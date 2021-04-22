@@ -1,0 +1,8 @@
+name: Warlords
+version: 1.0
+author: ebic
+main: com.ebicep.warlords.Warlords
+commands:
+  start:
+    description: Starts a new game
+    usage: /start
