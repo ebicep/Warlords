@@ -9,7 +9,7 @@ import java.util.List;
 public class temp extends AbstractAbility {
 
     public temp() {
-        super("temp", 0, 0, 0, 0, "temp");
+        super("temp", 0, 0, 0, 0, 0, 0, "temp");
     }
 
     @Override

@@ -1,8 +1,11 @@
 package com.ebicep.warlords;
 
+import com.ebicep.warlords.classes.abilties.EarthenSpike;
 import com.ebicep.warlords.classes.abilties.EarthenSpikeBlock;
+import com.ebicep.warlords.classes.abilties.SeismicWave;
 import com.ebicep.warlords.commands.StartGame;
 import com.ebicep.warlords.events.WarlordsEvents;
+import com.ebicep.warlords.classes.abilties.ConsecrateCircle;
 import org.bukkit.*;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
@@ -26,32 +29,45 @@ public class Warlords extends JavaPlugin {
         return instance;
     }
 
-    static ArrayList<ArmorStand> armorStands = new ArrayList<>(new ArrayList<>());
+
+    public static List<ArrayList<ArrayList<SeismicWave>>> waveArrays = new ArrayList<>();
+    public static List<EarthenSpike> spikes = new ArrayList<>();
+    public static List<ArmorStand> armorStands = new ArrayList<>(new ArrayList<>());
+
+    public static List<ArrayList<ArrayList<SeismicWave>>> getWaveArrays() {
+        return waveArrays;
+    }
+
+    public static List<ConsecrateCircle> consecrates = new ArrayList<>();
 
     private static HashMap<Player, WarlordsPlayer> players = new HashMap<>();
+
     public static void addPlayer(WarlordsPlayer warlordsPlayer) {
-        players.put(warlordsPlayer.getPlayer(),warlordsPlayer);
+        players.put(warlordsPlayer.getPlayer(), warlordsPlayer);
     }
+
     public static WarlordsPlayer getPlayer(Player player) {
         return players.get(player);
     }
+
     public static boolean hasPlayer(Player player) {
         return players.containsKey(player);
     }
 
 
-    static World world = Bukkit.getWorld("world");
+    public static World world = Bukkit.getWorld("world");
+
 
     @Override
     public void onEnable() {
         instance = this;
         getServer().getPluginManager().registerEvents(new WarlordsEvents(), this);
         Objects.requireNonNull(getCommand("start")).setExecutor(new StartGame());
-
         if (world != null) {
             runnable();
-            runnable2();
+            everySecond();
             runnable3();
+            runnable4();
         }
         getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords]: Plugin is enabled");
     }
@@ -68,13 +84,13 @@ public class Warlords extends JavaPlugin {
             @Override
             public void run() {
                 //all earthen spikes +1 when right click
-                if(WarlordsEvents.getSpikes().size() != 0) {
-                    for (int i = 0; i < WarlordsEvents.getSpikes().size(); i++) {
+                if (spikes.size() != 0) {
+                    for (int i = 0; i < spikes.size(); i++) {
                         //earthen spike BLOCk array
-                        List<ArrayList<EarthenSpikeBlock>> spikes = WarlordsEvents.getSpikes().get(i).getSpikeArrays();
+                        List<ArrayList<EarthenSpikeBlock>> tempSpikes = spikes.get(i).getSpikeArrays();
                         //block
-                        if(spikes.size() != 0) {
-                            ArrayList<EarthenSpikeBlock> spike = spikes.get(0);
+                        if (tempSpikes.size() != 0) {
+                            ArrayList<EarthenSpikeBlock> spike = tempSpikes.get(0);
                             Player player = spike.get(spike.size() - 1).getPlayer();
                             FallingBlock block = spike.get(spike.size() - 1).getBlock();
                             if (Math.abs(player.getLocation().getX() - block.getLocation().getX()) + Math.abs(player.getLocation().getX() - block.getLocation().getX()) > 1) {
@@ -99,11 +115,14 @@ public class Warlords extends JavaPlugin {
                                 newBlock.setDropItem(false);
                                 spike.add(new EarthenSpikeBlock(newBlock, player));
                                 WarlordsEvents.addEntityUUID(newBlock.getUniqueId());
-                            } else if (i <= spikes.size() && spikes.get(i).size() > 30) {
-                                WarlordsEvents.getSpikes().remove(i);
+                            } else if (i <= tempSpikes.size() && tempSpikes.get(i).size() > 30) {
+                                spikes.remove(i);
                             } else {
                                 Bukkit.broadcastMessage("HIT");
                                 Location location = player.getLocation();
+
+                                Warlords.getPlayer(player).addHealth(spikes.get(i).getMinDamageHeal(), spikes.get(i).getMaxDamageHeal(), spikes.get(i).getCritChance(), spikes.get(i).getCritMultiplier());
+
                                 location.setYaw(0);
                                 location.setY(player.getWorld().getHighestBlockYAt(location));
                                 ArmorStand stand = (ArmorStand) location.getWorld().spawnEntity(location.add(0, -.6, 0), EntityType.ARMOR_STAND);
@@ -117,7 +136,11 @@ public class Warlords extends JavaPlugin {
                                     player.setVelocity(new Vector(0, .6, 0));
                                 }
 
-                                WarlordsEvents.getSpikes().remove(i);
+                                spikes.remove(i);
+                                i--;
+                            }
+                            if (player.getGameMode() == GameMode.SPECTATOR) {
+                                spikes.remove(i);
                                 i--;
                             }
                         }
@@ -137,7 +160,7 @@ public class Warlords extends JavaPlugin {
         }.runTaskTimer(this, 0, 2);
     }
 
-    public void runnable2() {
+    public void everySecond() {
         new BukkitRunnable() {
 
             @Override
@@ -169,6 +192,37 @@ public class Warlords extends JavaPlugin {
                 objective.getScore(ChatColor.YELLOW + "localhost").setScore(1);
 
                 world.getPlayers().forEach(player -> player.setScoreboard(board));
+
+                for (Player player : world.getPlayers()) {
+                    WarlordsPlayer warlordsPlayer = getPlayer(player);
+                    if (warlordsPlayer.getRespawnTimer() != -1) {
+                        Bukkit.broadcastMessage("RESPAWN = " + warlordsPlayer.getRespawnTimer());
+                        warlordsPlayer.setRespawnTimer(warlordsPlayer.getRespawnTimer() - 1);
+                    }
+                    if (warlordsPlayer.getWrath() != -1) {
+                        warlordsPlayer.setWrath(warlordsPlayer.getWrath() - 1);
+                    }
+
+                    for (int i = 0; i < consecrates.size(); i++) {
+                        ConsecrateCircle consecrateCircle = consecrates.get(i);
+                        if (consecrateCircle.getPlayer() != player) {
+                            double distance = consecrateCircle.getLocation().distanceSquared(player.getLocation());
+                            System.out.println(distance);
+                            if (consecrateCircle.getDuration() == 3)
+                                consecrateCircle.spawn();
+                            if (distance < consecrateCircle.getRadius() * consecrateCircle.getRadius()) {
+                                warlordsPlayer.addHealth(consecrateCircle.getMinDamage(), consecrateCircle.getMaxDamage(), consecrateCircle.getCritChance(), consecrateCircle.getCritMultiplier());
+                            }
+                            consecrateCircle.setDuration(consecrateCircle.getDuration() - 1);
+                            if (consecrateCircle.getDuration() == 0) {
+                                consecrates.remove(i);
+                                i--;
+                            }
+                        }
+                    }
+
+                }
+
             }
 
         }.runTaskTimer(this, 0, 20);
@@ -179,33 +233,80 @@ public class Warlords extends JavaPlugin {
 
             @Override
             public void run() {
-                 for(ArmorStand e : world.getEntitiesByClass(ArmorStand.class)) {
-                     if(e.getVelocity().getX() != 0 && e.getCustomName()!= null && e.getCustomName().contains("Boulder")) {
-                         Bukkit.broadcastMessage("" + e.getVelocity());
-                         Vector velocity = e.getVelocity();
-                         double xVel = velocity.getX();
-                         double yVel = velocity.getY();
-                         double zVel = velocity.getZ();
-                         if(yVel < 0) {
-                             e.setHeadPose(new EulerAngle(e.getVelocity().getY()/2 * -1, 0, 0));
-                         } else {
-                             e.setHeadPose(new EulerAngle(e.getVelocity().getY() * -1, 0, 0));
-                         }
-                         if (Math.abs(xVel) < .2 && Math.abs(zVel) < .2) {
-                             if(!e.getCustomName().contains("2")) {
-                                 e.setVelocity(new Vector(xVel * 1.5,yVel,zVel/2));
-                                 e.setCustomName(e.getCustomName() + "2");
-                             }
-                             if(!e.getCustomName().contains("3")) {
-                                 e.setVelocity(new Vector(zVel/2,yVel,zVel * 1.5));
-                                 e.setCustomName(e.getCustomName() + "3");
-                             }
-                         }
+                for (Player player : world.getPlayers()) {
+                    WarlordsPlayer warlordsPlayer = getPlayer(player);
+                    //respawn
+                    if (warlordsPlayer.getRespawnTimer() == 0) {
+                        warlordsPlayer.setRespawnTimer(-1);
+                        warlordsPlayer.respawn();
+                        player.setGameMode(GameMode.SURVIVAL);
+                    }
+                    //damage or heal
+                    double newHealth = (double) warlordsPlayer.getHealth() / warlordsPlayer.getMaxHealth() * 40;
+                    if (newHealth < 0) {
+                        player.setGameMode(GameMode.SPECTATOR);
+                        warlordsPlayer.respawn();
+                        warlordsPlayer.setRespawnTimer(5);
+                    } else {
+                        player.setHealth(newHealth);
+                    }
+                    //energy
+                    if (warlordsPlayer.getEnergy() != warlordsPlayer.getMaxEnergy())
+                        warlordsPlayer.setEnergy(warlordsPlayer.getEnergy() + 1);
+                    player.setLevel(warlordsPlayer.getEnergy());
+                    player.setExp((float) warlordsPlayer.getEnergy() / warlordsPlayer.getMaxEnergy());
+                    //melee cooldown
+                    if (warlordsPlayer.getHitCooldown() != 0) {
+                        warlordsPlayer.setHitCooldown(warlordsPlayer.getHitCooldown() - 1);
+                    }
+                }
 
-                     }
-                 }
             }
 
-        }.runTaskTimer(this,0,0);
+        }.runTaskTimer(this, 0, 0);
     }
+
+    public void runnable4() {
+        new BukkitRunnable() {
+
+            @Override
+            public void run() {
+                for (ArmorStand e : world.getEntitiesByClass(ArmorStand.class)) {
+                    if (e.getCustomName() != null && e.getCustomName().contains("Boulder")) {
+                        Vector velocity = e.getVelocity();
+                        Location location = e.getLocation();
+                        double xVel = velocity.getX();
+                        double yVel = velocity.getY();
+                        double zVel = velocity.getZ();
+                        Bukkit.broadcastMessage("" + location.getDirection());
+
+                        if (yVel < 0) {
+                            e.setHeadPose(new EulerAngle(e.getVelocity().getY() / 2 * -1, 0, 0));
+                        } else {
+                            e.setHeadPose(new EulerAngle(e.getVelocity().getY() * -1, 0, 0));
+                        }
+                        if (yVel < 0 && Math.round(Math.abs(xVel) + Math.abs(zVel)) == 0 && location.getY() < location.getWorld().getHighestBlockYAt(location) + 5) {
+                            e.remove();
+                            //TODO spawn boulder impact
+                        }
+
+                        //TODO fix boulder velocity stopping
+//                         if (Math.abs(xVel) < .2 && Math.abs(zVel) < .2) {
+//                             if(!e.getCustomName().contains("2")) {
+//                                 e.setVelocity(new Vector(xVel * 1.5,yVel,zVel/2));
+//                                 e.setCustomName(e.getCustomName() + "2");
+//                             }
+//                             if(!e.getCustomName().contains("3")) {
+//                                 e.setVelocity(new Vector(zVel/2,yVel,zVel * 1.5));
+//                                 e.setCustomName(e.getCustomName() + "3");
+//                             }
+//                         }
+
+                    }
+                }
+            }
+
+        }.runTaskTimerAsynchronously(this, 0, 2);
+    }
+
 }

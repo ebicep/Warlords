@@ -8,11 +8,11 @@ import org.bukkit.event.player.PlayerInteractEvent;
 public class Avenger extends AbstractPaladin {
 
     public Avenger(Player player) {
-        super(new temp(),new Consecrate(), new LightInfusion(16, "avenger infusion"), new HolyRadiance(20,20,15,175, "avenger holy"), new AvengersWrath(), 6200, 305,player);
-    }
-
-    @Override
-    public void onRightClick(PlayerInteractEvent e) {
-
+        super(player, 6200, 305, 20, 20, 0,
+                new Strike("Avenger's Strike", -427, -577, 0, 90, 25, 185, "avenger strike description"),
+                new Consecrate(),
+                new LightInfusion(16, "avenger infusion"),
+                new HolyRadiance(20, 20, 15, 175, "avenger holy"),
+                new AvengersWrath());
     }
 }

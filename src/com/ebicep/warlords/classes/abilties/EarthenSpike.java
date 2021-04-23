@@ -1,9 +1,10 @@
 package com.ebicep.warlords.classes.abilties;
 
-import com.ebicep.warlords.Utils;
+import com.ebicep.warlords.util.Utils;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.events.WarlordsEvents;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.FallingBlock;
@@ -22,7 +23,7 @@ public class EarthenSpike extends AbstractAbility {
     }
 
     public EarthenSpike() {
-        super("Earthen Spike", 0, 120, 15, 175, "earthen spike description");
+        super("Earthen Spike", -476, -662, 0, 120, 15, 175, "earthen spike description");
     }
 
     @Override
@@ -34,7 +35,8 @@ public class EarthenSpike extends AbstractAbility {
             if (entity instanceof Player) {
                 Player nearPlayer = (Player) entity;
                 double distance = player.getLocation().distance(nearPlayer.getLocation());
-                if (Utils.getLookingAt(player, nearPlayer)) {
+                //TODO add distance
+                if (nearPlayer.getGameMode() != GameMode.SPECTATOR && Utils.getLookingAt(player, nearPlayer)) {
                     location.setY(player.getWorld().getHighestBlockYAt(location));
 
 
@@ -44,8 +46,9 @@ public class EarthenSpike extends AbstractAbility {
                     spikeList.add(new EarthenSpikeBlock(block, nearPlayer));
                     EarthenSpike spike = new EarthenSpike();
                     spike.getSpikeArrays().add(spikeList);
-                    WarlordsEvents.getSpikes().add(spike);
 
+                    Warlords.getPlayer(player).subtractEnergy(energyCost);
+                    Warlords.spikes.add(spike);
                     WarlordsEvents.addEntityUUID(block.getUniqueId());
                 }
             }

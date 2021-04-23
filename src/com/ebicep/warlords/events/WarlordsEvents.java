@@ -5,6 +5,7 @@ import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.abilties.EarthenSpike;
 import com.ebicep.warlords.classes.abilties.SeismicWave;
 import com.ebicep.warlords.classes.abilties.Slam;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -18,6 +19,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
@@ -27,18 +29,8 @@ import java.util.*;
 
 public class WarlordsEvents implements Listener {
 
-    static List<String> entityList = new ArrayList<>();
-    static List<ArrayList<ArrayList<SeismicWave>>> waveArrays = new ArrayList<>();
 
-    static List<EarthenSpike> spikes = new ArrayList<>();
-
-    public static List<EarthenSpike> getSpikes() {
-        return spikes;
-    }
-
-    public static List<ArrayList<ArrayList<SeismicWave>>> getWaveArrays() {
-        return waveArrays;
-    }
+    public static List<String> entityList = new ArrayList<>();
 
     @EventHandler
     public void onEntityChangeBlock(EntityChangeBlockEvent event) {
@@ -71,24 +63,26 @@ public class WarlordsEvents implements Listener {
     @EventHandler
     public static void onPlayerJoin(PlayerJoinEvent e) {
         Player player = e.getPlayer();
-
-//        ItemStack[] inventoryContents = new ItemStack[9];
-//        Dye red = new Dye();
-//        red.setColor(DyeColor.RED);
-//        inventoryContents[1] = new ItemStack(red.toItemStack(1));
-//        inventoryContents[2] = new ItemStack(Material.GLOWSTONE_DUST);
-//        Dye lime = new Dye();
-//        lime.setColor(DyeColor.LIME);
-//        inventoryContents[3] = new ItemStack(lime.toItemStack(1));
-//        Dye orange = new Dye();
-//        orange.setColor(DyeColor.ORANGE);
-//        inventoryContents[4] = new ItemStack(orange.toItemStack(1));
-//        inventoryContents[7] = new ItemStack(Material.GOLD_BARDING);
-//        inventoryContents[8] = new ItemStack(Material.COMPASS);
-//
-//        player.getInventory().setContents(inventoryContents);
-
         player.sendMessage(ChatColor.AQUA + "Welcome to the server retard");
+    }
+
+    @EventHandler
+    public void onPlayerHit(EntityDamageByEntityEvent e) {
+        //TODO find other fix?
+        if (e.getEntity() instanceof Player && e.getDamager() instanceof Player) {
+            Player attacker = (Player) e.getDamager();
+            Player victim = (Player) e.getEntity();
+            WarlordsPlayer warlordsPlayerAttacker = Warlords.getPlayer(attacker);
+            WarlordsPlayer warlordsPlayerVictim = Warlords.getPlayer(victim);
+
+            if (attacker.getInventory().getHeldItemSlot() == 0 && warlordsPlayerAttacker.getHitCooldown() == 0) {
+                victim.damage(0);
+                warlordsPlayerAttacker.setHitCooldown(13);
+                warlordsPlayerAttacker.subtractEnergy(warlordsPlayerAttacker.getSpec().getEnergyOnHit() * -1);
+                warlordsPlayerVictim.addHealth(-132, -179, 25, 200);
+            }
+        }
+        e.setCancelled(true);
     }
 
     @EventHandler
@@ -98,7 +92,7 @@ public class WarlordsEvents implements Listener {
         Location location = player.getLocation();
 
         if (action == Action.RIGHT_CLICK_BLOCK || action == Action.RIGHT_CLICK_AIR) {
-            if(Warlords.hasPlayer(player)) {
+            if (Warlords.hasPlayer(player)) {
                 Warlords.getPlayer(player).getSpec().onRightClick(e);
             }
             ItemStack itemHeld = player.getItemInHand();
@@ -122,7 +116,7 @@ public class WarlordsEvents implements Listener {
                 block.setVelocity(new Vector(0, .1, 0));
                 ArrayList<ArrayList<SeismicWave>> waveList = new ArrayList<>();
                 //waveList.add(new SeismicWave(block));
-                waveArrays.add(waveList);
+                Warlords.waveArrays.add(waveList);
 
                 WarlordsEvents.addEntityUUID(block.getUniqueId());
             } else if (itemHeld.getType() == Material.DIAMOND_PICKAXE) {

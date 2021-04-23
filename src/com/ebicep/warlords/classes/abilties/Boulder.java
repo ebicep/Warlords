@@ -13,7 +13,7 @@ import org.bukkit.util.EulerAngle;
 public class Boulder extends AbstractAbility {
 
     public Boulder() {
-        super("Boulder", 8, 80, 15, 175, "boulder yo");
+        super("Boulder", -588, -877, 8, 80, 15, 175, "boulder yo");
     }
 
     @Override

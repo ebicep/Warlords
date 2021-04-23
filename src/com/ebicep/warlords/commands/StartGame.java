@@ -2,6 +2,7 @@ package com.ebicep.warlords.commands;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
+import com.ebicep.warlords.classes.paladin.specs.avenger.Avenger;
 import com.ebicep.warlords.classes.shaman.earthwarden.Earthwarden;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
@@ -24,7 +25,7 @@ public class StartGame implements CommandExecutor {
         if (!(sender instanceof Player)) return true;
         Player player = (Player) sender;
         if (command.getName().equalsIgnoreCase("start")) {
-            if(args.length > 2) {
+            if (args.length > 2) {
                 Location location = player.getLocation();
                 ArmorStand stand = (ArmorStand) location.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
                 stand.setHelmet(new ItemStack(Material.LONG_GRASS, 1, (short) 2));
@@ -32,8 +33,11 @@ public class StartGame implements CommandExecutor {
                 stand.setVisible(true);
                 stand.setHeadPose(new EulerAngle(Double.parseDouble(args[0]), Double.parseDouble(args[1]), Double.parseDouble(args[2])));
             }
-
-            Warlords.addPlayer(new WarlordsPlayer(player, player.getName(), player.getUniqueId(), new Earthwarden(player)));
+            for (Player worldPlayer : Warlords.world.getPlayers()) {
+                Warlords.addPlayer(new WarlordsPlayer(worldPlayer, worldPlayer.getName(), worldPlayer.getUniqueId(), new Avenger(worldPlayer)));
+                worldPlayer.setMaxHealth(40);
+            }
+            player.setLevel(Warlords.getPlayer(player).getMaxEnergy());
             Warlords.getPlayer(player).assignItemLore();
 
 

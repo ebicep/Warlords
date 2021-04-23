@@ -1,6 +1,7 @@
 package com.ebicep.warlords;
 
 import com.ebicep.warlords.classes.PlayerClass;
+import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -18,18 +19,30 @@ public class WarlordsPlayer {
     private UUID uuid;
     private PlayerClass spec;
     private int health;
+    private int maxHealth;
+    private int respawnTimer;
+    private int energy;
+    private int maxEnergy;
+
+    private int hitCooldown;
+
+    private int wrath;
 
     public WarlordsPlayer(Player player, String name, UUID uuid, PlayerClass spec) {
         this.player = player;
         this.name = name;
         this.uuid = uuid;
         this.spec = spec;
-
+        this.health = spec.getMaxHealth();
+        this.maxHealth = spec.getMaxHealth();
+        this.respawnTimer = -1;
+        this.energy = spec.getMaxEnergy();
+        this.maxEnergy = spec.getMaxEnergy();
+        this.hitCooldown = 20;
     }
 
     public void assignItemLore() {
         ItemStack[] inventoryContents = new ItemStack[9];
-        //TODO custom weapons
 
         Dye redDye = new Dye();
         redDye.setColor(DyeColor.RED);
@@ -64,6 +77,7 @@ public class WarlordsPlayer {
         weaponLore.add("§bBOUND");
         weaponMeta.setLore(weaponLore);
         weapon.setItemMeta(weaponMeta);
+        weaponMeta.spigot().setUnbreakable(true);
 
         ItemStack red = new ItemStack(redDye.toItemStack(1));
         ItemMeta redMeta = weapon.getItemMeta();
@@ -77,6 +91,7 @@ public class WarlordsPlayer {
         redLore.add(spec.getRed().getDescription());
         redMeta.setLore(redLore);
         red.setItemMeta(redMeta);
+        redMeta.spigot().setUnbreakable(true);
 
         ItemStack purple = new ItemStack(Material.GLOWSTONE_DUST);
         ItemMeta purpleMeta = purple.getItemMeta();
@@ -90,6 +105,7 @@ public class WarlordsPlayer {
         purpleLore.add(spec.getPurple().getDescription());
         purpleMeta.setLore(purpleLore);
         purple.setItemMeta(purpleMeta);
+        purpleMeta.spigot().setUnbreakable(true);
 
         ItemStack blue = new ItemStack(limeDye.toItemStack(1));
         ItemMeta blueMeta = blue.getItemMeta();
@@ -103,6 +119,7 @@ public class WarlordsPlayer {
         blueLore.add(spec.getBlue().getDescription());
         blueMeta.setLore(blueLore);
         blue.setItemMeta(blueMeta);
+        blueMeta.spigot().setUnbreakable(true);
 
         ItemStack orange = new ItemStack(orangeDye.toItemStack(1));
         ItemMeta orangeMeta = orange.getItemMeta();
@@ -116,6 +133,7 @@ public class WarlordsPlayer {
         orangeLore.add(spec.getOrange().getDescription());
         orangeMeta.setLore(orangeLore);
         orange.setItemMeta(orangeMeta);
+        orangeMeta.spigot().setUnbreakable(true);
 
         ItemStack horse = new ItemStack(Material.GOLD_BARDING);
         ItemMeta horseMeta = horse.getItemMeta();
@@ -126,11 +144,13 @@ public class WarlordsPlayer {
         horseLore.add("§7Call your steed to assists you in battle");
         horseMeta.setLore(horseLore);
         horse.setItemMeta(horseMeta);
+        horseMeta.spigot().setUnbreakable(true);
 
         ItemStack compass = new ItemStack(Material.COMPASS);
         ItemMeta compassMeta = compass.getItemMeta();
         compassMeta.setDisplayName("§aFlag Finder");
         compass.setItemMeta(compassMeta);
+        compassMeta.spigot().setUnbreakable(true);
 
         inventoryContents[0] = weapon;
         inventoryContents[1] = red;
@@ -173,5 +193,86 @@ public class WarlordsPlayer {
 
     public void setSpec(PlayerClass spec) {
         this.spec = spec;
+    }
+
+    public int getHealth() {
+        return health;
+    }
+
+    public void setHealth(int health) {
+        this.health = health;
+    }
+
+    public int getMaxHealth() {
+        return maxHealth;
+    }
+
+    public void setMaxHealth(int maxHealth) {
+        this.maxHealth = maxHealth;
+    }
+
+    public void addHealth(int min, int max, int critChance, int critMultiplier) {
+        double random = (int) ((Math.random() * (max - min)) + min);
+        int crit = (int) ((Math.random() * (100)));
+        if (crit <= critChance) {
+            random *= critMultiplier / 100f;
+        }
+        if (this.health + random > this.maxHealth) {
+            this.health = maxHealth;
+        } else {
+            this.health += Math.round(random);
+        }
+    }
+
+    public void respawn() {
+        this.health = this.maxHealth;
+    }
+
+    public int getRespawnTimer() {
+        return respawnTimer;
+    }
+
+    public void setRespawnTimer(int respawnTimer) {
+        this.respawnTimer = respawnTimer;
+    }
+
+    public int getEnergy() {
+        return energy;
+    }
+
+    public void setEnergy(int energy) {
+        this.energy = energy;
+    }
+
+    public void subtractEnergy(int amount) {
+        if (energy - amount > maxEnergy) {
+            energy = maxEnergy;
+        } else {
+            this.energy -= amount;
+        }
+    }
+
+    public int getMaxEnergy() {
+        return maxEnergy;
+    }
+
+    public void setMaxEnergy(int maxEnergy) {
+        this.maxEnergy = maxEnergy;
+    }
+
+    public int getHitCooldown() {
+        return hitCooldown;
+    }
+
+    public void setHitCooldown(int hitCooldown) {
+        this.hitCooldown = hitCooldown;
+    }
+
+    public int getWrath() {
+        return wrath;
+    }
+
+    public void setWrath(int wrath) {
+        this.wrath = wrath;
     }
 }

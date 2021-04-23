@@ -1,39 +1,108 @@
 package com.ebicep.warlords.classes;
 
+import com.ebicep.warlords.Warlords;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 public abstract class PlayerClass {
 
+    protected Player player;
+    protected int maxHealth;
+    protected int maxEnergy;
+    protected int energyPerSec;
+    protected int energyOnHit;
+    protected int damageResistance;
     protected AbstractAbility weapon;
     protected AbstractAbility red;
     protected AbstractAbility purple;
     protected AbstractAbility blue;
     protected AbstractAbility orange;
-    protected Player player;
 
-    public PlayerClass(AbstractAbility weapon,AbstractAbility red, AbstractAbility purple, AbstractAbility blue, AbstractAbility orange, Player player) {
+    public PlayerClass(Player player, int maxHealth, int maxEnergy, int energyPerSec, int energyOnHit, int damageResistance, AbstractAbility weapon, AbstractAbility red, AbstractAbility purple, AbstractAbility blue, AbstractAbility orange) {
+        this.player = player;
+        this.maxHealth = maxHealth;
+        this.maxEnergy = maxEnergy;
+        this.energyPerSec = energyPerSec;
+        this.energyOnHit = energyOnHit;
+        this.damageResistance = damageResistance;
         this.weapon = weapon;
         this.red = red;
         this.purple = purple;
         this.blue = blue;
         this.orange = orange;
-        this.player = player;
     }
 
     public void onRightClick(PlayerInteractEvent e) {
         Player player = e.getPlayer();
-        if(player.getInventory().getHeldItemSlot() == 0) {
-            weapon.onActivate(e);
-        } else if(player.getInventory().getHeldItemSlot() == 1) {
-            red.onActivate(e);
-        } else if(player.getInventory().getHeldItemSlot() == 2) {
-            purple.onActivate(e);
-        } else if(player.getInventory().getHeldItemSlot() == 3) {
-            blue.onActivate(e);
-        } else if(player.getInventory().getHeldItemSlot() == 4) {
-            orange.onActivate(e);
+        if (player.getInventory().getHeldItemSlot() == 0) {
+            if (player.getLevel() >= weapon.getEnergyCost()) {
+                weapon.onActivate(e);
+            }
+        } else if (player.getInventory().getHeldItemSlot() == 1) {
+            if (player.getLevel() >= red.getEnergyCost()) {
+                red.onActivate(e);
+            }
+        } else if (player.getInventory().getHeldItemSlot() == 2) {
+            if (player.getLevel() >= purple.getEnergyCost()) {
+                purple.onActivate(e);
+            }
+        } else if (player.getInventory().getHeldItemSlot() == 3) {
+            if (player.getLevel() >= blue.getEnergyCost()) {
+                blue.onActivate(e);
+            }
+        } else if (player.getInventory().getHeldItemSlot() == 4) {
+            if (player.getLevel() >= orange.getEnergyCost()) {
+                orange.onActivate(e);
+            }
         }
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    public void setPlayer(Player player) {
+        this.player = player;
+    }
+
+    public int getMaxHealth() {
+        return maxHealth;
+    }
+
+    public void setMaxHealth(int maxHealth) {
+        this.maxHealth = maxHealth;
+    }
+
+    public int getMaxEnergy() {
+        return maxEnergy;
+    }
+
+    public void setMaxEnergy(int maxEnergy) {
+        this.maxEnergy = maxEnergy;
+    }
+
+    public int getEnergyPerSec() {
+        return energyPerSec;
+    }
+
+    public void setEnergyPerSec(int energyPerSec) {
+        this.energyPerSec = energyPerSec;
+    }
+
+    public int getEnergyOnHit() {
+        return energyOnHit;
+    }
+
+    public void setEnergyOnHit(int energyOnHit) {
+        this.energyOnHit = energyOnHit;
+    }
+
+    public int getDamageResistance() {
+        return damageResistance;
+    }
+
+    public void setDamageResistance(int damageResistance) {
+        this.damageResistance = damageResistance;
     }
 
     public AbstractAbility getWeapon() {
@@ -74,13 +143,5 @@ public abstract class PlayerClass {
 
     public void setOrange(AbstractAbility orange) {
         this.orange = orange;
-    }
-
-    public Player getPlayer() {
-        return player;
-    }
-
-    public void setPlayer(Player player) {
-        this.player = player;
     }
 }
