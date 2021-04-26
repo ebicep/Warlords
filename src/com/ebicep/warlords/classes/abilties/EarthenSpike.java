@@ -43,7 +43,7 @@ public class EarthenSpike extends AbstractAbility {
                     FallingBlock block = player.getWorld().spawnFallingBlock(location.add(0, 0, 0), location.getWorld().getBlockAt((int) location.getX(), location.getWorld().getHighestBlockYAt(location) - 1, (int) location.getZ()).getType(), (byte) 0);
                     block.setVelocity(new Vector(0, .2, 0));
                     ArrayList<EarthenSpikeBlock> spikeList = new ArrayList<>();
-                    spikeList.add(new EarthenSpikeBlock(block, nearPlayer));
+                    spikeList.add(new EarthenSpikeBlock(block, nearPlayer, Warlords.getPlayer(player)));
                     EarthenSpike spike = new EarthenSpike();
                     spike.getSpikeArrays().add(spikeList);
 

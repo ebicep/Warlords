@@ -6,18 +6,18 @@ import com.ebicep.warlords.classes.AbstractAbility;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-public class LightInfusion extends AbstractAbility {
+public class LightningRod extends AbstractAbility {
 
-    public LightInfusion(int cooldown, String description) {
-        super("Light Infusion", 0, 0, cooldown, -120, 0, 0, description);
+    public LightningRod() {
+        super("Lightning Rod", 0, 0, 32, 0, 0, 0, "lightning rod description");
     }
 
     @Override
     public void onActivate(PlayerInteractEvent e) {
         Player player = e.getPlayer();
         WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
-        player.setWalkSpeed(WarlordsPlayer.infusionSpeed);
-        warlordsPlayer.setInfusion(3);
-        warlordsPlayer.subtractEnergy(energyCost);
+        warlordsPlayer.subtractEnergy(-160);
+        warlordsPlayer.addHealth(warlordsPlayer, name, (int) (warlordsPlayer.getMaxHealth() * .3), (int) (warlordsPlayer.getMaxHealth() * .3), critChance, critMultiplier);
+
     }
 }

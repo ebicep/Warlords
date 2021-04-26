@@ -6,18 +6,17 @@ import com.ebicep.warlords.classes.AbstractAbility;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-public class LightInfusion extends AbstractAbility {
+public class Berserk extends AbstractAbility {
 
-    public LightInfusion(int cooldown, String description) {
-        super("Light Infusion", 0, 0, cooldown, -120, 0, 0, description);
+    public Berserk() {
+        super("Berserk", 0, 0, 47, 30, 0, 0, "berserker berserk");
     }
 
     @Override
     public void onActivate(PlayerInteractEvent e) {
         Player player = e.getPlayer();
         WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
-        player.setWalkSpeed(WarlordsPlayer.infusionSpeed);
-        warlordsPlayer.setInfusion(3);
+        warlordsPlayer.setBerserk(18);
         warlordsPlayer.subtractEnergy(energyCost);
     }
 }

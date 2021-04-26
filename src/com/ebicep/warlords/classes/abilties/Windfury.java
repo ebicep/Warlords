@@ -6,18 +6,17 @@ import com.ebicep.warlords.classes.AbstractAbility;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-public class LightInfusion extends AbstractAbility {
+public class Windfury extends AbstractAbility {
 
-    public LightInfusion(int cooldown, String description) {
-        super("Light Infusion", 0, 0, cooldown, -120, 0, 0, description);
+    public Windfury() {
+        super("Windfury Weapon", 0, 0, 16, 30, 25, 135, "windfury description");
     }
 
     @Override
     public void onActivate(PlayerInteractEvent e) {
         Player player = e.getPlayer();
         WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
-        player.setWalkSpeed(WarlordsPlayer.infusionSpeed);
-        warlordsPlayer.setInfusion(3);
         warlordsPlayer.subtractEnergy(energyCost);
+        warlordsPlayer.setWindfury(8);
     }
 }

@@ -10,7 +10,7 @@ public class Utils {
         Location eye = player.getEyeLocation();
         eye.setY(eye.getY() + .5);
         Vector toEntity = player1.getEyeLocation().toVector().subtract(eye.toVector());
-        double dot = toEntity.normalize().dot(eye.getDirection());
+        float dot = (float) toEntity.normalize().dot(eye.getDirection());
 
         return dot > 0.98D;
     }

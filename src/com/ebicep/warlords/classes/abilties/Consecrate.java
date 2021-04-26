@@ -5,15 +5,15 @@ import com.ebicep.warlords.classes.AbstractAbility;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 public class Consecrate extends AbstractAbility {
-    public Consecrate() {
-        super("Consecrate", -158, -214, 8, 50, 20, 175, "consecrate description");
+    public Consecrate(int minDamageHeal, int maxDamageHeal, int energyCost, int critChance, int critMultiplier) {
+        super("Consecrate", minDamageHeal, maxDamageHeal, 8, energyCost, critChance, critMultiplier, "consecrate description");
     }
 
     @Override
     public void onActivate(PlayerInteractEvent e) {
-        ConsecrateCircle consecrateCircle = new ConsecrateCircle(e.getPlayer(), e.getPlayer().getLocation(), 5, 5, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
-        consecrateCircle.spawn();
+        ConsecrateHammerCircle consecrateHammerCircle = new ConsecrateHammerCircle(e.getPlayer(), e.getPlayer().getLocation(), 5, 5, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+        consecrateHammerCircle.spawn();
         Warlords.getPlayer(e.getPlayer()).subtractEnergy(energyCost);
-        Warlords.consecrates.add(consecrateCircle);
+        Warlords.consecrates.add(consecrateHammerCircle);
     }
 }

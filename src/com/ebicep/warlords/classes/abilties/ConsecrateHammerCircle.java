@@ -4,7 +4,7 @@ import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-public class ConsecrateCircle {
+public class ConsecrateHammerCircle {
 
     private Player player;
     private Location location;
@@ -15,7 +15,7 @@ public class ConsecrateCircle {
     private int critChance;
     private int critMultiplier;
 
-    public ConsecrateCircle(Player player, Location location, int radius, int duration, int minDamage, int maxDamage, int critChance, int critMultiplier) {
+    public ConsecrateHammerCircle(Player player, Location location, int radius, int duration, int minDamage, int maxDamage, int critChance, int critMultiplier) {
         this.player = player;
         this.location = location;
         this.radius = radius;
@@ -27,10 +27,10 @@ public class ConsecrateCircle {
     }
 
     public void spawn() {
-        double angle = 0;
+        float angle = 0;
         for (int i = 0; i < Math.PI * 20; i++) {
-            double x = (radius * Math.sin(angle));
-            double z = (radius * Math.cos(angle));
+            float x = (float) (radius * Math.sin(angle));
+            float z = (float) (radius * Math.cos(angle));
             angle += 0.2;
             location.getWorld().playEffect(new Location(location.getWorld(), location.getX() + x, location.getWorld().getHighestBlockYAt(location), location.getZ() + z), Effect.HAPPY_VILLAGER, 0);
 

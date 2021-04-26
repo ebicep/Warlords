@@ -6,7 +6,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
+import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
@@ -47,18 +49,19 @@ public class Slam {
      * @param amount
      * @return
      */
-    private ArrayList<Location> getCircle(Location center, double radius, int amount) {
+    private ArrayList<Location> getCircle(Location center, float radius, int amount) {
         World world = center.getWorld();
         double increment = ((2 * Math.PI) / amount);
         ArrayList<Location> locations = new ArrayList<Location>();
         for (int i = 0; i < amount; i++) {
-            double angle = i * increment;
+            float angle = (float) (i * increment);
             if (Math.toDegrees(angle) > 40) {
                 break;
             }
-            double x = center.getX() + (radius / 2.5 * Math.cos(angle));
-            double z = center.getZ() + (radius / 2.5 * Math.sin(angle));
+            float x = (float) (center.getX() + (radius / 2.5 * Math.cos(angle)));
+            float z = (float) (center.getZ() + (radius / 2.5 * Math.sin(angle)));
             locations.add(new Location(world, x, center.getY(), z));
+            world.spawnEntity(new Location(world, x, center.getY(), z), EntityType.ARROW);
         }
         return locations;
     }
@@ -75,7 +78,7 @@ public class Slam {
     /**
      * Stops The Timer
      */
-    protected void stop() {
-        Bukkit.getScheduler().cancelTask(id);
-    }
+//    protected void stop() {
+//        Bukkit.getScheduler().cancelTask(id);
+//    }
 }

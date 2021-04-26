@@ -2,9 +2,9 @@ package com.ebicep.warlords.commands;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
-import com.ebicep.warlords.classes.paladin.specs.avenger.Avenger;
-import com.ebicep.warlords.classes.shaman.earthwarden.Earthwarden;
-import org.bukkit.DyeColor;
+import com.ebicep.warlords.classes.paladin.specs.protector.Protector;
+import com.ebicep.warlords.classes.shaman.specs.thunderlord.ThunderLord;
+import com.ebicep.warlords.classes.warrior.specs.berserker.Berserker;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -15,7 +15,6 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.Dye;
 import org.bukkit.util.EulerAngle;
 
 public class StartGame implements CommandExecutor {
@@ -34,10 +33,12 @@ public class StartGame implements CommandExecutor {
                 stand.setHeadPose(new EulerAngle(Double.parseDouble(args[0]), Double.parseDouble(args[1]), Double.parseDouble(args[2])));
             }
             for (Player worldPlayer : Warlords.world.getPlayers()) {
-                Warlords.addPlayer(new WarlordsPlayer(worldPlayer, worldPlayer.getName(), worldPlayer.getUniqueId(), new Avenger(worldPlayer)));
+                //worldPlayer.setWalkSpeed(.2f * Float.parseFloat(args[0]));
+                System.out.println("Added " + worldPlayer.getName());
+                Warlords.addPlayer(new WarlordsPlayer(worldPlayer, worldPlayer.getName(), worldPlayer.getUniqueId(), new ThunderLord(worldPlayer)));
                 worldPlayer.setMaxHealth(40);
             }
-            player.setLevel(Warlords.getPlayer(player).getMaxEnergy());
+            player.setLevel((int) Warlords.getPlayer(player).getMaxEnergy());
             Warlords.getPlayer(player).assignItemLore();
 
 

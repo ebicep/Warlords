@@ -7,6 +7,7 @@ public abstract class AbstractAbility {
     protected String name;
     protected int minDamageHeal;
     protected int maxDamageHeal;
+    protected int currentCooldown;
     protected int cooldown;
     protected int energyCost;
     protected int critChance;
@@ -38,8 +39,20 @@ public abstract class AbstractAbility {
         return maxDamageHeal;
     }
 
+    public int getCurrentCooldown() {
+        return currentCooldown;
+    }
+
+    public void setCurrentCooldown(int currentCooldown) {
+        this.currentCooldown = currentCooldown;
+    }
+
     public int getCooldown() {
         return cooldown;
+    }
+
+    public void setCooldown(int cooldown) {
+        this.cooldown = cooldown;
     }
 
     public int getEnergyCost() {

@@ -6,18 +6,17 @@ import com.ebicep.warlords.classes.AbstractAbility;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-public class LightInfusion extends AbstractAbility {
+public class BloodLust extends AbstractAbility {
 
-    public LightInfusion(int cooldown, String description) {
-        super("Light Infusion", 0, 0, cooldown, -120, 0, 0, description);
+    public BloodLust() {
+        super("Blood Lust", 0, 0, 32, 20, 0, 0, "blood lust description");
     }
 
     @Override
     public void onActivate(PlayerInteractEvent e) {
         Player player = e.getPlayer();
         WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
-        player.setWalkSpeed(WarlordsPlayer.infusionSpeed);
-        warlordsPlayer.setInfusion(3);
         warlordsPlayer.subtractEnergy(energyCost);
+        warlordsPlayer.setBloodLust(15);
     }
 }

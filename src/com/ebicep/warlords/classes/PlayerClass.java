@@ -39,20 +39,25 @@ public abstract class PlayerClass {
                 weapon.onActivate(e);
             }
         } else if (player.getInventory().getHeldItemSlot() == 1) {
-            if (player.getLevel() >= red.getEnergyCost()) {
+            if (red.getCurrentCooldown() == 0 && player.getLevel() >= red.getEnergyCost()) {
                 red.onActivate(e);
+                red.setCurrentCooldown(red.cooldown);
             }
         } else if (player.getInventory().getHeldItemSlot() == 2) {
-            if (player.getLevel() >= purple.getEnergyCost()) {
+            if (purple.getCurrentCooldown() == 0 && player.getLevel() >= purple.getEnergyCost()) {
                 purple.onActivate(e);
+                purple.setCurrentCooldown(purple.cooldown);
             }
         } else if (player.getInventory().getHeldItemSlot() == 3) {
-            if (player.getLevel() >= blue.getEnergyCost()) {
+            if (blue.getCurrentCooldown() == 0 && player.getLevel() >= blue.getEnergyCost()) {
                 blue.onActivate(e);
+                blue.setCurrentCooldown(blue.cooldown);
             }
         } else if (player.getInventory().getHeldItemSlot() == 4) {
-            if (player.getLevel() >= orange.getEnergyCost()) {
+            if (orange.getCurrentCooldown() == 0 && player.getLevel() >= orange.getEnergyCost()) {
                 orange.onActivate(e);
+                orange.setCurrentCooldown(orange.cooldown);
+
             }
         }
     }

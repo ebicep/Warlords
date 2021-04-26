@@ -1,5 +1,6 @@
 package com.ebicep.warlords.classes.abilties;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -28,5 +29,6 @@ public class Boulder extends AbstractAbility {
         stand.setVisible(true);
         //stand.setHeadPose(new EulerAngle());
         stand.setVelocity(location.getDirection().multiply(2.5));
+        Warlords.getPlayer(player).subtractEnergy(energyCost);
     }
 }

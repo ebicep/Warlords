@@ -17,6 +17,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
@@ -79,7 +80,7 @@ public class WarlordsEvents implements Listener {
                 victim.damage(0);
                 warlordsPlayerAttacker.setHitCooldown(13);
                 warlordsPlayerAttacker.subtractEnergy(warlordsPlayerAttacker.getSpec().getEnergyOnHit() * -1);
-                warlordsPlayerVictim.addHealth(-132, -179, 25, 200);
+                warlordsPlayerVictim.addHealth(warlordsPlayerAttacker, "", -132, -179, 25, 200);
             }
         }
         e.setCancelled(true);
@@ -92,6 +93,7 @@ public class WarlordsEvents implements Listener {
         Location location = player.getLocation();
 
         if (action == Action.RIGHT_CLICK_BLOCK || action == Action.RIGHT_CLICK_AIR) {
+            //Slam test = new Slam(location);
             if (Warlords.hasPlayer(player)) {
                 Warlords.getPlayer(player).getSpec().onRightClick(e);
             }
@@ -108,6 +110,7 @@ public class WarlordsEvents implements Listener {
                     horse.setJumpStrength(0);
                     //TODO change speed
                     horse.setPassenger(player);
+                    Warlords.getPlayer(player).setHorseCooldown(15);
                 }
             } else if (itemHeld.getType() == Material.DIAMOND_AXE) {
                 location.setY(player.getWorld().getHighestBlockYAt(location));
@@ -139,7 +142,7 @@ public class WarlordsEvents implements Listener {
         Location eye = player.getEyeLocation();
         eye.setY(eye.getY() + .5);
         Vector toEntity = player1.getEyeLocation().toVector().subtract(eye.toVector());
-        double dot = toEntity.normalize().dot(eye.getDirection());
+        float dot = (float) toEntity.normalize().dot(eye.getDirection());
 
         return dot > 0.98D;
     }
@@ -190,6 +193,17 @@ public class WarlordsEvents implements Listener {
                 blueFlag.setCustomNameVisible(true);
                 blueFlag.setVisible(false);
             }
+        }
+    }
+
+    @EventHandler
+    public void regenEvent(EntityRegainHealthEvent e) {
+        if (e.getEntity() instanceof Player) {
+            Player player = ((Player) e.getEntity()).getPlayer();
+            //TODO FIX REGEEENNE
+            //if (Warlords.getPlayer(player).getRegenTimer() != -1) {
+            e.setCancelled(true);
+            //}
         }
     }
 }
