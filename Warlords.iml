@@ -10,10 +10,12 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../Dependencies/spigot-api-1.8.8.jar!/" />
+          <root url="jar://$MODULE_DIR$/../Server2/spigot-1.8.8.jar!/" />
         </CLASSES>
         <JAVADOC />
-        <SOURCES />
+        <SOURCES>
+          <root url="jar://$MODULE_DIR$/../Server2/spigot-1.8.8.jar!/" />
+        </SOURCES>
       </library>
     </orderEntry>
   </component>

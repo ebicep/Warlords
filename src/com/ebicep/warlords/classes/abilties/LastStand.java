@@ -21,14 +21,15 @@ public class LastStand extends AbstractAbility {
         Player player = e.getPlayer();
         WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
         warlordsPlayer.setLastStand(12);
-        List<Entity> near = player.getNearbyEntities(7.0D, 7.0D, 7.0D);
+        List<Entity> near = player.getNearbyEntities(4.0D, 4.0D, 4.0D);
         near.remove(player);
         for (Entity entity : near) {
             if (entity instanceof Player) {
                 Player nearPlayer = (Player) entity;
-                double distance = player.getLocation().distanceSquared(nearPlayer.getLocation());
-                if (nearPlayer.getGameMode() != GameMode.SPECTATOR && distance < 5 * 5) {
+                if (nearPlayer.getGameMode() != GameMode.SPECTATOR) {
                     Warlords.getPlayer(nearPlayer).setLastStand(6);
+                    Warlords.getPlayer(nearPlayer).setLastStandedBy(warlordsPlayer);
+                    player.sendMessage("you last standed " + nearPlayer.getName());
                 }
             }
         }

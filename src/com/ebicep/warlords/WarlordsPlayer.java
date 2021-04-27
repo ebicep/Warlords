@@ -37,8 +37,12 @@ public class WarlordsPlayer {
     private int presence = 0;
     private int bloodLust = 0;
     private int berserk = 0;
-    private String intervene = "";
+    private int intervene = 0;
+    private int interveneDamage = 0;
+    private WarlordsPlayer intervened;
+    private WarlordsPlayer intervenedBy;
     private int lastStand = 0;
+    private WarlordsPlayer lastStandedBy;
     private int windfury = 0;
     private int earthliving = 0;
 
@@ -272,9 +276,13 @@ public class WarlordsPlayer {
         //crit
         float damageHealValue = (int) ((Math.random() * (max - min)) + min);
         int crit = (int) ((Math.random() * (100)));
+        boolean isCrit = false;
         if (crit <= critChance) {
+            isCrit = true;
             damageHealValue *= critMultiplier / 100f;
         }
+        //resistance
+        damageHealValue *= 1 - spec.getDamageResistance() / 100f;
         //TODO fix calcualtions should be (.25 + .1 + ....) then multiply
         //berserk
         if (attacker.getBerserk() != 0) {
@@ -283,70 +291,90 @@ public class WarlordsPlayer {
         if (berserk != 0) {
             damageHealValue *= 1.1;
         }
-        //Prevent overheal
-        if (this.health + damageHealValue > this.maxHealth) {
-            damageHealValue = this.maxHealth - this.health;
-            this.health = maxHealth;
-        } else {
-            this.health += Math.round(damageHealValue);
-        }
-        //Self heal
-        if (attacker.getName().equals(name)) {
-            if (crit <= critChance) {
-                player.sendMessage("§a\u00AB§7 Your " + ability + " critically healed you for §a§l" + (int) damageHealValue + "! §7health.");
+        if (intervene != 0) {
+            damageHealValue *= .5;
+            if (isCrit) {
+                intervenedBy.getPlayer().sendMessage("§c\u00AB§7 " + attacker.getName() + "'s Intervene hit you for §c§l" + (int) damageHealValue * -1 + "! §7critical damage.");
+                attacker.getPlayer().sendMessage("§a\u00BB§7 Your Intervene hit " + intervenedBy.getName() + " for §c§l" + (int) damageHealValue * -1 + "! §7critical damage.");
             } else {
-                player.sendMessage("§a\u00AB§7 Your " + ability + " healed for §a" + (int) damageHealValue + " §7health.");
-
+                intervenedBy.getPlayer().sendMessage("§c\u00AB§7 " + attacker.getName() + "'s Intervene hit you for §c" + (int) damageHealValue * -1 + "§7 damage.");
+                attacker.getPlayer().sendMessage("§a\u00BB§7 Your Intervene hit " + intervenedBy.getName() + " for §c" + (int) damageHealValue * -1 + "§7 damage.");
             }
+            intervenedBy.setHealth((int) (intervenedBy.getHealth() + damageHealValue));
+            interveneDamage += damageHealValue;
         } else {
-            //DAMAGE
-            if (damageHealValue < 0) {
-                regenTimer = 10;
-                float tempDamageHealValue = Math.abs(damageHealValue);
-                if (lastStand != 0) {
-                    if (spec.getOrange().getName().equals("Last Stand")) {
-                        tempDamageHealValue *= .5;
-                    } else {
-                        tempDamageHealValue *= .4;
-                        //TODO heal player that used last stand, need to get a reference
-                    }
-                }
-                if (crit <= critChance) {
-                    if (ability.isEmpty()) {
-                        player.sendMessage("§c\u00AB§7 " + attacker.getName() + " hit you for §c§l" + (int) tempDamageHealValue + "! §7critical melee damage.");
-                        attacker.getPlayer().sendMessage("§a\u00BB§7 " + "You hit " + name + " for §c§l" + (int) tempDamageHealValue + "! §7critical melee damage.");
-                    } else {
-                        player.sendMessage("§c\u00AB§7 " + attacker.getName() + "'s " + ability + " hit you for §c§l" + (int) tempDamageHealValue + "! §7critical damage.");
-                        attacker.getPlayer().sendMessage("§a\u00BB§7 " + "Your " + ability + " hit " + name + " for §c§l" + (int) tempDamageHealValue + "! §7critical damage.");
-                    }
-                } else {
-                    if (ability.isEmpty()) {
-                        player.sendMessage("§c\u00AB§7 " + attacker.getName() + " hit you for §c" + (int) tempDamageHealValue + " §7damage.");
-                        attacker.getPlayer().sendMessage("§a\u00BB§7 " + "You hit " + name + " for §c" + (int) tempDamageHealValue + " §7damage.");
-                    } else {
-                        player.sendMessage("§c\u00AB§7 " + attacker.getName() + "'s " + ability + " hit you for §c" + (int) tempDamageHealValue + " §7damage.");
-                        attacker.getPlayer().sendMessage("§a\u00BB§7 " + "Your " + ability + " hit " + name + " for §c" + (int) tempDamageHealValue + " §7damage.");
-                    }
-                }
+            System.out.println(attacker.getName() + " hit " + name);
+            System.out.println(damageHealValue);
+            //Prevent overheal
+            if (this.health + damageHealValue > this.maxHealth) {
+                damageHealValue = this.maxHealth - this.health;
+                this.health = maxHealth;
+            } else {
+                this.health += Math.round(damageHealValue);
             }
-            //HEALING
-            else {
-                if (berserkerWounded != 0) {
-                    damageHealValue *= .65;
-                } else if (defenderWounded != 0) {
-                    damageHealValue *= .75;
-                }
-                if (crit <= critChance) {
-                    player.sendMessage("§a\u00AB§7 " + attacker.getName() + "'s " + ability + " critically healed you for §a§l" + (int) damageHealValue + "! §7health.");
-                    attacker.getPlayer().sendMessage("§a\u00BB§7 " + "Your " + ability + " critically healed " + name + " for §a§l" + (int) damageHealValue + "! §7health.");
+            //Self heal
+            if (attacker.getName().equals(name)) {
+                if (isCrit) {
+                    player.sendMessage("§a\u00AB§7 Your " + ability + " critically healed you for §a§l" + (int) damageHealValue + "! §7health.");
                 } else {
-                    player.sendMessage("§a\u00AB§7 " + attacker.getName() + "'s " + ability + " healed for §a" + (int) damageHealValue + " §7health.");
-                    attacker.getPlayer().sendMessage("§a\u00BB§7 " + "Your " + ability + " healed " + name + " for §a" + (int) damageHealValue + " §7health.");
+                    player.sendMessage("§a\u00AB§7 Your " + ability + " healed for §a" + (int) damageHealValue + " §7health.");
 
+                }
+            } else {
+                //DAMAGE
+                if (damageHealValue < 0) {
+                    regenTimer = 10;
+                    float tempDamageHealValue = Math.abs(damageHealValue);
+                    if (lastStand != 0) {
+                        if (spec.getOrange().getName().equals("Last Stand")) {
+                            tempDamageHealValue *= .5;
+                        } else {
+                            tempDamageHealValue *= .4;
+                            //TODO multiple last stands? lastest person that last stands will over ride other dude
+                            if (lastStandedBy.getLastStand() != 0) {
+                                if (isCrit)
+                                    lastStandedBy.addHealth(lastStandedBy, "Last Stand", (int) (tempDamageHealValue), (int) (tempDamageHealValue), 100, 100);
+                                else
+                                    lastStandedBy.addHealth(lastStandedBy, "Last Stand", (int) (tempDamageHealValue), (int) (tempDamageHealValue), -1, 100);
+                            }
+                        }
+                    }
+                    if (isCrit) {
+                        if (ability.isEmpty()) {
+                            player.sendMessage("§c\u00AB§7 " + attacker.getName() + " hit you for §c§l" + (int) tempDamageHealValue + "! §7critical melee damage.");
+                            attacker.getPlayer().sendMessage("§a\u00BB§7 " + "You hit " + name + " for §c§l" + (int) tempDamageHealValue + "! §7critical melee damage.");
+                        } else {
+                            player.sendMessage("§c\u00AB§7 " + attacker.getName() + "'s " + ability + " hit you for §c§l" + (int) tempDamageHealValue + "! §7critical damage.");
+                            attacker.getPlayer().sendMessage("§a\u00BB§7 " + "Your " + ability + " hit " + name + " for §c§l" + (int) tempDamageHealValue + "! §7critical damage.");
+                        }
+                    } else {
+                        if (ability.isEmpty()) {
+                            player.sendMessage("§c\u00AB§7 " + attacker.getName() + " hit you for §c" + (int) tempDamageHealValue + " §7damage.");
+                            attacker.getPlayer().sendMessage("§a\u00BB§7 " + "You hit " + name + " for §c" + (int) tempDamageHealValue + " §7damage.");
+                        } else {
+                            player.sendMessage("§c\u00AB§7 " + attacker.getName() + "'s " + ability + " hit you for §c" + (int) tempDamageHealValue + " §7damage.");
+                            attacker.getPlayer().sendMessage("§a\u00BB§7 " + "Your " + ability + " hit " + name + " for §c" + (int) tempDamageHealValue + " §7damage.");
+                        }
+                    }
+                }
+                //HEALING
+                else {
+                    if (berserkerWounded != 0) {
+                        damageHealValue *= .65;
+                    } else if (defenderWounded != 0) {
+                        damageHealValue *= .75;
+                    }
+                    if (isCrit) {
+                        player.sendMessage("§a\u00AB§7 " + attacker.getName() + "'s " + ability + " critically healed you for §a§l" + (int) damageHealValue + "! §7health.");
+                        attacker.getPlayer().sendMessage("§a\u00BB§7 " + "Your " + ability + " critically healed " + name + " for §a§l" + (int) damageHealValue + "! §7health.");
+                    } else {
+                        player.sendMessage("§a\u00AB§7 " + attacker.getName() + "'s " + ability + " healed for §a" + (int) damageHealValue + " §7health.");
+                        attacker.getPlayer().sendMessage("§a\u00BB§7 " + "Your " + ability + " healed " + name + " for §a" + (int) damageHealValue + " §7health.");
+
+                    }
                 }
             }
         }
-
         if (attacker.getBloodLust() != 0 && damageHealValue < 0) {
             attacker.addHealth(attacker, "Blood Lust", Math.round(damageHealValue * -.65f), Math.round(damageHealValue * -.65f), 0, 0);
         }
@@ -480,12 +508,36 @@ public class WarlordsPlayer {
         this.berserk = berserk;
     }
 
-    public String getIntervene() {
+    public int getIntervene() {
         return intervene;
     }
 
-    public void setIntervene(String intervene) {
+    public void setIntervene(int intervene) {
         this.intervene = intervene;
+    }
+
+    public int getInterveneDamage() {
+        return interveneDamage;
+    }
+
+    public void setInterveneDamage(int interveneDamage) {
+        this.interveneDamage = interveneDamage;
+    }
+
+    public WarlordsPlayer getIntervened() {
+        return intervened;
+    }
+
+    public void setIntervened(WarlordsPlayer intervened) {
+        this.intervened = intervened;
+    }
+
+    public WarlordsPlayer getIntervenedBy() {
+        return intervenedBy;
+    }
+
+    public void setIntervenedBy(WarlordsPlayer intervenedBy) {
+        this.intervenedBy = intervenedBy;
     }
 
     public int getLastStand() {
@@ -494,6 +546,14 @@ public class WarlordsPlayer {
 
     public void setLastStand(int lastStand) {
         this.lastStand = lastStand;
+    }
+
+    public WarlordsPlayer getLastStandedBy() {
+        return lastStandedBy;
+    }
+
+    public void setLastStandedBy(WarlordsPlayer lastStandedBy) {
+        this.lastStandedBy = lastStandedBy;
     }
 
     public int getBerserkerWounded() {
