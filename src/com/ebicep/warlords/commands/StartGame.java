@@ -22,6 +22,7 @@ import org.bukkit.util.EulerAngle;
 
 public class StartGame implements CommandExecutor {
 
+    // test comment
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
         if (!(sender instanceof Player)) return true;
@@ -81,3 +82,34 @@ public class StartGame implements CommandExecutor {
     }
 
 }
+
+// random wip
+    // player.getPlayer();
+
+   /* int max = 120;
+    int min = 0;
+    int countdown;
+    GameState game;
+
+				if (player === max) {
+                        state = "GAME";
+                        // Teleport players to game area
+
+                        } else if (players >= min)
+
+
+                        if (countdown > 0) {
+                        countdown--;
+                        } else {
+                        state = "GAME";
+                        // Teleport players to game area
+                        } else {
+                        countdown = 60;
+
+                        } else {
+                        System.out.println("Starting failed.");
+                        }
+                        }
+
+                        return false;
+                        } */
