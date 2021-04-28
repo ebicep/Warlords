@@ -1,9 +1,14 @@
 package com.ebicep.warlords;
 
 import com.ebicep.warlords.classes.PlayerClass;
+import com.ebicep.warlords.classes.abilties.Orb;
 import org.bukkit.DyeColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -43,12 +48,17 @@ public class WarlordsPlayer {
     private WarlordsPlayer intervenedBy;
     private int lastStand = 0;
     private WarlordsPlayer lastStandedBy;
+    private int orbOfLife = 0;
+    private int undyingArmy = 0;
+    private boolean undyingArmyDead = false;
+    private WarlordsPlayer undyingArmyBy;
     private int windfury = 0;
     private int earthliving = 0;
 
 
     private int berserkerWounded = 0;
     private int defenderWounded = 0;
+    private int crippled = 0;
     private final Dye grayDye = new Dye();
 
     public WarlordsPlayer(Player player, String name, UUID uuid, PlayerClass spec) {
@@ -339,6 +349,9 @@ public class WarlordsPlayer {
                             }
                         }
                     }
+                    if (attacker.getCrippled() != 0) {
+                        tempDamageHealValue *= .875;
+                    }
                     if (isCrit) {
                         if (ability.isEmpty()) {
                             player.sendMessage("§c\u00AB§7 " + attacker.getName() + " hit you for §c§l" + (int) tempDamageHealValue + "! §7critical melee damage.");
@@ -355,6 +368,18 @@ public class WarlordsPlayer {
                             player.sendMessage("§c\u00AB§7 " + attacker.getName() + "'s " + ability + " hit you for §c" + (int) tempDamageHealValue + " §7damage.");
                             attacker.getPlayer().sendMessage("§a\u00BB§7 " + "Your " + ability + " hit " + name + " for §c" + (int) tempDamageHealValue + " §7damage.");
                         }
+                    }
+
+                    if (attacker.getOrbOfLife() != 0 && !ability.isEmpty()) {
+                        Location location = player.getLocation();
+                        Orb orb = new Orb(((CraftWorld) player.getWorld()).getHandle(), location);
+                        //TODO Add team whitelist
+                        ArmorStand orbStand = (ArmorStand) location.getWorld().spawnEntity(location.add(Math.random() * 3 - 1.5, 0, Math.random() * 3 - 1.5), EntityType.ARMOR_STAND);
+                        orbStand.setVisible(false);
+                        //WOW need to set passenger to orb or else the orb will move   like ???
+                        orbStand.setPassenger(orb.spawn(location).getBukkitEntity());
+                        orb.setArmorStand(orbStand);
+                        Warlords.getOrbs().add(orb);
                     }
                 }
                 //HEALING
@@ -570,6 +595,46 @@ public class WarlordsPlayer {
 
     public void setDefenderWounded(int defenderWounded) {
         this.defenderWounded = defenderWounded;
+    }
+
+    public int getCrippled() {
+        return crippled;
+    }
+
+    public void setCrippled(int crippled) {
+        this.crippled = crippled;
+    }
+
+    public int getOrbOfLife() {
+        return orbOfLife;
+    }
+
+    public void setOrbOfLife(int orbOfLife) {
+        this.orbOfLife = orbOfLife;
+    }
+
+    public int getUndyingArmy() {
+        return undyingArmy;
+    }
+
+    public void setUndyingArmy(int undyingArmy) {
+        this.undyingArmy = undyingArmy;
+    }
+
+    public boolean isUndyingArmyDead() {
+        return undyingArmyDead;
+    }
+
+    public void setUndyingArmyDead(boolean undyingArmyDead) {
+        this.undyingArmyDead = undyingArmyDead;
+    }
+
+    public WarlordsPlayer getUndyingArmyBy() {
+        return undyingArmyBy;
+    }
+
+    public void setUndyingArmyBy(WarlordsPlayer undyingArmyBy) {
+        this.undyingArmyBy = undyingArmyBy;
     }
 
     public int getWindfury() {

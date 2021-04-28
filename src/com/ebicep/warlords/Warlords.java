@@ -5,6 +5,7 @@ import com.ebicep.warlords.commands.StartGame;
 import com.ebicep.warlords.events.WarlordsEvents;
 import org.bukkit.*;
 import org.bukkit.entity.*;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -39,7 +40,20 @@ public class Warlords extends JavaPlugin {
         return groundSlamArray;
     }
 
+    public static List<Orb> orbs = new ArrayList<>();
+
+    public static List<Orb> getOrbs() {
+        return orbs;
+    }
+
+    public static List<Bolt> bolts = new ArrayList<>();
+
+    public static List<Bolt> getBolts() {
+        return bolts;
+    }
+
     public static List<EarthenSpike> spikes = new ArrayList<>();
+
     public static List<ArmorStand> armorStands = new ArrayList<>(new ArrayList<>());
 
 
@@ -247,6 +261,13 @@ public class Warlords extends JavaPlugin {
                             //REGEN
                             if (warlordsPlayer.getRegenTimer() != -1) {
                                 warlordsPlayer.setRegenTimer(warlordsPlayer.getRegenTimer() - 1);
+                            } else {
+                                int healthToAdd = (int) (warlordsPlayer.getMaxHealth() / 55.3);
+                                if (warlordsPlayer.getHealth() + healthToAdd >= warlordsPlayer.getMaxHealth()) {
+                                    warlordsPlayer.setHealth(warlordsPlayer.getMaxHealth());
+                                } else {
+                                    warlordsPlayer.setHealth(warlordsPlayer.getHealth() + (int) (warlordsPlayer.getMaxHealth() / 55.3));
+                                }
                             }
                             //RESPAWN
                             if (warlordsPlayer.getRespawnTimer() != -1) {
@@ -321,6 +342,23 @@ public class Warlords extends JavaPlugin {
                             if (warlordsPlayer.getLastStand() != 0) {
                                 warlordsPlayer.setLastStand(warlordsPlayer.getLastStand() - 1);
                             }
+                            if (warlordsPlayer.getOrbOfLife() != 0) {
+                                warlordsPlayer.setOrbOfLife(warlordsPlayer.getOrbOfLife() - 1);
+                            }
+                            if (warlordsPlayer.getUndyingArmy() != 0 && !warlordsPlayer.isUndyingArmyDead()) {
+                                warlordsPlayer.setUndyingArmy(warlordsPlayer.getUndyingArmy() - 1);
+                                if (warlordsPlayer.getUndyingArmy() == 0) {
+                                    int healing = (int) ((warlordsPlayer.getMaxHealth() - warlordsPlayer.getHealth()) * .35 + 200);
+                                    warlordsPlayer.addHealth(warlordsPlayer.getUndyingArmyBy(), "Undying Army", healing, healing, -1, 100);
+                                }
+                            } else if (warlordsPlayer.isUndyingArmyDead()) {
+                                if (warlordsPlayer.getHealth() - 500 < 0) {
+                                    warlordsPlayer.setHealth(0);
+                                    warlordsPlayer.setUndyingArmyDead(false);
+                                } else {
+                                    warlordsPlayer.setHealth(warlordsPlayer.getHealth() - 500);
+                                }
+                            }
                             if (warlordsPlayer.getWindfury() != 0) {
                                 warlordsPlayer.setWindfury(warlordsPlayer.getWindfury() - 1);
                             }
@@ -328,6 +366,15 @@ public class Warlords extends JavaPlugin {
                                 warlordsPlayer.setEarthliving(warlordsPlayer.getEarthliving() - 1);
                             }
 
+                            if (warlordsPlayer.getBerserkerWounded() != 0) {
+                                warlordsPlayer.setBerserkerWounded(warlordsPlayer.getBerserkerWounded() - 1);
+                            }
+                            if (warlordsPlayer.getDefenderWounded() != 0) {
+                                warlordsPlayer.setDefenderWounded(warlordsPlayer.getDefenderWounded() - 1);
+                            }
+                            if (warlordsPlayer.getCrippled() != 0) {
+                                warlordsPlayer.setCrippled(warlordsPlayer.getCrippled() - 1);
+                            }
                             //CONSECRATE
                             for (int i = 0; i < consecrates.size(); i++) {
                                 ConsecrateHammerCircle consecrateHammerCircle = consecrates.get(i);
@@ -366,6 +413,7 @@ public class Warlords extends JavaPlugin {
             public void run() {
                 for (Player player : world.getPlayers()) {
                     WarlordsPlayer warlordsPlayer = getPlayer(player);
+                    Location location = player.getLocation();
 
                     //to make it look like the cooldown activates super fast but isnt really fast since it updates next second tick
                     if (warlordsPlayer.getSpec().getRed().getCurrentCooldown() == warlordsPlayer.getSpec().getRed().getCooldown()) {
@@ -397,7 +445,12 @@ public class Warlords extends JavaPlugin {
                     }
                     //damage or heal
                     float newHealth = (float) warlordsPlayer.getHealth() / warlordsPlayer.getMaxHealth() * 40;
-                    if (newHealth < 0) {
+                    if (warlordsPlayer.getUndyingArmy() != 0 && newHealth <= 0) {
+                        warlordsPlayer.setHealth(warlordsPlayer.getMaxHealth());
+                        warlordsPlayer.setUndyingArmyDead(true);
+                        warlordsPlayer.setUndyingArmy(0);
+                    }
+                    if (newHealth <= 0 && !warlordsPlayer.isUndyingArmyDead()) {
                         //TODO change spectator and tp to spawn point
                         player.setGameMode(GameMode.SPECTATOR);
                         warlordsPlayer.respawn();
@@ -425,6 +478,52 @@ public class Warlords extends JavaPlugin {
                     //melee cooldown
                     if (warlordsPlayer.getHitCooldown() != 0) {
                         warlordsPlayer.setHitCooldown(warlordsPlayer.getHitCooldown() - 1);
+                    }
+
+                    //orbs
+                    for (int i = 0; i < orbs.size(); i++) {
+                        Orb orb = orbs.get(i);
+                        Location orbPosition = orb.getBukkitEntity().getLocation();
+                        if (orbPosition.distanceSquared(location) < 2.3 * 2.3) {
+                            orb.getArmorStand().remove();
+                            orb.getBukkitEntity().remove();
+                            orbs.remove(i);
+                            i--;
+                            warlordsPlayer.addHealth(warlordsPlayer, "Orbs of Life", 502, 502, -1, 100);
+                            List<Entity> near = player.getNearbyEntities(3.0D, 3.0D, 3.0D);
+                            near.remove(player);
+                            for (Entity entity : near) {
+                                if (entity instanceof Player) {
+                                    Player nearPlayer = (Player) entity;
+                                    if (nearPlayer.getGameMode() != GameMode.SPECTATOR) {
+                                        getPlayer(nearPlayer).addHealth(warlordsPlayer, "Orbs of Life", 420, 420, -1, 100);
+                                    }
+                                }
+                            }
+                        }
+                        if (orb.getBukkitEntity().getTicksLived() > 160) {
+                            orb.getArmorStand().remove();
+                            orb.getBukkitEntity().remove();
+                            orbs.remove(i);
+                            i--;
+                        }
+                    }
+
+                    for (int i = 0; i < bolts.size(); i++) {
+                        Bolt bolt = bolts.get(i);
+                        bolt.getArmorStand().teleport(bolt.getLocation().add(bolt.getTeleportDirection().multiply(1.1)), PlayerTeleportEvent.TeleportCause.PLUGIN);
+                        //hitting player
+                        //TODO fix fucked up hit detection
+                        if (bolt.getShooter() != warlordsPlayer && location.distanceSquared(new Location(world, bolt.getLocation().getX(), bolt.getLocation().getY(), bolt.getLocation().getZ()).add(0, 2, 0)) < 2.5 * 2.5) {
+                            warlordsPlayer.addHealth(bolt.getShooter(), bolt.getName(), bolt.getMinDmg(), bolt.getMaxDmg(), bolt.getCritChance(), bolt.getCritMultiplier());
+                        }
+
+                        if (world.getBlockAt(new Location(world, bolt.getLocation().getX(), bolt.getLocation().getY(), bolt.getLocation().getZ()).add(0, 2, 0)).getType() != Material.AIR || bolt.getArmorStand().getTicksLived() > 50) {
+                            //TODO add explosion thingy
+                            bolt.getArmorStand().remove();
+                            bolts.remove(i);
+                            i--;
+                        }
                     }
                 }
 

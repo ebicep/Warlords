@@ -198,12 +198,6 @@ public class WarlordsEvents implements Listener {
 
     @EventHandler
     public void regenEvent(EntityRegainHealthEvent e) {
-        if (e.getEntity() instanceof Player) {
-            Player player = ((Player) e.getEntity()).getPlayer();
-            //TODO FIX REGEEENNE
-            //if (Warlords.getPlayer(player).getRegenTimer() != -1) {
-            e.setCancelled(true);
-            //}
-        }
+        e.setCancelled(true);
     }
 }

@@ -1,5 +1,6 @@
 package com.ebicep.warlords.classes.abilties;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import net.minecraft.server.v1_8_R3.World;
 import org.bukkit.Location;
@@ -18,11 +19,6 @@ public class OrbsOfLife extends AbstractAbility {
     @Override
     public void onActivate(PlayerInteractEvent e) {
         Player player = e.getPlayer();
-        Location location = player.getLocation();
-        Orb orb = new Orb(((CraftWorld) player.getWorld()).getHandle(), location);
-        ArmorStand test = (ArmorStand) location.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
-        test.setVisible(false);
-        //WOW need to set passenger to orb or else the orb will move   like ???
-        test.setPassenger(orb.spawn(location).getBukkitEntity());
+        Warlords.getPlayer(player).setOrbOfLife(13);
     }
 }

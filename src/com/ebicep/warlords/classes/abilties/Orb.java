@@ -5,9 +5,12 @@ import net.minecraft.server.v1_8_R3.EntityHuman;
 import net.minecraft.server.v1_8_R3.World;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 
 public class Orb extends EntityExperienceOrb {
+
+    private ArmorStand armorStand;
 
     public Orb(World world, Location location) {
         super(world, location.getX(), location.getY(), location.getZ(), 1000);
@@ -30,4 +33,11 @@ public class Orb extends EntityExperienceOrb {
         return this;
     }
 
+    public ArmorStand getArmorStand() {
+        return armorStand;
+    }
+
+    public void setArmorStand(ArmorStand armorStand) {
+        this.armorStand = armorStand;
+    }
 }

@@ -3,6 +3,7 @@ package com.ebicep.warlords.classes.warrior.specs.revenant;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.classes.abilties.OrbsOfLife;
 import com.ebicep.warlords.classes.abilties.Strike;
+import com.ebicep.warlords.classes.abilties.UndyingArmy;
 import com.ebicep.warlords.classes.abilties.temp;
 import com.ebicep.warlords.classes.warrior.AbstractWarrior;
 import org.bukkit.entity.Player;
@@ -14,6 +15,6 @@ public class Revenant extends AbstractWarrior {
                 new temp(),
                 new temp(),
                 new OrbsOfLife(),
-                new temp());
+                new UndyingArmy());
     }
 }

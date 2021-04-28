@@ -159,6 +159,9 @@ public class Strike extends AbstractAbility {
                     } else if (name.contains("Defender")) {
                         Warlords.getPlayer(nearPlayer).setDefenderWounded(3);
                         Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+                    } else if (name.contains("Cripp")) {
+                        Warlords.getPlayer(nearPlayer).setCrippled(3);
+                        Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
                     }
                     break;
                 }
