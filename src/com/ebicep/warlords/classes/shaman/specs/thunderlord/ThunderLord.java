@@ -12,6 +12,6 @@ public class ThunderLord extends AbstractShaman {
                 new temp(),
                 new Windfury(),
                 new LightningRod(),
-                new temp());
+                new TotemThunderlord());
     }
 }

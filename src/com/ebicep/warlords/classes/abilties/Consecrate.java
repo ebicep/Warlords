@@ -11,9 +11,9 @@ public class Consecrate extends AbstractAbility {
 
     @Override
     public void onActivate(PlayerInteractEvent e) {
-        ConsecrateHammerCircle consecrateHammerCircle = new ConsecrateHammerCircle(e.getPlayer(), e.getPlayer().getLocation(), 5, 5, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
-        consecrateHammerCircle.spawn();
+        DamageHealCircle damageHealCircle = new DamageHealCircle(e.getPlayer(), e.getPlayer().getLocation(), 5, 5, minDamageHeal, maxDamageHeal, critChance, critMultiplier, name);
+        damageHealCircle.spawn();
         Warlords.getPlayer(e.getPlayer()).subtractEnergy(energyCost);
-        Warlords.consecrates.add(consecrateHammerCircle);
+        Warlords.damageHealCircles.add(damageHealCircle);
     }
 }

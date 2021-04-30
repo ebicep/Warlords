@@ -25,6 +25,7 @@ public class LightningBolt extends AbstractAbility {
 
         Bolt bolt = new Bolt(Warlords.getPlayer(player), (ArmorStand) location.getWorld().spawnEntity(location.subtract(direction.getX() * -.5, .3, direction.getZ() * -.5), EntityType.ARMOR_STAND), location, direction, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
         Warlords.getBolts().add(bolt);
+        Warlords.getPlayer(player).subtractEnergy(energyCost);
 
     }
 }

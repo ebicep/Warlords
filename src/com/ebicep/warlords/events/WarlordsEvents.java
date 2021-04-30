@@ -18,6 +18,7 @@ import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
+import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
@@ -82,8 +83,8 @@ public class WarlordsEvents implements Listener {
                 warlordsPlayerAttacker.subtractEnergy(warlordsPlayerAttacker.getSpec().getEnergyOnHit() * -1);
                 warlordsPlayerVictim.addHealth(warlordsPlayerAttacker, "", -132, -179, 25, 200);
             }
+            e.setCancelled(true);
         }
-        e.setCancelled(true);
     }
 
     @EventHandler
@@ -157,11 +158,12 @@ public class WarlordsEvents implements Listener {
 
     @EventHandler
     public void onArmorStandBreak(EntityDamageByEntityEvent e) {
-        if (e.getEntity() instanceof ArmorStand) {
-            if (e.getEntity().getCustomName().contains("FLAG")) {
-                e.getEntity().remove();
+        Entity entity = e.getEntity();
+        if (entity instanceof ArmorStand) {
+            if (entity.getCustomName() != null && entity.getCustomName().contains("FLAG")) {
+                entity.remove();
                 Player player = (Player) e.getDamager();
-                player.getWorld().getBlockAt(e.getEntity().getLocation()).setType(Material.AIR);
+                player.getWorld().getBlockAt(entity.getLocation()).setType(Material.AIR);
                 ItemStack[] armor = new ItemStack[4];
                 armor[0] = new ItemStack(player.getInventory().getArmorContents()[0]);
                 armor[1] = new ItemStack(player.getInventory().getArmorContents()[1]);
@@ -198,6 +200,11 @@ public class WarlordsEvents implements Listener {
 
     @EventHandler
     public void regenEvent(EntityRegainHealthEvent e) {
+        e.setCancelled(true);
+    }
+
+    @EventHandler
+    public void pickUpItem(PlayerArmorStandManipulateEvent e) {
         e.setCancelled(true);
     }
 }

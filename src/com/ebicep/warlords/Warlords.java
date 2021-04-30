@@ -56,8 +56,19 @@ public class Warlords extends JavaPlugin {
 
     public static List<ArmorStand> armorStands = new ArrayList<>(new ArrayList<>());
 
+    public static List<Totem> totems = new ArrayList<>();
 
-    public static List<ConsecrateHammerCircle> consecrates = new ArrayList<>();
+    public static List<Totem> getTotems() {
+        return totems;
+    }
+
+    public static List<DamageHealCircle> damageHealCircles = new ArrayList<>();
+
+    public static List<TimeWarpPlayer> timeWarpPlayers = new ArrayList<>();
+
+    public static List<TimeWarpPlayer> getTimeWarpPlayers() {
+        return timeWarpPlayers;
+    }
 
     private static HashMap<Player, WarlordsPlayer> players = new HashMap<>();
 
@@ -375,29 +386,104 @@ public class Warlords extends JavaPlugin {
                             if (warlordsPlayer.getCrippled() != 0) {
                                 warlordsPlayer.setCrippled(warlordsPlayer.getCrippled() - 1);
                             }
-                            //CONSECRATE
-                            for (int i = 0; i < consecrates.size(); i++) {
-                                ConsecrateHammerCircle consecrateHammerCircle = consecrates.get(i);
-                                if (consecrateHammerCircle.getPlayer() != player) {
-                                    double distance = consecrateHammerCircle.getLocation().distanceSquared(player.getLocation());
-                                    if (consecrateHammerCircle.getDuration() == 3)
-                                        consecrateHammerCircle.spawn();
-                                    if (distance < consecrateHammerCircle.getRadius() * consecrateHammerCircle.getRadius()) {
-                                        if (consecrateHammerCircle.getMinDamage() < 0) {
-                                            warlordsPlayer.addHealth(Warlords.getPlayer(consecrateHammerCircle.getPlayer()), "Consecrate", consecrateHammerCircle.getMinDamage(), consecrateHammerCircle.getMaxDamage(), consecrateHammerCircle.getCritChance(), consecrateHammerCircle.getCritMultiplier());
-                                        } else {
-                                            //TODO damage/heal
-                                            warlordsPlayer.addHealth(Warlords.getPlayer(consecrateHammerCircle.getPlayer()), "Hammer of Light", consecrateHammerCircle.getMinDamage(), consecrateHammerCircle.getMaxDamage(), consecrateHammerCircle.getCritChance(), consecrateHammerCircle.getCritMultiplier());
+                            if (warlordsPlayer.getRepentance() != 0) {
+                                warlordsPlayer.setRepentance(warlordsPlayer.getRepentance() - 1);
+                            }
+                            if (warlordsPlayer.getRepentanceCounter() != 0) {
+                                int newRepentanceCounter = (int) (warlordsPlayer.getRepentanceCounter() * .8 - 60);
+                                if (newRepentanceCounter < 0) {
+                                    warlordsPlayer.setRepentanceCounter(0);
+                                } else {
+                                    warlordsPlayer.setRepentanceCounter(newRepentanceCounter);
+                                }
+                            }
+                            if (warlordsPlayer.getArcaneShield() != 0) {
+                                Bukkit.broadcastMessage("" + warlordsPlayer.getArcaneShield());
+                                warlordsPlayer.setArcaneShield(warlordsPlayer.getArcaneShield() - 1);
+                            }
+                            if (warlordsPlayer.getInferno() != 0) {
+                                warlordsPlayer.setInferno(warlordsPlayer.getInferno() - 1);
+                            }
+                            if (warlordsPlayer.getIceBarrier() != 0) {
+                                warlordsPlayer.setIceBarrier(warlordsPlayer.getIceBarrier() - 1);
+                            }
+                        }
+
+                        //CONSECRATE
+                        for (int i = 0; i < damageHealCircles.size(); i++) {
+                            DamageHealCircle damageHealCircle = damageHealCircles.get(i);
+                            if (damageHealCircle.getDuration() % 2 == 0) {
+                                damageHealCircle.spawn();
+                            }
+                            List<Entity> near = (List<Entity>) damageHealCircle.getLocation().getWorld().getNearbyEntities(damageHealCircle.getLocation(), 3, 3, 3);
+                            for (Entity entity : near) {
+                                if (entity instanceof Player) {
+                                    Player player = (Player) entity;
+                                    WarlordsPlayer warlordsPlayer = getPlayer(player);
+                                    if (!damageHealCircle.getName().equals("Consecrate")) {
+                                        double distance = damageHealCircle.getLocation().distanceSquared(player.getLocation());
+                                        if (distance < damageHealCircle.getRadius() * damageHealCircle.getRadius()) {
+                                            //TODO check team to heal or dmg for hammer
+                                            warlordsPlayer.addHealth(Warlords.getPlayer(damageHealCircle.getPlayer()), damageHealCircle.getName(), damageHealCircle.getMinDamage(), damageHealCircle.getMaxDamage(), damageHealCircle.getCritChance(), damageHealCircle.getCritMultiplier());
                                         }
-                                    }
-                                    consecrateHammerCircle.setDuration(consecrateHammerCircle.getDuration() - 1);
-                                    if (consecrateHammerCircle.getDuration() == 0) {
-                                        consecrates.remove(i);
-                                        i--;
                                     }
                                 }
                             }
+                            damageHealCircle.setDuration(damageHealCircle.getDuration() - 1);
+                            if (damageHealCircle.getDuration() == 0) {
+                                damageHealCircles.remove(i);
+                                i--;
+                            }
 
+                        }
+                        //TOTEMS
+                        for (int i = 0; i < totems.size(); i++) {
+                            Totem totem = totems.get(i);
+                            if (totem.getSecondsLeft() != 0) {
+                                if (totem.getOwner().getSpec().getOrange().getName().contains("Healing")) {
+                                    List<Entity> near = totem.getTotemArmorStand().getNearbyEntities(4.0D, 4.0D, 4.0D);
+                                    for (Entity entity : near) {
+                                        if (entity instanceof Player) {
+                                            Player nearPlayer = (Player) entity;
+                                            if (nearPlayer.getGameMode() != GameMode.SPECTATOR) {
+                                                getPlayer(nearPlayer).addHealth(totem.getOwner(), "Healing Totem", totem.getOwner().getSpec().getOrange().getMinDamageHeal(), (int) (totem.getOwner().getSpec().getOrange().getMinDamageHeal() * 1.35), totem.getOwner().getSpec().getOrange().getCritChance(), totem.getOwner().getSpec().getOrange().getCritMultiplier());
+                                            }
+                                        }
+                                    }
+                                }
+                                totem.setSecondsLeft(totem.getSecondsLeft() - 1);
+                            } else {
+                                if (totem.getOwner().getSpec().getOrange().getName().contains("Healing")) {
+                                    List<Entity> near = totem.getTotemArmorStand().getNearbyEntities(4.0D, 4.0D, 4.0D);
+                                    for (Entity entity : near) {
+                                        if (entity instanceof Player) {
+                                            Player nearPlayer = (Player) entity;
+                                            if (nearPlayer.getGameMode() != GameMode.SPECTATOR) {
+                                                getPlayer(nearPlayer).addHealth(totem.getOwner(), "Healing Totem", totem.getOwner().getSpec().getOrange().getMaxDamageHeal(), (int) (totem.getOwner().getSpec().getOrange().getMaxDamageHeal() * 1.35), totem.getOwner().getSpec().getOrange().getCritChance(), totem.getOwner().getSpec().getOrange().getCritMultiplier());
+                                            }
+                                        }
+                                    }
+                                }
+                                totem.getTotemArmorStand().remove();
+                                totems.remove(i);
+                                i--;
+                            }
+                        }
+
+                        //TIME WARPS
+                        for (int i = 0; i < timeWarpPlayers.size(); i++) {
+                            TimeWarpPlayer timeWarpPlayer = timeWarpPlayers.get(i);
+                            if (timeWarpPlayer.getTime() != 0) {
+                                timeWarpPlayer.setTime(timeWarpPlayer.getTime() - 1);
+                            } else {
+                                WarlordsPlayer player = timeWarpPlayer.getWarlordsPlayer();
+                                player.addHealth(player, "Time Warp", (int) (player.getMaxHealth() * .3), (int) (player.getMaxHealth() * .3), -1, 100);
+                                player.getPlayer().teleport(timeWarpPlayer.getLocation());
+                                player.getPlayer().getLocation().setDirection(timeWarpPlayer.getFacing());
+
+                                timeWarpPlayers.remove(i);
+                                i--;
+                            }
                         }
 
                     }

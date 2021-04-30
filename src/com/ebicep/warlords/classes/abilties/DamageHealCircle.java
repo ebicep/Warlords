@@ -4,7 +4,7 @@ import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-public class ConsecrateHammerCircle {
+public class DamageHealCircle {
 
     private Player player;
     private Location location;
@@ -14,8 +14,9 @@ public class ConsecrateHammerCircle {
     private int maxDamage;
     private int critChance;
     private int critMultiplier;
+    private String name;
 
-    public ConsecrateHammerCircle(Player player, Location location, int radius, int duration, int minDamage, int maxDamage, int critChance, int critMultiplier) {
+    public DamageHealCircle(Player player, Location location, int radius, int duration, int minDamage, int maxDamage, int critChance, int critMultiplier, String name) {
         this.player = player;
         this.location = location;
         this.radius = radius;
@@ -24,6 +25,7 @@ public class ConsecrateHammerCircle {
         this.maxDamage = maxDamage;
         this.critChance = critChance;
         this.critMultiplier = critMultiplier;
+        this.name = name;
     }
 
     public void spawn() {
@@ -99,5 +101,13 @@ public class ConsecrateHammerCircle {
 
     public void setCritMultiplier(int critMultiplier) {
         this.critMultiplier = critMultiplier;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

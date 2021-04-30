@@ -2,8 +2,14 @@ package com.ebicep.warlords.commands;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
+import com.ebicep.warlords.classes.mage.specs.aquamancer.Aquamancer;
+import com.ebicep.warlords.classes.mage.specs.cryomancer.Cryomancer;
+import com.ebicep.warlords.classes.mage.specs.pyromancer.Pyromancer;
 import com.ebicep.warlords.classes.paladin.specs.avenger.Avenger;
+import com.ebicep.warlords.classes.paladin.specs.crusader.Crusader;
 import com.ebicep.warlords.classes.paladin.specs.protector.Protector;
+import com.ebicep.warlords.classes.shaman.specs.earthwarden.Earthwarden;
+import com.ebicep.warlords.classes.shaman.specs.spiritguard.Spiritguard;
 import com.ebicep.warlords.classes.shaman.specs.thunderlord.ThunderLord;
 import com.ebicep.warlords.classes.warrior.specs.berserker.Berserker;
 import com.ebicep.warlords.classes.warrior.specs.defender.Defender;
@@ -39,13 +45,13 @@ public class StartGame implements CommandExecutor {
             for (int i = 0; i < Warlords.world.getPlayers().size(); i = i + 2) {
                 Player worldPlayer = Warlords.world.getPlayers().get(i);
                 //worldPlayer.setWalkSpeed(.2f * Float.parseFloat(args[0]));
-                Warlords.addPlayer(new WarlordsPlayer(worldPlayer, worldPlayer.getName(), worldPlayer.getUniqueId(), new ThunderLord(worldPlayer)));
+                Warlords.addPlayer(new WarlordsPlayer(worldPlayer, worldPlayer.getName(), worldPlayer.getUniqueId(), new Crusader(worldPlayer)));
                 worldPlayer.setMaxHealth(40);
                 System.out.println("Added " + worldPlayer.getName());
 
                 if (i + 1 < Warlords.world.getPlayers().size()) {
                     Player worldPlayer2 = Warlords.world.getPlayers().get(i + 1);
-                    Warlords.addPlayer(new WarlordsPlayer(worldPlayer2, worldPlayer2.getName(), worldPlayer2.getUniqueId(), new ThunderLord(worldPlayer2)));
+                    Warlords.addPlayer(new WarlordsPlayer(worldPlayer2, worldPlayer2.getName(), worldPlayer2.getUniqueId(), new Earthwarden(worldPlayer2)));
                     worldPlayer2.setMaxHealth(40);
                     System.out.println("Added " + worldPlayer2.getName());
                 }

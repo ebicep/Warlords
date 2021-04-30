@@ -5,7 +5,6 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
 import org.bukkit.GameMode;
-import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -53,11 +52,11 @@ public class Strike extends AbstractAbility {
                                             System.out.println("NEAR NEAR HIT " + nearNearPlayer);
                                             //checking if player is in consecrate
                                             boolean inConsecrate = false;
-                                            for (int i = 0; i < Warlords.consecrates.size(); i++) {
-                                                ConsecrateHammerCircle consecrateHammerCircle = Warlords.consecrates.get(i);
-                                                if (consecrateHammerCircle.getPlayer() == player) {
-                                                    double consecrateDistance = consecrateHammerCircle.getLocation().distanceSquared(player.getLocation());
-                                                    if (consecrateDistance < consecrateHammerCircle.getRadius() * consecrateHammerCircle.getRadius()) {
+                                            for (int i = 0; i < Warlords.damageHealCircles.size(); i++) {
+                                                DamageHealCircle damageHealCircle = Warlords.damageHealCircles.get(i);
+                                                if (damageHealCircle.getPlayer() == player) {
+                                                    double consecrateDistance = damageHealCircle.getLocation().distanceSquared(player.getLocation());
+                                                    if (consecrateDistance < damageHealCircle.getRadius() * damageHealCircle.getRadius()) {
                                                         inConsecrate = true;
                                                         break;
                                                     }
@@ -83,11 +82,11 @@ public class Strike extends AbstractAbility {
                             int counter = 0;
                             //checking if player is in consecrate
                             boolean inConsecrate = false;
-                            for (int i = 0; i < Warlords.consecrates.size(); i++) {
-                                ConsecrateHammerCircle consecrateHammerCircle = Warlords.consecrates.get(i);
-                                if (consecrateHammerCircle.getPlayer() == player) {
-                                    double consecrateDistance = consecrateHammerCircle.getLocation().distanceSquared(player.getLocation());
-                                    if (consecrateDistance < consecrateHammerCircle.getRadius() * consecrateHammerCircle.getRadius()) {
+                            for (int i = 0; i < Warlords.damageHealCircles.size(); i++) {
+                                DamageHealCircle damageHealCircle = Warlords.damageHealCircles.get(i);
+                                if (damageHealCircle.getPlayer() == player) {
+                                    double consecrateDistance = damageHealCircle.getLocation().distanceSquared(player.getLocation());
+                                    if (consecrateDistance < damageHealCircle.getRadius() * damageHealCircle.getRadius()) {
                                         inConsecrate = true;
                                         break;
                                     }
@@ -103,7 +102,7 @@ public class Strike extends AbstractAbility {
                                 if (nearEntity2 instanceof Player) {
                                     Player nearTeamPlayer = (Player) nearEntity2;
                                     //TODO check if near player is on the same team, then give energy
-                                    Warlords.getPlayer(nearTeamPlayer).subtractEnergy(-24);
+                                    Warlords.getPlayer(nearTeamPlayer).addEnergy(warlordsPlayer, name, 24);
                                     break;
                                 }
                                 counter++;
@@ -120,11 +119,11 @@ public class Strike extends AbstractAbility {
                             int counter = 0;
                             //checking if player is in consecrate
                             boolean inConsecrate = false;
-                            for (int i = 0; i < Warlords.consecrates.size(); i++) {
-                                ConsecrateHammerCircle consecrateHammerCircle = Warlords.consecrates.get(i);
-                                if (consecrateHammerCircle.getPlayer() == player) {
-                                    double consecrateDistance = consecrateHammerCircle.getLocation().distanceSquared(player.getLocation());
-                                    if (consecrateDistance < consecrateHammerCircle.getRadius() * consecrateHammerCircle.getRadius()) {
+                            for (int i = 0; i < Warlords.damageHealCircles.size(); i++) {
+                                DamageHealCircle damageHealCircle = Warlords.damageHealCircles.get(i);
+                                if (damageHealCircle.getPlayer() == player) {
+                                    double consecrateDistance = damageHealCircle.getLocation().distanceSquared(player.getLocation());
+                                    if (consecrateDistance < damageHealCircle.getRadius() * damageHealCircle.getRadius()) {
                                         inConsecrate = true;
                                         break;
                                     }

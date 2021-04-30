@@ -2,6 +2,7 @@ package com.ebicep.warlords;
 
 import com.ebicep.warlords.classes.PlayerClass;
 import com.ebicep.warlords.classes.abilties.Orb;
+import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -54,11 +55,25 @@ public class WarlordsPlayer {
     private WarlordsPlayer undyingArmyBy;
     private int windfury = 0;
     private int earthliving = 0;
+    private int repentance = 0;
+    private int repentanceCounter = 0;
 
+    private int arcaneShield = 0;
+    private int arcaneShieldHealth = 0;
+    private int inferno = 0;
+
+    private int iceBarrier = 0;
 
     private int berserkerWounded = 0;
     private int defenderWounded = 0;
     private int crippled = 0;
+
+    private int powerUpDamage = 0;
+    private int powerUpEnergy = 0;
+    private boolean powerUpHeal = false;
+    private int powerUpSpeed = 0;
+
+
     private final Dye grayDye = new Dye();
 
     public WarlordsPlayer(Player player, String name, UUID uuid, PlayerClass spec) {
@@ -283,6 +298,10 @@ public class WarlordsPlayer {
     }
 
     public void addHealth(WarlordsPlayer attacker, String ability, int min, int max, int critChance, int critMultiplier) {
+        if (attacker.getInferno() != 0) {
+            critChance += attacker.getSpec().getOrange().getCritChance();
+            critMultiplier += attacker.getSpec().getOrange().getCritMultiplier();
+        }
         //crit
         float damageHealValue = (int) ((Math.random() * (max - min)) + min);
         int crit = (int) ((Math.random() * (100)));
@@ -291,17 +310,21 @@ public class WarlordsPlayer {
             isCrit = true;
             damageHealValue *= critMultiplier / 100f;
         }
-        //resistance
-        damageHealValue *= 1 - spec.getDamageResistance() / 100f;
-        //TODO fix calcualtions should be (.25 + .1 + ....) then multiply
-        //berserk
+        //TODO check if totaldmgreduc works
+        //reduction begining with base resistance
+        float totalReduction = 1 - spec.getDamageResistance() / 100f;
         if (attacker.getBerserk() != 0) {
-            damageHealValue *= 1.25;
+            totalReduction += 1.25;
         }
         if (berserk != 0) {
-            damageHealValue *= 1.1;
+            totalReduction += 1.1;
+        }
+        if (iceBarrier != 0) {
+            totalReduction -= .5;
         }
         if (intervene != 0) {
+            //TODO check teammate heal
+            damageHealValue *= totalReduction;
             damageHealValue *= .5;
             if (isCrit) {
                 intervenedBy.getPlayer().sendMessage("§c\u00AB§7 " + attacker.getName() + "'s Intervene hit you for §c§l" + (int) damageHealValue * -1 + "! §7critical damage.");
@@ -312,7 +335,30 @@ public class WarlordsPlayer {
             }
             intervenedBy.setHealth((int) (intervenedBy.getHealth() + damageHealValue));
             interveneDamage += damageHealValue;
+        } else if (arcaneShield != 0) {
+            damageHealValue *= totalReduction;
+            //TODO check teammate heal
+            if (arcaneShieldHealth + damageHealValue < 0) {
+                Bukkit.broadcastMessage("" + arcaneShieldHealth);
+                Bukkit.broadcastMessage("" + damageHealValue);
+                Bukkit.broadcastMessage("" + (arcaneShieldHealth + damageHealValue));
+
+                arcaneShield = 0;
+                addHealth(attacker, ability, (int) (arcaneShieldHealth + damageHealValue), (int) (arcaneShieldHealth + damageHealValue), isCrit ? 100 : -1, 100);
+            } else {
+                if (ability.isEmpty()) {
+                    player.sendMessage("§c\u00AB§7 You absorbed " + attacker.getName() + "'s melee §7hit.");
+                    attacker.getPlayer().sendMessage("§a\u00BB§7 Your melee hit was absorbed by " + name);
+                } else {
+                    player.sendMessage("§c\u00AB§7 You absorbed " + attacker.getName() + "'s " + ability + " §7hit.");
+                    attacker.getPlayer().sendMessage("§a\u00BB§7 Your " + ability + " was absorbed by " + name + "§7.");
+                }
+            }
+            arcaneShieldHealth += damageHealValue;
+
+            Bukkit.broadcastMessage("" + arcaneShieldHealth);
         } else {
+            damageHealValue *= totalReduction;
             System.out.println(attacker.getName() + " hit " + name);
             System.out.println(damageHealValue);
             //Prevent overheal
@@ -323,7 +369,8 @@ public class WarlordsPlayer {
                 this.health += Math.round(damageHealValue);
             }
             //Self heal
-            if (attacker.getName().equals(name)) {
+            if (this == attacker) {
+                damageHealValue = Math.round(damageHealValue);
                 if (isCrit) {
                     player.sendMessage("§a\u00AB§7 Your " + ability + " critically healed you for §a§l" + (int) damageHealValue + "! §7health.");
                 } else {
@@ -369,7 +416,20 @@ public class WarlordsPlayer {
                             attacker.getPlayer().sendMessage("§a\u00BB§7 " + "Your " + ability + " hit " + name + " for §c" + (int) tempDamageHealValue + " §7damage.");
                         }
                     }
+                    //REPENTANCE
+                    if (spec.getBlue().getName().equals("Repentance")) {
+                        repentanceCounter += tempDamageHealValue;
+                    }
+                    if (attacker.getSpec().getBlue().getName().equals("Repentance")) {
+                        if (attacker.getRepentance() != 0) {
+                            int healthToAdd = (int) (attacker.getRepentanceCounter() * .1) + 11;
+                            attacker.addHealth(attacker, "Repentance", healthToAdd, healthToAdd, -1, 100);
+                            attacker.setRepentanceCounter((int) (attacker.getRepentanceCounter() * .5));
+                            attacker.addEnergy(attacker, "Repentance", (int) (healthToAdd * .035));
+                        }
+                    }
 
+                    //ORBS
                     if (attacker.getOrbOfLife() != 0 && !ability.isEmpty()) {
                         Location location = player.getLocation();
                         Orb orb = new Orb(((CraftWorld) player.getWorld()).getHandle(), location);
@@ -459,6 +519,20 @@ public class WarlordsPlayer {
 
     public void setEnergy(float energy) {
         this.energy = energy;
+    }
+
+    public void addEnergy(WarlordsPlayer giver, String ability, int amount) {
+        if (energy + amount > maxEnergy) {
+            this.energy += 0;
+        } else {
+            this.energy += amount;
+        }
+        if (this == giver) {
+            player.sendMessage("§a\u00AB§7 Your " + ability + " gave you §e" + amount + " §7energy.");
+        } else {
+            player.sendMessage("§a\u00AB§7 " + giver.getName() + "'s " + ability + " gave you §e" + amount + " §7energy.");
+            giver.getPlayer().sendMessage("§a\u00BB§7 " + "Your " + ability + " gave " + name + " §e" + amount + " §7energy.");
+        }
     }
 
     public void subtractEnergy(int amount) {
@@ -651,5 +725,85 @@ public class WarlordsPlayer {
 
     public void setEarthliving(int earthliving) {
         this.earthliving = earthliving;
+    }
+
+    public int getRepentance() {
+        return repentance;
+    }
+
+    public void setRepentance(int repentance) {
+        this.repentance = repentance;
+    }
+
+    public int getRepentanceCounter() {
+        return repentanceCounter;
+    }
+
+    public void setRepentanceCounter(int repentanceCounter) {
+        this.repentanceCounter = repentanceCounter;
+    }
+
+    public int getArcaneShield() {
+        return arcaneShield;
+    }
+
+    public void setArcaneShield(int arcaneShield) {
+        this.arcaneShield = arcaneShield;
+    }
+
+    public int getArcaneShieldHealth() {
+        return arcaneShieldHealth;
+    }
+
+    public void setArcaneShieldHealth(int arcaneShieldHealth) {
+        this.arcaneShieldHealth = arcaneShieldHealth;
+    }
+
+    public int getInferno() {
+        return inferno;
+    }
+
+    public void setInferno(int inferno) {
+        this.inferno = inferno;
+    }
+
+    public int getIceBarrier() {
+        return iceBarrier;
+    }
+
+    public void setIceBarrier(int iceBarrier) {
+        this.iceBarrier = iceBarrier;
+    }
+
+    public int getPowerUpDamage() {
+        return powerUpDamage;
+    }
+
+    public void setPowerUpDamage(int powerUpDamage) {
+        this.powerUpDamage = powerUpDamage;
+    }
+
+    public int getPowerUpEnergy() {
+        return powerUpEnergy;
+    }
+
+    public void setPowerUpEnergy(int powerUpEnergy) {
+        this.powerUpEnergy = powerUpEnergy;
+    }
+
+    public boolean isPowerUpHeal() {
+        return powerUpHeal;
+    }
+
+    public void setPowerUpHeal(boolean powerUpHeal) {
+        this.powerUpHeal = powerUpHeal;
+    }
+
+    public int getPowerUpSpeed() {
+        return powerUpSpeed;
+    }
+
+    public void setPowerUpSpeed(int powerUpSpeed) {
+        this.powerUpSpeed = powerUpSpeed;
     }
 }
