@@ -3,6 +3,7 @@ package com.ebicep.warlords.classes.abilties;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
 
@@ -18,5 +19,10 @@ public class TimeWarp extends AbstractAbility {
         WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
         Warlords.getTimeWarpPlayers().add(new TimeWarpPlayer(warlordsPlayer, player.getLocation(), player.getLocation().getDirection(), 5));
         warlordsPlayer.subtractEnergy(energyCost);
+
+        // TODO: fix sound for warping back
+        for (Player player1 : Bukkit.getOnlinePlayers()) {
+            player1.playSound(player.getLocation(), "mage.timewarp.activation", 1, 1);
+        }
     }
 }

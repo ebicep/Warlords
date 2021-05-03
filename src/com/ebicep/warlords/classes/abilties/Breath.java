@@ -3,6 +3,7 @@ package com.ebicep.warlords.classes.abilties;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -35,8 +36,18 @@ public class Breath extends AbstractAbility {
                         //TODO fix kb
                         Vector toEntity = nearPlayer.getEyeLocation().toVector().subtract(eye.toVector());
                         nearPlayer.setVelocity(toEntity);
+
+                        for (Player player1 : Bukkit.getOnlinePlayers()) {
+                            player1.playSound(player.getLocation(), "mage.waterbreath.activation", 1, 1);
+                        }
+                    } else {
+                        //TODO add slowness if freezing
+                        //cryo stuff
+
+                        for (Player player1 : Bukkit.getOnlinePlayers()) {
+                            player1.playSound(player.getLocation(), "mage.freezingbreath.activation", 1, 1);
+                        }
                     }
-                    //TODO add slowness if freezing
                 }
             }
         }

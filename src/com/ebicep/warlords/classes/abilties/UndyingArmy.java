@@ -3,7 +3,9 @@ package com.ebicep.warlords.classes.abilties;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -32,6 +34,12 @@ public class UndyingArmy extends AbstractAbility {
                     Warlords.getPlayer(nearPlayer).setUndyingArmyBy(warlordsPlayer);
                 }
             }
+        }
+
+
+        // TODO: double check/fix armys activation sound
+        for (Player player1 : Bukkit.getOnlinePlayers()) {
+            player1.playSound(player.getLocation(), Sound.ZOMBIE_IDLE, 1, 1);
         }
     }
 }

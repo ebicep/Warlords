@@ -4,6 +4,7 @@ import com.ebicep.warlords.util.Utils;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -152,15 +153,31 @@ public class Strike extends AbstractAbility {
                             }
                             break;
                         }
+                        for (Player player1 : Bukkit.getOnlinePlayers()) {
+                            player1.playSound(player.getLocation(), "paladin.paladinstrike.activation", 1, 1);
+                        }
+
                     } else if (name.contains("Berserker")) {
                         Warlords.getPlayer(nearPlayer).setBerserkerWounded(3);
                         Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+
+                        for (Player player1 : Bukkit.getOnlinePlayers()) {
+                            player1.playSound(player.getLocation(), "warrior.mortalstrike.impact", 1, 1);
+                        }
                     } else if (name.contains("Defender")) {
                         Warlords.getPlayer(nearPlayer).setDefenderWounded(3);
                         Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+
+                        for (Player player1 : Bukkit.getOnlinePlayers()) {
+                            player1.playSound(player.getLocation(), "warrior.mortalstrike.impact", 1, 1);
+                        }
                     } else if (name.contains("Cripp")) {
                         Warlords.getPlayer(nearPlayer).setCrippled(3);
                         Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+
+                        for (Player player1 : Bukkit.getOnlinePlayers()) {
+                            player1.playSound(player.getLocation(), "warrior.mortalstrike.impact", 1, 1);
+                        }
                     }
                     break;
                 }

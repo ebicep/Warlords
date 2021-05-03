@@ -3,12 +3,16 @@ package com.ebicep.warlords.classes.abilties;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LightningStrike;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.weather.LightningStrikeEvent;
 import org.bukkit.util.Vector;
 
 import java.util.List;
@@ -47,8 +51,10 @@ public class LightningRod extends AbstractAbility {
             }
         }
 
-        // TODO: add effects around player with armorstands, also fix sound
-        player.playSound(player.getLocation(), "shaman.lightningrod.activation", 2, 1);
-        player.getWorld().strikeLightningEffect(playerLocation);
+        // TODO: add effects around player with armorstands
+        player.getWorld().spigot().strikeLightningEffect(playerLocation, true);
+        for (Player player1 : Bukkit.getOnlinePlayers()) {
+            player1.playSound(player.getLocation(), "shaman.lightningrod.activation", 1, 1);
+        }
     }
 }

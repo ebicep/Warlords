@@ -3,6 +3,7 @@ package com.ebicep.warlords.classes.abilties;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
 
@@ -18,5 +19,9 @@ public class IceBarrier extends AbstractAbility {
         WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
         warlordsPlayer.setIceBarrier(6);
         //TODO add slowness
+
+        for (Player player1 : Bukkit.getOnlinePlayers()) {
+            player1.playSound(player.getLocation(), "paladin.icebarrier.activation", 1, 1);
+        }
     }
 }

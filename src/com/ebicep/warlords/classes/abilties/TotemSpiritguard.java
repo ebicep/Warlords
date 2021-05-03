@@ -3,6 +3,7 @@ package com.ebicep.warlords.classes.abilties;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
@@ -32,5 +33,9 @@ public class TotemSpiritguard extends AbstractAbility {
         //TODO find time based on health 6 + (something)
         Totem deathsDebtTotem = new Totem(((CraftWorld) player.getWorld()).getHandle(), warlordsPlayer, totemStand, -1);
         Warlords.totems.add(deathsDebtTotem);
+
+        for (Player player1 : Bukkit.getOnlinePlayers()) {
+            player1.playSound(player.getLocation(), "shaman.totem.activation", 1, 1);
+        }
     }
 }

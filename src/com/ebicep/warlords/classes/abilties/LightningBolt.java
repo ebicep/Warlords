@@ -2,6 +2,7 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.entity.ArmorStand;
@@ -27,5 +28,8 @@ public class LightningBolt extends AbstractAbility {
         Warlords.getBolts().add(bolt);
         Warlords.getPlayer(player).subtractEnergy(energyCost);
 
+        for (Player player1 : Bukkit.getOnlinePlayers()) {
+            player1.playSound(player.getLocation(), "shaman.lightningbolt.activation", 1, 1);
+        }
     }
 }

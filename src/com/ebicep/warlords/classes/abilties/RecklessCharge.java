@@ -2,6 +2,7 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.util.Utils;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -35,5 +36,9 @@ public class RecklessCharge extends AbstractAbility {
         // if at end
         // set x/z vel to 0
         // charged false
+
+        for (Player player1 : Bukkit.getOnlinePlayers()) {
+            player1.playSound(player.getLocation(), "warrior.seismicwave.activation", 1, 1);
+        }
     }
 }

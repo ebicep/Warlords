@@ -35,5 +35,9 @@ public class HolyRadiance extends AbstractAbility {
         }
         warlordsPlayer.subtractEnergy(energyCost);
         warlordsPlayer.addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+
+        for (Player player1 : Bukkit.getOnlinePlayers()) {
+            player1.playSound(player.getLocation(), "paladin.holyradiance.activation", 1, 1);
+        }
     }
 }

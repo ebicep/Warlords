@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.util.Utils;
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -36,6 +37,10 @@ public class Intervene extends AbstractAbility {
                     nearWarlordsPlayer.setInterveneDamage(0);
                 }
             }
+        }
+
+        for (Player player1 : Bukkit.getOnlinePlayers()) {
+            player1.playSound(player.getLocation(), "warrior.intervene.impact", 1, 1);
         }
     }
 }

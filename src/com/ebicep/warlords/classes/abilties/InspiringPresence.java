@@ -3,6 +3,7 @@ package com.ebicep.warlords.classes.abilties;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
+import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -30,6 +31,10 @@ public class InspiringPresence extends AbstractAbility {
             if (entity instanceof Player) {
                 Warlords.getPlayer(player).setPresence(12);
             }
+        }
+
+        for (Player player1 : Bukkit.getOnlinePlayers()) {
+            player1.playSound(player.getLocation(), "paladin.inspiringpresence.activation", 1, 1);
         }
     }
 }

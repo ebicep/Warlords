@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.util.Utils;
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -27,7 +28,7 @@ public class Chain extends AbstractAbility {
         Player player = e.getPlayer();
         WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
 
-        //TODO add You enemy is too far away!
+        //TODO add Your enemy is too far away!
         //TODO add soulbinding and totem priority
         int hitCounter = 0;
         List<Entity> near = player.getNearbyEntities(20.0D, 18.0D, 20.0D);
@@ -100,6 +101,10 @@ public class Chain extends AbstractAbility {
                 warlordsPlayer.setChainLightning(hitCounter);
                 warlordsPlayer.setChainLightningCooldown(4);
                 warlordsPlayer.getSpec().getRed().setCooldown(cooldown);
+
+                for (Player player1 : Bukkit.getOnlinePlayers()) {
+                    player1.playSound(player.getLocation(), "shaman.chainlightning.activation", 1, 1);
+                }
             } else if (name.contains("Chain")) {
                 if (hitCounter * 2 > warlordsPlayer.getSpec().getRed().getCurrentCooldown()) {
                     warlordsPlayer.getSpec().getRed().setCurrentCooldown(0);
@@ -108,9 +113,18 @@ public class Chain extends AbstractAbility {
                 }
                 warlordsPlayer.updateRedItem();
                 warlordsPlayer.getSpec().getBlue().setCooldown(cooldown);
+
+                for (Player player1 : Bukkit.getOnlinePlayers()) {
+                    player1.playSound(player.getLocation(), "shaman.chainheal.activation", 1, 1);
+                }
             } else if (name.contains("Spirit")) {
                 warlordsPlayer.setSpiritLink(4);
                 warlordsPlayer.getSpec().getRed().setCooldown(cooldown);
+
+                // TODO: find spiritguards chain sounds somehow
+                for (Player player1 : Bukkit.getOnlinePlayers()) {
+                    player1.playSound(player.getLocation(), "shaman.chainheal.activation", 1, 1);
+                }
             }
         }
     }
