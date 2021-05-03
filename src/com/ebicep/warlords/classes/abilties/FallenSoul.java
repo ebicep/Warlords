@@ -7,6 +7,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
@@ -28,6 +29,7 @@ public class FallenSoul {
         fallenSoul.setHelmet(new ItemStack(Material.ACACIA_FENCE_GATE));
         fallenSoul.setGravity(false);
         fallenSoul.setVisible(false);
+        fallenSoul.setHeadPose(new EulerAngle(direction.getY() * -1, 0, 0));
         this.location = location;
         this.direction = direction;
         this.fallenSouls = fallenSouls;
