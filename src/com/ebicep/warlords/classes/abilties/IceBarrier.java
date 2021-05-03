@@ -10,7 +10,13 @@ import org.bukkit.event.player.PlayerInteractEvent;
 public class IceBarrier extends AbstractAbility {
 
     public IceBarrier() {
-        super("Ice Barrier", 0, 0, 47, 0, 0, 0, "ice barrier description");
+        super("Ice Barrier", 0, 0, 47, 0, 0, 0,
+                "§7Surround yourself with a layer of\n" +
+                        "§7of cold air, reducing damage taken by\n" +
+                        "§c50%§7, While active, taking melee\n" +
+                        "damage reduces the attacker's movement\n" +
+                        "speed by §e20% §7for §62 §7seconds. Lasts\n" +
+                        "§66 §7seconds.");
     }
 
     @Override
@@ -21,7 +27,7 @@ public class IceBarrier extends AbstractAbility {
         //TODO add slowness
 
         for (Player player1 : Bukkit.getOnlinePlayers()) {
-            player1.playSound(player.getLocation(), "paladin.icebarrier.activation", 1, 1);
+            player1.playSound(player.getLocation(), "mage.icebarrier.activation", 1, 1);
         }
     }
 }

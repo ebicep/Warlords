@@ -10,7 +10,14 @@ import org.bukkit.event.player.PlayerInteractEvent;
 public class Windfury extends AbstractAbility {
 
     public Windfury() {
-        super("Windfury Weapon", 0, 0, 16, 30, 25, 135, "windfury description");
+        super("Windfury Weapon", 0, 0, 16, 30, 25, 135,
+                "§7Imbue your weapon with the power\n" +
+                        "§7of the wind, causing each of your\n" +
+                        "§7melee attacks to have a §e35% §7chance\n" +
+                        "§7to hit §e2 §7additional times for §c135%\n" +
+                        "§7weapon damage. The first melee hit is\n" +
+                        "§7guaranteed to activate Windfury. Lasts §68\n" +
+                        "§7seconds.");
     }
 
     @Override

@@ -10,7 +10,13 @@ import org.bukkit.util.Vector;
 
 public class RecklessCharge extends AbstractAbility {
     public RecklessCharge() {
-        super("Reckless Charge", -466, -612, 11, 60, 20, 200, "reckless charge description");
+        super("Reckless Charge", -466, -612, 11, 60, 20, 200,
+                "§7Charge forward, dealing §c466\n" +
+                        "§7- §c612 §7damage to all enemies\n" +
+                        "§7you pass through. Enemies hit are\n" +
+                        "§5IMMOBILIZED§7, preventing movement\n" +
+                        "§7for §60.5 §7seconds. Charge is reduced\n" +
+                        "§7when carrying a flag.");
     }
 
     @Override

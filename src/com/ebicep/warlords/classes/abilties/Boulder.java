@@ -15,7 +15,11 @@ import org.bukkit.util.EulerAngle;
 public class Boulder extends AbstractAbility {
 
     public Boulder() {
-        super("Boulder", -588, -877, 8, 80, 15, 175, "boulder yo");
+        super("Boulder", -588, -877, 8, 80, 15, 175,
+                "§7Launch a giant boulder that shatters\n" +
+                "§7and deals §c%dynamic.value% §7- §c%dynamic.value% §7damage\n" +
+                "§7to all enemies near the impact point\n" +
+                "§7and knocks them back slightly.");
     }
 
     @Override

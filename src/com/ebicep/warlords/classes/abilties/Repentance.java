@@ -10,7 +10,11 @@ import org.bukkit.event.player.PlayerInteractEvent;
 public class Repentance extends AbstractAbility {
 
     public Repentance() {
-        super("Repentance", 0, 0, 32, 20, 0, 0, "repentance description");
+        super("Repentance", 0, 0, 32, 20, 0, 0,
+                "§7Taking damage empowers your damaging\n" +
+                "§7abilities and melee hits, restoring health\n" +
+                "§7and energy based on §c10 §7+ §c10% §7of the\n" +
+                "§7damage you've recently took. Lasts §612 §7seconds.");
     }
 
     @Override

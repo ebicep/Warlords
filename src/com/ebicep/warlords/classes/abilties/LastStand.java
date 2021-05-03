@@ -14,7 +14,14 @@ import java.util.List;
 public class LastStand extends AbstractAbility {
 
     public LastStand() {
-        super("Last Stand", 0, 0, 58, 40, 0, 0, "last stand description");
+        super("Last Stand", 0, 0, 58, 40, 0, 0,
+                "§7Enter a defensive stance,\n" +
+                        "§7reducing all damage you take by\n" +
+                        "§c50% §7for §612 §7seconds and also\n" +
+                        "§7reduces all damage nearby allies take\n" +
+                        "§7by §c40% §7for §66 §7seconds. You are\n" +
+                        "§ahealed §7for the amount of damage\n" +
+                        "§7prevented on allies.");
     }
 
     @Override

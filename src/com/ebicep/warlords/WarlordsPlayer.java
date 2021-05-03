@@ -112,7 +112,7 @@ public class WarlordsPlayer {
         weaponLore.add("§adeal with " + spec.getWeapon().getName() + " by §c20%");
         weaponLore.add("");
         weaponLore.add("§7Health: §a+800");
-        weaponLore.add("§7Max Energy: §a+25");
+        weaponLore.add("§7Max Energy: §a+35");
         weaponLore.add("§7Cooldown Reduction: §a+13%");
         weaponLore.add("§7Speed: §a+13%");
         weaponLore.add("");

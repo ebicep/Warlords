@@ -15,7 +15,12 @@ import org.bukkit.inventory.ItemStack;
 public class TotemThunderlord extends AbstractAbility {
 
     public TotemThunderlord() {
-        super("Capacitor Totem", -404, -503, 60 + 2, 20, 20, 200, "capacitor totem description");
+        super("Capacitor Totem", -404, -523, 60 + 2, 20, 20, 200,
+                "§7Place a highly conductive totem\n" +
+                        "§7on the ground. Casting Chain Lightning\n" +
+                        "§7or Lightning Rod on the totem will cause\n" +
+                        "§7it to pulse, dealing §c404 §7- §c523 §7damage\n" +
+                        "§7to all enemies nearby. Lasts §68 §7seconds.");
     }
 
     @Override

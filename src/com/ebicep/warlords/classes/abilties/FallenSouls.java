@@ -13,7 +13,11 @@ import org.bukkit.util.Vector;
 public class FallenSouls extends AbstractAbility {
 
     public FallenSouls() {
-        super("Fallen Souls", -197, -254, 0, 55, 20, 180, "fallen souls description");
+        super("Fallen Souls", -197, -254, 0, 55, 20, 180,
+                "§7Summon a wave of fallen souls, dealing\n" +
+                "§c%dynamic.value% §7- §c%dynamic.value% §7damage to all enemies they\n" +
+                "§7pass through. Each target hit reduces the\n" +
+                "§7cooldown of Spirit Link by §62 §7seconds.");
     }
 
     @Override

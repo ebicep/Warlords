@@ -11,7 +11,11 @@ import java.util.HashSet;
 public class HealingRain extends AbstractAbility {
 
     public HealingRain() {
-        super("Healing Rain", 170, 230, 53, 50, 15, 200, "healing rain description");
+        super("Healing Rain", 170, 230, 53, 50, 15, 200,
+                "§7Conjure rain at targeted\n" +
+                        "§7location that will restore §a170\n" +
+                        "§7- §a230 §7health every second to\n" +
+                        "§7allies. Lasts §610 §7seconds.");
     }
 
     @Override

@@ -10,7 +10,10 @@ import org.bukkit.event.player.PlayerInteractEvent;
 public class BloodLust extends AbstractAbility {
 
     public BloodLust() {
-        super("Blood Lust", 0, 0, 32, 20, 0, 0, "blood lust description");
+        super("Blood Lust", 0, 0, 32, 20, 0, 0,
+                "§7You lust for blood, healing yourself\n" +
+                "§7for §a65% §7of all the damage you deal.\n" +
+                "§7Lasts §615 §7seconds.");
     }
 
     @Override

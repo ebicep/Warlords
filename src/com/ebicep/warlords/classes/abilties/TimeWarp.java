@@ -10,7 +10,11 @@ import org.bukkit.event.player.PlayerInteractEvent;
 public class TimeWarp extends AbstractAbility {
 
     public TimeWarp() {
-        super("Time Warp", 0, 0, 29, 30, 0, 0, "time warp description");
+        super("Time Warp", 0, 0, 29, 30, 0, 0,
+                "§7Activate to place a time rune on\n" +
+                "§7the ground. After §65 §7seconds,\n" +
+                "§7you will warp back to that location\n" +
+                "§7and restore §a30% §7of your health");
     }
 
     @Override

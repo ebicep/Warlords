@@ -12,7 +12,13 @@ public class Defender extends AbstractWarrior {
 
     public Defender(Player player) {
         super(player, 7400, 305, 10,
-                new Strike("Wounding Strike Defender", -495, -662, 0, 100, 20, 200, "defending wounding strike description"),
+                new Strike("Wounding Strike Defender", -498, -667, 0, 100, 20, 200,
+                        "§7Strike the targeted enemy player,\n" +
+                        "§7causing §c%dynamic.value% §7- §c%dynamic.value% §7damage\n" +
+                        "§7and §cwounding §7them for §63 §7seconds.\n" +
+                        "§7A wounded player receives §c25% §7less\n" +
+                        "§7healing for the duration of the effect."),
+
                 new temp(),
                 new temp(),
                 new Intervene(),

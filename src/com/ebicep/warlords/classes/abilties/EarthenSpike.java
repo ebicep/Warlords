@@ -23,7 +23,13 @@ public class EarthenSpike extends AbstractAbility {
     }
 
     public EarthenSpike() {
-        super("Earthen Spike", -476, -662, 0, 120, 15, 175, "earthen spike description");
+        super("Earthen Spike", -476, -662, 0, 120, 15, 175,
+                "§7Send forth an underground earth spike\n" +
+                "§7that locks onto a targeted enemy player.\n" +
+                "§7When the spike reaches its target it\n" +
+                "§7emerges from the ground, dealing §c%dynamic.value% §7-\n" +
+                "§c%dynamic.value §7damage to any nearby enemies and\n" +
+                "§7launches them up into the air.");
     }
 
     @Override

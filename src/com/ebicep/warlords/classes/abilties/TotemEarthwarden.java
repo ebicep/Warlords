@@ -15,7 +15,13 @@ import org.bukkit.inventory.ItemStack;
 public class TotemEarthwarden extends AbstractAbility {
 
     public TotemEarthwarden() {
-        super("Healing Totem", 168, 841, 60 + 12, 60, 15, 200, "healing totem description");
+        super("Healing Totem", 168, 841, 60 + 12, 60, 15, 200,
+                "§7Place a totem on the ground that\n" +
+                        "§7pulses constantly, healing nearby\n" +
+                        "§allies for §a168 §7- §a227 §7every\n" +
+                        "second. Before disappearing , the totem\n" +
+                        "will let out a final pulse that heals for\n" +
+                        "§a841 §7 - §a1138 §7. Lasts §65 §7seconds.");
         //168 - 227
         //841 - 1138
         //1.35x

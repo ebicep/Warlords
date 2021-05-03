@@ -15,7 +15,12 @@ import java.util.List;
 public class InspiringPresence extends AbstractAbility {
 
     public InspiringPresence() {
-        super("Inspiring Presence", 0, 0, 60 + 10, 0, 0, 0, "Inspiring Presence description");
+        super("Inspiring Presence", 0, 0, 60 + 10, 0, 0, 0,
+                "§7Your presence on the battlefield\n" +
+                        "§7inspires your allies, increasing\n" +
+                        "§7their energy regeneration by §e10\n" +
+                        "§7per second and their movement\n" +
+                        "by §e30% §7for §612 §7seconds.");
     }
 
     @Override

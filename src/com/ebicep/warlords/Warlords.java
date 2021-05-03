@@ -736,6 +736,7 @@ public class Warlords extends JavaPlugin {
                         location.add(customProjectile.getDirection().multiply(1.2));
                         location.add(0, 1.5, 0);
                         ParticleEffect.DRIP_LAVA.display(0, 0, 0, 0.15F, 3, location, 500);
+                        ParticleEffect.SMOKE_NORMAL.display(0, 0, 0, 0.1F, 3, location, 500);
                         ParticleEffect.FLAME.display(0, 0, 0, 0.1F, 3, location, 500);
                         for (Entity entity : location.getWorld().getEntities()) {
                             if (entity instanceof Player && entity != customProjectile.getShooter()) {
@@ -771,7 +772,7 @@ public class Warlords extends JavaPlugin {
                             }
                         }
                     } else if (customProjectile.getBall().getName().contains("Frost")) {
-                        location.add(customProjectile.getDirection().multiply(1));
+                        location.add(customProjectile.getDirection().multiply(1.1));
                         location.add(0, 1.5, 0);
                         //TODO add slowness
                         ParticleEffect.CLOUD.display(0, 0, 0, 0F, 1, location, 500);

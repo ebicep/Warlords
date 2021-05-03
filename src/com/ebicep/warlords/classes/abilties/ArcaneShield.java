@@ -10,7 +10,11 @@ import org.bukkit.event.player.PlayerInteractEvent;
 public class ArcaneShield extends AbstractAbility {
 
     public ArcaneShield() {
-        super("Arcane Shield", 0, 0, 32, 40, 0, 0, "arcane shield description");
+        super("Arcane Shield", 0, 0, 32, 40, 0, 0,
+                "§7Surround yourself with arcane\n" +
+                "§7energy, creating a shield that will\n" +
+                "§7absorb up to %dynamic.value% §7(§e50% §7of your maximum\n" +
+                "§7health) incoming damage. Lasts §66 §7seconds.");
     }
 
     @Override

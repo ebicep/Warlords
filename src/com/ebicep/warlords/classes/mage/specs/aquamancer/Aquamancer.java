@@ -7,8 +7,20 @@ import org.bukkit.entity.Player;
 public class Aquamancer extends AbstractMage {
     public Aquamancer(Player player) {
         super(player, 5200, 355, 20, 14, 0,
-                new Projectile("Water Bolt", 328, 452, 0, 85, 20, 175, "waterbolt description", 40),
-                new Breath("Water Breath", 668, 905, 1, 60, 25, 175, "water breath description"),
+                new Projectile("Water Bolt", 328, 452, 0, 85, 20, 175,
+                        "§7Shoot a bolt of water that will burst\n" +
+                        "§7for §c%dynamic.value% §7- §c%dynamic.value% §7damage and restore\n" +
+                        "§a%value% §7- §a%value% §7health to allies. A\n" +
+                        "§7direct hit will cause §a15% §7increased\n" +
+                        "§7damage or healing for the target hit.\n" +
+                        "§7Has an optimal range of §e40 §7blocks.", 40),
+
+                new Breath("Water Breath", 556, 752, 1, 60, 25, 175,
+                        "§7Breathe water in a cone in front of you,\n" +
+                        "§7Knocking back enemies and restoring §a%dynamic.value%\n" +
+                        "§7- §a%dynamic.value% §7health to yourself and all\n" +
+                        "§7allies hit."),
+
                 new TimeWarp(),
                 new ArcaneShield(),
                 new HealingRain());
