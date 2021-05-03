@@ -35,7 +35,6 @@ public class DamageHealCircle {
             float z = (float) (radius * Math.cos(angle));
             angle += 0.2;
             location.getWorld().playEffect(new Location(location.getWorld(), location.getX() + x, location.getWorld().getHighestBlockYAt(location), location.getZ() + z), Effect.HAPPY_VILLAGER, 0);
-
         }
     }
 

@@ -41,6 +41,7 @@ public class WarlordsPlayer {
     private int infusion = 0;
     private int wrath = 0;
     private int presence = 0;
+
     private int bloodLust = 0;
     private int berserk = 0;
     private int intervene = 0;
@@ -53,6 +54,7 @@ public class WarlordsPlayer {
     private int undyingArmy = 0;
     private boolean undyingArmyDead = false;
     private WarlordsPlayer undyingArmyBy;
+
     private int windfury = 0;
     private int earthliving = 0;
     private int repentance = 0;
@@ -61,12 +63,14 @@ public class WarlordsPlayer {
     private int arcaneShield = 0;
     private int arcaneShieldHealth = 0;
     private int inferno = 0;
-
     private int iceBarrier = 0;
 
     private int berserkerWounded = 0;
     private int defenderWounded = 0;
     private int crippled = 0;
+    private int chainLightning = 0;
+    private int chainLightningCooldown = 0;
+    private int spiritLink = 0;
 
     private int powerUpDamage = 0;
     private int powerUpEnergy = 0;
@@ -321,6 +325,12 @@ public class WarlordsPlayer {
         }
         if (iceBarrier != 0) {
             totalReduction -= .5;
+        }
+        if (chainLightningCooldown != 0) {
+            totalReduction -= 1 - chainLightning * .1;
+        }
+        if (spiritLink != 0) {
+            totalReduction -= .2;
         }
         if (intervene != 0) {
             //TODO check teammate heal
@@ -805,5 +815,29 @@ public class WarlordsPlayer {
 
     public void setPowerUpSpeed(int powerUpSpeed) {
         this.powerUpSpeed = powerUpSpeed;
+    }
+
+    public int getChainLightning() {
+        return chainLightning;
+    }
+
+    public void setChainLightning(int chainLightning) {
+        this.chainLightning = chainLightning;
+    }
+
+    public int getChainLightningCooldown() {
+        return chainLightningCooldown;
+    }
+
+    public void setChainLightningCooldown(int chainLightningCooldown) {
+        this.chainLightningCooldown = chainLightningCooldown;
+    }
+
+    public int getSpiritLink() {
+        return spiritLink;
+    }
+
+    public void setSpiritLink(int spiritLink) {
+        this.spiritLink = spiritLink;
     }
 }

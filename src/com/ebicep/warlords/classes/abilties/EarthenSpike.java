@@ -30,12 +30,10 @@ public class EarthenSpike extends AbstractAbility {
     public void onActivate(PlayerInteractEvent e) {
         Player player = e.getPlayer();
         Location location = player.getLocation();
-        List<Entity> near = player.getNearbyEntities(50.0D, 50.0D, 50.0D);
+        List<Entity> near = player.getNearbyEntities(3.0D, 3.0D, 3.0D);
         for (Entity entity : near) {
             if (entity instanceof Player) {
                 Player nearPlayer = (Player) entity;
-                double distance = player.getLocation().distance(nearPlayer.getLocation());
-                //TODO add distance
                 if (nearPlayer.getGameMode() != GameMode.SPECTATOR && Utils.getLookingAt(player, nearPlayer)) {
                     location.setY(player.getWorld().getHighestBlockYAt(location));
 

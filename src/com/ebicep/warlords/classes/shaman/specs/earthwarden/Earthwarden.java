@@ -1,9 +1,6 @@
 package com.ebicep.warlords.classes.shaman.specs.earthwarden;
 
-import com.ebicep.warlords.classes.abilties.Boulder;
-import com.ebicep.warlords.classes.abilties.EarthenSpike;
-import com.ebicep.warlords.classes.abilties.TotemEarthwarden;
-import com.ebicep.warlords.classes.abilties.temp;
+import com.ebicep.warlords.classes.abilties.*;
 import com.ebicep.warlords.classes.shaman.AbstractShaman;
 import org.bukkit.entity.Player;
 
@@ -13,8 +10,8 @@ public class Earthwarden extends AbstractShaman {
         super(player, 6200, 305, 10,
                 new EarthenSpike(),
                 new Boulder(),
-                new temp(),
-                new temp(),
+                new Earthliving(),
+                new Chain("Chain Heal", 454, 613, 8, 40, 20, 175, "chain heal description"),
                 new TotemEarthwarden());
     }
 

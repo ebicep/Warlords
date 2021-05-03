@@ -3,6 +3,7 @@ package com.ebicep.warlords;
 import com.ebicep.warlords.classes.abilties.*;
 import com.ebicep.warlords.commands.StartGame;
 import com.ebicep.warlords.events.WarlordsEvents;
+import com.ebicep.warlords.util.ParticleEffect;
 import org.bukkit.*;
 import org.bukkit.entity.*;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -64,10 +65,34 @@ public class Warlords extends JavaPlugin {
 
     public static List<DamageHealCircle> damageHealCircles = new ArrayList<>();
 
+    public static List<CustomProjectile> customProjectiles = new ArrayList<>();
+
+    public static List<CustomProjectile> getCustomProjectiles() {
+        return customProjectiles;
+    }
+
+    public static List<Breath> breaths = new ArrayList<>();
+
+    public static List<Breath> getBreaths() {
+        return breaths;
+    }
+
     public static List<TimeWarpPlayer> timeWarpPlayers = new ArrayList<>();
 
     public static List<TimeWarpPlayer> getTimeWarpPlayers() {
         return timeWarpPlayers;
+    }
+
+    public static List<FallenSoul> fallenSouls = new ArrayList<>();
+
+    public static List<FallenSoul> getFallenSouls() {
+        return fallenSouls;
+    }
+
+    public static List<ArmorStand> chains = new ArrayList<>();
+
+    public static List<ArmorStand> getChains() {
+        return chains;
     }
 
     private static HashMap<Player, WarlordsPlayer> players = new HashMap<>();
@@ -97,8 +122,9 @@ public class Warlords extends JavaPlugin {
             runnable();
             everySecond();
             everySecondAsync();
-            runnable3();
-            runnable4();
+            everyTick();
+            boulders();
+            projectiles();
         }
         getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords]: Plugin is enabled");
     }
@@ -407,6 +433,13 @@ public class Warlords extends JavaPlugin {
                             if (warlordsPlayer.getIceBarrier() != 0) {
                                 warlordsPlayer.setIceBarrier(warlordsPlayer.getIceBarrier() - 1);
                             }
+
+                            if (warlordsPlayer.getChainLightningCooldown() != 0) {
+                                warlordsPlayer.setChainLightningCooldown(warlordsPlayer.getChainLightningCooldown() - 1);
+                            }
+                            if (warlordsPlayer.getSpiritLink() != 0) {
+                                warlordsPlayer.setSpiritLink(warlordsPlayer.getSpiritLink() - 1);
+                            }
                         }
 
                         //CONSECRATE
@@ -492,7 +525,7 @@ public class Warlords extends JavaPlugin {
         }.runTaskTimerAsynchronously(this, 0, 20);
     }
 
-    public void runnable3() {
+    public void everyTick() {
         new BukkitRunnable() {
 
             @Override
@@ -595,19 +628,47 @@ public class Warlords extends JavaPlugin {
                         }
                     }
 
+                    //BOLTS
                     for (int i = 0; i < bolts.size(); i++) {
                         Bolt bolt = bolts.get(i);
                         bolt.getArmorStand().teleport(bolt.getLocation().add(bolt.getTeleportDirection().multiply(1.1)), PlayerTeleportEvent.TeleportCause.PLUGIN);
                         //hitting player
                         //TODO fix fucked up hit detection
                         if (bolt.getShooter() != warlordsPlayer && location.distanceSquared(new Location(world, bolt.getLocation().getX(), bolt.getLocation().getY(), bolt.getLocation().getZ()).add(0, 2, 0)) < 2.5 * 2.5) {
-                            warlordsPlayer.addHealth(bolt.getShooter(), bolt.getName(), bolt.getMinDmg(), bolt.getMaxDmg(), bolt.getCritChance(), bolt.getCritMultiplier());
+                            warlordsPlayer.addHealth(bolt.getShooter(), bolt.getLightningBolt().getName(), bolt.getLightningBolt().getMinDamageHeal(), bolt.getLightningBolt().getMaxDamageHeal(), bolt.getLightningBolt().getCritChance(), bolt.getLightningBolt().getCritMultiplier());
                         }
 
                         if (world.getBlockAt(new Location(world, bolt.getLocation().getX(), bolt.getLocation().getY(), bolt.getLocation().getZ()).add(0, 2, 0)).getType() != Material.AIR || bolt.getArmorStand().getTicksLived() > 50) {
                             //TODO add explosion thingy
                             bolt.getArmorStand().remove();
                             bolts.remove(i);
+                            i--;
+                        }
+                    }
+
+                    //FALLEN SOULS
+                    for (int i = 0; i < fallenSouls.size(); i++) {
+                        FallenSoul fallenSoul = fallenSouls.get(i);
+                        fallenSoul.getFallenSoul().teleport(fallenSoul.getFallenSoul().getLocation().add(fallenSoul.getDirection()));
+
+                        if (!fallenSoul.getPlayersHit().contains(warlordsPlayer) && location.distanceSquared(new Location(world, fallenSoul.getFallenSoul().getLocation().getX(), fallenSoul.getFallenSoul().getLocation().getY(), fallenSoul.getFallenSoul().getLocation().getZ()).add(0, 2, 0)) < 2 * 2) {
+                            warlordsPlayer.addHealth(fallenSoul.getShooter(), fallenSoul.getFallenSouls().getName(), fallenSoul.getFallenSouls().getMinDamageHeal(), fallenSoul.getFallenSouls().getMaxDamageHeal(), fallenSoul.getFallenSouls().getCritChance(), fallenSoul.getFallenSouls().getCritMultiplier());
+                            fallenSoul.getPlayersHit().add(warlordsPlayer);
+                        }
+
+                        if (world.getBlockAt(new Location(world, fallenSoul.getFallenSoul().getLocation().getX(), fallenSoul.getFallenSoul().getLocation().getY(), fallenSoul.getFallenSoul().getLocation().getZ()).add(0, 2, 0)).getType() != Material.AIR || fallenSoul.getFallenSoul().getTicksLived() > 50) {
+                            //TODO add explosion thingy
+                            fallenSoul.getFallenSoul().remove();
+                            fallenSouls.remove(i);
+                            i--;
+                        }
+                    }
+
+                    //CHAINS
+                    for (int i = 0; i < chains.size(); i++) {
+                        if (chains.get(i).getTicksLived() >= 15) {
+                            chains.get(i).remove();
+                            chains.remove(i);
                             i--;
                         }
                     }
@@ -618,7 +679,7 @@ public class Warlords extends JavaPlugin {
         }.runTaskTimer(this, 0, 0);
     }
 
-    public void runnable4() {
+    public void boulders() {
         new BukkitRunnable() {
 
             @Override
@@ -659,6 +720,223 @@ public class Warlords extends JavaPlugin {
             }
 
         }.runTaskTimerAsynchronously(this, 0, 2);
+    }
+
+    public void projectiles() {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                for (int i = 0; i < customProjectiles.size(); i++) {
+                    CustomProjectile customProjectile = customProjectiles.get(i);
+                    Location location = customProjectile.getCurrentLocation();
+                    boolean hitPlayer = false;
+                    //TODO get confirm actual speeds
+                    //BALLS
+                    if (customProjectile.getBall().getName().contains("Fire")) {
+                        location.add(customProjectile.getDirection().multiply(1.2));
+                        location.add(0, 1.5, 0);
+                        ParticleEffect.DRIP_LAVA.display(0, 0, 0, 0.15F, 3, location, 500);
+                        ParticleEffect.FLAME.display(0, 0, 0, 0.1F, 3, location, 500);
+                        for (Entity entity : location.getWorld().getEntities()) {
+                            if (entity instanceof Player && entity != customProjectile.getShooter()) {
+                                if (entity.getLocation().distanceSquared(location) < 2 * 2) {
+                                    hitPlayer = true;
+                                    ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.5F, 1, entity.getLocation().add(0, 1, 0), 500);
+                                    Player victim = (Player) entity;
+                                    getPlayer(victim).addHealth(
+                                            getPlayer(customProjectile.getShooter()),
+                                            customProjectile.getBall().getName(),
+                                            (int) (customProjectile.getBall().getMinDamageHeal() * 1.15),
+                                            (int) (customProjectile.getBall().getMaxDamageHeal() * 1.15),
+                                            customProjectile.getBall().getCritChance(),
+                                            customProjectile.getBall().getCritMultiplier()
+                                    );
+                                    List<Entity> near = victim.getNearbyEntities(3.5D, 3.5D, 3.5D);
+                                    for (Entity nearEntity : near) {
+                                        if (nearEntity instanceof Player) {
+                                            getPlayer((Player) nearEntity).addHealth(
+                                                    getPlayer(customProjectile.getShooter()),
+                                                    customProjectile.getBall().getName(),
+                                                    customProjectile.getBall().getMinDamageHeal(),
+                                                    customProjectile.getBall().getMaxDamageHeal(),
+                                                    customProjectile.getBall().getCritChance(),
+                                                    customProjectile.getBall().getCritMultiplier()
+                                            );
+                                        }
+                                    }
+
+                                    customProjectiles.remove(i);
+                                    i--;
+                                }
+                            }
+                        }
+                    } else if (customProjectile.getBall().getName().contains("Frost")) {
+                        location.add(customProjectile.getDirection().multiply(1));
+                        location.add(0, 1.5, 0);
+                        //TODO add slowness
+                        ParticleEffect.CLOUD.display(0, 0, 0, 0F, 1, location, 500);
+                        //ParticleEffect.FLAME.display(0, 0, 0, 0.1F, 3, location, 500);
+                        for (Entity entity : location.getWorld().getEntities()) {
+                            if (entity instanceof Player && entity != customProjectile.getShooter()) {
+                                if (entity.getLocation().distanceSquared(location) < 2 * 2) {
+                                    hitPlayer = true;
+                                    ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.0F, 1, entity.getLocation().add(0, 1, 0), 500);
+                                    Player victim = (Player) entity;
+                                    getPlayer(victim).addHealth(
+                                            getPlayer(customProjectile.getShooter()),
+                                            customProjectile.getBall().getName(),
+                                            (int) (customProjectile.getBall().getMinDamageHeal() * 1.3),
+                                            (int) (customProjectile.getBall().getMaxDamageHeal() * 1.3),
+                                            customProjectile.getBall().getCritChance(),
+                                            customProjectile.getBall().getCritMultiplier()
+                                    );
+                                    List<Entity> near = victim.getNearbyEntities(3.5D, 3.5D, 3.5D);
+                                    for (Entity nearEntity : near) {
+                                        if (nearEntity instanceof Player) {
+                                            getPlayer((Player) nearEntity).addHealth(
+                                                    getPlayer(customProjectile.getShooter()),
+                                                    customProjectile.getBall().getName(),
+                                                    customProjectile.getBall().getMinDamageHeal(),
+                                                    customProjectile.getBall().getMaxDamageHeal(),
+                                                    customProjectile.getBall().getCritChance(),
+                                                    customProjectile.getBall().getCritMultiplier()
+                                            );
+                                        }
+                                    }
+
+                                    customProjectiles.remove(i);
+                                    i--;
+                                }
+                            }
+                        }
+                    } else if (customProjectile.getBall().getName().contains("Water")) {
+                        location.add(customProjectile.getDirection().multiply(1));
+                        location.add(0, 1.5, 0);
+                        //TODO add damage
+                        ParticleEffect.DRIP_WATER.display(0.3f, 0.3f, 0.3f, 0.1F, 5, location, 500);
+                        ParticleEffect.ENCHANTMENT_TABLE.display(0, 0, 0, 0.1F, 1, location, 500);
+                        ParticleEffect.VILLAGER_HAPPY.display(0, 0, 0, 0.1F, 1, location, 500);
+                        ParticleEffect.CLOUD.display(0, 0, 0, 0F, 1, location, 500);
+                        //ParticleEffect.FLAME.display(0, 0, 0, 0.1F, 3, location, 500);
+                        for (Entity entity : location.getWorld().getEntities()) {
+                            if (entity instanceof Player && entity != customProjectile.getShooter()) {
+                                if (entity.getLocation().distanceSquared(location) < 2 * 2) {
+                                    ParticleEffect.HEART.display(3, 3, 3, 0.2F, 5, entity.getLocation().add(0, 1, 0), 500);
+                                    ParticleEffect.VILLAGER_HAPPY.display(4, 4, 4, 0.2F, 5, entity.getLocation().add(0, 1, 0), 500);
+                                    Player victim = (Player) entity;
+                                    getPlayer(victim).addHealth(
+                                            getPlayer(customProjectile.getShooter()),
+                                            customProjectile.getBall().getName(),
+                                            (int) (customProjectile.getBall().getMinDamageHeal() * 1.15),
+                                            (int) (customProjectile.getBall().getMaxDamageHeal() * 1.15),
+                                            customProjectile.getBall().getCritChance(),
+                                            customProjectile.getBall().getCritMultiplier()
+                                    );
+                                    List<Entity> near = victim.getNearbyEntities(3.5D, 3.5D, 3.5D);
+                                    for (Entity nearEntity : near) {
+                                        if (nearEntity instanceof Player) {
+                                            getPlayer((Player) nearEntity).addHealth(
+                                                    getPlayer(customProjectile.getShooter()),
+                                                    customProjectile.getBall().getName(),
+                                                    customProjectile.getBall().getMinDamageHeal(),
+                                                    customProjectile.getBall().getMaxDamageHeal(),
+                                                    customProjectile.getBall().getCritChance(),
+                                                    customProjectile.getBall().getCritMultiplier()
+                                            );
+                                        }
+                                    }
+
+                                    customProjectiles.remove(i);
+                                    i--;
+                                }
+                            }
+                        }
+
+
+                    } else if (customProjectile.getBall().getName().contains("Flame")) {
+                        location.add(customProjectile.getDirection().multiply(1.4));
+                        location.add(0, 1.5, 0);
+                        //TODO add flameburst animation
+                        ParticleEffect.FLAME.display(0, 0, 0, 0F, 1, location, 500);
+                        for (Entity entity : location.getWorld().getEntities()) {
+                            if (entity instanceof Player && entity != customProjectile.getShooter()) {
+                                if (entity.getLocation().distanceSquared(location) < 2 * 2) {
+                                    hitPlayer = true;
+                                    ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.0F, 1, entity.getLocation().add(0, 1, 0), 500);
+                                    Player victim = (Player) entity;
+                                    System.out.println((int) location.distance(customProjectile.getStartingLocation()));
+                                    getPlayer(victim).addHealth(
+                                            getPlayer(customProjectile.getShooter()),
+                                            customProjectile.getBall().getName(),
+                                            customProjectile.getBall().getMinDamageHeal(),
+                                            customProjectile.getBall().getMaxDamageHeal(),
+                                            customProjectile.getBall().getCritChance() + (int) location.distance(customProjectile.getStartingLocation()),
+                                            customProjectile.getBall().getCritMultiplier()
+                                    );
+                                    List<Entity> near = victim.getNearbyEntities(3.5D, 3.5D, 3.5D);
+                                    for (Entity nearEntity : near) {
+                                        if (nearEntity instanceof Player) {
+                                            getPlayer((Player) nearEntity).addHealth(
+                                                    getPlayer(customProjectile.getShooter()),
+                                                    customProjectile.getBall().getName(),
+                                                    customProjectile.getBall().getMinDamageHeal(),
+                                                    customProjectile.getBall().getMaxDamageHeal(),
+                                                    customProjectile.getBall().getCritChance() + (int) Math.pow(location.distanceSquared(customProjectile.getStartingLocation()), 2),
+                                                    customProjectile.getBall().getCritMultiplier()
+                                            );
+                                        }
+                                    }
+
+                                    customProjectiles.remove(i);
+                                    i--;
+                                }
+                            }
+                        }
+                    }
+
+                    //hit block or out of range
+                    if (world.getBlockAt(location).getType() != Material.AIR && !hitPlayer) {
+                        if (customProjectile.getBall().getName().contains("Water")) {
+                            ParticleEffect.HEART.display(1, 1, 1, 0.2F, 5, location, 500);
+                            ParticleEffect.VILLAGER_HAPPY.display(1, 1, 1, 0.2F, 5, location, 500);
+                        } else {
+                            ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.0F, 1, location, 500);
+                        }
+                        List<Entity> near = (List<Entity>) location.getWorld().getNearbyEntities(location, 3.5, 3.5, 3.5);
+                        for (Entity nearEntity : near) {
+                            if (nearEntity instanceof Player && nearEntity != customProjectile.getShooter()) {
+                                if (customProjectile.getBall().getName().contains("Flame")) {
+                                    getPlayer((Player) nearEntity).addHealth(
+                                            getPlayer(customProjectile.getShooter()),
+                                            customProjectile.getBall().getName(),
+                                            customProjectile.getBall().getMinDamageHeal(),
+                                            customProjectile.getBall().getMaxDamageHeal(),
+                                            customProjectile.getBall().getCritChance() + (int) Math.pow(location.distanceSquared(customProjectile.getStartingLocation()), 2),
+                                            customProjectile.getBall().getCritMultiplier()
+                                    );
+                                } else {
+                                    getPlayer((Player) nearEntity).addHealth(
+                                            getPlayer(customProjectile.getShooter()),
+                                            customProjectile.getBall().getName(),
+                                            customProjectile.getBall().getMinDamageHeal(),
+                                            customProjectile.getBall().getMaxDamageHeal(),
+                                            customProjectile.getBall().getCritChance(),
+                                            customProjectile.getBall().getCritMultiplier()
+                                    );
+                                }
+                            }
+                        }
+                        customProjectiles.remove(i);
+                        i--;
+                    } else if (location.distanceSquared(customProjectile.getStartingLocation()) >= customProjectile.getMaxDistance() * customProjectile.getMaxDistance()) {
+//                            customProjectiles.remove(i);
+//                            i--;
+                    }
+
+                    location.subtract(0, 1.5, 0);
+                }
+            }
+        }.runTaskTimer(this, 0, 1);
     }
 
 }

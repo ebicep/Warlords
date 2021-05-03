@@ -34,6 +34,7 @@ public class StartGame implements CommandExecutor {
         if (!(sender instanceof Player)) return true;
         Player player = (Player) sender;
         if (command.getName().equalsIgnoreCase("start")) {
+            System.out.println("STARTED");
             if (args.length > 2) {
                 Location location = player.getLocation();
                 ArmorStand stand = (ArmorStand) location.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
@@ -45,7 +46,7 @@ public class StartGame implements CommandExecutor {
             for (int i = 0; i < Warlords.world.getPlayers().size(); i = i + 2) {
                 Player worldPlayer = Warlords.world.getPlayers().get(i);
                 //worldPlayer.setWalkSpeed(.2f * Float.parseFloat(args[0]));
-                Warlords.addPlayer(new WarlordsPlayer(worldPlayer, worldPlayer.getName(), worldPlayer.getUniqueId(), new Crusader(worldPlayer)));
+                Warlords.addPlayer(new WarlordsPlayer(worldPlayer, worldPlayer.getName(), worldPlayer.getUniqueId(), new Spiritguard(worldPlayer)));
                 worldPlayer.setMaxHealth(40);
                 System.out.println("Added " + worldPlayer.getName());
 

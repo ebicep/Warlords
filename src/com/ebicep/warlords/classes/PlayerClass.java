@@ -41,7 +41,8 @@ public abstract class PlayerClass {
         } else if (player.getInventory().getHeldItemSlot() == 1) {
             if (red.getCurrentCooldown() == 0 && player.getLevel() >= red.getEnergyCost()) {
                 red.onActivate(e);
-                red.setCurrentCooldown(red.cooldown);
+                if (!red.getName().contains("Chain") && !red.getName().contains("Link"))
+                    red.setCurrentCooldown(red.cooldown);
             }
         } else if (player.getInventory().getHeldItemSlot() == 2) {
             if (purple.getCurrentCooldown() == 0 && player.getLevel() >= purple.getEnergyCost()) {
@@ -51,7 +52,9 @@ public abstract class PlayerClass {
         } else if (player.getInventory().getHeldItemSlot() == 3) {
             if (blue.getCurrentCooldown() == 0 && player.getLevel() >= blue.getEnergyCost()) {
                 blue.onActivate(e);
-                blue.setCurrentCooldown(blue.cooldown);
+                if (!blue.getName().contains("Chain")) {
+                    blue.setCurrentCooldown(blue.cooldown);
+                }
             }
         } else if (player.getInventory().getHeldItemSlot() == 4) {
             if (orange.getCurrentCooldown() == 0 && player.getLevel() >= orange.getEnergyCost()) {
