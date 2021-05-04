@@ -1,7 +1,8 @@
 package com.ebicep.warlords;
 
 import com.ebicep.warlords.classes.PlayerClass;
-import com.ebicep.warlords.classes.abilties.Orb;
+import com.ebicep.warlords.classes.abilties.OrbsOfLife;
+import com.ebicep.warlords.classes.abilties.Soulbinding;
 import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
@@ -25,6 +26,7 @@ public class WarlordsPlayer {
     private String name;
     private UUID uuid;
     private PlayerClass spec;
+    private boolean hotKeyMode = true;
     private int health;
     private int maxHealth;
     private int regenTimer;
@@ -34,6 +36,17 @@ public class WarlordsPlayer {
     public static final float defaultSpeed = (float) (.2825);
     public static final float infusionSpeed = (float) (.35);
     public static final float presenceSpeed = (float) (.325);
+
+    /*
+    cryo 5.94
+    cryo + infusion 7.3
+    cryo + presence  6.84
+    freezing 5.15
+    freezing + infusion 6.38
+    freezing + presence 5.93
+    barrier 6.34
+    barrier + infusion 7.36
+     */
 
     private int horseCooldown;
     private int hitCooldown;
@@ -71,6 +84,8 @@ public class WarlordsPlayer {
     private int chainLightning = 0;
     private int chainLightningCooldown = 0;
     private int spiritLink = 0;
+    private List<Soulbinding.SoulBoundPlayer> soulBindedPlayers = new ArrayList<>();
+    private int soulBindCooldown = 0;
 
     private int powerUpDamage = 0;
     private int powerUpEnergy = 0;
@@ -142,7 +157,7 @@ public class WarlordsPlayer {
 
     public void updateRedItem() {
         if (spec.getRed().getCurrentCooldown() != 0) {
-            ItemStack cooldown = new ItemStack(grayDye.toItemStack(spec.getRed().getCurrentCooldown()));
+            ItemStack cooldown = new ItemStack(grayDye.toItemStack((int) spec.getRed().getCurrentCooldown()));
             player.getInventory().setItem(1, cooldown);
         } else {
             Dye redDye = new Dye();
@@ -166,7 +181,7 @@ public class WarlordsPlayer {
 
     public void updatePurpleItem() {
         if (spec.getPurple().getCurrentCooldown() != 0) {
-            ItemStack cooldown = new ItemStack(grayDye.toItemStack(spec.getPurple().getCurrentCooldown()));
+            ItemStack cooldown = new ItemStack(grayDye.toItemStack((int) spec.getPurple().getCurrentCooldown()));
             player.getInventory().setItem(2, cooldown);
         } else {
             ItemStack purple = new ItemStack(Material.GLOWSTONE_DUST);
@@ -188,7 +203,7 @@ public class WarlordsPlayer {
 
     public void updateBlueItem() {
         if (spec.getBlue().getCurrentCooldown() != 0) {
-            ItemStack cooldown = new ItemStack(grayDye.toItemStack(spec.getBlue().getCurrentCooldown()));
+            ItemStack cooldown = new ItemStack(grayDye.toItemStack((int) spec.getBlue().getCurrentCooldown()));
             player.getInventory().setItem(3, cooldown);
         } else {
             Dye limeDye = new Dye();
@@ -212,7 +227,7 @@ public class WarlordsPlayer {
 
     public void updateOrangeItem() {
         if (spec.getOrange().getCurrentCooldown() != 0) {
-            ItemStack cooldown = new ItemStack(grayDye.toItemStack(spec.getOrange().getCurrentCooldown()));
+            ItemStack cooldown = new ItemStack(grayDye.toItemStack((int) spec.getOrange().getCurrentCooldown()));
             player.getInventory().setItem(4, cooldown);
         } else {
             Dye orangeDye = new Dye();
@@ -285,6 +300,14 @@ public class WarlordsPlayer {
         this.spec = spec;
     }
 
+    public boolean isHotKeyMode() {
+        return hotKeyMode;
+    }
+
+    public void setHotKeyMode(boolean hotKeyMode) {
+        this.hotKeyMode = hotKeyMode;
+    }
+
     public int getHealth() {
         return health;
     }
@@ -316,21 +339,24 @@ public class WarlordsPlayer {
         }
         //TODO check if totaldmgreduc works
         //reduction begining with base resistance
-        float totalReduction = 1 - spec.getDamageResistance() / 100f;
-        if (attacker.getBerserk() != 0) {
-            totalReduction += 1.25;
-        }
-        if (berserk != 0) {
-            totalReduction += 1.1;
-        }
-        if (iceBarrier != 0) {
-            totalReduction -= .5;
-        }
-        if (chainLightningCooldown != 0) {
-            totalReduction -= 1 - chainLightning * .1;
-        }
-        if (spiritLink != 0) {
-            totalReduction -= .2;
+        float totalReduction = 1;
+        if (min < 0) {
+            totalReduction = 1 - spec.getDamageResistance() / 100f;
+            if (attacker.getBerserk() != 0) {
+                totalReduction += 1.25;
+            }
+            if (berserk != 0) {
+                totalReduction += 1.1;
+            }
+            if (iceBarrier != 0) {
+                totalReduction -= .5;
+            }
+            if (chainLightningCooldown != 0) {
+                totalReduction -= 1 - chainLightning * .1;
+            }
+            if (spiritLink != 0) {
+                totalReduction -= .2;
+            }
         }
         if (intervene != 0) {
             //TODO check teammate heal
@@ -442,7 +468,7 @@ public class WarlordsPlayer {
                     //ORBS
                     if (attacker.getOrbOfLife() != 0 && !ability.isEmpty()) {
                         Location location = player.getLocation();
-                        Orb orb = new Orb(((CraftWorld) player.getWorld()).getHandle(), location);
+                        OrbsOfLife.Orb orb = new OrbsOfLife.Orb(((CraftWorld) player.getWorld()).getHandle(), location);
                         //TODO Add team whitelist
                         ArmorStand orbStand = (ArmorStand) location.getWorld().spawnEntity(location.add(Math.random() * 3 - 1.5, 0, Math.random() * 3 - 1.5), EntityType.ARMOR_STAND);
                         orbStand.setVisible(false);
@@ -497,7 +523,9 @@ public class WarlordsPlayer {
                     if (counter == 2)
                         break;
                 }
-
+            } else if (attacker.getSoulBindCooldown() != 0) {
+                attacker.getPlayer().sendMessage("§a\u00BB§7 " + "BOUNDED " + player.getName());
+                attacker.getSoulBindedPlayers().add(new Soulbinding.SoulBoundPlayer(this, 2));
             }
         }
 
@@ -839,5 +867,26 @@ public class WarlordsPlayer {
 
     public void setSpiritLink(int spiritLink) {
         this.spiritLink = spiritLink;
+    }
+
+    public List<Soulbinding.SoulBoundPlayer> getSoulBindedPlayers() {
+        return soulBindedPlayers;
+    }
+
+    public void setSoulBindedPlayers(List<Soulbinding.SoulBoundPlayer> soulBindedPlayers) {
+        this.soulBindedPlayers = soulBindedPlayers;
+    }
+
+    public boolean hasBoundPlayer(WarlordsPlayer warlordsPlayer) {
+        return soulBindedPlayers.stream().anyMatch(player -> warlordsPlayer.equals(player.getBoundPlayer()));
+
+    }
+
+    public int getSoulBindCooldown() {
+        return soulBindCooldown;
+    }
+
+    public void setSoulBindCooldown(int soulBindCooldown) {
+        this.soulBindCooldown = soulBindCooldown;
     }
 }

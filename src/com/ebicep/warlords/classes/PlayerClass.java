@@ -2,7 +2,9 @@ package com.ebicep.warlords.classes;
 
 import com.ebicep.warlords.Warlords;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerItemHeldEvent;
 
 public abstract class PlayerClass {
 
@@ -32,37 +34,69 @@ public abstract class PlayerClass {
         this.orange = orange;
     }
 
-    public void onRightClick(PlayerInteractEvent e) {
-        Player player = e.getPlayer();
+    public void onRightClick(Player player) {
         if (player.getInventory().getHeldItemSlot() == 0) {
             if (player.getLevel() >= weapon.getEnergyCost()) {
-                weapon.onActivate(e);
+                weapon.onActivate(player);
             }
         } else if (player.getInventory().getHeldItemSlot() == 1) {
             if (red.getCurrentCooldown() == 0 && player.getLevel() >= red.getEnergyCost()) {
-                red.onActivate(e);
+                red.onActivate(player);
                 if (!red.getName().contains("Chain") && !red.getName().contains("Link"))
                     red.setCurrentCooldown(red.cooldown);
             }
         } else if (player.getInventory().getHeldItemSlot() == 2) {
             if (purple.getCurrentCooldown() == 0 && player.getLevel() >= purple.getEnergyCost()) {
-                purple.onActivate(e);
+                purple.onActivate(player);
                 purple.setCurrentCooldown(purple.cooldown);
             }
         } else if (player.getInventory().getHeldItemSlot() == 3) {
             if (blue.getCurrentCooldown() == 0 && player.getLevel() >= blue.getEnergyCost()) {
-                blue.onActivate(e);
+                blue.onActivate(player);
                 if (!blue.getName().contains("Chain")) {
                     blue.setCurrentCooldown(blue.cooldown);
                 }
             }
         } else if (player.getInventory().getHeldItemSlot() == 4) {
             if (orange.getCurrentCooldown() == 0 && player.getLevel() >= orange.getEnergyCost()) {
-                orange.onActivate(e);
+                orange.onActivate(player);
                 orange.setCurrentCooldown(orange.cooldown);
 
             }
         }
+    }
+
+    public void onRightClickHotKey(Player player, int slot) {
+        if (slot == 0) {
+            if (player.getLevel() >= weapon.getEnergyCost()) {
+                weapon.onActivate(player);
+            }
+        } else if (slot == 1) {
+            if (red.getCurrentCooldown() == 0 && player.getLevel() >= red.getEnergyCost()) {
+                red.onActivate(player);
+                if (!red.getName().contains("Chain") && !red.getName().contains("Link"))
+                    red.setCurrentCooldown(red.cooldown);
+            }
+        } else if (slot == 2) {
+            if (purple.getCurrentCooldown() == 0 && player.getLevel() >= purple.getEnergyCost()) {
+                purple.onActivate(player);
+                purple.setCurrentCooldown(purple.cooldown);
+            }
+        } else if (slot == 3) {
+            if (blue.getCurrentCooldown() == 0 && player.getLevel() >= blue.getEnergyCost()) {
+                blue.onActivate(player);
+                if (!blue.getName().contains("Chain")) {
+                    blue.setCurrentCooldown(blue.cooldown);
+                }
+            }
+        } else if (slot == 4) {
+            if (orange.getCurrentCooldown() == 0 && player.getLevel() >= orange.getEnergyCost()) {
+                orange.onActivate(player);
+                orange.setCurrentCooldown(orange.cooldown);
+
+            }
+        }
+        player.getInventory().setHeldItemSlot(0);
     }
 
     public Player getPlayer() {

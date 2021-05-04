@@ -2,18 +2,8 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
-import com.ebicep.warlords.util.ParticleEffect;
 import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.entity.Damageable;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerAnimationEvent;
-import org.bukkit.event.player.PlayerAnimationType;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 public class Projectile extends AbstractAbility {
@@ -26,9 +16,75 @@ public class Projectile extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(PlayerInteractEvent e) {
-        Player player = e.getPlayer();
+    public void onActivate(Player player) {
         CustomProjectile customProjectile = new CustomProjectile(player, player.getLocation(), player.getLocation(), player.getLocation().getDirection(), maxDistance, this);
         Warlords.getCustomProjectiles().add(customProjectile);
+    }
+
+    public static class CustomProjectile {
+
+        private Player shooter;
+        private Location startingLocation;
+        private Location currentLocation;
+        private Vector direction;
+        private int maxDistance;
+        private Projectile projectile;
+
+        public CustomProjectile(Player shooter, Location startingLocation, Location currentLocation, Vector direction, int maxDistance, Projectile projectile) {
+            this.shooter = shooter;
+            this.startingLocation = startingLocation;
+            this.currentLocation = currentLocation;
+            this.direction = direction;
+            this.maxDistance = maxDistance;
+            this.projectile = projectile;
+        }
+
+        public Player getShooter() {
+            return shooter;
+        }
+
+        public void setShooter(Player shooter) {
+            this.shooter = shooter;
+        }
+
+        public Location getStartingLocation() {
+            return startingLocation;
+        }
+
+        public void setStartingLocation(Location startingLocation) {
+            this.startingLocation = startingLocation;
+        }
+
+        public Location getCurrentLocation() {
+            return currentLocation;
+        }
+
+        public void setCurrentLocation(Location currentLocation) {
+            this.currentLocation = currentLocation;
+        }
+
+        public Vector getDirection() {
+            return direction;
+        }
+
+        public void setDirection(Vector direction) {
+            this.direction = direction;
+        }
+
+        public int getMaxDistance() {
+            return maxDistance;
+        }
+
+        public void setMaxDistance(int maxDistance) {
+            this.maxDistance = maxDistance;
+        }
+
+        public Projectile getBall() {
+            return projectile;
+        }
+
+        public void setBall(Projectile projectile) {
+            this.projectile = projectile;
+        }
     }
 }

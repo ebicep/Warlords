@@ -1,5 +1,6 @@
 package com.ebicep.warlords.classes.abilties;
 
+import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.util.Utils;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
@@ -9,7 +10,6 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
@@ -33,10 +33,9 @@ public class EarthenSpike extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(PlayerInteractEvent e) {
-        Player player = e.getPlayer();
+    public void onActivate(Player player) {
         Location location = player.getLocation();
-        List<Entity> near = player.getNearbyEntities(3.0D, 3.0D, 3.0D);
+        List<Entity> near = player.getNearbyEntities(6.0D, 6.0D, 6.0D);
         for (Entity entity : near) {
             if (entity instanceof Player) {
                 Player nearPlayer = (Player) entity;
@@ -56,6 +55,43 @@ public class EarthenSpike extends AbstractAbility {
                     WarlordsEvents.addEntityUUID(block.getUniqueId());
                 }
             }
+        }
+    }
+
+    public static class EarthenSpikeBlock {
+
+        FallingBlock block;
+        Player player;
+        WarlordsPlayer user;
+
+        public EarthenSpikeBlock(FallingBlock block, Player player, WarlordsPlayer user) {
+            this.block = block;
+            this.player = player;
+            this.user = user;
+        }
+
+        public FallingBlock getBlock() {
+            return block;
+        }
+
+        public void setBlock(FallingBlock block) {
+            this.block = block;
+        }
+
+        public Player getPlayer() {
+            return player;
+        }
+
+        public void setPlayer(Player player) {
+            this.player = player;
+        }
+
+        public WarlordsPlayer getUser() {
+            return user;
+        }
+
+        public void setUser(WarlordsPlayer user) {
+            this.user = user;
         }
     }
 }

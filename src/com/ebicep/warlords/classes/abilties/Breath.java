@@ -19,8 +19,7 @@ public class Breath extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(PlayerInteractEvent e) {
-        Player player = e.getPlayer();
+    public void onActivate(Player player) {
         WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
         Vector viewDirection = player.getLocation().getDirection();
         List<Entity> near = player.getNearbyEntities(7.0D, 3.5D, 7.0D);

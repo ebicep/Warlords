@@ -25,8 +25,7 @@ public class LastStand extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(PlayerInteractEvent e) {
-        Player player = e.getPlayer();
+    public void onActivate(Player player) {
         WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
         warlordsPlayer.setLastStand(12);
         List<Entity> near = player.getNearbyEntities(4.0D, 4.0D, 4.0D);

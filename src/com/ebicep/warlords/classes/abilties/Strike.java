@@ -19,8 +19,7 @@ public class Strike extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(PlayerInteractEvent e) {
-        Player player = e.getPlayer();
+    public void onActivate(Player player) {
         List<Entity> near = player.getNearbyEntities(5.0D, 5.0D, 5.0D);
         System.out.println(near);
         for (Entity entity : near) {

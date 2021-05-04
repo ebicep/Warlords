@@ -13,8 +13,7 @@ public class GroundSlam extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(PlayerInteractEvent e) {
-        Player player = e.getPlayer();
+    public void onActivate(Player player) {
         Location location = player.getLocation();
         //TODO arraylist of locations of falling blocks
         //loop in main then add to arraylist of players hit so you dont rehit a player

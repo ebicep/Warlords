@@ -26,8 +26,7 @@ public class Intervene extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(PlayerInteractEvent e) {
-        Player player = e.getPlayer();
+    public void onActivate(Player player) {
         WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
         //TODO change intervene disntace?
         List<Entity> near = player.getNearbyEntities(5.0D, 5.0D, 5.0D);

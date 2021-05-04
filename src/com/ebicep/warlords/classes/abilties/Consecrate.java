@@ -19,11 +19,10 @@ public class Consecrate extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(PlayerInteractEvent e) {
-        Player player = e.getPlayer();
-        DamageHealCircle damageHealCircle = new DamageHealCircle(e.getPlayer(), e.getPlayer().getLocation(), 5, 5, minDamageHeal, maxDamageHeal, critChance, critMultiplier, name);
+    public void onActivate(Player player) {
+        DamageHealCircle damageHealCircle = new DamageHealCircle(player, player.getLocation(), 5, 5, minDamageHeal, maxDamageHeal, critChance, critMultiplier, name);
         damageHealCircle.spawn();
-        Warlords.getPlayer(e.getPlayer()).subtractEnergy(energyCost);
+        Warlords.getPlayer(player).subtractEnergy(energyCost);
         Warlords.damageHealCircles.add(damageHealCircle);
 
         for (Player player1 : Bukkit.getOnlinePlayers()) {

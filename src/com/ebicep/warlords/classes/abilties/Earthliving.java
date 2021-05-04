@@ -21,8 +21,7 @@ public class Earthliving extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(PlayerInteractEvent e) {
-        Player player = e.getPlayer();
+    public void onActivate(Player player) {
         WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
         warlordsPlayer.subtractEnergy(energyCost);
         warlordsPlayer.setEarthliving(8);

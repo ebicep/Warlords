@@ -18,8 +18,7 @@ public class Berserk extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(PlayerInteractEvent e) {
-        Player player = e.getPlayer();
+    public void onActivate(Player player) {
         WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
         warlordsPlayer.setBerserk(18);
         warlordsPlayer.subtractEnergy(energyCost);

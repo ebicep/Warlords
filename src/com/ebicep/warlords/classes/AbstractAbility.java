@@ -1,13 +1,16 @@
 package com.ebicep.warlords.classes;
 
+import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerItemHeldEvent;
 
 public abstract class AbstractAbility {
 
     protected String name;
     protected int minDamageHeal;
     protected int maxDamageHeal;
-    protected int currentCooldown;
+    protected float currentCooldown;
     protected int cooldown;
     protected int energyCost;
     protected int critChance;
@@ -25,7 +28,7 @@ public abstract class AbstractAbility {
         this.description = description;
     }
 
-    public abstract void onActivate(PlayerInteractEvent e);
+    public abstract void onActivate(Player player);
 
     public String getName() {
         return name;
@@ -39,12 +42,22 @@ public abstract class AbstractAbility {
         return maxDamageHeal;
     }
 
-    public int getCurrentCooldown() {
+    public float getCurrentCooldown() {
         return currentCooldown;
     }
 
-    public void setCurrentCooldown(int currentCooldown) {
+    public void setCurrentCooldown(float currentCooldown) {
         this.currentCooldown = currentCooldown;
+    }
+
+    public void subtractCooldown(float cooldown) {
+        if (currentCooldown != 0) {
+            if (currentCooldown - cooldown < 0) {
+                currentCooldown = 0;
+            } else {
+                currentCooldown -= cooldown;
+            }
+        }
     }
 
     public int getCooldown() {

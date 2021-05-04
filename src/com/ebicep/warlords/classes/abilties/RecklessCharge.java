@@ -20,8 +20,7 @@ public class RecklessCharge extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(PlayerInteractEvent e) {
-        Player player = e.getPlayer();
+    public void onActivate(Player player) {
         Location eyeLocation = player.getLocation();
         eyeLocation.setPitch(-10);
         double distance = player.getLocation().getY() - player.getWorld().getHighestBlockYAt(player.getLocation());

@@ -20,9 +20,8 @@ public class AvengersWrath extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(PlayerInteractEvent e) {
-        Player player = e.getPlayer();
-        Warlords.getPlayer(e.getPlayer()).setWrath(12);
+    public void onActivate(Player player) {
+        Warlords.getPlayer(player).setWrath(12);
 
         for (Player player1 : Bukkit.getOnlinePlayers()) {
             player1.playSound(player.getLocation(), "paladin.avengerswrath.activation", 1, 1);

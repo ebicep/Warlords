@@ -2,14 +2,15 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
+import net.minecraft.server.v1_8_R3.EntityExperienceOrb;
+import net.minecraft.server.v1_8_R3.EntityHuman;
 import net.minecraft.server.v1_8_R3.World;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 
 public class OrbsOfLife extends AbstractAbility {
 
@@ -24,12 +25,45 @@ public class OrbsOfLife extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(PlayerInteractEvent e) {
-        Player player = e.getPlayer();
+    public void onActivate(Player player) {
         Warlords.getPlayer(player).setOrbOfLife(13);
 
         for (Player player1 : Bukkit.getOnlinePlayers()) {
             player1.playSound(player.getLocation(), "warrior.revenant.orbsoflife", 1, 1);
+        }
+    }
+
+    public static class Orb extends EntityExperienceOrb {
+
+        private ArmorStand armorStand;
+
+        public Orb(World world, Location location) {
+            super(world, location.getX(), location.getY(), location.getZ(), 1000);
+        }
+
+        @Override
+        public void d(EntityHuman entityhuman) {
+
+        }
+
+        @Override
+        public void t_() {
+
+        }
+
+        public Orb spawn(Location loc) {
+            World w = ((CraftWorld) loc.getWorld()).getHandle();
+            this.setPosition(loc.getX(), loc.getY(), loc.getZ());
+            w.addEntity(this, CreatureSpawnEvent.SpawnReason.CUSTOM);
+            return this;
+        }
+
+        public ArmorStand getArmorStand() {
+            return armorStand;
+        }
+
+        public void setArmorStand(ArmorStand armorStand) {
+            this.armorStand = armorStand;
         }
     }
 }

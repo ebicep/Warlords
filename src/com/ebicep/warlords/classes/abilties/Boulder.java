@@ -23,8 +23,7 @@ public class Boulder extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(PlayerInteractEvent e) {
-        Player player = e.getPlayer();
+    public void onActivate(Player player) {
         Location location = player.getLocation();
         ArmorStand stand = (ArmorStand) location.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
         stand.setHelmet(new ItemStack(Material.LONG_GRASS, 1, (short) 2));

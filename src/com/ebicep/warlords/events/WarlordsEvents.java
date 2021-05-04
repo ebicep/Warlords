@@ -18,10 +18,7 @@ import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
-import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
@@ -95,8 +92,8 @@ public class WarlordsEvents implements Listener {
 
         if (action == Action.RIGHT_CLICK_BLOCK || action == Action.RIGHT_CLICK_AIR) {
             //Slam test = new Slam(location);
-            if (Warlords.hasPlayer(player)) {
-                Warlords.getPlayer(player).getSpec().onRightClick(e);
+            if (Warlords.hasPlayer(player) && (player.getInventory().getHeldItemSlot() == 0 || !Warlords.getPlayer(player).isHotKeyMode())) {
+                Warlords.getPlayer(player).getSpec().onRightClick(player);
             }
             ItemStack itemHeld = player.getItemInHand();
             if (itemHeld.getType() == Material.GOLD_BARDING) {
@@ -206,5 +203,14 @@ public class WarlordsEvents implements Listener {
     @EventHandler
     public void pickUpItem(PlayerArmorStandManipulateEvent e) {
         e.setCancelled(true);
+    }
+
+    @EventHandler
+    public void switchItemHeld(PlayerItemHeldEvent e) {
+        int slot = e.getNewSlot();
+        if (Warlords.getPlayer(e.getPlayer()).isHotKeyMode() && (slot == 1 || slot == 2 || slot == 3 || slot == 4)) {
+            Warlords.getPlayer(e.getPlayer()).getSpec().onRightClickHotKey(e.getPlayer(), slot);
+            e.setCancelled(true);
+        }
     }
 }
