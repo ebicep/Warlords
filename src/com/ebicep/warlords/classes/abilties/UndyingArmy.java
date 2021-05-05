@@ -43,10 +43,8 @@ public class UndyingArmy extends AbstractAbility {
             }
         }
 
-
-        // TODO: double check/fix armys activation sound
         for (Player player1 : Bukkit.getOnlinePlayers()) {
-            player1.playSound(player.getLocation(), Sound.ZOMBIE_IDLE, 1, 1);
+            player1.playSound(player.getLocation(), Sound.ZOMBIE_IDLE, 1, 1.1f);
         }
     }
 }

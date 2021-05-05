@@ -61,7 +61,12 @@ public class Totem extends EntityArmorStand {
     public static class TotemThunderlord extends AbstractAbility {
 
         public TotemThunderlord() {
-            super("Capacitor Totem", -404, -503, 60 + 2, 20, 20, 200, "capacitor totem description");
+            super("Capacitor Totem", -404, -523, 60 + 2, 20, 20, 200,
+                    "§7Place a highly conductive totem\n" +
+                    "§7on the ground. Casting Chain Lightning\n" +
+                    "§7or Lightning Rod on the totem will cause\n" +
+                    "§7it to pulse, dealing §c404 §7- §c523 §7damage\n" +
+                    "§7to all enemies nearby. Lasts §68 §7seconds.");
         }
 
         @Override
@@ -84,7 +89,18 @@ public class Totem extends EntityArmorStand {
     public static class TotemSpiritguard extends AbstractAbility {
 
         public TotemSpiritguard() {
-            super("Death's Debt", 0, 0, 60 + 12, 20, -1, 100, "deaths debt description");
+            super("Death's Debt", 0, 0, 60 + 12, 20, -1, 100,
+                    "'§2Spirits’ Respite§7: Place down a totem that'\n" +
+                    "§7delays §c100% §7of incoming damage towards\n" +
+                    "§7yourself. Transforms into §dDeath’s Debt §7after\n" +
+                    "§64 §7- §68 §7seconds (increases with higher health),\n" +
+                    "§7or when you exit its §e12 §7block radius.\n" +
+                    "''\n" +
+                    "'§dDeath’s Debt§7: Take §c100% §7of the damage delayed'\n" +
+                    "§7by §2Spirit's Respite §7over §66 §7seconds. The totem\n" +
+                    "§7will heal nearby allies for §a15% §7of all damage\n" +
+                    "§7that you take. If you survive, deal §c15% §7of the\n" +
+                    "§7damage delayed to nearby enemies.");
         }
 
         @Override
@@ -108,7 +124,14 @@ public class Totem extends EntityArmorStand {
     public static class TotemEarthwarden extends AbstractAbility {
 
         public TotemEarthwarden() {
-            super("Healing Totem", 168, 841, 60 + 12, 60, 15, 200, "healing totem description");
+            super("Healing Totem", 168, 841, 60 + 12, 60, 15, 200,
+                    "§7Place a totem on the ground that\n" +
+                    "§7pulses constantly, healing nearby\n" +
+                    "§allies for §a168 §7- §a227 §7every\n" +
+                    "second. Before disappearing , the totem\n" +
+                    "will let out a final pulse that heals for\n" +
+                    "§a841 §7 - §a1138 §7. Lasts §65 §7seconds.");
+
             //168 - 227
             //841 - 1138
             //1.35x

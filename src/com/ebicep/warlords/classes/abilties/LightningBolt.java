@@ -16,7 +16,7 @@ import org.bukkit.util.Vector;
 public class LightningBolt extends AbstractAbility {
 
     public LightningBolt() {
-        super("Lightning Bolt", -249, -462, 0, 60, 20, 200,
+        super("Lightning Bolt", -249, -462, 0, 1, 20, 200,
                 "§7Hurl a fast, piercing bolt of lightning that\n" +
                 "§7deals §c%dynamic.value% §7- §c%dynamic.value% §7damage to all enemies it\n" +
                 "§7passes through. Each target hit reduces the\n" +
@@ -52,7 +52,7 @@ public class LightningBolt extends AbstractAbility {
             this.armorStand = armorStand;
             armorStand.setGravity(false);
             armorStand.setVisible(false);
-            armorStand.setHelmet(new ItemStack(Material.RED_MUSHROOM));
+            armorStand.setHelmet(new ItemStack(Material.SAPLING, 1, (short) 3));
             armorStand.setHeadPose(new EulerAngle(direction.getY() * -1, 0, 0));
             this.location = location;
             this.direction = direction;

@@ -10,6 +10,13 @@ public class GameLobby {
 
     private GameState state;
 
+    enum Map {
+        RIFT,
+        CROSSFIRE,
+        GORGE,
+        WARSONG,
+        VALLEY
+    }
     enum GameState {
         LOBBY,
         PLAYING,

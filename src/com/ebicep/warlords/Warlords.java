@@ -139,7 +139,8 @@ public class Warlords extends JavaPlugin {
             public void run() {
 
                 //EVERY TWO TICKS
-                if (counter % 2 == 0) {
+                // 1 tick is a lot smoother, idk about performance impact
+                if (counter % 1 == 0) {
                     for (int i = 0; i < customProjectiles.size(); i++) {
                         Projectile.CustomProjectile customProjectile = customProjectiles.get(i);
                         Location location = customProjectile.getCurrentLocation();
@@ -147,16 +148,22 @@ public class Warlords extends JavaPlugin {
                         //TODO get confirm actual speeds
                         //BALLS
                         if (customProjectile.getBall().getName().contains("Fire")) {
-                            location.add(customProjectile.getDirection().multiply(1.2));
+                            // TODO: use setVelocity instead of multiply to avoid acceleration/startup time
+                            location.add(customProjectile.getDirection().multiply(1.15));
                             location.add(0, 1.5, 0);
-                            ParticleEffect.DRIP_LAVA.display(0, 0, 0, 0.15F, 3, location, 500);
-                            ParticleEffect.FLAME.display(0, 0, 0, 0.1F, 3, location, 500);
+                            ParticleEffect.DRIP_LAVA.display(0, 0, 0, 0.15F, 7, location, 500);
+                            ParticleEffect.SMOKE_NORMAL.display(0, 0, 0, 0.1F, 4, location, 500);
+                            ParticleEffect.FLAME.display(0, 0, 0, 0.08F, 2, location, 500);
                             for (Entity entity : location.getWorld().getEntities()) {
                                 if (entity instanceof Player && entity != customProjectile.getShooter()) {
                                     if (entity.getLocation().distanceSquared(location) < 2 * 2) {
                                         hitPlayer = true;
                                         ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.5F, 1, entity.getLocation().add(0, 1, 0), 500);
                                         Player victim = (Player) entity;
+                                        // TODO: fix sounds only playing on direct hit
+                                        for (Player player1 : Bukkit.getOnlinePlayers()) {
+                                            player1.playSound(entity.getLocation(), "mage.fireball.impact", 1, 1);
+                                        }
                                         getPlayer(victim).addHealth(
                                                 getPlayer(customProjectile.getShooter()),
                                                 customProjectile.getBall().getName(),
@@ -185,7 +192,7 @@ public class Warlords extends JavaPlugin {
                                 }
                             }
                         } else if (customProjectile.getBall().getName().contains("Frost")) {
-                            location.add(customProjectile.getDirection().multiply(1));
+                            location.add(customProjectile.getDirection().multiply(1.05));
                             location.add(0, 1.5, 0);
                             //TODO add slowness
                             ParticleEffect.CLOUD.display(0, 0, 0, 0F, 1, location, 500);
@@ -196,6 +203,9 @@ public class Warlords extends JavaPlugin {
                                         hitPlayer = true;
                                         ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.0F, 1, entity.getLocation().add(0, 1, 0), 500);
                                         Player victim = (Player) entity;
+                                        for (Player player1 : Bukkit.getOnlinePlayers()) {
+                                            player1.playSound(entity.getLocation(), "mage.frostbolt.impact", 1, 1);
+                                        }
                                         getPlayer(victim).addHealth(
                                                 getPlayer(customProjectile.getShooter()),
                                                 customProjectile.getBall().getName(),
@@ -238,6 +248,9 @@ public class Warlords extends JavaPlugin {
                                         ParticleEffect.HEART.display(3, 3, 3, 0.2F, 5, entity.getLocation().add(0, 1, 0), 500);
                                         ParticleEffect.VILLAGER_HAPPY.display(4, 4, 4, 0.2F, 5, entity.getLocation().add(0, 1, 0), 500);
                                         Player victim = (Player) entity;
+                                        for (Player player1 : Bukkit.getOnlinePlayers()) {
+                                            player1.playSound(entity.getLocation(), "mage.waterbolt.impact", 1, 1);
+                                        }
                                         getPlayer(victim).addHealth(
                                                 getPlayer(customProjectile.getShooter()),
                                                 customProjectile.getBall().getName(),
@@ -271,6 +284,14 @@ public class Warlords extends JavaPlugin {
                             location.add(customProjectile.getDirection().multiply(1.4));
                             location.add(0, 1.5, 0);
                             //TODO add flameburst animation
+
+                            // Equation for spiral animation
+                            int radius = 2;
+                            for(double y = 0; y <= 50; y+=0.05) { // Set for vertical, need to change
+                                double x = radius * Math.cos(y);
+                                double z = radius * Math.sin(y);
+                            }
+
                             ParticleEffect.FLAME.display(0, 0, 0, 0F, 1, location, 500);
                             for (Entity entity : location.getWorld().getEntities()) {
                                 if (entity instanceof Player && entity != customProjectile.getShooter()) {
@@ -278,6 +299,9 @@ public class Warlords extends JavaPlugin {
                                         hitPlayer = true;
                                         ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.0F, 1, entity.getLocation().add(0, 1, 0), 500);
                                         Player victim = (Player) entity;
+                                        for (Player player1 : Bukkit.getOnlinePlayers()) {
+                                            player1.playSound(entity.getLocation(), "mage.flameburst.impact", 1, 1);
+                                        }
                                         System.out.println((int) location.distance(customProjectile.getStartingLocation()));
                                         getPlayer(victim).addHealth(
                                                 getPlayer(customProjectile.getShooter()),
