@@ -1,5 +1,6 @@
 package com.ebicep.warlords;
 
+import com.ebicep.customentities.CustomFallingBlock;
 import com.ebicep.warlords.classes.abilties.Projectile;
 import com.ebicep.warlords.classes.abilties.*;
 import com.ebicep.warlords.commands.StartGame;
@@ -29,6 +30,11 @@ public class Warlords extends JavaPlugin {
         return instance;
     }
 
+    public static List<CustomFallingBlock> customFallingBlocks = new ArrayList<>();
+
+    public static List<CustomFallingBlock> getFallingBlocks() {
+        return customFallingBlocks;
+    }
 
     public static List<ArrayList<ArrayList<SeismicWave>>> waveArrays = new ArrayList<>();
 
@@ -36,9 +42,9 @@ public class Warlords extends JavaPlugin {
         return waveArrays;
     }
 
-    public static List<ArrayList<ArrayList<GroundSlam>>> groundSlamArray = new ArrayList<>();
+    public static List<GroundSlam> groundSlamArray = new ArrayList<>();
 
-    public static List<ArrayList<ArrayList<GroundSlam>>> getGroundSlamArray() {
+    public static List<GroundSlam> getGroundSlamArray() {
         return groundSlamArray;
     }
 
@@ -372,6 +378,23 @@ public class Warlords extends JavaPlugin {
                         }
 
                         location.subtract(0, 1.5, 0);
+                    }
+                }
+
+                if (counter % 2 == 0) {
+                    //GROUND SLAM
+                    for (int i = 0; i < groundSlamArray.size(); i++) {
+                        GroundSlam groundSlam = groundSlamArray.get(i);
+                        for (List<Location> fallingBlockLocation : groundSlam.getFallingBlockLocations()) {
+                            for (Location location : fallingBlockLocation) {
+                                FallingBlock fallingBlock = world.spawnFallingBlock(location, location.getWorld().getBlockAt((int) location.getX(), location.getWorld().getHighestBlockYAt(location) - 1, (int) location.getZ()).getType(), location.getWorld().getBlockAt((int) location.getX(), location.getWorld().getHighestBlockYAt(location) - 1, (int) location.getZ()).getData());
+                                fallingBlock.setVelocity(new Vector(0, .1, 0));
+                                fallingBlock.setDropItem(false);
+                                customFallingBlocks.add(new CustomFallingBlock(fallingBlock, location.getY() + .25, groundSlam.getOwner()));
+                            }
+                            groundSlam.getFallingBlockLocations().remove(fallingBlockLocation);
+                            break;
+                        }
                     }
                 }
 
@@ -733,6 +756,23 @@ public class Warlords extends JavaPlugin {
                 }
 
                 //EVERY TICK
+                for (int i = 0; i < customFallingBlocks.size(); i++) {
+                    CustomFallingBlock customFallingBlock = customFallingBlocks.get(i);
+
+                    for (Player player : players.keySet()) {
+                        if (player.getLocation().distanceSquared(customFallingBlock.getFallingBlock().getLocation()) < 1) {
+                            //getPlayer(player).addHealth(customFallingBlock.getOwner(), );
+                        }
+                    }
+
+                    if (customFallingBlock.getFallingBlock().getLocation().getY() <= customFallingBlock.getyLevel() || customFallingBlock.getFallingBlock().getTicksLived() > 10) {
+                        customFallingBlock.getFallingBlock().remove();
+                        customFallingBlocks.remove(i);
+                        i--;
+                    }
+                }
+                System.out.println(customFallingBlocks.size());
+
                 for (Player player : world.getPlayers()) {
                     WarlordsPlayer warlordsPlayer = getPlayer(player);
                     Location location = player.getLocation();
