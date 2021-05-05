@@ -49,6 +49,7 @@ public class Chain extends AbstractAbility {
                     // TOTEM -> (PLAYER) -> PLAYER
                     List<Entity> near = totem.getTotemArmorStand().getNearbyEntities(20.0D, 18.0D, 20.0D);
                     near.remove(player);
+                    //TODO maybe fix this, may be performance heavy - getNearbyEntities is not in order of closest
                     System.out.println(near);
                     for (Entity entity : near) {
                         if (entity instanceof Player) {
