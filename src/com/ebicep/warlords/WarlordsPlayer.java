@@ -395,8 +395,7 @@ public class WarlordsPlayer {
             Bukkit.broadcastMessage("" + arcaneShieldHealth);
         } else {
             damageHealValue *= totalReduction;
-            System.out.println(attacker.getName() + " hit " + name);
-            System.out.println(damageHealValue);
+            System.out.println(attacker.getName() + " hit " + name + " for " + damageHealValue);
             //Prevent overheal
             if (this.health + damageHealValue > this.maxHealth) {
                 damageHealValue = this.maxHealth - this.health;

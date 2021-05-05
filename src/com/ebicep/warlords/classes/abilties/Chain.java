@@ -27,80 +27,150 @@ public class Chain extends AbstractAbility {
         WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
 
         //TODO add Your enemy is too far away!
+        // TODO Chain pulse animation
+        /* CHAINS
+           TOTEM -> PLAYER -> PLAYER
+           PLAYER -> TOTEM -> PLAYER
+           PLAYER -> PLAYER -> TOTEM
+           PLAYER -> PLAYER -> PLAYER
+         */
         int hitCounter = 0;
+        // TOTEM -> PLAYER -> PLAYER
         if (Utils.lookingAtTotem(player)) {
-            //TODO Chain pulse animation
+            // (TOTEM) -> PLAYER -> PLAYER
             for (Totem totem : Warlords.getTotems()) {
-                if (totem.getOwner() == warlordsPlayer) {
-                    Location location = player.getLocation().subtract(0, .5, 0);
-                    location.setDirection(location.toVector().subtract(totem.getTotemArmorStand().getLocation().subtract(0, .5, 0).toVector()).multiply(-1));
-                    spawnChain((int) (player.getLocation().distance(totem.getTotemArmorStand().getLocation()) * .9), location);
-                    List<Entity> near = totem.getTotemArmorStand().getNearbyEntities(4.0D, 4.0D, 4.0D);
+                if (totem.getOwner() == warlordsPlayer && totem.getTotemArmorStand().getLocation().distanceSquared(player.getLocation()) < 20 * 20) {
+                    System.out.println("(TOTEM) -> PLAYER -> PLAYER");
+                    chain(player.getLocation(), totem.getTotemArmorStand().getLocation().add(0, .5, 0));
+                    List<Entity> nearTotem = totem.getTotemArmorStand().getNearbyEntities(4.0D, 4.0D, 4.0D);
+                    nearTotem.remove(player);
+                    pulseDamage(warlordsPlayer, nearTotem);
+                    hitCounter++;
+                    // TOTEM -> (PLAYER) -> PLAYER
+                    List<Entity> near = totem.getTotemArmorStand().getNearbyEntities(20.0D, 18.0D, 20.0D);
                     near.remove(player);
+                    System.out.println(near);
                     for (Entity entity : near) {
                         if (entity instanceof Player) {
+                            System.out.println("TOTEM -> (PLAYER) -> PLAYER");
                             Player nearPlayer = (Player) entity;
                             if (nearPlayer.getGameMode() != GameMode.SPECTATOR) {
-                                Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, warlordsPlayer.getSpec().getOrange().getName(), warlordsPlayer.getSpec().getOrange().getMinDamageHeal(), warlordsPlayer.getSpec().getOrange().getMaxDamageHeal(), warlordsPlayer.getSpec().getOrange().getCritChance(), warlordsPlayer.getSpec().getOrange().getCritMultiplier());
+                                chain(totem.getTotemArmorStand().getLocation().add(0, .5, 0), nearPlayer.getLocation());
+                                Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+                                hitCounter++;
+
+                                List<Entity> nearNearPlayers = nearPlayer.getNearbyEntities(10.0D, 9.0D, 10.0D);
+                                nearNearPlayers.remove(player);
+                                nearNearPlayers.remove(nearPlayer);
+                                // TOTEM -> PLAYER -> (PLAYER)
+                                for (Entity entity1 : nearNearPlayers) {
+                                    if (entity1 instanceof Player) {
+                                        System.out.println("TOTEM -> PLAYER -> (PLAYER)");
+                                        Player nearNearPlayer = (Player) entity1;
+                                        if (nearNearPlayer.getGameMode() != GameMode.SPECTATOR) {
+                                            chain(nearPlayer.getLocation(), nearNearPlayer.getLocation());
+                                            Warlords.getPlayer(nearNearPlayer).addHealth(warlordsPlayer, name, (int) (minDamageHeal * .85), (int) (maxDamageHeal * .85), critChance, critMultiplier);
+
+                                            hitCounter++;
+                                            List<Entity> nearNearNearPlayers = nearNearPlayer.getNearbyEntities(10.0D, 9.0D, 10.0D);
+                                            nearNearNearPlayers.remove(player);
+                                            nearNearNearPlayers.remove(nearPlayer);
+                                            nearNearNearPlayers.remove(nearNearPlayer);
+                                            for (Entity entity2 : nearNearNearPlayers) {
+                                                if (entity2 instanceof Player) {
+                                                    Player nearNearNearPlayer = (Player) entity2;
+                                                    if (nearNearNearPlayer.getGameMode() != GameMode.SPECTATOR) {
+                                                        chain(nearNearPlayer.getLocation(), nearNearNearPlayer.getLocation());
+                                                        Warlords.getPlayer(nearNearNearPlayer).addHealth(warlordsPlayer, name, (int) (minDamageHeal * .7), (int) (maxDamageHeal * .7), critChance, critMultiplier);
+                                                        hitCounter++;
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                            break;
+                                        }
+                                    }
+                                }
+                                break;
                             }
                         }
                     }
-                    hitCounter++;
                     break;
                 }
             }
-
         } else {
-            //TODO add soulbinding and totem priority
+            //TODO totem priority, totem counts as target
             List<Entity> near = player.getNearbyEntities(20.0D, 18.0D, 20.0D);
             for (Entity entity : near) {
                 if (entity instanceof Player) {
+                    // (PLAYER) -> TOTEM -> PLAYER
                     Player nearPlayer = (Player) entity;
                     if (nearPlayer.getGameMode() != GameMode.SPECTATOR && Utils.getLookingAt(player, nearPlayer)) {
+                        System.out.println("(PLAYER) -> TOTEM -> PLAYER");
                         //self heal
                         if (name.contains("Heal")) {
                             warlordsPlayer.addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
                         }
-                        Location location = player.getLocation().subtract(0, .5, 0);
-                        location.setDirection(location.toVector().subtract(nearPlayer.getLocation().subtract(0, .5, 0).toVector()).multiply(-1));
-                        spawnChain((int) (player.getLocation().distance(nearPlayer.getLocation()) * .9), location);
+                        chain(player.getLocation(), nearPlayer.getLocation());
                         Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
                         if (warlordsPlayer.hasBoundPlayer(Warlords.getPlayer(nearPlayer))) {
                             healNearPlayers(player);
                         }
 
                         hitCounter++;
-                        List<Entity> nearNearPlayers = nearPlayer.getNearbyEntities(10.0D, 9.0D, 10.0D);
-                        nearNearPlayers.remove(player);
-                        nearNearPlayers.remove(nearPlayer);
-                        for (Entity entity1 : nearNearPlayers) {
-                            if (entity1 instanceof ArmorStand) {
+                        List<Entity> nearNearEntities = nearPlayer.getNearbyEntities(10.0D, 9.0D, 10.0D);
+                        nearNearEntities.sort(new Utils.ArmorStandComparator());
+                        nearNearEntities.remove(player);
+                        nearNearEntities.remove(nearPlayer);
+                        for (Entity entity1 : nearNearEntities) {
+                            if (Utils.totemDownAndClose(warlordsPlayer, nearPlayer)) {
+                                // PLAYER -> (TOTEM) -> PLAYER   THIS IS SO TRASH
                                 for (Totem totem : Warlords.getTotems()) {
                                     if (totem.getOwner() == warlordsPlayer) {
-                                        location = nearPlayer.getLocation().subtract(0, .5, 0);
-                                        location.setDirection(location.toVector().subtract(entity1.getLocation().subtract(0, .5, 0).toVector()).multiply(-1));
-                                        spawnChain((int) (nearPlayer.getLocation().distance(entity1.getLocation()) * .9), location);
+                                        System.out.println("PLAYER -> (TOTEM) -> PLAYER");
+                                        chain(nearPlayer.getLocation(), totem.getTotemArmorStand().getLocation().add(0, .5, 0));
                                         List<Entity> totemNear = totem.getTotemArmorStand().getNearbyEntities(4.0D, 4.0D, 4.0D);
-                                        near.remove(player);
-                                        near.remove(nearPlayer);
-                                        for (Entity totemEntity : totemNear) {
-                                            if (totemEntity instanceof Player) {
-                                                Player playerNearTotem = (Player) entity;
-                                                if (playerNearTotem.getGameMode() != GameMode.SPECTATOR) {
-                                                    Warlords.getPlayer(playerNearTotem).addHealth(warlordsPlayer, warlordsPlayer.getSpec().getOrange().getName(), warlordsPlayer.getSpec().getOrange().getMinDamageHeal(), warlordsPlayer.getSpec().getOrange().getMaxDamageHeal(), warlordsPlayer.getSpec().getOrange().getCritChance(), warlordsPlayer.getSpec().getOrange().getCritMultiplier());
+                                        totemNear.remove(player);
+                                        pulseDamage(warlordsPlayer, totemNear);
+                                        hitCounter++;
+                                        List<Entity> nearNearNearPlayers = totem.getTotemArmorStand().getNearbyEntities(10.0D, 9.0D, 10.0D);
+                                        nearNearNearPlayers.remove(player);
+                                        nearNearNearPlayers.remove(nearPlayer);
+                                        for (Entity entity2 : nearNearNearPlayers) {
+                                            if (entity2 instanceof Player) {
+                                                // PLAYER -> TOTEM -> (PLAYER)
+                                                Player nearNearNearPlayer = (Player) entity2;
+                                                if (nearNearNearPlayer.getGameMode() != GameMode.SPECTATOR) {
+                                                    System.out.println("PLAYER -> TOTEM -> (PLAYER)");
+                                                    chain(totem.getTotemArmorStand().getLocation().add(0, .5, 0), nearNearNearPlayer.getLocation());
+                                                    if (name.contains("Lightning")) {
+                                                        Warlords.getPlayer(nearNearNearPlayer).addHealth(warlordsPlayer, name, (int) (minDamageHeal * .7), (int) (maxDamageHeal * .7), critChance, critMultiplier);
+                                                    } else if (name.contains("Chain")) {
+                                                        Warlords.getPlayer(nearNearNearPlayer).addHealth(warlordsPlayer, name, (int) (minDamageHeal * .8), (int) (maxDamageHeal * .8), critChance, critMultiplier);
+                                                    } else if (name.contains("Spirit")) {
+                                                        Warlords.getPlayer(nearNearNearPlayer).addHealth(warlordsPlayer, name, (int) (minDamageHeal * .6), (int) (maxDamageHeal * .6), critChance, critMultiplier);
+                                                    }
+                                                    if (warlordsPlayer.hasBoundPlayer(Warlords.getPlayer(nearPlayer))) {
+                                                        healNearPlayers(player);
+                                                    }
+                                                    hitCounter++;
+                                                    break;
                                                 }
                                             }
                                         }
-                                        //TODO fix this shit holy shit
-
+                                        break;
                                     }
                                 }
+                                if (hitCounter > 1) {
+                                    break;
+                                }
                             } else if (entity1 instanceof Player) {
+                                System.out.println("PLAYER -> (PLAYER) -> TOTEM/PLAYER");
+                                // PLAYER -> (PLAYER) -> TOTEM/PLAYER
                                 Player nearNearPlayer = (Player) entity1;
                                 if (nearNearPlayer.getGameMode() != GameMode.SPECTATOR) {
-                                    location = nearPlayer.getLocation().subtract(0, .5, 0);
-                                    location.setDirection(location.toVector().subtract(nearNearPlayer.getLocation().subtract(0, .5, 0).toVector()).multiply(-1));
-                                    spawnChain((int) (nearPlayer.getLocation().distance(nearNearPlayer.getLocation()) * .9), location);
+                                    System.out.println("PLAYER -> (PLAYER) -> TOTEM/PLAYER");
+                                    chain(nearPlayer.getLocation(), nearNearPlayer.getLocation());
                                     if (name.contains("Lightning")) {
                                         Warlords.getPlayer(nearNearPlayer).addHealth(warlordsPlayer, name, (int) (minDamageHeal * .85), (int) (maxDamageHeal * .85), critChance, critMultiplier);
                                     } else if (name.contains("Chain")) {
@@ -112,17 +182,32 @@ public class Chain extends AbstractAbility {
                                         healNearPlayers(player);
                                     }
                                     hitCounter++;
-                                    List<Entity> nearNearNearPlayers = nearNearPlayer.getNearbyEntities(10.0D, 9.0D, 10.0D);
-                                    nearNearNearPlayers.remove(player);
-                                    nearNearNearPlayers.remove(nearPlayer);
-                                    nearNearNearPlayers.remove(nearNearPlayer);
-                                    for (Entity entity2 : nearNearNearPlayers) {
-                                        if (entity2 instanceof Player) {
+                                    List<Entity> nearNearNearEntities = nearNearPlayer.getNearbyEntities(10.0D, 9.0D, 10.0D);
+                                    nearNearNearEntities.sort(new Utils.ArmorStandComparator());
+                                    nearNearNearEntities.remove(player);
+                                    nearNearNearEntities.remove(nearPlayer);
+                                    nearNearNearEntities.remove(nearNearPlayer);
+                                    for (Entity entity2 : nearNearNearEntities) {
+                                        if (Utils.totemDownAndClose(warlordsPlayer, nearNearPlayer)) {
+                                            // PLAYER -> PLAYER -> (TOTEM)
+                                            for (Totem totem : Warlords.getTotems()) {
+                                                if (totem.getOwner() == warlordsPlayer) {
+                                                    System.out.println("PLAYER -> PLAYER -> (TOTEM)");
+                                                    chain(nearNearPlayer.getLocation(), totem.getTotemArmorStand().getLocation().add(0, .5, 0));
+                                                    List<Entity> totemNear = totem.getTotemArmorStand().getNearbyEntities(4.0D, 4.0D, 4.0D);
+                                                    totemNear.remove(player);
+                                                    pulseDamage(warlordsPlayer, totemNear);
+                                                    hitCounter++;
+                                                    break;
+                                                }
+                                            }
+                                            break;
+                                        } else if (entity2 instanceof Player) {
+                                            // PLAYER -> PLAYER -> (PLAYER)
                                             Player nearNearNearPlayer = (Player) entity2;
                                             if (nearNearNearPlayer.getGameMode() != GameMode.SPECTATOR) {
-                                                location = nearNearPlayer.getLocation();
-                                                location.setDirection(location.toVector().subtract(nearNearNearPlayer.getLocation().subtract(0, .5, 0).toVector()).multiply(-1));
-                                                spawnChain((int) (nearNearPlayer.getLocation().distance(nearNearNearPlayer.getLocation()) * .9), location);
+                                                System.out.println("PLAYER -> PLAYER -> (PLAYER)");
+                                                chain(nearNearPlayer.getLocation(), nearNearNearPlayer.getLocation());
                                                 if (name.contains("Lightning")) {
                                                     Warlords.getPlayer(nearNearNearPlayer).addHealth(warlordsPlayer, name, (int) (minDamageHeal * .7), (int) (maxDamageHeal * .7), critChance, critMultiplier);
                                                 } else if (name.contains("Chain")) {
@@ -182,6 +267,17 @@ public class Chain extends AbstractAbility {
         }
     }
 
+    private void pulseDamage(WarlordsPlayer warlordsPlayer, List<Entity> near) {
+        for (Entity entity : near) {
+            if (entity instanceof Player) {
+                Player nearPlayer = (Player) entity;
+                if (nearPlayer.getGameMode() != GameMode.SPECTATOR) {
+                    Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, warlordsPlayer.getSpec().getOrange().getName(), warlordsPlayer.getSpec().getOrange().getMinDamageHeal(), warlordsPlayer.getSpec().getOrange().getMaxDamageHeal(), warlordsPlayer.getSpec().getOrange().getCritChance(), warlordsPlayer.getSpec().getOrange().getCritMultiplier());
+                }
+            }
+        }
+    }
+
     private void healNearPlayers(Player player) {
         WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
         warlordsPlayer.addHealth(warlordsPlayer, warlordsPlayer.getSpec().getRed().getName(), 420, 420, -1, 100);
@@ -197,6 +293,12 @@ public class Chain extends AbstractAbility {
         }
     }
 
+    private void chain(Location from, Location to) {
+        Location location = from.subtract(0, .5, 0);
+        location.setDirection(location.toVector().subtract(to.subtract(0, .5, 0).toVector()).multiply(-1));
+        spawnChain((int) Math.round(from.distance(to)), location);
+    }
+
     private void spawnChain(int distance, Location location) {
         if (name.contains("Lightning")) {
             for (int i = 0; i < distance; i++) {
@@ -208,7 +310,7 @@ public class Chain extends AbstractAbility {
                 location.add(location.getDirection().multiply(1.2));
                 Warlords.getChains().add(chain);
             }
-        } else if (name.contains("Chain")) {
+        } else if (name.contains("Heal")) {
             for (int i = 0; i < distance; i++) {
                 ArmorStand chain = location.getWorld().spawn(location, ArmorStand.class);
                 chain.setHeadPose(new EulerAngle(location.getDirection().getY() * -1, 0, 0));
