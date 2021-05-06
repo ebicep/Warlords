@@ -18,6 +18,6 @@ public class Spiritguard extends AbstractShaman {
                                 "§7reduced damage for §64.5 §7seconds."),
                 new Soulbinding(),
                 new Repentance(),
-                new temp());
+                new Totem.TotemSpiritguard());
     }
 }

@@ -3,6 +3,7 @@ package com.ebicep.warlords;
 import com.ebicep.warlords.classes.PlayerClass;
 import com.ebicep.warlords.classes.abilties.OrbsOfLife;
 import com.ebicep.warlords.classes.abilties.Soulbinding;
+import com.ebicep.warlords.classes.abilties.Totem;
 import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
@@ -325,209 +326,235 @@ public class WarlordsPlayer {
     }
 
     public void addHealth(WarlordsPlayer attacker, String ability, int min, int max, int critChance, int critMultiplier) {
-        if (attacker.getInferno() != 0) {
-            critChance += attacker.getSpec().getOrange().getCritChance();
-            critMultiplier += attacker.getSpec().getOrange().getCritMultiplier();
-        }
-        //crit
-        float damageHealValue = (int) ((Math.random() * (max - min)) + min);
-        int crit = (int) ((Math.random() * (100)));
-        boolean isCrit = false;
-        if (crit <= critChance) {
-            isCrit = true;
-            damageHealValue *= critMultiplier / 100f;
-        }
-        //TODO check if totaldmgreduc works
-        //reduction begining with base resistance
-        float totalReduction = 1;
-        if (min < 0) {
-            totalReduction = 1 - spec.getDamageResistance() / 100f;
-            if (attacker.getBerserk() != 0) {
-                totalReduction += 1.25;
-            }
-            if (berserk != 0) {
-                totalReduction += 1.1;
-            }
-            if (iceBarrier != 0) {
-                totalReduction -= .5;
-            }
-            if (chainLightningCooldown != 0) {
-                totalReduction -= 1 - chainLightning * .1;
-            }
-            if (spiritLink != 0) {
-                totalReduction -= .2;
-            }
-        }
-        if (intervene != 0) {
-            //TODO check teammate heal
-            damageHealValue *= totalReduction;
-            damageHealValue *= .5;
-            if (isCrit) {
-                intervenedBy.getPlayer().sendMessage("§c\u00AB§7 " + attacker.getName() + "'s Intervene hit you for §c§l" + (int) damageHealValue * -1 + "! §7critical damage.");
-                attacker.getPlayer().sendMessage("§a\u00BB§7 Your Intervene hit " + intervenedBy.getName() + " for §c§l" + (int) damageHealValue * -1 + "! §7critical damage.");
-            } else {
-                intervenedBy.getPlayer().sendMessage("§c\u00AB§7 " + attacker.getName() + "'s Intervene hit you for §c" + (int) damageHealValue * -1 + "§7 damage.");
-                attacker.getPlayer().sendMessage("§a\u00BB§7 Your Intervene hit " + intervenedBy.getName() + " for §c" + (int) damageHealValue * -1 + "§7 damage.");
-            }
-            intervenedBy.setHealth((int) (intervenedBy.getHealth() + damageHealValue));
-            interveneDamage += damageHealValue;
-        } else if (arcaneShield != 0) {
-            damageHealValue *= totalReduction;
-            //TODO check teammate heal
-            if (arcaneShieldHealth + damageHealValue < 0) {
-                Bukkit.broadcastMessage("" + arcaneShieldHealth);
-                Bukkit.broadcastMessage("" + damageHealValue);
-                Bukkit.broadcastMessage("" + (arcaneShieldHealth + damageHealValue));
+        if (attacker == this && ability.isEmpty()) {
+            player.sendMessage("§c\u00AB§7 You took §c" + min * -1 + "§7 melee damage.");
 
-                arcaneShield = 0;
-                addHealth(attacker, ability, (int) (arcaneShieldHealth + damageHealValue), (int) (arcaneShieldHealth + damageHealValue), isCrit ? 100 : -1, 100);
+            if (health + min < 0) {
+                health = 0;
             } else {
-                if (ability.isEmpty()) {
-                    player.sendMessage("§c\u00AB§7 You absorbed " + attacker.getName() + "'s melee §7hit.");
-                    attacker.getPlayer().sendMessage("§a\u00BB§7 Your melee hit was absorbed by " + name);
-                } else {
-                    player.sendMessage("§c\u00AB§7 You absorbed " + attacker.getName() + "'s " + ability + " §7hit.");
-                    attacker.getPlayer().sendMessage("§a\u00BB§7 Your " + ability + " was absorbed by " + name + "§7.");
-                }
+                health += min;
             }
-            arcaneShieldHealth += damageHealValue;
-
-            Bukkit.broadcastMessage("" + arcaneShieldHealth);
         } else {
-            damageHealValue *= totalReduction;
-            System.out.println(attacker.getName() + " hit " + name + " for " + damageHealValue);
-            //Prevent overheal
-            if (this.health + damageHealValue > this.maxHealth) {
-                damageHealValue = this.maxHealth - this.health;
-                this.health = maxHealth;
-            } else {
-                this.health += Math.round(damageHealValue);
-            }
-            //Self heal
-            if (this == attacker) {
-                damageHealValue = Math.round(damageHealValue);
-                if (isCrit) {
-                    player.sendMessage("§a\u00AB§7 Your " + ability + " critically healed you for §a§l" + (int) damageHealValue + "! §7health.");
-                } else {
-                    player.sendMessage("§a\u00AB§7 Your " + ability + " healed for §a" + (int) damageHealValue + " §7health.");
 
+            if (attacker.getInferno() != 0) {
+                critChance += attacker.getSpec().getOrange().getCritChance();
+                critMultiplier += attacker.getSpec().getOrange().getCritMultiplier();
+            }
+            //crit
+            float damageHealValue = (int) ((Math.random() * (max - min)) + min);
+            int crit = (int) ((Math.random() * (100)));
+            boolean isCrit = false;
+            if (crit <= critChance) {
+                isCrit = true;
+                damageHealValue *= critMultiplier / 100f;
+            }
+            //TODO check if totaldmgreduc works
+            //reduction begining with base resistance
+            float totalReduction = 1;
+            if (min < 0) {
+                totalReduction = 1 - spec.getDamageResistance() / 100f;
+                if (attacker.getBerserk() != 0) {
+                    totalReduction += 1.25;
                 }
+                if (berserk != 0) {
+                    totalReduction += 1.1;
+                }
+                if (iceBarrier != 0) {
+                    totalReduction -= .5;
+                }
+                if (chainLightningCooldown != 0) {
+                    totalReduction -= 1 - chainLightning * .1;
+                }
+                if (spiritLink != 0) {
+                    totalReduction -= .2;
+                }
+            }
+            if (intervene != 0) {
+                //TODO check teammate heal
+                damageHealValue *= totalReduction;
+                damageHealValue *= .5;
+                if (isCrit) {
+                    intervenedBy.getPlayer().sendMessage("§c\u00AB§7 " + attacker.getName() + "'s Intervene hit you for §c§l" + (int) damageHealValue * -1 + "! §7critical damage.");
+                    attacker.getPlayer().sendMessage("§a\u00BB§7 Your Intervene hit " + intervenedBy.getName() + " for §c§l" + (int) damageHealValue * -1 + "! §7critical damage.");
+                } else {
+                    intervenedBy.getPlayer().sendMessage("§c\u00AB§7 " + attacker.getName() + "'s Intervene hit you for §c" + (int) damageHealValue * -1 + "§7 damage.");
+                    attacker.getPlayer().sendMessage("§a\u00BB§7 Your Intervene hit " + intervenedBy.getName() + " for §c" + (int) damageHealValue * -1 + "§7 damage.");
+                }
+                intervenedBy.setHealth((int) (intervenedBy.getHealth() + damageHealValue));
+                interveneDamage += damageHealValue;
+            } else if (arcaneShield != 0) {
+                damageHealValue *= totalReduction;
+                //TODO check teammate heal
+                if (arcaneShieldHealth + damageHealValue < 0) {
+                    Bukkit.broadcastMessage("" + arcaneShieldHealth);
+                    Bukkit.broadcastMessage("" + damageHealValue);
+                    Bukkit.broadcastMessage("" + (arcaneShieldHealth + damageHealValue));
+
+                    arcaneShield = 0;
+                    addHealth(attacker, ability, (int) (arcaneShieldHealth + damageHealValue), (int) (arcaneShieldHealth + damageHealValue), isCrit ? 100 : -1, 100);
+                } else {
+                    if (ability.isEmpty()) {
+                        player.sendMessage("§c\u00AB§7 You absorbed " + attacker.getName() + "'s melee §7hit.");
+                        attacker.getPlayer().sendMessage("§a\u00BB§7 Your melee hit was absorbed by " + name);
+                    } else {
+                        player.sendMessage("§c\u00AB§7 You absorbed " + attacker.getName() + "'s " + ability + " §7hit.");
+                        attacker.getPlayer().sendMessage("§a\u00BB§7 Your " + ability + " was absorbed by " + name + "§7.");
+                    }
+                }
+                arcaneShieldHealth += damageHealValue;
+
+                Bukkit.broadcastMessage("" + arcaneShieldHealth);
             } else {
-                //DAMAGE
-                if (damageHealValue < 0) {
-                    regenTimer = 10;
-                    float tempDamageHealValue = Math.abs(damageHealValue);
-                    if (lastStand != 0) {
-                        if (spec.getOrange().getName().equals("Last Stand")) {
-                            tempDamageHealValue *= .5;
-                        } else {
-                            tempDamageHealValue *= .4;
-                            //TODO multiple last stands? lastest person that last stands will over ride other dude
-                            if (lastStandedBy.getLastStand() != 0) {
-                                if (isCrit)
-                                    lastStandedBy.addHealth(lastStandedBy, "Last Stand", (int) (tempDamageHealValue), (int) (tempDamageHealValue), 100, 100);
-                                else
-                                    lastStandedBy.addHealth(lastStandedBy, "Last Stand", (int) (tempDamageHealValue), (int) (tempDamageHealValue), -1, 100);
+                damageHealValue *= totalReduction;
+                System.out.println(attacker.getName() + " hit " + name + " for " + damageHealValue);
+                boolean debt = false;
+
+                //Self heal
+                if (this == attacker) {
+                    damageHealValue = Math.round(damageHealValue);
+                    if (isCrit) {
+                        player.sendMessage("§a\u00AB§7 Your " + ability + " critically healed you for §a§l" + (int) damageHealValue + "! §7health.");
+                    } else {
+                        player.sendMessage("§a\u00AB§7 Your " + ability + " healed for §a" + (int) damageHealValue + " §7health.");
+
+                    }
+                } else {
+                    //DAMAGE
+                    if (damageHealValue < 0) {
+                        regenTimer = 10;
+                        if (spec.getOrange() instanceof Totem.TotemSpiritguard) {
+                            for (int i = 0; i < Warlords.totems.size(); i++) {
+                                Totem totem = Warlords.totems.get(i);
+                                if (totem.getOwner() == this) {
+                                    if (totem.getSecondsLeft() != 0) {
+                                        debt = true;
+                                        ((Totem.TotemSpiritguard) totem.getOwner().getSpec().getOrange()).setDelayedDamage((int) (((Totem.TotemSpiritguard) totem.getOwner().getSpec().getOrange()).getDelayedDamage() + damageHealValue));
+                                    }
+                                    intervene = 0;
+                                }
                             }
                         }
-                    }
-                    if (attacker.getCrippled() != 0) {
-                        tempDamageHealValue *= .875;
-                    }
-                    if (isCrit) {
-                        if (ability.isEmpty()) {
-                            player.sendMessage("§c\u00AB§7 " + attacker.getName() + " hit you for §c§l" + (int) tempDamageHealValue + "! §7critical melee damage.");
-                            attacker.getPlayer().sendMessage("§a\u00BB§7 " + "You hit " + name + " for §c§l" + (int) tempDamageHealValue + "! §7critical melee damage.");
-                        } else {
-                            player.sendMessage("§c\u00AB§7 " + attacker.getName() + "'s " + ability + " hit you for §c§l" + (int) tempDamageHealValue + "! §7critical damage.");
-                            attacker.getPlayer().sendMessage("§a\u00BB§7 " + "Your " + ability + " hit " + name + " for §c§l" + (int) tempDamageHealValue + "! §7critical damage.");
-                        }
-                    } else {
-                        if (ability.isEmpty()) {
-                            player.sendMessage("§c\u00AB§7 " + attacker.getName() + " hit you for §c" + (int) tempDamageHealValue + " §7damage.");
-                            attacker.getPlayer().sendMessage("§a\u00BB§7 " + "You hit " + name + " for §c" + (int) tempDamageHealValue + " §7damage.");
-                        } else {
-                            player.sendMessage("§c\u00AB§7 " + attacker.getName() + "'s " + ability + " hit you for §c" + (int) tempDamageHealValue + " §7damage.");
-                            attacker.getPlayer().sendMessage("§a\u00BB§7 " + "Your " + ability + " hit " + name + " for §c" + (int) tempDamageHealValue + " §7damage.");
-                        }
-                    }
-                    //REPENTANCE
-                    if (spec.getBlue().getName().equals("Repentance")) {
-                        repentanceCounter += tempDamageHealValue;
-                    }
-                    if (attacker.getSpec().getBlue().getName().equals("Repentance")) {
-                        if (attacker.getRepentance() != 0) {
-                            int healthToAdd = (int) (attacker.getRepentanceCounter() * .1) + 11;
-                            attacker.addHealth(attacker, "Repentance", healthToAdd, healthToAdd, -1, 100);
-                            attacker.setRepentanceCounter((int) (attacker.getRepentanceCounter() * .5));
-                            attacker.addEnergy(attacker, "Repentance", (int) (healthToAdd * .035));
-                        }
-                    }
 
-                    //ORBS
-                    if (attacker.getOrbOfLife() != 0 && !ability.isEmpty()) {
-                        Location location = player.getLocation();
-                        OrbsOfLife.Orb orb = new OrbsOfLife.Orb(((CraftWorld) player.getWorld()).getHandle(), location);
-                        //TODO Add team whitelist
-                        ArmorStand orbStand = (ArmorStand) location.getWorld().spawnEntity(location.add(Math.random() * 3 - 1.5, 0, Math.random() * 3 - 1.5), EntityType.ARMOR_STAND);
-                        orbStand.setVisible(false);
-                        //WOW need to set passenger to orb or else the orb will move   like ???
-                        orbStand.setPassenger(orb.spawn(location).getBukkitEntity());
-                        orb.setArmorStand(orbStand);
-                        Warlords.getOrbs().add(orb);
+                        if (lastStand != 0) {
+                            if (spec.getOrange().getName().equals("Last Stand")) {
+                                damageHealValue *= .5;
+                            } else {
+                                damageHealValue *= .4;
+                                //TODO multiple last stands? lastest person that last stands will over ride other dude
+                                if (lastStandedBy.getLastStand() != 0) {
+                                    if (isCrit)
+                                        lastStandedBy.addHealth(lastStandedBy, "Last Stand", (int) (damageHealValue * -1), (int) (damageHealValue * -1), 100, 100);
+                                    else
+                                        lastStandedBy.addHealth(lastStandedBy, "Last Stand", (int) (damageHealValue * 1), (int) (damageHealValue * -1), -1, 100);
+                                }
+                            }
+                        }
+                        if (attacker.getCrippled() != 0) {
+                            damageHealValue *= .875;
+                        }
+                        if (isCrit) {
+                            if (ability.isEmpty()) {
+                                player.sendMessage("§c\u00AB§7 " + attacker.getName() + " hit you for §c§l" + (int) damageHealValue * -1 + "! §7critical melee damage.");
+                                attacker.getPlayer().sendMessage("§a\u00BB§7 " + "You hit " + name + " for §c§l" + (int) damageHealValue * -1 + "! §7critical melee damage.");
+                            } else {
+                                player.sendMessage("§c\u00AB§7 " + attacker.getName() + "'s " + ability + " hit you for §c§l" + (int) damageHealValue * -1 + "! §7critical damage.");
+                                attacker.getPlayer().sendMessage("§a\u00BB§7 " + "Your " + ability + " hit " + name + " for §c§l" + (int) damageHealValue * -1 + "! §7critical damage.");
+                            }
+                        } else {
+                            if (ability.isEmpty()) {
+                                player.sendMessage("§c\u00AB§7 " + attacker.getName() + " hit you for §c" + (int) damageHealValue * -1 + " §7damage.");
+                                attacker.getPlayer().sendMessage("§a\u00BB§7 " + "You hit " + name + " for §c" + (int) damageHealValue * -1 + " §7damage.");
+                            } else {
+                                player.sendMessage("§c\u00AB§7 " + attacker.getName() + "'s " + ability + " hit you for §c" + (int) damageHealValue * -1 + " §7damage.");
+                                attacker.getPlayer().sendMessage("§a\u00BB§7 " + "Your " + ability + " hit " + name + " for §c" + (int) damageHealValue * -1 + " §7damage.");
+                            }
+                        }
+                        //REPENTANCE
+                        if (spec.getBlue().getName().equals("Repentance")) {
+                            repentanceCounter += damageHealValue * -1;
+                        }
+                        if (attacker.getSpec().getBlue().getName().equals("Repentance")) {
+                            if (attacker.getRepentance() != 0) {
+                                int healthToAdd = (int) (attacker.getRepentanceCounter() * .1) + 11;
+                                attacker.addHealth(attacker, "Repentance", healthToAdd, healthToAdd, -1, 100);
+                                attacker.setRepentanceCounter((int) (attacker.getRepentanceCounter() * .5));
+                                attacker.addEnergy(attacker, "Repentance", (int) (healthToAdd * .035));
+                            }
+                        }
+
+                        //ORBS
+                        if (attacker.getOrbOfLife() != 0 && !ability.isEmpty()) {
+                            Location location = player.getLocation();
+                            OrbsOfLife.Orb orb = new OrbsOfLife.Orb(((CraftWorld) player.getWorld()).getHandle(), location);
+                            //TODO Add team whitelist
+                            ArmorStand orbStand = (ArmorStand) location.getWorld().spawnEntity(location.add(Math.random() * 3 - 1.5, 0, Math.random() * 3 - 1.5), EntityType.ARMOR_STAND);
+                            orbStand.setVisible(false);
+                            //WOW need to set passenger to orb or else the orb will move   like ???
+                            orbStand.setPassenger(orb.spawn(location).getBukkitEntity());
+                            orb.setArmorStand(orbStand);
+                            Warlords.getOrbs().add(orb);
+                        }
+                    }
+                    //HEALING
+                    else {
+                        if (berserkerWounded != 0) {
+                            damageHealValue *= .65;
+                        } else if (defenderWounded != 0) {
+                            damageHealValue *= .75;
+                        }
+                        if (isCrit) {
+                            player.sendMessage("§a\u00AB§7 " + attacker.getName() + "'s " + ability + " critically healed you for §a§l" + (int) damageHealValue + "! §7health.");
+                            attacker.getPlayer().sendMessage("§a\u00BB§7 " + "Your " + ability + " critically healed " + name + " for §a§l" + (int) damageHealValue + "! §7health.");
+                        } else {
+                            player.sendMessage("§a\u00AB§7 " + attacker.getName() + "'s " + ability + " healed for §a" + (int) damageHealValue + " §7health.");
+                            attacker.getPlayer().sendMessage("§a\u00BB§7 " + "Your " + ability + " healed " + name + " for §a" + (int) damageHealValue + " §7health.");
+
+                        }
                     }
                 }
-                //HEALING
-                else {
-                    if (berserkerWounded != 0) {
-                        damageHealValue *= .65;
-                    } else if (defenderWounded != 0) {
-                        damageHealValue *= .75;
-                    }
-                    if (isCrit) {
-                        player.sendMessage("§a\u00AB§7 " + attacker.getName() + "'s " + ability + " critically healed you for §a§l" + (int) damageHealValue + "! §7health.");
-                        attacker.getPlayer().sendMessage("§a\u00BB§7 " + "Your " + ability + " critically healed " + name + " for §a§l" + (int) damageHealValue + "! §7health.");
+                //Prevent overheal
+                if (!(debt && damageHealValue < 0)) {
+                    if (this.health + damageHealValue > this.maxHealth) {
+                        damageHealValue = this.maxHealth - this.health;
+                        this.health = maxHealth;
                     } else {
-                        player.sendMessage("§a\u00AB§7 " + attacker.getName() + "'s " + ability + " healed for §a" + (int) damageHealValue + " §7health.");
-                        attacker.getPlayer().sendMessage("§a\u00BB§7 " + "Your " + ability + " healed " + name + " for §a" + (int) damageHealValue + " §7health.");
-
+                        this.health += Math.round(damageHealValue);
                     }
                 }
             }
-        }
-        if (attacker.getBloodLust() != 0 && damageHealValue < 0) {
-            attacker.addHealth(attacker, "Blood Lust", Math.round(damageHealValue * -.65f), Math.round(damageHealValue * -.65f), 0, 0);
-        }
-        //TODO make inital windfury hit proc
-        if (ability.equals("")) {
-            if (attacker.getWindfury() != 0) {
-                int windfuryActivate = (int) (Math.random() * 100);
-                if (windfuryActivate < 35) {
-                    addHealth(attacker, "Windfury Weapon", min, max, 25, 235);
-                    addHealth(attacker, "Windfury Weapon", min, max, 25, 235);
-                }
-            } else if (attacker.getEarthliving() != 0) {
-                //TODO heal attackers teamamtes
-                List<Entity> near = attacker.getPlayer().getNearbyEntities(3.0D, 3.0D, 3.0D);
-                near.remove(attacker.getPlayer());
-                int counter = 0;
-                for (Entity entity : near) {
-                    if (entity instanceof Player) {
-                        int earthlivingActivate = (int) (Math.random() * 100);
-                        if (earthlivingActivate < 40) {
-                            Warlords.getPlayer((Player) near.get(0)).addHealth(attacker, "Earthliving Weapon", min * -1, max * -1, 25, 440);
-                            counter++;
-                        }
+            if (attacker.getBloodLust() != 0 && damageHealValue < 0) {
+                attacker.addHealth(attacker, "Blood Lust", Math.round(damageHealValue * -.65f), Math.round(damageHealValue * -.65f), 0, 0);
+            }
+            //TODO make inital windfury hit proc
+            if (ability.equals("")) {
+                if (attacker.getWindfury() != 0) {
+                    int windfuryActivate = (int) (Math.random() * 100);
+                    if (windfuryActivate < 35) {
+                        addHealth(attacker, "Windfury Weapon", min, max, 25, 235);
+                        addHealth(attacker, "Windfury Weapon", min, max, 25, 235);
                     }
-                    if (counter == 2)
-                        break;
+                } else if (attacker.getEarthliving() != 0) {
+                    //TODO heal attackers teamamtes
+                    List<Entity> near = attacker.getPlayer().getNearbyEntities(3.0D, 3.0D, 3.0D);
+                    near.remove(attacker.getPlayer());
+                    int counter = 0;
+                    for (Entity entity : near) {
+                        if (entity instanceof Player) {
+                            int earthlivingActivate = (int) (Math.random() * 100);
+                            if (earthlivingActivate < 40) {
+                                Warlords.getPlayer((Player) near.get(0)).addHealth(attacker, "Earthliving Weapon", min * -1, max * -1, 25, 440);
+                                counter++;
+                            }
+                        }
+                        if (counter == 2)
+                            break;
+                    }
+                } else if (attacker.getSoulBindCooldown() != 0) {
+                    attacker.getPlayer().sendMessage("§a\u00BB§7 " + "BOUNDED " + player.getName());
+                    attacker.getSoulBindedPlayers().add(new Soulbinding.SoulBoundPlayer(this, 2));
                 }
-            } else if (attacker.getSoulBindCooldown() != 0) {
-                attacker.getPlayer().sendMessage("§a\u00BB§7 " + "BOUNDED " + player.getName());
-                attacker.getSoulBindedPlayers().add(new Soulbinding.SoulBoundPlayer(this, 2));
             }
         }
-
     }
 
     public void respawn() {

@@ -16,7 +16,7 @@ public class Revenant extends AbstractWarrior {
                         "§7damage for the duration of the effect."),
 
                 new RecklessCharge(),
-                new GroundSlam("Ground Slam", 326, 441, 7, 30, 35, 200,
+                new GroundSlam("Ground Slam", -326, -441, 7, 30, 35, 200,
                         "§7Slam the ground, creating a shockwave\n" +
                                 "§7around you that deals §c%dynamic.value% §7- §c%dynamic.value%\n" +
                                 "§7damage and knocks enemies back slightly.", player),

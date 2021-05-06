@@ -5,9 +5,7 @@ import com.ebicep.warlords.classes.AbstractAbility;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
@@ -25,18 +23,50 @@ public class Boulder extends AbstractAbility {
     @Override
     public void onActivate(Player player) {
         Location location = player.getLocation();
-        ArmorStand stand = (ArmorStand) location.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
+
+        Snowball snowball = player.launchProjectile(Snowball.class);
+        snowball.setVelocity(player.getLocation().getDirection().multiply(1.5));
+        ArmorStand stand = (ArmorStand) location.getWorld().spawnEntity(location.clone().add(0, 2, 0), EntityType.ARMOR_STAND);
         stand.setHelmet(new ItemStack(Material.LONG_GRASS, 1, (short) 2));
         stand.setCustomName("Boulder");
         stand.setCustomNameVisible(false);
-        stand.setGravity(true);
-        stand.setVisible(true);
-        //stand.setHeadPose(new EulerAngle());
-        stand.setVelocity(location.getDirection().multiply(2.5));
+        stand.setGravity(false);
+        stand.setVisible(false);
+        //stand.setVelocity(location.getDirection().multiply(2.5));
+
+        SnowballBoulder snowballBoulder = new SnowballBoulder(snowball, stand);
+        Warlords.getSnowballBoulders().add(snowballBoulder);
+
         Warlords.getPlayer(player).subtractEnergy(energyCost);
 
         for (Player player1 : Bukkit.getOnlinePlayers()) {
             player1.playSound(player.getLocation(), "shaman.boulder.activation", 1, 1);
+        }
+    }
+
+    public class SnowballBoulder {
+        private Snowball snowball;
+        private ArmorStand boulder;
+
+        public SnowballBoulder(Snowball snowball, ArmorStand boulder) {
+            this.snowball = snowball;
+            this.boulder = boulder;
+        }
+
+        public Snowball getSnowball() {
+            return snowball;
+        }
+
+        public void setSnowball(Snowball snowball) {
+            this.snowball = snowball;
+        }
+
+        public ArmorStand getBoulder() {
+            return boulder;
+        }
+
+        public void setBoulder(ArmorStand boulder) {
+            this.boulder = boulder;
         }
     }
 }

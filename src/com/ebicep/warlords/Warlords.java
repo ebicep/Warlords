@@ -103,6 +103,12 @@ public class Warlords extends JavaPlugin {
         return chains;
     }
 
+    public static List<Boulder.SnowballBoulder> snowballBoulders = new ArrayList<>();
+
+    public static List<Boulder.SnowballBoulder> getSnowballBoulders() {
+        return snowballBoulders;
+    }
+
     private static HashMap<Player, WarlordsPlayer> players = new HashMap<>();
 
     public static void addPlayer(WarlordsPlayer warlordsPlayer) {
@@ -528,6 +534,16 @@ public class Warlords extends JavaPlugin {
 
                     //BOULDERS
                     //TODO remake boulder into a seperate class for better performance
+                    for (int i = 0; i < snowballBoulders.size(); i++) {
+                        Boulder.SnowballBoulder snowballBoulder = snowballBoulders.get(i);
+                        snowballBoulder.getBoulder().teleport(snowballBoulder.getSnowball().getLocation().clone().add(0, 2, 0));
+                        if (snowballBoulder.getSnowball().getVelocity().getY() < 0) {
+                            snowballBoulder.getBoulder().setHeadPose(new EulerAngle(snowballBoulder.getSnowball().getVelocity().getY() / 2 * -1, 0, 0));
+                        } else {
+                            snowballBoulder.getBoulder().setHeadPose(new EulerAngle(snowballBoulder.getSnowball().getVelocity().getY() * -1, 0, 0));
+                        }
+                    }
+
                     for (ArmorStand e : world.getEntitiesByClass(ArmorStand.class)) {
                         if (e.getCustomName() != null && e.getCustomName().contains("Boulder")) {
                             Vector velocity = e.getVelocity();
@@ -535,30 +551,31 @@ public class Warlords extends JavaPlugin {
                             double xVel = velocity.getX();
                             double yVel = velocity.getY();
                             double zVel = velocity.getZ();
-                            Bukkit.broadcastMessage("" + location.getDirection());
+                            //Bukkit.broadcastMessage("" + velocity);
 
                             if (yVel < 0) {
                                 e.setHeadPose(new EulerAngle(e.getVelocity().getY() / 2 * -1, 0, 0));
                             } else {
                                 e.setHeadPose(new EulerAngle(e.getVelocity().getY() * -1, 0, 0));
                             }
-                            if (yVel < 0 && Math.round(Math.abs(xVel) + Math.abs(zVel)) == 0 && location.getY() < location.getWorld().getHighestBlockYAt(location) + 5) {
+                            if (yVel < 0 && Math.round(Math.abs(xVel) + Math.abs(zVel)) == 0) {
                                 e.remove();
+
+
                                 //TODO spawn boulder impact
                             }
 
                             //TODO fix boulder velocity stopping
-//                         if (Math.abs(xVel) < .2 && Math.abs(zVel) < .2) {
-//                             if(!e.getCustomName().contains("2")) {
-//                                 e.setVelocity(new Vector(xVel * 1.5,yVel,zVel/2));
-//                                 e.setCustomName(e.getCustomName() + "2");
-//                             }
-//                             if(!e.getCustomName().contains("3")) {
-//                                 e.setVelocity(new Vector(zVel/2,yVel,zVel * 1.5));
-//                                 e.setCustomName(e.getCustomName() + "3");
-//                             }
-//                         }
-
+//                            if (Math.abs(xVel) + Math.abs(zVel) <= .25) {
+//                                if (!e.getCustomName().contains("2")) {
+//                                    Bukkit.broadcastMessage("HEHEXD");
+//                                    Location newLocation = e.getLocation().clone();
+//                                    newLocation.setPitch(newLocation.getPitch() * -1);
+//                                    System.out.println(location.getPitch());
+//                                    e.setVelocity(newLocation.getDirection().multiply(.5));
+//                                    e.setCustomName(e.getCustomName() + "2");
+//                                }
+//                            }
                         }
                     }
 
@@ -774,12 +791,17 @@ public class Warlords extends JavaPlugin {
                                     if (entity instanceof Player) {
                                         Player nearPlayer = (Player) entity;
                                         if (nearPlayer.getGameMode() != GameMode.SPECTATOR) {
-                                            getPlayer(nearPlayer).addHealth(totem.getOwner(), "Healing Totem", totem.getOwner().getSpec().getOrange().getMinDamageHeal(), (int) (totem.getOwner().getSpec().getOrange().getMinDamageHeal() * 1.35), totem.getOwner().getSpec().getOrange().getCritChance(), totem.getOwner().getSpec().getOrange().getCritMultiplier());
+                                            getPlayer(nearPlayer).addHealth(totem.getOwner(), totem.getOwner().getSpec().getOrange().getName(), totem.getOwner().getSpec().getOrange().getMinDamageHeal(), (int) (totem.getOwner().getSpec().getOrange().getMinDamageHeal() * 1.35), totem.getOwner().getSpec().getOrange().getCritChance(), totem.getOwner().getSpec().getOrange().getCritMultiplier());
                                         }
                                     }
                                 }
                             }
                             totem.setSecondsLeft(totem.getSecondsLeft() - 1);
+                            if (totem.getOwner().getSpec().getOrange().getName().contains("Death")) {
+                                if (totem.getSecondsLeft() == 0) {
+                                    ((Totem.TotemSpiritguard) totem.getOwner().getSpec().getOrange()).setDebt(6);
+                                }
+                            }
                         } else {
                             if (totem.getOwner().getSpec().getOrange().getName().contains("Healing")) {
                                 List<Entity> near = totem.getTotemArmorStand().getNearbyEntities(4.0D, 4.0D, 4.0D);
@@ -787,14 +809,63 @@ public class Warlords extends JavaPlugin {
                                     if (entity instanceof Player) {
                                         Player nearPlayer = (Player) entity;
                                         if (nearPlayer.getGameMode() != GameMode.SPECTATOR) {
-                                            getPlayer(nearPlayer).addHealth(totem.getOwner(), "Healing Totem", totem.getOwner().getSpec().getOrange().getMaxDamageHeal(), (int) (totem.getOwner().getSpec().getOrange().getMaxDamageHeal() * 1.35), totem.getOwner().getSpec().getOrange().getCritChance(), totem.getOwner().getSpec().getOrange().getCritMultiplier());
+                                            getPlayer(nearPlayer).addHealth(totem.getOwner(), totem.getOwner().getSpec().getOrange().getName(), totem.getOwner().getSpec().getOrange().getMaxDamageHeal(), (int) (totem.getOwner().getSpec().getOrange().getMaxDamageHeal() * 1.35), totem.getOwner().getSpec().getOrange().getCritChance(), totem.getOwner().getSpec().getOrange().getCritMultiplier());
                                         }
                                     }
                                 }
+                                totem.getTotemArmorStand().remove();
+                                totems.remove(i);
+                                i--;
+                            } else if (totem.getOwner().getSpec().getOrange().getName().contains("Capacitor")) {
+                                totem.getTotemArmorStand().remove();
+                                totems.remove(i);
+                                i--;
+                            } else if (totem.getOwner().getSpec().getOrange().getName().contains("Death")) {
+                                //TODO check teammates for ALL THIS
+                                Totem.TotemSpiritguard totemSpiritguard = ((Totem.TotemSpiritguard) totem.getOwner().getSpec().getOrange());
+                                if (totemSpiritguard.getDebt() != 0) {
+                                    Bukkit.broadcastMessage("" + totemSpiritguard.getDelayedDamage());
+                                    //100% of damage over 6 seconds
+                                    int damage = (int) (totemSpiritguard.getDelayedDamage() * .1667);
+                                    System.out.println(damage);
+                                    //player damage
+                                    totem.getOwner().addHealth(totem.getOwner(), "",
+                                            damage,
+                                            damage,
+                                            totem.getOwner().getSpec().getOrange().getCritChance(), totem.getOwner().getSpec().getOrange().getCritMultiplier());
+                                    //teammate heal
+                                    List<Entity> near = totem.getTotemArmorStand().getNearbyEntities(6.0D, 4.0D, 6.0D);
+                                    for (Entity entity : near) {
+                                        if (entity instanceof Player) {
+                                            Player nearPlayer = (Player) entity;
+                                            if (nearPlayer.getGameMode() != GameMode.SPECTATOR) {
+                                                getPlayer(nearPlayer).addHealth(totem.getOwner(), totem.getOwner().getSpec().getOrange().getName(),
+                                                        (int) (damage * -.15),
+                                                        (int) (damage * -.15),
+                                                        totem.getOwner().getSpec().getOrange().getCritChance(), totem.getOwner().getSpec().getOrange().getCritMultiplier());
+                                            }
+                                        }
+                                    }
+
+                                    totemSpiritguard.setDebt(totemSpiritguard.getDebt() - 1);
+                                } else {
+                                    List<Entity> near = totem.getTotemArmorStand().getNearbyEntities(6.0D, 4.0D, 6.0D);
+                                    for (Entity entity : near) {
+                                        if (entity instanceof Player) {
+                                            Player nearPlayer = (Player) entity;
+                                            if (nearPlayer.getGameMode() != GameMode.SPECTATOR) {
+                                                getPlayer(nearPlayer).addHealth(totem.getOwner(), totem.getOwner().getSpec().getOrange().getName(),
+                                                        (int) (totemSpiritguard.getDelayedDamage() * -.15),
+                                                        (int) (totemSpiritguard.getDelayedDamage() * -.15),
+                                                        totem.getOwner().getSpec().getOrange().getCritChance(), totem.getOwner().getSpec().getOrange().getCritMultiplier());
+                                            }
+                                        }
+                                    }
+                                    totem.getTotemArmorStand().remove();
+                                    totems.remove(i);
+                                    i--;
+                                }
                             }
-                            totem.getTotemArmorStand().remove();
-                            totems.remove(i);
-                            i--;
                         }
                     }
 

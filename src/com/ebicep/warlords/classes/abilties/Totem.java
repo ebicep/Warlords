@@ -87,16 +87,18 @@ public class Totem extends EntityArmorStand {
     }
 
     public static class TotemSpiritguard extends AbstractAbility {
+        private int delayedDamage = 0;
+        private int debt = 0;
 
         public TotemSpiritguard() {
             super("Death's Debt", 0, 0, 60 + 12, 20, -1, 100,
                     "'§2Spirits’ Respite§7: Place down a totem that'\n" +
-                    "§7delays §c100% §7of incoming damage towards\n" +
-                    "§7yourself. Transforms into §dDeath’s Debt §7after\n" +
-                    "§64 §7- §68 §7seconds (increases with higher health),\n" +
-                    "§7or when you exit its §e12 §7block radius.\n" +
-                    "''\n" +
-                    "'§dDeath’s Debt§7: Take §c100% §7of the damage delayed'\n" +
+                            "§7delays §c100% §7of incoming damage towards\n" +
+                            "§7yourself. Transforms into §dDeath’s Debt §7after\n" +
+                            "§64 §7- §68 §7seconds (increases with higher health),\n" +
+                            "§7or when you exit its §e12 §7block radius.\n" +
+                            "''\n" +
+                            "'§dDeath’s Debt§7: Take §c100% §7of the damage delayed'\n" +
                     "§7by §2Spirit's Respite §7over §66 §7seconds. The totem\n" +
                     "§7will heal nearby allies for §a15% §7of all damage\n" +
                     "§7that you take. If you survive, deal §c15% §7of the\n" +
@@ -109,15 +111,30 @@ public class Totem extends EntityArmorStand {
 
             Location standLocation = player.getLocation();
             standLocation.setYaw(0);
-            standLocation.setY(standLocation.getWorld().getHighestBlockYAt(standLocation) - 1);
+            standLocation.setY(standLocation.getWorld().getHighestBlockYAt(standLocation) - 1.25);
             ArmorStand totemStand = player.getWorld().spawn(standLocation, ArmorStand.class);
             totemStand.setVisible(false);
             totemStand.setGravity(false);
             totemStand.setHelmet(new ItemStack(Material.JUNGLE_FENCE_GATE));
 
-            //TODO find time based on health 6 + (something)
-            Totem deathsDebtTotem = new Totem(((CraftWorld) player.getWorld()).getHandle(), warlordsPlayer, totemStand, -1);
+            Totem deathsDebtTotem = new Totem(((CraftWorld) player.getWorld()).getHandle(), warlordsPlayer, totemStand, 4 + (4 * (int) Math.round((double) warlordsPlayer.getHealth() / warlordsPlayer.getMaxHealth())));
             Warlords.totems.add(deathsDebtTotem);
+        }
+
+        public int getDelayedDamage() {
+            return delayedDamage;
+        }
+
+        public void setDelayedDamage(int delayedDamage) {
+            this.delayedDamage = delayedDamage;
+        }
+
+        public int getDebt() {
+            return debt;
+        }
+
+        public void setDebt(int debt) {
+            this.debt = debt;
         }
     }
 
