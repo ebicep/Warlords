@@ -11,6 +11,7 @@ public class CustomFallingBlock {
     private double yLevel;
     private Player owner;
     private AbstractAbility ability;
+    private int ticksLived = 0;
 
     public CustomFallingBlock(FallingBlock customFallingBlock, double yLevel, Player owner, AbstractAbility ability) {
         this.customFallingBlock = customFallingBlock;
@@ -57,5 +58,13 @@ public class CustomFallingBlock {
 
     public void setAbility(AbstractAbility ability) {
         this.ability = ability;
+    }
+
+    public int getTicksLived() {
+        return ticksLived;
+    }
+
+    public void setTicksLived(int ticksLived) {
+        this.ticksLived = ticksLived;
     }
 }
