@@ -22,8 +22,7 @@ public class IceBarrier extends AbstractAbility {
     @Override
     public void onActivate(Player player) {
         WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
-        warlordsPlayer.setIceBarrier(6);
-        //TODO add slowness
+        warlordsPlayer.setIceBarrier(6 * 20 - 10);
 
         for (Player player1 : Bukkit.getOnlinePlayers()) {
             player1.playSound(player.getLocation(), "mage.icebarrier.activation", 1, 1);

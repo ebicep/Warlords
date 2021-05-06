@@ -35,17 +35,11 @@ public class Breath extends AbstractAbility {
                         //TODO fix kb
                         Vector toEntity = nearPlayer.getEyeLocation().toVector().subtract(eye.toVector());
                         nearPlayer.setVelocity(toEntity);
-
-                        for (Player player1 : Bukkit.getOnlinePlayers()) {
-                            player1.playSound(player.getLocation(), "mage.waterbreath.activation", 1, 1);
-                        }
-                    } else {
-                        //TODO add slowness if freezing
-                        //cryo stuff
-
-                        for (Player player1 : Bukkit.getOnlinePlayers()) {
-                            player1.playSound(player.getLocation(), "mage.freezingbreath.activation", 1, 1);
-                        }
+                        warlordsPlayer.subtractEnergy(energyCost);
+                    } else if (name.contains("Freezing")) {
+                        nearPlayer.setWalkSpeed(WarlordsPlayer.currentSpeed);
+                        warlordsPlayer.setBreathSlowness(4 * 20 - 10);
+                        warlordsPlayer.subtractEnergy(energyCost);
                     }
                 }
             }
@@ -53,6 +47,15 @@ public class Breath extends AbstractAbility {
         //TODO breath animation
         Warlords.getBreaths().add(this);
 
+        if (name.contains("Water")) {
+            for (Player player1 : Bukkit.getOnlinePlayers()) {
+                player1.playSound(player.getLocation(), "mage.waterbreath.activation", 1, 1);
+            }
+        } else if (name.contains("Freezing")) {
+            for (Player player1 : Bukkit.getOnlinePlayers()) {
+                player1.playSound(player.getLocation(), "mage.freezingbreath.activation", 1, 1);
+            }
+        }
 
     }
 }

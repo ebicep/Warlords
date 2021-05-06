@@ -20,7 +20,7 @@ public class Berserk extends AbstractAbility {
     @Override
     public void onActivate(Player player) {
         WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
-        warlordsPlayer.setBerserk(18);
+        warlordsPlayer.setBerserk(18 * 20 - 10);
         warlordsPlayer.subtractEnergy(energyCost);
 
         for (Player player1 : Bukkit.getOnlinePlayers()) {

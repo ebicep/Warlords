@@ -154,6 +154,89 @@ public class Warlords extends JavaPlugin {
                 //EVERY TWO TICKS
                 // 1 tick is a lot smoother, idk about performance impact
                 if (counter % 1 == 0) {
+
+                    // speed every 1 tick updated so it activates instantly
+                    // MOVEMENT
+                    for (Player player : world.getPlayers()) {
+                        WarlordsPlayer warlordsPlayer = getPlayer(player);
+                        player.sendMessage(String.valueOf(player.getWalkSpeed()));
+
+                        // light infusion
+                        if (warlordsPlayer.getInfusion() != 0) {
+                            player.setWalkSpeed(WarlordsPlayer.currentSpeed);
+                            warlordsPlayer.setInfusion((int) (warlordsPlayer.getInfusion() - 0.05));
+                        }
+
+                        // presence
+                        if (warlordsPlayer.getPresence() != 0) {
+                            if (warlordsPlayer.getInfusion() == 0)
+                                player.setWalkSpeed(WarlordsPlayer.currentSpeed);
+                            warlordsPlayer.setPresence((int) (warlordsPlayer.getPresence() - 0.05));
+                            List<Entity> near = player.getNearbyEntities(6.0D, 2.0D, 6.0D);
+//                            near.remove(player);
+                            for (Entity entity : near) {
+                                if (entity instanceof Player) {
+                                    Player nearPlayer = (Player) entity;
+                                    nearPlayer.setWalkSpeed(WarlordsPlayer.currentSpeed);
+                                }
+                            }
+                        }
+
+                        //freezingbreath
+                        if (warlordsPlayer.getBreathSlowness() != 0) {
+                            warlordsPlayer.setBreathSlowness((int) (warlordsPlayer.getBreathSlowness() - 0.05));
+                            List<Entity> near = player.getNearbyEntities(6.0D, 2.0D, 6.0D);
+//                            near1.remove(player);
+                            for (Entity entity : near) {
+                                if (entity instanceof Player) {
+                                    Player nearPlayer = (Player) entity;
+                                    nearPlayer.setWalkSpeed(WarlordsPlayer.currentSpeed);
+                                }
+                            }
+                        }
+
+                        // frostbolt
+                        if (warlordsPlayer.getFrostbolt() != 0) {
+                            warlordsPlayer.setFrostbolt((int) (warlordsPlayer.getFrostbolt() - 0.05));
+                            List<Entity> near = player.getNearbyEntities(6.0D, 2.0D, 6.0D);
+
+                            // TODO: fix shooting getting all players + shooter instead of just impact location bolt
+                            for (Entity entity : near) {
+                                if (entity instanceof Player) {
+                                    Player nearPlayer = (Player) entity;
+                                    nearPlayer.setWalkSpeed(WarlordsPlayer.currentSpeed);
+                                }
+                            }
+                        }
+
+                        // berserk
+                        if (warlordsPlayer.getBerserk() != 0) {
+                            //berserk same speed as presence 30%
+                            player.setWalkSpeed(WarlordsPlayer.currentSpeed);
+                            warlordsPlayer.setBerserk((int) (warlordsPlayer.getBerserk() - 0.05));
+                        }
+
+                        // spiritlink
+                        if (warlordsPlayer.getSpiritLink() != 0) {
+                            player.setWalkSpeed(WarlordsPlayer.currentSpeed);
+                            warlordsPlayer.setSpiritLink((int) (warlordsPlayer.getSpiritLink() - 0.05));
+                        }
+
+                        // ice barrier
+                        if (warlordsPlayer.getIceBarrier() != 0) {
+                            warlordsPlayer.setIceBarrier((int) (warlordsPlayer.getIceBarrier() - 0.05));
+                        }
+
+                        // ice barrier slowness duration
+                        if (warlordsPlayer.getIceBarrierSlowness() != 0) {
+                            player.setWalkSpeed(WarlordsPlayer.currentSpeed);
+                            warlordsPlayer.setIceBarrierSlowness((int) (warlordsPlayer.getIceBarrierSlowness() - 0.05));
+                        }
+                    }
+
+
+
+
                     for (int i = 0; i < customProjectiles.size(); i++) {
                         Projectile.CustomProjectile customProjectile = customProjectiles.get(i);
                         Location location = customProjectile.getCurrentLocation();
@@ -198,7 +281,6 @@ public class Warlords extends JavaPlugin {
                                                 );
                                             }
                                         }
-
                                         customProjectiles.remove(i);
                                         i--;
                                     }
@@ -240,7 +322,6 @@ public class Warlords extends JavaPlugin {
                                                 );
                                             }
                                         }
-
                                         customProjectiles.remove(i);
                                         i--;
                                     }
@@ -285,7 +366,6 @@ public class Warlords extends JavaPlugin {
                                                 );
                                             }
                                         }
-
                                         customProjectiles.remove(i);
                                         i--;
                                     }
@@ -627,31 +707,6 @@ public class Warlords extends JavaPlugin {
                         if (warlordsPlayer.getWrath() != 0) {
                             warlordsPlayer.setWrath(warlordsPlayer.getWrath() - 1);
                         }
-                        //MOVEMENT
-                        if (warlordsPlayer.getInfusion() != 0) {
-                            player.setWalkSpeed(WarlordsPlayer.infusionSpeed);
-                            warlordsPlayer.setInfusion(warlordsPlayer.getInfusion() - 1);
-                        }
-                        if (warlordsPlayer.getPresence() != 0) {
-                            if (warlordsPlayer.getInfusion() == 0)
-                                player.setWalkSpeed(WarlordsPlayer.presenceSpeed);
-                            warlordsPlayer.setPresence(warlordsPlayer.getPresence() - 1);
-                            List<Entity> near = player.getNearbyEntities(6.0D, 2.0D, 6.0D);
-                            near.remove(player);
-                            for (Entity entity : near) {
-                                if (entity instanceof Player) {
-                                    Warlords.getPlayer((Player) entity).setPresence(warlordsPlayer.getPresence());
-                                }
-                            }
-                        }
-                        if (warlordsPlayer.getBerserk() != 0) {
-                            //berserk same speed as presence 30%
-                            player.setWalkSpeed(WarlordsPlayer.presenceSpeed);
-                            warlordsPlayer.setBerserk(warlordsPlayer.getBerserk() - 1);
-                        }
-                        if (warlordsPlayer.getInfusion() == 0 && warlordsPlayer.getPresence() == 0 && warlordsPlayer.getBerserk() == 0) {
-                            player.setWalkSpeed(WarlordsPlayer.defaultSpeed);
-                        }
                         if (warlordsPlayer.getBloodLust() != 0) {
                             warlordsPlayer.setBloodLust(warlordsPlayer.getBloodLust() - 1);
                         }
@@ -731,15 +786,8 @@ public class Warlords extends JavaPlugin {
                                 ParticleEffect.CRIT.display(0.4F, 0.7F, 0.4F, 0.0001F, 1, player.getLocation(), 500);
                             }
                         }
-                        if (warlordsPlayer.getIceBarrier() != 0) {
-                            warlordsPlayer.setIceBarrier(warlordsPlayer.getIceBarrier() - 1);
-                        }
-
                         if (warlordsPlayer.getChainLightningCooldown() != 0) {
                             warlordsPlayer.setChainLightningCooldown(warlordsPlayer.getChainLightningCooldown() - 1);
-                        }
-                        if (warlordsPlayer.getSpiritLink() != 0) {
-                            warlordsPlayer.setSpiritLink(warlordsPlayer.getSpiritLink() - 1);
                         }
                         if (warlordsPlayer.getSoulBindCooldown() != 0) {
                             warlordsPlayer.setSoulBindCooldown(warlordsPlayer.getSoulBindCooldown() - 1);

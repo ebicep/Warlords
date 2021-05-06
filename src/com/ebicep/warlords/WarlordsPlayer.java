@@ -16,6 +16,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.Dye;
+import com.ebicep.warlords.util.CalculateSpeed;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,12 +32,17 @@ public class WarlordsPlayer {
     private int health;
     private int maxHealth;
     private int regenTimer;
+
     private int respawnTimer;
     private float energy;
     private float maxEnergy;
     public static final float defaultSpeed = (float) (.2825);
     public static final float infusionSpeed = (float) (.35);
     public static final float presenceSpeed = (float) (.325);
+    public static final float breathSlowness = (float) .183; // -35%
+
+    private static final CalculateSpeed speedyes = new CalculateSpeed(.3192f); // .2825f def speed. .3192f is def + 13%
+    public static float currentSpeed = speedyes.getCurrentSpeed();
 
     /*
     cryo 5.94
@@ -52,12 +58,14 @@ public class WarlordsPlayer {
     private int horseCooldown;
     private int hitCooldown;
 
-    private int infusion = 0;
+    private int infusionDuration = 0;
     private int wrath = 0;
-    private int presence = 0;
+    private int presenceDuration = 0;
+    private int breathSlownessDuration = 0;
+    private int frostboltDuration = 0;
 
     private int bloodLust = 0;
-    private int berserk = 0;
+    private int berserkDuration = 0;
     private int intervene = 0;
     private int interveneDamage = 0;
     private WarlordsPlayer intervened;
@@ -77,14 +85,15 @@ public class WarlordsPlayer {
     private int arcaneShield = 0;
     private int arcaneShieldHealth = 0;
     private int inferno = 0;
-    private int iceBarrier = 0;
+    private int iceBarrierDuration = 0;
+    private int iceBarrierSlownessDuration = 0;
 
     private int berserkerWounded = 0;
     private int defenderWounded = 0;
     private int crippled = 0;
     private int chainLightning = 0;
     private int chainLightningCooldown = 0;
-    private int spiritLink = 0;
+    private int spiritLinkDuration = 0;
     private List<Soulbinding.SoulBoundPlayer> soulBindedPlayers = new ArrayList<>();
     private int soulBindCooldown = 0;
 
@@ -106,7 +115,7 @@ public class WarlordsPlayer {
         this.respawnTimer = -1;
         this.energy = spec.getMaxEnergy();
         this.maxEnergy = spec.getMaxEnergy();
-        player.setWalkSpeed(defaultSpeed);
+        player.setWalkSpeed(currentSpeed);
         this.horseCooldown = 0;
         this.hitCooldown = 20;
         grayDye.setColor(DyeColor.GRAY);
@@ -356,16 +365,16 @@ public class WarlordsPlayer {
                 if (attacker.getBerserk() != 0) {
                     totalReduction += 1.25;
                 }
-                if (berserk != 0) {
+                if (berserkDuration != 0) {
                     totalReduction += 1.1;
                 }
-                if (iceBarrier != 0) {
+                if (iceBarrierDuration != 0) {
                     totalReduction -= .5;
                 }
                 if (chainLightningCooldown != 0) {
                     totalReduction -= 1 - chainLightning * .1;
                 }
-                if (spiritLink != 0) {
+                if (spiritLinkDuration != 0) {
                     totalReduction -= .2;
                 }
             }
@@ -632,11 +641,31 @@ public class WarlordsPlayer {
     }
 
     public int getInfusion() {
-        return infusion;
+        return infusionDuration;
     }
 
-    public void setInfusion(int infusion) {
-        this.infusion = infusion;
+    public void setInfusion(int infusionDuration) {
+        this.infusionDuration = infusionDuration;
+        speedyes.setCurrentSpeed(infusionDuration, .1276f, 3); // .113f 40% on def speed
+        currentSpeed = speedyes.getCurrentSpeed();
+    }
+
+    public void setBreathSlowness(int breathSlownessDuration) {
+        this.breathSlownessDuration = breathSlownessDuration;
+        speedyes.setCurrentSpeed(breathSlownessDuration, -.1117f, 4); // -.0988f -20% on def speed
+        currentSpeed = speedyes.getCurrentSpeed();
+    }
+    public int getBreathSlowness() {
+        return breathSlownessDuration;
+    }
+
+    public void setFrostbolt(int frostboltDuration) {
+        this.frostboltDuration = frostboltDuration;
+        speedyes.setCurrentSpeed(frostboltDuration, -.0638f, 2); // -.0565f -20% on def speed
+        currentSpeed = speedyes.getCurrentSpeed();
+    }
+    public int getFrostbolt() {
+        return frostboltDuration;
     }
 
     public int getWrath() {
@@ -648,11 +677,13 @@ public class WarlordsPlayer {
     }
 
     public int getPresence() {
-        return presence;
+        return presenceDuration;
     }
 
-    public void setPresence(int presence) {
-        this.presence = presence;
+    public void setPresence(int presenceDuration) {
+        this.presenceDuration = presenceDuration;
+        speedyes.setCurrentSpeed(presenceDuration, .0847f, 12); // .0847f 30% on def speed
+        currentSpeed = speedyes.getCurrentSpeed();
     }
 
     public int getBloodLust() {
@@ -664,11 +695,13 @@ public class WarlordsPlayer {
     }
 
     public int getBerserk() {
-        return berserk;
+        return berserkDuration;
     }
 
-    public void setBerserk(int berserk) {
-        this.berserk = berserk;
+    public void setBerserk(int berserkDuration) {
+        this.berserkDuration = berserkDuration;
+        speedyes.setCurrentSpeed(berserkDuration, .0957f, 18); // .0847f 30% on def speed
+        currentSpeed = speedyes.getCurrentSpeed();
     }
 
     public int getIntervene() {
@@ -832,11 +865,22 @@ public class WarlordsPlayer {
     }
 
     public int getIceBarrier() {
-        return iceBarrier;
+        return iceBarrierDuration;
     }
 
-    public void setIceBarrier(int iceBarrier) {
-        this.iceBarrier = iceBarrier;
+    public void setIceBarrier(int iceBarrierDuration) {
+        this.iceBarrierDuration = iceBarrierDuration;
+        speedyes.setCurrentSpeed(iceBarrierDuration, 0, 12);
+        currentSpeed = speedyes.getCurrentSpeed();
+    }
+    public int getIceBarrierSlowness() {
+        return iceBarrierSlownessDuration;
+    }
+
+    public void setIceBarrierSlowness(int iceBarrierSlownessDuration) {
+        this.iceBarrierSlownessDuration = iceBarrierSlownessDuration;
+        speedyes.setCurrentSpeed(iceBarrierSlownessDuration, -.0638f, 2); // -.0565f -20% on def speed
+        currentSpeed = speedyes.getCurrentSpeed();
     }
 
     public int getPowerUpDamage() {
@@ -888,11 +932,15 @@ public class WarlordsPlayer {
     }
 
     public int getSpiritLink() {
-        return spiritLink;
+        return spiritLinkDuration;
     }
 
-    public void setSpiritLink(int spiritLink) {
-        this.spiritLink = spiritLink;
+    public void setSpiritLink(int spiritLinkDuration) {
+        this.spiritLinkDuration = spiritLinkDuration;
+
+        // TODO: set buff to 1.5 sec duration
+        speedyes.setCurrentSpeed(spiritLinkDuration, .1276f, 2); // .113f 40% on def speed
+        currentSpeed = speedyes.getCurrentSpeed();
     }
 
     public List<Soulbinding.SoulBoundPlayer> getSoulBindedPlayers() {

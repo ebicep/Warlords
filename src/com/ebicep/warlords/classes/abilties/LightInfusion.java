@@ -16,8 +16,8 @@ public class LightInfusion extends AbstractAbility {
     @Override
     public void onActivate(Player player) {
         WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
-        player.setWalkSpeed(WarlordsPlayer.infusionSpeed);
-        warlordsPlayer.setInfusion(3);
+        player.setWalkSpeed(WarlordsPlayer.currentSpeed);
+        warlordsPlayer.setInfusion(3 * 20 - 10);
         warlordsPlayer.subtractEnergy(energyCost);
 
         for (Player player1 : Bukkit.getOnlinePlayers()) {

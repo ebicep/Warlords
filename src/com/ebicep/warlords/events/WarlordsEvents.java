@@ -2,7 +2,9 @@ package com.ebicep.warlords.events;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
+import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.classes.abilties.EarthenSpike;
+import com.ebicep.warlords.classes.abilties.IceBarrier;
 import com.ebicep.warlords.classes.abilties.SeismicWave;
 import com.ebicep.warlords.classes.abilties.Slam;
 import org.bukkit.Bukkit;
@@ -77,6 +79,13 @@ public class WarlordsEvents implements Listener {
                 warlordsPlayerAttacker.subtractEnergy(warlordsPlayerAttacker.getSpec().getEnergyOnHit() * -1);
                 warlordsPlayerVictim.addHealth(warlordsPlayerAttacker, "", -132, -179, 25, 200);
             }
+
+            if (warlordsPlayerVictim.getIceBarrier() != 0) {
+                if (warlordsPlayerAttacker.getIceBarrierSlowness() == 0) {
+                    warlordsPlayerAttacker.setIceBarrierSlowness(2 * 20 - 10);
+                }
+            }
+
             e.setCancelled(true);
         }
 
