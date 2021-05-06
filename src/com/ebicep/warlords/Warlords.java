@@ -164,7 +164,7 @@ public class Warlords extends JavaPlugin {
                             // TODO: use setVelocity instead of multiply to avoid acceleration/startup time
                             location.add(customProjectile.getDirection().multiply(1.15));
                             location.add(0, 1.5, 0);
-                            ParticleEffect.DRIP_LAVA.display(0, 0, 0, 0.15F, 7, location, 500);
+                            ParticleEffect.DRIP_LAVA.display(0, 0, 0, 0.35F, 7, location, 500);
                             ParticleEffect.SMOKE_NORMAL.display(0, 0, 0, 0.1F, 4, location, 500);
                             ParticleEffect.FLAME.display(0, 0, 0, 0.06F, 1, location, 500);
                             for (Entity entity : location.getWorld().getEntities()) {
@@ -434,22 +434,32 @@ public class Warlords extends JavaPlugin {
                         WarlordsPlayer warlordsPlayer = getPlayer(player);
                         if (warlordsPlayer.getArcaneShield() != 0) {
                             for (int i = 0; i < warlordsPlayer.getArcaneShield(); i++) {
-                                ParticleEffect.CLOUD.display(0.3F, 0.6F, 0.3F, 0.001F, 1, player.getLocation(), 500);
+                                ParticleEffect.CLOUD.display(0.3F, 0.9F, 0.3F, 0.02F, 2, player.getLocation(), 500);
                                 ParticleEffect.FIREWORKS_SPARK.display(0.3F, 1.2F, 0.3F, 0.0001F, 1, player.getLocation(), 500);
-                                ParticleEffect.SPELL_WITCH.display(0.4F, 1.2F, 0.4F, 0.001F, 1, player.getLocation(), 500);
+                                ParticleEffect.SPELL_WITCH.display(0.3F, 1.2F, 0.3F, 0.001F, 1, player.getLocation(), 500);
                             }
                         }
                         if (warlordsPlayer.getInferno() != 0) {
                             for (int i = 0; i < warlordsPlayer.getInferno(); i++) {
-                                ParticleEffect.DRIP_LAVA.display(0.3F, 0.6F, 0.3F, 0.02F, 1, player.getLocation(), 500);
+                                ParticleEffect.DRIP_LAVA.display(0.3F, 0.6F, 0.3F, 0.4F, 1, player.getLocation(), 500);
                             }
                         }
 
                         for (int i = 0; i < timeWarpPlayers.size(); i++) {
                             TimeWarp.TimeWarpPlayer timeWarpPlayer = timeWarpPlayers.get(i);
                             if (timeWarpPlayer.getTime() != 0) {
-                                ParticleEffect.CLOUD.display(0.4F, 0.1F, 0.4F, 0.001F, 5, timeWarpPlayer.getLocation(), 500);
-                                ParticleEffect.SPELL_WITCH.display(0F, 0F, 0F, 0.001F, 4, player.getLocation(), 500);
+                                //ParticleEffect.CLOUD.display(0.4F, 0.1F, 0.4F, 0.001F, 5, timeWarpPlayer.getLocation(), 500);
+                                ParticleEffect.SPELL_WITCH.display(0F, 0F, 0F, 0.001F, 6, player.getLocation(), 500);
+                            }
+
+                            int points = 20;
+                            double radius = 0.5d;
+                            Location origin = timeWarpPlayer.getLocation();
+
+                            for (int e = 0; e < points; e++) {
+                                double angle = 2 * Math.PI * e / points;
+                                Location point = origin.clone().add(radius * Math.sin(angle), 0.0d, radius * Math.cos(angle));
+                                ParticleEffect.CLOUD.display(0F, 0F, 0F, 0.001F, 2, point, 500);
                             }
                         }
                     }
