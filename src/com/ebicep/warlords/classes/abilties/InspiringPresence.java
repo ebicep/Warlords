@@ -26,14 +26,15 @@ public class InspiringPresence extends AbstractAbility {
     @Override
     public void onActivate(Player player) {
         WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
-        player.setWalkSpeed(WarlordsPlayer.presenceSpeed);
-        warlordsPlayer.setPresence(12);
-        player.playSound(player.getLocation(), "paladin.inspiringpresence.activation", 1, 1);
+        player.setWalkSpeed(WarlordsPlayer.currentSpeed);
+        warlordsPlayer.setPresence(12 * 20 - 10);
 
+        // TODO: test if boost works for other players
         List<Entity> near = player.getNearbyEntities(6.0D, 2.0D, 6.0D);
         for (Entity entity : near) {
             if (entity instanceof Player) {
-                Warlords.getPlayer(player).setPresence(12);
+                player.setWalkSpeed(WarlordsPlayer.currentSpeed);
+                // Warlords.getPlayer(player).setPresence(12);
             }
         }
 

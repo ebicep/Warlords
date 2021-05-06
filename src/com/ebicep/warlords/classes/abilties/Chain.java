@@ -257,7 +257,11 @@ public class Chain extends AbstractAbility {
                 }
                 warlordsPlayer.updateBlueItem();
             } else if (name.contains("Spirit")) {
-                warlordsPlayer.setSpiritLink(4);
+                // TODO: add dmg reduction
+                // speed buff
+                player.setWalkSpeed(WarlordsPlayer.currentSpeed);
+                warlordsPlayer.setSpiritLink(2 * 20 - 10);
+
                 warlordsPlayer.getSpec().getRed().setCooldown(cooldown);
 
                 // TODO: find spiritguards chain sounds somehow

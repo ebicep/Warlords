@@ -1,11 +1,15 @@
 package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
+
+import java.util.List;
 
 public class Projectile extends AbstractAbility {
 
@@ -27,6 +31,17 @@ public class Projectile extends AbstractAbility {
                 player1.playSound(player.getLocation(), "mage.fireball.activation", 1, 1);
             }
         } else if (customProjectile.getBall().getName().contains("Frost")) {
+            WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
+            List<Entity> near = player.getNearbyEntities(7.0D, 3.5D, 7.0D);
+            for (Entity entity : near) {
+                if (entity instanceof Player) {
+                    Player nearPlayer = (Player) entity;
+                    if (warlordsPlayer.getFrostbolt() == 0) {
+                        nearPlayer.setWalkSpeed(WarlordsPlayer.currentSpeed);
+                        warlordsPlayer.setFrostbolt(2 * 20 - 10);
+                    }
+                }
+            }
             for (Player player1 : Bukkit.getOnlinePlayers()) {
                 player1.playSound(player.getLocation(), "mage.frostbolt.activation", 1, 1);
             }
