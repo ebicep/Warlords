@@ -1,6 +1,7 @@
 package com.ebicep.warlords;
 
 import com.ebicep.customentities.CustomFallingBlock;
+import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.classes.abilties.Projectile;
 import com.ebicep.warlords.classes.abilties.*;
 import com.ebicep.warlords.commands.StartGame;
@@ -36,9 +37,9 @@ public class Warlords extends JavaPlugin {
         return customFallingBlocks;
     }
 
-    public static List<ArrayList<ArrayList<SeismicWave>>> waveArrays = new ArrayList<>();
+    public static List<SeismicWave> waveArrays = new ArrayList<>();
 
-    public static List<ArrayList<ArrayList<SeismicWave>>> getWaveArrays() {
+    public static List<SeismicWave> getWaveArrays() {
         return waveArrays;
     }
 
@@ -293,7 +294,7 @@ public class Warlords extends JavaPlugin {
 
                             // Equation for spiral animation
                             int radius = 2;
-                            for(double y = 0; y <= 50; y+=0.05) { // Set for vertical, need to change
+                            for (double y = 0; y <= 50; y += 0.05) { // Set for vertical, need to change
                                 double x = radius * Math.cos(y);
                                 double z = radius * Math.sin(y);
                             }
@@ -387,13 +388,37 @@ public class Warlords extends JavaPlugin {
                         GroundSlam groundSlam = groundSlamArray.get(i);
                         for (List<Location> fallingBlockLocation : groundSlam.getFallingBlockLocations()) {
                             for (Location location : fallingBlockLocation) {
-                                FallingBlock fallingBlock = world.spawnFallingBlock(location, location.getWorld().getBlockAt((int) location.getX(), location.getWorld().getHighestBlockYAt(location) - 1, (int) location.getZ()).getType(), location.getWorld().getBlockAt((int) location.getX(), location.getWorld().getHighestBlockYAt(location) - 1, (int) location.getZ()).getData());
-                                fallingBlock.setVelocity(new Vector(0, .1, 0));
-                                fallingBlock.setDropItem(false);
-                                customFallingBlocks.add(new CustomFallingBlock(fallingBlock, location.getY() + .25, groundSlam.getOwner()));
+                                if (world.getBlockAt(location.clone().add(0, 1, 0)).getType() == Material.AIR) {
+                                    FallingBlock fallingBlock = addFallingBlock(location);
+                                    if (fallingBlock != null)
+                                        customFallingBlocks.add(new CustomFallingBlock(fallingBlock, location.getY() + .25, groundSlam.getOwner(), groundSlam));
+                                }
                             }
                             groundSlam.getFallingBlockLocations().remove(fallingBlockLocation);
                             break;
+                        }
+                        if (groundSlam.getFallingBlockLocations().size() == 0) {
+                            groundSlamArray.remove(i);
+                            i--;
+                        }
+                    }
+                    //WAVE
+                    for (int i = 0; i < waveArrays.size(); i++) {
+                        SeismicWave seismicWave = waveArrays.get(i);
+                        for (List<Location> fallingBlockLocation : seismicWave.getFallingBlockLocations()) {
+                            for (Location location : fallingBlockLocation) {
+                                if (world.getBlockAt(location.clone().add(0, 1, 0)).getType() == Material.AIR) {
+                                    FallingBlock fallingBlock = addFallingBlock(location);
+                                    if (fallingBlock != null)
+                                        customFallingBlocks.add(new CustomFallingBlock(fallingBlock, location.getY() + .25, seismicWave.getOwner(), seismicWave));
+                                }
+                            }
+                            seismicWave.getFallingBlockLocations().remove(fallingBlockLocation);
+                            break;
+                        }
+                        if (seismicWave.getFallingBlockLocations().size() == 0) {
+                            waveArrays.remove(i);
+                            i--;
                         }
                     }
                 }
@@ -760,18 +785,30 @@ public class Warlords extends JavaPlugin {
                     CustomFallingBlock customFallingBlock = customFallingBlocks.get(i);
 
                     for (Player player : players.keySet()) {
-                        if (player.getLocation().distanceSquared(customFallingBlock.getFallingBlock().getLocation()) < 1) {
-                            //getPlayer(player).addHealth(customFallingBlock.getOwner(), );
+                        if (player != customFallingBlock.getOwner()) {
+                            AbstractAbility ability = customFallingBlock.getAbility();
+                            if (ability instanceof SeismicWave && !((SeismicWave) ability).getPlayersHit().contains(player)) {
+                                if (player.getLocation().distanceSquared(customFallingBlock.getFallingBlock().getLocation()) < 1.5) {
+                                    ((SeismicWave) ability).getPlayersHit().add(player);
+                                    getPlayer(player).addHealth(Warlords.getPlayer(customFallingBlock.getOwner()), ability.getName(), ability.getMinDamageHeal(), ability.getMaxDamageHeal(), ability.getCritChance(), ability.getCritMultiplier());
+                                }
+                            } else if (ability instanceof GroundSlam && !((GroundSlam) ability).getPlayersHit().contains(player)) {
+                                if (player.getLocation().distanceSquared(customFallingBlock.getFallingBlock().getLocation()) < 1.5) {
+                                    ((GroundSlam) ability).getPlayersHit().add(player);
+                                    getPlayer(player).addHealth(Warlords.getPlayer(customFallingBlock.getOwner()), ability.getName(), ability.getMinDamageHeal(), ability.getMaxDamageHeal(), ability.getCritChance(), ability.getCritMultiplier());
+                                }
+                            }
                         }
                     }
-
+                    //TODO fix bug where the blocks dont get removed if ability used near high wall - stuck in block?
+                    System.out.println(customFallingBlock.getCustomFallingBlock().getLocation().getY());
+                    System.out.println(customFallingBlock.getyLevel());
                     if (customFallingBlock.getFallingBlock().getLocation().getY() <= customFallingBlock.getyLevel() || customFallingBlock.getFallingBlock().getTicksLived() > 10) {
                         customFallingBlock.getFallingBlock().remove();
                         customFallingBlocks.remove(i);
                         i--;
                     }
                 }
-                System.out.println(customFallingBlocks.size());
 
                 for (Player player : world.getPlayers()) {
                     WarlordsPlayer warlordsPlayer = getPlayer(player);
@@ -985,6 +1022,25 @@ public class Warlords extends JavaPlugin {
         objective.getScore(ChatColor.YELLOW + "localhost").setScore(1);
 
         world.getPlayers().forEach(player -> player.setScoreboard(board));
+    }
+
+    private FallingBlock addFallingBlock(Location location) {
+        if (world.getBlockAt(location.clone().add(0, 1, 0)).getType() == Material.AIR) {
+            if (world.getBlockAt(location).getType() != Material.AIR) {
+                location.add(0, 1, 0);
+            }
+            Location blockToGet = location.clone().add(0, -1, 0);
+            if (location.getWorld().getBlockAt(location.clone().add(0, -1, 0)).getType() == Material.AIR) {
+                blockToGet.add(0, -1, 0);
+            }
+            FallingBlock fallingBlock = world.spawnFallingBlock(location,
+                    location.getWorld().getBlockAt(blockToGet).getType(),
+                    location.getWorld().getBlockAt(blockToGet).getData());
+            fallingBlock.setVelocity(new Vector(0, .1, 0));
+            fallingBlock.setDropItem(false);
+            return fallingBlock;
+        }
+        return null;
     }
 
 }

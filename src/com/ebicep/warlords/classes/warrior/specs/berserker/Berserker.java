@@ -17,8 +17,8 @@ public class Berserker extends AbstractWarrior {
                                 "§7A wounded player receives §c35% §7less\n" +
                                 "§7healing for the duration of the effect."),
 
-                new temp(),
-                new GroundSlam("Ground Slam", -449, -606, 1, 60, 15, 200, "ground slam description", Warlords.getPlayer(player)),
+                new SeismicWave("Seismic Wave", -557, -753, 12, 60, 25, 200, "seismic wave description", player),
+                new GroundSlam("Ground Slam", -449, -606, 1, 60, 15, 200, "ground slam description", player),
                 new BloodLust(),
                 new Berserk());
     }

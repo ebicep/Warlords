@@ -5,6 +5,9 @@ import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public abstract class AbstractAbility {
 
     protected String name;
@@ -83,4 +86,5 @@ public abstract class AbstractAbility {
     public String getDescription() {
         return description;
     }
+
 }

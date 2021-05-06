@@ -53,4 +53,14 @@ public class Utils {
         }
     }
 
+    public static Vector getRightDirection(Location location) {
+        Vector direction = location.getDirection().normalize();
+        return new Vector(-direction.getZ(), 0.0, direction.getX()).normalize();
+    }
+
+    public static Vector getLeftDirection(Location location) {
+        Vector direction = location.getDirection().normalize();
+        return new Vector(direction.getZ(), 0.0, -direction.getX()).normalize();
+    }
+
 }

@@ -117,7 +117,7 @@ public class WarlordsEvents implements Listener {
                 block.setVelocity(new Vector(0, .1, 0));
                 ArrayList<ArrayList<SeismicWave>> waveList = new ArrayList<>();
                 //waveList.add(new SeismicWave(block));
-                Warlords.waveArrays.add(waveList);
+                //Warlords.waveArrays.add(waveList);
 
                 WarlordsEvents.addEntityUUID(block.getUniqueId());
             } else if (itemHeld.getType() == Material.DIAMOND_PICKAXE) {

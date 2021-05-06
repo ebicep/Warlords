@@ -54,7 +54,7 @@ public class StartGame implements CommandExecutor {
 
                 if (i + 1 < Warlords.world.getPlayers().size()) {
                     Player worldPlayer2 = Warlords.world.getPlayers().get(i + 1);
-                    Warlords.addPlayer(new WarlordsPlayer(worldPlayer2, worldPlayer2.getName(), worldPlayer2.getUniqueId(), new Spiritguard(worldPlayer2)));
+                    Warlords.addPlayer(new WarlordsPlayer(worldPlayer2, worldPlayer2.getName(), worldPlayer2.getUniqueId(), new Berserker(worldPlayer2)));
                     worldPlayer2.setMaxHealth(40);
                     System.out.println("Added " + worldPlayer2.getName());
                 }

@@ -20,26 +20,23 @@ import java.util.List;
 public class GroundSlam extends AbstractAbility {
 
     private List<List<Location>> fallingBlockLocations = new ArrayList<>();
-    private WarlordsPlayer owner;
+    private Player owner;
+    private List<Player> playersHit = new ArrayList<>();
 
-    public GroundSlam(String name, int minDamageHeal, int maxDamageHeal, int cooldown, int energyCost, int critChance, int critMultiplier, String description, WarlordsPlayer owner) {
+    public GroundSlam(String name, int minDamageHeal, int maxDamageHeal, int cooldown, int energyCost, int critChance, int critMultiplier, String description, Player owner) {
         super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier, description);
         this.owner = owner;
     }
 
     @Override
     public void onActivate(Player player) {
+        playersHit.clear();
         Location location = player.getLocation();
 
         for (int i = 0; i < 6; i++) {
             fallingBlockLocations.add(getCircle(location, i, (i * ((int) (Math.PI * 2)))));
         }
         Warlords.getGroundSlamArray().add(this);
-
-        //TODO arraylist of locations of falling blocks
-        //loop in main then add to arraylist of players hit so you dont rehit a player
-        //deal with kb
-
 
         for (Player player1 : Bukkit.getOnlinePlayers()) {
             player1.playSound(player.getLocation(), "warrior.groundslam.activation", 1, 1);
@@ -56,10 +53,10 @@ public class GroundSlam extends AbstractAbility {
      * @param amount
      * @return
      */
-    private ArrayList<Location> getCircle(Location center, float radius, int amount) {
+    private List<Location> getCircle(Location center, float radius, int amount) {
         World world = center.getWorld();
         double increment = ((2 * Math.PI) / amount);
-        ArrayList<Location> locations = new ArrayList<>();
+        List<Location> locations = new ArrayList<>();
         for (int i = 0; i < amount; i++) {
             float angle = (float) (i * increment);
             float x = (float) (center.getX() + (radius * Math.cos(angle)));
@@ -79,12 +76,20 @@ public class GroundSlam extends AbstractAbility {
         this.fallingBlockLocations = fallingBlockLocations;
     }
 
-    public WarlordsPlayer getOwner() {
+    public Player getOwner() {
         return owner;
     }
 
-    public void setOwner(WarlordsPlayer owner) {
+    public void setOwner(Player owner) {
         this.owner = owner;
+    }
+
+    public List<Player> getPlayersHit() {
+        return playersHit;
+    }
+
+    public void setPlayersHit(List<Player> playersHit) {
+        this.playersHit = playersHit;
     }
 }
 
