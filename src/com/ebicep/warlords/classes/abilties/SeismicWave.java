@@ -34,6 +34,10 @@ public class SeismicWave extends AbstractAbility {
             fallingBlockLocations.add(getWave(location, i));
         }
         Warlords.getWaveArrays().add(this);
+
+        for (Player player1 : Bukkit.getOnlinePlayers()) {
+            player1.playSound(player.getLocation(), "warrior.seismicwave.activation", 1, 1);
+        }
     }
 
     private List<Location> getWave(Location center, int distance) {
