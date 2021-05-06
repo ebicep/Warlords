@@ -790,11 +790,17 @@ public class Warlords extends JavaPlugin {
                             if (ability instanceof SeismicWave && !((SeismicWave) ability).getPlayersHit().contains(player)) {
                                 if (player.getLocation().distanceSquared(customFallingBlock.getFallingBlock().getLocation()) < 1.5) {
                                     ((SeismicWave) ability).getPlayersHit().add(player);
+                                    final Location loc = player.getLocation();
+                                    final Vector v = customFallingBlock.getOwner().getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1.1).setY(0.25);
+                                    player.setVelocity(v);
                                     getPlayer(player).addHealth(Warlords.getPlayer(customFallingBlock.getOwner()), ability.getName(), ability.getMinDamageHeal(), ability.getMaxDamageHeal(), ability.getCritChance(), ability.getCritMultiplier());
                                 }
                             } else if (ability instanceof GroundSlam && !((GroundSlam) ability).getPlayersHit().contains(player)) {
                                 if (player.getLocation().distanceSquared(customFallingBlock.getFallingBlock().getLocation()) < 1.5) {
                                     ((GroundSlam) ability).getPlayersHit().add(player);
+                                    final Location loc = player.getLocation();
+                                    final Vector v = customFallingBlock.getOwner().getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1.1).setY(0.25);
+                                    player.setVelocity(v);
                                     getPlayer(player).addHealth(Warlords.getPlayer(customFallingBlock.getOwner()), ability.getName(), ability.getMinDamageHeal(), ability.getMaxDamageHeal(), ability.getCritChance(), ability.getCritMultiplier());
                                 }
                             }

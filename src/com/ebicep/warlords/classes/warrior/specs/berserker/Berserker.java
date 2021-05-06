@@ -17,8 +17,16 @@ public class Berserker extends AbstractWarrior {
                                 "§7A wounded player receives §c35% §7less\n" +
                                 "§7healing for the duration of the effect."),
 
-                new SeismicWave("Seismic Wave", -557, -753, 12, 60, 25, 200, "seismic wave description", player),
-                new GroundSlam("Ground Slam", -449, -606, 1, 60, 15, 200, "ground slam description", player),
+                new SeismicWave("Seismic Wave", -557, -753, 12, 60, 25, 200,
+                        "§7Send a wave of incredible force forward\n" +
+                                "§7that deals §c%dynamic.value% §7- §c%dynamic.value% §7damage\n" +
+                                "§7to all enemies hit and knocks them back\n" +
+                                "§7slightly.", player),
+
+                new GroundSlam("Ground Slam", -449, -606, 1, 60, 15, 200,
+                        "§7Slam the ground, creating a shockwave\n" +
+                                "§7around you that deals §c%dynamic.value% §7- §c%dynamic.value%\n" +
+                                "§7damage and knocks enemies back slightly.", player),
                 new BloodLust(),
                 new Berserk());
     }
