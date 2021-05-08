@@ -2,7 +2,12 @@ package com.ebicep.warlords.classes.abilties;
 
 import org.bukkit.Effect;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.EulerAngle;
 
 public class DamageHealCircle {
 
@@ -15,10 +20,17 @@ public class DamageHealCircle {
     private int critChance;
     private int critMultiplier;
     private String name;
+    private ArmorStand hammer;
 
     public DamageHealCircle(Player player, Location location, int radius, int duration, int minDamage, int maxDamage, int critChance, int critMultiplier, String name) {
         this.player = player;
         this.location = location;
+        for (int i = 0; i < 10; i++) {
+            if (location.getWorld().getBlockAt(location.clone().add(0, -1, 0)).getType() == Material.AIR) {
+                location.add(0, -1, 0);
+            }
+        }
+        location.add(0, -1, 0);
         this.radius = radius;
         this.duration = duration;
         this.minDamage = minDamage;
@@ -28,13 +40,37 @@ public class DamageHealCircle {
         this.name = name;
     }
 
+    public void spawnHammer() {
+        Location newLocation = location.clone();
+        for (int i = 0; i < 10; i++) {
+            if (newLocation.getWorld().getBlockAt(newLocation.clone().add(0, -1, 0)).getType() == Material.AIR) {
+                newLocation.add(0, -1, 0);
+            }
+        }
+        newLocation.add(0, -1, 0);
+        hammer = (ArmorStand) location.getWorld().spawnEntity(newLocation.clone().add(.25, 2.9, -.25), EntityType.ARMOR_STAND);
+        hammer.setRightArmPose(new EulerAngle(20.25, 0, 0));
+        hammer.setItemInHand(new ItemStack(Material.STRING));
+        hammer.setGravity(false);
+        hammer.setVisible(false);
+    }
+
+    public void removeHammer() {
+        hammer.remove();
+    }
+
     public void spawn() {
         float angle = 0;
         for (int i = 0; i < Math.PI * 20; i++) {
             float x = (float) (radius * Math.sin(angle));
             float z = (float) (radius * Math.cos(angle));
             angle += 0.2;
-            location.getWorld().playEffect(new Location(location.getWorld(), location.getX() + x, location.getWorld().getHighestBlockYAt(location), location.getZ() + z), Effect.HAPPY_VILLAGER, 0);
+            if (name.contains("Hammer")) {
+                location.getWorld().playEffect(new Location(location.getWorld(), location.getX() + x, location.getY() + 2, location.getZ() + z), Effect.HAPPY_VILLAGER, 0);
+
+            } else {
+                location.getWorld().playEffect(new Location(location.getWorld(), location.getX() + x, location.getY() + 1, location.getZ() + z), Effect.HAPPY_VILLAGER, 0);
+            }
         }
     }
 

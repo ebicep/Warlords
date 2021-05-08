@@ -4,6 +4,8 @@ import com.ebicep.warlords.classes.PlayerClass;
 import com.ebicep.warlords.classes.abilties.OrbsOfLife;
 import com.ebicep.warlords.classes.abilties.Soulbinding;
 import com.ebicep.warlords.classes.abilties.Totem;
+import com.ebicep.warlords.util.CalculateSpeed;
+import com.ebicep.warlords.util.CustomScoreboard;
 import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
@@ -16,7 +18,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.Dye;
-import com.ebicep.warlords.util.CalculateSpeed;
+import org.bukkit.scoreboard.Team;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +38,14 @@ public class WarlordsPlayer {
     private int respawnTimer;
     private float energy;
     private float maxEnergy;
+
+    private int kills;
+    private int assists;
+    private int deaths;
+    private int damage;
+    private int healing;
+    private int absorbed;
+
     public static final float defaultSpeed = (float) (.2825);
     public static final float infusionSpeed = (float) (.35);
     public static final float presenceSpeed = (float) (.325);
@@ -102,8 +112,20 @@ public class WarlordsPlayer {
     private boolean powerUpHeal = false;
     private int powerUpSpeed = 0;
 
+    private int charged = 0;
+    private Location chargeLocation;
 
     private final Dye grayDye = new Dye();
+
+    private CustomScoreboard scoreboard;
+
+    public CustomScoreboard getScoreboard() {
+        return scoreboard;
+    }
+
+    public void setScoreboard(CustomScoreboard scoreboard) {
+        this.scoreboard = scoreboard;
+    }
 
     public WarlordsPlayer(Player player, String name, UUID uuid, PlayerClass spec) {
         this.player = player;
@@ -401,6 +423,8 @@ public class WarlordsPlayer {
 
                     arcaneShield = 0;
                     addHealth(attacker, ability, (int) (arcaneShieldHealth + damageHealValue), (int) (arcaneShieldHealth + damageHealValue), isCrit ? 100 : -1, 100);
+
+                    this.absorbed += -(arcaneShield + damageHealValue);
                 } else {
                     if (ability.isEmpty()) {
                         player.sendMessage("§c\u00AB§7 You absorbed " + attacker.getName() + "'s melee §7hit.");
@@ -409,6 +433,8 @@ public class WarlordsPlayer {
                         player.sendMessage("§c\u00AB§7 You absorbed " + attacker.getName() + "'s " + ability + " §7hit.");
                         attacker.getPlayer().sendMessage("§a\u00BB§7 Your " + ability + " was absorbed by " + name + "§7.");
                     }
+
+                    this.absorbed += -damageHealValue;
                 }
                 arcaneShieldHealth += damageHealValue;
 
@@ -451,6 +477,8 @@ public class WarlordsPlayer {
                                 damageHealValue *= .4;
                                 //TODO multiple last stands? lastest person that last stands will over ride other dude
                                 if (lastStandedBy.getLastStand() != 0) {
+                                    this.absorbed += damageHealValue * -1;
+                                    attacker.setAbsorbed((int) (attacker.getAbsorbed() + damageHealValue * -1));
                                     if (isCrit)
                                         lastStandedBy.addHealth(lastStandedBy, "Last Stand", (int) (damageHealValue * -1), (int) (damageHealValue * -1), 100, 100);
                                     else
@@ -528,6 +556,27 @@ public class WarlordsPlayer {
                         this.health = maxHealth;
                     } else {
                         this.health += Math.round(damageHealValue);
+
+                        if (damageHealValue < 0) {
+                            attacker.setDamage((int) (attacker.getDamage() + -damageHealValue));
+                        } else {
+                            attacker.setHealing((int) (attacker.getHealing() + -damageHealValue));
+                        }
+
+                        if (this.health <= 0) {
+                            player.sendMessage("§a\u00AB§7 You were killed by " + attacker.getName() + ".");
+                            attacker.getPlayer().sendMessage("§a\u00BB§7 " + "You killed " + name + ".");
+
+                            if (scoreboard.getBlueTeam().contains(name)) {
+                                Warlords.redKills++;
+                            } else {
+                                Warlords.blueKills++;
+                            }
+
+                            for (WarlordsPlayer value : Warlords.getPlayers().values()) {
+                                value.getScoreboard().updateKills();
+                            }
+                        }
                     }
                 }
             }
@@ -962,5 +1011,69 @@ public class WarlordsPlayer {
 
     public void setSoulBindCooldown(int soulBindCooldown) {
         this.soulBindCooldown = soulBindCooldown;
+    }
+
+    public int getCharged() {
+        return charged;
+    }
+
+    public void setCharged(int charged) {
+        this.charged = charged;
+    }
+
+    public Location getChargeLocation() {
+        return chargeLocation;
+    }
+
+    public void setChargeLocation(Location chargeLocation) {
+        this.chargeLocation = chargeLocation;
+    }
+
+    public int getKills() {
+        return kills;
+    }
+
+    public void setKills(int kills) {
+        this.kills = kills;
+    }
+
+    public int getAssists() {
+        return assists;
+    }
+
+    public void setAssists(int assists) {
+        this.assists = assists;
+    }
+
+    public int getDeaths() {
+        return deaths;
+    }
+
+    public void setDeaths(int deaths) {
+        this.deaths = deaths;
+    }
+
+    public int getDamage() {
+        return damage;
+    }
+
+    public void setDamage(int damage) {
+        this.damage = damage;
+    }
+
+    public int getHealing() {
+        return healing;
+    }
+
+    public void setHealing(int healing) {
+        this.healing = healing;
+    }
+
+    public int getAbsorbed() {
+        return absorbed;
+    }
+
+    public void setAbsorbed(int absorbed) {
+        this.absorbed = absorbed;
     }
 }

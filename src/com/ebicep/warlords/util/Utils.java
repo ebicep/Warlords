@@ -63,4 +63,16 @@ public class Utils {
         return new Vector(direction.getZ(), 0.0, -direction.getX()).normalize();
     }
 
+    public static double getDistance(Entity e, double accuracy) {
+        Location loc = e.getLocation().clone(); // Using .clone so you aren't messing with the direct location object from the entity
+        double distance = 0; // Shouldn't start at -2 unless you're wanting the eye height from the ground (I don't know why you'd want that)
+        for (double i = loc.getY(); i >= 0; i -= accuracy) {
+            loc.setY(i);
+            distance += accuracy;
+            if (loc.getBlock().getType().isSolid()) // Makes a little more sense than checking if it's air
+                break;
+        }
+        return distance;
+    }
+
 }

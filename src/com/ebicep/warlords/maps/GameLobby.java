@@ -1,8 +1,17 @@
 package com.ebicep.warlords.maps;
 
+import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.WarlordsPlayer;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.plugin.Plugin;
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
+import org.bukkit.scoreboard.DisplaySlot;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.ScoreboardManager;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
 // WIP not usable yet
@@ -17,11 +26,13 @@ public class GameLobby {
         WARSONG,
         VALLEY
     }
+
     enum GameState {
         LOBBY,
         PLAYING,
         END
     }
+
     public static class Game implements Runnable {
 
         private static final int MIN_PLAYERS = 8;
@@ -33,9 +44,13 @@ public class GameLobby {
         private int countdown = -1;
         private Object countDown;
 
+        private int blueKills = 0;
+        private int redKills = 0;
+
+
         @Override
         public void run() {
-            switch(this.state) {
+            switch (this.state) {
                 case LOBBY:
                     int playersInGame = Bukkit.getWorld("game").getPlayers().size();
                     if (playersInGame >= MAX_PLAYERS) {
@@ -46,13 +61,14 @@ public class GameLobby {
                             this.countdown = COUNTDOWN_IN_SECONDS;
 
                     } else if (this.countdown == 0) {
-                    this.state = GameState.PLAYING;
-                    // Teleport players to their start positions
+                        this.state = GameState.PLAYING;
+                        // Teleport players to their start positions
 
-                } else {
-                    this.countdown--;
-                }
-                break;
+
+                    } else {
+                        this.countdown--;
+                    }
+                    break;
 
                 case PLAYING:
                     int playersInGame2 = Bukkit.getWorld("game").getPlayers().size(); // todo filter out spectators from actual players
@@ -70,11 +86,29 @@ public class GameLobby {
                         // Kick out every player, game ends
                     }
                     break;
-                }
             }
         }
 
-        public GameState getState() {
-            return this.state;
+        public int getBlueKills() {
+            return blueKills;
+        }
+
+        public void setBlueKills(int blueKills) {
+            this.blueKills = blueKills;
+        }
+
+        public int getRedKills() {
+            return redKills;
+        }
+
+        public void setRedKills(int redKills) {
+            this.redKills = redKills;
         }
     }
+
+    public GameState getState() {
+        return this.state;
+    }
+
+
+}

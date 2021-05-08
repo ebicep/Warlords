@@ -123,8 +123,15 @@ public class Warlords extends JavaPlugin {
         return players.containsKey(player);
     }
 
+    public static HashMap<Player, WarlordsPlayer> getPlayers() {
+        return players;
+    }
 
-    public static World world = Bukkit.getWorld("TestWorld");
+    public static int blueKills;
+    public static int redKills;
+
+
+    public static World world = Bukkit.getWorld("world");
 
     private int counter = 0;
 
@@ -132,7 +139,9 @@ public class Warlords extends JavaPlugin {
     public void onEnable() {
         instance = this;
         getServer().getPluginManager().registerEvents(new WarlordsEvents(), this);
-        Objects.requireNonNull(getCommand("start")).setExecutor(new StartGame());
+        StartGame startGame = new StartGame();
+        getCommand("start").setExecutor(startGame);
+        getCommand("test").setExecutor(startGame);
         if (world != null) {
             runnable();
         }
@@ -159,7 +168,7 @@ public class Warlords extends JavaPlugin {
                     // MOVEMENT
                     for (Player player : world.getPlayers()) {
                         WarlordsPlayer warlordsPlayer = getPlayer(player);
-                        player.sendMessage(String.valueOf(player.getWalkSpeed()));
+                        //player.sendMessage(String.valueOf(player.getWalkSpeed()));
 
                         // light infusion
                         if (warlordsPlayer.getInfusion() != 0) {
@@ -269,6 +278,7 @@ public class Warlords extends JavaPlugin {
                                                 customProjectile.getBall().getCritMultiplier()
                                         );
                                         List<Entity> near = victim.getNearbyEntities(3.5D, 3.5D, 3.5D);
+                                        near.remove(customProjectile.getShooter());
                                         for (Entity nearEntity : near) {
                                             if (nearEntity instanceof Player) {
                                                 getPlayer((Player) nearEntity).addHealth(
@@ -310,6 +320,7 @@ public class Warlords extends JavaPlugin {
                                                 customProjectile.getBall().getCritMultiplier()
                                         );
                                         List<Entity> near = victim.getNearbyEntities(3.5D, 3.5D, 3.5D);
+                                        near.remove(customProjectile.getShooter());
                                         for (Entity nearEntity : near) {
                                             if (nearEntity instanceof Player) {
                                                 getPlayer((Player) nearEntity).addHealth(
@@ -405,6 +416,7 @@ public class Warlords extends JavaPlugin {
                                                 customProjectile.getBall().getCritMultiplier()
                                         );
                                         List<Entity> near = victim.getNearbyEntities(3.5D, 3.5D, 3.5D);
+                                        near.remove(customProjectile.getShooter());
                                         for (Entity nearEntity : near) {
                                             if (nearEntity instanceof Player) {
                                                 getPlayer((Player) nearEntity).addHealth(
@@ -583,9 +595,14 @@ public class Warlords extends JavaPlugin {
                                 } else if (i <= tempSpikes.size() && tempSpikes.get(i).size() > 30) {
                                     spikes.remove(i);
                                 } else {
-                                    Bukkit.broadcastMessage("HIT");
-                                    Location location = player.getLocation();
-
+                                    Location location = world.getBlockAt(player.getLocation()).getLocation();
+                                    location.add(.5, 0, .5);
+                                    List<Entity> onSameBlock = (List<Entity>) world.getNearbyEntities(location, .6, 1.5, .6);
+                                    onSameBlock.remove(user.getPlayer());
+                                    for (Entity entity : onSameBlock) {
+                                        if (entity instanceof Player)
+                                            Warlords.getPlayer((Player) entity).addHealth(user, spikes.get(i).getName(), spikes.get(i).getMinDamageHeal(), spikes.get(i).getMaxDamageHeal(), spikes.get(i).getCritChance(), spikes.get(i).getCritMultiplier());
+                                    }
                                     Warlords.getPlayer(player).addHealth(user, spikes.get(i).getName(), spikes.get(i).getMinDamageHeal(), spikes.get(i).getMaxDamageHeal(), spikes.get(i).getCritChance(), spikes.get(i).getCritMultiplier());
 
                                     location.setYaw(0);
@@ -634,6 +651,7 @@ public class Warlords extends JavaPlugin {
                         }
                     }
 
+                    //TODO MAKE BOULDER CLASS
                     for (ArmorStand e : world.getEntitiesByClass(ArmorStand.class)) {
                         if (e.getCustomName() != null && e.getCustomName().contains("Boulder")) {
                             Vector velocity = e.getVelocity();
@@ -648,10 +666,37 @@ public class Warlords extends JavaPlugin {
                             } else {
                                 e.setHeadPose(new EulerAngle(e.getVelocity().getY() * -1, 0, 0));
                             }
-                            if (yVel < 0 && Math.round(Math.abs(xVel) + Math.abs(zVel)) == 0) {
+                            System.out.println(location.getY());
+                            if (location.getY() <= 6) {
                                 e.remove();
 
+                                location.setPitch(-10);
+                                for (int i = 0; i < 20; i++) {
+                                    Location tempLocation = location.clone();
+                                    while (location.getWorld().getBlockAt(tempLocation).getType() == Material.AIR) {
+                                        tempLocation.add(0, -1, 0);
+                                    }
 
+                                    FallingBlock fallingBlock = world.spawnFallingBlock(location.clone().add(0, 1, 0),
+                                            location.getWorld().getBlockAt(tempLocation).getType(),
+                                            location.getWorld().getBlockAt(tempLocation).getData());
+                                    fallingBlock.setVelocity(location.getDirection().normalize().multiply(.75));
+                                    fallingBlock.setDropItem(false);
+                                    location.setYaw((float) (location.getYaw() + Math.random() * 25 + 12));
+                                    WarlordsEvents.addEntityUUID(fallingBlock.getUniqueId());
+                                }
+                                List<Entity> near = (List<Entity>) world.getNearbyEntities(location, 5, 5, 5);
+                                for (Entity entity : near) {
+                                    if (entity instanceof Player) {
+                                        Player nearPlayer = (Player) entity;
+                                        if (nearPlayer.getGameMode() != GameMode.SPECTATOR) {
+                                            //Warlords.getPlayer(nearPlayer).addHealth();
+                                            final Vector v = nearPlayer.getLocation().toVector().subtract(location.toVector()).normalize().multiply(1.5).setY(0.4);
+
+                                            nearPlayer.setVelocity(v);
+                                        }
+                                    }
+                                }
                                 //TODO spawn boulder impact
                             }
 
@@ -676,6 +721,7 @@ public class Warlords extends JavaPlugin {
                 if (counter % 20 == 0) {
                     for (Player player : world.getPlayers()) {
                         WarlordsPlayer warlordsPlayer = getPlayer(player);
+                        warlordsPlayer.getScoreboard().updateTime();
 
                         //REGEN
                         if (warlordsPlayer.getRegenTimer() != -1) {
@@ -836,6 +882,9 @@ public class Warlords extends JavaPlugin {
                         if (damageHealCircle.getDuration() == 0) {
                             damageHealCircles.remove(i);
                             i--;
+                            if (damageHealCircle.getName().contains("Hammer")) {
+                                damageHealCircle.removeHammer();
+                            }
                         }
 
                     }
@@ -1052,6 +1101,21 @@ public class Warlords extends JavaPlugin {
                         warlordsPlayer.setHitCooldown(warlordsPlayer.getHitCooldown() - 1);
                     }
 
+                    if (warlordsPlayer.getCharged() != 0) {
+                        List<Entity> playersInside = player.getNearbyEntities(2, 2, 2);
+                        playersInside.removeAll(((RecklessCharge) warlordsPlayer.getSpec().getRed()).getPlayersHit());
+                        for (Entity entity : playersInside) {
+                            if (entity instanceof Player) {
+                                //TODO add 100 slowness
+                                ((RecklessCharge) warlordsPlayer.getSpec().getRed()).getPlayersHit().add((Player) entity);
+                                Warlords.getPlayer((Player) entity).addHealth(warlordsPlayer, warlordsPlayer.getSpec().getRed().getName(), warlordsPlayer.getSpec().getRed().getMinDamageHeal(), warlordsPlayer.getSpec().getRed().getMaxDamageHeal(), warlordsPlayer.getSpec().getRed().getCritChance(), warlordsPlayer.getSpec().getRed().getCritMultiplier());
+                            }
+                        }
+                        if (player.getLocation().distanceSquared(warlordsPlayer.getChargeLocation()) > warlordsPlayer.getCharged() || (player.getVelocity().getX() == 0 && player.getVelocity().getZ() == 0)) {
+                            player.setVelocity(new Vector(0, 0, 0));
+                            warlordsPlayer.setCharged(0);
+                        }
+                    }
                     //orbs
                     for (int i = 0; i < orbs.size(); i++) {
                         OrbsOfLife.Orb orb = orbs.get(i);
@@ -1160,42 +1224,12 @@ public class Warlords extends JavaPlugin {
                         }
                     }
                 }
-                updateScoreBoard();
+                //updateScoreBoard();
 
                 counter++;
             }
 
         }.runTaskTimer(this, 0, 0);
-    }
-
-    private void updateScoreBoard() {
-        ScoreboardManager manager = Bukkit.getScoreboardManager();
-        Scoreboard board = manager.getNewScoreboard();
-
-
-        SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
-        String dateString = format.format(new Date());
-
-        Objective objective = board.registerNewObjective(dateString, "");
-        objective.setDisplaySlot(DisplaySlot.SIDEBAR);
-        objective.setDisplayName("§e§lWARLORDS");
-        objective.getScore(ChatColor.GRAY + dateString).setScore(15);
-        objective.getScore(" ").setScore(14);
-        objective.getScore(ChatColor.BLUE + "BLU: " + ChatColor.AQUA + "1000" + ChatColor.GOLD + "/1000").setScore(13);
-        objective.getScore(ChatColor.RED + "RED: " + ChatColor.AQUA + "800" + ChatColor.GOLD + "/1000").setScore(12);
-        objective.getScore("  ").setScore(11);
-        objective.getScore(ChatColor.BLUE + "BLU " + ChatColor.GOLD + "Wins in: " + ChatColor.GREEN + "10:00").setScore(10);
-        objective.getScore("   ").setScore(9);
-        objective.getScore(ChatColor.RED + "RED Flag: " + ChatColor.GREEN + "Safe").setScore(8);
-        objective.getScore(ChatColor.BLUE + "BLU Flag: " + ChatColor.GREEN + "Safe").setScore(7);
-        objective.getScore("    ").setScore(6);
-        objective.getScore(ChatColor.GOLD + "Lv90 " + ChatColor.GREEN + "Berserker").setScore(5);
-        objective.getScore("     ").setScore(4);
-        objective.getScore(ChatColor.GREEN + "150 " + ChatColor.RESET + "Kills " + ChatColor.GREEN + "50 " + ChatColor.RESET + "Assists").setScore(3);
-        objective.getScore("      ").setScore(2);
-        objective.getScore(ChatColor.YELLOW + "localhost").setScore(1);
-
-        world.getPlayers().forEach(player -> player.setScoreboard(board));
     }
 
     private FallingBlock addFallingBlock(Location location) {

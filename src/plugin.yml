@@ -6,3 +6,6 @@ commands:
   start:
     description: Starts a new game
     usage: /start
+  test:
+    description: randoms hit
+    usage: /test

@@ -38,9 +38,9 @@ public class LightningRod extends AbstractAbility {
         List<Entity> near = player.getNearbyEntities(5.0D, 5.0D, 5.0D);
         for (Entity entity : near) {
             final Location otherLocation = entity.getLocation();
-            if (otherLocation.distanceSquared(playerLocation) < 30) {
+            if (entity instanceof Player && otherLocation.distanceSquared(playerLocation) < 30) {
                 // TODO: entity check to exclude armorstands and other entities if needed
-                if (entity != warlordsPlayer) {
+                if (entity != player) {
 
                     final Location loc = entity.getLocation();
                     final Vector v = player.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1.5).setY(0.4);
