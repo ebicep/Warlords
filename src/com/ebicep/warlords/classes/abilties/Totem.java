@@ -5,6 +5,7 @@ import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
 import net.minecraft.server.v1_8_R3.EntityArmorStand;
 import net.minecraft.server.v1_8_R3.World;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
@@ -83,6 +84,10 @@ public class Totem extends EntityArmorStand {
 
             Totem capacitorTotem = new Totem(((CraftWorld) player.getWorld()).getHandle(), warlordsPlayer, totemStand, 8);
             Warlords.totems.add(capacitorTotem);
+
+            for (Player player1 : Bukkit.getOnlinePlayers()) {
+                player1.playSound(player.getLocation(), "shaman.totem.activation", 1, 1);
+            }
         }
     }
 
@@ -99,10 +104,10 @@ public class Totem extends EntityArmorStand {
                             "§7or when you exit its §e12 §7block radius.\n" +
                             "''\n" +
                             "'§dDeath’s Debt§7: Take §c100% §7of the damage delayed'\n" +
-                    "§7by §2Spirit's Respite §7over §66 §7seconds. The totem\n" +
-                    "§7will heal nearby allies for §a15% §7of all damage\n" +
-                    "§7that you take. If you survive, deal §c15% §7of the\n" +
-                    "§7damage delayed to nearby enemies.");
+                            "§7by §2Spirit's Respite §7over §66 §7seconds. The totem\n" +
+                            "§7will heal nearby allies for §a15% §7of all damage\n" +
+                            "§7that you take. If you survive, deal §c15% §7of the\n" +
+                            "§7damage delayed to nearby enemies.");
         }
 
         @Override
@@ -119,6 +124,10 @@ public class Totem extends EntityArmorStand {
 
             Totem deathsDebtTotem = new Totem(((CraftWorld) player.getWorld()).getHandle(), warlordsPlayer, totemStand, 4 + (4 * (int) Math.round((double) warlordsPlayer.getHealth() / warlordsPlayer.getMaxHealth())));
             Warlords.totems.add(deathsDebtTotem);
+
+            for (Player player1 : Bukkit.getOnlinePlayers()) {
+                player1.playSound(player.getLocation(), "shaman.earthlivingweapon.impact", 1, 2);
+            }
         }
 
         public int getDelayedDamage() {
@@ -144,10 +153,10 @@ public class Totem extends EntityArmorStand {
             super("Healing Totem", 168, 841, 60 + 12, 60, 15, 200,
                     "§7Place a totem on the ground that\n" +
                     "§7pulses constantly, healing nearby\n" +
-                    "§allies for §a168 §7- §a227 §7every\n" +
+                    "§7allies for §a168 §7- §a227 §7every\n" +
                     "second. Before disappearing , the totem\n" +
                     "will let out a final pulse that heals for\n" +
-                    "§a841 §7 - §a1138 §7. Lasts §65 §7seconds.");
+                    "§a841 §7 - §a1138§7. Lasts §65 §7seconds.");
 
             //168 - 227
             //841 - 1138
@@ -168,6 +177,10 @@ public class Totem extends EntityArmorStand {
 
             Totem healingTotem = new Totem(((CraftWorld) player.getWorld()).getHandle(), warlordsPlayer, totemStand, 5);
             Warlords.totems.add(healingTotem);
+
+            for (Player player1 : Bukkit.getOnlinePlayers()) {
+                player1.playSound(player.getLocation(), "shaman.totem.activation", 1, 1);
+            }
         }
 
     }

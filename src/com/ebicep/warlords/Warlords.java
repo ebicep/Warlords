@@ -7,6 +7,8 @@ import com.ebicep.warlords.classes.abilties.*;
 import com.ebicep.warlords.commands.StartGame;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.util.ParticleEffect;
+import net.minecraft.server.v1_8_R3.EnumParticle;
+import net.minecraft.server.v1_8_R3.PacketPlayOutWorldParticles;
 import org.bukkit.*;
 import org.bukkit.entity.*;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -131,7 +133,7 @@ public class Warlords extends JavaPlugin {
     public static int redKills;
 
 
-    public static World world = Bukkit.getWorld("world");
+    public static World world = Bukkit.getWorld("TestWorld");
 
     private int counter = 0;
 
@@ -256,8 +258,8 @@ public class Warlords extends JavaPlugin {
                             // TODO: use setVelocity instead of multiply to avoid acceleration/startup time
                             location.add(customProjectile.getDirection().multiply(1.15));
                             location.add(0, 1.5, 0);
-                            ParticleEffect.DRIP_LAVA.display(0, 0, 0, 0.35F, 7, location, 500);
-                            ParticleEffect.SMOKE_NORMAL.display(0, 0, 0, 0.1F, 4, location, 500);
+                            ParticleEffect.DRIP_LAVA.display(0, 0, 0, 0.35F, 5, location, 500);
+                            ParticleEffect.SMOKE_NORMAL.display(0, 0, 0, 0.001F, 7, location, 500);
                             ParticleEffect.FLAME.display(0, 0, 0, 0.06F, 1, location, 500);
                             for (Entity entity : location.getWorld().getEntities()) {
                                 if (entity instanceof Player && entity != customProjectile.getShooter()) {
@@ -342,7 +344,7 @@ public class Warlords extends JavaPlugin {
                             location.add(customProjectile.getDirection().multiply(1));
                             location.add(0, 1.5, 0);
                             //TODO add damage
-                            ParticleEffect.DRIP_WATER.display(0.3f, 0.3f, 0.3f, 0.1F, 5, location, 500);
+                            ParticleEffect.DRIP_WATER.display(0.3f, 0.3f, 0.3f, 0.1F, 2, location, 500);
                             ParticleEffect.ENCHANTMENT_TABLE.display(0, 0, 0, 0.1F, 1, location, 500);
                             ParticleEffect.VILLAGER_HAPPY.display(0, 0, 0, 0.1F, 1, location, 500);
                             ParticleEffect.CLOUD.display(0, 0, 0, 0F, 1, location, 500);
@@ -350,8 +352,8 @@ public class Warlords extends JavaPlugin {
                             for (Entity entity : location.getWorld().getEntities()) {
                                 if (entity instanceof Player && entity != customProjectile.getShooter()) {
                                     if (entity.getLocation().distanceSquared(location) < 2 * 2) {
-                                        ParticleEffect.HEART.display(3, 3, 3, 0.2F, 5, entity.getLocation().add(0, 1, 0), 500);
-                                        ParticleEffect.VILLAGER_HAPPY.display(4, 4, 4, 0.2F, 5, entity.getLocation().add(0, 1, 0), 500);
+                                        ParticleEffect.HEART.display(1.5F, 1.5F, 1.5F, 0.2F, 2, entity.getLocation().add(0, 1, 0), 500);
+                                        ParticleEffect.VILLAGER_HAPPY.display(1.5F, 1.5F, 1.5F, 0.2F, 3, entity.getLocation().add(0, 1, 0), 500);
                                         Player victim = (Player) entity;
                                         for (Player player1 : Bukkit.getOnlinePlayers()) {
                                             player1.playSound(entity.getLocation(), "mage.waterbolt.impact", 1, 1);
@@ -520,39 +522,84 @@ public class Warlords extends JavaPlugin {
                     }
                 }
 
-                // PARTICLES
+                // PARTICLES - FOUR TICK MODULE
                 if (counter % 4 == 0) {
                     for (Player player : world.getPlayers()) {
                         WarlordsPlayer warlordsPlayer = getPlayer(player);
+
+                        // Arcane Shield
                         if (warlordsPlayer.getArcaneShield() != 0) {
-                            for (int i = 0; i < warlordsPlayer.getArcaneShield(); i++) {
-                                ParticleEffect.CLOUD.display(0.3F, 0.9F, 0.3F, 0.02F, 2, player.getLocation(), 500);
-                                ParticleEffect.FIREWORKS_SPARK.display(0.3F, 1.2F, 0.3F, 0.0001F, 1, player.getLocation(), 500);
-                                ParticleEffect.SPELL_WITCH.display(0.3F, 1.2F, 0.3F, 0.001F, 1, player.getLocation(), 500);
-                            }
-                        }
-                        if (warlordsPlayer.getInferno() != 0) {
-                            for (int i = 0; i < warlordsPlayer.getInferno(); i++) {
-                                ParticleEffect.DRIP_LAVA.display(0.3F, 0.6F, 0.3F, 0.4F, 1, player.getLocation(), 500);
-                            }
+                                Location location = player.getLocation();
+                                location.add(0, 1.5, 0);
+                                ParticleEffect.CLOUD.display(0.15F, 0.3F, 0.15F, 0.01F, 2, location, 500);
+                                ParticleEffect.FIREWORKS_SPARK.display(0.3F, 0.3F, 0.3F, 0.0001F, 1, location, 500);
+                                ParticleEffect.SPELL_WITCH.display(0.3F, 0.3F, 0.3F, 0.001F, 1, location, 500);
                         }
 
+                        // Timewarp
                         for (int i = 0; i < timeWarpPlayers.size(); i++) {
                             TimeWarp.TimeWarpPlayer timeWarpPlayer = timeWarpPlayers.get(i);
                             if (timeWarpPlayer.getTime() != 0) {
                                 //ParticleEffect.CLOUD.display(0.4F, 0.1F, 0.4F, 0.001F, 5, timeWarpPlayer.getLocation(), 500);
-                                ParticleEffect.SPELL_WITCH.display(0F, 0F, 0F, 0.001F, 6, player.getLocation(), 500);
+                                ParticleEffect.SPELL_WITCH.display(0F, 0F, 0F, 0.001F, 6, timeWarpPlayer.getLocation(), 500);
                             }
 
-                            int points = 20;
+                            int points = 6;
                             double radius = 0.5d;
                             Location origin = timeWarpPlayer.getLocation();
 
                             for (int e = 0; e < points; e++) {
                                 double angle = 2 * Math.PI * e / points;
                                 Location point = origin.clone().add(radius * Math.sin(angle), 0.0d, radius * Math.cos(angle));
-                                ParticleEffect.CLOUD.display(0F, 0F, 0F, 0.001F, 2, point, 500);
+                                ParticleEffect.CLOUD.display(0.1F, 0F, 0.1F, 0.001F, 1, point, 500);
                             }
+                        }
+
+                        // Blood Lust
+                        if (warlordsPlayer.getBloodLust() != 0) {
+                            Location location = player.getLocation();
+                            location.add(0, 1.2, 0);
+                            //PacketPlayOutWorldParticles p1 = new PacketPlayOutWorldParticles(EnumParticle.REDSTONE, true, 1, 1, 1, 255, 255, 255, 0, 0);
+                            // TODO: make it not a rainbow lol
+                            ParticleEffect.REDSTONE.display(0.3F, 0.2F, 0.3F, 0.1F, 3, location, 500);
+                        }
+
+                        // Earthliving
+                        if (warlordsPlayer.getEarthliving() != 0) {
+                            Location location = player.getLocation();
+                            location.add(0, 1.2, 0);
+                            ParticleEffect.VILLAGER_HAPPY.display(0.3F, 0.3F, 0.3F, 0.1F, 3, location, 500);
+                        }
+                    }
+                }
+
+                // PARTICLES - TWO TICK MODULE
+                if (counter % 2 == 0) {
+                    for (Player player : world.getPlayers()) {
+                        WarlordsPlayer warlordsPlayer = getPlayer(player);
+
+                        // Inferno
+                        if (warlordsPlayer.getInferno() != 0) {
+                                Location location = player.getLocation();
+                                location.add(0, 1.2, 0);
+                                ParticleEffect.DRIP_LAVA.display(0.5F, 0.2F, 0.5F, 0.4F, 1, location, 500);
+                                ParticleEffect.FLAME.display(0.5F, 0.2F, 0.5F, 0.0001F, 1, location, 500);
+                                ParticleEffect.CRIT.display(0.5F, 0.2F, 0.5F, 0.0001F, 1, location, 500);
+                        }
+
+                        // Ice Barrier
+                        if (warlordsPlayer.getIceBarrier() != 0) {
+                            Location location = player.getLocation();
+                            location.add(0, 1.5, 0);
+                            ParticleEffect.CLOUD.display(0.2F, 0.2F, 0.2F, 0.001F, 1, location, 500);
+                            ParticleEffect.FIREWORKS_SPARK.display(0.3F, 0.2F, 0.3F, 0.0001F, 1, location, 500);
+                        }
+
+                        // Berserk
+                        if (warlordsPlayer.getBerserk() != 0) {
+                            Location location = player.getLocation();
+                            location.add(0, 2.1, 0);
+                            ParticleEffect.VILLAGER_ANGRY.display(0, 0, 0, 0.1F, 1, location, 500);
                         }
                     }
                 }
@@ -829,18 +876,9 @@ public class Warlords extends JavaPlugin {
                         if (warlordsPlayer.getArcaneShield() != 0) {
                             Bukkit.broadcastMessage("" + warlordsPlayer.getArcaneShield());
                             warlordsPlayer.setArcaneShield(warlordsPlayer.getArcaneShield() - 1);
-                            /*or (int i = 0; i < warlordsPlayer.getArcaneShield(); i++) {
-                                ParticleEffect.CLOUD.display(0.3F, 1.2F, 0.3F, 0.002F, 2, player.getLocation(), 500);
-                                ParticleEffect.FIREWORKS_SPARK.display(0.3F, 1.2F, 0.3F, 0.0001F, 1, player.getLocation(), 500);
-                                Bukkit.broadcastMessage("Arcane:" + warlordsPlayer.getArcaneShield());
-                            }*/
                         }
                         if (warlordsPlayer.getInferno() != 0) {
                             warlordsPlayer.setInferno(warlordsPlayer.getInferno() - 1);
-                            for (int i = 0; i < warlordsPlayer.getInferno(); i++) {
-                                ParticleEffect.FLAME.display(0.3F, 0.7F, 0.3F, 0.0001F, 1, player.getLocation(), 500);
-                                ParticleEffect.CRIT.display(0.4F, 0.7F, 0.4F, 0.0001F, 1, player.getLocation(), 500);
-                            }
                         }
                         if (warlordsPlayer.getChainLightningCooldown() != 0) {
                             warlordsPlayer.setChainLightningCooldown(warlordsPlayer.getChainLightningCooldown() - 1);
