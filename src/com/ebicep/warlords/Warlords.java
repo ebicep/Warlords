@@ -170,7 +170,7 @@ public class Warlords extends JavaPlugin {
                     // MOVEMENT
                     for (Player player : world.getPlayers()) {
                         WarlordsPlayer warlordsPlayer = getPlayer(player);
-                        //player.sendMessage(String.valueOf(player.getWalkSpeed()));
+//                        player.sendMessage(String.valueOf(player.getWalkSpeed()));
 
                         // light infusion
                         if (warlordsPlayer.getInfusion() != 0) {
@@ -211,7 +211,7 @@ public class Warlords extends JavaPlugin {
                             warlordsPlayer.setFrostbolt((int) (warlordsPlayer.getFrostbolt() - 0.05));
                             List<Entity> near = player.getNearbyEntities(6.0D, 2.0D, 6.0D);
 
-                            // TODO: fix shooting getting all players + shooter instead of just impact location bolt
+                            // TODO: fix shooting all players + shooter instead of just impact location bolt
                             for (Entity entity : near) {
                                 if (entity instanceof Player) {
                                     Player nearPlayer = (Player) entity;
