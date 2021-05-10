@@ -14,7 +14,10 @@ import com.ebicep.warlords.classes.shaman.specs.thunderlord.ThunderLord;
 import com.ebicep.warlords.classes.warrior.specs.berserker.Berserker;
 import com.ebicep.warlords.classes.warrior.specs.defender.Defender;
 import com.ebicep.warlords.classes.warrior.specs.revenant.Revenant;
+import com.ebicep.warlords.maps.GameLobby;
+import com.ebicep.warlords.maps.Map;
 import com.ebicep.warlords.util.CustomScoreboard;
+import com.ebicep.warlords.util.RemoveEntities;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -34,13 +37,16 @@ import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
 import org.bukkit.util.EulerAngle;
 
+import java.awt.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class StartGame implements CommandExecutor {
+public class Commands implements CommandExecutor {
 
+
+    // TODO: note to self, move all this stuff
     private int blueKills = 0;
     private int redKills = 0;
 
@@ -86,7 +92,7 @@ public class StartGame implements CommandExecutor {
         for (Player player : Warlords.getPlayers().keySet()) {
             WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
             objective.getScore(ChatColor.GOLD + "Lv90 " + ChatColor.GREEN + warlordsPlayer.getSpec().getClass().getSimpleName()).setScore(5);
-            objective.getScore("" + ChatColor.GREEN + warlordsPlayer.getKills() + ChatColor.RESET + "Kills " + ChatColor.GREEN + warlordsPlayer.getAssists() + ChatColor.RESET + "Assists").setScore(3);
+            objective.getScore("" + ChatColor.GREEN + warlordsPlayer.getKills() + ChatColor.RESET + " Kills " + ChatColor.GREEN + warlordsPlayer.getAssists() + ChatColor.RESET + " Assists").setScore(3);
 
             player.setScoreboard(board);
         }
@@ -118,20 +124,21 @@ public class StartGame implements CommandExecutor {
         for (Player player : Warlords.getPlayers().keySet()) {
             WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
             objective.getScore(ChatColor.GOLD + "Lv90 " + ChatColor.GREEN + warlordsPlayer.getSpec().getClass().getSimpleName()).setScore(5);
-            objective.getScore("" + ChatColor.GREEN + warlordsPlayer.getKills() + ChatColor.RESET + "Kills " + ChatColor.GREEN + warlordsPlayer.getAssists() + ChatColor.RESET + "Assists").setScore(3);
+            objective.getScore("" + ChatColor.GREEN + warlordsPlayer.getKills() + ChatColor.RESET + " Kills " + ChatColor.GREEN + warlordsPlayer.getAssists() + ChatColor.RESET + " Assists").setScore(3);
 
             player.setScoreboard(board);
         }
     }
 
-    // test comment
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
         if (!(sender instanceof Player)) return true;
         Player player = (Player) sender;
         if (command.getName().equalsIgnoreCase("start")) {
             System.out.println("STARTED");
-            Warlords.world.getEntities().stream().filter(entity -> !(entity instanceof Player)).forEach(Entity::remove);
+            RemoveEntities removeEntities = new RemoveEntities();
+            removeEntities.onRemove();
+            //Warlords.world.getEntities().stream().filter(entity -> !(entity instanceof Player)).forEach(Entity::remove);
             if (args.length > 2) {
                 Location location = player.getLocation();
                 ArmorStand stand = (ArmorStand) location.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
@@ -148,14 +155,14 @@ public class StartGame implements CommandExecutor {
             for (int i = 0; i < Warlords.world.getPlayers().size(); i = i + 2) {
                 Player worldPlayer = Warlords.world.getPlayers().get(i);
                 //worldPlayer.setWalkSpeed(.2f * Float.parseFloat(args[0]));
-                Warlords.addPlayer(new WarlordsPlayer(worldPlayer, worldPlayer.getName(), worldPlayer.getUniqueId(), new Earthwarden(worldPlayer)));
+                Warlords.addPlayer(new WarlordsPlayer(worldPlayer, worldPlayer.getName(), worldPlayer.getUniqueId(), new Pyromancer(worldPlayer)));
                 worldPlayer.setMaxHealth(40);
                 blueTeam.add(worldPlayer.getName());
                 System.out.println("Added " + worldPlayer.getName());
 
                 if (i + 1 < Warlords.world.getPlayers().size()) {
                     Player worldPlayer2 = Warlords.world.getPlayers().get(i + 1);
-                    Warlords.addPlayer(new WarlordsPlayer(worldPlayer2, worldPlayer2.getName(), worldPlayer2.getUniqueId(), new Cryomancer(worldPlayer2)));
+                    Warlords.addPlayer(new WarlordsPlayer(worldPlayer2, worldPlayer2.getName(), worldPlayer2.getUniqueId(), new Pyromancer(worldPlayer2)));
                     worldPlayer2.setMaxHealth(40);
                     redTeam.add(worldPlayer.getName());
                     System.out.println("Added2 " + worldPlayer2.getName());
@@ -165,31 +172,17 @@ public class StartGame implements CommandExecutor {
                 Warlords.getPlayer(worldPlayer).assignItemLore();
             }
 
-
             System.out.println(Warlords.getPlayers().values());
             for (WarlordsPlayer value : Warlords.getPlayers().values()) {
                 System.out.println("updated scoreboard for " + value.getName());
                 value.setScoreboard(new CustomScoreboard(value.getPlayer(), blueTeam, redTeam));
             }
 
-//            Location blueFlagLocation = new Location(player.getWorld(), 0.5, 4, 0.5);
-//            Block block = blueFlagLocation.getWorld().getBlockAt(blueFlagLocation);
-//            block.setType(Material.STANDING_BANNER);
-//
-//
-//            ArmorStand blueFlag = blueFlagLocation.getWorld().spawn(blueFlagLocation, ArmorStand.class);
-//            blueFlag.setGravity(false);
-//            blueFlag.setCanPickupItems(false);
-//            blueFlag.setCustomName("BLU FLAG");
-//            blueFlag.setCustomNameVisible(true);
-//            blueFlag.setVisible(false);
-
         } else if (command.getName().equalsIgnoreCase("test")) {
             for (WarlordsPlayer value : Warlords.getPlayers().values()) {
                 value.getScoreboard().updateKills();
             }
-
-
+        }
 //            Location location = player.getLocation();
 //            ArmorStand as = location.getWorld().spawn(location, ArmorStand.class);
 //
@@ -199,7 +192,6 @@ public class StartGame implements CommandExecutor {
 //
 //            as.setGravity(false);
 //            as.setVisible(true);
-        }
 
         return true;
     }

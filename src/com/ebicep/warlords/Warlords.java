@@ -4,25 +4,18 @@ import com.ebicep.customentities.CustomFallingBlock;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.classes.abilties.Projectile;
 import com.ebicep.warlords.classes.abilties.*;
-import com.ebicep.warlords.commands.StartGame;
+import com.ebicep.warlords.commands.Commands;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.util.ParticleEffect;
-import net.minecraft.server.v1_8_R3.EnumParticle;
-import net.minecraft.server.v1_8_R3.PacketPlayOutWorldParticles;
 import org.bukkit.*;
 import org.bukkit.entity.*;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scoreboard.DisplaySlot;
-import org.bukkit.scoreboard.Objective;
-import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.ScoreboardManager;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class Warlords extends JavaPlugin {
@@ -141,7 +134,7 @@ public class Warlords extends JavaPlugin {
     public void onEnable() {
         instance = this;
         getServer().getPluginManager().registerEvents(new WarlordsEvents(), this);
-        StartGame startGame = new StartGame();
+        Commands startGame = new Commands();
         getCommand("start").setExecutor(startGame);
         getCommand("test").setExecutor(startGame);
         if (world != null) {
@@ -270,6 +263,7 @@ public class Warlords extends JavaPlugin {
                                         // TODO: fix sounds only playing on direct hit
                                         for (Player player1 : Bukkit.getOnlinePlayers()) {
                                             player1.playSound(entity.getLocation(), "mage.fireball.impact", 1, 1);
+                                            player1.playSound(entity.getLocation(), Sound.ORB_PICKUP, 0.3f, 1f);
                                         }
                                         getPlayer(victim).addHealth(
                                                 getPlayer(customProjectile.getShooter()),
@@ -278,6 +272,7 @@ public class Warlords extends JavaPlugin {
                                                 (int) (customProjectile.getBall().getMaxDamageHeal() * 1.15),
                                                 customProjectile.getBall().getCritChance(),
                                                 customProjectile.getBall().getCritMultiplier()
+
                                         );
                                         List<Entity> near = victim.getNearbyEntities(3.5D, 3.5D, 3.5D);
                                         near.remove(customProjectile.getShooter());

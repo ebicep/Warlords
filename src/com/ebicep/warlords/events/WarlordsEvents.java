@@ -61,7 +61,12 @@ public class WarlordsEvents implements Listener {
     @EventHandler
     public static void onPlayerJoin(PlayerJoinEvent e) {
         Player player = e.getPlayer();
-        player.sendMessage(ChatColor.AQUA + "Welcome to the server retard");
+        player.sendMessage(ChatColor.GRAY + "Welcome " + ChatColor.RED + player.getPlayerListName() + ChatColor.GRAY + " to the Warlords comp games server.");
+        player.sendMessage(" ");
+        player.sendMessage(ChatColor.GRAY + "Developed by " + ChatColor.RED + "sumSmash " + ChatColor.GRAY + "&" + ChatColor.RED + " Plikie");
+        player.sendMessage(" ");
+        player.sendMessage(ChatColor.GRAY + "placerholer optional extras idk");
+        player.sendMessage(" ");
     }
 
     @EventHandler
