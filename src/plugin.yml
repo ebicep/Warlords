@@ -2,10 +2,12 @@ name: Warlords
 version: 1.0
 author: ebic
 main: com.ebicep.warlords.Warlords
+depend: [MultiWorld]
 commands:
   start:
-    description: Starts a new game
-    usage: /start
-  test:
-    description: randoms hit
-    usage: /test
+    description: Starts a new game.
+    usage: /start [MAP]
+  endgame:
+    description: Force stops the game.
+    usage: /endgame
+

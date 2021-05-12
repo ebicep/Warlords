@@ -35,7 +35,7 @@ public class RecklessCharge extends AbstractAbility {
         Location eyeLocation = player.getLocation();
         eyeLocation.setPitch(-10);
         //TODO fix charge, needs to set x/z velcity to zero after travelling x blocks or v velocity isnt x anymore
-        if (Warlords.world.getBlockAt(eyeLocation.clone().add(0, -1, 0)).getType() != Material.AIR) {
+        if (eyeLocation.getWorld().getBlockAt(eyeLocation.clone().add(0, -1, 0)).getType() != Material.AIR) {
             System.out.println("Launched on ground");
             //travels 5 blocks
             player.setVelocity(eyeLocation.getDirection().multiply(2.4));

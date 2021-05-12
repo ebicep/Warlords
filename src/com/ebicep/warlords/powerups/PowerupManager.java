@@ -2,7 +2,7 @@ package com.ebicep.warlords.powerups;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
-import com.ebicep.warlords.maps.GameManager;
+import com.ebicep.warlords.maps.GameMap;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -14,17 +14,17 @@ import java.util.stream.Collectors;
 public class PowerupManager extends BukkitRunnable {
 
     private List<AbstractPowerUp> powerUps = new ArrayList<>();
-    private GameManager.GameMap map;
+    private GameMap map;
 
-    public PowerupManager(GameManager.GameMap map) {
+    public PowerupManager(GameMap map) {
         this.map = map;
-        powerUps.add(new DamagePowerUp(map.map.getDamagePowerupBlue(), 30, 45 * 20));
-        powerUps.add(new DamagePowerUp(map.map.getDamagePowerupRed(), 30, 45 * 20));
-        powerUps.add(new HealingPowerUp(map.map.getHealingPowerupBlue(), 0, 45 * 20));
-        powerUps.add(new HealingPowerUp(map.map.getHealingPowerupRed(), 0, 45 * 20));
+        powerUps.add(new DamagePowerUp(map.getDamagePowerupBlue(), 30, 45 * 20));
+        powerUps.add(new DamagePowerUp(map.getDamagePowerupRed(), 30, 45 * 20));
+        powerUps.add(new HealingPowerUp(map.getHealingPowerupBlue(), 0, 45 * 20));
+        powerUps.add(new HealingPowerUp(map.getHealingPowerupRed(), 0, 45 * 20));
         //TODO find duration of speed
-        powerUps.add(new SpeedPowerUp(map.map.getSpeedPowerupBlue(), 10, 45 * 20));
-        powerUps.add(new SpeedPowerUp(map.map.getSpeedPowerupRed(), 10, 45 * 20));
+        powerUps.add(new SpeedPowerUp(map.getSpeedPowerupBlue(), 10, 45 * 20));
+        powerUps.add(new SpeedPowerUp(map.getSpeedPowerupRed(), 10, 45 * 20));
     }
 
 

@@ -24,7 +24,6 @@ public class TimeWarp extends AbstractAbility {
         Warlords.getTimeWarpPlayers().add(new TimeWarpPlayer(warlordsPlayer, player.getLocation(), player.getLocation().getDirection(), 5));
         warlordsPlayer.subtractEnergy(energyCost);
 
-        // TODO: fix sound for warping back
         for (Player player1 : Bukkit.getOnlinePlayers()) {
             player1.playSound(player.getLocation(), "mage.timewarp.activation", 1, 1);
         }

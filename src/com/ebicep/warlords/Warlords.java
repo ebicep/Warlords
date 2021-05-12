@@ -6,6 +6,7 @@ import com.ebicep.warlords.classes.abilties.Projectile;
 import com.ebicep.warlords.classes.abilties.*;
 import com.ebicep.warlords.commands.Commands;
 import com.ebicep.warlords.events.WarlordsEvents;
+import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.util.ParticleEffect;
 import org.bukkit.*;
 import org.bukkit.entity.*;
@@ -125,43 +126,39 @@ public class Warlords extends JavaPlugin {
     public static int blueKills;
     public static int redKills;
 
-    public static World world = Bukkit.getWorld("TestWorld");
-
     private int counter = 0;
+
+    public Game game;
 
     @Override
     public void onEnable() {
         instance = this;
         getServer().getPluginManager().registerEvents(new WarlordsEvents(), this);
-        Commands startGame = new Commands();
-        getCommand("start").setExecutor(startGame);
-        getCommand("test").setExecutor(startGame);
-        if (world != null) {
-            runnable();
-        }
+        Commands commands = new Commands();
+        getCommand("start").setExecutor(commands);
+        getCommand("endgame").setExecutor(commands);
+        this.game = new Game();
+        startTask();
+
+        getServer().getScheduler().runTaskTimer(this, this.game, 1, 1);
+
         getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords]: Plugin is enabled");
     }
 
     @Override
     public void onDisable() {
         getServer().getConsoleSender().sendMessage(ChatColor.RED + "[Warlords]: Plugin is disabled");
-
     }
 
-    public void runnable() {
+    public void startTask() {
         new BukkitRunnable() {
 
             @Override
             public void run() {
 
-                //EVERY TWO TICKS
-                // 1 tick is a lot smoother, idk about performance impact
-                // TODO fix - this if statement is always true
-                if (counter % 1 == 0) {
-
                     // speed every 1 tick updated so it activates instantly
                     // MOVEMENT
-                    for (Player player : world.getPlayers()) {
+                    for (Player player : Bukkit.getOnlinePlayers()) {
                         WarlordsPlayer warlordsPlayer = getPlayer(player);
 //                        player.sendMessage(String.valueOf(player.getWalkSpeed()));
 
@@ -434,7 +431,7 @@ public class Warlords extends JavaPlugin {
                         }
 
                         //hit block or out of range
-                        if (world.getBlockAt(location).getType() != Material.AIR && !hitPlayer) {
+                        if (location.getWorld().getBlockAt(location).getType() != Material.AIR && !hitPlayer) {
                             if (customProjectile.getBall().getName().contains("Water")) {
                                 ParticleEffect.HEART.display(1, 1, 1, 0.2F, 5, location, 500);
                                 ParticleEffect.VILLAGER_HAPPY.display(1, 1, 1, 0.2F, 5, location, 500);
@@ -474,7 +471,6 @@ public class Warlords extends JavaPlugin {
 
                         location.subtract(0, 1.5, 0);
                     }
-                }
 
                 if (counter % 2 == 0) {
                     //GROUND SLAM
@@ -482,7 +478,7 @@ public class Warlords extends JavaPlugin {
                         GroundSlam groundSlam = groundSlamArray.get(i);
                         for (List<Location> fallingBlockLocation : groundSlam.getFallingBlockLocations()) {
                             for (Location location : fallingBlockLocation) {
-                                if (world.getBlockAt(location.clone().add(0, 1, 0)).getType() == Material.AIR) {
+                                if (location.getWorld().getBlockAt(location.clone().add(0, 1, 0)).getType() == Material.AIR) {
                                     FallingBlock fallingBlock = addFallingBlock(location);
                                     System.out.println(fallingBlock.getLocation());
                                     customFallingBlocks.add(new CustomFallingBlock(fallingBlock, location.getY() + .25, groundSlam.getOwner(), groundSlam));
@@ -501,7 +497,7 @@ public class Warlords extends JavaPlugin {
                         SeismicWave seismicWave = waveArrays.get(i);
                         for (List<Location> fallingBlockLocation : seismicWave.getFallingBlockLocations()) {
                             for (Location location : fallingBlockLocation) {
-                                if (world.getBlockAt(location.clone().add(0, 1, 0)).getType() == Material.AIR) {
+                                if (location.getWorld().getBlockAt(location.clone().add(0, 1, 0)).getType() == Material.AIR) {
                                     FallingBlock fallingBlock = addFallingBlock(location);
                                     customFallingBlocks.add(new CustomFallingBlock(fallingBlock, location.getY() + .25, seismicWave.getOwner(), seismicWave));
                                 }
@@ -518,7 +514,7 @@ public class Warlords extends JavaPlugin {
 
                 // PARTICLES - FOUR TICK MODULE
                 if (counter % 4 == 0) {
-                    for (Player player : world.getPlayers()) {
+                    for (Player player : Bukkit.getOnlinePlayers()) {
                         WarlordsPlayer warlordsPlayer = getPlayer(player);
 
                         // Arcane Shield
@@ -569,7 +565,7 @@ public class Warlords extends JavaPlugin {
 
                 // PARTICLES - TWO TICK MODULE
                 if (counter % 2 == 0) {
-                    for (Player player : world.getPlayers()) {
+                    for (Player player : Bukkit.getOnlinePlayers()) {
                         WarlordsPlayer warlordsPlayer = getPlayer(player);
 
                         // Inferno
@@ -636,9 +632,9 @@ public class Warlords extends JavaPlugin {
                                 } else if (i <= tempSpikes.size() && tempSpikes.get(i).size() > 30) {
                                     spikes.remove(i);
                                 } else {
-                                    Location location = world.getBlockAt(player.getLocation()).getLocation();
+                                    Location location = player.getWorld().getBlockAt(player.getLocation()).getLocation();
                                     location.add(.5, 0, .5);
-                                    List<Entity> onSameBlock = (List<Entity>) world.getNearbyEntities(location, .6, 1.5, .6);
+                                    List<Entity> onSameBlock = (List<Entity>) location.getWorld().getNearbyEntities(location, .6, 1.5, .6);
                                     onSameBlock.remove(user.getPlayer());
                                     for (Entity entity : onSameBlock) {
                                         if (entity instanceof Player)
@@ -693,55 +689,56 @@ public class Warlords extends JavaPlugin {
                     }
 
                     //TODO MAKE BOULDER CLASS
-                    for (ArmorStand e : world.getEntitiesByClass(ArmorStand.class)) {
-                        if (e.getCustomName() != null && e.getCustomName().contains("Boulder")) {
-                            Vector velocity = e.getVelocity();
-                            Location location = e.getLocation();
-                            double xVel = velocity.getX();
-                            double yVel = velocity.getY();
-                            double zVel = velocity.getZ();
-                            //Bukkit.broadcastMessage("" + velocity);
+                    for (World world : Bukkit.getWorlds()) {
+                        for (ArmorStand e : world.getEntitiesByClass(ArmorStand.class)) {
+                            if (e.getCustomName() != null && e.getCustomName().contains("Boulder")) {
+                                Vector velocity = e.getVelocity();
+                                Location location = e.getLocation();
+                                double xVel = velocity.getX();
+                                double yVel = velocity.getY();
+                                double zVel = velocity.getZ();
+                                //Bukkit.broadcastMessage("" + velocity);
 
-                            if (yVel < 0) {
-                                e.setHeadPose(new EulerAngle(e.getVelocity().getY() / 2 * -1, 0, 0));
-                            } else {
-                                e.setHeadPose(new EulerAngle(e.getVelocity().getY() * -1, 0, 0));
-                            }
-                            System.out.println(location.getY());
-                            if (location.getY() <= 6) {
-                                e.remove();
-
-                                location.setPitch(-10);
-                                for (int i = 0; i < 20; i++) {
-                                    Location tempLocation = location.clone();
-                                    while (location.getWorld().getBlockAt(tempLocation).getType() == Material.AIR) {
-                                        tempLocation.add(0, -1, 0);
-                                    }
-
-                                    FallingBlock fallingBlock = world.spawnFallingBlock(location.clone().add(0, 1, 0),
-                                            location.getWorld().getBlockAt(tempLocation).getType(),
-                                            location.getWorld().getBlockAt(tempLocation).getData());
-                                    fallingBlock.setVelocity(location.getDirection().normalize().multiply(.75));
-                                    fallingBlock.setDropItem(false);
-                                    location.setYaw((float) (location.getYaw() + Math.random() * 25 + 12));
-                                    WarlordsEvents.addEntityUUID(fallingBlock.getUniqueId());
+                                if (yVel < 0) {
+                                    e.setHeadPose(new EulerAngle(e.getVelocity().getY() / 2 * -1, 0, 0));
+                                } else {
+                                    e.setHeadPose(new EulerAngle(e.getVelocity().getY() * -1, 0, 0));
                                 }
-                                List<Entity> near = (List<Entity>) world.getNearbyEntities(location, 5, 5, 5);
-                                for (Entity entity : near) {
-                                    if (entity instanceof Player) {
-                                        Player nearPlayer = (Player) entity;
-                                        if (nearPlayer.getGameMode() != GameMode.SPECTATOR) {
-                                            //Warlords.getPlayer(nearPlayer).addHealth();
-                                            final Vector v = nearPlayer.getLocation().toVector().subtract(location.toVector()).normalize().multiply(1.5).setY(0.4);
+                                System.out.println(location.getY());
+                                if (location.getY() <= 6) {
+                                    e.remove();
 
-                                            nearPlayer.setVelocity(v);
+                                    location.setPitch(-10);
+                                    for (int i = 0; i < 20; i++) {
+                                        Location tempLocation = location.clone();
+                                        while (location.getWorld().getBlockAt(tempLocation).getType() == Material.AIR) {
+                                            tempLocation.add(0, -1, 0);
+                                        }
+
+                                        FallingBlock fallingBlock = world.spawnFallingBlock(location.clone().add(0, 1, 0),
+                                                location.getWorld().getBlockAt(tempLocation).getType(),
+                                                location.getWorld().getBlockAt(tempLocation).getData());
+                                        fallingBlock.setVelocity(location.getDirection().normalize().multiply(.75));
+                                        fallingBlock.setDropItem(false);
+                                        location.setYaw((float) (location.getYaw() + Math.random() * 25 + 12));
+                                        WarlordsEvents.addEntityUUID(fallingBlock.getUniqueId());
+                                    }
+                                    List<Entity> near = (List<Entity>) world.getNearbyEntities(location, 5, 5, 5);
+                                    for (Entity entity : near) {
+                                        if (entity instanceof Player) {
+                                            Player nearPlayer = (Player) entity;
+                                            if (nearPlayer.getGameMode() != GameMode.SPECTATOR) {
+                                                //Warlords.getPlayer(nearPlayer).addHealth();
+                                                final Vector v = nearPlayer.getLocation().toVector().subtract(location.toVector()).normalize().multiply(1.5).setY(0.4);
+
+                                                nearPlayer.setVelocity(v);
+                                            }
                                         }
                                     }
+                                    //TODO spawn boulder impact
                                 }
-                                //TODO spawn boulder impact
-                            }
 
-                            //TODO fix boulder velocity stopping
+                                //TODO fix boulder velocity stopping
 //                            if (Math.abs(xVel) + Math.abs(zVel) <= .25) {
 //                                if (!e.getCustomName().contains("2")) {
 //                                    Bukkit.broadcastMessage("HEHEXD");
@@ -752,20 +749,20 @@ public class Warlords extends JavaPlugin {
 //                                    e.setCustomName(e.getCustomName() + "2");
 //                                }
 //                            }
+                            }
                         }
                     }
-
                 }
-
 
                 //EVERY SECOND
                 if (counter % 20 == 0) {
-                    for (Player player : world.getPlayers()) {
+                    for (Player player : Bukkit.getOnlinePlayers()) {
                         WarlordsPlayer warlordsPlayer = getPlayer(player);
                         warlordsPlayer.getScoreboard().updateTime();
 
                         //REGEN
                         if (warlordsPlayer.getRegenTimer() != -1) {
+                            warlordsPlayer.setRegenTimer(warlordsPlayer.getRegenTimer() - 1);
                             warlordsPlayer.setRegenTimer(warlordsPlayer.getRegenTimer() - 1);
                         } else {
                             int healthToAdd = (int) (warlordsPlayer.getMaxHealth() / 55.3);
@@ -775,6 +772,7 @@ public class Warlords extends JavaPlugin {
                                 warlordsPlayer.setHealth(warlordsPlayer.getHealth() + (int) (warlordsPlayer.getMaxHealth() / 55.3));
                             }
                         }
+
                         //RESPAWN
                         if (warlordsPlayer.getRespawnTimer() != -1) {
                             warlordsPlayer.setRespawnTimer(warlordsPlayer.getRespawnTimer() - 1);
@@ -1085,7 +1083,7 @@ public class Warlords extends JavaPlugin {
                     }
                 }
 
-                for (Player player : world.getPlayers()) {
+                for (Player player : Bukkit.getOnlinePlayers()) {
                     WarlordsPlayer warlordsPlayer = getPlayer(player);
                     Location location = player.getLocation();
 
@@ -1206,11 +1204,11 @@ public class Warlords extends JavaPlugin {
                         bolt.getArmorStand().teleport(bolt.getLocation().add(bolt.getTeleportDirection().multiply(1.1)), PlayerTeleportEvent.TeleportCause.PLUGIN);
                         //hitting player
                         //TODO fix fucked up hit detection
-                        if (bolt.getShooter() != warlordsPlayer && location.distanceSquared(new Location(world, bolt.getLocation().getX(), bolt.getLocation().getY(), bolt.getLocation().getZ()).add(0, 2, 0)) < 2.5 * 2.5) {
+                        if (bolt.getShooter() != warlordsPlayer && location.distanceSquared(new Location(location.getWorld(), bolt.getLocation().getX(), bolt.getLocation().getY(), bolt.getLocation().getZ()).add(0, 2, 0)) < 2.5 * 2.5) {
                             warlordsPlayer.addHealth(bolt.getShooter(), bolt.getLightningBolt().getName(), bolt.getLightningBolt().getMinDamageHeal(), bolt.getLightningBolt().getMaxDamageHeal(), bolt.getLightningBolt().getCritChance(), bolt.getLightningBolt().getCritMultiplier());
                         }
 
-                        if (world.getBlockAt(new Location(world, bolt.getLocation().getX(), bolt.getLocation().getY(), bolt.getLocation().getZ()).add(0, 2, 0)).getType() != Material.AIR || bolt.getArmorStand().getTicksLived() > 50) {
+                        if (location.getWorld().getBlockAt(new Location(location.getWorld(), bolt.getLocation().getX(), bolt.getLocation().getY(), bolt.getLocation().getZ()).add(0, 2, 0)).getType() != Material.AIR || bolt.getArmorStand().getTicksLived() > 50) {
                             //TODO add explosion thingy
                             bolt.getArmorStand().remove();
                             bolts.remove(i);
@@ -1227,9 +1225,9 @@ public class Warlords extends JavaPlugin {
 
                         if (!fallenSoul.getPlayersHit().contains(warlordsPlayer) &&
                                 warlordsPlayer.getPlayer().getGameMode() != GameMode.SPECTATOR &&
-                                (location.distanceSquared(new Location(world, fallenSoul.getFallenSoulLeft().getLocation().getX(), fallenSoul.getFallenSoulLeft().getLocation().getY(), fallenSoul.getFallenSoulLeft().getLocation().getZ()).add(0, 2, 0)) < 2 * 2
-                                        || location.distanceSquared(new Location(world, fallenSoul.getFallenSoulMiddle().getLocation().getX(), fallenSoul.getFallenSoulMiddle().getLocation().getY(), fallenSoul.getFallenSoulMiddle().getLocation().getZ()).add(0, 2, 0)) < 2 * 2
-                                        || location.distanceSquared(new Location(world, fallenSoul.getFallenSoulRight().getLocation().getX(), fallenSoul.getFallenSoulRight().getLocation().getY(), fallenSoul.getFallenSoulRight().getLocation().getZ()).add(0, 2, 0)) < 2 * 2
+                                (location.distanceSquared(new Location(location.getWorld(), fallenSoul.getFallenSoulLeft().getLocation().getX(), fallenSoul.getFallenSoulLeft().getLocation().getY(), fallenSoul.getFallenSoulLeft().getLocation().getZ()).add(0, 2, 0)) < 2 * 2
+                                        || location.distanceSquared(new Location(location.getWorld(), fallenSoul.getFallenSoulMiddle().getLocation().getX(), fallenSoul.getFallenSoulMiddle().getLocation().getY(), fallenSoul.getFallenSoulMiddle().getLocation().getZ()).add(0, 2, 0)) < 2 * 2
+                                        || location.distanceSquared(new Location(location.getWorld(), fallenSoul.getFallenSoulRight().getLocation().getX(), fallenSoul.getFallenSoulRight().getLocation().getY(), fallenSoul.getFallenSoulRight().getLocation().getZ()).add(0, 2, 0)) < 2 * 2
                                 )
                         ) {
                             warlordsPlayer.addHealth(fallenSoul.getShooter(), fallenSoul.getFallenSouls().getName(), fallenSoul.getFallenSouls().getMinDamageHeal(), fallenSoul.getFallenSouls().getMaxDamageHeal(), fallenSoul.getFallenSouls().getCritChance(), fallenSoul.getFallenSouls().getCritMultiplier());
@@ -1248,17 +1246,17 @@ public class Warlords extends JavaPlugin {
                             }
                         }
 
-                        if (!fallenSoul.isLeftRemoved() && world.getBlockAt(new Location(world, fallenSoul.getFallenSoulLeft().getLocation().getX(), fallenSoul.getFallenSoulLeft().getLocation().getY(), fallenSoul.getFallenSoulLeft().getLocation().getZ()).add(0, 2, 0)).getType() != Material.AIR || fallenSoul.getFallenSoulLeft().getTicksLived() > 50) {
+                        if (!fallenSoul.isLeftRemoved() && location.getWorld().getBlockAt(new Location(location.getWorld(), fallenSoul.getFallenSoulLeft().getLocation().getX(), fallenSoul.getFallenSoulLeft().getLocation().getY(), fallenSoul.getFallenSoulLeft().getLocation().getZ()).add(0, 2, 0)).getType() != Material.AIR || fallenSoul.getFallenSoulLeft().getTicksLived() > 50) {
                             //TODO add explosion thingy
                             fallenSoul.getFallenSoulLeft().remove();
                             fallenSoul.setLeftRemoved(true);
                         }
-                        if (!fallenSoul.isMiddleRemoved() && world.getBlockAt(new Location(world, fallenSoul.getFallenSoulMiddle().getLocation().getX(), fallenSoul.getFallenSoulMiddle().getLocation().getY(), fallenSoul.getFallenSoulMiddle().getLocation().getZ()).add(0, 2, 0)).getType() != Material.AIR || fallenSoul.getFallenSoulMiddle().getTicksLived() > 50) {
+                        if (!fallenSoul.isMiddleRemoved() && location.getWorld().getBlockAt(new Location(location.getWorld(), fallenSoul.getFallenSoulMiddle().getLocation().getX(), fallenSoul.getFallenSoulMiddle().getLocation().getY(), fallenSoul.getFallenSoulMiddle().getLocation().getZ()).add(0, 2, 0)).getType() != Material.AIR || fallenSoul.getFallenSoulMiddle().getTicksLived() > 50) {
                             //TODO add explosion thingy
                             fallenSoul.getFallenSoulMiddle().remove();
                             fallenSoul.setMiddleRemoved(true);
                         }
-                        if (!fallenSoul.isRightRemoved() && world.getBlockAt(new Location(world, fallenSoul.getFallenSoulRight().getLocation().getX(), fallenSoul.getFallenSoulRight().getLocation().getY(), fallenSoul.getFallenSoulRight().getLocation().getZ()).add(0, 2, 0)).getType() != Material.AIR || fallenSoul.getFallenSoulRight().getTicksLived() > 50) {
+                        if (!fallenSoul.isRightRemoved() && location.getWorld().getBlockAt(new Location(location.getWorld(), fallenSoul.getFallenSoulRight().getLocation().getX(), fallenSoul.getFallenSoulRight().getLocation().getY(), fallenSoul.getFallenSoulRight().getLocation().getZ()).add(0, 2, 0)).getType() != Material.AIR || fallenSoul.getFallenSoulRight().getTicksLived() > 50) {
                             //TODO add explosion thingy
                             fallenSoul.getFallenSoulRight().remove();
                             fallenSoul.setRightRemoved(true);
@@ -1288,14 +1286,14 @@ public class Warlords extends JavaPlugin {
     }
 
     private FallingBlock addFallingBlock(Location location) {
-        if (world.getBlockAt(location).getType() != Material.AIR) {
+        if (location.getWorld().getBlockAt(location).getType() != Material.AIR) {
             location.add(0, 1, 0);
         }
         Location blockToGet = location.clone().add(0, -1, 0);
         if (location.getWorld().getBlockAt(location.clone().add(0, -1, 0)).getType() == Material.AIR) {
             blockToGet.add(0, -1, 0);
         }
-        FallingBlock fallingBlock = world.spawnFallingBlock(location,
+        FallingBlock fallingBlock = location.getWorld().spawnFallingBlock(location,
                 location.getWorld().getBlockAt(blockToGet).getType(),
                 location.getWorld().getBlockAt(blockToGet).getData());
         fallingBlock.setVelocity(new Vector(0, .1, 0));

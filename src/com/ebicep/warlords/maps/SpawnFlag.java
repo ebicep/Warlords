@@ -9,9 +9,9 @@ import org.bukkit.entity.ArmorStand;
 
 public class SpawnFlag extends Commands {
 
-    public void spawnFlag(GameManager.GameMap map) {
-        Location blueFlagLocation = map.map.getBlueFlag().clone();
-        blueFlagLocation.setWorld(Bukkit.getWorld(map.map.mapName));
+    public void spawnFlag(GameMap map) {
+        Location blueFlagLocation = map.getBlueFlag().clone();
+        blueFlagLocation.setWorld(Bukkit.getWorld(map.mapName));
         Block block = blueFlagLocation.getWorld().getBlockAt(blueFlagLocation);
         block.setType(Material.STANDING_BANNER);
 
@@ -22,8 +22,8 @@ public class SpawnFlag extends Commands {
         blueFlag.setCustomNameVisible(true);
         blueFlag.setVisible(false);
 
-        Location redFlagLocation = map.map.getBlueFlag().clone();
-        blueFlagLocation.setWorld(Bukkit.getWorld(map.map.mapName));
+        Location redFlagLocation = map.getRedFlag().clone();
+        blueFlagLocation.setWorld(Bukkit.getWorld(map.mapName));
         Block block2 = redFlagLocation.getWorld().getBlockAt(redFlagLocation);
         block2.setType(Material.STANDING_BANNER);
 
