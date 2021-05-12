@@ -2,11 +2,7 @@ package com.ebicep.warlords.powerups;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
-import com.ebicep.warlords.maps.GameLobby;
-import com.ebicep.warlords.maps.Map;
-import net.minecraft.server.v1_8_R3.PacketPlayOutEntityDestroy;
-import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import com.ebicep.warlords.maps.GameManager;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -18,9 +14,9 @@ import java.util.stream.Collectors;
 public class PowerupManager extends BukkitRunnable {
 
     private List<AbstractPowerUp> powerUps = new ArrayList<>();
-    private GameLobby.GameMap map;
+    private GameManager.GameMap map;
 
-    public PowerupManager(GameLobby.GameMap map) {
+    public PowerupManager(GameManager.GameMap map) {
         this.map = map;
         powerUps.add(new DamagePowerUp(map.map.getDamagePowerupBlue(), 30, 45 * 20));
         powerUps.add(new DamagePowerUp(map.map.getDamagePowerupRed(), 30, 45 * 20));
@@ -46,7 +42,7 @@ public class PowerupManager extends BukkitRunnable {
                             entitiesNear.get(0).sendMessage("picked up energy");
                         } else {
                             Warlords.getPlayer((Player) entitiesNear.get(0)).setPowerUpDamage(powerUp.getDuration());
-                            entitiesNear.get(0).sendMessage("picked up damage");
+                            entitiesNear.get(0).sendMessage("§cpicked up damage");
 
                         }
                     } else if (powerUp instanceof HealingPowerUp) {

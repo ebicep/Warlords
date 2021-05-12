@@ -1,19 +1,37 @@
 package com.ebicep.warlords.maps;
 
-public class SpawnFlag {
+import com.ebicep.warlords.commands.Commands;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.entity.ArmorStand;
 
-    // TODO: finish this
+public class SpawnFlag extends Commands {
 
-    //            Location blueFlagLocation = new Location(player.getWorld(), 0.5, 4, 0.5);
-//            Block block = blueFlagLocation.getWorld().getBlockAt(blueFlagLocation);
-//            block.setType(Material.STANDING_BANNER);
-//
-//
-//            ArmorStand blueFlag = blueFlagLocation.getWorld().spawn(blueFlagLocation, ArmorStand.class);
-//            blueFlag.setGravity(false);
-//            blueFlag.setCanPickupItems(false);
-//            blueFlag.setCustomName("BLU FLAG");
-//            blueFlag.setCustomNameVisible(true);
-//            blueFlag.setVisible(false);
+    public void spawnFlag(GameManager.GameMap map) {
+        Location blueFlagLocation = map.map.getBlueFlag().clone();
+        blueFlagLocation.setWorld(Bukkit.getWorld(map.map.mapName));
+        Block block = blueFlagLocation.getWorld().getBlockAt(blueFlagLocation);
+        block.setType(Material.STANDING_BANNER);
 
+        ArmorStand blueFlag = blueFlagLocation.getWorld().spawn(blueFlagLocation, ArmorStand.class);
+        blueFlag.setGravity(false);
+        blueFlag.setCanPickupItems(false);
+        blueFlag.setCustomName("§9BLU FLAG");
+        blueFlag.setCustomNameVisible(true);
+        blueFlag.setVisible(false);
+
+        Location redFlagLocation = map.map.getBlueFlag().clone();
+        blueFlagLocation.setWorld(Bukkit.getWorld(map.map.mapName));
+        Block block2 = redFlagLocation.getWorld().getBlockAt(redFlagLocation);
+        block2.setType(Material.STANDING_BANNER);
+
+        ArmorStand redFlag = redFlagLocation.getWorld().spawn(redFlagLocation, ArmorStand.class);
+        redFlag.setGravity(false);
+        redFlag.setCanPickupItems(false);
+        redFlag.setCustomName("§cRED FLAG");
+        redFlag.setCustomNameVisible(true);
+        redFlag.setVisible(false);
+    }
 }

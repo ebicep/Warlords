@@ -125,8 +125,7 @@ public class Warlords extends JavaPlugin {
     public static int blueKills;
     public static int redKills;
 
-
-    public static World world = Bukkit.getWorld("world");
+    public static World world = Bukkit.getWorld("TestWorld");
 
     private int counter = 0;
 
@@ -249,8 +248,7 @@ public class Warlords extends JavaPlugin {
                         //TODO get confirm actual speeds
                         //BALLS
                         if (customProjectile.getBall().getName().contains("Fire")) {
-                            // TODO: use setVelocity instead of multiply to avoid acceleration/startup time
-                            location.add(customProjectile.getDirection().clone().multiply(1.15));
+                            location.add(customProjectile.getDirection().clone().multiply(2.3));
                             location.add(0, 1.5, 0);
                             ParticleEffect.DRIP_LAVA.display(0, 0, 0, 0.35F, 5, location, 500);
                             ParticleEffect.SMOKE_NORMAL.display(0, 0, 0, 0.001F, 7, location, 500);
@@ -295,7 +293,7 @@ public class Warlords extends JavaPlugin {
                                 }
                             }
                         } else if (customProjectile.getBall().getName().contains("Frost")) {
-                            location.add(customProjectile.getDirection().clone().multiply(1.05));
+                            location.add(customProjectile.getDirection().clone().multiply(2.1));
                             location.add(0, 1.5, 0);
                             //TODO add slowness
                             ParticleEffect.CLOUD.display(0, 0, 0, 0F, 1, location, 500);
@@ -337,7 +335,7 @@ public class Warlords extends JavaPlugin {
                                 }
                             }
                         } else if (customProjectile.getBall().getName().contains("Water")) {
-                            location.add(customProjectile.getDirection().clone().multiply(1));
+                            location.add(customProjectile.getDirection().clone().multiply(1.6));
                             location.add(0, 1.5, 0);
                             //TODO add damage
                             ParticleEffect.DRIP_WATER.display(0.3f, 0.3f, 0.3f, 0.1F, 2, location, 500);
@@ -383,7 +381,7 @@ public class Warlords extends JavaPlugin {
 
 
                         } else if (customProjectile.getBall().getName().contains("Flame")) {
-                            location.add(customProjectile.getDirection().clone().multiply(1.1));
+                            location.add(customProjectile.getDirection().multiply(1.05));
                             location.add(0, 1.5, 0);
                             //TODO add flameburst animation
 
@@ -578,9 +576,9 @@ public class Warlords extends JavaPlugin {
                         if (warlordsPlayer.getInferno() != 0) {
                                 Location location = player.getLocation();
                                 location.add(0, 1.2, 0);
-                                ParticleEffect.DRIP_LAVA.display(0.5F, 0.2F, 0.5F, 0.4F, 1, location, 500);
-                                ParticleEffect.FLAME.display(0.5F, 0.2F, 0.5F, 0.0001F, 1, location, 500);
-                                ParticleEffect.CRIT.display(0.5F, 0.2F, 0.5F, 0.0001F, 1, location, 500);
+                                ParticleEffect.DRIP_LAVA.display(0.5F, 0.3F, 0.5F, 0.4F, 1, location, 500);
+                                ParticleEffect.FLAME.display(0.5F, 0.3F, 0.5F, 0.0001F, 1, location, 500);
+                                ParticleEffect.CRIT.display(0.5F, 0.3F, 0.5F, 0.0001F, 1, location, 500);
                         }
 
                         // Ice Barrier
