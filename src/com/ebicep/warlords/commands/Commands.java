@@ -1,5 +1,6 @@
 package com.ebicep.warlords.commands;
 
+import com.ebicep.BountifulAPI.BountifulAPI;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.mage.specs.aquamancer.Aquamancer;
@@ -21,6 +22,10 @@ import com.ebicep.warlords.powerups.DamagePowerUp;
 import com.ebicep.warlords.powerups.PowerupManager;
 import com.ebicep.warlords.util.CustomScoreboard;
 import com.ebicep.warlords.util.RemoveEntities;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.minecraft.server.v1_8_R3.ChatMessage;
 import net.minecraft.server.v1_8_R3.PacketPlayOutEntityDestroy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -75,7 +80,7 @@ public class Commands implements CommandExecutor {
             for (int i = 0; i < Warlords.world.getPlayers().size(); i = i + 2) {
                 Player worldPlayer = Warlords.world.getPlayers().get(i);
                 //worldPlayer.setWalkSpeed(.2f * Float.parseFloat(args[0]));
-                Warlords.addPlayer(new WarlordsPlayer(worldPlayer, worldPlayer.getName(), worldPlayer.getUniqueId(), new Pyromancer(worldPlayer), false));
+                Warlords.addPlayer(new WarlordsPlayer(worldPlayer, worldPlayer.getName(), worldPlayer.getUniqueId(), new Crusader(worldPlayer), false));
                 worldPlayer.setMaxHealth(40);
                 blueTeam.add(worldPlayer.getName());
                 System.out.println("Added " + worldPlayer.getName());
@@ -100,7 +105,7 @@ public class Commands implements CommandExecutor {
             new PowerupManager(GameLobby.GameMap.RIFT).runTaskTimer(Warlords.getInstance(), 0, 0);
 
         } else if (command.getName().equalsIgnoreCase("test")) {
-            new PowerupManager(GameLobby.GameMap.RIFT).runTaskTimer(Warlords.getInstance(), 0, 0);
+            BountifulAPI.sendTitle(((Player) sender).getPlayer(), 0, 5, 0, "TEST", "");
         }
 //            Location location = player.getLocation();
 //            ArmorStand as = location.getWorld().spawn(location, ArmorStand.class);

@@ -249,7 +249,6 @@ public class Warlords extends JavaPlugin {
                         //TODO get confirm actual speeds
                         //BALLS
                         if (customProjectile.getBall().getName().contains("Fire")) {
-                            // TODO: use setVelocity instead of multiply to avoid acceleration/startup time
                             location.add(customProjectile.getDirection().clone().multiply(1.15));
                             location.add(0, 1.5, 0);
                             ParticleEffect.DRIP_LAVA.display(0, 0, 0, 0.35F, 5, location, 500);
