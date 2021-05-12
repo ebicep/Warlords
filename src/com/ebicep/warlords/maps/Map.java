@@ -1,14 +1,12 @@
 package com.ebicep.warlords.maps;
 
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
 
 public class Map {
 
     protected String mapName;
-    protected int maxPlayers = 32;
-    protected int minPlayers = -1;
+    protected int maxPlayers;
+    protected int minPlayers;
     protected int gameTimerInSeconds;
     protected int countdownTimerInSeconds;
     protected Location damagePowerupBlue;
@@ -27,8 +25,6 @@ public class Map {
 
         // TODO: seperate startgame and wrap into the absract map to warp all players to game lobbies (ill do this)
         // TODO: scoreboard updates
-        // TODO: powerup locations once those are done
-        // TODO: map cleanup
 
     public Map(String mapName, int maxPlayers, int minPlayers, int gameTime, int countdown, String mapPath, Location damagePowerupBlue, Location damagePowerupRed,
                        Location speedPowerupBlue, Location speedPowerupRed, Location healingPowerupBlue, Location healingPowerupRed, Location blueSpawnPoint, Location redSpawnPoint, Location blueRespawn, Location redRespawn, Location blueFlag, Location redFlag) {
@@ -51,6 +47,10 @@ public class Map {
         this.redRespawn = redRespawn;
         this.blueFlag = blueFlag;
         this.redFlag = redFlag;
+    }
+
+    public Map() {
+
     }
 
     public String getMapName() { return mapName; }

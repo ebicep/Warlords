@@ -20,7 +20,7 @@ public class Utils {
         Vector toEntity = player1.getEyeLocation().toVector().subtract(eye.toVector());
         float dot = (float) toEntity.normalize().dot(eye.getDirection());
 
-        return dot > 0.98D;
+        return dot > 0.92D;
     }
 
     public static boolean totemDownAndClose(WarlordsPlayer warlordsPlayer, Player player) {

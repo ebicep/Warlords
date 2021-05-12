@@ -9,36 +9,41 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+public class GameManager {
 
-// WIP not usable yet
-public class GameLobby {
+    // MAPS:
+    // "Crossfire"
+    // "Rift"
+    // "Atherrough_Valley"
+    // "Warsong"
+    // "Gorge"
 
     public enum GameMap {
         RIFT(new Map(
-                "The Rift",
+                "Rift",
                 24,
                 1,
                 900, // seconds
                 30, // seconds
                 "",
 
-                new Location(Bukkit.getWorld("world"), -32.5, 25.5, 49.5), // BLUE DAMAGE
-                new Location(Bukkit.getWorld("world"), 33.5, 25.5, -48.5), // RED DAMAGE
+                new Location(Bukkit.getWorld("TestWorld"), -32.5, 25.5, 49.5), // BLUE DAMAGE
+                new Location(Bukkit.getWorld("TestWorld"), 33.5, 25.5, -48.5), // RED DAMAGE
 
-                new Location(Bukkit.getWorld("world"), -54.5, 36.5, 24.5), // BLUE SPEED
-                new Location(Bukkit.getWorld("world"), 55.5, 36.5, -23.5), // RED SPEED
+                new Location(Bukkit.getWorld("Rift"), -54.5, 36.5, 24.5), // BLUE SPEED
+                new Location(Bukkit.getWorld("Rift"), 55.5, 36.5, -23.5), // RED SPEED
 
-                new Location(Bukkit.getWorld("world"), -0.5, 24.5, 64.5), // BLUE HEALING
-                new Location(Bukkit.getWorld("world"), 1.5, 24.5, -62.5), // RED HEALING
+                new Location(Bukkit.getWorld("Rift"), -0.5, 24.5, 64.5), // BLUE HEALING
+                new Location(Bukkit.getWorld("Rift"), 1.5, 24.5, -62.5), // RED HEALING
 
-                new Location(Bukkit.getWorld("world"), -86.5, 45.5, -33.5),// BLUE LOBBY SPAWN
-                new Location(Bukkit.getWorld("world"), 87, 45.5, -35.5), // RED LOBBY SPAWN
+                new Location(Bukkit.getWorld("Rift"), -86.5, 45.5, -33.5),// BLUE LOBBY SPAWN
+                new Location(Bukkit.getWorld("Rift"), 87, 45.5, -35.5), // RED LOBBY SPAWN
 
-                new Location(Bukkit.getWorld("world"), -32.5, 34.5, -43.5), // BLUE RESPAWN
-                new Location(Bukkit.getWorld("world"), 34.5, 34.5, 42.5), // RED RESPAWN
+                new Location(Bukkit.getWorld("Rift"), -32.5, 34.5, -43.5), // BLUE RESPAWN
+                new Location(Bukkit.getWorld("Rift"), 34.5, 34.5, 42.5), // RED RESPAWN
 
-                new Location(Bukkit.getWorld("world"), -98.5, 45.5, -17.5), // BLUE FLAG
-                new Location(Bukkit.getWorld("world"), 99.5, 45.5, 17.5) // RED FLAG
+                new Location(Bukkit.getWorld("Rift"), -98.5, 45.5, -17.5), // BLUE FLAG
+                new Location(Bukkit.getWorld("Rift"), 99.5, 45.5, 17.5) // RED FLAG
         )),
 
         CROSSFIRE(new Map(
@@ -82,7 +87,7 @@ public class GameLobby {
 
     }
 
-    public class GameManager {
+    public class GameManager1 {
 
     }
 

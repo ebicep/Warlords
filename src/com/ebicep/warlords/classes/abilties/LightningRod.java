@@ -39,7 +39,6 @@ public class LightningRod extends AbstractAbility {
         for (Entity entity : near) {
             final Location otherLocation = entity.getLocation();
             if (entity instanceof Player && otherLocation.distanceSquared(playerLocation) < 30) {
-                // TODO: entity check to exclude armorstands and other entities if needed
                 if (entity != player) {
 
                     final Location loc = entity.getLocation();
