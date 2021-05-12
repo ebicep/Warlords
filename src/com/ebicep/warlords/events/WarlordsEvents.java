@@ -7,11 +7,14 @@ import com.ebicep.warlords.classes.abilties.EarthenSpike;
 import com.ebicep.warlords.classes.abilties.IceBarrier;
 import com.ebicep.warlords.classes.abilties.SeismicWave;
 import com.ebicep.warlords.classes.abilties.Slam;
+import net.minecraft.server.v1_8_R3.EntityLiving;
+import net.minecraft.server.v1_8_R3.GenericAttributes;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -67,6 +70,7 @@ public class WarlordsEvents implements Listener {
         player.sendMessage(" ");
         player.sendMessage(ChatColor.GRAY + "placerholer optional extras idk");
         player.sendMessage(" ");
+
     }
 
     @EventHandler
@@ -91,6 +95,9 @@ public class WarlordsEvents implements Listener {
                 }
             }
 
+            e.setCancelled(true);
+        } else if (e.getEntity() instanceof Horse && e.getDamager() instanceof Player) {
+            e.getEntity().remove();
             e.setCancelled(true);
         }
 
@@ -126,7 +133,8 @@ public class WarlordsEvents implements Listener {
                     horse.getInventory().setSaddle(new ItemStack(Material.SADDLE));
                     horse.setOwner(player);
                     horse.setJumpStrength(0);
-                    //TODO change speed
+                    horse.setVariant(Horse.Variant.HORSE);
+                    ((EntityLiving) ((CraftEntity) horse).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(.308);
                     horse.setPassenger(player);
                     Warlords.getPlayer(player).setHorseCooldown(15);
                 }

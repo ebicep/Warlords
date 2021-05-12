@@ -39,12 +39,12 @@ public class WarlordsPlayer {
     private float energy;
     private float maxEnergy;
 
-    private int kills;
-    private int assists;
-    private int deaths;
-    private int damage;
-    private int healing;
-    private int absorbed;
+    private int kills = 0;
+    private int assists = 0;
+    private int deaths = 0;
+    private float damage = 0;
+    private float healing = 0;
+    private float absorbed = 0;
 
     private static final CalculateSpeed speed = new CalculateSpeed(.2825f); // .2825f is def + 13%
     public static float currentSpeed = speed.getCurrentSpeed();
@@ -404,6 +404,9 @@ public class WarlordsPlayer {
                 if (spiritLinkDuration != 0) {
                     totalReduction -= .2;
                 }
+                if (attacker.getCrippled() != 0) {
+                    totalReduction -= .125;
+                }
             }
             if (intervene != 0) {
                 //TODO check teammate heal
@@ -418,6 +421,10 @@ public class WarlordsPlayer {
                 }
                 intervenedBy.setHealth((int) (intervenedBy.getHealth() + damageHealValue));
                 interveneDamage += damageHealValue;
+
+                this.addAbsorbed(-damageHealValue);
+                attacker.addDamage(-damageHealValue);
+
             } else if (arcaneShield != 0) {
                 damageHealValue *= totalReduction;
                 //TODO check teammate heal
@@ -456,14 +463,18 @@ public class WarlordsPlayer {
                         player.sendMessage("§a\u00AB§7 Your " + ability + " critically healed you for §a§l" + (int) damageHealValue + "! §7health.");
                     } else {
                         player.sendMessage("§a\u00AB§7 Your " + ability + " healed for §a" + (int) damageHealValue + " §7health.");
-
                     }
+
+                    addHealing(damageHealValue);
                 } else {
                     //DAMAGE
                     if (damageHealValue < 0) {
                         if (powerUpHeal) {
                             powerUpHeal = false;
                             player.sendMessage("heal cancelled");
+                        }
+                        if (player.getVehicle() != null) {
+                            player.getVehicle().remove();
                         }
                         regenTimer = 10;
                         if (spec.getOrange() instanceof Totem.TotemSpiritguard) {
@@ -478,7 +489,6 @@ public class WarlordsPlayer {
                                 }
                             }
                         }
-
                         if (lastStand != 0) {
                             if (spec.getOrange().getName().equals("Last Stand")) {
                                 damageHealValue *= .5;
@@ -494,10 +504,9 @@ public class WarlordsPlayer {
                                         lastStandedBy.addHealth(lastStandedBy, "Last Stand", (int) (damageHealValue * 1), (int) (damageHealValue * -1), -1, 100);
                                 }
                             }
+                            addAbsorbed(-damageHealValue);
                         }
-                        if (attacker.getCrippled() != 0) {
-                            damageHealValue *= .875;
-                        }
+
                         if (isCrit) {
                             if (ability.isEmpty()) {
                                 player.sendMessage("§c\u00AB§7 " + attacker.getName() + " hit you for §c§l" + (int) damageHealValue * -1 + "! §7critical melee damage.");
@@ -554,7 +563,6 @@ public class WarlordsPlayer {
                         } else {
                             player.sendMessage("§a\u00AB§7 " + attacker.getName() + "'s " + ability + " healed for §a" + (int) damageHealValue + " §7health.");
                             attacker.getPlayer().sendMessage("§a\u00BB§7 " + "Your " + ability + " healed " + name + " for §a" + (int) damageHealValue + " §7health.");
-
                         }
                     }
                 }
@@ -567,9 +575,9 @@ public class WarlordsPlayer {
                         this.health += Math.round(damageHealValue);
 
                         if (damageHealValue < 0) {
-                            attacker.setDamage((int) (attacker.getDamage() + -damageHealValue));
+                            attacker.addDamage(-damageHealValue);
                         } else {
-                            attacker.setHealing((int) (attacker.getHealing() + -damageHealValue));
+                            attacker.addHealing(damageHealValue);
                         }
 
                         if (this.health <= 0) {
@@ -1064,7 +1072,7 @@ public class WarlordsPlayer {
         this.deaths = deaths;
     }
 
-    public int getDamage() {
+    public float getDamage() {
         return damage;
     }
 
@@ -1072,7 +1080,11 @@ public class WarlordsPlayer {
         this.damage = damage;
     }
 
-    public int getHealing() {
+    public void addDamage(float amount) {
+        this.damage += amount;
+    }
+
+    public float getHealing() {
         return healing;
     }
 
@@ -1080,11 +1092,19 @@ public class WarlordsPlayer {
         this.healing = healing;
     }
 
-    public int getAbsorbed() {
+    public void addHealing(float amount) {
+        this.health += amount;
+    }
+
+    public float getAbsorbed() {
         return absorbed;
     }
 
     public void setAbsorbed(int absorbed) {
         this.absorbed = absorbed;
+    }
+
+    public void addAbsorbed(float amount) {
+        this.absorbed += amount;
     }
 }
