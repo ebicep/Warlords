@@ -16,8 +16,12 @@ import com.ebicep.warlords.classes.warrior.specs.defender.Defender;
 import com.ebicep.warlords.classes.warrior.specs.revenant.Revenant;
 import com.ebicep.warlords.maps.GameLobby;
 import com.ebicep.warlords.maps.Map;
+import com.ebicep.warlords.powerups.AbstractPowerUp;
+import com.ebicep.warlords.powerups.DamagePowerUp;
+import com.ebicep.warlords.powerups.PowerupManager;
 import com.ebicep.warlords.util.CustomScoreboard;
 import com.ebicep.warlords.util.RemoveEntities;
+import net.minecraft.server.v1_8_R3.PacketPlayOutEntityDestroy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -45,91 +49,6 @@ import java.util.List;
 
 public class Commands implements CommandExecutor {
 
-
-    // TODO: note to self, move all this stuff
-    private int blueKills = 0;
-    private int redKills = 0;
-
-    public int getBlueKills() {
-        return blueKills;
-    }
-
-    public void setBlueKills(int blueKills) {
-        this.blueKills = blueKills;
-    }
-
-    public int getRedKills() {
-        return redKills;
-    }
-
-    public void setRedKills(int redKills) {
-        this.redKills = redKills;
-    }
-
-    public void spawnScoreboard() {
-        ScoreboardManager manager = Bukkit.getScoreboardManager();
-        Scoreboard board = manager.getMainScoreboard();
-        SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
-        String dateString = format.format(new Date());
-        Objective objective = board.registerNewObjective(dateString, "");
-        objective.setDisplaySlot(DisplaySlot.SIDEBAR);
-        objective.setDisplayName("§e§lWARLORDS");
-        objective.getScore(ChatColor.GRAY + dateString).setScore(15);
-        objective.getScore(" ").setScore(14);
-        objective.getScore(ChatColor.BLUE + "BLU: " + ChatColor.AQUA + blueKills * 5 + ChatColor.GOLD + "/1000").setScore(13);
-        objective.getScore(ChatColor.RED + "RED: " + ChatColor.AQUA + redKills * 5 + ChatColor.GOLD + "/1000").setScore(12);
-        objective.getScore("  ").setScore(11);
-        objective.getScore(ChatColor.BLUE + "BLU " + ChatColor.GOLD + "Wins in: " + ChatColor.GREEN + "10:00").setScore(10);
-        objective.getScore("   ").setScore(9);
-        objective.getScore(ChatColor.RED + "RED Flag: " + ChatColor.GREEN + "Safe").setScore(8);
-        objective.getScore(ChatColor.BLUE + "BLU Flag: " + ChatColor.GREEN + "Safe").setScore(7);
-        objective.getScore("    ").setScore(6);
-        objective.getScore("     ").setScore(4);
-        objective.getScore("      ").setScore(2);
-        objective.getScore(ChatColor.YELLOW + "localhost").setScore(1);
-
-
-        for (Player player : Warlords.getPlayers().keySet()) {
-            WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
-            objective.getScore(ChatColor.GOLD + "Lv90 " + ChatColor.GREEN + warlordsPlayer.getSpec().getClass().getSimpleName()).setScore(5);
-            objective.getScore("" + ChatColor.GREEN + warlordsPlayer.getKills() + ChatColor.RESET + " Kills " + ChatColor.GREEN + warlordsPlayer.getAssists() + ChatColor.RESET + " Assists").setScore(3);
-
-            player.setScoreboard(board);
-        }
-    }
-
-    public void updateScoreboard() {
-        ScoreboardManager manager = Bukkit.getScoreboardManager();
-        Scoreboard board = manager.getMainScoreboard();
-        SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
-        String dateString = format.format(new Date());
-        Objective objective = board.getObjective(dateString);
-
-
-        objective.getScore(ChatColor.GRAY + dateString).setScore(15);
-        objective.getScore(" ").setScore(14);
-        objective.getScore(ChatColor.BLUE + "BLU: " + ChatColor.AQUA + blueKills * 5 + ChatColor.GOLD + "/1000").setScore(13);
-        objective.getScore(ChatColor.RED + "RED: " + ChatColor.AQUA + redKills * 5 + ChatColor.GOLD + "/1000").setScore(12);
-        objective.getScore("  ").setScore(11);
-        objective.getScore(ChatColor.BLUE + "BLU " + ChatColor.GOLD + "Wins in: " + ChatColor.GREEN + "10:00").setScore(10);
-        objective.getScore("   ").setScore(9);
-        objective.getScore(ChatColor.RED + "RED Flag: " + ChatColor.GREEN + "Safe").setScore(8);
-        objective.getScore(ChatColor.BLUE + "BLU Flag: " + ChatColor.GREEN + "Safe").setScore(7);
-        objective.getScore("    ").setScore(6);
-        objective.getScore("     ").setScore(4);
-        objective.getScore("      ").setScore(2);
-        objective.getScore(ChatColor.YELLOW + "localhost").setScore(1);
-
-
-        for (Player player : Warlords.getPlayers().keySet()) {
-            WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
-            objective.getScore(ChatColor.GOLD + "Lv90 " + ChatColor.GREEN + warlordsPlayer.getSpec().getClass().getSimpleName()).setScore(5);
-            objective.getScore("" + ChatColor.GREEN + warlordsPlayer.getKills() + ChatColor.RESET + " Kills " + ChatColor.GREEN + warlordsPlayer.getAssists() + ChatColor.RESET + " Assists").setScore(3);
-
-            player.setScoreboard(board);
-        }
-    }
-
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
         if (!(sender instanceof Player)) return true;
@@ -138,6 +57,7 @@ public class Commands implements CommandExecutor {
             System.out.println("STARTED");
             RemoveEntities removeEntities = new RemoveEntities();
             removeEntities.onRemove();
+            System.out.println(Warlords.world.getEntities());
             //Warlords.world.getEntities().stream().filter(entity -> !(entity instanceof Player)).forEach(Entity::remove);
             if (args.length > 2) {
                 Location location = player.getLocation();
@@ -155,14 +75,14 @@ public class Commands implements CommandExecutor {
             for (int i = 0; i < Warlords.world.getPlayers().size(); i = i + 2) {
                 Player worldPlayer = Warlords.world.getPlayers().get(i);
                 //worldPlayer.setWalkSpeed(.2f * Float.parseFloat(args[0]));
-                Warlords.addPlayer(new WarlordsPlayer(worldPlayer, worldPlayer.getName(), worldPlayer.getUniqueId(), new Pyromancer(worldPlayer)));
+                Warlords.addPlayer(new WarlordsPlayer(worldPlayer, worldPlayer.getName(), worldPlayer.getUniqueId(), new Pyromancer(worldPlayer), false));
                 worldPlayer.setMaxHealth(40);
                 blueTeam.add(worldPlayer.getName());
                 System.out.println("Added " + worldPlayer.getName());
 
                 if (i + 1 < Warlords.world.getPlayers().size()) {
                     Player worldPlayer2 = Warlords.world.getPlayers().get(i + 1);
-                    Warlords.addPlayer(new WarlordsPlayer(worldPlayer2, worldPlayer2.getName(), worldPlayer2.getUniqueId(), new Pyromancer(worldPlayer2)));
+                    Warlords.addPlayer(new WarlordsPlayer(worldPlayer2, worldPlayer2.getName(), worldPlayer2.getUniqueId(), new Pyromancer(worldPlayer2), true));
                     worldPlayer2.setMaxHealth(40);
                     redTeam.add(worldPlayer.getName());
                     System.out.println("Added2 " + worldPlayer2.getName());
@@ -177,11 +97,10 @@ public class Commands implements CommandExecutor {
                 System.out.println("updated scoreboard for " + value.getName());
                 value.setScoreboard(new CustomScoreboard(value.getPlayer(), blueTeam, redTeam));
             }
+            new PowerupManager(GameLobby.GameMap.RIFT).runTaskTimer(Warlords.getInstance(), 0, 0);
 
         } else if (command.getName().equalsIgnoreCase("test")) {
-            for (WarlordsPlayer value : Warlords.getPlayers().values()) {
-                value.getScoreboard().updateKills();
-            }
+            new PowerupManager(GameLobby.GameMap.RIFT).runTaskTimer(Warlords.getInstance(), 0, 0);
         }
 //            Location location = player.getLocation();
 //            ArmorStand as = location.getWorld().spawn(location, ArmorStand.class);

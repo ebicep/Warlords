@@ -24,7 +24,9 @@ public class CalculateSpeed {
         // TODO: set max and min speed cap
         if (this.nameDuration >= this.duration) {
             this.currentSpeed += nameSpeed;
-        } else if (this.nameDuration <= this.duration && this.nameDuration > 1) {
+        }
+        // TODO fix first statement is always true
+        else if (this.nameDuration <= this.duration && this.nameDuration > 1) {
             this.currentSpeed += 0;
         } else if (this.nameDuration == 1) {
             this.currentSpeed -= nameSpeed;

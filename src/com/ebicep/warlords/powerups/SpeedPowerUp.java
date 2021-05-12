@@ -1,16 +1,14 @@
 package com.ebicep.warlords.powerups;
 
 import org.bukkit.Location;
-import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Player;
 
 public class SpeedPowerUp extends AbstractPowerUp {
 
-    public SpeedPowerUp(Location location, ArmorStand powerUp, int duration) {
-        super(location, powerUp, duration);
+
+    public SpeedPowerUp(Location location, int duration, int cooldown) {
+        super(location, duration, cooldown);
     }
 
-    @Override
-    public void onPickUp() {
 
-    }
 }

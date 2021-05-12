@@ -122,7 +122,13 @@ public class WarlordsPlayer {
         this.scoreboard = scoreboard;
     }
 
-    public WarlordsPlayer(Player player, String name, UUID uuid, PlayerClass spec) {
+    private boolean energyPowerup;
+
+    public boolean isEnergyPowerup() {
+        return energyPowerup;
+    }
+
+    public WarlordsPlayer(Player player, String name, UUID uuid, PlayerClass spec, boolean temp) {
         this.player = player;
         this.name = name;
         this.uuid = uuid;
@@ -136,6 +142,7 @@ public class WarlordsPlayer {
         this.horseCooldown = 0;
         this.hitCooldown = 20;
         grayDye.setColor(DyeColor.GRAY);
+        energyPowerup = temp;
     }
 
     public void assignItemLore() {
@@ -379,11 +386,14 @@ public class WarlordsPlayer {
             float totalReduction = 1;
             if (min < 0) {
                 totalReduction = 1 - spec.getDamageResistance() / 100f;
+                if (attacker.getPowerUpDamage() != 0) {
+                    totalReduction += .3;
+                }
                 if (attacker.getBerserk() != 0) {
-                    totalReduction += 1.25;
+                    totalReduction += .25;
                 }
                 if (berserkDuration != 0) {
-                    totalReduction += 1.1;
+                    totalReduction += .1;
                 }
                 if (iceBarrierDuration != 0) {
                     totalReduction -= .5;
@@ -451,6 +461,10 @@ public class WarlordsPlayer {
                 } else {
                     //DAMAGE
                     if (damageHealValue < 0) {
+                        if (powerUpHeal) {
+                            powerUpHeal = false;
+                            player.sendMessage("heal cancelled");
+                        }
                         regenTimer = 10;
                         if (spec.getOrange() instanceof Totem.TotemSpiritguard) {
                             for (int i = 0; i < Warlords.totems.size(); i++) {

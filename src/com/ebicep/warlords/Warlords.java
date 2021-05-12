@@ -126,7 +126,7 @@ public class Warlords extends JavaPlugin {
     public static int redKills;
 
 
-    public static World world = Bukkit.getWorld("TestWorld");
+    public static World world = Bukkit.getWorld("world");
 
     private int counter = 0;
 
@@ -157,6 +157,7 @@ public class Warlords extends JavaPlugin {
 
                 //EVERY TWO TICKS
                 // 1 tick is a lot smoother, idk about performance impact
+                // TODO fix - this if statement is always true
                 if (counter % 1 == 0) {
 
                     // speed every 1 tick updated so it activates instantly
@@ -249,7 +250,7 @@ public class Warlords extends JavaPlugin {
                         //BALLS
                         if (customProjectile.getBall().getName().contains("Fire")) {
                             // TODO: use setVelocity instead of multiply to avoid acceleration/startup time
-                            location.add(customProjectile.getDirection().multiply(1.15));
+                            location.add(customProjectile.getDirection().clone().multiply(1.15));
                             location.add(0, 1.5, 0);
                             ParticleEffect.DRIP_LAVA.display(0, 0, 0, 0.35F, 5, location, 500);
                             ParticleEffect.SMOKE_NORMAL.display(0, 0, 0, 0.001F, 7, location, 500);
@@ -294,7 +295,7 @@ public class Warlords extends JavaPlugin {
                                 }
                             }
                         } else if (customProjectile.getBall().getName().contains("Frost")) {
-                            location.add(customProjectile.getDirection().multiply(1.05));
+                            location.add(customProjectile.getDirection().clone().multiply(1.05));
                             location.add(0, 1.5, 0);
                             //TODO add slowness
                             ParticleEffect.CLOUD.display(0, 0, 0, 0F, 1, location, 500);
@@ -336,7 +337,7 @@ public class Warlords extends JavaPlugin {
                                 }
                             }
                         } else if (customProjectile.getBall().getName().contains("Water")) {
-                            location.add(customProjectile.getDirection().multiply(1));
+                            location.add(customProjectile.getDirection().clone().multiply(1));
                             location.add(0, 1.5, 0);
                             //TODO add damage
                             ParticleEffect.DRIP_WATER.display(0.3f, 0.3f, 0.3f, 0.1F, 2, location, 500);
@@ -382,7 +383,7 @@ public class Warlords extends JavaPlugin {
 
 
                         } else if (customProjectile.getBall().getName().contains("Flame")) {
-                            location.add(customProjectile.getDirection().multiply(1.1));
+                            location.add(customProjectile.getDirection().clone().multiply(1.1));
                             location.add(0, 1.5, 0);
                             //TODO add flameburst animation
 
@@ -889,6 +890,27 @@ public class Warlords extends JavaPlugin {
                                 i--;
                             }
                         }
+                        if (warlordsPlayer.getPowerUpDamage() != 0) {
+                            warlordsPlayer.getPlayer().sendMessage("damage " + warlordsPlayer.getPowerUpDamage());
+                            warlordsPlayer.setPowerUpDamage(warlordsPlayer.getPowerUpDamage() - 1);
+                        }
+
+                        if (warlordsPlayer.isPowerUpHeal()) {
+                            int heal = (int) (warlordsPlayer.getMaxHealth() * .1);
+                            if (warlordsPlayer.getHealth() + heal > warlordsPlayer.getMaxHealth()) {
+                                heal = warlordsPlayer.getMaxHealth() - warlordsPlayer.getHealth();
+                            }
+                            warlordsPlayer.setHealth(warlordsPlayer.getHealth() + heal);
+                            warlordsPlayer.getPlayer().sendMessage("healed for " + heal);
+                            if (warlordsPlayer.getHealth() == warlordsPlayer.getMaxHealth()) {
+                                warlordsPlayer.setPowerUpHeal(false);
+                            }
+                        }
+
+                        if (warlordsPlayer.getPowerUpEnergy() != 0) {
+                            warlordsPlayer.getPlayer().sendMessage("energy " + warlordsPlayer.getPowerUpEnergy());
+                            warlordsPlayer.setPowerUpEnergy(warlordsPlayer.getPowerUpEnergy() - 1);
+                        }
                     }
 
                     //CONSECRATE
@@ -1119,13 +1141,15 @@ public class Warlords extends JavaPlugin {
 
                     }
                     //energy
-                    if (warlordsPlayer.getEnergy() != warlordsPlayer.getMaxEnergy()) {
+                    if (warlordsPlayer.getEnergy() < warlordsPlayer.getMaxEnergy()) {
+                        float newEnergy = warlordsPlayer.getEnergy() + 1;
                         if (warlordsPlayer.getPresence() != 0) {
-                            System.out.println("JUICING " + warlordsPlayer.getName());
-                            warlordsPlayer.setEnergy((float) (warlordsPlayer.getEnergy() + 1.5));
-                        } else {
-                            warlordsPlayer.setEnergy(warlordsPlayer.getEnergy() + 1);
+                            newEnergy += .5;
                         }
+                        if (warlordsPlayer.getPowerUpEnergy() != 0) {
+                            newEnergy += .35;
+                        }
+                        warlordsPlayer.setEnergy(newEnergy);
                     }
                     player.setLevel((int) warlordsPlayer.getEnergy());
                     player.setExp(warlordsPlayer.getEnergy() / warlordsPlayer.getMaxEnergy());

@@ -22,6 +22,8 @@ public class Projectile extends AbstractAbility {
 
     @Override
     public void onActivate(Player player) {
+        Warlords.getPlayer(player).subtractEnergy(energyCost);
+
         CustomProjectile customProjectile = new CustomProjectile(player, player.getLocation(), player.getLocation(), player.getLocation().getDirection(), maxDistance, this);
         Warlords.getCustomProjectiles().add(customProjectile);
 

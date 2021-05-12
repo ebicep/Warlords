@@ -1,17 +1,13 @@
 package com.ebicep.warlords.powerups;
 
 import org.bukkit.Location;
-import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Player;
 
 public class HealingPowerUp extends AbstractPowerUp {
 
 
-    public HealingPowerUp(Location location, ArmorStand powerUp, int duration) {
-        super(location, powerUp, duration);
+    public HealingPowerUp(Location location, int duration, int cooldown) {
+        super(location, duration, cooldown);
     }
 
-    @Override
-    public void onPickUp() {
-
-    }
 }

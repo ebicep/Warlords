@@ -36,7 +36,7 @@ public class CustomScoreboard {
         objective.getScore(ChatColor.GOLD + "Lv90 " + ChatColor.GREEN + Warlords.getPlayer(player).getSpec().getClass().getSimpleName()).setScore(5);
         System.out.println(player.getName() + " = " + Warlords.getPlayer(player).getSpec().getClass().getSimpleName());
         objective.getScore("     ").setScore(4);
-        objective.getScore("" + ChatColor.GREEN + Warlords.getPlayer(player).getKills() + ChatColor.RESET + "Kills " + ChatColor.GREEN + Warlords.getPlayer(player).getAssists() + ChatColor.RESET + "Assists").setScore(3);
+        objective.getScore("" + ChatColor.GREEN + Warlords.getPlayer(player).getKills() + ChatColor.RESET + " Kills " + ChatColor.GREEN + Warlords.getPlayer(player).getAssists() + ChatColor.RESET + " Assists").setScore(3);
         objective.getScore("      ").setScore(2);
         objective.getScore(ChatColor.YELLOW + "localhost").setScore(1);
         player.setScoreboard(board);

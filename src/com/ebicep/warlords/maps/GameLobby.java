@@ -22,23 +22,23 @@ public class GameLobby {
                 30, // seconds
                 "",
 
-                new Location(Bukkit.getWorld("TheRift"), -32.5, 25.5, 49.5), // BLUE DAMAGE
-                new Location(Bukkit.getWorld("TheRift"), 33.5, 25.5, -48.5), // RED DAMAGE
+                new Location(Bukkit.getWorld("world"), -32.5, 25.5, 49.5), // BLUE DAMAGE
+                new Location(Bukkit.getWorld("world"), 33.5, 25.5, -48.5), // RED DAMAGE
 
-                new Location(Bukkit.getWorld("TheRift"), -54.5, 36.5, 24.5), // BLUE SPEED
-                new Location(Bukkit.getWorld("TheRift"), 55.5, 36.5, -23.5), // RED SPEED
+                new Location(Bukkit.getWorld("world"), -54.5, 36.5, 24.5), // BLUE SPEED
+                new Location(Bukkit.getWorld("world"), 55.5, 36.5, -23.5), // RED SPEED
 
-                new Location(Bukkit.getWorld("TheRift"), 0.5, 24.5, 64.5), // BLUE HEALING
-                new Location(Bukkit.getWorld("TheRift"), 1.5, 24.5, -62.5), // RED HEALING
+                new Location(Bukkit.getWorld("world"), -0.5, 24.5, 64.5), // BLUE HEALING
+                new Location(Bukkit.getWorld("world"), 1.5, 24.5, -62.5), // RED HEALING
 
-                new Location(Bukkit.getWorld("TheRift"), -86.5, 45.5, -33.5),// BLUE LOBBY SPAWN
-                new Location(Bukkit.getWorld("TheRift"), 87, 45.5, -35.5), // RED LOBBY SPAWN
+                new Location(Bukkit.getWorld("world"), -86.5, 45.5, -33.5),// BLUE LOBBY SPAWN
+                new Location(Bukkit.getWorld("world"), 87, 45.5, -35.5), // RED LOBBY SPAWN
 
-                new Location(Bukkit.getWorld("TheRift"), -32.5, 34.5, -43.5), // BLUE RESPAWN
-                new Location(Bukkit.getWorld("TheRift"), 34.5, 34.5, 42.5), // RED RESPAWN
+                new Location(Bukkit.getWorld("world"), -32.5, 34.5, -43.5), // BLUE RESPAWN
+                new Location(Bukkit.getWorld("world"), 34.5, 34.5, 42.5), // RED RESPAWN
 
-                new Location(Bukkit.getWorld("TheRift"), -98.5, 45.5, -17.5), // BLUE FLAG
-                new Location(Bukkit.getWorld("TheRift"), 99.5, 45.5, 17.5) // RED FLAG
+                new Location(Bukkit.getWorld("world"), -98.5, 45.5, -17.5), // BLUE FLAG
+                new Location(Bukkit.getWorld("world"), 99.5, 45.5, 17.5) // RED FLAG
         )),
 
         CROSSFIRE(new Map(
