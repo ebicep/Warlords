@@ -36,26 +36,30 @@ public class Breath extends AbstractAbility {
                         Vector toEntity = nearPlayer.getEyeLocation().toVector().subtract(eye.toVector());
                         nearPlayer.setVelocity(toEntity);
                         warlordsPlayer.subtractEnergy(energyCost);
-                    } else if (name.contains("Freezing") && !Warlords.getInstance().game.onSameTeam(warlordsPlayer, Warlords.getPlayer(nearPlayer))) {
+                    }
+                } else if (viewDirection.dot(direction) > .73 && !Warlords.getInstance().game.onSameTeam(warlordsPlayer, Warlords.getPlayer(nearPlayer))) {
+                    Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+                    if (name.contains("Freezing")) {
                         nearPlayer.setWalkSpeed(WarlordsPlayer.currentSpeed);
                         warlordsPlayer.setBreathSlowness(4 * 20 - 10);
                         warlordsPlayer.subtractEnergy(energyCost);
                     }
+
                 }
             }
-        }
-        //TODO breath animation
-        Warlords.getBreaths().add(this);
+            //TODO breath animation
+            Warlords.getBreaths().add(this);
 
-        if (name.contains("Water")) {
-            for (Player player1 : Bukkit.getOnlinePlayers()) {
-                player1.playSound(player.getLocation(), "mage.waterbreath.activation", 1, 1);
+            if (name.contains("Water")) {
+                for (Player player1 : Bukkit.getOnlinePlayers()) {
+                    player1.playSound(player.getLocation(), "mage.waterbreath.activation", 1, 1);
+                }
+            } else if (name.contains("Freezing")) {
+                for (Player player1 : Bukkit.getOnlinePlayers()) {
+                    player1.playSound(player.getLocation(), "mage.freezingbreath.activation", 1, 1);
+                }
             }
-        } else if (name.contains("Freezing")) {
-            for (Player player1 : Bukkit.getOnlinePlayers()) {
-                player1.playSound(player.getLocation(), "mage.freezingbreath.activation", 1, 1);
-            }
-        }
 
+        }
     }
 }
