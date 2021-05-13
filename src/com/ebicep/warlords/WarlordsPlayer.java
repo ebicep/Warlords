@@ -523,8 +523,8 @@ public class WarlordsPlayer {
                             }
                         } else {
                             if (ability.isEmpty()) {
-                                player.sendMessage("§c\u00AB§7 " + attacker.getName() + " hit you for §c" + (int) damageHealValue * -1 + " §7damage.");
-                                attacker.getPlayer().sendMessage("§a\u00BB§7 " + "You hit " + name + " for §c" + (int) damageHealValue * -1 + " §7damage.");
+                                player.sendMessage("§c\u00AB§7 " + attacker.getName() + " hit you for §c" + (int) damageHealValue * -1 + " §7melee damage.");
+                                attacker.getPlayer().sendMessage("§a\u00BB§7 " + "You hit " + name + " for §c" + (int) damageHealValue * -1 + " §7melee damage.");
                             } else {
                                 player.sendMessage("§c\u00AB§7 " + attacker.getName() + "'s " + ability + " hit you for §c" + (int) damageHealValue * -1 + " §7damage.");
                                 attacker.getPlayer().sendMessage("§a\u00BB§7 " + "Your " + ability + " hit " + name + " for §c" + (int) damageHealValue * -1 + " §7damage.");
@@ -593,7 +593,8 @@ public class WarlordsPlayer {
                         }
 
                         if (this.health <= 0) {
-                            player.sendMessage("§a\u00AB§7 You were killed by " + attacker.getName() + ".");
+                            // TODO: make killer/killed by name the team color instead of gray
+                            player.sendMessage("§c\u00AB§7 You were killed by " + attacker.getName() + ".");
                             attacker.getPlayer().sendMessage("§a\u00BB§7 " + "You killed " + name + ".");
 
                             if (scoreboard.getBlueTeam().contains(name)) {
@@ -615,6 +616,10 @@ public class WarlordsPlayer {
                 if (attacker.getWindfury() != 0) {
                     int windfuryActivate = (int) (Math.random() * 100);
                     if (windfuryActivate < 35) {
+                        // TODO: set delay between hits
+                        for (Player player1 : Bukkit.getOnlinePlayers()) {
+                            player1.playSound(player.getLocation(), "shaman.windfuryweapon.impact", 1, 1);
+                        }
                         addHealth(attacker, "Windfury Weapon", min, max, 25, 235);
                         addHealth(attacker, "Windfury Weapon", min, max, 25, 235);
                     }
@@ -738,7 +743,7 @@ public class WarlordsPlayer {
     public void setFrostbolt(int frostboltDuration) {
         this.frostboltDuration = frostboltDuration;
         // TODO: fix speed value
-        speed.setCurrentSpeed(frostboltDuration, -.0565f, 2); // -.0565f -20% on def speed
+        speed.setCurrentSpeed(frostboltDuration, -.0785f, 2); // -.0565f -20% on def speed
         currentSpeed = speed.getCurrentSpeed();
     }
     public int getFrostbolt() {
@@ -957,7 +962,7 @@ public class WarlordsPlayer {
     public void setIceBarrierSlowness(int iceBarrierSlownessDuration) {
         this.iceBarrierSlownessDuration = iceBarrierSlownessDuration;
         // TODO: fix slowness value
-        speed.setCurrentSpeed(iceBarrierSlownessDuration, -.0638f, 2); // -.0638f -20% on def speed
+        speed.setCurrentSpeed(iceBarrierSlownessDuration, -.0785f, 2); // -.0638f -20% on def speed
         currentSpeed = speed.getCurrentSpeed();
     }
 

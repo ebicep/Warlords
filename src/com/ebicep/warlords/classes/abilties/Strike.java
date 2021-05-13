@@ -35,6 +35,9 @@ public class Strike extends AbstractAbility {
                     System.out.println("NEAR HIT " + nearPlayer);
                     //PALADIN
                     if (name.contains("Avenger") || name.contains("Crusader") || name.contains("Protector")) {
+                        for (Player player1 : Bukkit.getOnlinePlayers()) {
+                            player1.playSound(player.getLocation(), "paladin.paladinstrike.activation", 1, 1);
+                        }
                         //check consecrate then boost dmg
                         if (name.contains("Avenger")) {
                             Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
@@ -149,9 +152,6 @@ public class Strike extends AbstractAbility {
 
                             }
                             break;
-                        }
-                        for (Player player1 : Bukkit.getOnlinePlayers()) {
-                            player1.playSound(player.getLocation(), "paladin.paladinstrike.activation", 1, 1);
                         }
 
                     } else if (name.contains("Berserker")) {

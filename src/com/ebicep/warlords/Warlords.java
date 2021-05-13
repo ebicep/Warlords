@@ -9,6 +9,7 @@ import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.Utils;
+import com.sun.xml.internal.ws.wsdl.writer.document.Part;
 import org.bukkit.*;
 import org.bukkit.entity.*;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -102,12 +103,6 @@ public class Warlords extends JavaPlugin {
         return chains;
     }
 
-    public static List<Boulder.SnowballBoulder> snowballBoulders = new ArrayList<>();
-
-    public static List<Boulder.SnowballBoulder> getSnowballBoulders() {
-        return snowballBoulders;
-    }
-
     private static HashMap<Player, WarlordsPlayer> players = new HashMap<>();
 
     public static void addPlayer(WarlordsPlayer warlordsPlayer) {
@@ -164,7 +159,7 @@ public class Warlords extends JavaPlugin {
                 // MOVEMENT
                 for (WarlordsPlayer warlordsPlayer : players.values()) {
                     Player player = warlordsPlayer.getPlayer();
-//                        player.sendMessage(String.valueOf(player.getWalkSpeed()));
+                        //player.sendMessage(String.valueOf(player.getWalkSpeed()));
 
                     // light infusion
                     if (warlordsPlayer.getInfusion() != 0) {
@@ -259,6 +254,7 @@ public class Warlords extends JavaPlugin {
                                 if (entity.getLocation().distanceSquared(location) < 2 * 2) {
                                     hitPlayer = true;
                                     ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.5F, 1, entity.getLocation().add(0, 1, 0), 500);
+                                    ParticleEffect.LAVA.display(0, 0, 0, 0.5F, 10, entity.getLocation().add(0, 1, 0), 500);
                                     Player victim = (Player) entity;
                                     // TODO: fix sounds only playing on direct hit
                                     for (Player player1 : Bukkit.getOnlinePlayers()) {
@@ -430,6 +426,7 @@ public class Warlords extends JavaPlugin {
                                     for (Player player1 : Bukkit.getOnlinePlayers()) {
                                         player1.playSound(entity.getLocation(), "mage.flameburst.impact", 1, 1);
                                     }
+
                                     getPlayer(victim).addHealth(
                                             getPlayer(customProjectile.getShooter()),
                                             customProjectile.getBall().getName(),
@@ -963,82 +960,6 @@ public class Warlords extends JavaPlugin {
                                 armorStand.remove();
                                 spikeArmorStands.remove(i);
                                 i--;
-                            }
-                        }
-                    }
-
-                    //BOULDERS
-                    //TODO remake boulder into a seperate class for better performance
-                    for (int i = 0; i < snowballBoulders.size(); i++) {
-                        Boulder.SnowballBoulder snowballBoulder = snowballBoulders.get(i);
-                        snowballBoulder.getBoulder().teleport(snowballBoulder.getSnowball().getLocation().clone().add(0, 2, 0));
-                        if (snowballBoulder.getSnowball().getVelocity().getY() < 0) {
-                            snowballBoulder.getBoulder().setHeadPose(new EulerAngle(snowballBoulder.getSnowball().getVelocity().getY() / 2 * -1, 0, 0));
-                        } else {
-                            snowballBoulder.getBoulder().setHeadPose(new EulerAngle(snowballBoulder.getSnowball().getVelocity().getY() * -1, 0, 0));
-                        }
-                    }
-
-                    //TODO MAKE BOULDER CLASS
-                    for (World world : Bukkit.getWorlds()) {
-                        for (ArmorStand e : world.getEntitiesByClass(ArmorStand.class)) {
-                            if (e.getCustomName() != null && e.getCustomName().contains("Boulder")) {
-                                Vector velocity = e.getVelocity();
-                                Location location = e.getLocation();
-                                double xVel = velocity.getX();
-                                double yVel = velocity.getY();
-                                double zVel = velocity.getZ();
-                                //Bukkit.broadcastMessage("" + velocity);
-
-                                if (yVel < 0) {
-                                    e.setHeadPose(new EulerAngle(e.getVelocity().getY() / 2 * -1, 0, 0));
-                                } else {
-                                    e.setHeadPose(new EulerAngle(e.getVelocity().getY() * -1, 0, 0));
-                                }
-                                if (location.getY() <= 6) {
-                                    e.remove();
-
-                                    location.setPitch(-10);
-                                    for (int i = 0; i < 20; i++) {
-                                        Location tempLocation = location.clone();
-                                        while (location.getWorld().getBlockAt(tempLocation).getType() == Material.AIR) {
-                                            tempLocation.add(0, -1, 0);
-                                        }
-
-                                        FallingBlock fallingBlock = world.spawnFallingBlock(location.clone().add(0, 1, 0),
-                                                location.getWorld().getBlockAt(tempLocation).getType(),
-                                                location.getWorld().getBlockAt(tempLocation).getData());
-                                        fallingBlock.setVelocity(location.getDirection().normalize().multiply(.75));
-                                        fallingBlock.setDropItem(false);
-                                        location.setYaw((float) (location.getYaw() + Math.random() * 25 + 12));
-                                        WarlordsEvents.addEntityUUID(fallingBlock.getUniqueId());
-                                    }
-                                    List<Entity> near = (List<Entity>) world.getNearbyEntities(location, 5, 5, 5);
-                                    for (Entity entity : near) {
-                                        if (entity instanceof Player) {
-                                            Player nearPlayer = (Player) entity;
-                                            if (nearPlayer.getGameMode() != GameMode.SPECTATOR) {
-                                                //Warlords.getPlayer(nearPlayer).addHealth();
-                                                final Vector v = nearPlayer.getLocation().toVector().subtract(location.toVector()).normalize().multiply(1.5).setY(0.4);
-
-                                                nearPlayer.setVelocity(v);
-                                            }
-                                        }
-                                    }
-                                    //TODO spawn boulder impact + remove teammates
-                                }
-
-                                //TODO fix boulder velocity stopping
-//                            if (Math.abs(xVel) + Math.abs(zVel) <= .25) {
-//                                if (!e.getCustomName().contains("2")) {
-//                                    Bukkit.broadcastMessage("HEHEXD");
-//                                    Location newLocation = e.getLocation().clone();
-//                                    newLocation.setPitch(newLocation.getPitch() * -1);
-//                                    System.out.println(location.getPitch());
-//                                    e.setVelocity(newLocation.getDirection().multiply(.5));
-//                                    e.setCustomName(e.getCustomName() + "2");
-//                                }
-//                            }
                             }
                         }
                     }

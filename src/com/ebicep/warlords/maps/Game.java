@@ -2,9 +2,13 @@ package com.ebicep.warlords.maps;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
+import com.ebicep.warlords.classes.mage.specs.cryomancer.Cryomancer;
+import com.ebicep.warlords.classes.mage.specs.pyromancer.Pyromancer;
 import com.ebicep.warlords.classes.paladin.specs.avenger.Avenger;
 import com.ebicep.warlords.classes.paladin.specs.crusader.Crusader;
 import com.ebicep.warlords.classes.paladin.specs.protector.Protector;
+import com.ebicep.warlords.classes.shaman.specs.earthwarden.Earthwarden;
+import com.ebicep.warlords.classes.shaman.specs.thunderlord.ThunderLord;
 import com.ebicep.warlords.classes.warrior.specs.berserker.Berserker;
 import com.ebicep.warlords.classes.warrior.specs.defender.Defender;
 import com.ebicep.warlords.powerups.PowerupManager;
@@ -51,6 +55,7 @@ public class Game implements Runnable {
                     }
                     //TESTING
                     return GAME;
+
                 } else {
                     game.timer = 0;
                 }
@@ -72,7 +77,7 @@ public class Game implements Runnable {
                 World world = Bukkit.getWorld(game.map.mapName);
                 for (int i = 0; i < world.getPlayers().size(); i = i + 2) {
                     Player worldPlayer = world.getPlayers().get(i);
-                    Warlords.addPlayer(new WarlordsPlayer(worldPlayer, worldPlayer.getName(), worldPlayer.getUniqueId(), new Protector(worldPlayer), false));
+                    Warlords.addPlayer(new WarlordsPlayer(worldPlayer, worldPlayer.getName(), worldPlayer.getUniqueId(), new Crusader(worldPlayer), false));
                     blueTeam.add(worldPlayer.getName());
                     worldPlayer.setPlayerListName(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + "SPEC" + ChatColor.DARK_GRAY + "] " + ChatColor.BLUE + worldPlayer.getName() + ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + "Lv90" + ChatColor.DARK_GRAY + "]");
 
@@ -80,7 +85,7 @@ public class Game implements Runnable {
 
                     if (i + 1 < world.getPlayers().size()) {
                         Player worldPlayer2 = world.getPlayers().get(i + 1);
-                        Warlords.addPlayer(new WarlordsPlayer(worldPlayer2, worldPlayer2.getName(), worldPlayer2.getUniqueId(), new Protector(worldPlayer2), false));
+                        Warlords.addPlayer(new WarlordsPlayer(worldPlayer2, worldPlayer2.getName(), worldPlayer2.getUniqueId(), new Cryomancer(worldPlayer2), false));
                         redTeam.add(worldPlayer2.getName());
                         worldPlayer2.setPlayerListName(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + "SPEC" + ChatColor.DARK_GRAY + "] " + ChatColor.RED + worldPlayer2.getName() + ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + "Lv90" + ChatColor.DARK_GRAY + "]");
 
@@ -145,7 +150,7 @@ public class Game implements Runnable {
                 // Disable abilities
                 game.timer = 0;
                 boolean teamBlueWins = !game.forceEnd && game.bluePoints > game.redPoints;
-                boolean teamReadWins = !game.forceEnd && game.redPoints > game.bluePoints;
+                boolean teamRedWins = !game.forceEnd && game.redPoints > game.bluePoints;
                 // Announce winner
             }
 
@@ -266,6 +271,7 @@ public class Game implements Runnable {
     public void run() {
         Game.State newState = state.run(this);
         if (newState != null) {
+            Bukkit.broadcastMessage(newState.toString());
             this.state = newState;
             newState.begin(this);
         }

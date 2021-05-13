@@ -154,9 +154,9 @@ public class Totem extends EntityArmorStand {
                     "§7Place a totem on the ground that\n" +
                     "§7pulses constantly, healing nearby\n" +
                     "§7allies for §a168 §7- §a227 §7every\n" +
-                    "second. Before disappearing , the totem\n" +
+                    "second. Before disappearing, the totem\n" +
                     "will let out a final pulse that heals for\n" +
-                    "§a841 §7 - §a1138§7. Lasts §65 §7seconds.");
+                    "§a841 §7- §a1138§7. Lasts §65 §7seconds.");
 
             //168 - 227
             //841 - 1138
