@@ -2,14 +2,9 @@ package com.ebicep.warlords.events;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
-import com.ebicep.warlords.classes.AbstractAbility;
-import com.ebicep.warlords.classes.abilties.EarthenSpike;
-import com.ebicep.warlords.classes.abilties.IceBarrier;
 import com.ebicep.warlords.classes.abilties.SeismicWave;
-import com.ebicep.warlords.classes.abilties.Slam;
 import net.minecraft.server.v1_8_R3.EntityLiving;
 import net.minecraft.server.v1_8_R3.GenericAttributes;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -20,6 +15,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.*;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
@@ -82,25 +79,27 @@ public class WarlordsEvents implements Listener {
             WarlordsPlayer warlordsPlayerAttacker = Warlords.getPlayer(attacker);
             WarlordsPlayer warlordsPlayerVictim = Warlords.getPlayer(victim);
 
-            if (attacker.getInventory().getHeldItemSlot() == 0 && warlordsPlayerAttacker.getHitCooldown() == 0) {
-                victim.damage(0);
-                warlordsPlayerAttacker.setHitCooldown(13);
-                warlordsPlayerAttacker.subtractEnergy(warlordsPlayerAttacker.getSpec().getEnergyOnHit() * -1);
-                warlordsPlayerVictim.addHealth(warlordsPlayerAttacker, "", -132, -179, 25, 200);
-            }
+            if (!warlordsPlayerAttacker.getScoreboard().onSameTeam(victim)) {
+                if (attacker.getInventory().getHeldItemSlot() == 0 && warlordsPlayerAttacker.getHitCooldown() == 0) {
+                    victim.damage(0);
+                    warlordsPlayerAttacker.setHitCooldown(13);
+                    warlordsPlayerAttacker.subtractEnergy(warlordsPlayerAttacker.getSpec().getEnergyOnHit() * -1);
+                    warlordsPlayerVictim.addHealth(warlordsPlayerAttacker, "", -132, -179, 25, 200);
+                }
 
-            if (warlordsPlayerVictim.getIceBarrier() != 0) {
-                if (warlordsPlayerAttacker.getIceBarrierSlowness() == 0) {
-                    warlordsPlayerAttacker.setIceBarrierSlowness(2 * 20 - 10);
+                if (warlordsPlayerVictim.getIceBarrier() != 0) {
+                    if (warlordsPlayerAttacker.getIceBarrierSlowness() == 0) {
+                        warlordsPlayerAttacker.setIceBarrierSlowness(2 * 20 - 10);
+                    }
                 }
             }
-
             e.setCancelled(true);
         } else if (e.getEntity() instanceof Horse && e.getDamager() instanceof Player) {
-            e.getEntity().remove();
+            if (!Warlords.getPlayer((Player) e.getEntity().getPassenger()).getScoreboard().onSameTeam((Player) e.getDamager())) {
+                e.getEntity().remove();
+            }
             e.setCancelled(true);
         }
-
     }
 
     @EventHandler
@@ -123,7 +122,7 @@ public class WarlordsEvents implements Listener {
                 Warlords.getPlayer(player).getSpec().onRightClick(player);
             }
             ItemStack itemHeld = player.getItemInHand();
-            if (itemHeld.getType() == Material.GOLD_BARDING) {
+            if (itemHeld.getType() == Material.GOLD_BARDING && player.getVehicle() == null) {
                 double distance = player.getLocation().getY() - player.getWorld().getHighestBlockYAt(player.getLocation());
                 if (distance > 2) {
                     player.sendMessage(ChatColor.DARK_RED + "You cannot mount in the air");
@@ -134,7 +133,8 @@ public class WarlordsEvents implements Listener {
                     horse.setOwner(player);
                     horse.setJumpStrength(0);
                     horse.setVariant(Horse.Variant.HORSE);
-                    ((EntityLiving) ((CraftEntity) horse).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(.308);
+                    //((EntityLiving) ((CraftEntity) horse).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(.308);
+                    ((EntityLiving) ((CraftEntity) horse).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(1);
                     horse.setPassenger(player);
                     Warlords.getPlayer(player).setHorseCooldown(15);
                 }
@@ -148,8 +148,6 @@ public class WarlordsEvents implements Listener {
                 //Warlords.waveArrays.add(waveList);
 
                 WarlordsEvents.addEntityUUID(block.getUniqueId());
-            } else if (itemHeld.getType() == Material.DIAMOND_PICKAXE) {
-                Slam slam = new Slam(player.getLocation());
             } else if (itemHeld.getType() == Material.WOOD_AXE) {
                 ArmorStand stand = (ArmorStand) location.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
                 stand.setHelmet(new ItemStack(Material.LONG_GRASS, 1, (short) 2));
@@ -240,5 +238,18 @@ public class WarlordsEvents implements Listener {
             Warlords.getPlayer(e.getPlayer()).getSpec().onRightClickHotKey(e.getPlayer(), slot);
             e.setCancelled(true);
         }
+    }
+
+    @EventHandler
+    public void onInvClick(InventoryClickEvent e) {
+        e.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onOpenInventory(InventoryOpenEvent e) {
+        if (e.getInventory().getHolder().getInventory().getTitle().equals("Horse")) {
+            e.setCancelled(true);
+        }
+
     }
 }

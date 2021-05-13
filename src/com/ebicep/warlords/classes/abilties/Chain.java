@@ -43,12 +43,12 @@ public class Chain extends AbstractAbility {
                     System.out.println("(TOTEM) -> PLAYER -> PLAYER");
                     chain(player.getLocation(), totem.getTotemArmorStand().getLocation().add(0, .5, 0));
                     List<Entity> nearTotem = totem.getTotemArmorStand().getNearbyEntities(4.0D, 4.0D, 4.0D);
-                    nearTotem.remove(player);
+                    nearTotem = Utils.filterOutTeammates(nearTotem, player);
                     pulseDamage(warlordsPlayer, nearTotem);
                     hitCounter++;
                     // TOTEM -> (PLAYER) -> PLAYER
                     List<Entity> near = totem.getTotemArmorStand().getNearbyEntities(20.0D, 18.0D, 20.0D);
-                    near.remove(player);
+                    near = Utils.filterOutTeammates(near, player);
                     //TODO maybe fix this, may be performance heavy - getNearbyEntities is not in order of closest
                     System.out.println(near);
                     for (Entity entity : near) {
@@ -61,8 +61,8 @@ public class Chain extends AbstractAbility {
                                 hitCounter++;
 
                                 List<Entity> nearNearPlayers = nearPlayer.getNearbyEntities(10.0D, 9.0D, 10.0D);
-                                nearNearPlayers.remove(player);
                                 nearNearPlayers.remove(nearPlayer);
+                                nearNearPlayers = Utils.filterOutTeammates(nearNearPlayers, player);
                                 // TOTEM -> PLAYER -> (PLAYER)
                                 for (Entity entity1 : nearNearPlayers) {
                                     if (entity1 instanceof Player) {
@@ -74,9 +74,9 @@ public class Chain extends AbstractAbility {
 
                                             hitCounter++;
                                             List<Entity> nearNearNearPlayers = nearNearPlayer.getNearbyEntities(10.0D, 9.0D, 10.0D);
-                                            nearNearNearPlayers.remove(player);
                                             nearNearNearPlayers.remove(nearPlayer);
                                             nearNearNearPlayers.remove(nearNearPlayer);
+                                            nearNearNearPlayers = Utils.filterOutTeammates(nearNearNearPlayers, player);
                                             for (Entity entity2 : nearNearNearPlayers) {
                                                 if (entity2 instanceof Player) {
                                                     Player nearNearNearPlayer = (Player) entity2;
@@ -121,8 +121,8 @@ public class Chain extends AbstractAbility {
                         hitCounter++;
                         List<Entity> nearNearEntities = nearPlayer.getNearbyEntities(10.0D, 9.0D, 10.0D);
                         nearNearEntities.sort(new Utils.ArmorStandComparator());
-                        nearNearEntities.remove(player);
                         nearNearEntities.remove(nearPlayer);
+                        nearNearEntities = Utils.filterOutTeammates(nearNearEntities, player);
                         for (Entity entity1 : nearNearEntities) {
                             if (Utils.totemDownAndClose(warlordsPlayer, nearPlayer)) {
                                 // PLAYER -> (TOTEM) -> PLAYER   THIS IS SO TRASH
@@ -131,12 +131,12 @@ public class Chain extends AbstractAbility {
                                         System.out.println("PLAYER -> (TOTEM) -> PLAYER");
                                         chain(nearPlayer.getLocation(), totem.getTotemArmorStand().getLocation().add(0, .5, 0));
                                         List<Entity> totemNear = totem.getTotemArmorStand().getNearbyEntities(4.0D, 4.0D, 4.0D);
-                                        totemNear.remove(player);
+                                        totemNear = Utils.filterOutTeammates(totemNear, player);
                                         pulseDamage(warlordsPlayer, totemNear);
                                         hitCounter++;
                                         List<Entity> nearNearNearPlayers = totem.getTotemArmorStand().getNearbyEntities(10.0D, 9.0D, 10.0D);
-                                        nearNearNearPlayers.remove(player);
                                         nearNearNearPlayers.remove(nearPlayer);
+                                        nearNearNearPlayers = Utils.filterOutTeammates(nearNearNearPlayers, player);
                                         for (Entity entity2 : nearNearNearPlayers) {
                                             if (entity2 instanceof Player) {
                                                 // PLAYER -> TOTEM -> (PLAYER)
@@ -185,9 +185,9 @@ public class Chain extends AbstractAbility {
                                     hitCounter++;
                                     List<Entity> nearNearNearEntities = nearNearPlayer.getNearbyEntities(10.0D, 9.0D, 10.0D);
                                     nearNearNearEntities.sort(new Utils.ArmorStandComparator());
-                                    nearNearNearEntities.remove(player);
                                     nearNearNearEntities.remove(nearPlayer);
                                     nearNearNearEntities.remove(nearNearPlayer);
+                                    nearNearNearEntities = Utils.filterOutTeammates(nearNearNearEntities, player);
                                     for (Entity entity2 : nearNearNearEntities) {
                                         if (Utils.totemDownAndClose(warlordsPlayer, nearNearPlayer)) {
                                             // PLAYER -> PLAYER -> (TOTEM)
@@ -196,7 +196,7 @@ public class Chain extends AbstractAbility {
                                                     System.out.println("PLAYER -> PLAYER -> (TOTEM)");
                                                     chain(nearNearPlayer.getLocation(), totem.getTotemArmorStand().getLocation().add(0, .5, 0));
                                                     List<Entity> totemNear = totem.getTotemArmorStand().getNearbyEntities(4.0D, 4.0D, 4.0D);
-                                                    totemNear.remove(player);
+                                                    totemNear = Utils.filterOutTeammates(totemNear, player);
                                                     pulseDamage(warlordsPlayer, totemNear);
                                                     hitCounter++;
                                                     break;
@@ -288,6 +288,7 @@ public class Chain extends AbstractAbility {
         warlordsPlayer.addHealth(warlordsPlayer, warlordsPlayer.getSpec().getRed().getName(), 420, 420, -1, 100);
         int playersHealed = 0;
         List<Entity> near = player.getNearbyEntities(2.5D, 2D, 2.5D);
+        near = Utils.filterOnlyTeammates(near, player);
         for (Entity entity : near) {
             if (entity instanceof Player) {
                 Player nearPlayer = (Player) entity;

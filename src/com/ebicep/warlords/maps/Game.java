@@ -2,12 +2,16 @@ package com.ebicep.warlords.maps;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
+import com.ebicep.warlords.classes.paladin.specs.avenger.Avenger;
+import com.ebicep.warlords.classes.paladin.specs.crusader.Crusader;
+import com.ebicep.warlords.classes.paladin.specs.protector.Protector;
 import com.ebicep.warlords.classes.warrior.specs.berserker.Berserker;
 import com.ebicep.warlords.classes.warrior.specs.defender.Defender;
 import com.ebicep.warlords.powerups.PowerupManager;
 import com.ebicep.warlords.util.CustomScoreboard;
 import com.ebicep.warlords.util.RemoveEntities;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
@@ -16,6 +20,7 @@ import java.util.*;
 public class Game implements Runnable {
 
     private static final int POINT_LIMIT = 1000;
+    public static int remaining = 0;
 
     public enum State {
         PRE_GAME {
@@ -38,12 +43,14 @@ public class Game implements Runnable {
                     game.timer++;
                     int total = game.map.getCountdownTimerInTicks();
                     int remaining = total - game.timer;
-                    if(remaining % 20 == 1) {
+                    if (remaining % 20 == 1) {
                         Bukkit.broadcastMessage("Gamestate PRE_GAME, remaining time: " + remaining / 20);
                     }
                     if (game.timer == total) {
                         return GAME;
                     }
+                    //TESTING
+                    return GAME;
                 } else {
                     game.timer = 0;
                 }
@@ -58,7 +65,6 @@ public class Game implements Runnable {
                 // Close config screen
                 List<String> blueTeam = new ArrayList<>();
                 List<String> redTeam = new ArrayList<>();
-                List<CustomScoreboard> customScoreboards = new ArrayList<>();
 
                 RemoveEntities removeEntities = new RemoveEntities();
                 removeEntities.onRemove();
@@ -66,28 +72,39 @@ public class Game implements Runnable {
                 World world = Bukkit.getWorld(game.map.mapName);
                 for (int i = 0; i < world.getPlayers().size(); i = i + 2) {
                     Player worldPlayer = world.getPlayers().get(i);
-                    Warlords.addPlayer(new WarlordsPlayer(worldPlayer, worldPlayer.getName(), worldPlayer.getUniqueId(), new Berserker(worldPlayer), false));
-                    worldPlayer.setMaxHealth(40);
-                    //player.teleport(GameManager.GameMap.RIFT.map.getBlueLobbySpawnPoint());
+                    Warlords.addPlayer(new WarlordsPlayer(worldPlayer, worldPlayer.getName(), worldPlayer.getUniqueId(), new Protector(worldPlayer), false));
                     blueTeam.add(worldPlayer.getName());
+                    worldPlayer.setPlayerListName(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + "SPEC" + ChatColor.DARK_GRAY + "] " + ChatColor.BLUE + worldPlayer.getName() + ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + "Lv90" + ChatColor.DARK_GRAY + "]");
+
                     System.out.println("Added " + worldPlayer.getName());
 
                     if (i + 1 < world.getPlayers().size()) {
                         Player worldPlayer2 = world.getPlayers().get(i + 1);
-                        Warlords.addPlayer(new WarlordsPlayer(worldPlayer2, worldPlayer2.getName(), worldPlayer2.getUniqueId(), new Defender(worldPlayer2), false));
-                        worldPlayer2.setMaxHealth(40);
-                        redTeam.add(worldPlayer.getName());
+                        Warlords.addPlayer(new WarlordsPlayer(worldPlayer2, worldPlayer2.getName(), worldPlayer2.getUniqueId(), new Protector(worldPlayer2), false));
+                        redTeam.add(worldPlayer2.getName());
+                        worldPlayer2.setPlayerListName(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + "SPEC" + ChatColor.DARK_GRAY + "] " + ChatColor.RED + worldPlayer2.getName() + ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + "Lv90" + ChatColor.DARK_GRAY + "]");
+
                         System.out.println("Added2 " + worldPlayer2.getName());
                     }
 
-                    worldPlayer.setLevel((int) Warlords.getPlayer(worldPlayer).getMaxEnergy());
-                    Warlords.getPlayer(worldPlayer).assignItemLore();
+
                 }
 
                 for (WarlordsPlayer value : Warlords.getPlayers().values()) {
+                    value.getPlayer().setMaxHealth(40);
+                    value.getPlayer().setLevel((int) value.getMaxEnergy());
+                    value.assignItemLore();
+
                     System.out.println("updated scoreboard for " + value.getName());
                     value.setScoreboard(new CustomScoreboard(value.getPlayer(), blueTeam, redTeam));
                 }
+
+                for (WarlordsPlayer value : Warlords.getPlayers().values()) {
+                    value.getScoreboard().addHealths();
+                }
+
+                System.out.println(blueTeam);
+                System.out.println(redTeam);
 
                 new PowerupManager(game.map).runTaskTimer(Warlords.getInstance(), 0, 0);
 
@@ -110,12 +127,11 @@ public class Game implements Runnable {
                     // Enable powerups
                 }
 
-                if (game.timer % 100 == 0) {
-                   int remaining = (game.map.getGameTimerInTicks() - game.timer) / 20;
-                   int minutes = remaining / 60;
-                   int seconds = remaining % 60;
-
-                   Bukkit.broadcastMessage(minutes + ":" + seconds + "remaining.");
+                if (game.timer % 20 == 0) {
+                    remaining = (game.map.getGameTimerInTicks() - game.timer) / 20;
+                    for (WarlordsPlayer value : Warlords.getPlayers().values()) {
+                        value.getScoreboard().updateTime();
+                    }
                 }
 
                 return null;
@@ -137,15 +153,13 @@ public class Game implements Runnable {
             public Game.State run(Game game) {
                 game.timer++;
                 if (game.timer > 10 * 20) {
-                    for(UUID id : game.teamBlue) {
-                        Player player = Bukkit.getPlayer(id);
-                        if(player != null) {
+                    for (Player player : game.teamBlue) {
+                        if (player != null) {
                             player.teleport(Bukkit.getWorlds().get(0).getSpawnLocation());
                         }
                     }
-                    for(UUID id : game.teamRed) {
-                        Player player = Bukkit.getPlayer(id);
-                        if(player != null) {
+                    for (Player player : game.teamRed) {
+                        if (player != null) {
                             player.teleport(Bukkit.getWorlds().get(0).getSpawnLocation());
                         }
                     }
@@ -170,8 +184,8 @@ public class Game implements Runnable {
     private Game.State state = Game.State.PRE_GAME;
     private int timer = 0;
     private GameMap map = GameMap.RIFT;
-    private final Set<UUID> teamRed = new HashSet<>();
-    private final Set<UUID> teamBlue = new HashSet<>();
+    private final Set<Player> teamRed = new HashSet<>();
+    private final Set<Player> teamBlue = new HashSet<>();
     private int redPoints;
     private int bluePoints;
     private boolean forceEnd;
@@ -192,11 +206,11 @@ public class Game implements Runnable {
         return map;
     }
 
-    public Set<UUID> getTeamRed() {
+    public Set<Player> getTeamRed() {
         return teamRed;
     }
 
-    public Set<UUID> getTeamBlue() {
+    public Set<Player> getTeamBlue() {
         return teamBlue;
     }
 
@@ -225,19 +239,27 @@ public class Game implements Runnable {
 
     public void addPlayer(Player player, boolean teamBlue) {
         if (teamBlue) {
-            this.teamRed.remove(player.getUniqueId());
-            this.teamBlue.add(player.getUniqueId());
+            this.teamRed.remove(player);
+            this.teamBlue.add(player);
             player.teleport(this.map.blueLobbySpawnPoint);
         } else {
-            this.teamBlue.remove(player.getUniqueId());
-            this.teamRed.add(player.getUniqueId());
+            this.teamBlue.remove(player);
+            this.teamRed.add(player);
             player.teleport(this.map.redLobbySpawnPoint);
         }
     }
 
-    public void removePlayer(UUID id) {
-        this.teamRed.remove(id);
-        this.teamBlue.remove(id);
+    public void removePlayer(Player player) {
+        this.teamRed.remove(player);
+        this.teamBlue.remove(player);
+    }
+
+    public boolean onSameTeam(Player player1, Player player2) {
+        return teamBlue.contains(player1) && teamBlue.contains(player2) || teamRed.contains(player1) && teamRed.contains(player2);
+    }
+
+    public boolean onSameTeam(WarlordsPlayer player1, WarlordsPlayer player2) {
+        return teamBlue.contains(player1.getPlayer()) && teamBlue.contains(player2.getPlayer()) || teamRed.contains(player1.getPlayer()) && teamRed.contains(player2.getPlayer());
     }
 
     @Override

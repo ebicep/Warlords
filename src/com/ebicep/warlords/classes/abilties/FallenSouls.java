@@ -94,12 +94,6 @@ public class FallenSouls extends AbstractAbility {
             playersHit.add(shooter);
         }
 
-        public FallenSoul(ArmorStand fallenSoulLeft, ArmorStand fallenSoulMiddle, ArmorStand fallenSoulRight) {
-            this.fallenSoulLeft = fallenSoulLeft;
-            this.fallenSoulMiddle = fallenSoulMiddle;
-            this.fallenSoulRight = fallenSoulRight;
-        }
-
         public WarlordsPlayer getShooter() {
             return shooter;
         }

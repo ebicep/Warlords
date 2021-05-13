@@ -34,22 +34,21 @@ public class RecklessCharge extends AbstractAbility {
 
         Location eyeLocation = player.getLocation();
         eyeLocation.setPitch(-10);
-        //TODO fix charge, needs to set x/z velcity to zero after travelling x blocks or v velocity isnt x anymore
+        //.clone().add(eyeLocation.getDirection().multiply(1)));
         if (eyeLocation.getWorld().getBlockAt(eyeLocation.clone().add(0, -1, 0)).getType() != Material.AIR) {
             System.out.println("Launched on ground");
             //travels 5 blocks
             player.setVelocity(eyeLocation.getDirection().multiply(2.4));
             Warlords.getPlayer(player).setCharged(6 * 6 - 7);
-            Warlords.getPlayer(player).setChargeLocation(eyeLocation);//.clone().add(eyeLocation.getDirection().multiply(1)));
 
         } else {
             System.out.println("Launched in air");
             //travels 7 at peak jump
             player.setVelocity(eyeLocation.getDirection().multiply(1.5));
             Warlords.getPlayer(player).setCharged((int) Math.pow(9 - Utils.getDistance(player, .1) * 2, 2));
-            Warlords.getPlayer(player).setChargeLocation(eyeLocation);//.clone().add(eyeLocation.getDirection().multiply(1)));
 
         }
+        Warlords.getPlayer(player).setChargeLocation(eyeLocation);//.clone().add(eyeLocation.getDirection().multiply(1)));
         // warlordsplayer charged variable
         // check distance from start to "end" every tick
         // check collision of every player

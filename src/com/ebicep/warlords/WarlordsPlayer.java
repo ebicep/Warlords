@@ -6,6 +6,7 @@ import com.ebicep.warlords.classes.abilties.Soulbinding;
 import com.ebicep.warlords.classes.abilties.Totem;
 import com.ebicep.warlords.util.CalculateSpeed;
 import com.ebicep.warlords.util.CustomScoreboard;
+import com.ebicep.warlords.util.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
@@ -410,47 +411,50 @@ public class WarlordsPlayer {
             }
             if (intervene != 0) {
                 //TODO check teammate heal
-                damageHealValue *= totalReduction;
-                damageHealValue *= .5;
-                if (isCrit) {
-                    intervenedBy.getPlayer().sendMessage("§c\u00AB§7 " + attacker.getName() + "'s Intervene hit you for §c§l" + (int) damageHealValue * -1 + "! §7critical damage.");
-                    attacker.getPlayer().sendMessage("§a\u00BB§7 Your Intervene hit " + intervenedBy.getName() + " for §c§l" + (int) damageHealValue * -1 + "! §7critical damage.");
-                } else {
-                    intervenedBy.getPlayer().sendMessage("§c\u00AB§7 " + attacker.getName() + "'s Intervene hit you for §c" + (int) damageHealValue * -1 + "§7 damage.");
-                    attacker.getPlayer().sendMessage("§a\u00BB§7 Your Intervene hit " + intervenedBy.getName() + " for §c" + (int) damageHealValue * -1 + "§7 damage.");
-                }
-                intervenedBy.setHealth((int) (intervenedBy.getHealth() + damageHealValue));
-                interveneDamage += damageHealValue;
-
-                this.addAbsorbed(-damageHealValue);
-                attacker.addDamage(-damageHealValue);
-
-            } else if (arcaneShield != 0) {
-                damageHealValue *= totalReduction;
-                //TODO check teammate heal
-                if (arcaneShieldHealth + damageHealValue < 0) {
-                    Bukkit.broadcastMessage("" + arcaneShieldHealth);
-                    Bukkit.broadcastMessage("" + damageHealValue);
-                    Bukkit.broadcastMessage("" + (arcaneShieldHealth + damageHealValue));
-
-                    arcaneShield = 0;
-                    addHealth(attacker, ability, (int) (arcaneShieldHealth + damageHealValue), (int) (arcaneShieldHealth + damageHealValue), isCrit ? 100 : -1, 100);
-
-                    this.absorbed += -(arcaneShield + damageHealValue);
-                } else {
-                    if (ability.isEmpty()) {
-                        player.sendMessage("§c\u00AB§7 You absorbed " + attacker.getName() + "'s melee §7hit.");
-                        attacker.getPlayer().sendMessage("§a\u00BB§7 Your melee hit was absorbed by " + name);
+                if (!Warlords.getInstance().game.onSameTeam(this, attacker)) {
+                    damageHealValue *= totalReduction;
+                    damageHealValue *= .5;
+                    if (isCrit) {
+                        intervenedBy.getPlayer().sendMessage("§c\u00AB§7 " + attacker.getName() + "'s Intervene hit you for §c§l" + (int) damageHealValue * -1 + "! §7critical damage.");
+                        attacker.getPlayer().sendMessage("§a\u00BB§7 Your Intervene hit " + intervenedBy.getName() + " for §c§l" + (int) damageHealValue * -1 + "! §7critical damage.");
                     } else {
-                        player.sendMessage("§c\u00AB§7 You absorbed " + attacker.getName() + "'s " + ability + " §7hit.");
-                        attacker.getPlayer().sendMessage("§a\u00BB§7 Your " + ability + " was absorbed by " + name + "§7.");
+                        intervenedBy.getPlayer().sendMessage("§c\u00AB§7 " + attacker.getName() + "'s Intervene hit you for §c" + (int) damageHealValue * -1 + "§7 damage.");
+                        attacker.getPlayer().sendMessage("§a\u00BB§7 Your Intervene hit " + intervenedBy.getName() + " for §c" + (int) damageHealValue * -1 + "§7 damage.");
                     }
+                    intervenedBy.setHealth((int) (intervenedBy.getHealth() + damageHealValue));
+                    interveneDamage += damageHealValue;
 
-                    this.absorbed += -damageHealValue;
+                    this.addAbsorbed(-damageHealValue);
+                    attacker.addDamage(-damageHealValue);
                 }
-                arcaneShieldHealth += damageHealValue;
+            } else if (arcaneShield != 0) {
+                if (!Warlords.getInstance().game.onSameTeam(this, attacker)) {
+                    damageHealValue *= totalReduction;
+                    //TODO check teammate heal
+                    if (arcaneShieldHealth + damageHealValue < 0) {
+                        Bukkit.broadcastMessage("" + arcaneShieldHealth);
+                        Bukkit.broadcastMessage("" + damageHealValue);
+                        Bukkit.broadcastMessage("" + (arcaneShieldHealth + damageHealValue));
 
-                Bukkit.broadcastMessage("" + arcaneShieldHealth);
+                        arcaneShield = 0;
+                        addHealth(attacker, ability, (int) (arcaneShieldHealth + damageHealValue), (int) (arcaneShieldHealth + damageHealValue), isCrit ? 100 : -1, 100);
+
+                        this.absorbed += -(arcaneShield + damageHealValue);
+                    } else {
+                        if (ability.isEmpty()) {
+                            player.sendMessage("§c\u00AB§7 You absorbed " + attacker.getName() + "'s melee §7hit.");
+                            attacker.getPlayer().sendMessage("§a\u00BB§7 Your melee hit was absorbed by " + name);
+                        } else {
+                            player.sendMessage("§c\u00AB§7 You absorbed " + attacker.getName() + "'s " + ability + " §7hit.");
+                            attacker.getPlayer().sendMessage("§a\u00BB§7 Your " + ability + " was absorbed by " + name + "§7.");
+                        }
+
+                        this.absorbed += -damageHealValue;
+                    }
+                    arcaneShieldHealth += damageHealValue;
+
+                    Bukkit.broadcastMessage("" + arcaneShieldHealth);
+                }
             } else {
                 damageHealValue *= totalReduction;
                 System.out.println(attacker.getName() + " hit " + name + " for " + damageHealValue);
@@ -458,17 +462,19 @@ public class WarlordsPlayer {
 
                 //Self heal
                 if (this == attacker) {
-                    damageHealValue = Math.round(damageHealValue);
-                    if (isCrit) {
-                        player.sendMessage("§a\u00AB§7 Your " + ability + " critically healed you for §a§l" + (int) damageHealValue + "! §7health.");
-                    } else {
-                        player.sendMessage("§a\u00AB§7 Your " + ability + " healed for §a" + (int) damageHealValue + " §7health.");
-                    }
+                    if (this.health != this.maxHealth) {
+                        damageHealValue = Math.round(damageHealValue);
+                        if (isCrit) {
+                            player.sendMessage("§a\u00AB§7 Your " + ability + " critically healed you for §a§l" + (int) damageHealValue + "! §7health.");
+                        } else {
+                            player.sendMessage("§a\u00AB§7 Your " + ability + " healed for §a" + (int) damageHealValue + " §7health.");
+                        }
 
-                    addHealing(damageHealValue);
+                        addHealing(damageHealValue);
+                    }
                 } else {
                     //DAMAGE
-                    if (damageHealValue < 0) {
+                    if (damageHealValue < 0 && !Warlords.getInstance().game.onSameTeam(this, attacker)) {
                         if (powerUpHeal) {
                             powerUpHeal = false;
                             player.sendMessage("heal cancelled");
@@ -552,28 +558,34 @@ public class WarlordsPlayer {
                     }
                     //HEALING
                     else {
-                        if (berserkerWounded != 0) {
-                            damageHealValue *= .65;
-                        } else if (defenderWounded != 0) {
-                            damageHealValue *= .75;
+                        if (Warlords.getInstance().game.onSameTeam(this, attacker)) {
+                            if (berserkerWounded != 0) {
+                                damageHealValue *= .65;
+                            } else if (defenderWounded != 0) {
+                                damageHealValue *= .75;
+                            }
+                            if (isCrit) {
+                                player.sendMessage("§a\u00AB§7 " + attacker.getName() + "'s " + ability + " critically healed you for §a§l" + (int) damageHealValue + "! §7health.");
+                                attacker.getPlayer().sendMessage("§a\u00BB§7 " + "Your " + ability + " critically healed " + name + " for §a§l" + (int) damageHealValue + "! §7health.");
+                            } else {
+                                player.sendMessage("§a\u00AB§7 " + attacker.getName() + "'s " + ability + " healed for §a" + (int) damageHealValue + " §7health.");
+                                attacker.getPlayer().sendMessage("§a\u00BB§7 " + "Your " + ability + " healed " + name + " for §a" + (int) damageHealValue + " §7health.");
+                            }
                         }
-                        if (isCrit) {
-                            player.sendMessage("§a\u00AB§7 " + attacker.getName() + "'s " + ability + " critically healed you for §a§l" + (int) damageHealValue + "! §7health.");
-                            attacker.getPlayer().sendMessage("§a\u00BB§7 " + "Your " + ability + " critically healed " + name + " for §a§l" + (int) damageHealValue + "! §7health.");
-                        } else {
-                            player.sendMessage("§a\u00AB§7 " + attacker.getName() + "'s " + ability + " healed for §a" + (int) damageHealValue + " §7health.");
-                            attacker.getPlayer().sendMessage("§a\u00BB§7 " + "Your " + ability + " healed " + name + " for §a" + (int) damageHealValue + " §7health.");
-                        }
+                    }
+                    if (attacker.getBloodLust() != 0 && damageHealValue < 0) {
+                        attacker.addHealth(attacker, "Blood Lust", Math.round(damageHealValue * -.65f), Math.round(damageHealValue * -.65f), -1, 100);
                     }
                 }
                 //Prevent overheal
                 if (!(debt && damageHealValue < 0)) {
-                    if (this.health + damageHealValue > this.maxHealth) {
-                        damageHealValue = this.maxHealth - this.health;
+                    if (this.health + damageHealValue > this.maxHealth && Warlords.getInstance().game.onSameTeam(this, attacker)) {
+                        //TODO fix this - chat message value with be different
                         this.health = maxHealth;
                     } else {
-                        this.health += Math.round(damageHealValue);
-
+                        if (!Warlords.getInstance().game.onSameTeam(this, attacker)) {
+                            this.health += Math.round(damageHealValue);
+                        }
                         if (damageHealValue < 0) {
                             attacker.addDamage(-damageHealValue);
                         } else {
@@ -597,9 +609,7 @@ public class WarlordsPlayer {
                     }
                 }
             }
-            if (attacker.getBloodLust() != 0 && damageHealValue < 0) {
-                attacker.addHealth(attacker, "Blood Lust", Math.round(damageHealValue * -.65f), Math.round(damageHealValue * -.65f), 0, 0);
-            }
+
             //TODO make inital windfury hit proc
             if (ability.equals("")) {
                 if (attacker.getWindfury() != 0) {
@@ -611,7 +621,7 @@ public class WarlordsPlayer {
                 } else if (attacker.getEarthliving() != 0) {
                     //TODO heal attackers teamamtes
                     List<Entity> near = attacker.getPlayer().getNearbyEntities(3.0D, 3.0D, 3.0D);
-                    near.remove(attacker.getPlayer());
+                    near = Utils.filterOnlyTeammates(near, attacker.getPlayer());
                     int counter = 0;
                     for (Entity entity : near) {
                         if (entity instanceof Player) {

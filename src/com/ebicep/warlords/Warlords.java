@@ -8,6 +8,7 @@ import com.ebicep.warlords.commands.Commands;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.util.ParticleEffect;
+import com.ebicep.warlords.util.Utils;
 import org.bukkit.*;
 import org.bukkit.entity.*;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -17,7 +18,9 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class Warlords extends JavaPlugin {
 
@@ -59,7 +62,7 @@ public class Warlords extends JavaPlugin {
 
     public static List<EarthenSpike> spikes = new ArrayList<>();
 
-    public static List<ArmorStand> armorStands = new ArrayList<>(new ArrayList<>());
+    public static List<ArmorStand> spikeArmorStands = new ArrayList<>(new ArrayList<>());
 
     public static List<Totem> totems = new ArrayList<>();
 
@@ -156,322 +159,608 @@ public class Warlords extends JavaPlugin {
             @Override
             public void run() {
 
-                    // speed every 1 tick updated so it activates instantly
-                    // MOVEMENT
-                    for (Player player : Bukkit.getOnlinePlayers()) {
-                        WarlordsPlayer warlordsPlayer = getPlayer(player);
+                // EVERY TICK
+                // speed every 1 tick updated so it activates instantly
+                // MOVEMENT
+                for (WarlordsPlayer warlordsPlayer : players.values()) {
+                    Player player = warlordsPlayer.getPlayer();
 //                        player.sendMessage(String.valueOf(player.getWalkSpeed()));
 
-                        // light infusion
-                        if (warlordsPlayer.getInfusion() != 0) {
-                            player.setWalkSpeed(WarlordsPlayer.currentSpeed);
-                            warlordsPlayer.setInfusion((int) (warlordsPlayer.getInfusion() - 0.05));
-                        }
+                    // light infusion
+                    if (warlordsPlayer.getInfusion() != 0) {
+                        player.setWalkSpeed(WarlordsPlayer.currentSpeed);
+                        warlordsPlayer.setInfusion((int) (warlordsPlayer.getInfusion() - 0.05));
+                    }
 
-                        // presence
-                        if (warlordsPlayer.getPresence() != 0) {
-                            if (warlordsPlayer.getInfusion() == 0)
-                                player.setWalkSpeed(WarlordsPlayer.currentSpeed);
-                            warlordsPlayer.setPresence((int) (warlordsPlayer.getPresence() - 0.05));
-                            List<Entity> near = player.getNearbyEntities(6.0D, 2.0D, 6.0D);
-//                            near.remove(player);
-                            for (Entity entity : near) {
-                                if (entity instanceof Player) {
-                                    Player nearPlayer = (Player) entity;
-                                    nearPlayer.setWalkSpeed(WarlordsPlayer.currentSpeed);
-                                }
+                    // presence
+                    if (warlordsPlayer.getPresence() != 0) {
+                        if (warlordsPlayer.getInfusion() == 0)
+                            player.setWalkSpeed(WarlordsPlayer.currentSpeed);
+                        warlordsPlayer.setPresence((int) (warlordsPlayer.getPresence() - 0.05));
+                        List<Entity> near = player.getNearbyEntities(6.0D, 2.0D, 6.0D);
+                        near = Utils.filterOnlyTeammates(near, player);
+                        for (Entity entity : near) {
+                            if (entity instanceof Player) {
+                                Player nearPlayer = (Player) entity;
+                                nearPlayer.setWalkSpeed(WarlordsPlayer.currentSpeed);
                             }
-                        }
-
-                        //freezingbreath
-                        if (warlordsPlayer.getBreathSlowness() != 0) {
-                            warlordsPlayer.setBreathSlowness((int) (warlordsPlayer.getBreathSlowness() - 0.05));
-                            List<Entity> near = player.getNearbyEntities(6.0D, 2.0D, 6.0D);
-//                            near1.remove(player);
-                            for (Entity entity : near) {
-                                if (entity instanceof Player) {
-                                    Player nearPlayer = (Player) entity;
-                                    nearPlayer.setWalkSpeed(WarlordsPlayer.currentSpeed);
-                                }
-                            }
-                        }
-
-                        // frostbolt
-                        if (warlordsPlayer.getFrostbolt() != 0) {
-                            warlordsPlayer.setFrostbolt((int) (warlordsPlayer.getFrostbolt() - 0.05));
-                            List<Entity> near = player.getNearbyEntities(6.0D, 2.0D, 6.0D);
-
-                            // TODO: fix shooting all players + shooter instead of just impact location bolt
-                            for (Entity entity : near) {
-                                if (entity instanceof Player) {
-                                    Player nearPlayer = (Player) entity;
-                                    nearPlayer.setWalkSpeed(WarlordsPlayer.currentSpeed);
-                                }
-                            }
-                        }
-
-                        // berserk
-                        if (warlordsPlayer.getBerserk() != 0) {
-                            //berserk same speed as presence 30%
-                            player.setWalkSpeed(WarlordsPlayer.currentSpeed);
-                            warlordsPlayer.setBerserk((int) (warlordsPlayer.getBerserk() - 0.05));
-                        }
-
-                        // spiritlink
-                        if (warlordsPlayer.getSpiritLink() != 0) {
-                            player.setWalkSpeed(WarlordsPlayer.currentSpeed);
-                            warlordsPlayer.setSpiritLink((int) (warlordsPlayer.getSpiritLink() - 0.05));
-                        }
-
-                        // ice barrier
-                        if (warlordsPlayer.getIceBarrier() != 0) {
-                            warlordsPlayer.setIceBarrier((int) (warlordsPlayer.getIceBarrier() - 0.05));
-                        }
-
-                        // ice barrier slowness duration
-                        if (warlordsPlayer.getIceBarrierSlowness() != 0) {
-                            player.setWalkSpeed(WarlordsPlayer.currentSpeed);
-                            warlordsPlayer.setIceBarrierSlowness((int) (warlordsPlayer.getIceBarrierSlowness() - 0.05));
                         }
                     }
 
-
-
-
-                    for (int i = 0; i < customProjectiles.size(); i++) {
-                        Projectile.CustomProjectile customProjectile = customProjectiles.get(i);
-                        Location location = customProjectile.getCurrentLocation();
-                        boolean hitPlayer = false;
-                        //TODO get confirm actual speeds
-                        //BALLS
-                        if (customProjectile.getBall().getName().contains("Fire")) {
-                            location.add(customProjectile.getDirection().clone().multiply(2.3));
-                            location.add(0, 1.5, 0);
-                            ParticleEffect.DRIP_LAVA.display(0, 0, 0, 0.35F, 5, location, 500);
-                            ParticleEffect.SMOKE_NORMAL.display(0, 0, 0, 0.001F, 7, location, 500);
-                            ParticleEffect.FLAME.display(0, 0, 0, 0.06F, 1, location, 500);
-                            for (Entity entity : location.getWorld().getEntities()) {
-                                if (entity instanceof Player && entity != customProjectile.getShooter()) {
-                                    if (entity.getLocation().distanceSquared(location) < 2 * 2) {
-                                        hitPlayer = true;
-                                        ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.5F, 1, entity.getLocation().add(0, 1, 0), 500);
-                                        Player victim = (Player) entity;
-                                        // TODO: fix sounds only playing on direct hit
-                                        for (Player player1 : Bukkit.getOnlinePlayers()) {
-                                            player1.playSound(entity.getLocation(), "mage.fireball.impact", 1, 1);
-                                            player1.playSound(entity.getLocation(), Sound.ORB_PICKUP, 0.3f, 1f);
-                                        }
-                                        getPlayer(victim).addHealth(
-                                                getPlayer(customProjectile.getShooter()),
-                                                customProjectile.getBall().getName(),
-                                                (int) (customProjectile.getBall().getMinDamageHeal() * 1.15),
-                                                (int) (customProjectile.getBall().getMaxDamageHeal() * 1.15),
-                                                customProjectile.getBall().getCritChance(),
-                                                customProjectile.getBall().getCritMultiplier()
-
-                                        );
-                                        List<Entity> near = victim.getNearbyEntities(3.5D, 3.5D, 3.5D);
-                                        near.remove(customProjectile.getShooter());
-                                        for (Entity nearEntity : near) {
-                                            if (nearEntity instanceof Player) {
-                                                getPlayer((Player) nearEntity).addHealth(
-                                                        getPlayer(customProjectile.getShooter()),
-                                                        customProjectile.getBall().getName(),
-                                                        customProjectile.getBall().getMinDamageHeal(),
-                                                        customProjectile.getBall().getMaxDamageHeal(),
-                                                        customProjectile.getBall().getCritChance(),
-                                                        customProjectile.getBall().getCritMultiplier()
-                                                );
-                                            }
-                                        }
-                                        customProjectiles.remove(i);
-                                        i--;
-                                    }
-                                }
+                    //freezingbreath
+                    if (warlordsPlayer.getBreathSlowness() != 0) {
+                        warlordsPlayer.setBreathSlowness((int) (warlordsPlayer.getBreathSlowness() - 0.05));
+                        List<Entity> near = player.getNearbyEntities(6.0D, 2.0D, 6.0D);
+                        near = Utils.filterOutTeammates(near, player);
+                        for (Entity entity : near) {
+                            if (entity instanceof Player) {
+                                Player nearPlayer = (Player) entity;
+                                nearPlayer.setWalkSpeed(WarlordsPlayer.currentSpeed);
                             }
-                        } else if (customProjectile.getBall().getName().contains("Frost")) {
-                            location.add(customProjectile.getDirection().clone().multiply(2.1));
-                            location.add(0, 1.5, 0);
-                            //TODO add slowness
-                            ParticleEffect.CLOUD.display(0, 0, 0, 0F, 1, location, 500);
-                            //ParticleEffect.FLAME.display(0, 0, 0, 0.1F, 3, location, 500);
-                            for (Entity entity : location.getWorld().getEntities()) {
-                                if (entity instanceof Player && entity != customProjectile.getShooter()) {
-                                    if (entity.getLocation().distanceSquared(location) < 2 * 2) {
-                                        hitPlayer = true;
-                                        ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.0F, 1, entity.getLocation().add(0, 1, 0), 500);
-                                        Player victim = (Player) entity;
-                                        for (Player player1 : Bukkit.getOnlinePlayers()) {
-                                            player1.playSound(entity.getLocation(), "mage.frostbolt.impact", 1, 1);
-                                        }
-                                        getPlayer(victim).addHealth(
-                                                getPlayer(customProjectile.getShooter()),
-                                                customProjectile.getBall().getName(),
-                                                (int) (customProjectile.getBall().getMinDamageHeal() * 1.3),
-                                                (int) (customProjectile.getBall().getMaxDamageHeal() * 1.3),
-                                                customProjectile.getBall().getCritChance(),
-                                                customProjectile.getBall().getCritMultiplier()
-                                        );
-                                        List<Entity> near = victim.getNearbyEntities(3.5D, 3.5D, 3.5D);
-                                        near.remove(customProjectile.getShooter());
-                                        for (Entity nearEntity : near) {
-                                            if (nearEntity instanceof Player) {
-                                                getPlayer((Player) nearEntity).addHealth(
-                                                        getPlayer(customProjectile.getShooter()),
-                                                        customProjectile.getBall().getName(),
-                                                        customProjectile.getBall().getMinDamageHeal(),
-                                                        customProjectile.getBall().getMaxDamageHeal(),
-                                                        customProjectile.getBall().getCritChance(),
-                                                        customProjectile.getBall().getCritMultiplier()
-                                                );
-                                            }
-                                        }
-                                        customProjectiles.remove(i);
-                                        i--;
-                                    }
-                                }
+                        }
+                    }
+
+                    // frostbolt
+                    if (warlordsPlayer.getFrostbolt() != 0) {
+                        warlordsPlayer.setFrostbolt((int) (warlordsPlayer.getFrostbolt() - 0.05));
+                        List<Entity> near = player.getNearbyEntities(6.0D, 2.0D, 6.0D);
+                        near = Utils.filterOutTeammates(near, player);
+                        // TODO: fix shooting all players + shooter instead of just impact location bolt
+                        for (Entity entity : near) {
+                            if (entity instanceof Player) {
+                                Player nearPlayer = (Player) entity;
+                                nearPlayer.setWalkSpeed(WarlordsPlayer.currentSpeed);
                             }
-                        } else if (customProjectile.getBall().getName().contains("Water")) {
-                            location.add(customProjectile.getDirection().clone().multiply(1.6));
-                            location.add(0, 1.5, 0);
-                            //TODO add damage
-                            ParticleEffect.DRIP_WATER.display(0.3f, 0.3f, 0.3f, 0.1F, 2, location, 500);
-                            ParticleEffect.ENCHANTMENT_TABLE.display(0, 0, 0, 0.1F, 1, location, 500);
-                            ParticleEffect.VILLAGER_HAPPY.display(0, 0, 0, 0.1F, 1, location, 500);
-                            ParticleEffect.CLOUD.display(0, 0, 0, 0F, 1, location, 500);
-                            //ParticleEffect.FLAME.display(0, 0, 0, 0.1F, 3, location, 500);
-                            for (Entity entity : location.getWorld().getEntities()) {
-                                if (entity instanceof Player && entity != customProjectile.getShooter()) {
-                                    if (entity.getLocation().distanceSquared(location) < 2 * 2) {
-                                        ParticleEffect.HEART.display(1.5F, 1.5F, 1.5F, 0.2F, 2, entity.getLocation().add(0, 1, 0), 500);
-                                        ParticleEffect.VILLAGER_HAPPY.display(1.5F, 1.5F, 1.5F, 0.2F, 3, entity.getLocation().add(0, 1, 0), 500);
-                                        Player victim = (Player) entity;
-                                        for (Player player1 : Bukkit.getOnlinePlayers()) {
-                                            player1.playSound(entity.getLocation(), "mage.waterbolt.impact", 1, 1);
-                                        }
-                                        getPlayer(victim).addHealth(
-                                                getPlayer(customProjectile.getShooter()),
-                                                customProjectile.getBall().getName(),
-                                                (int) (customProjectile.getBall().getMinDamageHeal() * 1.15),
-                                                (int) (customProjectile.getBall().getMaxDamageHeal() * 1.15),
-                                                customProjectile.getBall().getCritChance(),
-                                                customProjectile.getBall().getCritMultiplier()
-                                        );
-                                        List<Entity> near = victim.getNearbyEntities(3.5D, 3.5D, 3.5D);
-                                        for (Entity nearEntity : near) {
-                                            if (nearEntity instanceof Player) {
-                                                getPlayer((Player) nearEntity).addHealth(
-                                                        getPlayer(customProjectile.getShooter()),
-                                                        customProjectile.getBall().getName(),
-                                                        customProjectile.getBall().getMinDamageHeal(),
-                                                        customProjectile.getBall().getMaxDamageHeal(),
-                                                        customProjectile.getBall().getCritChance(),
-                                                        customProjectile.getBall().getCritMultiplier()
-                                                );
-                                            }
-                                        }
-                                        customProjectiles.remove(i);
-                                        i--;
+                        }
+                    }
+
+                    // berserk
+                    if (warlordsPlayer.getBerserk() != 0) {
+                        //berserk same speed as presence 30%
+                        player.setWalkSpeed(WarlordsPlayer.currentSpeed);
+                        warlordsPlayer.setBerserk((int) (warlordsPlayer.getBerserk() - 0.05));
+                    }
+
+                    // spiritlink
+                    if (warlordsPlayer.getSpiritLink() != 0) {
+                        player.setWalkSpeed(WarlordsPlayer.currentSpeed);
+                        warlordsPlayer.setSpiritLink((int) (warlordsPlayer.getSpiritLink() - 0.05));
+                    }
+
+                    // ice barrier
+                    if (warlordsPlayer.getIceBarrier() != 0) {
+                        warlordsPlayer.setIceBarrier((int) (warlordsPlayer.getIceBarrier() - 0.05));
+                    }
+
+                    // ice barrier slowness duration
+                    if (warlordsPlayer.getIceBarrierSlowness() != 0) {
+                        player.setWalkSpeed(WarlordsPlayer.currentSpeed);
+                        warlordsPlayer.setIceBarrierSlowness((int) (warlordsPlayer.getIceBarrierSlowness() - 0.05));
+                    }
+                }
+
+
+                for (int i = 0; i < customProjectiles.size(); i++) {
+                    Projectile.CustomProjectile customProjectile = customProjectiles.get(i);
+                    Location location = customProjectile.getCurrentLocation();
+                    boolean hitPlayer = false;
+                    //TODO get confirm actual speeds
+                    //BALLS
+                    if (customProjectile.getBall().getName().contains("Fire")) {
+                        location.add(customProjectile.getDirection().clone().multiply(2.3));
+                        location.add(0, 1.5, 0);
+                        ParticleEffect.DRIP_LAVA.display(0, 0, 0, 0.35F, 5, location, 500);
+                        ParticleEffect.SMOKE_NORMAL.display(0, 0, 0, 0.001F, 7, location, 500);
+                        ParticleEffect.FLAME.display(0, 0, 0, 0.06F, 1, location, 500);
+                        List<Entity> entities = (List<Entity>) location.getWorld().getNearbyEntities(location, 5, 5, 5);
+                        entities = Utils.filterOutTeammates(entities, customProjectile.getShooter());
+                        for (Entity entity : entities) {
+                            if (entity instanceof Player && entity != customProjectile.getShooter()) {
+                                if (entity.getLocation().distanceSquared(location) < 2 * 2) {
+                                    hitPlayer = true;
+                                    ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.5F, 1, entity.getLocation().add(0, 1, 0), 500);
+                                    Player victim = (Player) entity;
+                                    // TODO: fix sounds only playing on direct hit
+                                    for (Player player1 : Bukkit.getOnlinePlayers()) {
+                                        player1.playSound(entity.getLocation(), "mage.fireball.impact", 1, 1);
+                                        player1.playSound(entity.getLocation(), Sound.ORB_PICKUP, 0.3f, 1f);
                                     }
-                                }
-                            }
+                                    getPlayer(victim).addHealth(
+                                            getPlayer(customProjectile.getShooter()),
+                                            customProjectile.getBall().getName(),
+                                            (int) (customProjectile.getBall().getMinDamageHeal() * 1.15),
+                                            (int) (customProjectile.getBall().getMaxDamageHeal() * 1.15),
+                                            customProjectile.getBall().getCritChance(),
+                                            customProjectile.getBall().getCritMultiplier()
 
-
-                        } else if (customProjectile.getBall().getName().contains("Flame")) {
-                            location.add(customProjectile.getDirection().multiply(1.05));
-                            location.add(0, 1.5, 0);
-                            //TODO add flameburst animation
-
-                            // Equation for spiral animation
-                            int radius = 2;
-                            for (double x = 0; x <= 50; x += 0.05) { // Set for vertical, need to change
-                                double y = radius * Math.cos(x);
-                                double z = radius * Math.sin(x);
-                            }
-
-                            ParticleEffect.FLAME.display(0.2F, 0, 0.2F, 0F, 4, location, 500);
-                            for (Entity entity : location.getWorld().getEntities()) {
-                                if (entity instanceof Player && entity != customProjectile.getShooter()) {
-                                    if (entity.getLocation().distanceSquared(location) < 2 * 2) {
-                                        hitPlayer = true;
-                                        ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.0F, 1, entity.getLocation().add(0, 1, 0), 500);
-                                        Player victim = (Player) entity;
-                                        for (Player player1 : Bukkit.getOnlinePlayers()) {
-                                            player1.playSound(entity.getLocation(), "mage.flameburst.impact", 1, 1);
+                                    );
+                                    List<Entity> near = victim.getNearbyEntities(3.5D, 3.5D, 3.5D);
+                                    near = Utils.filterOutTeammates(near, customProjectile.getShooter());
+                                    for (Entity nearEntity : near) {
+                                        if (nearEntity instanceof Player) {
+                                            getPlayer((Player) nearEntity).addHealth(
+                                                    getPlayer(customProjectile.getShooter()),
+                                                    customProjectile.getBall().getName(),
+                                                    customProjectile.getBall().getMinDamageHeal(),
+                                                    customProjectile.getBall().getMaxDamageHeal(),
+                                                    customProjectile.getBall().getCritChance(),
+                                                    customProjectile.getBall().getCritMultiplier()
+                                            );
                                         }
-                                        System.out.println((int) location.distance(customProjectile.getStartingLocation()));
-                                        getPlayer(victim).addHealth(
-                                                getPlayer(customProjectile.getShooter()),
-                                                customProjectile.getBall().getName(),
-                                                customProjectile.getBall().getMinDamageHeal(),
-                                                customProjectile.getBall().getMaxDamageHeal(),
-                                                customProjectile.getBall().getCritChance() + (int) location.distance(customProjectile.getStartingLocation()),
-                                                customProjectile.getBall().getCritMultiplier()
-                                        );
-                                        List<Entity> near = victim.getNearbyEntities(3.5D, 3.5D, 3.5D);
-                                        near.remove(customProjectile.getShooter());
-                                        for (Entity nearEntity : near) {
-                                            if (nearEntity instanceof Player) {
-                                                getPlayer((Player) nearEntity).addHealth(
-                                                        getPlayer(customProjectile.getShooter()),
-                                                        customProjectile.getBall().getName(),
-                                                        customProjectile.getBall().getMinDamageHeal(),
-                                                        customProjectile.getBall().getMaxDamageHeal(),
-                                                        customProjectile.getBall().getCritChance() + (int) Math.pow(location.distanceSquared(customProjectile.getStartingLocation()), 2),
-                                                        customProjectile.getBall().getCritMultiplier()
-                                                );
-                                            }
-                                        }
-
-                                        customProjectiles.remove(i);
-                                        i--;
                                     }
+                                    customProjectiles.remove(i);
+                                    i--;
                                 }
                             }
                         }
-
-                        //hit block or out of range
-                        if (location.getWorld().getBlockAt(location).getType() != Material.AIR && !hitPlayer) {
-                            if (customProjectile.getBall().getName().contains("Water")) {
-                                ParticleEffect.HEART.display(1, 1, 1, 0.2F, 5, location, 500);
-                                ParticleEffect.VILLAGER_HAPPY.display(1, 1, 1, 0.2F, 5, location, 500);
-                            } else {
-                                ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.0F, 1, location, 500);
+                    } else if (customProjectile.getBall().getName().contains("Frost")) {
+                        location.add(customProjectile.getDirection().clone().multiply(2.1));
+                        location.add(0, 1.5, 0);
+                        //TODO add slowness
+                        ParticleEffect.CLOUD.display(0, 0, 0, 0F, 1, location, 500);
+                        //ParticleEffect.FLAME.display(0, 0, 0, 0.1F, 3, location, 500);
+                        List<Entity> entities = (List<Entity>) location.getWorld().getNearbyEntities(location, 5, 5, 5);
+                        entities = Utils.filterOutTeammates(entities, customProjectile.getShooter());
+                        for (Entity entity : entities) {
+                            if (entity instanceof Player && entity != customProjectile.getShooter()) {
+                                if (entity.getLocation().distanceSquared(location) < 2 * 2) {
+                                    hitPlayer = true;
+                                    ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.0F, 1, entity.getLocation().add(0, 1, 0), 500);
+                                    Player victim = (Player) entity;
+                                    for (Player player1 : Bukkit.getOnlinePlayers()) {
+                                        player1.playSound(entity.getLocation(), "mage.frostbolt.impact", 1, 1);
+                                    }
+                                    getPlayer(victim).addHealth(
+                                            getPlayer(customProjectile.getShooter()),
+                                            customProjectile.getBall().getName(),
+                                            (int) (customProjectile.getBall().getMinDamageHeal() * 1.3),
+                                            (int) (customProjectile.getBall().getMaxDamageHeal() * 1.3),
+                                            customProjectile.getBall().getCritChance(),
+                                            customProjectile.getBall().getCritMultiplier()
+                                    );
+                                    List<Entity> near = victim.getNearbyEntities(3.5D, 3.5D, 3.5D);
+                                    near.remove(customProjectile.getShooter());
+                                    for (Entity nearEntity : near) {
+                                        if (nearEntity instanceof Player) {
+                                            getPlayer((Player) nearEntity).addHealth(
+                                                    getPlayer(customProjectile.getShooter()),
+                                                    customProjectile.getBall().getName(),
+                                                    customProjectile.getBall().getMinDamageHeal(),
+                                                    customProjectile.getBall().getMaxDamageHeal(),
+                                                    customProjectile.getBall().getCritChance(),
+                                                    customProjectile.getBall().getCritMultiplier()
+                                            );
+                                        }
+                                    }
+                                    customProjectiles.remove(i);
+                                    i--;
+                                }
                             }
-                            List<Entity> near = (List<Entity>) location.getWorld().getNearbyEntities(location, 3.5, 3.5, 3.5);
-                            for (Entity nearEntity : near) {
-                                if (nearEntity instanceof Player && nearEntity != customProjectile.getShooter()) {
-                                    if (customProjectile.getBall().getName().contains("Flame")) {
-                                        getPlayer((Player) nearEntity).addHealth(
+                        }
+                    } else if (customProjectile.getBall().getName().contains("Water")) {
+                        location.add(customProjectile.getDirection().clone().multiply(1.6));
+                        location.add(0, 1.5, 0);
+                        //TODO add damage
+                        ParticleEffect.DRIP_WATER.display(0.3f, 0.3f, 0.3f, 0.1F, 2, location, 500);
+                        ParticleEffect.ENCHANTMENT_TABLE.display(0, 0, 0, 0.1F, 1, location, 500);
+                        ParticleEffect.VILLAGER_HAPPY.display(0, 0, 0, 0.1F, 1, location, 500);
+                        ParticleEffect.CLOUD.display(0, 0, 0, 0F, 1, location, 500);
+                        //ParticleEffect.FLAME.display(0, 0, 0, 0.1F, 3, location, 500);
+                        List<Entity> entities = (List<Entity>) location.getWorld().getNearbyEntities(location, 5, 5, 5);
+                        for (Entity entity : entities) {
+                            if (entity instanceof Player && entity != customProjectile.getShooter()) {
+                                if (entity.getLocation().distanceSquared(location) < 2 * 2) {
+                                    ParticleEffect.HEART.display(1.5F, 1.5F, 1.5F, 0.2F, 2, entity.getLocation().add(0, 1, 0), 500);
+                                    ParticleEffect.VILLAGER_HAPPY.display(1.5F, 1.5F, 1.5F, 0.2F, 3, entity.getLocation().add(0, 1, 0), 500);
+                                    Player victim = (Player) entity;
+                                    for (Player player1 : Bukkit.getOnlinePlayers()) {
+                                        player1.playSound(entity.getLocation(), "mage.waterbolt.impact", 1, 1);
+                                    }
+                                    if (game.onSameTeam((Player) entity, customProjectile.getShooter())) {
+                                        getPlayer((Player) entity).addHealth(
                                                 getPlayer(customProjectile.getShooter()),
                                                 customProjectile.getBall().getName(),
-                                                customProjectile.getBall().getMinDamageHeal(),
-                                                customProjectile.getBall().getMaxDamageHeal(),
-                                                customProjectile.getBall().getCritChance() + (int) Math.pow(location.distanceSquared(customProjectile.getStartingLocation()), 2),
+                                                (int) (customProjectile.getBall().getMinDamageHeal() * 1.15),
+                                                (int) (customProjectile.getBall().getMaxDamageHeal() * 1.15),
+                                                customProjectile.getBall().getCritChance(),
                                                 customProjectile.getBall().getCritMultiplier()
                                         );
                                     } else {
-                                        getPlayer((Player) nearEntity).addHealth(
+                                        getPlayer((Player) entity).addHealth(
                                                 getPlayer(customProjectile.getShooter()),
                                                 customProjectile.getBall().getName(),
-                                                customProjectile.getBall().getMinDamageHeal(),
-                                                customProjectile.getBall().getMaxDamageHeal(),
+                                                (int) (-231 * 1.15),
+                                                (int) (-299 * 1.15),
                                                 customProjectile.getBall().getCritChance(),
                                                 customProjectile.getBall().getCritMultiplier()
                                         );
                                     }
+                                    List<Entity> near = victim.getNearbyEntities(3.5D, 3.5D, 3.5D);
+                                    for (Entity nearEntity : near) {
+                                        if (nearEntity instanceof Player) {
+                                            if (game.onSameTeam((Player) nearEntity, customProjectile.getShooter())) {
+                                                getPlayer((Player) nearEntity).addHealth(
+                                                        getPlayer(customProjectile.getShooter()),
+                                                        customProjectile.getBall().getName(),
+                                                        customProjectile.getBall().getMinDamageHeal(),
+                                                        customProjectile.getBall().getMaxDamageHeal(),
+                                                        customProjectile.getBall().getCritChance(),
+                                                        customProjectile.getBall().getCritMultiplier()
+                                                );
+                                            } else {
+                                                getPlayer((Player) nearEntity).addHealth(
+                                                        getPlayer(customProjectile.getShooter()),
+                                                        customProjectile.getBall().getName(),
+                                                        -231,
+                                                        -299,
+                                                        customProjectile.getBall().getCritChance(),
+                                                        customProjectile.getBall().getCritMultiplier()
+                                                );
+                                            }
+                                        }
+                                    }
+                                    customProjectiles.remove(i);
+                                    i--;
                                 }
                             }
-                            customProjectiles.remove(i);
-                            i--;
-                        } else if (location.distanceSquared(customProjectile.getStartingLocation()) >= customProjectile.getMaxDistance() * customProjectile.getMaxDistance()) {
-//                            customProjectiles.remove(i);
-//                            i--;
                         }
 
-                        location.subtract(0, 1.5, 0);
+
+                    } else if (customProjectile.getBall().getName().contains("Flame")) {
+                        location.add(customProjectile.getDirection().multiply(1.05));
+                        location.add(0, 1.5, 0);
+                        //TODO add flameburst animation
+
+                        // Equation for spiral animation
+                        int radius = 2;
+                        for (double x = 0; x <= 50; x += 0.05) { // Set for vertical, need to change
+                            double y = radius * Math.cos(x);
+                            double z = radius * Math.sin(x);
+                        }
+
+                        ParticleEffect.FLAME.display(0.2F, 0, 0.2F, 0F, 4, location, 500);
+                        List<Entity> entities = (List<Entity>) location.getWorld().getNearbyEntities(location, 5, 5, 5);
+                        entities = Utils.filterOutTeammates(entities, customProjectile.getShooter());
+                        for (Entity entity : entities) {
+                            if (entity instanceof Player && entity != customProjectile.getShooter()) {
+                                if (entity.getLocation().distanceSquared(location) < 2 * 2) {
+                                    hitPlayer = true;
+                                    ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.0F, 1, entity.getLocation().add(0, 1, 0), 500);
+                                    Player victim = (Player) entity;
+                                    for (Player player1 : Bukkit.getOnlinePlayers()) {
+                                        player1.playSound(entity.getLocation(), "mage.flameburst.impact", 1, 1);
+                                    }
+                                    getPlayer(victim).addHealth(
+                                            getPlayer(customProjectile.getShooter()),
+                                            customProjectile.getBall().getName(),
+                                            customProjectile.getBall().getMinDamageHeal(),
+                                            customProjectile.getBall().getMaxDamageHeal(),
+                                            customProjectile.getBall().getCritChance() + (int) location.distance(customProjectile.getStartingLocation()),
+                                            customProjectile.getBall().getCritMultiplier()
+                                    );
+                                    List<Entity> near = victim.getNearbyEntities(3.5D, 3.5D, 3.5D);
+                                    near = Utils.filterOutTeammates(near, customProjectile.getShooter());
+                                    for (Entity nearEntity : near) {
+                                        if (nearEntity instanceof Player) {
+                                            getPlayer((Player) nearEntity).addHealth(
+                                                    getPlayer(customProjectile.getShooter()),
+                                                    customProjectile.getBall().getName(),
+                                                    customProjectile.getBall().getMinDamageHeal(),
+                                                    customProjectile.getBall().getMaxDamageHeal(),
+                                                    customProjectile.getBall().getCritChance() + (int) Math.pow(location.distanceSquared(customProjectile.getStartingLocation()), 2),
+                                                    customProjectile.getBall().getCritMultiplier()
+                                            );
+                                        }
+                                    }
+
+                                    customProjectiles.remove(i);
+                                    i--;
+                                }
+                            }
+                        }
                     }
 
+                    //hit block or out of range
+                    if (location.getWorld().getBlockAt(location).getType() != Material.AIR && !hitPlayer) {
+                        if (customProjectile.getBall().getName().contains("Water")) {
+                            ParticleEffect.HEART.display(1, 1, 1, 0.2F, 5, location, 500);
+                            ParticleEffect.VILLAGER_HAPPY.display(1, 1, 1, 0.2F, 5, location, 500);
+                        } else {
+                            ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.0F, 1, location, 500);
+                        }
+                        List<Entity> near = (List<Entity>) location.getWorld().getNearbyEntities(location, 3.5, 3.5, 3.5);
+                        for (Entity nearEntity : near) {
+                            if (nearEntity instanceof Player && nearEntity != customProjectile.getShooter()) {
+                                if (customProjectile.getBall().getName().contains("Flame") && game.onSameTeam((Player) nearEntity, customProjectile.getShooter())) {
+                                    getPlayer((Player) nearEntity).addHealth(
+                                            getPlayer(customProjectile.getShooter()),
+                                            customProjectile.getBall().getName(),
+                                            customProjectile.getBall().getMinDamageHeal(),
+                                            customProjectile.getBall().getMaxDamageHeal(),
+                                            customProjectile.getBall().getCritChance() + (int) Math.pow(location.distanceSquared(customProjectile.getStartingLocation()), 2),
+                                            customProjectile.getBall().getCritMultiplier()
+                                    );
+                                } else {
+                                    if (customProjectile.getBall().getName().contains("Water")) {
+                                        if (game.onSameTeam((Player) nearEntity, customProjectile.getShooter())) {
+                                            getPlayer((Player) nearEntity).addHealth(
+                                                    getPlayer(customProjectile.getShooter()),
+                                                    customProjectile.getBall().getName(),
+                                                    customProjectile.getBall().getMinDamageHeal(),
+                                                    customProjectile.getBall().getMaxDamageHeal(),
+                                                    customProjectile.getBall().getCritChance(),
+                                                    customProjectile.getBall().getCritMultiplier()
+                                            );
+                                        } else {
+                                            getPlayer((Player) nearEntity).addHealth(
+                                                    getPlayer(customProjectile.getShooter()),
+                                                    customProjectile.getBall().getName(),
+                                                    -231,
+                                                    -299,
+                                                    customProjectile.getBall().getCritChance(),
+                                                    customProjectile.getBall().getCritMultiplier()
+                                            );
+                                        }
+                                    } else {
+                                        if (!game.onSameTeam((Player) nearEntity, customProjectile.getShooter())) {
+                                            getPlayer((Player) nearEntity).addHealth(
+                                                    getPlayer(customProjectile.getShooter()),
+                                                    customProjectile.getBall().getName(),
+                                                    customProjectile.getBall().getMinDamageHeal(),
+                                                    customProjectile.getBall().getMaxDamageHeal(),
+                                                    customProjectile.getBall().getCritChance(),
+                                                    customProjectile.getBall().getCritMultiplier()
+                                            );
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        customProjectiles.remove(i);
+                        i--;
+                    } else if (location.distanceSquared(customProjectile.getStartingLocation()) >= customProjectile.getMaxDistance() * customProjectile.getMaxDistance()) {
+                        customProjectiles.remove(i);
+                        i--;
+                    }
+
+                    location.subtract(0, 1.5, 0);
+                }
+
+                //EVERY TICK
+                for (int i = 0; i < customFallingBlocks.size(); i++) {
+                    CustomFallingBlock customFallingBlock = customFallingBlocks.get(i);
+                    customFallingBlock.setTicksLived(customFallingBlock.getTicksLived() + 1);
+                    for (Player player : players.keySet()) {
+                        if (player != customFallingBlock.getOwner()) {
+                            AbstractAbility ability = customFallingBlock.getAbility();
+                            if (ability instanceof SeismicWave && !((SeismicWave) ability).getPlayersHit().contains(player) && !game.onSameTeam(player, customFallingBlock.getOwner())) {
+                                if (player.getLocation().distanceSquared(customFallingBlock.getFallingBlock().getLocation()) < 1.5) {
+                                    ((SeismicWave) ability).getPlayersHit().add(player);
+                                    final Location loc = player.getLocation();
+                                    final Vector v = customFallingBlock.getOwner().getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1.1).setY(0.25);
+                                    player.setVelocity(v);
+                                    getPlayer(player).addHealth(Warlords.getPlayer(customFallingBlock.getOwner()), ability.getName(), ability.getMinDamageHeal(), ability.getMaxDamageHeal(), ability.getCritChance(), ability.getCritMultiplier());
+                                }
+                            } else if (ability instanceof GroundSlam && !((GroundSlam) ability).getPlayersHit().contains(player) && !game.onSameTeam(player, customFallingBlock.getOwner())) {
+                                if (player.getLocation().distanceSquared(customFallingBlock.getFallingBlock().getLocation()) < 1.5) {
+                                    ((GroundSlam) ability).getPlayersHit().add(player);
+                                    final Location loc = player.getLocation();
+                                    final Vector v = customFallingBlock.getOwner().getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1.1).setY(0.25);
+                                    player.setVelocity(v);
+                                    getPlayer(player).addHealth(Warlords.getPlayer(customFallingBlock.getOwner()), ability.getName(), ability.getMinDamageHeal(), ability.getMaxDamageHeal(), ability.getCritChance(), ability.getCritMultiplier());
+                                }
+                            }
+                        }
+                    }
+                    //TODO fix bug where the blocks dont get removed if ability used near high wall - stuck in block?
+                    //System.out.println(customFallingBlock.getCustomFallingBlock().getLocation().getY());
+                    //System.out.println(customFallingBlock.getyLevel());
+                    if (customFallingBlock.getFallingBlock().getLocation().getY() <= customFallingBlock.getyLevel() || customFallingBlock.getFallingBlock().getTicksLived() > 10 || customFallingBlock.getTicksLived() > 10) {
+                        customFallingBlock.getFallingBlock().remove();
+                        customFallingBlocks.remove(i);
+                        i--;
+                    }
+                }
+
+                for (WarlordsPlayer warlordsPlayer : players.values()) {
+                    Player player = warlordsPlayer.getPlayer();
+                    Location location = player.getLocation();
+
+                    //to make it look like the cooldown activates super fast but isnt really fast since it updates next second tick
+                    if (warlordsPlayer.getSpec().getRed().getCurrentCooldown() == warlordsPlayer.getSpec().getRed().getCooldown()) {
+                        warlordsPlayer.getSpec().getRed().setCurrentCooldown(warlordsPlayer.getSpec().getRed().getCurrentCooldown() - 1);
+                        warlordsPlayer.updateRedItem();
+                    }
+                    if (warlordsPlayer.getSpec().getPurple().getCurrentCooldown() == warlordsPlayer.getSpec().getPurple().getCooldown()) {
+                        warlordsPlayer.getSpec().getPurple().setCurrentCooldown(warlordsPlayer.getSpec().getPurple().getCurrentCooldown() - 1);
+                        warlordsPlayer.updatePurpleItem();
+                    }
+                    if (warlordsPlayer.getSpec().getBlue().getCurrentCooldown() == warlordsPlayer.getSpec().getBlue().getCooldown()) {
+                        warlordsPlayer.getSpec().getBlue().setCurrentCooldown(warlordsPlayer.getSpec().getBlue().getCurrentCooldown() - 1);
+                        warlordsPlayer.updateBlueItem();
+                    }
+                    if (warlordsPlayer.getSpec().getOrange().getCurrentCooldown() == warlordsPlayer.getSpec().getOrange().getCooldown()) {
+                        warlordsPlayer.getSpec().getOrange().setCurrentCooldown(warlordsPlayer.getSpec().getOrange().getCurrentCooldown() - 1);
+                        warlordsPlayer.updateOrangeItem();
+                    }
+                    if (warlordsPlayer.getHorseCooldown() == 15 && !player.isInsideVehicle()) {
+                        warlordsPlayer.setHorseCooldown(warlordsPlayer.getHorseCooldown() - 1);
+                        warlordsPlayer.updateHorseItem();
+                    }
+
+                    //respawn
+                    if (warlordsPlayer.getRespawnTimer() == 0) {
+                        warlordsPlayer.setRespawnTimer(-1);
+                        warlordsPlayer.respawn();
+                        player.setGameMode(GameMode.SURVIVAL);
+                    }
+                    //damage or heal
+                    float newHealth = (float) warlordsPlayer.getHealth() / warlordsPlayer.getMaxHealth() * 40;
+                    if (warlordsPlayer.getUndyingArmy() != 0 && newHealth <= 0) {
+                        warlordsPlayer.setHealth(warlordsPlayer.getMaxHealth());
+                        warlordsPlayer.setUndyingArmyDead(true);
+                        warlordsPlayer.setUndyingArmy(0);
+                    }
+                    if (newHealth <= 0 && !warlordsPlayer.isUndyingArmyDead()) {
+                        //TODO tp to spawn point
+                        player.setGameMode(GameMode.SPECTATOR);
+                        warlordsPlayer.respawn();
+                        warlordsPlayer.setRespawnTimer(5);
+                    } else {
+                        player.setHealth(newHealth);
+                    }
+
+                    if (warlordsPlayer.getIntervene() != 0 && warlordsPlayer.getInterveneDamage() >= 3600 || (warlordsPlayer.getIntervenedBy() != null && warlordsPlayer.getPlayer().getLocation().distanceSquared(warlordsPlayer.getIntervenedBy().getPlayer().getLocation()) > 15 * 15)) {
+                        //TODO seperate and add why the vene broke in chat
+                        warlordsPlayer.setIntervene(0);
+                        warlordsPlayer.getPlayer().sendMessage("§c\u00AB§7 " + warlordsPlayer.getIntervenedBy().getName() + "'s §eIntervene §7has expired!");
+
+                    }
+                    //energy
+                    if (warlordsPlayer.getEnergy() < warlordsPlayer.getMaxEnergy()) {
+                        float newEnergy = warlordsPlayer.getEnergy() + 1;
+                        if (warlordsPlayer.getPresence() != 0) {
+                            newEnergy += .5;
+                        }
+                        if (warlordsPlayer.getPowerUpEnergy() != 0) {
+                            newEnergy += .35;
+                        }
+                        warlordsPlayer.setEnergy(newEnergy);
+                    }
+                    player.setLevel((int) warlordsPlayer.getEnergy());
+                    player.setExp(warlordsPlayer.getEnergy() / warlordsPlayer.getMaxEnergy());
+                    //melee cooldown
+                    if (warlordsPlayer.getHitCooldown() != 0) {
+                        warlordsPlayer.setHitCooldown(warlordsPlayer.getHitCooldown() - 1);
+                    }
+
+                    if (warlordsPlayer.getCharged() != 0) {
+                        List<Entity> playersInside = player.getNearbyEntities(2, 2, 2);
+                        playersInside.removeAll(((RecklessCharge) warlordsPlayer.getSpec().getRed()).getPlayersHit());
+                        playersInside = Utils.filterOutTeammates(playersInside, player);
+                        for (Entity entity : playersInside) {
+                            if (entity instanceof Player) {
+                                //TODO add 100 slowness
+                                ((RecklessCharge) warlordsPlayer.getSpec().getRed()).getPlayersHit().add((Player) entity);
+                                Warlords.getPlayer((Player) entity).addHealth(warlordsPlayer, warlordsPlayer.getSpec().getRed().getName(), warlordsPlayer.getSpec().getRed().getMinDamageHeal(), warlordsPlayer.getSpec().getRed().getMaxDamageHeal(), warlordsPlayer.getSpec().getRed().getCritChance(), warlordsPlayer.getSpec().getRed().getCritMultiplier());
+                            }
+                        }
+                        //cancel charge if hit a block, making the player stand still
+                        if (player.getLocation().distanceSquared(warlordsPlayer.getChargeLocation()) > warlordsPlayer.getCharged() || (player.getVelocity().getX() == 0 && player.getVelocity().getZ() == 0)) {
+                            player.setVelocity(new Vector(0, 0, 0));
+                            warlordsPlayer.setCharged(0);
+                        }
+                    }
+                    //orbs
+                    for (int i = 0; i < orbs.size(); i++) {
+                        OrbsOfLife.Orb orb = orbs.get(i);
+                        Location orbPosition = orb.getBukkitEntity().getLocation();
+                        if (orbPosition.distanceSquared(location) < 2.3 * 2.3) {
+                            orb.getArmorStand().remove();
+                            orb.getBukkitEntity().remove();
+                            orbs.remove(i);
+                            i--;
+                            warlordsPlayer.addHealth(warlordsPlayer, "Orbs of Life", 502, 502, -1, 100);
+                            List<Entity> near = player.getNearbyEntities(3.0D, 3.0D, 3.0D);
+                            near = Utils.filterOnlyTeammates(near, player);
+                            for (Entity entity : near) {
+                                if (entity instanceof Player) {
+                                    Player nearPlayer = (Player) entity;
+                                    if (nearPlayer.getGameMode() != GameMode.SPECTATOR) {
+                                        getPlayer(nearPlayer).addHealth(warlordsPlayer, "Orbs of Life", 420, 420, -1, 100);
+                                    }
+                                }
+                            }
+                        }
+                        if (orb.getBukkitEntity().getTicksLived() > 160) {
+                            orb.getArmorStand().remove();
+                            orb.getBukkitEntity().remove();
+                            orbs.remove(i);
+                            i--;
+                        }
+                    }
+
+                    //BOLTS
+                    for (int i = 0; i < bolts.size(); i++) {
+                        LightningBolt.Bolt bolt = bolts.get(i);
+                        bolt.getArmorStand().teleport(bolt.getLocation().add(bolt.getTeleportDirection().multiply(1.1)), PlayerTeleportEvent.TeleportCause.PLUGIN);
+                        //hitting player
+                        //TODO fix fucked up hit detection
+                        if (bolt.getShooter() != warlordsPlayer && !game.onSameTeam(player, bolt.getShooter().getPlayer()) && location.distanceSquared(new Location(location.getWorld(), bolt.getLocation().getX(), bolt.getLocation().getY(), bolt.getLocation().getZ()).add(0, 2, 0)) < 2.5 * 2.5) {
+                            warlordsPlayer.addHealth(bolt.getShooter(), bolt.getLightningBolt().getName(), bolt.getLightningBolt().getMinDamageHeal(), bolt.getLightningBolt().getMaxDamageHeal(), bolt.getLightningBolt().getCritChance(), bolt.getLightningBolt().getCritMultiplier());
+                        }
+
+                        if (location.getWorld().getBlockAt(new Location(location.getWorld(), bolt.getLocation().getX(), bolt.getLocation().getY(), bolt.getLocation().getZ()).add(0, 2, 0)).getType() != Material.AIR || bolt.getArmorStand().getTicksLived() > 50) {
+                            //TODO add explosion thingy
+                            bolt.getArmorStand().remove();
+                            bolts.remove(i);
+                            i--;
+                        }
+                    }
+
+                    //FALLEN SOULS
+                    for (int i = 0; i < fallenSouls.size(); i++) {
+                        FallenSouls.FallenSoul fallenSoul = fallenSouls.get(i);
+                        fallenSoul.getFallenSoulLeft().teleport(fallenSoul.getFallenSoulLeft().getLocation().add(fallenSoul.getDirectionLeft()));
+                        fallenSoul.getFallenSoulMiddle().teleport(fallenSoul.getFallenSoulMiddle().getLocation().add(fallenSoul.getDirectionMiddle()));
+                        fallenSoul.getFallenSoulRight().teleport(fallenSoul.getFallenSoulRight().getLocation().add(fallenSoul.getDirectionRight()));
+
+                        if (!fallenSoul.getPlayersHit().contains(warlordsPlayer) &&
+                                warlordsPlayer.getPlayer().getGameMode() != GameMode.SPECTATOR &&
+                                !game.onSameTeam(player, fallenSoul.getShooter().getPlayer()) &&
+                                (location.distanceSquared(new Location(location.getWorld(), fallenSoul.getFallenSoulLeft().getLocation().getX(), fallenSoul.getFallenSoulLeft().getLocation().getY(), fallenSoul.getFallenSoulLeft().getLocation().getZ()).add(0, 2, 0)) < 2 * 2
+                                        || location.distanceSquared(new Location(location.getWorld(), fallenSoul.getFallenSoulMiddle().getLocation().getX(), fallenSoul.getFallenSoulMiddle().getLocation().getY(), fallenSoul.getFallenSoulMiddle().getLocation().getZ()).add(0, 2, 0)) < 2 * 2
+                                        || location.distanceSquared(new Location(location.getWorld(), fallenSoul.getFallenSoulRight().getLocation().getX(), fallenSoul.getFallenSoulRight().getLocation().getY(), fallenSoul.getFallenSoulRight().getLocation().getZ()).add(0, 2, 0)) < 2 * 2
+                                )
+                        ) {
+                            warlordsPlayer.addHealth(fallenSoul.getShooter(), fallenSoul.getFallenSouls().getName(), fallenSoul.getFallenSouls().getMinDamageHeal(), fallenSoul.getFallenSouls().getMaxDamageHeal(), fallenSoul.getFallenSouls().getCritChance(), fallenSoul.getFallenSouls().getCritMultiplier());
+                            fallenSoul.getPlayersHit().add(warlordsPlayer);
+                            if (fallenSoul.getShooter().getSoulBindCooldown() != 0 && fallenSoul.getShooter().hasBoundPlayer(warlordsPlayer)) {
+                                fallenSoul.getShooter().getSpec().getRed().subtractCooldown(1.5F);
+                                fallenSoul.getShooter().getSpec().getPurple().subtractCooldown(1.5F);
+                                fallenSoul.getShooter().getSpec().getBlue().subtractCooldown(1.5F);
+                                fallenSoul.getShooter().getSpec().getOrange().subtractCooldown(1.5F);
+
+                                fallenSoul.getShooter().updateRedItem();
+                                fallenSoul.getShooter().updatePurpleItem();
+                                fallenSoul.getShooter().updateBlueItem();
+                                fallenSoul.getShooter().updateOrangeItem();
+                            }
+                        }
+
+                        if (!fallenSoul.isLeftRemoved() && location.getWorld().getBlockAt(new Location(location.getWorld(), fallenSoul.getFallenSoulLeft().getLocation().getX(), fallenSoul.getFallenSoulLeft().getLocation().getY(), fallenSoul.getFallenSoulLeft().getLocation().getZ()).add(0, 2, 0)).getType() != Material.AIR || fallenSoul.getFallenSoulLeft().getTicksLived() > 50) {
+                            //TODO add explosion thingy
+                            fallenSoul.getFallenSoulLeft().remove();
+                            fallenSoul.setLeftRemoved(true);
+                        }
+                        if (!fallenSoul.isMiddleRemoved() && location.getWorld().getBlockAt(new Location(location.getWorld(), fallenSoul.getFallenSoulMiddle().getLocation().getX(), fallenSoul.getFallenSoulMiddle().getLocation().getY(), fallenSoul.getFallenSoulMiddle().getLocation().getZ()).add(0, 2, 0)).getType() != Material.AIR || fallenSoul.getFallenSoulMiddle().getTicksLived() > 50) {
+                            //TODO add explosion thingy
+                            fallenSoul.getFallenSoulMiddle().remove();
+                            fallenSoul.setMiddleRemoved(true);
+                        }
+                        if (!fallenSoul.isRightRemoved() && location.getWorld().getBlockAt(new Location(location.getWorld(), fallenSoul.getFallenSoulRight().getLocation().getX(), fallenSoul.getFallenSoulRight().getLocation().getY(), fallenSoul.getFallenSoulRight().getLocation().getZ()).add(0, 2, 0)).getType() != Material.AIR || fallenSoul.getFallenSoulRight().getTicksLived() > 50) {
+                            //TODO add explosion thingy
+                            fallenSoul.getFallenSoulRight().remove();
+                            fallenSoul.setRightRemoved(true);
+                        }
+
+                        if (fallenSoul.isLeftRemoved() && fallenSoul.isMiddleRemoved() && fallenSoul.isRightRemoved()) {
+                            fallenSouls.remove(i);
+                            i--;
+                        }
+                    }
+
+                    //CHAINS
+                    for (int i = 0; i < chains.size(); i++) {
+                        if (chains.get(i).getTicksLived() >= 15) {
+                            chains.get(i).remove();
+                            chains.remove(i);
+                            i--;
+                        }
+                    }
+                }
+
+                //EVERY OTHER TICK
                 if (counter % 2 == 0) {
                     //GROUND SLAM
                     for (int i = 0; i < groundSlamArray.size(); i++) {
@@ -480,7 +769,6 @@ public class Warlords extends JavaPlugin {
                             for (Location location : fallingBlockLocation) {
                                 if (location.getWorld().getBlockAt(location.clone().add(0, 1, 0)).getType() == Material.AIR) {
                                     FallingBlock fallingBlock = addFallingBlock(location);
-                                    System.out.println(fallingBlock.getLocation());
                                     customFallingBlocks.add(new CustomFallingBlock(fallingBlock, location.getY() + .25, groundSlam.getOwner(), groundSlam));
                                 }
                             }
@@ -514,21 +802,24 @@ public class Warlords extends JavaPlugin {
 
                 // PARTICLES - FOUR TICK MODULE
                 if (counter % 4 == 0) {
-                    for (Player player : Bukkit.getOnlinePlayers()) {
-                        WarlordsPlayer warlordsPlayer = getPlayer(player);
+                    for (WarlordsPlayer warlordsPlayer : players.values()) {
+                        //health above heads
+                        warlordsPlayer.getScoreboard().updateHealths();
+
+                        Player player = warlordsPlayer.getPlayer();
+
 
                         // Arcane Shield
                         if (warlordsPlayer.getArcaneShield() != 0) {
-                                Location location = player.getLocation();
-                                location.add(0, 1.5, 0);
-                                ParticleEffect.CLOUD.display(0.15F, 0.3F, 0.15F, 0.01F, 2, location, 500);
-                                ParticleEffect.FIREWORKS_SPARK.display(0.3F, 0.3F, 0.3F, 0.0001F, 1, location, 500);
-                                ParticleEffect.SPELL_WITCH.display(0.3F, 0.3F, 0.3F, 0.001F, 1, location, 500);
+                            Location location = player.getLocation();
+                            location.add(0, 1.5, 0);
+                            ParticleEffect.CLOUD.display(0.15F, 0.3F, 0.15F, 0.01F, 2, location, 500);
+                            ParticleEffect.FIREWORKS_SPARK.display(0.3F, 0.3F, 0.3F, 0.0001F, 1, location, 500);
+                            ParticleEffect.SPELL_WITCH.display(0.3F, 0.3F, 0.3F, 0.001F, 1, location, 500);
                         }
 
                         // Timewarp
-                        for (int i = 0; i < timeWarpPlayers.size(); i++) {
-                            TimeWarp.TimeWarpPlayer timeWarpPlayer = timeWarpPlayers.get(i);
+                        for (TimeWarp.TimeWarpPlayer timeWarpPlayer : timeWarpPlayers) {
                             if (timeWarpPlayer.getTime() != 0) {
                                 //ParticleEffect.CLOUD.display(0.4F, 0.1F, 0.4F, 0.001F, 5, timeWarpPlayer.getLocation(), 500);
                                 ParticleEffect.SPELL_WITCH.display(0F, 0F, 0F, 0.001F, 6, timeWarpPlayer.getLocation(), 500);
@@ -565,16 +856,16 @@ public class Warlords extends JavaPlugin {
 
                 // PARTICLES - TWO TICK MODULE
                 if (counter % 2 == 0) {
-                    for (Player player : Bukkit.getOnlinePlayers()) {
-                        WarlordsPlayer warlordsPlayer = getPlayer(player);
+                    for (WarlordsPlayer warlordsPlayer : players.values()) {
+                        Player player = warlordsPlayer.getPlayer();
 
                         // Inferno
                         if (warlordsPlayer.getInferno() != 0) {
-                                Location location = player.getLocation();
-                                location.add(0, 1.2, 0);
-                                ParticleEffect.DRIP_LAVA.display(0.5F, 0.3F, 0.5F, 0.4F, 1, location, 500);
-                                ParticleEffect.FLAME.display(0.5F, 0.3F, 0.5F, 0.0001F, 1, location, 500);
-                                ParticleEffect.CRIT.display(0.5F, 0.3F, 0.5F, 0.0001F, 1, location, 500);
+                            Location location = player.getLocation();
+                            location.add(0, 1.2, 0);
+                            ParticleEffect.DRIP_LAVA.display(0.5F, 0.3F, 0.5F, 0.4F, 1, location, 500);
+                            ParticleEffect.FLAME.display(0.5F, 0.3F, 0.5F, 0.0001F, 1, location, 500);
+                            ParticleEffect.CRIT.display(0.5F, 0.3F, 0.5F, 0.0001F, 1, location, 500);
                         }
 
                         // Ice Barrier
@@ -635,7 +926,7 @@ public class Warlords extends JavaPlugin {
                                     Location location = player.getWorld().getBlockAt(player.getLocation()).getLocation();
                                     location.add(.5, 0, .5);
                                     List<Entity> onSameBlock = (List<Entity>) location.getWorld().getNearbyEntities(location, .6, 1.5, .6);
-                                    onSameBlock.remove(user.getPlayer());
+                                    onSameBlock = Utils.filterOutTeammates(onSameBlock, user.getPlayer());
                                     for (Entity entity : onSameBlock) {
                                         if (entity instanceof Player)
                                             Warlords.getPlayer((Player) entity).addHealth(user, spikes.get(i).getName(), spikes.get(i).getMinDamageHeal(), spikes.get(i).getMaxDamageHeal(), spikes.get(i).getCritChance(), spikes.get(i).getCritMultiplier());
@@ -650,8 +941,8 @@ public class Warlords extends JavaPlugin {
                                     stand.setGravity(false);
                                     stand.setVisible(false);
 
-                                    armorStands.add(stand);
-                                    if (armorStands.size() == 1) {
+                                    spikeArmorStands.add(stand);
+                                    if (spikeArmorStands.size() == 1) {
                                         player.setVelocity(new Vector(0, .6, 0));
                                     }
 
@@ -665,12 +956,12 @@ public class Warlords extends JavaPlugin {
                             }
                         }
                     }
-                    if (armorStands.size() != 0) {
-                        for (int i = 0; i < armorStands.size(); i++) {
-                            ArmorStand armorStand = armorStands.get(i);
+                    if (spikeArmorStands.size() != 0) {
+                        for (int i = 0; i < spikeArmorStands.size(); i++) {
+                            ArmorStand armorStand = spikeArmorStands.get(i);
                             if (armorStand.getTicksLived() > 10) {
                                 armorStand.remove();
-                                armorStands.remove(i);
+                                spikeArmorStands.remove(i);
                                 i--;
                             }
                         }
@@ -704,7 +995,6 @@ public class Warlords extends JavaPlugin {
                                 } else {
                                     e.setHeadPose(new EulerAngle(e.getVelocity().getY() * -1, 0, 0));
                                 }
-                                System.out.println(location.getY());
                                 if (location.getY() <= 6) {
                                     e.remove();
 
@@ -735,7 +1025,7 @@ public class Warlords extends JavaPlugin {
                                             }
                                         }
                                     }
-                                    //TODO spawn boulder impact
+                                    //TODO spawn boulder impact + remove teammates
                                 }
 
                                 //TODO fix boulder velocity stopping
@@ -756,10 +1046,10 @@ public class Warlords extends JavaPlugin {
 
                 //EVERY SECOND
                 if (counter % 20 == 0) {
-                    for (Player player : Bukkit.getOnlinePlayers()) {
-                        WarlordsPlayer warlordsPlayer = getPlayer(player);
+                    for (WarlordsPlayer warlordsPlayer : players.values()) {
                         warlordsPlayer.getScoreboard().updateTime();
 
+                        Player player = warlordsPlayer.getPlayer();
                         //REGEN
                         if (warlordsPlayer.getRegenTimer() != -1) {
                             warlordsPlayer.setRegenTimer(warlordsPlayer.getRegenTimer() - 1);
@@ -859,14 +1149,9 @@ public class Warlords extends JavaPlugin {
                         }
                         if (warlordsPlayer.getRepentanceCounter() != 0) {
                             int newRepentanceCounter = (int) (warlordsPlayer.getRepentanceCounter() * .8 - 60);
-                            if (newRepentanceCounter < 0) {
-                                warlordsPlayer.setRepentanceCounter(0);
-                            } else {
-                                warlordsPlayer.setRepentanceCounter(newRepentanceCounter);
-                            }
+                            warlordsPlayer.setRepentanceCounter(Math.max(newRepentanceCounter, 0));
                         }
                         if (warlordsPlayer.getArcaneShield() != 0) {
-                            Bukkit.broadcastMessage("" + warlordsPlayer.getArcaneShield());
                             warlordsPlayer.setArcaneShield(warlordsPlayer.getArcaneShield() - 1);
                         }
                         if (warlordsPlayer.getInferno() != 0) {
@@ -920,13 +1205,19 @@ public class Warlords extends JavaPlugin {
                             if (entity instanceof Player) {
                                 Player player = (Player) entity;
                                 WarlordsPlayer warlordsPlayer = getPlayer(player);
-                                if (!damageHealCircle.getName().equals("Consecrate")) {
                                     double distance = damageHealCircle.getLocation().distanceSquared(player.getLocation());
                                     if (distance < damageHealCircle.getRadius() * damageHealCircle.getRadius()) {
-                                        //TODO check team to heal or dmg for hammer
-                                        warlordsPlayer.addHealth(Warlords.getPlayer(damageHealCircle.getPlayer()), damageHealCircle.getName(), damageHealCircle.getMinDamage(), damageHealCircle.getMaxDamage(), damageHealCircle.getCritChance(), damageHealCircle.getCritMultiplier());
+                                        if (game.onSameTeam((Player) entity, damageHealCircle.getPlayer())) {
+                                            if (damageHealCircle.getName().contains("Hammer")) {
+                                                warlordsPlayer.addHealth(Warlords.getPlayer(damageHealCircle.getPlayer()), damageHealCircle.getName(), 160, 216, damageHealCircle.getCritChance(), damageHealCircle.getCritMultiplier());
+                                            } else if (damageHealCircle.getName().contains("Healing")) {
+                                                warlordsPlayer.addHealth(Warlords.getPlayer(damageHealCircle.getPlayer()), damageHealCircle.getName(), damageHealCircle.getMinDamage(), damageHealCircle.getMaxDamage(), damageHealCircle.getCritChance(), damageHealCircle.getCritMultiplier());
+                                            }
+                                        } else {
+                                            warlordsPlayer.addHealth(Warlords.getPlayer(damageHealCircle.getPlayer()), damageHealCircle.getName(), damageHealCircle.getMinDamage(), damageHealCircle.getMaxDamage(), damageHealCircle.getCritChance(), damageHealCircle.getCritMultiplier());
+                                        }
                                     }
-                                }
+
                             }
                         }
                         damageHealCircle.setDuration(damageHealCircle.getDuration() - 1);
@@ -945,6 +1236,7 @@ public class Warlords extends JavaPlugin {
                         if (totem.getSecondsLeft() != 0) {
                             if (totem.getOwner().getSpec().getOrange().getName().contains("Healing")) {
                                 List<Entity> near = totem.getTotemArmorStand().getNearbyEntities(4.0D, 4.0D, 4.0D);
+                                near = Utils.filterOnlyTeammates(near, totem.getOwner().getPlayer());
                                 for (Entity entity : near) {
                                     if (entity instanceof Player) {
                                         Player nearPlayer = (Player) entity;
@@ -963,6 +1255,7 @@ public class Warlords extends JavaPlugin {
                         } else {
                             if (totem.getOwner().getSpec().getOrange().getName().contains("Healing")) {
                                 List<Entity> near = totem.getTotemArmorStand().getNearbyEntities(4.0D, 4.0D, 4.0D);
+                                near = Utils.filterOnlyTeammates(near, totem.getOwner().getPlayer());
                                 for (Entity entity : near) {
                                     if (entity instanceof Player) {
                                         Player nearPlayer = (Player) entity;
@@ -985,7 +1278,6 @@ public class Warlords extends JavaPlugin {
                                     Bukkit.broadcastMessage("" + totemSpiritguard.getDelayedDamage());
                                     //100% of damage over 6 seconds
                                     int damage = (int) (totemSpiritguard.getDelayedDamage() * .1667);
-                                    System.out.println(damage);
                                     //player damage
                                     totem.getOwner().addHealth(totem.getOwner(), "",
                                             damage,
@@ -993,6 +1285,7 @@ public class Warlords extends JavaPlugin {
                                             totem.getOwner().getSpec().getOrange().getCritChance(), totem.getOwner().getSpec().getOrange().getCritMultiplier());
                                     //teammate heal
                                     List<Entity> near = totem.getTotemArmorStand().getNearbyEntities(6.0D, 4.0D, 6.0D);
+                                    near = Utils.filterOnlyTeammates(near, totem.getOwner().getPlayer());
                                     for (Entity entity : near) {
                                         if (entity instanceof Player) {
                                             Player nearPlayer = (Player) entity;
@@ -1008,6 +1301,7 @@ public class Warlords extends JavaPlugin {
                                     totemSpiritguard.setDebt(totemSpiritguard.getDebt() - 1);
                                 } else {
                                     List<Entity> near = totem.getTotemArmorStand().getNearbyEntities(6.0D, 4.0D, 6.0D);
+                                    near = Utils.filterOutTeammates(near, totem.getOwner().getPlayer());
                                     for (Entity entity : near) {
                                         if (entity instanceof Player) {
                                             Player nearPlayer = (Player) entity;
@@ -1035,9 +1329,9 @@ public class Warlords extends JavaPlugin {
                         } else {
                             WarlordsPlayer player = timeWarpPlayer.getWarlordsPlayer();
                             player.addHealth(player, "Time Warp", (int) (player.getMaxHealth() * .3), (int) (player.getMaxHealth() * .3), -1, 100);
-                                for (Player player1 : Bukkit.getOnlinePlayers()) {
-                                    player1.playSound(timeWarpPlayer.getLocation(), "mage.timewarp.teleport", 1, 1);
-                                }
+                            for (Player player1 : Bukkit.getOnlinePlayers()) {
+                                player1.playSound(timeWarpPlayer.getLocation(), "mage.timewarp.teleport", 1, 1);
+                            }
                             player.getPlayer().teleport(timeWarpPlayer.getLocation());
                             player.getPlayer().getLocation().setDirection(timeWarpPlayer.getFacing());
 
@@ -1046,239 +1340,6 @@ public class Warlords extends JavaPlugin {
                         }
                     }
                 }
-
-                //EVERY TICK
-                for (int i = 0; i < customFallingBlocks.size(); i++) {
-                    CustomFallingBlock customFallingBlock = customFallingBlocks.get(i);
-                    customFallingBlock.setTicksLived(customFallingBlock.getTicksLived() + 1);
-                    for (Player player : players.keySet()) {
-                        if (player != customFallingBlock.getOwner()) {
-                            AbstractAbility ability = customFallingBlock.getAbility();
-                            if (ability instanceof SeismicWave && !((SeismicWave) ability).getPlayersHit().contains(player)) {
-                                if (player.getLocation().distanceSquared(customFallingBlock.getFallingBlock().getLocation()) < 1.5) {
-                                    ((SeismicWave) ability).getPlayersHit().add(player);
-                                    final Location loc = player.getLocation();
-                                    final Vector v = customFallingBlock.getOwner().getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1.1).setY(0.25);
-                                    player.setVelocity(v);
-                                    getPlayer(player).addHealth(Warlords.getPlayer(customFallingBlock.getOwner()), ability.getName(), ability.getMinDamageHeal(), ability.getMaxDamageHeal(), ability.getCritChance(), ability.getCritMultiplier());
-                                }
-                            } else if (ability instanceof GroundSlam && !((GroundSlam) ability).getPlayersHit().contains(player)) {
-                                if (player.getLocation().distanceSquared(customFallingBlock.getFallingBlock().getLocation()) < 1.5) {
-                                    ((GroundSlam) ability).getPlayersHit().add(player);
-                                    final Location loc = player.getLocation();
-                                    final Vector v = customFallingBlock.getOwner().getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1.1).setY(0.25);
-                                    player.setVelocity(v);
-                                    getPlayer(player).addHealth(Warlords.getPlayer(customFallingBlock.getOwner()), ability.getName(), ability.getMinDamageHeal(), ability.getMaxDamageHeal(), ability.getCritChance(), ability.getCritMultiplier());
-                                }
-                            }
-                        }
-                    }
-                    //TODO fix bug where the blocks dont get removed if ability used near high wall - stuck in block?
-                    //System.out.println(customFallingBlock.getCustomFallingBlock().getLocation().getY());
-                    //System.out.println(customFallingBlock.getyLevel());
-                    if (customFallingBlock.getFallingBlock().getLocation().getY() <= customFallingBlock.getyLevel() || customFallingBlock.getFallingBlock().getTicksLived() > 10 || customFallingBlock.getTicksLived() > 10) {
-                        customFallingBlock.getFallingBlock().remove();
-                        customFallingBlocks.remove(i);
-                        i--;
-                    }
-                }
-
-                for (Player player : Bukkit.getOnlinePlayers()) {
-                    WarlordsPlayer warlordsPlayer = getPlayer(player);
-                    Location location = player.getLocation();
-
-                    //to make it look like the cooldown activates super fast but isnt really fast since it updates next second tick
-                    if (warlordsPlayer.getSpec().getRed().getCurrentCooldown() == warlordsPlayer.getSpec().getRed().getCooldown()) {
-                        warlordsPlayer.getSpec().getRed().setCurrentCooldown(warlordsPlayer.getSpec().getRed().getCurrentCooldown() - 1);
-                        warlordsPlayer.updateRedItem();
-                    }
-                    if (warlordsPlayer.getSpec().getPurple().getCurrentCooldown() == warlordsPlayer.getSpec().getPurple().getCooldown()) {
-                        warlordsPlayer.getSpec().getPurple().setCurrentCooldown(warlordsPlayer.getSpec().getPurple().getCurrentCooldown() - 1);
-                        warlordsPlayer.updatePurpleItem();
-                    }
-                    if (warlordsPlayer.getSpec().getBlue().getCurrentCooldown() == warlordsPlayer.getSpec().getBlue().getCooldown()) {
-                        warlordsPlayer.getSpec().getBlue().setCurrentCooldown(warlordsPlayer.getSpec().getBlue().getCurrentCooldown() - 1);
-                        warlordsPlayer.updateBlueItem();
-                    }
-                    if (warlordsPlayer.getSpec().getOrange().getCurrentCooldown() == warlordsPlayer.getSpec().getOrange().getCooldown()) {
-                        warlordsPlayer.getSpec().getOrange().setCurrentCooldown(warlordsPlayer.getSpec().getOrange().getCurrentCooldown() - 1);
-                        warlordsPlayer.updateOrangeItem();
-                    }
-                    if (warlordsPlayer.getHorseCooldown() == 15 && !player.isInsideVehicle()) {
-                        warlordsPlayer.setHorseCooldown(warlordsPlayer.getHorseCooldown() - 1);
-                        warlordsPlayer.updateHorseItem();
-                    }
-
-                    //respawn
-                    if (warlordsPlayer.getRespawnTimer() == 0) {
-                        warlordsPlayer.setRespawnTimer(-1);
-                        warlordsPlayer.respawn();
-                        player.setGameMode(GameMode.SURVIVAL);
-                    }
-                    //damage or heal
-                    float newHealth = (float) warlordsPlayer.getHealth() / warlordsPlayer.getMaxHealth() * 40;
-                    if (warlordsPlayer.getUndyingArmy() != 0 && newHealth <= 0) {
-                        warlordsPlayer.setHealth(warlordsPlayer.getMaxHealth());
-                        warlordsPlayer.setUndyingArmyDead(true);
-                        warlordsPlayer.setUndyingArmy(0);
-                    }
-                    if (newHealth <= 0 && !warlordsPlayer.isUndyingArmyDead()) {
-                        //TODO change spectator and tp to spawn point
-                        player.setGameMode(GameMode.SPECTATOR);
-                        warlordsPlayer.respawn();
-                        warlordsPlayer.setRespawnTimer(5);
-                    } else {
-                        player.setHealth(newHealth);
-                    }
-                    if (warlordsPlayer.getIntervene() != 0 && warlordsPlayer.getInterveneDamage() >= 3600 || (warlordsPlayer.getIntervenedBy() != null && warlordsPlayer.getPlayer().getLocation().distanceSquared(warlordsPlayer.getIntervenedBy().getPlayer().getLocation()) > 15 * 15)) {
-                        //TODO seperate and add why the vene broke in chat
-                        warlordsPlayer.setIntervene(0);
-                        warlordsPlayer.getPlayer().sendMessage("§c\u00AB§7 " + warlordsPlayer.getIntervenedBy().getName() + "'s §eIntervene §7has expired!");
-
-                    }
-                    //energy
-                    if (warlordsPlayer.getEnergy() < warlordsPlayer.getMaxEnergy()) {
-                        float newEnergy = warlordsPlayer.getEnergy() + 1;
-                        if (warlordsPlayer.getPresence() != 0) {
-                            newEnergy += .5;
-                        }
-                        if (warlordsPlayer.getPowerUpEnergy() != 0) {
-                            newEnergy += .35;
-                        }
-                        warlordsPlayer.setEnergy(newEnergy);
-                    }
-                    player.setLevel((int) warlordsPlayer.getEnergy());
-                    player.setExp(warlordsPlayer.getEnergy() / warlordsPlayer.getMaxEnergy());
-                    //melee cooldown
-                    if (warlordsPlayer.getHitCooldown() != 0) {
-                        warlordsPlayer.setHitCooldown(warlordsPlayer.getHitCooldown() - 1);
-                    }
-
-                    if (warlordsPlayer.getCharged() != 0) {
-                        List<Entity> playersInside = player.getNearbyEntities(2, 2, 2);
-                        playersInside.removeAll(((RecklessCharge) warlordsPlayer.getSpec().getRed()).getPlayersHit());
-                        for (Entity entity : playersInside) {
-                            if (entity instanceof Player) {
-                                //TODO add 100 slowness
-                                ((RecklessCharge) warlordsPlayer.getSpec().getRed()).getPlayersHit().add((Player) entity);
-                                Warlords.getPlayer((Player) entity).addHealth(warlordsPlayer, warlordsPlayer.getSpec().getRed().getName(), warlordsPlayer.getSpec().getRed().getMinDamageHeal(), warlordsPlayer.getSpec().getRed().getMaxDamageHeal(), warlordsPlayer.getSpec().getRed().getCritChance(), warlordsPlayer.getSpec().getRed().getCritMultiplier());
-                            }
-                        }
-                        if (player.getLocation().distanceSquared(warlordsPlayer.getChargeLocation()) > warlordsPlayer.getCharged() || (player.getVelocity().getX() == 0 && player.getVelocity().getZ() == 0)) {
-                            player.setVelocity(new Vector(0, 0, 0));
-                            warlordsPlayer.setCharged(0);
-                        }
-                    }
-                    //orbs
-                    for (int i = 0; i < orbs.size(); i++) {
-                        OrbsOfLife.Orb orb = orbs.get(i);
-                        Location orbPosition = orb.getBukkitEntity().getLocation();
-                        if (orbPosition.distanceSquared(location) < 2.3 * 2.3) {
-                            orb.getArmorStand().remove();
-                            orb.getBukkitEntity().remove();
-                            orbs.remove(i);
-                            i--;
-                            warlordsPlayer.addHealth(warlordsPlayer, "Orbs of Life", 502, 502, -1, 100);
-                            List<Entity> near = player.getNearbyEntities(3.0D, 3.0D, 3.0D);
-                            near.remove(player);
-                            for (Entity entity : near) {
-                                if (entity instanceof Player) {
-                                    Player nearPlayer = (Player) entity;
-                                    if (nearPlayer.getGameMode() != GameMode.SPECTATOR) {
-                                        getPlayer(nearPlayer).addHealth(warlordsPlayer, "Orbs of Life", 420, 420, -1, 100);
-                                    }
-                                }
-                            }
-                        }
-                        if (orb.getBukkitEntity().getTicksLived() > 160) {
-                            orb.getArmorStand().remove();
-                            orb.getBukkitEntity().remove();
-                            orbs.remove(i);
-                            i--;
-                        }
-                    }
-
-                    //BOLTS
-                    for (int i = 0; i < bolts.size(); i++) {
-                        LightningBolt.Bolt bolt = bolts.get(i);
-                        bolt.getArmorStand().teleport(bolt.getLocation().add(bolt.getTeleportDirection().multiply(1.1)), PlayerTeleportEvent.TeleportCause.PLUGIN);
-                        //hitting player
-                        //TODO fix fucked up hit detection
-                        if (bolt.getShooter() != warlordsPlayer && location.distanceSquared(new Location(location.getWorld(), bolt.getLocation().getX(), bolt.getLocation().getY(), bolt.getLocation().getZ()).add(0, 2, 0)) < 2.5 * 2.5) {
-                            warlordsPlayer.addHealth(bolt.getShooter(), bolt.getLightningBolt().getName(), bolt.getLightningBolt().getMinDamageHeal(), bolt.getLightningBolt().getMaxDamageHeal(), bolt.getLightningBolt().getCritChance(), bolt.getLightningBolt().getCritMultiplier());
-                        }
-
-                        if (location.getWorld().getBlockAt(new Location(location.getWorld(), bolt.getLocation().getX(), bolt.getLocation().getY(), bolt.getLocation().getZ()).add(0, 2, 0)).getType() != Material.AIR || bolt.getArmorStand().getTicksLived() > 50) {
-                            //TODO add explosion thingy
-                            bolt.getArmorStand().remove();
-                            bolts.remove(i);
-                            i--;
-                        }
-                    }
-
-                    //FALLEN SOULS
-                    for (int i = 0; i < fallenSouls.size(); i++) {
-                        FallenSouls.FallenSoul fallenSoul = fallenSouls.get(i);
-                        fallenSoul.getFallenSoulLeft().teleport(fallenSoul.getFallenSoulLeft().getLocation().add(fallenSoul.getDirectionLeft()));
-                        fallenSoul.getFallenSoulMiddle().teleport(fallenSoul.getFallenSoulMiddle().getLocation().add(fallenSoul.getDirectionMiddle()));
-                        fallenSoul.getFallenSoulRight().teleport(fallenSoul.getFallenSoulRight().getLocation().add(fallenSoul.getDirectionRight()));
-
-                        if (!fallenSoul.getPlayersHit().contains(warlordsPlayer) &&
-                                warlordsPlayer.getPlayer().getGameMode() != GameMode.SPECTATOR &&
-                                (location.distanceSquared(new Location(location.getWorld(), fallenSoul.getFallenSoulLeft().getLocation().getX(), fallenSoul.getFallenSoulLeft().getLocation().getY(), fallenSoul.getFallenSoulLeft().getLocation().getZ()).add(0, 2, 0)) < 2 * 2
-                                        || location.distanceSquared(new Location(location.getWorld(), fallenSoul.getFallenSoulMiddle().getLocation().getX(), fallenSoul.getFallenSoulMiddle().getLocation().getY(), fallenSoul.getFallenSoulMiddle().getLocation().getZ()).add(0, 2, 0)) < 2 * 2
-                                        || location.distanceSquared(new Location(location.getWorld(), fallenSoul.getFallenSoulRight().getLocation().getX(), fallenSoul.getFallenSoulRight().getLocation().getY(), fallenSoul.getFallenSoulRight().getLocation().getZ()).add(0, 2, 0)) < 2 * 2
-                                )
-                        ) {
-                            warlordsPlayer.addHealth(fallenSoul.getShooter(), fallenSoul.getFallenSouls().getName(), fallenSoul.getFallenSouls().getMinDamageHeal(), fallenSoul.getFallenSouls().getMaxDamageHeal(), fallenSoul.getFallenSouls().getCritChance(), fallenSoul.getFallenSouls().getCritMultiplier());
-                            fallenSoul.getPlayersHit().add(warlordsPlayer);
-                            if (fallenSoul.getShooter().getSoulBindCooldown() != 0 && fallenSoul.getShooter().hasBoundPlayer(warlordsPlayer)) {
-                                System.out.println("COOLDOWN REDUCED");
-                                fallenSoul.getShooter().getSpec().getRed().subtractCooldown(1.5F);
-                                fallenSoul.getShooter().getSpec().getPurple().subtractCooldown(1.5F);
-                                fallenSoul.getShooter().getSpec().getBlue().subtractCooldown(1.5F);
-                                fallenSoul.getShooter().getSpec().getOrange().subtractCooldown(1.5F);
-
-                                fallenSoul.getShooter().updateRedItem();
-                                fallenSoul.getShooter().updatePurpleItem();
-                                fallenSoul.getShooter().updateBlueItem();
-                                fallenSoul.getShooter().updateOrangeItem();
-                            }
-                        }
-
-                        if (!fallenSoul.isLeftRemoved() && location.getWorld().getBlockAt(new Location(location.getWorld(), fallenSoul.getFallenSoulLeft().getLocation().getX(), fallenSoul.getFallenSoulLeft().getLocation().getY(), fallenSoul.getFallenSoulLeft().getLocation().getZ()).add(0, 2, 0)).getType() != Material.AIR || fallenSoul.getFallenSoulLeft().getTicksLived() > 50) {
-                            //TODO add explosion thingy
-                            fallenSoul.getFallenSoulLeft().remove();
-                            fallenSoul.setLeftRemoved(true);
-                        }
-                        if (!fallenSoul.isMiddleRemoved() && location.getWorld().getBlockAt(new Location(location.getWorld(), fallenSoul.getFallenSoulMiddle().getLocation().getX(), fallenSoul.getFallenSoulMiddle().getLocation().getY(), fallenSoul.getFallenSoulMiddle().getLocation().getZ()).add(0, 2, 0)).getType() != Material.AIR || fallenSoul.getFallenSoulMiddle().getTicksLived() > 50) {
-                            //TODO add explosion thingy
-                            fallenSoul.getFallenSoulMiddle().remove();
-                            fallenSoul.setMiddleRemoved(true);
-                        }
-                        if (!fallenSoul.isRightRemoved() && location.getWorld().getBlockAt(new Location(location.getWorld(), fallenSoul.getFallenSoulRight().getLocation().getX(), fallenSoul.getFallenSoulRight().getLocation().getY(), fallenSoul.getFallenSoulRight().getLocation().getZ()).add(0, 2, 0)).getType() != Material.AIR || fallenSoul.getFallenSoulRight().getTicksLived() > 50) {
-                            //TODO add explosion thingy
-                            fallenSoul.getFallenSoulRight().remove();
-                            fallenSoul.setRightRemoved(true);
-                        }
-
-                        if (fallenSoul.isLeftRemoved() && fallenSoul.isMiddleRemoved() && fallenSoul.isRightRemoved()) {
-                            fallenSouls.remove(i);
-                            i--;
-                        }
-                    }
-
-                    //CHAINS
-                    for (int i = 0; i < chains.size(); i++) {
-                        if (chains.get(i).getTicksLived() >= 15) {
-                            chains.get(i).remove();
-                            chains.remove(i);
-                            i--;
-                        }
-                    }
-                }
-                //updateScoreBoard();
-
                 counter++;
             }
 

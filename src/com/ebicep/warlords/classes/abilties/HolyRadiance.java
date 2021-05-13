@@ -22,7 +22,7 @@ public class HolyRadiance extends AbstractAbility {
     public void onActivate(Player player) {
         WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
         List<Entity> near = player.getNearbyEntities(7.0D, 7.0D, 7.0D);
-        near.remove(player);
+        near = Utils.filterOnlyTeammates(near, player);
         for (Entity entity : near) {
             if (entity instanceof Player) {
                 Player nearPlayer = (Player) entity;

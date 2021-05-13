@@ -10,7 +10,7 @@ import java.util.HashSet;
 
 public class HammerOfLight extends AbstractAbility {
     public HammerOfLight() {
-        super("Hammer of Light", 119, 158, 60 + 11, 30, 20, 175,
+        super("Hammer of Light", -119, -158, 60 + 11, 30, 20, 175,
                 "§7Throw down a Hammer of Light on\n" +
                         "§7the ground, dealing §c119 §7-\n" +
                         "§c158 §7damage every second to\n" +

@@ -1,6 +1,9 @@
 package com.ebicep.warlords.util;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.WarlordsPlayer;
+import com.ebicep.warlords.maps.Game;
+import net.minecraft.server.v1_8_R3.EnumChatFormat;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -31,10 +34,10 @@ public class CustomScoreboard {
         objective.getScore(ChatColor.BLUE + "BLU: " + ChatColor.AQUA + Warlords.blueKills * 5 + ChatColor.GOLD + "/1000").setScore(13);
         objective.getScore(ChatColor.RED + "RED: " + ChatColor.AQUA + Warlords.redKills * 5 + ChatColor.GOLD + "/1000").setScore(12);
         objective.getScore("  ").setScore(11);
+        objective.getScore(ChatColor.WHITE + "Time Left: " + ChatColor.GREEN + "15:00").setScore(10);
         objective.getScore("   ").setScore(9);
         objective.getScore("    ").setScore(6);
         objective.getScore(ChatColor.GOLD + "Lv90 " + ChatColor.GREEN + Warlords.getPlayer(player).getSpec().getClass().getSimpleName()).setScore(5);
-        System.out.println(player.getName() + " = " + Warlords.getPlayer(player).getSpec().getClass().getSimpleName());
         objective.getScore("     ").setScore(4);
         objective.getScore("" + ChatColor.GREEN + Warlords.getPlayer(player).getKills() + ChatColor.RESET + " Kills " + ChatColor.GREEN + Warlords.getPlayer(player).getAssists() + ChatColor.RESET + " Assists").setScore(3);
         objective.getScore("      ").setScore(2);
@@ -45,6 +48,27 @@ public class CustomScoreboard {
         this.player = player;
         this.blueTeam = blueTeam;
         this.redTeam = redTeam;
+    }
+
+    public void addHealths() {
+        scoreboard.registerNewObjective("health", "dummy");
+        objective.setDisplaySlot(DisplaySlot.BELOW_NAME);
+        objective.setDisplayName(ChatColor.RED + "❤");
+        for (WarlordsPlayer value : Warlords.getPlayers().values()) {
+            Score score = objective.getScore(value.getPlayer());
+            score.setScore(value.getHealth());
+        }
+    }
+
+    public void updateHealths() {
+        for (Objective scoreboardObjective : scoreboard.getObjectives()) {
+            if (scoreboardObjective.getName().equals("health")) {
+                scoreboardObjective.unregister();
+                addHealths();
+                break;
+            }
+        }
+
     }
 
     public void updateKills() {
@@ -65,15 +89,20 @@ public class CustomScoreboard {
     public void updateTime() {
         for (String entry : scoreboard.getEntries()) {
             String entryUnformatted = ChatColor.stripColor(entry);
-            if (entryUnformatted.contains("Wins in")) {
+            if (entryUnformatted.contains("Wins in:") || entryUnformatted.contains("Time Left:")) {
                 //TODO add game timer and blue/red caps
                 scoreboard.resetScores(entry);
+                String timeLeft = (Game.remaining / 60) + ":";
+                if (Game.remaining % 60 < 10) {
+                    timeLeft += "0";
+                }
+                timeLeft += Game.remaining % 60;
                 if (Warlords.blueKills > Warlords.redKills) {
-                    objective.getScore(ChatColor.BLUE + "BLU " + ChatColor.GOLD + "Wins in: " + ChatColor.GREEN + "10:00").setScore(10);
+                    objective.getScore(ChatColor.BLUE + "BLU " + ChatColor.GOLD + "Wins in: " + ChatColor.GREEN + timeLeft).setScore(10);
                 } else if (Warlords.redKills > Warlords.blueKills) {
-                    objective.getScore(ChatColor.RED + "RED " + ChatColor.GOLD + "Wins in: " + ChatColor.GREEN + "10:00").setScore(10);
+                    objective.getScore(ChatColor.RED + "RED " + ChatColor.GOLD + "Wins in: " + ChatColor.GREEN + timeLeft).setScore(10);
                 } else {
-                    objective.getScore(ChatColor.WHITE + "Time Left: " + ChatColor.GREEN + "10:00").setScore(10);
+                    objective.getScore(ChatColor.WHITE + "Time Left: " + ChatColor.GREEN + timeLeft).setScore(10);
                 }
             }
         }
@@ -104,6 +133,10 @@ public class CustomScoreboard {
 
             }
         }
+    }
+
+    public boolean onSameTeam(Player player) {
+        return blueTeam.contains(this.player.getName()) && blueTeam.contains(player.getName()) || redTeam.contains(this.player.getName()) && redTeam.contains(player.getName());
     }
 
     public Player getPlayer() {

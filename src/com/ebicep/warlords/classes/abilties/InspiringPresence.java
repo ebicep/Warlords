@@ -3,6 +3,7 @@ package com.ebicep.warlords.classes.abilties;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.util.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
@@ -31,6 +32,7 @@ public class InspiringPresence extends AbstractAbility {
 
         // TODO: test if boost works for other players
         List<Entity> near = player.getNearbyEntities(6.0D, 2.0D, 6.0D);
+        near = Utils.filterOnlyTeammates(near, player);
         for (Entity entity : near) {
             if (entity instanceof Player) {
                 player.setWalkSpeed(WarlordsPlayer.currentSpeed);

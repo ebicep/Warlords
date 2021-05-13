@@ -33,6 +33,7 @@ public class Projectile extends AbstractAbility {
                 player1.playSound(player.getLocation(), "mage.fireball.activation", 1, 1);
             }
         } else if (customProjectile.getBall().getName().contains("Frost")) {
+            //TODO - Why is this here?
             WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
             List<Entity> near = player.getNearbyEntities(7.0D, 3.5D, 7.0D);
             for (Entity entity : near) {

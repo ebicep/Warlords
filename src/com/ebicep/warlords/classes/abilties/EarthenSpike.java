@@ -36,6 +36,7 @@ public class EarthenSpike extends AbstractAbility {
     public void onActivate(Player player) {
         Location location = player.getLocation();
         List<Entity> near = player.getNearbyEntities(6.0D, 6.0D, 6.0D);
+        near = Utils.filterOutTeammates(near, player);
         for (Entity entity : near) {
             if (entity instanceof Player) {
                 Player nearPlayer = (Player) entity;

@@ -10,7 +10,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import java.util.Comparator;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 public class Utils {
 
@@ -53,6 +55,15 @@ public class Utils {
         }
     }
 
+    public static List<Entity> filterOutTeammates(List<Entity> entities, Player player) {
+        entities.remove(player);
+        return entities.stream().filter(entity -> !(entity instanceof Player) || !Warlords.getInstance().game.onSameTeam((Player) entity, player)).collect(Collectors.toList());
+    }
+
+    public static List<Entity> filterOnlyTeammates(List<Entity> entities, Player player) {
+        return entities.stream().filter(entity -> !(entity instanceof Player) || Warlords.getInstance().game.onSameTeam((Player) entity, player)).collect(Collectors.toList());
+    }
+
     public static Vector getRightDirection(Location location) {
         Vector direction = location.getDirection().normalize();
         return new Vector(-direction.getZ(), 0.0, direction.getX()).normalize();
@@ -74,5 +85,6 @@ public class Utils {
         }
         return distance;
     }
+
 
 }

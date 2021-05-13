@@ -3,6 +3,7 @@ package com.ebicep.warlords.classes.abilties;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.util.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -36,6 +37,7 @@ public class LightningRod extends AbstractAbility {
         Location playerLocation = player.getLocation();
 
         List<Entity> near = player.getNearbyEntities(5.0D, 5.0D, 5.0D);
+        near = Utils.filterOutTeammates(near, player);
         for (Entity entity : near) {
             final Location otherLocation = entity.getLocation();
             if (entity instanceof Player && otherLocation.distanceSquared(playerLocation) < 30) {

@@ -21,28 +21,27 @@ public class Strike extends AbstractAbility {
     @Override
     public void onActivate(Player player) {
         List<Entity> near = player.getNearbyEntities(5.0D, 5.0D, 5.0D);
+        near = Utils.filterOutTeammates(near, player);
         System.out.println(near);
         for (Entity entity : near) {
             if (entity instanceof Player) {
                 Player nearPlayer = (Player) entity;
                 //TODO check if you should just remove distance because near gets nearest already
-                //TODO check if player is on the other team
                 double distance = player.getLocation().distanceSquared(nearPlayer.getLocation());
                 if (nearPlayer.getGameMode() != GameMode.SPECTATOR && Utils.getLookingAt(player, nearPlayer) && distance < 3.3 * 3.3) {
-                    //TODO seperate every strike using description
                     WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
                     warlordsPlayer.subtractEnergy(energyCost);
 
                     System.out.println("NEAR HIT " + nearPlayer);
+                    //PALADIN
                     if (name.contains("Avenger") || name.contains("Crusader") || name.contains("Protector")) {
                         //check consecrate then boost dmg
-                        if (description.contains("avenger")) {
+                        if (name.contains("Avenger")) {
                             Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
                             Warlords.getPlayer(nearPlayer).subtractEnergy(6);
                             if (warlordsPlayer.getWrath() != -1) {
                                 List<Entity> nearNearPlayers = nearPlayer.getNearbyEntities(5.0D, 5.0D, 5.0D);
-                                System.out.println(nearNearPlayers);
-                                nearNearPlayers.remove(player);
+                                nearNearPlayers = Utils.filterOutTeammates(nearNearPlayers, player);
                                 int counter = 0;
                                 for (Entity nearEntity : nearNearPlayers) {
                                     if (nearEntity instanceof Player) {
@@ -75,10 +74,7 @@ public class Strike extends AbstractAbility {
                                     }
                                 }
                             }
-                        } else if (description.contains("crusader")) {
-                            List<Entity> nearNearPlayers = nearPlayer.getNearbyEntities(5.0D, 5.0D, 5.0D);
-                            System.out.println(nearNearPlayers);
-                            nearNearPlayers.remove(player);
+                        } else if (name.contains("Crusader")) {
                             int counter = 0;
                             //checking if player is in consecrate
                             boolean inConsecrate = false;
@@ -98,24 +94,23 @@ public class Strike extends AbstractAbility {
                                 Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
                             }
                             //reloops near players to give energy to
+                            List<Entity> nearNearPlayers = nearPlayer.getNearbyEntities(5.0D, 5.0D, 5.0D);
+                            nearNearPlayers.remove(player);
+                            nearNearPlayers = Utils.filterOnlyTeammates(nearNearPlayers, player);
                             for (Entity nearEntity2 : nearNearPlayers) {
                                 if (nearEntity2 instanceof Player) {
                                     Player nearTeamPlayer = (Player) nearEntity2;
-                                    //TODO check if near player is on the same team, then give energy
                                     Warlords.getPlayer(nearTeamPlayer).addEnergy(warlordsPlayer, name, 24);
-                                    break;
+                                    counter++;
+                                    if (counter == 2)
+                                        break;
                                 }
-                                counter++;
-                                if (counter == 2)
-                                    break;
                             }
                             break;
-                        } else if (description.contains("protector")) {
+                        } else if (name.contains("Protector")) {
                             //self heal 50%
-                            Warlords.getPlayer(player).addHealth(warlordsPlayer, name, minDamageHeal / 2, maxDamageHeal / 2, critChance, critMultiplier);
-                            List<Entity> nearNearPlayers = nearPlayer.getNearbyEntities(5.0D, 5.0D, 5.0D);
-                            System.out.println(nearNearPlayers);
-                            nearNearPlayers.remove(player);
+                            Warlords.getPlayer(player).addHealth(warlordsPlayer, name, -minDamageHeal / 2, -maxDamageHeal / 2, critChance, critMultiplier);
+
                             int counter = 0;
                             //checking if player is in consecrate
                             boolean inConsecrate = false;
@@ -134,21 +129,24 @@ public class Strike extends AbstractAbility {
                             } else {
                                 Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
                             }
-                            //reloops near players to give energy to
+                            //reloops near players to give health to
+                            List<Entity> nearNearPlayers = nearPlayer.getNearbyEntities(5.0D, 5.0D, 5.0D);
+                            nearNearPlayers.remove(player);
+                            nearNearPlayers = Utils.filterOnlyTeammates(nearNearPlayers, player);
                             for (Entity nearEntity2 : nearNearPlayers) {
                                 if (nearEntity2 instanceof Player) {
                                     Player nearTeamPlayer = (Player) nearEntity2;
-                                    //TODO check if near player is on the same team, then give energy
                                     if (inConsecrate) {
                                         Warlords.getPlayer(nearTeamPlayer).addHealth(warlordsPlayer, name, Math.round(minDamageHeal * 1.2f * -1), Math.round(maxDamageHeal * 1.2f * -1), critChance, critMultiplier);
                                     } else {
                                         Warlords.getPlayer(nearTeamPlayer).addHealth(warlordsPlayer, name, minDamageHeal * -1, maxDamageHeal * -1, critChance, critMultiplier);
                                     }
-                                    break;
+                                    counter++;
+                                    if (counter == 2)
+                                        break;
+                                    ;
                                 }
-                                counter++;
-                                if (counter == 2)
-                                    break;
+
                             }
                             break;
                         }
