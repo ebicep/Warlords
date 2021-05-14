@@ -3,6 +3,7 @@ package com.ebicep.warlords.classes.abilties;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.classes.ActionBarStats;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -22,6 +23,7 @@ public class TimeWarp extends AbstractAbility {
     public void onActivate(Player player) {
         WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
         Warlords.getTimeWarpPlayers().add(new TimeWarpPlayer(warlordsPlayer, player.getLocation(), player.getLocation().getDirection(), 5));
+        warlordsPlayer.getActionBarStats().add(new ActionBarStats(warlordsPlayer, "TIME", 5));
         warlordsPlayer.subtractEnergy(energyCost);
 
         for (Player player1 : Bukkit.getOnlinePlayers()) {

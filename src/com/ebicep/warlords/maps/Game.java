@@ -2,6 +2,7 @@ package com.ebicep.warlords.maps;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
+import com.ebicep.warlords.classes.mage.specs.aquamancer.Aquamancer;
 import com.ebicep.warlords.classes.mage.specs.cryomancer.Cryomancer;
 import com.ebicep.warlords.classes.mage.specs.pyromancer.Pyromancer;
 import com.ebicep.warlords.classes.paladin.specs.avenger.Avenger;
@@ -77,7 +78,7 @@ public class Game implements Runnable {
                 World world = Bukkit.getWorld(game.map.mapName);
                 for (int i = 0; i < world.getPlayers().size(); i = i + 2) {
                     Player worldPlayer = world.getPlayers().get(i);
-                    Warlords.addPlayer(new WarlordsPlayer(worldPlayer, worldPlayer.getName(), worldPlayer.getUniqueId(), new Crusader(worldPlayer), false));
+                    Warlords.addPlayer(new WarlordsPlayer(worldPlayer, worldPlayer.getName(), worldPlayer.getUniqueId(), new Aquamancer(worldPlayer), false));
                     blueTeam.add(worldPlayer.getName());
                     worldPlayer.setPlayerListName(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + "SPEC" + ChatColor.DARK_GRAY + "] " + ChatColor.BLUE + worldPlayer.getName() + ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + "Lv90" + ChatColor.DARK_GRAY + "]");
 
@@ -85,7 +86,7 @@ public class Game implements Runnable {
 
                     if (i + 1 < world.getPlayers().size()) {
                         Player worldPlayer2 = world.getPlayers().get(i + 1);
-                        Warlords.addPlayer(new WarlordsPlayer(worldPlayer2, worldPlayer2.getName(), worldPlayer2.getUniqueId(), new Cryomancer(worldPlayer2), false));
+                        Warlords.addPlayer(new WarlordsPlayer(worldPlayer2, worldPlayer2.getName(), worldPlayer2.getUniqueId(), new Aquamancer(worldPlayer2), false));
                         redTeam.add(worldPlayer2.getName());
                         worldPlayer2.setPlayerListName(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + "SPEC" + ChatColor.DARK_GRAY + "] " + ChatColor.RED + worldPlayer2.getName() + ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + "Lv90" + ChatColor.DARK_GRAY + "]");
 
@@ -106,6 +107,7 @@ public class Game implements Runnable {
 
                 for (WarlordsPlayer value : Warlords.getPlayers().values()) {
                     value.getScoreboard().addHealths();
+                    System.out.println(value.getScoreboard());
                 }
 
                 System.out.println(blueTeam);

@@ -19,6 +19,7 @@ public abstract class PlayerClass {
     protected AbstractAbility purple;
     protected AbstractAbility blue;
     protected AbstractAbility orange;
+    protected String className;
 
     public PlayerClass(Player player, int maxHealth, int maxEnergy, int energyPerSec, int energyOnHit, int damageResistance, AbstractAbility weapon, AbstractAbility red, AbstractAbility purple, AbstractAbility blue, AbstractAbility orange) {
         this.player = player;
@@ -32,6 +33,15 @@ public abstract class PlayerClass {
         this.purple = purple;
         this.blue = blue;
         this.orange = orange;
+        if (red.getName().contains("Consecrate")) {
+            className = "Paladin";
+        } else if (purple.getName().contains("Time")) {
+            className = "Mage";
+        } else if (purple.getName().contains("Ground")) {
+            className = "Warrior";
+        } else {
+            className = "Shaman";
+        }
     }
 
     public void onRightClick(Player player) {
@@ -185,5 +195,9 @@ public abstract class PlayerClass {
 
     public void setOrange(AbstractAbility orange) {
         this.orange = orange;
+    }
+
+    public String getClassName() {
+        return className;
     }
 }

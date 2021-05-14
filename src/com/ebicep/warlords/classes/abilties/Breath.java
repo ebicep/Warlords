@@ -21,30 +21,33 @@ public class Breath extends AbstractAbility {
     @Override
     public void onActivate(Player player) {
         WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
+
+        if (name.contains("Water")) {
+            warlordsPlayer.addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+        }
+
         Vector viewDirection = player.getLocation().getDirection();
         List<Entity> near = player.getNearbyEntities(7.0D, 3.5D, 7.0D);
         for (Entity entity : near) {
             if (entity instanceof Player) {
                 Player nearPlayer = (Player) entity;
                 Vector direction = nearPlayer.getLocation().subtract(player.getLocation()).toVector().normalize();
-                if (viewDirection.dot(direction) > .73 && Warlords.getInstance().game.onSameTeam(warlordsPlayer, Warlords.getPlayer(nearPlayer))) {
-                    Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+                if (viewDirection.dot(direction) > .73) {
                     if (name.contains("Water")) {
-                        Location eye = player.getEyeLocation();
-                        eye.setY(eye.getY() + .5);
-                        //TODO fix kb
-                        Vector toEntity = nearPlayer.getEyeLocation().toVector().subtract(eye.toVector());
-                        nearPlayer.setVelocity(toEntity);
-                        warlordsPlayer.subtractEnergy(energyCost);
-                    }
-                } else if (viewDirection.dot(direction) > .73 && !Warlords.getInstance().game.onSameTeam(warlordsPlayer, Warlords.getPlayer(nearPlayer))) {
-                    Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
-                    if (name.contains("Freezing")) {
+                        if (Warlords.getInstance().game.onSameTeam(warlordsPlayer, Warlords.getPlayer(nearPlayer))) {
+                            Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+                        } else {
+                            Location eye = player.getEyeLocation();
+                            eye.setY(eye.getY() + .5);
+                            //TODO fix kb
+                            Vector toEntity = nearPlayer.getEyeLocation().toVector().subtract(eye.toVector());
+                            nearPlayer.setVelocity(toEntity);
+                        }
+                    } else if (name.contains("Freezing") && !Warlords.getInstance().game.onSameTeam(warlordsPlayer, Warlords.getPlayer(nearPlayer))) {
+                        Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
                         nearPlayer.setWalkSpeed(WarlordsPlayer.currentSpeed);
                         warlordsPlayer.setBreathSlowness(4 * 20 - 10);
-                        warlordsPlayer.subtractEnergy(energyCost);
                     }
-
                 }
             }
             //TODO breath animation
@@ -61,5 +64,6 @@ public class Breath extends AbstractAbility {
             }
 
         }
+        warlordsPlayer.subtractEnergy(energyCost);
     }
 }
