@@ -1,7 +1,9 @@
 package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.classes.ActionBarStats;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -22,7 +24,9 @@ public class HealingRain extends AbstractAbility {
     public void onActivate(Player player) {
         DamageHealCircle damageHealCircle = new DamageHealCircle(player, player.getTargetBlock((HashSet<Byte>) null, 15).getLocation(), 5, 10, minDamageHeal, maxDamageHeal, critChance, critMultiplier, name);
         damageHealCircle.spawn();
-        Warlords.getPlayer(player).subtractEnergy(energyCost);
+        WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
+        warlordsPlayer.getActionBarStats().add(new ActionBarStats(warlordsPlayer, "RAIN", 10));
+        warlordsPlayer.subtractEnergy(energyCost);
         Warlords.damageHealCircles.add(damageHealCircle);
 
         for (Player player1 : Bukkit.getOnlinePlayers()) {

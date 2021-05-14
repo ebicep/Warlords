@@ -15,11 +15,11 @@ public class Aquamancer extends AbstractMage {
                         "§7damage or healing for the target hit.\n" +
                         "§7Has an optimal range of §e40 §7blocks.", 40),
 
-                new Breath("Water Breath", 556, 752, 1, 60, 25, 175,
+                new Breath("Water Breath", 556, 752, 13, 60, 25, 175,
                         "§7Breathe water in a cone in front of you,\n" +
-                        "§7Knocking back enemies and restoring §a%dynamic.value%\n" +
-                        "§7- §a%dynamic.value% §7health to yourself and all\n" +
-                        "§7allies hit."),
+                                "§7Knocking back enemies and restoring §a%dynamic.value%\n" +
+                                "§7- §a%dynamic.value% §7health to yourself and all\n" +
+                                "§7allies hit."),
 
                 new TimeWarp(),
                 new ArcaneShield(),

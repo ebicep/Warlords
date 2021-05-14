@@ -1,5 +1,6 @@
 package com.ebicep.warlords;
 
+import com.ebicep.warlords.classes.ActionBarStats;
 import com.ebicep.warlords.classes.PlayerClass;
 import com.ebicep.warlords.classes.abilties.OrbsOfLife;
 import com.ebicep.warlords.classes.abilties.Soulbinding;
@@ -7,10 +8,7 @@ import com.ebicep.warlords.classes.abilties.Totem;
 import com.ebicep.warlords.util.CalculateSpeed;
 import com.ebicep.warlords.util.CustomScoreboard;
 import com.ebicep.warlords.util.Utils;
-import org.bukkit.Bukkit;
-import org.bukkit.DyeColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -19,7 +17,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.Dye;
-import org.bukkit.scoreboard.Team;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,10 +39,120 @@ public class WarlordsPlayer {
 
     private int kills = 0;
     private int assists = 0;
+    private List<WarlordsPlayer> hitBy = new ArrayList<>();
     private int deaths = 0;
     private float damage = 0;
     private float healing = 0;
     private float absorbed = 0;
+
+    private List<ActionBarStats> actionBarStats = new ArrayList<>();
+
+    public List<ActionBarStats> getActionBarStats() {
+        return actionBarStats;
+    }
+
+    public void displayActionBar() {
+        StringBuilder actionBarMessage = new StringBuilder(ChatColor.GOLD + "§lHP: ");
+        float healthRatio = (float) health / maxHealth;
+        if (healthRatio >= .75) {
+            actionBarMessage.append(ChatColor.GREEN);
+
+        } else if (healthRatio >= .25) {
+            actionBarMessage.append(ChatColor.YELLOW);
+
+        } else {
+            actionBarMessage.append(ChatColor.RED);
+
+        }
+        actionBarMessage.append("§l").append(health).append(ChatColor.GOLD).append("§l/§l").append(maxHealth).append("    ");
+        if (Warlords.game.getTeamBlue().contains(player)) {
+            actionBarMessage.append(ChatColor.BLUE).append("§lBLU TEAM  ");
+        } else if (Warlords.game.getTeamRed().contains(player)) {
+            actionBarMessage.append(ChatColor.RED).append("§lRED TEAM  ");
+        }
+        for (int i = 0; i < actionBarStats.size(); i++) {
+            ActionBarStats actionBarStat = actionBarStats.get(i);
+            actionBarMessage.append(ChatColor.GREEN).append(actionBarStat.getName()).append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append(actionBarStat.getTimeLeft()).append("  ");
+            if (actionBarStat.subtractTime()) {
+                actionBarStats.remove(i);
+                i--;
+            }
+        }
+        switch (spec.getClassName()) {
+            case "Paladin":
+                if (infusionDuration != 0) {
+                    actionBarMessage.append(ChatColor.GREEN).append("LINF").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append(infusionDuration).append(" ");
+                }
+                if (wrath != 0) {
+                    actionBarMessage.append(ChatColor.GREEN).append("WRAT").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append(wrath).append(" ");
+                }
+                if (presenceDuration != 0) {
+                    actionBarMessage.append(ChatColor.GREEN).append("INSP").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append(presenceDuration).append(" ");
+                }
+                break;
+            case "Warrior":
+                if (bloodLust != 0) {
+                    actionBarMessage.append(ChatColor.GREEN).append("BLOO").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append(bloodLust).append(" ");
+                }
+                if (berserkDuration != 0) {
+                    actionBarMessage.append(ChatColor.GREEN).append("BERS").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append(berserkDuration).append(" ");
+                }
+                if (intervene != 0) {
+                    actionBarMessage.append(ChatColor.GREEN).append("VENE").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append(intervene).append(" ");
+                }
+                if (lastStand != 0) {
+                    actionBarMessage.append(ChatColor.GREEN).append("LAST").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append(lastStand).append(" ");
+                }
+                if (orbOfLife != 0) {
+                    actionBarMessage.append(ChatColor.GREEN).append("ORBS").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append(orbOfLife).append(" ");
+                }
+                if (undyingArmy != 0) {
+                    actionBarMessage.append(ChatColor.GREEN).append("ARMY").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append(undyingArmy).append(" ");
+                }
+                break;
+            case "Mage":
+                // WARP/RAIN IN actionBarStats
+                if (arcaneShield - 1 > 0) {
+                    actionBarMessage.append(ChatColor.GREEN).append("ARCA").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append(arcaneShield - 1).append(" ");
+                }
+                if (iceBarrierDuration != 0) {
+                    actionBarMessage.append(ChatColor.GREEN).append("ICEB").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append((iceBarrierDuration + 10) / 20).append(" ");
+                }
+                if (inferno != 0) {
+                    actionBarMessage.append(ChatColor.GREEN).append("INFR").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append(inferno).append(" ");
+                }
+                break;
+            case "Shaman":
+                // TOTEMS IN actionBarStats
+                if (chainLightningCooldown != 0) {
+                    actionBarMessage.append(ChatColor.GREEN).append("CHAIN").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append(chainLightningCooldown).append(" ");
+                }
+                if (windfury != 0) {
+                    actionBarMessage.append(ChatColor.GREEN).append("FURY").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append(windfury).append(" ");
+                }
+                if (spiritLinkDuration != 0) {
+                    actionBarMessage.append(ChatColor.GREEN).append("LINK").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append(spiritLinkDuration).append(" ");
+                }
+                if (soulBindCooldown != 0) {
+                    actionBarMessage.append(ChatColor.GREEN).append("SOUL").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append(soulBindCooldown).append(" ");
+                }
+                if (repentance != 0) {
+                    actionBarMessage.append(ChatColor.GREEN).append("REPE").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append(repentance).append(" ");
+                }
+                break;
+        }
+        if (powerUpDamage != 0) {
+            actionBarMessage.append(ChatColor.GREEN).append("DMG").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append(powerUpDamage).append(" ");
+        }
+        if (powerUpEnergy != 0) {
+            actionBarMessage.append(ChatColor.GREEN).append("ENE").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append(powerUpEnergy).append(" ");
+        }
+        if (powerUpSpeed != 0) {
+            actionBarMessage.append(ChatColor.GREEN).append("SPE").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append(powerUpSpeed).append(" ");
+        }
+
+        Utils.sendActionbar(player, actionBarMessage.toString());
+    }
 
     private static final CalculateSpeed speed = new CalculateSpeed(.2825f); // .2825f is def + 13%
     public static float currentSpeed = speed.getCurrentSpeed();
@@ -462,19 +569,26 @@ public class WarlordsPlayer {
 
                 //Self heal
                 if (this == attacker) {
-                    if (this.health != this.maxHealth) {
-                        damageHealValue = Math.round(damageHealValue);
-                        if (isCrit) {
-                            player.sendMessage("§a\u00AB§7 Your " + ability + " critically healed you for §a§l" + (int) damageHealValue + "! §7health.");
-                        } else {
-                            player.sendMessage("§a\u00AB§7 Your " + ability + " healed for §a" + (int) damageHealValue + " §7health.");
-                        }
-
-                        addHealing(damageHealValue);
+                    System.out.println(this.health);
+                    System.out.println(this.maxHealth);
+                    if (this.health + damageHealValue > this.maxHealth) {
+                        damageHealValue = this.maxHealth - this.health;
                     }
+                    damageHealValue = Math.round(damageHealValue);
+                    if (isCrit) {
+                        player.sendMessage("§a\u00AB§7 Your " + ability + " critically healed you for §a§l" + (int) damageHealValue + "! §7health.");
+                    } else {
+                        player.sendMessage("§a\u00AB§7 Your " + ability + " healed for §a" + (int) damageHealValue + " §7health.");
+                    }
+
+                    addHealing(damageHealValue);
+
                 } else {
                     //DAMAGE
-                    if (damageHealValue < 0 && !Warlords.getInstance().game.onSameTeam(this, attacker)) {
+                    if (damageHealValue < 0 && !Warlords.game.onSameTeam(this, attacker)) {
+                        if (!hitBy.contains(attacker)) {
+                            hitBy.add(attacker);
+                        }
                         if (powerUpHeal) {
                             powerUpHeal = false;
                             player.sendMessage("heal cancelled");
@@ -558,11 +672,14 @@ public class WarlordsPlayer {
                     }
                     //HEALING
                     else {
-                        if (Warlords.getInstance().game.onSameTeam(this, attacker)) {
+                        if (Warlords.game.onSameTeam(this, attacker)) {
                             if (berserkerWounded != 0) {
                                 damageHealValue *= .65;
                             } else if (defenderWounded != 0) {
                                 damageHealValue *= .75;
+                            }
+                            if (this.health + damageHealValue > maxHealth) {
+                                damageHealValue = maxHealth - this.health;
                             }
                             if (isCrit) {
                                 player.sendMessage("§a\u00AB§7 " + attacker.getName() + "'s " + ability + " critically healed you for §a§l" + (int) damageHealValue + "! §7health.");
@@ -579,11 +696,11 @@ public class WarlordsPlayer {
                 }
                 //Prevent overheal
                 if (!(debt && damageHealValue < 0)) {
-                    if (this.health + damageHealValue > this.maxHealth && Warlords.getInstance().game.onSameTeam(this, attacker)) {
+                    if (this.health + damageHealValue > this.maxHealth && Warlords.game.onSameTeam(this, attacker)) {
                         //TODO fix this - chat message value with be different
                         this.health = maxHealth;
                     } else {
-                        if (!Warlords.getInstance().game.onSameTeam(this, attacker)) {
+                        if (!Warlords.game.onSameTeam(this, attacker)) {
                             this.health += Math.round(damageHealValue);
                         }
                         if (damageHealValue < 0) {
@@ -593,6 +710,12 @@ public class WarlordsPlayer {
                         }
 
                         if (this.health <= 0) {
+                            hitBy.remove(attacker);
+                            attacker.addKill();
+                            attacker.scoreboard.updateKillsAssists();
+                            this.addDeath();
+                            this.scoreboard.updateKillsAssists();
+                            this.player.setGameMode(GameMode.SPECTATOR);
                             // TODO: make killer/killed by name the team color instead of gray
                             player.sendMessage("§c\u00AB§7 You were killed by " + attacker.getName() + ".");
                             attacker.getPlayer().sendMessage("§a\u00BB§7 " + "You killed " + name + ".");
@@ -736,6 +859,7 @@ public class WarlordsPlayer {
         speed.setCurrentSpeed(breathSlownessDuration, -.0985f, 4); // -.0985f -20% on def speed
         currentSpeed = speed.getCurrentSpeed();
     }
+
     public int getBreathSlowness() {
         return breathSlownessDuration;
     }
@@ -746,6 +870,7 @@ public class WarlordsPlayer {
         speed.setCurrentSpeed(frostboltDuration, -.0785f, 2); // -.0565f -20% on def speed
         currentSpeed = speed.getCurrentSpeed();
     }
+
     public int getFrostbolt() {
         return frostboltDuration;
     }
@@ -955,6 +1080,7 @@ public class WarlordsPlayer {
         speed.setCurrentSpeed(iceBarrierDuration, 0, 12);
         currentSpeed = speed.getCurrentSpeed();
     }
+
     public int getIceBarrierSlowness() {
         return iceBarrierSlownessDuration;
     }
@@ -1071,6 +1197,10 @@ public class WarlordsPlayer {
         this.kills = kills;
     }
 
+    public void addKill() {
+        this.kills++;
+    }
+
     public int getAssists() {
         return assists;
     }
@@ -1079,12 +1209,28 @@ public class WarlordsPlayer {
         this.assists = assists;
     }
 
+    public void addAssist() {
+        this.assists++;
+    }
+
+    public List<WarlordsPlayer> getHitBy() {
+        return hitBy;
+    }
+
+    public void setHitBy(List<WarlordsPlayer> hitBy) {
+        this.hitBy = hitBy;
+    }
+
     public int getDeaths() {
         return deaths;
     }
 
     public void setDeaths(int deaths) {
         this.deaths = deaths;
+    }
+
+    public void addDeath() {
+        this.deaths++;
     }
 
     public float getDamage() {

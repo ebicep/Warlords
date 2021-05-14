@@ -16,11 +16,11 @@ public class Cryomancer extends AbstractMage {
                         "§7damage. Has an optimal range of §e30\n" +
                         "§7blocks.", 30),
 
-                new Breath("Freezing Breath", -422, -585, 6, 60, 20, 175,
+                new Breath("Freezing Breath", -422, -585, 7, 60, 20, 175,
                         "§7Breathe cold air in a cone in front\n" +
-                        "§7of you, dealing §c%dynamic.value% §7- §c%dynamic.value% §7damage\n" +
-                        "§7to all enemies hit and slowing them by\n" +
-                        "§e35% §7for §64 §7seconds."),
+                                "§7of you, dealing §c%dynamic.value% §7- §c%dynamic.value% §7damage\n" +
+                                "§7to all enemies hit and slowing them by\n" +
+                                "§e35% §7for §64 §7seconds."),
                 new TimeWarp(),
                 new ArcaneShield(),
                 new IceBarrier());

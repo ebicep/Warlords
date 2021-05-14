@@ -70,13 +70,17 @@ public class DamageHealCircle {
                 location.getWorld().playEffect(new Location(location.getWorld(), location.getX() + x, location.getY() + 2, location.getZ() + z), Effect.HAPPY_VILLAGER, 0);
 
             } else {
-                location.getWorld().playEffect(new Location(location.getWorld(), location.getX() + x, location.getY() + 1, location.getZ() + z), Effect.HAPPY_VILLAGER, 0);
+                if (name.contains("Rain")) {
+                    location.getWorld().playEffect(new Location(location.getWorld(), location.getX() + x, location.getY() + 2, location.getZ() + z), Effect.HAPPY_VILLAGER, 0);
+                } else {
+                    location.getWorld().playEffect(new Location(location.getWorld(), location.getX() + x, location.getY() + 1, location.getZ() + z), Effect.HAPPY_VILLAGER, 0);
+                }
             }
 
             if (name.contains("Rain")) {
                 // TODO: need to revise this + ring doesn't appear at all sometimes?
-                ParticleEffect.CLOUD.display(2, 0, 2, 0.01F, 1, (new Location(location.getWorld(), location.getX(), location.getY() + 6, location.getZ())), 500);
-                ParticleEffect.DRIP_WATER.display(2, 0, 2, 0.01F, 1, (new Location(location.getWorld(), location.getX(), location.getY() + 6, location.getZ())), 500);
+                ParticleEffect.CLOUD.display(2, 0, 2, 0.01F, 1, (new Location(location.getWorld(), location.getX(), location.getY() + 7, location.getZ())), 500);
+                ParticleEffect.DRIP_WATER.display(2, 0, 2, 0.01F, 1, (new Location(location.getWorld(), location.getX(), location.getY() + 7, location.getZ())), 500);
             }
         }
     }

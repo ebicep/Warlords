@@ -68,6 +68,27 @@ public class WarlordsEvents implements Listener {
         player.sendMessage(ChatColor.GRAY + "placerholer optional extras idk");
         player.sendMessage(" ");
 
+        //readds player
+        //first to warlords players
+        for (Player oldPlayer : Warlords.getPlayers().keySet()) {
+            if (oldPlayer.getUniqueId().equals(player.getUniqueId())) {
+                Warlords.getPlayers().put(player, Warlords.getPlayer(oldPlayer));
+                Warlords.getPlayer(player).setPlayer(player);
+                Warlords.getPlayer(player).setUuid(player.getUniqueId());
+                //then to team players
+                if (Warlords.game.getTeamBlue().contains(oldPlayer)) {
+                    Warlords.game.getTeamBlue().remove(oldPlayer);
+                    Warlords.game.getTeamBlue().add(player);
+                } else if (Warlords.game.getTeamRed().contains(oldPlayer)) {
+                    Warlords.game.getTeamRed().remove(oldPlayer);
+                    Warlords.game.getTeamRed().add(player);
+                }
+
+                Warlords.getPlayers().remove(oldPlayer);
+                break;
+            }
+        }
+
     }
 
     @EventHandler

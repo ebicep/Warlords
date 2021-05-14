@@ -1,7 +1,9 @@
 package com.ebicep.warlords;
 
+import com.ebicep.BountifulAPI.BountifulAPI;
 import com.ebicep.customentities.CustomFallingBlock;
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.classes.ActionBarStats;
 import com.ebicep.warlords.classes.abilties.Projectile;
 import com.ebicep.warlords.classes.abilties.*;
 import com.ebicep.warlords.commands.Commands;
@@ -126,7 +128,8 @@ public class Warlords extends JavaPlugin {
 
     private int counter = 0;
 
-    public Game game;
+    //TODO remove static EVERYWHERE FUCK ME
+    public static Game game;
 
     @Override
     public void onEnable() {
@@ -135,10 +138,10 @@ public class Warlords extends JavaPlugin {
         Commands commands = new Commands();
         getCommand("start").setExecutor(commands);
         getCommand("endgame").setExecutor(commands);
-        this.game = new Game();
+        game = new Game();
         startTask();
 
-        getServer().getScheduler().runTaskTimer(this, this.game, 1, 1);
+        getServer().getScheduler().runTaskTimer(this, game, 1, 1);
 
         getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords]: Plugin is enabled");
     }
@@ -286,6 +289,7 @@ public class Warlords extends JavaPlugin {
                                     }
                                     customProjectiles.remove(i);
                                     i--;
+                                    break;
                                 }
                             }
                         }
@@ -296,7 +300,9 @@ public class Warlords extends JavaPlugin {
                         ParticleEffect.CLOUD.display(0, 0, 0, 0F, 1, location, 500);
                         //ParticleEffect.FLAME.display(0, 0, 0, 0.1F, 3, location, 500);
                         List<Entity> entities = (List<Entity>) location.getWorld().getNearbyEntities(location, 5, 5, 5);
+                        System.out.println(entities);
                         entities = Utils.filterOutTeammates(entities, customProjectile.getShooter());
+                        System.out.println(entities);
                         for (Entity entity : entities) {
                             if (entity instanceof Player && entity != customProjectile.getShooter()) {
                                 if (entity.getLocation().distanceSquared(location) < 2 * 2) {
@@ -316,6 +322,7 @@ public class Warlords extends JavaPlugin {
                                     );
                                     List<Entity> near = victim.getNearbyEntities(3.5D, 3.5D, 3.5D);
                                     near.remove(customProjectile.getShooter());
+                                    System.out.println(near);
                                     for (Entity nearEntity : near) {
                                         if (nearEntity instanceof Player) {
                                             getPlayer((Player) nearEntity).addHealth(
@@ -330,6 +337,7 @@ public class Warlords extends JavaPlugin {
                                     }
                                     customProjectiles.remove(i);
                                     i--;
+                                    break;
                                 }
                             }
                         }
@@ -346,6 +354,7 @@ public class Warlords extends JavaPlugin {
                         for (Entity entity : entities) {
                             if (entity instanceof Player && entity != customProjectile.getShooter()) {
                                 if (entity.getLocation().distanceSquared(location) < 2 * 2) {
+                                    hitPlayer = true;
                                     ParticleEffect.HEART.display(1.5F, 1.5F, 1.5F, 0.2F, 2, entity.getLocation().add(0, 1, 0), 500);
                                     ParticleEffect.VILLAGER_HAPPY.display(1.5F, 1.5F, 1.5F, 0.2F, 3, entity.getLocation().add(0, 1, 0), 500);
                                     Player victim = (Player) entity;
@@ -397,6 +406,7 @@ public class Warlords extends JavaPlugin {
                                     }
                                     customProjectiles.remove(i);
                                     i--;
+                                    break;
                                 }
                             }
                         }
@@ -452,6 +462,7 @@ public class Warlords extends JavaPlugin {
 
                                     customProjectiles.remove(i);
                                     i--;
+                                    break;
                                 }
                             }
                         }
@@ -467,8 +478,8 @@ public class Warlords extends JavaPlugin {
                         }
                         List<Entity> near = (List<Entity>) location.getWorld().getNearbyEntities(location, 3.5, 3.5, 3.5);
                         for (Entity nearEntity : near) {
-                            if (nearEntity instanceof Player && nearEntity != customProjectile.getShooter()) {
-                                if (customProjectile.getBall().getName().contains("Flame") && game.onSameTeam((Player) nearEntity, customProjectile.getShooter())) {
+                            if (nearEntity instanceof Player) {
+                                if (customProjectile.getBall().getName().contains("Flame") && game.onSameTeam((Player) nearEntity, customProjectile.getShooter()) && nearEntity != customProjectile.getShooter()) {
                                     getPlayer((Player) nearEntity).addHealth(
                                             getPlayer(customProjectile.getShooter()),
                                             customProjectile.getBall().getName(),
@@ -562,6 +573,9 @@ public class Warlords extends JavaPlugin {
                 for (WarlordsPlayer warlordsPlayer : players.values()) {
                     Player player = warlordsPlayer.getPlayer();
                     Location location = player.getLocation();
+                    //ACTION BAR
+                    //BountifulAPI.sendActionText(player, "TEST");
+
 
                     //to make it look like the cooldown activates super fast but isnt really fast since it updates next second tick
                     if (warlordsPlayer.getSpec().getRed().getCurrentCooldown() == warlordsPlayer.getSpec().getRed().getCooldown()) {
@@ -588,6 +602,11 @@ public class Warlords extends JavaPlugin {
                     //respawn
                     if (warlordsPlayer.getRespawnTimer() == 0) {
                         warlordsPlayer.setRespawnTimer(-1);
+                        if (game.getTeamBlue().contains(warlordsPlayer.getPlayer())) {
+                            warlordsPlayer.getPlayer().teleport(game.getMap().getBlueRespawn());
+                        } else if (game.getTeamRed().contains(warlordsPlayer.getPlayer())) {
+                            warlordsPlayer.getPlayer().teleport(game.getMap().getRedRespawn());
+                        }
                         warlordsPlayer.respawn();
                         player.setGameMode(GameMode.SURVIVAL);
                     }
@@ -599,10 +618,16 @@ public class Warlords extends JavaPlugin {
                         warlordsPlayer.setUndyingArmy(0);
                     }
                     if (newHealth <= 0 && !warlordsPlayer.isUndyingArmyDead()) {
-                        //TODO tp to spawn point
-                        player.setGameMode(GameMode.SPECTATOR);
                         warlordsPlayer.respawn();
-                        warlordsPlayer.setRespawnTimer(5);
+                        player.setGameMode(GameMode.SPECTATOR);
+                        //giving out assists
+                        for (WarlordsPlayer assisted : warlordsPlayer.getHitBy()) {
+                            assisted.addAssist();
+                            assisted.getScoreboard().updateKillsAssists();
+                        }
+                        //respawn timer
+                        Bukkit.broadcastMessage("" + game.getTimer() % 60 % 12);
+                        warlordsPlayer.setRespawnTimer(game.getTimer() % 60 % 12);
                     } else {
                         player.setHealth(newHealth);
                     }
@@ -636,7 +661,7 @@ public class Warlords extends JavaPlugin {
                         playersInside.removeAll(((RecklessCharge) warlordsPlayer.getSpec().getRed()).getPlayersHit());
                         playersInside = Utils.filterOutTeammates(playersInside, player);
                         for (Entity entity : playersInside) {
-                            if (entity instanceof Player) {
+                            if (entity instanceof Player && ((Player) entity).getGameMode() != GameMode.SPECTATOR) {
                                 //TODO add 100 slowness
                                 ((RecklessCharge) warlordsPlayer.getSpec().getRed()).getPlayersHit().add((Player) entity);
                                 Warlords.getPlayer((Player) entity).addHealth(warlordsPlayer, warlordsPlayer.getSpec().getRed().getName(), warlordsPlayer.getSpec().getRed().getMinDamageHeal(), warlordsPlayer.getSpec().getRed().getMaxDamageHeal(), warlordsPlayer.getSpec().getRed().getCritChance(), warlordsPlayer.getSpec().getRed().getCritMultiplier());
@@ -683,7 +708,7 @@ public class Warlords extends JavaPlugin {
                         bolt.getArmorStand().teleport(bolt.getLocation().add(bolt.getTeleportDirection().multiply(1.1)), PlayerTeleportEvent.TeleportCause.PLUGIN);
                         //hitting player
                         //TODO fix fucked up hit detection
-                        if (bolt.getShooter() != warlordsPlayer && !game.onSameTeam(player, bolt.getShooter().getPlayer()) && location.distanceSquared(new Location(location.getWorld(), bolt.getLocation().getX(), bolt.getLocation().getY(), bolt.getLocation().getZ()).add(0, 2, 0)) < 2.5 * 2.5) {
+                        if (bolt.getShooter() != warlordsPlayer && player.getGameMode() != GameMode.SPECTATOR && !game.onSameTeam(player, bolt.getShooter().getPlayer()) && location.distanceSquared(new Location(location.getWorld(), bolt.getLocation().getX(), bolt.getLocation().getY(), bolt.getLocation().getZ()).add(0, 2, 0)) < 2.5 * 2.5) {
                             warlordsPlayer.addHealth(bolt.getShooter(), bolt.getLightningBolt().getName(), bolt.getLightningBolt().getMinDamageHeal(), bolt.getLightningBolt().getMaxDamageHeal(), bolt.getLightningBolt().getCritChance(), bolt.getLightningBolt().getCritMultiplier());
                         }
 
@@ -800,11 +825,7 @@ public class Warlords extends JavaPlugin {
                 // PARTICLES - FOUR TICK MODULE
                 if (counter % 4 == 0) {
                     for (WarlordsPlayer warlordsPlayer : players.values()) {
-                        //health above heads
-                        warlordsPlayer.getScoreboard().updateHealths();
-
                         Player player = warlordsPlayer.getPlayer();
-
 
                         // Arcane Shield
                         if (warlordsPlayer.getArcaneShield() != 0) {
@@ -854,6 +875,9 @@ public class Warlords extends JavaPlugin {
                 // PARTICLES - TWO TICK MODULE
                 if (counter % 2 == 0) {
                     for (WarlordsPlayer warlordsPlayer : players.values()) {
+                        //UPDATES SCOREBOARD HEALTHS
+                        warlordsPlayer.getScoreboard().updateHealths();
+
                         Player player = warlordsPlayer.getPlayer();
 
                         // Inferno
@@ -925,7 +949,7 @@ public class Warlords extends JavaPlugin {
                                     List<Entity> onSameBlock = (List<Entity>) location.getWorld().getNearbyEntities(location, .6, 1.5, .6);
                                     onSameBlock = Utils.filterOutTeammates(onSameBlock, user.getPlayer());
                                     for (Entity entity : onSameBlock) {
-                                        if (entity instanceof Player)
+                                        if (entity instanceof Player && ((Player) entity).getGameMode() != GameMode.SPECTATOR)
                                             Warlords.getPlayer((Player) entity).addHealth(user, spikes.get(i).getName(), spikes.get(i).getMinDamageHeal(), spikes.get(i).getMaxDamageHeal(), spikes.get(i).getCritChance(), spikes.get(i).getCritMultiplier());
                                     }
                                     Warlords.getPlayer(player).addHealth(user, spikes.get(i).getName(), spikes.get(i).getMinDamageHeal(), spikes.get(i).getMaxDamageHeal(), spikes.get(i).getCritChance(), spikes.get(i).getCritMultiplier());
@@ -969,12 +993,16 @@ public class Warlords extends JavaPlugin {
                 if (counter % 20 == 0) {
                     for (WarlordsPlayer warlordsPlayer : players.values()) {
                         warlordsPlayer.getScoreboard().updateTime();
+                        //ACTION BAR
+                        warlordsPlayer.displayActionBar();
 
                         Player player = warlordsPlayer.getPlayer();
                         //REGEN
                         if (warlordsPlayer.getRegenTimer() != -1) {
                             warlordsPlayer.setRegenTimer(warlordsPlayer.getRegenTimer() - 1);
-                            warlordsPlayer.setRegenTimer(warlordsPlayer.getRegenTimer() - 1);
+                            if (warlordsPlayer.getRegenTimer() == 0) {
+                                warlordsPlayer.getHitBy().clear();
+                            }
                         } else {
                             int healthToAdd = (int) (warlordsPlayer.getMaxHealth() / 55.3);
                             if (warlordsPlayer.getHealth() + healthToAdd >= warlordsPlayer.getMaxHealth()) {
@@ -987,6 +1015,7 @@ public class Warlords extends JavaPlugin {
                         //RESPAWN
                         if (warlordsPlayer.getRespawnTimer() != -1) {
                             warlordsPlayer.setRespawnTimer(warlordsPlayer.getRespawnTimer() - 1);
+                            warlordsPlayer.getPlayer().sendMessage("RESPAWN: " + warlordsPlayer.getRespawnTimer());
                         }
                         //ABILITY COOLDOWN
                         if (warlordsPlayer.getSpec().getRed().getCurrentCooldown() != 0 && warlordsPlayer.getSpec().getRed().getCurrentCooldown() != warlordsPlayer.getSpec().getRed().getCooldown()) {
@@ -1135,7 +1164,9 @@ public class Warlords extends JavaPlugin {
                                                 warlordsPlayer.addHealth(Warlords.getPlayer(damageHealCircle.getPlayer()), damageHealCircle.getName(), damageHealCircle.getMinDamage(), damageHealCircle.getMaxDamage(), damageHealCircle.getCritChance(), damageHealCircle.getCritMultiplier());
                                             }
                                         } else {
-                                            warlordsPlayer.addHealth(Warlords.getPlayer(damageHealCircle.getPlayer()), damageHealCircle.getName(), damageHealCircle.getMinDamage(), damageHealCircle.getMaxDamage(), damageHealCircle.getCritChance(), damageHealCircle.getCritMultiplier());
+                                            if (!damageHealCircle.getName().contains("Healing")) {
+                                                warlordsPlayer.addHealth(Warlords.getPlayer(damageHealCircle.getPlayer()), damageHealCircle.getName(), damageHealCircle.getMinDamage(), damageHealCircle.getMaxDamage(), damageHealCircle.getCritChance(), damageHealCircle.getCritMultiplier());
+                                            }
                                         }
                                     }
 
@@ -1171,6 +1202,7 @@ public class Warlords extends JavaPlugin {
                             if (totem.getOwner().getSpec().getOrange().getName().contains("Death")) {
                                 if (totem.getSecondsLeft() == 0) {
                                     ((Totem.TotemSpiritguard) totem.getOwner().getSpec().getOrange()).setDebt(6);
+                                    totem.getOwner().getActionBarStats().add(new ActionBarStats(totem.getOwner(), "DEBT", 6));
                                 }
                             }
                         } else {
@@ -1193,7 +1225,6 @@ public class Warlords extends JavaPlugin {
                                 totems.remove(i);
                                 i--;
                             } else if (totem.getOwner().getSpec().getOrange().getName().contains("Death")) {
-                                //TODO check teammates for ALL THIS
                                 Totem.TotemSpiritguard totemSpiritguard = ((Totem.TotemSpiritguard) totem.getOwner().getSpec().getOrange());
                                 if (totemSpiritguard.getDebt() != 0) {
                                     Bukkit.broadcastMessage("" + totemSpiritguard.getDelayedDamage());

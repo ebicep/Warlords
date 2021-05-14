@@ -3,6 +3,7 @@ package com.ebicep.warlords.classes.abilties;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.classes.ActionBarStats;
 import net.minecraft.server.v1_8_R3.EntityArmorStand;
 import net.minecraft.server.v1_8_R3.World;
 import org.bukkit.Bukkit;
@@ -85,6 +86,8 @@ public class Totem extends EntityArmorStand {
             Totem capacitorTotem = new Totem(((CraftWorld) player.getWorld()).getHandle(), warlordsPlayer, totemStand, 8);
             Warlords.totems.add(capacitorTotem);
 
+            warlordsPlayer.getActionBarStats().add(new ActionBarStats(warlordsPlayer, "TOTEM", capacitorTotem.getSecondsLeft()));
+
             for (Player player1 : Bukkit.getOnlinePlayers()) {
                 player1.playSound(player.getLocation(), "shaman.totem.activation", 1, 1);
             }
@@ -124,6 +127,8 @@ public class Totem extends EntityArmorStand {
 
             Totem deathsDebtTotem = new Totem(((CraftWorld) player.getWorld()).getHandle(), warlordsPlayer, totemStand, 4 + (4 * (int) Math.round((double) warlordsPlayer.getHealth() / warlordsPlayer.getMaxHealth())));
             Warlords.totems.add(deathsDebtTotem);
+
+            warlordsPlayer.getActionBarStats().add(new ActionBarStats(warlordsPlayer, "RESP", deathsDebtTotem.getSecondsLeft()));
 
             for (Player player1 : Bukkit.getOnlinePlayers()) {
                 player1.playSound(player.getLocation(), "shaman.earthlivingweapon.impact", 1, 2);
@@ -177,6 +182,8 @@ public class Totem extends EntityArmorStand {
 
             Totem healingTotem = new Totem(((CraftWorld) player.getWorld()).getHandle(), warlordsPlayer, totemStand, 5);
             Warlords.totems.add(healingTotem);
+
+            warlordsPlayer.getActionBarStats().add(new ActionBarStats(warlordsPlayer, "TOTEM", healingTotem.getSecondsLeft()));
 
             for (Player player1 : Bukkit.getOnlinePlayers()) {
                 player1.playSound(player.getLocation(), "shaman.totem.activation", 1, 1);

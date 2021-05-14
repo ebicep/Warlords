@@ -5,10 +5,14 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Iterator;
 
+import com.ebicep.warlords.Warlords;
+import net.minecraft.server.v1_8_R3.ChatComponentText;
+import net.minecraft.server.v1_8_R3.PacketPlayOutChat;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -156,26 +160,40 @@ public class BountifulAPI extends JavaPlugin implements Listener {
         }
     }
 
+//    public static void sendActionText(Player player, String message){
+//        PacketPlayOutChat packet = new PacketPlayOutChat(new ChatComponentText(message), (byte)2);
+//        ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
+//    }
+
     public static void sendActionBar(Player player, String message) {
+        System.out.println(player);
+        System.out.println(message);
         ActionBarMessageEvent actionBarMessageEvent = new ActionBarMessageEvent(player, message);
         Bukkit.getPluginManager().callEvent(actionBarMessageEvent);
         if (!actionBarMessageEvent.isCancelled()) {
             String nmsver = Bukkit.getServer().getClass().getPackage().getName();
             nmsver = nmsver.substring(nmsver.lastIndexOf(".") + 1);
-
+            //v1_8_R3
             try {
                 Class<?> c1 = Class.forName("org.bukkit.craftbukkit." + nmsver + ".entity.CraftPlayer");
+                //class org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer
                 Object p = c1.cast(player);
-                Object ppoc = null;
+                //CraftPlayer{name=sumSmash}
+                Object ppoc;
                 Class<?> c4 = Class.forName("net.minecraft.server." + nmsver + ".PacketPlayOutChat");
+                //class net.minecraft.server.v1_8_R3.PacketPlayOutChat
                 Class<?> c5 = Class.forName("net.minecraft.server." + nmsver + ".Packet");
+                //interface net.minecraft.server.v1_8_R3.Packet
                 Class c2;
                 Class c3;
                 Object pc;
                 if (!nmsver.equalsIgnoreCase("v1_8_R1") && nmsver.startsWith("v1_8_")) {
                     c2 = Class.forName("net.minecraft.server." + nmsver + ".ChatComponentText");
+                    //class net.minecraft.server.v1_8_R3.ChatComponentText
                     c3 = Class.forName("net.minecraft.server." + nmsver + ".IChatBaseComponent");
+                    //interface net.minecraft.server.v1_8_R3.IChatBaseComponent
                     Object o = c2.getConstructor(String.class).newInstance(message);
+                    //TextComponent{text='ARCA: 6', siblings=[], style=Style{hasParent=false, color=null, bold=null, italic=null, underlined=null, obfuscated=null, clickEvent=null, hoverEvent=null, insertion=null}}
                     ppoc = c4.getConstructor(c3, Byte.TYPE).newInstance(o, 2);
                 } else {
                     c2 = Class.forName("net.minecraft.server." + nmsver + ".ChatSerializer");
@@ -205,7 +223,7 @@ public class BountifulAPI extends JavaPlugin implements Listener {
                 public void run() {
                     BountifulAPI.sendActionBar(player, "");
                 }
-            }).runTaskLater(bountifulAPI, (long) (duration + 1));
+            }).runTaskLater(Warlords.getInstance(), (long) (duration + 1));
         }
 
         while (duration > 60) {
@@ -215,7 +233,7 @@ public class BountifulAPI extends JavaPlugin implements Listener {
                 public void run() {
                     BountifulAPI.sendActionBar(player, message);
                 }
-            }).runTaskLater(bountifulAPI, (long) sched);
+            }).runTaskLater(Warlords.getInstance(), (long) sched);
         }
 
     }
