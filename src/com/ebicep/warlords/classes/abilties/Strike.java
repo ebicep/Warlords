@@ -28,7 +28,7 @@ public class Strike extends AbstractAbility {
                 Player nearPlayer = (Player) entity;
                 //TODO check if you should just remove distance because near gets nearest already
                 double distance = player.getLocation().distanceSquared(nearPlayer.getLocation());
-                if (nearPlayer.getGameMode() != GameMode.SPECTATOR && Utils.getLookingAt(player, nearPlayer) && distance < 3.3 * 3.3) {
+                if (nearPlayer.getGameMode() != GameMode.SPECTATOR && Utils.getLookingAt(player, nearPlayer) && distance < 3.6 * 3.6) {
                     WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
                     warlordsPlayer.subtractEnergy(energyCost);
 
@@ -50,7 +50,7 @@ public class Strike extends AbstractAbility {
                                     if (nearEntity instanceof Player) {
                                         Player nearNearPlayer = (Player) nearEntity;
                                         double distanceNearPlayer = nearPlayer.getLocation().distanceSquared(nearNearPlayer.getLocation());
-                                        if (nearNearPlayer.getGameMode() != GameMode.SPECTATOR && distanceNearPlayer < 3.3 * 3.3) {
+                                        if (nearNearPlayer.getGameMode() != GameMode.SPECTATOR && distanceNearPlayer < 3.6 * 3.6) {
                                             System.out.println("NEAR NEAR HIT " + nearNearPlayer);
                                             //checking if player is in consecrate
                                             boolean inConsecrate = false;

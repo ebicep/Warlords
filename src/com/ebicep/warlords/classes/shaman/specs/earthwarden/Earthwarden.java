@@ -18,7 +18,7 @@ public class Earthwarden extends AbstractShaman {
                                 "§7jumps to §c2 §7additional targets within\n" +
                                 "§e10 §7blocks. Each time the lightning jumps\n" +
                                 "§7the healing is reduced by §c10%§7.\n" +
-                                "''\n" +
+                                "\n" +
                                 "§7Each ally healed reduces the cooldown of\n" +
                                 "§7Boulder by §62 §7seconds."),
 
