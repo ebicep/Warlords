@@ -43,7 +43,7 @@ public class LastStand extends AbstractAbility {
         }
         warlordsPlayer.subtractEnergy(energyCost);
 
-        for (Player player1 : Bukkit.getOnlinePlayers()) {
+        for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "warrior.laststand.activation", 1, 1);
         }
     }

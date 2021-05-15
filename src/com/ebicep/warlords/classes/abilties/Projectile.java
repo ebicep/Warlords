@@ -32,19 +32,20 @@ public class Projectile extends AbstractAbility {
             for (Player player1 : Bukkit.getOnlinePlayers()) {
                 player1.playSound(player.getLocation(), "mage.fireball.activation", 1, 1);
             }
+
         } else if (customProjectile.getBall().getName().contains("Frost")) {
             //TODO - Why is this here?
-            WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
+            /*WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
             List<Entity> near = player.getNearbyEntities(7.0D, 3.5D, 7.0D);
             for (Entity entity : near) {
                 if (entity instanceof Player) {
                     Player nearPlayer = (Player) entity;
                     if (warlordsPlayer.getFrostbolt() == 0) {
-                        nearPlayer.setWalkSpeed(WarlordsPlayer.currentSpeed);
-                        warlordsPlayer.setFrostbolt(2 * 20 - 10);
+                        //nearPlayer.setWalkSpeed(WarlordsPlayer.currentSpeed);
+                        //warlordsPlayer.setFrostbolt(2 * 20 - 10);
                     }
                 }
-            }
+            }*/
             for (Player player1 : Bukkit.getOnlinePlayers()) {
                 player1.playSound(player.getLocation(), "mage.frostbolt.activation", 1, 1);
             }

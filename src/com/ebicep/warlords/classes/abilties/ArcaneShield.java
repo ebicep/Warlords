@@ -26,7 +26,7 @@ public class ArcaneShield extends AbstractAbility {
         warlordsPlayer.setArcaneShield(6);
         warlordsPlayer.setArcaneShieldHealth((int) (warlordsPlayer.getMaxHealth() * .5));
 
-        for (Player player1 : Bukkit.getOnlinePlayers()) {
+        for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "mage.arcaneshield.activation", 1, 1);
         }
     }

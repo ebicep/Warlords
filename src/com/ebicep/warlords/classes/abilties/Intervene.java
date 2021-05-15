@@ -46,7 +46,7 @@ public class Intervene extends AbstractAbility {
             }
         }
 
-        for (Player player1 : Bukkit.getOnlinePlayers()) {
+        for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "warrior.intervene.impact", 1, 1);
         }
     }

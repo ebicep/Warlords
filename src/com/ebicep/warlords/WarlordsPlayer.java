@@ -5,6 +5,8 @@ import com.ebicep.warlords.classes.PlayerClass;
 import com.ebicep.warlords.classes.abilties.OrbsOfLife;
 import com.ebicep.warlords.classes.abilties.Soulbinding;
 import com.ebicep.warlords.classes.abilties.Totem;
+import com.ebicep.warlords.events.WarlordsDeathEvent;
+import com.ebicep.warlords.maps.FlagManager;
 import com.ebicep.warlords.util.CalculateSpeed;
 import com.ebicep.warlords.util.CustomScoreboard;
 import com.ebicep.warlords.util.Utils;
@@ -21,6 +23,7 @@ import org.bukkit.material.Dye;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import org.bukkit.metadata.MetadataValue;
 
 public class WarlordsPlayer {
 
@@ -482,17 +485,18 @@ public class WarlordsPlayer {
                 critMultiplier += attacker.getSpec().getOrange().getCritMultiplier();
             }
             //crit
-            System.out.println(min);
-            System.out.println(max);
             float damageHealValue = (int) ((Math.random() * (max - min)) + min);
-            System.out.println("BEFORE CRIT: " + damageHealValue);
             int crit = (int) ((Math.random() * (100)));
             boolean isCrit = false;
             if (crit <= critChance) {
                 isCrit = true;
                 damageHealValue *= critMultiplier / 100f;
             }
-            System.out.println("AFTER CRITL: " + damageHealValue);
+			// Flag carries gets more damage
+			for(MetadataValue metadata : this.getPlayer().getMetadata(FlagManager.FLAG_DAMAGE_MULTIPLIER)) {
+				damageHealValue *= metadata.asDouble();
+			}
+			
             //TODO check if totaldmgreduc works
             //reduction begining with base resistance
             float totalReduction = 1;
@@ -567,8 +571,6 @@ public class WarlordsPlayer {
                     Bukkit.broadcastMessage("" + arcaneShieldHealth);
                 }
             } else {
-                System.out.println("--- " + damageHealValue);
-
                 damageHealValue *= totalReduction;
                 System.out.println(attacker.getName() + " hit " + name + " for " + damageHealValue);
                 boolean debt = false;
@@ -578,7 +580,6 @@ public class WarlordsPlayer {
                     System.out.println(this.health);
                     System.out.println(this.maxHealth);
                     if (this.health + damageHealValue > this.maxHealth) {
-                        System.out.println("HEALING AT MAX");
                         damageHealValue = this.maxHealth - this.health;
                     }
                     damageHealValue = Math.round(damageHealValue);
@@ -621,18 +622,16 @@ public class WarlordsPlayer {
                                 damageHealValue *= .5;
                             } else {
                                 damageHealValue *= .4;
+                                //TODO multiple last stands? lastest person that last stands will over ride other dude
+                                if (lastStandedBy.getLastStand() != 0) {
+                                    this.absorbed += damageHealValue * -1;
+                                    attacker.setAbsorbed((int) (attacker.getAbsorbed() + damageHealValue * -1));
+                                    if (isCrit)
+                                        lastStandedBy.addHealth(lastStandedBy, "Last Stand", (int) (damageHealValue * -1), (int) (damageHealValue * -1), 100, 100);
+                                    else
+                                        lastStandedBy.addHealth(lastStandedBy, "Last Stand", (int) (damageHealValue * 1), (int) (damageHealValue * -1), -1, 100);
+                                }
                             }
-                            //TODO multiple last stands? lastest person that last stands will over ride other dude
-                            if (lastStandedBy.getLastStand() != 0) {
-                                attacker.setAbsorbed((int) (attacker.getAbsorbed() + damageHealValue * -1));
-                                System.out.println("===" + -damageHealValue);
-                                float healValue = damageHealValue * -1;
-                                if (isCrit)
-                                    lastStandedBy.addHealth(lastStandedBy, "Last Stand", (int) (healValue), (int) (healValue), 100, 100);
-                                else
-                                    lastStandedBy.addHealth(lastStandedBy, "Last Stand", (int) (healValue), (int) (healValue), -1, 100);
-                            }
-
                             addAbsorbed(-damageHealValue);
                         }
 
@@ -725,14 +724,17 @@ public class WarlordsPlayer {
                             this.addDeath();
                             this.scoreboard.updateKillsAssists();
                             this.player.setGameMode(GameMode.SPECTATOR);
+							Bukkit.getPluginManager().callEvent(new WarlordsDeathEvent(this));
                             // TODO: make killer/killed by name the team color instead of gray
                             player.sendMessage("§c\u00AB§7 You were killed by " + attacker.getName() + ".");
                             attacker.getPlayer().sendMessage("§a\u00BB§7 " + "You killed " + name + ".");
 
                             if (scoreboard.getBlueTeam().contains(name)) {
                                 Warlords.redKills++;
+								Warlords.game.addRedPoints(SCORE_KILL_POINTS);
                             } else {
                                 Warlords.blueKills++;
+								Warlords.game.addBluePoints(SCORE_KILL_POINTS);
                             }
 
                             for (WarlordsPlayer value : Warlords.getPlayers().values()) {
@@ -778,6 +780,7 @@ public class WarlordsPlayer {
             }
         }
     }
+	private static final int SCORE_KILL_POINTS = 5;
 
     public void respawn() {
         this.health = this.maxHealth;

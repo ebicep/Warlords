@@ -22,7 +22,7 @@ public class BloodLust extends AbstractAbility {
         warlordsPlayer.subtractEnergy(energyCost);
         warlordsPlayer.setBloodLust(15);
 
-        for (Player player1 : Bukkit.getOnlinePlayers()) {
+        for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "warrior.bloodlust.activation", 1, 1);
         }
     }

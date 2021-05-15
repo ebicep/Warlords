@@ -38,7 +38,7 @@ public class GroundSlam extends AbstractAbility {
         }
         Warlords.getGroundSlamArray().add(this);
 
-        for (Player player1 : Bukkit.getOnlinePlayers()) {
+        for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "warrior.groundslam.activation", 1, 1);
         }
     }

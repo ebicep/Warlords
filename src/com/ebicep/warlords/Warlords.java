@@ -342,7 +342,7 @@ public class Warlords extends JavaPlugin {
                             }
                         }
                     } else if (customProjectile.getBall().getName().contains("Water")) {
-                        location.add(customProjectile.getDirection().clone().multiply(1.6));
+                        location.add(customProjectile.getDirection().clone().multiply(2));
                         location.add(0, 1.5, 0);
                         //TODO add damage
                         ParticleEffect.DRIP_WATER.display(0.3f, 0.3f, 0.3f, 0.1F, 2, location, 500);
@@ -903,6 +903,21 @@ public class Warlords extends JavaPlugin {
                             location.add(0, 2.1, 0);
                             ParticleEffect.VILLAGER_ANGRY.display(0, 0, 0, 0.1F, 1, location, 500);
                         }
+
+                        // Infusion
+                        if (warlordsPlayer.getInfusion() != 0) {
+                            Location location = player.getLocation();
+                            location.add(0, 1.5, 0);
+                            ParticleEffect.BLOCK_DUST.display(0.3F, 0.3F, 0.3F, 0.05F, 6, location, 500);
+                        }
+
+                        // Presence
+                        if (warlordsPlayer.getPresence() != 0) {
+                            Location location = player.getLocation();
+                            location.add(0, 1.5, 0);
+                            ParticleEffect.SMOKE_NORMAL.display(0.3F, 0.3F, 0.3F, 0.02F, 1, location, 500);
+                            ParticleEffect.BLOCK_DUST.display(0.3F, 0.3F, 0.3F, 0.02F, 3, location, 500);
+                        }
                     }
                 }
 
@@ -1281,7 +1296,7 @@ public class Warlords extends JavaPlugin {
                         } else {
                             WarlordsPlayer player = timeWarpPlayer.getWarlordsPlayer();
                             player.addHealth(player, "Time Warp", (int) (player.getMaxHealth() * .3), (int) (player.getMaxHealth() * .3), -1, 100);
-                            for (Player player1 : Bukkit.getOnlinePlayers()) {
+                            for (Player player1 : player.getPlayer().getWorld().getPlayers()) {
                                 player1.playSound(timeWarpPlayer.getLocation(), "mage.timewarp.teleport", 1, 1);
                             }
                             player.getPlayer().teleport(timeWarpPlayer.getLocation());

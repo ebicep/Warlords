@@ -56,7 +56,7 @@ public class RecklessCharge extends AbstractAbility {
         // set x/z vel to 0
         // charged false
 
-        for (Player player1 : Bukkit.getOnlinePlayers()) {
+        for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "warrior.seismicwave.activation", 1, 1);
         }
     }

@@ -27,7 +27,7 @@ public class Breath extends AbstractAbility {
         }
 
         Vector viewDirection = player.getLocation().getDirection();
-        List<Entity> near = player.getNearbyEntities(7.0D, 3.5D, 7.0D);
+        List<Entity> near = player.getNearbyEntities(5.0D, 3.5D, 5.0D);
         for (Entity entity : near) {
             if (entity instanceof Player) {
                 Player nearPlayer = (Player) entity;
@@ -38,10 +38,12 @@ public class Breath extends AbstractAbility {
                             Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
                         } else {
                             Location eye = player.getEyeLocation();
-                            eye.setY(eye.getY() + .5);
-                            //TODO fix kb
-                            Vector toEntity = nearPlayer.getEyeLocation().toVector().subtract(eye.toVector());
-                            nearPlayer.setVelocity(toEntity);
+                            eye.setY(eye.getY() + .7);
+
+                            final Location loc = entity.getLocation();
+                            final Vector v = player.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-0.75).setY(0.3);
+
+                            entity.setVelocity(v);;
                         }
                     } else if (name.contains("Freezing") && !Warlords.getInstance().game.onSameTeam(warlordsPlayer, Warlords.getPlayer(nearPlayer))) {
                         Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);

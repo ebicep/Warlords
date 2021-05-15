@@ -36,11 +36,11 @@ public class InspiringPresence extends AbstractAbility {
         for (Entity entity : near) {
             if (entity instanceof Player) {
                 player.setWalkSpeed(WarlordsPlayer.currentSpeed);
-                // Warlords.getPlayer(player).setPresence(12);
+                Warlords.getPlayer(player).setPresence(12);
             }
         }
 
-        for (Player player1 : Bukkit.getOnlinePlayers()) {
+        for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "paladin.inspiringpresence.activation", 1, 1);
         }
     }

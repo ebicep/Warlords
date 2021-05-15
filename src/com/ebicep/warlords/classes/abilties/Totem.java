@@ -88,7 +88,7 @@ public class Totem extends EntityArmorStand {
 
             warlordsPlayer.getActionBarStats().add(new ActionBarStats(warlordsPlayer, "TOTEM", capacitorTotem.getSecondsLeft()));
 
-            for (Player player1 : Bukkit.getOnlinePlayers()) {
+            for (Player player1 : player.getWorld().getPlayers()) {
                 player1.playSound(player.getLocation(), "shaman.totem.activation", 1, 1);
             }
         }
@@ -130,7 +130,7 @@ public class Totem extends EntityArmorStand {
 
             warlordsPlayer.getActionBarStats().add(new ActionBarStats(warlordsPlayer, "RESP", deathsDebtTotem.getSecondsLeft()));
 
-            for (Player player1 : Bukkit.getOnlinePlayers()) {
+            for (Player player1 : player.getWorld().getPlayers()) {
                 player1.playSound(player.getLocation(), "shaman.earthlivingweapon.impact", 1, 2);
             }
         }
@@ -185,7 +185,7 @@ public class Totem extends EntityArmorStand {
 
             warlordsPlayer.getActionBarStats().add(new ActionBarStats(warlordsPlayer, "TOTEM", healingTotem.getSecondsLeft()));
 
-            for (Player player1 : Bukkit.getOnlinePlayers()) {
+            for (Player player1 : player.getWorld().getPlayers()) {
                 player1.playSound(player.getLocation(), "shaman.totem.activation", 1, 1);
             }
         }

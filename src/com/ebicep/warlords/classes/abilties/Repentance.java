@@ -25,7 +25,7 @@ public class Repentance extends AbstractAbility {
 
 
         // TODO: find spiritguards rep sound
-        for (Player player1 : Bukkit.getOnlinePlayers()) {
+        for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "warrior.seismicwave.activation", 1, 1);
         }
     }

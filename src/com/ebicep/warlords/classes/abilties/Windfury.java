@@ -26,7 +26,7 @@ public class Windfury extends AbstractAbility {
         warlordsPlayer.subtractEnergy(energyCost);
         warlordsPlayer.setWindfury(8);
 
-        for (Player player1 : Bukkit.getOnlinePlayers()) {
+        for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "shaman.windfuryweapon.activation", 1, 1);
         }
     }

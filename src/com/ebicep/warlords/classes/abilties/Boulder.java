@@ -66,7 +66,7 @@ public class Boulder extends AbstractAbility {
 
                 if (!newLoc.add(0, 2, 0).getBlock().isEmpty()) {
                     boulderExplode = true;
-                    for (Player player1 : Bukkit.getOnlinePlayers()) {
+                    for (Player player1 : player.getWorld().getPlayers()) {
                         player1.playSound(player.getLocation(), "shaman.boulder.impact", 1, 1);
                     }
                 }
@@ -76,6 +76,7 @@ public class Boulder extends AbstractAbility {
                     if (entity instanceof Player) {
                         if (!Warlords.getInstance().game.onSameTeam(player, (Player) entity)) {
                             boulderExplode = true;
+
                         }
                     }
                 }
@@ -88,7 +89,7 @@ public class Boulder extends AbstractAbility {
         }.runTaskTimer(Warlords.getInstance(), 0, 1);
 
 
-        for (Player player1 : Bukkit.getOnlinePlayers()) {
+        for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "shaman.boulder.activation", 1, 1);
         }
     }

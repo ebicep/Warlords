@@ -20,7 +20,7 @@ public class LightInfusion extends AbstractAbility {
         warlordsPlayer.setInfusion(3 * 20 - 10);
         warlordsPlayer.subtractEnergy(energyCost);
 
-        for (Player player1 : Bukkit.getOnlinePlayers()) {
+        for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "paladin.infusionoflight.activation", 1, 1);
         }
     }

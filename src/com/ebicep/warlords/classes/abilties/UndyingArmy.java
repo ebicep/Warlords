@@ -44,7 +44,7 @@ public class UndyingArmy extends AbstractAbility {
             }
         }
 
-        for (Player player1 : Bukkit.getOnlinePlayers()) {
+        for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), Sound.ZOMBIE_IDLE, 1, 1.1f);
         }
     }

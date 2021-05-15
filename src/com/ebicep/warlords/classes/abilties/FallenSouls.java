@@ -40,7 +40,7 @@ public class FallenSouls extends AbstractAbility {
         location.add(0, .5, 0);
         Warlords.getFallenSouls().add(new FallenSoul(Warlords.getPlayer(player), fallenSoulLeft, fallenSoulMiddle, fallenSoulRight, player.getLocation(), player.getLocation(), player.getLocation(), locationLeft.getDirection(), locationMiddle.getDirection(), locationRight.getDirection(), this));
 
-        for (Player player1 : Bukkit.getOnlinePlayers()) {
+        for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "shaman.lightningbolt.impact", 1, 1.5f);
         }
     }

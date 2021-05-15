@@ -44,18 +44,18 @@ public class Game implements Runnable {
             @Override
             public Game.State run(Game game) {
                 int players = game.teamBlue.size() + game.teamRed.size();
-                if (players > game.map.getMinPlayers()) {
+                if (players >= game.map.getMinPlayers()) {
                     game.timer++;
                     int total = game.map.getCountdownTimerInTicks();
                     int remaining = total - game.timer;
                     if (remaining % 20 == 1) {
-                        Bukkit.broadcastMessage("Gamestate PRE_GAME, remaining time: " + remaining / 20);
+                        Bukkit.broadcastMessage(ChatColor.GOLD + "Gamestate PRE_GAME, remaining time: " + remaining / 20);
                     }
                     if (game.timer == total) {
                         return GAME;
                     }
                     //TESTING
-                    return GAME;
+                    //return GAME;
 
                 } else {
                     game.timer = 0;
@@ -67,6 +67,7 @@ public class Game implements Runnable {
         GAME {
             @Override
             public void begin(Game game) {
+                game.flags = new FlagManager(game.map.redFlag, game.map.blueFlag);
                 game.timer = 0;
                 // Close config screen
                 List<String> blueTeam = new ArrayList<>();
@@ -78,7 +79,7 @@ public class Game implements Runnable {
                 World world = Bukkit.getWorld(game.map.mapName);
                 for (int i = 0; i < world.getPlayers().size(); i = i + 2) {
                     Player worldPlayer = world.getPlayers().get(i);
-                    Warlords.addPlayer(new WarlordsPlayer(worldPlayer, worldPlayer.getName(), worldPlayer.getUniqueId(), new Defender(worldPlayer), false));
+                    Warlords.addPlayer(new WarlordsPlayer(worldPlayer, worldPlayer.getName(), worldPlayer.getUniqueId(), new Aquamancer(worldPlayer), false));
                     blueTeam.add(worldPlayer.getName());
                     worldPlayer.setPlayerListName(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + "SPEC" + ChatColor.DARK_GRAY + "] " + ChatColor.BLUE + worldPlayer.getName() + ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + "Lv90" + ChatColor.DARK_GRAY + "]");
 
@@ -86,7 +87,7 @@ public class Game implements Runnable {
 
                     if (i + 1 < world.getPlayers().size()) {
                         Player worldPlayer2 = world.getPlayers().get(i + 1);
-                        Warlords.addPlayer(new WarlordsPlayer(worldPlayer2, worldPlayer2.getName(), worldPlayer2.getUniqueId(), new Defender(worldPlayer2), false));
+                        Warlords.addPlayer(new WarlordsPlayer(worldPlayer2, worldPlayer2.getName(), worldPlayer2.getUniqueId(), new Aquamancer(worldPlayer2), false));
                         redTeam.add(worldPlayer2.getName());
                         worldPlayer2.setPlayerListName(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + "SPEC" + ChatColor.DARK_GRAY + "] " + ChatColor.RED + worldPlayer2.getName() + ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + "Lv90" + ChatColor.DARK_GRAY + "]");
 
@@ -114,9 +115,6 @@ public class Game implements Runnable {
                 System.out.println(redTeam);
 
                 new PowerupManager(game.map).runTaskTimer(Warlords.getInstance(), 0, 0);
-
-                SpawnFlag flag = new SpawnFlag();
-                flag.spawnFlag(game.map);
             }
 
             @Override
@@ -150,6 +148,8 @@ public class Game implements Runnable {
             public void begin(Game game) {
                 Bukkit.broadcastMessage("The game has ended!");
                 // Disable abilities
+                game.flags.stop();
+                game.flags = null;
                 game.timer = 0;
                 boolean teamBlueWins = !game.forceEnd && game.bluePoints > game.redPoints;
                 boolean teamRedWins = !game.forceEnd && game.redPoints > game.bluePoints;
@@ -196,6 +196,7 @@ public class Game implements Runnable {
     private int redPoints;
     private int bluePoints;
     private boolean forceEnd;
+    private FlagManager flags = null;
 
     public void forceDraw() {
         this.forceEnd = true;
@@ -229,12 +230,28 @@ public class Game implements Runnable {
         return bluePoints;
     }
 
+    public void addBluePoints(int i) {
+        this.redPoints += i;
+    }
+
+    public void addRedPoints(int i) {
+        this.bluePoints += i;
+    }
+
     public boolean isForceEnd() {
         return forceEnd;
     }
 
+    public boolean isRedTeam(Player player) {
+        return teamRed.contains(player);
+    }
+
     public boolean canChangeMap() {
         return teamBlue.isEmpty() && teamRed.isEmpty() && state == Game.State.PRE_GAME;
+    }
+
+    public void resetTimer() {
+        this.timer = 0;
     }
 
     public void changeMap(GameMap map) {

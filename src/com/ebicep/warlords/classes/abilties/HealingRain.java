@@ -29,7 +29,7 @@ public class HealingRain extends AbstractAbility {
         warlordsPlayer.subtractEnergy(energyCost);
         Warlords.damageHealCircles.add(damageHealCircle);
 
-        for (Player player1 : Bukkit.getOnlinePlayers()) {
+        for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "mage.healingrain.impact", 1, 1);
         }
     }

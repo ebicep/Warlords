@@ -35,7 +35,7 @@ public class Strike extends AbstractAbility {
                     System.out.println("NEAR HIT " + nearPlayer);
                     //PALADIN
                     if (name.contains("Avenger") || name.contains("Crusader") || name.contains("Protector")) {
-                        for (Player player1 : Bukkit.getOnlinePlayers()) {
+                        for (Player player1 : player.getWorld().getPlayers()) {
                             player1.playSound(player.getLocation(), "paladin.paladinstrike.activation", 1, 1);
                         }
                         //check consecrate then boost dmg

@@ -240,7 +240,7 @@ public class Chain extends AbstractAbility {
                 warlordsPlayer.setChainLightningCooldown(4);
                 warlordsPlayer.getSpec().getRed().setCooldown(cooldown);
 
-                for (Player player1 : Bukkit.getOnlinePlayers()) {
+                for (Player player1 : player.getWorld().getPlayers()) {
                     player1.playSound(player.getLocation(), "shaman.chainlightning.activation", 1, 1);
                 }
             } else if (name.contains("Chain")) {
@@ -252,7 +252,7 @@ public class Chain extends AbstractAbility {
                 warlordsPlayer.updateRedItem();
                 warlordsPlayer.getSpec().getBlue().setCooldown(cooldown);
 
-                for (Player player1 : Bukkit.getOnlinePlayers()) {
+                for (Player player1 : player.getWorld().getPlayers()) {
                     player1.playSound(player.getLocation(), "shaman.chainheal.activation", 1, 1);
                 }
                 warlordsPlayer.updateBlueItem();
@@ -265,7 +265,7 @@ public class Chain extends AbstractAbility {
                 warlordsPlayer.getSpec().getRed().setCooldown(cooldown);
 
                 // TODO: find spiritguards chain sounds somehow
-                for (Player player1 : Bukkit.getOnlinePlayers()) {
+                for (Player player1 : player.getWorld().getPlayers()) {
                     player1.playSound(player.getLocation(), "shaman.chainheal.activation", 1, 1);
                 }
             }

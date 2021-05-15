@@ -23,7 +23,7 @@ public class Berserk extends AbstractAbility {
         warlordsPlayer.setBerserk(18 * 20 - 10);
         warlordsPlayer.subtractEnergy(energyCost);
 
-        for (Player player1 : Bukkit.getOnlinePlayers()) {
+        for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "warrior.berserk.activation", 1, 1);
         }
     }

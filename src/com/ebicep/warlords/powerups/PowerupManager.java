@@ -42,16 +42,16 @@ public class PowerupManager extends BukkitRunnable {
                             entitiesNear.get(0).sendMessage("picked up energy");
                         } else {
                             Warlords.getPlayer((Player) entitiesNear.get(0)).setPowerUpDamage(powerUp.getDuration());
-                            entitiesNear.get(0).sendMessage("§cpicked up damage");
+                            entitiesNear.get(0).sendMessage("§6You activated the §c§lDAMAGE §6powerup! §a+20% §6Damage for §a30 §6seconds!");
 
                         }
                     } else if (powerUp instanceof HealingPowerUp) {
                         Warlords.getPlayer((Player) entitiesNear.get(0)).setPowerUpHeal(true);
-                        entitiesNear.get(0).sendMessage("picked up healing");
+                        entitiesNear.get(0).sendMessage("§6You activated the §a§lHEALING §6powerup! §a+10% §6Health per second for §a10 §6seconds!");
 
                     } else if (powerUp instanceof SpeedPowerUp) {
                         Warlords.getPlayer((Player) entitiesNear.get(0)).setPowerUpSpeed(powerUp.getDuration());
-                        entitiesNear.get(0).sendMessage("picked up speed");
+                        entitiesNear.get(0).sendMessage("§6You activated the §e§lSPEED §6powerup! §a+40% §6Speed for §a10 §6seconds!");
 
                     }
 //                    PacketPlayOutEntityDestroy destroyPacket = new PacketPlayOutEntityDestroy(powerUp.getPowerUp().getId());

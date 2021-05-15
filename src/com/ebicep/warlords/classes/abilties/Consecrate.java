@@ -25,7 +25,7 @@ public class Consecrate extends AbstractAbility {
         Warlords.getPlayer(player).subtractEnergy(energyCost);
         Warlords.damageHealCircles.add(damageHealCircle);
 
-        for (Player player1 : Bukkit.getOnlinePlayers()) {
+        for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "paladin.consecrate.activation", 1, 1);
         }
     }

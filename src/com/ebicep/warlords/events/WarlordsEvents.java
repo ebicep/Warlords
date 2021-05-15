@@ -6,9 +6,13 @@ import com.ebicep.warlords.classes.abilties.SeismicWave;
 import net.minecraft.server.v1_8_R3.EntityLiving;
 import net.minecraft.server.v1_8_R3.GenericAttributes;
 import org.bukkit.ChatColor;
+import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Banner;
 import org.bukkit.block.Block;
+import org.bukkit.block.banner.Pattern;
+import org.bukkit.block.banner.PatternType;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -146,7 +150,9 @@ public class WarlordsEvents implements Listener {
             if (itemHeld.getType() == Material.GOLD_BARDING && player.getVehicle() == null) {
                 double distance = player.getLocation().getY() - player.getWorld().getHighestBlockYAt(player.getLocation());
                 if (distance > 2) {
-                    player.sendMessage(ChatColor.DARK_RED + "You cannot mount in the air");
+                    player.sendMessage(ChatColor.RED + "You cannot mount in the air");
+                } else if (player.getInventory().getHelmet() != null && player.getInventory().getHelmet().getType() == Material.STANDING_BANNER){
+                    player.sendMessage(ChatColor.RED + "You cannot mount while holding the flag!");
                 } else {
                     Horse horse = (Horse) player.getWorld().spawnEntity(player.getLocation(), EntityType.HORSE);
                     horse.setTamed(true);
@@ -202,25 +208,7 @@ public class WarlordsEvents implements Listener {
 
     @EventHandler
     public void onArmorStandBreak(EntityDamageByEntityEvent e) {
-        Entity entity = e.getEntity();
-        if (entity instanceof ArmorStand) {
-            if (entity.getCustomName() != null && entity.getCustomName().contains("FLAG")) {
-                entity.remove();
-                Player player = (Player) e.getDamager();
-                player.getWorld().getBlockAt(entity.getLocation()).setType(Material.AIR);
-                ItemStack[] armor = new ItemStack[4];
-                armor[0] = new ItemStack(player.getInventory().getArmorContents()[0]);
-                armor[1] = new ItemStack(player.getInventory().getArmorContents()[1]);
-                armor[2] = new ItemStack(player.getInventory().getArmorContents()[2]);
-                armor[3] = new ItemStack(Material.BANNER);
 
-                player.getInventory().setArmorContents(armor);
-                player.sendMessage("" + Arrays.toString(armor));
-                player.sendMessage("" + Arrays.toString(player.getInventory().getArmorContents()));
-                player.sendMessage("" + player.getTargetBlock((Set<Material>) null, 1));
-            }
-
-        }
     }
 
     @EventHandler

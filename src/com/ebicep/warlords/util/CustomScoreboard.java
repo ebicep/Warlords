@@ -32,8 +32,8 @@ public class CustomScoreboard {
         sideBar.setDisplayName("§e§lWARLORDS");
         sideBar.getScore(ChatColor.GRAY + dateString).setScore(15);
         sideBar.getScore(" ").setScore(14);
-        sideBar.getScore(ChatColor.BLUE + "BLU: " + ChatColor.AQUA + Warlords.blueKills * 5 + ChatColor.GOLD + "/1000").setScore(13);
-        sideBar.getScore(ChatColor.RED + "RED: " + ChatColor.AQUA + Warlords.redKills * 5 + ChatColor.GOLD + "/1000").setScore(12);
+        sideBar.getScore(ChatColor.BLUE + "BLU: " + ChatColor.AQUA + Warlords.game.getBluePoints() + ChatColor.GOLD + "/1000").setScore(13);
+        sideBar.getScore(ChatColor.RED + "RED: " + ChatColor.AQUA + Warlords.game.getRedPoints() + ChatColor.GOLD + "/1000").setScore(12);
         sideBar.getScore("  ").setScore(11);
         sideBar.getScore(ChatColor.WHITE + "Time Left: " + ChatColor.GREEN + "15:00").setScore(10);
         sideBar.getScore("   ").setScore(9);
@@ -74,10 +74,10 @@ public class CustomScoreboard {
             //System.out.println(scoreboard.getObjectives().iterator().next().getName());
             if (entryUnformatted.contains("BLU")) {
                 scoreboard.resetScores(entry);
-                sideBar.getScore(ChatColor.BLUE + "BLU: " + ChatColor.AQUA + Warlords.blueKills * 5 + ChatColor.GOLD + "/1000").setScore(13);
+                sideBar.getScore(ChatColor.BLUE + "BLU: " + ChatColor.AQUA + Warlords.game.getBluePoints() + ChatColor.GOLD + "/1000").setScore(13);
             } else if (entryUnformatted.contains("RED")) {
                 scoreboard.resetScores(entry);
-                sideBar.getScore(ChatColor.RED + "RED: " + ChatColor.AQUA + Warlords.redKills * 5 + ChatColor.GOLD + "/1000").setScore(12);
+                sideBar.getScore(ChatColor.RED + "RED: " + ChatColor.AQUA + Warlords.game.getRedPoints() + ChatColor.GOLD + "/1000").setScore(12);
             }
         }
     }
@@ -93,9 +93,9 @@ public class CustomScoreboard {
                     timeLeft += "0";
                 }
                 timeLeft += Game.remaining % 60;
-                if (Warlords.blueKills > Warlords.redKills) {
+                if (Warlords.game.getBluePoints() > Warlords.game.getRedPoints()) {
                     sideBar.getScore(ChatColor.BLUE + "BLU " + ChatColor.GOLD + "Wins in: " + ChatColor.GREEN + timeLeft).setScore(10);
-                } else if (Warlords.redKills > Warlords.blueKills) {
+                } else if (Warlords.game.getRedPoints() > Warlords.game.getBluePoints()) {
                     sideBar.getScore(ChatColor.RED + "RED " + ChatColor.GOLD + "Wins in: " + ChatColor.GREEN + timeLeft).setScore(10);
                 } else {
                     sideBar.getScore(ChatColor.WHITE + "Time Left: " + ChatColor.GREEN + timeLeft).setScore(10);

@@ -23,7 +23,7 @@ public class AvengersWrath extends AbstractAbility {
     public void onActivate(Player player) {
         Warlords.getPlayer(player).setWrath(12);
 
-        for (Player player1 : Bukkit.getOnlinePlayers()) {
+        for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "paladin.avengerswrath.activation", 1, 1);
         }
     }
