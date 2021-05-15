@@ -482,13 +482,17 @@ public class WarlordsPlayer {
                 critMultiplier += attacker.getSpec().getOrange().getCritMultiplier();
             }
             //crit
+            System.out.println(min);
+            System.out.println(max);
             float damageHealValue = (int) ((Math.random() * (max - min)) + min);
+            System.out.println("BEFORE CRIT: " + damageHealValue);
             int crit = (int) ((Math.random() * (100)));
             boolean isCrit = false;
             if (crit <= critChance) {
                 isCrit = true;
                 damageHealValue *= critMultiplier / 100f;
             }
+            System.out.println("AFTER CRITL: " + damageHealValue);
             //TODO check if totaldmgreduc works
             //reduction begining with base resistance
             float totalReduction = 1;
@@ -563,6 +567,8 @@ public class WarlordsPlayer {
                     Bukkit.broadcastMessage("" + arcaneShieldHealth);
                 }
             } else {
+                System.out.println("--- " + damageHealValue);
+
                 damageHealValue *= totalReduction;
                 System.out.println(attacker.getName() + " hit " + name + " for " + damageHealValue);
                 boolean debt = false;
@@ -572,6 +578,7 @@ public class WarlordsPlayer {
                     System.out.println(this.health);
                     System.out.println(this.maxHealth);
                     if (this.health + damageHealValue > this.maxHealth) {
+                        System.out.println("HEALING AT MAX");
                         damageHealValue = this.maxHealth - this.health;
                     }
                     damageHealValue = Math.round(damageHealValue);
@@ -614,16 +621,18 @@ public class WarlordsPlayer {
                                 damageHealValue *= .5;
                             } else {
                                 damageHealValue *= .4;
-                                //TODO multiple last stands? lastest person that last stands will over ride other dude
-                                if (lastStandedBy.getLastStand() != 0) {
-                                    this.absorbed += damageHealValue * -1;
-                                    attacker.setAbsorbed((int) (attacker.getAbsorbed() + damageHealValue * -1));
-                                    if (isCrit)
-                                        lastStandedBy.addHealth(lastStandedBy, "Last Stand", (int) (damageHealValue * -1), (int) (damageHealValue * -1), 100, 100);
-                                    else
-                                        lastStandedBy.addHealth(lastStandedBy, "Last Stand", (int) (damageHealValue * 1), (int) (damageHealValue * -1), -1, 100);
-                                }
                             }
+                            //TODO multiple last stands? lastest person that last stands will over ride other dude
+                            if (lastStandedBy.getLastStand() != 0) {
+                                attacker.setAbsorbed((int) (attacker.getAbsorbed() + damageHealValue * -1));
+                                System.out.println("===" + -damageHealValue);
+                                float healValue = damageHealValue * -1;
+                                if (isCrit)
+                                    lastStandedBy.addHealth(lastStandedBy, "Last Stand", (int) (healValue), (int) (healValue), 100, 100);
+                                else
+                                    lastStandedBy.addHealth(lastStandedBy, "Last Stand", (int) (healValue), (int) (healValue), -1, 100);
+                            }
+
                             addAbsorbed(-damageHealValue);
                         }
 
