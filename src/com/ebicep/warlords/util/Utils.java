@@ -23,11 +23,11 @@ public class Utils {
 
     public static boolean getLookingAt(Player player, Player player1) {
         Location eye = player.getEyeLocation();
-        eye.setY(eye.getY() + .5);
+        eye.setY(eye.getY() + 0.7);
         Vector toEntity = player1.getEyeLocation().toVector().subtract(eye.toVector());
         float dot = (float) toEntity.normalize().dot(eye.getDirection());
 
-        return dot > 0.92D;
+        return dot > 0.91D;
     }
 
     public static boolean totemDownAndClose(WarlordsPlayer warlordsPlayer, Player player) {
