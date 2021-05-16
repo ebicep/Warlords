@@ -256,11 +256,6 @@ public class Warlords extends JavaPlugin {
                                     ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.5F, 1, entity.getLocation().add(0, 1, 0), 500);
                                     ParticleEffect.LAVA.display(0, 0, 0, 0.5F, 10, entity.getLocation().add(0, 1, 0), 500);
                                     Player victim = (Player) entity;
-                                    // TODO: fix sounds only playing on direct hit
-                                    for (Player player1 : Bukkit.getOnlinePlayers()) {
-                                        player1.playSound(entity.getLocation(), "mage.fireball.impact", 1, 1);
-                                        player1.playSound(entity.getLocation(), Sound.ORB_PICKUP, 0.3f, 1f);
-                                    }
                                     getPlayer(victim).addHealth(
                                             getPlayer(customProjectile.getShooter()),
                                             customProjectile.getBall().getName(),

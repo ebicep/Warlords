@@ -69,7 +69,7 @@ public class WarlordsEvents implements Listener {
         player.sendMessage(" ");
         player.sendMessage(ChatColor.GRAY + "Developed by " + ChatColor.RED + "sumSmash " + ChatColor.GRAY + "&" + ChatColor.RED + " Plikie");
         player.sendMessage(" ");
-        player.sendMessage(ChatColor.GRAY + "placerholer optional extras idk");
+        player.sendMessage(ChatColor.GRAY + "placeholder optional extras idk");
         player.sendMessage(" ");
 
         //readds player

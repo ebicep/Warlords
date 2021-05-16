@@ -2,6 +2,7 @@ package com.ebicep.warlords;
 
 import com.ebicep.warlords.classes.ActionBarStats;
 import com.ebicep.warlords.classes.PlayerClass;
+import com.ebicep.warlords.classes.abilties.Breath;
 import com.ebicep.warlords.classes.abilties.OrbsOfLife;
 import com.ebicep.warlords.classes.abilties.Soulbinding;
 import com.ebicep.warlords.classes.abilties.Totem;
@@ -496,7 +497,8 @@ public class WarlordsPlayer {
                 isCrit = true;
                 damageHealValue *= critMultiplier / 100f;
             }
-            // Flag carries gets more damage
+
+            // Flag carriers take more damage
             for (MetadataValue metadata : this.getPlayer().getMetadata(FlagManager.FLAG_DAMAGE_MULTIPLIER)) {
                 damageHealValue *= metadata.asDouble();
             }
@@ -721,6 +723,9 @@ public class WarlordsPlayer {
                 }
                 attacker.addDamage(-damageHealValue);
                 if (this.health <= 0) {
+
+                    attacker.getPlayer().playSound(attacker.getPlayer().getLocation(), Sound.ORB_PICKUP, 500f, 0.3f);
+
                     hitBy.remove(attacker);
                     attacker.addKill();
                     attacker.scoreboard.updateKillsAssists();
@@ -743,6 +748,11 @@ public class WarlordsPlayer {
 
                     for (WarlordsPlayer value : Warlords.getPlayers().values()) {
                         value.getScoreboard().updateKills();
+                    }
+                } else {
+
+                    if (!ability.isEmpty()) {
+                        attacker.getPlayer().playSound(attacker.getPlayer().getLocation(), Sound.ORB_PICKUP, 0.4f, 1f);
                     }
                 }
 

@@ -44,7 +44,7 @@ public class Commands implements CommandExecutor {
                 try {
                     map = GameMap.valueOf(args[0].toUpperCase(Locale.ROOT));
                 } catch(IllegalArgumentException e) {
-                    sender.sendMessage(ChatColor.RED + args[0] + "' was not found, valid maps: " + Arrays.toString(GameMap.values()));
+                    sender.sendMessage(ChatColor.RED + args[0] + " was not found, valid maps: " + Arrays.toString(GameMap.values()));
                     return true;
                 }
             }
@@ -80,7 +80,7 @@ public class Commands implements CommandExecutor {
             }
 
             List<Player> people = new ArrayList<>(online);
-            Collections.shuffle(people);
+            //Collections.shuffle(people);
             boolean teamBlueAssessment = true;
             for (Player player : people) {
                 Warlords.game.addPlayer(player, teamBlueAssessment);
@@ -94,7 +94,7 @@ public class Commands implements CommandExecutor {
             }
 
             Warlords.game.forceDraw();
-            sender.sendMessage(ChatColor.RED + "Game has been terminated.");
+            sender.sendMessage(ChatColor.RED + "Game has been terminated. Warping back to lobby...");
         }
 
         return true;

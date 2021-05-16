@@ -17,6 +17,7 @@ import com.ebicep.warlords.classes.warrior.specs.revenant.Revenant;
 import com.ebicep.warlords.powerups.PowerupManager;
 import com.ebicep.warlords.util.CustomScoreboard;
 import com.ebicep.warlords.util.RemoveEntities;
+import com.sun.jndi.ldap.Ber;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
@@ -78,41 +79,24 @@ public class Game implements Runnable {
                 RemoveEntities removeEntities = new RemoveEntities();
                 removeEntities.onRemove();
 
-                World world = Bukkit.getWorld(game.map.mapName);
-                for (int i = 0; i < world.getPlayers().size(); i = i + 2) {
-                    //ALTERNATING
-                    Player worldPlayer = world.getPlayers().get(i);
-                    Warlords.addPlayer(new WarlordsPlayer(worldPlayer, worldPlayer.getName(), worldPlayer.getUniqueId(), new ThunderLord(worldPlayer), false));
-                    blueTeam.add(worldPlayer.getName());
-                    worldPlayer.setPlayerListName(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + "SPEC" + ChatColor.DARK_GRAY + "] " + ChatColor.BLUE + worldPlayer.getName() + ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + "Lv90" + ChatColor.DARK_GRAY + "]");
+                for(Player p : game.teamRed) {
 
-                    System.out.println("Added " + worldPlayer.getName());
+                    Warlords.addPlayer(new WarlordsPlayer(p, p.getName(), p.getUniqueId(), new Pyromancer(p), false));
+                    redTeam.add(p.getName());
+                    p.setPlayerListName(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + "SPEC" + ChatColor.DARK_GRAY + "] "
+                            + ChatColor.RED + p.getName() + ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + "Lv90" + ChatColor.DARK_GRAY + "]");
 
-                    if (i + 1 < world.getPlayers().size()) {
-                        Player worldPlayer2 = world.getPlayers().get(i + 1);
-                        Warlords.addPlayer(new WarlordsPlayer(worldPlayer2, worldPlayer2.getName(), worldPlayer2.getUniqueId(), new ThunderLord(worldPlayer2), false));
-                        redTeam.add(worldPlayer2.getName());
-                        worldPlayer2.setPlayerListName(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + "SPEC" + ChatColor.DARK_GRAY + "] " + ChatColor.RED + worldPlayer2.getName() + ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + "Lv90" + ChatColor.DARK_GRAY + "]");
+                    System.out.println("Added " + p.getName());
+                }
 
-                        System.out.println("Added2 " + worldPlayer2.getName());
-                    }
+                for(Player p : game.teamBlue) {
 
-//                    //FIRST PLAYER ON ONE TEAM
-//                    if(i == 0) {
-//                        Player worldPlayer = world.getPlayers().get(i);
-//                        Warlords.addPlayer(new WarlordsPlayer(worldPlayer, worldPlayer.getName(), worldPlayer.getUniqueId(), new Earthwarden(worldPlayer), false));
-//                        blueTeam.add(worldPlayer.getName());
-//                        worldPlayer.setPlayerListName(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + "SPEC" + ChatColor.DARK_GRAY + "] " + ChatColor.BLUE + worldPlayer.getName() + ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + "Lv90" + ChatColor.DARK_GRAY + "]");
-//
-//                        System.out.println("Added " + worldPlayer.getName());
-//                    } else {
-//                        Player worldPlayer2 = world.getPlayers().get(i);
-//                        Warlords.addPlayer(new WarlordsPlayer(worldPlayer2, worldPlayer2.getName(), worldPlayer2.getUniqueId(), new Earthwarden(worldPlayer2), false));
-//                        redTeam.add(worldPlayer2.getName());
-//                        worldPlayer2.setPlayerListName(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + "SPEC" + ChatColor.DARK_GRAY + "] " + ChatColor.RED + worldPlayer2.getName() + ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + "Lv90" + ChatColor.DARK_GRAY + "]");
-//
-//                        System.out.println("Added2 " + worldPlayer2.getName());
-//                    }
+                    Warlords.addPlayer(new WarlordsPlayer(p, p.getName(), p.getUniqueId(), new Pyromancer(p), false));
+                    blueTeam.add(p.getName());
+                    p.setPlayerListName(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + "SPEC" + ChatColor.DARK_GRAY + "] "
+                            + ChatColor.BLUE + p.getName() + ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + "Lv90" + ChatColor.DARK_GRAY + "]");
+
+                    System.out.println("Added " + p.getName());
                 }
 
                 for (WarlordsPlayer value : Warlords.getPlayers().values()) {

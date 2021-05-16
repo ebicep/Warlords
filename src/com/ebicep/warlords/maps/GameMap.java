@@ -58,13 +58,11 @@ import org.bukkit.Location;
                 new Location(Bukkit.getWorld("Crossfire"), 215.5, 36.5, 109.5),// BLUE LOBBY SPAWN
                 new Location(Bukkit.getWorld("Crossfire"), 7.5, 36.5, 19.5), // RED LOBBY SPAWN
 
-                // TODO: fix respawn locations
-                new Location(Bukkit.getWorld("Crossfire"), -32.5, 34.5, -43.5), // BLUE RESPAWN
-                new Location(Bukkit.getWorld("Crossfire"), 34.5, 34.5, 42.5), // RED RESPAWN
+                new Location(Bukkit.getWorld("Crossfire"), 133, 11.5, 130.5), // BLUE RESPAWN
+                new Location(Bukkit.getWorld("Crossfire"), 90.5, 11.5, 0.5), // RED RESPAWN
 
-                // TODO: fix flag spawn locations
-                new Location(Bukkit.getWorld("Crossfire"), 215.5, 36.5, 109.5), // BLUE FLAG
-                new Location(Bukkit.getWorld("Crossfire"), 7.5, 36.5, 19.5) // RED FLAG
+                new Location(Bukkit.getWorld("Crossfire"), 217.5, 36.5, 126.5), // BLUE FLAG
+                new Location(Bukkit.getWorld("Crossfire"), 5.5, 36.5, 1.5) // RED FLAG
         );
 
         protected String mapName;
@@ -85,9 +83,6 @@ import org.bukkit.Location;
         protected Location blueFlag;
         protected Location redFlag;
         protected String mapDirPath = "";
-
-        // TODO: seperate startgame and wrap into the absract map to warp all players to game lobbies (ill do this)
-        // TODO: scoreboard updates
 
          GameMap(String mapName, int maxPlayers, int minPlayers, int gameTime, int countdown, String mapPath, Location damagePowerupBlue, Location damagePowerupRed,
                    Location speedPowerupBlue, Location speedPowerupRed, Location healingPowerupBlue, Location healingPowerupRed, Location blueSpawnPoint, Location redSpawnPoint, Location blueRespawn, Location redRespawn, Location blueFlag, Location redFlag) {
