@@ -104,7 +104,7 @@ public class WarlordsEvents implements Listener {
             WarlordsPlayer warlordsPlayerAttacker = Warlords.getPlayer(attacker);
             WarlordsPlayer warlordsPlayerVictim = Warlords.getPlayer(victim);
 
-            if (!warlordsPlayerAttacker.getScoreboard().onSameTeam(victim)) {
+            if (!Warlords.game.onSameTeam(warlordsPlayerAttacker, warlordsPlayerVictim)) {
                 if (attacker.getInventory().getHeldItemSlot() == 0 && warlordsPlayerAttacker.getHitCooldown() == 0) {
                     victim.damage(0);
                     warlordsPlayerAttacker.setHitCooldown(13);
@@ -148,22 +148,27 @@ public class WarlordsEvents implements Listener {
             }
             ItemStack itemHeld = player.getItemInHand();
             if (itemHeld.getType() == Material.GOLD_BARDING && player.getVehicle() == null) {
-                double distance = player.getLocation().getY() - player.getWorld().getHighestBlockYAt(player.getLocation());
-                if (distance > 2) {
-                    player.sendMessage(ChatColor.RED + "You cannot mount in the air");
-                } else if (player.getInventory().getHelmet() != null && player.getInventory().getHelmet().getType() == Material.STANDING_BANNER){
-                    player.sendMessage(ChatColor.RED + "You cannot mount while holding the flag!");
+                if (location.getWorld().getBlockAt((int) location.getX(), 2, (int) location.getZ()).getType() == Material.NETHERRACK) {
+                    player.sendMessage(ChatColor.RED + "You cannot mount here!");
                 } else {
-                    Horse horse = (Horse) player.getWorld().spawnEntity(player.getLocation(), EntityType.HORSE);
-                    horse.setTamed(true);
-                    horse.getInventory().setSaddle(new ItemStack(Material.SADDLE));
-                    horse.setOwner(player);
-                    horse.setJumpStrength(0);
-                    horse.setVariant(Horse.Variant.HORSE);
-                    //((EntityLiving) ((CraftEntity) horse).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(.308);
-                    ((EntityLiving) ((CraftEntity) horse).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(1);
-                    horse.setPassenger(player);
-                    Warlords.getPlayer(player).setHorseCooldown(15);
+                    double distance = player.getLocation().getY() - player.getWorld().getHighestBlockYAt(player.getLocation());
+                    if (distance > 2) {
+                        player.sendMessage(ChatColor.RED + "You cannot mount in the air");
+                    } else if (player.getInventory().getHelmet() != null && player.getInventory().getHelmet().getType() == Material.STANDING_BANNER) {
+                        player.sendMessage(ChatColor.RED + "You cannot mount while holding the flag!");
+                    } else {
+                        Horse horse = (Horse) player.getWorld().spawnEntity(player.getLocation(), EntityType.HORSE);
+                        horse.setTamed(true);
+                        horse.getInventory().setSaddle(new ItemStack(Material.SADDLE));
+                        horse.setOwner(player);
+                        horse.setJumpStrength(0);
+                        horse.setVariant(Horse.Variant.HORSE);
+                        horse.setAdult();
+                        //((EntityLiving) ((CraftEntity) horse).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(.308);
+                        ((EntityLiving) ((CraftEntity) horse).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(1);
+                        horse.setPassenger(player);
+                        Warlords.getPlayer(player).setHorseCooldown(15);
+                    }
                 }
             } else if (itemHeld.getType() == Material.DIAMOND_AXE) {
                 location.setY(player.getWorld().getHighestBlockYAt(location));
@@ -259,6 +264,23 @@ public class WarlordsEvents implements Listener {
         if (e.getInventory().getHolder().getInventory().getTitle().equals("Horse")) {
             e.setCancelled(true);
         }
+    }
 
+    @EventHandler
+    public void onPlayerMove(PlayerMoveEvent e) {
+        if (e.getPlayer().getVehicle() instanceof Horse) {
+            Location location = e.getPlayer().getLocation();
+            if (location.getWorld().getBlockAt((int) location.getX(), 2, (int) location.getZ()).getType() == Material.NETHERRACK) {
+                e.getPlayer().getVehicle().remove();
+            }
+        }
+    }
+
+    @EventHandler
+    public void onPlayerDamage(EntityDamageEvent e) {
+        if (e.getCause() == EntityDamageEvent.DamageCause.FALL) {
+            //TODO fall damage
+            e.setCancelled(true);
+        }
     }
 }

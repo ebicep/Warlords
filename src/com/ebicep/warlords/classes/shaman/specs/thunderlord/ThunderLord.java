@@ -8,7 +8,7 @@ public class ThunderLord extends AbstractShaman {
     public ThunderLord(Player player) {
         super(player, 5200, 305, 0,
                 new LightningBolt(),
-                new Chain("Chain Lightning", -294, -575, 9, 40, 20, 175,
+                new Chain("Chain Lightning", -294, -575, 10, 40, 20, 175,
                         "§7Discharge a bolt of lightning at the\n" +
                                 "§7targeted enemy player that deals\n" +
                                 "§c%dynamic.value% §7- §c%dynamic.value% §7damage and jumps to\n" +

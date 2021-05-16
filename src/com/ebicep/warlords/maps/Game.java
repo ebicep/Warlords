@@ -9,9 +9,11 @@ import com.ebicep.warlords.classes.paladin.specs.avenger.Avenger;
 import com.ebicep.warlords.classes.paladin.specs.crusader.Crusader;
 import com.ebicep.warlords.classes.paladin.specs.protector.Protector;
 import com.ebicep.warlords.classes.shaman.specs.earthwarden.Earthwarden;
+import com.ebicep.warlords.classes.shaman.specs.spiritguard.Spiritguard;
 import com.ebicep.warlords.classes.shaman.specs.thunderlord.ThunderLord;
 import com.ebicep.warlords.classes.warrior.specs.berserker.Berserker;
 import com.ebicep.warlords.classes.warrior.specs.defender.Defender;
+import com.ebicep.warlords.classes.warrior.specs.revenant.Revenant;
 import com.ebicep.warlords.powerups.PowerupManager;
 import com.ebicep.warlords.util.CustomScoreboard;
 import com.ebicep.warlords.util.RemoveEntities;
@@ -55,7 +57,7 @@ public class Game implements Runnable {
                         return GAME;
                     }
                     //TESTING
-                    //return GAME;
+                    return GAME;
 
                 } else {
                     game.timer = 0;
@@ -78,8 +80,9 @@ public class Game implements Runnable {
 
                 World world = Bukkit.getWorld(game.map.mapName);
                 for (int i = 0; i < world.getPlayers().size(); i = i + 2) {
+                    //ALTERNATING
                     Player worldPlayer = world.getPlayers().get(i);
-                    Warlords.addPlayer(new WarlordsPlayer(worldPlayer, worldPlayer.getName(), worldPlayer.getUniqueId(), new Aquamancer(worldPlayer), false));
+                    Warlords.addPlayer(new WarlordsPlayer(worldPlayer, worldPlayer.getName(), worldPlayer.getUniqueId(), new ThunderLord(worldPlayer), false));
                     blueTeam.add(worldPlayer.getName());
                     worldPlayer.setPlayerListName(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + "SPEC" + ChatColor.DARK_GRAY + "] " + ChatColor.BLUE + worldPlayer.getName() + ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + "Lv90" + ChatColor.DARK_GRAY + "]");
 
@@ -87,21 +90,35 @@ public class Game implements Runnable {
 
                     if (i + 1 < world.getPlayers().size()) {
                         Player worldPlayer2 = world.getPlayers().get(i + 1);
-                        Warlords.addPlayer(new WarlordsPlayer(worldPlayer2, worldPlayer2.getName(), worldPlayer2.getUniqueId(), new Aquamancer(worldPlayer2), false));
+                        Warlords.addPlayer(new WarlordsPlayer(worldPlayer2, worldPlayer2.getName(), worldPlayer2.getUniqueId(), new ThunderLord(worldPlayer2), false));
                         redTeam.add(worldPlayer2.getName());
                         worldPlayer2.setPlayerListName(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + "SPEC" + ChatColor.DARK_GRAY + "] " + ChatColor.RED + worldPlayer2.getName() + ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + "Lv90" + ChatColor.DARK_GRAY + "]");
 
                         System.out.println("Added2 " + worldPlayer2.getName());
                     }
 
-
+//                    //FIRST PLAYER ON ONE TEAM
+//                    if(i == 0) {
+//                        Player worldPlayer = world.getPlayers().get(i);
+//                        Warlords.addPlayer(new WarlordsPlayer(worldPlayer, worldPlayer.getName(), worldPlayer.getUniqueId(), new Earthwarden(worldPlayer), false));
+//                        blueTeam.add(worldPlayer.getName());
+//                        worldPlayer.setPlayerListName(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + "SPEC" + ChatColor.DARK_GRAY + "] " + ChatColor.BLUE + worldPlayer.getName() + ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + "Lv90" + ChatColor.DARK_GRAY + "]");
+//
+//                        System.out.println("Added " + worldPlayer.getName());
+//                    } else {
+//                        Player worldPlayer2 = world.getPlayers().get(i);
+//                        Warlords.addPlayer(new WarlordsPlayer(worldPlayer2, worldPlayer2.getName(), worldPlayer2.getUniqueId(), new Earthwarden(worldPlayer2), false));
+//                        redTeam.add(worldPlayer2.getName());
+//                        worldPlayer2.setPlayerListName(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + "SPEC" + ChatColor.DARK_GRAY + "] " + ChatColor.RED + worldPlayer2.getName() + ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + "Lv90" + ChatColor.DARK_GRAY + "]");
+//
+//                        System.out.println("Added2 " + worldPlayer2.getName());
+//                    }
                 }
 
                 for (WarlordsPlayer value : Warlords.getPlayers().values()) {
                     value.getPlayer().setMaxHealth(40);
                     value.getPlayer().setLevel((int) value.getMaxEnergy());
                     value.assignItemLore();
-
                     System.out.println("updated scoreboard for " + value.getName());
                     value.setScoreboard(new CustomScoreboard(value.getPlayer(), blueTeam, redTeam));
                 }
@@ -114,7 +131,6 @@ public class Game implements Runnable {
                 System.out.println(blueTeam);
                 System.out.println(redTeam);
 
-                new PowerupManager(game.map).runTaskTimer(Warlords.getInstance(), 0, 0);
             }
 
             @Override
@@ -128,8 +144,9 @@ public class Game implements Runnable {
                 if (game.timer == 10 * 20) {
                     // Destroy gates
                     // Enable abilities
-                } else if (game.timer == 70 * 20) {
+                } else if (game.timer == 30 * 20) {
                     // Enable powerups
+                    new PowerupManager(game.map).runTaskTimer(Warlords.getInstance(), 0, 0);
                 }
 
                 if (game.timer % 20 == 0) {
@@ -231,11 +248,11 @@ public class Game implements Runnable {
     }
 
     public void addBluePoints(int i) {
-        this.redPoints += i;
+        this.bluePoints += i;
     }
 
     public void addRedPoints(int i) {
-        this.bluePoints += i;
+        this.redPoints += i;
     }
 
     public boolean isForceEnd() {
@@ -284,6 +301,14 @@ public class Game implements Runnable {
 
     public boolean onSameTeam(WarlordsPlayer player1, WarlordsPlayer player2) {
         return teamBlue.contains(player1.getPlayer()) && teamBlue.contains(player2.getPlayer()) || teamRed.contains(player1.getPlayer()) && teamRed.contains(player2.getPlayer());
+    }
+
+    public FlagManager getFlags() {
+        return flags;
+    }
+
+    public void setFlags(FlagManager flags) {
+        this.flags = flags;
     }
 
     @Override

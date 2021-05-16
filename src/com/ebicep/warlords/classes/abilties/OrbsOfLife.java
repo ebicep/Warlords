@@ -1,6 +1,7 @@
 package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
 import net.minecraft.server.v1_8_R3.EntityExperienceOrb;
 import net.minecraft.server.v1_8_R3.EntityHuman;
@@ -36,9 +37,11 @@ public class OrbsOfLife extends AbstractAbility {
     public static class Orb extends EntityExperienceOrb {
 
         private ArmorStand armorStand;
+        private WarlordsPlayer owner;
 
-        public Orb(World world, Location location) {
+        public Orb(World world, Location location, WarlordsPlayer owner) {
             super(world, location.getX(), location.getY(), location.getZ(), 1000);
+            this.owner = owner;
         }
 
         @Override
@@ -64,6 +67,10 @@ public class OrbsOfLife extends AbstractAbility {
 
         public void setArmorStand(ArmorStand armorStand) {
             this.armorStand = armorStand;
+        }
+
+        public WarlordsPlayer getOwner() {
+            return owner;
         }
     }
 }

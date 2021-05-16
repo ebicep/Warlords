@@ -14,16 +14,17 @@ public abstract class AbstractPowerUp {
     protected int duration;
     protected int cooldown;
     protected int maxCooldown;
+    protected int timeToSpawn;
 
-    public AbstractPowerUp(Location location, int duration, int cooldown) {
+    public AbstractPowerUp(Location location, int duration, int cooldown, int timeToSpawn) {
         this.location = location;
         this.duration = duration;
-        this.cooldown = cooldown;
+        this.cooldown = 0;
         this.maxCooldown = cooldown;
+        this.timeToSpawn = timeToSpawn;
     }
 
     public void spawn() {
-        System.out.println("spawned powerup at - " + location);
         powerUp = location.getWorld().spawn(location.clone().add(0, -1.5, 0), ArmorStand.class);
         if (this instanceof DamagePowerUp) {
             powerUp.setCustomName("§c§lDAMAGE");
@@ -37,7 +38,6 @@ public abstract class AbstractPowerUp {
         } else if (this instanceof SpeedPowerUp) {
             powerUp.setCustomName("§e§lSPEED");
             powerUp.setHelmet(new ItemStack(Material.WOOL, 1, (short) 4));
-
         }
         powerUp.setGravity(false);
         powerUp.setVisible(false);

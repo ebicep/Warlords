@@ -18,13 +18,16 @@ public class PowerupManager extends BukkitRunnable {
 
     public PowerupManager(GameMap map) {
         this.map = map;
-        powerUps.add(new DamagePowerUp(map.getDamagePowerupBlue(), 30, 45 * 20));
-        powerUps.add(new DamagePowerUp(map.getDamagePowerupRed(), 30, 45 * 20));
-        powerUps.add(new HealingPowerUp(map.getHealingPowerupBlue(), 0, 45 * 20));
-        powerUps.add(new HealingPowerUp(map.getHealingPowerupRed(), 0, 45 * 20));
+        powerUps.add(new DamagePowerUp(map.getDamagePowerupBlue(), 30, 45 * 20, 30));
+        powerUps.add(new DamagePowerUp(map.getDamagePowerupRed(), 30, 45 * 20, 30));
+        powerUps.add(new HealingPowerUp(map.getHealingPowerupBlue(), 0, 45 * 20, 30));
+        powerUps.add(new HealingPowerUp(map.getHealingPowerupRed(), 0, 45 * 20, 30));
         //TODO find duration of speed
-        powerUps.add(new SpeedPowerUp(map.getSpeedPowerupBlue(), 10, 45 * 20));
-        powerUps.add(new SpeedPowerUp(map.getSpeedPowerupRed(), 10, 45 * 20));
+        powerUps.add(new SpeedPowerUp(map.getSpeedPowerupBlue(), 10, 45 * 20, 30));
+        powerUps.add(new SpeedPowerUp(map.getSpeedPowerupRed(), 10, 45 * 20, 30));
+        for (AbstractPowerUp powerUp : powerUps) {
+            powerUp.spawn();
+        }
     }
 
 

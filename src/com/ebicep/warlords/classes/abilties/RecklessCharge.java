@@ -19,7 +19,7 @@ public class RecklessCharge extends AbstractAbility {
     private List<Player> playersHit = new ArrayList<>();
 
     public RecklessCharge() {
-        super("Reckless Charge", -466, -612, 1, 60, 20, 200,
+        super("Reckless Charge", -466, -612, 11, 60, 20, 200,
                 "§7Charge forward, dealing §c466\n" +
                         "§7- §c612 §7damage to all enemies\n" +
                         "§7you pass through. Enemies hit are\n" +

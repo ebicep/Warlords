@@ -2,9 +2,12 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.util.ParticleEffect;
+import com.ebicep.warlords.util.Utils;
 import com.sun.xml.internal.bind.v2.schemagen.xmlschema.Particle;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.*;
@@ -31,7 +34,7 @@ public class Boulder extends AbstractAbility {
     public void onActivate(Player player) {
 
         Location location = player.getLocation();
-        Vector speed = player.getLocation().getDirection().multiply(2.5);
+        Vector speed = player.getLocation().getDirection().multiply(2.2);
         ArmorStand stand = (ArmorStand) location.getWorld().spawnEntity(location.clone().add(0, 0, 0), EntityType.ARMOR_STAND);
         stand.setHelmet(new ItemStack(Material.LONG_GRASS, 1, (short) 2));
         stand.setCustomName("Boulder");
@@ -63,26 +66,73 @@ public class Boulder extends AbstractAbility {
                 }
 
                 boolean boulderExplode = false;
+                List<Entity> near = null;
 
                 if (!newLoc.add(0, 2, 0).getBlock().isEmpty()) {
                     boulderExplode = true;
+                    near = (List<Entity>) newLoc.getWorld().getNearbyEntities(newLoc, 5, 5, 5);
+                    near = Utils.filterOutTeammates(near, player);
                     for (Player player1 : player.getWorld().getPlayers()) {
-                        player1.playSound(player.getLocation(), "shaman.boulder.impact", 1, 1);
+                        player1.playSound(newLoc, "shaman.boulder.impact", 1, 1);
                     }
-                }
+                } else {
+                    Collection<Entity> nearbyEntities = stand.getWorld().getNearbyEntities(stand.getLocation(), 1.25, 1.25, 1.25);
+                    for (Entity entity : nearbyEntities) {
+                        if (entity instanceof Player) {
+                            if (!Warlords.getInstance().game.onSameTeam(player, (Player) entity)) {
+                                boulderExplode = true;
+                                near = (List<Entity>) newLoc.getWorld().getNearbyEntities(newLoc, 5, 5, 5);
+                                near = Utils.filterOutTeammates(near, player);
+                                near.remove(entity);
+                                final Vector v = entity.getLocation().toVector().subtract(location.toVector()).normalize().multiply(1.2).setY(0.4);
+                                entity.setVelocity(v);
 
-                Collection<Entity> nearbyEntities = stand.getWorld().getNearbyEntities(stand.getLocation(), 1, 1, 1);
-                for (Entity entity : nearbyEntities) {
-                    if (entity instanceof Player) {
-                        if (!Warlords.getInstance().game.onSameTeam(player, (Player) entity)) {
-                            boulderExplode = true;
+                                Warlords.getPlayer((Player) entity).addHealth(Warlords.getPlayer(player), name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
 
+                                break;
+                            }
                         }
                     }
                 }
 
                 if (boulderExplode) {
                     stand.remove();
+                    for (Entity entity2 : near) {
+                        if (entity2 instanceof Player) {
+                            Player nearPlayer = (Player) entity2;
+                            if (nearPlayer.getGameMode() != GameMode.SPECTATOR) {
+                                final Vector v = nearPlayer.getLocation().toVector().subtract(newLoc.toVector()).normalize().multiply(1.2).setY(0.4);
+                                nearPlayer.setVelocity(v);
+
+                                Warlords.getPlayer(nearPlayer).addHealth(Warlords.getPlayer(player), name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+                            }
+                        }
+                    }
+                    newLoc.setPitch(-12);
+                    newLoc.add(0, 1, 0);
+                    for (int i = 0; i < 30; i++) {
+                        if (location.getWorld().getBlockAt(newLoc).getType() == Material.AIR) {
+                            FallingBlock fallingBlock;
+                            switch ((int) (Math.random() * 3)) {
+                                case 0:
+                                    fallingBlock = newLoc.getWorld().spawnFallingBlock(newLoc.clone().add(0, 1, 0), Material.DIRT, (byte) 0);
+                                    break;
+                                case 1:
+                                    fallingBlock = newLoc.getWorld().spawnFallingBlock(newLoc.clone().add(0, 1, 0), Material.STONE, (byte) 0);
+                                    break;
+                                case 2:
+                                    fallingBlock = newLoc.getWorld().spawnFallingBlock(newLoc.clone().add(0, 1, 0), Material.DIRT, (byte) 2);
+                                    break;
+                                default:
+                                    throw new IllegalStateException("Unexpected value: " + (int) (Math.random() * 3));
+                            }
+                            fallingBlock.setVelocity(newLoc.getDirection().normalize().multiply(.75));
+                            fallingBlock.setDropItem(false);
+                            newLoc.setYaw((float) (newLoc.getYaw() + Math.random() * 25 + 12));
+                            WarlordsEvents.addEntityUUID(fallingBlock.getUniqueId());
+                        }
+                    }
+                    this.cancel();
                 }
             }
 

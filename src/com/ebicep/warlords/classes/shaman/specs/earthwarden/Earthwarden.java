@@ -7,7 +7,7 @@ import org.bukkit.entity.Player;
 public class Earthwarden extends AbstractShaman {
 
     public Earthwarden(Player player) {
-        super(player, 6200, 305, 10,
+        super(player, 5530, 305, 10,
                 new EarthenSpike(),
                 new Boulder(),
                 new Earthliving(),

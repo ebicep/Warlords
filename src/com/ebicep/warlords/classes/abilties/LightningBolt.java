@@ -16,13 +16,13 @@ import org.bukkit.util.Vector;
 public class LightningBolt extends AbstractAbility {
 
     public LightningBolt() {
-        super("Lightning Bolt", -249, -462, 0, 1, 20, 200,
+        super("Lightning Bolt", -249, -462, 0, 60, 20, 200,
                 "§7Hurl a fast, piercing bolt of lightning that\n" +
-                "§7deals §c%dynamic.value% §7- §c%dynamic.value% §7damage to all enemies it\n" +
-                "§7passes through. Each target hit reduces the\n" +
-                "§7cooldown of Chain Lightning by §62 §7seconds.\n" +
-                "''\n" +
-                "§7Has a maximum range of §e60 §7blocks.");
+                        "§7deals §c%dynamic.value% §7- §c%dynamic.value% §7damage to all enemies it\n" +
+                        "§7passes through. Each target hit reduces the\n" +
+                        "§7cooldown of Chain Lightning by §62 §7seconds.\n" +
+                        "''\n" +
+                        "§7Has a maximum range of §e60 §7blocks.");
     }
 
     @Override
@@ -30,7 +30,7 @@ public class LightningBolt extends AbstractAbility {
         Location location = player.getLocation();
         Vector direction = location.getDirection();
 
-        Bolt bolt = new Bolt(Warlords.getPlayer(player), (ArmorStand) location.getWorld().spawnEntity(location.subtract(direction.getX() * -.5, .3, direction.getZ() * -.5), EntityType.ARMOR_STAND), location, direction, this);
+        Bolt bolt = new Bolt(Warlords.getPlayer(player), (ArmorStand) location.getWorld().spawnEntity(location.subtract(direction.getX() * -.5, .3, direction.getZ() * -.5), EntityType.ARMOR_STAND), location.subtract(direction.getX() * -.5, .3, direction.getZ() * -.5), direction, this);
         Warlords.getBolts().add(bolt);
         Warlords.getPlayer(player).subtractEnergy(energyCost);
 
@@ -51,7 +51,7 @@ public class LightningBolt extends AbstractAbility {
             this.shooter = shooter;
             this.armorStand = armorStand;
             armorStand.setGravity(false);
-            armorStand.setVisible(false);
+            armorStand.setVisible(true);
             armorStand.setHelmet(new ItemStack(Material.SAPLING, 1, (short) 3));
             armorStand.setHeadPose(new EulerAngle(direction.getY() * -1, 0, 0));
             this.location = location;

@@ -24,6 +24,7 @@ import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.material.Banner;
 import org.bukkit.material.MaterialData;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.metadata.MetadataValue;
 import org.bukkit.metadata.MetadataValueAdapter;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -36,6 +37,14 @@ public class FlagManager implements Listener {
 
     private final FlagInfo red;
     private final FlagInfo blue;
+
+    public FlagInfo getRed() {
+        return red;
+    }
+
+    public FlagInfo getBlue() {
+        return blue;
+    }
 
     private final FlagRenderer redRenderer;
     private final FlagRenderer blueRenderer;
@@ -131,7 +140,7 @@ public class FlagManager implements Listener {
         if (entity instanceof ArmorStand && entity.getCustomName() != null && entity.getCustomName().contains("FLAG")) {
             event.setCancelled(true);
             Player player = (Player) event.getDamager();
-            Team standTeam = (Team)entity.getMetadata("TEAM").stream().map(v -> v.value()).filter(v -> v instanceof Team).findAny().orElse(null);
+            Team standTeam = (Team) entity.getMetadata("TEAM").stream().map(MetadataValue::value).filter(v -> v instanceof Team).findAny().orElse(null);
             if (standTeam == null) {
                 return;
             }
@@ -188,15 +197,21 @@ public class FlagManager implements Listener {
         }
 
         private void doSameTeamInteraction(Player player) {
+            for (Player player1 : Warlords.getPlayers().keySet()) {
+                Warlords.getPlayer(player1).getScoreboard().updateFlagStatus();
+            }
             FlagLocation newLoc = flag.afterSameTeamInteraction(player, spawnLocation);
-            if(newLoc != null) {
+            if (newLoc != null) {
                 this.flag = newLoc;
             }
         }
 
         private void doOtherTeamInteraction(Player attacker) {
+            for (Player player1 : Warlords.getPlayers().keySet()) {
+                Warlords.getPlayer(player1).getScoreboard().updateFlagStatus();
+            }
             FlagLocation newLoc = flag.otherTeamInteraction(attacker);
-            if(newLoc != null) {
+            if (newLoc != null) {
                 this.flag = newLoc;
             }
         }
@@ -209,11 +224,13 @@ public class FlagManager implements Listener {
     }
 
     public interface FlagLocation {
-        public Location getLocation();
+        Location getLocation();
 
-        public FlagLocation afterSameTeamInteraction(Player player, Location ownTeamSpawnLocation);
-        public FlagLocation otherTeamInteraction(Player player);
+        FlagLocation afterSameTeamInteraction(Player player, Location ownTeamSpawnLocation);
+
+        FlagLocation otherTeamInteraction(Player player);
     }
+
     abstract static class AbstractLocationBasedFlagLocation implements FlagManager.FlagLocation {
 
         protected final Location location;
@@ -242,7 +259,7 @@ public class FlagManager implements Listener {
 
     }
 
-    static class GroundFlagLocation extends AbstractLocationBasedFlagLocation implements FlagLocation {
+    public static class GroundFlagLocation extends AbstractLocationBasedFlagLocation implements FlagLocation {
         public GroundFlagLocation(Location location) {
             super(location);
         }
@@ -268,7 +285,7 @@ public class FlagManager implements Listener {
         }
     }
 
-    static class SpawnFlagLocation extends AbstractLocationBasedFlagLocation {
+    public static class SpawnFlagLocation extends AbstractLocationBasedFlagLocation {
 
         public SpawnFlagLocation(Location location) {
             super(location);
@@ -280,7 +297,7 @@ public class FlagManager implements Listener {
         }
     }
 
-    static class WaitingFlagLocation extends AbstractLocationBasedFlagLocation {
+    public static class WaitingFlagLocation extends AbstractLocationBasedFlagLocation {
 
         public WaitingFlagLocation(Location location) {
             super(location);

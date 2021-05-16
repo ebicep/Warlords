@@ -28,6 +28,7 @@ public class LastStand extends AbstractAbility {
     @Override
     public void onActivate(Player player) {
         WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
+        warlordsPlayer.setLastStandedBy(warlordsPlayer);
         warlordsPlayer.setLastStand(12);
         List<Entity> near = player.getNearbyEntities(4.0D, 4.0D, 4.0D);
         near = Utils.filterOnlyTeammates(near, player);

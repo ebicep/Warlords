@@ -5,9 +5,7 @@ import org.bukkit.entity.Player;
 
 public class EnergyPowerUp extends AbstractPowerUp {
 
-
-    public EnergyPowerUp(Location location, int duration, int cooldown) {
-        super(location, duration, cooldown);
+    public EnergyPowerUp(Location location, int duration, int cooldown, int timeToSpawn) {
+        super(location, duration, cooldown, timeToSpawn);
     }
-
 }

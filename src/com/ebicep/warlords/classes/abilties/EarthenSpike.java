@@ -35,16 +35,13 @@ public class EarthenSpike extends AbstractAbility {
     @Override
     public void onActivate(Player player) {
         Location location = player.getLocation();
-        List<Entity> near = player.getNearbyEntities(6.0D, 6.0D, 6.0D);
+        List<Entity> near = player.getNearbyEntities(7.0D, 6.0D, 7.0D);
         near = Utils.filterOutTeammates(near, player);
         for (Entity entity : near) {
             if (entity instanceof Player) {
                 Player nearPlayer = (Player) entity;
                 if (nearPlayer.getGameMode() != GameMode.SPECTATOR && Utils.getLookingAt(player, nearPlayer)) {
-                    location.setY(player.getWorld().getHighestBlockYAt(location));
-
-
-                    FallingBlock block = player.getWorld().spawnFallingBlock(location.add(0, 0, 0), location.getWorld().getBlockAt((int) location.getX(), location.getWorld().getHighestBlockYAt(location) - 1, (int) location.getZ()).getType(), (byte) 0);
+                    FallingBlock block = player.getWorld().spawnFallingBlock(location.clone(), location.getWorld().getBlockAt((int) location.getX(), (int) location.getY(), (int) location.getZ()).getType(), (byte) 0);
                     block.setVelocity(new Vector(0, .2, 0));
                     ArrayList<EarthenSpikeBlock> spikeList = new ArrayList<>();
                     spikeList.add(new EarthenSpikeBlock(block, nearPlayer, Warlords.getPlayer(player)));
@@ -54,6 +51,7 @@ public class EarthenSpike extends AbstractAbility {
                     Warlords.getPlayer(player).subtractEnergy(energyCost);
                     Warlords.spikes.add(spike);
                     WarlordsEvents.addEntityUUID(block.getUniqueId());
+                    break;
                 }
             }
         }

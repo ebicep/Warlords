@@ -25,6 +25,7 @@ public class Earthliving extends AbstractAbility {
         WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
         warlordsPlayer.subtractEnergy(energyCost);
         warlordsPlayer.setEarthliving(8);
+        warlordsPlayer.setFirstProc(true);
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "shaman.earthlivingweapon.activation", 1, 1);

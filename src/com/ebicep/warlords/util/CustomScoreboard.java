@@ -2,6 +2,7 @@ package com.ebicep.warlords.util;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
+import com.ebicep.warlords.maps.FlagManager.*;
 import com.ebicep.warlords.maps.Game;
 import net.minecraft.server.v1_8_R3.EnumChatFormat;
 import org.bukkit.Bukkit;
@@ -37,6 +38,8 @@ public class CustomScoreboard {
         sideBar.getScore("  ").setScore(11);
         sideBar.getScore(ChatColor.WHITE + "Time Left: " + ChatColor.GREEN + "15:00").setScore(10);
         sideBar.getScore("   ").setScore(9);
+        sideBar.getScore(ChatColor.RED + "RED Flag: " + ChatColor.GREEN + "Safe").setScore(8);
+        sideBar.getScore(ChatColor.BLUE + "BLU Flag: " + ChatColor.GREEN + "Safe").setScore(7);
         sideBar.getScore("    ").setScore(6);
         sideBar.getScore(ChatColor.GOLD + "Lv90 " + ChatColor.GREEN + Warlords.getPlayer(player).getSpec().getClass().getSimpleName()).setScore(5);
         sideBar.getScore("     ").setScore(4);
@@ -109,13 +112,27 @@ public class CustomScoreboard {
             String entryUnformatted = ChatColor.stripColor(entry);
             if (entryUnformatted.contains("RED Flag")) {
                 scoreboard.resetScores(entry);
-                //TODO add flag stuff
-                sideBar.getScore(ChatColor.RED + "RED Flag: " + ChatColor.GREEN + "Safe").setScore(8);
+                if (Warlords.game.getFlags().getRed().getFlag() instanceof SpawnFlagLocation) {
+                    sideBar.getScore(ChatColor.RED + "RED Flag: " + ChatColor.GREEN + "Safe").setScore(8);
+                } else if (Warlords.game.getFlags().getRed().getFlag() instanceof PlayerFlagLocation) {
+                    sideBar.getScore(ChatColor.RED + "RED Flag: " + ChatColor.RED + "Stolen!" + ChatColor.YELLOW).setScore(8);
+                } else if (Warlords.game.getFlags().getRed().getFlag() instanceof GroundFlagLocation) {
+                    sideBar.getScore(ChatColor.RED + "RED Flag: " + ChatColor.YELLOW + "Dropped!" + ChatColor.GRAY).setScore(8);
+                } else {
+                    sideBar.getScore(ChatColor.BLUE + "BLU Flag: " + ChatColor.GRAY + "Respawning...").setScore(8);
+                }
             }
             if (entryUnformatted.contains("BLU Flag")) {
                 scoreboard.resetScores(entry);
-                //TODO add flag stuff
-                sideBar.getScore(ChatColor.BLUE + "BLU Flag: " + ChatColor.GREEN + "Safe").setScore(7);
+                if (Warlords.game.getFlags().getBlue().getFlag() instanceof SpawnFlagLocation) {
+                    sideBar.getScore(ChatColor.BLUE + "BLU Flag: " + ChatColor.GREEN + "Safe").setScore(7);
+                } else if (Warlords.game.getFlags().getBlue().getFlag() instanceof PlayerFlagLocation) {
+                    sideBar.getScore(ChatColor.BLUE + "BLU Flag: " + ChatColor.BLUE + "Stolen!" + ChatColor.YELLOW).setScore(7);
+                } else if (Warlords.game.getFlags().getBlue().getFlag() instanceof GroundFlagLocation) {
+                    sideBar.getScore(ChatColor.BLUE + "BLU Flag: " + ChatColor.YELLOW + "Dropped!" + ChatColor.GRAY).setScore(7);
+                } else {
+                    sideBar.getScore(ChatColor.BLUE + "BLU Flag: " + ChatColor.GRAY + "Respawning...!").setScore(7);
+                }
             }
         }
     }
