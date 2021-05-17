@@ -85,7 +85,7 @@ public class Game implements Runnable {
 
                 for(Player p : game.teamRed) {
 
-                    Warlords.addPlayer(new WarlordsPlayer(p, p.getName(), p.getUniqueId(), new ThunderLord(p), false));
+                    Warlords.addPlayer(new WarlordsPlayer(p, p.getName(), p.getUniqueId(), new Pyromancer(p), false));
                     redTeam.add(p.getName());
                     p.setPlayerListName(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + "SPEC" + ChatColor.DARK_GRAY + "] "
                             + ChatColor.RED + p.getName() + ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + "Lv90" + ChatColor.DARK_GRAY + "]");
@@ -95,7 +95,7 @@ public class Game implements Runnable {
 
                 for(Player p : game.teamBlue) {
 
-                    Warlords.addPlayer(new WarlordsPlayer(p, p.getName(), p.getUniqueId(), new ThunderLord(p), false));
+                    Warlords.addPlayer(new WarlordsPlayer(p, p.getName(), p.getUniqueId(), new Pyromancer(p), false));
                     blueTeam.add(p.getName());
                     p.setPlayerListName(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + "SPEC" + ChatColor.DARK_GRAY + "] "
                             + ChatColor.BLUE + p.getName() + ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + "Lv90" + ChatColor.DARK_GRAY + "]");

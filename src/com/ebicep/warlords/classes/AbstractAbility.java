@@ -55,7 +55,6 @@ public abstract class AbstractAbility {
 
     public void subtractCooldown(float cooldown) {
         if (currentCooldown != 0) {
-            System.out.println(currentCooldown - cooldown);
             if (currentCooldown - cooldown < 0) {
                 currentCooldown = 0;
             } else {
