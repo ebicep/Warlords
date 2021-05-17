@@ -2,15 +2,19 @@ package com.ebicep.warlords.maps;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
+import com.ebicep.warlords.classes.PlayerClass;
+import com.ebicep.warlords.classes.mage.AbstractMage;
 import com.ebicep.warlords.classes.mage.specs.aquamancer.Aquamancer;
 import com.ebicep.warlords.classes.mage.specs.cryomancer.Cryomancer;
 import com.ebicep.warlords.classes.mage.specs.pyromancer.Pyromancer;
+import com.ebicep.warlords.classes.paladin.AbstractPaladin;
 import com.ebicep.warlords.classes.paladin.specs.avenger.Avenger;
 import com.ebicep.warlords.classes.paladin.specs.crusader.Crusader;
 import com.ebicep.warlords.classes.paladin.specs.protector.Protector;
 import com.ebicep.warlords.classes.shaman.specs.earthwarden.Earthwarden;
 import com.ebicep.warlords.classes.shaman.specs.spiritguard.Spiritguard;
 import com.ebicep.warlords.classes.shaman.specs.thunderlord.ThunderLord;
+import com.ebicep.warlords.classes.warrior.AbstractWarrior;
 import com.ebicep.warlords.classes.warrior.specs.berserker.Berserker;
 import com.ebicep.warlords.classes.warrior.specs.defender.Defender;
 import com.ebicep.warlords.classes.warrior.specs.revenant.Revenant;
@@ -18,10 +22,10 @@ import com.ebicep.warlords.powerups.PowerupManager;
 import com.ebicep.warlords.util.CustomScoreboard;
 import com.ebicep.warlords.util.RemoveEntities;
 import com.sun.jndi.ldap.Ber;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
 
 import java.util.*;
 
@@ -81,27 +85,28 @@ public class Game implements Runnable {
 
                 for(Player p : game.teamRed) {
 
-                    Warlords.addPlayer(new WarlordsPlayer(p, p.getName(), p.getUniqueId(), new Pyromancer(p), false));
+                    Warlords.addPlayer(new WarlordsPlayer(p, p.getName(), p.getUniqueId(), new ThunderLord(p), false));
                     redTeam.add(p.getName());
                     p.setPlayerListName(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + "SPEC" + ChatColor.DARK_GRAY + "] "
                             + ChatColor.RED + p.getName() + ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + "Lv90" + ChatColor.DARK_GRAY + "]");
-
+                    resetArmor(p, Warlords.getPlayer(p).getSpec(), false);
                     System.out.println("Added " + p.getName());
                 }
 
                 for(Player p : game.teamBlue) {
 
-                    Warlords.addPlayer(new WarlordsPlayer(p, p.getName(), p.getUniqueId(), new Pyromancer(p), false));
+                    Warlords.addPlayer(new WarlordsPlayer(p, p.getName(), p.getUniqueId(), new ThunderLord(p), false));
                     blueTeam.add(p.getName());
                     p.setPlayerListName(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + "SPEC" + ChatColor.DARK_GRAY + "] "
                             + ChatColor.BLUE + p.getName() + ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + "Lv90" + ChatColor.DARK_GRAY + "]");
-
+                    resetArmor(p, Warlords.getPlayer(p).getSpec(), true);
                     System.out.println("Added " + p.getName());
                 }
 
                 for (WarlordsPlayer value : Warlords.getPlayers().values()) {
                     value.getPlayer().setMaxHealth(40);
                     value.getPlayer().setLevel((int) value.getMaxEnergy());
+                    value.getPlayer().getInventory().clear();
                     value.assignItemLore();
                     System.out.println("updated scoreboard for " + value.getName());
                     value.setScoreboard(new CustomScoreboard(value.getPlayer(), blueTeam, redTeam));
@@ -187,6 +192,56 @@ public class Game implements Runnable {
         public abstract Game.State run(Game game);
 
         public abstract void begin(Game game);
+
+        public void resetArmor(Player p, PlayerClass playerClass, boolean onBlue) {
+            ItemStack[] armor = new ItemStack[4];
+            if (onBlue) {
+                armor[0] = new ItemStack(Material.LEATHER_BOOTS);
+                LeatherArmorMeta meta0 = (LeatherArmorMeta) armor[0].getItemMeta();
+                meta0.setColor(Color.fromRGB(51, 76, 178));
+                armor[0].setItemMeta(meta0);
+                armor[1] = new ItemStack(Material.LEATHER_LEGGINGS);
+                LeatherArmorMeta meta1 = (LeatherArmorMeta) armor[1].getItemMeta();
+                meta1.setColor(Color.fromRGB(51, 76, 178));
+                armor[1].setItemMeta(meta1);
+                armor[2] = new ItemStack(Material.LEATHER_CHESTPLATE);
+                LeatherArmorMeta meta2 = (LeatherArmorMeta) armor[2].getItemMeta();
+                meta2.setColor(Color.fromRGB(51, 76, 178));
+                armor[2].setItemMeta(meta2);
+                if (playerClass instanceof AbstractPaladin) {
+                    armor[3] = new ItemStack(Material.RED_ROSE, 1, (short) 6);
+                } else if (playerClass instanceof AbstractWarrior) {
+                    armor[3] = new ItemStack(Material.WOOD_PLATE);
+                } else if (playerClass instanceof AbstractMage) {
+                    armor[3] = new ItemStack(Material.SAPLING, 1, (short) 5);
+                } else {
+                    armor[3] = new ItemStack(Material.SAPLING, 1, (short) 1);
+                }
+            } else {
+                armor[0] = new ItemStack(Material.LEATHER_BOOTS);
+                LeatherArmorMeta meta0 = (LeatherArmorMeta) armor[0].getItemMeta();
+                meta0.setColor(Color.fromRGB(153, 51, 51));
+                armor[0].setItemMeta(meta0);
+                armor[1] = new ItemStack(Material.LEATHER_LEGGINGS);
+                LeatherArmorMeta meta1 = (LeatherArmorMeta) armor[1].getItemMeta();
+                meta1.setColor(Color.fromRGB(153, 51, 51));
+                armor[1].setItemMeta(meta1);
+                armor[2] = new ItemStack(Material.LEATHER_CHESTPLATE);
+                LeatherArmorMeta meta2 = (LeatherArmorMeta) armor[2].getItemMeta();
+                meta2.setColor(Color.fromRGB(153, 51, 51));
+                armor[2].setItemMeta(meta2);
+                if (playerClass instanceof AbstractPaladin) {
+                    armor[3] = new ItemStack(Material.DEAD_BUSH);
+                } else if (playerClass instanceof AbstractWarrior) {
+                    armor[3] = new ItemStack(Material.STONE_PLATE);
+                } else if (playerClass instanceof AbstractMage) {
+                    armor[3] = new ItemStack(Material.RED_ROSE, 1, (short) 5);
+                } else {
+                    armor[3] = new ItemStack(Material.SAPLING, 1, (short) 0);
+                }
+            }
+            p.getInventory().setArmorContents(armor);
+        }
     }
 
     private Game.State state = Game.State.PRE_GAME;
@@ -247,6 +302,10 @@ public class Game implements Runnable {
         return teamRed.contains(player);
     }
 
+    public boolean isBlueTeam(Player player) {
+        return teamBlue.contains(player);
+    }
+
     public boolean canChangeMap() {
         return teamBlue.isEmpty() && teamRed.isEmpty() && state == Game.State.PRE_GAME;
     }
@@ -294,6 +353,7 @@ public class Game implements Runnable {
     public void setFlags(FlagManager flags) {
         this.flags = flags;
     }
+
 
     @Override
     public void run() {

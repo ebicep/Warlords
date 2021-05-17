@@ -7,6 +7,7 @@ import com.ebicep.warlords.classes.abilties.Projectile;
 import com.ebicep.warlords.classes.abilties.*;
 import com.ebicep.warlords.commands.Commands;
 import com.ebicep.warlords.events.WarlordsEvents;
+import com.ebicep.warlords.maps.FlagManager;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.Utils;
@@ -313,8 +314,7 @@ public class Warlords extends JavaPlugin {
                                             customProjectile.getBall().getCritMultiplier()
                                     );
                                     List<Entity> near = victim.getNearbyEntities(3.5D, 3.5D, 3.5D);
-                                    near.remove(customProjectile.getShooter());
-                                    System.out.println(near);
+                                    near = Utils.filterOutTeammates(near, customProjectile.getShooter());
                                     for (Entity nearEntity : near) {
                                         if (nearEntity instanceof Player) {
                                             getPlayer((Player) nearEntity).addHealth(
@@ -461,7 +461,7 @@ public class Warlords extends JavaPlugin {
                     }
 
                     //hit block or out of range
-                    if (location.getWorld().getBlockAt(location).getType() != Material.AIR && !hitPlayer) {
+                    if ((location.getWorld().getBlockAt(location).getType() != Material.AIR && location.getWorld().getBlockAt(location).getType() != Material.WATER) && !hitPlayer) {
                         if (customProjectile.getBall().getName().contains("Water")) {
                             ParticleEffect.HEART.display(1, 1, 1, 0.2F, 5, location, 500);
                             ParticleEffect.VILLAGER_HAPPY.display(1, 1, 1, 0.2F, 5, location, 500);
@@ -471,7 +471,7 @@ public class Warlords extends JavaPlugin {
                         List<Entity> near = (List<Entity>) location.getWorld().getNearbyEntities(location, 3.5, 3.5, 3.5);
                         for (Entity nearEntity : near) {
                             if (nearEntity instanceof Player) {
-                                if (customProjectile.getBall().getName().contains("Flame") && game.onSameTeam((Player) nearEntity, customProjectile.getShooter()) && nearEntity != customProjectile.getShooter()) {
+                                if (customProjectile.getBall().getName().contains("Flame") && !game.onSameTeam((Player) nearEntity, customProjectile.getShooter()) && nearEntity != customProjectile.getShooter()) {
                                     getPlayer((Player) nearEntity).addHealth(
                                             getPlayer(customProjectile.getShooter()),
                                             customProjectile.getBall().getName(),
@@ -565,6 +565,20 @@ public class Warlords extends JavaPlugin {
                 for (WarlordsPlayer warlordsPlayer : players.values()) {
                     Player player = warlordsPlayer.getPlayer();
                     Location location = player.getLocation();
+
+                    if (game.isRedTeam(player)) {
+                        if (warlordsPlayer.isTeamFlagCompass()) {
+                            player.setCompassTarget(game.getFlags().getRed().getFlag().getLocation());
+                        } else {
+                            player.setCompassTarget(game.getFlags().getBlue().getFlag().getLocation());
+                        }
+                    } else if (game.isBlueTeam(player)) {
+                        if (warlordsPlayer.isTeamFlagCompass()) {
+                            player.setCompassTarget(game.getFlags().getBlue().getFlag().getLocation());
+                        } else {
+                            player.setCompassTarget(game.getFlags().getRed().getFlag().getLocation());
+                        }
+                    }
 
                     //to make it look like the cooldown activates super fast but isnt really fast since it updates next second tick
                     if (warlordsPlayer.getSpec().getRed().getCurrentCooldown() == warlordsPlayer.getSpec().getRed().getCooldown()) {
@@ -1025,8 +1039,11 @@ public class Warlords extends JavaPlugin {
                     for (WarlordsPlayer warlordsPlayer : players.values()) {
                         warlordsPlayer.getScoreboard().updateTime();
                         //ACTION BAR
-                        warlordsPlayer.displayActionBar();
-
+                        if (warlordsPlayer.getPlayer().getInventory().getHeldItemSlot() != 8) {
+                            warlordsPlayer.displayActionBar();
+                        } else {
+                            warlordsPlayer.displayFlagActionBar();
+                        }
                         Player player = warlordsPlayer.getPlayer();
                         //REGEN
                         if (warlordsPlayer.getRegenTimer() != -1) {

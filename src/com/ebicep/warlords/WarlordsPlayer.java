@@ -2,7 +2,6 @@ package com.ebicep.warlords;
 
 import com.ebicep.warlords.classes.ActionBarStats;
 import com.ebicep.warlords.classes.PlayerClass;
-import com.ebicep.warlords.classes.abilties.Breath;
 import com.ebicep.warlords.classes.abilties.OrbsOfLife;
 import com.ebicep.warlords.classes.abilties.Soulbinding;
 import com.ebicep.warlords.classes.abilties.Totem;
@@ -159,6 +158,53 @@ public class WarlordsPlayer {
         }
 
         Utils.sendActionbar(player, actionBarMessage.toString());
+    }
+
+    private boolean teamFlagCompass = true;
+
+    public void displayFlagActionBar() {
+        FlagManager.FlagInfo blueFlag = Warlords.game.getFlags().getBlue();
+        double blueFlagDistance = Math.round(blueFlag.getFlag().getLocation().distance(player.getLocation()) * 10) / 10.0;
+        FlagManager.FlagInfo redFlag = Warlords.game.getFlags().getRed();
+        double redFlagDistance = Math.round(redFlag.getFlag().getLocation().distance(player.getLocation()) * 10) / 10.0;
+
+        if (Warlords.game.isBlueTeam(player)) {
+            if (teamFlagCompass) {
+                if (blueFlag.getFlag() instanceof FlagManager.PlayerFlagLocation) {
+                    Utils.sendActionbar(player, "" + ChatColor.BLUE + ChatColor.BOLD + "YOUR Flag " + ChatColor.WHITE + "is stolen " + ChatColor.RED + blueFlagDistance + "m " + ChatColor.WHITE + "away!");
+                } else if (blueFlag.getFlag() instanceof FlagManager.GroundFlagLocation) {
+                    Utils.sendActionbar(player, "" + ChatColor.BLUE + ChatColor.BOLD + "YOUR Flag " + ChatColor.GOLD + "is dropped " + ChatColor.RED + blueFlagDistance + "m " + ChatColor.WHITE + "away!");
+                } else {
+                    Utils.sendActionbar(player, "" + ChatColor.BLUE + ChatColor.BOLD + "YOUR " + ChatColor.GREEN + "Flag is safe");
+                }
+            } else {
+                if (redFlag.getFlag() instanceof FlagManager.PlayerFlagLocation) {
+                    Utils.sendActionbar(player, "" + ChatColor.RED + ChatColor.BOLD + "ENEMY Flag " + ChatColor.WHITE + "is stolen " + ChatColor.RED + redFlagDistance + "m " + ChatColor.WHITE + "away!");
+                } else if (redFlag.getFlag() instanceof FlagManager.GroundFlagLocation) {
+                    Utils.sendActionbar(player, "" + ChatColor.RED + ChatColor.BOLD + "ENEMY Flag " + ChatColor.GOLD + "is dropped " + ChatColor.RED + redFlagDistance + "m " + ChatColor.WHITE + "away!");
+                } else {
+                    Utils.sendActionbar(player, "" + ChatColor.RED + ChatColor.BOLD + "ENEMY " + ChatColor.GREEN + "Flag is safe");
+                }
+            }
+        } else {
+            if (teamFlagCompass) {
+                if (redFlag.getFlag() instanceof FlagManager.PlayerFlagLocation) {
+                    Utils.sendActionbar(player, "" + ChatColor.RED + ChatColor.BOLD + "YOUR Flag " + ChatColor.WHITE + "is stolen " + ChatColor.RED + redFlagDistance + "m " + ChatColor.WHITE + "away!");
+                } else if (redFlag.getFlag() instanceof FlagManager.GroundFlagLocation) {
+                    Utils.sendActionbar(player, "" + ChatColor.RED + ChatColor.BOLD + "YOUR Flag " + ChatColor.GOLD + "is dropped " + ChatColor.RED + redFlagDistance + "m " + ChatColor.WHITE + "away!");
+                } else {
+                    Utils.sendActionbar(player, "" + ChatColor.RED + ChatColor.BOLD + "YOUR " + ChatColor.GREEN + "Flag is safe");
+                }
+            } else {
+                if (blueFlag.getFlag() instanceof FlagManager.PlayerFlagLocation) {
+                    Utils.sendActionbar(player, "" + ChatColor.BLUE + ChatColor.BOLD + "ENEMY Flag " + ChatColor.WHITE + "is stolen " + ChatColor.RED + blueFlagDistance + "m " + ChatColor.WHITE + "away!");
+                } else if (blueFlag.getFlag() instanceof FlagManager.GroundFlagLocation) {
+                    Utils.sendActionbar(player, "" + ChatColor.BLUE + ChatColor.BOLD + "ENEMY Flag " + ChatColor.GOLD + "is dropped " + ChatColor.RED + blueFlagDistance + "m " + ChatColor.WHITE + "away!");
+                } else {
+                    Utils.sendActionbar(player, "" + ChatColor.BLUE + ChatColor.BOLD + "ENEMY " + ChatColor.GREEN + "Flag is safe");
+                }
+            }
+        }
     }
 
     private static final CalculateSpeed speed = new CalculateSpeed(.2825f); // .2825f is def + 13%
@@ -401,7 +447,7 @@ public class WarlordsPlayer {
 
     public void updateHorseItem() {
         if (horseCooldown != 0) {
-            ItemStack cooldown = new ItemStack(grayDye.toItemStack(horseCooldown));
+            ItemStack cooldown = new ItemStack(Material.IRON_BARDING, horseCooldown);
             player.getInventory().setItem(7, cooldown);
         } else {
             ItemStack horse = new ItemStack(Material.GOLD_BARDING);
@@ -548,34 +594,32 @@ public class WarlordsPlayer {
                     this.addAbsorbed(-damageHealValue);
                     attacker.addDamage(-damageHealValue);
                 }
-            } else if (arcaneShield != 0) {
-                if (!Warlords.getInstance().game.onSameTeam(this, attacker)) {
-                    damageHealValue *= totalReduction;
-                    //TODO check teammate heal
-                    if (arcaneShieldHealth + damageHealValue < 0) {
-                        Bukkit.broadcastMessage("" + arcaneShieldHealth);
-                        Bukkit.broadcastMessage("" + damageHealValue);
-                        Bukkit.broadcastMessage("" + (arcaneShieldHealth + damageHealValue));
-
-                        arcaneShield = 0;
-                        addHealth(attacker, ability, (int) (arcaneShieldHealth + damageHealValue), (int) (arcaneShieldHealth + damageHealValue), isCrit ? 100 : -1, 100);
-
-                        this.absorbed += -(arcaneShield + damageHealValue);
-                    } else {
-                        if (ability.isEmpty()) {
-                            player.sendMessage("§c\u00AB§7 You absorbed " + attacker.getName() + "'s melee §7hit.");
-                            attacker.getPlayer().sendMessage("§a\u00BB§7 Your melee hit was absorbed by " + name);
-                        } else {
-                            player.sendMessage("§c\u00AB§7 You absorbed " + attacker.getName() + "'s " + ability + " §7hit.");
-                            attacker.getPlayer().sendMessage("§a\u00BB§7 Your " + ability + " was absorbed by " + name + "§7.");
-                        }
-
-                        this.absorbed += -damageHealValue;
-                    }
-                    arcaneShieldHealth += damageHealValue;
-
+            } else if (arcaneShield != 0 && !Warlords.getInstance().game.onSameTeam(this, attacker)) {
+                damageHealValue *= totalReduction;
+                //TODO check teammate heal
+                if (arcaneShieldHealth + damageHealValue < 0) {
                     Bukkit.broadcastMessage("" + arcaneShieldHealth);
+                    Bukkit.broadcastMessage("" + damageHealValue);
+                    Bukkit.broadcastMessage("" + (arcaneShieldHealth + damageHealValue));
+
+                    arcaneShield = 0;
+                    addHealth(attacker, ability, (int) (arcaneShieldHealth + damageHealValue), (int) (arcaneShieldHealth + damageHealValue), isCrit ? 100 : -1, 100);
+
+                    this.absorbed += -(arcaneShield + damageHealValue);
+                } else {
+                    if (ability.isEmpty()) {
+                        player.sendMessage("§c\u00AB§7 You absorbed " + attacker.getName() + "'s melee §7hit.");
+                        attacker.getPlayer().sendMessage("§a\u00BB§7 Your melee hit was absorbed by " + name);
+                    } else {
+                        player.sendMessage("§c\u00AB§7 You absorbed " + attacker.getName() + "'s " + ability + " §7hit.");
+                        attacker.getPlayer().sendMessage("§a\u00BB§7 Your " + ability + " was absorbed by " + name + "§7.");
+                    }
+
+                    this.absorbed += -damageHealValue;
                 }
+                arcaneShieldHealth += damageHealValue;
+
+                Bukkit.broadcastMessage("" + arcaneShieldHealth);
             } else {
                 System.out.println(attacker.getName() + " hit " + name + " for " + damageHealValue);
                 boolean debt = false;
@@ -591,12 +635,13 @@ public class WarlordsPlayer {
                         damageHealValue = this.maxHealth - this.health;
                     }
                     damageHealValue = Math.round(damageHealValue);
-                    if (isCrit) {
-                        player.sendMessage("§a\u00AB§7 Your " + ability + " critically healed you for §a§l" + (int) damageHealValue + "! §7health.");
-                    } else {
-                        player.sendMessage("§a\u00AB§7 Your " + ability + " healed you for §a" + (int) damageHealValue + " §7health.");
+                    if (damageHealValue != 0) {
+                        if (isCrit) {
+                            player.sendMessage("§a\u00AB§7 Your " + ability + " critically healed you for §a§l" + (int) damageHealValue + "! §7health.");
+                        } else {
+                            player.sendMessage("§a\u00AB§7 Your " + ability + " healed you for §a" + (int) damageHealValue + " §7health.");
+                        }
                     }
-
                     addHealing(damageHealValue);
 
                 } else {
@@ -699,12 +744,14 @@ public class WarlordsPlayer {
                             if (this.health + damageHealValue > maxHealth) {
                                 damageHealValue = maxHealth - this.health;
                             }
-                            if (isCrit) {
-                                player.sendMessage("§a\u00AB§7 " + attacker.getName() + "'s " + ability + " critically healed you for §a§l" + (int) damageHealValue + "! §7health.");
-                                attacker.getPlayer().sendMessage("§a\u00BB§7 " + "Your " + ability + " critically healed " + name + " for §a§l" + (int) damageHealValue + "! §7health.");
-                            } else {
-                                player.sendMessage("§a\u00AB§7 " + attacker.getName() + "'s " + ability + " healed for §a" + (int) damageHealValue + " §7health.");
-                                attacker.getPlayer().sendMessage("§a\u00BB§7 " + "Your " + ability + " healed " + name + " for §a" + (int) damageHealValue + " §7health.");
+                            if (damageHealValue != 0) {
+                                if (isCrit) {
+                                    player.sendMessage("§a\u00AB§7 " + attacker.getName() + "'s " + ability + " critically healed you for §a§l" + (int) damageHealValue + "! §7health.");
+                                    attacker.getPlayer().sendMessage("§a\u00BB§7 " + "Your " + ability + " critically healed " + name + " for §a§l" + (int) damageHealValue + "! §7health.");
+                                } else {
+                                    player.sendMessage("§a\u00AB§7 " + attacker.getName() + "'s " + ability + " healed for §a" + (int) damageHealValue + " §7health.");
+                                    attacker.getPlayer().sendMessage("§a\u00BB§7 " + "Your " + ability + " healed " + name + " for §a" + (int) damageHealValue + " §7health.");
+                                }
                             }
                         }
                     }
@@ -1329,5 +1376,13 @@ public class WarlordsPlayer {
 
     public void setFirstProc(boolean firstProc) {
         this.firstProc = firstProc;
+    }
+
+    public boolean isTeamFlagCompass() {
+        return teamFlagCompass;
+    }
+
+    public void setTeamFlagCompass(boolean teamFlagCompass) {
+        this.teamFlagCompass = teamFlagCompass;
     }
 }

@@ -4,8 +4,12 @@ import com.ebicep.warlords.util.Utils;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
+import net.minecraft.server.v1_8_R3.EntityPlayer;
+import net.minecraft.server.v1_8_R3.PacketPlayInArmAnimation;
+import net.minecraft.server.v1_8_R3.PacketPlayOutAnimation;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -29,6 +33,9 @@ public class Strike extends AbstractAbility {
                 //TODO check if you should just remove distance because near gets nearest already
                 double distance = player.getLocation().distanceSquared(nearPlayer.getLocation());
                 if (nearPlayer.getGameMode() != GameMode.SPECTATOR && Utils.getLookingAt(player, nearPlayer) && distance < 3.6 * 3.6) {
+                    PacketPlayOutAnimation playOutAnimation = new PacketPlayOutAnimation(((CraftPlayer) player).getHandle(), 0);
+                    ((CraftPlayer) player).getHandle().playerConnection.sendPacket(playOutAnimation);
+
                     WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
                     warlordsPlayer.subtractEnergy(energyCost);
 

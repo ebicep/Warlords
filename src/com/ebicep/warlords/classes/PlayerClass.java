@@ -74,6 +74,10 @@ public abstract class PlayerClass {
 
             }
         }
+
+        if (player.getVehicle() != null) {
+            player.getVehicle().remove();
+        }
     }
 
     public void onRightClickHotKey(Player player, int slot) {
@@ -107,6 +111,10 @@ public abstract class PlayerClass {
             }
         }
         player.getInventory().setHeldItemSlot(0);
+
+        if (player.getVehicle() != null) {
+            player.getVehicle().remove();
+        }
     }
 
     public Player getPlayer() {
