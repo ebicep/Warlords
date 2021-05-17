@@ -25,16 +25,16 @@ public class Boulder extends AbstractAbility {
     public Boulder() {
         super("Boulder", -588, -877, 8, 80, 15, 175,
                 "§7Launch a giant boulder that shatters\n" +
-                "§7and deals §c%dynamic.value% §7- §c%dynamic.value% §7damage\n" +
-                "§7to all enemies near the impact point\n" +
-                "§7and knocks them back slightly.");
+                        "§7and deals §c%dynamic.value% §7- §c%dynamic.value% §7damage\n" +
+                        "§7to all enemies near the impact point\n" +
+                        "§7and knocks them back slightly.");
     }
 
     @Override
     public void onActivate(Player player) {
 
         Location location = player.getLocation();
-        Vector speed = player.getLocation().getDirection().multiply(2.2);
+        Vector speed = player.getLocation().getDirection().multiply(2.4);
         ArmorStand stand = (ArmorStand) location.getWorld().spawnEntity(location.clone().add(0, 0, 0), EntityType.ARMOR_STAND);
         stand.setHelmet(new ItemStack(Material.LONG_GRASS, 1, (short) 2));
         stand.setCustomName("Boulder");
@@ -53,8 +53,8 @@ public class Boulder extends AbstractAbility {
                     this.cancel();
                 }
 
-                speed.multiply(0.97);
-                speed.add(new Vector(0, -0.09, 0));
+                speed.multiply(0.98);
+                speed.add(new Vector(0, -0.1, 0));
                 Location newLoc = stand.getLocation();
                 newLoc.add(speed);
                 stand.teleport(newLoc);
@@ -72,9 +72,11 @@ public class Boulder extends AbstractAbility {
                     boulderExplode = true;
                     near = (List<Entity>) newLoc.getWorld().getNearbyEntities(newLoc, 5, 5, 5);
                     near = Utils.filterOutTeammates(near, player);
+
                     for (Player player1 : player.getWorld().getPlayers()) {
                         player1.playSound(newLoc, "shaman.boulder.impact", 1, 1);
                     }
+
                 } else {
                     Collection<Entity> nearbyEntities = stand.getWorld().getNearbyEntities(stand.getLocation(), 1.25, 1.25, 1.25);
                     for (Entity entity : nearbyEntities) {
@@ -84,7 +86,12 @@ public class Boulder extends AbstractAbility {
                                 near = (List<Entity>) newLoc.getWorld().getNearbyEntities(newLoc, 5, 5, 5);
                                 near = Utils.filterOutTeammates(near, player);
                                 near.remove(entity);
-                                final Vector v = entity.getLocation().toVector().subtract(location.toVector()).normalize().multiply(1.2).setY(0.4);
+
+                                for (Player player1 : player.getWorld().getPlayers()) {
+                                    player1.playSound(newLoc, "shaman.boulder.impact", 1, 1);
+                                }
+
+                                final Vector v = entity.getLocation().toVector().subtract(location.toVector()).normalize().multiply(1).setY(0.1);
                                 entity.setVelocity(v);
 
                                 Warlords.getPlayer((Player) entity).addHealth(Warlords.getPlayer(player), name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);

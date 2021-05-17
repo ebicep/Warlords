@@ -160,25 +160,22 @@ public class Warlords extends JavaPlugin {
                 // MOVEMENT
                 for (WarlordsPlayer warlordsPlayer : players.values()) {
                     Player player = warlordsPlayer.getPlayer();
-                    //player.sendMessage(String.valueOf(player.getWalkSpeed()));
+                    warlordsPlayer.getSpeed().updateSpeed();
 
                     // light infusion
                     if (warlordsPlayer.getInfusion() != 0) {
-                        player.setWalkSpeed(WarlordsPlayer.currentSpeed);
                         warlordsPlayer.setInfusion((int) (warlordsPlayer.getInfusion() - 0.05));
                     }
 
                     // presence
                     if (warlordsPlayer.getPresence() != 0) {
                         if (warlordsPlayer.getInfusion() == 0)
-                            player.setWalkSpeed(WarlordsPlayer.currentSpeed);
                         warlordsPlayer.setPresence((int) (warlordsPlayer.getPresence() - 0.05));
                         List<Entity> near = player.getNearbyEntities(6.0D, 2.0D, 6.0D);
                         near = Utils.filterOnlyTeammates(near, player);
                         for (Entity entity : near) {
                             if (entity instanceof Player) {
                                 Player nearPlayer = (Player) entity;
-                                nearPlayer.setWalkSpeed(WarlordsPlayer.currentSpeed);
                             }
                         }
                     }
@@ -191,7 +188,6 @@ public class Warlords extends JavaPlugin {
                         for (Entity entity : near) {
                             if (entity instanceof Player) {
                                 Player nearPlayer = (Player) entity;
-                                nearPlayer.setWalkSpeed(WarlordsPlayer.currentSpeed);
                             }
                         }
                     }
@@ -205,7 +201,6 @@ public class Warlords extends JavaPlugin {
                         for (Entity entity : near) {
                             if (entity instanceof Player) {
                                 Player nearPlayer = (Player) entity;
-                                nearPlayer.setWalkSpeed(WarlordsPlayer.currentSpeed);
                             }
                         }
                     }
@@ -213,13 +208,11 @@ public class Warlords extends JavaPlugin {
                     // berserk
                     if (warlordsPlayer.getBerserk() != 0) {
                         //berserk same speed as presence 30%
-                        player.setWalkSpeed(WarlordsPlayer.currentSpeed);
                         warlordsPlayer.setBerserk((int) (warlordsPlayer.getBerserk() - 0.05));
                     }
 
                     // spiritlink
                     if (warlordsPlayer.getSpiritLink() != 0) {
-                        player.setWalkSpeed(WarlordsPlayer.currentSpeed);
                         warlordsPlayer.setSpiritLink((int) (warlordsPlayer.getSpiritLink() - 0.05));
                     }
 
@@ -230,8 +223,8 @@ public class Warlords extends JavaPlugin {
 
                     // ice barrier slowness duration
                     if (warlordsPlayer.getIceBarrierSlowness() != 0) {
-                        player.setWalkSpeed(WarlordsPlayer.currentSpeed);
                         warlordsPlayer.setIceBarrierSlowness((int) (warlordsPlayer.getIceBarrierSlowness() - 0.05));
+                        warlordsPlayer.getSpeed().changeCurrentSpeed("Infusion", -20, 2 * 20);
                     }
                 }
 
@@ -253,6 +246,9 @@ public class Warlords extends JavaPlugin {
                         for (Entity entity : entities) {
                             if (entity instanceof Player && entity != customProjectile.getShooter()) {
                                 if (entity.getLocation().distanceSquared(location) < 2 * 2) {
+                                    for (Player player1 : entity.getWorld().getPlayers()) {
+                                        player1.playSound(entity.getLocation(), "mage.fireball.impact", 1, 1);
+                                    }
                                     hitPlayer = true;
                                     ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.5F, 1, entity.getLocation().add(0, 1, 0), 500);
                                     ParticleEffect.LAVA.display(0, 0, 0, 0.5F, 10, entity.getLocation().add(0, 1, 0), 500);
@@ -923,7 +919,6 @@ public class Warlords extends JavaPlugin {
                         if (warlordsPlayer.getInfusion() != 0) {
                             Location location = player.getLocation();
                             location.add(0, 1.5, 0);
-                            ParticleEffect.BLOCK_DUST.display(0.3F, 0.3F, 0.3F, 0.05F, 6, location, 500);
                         }
 
                         // Presence
@@ -931,7 +926,6 @@ public class Warlords extends JavaPlugin {
                             Location location = player.getLocation();
                             location.add(0, 1.5, 0);
                             ParticleEffect.SMOKE_NORMAL.display(0.3F, 0.3F, 0.3F, 0.02F, 1, location, 500);
-                            ParticleEffect.BLOCK_DUST.display(0.3F, 0.3F, 0.3F, 0.02F, 3, location, 500);
                         }
                     }
                 }

@@ -6,7 +6,7 @@ depend: [MultiWorld]
 commands:
   start:
     description: Starts a new game.
-    usage: /start [MAP]
+    usage: /start [MAP | RANDOM]
   endgame:
     description: Force stops the game.
     usage: /endgame

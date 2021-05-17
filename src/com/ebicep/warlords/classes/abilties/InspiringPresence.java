@@ -27,16 +27,17 @@ public class InspiringPresence extends AbstractAbility {
     @Override
     public void onActivate(Player player) {
         WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
-        player.setWalkSpeed(WarlordsPlayer.currentSpeed);
+        warlordsPlayer.getSpeed().changeCurrentSpeed("Inspiring Presence", 15, 12 * 20);
         warlordsPlayer.setPresence(12 * 20 - 10);
 
         // TODO: test if boost works for other players
+        // TODO: make range a circle instead of square
         List<Entity> near = player.getNearbyEntities(6.0D, 2.0D, 6.0D);
         near = Utils.filterOnlyTeammates(near, player);
         for (Entity entity : near) {
             if (entity instanceof Player) {
-                player.setWalkSpeed(WarlordsPlayer.currentSpeed);
-                Warlords.getPlayer(player).setPresence(12);
+                warlordsPlayer.getSpeed().changeCurrentSpeed("Inspiring Presence", 30, 12 * 20);
+                Warlords.getPlayer(player).setPresence(12 * 20);
             }
         }
 

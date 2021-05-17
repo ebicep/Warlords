@@ -1,88 +1,100 @@
 package com.ebicep.warlords.util;
 
+import java.util.*;
+import java.util.function.Consumer;
 import org.bukkit.Bukkit;
 
 public class CalculateSpeed {
-    private int Duration;
-    private float Speed;
-    private int DurationStatic;
-    private float currentSpeed;
-    private float speed = .35f;
-    private float slowness = .184f;
-    private float savedSpeed;
-    private boolean speedCap;
-    private boolean slownessCap;
-    private float defaultspeed;
+    private final float BASE_SPEED = 7.02f;
+    private final float BASE_SPEED_TO_WALKING_SPEED = 0.2825f/113*100/BASE_SPEED;
 
-    public CalculateSpeed(float defaultSpeed) {
-        this.currentSpeed = defaultSpeed;
-        this.defaultspeed = defaultSpeed;
+    private final float minspeed;
+    private final float maxspeed;
+    private final List<Modifier> modifiers = new LinkedList<>();
+    private final Consumer<Float> updateWalkingSpeed;
+    private float lastSpeed = 0;
+
+    public CalculateSpeed(Consumer<Float> updateWalkingSpeed, int baseModifier) {
+        // For some reason, the base speed of your weapon matters for your min speed, but your max speed is not affected by this
+        this.minspeed = BASE_SPEED * (1 + baseModifier / 100f) * (1 - .35f);
+        this.maxspeed = BASE_SPEED * 1.40f;
+        this.updateWalkingSpeed = updateWalkingSpeed;
+        this.modifiers.add(new Modifier("BASE", baseModifier, 0));
     }
 
-    public float getCurrentSpeed() {
-        return currentSpeed;
+    /**
+     * Called every tick. This function calculates the new speed and updates the player
+     */
+
+    public void updateSpeed() {
+        Iterator<Modifier> iterator = this.modifiers.iterator();
+        float speed = BASE_SPEED;
+        while(iterator.hasNext()) {
+            Modifier next = iterator.next();
+            if(next.duration != 0) {
+                next.duration--;
+                if(next.duration == 0) {
+                    iterator.remove();
+                    continue;
+                }
+            }
+            speed *= next.calculatedModifier;
+        }
+        if(speed < this.minspeed) {
+            speed = this.minspeed;
+        }
+        if(speed > this.maxspeed) {
+            speed = this.maxspeed;
+        }
+        if(speed != lastSpeed) {
+            float walkSpeed = speed * BASE_SPEED_TO_WALKING_SPEED;
+            // DEBUG - Bukkit.broadcastMessage("Speed updated ("+lastSpeed+" --> " +speed + ") walkSpeed: "+walkSpeed+" causes:");
+            for(Modifier mod : this.modifiers) {
+                Bukkit.broadcastMessage(mod.toString());
+            }
+            lastSpeed = speed;
+            this.updateWalkingSpeed.accept(walkSpeed);
+        }
     }
 
-    public void setCurrentSpeed(int Duration, float Speed, int DurationStatic) {
-        this.Duration = Duration;
-        this.Speed = Speed;
-        this.DurationStatic = DurationStatic * 20 - 10;
+    /**
+     * Add a speed change object
+     * @param name Unique name of the effect source
+     * @param modifier a value like +30 or -20, in percent
+     * @param duration The duration of this speedchange, 0 means no duration
+     * @return A runnable that can be used to manually remove this entry
+     */
 
-        // TODO: wip, caps still need fixing but base works
-        // Add the speed
-        if (this.Duration >= this.DurationStatic) {
-
-            // Save current speed for later use
-            this.savedSpeed = this.currentSpeed;
-
-            // Add speed to counter
-            this.currentSpeed += Speed;
-
-            // If current speed is higher than the speedcap set speed to cap
-            if (this.currentSpeed > this.speed) {
-                this.currentSpeed = this.speed;
-                speedCap = true;
-
-            // If current speed is lower than the slownesscap set speed to that cap
-            } else if (this.currentSpeed < this.slowness) {
-                this.currentSpeed = this.slowness;
-                slownessCap = true;
-
-            // If speed is fine, dont do anything
-            } else {
-                speedCap = false;
-                slownessCap = false;
+    public Runnable changeCurrentSpeed(String name, int modifier, int duration) {
+        Modifier mod = new Modifier(name, modifier, duration);
+        ListIterator<Modifier> iterator = this.modifiers.listIterator();
+        while(iterator.hasNext()) {
+            Modifier next = iterator.next();
+            if(Objects.equals(next.name, name)) {
+                iterator.set(mod);
+                return () -> modifiers.remove(mod);
             }
+        }
+        modifiers.add(mod);
+        return () -> modifiers.remove(mod);
+    }
 
-        // Dont change speed
-        } else if (this.Duration > 1) {
-            this.currentSpeed += 0;
+    private static class Modifier {
+        public final String name;
+        public final int modifier;
+        public final float calculatedModifier;
+        public int duration;
 
-        // Remove the speed
-        } else if (this.Duration == 1) {
+        public Modifier(String name, int modifier, int duration) {
+            this.name = name;
+            this.modifier = modifier;
+            this.calculatedModifier = 1 + modifier / 100f;
+            this.duration = duration;
+        }
 
-            // If speed hit the cap, reset to value before the cap was set
-            if (speedCap) {
-                if (this.savedSpeed == this.speed) {
-                    this.currentSpeed = this.savedSpeed - (float) 0.025;
-                } else {
-                    this.currentSpeed = this.savedSpeed;
-                }
-                speedCap = false;
-
-            // If slowness hit the cap, reset to value before the cap was set
-            } else if (slownessCap) {
-                if (this.savedSpeed == this.slowness) {
-                    this.currentSpeed = this.savedSpeed;
-                } else {
-                    this.currentSpeed = this.savedSpeed - (float) 0.02;
-                }
-                slownessCap = false;
-
-            // If speed was fine, just remove it
-            } else {
-                this.currentSpeed -= Speed;
-            }
+        @Override
+        public String toString() {
+            return "Modifier{" + "name=" + name + ", modifier=" + modifier + " (" + calculatedModifier + "), duration=" + duration + '}';
         }
     }
 }

@@ -22,6 +22,7 @@ import org.bukkit.material.Dye;
 import org.bukkit.metadata.MetadataValue;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -47,6 +48,8 @@ public class WarlordsPlayer {
     private float damage = 0;
     private float healing = 0;
     private float absorbed = 0;
+
+    private final CalculateSpeed speed;
 
     private List<ActionBarStats> actionBarStats = new ArrayList<>();
 
@@ -207,11 +210,9 @@ public class WarlordsPlayer {
         }
     }
 
-    private static final CalculateSpeed speed = new CalculateSpeed(.2825f); // .2825f is def + 13%
-    public static float currentSpeed = speed.getCurrentSpeed();
 
     /*
-    cryo 5.94
+    cryo 5.95
     cryo + infusion 7.3
     cryo + presence  6.84
     freezing 5.15
@@ -300,16 +301,16 @@ public class WarlordsPlayer {
         this.respawnTimer = -1;
         this.energy = spec.getMaxEnergy();
         this.maxEnergy = spec.getMaxEnergy();
-        player.setWalkSpeed(currentSpeed);
         this.horseCooldown = 0;
         this.hitCooldown = 20;
+        this.speed = new CalculateSpeed(player :: setWalkSpeed, 13);
         grayDye.setColor(DyeColor.GRAY);
         energyPowerup = temp;
     }
 
     public void assignItemLore() {
         //§
-        ItemStack weapon = new ItemStack(Material.GOLD_PICKAXE);
+        ItemStack weapon = new ItemStack(Material.POISONOUS_POTATO);
         ItemMeta weaponMeta = weapon.getItemMeta();
         weaponMeta.setDisplayName("§6Warlord's Fat Cock of the " + spec.getWeapon().getName());
         ArrayList<String> weaponLore = new ArrayList<>();
@@ -364,10 +365,14 @@ public class WarlordsPlayer {
             ArrayList<String> redLore = new ArrayList<>();
             redLore.add("§7Cooldown: §b" + spec.getRed().getCooldown());
             redLore.add("§7Energy Cost: §e" + spec.getRed().getEnergyCost());
-            redLore.add("§7Crit Chance: §c" + spec.getRed().getCritChance() + "%");
-            redLore.add("§7Crit Multiplier: §c" + spec.getRed().getCritMultiplier() + "%");
+
+            if (spec.getRed().getCritChance()  != 0 || spec.getRed().getCritMultiplier() != 0) {
+                redLore.add("§7Crit Chance: §c" + spec.getRed().getCritChance() + "%");
+                redLore.add("§7Crit Multiplier: §c" + spec.getRed().getCritMultiplier() + "%");
+            }
+
             redLore.add("");
-            redLore.add(spec.getRed().getDescription());
+            redLore.addAll(Arrays.asList(spec.getRed().getDescription().split("\n")));
             redMeta.setLore(redLore);
             red.setItemMeta(redMeta);
             redMeta.spigot().setUnbreakable(true);
@@ -386,10 +391,14 @@ public class WarlordsPlayer {
             ArrayList<String> purpleLore = new ArrayList<>();
             purpleLore.add("§7Cooldown: §b" + spec.getPurple().getCooldown());
             purpleLore.add("§7Energy Cost: §e" + spec.getPurple().getEnergyCost());
-            purpleLore.add("§7Crit Chance: §c" + spec.getPurple().getCritChance() + "%");
-            purpleLore.add("§7Crit Multiplier: §c" + spec.getPurple().getCritMultiplier() + "%");
+
+            if (spec.getPurple().getCritChance()  != 0 || spec.getPurple().getCritMultiplier() != 0) {
+                purpleLore.add("§7Crit Chance: §c" + spec.getPurple().getCritChance() + "%");
+                purpleLore.add("§7Crit Multiplier: §c" + spec.getPurple().getCritMultiplier() + "%");
+            }
+
             purpleLore.add("");
-            purpleLore.add(spec.getPurple().getDescription());
+            purpleLore.addAll(Arrays.asList(spec.getPurple().getDescription().split("\n")));
             purpleMeta.setLore(purpleLore);
             purple.setItemMeta(purpleMeta);
             purpleMeta.spigot().setUnbreakable(true);
@@ -410,10 +419,14 @@ public class WarlordsPlayer {
             ArrayList<String> blueLore = new ArrayList<>();
             blueLore.add("§7Cooldown: §b" + spec.getBlue().getCooldown());
             blueLore.add("§7Energy Cost: §e" + spec.getBlue().getEnergyCost());
-            blueLore.add("§7Crit Chance: §c" + spec.getBlue().getCritChance() + "%");
-            blueLore.add("§7Crit Multiplier: §c" + spec.getBlue().getCritMultiplier() + "%");
+
+            if (spec.getBlue().getCritChance()  != 0 || spec.getBlue().getCritMultiplier() != 0) {
+                blueLore.add("§7Crit Chance: §c" + spec.getBlue().getCritChance() + "%");
+                blueLore.add("§7Crit Multiplier: §c" + spec.getBlue().getCritMultiplier() + "%");
+            }
+
             blueLore.add("");
-            blueLore.add(spec.getBlue().getDescription());
+            blueLore.addAll(Arrays.asList(spec.getBlue().getDescription().split("\n")));
             blueMeta.setLore(blueLore);
             blue.setItemMeta(blueMeta);
             blueMeta.spigot().setUnbreakable(true);
@@ -434,10 +447,14 @@ public class WarlordsPlayer {
             ArrayList<String> orangeLore = new ArrayList<>();
             orangeLore.add("§7Cooldown: §b" + spec.getOrange().getCooldown());
             orangeLore.add("§7Energy Cost: §e" + spec.getOrange().getEnergyCost());
-            orangeLore.add("§7Crit Chance: §c" + spec.getOrange().getCritChance() + "%");
-            orangeLore.add("§7Crit Multiplier: §c" + spec.getOrange().getCritMultiplier() + "%");
+
+            if (spec.getOrange().getCritChance()  != 0 || spec.getOrange().getCritMultiplier() != 0) {
+                orangeLore.add("§7Crit Chance: §c" + spec.getOrange().getCritChance() + "%");
+                orangeLore.add("§7Crit Multiplier: §c" + spec.getOrange().getCritMultiplier() + "%");
+            }
+
             orangeLore.add("");
-            orangeLore.add(spec.getOrange().getDescription());
+            orangeLore.addAll(Arrays.asList(spec.getOrange().getDescription().split("\n")));
             orangeMeta.setLore(orangeLore);
             orange.setItemMeta(orangeMeta);
             orangeMeta.spigot().setUnbreakable(true);
@@ -799,7 +816,7 @@ public class WarlordsPlayer {
                 } else {
 
                     if (!ability.isEmpty()) {
-                        attacker.getPlayer().playSound(attacker.getPlayer().getLocation(), Sound.ORB_PICKUP, 0.4f, 1f);
+                        attacker.getPlayer().playSound(attacker.getPlayer().getLocation(), Sound.ORB_PICKUP, 0.8f, 1f);
                     }
                 }
 
@@ -823,11 +840,20 @@ public class WarlordsPlayer {
                 } else if (attacker.getEarthliving() != 0) {
                     int earthlivingActivate = (int) (Math.random() * 100);
                     if (attacker.isFirstProc()) {
+
+                        for (Player player1 : player.getWorld().getPlayers()) {
+                            player1.playSound(player.getLocation(), "shaman.earthlivingweapon.impact", 1, 1);
+                        }
+
                         attacker.setFirstProc(false);
                         earthlivingActivate = 0;
                     }
                     if (earthlivingActivate < 40) {
                         attacker.addHealth(attacker, "Earthliving Weapon", min * -1, max * -1, 25, 440);
+
+                        for (Player player1 : player.getWorld().getPlayers()) {
+                            player1.playSound(player.getLocation(), "shaman.earthlivingweapon.impact", 1, 1);
+                        }
                     }
                     List<Entity> near = attacker.getPlayer().getNearbyEntities(3.0D, 3.0D, 3.0D);
                     near = Utils.filterOnlyTeammates(near, attacker.getPlayer());
@@ -836,6 +862,7 @@ public class WarlordsPlayer {
                         if (entity instanceof Player) {
                             if (earthlivingActivate < 40) {
                                 Warlords.getPlayer((Player) near.get(0)).addHealth(attacker, "Earthliving Weapon", min * -1, max * -1, 25, 440);
+
                                 counter++;
                             }
                         }
@@ -932,14 +959,10 @@ public class WarlordsPlayer {
 
     public void setInfusion(int infusionDuration) {
         this.infusionDuration = infusionDuration;
-        speed.setCurrentSpeed(infusionDuration, .0675f, 3); // .0675f 40% on def speed
-        currentSpeed = speed.getCurrentSpeed();
     }
 
     public void setBreathSlowness(int breathSlownessDuration) {
         this.breathSlownessDuration = breathSlownessDuration;
-        speed.setCurrentSpeed(breathSlownessDuration, -.0985f, 4); // -.0985f -20% on def speed
-        currentSpeed = speed.getCurrentSpeed();
     }
 
     public int getBreathSlowness() {
@@ -948,9 +971,6 @@ public class WarlordsPlayer {
 
     public void setFrostbolt(int frostboltDuration) {
         this.frostboltDuration = frostboltDuration;
-        // TODO: fix speed value
-        speed.setCurrentSpeed(frostboltDuration, -.0785f, 2); // -.0565f -20% on def speed
-        currentSpeed = speed.getCurrentSpeed();
     }
 
     public int getFrostbolt() {
@@ -971,8 +991,6 @@ public class WarlordsPlayer {
 
     public void setPresence(int presenceDuration) {
         this.presenceDuration = presenceDuration;
-        speed.setCurrentSpeed(presenceDuration, .0425f, 12); // .0425f 30% on def speed
-        currentSpeed = speed.getCurrentSpeed();
     }
 
     public int getBloodLust() {
@@ -989,8 +1007,6 @@ public class WarlordsPlayer {
 
     public void setBerserk(int berserkDuration) {
         this.berserkDuration = berserkDuration;
-        speed.setCurrentSpeed(berserkDuration, .0425f, 18); // .0425f 30% on def speed
-        currentSpeed = speed.getCurrentSpeed();
     }
 
     public int getIntervene() {
@@ -1159,8 +1175,6 @@ public class WarlordsPlayer {
 
     public void setIceBarrier(int iceBarrierDuration) {
         this.iceBarrierDuration = iceBarrierDuration;
-        speed.setCurrentSpeed(iceBarrierDuration, 0, 12);
-        currentSpeed = speed.getCurrentSpeed();
     }
 
     public int getIceBarrierSlowness() {
@@ -1169,9 +1183,6 @@ public class WarlordsPlayer {
 
     public void setIceBarrierSlowness(int iceBarrierSlownessDuration) {
         this.iceBarrierSlownessDuration = iceBarrierSlownessDuration;
-        // TODO: fix slowness value
-        speed.setCurrentSpeed(iceBarrierSlownessDuration, -.0785f, 2); // -.0638f -20% on def speed
-        currentSpeed = speed.getCurrentSpeed();
     }
 
     public int getPowerUpDamage() {
@@ -1228,10 +1239,6 @@ public class WarlordsPlayer {
 
     public void setSpiritLink(int spiritLinkDuration) {
         this.spiritLinkDuration = spiritLinkDuration;
-
-        // TODO: set buff to 1.5 sec duration
-        speed.setCurrentSpeed(spiritLinkDuration, .0675f, 2); // .0675f 40% on def speed
-        currentSpeed = speed.getCurrentSpeed();
     }
 
     public List<Soulbinding.SoulBoundPlayer> getSoulBindedPlayers() {
@@ -1385,4 +1392,6 @@ public class WarlordsPlayer {
     public void setTeamFlagCompass(boolean teamFlagCompass) {
         this.teamFlagCompass = teamFlagCompass;
     }
+
+    public CalculateSpeed getSpeed() { return speed; }
 }

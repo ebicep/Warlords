@@ -32,8 +32,9 @@ public class Commands implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
         if (!(sender instanceof Player)) return true;
         if (command.getName().equalsIgnoreCase("start")) {
-            Game game = Warlords.game; // In the future allow the user to select a game player)
+            Game game = Warlords.game; // In the future allow the user to select a game player
             GameMap map;
+
             if (args.length == 0) {
                 map = null;
             } else if(args[0].equalsIgnoreCase("random")) {
@@ -43,7 +44,7 @@ public class Commands implements CommandExecutor {
             } else {
                 try {
                     map = GameMap.valueOf(args[0].toUpperCase(Locale.ROOT));
-                } catch(IllegalArgumentException e) {
+                } catch (IllegalArgumentException e) {
                     sender.sendMessage(ChatColor.RED + args[0] + " was not found, valid maps: " + Arrays.toString(GameMap.values()));
                     return true;
                 }

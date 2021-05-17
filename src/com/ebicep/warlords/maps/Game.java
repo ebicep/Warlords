@@ -56,7 +56,7 @@ public class Game implements Runnable {
                     int total = game.map.getCountdownTimerInTicks();
                     int remaining = total - game.timer;
                     if (remaining % 20 == 1) {
-                        Bukkit.broadcastMessage(ChatColor.GOLD + "Gamestate PRE_GAME, remaining time: " + remaining / 20);
+                        Bukkit.broadcastMessage(ChatColor.GOLD + "DEBUG - Gamestate: PRE_GAME | Remaining time: " + remaining / 20);
                     }
                     if (game.timer == total) {
                         return GAME;
@@ -85,20 +85,22 @@ public class Game implements Runnable {
 
                 for(Player p : game.teamRed) {
 
-                    Warlords.addPlayer(new WarlordsPlayer(p, p.getName(), p.getUniqueId(), new ThunderLord(p), false));
+                    Warlords.addPlayer(new WarlordsPlayer(p, p.getName(), p.getUniqueId(), new Crusader(p), false));
                     redTeam.add(p.getName());
                     p.setPlayerListName(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + "SPEC" + ChatColor.DARK_GRAY + "] "
                             + ChatColor.RED + p.getName() + ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + "Lv90" + ChatColor.DARK_GRAY + "]");
+
                     resetArmor(p, Warlords.getPlayer(p).getSpec(), false);
                     System.out.println("Added " + p.getName());
                 }
 
                 for(Player p : game.teamBlue) {
 
-                    Warlords.addPlayer(new WarlordsPlayer(p, p.getName(), p.getUniqueId(), new ThunderLord(p), false));
+                    Warlords.addPlayer(new WarlordsPlayer(p, p.getName(), p.getUniqueId(), new Cryomancer(p), false));
                     blueTeam.add(p.getName());
                     p.setPlayerListName(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + "SPEC" + ChatColor.DARK_GRAY + "] "
                             + ChatColor.BLUE + p.getName() + ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + "Lv90" + ChatColor.DARK_GRAY + "]");
+
                     resetArmor(p, Warlords.getPlayer(p).getSpec(), true);
                     System.out.println("Added " + p.getName());
                 }
@@ -183,12 +185,6 @@ public class Game implements Runnable {
         },
         ;
 
-        /**
-         * Run a tick of the game
-         *
-         * @param game The current game instance
-         * @return null if no change needs to be made, a new State if the state needs to be changed
-         */
         public abstract Game.State run(Game game);
 
         public abstract void begin(Game game);
@@ -316,7 +312,7 @@ public class Game implements Runnable {
 
     public void changeMap(GameMap map) {
         if (!canChangeMap()) {
-            throw new IllegalStateException("cannot change map");
+            throw new IllegalStateException("Cannot change map!");
         }
         this.map = map;
     }

@@ -47,8 +47,7 @@ public class Breath extends AbstractAbility {
                         }
                     } else if (name.contains("Freezing") && !Warlords.getInstance().game.onSameTeam(warlordsPlayer, Warlords.getPlayer(nearPlayer))) {
                         Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
-                        nearPlayer.setWalkSpeed(WarlordsPlayer.currentSpeed);
-                        warlordsPlayer.setBreathSlowness(4 * 20 - 10);
+                        Warlords.getPlayer(nearPlayer).getSpeed().changeCurrentSpeed("Freezing Breath", -35, 4 * 20);
                     }
                 }
             }
