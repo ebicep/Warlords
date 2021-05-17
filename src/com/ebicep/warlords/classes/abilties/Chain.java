@@ -336,7 +336,7 @@ public class Chain extends AbstractAbility {
             } else if (name.contains("Spirit")) {
                 // TODO: add dmg reduction
                 // speed buff
-                warlordsPlayer.getSpeed().changeCurrentSpeed("Infusion", 40, 30); // 30 is ticks
+                warlordsPlayer.getSpeed().changeCurrentSpeed("Spirit Link", 40, 30); // 30 is ticks
                 warlordsPlayer.setSpiritLink(30);
 
                 warlordsPlayer.getSpec().getRed().setCurrentCooldown(cooldown);
