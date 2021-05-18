@@ -67,7 +67,7 @@ public class CalculateSpeed {
                         }
                     }
                     if(appliedEffects.containsKey(next.name)) {
-                        continue; // We are found in the applied map, this means another effect has disabled us!
+                        continue;
                     }
                 }
                 speed *= next.calculatedModifier;
@@ -81,9 +81,9 @@ public class CalculateSpeed {
             }
             if(speed != lastSpeed) {
                 float walkSpeed = speed * BASE_SPEED_TO_WALKING_SPEED;
-                Bukkit.broadcastMessage("Speed updated ("+lastSpeed+" --> " +speed + ") walkSpeed: "+walkSpeed+" causes:");
+                //Bukkit.broadcastMessage("Speed updated ("+lastSpeed+" --> " +speed + ") walkSpeed: "+walkSpeed+" causes:");
                 for(Modifier mod : appliedEffects.values()) {
-                    Bukkit.broadcastMessage(String.valueOf(mod));
+                    //Bukkit.broadcastMessage(String.valueOf(mod));
                 }
                 lastSpeed = speed;
                 this.updateWalkingSpeed.accept(walkSpeed);
@@ -136,9 +136,9 @@ public class CalculateSpeed {
             this.toDisable = toDisable;
         }
 
-        @Override
+        /*@Override
         public String toString() {
             return "Modifier{" + "name=" + name + ", modifier=" + modifier + " (" + calculatedModifier + "), duration=" + duration + ", toDisable=" + toDisable + '}';
-        }
+        }*/
     }
 }
