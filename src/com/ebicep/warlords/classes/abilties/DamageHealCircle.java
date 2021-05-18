@@ -31,7 +31,6 @@ public class DamageHealCircle {
                 location.add(0, -1, 0);
             }
         }
-        location.add(0, -1, 0);
         this.radius = radius;
         this.duration = duration;
         this.minDamage = minDamage;
@@ -54,6 +53,7 @@ public class DamageHealCircle {
         hammer.setItemInHand(new ItemStack(Material.STRING));
         hammer.setGravity(false);
         hammer.setVisible(false);
+        hammer.setMarker(true);
     }
 
     public void removeHammer() {
@@ -67,20 +67,20 @@ public class DamageHealCircle {
             float z = (float) (radius * Math.cos(angle));
             angle += 0.2;
             if (name.contains("Hammer")) {
-                location.getWorld().playEffect(new Location(location.getWorld(), location.getX() + x, location.getY() + 2, location.getZ() + z), Effect.HAPPY_VILLAGER, 0);
+                location.getWorld().playEffect(new Location(location.getWorld(), location.getX() + x, location.getY() + 1, location.getZ() + z), Effect.HAPPY_VILLAGER, 0);
 
             } else {
                 if (name.contains("Rain")) {
-                    location.getWorld().playEffect(new Location(location.getWorld(), location.getX() + x, location.getY() + 2, location.getZ() + z), Effect.HAPPY_VILLAGER, 0);
-                } else {
                     location.getWorld().playEffect(new Location(location.getWorld(), location.getX() + x, location.getY() + 1, location.getZ() + z), Effect.HAPPY_VILLAGER, 0);
+                } else {
+                    location.getWorld().playEffect(new Location(location.getWorld(), location.getX() + x, location.getY(), location.getZ() + z), Effect.HAPPY_VILLAGER, 0);
                 }
             }
 
             if (name.contains("Rain")) {
                 // TODO: need to revise this + ring doesn't appear at all sometimes?
-                ParticleEffect.CLOUD.display(2, 0, 2, 0.01F, 1, (new Location(location.getWorld(), location.getX(), location.getY() + 7, location.getZ())), 500);
-                ParticleEffect.DRIP_WATER.display(2, 0, 2, 0.01F, 1, (new Location(location.getWorld(), location.getX(), location.getY() + 7, location.getZ())), 500);
+                ParticleEffect.CLOUD.display(2, 0, 2, 0.01F, 1, (new Location(location.getWorld(), location.getX(), location.getY() + 6, location.getZ())), 500);
+                ParticleEffect.DRIP_WATER.display(2, 0, 2, 0.01F, 1, (new Location(location.getWorld(), location.getX(), location.getY() + 6, location.getZ())), 500);
             }
         }
     }

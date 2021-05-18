@@ -41,6 +41,7 @@ public class Boulder extends AbstractAbility {
         stand.setCustomNameVisible(false);
         stand.setGravity(false);
         stand.setVisible(false);
+        stand.setMarker(true);
 
         Warlords.getPlayer(player).subtractEnergy(energyCost);
 

@@ -3,15 +3,23 @@ package com.ebicep.warlords.classes.abilties;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.util.Utils;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class LightningBolt extends AbstractAbility {
 
@@ -31,12 +39,44 @@ public class LightningBolt extends AbstractAbility {
         Vector direction = location.getDirection();
 
         Bolt bolt = new Bolt(Warlords.getPlayer(player), (ArmorStand) location.getWorld().spawnEntity(location.subtract(direction.getX() * -.5, .3, direction.getZ() * -.5), EntityType.ARMOR_STAND), location.subtract(direction.getX() * -.5, .3, direction.getZ() * -.5), direction, this);
-        Warlords.getBolts().add(bolt);
         Warlords.getPlayer(player).subtractEnergy(energyCost);
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "shaman.lightningbolt.activation", 1, 1);
         }
+
+        new BukkitRunnable() {
+
+            @Override
+            public void run() {
+                List<Entity> near = (List<Entity>) bolt.getLocation().getWorld().getNearbyEntities(bolt.getLocation().clone().add(0, 2, 0), 1.25, 1.175, 1.175);
+                near = Utils.filterOutTeammates(near, player);
+                for (Entity entity : near) {
+                    if (entity instanceof Player) {
+                        WarlordsPlayer warlordsPlayer = Warlords.getPlayer((Player) entity);
+                        //hitting player
+                        //TODO fix fucked up hit detection
+                        if (player.getGameMode() != GameMode.SPECTATOR && !Warlords.game.onSameTeam((Player) entity, player) && !bolt.getPlayersHit().contains(entity)) {
+                            bolt.getPlayersHit().add((Player) entity);
+                            warlordsPlayer.addHealth(bolt.getShooter(), bolt.getLightningBolt().getName(), bolt.getLightningBolt().getMinDamageHeal(), bolt.getLightningBolt().getMaxDamageHeal(), bolt.getLightningBolt().getCritChance(), bolt.getLightningBolt().getCritMultiplier());
+                            //reducing chain cooldown
+                            bolt.getShooter().getSpec().getRed().subtractCooldown(2);
+                            bolt.getShooter().updateRedItem();
+                        }
+                    }
+                }
+                //System.out.println(location.getWorld().getBlockAt(bolt.getArmorStand().getLocation().clone().add(0, 2, 0)).getType());
+                if (location.getWorld().getBlockAt(bolt.getArmorStand().getLocation().clone().add(0, 2, 0)).getType() != Material.AIR && location.getWorld().getBlockAt(bolt.getArmorStand().getLocation().clone().add(0, 2, 0)).getType() != Material.WATER || bolt.getArmorStand().getTicksLived() > 50) {
+                    //TODO add explosion thingy
+                    bolt.getArmorStand().remove();
+                    this.cancel();
+                }
+
+                bolt.getArmorStand().teleport(bolt.getLocation().add(bolt.getTeleportDirection().clone().multiply(2.5)), PlayerTeleportEvent.TeleportCause.PLUGIN);
+
+            }
+
+        }.runTaskTimer(Warlords.getInstance(), 0, 0);
     }
 
     public static class Bolt {
@@ -46,12 +86,14 @@ public class LightningBolt extends AbstractAbility {
         private Location location;
         private Vector direction;
         private LightningBolt lightningBolt;
+        private List<Player> playersHit = new ArrayList<>();
 
         public Bolt(WarlordsPlayer shooter, ArmorStand armorStand, Location location, Vector direction, LightningBolt lightningBolt) {
             this.shooter = shooter;
             this.armorStand = armorStand;
             armorStand.setGravity(false);
-            armorStand.setVisible(true);
+            armorStand.setVisible(false);
+            armorStand.setMarker(true);
             armorStand.setHelmet(new ItemStack(Material.SAPLING, 1, (short) 3));
             armorStand.setHeadPose(new EulerAngle(direction.getY() * -1, 0, 0));
             this.location = location;
@@ -99,5 +141,12 @@ public class LightningBolt extends AbstractAbility {
             this.lightningBolt = lightningBolt;
         }
 
+        public List<Player> getPlayersHit() {
+            return playersHit;
+        }
+
+        public void setPlayersHit(List<Player> playersHit) {
+            this.playersHit = playersHit;
+        }
     }
 }

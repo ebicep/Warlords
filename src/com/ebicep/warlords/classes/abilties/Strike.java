@@ -10,6 +10,7 @@ import net.minecraft.server.v1_8_R3.PacketPlayOutAnimation;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -26,7 +27,6 @@ public class Strike extends AbstractAbility {
     public void onActivate(Player player) {
         List<Entity> near = player.getNearbyEntities(5.0D, 5.0D, 5.0D);
         near = Utils.filterOutTeammates(near, player);
-        System.out.println(near);
         for (Entity entity : near) {
             if (entity instanceof Player) {
                 Player nearPlayer = (Player) entity;
@@ -47,7 +47,11 @@ public class Strike extends AbstractAbility {
                         }
                         //check consecrate then boost dmg
                         if (name.contains("Avenger")) {
-                            Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+                            if (standingOnConsecrate(player, nearPlayer)) {
+                                Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, name, Math.round(minDamageHeal * 1.2f), Math.round(maxDamageHeal * 1.2f), critChance, critMultiplier);
+                            } else {
+                                Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+                            }
                             Warlords.getPlayer(nearPlayer).subtractEnergy(6);
                             if (warlordsPlayer.getWrath() != -1) {
                                 List<Entity> nearNearPlayers = nearPlayer.getNearbyEntities(5.0D, 5.0D, 5.0D);
@@ -60,18 +64,7 @@ public class Strike extends AbstractAbility {
                                         if (nearNearPlayer.getGameMode() != GameMode.SPECTATOR && distanceNearPlayer < 3.6 * 3.6) {
                                             System.out.println("NEAR NEAR HIT " + nearNearPlayer);
                                             //checking if player is in consecrate
-                                            boolean inConsecrate = false;
-                                            for (int i = 0; i < Warlords.damageHealCircles.size(); i++) {
-                                                DamageHealCircle damageHealCircle = Warlords.damageHealCircles.get(i);
-                                                if (damageHealCircle.getPlayer() == player) {
-                                                    double consecrateDistance = damageHealCircle.getLocation().distanceSquared(player.getLocation());
-                                                    if (consecrateDistance < damageHealCircle.getRadius() * damageHealCircle.getRadius()) {
-                                                        inConsecrate = true;
-                                                        break;
-                                                    }
-                                                }
-                                            }
-                                            if (inConsecrate) {
+                                            if (standingOnConsecrate(player, nearNearPlayer)) {
                                                 Warlords.getPlayer(nearNearPlayer).addHealth(warlordsPlayer, name, Math.round(minDamageHeal * 1.2f), Math.round(maxDamageHeal * 1.2f), critChance, critMultiplier);
                                             } else {
                                                 Warlords.getPlayer(nearNearPlayer).addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
@@ -87,18 +80,7 @@ public class Strike extends AbstractAbility {
                         } else if (name.contains("Crusader")) {
                             int counter = 0;
                             //checking if player is in consecrate
-                            boolean inConsecrate = false;
-                            for (int i = 0; i < Warlords.damageHealCircles.size(); i++) {
-                                DamageHealCircle damageHealCircle = Warlords.damageHealCircles.get(i);
-                                if (damageHealCircle.getPlayer() == player) {
-                                    double consecrateDistance = damageHealCircle.getLocation().distanceSquared(player.getLocation());
-                                    if (consecrateDistance < damageHealCircle.getRadius() * damageHealCircle.getRadius()) {
-                                        inConsecrate = true;
-                                        break;
-                                    }
-                                }
-                            }
-                            if (inConsecrate) {
+                            if (standingOnConsecrate(player, nearPlayer)) {
                                 Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, name, Math.round(minDamageHeal * 1.2f), Math.round(maxDamageHeal * 1.2f), critChance, critMultiplier);
                             } else {
                                 Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
@@ -119,22 +101,15 @@ public class Strike extends AbstractAbility {
                             break;
                         } else if (name.contains("Protector")) {
                             //self heal 50%
-                            Warlords.getPlayer(player).addHealth(warlordsPlayer, name, -minDamageHeal / 2, -maxDamageHeal / 2, critChance, critMultiplier);
+                            if (standingOnConsecrate(player, nearPlayer)) {
+                                Warlords.getPlayer(player).addHealth(warlordsPlayer, name, Math.round(-minDamageHeal * 1.2f / 2), Math.round(-maxDamageHeal * 1.2f / 2), critChance, critMultiplier);
+                            } else {
+                                Warlords.getPlayer(player).addHealth(warlordsPlayer, name, -minDamageHeal / 2, -maxDamageHeal / 2, critChance, critMultiplier);
+                            }
 
                             int counter = 0;
                             //checking if player is in consecrate
-                            boolean inConsecrate = false;
-                            for (int i = 0; i < Warlords.damageHealCircles.size(); i++) {
-                                DamageHealCircle damageHealCircle = Warlords.damageHealCircles.get(i);
-                                if (damageHealCircle.getPlayer() == player) {
-                                    double consecrateDistance = damageHealCircle.getLocation().distanceSquared(player.getLocation());
-                                    if (consecrateDistance < damageHealCircle.getRadius() * damageHealCircle.getRadius()) {
-                                        inConsecrate = true;
-                                        break;
-                                    }
-                                }
-                            }
-                            if (inConsecrate) {
+                            if (standingOnConsecrate(player, nearPlayer)) {
                                 Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, name, Math.round(minDamageHeal * 1.2f), Math.round(maxDamageHeal * 1.2f), critChance, critMultiplier);
                             } else {
                                 Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
@@ -146,7 +121,7 @@ public class Strike extends AbstractAbility {
                             for (Entity nearEntity2 : nearNearPlayers) {
                                 if (nearEntity2 instanceof Player) {
                                     Player nearTeamPlayer = (Player) nearEntity2;
-                                    if (inConsecrate) {
+                                    if (standingOnConsecrate(player, nearPlayer)) {
                                         Warlords.getPlayer(nearTeamPlayer).addHealth(warlordsPlayer, name, Math.round(minDamageHeal * 1.2f * -1), Math.round(maxDamageHeal * 1.2f * -1), critChance, critMultiplier);
                                     } else {
                                         Warlords.getPlayer(nearTeamPlayer).addHealth(warlordsPlayer, name, minDamageHeal * -1, maxDamageHeal * -1, critChance, critMultiplier);
@@ -187,5 +162,17 @@ public class Strike extends AbstractAbility {
                 }
             }
         }
+    }
+
+    private boolean standingOnConsecrate(Player owner, Player standing) {
+        for (Entity entity : owner.getWorld().getEntities()) {
+            if (entity instanceof ArmorStand && entity.hasMetadata("Consecrate - " + owner.getName())) {
+                if (entity.getLocation().clone().add(0, 2, 0).distanceSquared(standing.getLocation()) < 5 * 5.25) {
+                    Bukkit.broadcastMessage("hit in consecrate");
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

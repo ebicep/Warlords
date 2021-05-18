@@ -39,11 +39,12 @@ public class LightningRod extends AbstractAbility {
 
         List<Entity> near = player.getNearbyEntities(5.0D, 5.0D, 5.0D);
         near = Utils.filterOutTeammates(near, player);
-        //knockback
+
         for (Entity entity : near) {
             final Location otherLocation = entity.getLocation();
             if (entity instanceof Player && otherLocation.distanceSquared(playerLocation) < 30) {
                 if (entity != player) {
+                    //knockback
                     final Location loc = entity.getLocation();
                     final Vector v = player.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1.5).setY(0.4);
 
@@ -51,9 +52,8 @@ public class LightningRod extends AbstractAbility {
                 }
             }
         }
-        //damage
-        //TODO only pusle on totem
-        //pulseDamage(warlordsPlayer, near);
+
+        pulseDamage(warlordsPlayer, near);
 
         // TODO: add effects around player with armorstands
         player.getWorld().spigot().strikeLightningEffect(playerLocation, true);
@@ -66,7 +66,7 @@ public class LightningRod extends AbstractAbility {
         for (Entity entity : near) {
             if (entity instanceof Player) {
                 Player nearPlayer = (Player) entity;
-                if (nearPlayer.getGameMode() != GameMode.SPECTATOR) {
+                if (Utils.totemDownAndClose(warlordsPlayer, nearPlayer) && nearPlayer.getGameMode() != GameMode.SPECTATOR) {
                     Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, warlordsPlayer.getSpec().getOrange().getName(), warlordsPlayer.getSpec().getOrange().getMinDamageHeal(), warlordsPlayer.getSpec().getOrange().getMaxDamageHeal(), warlordsPlayer.getSpec().getOrange().getCritChance(), warlordsPlayer.getSpec().getOrange().getCritMultiplier());
                 }
             }
