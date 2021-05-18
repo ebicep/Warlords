@@ -37,8 +37,6 @@ public class Warlords extends JavaPlugin {
         return orbs;
     }
 
-    public static List<DamageHealCircle> damageHealCircles = new ArrayList<>();
-
     private static HashMap<Player, WarlordsPlayer> players = new HashMap<>();
 
     public static void addPlayer(WarlordsPlayer warlordsPlayer) {
