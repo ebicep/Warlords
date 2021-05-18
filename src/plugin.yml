@@ -10,4 +10,7 @@ commands:
   endgame:
     description: Force stops the game.
     usage: /endgame
+  class:
+    description: Select your class.
+    usage: /class [CLASS]
 

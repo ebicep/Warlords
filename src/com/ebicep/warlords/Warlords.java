@@ -70,6 +70,11 @@ public class Warlords extends JavaPlugin {
         Commands commands = new Commands();
         getCommand("start").setExecutor(commands);
         getCommand("endgame").setExecutor(commands);
+        getCommand("class").setExecutor(commands);
+
+        getCommand("start").setTabCompleter(commands);
+        getCommand("class").setTabCompleter(commands);
+
         game = new Game();
         startTask();
 

@@ -19,6 +19,7 @@ import com.ebicep.warlords.classes.warrior.specs.berserker.Berserker;
 import com.ebicep.warlords.classes.warrior.specs.defender.Defender;
 import com.ebicep.warlords.classes.warrior.specs.revenant.Revenant;
 import com.ebicep.warlords.powerups.PowerupManager;
+import com.ebicep.warlords.util.Classes;
 import com.ebicep.warlords.util.CustomScoreboard;
 import com.ebicep.warlords.util.RemoveEntities;
 import com.sun.jndi.ldap.Ber;
@@ -85,7 +86,9 @@ public class Game implements Runnable {
 
                 for(Player p : game.teamRed) {
 
-                    Warlords.addPlayer(new WarlordsPlayer(p, p.getName(), p.getUniqueId(), new Crusader(p), false));
+                    Classes selected = Classes.getSelected(p);
+                    Warlords.addPlayer(new WarlordsPlayer(p, p.getName(), p.getUniqueId(), selected.create.apply(p), false));
+
                     redTeam.add(p.getName());
                     p.setPlayerListName(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + "SPEC" + ChatColor.DARK_GRAY + "] "
                             + ChatColor.RED + p.getName() + ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + "Lv90" + ChatColor.DARK_GRAY + "]");
@@ -96,7 +99,9 @@ public class Game implements Runnable {
 
                 for(Player p : game.teamBlue) {
 
-                    Warlords.addPlayer(new WarlordsPlayer(p, p.getName(), p.getUniqueId(), new Cryomancer(p), false));
+                    Classes selected = Classes.getSelected(p);
+                    Warlords.addPlayer(new WarlordsPlayer(p, p.getName(), p.getUniqueId(), selected.create.apply(p), false));
+
                     blueTeam.add(p.getName());
                     p.setPlayerListName(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + "SPEC" + ChatColor.DARK_GRAY + "] "
                             + ChatColor.BLUE + p.getName() + ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + "Lv90" + ChatColor.DARK_GRAY + "]");
@@ -167,7 +172,7 @@ public class Game implements Runnable {
             @Override
             public Game.State run(Game game) {
                 game.timer++;
-                if (game.timer > 10 * 20) {
+                if (game.timer > 10 * 20 || true) {
                     for (Player player : game.teamBlue) {
                         if (player != null) {
                             player.teleport(Bukkit.getWorlds().get(0).getSpawnLocation());
@@ -180,6 +185,7 @@ public class Game implements Runnable {
                     }
                     return PRE_GAME;
                 }
+
                 return null;
             }
         },
