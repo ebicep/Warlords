@@ -14,8 +14,8 @@ public class IceBarrier extends AbstractAbility {
                 "§7Surround yourself with a layer of\n" +
                         "§7of cold air, reducing damage taken by\n" +
                         "§c50%§7, While active, taking melee\n" +
-                        "damage reduces the attacker's movement\n" +
-                        "speed by §e20% §7for §62 §7seconds. Lasts\n" +
+                        "§7damage reduces the attacker's movement\n" +
+                        "§7speed by §e20% §7for §62 §7seconds. Lasts\n" +
                         "§66 §7seconds.");
     }
 

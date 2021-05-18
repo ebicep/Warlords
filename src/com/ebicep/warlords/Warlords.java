@@ -94,6 +94,7 @@ public class Warlords extends JavaPlugin {
             @Override
             public void run() {
 
+
                 // EVERY TICK
                 // speed every 1 tick updated so it activates instantly
                 // MOVEMENT
@@ -544,7 +545,8 @@ public class Warlords extends JavaPlugin {
                                 heal = warlordsPlayer.getMaxHealth() - warlordsPlayer.getHealth();
                             }
                             warlordsPlayer.setHealth(warlordsPlayer.getHealth() + heal);
-                            warlordsPlayer.getPlayer().sendMessage("healed for " + heal);
+                            warlordsPlayer.getPlayer().sendMessage("§a\u00BB §7Healed §a" + heal + " §7health.");
+
                             if (warlordsPlayer.getHealth() == warlordsPlayer.getMaxHealth()) {
                                 warlordsPlayer.setPowerUpHeal(false);
                             }
