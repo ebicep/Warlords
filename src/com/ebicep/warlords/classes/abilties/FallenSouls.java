@@ -3,10 +3,14 @@ package com.ebicep.warlords.classes.abilties;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
-import org.bukkit.*;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
@@ -14,6 +18,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FallenSouls extends AbstractAbility {
+
+    private List<FallenSoul> fallenSouls = new ArrayList<>();
+    private static final float fallenSoulHitBox = .7f;
+    private static final float fallenSoulSpeed = 1.5f;
 
     public FallenSouls() {
         super("Fallen Souls", -197, -254, 0, 55, 20, 180,
@@ -28,7 +36,8 @@ public class FallenSouls extends AbstractAbility {
         Location location = player.getLocation().add(player.getLocation().getDirection().multiply(-1));
         ArmorStand fallenSoulLeft = player.getWorld().spawn(location.subtract(0, .5, 0), ArmorStand.class);
         Location locationLeft = player.getLocation().add(player.getLocation().getDirection().multiply(-1));
-        locationLeft.setYaw(location.getYaw() - 15);
+        //TODO fix spread, gets shorter the higher the pitch
+        locationLeft.setYaw(location.getYaw() - 15);// - (int)(location.getPitch()/-10f * 1.6));
         location.add(0, .5, 0);
         ArmorStand fallenSoulMiddle = player.getWorld().spawn(location.subtract(0, .5, 0), ArmorStand.class);
         Location locationMiddle = player.getLocation().add(player.getLocation().getDirection().multiply(-1));
@@ -36,16 +45,89 @@ public class FallenSouls extends AbstractAbility {
         location.add(0, .5, 0);
         ArmorStand fallenSoulRight = player.getWorld().spawn(location.subtract(0, .5, 0), ArmorStand.class);
         Location locationRight = player.getLocation().add(player.getLocation().getDirection().multiply(-1));
-        locationRight.setYaw(location.getYaw() + 15);
+        locationRight.setYaw(location.getYaw() + 15);// + (int)(location.getPitch()/-10f * 1.6));
         location.add(0, .5, 0);
-        Warlords.getFallenSouls().add(new FallenSoul(Warlords.getPlayer(player), fallenSoulLeft, fallenSoulMiddle, fallenSoulRight, player.getLocation(), player.getLocation(), player.getLocation(), locationLeft.getDirection(), locationMiddle.getDirection(), locationRight.getDirection(), this));
 
-        Warlords.getPlayer(player).subtractEnergy(energyCost);
+        FallenSoul fallenSoul = new FallenSoul(Warlords.getPlayer(player), fallenSoulLeft, fallenSoulMiddle, fallenSoulRight, player.getLocation(), player.getLocation(), player.getLocation(), locationLeft.getDirection(), locationMiddle.getDirection(), locationRight.getDirection(), this);
+        //fallenSouls.add(new FallenSoul(Warlords.getPlayer(player), fallenSoulLeft, fallenSoulMiddle, fallenSoulRight, player.getLocation(), player.getLocation(), player.getLocation(), locationLeft.getDirection(), locationMiddle.getDirection(), locationRight.getDirection(), this));
+
+        //Warlords.getPlayer(player).subtractEnergy(energyCost);
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "shaman.lightningbolt.impact", 1, 1.5f);
         }
+
+        new BukkitRunnable() {
+
+            @Override
+            public void run() {
+
+                if (fallenSoul.isLeftRemoved() && fallenSoul.isMiddleRemoved() && fallenSoul.isRightRemoved()) {
+                    this.cancel();
+                }
+
+                ArmorStand leftSoul = fallenSoul.getFallenSoulLeft();
+                ArmorStand middleSoul = fallenSoul.getFallenSoulMiddle();
+                ArmorStand rightSoul = fallenSoul.getFallenSoulRight();
+
+                leftSoul.teleport(leftSoul.getLocation().add(fallenSoul.getDirectionLeft().clone().multiply(fallenSoulSpeed)));
+                middleSoul.teleport(middleSoul.getLocation().add(fallenSoul.getDirectionMiddle().clone().multiply(fallenSoulSpeed)));
+                rightSoul.teleport(rightSoul.getLocation().add(fallenSoul.getDirectionRight().clone().multiply(fallenSoulSpeed)));
+
+                List<Entity> nearLeft = (List<Entity>) leftSoul.getWorld().getNearbyEntities(leftSoul.getLocation().clone().add(0, 2, 0), fallenSoulHitBox, 0, fallenSoulHitBox);
+                List<Entity> nearMiddle = (List<Entity>) middleSoul.getWorld().getNearbyEntities(middleSoul.getLocation().clone().add(0, 2, 0), fallenSoulHitBox, 0, fallenSoulHitBox);
+                List<Entity> nearRight = (List<Entity>) rightSoul.getWorld().getNearbyEntities(rightSoul.getLocation().clone().add(0, 2, 0), fallenSoulHitBox, 0, fallenSoulHitBox);
+
+                damageNearByPlayers(nearLeft, player, fallenSoul);
+                damageNearByPlayers(nearMiddle, player, fallenSoul);
+                damageNearByPlayers(nearRight, player, fallenSoul);
+
+                if (!fallenSoul.isLeftRemoved() && leftSoul.getLocation().getWorld().getBlockAt(leftSoul.getLocation().clone().add(0, 2, 0)).getType() != Material.AIR || fallenSoul.getFallenSoulLeft().getTicksLived() > 50 / fallenSoulSpeed) {
+                    //TODO add explosion thingy
+                    fallenSoul.getFallenSoulLeft().remove();
+                    fallenSoul.setLeftRemoved(true);
+                }
+
+                if (!fallenSoul.isMiddleRemoved() && middleSoul.getLocation().getWorld().getBlockAt(middleSoul.getLocation().clone().add(0, 2, 0)).getType() != Material.AIR || fallenSoul.getFallenSoulMiddle().getTicksLived() > 50 / fallenSoulSpeed) {
+                    //TODO add explosion thingy
+                    fallenSoul.getFallenSoulMiddle().remove();
+                    fallenSoul.setMiddleRemoved(true);
+                }
+
+                if (!fallenSoul.isRightRemoved() && rightSoul.getLocation().getWorld().getBlockAt(rightSoul.getLocation().clone().add(0, 2, 0)).getType() != Material.AIR || fallenSoul.getFallenSoulRight().getTicksLived() > 50 / fallenSoulSpeed) {
+                    //TODO add explosion thingy
+                    fallenSoul.getFallenSoulRight().remove();
+                    fallenSoul.setRightRemoved(true);
+                }
+
+            }
+
+        }.runTaskTimer(Warlords.getInstance(), 0, 0);
     }
+
+    public void damageNearByPlayers(List<Entity> near, Player player, FallenSoul fallenSoul) {
+        for (Entity entity : near) {
+            if (entity instanceof Player) {
+                WarlordsPlayer warlordsPlayer = Warlords.getPlayer((Player) entity);
+                if (!fallenSoul.getPlayersHit().contains(warlordsPlayer) && warlordsPlayer.getPlayer().getGameMode() != GameMode.SPECTATOR && !Warlords.game.onSameTeam((Player) entity, player)) {
+                    warlordsPlayer.addHealth(fallenSoul.getShooter(), fallenSoul.getFallenSouls().getName(), fallenSoul.getFallenSouls().getMinDamageHeal(), fallenSoul.getFallenSouls().getMaxDamageHeal(), fallenSoul.getFallenSouls().getCritChance(), fallenSoul.getFallenSouls().getCritMultiplier());
+                    fallenSoul.getPlayersHit().add(warlordsPlayer);
+                    if (fallenSoul.getShooter().getSoulBindCooldown() != 0 && fallenSoul.getShooter().hasBoundPlayerSoul(warlordsPlayer)) {
+                        fallenSoul.getShooter().getSpec().getRed().subtractCooldown(1.5F);
+                        fallenSoul.getShooter().getSpec().getPurple().subtractCooldown(1.5F);
+                        fallenSoul.getShooter().getSpec().getBlue().subtractCooldown(1.5F);
+                        fallenSoul.getShooter().getSpec().getOrange().subtractCooldown(1.5F);
+
+                        fallenSoul.getShooter().updateRedItem();
+                        fallenSoul.getShooter().updatePurpleItem();
+                        fallenSoul.getShooter().updateBlueItem();
+                        fallenSoul.getShooter().updateOrangeItem();
+                    }
+                }
+            }
+        }
+    }
+
 
     public static class FallenSoul {
 
@@ -71,17 +153,19 @@ public class FallenSouls extends AbstractAbility {
             fallenSoulLeft.setHelmet(new ItemStack(Material.ACACIA_FENCE_GATE));
             fallenSoulLeft.setGravity(false);
             fallenSoulLeft.setVisible(false);
-            fallenSoulLeft.setHeadPose(new EulerAngle(directionLeft.getY() * -1, 0, 0));
+            fallenSoulLeft.setHeadPose(new EulerAngle(directionLeft.getY() * -fallenSoulSpeed, 0, 0));
+            //fallenSoulLeft.setHeadPose(new EulerAngle(directionLeft.getY() * -fallenSoulSpeed, -.25, 0));
             this.fallenSoulMiddle = fallenSoulMiddle;
             fallenSoulMiddle.setHelmet(new ItemStack(Material.ACACIA_FENCE_GATE));
             fallenSoulMiddle.setGravity(false);
             fallenSoulMiddle.setVisible(false);
-            fallenSoulMiddle.setHeadPose(new EulerAngle(directionMiddle.getY() * -1, 0, 0));
+            fallenSoulMiddle.setHeadPose(new EulerAngle(directionMiddle.getY() * -fallenSoulSpeed, 0, 0));
             this.fallenSoulRight = fallenSoulRight;
             fallenSoulRight.setHelmet(new ItemStack(Material.ACACIA_FENCE_GATE));
             fallenSoulRight.setGravity(false);
             fallenSoulRight.setVisible(false);
-            fallenSoulRight.setHeadPose(new EulerAngle(directionRight.getY() * -1, 0, 0));
+            fallenSoulRight.setHeadPose(new EulerAngle(directionRight.getY() * -fallenSoulSpeed, 0, 0));
+            //fallenSoulRight.setHeadPose(new EulerAngle(directionRight.getY() * -fallenSoulSpeed, .25, 0));
             this.locationLeft = locationLeft;
             this.locationMiddle = locationMiddle;
             this.locationRight = locationRight;

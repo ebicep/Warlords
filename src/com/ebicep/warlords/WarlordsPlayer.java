@@ -659,18 +659,19 @@ public class WarlordsPlayer {
                             player.getVehicle().remove();
                         }
                         regenTimer = 10;
-                        if (spec.getOrange() instanceof Totem.TotemSpiritguard) {
-                            for (int i = 0; i < Warlords.totems.size(); i++) {
-                                Totem totem = Warlords.totems.get(i);
-                                if (totem.getOwner() == this) {
-                                    if (totem.getSecondsLeft() != 0) {
-                                        debt = true;
-                                        ((Totem.TotemSpiritguard) totem.getOwner().getSpec().getOrange()).setDelayedDamage((int) (((Totem.TotemSpiritguard) totem.getOwner().getSpec().getOrange()).getDelayedDamage() + damageHealValue));
-                                    }
-                                    intervene = 0;
-                                }
-                            }
-                        }
+                        //TODO rework
+//                        if (spec.getOrange() instanceof Totem.TotemSpiritguard) {
+//                            for (int i = 0; i < Warlords.totems.size(); i++) {
+//                                Totem totem = Warlords.totems.get(i);
+//                                if (totem.getOwner() == this) {
+//                                    if (totem.getSecondsLeft() != 0) {
+//                                        debt = true;
+//                                        ((Totem.TotemSpiritguard) totem.getOwner().getSpec().getOrange()).setDelayedDamage((int) (((Totem.TotemSpiritguard) totem.getOwner().getSpec().getOrange()).getDelayedDamage() + damageHealValue));
+//                                    }
+//                                    intervene = 0;
+//                                }
+//                            }
+//                        }
                         if (lastStand != 0) {
                             if (lastStandedBy == this) {
                                 damageHealValue *= .5;

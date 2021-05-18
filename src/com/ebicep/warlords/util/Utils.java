@@ -16,7 +16,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 public class Utils {
@@ -31,9 +30,10 @@ public class Utils {
     }
 
     public static boolean totemDownAndClose(WarlordsPlayer warlordsPlayer, Player player) {
-        for (Totem totem : Warlords.getTotems()) {
-            if (totem.getOwner() == warlordsPlayer && totem.getTotemArmorStand().getLocation().distanceSquared(player.getLocation()) < 10 * 10)
+        for (Entity entity : player.getNearbyEntities(5, 3, 5)) {
+            if (entity instanceof ArmorStand && entity.hasMetadata("Capacitor Totem - " + warlordsPlayer.getName())) {
                 return true;
+            }
         }
         return false;
     }
@@ -41,16 +41,23 @@ public class Utils {
     public static boolean lookingAtTotem(Player player) {
         Location eye = player.getEyeLocation();
         eye.setY(eye.getY() + .5);
-        AtomicBoolean lookingAt = new AtomicBoolean(false);
-        Warlords.getTotems().stream().filter(o -> o.getOwner().equals(Warlords.getPlayer(player))).forEach(o -> {
-                    Vector toEntity = o.getTotemArmorStand().getEyeLocation().toVector().subtract(eye.toVector());
-                    float dot = (float) toEntity.normalize().dot(eye.getDirection());
-                    System.out.println(dot);
-                    lookingAt.set(dot > .98f);
-                }
-        );
+        for (Entity entity : player.getNearbyEntities(20, 17, 20)) {
+            if (entity instanceof ArmorStand && entity.hasMetadata("Capacitor Totem - " + player.getName())) {
+                Vector toEntity = ((ArmorStand) entity).getEyeLocation().toVector().subtract(eye.toVector());
+                float dot = (float) toEntity.normalize().dot(eye.getDirection());
+                return dot > .98f;
+            }
+        }
+        return false;
+    }
 
-        return lookingAt.get();
+    public static ArmorStand getTotem(Player player) {
+        for (Entity entity : player.getNearbyEntities(20, 17, 20)) {
+            if (entity instanceof ArmorStand && entity.hasMetadata("Capacitor Totem - " + player.getName())) {
+                return (ArmorStand) entity;
+            }
+        }
+        return null;
     }
 
     public static class ArmorStandComparator implements Comparator<Entity> {

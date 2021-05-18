@@ -23,7 +23,7 @@ public class Berserker extends AbstractWarrior {
                                 "§7to all enemies hit and knocks them back\n" +
                                 "§7slightly.", player),
 
-                new GroundSlam("Ground Slam", -449, -606, 1, 60, 15, 200,
+                new GroundSlam("Ground Slam", -449, -606, 10, 60, 15, 200,
                         "§7Slam the ground, creating a shockwave\n" +
                                 "§7around you that deals §c%dynamic.value% §7- §c%dynamic.value%\n" +
                                 "§7damage and knocks enemies back slightly.", player),

@@ -61,6 +61,7 @@ public class Strike extends AbstractAbility {
                                             System.out.println("NEAR NEAR HIT " + nearNearPlayer);
                                             //checking if player is in consecrate
                                             boolean inConsecrate = false;
+
                                             for (int i = 0; i < Warlords.damageHealCircles.size(); i++) {
                                                 DamageHealCircle damageHealCircle = Warlords.damageHealCircles.get(i);
                                                 if (damageHealCircle.getPlayer() == player) {
