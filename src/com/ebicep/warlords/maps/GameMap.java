@@ -82,7 +82,7 @@ import org.bukkit.Location;
                 new Location(Bukkit.getWorld("Warsong"), 42.5, 17.5, 60.5), // BLUE HEALING
                 new Location(Bukkit.getWorld("Warsong"), 120.5, 22.5, 90.5), // RED HEALING
 
-                new Location(Bukkit.getWorld("Warsong"), 56.5, 39.5, 94.5),// BLUE LOBBY SPAWN
+                new Location(Bukkit.getWorld("Warsong"), 56.5, 39.5, -94.5),// BLUE LOBBY SPAWN
                 new Location(Bukkit.getWorld("Warsong"), 88.5, 40.5, 232.5), // RED LOBBY SPAWN
 
                 new Location(Bukkit.getWorld("Warsong"), 38.5, 29.5, 14.5), // BLUE RESPAWN

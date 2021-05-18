@@ -48,7 +48,7 @@ public class CustomScoreboard {
         sideBar.getScore("     ").setScore(4);
         sideBar.getScore("" + ChatColor.GREEN + Warlords.getPlayer(player).getKills() + ChatColor.RESET + " Kills " + ChatColor.GREEN + Warlords.getPlayer(player).getAssists() + ChatColor.RESET + " Assists").setScore(3);
         sideBar.getScore("      ").setScore(2);
-        sideBar.getScore(ChatColor.YELLOW + "localhost").setScore(1);
+        sideBar.getScore(ChatColor.YELLOW + "WL 2.0 beta_b-v1.0 ").setScore(1);
         player.setScoreboard(board);
         this.scoreboard = board;
         this.sideBar = sideBar;
@@ -78,10 +78,10 @@ public class CustomScoreboard {
             String entryUnformatted = ChatColor.stripColor(entry);
             //System.out.println(entry);
             //System.out.println(scoreboard.getObjectives().iterator().next().getName());
-            if (entryUnformatted.contains("BLU")) {
+            if (entryUnformatted.contains("BLU:")) {
                 scoreboard.resetScores(entry);
                 sideBar.getScore(ChatColor.BLUE + "BLU: " + ChatColor.AQUA + Warlords.game.getBluePoints() + ChatColor.GOLD + "/1000").setScore(13);
-            } else if (entryUnformatted.contains("RED")) {
+            } else if (entryUnformatted.contains("RED:")) {
                 scoreboard.resetScores(entry);
                 sideBar.getScore(ChatColor.RED + "RED: " + ChatColor.AQUA + Warlords.game.getRedPoints() + ChatColor.GOLD + "/1000").setScore(12);
             }

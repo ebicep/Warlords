@@ -21,14 +21,14 @@ public class InspiringPresence extends AbstractAbility {
                         "§7inspires your allies, increasing\n" +
                         "§7their energy regeneration by §e10\n" +
                         "§7per second and their movement\n" +
-                        "by §e30% §7for §612 §7seconds.");
+                        "§7by §e30% §7for §612 §7seconds.");
     }
 
     @Override
     public void onActivate(Player player) {
         WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
-        warlordsPlayer.getSpeed().changeCurrentSpeed("Inspiring Presence", 15, 12 * 20);
-        warlordsPlayer.setPresence(12 * 20 - 10);
+        warlordsPlayer.getSpeed().changeCurrentSpeed("Inspiring Presence", 30, 12 * 20, "BASE");
+        warlordsPlayer.setPresence(12 * 20);
 
         // TODO: test if boost works for other players
         // TODO: make range a circle instead of square

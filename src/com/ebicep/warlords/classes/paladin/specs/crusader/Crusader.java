@@ -8,7 +8,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 public class Crusader extends AbstractPaladin {
 
     public Crusader(Player player) {
-        super(player, 6200, 305, 20,
+        super(player, 6850, 305, 20,
                 new Strike("Crusader's Strike", -326, -441, 0, 90, 25, 175,
                         "§7Strike the targeted enemy player,\n" +
                                 "§7causing §c%dynamic value% §7- §c%dynamic.value% damage\n" +

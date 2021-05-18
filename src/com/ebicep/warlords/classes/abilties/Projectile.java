@@ -40,18 +40,7 @@ public class Projectile extends AbstractAbility {
             }
 
         } else if (customProjectile.getBall().getName().contains("Frost")) {
-            //TODO - Why is this here?
-            /*WarlordsPlayer warlordsPlayer = Warlords.Warlords.getPlayer(player);
-            List<Entity> near = player.getNearbyEntities(7.0D, 3.5D, 7.0D);
-            for (Entity entity : near) {
-                if (entity instanceof Player) {
-                    Player nearPlayer = (Player) entity;
-                    if (warlordsPlayer.getFrostbolt() == 0) {
-                        //nearPlayer.setWalkSpeed(WarlordsPlayer.currentSpeed);
-                        //warlordsPlayer.setFrostbolt(2 * 20 - 10);
-                    }
-                }
-            }*/
+
             for (Player player1 : Bukkit.getOnlinePlayers()) {
                 player1.playSound(player.getLocation(), "mage.frostbolt.activation", 1, 1);
             }
@@ -71,7 +60,6 @@ public class Projectile extends AbstractAbility {
             public void run() {
                 Location location = customProjectile.getCurrentLocation();
                 boolean hitPlayer = false;
-                //TODO get confirm actual speeds
                 //BALLS
                 if (customProjectile.getBall().getName().contains("Fire")) {
                     location.add(customProjectile.getDirection().clone().multiply(2.3));
@@ -132,9 +120,11 @@ public class Projectile extends AbstractAbility {
                                 hitPlayer = true;
                                 ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.0F, 1, entity.getLocation().add(0, 1, 0), 500);
                                 Player victim = (Player) entity;
+
                                 for (Player player1 : Bukkit.getOnlinePlayers()) {
                                     player1.playSound(entity.getLocation(), "mage.frostbolt.impact", 1, 1);
                                 }
+
                                 Warlords.getPlayer(victim).addHealth(
                                         Warlords.getPlayer(customProjectile.getShooter()),
                                         customProjectile.getBall().getName(),
@@ -143,6 +133,9 @@ public class Projectile extends AbstractAbility {
                                         customProjectile.getBall().getCritChance(),
                                         customProjectile.getBall().getCritMultiplier()
                                 );
+
+                                Warlords.getPlayer(victim).getSpeed().changeCurrentSpeed("Frostbolt", -25, 2 * 20);
+
                                 List<Entity> near = victim.getNearbyEntities(3.5D, 3.5D, 3.5D);
                                 near = Utils.filterOutTeammates(near, customProjectile.getShooter());
                                 for (Entity nearEntity : near) {

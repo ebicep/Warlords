@@ -76,6 +76,7 @@ public class FlagManager implements Listener {
                 hasScored = true;
 
                 for (Player player1 : playerFlagLocation.getPlayer().getWorld().getPlayers()) {
+                    Warlords.getPlayer(player1).getScoreboard().updateKills();
                     if (Warlords.game.isRedTeam(player1)) {
                         player1.playSound(playerFlagLocation.getLocation(), "ctf.enemyflagcaptured", 500, 1);
                     } else {
@@ -96,6 +97,7 @@ public class FlagManager implements Listener {
                 hasScored = true;
 
                 for (Player player1 : playerFlagLocation.getPlayer().getWorld().getPlayers()) {
+                    Warlords.getPlayer(player1).getScoreboard().updateKills();
                     if (!Warlords.game.isRedTeam(player1)) {
                         player1.playSound(playerFlagLocation.getLocation(), "ctf.enemyflagcaptured", 500, 1);
                     } else {

@@ -361,7 +361,6 @@ public class Game implements Runnable {
     public void run() {
         Game.State newState = state.run(this);
         if (newState != null) {
-            Bukkit.broadcastMessage(newState.toString());
             this.state = newState;
             newState.begin(this);
         }
