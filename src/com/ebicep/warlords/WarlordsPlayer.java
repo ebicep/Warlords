@@ -819,7 +819,8 @@ public class WarlordsPlayer {
                             player1.playSound(player.getLocation(), "shaman.windfuryweapon.impact", 1, 1);
                         }
                         addHealth(attacker, "Windfury Weapon", min, max, 25, 235);
-                        addHealth(attacker, "Windfury Weapon", min, max, 25, 235);
+                        if (health > 0)
+                            addHealth(attacker, "Windfury Weapon", min, max, 25, 235);
                     }
                 } else if (attacker.getEarthliving() != 0) {
                     int earthlivingActivate = (int) (Math.random() * 100);

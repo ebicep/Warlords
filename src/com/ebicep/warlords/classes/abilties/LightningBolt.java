@@ -93,6 +93,7 @@ public class LightningBolt extends AbstractAbility {
             this.armorStand = armorStand;
             armorStand.setGravity(false);
             armorStand.setVisible(false);
+            armorStand.setMarker(true);
             armorStand.setHelmet(new ItemStack(Material.SAPLING, 1, (short) 3));
             armorStand.setHeadPose(new EulerAngle(direction.getY() * -1, 0, 0));
             this.location = location;

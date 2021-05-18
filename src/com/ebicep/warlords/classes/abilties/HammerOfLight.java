@@ -43,7 +43,7 @@ public class HammerOfLight extends AbstractAbility {
             @Override
             public void run() {
                 damageHealCircle.setDuration(damageHealCircle.getDuration() - 1);
-                List<Entity> near = (List<Entity>) damageHealCircle.getLocation().getWorld().getNearbyEntities(damageHealCircle.getLocation(), 3, 3, 3);
+                List<Entity> near = (List<Entity>) damageHealCircle.getLocation().getWorld().getNearbyEntities(damageHealCircle.getLocation(), 5, 4, 5);
                 for (Entity entity : near) {
                     if (entity instanceof Player) {
                         Player player = (Player) entity;
@@ -60,6 +60,7 @@ public class HammerOfLight extends AbstractAbility {
                     }
                 }
                 if (damageHealCircle.getDuration() == 0) {
+                    damageHealCircle.removeHammer();
                     this.cancel();
                 }
             }

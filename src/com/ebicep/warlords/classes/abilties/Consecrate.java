@@ -38,26 +38,26 @@ public class Consecrate extends AbstractAbility {
 
         ArmorStand consecrate = player.getLocation().getWorld().spawn(player.getLocation().clone().add(0, -2, 0), ArmorStand.class);
         consecrate.setMetadata("Consecrate - " + player.getName(), new FixedMetadataValue(Warlords.getInstance(), true));
+        consecrate.setGravity(false);
+        consecrate.setVisible(false);
+        consecrate.setMarker(true);
 
         new BukkitRunnable() {
 
             @Override
             public void run() {
                 damageHealCircle.setDuration(damageHealCircle.getDuration() - 1);
-                List<Entity> near = (List<Entity>) damageHealCircle.getLocation().getWorld().getNearbyEntities(damageHealCircle.getLocation(), 3, 3, 3);
+                List<Entity> near = (List<Entity>) damageHealCircle.getLocation().getWorld().getNearbyEntities(damageHealCircle.getLocation(), 5, 3, 5);
                 near = Utils.filterOutTeammates(near, player);
                 for (Entity entity : near) {
                     if (entity instanceof Player) {
                         Player player = (Player) entity;
                         WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
-                        double distance = damageHealCircle.getLocation().distanceSquared(player.getLocation());
-                        if (distance < damageHealCircle.getRadius() * damageHealCircle.getRadius()) {
-                            warlordsPlayer.addHealth(Warlords.getPlayer(damageHealCircle.getPlayer()), damageHealCircle.getName(), damageHealCircle.getMinDamage(), damageHealCircle.getMaxDamage(), damageHealCircle.getCritChance(), damageHealCircle.getCritMultiplier());
-                        }
-
+                        warlordsPlayer.addHealth(Warlords.getPlayer(damageHealCircle.getPlayer()), damageHealCircle.getName(), damageHealCircle.getMinDamage(), damageHealCircle.getMaxDamage(), damageHealCircle.getCritChance(), damageHealCircle.getCritMultiplier());
                     }
                 }
                 if (damageHealCircle.getDuration() == 0) {
+                    consecrate.remove();
                     this.cancel();
                 }
             }

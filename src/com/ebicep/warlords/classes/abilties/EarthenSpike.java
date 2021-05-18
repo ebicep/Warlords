@@ -65,6 +65,8 @@ public class EarthenSpike extends AbstractAbility {
 
             @Override
             public void run() {
+
+                //TODO redo this, remove all arrays
                 if (spikes.size() == 0 && spikeArmorStands.size() == 0) {
                     this.cancel();
                 }
@@ -135,6 +137,7 @@ public class EarthenSpike extends AbstractAbility {
                             stand.setHelmet(new ItemStack(Material.BROWN_MUSHROOM));
                             stand.setGravity(false);
                             stand.setVisible(false);
+                            stand.setMarker(true);
 
                             spikeArmorStands.add(stand);
                             if (spikeArmorStands.size() == 1) {

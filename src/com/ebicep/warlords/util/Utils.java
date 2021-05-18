@@ -38,28 +38,6 @@ public class Utils {
         return false;
     }
 
-    public static boolean lookingAtTotem(Player player) {
-        Location eye = player.getEyeLocation();
-        eye.setY(eye.getY() + .5);
-        for (Entity entity : player.getNearbyEntities(20, 17, 20)) {
-            if (entity instanceof ArmorStand && entity.hasMetadata("Capacitor Totem - " + player.getName())) {
-                Vector toEntity = ((ArmorStand) entity).getEyeLocation().toVector().subtract(eye.toVector());
-                float dot = (float) toEntity.normalize().dot(eye.getDirection());
-                return dot > .98f;
-            }
-        }
-        return false;
-    }
-
-    public static ArmorStand getTotem(Player player) {
-        for (Entity entity : player.getNearbyEntities(20, 17, 20)) {
-            if (entity instanceof ArmorStand && entity.hasMetadata("Capacitor Totem - " + player.getName())) {
-                return (ArmorStand) entity;
-            }
-        }
-        return null;
-    }
-
     public static class ArmorStandComparator implements Comparator<Entity> {
         @Override
         public int compare(Entity a, Entity b) {

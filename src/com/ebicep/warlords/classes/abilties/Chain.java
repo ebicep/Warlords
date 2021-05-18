@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.EulerAngle;
+import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,10 +39,10 @@ public class Chain extends AbstractAbility {
         int hitCounter = 0;
         if (name.contains("Lightning")) {
             // TOTEM -> PLAYER -> PLAYER
-            if (Utils.lookingAtTotem(player)) {
+            if (lookingAtTotem(player)) {
                 // (TOTEM) -> PLAYER -> PLAYER
                 System.out.println("(TOTEM) -> PLAYER -> PLAYER");
-                ArmorStand totem = Utils.getTotem(player);
+                ArmorStand totem = getTotem(player);
                 chain(player.getLocation(), totem.getLocation().add(0, .5, 0));
                 List<Entity> nearTotem = totem.getNearbyEntities(4.0D, 4.0D, 4.0D);
                 nearTotem = Utils.filterOutTeammates(nearTotem, player);
@@ -118,7 +119,7 @@ public class Chain extends AbstractAbility {
                                     // PLAYER -> (TOTEM) -> PLAYER   THIS IS SO TRASH
 
                                     System.out.println("PLAYER -> (TOTEM) -> PLAYER");
-                                    ArmorStand totem = Utils.getTotem(player);
+                                    ArmorStand totem = getTotem(player);
                                     chain(nearPlayer.getLocation(), totem.getLocation().add(0, .5, 0));
                                     List<Entity> totemNear = totem.getNearbyEntities(4.0D, 4.0D, 4.0D);
                                     totemNear = Utils.filterOutTeammates(totemNear, player);
@@ -163,7 +164,7 @@ public class Chain extends AbstractAbility {
                                                 // PLAYER -> PLAYER -> (TOTEM)
 
                                                 System.out.println("PLAYER -> PLAYER -> (TOTEM)");
-                                                ArmorStand totem = Utils.getTotem(player);
+                                                ArmorStand totem = getTotem(player);
 
                                                 chain(nearNearPlayer.getLocation(), totem.getLocation().add(0, .5, 0));
                                                 List<Entity> totemNear = totem.getNearbyEntities(4.0D, 4.0D, 4.0D);
@@ -385,10 +386,10 @@ public class Chain extends AbstractAbility {
         if (name.contains("Lightning")) {
             for (int i = 0; i < distance; i++) {
                 ArmorStand chain = location.getWorld().spawn(location, ArmorStand.class);
-                chain.setMarker(true);
                 chain.setHeadPose(new EulerAngle(location.getDirection().getY() * -1, 0, 0));
                 chain.setGravity(false);
                 chain.setVisible(false);
+                chain.setMarker(true);
                 chain.setHelmet(new ItemStack(Material.RED_MUSHROOM));
                 location.add(location.getDirection().multiply(1.2));
                 chains.add(chain);
@@ -399,6 +400,7 @@ public class Chain extends AbstractAbility {
                 chain.setHeadPose(new EulerAngle(location.getDirection().getY() * -1, 0, 0));
                 chain.setGravity(false);
                 chain.setVisible(false);
+                chain.setMarker(true);
                 chain.setHelmet(new ItemStack(Material.RED_ROSE, 1, (short) 1));
                 location.add(location.getDirection().multiply(1.2));
                 chains.add(chain);
@@ -409,6 +411,7 @@ public class Chain extends AbstractAbility {
                 chain.setHeadPose(new EulerAngle(location.getDirection().getY() * -1, 0, 0));
                 chain.setGravity(false);
                 chain.setVisible(false);
+                chain.setMarker(true);
                 chain.setHelmet(new ItemStack(Material.SPRUCE_FENCE_GATE));
                 location.add(location.getDirection().multiply(1.2));
                 chains.add(chain);
@@ -434,6 +437,28 @@ public class Chain extends AbstractAbility {
             }
 
         }.runTaskTimer(Warlords.getInstance(), 0, 0);
+    }
+
+    private boolean lookingAtTotem(Player player) {
+        Location eye = player.getEyeLocation();
+        eye.setY(eye.getY() + .5);
+        for (Entity entity : player.getNearbyEntities(20, 17, 20)) {
+            if (entity instanceof ArmorStand && entity.hasMetadata("Capacitor Totem - " + player.getName())) {
+                Vector toEntity = ((ArmorStand) entity).getEyeLocation().toVector().subtract(eye.toVector());
+                float dot = (float) toEntity.normalize().dot(eye.getDirection());
+                return dot > .98f;
+            }
+        }
+        return false;
+    }
+
+    private ArmorStand getTotem(Player player) {
+        for (Entity entity : player.getNearbyEntities(20, 17, 20)) {
+            if (entity instanceof ArmorStand && entity.hasMetadata("Capacitor Totem - " + player.getName())) {
+                return (ArmorStand) entity;
+            }
+        }
+        return null;
     }
 
 }

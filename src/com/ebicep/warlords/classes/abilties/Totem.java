@@ -86,6 +86,7 @@ public class Totem extends EntityArmorStand {
             ArmorStand totemStand = player.getWorld().spawn(standLocation, ArmorStand.class);
             totemStand.setVisible(false);
             totemStand.setGravity(false);
+            totemStand.setMarker(true);
             totemStand.setHelmet(new ItemStack(Material.RED_ROSE, 1, (short) 4));
             totemStand.setMetadata("Capacitor Totem - " + player.getName(), new FixedMetadataValue(Warlords.getInstance(), true));
 
@@ -141,6 +142,7 @@ public class Totem extends EntityArmorStand {
             ArmorStand totemStand = player.getWorld().spawn(standLocation, ArmorStand.class);
             totemStand.setVisible(false);
             totemStand.setGravity(false);
+            totemStand.setMarker(true);
             totemStand.setHelmet(new ItemStack(Material.JUNGLE_FENCE_GATE));
 
             Totem deathsDebtTotem = new Totem(((CraftWorld) player.getWorld()).getHandle(), warlordsPlayer, totemStand, 4 + (4 * (int) Math.round((double) warlordsPlayer.getHealth() / warlordsPlayer.getMaxHealth())));
@@ -254,6 +256,7 @@ public class Totem extends EntityArmorStand {
             ArmorStand totemStand = player.getWorld().spawn(standLocation, ArmorStand.class);
             totemStand.setVisible(false);
             totemStand.setGravity(false);
+            totemStand.setMarker(true);
             totemStand.setHelmet(new ItemStack(Material.RED_ROSE, 1, (short) 7));
 
             Totem healingTotem = new Totem(((CraftWorld) player.getWorld()).getHandle(), warlordsPlayer, totemStand, 5);
