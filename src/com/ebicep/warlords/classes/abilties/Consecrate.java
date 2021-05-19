@@ -29,7 +29,6 @@ public class Consecrate extends AbstractAbility {
     @Override
     public void onActivate(Player player) {
         DamageHealCircle damageHealCircle = new DamageHealCircle(player, player.getLocation(), 5, 5, minDamageHeal, maxDamageHeal, critChance, critMultiplier, name);
-        damageHealCircle.spawn();
         Warlords.getPlayer(player).subtractEnergy(energyCost);
 
         for (Player player1 : player.getWorld().getPlayers()) {
@@ -46,6 +45,7 @@ public class Consecrate extends AbstractAbility {
 
             @Override
             public void run() {
+                damageHealCircle.spawn();
                 damageHealCircle.setDuration(damageHealCircle.getDuration() - 1);
                 List<Entity> near = (List<Entity>) damageHealCircle.getLocation().getWorld().getNearbyEntities(damageHealCircle.getLocation(), 5, 3, 5);
                 near = Utils.filterOutTeammates(near, player);

@@ -56,11 +56,13 @@ public class Commands implements TabExecutor {
                     player.teleport(Bukkit.getWorlds().get(0).getSpawnLocation());
                 }
             }
+
             for (Player player : game.getTeamRed()) {
                 if (player != null) {
                     player.teleport(Bukkit.getWorlds().get(0).getSpawnLocation());
                 }
             }
+
             game.getTeamBlue().clear();
             game.getTeamRed().clear();
             game.resetTimer();

@@ -327,11 +327,11 @@ public class Game implements Runnable {
         if (teamBlue) {
             this.teamRed.remove(player);
             this.teamBlue.add(player);
-            //player.teleport(this.map.blueLobbySpawnPoint);
+            player.teleport(this.map.blueLobbySpawnPoint);
         } else {
             this.teamBlue.remove(player);
             this.teamRed.add(player);
-            //player.teleport(this.map.redLobbySpawnPoint);
+            player.teleport(this.map.redLobbySpawnPoint);
         }
     }
 

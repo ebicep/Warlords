@@ -25,7 +25,7 @@ public class Protector extends AbstractPaladin {
                         "§7increasing your movement speed by\n" +
                         "§e40% §7for §63 §7seconds"),
 
-                new HolyRadiance(20, 20, 15, 175,
+                new HolyRadiance(10, 30, 15, 175,
                         "§7Radiate with holy energy, healing\n" +
                         "§7yourself and all nearby allies for\n" +
                         "§a%dynamic.value% §7- §a%dynamic.value% §7health."),

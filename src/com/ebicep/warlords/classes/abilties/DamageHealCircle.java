@@ -78,7 +78,7 @@ public class DamageHealCircle {
             }
 
             if (name.contains("Rain")) {
-                // TODO: need to revise this + ring doesn't appear at all sometimes?
+                // TODO: still need to fix rain/hammer particles
                 ParticleEffect.CLOUD.display(2, 0, 2, 0.01F, 1, (new Location(location.getWorld(), location.getX(), location.getY() + 6, location.getZ())), 500);
                 ParticleEffect.DRIP_WATER.display(2, 0, 2, 0.01F, 1, (new Location(location.getWorld(), location.getX(), location.getY() + 6, location.getZ())), 500);
             }
