@@ -233,6 +233,7 @@ public class Warlords extends JavaPlugin {
                         player.setGameMode(GameMode.SPECTATOR);
                         //giving out assists
                         for (WarlordsPlayer assisted : warlordsPlayer.getHitBy()) {
+                            assisted.getPlayer().sendMessage("You assisted a person in killing " + warlordsPlayer.getName());
                             assisted.addAssist();
                             assisted.getScoreboard().updateKillsAssists();
                         }
