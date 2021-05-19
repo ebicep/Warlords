@@ -229,7 +229,6 @@ public class Warlords extends JavaPlugin {
                         newHealth = 40;
                     }
                     if (newHealth <= 0 && !warlordsPlayer.isUndyingArmyDead()) {
-                        warlordsPlayer.getPlayer().sendMessage("DEAD>??>???");
                         warlordsPlayer.respawn();
                         player.setGameMode(GameMode.SPECTATOR);
                         //giving out assists
@@ -238,7 +237,7 @@ public class Warlords extends JavaPlugin {
                             assisted.getScoreboard().updateKillsAssists();
                         }
                         //respawn timer
-                        Bukkit.broadcastMessage("" + game.getTimer() % 60 % 12);
+                        //Bukkit.broadcastMessage("" + game.getTimer() % 60 % 12);
                         int respawn = game.getTimer() % 60 % 12;
                         if (game.getTimer() % 60 % 12 <= 4) {
                             respawn += 12;
@@ -270,24 +269,6 @@ public class Warlords extends JavaPlugin {
                     //melee cooldown
                     if (warlordsPlayer.getHitCooldown() != 0) {
                         warlordsPlayer.setHitCooldown(warlordsPlayer.getHitCooldown() - 1);
-                    }
-
-                    if (warlordsPlayer.getCharged() != 0) {
-                        List<Entity> playersInside = player.getNearbyEntities(2, 2, 2);
-                        playersInside.removeAll(((RecklessCharge) warlordsPlayer.getSpec().getRed()).getPlayersHit());
-                        playersInside = Utils.filterOutTeammates(playersInside, player);
-                        for (Entity entity : playersInside) {
-                            if (entity instanceof Player && ((Player) entity).getGameMode() != GameMode.SPECTATOR) {
-                                //TODO add 100 slowness
-                                ((RecklessCharge) warlordsPlayer.getSpec().getRed()).getPlayersHit().add((Player) entity);
-                                Warlords.getPlayer((Player) entity).addHealth(warlordsPlayer, warlordsPlayer.getSpec().getRed().getName(), warlordsPlayer.getSpec().getRed().getMinDamageHeal(), warlordsPlayer.getSpec().getRed().getMaxDamageHeal(), warlordsPlayer.getSpec().getRed().getCritChance(), warlordsPlayer.getSpec().getRed().getCritMultiplier());
-                            }
-                        }
-                        //cancel charge if hit a block, making the player stand still
-                        if (player.getLocation().distanceSquared(warlordsPlayer.getChargeLocation()) > warlordsPlayer.getCharged() || (player.getVelocity().getX() == 0 && player.getVelocity().getZ() == 0)) {
-                            player.setVelocity(new Vector(0, 0, 0));
-                            warlordsPlayer.setCharged(0);
-                        }
                     }
                     //orbs
                     for (int i = 0; i < orbs.size(); i++) {
@@ -427,7 +408,7 @@ public class Warlords extends JavaPlugin {
                         //RESPAWN
                         if (warlordsPlayer.getRespawnTimer() != -1) {
                             warlordsPlayer.setRespawnTimer(warlordsPlayer.getRespawnTimer() - 1);
-                            warlordsPlayer.getPlayer().sendMessage("RESPAWN: " + warlordsPlayer.getRespawnTimer());
+                            //warlordsPlayer.getPlayer().sendMessage("RESPAWN: " + warlordsPlayer.getRespawnTimer());
                         }
                         //ABILITY COOLDOWN
                         if (warlordsPlayer.getSpec().getRed().getCurrentCooldown() != 0 && warlordsPlayer.getSpec().getRed().getCurrentCooldown() != warlordsPlayer.getSpec().getRed().getCooldown()) {

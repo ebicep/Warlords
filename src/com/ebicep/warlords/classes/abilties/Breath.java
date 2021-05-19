@@ -52,7 +52,6 @@ public class Breath extends AbstractAbility {
                 }
             }
             //TODO breath animation
-            //Warlords.getBreaths().add(this);
 
             if (name.contains("Water")) {
                 for (Player player1 : Bukkit.getOnlinePlayers()) {

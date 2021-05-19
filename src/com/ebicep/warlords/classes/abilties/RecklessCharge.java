@@ -5,10 +5,13 @@ import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.util.Utils;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
@@ -32,6 +35,7 @@ public class RecklessCharge extends AbstractAbility {
     public void onActivate(Player player) {
         playersHit.clear();
 
+        WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
         Location eyeLocation = player.getLocation();
         eyeLocation.setPitch(-10);
         //.clone().add(eyeLocation.getDirection().multiply(1)));
@@ -59,6 +63,32 @@ public class RecklessCharge extends AbstractAbility {
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "warrior.seismicwave.activation", 1, 1);
         }
+
+        new BukkitRunnable() {
+
+            @Override
+            public void run() {
+                if (warlordsPlayer.getCharged() == 0) {
+                    this.cancel();
+                }
+                List<Entity> playersInside = player.getNearbyEntities(2, 2, 2);
+                playersInside.removeAll(((RecklessCharge) warlordsPlayer.getSpec().getRed()).getPlayersHit());
+                playersInside = Utils.filterOutTeammates(playersInside, player);
+                for (Entity entity : playersInside) {
+                    if (entity instanceof Player && ((Player) entity).getGameMode() != GameMode.SPECTATOR) {
+                        //TODO add 100 slowness
+                        ((RecklessCharge) warlordsPlayer.getSpec().getRed()).getPlayersHit().add((Player) entity);
+                        Warlords.getPlayer((Player) entity).addHealth(warlordsPlayer, warlordsPlayer.getSpec().getRed().getName(), warlordsPlayer.getSpec().getRed().getMinDamageHeal(), warlordsPlayer.getSpec().getRed().getMaxDamageHeal(), warlordsPlayer.getSpec().getRed().getCritChance(), warlordsPlayer.getSpec().getRed().getCritMultiplier());
+                    }
+                }
+                //cancel charge if hit a block, making the player stand still
+                if (player.getLocation().distanceSquared(warlordsPlayer.getChargeLocation()) > warlordsPlayer.getCharged() || (player.getVelocity().getX() == 0 && player.getVelocity().getZ() == 0)) {
+                    player.setVelocity(new Vector(0, 0, 0));
+                    warlordsPlayer.setCharged(0);
+                }
+            }
+
+        }.runTaskTimer(Warlords.getInstance(), 0, 0);
     }
 
     public List<Player> getPlayersHit() {

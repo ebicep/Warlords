@@ -41,8 +41,16 @@ public abstract class AbstractAbility {
         return minDamageHeal;
     }
 
+    public void setMinDamageHeal(int minDamageHeal) {
+        this.minDamageHeal = minDamageHeal;
+    }
+
     public int getMaxDamageHeal() {
         return maxDamageHeal;
+    }
+
+    public void setMaxDamageHeal(int maxDamageHeal) {
+        this.maxDamageHeal = maxDamageHeal;
     }
 
     public float getCurrentCooldown() {

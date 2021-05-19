@@ -35,7 +35,6 @@ public class Strike extends AbstractAbility {
                 if (nearPlayer.getGameMode() != GameMode.SPECTATOR && Utils.getLookingAt(player, nearPlayer) && distance < 3.6 * 3.6) {
                     PacketPlayOutAnimation playOutAnimation = new PacketPlayOutAnimation(((CraftPlayer) player).getHandle(), 0);
                     ((CraftPlayer) player).getHandle().playerConnection.sendPacket(playOutAnimation);
-
                     WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
                     warlordsPlayer.subtractEnergy(energyCost);
 
@@ -168,7 +167,6 @@ public class Strike extends AbstractAbility {
         for (Entity entity : owner.getWorld().getEntities()) {
             if (entity instanceof ArmorStand && entity.hasMetadata("Consecrate - " + owner.getName())) {
                 if (entity.getLocation().clone().add(0, 2, 0).distanceSquared(standing.getLocation()) < 5 * 5.25) {
-                    Bukkit.broadcastMessage("hit in consecrate");
                     return true;
                 }
             }

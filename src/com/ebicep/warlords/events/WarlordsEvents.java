@@ -5,10 +5,7 @@ import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.abilties.SeismicWave;
 import net.minecraft.server.v1_8_R3.EntityLiving;
 import net.minecraft.server.v1_8_R3.GenericAttributes;
-import org.bukkit.ChatColor;
-import org.bukkit.DyeColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.block.Banner;
 import org.bukkit.block.Block;
 import org.bukkit.block.banner.Pattern;
@@ -281,6 +278,12 @@ public class WarlordsEvents implements Listener {
         if (e.getCause() == EntityDamageEvent.DamageCause.FALL) {
             //TODO fall damage
             e.setCancelled(true);
+        } else if (e.getCause() == EntityDamageEvent.DamageCause.CUSTOM) {
+            Bukkit.broadcastMessage("CUSTOM DMG EVENT");
+            //e.setCancelled(true);
+        } else if (e.getCause() == EntityDamageEvent.DamageCause.ENTITY_ATTACK) {
+            //Bukkit.broadcastMessage("ENTITY ATTACK EVENT");
+            //e.setCancelled(true);
         }
     }
 }

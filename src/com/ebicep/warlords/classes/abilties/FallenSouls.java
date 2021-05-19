@@ -49,9 +49,8 @@ public class FallenSouls extends AbstractAbility {
         location.add(0, .5, 0);
 
         FallenSoul fallenSoul = new FallenSoul(Warlords.getPlayer(player), fallenSoulLeft, fallenSoulMiddle, fallenSoulRight, player.getLocation(), player.getLocation(), player.getLocation(), locationLeft.getDirection(), locationMiddle.getDirection(), locationRight.getDirection(), this);
-        //fallenSouls.add(new FallenSoul(Warlords.getPlayer(player), fallenSoulLeft, fallenSoulMiddle, fallenSoulRight, player.getLocation(), player.getLocation(), player.getLocation(), locationLeft.getDirection(), locationMiddle.getDirection(), locationRight.getDirection(), this));
 
-        //Warlords.getPlayer(player).subtractEnergy(energyCost);
+        Warlords.getPlayer(player).subtractEnergy(energyCost);
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "shaman.lightningbolt.impact", 1, 1.5f);
@@ -112,6 +111,8 @@ public class FallenSouls extends AbstractAbility {
                 if (!fallenSoul.getPlayersHit().contains(warlordsPlayer) && warlordsPlayer.getPlayer().getGameMode() != GameMode.SPECTATOR && !Warlords.game.onSameTeam((Player) entity, player)) {
                     warlordsPlayer.addHealth(fallenSoul.getShooter(), fallenSoul.getFallenSouls().getName(), fallenSoul.getFallenSouls().getMinDamageHeal(), fallenSoul.getFallenSouls().getMaxDamageHeal(), fallenSoul.getFallenSouls().getCritChance(), fallenSoul.getFallenSouls().getCritMultiplier());
                     fallenSoul.getPlayersHit().add(warlordsPlayer);
+                    fallenSoul.getShooter().getSpec().getRed().subtractCooldown(2);
+                    fallenSoul.getShooter().updateRedItem();
                     if (fallenSoul.getShooter().getSoulBindCooldown() != 0 && fallenSoul.getShooter().hasBoundPlayerSoul(warlordsPlayer)) {
                         fallenSoul.getShooter().getSpec().getRed().subtractCooldown(1.5F);
                         fallenSoul.getShooter().getSpec().getPurple().subtractCooldown(1.5F);

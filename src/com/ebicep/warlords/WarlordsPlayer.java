@@ -87,13 +87,13 @@ public class WarlordsPlayer {
         switch (spec.getClassName()) {
             case "Paladin":
                 if (infusionDuration != 0) {
-                    actionBarMessage.append(ChatColor.GREEN).append("LINF").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append(infusionDuration).append(" ");
+                    actionBarMessage.append(ChatColor.GREEN).append("LINF").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append(infusionDuration / 20 + 1).append(" ");
                 }
                 if (wrath != 0) {
                     actionBarMessage.append(ChatColor.GREEN).append("WRAT").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append(wrath).append(" ");
                 }
                 if (presenceDuration != 0) {
-                    actionBarMessage.append(ChatColor.GREEN).append("INSP").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append(presenceDuration).append(" ");
+                    actionBarMessage.append(ChatColor.GREEN).append("INSP").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append(presenceDuration / 20).append(" ");
                 }
                 break;
             case "Warrior":
@@ -122,7 +122,7 @@ public class WarlordsPlayer {
                     actionBarMessage.append(ChatColor.GREEN).append("ARCA").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append(arcaneShield - 1).append(" ");
                 }
                 if (iceBarrierDuration != 0) {
-                    actionBarMessage.append(ChatColor.GREEN).append("ICEB").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append((iceBarrierDuration + 10) / 20).append(" ");
+                    actionBarMessage.append(ChatColor.GREEN).append("ICEB").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append(iceBarrierDuration / 20).append(" ");
                 }
                 if (inferno != 0) {
                     actionBarMessage.append(ChatColor.GREEN).append("INFR").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append(inferno).append(" ");
@@ -798,15 +798,18 @@ public class WarlordsPlayer {
                     this.scoreboard.updateKillsAssists();
                     Bukkit.getPluginManager().callEvent(new WarlordsDeathEvent(this));
                     // TODO: make killer/killed by name the team color instead of gray
-                    player.sendMessage("§c\u00AB§7 You were killed by " + attacker.getName() + ".");
-                    attacker.getPlayer().sendMessage("§a\u00BB§7 " + "You killed " + name + ".");
+                    if (Warlords.game.isBlueTeam(attacker.player)) {
+                        player.sendMessage(ChatColor.GRAY + "You were killed by " + ChatColor.BLUE + attacker.getName());
+                        attacker.getPlayer().sendMessage(ChatColor.GRAY + "You killed " + ChatColor.RED + name);
+                    } else {
+                        player.sendMessage(ChatColor.GRAY + "You were killed by " + ChatColor.RED + attacker.getName());
+                        attacker.getPlayer().sendMessage(ChatColor.GRAY + "You killed " + ChatColor.BLUE + name);
+                    }
 
                     if (scoreboard.getBlueTeam().contains(name)) {
-                        Bukkit.broadcastMessage("RED KILL");
                         Warlords.redKills++;
                         Warlords.game.addRedPoints(SCORE_KILL_POINTS);
                     } else {
-                        Bukkit.broadcastMessage("BLUE KILL");
                         Warlords.blueKills++;
                         Warlords.game.addBluePoints(SCORE_KILL_POINTS);
                     }
