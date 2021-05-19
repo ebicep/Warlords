@@ -473,6 +473,8 @@ public class Projectile extends AbstractAbility {
                         }
                     }
                     customProjectile.setRemove(true);
+                } else if (location.distanceSquared(customProjectile.getStartingLocation()) >= 300) {
+                    customProjectile.setRemove(true);
                 }
 
                 location.subtract(0, 1.5, 0);
