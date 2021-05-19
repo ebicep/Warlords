@@ -9,6 +9,7 @@ import com.ebicep.warlords.commands.Commands;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.maps.FlagManager;
 import com.ebicep.warlords.maps.Game;
+import com.ebicep.warlords.menu.MenuEventListener;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.Utils;
 import org.bukkit.*;
@@ -67,10 +68,12 @@ public class Warlords extends JavaPlugin {
     public void onEnable() {
         instance = this;
         getServer().getPluginManager().registerEvents(new WarlordsEvents(), this);
+        getServer().getPluginManager().registerEvents(new MenuEventListener(this), this);
         Commands commands = new Commands();
         getCommand("start").setExecutor(commands);
         getCommand("endgame").setExecutor(commands);
         getCommand("class").setExecutor(commands);
+        getCommand("menu").setExecutor(commands);
 
         getCommand("start").setTabCompleter(commands);
         getCommand("class").setTabCompleter(commands);
@@ -82,6 +85,7 @@ public class Warlords extends JavaPlugin {
 
         getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords]: Plugin is enabled");
     }
+
 
     @Override
     public void onDisable() {
