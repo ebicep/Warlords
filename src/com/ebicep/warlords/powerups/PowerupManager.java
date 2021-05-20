@@ -57,7 +57,7 @@ public class PowerupManager extends BukkitRunnable {
                         warlordsPlayer.getSpeed().changeCurrentSpeed("Speed Powerup", 40, 10 * 20);
 
                         for (Player player1 : powerUp.getLocation().getWorld().getPlayers()) {
-                            player1.playSound(powerUp.getLocation(), "ctf.powerup_speed", 1, 1);
+                            player1.playSound(powerUp.getLocation(), "ctf.powerup.speed", 2, 1);
                         }
                     }
 //                    PacketPlayOutEntityDestroy destroyPacket = new PacketPlayOutEntityDestroy(powerUp.getPowerUp().getId());

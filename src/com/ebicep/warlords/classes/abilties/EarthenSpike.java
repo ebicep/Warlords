@@ -129,6 +129,10 @@ public class EarthenSpike extends AbstractAbility {
                             for (Entity entity : onSameBlock) {
                                 if (entity instanceof Player && ((Player) entity).getGameMode() != GameMode.SPECTATOR)
                                     Warlords.getPlayer((Player) entity).addHealth(user, spikes.get(i).getName(), spikes.get(i).getMinDamageHeal(), spikes.get(i).getMaxDamageHeal(), spikes.get(i).getCritChance(), spikes.get(i).getCritMultiplier());
+
+                                for (Player player1 : entity.getWorld().getPlayers()) {
+                                    player1.playSound(entity.getLocation(), "shaman.earthenspike.impact", 1, 1);
+                                }
                             }
 
                             location.setYaw(0);

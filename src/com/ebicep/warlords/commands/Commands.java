@@ -118,7 +118,7 @@ public class Commands implements TabExecutor {
             }
 
             Classes selected = Classes.getSelected(player);
-            player.sendMessage(ChatColor.BLUE + "Your selected class: ยง7" + selected);
+            player.sendMessage(ChatColor.BLUE + "Your selected class: §7" + selected);
         } else if (command.getName().equalsIgnoreCase("menu")) {
             if (!(sender instanceof Player)) {
                 return true;

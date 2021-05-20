@@ -26,7 +26,7 @@ public class Inferno extends AbstractAbility {
         warlordsPlayer.setInferno(18);
 
         for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "mage.inferno.activation", 1, 1);
+            player1.playSound(player.getLocation(), "mage.inferno.activation", 2, 1);
         }
     }
 }

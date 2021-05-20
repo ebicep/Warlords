@@ -315,8 +315,10 @@ public class Chain extends AbstractAbility {
                 warlordsPlayer.getSpec().getRed().setCurrentCooldown(cooldown);
 
                 for (Player player1 : player.getWorld().getPlayers()) {
-                    player1.playSound(player.getLocation(), "shaman.chainlightning.activation", 1, 1);
+                    player1.playSound(player.getLocation(), "shaman.chainlightning.activation", 2, 1);
+                    player1.playSound(player.getLocation(), "shaman.chainlightning.impact", 0.6F, 1);
                 }
+
             } else if (name.contains("Heal")) {
                 if (hitCounter * 2 > warlordsPlayer.getSpec().getRed().getCurrentCooldown()) {
                     warlordsPlayer.getSpec().getRed().setCurrentCooldown(0);
@@ -327,7 +329,7 @@ public class Chain extends AbstractAbility {
                 warlordsPlayer.getSpec().getBlue().setCurrentCooldown(cooldown);
 
                 for (Player player1 : player.getWorld().getPlayers()) {
-                    player1.playSound(player.getLocation(), "shaman.chainheal.activation", 1, 1);
+                    player1.playSound(player.getLocation(), "shaman.chainheal.activation", 2, 1);
                 }
                 warlordsPlayer.updateBlueItem();
             } else if (name.contains("Spirit")) {
@@ -340,7 +342,7 @@ public class Chain extends AbstractAbility {
 
                 // TODO: find spiritguards chain sounds somehow
                 for (Player player1 : player.getWorld().getPlayers()) {
-                    player1.playSound(player.getLocation(), "shaman.chainheal.activation", 1, 1);
+                    player1.playSound(player.getLocation(), "shaman.chainheal.activation", 2, 0.9F);
                 }
             }
         }

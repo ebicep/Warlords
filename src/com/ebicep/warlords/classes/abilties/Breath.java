@@ -32,9 +32,9 @@ public class Breath extends AbstractAbility {
             if (entity instanceof Player) {
                 Player nearPlayer = (Player) entity;
                 Vector direction = nearPlayer.getLocation().subtract(player.getLocation()).toVector().normalize();
-                if (viewDirection.dot(direction) > .73) {
+                if (viewDirection.dot(direction) > .72) {
                     if (name.contains("Water")) {
-                        if (Warlords.getInstance().game.onSameTeam(warlordsPlayer, Warlords.getPlayer(nearPlayer))) {
+                        if (Warlords.game.onSameTeam(warlordsPlayer, Warlords.getPlayer(nearPlayer))) {
                             Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
                         } else {
                             Location eye = player.getEyeLocation();
@@ -45,7 +45,7 @@ public class Breath extends AbstractAbility {
 
                             entity.setVelocity(v);;
                         }
-                    } else if (name.contains("Freezing") && !Warlords.getInstance().game.onSameTeam(warlordsPlayer, Warlords.getPlayer(nearPlayer))) {
+                    } else if (name.contains("Freezing") && !Warlords.game.onSameTeam(warlordsPlayer, Warlords.getPlayer(nearPlayer))) {
                         Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
                         Warlords.getPlayer(nearPlayer).getSpeed().changeCurrentSpeed("Freezing Breath", -35, 4 * 20);
                     }

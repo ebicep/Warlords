@@ -310,7 +310,7 @@ public class WarlordsPlayer {
 
     public void assignItemLore() {
         //§
-        ItemStack weapon = new ItemStack(Material.POISONOUS_POTATO);
+        ItemStack weapon = new ItemStack(Material.STONE_AXE);
         ItemMeta weaponMeta = weapon.getItemMeta();
         weaponMeta.setDisplayName("§6Warlord's Fat Cock of the " + spec.getWeapon().getName());
         ArrayList<String> weaponLore = new ArrayList<>();

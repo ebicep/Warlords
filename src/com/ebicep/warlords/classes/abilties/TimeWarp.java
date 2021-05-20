@@ -51,7 +51,6 @@ public class TimeWarp extends AbstractAbility {
                 if (counter % 4 == 0) {
                     for (TimeWarp.TimeWarpPlayer timeWarpPlayer : timeWarpPlayers) {
                         if (timeWarpPlayer.getTime() != 0) {
-                            //ParticleEffect.CLOUD.display(0.4F, 0.1F, 0.4F, 0.001F, 5, timeWarpPlayer.getLocation(), 500);
                             ParticleEffect.SPELL_WITCH.display(0F, 0F, 0F, 0.001F, 6, timeWarpPlayer.getLocation(), 500);
                         }
 
