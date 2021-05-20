@@ -3,6 +3,7 @@ package com.ebicep.warlords.classes.abilties;
 import com.ebicep.customentities.CustomFallingBlock;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -44,11 +45,6 @@ public class GroundSlam extends AbstractAbility {
             @Override
             public void run() {
 
-                if (fallingBlockLocations.size() == 0 && customFallingBlocks.size() == 0) {
-                    this.cancel();
-                }
-
-
                 for (List<Location> fallingBlockLocation : fallingBlockLocations) {
                     for (Location location : fallingBlockLocation) {
                         if (location.getWorld().getBlockAt(location.clone().add(0, 1, 0)).getType() == Material.AIR) {
@@ -80,15 +76,21 @@ public class GroundSlam extends AbstractAbility {
                     //TODO fix bug where the blocks dont get removed if ability used near high wall - stuck in block?
                     //System.out.println(customFallingBlock.getCustomFallingBlock().getLocation().getY());
                     //System.out.println(customFallingBlock.getyLevel());
-                    if (customFallingBlock.getFallingBlock().getLocation().getY() <= customFallingBlock.getyLevel() || customFallingBlock.getFallingBlock().getTicksLived() > 10 || customFallingBlock.getTicksLived() > 10) {
+                    if (customFallingBlock.getFallingBlock().getLocation().getY() <= customFallingBlock.getyLevel() || customFallingBlock.getFallingBlock().getTicksLived() > 10) {
                         customFallingBlock.getFallingBlock().remove();
                         customFallingBlocks.remove(i);
                         i--;
                     }
                 }
+                Bukkit.broadcastMessage("" + customFallingBlocks.size());
+
+                if (customFallingBlocks.isEmpty() && fallingBlockLocations.isEmpty()) {
+                    this.cancel();
+                }
+
             }
 
-        }.runTaskTimer(Warlords.getInstance(), 0, 0);
+        }.runTaskTimer(Warlords.getInstance(), 0, 1);
     }
 
     /**
@@ -147,6 +149,9 @@ public class GroundSlam extends AbstractAbility {
         Location blockToGet = location.clone().add(0, -1, 0);
         if (location.getWorld().getBlockAt(location.clone().add(0, -1, 0)).getType() == Material.AIR) {
             blockToGet.add(0, -1, 0);
+            if (location.getWorld().getBlockAt(location.clone().add(0, -2, 0)).getType() == Material.AIR) {
+                blockToGet.add(0, -1, 0);
+            }
         }
         FallingBlock fallingBlock = location.getWorld().spawnFallingBlock(location,
                 location.getWorld().getBlockAt(blockToGet).getType(),

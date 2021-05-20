@@ -101,7 +101,7 @@ public class WarlordsPlayer {
                     actionBarMessage.append(ChatColor.GREEN).append("BLOO").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append(bloodLust).append(" ");
                 }
                 if (berserkDuration != 0) {
-                    actionBarMessage.append(ChatColor.GREEN).append("BERS").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append(berserkDuration).append(" ");
+                    actionBarMessage.append(ChatColor.GREEN).append("BERS").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append(berserkDuration / 20).append(" ");
                 }
                 if (intervene != 0) {
                     actionBarMessage.append(ChatColor.GREEN).append("VENE").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append(intervene).append(" ");
@@ -636,7 +636,7 @@ public class WarlordsPlayer {
                 }
                 arcaneShieldHealth += damageHealValue;
 
-                Bukkit.broadcastMessage("" + arcaneShieldHealth);
+                //Bukkit.broadcastMessage("" + arcaneShieldHealth);
             } else {
                 System.out.println(attacker.getName() + " hit " + name + " for " + damageHealValue);
                 boolean debt = false;
@@ -845,34 +845,52 @@ public class WarlordsPlayer {
                 } else if (attacker.getEarthliving() != 0) {
                     int earthlivingActivate = (int) (Math.random() * 100);
                     if (attacker.isFirstProc()) {
-
+                        if (isCrit) {
+                            attacker.addHealth(attacker, "Earthliving Weapon", (int) (damageHealValue * -2.4), (int) (damageHealValue * -2.4), 100, 100);
+                        } else {
+                            attacker.addHealth(attacker, "Earthliving Weapon", (int) (damageHealValue * -2.4), (int) (damageHealValue * -2.4), -1, 100);
+                        }
                         for (Player player1 : player.getWorld().getPlayers()) {
                             player1.playSound(player.getLocation(), "shaman.earthlivingweapon.impact", 1, 1);
                         }
 
                         attacker.setFirstProc(false);
-                        earthlivingActivate = 0;
-                    }
-                    if (earthlivingActivate < 40) {
-                        attacker.addHealth(attacker, "Earthliving Weapon", min * -1, max * -1, 25, 440);
+                        List<Entity> near = attacker.getPlayer().getNearbyEntities(3.0D, 3.0D, 3.0D);
+                        near = Utils.filterOnlyTeammates(near, attacker.getPlayer());
+                        int counter = 0;
+                        for (Entity entity : near) {
+                            if (entity instanceof Player) {
+                                if (earthlivingActivate < 40) {
+                                    Warlords.getPlayer((Player) near.get(0)).addHealth(attacker, "Earthliving Weapon", (int) (damageHealValue * -2.4), (int) (damageHealValue * -2.4), 25, 100);
+
+                                    counter++;
+                                }
+                            }
+                            if (counter == 2)
+                                break;
+                        }
+                    } else if (earthlivingActivate < 40) {
+                        if (isCrit) {
+                            attacker.addHealth(attacker, "Earthliving Weapon", (int) (damageHealValue * -2.4), (int) (damageHealValue * -2.4), 100, 100);
+                        } else {
+                            attacker.addHealth(attacker, "Earthliving Weapon", (int) (damageHealValue * -2.4), (int) (damageHealValue * -2.4), -1, 100);
+
+                        }
 
                         for (Player player1 : player.getWorld().getPlayers()) {
                             player1.playSound(player.getLocation(), "shaman.earthlivingweapon.impact", 1, 1);
                         }
-                    }
-                    List<Entity> near = attacker.getPlayer().getNearbyEntities(3.0D, 3.0D, 3.0D);
-                    near = Utils.filterOnlyTeammates(near, attacker.getPlayer());
-                    int counter = 0;
-                    for (Entity entity : near) {
-                        if (entity instanceof Player) {
-                            if (earthlivingActivate < 40) {
-                                Warlords.getPlayer((Player) near.get(0)).addHealth(attacker, "Earthliving Weapon", min * -1, max * -1, 25, 440);
-
+                        List<Entity> near = attacker.getPlayer().getNearbyEntities(3.0D, 3.0D, 3.0D);
+                        near = Utils.filterOnlyTeammates(near, attacker.getPlayer());
+                        int counter = 0;
+                        for (Entity entity : near) {
+                            if (entity instanceof Player) {
+                                Warlords.getPlayer((Player) near.get(0)).addHealth(attacker, "Earthliving Weapon", (int) (damageHealValue * -2.4), (int) (damageHealValue * -2.4), 25, 440);
                                 counter++;
                             }
+                            if (counter == 2)
+                                break;
                         }
-                        if (counter == 2)
-                            break;
                     }
                 } else if (attacker.getSoulBindCooldown() != 0) {
                     attacker.getPlayer().sendMessage("§a\u00BB§7 " + "BOUNDED " + player.getName());

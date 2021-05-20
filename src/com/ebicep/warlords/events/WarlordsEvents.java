@@ -3,6 +3,7 @@ package com.ebicep.warlords.events;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.abilties.SeismicWave;
+import com.ebicep.warlords.util.Utils;
 import net.minecraft.server.v1_8_R3.EntityLiving;
 import net.minecraft.server.v1_8_R3.GenericAttributes;
 import org.bukkit.*;
@@ -104,7 +105,7 @@ public class WarlordsEvents implements Listener {
             if (!Warlords.game.onSameTeam(warlordsPlayerAttacker, warlordsPlayerVictim)) {
                 if (attacker.getInventory().getHeldItemSlot() == 0 && warlordsPlayerAttacker.getHitCooldown() == 0) {
                     victim.damage(0);
-                    warlordsPlayerAttacker.setHitCooldown(13);
+                    warlordsPlayerAttacker.setHitCooldown(12);
                     warlordsPlayerAttacker.subtractEnergy(warlordsPlayerAttacker.getSpec().getEnergyOnHit() * -1);
                     warlordsPlayerVictim.addHealth(warlordsPlayerAttacker, "", -132, -179, 25, 200);
                 }
@@ -145,7 +146,7 @@ public class WarlordsEvents implements Listener {
             }
             ItemStack itemHeld = player.getItemInHand();
             if (itemHeld.getType() == Material.GOLD_BARDING && player.getVehicle() == null) {
-                if (location.getWorld().getBlockAt((int) location.getX(), 2, (int) location.getZ()).getType() == Material.NETHERRACK) {
+                if (location.getWorld().getBlockAt((int) location.getX(), 2, (int) location.getZ()).getType() == Material.NETHERRACK && !Utils.tunnelUnder(e.getPlayer())) {
                     player.sendMessage(ChatColor.RED + "You cannot mount here!");
                 } else {
                     double distance = player.getLocation().getY() - player.getWorld().getHighestBlockYAt(player.getLocation());
@@ -191,14 +192,6 @@ public class WarlordsEvents implements Listener {
         }
     }
 
-    private static boolean getLookingAt(Player player, Player player1) {
-        Location eye = player.getEyeLocation();
-        eye.setY(eye.getY() + .5);
-        Vector toEntity = player1.getEyeLocation().toVector().subtract(eye.toVector());
-        float dot = (float) toEntity.normalize().dot(eye.getDirection());
-
-        return dot > 0.98D;
-    }
 
     @EventHandler
     public static void onPlayerShift(EntityDismountEvent e) {
@@ -253,7 +246,7 @@ public class WarlordsEvents implements Listener {
 
     @EventHandler
     public void onInvClick(InventoryClickEvent e) {
-        e.setCancelled(true);
+        //e.setCancelled(true);
     }
 
     @EventHandler
@@ -267,7 +260,7 @@ public class WarlordsEvents implements Listener {
     public void onPlayerMove(PlayerMoveEvent e) {
         if (e.getPlayer().getVehicle() instanceof Horse) {
             Location location = e.getPlayer().getLocation();
-            if (location.getWorld().getBlockAt((int) location.getX(), 2, (int) location.getZ()).getType() == Material.NETHERRACK) {
+            if (location.getWorld().getBlockAt((int) location.getX(), 2, (int) location.getZ()).getType() == Material.NETHERRACK && !Utils.tunnelUnder(e.getPlayer())) {
                 e.getPlayer().getVehicle().remove();
             }
         }

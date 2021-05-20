@@ -41,7 +41,6 @@ public abstract class AbstractPowerUp {
         }
         powerUp.setGravity(false);
         powerUp.setVisible(false);
-        powerUp.setMarker(true);
         powerUp.setCustomNameVisible(true);
 
         //TODO packets - energy vs damage display differently for every player

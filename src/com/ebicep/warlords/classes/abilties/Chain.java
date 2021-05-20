@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.util.Utils;
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -195,7 +196,7 @@ public class Chain extends AbstractAbility {
                 }
             }
         } else if (name.contains("Heal")) {
-            List<Entity> near = player.getNearbyEntities(20.0D, 18.0D, 20.0D);
+            List<Entity> near = player.getNearbyEntities(10.0D, 9.0D, 10.0D);
             near = Utils.filterOnlyTeammates(near, player);
             for (Entity entity : near) {
                 if (entity instanceof Player) {
@@ -207,7 +208,7 @@ public class Chain extends AbstractAbility {
                         Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
                         hitCounter++;
 
-                        List<Entity> nearNearPlayers = nearPlayer.getNearbyEntities(10.0D, 9.0D, 10.0D);
+                        List<Entity> nearNearPlayers = nearPlayer.getNearbyEntities(5.0D, 4.0D, 5.0D);
                         nearNearPlayers.remove(player);
                         nearNearPlayers.remove(nearPlayer);
                         nearNearPlayers = Utils.filterOnlyTeammates(nearNearPlayers, player);
@@ -220,7 +221,7 @@ public class Chain extends AbstractAbility {
                                     Warlords.getPlayer(nearNearPlayer).addHealth(warlordsPlayer, name, (int) (minDamageHeal * .9), (int) (maxDamageHeal * .9), critChance, critMultiplier);
                                     hitCounter++;
 
-                                    List<Entity> nearNearNearPlayers = nearNearPlayer.getNearbyEntities(10.0D, 9.0D, 10.0D);
+                                    List<Entity> nearNearNearPlayers = nearNearPlayer.getNearbyEntities(5.0D, 4.0D, 5.0D);
                                     nearNearNearPlayers.remove(player);
                                     nearNearNearPlayers.remove(nearPlayer);
                                     nearNearNearPlayers.remove(nearNearPlayer);
@@ -246,12 +247,12 @@ public class Chain extends AbstractAbility {
                 }
             }
         } else if (name.contains("Spirit")) {
-            List<Entity> near = player.getNearbyEntities(20.0D, 18.0D, 20.0D);
+            List<Entity> near = player.getNearbyEntities(15.0D, 13.0D, 15.0D);
             near = Utils.filterOutTeammates(near, player);
             for (Entity entity : near) {
                 if (entity instanceof Player) {
                     Player nearPlayer = (Player) entity;
-                    if (nearPlayer.getGameMode() != GameMode.SPECTATOR && Utils.getLookingAt(player, nearPlayer)) {
+                    if (nearPlayer.getGameMode() != GameMode.SPECTATOR && Utils.getLookingAtChain(player, nearPlayer)) {
                         chain(player.getLocation(), nearPlayer.getLocation());
                         Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
                         hitCounter++;
@@ -363,6 +364,7 @@ public class Chain extends AbstractAbility {
         int playersHealed = 0;
         List<Entity> near = player.getNearbyEntities(2.5D, 2D, 2.5D);
         near = Utils.filterOnlyTeammates(near, player);
+        near.remove(player);
         for (Entity entity : near) {
             if (entity instanceof Player) {
                 Player nearPlayer = (Player) entity;
@@ -444,9 +446,9 @@ public class Chain extends AbstractAbility {
         eye.setY(eye.getY() + .5);
         for (Entity entity : player.getNearbyEntities(20, 17, 20)) {
             if (entity instanceof ArmorStand && entity.hasMetadata("Capacitor Totem - " + player.getName())) {
-                Vector toEntity = ((ArmorStand) entity).getEyeLocation().toVector().subtract(eye.toVector());
+                Vector toEntity = ((ArmorStand) entity).getEyeLocation().add(0, 1, 0).toVector().subtract(eye.toVector());
                 float dot = (float) toEntity.normalize().dot(eye.getDirection());
-                return dot > .98f;
+                return dot > .95f;
             }
         }
         return false;

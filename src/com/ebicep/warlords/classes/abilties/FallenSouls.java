@@ -20,8 +20,8 @@ import java.util.List;
 public class FallenSouls extends AbstractAbility {
 
     private List<FallenSoul> fallenSouls = new ArrayList<>();
-    private static final float fallenSoulHitBox = .7f;
-    private static final float fallenSoulSpeed = 1.5f;
+    private static final float fallenSoulHitBox = .9f;
+    private static final float fallenSoulSpeed = 2.0f;
 
     public FallenSouls() {
         super("Fallen Souls", -197, -254, 0, 55, 20, 180,
@@ -81,19 +81,19 @@ public class FallenSouls extends AbstractAbility {
                 damageNearByPlayers(nearMiddle, player, fallenSoul);
                 damageNearByPlayers(nearRight, player, fallenSoul);
 
-                if (!fallenSoul.isLeftRemoved() && leftSoul.getLocation().getWorld().getBlockAt(leftSoul.getLocation().clone().add(0, 2, 0)).getType() != Material.AIR || fallenSoul.getFallenSoulLeft().getTicksLived() > 50 / fallenSoulSpeed) {
+                if (!fallenSoul.isLeftRemoved() && leftSoul.getLocation().getWorld().getBlockAt(leftSoul.getLocation().clone().add(0, 2, 0)).getType() != Material.AIR || fallenSoul.getFallenSoulLeft().getTicksLived() > 50 / fallenSoulSpeed * 1.2) {
                     //TODO add explosion thingy
                     fallenSoul.getFallenSoulLeft().remove();
                     fallenSoul.setLeftRemoved(true);
                 }
 
-                if (!fallenSoul.isMiddleRemoved() && middleSoul.getLocation().getWorld().getBlockAt(middleSoul.getLocation().clone().add(0, 2, 0)).getType() != Material.AIR || fallenSoul.getFallenSoulMiddle().getTicksLived() > 50 / fallenSoulSpeed) {
+                if (!fallenSoul.isMiddleRemoved() && middleSoul.getLocation().getWorld().getBlockAt(middleSoul.getLocation().clone().add(0, 2, 0)).getType() != Material.AIR || fallenSoul.getFallenSoulMiddle().getTicksLived() > 50 / fallenSoulSpeed * 1.2) {
                     //TODO add explosion thingy
                     fallenSoul.getFallenSoulMiddle().remove();
                     fallenSoul.setMiddleRemoved(true);
                 }
 
-                if (!fallenSoul.isRightRemoved() && rightSoul.getLocation().getWorld().getBlockAt(rightSoul.getLocation().clone().add(0, 2, 0)).getType() != Material.AIR || fallenSoul.getFallenSoulRight().getTicksLived() > 50 / fallenSoulSpeed) {
+                if (!fallenSoul.isRightRemoved() && rightSoul.getLocation().getWorld().getBlockAt(rightSoul.getLocation().clone().add(0, 2, 0)).getType() != Material.AIR || fallenSoul.getFallenSoulRight().getTicksLived() > 50 / fallenSoulSpeed * 1.2) {
                     //TODO add explosion thingy
                     fallenSoul.getFallenSoulRight().remove();
                     fallenSoul.setRightRemoved(true);

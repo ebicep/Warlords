@@ -20,7 +20,7 @@ public class TimeWarp extends AbstractAbility {
     private int counter = 0;
 
     public TimeWarp() {
-        super("Time Warp", 0, 0, 29, 30, 0, 0,
+        super("Time Warp", 0, 0, 29, 30, -1, 100,
                 "§7Activate to place a time rune on\n" +
                         "§7the ground. After §65 §7seconds,\n" +
                         "§7you will warp back to that location\n" +

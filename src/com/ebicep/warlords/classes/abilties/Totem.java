@@ -37,6 +37,22 @@ public class Totem extends EntityArmorStand {
         playersHit = new ArrayList<>();
     }
 
+    public static double getLocationUnderPlayer(Player player) {
+        Location location = player.getLocation().clone();
+        if (player.getWorld().getHighestBlockYAt(location) < player.getLocation().getY()) {
+            return player.getWorld().getHighestBlockYAt(location);
+        } else {
+            for (int i = 0; i < 20; i++) {
+                if (player.getWorld().getBlockAt(location).getType() == Material.AIR) {
+                    location.add(0, -1, 0);
+                } else {
+                    break;
+                }
+            }
+            return location.getY();
+        }
+    }
+
     public WarlordsPlayer getOwner() {
         return owner;
     }
@@ -82,7 +98,7 @@ public class Totem extends EntityArmorStand {
 
             Location standLocation = player.getLocation();
             standLocation.setYaw(0);
-            standLocation.setY(standLocation.getWorld().getHighestBlockYAt(standLocation) - 1);
+            standLocation.setY(Totem.getLocationUnderPlayer(player));
             ArmorStand totemStand = player.getWorld().spawn(standLocation, ArmorStand.class);
             totemStand.setVisible(false);
             totemStand.setGravity(false);
@@ -138,7 +154,7 @@ public class Totem extends EntityArmorStand {
 
             Location standLocation = player.getLocation();
             standLocation.setYaw(0);
-            standLocation.setY(standLocation.getWorld().getHighestBlockYAt(standLocation) - 1.25);
+            standLocation.setY(Totem.getLocationUnderPlayer(player));
             ArmorStand totemStand = player.getWorld().spawn(standLocation, ArmorStand.class);
             totemStand.setVisible(false);
             totemStand.setGravity(false);
@@ -252,7 +268,7 @@ public class Totem extends EntityArmorStand {
 
             Location standLocation = player.getLocation();
             standLocation.setYaw(0);
-            standLocation.setY(standLocation.getWorld().getHighestBlockYAt(standLocation) - 1);
+            standLocation.setY(Totem.getLocationUnderPlayer(player));
             ArmorStand totemStand = player.getWorld().spawn(standLocation, ArmorStand.class);
             totemStand.setVisible(false);
             totemStand.setGravity(false);
@@ -302,6 +318,5 @@ public class Totem extends EntityArmorStand {
 
             }.runTaskTimer(Warlords.getInstance(), 0, 20);
         }
-
     }
 }

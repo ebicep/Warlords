@@ -82,6 +82,9 @@ public class RecklessCharge extends AbstractAbility {
                     }
                 }
                 //cancel charge if hit a block, making the player stand still
+                Bukkit.broadcastMessage("" + player.getLocation().distanceSquared(warlordsPlayer.getChargeLocation()));
+                Bukkit.broadcastMessage("" + warlordsPlayer.getCharged());
+                Bukkit.broadcastMessage(" ----- ");
                 if (player.getLocation().distanceSquared(warlordsPlayer.getChargeLocation()) > warlordsPlayer.getCharged() || (player.getVelocity().getX() == 0 && player.getVelocity().getZ() == 0)) {
                     player.setVelocity(new Vector(0, 0, 0));
                     warlordsPlayer.setCharged(0);

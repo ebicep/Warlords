@@ -6,6 +6,7 @@ import com.ebicep.warlords.classes.abilties.Totem;
 import net.md_5.bungee.api.ChatMessageType;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -21,12 +22,29 @@ import java.util.stream.Collectors;
 public class Utils {
 
     public static boolean getLookingAt(Player player, Player player1) {
-        Location eye = player.getEyeLocation();
+        Location eye = player.getEyeLocation().subtract(player.getLocation().getDirection().multiply(4));
         eye.setY(eye.getY() + 0.7);
         Vector toEntity = player1.getEyeLocation().toVector().subtract(eye.toVector());
         float dot = (float) toEntity.normalize().dot(eye.getDirection());
+        player.sendMessage("" + dot);
 
-        return dot > 0.91D;
+        return dot > 0.98D;
+    }
+
+    //15 blocks = 6.6
+    //10 blocks = 8
+    //7 blocks = 10
+    //5 blocks = 28
+    //2 blocks = WIDE
+    public static boolean getLookingAtChain(Player player, Player player1) {
+        Location eye = player.getEyeLocation().subtract(player.getLocation().getDirection().multiply(4));
+        eye.setY(eye.getY() + 0.7);
+        Vector toEntity = player1.getEyeLocation().toVector().subtract(eye.toVector());
+        float dot = (float) toEntity.normalize().dot(eye.getDirection());
+        player.sendMessage("" + dot);
+        player.sendMessage("" + (player.getLocation().distanceSquared(player1.getLocation()) / 10000));
+
+        return dot > 0.965D + (player.getLocation().distanceSquared(player1.getLocation()) / 10000);
     }
 
     public static boolean totemDownAndClose(WarlordsPlayer warlordsPlayer, Player player) {
@@ -67,7 +85,7 @@ public class Utils {
     public static double getDistance(Entity e, double accuracy) {
         Location loc = e.getLocation().clone(); // Using .clone so you aren't messing with the direct location object from the entity
         double distance = 0; // Shouldn't start at -2 unless you're wanting the eye height from the ground (I don't know why you'd want that)
-        for (double i = loc.getY(); i >= 0; i -= accuracy) {
+        for (double i = loc.getY(); i >= e.getLocation().getY() - 2; i -= accuracy) {
             loc.setY(i);
             distance += accuracy;
             if (loc.getBlock().getType().isSolid()) // Makes a little more sense than checking if it's air
@@ -114,6 +132,18 @@ public class Utils {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+    }
+
+    public static boolean tunnelUnder(Player p) {
+        Location location = p.getLocation().clone();
+        for (int i = 0; i < 15; i++) {
+            location.add(0, -1, 0);
+            p.sendMessage("" + p.getWorld().getBlockAt(location).getType());
+            if (p.getWorld().getBlockAt(location).getType() == Material.AIR) {
+                return true;
+            }
+        }
+        return false;
     }
 
 
