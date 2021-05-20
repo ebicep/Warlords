@@ -16,6 +16,7 @@ import java.util.List;
 
 public class Projectile extends AbstractAbility {
 
+    private static final float hitBox = 2;
     private int maxDistance;
 
     public Projectile(String name, int minDamageHeal, int maxDamageHeal, int cooldown, int energyCost, int critChance, int critMultiplier, String description, int maxDistance) {
@@ -68,7 +69,8 @@ public class Projectile extends AbstractAbility {
                     entities = Utils.filterOutTeammates(entities, customProjectile.getShooter());
                     for (Entity entity : entities) {
                         if (entity instanceof Player && entity != customProjectile.getShooter()) {
-                            if (entity.getLocation().distanceSquared(location) < 2 * 2) {
+                            if (entity.getLocation().distanceSquared(location) < hitBox * hitBox) {
+                                player.sendMessage("HIT PLAYER");
                                 hitPlayer = true;
                                 ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.5F, 1, entity.getLocation().add(0, 1, 0), 500);
                                 ParticleEffect.LAVA.display(0, 0, 0, 0.5F, 10, entity.getLocation().add(0, 1, 0), 500);
@@ -142,7 +144,7 @@ public class Projectile extends AbstractAbility {
                     System.out.println(entities);
                     for (Entity entity : entities) {
                         if (entity instanceof Player && entity != customProjectile.getShooter()) {
-                            if (entity.getLocation().distanceSquared(location) < 2 * 2) {
+                            if (entity.getLocation().distanceSquared(location) < hitBox * hitBox) {
                                 hitPlayer = true;
                                 ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.0F, 1, entity.getLocation().add(0, 1, 0), 500);
                                 Player victim = (Player) entity;
@@ -217,7 +219,7 @@ public class Projectile extends AbstractAbility {
                     List<Entity> entities = (List<Entity>) location.getWorld().getNearbyEntities(location, 5, 5, 5);
                     for (Entity entity : entities) {
                         if (entity instanceof Player && entity != customProjectile.getShooter()) {
-                            if (entity.getLocation().distanceSquared(location) < 2 * 2) {
+                            if (entity.getLocation().distanceSquared(location) < hitBox * hitBox) {
                                 hitPlayer = true;
                                 ParticleEffect.HEART.display(1.5F, 1.5F, 1.5F, 0.2F, 2, entity.getLocation().add(0, 1, 0), 500);
                                 ParticleEffect.VILLAGER_HAPPY.display(1.5F, 1.5F, 1.5F, 0.2F, 3, entity.getLocation().add(0, 1, 0), 500);
@@ -340,7 +342,7 @@ public class Projectile extends AbstractAbility {
                     entities = Utils.filterOutTeammates(entities, customProjectile.getShooter());
                     for (Entity entity : entities) {
                         if (entity instanceof Player && entity != customProjectile.getShooter()) {
-                            if (entity.getLocation().distanceSquared(location) < 2 * 2) {
+                            if (entity.getLocation().distanceSquared(location) < hitBox * hitBox) {
                                 hitPlayer = true;
                                 ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.0F, 1, entity.getLocation().add(0, 1, 0), 500);
                                 Player victim = (Player) entity;
@@ -380,6 +382,7 @@ public class Projectile extends AbstractAbility {
 
                 //hit block or out of range
                 if ((location.getWorld().getBlockAt(location).getType() != Material.AIR && location.getWorld().getBlockAt(location).getType() != Material.WATER) && !hitPlayer) {
+                    player.sendMessage("HIT FLOOR");
                     if (customProjectile.getBall().getName().contains("Water")) {
                         ParticleEffect.HEART.display(1, 1, 1, 0.2F, 5, location, 500);
                         ParticleEffect.VILLAGER_HAPPY.display(1, 1, 1, 0.2F, 5, location, 500);
