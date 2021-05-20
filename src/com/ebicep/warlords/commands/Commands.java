@@ -16,6 +16,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
+import static com.ebicep.warlords.menu.GameMenu.openMainMenu;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -56,13 +57,11 @@ public class Commands implements TabExecutor {
                     player.teleport(Bukkit.getWorlds().get(0).getSpawnLocation());
                 }
             }
-
             for (Player player : game.getTeamRed()) {
                 if (player != null) {
                     player.teleport(Bukkit.getWorlds().get(0).getSpawnLocation());
                 }
             }
-
             game.getTeamBlue().clear();
             game.getTeamRed().clear();
             game.resetTimer();
@@ -111,8 +110,7 @@ public class Commands implements TabExecutor {
             if (args.length != 0) {
                 try {
                     Classes selectedClass = Classes.valueOf(args[0].toUpperCase(Locale.ROOT));
-                    player.removeMetadata("selected-class", Warlords.getInstance());
-                    player.setMetadata("selected-class", new FixedMetadataValue(Warlords.getInstance(), selectedClass));
+                    Classes.setSelected(player, selectedClass);
                 } catch (IllegalArgumentException e) {
                     sender.sendMessage(ChatColor.RED + args[0] + " was not found, valid classes: " + Arrays.toString(Classes.values()));
                     return true;
@@ -120,7 +118,14 @@ public class Commands implements TabExecutor {
             }
 
             Classes selected = Classes.getSelected(player);
-            player.sendMessage(ChatColor.BLUE + "Your selected class: §7" + selected);
+            player.sendMessage(ChatColor.BLUE + "Your selected class: ยง7" + selected);
+        } else if (command.getName().equalsIgnoreCase("menu")) {
+            if (!(sender instanceof Player)) {
+                return true;
+            }
+
+            Player player = (Player) sender;
+            openMainMenu(player);
         }
 
         return true;

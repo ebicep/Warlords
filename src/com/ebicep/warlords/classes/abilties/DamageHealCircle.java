@@ -10,6 +10,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
 
+import java.util.Random;
+
 public class DamageHealCircle {
 
     private Player player;
@@ -60,12 +62,12 @@ public class DamageHealCircle {
         hammer.remove();
     }
 
+    private static final Random random = new Random();
     public void spawn() {
-        float angle = 0;
-        for (int i = 0; i < Math.PI * 20; i++) {
+        for (int i = 0; i < 5; i++) {
+            double angle = random.nextInt(360) * Math.PI / 180;
             float x = (float) (radius * Math.sin(angle));
             float z = (float) (radius * Math.cos(angle));
-            angle += 0.2;
             if (name.contains("Hammer")) {
                 location.getWorld().playEffect(new Location(location.getWorld(), location.getX() + x, location.getY() + 1, location.getZ() + z), Effect.HAPPY_VILLAGER, 0);
 
@@ -78,7 +80,7 @@ public class DamageHealCircle {
             }
 
             if (name.contains("Rain")) {
-                // TODO: still need to fix rain/hammer particles
+                // TODO: need to revise this + ring doesn't appear at all sometimes?
                 ParticleEffect.CLOUD.display(2, 0, 2, 0.01F, 1, (new Location(location.getWorld(), location.getX(), location.getY() + 6, location.getZ())), 500);
                 ParticleEffect.DRIP_WATER.display(2, 0, 2, 0.01F, 1, (new Location(location.getWorld(), location.getX(), location.getY() + 6, location.getZ())), 500);
             }

@@ -13,4 +13,7 @@ commands:
   class:
     description: Select your class.
     usage: /class [CLASS]
+  menu:
+    description: Opens the game menu. Later to be removed.
+    usage: /menu
 

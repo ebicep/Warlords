@@ -1,5 +1,6 @@
 package com.ebicep.warlords.util;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.PlayerClass;
 import com.ebicep.warlords.classes.mage.specs.aquamancer.Aquamancer;
 import com.ebicep.warlords.classes.mage.specs.cryomancer.Cryomancer;
@@ -17,6 +18,7 @@ import org.bukkit.entity.Player;
 
 import java.util.Objects;
 import java.util.function.Function;
+import org.bukkit.metadata.FixedMetadataValue;
 
 public enum Classes {
     PYROMANCER("Pyromancer", Pyromancer::new, "§7A damage-oriented Mage specialization that uses the destructive Fire spells to obliterate enemies."),
@@ -47,7 +49,16 @@ public enum Classes {
         this.description = description;
     }
 
-    public static Classes getSelected(Player player) { return player.getMetadata("selected-class").stream().
-            map(v -> v.value() instanceof  Classes ? (Classes)v.value() : null).filter(Objects::nonNull).findAny().orElse(Classes.PYROMANCER);
+    public static Classes getSelected(Player player) {
+        return player.getMetadata("selected-class").stream()
+                .map(v -> v.value() instanceof  Classes ? (Classes)v.value() : null)
+                .filter(Objects::nonNull)
+                .findAny()
+                .orElse(Classes.PYROMANCER);
+    }
+
+    public static void setSelected(Player player, Classes selectedClass) {
+        player.removeMetadata("selected-class", Warlords.getInstance());
+        player.setMetadata("selected-class", new FixedMetadataValue(Warlords.getInstance(), selectedClass));
     }
 }
