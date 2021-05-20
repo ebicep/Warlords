@@ -75,21 +75,21 @@ public class Boulder extends AbstractAbility {
                     near = Utils.filterOutTeammates(near, player);
 
                     for (Player player1 : player.getWorld().getPlayers()) {
-                        player1.playSound(newLoc, "shaman.boulder.impact", 1, 1);
+                        player1.playSound(newLoc, "shaman.boulder.impact", 2, 1);
                     }
 
                 } else {
                     Collection<Entity> nearbyEntities = stand.getWorld().getNearbyEntities(stand.getLocation(), 1.25, 1.25, 1.25);
                     for (Entity entity : nearbyEntities) {
                         if (entity instanceof Player) {
-                            if (!Warlords.getInstance().game.onSameTeam(player, (Player) entity)) {
+                            if (!Warlords.game.onSameTeam(player, (Player) entity)) {
                                 boulderExplode = true;
                                 near = (List<Entity>) newLoc.getWorld().getNearbyEntities(newLoc, 5, 5, 5);
                                 near = Utils.filterOutTeammates(near, player);
                                 near.remove(entity);
 
                                 for (Player player1 : player.getWorld().getPlayers()) {
-                                    player1.playSound(newLoc, "shaman.boulder.impact", 1, 1);
+                                    player1.playSound(newLoc, "shaman.boulder.impact", 2, 1);
                                 }
 
                                 final Vector v = entity.getLocation().toVector().subtract(location.toVector()).normalize().multiply(0.9).setY(0.1);

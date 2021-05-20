@@ -50,7 +50,7 @@ public class DamageHealCircle {
             }
         }
         newLocation.add(0, -1, 0);
-        hammer = (ArmorStand) location.getWorld().spawnEntity(newLocation.clone().add(.25, 2.9, -.25), EntityType.ARMOR_STAND);
+        hammer = (ArmorStand) location.getWorld().spawnEntity(newLocation.clone().add(.25, 1.9, -.25), EntityType.ARMOR_STAND);
         hammer.setRightArmPose(new EulerAngle(20.25, 0, 0));
         hammer.setItemInHand(new ItemStack(Material.STRING));
         hammer.setGravity(false);
@@ -64,7 +64,7 @@ public class DamageHealCircle {
 
     private static final Random random = new Random();
     public void spawn() {
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 16; i++) {
             double angle = random.nextInt(360) * Math.PI / 180;
             float x = (float) (radius * Math.sin(angle));
             float z = (float) (radius * Math.cos(angle));

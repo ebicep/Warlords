@@ -26,8 +26,7 @@ public class HealingRain extends AbstractAbility {
 
     @Override
     public void onActivate(Player player) {
-        DamageHealCircle damageHealCircle = new DamageHealCircle(player, player.getTargetBlock((HashSet<Byte>) null, 15).getLocation(), 5, 10, minDamageHeal, maxDamageHeal, critChance, critMultiplier, name);
-        damageHealCircle.spawn();
+        DamageHealCircle damageHealCircle = new DamageHealCircle(player, player.getTargetBlock((HashSet<Byte>) null, 15).getLocation(), 6, 10, minDamageHeal, maxDamageHeal, critChance, critMultiplier, name);
         WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
         warlordsPlayer.getActionBarStats().add(new ActionBarStats(warlordsPlayer, "RAIN", 10));
         warlordsPlayer.subtractEnergy(energyCost);
@@ -40,6 +39,7 @@ public class HealingRain extends AbstractAbility {
 
             @Override
             public void run() {
+                damageHealCircle.spawn();
                 damageHealCircle.setDuration(damageHealCircle.getDuration() - 1);
                 List<Entity> near = (List<Entity>) damageHealCircle.getLocation().getWorld().getNearbyEntities(damageHealCircle.getLocation(), 5, 4, 5);
                 near = Utils.filterOnlyTeammates(near, player);

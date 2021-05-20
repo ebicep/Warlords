@@ -29,8 +29,7 @@ public class HammerOfLight extends AbstractAbility {
 
     @Override
     public void onActivate(Player player) {
-        DamageHealCircle damageHealCircle = new DamageHealCircle(player, player.getTargetBlock((HashSet<Byte>) null, 15).getLocation().add(1, 0, 1), 5, 8, minDamageHeal, maxDamageHeal, critChance, critMultiplier, name);
-        damageHealCircle.spawn();
+        DamageHealCircle damageHealCircle = new DamageHealCircle(player, player.getTargetBlock((HashSet<Byte>) null, 15).getLocation().add(1, 0, 1), 6, 8, minDamageHeal, maxDamageHeal, critChance, critMultiplier, name);
         damageHealCircle.spawnHammer();
         Warlords.getPlayer(player).subtractEnergy(energyCost);
 
@@ -42,6 +41,7 @@ public class HammerOfLight extends AbstractAbility {
 
             @Override
             public void run() {
+                damageHealCircle.spawn();
                 damageHealCircle.setDuration(damageHealCircle.getDuration() - 1);
                 List<Entity> near = (List<Entity>) damageHealCircle.getLocation().getWorld().getNearbyEntities(damageHealCircle.getLocation(), 5, 4, 5);
                 for (Entity entity : near) {
