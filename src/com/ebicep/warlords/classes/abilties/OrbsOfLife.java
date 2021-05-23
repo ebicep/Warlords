@@ -30,7 +30,7 @@ public class OrbsOfLife extends AbstractAbility {
         Warlords.getPlayer(player).setOrbOfLife(13);
 
         for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "warrior.revenant.orbsoflife", 1, 1);
+            player1.playSound(player.getLocation(), "warrior.revenant.orbsoflife", 2, 1);
         }
     }
 

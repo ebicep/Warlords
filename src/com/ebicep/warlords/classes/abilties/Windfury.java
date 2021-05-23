@@ -28,7 +28,7 @@ public class Windfury extends AbstractAbility {
         warlordsPlayer.setFirstProc(true);
 
         for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "shaman.windfuryweapon.activation", 1, 1);
+            player1.playSound(player.getLocation(), "shaman.windfuryweapon.activation", 2, 1);
         }
     }
 }

@@ -21,7 +21,7 @@ public class LightInfusion extends AbstractAbility {
         warlordsPlayer.subtractEnergy(energyCost);
 
         for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "paladin.infusionoflight.activation", 1, 1);
+            player1.playSound(player.getLocation(), "paladin.infusionoflight.activation", 2, 1);
         }
     }
 }

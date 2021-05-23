@@ -16,7 +16,7 @@ import java.util.List;
 
 public class Projectile extends AbstractAbility {
 
-    private static final float hitBox = 2;
+    private static final float hitBox = 1.85F;
     private int maxDistance;
 
     public Projectile(String name, int minDamageHeal, int maxDamageHeal, int cooldown, int energyCost, int critChance, int critMultiplier, String description, int maxDistance) {
@@ -206,12 +206,10 @@ public class Projectile extends AbstractAbility {
                 } else if (customProjectile.getBall().getName().contains("Water")) {
                     location.add(customProjectile.getDirection().clone().multiply(2));
                     location.add(0, 1.5, 0);
-                    //TODO add damage
                     ParticleEffect.DRIP_WATER.display(0.3f, 0.3f, 0.3f, 0.1F, 2, location, 500);
                     ParticleEffect.ENCHANTMENT_TABLE.display(0, 0, 0, 0.1F, 1, location, 500);
                     ParticleEffect.VILLAGER_HAPPY.display(0, 0, 0, 0.1F, 1, location, 500);
                     ParticleEffect.CLOUD.display(0, 0, 0, 0F, 1, location, 500);
-                    //ParticleEffect.FLAME.display(0, 0, 0, 0.1F, 3, location, 500);
                     List<Entity> entities = (List<Entity>) location.getWorld().getNearbyEntities(location, 5, 5, 5);
                     for (Entity entity : entities) {
                         if (entity instanceof Player && entity != customProjectile.getShooter()) {

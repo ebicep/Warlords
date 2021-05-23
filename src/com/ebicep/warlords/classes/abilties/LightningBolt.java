@@ -42,7 +42,7 @@ public class LightningBolt extends AbstractAbility {
         Warlords.getPlayer(player).subtractEnergy(energyCost);
 
         for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "shaman.lightningbolt.activation", 1, 1);
+            player1.playSound(player.getLocation(), "shaman.lightningbolt.activation", 2, 1);
         }
 
         new BukkitRunnable() {

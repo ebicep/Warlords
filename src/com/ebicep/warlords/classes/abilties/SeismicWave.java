@@ -39,7 +39,7 @@ public class SeismicWave extends AbstractAbility {
         }
 
         for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "warrior.seismicwave.activation", 1, 1);
+            player1.playSound(player.getLocation(), "warrior.seismicwave.activation", 2, 1);
         }
 
         new BukkitRunnable() {

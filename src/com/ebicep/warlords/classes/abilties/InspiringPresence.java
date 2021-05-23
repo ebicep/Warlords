@@ -42,7 +42,7 @@ public class InspiringPresence extends AbstractAbility {
         }
 
         for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "paladin.inspiringpresence.activation", 1, 1);
+            player1.playSound(player.getLocation(), "paladin.inspiringpresence.activation", 2, 1);
         }
     }
 }

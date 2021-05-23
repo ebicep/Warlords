@@ -27,7 +27,7 @@ public class Earthliving extends AbstractAbility {
         warlordsPlayer.setFirstProc(true);
 
         for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "shaman.earthlivingweapon.activation", 1, 1);
+            player1.playSound(player.getLocation(), "shaman.earthlivingweapon.activation", 2, 1);
         }
     }
 }
