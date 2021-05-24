@@ -3,6 +3,7 @@ package com.ebicep.warlords.classes.abilties;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.util.ParticleEffect;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -53,7 +54,7 @@ public class FallenSouls extends AbstractAbility {
         Warlords.getPlayer(player).subtractEnergy(energyCost);
 
         for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "shaman.lightningbolt.impact", 1, 1.5f);
+            player1.playSound(player.getLocation(), "shaman.lightningbolt.impact", 2, 1.5f);
         }
 
         new BukkitRunnable() {

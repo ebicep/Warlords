@@ -35,7 +35,7 @@ public class TimeWarp extends AbstractAbility {
         warlordsPlayer.subtractEnergy(energyCost);
 
         for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "mage.timewarp.activation", 1, 1);
+            player1.playSound(player.getLocation(), "mage.timewarp.activation", 2, 1);
         }
 
         new BukkitRunnable() {

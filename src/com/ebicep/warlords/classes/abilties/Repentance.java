@@ -26,7 +26,7 @@ public class Repentance extends AbstractAbility {
 
         // TODO: find spiritguards rep sound
         for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "warrior.seismicwave.activation", 2, 1);
+            player1.playSound(player.getLocation(), "paladin.barrieroflight.impact", 2, 1.4F);
         }
     }
 }

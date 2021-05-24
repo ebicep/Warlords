@@ -91,7 +91,8 @@ public class Game implements Runnable {
 
                     redTeam.add(p.getName());
                     p.setPlayerListName(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + "SPEC" + ChatColor.DARK_GRAY + "] "
-                            + ChatColor.RED + p.getName() + ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + "Lv90" + ChatColor.DARK_GRAY + "]");
+                            // do we even need levels anymore?
+                            + ChatColor.RED + p.getName() + ChatColor.DARK_GRAY + " [" + ChatColor.RED + "Lv100" + ChatColor.DARK_GRAY + "]");
 
                     resetArmor(p, Warlords.getPlayer(p).getSpec(), false);
                     System.out.println("Added " + p.getName());
@@ -104,7 +105,7 @@ public class Game implements Runnable {
 
                     blueTeam.add(p.getName());
                     p.setPlayerListName(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + "SPEC" + ChatColor.DARK_GRAY + "] "
-                            + ChatColor.BLUE + p.getName() + ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + "Lv90" + ChatColor.DARK_GRAY + "]");
+                            + ChatColor.BLUE + p.getName() + ChatColor.DARK_GRAY + " [" + ChatColor.RED + "Lv100" + ChatColor.DARK_GRAY + "]");
 
                     resetArmor(p, Warlords.getPlayer(p).getSpec(), true);
                     System.out.println("Added " + p.getName());

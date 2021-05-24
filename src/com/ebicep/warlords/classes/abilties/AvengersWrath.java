@@ -24,7 +24,7 @@ public class AvengersWrath extends AbstractAbility {
         Warlords.getPlayer(player).setWrath(12);
 
         for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "paladin.avengerswrath.activation", 1, 1);
+            player1.playSound(player.getLocation(), "paladin.avengerswrath.activation", 2, 1);
         }
     }
 }

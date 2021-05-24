@@ -32,7 +32,7 @@ public class HealingRain extends AbstractAbility {
         warlordsPlayer.subtractEnergy(energyCost);
 
         for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "mage.healingrain.impact", 1, 1);
+            player1.playSound(player.getLocation(), "mage.healingrain.impact", 2, 1);
         }
 
         new BukkitRunnable() {

@@ -595,7 +595,7 @@ public class WarlordsPlayer {
             }
             if (intervene != 0) {
                 //TODO check teammate heal
-                if (!Warlords.getInstance().game.onSameTeam(this, attacker)) {
+                if (!Warlords.game.onSameTeam(this, attacker)) {
                     damageHealValue *= totalReduction;
                     damageHealValue *= .5;
                     if (isCrit) {
@@ -611,7 +611,7 @@ public class WarlordsPlayer {
                     this.addAbsorbed(-damageHealValue);
                     attacker.addDamage(-damageHealValue);
                 }
-            } else if (arcaneShield != 0 && !Warlords.getInstance().game.onSameTeam(this, attacker)) {
+            } else if (arcaneShield != 0 && !Warlords.game.onSameTeam(this, attacker)) {
                 damageHealValue *= totalReduction;
                 //TODO check teammate heal
                 if (arcaneShieldHealth + damageHealValue < 0) {
@@ -836,7 +836,7 @@ public class WarlordsPlayer {
                     }
                     if (windfuryActivate < 35) {
                         for (Player player1 : Bukkit.getOnlinePlayers()) {
-                            player1.playSound(player.getLocation(), "shaman.windfuryweapon.impact", 1, 1);
+                            player1.playSound(player.getLocation(), "shaman.windfuryweapon.impact", 1.5F, 1);
                         }
                         addHealth(attacker, "Windfury Weapon", min, max, 25, 235);
                         if (health > 0)

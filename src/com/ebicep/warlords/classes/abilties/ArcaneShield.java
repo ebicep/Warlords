@@ -28,7 +28,7 @@ public class ArcaneShield extends AbstractAbility {
         warlordsPlayer.subtractEnergy(energyCost);
 
         for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "mage.arcaneshield.activation", 1, 1);
+            player1.playSound(player.getLocation(), "mage.arcaneshield.activation", 2, 1);
         }
     }
 }

@@ -54,12 +54,12 @@ public class Breath extends AbstractAbility {
             //TODO breath animation
 
             if (name.contains("Water")) {
-                for (Player player1 : Bukkit.getOnlinePlayers()) {
-                    player1.playSound(player.getLocation(), "mage.waterbreath.activation", 1, 1);
+                for (Player player1 : player.getWorld().getPlayers()) {
+                    player1.playSound(player.getLocation(), "mage.waterbreath.activation", 1.5F, 1);
                 }
             } else if (name.contains("Freezing")) {
-                for (Player player1 : Bukkit.getOnlinePlayers()) {
-                    player1.playSound(player.getLocation(), "mage.freezingbreath.activation", 1, 1);
+                for (Player player1 : player.getWorld().getPlayers()) {
+                    player1.playSound(player.getLocation(), "mage.freezingbreath.activation", 1.5F, 1);
                 }
             }
 

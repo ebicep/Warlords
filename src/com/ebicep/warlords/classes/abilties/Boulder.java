@@ -109,7 +109,7 @@ public class Boulder extends AbstractAbility {
                         if (entity2 instanceof Player) {
                             Player nearPlayer = (Player) entity2;
                             if (nearPlayer.getGameMode() != GameMode.SPECTATOR) {
-                                final Vector v = nearPlayer.getLocation().toVector().subtract(newLoc.toVector()).normalize().multiply(1.2).setY(0.4);
+                                final Vector v = nearPlayer.getLocation().toVector().subtract(newLoc.toVector()).normalize().multiply(0.9).setY(0.1);
                                 nearPlayer.setVelocity(v);
 
                                 Warlords.getPlayer(nearPlayer).addHealth(Warlords.getPlayer(player), name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
@@ -148,7 +148,7 @@ public class Boulder extends AbstractAbility {
 
 
         for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "shaman.boulder.activation", 1, 1);
+            player1.playSound(player.getLocation(), "shaman.boulder.activation", 1.5F, 1);
         }
     }
 }

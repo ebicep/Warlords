@@ -20,7 +20,7 @@ public class Berserk extends AbstractAbility {
     @Override
     public void onActivate(Player player) {
         WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
-        warlordsPlayer.getSpeed().changeCurrentSpeed("Berserk", 30, 18 * 20);
+        warlordsPlayer.getSpeed().changeCurrentSpeed("Berserk", 30, 18 * 20, "BASE");
         warlordsPlayer.setBerserk(18 * 20);
         warlordsPlayer.subtractEnergy(energyCost);
 

@@ -44,7 +44,7 @@ public class CustomScoreboard {
         sideBar.getScore(ChatColor.RED + "RED Flag: " + ChatColor.GREEN + "Safe").setScore(8);
         sideBar.getScore(ChatColor.BLUE + "BLU Flag: " + ChatColor.GREEN + "Safe").setScore(7);
         sideBar.getScore("    ").setScore(6);
-        sideBar.getScore(ChatColor.GOLD + "Lv90 " + ChatColor.GREEN + Warlords.getPlayer(player).getSpec().getClass().getSimpleName()).setScore(5);
+        sideBar.getScore(ChatColor.WHITE + "Class: " + ChatColor.GREEN + Warlords.getPlayer(player).getSpec().getClass().getSimpleName()).setScore(5);
         sideBar.getScore("     ").setScore(4);
         sideBar.getScore("" + ChatColor.GREEN + Warlords.getPlayer(player).getKills() + ChatColor.RESET + " Kills " + ChatColor.GREEN + Warlords.getPlayer(player).getAssists() + ChatColor.RESET + " Assists").setScore(3);
         sideBar.getScore("      ").setScore(2);

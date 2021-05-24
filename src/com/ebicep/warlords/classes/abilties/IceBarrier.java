@@ -25,7 +25,7 @@ public class IceBarrier extends AbstractAbility {
         warlordsPlayer.setIceBarrier(6 * 20 - 10);
 
         for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "mage.icebarrier.activation", 1, 1);
+            player1.playSound(player.getLocation(), "mage.icebarrier.activation", 2, 1);
         }
     }
 }

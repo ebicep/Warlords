@@ -100,7 +100,7 @@ public class Warlords extends JavaPlugin {
 
 
                 // EVERY TICK
-                // speed every 1 tick updated so it activates instantly
+
                 // MOVEMENT
                 for (WarlordsPlayer warlordsPlayer : players.values()) {
                     Player player = warlordsPlayer.getPlayer();
@@ -141,7 +141,6 @@ public class Warlords extends JavaPlugin {
                         warlordsPlayer.setFrostbolt((int) (warlordsPlayer.getFrostbolt() - 0.05));
                         List<Entity> near = player.getNearbyEntities(6.0D, 2.0D, 6.0D);
                         near = Utils.filterOutTeammates(near, player);
-                        // TODO: fix shooting all players + shooter instead of just impact location bolt
                         for (Entity entity : near) {
                             if (entity instanceof Player) {
                                 Player nearPlayer = (Player) entity;
@@ -168,7 +167,7 @@ public class Warlords extends JavaPlugin {
                     // ice barrier slowness duration
                     if (warlordsPlayer.getIceBarrierSlowness() != 0) {
                         warlordsPlayer.setIceBarrierSlowness((int) (warlordsPlayer.getIceBarrierSlowness() - 0.05));
-                        warlordsPlayer.getSpeed().changeCurrentSpeed("Infusion", -20, 2 * 20);
+                        warlordsPlayer.getSpeed().changeCurrentSpeed("Ice Barrier", -20, 2 * 20);
                     }
                 }
 

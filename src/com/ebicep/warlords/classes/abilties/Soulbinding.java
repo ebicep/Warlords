@@ -8,7 +8,17 @@ import org.bukkit.entity.Player;
 public class Soulbinding extends AbstractAbility {
 
     public Soulbinding() {
-        super("Soulbinding Weapon", 0, 0, 23, 30, -1, 100, "soulbinding weapon description");
+        super("Soulbinding Weapon", 0, 0, 23, 30, -1, 100,
+                "§7Your melee attacks §dBIND\n" +
+                "§7enemies for §62 §7seconds.\n" +
+                "§7Against §dBOUND §7targets, your\n" +
+                "§7next Spirit Link ill heal you and\n" +
+                "§e2 §7nearby allies for §a420 §7health.\n" +
+                "§7Your next allen Souls will reduce the\n" +
+                "§7cooldown of all abilities by §61.5\n" +
+                "§7seconds. (§60.5 §7seconds for §e2 §7nearby\n" +
+                "§7allies). Both buffs may be activated for\n" +
+                "§7every melee hit. Lasts §612 §7seconds.");
     }
 
     @Override
