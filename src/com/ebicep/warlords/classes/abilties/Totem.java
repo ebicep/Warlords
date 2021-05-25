@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.classes.ActionBarStats;
+import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.Utils;
 import net.minecraft.server.v1_8_R3.EntityArmorStand;
 import net.minecraft.server.v1_8_R3.World;
@@ -289,24 +290,46 @@ public class Totem extends EntityArmorStand {
                 public void run() {
 
                     if (healingTotem.getSecondsLeft() != 0) {
+
+                        ParticleEffect.VILLAGER_HAPPY.display(0.2F, 0.2F, 0.2F, 0.05F, 2, standLocation, 500);
+
+                        for (Player player1 : player.getWorld().getPlayers()) {
+                            player1.playSound(player.getLocation(), "shaman.earthlivingweapon.impact", 2, 1F);
+                        }
+
                         List<Entity> near = healingTotem.getTotemArmorStand().getNearbyEntities(4.0D, 4.0D, 4.0D);
                         near = Utils.filterOnlyTeammates(near, healingTotem.getOwner().getPlayer());
                         for (Entity entity : near) {
                             if (entity instanceof Player) {
                                 Player nearPlayer = (Player) entity;
                                 if (nearPlayer.getGameMode() != GameMode.SPECTATOR) {
-                                    Warlords.getPlayer(nearPlayer).addHealth(healingTotem.getOwner(), healingTotem.getOwner().getSpec().getOrange().getName(), healingTotem.getOwner().getSpec().getOrange().getMinDamageHeal(), (int) (healingTotem.getOwner().getSpec().getOrange().getMinDamageHeal() * 1.35), healingTotem.getOwner().getSpec().getOrange().getCritChance(), healingTotem.getOwner().getSpec().getOrange().getCritMultiplier());
+                                    Warlords.getPlayer(nearPlayer).addHealth(healingTotem.getOwner(),
+                                            healingTotem.getOwner().getSpec().getOrange().getName(),
+                                            healingTotem.getOwner().getSpec().getOrange().getMinDamageHeal(),
+                                            (int) (healingTotem.getOwner().getSpec().getOrange().getMinDamageHeal() * 1.35),
+                                            healingTotem.getOwner().getSpec().getOrange().getCritChance(),
+                                            healingTotem.getOwner().getSpec().getOrange().getCritMultiplier());
                                 }
                             }
                         }
                     } else {
+
+                        for (Player player1 : player.getWorld().getPlayers()) {
+                            player1.playSound(player.getLocation(), "shaman.heal.impact", 1.5F, 1F);
+                        }
+
                         List<Entity> near = healingTotem.getTotemArmorStand().getNearbyEntities(4.0D, 4.0D, 4.0D);
                         near = Utils.filterOnlyTeammates(near, healingTotem.getOwner().getPlayer());
                         for (Entity entity : near) {
                             if (entity instanceof Player) {
                                 Player nearPlayer = (Player) entity;
                                 if (nearPlayer.getGameMode() != GameMode.SPECTATOR) {
-                                    Warlords.getPlayer(nearPlayer).addHealth(healingTotem.getOwner(), healingTotem.getOwner().getSpec().getOrange().getName(), healingTotem.getOwner().getSpec().getOrange().getMaxDamageHeal(), (int) (healingTotem.getOwner().getSpec().getOrange().getMaxDamageHeal() * 1.35), healingTotem.getOwner().getSpec().getOrange().getCritChance(), healingTotem.getOwner().getSpec().getOrange().getCritMultiplier());
+                                    Warlords.getPlayer(nearPlayer).addHealth(healingTotem.getOwner(),
+                                            healingTotem.getOwner().getSpec().getOrange().getName(),
+                                            healingTotem.getOwner().getSpec().getOrange().getMaxDamageHeal(),
+                                            (int) (healingTotem.getOwner().getSpec().getOrange().getMaxDamageHeal() * 1.35),
+                                            healingTotem.getOwner().getSpec().getOrange().getCritChance(),
+                                            healingTotem.getOwner().getSpec().getOrange().getCritMultiplier());
                                 }
                             }
                         }

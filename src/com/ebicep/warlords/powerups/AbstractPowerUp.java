@@ -43,6 +43,10 @@ public abstract class AbstractPowerUp {
         powerUp.setVisible(false);
         powerUp.setCustomNameVisible(true);
 
+        for (Player player1 : powerUp.getWorld().getPlayers()) {
+            player1.playSound(powerUp.getLocation(), "ctf.powerup.spawn", 2, 1);
+        }
+
         //TODO packets - energy vs damage display differently for every player
 //        WorldServer s = ((CraftWorld) location.getWorld()).getHandle();
 //        powerUp = new EntityArmorStand(s);

@@ -340,9 +340,8 @@ public class Chain extends AbstractAbility {
 
                 warlordsPlayer.getSpec().getRed().setCurrentCooldown(cooldown);
 
-                // TODO: find spiritguards chain sounds somehow
                 for (Player player1 : player.getWorld().getPlayers()) {
-                    player1.playSound(player.getLocation(), "shaman.chainheal.activation", 2, 0.9F);
+                    player1.playSound(player.getLocation(), "mage.firebreath.activation", 1.5F, 1);
                 }
             }
         }

@@ -60,15 +60,31 @@ public class EarthenSpike extends AbstractAbility {
                                 earthenSpikeBlock.setDuration(-1);
                                 this.cancel();
                             } else if (Math.abs(target.getLocation().getX() - lastFallingBlock.getLocation().getX()) + Math.abs(target.getLocation().getZ() - lastFallingBlock.getLocation().getZ()) > 1) {
+
+                                // TODO: make sounds actually sound accurate to live instead of an earthquake, just threw them in for now
+                                for (Player player1 : player.getWorld().getPlayers()) {
+                                    player1.playSound(lastFallingBlock.getLocation(), "shaman.earthenspike.animation.d", 1.5F, 1);
+                                }
+
                                 Location newLocation = lastFallingBlock.getLocation();
                                 //moving diagonally
                                 if (Math.abs(target.getLocation().getX() - newLocation.getX()) >= Math.abs(target.getLocation().getZ() - newLocation.getZ())) {
+
+                                    for (Player player1 : player.getWorld().getPlayers()) {
+                                        player1.playSound(lastFallingBlock.getLocation(), "shaman.earthenspike.animation.a", 1.5F, 1);
+                                    }
+
                                     if (target.getLocation().getX() < newLocation.getX()) {
                                         newLocation.add(-1, 0, 0);
                                     } else {
                                         newLocation.add(1, 0, 0);
                                     }
                                 } else {
+
+                                    for (Player player1 : player.getWorld().getPlayers()) {
+                                        player1.playSound(lastFallingBlock.getLocation(), "shaman.earthenspike.animation.b", 1.5F, 1);
+                                    }
+
                                     if (target.getLocation().getZ() < newLocation.getZ()) {
                                         newLocation.add(0, 0, -1);
                                     } else {
@@ -77,6 +93,11 @@ public class EarthenSpike extends AbstractAbility {
                                 }
                                 //moving vertically
                                 if (target.getLocation().getY() < newLocation.getY()) {
+
+                                    for (Player player1 : player.getWorld().getPlayers()) {
+                                        player1.playSound(lastFallingBlock.getLocation(), "shaman.earthenspike.animation.c", 1.5F, 1);
+                                    }
+
                                     for (int j = 0; j < 10; j++) {
                                         if (newLocation.getWorld().getBlockAt(newLocation.clone().add(0, -1, 0)).getType() == Material.AIR) {
                                             newLocation.add(0, -1, 0);

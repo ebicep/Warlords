@@ -604,9 +604,17 @@ public class WarlordsPlayer {
                     if (isCrit) {
                         intervenedBy.getPlayer().sendMessage("§c\u00AB§7 " + attacker.getName() + "'s Intervene hit you for §c§l" + (int) damageHealValue * -1 + "! §7critical damage.");
                         attacker.getPlayer().sendMessage("§a\u00BB§7 Your Intervene hit " + intervenedBy.getName() + " for §c§l" + (int) damageHealValue * -1 + "! §7critical damage.");
+
+                        for (Player player1 : player.getWorld().getPlayers()) {
+                            player1.playSound(player.getLocation(), "warrior.intervene.block3", 2, 1);
+                        }
                     } else {
                         intervenedBy.getPlayer().sendMessage("§c\u00AB§7 " + attacker.getName() + "'s Intervene hit you for §c" + (int) damageHealValue * -1 + "§7 damage.");
                         attacker.getPlayer().sendMessage("§a\u00BB§7 Your Intervene hit " + intervenedBy.getName() + " for §c" + (int) damageHealValue * -1 + "§7 damage.");
+
+                        for (Player player1 : player.getWorld().getPlayers()) {
+                            player1.playSound(player.getLocation(), "warrior.intervene.block.1", 2, 1);
+                        }
                     }
                     intervenedBy.setHealth((int) (intervenedBy.getHealth() + damageHealValue));
                     interveneDamage += damageHealValue;
@@ -820,7 +828,7 @@ public class WarlordsPlayer {
                             player.getWorld().getBlockAt(graveLocation).setData((byte) 5);
 
                             graveLocation.setYaw(0);
-                            deathStand = (ArmorStand) player.getWorld().spawnEntity(player.getWorld().getBlockAt(graveLocation).getLocation().add(.5, -1, .5), EntityType.ARMOR_STAND);
+                            deathStand = (ArmorStand) player.getWorld().spawnEntity(player.getWorld().getBlockAt(graveLocation).getLocation().add(.5, -1.5, .5), EntityType.ARMOR_STAND);
                             if (Warlords.game.isBlueTeam(player)) {
                                 deathStand.setCustomName(ChatColor.BLUE + name + ChatColor.GRAY + " - " + ChatColor.YELLOW + "DEAD");
                             } else {
@@ -894,6 +902,7 @@ public class WarlordsPlayer {
                         } else {
                             attacker.addHealth(attacker, "Earthliving Weapon", (int) (damageHealValue * -2.4), (int) (damageHealValue * -2.4), -1, 100);
                         }
+
                         for (Player player1 : player.getWorld().getPlayers()) {
                             player1.playSound(player.getLocation(), "shaman.earthlivingweapon.impact", 1, 1);
                         }
@@ -924,6 +933,7 @@ public class WarlordsPlayer {
                         for (Player player1 : player.getWorld().getPlayers()) {
                             player1.playSound(player.getLocation(), "shaman.earthlivingweapon.impact", 1, 1);
                         }
+
                         List<Entity> near = attacker.getPlayer().getNearbyEntities(3.0D, 3.0D, 3.0D);
                         near = Utils.filterOnlyTeammates(near, attacker.getPlayer());
                         int counter = 0;

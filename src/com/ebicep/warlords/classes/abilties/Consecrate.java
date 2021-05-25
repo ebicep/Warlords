@@ -32,7 +32,7 @@ public class Consecrate extends AbstractAbility {
         Warlords.getPlayer(player).subtractEnergy(energyCost);
 
         for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "paladin.consecrate.activation", 1, 1);
+            player1.playSound(player.getLocation(), "paladin.consecrate.activation", 1.5F, 1);
         }
 
         ArmorStand consecrate = player.getLocation().getWorld().spawn(player.getLocation().clone().add(0, -2, 0), ArmorStand.class);

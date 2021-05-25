@@ -36,7 +36,7 @@ public class InspiringPresence extends AbstractAbility {
         near = Utils.filterOnlyTeammates(near, player);
         for (Entity entity : near) {
             if (entity instanceof Player) {
-                warlordsPlayer.getSpeed().changeCurrentSpeed("Inspiring Presence", 30, 12 * 20);
+                warlordsPlayer.getSpeed().changeCurrentSpeed("Inspiring Presence", 30, 12 * 20, "BASE");
                 Warlords.getPlayer(player).setPresence(12 * 20);
             }
         }

@@ -68,7 +68,6 @@ public class Projectile extends AbstractAbility {
                     for (Entity entity : entities) {
                         if (entity instanceof Player && entity != customProjectile.getShooter()) {
                             if (entity.getLocation().clone().add(0, 1, 0).distanceSquared(location) < hitBox * hitBox) {
-                                player.sendMessage("HIT PLAYER");
                                 hitPlayer = true;
                                 ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.5F, 1, entity.getLocation().add(0, 1, 0), 500);
                                 ParticleEffect.LAVA.display(0.5F, 0, 0.5F, 2F, 10, entity.getLocation().add(0, 1, 0), 500);
@@ -148,6 +147,11 @@ public class Projectile extends AbstractAbility {
                                 hitPlayer = true;
                                 ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.0F, 1, entity.getLocation().add(0, 1, 0), 500);
                                 Player victim = (Player) entity;
+
+                                for (Player player1 : player.getWorld().getPlayers()) {
+                                    player1.playSound(location, "mage.frostbolt.impact", 2F, 1);
+                                }
+
                                 Warlords.getPlayer(victim).getSpeed().changeCurrentSpeed("Frostbolt", -25, 2 * 20);
                                 if (location.distanceSquared(customProjectile.getStartingLocation()) >= customProjectile.getMaxDistance() * customProjectile.getMaxDistance()) {
                                     double toReduceBy = (1 - ((location.distance(customProjectile.getStartingLocation()) - customProjectile.getMaxDistance()) / 100.0));
@@ -218,9 +222,11 @@ public class Projectile extends AbstractAbility {
                                 ParticleEffect.HEART.display(1.5F, 1.5F, 1.5F, 0.2F, 2, entity.getLocation().add(0, 1, 0), 500);
                                 ParticleEffect.VILLAGER_HAPPY.display(1.5F, 1.5F, 1.5F, 0.2F, 3, entity.getLocation().add(0, 1, 0), 500);
                                 Player victim = (Player) entity;
+
                                 for (Player player1 : Bukkit.getOnlinePlayers()) {
-                                    player1.playSound(entity.getLocation(), "mage.waterbolt.impact", 1, 1);
+                                    player1.playSound(entity.getLocation(), "mage.waterbolt.impact", 2F, 1);
                                 }
+
                                 if (location.distanceSquared(customProjectile.getStartingLocation()) >= customProjectile.getMaxDistance() * customProjectile.getMaxDistance()) {
                                     double toReduceBy = (1 - ((location.distance(customProjectile.getStartingLocation()) - customProjectile.getMaxDistance()) / 100.0));
                                     if (toReduceBy < 0) toReduceBy = 0;
@@ -341,8 +347,9 @@ public class Projectile extends AbstractAbility {
                                 ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.0F, 1, entity.getLocation().add(0, 1, 0), 500);
                                 ParticleEffect.LAVA.display(0.5F, 0, 0.5F, 2F, 10, entity.getLocation().add(0, 1, 0), 500);
                                 Player victim = (Player) entity;
+
                                 for (Player player1 : Bukkit.getOnlinePlayers()) {
-                                    player1.playSound(entity.getLocation(), "mage.flameburst.impact", 1, 1);
+                                    player1.playSound(entity.getLocation(), "mage.flameburst.impact", 2F, 1);
                                 }
 
                                 Warlords.getPlayer(victim).addHealth(
@@ -353,7 +360,7 @@ public class Projectile extends AbstractAbility {
                                         customProjectile.getBall().getCritChance() + (int) location.distance(customProjectile.getStartingLocation()),
                                         customProjectile.getBall().getCritMultiplier()
                                 );
-                                List<Entity> near = victim.getNearbyEntities(3.5D, 3.5D, 3.5D);
+                                List<Entity> near = victim.getNearbyEntities(4D, 4D, 4D);
                                 near = Utils.filterOutTeammates(near, customProjectile.getShooter());
                                 for (Entity nearEntity : near) {
                                     if (nearEntity instanceof Player) {
@@ -377,14 +384,41 @@ public class Projectile extends AbstractAbility {
 
                 //hit block or out of range
                 if ((location.getWorld().getBlockAt(location).getType() != Material.AIR && location.getWorld().getBlockAt(location).getType() != Material.WATER) && !hitPlayer) {
-                    player.sendMessage("HIT FLOOR");
                     if (customProjectile.getBall().getName().contains("Water")) {
                         ParticleEffect.HEART.display(1, 1, 1, 0.2F, 5, location, 500);
                         ParticleEffect.VILLAGER_HAPPY.display(1, 1, 1, 0.2F, 5, location, 500);
-                    } else {
+
+                        for (Player player1 : player.getWorld().getPlayers()) {
+                            player1.playSound(location, "mage.waterbolt.impact", 2, 1);
+                        }
+
+                    } else if (customProjectile.getBall().getName().contains("Fire")) {
                         ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.0F, 1, location, 500);
+                        ParticleEffect.LAVA.display(0.5F, 0, 0.5F, 2F, 10, location, 500);
+                        ParticleEffect.CLOUD.display(0.3F, 0.3F, 0.3F, 1F, 3, location, 500);
+
+                        for (Player player1 : player.getWorld().getPlayers()) {
+                            player1.playSound(location, "mage.fireball.impact", 2, 1);
+                        }
+
+                    } else if (customProjectile.getBall().getName().contains("Frost")) {
+                        ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.0F, 1, location, 500);
+                        ParticleEffect.CLOUD.display(0.3F, 0.3F, 0.3F, 1F, 3, location, 500);
+
+                        for (Player player1 : player.getWorld().getPlayers()) {
+                            player1.playSound(location, "mage.frostbolt.impact", 2, 1);
+                        }
+
+                    } else if (customProjectile.getBall().getName().contains("Flame")) {
+                        ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.0F, 1, location, 500);
+                        ParticleEffect.LAVA.display(0.5F, 0.1F, 0.5F, 2F, 15, location, 500);
+
+                        for (Player player1 : player.getWorld().getPlayers()) {
+                            player1.playSound(location, "mage.flameburst.impact", 2, 1);
+                        }
                     }
-                    List<Entity> near = (List<Entity>) location.getWorld().getNearbyEntities(location, 3.5, 3.5, 3.5);
+
+                    List<Entity> near = (List<Entity>) location.getWorld().getNearbyEntities(location, 4, 4, 4);
                     for (Entity nearEntity : near) {
                         if (nearEntity instanceof Player) {
                             if (customProjectile.getBall().getName().contains("Flame") && !Warlords.game.onSameTeam((Player) nearEntity, customProjectile.getShooter()) && nearEntity != customProjectile.getShooter()) {
