@@ -220,6 +220,8 @@ public class Warlords extends JavaPlugin {
                             warlordsPlayer.getPlayer().teleport(game.getMap().getRedRespawn());
                         }
                         warlordsPlayer.respawn();
+                        warlordsPlayer.getDeathStand().remove();
+                        player.getWorld().getBlockAt(warlordsPlayer.getDeathLocation()).setType(Material.AIR);
                         player.setGameMode(GameMode.SURVIVAL);
                     }
                     //damage or heal
@@ -258,18 +260,20 @@ public class Warlords extends JavaPlugin {
 
                     }
                     //energy
-                    if (warlordsPlayer.getEnergy() < warlordsPlayer.getMaxEnergy()) {
-                        float newEnergy = warlordsPlayer.getEnergy() + 1;
-                        if (warlordsPlayer.getPresence() != 0) {
-                            newEnergy += .5;
+                    if (warlordsPlayer.getPlayer().getGameMode() != GameMode.CREATIVE) {
+                        if (warlordsPlayer.getEnergy() < warlordsPlayer.getMaxEnergy()) {
+                            float newEnergy = warlordsPlayer.getEnergy() + 1;
+                            if (warlordsPlayer.getPresence() != 0) {
+                                newEnergy += .5;
+                            }
+                            if (warlordsPlayer.getPowerUpEnergy() != 0) {
+                                newEnergy += .35;
+                            }
+                            warlordsPlayer.setEnergy(newEnergy);
                         }
-                        if (warlordsPlayer.getPowerUpEnergy() != 0) {
-                            newEnergy += .35;
-                        }
-                        warlordsPlayer.setEnergy(newEnergy);
+                        player.setLevel((int) warlordsPlayer.getEnergy());
+                        player.setExp(warlordsPlayer.getEnergy() / warlordsPlayer.getMaxEnergy());
                     }
-                    player.setLevel((int) warlordsPlayer.getEnergy());
-                    player.setExp(warlordsPlayer.getEnergy() / warlordsPlayer.getMaxEnergy());
                     //melee cooldown
                     if (warlordsPlayer.getHitCooldown() != 0) {
                         warlordsPlayer.setHitCooldown(warlordsPlayer.getHitCooldown() - 1);

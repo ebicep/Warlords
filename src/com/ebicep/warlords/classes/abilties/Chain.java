@@ -106,7 +106,7 @@ public class Chain extends AbstractAbility {
                     if (entity instanceof Player) {
                         // (PLAYER) -> TOTEM -> PLAYER
                         Player nearPlayer = (Player) entity;
-                        if (nearPlayer.getGameMode() != GameMode.SPECTATOR && Utils.getLookingAt(player, nearPlayer)) {
+                        if (nearPlayer.getGameMode() != GameMode.SPECTATOR && Utils.getLookingAtChain(player, nearPlayer) && Utils.hasLineOfSight(player, nearPlayer)) {
                             System.out.println("(PLAYER) -> TOTEM -> PLAYER");
                             chain(player.getLocation(), nearPlayer.getLocation());
                             Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
@@ -201,7 +201,7 @@ public class Chain extends AbstractAbility {
             for (Entity entity : near) {
                 if (entity instanceof Player) {
                     Player nearPlayer = (Player) entity;
-                    if (nearPlayer.getGameMode() != GameMode.SPECTATOR && Utils.getLookingAt(player, nearPlayer)) {
+                    if (nearPlayer.getGameMode() != GameMode.SPECTATOR && Utils.getLookingAtChain(player, nearPlayer) && Utils.hasLineOfSight(player, nearPlayer)) {
                         //self heal
                         warlordsPlayer.addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
                         chain(player.getLocation(), nearPlayer.getLocation());
@@ -252,7 +252,7 @@ public class Chain extends AbstractAbility {
             for (Entity entity : near) {
                 if (entity instanceof Player) {
                     Player nearPlayer = (Player) entity;
-                    if (nearPlayer.getGameMode() != GameMode.SPECTATOR && Utils.getLookingAtChain(player, nearPlayer)) {
+                    if (nearPlayer.getGameMode() != GameMode.SPECTATOR && Utils.getLookingAtChain(player, nearPlayer) && Utils.hasLineOfSight(player, nearPlayer)) {
                         chain(player.getLocation(), nearPlayer.getLocation());
                         Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
                         hitCounter++;

@@ -9,6 +9,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
@@ -26,8 +27,6 @@ public class Utils {
         eye.setY(eye.getY() + 0.7);
         Vector toEntity = player1.getEyeLocation().toVector().subtract(eye.toVector());
         float dot = (float) toEntity.normalize().dot(eye.getDirection());
-        player.sendMessage("" + dot);
-
         return dot > 0.98D;
     }
 
@@ -41,10 +40,19 @@ public class Utils {
         eye.setY(eye.getY() + 0.7);
         Vector toEntity = player1.getEyeLocation().toVector().subtract(eye.toVector());
         float dot = (float) toEntity.normalize().dot(eye.getDirection());
-        player.sendMessage("" + dot);
-        player.sendMessage("" + (player.getLocation().distanceSquared(player1.getLocation()) / 10000));
-
         return dot > 0.965D + (player.getLocation().distanceSquared(player1.getLocation()) / 10000);
+    }
+
+    public static boolean getLookingAtWave(Player player, Player player1) {
+        Location eye = player.getEyeLocation();
+        eye.setY(eye.getY() + 0.7);
+        Vector toEntity = player1.getEyeLocation().toVector().subtract(eye.toVector());
+        float dot = (float) toEntity.normalize().dot(eye.getDirection());
+        return dot > 0.95;
+    }
+
+    public static boolean hasLineOfSight(Player player, Player player2) {
+        return player.hasLineOfSight(player2);
     }
 
     public static boolean totemDownAndClose(WarlordsPlayer warlordsPlayer, Player player) {

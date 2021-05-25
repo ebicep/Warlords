@@ -291,6 +291,9 @@ public class WarlordsPlayer {
         return energyPowerup;
     }
 
+    private Location deathLocation;
+    private ArmorStand deathStand;
+
     public WarlordsPlayer(Player player, String name, UUID uuid, PlayerClass spec, boolean temp) {
         this.player = player;
         this.name = name;
@@ -788,6 +791,47 @@ public class WarlordsPlayer {
                 }
                 attacker.addDamage(-damageHealValue);
                 if (this.health <= 0) {
+                    //grave
+                    Location graveLocation = player.getLocation().clone();
+                    for (int i = 0; i < 30; i++) {
+                        if (player.getWorld().getBlockAt(graveLocation.clone().add(0, -1, 0)).getType() == Material.AIR) {
+                            //get block on floor
+                            graveLocation.add(0, -1, 0);
+                        } else {
+                            //making sure the grave isnt on a block
+                            if (player.getWorld().getBlockAt(graveLocation).getType() != Material.AIR) {
+                                if (player.getWorld().getBlockAt(graveLocation.clone().add(0, 1, 0)).getType() == Material.AIR) {
+                                    graveLocation.add(0, 1, 0);
+                                } else if (player.getWorld().getBlockAt(graveLocation.clone().add(1, 0, 0)).getType() == Material.AIR) {
+                                    graveLocation.add(1, 0, 0);
+                                } else if (player.getWorld().getBlockAt(graveLocation.clone().add(-1, 0, 0)).getType() == Material.AIR) {
+                                    graveLocation.add(-1, 0, 0);
+                                } else if (player.getWorld().getBlockAt(graveLocation.clone().add(0, 0, 1)).getType() == Material.AIR) {
+                                    graveLocation.add(0, 0, 1);
+                                } else if (player.getWorld().getBlockAt(graveLocation.clone().add(0, 0, -1)).getType() == Material.AIR) {
+                                    graveLocation.add(0, 0, -1);
+                                }
+                            }
+
+                            deathLocation = graveLocation;
+
+                            //spawn grave
+                            player.getWorld().getBlockAt(graveLocation).setType(Material.SAPLING);
+                            player.getWorld().getBlockAt(graveLocation).setData((byte) 5);
+
+                            graveLocation.setYaw(0);
+                            deathStand = (ArmorStand) player.getWorld().spawnEntity(player.getWorld().getBlockAt(graveLocation).getLocation().add(.5, -1, .5), EntityType.ARMOR_STAND);
+                            if (Warlords.game.isBlueTeam(player)) {
+                                deathStand.setCustomName(ChatColor.BLUE + name + ChatColor.GRAY + " - " + ChatColor.YELLOW + "DEAD");
+                            } else {
+                                deathStand.setCustomName(ChatColor.RED + name + ChatColor.GRAY + " - " + ChatColor.YELLOW + "DEAD");
+                            }
+                            deathStand.setCustomNameVisible(true);
+                            deathStand.setGravity(false);
+                            deathStand.setVisible(false);
+                            break;
+                        }
+                    }
 
                     attacker.getPlayer().playSound(attacker.getPlayer().getLocation(), Sound.ORB_PICKUP, 500f, 0.3f);
 
@@ -1416,5 +1460,23 @@ public class WarlordsPlayer {
         this.teamFlagCompass = teamFlagCompass;
     }
 
-    public CalculateSpeed getSpeed() { return speed; }
+    public CalculateSpeed getSpeed() {
+        return speed;
+    }
+
+    public Location getDeathLocation() {
+        return deathLocation;
+    }
+
+    public void setDeathLocation(Location deathLocation) {
+        this.deathLocation = deathLocation;
+    }
+
+    public ArmorStand getDeathStand() {
+        return deathStand;
+    }
+
+    public void setDeathStand(ArmorStand deathStand) {
+        this.deathStand = deathStand;
+    }
 }

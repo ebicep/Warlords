@@ -16,6 +16,7 @@ import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
@@ -146,7 +147,7 @@ public class WarlordsEvents implements Listener {
             }
             ItemStack itemHeld = player.getItemInHand();
             if (itemHeld.getType() == Material.GOLD_BARDING && player.getVehicle() == null) {
-                if (location.getWorld().getBlockAt((int) location.getX(), 2, (int) location.getZ()).getType() == Material.NETHERRACK && !Utils.tunnelUnder(e.getPlayer())) {
+                if (location.getWorld().getBlockAt((int) location.getX(), 2, (int) location.getZ()).getType() == Material.NETHERRACK) { //&& !Utils.tunnelUnder(e.getPlayer())) {
                     player.sendMessage(ChatColor.RED + "You cannot mount here!");
                 } else {
                     double distance = player.getLocation().getY() - player.getWorld().getHighestBlockYAt(player.getLocation());
@@ -194,10 +195,11 @@ public class WarlordsEvents implements Listener {
 
 
     @EventHandler
-    public static void onPlayerShift(EntityDismountEvent e) {
+    public static void onPlayerDismount(EntityDismountEvent e) {
         Entity entity = e.getDismounted();
         if (entity instanceof Horse) {
             entity.remove();
+
         }
     }
 
@@ -260,7 +262,7 @@ public class WarlordsEvents implements Listener {
     public void onPlayerMove(PlayerMoveEvent e) {
         if (e.getPlayer().getVehicle() instanceof Horse) {
             Location location = e.getPlayer().getLocation();
-            if (location.getWorld().getBlockAt((int) location.getX(), 2, (int) location.getZ()).getType() == Material.NETHERRACK && !Utils.tunnelUnder(e.getPlayer())) {
+            if (location.getWorld().getBlockAt((int) location.getX(), 2, (int) location.getZ()).getType() == Material.NETHERRACK) { // && !Utils.tunnelUnder(e.getPlayer())) {
                 e.getPlayer().getVehicle().remove();
             }
         }
@@ -278,5 +280,11 @@ public class WarlordsEvents implements Listener {
             //Bukkit.broadcastMessage("ENTITY ATTACK EVENT");
             //e.setCancelled(true);
         }
+    }
+
+    @EventHandler
+    public void onBlockBreak(BlockBreakEvent e) {
+        e.getBlock().getDrops().clear();
+        //e.setCancelled(true);
     }
 }

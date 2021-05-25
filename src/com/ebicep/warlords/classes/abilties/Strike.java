@@ -32,7 +32,7 @@ public class Strike extends AbstractAbility {
                 Player nearPlayer = (Player) entity;
                 //TODO check if you should just remove distance because near gets nearest already
                 double distance = player.getLocation().distanceSquared(nearPlayer.getLocation());
-                if (nearPlayer.getGameMode() != GameMode.SPECTATOR && Utils.getLookingAt(player, nearPlayer) && distance < 3.6 * 3.6) {
+                if (nearPlayer.getGameMode() != GameMode.SPECTATOR && Utils.getLookingAt(player, nearPlayer) && distance < 3.6 * 3.6 && Utils.hasLineOfSight(player, nearPlayer)) {
                     PacketPlayOutAnimation playOutAnimation = new PacketPlayOutAnimation(((CraftPlayer) player).getHandle(), 0);
                     ((CraftPlayer) player).getHandle().playerConnection.sendPacket(playOutAnimation);
                     WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);

@@ -16,7 +16,7 @@ import java.util.List;
 
 public class Projectile extends AbstractAbility {
 
-    private static final float hitBox = 1.85F;
+    private static final float hitBox = 1.25F;
     private int maxDistance;
 
     public Projectile(String name, int minDamageHeal, int maxDamageHeal, int cooldown, int energyCost, int critChance, int critMultiplier, String description, int maxDistance) {
@@ -67,7 +67,7 @@ public class Projectile extends AbstractAbility {
                     entities = Utils.filterOutTeammates(entities, customProjectile.getShooter());
                     for (Entity entity : entities) {
                         if (entity instanceof Player && entity != customProjectile.getShooter()) {
-                            if (entity.getLocation().distanceSquared(location) < hitBox * hitBox) {
+                            if (entity.getLocation().clone().add(0, 1, 0).distanceSquared(location) < hitBox * hitBox) {
                                 player.sendMessage("HIT PLAYER");
                                 hitPlayer = true;
                                 ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.5F, 1, entity.getLocation().add(0, 1, 0), 500);
@@ -144,7 +144,7 @@ public class Projectile extends AbstractAbility {
                     System.out.println(entities);
                     for (Entity entity : entities) {
                         if (entity instanceof Player && entity != customProjectile.getShooter()) {
-                            if (entity.getLocation().distanceSquared(location) < hitBox * hitBox) {
+                            if (entity.getLocation().clone().add(0, 1, 0).distanceSquared(location) < hitBox * hitBox) {
                                 hitPlayer = true;
                                 ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.0F, 1, entity.getLocation().add(0, 1, 0), 500);
                                 Player victim = (Player) entity;
@@ -213,7 +213,7 @@ public class Projectile extends AbstractAbility {
                     List<Entity> entities = (List<Entity>) location.getWorld().getNearbyEntities(location, 5, 5, 5);
                     for (Entity entity : entities) {
                         if (entity instanceof Player && entity != customProjectile.getShooter()) {
-                            if (entity.getLocation().distanceSquared(location) < hitBox * hitBox) {
+                            if (entity.getLocation().clone().add(0, 1, 0).distanceSquared(location) < hitBox * hitBox) {
                                 hitPlayer = true;
                                 ParticleEffect.HEART.display(1.5F, 1.5F, 1.5F, 0.2F, 2, entity.getLocation().add(0, 1, 0), 500);
                                 ParticleEffect.VILLAGER_HAPPY.display(1.5F, 1.5F, 1.5F, 0.2F, 3, entity.getLocation().add(0, 1, 0), 500);
@@ -336,7 +336,7 @@ public class Projectile extends AbstractAbility {
                     entities = Utils.filterOutTeammates(entities, customProjectile.getShooter());
                     for (Entity entity : entities) {
                         if (entity instanceof Player && entity != customProjectile.getShooter()) {
-                            if (entity.getLocation().distanceSquared(location) < hitBox * hitBox) {
+                            if (entity.getLocation().clone().add(0, 1, 0).distanceSquared(location) < hitBox * hitBox) {
                                 hitPlayer = true;
                                 ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.0F, 1, entity.getLocation().add(0, 1, 0), 500);
                                 ParticleEffect.LAVA.display(0.5F, 0, 0.5F, 2F, 10, entity.getLocation().add(0, 1, 0), 500);

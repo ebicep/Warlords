@@ -30,11 +30,14 @@ public class GroundSlam extends AbstractAbility {
     @Override
     public void onActivate(Player player) {
         playersHit.clear();
+
         Location location = player.getLocation();
 
         for (int i = 0; i < 6; i++) {
             fallingBlockLocations.add(getCircle(location, i, (i * ((int) (Math.PI * 2)))));
         }
+        System.out.println(fallingBlockLocations.get(0).size());
+        System.out.println(fallingBlockLocations.get(1).size());
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "warrior.groundslam.activation", 2, 1);
@@ -44,7 +47,6 @@ public class GroundSlam extends AbstractAbility {
 
             @Override
             public void run() {
-
                 for (List<Location> fallingBlockLocation : fallingBlockLocations) {
                     for (Location location : fallingBlockLocation) {
                         if (location.getWorld().getBlockAt(location.clone().add(0, 1, 0)).getType() == Material.AIR) {
@@ -56,6 +58,18 @@ public class GroundSlam extends AbstractAbility {
                     break;
                 }
 
+                if (fallingBlockLocations.isEmpty()) {
+                    System.out.println("CANCEL SPAWNING");
+                    this.cancel();
+                }
+            }
+
+        }.runTaskTimer(Warlords.getInstance(), 0, 2);
+
+        new BukkitRunnable() {
+
+            @Override
+            public void run() {
                 for (int i = 0; i < customFallingBlocks.size(); i++) {
                     CustomFallingBlock customFallingBlock = customFallingBlocks.get(i);
                     customFallingBlock.setTicksLived(customFallingBlock.getTicksLived() + 1);
@@ -82,15 +96,14 @@ public class GroundSlam extends AbstractAbility {
                         i--;
                     }
                 }
-                Bukkit.broadcastMessage("" + customFallingBlocks.size());
 
-                if (customFallingBlocks.isEmpty() && fallingBlockLocations.isEmpty()) {
+                if (fallingBlockLocations.isEmpty() && customFallingBlocks.isEmpty()) {
+                    System.out.println("CANCEL REMOVING");
                     this.cancel();
                 }
-
             }
 
-        }.runTaskTimer(Warlords.getInstance(), 0, 1);
+        }.runTaskTimer(Warlords.getInstance(), 0, 0);
     }
 
     /**
@@ -111,11 +124,15 @@ public class GroundSlam extends AbstractAbility {
             float angle = (float) (i * increment);
             float x = (float) (center.getX() + (radius * Math.cos(angle)));
             float z = (float) (center.getZ() + (radius * Math.sin(angle)));
-            Location location = new Location(world, x, center.getY(), z);
+            Location location = new Location(world, Math.floor(x), Math.floor(center.getY()), Math.floor(z));
             //location.setY(world.getHighestBlockYAt(location));
             locations.add(location);
         }
         return locations;
+    }
+
+    private boolean sameLocation(Location location1, Location location2) {
+        return location1.getX() == location2.getX() && location1.getZ() == location2.getZ();
     }
 
     public List<List<Location>> getFallingBlockLocations() {
@@ -156,7 +173,7 @@ public class GroundSlam extends AbstractAbility {
         FallingBlock fallingBlock = location.getWorld().spawnFallingBlock(location,
                 location.getWorld().getBlockAt(blockToGet).getType(),
                 location.getWorld().getBlockAt(blockToGet).getData());
-        fallingBlock.setVelocity(new Vector(0, .1, 0));
+        fallingBlock.setVelocity(new Vector(0, .14, 0));
         fallingBlock.setDropItem(false);
         return fallingBlock;
     }
