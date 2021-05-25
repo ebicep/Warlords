@@ -4,8 +4,6 @@ import com.ebicep.warlords.util.Utils;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
-import net.minecraft.server.v1_8_R3.EntityPlayer;
-import net.minecraft.server.v1_8_R3.PacketPlayInArmAnimation;
 import net.minecraft.server.v1_8_R3.PacketPlayOutAnimation;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -13,7 +11,6 @@ import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.List;
 
@@ -52,7 +49,7 @@ public class Strike extends AbstractAbility {
                                 Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
                             }
                             Warlords.getPlayer(nearPlayer).subtractEnergy(6);
-                            if (warlordsPlayer.getWrath() != -1) {
+                            if (warlordsPlayer.getWrathDuration() != -1) {
                                 List<Entity> nearNearPlayers = nearPlayer.getNearbyEntities(5.0D, 5.0D, 5.0D);
                                 nearNearPlayers = Utils.filterOutTeammates(nearNearPlayers, player);
                                 int counter = 0;

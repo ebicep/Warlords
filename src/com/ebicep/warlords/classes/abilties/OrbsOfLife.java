@@ -6,7 +6,6 @@ import com.ebicep.warlords.classes.AbstractAbility;
 import net.minecraft.server.v1_8_R3.EntityExperienceOrb;
 import net.minecraft.server.v1_8_R3.EntityHuman;
 import net.minecraft.server.v1_8_R3.World;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.entity.ArmorStand;
@@ -27,7 +26,7 @@ public class OrbsOfLife extends AbstractAbility {
 
     @Override
     public void onActivate(Player player) {
-        Warlords.getPlayer(player).setOrbOfLife(13);
+        Warlords.getPlayer(player).setOrbsOfLifeDuration(13);
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "warrior.revenant.orbsoflife", 2, 1);

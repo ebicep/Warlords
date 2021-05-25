@@ -4,11 +4,10 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.util.Utils;
-import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.List;
 
@@ -38,8 +37,9 @@ public class Intervene extends AbstractAbility {
                     WarlordsPlayer nearWarlordsPlayer = Warlords.getPlayer(nearPlayer);
                     warlordsPlayer.setIntervened(nearWarlordsPlayer);
                     warlordsPlayer.getPlayer().sendMessage("§a\u00BB§7 You are now protecting " + nearWarlordsPlayer.getName() + " with your §eIntervene!");
+                    nearWarlordsPlayer.getPlayer().sendMessage("§a\u00BB§7 " + warlordsPlayer.getName() + "is shielding you with their " + ChatColor.YELLOW + "Intervene" + ChatColor.GRAY + "!");
                     nearWarlordsPlayer.setIntervenedBy(warlordsPlayer);
-                    nearWarlordsPlayer.setIntervene(6);
+                    nearWarlordsPlayer.setInterveneDuration(6);
                     nearWarlordsPlayer.setInterveneDamage(0);
                 }
             }
