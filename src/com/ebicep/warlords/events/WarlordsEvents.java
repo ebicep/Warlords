@@ -287,4 +287,34 @@ public class WarlordsEvents implements Listener {
         e.getBlock().getDrops().clear();
         //e.setCancelled(true);
     }
+
+    @EventHandler
+    public void onPlayerChat(AsyncPlayerChatEvent e) {
+        Player player = e.getPlayer();
+        if (Warlords.hasPlayer(player)) {
+            e.setCancelled(true);
+            WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
+            if (Warlords.game.isBlueTeam(player)) {
+                for (Player bluePlayer : Warlords.game.getTeamBlue()) {
+                    bluePlayer.sendMessage(ChatColor.BLUE + "[BLU]" +
+                            ChatColor.DARK_GRAY + "[" +
+                            ChatColor.GOLD + warlordsPlayer.getSpec().getClassName().substring(0, 3).toUpperCase() +
+                            ChatColor.DARK_GRAY + "][" + ChatColor.GOLD + "90" + ChatColor.DARK_GRAY + "] " +
+                            ChatColor.AQUA + warlordsPlayer.getName() +
+                            ChatColor.WHITE + ": " + e.getMessage()
+                    );
+                }
+            } else if (Warlords.game.isRedTeam(player)) {
+                for (Player redPlayer : Warlords.game.getTeamRed()) {
+                    redPlayer.sendMessage(ChatColor.RED + "[RED]" +
+                            ChatColor.DARK_GRAY + "[" +
+                            ChatColor.GOLD + warlordsPlayer.getSpec().getClassName().substring(0, 3).toUpperCase() +
+                            ChatColor.DARK_GRAY + "][" + ChatColor.GOLD + "90" + ChatColor.DARK_GRAY + "] " +
+                            ChatColor.AQUA + warlordsPlayer.getName() +
+                            ChatColor.WHITE + ": " + e.getMessage()
+                    );
+                }
+            }
+        }
+    }
 }

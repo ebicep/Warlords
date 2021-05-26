@@ -4,11 +4,9 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.util.Utils;
-import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.List;
 
@@ -29,14 +27,14 @@ public class LastStand extends AbstractAbility {
     public void onActivate(Player player) {
         WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
         warlordsPlayer.setLastStandedBy(warlordsPlayer);
-        warlordsPlayer.setLastStand(12);
+        warlordsPlayer.setLastStandDuration(12);
         List<Entity> near = player.getNearbyEntities(4.0D, 4.0D, 4.0D);
         near = Utils.filterOnlyTeammates(near, player);
         for (Entity entity : near) {
             if (entity instanceof Player) {
                 Player nearPlayer = (Player) entity;
                 if (nearPlayer.getGameMode() != GameMode.SPECTATOR) {
-                    Warlords.getPlayer(nearPlayer).setLastStand(6);
+                    Warlords.getPlayer(nearPlayer).setLastStandDuration(6);
                     Warlords.getPlayer(nearPlayer).setLastStandedBy(warlordsPlayer);
                     player.sendMessage("you last standed " + nearPlayer.getName());
                 }

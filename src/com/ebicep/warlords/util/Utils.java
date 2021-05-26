@@ -73,11 +73,11 @@ public class Utils {
 
     public static List<Entity> filterOutTeammates(List<Entity> entities, Player player) {
         entities.remove(player);
-        return entities.stream().filter(entity -> !(entity instanceof Player) || !Warlords.getInstance().game.onSameTeam((Player) entity, player)).collect(Collectors.toList());
+        return entities.stream().filter(entity -> !(entity instanceof Player) || !Warlords.game.onSameTeam((Player) entity, player)).collect(Collectors.toList());
     }
 
     public static List<Entity> filterOnlyTeammates(List<Entity> entities, Player player) {
-        return entities.stream().filter(entity -> !(entity instanceof Player) || Warlords.getInstance().game.onSameTeam((Player) entity, player)).collect(Collectors.toList());
+        return entities.stream().filter(entity -> !(entity instanceof Player) || Warlords.game.onSameTeam((Player) entity, player)).collect(Collectors.toList());
     }
 
     public static Vector getRightDirection(Location location) {

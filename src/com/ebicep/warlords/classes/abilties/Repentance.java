@@ -3,9 +3,7 @@ package com.ebicep.warlords.classes.abilties;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerInteractEvent;
 
 public class Repentance extends AbstractAbility {
 
@@ -20,7 +18,7 @@ public class Repentance extends AbstractAbility {
     @Override
     public void onActivate(Player player) {
         WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
-        warlordsPlayer.setRepentance(12);
+        warlordsPlayer.setRepentanceDuration(12);
         warlordsPlayer.setRepentanceCounter(warlordsPlayer.getRepentanceCounter() + 2000);
 
 

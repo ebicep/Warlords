@@ -3,9 +3,7 @@ package com.ebicep.warlords.classes.abilties;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerInteractEvent;
 
 public class Windfury extends AbstractAbility {
 
@@ -24,7 +22,7 @@ public class Windfury extends AbstractAbility {
     public void onActivate(Player player) {
         WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
         warlordsPlayer.subtractEnergy(energyCost);
-        warlordsPlayer.setWindfury(8);
+        warlordsPlayer.setWindfuryDuration(8);
         warlordsPlayer.setFirstProc(true);
 
         for (Player player1 : player.getWorld().getPlayers()) {

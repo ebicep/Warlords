@@ -1,24 +1,16 @@
 package com.ebicep.warlords;
 
-import com.ebicep.customentities.CustomFallingBlock;
-import com.ebicep.warlords.classes.AbstractAbility;
-import com.ebicep.warlords.classes.ActionBarStats;
-import com.ebicep.warlords.classes.abilties.Projectile;
 import com.ebicep.warlords.classes.abilties.*;
 import com.ebicep.warlords.commands.Commands;
 import com.ebicep.warlords.events.WarlordsEvents;
-import com.ebicep.warlords.maps.FlagManager;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.menu.MenuEventListener;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.Utils;
 import org.bukkit.*;
 import org.bukkit.entity.*;
-import org.bukkit.event.player.PlayerTeleportEvent;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -226,19 +218,28 @@ public class Warlords extends JavaPlugin {
                     }
                     //damage or heal
                     float newHealth = (float) warlordsPlayer.getHealth() / warlordsPlayer.getMaxHealth() * 40;
-                    if (warlordsPlayer.getUndyingArmy() != 0 && newHealth <= 0) {
-                        warlordsPlayer.getPlayer().sendMessage("YOU DIED TO UNDYING ARMY LOL");
+                    if (warlordsPlayer.getUndyingArmyDuration() != 0 && newHealth <= 0) {
+                        if (warlordsPlayer.getUndyingArmyBy() == warlordsPlayer) {
+                            warlordsPlayer.getPlayer().sendMessage("§a\u00BB§7 " + ChatColor.LIGHT_PURPLE + "Your Undying Army revived you with temporary health. Fight until your death! Your health will decay by " + ChatColor.RED + "500 " + ChatColor.LIGHT_PURPLE + "every second.");
+                        } else {
+                            warlordsPlayer.getPlayer().sendMessage("§a\u00BB§7 " + ChatColor.LIGHT_PURPLE + warlordsPlayer.getUndyingArmyBy().getName() + "'s Undying Army revived you with temporary health. Fight until your death! Your health will decay by " + ChatColor.RED + "500 " + ChatColor.LIGHT_PURPLE + "every second.");
+                        }
                         warlordsPlayer.respawn();
                         warlordsPlayer.setUndyingArmyDead(true);
-                        warlordsPlayer.setUndyingArmy(0);
+                        warlordsPlayer.setUndyingArmyDuration(0);
                         newHealth = 40;
                     }
                     if (newHealth <= 0 && !warlordsPlayer.isUndyingArmyDead()) {
                         warlordsPlayer.respawn();
                         player.setGameMode(GameMode.SPECTATOR);
                         //giving out assists
-                        for (WarlordsPlayer assisted : warlordsPlayer.getHitBy()) {
-                            assisted.getPlayer().sendMessage("You assisted a person in killing " + warlordsPlayer.getName());
+                        for (int i = 1; i < warlordsPlayer.getHitBy().size(); i++) {
+                            WarlordsPlayer assisted = warlordsPlayer.getHitBy().get(i);
+                            if (game.isBlueTeam(warlordsPlayer.getHitBy().get(0).getPlayer())) {
+                                assisted.getPlayer().sendMessage(ChatColor.GRAY + "You assisted" + ChatColor.BLUE + warlordsPlayer.getHitBy().get(0).getName() + ChatColor.GRAY + "in killing " + ChatColor.RED + warlordsPlayer.getName());
+                            } else if (game.isRedTeam(warlordsPlayer.getHitBy().get(0).getPlayer())) {
+                                assisted.getPlayer().sendMessage(ChatColor.GRAY + "You assisted" + ChatColor.RED + warlordsPlayer.getHitBy().get(0).getName() + ChatColor.GRAY + "in killing " + ChatColor.BLUE + warlordsPlayer.getName());
+                            }
                             assisted.addAssist();
                             assisted.getScoreboard().updateKillsAssists();
                         }
@@ -253,10 +254,10 @@ public class Warlords extends JavaPlugin {
                         player.setHealth(newHealth);
                     }
 
-                    if (warlordsPlayer.getIntervene() != 0 && (warlordsPlayer.getInterveneDamage() >= 3600 || (warlordsPlayer.getIntervenedBy() != null && warlordsPlayer.getPlayer().getLocation().distanceSquared(warlordsPlayer.getIntervenedBy().getPlayer().getLocation()) > 15 * 15))) {
+                    if (warlordsPlayer.getInterveneDuration() != 0 && (warlordsPlayer.getInterveneDamage() >= 3600 || (warlordsPlayer.getIntervenedBy() != null && warlordsPlayer.getPlayer().getLocation().distanceSquared(warlordsPlayer.getIntervenedBy().getPlayer().getLocation()) > 15 * 15))) {
                         //TODO seperate and add why the vene broke in chat
-                        warlordsPlayer.setIntervene(0);
-                        warlordsPlayer.getPlayer().sendMessage("§c\u00AB§7 " + warlordsPlayer.getIntervenedBy().getName() + "'s §eIntervene §7has expired!");
+                        warlordsPlayer.setInterveneDuration(0);
+                        warlordsPlayer.getPlayer().sendMessage("§c\u00AB§7 " + warlordsPlayer.getIntervenedBy().getName() + "'s " + ChatColor.YELLOW + "Intervene " + ChatColor.GRAY + "has expired!");
 
                     }
                     //energy
@@ -323,7 +324,7 @@ public class Warlords extends JavaPlugin {
                         }
 
                         // Blood Lust
-                        if (warlordsPlayer.getBloodLust() != 0) {
+                        if (warlordsPlayer.getBloodLustDuration() != 0) {
                             Location location = player.getLocation();
                             location.add(0, 1.2, 0);
                             //PacketPlayOutWorldParticles p1 = new PacketPlayOutWorldParticles(EnumParticle.REDSTONE, true, 1, 1, 1, 255, 255, 255, 0, 0);
@@ -332,7 +333,7 @@ public class Warlords extends JavaPlugin {
                         }
 
                         // Earthliving
-                        if (warlordsPlayer.getEarthliving() != 0) {
+                        if (warlordsPlayer.getEarthlivingDuration() != 0) {
                             Location location = player.getLocation();
                             location.add(0, 1.2, 0);
                             ParticleEffect.VILLAGER_HAPPY.display(0.3F, 0.3F, 0.3F, 0.1F, 3, location, 500);
@@ -440,34 +441,34 @@ public class Warlords extends JavaPlugin {
                             warlordsPlayer.updateHorseItem();
                         }
                         //COOLDOWNS
-                        if (warlordsPlayer.getWrath() != 0) {
-                            warlordsPlayer.setWrath(warlordsPlayer.getWrath() - 1);
+                        if (warlordsPlayer.getWrathDuration() != 0) {
+                            warlordsPlayer.setWrathDuration(warlordsPlayer.getWrathDuration() - 1);
                         }
-                        if (warlordsPlayer.getBloodLust() != 0) {
-                            warlordsPlayer.setBloodLust(warlordsPlayer.getBloodLust() - 1);
+                        if (warlordsPlayer.getBloodLustDuration() != 0) {
+                            warlordsPlayer.setBloodLustDuration(warlordsPlayer.getBloodLustDuration() - 1);
                         }
-                        if (warlordsPlayer.getIntervene() != 0) {
-                            if (warlordsPlayer.getIntervene() != 1) {
-                                if (warlordsPlayer.getIntervene() == 2)
-                                    warlordsPlayer.getPlayer().sendMessage("§a\u00BB§7 " + warlordsPlayer.getIntervenedBy().getName() + "'s §eIntervene §7will expire in §6" + (warlordsPlayer.getIntervene() - 1) + "§7 second!");
+                        if (warlordsPlayer.getInterveneDuration() != 0) {
+                            if (warlordsPlayer.getInterveneDuration() != 1) {
+                                if (warlordsPlayer.getInterveneDuration() == 2)
+                                    warlordsPlayer.getPlayer().sendMessage("§a\u00BB§7 " + warlordsPlayer.getIntervenedBy().getName() + "'s §eIntervene §7will expire in §6" + (warlordsPlayer.getInterveneDuration() - 1) + "§7 second!");
                                 else
-                                    warlordsPlayer.getPlayer().sendMessage("§a\u00BB§7 " + warlordsPlayer.getIntervenedBy().getName() + "'s §eIntervene §7will expire in §6" + (warlordsPlayer.getIntervene() - 1) + "§7 seconds!");
+                                    warlordsPlayer.getPlayer().sendMessage("§a\u00BB§7 " + warlordsPlayer.getIntervenedBy().getName() + "'s §eIntervene §7will expire in §6" + (warlordsPlayer.getInterveneDuration() - 1) + "§7 seconds!");
                             }
-                            warlordsPlayer.setIntervene(warlordsPlayer.getIntervene() - 1);
-                            if (warlordsPlayer.getIntervene() == 0) {
+                            warlordsPlayer.setInterveneDuration(warlordsPlayer.getInterveneDuration() - 1);
+                            if (warlordsPlayer.getInterveneDuration() == 0) {
                                 warlordsPlayer.getPlayer().sendMessage("§c\u00AB§7 " + warlordsPlayer.getIntervenedBy().getName() + "'s §eIntervene §7has expired!");
                                 //TODO add intervenedBy player no longer veneing
                             }
                         }
-                        if (warlordsPlayer.getLastStand() != 0) {
-                            warlordsPlayer.setLastStand(warlordsPlayer.getLastStand() - 1);
+                        if (warlordsPlayer.getLastStandDuration() != 0) {
+                            warlordsPlayer.setLastStandDuration(warlordsPlayer.getLastStandDuration() - 1);
                         }
-                        if (warlordsPlayer.getOrbOfLife() != 0) {
-                            warlordsPlayer.setOrbOfLife(warlordsPlayer.getOrbOfLife() - 1);
+                        if (warlordsPlayer.getOrbsOfLifeDuration() != 0) {
+                            warlordsPlayer.setOrbsOfLifeDuration(warlordsPlayer.getOrbsOfLifeDuration() - 1);
                         }
-                        if (warlordsPlayer.getUndyingArmy() != 0 && !warlordsPlayer.isUndyingArmyDead()) {
-                            warlordsPlayer.setUndyingArmy(warlordsPlayer.getUndyingArmy() - 1);
-                            if (warlordsPlayer.getUndyingArmy() == 0) {
+                        if (warlordsPlayer.getUndyingArmyDuration() != 0 && !warlordsPlayer.isUndyingArmyDead()) {
+                            warlordsPlayer.setUndyingArmyDuration(warlordsPlayer.getUndyingArmyDuration() - 1);
+                            if (warlordsPlayer.getUndyingArmyDuration() == 0) {
                                 int healing = (int) ((warlordsPlayer.getMaxHealth() - warlordsPlayer.getHealth()) * .35 + 200);
                                 warlordsPlayer.addHealth(warlordsPlayer.getUndyingArmyBy(), "Undying Army", healing, healing, -1, 100);
                             }
@@ -479,11 +480,11 @@ public class Warlords extends JavaPlugin {
                                 warlordsPlayer.setHealth(warlordsPlayer.getHealth() - 500);
                             }
                         }
-                        if (warlordsPlayer.getWindfury() != 0) {
-                            warlordsPlayer.setWindfury(warlordsPlayer.getWindfury() - 1);
+                        if (warlordsPlayer.getWindfuryDuration() != 0) {
+                            warlordsPlayer.setWindfuryDuration(warlordsPlayer.getWindfuryDuration() - 1);
                         }
-                        if (warlordsPlayer.getEarthliving() != 0) {
-                            warlordsPlayer.setEarthliving(warlordsPlayer.getEarthliving() - 1);
+                        if (warlordsPlayer.getEarthlivingDuration() != 0) {
+                            warlordsPlayer.setEarthlivingDuration(warlordsPlayer.getEarthlivingDuration() - 1);
                         }
 
                         if (warlordsPlayer.getBerserkerWounded() != 0) {
@@ -495,8 +496,8 @@ public class Warlords extends JavaPlugin {
                         if (warlordsPlayer.getCrippled() != 0) {
                             warlordsPlayer.setCrippled(warlordsPlayer.getCrippled() - 1);
                         }
-                        if (warlordsPlayer.getRepentance() != 0) {
-                            warlordsPlayer.setRepentance(warlordsPlayer.getRepentance() - 1);
+                        if (warlordsPlayer.getRepentanceDuration() != 0) {
+                            warlordsPlayer.setRepentanceDuration(warlordsPlayer.getRepentanceDuration() - 1);
                         }
                         if (warlordsPlayer.getRepentanceCounter() != 0) {
                             int newRepentanceCounter = (int) (warlordsPlayer.getRepentanceCounter() * .8 - 60);

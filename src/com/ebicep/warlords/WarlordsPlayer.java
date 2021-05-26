@@ -4,7 +4,6 @@ import com.ebicep.warlords.classes.ActionBarStats;
 import com.ebicep.warlords.classes.PlayerClass;
 import com.ebicep.warlords.classes.abilties.OrbsOfLife;
 import com.ebicep.warlords.classes.abilties.Soulbinding;
-import com.ebicep.warlords.classes.abilties.Totem;
 import com.ebicep.warlords.events.WarlordsDeathEvent;
 import com.ebicep.warlords.maps.FlagManager;
 import com.ebicep.warlords.util.CalculateSpeed;
@@ -36,10 +35,11 @@ public class WarlordsPlayer {
     private int health;
     private int maxHealth;
     private int regenTimer;
-
     private int respawnTimer;
     private float energy;
     private float maxEnergy;
+    private int horseCooldown;
+    private int hitCooldown;
 
     private int kills = 0;
     private int assists = 0;
@@ -89,31 +89,31 @@ public class WarlordsPlayer {
                 if (infusionDuration != 0) {
                     actionBarMessage.append(ChatColor.GREEN).append("LINF").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append(infusionDuration / 20 + 1).append(" ");
                 }
-                if (wrath != 0) {
-                    actionBarMessage.append(ChatColor.GREEN).append("WRAT").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append(wrath).append(" ");
+                if (wrathDuration != 0) {
+                    actionBarMessage.append(ChatColor.GREEN).append("WRAT").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append(wrathDuration).append(" ");
                 }
                 if (presenceDuration != 0) {
                     actionBarMessage.append(ChatColor.GREEN).append("INSP").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append(presenceDuration / 20).append(" ");
                 }
                 break;
             case "Warrior":
-                if (bloodLust != 0) {
-                    actionBarMessage.append(ChatColor.GREEN).append("BLOO").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append(bloodLust).append(" ");
+                if (bloodLustDuration != 0) {
+                    actionBarMessage.append(ChatColor.GREEN).append("BLOO").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append(bloodLustDuration).append(" ");
                 }
                 if (berserkDuration != 0) {
                     actionBarMessage.append(ChatColor.GREEN).append("BERS").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append(berserkDuration / 20).append(" ");
                 }
-                if (intervene != 0) {
-                    actionBarMessage.append(ChatColor.GREEN).append("VENE").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append(intervene).append(" ");
+                if (interveneDuration != 0) {
+                    actionBarMessage.append(ChatColor.GREEN).append("VENE").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append(interveneDuration).append(" ");
                 }
-                if (lastStand != 0) {
-                    actionBarMessage.append(ChatColor.GREEN).append("LAST").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append(lastStand).append(" ");
+                if (lastStandDuration != 0) {
+                    actionBarMessage.append(ChatColor.GREEN).append("LAST").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append(lastStandDuration).append(" ");
                 }
-                if (orbOfLife != 0) {
-                    actionBarMessage.append(ChatColor.GREEN).append("ORBS").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append(orbOfLife).append(" ");
+                if (orbsOfLifeDuration != 0) {
+                    actionBarMessage.append(ChatColor.GREEN).append("ORBS").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append(orbsOfLifeDuration).append(" ");
                 }
-                if (undyingArmy != 0) {
-                    actionBarMessage.append(ChatColor.GREEN).append("ARMY").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append(undyingArmy).append(" ");
+                if (undyingArmyDuration != 0) {
+                    actionBarMessage.append(ChatColor.GREEN).append("ARMY").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append(undyingArmyDuration).append(" ");
                 }
                 break;
             case "Mage":
@@ -133,20 +133,20 @@ public class WarlordsPlayer {
                 if (chainLightningCooldown != 0) {
                     actionBarMessage.append(ChatColor.GREEN).append("CHAIN").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append(chainLightningCooldown).append(" ");
                 }
-                if (windfury != 0) {
-                    actionBarMessage.append(ChatColor.GREEN).append("FURY").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append(windfury).append(" ");
+                if (windfuryDuration != 0) {
+                    actionBarMessage.append(ChatColor.GREEN).append("FURY").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append(windfuryDuration).append(" ");
                 }
                 if (spiritLinkDuration != 0) {
                     actionBarMessage.append(ChatColor.GREEN).append("LINK").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append(spiritLinkDuration).append(" ");
                 }
-                if (earthliving != 0) {
-                    actionBarMessage.append(ChatColor.GREEN).append("EARTH").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append(earthliving).append(" ");
+                if (earthlivingDuration != 0) {
+                    actionBarMessage.append(ChatColor.GREEN).append("EARTH").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append(earthlivingDuration).append(" ");
                 }
                 if (soulBindCooldown != 0) {
                     actionBarMessage.append(ChatColor.GREEN).append("SOUL").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append(soulBindCooldown).append(" ");
                 }
-                if (repentance != 0) {
-                    actionBarMessage.append(ChatColor.GREEN).append("REPE").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append(repentance).append(" ");
+                if (repentanceDuration != 0) {
+                    actionBarMessage.append(ChatColor.GREEN).append("REPE").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append(repentanceDuration).append(" ");
                 }
                 break;
         }
@@ -222,71 +222,69 @@ public class WarlordsPlayer {
     barrier + infusion 7.36
      */
 
-    private int horseCooldown;
-    private int hitCooldown;
 
+    // PALADIN
     private int infusionDuration = 0;
-    private int wrath = 0;
+    private int wrathDuration = 0;
     private int presenceDuration = 0;
-    private int breathSlownessDuration = 0;
-    private int frostboltDuration = 0;
 
-    private int bloodLust = 0;
+    // WARRIOR
+    private int berserkerWounded = 0;
+    private int defenderWounded = 0;
+    private int crippled = 0;
+    private int bloodLustDuration = 0;
     private int berserkDuration = 0;
-    private int intervene = 0;
+    private int interveneDuration = 0;
     private int interveneDamage = 0;
     private WarlordsPlayer intervened;
     private WarlordsPlayer intervenedBy;
-    private int lastStand = 0;
+    private int lastStandDuration = 0;
     private WarlordsPlayer lastStandedBy;
-    private int orbOfLife = 0;
-    private int undyingArmy = 0;
+    private int charged = 0;
+    private Location chargeLocation;
+    private int orbsOfLifeDuration = 0;
+    private int undyingArmyDuration = 0;
     private boolean undyingArmyDead = false;
     private WarlordsPlayer undyingArmyBy;
 
-    private int windfury = 0;
-    private int earthliving = 0;
+    //SHAMAN
+    private int chainLightning = 0;
+    private int chainLightningCooldown = 0;
+    private int spiritLinkDuration = 0;
+    private List<Soulbinding.SoulBoundPlayer> soulBindedPlayers = new ArrayList<>();
+    private int soulBindCooldown = 0;
+    private int windfuryDuration = 0;
+    private int earthlivingDuration = 0;
     private boolean firstProc = false;
-    private int repentance = 0;
+    private int repentanceDuration = 0;
     private int repentanceCounter = 0;
 
+    //MAGE
+    private int breathSlownessDuration = 0;
+    private int frostboltDuration = 0;
     private int arcaneShield = 0;
     private int arcaneShieldHealth = 0;
     private int inferno = 0;
     private int iceBarrierDuration = 0;
     private int iceBarrierSlownessDuration = 0;
 
-    private int berserkerWounded = 0;
-    private int defenderWounded = 0;
-    private int crippled = 0;
-    private int chainLightning = 0;
-    private int chainLightningCooldown = 0;
-    private int spiritLinkDuration = 0;
-    private List<Soulbinding.SoulBoundPlayer> soulBindedPlayers = new ArrayList<>();
-    private int soulBindCooldown = 0;
-
+    //POWERUPS
     private int powerUpDamage = 0;
     private int powerUpEnergy = 0;
     private boolean powerUpHeal = false;
     private int powerUpSpeed = 0;
 
-    private int charged = 0;
-    private Location chargeLocation;
-
-    private final Dye grayDye = new Dye();
+    private static final Dye grayDye = new Dye();
 
     private CustomScoreboard scoreboard;
-
     public CustomScoreboard getScoreboard() {
         return scoreboard;
     }
-
     public void setScoreboard(CustomScoreboard scoreboard) {
         this.scoreboard = scoreboard;
     }
 
     private boolean energyPowerup;
-
     public boolean isEnergyPowerup() {
         return energyPowerup;
     }
@@ -294,7 +292,7 @@ public class WarlordsPlayer {
     private Location deathLocation;
     private ArmorStand deathStand;
 
-    public WarlordsPlayer(Player player, String name, UUID uuid, PlayerClass spec, boolean temp) {
+    public WarlordsPlayer(Player player, String name, UUID uuid, PlayerClass spec, boolean energyPowerup) {
         this.player = player;
         this.name = name;
         this.uuid = uuid;
@@ -308,7 +306,7 @@ public class WarlordsPlayer {
         this.hitCooldown = 20;
         this.speed = new CalculateSpeed(player :: setWalkSpeed, 13);
         grayDye.setColor(DyeColor.GRAY);
-        energyPowerup = temp;
+        this.energyPowerup = energyPowerup;
     }
 
     public void assignItemLore() {
@@ -596,7 +594,7 @@ public class WarlordsPlayer {
                     totalReduction -= .125;
                 }
             }
-            if (intervene != 0) {
+            if (interveneDuration != 0) {
                 //TODO check teammate heal
                 if (!Warlords.game.onSameTeam(this, attacker)) {
                     damageHealValue *= totalReduction;
@@ -700,7 +698,7 @@ public class WarlordsPlayer {
 //                                }
 //                            }
 //                        }
-                        if (lastStand != 0) {
+                        if (lastStandDuration != 0) {
                             if (lastStandedBy == this) {
                                 damageHealValue *= .5;
                             } else {
@@ -708,7 +706,7 @@ public class WarlordsPlayer {
                             }
                             //TODO multiple last stands? lastest person that last stands will over ride other dude
                             //HEALING FROM LASTSTAND
-                            if (lastStandedBy != this && lastStandedBy.getLastStand() != 0) {
+                            if (lastStandedBy != this && lastStandedBy.getLastStandDuration() != 0) {
                                 System.out.println("===" + -damageHealValue);
                                 float healValue = damageHealValue * -1;
                                 if (isCrit)
@@ -741,7 +739,7 @@ public class WarlordsPlayer {
                             repentanceCounter += damageHealValue * -1;
                         }
                         if (attacker.getSpec().getBlue().getName().equals("Repentance")) {
-                            if (attacker.getRepentance() != 0) {
+                            if (attacker.getRepentanceDuration() != 0) {
                                 int healthToAdd = (int) (attacker.getRepentanceCounter() * .1) + 11;
                                 attacker.addHealth(attacker, "Repentance", healthToAdd, healthToAdd, -1, 100);
                                 attacker.setRepentanceCounter((int) (attacker.getRepentanceCounter() * .5));
@@ -750,7 +748,7 @@ public class WarlordsPlayer {
                         }
 
                         //ORBS
-                        if (attacker.getOrbOfLife() != 0 && !ability.isEmpty()) {
+                        if (attacker.getOrbsOfLifeDuration() != 0 && !ability.isEmpty()) {
                             Location location = player.getLocation();
                             OrbsOfLife.Orb orb = new OrbsOfLife.Orb(((CraftWorld) player.getWorld()).getHandle(), location, attacker);
                             //TODO Add team whitelist
@@ -784,7 +782,7 @@ public class WarlordsPlayer {
                             }
                         }
                     }
-                    if (attacker.getBloodLust() != 0 && damageHealValue < 0) {
+                    if (attacker.getBloodLustDuration() != 0 && damageHealValue < 0) {
                         attacker.addHealth(attacker, "Blood Lust", Math.round(damageHealValue * -.65f), Math.round(damageHealValue * -.65f), -1, 100);
                     }
                 }
@@ -844,18 +842,26 @@ public class WarlordsPlayer {
                     attacker.getPlayer().playSound(attacker.getPlayer().getLocation(), Sound.ORB_PICKUP, 500f, 0.3f);
 
                     hitBy.remove(attacker);
+                    hitBy.add(0, attacker);
+
                     attacker.addKill();
                     attacker.scoreboard.updateKillsAssists();
                     this.addDeath();
                     this.scoreboard.updateKillsAssists();
                     Bukkit.getPluginManager().callEvent(new WarlordsDeathEvent(this));
-                    // TODO: make killer/killed by name the team color instead of gray
+                    // TODO: add kill messages for everyone, filter out killer/victim
                     if (Warlords.game.isBlueTeam(attacker.player)) {
                         player.sendMessage(ChatColor.GRAY + "You were killed by " + ChatColor.BLUE + attacker.getName());
                         attacker.getPlayer().sendMessage(ChatColor.GRAY + "You killed " + ChatColor.RED + name);
+                        for (Player gamePlayer : Warlords.getPlayers().keySet()) {
+                            gamePlayer.sendMessage(ChatColor.RED + name + ChatColor.GRAY + " was killed by " + ChatColor.BLUE + attacker.getName());
+                        }
                     } else {
                         player.sendMessage(ChatColor.GRAY + "You were killed by " + ChatColor.RED + attacker.getName());
                         attacker.getPlayer().sendMessage(ChatColor.GRAY + "You killed " + ChatColor.BLUE + name);
+                        for (Player gamePlayer : Warlords.getPlayers().keySet()) {
+                            gamePlayer.sendMessage(ChatColor.BLUE + name + ChatColor.GRAY + " was killed by " + ChatColor.RED + attacker.getName());
+                        }
                     }
 
                     if (scoreboard.getBlueTeam().contains(name)) {
@@ -880,7 +886,7 @@ public class WarlordsPlayer {
 
             //TODO make inital windfury hit proc
             if (ability.equals("")) {
-                if (attacker.getWindfury() != 0) {
+                if (attacker.getWindfuryDuration() != 0) {
                     int windfuryActivate = (int) (Math.random() * 100);
                     if (attacker.isFirstProc()) {
                         attacker.setFirstProc(false);
@@ -894,7 +900,7 @@ public class WarlordsPlayer {
                         if (health > 0)
                             addHealth(attacker, "Windfury Weapon", min, max, 25, 235);
                     }
-                } else if (attacker.getEarthliving() != 0) {
+                } else if (attacker.getEarthlivingDuration() != 0) {
                     int earthlivingActivate = (int) (Math.random() * 100);
                     if (attacker.isFirstProc()) {
                         if (isCrit) {
@@ -947,7 +953,7 @@ public class WarlordsPlayer {
                         }
                     }
                 } else if (attacker.getSoulBindCooldown() != 0) {
-                    attacker.getPlayer().sendMessage("§a\u00BB§7 " + "BOUNDED " + player.getName());
+                    attacker.getPlayer().sendMessage("§a\u00BB§7 " + ChatColor.GRAY + "Your " + ChatColor.LIGHT_PURPLE + "Soulbinding Weapon " + ChatColor.GRAY + "has bound " + player.getName());
                     attacker.getSoulBindedPlayers().add(new Soulbinding.SoulBoundPlayer(this, 2));
                 }
             }
@@ -1054,12 +1060,12 @@ public class WarlordsPlayer {
         return frostboltDuration;
     }
 
-    public int getWrath() {
-        return wrath;
+    public int getWrathDuration() {
+        return wrathDuration;
     }
 
-    public void setWrath(int wrath) {
-        this.wrath = wrath;
+    public void setWrathDuration(int wrathDuration) {
+        this.wrathDuration = wrathDuration;
     }
 
     public int getPresence() {
@@ -1070,12 +1076,12 @@ public class WarlordsPlayer {
         this.presenceDuration = presenceDuration;
     }
 
-    public int getBloodLust() {
-        return bloodLust;
+    public int getBloodLustDuration() {
+        return bloodLustDuration;
     }
 
-    public void setBloodLust(int bloodLust) {
-        this.bloodLust = bloodLust;
+    public void setBloodLustDuration(int bloodLustDuration) {
+        this.bloodLustDuration = bloodLustDuration;
     }
 
     public int getBerserk() {
@@ -1086,12 +1092,12 @@ public class WarlordsPlayer {
         this.berserkDuration = berserkDuration;
     }
 
-    public int getIntervene() {
-        return intervene;
+    public int getInterveneDuration() {
+        return interveneDuration;
     }
 
-    public void setIntervene(int intervene) {
-        this.intervene = intervene;
+    public void setInterveneDuration(int interveneDuration) {
+        this.interveneDuration = interveneDuration;
     }
 
     public int getInterveneDamage() {
@@ -1118,12 +1124,12 @@ public class WarlordsPlayer {
         this.intervenedBy = intervenedBy;
     }
 
-    public int getLastStand() {
-        return lastStand;
+    public int getLastStandDuration() {
+        return lastStandDuration;
     }
 
-    public void setLastStand(int lastStand) {
-        this.lastStand = lastStand;
+    public void setLastStandDuration(int lastStandDuration) {
+        this.lastStandDuration = lastStandDuration;
     }
 
     public WarlordsPlayer getLastStandedBy() {
@@ -1158,20 +1164,20 @@ public class WarlordsPlayer {
         this.crippled = crippled;
     }
 
-    public int getOrbOfLife() {
-        return orbOfLife;
+    public int getOrbsOfLifeDuration() {
+        return orbsOfLifeDuration;
     }
 
-    public void setOrbOfLife(int orbOfLife) {
-        this.orbOfLife = orbOfLife;
+    public void setOrbsOfLifeDuration(int orbsOfLifeDuration) {
+        this.orbsOfLifeDuration = orbsOfLifeDuration;
     }
 
-    public int getUndyingArmy() {
-        return undyingArmy;
+    public int getUndyingArmyDuration() {
+        return undyingArmyDuration;
     }
 
-    public void setUndyingArmy(int undyingArmy) {
-        this.undyingArmy = undyingArmy;
+    public void setUndyingArmyDuration(int undyingArmyDuration) {
+        this.undyingArmyDuration = undyingArmyDuration;
     }
 
     public boolean isUndyingArmyDead() {
@@ -1190,28 +1196,28 @@ public class WarlordsPlayer {
         this.undyingArmyBy = undyingArmyBy;
     }
 
-    public int getWindfury() {
-        return windfury;
+    public int getWindfuryDuration() {
+        return windfuryDuration;
     }
 
-    public void setWindfury(int windfury) {
-        this.windfury = windfury;
+    public void setWindfuryDuration(int windfuryDuration) {
+        this.windfuryDuration = windfuryDuration;
     }
 
-    public int getEarthliving() {
-        return earthliving;
+    public int getEarthlivingDuration() {
+        return earthlivingDuration;
     }
 
-    public void setEarthliving(int earthliving) {
-        this.earthliving = earthliving;
+    public void setEarthlivingDuration(int earthlivingDuration) {
+        this.earthlivingDuration = earthlivingDuration;
     }
 
-    public int getRepentance() {
-        return repentance;
+    public int getRepentanceDuration() {
+        return repentanceDuration;
     }
 
-    public void setRepentance(int repentance) {
-        this.repentance = repentance;
+    public void setRepentanceDuration(int repentanceDuration) {
+        this.repentanceDuration = repentanceDuration;
     }
 
     public int getRepentanceCounter() {
