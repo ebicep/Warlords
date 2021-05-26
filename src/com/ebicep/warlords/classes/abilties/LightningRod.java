@@ -27,7 +27,6 @@ public class LightningRod extends AbstractAbility {
                         "§7upon yourself, restoring §a30% §7health and\n" +
                         "§e160 §7energy and knock all nearby enemies back.");
     }
-    // set cooldown back to original, 2 is for testing
 
     @Override
     public void onActivate(Player player) {

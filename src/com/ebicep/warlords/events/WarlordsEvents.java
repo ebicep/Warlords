@@ -21,6 +21,7 @@ import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.*;
+import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
@@ -317,4 +318,23 @@ public class WarlordsEvents implements Listener {
             }
         }
     }
+
+    @EventHandler
+    public void onPlayerVelocity(PlayerVelocityEvent event) {
+        Player player = event.getPlayer();
+        EntityDamageEvent lastDamage = player.getLastDamageCause();
+
+        if ((!(lastDamage instanceof EntityDamageByEntityEvent))) {
+            return;
+        }
+
+        if ((((EntityDamageByEntityEvent)lastDamage).getDamager() instanceof Player))
+            event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onWeatherChange(WeatherChangeEvent change) {
+        change.setCancelled(true);
+    }
+
 }

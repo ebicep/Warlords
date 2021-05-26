@@ -15,6 +15,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import org.bukkit.block.Block;
 
 public class Warlords extends JavaPlugin {
 
@@ -106,7 +107,7 @@ public class Warlords extends JavaPlugin {
                     // presence
                     if (warlordsPlayer.getPresence() != 0) {
                         if (warlordsPlayer.getInfusion() == 0)
-                        warlordsPlayer.setPresence((int) (warlordsPlayer.getPresence() - 0.05));
+                            warlordsPlayer.setPresence((int) (warlordsPlayer.getPresence() - 0.05));
                         List<Entity> near = player.getNearbyEntities(6.0D, 2.0D, 6.0D);
                         near = Utils.filterOnlyTeammates(near, player);
                         for (Entity entity : near) {
@@ -212,9 +213,19 @@ public class Warlords extends JavaPlugin {
                             warlordsPlayer.getPlayer().teleport(game.getMap().getRedRespawn());
                         }
                         warlordsPlayer.respawn();
-                        warlordsPlayer.getDeathStand().remove();
-                        player.getWorld().getBlockAt(warlordsPlayer.getDeathLocation()).setType(Material.AIR);
-                        player.setGameMode(GameMode.SURVIVAL);
+                        if(warlordsPlayer.getDeathStand() != null) {
+                            warlordsPlayer.getDeathStand().remove();
+                            warlordsPlayer.setDeathStand(null);
+                        }
+                        Location deathLocation = warlordsPlayer.getDeathLocation();
+                        if(deathLocation != null) {
+                            Block deathBlock = deathLocation.getBlock();
+                            if (deathBlock.getType() != Material.SAPLING) {
+                                deathBlock.setType(Material.AIR);
+                            }
+                            warlordsPlayer.setDeathLocation(null);
+                        }
+                        player.setGameMode(GameMode.ADVENTURE);
                     }
                     //damage or heal
                     float newHealth = (float) warlordsPlayer.getHealth() / warlordsPlayer.getMaxHealth() * 40;

@@ -39,7 +39,7 @@ public class Strike extends AbstractAbility {
                     //PALADIN
                     if (name.contains("Avenger") || name.contains("Crusader") || name.contains("Protector")) {
                         for (Player player1 : player.getWorld().getPlayers()) {
-                            player1.playSound(player.getLocation(), "paladin.paladinstrike.activation", 1.5F, 1);
+                            player1.playSound(player.getLocation(), "paladin.paladinstrike.activation", 2, 1);
                         }
                         //check consecrate then boost dmg
                         if (name.contains("Avenger")) {
@@ -137,21 +137,21 @@ public class Strike extends AbstractAbility {
                         Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
 
                         for (Player player1 : Bukkit.getOnlinePlayers()) {
-                            player1.playSound(player.getLocation(), "warrior.mortalstrike.impact", 1.5F, 1);
+                            player1.playSound(player.getLocation(), "warrior.mortalstrike.impact", 2, 1);
                         }
                     } else if (name.contains("Defender")) {
                         Warlords.getPlayer(nearPlayer).setDefenderWounded(3);
                         Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
 
                         for (Player player1 : Bukkit.getOnlinePlayers()) {
-                            player1.playSound(player.getLocation(), "warrior.mortalstrike.impact", 1.5F, 1);
+                            player1.playSound(player.getLocation(), "warrior.mortalstrike.impact", 2, 1);
                         }
                     } else if (name.contains("Cripp")) {
                         Warlords.getPlayer(nearPlayer).setCrippled(3);
                         Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
 
                         for (Player player1 : Bukkit.getOnlinePlayers()) {
-                            player1.playSound(player.getLocation(), "warrior.mortalstrike.impact", 1.5F, 1);
+                            player1.playSound(player.getLocation(), "warrior.mortalstrike.impact", 2, 1);
                         }
                     }
                     break;

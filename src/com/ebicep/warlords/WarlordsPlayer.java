@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import org.bukkit.block.Block;
 
 public class WarlordsPlayer {
 
@@ -797,47 +798,72 @@ public class WarlordsPlayer {
                 }
                 attacker.addDamage(-damageHealValue);
                 if (this.health <= 0) {
-                    //grave
-                    Location graveLocation = player.getLocation().clone();
-                    for (int i = 0; i < 30; i++) {
-                        if (player.getWorld().getBlockAt(graveLocation.clone().add(0, -1, 0)).getType() == Material.AIR) {
-                            //get block on floor
-                            graveLocation.add(0, -1, 0);
-                        } else {
-                            //making sure the grave isnt on a block
-                            if (player.getWorld().getBlockAt(graveLocation).getType() != Material.AIR) {
-                                if (player.getWorld().getBlockAt(graveLocation.clone().add(0, 1, 0)).getType() == Material.AIR) {
-                                    graveLocation.add(0, 1, 0);
-                                } else if (player.getWorld().getBlockAt(graveLocation.clone().add(1, 0, 0)).getType() == Material.AIR) {
-                                    graveLocation.add(1, 0, 0);
-                                } else if (player.getWorld().getBlockAt(graveLocation.clone().add(-1, 0, 0)).getType() == Material.AIR) {
-                                    graveLocation.add(-1, 0, 0);
-                                } else if (player.getWorld().getBlockAt(graveLocation.clone().add(0, 0, 1)).getType() == Material.AIR) {
-                                    graveLocation.add(0, 0, 1);
-                                } else if (player.getWorld().getBlockAt(graveLocation.clone().add(0, 0, -1)).getType() == Material.AIR) {
-                                    graveLocation.add(0, 0, -1);
+                    // GRAVE - START
+                    Location deathLocation = player.getLocation();
+                    Block bestGraveCandidate = null;
+                    boolean isFlagCarrier = !player.getMetadata(FlagManager.FLAG_DAMAGE_MULTIPLIER).isEmpty();
+                    for (int x = -1; x <= 1; x++) {
+                        Bukkit.broadcastMessage("For 1:" + x);
+                        for (int z = -1; z <= 1; z++) {
+                            Bukkit.broadcastMessage("For 2:" + z);
+                            if (isFlagCarrier && x == 0 && z == 0) {
+                                // This player is a flag carrier, prevent placing the grave at the direct location of the player
+                                continue;
+                            }
+
+                            Location toTest = deathLocation.clone().add(x, 2, z);
+                            Block lastBlock = toTest.getBlock();
+
+                            if (lastBlock.getType() == Material.AIR) {
+                                toTest.subtract(0, 1, 0);
+                                for (; toTest.getY() > 0; toTest.subtract(0, 1, 0)) {
+                                    Bukkit.broadcastMessage("For 3:" + toTest.getY());
+                                    Block underTest = toTest.getBlock();
+                                    if (underTest.getType() != Material.AIR) {
+                                        if (underTest.getType().isTransparent()) {
+                                            // We have hit a sappling, fence, torch or other non-solid
+                                            break;
+                                        }
+                                        // We have hit a solid block. Go back 1 tile
+                                        toTest.add(0, 1, 0);
+                                        // Check if we found a better tile for the grave
+                                        if (bestGraveCandidate != null) {
+                                            double newDistance = toTest.distanceSquared(deathLocation);
+                                            double existingDistance = bestGraveCandidate.getLocation(toTest).distanceSquared(deathLocation);
+                                            if(newDistance >= existingDistance) {
+                                                // Our new candidate is not closer, skip
+                                                break;
+                                            }
+                                        }
+                                        bestGraveCandidate = lastBlock;
+                                        //
+                                        break;
+                                    }
+                                    lastBlock = underTest;
                                 }
                             }
-
-                            deathLocation = graveLocation;
-
-                            //spawn grave
-                            player.getWorld().getBlockAt(graveLocation).setType(Material.SAPLING);
-                            player.getWorld().getBlockAt(graveLocation).setData((byte) 5);
-
-                            graveLocation.setYaw(0);
-                            deathStand = (ArmorStand) player.getWorld().spawnEntity(player.getWorld().getBlockAt(graveLocation).getLocation().add(.5, -1.5, .5), EntityType.ARMOR_STAND);
-                            if (Warlords.game.isBlueTeam(player)) {
-                                deathStand.setCustomName(ChatColor.BLUE + name + ChatColor.GRAY + " - " + ChatColor.YELLOW + "DEAD");
-                            } else {
-                                deathStand.setCustomName(ChatColor.RED + name + ChatColor.GRAY + " - " + ChatColor.YELLOW + "DEAD");
-                            }
-                            deathStand.setCustomNameVisible(true);
-                            deathStand.setGravity(false);
-                            deathStand.setVisible(false);
-                            break;
                         }
                     }
+
+                    if (bestGraveCandidate != null) {
+
+                        //spawn grave
+                        bestGraveCandidate.setType(Material.SAPLING);
+                        bestGraveCandidate.setData((byte) 5);
+
+                        this.deathLocation = bestGraveCandidate.getLocation();
+
+                        this.deathStand = (ArmorStand) player.getWorld().spawnEntity(bestGraveCandidate.getLocation().add(.5, -1.5, .5), EntityType.ARMOR_STAND);
+                        if (Warlords.game.isBlueTeam(player)) {
+                            this.deathStand.setCustomName(ChatColor.BLUE + name + ChatColor.GRAY + " - " + ChatColor.YELLOW + "DEAD");
+                        } else {
+                            this.deathStand.setCustomName(ChatColor.RED + name + ChatColor.GRAY + " - " + ChatColor.YELLOW + "DEAD");
+                        }
+                        this.deathStand.setCustomNameVisible(true);
+                        this.deathStand.setGravity(false);
+                        this.deathStand.setVisible(false);
+                    }
+                    // GRAVE - END
 
                     attacker.getPlayer().playSound(attacker.getPlayer().getLocation(), Sound.ORB_PICKUP, 500f, 0.3f);
 

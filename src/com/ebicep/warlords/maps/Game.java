@@ -27,6 +27,7 @@ import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.*;
 
@@ -143,7 +144,7 @@ public class Game implements Runnable {
                     // Enable abilities
                 } else if (game.timer == 30 * 20) {
                     // Enable powerups
-                    new PowerupManager(game.map).runTaskTimer(Warlords.getInstance(), 0, 0);
+                    game.powerUps = new PowerupManager(game.map).runTaskTimer(Warlords.getInstance(), 0, 0);
                 }
 
                 if (game.timer % 20 == 0) {
@@ -167,6 +168,11 @@ public class Game implements Runnable {
                 game.timer = 0;
                 boolean teamBlueWins = !game.forceEnd && game.bluePoints > game.redPoints;
                 boolean teamRedWins = !game.forceEnd && game.redPoints > game.bluePoints;
+
+                if (game.powerUps != null) {
+                    game.powerUps.cancel();
+                }
+
                 // Announce winner
             }
 
@@ -256,6 +262,7 @@ public class Game implements Runnable {
     private int bluePoints;
     private boolean forceEnd;
     private FlagManager flags = null;
+    private BukkitTask powerUps = null;
 
     public void forceDraw() {
         this.forceEnd = true;

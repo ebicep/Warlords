@@ -3,11 +3,13 @@ package com.ebicep.warlords.classes.abilties;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.util.ParticleEffect;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import java.util.List;
@@ -51,16 +53,35 @@ public class Breath extends AbstractAbility {
                     }
                 }
             }
-            //TODO breath animation
 
             if (name.contains("Water")) {
                 for (Player player1 : player.getWorld().getPlayers()) {
-                    player1.playSound(player.getLocation(), "mage.waterbreath.activation", 1.5F, 1);
+                    player1.playSound(player.getLocation(), "mage.waterbreath.activation", 2F, 1);
                 }
             } else if (name.contains("Freezing")) {
                 for (Player player1 : player.getWorld().getPlayers()) {
-                    player1.playSound(player.getLocation(), "mage.freezingbreath.activation", 1.5F, 1);
+                    player1.playSound(player.getLocation(), "mage.freezingbreath.activation", 2F, 1);
                 }
+
+                new BukkitRunnable() {
+
+                    int animationTimer = 0;
+                    Location center = player.getLocation();
+
+                    @Override
+                    public void run() {
+                        animationTimer++;
+
+                        if (animationTimer > 20) {
+                            this.cancel();
+
+                        }
+
+                        for (int i = 0; i < 4; i++) {
+                            // wip
+                        }
+                    }
+                }.runTaskTimer(Warlords.getInstance(),0, 1);
             }
 
         }

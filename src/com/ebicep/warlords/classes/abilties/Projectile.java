@@ -331,11 +331,11 @@ public class Projectile extends AbstractAbility {
                     //TODO add flameburst animation
 
                     // Equation for spiral animation
-                    int radius = 2;
+                    /*int radius = 2;
                     for (double x = 0; x <= 50; x += 0.05) { // Set for vertical, need to change
                         double y = radius * Math.cos(x);
                         double z = radius * Math.sin(x);
-                    }
+                    }*/
 
                     ParticleEffect.FLAME.display(0.2F, 0, 0.2F, 0F, 4, location, 500);
                     List<Entity> entities = (List<Entity>) location.getWorld().getNearbyEntities(location, 5, 5, 5);
