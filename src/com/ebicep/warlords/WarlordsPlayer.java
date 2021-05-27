@@ -42,6 +42,7 @@ public class WarlordsPlayer {
     private int horseCooldown;
     private int hitCooldown;
 
+    //TODO make these lists, each index indicated a minute in the game
     private int kills = 0;
     private int assists = 0;
     private List<WarlordsPlayer> hitBy = new ArrayList<>();
@@ -548,6 +549,10 @@ public class WarlordsPlayer {
             } else {
                 health += min;
             }
+
+            if (min < 0) {
+                player.damage(0);
+            }
         } else {
 
             if (attacker.getInferno() != 0) {
@@ -875,7 +880,6 @@ public class WarlordsPlayer {
                     this.addDeath();
                     this.scoreboard.updateKillsAssists();
                     Bukkit.getPluginManager().callEvent(new WarlordsDeathEvent(this));
-                    // TODO: add kill messages for everyone, filter out killer/victim
                     if (Warlords.game.isBlueTeam(attacker.player)) {
                         player.sendMessage(ChatColor.GRAY + "You were killed by " + ChatColor.BLUE + attacker.getName());
                         attacker.getPlayer().sendMessage(ChatColor.GRAY + "You killed " + ChatColor.RED + name);

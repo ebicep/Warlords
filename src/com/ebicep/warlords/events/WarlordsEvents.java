@@ -83,10 +83,15 @@ public class WarlordsEvents implements Listener {
                 if (Warlords.game.getTeamBlue().contains(oldPlayer)) {
                     Warlords.game.getTeamBlue().remove(oldPlayer);
                     Warlords.game.getTeamBlue().add(player);
+//                    player.setPlayerListName(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + Warlords.getPlayer(player).getSpec().getClassNameShort() + ChatColor.DARK_GRAY + "] "
+//                            + ChatColor.BLUE + player.getName() + ChatColor.DARK_GRAY + " [" + ChatColor.GOLD + "Lv90" + ChatColor.DARK_GRAY + "]");
                 } else if (Warlords.game.getTeamRed().contains(oldPlayer)) {
                     Warlords.game.getTeamRed().remove(oldPlayer);
                     Warlords.game.getTeamRed().add(player);
+//                    player.setPlayerListName(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + Warlords.getPlayer(player).getSpec().getClassNameShort() + ChatColor.DARK_GRAY + "] "
+//                            + ChatColor.RED + player.getName() + ChatColor.DARK_GRAY + " [" + ChatColor.GOLD + "Lv90" + ChatColor.DARK_GRAY + "]");
                 }
+
 
                 Warlords.getPlayers().remove(oldPlayer);
                 break;
@@ -97,7 +102,6 @@ public class WarlordsEvents implements Listener {
 
     @EventHandler
     public void onPlayerHit(EntityDamageByEntityEvent e) {
-        //TODO find other fix?
         if (e.getEntity() instanceof Player && e.getDamager() instanceof Player) {
             Player attacker = (Player) e.getDamager();
             Player victim = (Player) e.getEntity();
@@ -170,22 +174,10 @@ public class WarlordsEvents implements Listener {
                         Warlords.getPlayer(player).setHorseCooldown(15);
                     }
                 }
-            } else if (itemHeld.getType() == Material.DIAMOND_AXE) {
-                location.setY(player.getWorld().getHighestBlockYAt(location));
-
-                FallingBlock block = player.getWorld().spawnFallingBlock(location.add(0, 0, 0), location.getWorld().getBlockAt((int) location.getX(), location.getWorld().getHighestBlockYAt(location) - 1, (int) location.getZ()).getType(), (byte) 0);
-                block.setVelocity(new Vector(0, .1, 0));
-                ArrayList<ArrayList<SeismicWave>> waveList = new ArrayList<>();
-                //waveList.add(new SeismicWave(block));
-                //Warlords.waveArrays.add(waveList);
-
-                WarlordsEvents.addEntityUUID(block.getUniqueId());
-            } else if (itemHeld.getType() == Material.WOOD_AXE) {
-                ArmorStand stand = (ArmorStand) location.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
-                stand.setHelmet(new ItemStack(Material.LONG_GRASS, 1, (short) 2));
-                stand.setGravity(true);
-                stand.setVisible(true);
-                stand.setHeadPose(new EulerAngle(20,0,0));
+            } else if (itemHeld.getType() == Material.BONE) {
+                player.getInventory().remove(Material.BONE);
+                Warlords.getPlayer(player).addHealth(Warlords.getPlayer(player), "", -100000, -100000, -1, 100);
+                Warlords.getPlayer(player).setUndyingArmyDead(false);
             }
         } else if (action == Action.LEFT_CLICK_BLOCK || action == Action.LEFT_CLICK_AIR) {
             if (action == Action.LEFT_CLICK_AIR) {
@@ -299,7 +291,7 @@ public class WarlordsEvents implements Listener {
                 for (Player bluePlayer : Warlords.game.getTeamBlue()) {
                     bluePlayer.sendMessage(ChatColor.BLUE + "[BLU]" +
                             ChatColor.DARK_GRAY + "[" +
-                            ChatColor.GOLD + warlordsPlayer.getSpec().getClassName().substring(0, 3).toUpperCase() +
+                            ChatColor.GOLD + warlordsPlayer.getSpec().getClassNameShort() +
                             ChatColor.DARK_GRAY + "][" + ChatColor.GOLD + "90" + ChatColor.DARK_GRAY + "] " +
                             ChatColor.AQUA + warlordsPlayer.getName() +
                             ChatColor.WHITE + ": " + e.getMessage()
@@ -309,7 +301,7 @@ public class WarlordsEvents implements Listener {
                 for (Player redPlayer : Warlords.game.getTeamRed()) {
                     redPlayer.sendMessage(ChatColor.RED + "[RED]" +
                             ChatColor.DARK_GRAY + "[" +
-                            ChatColor.GOLD + warlordsPlayer.getSpec().getClassName().substring(0, 3).toUpperCase() +
+                            ChatColor.GOLD + warlordsPlayer.getSpec().getClassNameShort() +
                             ChatColor.DARK_GRAY + "][" + ChatColor.GOLD + "90" + ChatColor.DARK_GRAY + "] " +
                             ChatColor.AQUA + warlordsPlayer.getName() +
                             ChatColor.WHITE + ": " + e.getMessage()

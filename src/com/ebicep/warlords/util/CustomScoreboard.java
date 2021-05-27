@@ -21,12 +21,15 @@ public class CustomScoreboard {
 
     private Player player;
     private Scoreboard scoreboard;
+    private Objective tab;
     private Objective sideBar;
     private Objective health;
     private List<String> blueTeam;
     private List<String> redTeam;
+    private Game game;
 
-    public CustomScoreboard(Player player, List<String> blueTeam, List<String> redTeam) {
+    public CustomScoreboard(WarlordsPlayer warlordsPlayer, List<String> blueTeam, List<String> redTeam, Game game) {
+        Player player = warlordsPlayer.getPlayer();
         ScoreboardManager manager = Bukkit.getScoreboardManager();
         Scoreboard board = manager.getNewScoreboard();
         SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
@@ -49,12 +52,40 @@ public class CustomScoreboard {
         sideBar.getScore("" + ChatColor.GREEN + Warlords.getPlayer(player).getKills() + ChatColor.RESET + " Kills " + ChatColor.GREEN + Warlords.getPlayer(player).getAssists() + ChatColor.RESET + " Assists").setScore(3);
         sideBar.getScore("      ").setScore(2);
         sideBar.getScore(ChatColor.YELLOW + "WL 2.0 beta_b-v1.0 ").setScore(1);
+
+        //        Objective tab = board.registerNewObjective("tab", "");
+//        tab.setDisplaySlot(DisplaySlot.PLAYER_LIST);
+//        int counter = 0;
+//        for (String s : blueTeam) {
+//            tab.getScore(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + "MAG" + ChatColor.DARK_GRAY + "] "
+//                    + ChatColor.BLUE + s + ChatColor.DARK_GRAY + " [" + ChatColor.GOLD + "Lv90" + ChatColor.DARK_GRAY + "]").setScore(counter);
+//            counter++;
+//        }
+//        for (String s : redTeam) {
+//            tab.getScore(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + "MAG" + ChatColor.DARK_GRAY + "] "
+//                    + ChatColor.RED + s + ChatColor.DARK_GRAY + " [" + ChatColor.GOLD + "Lv90" + ChatColor.DARK_GRAY + "]").setScore(counter);
+//            counter++;
+//        }
+//
+//        Team blue = board.registerNewTeam("BLUE");
+//        Team red = board.registerNewTeam("RED");
+//        for (String s : blueTeam) {
+//            blue.addEntry(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + "MAG" + ChatColor.DARK_GRAY + "] "
+//                    + ChatColor.BLUE + s + ChatColor.DARK_GRAY + " [" + ChatColor.GOLD + "Lv90" + ChatColor.DARK_GRAY + "]");
+//        }
+//
+//        for (String s : redTeam) {
+//            red.addEntry(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + "MAG" + ChatColor.DARK_GRAY + "] "
+//                    + ChatColor.RED + s + ChatColor.DARK_GRAY + " [" + ChatColor.GOLD + "Lv90" + ChatColor.DARK_GRAY + "]");
+//        }
+
         player.setScoreboard(board);
         this.scoreboard = board;
         this.sideBar = sideBar;
         this.player = player;
         this.blueTeam = blueTeam;
         this.redTeam = redTeam;
+        this.game = game;
     }
 
     public void addHealths() {

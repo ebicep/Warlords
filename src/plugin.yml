@@ -16,4 +16,7 @@ commands:
   menu:
     description: Opens the game menu. Later to be removed.
     usage: /menu
+  shout:
+    description: Shouts in game
+    usage: /shout [MESSAGE]
 

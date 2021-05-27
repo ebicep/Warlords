@@ -82,6 +82,7 @@ public class Commands implements TabExecutor {
             boolean teamBlueAssessment = true;
             for (Player player : people) {
                 Warlords.game.addPlayer(player, teamBlueAssessment);
+                game.giveLobbyScoreboard(player);
                 teamBlueAssessment = !teamBlueAssessment;
             }
 
@@ -126,8 +127,27 @@ public class Commands implements TabExecutor {
 
             Player player = (Player) sender;
             openMainMenu(player);
-        }
+        } else if (command.getName().equalsIgnoreCase("shout") && args.length > 0) {
+            if (!(sender instanceof Player)) {
+                return true;
+            }
+            if (Warlords.game.getState() == GAME && Warlords.hasPlayer((Player) sender)) {
+                String message;
+                if (Warlords.game.isBlueTeam((Player) sender)) {
+                    message = ChatColor.BLUE + "[SHOUT] ";
+                } else {
+                    message = ChatColor.RED + "[SHOUT] ";
+                }
+                message += ChatColor.AQUA + sender.getName() + ChatColor.WHITE + ": ";
+                for (String arg : args) {
+                    message += arg + " ";
+                }
 
+                for (Player player : Warlords.getPlayers().keySet()) {
+                    player.sendMessage(message);
+                }
+            }
+        }
         return true;
     }
 
