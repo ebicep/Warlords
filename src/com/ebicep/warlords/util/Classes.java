@@ -54,7 +54,7 @@ public enum Classes {
                 .map(v -> v.value() instanceof  Classes ? (Classes)v.value() : null)
                 .filter(Objects::nonNull)
                 .findAny()
-                .orElse(Classes.PYROMANCER);
+                .orElse(Classes.CRYOMANCER);
     }
 
     public static void setSelected(Player player, Classes selectedClass) {

@@ -2,6 +2,7 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.util.Matrix4d;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.Utils;
 import org.bukkit.Bukkit;
@@ -19,7 +20,7 @@ public class Projectile extends AbstractAbility {
     private static final float hitBox = 1.25F;
     private int maxDistance;
 
-    public Projectile(String name, int minDamageHeal, int maxDamageHeal, int cooldown, int energyCost, int critChance, int critMultiplier, String description, int maxDistance) {
+    public Projectile(String name, int minDamageHeal, int maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier, String description, int maxDistance) {
         super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier, description);
         this.maxDistance = maxDistance;
     }
@@ -50,7 +51,10 @@ public class Projectile extends AbstractAbility {
             }
         }
 
+
         new BukkitRunnable() {
+
+            int animationTimer = 0;
 
             @Override
             public void run() {
@@ -146,6 +150,7 @@ public class Projectile extends AbstractAbility {
                             if (entity.getLocation().clone().add(0, 1, 0).distanceSquared(location) < hitBox * hitBox) {
                                 hitPlayer = true;
                                 ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.0F, 1, entity.getLocation().add(0, 1, 0), 500);
+                                ParticleEffect.CLOUD.display(0.3F, 0.3F, 0.3F, 1F, 3, entity.getLocation().add(0, 1, 0), 500);
                                 Player victim = (Player) entity;
 
                                 for (Player player1 : player.getWorld().getPlayers()) {
@@ -223,7 +228,7 @@ public class Projectile extends AbstractAbility {
                                 ParticleEffect.VILLAGER_HAPPY.display(1.5F, 1.5F, 1.5F, 0.2F, 3, entity.getLocation().add(0, 1, 0), 500);
                                 Player victim = (Player) entity;
 
-                                for (Player player1 : Bukkit.getOnlinePlayers()) {
+                                for (Player player1 : player.getWorld().getPlayers()) {
                                     player1.playSound(entity.getLocation(), "mage.waterbolt.impact", 2F, 1);
                                 }
 
@@ -328,16 +333,17 @@ public class Projectile extends AbstractAbility {
                 } else if (customProjectile.getBall().getName().contains("Flame")) {
                     location.add(customProjectile.getDirection().multiply(1.05));
                     location.add(0, 1.5, 0);
-                    //TODO add flameburst animation
 
-                    // Equation for spiral animation
-                    /*int radius = 2;
-                    for (double x = 0; x <= 50; x += 0.05) { // Set for vertical, need to change
-                        double y = radius * Math.cos(x);
-                        double z = radius * Math.sin(x);
-                    }*/
+                    Matrix4d center = new Matrix4d(location);
 
-                    ParticleEffect.FLAME.display(0.2F, 0, 0.2F, 0F, 4, location, 500);
+                    for (int i = 0; i < 4; i++) {
+                        double angle = Math.toRadians(i * 90) + animationTimer * 0.3;
+                        double width = 0.2D;
+                        ParticleEffect.FLAME.display(0, 0, 0, 0, 1,
+                                center.translateVector(location.getWorld(), 0, Math.sin(angle) * width, Math.cos(angle) * width), 500);
+                    }
+                    animationTimer++;
+
                     List<Entity> entities = (List<Entity>) location.getWorld().getNearbyEntities(location, 5, 5, 5);
                     entities = Utils.filterOutTeammates(entities, customProjectile.getShooter());
                     for (Entity entity : entities) {
@@ -348,7 +354,7 @@ public class Projectile extends AbstractAbility {
                                 ParticleEffect.LAVA.display(0.5F, 0, 0.5F, 2F, 10, entity.getLocation().add(0, 1, 0), 500);
                                 Player victim = (Player) entity;
 
-                                for (Player player1 : Bukkit.getOnlinePlayers()) {
+                                for (Player player1 : player.getWorld().getPlayers()) {
                                     player1.playSound(entity.getLocation(), "mage.flameburst.impact", 2F, 1);
                                 }
 

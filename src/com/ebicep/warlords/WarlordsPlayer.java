@@ -570,7 +570,7 @@ public class WarlordsPlayer {
 
             // Flag carriers take more damage
             for (MetadataValue metadata : this.getPlayer().getMetadata(FlagManager.FLAG_DAMAGE_MULTIPLIER)) {
-                damageHealValue *= metadata.asDouble();
+                damageHealValue *= damageHealValue > 0 ? 1 : metadata.asDouble();
             }
 
             //TODO check if totaldmgreduc works
@@ -907,7 +907,7 @@ public class WarlordsPlayer {
                     }
                 } else {
 
-                    if (!ability.isEmpty()) {
+                    if (!ability.isEmpty() && !ability.equals("Time Warp") && !ability.equals("Healing Rain") && !ability.equals("Hammer of Light")) {
                         attacker.getPlayer().playSound(attacker.getPlayer().getLocation(), Sound.ORB_PICKUP, 0.8f, 1f);
                     }
                 }

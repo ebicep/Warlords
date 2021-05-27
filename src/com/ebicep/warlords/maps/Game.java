@@ -17,10 +17,7 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.minecraft.server.v1_8_R3.ChatMessage;
 import net.minecraft.server.v1_8_R3.IChatBaseComponent;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Color;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
@@ -64,15 +61,59 @@ public class Game implements Runnable {
                         int time = remaining / 20;
                         if (time == 30) {
                             sendMessageToAllGamePlayer(game, ChatColor.YELLOW + "The game starts in " + ChatColor.GREEN + "30 " + ChatColor.YELLOW + "seconds!", false);
+
+                            for (Player player1 : game.teamBlue) {
+                                player1.playSound(player1.getLocation(), Sound.NOTE_STICKS, 1, 1);
+                            }
+
+                            for (Player player1 : game.teamRed) {
+                                player1.playSound(player1.getLocation(), Sound.NOTE_STICKS, 1, 1);
+                            }
+
                         } else if (time == 20) {
                             sendMessageToAllGamePlayer(game, ChatColor.YELLOW + "The game starts in 20 seconds!", false);
+
+                            for (Player player1 : game.teamBlue) {
+                                player1.playSound(player1.getLocation(), Sound.NOTE_STICKS, 1, 1);
+                            }
+
+                            for (Player player1 : game.teamRed) {
+                                player1.playSound(player1.getLocation(), Sound.NOTE_STICKS, 1, 1);
+                            }
+
                         } else if (time == 10) {
                             sendMessageToAllGamePlayer(game, ChatColor.YELLOW + "The game starts in " + ChatColor.GOLD + "10 " + ChatColor.YELLOW + "seconds!", false);
+
+                            for (Player player1 : game.teamBlue) {
+                                player1.playSound(player1.getLocation(), Sound.NOTE_STICKS, 1, 1);
+                            }
+
+                            for (Player player1 : game.teamRed) {
+                                player1.playSound(player1.getLocation(), Sound.NOTE_STICKS, 1, 1);
+                            }
+
                         } else if (time <= 5 && time != 0) {
                             if (time == 1) {
                                 sendMessageToAllGamePlayer(game, ChatColor.YELLOW + "The game starts in " + ChatColor.RED + time + ChatColor.YELLOW + " second", false);
+
+                                for (Player player1 : game.teamBlue) {
+                                    player1.playSound(player1.getLocation(), Sound.NOTE_STICKS, 1, 1);
+                                }
+
+                                for (Player player1 : game.teamRed) {
+                                    player1.playSound(player1.getLocation(), Sound.NOTE_STICKS, 1, 1);
+                                }
+
                             } else {
                                 sendMessageToAllGamePlayer(game, ChatColor.YELLOW + "The game starts in " + ChatColor.RED + time + ChatColor.YELLOW + " seconds!", false);
+
+                                for (Player player1 : game.teamBlue) {
+                                    player1.playSound(player1.getLocation(), Sound.NOTE_STICKS, 1, 1);
+                                }
+
+                                for (Player player1 : game.teamRed) {
+                                    player1.playSound(player1.getLocation(), Sound.NOTE_STICKS, 1, 1);
+                                }
                             }
                         } else if (time == 0) {
                             sendMessageToAllGamePlayer(game, "" + ChatColor.GREEN + ChatColor.BOLD + "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬", false);
@@ -83,6 +124,14 @@ public class Game implements Runnable {
                             sendMessageToAllGamePlayer(game, "" + ChatColor.YELLOW + ChatColor.BOLD + "score of " + ChatColor.AQUA + ChatColor.BOLD + "1000 " + ChatColor.YELLOW + ChatColor.BOLD + "wins!", true);
                             sendMessageToAllGamePlayer(game, "", true);
                             sendMessageToAllGamePlayer(game, "" + ChatColor.GREEN + ChatColor.BOLD + "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬", false);
+
+                            for (Player player1 : game.teamBlue) {
+                                player1.playSound(player1.getLocation(), "gamestart", 1, 1);
+                            }
+
+                            for (Player player1 : game.teamRed) {
+                                player1.playSound(player1.getLocation(), "gamestart", 1, 1);
+                            }
                         }
                         for (Player player : game.teamBlue) {
                             updateTimeLeft(player, time, game);
@@ -178,13 +227,41 @@ public class Game implements Runnable {
                         // Destroy gates
                         // Enable abilities
                         sendMessageToAllGamePlayer(game, ChatColor.YELLOW + "Gates opened! " + ChatColor.RED + "FIGHT!", false);
+
+                        for (Player player1 : game.teamBlue) {
+                            player1.playSound(player1.getLocation(), Sound.WITHER_SPAWN, 1, 1);
+                        }
+
+                        for (Player player1 : game.teamRed) {
+                            player1.playSound(player1.getLocation(), Sound.WITHER_SPAWN, 1, 1);
+                        }
+
                     } else {
                         if (game.timer % 20 == 0) {
+
                             int time = game.timer / 20;
                             System.out.println(time);
                             if (time == 0) {
                                 sendMessageToAllGamePlayer(game, ChatColor.YELLOW + "The gates will fall in " + ChatColor.RED + "10" + ChatColor.YELLOW + " seconds!", false);
+
+                                for (Player player1 : game.teamBlue) {
+                                    player1.playSound(player1.getLocation(), Sound.NOTE_STICKS, 1, 1);
+                                }
+
+                                for (Player player1 : game.teamRed) {
+                                    player1.playSound(player1.getLocation(), Sound.NOTE_STICKS, 1, 1);
+                                }
+
                             } else if (time >= 5) {
+
+                                for (Player player1 : game.teamBlue) {
+                                    player1.playSound(player1.getLocation(), Sound.NOTE_STICKS, 1, 1);
+                                }
+
+                                for (Player player1 : game.teamRed) {
+                                    player1.playSound(player1.getLocation(), Sound.NOTE_STICKS, 1, 1);
+                                }
+
                                 if (time == 9) {
                                     sendMessageToAllGamePlayer(game, ChatColor.YELLOW + "The gates will fall in " + ChatColor.RED + (10 - time) + ChatColor.YELLOW + " second!", false);
                                 } else {
@@ -533,7 +610,7 @@ public class Game implements Runnable {
         //sideBar.getScore(ChatColor.GOLD + "Lv90 " + warlordsPlayer.getSpec().getClassName()).setScore(4);
         //sideBar.getScore(ChatColor.WHITE + "Spec: " + ChatColor.GREEN + warlordsPlayer.getSpec().getClass().getSimpleName()).setScore(3);
         sideBar.getScore("    ").setScore(2);
-        sideBar.getScore(ChatColor.YELLOW + "WL 2.0 beta_b-v1.0 ").setScore(1);
+        sideBar.getScore(ChatColor.YELLOW + "WL 2.0 master_b-v0.0.2 ").setScore(1);
 
         player.setScoreboard(board);
     }

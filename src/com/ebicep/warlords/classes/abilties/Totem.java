@@ -291,7 +291,8 @@ public class Totem extends EntityArmorStand {
 
                     if (healingTotem.getSecondsLeft() != 0) {
 
-                        ParticleEffect.VILLAGER_HAPPY.display(0.2F, 0.2F, 0.2F, 0.05F, 2, standLocation, 500);
+                        Location particleLoc = standLocation.add(0, 1.5, 0);
+                        ParticleEffect.VILLAGER_HAPPY.display(0.2F, 0.2F, 0.2F, 0.05F, 2, particleLoc, 500);
 
                         for (Player player1 : player.getWorld().getPlayers()) {
                             player1.playSound(player.getLocation(), "shaman.earthlivingweapon.impact", 2, 1F);
