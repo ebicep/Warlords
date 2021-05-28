@@ -34,7 +34,7 @@ public enum Classes {
     PROTECTOR("Protector", Protector::new, "§7A healing-oriented Paladin specialization that converts damage into healing for his allies and has access to greater healing abilities."),
 
     THUNDERLORD("Thunderlord", ThunderLord::new, "§7A damage-oriented Shaman specialization that calls upon the power of Lightning to electrocute enemies."),
-    SPIRITGUARD("Spiritguard", Spiritguard::new, "§7A defense-oriented Shaman specialization that calls upon the aid of spirits old and new to mitigate death and avoid death."),
+    SPIRITGUARD("Spiritguard", Spiritguard::new, "§7A defense-oriented Shaman specialization that calls upon the aid of spirits old and new to mitigate damage and avoid death."),
     EARTHWARDEN("Earthwarden", Earthwarden::new, "§7A healing-oriented Shaman specialization that calls upon the power of Earth to crush enemies and to aid allies."),
 
     ;

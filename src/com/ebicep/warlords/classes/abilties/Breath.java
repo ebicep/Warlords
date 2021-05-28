@@ -61,7 +61,7 @@ public class Breath extends AbstractAbility {
 
         if (name.contains("Water")) {
             for (Player player1 : player.getWorld().getPlayers()) {
-                player1.playSound(player.getLocation(), "mage.waterbreath.activation", 2F, 1);
+                player1.playSound(player.getLocation(), "mage.waterbreath.activation", 2, 1);
             }
 
             new BukkitRunnable() {
@@ -101,7 +101,7 @@ public class Breath extends AbstractAbility {
 
         } else if (name.contains("Freezing")) {
             for (Player player1 : player.getWorld().getPlayers()) {
-                player1.playSound(player.getLocation(), "mage.freezingbreath.activation", 2F, 1);
+                player1.playSound(player.getLocation(), "mage.freezingbreath.activation", 2, 1);
             }
 
             new BukkitRunnable() {

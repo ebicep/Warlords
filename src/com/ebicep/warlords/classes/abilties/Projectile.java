@@ -338,9 +338,9 @@ public class Projectile extends AbstractAbility {
                     Matrix4d center = new Matrix4d(location);
 
                     for (int i = 0; i < 4; i++) {
-                        double angle = Math.toRadians(i * 90) + animationTimer * 0.3;
+                        double angle = Math.toRadians(i * 90) + animationTimer * 0.45;
                         double width = 0.2D;
-                        ParticleEffect.FLAME.display(0, 0, 0, 0, 1,
+                        ParticleEffect.FLAME.display(0, 0, 0, 0, 2,
                                 center.translateVector(location.getWorld(), 0, Math.sin(angle) * width, Math.cos(angle) * width), 500);
                     }
                     animationTimer++;
@@ -367,7 +367,7 @@ public class Projectile extends AbstractAbility {
                                         customProjectile.getBall().getCritChance() + (int) location.distance(customProjectile.getStartingLocation()),
                                         customProjectile.getBall().getCritMultiplier()
                                 );
-                                List<Entity> near = victim.getNearbyEntities(4D, 4D, 4D);
+                                List<Entity> near = victim.getNearbyEntities(5D, 5D, 5D);
                                 near = Utils.filterOutTeammates(near, customProjectile.getShooter());
                                 for (Entity nearEntity : near) {
                                     if (nearEntity instanceof Player && ((Player) nearEntity).getGameMode() != GameMode.SPECTATOR) {

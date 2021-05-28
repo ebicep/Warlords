@@ -21,10 +21,8 @@ public class Repentance extends AbstractAbility {
         warlordsPlayer.setRepentanceDuration(12);
         warlordsPlayer.setRepentanceCounter(warlordsPlayer.getRepentanceCounter() + 2000);
 
-
-        // TODO: find spiritguards rep sound
         for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "paladin.barrieroflight.impact", 1, 1.5F);
+            player1.playSound(player.getLocation(), "paladin.barrieroflight.impact", 1, 2F);
         }
     }
 }

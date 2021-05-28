@@ -169,6 +169,10 @@ public class WarlordsEvents implements Listener {
                     } else if (player.getInventory().getHelmet() != null && player.getInventory().getHelmet().getType() == Material.STANDING_BANNER) {
                         player.sendMessage(ChatColor.RED + "You cannot mount while holding the flag!");
                     } else {
+                        for (Player player1 : player.getWorld().getPlayers()) {
+                            player1.playSound(player.getLocation(), "mountup", 1, 1);
+                        }
+
                         Horse horse = (Horse) player.getWorld().spawnEntity(player.getLocation(), EntityType.HORSE);
                         horse.setTamed(true);
                         horse.getInventory().setSaddle(new ItemStack(Material.SADDLE));

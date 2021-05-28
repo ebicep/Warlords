@@ -251,9 +251,9 @@ public class Warlords extends JavaPlugin {
                             for (int i = 1; i < warlordsPlayer.getHitBy().size(); i++) {
                                 WarlordsPlayer assisted = warlordsPlayer.getHitBy().get(i);
                                 if (game.isBlueTeam(warlordsPlayer.getHitBy().get(0).getPlayer())) {
-                                    assisted.getPlayer().sendMessage(ChatColor.GRAY + "You assisted" + ChatColor.BLUE + warlordsPlayer.getHitBy().get(0).getName() + ChatColor.GRAY + "in killing " + ChatColor.RED + warlordsPlayer.getName());
+                                    assisted.getPlayer().sendMessage(ChatColor.GRAY + "You assisted " + ChatColor.BLUE + warlordsPlayer.getHitBy().get(0).getName() + ChatColor.GRAY + " in killing " + ChatColor.RED + warlordsPlayer.getName());
                                 } else if (game.isRedTeam(warlordsPlayer.getHitBy().get(0).getPlayer())) {
-                                    assisted.getPlayer().sendMessage(ChatColor.GRAY + "You assisted" + ChatColor.RED + warlordsPlayer.getHitBy().get(0).getName() + ChatColor.GRAY + "in killing " + ChatColor.BLUE + warlordsPlayer.getName());
+                                    assisted.getPlayer().sendMessage(ChatColor.GRAY + "You assisted " + ChatColor.RED + warlordsPlayer.getHitBy().get(0).getName() + ChatColor.GRAY + " in killing " + ChatColor.BLUE + warlordsPlayer.getName());
                                 }
                                 assisted.addAssist();
                                 assisted.getScoreboard().updateKillsAssists();

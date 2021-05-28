@@ -51,7 +51,7 @@ public class CustomScoreboard {
         sideBar.getScore("     ").setScore(4);
         sideBar.getScore("" + ChatColor.GREEN + Warlords.getPlayer(player).getTotalKills() + ChatColor.RESET + " Kills " + ChatColor.GREEN + Warlords.getPlayer(player).getTotalAssists() + ChatColor.RESET + " Assists").setScore(3);
         sideBar.getScore("      ").setScore(2);
-        sideBar.getScore(ChatColor.YELLOW + "WL 2.0 beta_b-v1.0 ").setScore(1);
+        sideBar.getScore(ChatColor.YELLOW + "WL 2.0 master_b-v0.0.2 ").setScore(1);
 
         //        Objective tab = board.registerNewObjective("tab", "");
 //        tab.setDisplaySlot(DisplaySlot.PLAYER_LIST);
@@ -130,7 +130,6 @@ public class CustomScoreboard {
         for (String entry : scoreboard.getEntries()) {
             String entryUnformatted = ChatColor.stripColor(entry);
             if (entryUnformatted.contains("Wins in:") || entryUnformatted.contains("Time Left:")) {
-                //TODO add game timer and blue/red caps
                 scoreboard.resetScores(entry);
                 String timeLeft = (Game.remaining / 60) + ":";
                 if (Game.remaining % 60 < 10) {
