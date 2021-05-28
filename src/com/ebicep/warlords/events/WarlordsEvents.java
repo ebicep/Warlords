@@ -74,22 +74,26 @@ public class WarlordsEvents implements Listener {
 
         //readds player
         //first to warlords players
+        System.out.println(player.getName() + "  REGJOINED");
+        System.out.println("OLD ---------");
+        System.out.println(Warlords.getPlayers().values());
+        System.out.println(Warlords.getPlayers().keySet());
+        System.out.println(Warlords.game.getTeamBlue());
+        System.out.println(Warlords.game.getTeamRed());
         for (Player oldPlayer : Warlords.getPlayers().keySet()) {
             if (oldPlayer.getUniqueId().equals(player.getUniqueId())) {
                 Warlords.getPlayers().put(player, Warlords.getPlayer(oldPlayer));
                 Warlords.getPlayer(player).setPlayer(player);
                 Warlords.getPlayer(player).setUuid(player.getUniqueId());
+                Warlords.getPlayer(player).getScoreboard().refreshScoreboard(player);
                 //then to team players
                 if (Warlords.game.getTeamBlue().contains(oldPlayer)) {
                     Warlords.game.getTeamBlue().remove(oldPlayer);
                     Warlords.game.getTeamBlue().add(player);
-//                    player.setPlayerListName(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + Warlords.getPlayer(player).getSpec().getClassNameShort() + ChatColor.DARK_GRAY + "] "
-//                            + ChatColor.BLUE + player.getName() + ChatColor.DARK_GRAY + " [" + ChatColor.GOLD + "Lv90" + ChatColor.DARK_GRAY + "]");
+
                 } else if (Warlords.game.getTeamRed().contains(oldPlayer)) {
                     Warlords.game.getTeamRed().remove(oldPlayer);
                     Warlords.game.getTeamRed().add(player);
-//                    player.setPlayerListName(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + Warlords.getPlayer(player).getSpec().getClassNameShort() + ChatColor.DARK_GRAY + "] "
-//                            + ChatColor.RED + player.getName() + ChatColor.DARK_GRAY + " [" + ChatColor.GOLD + "Lv90" + ChatColor.DARK_GRAY + "]");
                 }
 
 
@@ -97,6 +101,12 @@ public class WarlordsEvents implements Listener {
                 break;
             }
         }
+        System.out.println("NEW ---------");
+        System.out.println(Warlords.getPlayers().values());
+        System.out.println(Warlords.getPlayers().keySet());
+        System.out.println(Warlords.game.getTeamBlue());
+        System.out.println(Warlords.game.getTeamRed());
+
 
     }
 
@@ -107,10 +117,8 @@ public class WarlordsEvents implements Listener {
             Player victim = (Player) e.getEntity();
             WarlordsPlayer warlordsPlayerAttacker = Warlords.getPlayer(attacker);
             WarlordsPlayer warlordsPlayerVictim = Warlords.getPlayer(victim);
-
             if (!Warlords.game.onSameTeam(warlordsPlayerAttacker, warlordsPlayerVictim)) {
                 if (attacker.getInventory().getHeldItemSlot() == 0 && warlordsPlayerAttacker.getHitCooldown() == 0) {
-                    victim.damage(0);
                     warlordsPlayerAttacker.setHitCooldown(12);
                     warlordsPlayerAttacker.subtractEnergy(warlordsPlayerAttacker.getSpec().getEnergyOnHit() * -1);
                     warlordsPlayerVictim.addHealth(warlordsPlayerAttacker, "", -132, -179, 25, 200);

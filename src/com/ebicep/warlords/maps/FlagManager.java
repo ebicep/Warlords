@@ -31,7 +31,6 @@ import org.bukkit.metadata.MetadataValueAdapter;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
-import org.bukkit.scoreboard.Scoreboard;
 
 public class FlagManager implements Listener {
 
@@ -77,7 +76,7 @@ public class FlagManager implements Listener {
                 hasScored = true;
 
                 for (Player player1 : playerFlagLocation.getPlayer().getWorld().getPlayers()) {
-                    Warlords.getPlayer(player1).getScoreboard().updateKills();
+                    Warlords.getPlayer(player1).getScoreboard().updatePoints();
                     if (Warlords.game.isRedTeam(player1)) {
                         player1.playSound(playerFlagLocation.getLocation(), "ctf.enemyflagcaptured", 500, 1);
                     } else {
@@ -98,7 +97,7 @@ public class FlagManager implements Listener {
                 hasScored = true;
 
                 for (Player player1 : playerFlagLocation.getPlayer().getWorld().getPlayers()) {
-                    Warlords.getPlayer(player1).getScoreboard().updateKills();
+                    Warlords.getPlayer(player1).getScoreboard().updatePoints();
                     if (!Warlords.game.isRedTeam(player1)) {
                         player1.playSound(playerFlagLocation.getLocation(), "ctf.enemyflagcaptured", 500, 1);
                     } else {
@@ -197,9 +196,11 @@ public class FlagManager implements Listener {
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent e) {
         Player player = e.getPlayer();
-        WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
-        if (player.getInventory().getHeldItemSlot() == 8 && e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
-            warlordsPlayer.setTeamFlagCompass(!warlordsPlayer.isTeamFlagCompass());
+        if (Warlords.hasPlayer(player)) {
+            WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
+            if (player.getInventory().getHeldItemSlot() == 8 && e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
+                warlordsPlayer.setTeamFlagCompass(!warlordsPlayer.isTeamFlagCompass());
+            }
         }
     }
 

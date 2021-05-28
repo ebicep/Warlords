@@ -1,7 +1,9 @@
 package com.ebicep.warlords.classes;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.maps.Game;
 import net.minecraft.server.v1_8_R3.PacketPlayOutAnimation;
+import org.bukkit.GameMode;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -52,88 +54,93 @@ public abstract class PlayerClass {
     }
 
     public void onRightClick(Player player) {
-        if (player.getInventory().getHeldItemSlot() == 0) {
-            if (player.getLevel() >= weapon.getEnergyCost()) {
-                weapon.onActivate(player);
-                if (!weapon.getName().contains("Strike"))
-                    sendRightClickPacket(player);
-            }
-        } else if (player.getInventory().getHeldItemSlot() == 1) {
-            if (red.getCurrentCooldown() == 0 && player.getLevel() >= red.getEnergyCost()) {
-                red.onActivate(player);
-                if (!red.getName().contains("Chain") && !red.getName().contains("Link")) {
-                    red.setCurrentCooldown(red.cooldown);
+        if (Warlords.game.getState() == Game.State.GAME && player.getGameMode() != GameMode.SPECTATOR) {
+            if (player.getInventory().getHeldItemSlot() == 0) {
+                if (player.getLevel() >= weapon.getEnergyCost()) {
+                    weapon.onActivate(player);
+                    if (!weapon.getName().contains("Strike"))
+                        sendRightClickPacket(player);
+                }
+            } else if (player.getInventory().getHeldItemSlot() == 1) {
+                if (red.getCurrentCooldown() == 0 && player.getLevel() >= red.getEnergyCost()) {
+                    red.onActivate(player);
+                    if (!red.getName().contains("Chain") && !red.getName().contains("Link")) {
+                        red.setCurrentCooldown(red.cooldown);
+                        sendRightClickPacket(player);
+                    }
+
+                }
+            } else if (player.getInventory().getHeldItemSlot() == 2) {
+                if (purple.getCurrentCooldown() == 0 && player.getLevel() >= purple.getEnergyCost()) {
+                    purple.onActivate(player);
+                    purple.setCurrentCooldown(purple.cooldown);
                     sendRightClickPacket(player);
                 }
-
-            }
-        } else if (player.getInventory().getHeldItemSlot() == 2) {
-            if (purple.getCurrentCooldown() == 0 && player.getLevel() >= purple.getEnergyCost()) {
-                purple.onActivate(player);
-                purple.setCurrentCooldown(purple.cooldown);
-                sendRightClickPacket(player);
-            }
-        } else if (player.getInventory().getHeldItemSlot() == 3) {
-            if (blue.getCurrentCooldown() == 0 && player.getLevel() >= blue.getEnergyCost()) {
-                blue.onActivate(player);
-                if (!blue.getName().contains("Chain")) {
-                    blue.setCurrentCooldown(blue.cooldown);
+            } else if (player.getInventory().getHeldItemSlot() == 3) {
+                if (blue.getCurrentCooldown() == 0 && player.getLevel() >= blue.getEnergyCost()) {
+                    blue.onActivate(player);
+                    if (!blue.getName().contains("Chain")) {
+                        blue.setCurrentCooldown(blue.cooldown);
+                        sendRightClickPacket(player);
+                    }
+                }
+            } else if (player.getInventory().getHeldItemSlot() == 4) {
+                if (orange.getCurrentCooldown() == 0 && player.getLevel() >= orange.getEnergyCost()) {
+                    orange.onActivate(player);
+                    orange.setCurrentCooldown(orange.cooldown);
                     sendRightClickPacket(player);
                 }
             }
-        } else if (player.getInventory().getHeldItemSlot() == 4) {
-            if (orange.getCurrentCooldown() == 0 && player.getLevel() >= orange.getEnergyCost()) {
-                orange.onActivate(player);
-                orange.setCurrentCooldown(orange.cooldown);
-                sendRightClickPacket(player);
-            }
-        }
 
-        if (player.getVehicle() != null) {
-            player.getVehicle().remove();
+            if (player.getVehicle() != null) {
+                player.getVehicle().remove();
+            }
         }
     }
 
     public void onRightClickHotKey(Player player, int slot) {
-        if (slot == 0) {
-            if (player.getLevel() >= weapon.getEnergyCost()) {
-                weapon.onActivate(player);
-                if (!weapon.getName().contains("Strike"))
-                    sendRightClickPacket(player);
-            }
-        } else if (slot == 1) {
-            if (red.getCurrentCooldown() == 0 && player.getLevel() >= red.getEnergyCost()) {
-                red.onActivate(player);
-                if (!red.getName().contains("Chain") && !red.getName().contains("Link")) {
-                    red.setCurrentCooldown(red.cooldown);
-                    sendRightClickPacket(player);
-                }
-            }
-        } else if (slot == 2) {
-            if (purple.getCurrentCooldown() == 0 && player.getLevel() >= purple.getEnergyCost()) {
-                purple.onActivate(player);
-                purple.setCurrentCooldown(purple.cooldown);
-                sendRightClickPacket(player);
-            }
-        } else if (slot == 3) {
-            if (blue.getCurrentCooldown() == 0 && player.getLevel() >= blue.getEnergyCost()) {
-                blue.onActivate(player);
-                if (!blue.getName().contains("Chain")) {
-                    blue.setCurrentCooldown(blue.cooldown);
-                    sendRightClickPacket(player);
-                }
-            }
-        } else if (slot == 4) {
-            if (orange.getCurrentCooldown() == 0 && player.getLevel() >= orange.getEnergyCost()) {
-                orange.onActivate(player);
-                orange.setCurrentCooldown(orange.cooldown);
-                sendRightClickPacket(player);
-            }
-        }
-        player.getInventory().setHeldItemSlot(0);
+        if (Warlords.game.getState() == Game.State.GAME && player.getGameMode() != GameMode.SPECTATOR) {
 
-        if (player.getVehicle() != null) {
-            player.getVehicle().remove();
+            if (slot == 0) {
+                if (player.getLevel() >= weapon.getEnergyCost()) {
+                    weapon.onActivate(player);
+                    if (!weapon.getName().contains("Strike"))
+                        sendRightClickPacket(player);
+                }
+            } else if (slot == 1) {
+                if (red.getCurrentCooldown() == 0 && player.getLevel() >= red.getEnergyCost()) {
+                    red.onActivate(player);
+                    if (!red.getName().contains("Chain") && !red.getName().contains("Link")) {
+                        red.setCurrentCooldown(red.cooldown);
+                        sendRightClickPacket(player);
+                    }
+                }
+            } else if (slot == 2) {
+                if (purple.getCurrentCooldown() == 0 && player.getLevel() >= purple.getEnergyCost()) {
+                    purple.onActivate(player);
+                    purple.setCurrentCooldown(purple.cooldown);
+                    sendRightClickPacket(player);
+                }
+            } else if (slot == 3) {
+                if (blue.getCurrentCooldown() == 0 && player.getLevel() >= blue.getEnergyCost()) {
+                    blue.onActivate(player);
+                    if (!blue.getName().contains("Chain")) {
+                        blue.setCurrentCooldown(blue.cooldown);
+                        sendRightClickPacket(player);
+                    }
+                }
+            } else if (slot == 4) {
+                if (orange.getCurrentCooldown() == 0 && player.getLevel() >= orange.getEnergyCost()) {
+                    orange.onActivate(player);
+                    orange.setCurrentCooldown(orange.cooldown);
+                    sendRightClickPacket(player);
+                }
+            }
+            player.getInventory().setHeldItemSlot(0);
+
+            if (player.getVehicle() != null) {
+                player.getVehicle().remove();
+            }
         }
     }
 

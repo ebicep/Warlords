@@ -6,6 +6,7 @@ import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.util.Matrix4d;
 import com.ebicep.warlords.util.ParticleEffect;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -32,7 +33,7 @@ public class Breath extends AbstractAbility {
         Vector viewDirection = player.getLocation().getDirection();
         List<Entity> near = player.getNearbyEntities(6.0D, 3.5D, 6.0D);
         for (Entity entity : near) {
-            if (entity instanceof Player) {
+            if (entity instanceof Player && ((Player) entity).getGameMode() != GameMode.SPECTATOR) {
                 Player nearPlayer = (Player) entity;
                 Vector direction = nearPlayer.getLocation().subtract(player.getLocation()).toVector().normalize();
                 if (viewDirection.dot(direction) > .72) {

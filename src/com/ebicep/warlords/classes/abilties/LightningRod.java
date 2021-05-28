@@ -41,7 +41,7 @@ public class LightningRod extends AbstractAbility {
 
         for (Entity entity : near) {
             final Location otherLocation = entity.getLocation();
-            if (entity instanceof Player && otherLocation.distanceSquared(playerLocation) < 30) {
+            if (entity instanceof Player && ((Player) entity).getGameMode() != GameMode.SPECTATOR && otherLocation.distanceSquared(playerLocation) < 30) {
                 if (entity != player) {
                     //knockback
                     final Location loc = entity.getLocation();

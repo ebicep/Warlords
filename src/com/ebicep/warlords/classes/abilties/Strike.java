@@ -25,11 +25,11 @@ public class Strike extends AbstractAbility {
         List<Entity> near = player.getNearbyEntities(5.0D, 5.0D, 5.0D);
         near = Utils.filterOutTeammates(near, player);
         for (Entity entity : near) {
-            if (entity instanceof Player) {
+            if (entity instanceof Player && ((Player) entity).getGameMode() != GameMode.SPECTATOR) {
                 Player nearPlayer = (Player) entity;
                 //TODO check if you should just remove distance because near gets nearest already
                 double distance = player.getLocation().distanceSquared(nearPlayer.getLocation());
-                if (nearPlayer.getGameMode() != GameMode.SPECTATOR && Utils.getLookingAt(player, nearPlayer) && distance < 3.6 * 3.6 && Utils.hasLineOfSight(player, nearPlayer)) {
+                if (Utils.getLookingAt(player, nearPlayer) && distance < 3.6 * 3.6 && Utils.hasLineOfSight(player, nearPlayer)) {
                     PacketPlayOutAnimation playOutAnimation = new PacketPlayOutAnimation(((CraftPlayer) player).getHandle(), 0);
                     ((CraftPlayer) player).getHandle().playerConnection.sendPacket(playOutAnimation);
                     WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);

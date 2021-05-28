@@ -367,7 +367,7 @@ public class Chain extends AbstractAbility {
         near = Utils.filterOnlyTeammates(near, player);
         near.remove(player);
         for (Entity entity : near) {
-            if (entity instanceof Player) {
+            if (entity instanceof Player && ((Player) entity).getGameMode() != GameMode.SPECTATOR) {
                 Player nearPlayer = (Player) entity;
                 Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, warlordsPlayer.getSpec().getRed().getName(), 420, 420, -1, 100);
                 playersHealed++;

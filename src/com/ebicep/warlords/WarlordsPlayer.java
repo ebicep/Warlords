@@ -20,10 +20,10 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.Dye;
 import org.bukkit.metadata.MetadataValue;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.DoubleStream;
+import java.util.stream.IntStream;
+
 import org.bukkit.block.Block;
 
 public class WarlordsPlayer {
@@ -43,13 +43,13 @@ public class WarlordsPlayer {
     private int hitCooldown;
 
     //TODO make these lists, each index indicated a minute in the game
-    private int kills = 0;
-    private int assists = 0;
+    private int[] kills = new int[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
+    private int[] assists = new int[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
     private List<WarlordsPlayer> hitBy = new ArrayList<>();
-    private int deaths = 0;
-    private float damage = 0;
-    private float healing = 0;
-    private float absorbed = 0;
+    private int[] deaths = new int[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
+    private float[] damage = new float[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
+    private float[] healing = new float[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
+    private float[] absorbed = new float[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
 
     private final CalculateSpeed speed;
 
@@ -637,7 +637,7 @@ public class WarlordsPlayer {
                     arcaneShield = 0;
                     addHealth(attacker, ability, (int) (arcaneShieldHealth + damageHealValue), (int) (arcaneShieldHealth + damageHealValue), isCrit ? 100 : -1, 100);
 
-                    this.absorbed += -(arcaneShield + damageHealValue);
+                    addAbsorbed(-(arcaneShield + damageHealValue));
                 } else {
                     if (ability.isEmpty()) {
                         player.sendMessage("§c\u00AB§7 You absorbed " + attacker.getName() + "'s melee §7hit.");
@@ -647,7 +647,7 @@ public class WarlordsPlayer {
                         attacker.getPlayer().sendMessage("§a\u00BB§7 Your " + ability + " was absorbed by " + name + "§7.");
                     }
 
-                    this.absorbed += -damageHealValue;
+                    addAbsorbed(-damageHealValue);
                 }
                 arcaneShieldHealth += damageHealValue;
 
@@ -803,14 +803,15 @@ public class WarlordsPlayer {
                 }
                 attacker.addDamage(-damageHealValue);
                 if (this.health <= 0) {
+
                     // GRAVE - START
                     Location deathLocation = player.getLocation();
                     Block bestGraveCandidate = null;
                     boolean isFlagCarrier = !player.getMetadata(FlagManager.FLAG_DAMAGE_MULTIPLIER).isEmpty();
                     for (int x = -1; x <= 1; x++) {
-                        Bukkit.broadcastMessage("For 1:" + x);
+                        //Bukkit.broadcastMessage("For 1:" + x);
                         for (int z = -1; z <= 1; z++) {
-                            Bukkit.broadcastMessage("For 2:" + z);
+                            //Bukkit.broadcastMessage("For 2:" + z);
                             if (isFlagCarrier && x == 0 && z == 0) {
                                 // This player is a flag carrier, prevent placing the grave at the direct location of the player
                                 continue;
@@ -822,7 +823,7 @@ public class WarlordsPlayer {
                             if (lastBlock.getType() == Material.AIR) {
                                 toTest.subtract(0, 1, 0);
                                 for (; toTest.getY() > 0; toTest.subtract(0, 1, 0)) {
-                                    Bukkit.broadcastMessage("For 3:" + toTest.getY());
+                                    //Bukkit.broadcastMessage("For 3:" + toTest.getY());
                                     Block underTest = toTest.getBlock();
                                     if (underTest.getType() != Material.AIR) {
                                         if (underTest.getType().isTransparent()) {
@@ -880,21 +881,25 @@ public class WarlordsPlayer {
                     this.addDeath();
                     this.scoreboard.updateKillsAssists();
                     Bukkit.getPluginManager().callEvent(new WarlordsDeathEvent(this));
+
+
                     if (Warlords.game.isBlueTeam(attacker.player)) {
                         player.sendMessage(ChatColor.GRAY + "You were killed by " + ChatColor.BLUE + attacker.getName());
                         attacker.getPlayer().sendMessage(ChatColor.GRAY + "You killed " + ChatColor.RED + name);
                         for (Player gamePlayer : Warlords.getPlayers().keySet()) {
-                            gamePlayer.sendMessage(ChatColor.RED + name + ChatColor.GRAY + " was killed by " + ChatColor.BLUE + attacker.getName());
+                            if (gamePlayer != this.player && gamePlayer != attacker.player)
+                                gamePlayer.sendMessage(ChatColor.RED + name + ChatColor.GRAY + " was killed by " + ChatColor.BLUE + attacker.getName());
                         }
                     } else {
                         player.sendMessage(ChatColor.GRAY + "You were killed by " + ChatColor.RED + attacker.getName());
                         attacker.getPlayer().sendMessage(ChatColor.GRAY + "You killed " + ChatColor.BLUE + name);
                         for (Player gamePlayer : Warlords.getPlayers().keySet()) {
-                            gamePlayer.sendMessage(ChatColor.BLUE + name + ChatColor.GRAY + " was killed by " + ChatColor.RED + attacker.getName());
+                            if (gamePlayer != this.player && gamePlayer != attacker.player)
+                                gamePlayer.sendMessage(ChatColor.BLUE + name + ChatColor.GRAY + " was killed by " + ChatColor.RED + attacker.getName());
                         }
                     }
 
-                    if (scoreboard.getBlueTeam().contains(name)) {
+                    if (scoreboard.getBlueTeam().contains(this)) {
                         Warlords.redKills++;
                         Warlords.game.addRedPoints(SCORE_KILL_POINTS);
                     } else {
@@ -903,7 +908,7 @@ public class WarlordsPlayer {
                     }
 
                     for (WarlordsPlayer value : Warlords.getPlayers().values()) {
-                        value.getScoreboard().updateKills();
+                        value.getScoreboard().updatePoints();
                     }
                 } else {
 
@@ -1410,28 +1415,28 @@ public class WarlordsPlayer {
         this.chargeLocation = chargeLocation;
     }
 
-    public int getKills() {
+    public int[] getKills() {
         return kills;
     }
 
-    public void setKills(int kills) {
-        this.kills = kills;
-    }
-
     public void addKill() {
-        this.kills++;
+        this.kills[Warlords.game.getMinute()]++;
     }
 
-    public int getAssists() {
+    public int getTotalKills() {
+        return IntStream.of(kills).sum();
+    }
+
+    public int[] getAssists() {
         return assists;
     }
 
-    public void setAssists(int assists) {
-        this.assists = assists;
+    public void addAssist() {
+        this.assists[Warlords.game.getMinute()]++;
     }
 
-    public void addAssist() {
-        this.assists++;
+    public int getTotalAssists() {
+        return IntStream.of(assists).sum();
     }
 
     public List<WarlordsPlayer> getHitBy() {
@@ -1442,52 +1447,77 @@ public class WarlordsPlayer {
         this.hitBy = hitBy;
     }
 
-    public int getDeaths() {
+    public int[] getDeaths() {
         return deaths;
     }
 
-    public void setDeaths(int deaths) {
-        this.deaths = deaths;
+    public int getTotalDeaths() {
+        return IntStream.of(deaths).sum();
     }
 
     public void addDeath() {
-        this.deaths++;
+        this.deaths[Warlords.game.getMinute()]++;
     }
 
-    public float getDamage() {
+    public float[] getDamage() {
         return damage;
     }
 
-    public void setDamage(int damage) {
-        this.damage = damage;
-    }
-
     public void addDamage(float amount) {
-        this.damage += amount;
+        this.damage[Warlords.game.getMinute()] += amount;
     }
 
-    public float getHealing() {
+    public float getTotalDamage() {
+        return (float) IntStream.range(0, damage.length).mapToDouble(i -> damage[i]).sum();
+    }
+
+    public float[] getHealing() {
         return healing;
     }
 
-    public void setHealing(int healing) {
-        this.healing = healing;
-    }
-
     public void addHealing(float amount) {
-        this.healing += amount;
+        this.healing[Warlords.game.getMinute()] += amount;
     }
 
-    public float getAbsorbed() {
+    public float getTotalHealing() {
+        return (float) IntStream.range(0, healing.length).mapToDouble(i -> healing[i]).sum();
+    }
+
+    public float[] getAbsorbed() {
         return absorbed;
     }
 
-    public void setAbsorbed(int absorbed) {
-        this.absorbed = absorbed;
+    public void addAbsorbed(float amount) {
+        this.absorbed[Warlords.game.getMinute()] += amount;
     }
 
-    public void addAbsorbed(float amount) {
-        this.absorbed += amount;
+    public float getTotalAbsorbed() {
+        return (float) IntStream.range(0, absorbed.length).mapToDouble(i -> absorbed[i]).sum();
+    }
+
+    public ItemStack getStatItemStack(String name) {
+        ItemStack itemStack = new ItemStack(Material.STONE);
+        ItemMeta meta = itemStack.getItemMeta();
+        List<String> lore = new ArrayList<>();
+        meta.setDisplayName(ChatColor.AQUA + "Stat Breakdown (" + name + "):");
+        for (int i = 0; i < damage.length && i < Warlords.game.getMinute() + 1; i++) {
+            if (name.equals("Kills")) {
+                lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + Utils.addCommaAndRound(kills[i + 1]));
+            } else if (name.equals("Assists")) {
+                lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + Utils.addCommaAndRound(assists[i + 1]));
+            } else if (name.equals("Deaths")) {
+                lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + Utils.addCommaAndRound(deaths[i + 1]));
+            } else if (name.equals("Damage")) {
+                lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + Utils.addCommaAndRound(damage[i + 1]));
+            } else if (name.equals("Healing")) {
+                lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + Utils.addCommaAndRound(healing[i + 1]));
+            } else if (name.equals("Absorbed")) {
+                lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + Utils.addCommaAndRound(absorbed[i + 1]));
+            }
+        }
+        meta.setLore(lore);
+        itemStack.setItemMeta(meta);
+        return itemStack;
     }
 
     public boolean isFirstProc() {

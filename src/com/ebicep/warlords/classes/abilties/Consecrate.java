@@ -5,6 +5,7 @@ import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.util.Utils;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -50,7 +51,7 @@ public class Consecrate extends AbstractAbility {
                 List<Entity> near = (List<Entity>) damageHealCircle.getLocation().getWorld().getNearbyEntities(damageHealCircle.getLocation(), 5, 3, 5);
                 near = Utils.filterOutTeammates(near, player);
                 for (Entity entity : near) {
-                    if (entity instanceof Player) {
+                    if (entity instanceof Player && ((Player) entity).getGameMode() != GameMode.SPECTATOR) {
                         Player player = (Player) entity;
                         WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
                         warlordsPlayer.addHealth(Warlords.getPlayer(damageHealCircle.getPlayer()), damageHealCircle.getName(), damageHealCircle.getMinDamage(), damageHealCircle.getMaxDamage(), damageHealCircle.getCritChance(), damageHealCircle.getCritMultiplier());

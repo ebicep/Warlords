@@ -11,10 +11,13 @@ import com.ebicep.warlords.util.Classes;
 import com.ebicep.warlords.util.CustomScoreboard;
 import com.ebicep.warlords.util.RemoveEntities;
 import com.ebicep.warlords.util.Utils;
-import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Color;
+import org.bukkit.Material;
 import net.minecraft.server.v1_8_R3.ChatMessage;
 import net.minecraft.server.v1_8_R3.IChatBaseComponent;
 import org.bukkit.*;
@@ -27,15 +30,16 @@ import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
 
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class Game implements Runnable {
 
     private static final int POINT_LIMIT = 1000;
     public static int remaining = 0;
+    public static TextComponent spacer = new TextComponent(ChatColor.GRAY + " - ");
 
     public enum State {
         PRE_GAME {
@@ -164,8 +168,8 @@ public class Game implements Runnable {
                 game.flags = new FlagManager(game.map.redFlag, game.map.blueFlag);
                 game.timer = 0;
                 // Close config screen
-                List<String> blueTeam = new ArrayList<>();
-                List<String> redTeam = new ArrayList<>();
+                List<WarlordsPlayer> blueTeam = new ArrayList<>();
+                List<WarlordsPlayer> redTeam = new ArrayList<>();
 
                 RemoveEntities removeEntities = new RemoveEntities();
                 removeEntities.onRemove();
@@ -175,9 +179,7 @@ public class Game implements Runnable {
                     Classes selected = Classes.getSelected(p);
                     Warlords.addPlayer(new WarlordsPlayer(p, p.getName(), p.getUniqueId(), selected.create.apply(p), false));
 
-                    redTeam.add(p.getName());
-//                    p.setPlayerListName(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + Warlords.getPlayer(p).getSpec().getClassNameShort() + ChatColor.DARK_GRAY + "] "
-//                            + ChatColor.RED + p.getName() + ChatColor.DARK_GRAY + " [" + ChatColor.GOLD + "Lv90" + ChatColor.DARK_GRAY + "]");
+                    redTeam.add(Warlords.getPlayer(p));
 
                     resetArmor(p, Warlords.getPlayer(p).getSpec(), false);
                     System.out.println("Added " + p.getName());
@@ -188,9 +190,7 @@ public class Game implements Runnable {
                     Classes selected = Classes.getSelected(p);
                     Warlords.addPlayer(new WarlordsPlayer(p, p.getName(), p.getUniqueId(), selected.create.apply(p), false));
 
-                    blueTeam.add(p.getName());
-//                    p.setPlayerListName(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + Warlords.getPlayer(p).getSpec().getClassNameShort() + ChatColor.DARK_GRAY + "] "
-//                            + ChatColor.BLUE + p.getName() + ChatColor.DARK_GRAY + " [" + ChatColor.GOLD + "Lv90" + ChatColor.DARK_GRAY + "]");
+                    blueTeam.add(Warlords.getPlayer(p));
 
                     resetArmor(p, Warlords.getPlayer(p).getSpec(), true);
                     System.out.println("Added " + p.getName());
@@ -240,7 +240,6 @@ public class Game implements Runnable {
                         if (game.timer % 20 == 0) {
 
                             int time = game.timer / 20;
-                            System.out.println(time);
                             if (time == 0) {
                                 sendMessageToAllGamePlayer(game, ChatColor.YELLOW + "The gates will fall in " + ChatColor.RED + "10" + ChatColor.YELLOW + " seconds!", false);
 
@@ -294,7 +293,6 @@ public class Game implements Runnable {
                 // Disable abilities
                 game.flags.stop();
                 game.flags = null;
-                game.timer = 0;
                 boolean teamBlueWins = !game.forceEnd && game.bluePoints > game.redPoints;
                 boolean teamRedWins = !game.forceEnd && game.redPoints > game.bluePoints;
 
@@ -306,44 +304,102 @@ public class Game implements Runnable {
                 List<WarlordsPlayer> players = new ArrayList<>(Warlords.getPlayers().values());
                 sendMessageToAllGamePlayer(game, "" + ChatColor.GREEN + ChatColor.BOLD + "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬", false);
                 sendMessageToAllGamePlayer(game, "" + ChatColor.WHITE + ChatColor.BOLD + "  Warlords", true);
-                sendMessageToAllGamePlayer(game, "", true);
-                sendMessageToAllGamePlayer(game, "" + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + "✚ MVP ✚", true);
-                sendMessageToAllGamePlayer(game, "" + ChatColor.AQUA + "Joe", true);
-                sendMessageToAllGamePlayer(game, "", true);
-                sendMessageToAllGamePlayer(game, "" + ChatColor.RED + ChatColor.BOLD + "✚ TOP DAMAGE ✚", true);
-                players = players.stream().sorted(Comparator.comparing(WarlordsPlayer::getDamage)).collect(Collectors.toList());
-                String damageMessage = "";
-                for (int i = 0; i < players.size() && i < 3; i++) {
-                    damageMessage += ChatColor.AQUA + players.get(i).getName() + ChatColor.GRAY + ": " + ChatColor.GOLD + players.get(i).getDamage() + "k " + ChatColor.GRAY + "- ";
-                }
-                sendMessageToAllGamePlayer(game, damageMessage, true);
-                sendMessageToAllGamePlayer(game, "", true);
-                sendMessageToAllGamePlayer(game, "" + ChatColor.GREEN + ChatColor.BOLD + "✚ TOP HEALING ✚", true);
-                players = players.stream().sorted(Comparator.comparing(WarlordsPlayer::getHealing)).collect(Collectors.toList());
-                String healingMessage = "";
-                for (int i = 0; i < players.size() && i < 3; i++) {
-                    healingMessage += ChatColor.AQUA + players.get(i).getName() + ChatColor.GRAY + ": " + ChatColor.GOLD + players.get(i).getHealing() + "k " + ChatColor.GRAY + "- ";
-                }
-                sendMessageToAllGamePlayer(game, healingMessage, true);
-                sendMessageToAllGamePlayer(game, "", true);
-                sendMessageToAllGamePlayer(game, "" + ChatColor.GOLD + ChatColor.BOLD + "✚ YOUR STATISTICS ✚", true);
-                for (WarlordsPlayer value : Warlords.getPlayers().values()) {
-                    Utils.sendCenteredMessage(value.getPlayer(),
-                            ChatColor.WHITE + "Kills: " + ChatColor.GOLD + value.getKills() + ChatColor.GRAY + " - " +
-                                    ChatColor.WHITE + "Assists: " + ChatColor.GOLD + value.getAssists() + ChatColor.GRAY + " - " +
-                                    ChatColor.WHITE + "Deaths: " + ChatColor.GOLD + value.getDeaths() + ChatColor.GRAY);
 
-                    TextComponent damage = new TextComponent(ChatColor.WHITE + "Damage " + ChatColor.GOLD + addCommaAndRound(value.getDamage()) + ChatColor.GRAY + " - ");
-                    TextComponent heal = new TextComponent(ChatColor.WHITE + "Healing " + ChatColor.GOLD + addCommaAndRound(value.getHealing()) + ChatColor.GRAY + " - ");
-                    TextComponent absorb = new TextComponent(ChatColor.WHITE + "Absorbed " + ChatColor.GOLD + addCommaAndRound(value.getAbsorbed()) + ChatColor.GRAY);
-                    damage.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("312321\ndwa\ndawd").create()));
-                    heal.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("80953").create()));
-                    absorb.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("645645").create()));
-                    Utils.sendCenteredHoverableMessage(value.getPlayer(), Arrays.asList(damage, heal, absorb));
+                sendMessageToAllGamePlayer(game, "", false);
+
+                TextComponent mvp = new TextComponent("" + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + "✚ MVP ✚");
+                //TODO caps/returns MVPPPP
+                mvp.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(
+                        ChatColor.LIGHT_PURPLE + "Total Flag Captures (everyone): " + "HERE" + "\n" + //Utils.addCommaAndRound((float) players.stream().mapToDouble(WarlordsPlayer::totalcaps).sum())
+                                ChatColor.LIGHT_PURPLE + "Total Flag Returns (everyone): " + "HERE").create())); //Utils.addCommaAndRound((float) players.stream().mapToDouble(WarlordsPlayer::totalreturns).sum())
+                sendCenteredHoverableMessageToAllGamePlayer(game, Collections.singletonList(mvp));
+                TextComponent playerMvp = new TextComponent(ChatColor.AQUA + "Joe");
+                //players = players.stream().sorted(Comparator.comparing(WarlordsPlayer::totalcaps+returns (make method in warlordsplayer?)).collect(Collectors.toList());
+                playerMvp.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(
+                        ChatColor.LIGHT_PURPLE + "Flag Captures: " + ChatColor.GOLD + "HERE" + "\n" + //players.get(0).getcaps...
+                                ChatColor.LIGHT_PURPLE + "Flag Returns: " + ChatColor.GOLD + "HERE").create()));
+                sendCenteredHoverableMessageToAllGamePlayer(game, Collections.singletonList(playerMvp));
+
+                sendMessageToAllGamePlayer(game, "", false);
+
+                TextComponent totalDamage = new TextComponent("" + ChatColor.RED + ChatColor.BOLD + "✚ TOP DAMAGE ✚");
+                totalDamage.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(
+                        ChatColor.RED + "Total Damage (everyone)" + ChatColor.GRAY + ": " +
+                                ChatColor.GOLD + Utils.addCommaAndRound((float) players.stream().mapToDouble(WarlordsPlayer::getTotalDamage).sum())).create()));
+                sendCenteredHoverableMessageToAllGamePlayer(game, Collections.singletonList(totalDamage));
+                players = players.stream().sorted(Comparator.comparing(WarlordsPlayer::getTotalDamage)).collect(Collectors.toList());
+                List<TextComponent> leaderboardPlayersDamage = new ArrayList<>();
+                for (int i = 0; i < players.size() && i < 3; i++) {
+                    WarlordsPlayer warlordsPlayer = players.get(i);
+                    TextComponent player = new TextComponent(ChatColor.AQUA + warlordsPlayer.getName() + ChatColor.GRAY + ": " + ChatColor.GOLD + warlordsPlayer.getTotalHealing() + "k");
+                    player.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(
+                            ChatColor.DARK_GRAY + "Lv" + ChatColor.GRAY + "90 " + ChatColor.GOLD + warlordsPlayer.getSpec().getClassName() + ChatColor.GREEN + " (" + warlordsPlayer.getSpec().getClass().getSimpleName() + ")").create()));
+                    leaderboardPlayersDamage.add(player);
+                    if (i != players.size() - 1) {
+                        leaderboardPlayersDamage.add(spacer);
+                    }
+                }
+                sendCenteredHoverableMessageToAllGamePlayer(game, leaderboardPlayersDamage);
+
+                sendMessageToAllGamePlayer(game, "", false);
+
+                TextComponent totalHealing = new TextComponent("" + ChatColor.GREEN + ChatColor.BOLD + "✚ TOP HEALING ✚");
+                totalHealing.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(
+                        ChatColor.GREEN + "Total Healing (everyone)" + ChatColor.GRAY + ": " +
+                                ChatColor.GOLD + Utils.addCommaAndRound((float) players.stream().mapToDouble(WarlordsPlayer::getTotalHealing).sum())).create()));
+                sendCenteredHoverableMessageToAllGamePlayer(game, Collections.singletonList(totalHealing));
+                players = players.stream().sorted(Comparator.comparing(WarlordsPlayer::getTotalHealing)).collect(Collectors.toList());
+                List<TextComponent> leaderboardPlayersHealing = new ArrayList<>();
+                for (int i = 0; i < players.size() && i < 3; i++) {
+                    WarlordsPlayer warlordsPlayer = players.get(i);
+                    TextComponent player = new TextComponent(ChatColor.AQUA + warlordsPlayer.getName() + ChatColor.GRAY + ": " + ChatColor.GOLD + warlordsPlayer.getTotalHealing() + "k");
+                    player.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(
+                            ChatColor.DARK_GRAY + "Lv" + ChatColor.GRAY + "90 " + ChatColor.GOLD + warlordsPlayer.getSpec().getClassName() + ChatColor.GREEN + " (" + warlordsPlayer.getSpec().getClass().getSimpleName() + ")").create()));
+                    leaderboardPlayersHealing.add(player);
+                    if (i != players.size() - 1) {
+                        leaderboardPlayersHealing.add(spacer);
+                    }
+                }
+                sendCenteredHoverableMessageToAllGamePlayer(game, leaderboardPlayersHealing);
+
+                sendMessageToAllGamePlayer(game, "", false);
+
+                TextComponent yourStatistics = new TextComponent("" + ChatColor.GOLD + ChatColor.BOLD + "✚ YOUR STATISTICS ✚");
+                yourStatistics.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(
+                        ChatColor.WHITE + "Total Kills (everyone): " + ChatColor.GREEN + Utils.addCommaAndRound((float) players.stream().mapToDouble(WarlordsPlayer::getTotalKills).sum()) + "\n" +
+                                ChatColor.WHITE + "Total Assists (everyone): " + ChatColor.GREEN + Utils.addCommaAndRound((float) players.stream().mapToDouble(WarlordsPlayer::getTotalAssists).sum()) + "\n" +
+                                ChatColor.WHITE + "Total Deaths (everyone): " + ChatColor.GREEN + Utils.addCommaAndRound((float) players.stream().mapToDouble(WarlordsPlayer::getTotalDeaths).sum())).create()));
+                sendCenteredHoverableMessageToAllGamePlayer(game, Collections.singletonList(yourStatistics));
+                for (WarlordsPlayer value : Warlords.getPlayers().values()) {
+                    TextComponent kills = new TextComponent(ChatColor.WHITE + "Kills: " + ChatColor.GOLD + Utils.addCommaAndRound(value.getTotalKills()));
+                    TextComponent assists = new TextComponent(ChatColor.WHITE + "Assists: " + ChatColor.GOLD + Utils.addCommaAndRound(value.getTotalAssists()));
+                    TextComponent deaths = new TextComponent(ChatColor.WHITE + "Deaths: " + ChatColor.GOLD + Utils.addCommaAndRound(value.getTotalDeaths()));
+                    String killsJson = Utils.convertItemStackToJsonRegular(value.getStatItemStack("Kills"));
+                    String assistsJson = Utils.convertItemStackToJsonRegular(value.getStatItemStack("Assists"));
+                    String deathsJson = Utils.convertItemStackToJsonRegular(value.getStatItemStack("Deaths"));
+                    kills.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new ComponentBuilder(killsJson).create()));
+                    assists.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new ComponentBuilder(assistsJson).create()));
+                    deaths.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new ComponentBuilder(deathsJson).create()));
+                    Utils.sendCenteredHoverableMessage(value.getPlayer(), Arrays.asList(kills, spacer, assists, spacer, deaths));
+
+
+                    TextComponent damage = new TextComponent(ChatColor.WHITE + "Damage: " + ChatColor.GOLD + Utils.addCommaAndRound(value.getTotalDamage()));
+                    TextComponent heal = new TextComponent(ChatColor.WHITE + "Healing: " + ChatColor.GOLD + Utils.addCommaAndRound(value.getTotalHealing()));
+                    TextComponent absorb = new TextComponent(ChatColor.WHITE + "Absorbed: " + ChatColor.GOLD + Utils.addCommaAndRound(value.getTotalAbsorbed()));
+                    String damageJson = Utils.convertItemStackToJsonRegular(value.getStatItemStack("Damage"));
+                    String healingJson = Utils.convertItemStackToJsonRegular(value.getStatItemStack("Healing"));
+                    String absorbedJson = Utils.convertItemStackToJsonRegular(value.getStatItemStack("Absorbed"));
+                    damage.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new ComponentBuilder(damageJson).create()));
+                    heal.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new ComponentBuilder(healingJson).create()));
+                    absorb.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new ComponentBuilder(absorbedJson).create()));
+                    Utils.sendCenteredHoverableMessage(value.getPlayer(), Arrays.asList(damage, spacer, heal, spacer, absorb));
 
                 }
 
                 sendMessageToAllGamePlayer(game, "" + ChatColor.GREEN + ChatColor.BOLD + "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬", false);
+
+                game.timer = 0;
+
             }
 
             @Override
@@ -371,12 +427,6 @@ public class Game implements Runnable {
         public abstract Game.State run(Game game);
 
         public abstract void begin(Game game);
-
-        public String addCommaAndRound(float amount) {
-            amount = Math.round(amount);
-            DecimalFormat formatter = new DecimalFormat("#,###");
-            return formatter.format(amount);
-        }
 
         public void updatePlayers(Player player, int players, Game game) {
             SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
@@ -424,7 +474,15 @@ public class Game implements Runnable {
                     p.sendMessage(message);
                 }
             }
+        }
 
+        public void sendCenteredHoverableMessageToAllGamePlayer(Game game, List<TextComponent> message) {
+            for (Player p : game.teamBlue) {
+                Utils.sendCenteredHoverableMessage(p, message);
+            }
+            for (Player p : game.teamRed) {
+                Utils.sendCenteredHoverableMessage(p, message);
+            }
         }
 
         public void resetArmor(Player p, PlayerClass playerClass, boolean onBlue) {
@@ -548,6 +606,22 @@ public class Game implements Runnable {
 
     public void resetTimer() {
         this.timer = 0;
+    }
+
+    public int getMinute() {
+        return this.timer / 20 / 60;
+    }
+
+    public int getScoreboardMinute() {
+        return 15 - (getMinute() + 1);
+    }
+
+    public int getSecond() {
+        return this.timer / 20;
+    }
+
+    public int getScoreboardSecond() {
+        return 60 * (getMinute() + 1) - getSecond();
     }
 
     public void changeMap(GameMap map) {

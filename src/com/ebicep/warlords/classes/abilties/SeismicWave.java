@@ -5,10 +5,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.util.Utils;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
@@ -38,7 +35,6 @@ public class SeismicWave extends AbstractAbility {
         for (int i = 0; i < 9; i++) {
             fallingBlockLocations.add(getWave(location, i));
         }
-        System.out.println(fallingBlockLocations.size());
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "warrior.seismicwave.activation", 2, 1);
@@ -48,7 +44,7 @@ public class SeismicWave extends AbstractAbility {
         List<Entity> near = player.getNearbyEntities(8.5, 2, 8.5);
         near = Utils.filterOutTeammates(near, player);
         for (Entity entity : near) {
-            if (entity instanceof Player && Utils.getLookingAtWave(player, (Player) entity)) {
+            if (entity instanceof Player && ((Player) entity).getGameMode() != GameMode.SPECTATOR && Utils.getLookingAtWave(player, (Player) entity)) {
                 final Location loc = entity.getLocation();
                 final Vector v = player.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1.1).setY(0.25);
                 entity.setVelocity(v);

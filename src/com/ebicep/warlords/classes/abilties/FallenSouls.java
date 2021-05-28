@@ -3,7 +3,7 @@ package com.ebicep.warlords.classes.abilties;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
-import com.ebicep.warlords.util.ParticleEffect;
+import com.ebicep.warlords.util.Utils;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -124,6 +124,29 @@ public class FallenSouls extends AbstractAbility {
                         fallenSoul.getShooter().updatePurpleItem();
                         fallenSoul.getShooter().updateBlueItem();
                         fallenSoul.getShooter().updateOrangeItem();
+
+                        List<Entity> teammatesNear = player.getNearbyEntities(2, 2, 2);
+                        teammatesNear = Utils.filterOnlyTeammates(teammatesNear, player);
+                        int counter = 0;
+                        for (Entity entity1 : teammatesNear) {
+                            if (entity1 instanceof Player && ((Player) entity).getGameMode() != GameMode.SPECTATOR) {
+                                WarlordsPlayer warlordsPlayer1 = Warlords.getPlayer((Player) entity1);
+                                warlordsPlayer1.getSpec().getRed().subtractCooldown(.5F);
+                                warlordsPlayer1.getSpec().getPurple().subtractCooldown(.5F);
+                                warlordsPlayer1.getSpec().getBlue().subtractCooldown(.5F);
+                                warlordsPlayer1.getSpec().getOrange().subtractCooldown(.5F);
+
+                                warlordsPlayer1.updateRedItem();
+                                warlordsPlayer1.updatePurpleItem();
+                                warlordsPlayer1.updateBlueItem();
+                                warlordsPlayer1.updateOrangeItem();
+
+                                counter++;
+                                if (counter == 2) {
+                                    break;
+                                }
+                            }
+                        }
                     }
                 }
             }

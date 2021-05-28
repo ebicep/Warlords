@@ -52,11 +52,11 @@ public class LightningBolt extends AbstractAbility {
                 List<Entity> near = (List<Entity>) bolt.getLocation().getWorld().getNearbyEntities(bolt.getLocation().clone().add(0, 2, 0), 1.25, 1.175, 1.175);
                 near = Utils.filterOutTeammates(near, player);
                 for (Entity entity : near) {
-                    if (entity instanceof Player) {
+                    if (entity instanceof Player && ((Player) entity).getGameMode() != GameMode.SPECTATOR) {
                         WarlordsPlayer warlordsPlayer = Warlords.getPlayer((Player) entity);
                         //hitting player
                         //TODO fix fucked up hit detection
-                        if (player.getGameMode() != GameMode.SPECTATOR && !Warlords.game.onSameTeam((Player) entity, player) && !bolt.getPlayersHit().contains(entity)) {
+                        if (!Warlords.game.onSameTeam((Player) entity, player) && !bolt.getPlayersHit().contains(entity)) {
                             bolt.getPlayersHit().add((Player) entity);
                             warlordsPlayer.addHealth(bolt.getShooter(), bolt.getLightningBolt().getName(), bolt.getLightningBolt().getMinDamageHeal(), bolt.getLightningBolt().getMaxDamageHeal(), bolt.getLightningBolt().getCritChance(), bolt.getLightningBolt().getCritMultiplier());
 

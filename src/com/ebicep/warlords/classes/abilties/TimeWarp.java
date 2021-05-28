@@ -6,6 +6,7 @@ import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.classes.ActionBarStats;
 import com.ebicep.warlords.util.ParticleEffect;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -16,7 +17,6 @@ import java.util.List;
 
 public class TimeWarp extends AbstractAbility {
 
-    private List<TimeWarpPlayer> timeWarpPlayers = new ArrayList<>();
     private int counter = 0;
 
     public TimeWarp() {
@@ -30,7 +30,7 @@ public class TimeWarp extends AbstractAbility {
     @Override
     public void onActivate(Player player) {
         WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
-        timeWarpPlayers.add(new TimeWarpPlayer(warlordsPlayer, player.getLocation(), player.getLocation().getDirection(), 5));
+        TimeWarpPlayer timeWarpPlayer = new TimeWarpPlayer(warlordsPlayer, player.getLocation(), player.getLocation().getDirection(), 5);
         warlordsPlayer.getActionBarStats().add(new ActionBarStats(warlordsPlayer, "TIME", 5));
         warlordsPlayer.subtractEnergy(energyCost);
 
@@ -42,14 +42,13 @@ public class TimeWarp extends AbstractAbility {
 
             @Override
             public void run() {
-                if (timeWarpPlayers.size() == 0) {
+                if (timeWarpPlayer.getWarlordsPlayer().getPlayer().getGameMode() == GameMode.SPECTATOR) {
                     counter = 0;
                     this.cancel();
                 }
 
                 //PARTICLES
                 if (counter % 4 == 0) {
-                    for (TimeWarp.TimeWarpPlayer timeWarpPlayer : timeWarpPlayers) {
                         if (timeWarpPlayer.getTime() != 0) {
                             ParticleEffect.SPELL_WITCH.display(0F, 0F, 0F, 0.001F, 6, timeWarpPlayer.getLocation(), 500);
                         }
@@ -63,30 +62,26 @@ public class TimeWarp extends AbstractAbility {
                             Location point = origin.clone().add(radius * Math.sin(angle), 0.0d, radius * Math.cos(angle));
                             ParticleEffect.CLOUD.display(0.1F, 0F, 0.1F, 0.001F, 1, point, 500);
                         }
-                    }
+
                 }
 
                 //TIME WARPS
                 if (counter % 20 == 0) {
-                    for (int i = 0; i < timeWarpPlayers.size(); i++) {
-                        TimeWarpPlayer timeWarpPlayer = timeWarpPlayers.get(i);
-                        if (timeWarpPlayer.getTime() != 0) {
-                            timeWarpPlayer.setTime(timeWarpPlayer.getTime() - 1);
-                        } else {
-                            WarlordsPlayer player = timeWarpPlayer.getWarlordsPlayer();
-                            player.addHealth(player, "Time Warp", (int) (player.getMaxHealth() * .3), (int) (player.getMaxHealth() * .3), -1, 100);
-                            for (Player player1 : player.getPlayer().getWorld().getPlayers()) {
-                                player1.playSound(timeWarpPlayer.getLocation(), "mage.timewarp.teleport", 1, 1);
-                            }
-                            player.getPlayer().teleport(timeWarpPlayer.getLocation());
-                            player.getPlayer().getLocation().setDirection(timeWarpPlayer.getFacing());
-
-                            timeWarpPlayers.remove(i);
-                            i--;
+                    if (timeWarpPlayer.getTime() != 0) {
+                        timeWarpPlayer.setTime(timeWarpPlayer.getTime() - 1);
+                    } else {
+                        WarlordsPlayer player = timeWarpPlayer.getWarlordsPlayer();
+                        player.addHealth(player, "Time Warp", (int) (player.getMaxHealth() * .3), (int) (player.getMaxHealth() * .3), -1, 100);
+                        for (Player player1 : player.getPlayer().getWorld().getPlayers()) {
+                            player1.playSound(timeWarpPlayer.getLocation(), "mage.timewarp.teleport", 1, 1);
                         }
+                        player.getPlayer().teleport(timeWarpPlayer.getLocation());
+                        player.getPlayer().getLocation().setDirection(timeWarpPlayer.getFacing());
+
+                        counter = 0;
+                        this.cancel();
                     }
                 }
-
                 counter++;
             }
 

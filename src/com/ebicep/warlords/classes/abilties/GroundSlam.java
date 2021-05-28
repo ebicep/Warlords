@@ -3,10 +3,7 @@ package com.ebicep.warlords.classes.abilties;
 import com.ebicep.customentities.CustomFallingBlock;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -36,8 +33,6 @@ public class GroundSlam extends AbstractAbility {
         for (int i = 0; i < 6; i++) {
             fallingBlockLocations.add(getCircle(location, i, (i * ((int) (Math.PI * 2)))));
         }
-        System.out.println(fallingBlockLocations.get(0).size());
-        System.out.println(fallingBlockLocations.get(1).size());
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "warrior.groundslam.activation", 2, 1);
@@ -59,7 +54,6 @@ public class GroundSlam extends AbstractAbility {
                 }
 
                 if (fallingBlockLocations.isEmpty()) {
-                    System.out.println("CANCEL SPAWNING");
                     this.cancel();
                 }
             }
@@ -74,7 +68,7 @@ public class GroundSlam extends AbstractAbility {
                     CustomFallingBlock customFallingBlock = customFallingBlocks.get(i);
                     customFallingBlock.setTicksLived(customFallingBlock.getTicksLived() + 1);
                     for (Player player : Warlords.getPlayers().keySet()) {
-                        if (player != customFallingBlock.getOwner()) {
+                        if (player != customFallingBlock.getOwner() && player.getGameMode() != GameMode.SPECTATOR) {
                             AbstractAbility ability = customFallingBlock.getAbility();
                             if (!((GroundSlam) ability).getPlayersHit().contains(player) && !Warlords.game.onSameTeam(player, customFallingBlock.getOwner())) {
                                 if (player.getLocation().distanceSquared(customFallingBlock.getFallingBlock().getLocation()) < 1.5) {
@@ -98,7 +92,6 @@ public class GroundSlam extends AbstractAbility {
                 }
 
                 if (fallingBlockLocations.isEmpty() && customFallingBlocks.isEmpty()) {
-                    System.out.println("CANCEL REMOVING");
                     this.cancel();
                 }
             }

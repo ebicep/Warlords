@@ -5,6 +5,7 @@ import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.util.Utils;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -45,7 +46,7 @@ public class HammerOfLight extends AbstractAbility {
                 damageHealCircle.setDuration(damageHealCircle.getDuration() - 1);
                 List<Entity> near = (List<Entity>) damageHealCircle.getLocation().getWorld().getNearbyEntities(damageHealCircle.getLocation(), 5, 4, 5);
                 for (Entity entity : near) {
-                    if (entity instanceof Player) {
+                    if (entity instanceof Player && ((Player) entity).getGameMode() != GameMode.SPECTATOR) {
                         Player player = (Player) entity;
                         WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
                         double distance = damageHealCircle.getLocation().distanceSquared(player.getLocation());

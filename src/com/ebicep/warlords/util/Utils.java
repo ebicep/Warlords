@@ -6,22 +6,27 @@ import com.ebicep.warlords.classes.abilties.Totem;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.TextComponent;
+import net.minecraft.server.v1_8_R3.NBTTagCompound;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 import javax.xml.soap.Text;
 import java.awt.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.text.DecimalFormat;
 import java.util.Comparator;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 public class Utils {
@@ -229,8 +234,7 @@ public class Utils {
             sb.append(" ");
             compensated += spaceLength;
         }
-        ComponentBuilder componentBuilder = new ComponentBuilder("");
-        componentBuilder.append(sb.toString());
+        ComponentBuilder componentBuilder = new ComponentBuilder(sb.toString());
         for (TextComponent textComponent : textComponents) {
             componentBuilder.append(textComponent.getText());
             componentBuilder.event(textComponent.getHoverEvent());
@@ -238,4 +242,25 @@ public class Utils {
         player.spigot().sendMessage(componentBuilder.create());
     }
 
+    public static String addCommaAndRound(float amount) {
+        amount = Math.round(amount);
+        DecimalFormat formatter = new DecimalFormat("#,###");
+        String output = formatter.format(amount);
+        return output;
+    }
+
+    /**
+     * Converts an {@link org.bukkit.inventory.ItemStack} to a Json string
+     * for sending with {@link net.md_5.bungee.api.chat.BaseComponent}'s.
+     *
+     * @param itemStack the item to convert
+     * @return the Json string representation of the item
+     */
+    public static String convertItemStackToJsonRegular(ItemStack itemStack) {
+        // First we convert the item stack into an NMS itemstack
+        net.minecraft.server.v1_8_R3.ItemStack nmsItemStack = CraftItemStack.asNMSCopy(itemStack);
+        net.minecraft.server.v1_8_R3.NBTTagCompound compound = new NBTTagCompound();
+        nmsItemStack.save(compound);
+        return compound.toString();
+    }
 }

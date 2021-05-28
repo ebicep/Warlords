@@ -24,11 +24,11 @@ public class CustomScoreboard {
     private Objective tab;
     private Objective sideBar;
     private Objective health;
-    private List<String> blueTeam;
-    private List<String> redTeam;
+    private List<WarlordsPlayer> blueTeam;
+    private List<WarlordsPlayer> redTeam;
     private Game game;
 
-    public CustomScoreboard(WarlordsPlayer warlordsPlayer, List<String> blueTeam, List<String> redTeam, Game game) {
+    public CustomScoreboard(WarlordsPlayer warlordsPlayer, List<WarlordsPlayer> blueTeam, List<WarlordsPlayer> redTeam, Game game) {
         Player player = warlordsPlayer.getPlayer();
         ScoreboardManager manager = Bukkit.getScoreboardManager();
         Scoreboard board = manager.getNewScoreboard();
@@ -49,7 +49,7 @@ public class CustomScoreboard {
         sideBar.getScore("    ").setScore(6);
         sideBar.getScore(ChatColor.WHITE + "Class: " + ChatColor.GREEN + Warlords.getPlayer(player).getSpec().getClass().getSimpleName()).setScore(5);
         sideBar.getScore("     ").setScore(4);
-        sideBar.getScore("" + ChatColor.GREEN + Warlords.getPlayer(player).getKills() + ChatColor.RESET + " Kills " + ChatColor.GREEN + Warlords.getPlayer(player).getAssists() + ChatColor.RESET + " Assists").setScore(3);
+        sideBar.getScore("" + ChatColor.GREEN + Warlords.getPlayer(player).getTotalKills() + ChatColor.RESET + " Kills " + ChatColor.GREEN + Warlords.getPlayer(player).getTotalAssists() + ChatColor.RESET + " Assists").setScore(3);
         sideBar.getScore("      ").setScore(2);
         sideBar.getScore(ChatColor.YELLOW + "WL 2.0 beta_b-v1.0 ").setScore(1);
 
@@ -67,17 +67,19 @@ public class CustomScoreboard {
 //            counter++;
 //        }
 //
-//        Team blue = board.registerNewTeam("BLUE");
-//        Team red = board.registerNewTeam("RED");
-//        for (String s : blueTeam) {
-//            blue.addEntry(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + "MAG" + ChatColor.DARK_GRAY + "] "
-//                    + ChatColor.BLUE + s + ChatColor.DARK_GRAY + " [" + ChatColor.GOLD + "Lv90" + ChatColor.DARK_GRAY + "]");
-//        }
-//
-//        for (String s : redTeam) {
-//            red.addEntry(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + "MAG" + ChatColor.DARK_GRAY + "] "
-//                    + ChatColor.RED + s + ChatColor.DARK_GRAY + " [" + ChatColor.GOLD + "Lv90" + ChatColor.DARK_GRAY + "]");
-//        }
+
+        for (WarlordsPlayer s : blueTeam) {
+            Team temp = board.registerNewTeam(s.getName());
+            temp.setPrefix(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + s.getSpec().getClassNameShort() + ChatColor.DARK_GRAY + "] " + ChatColor.BLUE);
+            temp.addPlayer(s.getPlayer());
+            temp.setSuffix(ChatColor.DARK_GRAY + " [" + ChatColor.GOLD + "Lv90" + ChatColor.DARK_GRAY + "]");
+        }
+        for (WarlordsPlayer s : redTeam) {
+            Team temp = board.registerNewTeam(s.getName());
+            temp.setPrefix(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + s.getSpec().getClassNameShort() + ChatColor.DARK_GRAY + "] " + ChatColor.RED);
+            temp.addPlayer(s.getPlayer());
+            temp.setSuffix(ChatColor.DARK_GRAY + " [" + ChatColor.GOLD + "Lv90" + ChatColor.DARK_GRAY + "]");
+        }
 
         player.setScoreboard(board);
         this.scoreboard = board;
@@ -86,6 +88,11 @@ public class CustomScoreboard {
         this.blueTeam = blueTeam;
         this.redTeam = redTeam;
         this.game = game;
+    }
+
+    public void refreshScoreboard(Player player) {
+        this.player = player;
+        player.setScoreboard(scoreboard);
     }
 
     public void addHealths() {
@@ -104,7 +111,7 @@ public class CustomScoreboard {
         addHealths();
     }
 
-    public void updateKills() {
+    public void updatePoints() {
         for (String entry : scoreboard.getEntries()) {
             String entryUnformatted = ChatColor.stripColor(entry);
             //System.out.println(entry);
@@ -193,7 +200,7 @@ public class CustomScoreboard {
             String entryUnformatted = ChatColor.stripColor(entry);
             if (entryUnformatted.contains("Kills")) {
                 scoreboard.resetScores(entry);
-                sideBar.getScore("" + ChatColor.GREEN + Warlords.getPlayer(player).getKills() + ChatColor.RESET + " Kills " + ChatColor.GREEN + Warlords.getPlayer(player).getAssists() + ChatColor.RESET + " Assists").setScore(3);
+                sideBar.getScore("" + ChatColor.GREEN + Warlords.getPlayer(player).getTotalKills() + ChatColor.RESET + " Kills " + ChatColor.GREEN + Warlords.getPlayer(player).getTotalAssists() + ChatColor.RESET + " Assists").setScore(3);
             }
         }
     }
@@ -218,11 +225,11 @@ public class CustomScoreboard {
         return health;
     }
 
-    public List<String> getBlueTeam() {
+    public List<WarlordsPlayer> getBlueTeam() {
         return blueTeam;
     }
 
-    public List<String> getRedTeam() {
+    public List<WarlordsPlayer> getRedTeam() {
         return redTeam;
     }
 }

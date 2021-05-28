@@ -6,6 +6,7 @@ import com.ebicep.warlords.util.Matrix4d;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.Utils;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
@@ -70,7 +71,7 @@ public class Projectile extends AbstractAbility {
                     List<Entity> entities = (List<Entity>) location.getWorld().getNearbyEntities(location, 5, 5, 5);
                     entities = Utils.filterOutTeammates(entities, customProjectile.getShooter());
                     for (Entity entity : entities) {
-                        if (entity instanceof Player && entity != customProjectile.getShooter()) {
+                        if (entity instanceof Player && ((Player) entity).getGameMode() != GameMode.SPECTATOR && entity != customProjectile.getShooter()) {
                             if (entity.getLocation().clone().add(0, 1, 0).distanceSquared(location) < hitBox * hitBox) {
                                 hitPlayer = true;
                                 ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.5F, 1, entity.getLocation().add(0, 1, 0), 500);
@@ -97,7 +98,7 @@ public class Projectile extends AbstractAbility {
                                     List<Entity> near = victim.getNearbyEntities(3.5D, 3.5D, 3.5D);
                                     near = Utils.filterOutTeammates(near, customProjectile.getShooter());
                                     for (Entity nearEntity : near) {
-                                        if (nearEntity instanceof Player) {
+                                        if (nearEntity instanceof Player && ((Player) nearEntity).getGameMode() != GameMode.SPECTATOR && ((Player) nearEntity).getGameMode() != GameMode.SPECTATOR) {
                                             Warlords.getPlayer((Player) nearEntity).addHealth(
                                                     Warlords.getPlayer(customProjectile.getShooter()),
                                                     customProjectile.getBall().getName(),
@@ -120,7 +121,7 @@ public class Projectile extends AbstractAbility {
                                     List<Entity> near = victim.getNearbyEntities(3.5D, 3.5D, 3.5D);
                                     near = Utils.filterOutTeammates(near, customProjectile.getShooter());
                                     for (Entity nearEntity : near) {
-                                        if (nearEntity instanceof Player) {
+                                        if (nearEntity instanceof Player && ((Player) nearEntity).getGameMode() != GameMode.SPECTATOR) {
                                             Warlords.getPlayer((Player) nearEntity).addHealth(
                                                     Warlords.getPlayer(customProjectile.getShooter()),
                                                     customProjectile.getBall().getName(),
@@ -146,7 +147,7 @@ public class Projectile extends AbstractAbility {
                     entities = Utils.filterOutTeammates(entities, customProjectile.getShooter());
                     System.out.println(entities);
                     for (Entity entity : entities) {
-                        if (entity instanceof Player && entity != customProjectile.getShooter()) {
+                        if (entity instanceof Player && ((Player) entity).getGameMode() != GameMode.SPECTATOR && entity != customProjectile.getShooter()) {
                             if (entity.getLocation().clone().add(0, 1, 0).distanceSquared(location) < hitBox * hitBox) {
                                 hitPlayer = true;
                                 ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.0F, 1, entity.getLocation().add(0, 1, 0), 500);
@@ -172,7 +173,7 @@ public class Projectile extends AbstractAbility {
                                     List<Entity> near = victim.getNearbyEntities(3.5D, 3.5D, 3.5D);
                                     near = Utils.filterOutTeammates(near, customProjectile.getShooter());
                                     for (Entity nearEntity : near) {
-                                        if (nearEntity instanceof Player) {
+                                        if (nearEntity instanceof Player && ((Player) nearEntity).getGameMode() != GameMode.SPECTATOR) {
                                             Warlords.getPlayer((Player) nearEntity).addHealth(
                                                     Warlords.getPlayer(customProjectile.getShooter()),
                                                     customProjectile.getBall().getName(),
@@ -195,7 +196,7 @@ public class Projectile extends AbstractAbility {
                                     List<Entity> near = victim.getNearbyEntities(3.5D, 3.5D, 3.5D);
                                     near = Utils.filterOutTeammates(near, customProjectile.getShooter());
                                     for (Entity nearEntity : near) {
-                                        if (nearEntity instanceof Player) {
+                                        if (nearEntity instanceof Player && ((Player) nearEntity).getGameMode() != GameMode.SPECTATOR) {
                                             Warlords.getPlayer((Player) nearEntity).addHealth(
                                                     Warlords.getPlayer(customProjectile.getShooter()),
                                                     customProjectile.getBall().getName(),
@@ -221,7 +222,7 @@ public class Projectile extends AbstractAbility {
                     ParticleEffect.CLOUD.display(0, 0, 0, 0F, 1, location, 500);
                     List<Entity> entities = (List<Entity>) location.getWorld().getNearbyEntities(location, 5, 5, 5);
                     for (Entity entity : entities) {
-                        if (entity instanceof Player && entity != customProjectile.getShooter()) {
+                        if (entity instanceof Player && ((Player) entity).getGameMode() != GameMode.SPECTATOR && entity != customProjectile.getShooter()) {
                             if (entity.getLocation().clone().add(0, 1, 0).distanceSquared(location) < hitBox * hitBox) {
                                 hitPlayer = true;
                                 ParticleEffect.HEART.display(1.5F, 1.5F, 1.5F, 0.2F, 2, entity.getLocation().add(0, 1, 0), 500);
@@ -256,7 +257,7 @@ public class Projectile extends AbstractAbility {
                                     }
                                     List<Entity> near = victim.getNearbyEntities(3.5D, 3.5D, 3.5D);
                                     for (Entity nearEntity : near) {
-                                        if (nearEntity instanceof Player) {
+                                        if (nearEntity instanceof Player && ((Player) nearEntity).getGameMode() != GameMode.SPECTATOR) {
                                             if (Warlords.game.onSameTeam((Player) nearEntity, customProjectile.getShooter())) {
                                                 Warlords.getPlayer((Player) nearEntity).addHealth(
                                                         Warlords.getPlayer(customProjectile.getShooter()),
@@ -300,7 +301,7 @@ public class Projectile extends AbstractAbility {
                                     }
                                     List<Entity> near = victim.getNearbyEntities(3.5D, 3.5D, 3.5D);
                                     for (Entity nearEntity : near) {
-                                        if (nearEntity instanceof Player) {
+                                        if (nearEntity instanceof Player && ((Player) nearEntity).getGameMode() != GameMode.SPECTATOR) {
                                             if (Warlords.game.onSameTeam((Player) nearEntity, customProjectile.getShooter())) {
                                                 Warlords.getPlayer((Player) nearEntity).addHealth(
                                                         Warlords.getPlayer(customProjectile.getShooter()),
@@ -347,7 +348,7 @@ public class Projectile extends AbstractAbility {
                     List<Entity> entities = (List<Entity>) location.getWorld().getNearbyEntities(location, 5, 5, 5);
                     entities = Utils.filterOutTeammates(entities, customProjectile.getShooter());
                     for (Entity entity : entities) {
-                        if (entity instanceof Player && entity != customProjectile.getShooter()) {
+                        if (entity instanceof Player && ((Player) entity).getGameMode() != GameMode.SPECTATOR && entity != customProjectile.getShooter()) {
                             if (entity.getLocation().clone().add(0, 1, 0).distanceSquared(location) < hitBox * hitBox) {
                                 hitPlayer = true;
                                 ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.0F, 1, entity.getLocation().add(0, 1, 0), 500);
@@ -369,7 +370,7 @@ public class Projectile extends AbstractAbility {
                                 List<Entity> near = victim.getNearbyEntities(4D, 4D, 4D);
                                 near = Utils.filterOutTeammates(near, customProjectile.getShooter());
                                 for (Entity nearEntity : near) {
-                                    if (nearEntity instanceof Player) {
+                                    if (nearEntity instanceof Player && ((Player) nearEntity).getGameMode() != GameMode.SPECTATOR) {
                                         Warlords.getPlayer((Player) nearEntity).addHealth(
                                                 Warlords.getPlayer(customProjectile.getShooter()),
                                                 customProjectile.getBall().getName(),
@@ -426,7 +427,7 @@ public class Projectile extends AbstractAbility {
 
                     List<Entity> near = (List<Entity>) location.getWorld().getNearbyEntities(location, 4, 4, 4);
                     for (Entity nearEntity : near) {
-                        if (nearEntity instanceof Player) {
+                        if (nearEntity instanceof Player && ((Player) nearEntity).getGameMode() != GameMode.SPECTATOR) {
                             if (customProjectile.getBall().getName().contains("Flame") && !Warlords.game.onSameTeam((Player) nearEntity, customProjectile.getShooter()) && nearEntity != customProjectile.getShooter()) {
                                 Warlords.getPlayer((Player) nearEntity).addHealth(
                                         Warlords.getPlayer(customProjectile.getShooter()),

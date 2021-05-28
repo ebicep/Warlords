@@ -5,6 +5,7 @@ import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.util.Utils;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -35,7 +36,7 @@ public class InspiringPresence extends AbstractAbility {
         List<Entity> near = player.getNearbyEntities(6.0D, 2.0D, 6.0D);
         near = Utils.filterOnlyTeammates(near, player);
         for (Entity entity : near) {
-            if (entity instanceof Player) {
+            if (entity instanceof Player && ((Player) entity).getGameMode() != GameMode.SPECTATOR) {
                 warlordsPlayer.getSpeed().changeCurrentSpeed("Inspiring Presence", 30, 12 * 20, "BASE");
                 Warlords.getPlayer(player).setPresence(12 * 20);
             }

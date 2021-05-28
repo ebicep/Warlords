@@ -259,9 +259,8 @@ public class Warlords extends JavaPlugin {
                                 assisted.getScoreboard().updateKillsAssists();
                             }
                             //respawn timer
-                            //Bukkit.broadcastMessage("" + game.getTimer() % 60 % 12);
-                            int respawn = game.getTimer() % 60 % 12;
-                            if (game.getTimer() % 60 % 12 <= 4) {
+                            int respawn = game.getScoreboardSecond() % 12;
+                            if (respawn <= 4) {
                                 respawn += 12;
                             }
                             warlordsPlayer.setRespawnTimer(respawn);

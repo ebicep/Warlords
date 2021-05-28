@@ -85,7 +85,7 @@ public class Boulder extends AbstractAbility {
                     Collection<Entity> nearbyEntities = stand.getWorld().getNearbyEntities(stand.getLocation(), 1.25, 1.25, 1.25);
                     for (Entity entity : nearbyEntities) {
                         if (entity instanceof Player) {
-                            if (!Warlords.game.onSameTeam(player, (Player) entity)) {
+                            if (!Warlords.game.onSameTeam(player, (Player) entity) && ((Player) entity).getGameMode() != GameMode.SPECTATOR) {
                                 boulderExplode = true;
                                 near = (List<Entity>) newLoc.getWorld().getNearbyEntities(newLoc, 6, 6, 6);
                                 near = Utils.filterOutTeammates(near, player);
