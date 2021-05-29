@@ -711,9 +711,8 @@ public class WarlordsPlayer {
                             addAbsorbed(-damageHealValue);
                         }
 
-                        // This metadata is only active on the class SpiritGuard
-                        // when they have an SpiritGuard totem ability active.
-                        // The cooldown of this ability prevents multiple from being active at the same time
+                        // this metadata is only active on the sg class
+                        // the cooldown of the ability prevents multiple from being active at the same time
                         Optional<MetadataValue> totem = player.getMetadata("TOTEM").stream()
                                 .filter(e -> e.value() instanceof Totem.TotemSpiritguard)
                                 .findAny();
