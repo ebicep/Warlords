@@ -182,6 +182,9 @@ public class Game implements Runnable {
                     redTeam.add(Warlords.getPlayer(p));
 
                     resetArmor(p, Warlords.getPlayer(p).getSpec(), false);
+
+                    p.setGameMode(GameMode.ADVENTURE);
+
                     System.out.println("Added " + p.getName());
                 }
 
@@ -193,6 +196,9 @@ public class Game implements Runnable {
                     blueTeam.add(Warlords.getPlayer(p));
 
                     resetArmor(p, Warlords.getPlayer(p).getSpec(), true);
+
+                    p.setGameMode(GameMode.ADVENTURE);
+
                     System.out.println("Added " + p.getName());
                 }
 
@@ -613,7 +619,7 @@ public class Game implements Runnable {
     }
 
     public int getScoreboardMinute() {
-        return 15 - (getMinute() + 1);
+        return remaining / 60;
     }
 
     public int getSecond() {
@@ -621,7 +627,7 @@ public class Game implements Runnable {
     }
 
     public int getScoreboardSecond() {
-        return 60 * (getMinute() + 1) - getSecond();
+        return remaining % 60;
     }
 
     public void changeMap(GameMap map) {

@@ -431,7 +431,6 @@ public class Warlords extends JavaPlugin {
                             //RESPAWN
                             if (warlordsPlayer.getRespawnTimer() != -1) {
                                 warlordsPlayer.setRespawnTimer(warlordsPlayer.getRespawnTimer() - 1);
-                                //warlordsPlayer.getPlayer().sendMessage("RESPAWN: " + warlordsPlayer.getRespawnTimer());
                             }
                             //ABILITY COOLDOWN
                             if (warlordsPlayer.getSpec().getRed().getCurrentCooldown() != 0 && warlordsPlayer.getSpec().getRed().getCurrentCooldown() != warlordsPlayer.getSpec().getRed().getCooldown()) {

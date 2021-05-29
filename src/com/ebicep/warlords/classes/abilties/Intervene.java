@@ -3,9 +3,11 @@ package com.ebicep.warlords.classes.abilties;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
@@ -28,12 +30,20 @@ public class Intervene extends AbstractAbility {
     public void onActivate(Player player) {
         WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
         List<Entity> near = player.getNearbyEntities(6.0D, 6.0D, 6.0D);
-        near = Utils.filterOnlyTeammates(near, player);
+        //near = Utils.filterOnlyTeammates(near, player);
         System.out.println(near);
         for (Entity entity : near) {
             if (entity instanceof Player) {
                 Player nearPlayer = (Player) entity;
                 if (nearPlayer.getGameMode() != GameMode.SPECTATOR && Utils.getLookingAt(player, nearPlayer)) {
+                    //green line thingy
+                    Location lineLocation = player.getLocation().add(0, 1, 0);
+                    lineLocation.setDirection(lineLocation.toVector().subtract(entity.getLocation().add(0, 1, 0).toVector()).multiply(-1));
+                    for (int i = 0; i < Math.floor(player.getLocation().distance(entity.getLocation())) * 4; i++) {
+                        ParticleEffect.VILLAGER_HAPPY.display(0, 0, 0, 0.35F, 1, lineLocation, 500);
+                        lineLocation.add(lineLocation.getDirection().multiply(.25));
+                    }
+
                     WarlordsPlayer nearWarlordsPlayer = Warlords.getPlayer(nearPlayer);
                     warlordsPlayer.setIntervened(nearWarlordsPlayer);
                     warlordsPlayer.getPlayer().sendMessage("§a\u00BB§7 You are now protecting " + nearWarlordsPlayer.getName() + " with your §eIntervene!");
@@ -41,12 +51,17 @@ public class Intervene extends AbstractAbility {
                     nearWarlordsPlayer.setIntervenedBy(warlordsPlayer);
                     nearWarlordsPlayer.setInterveneDuration(6);
                     nearWarlordsPlayer.setInterveneDamage(0);
+
+                    warlordsPlayer.getSpec().getBlue().setCurrentCooldown(cooldown);
+                    warlordsPlayer.updateBlueItem();
+
+                    for (Player player1 : player.getWorld().getPlayers()) {
+                        player1.playSound(player.getLocation(), "warrior.intervene.impact", 1, 1);
+                    }
                 }
             }
         }
 
-        for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "warrior.intervene.impact", 1, 1);
-        }
+
     }
 }

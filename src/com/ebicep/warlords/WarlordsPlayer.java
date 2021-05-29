@@ -124,7 +124,7 @@ public class WarlordsPlayer {
                     actionBarMessage.append(ChatColor.GREEN).append("ARCA").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append(arcaneShield - 1).append(" ");
                 }
                 if (iceBarrierDuration != 0) {
-                    actionBarMessage.append(ChatColor.GREEN).append("ICEB").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append(iceBarrierDuration / 20).append(" ");
+                    actionBarMessage.append(ChatColor.GREEN).append("ICEB").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append(iceBarrierDuration / 20 + 1).append(" ");
                 }
                 if (inferno != 0) {
                     actionBarMessage.append(ChatColor.GREEN).append("INFR").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append(inferno).append(" ");

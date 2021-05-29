@@ -3,11 +3,13 @@ package com.ebicep.warlords.classes.abilties;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -38,7 +40,7 @@ public class LightningBolt extends AbstractAbility {
         Location location = player.getLocation();
         Vector direction = location.getDirection();
 
-        Bolt bolt = new Bolt(Warlords.getPlayer(player), (ArmorStand) location.getWorld().spawnEntity(location.subtract(direction.getX() * -.5, .3, direction.getZ() * -.5), EntityType.ARMOR_STAND), location.subtract(direction.getX() * -.5, .3, direction.getZ() * -.5), direction, this);
+        Bolt bolt = new Bolt(Warlords.getPlayer(player), (ArmorStand) location.getWorld().spawnEntity(location.clone().subtract(direction.getX() * -.5, .3, direction.getZ() * -.5), EntityType.ARMOR_STAND), location.clone().subtract(direction.getX() * -.5, .3, direction.getZ() * -.5), direction, this);
         Warlords.getPlayer(player).subtractEnergy(energyCost);
 
         for (Player player1 : player.getWorld().getPlayers()) {
@@ -49,13 +51,12 @@ public class LightningBolt extends AbstractAbility {
 
             @Override
             public void run() {
-                List<Entity> near = (List<Entity>) bolt.getLocation().getWorld().getNearbyEntities(bolt.getLocation().clone().add(0, 2, 0), 1.25, 1.175, 1.175);
+                List<Entity> near = (List<Entity>) bolt.getLocation().getWorld().getNearbyEntities(bolt.getBoltLocation(), .8, .75, .8);
                 near = Utils.filterOutTeammates(near, player);
                 for (Entity entity : near) {
                     if (entity instanceof Player && ((Player) entity).getGameMode() != GameMode.SPECTATOR) {
                         WarlordsPlayer warlordsPlayer = Warlords.getPlayer((Player) entity);
                         //hitting player
-                        //TODO fix fucked up hit detection
                         if (!Warlords.game.onSameTeam((Player) entity, player) && !bolt.getPlayersHit().contains(entity)) {
                             bolt.getPlayersHit().add((Player) entity);
                             warlordsPlayer.addHealth(bolt.getShooter(), bolt.getLightningBolt().getName(), bolt.getLightningBolt().getMinDamageHeal(), bolt.getLightningBolt().getMaxDamageHeal(), bolt.getLightningBolt().getCritChance(), bolt.getLightningBolt().getCritMultiplier());
@@ -70,9 +71,10 @@ public class LightningBolt extends AbstractAbility {
                         }
                     }
                 }
-                //System.out.println(location.getWorld().getBlockAt(bolt.getArmorStand().getLocation().clone().add(0, 2, 0)).getType());
-                if (location.getWorld().getBlockAt(bolt.getArmorStand().getLocation().clone().add(0, 2, 0)).getType() != Material.AIR && location.getWorld().getBlockAt(bolt.getArmorStand().getLocation().clone().add(0, 2, 0)).getType() != Material.WATER || bolt.getArmorStand().getTicksLived() > 50) {
-                    //TODO add explosion thingy
+                //hitting block or out of range
+                Block blockInsideBolt = location.getWorld().getBlockAt(bolt.getBoltLocation().subtract(bolt.getTeleportDirection().clone().multiply(2)));
+                if (blockInsideBolt.getType() != Material.AIR && blockInsideBolt.getType() != Material.WATER || bolt.getArmorStand().getTicksLived() > 50) {
+                    ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.0F, 1, bolt.getBoltLocation().subtract(bolt.getTeleportDirection().clone().multiply(2.5)), 500);
                     bolt.getArmorStand().remove();
                     this.cancel();
                 }
@@ -152,6 +154,10 @@ public class LightningBolt extends AbstractAbility {
 
         public void setPlayersHit(List<Player> playersHit) {
             this.playersHit = playersHit;
+        }
+
+        public Location getBoltLocation() {
+            return this.armorStand.getLocation().clone().add(0, 1.65, 0);
         }
     }
 }

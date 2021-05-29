@@ -53,21 +53,6 @@ public class CustomScoreboard {
         sideBar.getScore("      ").setScore(2);
         sideBar.getScore(ChatColor.YELLOW + "WL 2.0 master_b-v0.0.2 ").setScore(1);
 
-        //        Objective tab = board.registerNewObjective("tab", "");
-//        tab.setDisplaySlot(DisplaySlot.PLAYER_LIST);
-//        int counter = 0;
-//        for (String s : blueTeam) {
-//            tab.getScore(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + "MAG" + ChatColor.DARK_GRAY + "] "
-//                    + ChatColor.BLUE + s + ChatColor.DARK_GRAY + " [" + ChatColor.GOLD + "Lv90" + ChatColor.DARK_GRAY + "]").setScore(counter);
-//            counter++;
-//        }
-//        for (String s : redTeam) {
-//            tab.getScore(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + "MAG" + ChatColor.DARK_GRAY + "] "
-//                    + ChatColor.RED + s + ChatColor.DARK_GRAY + " [" + ChatColor.GOLD + "Lv90" + ChatColor.DARK_GRAY + "]").setScore(counter);
-//            counter++;
-//        }
-//
-
         for (WarlordsPlayer s : blueTeam) {
             Team temp = board.registerNewTeam(s.getName());
             temp.setPrefix(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + s.getSpec().getClassNameShort() + ChatColor.DARK_GRAY + "] " + ChatColor.BLUE);
@@ -131,11 +116,18 @@ public class CustomScoreboard {
             String entryUnformatted = ChatColor.stripColor(entry);
             if (entryUnformatted.contains("Wins in:") || entryUnformatted.contains("Time Left:")) {
                 scoreboard.resetScores(entry);
-                String timeLeft = (Game.remaining / 60) + ":";
-                if (Game.remaining % 60 < 10) {
+                int minute = game.getScoreboardMinute();
+                int second = game.getScoreboardSecond();
+                String timeLeft = "";
+                if (minute < 10) {
                     timeLeft += "0";
                 }
-                timeLeft += Game.remaining % 60;
+                timeLeft += minute + ":";
+                if (second < 10) {
+                    timeLeft += "0";
+                }
+                timeLeft += second;
+
                 if (Warlords.game.getBluePoints() > Warlords.game.getRedPoints()) {
                     sideBar.getScore(ChatColor.BLUE + "BLU " + ChatColor.GOLD + "Wins in: " + ChatColor.GREEN + timeLeft).setScore(10);
                 } else if (Warlords.game.getRedPoints() > Warlords.game.getBluePoints()) {

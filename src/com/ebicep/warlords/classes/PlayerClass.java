@@ -79,7 +79,7 @@ public abstract class PlayerClass {
             } else if (player.getInventory().getHeldItemSlot() == 3) {
                 if (blue.getCurrentCooldown() == 0 && player.getLevel() >= blue.getEnergyCost()) {
                     blue.onActivate(player);
-                    if (!blue.getName().contains("Chain")) {
+                    if (!blue.getName().contains("Chain") && !blue.getName().contains("Intervene")) {
                         blue.setCurrentCooldown(blue.cooldown);
                         sendRightClickPacket(player);
                     }
@@ -124,7 +124,7 @@ public abstract class PlayerClass {
             } else if (slot == 3) {
                 if (blue.getCurrentCooldown() == 0 && player.getLevel() >= blue.getEnergyCost()) {
                     blue.onActivate(player);
-                    if (!blue.getName().contains("Chain")) {
+                    if (!blue.getName().contains("Chain") && !blue.getName().contains("Intervene")) {
                         blue.setCurrentCooldown(blue.cooldown);
                         sendRightClickPacket(player);
                     }
