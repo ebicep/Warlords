@@ -51,7 +51,7 @@ public class CustomScoreboard {
         sideBar.getScore("     ").setScore(4);
         sideBar.getScore("" + ChatColor.GREEN + Warlords.getPlayer(player).getTotalKills() + ChatColor.RESET + " Kills " + ChatColor.GREEN + Warlords.getPlayer(player).getTotalAssists() + ChatColor.RESET + " Assists").setScore(3);
         sideBar.getScore("      ").setScore(2);
-        sideBar.getScore(ChatColor.YELLOW + "WL 2.0 master_b-v0.0.2 ").setScore(1);
+        sideBar.getScore(ChatColor.YELLOW + "WL 2.0 master_b-v0.0.2").setScore(1);
 
         for (WarlordsPlayer s : blueTeam) {
             Team temp = board.registerNewTeam(s.getName());

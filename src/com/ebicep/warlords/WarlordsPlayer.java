@@ -4,6 +4,7 @@ import com.ebicep.warlords.classes.ActionBarStats;
 import com.ebicep.warlords.classes.PlayerClass;
 import com.ebicep.warlords.classes.abilties.OrbsOfLife;
 import com.ebicep.warlords.classes.abilties.Soulbinding;
+import com.ebicep.warlords.classes.abilties.Totem;
 import com.ebicep.warlords.events.WarlordsDeathEvent;
 import com.ebicep.warlords.maps.FlagManager;
 import com.ebicep.warlords.util.CalculateSpeed;
@@ -691,19 +692,6 @@ public class WarlordsPlayer {
                             player.getVehicle().remove();
                         }
                         regenTimer = 10;
-                        //TODO rework
-//                        if (spec.getOrange() instanceof Totem.TotemSpiritguard) {
-//                            for (int i = 0; i < Warlords.totems.size(); i++) {
-//                                Totem totem = Warlords.totems.get(i);
-//                                if (totem.getOwner() == this) {
-//                                    if (totem.getSecondsLeft() != 0) {
-//                                        debt = true;
-//                                        ((Totem.TotemSpiritguard) totem.getOwner().getSpec().getOrange()).setDelayedDamage((int) (((Totem.TotemSpiritguard) totem.getOwner().getSpec().getOrange()).getDelayedDamage() + damageHealValue));
-//                                    }
-//                                    intervene = 0;
-//                                }
-//                            }
-//                        }
                         if (lastStandDuration != 0) {
                             if (lastStandedBy == this) {
                                 damageHealValue *= .5;
@@ -721,6 +709,18 @@ public class WarlordsPlayer {
                                     lastStandedBy.addHealth(lastStandedBy, "Last Stand", (int) (healValue), (int) (healValue), -1, 100);
                             }
                             addAbsorbed(-damageHealValue);
+                        }
+
+                        // This metadata is only active on the class SpiritGuard
+                        // when they have an SpiritGuard totem ability active.
+                        // The cooldown of this ability prevents multiple from being active at the same time
+                        Optional<MetadataValue> totem = player.getMetadata("TOTEM").stream()
+                                .filter(e -> e.value() instanceof Totem.TotemSpiritguard)
+                                .findAny();
+                        if(totem.isPresent()) {
+                            Totem.TotemSpiritguard t = (Totem.TotemSpiritguard) totem.get().value();
+                            t.addDelayedDamage(damageHealValue);
+                            debt = true;
                         }
 
                         if (isCrit) {

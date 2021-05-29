@@ -62,7 +62,7 @@ public class LightningBolt extends AbstractAbility {
                             warlordsPlayer.addHealth(bolt.getShooter(), bolt.getLightningBolt().getName(), bolt.getLightningBolt().getMinDamageHeal(), bolt.getLightningBolt().getMaxDamageHeal(), bolt.getLightningBolt().getCritChance(), bolt.getLightningBolt().getCritMultiplier());
 
                             for (Player player1 : entity.getWorld().getPlayers()) {
-                                player1.playSound(entity.getLocation(), "shaman.lightningbolt.impact", 1, 1);
+                                player1.playSound(entity.getLocation(), "shaman.lightningbolt.impact", 1.5F, 1);
                             }
 
                             //reducing chain cooldown

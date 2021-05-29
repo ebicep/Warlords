@@ -52,7 +52,7 @@ public class GameMenu {
                             .lore(subClass.description)
                             .get(),
                     (n,e) -> {
-                        player.sendMessage(ChatColor.BLUE + "Your selected class: ยง7" + subClass);
+                        player.sendMessage(ChatColor.BLUE + "Your selected class: §7" + subClass);
                         setSelected(player, subClass);
                         openClassMenu(player, selectedGroup);
                     }

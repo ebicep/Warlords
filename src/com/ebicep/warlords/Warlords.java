@@ -223,7 +223,7 @@ public class Warlords extends JavaPlugin {
                             Location deathLocation = warlordsPlayer.getDeathLocation();
                             if (deathLocation != null) {
                                 Block deathBlock = deathLocation.getBlock();
-                                if (deathBlock.getType() != Material.SAPLING) {
+                                if (deathBlock.getType() == Material.SAPLING) {
                                     deathBlock.setType(Material.AIR);
                                 }
                                 warlordsPlayer.setDeathLocation(null);

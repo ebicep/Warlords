@@ -72,7 +72,7 @@ public class Boulder extends AbstractAbility {
                 Location particleLoc = newLoc.add(0, 2, 0);
                 ParticleEffect.CRIT.display(0.3F, 0.3F, 0.3F, 0.1F, 4, particleLoc, 500);
 
-                if (!newLoc.add(0, 2, 0).getBlock().isEmpty()) {
+                if (!newLoc.getBlock().isEmpty()) {
                     boulderExplode = true;
                     near = (List<Entity>) newLoc.getWorld().getNearbyEntities(newLoc, 6, 6, 6);
                     near = Utils.filterOutTeammates(near, player);
@@ -121,7 +121,7 @@ public class Boulder extends AbstractAbility {
                     }
                     newLoc.setPitch(-12);
                     newLoc.add(0, 1, 0);
-                    for (int i = 0; i < 30; i++) {
+                    for (int i = 0; i < 24; i++) {
                         if (location.getWorld().getBlockAt(newLoc).getType() == Material.AIR) {
                             FallingBlock fallingBlock;
                             switch ((int) (Math.random() * 3)) {

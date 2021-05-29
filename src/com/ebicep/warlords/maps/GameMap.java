@@ -9,6 +9,7 @@ import org.bukkit.Location;
     // "Valley"
     // "Warsong"
     // "Gorge"
+    // "Debug"
 
     public enum GameMap {
         RIFT(
@@ -28,7 +29,7 @@ import org.bukkit.Location;
                 new Location(Bukkit.getWorld("Rift"), -0.5, 24.5, 64.5), // BLUE HEALING
                 new Location(Bukkit.getWorld("Rift"), 1.5, 24.5, -62.5), // RED HEALING
 
-                new Location(Bukkit.getWorld("Rift"), -86.5, 45.5, -33.5),// BLUE LOBBY SPAWN
+                new Location(Bukkit.getWorld("Rift"), -86.5, 45.5, -33.5), // BLUE LOBBY SPAWN
                 new Location(Bukkit.getWorld("Rift"), 87, 45.5, 35.5), // RED LOBBY SPAWN
 
                 new Location(Bukkit.getWorld("Rift"), -32.5, 34.5, -43.5), // BLUE RESPAWN
@@ -55,7 +56,7 @@ import org.bukkit.Location;
                 new Location(Bukkit.getWorld("Crossfire"), 96.5, 6.5, 108.5), // BLUE HEALING
                 new Location(Bukkit.getWorld("Crossfire"), 126.5, 6.5, 19.5), // RED HEALING
 
-                new Location(Bukkit.getWorld("Crossfire"), 215.5, 36.5, 109.5),// BLUE LOBBY SPAWN
+                new Location(Bukkit.getWorld("Crossfire"), 215.5, 36.5, 109.5), // BLUE LOBBY SPAWN
                 new Location(Bukkit.getWorld("Crossfire"), 7.5, 36.5, 19.5), // RED LOBBY SPAWN
 
                 new Location(Bukkit.getWorld("Crossfire"), 133, 11.5, 130.5), // BLUE RESPAWN
@@ -82,7 +83,7 @@ import org.bukkit.Location;
                 new Location(Bukkit.getWorld("Warsong"), 42.5, 17.5, 60.5), // BLUE HEALING
                 new Location(Bukkit.getWorld("Warsong"), 120.5, 22.5, 90.5), // RED HEALING
 
-                new Location(Bukkit.getWorld("Warsong"), 56.5, 39.5, -94.5),// BLUE LOBBY SPAWN
+                new Location(Bukkit.getWorld("Warsong"), 56.5, 39.5, -94.5), // BLUE LOBBY SPAWN
                 new Location(Bukkit.getWorld("Warsong"), 88.5, 40.5, 232.5), // RED LOBBY SPAWN
 
                 new Location(Bukkit.getWorld("Warsong"), 38.5, 29.5, 14.5), // BLUE RESPAWN
@@ -112,7 +113,7 @@ import org.bukkit.Location;
                 new Location(Bukkit.getWorld("Gorge"), 0.5, 15.5, 0.5), // BLUE HEALING
                 new Location(Bukkit.getWorld("Gorge"), 999, 22.5, 999), // RED HEALING
 
-                new Location(Bukkit.getWorld("Gorge"), 84.5, 41.5, 0.5),// BLUE LOBBY SPAWN
+                new Location(Bukkit.getWorld("Gorge"), 84.5, 41.5, 0.5), // BLUE LOBBY SPAWN
                 new Location(Bukkit.getWorld("Gorge"), -85.5, 41.5, 0.5), // RED LOBBY SPAWN
 
                 new Location(Bukkit.getWorld("Gorge"), 65.5, 42.5, -36.5), // BLUE RESPAWN
@@ -139,7 +140,7 @@ import org.bukkit.Location;
                 new Location(Bukkit.getWorld("Atherrough_Valley"), 57.5, 15.5, 1.5), // BLUE HEALING
                 new Location(Bukkit.getWorld("Atherrough_Valley"), -56.5, 15.5, -0.5), // RED HEALING
 
-                new Location(Bukkit.getWorld("Atherrough_Valley"), -22.5, 38.5, -83.5),// BLUE LOBBY SPAWN
+                new Location(Bukkit.getWorld("Atherrough_Valley"), -22.5, 38.5, -83.5), // BLUE LOBBY SPAWN
                 new Location(Bukkit.getWorld("Atherrough_Valley"), 23.5, 38.5, 83.5), // RED LOBBY SPAWN
 
                 new Location(Bukkit.getWorld("Atherrough_Valley"), 39.5, 28.5, -97.5), // BLUE RESPAWN
@@ -147,6 +148,33 @@ import org.bukkit.Location;
 
                 new Location(Bukkit.getWorld("Atherrough_Valley"), -29.5, 38.5, -88.5), // BLUE FLAG
                 new Location(Bukkit.getWorld("Atherrough_Valley"), 30.5, 38.5, 89.5) // RED FLAG
+        ),
+
+        DEBUG(
+                "Debug",
+                96,
+                1,
+                1800 * 20,
+                30 * 20,
+                "",
+
+                new Location(Bukkit.getWorld("WLDebug"), 699.5, 8.5, 184.5), // BLUE DAMAGE
+                new Location(Bukkit.getWorld("WLDebug"), 699.5, 8.5, 188.5), // RED DAMAGE
+
+                new Location(Bukkit.getWorld("WLDebug"), 699.5, 8.5, 192.5), // BLUE SPEED
+                new Location(Bukkit.getWorld("WLDebug"), 699.5, 8.5, 196.5), // RED SPEED
+
+                new Location(Bukkit.getWorld("WLDebug"), 699.5, 8.5, 200.5), // BLUE HEALING
+                new Location(Bukkit.getWorld("WLDebug"), 699.5, 8.5, 204.5), // RED HEALING
+
+                new Location(Bukkit.getWorld("WLDebug"), 727.5, 8.5, 200.5), // BLUE LOBBY SPAWN
+                new Location(Bukkit.getWorld("WLDebug"), 727.5, 8.5, 196.5), // RED LOBBY SPAWN
+
+                new Location(Bukkit.getWorld("WLDebug"), 727.5, 8.5, 196.5), // BLUE RESPAWN
+                new Location(Bukkit.getWorld("WLDebug"), 727.5, 8.5, 196.5), // RED RESPAWN
+
+                new Location(Bukkit.getWorld("WLDebug"), 703.5, 8.5, 212.5), // BLUE FLAG
+                new Location(Bukkit.getWorld("WLDebug"), 720.5, 8.5, 212.5) // RED FLAG
         );
 
         protected String mapName;

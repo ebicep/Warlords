@@ -36,7 +36,7 @@ public class Utils {
         eye.setY(eye.getY() + 0.7);
         Vector toEntity = player1.getEyeLocation().toVector().subtract(eye.toVector());
         float dot = (float) toEntity.normalize().dot(eye.getDirection());
-        return dot > 0.98D;
+        return dot > 0.975D;
     }
 
     //15 blocks = 6.6
@@ -57,7 +57,7 @@ public class Utils {
         eye.setY(eye.getY() + 0.7);
         Vector toEntity = player1.getEyeLocation().toVector().subtract(eye.toVector());
         float dot = (float) toEntity.normalize().dot(eye.getDirection());
-        return dot > 0.95;
+        return dot > 0.935D;
     }
 
     public static boolean hasLineOfSight(Player player, Player player2) {

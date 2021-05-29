@@ -22,7 +22,7 @@ public class Repentance extends AbstractAbility {
         warlordsPlayer.setRepentanceCounter(warlordsPlayer.getRepentanceCounter() + 2000);
 
         for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "paladin.barrieroflight.impact", 1, 2F);
+            player1.playSound(player.getLocation(), "paladin.barrieroflight.impact", 2, 1.5F);
         }
     }
 }

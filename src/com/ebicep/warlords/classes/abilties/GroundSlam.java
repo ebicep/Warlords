@@ -3,6 +3,7 @@ package com.ebicep.warlords.classes.abilties;
 import com.ebicep.customentities.CustomFallingBlock;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.maps.Game;
 import org.bukkit.*;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
@@ -74,7 +75,7 @@ public class GroundSlam extends AbstractAbility {
                                 if (player.getLocation().distanceSquared(customFallingBlock.getFallingBlock().getLocation()) < 1.5) {
                                     ((GroundSlam) ability).getPlayersHit().add(player);
                                     final Location loc = player.getLocation();
-                                    final Vector v = customFallingBlock.getOwner().getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1.1).setY(0.25);
+                                    final Vector v = customFallingBlock.getOwner().getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1.15).setY(0.35);
                                     player.setVelocity(v);
                                     Warlords.getPlayer(player).addHealth(Warlords.getPlayer(customFallingBlock.getOwner()), ability.getName(), ability.getMinDamageHeal(), ability.getMaxDamageHeal(), ability.getCritChance(), ability.getCritMultiplier());
                                 }
