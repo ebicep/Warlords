@@ -55,6 +55,7 @@ public class Utils {
     public static boolean getLookingAtWave(Player player, Player player1) {
         Location eye = player.getEyeLocation();
         eye.setY(eye.getY() + 0.7);
+        eye.setPitch(0);
         Vector toEntity = player1.getEyeLocation().toVector().subtract(eye.toVector());
         float dot = (float) toEntity.normalize().dot(eye.getDirection());
         return dot > 0.935D;
