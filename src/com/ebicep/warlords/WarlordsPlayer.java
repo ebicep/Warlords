@@ -543,7 +543,7 @@ public class WarlordsPlayer {
     }
 
     public void addHealth(WarlordsPlayer attacker, String ability, int min, int max, int critChance, int critMultiplier) {
-        if (attacker == this) {
+        if (attacker == this && (ability.isEmpty() || ability.equals("Fall"))) {
             if (ability.isEmpty()) {
                 player.sendMessage("§c\u00AB§7 You took §c" + min * -1 + "§7 melee damage.");
 
