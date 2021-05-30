@@ -576,44 +576,41 @@ public class WarlordsPlayer {
                     player.damage(0);
                 }
             } else {
-                if (ability.equals("Fall")) {
-                    //TODO FIX FIX IT JUST GETS MORE MESSY LETS GOOOOOOOOOOOOOOO
-                    player.sendMessage("§c\u00AB§7 You took §c" + min * -1 + "§7 fall damage.");
-                    if (health + min < 0) {
-                        addGrave();
-                        hitBy.remove(attacker);
-                        hitBy.add(0, attacker);
+                //TODO FIX FIX IT JUST GETS MORE MESSY LETS GOOOOOOOOOOOOOOO
+                player.sendMessage("§c\u00AB§7 You took §c" + min * -1 + "§7 fall damage.");
+                if (health + min < 0) {
+                    addGrave();
+                    hitBy.remove(attacker);
+                    hitBy.add(0, attacker);
 
-                        this.addDeath();
-                        this.scoreboard.updateKillsAssists();
-                        Bukkit.getPluginManager().callEvent(new WarlordsDeathEvent(this));
+                    this.addDeath();
+                    this.scoreboard.updateKillsAssists();
+                    Bukkit.getPluginManager().callEvent(new WarlordsDeathEvent(this));
 
-                        if (Warlords.game.getTeamBlue().contains(player)) {
-                            Warlords.redKills++;
-                            Warlords.game.addRedPoints(SCORE_KILL_POINTS);
-                        } else {
-                            Warlords.blueKills++;
-                            Warlords.game.addBluePoints(SCORE_KILL_POINTS);
-                        }
-
-                        //title YOU DIED
-                        PacketUtils.sendTitle(player, ChatColor.RED + "YOU DIED!", ChatColor.GRAY + "You took " + ChatColor.RED + (min * -1) + ChatColor.GRAY + " fall damage and died.", 0, 40, 0);
-
-                        for (WarlordsPlayer value : Warlords.getPlayers().values()) {
-                            value.getScoreboard().updatePoints();
-                        }
-                        health = 0;
+                    if (Warlords.game.getTeamBlue().contains(player)) {
+                        Warlords.redKills++;
+                        Warlords.game.addRedPoints(SCORE_KILL_POINTS);
                     } else {
-                        health += min;
+                        Warlords.blueKills++;
+                        Warlords.game.addBluePoints(SCORE_KILL_POINTS);
                     }
 
+                    //title YOU DIED
+                    PacketUtils.sendTitle(player, ChatColor.RED + "YOU DIED!", ChatColor.GRAY + "You took " + ChatColor.RED + (min * -1) + ChatColor.GRAY + " fall damage and died.", 0, 40, 0);
 
-                    player.damage(0);
+                    for (WarlordsPlayer value : Warlords.getPlayers().values()) {
+                        value.getScoreboard().updatePoints();
+                    }
+                    health = 0;
+                } else {
+                    health += min;
                 }
+
+
+                player.damage(0);
             }
         } else {
-
-            if (attacker.getInferno() != 0) {
+            if (attacker.getInferno() != 0 && !ability.equals("Time Warp")) {
                 critChance += attacker.getSpec().getOrange().getCritChance();
                 critMultiplier += attacker.getSpec().getOrange().getCritMultiplier();
             }
