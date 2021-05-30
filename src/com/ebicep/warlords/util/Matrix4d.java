@@ -1,9 +1,10 @@
 package com.ebicep.warlords.util;
 
-import java.util.Arrays;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.util.Vector;
+
+import java.util.Arrays;
 
 /**
  * Class for automatically converting a Vector to a Location based on another Location

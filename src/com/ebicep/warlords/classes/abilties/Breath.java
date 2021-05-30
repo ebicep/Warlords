@@ -5,12 +5,10 @@ import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.util.Matrix4d;
 import com.ebicep.warlords.util.ParticleEffect;
-import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
@@ -45,7 +43,7 @@ public class Breath extends AbstractAbility {
                             eye.setY(eye.getY() + .7);
 
                             final Location loc = entity.getLocation();
-                            final Vector v = player.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-0.75).setY(0.3);
+                            final Vector v = player.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-0.85).setY(0.3);
 
                             entity.setVelocity(v);;
                         }

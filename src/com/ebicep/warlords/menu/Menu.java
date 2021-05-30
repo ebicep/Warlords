@@ -1,17 +1,11 @@
 package com.ebicep.warlords.menu;
 
-import com.ebicep.warlords.Warlords;
-import static com.ebicep.warlords.menu.MenuEventListener.METADATA_CUSTOM_INVENTORY;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
-import java.util.function.Function;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.metadata.FixedMetadataValue;
+
+import java.util.function.BiConsumer;
 
 public class Menu extends MenuBase {
     public static final BiConsumer<Menu, InventoryClickEvent> ACTION_CLOSE_MENU = (m, e) -> e.getWhoClicked().closeInventory();

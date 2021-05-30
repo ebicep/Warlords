@@ -2,10 +2,6 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.classes.AbstractAbility;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerInteractEvent;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class temp extends AbstractAbility {
 

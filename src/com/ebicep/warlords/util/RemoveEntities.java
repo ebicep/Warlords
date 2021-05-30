@@ -1,9 +1,7 @@
 package com.ebicep.warlords.util;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.Commands;
 import org.bukkit.Bukkit;
-import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 

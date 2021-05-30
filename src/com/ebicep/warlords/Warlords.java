@@ -1,6 +1,7 @@
 package com.ebicep.warlords;
 
-import com.ebicep.warlords.classes.abilties.*;
+import com.ebicep.warlords.classes.abilties.OrbsOfLife;
+import com.ebicep.warlords.classes.abilties.Soulbinding;
 import com.ebicep.warlords.commands.Commands;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.maps.Game;
@@ -8,8 +9,13 @@ import com.ebicep.warlords.menu.MenuEventListener;
 import com.ebicep.warlords.util.PacketUtils;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.Utils;
-import org.bukkit.*;
-import org.bukkit.entity.*;
+import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -17,7 +23,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import org.bukkit.block.Block;
 
 public class Warlords extends JavaPlugin {
 

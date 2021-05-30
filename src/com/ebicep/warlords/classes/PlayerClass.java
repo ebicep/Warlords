@@ -6,9 +6,6 @@ import net.minecraft.server.v1_8_R3.PacketPlayOutAnimation;
 import org.bukkit.GameMode;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerItemHeldEvent;
 
 public abstract class PlayerClass {
 

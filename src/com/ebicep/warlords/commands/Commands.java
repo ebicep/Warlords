@@ -1,9 +1,6 @@
 package com.ebicep.warlords.commands;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.WarlordsPlayer;
-import com.ebicep.warlords.classes.warrior.specs.berserker.Berserker;
-import com.ebicep.warlords.classes.warrior.specs.defender.Defender;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Game.State;
 import com.ebicep.warlords.maps.GameMap;
@@ -11,18 +8,15 @@ import com.ebicep.warlords.util.Classes;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
-import org.bukkit.metadata.FixedMetadataValue;
-import static com.ebicep.warlords.menu.GameMenu.openMainMenu;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.maps.Game.State.GAME;
-import static com.ebicep.warlords.maps.Game.State.PRE_GAME;
+import static com.ebicep.warlords.menu.GameMenu.openMainMenu;
 
 public class Commands implements TabExecutor {
 

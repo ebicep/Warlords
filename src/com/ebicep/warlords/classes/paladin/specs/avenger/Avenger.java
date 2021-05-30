@@ -3,7 +3,6 @@ package com.ebicep.warlords.classes.paladin.specs.avenger;
 import com.ebicep.warlords.classes.abilties.*;
 import com.ebicep.warlords.classes.paladin.AbstractPaladin;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerInteractEvent;
 
 public class Avenger extends AbstractPaladin {
 

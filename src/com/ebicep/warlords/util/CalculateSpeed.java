@@ -2,7 +2,6 @@ package com.ebicep.warlords.util;
 
 import java.util.*;
 import java.util.function.Consumer;
-import org.bukkit.Bukkit;
 
 public class CalculateSpeed {
     private final float BASE_SPEED = 7.02f;

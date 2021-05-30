@@ -12,6 +12,7 @@ import com.ebicep.warlords.util.CustomScoreboard;
 import com.ebicep.warlords.util.PacketUtils;
 import com.ebicep.warlords.util.Utils;
 import org.bukkit.*;
+import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -23,10 +24,7 @@ import org.bukkit.material.Dye;
 import org.bukkit.metadata.MetadataValue;
 
 import java.util.*;
-import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
-
-import org.bukkit.block.Block;
 
 public class WarlordsPlayer {
 

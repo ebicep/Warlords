@@ -1,6 +1,5 @@
 package com.ebicep.warlords.classes;
 
-import com.ebicep.BountifulAPI.BountifulAPI;
 import com.ebicep.warlords.WarlordsPlayer;
 
 public class ActionBarStats {

@@ -1,6 +1,5 @@
 package com.ebicep.warlords.classes.warrior.specs.revenant;
 
-import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.classes.abilties.*;
 import com.ebicep.warlords.classes.warrior.AbstractWarrior;
 import org.bukkit.entity.Player;

@@ -15,10 +15,10 @@ import com.ebicep.warlords.classes.warrior.specs.berserker.Berserker;
 import com.ebicep.warlords.classes.warrior.specs.defender.Defender;
 import com.ebicep.warlords.classes.warrior.specs.revenant.Revenant;
 import org.bukkit.entity.Player;
+import org.bukkit.metadata.FixedMetadataValue;
 
 import java.util.Objects;
 import java.util.function.Function;
-import org.bukkit.metadata.FixedMetadataValue;
 
 public enum Classes {
     PYROMANCER("Pyromancer", Pyromancer::new, "§7A damage-oriented Mage specialization that uses the destructive Fire spells to obliterate enemies."),

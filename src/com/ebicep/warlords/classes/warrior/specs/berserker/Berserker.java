@@ -1,10 +1,7 @@
 package com.ebicep.warlords.classes.warrior.specs.berserker;
 
-import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.classes.abilties.*;
 import com.ebicep.warlords.classes.warrior.AbstractWarrior;
-import com.sun.jndi.ldap.Ber;
 import org.bukkit.entity.Player;
 
 public class Berserker extends AbstractWarrior {

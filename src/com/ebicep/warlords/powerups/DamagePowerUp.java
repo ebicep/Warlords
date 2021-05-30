@@ -1,7 +1,6 @@
 package com.ebicep.warlords.powerups;
 
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
 
 public class DamagePowerUp extends AbstractPowerUp {
 

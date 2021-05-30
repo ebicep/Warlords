@@ -1,12 +1,13 @@
 package com.ebicep.warlords.menu;
 
-import java.util.Optional;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
+
+import java.util.Optional;
 
 public class MenuEventListener implements Listener {
     public static final String METADATA_CUSTOM_INVENTORY = "CUSTOM-INVENTORY";

@@ -2,20 +2,18 @@ package com.ebicep.warlords.util;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
-import com.ebicep.warlords.maps.FlagManager;
-import com.ebicep.warlords.maps.FlagManager.*;
+import com.ebicep.warlords.maps.FlagManager.GroundFlagLocation;
+import com.ebicep.warlords.maps.FlagManager.PlayerFlagLocation;
+import com.ebicep.warlords.maps.FlagManager.SpawnFlagLocation;
 import com.ebicep.warlords.maps.Game;
-import net.minecraft.server.v1_8_R3.EnumChatFormat;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.bukkit.metadata.MetadataValue;
 import org.bukkit.scoreboard.*;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class CustomScoreboard {
 

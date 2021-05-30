@@ -1,6 +1,5 @@
 package com.ebicep.warlords.classes.shaman.specs.spiritguard;
 
-import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.classes.abilties.*;
 import com.ebicep.warlords.classes.shaman.AbstractShaman;
 import org.bukkit.entity.Player;

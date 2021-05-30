@@ -1,13 +1,14 @@
 package com.ebicep.warlords.util;
 
-import static com.ebicep.warlords.util.Classes.*;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Supplier;
-import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
+
+import static com.ebicep.warlords.util.Classes.*;
 
 public enum ClassesGroup {
     MAGE(

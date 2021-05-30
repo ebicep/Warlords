@@ -1,17 +1,18 @@
 package com.ebicep.warlords.menu;
 
-import static com.ebicep.warlords.menu.Menu.ACTION_CLOSE_MENU;
 import com.ebicep.warlords.util.Classes;
-import static com.ebicep.warlords.util.Classes.getSelected;
-import static com.ebicep.warlords.util.Classes.setSelected;
 import com.ebicep.warlords.util.ClassesGroup;
 import com.ebicep.warlords.util.ItemBuilder;
-import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.List;
+
+import static com.ebicep.warlords.menu.Menu.ACTION_CLOSE_MENU;
+import static com.ebicep.warlords.util.Classes.getSelected;
+import static com.ebicep.warlords.util.Classes.setSelected;
 
 public class GameMenu {
     private static final ItemStack MENU_CLOSE = new ItemBuilder(Material.ARROW)

@@ -1,8 +1,6 @@
 package com.ebicep.customentities;
 
-import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
-import com.ebicep.warlords.util.ParticleEffect;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
 

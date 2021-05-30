@@ -1,6 +1,9 @@
 package com.ebicep.warlords.classes.mage.specs.pyromancer;
 
-import com.ebicep.warlords.classes.abilties.*;
+import com.ebicep.warlords.classes.abilties.ArcaneShield;
+import com.ebicep.warlords.classes.abilties.Inferno;
+import com.ebicep.warlords.classes.abilties.Projectile;
+import com.ebicep.warlords.classes.abilties.TimeWarp;
 import com.ebicep.warlords.classes.mage.AbstractMage;
 import org.bukkit.entity.Player;
 

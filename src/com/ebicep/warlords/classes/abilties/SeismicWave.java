@@ -2,10 +2,11 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.customentities.CustomFallingBlock;
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.util.Utils;
-import org.bukkit.*;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
