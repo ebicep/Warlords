@@ -3,6 +3,7 @@ package com.ebicep.warlords.maps;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.events.WarlordsDeathEvent;
+import com.ebicep.warlords.util.PacketUtils;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -93,6 +94,7 @@ public class FlagManager implements Listener {
                 // Blue scores a capture
                 PlayerFlagLocation playerFlagLocation = (PlayerFlagLocation) this.red.getFlag();
                 Bukkit.broadcastMessage("§9" + playerFlagLocation.getPlayer().getName() + " §ehas captured the §cRED §eflag!");
+                PacketUtils.sendTitle(playerFlagLocation.player, "", "§9" + playerFlagLocation.getPlayer().getName() + " §ehas captured the §cRED §eflag!", 0, 60, 0);
                 Warlords.game.addBluePoints(SCORE_FLAG_POINTS);
                 hasScored = true;
 
@@ -182,6 +184,7 @@ public class FlagManager implements Listener {
                 ChatColor color = (info.getTeam() == Team.RED ? ChatColor.BLUE : ChatColor.RED);
                 ChatColor color2 = (info.getTeam() == Team.RED ? ChatColor.RED : ChatColor.BLUE);
                 Bukkit.broadcastMessage(color + player.getPlayerListName() + " §ehas picked up the " + color2 +  info.getTeam() + " §eflag!");
+                PacketUtils.sendTitle(player, "", color + player.getPlayerListName() + " §ehas picked up the " + color2 +  info.getTeam() + " §eflag!", 0, 60, 0);
 
                 for (Player player1 : player.getWorld().getPlayers()) {
                     if (Warlords.game.isRedTeam(player1) == (info.getTeam() == Team.RED)) {

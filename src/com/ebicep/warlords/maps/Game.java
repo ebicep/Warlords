@@ -137,7 +137,7 @@ public class Game implements Runnable {
 
                     game.timer++;
                     //TESTING
-                    return GAME;
+                    //return GAME;
 
                 } else {
                     game.timer = 0;
@@ -208,7 +208,7 @@ public class Game implements Runnable {
             @Override
             public Game.State run(Game game) {
                 if (
-                        game.bluePoints >= POINT_LIMIT || game.redPoints >= POINT_LIMIT || game.timer >= game.map.getGameTimerInTicks() * 20 || game.forceEnd
+                        game.bluePoints >= POINT_LIMIT || game.redPoints >= POINT_LIMIT || game.timer >= game.map.getGameTimerInTicks() || game.forceEnd
                 ) {
                     return END;
                 }

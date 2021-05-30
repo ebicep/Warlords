@@ -42,7 +42,7 @@ public enum GameMap {
 
             Arrays.asList(
                     new Cuboid(Bukkit.getWorld("Rift"), -79, 45, -29, -79, 49, -24), // BLUE GATES 1
-                    new Cuboid(Bukkit.getWorld("Rift"),-90, 45, -6, -86, 49, -6), // BLUE GATES 2
+                    new Cuboid(Bukkit.getWorld("Rift"),-91, 45, -6, -86, 49, -6), // BLUE GATES 2
 
                     new Cuboid(Bukkit.getWorld("Rift"),79, 45, 25, 79, 49, 29), // RED GATES 1
                     new Cuboid(Bukkit.getWorld("Rift"),87, 45, 6, 91, 49, 6) // RED GATES 2
@@ -150,7 +150,7 @@ public enum GameMap {
 
             Arrays.asList(
                     new Cuboid(Bukkit.getWorld("Gorge"), 76, 41, -2, 76, 45, 3), // BLUE GATE
-                    new Cuboid(Bukkit.getWorld("Gorge"), -76, 41, -3, 75, 45, 2) // RED GATE
+                    new Cuboid(Bukkit.getWorld("Gorge"), -76, 41, -3, -75, 45, 2) // RED GATE
             )
     ),
 
@@ -181,7 +181,7 @@ public enum GameMap {
             new Location(Bukkit.getWorld("Atherrough_Valley"), 30.5, 38.5, 89.5), // RED FLAG
 
             Arrays.asList(
-                    new Cuboid(Bukkit.getWorld("Atherrough_Valley"), -25, 33, -95, -19, 40, -95), // BLUE GATES 1
+                    new Cuboid(Bukkit.getWorld("Atherrough_Valley"), -26, 33, -96, -19, 40, -96), // BLUE GATES 1
                     new Cuboid(Bukkit.getWorld("Atherrough_Valley"), -28, 31, -81, -28, 41, -75), // BLUE GATES 2
 
                     new Cuboid(Bukkit.getWorld("Atherrough_Valley"), 20, 33, 96, 26, 42, 96), // RED GATES 1

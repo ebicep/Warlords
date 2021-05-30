@@ -454,9 +454,9 @@ public class Warlords extends JavaPlugin {
                                         PacketUtils.sendTitle(player, "", "", 0, 0, 0);
                                     } else {
                                         if (game.isBlueTeam(player)) {
-                                            PacketUtils.sendTitle(player, ChatColor.BLUE + "Respawning in... " + ChatColor.YELLOW + (respawn - 1), "", 0, 40, 0);
+                                            PacketUtils.sendTitle(player, "", ChatColor.BLUE + "Respawning in... " + ChatColor.YELLOW + (respawn - 1), 0, 40, 0);
                                         } else {
-                                            PacketUtils.sendTitle(player, ChatColor.RED + "Respawning in... " + ChatColor.YELLOW + (respawn - 1), "", 0, 40, 0);
+                                            PacketUtils.sendTitle(player, "", ChatColor.RED + "Respawning in... " + ChatColor.YELLOW + (respawn - 1), 0, 40, 0);
                                         }
                                     }
                                 }
