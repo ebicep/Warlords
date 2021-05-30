@@ -4,10 +4,14 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.classes.ActionBarStats;
+import com.ebicep.warlords.effects.circle.CircleEffect;
+import com.ebicep.warlords.effects.circle.CircumferenceEffect;
+import com.ebicep.warlords.effects.circle.DoubleLineEffect;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.Utils;
 import net.minecraft.server.v1_8_R3.EntityArmorStand;
 import net.minecraft.server.v1_8_R3.World;
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -18,6 +22,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -86,10 +91,10 @@ public class Totem extends EntityArmorStand {
         public TotemThunderlord() {
             super("Capacitor Totem", -404, -523, 60 + 2, 20, 20, 200,
                     "§7Place a highly conductive totem\n" +
-                    "§7on the ground. Casting Chain Lightning\n" +
-                    "§7or Lightning Rod on the totem will cause\n" +
-                    "§7it to pulse, dealing §c404 §7- §c523 §7damage\n" +
-                    "§7to all enemies nearby. Lasts §68 §7seconds.");
+                            "§7on the ground. Casting Chain Lightning\n" +
+                            "§7or Lightning Rod on the totem will cause\n" +
+                            "§7it to pulse, dealing §c404 §7- §c523 §7damage\n" +
+                            "§7to all enemies nearby. Lasts §68 §7seconds.");
         }
 
         @Override
@@ -167,11 +172,16 @@ public class Totem extends EntityArmorStand {
 
             player.setMetadata("TOTEM", new FixedMetadataValue(Warlords.getInstance(), this));
 
+            CircleEffect circle = new CircleEffect(Warlords.game, Warlords.game.getPlayerTeam(player), standLocation.clone().add(0, 1, 0), 10);
+            circle.addEffect(new CircumferenceEffect(ParticleEffect.SPELL));
+            circle.addEffect(new DoubleLineEffect(ParticleEffect.REDSTONE));
+            BukkitTask task = Bukkit.getScheduler().runTaskTimer(Warlords.getInstance(), circle::playEffects, 0, 1);
+
             new BukkitRunnable() {
 
                 @Override
                 public void run() {
-                    boolean isPlayerInRadius = player.getLocation().distanceSquared(standLocation) < 5 * 5;
+                    boolean isPlayerInRadius = player.getLocation().distanceSquared(standLocation) < 10 * 10;
                     int secondsLeft = Math.min(
                             deathsDebtTotem.getSecondsLeft() - 1,
                             isPlayerInRadius ? Integer.MAX_VALUE : 0
@@ -195,11 +205,7 @@ public class Totem extends EntityArmorStand {
                             } else {
                                 player.sendMessage("§c\u00AB §2Spirit's Respite §7delayed §c" + -Math.round(getDelayedDamage()) + " §7damage. §dYour debt must now be paid.");
                             }
-
-                            if (TotemSpiritguard.this.getDelayedDamage() == 0) {
-                                this.cancel();
-
-                            }
+                            circle.replaceEffects(e -> e instanceof DoubleLineEffect, new DoubleLineEffect(ParticleEffect.SPELL_WITCH));
                         }
 
                         // TODO: render particles for the damage phase
@@ -254,6 +260,7 @@ public class Totem extends EntityArmorStand {
                             // 6 damage waves, stop the function
                             deathsDebtTotem.getTotemArmorStand().remove();
                             this.cancel();
+                            task.cancel();
                         }
                     }
                 }
@@ -279,11 +286,11 @@ public class Totem extends EntityArmorStand {
         public TotemEarthwarden() {
             super("Healing Totem", 168, 841, 60 + 12, 60, 15, 200,
                     "§7Place a totem on the ground that\n" +
-                    "§7pulses constantly, healing nearby\n" +
-                    "§7allies for §a168 §7- §a227 §7every\n" +
-                    "§7second. Before disappearing, the totem\n" +
-                    "§7will let out a final pulse that heals for\n" +
-                    "§a841 §7- §a1138§7. Lasts §65 §7seconds.");
+                            "§7pulses constantly, healing nearby\n" +
+                            "§7allies for §a168 §7- §a227 §7every\n" +
+                            "§7second. Before disappearing, the totem\n" +
+                            "§7will let out a final pulse that heals for\n" +
+                            "§a841 §7- §a1138§7. Lasts §65 §7seconds.");
 
             //168 - 227
             //841 - 1138

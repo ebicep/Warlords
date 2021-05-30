@@ -11,6 +11,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -81,7 +82,7 @@ public enum ParticleEffect {
      * <li>The speed value influences the velocity at which the particle flies off
      * </ul>
      */
-    WATER_BUBBLE("bubble", 4, -1, ParticleProperty.DIRECTIONAL, ParticleProperty.REQUIRES_WATER),
+    WATER_BUBBLE("bubble", 4, -1, ParticleProperty.DIRECTIONAL),
     /**
      * A particle effect which is displayed by swimming entities and shaking wolves:
      * <ul>
@@ -509,7 +510,7 @@ public enum ParticleEffect {
      * @param location Location to check
      * @return Whether the distance exceeds 256 or not
      */
-    private static boolean isLongDistance(Location location, List<Player> players) {
+    private static boolean isLongDistance(Location location, Collection<Player> players) {
         String world = location.getWorld().getName();
         for (Player player : players) {
             Location playerLocation = player.getLocation();
@@ -588,7 +589,7 @@ public enum ParticleEffect {
      * @see ParticlePacket
      * @see ParticlePacket#sendTo(Location, List)
      */
-    public void display(float offsetX, float offsetY, float offsetZ, float speed, int amount, Location center, List<Player> players) throws ParticleVersionException, ParticleDataException, IllegalArgumentException {
+    public void display(float offsetX, float offsetY, float offsetZ, float speed, int amount, Location center, Collection<Player> players) throws ParticleVersionException, ParticleDataException, IllegalArgumentException {
         if (!isSupported()) {
             throw new ParticleVersionException("This particle effect is not supported by your server version");
         }
@@ -662,7 +663,7 @@ public enum ParticleEffect {
      * @see ParticlePacket#ParticlePacket(ParticleEffect, Vector, float, boolean, ParticleData)
      * @see ParticlePacket#sendTo(Location, List)
      */
-    public void display(Vector direction, float speed, Location center, List<Player> players) throws ParticleVersionException, ParticleDataException, IllegalArgumentException {
+    public void display(Vector direction, float speed, Location center, Collection<Player> players) throws ParticleVersionException, ParticleDataException, IllegalArgumentException {
         if (!isSupported()) {
             throw new ParticleVersionException("This particle effect is not supported by your server version");
         }
@@ -729,7 +730,7 @@ public enum ParticleEffect {
      * @see ParticlePacket#ParticlePacket(ParticleEffect, ParticleColor, boolean)
      * @see ParticlePacket#sendTo(Location, List)
      */
-    public void display(ParticleColor color, Location center, List<Player> players) throws ParticleVersionException, ParticleColorException {
+    public void display(ParticleColor color, Location center, Collection<Player> players) throws ParticleVersionException, ParticleColorException {
         if (!isSupported()) {
             throw new ParticleVersionException("This particle effect is not supported by your server version");
         }
@@ -801,7 +802,7 @@ public enum ParticleEffect {
      * @see ParticlePacket
      * @see ParticlePacket#sendTo(Location, List)
      */
-    public void display(ParticleData data, float offsetX, float offsetY, float offsetZ, float speed, int amount, Location center, List<Player> players) throws ParticleVersionException, ParticleDataException {
+    public void display(ParticleData data, float offsetX, float offsetY, float offsetZ, float speed, int amount, Location center, Collection<Player> players) throws ParticleVersionException, ParticleDataException {
         if (!isSupported()) {
             throw new ParticleVersionException("This particle effect is not supported by your server version");
         }
@@ -872,7 +873,7 @@ public enum ParticleEffect {
      * @see ParticlePacket
      * @see ParticlePacket#sendTo(Location, List)
      */
-    public void display(ParticleData data, Vector direction, float speed, Location center, List<Player> players) throws ParticleVersionException, ParticleDataException {
+    public void display(ParticleData data, Vector direction, float speed, Location center, Collection<Player> players) throws ParticleVersionException, ParticleDataException {
         if (!isSupported()) {
             throw new ParticleVersionException("This particle effect is not supported by your server version");
         }
@@ -1499,13 +1500,9 @@ public enum ParticleEffect {
          *
          * @param center  Center location of the effect
          * @param players Receivers of the packet
-         * @throws IllegalArgumentException If the player list is empty
          * @see #sendTo(Location center, Player player)
          */
-        public void sendTo(Location center, List<Player> players) throws IllegalArgumentException {
-            if (players.isEmpty()) {
-                throw new IllegalArgumentException("The player list is empty");
-            }
+        public void sendTo(Location center, Collection<Player> players) throws IllegalArgumentException {
             for (Player player : players) {
                 sendTo(center, player);
             }

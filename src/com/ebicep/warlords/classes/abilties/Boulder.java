@@ -31,7 +31,7 @@ public class Boulder extends AbstractAbility {
     public void onActivate(Player player) {
 
         Location location = player.getLocation();
-        Vector speed = player.getLocation().getDirection().multiply(1.9);
+        Vector speed = player.getLocation().getDirection().multiply(0.475);
         ArmorStand stand = (ArmorStand) location.getWorld().spawnEntity(location.clone().add(0, 0, 0), EntityType.ARMOR_STAND);
         stand.setHelmet(new ItemStack(Material.LONG_GRASS, 1, (short) 2));
         stand.setCustomName("Boulder");
@@ -46,13 +46,19 @@ public class Boulder extends AbstractAbility {
 
             @Override
             public void run() {
+                quarterStep(false);
+                quarterStep(false);
+                quarterStep(false);
+                quarterStep(true);
+            }
+
+            private void quarterStep(boolean last) {
 
                 if (!stand.isValid()) {
                     this.cancel();
                 }
 
-                speed.multiply(1);
-                speed.add(new Vector(0, -0.09, 0));
+                speed.add(new Vector(0, -0.0075, 0));
                 Location newLoc = stand.getLocation();
                 newLoc.add(speed);
                 stand.teleport(newLoc);
@@ -66,9 +72,10 @@ public class Boulder extends AbstractAbility {
                 boolean boulderExplode = false;
                 List<Entity> near = null;
 
-                Location particleLoc = newLoc.add(0, 2, 0);
-                ParticleEffect.CRIT.display(0.3F, 0.3F, 0.3F, 0.1F, 4, particleLoc, 500);
-
+                if(last) {
+                    Location particleLoc = newLoc.clone().add(0, 2, 0);
+                    ParticleEffect.CRIT.display(0.3F, 0.3F, 0.3F, 0.1F, 4, particleLoc, 500);
+                }
                 if (!newLoc.getBlock().isEmpty()) {
                     boulderExplode = true;
                     near = (List<Entity>) newLoc.getWorld().getNearbyEntities(newLoc, 6, 6, 6);

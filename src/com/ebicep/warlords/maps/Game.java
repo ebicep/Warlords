@@ -11,6 +11,7 @@ import com.ebicep.warlords.util.*;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.apache.commons.lang.Validate;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -24,6 +25,8 @@ import org.bukkit.scoreboard.ScoreboardManager;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class Game implements Runnable {
 
@@ -39,15 +42,15 @@ public class Game implements Runnable {
                 game.redPoints = 0;
                 game.bluePoints = 0;
                 game.forceEnd = false;
-                game.teamBlue.clear();
-                game.teamRed.clear();
-                // Repair gates
+                game.cachedTeamBlue.clear();
+                game.cachedTeamRed.clear();
+                Gates.changeGates(game.map, false);
                 // Repair map damage (remove powerups)
             }
 
             @Override
             public Game.State run(Game game) {
-                int players = game.teamBlue.size() + game.teamRed.size();
+                int players = game.cachedTeamBlue.size() + game.cachedTeamRed.size();
                 if (players >= game.map.getMinPlayers()) {
                     int total = game.map.getCountdownTimerInTicks();
                     int remaining = total - game.timer;
@@ -56,33 +59,33 @@ public class Game implements Runnable {
                         if (time == 30) {
                             sendMessageToAllGamePlayer(game, ChatColor.YELLOW + "The game starts in " + ChatColor.GREEN + "30 " + ChatColor.YELLOW + "seconds!", false);
 
-                            for (Player player1 : game.teamBlue) {
+                            for (Player player1 : game.cachedTeamBlue) {
                                 player1.playSound(player1.getLocation(), Sound.NOTE_STICKS, 1, 1);
                             }
 
-                            for (Player player1 : game.teamRed) {
+                            for (Player player1 : game.cachedTeamRed) {
                                 player1.playSound(player1.getLocation(), Sound.NOTE_STICKS, 1, 1);
                             }
 
                         } else if (time == 20) {
                             sendMessageToAllGamePlayer(game, ChatColor.YELLOW + "The game starts in 20 seconds!", false);
 
-                            for (Player player1 : game.teamBlue) {
+                            for (Player player1 : game.cachedTeamBlue) {
                                 player1.playSound(player1.getLocation(), Sound.NOTE_STICKS, 1, 1);
                             }
 
-                            for (Player player1 : game.teamRed) {
+                            for (Player player1 : game.cachedTeamRed) {
                                 player1.playSound(player1.getLocation(), Sound.NOTE_STICKS, 1, 1);
                             }
 
                         } else if (time == 10) {
                             sendMessageToAllGamePlayer(game, ChatColor.YELLOW + "The game starts in " + ChatColor.GOLD + "10 " + ChatColor.YELLOW + "seconds!", false);
 
-                            for (Player player1 : game.teamBlue) {
+                            for (Player player1 : game.cachedTeamBlue) {
                                 player1.playSound(player1.getLocation(), Sound.NOTE_STICKS, 1, 1);
                             }
 
-                            for (Player player1 : game.teamRed) {
+                            for (Player player1 : game.cachedTeamRed) {
                                 player1.playSound(player1.getLocation(), Sound.NOTE_STICKS, 1, 1);
                             }
 
@@ -90,22 +93,22 @@ public class Game implements Runnable {
                             if (time == 1) {
                                 sendMessageToAllGamePlayer(game, ChatColor.YELLOW + "The game starts in " + ChatColor.RED + time + ChatColor.YELLOW + " second", false);
 
-                                for (Player player1 : game.teamBlue) {
+                                for (Player player1 : game.cachedTeamBlue) {
                                     player1.playSound(player1.getLocation(), Sound.NOTE_STICKS, 1, 1);
                                 }
 
-                                for (Player player1 : game.teamRed) {
+                                for (Player player1 : game.cachedTeamRed) {
                                     player1.playSound(player1.getLocation(), Sound.NOTE_STICKS, 1, 1);
                                 }
 
                             } else {
                                 sendMessageToAllGamePlayer(game, ChatColor.YELLOW + "The game starts in " + ChatColor.RED + time + ChatColor.YELLOW + " seconds!", false);
 
-                                for (Player player1 : game.teamBlue) {
+                                for (Player player1 : game.cachedTeamBlue) {
                                     player1.playSound(player1.getLocation(), Sound.NOTE_STICKS, 1, 1);
                                 }
 
-                                for (Player player1 : game.teamRed) {
+                                for (Player player1 : game.cachedTeamRed) {
                                     player1.playSound(player1.getLocation(), Sound.NOTE_STICKS, 1, 1);
                                 }
                             }
@@ -119,11 +122,11 @@ public class Game implements Runnable {
                             sendMessageToAllGamePlayer(game, "", true);
                             sendMessageToAllGamePlayer(game, "" + ChatColor.GREEN + ChatColor.BOLD + "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬", false);
 
-                            for (Player player1 : game.teamBlue) {
+                            for (Player player1 : game.cachedTeamBlue) {
                                 player1.playSound(player1.getLocation(), "gamestart", 1, 1);
                             }
 
-                            for (Player player1 : game.teamRed) {
+                            for (Player player1 : game.cachedTeamRed) {
                                 player1.playSound(player1.getLocation(), "gamestart", 1, 1);
                             }
                         }
@@ -155,7 +158,7 @@ public class Game implements Runnable {
                 RemoveEntities removeEntities = new RemoveEntities();
                 removeEntities.onRemove();
 
-                for (Player p : game.teamRed) {
+                for (Player p : game.cachedTeamRed) {
 
                     Classes selected = Classes.getSelected(p);
                     Warlords.addPlayer(new WarlordsPlayer(p, p.getName(), p.getUniqueId(), selected.create.apply(p), false));
@@ -169,7 +172,7 @@ public class Game implements Runnable {
                     System.out.println("Added " + p.getName());
                 }
 
-                for (Player p : game.teamBlue) {
+                for (Player p : game.cachedTeamBlue) {
 
                     Classes selected = Classes.getSelected(p);
                     Warlords.addPlayer(new WarlordsPlayer(p, p.getName(), p.getUniqueId(), selected.create.apply(p), false));
@@ -211,16 +214,16 @@ public class Game implements Runnable {
                 }
                 if (game.timer <= 10 * 20) {
                     if (game.timer == 10 * 20) {
-                        // Destroy gates
+                        Gates.changeGates(game.map, true);
                         // Enable abilities
                         sendMessageToAllGamePlayer(game, ChatColor.YELLOW + "Gates opened! " + ChatColor.RED + "FIGHT!", false);
 
-                        for (Player player1 : game.teamBlue) {
+                        for (Player player1 : game.cachedTeamBlue) {
                             PacketUtils.sendTitle(player1, ChatColor.GREEN + "GO!", ChatColor.YELLOW + "Steal and capture the enemy flag!", 0, 40, 20);
                             player1.playSound(player1.getLocation(), Sound.WITHER_SPAWN, 1, 1);
                         }
 
-                        for (Player player1 : game.teamRed) {
+                        for (Player player1 : game.cachedTeamRed) {
                             PacketUtils.sendTitle(player1, ChatColor.GREEN + "GO!", ChatColor.YELLOW + "Steal and capture the enemy flag!", 0, 40, 20);
                             player1.playSound(player1.getLocation(), Sound.WITHER_SPAWN, 1, 1);
                         }
@@ -231,23 +234,23 @@ public class Game implements Runnable {
                             if (time == 0) {
                                 sendMessageToAllGamePlayer(game, ChatColor.YELLOW + "The gates will fall in " + ChatColor.RED + "10" + ChatColor.YELLOW + " seconds!", false);
 
-                                for (Player player1 : game.teamBlue) {
+                                for (Player player1 : game.cachedTeamBlue) {
                                     PacketUtils.sendTitle(player1, ChatColor.GREEN + "GO!", ChatColor.YELLOW + "Steal and capture the enemy flag!", 0, 40, 20);
                                     player1.playSound(player1.getLocation(), Sound.NOTE_STICKS, 1, 1);
                                 }
 
-                                for (Player player1 : game.teamRed) {
+                                for (Player player1 : game.cachedTeamRed) {
                                     PacketUtils.sendTitle(player1, ChatColor.GREEN + "GO!", ChatColor.YELLOW + "Steal and capture the enemy flag!", 0, 40, 20);
                                     player1.playSound(player1.getLocation(), Sound.NOTE_STICKS, 1, 1);
                                 }
 
                             } else if (time >= 5) {
 
-                                for (Player player1 : game.teamBlue) {
+                                for (Player player1 : game.cachedTeamBlue) {
                                     player1.playSound(player1.getLocation(), Sound.NOTE_STICKS, 1, 1);
                                 }
 
-                                for (Player player1 : game.teamRed) {
+                                for (Player player1 : game.cachedTeamRed) {
                                     player1.playSound(player1.getLocation(), Sound.NOTE_STICKS, 1, 1);
                                 }
 
@@ -266,10 +269,10 @@ public class Game implements Runnable {
                                 number += ChatColor.RED;
                             }
                             number += 10 - time;
-                            for (Player p : game.teamBlue) {
+                            for (Player p : game.cachedTeamBlue) {
                                 PacketUtils.sendTitle(p, number, "", 0, 40, 0);
                             }
-                            for (Player p : game.teamRed) {
+                            for (Player p : game.cachedTeamRed) {
                                 PacketUtils.sendTitle(p, number, "", 0, 40, 0);
                             }
                         }
@@ -411,16 +414,12 @@ public class Game implements Runnable {
             public Game.State run(Game game) {
                 game.timer++;
                 if (game.timer > 10 * 20 || true) {
-                    for (Player player : game.teamBlue) {
+                    for (Player player : game.clearAllPlayers()) {
                         if (player != null) {
                             player.teleport(Bukkit.getWorlds().get(0).getSpawnLocation());
                         }
                     }
-                    for (Player player : game.teamRed) {
-                        if (player != null) {
-                            player.teleport(Bukkit.getWorlds().get(0).getSpawnLocation());
-                        }
-                    }
+                    Gates.changeGates(game.map, false);
                     return PRE_GAME;
                 }
 
@@ -465,14 +464,7 @@ public class Game implements Runnable {
         }
 
         public void sendMessageToAllGamePlayer(Game game, String message, boolean centered) {
-            for (Player p : game.teamBlue) {
-                if (centered) {
-                    Utils.sendCenteredMessage(p, message);
-                } else {
-                    p.sendMessage(message);
-                }
-            }
-            for (Player p : game.teamRed) {
+            for (Player p : game.players.keySet()) {
                 if (centered) {
                     Utils.sendCenteredMessage(p, message);
                 } else {
@@ -482,10 +474,7 @@ public class Game implements Runnable {
         }
 
         public void sendCenteredHoverableMessageToAllGamePlayer(Game game, List<TextComponent> message) {
-            for (Player p : game.teamBlue) {
-                Utils.sendCenteredHoverableMessage(p, message);
-            }
-            for (Player p : game.teamRed) {
+            for (Player p : game.players.keySet()) {
                 Utils.sendCenteredHoverableMessage(p, message);
             }
         }
@@ -545,8 +534,12 @@ public class Game implements Runnable {
     private Game.State state = Game.State.PRE_GAME;
     private int timer = 0;
     private GameMap map = GameMap.RIFT;
-    private final Set<Player> teamRed = new HashSet<>();
-    private final Set<Player> teamBlue = new HashSet<>();
+    private final Map<Player, Team> players = new HashMap<>();
+    private final Map<Player, Team> playersProtected = Collections.unmodifiableMap(players);
+    private final Set<Player> cachedTeamRed = new HashSet<>();
+    private final Set<Player> cachedTeamRedProtected = Collections.unmodifiableSet(cachedTeamRed);
+    private final Set<Player> cachedTeamBlue = new HashSet<>();
+    private final Set<Player> cachedTeamBlueProtected = Collections.unmodifiableSet(cachedTeamBlue);
     private int redPoints;
     private int bluePoints;
     private boolean forceEnd;
@@ -569,12 +562,16 @@ public class Game implements Runnable {
         return map;
     }
 
-    public Set<Player> getTeamRed() {
-        return teamRed;
+    public Map<Player, Team> getPlayers() {
+        return playersProtected;
     }
 
-    public Set<Player> getTeamBlue() {
-        return teamBlue;
+    public Collection<Player> getTeamRed() {
+        return cachedTeamRedProtected;
+    }
+
+    public Collection<Player> getTeamBlue() {
+        return cachedTeamBlueProtected;
     }
 
     public int getRedPoints() {
@@ -597,16 +594,30 @@ public class Game implements Runnable {
         return forceEnd;
     }
 
-    public boolean isRedTeam(Player player) {
-        return teamRed.contains(player);
+    public boolean isRedTeam(@Nonnull Player player) {
+        return players.get(player) == Team.RED;
     }
 
-    public boolean isBlueTeam(Player player) {
-        return teamBlue.contains(player);
+    public boolean isBlueTeam(@Nonnull Player player) {
+        return players.get(player) == Team.BLUE;
+    }
+
+    @Nullable
+    public Team getPlayerTeamOrNull(@Nonnull Player player) {
+        return this.players.get(player);
+    }
+
+    @Nonnull
+    public Team getPlayerTeam(@Nonnull Player player) {
+        Team team = getPlayerTeamOrNull(player);
+        if (team == null) {
+            throw new IllegalArgumentException("Player provided is not playing a game at the moment");
+        }
+        return team;
     }
 
     public boolean canChangeMap() {
-        return teamBlue.isEmpty() && teamRed.isEmpty() && state == Game.State.PRE_GAME;
+        return players.isEmpty() && state == Game.State.PRE_GAME;
     }
 
     public void resetTimer() {
@@ -629,43 +640,85 @@ public class Game implements Runnable {
         return remaining % 60;
     }
 
-    public void changeMap(GameMap map) {
+    public void changeMap(@Nonnull GameMap map) {
         if (!canChangeMap()) {
             throw new IllegalStateException("Cannot change map!");
         }
         this.map = map;
     }
 
+    public void addPlayer(@Nonnull Player player, @Nonnull Team team) {
+        Validate.notNull(player, "player");
+        Validate.notNull(team, "team");
+
+        Team oldTeam = this.players.put(player, team);
+        if(oldTeam != team) {
+            if(oldTeam == Team.RED) {
+                this.cachedTeamRed.remove(player);
+            } else if(oldTeam == Team.BLUE) {
+                this.cachedTeamBlue.remove(player);
+            }
+        }
+        switch(team) {
+            case BLUE:
+                this.cachedTeamBlue.add(player);
+                player.teleport(this.map.blueLobbySpawnPoint);
+                break;
+            case RED:
+                this.cachedTeamRed.add(player);
+                player.teleport(this.map.redLobbySpawnPoint);
+                break;
+        }
+    }
+    /**
+     * Adds a player to the game
+     * @param player
+     * @param teamBlue
+     * @deprecated use {@link #addPlayer(Player, Team) addPlayer(Player, Team)} instead
+     */
+    @Deprecated
     public void addPlayer(Player player, boolean teamBlue) {
         if (teamBlue) {
-            this.teamRed.remove(player);
-            this.teamBlue.add(player);
-            player.teleport(this.map.blueLobbySpawnPoint);
+            this.addPlayer(player, Team.BLUE);
         } else {
-            this.teamBlue.remove(player);
-            this.teamRed.add(player);
-            player.teleport(this.map.redLobbySpawnPoint);
+            this.addPlayer(player, Team.RED);
         }
     }
 
     public void removePlayer(Player player) {
-        this.teamRed.remove(player);
-        this.teamBlue.remove(player);
+        Team oldTeam = this.players.remove(player);
+        if(oldTeam == Team.RED) {
+            this.cachedTeamRed.remove(player);
+        } else if(oldTeam == Team.BLUE) {
+            this.cachedTeamBlue.remove(player);
+        }
+    }
+
+    public List<Player> clearAllPlayers() {
+        List<Player> toRemove = new ArrayList<>(this.players.keySet());
+        for(Player p : toRemove) {
+            this.removePlayer(p);
+        }
+        assert this.players.isEmpty();
+        assert this.cachedTeamBlue.isEmpty();
+        assert this.cachedTeamRed.isEmpty();
+        return toRemove;
     }
 
     public boolean onSameTeam(Player player1, Player player2) {
-        return teamBlue.contains(player1) && teamBlue.contains(player2) || teamRed.contains(player1) && teamRed.contains(player2);
+        return players.get(player1) == players.get(player2);
     }
 
-    public boolean onSameTeam(WarlordsPlayer player1, WarlordsPlayer player2) {
-        return teamBlue.contains(player1.getPlayer()) && teamBlue.contains(player2.getPlayer()) || teamRed.contains(player1.getPlayer()) && teamRed.contains(player2.getPlayer());
+    public boolean onSameTeam(@Nonnull WarlordsPlayer player1, @Nonnull WarlordsPlayer player2) {
+        return onSameTeam(player1.getPlayer(), player2.getPlayer());
     }
 
+    @Nullable
     public FlagManager getFlags() {
         return flags;
     }
 
-    public void setFlags(FlagManager flags) {
+    public void setFlags(@Nullable FlagManager flags) {
         this.flags = flags;
     }
 

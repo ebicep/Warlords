@@ -3,6 +3,9 @@ package com.ebicep.warlords.classes.abilties;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.effects.circle.CircleEffect;
+import com.ebicep.warlords.effects.circle.CircumferenceEffect;
+import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -56,8 +59,13 @@ public class UndyingArmy extends AbstractAbility {
         } else {
             warlordsPlayer.getPlayer().sendMessage("§a\u00BB§7 " + ChatColor.GRAY + "Your Undying Army is protecting " + ChatColor.YELLOW + numberOfPlayersWithArmy + ChatColor.GRAY + " nearby allies.");
         }
+
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), Sound.ZOMBIE_IDLE, 1, 1.1f);
         }
+
+        CircleEffect circle = new CircleEffect(Warlords.game, Warlords.game.getPlayerTeam(player), player.getLocation(), 5);
+        circle.addEffect(new CircumferenceEffect(ParticleEffect.VILLAGER_HAPPY).particlesPerCircumference(10));
+        circle.playEffects();
     }
 }

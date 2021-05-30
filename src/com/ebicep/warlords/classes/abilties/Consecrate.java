@@ -4,12 +4,14 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.util.Utils;
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.List;
 
@@ -39,12 +41,12 @@ public class Consecrate extends AbstractAbility {
         consecrate.setGravity(false);
         consecrate.setVisible(false);
         consecrate.setMarker(true);
+        BukkitTask task = Bukkit.getScheduler().runTaskTimer(Warlords.getInstance(), damageHealCircle::spawn, 0, 1);
 
         new BukkitRunnable() {
 
             @Override
             public void run() {
-                damageHealCircle.spawn();
                 damageHealCircle.setDuration(damageHealCircle.getDuration() - 1);
                 List<Entity> near = (List<Entity>) damageHealCircle.getLocation().getWorld().getNearbyEntities(damageHealCircle.getLocation(), 5, 3, 5);
                 near = Utils.filterOutTeammates(near, player);
@@ -58,6 +60,7 @@ public class Consecrate extends AbstractAbility {
                 if (damageHealCircle.getDuration() == 0) {
                     consecrate.remove();
                     this.cancel();
+                    task.cancel();
                 }
             }
 

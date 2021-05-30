@@ -179,8 +179,9 @@ public class FlagManager implements Listener {
             } else {
                 info.doOtherTeamInteraction(player);
 
-                ChatColor color = (info.getTeam() == Team.RED ? ChatColor.RED : ChatColor.BLUE);
-                Bukkit.broadcastMessage(color + player.getPlayerListName() + " §ehas picked up the " + color +  info.getTeam() + " §eflag!");
+                ChatColor color = (info.getTeam() == Team.RED ? ChatColor.BLUE : ChatColor.RED);
+                ChatColor color2 = (info.getTeam() == Team.RED ? ChatColor.RED : ChatColor.BLUE);
+                Bukkit.broadcastMessage(color + player.getPlayerListName() + " §ehas picked up the " + color2 +  info.getTeam() + " §eflag!");
 
                 for (Player player1 : player.getWorld().getPlayers()) {
                     if (Warlords.game.isRedTeam(player1) == (info.getTeam() == Team.RED)) {

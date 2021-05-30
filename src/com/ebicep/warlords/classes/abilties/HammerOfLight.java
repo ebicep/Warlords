@@ -3,10 +3,12 @@ package com.ebicep.warlords.classes.abilties;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.HashSet;
 import java.util.List;
@@ -29,17 +31,19 @@ public class HammerOfLight extends AbstractAbility {
     public void onActivate(Player player) {
         DamageHealCircle damageHealCircle = new DamageHealCircle(player, player.getTargetBlock((HashSet<Byte>) null, 15).getLocation().add(1, 0, 1), 6, 8, minDamageHeal, maxDamageHeal, critChance, critMultiplier, name);
         damageHealCircle.spawnHammer();
+        damageHealCircle.getLocation().add(0, 1, 0);
         Warlords.getPlayer(player).subtractEnergy(energyCost);
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "paladin.hammeroflight.impact", 2, 1);
         }
 
+        BukkitTask task = Bukkit.getScheduler().runTaskTimer(Warlords.getInstance(), damageHealCircle::spawn, 0, 1);
+
         new BukkitRunnable() {
 
             @Override
             public void run() {
-                damageHealCircle.spawn();
                 damageHealCircle.setDuration(damageHealCircle.getDuration() - 1);
                 List<Entity> near = (List<Entity>) damageHealCircle.getLocation().getWorld().getNearbyEntities(damageHealCircle.getLocation(), 5, 4, 5);
                 for (Entity entity : near) {
@@ -60,6 +64,7 @@ public class HammerOfLight extends AbstractAbility {
                 if (damageHealCircle.getDuration() == 0) {
                     damageHealCircle.removeHammer();
                     this.cancel();
+                    task.cancel();
                 }
             }
 

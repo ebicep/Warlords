@@ -1,7 +1,12 @@
 package com.ebicep.warlords.classes.abilties;
 
+import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.effects.circle.AreaEffect;
+import com.ebicep.warlords.effects.circle.CircleEffect;
+import com.ebicep.warlords.effects.circle.CircumferenceEffect;
+import com.ebicep.warlords.effects.circle.DoubleLineEffect;
+import com.ebicep.warlords.effects.circle.LineEffect;
 import com.ebicep.warlords.util.ParticleEffect;
-import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
@@ -10,7 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
 
-import java.util.Random;
+import org.bukkit.Bukkit;
 
 public class DamageHealCircle {
 
@@ -24,6 +29,7 @@ public class DamageHealCircle {
     private int critMultiplier;
     private String name;
     private ArmorStand hammer;
+    private final CircleEffect circle;
 
     public DamageHealCircle(Player player, Location location, int radius, int duration, int minDamage, int maxDamage, int critChance, int critMultiplier, String name) {
         this.player = player;
@@ -40,6 +46,21 @@ public class DamageHealCircle {
         this.critChance = critChance;
         this.critMultiplier = critMultiplier;
         this.name = name;
+        this.circle = new CircleEffect(Warlords.game, Warlords.game.getPlayerTeam(player), location, radius);
+        if(name.contains("Healing Rain")) {
+            this.circle.addEffect(new CircumferenceEffect(ParticleEffect.VILLAGER_HAPPY, ParticleEffect.REDSTONE));
+            this.circle.addEffect(new AreaEffect(5, ParticleEffect.CLOUD).particlesPerSurface(0.1));
+            this.circle.addEffect(new AreaEffect(5, ParticleEffect.DRIP_WATER).particlesPerSurface(0.1));
+        } else if (name.equals("Consecrate")) {
+            this.circle.addEffect(new CircumferenceEffect(ParticleEffect.VILLAGER_HAPPY, ParticleEffect.REDSTONE));
+            this.circle.addEffect(new DoubleLineEffect(ParticleEffect.SPELL));
+        } else if (name.equals("Hammer of Light")) {
+            this.circle.addEffect(new CircumferenceEffect(ParticleEffect.VILLAGER_HAPPY, ParticleEffect.REDSTONE));
+            this.circle.addEffect(new LineEffect(this.location.clone().add(0, 2.3, 0), ParticleEffect.SPELL));
+        } else {
+            Bukkit.broadcastMessage("Notice, no particle effect definition for " + this.name + ", no effect is played!!");
+        }
+
     }
 
     public void spawnHammer() {
@@ -62,29 +83,8 @@ public class DamageHealCircle {
         hammer.remove();
     }
 
-    private static final Random random = new Random();
     public void spawn() {
-        for (int i = 0; i < 16; i++) {
-            double angle = random.nextInt(360) * Math.PI / 180;
-            float x = (float) (radius * Math.sin(angle));
-            float z = (float) (radius * Math.cos(angle));
-            if (name.contains("Hammer")) {
-                location.getWorld().playEffect(new Location(location.getWorld(), location.getX() + x, location.getY() + 1, location.getZ() + z), Effect.HAPPY_VILLAGER, 0);
-
-            } else {
-                if (name.contains("Rain")) {
-                    location.getWorld().playEffect(new Location(location.getWorld(), location.getX() + x, location.getY() + 1, location.getZ() + z), Effect.HAPPY_VILLAGER, 0);
-                } else {
-                    location.getWorld().playEffect(new Location(location.getWorld(), location.getX() + x, location.getY(), location.getZ() + z), Effect.HAPPY_VILLAGER, 0);
-                }
-            }
-
-            if (name.contains("Rain")) {
-                // TODO: need to revise this + ring doesn't appear at all sometimes?
-                ParticleEffect.CLOUD.display(2, 0, 2, 0.01F, 1, (new Location(location.getWorld(), location.getX(), location.getY() + 6, location.getZ())), 500);
-                ParticleEffect.DRIP_WATER.display(2, 0, 2, 0.01F, 1, (new Location(location.getWorld(), location.getX(), location.getY() + 6, location.getZ())), 500);
-            }
-        }
+        this.circle.playEffects();
     }
 
     public Player getPlayer() {

@@ -43,7 +43,8 @@ public class HolyRadiance extends AbstractAbility {
         for (int i = 0; i < 10; i++) {
             Location particleLoc = player.getLocation().add(0, 1.2, 0);
             ParticleEffect.VILLAGER_HAPPY.display(1F, 1F, 1F, 0.1F, 2, particleLoc, 500);
-            ParticleEffect.FIREWORKS_SPARK.display(1F, 1F, 1F, 0.1F, 1, particleLoc, 500);
+            ParticleEffect.SPELL.display(1F, 1F, 1F, 0.1F, 2, particleLoc, 500);
+            ParticleEffect.HEART.display(0, 0, 0, 0.1F, 1, particleLoc, 500);
         }
     }
 }
