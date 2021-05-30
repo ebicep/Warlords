@@ -543,7 +543,7 @@ public class WarlordsPlayer {
     }
 
     public void addHealth(WarlordsPlayer attacker, String ability, int min, int max, int critChance, int critMultiplier) {
-        if (attacker == this && (ability.isEmpty() || ability.equals("Fall"))) {
+        if (attacker == this && (ability.equals("Fall") || ability.isEmpty())) {
             if (ability.isEmpty()) {
                 player.sendMessage("§c\u00AB§7 You took §c" + min * -1 + "§7 melee damage.");
 
@@ -610,7 +610,7 @@ public class WarlordsPlayer {
                 player.damage(0);
             }
         } else {
-            if (attacker.getInferno() != 0 && !ability.equals("Time Warp")) {
+            if (attacker.getInferno() != 0 && (!ability.isEmpty() && !ability.equals("Time Warp"))) {
                 critChance += attacker.getSpec().getOrange().getCritChance();
                 critMultiplier += attacker.getSpec().getOrange().getCritMultiplier();
             }
