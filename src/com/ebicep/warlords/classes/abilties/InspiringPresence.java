@@ -38,7 +38,7 @@ public class InspiringPresence extends AbstractAbility {
         for (Entity entity : near) {
             if (entity instanceof Player && ((Player) entity).getGameMode() != GameMode.SPECTATOR) {
                 warlordsPlayer.getSpeed().changeCurrentSpeed("Inspiring Presence", 30, 12 * 20, "BASE");
-                Warlords.getPlayer(player).setPresence(12 * 20);
+                Warlords.getPlayer((Player) entity).setPresence(12 * 20);
             }
         }
 

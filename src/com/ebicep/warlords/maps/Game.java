@@ -7,10 +7,7 @@ import com.ebicep.warlords.classes.mage.AbstractMage;
 import com.ebicep.warlords.classes.paladin.AbstractPaladin;
 import com.ebicep.warlords.classes.warrior.AbstractWarrior;
 import com.ebicep.warlords.powerups.PowerupManager;
-import com.ebicep.warlords.util.Classes;
-import com.ebicep.warlords.util.CustomScoreboard;
-import com.ebicep.warlords.util.RemoveEntities;
-import com.ebicep.warlords.util.Utils;
+import com.ebicep.warlords.util.*;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -137,15 +134,6 @@ public class Game implements Runnable {
                                 player1.playSound(player1.getLocation(), "gamestart", 1, 1);
                             }
                         }
-                        for (Player player : game.teamBlue) {
-                            updateTimeLeft(player, time, game);
-                            updatePlayers(player, players, game);
-                        }
-                        for (Player player : game.teamRed) {
-                            updateTimeLeft(player, time, game);
-                            updatePlayers(player, players, game);
-                        }
-
                     }
                     if (game.timer == total) {
                         return GAME;
@@ -235,25 +223,28 @@ public class Game implements Runnable {
                         sendMessageToAllGamePlayer(game, ChatColor.YELLOW + "Gates opened! " + ChatColor.RED + "FIGHT!", false);
 
                         for (Player player1 : game.teamBlue) {
+                            PacketUtils.sendTitle(player1, ChatColor.GREEN + "GO!", ChatColor.YELLOW + "Steal and capture the enemy flag!", 0, 40, 20);
                             player1.playSound(player1.getLocation(), Sound.WITHER_SPAWN, 1, 1);
                         }
 
                         for (Player player1 : game.teamRed) {
+                            PacketUtils.sendTitle(player1, ChatColor.GREEN + "GO!", ChatColor.YELLOW + "Steal and capture the enemy flag!", 0, 40, 20);
                             player1.playSound(player1.getLocation(), Sound.WITHER_SPAWN, 1, 1);
                         }
 
                     } else {
                         if (game.timer % 20 == 0) {
-
                             int time = game.timer / 20;
                             if (time == 0) {
                                 sendMessageToAllGamePlayer(game, ChatColor.YELLOW + "The gates will fall in " + ChatColor.RED + "10" + ChatColor.YELLOW + " seconds!", false);
 
                                 for (Player player1 : game.teamBlue) {
+                                    PacketUtils.sendTitle(player1, ChatColor.GREEN + "GO!", ChatColor.YELLOW + "Steal and capture the enemy flag!", 0, 40, 20);
                                     player1.playSound(player1.getLocation(), Sound.NOTE_STICKS, 1, 1);
                                 }
 
                                 for (Player player1 : game.teamRed) {
+                                    PacketUtils.sendTitle(player1, ChatColor.GREEN + "GO!", ChatColor.YELLOW + "Steal and capture the enemy flag!", 0, 40, 20);
                                     player1.playSound(player1.getLocation(), Sound.NOTE_STICKS, 1, 1);
                                 }
 
@@ -272,6 +263,21 @@ public class Game implements Runnable {
                                 } else {
                                     sendMessageToAllGamePlayer(game, ChatColor.YELLOW + "The gates will fall in " + ChatColor.RED + (10 - time) + ChatColor.YELLOW + " seconds!", false);
                                 }
+                            }
+                            String number = "";
+                            if (10 - time >= 8) {
+                                number += ChatColor.GREEN;
+                            } else if (10 - time >= 4) {
+                                number += ChatColor.YELLOW;
+                            } else {
+                                number += ChatColor.RED;
+                            }
+                            number += 10 - time;
+                            for (Player p : game.teamBlue) {
+                                PacketUtils.sendTitle(p, number, "", 0, 40, 0);
+                            }
+                            for (Player p : game.teamRed) {
+                                PacketUtils.sendTitle(p, number, "", 0, 40, 0);
                             }
                         }
                     }

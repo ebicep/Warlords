@@ -9,6 +9,7 @@ import com.ebicep.warlords.events.WarlordsDeathEvent;
 import com.ebicep.warlords.maps.FlagManager;
 import com.ebicep.warlords.util.CalculateSpeed;
 import com.ebicep.warlords.util.CustomScoreboard;
+import com.ebicep.warlords.util.PacketUtils;
 import com.ebicep.warlords.util.Utils;
 import org.bukkit.*;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
@@ -163,7 +164,7 @@ public class WarlordsPlayer {
             actionBarMessage.append(ChatColor.GREEN).append("SPEED").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append(powerUpSpeed).append(" ");
         }
 
-        Utils.sendActionbar(player, actionBarMessage.toString());
+        PacketUtils.sendActionBar(player, actionBarMessage.toString());
     }
 
     private boolean teamFlagCompass = true;
@@ -177,37 +178,37 @@ public class WarlordsPlayer {
         if (Warlords.game.isBlueTeam(player)) {
             if (teamFlagCompass) {
                 if (blueFlag.getFlag() instanceof FlagManager.PlayerFlagLocation) {
-                    Utils.sendActionbar(player, "" + ChatColor.BLUE + ChatColor.BOLD + "YOUR Flag " + ChatColor.WHITE + "is stolen " + ChatColor.RED + blueFlagDistance + "m " + ChatColor.WHITE + "away!");
+                    PacketUtils.sendActionBar(player, "" + ChatColor.BLUE + ChatColor.BOLD + "YOUR Flag " + ChatColor.WHITE + "is stolen " + ChatColor.RED + blueFlagDistance + "m " + ChatColor.WHITE + "away!");
                 } else if (blueFlag.getFlag() instanceof FlagManager.GroundFlagLocation) {
-                    Utils.sendActionbar(player, "" + ChatColor.BLUE + ChatColor.BOLD + "YOUR Flag " + ChatColor.GOLD + "is dropped " + ChatColor.RED + blueFlagDistance + "m " + ChatColor.WHITE + "away!");
+                    PacketUtils.sendActionBar(player, "" + ChatColor.BLUE + ChatColor.BOLD + "YOUR Flag " + ChatColor.GOLD + "is dropped " + ChatColor.RED + blueFlagDistance + "m " + ChatColor.WHITE + "away!");
                 } else {
-                    Utils.sendActionbar(player, "" + ChatColor.BLUE + ChatColor.BOLD + "YOUR " + ChatColor.GREEN + "Flag is safe");
+                    PacketUtils.sendActionBar(player, "" + ChatColor.BLUE + ChatColor.BOLD + "YOUR " + ChatColor.GREEN + "Flag is safe");
                 }
             } else {
                 if (redFlag.getFlag() instanceof FlagManager.PlayerFlagLocation) {
-                    Utils.sendActionbar(player, "" + ChatColor.RED + ChatColor.BOLD + "ENEMY Flag " + ChatColor.WHITE + "is stolen " + ChatColor.RED + redFlagDistance + "m " + ChatColor.WHITE + "away!");
+                    PacketUtils.sendActionBar(player, "" + ChatColor.RED + ChatColor.BOLD + "ENEMY Flag " + ChatColor.WHITE + "is stolen " + ChatColor.RED + redFlagDistance + "m " + ChatColor.WHITE + "away!");
                 } else if (redFlag.getFlag() instanceof FlagManager.GroundFlagLocation) {
-                    Utils.sendActionbar(player, "" + ChatColor.RED + ChatColor.BOLD + "ENEMY Flag " + ChatColor.GOLD + "is dropped " + ChatColor.RED + redFlagDistance + "m " + ChatColor.WHITE + "away!");
+                    PacketUtils.sendActionBar(player, "" + ChatColor.RED + ChatColor.BOLD + "ENEMY Flag " + ChatColor.GOLD + "is dropped " + ChatColor.RED + redFlagDistance + "m " + ChatColor.WHITE + "away!");
                 } else {
-                    Utils.sendActionbar(player, "" + ChatColor.RED + ChatColor.BOLD + "ENEMY " + ChatColor.GREEN + "Flag is safe");
+                    PacketUtils.sendActionBar(player, "" + ChatColor.RED + ChatColor.BOLD + "ENEMY " + ChatColor.GREEN + "Flag is safe");
                 }
             }
         } else {
             if (teamFlagCompass) {
                 if (redFlag.getFlag() instanceof FlagManager.PlayerFlagLocation) {
-                    Utils.sendActionbar(player, "" + ChatColor.RED + ChatColor.BOLD + "YOUR Flag " + ChatColor.WHITE + "is stolen " + ChatColor.RED + redFlagDistance + "m " + ChatColor.WHITE + "away!");
+                    PacketUtils.sendActionBar(player, "" + ChatColor.RED + ChatColor.BOLD + "YOUR Flag " + ChatColor.WHITE + "is stolen " + ChatColor.RED + redFlagDistance + "m " + ChatColor.WHITE + "away!");
                 } else if (redFlag.getFlag() instanceof FlagManager.GroundFlagLocation) {
-                    Utils.sendActionbar(player, "" + ChatColor.RED + ChatColor.BOLD + "YOUR Flag " + ChatColor.GOLD + "is dropped " + ChatColor.RED + redFlagDistance + "m " + ChatColor.WHITE + "away!");
+                    PacketUtils.sendActionBar(player, "" + ChatColor.RED + ChatColor.BOLD + "YOUR Flag " + ChatColor.GOLD + "is dropped " + ChatColor.RED + redFlagDistance + "m " + ChatColor.WHITE + "away!");
                 } else {
-                    Utils.sendActionbar(player, "" + ChatColor.RED + ChatColor.BOLD + "YOUR " + ChatColor.GREEN + "Flag is safe");
+                    PacketUtils.sendActionBar(player, "" + ChatColor.RED + ChatColor.BOLD + "YOUR " + ChatColor.GREEN + "Flag is safe");
                 }
             } else {
                 if (blueFlag.getFlag() instanceof FlagManager.PlayerFlagLocation) {
-                    Utils.sendActionbar(player, "" + ChatColor.BLUE + ChatColor.BOLD + "ENEMY Flag " + ChatColor.WHITE + "is stolen " + ChatColor.RED + blueFlagDistance + "m " + ChatColor.WHITE + "away!");
+                    PacketUtils.sendActionBar(player, "" + ChatColor.BLUE + ChatColor.BOLD + "ENEMY Flag " + ChatColor.WHITE + "is stolen " + ChatColor.RED + blueFlagDistance + "m " + ChatColor.WHITE + "away!");
                 } else if (blueFlag.getFlag() instanceof FlagManager.GroundFlagLocation) {
-                    Utils.sendActionbar(player, "" + ChatColor.BLUE + ChatColor.BOLD + "ENEMY Flag " + ChatColor.GOLD + "is dropped " + ChatColor.RED + blueFlagDistance + "m " + ChatColor.WHITE + "away!");
+                    PacketUtils.sendActionBar(player, "" + ChatColor.BLUE + ChatColor.BOLD + "ENEMY Flag " + ChatColor.GOLD + "is dropped " + ChatColor.RED + blueFlagDistance + "m " + ChatColor.WHITE + "away!");
                 } else {
-                    Utils.sendActionbar(player, "" + ChatColor.BLUE + ChatColor.BOLD + "ENEMY " + ChatColor.GREEN + "Flag is safe");
+                    PacketUtils.sendActionBar(player, "" + ChatColor.BLUE + ChatColor.BOLD + "ENEMY " + ChatColor.GREEN + "Flag is safe");
                 }
             }
         }
@@ -542,17 +543,73 @@ public class WarlordsPlayer {
     }
 
     public void addHealth(WarlordsPlayer attacker, String ability, int min, int max, int critChance, int critMultiplier) {
-        if (attacker == this && ability.isEmpty()) {
-            player.sendMessage("§c\u00AB§7 You took §c" + min * -1 + "§7 melee damage.");
+        if (attacker == this) {
+            if (ability.isEmpty()) {
+                player.sendMessage("§c\u00AB§7 You took §c" + min * -1 + "§7 melee damage.");
 
-            if (health + min < 0) {
-                health = 0;
+                if (health + min < 0) {
+                    addGrave();
+                    hitBy.remove(attacker);
+                    hitBy.add(0, attacker);
+
+                    this.addDeath();
+                    this.scoreboard.updateKillsAssists();
+                    Bukkit.getPluginManager().callEvent(new WarlordsDeathEvent(this));
+
+                    if (Warlords.game.getTeamBlue().contains(player)) {
+                        Warlords.redKills++;
+                        Warlords.game.addRedPoints(SCORE_KILL_POINTS);
+                    } else {
+                        Warlords.blueKills++;
+                        Warlords.game.addBluePoints(SCORE_KILL_POINTS);
+                    }
+
+                    for (WarlordsPlayer value : Warlords.getPlayers().values()) {
+                        value.getScoreboard().updatePoints();
+                    }
+                    health = 0;
+                } else {
+                    health += min;
+                }
+
+                if (min < 0) {
+                    player.damage(0);
+                }
             } else {
-                health += min;
-            }
+                if (ability.equals("Fall")) {
+                    //TODO FIX FIX IT JUST GETS MORE MESSY LETS GOOOOOOOOOOOOOOO
+                    player.sendMessage("§c\u00AB§7 You took §c" + min * -1 + "§7 fall damage.");
+                    if (health + min < 0) {
+                        addGrave();
+                        hitBy.remove(attacker);
+                        hitBy.add(0, attacker);
 
-            if (min < 0) {
-                player.damage(0);
+                        this.addDeath();
+                        this.scoreboard.updateKillsAssists();
+                        Bukkit.getPluginManager().callEvent(new WarlordsDeathEvent(this));
+
+                        if (Warlords.game.getTeamBlue().contains(player)) {
+                            Warlords.redKills++;
+                            Warlords.game.addRedPoints(SCORE_KILL_POINTS);
+                        } else {
+                            Warlords.blueKills++;
+                            Warlords.game.addBluePoints(SCORE_KILL_POINTS);
+                        }
+
+                        //title YOU DIED
+                        PacketUtils.sendTitle(player, ChatColor.RED + "YOU DIED!", ChatColor.GRAY + "You took " + ChatColor.RED + (min * -1) + ChatColor.GRAY + " fall damage and died.", 0, 40, 0);
+
+                        for (WarlordsPlayer value : Warlords.getPlayers().values()) {
+                            value.getScoreboard().updatePoints();
+                        }
+                        health = 0;
+                    } else {
+                        health += min;
+                    }
+
+
+                    player.damage(0);
+                }
             }
         } else {
 
@@ -651,7 +708,7 @@ public class WarlordsPlayer {
                     addAbsorbed(-damageHealValue);
                 }
                 arcaneShieldHealth += damageHealValue;
-
+                player.damage(0);
                 //Bukkit.broadcastMessage("" + arcaneShieldHealth);
             } else {
                 System.out.println(attacker.getName() + " hit " + name + " for " + damageHealValue);
@@ -716,7 +773,7 @@ public class WarlordsPlayer {
                         Optional<MetadataValue> totem = player.getMetadata("TOTEM").stream()
                                 .filter(e -> e.value() instanceof Totem.TotemSpiritguard)
                                 .findAny();
-                        if(totem.isPresent()) {
+                        if (totem.isPresent()) {
                             Totem.TotemSpiritguard t = (Totem.TotemSpiritguard) totem.get().value();
                             t.addDelayedDamage(damageHealValue);
                             debt = true;
@@ -803,72 +860,7 @@ public class WarlordsPlayer {
                 attacker.addDamage(-damageHealValue);
                 if (this.health <= 0) {
 
-                    // GRAVE - START
-                    Location deathLocation = player.getLocation();
-                    Block bestGraveCandidate = null;
-                    boolean isFlagCarrier = !player.getMetadata(FlagManager.FLAG_DAMAGE_MULTIPLIER).isEmpty();
-                    for (int x = -1; x <= 1; x++) {
-                        //Bukkit.broadcastMessage("For 1:" + x);
-                        for (int z = -1; z <= 1; z++) {
-                            //Bukkit.broadcastMessage("For 2:" + z);
-                            if (isFlagCarrier && x == 0 && z == 0) {
-                                // This player is a flag carrier, prevent placing the grave at the direct location of the player
-                                continue;
-                            }
-
-                            Location toTest = deathLocation.clone().add(x, 2, z);
-                            Block lastBlock = toTest.getBlock();
-
-                            if (lastBlock.getType() == Material.AIR) {
-                                toTest.subtract(0, 1, 0);
-                                for (; toTest.getY() > 0; toTest.subtract(0, 1, 0)) {
-                                    //Bukkit.broadcastMessage("For 3:" + toTest.getY());
-                                    Block underTest = toTest.getBlock();
-                                    if (underTest.getType() != Material.AIR) {
-                                        if (underTest.getType().isTransparent()) {
-                                            // We have hit a sappling, fence, torch or other non-solid
-                                            break;
-                                        }
-                                        // We have hit a solid block. Go back 1 tile
-                                        toTest.add(0, 1, 0);
-                                        // Check if we found a better tile for the grave
-                                        if (bestGraveCandidate != null) {
-                                            double newDistance = toTest.distanceSquared(deathLocation);
-                                            double existingDistance = bestGraveCandidate.getLocation(toTest).distanceSquared(deathLocation);
-                                            if(newDistance >= existingDistance) {
-                                                // Our new candidate is not closer, skip
-                                                break;
-                                            }
-                                        }
-                                        bestGraveCandidate = lastBlock;
-                                        //
-                                        break;
-                                    }
-                                    lastBlock = underTest;
-                                }
-                            }
-                        }
-                    }
-
-                    if (bestGraveCandidate != null) {
-
-                        //spawn grave
-                        bestGraveCandidate.setType(Material.SAPLING);
-                        bestGraveCandidate.setData((byte) 5);
-
-                        this.deathLocation = bestGraveCandidate.getLocation();
-
-                        this.deathStand = (ArmorStand) player.getWorld().spawnEntity(bestGraveCandidate.getLocation().add(.5, -1.5, .5), EntityType.ARMOR_STAND);
-                        if (Warlords.game.isBlueTeam(player)) {
-                            this.deathStand.setCustomName(ChatColor.BLUE + name + ChatColor.GRAY + " - " + ChatColor.YELLOW + "DEAD");
-                        } else {
-                            this.deathStand.setCustomName(ChatColor.RED + name + ChatColor.GRAY + " - " + ChatColor.YELLOW + "DEAD");
-                        }
-                        this.deathStand.setCustomNameVisible(true);
-                        this.deathStand.setGravity(false);
-                        this.deathStand.setVisible(false);
-                    }
-                    // GRAVE - END
+                    addGrave();
 
                     attacker.getPlayer().playSound(attacker.getPlayer().getLocation(), Sound.ORB_PICKUP, 500f, 0.3f);
 
@@ -898,13 +890,16 @@ public class WarlordsPlayer {
                         }
                     }
 
-                    if (scoreboard.getBlueTeam().contains(this)) {
+                    if (Warlords.game.getTeamBlue().contains(player)) {
                         Warlords.redKills++;
                         Warlords.game.addRedPoints(SCORE_KILL_POINTS);
                     } else {
                         Warlords.blueKills++;
                         Warlords.game.addBluePoints(SCORE_KILL_POINTS);
                     }
+
+                    //title YOU DIED
+                    PacketUtils.sendTitle(player, ChatColor.RED + "YOU DIED!", ChatColor.GRAY + attacker.getName() + " killed you.", 0, 40, 0);
 
                     for (WarlordsPlayer value : Warlords.getPlayers().values()) {
                         value.getScoreboard().updatePoints();
@@ -918,7 +913,6 @@ public class WarlordsPlayer {
 
             }
 
-            //TODO make inital windfury hit proc
             if (ability.equals("")) {
                 if (attacker.getWindfuryDuration() != 0) {
                     int windfuryActivate = (int) (Math.random() * 100);
@@ -991,10 +985,79 @@ public class WarlordsPlayer {
                     attacker.getSoulBindedPlayers().add(new Soulbinding.SoulBoundPlayer(this, 2));
                 }
             }
+
+
         }
     }
 
     private static final int SCORE_KILL_POINTS = 5;
+
+    public void addGrave() {
+        Location deathLocation = player.getLocation();
+        Block bestGraveCandidate = null;
+        boolean isFlagCarrier = !player.getMetadata(FlagManager.FLAG_DAMAGE_MULTIPLIER).isEmpty();
+        for (int x = -1; x <= 1; x++) {
+            //Bukkit.broadcastMessage("For 1:" + x);
+            for (int z = -1; z <= 1; z++) {
+                //Bukkit.broadcastMessage("For 2:" + z);
+                if (isFlagCarrier && x == 0 && z == 0) {
+                    // This player is a flag carrier, prevent placing the grave at the direct location of the player
+                    continue;
+                }
+
+                Location toTest = deathLocation.clone().add(x, 2, z);
+                Block lastBlock = toTest.getBlock();
+
+                if (lastBlock.getType() == Material.AIR) {
+                    toTest.subtract(0, 1, 0);
+                    for (; toTest.getY() > 0; toTest.subtract(0, 1, 0)) {
+                        //Bukkit.broadcastMessage("For 3:" + toTest.getY());
+                        Block underTest = toTest.getBlock();
+                        if (underTest.getType() != Material.AIR) {
+                            if (underTest.getType().isTransparent()) {
+                                // We have hit a sappling, fence, torch or other non-solid
+                                break;
+                            }
+                            // We have hit a solid block. Go back 1 tile
+                            toTest.add(0, 1, 0);
+                            // Check if we found a better tile for the grave
+                            if (bestGraveCandidate != null) {
+                                double newDistance = toTest.distanceSquared(deathLocation);
+                                double existingDistance = bestGraveCandidate.getLocation(toTest).distanceSquared(deathLocation);
+                                if (newDistance >= existingDistance) {
+                                    // Our new candidate is not closer, skip
+                                    break;
+                                }
+                            }
+                            bestGraveCandidate = lastBlock;
+                            //
+                            break;
+                        }
+                        lastBlock = underTest;
+                    }
+                }
+            }
+        }
+
+        if (bestGraveCandidate != null) {
+
+            //spawn grave
+            bestGraveCandidate.setType(Material.SAPLING);
+            bestGraveCandidate.setData((byte) 5);
+
+            this.deathLocation = bestGraveCandidate.getLocation();
+
+            this.deathStand = (ArmorStand) player.getWorld().spawnEntity(bestGraveCandidate.getLocation().add(.5, -1.5, .5), EntityType.ARMOR_STAND);
+            if (Warlords.game.isBlueTeam(player)) {
+                this.deathStand.setCustomName(ChatColor.BLUE + name + ChatColor.GRAY + " - " + ChatColor.YELLOW + "DEAD");
+            } else {
+                this.deathStand.setCustomName(ChatColor.RED + name + ChatColor.GRAY + " - " + ChatColor.YELLOW + "DEAD");
+            }
+            this.deathStand.setCustomNameVisible(true);
+            this.deathStand.setGravity(false);
+            this.deathStand.setVisible(false);
+        }
+    }
 
     public void respawn() {
         this.health = this.maxHealth;

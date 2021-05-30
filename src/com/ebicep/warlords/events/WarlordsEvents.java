@@ -2,15 +2,13 @@ package com.ebicep.warlords.events;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
-import com.ebicep.warlords.classes.abilties.SeismicWave;
-import com.ebicep.warlords.util.Utils;
+import com.ebicep.warlords.maps.Game;
 import net.minecraft.server.v1_8_R3.EntityLiving;
 import net.minecraft.server.v1_8_R3.GenericAttributes;
-import org.bukkit.*;
-import org.bukkit.block.Banner;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.banner.Pattern;
-import org.bukkit.block.banner.PatternType;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -23,11 +21,11 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.EulerAngle;
-import org.bukkit.util.Vector;
 import org.spigotmc.event.entity.EntityDismountEvent;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 public class WarlordsEvents implements Listener {
 
@@ -276,14 +274,28 @@ public class WarlordsEvents implements Listener {
     @EventHandler
     public void onPlayerDamage(EntityDamageEvent e) {
         if (e.getCause() == EntityDamageEvent.DamageCause.FALL) {
-            //TODO fall damage
+            //HEIGHT - DAMAGE
+            //PLAYER
+            //9 - 160 - 6
+            //15 - 400 - 12
+            //30ish - 1040
+
+            //HORSE
+            //HEIGHT - DAMAGE
+            //18 - 160
+            //HEIGHT x 40 - 200
+            int damage = (int) e.getDamage();
+            if (Warlords.game.getState() == Game.State.GAME) {
+                if (e.getEntity() instanceof Player) {
+                    if (damage > 5) {
+                        WarlordsPlayer warlordsPlayer = Warlords.getPlayer((Player) e.getEntity());
+                        warlordsPlayer.addHealth(warlordsPlayer, "Fall", -((damage + 3) * 40 - 200), -((damage + 3) * 40 - 200), -1, 100);
+                        warlordsPlayer.setRegenTimer(10);
+                    }
+                }
+            }
+
             e.setCancelled(true);
-        } else if (e.getCause() == EntityDamageEvent.DamageCause.CUSTOM) {
-            Bukkit.broadcastMessage("CUSTOM DMG EVENT");
-            //e.setCancelled(true);
-        } else if (e.getCause() == EntityDamageEvent.DamageCause.ENTITY_ATTACK) {
-            //Bukkit.broadcastMessage("ENTITY ATTACK EVENT");
-            //e.setCancelled(true);
         }
     }
 
@@ -332,7 +344,7 @@ public class WarlordsEvents implements Listener {
             return;
         }
 
-        if ((((EntityDamageByEntityEvent)lastDamage).getDamager() instanceof Player))
+        if ((((EntityDamageByEntityEvent) lastDamage).getDamager() instanceof Player))
             event.setCancelled(true);
     }
 

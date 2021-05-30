@@ -30,8 +30,7 @@ public class Intervene extends AbstractAbility {
     public void onActivate(Player player) {
         WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
         List<Entity> near = player.getNearbyEntities(6.0D, 6.0D, 6.0D);
-        //near = Utils.filterOnlyTeammates(near, player);
-        System.out.println(near);
+        near = Utils.filterOnlyTeammates(near, player);
         for (Entity entity : near) {
             if (entity instanceof Player) {
                 Player nearPlayer = (Player) entity;
@@ -58,6 +57,8 @@ public class Intervene extends AbstractAbility {
                     for (Player player1 : player.getWorld().getPlayers()) {
                         player1.playSound(player.getLocation(), "warrior.intervene.impact", 1, 1);
                     }
+
+                    break;
                 }
             }
         }

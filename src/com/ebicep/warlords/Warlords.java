@@ -5,6 +5,7 @@ import com.ebicep.warlords.commands.Commands;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.menu.MenuEventListener;
+import com.ebicep.warlords.util.PacketUtils;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.Utils;
 import org.bukkit.*;
@@ -244,16 +245,28 @@ public class Warlords extends JavaPlugin {
                             warlordsPlayer.getPlayer().getInventory().setItem(5, new ItemStack(Material.BONE));
                             newHealth = 40;
                         }
-                        if (newHealth <= 0 && !warlordsPlayer.isUndyingArmyDead()) {
+                        if (newHealth <= 0) {
+                            if (warlordsPlayer.isUndyingArmyDead()) {
+                                warlordsPlayer.setUndyingArmyDead(false);
+                                warlordsPlayer.getPlayer().getInventory().remove(Material.BONE);
+                            }
                             warlordsPlayer.respawn();
                             player.setGameMode(GameMode.SPECTATOR);
                             //giving out assists
                             for (int i = 1; i < warlordsPlayer.getHitBy().size(); i++) {
                                 WarlordsPlayer assisted = warlordsPlayer.getHitBy().get(i);
-                                if (game.isBlueTeam(warlordsPlayer.getHitBy().get(0).getPlayer())) {
-                                    assisted.getPlayer().sendMessage(ChatColor.GRAY + "You assisted " + ChatColor.BLUE + warlordsPlayer.getHitBy().get(0).getName() + ChatColor.GRAY + " in killing " + ChatColor.RED + warlordsPlayer.getName());
-                                } else if (game.isRedTeam(warlordsPlayer.getHitBy().get(0).getPlayer())) {
-                                    assisted.getPlayer().sendMessage(ChatColor.GRAY + "You assisted " + ChatColor.RED + warlordsPlayer.getHitBy().get(0).getName() + ChatColor.GRAY + " in killing " + ChatColor.BLUE + warlordsPlayer.getName());
+                                if (warlordsPlayer.getHitBy().get(0).getPlayer() == player) {
+                                    if (game.isBlueTeam(player)) {
+                                        assisted.getPlayer().sendMessage(ChatColor.GRAY + "You assisted in killing " + ChatColor.BLUE + warlordsPlayer.getName());
+                                    } else if (game.isRedTeam(player)) {
+                                        assisted.getPlayer().sendMessage(ChatColor.GRAY + "You assisted in killing " + ChatColor.RED + warlordsPlayer.getName());
+                                    }
+                                } else {
+                                    if (game.isBlueTeam(warlordsPlayer.getHitBy().get(0).getPlayer())) {
+                                        assisted.getPlayer().sendMessage(ChatColor.GRAY + "You assisted " + ChatColor.BLUE + warlordsPlayer.getHitBy().get(0).getName() + ChatColor.GRAY + " in killing " + ChatColor.RED + warlordsPlayer.getName());
+                                    } else if (game.isRedTeam(warlordsPlayer.getHitBy().get(0).getPlayer())) {
+                                        assisted.getPlayer().sendMessage(ChatColor.GRAY + "You assisted " + ChatColor.RED + warlordsPlayer.getHitBy().get(0).getName() + ChatColor.GRAY + " in killing " + ChatColor.BLUE + warlordsPlayer.getName());
+                                    }
                                 }
                                 assisted.addAssist();
                                 assisted.getScoreboard().updateKillsAssists();
@@ -429,8 +442,20 @@ public class Warlords extends JavaPlugin {
                             }
 
                             //RESPAWN
-                            if (warlordsPlayer.getRespawnTimer() != -1) {
-                                warlordsPlayer.setRespawnTimer(warlordsPlayer.getRespawnTimer() - 1);
+                            int respawn = warlordsPlayer.getRespawnTimer();
+                            if (respawn != -1) {
+                                if (respawn <= 6) {
+                                    if (respawn == 1) {
+                                        PacketUtils.sendTitle(player, "", "", 0, 0, 0);
+                                    } else {
+                                        if (game.isBlueTeam(player)) {
+                                            PacketUtils.sendTitle(player, ChatColor.BLUE + "Respawning in... " + ChatColor.YELLOW + (respawn - 1), "", 0, 40, 0);
+                                        } else {
+                                            PacketUtils.sendTitle(player, ChatColor.RED + "Respawning in... " + ChatColor.YELLOW + (respawn - 1), "", 0, 40, 0);
+                                        }
+                                    }
+                                }
+                                warlordsPlayer.setRespawnTimer(respawn - 1);
                             }
                             //ABILITY COOLDOWN
                             if (warlordsPlayer.getSpec().getRed().getCurrentCooldown() != 0 && warlordsPlayer.getSpec().getRed().getCurrentCooldown() != warlordsPlayer.getSpec().getRed().getCooldown()) {

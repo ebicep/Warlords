@@ -76,7 +76,9 @@ public class RecklessCharge extends AbstractAbility {
                 playersInside = Utils.filterOutTeammates(playersInside, player);
                 for (Entity entity : playersInside) {
                     if (entity instanceof Player && ((Player) entity).getGameMode() != GameMode.SPECTATOR) {
-                        //TODO add 100 slowness
+                        //TODO add 100 slowness   -   DOESNT WORK NOT BARELY SLOW
+                        //Warlords.getPlayer((Player) entity).getSpeed().changeCurrentSpeed("Reckless Charge", -10000, .5 * 20);
+
                         ((RecklessCharge) warlordsPlayer.getSpec().getRed()).getPlayersHit().add((Player) entity);
                         Warlords.getPlayer((Player) entity).addHealth(warlordsPlayer, warlordsPlayer.getSpec().getRed().getName(), warlordsPlayer.getSpec().getRed().getMinDamageHeal(), warlordsPlayer.getSpec().getRed().getMaxDamageHeal(), warlordsPlayer.getSpec().getRed().getCritChance(), warlordsPlayer.getSpec().getRed().getCritMultiplier());
                     }
