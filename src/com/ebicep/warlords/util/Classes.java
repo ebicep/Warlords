@@ -35,7 +35,7 @@ public enum Classes {
 
     AVENGER("Avenger", Avenger::new, "§7A damage-oriented Paladin specialization that focuses on draining energy from enemies and has access to minor healing.", AVENGER_STRIKE, CONSECRATE),
     CRUSADER("Crusader", Crusader::new, "§7A defense-oriented Paladin specialization that inspires allies by granting them more energy in battle and has access to minor healing.", CRUSADER_STRIKE, CONSECRATE),
-    PROTECTOR("Protector", Protector::new, "§7A healing-oriented Paladin specialization that converts damage into healing for his allies and has access to greater healing abilities.", HOLY_RADIANCE, HAMMER_OF_LIGHT),
+    PROTECTOR("Protector", Protector::new, "§7A healing-oriented Paladin specialization that converts damage into healing for his allies and has access to greater healing abilities.", PROTECTOR_STRIKE, HOLY_RADIANCE, HAMMER_OF_LIGHT),
 
     THUNDERLORD("Thunderlord", ThunderLord::new, "§7A damage-oriented Shaman specialization that calls upon the power of Lightning to electrocute enemies.", LIGHTNING_BOLT, CHAIN_LIGHTNING, WINDFURY_WEAPON),
     SPIRITGUARD("Spiritguard", Spiritguard::new, "§7A defense-oriented Shaman specialization that calls upon the aid of spirits old and new to mitigate damage and avoid death.", FALLEN_SOULS, SPIRIT_LINK),
