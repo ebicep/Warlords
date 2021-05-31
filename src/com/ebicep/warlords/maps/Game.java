@@ -137,7 +137,7 @@ public class Game implements Runnable {
 
                     game.timer++;
                     //TESTING
-                    //return GAME;
+                    return GAME;
 
                 } else {
                     game.timer = 0;
@@ -165,7 +165,7 @@ public class Game implements Runnable {
 
                     redTeam.add(Warlords.getPlayer(p));
 
-                    resetArmor(p, Warlords.getPlayer(p).getSpec(), false);
+                    ArmorManager.resetArmor(p, Warlords.getPlayer(p).getSpec(), Warlords.game.getPlayerTeam(p));
 
                     p.setGameMode(GameMode.ADVENTURE);
 
@@ -179,7 +179,7 @@ public class Game implements Runnable {
 
                     blueTeam.add(Warlords.getPlayer(p));
 
-                    resetArmor(p, Warlords.getPlayer(p).getSpec(), true);
+                    ArmorManager.resetArmor(p, Warlords.getPlayer(p).getSpec(), Warlords.game.getPlayerTeam(p));
 
                     p.setGameMode(GameMode.ADVENTURE);
 
@@ -477,56 +477,6 @@ public class Game implements Runnable {
             for (Player p : game.players.keySet()) {
                 Utils.sendCenteredHoverableMessage(p, message);
             }
-        }
-
-        public void resetArmor(Player p, PlayerClass playerClass, boolean onBlue) {
-            ItemStack[] armor = new ItemStack[4];
-            if (onBlue) {
-                armor[0] = new ItemStack(Material.LEATHER_BOOTS);
-                LeatherArmorMeta meta0 = (LeatherArmorMeta) armor[0].getItemMeta();
-                meta0.setColor(Color.fromRGB(51, 76, 178));
-                armor[0].setItemMeta(meta0);
-                armor[1] = new ItemStack(Material.LEATHER_LEGGINGS);
-                LeatherArmorMeta meta1 = (LeatherArmorMeta) armor[1].getItemMeta();
-                meta1.setColor(Color.fromRGB(51, 76, 178));
-                armor[1].setItemMeta(meta1);
-                armor[2] = new ItemStack(Material.LEATHER_CHESTPLATE);
-                LeatherArmorMeta meta2 = (LeatherArmorMeta) armor[2].getItemMeta();
-                meta2.setColor(Color.fromRGB(51, 76, 178));
-                armor[2].setItemMeta(meta2);
-                if (playerClass instanceof AbstractPaladin) {
-                    armor[3] = new ItemStack(Material.RED_ROSE, 1, (short) 6);
-                } else if (playerClass instanceof AbstractWarrior) {
-                    armor[3] = new ItemStack(Material.WOOD_PLATE);
-                } else if (playerClass instanceof AbstractMage) {
-                    armor[3] = new ItemStack(Material.SAPLING, 1, (short) 5);
-                } else {
-                    armor[3] = new ItemStack(Material.SAPLING, 1, (short) 1);
-                }
-            } else {
-                armor[0] = new ItemStack(Material.LEATHER_BOOTS);
-                LeatherArmorMeta meta0 = (LeatherArmorMeta) armor[0].getItemMeta();
-                meta0.setColor(Color.fromRGB(153, 51, 51));
-                armor[0].setItemMeta(meta0);
-                armor[1] = new ItemStack(Material.LEATHER_LEGGINGS);
-                LeatherArmorMeta meta1 = (LeatherArmorMeta) armor[1].getItemMeta();
-                meta1.setColor(Color.fromRGB(153, 51, 51));
-                armor[1].setItemMeta(meta1);
-                armor[2] = new ItemStack(Material.LEATHER_CHESTPLATE);
-                LeatherArmorMeta meta2 = (LeatherArmorMeta) armor[2].getItemMeta();
-                meta2.setColor(Color.fromRGB(153, 51, 51));
-                armor[2].setItemMeta(meta2);
-                if (playerClass instanceof AbstractPaladin) {
-                    armor[3] = new ItemStack(Material.DEAD_BUSH);
-                } else if (playerClass instanceof AbstractWarrior) {
-                    armor[3] = new ItemStack(Material.STONE_PLATE);
-                } else if (playerClass instanceof AbstractMage) {
-                    armor[3] = new ItemStack(Material.RED_ROSE, 1, (short) 5);
-                } else {
-                    armor[3] = new ItemStack(Material.SAPLING, 1, (short) 0);
-                }
-            }
-            p.getInventory().setArmorContents(armor);
         }
     }
 

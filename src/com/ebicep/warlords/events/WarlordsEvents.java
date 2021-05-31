@@ -2,12 +2,14 @@ package com.ebicep.warlords.events;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
+import com.ebicep.warlords.maps.FlagManager;
 import com.ebicep.warlords.maps.Game;
 import net.minecraft.server.v1_8_R3.EntityLiving;
 import net.minecraft.server.v1_8_R3.GenericAttributes;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
 import org.bukkit.entity.*;
@@ -117,6 +119,7 @@ public class WarlordsEvents implements Listener {
             WarlordsPlayer warlordsPlayerVictim = Warlords.getPlayer(victim);
             if (!Warlords.game.onSameTeam(warlordsPlayerAttacker, warlordsPlayerVictim)) {
                 if (attacker.getInventory().getHeldItemSlot() == 0 && warlordsPlayerAttacker.getHitCooldown() == 0) {
+                    attacker.playSound(victim.getLocation(), Sound.HURT_FLESH, 1, 1);
                     warlordsPlayerAttacker.setHitCooldown(12);
                     warlordsPlayerAttacker.subtractEnergy(warlordsPlayerAttacker.getSpec().getEnergyOnHit() * -1);
                     warlordsPlayerVictim.addHealth(warlordsPlayerAttacker, "", -132, -179, 25, 200);
@@ -164,7 +167,7 @@ public class WarlordsEvents implements Listener {
                     double distance = player.getLocation().getY() - player.getWorld().getHighestBlockYAt(player.getLocation());
                     if (distance > 2) {
                         player.sendMessage(ChatColor.RED + "You cannot mount in the air");
-                    } else if (player.getInventory().getHelmet() != null && player.getInventory().getHelmet().getType() == Material.STANDING_BANNER) {
+                    } else if (!player.getMetadata(FlagManager.FLAG_DAMAGE_MULTIPLIER).isEmpty()) {
                         player.sendMessage(ChatColor.RED + "You cannot mount while holding the flag!");
                     } else {
                         for (Player player1 : player.getWorld().getPlayers()) {
