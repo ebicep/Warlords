@@ -27,6 +27,11 @@ public abstract class AbstractAbility {
 
     public abstract void onActivate(Player player);
 
+    public void boostSkill() {
+        minDamageHeal *= 1.2;
+        maxDamageHeal *= 1.2;
+    }
+
     public String getName() {
         return name;
     }
