@@ -14,10 +14,7 @@ import com.ebicep.warlords.util.Utils;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.Dye;
@@ -562,6 +559,14 @@ public class WarlordsPlayer {
                         Warlords.game.addBluePoints(SCORE_KILL_POINTS);
                     }
 
+                    Zombie zombie = player.getWorld().spawn(player.getLocation(), Zombie.class);
+                    zombie.getEquipment().setBoots(player.getInventory().getBoots());
+                    zombie.getEquipment().setLeggings(player.getInventory().getLeggings());
+                    zombie.getEquipment().setChestplate(player.getInventory().getChestplate());
+                    zombie.getEquipment().setHelmet(player.getInventory().getHelmet());
+                    zombie.getEquipment().setItemInHand(player.getInventory().getItemInHand());
+                    zombie.setHealth(0);
+
                     for (WarlordsPlayer value : Warlords.getPlayers().values()) {
                         value.getScoreboard().updatePoints();
                     }
@@ -571,7 +576,7 @@ public class WarlordsPlayer {
                 }
 
                 if (min < 0) {
-                    player.damage(0);
+                    player.playEffect(EntityEffect.HURT);
                 }
             } else {
                 //TODO FIX FIX IT JUST GETS MORE MESSY LETS GOOOOOOOOOOOOOOO
@@ -593,6 +598,14 @@ public class WarlordsPlayer {
                         Warlords.game.addBluePoints(SCORE_KILL_POINTS);
                     }
 
+                    Zombie zombie = player.getWorld().spawn(player.getLocation(), Zombie.class);
+                    zombie.getEquipment().setBoots(player.getInventory().getBoots());
+                    zombie.getEquipment().setLeggings(player.getInventory().getLeggings());
+                    zombie.getEquipment().setChestplate(player.getInventory().getChestplate());
+                    zombie.getEquipment().setHelmet(player.getInventory().getHelmet());
+                    zombie.getEquipment().setItemInHand(player.getInventory().getItemInHand());
+                    zombie.setHealth(0);
+
                     //title YOU DIED
                     PacketUtils.sendTitle(player, ChatColor.RED + "YOU DIED!", ChatColor.GRAY + "You took " + ChatColor.RED + (min * -1) + ChatColor.GRAY + " fall damage and died.", 0, 40, 0);
 
@@ -605,7 +618,7 @@ public class WarlordsPlayer {
                 }
 
 
-                player.damage(0);
+                player.playEffect(EntityEffect.HURT);
             }
         } else {
             if (attacker.getInferno() != 0 && (!ability.isEmpty() && !ability.equals("Time Warp"))) {
@@ -703,7 +716,7 @@ public class WarlordsPlayer {
                     addAbsorbed(-damageHealValue);
                 }
                 arcaneShieldHealth += damageHealValue;
-                player.damage(0);
+                player.playEffect(EntityEffect.HURT);
                 //Bukkit.broadcastMessage("" + arcaneShieldHealth);
             } else {
                 System.out.println(attacker.getName() + " hit " + name + " for " + damageHealValue);
@@ -850,12 +863,20 @@ public class WarlordsPlayer {
                     this.health += Math.round(damageHealValue);
                 }
                 if (damageHealValue < 0) {
-                    player.damage(0);
+                    player.playEffect(EntityEffect.HURT);
                 }
                 attacker.addDamage(-damageHealValue);
                 if (this.health <= 0) {
 
                     addGrave();
+
+                    Zombie zombie = player.getWorld().spawn(player.getLocation(), Zombie.class);
+                    zombie.getEquipment().setBoots(player.getInventory().getBoots());
+                    zombie.getEquipment().setLeggings(player.getInventory().getLeggings());
+                    zombie.getEquipment().setChestplate(player.getInventory().getChestplate());
+                    zombie.getEquipment().setHelmet(player.getInventory().getHelmet());
+                    zombie.getEquipment().setItemInHand(player.getInventory().getItemInHand());
+                    zombie.setHealth(0);
 
                     attacker.getPlayer().playSound(attacker.getPlayer().getLocation(), Sound.ORB_PICKUP, 500f, 0.3f);
 

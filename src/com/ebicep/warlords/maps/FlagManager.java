@@ -3,6 +3,7 @@ package com.ebicep.warlords.maps;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.events.WarlordsDeathEvent;
+import com.ebicep.warlords.util.ArmorManager;
 import com.ebicep.warlords.util.PacketUtils;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -94,7 +95,9 @@ public class FlagManager implements Listener {
                 // Blue scores a capture
                 PlayerFlagLocation playerFlagLocation = (PlayerFlagLocation) this.red.getFlag();
                 Bukkit.broadcastMessage("§9" + playerFlagLocation.getPlayer().getName() + " §ehas captured the §cRED §eflag!");
-                PacketUtils.sendTitle(playerFlagLocation.player, "", "§9" + playerFlagLocation.getPlayer().getName() + " §ehas captured the §cRED §eflag!", 0, 60, 0);
+                for (Player player1 : Warlords.game.getPlayers().keySet()) {
+                    PacketUtils.sendTitle(player1, "", "§9" + playerFlagLocation.getPlayer().getName() + " §ehas captured the §cRED §eflag!", 0, 60, 0);
+                }
                 Warlords.game.addBluePoints(SCORE_FLAG_POINTS);
                 hasScored = true;
 
@@ -184,8 +187,9 @@ public class FlagManager implements Listener {
                 ChatColor color = (info.getTeam() == Team.RED ? ChatColor.BLUE : ChatColor.RED);
                 ChatColor color2 = (info.getTeam() == Team.RED ? ChatColor.RED : ChatColor.BLUE);
                 Bukkit.broadcastMessage(color + player.getPlayerListName() + " §ehas picked up the " + color2 +  info.getTeam() + " §eflag!");
-                PacketUtils.sendTitle(player, "", color + player.getPlayerListName() + " §ehas picked up the " + color2 +  info.getTeam() + " §eflag!", 0, 60, 0);
-
+                for (Player player1 : Warlords.game.getPlayers().keySet()) {
+                    PacketUtils.sendTitle(player1, "", color + player.getPlayerListName() + " §ehas picked up the " + color2 + info.getTeam() + " §eflag!", 0, 60, 0);
+                }
                 for (Player player1 : player.getWorld().getPlayers()) {
                     if (Warlords.game.isRedTeam(player1) == (info.getTeam() == Team.RED)) {
                         player1.playSound(player.getLocation(), "ctf.friendlyflagtaken", 500, 1);
@@ -314,6 +318,12 @@ public class FlagManager implements Listener {
         @Override
         public FlagLocation afterSameTeamInteraction(Player player, Location ownTeamSpawnLocation) {
 
+            ChatColor color = Warlords.game.getPlayerTeam(player).teamColor();
+            Bukkit.broadcastMessage(color + player.getPlayerListName() + " §ehas returned the " + color +  Warlords.game.getPlayerTeam(player) + " §eflag!");
+            for (Player player1 : Warlords.game.getPlayers().keySet()) {
+                PacketUtils.sendTitle(player1, "", color + player.getPlayerListName() + " §ehas returned the " + color + Warlords.game.getPlayerTeam(player) + " §eflag!", 0, 60, 0);
+            }
+
             for (Player player1 : player.getWorld().getPlayers()) {
                 player1.playSound(player.getLocation(), "ctf.flagreturned", 500, 1);
             }
@@ -428,6 +438,10 @@ public class FlagManager implements Listener {
 
                 Block block = this.lastLocation.getLocation().getBlock();
 
+                for (int i = 0; !block.isEmpty() && block.getType() != Material.STANDING_BANNER && i < 4; i++) {
+                    block = block.getRelative(0, 1, 0);
+                }
+
                 if (block.isEmpty() || block.getType() == Material.STANDING_BANNER) {
                     renderedBlocks.add(block);
                     block.setType(Material.STANDING_BANNER);
@@ -452,17 +466,17 @@ public class FlagManager implements Listener {
                     }
                     ((Banner) newData).setFacingDirection(dir);
                     block.setData(newData.getData());
+                }
 
-                    if(this.lastLocation instanceof GroundFlagLocation) {
+                if(this.lastLocation instanceof GroundFlagLocation) {
 
-                        this.runningTasksCancel.add(new BukkitRunnable() {
-                            @Override
-                            public void run() {
-                                FlagRenderer.this.info.setFlag(new SpawnFlagLocation(info.getSpawnLocation()));
-                            }
+                    this.runningTasksCancel.add(new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            FlagRenderer.this.info.setFlag(new SpawnFlagLocation(info.getSpawnLocation()));
+                        }
 
-                        }.runTaskLater(plugin, 15*20)::cancel);
-                    }
+                    }.runTaskLater(plugin, 15*20)::cancel);
                 }
 
                 ArmorStand stand = this.lastLocation.getLocation().getWorld().spawn(block.getLocation().add(.5, 0, .5), ArmorStand.class);
@@ -495,6 +509,7 @@ public class FlagManager implements Listener {
                     task.cancel();
                     player.removeMetadata(FLAG_DAMAGE_MULTIPLIER, plugin);
                 });
+                runningTasksCancel.add(Warlords.getPlayer(player).getSpeed().changeCurrentSpeed("FLAG", -20, 0));
             }
         }
 
@@ -511,7 +526,7 @@ public class FlagManager implements Listener {
 
             renderedArmorStands.clear();
             for(Player p : affectedPlayers) {
-                p.getInventory().setHelmet(null);
+                ArmorManager.resetArmor(p, Warlords.getPlayer(p).getSpec(), Warlords.game.getPlayerTeam(p));
             }
 
             affectedPlayers.clear();
