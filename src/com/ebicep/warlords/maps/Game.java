@@ -297,8 +297,6 @@ public class Game implements Runnable {
         END {
             @Override
             public void begin(Game game) {
-                Bukkit.broadcastMessage("The game has ended!");
-                // Disable abilities
                 game.flags.stop();
                 game.flags = null;
                 boolean teamBlueWins = !game.forceEnd && game.bluePoints > game.redPoints;
@@ -329,8 +327,13 @@ public class Game implements Runnable {
                         ChatColor.LIGHT_PURPLE + "Total Flag Captures (everyone): " + ChatColor.GOLD + Utils.addCommaAndRound((float) players.stream().mapToDouble(WarlordsPlayer::getFlagsCaptured).sum()) + "\n" +
                                 ChatColor.LIGHT_PURPLE + "Total Flag Returns (everyone): " + ChatColor.GOLD + Utils.addCommaAndRound((float) players.stream().mapToDouble(WarlordsPlayer::getFlagsCaptured).sum())).create()));
                 sendCenteredHoverableMessageToAllGamePlayer(game, Collections.singletonList(mvp));
-                TextComponent playerMvp = new TextComponent(ChatColor.AQUA + "Joe");
                 players = players.stream().sorted(Comparator.comparing(WarlordsPlayer::getTotalCapsAndReturns)).collect(Collectors.toList());
+                for (WarlordsPlayer player : players) {
+                    System.out.println(player.getName());
+                    System.out.println(player.getFlagsCaptured());
+                    System.out.println(player.getFlagsReturned());
+                }
+                TextComponent playerMvp = new TextComponent(ChatColor.AQUA + players.get(0).getName());
                 playerMvp.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(
                         ChatColor.LIGHT_PURPLE + "Flag Captures: " + ChatColor.GOLD + players.get(0).getFlagsCaptured() + "\n" +
                                 ChatColor.LIGHT_PURPLE + "Flag Returns: " + ChatColor.GOLD + players.get(0).getFlagsReturned()).create()));
@@ -410,6 +413,7 @@ public class Game implements Runnable {
                     absorb.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new ComponentBuilder(absorbedJson).create()));
                     Utils.sendCenteredHoverableMessage(value.getPlayer(), Arrays.asList(damage, spacer, heal, spacer, absorb));
 
+                    value.getPlayer().setGameMode(GameMode.ADVENTURE);
                 }
 
                 sendMessageToAllGamePlayer(game, "" + ChatColor.GREEN + ChatColor.BOLD + "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬", false);
