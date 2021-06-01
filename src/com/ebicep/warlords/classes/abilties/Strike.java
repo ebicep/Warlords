@@ -94,49 +94,8 @@ public class Strike extends AbstractAbility {
                                         break;
                                 }
                             }
-                            break;
                         } else if (name.contains("Protector")) {
-                            boolean inConsecrate = standingOnConsecrate(player, nearPlayer);
-                            float damageHealValue;
-                            if (inConsecrate) {
-                                damageHealValue = (int) ((Math.random() * (maxDamageHeal * 1.15f - minDamageHeal * 1.15f)) + minDamageHeal * 1.15f);
-                            } else {
-                                damageHealValue = (int) ((Math.random() * (maxDamageHeal * 1.15f - minDamageHeal)) + minDamageHeal);
-                            }
-                            int crit = (int) ((Math.random() * (100)));
-                            boolean isCrit = false;
-                            if (crit <= critChance) {
-                                isCrit = true;
-                                damageHealValue *= critMultiplier / 100f;
-                            }
-                            int tempNewCritChance;
-                            if (isCrit) {
-                                tempNewCritChance = 100;
-                            } else {
-                                tempNewCritChance = -1;
-                            }
-
-                            //DMG
-                            Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, name, (int) damageHealValue, (int) damageHealValue, tempNewCritChance, 100);
-                            //SELF HEAL
-                            Warlords.getPlayer(player).addHealth(warlordsPlayer, name, (int) -damageHealValue / 2, (int) -damageHealValue / 2, tempNewCritChance, 100);
-
-                            int counter = 0;
-                            //reloops near players to give health to
-                            List<Entity> nearNearPlayers = nearPlayer.getNearbyEntities(5.0D, 5.0D, 5.0D);
-                            nearNearPlayers.remove(player);
-                            nearNearPlayers = Utils.filterOnlyTeammates(nearNearPlayers, player);
-                            for (Entity nearEntity2 : nearNearPlayers) {
-                                if (nearEntity2 instanceof Player) {
-                                    Player nearTeamPlayer = (Player) nearEntity2;
-                                    Warlords.getPlayer(nearTeamPlayer).addHealth(warlordsPlayer, name, (int) -damageHealValue, (int) -damageHealValue, tempNewCritChance, 100);
-                                    counter++;
-                                    if (counter == 2)
-                                        break;
-                                }
-
-                            }
-                            break;
+                            Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
                         }
 
                     } else if (name.contains("Berserker")) {

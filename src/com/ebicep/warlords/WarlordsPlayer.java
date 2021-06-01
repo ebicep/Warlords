@@ -38,8 +38,10 @@ public class WarlordsPlayer {
     private float maxEnergy;
     private int horseCooldown;
     private int hitCooldown;
-    private int flagsCaptured;
-    private int flagsReturned;
+    private int spawnProtection;
+    private int spawnDamage = 0;
+    private int flagsCaptured = 0;
+    private int flagsReturned = 0;
 
     private final int[] kills = new int[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
     private final int[] assists = new int[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
@@ -159,7 +161,9 @@ public class WarlordsPlayer {
         if (powerUpSpeed != 0) {
             actionBarMessage.append(ChatColor.GREEN).append("SPEED").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append(powerUpSpeed).append(" ");
         }
-
+        if (spawnDamage != 0) {
+            actionBarMessage.append(ChatColor.GREEN).append("DAMAGE").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append(spawnDamage).append(" ");
+        }
         PacketUtils.sendActionBar(player, actionBarMessage.toString());
     }
 
@@ -304,7 +308,8 @@ public class WarlordsPlayer {
         this.maxEnergy = spec.getMaxEnergy();
         this.horseCooldown = 0;
         this.hitCooldown = 20;
-        this.speed = new CalculateSpeed(player :: setWalkSpeed, 13);
+        this.spawnProtection = 0;
+        this.speed = new CalculateSpeed(player::setWalkSpeed, 13);
         grayDye.setColor(DyeColor.GRAY);
         this.energyPowerup = energyPowerup;
     }
@@ -539,6 +544,7 @@ public class WarlordsPlayer {
     }
 
     public void addHealth(WarlordsPlayer attacker, String ability, int min, int max, int critChance, int critMultiplier) {
+        if (spawnProtection != 0) return;
         if (attacker == this && (ability.equals("Fall") || ability.isEmpty())) {
             if (ability.isEmpty()) {
                 player.sendMessage("§c\u00AB§7 You took §c" + min * -1 + "§7 melee damage.");
@@ -647,6 +653,8 @@ public class WarlordsPlayer {
                 totalReduction = 1 - spec.getDamageResistance() / 100f;
                 if (attacker.getPowerUpDamage() != 0) {
                     totalReduction += .3;
+                } else if (attacker.getSpawnDamage() != 0) {
+                    totalReduction += .2;
                 }
                 if (attacker.getBerserk() != 0) {
                     totalReduction += .25;
@@ -830,6 +838,34 @@ public class WarlordsPlayer {
                             orb.setArmorStand(orbStand);
                             Warlords.getOrbs().add(orb);
                         }
+
+                        //prot strike
+                        if (ability.equals("Protector's Strike")) {
+                            System.out.println(damageHealValue);
+                            //SELF HEAL
+                            int tempNewCritChance;
+                            if (isCrit) {
+                                tempNewCritChance = 100;
+                            } else {
+                                tempNewCritChance = -1;
+                            }
+                            attacker.addHealth(attacker, name, (int) -damageHealValue / 2, (int) -damageHealValue / 2, tempNewCritChance, 100);
+
+                            int counter = 0;
+                            //reloops near players to give health to
+                            List<Entity> nearNearPlayers = attacker.getPlayer().getNearbyEntities(5.0D, 5.0D, 5.0D);
+                            nearNearPlayers.remove(attacker.getPlayer());
+                            nearNearPlayers = Utils.filterOnlyTeammates(nearNearPlayers, attacker.getPlayer());
+                            for (Entity nearEntity2 : nearNearPlayers) {
+                                if (nearEntity2 instanceof Player) {
+                                    Player nearTeamPlayer = (Player) nearEntity2;
+                                    Warlords.getPlayer(nearTeamPlayer).addHealth(attacker, name, (int) -damageHealValue, (int) -damageHealValue, tempNewCritChance, 100);
+                                    counter++;
+                                    if (counter == 2)
+                                        break;
+                                }
+                            }
+                        }
                     }
                     //HEALING
                     else {
@@ -868,7 +904,9 @@ public class WarlordsPlayer {
                 }
                 attacker.addDamage(-damageHealValue);
                 if (this.health <= 0) {
-
+                    powerUpDamage = 0;
+                    powerUpEnergy = 0;
+                    powerUpSpeed = 0;
                     addGrave();
 
                     Zombie zombie = player.getWorld().spawn(player.getLocation(), Zombie.class);
@@ -889,7 +927,6 @@ public class WarlordsPlayer {
                     this.addDeath();
                     this.scoreboard.updateKillsAssists();
                     Bukkit.getPluginManager().callEvent(new WarlordsDeathEvent(this));
-
 
                     if (Warlords.game.isBlueTeam(attacker.player)) {
                         player.sendMessage(ChatColor.GRAY + "You were killed by " + ChatColor.BLUE + attacker.getName());
@@ -1652,6 +1689,22 @@ public class WarlordsPlayer {
     }
 
     public int getTotalCapsAndReturns() {
-        return this.flagsCaptured + this.flagsCaptured;
+        return this.flagsCaptured + this.flagsReturned;
+    }
+
+    public int getSpawnProtection() {
+        return spawnProtection;
+    }
+
+    public void setSpawnProtection(int spawnProtection) {
+        this.spawnProtection = spawnProtection;
+    }
+
+    public void setSpawnDamage(int spawnDamage) {
+        this.spawnDamage = spawnDamage;
+    }
+
+    public int getSpawnDamage() {
+        return spawnDamage;
     }
 }

@@ -216,10 +216,35 @@ public class Warlords extends JavaPlugin {
                         //respawn
                         if (warlordsPlayer.getRespawnTimer() == 0) {
                             warlordsPlayer.setRespawnTimer(-1);
+                            warlordsPlayer.setSpawnProtection(10);
+                            warlordsPlayer.setSpawnDamage(5);
+
                             if (game.getTeamBlue().contains(warlordsPlayer.getPlayer())) {
                                 warlordsPlayer.getPlayer().teleport(game.getMap().getBlueRespawn());
+                                new BukkitRunnable() {
+                                    @Override
+                                    public void run() {
+                                        if (player.getLocation().distanceSquared(game.getMap().getBlueRespawn()) > 5 * 5) {
+                                            warlordsPlayer.setSpawnProtection(0);
+                                        }
+                                        if (warlordsPlayer.getSpawnProtection() == 0) {
+                                            this.cancel();
+                                        }
+                                    }
+                                }.runTaskTimer(instance, 0, 5);
                             } else if (game.getTeamRed().contains(warlordsPlayer.getPlayer())) {
                                 warlordsPlayer.getPlayer().teleport(game.getMap().getRedRespawn());
+                                new BukkitRunnable() {
+                                    @Override
+                                    public void run() {
+                                        if (player.getLocation().distanceSquared(game.getMap().getRedRespawn()) > 5 * 5) {
+                                            warlordsPlayer.setSpawnProtection(0);
+                                        }
+                                        if (warlordsPlayer.getSpawnProtection() == 0) {
+                                            this.cancel();
+                                        }
+                                    }
+                                }.runTaskTimer(instance, 0, 5);
                             }
                             warlordsPlayer.respawn();
                             if (warlordsPlayer.getDeathStand() != null) {
@@ -484,6 +509,12 @@ public class Warlords extends JavaPlugin {
                                 warlordsPlayer.updateHorseItem();
                             }
                             //COOLDOWNS
+                            if (warlordsPlayer.getSpawnProtection() != 0) {
+                                warlordsPlayer.setSpawnProtection(warlordsPlayer.getSpawnProtection() - 1);
+                            }
+                            if (warlordsPlayer.getSpawnDamage() != 0) {
+                                warlordsPlayer.setSpawnDamage(warlordsPlayer.getSpawnDamage() - 1);
+                            }
                             if (warlordsPlayer.getWrathDuration() != 0) {
                                 warlordsPlayer.setWrathDuration(warlordsPlayer.getWrathDuration() - 1);
                             }
