@@ -23,6 +23,10 @@ public class Commands implements TabExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
         if (command.getName().equalsIgnoreCase("start")) {
+            if (!sender.isOp()) {
+                sender.sendMessage("§cYou do not have permission to do that.");
+                return true;
+            }
             Game game = Warlords.game; // In the future allow the user to select a game player
             GameMap map;
 
@@ -72,6 +76,10 @@ public class Commands implements TabExecutor {
             }
 
         } else if (command.getName().equalsIgnoreCase("endgame")) {
+            if (!sender.isOp()) {
+                sender.sendMessage("§cYou do not have permission to do that.");
+                return true;
+            }
             if (Warlords.game.getState() != GAME) {
                 sender.sendMessage(ChatColor.RED + "There are no games currently running!");
                 return true;

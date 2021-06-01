@@ -70,8 +70,16 @@ public class WarlordsEvents implements Listener {
         player.sendMessage(" ");
         player.sendMessage(ChatColor.GRAY + "Developed by " + ChatColor.RED + "sumSmash " + ChatColor.GRAY + "&" + ChatColor.RED + " Plikie");
         player.sendMessage(" ");
-        player.sendMessage(ChatColor.GRAY + "placeholder optional extras idk");
+        player.sendMessage(ChatColor.GRAY + "/class [ClASS] to choose your class!");
         player.sendMessage(" ");
+        player.sendMessage(ChatColor.GRAY + "NOTE: We're still in beta, bugs and/or missing features are still present. Please report any bugs you might find.");
+        player.sendMessage(" ");
+        player.sendMessage(ChatColor.GRAY + "CURRENT MISSING FEATURES: ");
+        player.sendMessage(ChatColor.RED + "- Weapon Skill boosts");
+        player.sendMessage(ChatColor.RED + "- Revenant's Orbs of Life being hidden for the enemy team");
+        player.sendMessage(ChatColor.RED + "- Being able to swap weapon/armor skins.");
+        player.sendMessage(ChatColor.RED + "- Flag damage modifier currently does not carry over to a new flag holder.");
+        player.sendMessage(ChatColor.RED + "- Thunderlord/Earthwarden's Totem does not have proc animations!");
 
         //readds player
         //first to warlords players

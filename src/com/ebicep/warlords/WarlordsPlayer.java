@@ -320,7 +320,7 @@ public class WarlordsPlayer {
         //§
         ItemStack weapon = new ItemStack(Material.COOKED_FISH, 1, (short) 1);
         ItemMeta weaponMeta = weapon.getItemMeta();
-        weaponMeta.setDisplayName("§6Warlord's Fat Cock of the " + spec.getWeapon().getName());
+        weaponMeta.setDisplayName("§cWarlord's Felflame blade of the " + spec.getWeapon().getName());
         ArrayList<String> weaponLore = new ArrayList<>();
         weaponLore.add("§7Damage: §c132 §7- §c179");
         weaponLore.add("§7Crit Chance: §c25%");
@@ -374,7 +374,7 @@ public class WarlordsPlayer {
             redLore.add("§7Cooldown: §b" + spec.getRed().getCooldown());
             redLore.add("§7Energy Cost: §e" + spec.getRed().getEnergyCost());
 
-            if (spec.getRed().getCritChance()  != 0 || spec.getRed().getCritMultiplier() != 0) {
+            if (spec.getRed().getCritChance()  != 0 || spec.getRed().getCritChance()  != -1 || spec.getRed().getCritMultiplier() < 150) {
                 redLore.add("§7Crit Chance: §c" + spec.getRed().getCritChance() + "%");
                 redLore.add("§7Crit Multiplier: §c" + spec.getRed().getCritMultiplier() + "%");
             }
@@ -400,7 +400,7 @@ public class WarlordsPlayer {
             purpleLore.add("§7Cooldown: §b" + spec.getPurple().getCooldown());
             purpleLore.add("§7Energy Cost: §e" + spec.getPurple().getEnergyCost());
 
-            if (spec.getPurple().getCritChance()  != 0 || spec.getPurple().getCritMultiplier() != 0) {
+            if (spec.getPurple().getCritChance()  != 0 || spec.getPurple().getCritChance()  != -1 ||  spec.getPurple().getCritMultiplier() < 150) {
                 purpleLore.add("§7Crit Chance: §c" + spec.getPurple().getCritChance() + "%");
                 purpleLore.add("§7Crit Multiplier: §c" + spec.getPurple().getCritMultiplier() + "%");
             }
@@ -428,7 +428,7 @@ public class WarlordsPlayer {
             blueLore.add("§7Cooldown: §b" + spec.getBlue().getCooldown());
             blueLore.add("§7Energy Cost: §e" + spec.getBlue().getEnergyCost());
 
-            if (spec.getBlue().getCritChance()  != 0 || spec.getBlue().getCritMultiplier() != 0) {
+            if (spec.getBlue().getCritChance()  != 0 || spec.getBlue().getCritChance()  != -1 || spec.getBlue().getCritMultiplier() < 150) {
                 blueLore.add("§7Crit Chance: §c" + spec.getBlue().getCritChance() + "%");
                 blueLore.add("§7Crit Multiplier: §c" + spec.getBlue().getCritMultiplier() + "%");
             }
@@ -456,7 +456,7 @@ public class WarlordsPlayer {
             orangeLore.add("§7Cooldown: §b" + spec.getOrange().getCooldown());
             orangeLore.add("§7Energy Cost: §e" + spec.getOrange().getEnergyCost());
 
-            if (spec.getOrange().getCritChance()  != 0 || spec.getOrange().getCritMultiplier() != 0) {
+            if (spec.getOrange().getCritChance()  != 0 || spec.getOrange().getCritChance()  != -1 || spec.getOrange().getCritMultiplier() < 150) {
                 orangeLore.add("§7Crit Chance: §c" + spec.getOrange().getCritChance() + "%");
                 orangeLore.add("§7Crit Multiplier: §c" + spec.getOrange().getCritMultiplier() + "%");
             }

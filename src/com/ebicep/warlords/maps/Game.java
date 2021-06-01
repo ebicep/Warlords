@@ -137,7 +137,7 @@ public class Game implements Runnable {
 
                     game.timer++;
                     //TESTING
-                    return GAME;
+                    //return GAME;
 
                 } else {
                     game.timer = 0;
@@ -704,7 +704,7 @@ public class Game implements Runnable {
         //sideBar.getScore(ChatColor.GOLD + "Lv90 " + warlordsPlayer.getSpec().getClassName()).setScore(4);
         //sideBar.getScore(ChatColor.WHITE + "Spec: " + ChatColor.GREEN + warlordsPlayer.getSpec().getClass().getSimpleName()).setScore(3);
         sideBar.getScore("    ").setScore(2);
-        sideBar.getScore(ChatColor.YELLOW + "WL 2.0 master_b-v0.0.2 ").setScore(1);
+        sideBar.getScore(ChatColor.YELLOW + "WL 2.0 master_b-v0.0.3 ").setScore(1);
 
         player.setScoreboard(board);
     }
