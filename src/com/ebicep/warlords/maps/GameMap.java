@@ -149,8 +149,8 @@ public enum GameMap {
             new Location(Bukkit.getWorld("Gorge"), -99.5, 47.5, 0.5), // RED FLAG
 
             Arrays.asList(
-                    new Cuboid(Bukkit.getWorld("Gorge"), 76, 41, -2, 76, 45, 3), // BLUE GATE
-                    new Cuboid(Bukkit.getWorld("Gorge"), -76, 41, -3, -75, 45, 2) // RED GATE
+                    new Cuboid(Bukkit.getWorld("Gorge"), 76, 41, -3, 76, 45, 4), // BLUE GATE
+                    new Cuboid(Bukkit.getWorld("Gorge"), -76, 41, -4, -76, 45, 3) // RED GATE
             )
     ),
 

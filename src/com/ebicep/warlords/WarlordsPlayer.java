@@ -37,6 +37,7 @@ public class WarlordsPlayer {
     private float energy;
     private float maxEnergy;
     private int horseCooldown;
+    private int flagCooldown;
     private int hitCooldown;
     private int flagsCaptured;
     private int flagsReturned;
@@ -303,6 +304,7 @@ public class WarlordsPlayer {
         this.energy = spec.getMaxEnergy();
         this.maxEnergy = spec.getMaxEnergy();
         this.horseCooldown = 0;
+        this.flagCooldown = 0;
         this.hitCooldown = 20;
         this.speed = new CalculateSpeed(player :: setWalkSpeed, 13);
         grayDye.setColor(DyeColor.GRAY);
@@ -566,7 +568,7 @@ public class WarlordsPlayer {
                     zombie.getEquipment().setChestplate(player.getInventory().getChestplate());
                     zombie.getEquipment().setHelmet(player.getInventory().getHelmet());
                     zombie.getEquipment().setItemInHand(player.getInventory().getItemInHand());
-                    zombie.setHealth(0);
+                    zombie.damage(2000);
 
                     for (WarlordsPlayer value : Warlords.getPlayers().values()) {
                         value.getScoreboard().updatePoints();
@@ -605,7 +607,7 @@ public class WarlordsPlayer {
                     zombie.getEquipment().setChestplate(player.getInventory().getChestplate());
                     zombie.getEquipment().setHelmet(player.getInventory().getHelmet());
                     zombie.getEquipment().setItemInHand(player.getInventory().getItemInHand());
-                    zombie.setHealth(0);
+                    zombie.damage(2000);
 
                     //title YOU DIED
                     PacketUtils.sendTitle(player, ChatColor.RED + "YOU DIED!", ChatColor.GRAY + "You took " + ChatColor.RED + (min * -1) + ChatColor.GRAY + " fall damage and died.", 0, 40, 0);
@@ -617,8 +619,6 @@ public class WarlordsPlayer {
                 } else {
                     health += min;
                 }
-
-
                 player.playEffect(EntityEffect.HURT);
             }
         } else {
@@ -877,7 +877,7 @@ public class WarlordsPlayer {
                     zombie.getEquipment().setChestplate(player.getInventory().getChestplate());
                     zombie.getEquipment().setHelmet(player.getInventory().getHelmet());
                     zombie.getEquipment().setItemInHand(player.getInventory().getItemInHand());
-                    zombie.setHealth(0);
+                    zombie.damage(2000);
 
                     attacker.getPlayer().playSound(attacker.getPlayer().getLocation(), Sound.ORB_PICKUP, 500f, 0.3f);
 
@@ -1140,6 +1140,14 @@ public class WarlordsPlayer {
 
     public void setHorseCooldown(int horseCooldown) {
         this.horseCooldown = horseCooldown;
+    }
+
+    public int getFlagCooldown() {
+        return flagCooldown;
+    }
+
+    public void setFlagCooldown(int flagCooldown) {
+        this.flagCooldown = flagCooldown;
     }
 
     public int getHitCooldown() {

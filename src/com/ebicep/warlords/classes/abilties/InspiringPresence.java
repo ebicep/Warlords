@@ -28,7 +28,6 @@ public class InspiringPresence extends AbstractAbility {
         warlordsPlayer.getSpeed().changeCurrentSpeed("Inspiring Presence", 30, 12 * 20, "BASE");
         warlordsPlayer.setPresence(12 * 20);
 
-        // TODO: test if boost works for other players
         // TODO: make range a circle instead of square
         List<Entity> near = player.getNearbyEntities(6.0D, 2.0D, 6.0D);
         near = Utils.filterOnlyTeammates(near, player);

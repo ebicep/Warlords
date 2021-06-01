@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.events.WarlordsDeathEvent;
 import com.ebicep.warlords.util.ArmorManager;
+import com.ebicep.warlords.util.ItemBuilder;
 import com.ebicep.warlords.util.PacketUtils;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -74,6 +75,9 @@ public class FlagManager implements Listener {
                 // Red scores a capture
                 PlayerFlagLocation playerFlagLocation = (PlayerFlagLocation) this.blue.getFlag();
                 Bukkit.broadcastMessage("§c" + playerFlagLocation.getPlayer().getName() + " §ehas captured the §9BLUE §eflag!");
+                for (Player player1 : Warlords.game.getPlayers().keySet()) {
+                    PacketUtils.sendTitle(player1, "", "§c" + playerFlagLocation.getPlayer().getName() + " §ehas captured the §9BLUE §eflag!", 0, 60, 0);
+                }
                 Warlords.game.addRedPoints(SCORE_FLAG_POINTS);
                 hasScored = true;
 
@@ -138,6 +142,21 @@ public class FlagManager implements Listener {
     public void onPlayerDeath(WarlordsDeathEvent event) {
         Player player = event.getPlayer().getPlayer();
 
+        if(
+                red.getFlag() instanceof PlayerFlagLocation &&
+                        ((PlayerFlagLocation)red.getFlag()).getPlayer().equals(player)
+        ) {
+            red.doOtherTeamInteraction(player);
+        }
+        if(
+                blue.getFlag() instanceof PlayerFlagLocation &&
+                        ((PlayerFlagLocation)blue.getFlag()).getPlayer().equals(player)
+        ) {
+            blue.doOtherTeamInteraction(player);
+        }
+    }
+
+    public void dropFlag(Player player) {
         if(
                 red.getFlag() instanceof PlayerFlagLocation &&
                         ((PlayerFlagLocation)red.getFlag()).getPlayer().equals(player)
@@ -512,6 +531,7 @@ public class FlagManager implements Listener {
                     player.removeMetadata(FLAG_DAMAGE_MULTIPLIER, plugin);
                 });
                 runningTasksCancel.add(Warlords.getPlayer(player).getSpeed().changeCurrentSpeed("FLAG", -20, 0));
+                player.getInventory().setItem(6, new ItemBuilder(Material.BANNER, 1).name("§aDrop Flag").get());
             }
         }
 
@@ -529,6 +549,7 @@ public class FlagManager implements Listener {
             renderedArmorStands.clear();
             for(Player p : affectedPlayers) {
                 ArmorManager.resetArmor(p, Warlords.getPlayer(p).getSpec(), Warlords.game.getPlayerTeam(p));
+                p.getInventory().setItem(6, null);
             }
 
             affectedPlayers.clear();

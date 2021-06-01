@@ -3,6 +3,8 @@ package com.ebicep.warlords.classes.abilties;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.util.ParticleEffect;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 public class LightInfusion extends AbstractAbility {
@@ -20,6 +22,11 @@ public class LightInfusion extends AbstractAbility {
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "paladin.infusionoflight.activation", 2, 1);
+        }
+
+        for (int i = 0; i < 10; i++) {
+            Location particleLoc = player.getLocation().add(0, 1.5, 0);
+            ParticleEffect.SPELL.display(1F, 0F, 1F, 0.3F, 5, particleLoc, 500);
         }
     }
 }

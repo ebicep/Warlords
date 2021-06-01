@@ -85,6 +85,17 @@ public class Warlords extends JavaPlugin {
         getServer().getScheduler().runTaskTimer(this, game, 1, 1);
 
         getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords]: Plugin is enabled");
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                for(Player player : getServer().getOnlinePlayers()) {
+                    player.setFoodLevel(20);
+                    player.setSaturation(1);
+                }
+            }
+
+        }.runTaskTimer(this, 50, 50);
     }
 
 
@@ -486,6 +497,9 @@ public class Warlords extends JavaPlugin {
                             //COOLDOWNS
                             if (warlordsPlayer.getWrathDuration() != 0) {
                                 warlordsPlayer.setWrathDuration(warlordsPlayer.getWrathDuration() - 1);
+                            }
+                            if (warlordsPlayer.getFlagCooldown() != 0) {
+                                warlordsPlayer.setFlagCooldown(warlordsPlayer.getFlagCooldown() - 1);
                             }
                             if (warlordsPlayer.getBloodLustDuration() != 0) {
                                 warlordsPlayer.setBloodLustDuration(warlordsPlayer.getBloodLustDuration() - 1);

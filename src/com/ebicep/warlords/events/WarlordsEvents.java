@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.maps.FlagManager;
 import com.ebicep.warlords.maps.Game;
+import com.ebicep.warlords.maps.Team;
 import net.minecraft.server.v1_8_R3.EntityLiving;
 import net.minecraft.server.v1_8_R3.GenericAttributes;
 import org.bukkit.ChatColor;
@@ -171,7 +172,7 @@ public class WarlordsEvents implements Listener {
                         player.sendMessage(ChatColor.RED + "You cannot mount while holding the flag!");
                     } else {
                         for (Player player1 : player.getWorld().getPlayers()) {
-                            player1.playSound(player.getLocation(), "mountup", 1, 1);
+                            player1.playSound(player1.getLocation(), "mountup", 1, 1);
                         }
 
                         Horse horse = (Horse) player.getWorld().spawnEntity(player.getLocation(), EntityType.HORSE);
@@ -191,7 +192,16 @@ public class WarlordsEvents implements Listener {
                 player.getInventory().remove(Material.BONE);
                 Warlords.getPlayer(player).addHealth(Warlords.getPlayer(player), "", -100000, -100000, -1, 100);
                 Warlords.getPlayer(player).setUndyingArmyDead(false);
+            } else if (itemHeld.getType() == Material.BANNER) {
+                if (Warlords.getPlayer(player).getFlagCooldown() > 0) {
+                    player.sendMessage("§cYou cannot drop the flag yet, please wait 5 seconds!");
+                } else {
+                    Warlords.game.getFlags().dropFlag(player);
+                    Warlords.getPlayer(player).setFlagCooldown(5);
+                }
             }
+
+
         } else if (action == Action.LEFT_CLICK_BLOCK || action == Action.LEFT_CLICK_AIR) {
             if (action == Action.LEFT_CLICK_AIR) {
 
