@@ -98,6 +98,7 @@ public class FlagManager implements Listener {
                 for (Player player1 : Warlords.game.getPlayers().keySet()) {
                     PacketUtils.sendTitle(player1, "", "§9" + playerFlagLocation.getPlayer().getName() + " §ehas captured the §cRED §eflag!", 0, 60, 0);
                 }
+                Warlords.getPlayer(playerFlagLocation.getPlayer()).addFlagCap();
                 Warlords.game.addBluePoints(SCORE_FLAG_POINTS);
                 hasScored = true;
 
@@ -323,6 +324,7 @@ public class FlagManager implements Listener {
             for (Player player1 : Warlords.game.getPlayers().keySet()) {
                 PacketUtils.sendTitle(player1, "", color + player.getPlayerListName() + " §ehas returned the " + color + Warlords.game.getPlayerTeam(player) + " §eflag!", 0, 60, 0);
             }
+            Warlords.getPlayer(player).addFlagReturn();
 
             for (Player player1 : player.getWorld().getPlayers()) {
                 player1.playSound(player.getLocation(), "ctf.flagreturned", 500, 1);

@@ -38,19 +38,20 @@ public class WarlordsPlayer {
     private float maxEnergy;
     private int horseCooldown;
     private int hitCooldown;
+    private int flagsCaptured;
+    private int flagsReturned;
 
-    //TODO make these lists, each index indicated a minute in the game
-    private int[] kills = new int[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
-    private int[] assists = new int[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
+    private final int[] kills = new int[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
+    private final int[] assists = new int[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
     private List<WarlordsPlayer> hitBy = new ArrayList<>();
-    private int[] deaths = new int[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
-    private float[] damage = new float[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
-    private float[] healing = new float[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
-    private float[] absorbed = new float[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
+    private final int[] deaths = new int[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
+    private final float[] damage = new float[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
+    private final float[] healing = new float[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
+    private final float[] absorbed = new float[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
 
     private final CalculateSpeed speed;
 
-    private List<ActionBarStats> actionBarStats = new ArrayList<>();
+    private final List<ActionBarStats> actionBarStats = new ArrayList<>();
 
     public List<ActionBarStats> getActionBarStats() {
         return actionBarStats;
@@ -283,7 +284,7 @@ public class WarlordsPlayer {
         this.scoreboard = scoreboard;
     }
 
-    private boolean energyPowerup;
+    private final boolean energyPowerup;
     public boolean isEnergyPowerup() {
         return energyPowerup;
     }
@@ -1632,5 +1633,25 @@ public class WarlordsPlayer {
 
     public void setDeathStand(ArmorStand deathStand) {
         this.deathStand = deathStand;
+    }
+
+    public int getFlagsCaptured() {
+        return flagsCaptured;
+    }
+
+    public void addFlagCap() {
+        this.flagsCaptured++;
+    }
+
+    public int getFlagsReturned() {
+        return flagsReturned;
+    }
+
+    public void addFlagReturn() {
+        this.flagsReturned++;
+    }
+
+    public int getTotalCapsAndReturns() {
+        return this.flagsCaptured + this.flagsCaptured;
     }
 }

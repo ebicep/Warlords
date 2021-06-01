@@ -308,24 +308,32 @@ public class Game implements Runnable {
                     game.powerUps.cancel();
                 }
 
-                // Announce winner
                 List<WarlordsPlayer> players = new ArrayList<>(Warlords.getPlayers().values());
                 sendMessageToAllGamePlayer(game, "" + ChatColor.GREEN + ChatColor.BOLD + "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬", false);
                 sendMessageToAllGamePlayer(game, "" + ChatColor.WHITE + ChatColor.BOLD + "  Warlords", true);
 
                 sendMessageToAllGamePlayer(game, "", false);
 
+                if (teamBlueWins) {
+                    sendMessageToAllGamePlayer(game, ChatColor.YELLOW + "Winner" + ChatColor.GRAY + " - " + ChatColor.BLUE + "BLU", true);
+                } else if (teamRedWins) {
+                    sendMessageToAllGamePlayer(game, ChatColor.YELLOW + "Winner" + ChatColor.GRAY + " - " + ChatColor.RED + "RED", true);
+                } else {
+                    sendMessageToAllGamePlayer(game, ChatColor.YELLOW + "Winner" + ChatColor.GRAY + " - " + ChatColor.LIGHT_PURPLE + "DRAW", true);
+                }
+
+                sendMessageToAllGamePlayer(game, "", false);
+
                 TextComponent mvp = new TextComponent("" + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + "✚ MVP ✚");
-                //TODO caps/returns MVPPPP
                 mvp.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(
-                        ChatColor.LIGHT_PURPLE + "Total Flag Captures (everyone): " + "HERE" + "\n" + //Utils.addCommaAndRound((float) players.stream().mapToDouble(WarlordsPlayer::totalcaps).sum())
-                                ChatColor.LIGHT_PURPLE + "Total Flag Returns (everyone): " + "HERE").create())); //Utils.addCommaAndRound((float) players.stream().mapToDouble(WarlordsPlayer::totalreturns).sum())
+                        ChatColor.LIGHT_PURPLE + "Total Flag Captures (everyone): " + ChatColor.GOLD + Utils.addCommaAndRound((float) players.stream().mapToDouble(WarlordsPlayer::getFlagsCaptured).sum()) + "\n" +
+                                ChatColor.LIGHT_PURPLE + "Total Flag Returns (everyone): " + ChatColor.GOLD + Utils.addCommaAndRound((float) players.stream().mapToDouble(WarlordsPlayer::getFlagsCaptured).sum())).create()));
                 sendCenteredHoverableMessageToAllGamePlayer(game, Collections.singletonList(mvp));
                 TextComponent playerMvp = new TextComponent(ChatColor.AQUA + "Joe");
-                //players = players.stream().sorted(Comparator.comparing(WarlordsPlayer::totalcaps+returns (make method in warlordsplayer?)).collect(Collectors.toList());
+                players = players.stream().sorted(Comparator.comparing(WarlordsPlayer::getTotalCapsAndReturns)).collect(Collectors.toList());
                 playerMvp.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(
-                        ChatColor.LIGHT_PURPLE + "Flag Captures: " + ChatColor.GOLD + "HERE" + "\n" + //players.get(0).getcaps...
-                                ChatColor.LIGHT_PURPLE + "Flag Returns: " + ChatColor.GOLD + "HERE").create()));
+                        ChatColor.LIGHT_PURPLE + "Flag Captures: " + ChatColor.GOLD + players.get(0).getFlagsCaptured() + "\n" +
+                                ChatColor.LIGHT_PURPLE + "Flag Returns: " + ChatColor.GOLD + players.get(0).getFlagsReturned()).create()));
                 sendCenteredHoverableMessageToAllGamePlayer(game, Collections.singletonList(playerMvp));
 
                 sendMessageToAllGamePlayer(game, "", false);

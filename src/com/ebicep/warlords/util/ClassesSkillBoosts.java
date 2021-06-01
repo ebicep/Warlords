@@ -75,10 +75,7 @@ public enum ClassesSkillBoosts {
             "§aIncrease the damage you\n§adeal with Boulder by 20%"),
     CHAIN_HEAL("Chain Heal",
             "§7Increases the amount of\n§7health you restore with\n§7Chain Heal by 20%",
-            "§aIncreases the amount of\n§ahealth you restore with\n§aChain Heal by §c20%"),
-    NONE("FUCK",
-            "??? What am i doing here",
-            "why am i alive");
+            "§aIncreases the amount of\n§ahealth you restore with\n§aChain Heal by §c20%");
 
     public final String name;
     public final String description;
