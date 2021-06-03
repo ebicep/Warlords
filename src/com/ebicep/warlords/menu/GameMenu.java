@@ -49,7 +49,7 @@ public class GameMenu {
             }
             ItemStack item = new ItemBuilder(group.item).name(
                     ChatColor.GOLD + group.name +
-                            ChatColor.DARK_GRAY + "[" +
+                            ChatColor.DARK_GRAY + " [" +
                             ChatColor.GRAY + "Lv00" +
                             ChatColor.DARK_GRAY + "]"
             ).lore(lore).get();

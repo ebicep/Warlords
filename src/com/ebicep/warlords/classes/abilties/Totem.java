@@ -193,7 +193,6 @@ public class Totem extends EntityArmorStand {
                         }
 
                         player.sendMessage("§c\u00AB §2Spirit's Respite §7delayed §c" + -Math.round(getDelayedDamage()) + " §7damage. §6" + secondsLeft + " §7seconds left.");
-                        // TODO: render particles for the "colllecting damage" phase
                     } else {
                         if (secondsLeft == 0) {
                             warlordsPlayer.getActionBarStats().removeIf(actionBarStats -> actionBarStats.getName().equals("RESP"));
@@ -208,7 +207,6 @@ public class Totem extends EntityArmorStand {
                             circle.replaceEffects(e -> e instanceof DoubleLineEffect, new DoubleLineEffect(ParticleEffect.SPELL_WITCH));
                         }
 
-                        // TODO: render particles for the damage phase
                         // TODO: fix totem not disappearing sometimes?
 
                         int damageTick = -secondsLeft;

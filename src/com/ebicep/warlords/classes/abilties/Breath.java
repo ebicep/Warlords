@@ -34,7 +34,7 @@ public class Breath extends AbstractAbility {
             if (entity instanceof Player && ((Player) entity).getGameMode() != GameMode.SPECTATOR) {
                 Player nearPlayer = (Player) entity;
                 Vector direction = nearPlayer.getLocation().subtract(player.getLocation()).toVector().normalize();
-                if (viewDirection.dot(direction) > .72) {
+                if (viewDirection.dot(direction) > .7) {
                     if (name.contains("Water")) {
                         if (Warlords.game.onSameTeam(warlordsPlayer, Warlords.getPlayer(nearPlayer))) {
                             Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);

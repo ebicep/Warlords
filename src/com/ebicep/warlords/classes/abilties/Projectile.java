@@ -338,7 +338,7 @@ public class Projectile extends AbstractAbility {
 
                     for (int i = 0; i < 4; i++) {
                         double angle = Math.toRadians(i * 90) + animationTimer * 0.45;
-                        double width = 0.2D;
+                        double width = 0.25D;
                         ParticleEffect.FLAME.display(0, 0, 0, 0, 2,
                                 center.translateVector(location.getWorld(), 0, Math.sin(angle) * width, Math.cos(angle) * width), 500);
                     }
@@ -350,12 +350,12 @@ public class Projectile extends AbstractAbility {
                         if (entity instanceof Player && ((Player) entity).getGameMode() != GameMode.SPECTATOR && entity != customProjectile.getShooter()) {
                             if (entity.getLocation().clone().add(0, 1, 0).distanceSquared(location) < hitBox * hitBox) {
                                 hitPlayer = true;
-                                ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.0F, 1, entity.getLocation().add(0, 1, 0), 500);
+                                ParticleEffect.EXPLOSION_HUGE.display(0, 0, 0, 0.0F, 2, entity.getLocation().add(0, 1, 0), 500);
                                 ParticleEffect.LAVA.display(0.5F, 0, 0.5F, 2F, 10, entity.getLocation().add(0, 1, 0), 500);
                                 Player victim = (Player) entity;
 
                                 for (Player player1 : player.getWorld().getPlayers()) {
-                                    player1.playSound(entity.getLocation(), "mage.flameburst.impact", 2F, 1);
+                                    player1.playSound(entity.getLocation(), "mage.flameburst.impact", 2, 1);
                                 }
 
                                 Warlords.getPlayer(victim).addHealth(

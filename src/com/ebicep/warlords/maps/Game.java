@@ -137,7 +137,7 @@ public class Game implements Runnable {
 
                     game.timer++;
                     //TESTING
-                    //return GAME;
+                    return GAME;
 
                 } else {
                     game.timer = 0;

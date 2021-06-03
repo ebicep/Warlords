@@ -215,19 +215,6 @@ public class WarlordsPlayer {
         }
     }
 
-
-    /*
-    cryo 5.95
-    cryo + infusion 7.3
-    cryo + presence  6.84
-    freezing 5.15
-    freezing + infusion 6.38
-    freezing + presence 5.93
-    barrier 6.34
-    barrier + infusion 7.36
-     */
-
-
     // PALADIN
     private int infusionDuration = 0;
     private int wrathDuration = 0;
@@ -320,7 +307,7 @@ public class WarlordsPlayer {
         //§
         ItemStack weapon = new ItemStack(Material.COOKED_FISH, 1, (short) 1);
         ItemMeta weaponMeta = weapon.getItemMeta();
-        weaponMeta.setDisplayName("§cWarlord's Felflame blade of the " + spec.getWeapon().getName());
+        weaponMeta.setDisplayName("§cWarlord's Felflame of the " + spec.getWeapon().getName());
         ArrayList<String> weaponLore = new ArrayList<>();
         weaponLore.add("§7Damage: §c132 §7- §c179");
         weaponLore.add("§7Crit Chance: §c25%");
