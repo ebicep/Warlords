@@ -4,7 +4,6 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.maps.FlagManager;
 import com.ebicep.warlords.maps.Game;
-import com.ebicep.warlords.maps.Team;
 import net.minecraft.server.v1_8_R3.EntityLiving;
 import net.minecraft.server.v1_8_R3.GenericAttributes;
 import org.bukkit.ChatColor;
@@ -37,7 +36,6 @@ public class WarlordsEvents implements Listener {
 
     @EventHandler
     public void onEntityChangeBlock(EntityChangeBlockEvent event) {
-
         if (event.getEntity() instanceof FallingBlock) {
             if (this.containsBlock(event.getEntity().getUniqueId())) {
                 event.setCancelled(true);
@@ -65,96 +63,79 @@ public class WarlordsEvents implements Listener {
 
     @EventHandler
     public static void onPlayerJoin(PlayerJoinEvent e) {
+        //e.setJoinMessage(null);
         Player player = e.getPlayer();
-        player.sendMessage(ChatColor.GRAY + "Welcome " + ChatColor.RED + player.getPlayerListName() + ChatColor.GRAY + " to the Warlords comp games server.");
-        player.sendMessage(" ");
-        player.sendMessage(ChatColor.GRAY + "Developed by " + ChatColor.RED + "sumSmash " + ChatColor.GRAY + "&" + ChatColor.RED + " Plikie");
-        player.sendMessage(" ");
-        player.sendMessage(ChatColor.GRAY + "/class [ClASS] to choose your class!");
-        player.sendMessage(" ");
-        player.sendMessage(ChatColor.GRAY + "NOTE: We're still in beta, bugs and/or missing features are still present. Please report any bugs you might find.");
-        player.sendMessage(" ");
-        player.sendMessage(ChatColor.GRAY + "CURRENT MISSING FEATURES: ");
-        player.sendMessage(ChatColor.RED + "- Weapon Skill boosts");
-        player.sendMessage(ChatColor.RED + "- Revenant's Orbs of Life being hidden for the enemy team");
-        player.sendMessage(ChatColor.RED + "- Being able to swap weapon/armor skins.");
-        player.sendMessage(ChatColor.RED + "- Flag damage modifier currently does not carry over to a new flag holder.");
-        player.sendMessage(ChatColor.RED + "- Thunderlord/Earthwarden's Totem does not have proc animations!");
+        if (Warlords.game.getState() == Game.State.GAME) {
+            //readds player
+            //first to warlords players
+            for (Player oldPlayer : Warlords.getPlayers().keySet()) {
+                if (oldPlayer.getUniqueId().equals(player.getUniqueId())) {
+                    Warlords.getPlayers().put(player, Warlords.getPlayer(oldPlayer));
+                    Warlords.getPlayer(player).setPlayer(player);
+                    Warlords.getPlayer(player).getScoreboard().refreshScoreboard(player);
 
-        //readds player
-        //first to warlords players
-        System.out.println(player.getName() + "  REGJOINED");
-        System.out.println("OLD ---------");
-        System.out.println(Warlords.getPlayers().values());
-        System.out.println(Warlords.getPlayers().keySet());
-        System.out.println(Warlords.game.getTeamBlue());
-        System.out.println(Warlords.game.getTeamRed());
-        for (Player oldPlayer : Warlords.getPlayers().keySet()) {
-            if (oldPlayer.getUniqueId().equals(player.getUniqueId())) {
-                Warlords.getPlayers().put(player, Warlords.getPlayer(oldPlayer));
-                Warlords.getPlayer(player).setPlayer(player);
-                Warlords.getPlayer(player).setUuid(player.getUniqueId());
-                Warlords.getPlayer(player).getScoreboard().refreshScoreboard(player);
-                //then to team players
-                if (Warlords.game.getTeamBlue().contains(oldPlayer)) {
-                    Warlords.game.getTeamBlue().remove(oldPlayer);
-                    Warlords.game.getTeamBlue().add(player);
+                    Warlords.getPlayers().remove(oldPlayer);
+                    //then to team players
+                    if (Warlords.game.getTeamBlueProtected().contains(oldPlayer)) {
+                        Warlords.game.getCachedTeamBlue().remove(oldPlayer);
+                        Warlords.game.getCachedTeamBlue().add(player);
+                    } else if (Warlords.game.getTeamRedProtected().contains(oldPlayer)) {
+                        Warlords.game.getCachedTeamRed().remove(oldPlayer);
+                        Warlords.game.getCachedTeamRed().add(player);
+                    }
 
-                } else if (Warlords.game.getTeamRed().contains(oldPlayer)) {
-                    Warlords.game.getTeamRed().remove(oldPlayer);
-                    Warlords.game.getTeamRed().add(player);
+                    break;
                 }
-
-
-                Warlords.getPlayers().remove(oldPlayer);
-                break;
             }
+        } else {
+            player.sendMessage(ChatColor.GRAY + "Welcome " + ChatColor.RED + player.getPlayerListName() + ChatColor.GRAY + " to the Warlords comp games server.");
+            player.sendMessage(" ");
+            player.sendMessage(ChatColor.GRAY + "Developed by " + ChatColor.RED + "sumSmash " + ChatColor.GRAY + "&" + ChatColor.RED + " Plikie");
+            player.sendMessage(" ");
+            player.sendMessage(ChatColor.GRAY + "/class [ClASS] to choose your class!");
+            player.sendMessage(" ");
+            player.sendMessage(ChatColor.GRAY + "NOTE: We're still in beta, bugs and/or missing features are still present. Please report any bugs you might find.");
+            player.sendMessage(" ");
+            player.sendMessage(ChatColor.GRAY + "CURRENT MISSING FEATURES: ");
+            player.sendMessage(ChatColor.RED + "- Weapon Skill boosts");
+            player.sendMessage(ChatColor.RED + "- Revenant's Orbs of Life being hidden for the enemy team");
+            player.sendMessage(ChatColor.RED + "- Being able to swap weapon/armor skins.");
+            player.sendMessage(ChatColor.RED + "- Flag damage modifier currently does not carry over to a new flag holder.");
+            player.sendMessage(ChatColor.RED + "- Thunderlord/Earthwarden's Totem does not have proc animations!");
         }
-        System.out.println("NEW ---------");
-        System.out.println(Warlords.getPlayers().values());
-        System.out.println(Warlords.getPlayers().keySet());
-        System.out.println(Warlords.game.getTeamBlue());
-        System.out.println(Warlords.game.getTeamRed());
-
 
     }
 
     @EventHandler
-    public void onPlayerHit(EntityDamageByEntityEvent e) {
-        if (e.getEntity() instanceof Player && e.getDamager() instanceof Player) {
-            Player attacker = (Player) e.getDamager();
-            Player victim = (Player) e.getEntity();
-            WarlordsPlayer warlordsPlayerAttacker = Warlords.getPlayer(attacker);
-            WarlordsPlayer warlordsPlayerVictim = Warlords.getPlayer(victim);
-            if (!Warlords.game.onSameTeam(warlordsPlayerAttacker, warlordsPlayerVictim)) {
-                if (attacker.getInventory().getHeldItemSlot() == 0 && warlordsPlayerAttacker.getHitCooldown() == 0) {
-                    attacker.playSound(victim.getLocation(), Sound.HURT_FLESH, 1, 1);
-                    warlordsPlayerAttacker.setHitCooldown(12);
-                    warlordsPlayerAttacker.subtractEnergy(warlordsPlayerAttacker.getSpec().getEnergyOnHit() * -1);
-                    warlordsPlayerVictim.addHealth(warlordsPlayerAttacker, "", -132, -179, 25, 200);
-                }
+    public void onEntityDamage(EntityDamageByEntityEvent e) {
+        if (Warlords.game.getState() == Game.State.GAME) {
+            if (e.getEntity() instanceof Player && e.getDamager() instanceof Player) {
+                Player attacker = (Player) e.getDamager();
+                Player victim = (Player) e.getEntity();
+                WarlordsPlayer warlordsPlayerAttacker = Warlords.getPlayer(attacker);
+                WarlordsPlayer warlordsPlayerVictim = Warlords.getPlayer(victim);
+                if (!Warlords.game.onSameTeam(warlordsPlayerAttacker, warlordsPlayerVictim)) {
+                    if (attacker.getInventory().getHeldItemSlot() == 0 && warlordsPlayerAttacker.getHitCooldown() == 0) {
+                        attacker.playSound(victim.getLocation(), Sound.HURT_FLESH, 1, 1);
+                        warlordsPlayerAttacker.setHitCooldown(12);
+                        warlordsPlayerAttacker.subtractEnergy(warlordsPlayerAttacker.getSpec().getEnergyOnHit() * -1);
+                        warlordsPlayerVictim.addHealth(warlordsPlayerAttacker, "", -132, -179, 25, 200);
+                    }
 
-                if (warlordsPlayerVictim.getIceBarrier() != 0) {
-                    if (warlordsPlayerAttacker.getIceBarrierSlowness() == 0) {
-                        warlordsPlayerAttacker.setIceBarrierSlowness(2 * 20 - 10);
+                    if (warlordsPlayerVictim.getIceBarrier() != 0) {
+                        if (warlordsPlayerAttacker.getIceBarrierSlowness() == 0) {
+                            warlordsPlayerAttacker.setIceBarrierSlowness(2 * 20 - 10);
+                        }
                     }
                 }
+
+            } else if (e.getEntity() instanceof Horse && e.getDamager() instanceof Player) {
+                if (!Warlords.getPlayer((Player) e.getEntity().getPassenger()).getScoreboard().onSameTeam((Player) e.getDamager())) {
+                    e.getEntity().remove();
+                }
             }
-            e.setCancelled(true);
-        } else if (e.getEntity() instanceof Horse && e.getDamager() instanceof Player) {
-            if (!Warlords.getPlayer((Player) e.getEntity().getPassenger()).getScoreboard().onSameTeam((Player) e.getDamager())) {
-                e.getEntity().remove();
-            }
-            e.setCancelled(true);
         }
-    }
-
-    @EventHandler
-    public void onProjectileHit(ProjectileHitEvent e) {
-        if (e.getEntity() instanceof Snowball) {
-
-        }
-
+        e.setCancelled(true);
     }
 
     @EventHandler
@@ -169,7 +150,7 @@ public class WarlordsEvents implements Listener {
                 Warlords.getPlayer(player).getSpec().onRightClick(player);
             }
             ItemStack itemHeld = player.getItemInHand();
-            if (itemHeld.getType() == Material.GOLD_BARDING && player.getVehicle() == null) {
+            if (player.getInventory().getHeldItemSlot() == 7 && itemHeld.getType() == Material.GOLD_BARDING && player.getVehicle() == null) {
                 if (location.getWorld().getBlockAt((int) location.getX(), 2, (int) location.getZ()).getType() == Material.NETHERRACK) { //&& !Utils.tunnelUnder(e.getPlayer())) {
                     player.sendMessage(ChatColor.RED + "You cannot mount here!");
                 } else {
@@ -223,13 +204,7 @@ public class WarlordsEvents implements Listener {
         Entity entity = e.getDismounted();
         if (entity instanceof Horse) {
             entity.remove();
-
         }
-    }
-
-    @EventHandler
-    public void onArmorStandBreak(EntityDamageByEntityEvent e) {
-
     }
 
     @EventHandler
@@ -264,15 +239,17 @@ public class WarlordsEvents implements Listener {
     @EventHandler
     public void switchItemHeld(PlayerItemHeldEvent e) {
         int slot = e.getNewSlot();
-        if (Warlords.getPlayer(e.getPlayer()).isHotKeyMode() && (slot == 1 || slot == 2 || slot == 3 || slot == 4)) {
-            Warlords.getPlayer(e.getPlayer()).getSpec().onRightClickHotKey(e.getPlayer(), slot);
-            e.setCancelled(true);
+        if (Warlords.game.getState() == Game.State.GAME) {
+            if (Warlords.getPlayer(e.getPlayer()).isHotKeyMode() && (slot == 1 || slot == 2 || slot == 3 || slot == 4)) {
+                Warlords.getPlayer(e.getPlayer()).getSpec().onRightClickHotKey(e.getPlayer(), slot);
+                e.setCancelled(true);
+            }
         }
     }
 
     @EventHandler
     public void onInvClick(InventoryClickEvent e) {
-        //e.setCancelled(true);
+        e.setCancelled(true);
     }
 
     @EventHandler
@@ -333,7 +310,7 @@ public class WarlordsEvents implements Listener {
             e.setCancelled(true);
             WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
             if (Warlords.game.isBlueTeam(player)) {
-                for (Player bluePlayer : Warlords.game.getTeamBlue()) {
+                for (Player bluePlayer : Warlords.game.getTeamBlueProtected()) {
                     bluePlayer.sendMessage(ChatColor.BLUE + "[BLU]" +
                             ChatColor.DARK_GRAY + "[" +
                             ChatColor.GOLD + warlordsPlayer.getSpec().getClassNameShort() +
@@ -343,7 +320,7 @@ public class WarlordsEvents implements Listener {
                     );
                 }
             } else if (Warlords.game.isRedTeam(player)) {
-                for (Player redPlayer : Warlords.game.getTeamRed()) {
+                for (Player redPlayer : Warlords.game.getTeamRedProtected()) {
                     redPlayer.sendMessage(ChatColor.RED + "[RED]" +
                             ChatColor.DARK_GRAY + "[" +
                             ChatColor.GOLD + warlordsPlayer.getSpec().getClassNameShort() +

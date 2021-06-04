@@ -1,6 +1,7 @@
 package com.ebicep.warlords.commands;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Game.State;
 import com.ebicep.warlords.maps.GameMap;
@@ -139,6 +140,16 @@ public class Commands implements TabExecutor {
                 for (Player player : Warlords.getPlayers().keySet()) {
                     player.sendMessage(message);
                 }
+            }
+        } else if (command.getName().equals("hotkeymode")) {
+            if (Warlords.game.getState() == GAME) {
+                WarlordsPlayer warlordsPlayer = Warlords.getPlayer((Player) sender);
+                if (warlordsPlayer.isHotKeyMode()) {
+                    sender.sendMessage(ChatColor.GREEN + "Hotkey Mode " + ChatColor.AQUA + "Classic " + ChatColor.GREEN + "enabled.");
+                } else {
+                    sender.sendMessage(ChatColor.GREEN + "Hotkey Mode " + ChatColor.YELLOW + "NEW " + ChatColor.GREEN + "enabled.");
+                }
+                warlordsPlayer.setHotKeyMode(!warlordsPlayer.isHotKeyMode());
             }
         }
         return true;

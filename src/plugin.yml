@@ -19,4 +19,7 @@ commands:
   shout:
     description: Shouts in game
     usage: /shout [MESSAGE]
+  hotkeymode:
+    description: Switches between hotkeymode and classic
+    usage: /hotkeymode
 

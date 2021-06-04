@@ -524,16 +524,24 @@ public class Game implements Runnable {
         return map;
     }
 
-    public Map<Player, Team> getPlayers() {
+    public Map<Player, Team> getPlayersProtected() {
         return playersProtected;
     }
 
-    public Collection<Player> getTeamRed() {
+    public Collection<Player> getTeamRedProtected() {
         return cachedTeamRedProtected;
     }
 
-    public Collection<Player> getTeamBlue() {
+    public Collection<Player> getTeamBlueProtected() {
         return cachedTeamBlueProtected;
+    }
+
+    public Set<Player> getCachedTeamRed() {
+        return cachedTeamRed;
+    }
+
+    public Set<Player> getCachedTeamBlue() {
+        return cachedTeamBlue;
     }
 
     public int getRedPoints() {

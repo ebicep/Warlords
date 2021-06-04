@@ -142,9 +142,7 @@ public class Projectile extends AbstractAbility {
                     location.add(0, 1.5, 0);
                     ParticleEffect.CLOUD.display(0, 0, 0, 0F, 1, location, 500);
                     List<Entity> entities = (List<Entity>) location.getWorld().getNearbyEntities(location, 5, 5, 5);
-                    System.out.println(entities);
                     entities = Utils.filterOutTeammates(entities, customProjectile.getShooter());
-                    System.out.println(entities);
                     for (Entity entity : entities) {
                         if (entity instanceof Player && ((Player) entity).getGameMode() != GameMode.SPECTATOR && entity != customProjectile.getShooter()) {
                             if (entity.getLocation().clone().add(0, 1, 0).distanceSquared(location) < hitBox * hitBox) {

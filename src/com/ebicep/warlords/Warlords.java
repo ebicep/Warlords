@@ -75,6 +75,7 @@ public class Warlords extends JavaPlugin {
         getCommand("class").setExecutor(commands);
         getCommand("menu").setExecutor(commands);
         getCommand("shout").setExecutor(commands);
+        getCommand("hotkeymode").setExecutor(commands);
 
         getCommand("start").setTabCompleter(commands);
         getCommand("class").setTabCompleter(commands);
@@ -230,7 +231,7 @@ public class Warlords extends JavaPlugin {
                             warlordsPlayer.setSpawnProtection(10);
                             warlordsPlayer.setSpawnDamage(5);
 
-                            if (game.getTeamBlue().contains(warlordsPlayer.getPlayer())) {
+                            if (game.getTeamBlueProtected().contains(warlordsPlayer.getPlayer())) {
                                 warlordsPlayer.getPlayer().teleport(game.getMap().getBlueRespawn());
                                 new BukkitRunnable() {
                                     @Override
@@ -243,7 +244,7 @@ public class Warlords extends JavaPlugin {
                                         }
                                     }
                                 }.runTaskTimer(instance, 0, 5);
-                            } else if (game.getTeamRed().contains(warlordsPlayer.getPlayer())) {
+                            } else if (game.getTeamRedProtected().contains(warlordsPlayer.getPlayer())) {
                                 warlordsPlayer.getPlayer().teleport(game.getMap().getRedRespawn());
                                 new BukkitRunnable() {
                                     @Override

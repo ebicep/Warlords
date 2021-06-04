@@ -23,7 +23,7 @@ public class GameTeamContainer {
     }
 
     public static Collection<Player> getAllyPlayers(Game game, Team team) {
-        return team == Team.RED ? game.getTeamRed() : game.getTeamBlue();
+        return team == Team.RED ? game.getTeamRedProtected() : game.getTeamBlueProtected();
     }
 
     public Collection<Player> getEnemyPlayers() {
@@ -31,7 +31,7 @@ public class GameTeamContainer {
     }
 
     public static Collection<Player> getEnemyPlayers(Game game, Team team) {
-        return team == Team.BLUE ? game.getTeamRed() : game.getTeamBlue();
+        return team == Team.BLUE ? game.getTeamRedProtected() : game.getTeamBlueProtected();
     }
 	
 }

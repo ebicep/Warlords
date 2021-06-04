@@ -74,9 +74,9 @@ public class WarlordsPlayer {
 
         }
         actionBarMessage.append("§l").append(health).append(ChatColor.GOLD).append("§l/§l").append(maxHealth).append("    ");
-        if (Warlords.game.getTeamBlue().contains(player)) {
+        if (Warlords.game.getTeamBlueProtected().contains(player)) {
             actionBarMessage.append(ChatColor.BLUE).append("§lBLU TEAM  ");
-        } else if (Warlords.game.getTeamRed().contains(player)) {
+        } else if (Warlords.game.getTeamRedProtected().contains(player)) {
             actionBarMessage.append(ChatColor.RED).append("§lRED TEAM  ");
         }
         for (int i = 0; i < actionBarStats.size(); i++) {
@@ -547,7 +547,7 @@ public class WarlordsPlayer {
                     this.scoreboard.updateKillsAssists();
                     Bukkit.getPluginManager().callEvent(new WarlordsDeathEvent(this));
 
-                    if (Warlords.game.getTeamBlue().contains(player)) {
+                    if (Warlords.game.getTeamBlueProtected().contains(player)) {
                         Warlords.redKills++;
                         Warlords.game.addRedPoints(SCORE_KILL_POINTS);
                     } else {
@@ -586,7 +586,7 @@ public class WarlordsPlayer {
                     this.scoreboard.updateKillsAssists();
                     Bukkit.getPluginManager().callEvent(new WarlordsDeathEvent(this));
 
-                    if (Warlords.game.getTeamBlue().contains(player)) {
+                    if (Warlords.game.getTeamBlueProtected().contains(player)) {
                         Warlords.redKills++;
                         Warlords.game.addRedPoints(SCORE_KILL_POINTS);
                     } else {
@@ -931,7 +931,7 @@ public class WarlordsPlayer {
                         }
                     }
 
-                    if (Warlords.game.getTeamBlue().contains(player)) {
+                    if (Warlords.game.getTeamBlueProtected().contains(player)) {
                         Warlords.redKills++;
                         Warlords.game.addRedPoints(SCORE_KILL_POINTS);
                     } else {
@@ -1611,7 +1611,7 @@ public class WarlordsPlayer {
         ItemMeta meta = itemStack.getItemMeta();
         List<String> lore = new ArrayList<>();
         meta.setDisplayName(ChatColor.AQUA + "Stat Breakdown (" + name + "):");
-        for (int i = 0; i < damage.length && i < Warlords.game.getMinute() + 1; i++) {
+        for (int i = 0; i < damage.length - 1 && i < Warlords.game.getMinute() + 1; i++) {
             if (name.equals("Kills")) {
                 lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + Utils.addCommaAndRound(kills[i + 1]));
             } else if (name.equals("Assists")) {

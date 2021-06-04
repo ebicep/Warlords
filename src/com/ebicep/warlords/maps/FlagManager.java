@@ -75,7 +75,7 @@ public class FlagManager implements Listener {
                 // Red scores a capture
                 PlayerFlagLocation playerFlagLocation = (PlayerFlagLocation) this.blue.getFlag();
                 Bukkit.broadcastMessage("§c" + playerFlagLocation.getPlayer().getName() + " §ehas captured the §9BLUE §eflag!");
-                for (Player player1 : Warlords.game.getPlayers().keySet()) {
+                for (Player player1 : Warlords.game.getPlayersProtected().keySet()) {
                     PacketUtils.sendTitle(player1, "", "§c" + playerFlagLocation.getPlayer().getName() + " §ehas captured the §9BLUE §eflag!", 0, 60, 0);
                 }
                 Warlords.game.addRedPoints(SCORE_FLAG_POINTS);
@@ -99,7 +99,7 @@ public class FlagManager implements Listener {
                 // Blue scores a capture
                 PlayerFlagLocation playerFlagLocation = (PlayerFlagLocation) this.red.getFlag();
                 Bukkit.broadcastMessage("§9" + playerFlagLocation.getPlayer().getName() + " §ehas captured the §cRED §eflag!");
-                for (Player player1 : Warlords.game.getPlayers().keySet()) {
+                for (Player player1 : Warlords.game.getPlayersProtected().keySet()) {
                     PacketUtils.sendTitle(player1, "", "§9" + playerFlagLocation.getPlayer().getName() + " §ehas captured the §cRED §eflag!", 0, 60, 0);
                 }
                 Warlords.getPlayer(playerFlagLocation.getPlayer()).addFlagCap();
@@ -207,7 +207,7 @@ public class FlagManager implements Listener {
                 ChatColor color = (info.getTeam() == Team.RED ? ChatColor.BLUE : ChatColor.RED);
                 ChatColor color2 = (info.getTeam() == Team.RED ? ChatColor.RED : ChatColor.BLUE);
                 Bukkit.broadcastMessage(color + player.getPlayerListName() + " §ehas picked up the " + color2 +  info.getTeam() + " §eflag!");
-                for (Player player1 : Warlords.game.getPlayers().keySet()) {
+                for (Player player1 : Warlords.game.getPlayersProtected().keySet()) {
                     PacketUtils.sendTitle(player1, "", color + player.getPlayerListName() + " §ehas picked up the " + color2 + info.getTeam() + " §eflag!", 0, 60, 0);
                 }
                 for (Player player1 : player.getWorld().getPlayers()) {
@@ -340,7 +340,7 @@ public class FlagManager implements Listener {
 
             ChatColor color = Warlords.game.getPlayerTeam(player).teamColor();
             Bukkit.broadcastMessage(color + player.getPlayerListName() + " §ehas returned the " + color +  Warlords.game.getPlayerTeam(player) + " §eflag!");
-            for (Player player1 : Warlords.game.getPlayers().keySet()) {
+            for (Player player1 : Warlords.game.getPlayersProtected().keySet()) {
                 PacketUtils.sendTitle(player1, "", color + player.getPlayerListName() + " §ehas returned the " + color + Warlords.game.getPlayerTeam(player) + " §eflag!", 0, 60, 0);
             }
             Warlords.getPlayer(player).addFlagReturn();
