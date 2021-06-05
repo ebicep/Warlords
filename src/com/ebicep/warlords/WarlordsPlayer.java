@@ -359,9 +359,10 @@ public class WarlordsPlayer {
             redMeta.setDisplayName("§6" + spec.getRed().getName());
             ArrayList<String> redLore = new ArrayList<>();
             redLore.add("§7Cooldown: §b" + spec.getRed().getCooldown());
-            redLore.add("§7Energy Cost: §e" + spec.getRed().getEnergyCost());
-
-            if (spec.getRed().getCritChance()  != 0 || spec.getRed().getCritChance()  != -1 || spec.getRed().getCritMultiplier() < 150) {
+            if (spec.getRed().getEnergyCost() != 0) {
+                redLore.add("§7Energy Cost: §e" + spec.getRed().getEnergyCost());
+            }
+            if (spec.getRed().getCritChance()  != 0 && spec.getRed().getCritChance()  != -1 && spec.getRed().getCritMultiplier() != 100) {
                 redLore.add("§7Crit Chance: §c" + spec.getRed().getCritChance() + "%");
                 redLore.add("§7Crit Multiplier: §c" + spec.getRed().getCritMultiplier() + "%");
             }
@@ -385,9 +386,10 @@ public class WarlordsPlayer {
             purpleMeta.setDisplayName("§6" + spec.getPurple().getName());
             ArrayList<String> purpleLore = new ArrayList<>();
             purpleLore.add("§7Cooldown: §b" + spec.getPurple().getCooldown());
-            purpleLore.add("§7Energy Cost: §e" + spec.getPurple().getEnergyCost());
-
-            if (spec.getPurple().getCritChance()  != 0 || spec.getPurple().getCritChance()  != -1 ||  spec.getPurple().getCritMultiplier() < 150) {
+            if (spec.getPurple().getEnergyCost() != 0) {
+                purpleLore.add("§7Energy Cost: §e" + spec.getPurple().getEnergyCost());
+            }
+            if (spec.getPurple().getCritChance()  != 0 && spec.getPurple().getCritChance()  != -1 &&  spec.getPurple().getCritMultiplier() != 100) {
                 purpleLore.add("§7Crit Chance: §c" + spec.getPurple().getCritChance() + "%");
                 purpleLore.add("§7Crit Multiplier: §c" + spec.getPurple().getCritMultiplier() + "%");
             }
@@ -413,9 +415,10 @@ public class WarlordsPlayer {
             blueMeta.setDisplayName("§6" + spec.getBlue().getName());
             ArrayList<String> blueLore = new ArrayList<>();
             blueLore.add("§7Cooldown: §b" + spec.getBlue().getCooldown());
-            blueLore.add("§7Energy Cost: §e" + spec.getBlue().getEnergyCost());
-
-            if (spec.getBlue().getCritChance()  != 0 || spec.getBlue().getCritChance()  != -1 || spec.getBlue().getCritMultiplier() < 150) {
+            if (spec.getBlue().getEnergyCost() != 0) {
+                blueLore.add("§7Energy Cost: §e" + spec.getBlue().getEnergyCost());
+            }
+            if (spec.getBlue().getCritChance()  != 0 && spec.getBlue().getCritChance()  != -1 && spec.getBlue().getCritMultiplier() != 100) {
                 blueLore.add("§7Crit Chance: §c" + spec.getBlue().getCritChance() + "%");
                 blueLore.add("§7Crit Multiplier: §c" + spec.getBlue().getCritMultiplier() + "%");
             }
@@ -441,9 +444,10 @@ public class WarlordsPlayer {
             orangeMeta.setDisplayName("§6" + spec.getOrange().getName());
             ArrayList<String> orangeLore = new ArrayList<>();
             orangeLore.add("§7Cooldown: §b" + spec.getOrange().getCooldown());
-            orangeLore.add("§7Energy Cost: §e" + spec.getOrange().getEnergyCost());
-
-            if (spec.getOrange().getCritChance()  != 0 || spec.getOrange().getCritChance()  != -1 || spec.getOrange().getCritMultiplier() < 150) {
+            if (spec.getOrange().getEnergyCost() != 0) {
+                orangeLore.add("§7Energy Cost: §e" + spec.getOrange().getEnergyCost());
+            }
+            if (spec.getOrange().getCritChance()  != 0 && spec.getOrange().getCritChance()  != -1 && spec.getOrange().getCritMultiplier() != 100) {
                 orangeLore.add("§7Crit Chance: §c" + spec.getOrange().getCritChance() + "%");
                 orangeLore.add("§7Crit Multiplier: §c" + spec.getOrange().getCritMultiplier() + "%");
             }
@@ -1006,7 +1010,7 @@ public class WarlordsPlayer {
                         }
 
                         for (Player player1 : player.getWorld().getPlayers()) {
-                            player1.playSound(player.getLocation(), "shaman.earthlivingweapon.impact", 1, 1);
+                            player1.playSound(player.getLocation(), "shaman.earthlivingweapon.impact", 2, 1);
                         }
 
                         List<Entity> near = attacker.getPlayer().getNearbyEntities(3.0D, 3.0D, 3.0D);

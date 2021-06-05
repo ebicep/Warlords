@@ -61,7 +61,7 @@ public class LightningBolt extends AbstractAbility {
                             warlordsPlayer.addHealth(bolt.getShooter(), bolt.getLightningBolt().getName(), bolt.getLightningBolt().getMinDamageHeal(), bolt.getLightningBolt().getMaxDamageHeal(), bolt.getLightningBolt().getCritChance(), bolt.getLightningBolt().getCritMultiplier());
 
                             for (Player player1 : entity.getWorld().getPlayers()) {
-                                player1.playSound(entity.getLocation(), "shaman.lightningbolt.impact", 1.5F, 1);
+                                player1.playSound(entity.getLocation(), "shaman.lightningbolt.impact", 2, 1);
                             }
 
                             //reducing chain cooldown
@@ -74,6 +74,9 @@ public class LightningBolt extends AbstractAbility {
                 Block blockInsideBolt = location.getWorld().getBlockAt(bolt.getBoltLocation().subtract(bolt.getTeleportDirection().clone().multiply(2)));
                 if (blockInsideBolt.getType() != Material.AIR && blockInsideBolt.getType() != Material.WATER || bolt.getArmorStand().getTicksLived() > 50) {
                     ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.0F, 1, bolt.getBoltLocation().subtract(bolt.getTeleportDirection().clone().multiply(2.5)), 500);
+                    for (Player player1 : player.getWorld().getPlayers()) {
+                        player1.playSound(bolt.getLocation(), "shaman.lightningbolt.impact", 2, 1);
+                    }
                     bolt.getArmorStand().remove();
                     this.cancel();
                 }

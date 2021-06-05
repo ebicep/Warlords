@@ -315,8 +315,8 @@ public class Chain extends AbstractAbility {
 
                 for (Player player1 : player.getWorld().getPlayers()) {
                     player1.playSound(player.getLocation(), "shaman.chainlightning.activation", 2, 1);
-                    player1.playSound(player.getLocation(), "shaman.chainlightning.impact", 0.6F, 1);
                 }
+                player.playSound(player.getLocation(), "shaman.chainlightning.impact", 1F, 1);
 
             } else if (name.contains("Heal")) {
                 if (hitCounter * 2 > warlordsPlayer.getSpec().getRed().getCurrentCooldown()) {
@@ -339,9 +339,7 @@ public class Chain extends AbstractAbility {
 
                 warlordsPlayer.getSpec().getRed().setCurrentCooldown(cooldown);
 
-                for (Player player1 : player.getWorld().getPlayers()) {
-                    player1.playSound(player.getLocation(), "mage.firebreath.activation", 1.5F, 1);
-                }
+                player.playSound(player.getLocation(), "mage.firebreath.activation", 1.5F, 1);
             }
         }
 

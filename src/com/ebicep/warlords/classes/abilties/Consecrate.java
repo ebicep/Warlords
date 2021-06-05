@@ -29,11 +29,11 @@ public class Consecrate extends AbstractAbility {
 
     @Override
     public void onActivate(Player player) {
-        DamageHealCircle damageHealCircle = new DamageHealCircle(player, player.getLocation(), 5, 5, minDamageHeal, maxDamageHeal, critChance, critMultiplier, name);
+        DamageHealCircle damageHealCircle = new DamageHealCircle(player, player.getLocation(), 4, 5, minDamageHeal, maxDamageHeal, critChance, critMultiplier, name);
         Warlords.getPlayer(player).subtractEnergy(energyCost);
 
         for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "paladin.consecrate.activation", 1.5F, 1);
+            player1.playSound(player.getLocation(), "paladin.consecrate.activation", 2, 1);
         }
 
         ArmorStand consecrate = player.getLocation().getWorld().spawn(player.getLocation().clone().add(0, -2, 0), ArmorStand.class);

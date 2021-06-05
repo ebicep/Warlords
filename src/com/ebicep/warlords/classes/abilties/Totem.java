@@ -166,6 +166,10 @@ public class Totem extends EntityArmorStand {
             totemStand.setMarker(true);
             totemStand.setHelmet(new ItemStack(Material.JUNGLE_FENCE_GATE));
 
+            for (Player player1 : player.getWorld().getPlayers()) {
+                player1.playSound(standLocation, "shaman.chainlightning.impact", 2, 2);
+            }
+
             Totem deathsDebtTotem = new Totem(((CraftWorld) player.getWorld()).getHandle(), warlordsPlayer, totemStand, 4 + (4 * (int) Math.round((double) warlordsPlayer.getHealth() / warlordsPlayer.getMaxHealth())));
 
             warlordsPlayer.getActionBarStats().add(new ActionBarStats(warlordsPlayer, "RESP", deathsDebtTotem.getSecondsLeft()));
@@ -206,8 +210,6 @@ public class Totem extends EntityArmorStand {
                             }
                             circle.replaceEffects(e -> e instanceof DoubleLineEffect, new DoubleLineEffect(ParticleEffect.SPELL_WITCH));
                         }
-
-                        // TODO: fix totem not disappearing sometimes?
 
                         int damageTick = -secondsLeft;
                         if(damageTick < 6) {
@@ -323,8 +325,8 @@ public class Totem extends EntityArmorStand {
 
                     if (healingTotem.getSecondsLeft() != 0) {
 
-                        Location particleLoc = standLocation.add(0, 1.5, 0);
-                        ParticleEffect.VILLAGER_HAPPY.display(0.2F, 0.2F, 0.2F, 0.05F, 2, particleLoc, 500);
+                        Location particleLoc = standLocation.clone().add(0, 1.6, 0);
+                        ParticleEffect.VILLAGER_HAPPY.display(0.4F, 0.2F, 0.4F, 0.05F, 5, particleLoc, 500);
 
                         for (Player player1 : player.getWorld().getPlayers()) {
                             player1.playSound(player.getLocation(), "shaman.earthlivingweapon.impact", 2, 1);

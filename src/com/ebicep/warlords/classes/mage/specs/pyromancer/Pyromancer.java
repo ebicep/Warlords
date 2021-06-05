@@ -12,7 +12,7 @@ public class Pyromancer extends AbstractMage {
         super(player, 5200, 305, 20, 14, 0,
                 new Projectile("Fireball", -401, -520, 0, 70, 20, 175,
                         "§7Shoot a fireball that will explode\n" +
-                        "§7for §c%dynamic.value% §7- §c%dynamic.value% §7damage. A\n" +
+                        "§7for §c401 §7- §c520 §7damage. A\n" +
                         "§7direct hit will cause the enemy\n" +
                         "§7to take an additional §c15% §7extra\n" +
                         "§7damage.\n" +
@@ -21,7 +21,7 @@ public class Pyromancer extends AbstractMage {
 
                 new Projectile("Flame Burst", -557, -753, 10, 60, 25, 185,
                         "§7Launch a flame burst that will explode\n" +
-                        "§7for §c%dynamic.value% §7- §c%dynamic.value% §7damage. The critical\n" +
+                        "§7for §c557 §7- §c753 §7damage. The critical\n" +
                         "§7chance increases by §c1% §7for each\n" +
                         "§7travelled block. Up to 100%.", 50),
                 new TimeWarp(),

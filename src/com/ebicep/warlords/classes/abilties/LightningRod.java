@@ -3,11 +3,14 @@ package com.ebicep.warlords.classes.abilties;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.effects.ArmorStandWaveEffect;
 import com.ebicep.warlords.util.Utils;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 import java.util.List;
@@ -47,7 +50,7 @@ public class LightningRod extends AbstractAbility {
 
         pulseDamage(warlordsPlayer, near);
 
-        // TODO: add effects around player with armorstands
+        new ArmorStandWaveEffect(playerLocation, 4, 1, new ItemStack(Material.RED_ROSE, 1, (short) 5)).play();
         player.getWorld().spigot().strikeLightningEffect(playerLocation, true);
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "shaman.lightningrod.activation", 2, 1);

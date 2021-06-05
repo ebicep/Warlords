@@ -6,10 +6,7 @@ import com.ebicep.warlords.maps.FlagManager;
 import com.ebicep.warlords.maps.Game;
 import net.minecraft.server.v1_8_R3.EntityLiving;
 import net.minecraft.server.v1_8_R3.GenericAttributes;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
 import org.bukkit.entity.*;
@@ -83,7 +80,6 @@ public class WarlordsEvents implements Listener {
                         Warlords.game.getCachedTeamRed().remove(oldPlayer);
                         Warlords.game.getCachedTeamRed().add(player);
                     }
-
                     break;
                 }
             }
@@ -160,10 +156,7 @@ public class WarlordsEvents implements Listener {
                     } else if (!player.getMetadata(FlagManager.FLAG_DAMAGE_MULTIPLIER).isEmpty()) {
                         player.sendMessage(ChatColor.RED + "You cannot mount while holding the flag!");
                     } else {
-                        for (Player player1 : player.getWorld().getPlayers()) {
-                            player1.playSound(player1.getLocation(), "mountup", 1, 1);
-                        }
-
+                        player.playSound(player.getLocation(), "mountup", 1, 1);
                         Horse horse = (Horse) player.getWorld().spawnEntity(player.getLocation(), EntityType.HORSE);
                         horse.setTamed(true);
                         horse.getInventory().setSaddle(new ItemStack(Material.SADDLE));

@@ -145,6 +145,7 @@ public class FlagManager implements Listener {
         if(
                 red.getFlag() instanceof PlayerFlagLocation &&
                         ((PlayerFlagLocation)red.getFlag()).getPlayer().equals(player)
+
         ) {
             red.doOtherTeamInteraction(player);
         }

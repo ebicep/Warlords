@@ -407,6 +407,27 @@ public class Warlords extends JavaPlugin {
                                 location.add(0, 1.2, 0);
                                 ParticleEffect.VILLAGER_HAPPY.display(0.3F, 0.3F, 0.3F, 0.1F, 3, location, 500);
                             }
+
+                            // Wrath
+                            if (warlordsPlayer.getWrathDuration() != 0) {
+                                Location location = player.getLocation();
+                                location.add(0, 1.2, 0);
+                                ParticleEffect.SPELL.display(0.3F, 0.1F, 0.3F, 0.2F, 6, location, 500);
+                            }
+
+                            // Windfury
+                            if (warlordsPlayer.getWindfuryDuration() != 0) {
+                                Location location = player.getLocation();
+                                location.add(0, 1.2, 0);
+                                ParticleEffect.CRIT.display(0.2F, 0F, 0.2F, 0.1F, 3, location, 500);
+                            }
+
+                            // Soulbinding Weapon
+                            if (warlordsPlayer.getSoulBindCooldown() != 0) {
+                                Location location = player.getLocation();
+                                location.add(0, 1.2, 0);
+                                ParticleEffect.SPELL_WITCH.display(0.2F, 0F, 0.2F, 0.1F, 1, location, 500);
+                            }
                         }
                     }
 
