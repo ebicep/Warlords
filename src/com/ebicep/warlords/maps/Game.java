@@ -51,9 +51,18 @@ public class Game implements Runnable {
             @Override
             public Game.State run(Game game) {
                 int players = game.cachedTeamBlue.size() + game.cachedTeamRed.size();
+
                 if (players >= game.map.getMinPlayers()) {
                     int total = game.map.getCountdownTimerInTicks();
                     int remaining = total - game.timer;
+                    for (Player player : game.cachedTeamBlue) {
+                        updateTimeLeft(player, remaining / 20, game);
+                        updatePlayers(player, players, game);
+                    }
+                    for (Player player : game.cachedTeamRed) {
+                        updateTimeLeft(player, remaining, game);
+                        updatePlayers(player, players, game);
+                    }
                     if (remaining % 20 == 0) {
                         int time = remaining / 20;
                         if (time == 30) {
@@ -137,7 +146,7 @@ public class Game implements Runnable {
 
                     game.timer++;
                     //TESTING
-                    return GAME;
+                    //return GAME;
 
                 } else {
                     game.timer = 0;
