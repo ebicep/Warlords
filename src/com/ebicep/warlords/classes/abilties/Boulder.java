@@ -56,6 +56,7 @@ public class Boulder extends AbstractAbility {
 
                 if (!stand.isValid()) {
                     this.cancel();
+                    return;
                 }
 
                 speed.add(new Vector(0, -0.0075, 0));
@@ -78,7 +79,7 @@ public class Boulder extends AbstractAbility {
                 }
                 if (!newLoc.getBlock().isEmpty()) {
                     boulderExplode = true;
-                    near = (List<Entity>) newLoc.getWorld().getNearbyEntities(newLoc, 6, 6, 6);
+                    near = (List<Entity>) newLoc.getWorld().getNearbyEntities(newLoc, 5, 5, 5);
                     near = Utils.filterOutTeammates(near, player);
 
                     for (Player player1 : player.getWorld().getPlayers()) {
@@ -91,7 +92,7 @@ public class Boulder extends AbstractAbility {
                         if (entity instanceof Player) {
                             if (!Warlords.game.onSameTeam(player, (Player) entity) && ((Player) entity).getGameMode() != GameMode.SPECTATOR) {
                                 boulderExplode = true;
-                                near = (List<Entity>) newLoc.getWorld().getNearbyEntities(newLoc, 6, 6, 6);
+                                near = (List<Entity>) newLoc.getWorld().getNearbyEntities(newLoc, 5, 5, 5);
                                 near = Utils.filterOutTeammates(near, player);
                                 near.remove(entity);
 
@@ -99,7 +100,7 @@ public class Boulder extends AbstractAbility {
                                     player1.playSound(newLoc, "shaman.boulder.impact", 2, 1);
                                 }
 
-                                final Vector v = entity.getLocation().toVector().subtract(location.toVector()).normalize().multiply(0.9).setY(0.1);
+                                final Vector v = entity.getLocation().toVector().subtract(location.toVector()).normalize().multiply(0.9).setY(0.15);
                                 entity.setVelocity(v);
 
                                 Warlords.getPlayer((Player) entity).addHealth(Warlords.getPlayer(player), name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
@@ -116,7 +117,7 @@ public class Boulder extends AbstractAbility {
                         if (entity2 instanceof Player) {
                             Player nearPlayer = (Player) entity2;
                             if (nearPlayer.getGameMode() != GameMode.SPECTATOR) {
-                                final Vector v = nearPlayer.getLocation().toVector().subtract(newLoc.toVector()).normalize().multiply(0.9).setY(0.1);
+                                final Vector v = nearPlayer.getLocation().toVector().subtract(newLoc.toVector()).normalize().multiply(0.9).setY(0.15);
                                 nearPlayer.setVelocity(v);
 
                                 Warlords.getPlayer(nearPlayer).addHealth(Warlords.getPlayer(player), name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);

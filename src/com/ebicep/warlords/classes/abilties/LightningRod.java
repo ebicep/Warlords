@@ -4,10 +4,12 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.effects.ArmorStandWaveEffect;
+import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.util.Utils;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -50,7 +52,7 @@ public class LightningRod extends AbstractAbility {
 
         pulseDamage(warlordsPlayer, near);
 
-        new ArmorStandWaveEffect(playerLocation, 4, 1, new ItemStack(Material.RED_ROSE, 1, (short) 5)).play();
+        new FallingBlockWaveEffect(playerLocation, 4, 1.1, Material.RED_ROSE, (byte) 5).play();
         player.getWorld().spigot().strikeLightningEffect(playerLocation, true);
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "shaman.lightningrod.activation", 2, 1);
@@ -58,13 +60,24 @@ public class LightningRod extends AbstractAbility {
     }
 
     private void pulseDamage(WarlordsPlayer warlordsPlayer, List<Entity> near) {
+        ArmorStand totem = getTotem(warlordsPlayer.getPlayer());
         for (Entity entity : near) {
             if (entity instanceof Player) {
                 Player nearPlayer = (Player) entity;
                 if (Utils.totemDownAndClose(warlordsPlayer, nearPlayer) && nearPlayer.getGameMode() != GameMode.SPECTATOR) {
+                    new FallingBlockWaveEffect(totem.getLocation(), 4, 1.1, Material.SAPLING, (byte) 0).play();
                     Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, warlordsPlayer.getSpec().getOrange().getName(), warlordsPlayer.getSpec().getOrange().getMinDamageHeal(), warlordsPlayer.getSpec().getOrange().getMaxDamageHeal(), warlordsPlayer.getSpec().getOrange().getCritChance(), warlordsPlayer.getSpec().getOrange().getCritMultiplier());
                 }
             }
         }
+    }
+
+    private ArmorStand getTotem(Player player) {
+        for (Entity entity : player.getNearbyEntities(20, 17, 20)) {
+            if (entity instanceof ArmorStand && entity.hasMetadata("Capacitor Totem - " + player.getName())) {
+                return (ArmorStand) entity;
+            }
+        }
+        return null;
     }
 }

@@ -71,7 +71,7 @@ public class GameMenu {
         List<Classes> values = selectedGroup.subclasses;
         for(int i = 0; i < values.size(); i++) {
             Classes subClass = values.get(i);
-            ItemBuilder builder = new ItemBuilder(Material.ARROW)
+            ItemBuilder builder = new ItemBuilder(subClass.icon)
                     .name(
                             ChatColor.GREEN + "§7Specialization: " + subClass.name
                     )
@@ -91,12 +91,13 @@ public class GameMenu {
                     1,
                     builder.get(),
                     (n, e) -> {
-                        player.sendMessage(ChatColor.BLUE + "Your selected class: §7" + subClass);
+                        player.sendMessage(ChatColor.WHITE + "Class: §6" + subClass);
                         setSelected(player, subClass);
                         openClassMenu(player, selectedGroup);
                     }
             );
         }
+        menu.setItem(4, 3, MENU_BACK, (n, e) -> openMainMenu(player));
 
         menu.openForPlayer(player);
     }

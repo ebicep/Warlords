@@ -3,10 +3,13 @@ package com.ebicep.warlords.classes.abilties;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.util.Utils;
+import net.minecraft.server.v1_8_R3.PacketPlayOutAnimation;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -27,9 +30,10 @@ public class Chain extends AbstractAbility {
     @Override
     public void onActivate(Player player) {
         WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
-
+        PacketPlayOutAnimation playOutAnimation = new PacketPlayOutAnimation(((CraftPlayer) player).getHandle(), 0);
+        ((CraftPlayer) player).getHandle().playerConnection.sendPacket(playOutAnimation);
         //TODO add Your enemy is too far away!
-        // TODO Chain pulse animation
+
         /* CHAINS
            TOTEM -> PLAYER -> PLAYER
            PLAYER -> TOTEM -> PLAYER
@@ -48,6 +52,12 @@ public class Chain extends AbstractAbility {
                 nearTotem = Utils.filterOutTeammates(nearTotem, player);
                 pulseDamage(warlordsPlayer, nearTotem);
                 hitCounter++;
+                if (getTotem(player) != null) {
+                    new FallingBlockWaveEffect(getTotem(player).getLocation().clone().add(0, 1, 0), 5, 1.2, Material.SAPLING, (byte) 0).play();
+                    for (Player player1 : player.getWorld().getPlayers()) {
+                        player1.playSound(player.getLocation(), "shaman.capacitortotem.pulse", 2, 1);
+                    }
+                }
                 // TOTEM -> (PLAYER) -> PLAYER
                 List<Entity> near = totem.getNearbyEntities(20.0D, 18.0D, 20.0D);
                 near = Utils.filterOutTeammates(near, player);
@@ -61,7 +71,12 @@ public class Chain extends AbstractAbility {
                             chain(totem.getLocation().add(0, .5, 0), nearPlayer.getLocation());
                             Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
                             hitCounter++;
-
+                            if (getTotem(player) != null) {
+                                new FallingBlockWaveEffect(getTotem(player).getLocation().clone().add(0, 1, 0), 5, 1.2, Material.SAPLING, (byte) 0).play();
+                                for (Player player1 : player.getWorld().getPlayers()) {
+                                    player1.playSound(player.getLocation(), "shaman.capacitortotem.pulse", 2, 1);
+                                }
+                            }
                             List<Entity> nearNearPlayers = nearPlayer.getNearbyEntities(10.0D, 9.0D, 10.0D);
                             nearNearPlayers.remove(nearPlayer);
                             nearNearPlayers = Utils.filterOutTeammates(nearNearPlayers, player);
@@ -75,6 +90,12 @@ public class Chain extends AbstractAbility {
                                         Warlords.getPlayer(nearNearPlayer).addHealth(warlordsPlayer, name, (int) (minDamageHeal * .85), (int) (maxDamageHeal * .85), critChance, critMultiplier);
 
                                         hitCounter++;
+                                        if (getTotem(player) != null) {
+                                            new FallingBlockWaveEffect(getTotem(player).getLocation().clone().add(0, 1, 0), 5, 1.2, Material.SAPLING, (byte) 0).play();
+                                            for (Player player1 : player.getWorld().getPlayers()) {
+                                                player1.playSound(player.getLocation(), "shaman.capacitortotem.pulse", 2, 1);
+                                            }
+                                        }
                                         List<Entity> nearNearNearPlayers = nearNearPlayer.getNearbyEntities(10.0D, 9.0D, 10.0D);
                                         nearNearNearPlayers.remove(nearPlayer);
                                         nearNearNearPlayers.remove(nearNearPlayer);
@@ -110,6 +131,12 @@ public class Chain extends AbstractAbility {
                             chain(player.getLocation(), nearPlayer.getLocation());
                             Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
                             hitCounter++;
+                            if (getTotem(player) != null) {
+                                new FallingBlockWaveEffect(getTotem(player).getLocation().clone().add(0, 1, 0), 5, 1.2, Material.SAPLING, (byte) 0).play();
+                                for (Player player1 : player.getWorld().getPlayers()) {
+                                    player1.playSound(player.getLocation(), "shaman.capacitortotem.pulse", 2, 1);
+                                }
+                            }
                             List<Entity> nearNearEntities = nearPlayer.getNearbyEntities(10.0D, 9.0D, 10.0D);
                             nearNearEntities.sort(new Utils.ArmorStandComparator());
                             nearNearEntities.remove(nearPlayer);
@@ -137,6 +164,12 @@ public class Chain extends AbstractAbility {
                                                 chain(totem.getLocation().add(0, .5, 0), nearNearNearPlayer.getLocation());
                                                 Warlords.getPlayer(nearNearNearPlayer).addHealth(warlordsPlayer, name, (int) (minDamageHeal * .7), (int) (maxDamageHeal * .7), critChance, critMultiplier);
                                                 hitCounter++;
+                                                if (getTotem(player) != null) {
+                                                    new FallingBlockWaveEffect(getTotem(player).getLocation().clone().add(0, 1, 0), 5, 1.2, Material.SAPLING, (byte) 0).play();
+                                                    for (Player player1 : player.getWorld().getPlayers()) {
+                                                        player1.playSound(player.getLocation(), "shaman.capacitortotem.pulse", 2, 1);
+                                                    }
+                                                }
                                                 break;
                                             }
                                         }
@@ -171,6 +204,12 @@ public class Chain extends AbstractAbility {
                                                 totemNear = Utils.filterOutTeammates(totemNear, player);
                                                 pulseDamage(warlordsPlayer, totemNear);
                                                 hitCounter++;
+                                                if (getTotem(player) != null) {
+                                                    new FallingBlockWaveEffect(getTotem(player).getLocation().clone().add(0, 1, 0), 5, 1.2, Material.SAPLING, (byte) 0).play();
+                                                    for (Player player1 : player.getWorld().getPlayers()) {
+                                                        player1.playSound(player.getLocation(), "shaman.capacitortotem.pulse", 2, 1);
+                                                    }
+                                                }
 
                                                 break;
                                             } else if (entity2 instanceof Player) {

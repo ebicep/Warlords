@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.classes.ActionBarStats;
+import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.effects.circle.DoubleLineEffect;
@@ -352,6 +353,8 @@ public class Totem extends EntityArmorStand {
                         for (Player player1 : player.getWorld().getPlayers()) {
                             player1.playSound(player.getLocation(), "shaman.heal.impact", 2, 1);
                         }
+
+                        new FallingBlockWaveEffect(totemStand.getLocation().clone().add(0, 1, 0), 5, 1.2, Material.SAPLING, (byte) 1).play();
 
                         List<Entity> near = healingTotem.getTotemArmorStand().getNearbyEntities(4.0D, 4.0D, 4.0D);
                         near = Utils.filterOnlyTeammates(near, healingTotem.getOwner().getPlayer());

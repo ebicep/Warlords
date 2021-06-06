@@ -1,28 +1,30 @@
 package com.ebicep.warlords.effects;
 
+import com.ebicep.customentities.CustomFallingBlock;
 import com.ebicep.warlords.Warlords;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
+import com.ebicep.warlords.classes.abilties.EarthenSpike;
+import com.ebicep.warlords.events.WarlordsEvents;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.FallingBlock;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
 
-public class ArmorStandWaveEffect {
+import java.util.*;
+
+public class FallingBlockWaveEffect {
     private final List<Stand> stands;
 
-    public ArmorStandWaveEffect(Location center, double range, double speed, ItemStack texture) {
+    public FallingBlockWaveEffect(Location center, double range, double speed, Material material, byte damage) {
         stands = new ArrayList<>((int)(Math.pow(Math.ceil(range), 2) * Math.PI * 1.1));
         double doubleRange = range * range;
         for (int x = (int)-range; x <= range; x++) {
             for (int z = (int)-range; z <= range; z++) {
                 double distanceSquared = x * x + z * z;
                 if (distanceSquared < doubleRange) {
-                    stands.add(new Stand(center.clone().add(x, -1, z), (int)(-Math.sqrt(distanceSquared) * speed), texture));
+                    stands.add(new Stand(center.clone().add(x, 0, z), (int)(-Math.sqrt(distanceSquared) / speed), material, damage));
                 }
             }
         }
@@ -51,14 +53,16 @@ public class ArmorStandWaveEffect {
 
     class Stand {
         private final Location loc;
-        private ArmorStand stand;
         private int timer;
-        private final ItemStack texture;
+        private Material material;
+        private byte damage;
+        private FallingBlock fallingBlock;
 
-        public Stand(Location loc, int timer, ItemStack texture) {
+        public Stand(Location loc, int timer, Material material, byte damage) {
             this.loc = loc;
             this.timer = timer;
-            this.texture = texture;
+            this.material = material;
+            this.damage = damage;
         }
 
         public int getTimer() {
@@ -67,22 +71,18 @@ public class ArmorStandWaveEffect {
 
         public boolean tick() {
             timer++;
-            if (timer >= 0) {
-                if (stand == null) {
-                    stand = loc.getWorld().spawn(loc, ArmorStand.class);
-                    stand.setGravity(false);
-                    stand.setHelmet(texture);
-                    stand.setBasePlate(false);
-                    stand.setVisible(false);
-                    stand.setMarker(true);
-                }
-                stand.teleport(stand.getLocation().add(0, 0.3 - timer / 20D, 0));
+            if (timer == 0) {
+                fallingBlock = loc.getWorld().spawnFallingBlock(loc, material, damage);
+                fallingBlock.setVelocity(new Vector(0, 0.05, 0));
+                fallingBlock.setDropItem(false);
+                WarlordsEvents.addEntityUUID(fallingBlock.getUniqueId());
 
-
-                if (timer > 20) {
-                    stand.remove();
-                    return true;
+                return false;
+            } else if (timer == 6) {
+                if (fallingBlock != null) {
+                    fallingBlock.remove();
                 }
+                return true;
             }
             return false;
         }
