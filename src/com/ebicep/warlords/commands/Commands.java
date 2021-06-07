@@ -77,6 +77,7 @@ public class Commands implements TabExecutor {
             }
 
         } else if (command.getName().equalsIgnoreCase("endgame")) {
+
             if (!sender.isOp()) {
                 sender.sendMessage("§cYou do not have permission to do that.");
                 return true;

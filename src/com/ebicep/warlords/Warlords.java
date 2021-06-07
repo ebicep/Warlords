@@ -436,7 +436,6 @@ public class Warlords extends JavaPlugin {
                         for (WarlordsPlayer warlordsPlayer : players.values()) {
                             //UPDATES SCOREBOARD HEALTHS
                             warlordsPlayer.getScoreboard().updateHealths();
-
                             Player player = warlordsPlayer.getPlayer();
 
                             // Inferno
@@ -466,7 +465,8 @@ public class Warlords extends JavaPlugin {
                             // Infusion
                             if (warlordsPlayer.getInfusion() != 0) {
                                 Location location = player.getLocation();
-                                location.add(0, 1.5, 0);
+                                location.add(0, 1.2, 0);
+                                ParticleEffect.SPELL.display(0.3F, 0.1F, 0.3F, 0.2F, 2, location, 500);
                             }
 
                             // Presence
@@ -474,6 +474,7 @@ public class Warlords extends JavaPlugin {
                                 Location location = player.getLocation();
                                 location.add(0, 1.5, 0);
                                 ParticleEffect.SMOKE_NORMAL.display(0.3F, 0.3F, 0.3F, 0.02F, 1, location, 500);
+                                ParticleEffect.SPELL.display(0.3F, 0.3F, 0.3F, 0.5F, 2, location, 500);
                             }
                         }
                     }

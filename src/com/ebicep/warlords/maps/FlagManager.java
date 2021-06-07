@@ -449,6 +449,8 @@ public class FlagManager implements Listener {
 
         public void render() {
 
+            FlagLocation old = this.lastLocation;
+
             if(this.lastLocation != null) {
                 this.reset();
             }
@@ -490,8 +492,17 @@ public class FlagManager implements Listener {
                     block.setData(newData.getData());
                 }
 
-                if(this.lastLocation instanceof GroundFlagLocation) {
+                if (this.lastLocation instanceof GroundFlagLocation) {
+                    if(old instanceof PlayerFlagLocation) {
+                        PlayerFlagLocation playerFlagLocation = (PlayerFlagLocation) old;
+                        String flag = info.getTeam() == Team.RED ? ChatColor.RED + "RED" : ChatColor.BLUE + "BLU";
+                        ChatColor playerColor = info.getTeam().enemy().teamColor();
+                        Bukkit.broadcastMessage(playerColor + playerFlagLocation.getPlayer().getName() + " §ehas dropped the " + flag + "§e flag!");
+                        for (Player player1 : Warlords.game.getPlayersProtected().keySet()) {
+                            PacketUtils.sendTitle(player1, "", playerColor + playerFlagLocation.getPlayer().getName() + " §ehas dropped the " + flag + "§e flag!", 0, 60, 0);
+                        }
 
+                    }
                     this.runningTasksCancel.add(new BukkitRunnable() {
                         @Override
                         public void run() {

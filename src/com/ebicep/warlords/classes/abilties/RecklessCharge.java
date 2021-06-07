@@ -4,11 +4,15 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.util.Utils;
+import org.bukkit.Effect;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.Potion;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
@@ -69,14 +73,12 @@ public class RecklessCharge extends AbstractAbility {
                 if (warlordsPlayer.getCharged() == 0) {
                     this.cancel();
                 }
+
                 List<Entity> playersInside = player.getNearbyEntities(2, 2, 2);
                 playersInside.removeAll(((RecklessCharge) warlordsPlayer.getSpec().getRed()).getPlayersHit());
                 playersInside = Utils.filterOutTeammates(playersInside, player);
                 for (Entity entity : playersInside) {
                     if (entity instanceof Player && ((Player) entity).getGameMode() != GameMode.SPECTATOR) {
-                        //TODO add 100 slowness   -   DOESNT WORK NOT BARELY SLOW
-                        //Warlords.getPlayer((Player) entity).getSpeed().changeCurrentSpeed("Reckless Charge", -10000, .5 * 20);
-
                         ((RecklessCharge) warlordsPlayer.getSpec().getRed()).getPlayersHit().add((Player) entity);
                         Warlords.getPlayer((Player) entity).addHealth(warlordsPlayer, warlordsPlayer.getSpec().getRed().getName(), warlordsPlayer.getSpec().getRed().getMinDamageHeal(), warlordsPlayer.getSpec().getRed().getMaxDamageHeal(), warlordsPlayer.getSpec().getRed().getCritChance(), warlordsPlayer.getSpec().getRed().getCritMultiplier());
                     }
