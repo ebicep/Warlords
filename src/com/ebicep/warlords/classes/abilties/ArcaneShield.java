@@ -3,6 +3,8 @@ package com.ebicep.warlords.classes.abilties;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
+import net.minecraft.server.v1_8_R3.EntityLiving;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 public class ArcaneShield extends AbstractAbility {
@@ -21,6 +23,7 @@ public class ArcaneShield extends AbstractAbility {
         warlordsPlayer.setArcaneShield(6);
         warlordsPlayer.setArcaneShieldHealth((int) (warlordsPlayer.getMaxHealth() * .5));
         warlordsPlayer.subtractEnergy(energyCost);
+        ((EntityLiving) ((CraftPlayer) player).getHandle()).setAbsorptionHearts(20);
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "mage.arcaneshield.activation", 2, 1);

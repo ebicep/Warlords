@@ -9,11 +9,13 @@ import com.ebicep.warlords.menu.MenuEventListener;
 import com.ebicep.warlords.util.PacketUtils;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.Utils;
+import net.minecraft.server.v1_8_R3.EntityLiving;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -90,7 +92,7 @@ public class Warlords extends JavaPlugin {
         new BukkitRunnable() {
             @Override
             public void run() {
-                for(Player player : getServer().getOnlinePlayers()) {
+                for (Player player : getServer().getOnlinePlayers()) {
                     player.setFoodLevel(20);
                     player.setSaturation(1);
                 }
@@ -187,6 +189,11 @@ public class Warlords extends JavaPlugin {
                     for (WarlordsPlayer warlordsPlayer : players.values()) {
                         Player player = warlordsPlayer.getPlayer();
                         Location location = player.getLocation();
+
+                        //dismount directly downwards
+                        if (player.isSneaking() && player.getVehicle() != null) {
+                            player.getVehicle().remove();
+                        }
 
                         if (game.isRedTeam(player)) {
                             if (warlordsPlayer.isTeamFlagCompass()) {
@@ -616,6 +623,9 @@ public class Warlords extends JavaPlugin {
                             }
                             if (warlordsPlayer.getArcaneShield() != 0) {
                                 warlordsPlayer.setArcaneShield(warlordsPlayer.getArcaneShield() - 1);
+                                if (warlordsPlayer.getArcaneShield() == 0) {
+                                    ((EntityLiving) ((CraftPlayer) player).getHandle()).setAbsorptionHearts(0);
+                                }
                             }
                             if (warlordsPlayer.getInferno() != 0) {
                                 warlordsPlayer.setInferno(warlordsPlayer.getInferno() - 1);

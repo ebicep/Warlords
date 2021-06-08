@@ -11,8 +11,10 @@ import com.ebicep.warlords.util.*;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import net.minecraft.server.v1_8_R3.EntityLiving;
 import org.apache.commons.lang.Validate;
 import org.bukkit.*;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
@@ -146,7 +148,7 @@ public class Game implements Runnable {
 
                     game.timer++;
                     //TESTING
-                    //return GAME;
+                    return GAME;
 
                 } else {
                     game.timer = 0;
@@ -178,6 +180,8 @@ public class Game implements Runnable {
 
                     p.setGameMode(GameMode.ADVENTURE);
 
+                    ((EntityLiving) ((CraftPlayer) p).getHandle()).setAbsorptionHearts(0);
+
                     System.out.println("Added " + p.getName());
                 }
 
@@ -191,6 +195,8 @@ public class Game implements Runnable {
                     ArmorManager.resetArmor(p, Warlords.getPlayer(p).getSpec(), Warlords.game.getPlayerTeam(p));
 
                     p.setGameMode(GameMode.ADVENTURE);
+
+                    ((EntityLiving) ((CraftPlayer) p).getHandle()).setAbsorptionHearts(0);
 
                     System.out.println("Added " + p.getName());
                 }

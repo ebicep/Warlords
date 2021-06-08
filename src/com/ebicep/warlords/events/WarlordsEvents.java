@@ -18,8 +18,10 @@ import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.*;
+import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.spigotmc.event.entity.EntityDismountEvent;
 
 import java.util.ArrayList;
@@ -148,13 +150,13 @@ public class WarlordsEvents implements Listener {
             ItemStack itemHeld = player.getItemInHand();
             if (player.getInventory().getHeldItemSlot() == 7 && itemHeld.getType() == Material.GOLD_BARDING && player.getVehicle() == null) {
                 if (location.getWorld().getBlockAt((int) location.getX(), 2, (int) location.getZ()).getType() == Material.NETHERRACK) { //&& !Utils.tunnelUnder(e.getPlayer())) {
-                    player.sendMessage(ChatColor.RED + "You cannot mount here!");
+                    player.sendMessage(ChatColor.RED + "You can't mount here!");
                 } else {
                     double distance = player.getLocation().getY() - player.getWorld().getHighestBlockYAt(player.getLocation());
                     if (distance > 2) {
-                        player.sendMessage(ChatColor.RED + "You cannot mount in the air");
+                        player.sendMessage(ChatColor.RED + "You can't mount in the air");
                     } else if (!player.getMetadata(FlagManager.FLAG_DAMAGE_MULTIPLIER).isEmpty()) {
-                        player.sendMessage(ChatColor.RED + "You cannot mount while holding the flag!");
+                        player.sendMessage(ChatColor.RED + "You can't mount while holding the flag!");
                     } else {
                         player.playSound(player.getLocation(), "mountup", 1, 1);
                         Horse horse = (Horse) player.getWorld().spawnEntity(player.getLocation(), EntityType.HORSE);
@@ -188,15 +190,6 @@ public class WarlordsEvents implements Listener {
             if (action == Action.LEFT_CLICK_AIR) {
 
             }
-        }
-    }
-
-
-    @EventHandler
-    public static void onPlayerDismount(EntityDismountEvent e) {
-        Entity entity = e.getDismounted();
-        if (entity instanceof Horse) {
-            entity.remove();
         }
     }
 
@@ -242,6 +235,13 @@ public class WarlordsEvents implements Listener {
 
     @EventHandler
     public void onInvClick(InventoryClickEvent e) {
+        if (Warlords.game.getState() == Game.State.GAME && e.getSlot() == 0) {
+            if (e.isLeftClick()) {
+                Warlords.getPlayer((Player) e.getWhoClicked()).weaponLeftClick();
+            } else if (e.isRightClick()) {
+                Warlords.getPlayer((Player) e.getWhoClicked()).weaponRightClick();
+            }
+        }
         e.setCancelled(true);
     }
 

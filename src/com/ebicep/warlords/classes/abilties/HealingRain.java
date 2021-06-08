@@ -7,6 +7,7 @@ import com.ebicep.warlords.classes.ActionBarStats;
 import com.ebicep.warlords.util.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -27,11 +28,13 @@ public class HealingRain extends AbstractAbility {
 
     @Override
     public void onActivate(Player player) {
+        if (player.getTargetBlock((HashSet<Byte>) null, 15).getType() == Material.AIR) return;
         DamageHealCircle damageHealCircle = new DamageHealCircle(player, player.getTargetBlock((HashSet<Byte>) null, 15).getLocation(), 7, 10, minDamageHeal, maxDamageHeal, critChance, critMultiplier, name);
         damageHealCircle.getLocation().add(0, 1, 0);
         WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
         warlordsPlayer.getActionBarStats().add(new ActionBarStats(warlordsPlayer, "RAIN", 10));
         warlordsPlayer.subtractEnergy(energyCost);
+        warlordsPlayer.getSpec().getOrange().setCurrentCooldown(cooldown);
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "mage.healingrain.impact", 2, 1);

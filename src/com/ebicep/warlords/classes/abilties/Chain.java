@@ -365,13 +365,12 @@ public class Chain extends AbstractAbility {
                 }
                 warlordsPlayer.updateRedItem();
                 warlordsPlayer.getSpec().getBlue().setCurrentCooldown(cooldown);
+                warlordsPlayer.updateBlueItem();
 
                 for (Player player1 : player.getWorld().getPlayers()) {
                     player1.playSound(player.getLocation(), "shaman.chainheal.activation", 2, 1);
                 }
-                warlordsPlayer.updateBlueItem();
             } else if (name.contains("Spirit")) {
-                // TODO: add dmg reduction
                 // speed buff
                 warlordsPlayer.getSpeed().changeCurrentSpeed("Spirit Link", 40, 30); // 30 is ticks
                 warlordsPlayer.setSpiritLink(30);

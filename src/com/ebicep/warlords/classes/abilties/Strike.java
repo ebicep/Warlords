@@ -3,6 +3,8 @@ package com.ebicep.warlords.classes.abilties;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.classes.paladin.AbstractPaladin;
+import com.ebicep.warlords.classes.paladin.specs.protector.Protector;
 import com.ebicep.warlords.util.Utils;
 import net.minecraft.server.v1_8_R3.PacketPlayOutAnimation;
 import org.bukkit.Bukkit;
@@ -132,6 +134,7 @@ public class Strike extends AbstractAbility {
                 if (entity.getLocation().clone().add(0, 2, 0).distanceSquared(standing.getLocation()) < 5 * 5.25) {
                     return true;
                 }
+                break;
             }
         }
         return false;
