@@ -404,7 +404,7 @@ public class Chain extends AbstractAbility {
         for (Entity entity : near) {
             if (entity instanceof Player && ((Player) entity).getGameMode() != GameMode.SPECTATOR) {
                 Player nearPlayer = (Player) entity;
-                Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, warlordsPlayer.getSpec().getRed().getName(), 420, 420, -1, 100);
+                Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, "Soulbinding Weapon", 420, 420, -1, 100);
                 playersHealed++;
                 if (playersHealed == 2) break;
             }
