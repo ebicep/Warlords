@@ -24,9 +24,7 @@ public class MenuEventListener implements Listener {
         Optional<MetadataValue> menu = evt.getWhoClicked().getMetadata(METADATA_CUSTOM_INVENTORY).stream()
                 .filter(e -> e.value() instanceof MenuBase)
                 .findAny();
-        if (menu.isPresent()) {
-            ((MenuBase)menu.get().value()).doOnClickAction(evt);
-        }
+        menu.ifPresent(metadataValue -> ((MenuBase) metadataValue.value()).doOnClickAction(evt));
 
     }
 

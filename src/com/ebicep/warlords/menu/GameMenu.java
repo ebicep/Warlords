@@ -1,14 +1,12 @@
 package com.ebicep.warlords.menu;
 
-import com.ebicep.warlords.util.Classes;
-import com.ebicep.warlords.util.ClassesGroup;
-import com.ebicep.warlords.util.ClassesSkillBoosts;
-import com.ebicep.warlords.util.ItemBuilder;
+import com.ebicep.warlords.util.*;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static com.ebicep.warlords.menu.Menu.ACTION_CLOSE_MENU;
@@ -25,6 +23,10 @@ public class GameMenu {
             .get();
     private static final ItemStack MENU_BACK = new ItemBuilder(Material.ARROW)
             .name("Back")
+            .get();
+    private static final ItemStack MENU_SKINS = new ItemBuilder(Material.PAINTING)
+            .name(ChatColor.GREEN + "Weapon Skin Selector")
+            .lore("§7Change the cosmetic appearance\n§7of your weapon to better suit\n§7your tastes.", "", "§eClick to change weapon skin!")
             .get();
     private static final ItemStack MENU_BOOSTS = new ItemBuilder(Material.BOOKSHELF)
             .name(ChatColor.AQUA + "Weapon Skill Boost")
@@ -60,6 +62,7 @@ public class GameMenu {
                     (n, e) -> openClassMenu(player, group)
             );
         }
+        menu.setItem(2, 3, MENU_SKINS, (n, e) -> openWeaponMenu(player, 1));
         menu.setItem(4, 3, MENU_BOOSTS, (n, e) -> openSkillBoostMenu(player, selectedClass));
         menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
@@ -139,6 +142,77 @@ public class GameMenu {
         }
 
         menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
+        menu.openForPlayer(player);
+    }
+
+    public static void openWeaponMenu(Player player, int pageNumber) {
+        Weapons selectedWeapon = Weapons.getSelected(player);
+        Menu menu = new Menu("Weapon Skin Selector", 9 * 6);
+        List<Weapons> values = new ArrayList<>(Arrays.asList(Weapons.values()));
+        for (int i = (pageNumber - 1) * 21; i < pageNumber * 21 && i < values.size(); i++) {
+            Weapons weapon = values.get(i);
+            ItemBuilder builder = new ItemBuilder(weapon.item)
+                    .name(
+                            ChatColor.GREEN + weapon.name
+                    )
+                    .flags(ItemFlag.HIDE_ENCHANTS);
+            List<String> lore = new ArrayList<>();
+            if (weapon == selectedWeapon) {
+                lore.add(ChatColor.GREEN + "Currently selected!");
+                builder.enchant(Enchantment.OXYGEN, 1);
+            } else {
+                lore.add(ChatColor.YELLOW + "Click to select!");
+            }
+            builder.lore(lore);
+            menu.setItem(
+                    (i - (pageNumber - 1) * 21) % 7 + 1,
+                    (i - (pageNumber - 1) * 21) / 7 + 1,
+                    builder.get(),
+                    (n, e) -> {
+                        player.sendMessage(ChatColor.GREEN + "Your have changed your weapon skin to: §b" + weapon.name + "!");
+                        Weapons.setSelected(player, weapon);
+                        openWeaponMenu(player, pageNumber);
+                    }
+            );
+        }
+        if (pageNumber == 1) {
+            menu.setItem(
+                    8,
+                    5,
+                    new ItemBuilder(Material.ARROW)
+                            .name(ChatColor.GREEN + "Next Page")
+                            .lore(ChatColor.YELLOW + "Page " + (pageNumber + 1))
+                            .get(),
+                    (n, e) -> openWeaponMenu(player, pageNumber + 1));
+        } else if (pageNumber == 2) {
+            menu.setItem(
+                    0,
+                    5,
+                    new ItemBuilder(Material.ARROW)
+                            .name(ChatColor.GREEN + "Previous Page")
+                            .lore(ChatColor.YELLOW + "Page " + (pageNumber - 1))
+                            .get(),
+                    (n, e) -> openWeaponMenu(player, pageNumber - 1));
+            menu.setItem(
+                    8,
+                    5,
+                    new ItemBuilder(Material.ARROW)
+                            .name(ChatColor.GREEN + "Next Page")
+                            .lore(ChatColor.YELLOW + "Page " + (pageNumber + 1))
+                            .get(),
+                    (n, e) -> openWeaponMenu(player, pageNumber + 1));
+        } else if (pageNumber == 3) {
+            menu.setItem(
+                    0,
+                    5,
+                    new ItemBuilder(Material.ARROW)
+                            .name(ChatColor.GREEN + "Previous Page")
+                            .lore(ChatColor.YELLOW + "Page " + (pageNumber - 1))
+                            .get(),
+                    (n, e) -> openWeaponMenu(player, pageNumber - 1));
+        }
+
+        menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
     }
 }

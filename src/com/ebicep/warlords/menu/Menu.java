@@ -1,6 +1,7 @@
 package com.ebicep.warlords.menu;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -49,7 +50,7 @@ public class Menu extends MenuBase {
     @Override
     public void doOnClickAction(InventoryClickEvent event) {
         event.setCancelled(true);
-        if (event.getRawSlot() < inventory.getSize()) {
+        if (event.getCurrentItem().getType() != Material.AIR && event.getRawSlot() < inventory.getSize()) {
             this.onClick[event.getRawSlot()].accept(this, event);
         }
     }

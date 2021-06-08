@@ -171,8 +171,9 @@ public class Game implements Runnable {
 
                 for (Player p : game.cachedTeamRed) {
 
-                    Classes selected = Classes.getSelected(p);
-                    Warlords.addPlayer(new WarlordsPlayer(p, p.getName(), p.getUniqueId(), selected.create.apply(p), false));
+                    Classes selectedClass = Classes.getSelected(p);
+                    Weapons selectedWeapon = Weapons.getSelected(p);
+                    Warlords.addPlayer(new WarlordsPlayer(p, p.getName(), p.getUniqueId(), selectedClass.create.apply(p), selectedWeapon, false));
 
                     redTeam.add(Warlords.getPlayer(p));
 
@@ -187,8 +188,9 @@ public class Game implements Runnable {
 
                 for (Player p : game.cachedTeamBlue) {
 
-                    Classes selected = Classes.getSelected(p);
-                    Warlords.addPlayer(new WarlordsPlayer(p, p.getName(), p.getUniqueId(), selected.create.apply(p), false));
+                    Classes selectedClass = Classes.getSelected(p);
+                    Weapons selectedWeapon = Weapons.getSelected(p);
+                    Warlords.addPlayer(new WarlordsPlayer(p, p.getName(), p.getUniqueId(), selectedClass.create.apply(p), selectedWeapon, false));
 
                     blueTeam.add(Warlords.getPlayer(p));
 

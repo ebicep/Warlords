@@ -8,10 +8,7 @@ import com.ebicep.warlords.classes.abilties.Soulbinding;
 import com.ebicep.warlords.classes.abilties.Totem;
 import com.ebicep.warlords.events.WarlordsDeathEvent;
 import com.ebicep.warlords.maps.FlagManager;
-import com.ebicep.warlords.util.CalculateSpeed;
-import com.ebicep.warlords.util.CustomScoreboard;
-import com.ebicep.warlords.util.PacketUtils;
-import com.ebicep.warlords.util.Utils;
+import com.ebicep.warlords.util.*;
 import net.minecraft.server.v1_8_R3.EntityLiving;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -33,8 +30,7 @@ public class WarlordsPlayer {
     private String name;
     private UUID uuid;
     private PlayerClass spec;
-    private ItemStack weapon = new ItemStack(Material.IRON_AXE);
-    //ItemStack weapon = new ItemStack(Material.COOKED_FISH, 1, (short) 1);
+    private ItemStack weapon;
     private boolean hotKeyMode = true;
     private int health;
     private int maxHealth;
@@ -290,11 +286,12 @@ public class WarlordsPlayer {
     private Location deathLocation;
     private ArmorStand deathStand;
 
-    public WarlordsPlayer(Player player, String name, UUID uuid, PlayerClass spec, boolean energyPowerup) {
+    public WarlordsPlayer(Player player, String name, UUID uuid, PlayerClass spec, Weapons weapon, boolean energyPowerup) {
         this.player = player;
         this.name = name;
         this.uuid = uuid;
         this.spec = spec;
+        this.weapon = weapon.item;
         this.health = spec.getMaxHealth();
         this.maxHealth = spec.getMaxHealth();
         this.respawnTimer = -1;
@@ -327,7 +324,6 @@ public class WarlordsPlayer {
     }
 
     public void weaponLeftClick() {
-        //§
         ItemMeta weaponMeta = weapon.getItemMeta();
         weaponMeta.setDisplayName(ChatColor.GOLD + "Warlord's ?????? of the " + spec.getWeapon().getName());
         ArrayList<String> weaponLore = new ArrayList<>();
@@ -360,7 +356,6 @@ public class WarlordsPlayer {
     }
 
     public void weaponRightClick() {
-        //§
         ItemMeta weaponMeta = weapon.getItemMeta();
         weaponMeta.setDisplayName(ChatColor.GREEN + spec.getWeapon().getName() + ChatColor.GRAY + " - " + ChatColor.YELLOW + "Right-Click!");
         ArrayList<String> weaponLore = new ArrayList<>();
