@@ -30,8 +30,6 @@ public class Chain extends AbstractAbility {
     @Override
     public void onActivate(Player player) {
         WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
-        PacketPlayOutAnimation playOutAnimation = new PacketPlayOutAnimation(((CraftPlayer) player).getHandle(), 0);
-        ((CraftPlayer) player).getHandle().playerConnection.sendPacket(playOutAnimation);
         //TODO add Your enemy is too far away!
 
         /* CHAINS
@@ -346,6 +344,8 @@ public class Chain extends AbstractAbility {
         }
 
         if (hitCounter != 0) {
+            PacketPlayOutAnimation playOutAnimation = new PacketPlayOutAnimation(((CraftPlayer) player).getHandle(), 0);
+            ((CraftPlayer) player).getHandle().playerConnection.sendPacket(playOutAnimation);
             warlordsPlayer.subtractEnergy(energyCost);
             if (name.contains("Lightning")) {
                 warlordsPlayer.setChainLightning(hitCounter);

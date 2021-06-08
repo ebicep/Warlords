@@ -2,8 +2,12 @@ package com.ebicep.warlords.events;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
+import com.ebicep.warlords.classes.abilties.Soulbinding;
+import com.ebicep.warlords.classes.abilties.UndyingArmy;
+import com.ebicep.warlords.classes.shaman.specs.spiritguard.Spiritguard;
 import com.ebicep.warlords.maps.FlagManager;
 import com.ebicep.warlords.maps.Game;
+import com.ebicep.warlords.util.Utils;
 import net.minecraft.server.v1_8_R3.EntityLiving;
 import net.minecraft.server.v1_8_R3.GenericAttributes;
 import org.bukkit.*;
@@ -117,6 +121,21 @@ public class WarlordsEvents implements Listener {
                         attacker.playSound(victim.getLocation(), Sound.HURT_FLESH, 1, 1);
                         warlordsPlayerAttacker.setHitCooldown(12);
                         warlordsPlayerAttacker.subtractEnergy(warlordsPlayerAttacker.getSpec().getEnergyOnHit() * -1);
+                        if (warlordsPlayerAttacker.getSpec() instanceof Spiritguard && warlordsPlayerAttacker.getSoulBindCooldown() != 0) {
+                            if (warlordsPlayerAttacker.hasBoundPlayer(warlordsPlayerVictim)) {
+                                for (Soulbinding.SoulBoundPlayer soulBindedPlayer : warlordsPlayerAttacker.getSoulBindedPlayers()) {
+                                    if (soulBindedPlayer.getBoundPlayer() == warlordsPlayerVictim) {
+                                        System.out.println(soulBindedPlayer.getTimeLeft());
+                                        soulBindedPlayer.setTimeLeft(3);
+                                        break;
+                                    }
+                                }
+                            } else {
+                                victim.sendMessage(ChatColor.RED + "\u00AB " + ChatColor.GRAY + "You have been bound by " + warlordsPlayerAttacker.getName() + "'s " + ChatColor.LIGHT_PURPLE + "Soulbinding Weapon " + ChatColor.GRAY + "!");
+                                warlordsPlayerAttacker.getPlayer().sendMessage(ChatColor.GREEN + "\u00BB " + ChatColor.GRAY + "Your " + ChatColor.LIGHT_PURPLE + "Soulbinding Weapon " + ChatColor.GRAY + "has bound " + victim.getName() + "!");
+                                warlordsPlayerAttacker.getSoulBindedPlayers().add(new Soulbinding.SoulBoundPlayer(warlordsPlayerVictim, 3));
+                            }
+                        }
                         warlordsPlayerVictim.addHealth(warlordsPlayerAttacker, "", -132, -179, 25, 200);
                     }
 
@@ -173,7 +192,7 @@ public class WarlordsEvents implements Listener {
                     }
                 }
             } else if (itemHeld.getType() == Material.BONE) {
-                player.getInventory().remove(Material.BONE);
+                player.getInventory().remove(UndyingArmy.BONE);
                 Warlords.getPlayer(player).addHealth(Warlords.getPlayer(player), "", -100000, -100000, -1, 100);
                 Warlords.getPlayer(player).setUndyingArmyDead(false);
             } else if (itemHeld.getType() == Material.BANNER) {
@@ -290,6 +309,11 @@ public class WarlordsEvents implements Listener {
 
             e.setCancelled(true);
         }
+    }
+
+    @EventHandler
+    public void onEntityDeath(EntityDeathEvent e) {
+        e.getDrops().clear();
     }
 
     @EventHandler

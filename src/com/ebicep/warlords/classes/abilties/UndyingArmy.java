@@ -5,17 +5,25 @@ import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
+import com.ebicep.warlords.util.ItemBuilder;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
 public class UndyingArmy extends AbstractAbility {
+
+    public static final ItemStack BONE = new ItemBuilder(Material.BONE)
+            .name(ChatColor.RED + "Instant Kill")
+            .lore("§7Right-click this item to die\n§7instantly instead of waiting for\n§7the decay.")
+            .get();
 
     public UndyingArmy() {
         super("Undying Army", 0, 0, 60 + 10, 20, 0, 0,

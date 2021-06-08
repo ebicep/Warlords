@@ -2,10 +2,7 @@ package com.ebicep.warlords;
 
 import com.ebicep.warlords.classes.ActionBarStats;
 import com.ebicep.warlords.classes.PlayerClass;
-import com.ebicep.warlords.classes.abilties.HammerOfLight;
-import com.ebicep.warlords.classes.abilties.OrbsOfLife;
-import com.ebicep.warlords.classes.abilties.Soulbinding;
-import com.ebicep.warlords.classes.abilties.Totem;
+import com.ebicep.warlords.classes.abilties.*;
 import com.ebicep.warlords.events.WarlordsDeathEvent;
 import com.ebicep.warlords.maps.FlagManager;
 import com.ebicep.warlords.util.*;
@@ -36,6 +33,7 @@ public class WarlordsPlayer {
     private int maxHealth;
     private int regenTimer;
     private int respawnTimer;
+    private boolean dead = false;
     private float energy;
     private float maxEnergy;
     private int horseCooldown;
@@ -563,12 +561,15 @@ public class WarlordsPlayer {
     }
 
     public void addHealth(WarlordsPlayer attacker, String ability, int min, int max, int critChance, int critMultiplier) {
-        if (spawnProtection != 0) return;
+        if (spawnProtection != 0 || (dead && !undyingArmyDead)) return;
         if (attacker == this && (ability.equals("Fall") || ability.isEmpty())) {
             if (ability.isEmpty()) {
                 player.sendMessage("" + ChatColor.RED + "\u00AB" + ChatColor.GRAY + " You took " + ChatColor.RED + min * -1 + ChatColor.GRAY + " melee damage.");
-
+                regenTimer = 10;
                 if (health + min < 0) {
+                    setUndyingArmyDead(false);
+                    getPlayer().getInventory().remove(UndyingArmy.BONE);
+
                     addGrave();
                     hitBy.remove(attacker);
                     hitBy.add(0, attacker);
@@ -593,6 +594,8 @@ public class WarlordsPlayer {
                     zombie.getEquipment().setItemInHand(player.getInventory().getItemInHand());
                     zombie.damage(2000);
 
+                    PacketUtils.sendTitle(player, ChatColor.RED + "YOU DIED!", ChatColor.GRAY + "You took " + ChatColor.RED + (min * -1) + ChatColor.GRAY + " melee damage and died.", 0, 40, 0);
+
                     for (WarlordsPlayer value : Warlords.getPlayers().values()) {
                         value.getScoreboard().updatePoints();
                     }
@@ -607,6 +610,7 @@ public class WarlordsPlayer {
             } else {
                 //TODO FIX FIX IT JUST GETS MORE MESSY LETS GOOOOOOOOOOOOOOO
                 player.sendMessage("" + ChatColor.RED + "\u00AB" + ChatColor.GRAY + " You took " + ChatColor.RED + min * -1 + ChatColor.GRAY + " fall damage.");
+                regenTimer = 10;
                 if (health + min < 0) {
                     addGrave();
                     hitBy.remove(attacker);
@@ -817,18 +821,18 @@ public class WarlordsPlayer {
 
                         if (isCrit) {
                             if (ability.isEmpty()) {
-                                player.sendMessage("" + ChatColor.RED + "\u00AB" + ChatColor.GRAY + " " + attacker.getName() + " hit you for " + ChatColor.RED + "§l" + (int) damageHealValue * -1 + "! " + ChatColor.GRAY + "critical melee damage.");
+                                player.sendMessage(ChatColor.RED + "\u00AB" + ChatColor.GRAY + " " + attacker.getName() + " hit you for " + ChatColor.RED + "§l" + (int) damageHealValue * -1 + "! " + ChatColor.GRAY + "critical melee damage.");
                                 attacker.getPlayer().sendMessage(ChatColor.GREEN + "\u00BB" + ChatColor.GRAY + " " + "You hit " + name + " for " + ChatColor.RED + "§l" + (int) damageHealValue * -1 + "! " + ChatColor.GRAY + "critical melee damage.");
                             } else {
-                                player.sendMessage("" + ChatColor.RED + "\u00AB" + ChatColor.GRAY + " " + attacker.getName() + "'s " + ability + " hit you for " + ChatColor.RED + "§l" + (int) damageHealValue * -1 + "! " + ChatColor.GRAY + "critical damage.");
+                                player.sendMessage(ChatColor.RED + "\u00AB" + ChatColor.GRAY + " " + attacker.getName() + "'s " + ability + " hit you for " + ChatColor.RED + "§l" + (int) damageHealValue * -1 + "! " + ChatColor.GRAY + "critical damage.");
                                 attacker.getPlayer().sendMessage(ChatColor.GREEN + "\u00BB" + ChatColor.GRAY + " " + "Your " + ability + " hit " + name + " for " + ChatColor.RED + "§l" + (int) damageHealValue * -1 + "! " + ChatColor.GRAY + "critical damage.");
                             }
                         } else {
                             if (ability.isEmpty()) {
-                                player.sendMessage("" + ChatColor.RED + "\u00AB" + ChatColor.GRAY + " " + attacker.getName() + " hit you for " + ChatColor.RED + (int) damageHealValue * -1 + " " + ChatColor.GRAY + "melee damage.");
+                                player.sendMessage(ChatColor.RED + "\u00AB" + ChatColor.GRAY + " " + attacker.getName() + " hit you for " + ChatColor.RED + (int) damageHealValue * -1 + " " + ChatColor.GRAY + "melee damage.");
                                 attacker.getPlayer().sendMessage(ChatColor.GREEN + "\u00BB" + ChatColor.GRAY + " " + "You hit " + name + " for " + ChatColor.RED + (int) damageHealValue * -1 + " " + ChatColor.GRAY + "melee damage.");
                             } else {
-                                player.sendMessage("" + ChatColor.RED + "\u00AB" + ChatColor.GRAY + " " + attacker.getName() + "'s " + ability + " hit you for " + ChatColor.RED + (int) damageHealValue * -1 + " " + ChatColor.GRAY + "damage.");
+                                player.sendMessage(ChatColor.RED + "\u00AB" + ChatColor.GRAY + " " + attacker.getName() + "'s " + ability + " hit you for " + ChatColor.RED + (int) damageHealValue * -1 + " " + ChatColor.GRAY + "damage.");
                                 attacker.getPlayer().sendMessage(ChatColor.GREEN + "\u00BB" + ChatColor.GRAY + " " + "Your " + ability + " hit " + name + " for " + ChatColor.RED + (int) damageHealValue * -1 + " " + ChatColor.GRAY + "damage.");
                             }
                         }
@@ -921,7 +925,8 @@ public class WarlordsPlayer {
                     player.playEffect(EntityEffect.HURT);
                 }
                 attacker.addDamage(-damageHealValue);
-                if (this.health <= 0) {
+                if (this.health <= 0 && undyingArmyDuration == 0) {
+                    dead = true;
                     powerUpDamage = 0;
                     powerUpEnergy = 0;
                     powerUpSpeed = 0;
@@ -977,7 +982,6 @@ public class WarlordsPlayer {
                         value.getScoreboard().updatePoints();
                     }
                 } else {
-
                     if (!ability.isEmpty() && !ability.equals("Time Warp") && !ability.equals("Healing Rain") && !ability.equals("Hammer of Light")) {
                         attacker.getPlayer().playSound(attacker.getPlayer().getLocation(), Sound.ORB_PICKUP, 0.8f, 1f);
                     }
@@ -1051,13 +1055,8 @@ public class WarlordsPlayer {
                                 break;
                         }
                     }
-                } else if (attacker.getSoulBindCooldown() != 0) {
-                    attacker.getPlayer().sendMessage(ChatColor.GREEN + "\u00BB" + ChatColor.GRAY + " " + ChatColor.GRAY + "Your " + ChatColor.LIGHT_PURPLE + "Soulbinding Weapon " + ChatColor.GRAY + "has bound " + player.getName());
-                    attacker.getSoulBindedPlayers().add(new Soulbinding.SoulBoundPlayer(this, 2));
                 }
             }
-
-
         }
     }
 
@@ -1508,6 +1507,15 @@ public class WarlordsPlayer {
         this.soulBindedPlayers = soulBindedPlayers;
     }
 
+    public boolean hasBoundPlayer(WarlordsPlayer warlordsPlayer) {
+        for (Soulbinding.SoulBoundPlayer soulBindedPlayer : soulBindedPlayers) {
+            if (soulBindedPlayer.getBoundPlayer() == warlordsPlayer) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public boolean hasBoundPlayerSoul(WarlordsPlayer warlordsPlayer) {
         for (Soulbinding.SoulBoundPlayer soulBindedPlayer : soulBindedPlayers) {
             if (soulBindedPlayer.getBoundPlayer() == warlordsPlayer) {
@@ -1515,6 +1523,7 @@ public class WarlordsPlayer {
                     soulBindedPlayer.setHitWithSoul(true);
                     return true;
                 }
+                break;
             }
         }
         return false;
@@ -1527,6 +1536,7 @@ public class WarlordsPlayer {
                     soulBindedPlayer.setHitWithLink(true);
                     return true;
                 }
+                break;
             }
         }
         return false;
@@ -1731,5 +1741,9 @@ public class WarlordsPlayer {
 
     public int getSpawnDamage() {
         return spawnDamage;
+    }
+
+    public void setDead(boolean dead) {
+        this.dead = dead;
     }
 }

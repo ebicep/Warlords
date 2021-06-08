@@ -2,6 +2,7 @@ package com.ebicep.warlords;
 
 import com.ebicep.warlords.classes.abilties.OrbsOfLife;
 import com.ebicep.warlords.classes.abilties.Soulbinding;
+import com.ebicep.warlords.classes.abilties.UndyingArmy;
 import com.ebicep.warlords.commands.Commands;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.maps.Game;
@@ -237,6 +238,7 @@ public class Warlords extends JavaPlugin {
                             warlordsPlayer.setRespawnTimer(-1);
                             warlordsPlayer.setSpawnProtection(10);
                             warlordsPlayer.setSpawnDamage(5);
+                            warlordsPlayer.setDead(false);
 
                             if (game.getTeamBlueProtected().contains(warlordsPlayer.getPlayer())) {
                                 warlordsPlayer.getPlayer().teleport(game.getMap().getBlueRespawn());
@@ -291,13 +293,13 @@ public class Warlords extends JavaPlugin {
                             warlordsPlayer.respawn();
                             warlordsPlayer.setUndyingArmyDead(true);
                             warlordsPlayer.setUndyingArmyDuration(0);
-                            warlordsPlayer.getPlayer().getInventory().setItem(5, new ItemStack(Material.BONE));
+                            warlordsPlayer.getPlayer().getInventory().setItem(5, UndyingArmy.BONE);
                             newHealth = 40;
                         }
                         if (newHealth <= 0) {
                             if (warlordsPlayer.isUndyingArmyDead()) {
                                 warlordsPlayer.setUndyingArmyDead(false);
-                                warlordsPlayer.getPlayer().getInventory().remove(Material.BONE);
+                                warlordsPlayer.getPlayer().getInventory().remove(UndyingArmy.BONE);
                             }
                             warlordsPlayer.respawn();
                             player.setGameMode(GameMode.SPECTATOR);
@@ -590,13 +592,7 @@ public class Warlords extends JavaPlugin {
                                     warlordsPlayer.addHealth(warlordsPlayer.getUndyingArmyBy(), "Undying Army", healing, healing, -1, 100);
                                 }
                             } else if (warlordsPlayer.isUndyingArmyDead()) {
-                                if (warlordsPlayer.getHealth() - 500 < 0) {
-                                    warlordsPlayer.setHealth(0);
-                                    warlordsPlayer.setUndyingArmyDead(false);
-                                    warlordsPlayer.getPlayer().getInventory().remove(Material.BONE);
-                                } else {
-                                    warlordsPlayer.setHealth(warlordsPlayer.getHealth() - 500);
-                                }
+                                warlordsPlayer.addHealth(warlordsPlayer, "", -500, -500, -1, 100);
                             }
                             if (warlordsPlayer.getWindfuryDuration() != 0) {
                                 warlordsPlayer.setWindfuryDuration(warlordsPlayer.getWindfuryDuration() - 1);
@@ -639,7 +635,7 @@ public class Warlords extends JavaPlugin {
                             for (int i = 0; i < warlordsPlayer.getSoulBindedPlayers().size(); i++) {
                                 Soulbinding.SoulBoundPlayer soulBoundPlayer = warlordsPlayer.getSoulBindedPlayers().get(0);
                                 soulBoundPlayer.setTimeLeft(soulBoundPlayer.getTimeLeft() - 1);
-                                if (soulBoundPlayer.getTimeLeft() == 0) {
+                                if (soulBoundPlayer.getTimeLeft() == 0 || (soulBoundPlayer.isHitWithLink() && soulBoundPlayer.isHitWithSoul())) {
                                     warlordsPlayer.getSoulBindedPlayers().remove(i);
                                     i--;
                                 }
