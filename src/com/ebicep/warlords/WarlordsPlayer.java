@@ -27,7 +27,7 @@ public class WarlordsPlayer {
     private String name;
     private UUID uuid;
     private PlayerClass spec;
-    private ItemStack weapon;
+    private Weapons weapon;
     private boolean hotKeyMode = true;
     private int health;
     private int maxHealth;
@@ -289,11 +289,11 @@ public class WarlordsPlayer {
         this.name = name;
         this.uuid = uuid;
         this.spec = spec;
-        this.weapon = weapon.item;
+        this.weapon = weapon;
         this.health = spec.getMaxHealth();
         this.maxHealth = spec.getMaxHealth();
         this.respawnTimer = -1;
-        this.energy = spec.getMaxEnergy();
+        this.energy = 0;
         this.maxEnergy = spec.getMaxEnergy();
         this.horseCooldown = 0;
         this.flagCooldown = 0;
@@ -322,8 +322,8 @@ public class WarlordsPlayer {
     }
 
     public void weaponLeftClick() {
-        ItemMeta weaponMeta = weapon.getItemMeta();
-        weaponMeta.setDisplayName(ChatColor.GOLD + "Warlord's ?????? of the " + spec.getWeapon().getName());
+        ItemMeta weaponMeta = weapon.item.getItemMeta();
+        weaponMeta.setDisplayName(ChatColor.GOLD + "Warlord's " + weapon.name + " of the " + spec.getClass().getSimpleName());
         ArrayList<String> weaponLore = new ArrayList<>();
         weaponLore.add(ChatColor.GRAY + "Damage: " + ChatColor.RED + "132 " + ChatColor.GRAY + "- " + ChatColor.RED + "179");
         weaponLore.add(ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + "25%");
@@ -349,12 +349,12 @@ public class WarlordsPlayer {
         weaponMeta.setLore(weaponLore);
         weaponMeta.spigot().setUnbreakable(true);
         weaponMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE);
-        weapon.setItemMeta(weaponMeta);
-        player.getInventory().setItem(0, weapon);
+        weapon.item.setItemMeta(weaponMeta);
+        player.getInventory().setItem(0, weapon.item);
     }
 
     public void weaponRightClick() {
-        ItemMeta weaponMeta = weapon.getItemMeta();
+        ItemMeta weaponMeta = weapon.item.getItemMeta();
         weaponMeta.setDisplayName(ChatColor.GREEN + spec.getWeapon().getName() + ChatColor.GRAY + " - " + ChatColor.YELLOW + "Right-Click!");
         ArrayList<String> weaponLore = new ArrayList<>();
         weaponLore.add(ChatColor.GRAY + "Energy Cost: " + ChatColor.YELLOW + spec.getWeapon().getEnergyCost());
@@ -367,8 +367,8 @@ public class WarlordsPlayer {
         weaponMeta.setLore(weaponLore);
         weaponMeta.spigot().setUnbreakable(true);
         weaponMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE);
-        weapon.setItemMeta(weaponMeta);
-        player.getInventory().setItem(0, weapon);
+        weapon.item.setItemMeta(weaponMeta);
+        player.getInventory().setItem(0, weapon.item);
     }
 
     public void updateRedItem() {

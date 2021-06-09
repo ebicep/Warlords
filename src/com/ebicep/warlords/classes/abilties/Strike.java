@@ -3,8 +3,12 @@ package com.ebicep.warlords.classes.abilties;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
-import com.ebicep.warlords.classes.paladin.AbstractPaladin;
+import com.ebicep.warlords.classes.paladin.specs.avenger.Avenger;
+import com.ebicep.warlords.classes.paladin.specs.crusader.Crusader;
 import com.ebicep.warlords.classes.paladin.specs.protector.Protector;
+import com.ebicep.warlords.classes.warrior.specs.berserker.Berserker;
+import com.ebicep.warlords.classes.warrior.specs.defender.Defender;
+import com.ebicep.warlords.classes.warrior.specs.revenant.Revenant;
 import com.ebicep.warlords.util.Utils;
 import net.minecraft.server.v1_8_R3.PacketPlayOutAnimation;
 import org.bukkit.Bukkit;
@@ -37,14 +41,13 @@ public class Strike extends AbstractAbility {
                     WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
                     warlordsPlayer.subtractEnergy(energyCost);
 
-                    System.out.println("NEAR HIT " + nearPlayer);
                     //PALADIN
-                    if (name.contains("Avenger") || name.contains("Crusader") || name.contains("Protector")) {
+                    if (warlordsPlayer.getSpec() instanceof Avenger || warlordsPlayer.getSpec() instanceof Crusader || warlordsPlayer.getSpec() instanceof Protector) {
                         for (Player player1 : player.getWorld().getPlayers()) {
                             player1.playSound(player.getLocation(), "paladin.paladinstrike.activation", 2, 1);
                         }
                         //check consecrate then boost dmg
-                        if (name.contains("Avenger")) {
+                        if (warlordsPlayer.getSpec() instanceof Avenger) {
                             if (standingOnConsecrate(player, nearPlayer)) {
                                 Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, name, Math.round(minDamageHeal * 1.2f), Math.round(maxDamageHeal * 1.2f), critChance, critMultiplier);
                             } else {
@@ -75,7 +78,7 @@ public class Strike extends AbstractAbility {
                                     }
                                 }
                             }
-                        } else if (name.contains("Crusader")) {
+                        } else if (warlordsPlayer.getSpec() instanceof Crusader) {
                             int counter = 0;
                             //checking if player is in consecrate
                             if (standingOnConsecrate(player, nearPlayer)) {
@@ -96,25 +99,25 @@ public class Strike extends AbstractAbility {
                                         break;
                                 }
                             }
-                        } else if (name.contains("Protector")) {
+                        } else if (warlordsPlayer.getSpec() instanceof Protector) {
                             Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
                         }
 
-                    } else if (name.contains("Berserker")) {
+                    } else if (warlordsPlayer.getSpec() instanceof Berserker) {
                         Warlords.getPlayer(nearPlayer).setBerserkerWounded(3);
                         Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
 
                         for (Player player1 : Bukkit.getOnlinePlayers()) {
                             player1.playSound(player.getLocation(), "warrior.mortalstrike.impact", 2, 1);
                         }
-                    } else if (name.contains("Defender")) {
+                    } else if (warlordsPlayer.getSpec() instanceof Defender) {
                         Warlords.getPlayer(nearPlayer).setDefenderWounded(3);
                         Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
 
                         for (Player player1 : Bukkit.getOnlinePlayers()) {
                             player1.playSound(player.getLocation(), "warrior.mortalstrike.impact", 2, 1);
                         }
-                    } else if (name.contains("Cripp")) {
+                    } else if (warlordsPlayer.getSpec() instanceof Revenant) {
                         Warlords.getPlayer(nearPlayer).setCrippled(3);
                         Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
 

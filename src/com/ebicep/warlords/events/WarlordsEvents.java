@@ -7,10 +7,12 @@ import com.ebicep.warlords.classes.abilties.UndyingArmy;
 import com.ebicep.warlords.classes.shaman.specs.spiritguard.Spiritguard;
 import com.ebicep.warlords.maps.FlagManager;
 import com.ebicep.warlords.maps.Game;
-import com.ebicep.warlords.util.Utils;
 import net.minecraft.server.v1_8_R3.EntityLiving;
 import net.minecraft.server.v1_8_R3.GenericAttributes;
-import org.bukkit.*;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
 import org.bukkit.entity.*;
@@ -22,15 +24,14 @@ import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.*;
-import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.spigotmc.event.entity.EntityDismountEvent;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import static com.ebicep.warlords.menu.GameMenu.openMainMenu;
 
 public class WarlordsEvents implements Listener {
 
@@ -102,7 +103,6 @@ public class WarlordsEvents implements Listener {
             player.sendMessage(ChatColor.GRAY + "CURRENT MISSING FEATURES: ");
             player.sendMessage(ChatColor.RED + "- Weapon Skill boosts");
             player.sendMessage(ChatColor.RED + "- Revenant's Orbs of Life being hidden for the enemy team");
-            player.sendMessage(ChatColor.RED + "- Being able to swap weapon/armor skins.");
             player.sendMessage(ChatColor.RED + "- Flag damage modifier currently does not carry over to a new flag holder.");
         }
 
@@ -202,6 +202,12 @@ public class WarlordsEvents implements Listener {
                     Warlords.game.getFlags().dropFlag(player);
                     Warlords.getPlayer(player).setFlagCooldown(5);
                 }
+            } else if (itemHeld.getType() == Material.NETHER_STAR) {
+                //menu
+                openMainMenu(player);
+            } else if (itemHeld.getType() == Material.NOTE_BLOCK) {
+                //team selector
+                player.sendMessage("this does jack shit right now :D");
             }
 
 

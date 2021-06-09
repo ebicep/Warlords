@@ -7,7 +7,7 @@ import org.bukkit.entity.Player;
 public class Berserker extends AbstractWarrior {
     public Berserker(Player player) {
         super(player, 6300, 305, 0,
-                new Strike("Wounding Strike Berserker", -596, -759, 0, 100, 20, 175,
+                new Strike("Wounding Strike", -596, -759, 0, 100, 20, 175,
                         "§7Strike the targeted enemy player,\n" +
                                 "§7causing §c596 §7- §c759 §7damage\n" +
                                 "§7and §cwounding §7them for §63 §7seconds.\n" +

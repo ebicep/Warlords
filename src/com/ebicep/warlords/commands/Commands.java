@@ -6,8 +6,10 @@ import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Game.State;
 import com.ebicep.warlords.maps.GameMap;
 import com.ebicep.warlords.util.Classes;
+import com.ebicep.warlords.util.ItemBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -71,10 +73,19 @@ public class Commands implements TabExecutor {
             //Collections.shuffle(people);
             boolean teamBlueAssessment = true;
             for (Player player : people) {
+                player.getInventory().setItem(5, new ItemBuilder(Material.NOTE_BLOCK)
+                        .name(ChatColor.GREEN + "Team Selector " + ChatColor.GRAY + "(Right-Click)")
+                        .lore(ChatColor.YELLOW + "Click to select your team!")
+                        .get());
+                player.getInventory().setItem(6, new ItemBuilder(Material.NETHER_STAR)
+                        .name(ChatColor.AQUA + "Pre-game Menu ")
+                        .lore(ChatColor.GRAY + "Allows you to change your class, select a\n" + ChatColor.GRAY + "weapon, and edit your settings.")
+                        .get());
                 Warlords.game.addPlayer(player, teamBlueAssessment);
                 game.giveLobbyScoreboard(player);
                 teamBlueAssessment = !teamBlueAssessment;
             }
+
 
         } else if (command.getName().equalsIgnoreCase("endgame")) {
 

@@ -1,32 +1,37 @@
 package com.ebicep.warlords.menu;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.util.*;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import static com.ebicep.warlords.menu.Menu.ACTION_CLOSE_MENU;
+import static com.ebicep.warlords.util.ArmorManager.*;
 import static com.ebicep.warlords.util.Classes.*;
-
-import java.util.ArrayList;
-
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.inventory.ItemFlag;
 
 public class GameMenu {
     private static final ItemStack MENU_CLOSE = new ItemBuilder(Material.BARRIER)
-            .name("Close")
+            .name(ChatColor.RED + "Close")
             .get();
-    private static final ItemStack MENU_BACK = new ItemBuilder(Material.ARROW)
-            .name("Back")
+    private static final ItemStack MENU_BACK_PREGAME = new ItemBuilder(Material.ARROW)
+            .name(ChatColor.GREEN + "Back")
+            .lore(ChatColor.GRAY + "To Pre-game Menu")
             .get();
     private static final ItemStack MENU_SKINS = new ItemBuilder(Material.PAINTING)
             .name(ChatColor.GREEN + "Weapon Skin Selector")
             .lore("§7Change the cosmetic appearance\n§7of your weapon to better suit\n§7your tastes.", "", "§eClick to change weapon skin!")
+            .get();
+    private static final ItemStack MENU_ARMOR_SETS = new ItemBuilder(Material.DIAMOND_HELMET)
+            .name(ChatColor.AQUA + "Armor Sets " + ChatColor.GRAY + "& " + ChatColor.AQUA + "Helmets " + ChatColor.GOLD + "(Cosmetic)")
+            .lore("§7Equip your favorite armor\n§7sets or class helmets")
             .get();
     private static final ItemStack MENU_BOOSTS = new ItemBuilder(Material.BOOKSHELF)
             .name(ChatColor.AQUA + "Weapon Skill Boost")
@@ -41,20 +46,19 @@ public class GameMenu {
         ClassesGroup[] values = ClassesGroup.values();
         for (int i = 0; i < values.length; i++) {
             ClassesGroup group = values[i];
-
             List<String> lore = new ArrayList<>();
             lore.add(group.description);
             lore.add("");
-            lore.add(ChatColor.GOLD + "§7Specializations:");
+            lore.add(ChatColor.GOLD + "Specializations:");
             for (Classes subClass : group.subclasses) {
-                lore.add((subClass == selectedClass ? ChatColor.GREEN : ChatColor.RESET) + subClass.name);
+                lore.add((subClass == selectedClass ? ChatColor.GREEN : ChatColor.GRAY) + subClass.name);
             }
-            ItemStack item = new ItemBuilder(group.item).name(
-                    ChatColor.GOLD + group.name +
-                            ChatColor.DARK_GRAY + " [" +
-                            ChatColor.GRAY + "Lv00" +
-                            ChatColor.DARK_GRAY + "]"
-            ).lore(lore).get();
+            lore.add("");
+            lore.add(ChatColor.YELLOW + "Click here to select a " + group.name + "\n" + ChatColor.YELLOW + "specialization");
+            ItemStack item = new ItemBuilder(group.item)
+                    .name(ChatColor.GOLD + group.name + ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + "Lv90" + ChatColor.DARK_GRAY + "]")
+                    .lore(lore)
+                    .get();
             menu.setItem(
                     9 / 2 - values.length / 2 + i * 2 - 1,
                     1,
@@ -62,22 +66,21 @@ public class GameMenu {
                     (n, e) -> openClassMenu(player, group)
             );
         }
-        menu.setItem(2, 3, MENU_SKINS, (n, e) -> openWeaponMenu(player, 1));
-        menu.setItem(4, 3, MENU_BOOSTS, (n, e) -> openSkillBoostMenu(player, selectedClass));
+        menu.setItem(1, 3, MENU_SKINS, (n, e) -> openWeaponMenu(player, 1));
+        menu.setItem(3, 3, MENU_ARMOR_SETS, (n, e) -> openArmorMenu(player, 1));
+        menu.setItem(5, 3, MENU_BOOSTS, (n, e) -> openSkillBoostMenu(player, selectedClass));
         menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
     }
 
     public static void openClassMenu(Player player, ClassesGroup selectedGroup) {
         Classes selectedClass = getSelected(player);
-        Menu menu = new Menu(selectedGroup.name, 9*6);
+        Menu menu = new Menu(selectedGroup.name, 9 * 4);
         List<Classes> values = selectedGroup.subclasses;
         for(int i = 0; i < values.size(); i++) {
             Classes subClass = values.get(i);
             ItemBuilder builder = new ItemBuilder(subClass.icon)
-                    .name(
-                            ChatColor.GREEN + "§7Specialization: " + subClass.name
-                    )
+                    .name(ChatColor.GREEN + "Specialization: " + subClass.name)
                     .flags(ItemFlag.HIDE_ENCHANTS);
             List<String> lore = new ArrayList<>();
             lore.add(subClass.description);
@@ -86,7 +89,7 @@ public class GameMenu {
                 lore.add(ChatColor.GREEN + ">>> ACTIVE <<<");
                 builder.enchant(Enchantment.OXYGEN, 1);
             } else {
-                lore.add(ChatColor.YELLOW + ">>> Click to activate <<<");
+                lore.add(ChatColor.YELLOW + "> Click to activate <");
             }
             builder.lore(lore);
             menu.setItem(
@@ -100,7 +103,7 @@ public class GameMenu {
                     }
             );
         }
-        menu.setItem(4, 3, MENU_BACK, (n, e) -> openMainMenu(player));
+        menu.setItem(4, 3, MENU_BACK_PREGAME, (n, e) -> openMainMenu(player));
 
         menu.openForPlayer(player);
     }
@@ -113,14 +116,10 @@ public class GameMenu {
         for (int i = 0; i < values.size(); i++) {
             ClassesSkillBoosts subClass = values.get(i);
             ItemBuilder builder = new ItemBuilder(player.getInventory().getItem(0))
-                    .name(
-                            subClass == selectedBoost ? ChatColor.GREEN + subClass.name + " (" + selectedClass.name + ")" : ChatColor.RED + subClass.name + " (" + selectedClass.name + ")"
-                    )
+                    .name(subClass == selectedBoost ? ChatColor.GREEN + subClass.name + " (" + selectedClass.name + ")" : ChatColor.RED + subClass.name + " (" + selectedClass.name + ")")
                     .flags(ItemFlag.HIDE_ENCHANTS);
             List<String> lore = new ArrayList<>();
-            lore.add(
-                    subClass == selectedBoost ? subClass.selectedDescription : subClass.description
-            );
+            lore.add(subClass == selectedBoost ? subClass.selectedDescription : subClass.description);
             lore.add("");
             if (subClass == selectedBoost) {
                 lore.add(ChatColor.GREEN + "Currently selected!");
@@ -140,8 +139,7 @@ public class GameMenu {
                     }
             );
         }
-
-        menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
+        menu.setItem(4, 3, MENU_BACK_PREGAME, (n, e) -> openMainMenu(player));
         menu.openForPlayer(player);
     }
 
@@ -152,9 +150,7 @@ public class GameMenu {
         for (int i = (pageNumber - 1) * 21; i < pageNumber * 21 && i < values.size(); i++) {
             Weapons weapon = values.get(i);
             ItemBuilder builder = new ItemBuilder(weapon.item)
-                    .name(
-                            ChatColor.GREEN + weapon.name
-                    )
+                    .name(ChatColor.GREEN + weapon.name)
                     .flags(ItemFlag.HIDE_ENCHANTS);
             List<String> lore = new ArrayList<>();
             if (weapon == selectedWeapon) {
@@ -212,7 +208,113 @@ public class GameMenu {
                     (n, e) -> openWeaponMenu(player, pageNumber - 1));
         }
 
-        menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
+        menu.setItem(4, 5, MENU_BACK_PREGAME, (n, e) -> openMainMenu(player));
+        menu.openForPlayer(player);
+    }
+
+    public static void openArmorMenu(Player player, int pageNumber) {
+        boolean onBlueTeam = Warlords.game.getCachedTeamBlue().contains(player);
+        List<Helmets> selectedHelmet = Helmets.getSelected(player);
+        List<ArmorSets> selectedArmorSet = ArmorSets.getSelected(player);
+        Menu menu = new Menu("Armor Sets & Helmets", 9 * 6);
+        List<Helmets> helmets = Arrays.asList(Helmets.values());
+        for (int i = (pageNumber - 1) * 8; i < pageNumber * 8 && i < helmets.size(); i++) {
+            Helmets helmet = helmets.get(i);
+            ItemBuilder builder = new ItemBuilder(onBlueTeam ? helmet.itemBlue : helmet.itemRed)
+                    .name(onBlueTeam ? ChatColor.BLUE + helmet.name : ChatColor.RED + helmet.name)
+                    .flags(ItemFlag.HIDE_ENCHANTS);
+            List<String> lore = new ArrayList<>();
+            lore.add(helmetDescription);
+            lore.add("");
+            if (selectedHelmet.contains(helmet)) {
+                lore.add(ChatColor.GREEN + ">>> ACTIVE <<<");
+                builder.enchant(Enchantment.OXYGEN, 1);
+            } else {
+                lore.add(ChatColor.YELLOW + "> Click to activate! <");
+            }
+            builder.lore(lore);
+            menu.setItem(
+                    (i - (pageNumber - 1) * 8) + 1,
+                    2,
+                    builder.get(),
+                    (n, e) -> {
+                        player.sendMessage(ChatColor.YELLOW + "Selected: " + ChatColor.GREEN + helmet.name);
+                        if (helmet == Helmets.SIMPLE_MAGE_HELMET || helmet == Helmets.GREATER_MAGE_HELMET || helmet == Helmets.MASTERWORK_MAGE_HELMET || helmet == Helmets.LEGENDARY_MAGE_HELMET) {
+                            Helmets.setSelectedMage(player, helmet);
+                        } else if (helmet == Helmets.SIMPLE_WARRIOR_HELMET || helmet == Helmets.GREATER_WARRIOR_HELMET || helmet == Helmets.MASTERWORK_WARRIOR_HELMET || helmet == Helmets.LEGENDARY_WARRIOR_HELMET) {
+                            Helmets.setSelectedWarrior(player, helmet);
+                        } else if (helmet == Helmets.SIMPLE_PALADIN_HELMET || helmet == Helmets.GREATER_PALADIN_HELMET || helmet == Helmets.MASTERWORK_PALADIN_HELMET || helmet == Helmets.LEGENDARY_PALADIN_HELMET) {
+                            Helmets.setSelectedPaladin(player, helmet);
+                        } else if (helmet == Helmets.SIMPLE_SHAMAN_HELMET || helmet == Helmets.GREATER_SHAMAN_HELMET || helmet == Helmets.MASTERWORK_SHAMAN_HELMET || helmet == Helmets.LEGENDARY_SHAMAN_HELMET) {
+                            Helmets.setSelectedShaman(player, helmet);
+                        }
+                        openArmorMenu(player, pageNumber);
+                    }
+            );
+        }
+        List<ArmorSets> armorSets = Arrays.asList(ArmorSets.values());
+        int xPosition = 1;
+        for (int i = (pageNumber - 1) * 6; i < pageNumber * 6; i++) {
+            ArmorSets armorSet = armorSets.get(i);
+            ItemBuilder builder = new ItemBuilder(i % 3 == 0 ? ArmorSets.applyColor(armorSet.itemBlue, onBlueTeam) : armorSet.itemBlue)
+                    .name(onBlueTeam ? ChatColor.BLUE + armorSet.name : ChatColor.RED + armorSet.name)
+                    .flags(ItemFlag.HIDE_ENCHANTS);
+            List<String> lore = new ArrayList<>();
+            lore.add(armorDescription);
+            lore.add("");
+            if (selectedArmorSet.contains(armorSet)) {
+                lore.add(ChatColor.GREEN + ">>> ACTIVE <<<");
+                builder.enchant(Enchantment.OXYGEN, 1);
+            } else {
+                lore.add(ChatColor.YELLOW + "> Click to activate! <");
+            }
+            builder.lore(lore);
+            menu.setItem(
+                    xPosition,
+                    3,
+                    builder.get(),
+                    (n, e) -> {
+                        player.sendMessage(ChatColor.YELLOW + "Selected: " + ChatColor.GREEN + armorSet.name);
+                        if (armorSet == ArmorSets.SIMPLE_CHESTPLATE_MAGE || armorSet == ArmorSets.GREATER_CHESTPLATE_MAGE || armorSet == ArmorSets.MASTERWORK_CHESTPLATE_MAGE) {
+                            ArmorSets.setSelectedMage(player, armorSet);
+                        } else if (armorSet == ArmorSets.SIMPLE_CHESTPLATE_WARRIOR || armorSet == ArmorSets.GREATER_CHESTPLATE_WARRIOR || armorSet == ArmorSets.MASTERWORK_CHESTPLATE_WARRIOR) {
+                            ArmorSets.setSelectedWarrior(player, armorSet);
+                        } else if (armorSet == ArmorSets.SIMPLE_CHESTPLATE_PALADIN || armorSet == ArmorSets.GREATER_CHESTPLATE_PALADIN || armorSet == ArmorSets.MASTERWORK_CHESTPLATE_PALADIN) {
+                            ArmorSets.setSelectedPaladin(player, armorSet);
+                        } else if (armorSet == ArmorSets.SIMPLE_CHESTPLATE_SHAMAN || armorSet == ArmorSets.GREATER_CHESTPLATE_SHAMAN || armorSet == ArmorSets.MASTERWORK_CHESTPLATE_SHAMAN) {
+                            ArmorSets.setSelectedShaman(player, armorSet);
+                        }
+                        openArmorMenu(player, pageNumber);
+                    }
+            );
+            if (xPosition == 3) {
+                xPosition += 2;
+            } else {
+                xPosition++;
+            }
+        }
+
+        if (pageNumber == 1) {
+            menu.setItem(
+                    8,
+                    5,
+                    new ItemBuilder(Material.ARROW)
+                            .name(ChatColor.GREEN + "Next Page")
+                            .lore(ChatColor.YELLOW + "Page " + (pageNumber + 1))
+                            .get(),
+                    (n, e) -> openArmorMenu(player, pageNumber + 1));
+        } else if (pageNumber == 2) {
+            menu.setItem(
+                    0,
+                    5,
+                    new ItemBuilder(Material.ARROW)
+                            .name(ChatColor.GREEN + "Previous Page")
+                            .lore(ChatColor.YELLOW + "Page " + (pageNumber - 1))
+                            .get(),
+                    (n, e) -> openArmorMenu(player, pageNumber - 1));
+        }
+
+        menu.setItem(4, 5, MENU_BACK_PREGAME, (n, e) -> openMainMenu(player));
         menu.openForPlayer(player);
     }
 }

@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.events.WarlordsDeathEvent;
 import com.ebicep.warlords.util.ArmorManager;
+import com.ebicep.warlords.util.Classes;
 import com.ebicep.warlords.util.ItemBuilder;
 import com.ebicep.warlords.util.PacketUtils;
 import org.bukkit.*;
@@ -560,7 +561,7 @@ public class FlagManager implements Listener {
 
             renderedArmorStands.clear();
             for(Player p : affectedPlayers) {
-                ArmorManager.resetArmor(p, Warlords.getPlayer(p).getSpec(), Warlords.game.getPlayerTeam(p));
+                ArmorManager.resetArmor(p, Classes.getSelected(p));
                 p.getInventory().setItem(6, null);
             }
 

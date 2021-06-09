@@ -8,7 +8,7 @@ public class Defender extends AbstractWarrior {
 
     public Defender(Player player) {
         super(player, 7400, 305, 10,
-                new Strike("Wounding Strike Defender", -498, -667, 0, 100, 20, 200,
+                new Strike("Wounding Strike", -498, -667, 0, 100, 20, 200,
                         "§7Strike the targeted enemy player,\n" +
                                 "§7causing §c498 §7- §c667 §7damage\n" +
                                 "§7and §cwounding §7them for §63 §7seconds.\n" +

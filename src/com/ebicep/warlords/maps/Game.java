@@ -2,10 +2,6 @@ package com.ebicep.warlords.maps;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
-import com.ebicep.warlords.classes.PlayerClass;
-import com.ebicep.warlords.classes.mage.AbstractMage;
-import com.ebicep.warlords.classes.paladin.AbstractPaladin;
-import com.ebicep.warlords.classes.warrior.AbstractWarrior;
 import com.ebicep.warlords.powerups.PowerupManager;
 import com.ebicep.warlords.util.*;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -13,22 +9,23 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.minecraft.server.v1_8_R3.EntityLiving;
 import org.apache.commons.lang.Validate;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
+import org.bukkit.Sound;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public class Game implements Runnable {
 
@@ -148,7 +145,7 @@ public class Game implements Runnable {
 
                     game.timer++;
                     //TESTING
-                    return GAME;
+                    //return GAME;
 
                 } else {
                     game.timer = 0;
@@ -177,7 +174,7 @@ public class Game implements Runnable {
 
                     redTeam.add(Warlords.getPlayer(p));
 
-                    ArmorManager.resetArmor(p, Warlords.getPlayer(p).getSpec(), Warlords.game.getPlayerTeam(p));
+                    ArmorManager.resetArmor(p, selectedClass);
 
                     p.setGameMode(GameMode.ADVENTURE);
 
@@ -194,7 +191,7 @@ public class Game implements Runnable {
 
                     blueTeam.add(Warlords.getPlayer(p));
 
-                    ArmorManager.resetArmor(p, Warlords.getPlayer(p).getSpec(), Warlords.game.getPlayerTeam(p));
+                    ArmorManager.resetArmor(p, selectedClass);
 
                     p.setGameMode(GameMode.ADVENTURE);
 
@@ -205,8 +202,8 @@ public class Game implements Runnable {
 
                 for (WarlordsPlayer value : Warlords.getPlayers().values()) {
                     value.getPlayer().setMaxHealth(40);
-                    value.getPlayer().setLevel((int) value.getMaxEnergy());
                     value.getPlayer().getInventory().clear();
+                    value.getPlayer().closeInventory();
                     value.assignItemLore();
                     System.out.println("updated scoreboard for " + value.getName());
                     value.setScoreboard(new CustomScoreboard(value, blueTeam, redTeam, game));
@@ -232,7 +229,6 @@ public class Game implements Runnable {
                 if (game.timer <= 10 * 20) {
                     if (game.timer == 10 * 20) {
                         Gates.changeGates(game.map, true);
-                        // Enable abilities
                         sendMessageToAllGamePlayer(game, ChatColor.YELLOW + "Gates opened! " + ChatColor.RED + "FIGHT!", false);
 
                         for (Player player1 : game.cachedTeamBlue) {
