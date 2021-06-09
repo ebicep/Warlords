@@ -20,9 +20,9 @@ import java.util.List;
 public class Boulder extends AbstractAbility {
 
     public Boulder() {
-        super("Boulder", -588, -877, 8, 80, 15, 175,
+        super("Boulder", -490, -731, 8, 80, 15, 175,
                 "§7Launch a giant boulder that shatters\n" +
-                        "§7and deals §c%dynamic.value% §7- §c%dynamic.value% §7damage\n" +
+                        "§7and deals §c490 §7- §c731 §7damage\n" +
                         "§7to all enemies near the impact point\n" +
                         "§7and knocks them back slightly.");
     }
@@ -100,7 +100,7 @@ public class Boulder extends AbstractAbility {
                                     player1.playSound(newLoc, "shaman.boulder.impact", 2, 1);
                                 }
 
-                                final Vector v = entity.getLocation().toVector().subtract(location.toVector()).normalize().multiply(0.9).setY(0.15);
+                                final Vector v = entity.getLocation().toVector().subtract(location.toVector()).normalize().multiply(0.9).setY(0.2);
                                 entity.setVelocity(v);
 
                                 Warlords.getPlayer((Player) entity).addHealth(Warlords.getPlayer(player), name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
@@ -117,7 +117,7 @@ public class Boulder extends AbstractAbility {
                         if (entity2 instanceof Player) {
                             Player nearPlayer = (Player) entity2;
                             if (nearPlayer.getGameMode() != GameMode.SPECTATOR) {
-                                final Vector v = nearPlayer.getLocation().toVector().subtract(newLoc.toVector()).normalize().multiply(0.9).setY(0.15);
+                                final Vector v = nearPlayer.getLocation().toVector().subtract(newLoc.toVector()).normalize().multiply(0.9).setY(0.2);
                                 nearPlayer.setVelocity(v);
 
                                 Warlords.getPlayer(nearPlayer).addHealth(Warlords.getPlayer(player), name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);

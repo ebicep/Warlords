@@ -10,7 +10,7 @@ public class Crusader extends AbstractPaladin {
         super(player, 6850, 305, 20,
                 new Strike("Crusader's Strike", -326, -441, 0, 90, 25, 175,
                         "§7Strike the targeted enemy player,\n" +
-                                "§7causing §c%dynamic value% §7- §c%dynamic.value% damage\n" +
+                                "§7causing §c326 §7- §c441 damage\n" +
                                 "§7and restoring §e24 §7energy to two nearby\n" +
                                 "§7within §e10 §7blocks."),
 
@@ -26,6 +26,7 @@ public class Crusader extends AbstractPaladin {
                         "§7Radiate with holy energy, healing\n" +
                         "§7yourself and all nearby allies for\n" +
                         "§a582 §7- §a760 §7health."),
+
                 new InspiringPresence());
     }
 

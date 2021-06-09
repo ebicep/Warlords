@@ -26,9 +26,9 @@ public class FallenSouls extends AbstractAbility {
     private static final float fallenSoulSpeed = 2.0f;
 
     public FallenSouls() {
-        super("Fallen Souls", -197, -254, 0, 55, 20, 180,
+        super("Fallen Souls", -164, -212, 0, 55, 20, 180,
                 "§7Summon a wave of fallen souls, dealing\n" +
-                        "§c%dynamic.value% §7- §c%dynamic.value% §7damage to all enemies they\n" +
+                        "§c164 §7- §c212 §7damage to all enemies they\n" +
                         "§7pass through. Each target hit reduces the\n" +
                         "§7cooldown of Spirit Link by §62 §7seconds.");
     }

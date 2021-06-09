@@ -48,8 +48,8 @@ public class DamageHealCircle {
         this.circle = new CircleEffect(Warlords.game, Warlords.game.getPlayerTeam(player), location, radius);
         if (name.contains("Healing Rain")) {
             this.circle.addEffect(new CircumferenceEffect(ParticleEffect.VILLAGER_HAPPY, ParticleEffect.REDSTONE));
-            this.circle.addEffect(new AreaEffect(5, ParticleEffect.CLOUD).particlesPerSurface(0.1));
-            this.circle.addEffect(new AreaEffect(5, ParticleEffect.DRIP_WATER).particlesPerSurface(0.1));
+            this.circle.addEffect(new AreaEffect(5, ParticleEffect.CLOUD).particlesPerSurface(0.05));
+            this.circle.addEffect(new AreaEffect(5, ParticleEffect.DRIP_WATER).particlesPerSurface(0.05));
         } else if (name.equals("Consecrate")) {
             this.circle.addEffect(new CircumferenceEffect(ParticleEffect.VILLAGER_HAPPY, ParticleEffect.REDSTONE));
             this.circle.addEffect(new DoubleLineEffect(ParticleEffect.SPELL));

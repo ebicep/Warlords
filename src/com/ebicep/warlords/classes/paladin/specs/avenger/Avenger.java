@@ -8,9 +8,9 @@ public class Avenger extends AbstractPaladin {
 
     public Avenger(Player player) {
         super(player, 6300, 305, 0,
-                new Strike("Avenger's Strike", -431, -582, 0, 90, 25, 185,
+                new Strike("Avenger's Strike", -359, -485, 0, 90, 25, 185,
                         "§7Strike the targeted enemy player,\n" +
-                        "§7causing §c%dynamic.value% §7- §c%dynamic.value% §7damage\n" +
+                        "§7causing §c359 §7- §c485 §7damage\n" +
                         "§7and removing §e6 §7energy."),
 
                 new Consecrate(-158, -214, 50, 20, 175),

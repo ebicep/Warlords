@@ -15,12 +15,12 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 public class OrbsOfLife extends AbstractAbility {
 
     public OrbsOfLife() {
-        super("Orbs of Life", 302, 504, 20, 20, 0, 0,
+        super("Orbs of Life", 252, 420, 20, 20, 0, 0,
                 "§7Striking and hitting enemies with\n" +
                 "§7abilities causes them to drop an orb of\n" +
                 "§7life that lasts §68 §7seconds, restoring\n" +
-                "§a%dynamic.value% §7health to the ally that pick it up.\n" +
-                "§7Other nearby allies recover §a%dynamic.value% §7health.\n" +
+                "§a420 §7health to the ally that pick it up.\n" +
+                "§7Other nearby allies recover §a252 §7health.\n" +
                 "§7Lasts §613.2 §7seconds.");
     }
 

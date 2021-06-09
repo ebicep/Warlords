@@ -16,7 +16,7 @@ public class LightInfusion extends AbstractAbility {
     @Override
     public void onActivate(Player player) {
         WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
-        warlordsPlayer.getSpeed().changeCurrentSpeed("Infusion", 40, 3 * 20);
+        warlordsPlayer.getSpeed().changeCurrentSpeed("Infusion", 40, 3 * 20, "BASE");
         warlordsPlayer.setInfusion(3 * 20);
         warlordsPlayer.subtractEnergy(energyCost);
 
