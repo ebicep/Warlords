@@ -29,7 +29,6 @@ public class PowerupManager extends BukkitRunnable {
         }
     }
 
-
     @Override
     public void run() {
         for (AbstractPowerUp powerUp : powerUps) {

@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static com.ebicep.warlords.menu.GameMenu.openMainMenu;
+import static com.ebicep.warlords.menu.GameMenu.openTeamMenu;
 
 public class WarlordsEvents implements Listener {
 
@@ -207,7 +208,7 @@ public class WarlordsEvents implements Listener {
                 openMainMenu(player);
             } else if (itemHeld.getType() == Material.NOTE_BLOCK) {
                 //team selector
-                player.sendMessage("this does jack shit right now :D");
+                openTeamMenu(player);
             }
 
 

@@ -55,12 +55,12 @@ public class Game implements Runnable {
                     int total = game.map.getCountdownTimerInTicks();
                     int remaining = total - game.timer;
                     for (Player player : game.cachedTeamBlue) {
-                        updateTimeLeft(player, remaining / 20, game);
-                        updatePlayers(player, players, game);
+                        game.updateTimeLeft(player, remaining / 20);
+                        game.updatePlayers(player, players, game);
                     }
                     for (Player player : game.cachedTeamRed) {
-                        updateTimeLeft(player, remaining, game);
-                        updatePlayers(player, players, game);
+                        game.updateTimeLeft(player, remaining);
+                        game.updatePlayers(player, players, game);
                     }
                     if (remaining % 20 == 0) {
                         int time = remaining / 20;
@@ -145,7 +145,7 @@ public class Game implements Runnable {
 
                     game.timer++;
                     //TESTING
-                    //return GAME;
+                    return GAME;
 
                 } else {
                     game.timer = 0;
@@ -159,63 +159,78 @@ public class Game implements Runnable {
             public void begin(Game game) {
                 game.flags = new FlagManager(game.map.redFlag, game.map.blueFlag);
                 game.timer = 0;
-                // Close config screen
-                List<WarlordsPlayer> blueTeam = new ArrayList<>();
-                List<WarlordsPlayer> redTeam = new ArrayList<>();
-
                 RemoveEntities removeEntities = new RemoveEntities();
                 removeEntities.onRemove();
 
-                for (Player p : game.cachedTeamRed) {
+                List<WarlordsPlayer> blueTeam = new ArrayList<>();
+                List<WarlordsPlayer> redTeam = new ArrayList<>();
 
-                    Classes selectedClass = Classes.getSelected(p);
-                    Weapons selectedWeapon = Weapons.getSelected(p);
-                    Warlords.addPlayer(new WarlordsPlayer(p, p.getName(), p.getUniqueId(), selectedClass.create.apply(p), selectedWeapon, false));
-
-                    redTeam.add(Warlords.getPlayer(p));
-
-                    ArmorManager.resetArmor(p, selectedClass);
-
-                    p.setGameMode(GameMode.ADVENTURE);
-
-                    ((EntityLiving) ((CraftPlayer) p).getHandle()).setAbsorptionHearts(0);
-
-                    System.out.println("Added " + p.getName());
+                //temp garbage bc of concurrent modification + teams final + see who is a retard and didnt pick teams (very intentional)
+                Set<Player> tempCachedTeamBlue = new HashSet<>();
+                Set<Player> tempCachedTeamRed = new HashSet<>();
+                Set<Player> tempPlayersNullTeam = new HashSet<>();
+                for (Player player : game.cachedTeamBlue) {
+                    Team team = Team.getSelected(player);
+                    if (team == Team.RED) {
+                        tempCachedTeamRed.add(player);
+                    } else if (team == Team.BLUE) {
+                        tempCachedTeamBlue.add(player);
+                    } else {
+                        tempPlayersNullTeam.add(player);
+                    }
+                }
+                for (Player player : game.cachedTeamRed) {
+                    Team team = Team.getSelected(player);
+                    if (team == Team.RED) {
+                        tempCachedTeamRed.add(player);
+                    } else if (team == Team.BLUE) {
+                        tempCachedTeamBlue.add(player);
+                    } else {
+                        tempPlayersNullTeam.add(player);
+                    }
                 }
 
-                for (Player p : game.cachedTeamBlue) {
+                game.cachedTeamBlue.clear();
+                for (Player player : tempCachedTeamBlue) {
+                    game.addPlayer(player, true);
+                }
+                game.cachedTeamRed.clear();
+                for (Player player : tempCachedTeamRed) {
+                    game.addPlayer(player, false);
+                }
+                for (Player player : tempPlayersNullTeam) {
+                    Bukkit.broadcastMessage(player.getName() + " did not choose a team!");
+                    game.addPlayer(player, game.cachedTeamBlue.size() < game.cachedTeamRed.size());
+                }
 
+                for (Player p : game.cachedTeamRed) {
                     Classes selectedClass = Classes.getSelected(p);
                     Weapons selectedWeapon = Weapons.getSelected(p);
                     Warlords.addPlayer(new WarlordsPlayer(p, p.getName(), p.getUniqueId(), selectedClass.create.apply(p), selectedWeapon, false));
-
+                    redTeam.add(Warlords.getPlayer(p));
+                }
+                for (Player p : game.cachedTeamBlue) {
+                    Classes selectedClass = Classes.getSelected(p);
+                    Weapons selectedWeapon = Weapons.getSelected(p);
+                    Warlords.addPlayer(new WarlordsPlayer(p, p.getName(), p.getUniqueId(), selectedClass.create.apply(p), selectedWeapon, false));
                     blueTeam.add(Warlords.getPlayer(p));
-
-                    ArmorManager.resetArmor(p, selectedClass);
-
-                    p.setGameMode(GameMode.ADVENTURE);
-
-                    ((EntityLiving) ((CraftPlayer) p).getHandle()).setAbsorptionHearts(0);
-
-                    System.out.println("Added " + p.getName());
                 }
 
                 for (WarlordsPlayer value : Warlords.getPlayers().values()) {
-                    value.getPlayer().setMaxHealth(40);
-                    value.getPlayer().getInventory().clear();
-                    value.getPlayer().closeInventory();
+                    Player player = value.getPlayer();
+                    player.setGameMode(GameMode.ADVENTURE);
+                    ((EntityLiving) ((CraftPlayer) player).getHandle()).setAbsorptionHearts(0);
+                    player.setMaxHealth(40);
+                    player.getInventory().clear();
+                    player.closeInventory();
                     value.assignItemLore();
-                    System.out.println("updated scoreboard for " + value.getName());
                     value.setScoreboard(new CustomScoreboard(value, blueTeam, redTeam, game));
                 }
 
                 for (WarlordsPlayer value : Warlords.getPlayers().values()) {
                     value.getScoreboard().addHealths();
-                    System.out.println(value.getScoreboard());
                 }
 
-                System.out.println(blueTeam);
-                System.out.println(redTeam);
 
             }
 
@@ -457,37 +472,6 @@ public class Game implements Runnable {
 
         public abstract void begin(Game game);
 
-        public void updatePlayers(Player player, int players, Game game) {
-            SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
-            String dateString = format.format(new Date());
-            Scoreboard scoreboard = player.getScoreboard();
-            for (String entry : scoreboard.getEntries()) {
-                String entryUnformatted = ChatColor.stripColor(entry);
-                if (entryUnformatted.contains("Players")) {
-                    scoreboard.resetScores(entry);
-                    scoreboard.getObjective(dateString).getScore(ChatColor.WHITE + "Players: " + ChatColor.GREEN + players + "/" + game.getMap().getMaxPlayers()).setScore(10);
-                }
-            }
-        }
-
-        public void updateTimeLeft(Player player, int time, Game game) {
-            SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
-            String dateString = format.format(new Date());
-            Scoreboard scoreboard = player.getScoreboard();
-            for (String entry : scoreboard.getEntries()) {
-                String entryUnformatted = ChatColor.stripColor(entry);
-                if (entryUnformatted.contains("Starting in")) {
-                    scoreboard.resetScores(entry);
-                    if (time < 10) {
-                        scoreboard.getObjective(dateString).getScore(ChatColor.WHITE + "Starting in: " + ChatColor.GREEN + "00:0" + time + ChatColor.WHITE + " to").setScore(8);
-                    } else {
-                        scoreboard.getObjective(dateString).getScore(ChatColor.WHITE + "Starting in: " + ChatColor.GREEN + "00:" + time + ChatColor.WHITE + " to").setScore(8);
-
-                    }
-                }
-            }
-        }
-
         public void sendMessageToAllGamePlayer(Game game, String message, boolean centered) {
             for (Player p : game.players.keySet()) {
                 if (centered) {
@@ -645,11 +629,11 @@ public class Game implements Runnable {
         switch(team) {
             case BLUE:
                 this.cachedTeamBlue.add(player);
-                player.teleport(this.map.blueLobbySpawnPoint);
+                //player.teleport(this.map.blueLobbySpawnPoint);
                 break;
             case RED:
                 this.cachedTeamRed.add(player);
-                player.teleport(this.map.redLobbySpawnPoint);
+                //player.teleport(this.map.redLobbySpawnPoint);
                 break;
         }
     }
@@ -666,6 +650,7 @@ public class Game implements Runnable {
         } else {
             this.addPlayer(player, Team.RED);
         }
+        ArmorManager.resetArmor(player, Classes.getSelected(player));
     }
 
     public void removePlayer(Player player) {
@@ -722,14 +707,59 @@ public class Game implements Runnable {
         sideBar.getScore(ChatColor.WHITE + "allow time for ").setScore(7);
         sideBar.getScore(ChatColor.WHITE + "additional players").setScore(6);
         sideBar.getScore("   ").setScore(5);
-        //sideBar.getScore(ChatColor.GOLD + "Lv90 " + warlordsPlayer.getSpec().getClassName()).setScore(4);
-        //sideBar.getScore(ChatColor.WHITE + "Spec: " + ChatColor.GREEN + warlordsPlayer.getSpec().getClass().getSimpleName()).setScore(3);
+        sideBar.getScore(ChatColor.GOLD + "Lv90 " + Classes.getClassesGroup(Classes.getSelected(player)).name).setScore(4);
+        sideBar.getScore(ChatColor.WHITE + "Spec: " + ChatColor.GREEN + Classes.getSelected(player).name).setScore(3);
         sideBar.getScore("    ").setScore(2);
         sideBar.getScore(ChatColor.YELLOW + "WL 2.0 master_b-v0.0.3 ").setScore(1);
 
         player.setScoreboard(board);
     }
 
+    public void updateClass(Player player) {
+        SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
+        String dateString = format.format(new Date());
+        Scoreboard scoreboard = player.getScoreboard();
+        for (String entry : scoreboard.getEntries()) {
+            String entryUnformatted = ChatColor.stripColor(entry);
+            if (entryUnformatted.contains("Lv90")) {
+                scoreboard.resetScores(entry);
+                scoreboard.getObjective(dateString).getScore(ChatColor.GOLD + "Lv90 " + Classes.getClassesGroup(Classes.getSelected(player)).name).setScore(4);
+            } else if (entryUnformatted.contains("Spec:")) {
+                scoreboard.resetScores(entry);
+                scoreboard.getObjective(dateString).getScore(ChatColor.WHITE + "Spec: " + ChatColor.GREEN + Classes.getSelected(player).name).setScore(3);
+            }
+        }
+    }
+
+    public void updatePlayers(Player player, int players, Game game) {
+        SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
+        String dateString = format.format(new Date());
+        Scoreboard scoreboard = player.getScoreboard();
+        for (String entry : scoreboard.getEntries()) {
+            String entryUnformatted = ChatColor.stripColor(entry);
+            if (entryUnformatted.contains("Players")) {
+                scoreboard.resetScores(entry);
+                scoreboard.getObjective(dateString).getScore(ChatColor.WHITE + "Players: " + ChatColor.GREEN + players + "/" + game.getMap().getMaxPlayers()).setScore(10);
+            }
+        }
+    }
+
+    public void updateTimeLeft(Player player, int time) {
+        SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
+        String dateString = format.format(new Date());
+        Scoreboard scoreboard = player.getScoreboard();
+        for (String entry : scoreboard.getEntries()) {
+            String entryUnformatted = ChatColor.stripColor(entry);
+            if (entryUnformatted.contains("Starting in")) {
+                scoreboard.resetScores(entry);
+                if (time / 20 < 10) {
+                    scoreboard.getObjective(dateString).getScore(ChatColor.WHITE + "Starting in: " + ChatColor.GREEN + "00:0" + time / 20 + ChatColor.WHITE + " to").setScore(8);
+                } else {
+                    scoreboard.getObjective(dateString).getScore(ChatColor.WHITE + "Starting in: " + ChatColor.GREEN + "00:" + time / 20 + ChatColor.WHITE + " to").setScore(8);
+                }
+            }
+        }
+    }
 
     @Override
     public void run() {

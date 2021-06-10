@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.util.ClassesSkillBoosts.*;
 
@@ -102,6 +103,10 @@ public enum Classes {
         this.description = description;
         this.icon = icon;
         this.skillBoosts = Arrays.asList(skillBoosts);
+    }
+
+    public static ClassesGroup getClassesGroup(Classes selected) {
+        return Arrays.stream(ClassesGroup.values()).filter(o -> o.subclasses.contains(selected)).collect(Collectors.toList()).get(0);
     }
 
     public static Classes getSelected(Player player) {

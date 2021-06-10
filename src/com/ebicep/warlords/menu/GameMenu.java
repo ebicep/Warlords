@@ -1,6 +1,7 @@
 package com.ebicep.warlords.menu;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.util.*;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -16,6 +17,7 @@ import java.util.List;
 import static com.ebicep.warlords.menu.Menu.ACTION_CLOSE_MENU;
 import static com.ebicep.warlords.util.ArmorManager.*;
 import static com.ebicep.warlords.util.Classes.*;
+import static com.ebicep.warlords.util.Settings.*;
 
 public class GameMenu {
     private static final ItemStack MENU_CLOSE = new ItemBuilder(Material.BARRIER)
@@ -36,6 +38,14 @@ public class GameMenu {
     private static final ItemStack MENU_BOOSTS = new ItemBuilder(Material.BOOKSHELF)
             .name(ChatColor.AQUA + "Weapon Skill Boost")
             .lore("§7Choose which of your skills you\n§7want your equipped weapon to boost.", "", "§eClick to change skill boost!")
+            .get();
+    private static final ItemStack MENU_SETTINGS = new ItemBuilder(Material.NETHER_STAR)
+            .name(ChatColor.AQUA + "Settings")
+            .lore("§7Allows you to toggle different settings\n§7options.", "", "§eClick to edit your settings.")
+            .get();
+    private static final ItemStack MENU_SETTINGS_PARTICLE_QUALITY = new ItemBuilder(Material.NETHER_STAR)
+            .name(ChatColor.GREEN + "Particle Quality")
+            .lore("§7Allows you to control, or\n§7disable, particles and the\n§7amount of them.")
             .get();
 
 
@@ -69,6 +79,7 @@ public class GameMenu {
         menu.setItem(1, 3, MENU_SKINS, (n, e) -> openWeaponMenu(player, 1));
         menu.setItem(3, 3, MENU_ARMOR_SETS, (n, e) -> openArmorMenu(player, 1));
         menu.setItem(5, 3, MENU_BOOSTS, (n, e) -> openSkillBoostMenu(player, selectedClass));
+        menu.setItem(7, 3, MENU_SETTINGS, (n, e) -> openSettingsMenu(player));
         menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
     }
@@ -77,7 +88,7 @@ public class GameMenu {
         Classes selectedClass = getSelected(player);
         Menu menu = new Menu(selectedGroup.name, 9 * 4);
         List<Classes> values = selectedGroup.subclasses;
-        for(int i = 0; i < values.size(); i++) {
+        for (int i = 0; i < values.size(); i++) {
             Classes subClass = values.get(i);
             ItemBuilder builder = new ItemBuilder(subClass.icon)
                     .name(ChatColor.GREEN + "Specialization: " + subClass.name)
@@ -85,7 +96,7 @@ public class GameMenu {
             List<String> lore = new ArrayList<>();
             lore.add(subClass.description);
             lore.add("");
-            if(subClass == selectedClass) {
+            if (subClass == selectedClass) {
                 lore.add(ChatColor.GREEN + ">>> ACTIVE <<<");
                 builder.enchant(Enchantment.OXYGEN, 1);
             } else {
@@ -99,6 +110,8 @@ public class GameMenu {
                     (n, e) -> {
                         player.sendMessage(ChatColor.WHITE + "Class: §6" + subClass);
                         setSelected(player, subClass);
+                        ArmorManager.resetArmor(player, subClass);
+                        Warlords.game.updateClass(player);
                         openClassMenu(player, selectedGroup);
                     }
             );
@@ -133,7 +146,7 @@ public class GameMenu {
                     1,
                     builder.get(),
                     (n, e) -> {
-                        player.sendMessage(ChatColor.GREEN + "Your have changed your weapon boost to: §b" + subClass.name + "!");
+                        player.sendMessage(ChatColor.GREEN + "You have changed your weapon boost to: §b" + subClass.name + "!");
                         setSelectedBoost(player, subClass);
                         openSkillBoostMenu(player, selectedGroup);
                     }
@@ -165,7 +178,7 @@ public class GameMenu {
                     (i - (pageNumber - 1) * 21) / 7 + 1,
                     builder.get(),
                     (n, e) -> {
-                        player.sendMessage(ChatColor.GREEN + "Your have changed your weapon skin to: §b" + weapon.name + "!");
+                        player.sendMessage(ChatColor.GREEN + "You have changed your weapon skin to: §b" + weapon.name + "!");
                         Weapons.setSelected(player, weapon);
                         openWeaponMenu(player, pageNumber);
                     }
@@ -315,6 +328,105 @@ public class GameMenu {
         }
 
         menu.setItem(4, 5, MENU_BACK_PREGAME, (n, e) -> openMainMenu(player));
+        menu.openForPlayer(player);
+    }
+
+    public static void openSettingsMenu(Player player) {
+        Powerup selectedPowerup = Powerup.getSelected(player);
+        HotkeyMode selectedHotkeyMode = HotkeyMode.getSelected(player);
+
+        Menu menu = new Menu("Settings", 9 * 6);
+        menu.setItem(
+                1,
+                1,
+                new ItemBuilder(selectedPowerup.item)
+                        .name(Settings.powerupsName)
+                        .lore(Settings.powerupsDescription, "", selectedPowerup == Powerup.ENERGY ? ChatColor.GREEN + ">>> ACTIVE <<<" : ChatColor.YELLOW + "> Click to activate! <")
+                        .flags(ItemFlag.HIDE_ENCHANTS)
+                        .get(),
+                (n, e) -> {
+                    player.sendMessage(selectedPowerup == Powerup.DAMAGE ? ChatColor.GREEN + "You have enabled energy powerups!" : ChatColor.RED + "You have disabled energy powerups!");
+                    Powerup.setSelected(player, selectedPowerup == Powerup.DAMAGE ? Powerup.ENERGY : Powerup.DAMAGE);
+                    openSettingsMenu(player);
+                }
+        );
+        menu.setItem(
+                3,
+                1,
+                selectedHotkeyMode.item,
+                (n, e) -> {
+                    player.sendMessage(selectedHotkeyMode == HotkeyMode.NEW_MODE ? ChatColor.GREEN + "Hotkey Mode " + ChatColor.AQUA + "Classic " + ChatColor.GREEN + "enabled." : ChatColor.GREEN + "Hotkey Mode " + ChatColor.YELLOW + "NEW " + ChatColor.GREEN + "enabled.");
+                    HotkeyMode.setSelected(player, selectedHotkeyMode == HotkeyMode.NEW_MODE ? HotkeyMode.CLASSIC_MODE : HotkeyMode.NEW_MODE);
+                    openSettingsMenu(player);
+                }
+        );
+
+        menu.setItem(1, 3, MENU_SETTINGS_PARTICLE_QUALITY, (n, e) -> openParticleQualityMenu(player));
+        menu.setItem(4, 5, MENU_BACK_PREGAME, (n, e) -> openMainMenu(player));
+        menu.openForPlayer(player);
+    }
+
+    public static void openParticleQualityMenu(Player player) {
+        ParticleQuality selectedParticleQuality = ParticleQuality.getSelected(player);
+
+        Menu menu = new Menu("Particle Quality", 9 * 4);
+
+        ParticleQuality[] particleQualities = ParticleQuality.values();
+        for (int i = 0; i < particleQualities.length; i++) {
+            ParticleQuality particleQuality = particleQualities[i];
+
+            menu.setItem(
+                    i + 3,
+                    1,
+                    new ItemBuilder(particleQuality.item)
+                            .lore(particleQuality.description, "", selectedParticleQuality == particleQuality ? ChatColor.GREEN + "SELECTED" : ChatColor.YELLOW + "Click to select!")
+                            .flags(ItemFlag.HIDE_ENCHANTS)
+                            .get(),
+                    (n, e) -> {
+                        player.sendMessage(ChatColor.GREEN + "Particle quality set to " + particleQuality.name());
+                        ParticleQuality.setSelected(player, particleQuality);
+                        openParticleQualityMenu(player);
+                    }
+            );
+        }
+        menu.setItem(4, 3, MENU_BACK_PREGAME, (n, e) -> openMainMenu(player));
+        menu.openForPlayer(player);
+    }
+
+    public static void openTeamMenu(Player player) {
+        Team selectedTeam = Team.getSelected(player);
+        Menu menu = new Menu("Team Selector", 9 * 4);
+        List<Team> values = new ArrayList<>(Arrays.asList(Team.values()));
+        for (int i = 0; i < values.size(); i++) {
+            Team team = values.get(i);
+            ItemBuilder builder = new ItemBuilder(team.item)
+                    .name(team.teamColor() + team.name)
+                    .flags(ItemFlag.HIDE_ENCHANTS);
+            List<String> lore = new ArrayList<>();
+            if (team == selectedTeam) {
+                lore.add(ChatColor.GREEN + "Currently selected!");
+                builder.enchant(Enchantment.OXYGEN, 1);
+            } else {
+                lore.add(ChatColor.YELLOW + "Click to select!");
+            }
+            builder.lore(lore);
+            menu.setItem(
+                    9 / 2 - values.size() % 2 + i * 2 - 1,
+                    1,
+                    builder.get(),
+                    (n, e) -> {
+                        if (selectedTeam != team) {
+                            player.sendMessage(ChatColor.GREEN + "You have joined the " + team.teamColor() + team.name + ChatColor.GREEN + " team!");
+                            Warlords.game.removePlayer(player);
+                            Warlords.game.addPlayer(player, team == Team.BLUE);
+                            Team.setSelected(player, team);
+                        }
+                        openTeamMenu(player);
+                    }
+            );
+        }
+
+        menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
     }
 }
