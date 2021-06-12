@@ -161,11 +161,12 @@ public class Totem extends EntityArmorStand {
             Location standLocation = player.getLocation();
             standLocation.setYaw(0);
             standLocation.setY(Totem.getLocationUnderPlayer(player));
-            ArmorStand totemStand = player.getWorld().spawn(standLocation, ArmorStand.class);
+            ArmorStand totemStand = player.getWorld().spawn(standLocation.clone().add(0, -0.25, 0), ArmorStand.class);
             totemStand.setVisible(false);
             totemStand.setGravity(false);
             totemStand.setMarker(true);
             totemStand.setHelmet(new ItemStack(Material.JUNGLE_FENCE_GATE));
+            setDelayedDamage(0);
 
             for (Player player1 : player.getWorld().getPlayers()) {
                 player1.playSound(standLocation, "shaman.chainlightning.impact", 2, 2);
@@ -205,11 +206,12 @@ public class Totem extends EntityArmorStand {
                             player.removeMetadata("TOTEM", Warlords.getInstance());
 
                             if(!isPlayerInRadius) {
-                                player.sendMessage("§7You walked outside the radius");
+                                player.sendMessage("§7You walked outside your §dDeath's Debt §7radius");
                             } else {
                                 player.sendMessage("§c\u00AB §2Spirit's Respite §7delayed §c" + -Math.round(getDelayedDamage()) + " §7damage. §dYour debt must now be paid.");
                             }
                             circle.replaceEffects(e -> e instanceof DoubleLineEffect, new DoubleLineEffect(ParticleEffect.SPELL_WITCH));
+                            circle.setRadius(7);
                         }
 
                         int damageTick = -secondsLeft;
@@ -229,7 +231,7 @@ public class Totem extends EntityArmorStand {
                                     TotemSpiritguard.this.getCritMultiplier()
                             );
                             // Teammate heal
-                            List<Entity> near = deathsDebtTotem.getTotemArmorStand().getNearbyEntities(20.0D, 4.0D, 20.0D);
+                            List<Entity> near = deathsDebtTotem.getTotemArmorStand().getNearbyEntities(14.0D, 8.0D, 14.0D);
                             near = Utils.filterOnlyTeammates(near, deathsDebtTotem.getOwner().getPlayer());
                             for (Entity entity : near) {
                                 if (entity instanceof Player) {
@@ -245,7 +247,7 @@ public class Totem extends EntityArmorStand {
                         } else {
                             // Enemy damage
                             player.getWorld().spigot().strikeLightningEffect(standLocation, false);
-                            List<Entity> near = deathsDebtTotem.getTotemArmorStand().getNearbyEntities(20.0D, 6.0D, 20.0D);
+                            List<Entity> near = deathsDebtTotem.getTotemArmorStand().getNearbyEntities(14.0D, 7.0D, 14.0D);
                             near = Utils.filterOutTeammates(near, deathsDebtTotem.getOwner().getPlayer());
                             for (Entity entity : near) {
                                 if (entity instanceof Player) {
@@ -318,6 +320,7 @@ public class Totem extends EntityArmorStand {
             for (Player player1 : player.getWorld().getPlayers()) {
                 player1.playSound(player.getLocation(), "shaman.totem.activation", 2, 1);
             }
+
 
             new BukkitRunnable() {
 

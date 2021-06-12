@@ -119,7 +119,9 @@ public class WarlordsEvents implements Listener {
                 WarlordsPlayer warlordsPlayerVictim = Warlords.getPlayer(victim);
                 if (!Warlords.game.onSameTeam(warlordsPlayerAttacker, warlordsPlayerVictim)) {
                     if (attacker.getInventory().getHeldItemSlot() == 0 && warlordsPlayerAttacker.getHitCooldown() == 0) {
-                        attacker.playSound(victim.getLocation(), Sound.HURT_FLESH, 1, 1);
+                        for (Player player1 : attacker.getWorld().getPlayers()) {
+                            player1.playSound(victim.getLocation(), Sound.HURT_FLESH, 1, 1);
+                        }
                         warlordsPlayerAttacker.setHitCooldown(12);
                         warlordsPlayerAttacker.subtractEnergy(warlordsPlayerAttacker.getSpec().getEnergyOnHit() * -1);
                         if (warlordsPlayerAttacker.getSpec() instanceof Spiritguard && warlordsPlayerAttacker.getSoulBindCooldown() != 0) {

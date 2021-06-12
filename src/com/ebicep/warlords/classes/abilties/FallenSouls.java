@@ -83,24 +83,24 @@ public class FallenSouls extends AbstractAbility {
                 damageNearByPlayers(nearMiddle, player, fallenSoul);
                 damageNearByPlayers(nearRight, player, fallenSoul);
 
-                ParticleEffect.SPELL_WITCH.display(0, 0, 0, 1F, 1, leftSoul.getLocation().add(0, 2, 0), 500);
-                ParticleEffect.SPELL_WITCH.display(0, 0, 0, 1F, 1, middleSoul.getLocation().add(0, 2, 0), 500);
-                ParticleEffect.SPELL_WITCH.display(0, 0, 0, 1F, 1, rightSoul.getLocation().add(0, 2, 0), 500);
+                ParticleEffect.SPELL_WITCH.display(0, 0, 0, 0.001F, 1, leftSoul.getLocation().add(0, 2, 0), 500);
+                ParticleEffect.SPELL_WITCH.display(0, 0, 0, 0.001F, 1, middleSoul.getLocation().add(0, 2, 0), 500);
+                ParticleEffect.SPELL_WITCH.display(0, 0, 0, 0.001F, 1, rightSoul.getLocation().add(0, 2, 0), 500);
 
                 if (!fallenSoul.isLeftRemoved() && leftSoul.getLocation().getWorld().getBlockAt(leftSoul.getLocation().clone().add(0, 2, 0)).getType() != Material.AIR || fallenSoul.getFallenSoulLeft().getTicksLived() > 50 / fallenSoulSpeed * 1.2) {
-                    ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.5F, 1, leftSoul.getLocation().add(0, 1, 0), 500);
+                    ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.7F, 1, leftSoul.getLocation().add(0, 1, 0), 500);
                     fallenSoul.getFallenSoulLeft().remove();
                     fallenSoul.setLeftRemoved(true);
                 }
 
                 if (!fallenSoul.isMiddleRemoved() && middleSoul.getLocation().getWorld().getBlockAt(middleSoul.getLocation().clone().add(0, 2, 0)).getType() != Material.AIR || fallenSoul.getFallenSoulMiddle().getTicksLived() > 50 / fallenSoulSpeed * 1.2) {
-                    ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.5F, 1, middleSoul.getLocation().add(0, 1, 0), 500);
+                    ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.7F, 1, middleSoul.getLocation().add(0, 1, 0), 500);
                     fallenSoul.getFallenSoulMiddle().remove();
                     fallenSoul.setMiddleRemoved(true);
                 }
 
                 if (!fallenSoul.isRightRemoved() && rightSoul.getLocation().getWorld().getBlockAt(rightSoul.getLocation().clone().add(0, 2, 0)).getType() != Material.AIR || fallenSoul.getFallenSoulRight().getTicksLived() > 50 / fallenSoulSpeed * 1.2) {
-                    ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.5F, 1, rightSoul.getLocation().add(0, 1, 0), 500);
+                    ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.7F, 1, rightSoul.getLocation().add(0, 1, 0), 500);
                     fallenSoul.getFallenSoulRight().remove();
                     fallenSoul.setRightRemoved(true);
                 }

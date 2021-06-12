@@ -31,14 +31,14 @@ public class Boulder extends AbstractAbility {
     public void onActivate(Player player) {
 
         Location location = player.getLocation();
-        Vector speed = player.getLocation().getDirection().multiply(0.475);
-        ArmorStand stand = (ArmorStand) location.getWorld().spawnEntity(location.clone().add(0, 0, 0), EntityType.ARMOR_STAND);
+        Vector speed = player.getLocation().getDirection().multiply(0.49);
+        ArmorStand stand = (ArmorStand) location.getWorld().spawnEntity(location.clone().add(0, 0.25, 0), EntityType.ARMOR_STAND);
         stand.setHelmet(new ItemStack(Material.LONG_GRASS, 1, (short) 2));
         stand.setCustomName("Boulder");
         stand.setCustomNameVisible(false);
         stand.setGravity(false);
         stand.setVisible(false);
-        stand.setMarker(true);
+        stand.setMarker(false);
 
         Warlords.getPlayer(player).subtractEnergy(energyCost);
 
@@ -59,7 +59,7 @@ public class Boulder extends AbstractAbility {
                     return;
                 }
 
-                speed.add(new Vector(0, -0.0075, 0));
+                speed.add(new Vector(0, -0.0071, 0));
                 Location newLoc = stand.getLocation();
                 newLoc.add(speed);
                 stand.teleport(newLoc);
@@ -100,7 +100,7 @@ public class Boulder extends AbstractAbility {
                                     player1.playSound(newLoc, "shaman.boulder.impact", 2, 1);
                                 }
 
-                                final Vector v = entity.getLocation().toVector().subtract(location.toVector()).normalize().multiply(0.9).setY(0.2);
+                                final Vector v = entity.getLocation().toVector().subtract(location.toVector()).normalize().multiply(1.05).setY(0.3);
                                 entity.setVelocity(v);
 
                                 Warlords.getPlayer((Player) entity).addHealth(Warlords.getPlayer(player), name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
@@ -117,7 +117,7 @@ public class Boulder extends AbstractAbility {
                         if (entity2 instanceof Player) {
                             Player nearPlayer = (Player) entity2;
                             if (nearPlayer.getGameMode() != GameMode.SPECTATOR) {
-                                final Vector v = nearPlayer.getLocation().toVector().subtract(newLoc.toVector()).normalize().multiply(0.9).setY(0.2);
+                                final Vector v = nearPlayer.getLocation().toVector().subtract(newLoc.toVector()).normalize().multiply(1.05).setY(0.3);
                                 nearPlayer.setVelocity(v);
 
                                 Warlords.getPlayer(nearPlayer).addHealth(Warlords.getPlayer(player), name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);

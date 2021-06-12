@@ -36,7 +36,7 @@ public class DamageHealCircle {
         this.player = player;
         this.location = location;
         if (!location.getWorld().getBlockAt(location).getType().isSolid()) {
-            location.add(0, -1, 0);
+            location.add(0, 0, 0);
         }
         this.radius = radius;
         this.duration = duration;

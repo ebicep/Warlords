@@ -94,7 +94,7 @@ public class Projectile extends AbstractAbility {
                                             customProjectile.getBall().getCritMultiplier()
                                     );
 
-                                    List<Entity> near = victim.getNearbyEntities(3.5D, 3.5D, 3.5D);
+                                    List<Entity> near = victim.getNearbyEntities(3.25D, 3.25D, 3.25D);
                                     near = Utils.filterOutTeammates(near, customProjectile.getShooter());
                                     for (Entity nearEntity : near) {
                                         if (nearEntity instanceof Player && ((Player) nearEntity).getGameMode() != GameMode.SPECTATOR && ((Player) nearEntity).getGameMode() != GameMode.SPECTATOR) {
@@ -117,7 +117,7 @@ public class Projectile extends AbstractAbility {
                                             customProjectile.getBall().getCritChance(),
                                             customProjectile.getBall().getCritMultiplier());
 
-                                    List<Entity> near = victim.getNearbyEntities(3.5D, 3.5D, 3.5D);
+                                    List<Entity> near = victim.getNearbyEntities(3.25D, 3.25D, 3.25D);
                                     near = Utils.filterOutTeammates(near, customProjectile.getShooter());
                                     for (Entity nearEntity : near) {
                                         if (nearEntity instanceof Player && ((Player) nearEntity).getGameMode() != GameMode.SPECTATOR) {

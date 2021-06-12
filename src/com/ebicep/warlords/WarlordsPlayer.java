@@ -711,7 +711,7 @@ public class WarlordsPlayer {
                         attacker.getPlayer().sendMessage(ChatColor.GREEN + "\u00BB" + ChatColor.GRAY + " Your Intervene hit " + intervenedBy.getName() + " for " + ChatColor.RED + "§l" + (int) damageHealValue * -1 + "! " + ChatColor.GRAY + "critical damage.");
 
                         for (Player player1 : player.getWorld().getPlayers()) {
-                            player1.playSound(player.getLocation(), "warrior.intervene.block3", 2, 1);
+                            player1.playSound(player.getLocation(), "warrior.intervene.block.3", 2, 1);
                         }
                     } else {
                         intervenedBy.getPlayer().sendMessage("" + ChatColor.RED + "\u00AB" + ChatColor.GRAY + " " + attacker.getName() + "'s Intervene hit you for " + ChatColor.RED + (int) damageHealValue * -1 + ChatColor.GRAY + " damage.");
@@ -998,7 +998,7 @@ public class WarlordsPlayer {
                     }
                     if (windfuryActivate < 35) {
                         for (Player player1 : Bukkit.getOnlinePlayers()) {
-                            player1.playSound(player.getLocation(), "shaman.windfuryweapon.impact", 1.5F, 1);
+                            player1.playSound(player.getLocation(), "shaman.windfuryweapon.impact", 2, 1);
                         }
                         addHealth(attacker, "Windfury Weapon", min, max, 25, 235);
                         if (health > 0)
@@ -1014,7 +1014,7 @@ public class WarlordsPlayer {
                         }
 
                         for (Player player1 : player.getWorld().getPlayers()) {
-                            player1.playSound(player.getLocation(), "shaman.earthlivingweapon.impact", 1, 1);
+                            player1.playSound(player.getLocation(), "shaman.earthlivingweapon.impact", 2, 1);
                         }
 
                         attacker.setFirstProc(false);
