@@ -145,7 +145,7 @@ public class Game implements Runnable {
 
                     game.timer++;
                     //TESTING
-                    //return GAME;
+                    return GAME;
 
                 } else {
                     game.timer = 0;
@@ -335,6 +335,7 @@ public class Game implements Runnable {
                 }
 
                 List<WarlordsPlayer> players = new ArrayList<>(Warlords.getPlayers().values());
+
                 sendMessageToAllGamePlayer(game, "" + ChatColor.GREEN + ChatColor.BOLD + "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬", false);
                 sendMessageToAllGamePlayer(game, "" + ChatColor.WHITE + ChatColor.BOLD + "  Warlords", true);
 
@@ -356,11 +357,7 @@ public class Game implements Runnable {
                                 ChatColor.LIGHT_PURPLE + "Total Flag Returns (everyone): " + ChatColor.GOLD + Utils.addCommaAndRound((float) players.stream().mapToDouble(WarlordsPlayer::getFlagsCaptured).sum())).create()));
                 sendCenteredHoverableMessageToAllGamePlayer(game, Collections.singletonList(mvp));
                 players = players.stream().sorted(Comparator.comparing(WarlordsPlayer::getTotalCapsAndReturns)).collect(Collectors.toList());
-                for (WarlordsPlayer player : players) {
-                    System.out.println(player.getName());
-                    System.out.println(player.getFlagsCaptured());
-                    System.out.println(player.getFlagsReturned());
-                }
+                Collections.reverse(players);
                 TextComponent playerMvp = new TextComponent(ChatColor.AQUA + players.get(0).getName());
                 playerMvp.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(
                         ChatColor.LIGHT_PURPLE + "Flag Captures: " + ChatColor.GOLD + players.get(0).getFlagsCaptured() + "\n" +
@@ -375,10 +372,11 @@ public class Game implements Runnable {
                                 ChatColor.GOLD + Utils.addCommaAndRound((float) players.stream().mapToDouble(WarlordsPlayer::getTotalDamage).sum())).create()));
                 sendCenteredHoverableMessageToAllGamePlayer(game, Collections.singletonList(totalDamage));
                 players = players.stream().sorted(Comparator.comparing(WarlordsPlayer::getTotalDamage)).collect(Collectors.toList());
+                Collections.reverse(players);
                 List<TextComponent> leaderboardPlayersDamage = new ArrayList<>();
                 for (int i = 0; i < players.size() && i < 3; i++) {
                     WarlordsPlayer warlordsPlayer = players.get(i);
-                    TextComponent player = new TextComponent(ChatColor.AQUA + warlordsPlayer.getName() + ChatColor.GRAY + ": " + ChatColor.GOLD + warlordsPlayer.getTotalHealing() + "k");
+                    TextComponent player = new TextComponent(ChatColor.AQUA + warlordsPlayer.getName() + ChatColor.GRAY + ": " + ChatColor.GOLD + getSimplifiedNumber((long) warlordsPlayer.getTotalDamage()));
                     player.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(
                             ChatColor.DARK_GRAY + "Lv" + ChatColor.GRAY + "90 " + ChatColor.GOLD + warlordsPlayer.getSpec().getClassName() + ChatColor.GREEN + " (" + warlordsPlayer.getSpec().getClass().getSimpleName() + ")").create()));
                     leaderboardPlayersDamage.add(player);
@@ -396,10 +394,11 @@ public class Game implements Runnable {
                                 ChatColor.GOLD + Utils.addCommaAndRound((float) players.stream().mapToDouble(WarlordsPlayer::getTotalHealing).sum())).create()));
                 sendCenteredHoverableMessageToAllGamePlayer(game, Collections.singletonList(totalHealing));
                 players = players.stream().sorted(Comparator.comparing(WarlordsPlayer::getTotalHealing)).collect(Collectors.toList());
+                Collections.reverse(players);
                 List<TextComponent> leaderboardPlayersHealing = new ArrayList<>();
                 for (int i = 0; i < players.size() && i < 3; i++) {
                     WarlordsPlayer warlordsPlayer = players.get(i);
-                    TextComponent player = new TextComponent(ChatColor.AQUA + warlordsPlayer.getName() + ChatColor.GRAY + ": " + ChatColor.GOLD + warlordsPlayer.getTotalHealing() + "k");
+                    TextComponent player = new TextComponent(ChatColor.AQUA + warlordsPlayer.getName() + ChatColor.GRAY + ": " + ChatColor.GOLD + getSimplifiedNumber((long) warlordsPlayer.getTotalHealing()));
                     player.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(
                             ChatColor.DARK_GRAY + "Lv" + ChatColor.GRAY + "90 " + ChatColor.GOLD + warlordsPlayer.getSpec().getClassName() + ChatColor.GREEN + " (" + warlordsPlayer.getSpec().getClass().getSimpleName() + ")").create()));
                     leaderboardPlayersHealing.add(player);
@@ -486,6 +485,32 @@ public class Game implements Runnable {
             for (Player p : game.players.keySet()) {
                 Utils.sendCenteredHoverableMessage(p, message);
             }
+        }
+
+        private static final NavigableMap<Long, String> suffixes = new TreeMap<>();
+
+        static {
+            suffixes.put(1_000L, "k");
+            suffixes.put(1_000_000L, "M");
+            suffixes.put(1_000_000_000L, "G");
+            suffixes.put(1_000_000_000_000L, "T");
+            suffixes.put(1_000_000_000_000_000L, "P");
+            suffixes.put(1_000_000_000_000_000_000L, "E");
+        }
+
+        public static String getSimplifiedNumber(long value) {
+            //Long.MIN_VALUE == -Long.MIN_VALUE so we need an adjustment here
+            if (value == Long.MIN_VALUE) return getSimplifiedNumber(Long.MIN_VALUE + 1);
+            if (value < 0) return "-" + getSimplifiedNumber(-value);
+            if (value < 1000) return Long.toString(value); //deal with easy case
+
+            Map.Entry<Long, String> e = suffixes.floorEntry(value);
+            Long divideBy = e.getKey();
+            String suffix = e.getValue();
+
+            long truncated = value / (divideBy / 10); //the number part of the output times 10
+            boolean hasDecimal = truncated < 100 && (truncated / 10d) != (truncated / 10);
+            return hasDecimal ? (truncated / 10d) + suffix : (truncated / 10) + suffix;
         }
     }
 
