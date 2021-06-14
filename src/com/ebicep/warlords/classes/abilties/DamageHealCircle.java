@@ -35,9 +35,6 @@ public class DamageHealCircle {
     public DamageHealCircle(Player player, Location location, int radius, int duration, int minDamage, int maxDamage, int critChance, int critMultiplier, String name) {
         this.player = player;
         this.location = location;
-        if (!location.getWorld().getBlockAt(location).getType().isSolid()) {
-            location.add(0, 0, 0);
-        }
         this.radius = radius;
         this.duration = duration;
         this.minDamage = minDamage;

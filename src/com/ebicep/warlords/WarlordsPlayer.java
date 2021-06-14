@@ -566,7 +566,7 @@ public class WarlordsPlayer {
             if (ability.isEmpty()) {
                 player.sendMessage("" + ChatColor.RED + "\u00AB" + ChatColor.GRAY + " You took " + ChatColor.RED + min * -1 + ChatColor.GRAY + " melee damage.");
                 regenTimer = 10;
-                if (health + min < 0) {
+                if (health + min <= 0) {
                     setUndyingArmyDead(false);
                     getPlayer().getInventory().remove(UndyingArmy.BONE);
 

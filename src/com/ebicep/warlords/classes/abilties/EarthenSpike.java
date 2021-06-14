@@ -67,10 +67,6 @@ public class EarthenSpike extends AbstractAbility {
                                 //moving diagonally
                                 if (Math.abs(target.getLocation().getX() - newLocation.getX()) >= Math.abs(target.getLocation().getZ() - newLocation.getZ())) {
 
-                                    for (Player player1 : player.getWorld().getPlayers()) {
-                                        player1.playSound(lastFallingBlock.getLocation(), "shaman.earthenspike.animation.a", 1.5F, 1);
-                                    }
-
                                     if (target.getLocation().getX() < newLocation.getX()) {
                                         newLocation.add(-1, 0, 0);
                                     } else {
@@ -90,10 +86,6 @@ public class EarthenSpike extends AbstractAbility {
                                 }
                                 //moving vertically
                                 if (target.getLocation().getY() < newLocation.getY()) {
-
-                                    for (Player player1 : player.getWorld().getPlayers()) {
-                                        player1.playSound(lastFallingBlock.getLocation(), "shaman.earthenspike.animation.c", 1.5F, 1);
-                                    }
 
                                     for (int j = 0; j < 10; j++) {
                                         if (newLocation.getWorld().getBlockAt(newLocation.clone().add(0, -1, 0)).getType() == Material.AIR) {

@@ -31,7 +31,7 @@ public class Boulder extends AbstractAbility {
     public void onActivate(Player player) {
 
         Location location = player.getLocation();
-        Vector speed = player.getLocation().getDirection().multiply(0.49);
+        Vector speed = player.getLocation().getDirection().multiply(0.55);
         ArmorStand stand = (ArmorStand) location.getWorld().spawnEntity(location.clone().add(0, 0.25, 0), EntityType.ARMOR_STAND);
         stand.setHelmet(new ItemStack(Material.LONG_GRASS, 1, (short) 2));
         stand.setCustomName("Boulder");
@@ -59,7 +59,7 @@ public class Boulder extends AbstractAbility {
                     return;
                 }
 
-                speed.add(new Vector(0, -0.0071, 0));
+                speed.add(new Vector(0, -0.00765, 0));
                 Location newLoc = stand.getLocation();
                 newLoc.add(speed);
                 stand.teleport(newLoc);
@@ -142,8 +142,9 @@ public class Boulder extends AbstractAbility {
                                 default:
                                     throw new IllegalStateException("Unexpected value: " + (int) (Math.random() * 3));
                             }
-                            fallingBlock.setVelocity(newLoc.getDirection().normalize().multiply(.55));
+                            fallingBlock.setVelocity(newLoc.getDirection().add(new Vector(0, 0.2, 0)).normalize().multiply(.5));
                             fallingBlock.setDropItem(false);
+                            fallingBlock.setTicksLived(4);
                             newLoc.setYaw((float) (newLoc.getYaw() + Math.random() * 25 + 12));
                             WarlordsEvents.addEntityUUID(fallingBlock.getUniqueId());
                         }

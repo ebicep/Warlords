@@ -80,7 +80,13 @@ public class RecklessCharge extends AbstractAbility {
                 for (Entity entity : playersInside) {
                     if (entity instanceof Player && ((Player) entity).getGameMode() != GameMode.SPECTATOR) {
                         ((RecklessCharge) warlordsPlayer.getSpec().getRed()).getPlayersHit().add((Player) entity);
-                        Warlords.getPlayer((Player) entity).addHealth(warlordsPlayer, warlordsPlayer.getSpec().getRed().getName(), warlordsPlayer.getSpec().getRed().getMinDamageHeal(), warlordsPlayer.getSpec().getRed().getMaxDamageHeal(), warlordsPlayer.getSpec().getRed().getCritChance(), warlordsPlayer.getSpec().getRed().getCritMultiplier());
+
+                        Warlords.getPlayer((Player) entity).addHealth(warlordsPlayer,
+                                warlordsPlayer.getSpec().getRed().getName(),
+                                warlordsPlayer.getSpec().getRed().getMinDamageHeal(),
+                                warlordsPlayer.getSpec().getRed().getMaxDamageHeal(),
+                                warlordsPlayer.getSpec().getRed().getCritChance(),
+                                warlordsPlayer.getSpec().getRed().getCritMultiplier());
                     }
                 }
                 //cancel charge if hit a block, making the player stand still

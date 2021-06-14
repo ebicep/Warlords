@@ -195,7 +195,7 @@ public class Totem extends EntityArmorStand {
                     deathsDebtTotem.setSecondsLeft(secondsLeft);
                     if(secondsLeft > 0) {
                         for (Player player1 : player.getWorld().getPlayers()) {
-                            player1.playSound(standLocation, "shaman.earthlivingweapon.impact", 1, 1.5F);
+                            player1.playSound(standLocation, "shaman.earthlivingweapon.impact", 2, 1.5F);
                         }
 
                         player.sendMessage("§c\u00AB §2Spirit's Respite §7delayed §c" + -Math.round(getDelayedDamage()) + " §7damage. §6" + secondsLeft + " §7seconds left.");
@@ -218,7 +218,7 @@ public class Totem extends EntityArmorStand {
                         if(damageTick < 6) {
 
                             for (Player player1 : player.getWorld().getPlayers()) {
-                                player1.playSound(standLocation, "shaman.lightningbolt.impact", 1, 1.5F);
+                                player1.playSound(standLocation, "shaman.lightningbolt.impact", 2, 1.5F);
                             }
 
                             // 100% of damage over 6 seconds
@@ -236,7 +236,7 @@ public class Totem extends EntityArmorStand {
                             for (Entity entity : near) {
                                 if (entity instanceof Player) {
                                     Player nearPlayer = (Player) entity;
-                                    if (nearPlayer.getGameMode() != GameMode.SPECTATOR) {
+                                    if (Warlords.getPlayer(nearPlayer).getHealth() > 0) {
                                         Warlords.getPlayer(nearPlayer).addHealth(deathsDebtTotem.getOwner(), deathsDebtTotem.getOwner().getSpec().getOrange().getName(),
                                                 (int) (damage * -.15),
                                                 (int) (damage * -.15),
@@ -266,6 +266,13 @@ public class Totem extends EntityArmorStand {
                             task.cancel();
                         }
                     }
+
+                    if (warlordsPlayer.getHealth() <= 0) {
+                        deathsDebtTotem.getTotemArmorStand().remove();
+                        this.cancel();
+                        task.cancel();
+                    }
+
                 }
 
             }.runTaskTimer(Warlords.getInstance(), 0, 20);
