@@ -62,7 +62,7 @@ public class Projectile extends AbstractAbility {
                 boolean hitPlayer = false;
                 //BALLS
                 if (customProjectile.getBall().getName().contains("Fire")) {
-                    location.add(customProjectile.getDirection().clone().multiply(2.3));
+                    location.add(customProjectile.getDirection().clone().multiply(2));
                     location.add(0, 1.5, 0);
                     ParticleEffect.DRIP_LAVA.display(0, 0, 0, 0.35F, 5, location, 500);
                     ParticleEffect.SMOKE_NORMAL.display(0, 0, 0, 0.001F, 7, location, 500);
@@ -138,7 +138,7 @@ public class Projectile extends AbstractAbility {
                         }
                     }
                 } else if (customProjectile.getBall().getName().contains("Frost")) {
-                    location.add(customProjectile.getDirection().clone().multiply(2.1));
+                    location.add(customProjectile.getDirection().clone().multiply(2));
                     location.add(0, 1.5, 0);
                     ParticleEffect.CLOUD.display(0, 0, 0, 0F, 1, location, 500);
                     List<Entity> entities = (List<Entity>) location.getWorld().getNearbyEntities(location, 5, 5, 5);
@@ -336,7 +336,7 @@ public class Projectile extends AbstractAbility {
 
                     for (int i = 0; i < 4; i++) {
                         double angle = Math.toRadians(i * 90) + animationTimer * 0.45;
-                        double width = 0.25D;
+                        double width = 0.2D;
                         ParticleEffect.FLAME.display(0, 0, 0, 0, 2,
                                 center.translateVector(location.getWorld(), 0, Math.sin(angle) * width, Math.cos(angle) * width), 500);
                     }

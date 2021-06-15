@@ -50,7 +50,7 @@ public class LightningBolt extends AbstractAbility {
 
             @Override
             public void run() {
-                List<Entity> near = (List<Entity>) bolt.getLocation().getWorld().getNearbyEntities(bolt.getBoltLocation(), .8, .75, .8);
+                List<Entity> near = (List<Entity>) bolt.getLocation().getWorld().getNearbyEntities(bolt.getBoltLocation(), .9, .85, .9);
                 near = Utils.filterOutTeammates(near, player);
                 for (Entity entity : near) {
                     if (entity instanceof Player && ((Player) entity).getGameMode() != GameMode.SPECTATOR) {

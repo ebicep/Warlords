@@ -29,7 +29,7 @@ public class Intervene extends AbstractAbility {
     @Override
     public void onActivate(Player player) {
         WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
-        List<Entity> near = player.getNearbyEntities(6.0D, 6.0D, 6.0D);
+        List<Entity> near = player.getNearbyEntities(10.0D, 10.0D, 10.0D);
         near = Utils.filterOnlyTeammates(near, player);
         for (Entity entity : near) {
             if (entity instanceof Player) {
