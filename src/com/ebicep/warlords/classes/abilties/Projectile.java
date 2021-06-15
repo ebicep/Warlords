@@ -336,7 +336,7 @@ public class Projectile extends AbstractAbility {
 
                     for (int i = 0; i < 4; i++) {
                         double angle = Math.toRadians(i * 90) + animationTimer * 0.45;
-                        double width = 0.2D;
+                        double width = 0.25D;
                         ParticleEffect.FLAME.display(0, 0, 0, 0, 2,
                                 center.translateVector(location.getWorld(), 0, Math.sin(angle) * width, Math.cos(angle) * width), 500);
                     }
@@ -389,7 +389,7 @@ public class Projectile extends AbstractAbility {
                 //hit block or out of range
                 if ((location.getWorld().getBlockAt(location).getType() != Material.AIR && location.getWorld().getBlockAt(location).getType() != Material.WATER) && !hitPlayer) {
                     if (customProjectile.getBall().getName().contains("Water")) {
-                        ParticleEffect.HEART.display(1, 1, 1, 0.2F, 5, location, 500);
+                        ParticleEffect.HEART.display(1, 1, 1, 0.2F, 3, location, 500);
                         ParticleEffect.VILLAGER_HAPPY.display(1, 1, 1, 0.2F, 5, location, 500);
 
                         for (Player player1 : player.getWorld().getPlayers()) {

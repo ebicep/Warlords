@@ -491,11 +491,11 @@ public class Game implements Runnable {
 
         static {
             suffixes.put(1_000L, "k");
-            suffixes.put(1_000_000L, "M");
-            suffixes.put(1_000_000_000L, "G");
-            suffixes.put(1_000_000_000_000L, "T");
-            suffixes.put(1_000_000_000_000_000L, "P");
-            suffixes.put(1_000_000_000_000_000_000L, "E");
+            suffixes.put(1_000_000L, "m");
+            suffixes.put(1_000_000_000L, "b");
+            suffixes.put(1_000_000_000_000L, "t");
+            suffixes.put(1_000_000_000_000_000L, "p");
+            suffixes.put(1_000_000_000_000_000_000L, "e");
         }
 
         public static String getSimplifiedNumber(long value) {
