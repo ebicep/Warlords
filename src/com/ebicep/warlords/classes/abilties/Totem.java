@@ -247,7 +247,7 @@ public class Totem extends EntityArmorStand {
                         } else {
                             // Enemy damage
                             player.getWorld().spigot().strikeLightningEffect(standLocation, false);
-                            List<Entity> near = deathsDebtTotem.getTotemArmorStand().getNearbyEntities(14.0D, 7.0D, 14.0D);
+                            List<Entity> near = deathsDebtTotem.getTotemArmorStand().getNearbyEntities(14.0D, 8.0D, 14.0D);
                             near = Utils.filterOutTeammates(near, deathsDebtTotem.getOwner().getPlayer());
                             for (Entity entity : near) {
                                 if (entity instanceof Player) {
@@ -304,7 +304,7 @@ public class Totem extends EntityArmorStand {
 
             //168 - 227
             //841 - 1138
-            //1.35x
+            //1.354x
         }
 
         @Override
@@ -352,7 +352,7 @@ public class Totem extends EntityArmorStand {
                                     Warlords.getPlayer(nearPlayer).addHealth(healingTotem.getOwner(),
                                             healingTotem.getOwner().getSpec().getOrange().getName(),
                                             healingTotem.getOwner().getSpec().getOrange().getMinDamageHeal(),
-                                            (int) (healingTotem.getOwner().getSpec().getOrange().getMinDamageHeal() * 1.35),
+                                            (int) (healingTotem.getOwner().getSpec().getOrange().getMinDamageHeal() * 1.354),
                                             healingTotem.getOwner().getSpec().getOrange().getCritChance(),
                                             healingTotem.getOwner().getSpec().getOrange().getCritMultiplier());
                                 }
@@ -375,7 +375,7 @@ public class Totem extends EntityArmorStand {
                                     Warlords.getPlayer(nearPlayer).addHealth(healingTotem.getOwner(),
                                             healingTotem.getOwner().getSpec().getOrange().getName(),
                                             healingTotem.getOwner().getSpec().getOrange().getMaxDamageHeal(),
-                                            (int) (healingTotem.getOwner().getSpec().getOrange().getMaxDamageHeal() * 1.35),
+                                            (int) (healingTotem.getOwner().getSpec().getOrange().getMaxDamageHeal() * 1.354),
                                             healingTotem.getOwner().getSpec().getOrange().getCritChance(),
                                             healingTotem.getOwner().getSpec().getOrange().getCritMultiplier());
                                 }

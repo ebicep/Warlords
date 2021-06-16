@@ -2,6 +2,7 @@ package com.ebicep.warlords.maps;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
+import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.powerups.PowerupManager;
 import com.ebicep.warlords.util.*;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -230,8 +231,6 @@ public class Game implements Runnable {
                 for (WarlordsPlayer value : Warlords.getPlayers().values()) {
                     value.getScoreboard().addHealths();
                 }
-
-
             }
 
             @Override

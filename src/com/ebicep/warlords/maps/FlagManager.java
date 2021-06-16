@@ -71,7 +71,7 @@ public class FlagManager implements Listener {
             if(
                     this.red.getFlag() instanceof SpawnFlagLocation &&
                             this.blue.getFlag() instanceof PlayerFlagLocation &&
-                            this.blue.getFlag().getLocation().distanceSquared(this.red.getSpawnLocation()) < 2 * 2
+                            this.blue.getFlag().getLocation().distanceSquared(this.red.getSpawnLocation()) < 2.5 * 2.5
             ) {
                 // Red scores a capture
                 PlayerFlagLocation playerFlagLocation = (PlayerFlagLocation) this.blue.getFlag();

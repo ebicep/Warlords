@@ -64,7 +64,7 @@ public class WarlordsPlayer {
         StringBuilder actionBarMessage = new StringBuilder(ChatColor.GOLD + "§lHP: ");
         float healthRatio = (float) health / maxHealth;
         if (healthRatio >= .75) {
-            actionBarMessage.append(ChatColor.GREEN);
+            actionBarMessage.append(ChatColor.DARK_GREEN);
 
         } else if (healthRatio >= .25) {
             actionBarMessage.append(ChatColor.YELLOW);
@@ -410,7 +410,7 @@ public class WarlordsPlayer {
             purpleMeta.setDisplayName(ChatColor.GOLD + spec.getPurple().getName());
             ArrayList<String> purpleLore = new ArrayList<>();
             purpleLore.add(ChatColor.GRAY + "Cooldown: " + ChatColor.AQUA + spec.getPurple().getCooldown());
-            if (spec.getPurple().getEnergyCost() != 0) {
+            if (spec.getPurple().getEnergyCost() != 0 && spec.getPurple().getEnergyCost() != -120) {
                 purpleLore.add(ChatColor.GRAY + "Energy Cost: " + ChatColor.YELLOW + spec.getPurple().getEnergyCost());
             }
             if (spec.getPurple().getCritChance()  != 0 && spec.getPurple().getCritChance()  != -1 &&  spec.getPurple().getCritMultiplier() != 100) {
