@@ -4,9 +4,11 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.util.Utils;
+import net.minecraft.server.v1_8_R3.PacketPlayOutAnimation;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -36,6 +38,10 @@ public class EarthenSpike extends AbstractAbility {
             if (entity instanceof Player) {
                 Player nearPlayer = (Player) entity;
                 if (nearPlayer.getGameMode() != GameMode.SPECTATOR && Utils.getLookingAt(player, nearPlayer) && Utils.hasLineOfSight(player, nearPlayer)) {
+                    PacketPlayOutAnimation playOutAnimation = new PacketPlayOutAnimation(((CraftPlayer) player).getHandle(), 0);
+                    ((CraftPlayer) player).getHandle().playerConnection.sendPacket(playOutAnimation);
+
+                    //TODO fix block getting glitched into world
                     FallingBlock block = player.getWorld().spawnFallingBlock(location.clone(), location.getWorld().getBlockAt((int) location.getX(), (int) location.getY(), (int) location.getZ()).getType(), (byte) 0);
                     block.setVelocity(new Vector(0, .2, 0));
                     Warlords.getPlayer(player).subtractEnergy(energyCost);
@@ -65,28 +71,40 @@ public class EarthenSpike extends AbstractAbility {
 
                                 Location newLocation = lastFallingBlock.getLocation();
                                 //moving diagonally
-                                if (Math.abs(target.getLocation().getX() - newLocation.getX()) >= Math.abs(target.getLocation().getZ() - newLocation.getZ())) {
-
+                                if (Math.abs(target.getLocation().getBlockX() - newLocation.getBlockX()) > 0) {
                                     if (target.getLocation().getX() < newLocation.getX()) {
                                         newLocation.add(-1, 0, 0);
                                     } else {
                                         newLocation.add(1, 0, 0);
                                     }
-                                } else {
-
-                                    for (Player player1 : player.getWorld().getPlayers()) {
-                                        player1.playSound(lastFallingBlock.getLocation(), "shaman.earthenspike.animation.b", 1.5F, 1);
+                                    if (Math.abs(target.getLocation().getBlockZ() - newLocation.getBlockZ()) > 0) {
+                                        if (target.getLocation().getZ() < newLocation.getZ()) {
+                                            FallingBlock newBlock = target.getWorld().spawnFallingBlock(newLocation, newLocation.getWorld().getBlockAt(newLocation.clone().add(0, -1, -1)).getType(), newLocation.getWorld().getBlockAt(newLocation.clone().add(0, -1, 0)).getData());
+                                            newBlock.setVelocity(new Vector(0, .25, 0));
+                                            newBlock.setDropItem(false);
+                                            customFallingBlocks.add(new CustomFallingBlock(newBlock, newBlock.getLocation().getY() - .20));
+                                        } else {
+                                            FallingBlock newBlock = target.getWorld().spawnFallingBlock(newLocation, newLocation.getWorld().getBlockAt(newLocation.clone().add(0, -1, 1)).getType(), newLocation.getWorld().getBlockAt(newLocation.clone().add(0, -1, 0)).getData());
+                                            newBlock.setVelocity(new Vector(0, .25, 0));
+                                            newBlock.setDropItem(false);
+                                            customFallingBlocks.add(new CustomFallingBlock(newBlock, newBlock.getLocation().getY() - .20));
+                                        }
                                     }
-
+                                }
+                                if (Math.abs(target.getLocation().getBlockZ() - newLocation.getBlockZ()) > 0) {
                                     if (target.getLocation().getZ() < newLocation.getZ()) {
                                         newLocation.add(0, 0, -1);
                                     } else {
                                         newLocation.add(0, 0, 1);
                                     }
                                 }
+
+//                                for (Player player1 : player.getWorld().getPlayers()) {
+//                                    player1.playSound(lastFallingBlock.getLocation(), "shaman.earthenspike.animation.b", 1.5F, 1);
+//                                }
+
                                 //moving vertically
                                 if (target.getLocation().getY() < newLocation.getY()) {
-
                                     for (int j = 0; j < 10; j++) {
                                         if (newLocation.getWorld().getBlockAt(newLocation.clone().add(0, -1, 0)).getType() == Material.AIR) {
                                             newLocation.add(0, -1, 0);
@@ -106,7 +124,6 @@ public class EarthenSpike extends AbstractAbility {
                                 FallingBlock newBlock = target.getWorld().spawnFallingBlock(newLocation, newLocation.getWorld().getBlockAt(newLocation.clone().add(0, -1, 0)).getType(), newLocation.getWorld().getBlockAt(newLocation.clone().add(0, -1, 0)).getData());
                                 newBlock.setVelocity(new Vector(0, .2, 0));
                                 newBlock.setDropItem(false);
-                                System.out.println(newLocation);
                                 customFallingBlocks.add(new CustomFallingBlock(newBlock, newBlock.getLocation().getY() - .20));
                             } else {
                                 //impact

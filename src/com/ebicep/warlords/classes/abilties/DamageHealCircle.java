@@ -1,12 +1,9 @@
 package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.effects.circle.AreaEffect;
-import com.ebicep.warlords.effects.circle.CircleEffect;
-import com.ebicep.warlords.effects.circle.CircumferenceEffect;
-import com.ebicep.warlords.effects.circle.DoubleLineEffect;
-import com.ebicep.warlords.effects.circle.LineEffect;
+import com.ebicep.warlords.effects.circle.*;
 import com.ebicep.warlords.util.ParticleEffect;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
@@ -16,23 +13,21 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.EulerAngle;
 
-import org.bukkit.Bukkit;
-
 public class DamageHealCircle {
 
     private Player player;
     private Location location;
     private int radius;
     private int duration;
-    private int minDamage;
-    private int maxDamage;
+    private float minDamage;
+    private float maxDamage;
     private int critChance;
     private int critMultiplier;
     private String name;
     private ArmorStand hammer;
     private final CircleEffect circle;
 
-    public DamageHealCircle(Player player, Location location, int radius, int duration, int minDamage, int maxDamage, int critChance, int critMultiplier, String name) {
+    public DamageHealCircle(Player player, Location location, int radius, int duration, float minDamage, float maxDamage, int critChance, int critMultiplier, String name) {
         this.player = player;
         this.location = location;
         this.radius = radius;
@@ -116,19 +111,19 @@ public class DamageHealCircle {
         this.duration = duration;
     }
 
-    public int getMinDamage() {
+    public float getMinDamage() {
         return minDamage;
     }
 
-    public void setMinDamage(int minDamage) {
+    public void setMinDamage(float minDamage) {
         this.minDamage = minDamage;
     }
 
-    public int getMaxDamage() {
+    public float getMaxDamage() {
         return maxDamage;
     }
 
-    public void setMaxDamage(int maxDamage) {
+    public void setMaxDamage(float maxDamage) {
         this.maxDamage = maxDamage;
     }
 

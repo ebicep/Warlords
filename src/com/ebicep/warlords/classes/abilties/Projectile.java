@@ -20,7 +20,7 @@ public class Projectile extends AbstractAbility {
     private static final float hitBox = 1.25F;
     private int maxDistance;
 
-    public Projectile(String name, int minDamageHeal, int maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier, String description, int maxDistance) {
+    public Projectile(String name, float minDamageHeal, float maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier, String description, int maxDistance) {
         super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier, description);
         this.maxDistance = maxDistance;
     }
@@ -88,8 +88,8 @@ public class Projectile extends AbstractAbility {
                                     Warlords.getPlayer(victim).addHealth(
                                             Warlords.getPlayer(customProjectile.getShooter()),
                                             customProjectile.getBall().getName(),
-                                            (int) (customProjectile.getBall().getMinDamageHeal() * 1.15 * toReduceBy),
-                                            (int) (customProjectile.getBall().getMaxDamageHeal() * 1.15 * toReduceBy),
+                                            (float) (customProjectile.getBall().getMinDamageHeal() * 1.15 * toReduceBy),
+                                            (float) (customProjectile.getBall().getMaxDamageHeal() * 1.15 * toReduceBy),
                                             customProjectile.getBall().getCritChance(),
                                             customProjectile.getBall().getCritMultiplier()
                                     );
@@ -101,8 +101,8 @@ public class Projectile extends AbstractAbility {
                                             Warlords.getPlayer((Player) nearEntity).addHealth(
                                                     Warlords.getPlayer(customProjectile.getShooter()),
                                                     customProjectile.getBall().getName(),
-                                                    (int) (customProjectile.getBall().getMinDamageHeal() * toReduceBy),
-                                                    (int) (customProjectile.getBall().getMaxDamageHeal() * toReduceBy),
+                                                    (float) (customProjectile.getBall().getMinDamageHeal() * toReduceBy),
+                                                    (float) (customProjectile.getBall().getMaxDamageHeal() * toReduceBy),
                                                     customProjectile.getBall().getCritChance(),
                                                     customProjectile.getBall().getCritMultiplier()
                                             );
@@ -112,8 +112,8 @@ public class Projectile extends AbstractAbility {
                                     Warlords.getPlayer(victim).addHealth(
                                             Warlords.getPlayer(customProjectile.getShooter()),
                                             customProjectile.getBall().getName(),
-                                            (int) (customProjectile.getBall().getMinDamageHeal() * 1.15),
-                                            (int) (customProjectile.getBall().getMaxDamageHeal() * 1.15),
+                                            (float) (customProjectile.getBall().getMinDamageHeal() * 1.15),
+                                            (float) (customProjectile.getBall().getMaxDamageHeal() * 1.15),
                                             customProjectile.getBall().getCritChance(),
                                             customProjectile.getBall().getCritMultiplier());
 
@@ -162,8 +162,8 @@ public class Projectile extends AbstractAbility {
                                     Warlords.getPlayer(victim).addHealth(
                                             Warlords.getPlayer(customProjectile.getShooter()),
                                             customProjectile.getBall().getName(),
-                                            (int) (customProjectile.getBall().getMinDamageHeal() * 1.3 * toReduceBy),
-                                            (int) (customProjectile.getBall().getMaxDamageHeal() * 1.3 * toReduceBy),
+                                            (float) (customProjectile.getBall().getMinDamageHeal() * 1.3 * toReduceBy),
+                                            (float) (customProjectile.getBall().getMaxDamageHeal() * 1.3 * toReduceBy),
                                             customProjectile.getBall().getCritChance(),
                                             customProjectile.getBall().getCritMultiplier()
                                     );
@@ -174,8 +174,8 @@ public class Projectile extends AbstractAbility {
                                             Warlords.getPlayer((Player) nearEntity).addHealth(
                                                     Warlords.getPlayer(customProjectile.getShooter()),
                                                     customProjectile.getBall().getName(),
-                                                    (int) (customProjectile.getBall().getMinDamageHeal() * toReduceBy),
-                                                    (int) (customProjectile.getBall().getMaxDamageHeal() * toReduceBy),
+                                                    (float) (customProjectile.getBall().getMinDamageHeal() * toReduceBy),
+                                                    (float) (customProjectile.getBall().getMaxDamageHeal() * toReduceBy),
                                                     customProjectile.getBall().getCritChance(),
                                                     customProjectile.getBall().getCritMultiplier()
                                             );
@@ -185,8 +185,8 @@ public class Projectile extends AbstractAbility {
                                     Warlords.getPlayer(victim).addHealth(
                                             Warlords.getPlayer(customProjectile.getShooter()),
                                             customProjectile.getBall().getName(),
-                                            (int) (customProjectile.getBall().getMinDamageHeal() * 1.3),
-                                            (int) (customProjectile.getBall().getMaxDamageHeal() * 1.3),
+                                            (float) (customProjectile.getBall().getMinDamageHeal() * 1.3),
+                                            (float) (customProjectile.getBall().getMaxDamageHeal() * 1.3),
                                             customProjectile.getBall().getCritChance(),
                                             customProjectile.getBall().getCritMultiplier()
                                     );
@@ -237,8 +237,8 @@ public class Projectile extends AbstractAbility {
                                         Warlords.getPlayer((Player) entity).addHealth(
                                                 Warlords.getPlayer(customProjectile.getShooter()),
                                                 customProjectile.getBall().getName(),
-                                                (int) (customProjectile.getBall().getMinDamageHeal() * 1.15 * toReduceBy),
-                                                (int) (customProjectile.getBall().getMaxDamageHeal() * 1.15 * toReduceBy),
+                                                (float) (customProjectile.getBall().getMinDamageHeal() * 1.15 * toReduceBy),
+                                                (float) (customProjectile.getBall().getMaxDamageHeal() * 1.15 * toReduceBy),
                                                 customProjectile.getBall().getCritChance(),
                                                 customProjectile.getBall().getCritMultiplier()
                                         );
@@ -246,8 +246,8 @@ public class Projectile extends AbstractAbility {
                                         Warlords.getPlayer((Player) entity).addHealth(
                                                 Warlords.getPlayer(customProjectile.getShooter()),
                                                 customProjectile.getBall().getName(),
-                                                (int) (-231 * 1.15 * toReduceBy),
-                                                (int) (-299 * 1.15 * toReduceBy),
+                                                (float) (-231 * 1.15 * toReduceBy),
+                                                (float) (-299 * 1.15 * toReduceBy),
                                                 customProjectile.getBall().getCritChance(),
                                                 customProjectile.getBall().getCritMultiplier()
                                         );
@@ -259,8 +259,8 @@ public class Projectile extends AbstractAbility {
                                                 Warlords.getPlayer((Player) nearEntity).addHealth(
                                                         Warlords.getPlayer(customProjectile.getShooter()),
                                                         customProjectile.getBall().getName(),
-                                                        (int) (customProjectile.getBall().getMinDamageHeal() * toReduceBy),
-                                                        (int) (customProjectile.getBall().getMaxDamageHeal() * toReduceBy),
+                                                        (float) (customProjectile.getBall().getMinDamageHeal() * toReduceBy),
+                                                        (float) (customProjectile.getBall().getMaxDamageHeal() * toReduceBy),
                                                         customProjectile.getBall().getCritChance(),
                                                         customProjectile.getBall().getCritMultiplier()
                                                 );
@@ -268,8 +268,8 @@ public class Projectile extends AbstractAbility {
                                                 Warlords.getPlayer((Player) nearEntity).addHealth(
                                                         Warlords.getPlayer(customProjectile.getShooter()),
                                                         customProjectile.getBall().getName(),
-                                                        (int) (-231 * toReduceBy),
-                                                        (int) (-299 * toReduceBy),
+                                                        (float) (-231 * toReduceBy),
+                                                        (float) (-299 * toReduceBy),
                                                         customProjectile.getBall().getCritChance(),
                                                         customProjectile.getBall().getCritMultiplier()
                                                 );
@@ -281,8 +281,8 @@ public class Projectile extends AbstractAbility {
                                         Warlords.getPlayer((Player) entity).addHealth(
                                                 Warlords.getPlayer(customProjectile.getShooter()),
                                                 customProjectile.getBall().getName(),
-                                                (int) (customProjectile.getBall().getMinDamageHeal() * 1.15),
-                                                (int) (customProjectile.getBall().getMaxDamageHeal() * 1.15),
+                                                (float) (customProjectile.getBall().getMinDamageHeal() * 1.15),
+                                                (float) (customProjectile.getBall().getMaxDamageHeal() * 1.15),
                                                 customProjectile.getBall().getCritChance(),
                                                 customProjectile.getBall().getCritMultiplier()
                                         );
@@ -290,8 +290,8 @@ public class Projectile extends AbstractAbility {
                                         Warlords.getPlayer((Player) entity).addHealth(
                                                 Warlords.getPlayer(customProjectile.getShooter()),
                                                 customProjectile.getBall().getName(),
-                                                (int) (-231 * 1.15),
-                                                (int) (-299 * 1.15),
+                                                (-231f * 1.15f),
+                                                (-299f * 1.15f),
                                                 customProjectile.getBall().getCritChance(),
                                                 customProjectile.getBall().getCritMultiplier()
                                         );
@@ -334,7 +334,7 @@ public class Projectile extends AbstractAbility {
 
                     Matrix4d center = new Matrix4d(location);
 
-                    for (int i = 0; i < 4; i++) {
+                    for (float i = 0; i < 4; i++) {
                         double angle = Math.toRadians(i * 90) + animationTimer * 0.45;
                         double width = 0.25D;
                         ParticleEffect.FLAME.display(0, 0, 0, 0, 2,
@@ -443,8 +443,8 @@ public class Projectile extends AbstractAbility {
                                             Warlords.getPlayer((Player) nearEntity).addHealth(
                                                     Warlords.getPlayer(customProjectile.getShooter()),
                                                     customProjectile.getBall().getName(),
-                                                    (int) (customProjectile.getBall().getMinDamageHeal() * toReduceBy),
-                                                    (int) (customProjectile.getBall().getMaxDamageHeal() * toReduceBy),
+                                                    (float) (customProjectile.getBall().getMinDamageHeal() * toReduceBy),
+                                                    (float) (customProjectile.getBall().getMaxDamageHeal() * toReduceBy),
                                                     customProjectile.getBall().getCritChance(),
                                                     customProjectile.getBall().getCritMultiplier()
                                             );
@@ -452,8 +452,8 @@ public class Projectile extends AbstractAbility {
                                             Warlords.getPlayer((Player) nearEntity).addHealth(
                                                     Warlords.getPlayer(customProjectile.getShooter()),
                                                     customProjectile.getBall().getName(),
-                                                    (int) (-231 * toReduceBy),
-                                                    (int) (-299 * toReduceBy),
+                                                    (float) (-231f * toReduceBy),
+                                                    (float) (-299f * toReduceBy),
                                                     customProjectile.getBall().getCritChance(),
                                                     customProjectile.getBall().getCritMultiplier()
                                             );
@@ -463,8 +463,8 @@ public class Projectile extends AbstractAbility {
                                             Warlords.getPlayer((Player) nearEntity).addHealth(
                                                     Warlords.getPlayer(customProjectile.getShooter()),
                                                     customProjectile.getBall().getName(),
-                                                    (int) (customProjectile.getBall().getMinDamageHeal() * toReduceBy),
-                                                    (int) (customProjectile.getBall().getMaxDamageHeal() * toReduceBy),
+                                                    (float) (customProjectile.getBall().getMinDamageHeal() * toReduceBy),
+                                                    (float) (customProjectile.getBall().getMaxDamageHeal() * toReduceBy),
                                                     customProjectile.getBall().getCritChance(),
                                                     customProjectile.getBall().getCritMultiplier()
                                             );

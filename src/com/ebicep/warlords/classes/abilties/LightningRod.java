@@ -3,7 +3,6 @@ package com.ebicep.warlords.classes.abilties;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
-import com.ebicep.warlords.effects.ArmorStandWaveEffect;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.util.Utils;
 import org.bukkit.GameMode;
@@ -12,7 +11,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 import java.util.List;
@@ -30,7 +28,7 @@ public class LightningRod extends AbstractAbility {
     public void onActivate(Player player) {
         WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
         warlordsPlayer.addEnergy(warlordsPlayer, name, 160);
-        warlordsPlayer.addHealth(warlordsPlayer, name, (int) (warlordsPlayer.getMaxHealth() * .3), (int) (warlordsPlayer.getMaxHealth() * .3), critChance, critMultiplier);
+        warlordsPlayer.addHealth(warlordsPlayer, name, (warlordsPlayer.getMaxHealth() * .3f), (warlordsPlayer.getMaxHealth() * .3f), critChance, critMultiplier);
 
         Location playerLocation = player.getLocation();
 

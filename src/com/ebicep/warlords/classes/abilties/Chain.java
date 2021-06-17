@@ -23,7 +23,7 @@ import java.util.List;
 
 public class Chain extends AbstractAbility {
 
-    public Chain(String name, int minDamageHeal, int maxDamageHeal, int cooldown, int energyCost, int critChance, int critMultiplier, String description) {
+    public Chain(String name, float minDamageHeal, float maxDamageHeal, int cooldown, int energyCost, int critChance, int critMultiplier, String description) {
         super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier, description);
     }
 
@@ -86,7 +86,7 @@ public class Chain extends AbstractAbility {
                                     Player nearNearPlayer = (Player) entity1;
                                     if (nearNearPlayer.getGameMode() != GameMode.SPECTATOR) {
                                         chain(nearPlayer.getLocation(), nearNearPlayer.getLocation());
-                                        Warlords.getPlayer(nearNearPlayer).addHealth(warlordsPlayer, name, (int) (minDamageHeal * .85), (int) (maxDamageHeal * .85), critChance, critMultiplier);
+                                        Warlords.getPlayer(nearNearPlayer).addHealth(warlordsPlayer, name, (minDamageHeal * .85f), (maxDamageHeal * .85f), critChance, critMultiplier);
 
                                         hitCounter++;
                                         if (getTotem(player) != null) {
@@ -104,7 +104,7 @@ public class Chain extends AbstractAbility {
                                                 Player nearNearNearPlayer = (Player) entity2;
                                                 if (nearNearNearPlayer.getGameMode() != GameMode.SPECTATOR) {
                                                     chain(nearNearPlayer.getLocation(), nearNearNearPlayer.getLocation());
-                                                    Warlords.getPlayer(nearNearNearPlayer).addHealth(warlordsPlayer, name, (int) (minDamageHeal * .7), (int) (maxDamageHeal * .7), critChance, critMultiplier);
+                                                    Warlords.getPlayer(nearNearNearPlayer).addHealth(warlordsPlayer, name, (minDamageHeal * .7f), (maxDamageHeal * .7f), critChance, critMultiplier);
                                                     hitCounter++;
                                                     break;
                                                 }
@@ -161,7 +161,7 @@ public class Chain extends AbstractAbility {
                                             if (nearNearNearPlayer.getGameMode() != GameMode.SPECTATOR) {
                                                 System.out.println("PLAYER -> TOTEM -> (PLAYER)");
                                                 chain(totem.getLocation().add(0, .5, 0), nearNearNearPlayer.getLocation());
-                                                Warlords.getPlayer(nearNearNearPlayer).addHealth(warlordsPlayer, name, (int) (minDamageHeal * .7), (int) (maxDamageHeal * .7), critChance, critMultiplier);
+                                                Warlords.getPlayer(nearNearNearPlayer).addHealth(warlordsPlayer, name, (minDamageHeal * .7f), (maxDamageHeal * .7f), critChance, critMultiplier);
                                                 hitCounter++;
                                                 if (getTotem(player) != null) {
                                                     new FallingBlockWaveEffect(getTotem(player).getLocation().clone().add(0, 1, 0), totemEffectRadius, 1.2, Material.SAPLING, (byte) 0).play();
@@ -184,7 +184,7 @@ public class Chain extends AbstractAbility {
                                     if (nearNearPlayer.getGameMode() != GameMode.SPECTATOR) {
                                         System.out.println("PLAYER -> (PLAYER) -> TOTEM/PLAYER");
                                         chain(nearPlayer.getLocation(), nearNearPlayer.getLocation());
-                                        Warlords.getPlayer(nearNearPlayer).addHealth(warlordsPlayer, name, (int) (minDamageHeal * .85), (int) (maxDamageHeal * .85), critChance, critMultiplier);
+                                        Warlords.getPlayer(nearNearPlayer).addHealth(warlordsPlayer, name, (minDamageHeal * .85f), (maxDamageHeal * .85f), critChance, critMultiplier);
                                         hitCounter++;
                                         List<Entity> nearNearNearEntities = nearNearPlayer.getNearbyEntities(10.0D, 9.0D, 10.0D);
                                         nearNearNearEntities.sort(new Utils.ArmorStandComparator());
@@ -217,7 +217,7 @@ public class Chain extends AbstractAbility {
                                                 if (nearNearNearPlayer.getGameMode() != GameMode.SPECTATOR) {
                                                     System.out.println("PLAYER -> PLAYER -> (PLAYER)");
                                                     chain(nearNearPlayer.getLocation(), nearNearNearPlayer.getLocation());
-                                                    Warlords.getPlayer(nearNearNearPlayer).addHealth(warlordsPlayer, name, (int) (minDamageHeal * .7), (int) (maxDamageHeal * .7), critChance, critMultiplier);
+                                                    Warlords.getPlayer(nearNearNearPlayer).addHealth(warlordsPlayer, name, (minDamageHeal * .7f), (maxDamageHeal * .7f), critChance, critMultiplier);
                                                     hitCounter++;
                                                     break;
                                                 }
@@ -255,7 +255,7 @@ public class Chain extends AbstractAbility {
                                 Player nearNearPlayer = (Player) entity1;
                                 if (nearNearPlayer.getGameMode() != GameMode.SPECTATOR) {
                                     chain(nearPlayer.getLocation(), nearNearPlayer.getLocation());
-                                    Warlords.getPlayer(nearNearPlayer).addHealth(warlordsPlayer, name, (int) (minDamageHeal * .9), (int) (maxDamageHeal * .9), critChance, critMultiplier);
+                                    Warlords.getPlayer(nearNearPlayer).addHealth(warlordsPlayer, name, (minDamageHeal * .9f), (maxDamageHeal * .9f), critChance, critMultiplier);
                                     hitCounter++;
 
                                     List<Entity> nearNearNearPlayers = nearNearPlayer.getNearbyEntities(5.0D, 4.0D, 5.0D);
@@ -269,7 +269,7 @@ public class Chain extends AbstractAbility {
                                             Player nearNearNearPlayer = (Player) entity2;
                                             if (nearNearNearPlayer.getGameMode() != GameMode.SPECTATOR) {
                                                 chain(nearNearPlayer.getLocation(), nearNearNearPlayer.getLocation());
-                                                Warlords.getPlayer(nearNearPlayer).addHealth(warlordsPlayer, name, (int) (minDamageHeal * .8), (int) (maxDamageHeal * .8), critChance, critMultiplier);
+                                                Warlords.getPlayer(nearNearPlayer).addHealth(warlordsPlayer, name, (minDamageHeal * .8f), (maxDamageHeal * .8f), critChance, critMultiplier);
                                                 hitCounter++;
                                                 break;
                                             }
@@ -307,7 +307,7 @@ public class Chain extends AbstractAbility {
                                 Player nearNearPlayer = (Player) entity1;
                                 if (nearNearPlayer.getGameMode() != GameMode.SPECTATOR) {
                                     chain(nearPlayer.getLocation(), nearNearPlayer.getLocation());
-                                    Warlords.getPlayer(nearNearPlayer).addHealth(warlordsPlayer, name, (int) (minDamageHeal * .8), (int) (maxDamageHeal * .8), critChance, critMultiplier);
+                                    Warlords.getPlayer(nearNearPlayer).addHealth(warlordsPlayer, name, (minDamageHeal * .8f), (maxDamageHeal * .8f), critChance, critMultiplier);
                                     hitCounter++;
 
                                     if (warlordsPlayer.hasBoundPlayerLink(Warlords.getPlayer(nearNearPlayer))) {
@@ -324,7 +324,7 @@ public class Chain extends AbstractAbility {
                                             Player nearNearNearPlayer = (Player) entity2;
                                             if (nearNearNearPlayer.getGameMode() != GameMode.SPECTATOR) {
                                                 chain(nearNearPlayer.getLocation(), nearNearNearPlayer.getLocation());
-                                                Warlords.getPlayer(nearNearPlayer).addHealth(warlordsPlayer, name, (int) (minDamageHeal * .6), (int) (maxDamageHeal * .6), critChance, critMultiplier);
+                                                Warlords.getPlayer(nearNearPlayer).addHealth(warlordsPlayer, name, (minDamageHeal * .6f), (maxDamageHeal * .6f), critChance, critMultiplier);
                                                 hitCounter++;
 
                                                 if (warlordsPlayer.hasBoundPlayerLink(Warlords.getPlayer(nearNearNearPlayer))) {

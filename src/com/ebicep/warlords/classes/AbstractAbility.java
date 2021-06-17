@@ -5,8 +5,8 @@ import org.bukkit.entity.Player;
 public abstract class AbstractAbility {
 
     protected String name;
-    protected int minDamageHeal;
-    protected int maxDamageHeal;
+    protected float minDamageHeal;
+    protected float maxDamageHeal;
     protected float currentCooldown;
     protected float cooldown;
     protected int energyCost;
@@ -14,7 +14,7 @@ public abstract class AbstractAbility {
     protected int critMultiplier;
     protected String description;
 
-    public AbstractAbility(String name, int minDamageHeal, int maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier, String description) {
+    public AbstractAbility(String name, float minDamageHeal, float maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier, String description) {
         this.name = name;
         this.minDamageHeal = minDamageHeal;
         this.maxDamageHeal = maxDamageHeal;
@@ -28,27 +28,27 @@ public abstract class AbstractAbility {
     public abstract void onActivate(Player player);
 
     public void boostSkill() {
-        minDamageHeal *= 1.2;
-        maxDamageHeal *= 1.2;
+        this.minDamageHeal *= 1.2;
+        this.maxDamageHeal *= 1.2;
     }
 
     public String getName() {
         return name;
     }
 
-    public int getMinDamageHeal() {
+    public float getMinDamageHeal() {
         return minDamageHeal;
     }
 
-    public void setMinDamageHeal(int minDamageHeal) {
+    public void setMinDamageHeal(float minDamageHeal) {
         this.minDamageHeal = minDamageHeal;
     }
 
-    public int getMaxDamageHeal() {
+    public float getMaxDamageHeal() {
         return maxDamageHeal;
     }
 
-    public void setMaxDamageHeal(int maxDamageHeal) {
+    public void setMaxDamageHeal(float maxDamageHeal) {
         this.maxDamageHeal = maxDamageHeal;
     }
 

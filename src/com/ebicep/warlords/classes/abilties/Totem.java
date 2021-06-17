@@ -222,7 +222,7 @@ public class Totem extends EntityArmorStand {
                             }
 
                             // 100% of damage over 6 seconds
-                            int damage = (int) (TotemSpiritguard.this.getDelayedDamage() * .1667);
+                            float damage = (TotemSpiritguard.this.getDelayedDamage() * .1667f);
                             // Player damage
                             deathsDebtTotem.getOwner().addHealth(deathsDebtTotem.getOwner(), "",
                                     damage,
@@ -236,10 +236,10 @@ public class Totem extends EntityArmorStand {
                             for (Entity entity : near) {
                                 if (entity instanceof Player) {
                                     Player nearPlayer = (Player) entity;
-                                    if (Warlords.getPlayer(nearPlayer).getHealth() > 0) {
+                                    if (nearPlayer.getGameMode() != GameMode.SPECTATOR) {
                                         Warlords.getPlayer(nearPlayer).addHealth(deathsDebtTotem.getOwner(), deathsDebtTotem.getOwner().getSpec().getOrange().getName(),
-                                                (int) (damage * -.15),
-                                                (int) (damage * -.15),
+                                                (damage * -.15f),
+                                                (damage * -.15f),
                                                 deathsDebtTotem.getOwner().getSpec().getOrange().getCritChance(), deathsDebtTotem.getOwner().getSpec().getOrange().getCritMultiplier());
                                     }
                                 }
@@ -254,8 +254,8 @@ public class Totem extends EntityArmorStand {
                                     Player nearPlayer = (Player) entity;
                                     if (nearPlayer.getGameMode() != GameMode.SPECTATOR) {
                                         Warlords.getPlayer(nearPlayer).addHealth(deathsDebtTotem.getOwner(), deathsDebtTotem.getOwner().getSpec().getOrange().getName(),
-                                                (int) (TotemSpiritguard.this.getDelayedDamage() * .15),
-                                                (int) (TotemSpiritguard.this.getDelayedDamage() * .15),
+                                                (TotemSpiritguard.this.getDelayedDamage() * .15f),
+                                                (TotemSpiritguard.this.getDelayedDamage() * .15f),
                                                 deathsDebtTotem.getOwner().getSpec().getOrange().getCritChance(), deathsDebtTotem.getOwner().getSpec().getOrange().getCritMultiplier());
                                     }
                                 }
@@ -352,7 +352,7 @@ public class Totem extends EntityArmorStand {
                                     Warlords.getPlayer(nearPlayer).addHealth(healingTotem.getOwner(),
                                             healingTotem.getOwner().getSpec().getOrange().getName(),
                                             healingTotem.getOwner().getSpec().getOrange().getMinDamageHeal(),
-                                            (int) (healingTotem.getOwner().getSpec().getOrange().getMinDamageHeal() * 1.35),
+                                            (healingTotem.getOwner().getSpec().getOrange().getMinDamageHeal() * 1.35f),
                                             healingTotem.getOwner().getSpec().getOrange().getCritChance(),
                                             healingTotem.getOwner().getSpec().getOrange().getCritMultiplier());
                                 }
@@ -375,7 +375,7 @@ public class Totem extends EntityArmorStand {
                                     Warlords.getPlayer(nearPlayer).addHealth(healingTotem.getOwner(),
                                             healingTotem.getOwner().getSpec().getOrange().getName(),
                                             healingTotem.getOwner().getSpec().getOrange().getMaxDamageHeal(),
-                                            (int) (healingTotem.getOwner().getSpec().getOrange().getMaxDamageHeal() * 1.35),
+                                            (healingTotem.getOwner().getSpec().getOrange().getMaxDamageHeal() * 1.35f),
                                             healingTotem.getOwner().getSpec().getOrange().getCritChance(),
                                             healingTotem.getOwner().getSpec().getOrange().getCritMultiplier());
                                 }

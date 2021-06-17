@@ -59,7 +59,7 @@ public class Game implements Runnable {
                         game.updatePlayers(player, players, game);
                     }
                     for (Player player : game.cachedTeamRed) {
-                        game.updateTimeLeft(player, remaining);
+                        game.updateTimeLeft(player, remaining / 20);
                         game.updatePlayers(player, players, game);
                     }
                     if (remaining % 20 == 0) {
@@ -229,6 +229,37 @@ public class Game implements Runnable {
 
                 for (WarlordsPlayer value : Warlords.getPlayers().values()) {
                     value.getScoreboard().addHealths();
+                    ClassesSkillBoosts selectedBoost = Classes.getSelectedBoost(value.getPlayer());
+                    switch (selectedBoost) {
+                        case FIREBALL:
+                        case FROST_BOLT:
+                        case WATER_BOLT:
+                        case WOUNDING_STRKE:
+                        case CRIPPLING_STRIKE:
+                        case AVENGER_STRIKE:
+                        case CRUSADER_STRIKE:
+                        case PROTECTOR_STRIKE:
+                        case LIGHTNING_BOLT:
+                        case FALLEN_SOULS:
+                        case EARTHEN_SPIKE:
+                            value.getSpec().getWeapon().boostSkill();
+                            break;
+                        case FLAME_BURST:
+                        case FREEZING_BREATH:
+                        case WATER_BREATH:
+                        case SEISMIC_WAVE:
+                        case CONSECRATE:
+                        case CHAIN_LIGHTNING:
+                        case SPIRIT_LINK:
+                        case BOULDER:
+                            value.getSpec().getRed().boostSkill();
+                        case GROUND_SLAM:
+                            value.getSpec().getPurple().boostSkill();
+                        case ORBS_OF_LIFE:
+                        case HOLY_RADIANCE:
+                        case CHAIN_HEAL:
+                            value.getSpec().getBlue().boostSkill();
+                    }
                 }
 
 

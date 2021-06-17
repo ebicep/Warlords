@@ -21,7 +21,6 @@ import java.util.List;
 
 public class FallenSouls extends AbstractAbility {
 
-    private List<FallenSoul> fallenSouls = new ArrayList<>();
     private static final float fallenSoulHitBox = .9f;
     private static final float fallenSoulSpeed = 2.0f;
 

@@ -67,7 +67,7 @@ public class TimeWarp extends AbstractAbility {
                         timeWarpPlayer.setTime(timeWarpPlayer.getTime() - 1);
                     } else {
                         WarlordsPlayer player = timeWarpPlayer.getWarlordsPlayer();
-                        player.addHealth(player, "Time Warp", (int) (player.getMaxHealth() * .3), (int) (player.getMaxHealth() * .3), -1, 100);
+                        player.addHealth(player, "Time Warp", (player.getMaxHealth() * .3f), (player.getMaxHealth() * .3f), -1, 100);
                         for (Player player1 : player.getPlayer().getWorld().getPlayers()) {
                             player1.playSound(timeWarpPlayer.getLocation(), "mage.timewarp.teleport", 1, 1);
                         }

@@ -22,7 +22,7 @@ public class GroundSlam extends AbstractAbility {
     private Player owner;
     private List<Player> playersHit = new ArrayList<>();
 
-    public GroundSlam(String name, int minDamageHeal, int maxDamageHeal, int cooldown, int energyCost, int critChance, int critMultiplier, String description, Player owner) {
+    public GroundSlam(String name, float minDamageHeal, float maxDamageHeal, int cooldown, int energyCost, int critChance, int critMultiplier, String description, Player owner) {
         super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier, description);
         this.owner = owner;
     }
@@ -30,6 +30,8 @@ public class GroundSlam extends AbstractAbility {
     @Override
     public void onActivate(Player player) {
         playersHit.clear();
+        fallingBlockLocations.clear();
+        customFallingBlocks.clear();
 
         Location location = player.getLocation();
 
@@ -84,16 +86,12 @@ public class GroundSlam extends AbstractAbility {
                             }
                         }
                     }
-                    //TODO fix bug where the blocks dont get removed if ability used near high wall - stuck in block?
-                    //System.out.println(customFallingBlock.getCustomFallingBlock().getLocation().getY());
-                    //System.out.println(customFallingBlock.getyLevel());
-                    if (customFallingBlock.getFallingBlock().getLocation().getY() <= customFallingBlock.getyLevel() || customFallingBlock.getFallingBlock().getTicksLived() > 10) {
+                    if (customFallingBlock.getFallingBlock().getLocation().getY() <= customFallingBlock.getyLevel() || customFallingBlock.getTicksLived() > 10) {
                         customFallingBlock.getFallingBlock().remove();
                         customFallingBlocks.remove(i);
                         i--;
                     }
                 }
-
                 if (fallingBlockLocations.isEmpty() && customFallingBlocks.isEmpty()) {
                     this.cancel();
                 }

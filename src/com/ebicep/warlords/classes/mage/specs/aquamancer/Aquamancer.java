@@ -15,7 +15,7 @@ public class Aquamancer extends AbstractMage {
                         "§7damage or healing for the target hit.\n" +
                         "§7Has an optimal range of §e40 §7blocks.", 40),
 
-                new Breath("Water Breath", 557, 753, 13, 60, 25, 175,
+                new Breath("Water Breath", 556.5f, 753.9f, 13, 60, 25, 175,
                         "§7Breathe water in a cone in front of you,\n" +
                                 "§7Knocking back enemies and restoring §a557\n" +
                                 "§7- §a753 §7health to yourself and all\n" +

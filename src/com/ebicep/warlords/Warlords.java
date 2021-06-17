@@ -19,7 +19,6 @@ import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -332,7 +331,7 @@ public class Warlords extends JavaPlugin {
                             player.setHealth(newHealth);
                         }
 
-                        if (warlordsPlayer.getInterveneDuration() != 0 && (warlordsPlayer.getInterveneDamage() >= 3600 || (warlordsPlayer.getIntervenedBy() != null && warlordsPlayer.getPlayer().getLocation().distanceSquared(warlordsPlayer.getIntervenedBy().getPlayer().getLocation()) > 15 * 15))) {
+                        if (warlordsPlayer.getInterveneDuration() != 0 && (warlordsPlayer.getInterveneDamage() >= 3600 || warlordsPlayer.getIntervenedBy().isDead() || (warlordsPlayer.getIntervenedBy() != null && warlordsPlayer.getPlayer().getLocation().distanceSquared(warlordsPlayer.getIntervenedBy().getPlayer().getLocation()) > 15 * 15))) {
                             //TODO seperate and add why the vene broke in chat
                             warlordsPlayer.setInterveneDuration(0);
                             warlordsPlayer.getPlayer().sendMessage("§c\u00AB§7 " + warlordsPlayer.getIntervenedBy().getName() + "'s " + ChatColor.YELLOW + "Intervene " + ChatColor.GRAY + "has expired!");

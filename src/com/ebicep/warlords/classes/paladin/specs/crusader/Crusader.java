@@ -14,18 +14,18 @@ public class Crusader extends AbstractPaladin {
                                 "§7and restoring §e24 §7energy to two nearby\n" +
                                 "§7within §e10 §7blocks."),
 
-                new Consecrate(-144, -194, 50, 15, 200),
+                new Consecrate(-144, -194.4f, 50, 15, 200),
 
                 new LightInfusion(16,
                         "§7You become infused with light,\n" +
-                        "§7restoring §a120 §7energy and\n" +
-                        "§7increasing your movement speed by\n" +
-                        "§e40% §7for §63 §7seconds"),
+                                "§7restoring §a120 §7energy and\n" +
+                                "§7increasing your movement speed by\n" +
+                                "§e40% §7for §63 §7seconds"),
 
                 new HolyRadiance(20, 20, 15, 175,
                         "§7Radiate with holy energy, healing\n" +
-                        "§7yourself and all nearby allies for\n" +
-                        "§a582 §7- §a760 §7health."),
+                                "§7yourself and all nearby allies for\n" +
+                                "§a582 §7- §a760 §7health."),
 
                 new InspiringPresence());
     }

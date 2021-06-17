@@ -10,21 +10,21 @@ public class Avenger extends AbstractPaladin {
         super(player, 6300, 305, 0,
                 new Strike("Avenger's Strike", -359, -485, 0, 90, 25, 185,
                         "§7Strike the targeted enemy player,\n" +
-                        "§7causing §c359 §7- §c485 §7damage\n" +
-                        "§7and removing §e6 §7energy."),
+                                "§7causing §c359 §7- §c485 §7damage\n" +
+                                "§7and removing §e6 §7energy."),
 
-                new Consecrate(-158, -214, 50, 20, 175),
+                new Consecrate(-158.4f, -213.6f, 50, 20, 175),
 
                 new LightInfusion(16,
                         "§7You become infused with light,\n" +
-                        "§7restoring §a120 §7energy and\n" +
-                        "§7increasing your movement speed by\n" +
-                        "§e40% §7for §63 §7seconds"),
+                                "§7restoring §a120 §7energy and\n" +
+                                "§7increasing your movement speed by\n" +
+                                "§e40% §7for §63 §7seconds"),
 
                 new HolyRadiance(20, 20, 15, 175,
                         "§7Radiate with holy energy, healing\n" +
-                        "§7yourself and all nearby allies for\n" +
-                        "§a582 §7- §a760 §7health."),
+                                "§7yourself and all nearby allies for\n" +
+                                "§a582 §7- §a760 §7health."),
                 new AvengersWrath());
     }
 }

@@ -2,7 +2,10 @@ package com.ebicep.warlords;
 
 import com.ebicep.warlords.classes.ActionBarStats;
 import com.ebicep.warlords.classes.PlayerClass;
-import com.ebicep.warlords.classes.abilties.*;
+import com.ebicep.warlords.classes.abilties.HammerOfLight;
+import com.ebicep.warlords.classes.abilties.OrbsOfLife;
+import com.ebicep.warlords.classes.abilties.Soulbinding;
+import com.ebicep.warlords.classes.abilties.Totem;
 import com.ebicep.warlords.events.WarlordsDeathEvent;
 import com.ebicep.warlords.maps.FlagManager;
 import com.ebicep.warlords.util.*;
@@ -269,14 +272,17 @@ public class WarlordsPlayer {
     private static final Dye grayDye = new Dye();
 
     private CustomScoreboard scoreboard;
+
     public CustomScoreboard getScoreboard() {
         return scoreboard;
     }
+
     public void setScoreboard(CustomScoreboard scoreboard) {
         this.scoreboard = scoreboard;
     }
 
     private final boolean energyPowerup;
+
     public boolean isEnergyPowerup() {
         return energyPowerup;
     }
@@ -322,53 +328,50 @@ public class WarlordsPlayer {
     }
 
     public void weaponLeftClick() {
-        ItemMeta weaponMeta = weapon.item.getItemMeta();
-        weaponMeta.setDisplayName(ChatColor.GOLD + "Warlord's " + weapon.name + " of the " + spec.getClass().getSimpleName());
-        ArrayList<String> weaponLore = new ArrayList<>();
-        weaponLore.add(ChatColor.GRAY + "Damage: " + ChatColor.RED + "132 " + ChatColor.GRAY + "- " + ChatColor.RED + "179");
-        weaponLore.add(ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + "25%");
-        weaponLore.add(ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + "200%");
-        weaponLore.add("");
-        weaponLore.add(ChatColor.GREEN + spec.getClassName() + " (" + spec.getClass().getSimpleName() + "):");
-        weaponLore.add(ChatColor.GREEN + "Increases the damage you");
-        weaponLore.add(ChatColor.GREEN + "deal with " + spec.getWeapon().getName() + " by " + ChatColor.RED + "20%");
-        weaponLore.add("");
-        weaponLore.add(ChatColor.GRAY + "Health: " + ChatColor.GREEN + "+800");
-        weaponLore.add(ChatColor.GRAY + "Max Energy: " + ChatColor.GREEN + "+35");
-        weaponLore.add(ChatColor.GRAY + "Cooldown Reduction: " + ChatColor.GREEN + "+13%");
-        weaponLore.add(ChatColor.GRAY + "Speed: " + ChatColor.GREEN + "+13%");
-        weaponLore.add("");
-        weaponLore.add(ChatColor.GOLD + "Skill Boost Unlocked");
-        weaponLore.add(ChatColor.DARK_AQUA + "Crafted");
-        weaponLore.add(ChatColor.LIGHT_PURPLE + "Void Forged [4/4]");
-        weaponLore.add(ChatColor.GREEN + "EQUIPPED");
-        weaponLore.add(ChatColor.AQUA + "BOUND");
-        weaponLore.add("");
-        weaponLore.add(ChatColor.YELLOW + ChatColor.BOLD.toString() + "RIGHT-CLICK " + ChatColor.GREEN + "to view " + ChatColor.YELLOW + spec.getWeapon().getName());
-        weaponLore.add(ChatColor.GREEN + "stats!");
-        weaponMeta.setLore(weaponLore);
-        weaponMeta.spigot().setUnbreakable(true);
-        weaponMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE);
-        weapon.item.setItemMeta(weaponMeta);
-        player.getInventory().setItem(0, weapon.item);
+        player.getInventory().setItem(
+                0,
+                new ItemBuilder(weapon.item)
+                        .name(ChatColor.GOLD + "Warlord's " + weapon.name + " of the " + spec.getClass().getSimpleName())
+                        .lore(ChatColor.GRAY + "Damage: " + ChatColor.RED + "132 " + ChatColor.GRAY + "- " + ChatColor.RED + "179",
+                                ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + "25%",
+                                ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + "200%",
+                                "",
+                                ChatColor.GREEN + spec.getClassName() + " (" + spec.getClass().getSimpleName() + "):",
+                                Classes.getSelectedBoost(player).selectedDescription,
+                                "",
+                                ChatColor.GRAY + "Health: " + ChatColor.GREEN + "+800",
+                                ChatColor.GRAY + "Max Energy: " + ChatColor.GREEN + "+35",
+                                ChatColor.GRAY + "Cooldown Reduction: " + ChatColor.GREEN + "+13%",
+                                ChatColor.GRAY + "Speed: " + ChatColor.GREEN + "+13%",
+                                "",
+                                ChatColor.GOLD + "Skill Boost Unlocked",
+                                ChatColor.DARK_AQUA + "Crafted",
+                                ChatColor.LIGHT_PURPLE + "Void Forged [4/4]",
+                                ChatColor.GREEN + "EQUIPPED",
+                                ChatColor.AQUA + "BOUND",
+                                "",
+                                ChatColor.YELLOW + ChatColor.BOLD.toString() + "RIGHT-CLICK " + ChatColor.GREEN + "to view " + ChatColor.YELLOW + spec.getWeapon().getName(),
+                                ChatColor.GREEN + "stats!")
+                        .unbreakable()
+                        .flags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE)
+                        .get());
     }
 
     public void weaponRightClick() {
-        ItemMeta weaponMeta = weapon.item.getItemMeta();
-        weaponMeta.setDisplayName(ChatColor.GREEN + spec.getWeapon().getName() + ChatColor.GRAY + " - " + ChatColor.YELLOW + "Right-Click!");
-        ArrayList<String> weaponLore = new ArrayList<>();
-        weaponLore.add(ChatColor.GRAY + "Energy Cost: " + ChatColor.YELLOW + spec.getWeapon().getEnergyCost());
-        weaponLore.add(ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + spec.getWeapon().getCritChance() + "%");
-        weaponLore.add(ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + spec.getWeapon().getCritMultiplier() + "%");
-        weaponLore.add("");
-        weaponLore.add(spec.getWeapon().getDescription());
-        weaponLore.add("");
-        weaponLore.add(ChatColor.YELLOW + ChatColor.BOLD.toString() + "LEFT-CLICK " + ChatColor.GREEN + "to view weapon stats!");
-        weaponMeta.setLore(weaponLore);
-        weaponMeta.spigot().setUnbreakable(true);
-        weaponMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE);
-        weapon.item.setItemMeta(weaponMeta);
-        player.getInventory().setItem(0, weapon.item);
+        player.getInventory().setItem(
+                0,
+                new ItemBuilder(weapon.item)
+                        .name(ChatColor.GREEN + spec.getWeapon().getName() + ChatColor.GRAY + " - " + ChatColor.YELLOW + "Right-Click!")
+                        .lore(ChatColor.GRAY + "Energy Cost: " + ChatColor.YELLOW + spec.getWeapon().getEnergyCost(),
+                                ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + spec.getWeapon().getCritChance() + "%",
+                                ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + spec.getWeapon().getCritMultiplier() + "%",
+                                "",
+                                spec.getWeapon().getDescription(),
+                                "",
+                                ChatColor.YELLOW + ChatColor.BOLD.toString() + "LEFT-CLICK " + ChatColor.GREEN + "to view weapon stats!")
+                        .unbreakable()
+                        .flags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE)
+                        .get());
     }
 
     public void updateRedItem() {
@@ -386,7 +389,7 @@ public class WarlordsPlayer {
             if (spec.getRed().getEnergyCost() != 0) {
                 redLore.add(ChatColor.GRAY + "Energy Cost: " + ChatColor.YELLOW + spec.getRed().getEnergyCost());
             }
-            if (spec.getRed().getCritChance()  != 0 && spec.getRed().getCritChance()  != -1 && spec.getRed().getCritMultiplier() != 100) {
+            if (spec.getRed().getCritChance() != 0 && spec.getRed().getCritChance() != -1 && spec.getRed().getCritMultiplier() != 100) {
                 redLore.add(ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + spec.getRed().getCritChance() + "%");
                 redLore.add(ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + spec.getRed().getCritMultiplier() + "%");
             }
@@ -413,7 +416,7 @@ public class WarlordsPlayer {
             if (spec.getPurple().getEnergyCost() != 0) {
                 purpleLore.add(ChatColor.GRAY + "Energy Cost: " + ChatColor.YELLOW + spec.getPurple().getEnergyCost());
             }
-            if (spec.getPurple().getCritChance()  != 0 && spec.getPurple().getCritChance()  != -1 &&  spec.getPurple().getCritMultiplier() != 100) {
+            if (spec.getPurple().getCritChance() != 0 && spec.getPurple().getCritChance() != -1 && spec.getPurple().getCritMultiplier() != 100) {
                 purpleLore.add(ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + spec.getPurple().getCritChance() + "%");
                 purpleLore.add(ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + spec.getPurple().getCritMultiplier() + "%");
             }
@@ -442,7 +445,7 @@ public class WarlordsPlayer {
             if (spec.getBlue().getEnergyCost() != 0) {
                 blueLore.add(ChatColor.GRAY + "Energy Cost: " + ChatColor.YELLOW + spec.getBlue().getEnergyCost());
             }
-            if (spec.getBlue().getCritChance()  != 0 && spec.getBlue().getCritChance()  != -1 && spec.getBlue().getCritMultiplier() != 100) {
+            if (spec.getBlue().getCritChance() != 0 && spec.getBlue().getCritChance() != -1 && spec.getBlue().getCritMultiplier() != 100) {
                 blueLore.add(ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + spec.getBlue().getCritChance() + "%");
                 blueLore.add(ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + spec.getBlue().getCritMultiplier() + "%");
             }
@@ -471,7 +474,7 @@ public class WarlordsPlayer {
             if (spec.getOrange().getEnergyCost() != 0) {
                 orangeLore.add(ChatColor.GRAY + "Energy Cost: " + ChatColor.YELLOW + spec.getOrange().getEnergyCost());
             }
-            if (spec.getOrange().getCritChance()  != 0 && spec.getOrange().getCritChance()  != -1 && spec.getOrange().getCritMultiplier() != 100) {
+            if (spec.getOrange().getCritChance() != 0 && spec.getOrange().getCritChance() != -1 && spec.getOrange().getCritMultiplier() != 100) {
                 orangeLore.add(ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + spec.getOrange().getCritChance() + "%");
                 orangeLore.add(ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + spec.getOrange().getCritMultiplier() + "%");
             }
@@ -560,17 +563,27 @@ public class WarlordsPlayer {
         this.maxHealth = maxHealth;
     }
 
-    public void addHealth(WarlordsPlayer attacker, String ability, int min, int max, int critChance, int critMultiplier) {
+    public void addHealth(WarlordsPlayer attacker, String ability, float min, float max, int critChance, int critMultiplier) {
         if (spawnProtection != 0 || (dead && !undyingArmyDead)) return;
         if (attacker == this && (ability.equals("Fall") || ability.isEmpty())) {
             if (ability.isEmpty()) {
                 player.sendMessage("" + ChatColor.RED + "\u00AB" + ChatColor.GRAY + " You took " + ChatColor.RED + min * -1 + ChatColor.GRAY + " melee damage.");
                 regenTimer = 10;
                 if (health + min <= 0) {
-                    setUndyingArmyDead(false);
-                    getPlayer().getInventory().remove(UndyingArmy.BONE);
-
+                    dead = true;
+                    powerUpDamage = 0;
+                    powerUpEnergy = 0;
+                    powerUpSpeed = 0;
                     addGrave();
+
+                    Zombie zombie = player.getWorld().spawn(player.getLocation(), Zombie.class);
+                    zombie.getEquipment().setBoots(player.getInventory().getBoots());
+                    zombie.getEquipment().setLeggings(player.getInventory().getLeggings());
+                    zombie.getEquipment().setChestplate(player.getInventory().getChestplate());
+                    zombie.getEquipment().setHelmet(player.getInventory().getHelmet());
+                    zombie.getEquipment().setItemInHand(player.getInventory().getItemInHand());
+                    zombie.damage(2000);
+
                     hitBy.remove(attacker);
                     hitBy.add(0, attacker);
 
@@ -585,14 +598,6 @@ public class WarlordsPlayer {
                         Warlords.blueKills++;
                         Warlords.game.addBluePoints(SCORE_KILL_POINTS);
                     }
-
-                    Zombie zombie = player.getWorld().spawn(player.getLocation(), Zombie.class);
-                    zombie.getEquipment().setBoots(player.getInventory().getBoots());
-                    zombie.getEquipment().setLeggings(player.getInventory().getLeggings());
-                    zombie.getEquipment().setChestplate(player.getInventory().getChestplate());
-                    zombie.getEquipment().setHelmet(player.getInventory().getHelmet());
-                    zombie.getEquipment().setItemInHand(player.getInventory().getItemInHand());
-                    zombie.damage(2000);
 
                     PacketUtils.sendTitle(player, ChatColor.RED + "YOU DIED!", ChatColor.GRAY + "You took " + ChatColor.RED + (min * -1) + ChatColor.GRAY + " melee damage and died.", 0, 40, 0);
 
@@ -612,7 +617,12 @@ public class WarlordsPlayer {
                 player.sendMessage("" + ChatColor.RED + "\u00AB" + ChatColor.GRAY + " You took " + ChatColor.RED + min * -1 + ChatColor.GRAY + " fall damage.");
                 regenTimer = 10;
                 if (health + min < 0) {
+                    dead = true;
+                    powerUpDamage = 0;
+                    powerUpEnergy = 0;
+                    powerUpSpeed = 0;
                     addGrave();
+
                     hitBy.remove(attacker);
                     hitBy.add(0, attacker);
 
@@ -732,7 +742,7 @@ public class WarlordsPlayer {
                 //TODO check teammate heal
                 if (arcaneShieldHealth + damageHealValue < 0) {
                     arcaneShield = 0;
-                    addHealth(attacker, ability, (int) (arcaneShieldHealth + damageHealValue), (int) (arcaneShieldHealth + damageHealValue), isCrit ? 100 : -1, 100);
+                    addHealth(attacker, ability, (arcaneShieldHealth + damageHealValue), (arcaneShieldHealth + damageHealValue), isCrit ? 100 : -1, 100);
 
                     addAbsorbed(-(arcaneShield + damageHealValue));
                 } else {
@@ -800,9 +810,9 @@ public class WarlordsPlayer {
                                 System.out.println("===" + -damageHealValue);
                                 float healValue = damageHealValue * -1;
                                 if (isCrit)
-                                    lastStandedBy.addHealth(lastStandedBy, "Last Stand", (int) (healValue), (int) (healValue), 100, 100);
+                                    lastStandedBy.addHealth(lastStandedBy, "Last Stand", Math.round(healValue), Math.round(healValue), 100, 100);
                                 else
-                                    lastStandedBy.addHealth(lastStandedBy, "Last Stand", (int) (healValue), (int) (healValue), -1, 100);
+                                    lastStandedBy.addHealth(lastStandedBy, "Last Stand", Math.round(healValue), Math.round(healValue), -1, 100);
                             }
                             addAbsorbed(-damageHealValue);
                         }
@@ -870,7 +880,7 @@ public class WarlordsPlayer {
                             } else {
                                 tempNewCritChance = -1;
                             }
-                            attacker.addHealth(attacker, name, (int) -damageHealValue / 2, (int) -damageHealValue / 2, tempNewCritChance, 100);
+                            attacker.addHealth(attacker, name, -damageHealValue / 2, -damageHealValue / 2, tempNewCritChance, 100);
 
                             int counter = 0;
                             //reloops near players to give health to
@@ -880,7 +890,7 @@ public class WarlordsPlayer {
                             for (Entity nearEntity2 : nearNearPlayers) {
                                 if (nearEntity2 instanceof Player) {
                                     Player nearTeamPlayer = (Player) nearEntity2;
-                                    Warlords.getPlayer(nearTeamPlayer).addHealth(attacker, name, (int) -damageHealValue, (int) -damageHealValue, tempNewCritChance, 100);
+                                    Warlords.getPlayer(nearTeamPlayer).addHealth(attacker, name, -damageHealValue, -damageHealValue, tempNewCritChance, 100);
                                     counter++;
                                     if (counter == 2)
                                         break;
@@ -1007,9 +1017,9 @@ public class WarlordsPlayer {
                     int earthlivingActivate = (int) (Math.random() * 100);
                     if (attacker.isFirstProc()) {
                         if (isCrit) {
-                            attacker.addHealth(attacker, "Earthliving Weapon", (int) (damageHealValue * -2.4), (int) (damageHealValue * -2.4), 100, 100);
+                            attacker.addHealth(attacker, "Earthliving Weapon", (damageHealValue * -2.4f), (damageHealValue * -2.4f), 100, 100);
                         } else {
-                            attacker.addHealth(attacker, "Earthliving Weapon", (int) (damageHealValue * -2.4), (int) (damageHealValue * -2.4), -1, 100);
+                            attacker.addHealth(attacker, "Earthliving Weapon", (damageHealValue * -2.4f), (damageHealValue * -2.4f), -1, 100);
                         }
 
                         for (Player player1 : player.getWorld().getPlayers()) {
@@ -1023,7 +1033,7 @@ public class WarlordsPlayer {
                         for (Entity entity : near) {
                             if (entity instanceof Player && ((Player) entity).getGameMode() != GameMode.SPECTATOR) {
                                 if (earthlivingActivate < 40) {
-                                    Warlords.getPlayer((Player) near.get(0)).addHealth(attacker, "Earthliving Weapon", (int) (damageHealValue * -2.4), (int) (damageHealValue * -2.4), 25, 100);
+                                    Warlords.getPlayer((Player) near.get(0)).addHealth(attacker, "Earthliving Weapon", (damageHealValue * -2.4f), (damageHealValue * -2.4f), 25, 100);
 
                                     counter++;
                                 }
@@ -1033,9 +1043,9 @@ public class WarlordsPlayer {
                         }
                     } else if (earthlivingActivate < 40) {
                         if (isCrit) {
-                            attacker.addHealth(attacker, "Earthliving Weapon", (int) (damageHealValue * -2.4), (int) (damageHealValue * -2.4), 100, 100);
+                            attacker.addHealth(attacker, "Earthliving Weapon", (damageHealValue * -2.4f), (damageHealValue * -2.4f), 100, 100);
                         } else {
-                            attacker.addHealth(attacker, "Earthliving Weapon", (int) (damageHealValue * -2.4), (int) (damageHealValue * -2.4), -1, 100);
+                            attacker.addHealth(attacker, "Earthliving Weapon", (damageHealValue * -2.4f), (damageHealValue * -2.4f), -1, 100);
                         }
 
                         for (Player player1 : player.getWorld().getPlayers()) {
@@ -1047,7 +1057,7 @@ public class WarlordsPlayer {
                         int counter = 0;
                         for (Entity entity : near) {
                             if (entity instanceof Player && ((Player) entity).getGameMode() != GameMode.SPECTATOR) {
-                                Warlords.getPlayer((Player) near.get(0)).addHealth(attacker, "Earthliving Weapon", (int) (damageHealValue * -2.4), (int) (damageHealValue * -2.4), 25, 440);
+                                Warlords.getPlayer((Player) near.get(0)).addHealth(attacker, "Earthliving Weapon", (damageHealValue * -2.4f), (damageHealValue * -2.4f), 25, 440);
                                 counter++;
                             }
                             if (counter == 2)
@@ -1742,6 +1752,10 @@ public class WarlordsPlayer {
 
     public int getSpawnDamage() {
         return spawnDamage;
+    }
+
+    public boolean isDead() {
+        return dead;
     }
 
     public void setDead(boolean dead) {
