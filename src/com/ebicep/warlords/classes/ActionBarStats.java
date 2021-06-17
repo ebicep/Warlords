@@ -4,7 +4,7 @@ import com.ebicep.warlords.WarlordsPlayer;
 
 public class ActionBarStats {
 
-    private WarlordsPlayer warlordsPlayer;
+    private final WarlordsPlayer warlordsPlayer;
     private String name;
     private int timeLeft;
 

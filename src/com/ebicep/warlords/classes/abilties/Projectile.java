@@ -18,11 +18,43 @@ import java.util.List;
 public class Projectile extends AbstractAbility {
 
     private static final float hitBox = 1.25F;
-    private int maxDistance;
+    private final int maxDistance;
 
-    public Projectile(String name, float minDamageHeal, float maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier, String description, int maxDistance) {
-        super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier, description);
+    public Projectile(String name, float minDamageHeal, float maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier, int maxDistance) {
+        super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
         this.maxDistance = maxDistance;
+        updateDescription();
+    }
+
+    @Override
+    public void updateDescription() {
+        if (name.contains("Fire")) {
+            description = "§7Shoot a fireball that will explode\n" +
+                    "§7for §c" + -minDamageHeal + " §7- §c" + -maxDamageHeal + " §7damage. A\n" +
+                    "§7direct hit will cause the enemy\n" +
+                    "§7to take an additional §c15% §7extra\n" +
+                    "§7damage. §7Has an optimal range of §e50 §7blocks.";
+        } else if (name.contains("Frost")) {
+            description = "§7Shoot a frostbolt that will shatter\n" +
+                    "§7for §c" + -minDamageHeal + " §7- §c" + -maxDamageHeal + " §7damage and slow\n" +
+                    "§7by §e20% §7for §62 §7seconds. A\n" +
+                    "§7direct hit will cause the enemy\n" +
+                    "§7to take an additional §c30% §7extra\n" +
+                    "§7damage." + "\n\n§7Has an optimal range of §e" + maxDistance + "\n" +
+                    "§7blocks.";
+        } else if (name.contains("Water")) {
+            description = "§7Shoot a bolt of water that will burst\n" +
+                    "§7for §c231 §7- §c299 §7damage and restore\n" +
+                    "§a" + minDamageHeal + " §7- §a" + maxDamageHeal + " §7health to allies. A\n" +
+                    "§7direct hit will cause §a15% §7increased\n" +
+                    "§7damage or healing for the target hit.\n" +
+                    "§7Has an optimal range of §e" + maxDistance + " §7blocks.";
+        } else if (name.contains("Flame")) {
+            description = "§7Launch a flame burst that will explode\n" +
+                    "§7for §c" + -minDamageHeal + " §7- §c" + -maxDamageHeal + " §7damage. The critical\n" +
+                    "§7chance increases by §c1% §7for each\n" +
+                    "§7travelled block. Up to 100%.";
+        }
     }
 
     @Override
@@ -30,7 +62,7 @@ public class Projectile extends AbstractAbility {
         Warlords.getPlayer(player).subtractEnergy(energyCost);
 
         CustomProjectile customProjectile = new CustomProjectile(player, player.getLocation(), player.getLocation(), player.getLocation().getDirection(), maxDistance,
-                new Projectile(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier, description, maxDistance));
+                new Projectile(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier, maxDistance));
 
         // SOUNDS
         if (customProjectile.getBall().getName().contains("Fire")) {

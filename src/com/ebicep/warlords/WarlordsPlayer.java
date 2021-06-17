@@ -21,7 +21,10 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.Dye;
 import org.bukkit.metadata.MetadataValue;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.IntStream;
 
 public class WarlordsPlayer {
@@ -30,7 +33,7 @@ public class WarlordsPlayer {
     private String name;
     private UUID uuid;
     private PlayerClass spec;
-    private Weapons weapon;
+    private final Weapons weapon;
     private boolean hotKeyMode = true;
     private int health;
     private int maxHealth;
@@ -381,25 +384,22 @@ public class WarlordsPlayer {
         } else {
             Dye redDye = new Dye();
             redDye.setColor(DyeColor.RED);
-            ItemStack red = new ItemStack(redDye.toItemStack(1));
-            ItemMeta redMeta = red.getItemMeta();
-            redMeta.setDisplayName(ChatColor.GOLD + spec.getRed().getName());
-            ArrayList<String> redLore = new ArrayList<>();
-            redLore.add(ChatColor.GRAY + "Cooldown: " + ChatColor.AQUA + spec.getRed().getCooldown());
-            if (spec.getRed().getEnergyCost() != 0) {
-                redLore.add(ChatColor.GRAY + "Energy Cost: " + ChatColor.YELLOW + spec.getRed().getEnergyCost());
-            }
-            if (spec.getRed().getCritChance() != 0 && spec.getRed().getCritChance() != -1 && spec.getRed().getCritMultiplier() != 100) {
-                redLore.add(ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + spec.getRed().getCritChance() + "%");
-                redLore.add(ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + spec.getRed().getCritMultiplier() + "%");
-            }
-
-            redLore.add("");
-            redLore.addAll(Arrays.asList(spec.getRed().getDescription().split("\n")));
-            redMeta.setLore(redLore);
-            red.setItemMeta(redMeta);
-            redMeta.spigot().setUnbreakable(true);
-            player.getInventory().setItem(1, red);
+            player.getInventory().setItem(
+                    1,
+                    new ItemBuilder(redDye.toItemStack(1))
+                            .name(ChatColor.GOLD + spec.getRed().getName())
+                            .lore(ChatColor.GRAY + "Cooldown: " + ChatColor.AQUA + spec.getRed().getCooldown() + " seconds",
+                                    spec.getRed().getEnergyCost() != 0
+                                            ? ChatColor.GRAY + "Energy Cost: " + ChatColor.YELLOW + spec.getRed().getEnergyCost() + "\n" +
+                                            (spec.getRed().getCritChance() != 0 && spec.getRed().getCritChance() != -1 && spec.getRed().getCritMultiplier() != 100
+                                                    ? ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + spec.getRed().getCritChance() + "%" + "\n"
+                                                    + ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + spec.getRed().getCritMultiplier() + "%" + "\n\n" + spec.getRed().getDescription()
+                                                    : "\n" + spec.getRed().getDescription())
+                                            : "\n" + spec.getRed().getDescription()
+                            )
+                            .unbreakable()
+                            .flags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE)
+                            .get());
         }
     }
 
@@ -408,25 +408,22 @@ public class WarlordsPlayer {
             ItemStack cooldown = new ItemStack(grayDye.toItemStack(Math.round(spec.getPurple().getCurrentCooldown())));
             player.getInventory().setItem(2, cooldown);
         } else {
-            ItemStack purple = new ItemStack(Material.GLOWSTONE_DUST);
-            ItemMeta purpleMeta = purple.getItemMeta();
-            purpleMeta.setDisplayName(ChatColor.GOLD + spec.getPurple().getName());
-            ArrayList<String> purpleLore = new ArrayList<>();
-            purpleLore.add(ChatColor.GRAY + "Cooldown: " + ChatColor.AQUA + spec.getPurple().getCooldown());
-            if (spec.getPurple().getEnergyCost() != 0 && spec.getPurple().getEnergyCost() != -120) {
-                purpleLore.add(ChatColor.GRAY + "Energy Cost: " + ChatColor.YELLOW + spec.getPurple().getEnergyCost());
-            }
-            if (spec.getPurple().getCritChance() != 0 && spec.getPurple().getCritChance() != -1 && spec.getPurple().getCritMultiplier() != 100) {
-                purpleLore.add(ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + spec.getPurple().getCritChance() + "%");
-                purpleLore.add(ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + spec.getPurple().getCritMultiplier() + "%");
-            }
-
-            purpleLore.add("");
-            purpleLore.addAll(Arrays.asList(spec.getPurple().getDescription().split("\n")));
-            purpleMeta.setLore(purpleLore);
-            purple.setItemMeta(purpleMeta);
-            purpleMeta.spigot().setUnbreakable(true);
-            player.getInventory().setItem(2, purple);
+            player.getInventory().setItem(
+                    2,
+                    new ItemBuilder(Material.GLOWSTONE_DUST)
+                            .name(ChatColor.GOLD + spec.getPurple().getName())
+                            .lore(ChatColor.GRAY + "Cooldown: " + ChatColor.AQUA + spec.getRed().getCooldown() + " seconds",
+                                    spec.getPurple().getEnergyCost() != 0
+                                            ? ChatColor.GRAY + "Energy Cost: " + ChatColor.YELLOW + spec.getPurple().getEnergyCost() + "\n" +
+                                            (spec.getPurple().getCritChance() != 0 && spec.getPurple().getCritChance() != -1 && spec.getPurple().getCritMultiplier() != 100
+                                                    ? ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + spec.getPurple().getCritChance() + "%" + "\n"
+                                                    + ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + spec.getPurple().getCritMultiplier() + "%" + "\n\n" + spec.getPurple().getDescription()
+                                                    : "\n" + spec.getPurple().getDescription())
+                                            : "\n" + spec.getPurple().getDescription()
+                            )
+                            .unbreakable()
+                            .flags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE)
+                            .get());
         }
     }
 
@@ -437,25 +434,22 @@ public class WarlordsPlayer {
         } else {
             Dye limeDye = new Dye();
             limeDye.setColor(DyeColor.LIME);
-            ItemStack blue = new ItemStack(limeDye.toItemStack(1));
-            ItemMeta blueMeta = blue.getItemMeta();
-            blueMeta.setDisplayName(ChatColor.GOLD + spec.getBlue().getName());
-            ArrayList<String> blueLore = new ArrayList<>();
-            blueLore.add(ChatColor.GRAY + "Cooldown: " + ChatColor.AQUA + spec.getBlue().getCooldown());
-            if (spec.getBlue().getEnergyCost() != 0) {
-                blueLore.add(ChatColor.GRAY + "Energy Cost: " + ChatColor.YELLOW + spec.getBlue().getEnergyCost());
-            }
-            if (spec.getBlue().getCritChance() != 0 && spec.getBlue().getCritChance() != -1 && spec.getBlue().getCritMultiplier() != 100) {
-                blueLore.add(ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + spec.getBlue().getCritChance() + "%");
-                blueLore.add(ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + spec.getBlue().getCritMultiplier() + "%");
-            }
-
-            blueLore.add("");
-            blueLore.addAll(Arrays.asList(spec.getBlue().getDescription().split("\n")));
-            blueMeta.setLore(blueLore);
-            blue.setItemMeta(blueMeta);
-            blueMeta.spigot().setUnbreakable(true);
-            player.getInventory().setItem(3, blue);
+            player.getInventory().setItem(
+                    3,
+                    new ItemBuilder(limeDye.toItemStack(1))
+                            .name(ChatColor.GOLD + spec.getBlue().getName())
+                            .lore(ChatColor.GRAY + "Cooldown: " + ChatColor.AQUA + spec.getBlue().getCooldown() + " seconds",
+                                    spec.getBlue().getEnergyCost() != 0
+                                            ? ChatColor.GRAY + "Energy Cost: " + ChatColor.YELLOW + spec.getBlue().getEnergyCost() + "\n" +
+                                            (spec.getBlue().getCritChance() != 0 && spec.getBlue().getCritChance() != -1 && spec.getBlue().getCritMultiplier() != 100
+                                                    ? ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + spec.getBlue().getCritChance() + "%" + "\n"
+                                                    + ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + spec.getBlue().getCritMultiplier() + "%" + "\n\n" + spec.getBlue().getDescription()
+                                                    : "\n" + spec.getBlue().getDescription())
+                                            : "\n" + spec.getBlue().getDescription()
+                            )
+                            .unbreakable()
+                            .flags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE)
+                            .get());
         }
     }
 
@@ -466,25 +460,22 @@ public class WarlordsPlayer {
         } else {
             Dye orangeDye = new Dye();
             orangeDye.setColor(DyeColor.ORANGE);
-            ItemStack orange = new ItemStack(orangeDye.toItemStack(1));
-            ItemMeta orangeMeta = orange.getItemMeta();
-            orangeMeta.setDisplayName(ChatColor.GOLD + spec.getOrange().getName());
-            ArrayList<String> orangeLore = new ArrayList<>();
-            orangeLore.add(ChatColor.GRAY + "Cooldown: " + ChatColor.AQUA + spec.getOrange().getCooldown());
-            if (spec.getOrange().getEnergyCost() != 0) {
-                orangeLore.add(ChatColor.GRAY + "Energy Cost: " + ChatColor.YELLOW + spec.getOrange().getEnergyCost());
-            }
-            if (spec.getOrange().getCritChance() != 0 && spec.getOrange().getCritChance() != -1 && spec.getOrange().getCritMultiplier() != 100) {
-                orangeLore.add(ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + spec.getOrange().getCritChance() + "%");
-                orangeLore.add(ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + spec.getOrange().getCritMultiplier() + "%");
-            }
-
-            orangeLore.add("");
-            orangeLore.addAll(Arrays.asList(spec.getOrange().getDescription().split("\n")));
-            orangeMeta.setLore(orangeLore);
-            orange.setItemMeta(orangeMeta);
-            orangeMeta.spigot().setUnbreakable(true);
-            player.getInventory().setItem(4, orange);
+            player.getInventory().setItem(
+                    4,
+                    new ItemBuilder(orangeDye.toItemStack(1))
+                            .name(ChatColor.GOLD + spec.getOrange().getName())
+                            .lore(ChatColor.GRAY + "Cooldown: " + ChatColor.AQUA + spec.getOrange().getCooldown() + " seconds",
+                                    spec.getOrange().getEnergyCost() != 0
+                                            ? ChatColor.GRAY + "Energy Cost: " + ChatColor.YELLOW + spec.getOrange().getEnergyCost() + "\n" +
+                                            (spec.getOrange().getCritChance() != 0 && spec.getOrange().getCritChance() != -1 && spec.getOrange().getCritMultiplier() != 100
+                                                    ? ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + spec.getOrange().getCritChance() + "%" + "\n"
+                                                    + ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + spec.getOrange().getCritMultiplier() + "%" + "\n\n" + spec.getOrange().getDescription()
+                                                    : "\n" + spec.getOrange().getDescription())
+                                            : "\n" + spec.getOrange().getDescription()
+                            )
+                            .unbreakable()
+                            .flags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE)
+                            .get());
         }
     }
 

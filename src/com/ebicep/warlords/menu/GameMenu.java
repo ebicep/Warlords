@@ -73,7 +73,10 @@ public class GameMenu {
                     9 / 2 - values.length / 2 + i * 2 - 1,
                     1,
                     item,
-                    (n, e) -> openClassMenu(player, group)
+                    (n, e) -> {
+                        openClassMenu(player, group);
+                        //TODO change inventory to spec stuff
+                    }
             );
         }
         menu.setItem(1, 3, MENU_SKINS, (n, e) -> openWeaponMenu(player, 1));

@@ -18,13 +18,13 @@ import java.util.List;
 public class CustomScoreboard {
 
     private Player player;
-    private Scoreboard scoreboard;
+    private final Scoreboard scoreboard;
     private Objective tab;
-    private Objective sideBar;
+    private final Objective sideBar;
     private Objective health;
-    private List<WarlordsPlayer> blueTeam;
-    private List<WarlordsPlayer> redTeam;
-    private Game game;
+    private final List<WarlordsPlayer> blueTeam;
+    private final List<WarlordsPlayer> redTeam;
+    private final Game game;
 
     public CustomScoreboard(WarlordsPlayer warlordsPlayer, List<WarlordsPlayer> blueTeam, List<WarlordsPlayer> redTeam, Game game) {
         Player player = warlordsPlayer.getPlayer();

@@ -22,8 +22,29 @@ import java.util.List;
 
 public class Strike extends AbstractAbility {
 
-    public Strike(String name, float minDamageHeal, float maxDamageHeal, int cooldown, int energyCost, int critChance, int critMultiplier, String description) {
-        super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier, description);
+    public Strike(String name, float minDamageHeal, float maxDamageHeal, int cooldown, int energyCost, int critChance, int critMultiplier) {
+        super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
+    }
+
+    @Override
+    public void updateDescription() {
+        if (name.contains("Avenger")) {
+            description = "§7Strike the targeted enemy player,\n" +
+                    "§7causing §c" + minDamageHeal + " §7- §c" + maxDamageHeal + " §7damage\n" +
+                    "§7and removing §e6 §7energy.";
+        } else if (name.contains("Crusader")) {
+            description = "§7Strike the targeted enemy player,\n" +
+                    "§7causing §c" + minDamageHeal + " §7- §c" + maxDamageHeal + " damage\n" +
+                    "§7and restoring §e24 §7energy to two nearby\n" +
+                    "§7within §e10 §7blocks.";
+        } else if (name.contains("Protector")) {
+            description = "§7Strike the targeted enemy player,\n" +
+                    "§7causing §c" + minDamageHeal + " §7- §c" + maxDamageHeal + " §7damage\n" +
+                    "§7and healing two nearby allies for\n" +
+                    "§a100% §7of the damage done. Also\n" +
+                    "§7heals yourself by §a50% §7of the\n" +
+                    "§7damage done.";
+        }
     }
 
     @Override
@@ -49,7 +70,7 @@ public class Strike extends AbstractAbility {
                         //check consecrate then boost dmg
                         if (warlordsPlayer.getSpec() instanceof Avenger) {
                             if (standingOnConsecrate(player, nearPlayer)) {
-                                Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, name, Math.round(minDamageHeal * 1.2f), Math.round(maxDamageHeal * 1.2f), critChance, critMultiplier);
+                                Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, name, (minDamageHeal * 1.2f), (maxDamageHeal * 1.2f), critChance, critMultiplier);
                             } else {
                                 Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
                             }
@@ -66,7 +87,7 @@ public class Strike extends AbstractAbility {
                                             System.out.println("NEAR NEAR HIT " + nearNearPlayer);
                                             //checking if player is in consecrate
                                             if (standingOnConsecrate(player, nearNearPlayer)) {
-                                                Warlords.getPlayer(nearNearPlayer).addHealth(warlordsPlayer, name, Math.round(minDamageHeal * 1.2f), Math.round(maxDamageHeal * 1.2f), critChance, critMultiplier);
+                                                Warlords.getPlayer(nearNearPlayer).addHealth(warlordsPlayer, name, (minDamageHeal * 1.2f), (maxDamageHeal * 1.2f), critChance, critMultiplier);
                                             } else {
                                                 Warlords.getPlayer(nearNearPlayer).addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
                                             }
@@ -82,7 +103,7 @@ public class Strike extends AbstractAbility {
                             int counter = 0;
                             //checking if player is in consecrate
                             if (standingOnConsecrate(player, nearPlayer)) {
-                                Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, name, Math.round(minDamageHeal * 1.15f), Math.round(maxDamageHeal * 1.15f), critChance, critMultiplier);
+                                Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, name, (minDamageHeal * 1.15f), (maxDamageHeal * 1.15f), critChance, critMultiplier);
                             } else {
                                 Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
                             }
@@ -100,7 +121,11 @@ public class Strike extends AbstractAbility {
                                 }
                             }
                         } else if (warlordsPlayer.getSpec() instanceof Protector) {
-                            Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+                            if (standingOnConsecrate(player, nearPlayer)) {
+                                Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, name, (minDamageHeal * 1.15f), (maxDamageHeal * 1.15f), critChance, critMultiplier);
+                            } else {
+                                Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+                            }
                         }
 
                     } else if (warlordsPlayer.getSpec() instanceof Berserker) {

@@ -16,11 +16,15 @@ public class TimeWarp extends AbstractAbility {
     private int counter = 0;
 
     public TimeWarp() {
-        super("Time Warp", 0, 0, 29, 30, -1, 100,
-                "§7Activate to place a time rune on\n" +
-                        "§7the ground. After §65 §7seconds,\n" +
-                        "§7you will warp back to that location\n" +
-                        "§7and restore §a30% §7of your health");
+        super("Time Warp", 0, 0, 29, 30, -1, 100);
+    }
+
+    @Override
+    public void updateDescription() {
+        description = "§7Activate to place a time rune on\n" +
+                "§7the ground. After §65 §7seconds,\n" +
+                "§7you will warp back to that location\n" +
+                "§7and restore §a30% §7of your health";
     }
 
     @Override
@@ -45,19 +49,19 @@ public class TimeWarp extends AbstractAbility {
 
                 //PARTICLES
                 if (counter % 4 == 0) {
-                        if (timeWarpPlayer.getTime() != 0) {
-                            ParticleEffect.SPELL_WITCH.display(0F, 0F, 0F, 0.001F, 6, timeWarpPlayer.getLocation(), 500);
-                        }
+                    if (timeWarpPlayer.getTime() != 0) {
+                        ParticleEffect.SPELL_WITCH.display(0F, 0F, 0F, 0.001F, 6, timeWarpPlayer.getLocation(), 500);
+                    }
 
-                        int points = 6;
-                        double radius = 0.5d;
-                        Location origin = timeWarpPlayer.getLocation();
+                    int points = 6;
+                    double radius = 0.5d;
+                    Location origin = timeWarpPlayer.getLocation();
 
-                        for (int e = 0; e < points; e++) {
-                            double angle = 2 * Math.PI * e / points;
-                            Location point = origin.clone().add(radius * Math.sin(angle), 0.0d, radius * Math.cos(angle));
-                            ParticleEffect.CLOUD.display(0.1F, 0F, 0.1F, 0.001F, 1, point, 500);
-                        }
+                    for (int e = 0; e < points; e++) {
+                        double angle = 2 * Math.PI * e / points;
+                        Location point = origin.clone().add(radius * Math.sin(angle), 0.0d, radius * Math.cos(angle));
+                        ParticleEffect.CLOUD.display(0.1F, 0F, 0.1F, 0.001F, 1, point, 500);
+                    }
 
                 }
 

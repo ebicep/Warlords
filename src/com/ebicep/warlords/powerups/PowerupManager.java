@@ -13,8 +13,8 @@ import java.util.stream.Collectors;
 
 public class PowerupManager extends BukkitRunnable {
 
-    private List<AbstractPowerUp> powerUps = new ArrayList<>();
-    private GameMap map;
+    private final List<AbstractPowerUp> powerUps = new ArrayList<>();
+    private final GameMap map;
 
     public PowerupManager(GameMap map) {
         this.map = map;

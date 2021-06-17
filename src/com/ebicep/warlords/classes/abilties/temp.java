@@ -6,7 +6,12 @@ import org.bukkit.entity.Player;
 public class temp extends AbstractAbility {
 
     public temp() {
-        super("temp", 0, 0, 0, 0, 0, 0, "temp");
+        super("temp", 0, 0, 0, 0, 0, 0);
+    }
+
+    @Override
+    public void updateDescription() {
+
     }
 
     @Override

@@ -19,13 +19,20 @@ import java.util.List;
 public class SeismicWave extends AbstractAbility {
 
     private List<List<Location>> fallingBlockLocations = new ArrayList<>();
-    private List<CustomFallingBlock> customFallingBlocks = new ArrayList<>();
+    private final List<CustomFallingBlock> customFallingBlocks = new ArrayList<>();
     private Player owner;
     private List<Player> playersHit = new ArrayList<>();
 
-    public SeismicWave(String name, float minDamageHeal, float maxDamageHeal, int cooldown, int energyCost, int critChance, int critMultiplier, String description, Player owner) {
-        super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier, description);
+    public SeismicWave(String name, float minDamageHeal, float maxDamageHeal, int cooldown, int energyCost, int critChance, int critMultiplier, Player owner) {
+        super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
         this.owner = owner;
+    }
+
+    @Override
+    public void updateDescription() {
+        description = "§7Slam the ground, creating a shockwave\n" +
+                "§7around you that deals §c" + -minDamageHeal + " §7- §c" + -maxDamageHeal + "\n" +
+                "§7damage and knocks enemies back slightly.";
     }
 
     @Override

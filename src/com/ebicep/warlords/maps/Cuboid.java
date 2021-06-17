@@ -12,13 +12,13 @@ public class Cuboid {
     private final int maxZ;
 
     public Cuboid(World world, int minX, int minY, int minZ, int maxX, int maxY, int maxZ) {
-        if(minX > maxX) {
+        if (minX > maxX) {
             throw new IllegalArgumentException("minX > maxX");
         }
-        if(minY > maxY) {
+        if (minY > maxY) {
             throw new IllegalArgumentException("minY > maxY");
         }
-        if(minZ > maxZ) {
+        if (minZ > maxZ) {
             throw new IllegalArgumentException("minZ > maxZ");
         }
         this.world = world;
@@ -102,10 +102,7 @@ public class Cuboid {
         if (this.maxY != other.maxY) {
             return false;
         }
-        if (this.maxZ != other.maxZ) {
-            return false;
-        }
-        return true;
+        return this.maxZ == other.maxZ;
     }
 
 }

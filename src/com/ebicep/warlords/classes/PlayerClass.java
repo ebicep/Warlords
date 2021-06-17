@@ -49,6 +49,10 @@ public abstract class PlayerClass {
             className = "Shaman";
             classNameShort = "SHA";
         }
+        if (blue instanceof ArcaneShield) {
+            ((ArcaneShield) blue).maxShieldHealth = maxHealth / 2;
+            blue.updateDescription();
+        }
     }
 
     public void onRightClick(Player player) {

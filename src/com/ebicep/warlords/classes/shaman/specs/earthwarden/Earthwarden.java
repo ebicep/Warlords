@@ -11,16 +11,7 @@ public class Earthwarden extends AbstractShaman {
                 new EarthenSpike(),
                 new Boulder(),
                 new Earthliving(),
-                new Chain("Chain Heal", 454, 613, 8, 40, 20, 175,
-                        "§7Discharge a beam of energizing lightning\n" +
-                                "§7that heals you and a targeted friendly\n" +
-                                "§7player for §a474 §7- §a633 §7health and\n" +
-                                "§7jumps to §e2 §7additional targets within\n" +
-                                "§e10 §7blocks." +
-                                "\n\n" +
-                                "§7Each ally healed reduces the cooldown of\n" +
-                                "§7Boulder by §62 §7seconds."),
-
+                new Chain("Chain Heal", 454, 613, 8, 40, 20, 175),
                 new Totem.TotemEarthwarden());
     }
 

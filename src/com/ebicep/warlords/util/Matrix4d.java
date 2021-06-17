@@ -13,13 +13,14 @@ public final class Matrix4d {
     private final double[] matrix;
 
     public Matrix4d() {
-        this.matrix = new double[] {
+        this.matrix = new double[]{
                 1, 0, 0, 0,
                 0, 1, 0, 0,
                 0, 0, 1, 0,
-                0, 0, 0 ,1,
+                0, 0, 0, 1,
         };
     }
+
     public Matrix4d(Location loc) {
         this();
         this.updateFromLocation(loc);
@@ -46,23 +47,23 @@ public final class Matrix4d {
     }
 
     public void setRotation(double x, double y, double z) {
-        double a = Math.cos( x ), b = Math.sin( x );
-        double c = Math.cos( y ), d = Math.sin( y );
-        double e = Math.cos( z ), f = Math.sin( z );
+        double a = Math.cos(x), b = Math.sin(x);
+        double c = Math.cos(y), d = Math.sin(y);
+        double e = Math.cos(z), f = Math.sin(z);
 
         double ac = a * c, ad = a * d, bc = b * c, bd = b * d;
 
-        this.matrix[ 0 ] = c * e;
-        this.matrix[ 4 ] = bd - ac * f;
-        this.matrix[ 8 ] = bc * f + ad;
+        this.matrix[0] = c * e;
+        this.matrix[4] = bd - ac * f;
+        this.matrix[8] = bc * f + ad;
 
-        this.matrix[ 1 ] = f;
-        this.matrix[ 5 ] = a * e;
-        this.matrix[ 9 ] = - b * e;
+        this.matrix[1] = f;
+        this.matrix[5] = a * e;
+        this.matrix[9] = -b * e;
 
-        this.matrix[ 2 ] = - d * e;
-        this.matrix[ 6 ] = ad * f + bc;
-        this.matrix[ 10 ] = ac - bd * f;
+        this.matrix[2] = -d * e;
+        this.matrix[6] = ad * f + bc;
+        this.matrix[10] = ac - bd * f;
     }
 
     public void scale(double v) {
@@ -70,19 +71,27 @@ public final class Matrix4d {
     }
 
     public void scale(double x, double y, double z) {
-        this.matrix[ 0 ] *= x; this.matrix[ 4 ] *= y; this.matrix[ 8 ] *= z;
-        this.matrix[ 1 ] *= x; this.matrix[ 5 ] *= y; this.matrix[ 9 ] *= z;
-        this.matrix[ 2 ] *= x; this.matrix[ 6 ] *= y; this.matrix[ 10 ] *= z;
-        this.matrix[ 3 ] *= x; this.matrix[ 7 ] *= y; this.matrix[ 11 ] *= z;
+        this.matrix[0] *= x;
+        this.matrix[4] *= y;
+        this.matrix[8] *= z;
+        this.matrix[1] *= x;
+        this.matrix[5] *= y;
+        this.matrix[9] *= z;
+        this.matrix[2] *= x;
+        this.matrix[6] *= y;
+        this.matrix[10] *= z;
+        this.matrix[3] *= x;
+        this.matrix[7] *= y;
+        this.matrix[11] *= z;
     }
 
 
     public Vector translateVector(double x, double y, double z) {
         double w = 1;
         return new Vector(
-                this.matrix[ 0 ] * x + this.matrix[ 4 ] * y + this.matrix[ 8 ] * z + this.matrix[ 12 ] * w,
-                this.matrix[ 1 ] * x + this.matrix[ 5 ] * y + this.matrix[ 9 ] * z + this.matrix[ 13 ] * w,
-                this.matrix[ 2 ] * x + this.matrix[ 6 ] * y + this.matrix[ 10 ] * z + this.matrix[ 14 ] * w
+                this.matrix[0] * x + this.matrix[4] * y + this.matrix[8] * z + this.matrix[12] * w,
+                this.matrix[1] * x + this.matrix[5] * y + this.matrix[9] * z + this.matrix[13] * w,
+                this.matrix[2] * x + this.matrix[6] * y + this.matrix[10] * z + this.matrix[14] * w
         );
     }
 
@@ -95,7 +104,7 @@ public final class Matrix4d {
         return "Matrix4d{" + Arrays.toString(matrix) + '}';
     }
 
-    public static void main(String ... args) {
+    public static void main(String... args) {
         // Stupid manual test:
         Matrix4d matrix4d = new Matrix4d(new Location(null, 128, 64, 0, 0, 90));
         System.out.println(matrix4d);

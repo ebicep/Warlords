@@ -20,13 +20,18 @@ import java.util.List;
 public class EarthenSpike extends AbstractAbility {
 
     public EarthenSpike() {
-        super("Earthen Spike", -476, -662, 0, 120, 15, 175,
-                "§7Send forth an underground earth spike\n" +
-                        "§7that locks onto a targeted enemy player.\n" +
-                        "§7When the spike reaches its target it\n" +
-                        "§7emerges from the ground, dealing §c476 §7-\n" +
-                        "§c662 §7damage to any nearby enemies and\n" +
-                        "§7launches them up into the air.");
+        super("Earthen Spike", -476, -662, 0, 120, 15, 175
+        );
+    }
+
+    @Override
+    public void updateDescription() {
+        description = "§7Send forth an underground earth spike\n" +
+                "§7that locks onto a targeted enemy player.\n" +
+                "§7When the spike reaches its target it\n" +
+                "§7emerges from the ground, dealing §c" + -minDamageHeal + " §7-\n" +
+                "§c" + -maxDamageHeal + " §7damage to any nearby enemies and\n" +
+                "§7launches them up into the air.";
     }
 
     @Override
@@ -177,7 +182,7 @@ public class EarthenSpike extends AbstractAbility {
                             System.out.println(earthenSpikeBlock.duration);
                         }
 
-                    }.runTaskTimer(Warlords.getInstance(), 0, (long) 2);
+                    }.runTaskTimer(Warlords.getInstance(), 0, 2);
 
                     new BukkitRunnable() {
 
@@ -208,8 +213,8 @@ public class EarthenSpike extends AbstractAbility {
     public class EarthenSpikeBlock {
 
         private List<CustomFallingBlock> fallingBlocks = new ArrayList<>();
-        private Player target;
-        private WarlordsPlayer user;
+        private final Player target;
+        private final WarlordsPlayer user;
         private int duration;
         private int removed;
 

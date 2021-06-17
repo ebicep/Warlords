@@ -23,8 +23,39 @@ import java.util.List;
 
 public class Chain extends AbstractAbility {
 
-    public Chain(String name, float minDamageHeal, float maxDamageHeal, int cooldown, int energyCost, int critChance, int critMultiplier, String description) {
-        super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier, description);
+    public Chain(String name, float minDamageHeal, float maxDamageHeal, int cooldown, int energyCost, int critChance, int critMultiplier) {
+        super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
+    }
+
+    @Override
+    public void updateDescription() {
+        if (name.contains("Lightning")) {
+            description = "§7Discharge a bolt of lightning at the\n" +
+                    "§7targeted enemy player that deals\n" +
+                    "§c" + -minDamageHeal + " §7- §c" + maxDamageHeal + " §7damage and jumps to\n" +
+                    "§e4 §7additional targets within §e15\n" +
+                    "§7blocks. Each time the lightning jumps\n" +
+                    "§7the damage is decreased by §c15%§7.\n" +
+                    "§7You gain §e10% §7damage resistance for\n" +
+                    "§7each target hit, up to §e30% §7damage\n" +
+                    "§7resistance. This buff lasts §64.5 §7seconds.";
+        } else if (name.contains("Heal")) {
+            description = "§7Discharge a beam of energizing lightning\n" +
+                    "§7that heals you and a targeted friendly\n" +
+                    "§7player for §a" + minDamageHeal + " §7- §a" + maxDamageHeal + " §7health and\n" +
+                    "§7jumps to §e2 §7additional targets within\n" +
+                    "§e10 §7blocks." +
+                    "\n\n" +
+                    "§7Each ally healed reduces the cooldown of\n" +
+                    "§7Boulder by §62 §7seconds.";
+        } else if (name.contains("Spirit")) {
+            description = "§7Links your spirit with up to §c3 §7enemy\n" +
+                    "§7players, dealing §c" + -minDamageHeal + " §7- §c" + -maxDamageHeal + " §7damage\n" +
+                    "§7to the first target hit. Each additional hit\n" +
+                    "§7deals §c10% §7reduced damage. You gain §e40%\n" +
+                    "§7speed for §61.5 §7seconds, and take §c20%\n" +
+                    "§7reduced damage for §64.5 §7seconds.";
+        }
     }
 
     @Override

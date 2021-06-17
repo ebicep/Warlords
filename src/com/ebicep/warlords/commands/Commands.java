@@ -48,7 +48,7 @@ public class Commands implements TabExecutor {
                 }
             }
 
-            if(game.getState() != State.PRE_GAME) {
+            if (game.getState() != State.PRE_GAME) {
                 sender.sendMessage(ChatColor.RED + "The game has already started!");
                 return true;
             }

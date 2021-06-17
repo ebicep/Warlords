@@ -1,28 +1,24 @@
 package com.ebicep.warlords.effects;
 
 import com.ebicep.warlords.Warlords;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.*;
+
 public class ArmorStandWaveEffect {
     private final List<Stand> stands;
 
     public ArmorStandWaveEffect(Location center, double range, double speed, ItemStack texture) {
-        stands = new ArrayList<>((int)(Math.pow(Math.ceil(range), 2) * Math.PI * 1.1));
+        stands = new ArrayList<>((int) (Math.pow(Math.ceil(range), 2) * Math.PI * 1.1));
         double doubleRange = range * range;
-        for (int x = (int)-range; x <= range; x++) {
-            for (int z = (int)-range; z <= range; z++) {
+        for (int x = (int) -range; x <= range; x++) {
+            for (int z = (int) -range; z <= range; z++) {
                 double distanceSquared = x * x + z * z;
                 if (distanceSquared < doubleRange) {
-                    stands.add(new Stand(center.clone().add(x, -1, z), (int)(-Math.sqrt(distanceSquared) * speed), texture));
+                    stands.add(new Stand(center.clone().add(x, -1, z), (int) (-Math.sqrt(distanceSquared) * speed), texture));
                 }
             }
         }
@@ -34,13 +30,13 @@ public class ArmorStandWaveEffect {
             @Override
             public void run() {
                 int size = stands.size();
-                if(size == 0) {
+                if (size == 0) {
                     this.cancel();
                     return;
                 }
                 ListIterator<Stand> itr = stands.listIterator(size);
-                while(itr.hasPrevious()) {
-                    if(itr.previous().tick()) {
+                while (itr.hasPrevious()) {
+                    if (itr.previous().tick()) {
                         itr.remove();
                     }
                 }

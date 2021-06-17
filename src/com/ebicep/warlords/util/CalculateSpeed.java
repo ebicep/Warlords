@@ -5,7 +5,7 @@ import java.util.function.Consumer;
 
 public class CalculateSpeed {
     private final float BASE_SPEED = 7.02f;
-    private final float BASE_SPEED_TO_WALKING_SPEED = 0.2825f/113*100/BASE_SPEED;
+    private final float BASE_SPEED_TO_WALKING_SPEED = 0.2825f / 113 * 100 / BASE_SPEED;
 
     private final float minspeed;
     private final float maxspeed;
@@ -29,21 +29,21 @@ public class CalculateSpeed {
      */
 
     public void updateSpeed() {
-        if(changed || hasPendingTimers) {
+        if (changed || hasPendingTimers) {
             boolean hasPendingTimers = false;
             boolean hasEffectAlteringEffects = false;
             Iterator<Modifier> iterator = this.modifiers.iterator();
-            while(iterator.hasNext()) {
+            while (iterator.hasNext()) {
                 Modifier next = iterator.next();
-                if(next.duration != 0) {
+                if (next.duration != 0) {
                     next.duration--;
-                    if(next.duration == 0) {
+                    if (next.duration == 0) {
                         iterator.remove();
                         changed = true;
                         continue;
                     }
                     hasPendingTimers = true;
-                    if(!next.toDisable.isEmpty()) {
+                    if (!next.toDisable.isEmpty()) {
                         hasEffectAlteringEffects = true;
                     }
                 }
@@ -51,37 +51,37 @@ public class CalculateSpeed {
             this.hasEffectAlteringEffects = hasEffectAlteringEffects;
             this.hasPendingTimers = hasPendingTimers;
         }
-        if(changed) {
+        if (changed) {
             changed = false;
             float speed = BASE_SPEED;
             Map<String, Modifier> appliedEffects = new HashMap<>();
             Iterator<Modifier> iterator = this.modifiers.iterator();
-            while(iterator.hasNext()) {
+            while (iterator.hasNext()) {
                 Modifier next = iterator.next();
-                if(hasEffectAlteringEffects){
-                    for(String toDisable : next.toDisable) {
+                if (hasEffectAlteringEffects) {
+                    for (String toDisable : next.toDisable) {
                         Modifier mod = appliedEffects.put(toDisable, null);
-                        if(mod != null) {
+                        if (mod != null) {
                             speed /= mod.calculatedModifier;
                         }
                     }
-                    if(appliedEffects.containsKey(next.name)) {
+                    if (appliedEffects.containsKey(next.name)) {
                         continue;
                     }
                 }
                 speed *= next.calculatedModifier;
                 appliedEffects.put(next.name, next);
             }
-            if(speed < this.minspeed) {
+            if (speed < this.minspeed) {
                 speed = this.minspeed;
             }
-            if(speed > this.maxspeed) {
+            if (speed > this.maxspeed) {
                 speed = this.maxspeed;
             }
-            if(speed != lastSpeed) {
+            if (speed != lastSpeed) {
                 float walkSpeed = speed * BASE_SPEED_TO_WALKING_SPEED;
                 //Bukkit.broadcastMessage("Speed updated ("+lastSpeed+" --> " +speed + ") walkSpeed: "+walkSpeed+" causes:");
-                for(Modifier mod : appliedEffects.values()) {
+                for (Modifier mod : appliedEffects.values()) {
                     //Bukkit.broadcastMessage(String.valueOf(mod));
                 }
                 lastSpeed = speed;
@@ -92,13 +92,14 @@ public class CalculateSpeed {
 
     /**
      * Add a speed change object
-     * @param name Unique name of the effect source
-     * @param modifier a value like +30 or -20, in percent
-     * @param duration The duration of this speedchange, 0 means no duration
+     *
+     * @param name      Unique name of the effect source
+     * @param modifier  a value like +30 or -20, in percent
+     * @param duration  The duration of this speedchange, 0 means no duration
      * @param toDisable The modifiers this should override for as long as it is active
      * @return A runnable that can be used to manually remove this entry
      */
-    public Runnable changeCurrentSpeed(String name, int modifier, int duration, String ... toDisable) {
+    public Runnable changeCurrentSpeed(String name, int modifier, int duration, String... toDisable) {
         return changeCurrentSpeed(name, modifier, duration, Arrays.asList(toDisable));
     }
 

@@ -40,7 +40,7 @@ public class Warlords extends JavaPlugin {
         return orbs;
     }
 
-    private static HashMap<Player, WarlordsPlayer> players = new HashMap<>();
+    private static final HashMap<Player, WarlordsPlayer> players = new HashMap<>();
 
     public static void addPlayer(WarlordsPlayer warlordsPlayer) {
         players.put(warlordsPlayer.getPlayer(), warlordsPlayer);
@@ -404,7 +404,7 @@ public class Warlords extends JavaPlugin {
                             if (warlordsPlayer.getBloodLustDuration() != 0) {
                                 Location location = player.getLocation();
                                 location.add((Math.random() - 0.5) * 1, 1.2, (Math.random() - 0.5) * 1);
-                                ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(255,0,0), location, 500);
+                                ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(255, 0, 0), location, 500);
                             }
 
                             // Earthliving

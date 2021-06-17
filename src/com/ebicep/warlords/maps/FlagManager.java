@@ -68,7 +68,7 @@ public class FlagManager implements Listener {
         final Warlords plugin = Warlords.getInstance();
         task = plugin.getServer().getScheduler().runTaskTimer(plugin, () -> {
             boolean hasScored = false;
-            if(
+            if (
                     this.red.getFlag() instanceof SpawnFlagLocation &&
                             this.blue.getFlag() instanceof PlayerFlagLocation &&
                             this.blue.getFlag().getLocation().distanceSquared(this.red.getSpawnLocation()) < 2.5 * 2.5
@@ -92,7 +92,7 @@ public class FlagManager implements Listener {
                 }
             }
 
-            if(
+            if (
                     this.blue.getFlag() instanceof SpawnFlagLocation &&
                             this.red.getFlag() instanceof PlayerFlagLocation &&
                             this.red.getFlag().getLocation().distanceSquared(this.blue.getSpawnLocation()) < 2 * 2
@@ -143,31 +143,31 @@ public class FlagManager implements Listener {
     public void onPlayerDeath(WarlordsDeathEvent event) {
         Player player = event.getPlayer().getPlayer();
 
-        if(
+        if (
                 red.getFlag() instanceof PlayerFlagLocation &&
-                        ((PlayerFlagLocation)red.getFlag()).getPlayer().equals(player)
+                        ((PlayerFlagLocation) red.getFlag()).getPlayer().equals(player)
 
         ) {
             red.doOtherTeamInteraction(player);
         }
-        if(
+        if (
                 blue.getFlag() instanceof PlayerFlagLocation &&
-                        ((PlayerFlagLocation)blue.getFlag()).getPlayer().equals(player)
+                        ((PlayerFlagLocation) blue.getFlag()).getPlayer().equals(player)
         ) {
             blue.doOtherTeamInteraction(player);
         }
     }
 
     public void dropFlag(Player player) {
-        if(
+        if (
                 red.getFlag() instanceof PlayerFlagLocation &&
-                        ((PlayerFlagLocation)red.getFlag()).getPlayer().equals(player)
+                        ((PlayerFlagLocation) red.getFlag()).getPlayer().equals(player)
         ) {
             red.doOtherTeamInteraction(player);
         }
-        if(
+        if (
                 blue.getFlag() instanceof PlayerFlagLocation &&
-                        ((PlayerFlagLocation)blue.getFlag()).getPlayer().equals(player)
+                        ((PlayerFlagLocation) blue.getFlag()).getPlayer().equals(player)
         ) {
             blue.doOtherTeamInteraction(player);
         }
@@ -177,9 +177,9 @@ public class FlagManager implements Listener {
     public void onPlayerLogout(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         FlagInfo info = Warlords.game.isRedTeam(player) ? red : blue;
-        if(
+        if (
                 info.getFlag() instanceof PlayerFlagLocation &&
-                        ((PlayerFlagLocation)info.getFlag()).getPlayer().equals(player)
+                        ((PlayerFlagLocation) info.getFlag()).getPlayer().equals(player)
         ) {
             info.doOtherTeamInteraction(player);
         }
@@ -208,7 +208,7 @@ public class FlagManager implements Listener {
 
                 ChatColor color = (info.getTeam() == Team.RED ? ChatColor.BLUE : ChatColor.RED);
                 ChatColor color2 = (info.getTeam() == Team.RED ? ChatColor.RED : ChatColor.BLUE);
-                Bukkit.broadcastMessage(color + player.getPlayerListName() + " §ehas picked up the " + color2 +  info.getTeam() + " §eflag!");
+                Bukkit.broadcastMessage(color + player.getPlayerListName() + " §ehas picked up the " + color2 + info.getTeam() + " §eflag!");
                 for (Player player1 : Warlords.game.getPlayersProtected().keySet()) {
                     PacketUtils.sendTitle(player1, "", color + player.getPlayerListName() + " §ehas picked up the " + color2 + info.getTeam() + " §eflag!", 0, 60, 0);
                 }
@@ -341,7 +341,7 @@ public class FlagManager implements Listener {
         public FlagLocation afterSameTeamInteraction(Player player, Location ownTeamSpawnLocation) {
 
             ChatColor color = Warlords.game.getPlayerTeam(player).teamColor();
-            Bukkit.broadcastMessage(color + player.getPlayerListName() + " §ehas returned the " + color +  Warlords.game.getPlayerTeam(player) + " §eflag!");
+            Bukkit.broadcastMessage(color + player.getPlayerListName() + " §ehas returned the " + color + Warlords.game.getPlayerTeam(player) + " §eflag!");
             for (Player player1 : Warlords.game.getPlayersProtected().keySet()) {
                 PacketUtils.sendTitle(player1, "", color + player.getPlayerListName() + " §ehas returned the " + color + Warlords.game.getPlayerTeam(player) + " §eflag!", 0, 60, 0);
             }
@@ -397,7 +397,9 @@ public class FlagManager implements Listener {
             return player;
         }
 
-        public int getModifier() { return modifier; }
+        public int getModifier() {
+            return modifier;
+        }
 
         public void setModifier(int modifier) {
             this.modifier = modifier;
@@ -430,7 +432,7 @@ public class FlagManager implements Listener {
         }
 
         public void checkRender() {
-            if(this.lastLocation != info.getFlag()) {
+            if (this.lastLocation != info.getFlag()) {
                 this.render();
                 for (WarlordsPlayer player : Warlords.getPlayers().values()) {
                     player.getScoreboard().updateFlagStatus();
@@ -447,12 +449,11 @@ public class FlagManager implements Listener {
         }
 
 
-
         public void render() {
 
             FlagLocation old = this.lastLocation;
 
-            if(this.lastLocation != null) {
+            if (this.lastLocation != null) {
                 this.reset();
             }
 
@@ -494,7 +495,7 @@ public class FlagManager implements Listener {
                 }
 
                 if (this.lastLocation instanceof GroundFlagLocation) {
-                    if(old instanceof PlayerFlagLocation) {
+                    if (old instanceof PlayerFlagLocation) {
                         PlayerFlagLocation playerFlagLocation = (PlayerFlagLocation) old;
                         String flag = info.getTeam() == Team.RED ? ChatColor.RED + "RED" : ChatColor.BLUE + "BLU";
                         ChatColor playerColor = info.getTeam().enemy().teamColor();
@@ -510,7 +511,7 @@ public class FlagManager implements Listener {
                             FlagRenderer.this.info.setFlag(new SpawnFlagLocation(info.getSpawnLocation()));
                         }
 
-                    }.runTaskLater(plugin, 15*20)::cancel);
+                    }.runTaskLater(plugin, 15 * 20)::cancel);
                 }
 
                 ArmorStand stand = this.lastLocation.getLocation().getWorld().spawn(block.getLocation().add(.5, 0, .5), ArmorStand.class);
@@ -550,23 +551,23 @@ public class FlagManager implements Listener {
 
         public void reset() {
             this.lastLocation = null;
-            for(Block b : renderedBlocks) {
+            for (Block b : renderedBlocks) {
                 b.setType(Material.AIR);
             }
             renderedBlocks.clear();
 
-            for(Entity e : renderedArmorStands) {
+            for (Entity e : renderedArmorStands) {
                 e.remove();
             }
 
             renderedArmorStands.clear();
-            for(Player p : affectedPlayers) {
+            for (Player p : affectedPlayers) {
                 ArmorManager.resetArmor(p, Classes.getSelected(p));
                 p.getInventory().setItem(6, null);
             }
 
             affectedPlayers.clear();
-            for(Runnable t : runningTasksCancel) {
+            for (Runnable t : runningTasksCancel) {
                 t.run();
             }
 
@@ -596,7 +597,7 @@ public class FlagManager implements Listener {
 
         @Override
         public void run() {
-            flag.setModifier(flag.getModifier() + 10) ;
+            flag.setModifier(flag.getModifier() + 10);
             ChatColor color = (info.getTeam() == Team.RED ? ChatColor.RED : ChatColor.BLUE);
             Bukkit.broadcastMessage("§eThe " + color + info.getTeam() + " §eflag carrier now takes §c" + flag.getModifier() + "§c% §eincreased damage!");
 

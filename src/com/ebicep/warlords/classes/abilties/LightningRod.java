@@ -18,10 +18,15 @@ import java.util.List;
 public class LightningRod extends AbstractAbility {
 
     public LightningRod() {
-        super("Lightning Rod", 0, 0, 32, 0, 0, 0,
-                "§7Call down an energizing bolt of lightning\n" +
-                        "§7upon yourself, restoring §a30% §7health and\n" +
-                        "§e160 §7energy and knock all nearby enemies back.");
+        super("Lightning Rod", 0, 0, 32, 0, 0, 0
+        );
+    }
+
+    @Override
+    public void updateDescription() {
+        description = "§7Call down an energizing bolt of lightning\n" +
+                "§7upon yourself, restoring §a30% §7health and\n" +
+                "§e160 §7energy and knock all nearby enemies back.";
     }
 
     @Override

@@ -1,12 +1,10 @@
 package com.ebicep.warlords.effects;
 
-import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.util.ParticleEffect;
-import javax.annotation.Nonnull;
-
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
+
+import javax.annotation.Nonnull;
 
 public class TeamBasedEffect {
 
@@ -53,5 +51,5 @@ public class TeamBasedEffect {
     public String toString() {
         return "TeamBasedEffect{" + "ownTeam=" + ownTeam + ", enemyTeam=" + enemyTeam + '}';
     }
-	
+
 }

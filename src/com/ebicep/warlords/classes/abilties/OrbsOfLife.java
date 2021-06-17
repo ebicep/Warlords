@@ -15,13 +15,18 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 public class OrbsOfLife extends AbstractAbility {
 
     public OrbsOfLife() {
-        super("Orbs of Life", 252, 420, 20, 20, 0, 0,
-                "§7Striking and hitting enemies with\n" +
+        super("Orbs of Life", 252, 420, 20, 20, 0, 0
+        );
+    }
+
+    @Override
+    public void updateDescription() {
+        description = "§7Striking and hitting enemies with\n" +
                 "§7abilities causes them to drop an orb of\n" +
                 "§7life that lasts §68 §7seconds, restoring\n" +
-                "§a420 §7health to the ally that pick it up.\n" +
-                "§7Other nearby allies recover §a252 §7health.\n" +
-                "§7Lasts §613.2 §7seconds.");
+                "§a" + maxDamageHeal + " §7health to the ally that pick it up.\n" +
+                "§7Other nearby allies recover §a" + minDamageHeal + " §7health.\n" +
+                "§7Lasts §613.2 §7seconds.";
     }
 
     @Override
@@ -36,7 +41,7 @@ public class OrbsOfLife extends AbstractAbility {
     public static class Orb extends EntityExperienceOrb {
 
         private ArmorStand armorStand;
-        private WarlordsPlayer owner;
+        private final WarlordsPlayer owner;
 
         public Orb(World world, Location location, WarlordsPlayer owner) {
             super(world, location.getX(), location.getY(), location.getZ(), 1000);

@@ -2,14 +2,15 @@ package com.ebicep.warlords.effects;
 
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Team;
-import java.util.Collection;
 import org.bukkit.entity.Player;
+
+import java.util.Collection;
 
 
 // Class to quickly get a team's teammates and enemies
 
 public class GameTeamContainer {
-	
+
     private final Game game;
     private final Team team;
 
@@ -33,5 +34,5 @@ public class GameTeamContainer {
     public static Collection<Player> getEnemyPlayers(Game game, Team team) {
         return team == Team.BLUE ? game.getTeamRedProtected() : game.getTeamBlueProtected();
     }
-	
+
 }

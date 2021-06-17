@@ -2,12 +2,14 @@ package com.ebicep.warlords.effects.circle;
 
 import com.ebicep.warlords.effects.AbstractEffectPlayer;
 import com.ebicep.warlords.effects.TeamBasedEffect;
+import com.ebicep.warlords.util.ParticleEffect;
+import org.bukkit.Location;
+
+import javax.annotation.Nonnull;
+import java.util.function.DoubleUnaryOperator;
+
 import static com.ebicep.warlords.effects.circle.CircleEffect.LOCATION_CACHE;
 import static com.ebicep.warlords.effects.circle.CircleEffect.RANDOM;
-import com.ebicep.warlords.util.ParticleEffect;
-import java.util.function.DoubleUnaryOperator;
-import javax.annotation.Nonnull;
-import org.bukkit.Location;
 
 public class DoubleLineEffect extends AbstractEffectPlayer<CircleEffect> {
 
@@ -19,13 +21,15 @@ public class DoubleLineEffect extends AbstractEffectPlayer<CircleEffect> {
     private double pendingParticles = 0;
     private double period = 0.2;
     private double pendingPeriod = 0;
-    
+
     public DoubleLineEffect(ParticleEffect own, ParticleEffect other) {
         this(new TeamBasedEffect(own, other));
     }
+
     public DoubleLineEffect(ParticleEffect effect) {
         this(new TeamBasedEffect(effect));
     }
+
     public DoubleLineEffect(TeamBasedEffect effect) {
         this.effect = effect;
     }
@@ -35,7 +39,7 @@ public class DoubleLineEffect extends AbstractEffectPlayer<CircleEffect> {
         Location center = baseData.getCenter();
         double radius = baseData.getRadius();
         LOCATION_CACHE.setY(center.getY());
-        
+
         double newLines = pendingPeriod + period;
         int maxNewLines = (int) newLines;
         pendingPeriod = newLines - maxNewLines;
@@ -47,10 +51,10 @@ public class DoubleLineEffect extends AbstractEffectPlayer<CircleEffect> {
                 angleA = RANDOM.nextInt(360) * Math.PI / 180;
                 angleB = RANDOM.nextInt(360) * Math.PI / 180;
                 difference = Math.abs(angleA - angleB);
-                if(difference > Math.PI) {
+                if (difference > Math.PI) {
                     difference = Math.PI * 2 - difference;
                 }
-            } while(difference < Math.PI / 4); // 45 in degrees
+            } while (difference < Math.PI / 4); // 45 in degrees
 
             double xA = radius * Math.sin(angleA);
             double zA = radius * Math.cos(angleA);

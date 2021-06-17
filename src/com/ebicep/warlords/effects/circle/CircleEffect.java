@@ -5,10 +5,11 @@ import com.ebicep.warlords.effects.EffectPlayer;
 import com.ebicep.warlords.effects.GameTeamContainer;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Team;
-import java.util.Random;
-import javax.annotation.Nonnull;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
+
+import javax.annotation.Nonnull;
+import java.util.Random;
 
 public class CircleEffect extends BaseAreaEffect<EffectPlayer<? super CircleEffect>> {
 
@@ -31,7 +32,7 @@ public class CircleEffect extends BaseAreaEffect<EffectPlayer<? super CircleEffe
     public double getRadius() {
         return radius;
     }
-    
+
     public void setRadius(double radius) {
         this.radius = radius;
         for (EffectPlayer<? super CircleEffect> effect : this) {
@@ -43,7 +44,7 @@ public class CircleEffect extends BaseAreaEffect<EffectPlayer<? super CircleEffe
     public void playEffects() {
         LOCATION_CACHE.setWorld(center.getWorld());
         for (EffectPlayer<? super CircleEffect> effect : this) {
-            if(effect.needsUpdate()) {
+            if (effect.needsUpdate()) {
                 effect.updateCachedData(this);
             }
             effect.playEffect(this);

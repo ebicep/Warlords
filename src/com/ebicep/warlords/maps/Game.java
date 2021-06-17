@@ -2,7 +2,6 @@ package com.ebicep.warlords.maps;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
-import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.powerups.PowerupManager;
 import com.ebicep.warlords.util.*;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -146,7 +145,7 @@ public class Game implements Runnable {
 
                     game.timer++;
                     //TESTING
-                    //return GAME;
+                    return GAME;
 
                 } else {
                     game.timer = 0;
@@ -231,35 +230,21 @@ public class Game implements Runnable {
                 for (WarlordsPlayer value : Warlords.getPlayers().values()) {
                     value.getScoreboard().addHealths();
                     ClassesSkillBoosts selectedBoost = Classes.getSelectedBoost(value.getPlayer());
-                    switch (selectedBoost) {
-                        case FIREBALL:
-                        case FROST_BOLT:
-                        case WATER_BOLT:
-                        case WOUNDING_STRKE:
-                        case CRIPPLING_STRIKE:
-                        case AVENGER_STRIKE:
-                        case CRUSADER_STRIKE:
-                        case PROTECTOR_STRIKE:
-                        case LIGHTNING_BOLT:
-                        case FALLEN_SOULS:
-                        case EARTHEN_SPIKE:
-                            value.getSpec().getWeapon().boostSkill();
-                            break;
-                        case FLAME_BURST:
-                        case FREEZING_BREATH:
-                        case WATER_BREATH:
-                        case SEISMIC_WAVE:
-                        case CONSECRATE:
-                        case CHAIN_LIGHTNING:
-                        case SPIRIT_LINK:
-                        case BOULDER:
-                            value.getSpec().getRed().boostSkill();
-                        case GROUND_SLAM:
-                            value.getSpec().getPurple().boostSkill();
-                        case ORBS_OF_LIFE:
-                        case HOLY_RADIANCE:
-                        case CHAIN_HEAL:
-                            value.getSpec().getBlue().boostSkill();
+                    if (value.getSpec().getWeapon().getClass() == selectedBoost.ability) {
+                        value.getSpec().getWeapon().boostSkill();
+                        value.getSpec().getWeapon().updateDescription();
+                    } else if (value.getSpec().getRed().getClass() == selectedBoost.ability) {
+                        value.getSpec().getRed().boostSkill();
+                        value.getSpec().getRed().updateDescription();
+                    } else if (value.getSpec().getPurple().getClass() == selectedBoost.ability) {
+                        value.getSpec().getPurple().boostSkill();
+                        value.getSpec().getPurple().updateDescription();
+                    } else if (value.getSpec().getBlue().getClass() == selectedBoost.ability) {
+                        value.getSpec().getBlue().boostSkill();
+                        value.getSpec().getBlue().updateDescription();
+                    } else if (value.getSpec().getOrange().getClass() == selectedBoost.ability) {
+                        value.getSpec().getOrange().boostSkill();
+                        value.getSpec().getOrange().updateDescription();
                     }
                 }
             }
@@ -674,14 +659,14 @@ public class Game implements Runnable {
         Validate.notNull(team, "team");
 
         Team oldTeam = this.players.put(player, team);
-        if(oldTeam != team) {
-            if(oldTeam == Team.RED) {
+        if (oldTeam != team) {
+            if (oldTeam == Team.RED) {
                 this.cachedTeamRed.remove(player);
-            } else if(oldTeam == Team.BLUE) {
+            } else if (oldTeam == Team.BLUE) {
                 this.cachedTeamBlue.remove(player);
             }
         }
-        switch(team) {
+        switch (team) {
             case BLUE:
                 this.cachedTeamBlue.add(player);
                 player.teleport(this.map.blueLobbySpawnPoint);
@@ -692,8 +677,10 @@ public class Game implements Runnable {
                 break;
         }
     }
+
     /**
      * Adds a player to the game
+     *
      * @param player
      * @param teamBlue
      * @deprecated use {@link #addPlayer(Player, Team) addPlayer(Player, Team)} instead
@@ -710,16 +697,16 @@ public class Game implements Runnable {
 
     public void removePlayer(Player player) {
         Team oldTeam = this.players.remove(player);
-        if(oldTeam == Team.RED) {
+        if (oldTeam == Team.RED) {
             this.cachedTeamRed.remove(player);
-        } else if(oldTeam == Team.BLUE) {
+        } else if (oldTeam == Team.BLUE) {
             this.cachedTeamBlue.remove(player);
         }
     }
 
     public List<Player> clearAllPlayers() {
         List<Player> toRemove = new ArrayList<>(this.players.keySet());
-        for(Player p : toRemove) {
+        for (Player p : toRemove) {
             this.removePlayer(p);
         }
         assert this.players.isEmpty();

@@ -20,11 +20,15 @@ import java.util.List;
 public class Boulder extends AbstractAbility {
 
     public Boulder() {
-        super("Boulder", -490, -731, 8, 80, 15, 175,
-                "§7Launch a giant boulder that shatters\n" +
-                        "§7and deals §c490 §7- §c731 §7damage\n" +
-                        "§7to all enemies near the impact point\n" +
-                        "§7and knocks them back slightly.");
+        super("Boulder", -490, -731, 8, 80, 15, 175);
+    }
+
+    @Override
+    public void updateDescription() {
+        description = "§7Launch a giant boulder that shatters\n" +
+                "§7and deals §c" + -minDamageHeal + " §7- §c" + -maxDamageHeal + " §7damage\n" +
+                "§7to all enemies near the impact point\n" +
+                "§7and knocks them back slightly.";
     }
 
     @Override
@@ -73,7 +77,7 @@ public class Boulder extends AbstractAbility {
                 boolean boulderExplode = false;
                 List<Entity> near = null;
 
-                if(last) {
+                if (last) {
                     Location particleLoc = newLoc.clone().add(0, 2, 0);
                     ParticleEffect.CRIT.display(0.3F, 0.3F, 0.3F, 0.1F, 4, particleLoc, 500);
                 }

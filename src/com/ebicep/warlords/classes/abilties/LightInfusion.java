@@ -9,8 +9,16 @@ import org.bukkit.entity.Player;
 
 public class LightInfusion extends AbstractAbility {
 
-    public LightInfusion(int cooldown, String description) {
-        super("Light Infusion", 0, 0, cooldown, -120, 0, 0, description);
+    public LightInfusion(int cooldown) {
+        super("Light Infusion", 0, 0, cooldown, -120, 0, 0);
+    }
+
+    @Override
+    public void updateDescription() {
+        description = "§7You become infused with light,\n" +
+                "§7restoring §a120 §7energy and\n" +
+                "§7increasing your movement speed by\n" +
+                "§e40% §7for §63 §7seconds";
     }
 
     @Override

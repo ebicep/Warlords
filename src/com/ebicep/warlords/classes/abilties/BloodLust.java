@@ -8,10 +8,14 @@ import org.bukkit.entity.Player;
 public class BloodLust extends AbstractAbility {
 
     public BloodLust() {
-        super("Blood Lust", 0, 0, 32, 20, 0, 0,
-                "§7You lust for blood, healing yourself\n" +
+        super("Blood Lust", 0, 0, 32, 20, 0, 0);
+    }
+
+    @Override
+    public void updateDescription() {
+        description = "§7You lust for blood, healing yourself\n" +
                 "§7for §a65% §7of all the damage you deal.\n" +
-                "§7Lasts §615 §7seconds.");
+                "§7Lasts §615 §7seconds.";
     }
 
     @Override

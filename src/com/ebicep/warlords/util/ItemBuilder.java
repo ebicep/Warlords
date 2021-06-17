@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Stream;
 
 public class ItemBuilder {
     private final ItemStack item;
@@ -34,7 +33,7 @@ public class ItemBuilder {
     }
 
     protected ItemMeta meta() {
-        if(meta != null) {
+        if (meta != null) {
             return meta;
         }
         return meta = item.getItemMeta();
@@ -55,18 +54,19 @@ public class ItemBuilder {
         return this;
     }
 
-    public ItemBuilder lore(String ... lore) {
+    public ItemBuilder lore(String... lore) {
         return lore(Arrays.asList(lore));
     }
+
     public ItemBuilder lore(Collection<String> lore) {
-        for(String row : lore) {
-            if(row.contains("\n")) {
+        for (String row : lore) {
+            if (row.contains("\n")) {
                 // Fix for \n
                 List<String> newLore = new ArrayList<>(Math.max(lore.size() * 2, 16));
                 for (String loreRow : lore) {
-                    if(loreRow.contains("\n")) {
+                    if (loreRow.contains("\n")) {
                         String chatColor = "";
-                        for(String split : loreRow.split("\n")) {
+                        for (String split : loreRow.split("\n")) {
                             String combined = !split.isEmpty() && split.charAt(0) != ChatColor.COLOR_CHAR ? split : chatColor + split;
                             newLore.add(combined);
                             chatColor = ChatColor.getLastColors(combined);
@@ -79,7 +79,7 @@ public class ItemBuilder {
                 return this;
             }
         }
-        meta().setLore(lore instanceof List<?> ? (List<String>)lore : new ArrayList<>(lore));
+        meta().setLore(lore instanceof List<?> ? (List<String>) lore : new ArrayList<>(lore));
         return this;
     }
 
@@ -93,7 +93,7 @@ public class ItemBuilder {
     }
 
     public ItemStack get() {
-        if(this.meta != null) {
+        if (this.meta != null) {
             this.item.setItemMeta(meta);
             this.meta = null;
         }

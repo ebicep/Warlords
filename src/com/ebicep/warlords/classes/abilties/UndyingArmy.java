@@ -26,15 +26,19 @@ public class UndyingArmy extends AbstractAbility {
             .get();
 
     public UndyingArmy() {
-        super("Undying Army", 0, 0, 60 + 10, 20, 0, 0,
-                "§7When you or nearby allies take\n" +
-                        "§7fatal damage within §610 §7seconds,\n" +
-                        "§7instantly restore them to §a100% §7health\n" +
-                        "§7instead. They will take §c500 §7TRUE DAMAGE\n" +
-                        "§7every second for the rest of their life.\n" +
-                        "§7Allies not revived will heal for §a200 §7+\n" +
-                        "§a35% §7of their missing health §610 §7seconds\n" +
-                        "§7after this abilty was cast.");
+        super("Undying Army", 0, 0, 60 + 10, 20, 0, 0);
+    }
+
+    @Override
+    public void updateDescription() {
+        description = "§7When you or nearby allies take\n" +
+                "§7fatal damage within §610 §7seconds,\n" +
+                "§7instantly restore them to §a100% §7health\n" +
+                "§7instead. They will take §c500 §7TRUE DAMAGE\n" +
+                "§7every second for the rest of their life.\n" +
+                "§7Allies not revived will heal for §a200 §7+\n" +
+                "§a35% §7of their missing health §610 §7seconds\n" +
+                "§7after this abilty was cast.";
     }
 
     @Override

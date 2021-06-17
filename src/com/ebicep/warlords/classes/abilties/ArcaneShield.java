@@ -9,12 +9,19 @@ import org.bukkit.entity.Player;
 
 public class ArcaneShield extends AbstractAbility {
 
+    public int maxShieldHealth;
+
     public ArcaneShield() {
-        super("Arcane Shield", 0, 0, 32, 40, 0, 0,
-                "§7Surround yourself with arcane\n" +
+        super("Arcane Shield", 0, 0, 32, 40, 0, 0);
+        updateDescription();
+    }
+
+    @Override
+    public void updateDescription() {
+        description = "§7Surround yourself with arcane\n" +
                 "§7energy, creating a shield that will\n" +
-                "§7absorb up to %dynamic.value% §7(§e50% §7of your maximum\n" +
-                "§7health) incoming damage. Lasts §66 §7seconds.");
+                "§7absorb up to §e" + maxShieldHealth + " §7(§e50% §7of your maximum\n" +
+                "§7health) incoming damage. Lasts §66 §7seconds.";
     }
 
     @Override

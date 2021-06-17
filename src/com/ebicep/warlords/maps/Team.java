@@ -21,7 +21,7 @@ public enum Team {
 
     static {
         inverseMapping = values();
-        Collections.reverse(Arrays.<Team>asList(inverseMapping));
+        Collections.reverse(Arrays.asList(inverseMapping));
     }
 
     public final String name;

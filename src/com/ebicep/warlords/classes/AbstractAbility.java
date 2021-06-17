@@ -13,8 +13,9 @@ public abstract class AbstractAbility {
     protected int critChance;
     protected int critMultiplier;
     protected String description;
+    protected boolean boosted;
 
-    public AbstractAbility(String name, float minDamageHeal, float maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier, String description) {
+    public AbstractAbility(String name, float minDamageHeal, float maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier) {
         this.name = name;
         this.minDamageHeal = minDamageHeal;
         this.maxDamageHeal = maxDamageHeal;
@@ -22,12 +23,16 @@ public abstract class AbstractAbility {
         this.energyCost = energyCost;
         this.critChance = critChance;
         this.critMultiplier = critMultiplier;
-        this.description = description;
+        updateDescription();
+        boosted = false;
     }
+
+    public abstract void updateDescription();
 
     public abstract void onActivate(Player player);
 
     public void boostSkill() {
+        boosted = true;
         this.minDamageHeal *= 1.2;
         this.maxDamageHeal *= 1.2;
     }
