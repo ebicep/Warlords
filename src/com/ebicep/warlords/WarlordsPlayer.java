@@ -432,7 +432,7 @@ public class WarlordsPlayer {
                     2,
                     new ItemBuilder(Material.GLOWSTONE_DUST)
                             .name(ChatColor.GOLD + spec.getPurple().getName())
-                            .lore(ChatColor.GRAY + "Cooldown: " + ChatColor.AQUA + spec.getRed().getCooldown() + " seconds",
+                            .lore(ChatColor.GRAY + "Cooldown: " + ChatColor.AQUA + spec.getPurple().getCooldown() + " seconds",
                                     spec.getPurple().getEnergyCost() != 0
                                             ? ChatColor.GRAY + "Energy Cost: " + ChatColor.YELLOW + spec.getPurple().getEnergyCost() + "\n" +
                                             (spec.getPurple().getCritChance() != 0 && spec.getPurple().getCritChance() != -1 && spec.getPurple().getCritMultiplier() != 100
