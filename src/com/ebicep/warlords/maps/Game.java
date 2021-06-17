@@ -464,6 +464,7 @@ public class Game implements Runnable {
                 if (game.timer > 10 * 20) {
                     for (Player player : game.clearAllPlayers()) {
                         if (player != null) {
+                            player.setGameMode(GameMode.ADVENTURE);
                             player.teleport(Bukkit.getWorlds().get(0).getSpawnLocation());
                         }
                     }

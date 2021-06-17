@@ -82,6 +82,28 @@ public class LightningBolt extends AbstractAbility {
                     for (Player player1 : player.getWorld().getPlayers()) {
                         player1.playSound(bolt.getLocation(), "shaman.lightningbolt.impact", 2, 1);
                     }
+
+                    List<Entity> nearBlock = (List<Entity>) bolt.getLocation().getWorld().getNearbyEntities(bolt.getBoltLocation(), 1, 1, 1);
+                    nearBlock = Utils.filterOutTeammates(nearBlock, player);
+                    for (Entity entity : nearBlock) {
+                        if (entity instanceof Player && ((Player) entity).getGameMode() != GameMode.SPECTATOR) {
+                            WarlordsPlayer warlordsPlayer = Warlords.getPlayer((Player) entity);
+                            //hitting player
+                            if (!Warlords.game.onSameTeam((Player) entity, player) && !bolt.getPlayersHit().contains(entity)) {
+                                bolt.getPlayersHit().add((Player) entity);
+                                warlordsPlayer.addHealth(bolt.getShooter(), bolt.getLightningBolt().getName(), bolt.getLightningBolt().getMinDamageHeal(), bolt.getLightningBolt().getMaxDamageHeal(), bolt.getLightningBolt().getCritChance(), bolt.getLightningBolt().getCritMultiplier());
+
+                                for (Player player1 : entity.getWorld().getPlayers()) {
+                                    player1.playSound(entity.getLocation(), "shaman.lightningbolt.impact", 2, 1);
+                                }
+
+                                //reducing chain cooldown
+                                bolt.getShooter().getSpec().getRed().subtractCooldown(2);
+                                bolt.getShooter().updateRedItem();
+                            }
+                        }
+                    }
+
                     bolt.getArmorStand().remove();
                     this.cancel();
                 }
