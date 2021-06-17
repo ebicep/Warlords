@@ -313,6 +313,26 @@ public class WarlordsPlayer {
         this.energyPowerup = energyPowerup;
     }
 
+    public void applySkillBoost() {
+        ClassesSkillBoosts selectedBoost = Classes.getSelectedBoost(player);
+        if (spec.getWeapon().getClass() == selectedBoost.ability) {
+            spec.getWeapon().boostSkill();
+            spec.getWeapon().updateDescription();
+        } else if (spec.getRed().getClass() == selectedBoost.ability) {
+            spec.getRed().boostSkill();
+            spec.getRed().updateDescription();
+        } else if (spec.getPurple().getClass() == selectedBoost.ability) {
+            spec.getPurple().boostSkill();
+            spec.getPurple().updateDescription();
+        } else if (spec.getBlue().getClass() == selectedBoost.ability) {
+            spec.getBlue().boostSkill();
+            spec.getBlue().updateDescription();
+        } else if (spec.getOrange().getClass() == selectedBoost.ability) {
+            spec.getOrange().boostOrange();
+            spec.getOrange().updateDescription();
+        }
+    }
+
     public void assignItemLore() {
         weaponLeftClick();
 
@@ -379,7 +399,7 @@ public class WarlordsPlayer {
 
     public void updateRedItem() {
         if (spec.getRed().getCurrentCooldown() != 0) {
-            ItemStack cooldown = new ItemStack(grayDye.toItemStack(Math.round(spec.getRed().getCurrentCooldown())));
+            ItemStack cooldown = new ItemStack(grayDye.toItemStack(spec.getRed().getCurrentCooldownItem()));
             player.getInventory().setItem(1, cooldown);
         } else {
             Dye redDye = new Dye();
@@ -405,7 +425,7 @@ public class WarlordsPlayer {
 
     public void updatePurpleItem() {
         if (spec.getPurple().getCurrentCooldown() != 0) {
-            ItemStack cooldown = new ItemStack(grayDye.toItemStack(Math.round(spec.getPurple().getCurrentCooldown())));
+            ItemStack cooldown = new ItemStack(grayDye.toItemStack(spec.getPurple().getCurrentCooldownItem()));
             player.getInventory().setItem(2, cooldown);
         } else {
             player.getInventory().setItem(
@@ -429,7 +449,7 @@ public class WarlordsPlayer {
 
     public void updateBlueItem() {
         if (spec.getBlue().getCurrentCooldown() != 0) {
-            ItemStack cooldown = new ItemStack(grayDye.toItemStack(Math.round(spec.getBlue().getCurrentCooldown())));
+            ItemStack cooldown = new ItemStack(grayDye.toItemStack(spec.getBlue().getCurrentCooldownItem()));
             player.getInventory().setItem(3, cooldown);
         } else {
             Dye limeDye = new Dye();
@@ -455,7 +475,7 @@ public class WarlordsPlayer {
 
     public void updateOrangeItem() {
         if (spec.getOrange().getCurrentCooldown() != 0) {
-            ItemStack cooldown = new ItemStack(grayDye.toItemStack(Math.round(spec.getOrange().getCurrentCooldown())));
+            ItemStack cooldown = new ItemStack(grayDye.toItemStack(spec.getOrange().getCurrentCooldownItem()));
             player.getInventory().setItem(4, cooldown);
         } else {
             Dye orangeDye = new Dye();
@@ -605,7 +625,7 @@ public class WarlordsPlayer {
                 }
             } else {
                 //TODO FIX FIX IT JUST GETS MORE MESSY LETS GOOOOOOOOOOOOOOO
-                player.sendMessage("" + ChatColor.RED + "\u00AB" + ChatColor.GRAY + " You took " + ChatColor.RED + min * -1 + ChatColor.GRAY + " fall damage.");
+                player.sendMessage("" + ChatColor.RED + "\u00AB" + ChatColor.GRAY + " You took " + ChatColor.RED + Math.round(min * -1) + ChatColor.GRAY + " fall damage.");
                 regenTimer = 10;
                 if (health + min < 0) {
                     dead = true;
@@ -1058,7 +1078,6 @@ public class WarlordsPlayer {
                 }
             }
             System.out.println(attacker.name + " - " + attacker.getTotalDamage());
-
         }
     }
 
