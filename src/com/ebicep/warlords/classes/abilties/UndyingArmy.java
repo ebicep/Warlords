@@ -73,7 +73,7 @@ public class UndyingArmy extends AbstractAbility {
         }
 
         CircleEffect circle = new CircleEffect(Warlords.game, Warlords.game.getPlayerTeam(player), player.getLocation(), 5);
-        circle.addEffect(new CircumferenceEffect(ParticleEffect.VILLAGER_HAPPY).particlesPerCircumference(10));
+        circle.addEffect(new CircumferenceEffect(ParticleEffect.VILLAGER_HAPPY).particlesPerCircumference(1));
         circle.playEffects();
     }
 }

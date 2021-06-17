@@ -72,7 +72,7 @@ public enum ClassesSkillBoosts {
             "§aIncrease the damage you\n§adeal with Earthen Spike by\n§c20%"),
     BOULDER("Boulder",
             "§7Increase the damage you\n§7deal with Boulder by 20%",
-            "§aIncrease the damage you\n§adeal with Boulder by 20%"),
+            "§aIncrease the damage you\n§adeal with Boulder by §c20%"),
     CHAIN_HEAL("Chain Heal",
             "§7Increases the amount of\n§7health you restore with\n§7Chain Heal by 20%",
             "§aIncreases the amount of\n§ahealth you restore with\n§aChain Heal by §c20%");

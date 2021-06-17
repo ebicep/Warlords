@@ -27,7 +27,7 @@ public class Soulbinding extends AbstractAbility {
         warlordsPlayer.setSoulBindCooldown(12);
 
         for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "shaman.boulder.activation", 2, 1.5F);
+            player1.playSound(player.getLocation(), "paladin.consecrate.activation", 2, 2);
         }
     }
 
