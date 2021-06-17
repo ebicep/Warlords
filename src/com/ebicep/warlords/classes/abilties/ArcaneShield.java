@@ -12,7 +12,7 @@ public class ArcaneShield extends AbstractAbility {
     public int maxShieldHealth;
 
     public ArcaneShield() {
-        super("Arcane Shield", 0, 0, 32, 40, 0, 0);
+        super("Arcane Shield", 0, 0, 31.32f, 40, 0, 0);
         updateDescription();
     }
 

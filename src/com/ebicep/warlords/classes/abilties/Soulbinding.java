@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 public class Soulbinding extends AbstractAbility {
 
     public Soulbinding() {
-        super("Soulbinding Weapon", 0, 0, 23, 30, -1, 100);
+        super("Soulbinding Weapon", 0, 0, 21.92f, 30, -1, 100);
     }
 
     @Override

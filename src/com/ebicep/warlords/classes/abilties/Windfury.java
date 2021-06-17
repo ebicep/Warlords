@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 public class Windfury extends AbstractAbility {
 
     public Windfury() {
-        super("Windfury Weapon", 0, 0, 16, 30, 25, 135);
+        super("Windfury Weapon", 0, 0, 15.66f, 30, 25, 135);
     }
 
     @Override

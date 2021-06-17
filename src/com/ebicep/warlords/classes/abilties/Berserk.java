@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 public class Berserk extends AbstractAbility {
 
     public Berserk() {
-        super("Berserk", 0, 0, 47, 30, 0, 0);
+        super("Berserk", 0, 0, 46.98f, 30, 0, 0);
     }
 
     @Override

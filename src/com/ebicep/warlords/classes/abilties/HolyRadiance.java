@@ -14,7 +14,7 @@ import java.util.List;
 
 public class HolyRadiance extends AbstractAbility {
 
-    public HolyRadiance(int cooldown, int energyCost, int critChance, int critMultiplier) {
+    public HolyRadiance(float cooldown, int energyCost, int critChance, int critMultiplier) {
         super("Holy Radiance", 582, 760, cooldown, energyCost, critChance, critMultiplier);
     }
 
@@ -22,7 +22,7 @@ public class HolyRadiance extends AbstractAbility {
     public void updateDescription() {
         description = "§7Radiate with holy energy, healing\n" +
                 "§7yourself and all nearby allies for\n" +
-                "§a" + minDamageHeal + " §7- §a" + minDamageHeal + " §7health.";
+                "§a" + minDamageHeal + " §7- §a" + maxDamageHeal + " §7health.";
     }
 
     @Override

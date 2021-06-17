@@ -15,7 +15,7 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 public class OrbsOfLife extends AbstractAbility {
 
     public OrbsOfLife() {
-        super("Orbs of Life", 252, 420, 20, 20, 0, 0
+        super("Orbs of Life", 252, 420, 19.57f, 20, 0, 0
         );
     }
 

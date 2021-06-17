@@ -26,7 +26,7 @@ public class UndyingArmy extends AbstractAbility {
             .get();
 
     public UndyingArmy() {
-        super("Undying Army", 0, 0, 60 + 10, 20, 0, 0);
+        super("Undying Army", 0, 0, 60f + 10.47f, 20, 0, 0);
     }
 
     @Override

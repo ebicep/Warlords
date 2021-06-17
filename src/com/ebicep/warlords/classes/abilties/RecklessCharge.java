@@ -20,7 +20,7 @@ public class RecklessCharge extends AbstractAbility {
     private List<Player> playersHit = new ArrayList<>();
 
     public RecklessCharge() {
-        super("Reckless Charge", -466, -612, 11, 60, 20, 200);
+        super("Reckless Charge", -466, -612, 9.98f, 60, 20, 200);
     }
 
     @Override

@@ -20,7 +20,7 @@ import java.util.List;
 public class Boulder extends AbstractAbility {
 
     public Boulder() {
-        super("Boulder", -490, -731, 8, 80, 15, 175);
+        super("Boulder", -490, -731, 7.05f, 80, 15, 175);
     }
 
     @Override
@@ -96,7 +96,7 @@ public class Boulder extends AbstractAbility {
                         if (entity instanceof Player) {
                             if (!Warlords.game.onSameTeam(player, (Player) entity) && ((Player) entity).getGameMode() != GameMode.SPECTATOR) {
                                 boulderExplode = true;
-                                near = (List<Entity>) newLoc.getWorld().getNearbyEntities(newLoc, 5, 5, 5);
+                                near = (List<Entity>) newLoc.getWorld().getNearbyEntities(newLoc, 5.5, 5.5, 5.5);
                                 near = Utils.filterOutTeammates(near, player);
                                 near.remove(entity);
 

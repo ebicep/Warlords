@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 public class BloodLust extends AbstractAbility {
 
     public BloodLust() {
-        super("Blood Lust", 0, 0, 32, 20, 0, 0);
+        super("Blood Lust", 0, 0, 31.32f, 20, 0, 0);
     }
 
     @Override

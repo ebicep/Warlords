@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 public class Earthliving extends AbstractAbility {
 
     public Earthliving() {
-        super("Earthliving Weapon", 0, 0, 16, 30, 25, 240
+        super("Earthliving Weapon", 0, 0, 15.66f, 30, 25, 240
         );
     }
 

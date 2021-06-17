@@ -16,7 +16,7 @@ import java.util.List;
 public class Intervene extends AbstractAbility {
 
     public Intervene() {
-        super("Intervene", 0, 0, 15, 20, 0, 0
+        super("Intervene", 0, 0, 14.09f, 20, 0, 0
         );
     }
 

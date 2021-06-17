@@ -10,8 +10,8 @@ public class Avenger extends AbstractPaladin {
         super(player, 6300, 305, 0,
                 new Strike("Avenger's Strike", -359, -485, 0, 90, 25, 185),
                 new Consecrate(-158.4f, -213.6f, 50, 20, 175, 20),
-                new LightInfusion(16),
-                new HolyRadiance(20, 20, 15, 175),
+                new LightInfusion(15.66f),
+                new HolyRadiance(19.57f, 20, 15, 175),
                 new AvengersWrath());
     }
 }

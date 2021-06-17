@@ -11,7 +11,7 @@ public class Earthwarden extends AbstractShaman {
                 new EarthenSpike(),
                 new Boulder(),
                 new Earthliving(),
-                new Chain("Chain Heal", 454, 613, 8, 40, 20, 175),
+                new Chain("Chain Heal", 454, 613, 7.99f, 40, 20, 175),
                 new Totem.TotemEarthwarden());
     }
 

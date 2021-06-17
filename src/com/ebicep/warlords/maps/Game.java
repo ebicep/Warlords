@@ -243,7 +243,7 @@ public class Game implements Runnable {
                         value.getSpec().getBlue().boostSkill();
                         value.getSpec().getBlue().updateDescription();
                     } else if (value.getSpec().getOrange().getClass() == selectedBoost.ability) {
-                        value.getSpec().getOrange().boostSkill();
+                        value.getSpec().getOrange().boostOrange();
                         value.getSpec().getOrange().updateDescription();
                     }
                 }

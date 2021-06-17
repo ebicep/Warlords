@@ -37,6 +37,13 @@ public abstract class AbstractAbility {
         this.maxDamageHeal *= 1.2;
     }
 
+    // purely for fun now, perhaps may actually use this later
+    public void boostOrange() {
+        boosted = true;
+        this.minDamageHeal *= 1.4;
+        this.maxDamageHeal *= 1.4;
+    }
+
     public String getName() {
         return name;
     }
@@ -99,4 +106,29 @@ public abstract class AbstractAbility {
         return description;
     }
 
+    /*
+flameburst/chain: 9.4
+breath: 6.3
+water breath: 12.53
+time warp: 28.19
+arcane shield/bloodlust/rod/repentance: 31.32
+barrier/inferno/berserk: 46.98
+healing rain/wrath: 52.85
+ground slam: 9.32
+defender slam: 7.34
+vene: 14.09
+last stand: 56.38
+wave: 11.74
+orbs/holy radiance: 19.57
+army/presence/hammer/healing totem/sg totem: 70.47
+reckless charge: 9.98
+infusion/earthliving/windfury: 15.66
+prot radiance: 9.87
+boulder: 7.05
+chain heal: 7.99
+consecrate: 7.83
+capac totem: 62.64
+spirit link: 8.61
+souldbind: 21.92
+    */
 }

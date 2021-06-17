@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 public class IceBarrier extends AbstractAbility {
 
     public IceBarrier() {
-        super("Ice Barrier", 0, 0, 47, 0, 0, 0
+        super("Ice Barrier", 0, 0, 46.98f, 0, 0, 0
         );
     }
 

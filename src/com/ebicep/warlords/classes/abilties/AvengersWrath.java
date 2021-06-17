@@ -7,7 +7,7 @@ import org.bukkit.entity.Player;
 public class AvengersWrath extends AbstractAbility {
 
     public AvengersWrath() {
-        super("Avenger's Wrath", 0, 0, 53, 0, 0, 0);
+        super("Avenger's Wrath", 0, 0, 52.85f, 0, 0, 0);
     }
 
     @Override
@@ -18,7 +18,7 @@ public class AvengersWrath extends AbstractAbility {
                 "§7that are within §e5 §7blocks of your\n" +
                 "§7target. Your energy per second is\n" +
                 "§7increased by §e20 §7for the duration\n" +
-                "§7of the effect. Lasts §612 seconds.";
+                "§7of the effect. Lasts §612 §7seconds.";
     }
 
     @Override

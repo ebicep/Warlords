@@ -19,7 +19,7 @@ import java.util.List;
 public class HealingRain extends AbstractAbility {
 
     public HealingRain() {
-        super("Healing Rain", 170, 230, 53, 50, 15, 200
+        super("Healing Rain", 170, 230, 52.85f, 50, 15, 200
         );
     }
 

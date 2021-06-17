@@ -16,7 +16,7 @@ import java.util.List;
 public class LastStand extends AbstractAbility {
 
     public LastStand() {
-        super("Last Stand", 0, 0, 58, 40, 0, 0
+        super("Last Stand", 0, 0, 56.38f, 40, 0, 0
         );
     }
 

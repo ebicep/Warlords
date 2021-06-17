@@ -23,7 +23,7 @@ import java.util.List;
 
 public class Chain extends AbstractAbility {
 
-    public Chain(String name, float minDamageHeal, float maxDamageHeal, int cooldown, int energyCost, int critChance, int critMultiplier) {
+    public Chain(String name, float minDamageHeal, float maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier) {
         super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
     }
 
@@ -32,7 +32,7 @@ public class Chain extends AbstractAbility {
         if (name.contains("Lightning")) {
             description = "§7Discharge a bolt of lightning at the\n" +
                     "§7targeted enemy player that deals\n" +
-                    "§c" + -minDamageHeal + " §7- §c" + maxDamageHeal + " §7damage and jumps to\n" +
+                    "§c" + -minDamageHeal + " §7- §c" + -maxDamageHeal + " §7damage and jumps to\n" +
                     "§e4 §7additional targets within §e15\n" +
                     "§7blocks. Each time the lightning jumps\n" +
                     "§7the damage is decreased by §c15%§7.\n" +

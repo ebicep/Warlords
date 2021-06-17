@@ -16,7 +16,7 @@ public class TimeWarp extends AbstractAbility {
     private int counter = 0;
 
     public TimeWarp() {
-        super("Time Warp", 0, 0, 29, 30, -1, 100);
+        super("Time Warp", 0, 0, 28.19f, 30, -1, 100);
     }
 
     @Override

@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 public class Repentance extends AbstractAbility {
 
     public Repentance() {
-        super("Repentance", 0, 0, 32, 20, 0, 0);
+        super("Repentance", 0, 0, 31.32f, 20, 0, 0);
     }
 
     @Override

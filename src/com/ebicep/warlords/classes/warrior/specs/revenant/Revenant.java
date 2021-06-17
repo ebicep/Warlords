@@ -9,7 +9,7 @@ public class Revenant extends AbstractWarrior {
         super(player, 6300, 305, 0,
                 new Strike("Crippling Strike", -362.25f, -498, 0, 100, 15, 200),
                 new RecklessCharge(),
-                new GroundSlam("Ground Slam", -326, -441, 7, 30, 35, 200, player),
+                new GroundSlam("Ground Slam", -326, -441, 7.34f, 30, 35, 200, player),
                 new OrbsOfLife(),
                 new UndyingArmy());
     }

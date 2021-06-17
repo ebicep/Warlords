@@ -14,7 +14,7 @@ import java.util.List;
 public class InspiringPresence extends AbstractAbility {
 
     public InspiringPresence() {
-        super("Inspiring Presence", 0, 0, 60 + 10, 0, 0, 0
+        super("Inspiring Presence", 0, 0, 60f + 10.47f, 0, 0, 0
         );
     }
 

@@ -20,7 +20,7 @@ public class Consecrate extends AbstractAbility {
     protected int strikeDamageBoost;
 
     public Consecrate(float minDamageHeal, float maxDamageHeal, int energyCost, int critChance, int critMultiplier, int strikeDamageBoost) {
-        super("Consecrate", minDamageHeal, maxDamageHeal, 8, energyCost, critChance, critMultiplier
+        super("Consecrate", minDamageHeal, maxDamageHeal, 7.83f, energyCost, critChance, critMultiplier
         );
     }
 
@@ -29,7 +29,7 @@ public class Consecrate extends AbstractAbility {
         description = "§7Consecrate the ground below your\n" +
                 "§7feet, declaring it sacred. Enemies\n" +
                 "§7standing on it will take §c" + -minDamageHeal + " §7-\n" +
-                "§c%" + -maxDamageHeal + " §7damage per second and\n" +
+                "§c" + -maxDamageHeal + " §7damage per second and\n" +
                 "§7take §c" + strikeDamageBoost + "% §7increased damage from\n" +
                 "§7your paladin strikes. Lasts §65\n" +
                 "§7seconds.";

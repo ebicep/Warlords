@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 
 public class LightInfusion extends AbstractAbility {
 
-    public LightInfusion(int cooldown) {
+    public LightInfusion(float cooldown) {
         super("Light Infusion", 0, 0, cooldown, -120, 0, 0);
     }
 

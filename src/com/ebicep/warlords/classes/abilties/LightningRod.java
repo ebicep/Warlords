@@ -18,7 +18,7 @@ import java.util.List;
 public class LightningRod extends AbstractAbility {
 
     public LightningRod() {
-        super("Lightning Rod", 0, 0, 32, 0, 0, 0
+        super("Lightning Rod", 0, 0, 31.32f, 0, 0, 0
         );
     }
 

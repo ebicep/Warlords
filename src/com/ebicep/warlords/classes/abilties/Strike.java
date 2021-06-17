@@ -30,16 +30,16 @@ public class Strike extends AbstractAbility {
     public void updateDescription() {
         if (name.contains("Avenger")) {
             description = "§7Strike the targeted enemy player,\n" +
-                    "§7causing §c" + minDamageHeal + " §7- §c" + maxDamageHeal + " §7damage\n" +
+                    "§7causing §c" + -minDamageHeal + " §7- §c" + -maxDamageHeal + " §7damage\n" +
                     "§7and removing §e6 §7energy.";
         } else if (name.contains("Crusader")) {
             description = "§7Strike the targeted enemy player,\n" +
-                    "§7causing §c" + minDamageHeal + " §7- §c" + maxDamageHeal + " damage\n" +
+                    "§7causing §c" + -minDamageHeal + " §7- §c" + -maxDamageHeal + " damage\n" +
                     "§7and restoring §e24 §7energy to two nearby\n" +
                     "§7within §e10 §7blocks.";
         } else if (name.contains("Protector")) {
             description = "§7Strike the targeted enemy player,\n" +
-                    "§7causing §c" + minDamageHeal + " §7- §c" + maxDamageHeal + " §7damage\n" +
+                    "§7causing §c" + -minDamageHeal + " §7- §c" + -maxDamageHeal + " §7damage\n" +
                     "§7and healing two nearby allies for\n" +
                     "§a100% §7of the damage done. Also\n" +
                     "§7heals yourself by §a50% §7of the\n" +

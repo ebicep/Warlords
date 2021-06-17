@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 public class Inferno extends AbstractAbility {
 
     public Inferno() {
-        super("Inferno", 0, 0, 47, 0, 30, 30
+        super("Inferno", 0, 0, 46.98f, 0, 30, 30
         );
     }
 

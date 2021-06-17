@@ -23,7 +23,7 @@ public class SeismicWave extends AbstractAbility {
     private Player owner;
     private List<Player> playersHit = new ArrayList<>();
 
-    public SeismicWave(String name, float minDamageHeal, float maxDamageHeal, int cooldown, int energyCost, int critChance, int critMultiplier, Player owner) {
+    public SeismicWave(String name, float minDamageHeal, float maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier, Player owner) {
         super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
         this.owner = owner;
     }

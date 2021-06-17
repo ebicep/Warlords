@@ -42,7 +42,7 @@ public enum Classes {
             Aquamancer::new,
             "§7A healing-oriented Mage specialization that uses Water spells to heal allies and to deal minor damage to enemies.",
             new ItemStack(Material.INK_SACK, 1, (short) 6),
-            WATER_BOLT, WATER_BREATH),
+            WATER_BOLT, WATER_BREATH, HEALING_RAIN),
     BERSERKER("Berserker",
             Berserker::new,
             "§7A damage-oriented Warrior specialization with a lust for blood and anger issues.",
@@ -77,7 +77,7 @@ public enum Classes {
             ThunderLord::new,
             "§7A damage-oriented Shaman specialization that calls upon the power of Lightning to electrocute enemies.",
             new ItemStack(Material.NETHER_STALK, 1),
-            LIGHTNING_BOLT, CHAIN_LIGHTNING, WINDFURY_WEAPON),
+            LIGHTNING_BOLT, CHAIN_LIGHTNING, WINDFURY_WEAPON, CAPACITOR_TOTEM),
     SPIRITGUARD("Spiritguard",
             Spiritguard::new,
             "§7A defense-oriented Shaman specialization that calls upon the aid of spirits old and new to mitigate damage and avoid death.",
@@ -87,7 +87,7 @@ public enum Classes {
             Earthwarden::new,
             "§7A healing-oriented Shaman specialization that calls upon the power of Earth to crush enemies and to aid allies.",
             new ItemStack(Material.INK_SACK, 1, (short) 6),
-            EARTHEN_SPIKE, BOULDER, CHAIN_HEAL),
+            EARTHEN_SPIKE, BOULDER, CHAIN_HEAL, HEALING_TOTEM),
 
     ;
 

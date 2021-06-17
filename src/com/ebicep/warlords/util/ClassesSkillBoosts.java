@@ -27,6 +27,10 @@ public enum ClassesSkillBoosts {
             "§7Increases the amount of\n§7health you restore with\n§7Water Breath by 20%",
             "§aIncreases the amount of\n§ahealth you restore with\n§aWater Breath by §c20%",
             Breath.class),
+    HEALING_RAIN("Healing Rain",
+            "§7Increases the amount of\n§7health you restore with\n§7Healing Rain by 40%",
+            "§aIncreases the amount of\n§ahealth you restore with\n§aHealing Rain by §c40%",
+            HealingRain.class),
     WOUNDING_STRKE("Wounding Strike",
             "§7Increase the damage you\n§7deal with Wounding Strike\n§7by 20%",
             "§aIncrease the damage you\n§adeal with Wounding Strike\n§aby §c20%",
@@ -68,8 +72,8 @@ public enum ClassesSkillBoosts {
             "§aIncreases the amount of\n§ahealth you restore with\n§aHoly Radiance by §c20%",
             HolyRadiance.class),
     HAMMER_OF_LIGHT("Hammer of Light",
-            "§7Increases the amount of\n§7health you restore with\n§7Hammer of Light by 20%",
-            "§aIncreases the amount of\n§ahealth you restore with\n§aHammer of Light by §c20%",
+            "§7Increases the amount of\n§7health you restore with\n§7Hammer of Light by 40%",
+            "§aIncreases the amount of\n§ahealth you restore with\n§aHammer of Light by §c40%",
             HammerOfLight.class),
     LIGHTNING_BOLT("Lightning Bolt",
             "§7Increase the damage you\n§7deal with Lightning Bolt by\n§720%",
@@ -83,6 +87,10 @@ public enum ClassesSkillBoosts {
             "§7Increase the damage you\n§7deal with Windfury Weapon\n§7by 20%",
             "§aIncrease the damage you\n§adeal with Windfury Weapon\n§aby §c20%",
             Windfury.class),
+    CAPACITOR_TOTEM("Capacitor Totem",
+            "§7Increase the damage you\n§7deal with Capacitor Totem\n§7by 40%",
+            "§aIncrease the damage you\n§adeal with Capacitor Totem\n§aby §c40%",
+            Totem.TotemThunderlord.class),
     FALLEN_SOULS("Fallen Souls",
             "§7Increase the damage you\n§7deal with Fallen Souls by\n§720%",
             "§aIncrease the damage you\n§adeal with Fallen Souls by\n§c20%",
@@ -102,7 +110,11 @@ public enum ClassesSkillBoosts {
     CHAIN_HEAL("Chain Heal",
             "§7Increases the amount of\n§7health you restore with\n§7Chain Heal by 20%",
             "§aIncreases the amount of\n§ahealth you restore with\n§aChain Heal by §c20%",
-            Chain.class);
+            Chain.class),
+    HEALING_TOTEM("Healing Totem",
+            "§7Increases the amount of\n§7health you restore with\n§7Healing Totem by 40%",
+            "§aIncreases the amount of\n§ahealth you restore with\n§aHealing Totem by §c40%",
+            Totem.TotemEarthwarden.class);
 
     public final String name;
     public final String description;

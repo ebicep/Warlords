@@ -309,6 +309,7 @@ public class Totem extends EntityArmorStand {
             //1.354x
         }
 
+
         @Override
         public void updateDescription() {
             description = "§7Place a totem on the ground that\n" +
@@ -376,7 +377,7 @@ public class Totem extends EntityArmorStand {
                             player1.playSound(player.getLocation(), "shaman.heal.impact", 2, 1);
                         }
 
-                        new FallingBlockWaveEffect(totemStand.getLocation().clone().add(0, 1, 0), 5, 1.2, Material.SAPLING, (byte) 1).play();
+                        new FallingBlockWaveEffect(totemStand.getLocation().clone().add(0, 1, 0), 7, 1.2, Material.SAPLING, (byte) 1).play();
 
                         List<Entity> near = healingTotem.getTotemArmorStand().getNearbyEntities(4.0D, 4.0D, 4.0D);
                         near = Utils.filterOnlyTeammates(near, healingTotem.getOwner().getPlayer());
