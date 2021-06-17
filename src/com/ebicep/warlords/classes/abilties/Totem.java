@@ -45,9 +45,7 @@ public class Totem extends EntityArmorStand {
 
     public static double getLocationUnderPlayer(Player player) {
         Location location = player.getLocation().clone();
-        if (player.getWorld().getHighestBlockYAt(location) < player.getLocation().getY()) {
-            return player.getWorld().getHighestBlockYAt(location);
-        } else {
+        location.setY(location.getBlockY() + 2);
             for (int i = 0; i < 20; i++) {
                 if (player.getWorld().getBlockAt(location).getType() == Material.AIR) {
                     location.add(0, -1, 0);
@@ -56,7 +54,6 @@ public class Totem extends EntityArmorStand {
                 }
             }
             return location.getY();
-        }
     }
 
     public WarlordsPlayer getOwner() {
@@ -314,10 +311,10 @@ public class Totem extends EntityArmorStand {
         public void updateDescription() {
             description = "§7Place a totem on the ground that\n" +
                     "§7pulses constantly, healing nearby\n" +
-                    "§7allies for §a" + minDamageHeal + " §7- §a" + (minDamageHeal * 1.354) + " §7every\n" +
+                    "§7allies for §a" + minDamageHeal + " §7- §a" + Math.floor(minDamageHeal * 1.354) + " §7every\n" +
                     "§7second. Before disappearing, the totem\n" +
                     "§7will let out a final pulse that heals for\n" +
-                    "§a" + maxDamageHeal + " §7- §a" + (maxDamageHeal * 1.354) + "§7. Lasts §65 §7seconds.";
+                    "§a" + maxDamageHeal + " §7- §a" + Math.floor(maxDamageHeal * 1.354) + "§7. Lasts §65 §7seconds.";
         }
 
         @Override

@@ -9,12 +9,10 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.minecraft.server.v1_8_R3.EntityLiving;
 import org.apache.commons.lang.Validate;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
@@ -30,6 +28,7 @@ import java.util.stream.Collectors;
 public class Game implements Runnable {
 
     private static final int POINT_LIMIT = 1000;
+    private static final int MERCY_LIMIT = 550;
     public static int remaining = 0;
     public static TextComponent spacer = new TextComponent(ChatColor.GRAY + " - ");
 
@@ -252,7 +251,7 @@ public class Game implements Runnable {
             @Override
             public Game.State run(Game game) {
                 if (
-                        game.bluePoints >= POINT_LIMIT || game.redPoints >= POINT_LIMIT || game.timer >= game.map.getGameTimerInTicks() || game.forceEnd
+                        game.bluePoints >= POINT_LIMIT || game.redPoints >= POINT_LIMIT || game.timer >= game.map.getGameTimerInTicks() || game.forceEnd || Math.abs(game.bluePoints - game.redPoints) > MERCY_LIMIT
                 ) {
                     return END;
                 }
@@ -458,6 +457,17 @@ public class Game implements Runnable {
                     value.getPlayer().setGameMode(GameMode.ADVENTURE);
                 }
 
+                for (Player player1 : game.getPlayersProtected().keySet()) {
+                    Warlords.getPlayer(player1).getScoreboard().updatePoints();
+                    if (Warlords.game.isRedTeam(player1) ? teamRedWins : teamBlueWins) {
+                        player1.playSound(player1.getLocation(), "victory", 500, 1);
+                        PacketUtils.sendTitle(player1, "§6§lVICTORY!", "", 0, 100, 0);
+                    } else {
+                        player1.playSound(player1.getLocation(), "defeat", 500, 1);
+                        PacketUtils.sendTitle(player1, "§c§lDEFEAT!", "", 0, 100, 0);
+                    }
+                }
+
                 sendMessageToAllGamePlayer(game, "" + ChatColor.GREEN + ChatColor.BOLD + "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬", false);
 
                 game.timer = 0;
@@ -467,7 +477,7 @@ public class Game implements Runnable {
             @Override
             public Game.State run(Game game) {
                 game.timer++;
-                if (game.timer > 10 * 20 || true) {
+                if (game.timer > 10 * 20) {
                     for (Player player : game.clearAllPlayers()) {
                         if (player != null) {
                             player.teleport(Bukkit.getWorlds().get(0).getSpawnLocation());
@@ -696,6 +706,9 @@ public class Game implements Runnable {
     }
 
     public void removePlayer(Player player) {
+        player.getInventory().clear();
+        player.getInventory().setArmorContents(new ItemStack[]{null, null, null, null});
+        player.getInventory().setItem(4, new ItemBuilder(Material.NETHER_STAR).name("§aSelection Menu").get());
         Team oldTeam = this.players.remove(player);
         if (oldTeam == Team.RED) {
             this.cachedTeamRed.remove(player);

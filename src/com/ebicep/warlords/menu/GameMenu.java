@@ -131,7 +131,7 @@ public class GameMenu {
         List<ClassesSkillBoosts> values = selectedGroup.skillBoosts;
         for (int i = 0; i < values.size(); i++) {
             ClassesSkillBoosts subClass = values.get(i);
-            ItemBuilder builder = new ItemBuilder(player.getInventory().getItem(0))
+            ItemBuilder builder = new ItemBuilder(getSelected(player).icon)
                     .name(subClass == selectedBoost ? ChatColor.GREEN + subClass.name + " (" + selectedClass.name + ")" : ChatColor.RED + subClass.name + " (" + selectedClass.name + ")")
                     .flags(ItemFlag.HIDE_ENCHANTS);
             List<String> lore = new ArrayList<>();

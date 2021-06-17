@@ -7,6 +7,7 @@ import com.ebicep.warlords.classes.abilties.UndyingArmy;
 import com.ebicep.warlords.classes.shaman.specs.spiritguard.Spiritguard;
 import com.ebicep.warlords.maps.FlagManager;
 import com.ebicep.warlords.maps.Game;
+import com.ebicep.warlords.util.ItemBuilder;
 import net.minecraft.server.v1_8_R3.EntityLiving;
 import net.minecraft.server.v1_8_R3.GenericAttributes;
 import org.bukkit.ChatColor;
@@ -105,6 +106,10 @@ public class WarlordsEvents implements Listener {
             player.sendMessage(ChatColor.RED + "- Weapon Skill boosts");
             player.sendMessage(ChatColor.RED + "- Revenant's Orbs of Life being hidden for the enemy team");
             player.sendMessage(ChatColor.RED + "- Flag damage modifier currently does not carry over to a new flag holder.");
+
+            player.getInventory().clear();
+            player.getInventory().setArmorContents(new ItemStack[]{null, null, null, null});
+            player.getInventory().setItem(4, new ItemBuilder(Material.NETHER_STAR).name("§aSelection Menu").get());
         }
 
     }
