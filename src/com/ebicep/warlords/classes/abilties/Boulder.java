@@ -91,7 +91,7 @@ public class Boulder extends AbstractAbility {
                     }
 
                 } else {
-                    Collection<Entity> nearbyEntities = stand.getWorld().getNearbyEntities(stand.getLocation(), 1.25, 1.25, 1.25);
+                    Collection<Entity> nearbyEntities = stand.getWorld().getNearbyEntities(stand.getLocation().clone().add(0, .5, 0), 1.25, 1.25, 1.25);
                     for (Entity entity : nearbyEntities) {
                         if (entity instanceof Player) {
                             if (!Warlords.game.onSameTeam(player, (Player) entity) && ((Player) entity).getGameMode() != GameMode.SPECTATOR) {

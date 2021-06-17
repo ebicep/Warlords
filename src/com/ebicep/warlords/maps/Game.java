@@ -228,23 +228,7 @@ public class Game implements Runnable {
 
                 for (WarlordsPlayer value : Warlords.getPlayers().values()) {
                     value.getScoreboard().addHealths();
-                    ClassesSkillBoosts selectedBoost = Classes.getSelectedBoost(value.getPlayer());
-                    if (value.getSpec().getWeapon().getClass() == selectedBoost.ability) {
-                        value.getSpec().getWeapon().boostSkill();
-                        value.getSpec().getWeapon().updateDescription();
-                    } else if (value.getSpec().getRed().getClass() == selectedBoost.ability) {
-                        value.getSpec().getRed().boostSkill();
-                        value.getSpec().getRed().updateDescription();
-                    } else if (value.getSpec().getPurple().getClass() == selectedBoost.ability) {
-                        value.getSpec().getPurple().boostSkill();
-                        value.getSpec().getPurple().updateDescription();
-                    } else if (value.getSpec().getBlue().getClass() == selectedBoost.ability) {
-                        value.getSpec().getBlue().boostSkill();
-                        value.getSpec().getBlue().updateDescription();
-                    } else if (value.getSpec().getOrange().getClass() == selectedBoost.ability) {
-                        value.getSpec().getOrange().boostOrange();
-                        value.getSpec().getOrange().updateDescription();
-                    }
+                    value.applySkillBoost();
                 }
             }
 
@@ -495,6 +479,13 @@ public class Game implements Runnable {
         public abstract Game.State run(Game game);
 
         public abstract void begin(Game game);
+
+        public static WarlordsPlayer updateTempPlayer(Player player) {
+            WarlordsPlayer temp = new WarlordsPlayer(player, player.getName(), player.getUniqueId(), Classes.getSelected(player).create.apply(player), Weapons.getSelected(player), false);
+            temp.applySkillBoost();
+            temp.assignItemLore();
+            return temp;
+        }
 
         public void sendMessageToAllGamePlayer(Game game, String message, boolean centered) {
             for (Player p : game.players.keySet()) {
@@ -807,10 +798,10 @@ public class Game implements Runnable {
             String entryUnformatted = ChatColor.stripColor(entry);
             if (entryUnformatted.contains("Starting in")) {
                 scoreboard.resetScores(entry);
-                if (time / 20 < 10) {
-                    scoreboard.getObjective(dateString).getScore(ChatColor.WHITE + "Starting in: " + ChatColor.GREEN + "00:0" + time / 20 + ChatColor.WHITE + " to").setScore(8);
+                if (time < 10) {
+                    scoreboard.getObjective(dateString).getScore(ChatColor.WHITE + "Starting in: " + ChatColor.GREEN + "00:0" + time + ChatColor.WHITE + " to").setScore(8);
                 } else {
-                    scoreboard.getObjective(dateString).getScore(ChatColor.WHITE + "Starting in: " + ChatColor.GREEN + "00:" + time / 20 + ChatColor.WHITE + " to").setScore(8);
+                    scoreboard.getObjective(dateString).getScore(ChatColor.WHITE + "Starting in: " + ChatColor.GREEN + "00:" + time + ChatColor.WHITE + " to").setScore(8);
                 }
             }
         }

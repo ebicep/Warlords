@@ -14,6 +14,7 @@ import com.ebicep.warlords.classes.shaman.specs.thunderlord.ThunderLord;
 import com.ebicep.warlords.classes.warrior.specs.berserker.Berserker;
 import com.ebicep.warlords.classes.warrior.specs.defender.Defender;
 import com.ebicep.warlords.classes.warrior.specs.revenant.Revenant;
+import com.ebicep.warlords.maps.Game;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -120,6 +121,8 @@ public enum Classes {
     public static void setSelected(Player player, Classes selectedClass) {
         player.removeMetadata("selected-class", Warlords.getInstance());
         player.setMetadata("selected-class", new FixedMetadataValue(Warlords.getInstance(), selectedClass));
+        Game.State.updateTempPlayer(player);
+        setSelectedBoost(player, selectedClass.skillBoosts.get(0));
     }
 
     public static ClassesSkillBoosts getSelectedBoost(Player player) {
@@ -132,6 +135,7 @@ public enum Classes {
 
     public static void setSelectedBoost(Player player, ClassesSkillBoosts selectedBoost) {
         player.removeMetadata("selected-boost", Warlords.getInstance());
+        Game.State.updateTempPlayer(player);
         player.setMetadata("selected-boost", new FixedMetadataValue(Warlords.getInstance(), selectedBoost));
     }
 }

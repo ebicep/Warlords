@@ -20,8 +20,8 @@ public class Consecrate extends AbstractAbility {
     protected int strikeDamageBoost;
 
     public Consecrate(float minDamageHeal, float maxDamageHeal, int energyCost, int critChance, int critMultiplier, int strikeDamageBoost) {
-        super("Consecrate", minDamageHeal, maxDamageHeal, 7.83f, energyCost, critChance, critMultiplier
-        );
+        super("Consecrate", minDamageHeal, maxDamageHeal, 7.83f, energyCost, critChance, critMultiplier);
+        this.strikeDamageBoost = strikeDamageBoost;
     }
 
     @Override

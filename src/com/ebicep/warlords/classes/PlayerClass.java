@@ -70,7 +70,6 @@ public abstract class PlayerClass {
                         red.setCurrentCooldown(red.cooldown);
                         sendRightClickPacket(player);
                     }
-
                 }
             } else if (player.getInventory().getHeldItemSlot() == 2) {
                 if (purple.getCurrentCooldown() == 0 && player.getLevel() >= purple.getEnergyCost()) {

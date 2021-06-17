@@ -64,6 +64,10 @@ public abstract class AbstractAbility {
         this.maxDamageHeal = maxDamageHeal;
     }
 
+    public int getCurrentCooldownItem() {
+        return (int) Math.round(currentCooldown + .5);
+    }
+
     public float getCurrentCooldown() {
         return currentCooldown;
     }

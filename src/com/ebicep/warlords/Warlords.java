@@ -210,24 +210,24 @@ public class Warlords extends JavaPlugin {
                         }
 
 
-                        //to make it look like the cooldown activates super fast but isnt really fast since it updates next second tick
-                        if (warlordsPlayer.getSpec().getRed().getCurrentCooldown() == warlordsPlayer.getSpec().getRed().getCooldown()) {
-                            warlordsPlayer.getSpec().getRed().setCurrentCooldown(warlordsPlayer.getSpec().getRed().getCurrentCooldown() - 1);
+                        //ABILITY COOLDOWN
+                        if (warlordsPlayer.getSpec().getRed().getCurrentCooldown() != 0) {
+                            warlordsPlayer.getSpec().getRed().subtractCooldown(.05f);
                             warlordsPlayer.updateRedItem();
                         }
-                        if (warlordsPlayer.getSpec().getPurple().getCurrentCooldown() == warlordsPlayer.getSpec().getPurple().getCooldown()) {
-                            warlordsPlayer.getSpec().getPurple().setCurrentCooldown(warlordsPlayer.getSpec().getPurple().getCurrentCooldown() - 1);
+                        if (warlordsPlayer.getSpec().getPurple().getCurrentCooldown() != 0) {
+                            warlordsPlayer.getSpec().getPurple().subtractCooldown(.05f);
                             warlordsPlayer.updatePurpleItem();
                         }
-                        if (warlordsPlayer.getSpec().getBlue().getCurrentCooldown() == warlordsPlayer.getSpec().getBlue().getCooldown()) {
-                            warlordsPlayer.getSpec().getBlue().setCurrentCooldown(warlordsPlayer.getSpec().getBlue().getCurrentCooldown() - 1);
+                        if (warlordsPlayer.getSpec().getBlue().getCurrentCooldown() != 0) {
+                            warlordsPlayer.getSpec().getBlue().subtractCooldown(.05f);
                             warlordsPlayer.updateBlueItem();
                         }
-                        if (warlordsPlayer.getSpec().getOrange().getCurrentCooldown() == warlordsPlayer.getSpec().getOrange().getCooldown()) {
-                            warlordsPlayer.getSpec().getOrange().setCurrentCooldown(warlordsPlayer.getSpec().getOrange().getCurrentCooldown() - 1);
+                        if (warlordsPlayer.getSpec().getOrange().getCurrentCooldown() != 0) {
+                            warlordsPlayer.getSpec().getOrange().subtractCooldown(.05f);
                             warlordsPlayer.updateOrangeItem();
                         }
-                        if (warlordsPlayer.getHorseCooldown() == 15 && !player.isInsideVehicle()) {
+                        if (warlordsPlayer.getHorseCooldown() != 0 && !player.isInsideVehicle()) {
                             warlordsPlayer.setHorseCooldown(warlordsPlayer.getHorseCooldown() - 1);
                             warlordsPlayer.updateHorseItem();
                         }
@@ -340,7 +340,10 @@ public class Warlords extends JavaPlugin {
                         //energy
                         if (warlordsPlayer.getPlayer().getGameMode() != GameMode.CREATIVE) {
                             if (warlordsPlayer.getEnergy() < warlordsPlayer.getMaxEnergy()) {
-                                float newEnergy = warlordsPlayer.getEnergy() + 1;
+                                float newEnergy = warlordsPlayer.getEnergy() + warlordsPlayer.getSpec().getEnergyPerSec() / 20f;
+                                if (warlordsPlayer.getWrathDuration() != 0) {
+                                    newEnergy += 1;
+                                }
                                 if (warlordsPlayer.getPresence() != 0) {
                                     newEnergy += .5;
                                 }
@@ -526,27 +529,6 @@ public class Warlords extends JavaPlugin {
                                     }
                                 }
                                 warlordsPlayer.setRespawnTimer(respawn - 1);
-                            }
-                            //ABILITY COOLDOWN
-                            if (warlordsPlayer.getSpec().getRed().getCurrentCooldown() != 0 && warlordsPlayer.getSpec().getRed().getCurrentCooldown() != warlordsPlayer.getSpec().getRed().getCooldown()) {
-                                warlordsPlayer.getSpec().getRed().subtractCooldown(1);
-                                warlordsPlayer.updateRedItem();
-                            }
-                            if (warlordsPlayer.getSpec().getPurple().getCurrentCooldown() != 0 && warlordsPlayer.getSpec().getPurple().getCurrentCooldown() != warlordsPlayer.getSpec().getPurple().getCooldown()) {
-                                warlordsPlayer.getSpec().getPurple().subtractCooldown(1);
-                                warlordsPlayer.updatePurpleItem();
-                            }
-                            if (warlordsPlayer.getSpec().getBlue().getCurrentCooldown() != 0 && warlordsPlayer.getSpec().getBlue().getCurrentCooldown() != warlordsPlayer.getSpec().getBlue().getCooldown()) {
-                                warlordsPlayer.getSpec().getBlue().subtractCooldown(1);
-                                warlordsPlayer.updateBlueItem();
-                            }
-                            if (warlordsPlayer.getSpec().getOrange().getCurrentCooldown() != 0 && warlordsPlayer.getSpec().getOrange().getCurrentCooldown() != warlordsPlayer.getSpec().getOrange().getCooldown()) {
-                                warlordsPlayer.getSpec().getOrange().subtractCooldown(1);
-                                warlordsPlayer.updateOrangeItem();
-                            }
-                            if (warlordsPlayer.getHorseCooldown() != 0 && !player.isInsideVehicle()) {
-                                warlordsPlayer.setHorseCooldown(warlordsPlayer.getHorseCooldown() - 1);
-                                warlordsPlayer.updateHorseItem();
                             }
                             //COOLDOWNS
                             if (warlordsPlayer.getSpawnProtection() != 0) {

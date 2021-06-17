@@ -83,6 +83,7 @@ public class Commands implements TabExecutor {
                         .get());
                 Warlords.game.addPlayer(player, teamBlueAssessment);
                 game.giveLobbyScoreboard(player);
+                Game.State.updateTempPlayer(player);
                 teamBlueAssessment = !teamBlueAssessment;
             }
 

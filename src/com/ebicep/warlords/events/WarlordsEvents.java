@@ -268,11 +268,21 @@ public class WarlordsEvents implements Listener {
 
     @EventHandler
     public void onInvClick(InventoryClickEvent e) {
-        if (Warlords.game.getState() == Game.State.GAME && e.getSlot() == 0) {
-            if (e.isLeftClick()) {
-                Warlords.getPlayer((Player) e.getWhoClicked()).weaponLeftClick();
-            } else if (e.isRightClick()) {
-                Warlords.getPlayer((Player) e.getWhoClicked()).weaponRightClick();
+        if (e.getSlot() == 0) {
+            Player player = (Player) e.getWhoClicked();
+            if (Warlords.game.getState() == Game.State.GAME) {
+                if (e.isLeftClick()) {
+                    Warlords.getPlayer(player).weaponLeftClick();
+                } else if (e.isRightClick()) {
+                    Warlords.getPlayer(player).weaponRightClick();
+                }
+            } else if (Warlords.game.getState() == Game.State.PRE_GAME) {
+                WarlordsPlayer temp = Game.State.updateTempPlayer(player);
+                if (e.isLeftClick()) {
+                    temp.weaponLeftClick();
+                } else if (e.isRightClick()) {
+                    temp.weaponRightClick();
+                }
             }
         }
         e.setCancelled(true);
