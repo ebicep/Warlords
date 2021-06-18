@@ -14,6 +14,7 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
 import net.minecraft.server.v1_8_R3.EntityLiving;
+import org.bson.Document;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -116,9 +117,9 @@ public class Warlords extends JavaPlugin {
             public void run() {
                 try {
                     MongoClient mongoClient = MongoClients.create(
-                            "mongodb+srv://user123:bananapeel@cluster0.xphds.mongodb.net/Cluster0?retryWrites=true&w=majority");
+                            "mongodb+srv://new_user:joemama@cluster0.xphds.mongodb.net/Cluster0?retryWrites=true&w=majority");
                     MongoDatabase database = mongoClient.getDatabase("temp");
-                    database.createCollection("tempCollection2");
+                    database.getCollection("temp").insertOne(new Document("name", "joe"));
                     getServer().getConsoleSender().sendMessage(ChatColor.RED + "HERE2222");
                 } catch (Exception e) {
                     e.printStackTrace();
