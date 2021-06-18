@@ -10,6 +10,9 @@ import com.ebicep.warlords.menu.MenuEventListener;
 import com.ebicep.warlords.util.PacketUtils;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.Utils;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoDatabase;
 import net.minecraft.server.v1_8_R3.EntityLiving;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -25,6 +28,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
 
 public class Warlords extends JavaPlugin {
 
@@ -84,11 +88,7 @@ public class Warlords extends JavaPlugin {
 
         game = new Game();
         startTask();
-
         getServer().getScheduler().runTaskTimer(this, game, 1, 1);
-
-        getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords]: Plugin is enabled");
-
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -98,13 +98,33 @@ public class Warlords extends JavaPlugin {
                 }
             }
 
-        }.runTaskTimer(this, 50, 50);
+        }.runTaskTimer(this, 50, 200);
+
+        getData();
+        getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords]: Plugin is enabled");
     }
 
 
     @Override
     public void onDisable() {
         getServer().getConsoleSender().sendMessage(ChatColor.RED + "[Warlords]: Plugin is disabled");
+    }
+
+    public void getData() {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                try {
+                    MongoClient mongoClient = MongoClients.create(
+                            "mongodb+srv://user123:bananapeel@cluster0.xphds.mongodb.net/Cluster0?retryWrites=true&w=majority");
+                    MongoDatabase database = mongoClient.getDatabase("temp");
+                    database.createCollection("tempCollection2");
+                    getServer().getConsoleSender().sendMessage(ChatColor.RED + "HERE2222");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }.runTaskAsynchronously(this);
     }
 
     public void startTask() {

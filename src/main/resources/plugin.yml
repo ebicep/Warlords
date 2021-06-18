@@ -1,5 +1,5 @@
 name: Warlords
-version: 1.0
+version: 0.0.3
 author: ebic
 main: com.ebicep.warlords.Warlords
 depend: [MultiWorld]
@@ -22,4 +22,3 @@ commands:
   hotkeymode:
     description: Switches between hotkeymode and classic
     usage: /hotkeymode
-
