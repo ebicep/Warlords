@@ -83,7 +83,7 @@ public class LightningBolt extends AbstractAbility {
                         player1.playSound(bolt.getLocation(), "shaman.lightningbolt.impact", 2, 1);
                     }
 
-                    List<Entity> nearBlock = (List<Entity>) bolt.getLocation().getWorld().getNearbyEntities(bolt.getBoltLocation(), 1, 1, 1);
+                    List<Entity> nearBlock = (List<Entity>) bolt.getLocation().getWorld().getNearbyEntities(bolt.getBoltLocation(), 1.25, 1.25, 1.25);
                     nearBlock = Utils.filterOutTeammates(nearBlock, player);
                     for (Entity entity : nearBlock) {
                         if (entity instanceof Player && ((Player) entity).getGameMode() != GameMode.SPECTATOR) {

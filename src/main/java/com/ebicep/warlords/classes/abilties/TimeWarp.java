@@ -48,6 +48,21 @@ public class TimeWarp extends AbstractAbility {
                 }
 
                 //PARTICLES
+                if (counter % 2 == 0) {
+                    if (timeWarpPlayer.getTime() != 0) {
+                        for (Location location : warlordsPlayer.getTrail()) {
+                            ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(175, 0, 175), location, 500);
+                        }
+                    }
+                }
+
+                if (counter % 6 == 0) {
+
+                    if (timeWarpPlayer.getTime() != 0) {
+                        warlordsPlayer.getTrail().add(player.getLocation());
+                    }
+                }
+
                 if (counter % 4 == 0) {
                     if (timeWarpPlayer.getTime() != 0) {
                         ParticleEffect.SPELL_WITCH.display(0F, 0F, 0F, 0.001F, 6, timeWarpPlayer.getLocation(), 500);

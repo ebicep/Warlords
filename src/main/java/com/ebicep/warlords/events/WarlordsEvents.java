@@ -103,7 +103,6 @@ public class WarlordsEvents implements Listener {
             player.sendMessage(ChatColor.GRAY + "NOTE: We're still in beta, bugs and/or missing features are still present. Please report any bugs you might find.");
             player.sendMessage(" ");
             player.sendMessage(ChatColor.GRAY + "CURRENT MISSING FEATURES: ");
-            player.sendMessage(ChatColor.RED + "- Weapon Skill boosts");
             player.sendMessage(ChatColor.RED + "- Revenant's Orbs of Life being hidden for the enemy team");
             player.sendMessage(ChatColor.RED + "- Flag damage modifier currently does not carry over to a new flag holder.");
 

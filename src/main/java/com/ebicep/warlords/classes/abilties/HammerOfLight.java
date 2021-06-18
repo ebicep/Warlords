@@ -29,7 +29,7 @@ public class HammerOfLight extends AbstractAbility {
                 "§7the ground, dealing §c118.8 §7-\n" +
                 "§c158.4 §7damage every second to\n" +
                 "§7nearby enemies and healing nearby\n" +
-                "§7allies for §a" + minDamageHeal + " §7- §a" + maxDamageHeal + " §7every\n" +
+                "§7allies for §a" + Math.floor(minDamageHeal) + " §7- §a" + Math.floor(maxDamageHeal) + " §7every\n" +
                 "§7second. Your Protector Strike pierces\n" +
                 "§7shields and defenses of enemies standing\n" +
                 "§7on top of the Hammer of Light. §7Lasts §68\n" +

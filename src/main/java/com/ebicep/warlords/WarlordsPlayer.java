@@ -58,6 +58,8 @@ public class WarlordsPlayer {
     private final float[] healing = new float[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
     private final float[] absorbed = new float[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
 
+    private final List<Location> trail = new ArrayList<>();
+
     private final CalculateSpeed speed;
 
     private final List<ActionBarStats> actionBarStats = new ArrayList<>();
@@ -433,7 +435,7 @@ public class WarlordsPlayer {
                     new ItemBuilder(Material.GLOWSTONE_DUST)
                             .name(ChatColor.GOLD + spec.getPurple().getName())
                             .lore(ChatColor.GRAY + "Cooldown: " + ChatColor.AQUA + spec.getPurple().getCooldown() + " seconds",
-                                    spec.getPurple().getEnergyCost() != 0
+                                    spec.getPurple().getEnergyCost() != 0 && spec.getPurple().getEnergyCost() != -120
                                             ? ChatColor.GRAY + "Energy Cost: " + ChatColor.YELLOW + spec.getPurple().getEnergyCost() + "\n" +
                                             (spec.getPurple().getCritChance() != 0 && spec.getPurple().getCritChance() != -1 && spec.getPurple().getCritMultiplier() != 100
                                                     ? ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + spec.getPurple().getCritChance() + "%" + "\n"
@@ -696,7 +698,7 @@ public class WarlordsPlayer {
                 totalReduction = 1 - spec.getDamageResistance() / 100f;
                 //add damage
                 if (attacker.getPowerUpDamage() != 0) {
-                    totalReduction += .3;
+                    totalReduction += .2;
                 } else if (attacker.getSpawnDamage() != 0) {
                     totalReduction += .2;
                 }
@@ -1003,7 +1005,7 @@ public class WarlordsPlayer {
                     }
                 } else {
                     if (!ability.isEmpty() && !ability.equals("Time Warp") && !ability.equals("Healing Rain") && !ability.equals("Hammer of Light")) {
-                        attacker.getPlayer().playSound(attacker.getPlayer().getLocation(), Sound.ORB_PICKUP, 0.8f, 1f);
+                        attacker.getPlayer().playSound(attacker.getPlayer().getLocation(), Sound.ORB_PICKUP, 0.95f, 1f);
                     }
                 }
 
@@ -1771,4 +1773,6 @@ public class WarlordsPlayer {
     public void setDead(boolean dead) {
         this.dead = dead;
     }
+
+    public List<Location> getTrail() { return trail; }
 }
