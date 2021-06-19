@@ -25,7 +25,7 @@ public class IceBarrier extends AbstractAbility {
     @Override
     public void onActivate(Player player) {
         WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
-        warlordsPlayer.setIceBarrier(6 * 20);
+        warlordsPlayer.setIceBarrier(6);
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "mage.icebarrier.activation", 2, 1);

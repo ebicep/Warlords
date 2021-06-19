@@ -126,7 +126,7 @@ public class Strike extends AbstractAbility {
                                 Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
                             }
                             //reloops near players to give energy to
-                            List<Entity> nearNearPlayers = nearPlayer.getNearbyEntities(5.0D, 5.0D, 5.0D);
+                            List<Entity> nearNearPlayers = nearPlayer.getNearbyEntities(10.0D, 10.0D, 10.0D);
                             nearNearPlayers.remove(player);
                             nearNearPlayers = Utils.filterOnlyTeammates(nearNearPlayers, player);
                             for (Entity nearEntity2 : nearNearPlayers) {
