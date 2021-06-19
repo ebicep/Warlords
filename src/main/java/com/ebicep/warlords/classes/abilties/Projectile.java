@@ -17,7 +17,7 @@ import java.util.List;
 
 public class Projectile extends AbstractAbility {
 
-    private static final float hitBox = 1.25F;
+    private static final float hitBox = 1.3F;
     private final int maxDistance;
 
     public Projectile(String name, float minDamageHeal, float maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier, int maxDistance) {
@@ -368,7 +368,7 @@ public class Projectile extends AbstractAbility {
 
                     for (float i = 0; i < 4; i++) {
                         double angle = Math.toRadians(i * 90) + animationTimer * 0.45;
-                        double width = 0.25D;
+                        double width = 0.24D;
                         ParticleEffect.FLAME.display(0, 0, 0, 0, 2,
                                 center.translateVector(location.getWorld(), 0, Math.sin(angle) * width, Math.cos(angle) * width), 500);
                     }

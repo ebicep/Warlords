@@ -18,7 +18,7 @@ public class Soulbinding extends AbstractAbility {
                 "§7Against §dBOUND §7targets, your\n" +
                 "§7next Spirit Link ill heal you and\n" +
                 "§e2 §7nearby allies for §a420 §7health.\n" +
-                "§7Your next allen Souls will reduce the\n" +
+                "§7Your next Fallen Souls will reduce the\n" +
                 "§7cooldown of all abilities by §61.5\n" +
                 "§7seconds. (§60.5 §7seconds for §e2 §7nearby\n" +
                 "§7allies). Both buffs may be activated for\n" +

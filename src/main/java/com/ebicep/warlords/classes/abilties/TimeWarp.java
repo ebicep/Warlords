@@ -30,8 +30,8 @@ public class TimeWarp extends AbstractAbility {
     @Override
     public void onActivate(Player player) {
         WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
-        TimeWarpPlayer timeWarpPlayer = new TimeWarpPlayer(warlordsPlayer, player.getLocation(), player.getLocation().getDirection(), 5);
-        warlordsPlayer.getActionBarStats().add(new ActionBarStats(warlordsPlayer, "TIME", 5));
+        TimeWarpPlayer timeWarpPlayer = new TimeWarpPlayer(warlordsPlayer, player.getLocation(), player.getLocation().getDirection(), 4);
+        warlordsPlayer.getActionBarStats().add(new ActionBarStats(warlordsPlayer, "TIME", 4));
         warlordsPlayer.subtractEnergy(energyCost);
 
         for (Player player1 : player.getWorld().getPlayers()) {
