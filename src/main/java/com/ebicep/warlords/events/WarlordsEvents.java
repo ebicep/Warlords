@@ -27,6 +27,7 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,6 +70,12 @@ public class WarlordsEvents implements Listener {
 
     @EventHandler
     public static void onPlayerJoin(PlayerJoinEvent e) {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                Warlords.databaseManager.loadPlayer(e.getPlayer());
+            }
+        }.runTaskAsynchronously(Warlords.getInstance());
         //e.setJoinMessage(null);
         Player player = e.getPlayer();
         if (Warlords.game.getState() == Game.State.GAME) {
@@ -348,7 +355,7 @@ public class WarlordsEvents implements Listener {
     @EventHandler
     public void onPlayerChat(AsyncPlayerChatEvent e) {
         Player player = e.getPlayer();
-        if (Warlords.hasPlayer(player)) {
+        if (Warlords.game.getState() == Game.State.GAME && Warlords.hasPlayer(player)) {
             e.setCancelled(true);
             WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
             if (Warlords.game.isBlueTeam(player)) {

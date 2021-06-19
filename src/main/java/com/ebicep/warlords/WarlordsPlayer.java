@@ -42,7 +42,7 @@ public class WarlordsPlayer {
     private boolean dead = false;
     private float energy;
     private float maxEnergy;
-    private int horseCooldown;
+    private float horseCooldown;
     private int flagCooldown;
     private int hitCooldown;
     private int spawnProtection;
@@ -400,7 +400,7 @@ public class WarlordsPlayer {
     }
 
     public void updateRedItem() {
-        if (spec.getRed().getCurrentCooldown() != 0) {
+        if (spec.getRed().getCurrentCooldown() > 0) {
             ItemStack cooldown = new ItemStack(grayDye.toItemStack(spec.getRed().getCurrentCooldownItem()));
             player.getInventory().setItem(1, cooldown);
         } else {
@@ -426,7 +426,7 @@ public class WarlordsPlayer {
     }
 
     public void updatePurpleItem() {
-        if (spec.getPurple().getCurrentCooldown() != 0) {
+        if (spec.getPurple().getCurrentCooldown() > 0) {
             ItemStack cooldown = new ItemStack(grayDye.toItemStack(spec.getPurple().getCurrentCooldownItem()));
             player.getInventory().setItem(2, cooldown);
         } else {
@@ -450,7 +450,7 @@ public class WarlordsPlayer {
     }
 
     public void updateBlueItem() {
-        if (spec.getBlue().getCurrentCooldown() != 0) {
+        if (spec.getBlue().getCurrentCooldown() > 0) {
             ItemStack cooldown = new ItemStack(grayDye.toItemStack(spec.getBlue().getCurrentCooldownItem()));
             player.getInventory().setItem(3, cooldown);
         } else {
@@ -476,7 +476,7 @@ public class WarlordsPlayer {
     }
 
     public void updateOrangeItem() {
-        if (spec.getOrange().getCurrentCooldown() != 0) {
+        if (spec.getOrange().getCurrentCooldown() > 0) {
             ItemStack cooldown = new ItemStack(grayDye.toItemStack(spec.getOrange().getCurrentCooldownItem()));
             player.getInventory().setItem(4, cooldown);
         } else {
@@ -502,8 +502,8 @@ public class WarlordsPlayer {
     }
 
     public void updateHorseItem() {
-        if (horseCooldown != 0) {
-            ItemStack cooldown = new ItemStack(Material.IRON_BARDING, horseCooldown);
+        if (horseCooldown > 0) {
+            ItemStack cooldown = new ItemStack(Material.IRON_BARDING, (int) (horseCooldown + .5));
             player.getInventory().setItem(7, cooldown);
         } else {
             ItemStack horse = new ItemStack(Material.GOLD_BARDING);
@@ -795,7 +795,6 @@ public class WarlordsPlayer {
                         }
                     }
                     addHealing(damageHealValue);
-
                 } else {
                     damageHealValue *= totalReduction;
                     //DAMAGE
@@ -944,9 +943,9 @@ public class WarlordsPlayer {
                     this.health += Math.round(damageHealValue);
                 }
                 if (damageHealValue < 0) {
+                    attacker.addDamage(-damageHealValue);
                     player.playEffect(EntityEffect.HURT);
                 }
-                attacker.addDamage(-damageHealValue);
                 if (this.health <= 0 && undyingArmyDuration == 0) {
                     dead = true;
                     powerUpDamage = 0;
@@ -1210,11 +1209,11 @@ public class WarlordsPlayer {
         this.maxEnergy = maxEnergy;
     }
 
-    public int getHorseCooldown() {
+    public float getHorseCooldown() {
         return horseCooldown;
     }
 
-    public void setHorseCooldown(int horseCooldown) {
+    public void setHorseCooldown(float horseCooldown) {
         this.horseCooldown = horseCooldown;
     }
 
