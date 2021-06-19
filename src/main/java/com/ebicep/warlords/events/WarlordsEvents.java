@@ -136,15 +136,7 @@ public class WarlordsEvents implements Listener {
                         warlordsPlayerAttacker.setHitCooldown(12);
                         warlordsPlayerAttacker.subtractEnergy(warlordsPlayerAttacker.getSpec().getEnergyOnHit() * -1);
                         if (warlordsPlayerAttacker.getSpec() instanceof Spiritguard && warlordsPlayerAttacker.getSoulBindCooldown() != 0) {
-                            if (warlordsPlayerAttacker.hasBoundPlayer(warlordsPlayerVictim)) {
-                                for (Soulbinding.SoulBoundPlayer soulBindedPlayer : warlordsPlayerAttacker.getSoulBindedPlayers()) {
-                                    if (soulBindedPlayer.getBoundPlayer() == warlordsPlayerVictim) {
-                                        System.out.println(soulBindedPlayer.getTimeLeft());
-                                        soulBindedPlayer.setTimeLeft(3);
-                                        break;
-                                    }
-                                }
-                            } else {
+                            if (!warlordsPlayerAttacker.hasBoundPlayer(warlordsPlayerVictim)) {
                                 victim.sendMessage(ChatColor.RED + "\u00AB " + ChatColor.GRAY + "You have been bound by " + warlordsPlayerAttacker.getName() + "'s " + ChatColor.LIGHT_PURPLE + "Soulbinding Weapon " + ChatColor.GRAY + "!");
                                 warlordsPlayerAttacker.getPlayer().sendMessage(ChatColor.GREEN + "\u00BB " + ChatColor.GRAY + "Your " + ChatColor.LIGHT_PURPLE + "Soulbinding Weapon " + ChatColor.GRAY + "has bound " + victim.getName() + "!");
                                 warlordsPlayerAttacker.getSoulBindedPlayers().add(new Soulbinding.SoulBoundPlayer(warlordsPlayerVictim, 3));

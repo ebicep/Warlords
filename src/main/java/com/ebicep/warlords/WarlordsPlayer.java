@@ -580,7 +580,7 @@ public class WarlordsPlayer {
         if (spawnProtection != 0 || (dead && !undyingArmyDead)) return;
         if (attacker == this && (ability.equals("Fall") || ability.isEmpty())) {
             if (ability.isEmpty()) {
-                player.sendMessage("" + ChatColor.RED + "\u00AB" + ChatColor.GRAY + " You took " + ChatColor.RED + min * -1 + ChatColor.GRAY + " melee damage.");
+                player.sendMessage("" + ChatColor.RED + "\u00AB" + ChatColor.GRAY + " You took " + ChatColor.RED + Math.round(min * -1) + ChatColor.GRAY + " melee damage.");
                 regenTimer = 10;
                 if (health + min <= 0) {
                     dead = true;
@@ -612,7 +612,7 @@ public class WarlordsPlayer {
                         Warlords.game.addBluePoints(SCORE_KILL_POINTS);
                     }
 
-                    PacketUtils.sendTitle(player, ChatColor.RED + "YOU DIED!", ChatColor.GRAY + "You took " + ChatColor.RED + (min * -1) + ChatColor.GRAY + " melee damage and died.", 0, 40, 0);
+                    PacketUtils.sendTitle(player, ChatColor.RED + "YOU DIED!", ChatColor.GRAY + "You took " + ChatColor.RED + Math.round(min * -1) + ChatColor.GRAY + " melee damage and died.", 0, 40, 0);
 
                     for (WarlordsPlayer value : Warlords.getPlayers().values()) {
                         value.getScoreboard().updatePoints();
@@ -660,7 +660,7 @@ public class WarlordsPlayer {
                     zombie.damage(2000);
 
                     //title YOU DIED
-                    PacketUtils.sendTitle(player, ChatColor.RED + "YOU DIED!", ChatColor.GRAY + "You took " + ChatColor.RED + (min * -1) + ChatColor.GRAY + " fall damage and died.", 0, 40, 0);
+                    PacketUtils.sendTitle(player, ChatColor.RED + "YOU DIED!", ChatColor.GRAY + "You took " + ChatColor.RED + Math.round(min * -1) + ChatColor.GRAY + " fall damage and died.", 0, 40, 0);
 
                     for (WarlordsPlayer value : Warlords.getPlayers().values()) {
                         value.getScoreboard().updatePoints();

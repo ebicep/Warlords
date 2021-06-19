@@ -10,7 +10,6 @@ import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.menu.MenuEventListener;
 import com.ebicep.warlords.util.PacketUtils;
 import com.ebicep.warlords.util.ParticleEffect;
-import com.ebicep.warlords.util.RemoveEntities;
 import com.ebicep.warlords.util.Utils;
 import net.minecraft.server.v1_8_R3.EntityLiving;
 import org.bukkit.ChatColor;
@@ -132,7 +131,7 @@ public class Warlords extends JavaPlugin {
 
             @Override
             public void run() {
-                RemoveEntities.onRemove();
+                //RemoveEntities.onRemove();
                 if (game.getState() == Game.State.GAME) {
                     // EVERY TICK
 
