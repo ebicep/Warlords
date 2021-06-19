@@ -88,4 +88,13 @@ public enum Weapons {
         player.removeMetadata("selected-weapon", Warlords.getInstance());
         player.setMetadata("selected-weapon", new FixedMetadataValue(Warlords.getInstance(), selectedWeapon));
     }
+
+    public static Weapons getWeapon(String name) {
+        for (Weapons value : Weapons.values()) {
+            if (value.name.equals(name)) {
+                return value;
+            }
+        }
+        return FELFLAME_BLADE;
+    }
 }

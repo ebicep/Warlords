@@ -4,17 +4,15 @@ import com.ebicep.warlords.classes.abilties.OrbsOfLife;
 import com.ebicep.warlords.classes.abilties.Soulbinding;
 import com.ebicep.warlords.classes.abilties.UndyingArmy;
 import com.ebicep.warlords.commands.Commands;
+import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.menu.MenuEventListener;
 import com.ebicep.warlords.util.PacketUtils;
 import com.ebicep.warlords.util.ParticleEffect;
+import com.ebicep.warlords.util.RemoveEntities;
 import com.ebicep.warlords.util.Utils;
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
-import com.mongodb.client.MongoDatabase;
 import net.minecraft.server.v1_8_R3.EntityLiving;
-import org.bson.Document;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -29,6 +27,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 public class Warlords extends JavaPlugin {
@@ -70,6 +70,7 @@ public class Warlords extends JavaPlugin {
 
     //TODO remove static EVERYWHERE FUCK ME
     public static Game game;
+    public static DatabaseManager databaseManager;
 
     @Override
     public void onEnable() {
@@ -88,6 +89,8 @@ public class Warlords extends JavaPlugin {
         getCommand("class").setTabCompleter(commands);
 
         game = new Game();
+        getData();
+
         startTask();
         getServer().getScheduler().runTaskTimer(this, game, 1, 1);
         new BukkitRunnable() {
@@ -101,7 +104,7 @@ public class Warlords extends JavaPlugin {
 
         }.runTaskTimer(this, 50, 200);
 
-        getData();
+        Logger.getLogger("org.mongodb.driver").setLevel(Level.WARNING);
         getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords]: Plugin is enabled");
     }
 
@@ -116,11 +119,7 @@ public class Warlords extends JavaPlugin {
             @Override
             public void run() {
                 try {
-                    MongoClient mongoClient = MongoClients.create(
-                            "mongodb+srv://new_user:joemama@cluster0.xphds.mongodb.net/Cluster0?retryWrites=true&w=majority");
-                    MongoDatabase database = mongoClient.getDatabase("temp");
-                    database.getCollection("temp").insertOne(new Document("name", "joe"));
-                    getServer().getConsoleSender().sendMessage(ChatColor.RED + "HERE2222");
+                    databaseManager = new DatabaseManager();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -133,7 +132,7 @@ public class Warlords extends JavaPlugin {
 
             @Override
             public void run() {
-
+                RemoveEntities.onRemove();
                 if (game.getState() == Game.State.GAME) {
                     // EVERY TICK
 
@@ -249,7 +248,7 @@ public class Warlords extends JavaPlugin {
                             warlordsPlayer.updateOrangeItem();
                         }
                         if (warlordsPlayer.getHorseCooldown() != 0 && !player.isInsideVehicle()) {
-                            warlordsPlayer.setHorseCooldown(warlordsPlayer.getHorseCooldown() - 1);
+                            warlordsPlayer.setHorseCooldown(warlordsPlayer.getHorseCooldown() - .05f);
                             warlordsPlayer.updateHorseItem();
                         }
 

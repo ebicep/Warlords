@@ -7,7 +7,7 @@ import org.bukkit.entity.Player;
 
 public class RemoveEntities extends Commands {
 
-    public void onRemove() {
+    public static void onRemove() {
 
         Bukkit.getWorlds().stream().skip(1).forEachOrdered(world -> {
             world.getEntities().stream().filter(entity -> !(entity instanceof Player)).forEach(Entity::remove);

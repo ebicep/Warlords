@@ -106,6 +106,15 @@ public enum Classes {
         this.skillBoosts = Arrays.asList(skillBoosts);
     }
 
+    public static Classes getClass(String name) {
+        for (Classes value : Classes.values()) {
+            if (value.name.equals(name)) {
+                return value;
+            }
+        }
+        return CRYOMANCER;
+    }
+
     public static ClassesGroup getClassesGroup(Classes selected) {
         return Arrays.stream(ClassesGroup.values()).filter(o -> o.subclasses.contains(selected)).collect(Collectors.toList()).get(0);
     }

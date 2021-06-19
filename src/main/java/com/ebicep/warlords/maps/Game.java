@@ -2,6 +2,7 @@ package com.ebicep.warlords.maps;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
+import com.ebicep.warlords.database.FieldUpdateOperators;
 import com.ebicep.warlords.powerups.PowerupManager;
 import com.ebicep.warlords.util.*;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -13,6 +14,7 @@ import org.bukkit.*;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
@@ -144,7 +146,7 @@ public class Game implements Runnable {
 
                     game.timer++;
                     //TESTING
-                    return GAME;
+                    //return GAME;
 
                 } else {
                     game.timer = 0;
@@ -158,8 +160,7 @@ public class Game implements Runnable {
             public void begin(Game game) {
                 game.flags = new FlagManager(game.map.redFlag, game.map.blueFlag);
                 game.timer = 0;
-                RemoveEntities removeEntities = new RemoveEntities();
-                removeEntities.onRemove();
+                RemoveEntities.onRemove();
 
                 List<WarlordsPlayer> blueTeam = new ArrayList<>();
                 List<WarlordsPlayer> redTeam = new ArrayList<>();
@@ -230,6 +231,29 @@ public class Game implements Runnable {
                     value.getScoreboard().addHealths();
                     value.applySkillBoost();
                 }
+
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        //DATABASE SHIT
+                        for (Player player : Warlords.getPlayers().keySet()) {
+                            HashMap<String, Object> newInfo = new HashMap<>();
+                            newInfo.put("last_spec", Classes.getSelected(player).name);
+                            newInfo.put("last_weapon", Weapons.getSelected(player).name);
+                            newInfo.put("mage_helm", ArmorManager.Helmets.getSelected(player).get(0).name);
+                            newInfo.put("mage_armor", ArmorManager.ArmorSets.getSelected(player).get(0).name);
+                            newInfo.put("warrior_helm", ArmorManager.Helmets.getSelected(player).get(1).name);
+                            newInfo.put("warrior_armor", ArmorManager.ArmorSets.getSelected(player).get(1).name);
+                            newInfo.put("paladin_helm", ArmorManager.Helmets.getSelected(player).get(2).name);
+                            newInfo.put("paladin_armor", ArmorManager.ArmorSets.getSelected(player).get(2).name);
+                            newInfo.put("shaman_helm", ArmorManager.Helmets.getSelected(player).get(3).name);
+                            newInfo.put("shaman_armor", ArmorManager.ArmorSets.getSelected(player).get(3).name);
+                            newInfo.put("powerup", Settings.Powerup.getSelected(player).name());
+                            newInfo.put("hotkeymode", Settings.HotkeyMode.getSelected(player).name());
+                            Warlords.databaseManager.updatePlayerInformation(player, newInfo, FieldUpdateOperators.SET);
+                        }
+                    }
+                }.runTaskAsynchronously(Warlords.getInstance());
             }
 
             @Override
@@ -456,6 +480,17 @@ public class Game implements Runnable {
 
                 game.timer = 0;
 
+                if (!game.forceEnd) {
+                    Warlords.databaseManager.addGame(game);
+                }
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        for (Player player : game.getPlayersProtected().keySet()) {
+                            Warlords.databaseManager.loadPlayer(player);
+                        }
+                    }
+                }.runTaskAsynchronously(Warlords.getInstance());
             }
 
             @Override
@@ -649,6 +684,45 @@ public class Game implements Runnable {
         return remaining % 60;
     }
 
+    public String getScoreboardTime() {
+        int minute = getScoreboardMinute();
+        int second = getScoreboardSecond();
+        String timeLeft = "";
+        if (minute < 10) {
+            timeLeft += "0";
+        }
+        timeLeft += minute + ":";
+        if (second < 10) {
+            timeLeft += "0";
+        }
+        timeLeft += second;
+        return timeLeft;
+    }
+
+    public String getWarlordsPlusEndGameStats() {
+        String output = "Winners:";
+        if (bluePoints > redPoints) {
+            for (Player player : cachedTeamBlue) {
+                output += player.getUniqueId().toString().replace("-", "") + "[" + Warlords.getPlayer(player).getTotalKills() + ":" + Warlords.getPlayer(player).getTotalDeaths() + "],";
+            }
+            output = output.substring(0, output.length() - 1);
+            output += "Losers:";
+            for (Player player : cachedTeamRed) {
+                output += player.getUniqueId().toString().replace("-", "") + "[" + Warlords.getPlayer(player).getTotalKills() + ":" + Warlords.getPlayer(player).getTotalDeaths() + "],";
+            }
+        } else if (redPoints > bluePoints) {
+            for (Player player : cachedTeamRed) {
+                output += player.getUniqueId().toString().replace("-", "") + "[" + Warlords.getPlayer(player).getTotalKills() + ":" + Warlords.getPlayer(player).getTotalDeaths() + "],";
+            }
+            output = output.substring(0, output.length() - 1);
+            output += "Losers:";
+            for (Player player : cachedTeamBlue) {
+                output += player.getUniqueId().toString().replace("-", "") + "[" + Warlords.getPlayer(player).getTotalKills() + ":" + Warlords.getPlayer(player).getTotalDeaths() + "],";
+            }
+        }
+        return output.substring(0, output.length() - 1);
+    }
+
     public void changeMap(@Nonnull GameMap map) {
         if (!canChangeMap()) {
             throw new IllegalStateException("Cannot change map!");
@@ -795,6 +869,7 @@ public class Game implements Runnable {
         SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
         String dateString = format.format(new Date());
         Scoreboard scoreboard = player.getScoreboard();
+        time += 1;
         for (String entry : scoreboard.getEntries()) {
             String entryUnformatted = ChatColor.stripColor(entry);
             if (entryUnformatted.contains("Starting in")) {

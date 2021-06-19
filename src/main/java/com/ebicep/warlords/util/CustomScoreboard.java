@@ -114,24 +114,12 @@ public class CustomScoreboard {
             String entryUnformatted = ChatColor.stripColor(entry);
             if (entryUnformatted.contains("Wins in:") || entryUnformatted.contains("Time Left:")) {
                 scoreboard.resetScores(entry);
-                int minute = game.getScoreboardMinute();
-                int second = game.getScoreboardSecond();
-                String timeLeft = "";
-                if (minute < 10) {
-                    timeLeft += "0";
-                }
-                timeLeft += minute + ":";
-                if (second < 10) {
-                    timeLeft += "0";
-                }
-                timeLeft += second;
-
                 if (Warlords.game.getBluePoints() > Warlords.game.getRedPoints()) {
-                    sideBar.getScore(ChatColor.BLUE + "BLU " + ChatColor.GOLD + "Wins in: " + ChatColor.GREEN + timeLeft).setScore(10);
+                    sideBar.getScore(ChatColor.BLUE + "BLU " + ChatColor.GOLD + "Wins in: " + ChatColor.GREEN + game.getScoreboardTime()).setScore(10);
                 } else if (Warlords.game.getRedPoints() > Warlords.game.getBluePoints()) {
-                    sideBar.getScore(ChatColor.RED + "RED " + ChatColor.GOLD + "Wins in: " + ChatColor.GREEN + timeLeft).setScore(10);
+                    sideBar.getScore(ChatColor.RED + "RED " + ChatColor.GOLD + "Wins in: " + ChatColor.GREEN + game.getScoreboardTime()).setScore(10);
                 } else {
-                    sideBar.getScore(ChatColor.WHITE + "Time Left: " + ChatColor.GREEN + timeLeft).setScore(10);
+                    sideBar.getScore(ChatColor.WHITE + "Time Left: " + ChatColor.GREEN + game.getScoreboardTime()).setScore(10);
                 }
             }
         }
