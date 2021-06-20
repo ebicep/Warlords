@@ -135,7 +135,8 @@ public class WarlordsEvents implements Listener {
                         }
                         warlordsPlayerAttacker.setHitCooldown(12);
                         warlordsPlayerAttacker.subtractEnergy(warlordsPlayerAttacker.getSpec().getEnergyOnHit() * -1);
-                        if (warlordsPlayerAttacker.getSpec() instanceof Spiritguard && warlordsPlayerAttacker.getSoulBindCooldown() != 0) {
+
+                        if (warlordsPlayerAttacker.getSpec() instanceof Spiritguard && warlordsPlayerAttacker.getSoulBindCooldown() > 0) {
                             if (warlordsPlayerAttacker.hasBoundPlayer(warlordsPlayerVictim)) {
                                 for (Soulbinding.SoulBoundPlayer soulBindedPlayer : warlordsPlayerAttacker.getSoulBindedPlayers()) {
                                     if (soulBindedPlayer.getBoundPlayer() == warlordsPlayerVictim) {
@@ -151,6 +152,7 @@ public class WarlordsEvents implements Listener {
                                 warlordsPlayerAttacker.getSoulBindedPlayers().add(new Soulbinding.SoulBoundPlayer(warlordsPlayerVictim, 3));
                             }
                         }
+
                         warlordsPlayerVictim.addHealth(warlordsPlayerAttacker, "", -132, -179, 25, 200);
                     }
 
@@ -177,60 +179,62 @@ public class WarlordsEvents implements Listener {
         Location location = player.getLocation();
 
         if (action == Action.RIGHT_CLICK_BLOCK || action == Action.RIGHT_CLICK_AIR) {
-            //Slam test = new Slam(location);
-            if (Warlords.hasPlayer(player) && (player.getInventory().getHeldItemSlot() == 0 || !Warlords.getPlayer(player).isHotKeyMode())) {
-                Warlords.getPlayer(player).getSpec().onRightClick(player);
-            }
             ItemStack itemHeld = player.getItemInHand();
-            if (player.getInventory().getHeldItemSlot() == 7 && itemHeld.getType() == Material.GOLD_BARDING && player.getVehicle() == null) {
-                if (location.getWorld().getBlockAt((int) location.getX(), 2, (int) location.getZ()).getType() == Material.NETHERRACK) { //&& !Utils.tunnelUnder(e.getPlayer())) {
-                    player.sendMessage(ChatColor.RED + "You can't mount here!");
-                } else {
-                    double distance = player.getLocation().getY() - player.getWorld().getHighestBlockYAt(player.getLocation());
-                    if (distance > 2) {
-                        player.sendMessage(ChatColor.RED + "You can't mount in the air");
-                    } else if (!player.getMetadata(FlagManager.FLAG_DAMAGE_MULTIPLIER).isEmpty()) {
-                        player.sendMessage(ChatColor.RED + "You can't mount while holding the flag!");
+            if (Warlords.game.getState() == Game.State.GAME) {
+                if (Warlords.hasPlayer(player) && (player.getInventory().getHeldItemSlot() == 0 || !Warlords.getPlayer(player).isHotKeyMode())) {
+                    Warlords.getPlayer(player).getSpec().onRightClick(player);
+                }
+                if (player.getInventory().getHeldItemSlot() == 7 && itemHeld.getType() == Material.GOLD_BARDING && player.getVehicle() == null) {
+                    if (location.getWorld().getBlockAt((int) location.getX(), 2, (int) location.getZ()).getType() == Material.NETHERRACK) { //&& !Utils.tunnelUnder(e.getPlayer())) {
+                        player.sendMessage(ChatColor.RED + "You can't mount here!");
                     } else {
-                        player.playSound(player.getLocation(), "mountup", 1, 1);
-                        Horse horse = (Horse) player.getWorld().spawnEntity(player.getLocation(), EntityType.HORSE);
-                        horse.setTamed(true);
-                        horse.getInventory().setSaddle(new ItemStack(Material.SADDLE));
-                        horse.setOwner(player);
-                        horse.setJumpStrength(0);
-                        horse.setVariant(Horse.Variant.HORSE);
-                        horse.setAdult();
-                        ((EntityLiving) ((CraftEntity) horse).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(.308);
-                        //((EntityLiving) ((CraftEntity) horse).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(1);
-                        horse.setPassenger(player);
-                        Warlords.getPlayer(player).setHorseCooldown(15);
+                        double distance = player.getLocation().getY() - player.getWorld().getHighestBlockYAt(player.getLocation());
+                        if (distance > 2) {
+                            player.sendMessage(ChatColor.RED + "You can't mount in the air");
+                        } else if (!player.getMetadata(FlagManager.FLAG_DAMAGE_MULTIPLIER).isEmpty()) {
+                            player.sendMessage(ChatColor.RED + "You can't mount while holding the flag!");
+                        } else {
+                            player.playSound(player.getLocation(), "mountup", 1, 1);
+                            Horse horse = (Horse) player.getWorld().spawnEntity(player.getLocation(), EntityType.HORSE);
+                            horse.setTamed(true);
+                            horse.getInventory().setSaddle(new ItemStack(Material.SADDLE));
+                            horse.setOwner(player);
+                            horse.setJumpStrength(0);
+                            horse.setVariant(Horse.Variant.HORSE);
+                            horse.setAdult();
+                            ((EntityLiving) ((CraftEntity) horse).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(.308);
+                            //((EntityLiving) ((CraftEntity) horse).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(1);
+                            horse.setPassenger(player);
+                            Warlords.getPlayer(player).setHorseCooldown(15);
+                        }
+                    }
+                } else if (itemHeld.getType() == Material.BONE) {
+                    player.getInventory().remove(UndyingArmy.BONE);
+                    Warlords.getPlayer(player).addHealth(Warlords.getPlayer(player), "", -100000, -100000, -1, 100);
+                    Warlords.getPlayer(player).setUndyingArmyDead(false);
+                } else if (itemHeld.getType() == Material.BANNER) {
+                    if (Warlords.getPlayer(player).getFlagCooldown() > 0) {
+                        player.sendMessage("§cYou cannot drop the flag yet, please wait 5 seconds!");
+                    } else {
+                        Warlords.game.getFlags().dropFlag(player);
+                        Warlords.getPlayer(player).setFlagCooldown(5);
                     }
                 }
-            } else if (itemHeld.getType() == Material.BONE) {
-                player.getInventory().remove(UndyingArmy.BONE);
-                Warlords.getPlayer(player).addHealth(Warlords.getPlayer(player), "", -100000, -100000, -1, 100);
-                Warlords.getPlayer(player).setUndyingArmyDead(false);
-            } else if (itemHeld.getType() == Material.BANNER) {
-                if (Warlords.getPlayer(player).getFlagCooldown() > 0) {
-                    player.sendMessage("§cYou cannot drop the flag yet, please wait 5 seconds!");
-                } else {
-                    Warlords.game.getFlags().dropFlag(player);
-                    Warlords.getPlayer(player).setFlagCooldown(5);
+            } else {
+                if (itemHeld.getType() == Material.NETHER_STAR) {
+                    //menu
+                    openMainMenu(player);
+                } else if (itemHeld.getType() == Material.NOTE_BLOCK) {
+                    //team selector
+                    openTeamMenu(player);
                 }
-            } else if (itemHeld.getType() == Material.NETHER_STAR) {
-                //menu
-                openMainMenu(player);
-            } else if (itemHeld.getType() == Material.NOTE_BLOCK) {
-                //team selector
-                openTeamMenu(player);
             }
-
-
         } else if (action == Action.LEFT_CLICK_BLOCK || action == Action.LEFT_CLICK_AIR) {
             if (action == Action.LEFT_CLICK_AIR) {
 
             }
         }
+
     }
 
     @EventHandler

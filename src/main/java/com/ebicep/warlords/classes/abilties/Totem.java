@@ -91,7 +91,7 @@ public class Totem extends EntityArmorStand {
         }
 
         @Override
-        public void updateDescription() {
+        public void updateDescription(Player player) {
             description = "§7Place a highly conductive totem\n" +
                     "§7on the ground. Casting Chain Lightning\n" +
                     "§7or Lightning Rod on the totem will cause\n" +
@@ -145,7 +145,7 @@ public class Totem extends EntityArmorStand {
         }
 
         @Override
-        public void updateDescription() {
+        public void updateDescription(Player player) {
             description = "§2Spirits’ Respite§7: Place down a totem that\n" +
                     "§7delays §c100% §7of incoming damage towards\n" +
                     "§7yourself. Transforms into §dDeath’s Debt §7after\n" +
@@ -308,7 +308,7 @@ public class Totem extends EntityArmorStand {
 
 
         @Override
-        public void updateDescription() {
+        public void updateDescription(Player player) {
             description = "§7Place a totem on the ground that\n" +
                     "§7pulses constantly, healing nearby\n" +
                     "§7allies for §a" + minDamageHeal + " §7- §a" + Math.floor(minDamageHeal * 1.354) + " §7every\n" +

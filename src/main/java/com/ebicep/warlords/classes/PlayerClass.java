@@ -51,7 +51,7 @@ public abstract class PlayerClass {
         }
         if (blue instanceof ArcaneShield) {
             ((ArcaneShield) blue).maxShieldHealth = maxHealth / 2;
-            blue.updateDescription();
+            blue.updateDescription(player);
         }
     }
 

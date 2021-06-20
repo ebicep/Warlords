@@ -3,6 +3,7 @@ package com.ebicep.warlords.classes.abilties;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.util.Classes;
 import com.ebicep.warlords.util.Matrix4d;
 import com.ebicep.warlords.util.ParticleEffect;
 import org.bukkit.GameMode;
@@ -21,13 +22,14 @@ public class Breath extends AbstractAbility {
     }
 
     @Override
-    public void updateDescription() {
-        if (name.contains("Water")) {
+    public void updateDescription(Player player) {
+        Classes selected = Classes.getSelected(player);
+        if (selected == Classes.AQUAMANCER) {
             description = "§7Breathe water in a cone in front of you,\n" +
                     "§7Knocking back enemies and restoring §a" + minDamageHeal + "\n" +
                     "§7- §a" + maxDamageHeal + " §7health to yourself and all\n" +
                     "§7allies hit.";
-        } else if (name.contains("Freezing")) {
+        } else if (selected == Classes.CRYOMANCER) {
             description = "§7Breathe cold air in a cone in front\n" +
                     "§7of you, dealing §c" + -minDamageHeal + " §7- §c" + -maxDamageHeal + " §7damage\n" +
                     "§7to all enemies hit and slowing them by\n" +

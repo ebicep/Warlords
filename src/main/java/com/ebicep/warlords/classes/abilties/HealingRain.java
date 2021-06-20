@@ -18,13 +18,15 @@ import java.util.List;
 
 public class HealingRain extends AbstractAbility {
 
+    private int recastCooldown = 0;
+
     public HealingRain() {
         super("Healing Rain", 170, 230, 52.85f, 50, 15, 200
         );
     }
 
     @Override
-    public void updateDescription() {
+    public void updateDescription(Player player) {
         description = "§7Conjure rain at targeted\n" +
                 "§7location that will restore §a" + minDamageHeal + "\n" +
                 "§7- §a" + maxDamageHeal + " §7health every second to\n" +
@@ -69,8 +71,21 @@ public class HealingRain extends AbstractAbility {
                     this.cancel();
                     task.cancel();
                 }
+                if (recastCooldown != 0) {
+                    recastCooldown--;
+                }
             }
 
         }.runTaskTimer(Warlords.getInstance(), 0, 20);
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                if (recastCooldown == 0 && player.isSneaking()) {
+                    damageHealCircle.setLocation(player.getLocation());
+                    recastCooldown = 2;
+                }
+            }
+        }.runTaskTimer(Warlords.getInstance(), 0, 0);
     }
 }

@@ -10,7 +10,7 @@ public class temp extends AbstractAbility {
     }
 
     @Override
-    public void updateDescription() {
+    public void updateDescription(Player player) {
 
     }
 

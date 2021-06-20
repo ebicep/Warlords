@@ -2,6 +2,7 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.util.Classes;
 import com.ebicep.warlords.util.Matrix4d;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.Utils;
@@ -23,18 +24,25 @@ public class Projectile extends AbstractAbility {
     public Projectile(String name, float minDamageHeal, float maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier, int maxDistance) {
         super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
         this.maxDistance = maxDistance;
-        updateDescription();
     }
 
     @Override
-    public void updateDescription() {
-        if (name.contains("Fire")) {
-            description = "§7Shoot a fireball that will explode\n" +
-                    "§7for §c" + -minDamageHeal + " §7- §c" + -maxDamageHeal + " §7damage. A\n" +
-                    "§7direct hit will cause the enemy\n" +
-                    "§7to take an additional §c15% §7extra\n" +
-                    "§7damage. §7Has an optimal range of §e50 §7blocks.";
-        } else if (name.contains("Frost")) {
+    public void updateDescription(Player player) {
+        Classes selected = Classes.getSelected(player);
+        if (selected == Classes.PYROMANCER) {
+            if (name.contains("Fire")) {
+                description = "§7Shoot a fireball that will explode\n" +
+                        "§7for §c" + -minDamageHeal + " §7- §c" + -maxDamageHeal + " §7damage. A\n" +
+                        "§7direct hit will cause the enemy\n" +
+                        "§7to take an additional §c15% §7extra\n" +
+                        "§7damage. §7Has an optimal range of §e50 §7blocks.";
+            } else if (name.contains("Flame")) {
+                description = "§7Launch a flame burst that will explode\n" +
+                        "§7for §c" + -minDamageHeal + " §7- §c" + -maxDamageHeal + " §7damage. The critical\n" +
+                        "§7chance increases by §c1% §7for each\n" +
+                        "§7travelled block. Up to 100%.";
+            }
+        } else if (selected == Classes.CRYOMANCER) {
             description = "§7Shoot a frostbolt that will shatter\n" +
                     "§7for §c" + -minDamageHeal + " §7- §c" + -maxDamageHeal + " §7damage and slow\n" +
                     "§7by §e20% §7for §62 §7seconds. A\n" +
@@ -42,18 +50,13 @@ public class Projectile extends AbstractAbility {
                     "§7to take an additional §c30% §7extra\n" +
                     "§7damage." + "\n\n§7Has an optimal range of §e" + maxDistance + "\n" +
                     "§7blocks.";
-        } else if (name.contains("Water")) {
+        } else if (selected == Classes.AQUAMANCER) {
             description = "§7Shoot a bolt of water that will burst\n" +
                     "§7for §c231 §7- §c299 §7damage and restore\n" +
                     "§a" + minDamageHeal + " §7- §a" + maxDamageHeal + " §7health to allies. A\n" +
                     "§7direct hit will cause §a15% §7increased\n" +
                     "§7damage or healing for the target hit.\n" +
                     "§7Has an optimal range of §e" + maxDistance + " §7blocks.";
-        } else if (name.contains("Flame")) {
-            description = "§7Launch a flame burst that will explode\n" +
-                    "§7for §c" + -minDamageHeal + " §7- §c" + -maxDamageHeal + " §7damage. The critical\n" +
-                    "§7chance increases by §c1% §7for each\n" +
-                    "§7travelled block. Up to 100%.";
         }
     }
 

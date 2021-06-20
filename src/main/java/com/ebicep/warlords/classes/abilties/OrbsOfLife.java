@@ -20,7 +20,7 @@ public class OrbsOfLife extends AbstractAbility {
     }
 
     @Override
-    public void updateDescription() {
+    public void updateDescription(Player player) {
         description = "§7Striking and hitting enemies with\n" +
                 "§7abilities causes them to drop an orb of\n" +
                 "§7life that lasts §68 §7seconds, restoring\n" +

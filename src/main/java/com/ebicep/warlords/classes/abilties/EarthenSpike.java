@@ -25,7 +25,7 @@ public class EarthenSpike extends AbstractAbility {
     }
 
     @Override
-    public void updateDescription() {
+    public void updateDescription(Player player) {
         description = "§7Send forth an underground earth spike\n" +
                 "§7that locks onto a targeted enemy player.\n" +
                 "§7When the spike reaches its target it\n" +

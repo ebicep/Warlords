@@ -9,6 +9,8 @@ import com.ebicep.warlords.classes.paladin.specs.protector.Protector;
 import com.ebicep.warlords.classes.warrior.specs.berserker.Berserker;
 import com.ebicep.warlords.classes.warrior.specs.defender.Defender;
 import com.ebicep.warlords.classes.warrior.specs.revenant.Revenant;
+import com.ebicep.warlords.util.Classes;
+import com.ebicep.warlords.util.ClassesSkillBoosts;
 import com.ebicep.warlords.util.Utils;
 import net.minecraft.server.v1_8_R3.PacketPlayOutAnimation;
 import org.bukkit.Bukkit;
@@ -27,41 +29,43 @@ public class Strike extends AbstractAbility {
     }
 
     @Override
-    public void updateDescription() {
-        if (name.contains("Avenger")) {
+    public void updateDescription(Player player) {
+        Classes selected = Classes.getSelected(player);
+        if (selected == Classes.AVENGER) {
             description = "§7Strike the targeted enemy player,\n" +
                     "§7causing §c" + -minDamageHeal + " §7- §c" + -maxDamageHeal + " §7damage\n" +
                     "§7and removing §e6 §7energy.";
-        } else if (name.contains("Crusader")) {
+        } else if (selected == Classes.CRUSADER) {
             description = "§7Strike the targeted enemy player,\n" +
                     "§7causing §c" + -minDamageHeal + " §7- §c" + -maxDamageHeal + " damage\n" +
                     "§7and restoring §e24 §7energy to two nearby\n" +
                     "§7within §e10 §7blocks.";
-        } else if (name.contains("Protector")) {
+        } else if (selected == Classes.PROTECTOR) {
+            int boost = Classes.getSelectedBoost(player) == ClassesSkillBoosts.PROTECTOR_STRIKE ? 120 : 100;
             description = "§7Strike the targeted enemy player,\n" +
-                    "§7causing §c" + -minDamageHeal + " §7- §c" + -maxDamageHeal + " §7damage\n" +
+                    "§7causing §c261 §7- §c352 §7damage\n" +
                     "§7and healing two nearby allies for\n" +
-                    "§a100% §7of the damage done. Also\n" +
+                    "§a" + boost + "% §7of the damage done. Also\n" +
                     "§7heals yourself by §a50% §7of the\n" +
                     "§7damage done.";
-        } else if (name.contains("Crippling")) {
-            description = "§7Strike the targeted enemy player,\n" +
-                    "§7causing §c" + -minDamageHeal + " §7- §c" + -maxDamageHeal + " §7damage\n" +
-                    "§7and §ccrippling §7them for §63 §7seconds.\n" +
-                    "§7A §ccrippled §7player deals §c12.5% §7less\n" +
-                    "§7damage for the duration of the effect.";
-        } else if (critMultiplier == 175) {
+        } else if (selected == Classes.BERSERKER) {
             description = "§7Strike the targeted enemy player,\n" +
                     "§7causing §c" + -minDamageHeal + " §7- §c" + -maxDamageHeal + " §7damage\n" +
                     "§7and §cwounding §7them for §63 §7seconds.\n" +
                     "§7A wounded player receives §c35% §7less\n" +
                     "§7healing for the duration of the effect.";
-        } else if (critMultiplier == 200) {
+        } else if (selected == Classes.DEFENDER) {
             description = "§7Strike the targeted enemy player,\n" +
                     "§7causing §c" + -minDamageHeal + " §7- §c" + -maxDamageHeal + " §7damage\n" +
                     "§7and §cwounding §7them for §63 §7seconds.\n" +
                     "§7A wounded player receives §c25% §7less\n" +
                     "§7healing for the duration of the effect.";
+        } else if (selected == Classes.REVENANT) {
+            description = "§7Strike the targeted enemy player,\n" +
+                    "§7causing §c" + -minDamageHeal + " §7- §c" + -maxDamageHeal + " §7damage\n" +
+                    "§7and §ccrippling §7them for §63 §7seconds.\n" +
+                    "§7A §ccrippled §7player deals §c12.5% §7less\n" +
+                    "§7damage for the duration of the effect.";
         }
     }
 

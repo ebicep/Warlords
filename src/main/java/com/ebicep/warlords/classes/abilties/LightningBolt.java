@@ -30,7 +30,7 @@ public class LightningBolt extends AbstractAbility {
     }
 
     @Override
-    public void updateDescription() {
+    public void updateDescription(Player player) {
         description = "§7Hurl a fast, piercing bolt of lightning that\n" +
                 "§7deals §c" + -minDamageHeal + " §7- §c" + -maxDamageHeal + " §7damage to all enemies it\n" +
                 "§7passes through. Each target hit reduces the\n" +

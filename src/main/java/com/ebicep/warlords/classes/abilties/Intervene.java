@@ -21,7 +21,7 @@ public class Intervene extends AbstractAbility {
     }
 
     @Override
-    public void updateDescription() {
+    public void updateDescription(Player player) {
         description = "§7Protect the target ally, reducing\n" +
                 "§7the damage they take by §e100%\n" +
                 "§7and redirecting §e50% §7of the damage\n" +

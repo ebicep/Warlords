@@ -14,7 +14,7 @@ public class LightInfusion extends AbstractAbility {
     }
 
     @Override
-    public void updateDescription() {
+    public void updateDescription(Player player) {
         description = "§7You become infused with light,\n" +
                 "§7restoring §a120 §7energy and\n" +
                 "§7increasing your movement speed by\n" +
@@ -25,7 +25,7 @@ public class LightInfusion extends AbstractAbility {
     public void onActivate(Player player) {
         WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
         warlordsPlayer.getSpeed().changeCurrentSpeed("Infusion", 40, 3 * 20, "BASE");
-        warlordsPlayer.setInfusion(3 * 20);
+        warlordsPlayer.setInfusion(3);
         warlordsPlayer.subtractEnergy(energyCost);
 
         for (Player player1 : player.getWorld().getPlayers()) {

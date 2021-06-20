@@ -11,7 +11,7 @@ public class AvengersWrath extends AbstractAbility {
     }
 
     @Override
-    public void updateDescription() {
+    public void updateDescription(Player player) {
         description = "§7Burst with incredible holy power,\n" +
                 "§7causing your Avenger's Strikes to\n" +
                 "§7hit up to §e2 §7additional enemies\n" +

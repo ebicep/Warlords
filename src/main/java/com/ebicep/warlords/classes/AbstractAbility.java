@@ -23,11 +23,10 @@ public abstract class AbstractAbility {
         this.energyCost = energyCost;
         this.critChance = critChance;
         this.critMultiplier = critMultiplier;
-        updateDescription();
         boosted = false;
     }
 
-    public abstract void updateDescription();
+    public abstract void updateDescription(Player player);
 
     public abstract void onActivate(Player player);
 

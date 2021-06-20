@@ -19,7 +19,7 @@ public class InspiringPresence extends AbstractAbility {
     }
 
     @Override
-    public void updateDescription() {
+    public void updateDescription(Player player) {
         description = "§7Your presence on the battlefield\n" +
                 "§7inspires your allies, increasing\n" +
                 "§7their energy regeneration by §e10\n" +
@@ -31,7 +31,7 @@ public class InspiringPresence extends AbstractAbility {
     public void onActivate(Player player) {
         WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
         warlordsPlayer.getSpeed().changeCurrentSpeed("Inspiring Presence", 30, 12 * 20, "BASE");
-        warlordsPlayer.setPresence(12 * 20);
+        warlordsPlayer.setPresence(12);
 
         // TODO: make range a circle instead of square
         List<Entity> near = player.getNearbyEntities(6.0D, 2.0D, 6.0D);
@@ -39,7 +39,7 @@ public class InspiringPresence extends AbstractAbility {
         for (Entity entity : near) {
             if (entity instanceof Player && ((Player) entity).getGameMode() != GameMode.SPECTATOR) {
                 warlordsPlayer.getSpeed().changeCurrentSpeed("Inspiring Presence", 30, 12 * 20, "BASE");
-                Warlords.getPlayer((Player) entity).setPresence(12 * 20);
+                Warlords.getPlayer((Player) entity).setPresence(12);
             }
         }
 

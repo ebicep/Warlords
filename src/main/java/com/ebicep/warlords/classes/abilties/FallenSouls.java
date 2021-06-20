@@ -21,16 +21,32 @@ import java.util.List;
 
 public class FallenSouls extends AbstractAbility {
 
-    private static final float fallenSoulHitBox = .9f;
-    private static final float fallenSoulSpeed = 2.0f;
+    private static float fallenSoulHitBox = 1f;
+    private static float fallenSoulSpeed = 1.8f;
+
+    public static float getFallenSoulHitBox() {
+        return fallenSoulHitBox;
+    }
+
+    public static void setFallenSoulHitBox(float fallenSoulHitBox) {
+        FallenSouls.fallenSoulHitBox = fallenSoulHitBox;
+    }
+
+    public static float getFallenSoulSpeed() {
+        return fallenSoulSpeed;
+    }
+
+    public static void setFallenSoulSpeed(float fallenSoulSpeed) {
+        FallenSouls.fallenSoulSpeed = fallenSoulSpeed;
+    }
 
     public FallenSouls() {
-        super("Fallen Souls", -164, -212, 0, 55, 20, 180
+        super("Fallen Souls", -16.4f, -21.2f, 0, 55, 20, 180
         );
     }
 
     @Override
-    public void updateDescription() {
+    public void updateDescription(Player player) {
         description = "§7Summon a wave of fallen souls, dealing\n" +
                 "§c" + -minDamageHeal + " §7- §c" + -maxDamageHeal + " §7damage to all enemies they\n" +
                 "§7pass through. Each target hit reduces the\n" +

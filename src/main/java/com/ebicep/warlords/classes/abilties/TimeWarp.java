@@ -20,7 +20,7 @@ public class TimeWarp extends AbstractAbility {
     }
 
     @Override
-    public void updateDescription() {
+    public void updateDescription(Player player) {
         description = "§7Activate to place a time rune on\n" +
                 "§7the ground. After §65 §7seconds,\n" +
                 "§7you will warp back to that location\n" +

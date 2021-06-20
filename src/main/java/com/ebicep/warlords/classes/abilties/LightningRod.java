@@ -23,7 +23,7 @@ public class LightningRod extends AbstractAbility {
     }
 
     @Override
-    public void updateDescription() {
+    public void updateDescription(Player player) {
         description = "§7Call down an energizing bolt of lightning\n" +
                 "§7upon yourself, restoring §a30% §7health and\n" +
                 "§e160 §7energy and knock all nearby enemies back.";

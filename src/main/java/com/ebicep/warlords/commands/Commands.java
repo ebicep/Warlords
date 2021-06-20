@@ -2,6 +2,7 @@ package com.ebicep.warlords.commands;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
+import com.ebicep.warlords.classes.abilties.FallenSouls;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Game.State;
 import com.ebicep.warlords.maps.GameMap;
@@ -165,6 +166,16 @@ public class Commands implements TabExecutor {
                 }
                 warlordsPlayer.setHotKeyMode(!warlordsPlayer.isHotKeyMode());
             }
+        } else if (command.getName().equals("hitbox")) {
+            if (args.length != 0) {
+                FallenSouls.setFallenSoulHitBox(Float.parseFloat(args[0]));
+            }
+            sender.sendMessage("hitbox is " + FallenSouls.getFallenSoulHitBox());
+        } else if (command.getName().equals("speed")) {
+            if (args.length != 0) {
+                FallenSouls.setFallenSoulSpeed(Float.parseFloat(args[0]));
+            }
+            sender.sendMessage("speed is " + FallenSouls.getFallenSoulSpeed());
         }
         return true;
     }

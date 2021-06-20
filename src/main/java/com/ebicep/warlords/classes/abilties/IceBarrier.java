@@ -13,7 +13,7 @@ public class IceBarrier extends AbstractAbility {
     }
 
     @Override
-    public void updateDescription() {
+    public void updateDescription(Player player) {
         description = "§7Surround yourself with a layer of\n" +
                 "§7of cold air, reducing damage taken by\n" +
                 "§c50%§7, While active, taking melee\n" +

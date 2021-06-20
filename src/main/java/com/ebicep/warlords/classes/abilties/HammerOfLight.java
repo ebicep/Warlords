@@ -24,7 +24,7 @@ public class HammerOfLight extends AbstractAbility {
     }
 
     @Override
-    public void updateDescription() {
+    public void updateDescription(Player player) {
         description = "§7Throw down a Hammer of Light on\n" +
                 "§7the ground, dealing §c118.8 §7-\n" +
                 "§c158.4 §7damage every second to\n" +

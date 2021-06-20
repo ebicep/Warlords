@@ -24,7 +24,7 @@ public class RecklessCharge extends AbstractAbility {
     }
 
     @Override
-    public void updateDescription() {
+    public void updateDescription(Player player) {
         description = "§7Charge forward, dealing §c" + -minDamageHeal + "\n" +
                 "§7- §c" + -maxDamageHeal + " §7damage to all enemies\n" +
                 "§7you pass through. Enemies hit are\n" +
