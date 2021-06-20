@@ -28,13 +28,13 @@ public class HolyRadiance extends AbstractAbility {
     @Override
     public void onActivate(Player player) {
         WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
-        List<Entity> near = player.getNearbyEntities(6.0D, 6.0D, 6.0D);
+        List<Entity> near = player.getNearbyEntities(6.5D, 6.5D, 6.5D);
         near = Utils.filterOnlyTeammates(near, player);
         for (Entity entity : near) {
             if (entity instanceof Player) {
                 Player nearPlayer = (Player) entity;
                 double distance = player.getLocation().distanceSquared(nearPlayer.getLocation());
-                if (nearPlayer.getGameMode() != GameMode.SPECTATOR && distance < 3 * 3) {
+                if (nearPlayer.getGameMode() != GameMode.SPECTATOR && distance < 3.6 * 3.6) {
                     Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
                 }
             }

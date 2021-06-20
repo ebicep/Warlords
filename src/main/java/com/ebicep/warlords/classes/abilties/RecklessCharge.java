@@ -4,15 +4,24 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.util.Utils;
+import org.bukkit.Effect;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.potion.Potion;
+import org.bukkit.potion.PotionBrewer;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class RecklessCharge extends AbstractAbility {
@@ -66,6 +75,7 @@ public class RecklessCharge extends AbstractAbility {
             player1.playSound(player.getLocation(), "warrior.seismicwave.activation", 2, 1);
         }
 
+
         new BukkitRunnable() {
 
             @Override
@@ -87,6 +97,10 @@ public class RecklessCharge extends AbstractAbility {
                                 warlordsPlayer.getSpec().getRed().getMaxDamageHeal(),
                                 warlordsPlayer.getSpec().getRed().getCritChance(),
                                 warlordsPlayer.getSpec().getRed().getCritMultiplier());
+
+                        // little scuffed might wanna change
+                        ((Player) entity).addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 17, 50));
+                        ((Player) entity).addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 17, 150));
                     }
                 }
                 //cancel charge if hit a block, making the player stand still

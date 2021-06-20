@@ -497,7 +497,7 @@ public class FlagManager implements Listener {
                 if (this.lastLocation instanceof GroundFlagLocation) {
                     if (old instanceof PlayerFlagLocation) {
                         PlayerFlagLocation playerFlagLocation = (PlayerFlagLocation) old;
-                        String flag = info.getTeam() == Team.RED ? ChatColor.RED + "RED" : ChatColor.BLUE + "BLU";
+                        String flag = info.getTeam() == Team.RED ? ChatColor.RED + "RED" : ChatColor.BLUE + "BLUE";
                         ChatColor playerColor = info.getTeam().enemy().teamColor();
                         Bukkit.broadcastMessage(playerColor + playerFlagLocation.getPlayer().getName() + " §ehas dropped the " + flag + "§e flag!");
                         for (Player player1 : Warlords.game.getPlayersProtected().keySet()) {

@@ -49,7 +49,7 @@ public class SeismicWave extends AbstractAbility {
         }
 
         //INSTANT DMG
-        List<Entity> near = player.getNearbyEntities(8.5, 3, 8.5);
+        List<Entity> near = player.getNearbyEntities(8, 4.5, 8);
         near = Utils.filterOutTeammates(near, player);
         for (Entity entity : near) {
             if (entity instanceof Player && ((Player) entity).getGameMode() != GameMode.SPECTATOR && Utils.getLookingAtWave(player, (Player) entity)) {
