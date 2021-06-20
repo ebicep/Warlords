@@ -140,7 +140,7 @@ public class Totem extends EntityArmorStand {
         private float delayedDamage = 0;
 
         public TotemSpiritguard() {
-            super("Death's Debt", 0, 0, 60 + 10.49f, 20, -1, 100);
+            super("Death's Debt", 0, 0, 60f + 10.49f, 20, -1, 100);
         }
 
         @Override

@@ -906,7 +906,12 @@ public class WarlordsPlayer {
                             } else {
                                 tempNewCritChance = -1;
                             }
-                            attacker.addHealth(attacker, ability, -damageHealValue / 2, -damageHealValue / 2, tempNewCritChance, 100);
+
+                            if (Classes.getSelectedBoost(attacker.getPlayer()) == ClassesSkillBoosts.PROTECTOR_STRIKE) {
+                                attacker.addHealth(attacker, ability, -damageHealValue / 1.43f, -damageHealValue / 1.43f, tempNewCritChance, 100);
+                            } else {
+                                attacker.addHealth(attacker, ability, -damageHealValue / 2, -damageHealValue / 2, tempNewCritChance, 100);
+                            }
 
                             int counter = 0;
                             //reloops near players to give health to

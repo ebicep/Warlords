@@ -42,11 +42,12 @@ public class Strike extends AbstractAbility {
                     "§7within §e10 §7blocks.";
         } else if (selected == Classes.PROTECTOR) {
             int boost = Classes.getSelectedBoost(player) == ClassesSkillBoosts.PROTECTOR_STRIKE ? 120 : 100;
+            int selfBoost = Classes.getSelectedBoost(player) == ClassesSkillBoosts.PROTECTOR_STRIKE ? 70 : 50;
             description = "§7Strike the targeted enemy player,\n" +
                     "§7causing §c261 §7- §c352 §7damage\n" +
                     "§7and healing two nearby allies for\n" +
                     "§a" + boost + "% §7of the damage done. Also\n" +
-                    "§7heals yourself by §a50% §7of the\n" +
+                    "§7heals yourself by §a" + selfBoost + "% §7of the\n" +
                     "§7damage done.";
         } else if (selected == Classes.BERSERKER) {
             description = "§7Strike the targeted enemy player,\n" +

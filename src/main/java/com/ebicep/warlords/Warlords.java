@@ -100,11 +100,11 @@ public class Warlords extends JavaPlugin {
             public void run() {
                 for (Player player : getServer().getOnlinePlayers()) {
                     player.setFoodLevel(20);
-                    player.setSaturation(1);
+                    player.setSaturation(2);
                 }
             }
 
-        }.runTaskTimer(this, 50, 200);
+        }.runTaskTimer(this, 30, 90);
 
         Logger.getLogger("org.mongodb.driver").setLevel(Level.WARNING);
         getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords]: Plugin is enabled");
