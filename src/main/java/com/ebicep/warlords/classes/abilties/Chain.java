@@ -430,7 +430,7 @@ public class Chain extends AbstractAbility {
 
     private void healNearPlayers(Player player) {
         WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
-        warlordsPlayer.addHealth(warlordsPlayer, warlordsPlayer.getSpec().getRed().getName(), 420, 420, -1, 100);
+        warlordsPlayer.addHealth(warlordsPlayer, "Soulbinding Weapon", 420, 420, -1, 100);
         int playersHealed = 0;
         List<Entity> near = player.getNearbyEntities(2.5D, 2D, 2.5D);
         near = Utils.filterOnlyTeammates(near, player);
