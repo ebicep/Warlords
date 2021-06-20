@@ -49,7 +49,7 @@ public class Utils {
         eye.setPitch(0);
         Vector toEntity = player1.getEyeLocation().toVector().subtract(eye.toVector());
         float dot = (float) toEntity.normalize().dot(eye.getDirection());
-        return dot > 0.935D;
+        return dot > 0.91D;
     }
 
     public static boolean hasLineOfSight(Player player, Player player2) {

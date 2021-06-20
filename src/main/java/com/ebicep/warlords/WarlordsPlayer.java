@@ -705,7 +705,7 @@ public class WarlordsPlayer {
                 totalReduction = 1 - spec.getDamageResistance() / 100f;
                 //add damage
                 if (attacker.getPowerUpDamage() > 0) {
-                    totalReduction *= .8;
+                    totalReduction *= 1.2;
                     //totalReduction += .2;
                 } else if (attacker.getSpawnDamage() > 0) {
                     totalReduction *= 1.2;

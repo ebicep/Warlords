@@ -4,6 +4,8 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.classes.paladin.specs.protector.Protector;
+import com.ebicep.warlords.util.Classes;
+import com.ebicep.warlords.util.ClassesSkillBoosts;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -19,7 +21,7 @@ import java.util.List;
 public class HammerOfLight extends AbstractAbility {
 
     public HammerOfLight() {
-        super("Hammer of Light", 159.85f, 216.2f, 58.72f, 30, 20, 175
+        super("Hammer of Light", 159.85f, 216.2f, 62.64f, 30, 20, 175
         );
     }
 
@@ -57,7 +59,7 @@ public class HammerOfLight extends AbstractAbility {
             @Override
             public void run() {
                 damageHealCircle.setDuration(damageHealCircle.getDuration() - 1);
-                List<Entity> near = (List<Entity>) damageHealCircle.getLocation().getWorld().getNearbyEntities(damageHealCircle.getLocation(), 5, 4, 5);
+                List<Entity> near = (List<Entity>) damageHealCircle.getLocation().getWorld().getNearbyEntities(damageHealCircle.getLocation(), 8, 4, 8);
                 for (Entity entity : near) {
                     if (entity instanceof Player && ((Player) entity).getGameMode() != GameMode.SPECTATOR) {
                         Player player = (Player) entity;
@@ -67,7 +69,7 @@ public class HammerOfLight extends AbstractAbility {
                             if (Warlords.game.onSameTeam((Player) entity, damageHealCircle.getPlayer())) {
                                 warlordsPlayer.addHealth(Warlords.getPlayer(damageHealCircle.getPlayer()), damageHealCircle.getName(), damageHealCircle.getMinDamage(), damageHealCircle.getMaxDamage(), damageHealCircle.getCritChance(), damageHealCircle.getCritMultiplier());
                             } else {
-                                warlordsPlayer.addHealth(Warlords.getPlayer(damageHealCircle.getPlayer()), damageHealCircle.getName(), -118.8f, -158.4f, damageHealCircle.getCritChance(), damageHealCircle.getCritMultiplier());
+                                    warlordsPlayer.addHealth(Warlords.getPlayer(damageHealCircle.getPlayer()), damageHealCircle.getName(), -118.8f, -158.4f, damageHealCircle.getCritChance(), damageHealCircle.getCritMultiplier());
                             }
                         }
 

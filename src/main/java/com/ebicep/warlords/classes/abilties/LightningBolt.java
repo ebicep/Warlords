@@ -44,7 +44,7 @@ public class LightningBolt extends AbstractAbility {
         Location location = player.getLocation();
         Vector direction = location.getDirection();
 
-        Bolt bolt = new Bolt(Warlords.getPlayer(player), (ArmorStand) location.getWorld().spawnEntity(location.clone().subtract(direction.getX() * -.5, .3, direction.getZ() * -.5), EntityType.ARMOR_STAND), location.clone().subtract(direction.getX() * -.5, .3, direction.getZ() * -.5), direction, this);
+        Bolt bolt = new Bolt(Warlords.getPlayer(player), (ArmorStand) location.getWorld().spawnEntity(location.clone().subtract(direction.getX() * -.1, .3, direction.getZ() * -.1), EntityType.ARMOR_STAND), location.clone().subtract(direction.getX() * -.1, .3, direction.getZ() * -.1), direction, this);
         Warlords.getPlayer(player).subtractEnergy(energyCost);
 
         for (Player player1 : player.getWorld().getPlayers()) {
