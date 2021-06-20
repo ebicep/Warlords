@@ -19,7 +19,7 @@ import java.util.List;
 public class HammerOfLight extends AbstractAbility {
 
     public HammerOfLight() {
-        super("Hammer of Light", 159.85f, 216.2f, 60f + 10.47f, 30, 20, 175
+        super("Hammer of Light", 159.85f, 216.2f, 58.72f, 30, 20, 175
         );
     }
 
