@@ -130,8 +130,10 @@ public enum Classes {
     public static void setSelected(Player player, Classes selectedClass) {
         player.removeMetadata("selected-class", Warlords.getInstance());
         player.setMetadata("selected-class", new FixedMetadataValue(Warlords.getInstance(), selectedClass));
+        if (Warlords.game.getState() == Game.State.PRE_GAME) {
+            setSelectedBoost(player, selectedClass.skillBoosts.get(0));
+        }
         Game.State.updateTempPlayer(player);
-        setSelectedBoost(player, selectedClass.skillBoosts.get(0));
     }
 
     public static ClassesSkillBoosts getSelectedBoost(Player player) {
@@ -144,7 +146,7 @@ public enum Classes {
 
     public static void setSelectedBoost(Player player, ClassesSkillBoosts selectedBoost) {
         player.removeMetadata("selected-boost", Warlords.getInstance());
-        Game.State.updateTempPlayer(player);
         player.setMetadata("selected-boost", new FixedMetadataValue(Warlords.getInstance(), selectedBoost));
+        Game.State.updateTempPlayer(player);
     }
 }

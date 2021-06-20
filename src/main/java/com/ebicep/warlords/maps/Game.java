@@ -223,13 +223,10 @@ public class Game implements Runnable {
                     player.setMaxHealth(40);
                     player.getInventory().clear();
                     player.closeInventory();
+                    value.applySkillBoost();
                     value.assignItemLore();
                     value.setScoreboard(new CustomScoreboard(value, blueTeam, redTeam, game));
-                }
-
-                for (WarlordsPlayer value : Warlords.getPlayers().values()) {
                     value.getScoreboard().addHealths();
-                    value.applySkillBoost();
                 }
 
                 new BukkitRunnable() {
