@@ -1,10 +1,10 @@
 package com.ebicep.warlords.maps;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.events.WarlordsDeathEvent;
-import com.ebicep.warlords.util.ArmorManager;
-import com.ebicep.warlords.util.Classes;
+import com.ebicep.warlords.player.ArmorManager;
+import com.ebicep.warlords.player.Classes;
+import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.ItemBuilder;
 import com.ebicep.warlords.util.PacketUtils;
 import org.bukkit.*;

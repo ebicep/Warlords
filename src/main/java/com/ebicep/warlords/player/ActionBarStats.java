@@ -1,6 +1,4 @@
-package com.ebicep.warlords.classes;
-
-import com.ebicep.warlords.WarlordsPlayer;
+package com.ebicep.warlords.player;
 
 public class ActionBarStats {
 

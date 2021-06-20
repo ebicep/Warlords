@@ -8,7 +8,7 @@ import org.bukkit.GameMode;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
-public abstract class PlayerClass {
+public abstract class AbstractPlayerClass {
 
     protected Player player;
     protected int maxHealth;
@@ -24,7 +24,7 @@ public abstract class PlayerClass {
     protected String className;
     protected String classNameShort;
 
-    public PlayerClass(Player player, int maxHealth, int maxEnergy, int energyPerSec, int energyOnHit, int damageResistance, AbstractAbility weapon, AbstractAbility red, AbstractAbility purple, AbstractAbility blue, AbstractAbility orange) {
+    public AbstractPlayerClass(Player player, int maxHealth, int maxEnergy, int energyPerSec, int energyOnHit, int damageResistance, AbstractAbility weapon, AbstractAbility red, AbstractAbility purple, AbstractAbility blue, AbstractAbility orange) {
         this.player = player;
         this.maxHealth = maxHealth;
         this.maxEnergy = maxEnergy;

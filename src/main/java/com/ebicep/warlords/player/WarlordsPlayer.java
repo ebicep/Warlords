@@ -1,14 +1,17 @@
-package com.ebicep.warlords;
+package com.ebicep.warlords.player;
 
-import com.ebicep.warlords.classes.ActionBarStats;
-import com.ebicep.warlords.classes.PlayerClass;
+import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.classes.abilties.HammerOfLight;
 import com.ebicep.warlords.classes.abilties.OrbsOfLife;
 import com.ebicep.warlords.classes.abilties.Soulbinding;
 import com.ebicep.warlords.classes.abilties.Totem;
 import com.ebicep.warlords.events.WarlordsDeathEvent;
 import com.ebicep.warlords.maps.FlagManager;
-import com.ebicep.warlords.util.*;
+import com.ebicep.warlords.util.CustomScoreboard;
+import com.ebicep.warlords.util.ItemBuilder;
+import com.ebicep.warlords.util.PacketUtils;
+import com.ebicep.warlords.util.Utils;
 import net.minecraft.server.v1_8_R3.EntityLiving;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -32,7 +35,7 @@ public class WarlordsPlayer {
     private Player player;
     private String name;
     private UUID uuid;
-    private PlayerClass spec;
+    private AbstractPlayerClass spec;
     private final Weapons weapon;
     private boolean hotKeyMode = true;
     private int health;
@@ -295,7 +298,7 @@ public class WarlordsPlayer {
     private Location deathLocation;
     private ArmorStand deathStand;
 
-    public WarlordsPlayer(Player player, String name, UUID uuid, PlayerClass spec, Weapons weapon, boolean energyPowerup) {
+    public WarlordsPlayer(Player player, String name, UUID uuid, AbstractPlayerClass spec, Weapons weapon, boolean energyPowerup) {
         this.player = player;
         this.name = name;
         this.uuid = uuid;
@@ -551,11 +554,11 @@ public class WarlordsPlayer {
         this.uuid = uuid;
     }
 
-    public PlayerClass getSpec() {
+    public AbstractPlayerClass getSpec() {
         return spec;
     }
 
-    public void setSpec(PlayerClass spec) {
+    public void setSpec(AbstractPlayerClass spec) {
         this.spec = spec;
     }
 

@@ -1,6 +1,7 @@
-package com.ebicep.warlords.util;
+package com.ebicep.warlords.player;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.util.ItemBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -15,7 +16,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static com.ebicep.warlords.util.Classes.*;
+import static com.ebicep.warlords.player.Classes.*;
 
 public class ArmorManager {
 

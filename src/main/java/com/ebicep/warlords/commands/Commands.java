@@ -1,12 +1,12 @@
 package com.ebicep.warlords.commands;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.abilties.FallenSouls;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Game.State;
 import com.ebicep.warlords.maps.GameMap;
-import com.ebicep.warlords.util.Classes;
+import com.ebicep.warlords.player.Classes;
+import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.ItemBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

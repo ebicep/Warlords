@@ -1,7 +1,7 @@
-package com.ebicep.warlords.util;
+package com.ebicep.warlords.player;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.classes.PlayerClass;
+import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.classes.mage.specs.aquamancer.Aquamancer;
 import com.ebicep.warlords.classes.mage.specs.cryomancer.Cryomancer;
 import com.ebicep.warlords.classes.mage.specs.pyromancer.Pyromancer;
@@ -26,7 +26,7 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static com.ebicep.warlords.util.ClassesSkillBoosts.*;
+import static com.ebicep.warlords.player.ClassesSkillBoosts.*;
 
 public enum Classes {
     PYROMANCER("Pyromancer",
@@ -93,12 +93,12 @@ public enum Classes {
     ;
 
     public final String name;
-    public final Function<Player, PlayerClass> create;
+    public final Function<Player, AbstractPlayerClass> create;
     public final String description;
     public final ItemStack icon;
     public final List<ClassesSkillBoosts> skillBoosts;
 
-    Classes(String name, Function<Player, PlayerClass> create, String description, ItemStack icon, ClassesSkillBoosts... skillBoosts) {
+    Classes(String name, Function<Player, AbstractPlayerClass> create, String description, ItemStack icon, ClassesSkillBoosts... skillBoosts) {
         this.name = name;
         this.create = create;
         this.description = description;

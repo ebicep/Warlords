@@ -1,8 +1,8 @@
 package com.ebicep.warlords.powerups;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.maps.GameMap;
+import com.ebicep.warlords.player.WarlordsPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;

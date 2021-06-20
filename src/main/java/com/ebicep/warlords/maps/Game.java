@@ -1,8 +1,11 @@
 package com.ebicep.warlords.maps;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.database.FieldUpdateOperators;
+import com.ebicep.warlords.player.ArmorManager;
+import com.ebicep.warlords.player.Classes;
+import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.Weapons;
 import com.ebicep.warlords.powerups.PowerupManager;
 import com.ebicep.warlords.util.*;
 import net.md_5.bungee.api.chat.ComponentBuilder;
