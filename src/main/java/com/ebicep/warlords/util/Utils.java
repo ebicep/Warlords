@@ -59,7 +59,7 @@ public class Utils {
     public static boolean totemDownAndClose(WarlordsPlayer warlordsPlayer, Player player) {
         for (Entity entity : player.getNearbyEntities(5, 3, 5)) {
             if (entity instanceof ArmorStand) {
-                if (entity.hasMetadata("capacitor_totem_" + warlordsPlayer.getName()) || entity.hasMetadata("healing_totem_" + warlordsPlayer.getName())) {
+                if (entity.hasMetadata("capacitor-totem-" + warlordsPlayer.getName().toLowerCase()) || entity.hasMetadata("healing-totem-" + warlordsPlayer.getName().toLowerCase())) {
                     return true;
                 }
             }

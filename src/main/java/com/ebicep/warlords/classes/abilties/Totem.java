@@ -111,7 +111,7 @@ public class Totem extends EntityArmorStand {
             totemStand.setGravity(false);
             totemStand.setMarker(true);
             totemStand.setHelmet(new ItemStack(Material.RED_ROSE, 1, (short) 4));
-            totemStand.setMetadata("capacitor_totem_" + player.getName(), new FixedMetadataValue(Warlords.getInstance(), true));
+            totemStand.setMetadata("capacitor-totem-" + player.getName().toLowerCase(), new FixedMetadataValue(Warlords.getInstance(), true));
 
             Totem capacitorTotem = new Totem(((CraftWorld) player.getWorld()).getHandle(), warlordsPlayer, totemStand, 8);
 
@@ -328,7 +328,7 @@ public class Totem extends EntityArmorStand {
             totemStand.setGravity(false);
             totemStand.setMarker(true);
             totemStand.setHelmet(new ItemStack(Material.RED_ROSE, 1, (short) 7));
-            totemStand.setMetadata("healing_totem_" + player.getName(), new FixedMetadataValue(Warlords.getInstance(), true));
+            totemStand.setMetadata("healing-totem-" + player.getName(), new FixedMetadataValue(Warlords.getInstance(), true));
 
             Totem healingTotem = new Totem(((CraftWorld) player.getWorld()).getHandle(), warlordsPlayer, totemStand, 5);
 
