@@ -111,7 +111,7 @@ public class Totem extends EntityArmorStand {
             totemStand.setGravity(false);
             totemStand.setMarker(true);
             totemStand.setHelmet(new ItemStack(Material.RED_ROSE, 1, (short) 4));
-            totemStand.setMetadata("Capacitor Totem - " + player.getName(), new FixedMetadataValue(Warlords.getInstance(), true));
+            totemStand.setMetadata("capacitor_totem_" + player.getName(), new FixedMetadataValue(Warlords.getInstance(), true));
 
             Totem capacitorTotem = new Totem(((CraftWorld) player.getWorld()).getHandle(), warlordsPlayer, totemStand, 8);
 
@@ -138,7 +138,6 @@ public class Totem extends EntityArmorStand {
 
     public static class TotemSpiritguard extends AbstractAbility {
         private float delayedDamage = 0;
-        private final int debt = 0;
 
         public TotemSpiritguard() {
             super("Death's Debt", 0, 0, 60 + 10.49f, 20, -1, 100);
@@ -329,6 +328,7 @@ public class Totem extends EntityArmorStand {
             totemStand.setGravity(false);
             totemStand.setMarker(true);
             totemStand.setHelmet(new ItemStack(Material.RED_ROSE, 1, (short) 7));
+            totemStand.setMetadata("healing_totem_" + player.getName(), new FixedMetadataValue(Warlords.getInstance(), true));
 
             Totem healingTotem = new Totem(((CraftWorld) player.getWorld()).getHandle(), warlordsPlayer, totemStand, 5);
 
