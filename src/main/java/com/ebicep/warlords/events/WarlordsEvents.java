@@ -163,10 +163,6 @@ public class WarlordsEvents implements Listener {
                     }
                 }
 
-            } else if (e.getEntity() instanceof Horse && e.getDamager() instanceof Player) {
-                if (!Warlords.game.onSameTeam((Player) e.getEntity().getPassenger(), (Player) e.getDamager())) {
-                    e.getEntity().remove();
-                }
             }
         }
         e.setCancelled(true);
