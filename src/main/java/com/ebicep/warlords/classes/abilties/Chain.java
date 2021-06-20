@@ -406,7 +406,7 @@ public class Chain extends AbstractAbility {
                 }
             } else if (name.contains("Spirit")) {
                 // speed buff
-                warlordsPlayer.getSpeed().changeCurrentSpeed("Spirit Link", 40, 90); // 30 is ticks
+                warlordsPlayer.getSpeed().changeCurrentSpeed("Spirit Link", 40, 30); // 30 is ticks
                 warlordsPlayer.setSpiritLink(4.5f);
 
                 warlordsPlayer.getSpec().getRed().setCurrentCooldown(cooldown);
@@ -515,7 +515,7 @@ public class Chain extends AbstractAbility {
         Location eye = player.getEyeLocation();
         eye.setY(eye.getY() + .5);
         for (Entity entity : player.getNearbyEntities(20, 17, 20)) {
-            if (entity instanceof ArmorStand && entity.hasMetadata("Capacitor Totem - " + player.getName())) {
+            if (entity instanceof ArmorStand && entity.hasMetadata("capacitor-totem-" + player.getName().toLowerCase())) {
                 Vector toEntity = ((ArmorStand) entity).getEyeLocation().add(0, 1, 0).toVector().subtract(eye.toVector());
                 float dot = (float) toEntity.normalize().dot(eye.getDirection());
                 return dot > .95f;
@@ -526,7 +526,7 @@ public class Chain extends AbstractAbility {
 
     private ArmorStand getTotem(Player player) {
         for (Entity entity : player.getNearbyEntities(20, 17, 20)) {
-            if (entity instanceof ArmorStand && entity.hasMetadata("Capacitor Totem - " + player.getName())) {
+            if (entity instanceof ArmorStand && entity.hasMetadata("capacitor-totem-" + player.getName().toLowerCase())) {
                 return (ArmorStand) entity;
             }
         }
