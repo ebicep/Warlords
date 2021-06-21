@@ -5,6 +5,7 @@ import com.ebicep.warlords.classes.shaman.AbstractShaman;
 import org.bukkit.entity.Player;
 
 public class Spiritguard extends AbstractShaman {
+
     public Spiritguard(Player player) {
         super(player, 10000, 305, 10,
                 new FallenSouls(),
@@ -13,4 +14,5 @@ public class Spiritguard extends AbstractShaman {
                 new Repentance(),
                 new Totem.TotemSpiritguard());
     }
+
 }

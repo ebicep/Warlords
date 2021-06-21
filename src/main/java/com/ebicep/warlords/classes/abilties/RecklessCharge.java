@@ -20,6 +20,8 @@ import java.util.List;
 public class RecklessCharge extends AbstractAbility {
 
     private List<Player> playersHit = new ArrayList<>();
+    private Location chargeLocation;
+    private int charge;
 
     public RecklessCharge() {
         super("Reckless Charge", -466, -612, 9.98f, 60, 20, 200);
@@ -42,21 +44,19 @@ public class RecklessCharge extends AbstractAbility {
         WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
         Location eyeLocation = player.getLocation();
         eyeLocation.setPitch(-10);
-        //.clone().add(eyeLocation.getDirection().multiply(1)));
+
+        chargeLocation = eyeLocation.clone();
+
         if (eyeLocation.getWorld().getBlockAt(eyeLocation.clone().add(0, -1, 0)).getType() != Material.AIR) {
-            System.out.println("Launched on ground");
             //travels 5 blocks
-            player.setVelocity(eyeLocation.getDirection().multiply(2.4));
-            Warlords.getPlayer(player).setCharged(6 * 6 - 7);
+            player.setVelocity(eyeLocation.getDirection().multiply(2.5));
+            charge = 6 * 6 - 7;
 
         } else {
-            System.out.println("Launched in air");
             //travels 7 at peak jump
-            player.setVelocity(eyeLocation.getDirection().multiply(1.5));
-            Warlords.getPlayer(player).setCharged((int) Math.pow(9 - Utils.getDistance(player, .1) * 2, 2));
-
+            player.setVelocity(eyeLocation.getDirection().multiply(1.6));
+            charge = (int) Math.pow(9 - Utils.getDistance(player, .1) * 2, 2);
         }
-        Warlords.getPlayer(player).setChargeLocation(eyeLocation);//.clone().add(eyeLocation.getDirection().multiply(1)));
         // warlordsplayer charged variable
         // check distance from start to "end" every tick
         // check collision of every player
@@ -73,7 +73,7 @@ public class RecklessCharge extends AbstractAbility {
 
             @Override
             public void run() {
-                if (warlordsPlayer.getCharged() == 0) {
+                if (charge == 0) {
                     this.cancel();
                 }
 
@@ -97,9 +97,9 @@ public class RecklessCharge extends AbstractAbility {
                     }
                 }
                 //cancel charge if hit a block, making the player stand still
-                if (player.getLocation().distanceSquared(warlordsPlayer.getChargeLocation()) > warlordsPlayer.getCharged() || (player.getVelocity().getX() == 0 && player.getVelocity().getZ() == 0)) {
+                if (player.getLocation().distanceSquared(chargeLocation) > charge || (player.getVelocity().getX() == 0 && player.getVelocity().getZ() == 0)) {
                     player.setVelocity(new Vector(0, 0, 0));
-                    warlordsPlayer.setCharged(0);
+                    charge = 0;
                 }
             }
 

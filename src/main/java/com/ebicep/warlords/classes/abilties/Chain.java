@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.player.Classes;
+import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.Utils;
 import net.minecraft.server.v1_8_R3.PacketPlayOutAnimation;
@@ -382,8 +383,8 @@ public class Chain extends AbstractAbility {
             ((CraftPlayer) player).getHandle().playerConnection.sendPacket(playOutAnimation);
             warlordsPlayer.subtractEnergy(energyCost);
             if (name.contains("Lightning")) {
-                warlordsPlayer.setChainLightning(hitCounter);
-                warlordsPlayer.setChainLightningCooldown(4);
+                warlordsPlayer.getCooldownManager().addCooldown(Chain.this.getClass(), "CHAIN(" + hitCounter + ")", 4, warlordsPlayer, CooldownTypes.BUFF);
+
                 warlordsPlayer.getSpec().getRed().setCurrentCooldown(cooldown);
 
                 for (Player player1 : player.getWorld().getPlayers()) {
@@ -407,7 +408,7 @@ public class Chain extends AbstractAbility {
             } else if (name.contains("Spirit")) {
                 // speed buff
                 warlordsPlayer.getSpeed().changeCurrentSpeed("Spirit Link", 40, 30); // 30 is ticks
-                warlordsPlayer.setSpiritLink(4.5f);
+                warlordsPlayer.getCooldownManager().addCooldown(Chain.this.getClass(), "LINK", 4.5f, warlordsPlayer, CooldownTypes.BUFF);
 
                 warlordsPlayer.getSpec().getRed().setCurrentCooldown(cooldown);
 

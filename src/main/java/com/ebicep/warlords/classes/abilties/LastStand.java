@@ -2,6 +2,7 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.Matrix4d;
 import com.ebicep.warlords.util.ParticleEffect;
@@ -34,16 +35,15 @@ public class LastStand extends AbstractAbility {
     @Override
     public void onActivate(Player player) {
         WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
-        warlordsPlayer.setLastStandedBy(warlordsPlayer);
-        warlordsPlayer.setLastStandDuration(12);
+        warlordsPlayer.getCooldownManager().addCooldown(LastStand.this.getClass(), "LAST", 12, warlordsPlayer, CooldownTypes.BUFF);
+
         List<Entity> near = player.getNearbyEntities(4.0D, 4.0D, 4.0D);
         near = Utils.filterOnlyTeammates(near, player);
         for (Entity entity : near) {
             if (entity instanceof Player) {
                 Player nearPlayer = (Player) entity;
                 if (nearPlayer.getGameMode() != GameMode.SPECTATOR) {
-                    Warlords.getPlayer(nearPlayer).setLastStandDuration(6);
-                    Warlords.getPlayer(nearPlayer).setLastStandedBy(warlordsPlayer);
+                    Warlords.getPlayer(nearPlayer).getCooldownManager().addCooldown(LastStand.this.getClass(), "LAST", 12, warlordsPlayer, CooldownTypes.BUFF);
                     player.sendMessage("you last standed " + nearPlayer.getName());
                 }
             }

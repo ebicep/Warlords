@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
+import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.ItemBuilder;
 import com.ebicep.warlords.util.ParticleEffect;
@@ -44,8 +45,8 @@ public class UndyingArmy extends AbstractAbility {
     @Override
     public void onActivate(Player player) {
         WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
-        warlordsPlayer.setUndyingArmyDuration(10);
-        warlordsPlayer.setUndyingArmyBy(warlordsPlayer);
+        warlordsPlayer.getCooldownManager().addCooldown(UndyingArmy.this.getClass(), "ARMY", 10, warlordsPlayer, CooldownTypes.ABILITY);
+
         List<Entity> near = player.getNearbyEntities(4.0D, 4.0D, 4.0D);
         near = Utils.filterOnlyTeammates(near, player);
         int numberOfPlayersWithArmy = 0;
@@ -59,8 +60,7 @@ public class UndyingArmy extends AbstractAbility {
                         warlordsPlayer.getPlayer().sendMessage("§a\u00BB§7 " + ChatColor.GRAY + "Your Undying Army is protecting " + ChatColor.RED + nearPlayer.getName() + ChatColor.GRAY + ".");
                     }
                     WarlordsPlayer warlordsNearPlayer = Warlords.getPlayer(nearPlayer);
-                    warlordsNearPlayer.setUndyingArmyDuration(10);
-                    warlordsNearPlayer.setUndyingArmyBy(warlordsPlayer);
+                    warlordsNearPlayer.getCooldownManager().addCooldown(UndyingArmy.this.getClass(), "ARMY", 10, warlordsPlayer, CooldownTypes.ABILITY);
                     warlordsNearPlayer.getPlayer().sendMessage("§a\u00BB§7 " + ChatColor.GRAY + warlordsPlayer.getName() + "'s Undying Army protects you for " + ChatColor.GOLD + "10 " + ChatColor.GRAY + "seconds.");
                     numberOfPlayersWithArmy++;
                 }

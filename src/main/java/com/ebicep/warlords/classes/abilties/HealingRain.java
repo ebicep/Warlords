@@ -2,7 +2,7 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
-import com.ebicep.warlords.player.ActionBarStats;
+import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.Utils;
 import org.bukkit.Bukkit;
@@ -35,7 +35,7 @@ public class HealingRain extends AbstractAbility {
         DamageHealCircle damageHealCircle = new DamageHealCircle(player, player.getTargetBlock((HashSet<Byte>) null, 15).getLocation(), 6, 10, minDamageHeal, maxDamageHeal, critChance, critMultiplier, name);
         damageHealCircle.getLocation().add(0, 1, 0);
         WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
-        warlordsPlayer.getActionBarStats().add(new ActionBarStats(warlordsPlayer, "RAIN", 10));
+        warlordsPlayer.getCooldownManager().addCooldown(HealingRain.this.getClass(), "RAIN", 10, warlordsPlayer, CooldownTypes.ABILITY);
         warlordsPlayer.subtractEnergy(energyCost);
         warlordsPlayer.getSpec().getOrange().setCurrentCooldown(cooldown);
 

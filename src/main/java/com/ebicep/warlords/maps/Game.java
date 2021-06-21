@@ -209,13 +209,13 @@ public class Game implements Runnable {
                 for (Player p : game.cachedTeamRed) {
                     Classes selectedClass = Classes.getSelected(p);
                     Weapons selectedWeapon = Weapons.getSelected(p);
-                    Warlords.addPlayer(new WarlordsPlayer(p, p.getName(), p.getUniqueId(), selectedClass.create.apply(p), selectedWeapon, false));
+                    Warlords.addPlayer(new WarlordsPlayer(p, p.getName(), p.getUniqueId(), selectedClass.create.apply(p), selectedWeapon));
                     redTeam.add(Warlords.getPlayer(p));
                 }
                 for (Player p : game.cachedTeamBlue) {
                     Classes selectedClass = Classes.getSelected(p);
                     Weapons selectedWeapon = Weapons.getSelected(p);
-                    Warlords.addPlayer(new WarlordsPlayer(p, p.getName(), p.getUniqueId(), selectedClass.create.apply(p), selectedWeapon, false));
+                    Warlords.addPlayer(new WarlordsPlayer(p, p.getName(), p.getUniqueId(), selectedClass.create.apply(p), selectedWeapon));
                     blueTeam.add(Warlords.getPlayer(p));
                 }
 
@@ -517,7 +517,7 @@ public class Game implements Runnable {
         public abstract void begin(Game game);
 
         public static WarlordsPlayer updateTempPlayer(Player player) {
-            WarlordsPlayer temp = new WarlordsPlayer(player, player.getName(), player.getUniqueId(), Classes.getSelected(player).create.apply(player), Weapons.getSelected(player), false);
+            WarlordsPlayer temp = new WarlordsPlayer(player, player.getName(), player.getUniqueId(), Classes.getSelected(player).create.apply(player), Weapons.getSelected(player));
             temp.applySkillBoost();
             temp.assignItemLore();
             return temp;

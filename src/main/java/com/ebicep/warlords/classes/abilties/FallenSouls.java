@@ -138,7 +138,7 @@ public class FallenSouls extends AbstractAbility {
                     fallenSoul.getPlayersHit().add(warlordsPlayer);
                     fallenSoul.getShooter().getSpec().getRed().subtractCooldown(2);
                     fallenSoul.getShooter().updateRedItem();
-                    if (fallenSoul.getShooter().getSoulBindCooldown() != 0 && fallenSoul.getShooter().hasBoundPlayerSoul(warlordsPlayer)) {
+                    if (fallenSoul.getShooter().getCooldownManager().getCooldown(Soulbinding.class).size() > 0 && fallenSoul.getShooter().hasBoundPlayerSoul(warlordsPlayer)) {
                         fallenSoul.getShooter().getSpec().getRed().subtractCooldown(1.5F);
                         fallenSoul.getShooter().getSpec().getPurple().subtractCooldown(1.5F);
                         fallenSoul.getShooter().getSpec().getBlue().subtractCooldown(1.5F);

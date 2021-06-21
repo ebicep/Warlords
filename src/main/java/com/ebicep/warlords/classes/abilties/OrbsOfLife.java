@@ -2,6 +2,7 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import net.minecraft.server.v1_8_R3.EntityExperienceOrb;
 import net.minecraft.server.v1_8_R3.EntityHuman;
@@ -31,7 +32,8 @@ public class OrbsOfLife extends AbstractAbility {
 
     @Override
     public void onActivate(Player player) {
-        Warlords.getPlayer(player).setOrbsOfLifeDuration(13);
+        WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
+        warlordsPlayer.getCooldownManager().addCooldown(OrbsOfLife.this.getClass(), "ORBS", 13, warlordsPlayer, CooldownTypes.ABILITY);
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "warrior.revenant.orbsoflife", 2, 1);

@@ -2,8 +2,12 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.util.ParticleEffect;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class Windfury extends AbstractAbility {
 
@@ -26,11 +30,25 @@ public class Windfury extends AbstractAbility {
     public void onActivate(Player player) {
         WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
         warlordsPlayer.subtractEnergy(energyCost);
-        warlordsPlayer.setWindfuryDuration(8);
+        warlordsPlayer.getCooldownManager().addCooldown(Windfury.this.getClass(), "FURY", 8, warlordsPlayer, CooldownTypes.ABILITY);
+
         warlordsPlayer.setFirstProc(true);
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "shaman.windfuryweapon.activation", 2, 1);
         }
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                if (warlordsPlayer.getCooldownManager().getCooldown(Windfury.class).size() > 0) {
+                    Location location = player.getLocation();
+                    location.add(0, 1.2, 0);
+                    ParticleEffect.CRIT.display(0.2F, 0F, 0.2F, 0.1F, 3, location, 500);
+                } else {
+                    this.cancel();
+                }
+            }
+        }.runTaskTimer(Warlords.getInstance(), 0, 4);
     }
 }

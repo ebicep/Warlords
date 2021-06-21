@@ -2,12 +2,13 @@ package com.ebicep.warlords.player;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
-import com.ebicep.warlords.classes.abilties.HammerOfLight;
-import com.ebicep.warlords.classes.abilties.OrbsOfLife;
-import com.ebicep.warlords.classes.abilties.Soulbinding;
-import com.ebicep.warlords.classes.abilties.Totem;
+import com.ebicep.warlords.classes.abilties.*;
+import com.ebicep.warlords.classes.shaman.specs.spiritguard.Spiritguard;
+import com.ebicep.warlords.classes.warrior.specs.berserker.Berserker;
+import com.ebicep.warlords.classes.warrior.specs.defender.Defender;
 import com.ebicep.warlords.events.WarlordsDeathEvent;
 import com.ebicep.warlords.maps.FlagManager;
+import com.ebicep.warlords.powerups.DamagePowerUp;
 import com.ebicep.warlords.util.CustomScoreboard;
 import com.ebicep.warlords.util.ItemBuilder;
 import com.ebicep.warlords.util.PacketUtils;
@@ -65,12 +66,6 @@ public class WarlordsPlayer {
 
     private final CalculateSpeed speed;
 
-    private final List<ActionBarStats> actionBarStats = new ArrayList<>();
-
-    public List<ActionBarStats> getActionBarStats() {
-        return actionBarStats;
-    }
-
     public void displayActionBar() {
         StringBuilder actionBarMessage = new StringBuilder(ChatColor.GOLD + "§lHP: ");
         float healthRatio = (float) health / maxHealth;
@@ -90,91 +85,9 @@ public class WarlordsPlayer {
         } else if (Warlords.game.getTeamRedProtected().contains(player)) {
             actionBarMessage.append(ChatColor.RED).append("§lRED TEAM  ");
         }
-        for (int i = 0; i < actionBarStats.size(); i++) {
-            ActionBarStats actionBarStat = actionBarStats.get(i);
-            actionBarMessage.append(ChatColor.GREEN).append(actionBarStat.getName()).append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append((int) actionBarStat.getTimeLeft()).append(" ");
-            if (actionBarStat.subtractTime()) {
-                actionBarStats.remove(i);
-                i--;
-            }
-        }
-        switch (spec.getClassName()) {
-            case "Paladin":
-                if (infusionDuration > 0) {
-                    actionBarMessage.append(ChatColor.GREEN).append("LINF").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append((int) infusionDuration).append(" ");
-                }
-                if (wrathDuration > 0) {
-                    actionBarMessage.append(ChatColor.GREEN).append("WRAT").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append((int) wrathDuration).append(" ");
-                }
-                if (presenceDuration > 0) {
-                    actionBarMessage.append(ChatColor.GREEN).append("INSP").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append((int) presenceDuration).append(" ");
-                }
-                break;
-            case "Warrior":
-                if (bloodLustDuration > 0) {
-                    actionBarMessage.append(ChatColor.GREEN).append("BLOO").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append((int) bloodLustDuration).append(" ");
-                }
-                if (berserkDuration > 0) {
-                    actionBarMessage.append(ChatColor.GREEN).append("BERS").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append((int) berserkDuration / 20).append(" ");
-                }
-                if (interveneDuration > 0) {
-                    actionBarMessage.append(ChatColor.GREEN).append("VENE").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append((int) interveneDuration).append(" ");
-                }
-                if (lastStandDuration > 0) {
-                    actionBarMessage.append(ChatColor.GREEN).append("LAST").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append((int) lastStandDuration).append(" ");
-                }
-                if (orbsOfLifeDuration > 0) {
-                    actionBarMessage.append(ChatColor.GREEN).append("ORBS").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append((int) orbsOfLifeDuration).append(" ");
-                }
-                if (undyingArmyDuration > 0) {
-                    actionBarMessage.append(ChatColor.GREEN).append("ARMY").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append((int) undyingArmyDuration).append(" ");
-                }
-                break;
-            case "Mage":
-                // WARP/RAIN IN actionBarStats
-                if (arcaneShield - 1 > 0) {
-                    actionBarMessage.append(ChatColor.GREEN).append("ARCA").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append((int) arcaneShield - 1).append(" ");
-                }
-                if (iceBarrierDuration > 0) {
-                    actionBarMessage.append(ChatColor.GREEN).append("ICEB").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append((int) iceBarrierDuration / 20 + 1).append(" ");
-                }
-                if (inferno > 0) {
-                    actionBarMessage.append(ChatColor.GREEN).append("INFR").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append((int) inferno).append(" ");
-                }
-                break;
-            case "Shaman":
-                // TOTEMS IN actionBarStats
-                if (chainLightningCooldown > 0) {
-                    actionBarMessage.append(ChatColor.GREEN).append("CHAIN").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append((int) chainLightningCooldown).append(" ");
-                }
-                if (windfuryDuration > 0) {
-                    actionBarMessage.append(ChatColor.GREEN).append("FURY").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append((int) windfuryDuration).append(" ");
-                }
-                if (spiritLinkDuration > 0) {
-                    actionBarMessage.append(ChatColor.GREEN).append("LINK").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append((int) spiritLinkDuration).append(" ");
-                }
-                if (earthlivingDuration > 0) {
-                    actionBarMessage.append(ChatColor.GREEN).append("EARTH").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append((int) earthlivingDuration).append(" ");
-                }
-                if (soulBindCooldown > 0) {
-                    actionBarMessage.append(ChatColor.GREEN).append("SOUL").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append((int) soulBindCooldown).append(" ");
-                }
-                if (repentanceDuration > 0) {
-                    actionBarMessage.append(ChatColor.GREEN).append("REPE").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append((int) repentanceDuration).append(" ");
-                }
-                break;
-        }
-        if (powerUpDamage > 0) {
-            actionBarMessage.append(ChatColor.GREEN).append("DAMAGE").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append((int) powerUpDamage).append(" ");
-        }
-        if (powerUpEnergy > 0) {
-            actionBarMessage.append(ChatColor.GREEN).append("ENERGY").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append((int) powerUpEnergy).append(" ");
-        }
-        if (powerUpSpeed > 0) {
-            actionBarMessage.append(ChatColor.GREEN).append("SPEED").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append((int) powerUpSpeed).append(" ");
-        }
-        if (spawnDamage > 0) {
-            actionBarMessage.append(ChatColor.GREEN).append("DAMAGE").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append(spawnDamage).append(" ");
+        for (Cooldown cooldown : cooldownManager.getCooldowns()) {
+            actionBarMessage.append(ChatColor.GREEN).append(cooldown.getName()).append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append((int) cooldown.getTimeLeft() + 1).append(" ");
+
         }
         PacketUtils.sendActionBar(player, actionBarMessage.toString());
     }
@@ -226,56 +139,14 @@ public class WarlordsPlayer {
         }
     }
 
-    // PALADIN
-    private float infusionDuration = 0;
-    private float wrathDuration = 0;
-    private float presenceDuration = 0;
-
-    // WARRIOR
-    private float berserkerWounded = 0;
-    private float defenderWounded = 0;
-    private float crippled = 0;
-    private float bloodLustDuration = 0;
-    private float berserkDuration = 0;
-    private float interveneDuration = 0;
-    private float interveneDamage = 0;
-    private WarlordsPlayer intervened;
-    private WarlordsPlayer intervenedBy;
-    private float lastStandDuration = 0;
-    private WarlordsPlayer lastStandedBy;
-    private float charged = 0;
-    private Location chargeLocation;
-    private float orbsOfLifeDuration = 0;
-    private float undyingArmyDuration = 0;
     private boolean undyingArmyDead = false;
-    private WarlordsPlayer undyingArmyBy;
 
     //SHAMAN
-    private float chainLightning = 0;
-    private float chainLightningCooldown = 0;
-    private float spiritLinkDuration = 0;
     private List<Soulbinding.SoulBoundPlayer> soulBindedPlayers = new ArrayList<>();
-    private float soulBindCooldown = 0;
-    private float windfuryDuration = 0;
-    private float earthlivingDuration = 0;
     private boolean firstProc = false;
-    private float repentanceDuration = 0;
-    private float repentanceCounter = 0;
-
-    //MAGE
-    private float breathSlownessDuration = 0;
-    private float frostboltDuration = 0;
-    private float arcaneShield = 0;
-    private float arcaneShieldHealth = 0;
-    private float inferno = 0;
-    private float iceBarrierDuration = 0;
-    private float iceBarrierSlownessDuration = 0;
 
     //POWERUPS
-    private float powerUpDamage = 0;
-    private float powerUpEnergy = 0;
     private boolean powerUpHeal = false;
-    private float powerUpSpeed = 0;
 
     private static final Dye grayDye = new Dye();
 
@@ -289,16 +160,16 @@ public class WarlordsPlayer {
         this.scoreboard = scoreboard;
     }
 
-    private final boolean energyPowerup;
-
-    public boolean isEnergyPowerup() {
-        return energyPowerup;
-    }
-
     private Location deathLocation;
     private ArmorStand deathStand;
 
-    public WarlordsPlayer(Player player, String name, UUID uuid, AbstractPlayerClass spec, Weapons weapon, boolean energyPowerup) {
+    private CooldownManager cooldownManager = new CooldownManager(this);
+
+    public CooldownManager getCooldownManager() {
+        return cooldownManager;
+    }
+
+    public WarlordsPlayer(Player player, String name, UUID uuid, AbstractPlayerClass spec, Weapons weapon) {
         this.player = player;
         this.name = name;
         this.uuid = uuid;
@@ -320,7 +191,6 @@ public class WarlordsPlayer {
         this.spawnProtection = 0;
         this.speed = new CalculateSpeed(player::setWalkSpeed, 13);
         grayDye.setColor(DyeColor.GRAY);
-        this.energyPowerup = energyPowerup;
     }
 
     public void applySkillBoost() {
@@ -594,9 +464,7 @@ public class WarlordsPlayer {
                 regenTimer = 10;
                 if (health + min <= 0) {
                     dead = true;
-                    powerUpDamage = 0;
-                    powerUpEnergy = 0;
-                    powerUpSpeed = 0;
+
                     addGrave();
 
                     Zombie zombie = player.getWorld().spawn(player.getLocation(), Zombie.class);
@@ -641,9 +509,7 @@ public class WarlordsPlayer {
                 regenTimer = 10;
                 if (health + min < 0) {
                     dead = true;
-                    powerUpDamage = 0;
-                    powerUpEnergy = 0;
-                    powerUpSpeed = 0;
+
                     addGrave();
 
                     hitBy.remove(attacker);
@@ -682,7 +548,7 @@ public class WarlordsPlayer {
                 player.playEffect(EntityEffect.HURT);
             }
         } else {
-            if (attacker.getInferno() != 0 && (!ability.isEmpty() && !ability.equals("Time Warp"))) {
+            if (attacker.getCooldownManager().getCooldown(Inferno.class).size() > 0 && (!ability.isEmpty() && !ability.equals("Time Warp"))) {
                 critChance += attacker.getSpec().getOrange().getCritChance();
                 critMultiplier += attacker.getSpec().getOrange().getCritMultiplier();
             }
@@ -707,74 +573,89 @@ public class WarlordsPlayer {
                 //base
                 totalReduction = 1 - spec.getDamageResistance() / 100f;
                 //add damage
-                if (attacker.getPowerUpDamage() > 0) {
+                if (attacker.getCooldownManager().getCooldown(DamagePowerUp.class).size() > 0) {
                     totalReduction *= 1.2;
                     //totalReduction += .2;
                 } else if (attacker.getSpawnDamage() > 0) {
                     totalReduction *= 1.2;
                     //totalReduction += .2;
                 }
-                if (attacker.getBerserk() > 0) {
+                if (attacker.getCooldownManager().getCooldown(Berserk.class).size() > 0) {
                     totalReduction *= 1.25;
                     //totalReduction += .25;
                 }
-                if (berserkDuration > 0) {
+                if (cooldownManager.getCooldown(Berserk.class).size() > 0) {
                     totalReduction *= 1.1;
                     //totalReduction += .1;
                 }
 
                 //reduce damage
-                if (iceBarrierDuration > 0) {
+                if (attacker.getCooldownManager().getCooldown(IceBarrier.class).size() > 0) {
                     totalReduction *= .5;
                     //totalReduction -= .5;
                 }
-                if (chainLightningCooldown > 0) {
-                    totalReduction *= 1 - chainLightning * .1;
+                if (cooldownManager.getCooldown("CHAIN").size() > 0) {
+                    String chainName = cooldownManager.getCooldown("CHAIN").get(0).getName();
+                    totalReduction *= 1 - Integer.parseInt(chainName.charAt(chainName.indexOf("(") + 1) + "") * .1;
                     //totalReduction -= chainLightning * .1;
                 }
-                if (spiritLinkDuration > 0) {
+                if (attacker.getCooldownManager().getCooldown("LINK").size() > 0) {
                     totalReduction *= .8;
                     //totalReduction -= .2;
                 }
                 //TODO maybe change to hypixel warlords where crippling effects hammer
-                if (attacker.getCrippled() > 0) {
+                if (attacker.getCooldownManager().getCooldown("CRIP").size() > 0) {
                     totalReduction *= .875;
                     //totalReduction -= .125;
                 }
             }
-            if (interveneDuration > 0 && !HammerOfLight.standingInHammer(attacker.getPlayer(), player)) {
+            if (cooldownManager.getCooldown(Intervene.class).size() > 0 && cooldownManager.getCooldown(Intervene.class).get(0).getFrom() != this && !HammerOfLight.standingInHammer(attacker.getPlayer(), player)) {
                 if (!Warlords.game.onSameTeam(this, attacker)) {
                     damageHealValue *= totalReduction;
                     damageHealValue *= .5;
                     if (isCrit) {
-                        intervenedBy.getPlayer().sendMessage("" + ChatColor.RED + "\u00AB" + ChatColor.GRAY + " " + attacker.getName() + "'s Intervene hit you for " + ChatColor.RED + "§l" + Math.round(damageHealValue) * -1 + "! " + ChatColor.GRAY + "critical damage.");
-                        attacker.getPlayer().sendMessage(ChatColor.GREEN + "\u00BB" + ChatColor.GRAY + " Your Intervene hit " + intervenedBy.getName() + " for " + ChatColor.RED + "§l" + Math.round(damageHealValue) * -1 + "! " + ChatColor.GRAY + "critical damage.");
+                        cooldownManager.getCooldown(Intervene.class).get(0).getFrom().getPlayer().sendMessage("" + ChatColor.RED + "\u00AB" + ChatColor.GRAY + " " + attacker.getName() + "'s Intervene hit you for " + ChatColor.RED + "§l" + Math.round(damageHealValue) * -1 + "! " + ChatColor.GRAY + "critical damage.");
+                        attacker.getPlayer().sendMessage(ChatColor.GREEN + "\u00BB" + ChatColor.GRAY + " Your Intervene hit " + cooldownManager.getCooldown(Intervene.class).get(0).getFrom().getName() + " for " + ChatColor.RED + "§l" + Math.round(damageHealValue) * -1 + "! " + ChatColor.GRAY + "critical damage.");
 
                         for (Player player1 : player.getWorld().getPlayers()) {
                             player1.playSound(player.getLocation(), "warrior.intervene.block.3", 2, 1);
                         }
                     } else {
-                        intervenedBy.getPlayer().sendMessage("" + ChatColor.RED + "\u00AB" + ChatColor.GRAY + " " + attacker.getName() + "'s Intervene hit you for " + ChatColor.RED + Math.round(damageHealValue) * -1 + ChatColor.GRAY + " damage.");
-                        attacker.getPlayer().sendMessage(ChatColor.GREEN + "\u00BB" + ChatColor.GRAY + " Your Intervene hit " + intervenedBy.getName() + " for " + ChatColor.RED + Math.round(damageHealValue) * -1 + ChatColor.GRAY + " damage.");
+                        cooldownManager.getCooldown(Intervene.class).get(0).getFrom().getPlayer().sendMessage("" + ChatColor.RED + "\u00AB" + ChatColor.GRAY + " " + attacker.getName() + "'s Intervene hit you for " + ChatColor.RED + Math.round(damageHealValue) * -1 + ChatColor.GRAY + " damage.");
+                        attacker.getPlayer().sendMessage(ChatColor.GREEN + "\u00BB" + ChatColor.GRAY + " Your Intervene hit " + cooldownManager.getCooldown(Intervene.class).get(0).getFrom().getName() + " for " + ChatColor.RED + Math.round(damageHealValue) * -1 + ChatColor.GRAY + " damage.");
 
                         for (Player player1 : player.getWorld().getPlayers()) {
                             player1.playSound(player.getLocation(), "warrior.intervene.block.1", 2, 1);
                         }
                     }
-                    intervenedBy.setHealth((int) (intervenedBy.getHealth() + damageHealValue));
-                    interveneDamage += damageHealValue;
 
+                    cooldownManager.getCooldown(Intervene.class).get(0).getFrom().setHealth((int) (cooldownManager.getCooldown(Intervene.class).get(0).getFrom().getHealth() + damageHealValue));
+                    cooldownManager.getCooldown(Intervene.class).get(0).getFrom().getPlayer().playEffect(EntityEffect.HURT);
+                    cooldownManager.getCooldown(Intervene.class).get(0).getFrom().setRegenTimer(10);
+
+                    Optional<MetadataValue> intervene = player.getMetadata("INTERVENE").stream()
+                            .filter(e -> e.value() instanceof Intervene)
+                            .findAny();
+                    if (intervene.isPresent()) {
+                        Intervene vene = (Intervene) intervene.get().value();
+                        vene.addDamagePrevented(-damageHealValue);
+                        if (vene.getDamagePrevented() >= 3600) {
+                            player.sendMessage("§c\u00AB§7 " + cooldownManager.getCooldown(Intervene.class).get(0).getFrom().getName() + "'s " + ChatColor.YELLOW + "Intervene " + ChatColor.GRAY + "has expired!");
+                            cooldownManager.getCooldowns().remove(cooldownManager.getCooldown(Intervene.class).get(0));
+                            player.removeMetadata("INTERVENE", Warlords.getInstance());
+                        }
+                    }
                     this.addAbsorbed(-damageHealValue);
-                    attacker.addDamage(-damageHealValue);
+                    attacker.addAbsorbed(-damageHealValue);
                 }
-            } else if (arcaneShield > 0 && !Warlords.game.onSameTeam(this, attacker) && !HammerOfLight.standingInHammer(attacker.getPlayer(), player)) {
+            } else if (cooldownManager.getCooldown(ArcaneShield.class).size() > 0 && !Warlords.game.onSameTeam(this, attacker) && !HammerOfLight.standingInHammer(attacker.getPlayer(), player)) {
                 damageHealValue *= totalReduction;
                 //TODO check teammate heal
-                if (arcaneShieldHealth + damageHealValue < 0) {
-                    arcaneShield = 0;
-                    addHealth(attacker, ability, (arcaneShieldHealth + damageHealValue), (arcaneShieldHealth + damageHealValue), isCrit ? 100 : -1, 100);
+                if (((ArcaneShield) spec.getBlue()).getShieldHealth() + damageHealValue < 0) {
+                    cooldownManager.getCooldowns().remove(cooldownManager.getCooldown(ArcaneShield.class).get(0));
+                    addHealth(attacker, ability, (((ArcaneShield) spec.getBlue()).getShieldHealth() + damageHealValue), (((ArcaneShield) spec.getBlue()).getShieldHealth() + damageHealValue), isCrit ? 100 : -1, 100);
 
-                    addAbsorbed(-(arcaneShield + damageHealValue));
+                    addAbsorbed(-(((ArcaneShield) spec.getBlue()).getShieldHealth()));
                 } else {
                     if (ability.isEmpty()) {
                         player.sendMessage("" + ChatColor.RED + "\u00AB" + ChatColor.GRAY + " You absorbed " + attacker.getName() + "'s melee " + ChatColor.GRAY + "hit.");
@@ -786,8 +667,8 @@ public class WarlordsPlayer {
 
                     addAbsorbed(-damageHealValue);
                 }
-                arcaneShieldHealth += damageHealValue;
-                ((EntityLiving) ((CraftPlayer) player).getHandle()).setAbsorptionHearts((float) ((float) arcaneShieldHealth / (maxHealth * .5) * 20));
+                ((ArcaneShield) spec.getBlue()).addShieldHealth(damageHealValue);
+                ((EntityLiving) ((CraftPlayer) player).getHandle()).setAbsorptionHearts((float) (((ArcaneShield) spec.getBlue()).getShieldHealth() / (maxHealth * .5) * 20));
                 player.playEffect(EntityEffect.HURT);
             } else {
                 System.out.println(attacker.getName() + " hit " + name + " for " + damageHealValue);
@@ -795,9 +676,9 @@ public class WarlordsPlayer {
 
                 //Self heal
                 if (this == attacker) {
-                    if (berserkerWounded > 0) {
+                    if (cooldownManager.getCooldown(Strike.class).size() > 0 && attacker.getCooldownManager().getCooldown(Strike.class).get(0).getFrom().getSpec() instanceof Berserker) {
                         damageHealValue *= .65;
-                    } else if (defenderWounded > 0) {
+                    } else if (cooldownManager.getCooldown(Strike.class).size() > 0 && attacker.getCooldownManager().getCooldown(Strike.class).get(0).getFrom().getSpec() instanceof Defender) {
                         damageHealValue *= .75;
                     }
                     if (this.health + damageHealValue > this.maxHealth) {
@@ -827,7 +708,8 @@ public class WarlordsPlayer {
                             player.getVehicle().remove();
                         }
                         regenTimer = 10;
-                        if (lastStandDuration > 0 && !HammerOfLight.standingInHammer(attacker.getPlayer(), player)) {
+                        if (cooldownManager.getCooldown(LastStand.class).size() > 0 && !HammerOfLight.standingInHammer(attacker.getPlayer(), player)) {
+                            WarlordsPlayer lastStandedBy = cooldownManager.getCooldown(LastStand.class).get(0).getFrom();
                             if (lastStandedBy == this) {
                                 damageHealValue *= .5;
                             } else {
@@ -835,8 +717,7 @@ public class WarlordsPlayer {
                             }
                             //TODO multiple last stands? lastest person that last stands will over ride other dude
                             //HEALING FROM LASTSTAND
-                            if (lastStandedBy != this && lastStandedBy.getLastStandDuration() > 0) {
-                                System.out.println("===" + -damageHealValue);
+                            if (lastStandedBy != this && lastStandedBy.getCooldownManager().getCooldown(LastStand.class).get(0).getTimeLeft() > 0) {
                                 float healValue = damageHealValue * -1;
                                 if (isCrit)
                                     lastStandedBy.addHealth(lastStandedBy, "Last Stand", Math.round(healValue), Math.round(healValue), 100, 100);
@@ -875,20 +756,20 @@ public class WarlordsPlayer {
                             }
                         }
                         //REPENTANCE
-                        if (spec.getBlue().getName().equals("Repentance")) {
-                            repentanceCounter += damageHealValue * -1;
+                        if (spec instanceof Spiritguard) {
+                            ((Repentance) spec.getBlue()).addToPool(damageHealValue * -1);
                         }
-                        if (attacker.getSpec().getBlue().getName().equals("Repentance")) {
-                            if (attacker.getRepentanceDuration() > 0) {
-                                int healthToAdd = (int) (attacker.getRepentanceCounter() * .1) + 11;
+                        if (attacker.getSpec() instanceof Spiritguard) {
+                            if (attacker.getCooldownManager().getCooldown(Repentance.class).size() > 0) {
+                                int healthToAdd = (int) (((Repentance) attacker.getSpec().getBlue()).getPool() * .1) + 11;
                                 attacker.addHealth(attacker, "Repentance", healthToAdd, healthToAdd, -1, 100);
-                                attacker.setRepentanceCounter((int) (attacker.getRepentanceCounter() * .5));
+                                ((Repentance) attacker.getSpec().getBlue()).setPool(((Repentance) attacker.getSpec().getBlue()).getPool() * .5f);
                                 attacker.addEnergy(attacker, "Repentance", (int) (healthToAdd * .035));
                             }
                         }
 
                         //ORBS
-                        if (attacker.getOrbsOfLifeDuration() > 0 && !ability.isEmpty()) {
+                        if (attacker.getCooldownManager().getCooldown(OrbsOfLife.class).size() > 0 && !ability.isEmpty()) {
                             Location location = player.getLocation();
                             OrbsOfLife.Orb orb = new OrbsOfLife.Orb(((CraftWorld) player.getWorld()).getHandle(), location, attacker);
                             //TODO Add team whitelist
@@ -939,9 +820,9 @@ public class WarlordsPlayer {
                     //HEALING
                     else {
                         if (Warlords.game.onSameTeam(this, attacker)) {
-                            if (berserkerWounded > 0) {
+                            if (cooldownManager.getCooldown(Strike.class).size() > 0 && attacker.getCooldownManager().getCooldown(Strike.class).get(0).getFrom().getSpec() instanceof Berserker) {
                                 damageHealValue *= .65;
-                            } else if (defenderWounded > 0) {
+                            } else if (cooldownManager.getCooldown(Strike.class).size() > 0 && attacker.getCooldownManager().getCooldown(Strike.class).get(0).getFrom().getSpec() instanceof Defender) {
                                 damageHealValue *= .75;
                             }
                             if (this.health + damageHealValue > maxHealth) {
@@ -958,7 +839,7 @@ public class WarlordsPlayer {
                             }
                         }
                     }
-                    if (attacker.getBloodLustDuration() > 0 && damageHealValue < 0) {
+                    if (attacker.getCooldownManager().getCooldown(BloodLust.class).size() > 0 && damageHealValue < 0) {
                         attacker.addHealth(attacker, "Blood Lust", Math.round(damageHealValue * -.65f), Math.round(damageHealValue * -.65f), -1, 100);
                     }
                 }
@@ -972,11 +853,9 @@ public class WarlordsPlayer {
                     attacker.addDamage(-damageHealValue);
                     player.playEffect(EntityEffect.HURT);
                 }
-                if (this.health <= 0 && undyingArmyDuration == 0) {
+                if (this.health <= 0 && cooldownManager.getCooldown(UndyingArmy.class).size() == 0) {
                     dead = true;
-                    powerUpDamage = 0;
-                    powerUpEnergy = 0;
-                    powerUpSpeed = 0;
+
                     addGrave();
 
                     Zombie zombie = player.getWorld().spawn(player.getLocation(), Zombie.class);
@@ -1037,7 +916,7 @@ public class WarlordsPlayer {
             }
 
             if (ability.equals("")) {
-                if (attacker.getWindfuryDuration() > 0) {
+                if (attacker.getCooldownManager().getCooldown(Windfury.class).size() > 0) {
                     int windfuryActivate = (int) (Math.random() * 100);
                     if (attacker.isFirstProc()) {
                         attacker.setFirstProc(false);
@@ -1051,7 +930,7 @@ public class WarlordsPlayer {
                         if (health > 0)
                             addHealth(attacker, "Windfury Weapon", min, max, 25, 235);
                     }
-                } else if (attacker.getEarthlivingDuration() > 0) {
+                } else if (attacker.getCooldownManager().getCooldown(Earthliving.class).size() > 0) {
                     int earthlivingActivate = (int) (Math.random() * 100);
                     if (attacker.isFirstProc()) {
                         //self heal
@@ -1251,252 +1130,12 @@ public class WarlordsPlayer {
         this.hitCooldown = hitCooldown;
     }
 
-    public float getInfusion() {
-        return infusionDuration;
-    }
-
-    public void setInfusion(float infusionDuration) {
-        this.infusionDuration = infusionDuration;
-    }
-
-    public void setBreathSlowness(float breathSlownessDuration) {
-        this.breathSlownessDuration = breathSlownessDuration;
-    }
-
-    public float getBreathSlowness() {
-        return breathSlownessDuration;
-    }
-
-    public void setFrostbolt(float frostboltDuration) {
-        this.frostboltDuration = frostboltDuration;
-    }
-
-    public float getFrostbolt() {
-        return frostboltDuration;
-    }
-
-    public float getWrathDuration() {
-        return wrathDuration;
-    }
-
-    public void setWrathDuration(float wrathDuration) {
-        this.wrathDuration = wrathDuration;
-    }
-
-    public float getPresence() {
-        return presenceDuration;
-    }
-
-    public void setPresence(float presenceDuration) {
-        this.presenceDuration = presenceDuration;
-    }
-
-    public float getBloodLustDuration() {
-        return bloodLustDuration;
-    }
-
-    public void setBloodLustDuration(float bloodLustDuration) {
-        this.bloodLustDuration = bloodLustDuration;
-    }
-
-    public float getBerserk() {
-        return berserkDuration;
-    }
-
-    public void setBerserk(float berserkDuration) {
-        this.berserkDuration = berserkDuration;
-    }
-
-    public float getInterveneDuration() {
-        return interveneDuration;
-    }
-
-    public void setInterveneDuration(float interveneDuration) {
-        this.interveneDuration = interveneDuration;
-    }
-
-    public float getInterveneDamage() {
-        return interveneDamage;
-    }
-
-    public void setInterveneDamage(float interveneDamage) {
-        this.interveneDamage = interveneDamage;
-    }
-
-    public WarlordsPlayer getIntervened() {
-        return intervened;
-    }
-
-    public void setIntervened(WarlordsPlayer intervened) {
-        this.intervened = intervened;
-    }
-
-    public WarlordsPlayer getIntervenedBy() {
-        return intervenedBy;
-    }
-
-    public void setIntervenedBy(WarlordsPlayer intervenedBy) {
-        this.intervenedBy = intervenedBy;
-    }
-
-    public float getLastStandDuration() {
-        return lastStandDuration;
-    }
-
-    public void setLastStandDuration(float lastStandDuration) {
-        this.lastStandDuration = lastStandDuration;
-    }
-
-    public WarlordsPlayer getLastStandedBy() {
-        return lastStandedBy;
-    }
-
-    public void setLastStandedBy(WarlordsPlayer lastStandedBy) {
-        this.lastStandedBy = lastStandedBy;
-    }
-
-    public float getBerserkerWounded() {
-        return berserkerWounded;
-    }
-
-    public void setBerserkerWounded(float berserkerWounded) {
-        this.berserkerWounded = berserkerWounded;
-    }
-
-    public float getDefenderWounded() {
-        return defenderWounded;
-    }
-
-    public void setDefenderWounded(float defenderWounded) {
-        this.defenderWounded = defenderWounded;
-    }
-
-    public float getCrippled() {
-        return crippled;
-    }
-
-    public void setCrippled(float crippled) {
-        this.crippled = crippled;
-    }
-
-    public float getOrbsOfLifeDuration() {
-        return orbsOfLifeDuration;
-    }
-
-    public void setOrbsOfLifeDuration(float orbsOfLifeDuration) {
-        this.orbsOfLifeDuration = orbsOfLifeDuration;
-    }
-
-    public float getUndyingArmyDuration() {
-        return undyingArmyDuration;
-    }
-
-    public void setUndyingArmyDuration(float undyingArmyDuration) {
-        this.undyingArmyDuration = undyingArmyDuration;
-    }
-
     public boolean isUndyingArmyDead() {
         return undyingArmyDead;
     }
 
     public void setUndyingArmyDead(boolean undyingArmyDead) {
         this.undyingArmyDead = undyingArmyDead;
-    }
-
-    public WarlordsPlayer getUndyingArmyBy() {
-        return undyingArmyBy;
-    }
-
-    public void setUndyingArmyBy(WarlordsPlayer undyingArmyBy) {
-        this.undyingArmyBy = undyingArmyBy;
-    }
-
-    public float getWindfuryDuration() {
-        return windfuryDuration;
-    }
-
-    public void setWindfuryDuration(float windfuryDuration) {
-        this.windfuryDuration = windfuryDuration;
-    }
-
-    public float getEarthlivingDuration() {
-        return earthlivingDuration;
-    }
-
-    public void setEarthlivingDuration(float earthlivingDuration) {
-        this.earthlivingDuration = earthlivingDuration;
-    }
-
-    public float getRepentanceDuration() {
-        return repentanceDuration;
-    }
-
-    public void setRepentanceDuration(float repentanceDuration) {
-        this.repentanceDuration = repentanceDuration;
-    }
-
-    public float getRepentanceCounter() {
-        return repentanceCounter;
-    }
-
-    public void setRepentanceCounter(float repentanceCounter) {
-        this.repentanceCounter = repentanceCounter;
-    }
-
-    public float getArcaneShield() {
-        return arcaneShield;
-    }
-
-    public void setArcaneShield(float arcaneShield) {
-        this.arcaneShield = arcaneShield;
-    }
-
-    public float getArcaneShieldHealth() {
-        return arcaneShieldHealth;
-    }
-
-    public void setArcaneShieldHealth(float arcaneShieldHealth) {
-        this.arcaneShieldHealth = arcaneShieldHealth;
-    }
-
-    public float getInferno() {
-        return inferno;
-    }
-
-    public void setInferno(float inferno) {
-        this.inferno = inferno;
-    }
-
-    public float getIceBarrier() {
-        return iceBarrierDuration;
-    }
-
-    public void setIceBarrier(float iceBarrierDuration) {
-        this.iceBarrierDuration = iceBarrierDuration;
-    }
-
-    public float getIceBarrierSlowness() {
-        return iceBarrierSlownessDuration;
-    }
-
-    public void setIceBarrierSlowness(float iceBarrierSlownessDuration) {
-        this.iceBarrierSlownessDuration = iceBarrierSlownessDuration;
-    }
-
-    public float getPowerUpDamage() {
-        return powerUpDamage;
-    }
-
-    public void setPowerUpDamage(float powerUpDamage) {
-        this.powerUpDamage = powerUpDamage;
-    }
-
-    public float getPowerUpEnergy() {
-        return powerUpEnergy;
-    }
-
-    public void setPowerUpEnergy(float powerUpEnergy) {
-        this.powerUpEnergy = powerUpEnergy;
     }
 
     public boolean isPowerUpHeal() {
@@ -1507,44 +1146,8 @@ public class WarlordsPlayer {
         this.powerUpHeal = powerUpHeal;
     }
 
-    public float getPowerUpSpeed() {
-        return powerUpSpeed;
-    }
-
-    public void setPowerUpSpeed(float powerUpSpeed) {
-        this.powerUpSpeed = powerUpSpeed;
-    }
-
-    public float getChainLightning() {
-        return chainLightning;
-    }
-
-    public void setChainLightning(float chainLightning) {
-        this.chainLightning = chainLightning;
-    }
-
-    public float getChainLightningCooldown() {
-        return chainLightningCooldown;
-    }
-
-    public void setChainLightningCooldown(float chainLightningCooldown) {
-        this.chainLightningCooldown = chainLightningCooldown;
-    }
-
-    public float getSpiritLink() {
-        return spiritLinkDuration;
-    }
-
-    public void setSpiritLink(float spiritLinkDuration) {
-        this.spiritLinkDuration = spiritLinkDuration;
-    }
-
     public List<Soulbinding.SoulBoundPlayer> getSoulBindedPlayers() {
         return soulBindedPlayers;
-    }
-
-    public void setSoulBindedPlayers(List<Soulbinding.SoulBoundPlayer> soulBindedPlayers) {
-        this.soulBindedPlayers = soulBindedPlayers;
     }
 
     public boolean hasBoundPlayer(WarlordsPlayer warlordsPlayer) {
@@ -1580,30 +1183,6 @@ public class WarlordsPlayer {
             }
         }
         return false;
-    }
-
-    public float getSoulBindCooldown() {
-        return soulBindCooldown;
-    }
-
-    public void setSoulBindCooldown(float soulBindCooldown) {
-        this.soulBindCooldown = soulBindCooldown;
-    }
-
-    public float getCharged() {
-        return charged;
-    }
-
-    public void setCharged(float charged) {
-        this.charged = charged;
-    }
-
-    public Location getChargeLocation() {
-        return chargeLocation;
-    }
-
-    public void setChargeLocation(Location chargeLocation) {
-        this.chargeLocation = chargeLocation;
     }
 
     public int[] getKills() {
@@ -1791,5 +1370,7 @@ public class WarlordsPlayer {
         this.dead = dead;
     }
 
-    public List<Location> getTrail() { return trail; }
+    public List<Location> getTrail() {
+        return trail;
+    }
 }

@@ -1,6 +1,7 @@
 package com.ebicep.warlords.events;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.classes.abilties.IceBarrier;
 import com.ebicep.warlords.classes.abilties.Soulbinding;
 import com.ebicep.warlords.classes.abilties.UndyingArmy;
 import com.ebicep.warlords.classes.shaman.specs.spiritguard.Spiritguard;
@@ -136,7 +137,7 @@ public class WarlordsEvents implements Listener {
                         warlordsPlayerAttacker.setHitCooldown(12);
                         warlordsPlayerAttacker.subtractEnergy(warlordsPlayerAttacker.getSpec().getEnergyOnHit() * -1);
 
-                        if (warlordsPlayerAttacker.getSpec() instanceof Spiritguard && warlordsPlayerAttacker.getSoulBindCooldown() > 0) {
+                        if (warlordsPlayerAttacker.getSpec() instanceof Spiritguard && warlordsPlayerAttacker.getCooldownManager().getCooldown(Soulbinding.class).size() > 0) {
                             if (warlordsPlayerAttacker.hasBoundPlayer(warlordsPlayerVictim)) {
                                 for (Soulbinding.SoulBoundPlayer soulBindedPlayer : warlordsPlayerAttacker.getSoulBindedPlayers()) {
                                     if (soulBindedPlayer.getBoundPlayer() == warlordsPlayerVictim) {
@@ -156,10 +157,8 @@ public class WarlordsEvents implements Listener {
                         warlordsPlayerVictim.addHealth(warlordsPlayerAttacker, "", -132, -179, 25, 200);
                     }
 
-                    if (warlordsPlayerVictim.getIceBarrier() != 0) {
-                        if (warlordsPlayerAttacker.getIceBarrierSlowness() == 0) {
-                            warlordsPlayerAttacker.setIceBarrierSlowness(2 * 20 - 10);
-                        }
+                    if (warlordsPlayerVictim.getCooldownManager().getCooldown(IceBarrier.class).size() > 0) {
+                        warlordsPlayerAttacker.getSpeed().changeCurrentSpeed("Ice Barrier", -20, 2 * 20);
                     }
                 }
 
