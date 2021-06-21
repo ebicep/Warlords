@@ -1,5 +1,6 @@
 package com.ebicep.warlords.util;
 
+import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.PlayerClass;
 import com.ebicep.warlords.classes.mage.AbstractMage;
 import com.ebicep.warlords.classes.paladin.AbstractPaladin;
@@ -13,7 +14,9 @@ import org.bukkit.inventory.meta.LeatherArmorMeta;
 
 public class ArmorManager {
 
-    public static void resetArmor(Player p, PlayerClass playerClass, Team team) {
+    public static void resetArmor(WarlordsPlayer wp, Player p) {
+        Team team = wp.getTeam();
+        PlayerClass playerClass = wp.getSpec();
         ItemStack[] armor = new ItemStack[4];
 
         if (team == Team.BLUE) {

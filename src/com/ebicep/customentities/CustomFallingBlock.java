@@ -1,17 +1,17 @@
 package com.ebicep.customentities;
 
+import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
 import org.bukkit.entity.FallingBlock;
-import org.bukkit.entity.Player;
 
 public class CustomFallingBlock {
     private FallingBlock customFallingBlock;
     private double yLevel;
-    private Player owner;
+    private WarlordsPlayer owner;
     private AbstractAbility ability;
     private int ticksLived = 0;
 
-    public CustomFallingBlock(FallingBlock customFallingBlock, double yLevel, Player owner, AbstractAbility ability) {
+    public CustomFallingBlock(FallingBlock customFallingBlock, double yLevel, WarlordsPlayer owner, AbstractAbility ability) {
         this.customFallingBlock = customFallingBlock;
         this.yLevel = yLevel;
         this.owner = owner;
@@ -42,11 +42,11 @@ public class CustomFallingBlock {
         this.customFallingBlock = customFallingBlock;
     }
 
-    public Player getOwner() {
+    public WarlordsPlayer getOwner() {
         return owner;
     }
 
-    public void setOwner(Player owner) {
+    public void setOwner(WarlordsPlayer owner) {
         this.owner = owner;
     }
 

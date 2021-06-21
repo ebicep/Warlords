@@ -2,12 +2,11 @@ package com.ebicep.warlords.classes.paladin.specs.crusader;
 
 import com.ebicep.warlords.classes.abilties.*;
 import com.ebicep.warlords.classes.paladin.AbstractPaladin;
-import org.bukkit.entity.Player;
 
 public class Crusader extends AbstractPaladin {
 
-    public Crusader(Player player) {
-        super(player, 6850, 305, 20,
+    public Crusader() {
+        super(6850, 305, 20,
                 new Strike("Crusader's Strike", -326, -441, 0, 90, 25, 175,
                         "§7Strike the targeted enemy player,\n" +
                                 "§7causing §c%dynamic value% §7- §c%dynamic.value% damage\n" +

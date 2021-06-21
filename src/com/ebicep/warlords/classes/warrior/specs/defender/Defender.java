@@ -2,12 +2,11 @@ package com.ebicep.warlords.classes.warrior.specs.defender;
 
 import com.ebicep.warlords.classes.abilties.*;
 import com.ebicep.warlords.classes.warrior.AbstractWarrior;
-import org.bukkit.entity.Player;
 
 public class Defender extends AbstractWarrior {
 
-    public Defender(Player player) {
-        super(player, 7400, 305, 10,
+    public Defender() {
+        super(7400, 305, 10,
                 new Strike("Wounding Strike Defender", -498, -667, 0, 100, 20, 200,
                         "§7Strike the targeted enemy player,\n" +
                                 "§7causing §c%dynamic.value% §7- §c%dynamic.value% §7damage\n" +
@@ -19,12 +18,12 @@ public class Defender extends AbstractWarrior {
                         "§7Send a wave of incredible force forward\n" +
                                 "§7that deals §c%dynamic.value% §7- §c%dynamic.value% §7damage\n" +
                                 "§7to all enemies hit and knocks them back\n" +
-                                "§7slightly.", player),
+                                "§7slightly."),
 
                 new GroundSlam("Ground Slam", -326, -441, 7, 0, 15, 200,
                         "§7Slam the ground, creating a shockwave\n" +
                                 "§7around you that deals §c%dynamic.value% §7- §c%dynamic.value%\n" +
-                                "§7damage and knocks enemies back slightly.", player),
+                                "§7damage and knocks enemies back slightly."),
 
                 new Intervene(),
                 new LastStand());

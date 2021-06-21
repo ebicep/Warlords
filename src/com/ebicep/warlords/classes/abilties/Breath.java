@@ -5,14 +5,11 @@ import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.util.Matrix4d;
 import com.ebicep.warlords.util.ParticleEffect;
-import org.bukkit.GameMode;
+import com.ebicep.warlords.util.PlayerFilter;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
-
-import java.util.List;
 
 public class Breath extends AbstractAbility {
 
@@ -21,40 +18,35 @@ public class Breath extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(Player player) {
-        WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
+    public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
 
         if (name.contains("Water")) {
             warlordsPlayer.addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
         }
 
         Vector viewDirection = player.getLocation().getDirection();
-        List<Entity> near = player.getNearbyEntities(6.0D, 3.5D, 6.0D);
-        for (Entity entity : near) {
-            if (entity instanceof Player && ((Player) entity).getGameMode() != GameMode.SPECTATOR) {
-                Player nearPlayer = (Player) entity;
-                Vector direction = nearPlayer.getLocation().subtract(player.getLocation()).toVector().normalize();
+        PlayerFilter.entitiesAround(player, 6.0D, 3.5D, 6.0D)
+            .forEach(target -> {
+                Vector direction = target.getLocation().subtract(player.getLocation()).toVector().normalize();
                 if (viewDirection.dot(direction) > .7) {
                     if (name.contains("Water")) {
-                        if (Warlords.game.onSameTeam(warlordsPlayer, Warlords.getPlayer(nearPlayer))) {
-                            Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+                        if (warlordsPlayer.isTeammate(target)) {
+                            target.addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
                         } else {
                             Location eye = player.getEyeLocation();
                             eye.setY(eye.getY() + .7);
 
-                            final Location loc = entity.getLocation();
+                            final Location loc = target.getLocation();
                             final Vector v = player.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-0.85).setY(0.3);
 
-                            entity.setVelocity(v);;
+                            target.setVelocity(v);
                         }
-                    } else if (name.contains("Freezing") && !Warlords.game.onSameTeam(warlordsPlayer, Warlords.getPlayer(nearPlayer))) {
-                        Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
-                        Warlords.getPlayer(nearPlayer).getSpeed().changeCurrentSpeed("Freezing Breath", -35, 4 * 20);
+                    } else if (name.contains("Freezing") && warlordsPlayer.isEnemy(target)) {
+                        target.addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+                        target.getSpeed().addSpeedModifier("Freezing Breath", -35, 4 * 20);
                     }
                 }
-            }
-
-        }
+            });
         warlordsPlayer.subtractEnergy(energyCost);
 
         if (name.contains("Water")) {
@@ -86,16 +78,16 @@ public class Breath extends AbstractAbility {
                         double angle = Math.toRadians(i * 90) + animationTimer * 0.15;
                         double width = animationTimer * 0.3;
                         ParticleEffect.DRIP_WATER.display(0, 0, 0, 0, 1,
-                                center.translateVector(player.getWorld(), animationTimer / 2D, Math.sin(angle) * width, Math.cos(angle) * width), 500);
+                            center.translateVector(player.getWorld(), animationTimer / 2D, Math.sin(angle) * width, Math.cos(angle) * width), 500);
                         ParticleEffect.ENCHANTMENT_TABLE.display(0, 0, 0, 0, 1,
-                                center.translateVector(player.getWorld(), animationTimer / 2D, Math.sin(angle) * width, Math.cos(angle) * width), 500);
+                            center.translateVector(player.getWorld(), animationTimer / 2D, Math.sin(angle) * width, Math.cos(angle) * width), 500);
                         ParticleEffect.VILLAGER_HAPPY.display(0, 0, 0, 0, 1,
-                                center.translateVector(player.getWorld(), animationTimer / 2D, Math.sin(angle) * width, Math.cos(angle) * width), 500);
+                            center.translateVector(player.getWorld(), animationTimer / 2D, Math.sin(angle) * width, Math.cos(angle) * width), 500);
                     }
 
                     animationTimer++;
                 }
-            }.runTaskTimer(Warlords.getInstance(),0, 1);
+            }.runTaskTimer(Warlords.getInstance(), 0, 1);
 
         } else if (name.contains("Freezing")) {
             for (Player player1 : player.getWorld().getPlayers()) {
@@ -131,7 +123,7 @@ public class Breath extends AbstractAbility {
 
                     animationTimer++;
                 }
-            }.runTaskTimer(Warlords.getInstance(),0, 1);
+            }.runTaskTimer(Warlords.getInstance(), 0, 1);
         }
     }
 }

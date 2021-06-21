@@ -2,6 +2,7 @@ package com.ebicep.warlords.maps;
 
 import java.util.Arrays;
 import java.util.List;
+import javax.annotation.Nonnull;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
@@ -273,15 +274,21 @@ public enum GameMap {
 
     public Location getDamagePowerupBlue() { return damagePowerupBlue; }
     public Location getDamagePowerupRed() { return damagePowerupRed; }
+    public Location getDamagePowerup(@Nonnull Team team) { return team == Team.RED  ? damagePowerupRed : damagePowerupBlue; }
     public Location getSpeedPowerupBlue() { return speedPowerupBlue; }
     public Location getSpeedPowerupRed() { return speedPowerupRed; }
+    public Location getSpeedPowerup(@Nonnull Team team) { return team == Team.RED  ? speedPowerupRed : speedPowerupBlue; }
     public Location getHealingPowerupBlue() { return healingPowerupBlue; }
     public Location getHealingPowerupRed() { return healingPowerupRed; }
+    public Location getHealingPowerup(@Nonnull Team team) { return team == Team.RED  ? healingPowerupRed : healingPowerupBlue; }
     public Location getBlueLobbySpawnPoint() { return blueLobbySpawnPoint; }
     public Location getRedLobbySpawnPoint() { return redLobbySpawnPoint; }
+    public Location getLobbySpawnPoint(@Nonnull Team team) { return team == Team.RED  ? redLobbySpawnPoint : blueLobbySpawnPoint; }
     public Location getBlueRespawn() { return blueRespawn; }
     public Location getRedRespawn() { return redRespawn; }
+    public Location getRespawn(@Nonnull Team team) { return team == Team.RED  ? redRespawn : blueRespawn; }
     public Location getBlueFlag() { return blueFlag; }
     public Location getRedFlag() { return redFlag; }
+    public Location getFlag(@Nonnull Team team) { return team == Team.RED  ? redFlag : blueFlag; }
     public List<Cuboid> getFenceGates() { return fenceGates; }
 }

@@ -3,8 +3,7 @@ package com.ebicep.warlords.classes.abilties;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
-import com.ebicep.warlords.util.Utils;
-import org.bukkit.GameMode;
+import com.ebicep.warlords.util.PlayerFilter;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
@@ -33,7 +32,7 @@ public class FallenSouls extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(Player player) {
+    public void onActivate(WarlordsPlayer wp, Player player) {
         Location location = player.getLocation().add(player.getLocation().getDirection().multiply(-1));
         ArmorStand fallenSoulLeft = player.getWorld().spawn(location.subtract(0, .5, 0), ArmorStand.class);
         Location locationLeft = player.getLocation().add(player.getLocation().getDirection().multiply(-1));
@@ -51,7 +50,7 @@ public class FallenSouls extends AbstractAbility {
 
         FallenSoul fallenSoul = new FallenSoul(Warlords.getPlayer(player), fallenSoulLeft, fallenSoulMiddle, fallenSoulRight, player.getLocation(), player.getLocation(), player.getLocation(), locationLeft.getDirection(), locationMiddle.getDirection(), locationRight.getDirection(), this);
 
-        Warlords.getPlayer(player).subtractEnergy(energyCost);
+        wp.subtractEnergy(energyCost);
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "shaman.lightningbolt.impact", 2, 1.5f);
@@ -78,9 +77,9 @@ public class FallenSouls extends AbstractAbility {
                 List<Entity> nearMiddle = (List<Entity>) middleSoul.getWorld().getNearbyEntities(middleSoul.getLocation().clone().add(0, 2, 0), fallenSoulHitBox, 0, fallenSoulHitBox);
                 List<Entity> nearRight = (List<Entity>) rightSoul.getWorld().getNearbyEntities(rightSoul.getLocation().clone().add(0, 2, 0), fallenSoulHitBox, 0, fallenSoulHitBox);
 
-                damageNearByPlayers(nearLeft, player, fallenSoul);
-                damageNearByPlayers(nearMiddle, player, fallenSoul);
-                damageNearByPlayers(nearRight, player, fallenSoul);
+                damageNearByPlayers(nearLeft, wp, player, fallenSoul);
+                damageNearByPlayers(nearMiddle, wp, player, fallenSoul);
+                damageNearByPlayers(nearRight, wp, player, fallenSoul);
 
                 if (!fallenSoul.isLeftRemoved() && leftSoul.getLocation().getWorld().getBlockAt(leftSoul.getLocation().clone().add(0, 2, 0)).getType() != Material.AIR || fallenSoul.getFallenSoulLeft().getTicksLived() > 50 / fallenSoulSpeed * 1.2) {
                     //TODO add explosion thingy
@@ -105,52 +104,47 @@ public class FallenSouls extends AbstractAbility {
         }.runTaskTimer(Warlords.getInstance(), 0, 0);
     }
 
-    public void damageNearByPlayers(List<Entity> near, Player player, FallenSoul fallenSoul) {
-        for (Entity entity : near) {
-            if (entity instanceof Player) {
-                WarlordsPlayer warlordsPlayer = Warlords.getPlayer((Player) entity);
-                if (!fallenSoul.getPlayersHit().contains(warlordsPlayer) && warlordsPlayer.getPlayer().getGameMode() != GameMode.SPECTATOR && !Warlords.game.onSameTeam((Player) entity, player)) {
-                    warlordsPlayer.addHealth(fallenSoul.getShooter(), fallenSoul.getFallenSouls().getName(), fallenSoul.getFallenSouls().getMinDamageHeal(), fallenSoul.getFallenSouls().getMaxDamageHeal(), fallenSoul.getFallenSouls().getCritChance(), fallenSoul.getFallenSouls().getCritMultiplier());
-                    fallenSoul.getPlayersHit().add(warlordsPlayer);
-                    fallenSoul.getShooter().getSpec().getRed().subtractCooldown(2);
-                    fallenSoul.getShooter().updateRedItem();
-                    if (fallenSoul.getShooter().getSoulBindCooldown() != 0 && fallenSoul.getShooter().hasBoundPlayerSoul(warlordsPlayer)) {
-                        fallenSoul.getShooter().getSpec().getRed().subtractCooldown(1.5F);
-                        fallenSoul.getShooter().getSpec().getPurple().subtractCooldown(1.5F);
-                        fallenSoul.getShooter().getSpec().getBlue().subtractCooldown(1.5F);
-                        fallenSoul.getShooter().getSpec().getOrange().subtractCooldown(1.5F);
+    public void damageNearByPlayers(List<Entity> near, WarlordsPlayer wp, Player player, FallenSoul fallenSoul) {
+        PlayerFilter.entities(near)
+            .filter(p -> !fallenSoul.getPlayersHit().contains(p))
+            .aliveEnemiesOf(wp)
+            .forEach((warlordsPlayer) -> {
+                warlordsPlayer.addHealth(fallenSoul.getShooter(), fallenSoul.getFallenSouls().getName(), fallenSoul.getFallenSouls().getMinDamageHeal(), fallenSoul.getFallenSouls().getMaxDamageHeal(), fallenSoul.getFallenSouls().getCritChance(), fallenSoul.getFallenSouls().getCritMultiplier());
+                fallenSoul.getPlayersHit().add(warlordsPlayer);
+                fallenSoul.getShooter().getSpec().getRed().subtractCooldown(2);
+                fallenSoul.getShooter().updateRedItem(player);
+                if (fallenSoul.getShooter().getSoulBindCooldown() != 0 && fallenSoul.getShooter().hasBoundPlayerSoul(warlordsPlayer)) {
+                    fallenSoul.getShooter().getSpec().getRed().subtractCooldown(1.5F);
+                    fallenSoul.getShooter().getSpec().getPurple().subtractCooldown(1.5F);
+                    fallenSoul.getShooter().getSpec().getBlue().subtractCooldown(1.5F);
+                    fallenSoul.getShooter().getSpec().getOrange().subtractCooldown(1.5F);
 
-                        fallenSoul.getShooter().updateRedItem();
-                        fallenSoul.getShooter().updatePurpleItem();
-                        fallenSoul.getShooter().updateBlueItem();
-                        fallenSoul.getShooter().updateOrangeItem();
+                    fallenSoul.getShooter().updateRedItem(player);
+                    fallenSoul.getShooter().updatePurpleItem(player);
+                    fallenSoul.getShooter().updateBlueItem(player);
+                    fallenSoul.getShooter().updateOrangeItem(player);
 
-                        List<Entity> teammatesNear = player.getNearbyEntities(2, 2, 2);
-                        teammatesNear = Utils.filterOnlyTeammates(teammatesNear, player);
-                        int counter = 0;
-                        for (Entity entity1 : teammatesNear) {
-                            if (entity1 instanceof Player && ((Player) entity).getGameMode() != GameMode.SPECTATOR) {
-                                WarlordsPlayer warlordsPlayer1 = Warlords.getPlayer((Player) entity1);
-                                warlordsPlayer1.getSpec().getRed().subtractCooldown(.5F);
-                                warlordsPlayer1.getSpec().getPurple().subtractCooldown(.5F);
-                                warlordsPlayer1.getSpec().getBlue().subtractCooldown(.5F);
-                                warlordsPlayer1.getSpec().getOrange().subtractCooldown(.5F);
+                    PlayerFilter.entitiesAround(player, 2, 2, 2)
+                        .aliveTeammatesOf(wp)
+                        .closestFirst(player)
+                        .limit(2)
+                        .forEach((warlordsPlayer1) -> {
+                        
+                            warlordsPlayer1.getSpec().getRed().subtractCooldown(.5F);
+                            warlordsPlayer1.getSpec().getPurple().subtractCooldown(.5F);
+                            warlordsPlayer1.getSpec().getBlue().subtractCooldown(.5F);
+                            warlordsPlayer1.getSpec().getOrange().subtractCooldown(.5F);
 
-                                warlordsPlayer1.updateRedItem();
-                                warlordsPlayer1.updatePurpleItem();
-                                warlordsPlayer1.updateBlueItem();
-                                warlordsPlayer1.updateOrangeItem();
-
-                                counter++;
-                                if (counter == 2) {
-                                    break;
-                                }
+                            if(warlordsPlayer1.getEntity() instanceof Player) {
+                                Player p = (Player) warlordsPlayer1.getEntity();
+                                warlordsPlayer1.updateRedItem(p);
+                                warlordsPlayer1.updatePurpleItem(p);
+                                warlordsPlayer1.updateBlueItem(p);
+                                warlordsPlayer1.updateOrangeItem(p);
                             }
-                        }
-                    }
+                        });
                 }
-            }
-        }
+            });
     }
 
 

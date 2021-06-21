@@ -8,8 +8,6 @@ import com.ebicep.warlords.util.ParticleEffect;
 import java.util.function.DoubleUnaryOperator;
 import javax.annotation.Nonnull;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Effect;
 import org.bukkit.Location;
 
 public class CircumferenceEffect extends AbstractEffectPlayer<CircleEffect> {

@@ -2,11 +2,10 @@ package com.ebicep.warlords.classes.mage.specs.aquamancer;
 
 import com.ebicep.warlords.classes.abilties.*;
 import com.ebicep.warlords.classes.mage.AbstractMage;
-import org.bukkit.entity.Player;
 
 public class Aquamancer extends AbstractMage {
-    public Aquamancer(Player player) {
-        super(player, 5200, 355, 20, 14, 0,
+    public Aquamancer() {
+        super(5200, 355, 20, 14, 0,
                 new Projectile("Water Bolt", 394, 542, 0, 85, 20, 175,
                         "§7Shoot a bolt of water that will burst\n" +
                         "§7for §c%dynamic.value% §7- §c%dynamic.value% §7damage and restore\n" +

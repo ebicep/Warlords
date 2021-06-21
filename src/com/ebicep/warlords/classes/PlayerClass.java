@@ -1,15 +1,13 @@
 package com.ebicep.warlords.classes;
 
-import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.maps.Game;
+import com.ebicep.warlords.WarlordsPlayer;
+import javax.annotation.Nonnull;
 import net.minecraft.server.v1_8_R3.PacketPlayOutAnimation;
-import org.bukkit.GameMode;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 public abstract class PlayerClass {
 
-    protected Player player;
     protected int maxHealth;
     protected int maxEnergy;
     protected int energyPerSec;
@@ -23,8 +21,7 @@ public abstract class PlayerClass {
     protected String className;
     protected String classNameShort;
 
-    public PlayerClass(Player player, int maxHealth, int maxEnergy, int energyPerSec, int energyOnHit, int damageResistance, AbstractAbility weapon, AbstractAbility red, AbstractAbility purple, AbstractAbility blue, AbstractAbility orange) {
-        this.player = player;
+    public PlayerClass(int maxHealth, int maxEnergy, int energyPerSec, int energyOnHit, int damageResistance, AbstractAbility weapon, AbstractAbility red, AbstractAbility purple, AbstractAbility blue, AbstractAbility orange) {
         this.maxHealth = maxHealth;
         this.maxEnergy = maxEnergy;
         this.energyPerSec = energyPerSec;
@@ -50,63 +47,64 @@ public abstract class PlayerClass {
         }
     }
 
-    public void onRightClick(Player player) {
-        if (Warlords.game.getState() == Game.State.GAME && player.getGameMode() != GameMode.SPECTATOR) {
-            if (player.getInventory().getHeldItemSlot() == 0) {
-                if (player.getLevel() >= weapon.getEnergyCost()) {
-                    weapon.onActivate(player);
-                    if (!weapon.getName().contains("Strike"))
-                        sendRightClickPacket(player);
-                }
-            } else if (player.getInventory().getHeldItemSlot() == 1) {
-                if (red.getCurrentCooldown() == 0 && player.getLevel() >= red.getEnergyCost()) {
-                    red.onActivate(player);
-                    if (!red.getName().contains("Chain") && !red.getName().contains("Link")) {
-                        red.setCurrentCooldown(red.cooldown);
-                        sendRightClickPacket(player);
-                    }
-
-                }
-            } else if (player.getInventory().getHeldItemSlot() == 2) {
-                if (purple.getCurrentCooldown() == 0 && player.getLevel() >= purple.getEnergyCost()) {
-                    purple.onActivate(player);
-                    purple.setCurrentCooldown(purple.cooldown);
+    public void onRightClick(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
+        if (wp.isDeath()) {
+            return;
+        }
+        if (player.getInventory().getHeldItemSlot() == 0) {
+            if (player.getLevel() >= weapon.getEnergyCost()) {
+                weapon.onActivate(wp, player);
+                if (!weapon.getName().contains("Strike"))
+                    sendRightClickPacket(player);
+            }
+        } else if (player.getInventory().getHeldItemSlot() == 1) {
+            if (red.getCurrentCooldown() == 0 && player.getLevel() >= red.getEnergyCost()) {
+                red.onActivate(wp, player);
+                if (!red.getName().contains("Chain") && !red.getName().contains("Link")) {
+                    red.setCurrentCooldown(red.cooldown);
                     sendRightClickPacket(player);
                 }
-            } else if (player.getInventory().getHeldItemSlot() == 3) {
-                if (blue.getCurrentCooldown() == 0 && player.getLevel() >= blue.getEnergyCost()) {
-                    blue.onActivate(player);
-                    if (!blue.getName().contains("Chain") && !blue.getName().contains("Intervene")) {
-                        blue.setCurrentCooldown(blue.cooldown);
-                        sendRightClickPacket(player);
-                    }
-                }
-            } else if (player.getInventory().getHeldItemSlot() == 4) {
-                if (orange.getCurrentCooldown() == 0 && player.getLevel() >= orange.getEnergyCost()) {
-                    orange.onActivate(player);
-                    orange.setCurrentCooldown(orange.cooldown);
+
+            }
+        } else if (player.getInventory().getHeldItemSlot() == 2) {
+            if (purple.getCurrentCooldown() == 0 && player.getLevel() >= purple.getEnergyCost()) {
+                purple.onActivate(wp, player);
+                purple.setCurrentCooldown(purple.cooldown);
+                sendRightClickPacket(player);
+            }
+        } else if (player.getInventory().getHeldItemSlot() == 3) {
+            if (blue.getCurrentCooldown() == 0 && player.getLevel() >= blue.getEnergyCost()) {
+                blue.onActivate(wp, player);
+                if (!blue.getName().contains("Chain") && !blue.getName().contains("Intervene")) {
+                    blue.setCurrentCooldown(blue.cooldown);
                     sendRightClickPacket(player);
                 }
             }
-
-            if (player.getVehicle() != null) {
-                player.getVehicle().remove();
+        } else if (player.getInventory().getHeldItemSlot() == 4) {
+            if (orange.getCurrentCooldown() == 0 && player.getLevel() >= orange.getEnergyCost()) {
+                orange.onActivate(wp, player);
+                orange.setCurrentCooldown(orange.cooldown);
+                sendRightClickPacket(player);
             }
+        }
+
+        if (player.getVehicle() != null) {
+            player.getVehicle().remove();
         }
     }
 
-    public void onRightClickHotKey(Player player, int slot) {
-        if (Warlords.game.getState() == Game.State.GAME && player.getGameMode() != GameMode.SPECTATOR) {
+    public void onRightClickHotKey(WarlordsPlayer wp, Player player, int slot) {
+        if (!wp.isDeath()) {
 
             if (slot == 0) {
                 if (player.getLevel() >= weapon.getEnergyCost()) {
-                    weapon.onActivate(player);
+                    weapon.onActivate(wp, player);
                     if (!weapon.getName().contains("Strike"))
                         sendRightClickPacket(player);
                 }
             } else if (slot == 1) {
                 if (red.getCurrentCooldown() == 0 && player.getLevel() >= red.getEnergyCost()) {
-                    red.onActivate(player);
+                    red.onActivate(wp, player);
                     if (!red.getName().contains("Chain") && !red.getName().contains("Link")) {
                         red.setCurrentCooldown(red.cooldown);
                         sendRightClickPacket(player);
@@ -114,13 +112,13 @@ public abstract class PlayerClass {
                 }
             } else if (slot == 2) {
                 if (purple.getCurrentCooldown() == 0 && player.getLevel() >= purple.getEnergyCost()) {
-                    purple.onActivate(player);
+                    purple.onActivate(wp, player);
                     purple.setCurrentCooldown(purple.cooldown);
                     sendRightClickPacket(player);
                 }
             } else if (slot == 3) {
                 if (blue.getCurrentCooldown() == 0 && player.getLevel() >= blue.getEnergyCost()) {
-                    blue.onActivate(player);
+                    blue.onActivate(wp, player);
                     if (!blue.getName().contains("Chain") && !blue.getName().contains("Intervene")) {
                         blue.setCurrentCooldown(blue.cooldown);
                         sendRightClickPacket(player);
@@ -128,7 +126,7 @@ public abstract class PlayerClass {
                 }
             } else if (slot == 4) {
                 if (orange.getCurrentCooldown() == 0 && player.getLevel() >= orange.getEnergyCost()) {
-                    orange.onActivate(player);
+                    orange.onActivate(wp, player);
                     orange.setCurrentCooldown(orange.cooldown);
                     sendRightClickPacket(player);
                 }
@@ -144,14 +142,6 @@ public abstract class PlayerClass {
     private void sendRightClickPacket(Player player) {
         PacketPlayOutAnimation playOutAnimation = new PacketPlayOutAnimation(((CraftPlayer) player).getHandle(), 0);
         ((CraftPlayer) player).getHandle().playerConnection.sendPacket(playOutAnimation);
-    }
-
-    public Player getPlayer() {
-        return player;
-    }
-
-    public void setPlayer(Player player) {
-        this.player = player;
     }
 
     public int getMaxHealth() {

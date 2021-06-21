@@ -1,6 +1,6 @@
 package com.ebicep.warlords.classes.abilties;
 
-import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.effects.circle.AreaEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
@@ -11,15 +11,13 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
 
 import org.bukkit.Bukkit;
 
 public class DamageHealCircle {
-
-    private Player player;
+    private final WarlordsPlayer warlordsPlayer;
     private Location location;
     private int radius;
     private int duration;
@@ -31,8 +29,8 @@ public class DamageHealCircle {
     private ArmorStand hammer;
     private final CircleEffect circle;
 
-    public DamageHealCircle(Player player, Location location, int radius, int duration, int minDamage, int maxDamage, int critChance, int critMultiplier, String name) {
-        this.player = player;
+    public DamageHealCircle(WarlordsPlayer warlordsPlayer, Location location, int radius, int duration, int minDamage, int maxDamage, int critChance, int critMultiplier, String name) {
+        this.warlordsPlayer = warlordsPlayer;
         this.location = location;
         for (int i = 0; i < 10; i++) {
             if (location.getWorld().getBlockAt(location.clone().add(0, -1, 0)).getType() == Material.AIR) {
@@ -46,8 +44,8 @@ public class DamageHealCircle {
         this.critChance = critChance;
         this.critMultiplier = critMultiplier;
         this.name = name;
-        this.circle = new CircleEffect(Warlords.game, Warlords.game.getPlayerTeam(player), location, radius);
-        if(name.contains("Healing Rain")) {
+        this.circle = new CircleEffect(warlordsPlayer.getGame(), warlordsPlayer.getTeam(), location, radius);
+        if (name.contains("Healing Rain")) {
             this.circle.addEffect(new CircumferenceEffect(ParticleEffect.VILLAGER_HAPPY, ParticleEffect.REDSTONE));
             this.circle.addEffect(new AreaEffect(5, ParticleEffect.CLOUD).particlesPerSurface(0.1));
             this.circle.addEffect(new AreaEffect(5, ParticleEffect.DRIP_WATER).particlesPerSurface(0.1));
@@ -87,12 +85,8 @@ public class DamageHealCircle {
         this.circle.playEffects();
     }
 
-    public Player getPlayer() {
-        return player;
-    }
-
-    public void setPlayer(Player player) {
-        this.player = player;
+    public WarlordsPlayer getWarlordsPlayer() {
+        return warlordsPlayer;
     }
 
     public Location getLocation() {

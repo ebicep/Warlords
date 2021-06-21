@@ -5,11 +5,10 @@ import com.ebicep.warlords.classes.abilties.Inferno;
 import com.ebicep.warlords.classes.abilties.Projectile;
 import com.ebicep.warlords.classes.abilties.TimeWarp;
 import com.ebicep.warlords.classes.mage.AbstractMage;
-import org.bukkit.entity.Player;
 
 public class Pyromancer extends AbstractMage {
-    public Pyromancer(Player player) {
-        super(player, 5200, 305, 20, 14, 0,
+    public Pyromancer() {
+        super(5200, 305, 20, 14, 0,
                 new Projectile("Fireball", -401, -520, 0, 70, 20, 175,
                         "§7Shoot a fireball that will explode\n" +
                         "§7for §c%dynamic.value% §7- §c%dynamic.value% §7damage. A\n" +

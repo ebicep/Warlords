@@ -2,11 +2,10 @@ package com.ebicep.warlords.classes.mage.specs.cryomancer;
 
 import com.ebicep.warlords.classes.abilties.*;
 import com.ebicep.warlords.classes.mage.AbstractMage;
-import org.bukkit.entity.Player;
 
 public class Cryomancer extends AbstractMage {
-    public Cryomancer(Player player) {
-        super(player, 6135, 305, 20, 14, 10,
+    public Cryomancer() {
+        super(6135, 305, 20, 14, 10,
                 new Projectile("Frostbolt", -323, -415, 0, 70, 20, 175,
                         "§7Shoot a frostbolt that will shatter\n" +
                         "§7for §c%dynamic.value% §7- §c%dynamic.value% §7damage and slow\n" +

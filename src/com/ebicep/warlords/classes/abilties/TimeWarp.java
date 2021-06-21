@@ -5,7 +5,6 @@ import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.classes.ActionBarStats;
 import com.ebicep.warlords.util.ParticleEffect;
-import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -24,8 +23,7 @@ public class TimeWarp extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(Player player) {
-        WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
+    public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
         TimeWarpPlayer timeWarpPlayer = new TimeWarpPlayer(warlordsPlayer, player.getLocation(), player.getLocation().getDirection(), 5);
         warlordsPlayer.getActionBarStats().add(new ActionBarStats(warlordsPlayer, "TIME", 5));
         warlordsPlayer.subtractEnergy(energyCost);
@@ -38,7 +36,7 @@ public class TimeWarp extends AbstractAbility {
 
             @Override
             public void run() {
-                if (timeWarpPlayer.getWarlordsPlayer().getPlayer().getGameMode() == GameMode.SPECTATOR) {
+                if (timeWarpPlayer.getWarlordsPlayer().isDeath()) {
                     counter = 0;
                     this.cancel();
                 }
@@ -66,13 +64,13 @@ public class TimeWarp extends AbstractAbility {
                     if (timeWarpPlayer.getTime() != 0) {
                         timeWarpPlayer.setTime(timeWarpPlayer.getTime() - 1);
                     } else {
-                        WarlordsPlayer player = timeWarpPlayer.getWarlordsPlayer();
-                        player.addHealth(player, "Time Warp", (int) (player.getMaxHealth() * .3), (int) (player.getMaxHealth() * .3), -1, 100);
-                        for (Player player1 : player.getPlayer().getWorld().getPlayers()) {
+                        WarlordsPlayer wp = timeWarpPlayer.getWarlordsPlayer();
+                        wp.addHealth(wp, "Time Warp", (int) (wp.getMaxHealth() * .3), (int) (wp.getMaxHealth() * .3), -1, 100);
+                        for (Player player1 : player.getWorld().getPlayers()) {
                             player1.playSound(timeWarpPlayer.getLocation(), "mage.timewarp.teleport", 1, 1);
                         }
-                        player.getPlayer().teleport(timeWarpPlayer.getLocation());
-                        player.getPlayer().getLocation().setDirection(timeWarpPlayer.getFacing());
+                        timeWarpPlayer.getLocation().setDirection(timeWarpPlayer.getFacing());
+                        wp.teleport(timeWarpPlayer.getLocation());
 
                         counter = 0;
                         this.cancel();

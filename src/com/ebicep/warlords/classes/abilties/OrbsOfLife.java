@@ -25,7 +25,7 @@ public class OrbsOfLife extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(Player player) {
+    public void onActivate(WarlordsPlayer wp, Player player) {
         Warlords.getPlayer(player).setOrbsOfLifeDuration(13);
 
         for (Player player1 : player.getWorld().getPlayers()) {

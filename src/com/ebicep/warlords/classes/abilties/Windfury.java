@@ -1,6 +1,5 @@
 package com.ebicep.warlords.classes.abilties;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
 import org.bukkit.entity.Player;
@@ -19,8 +18,7 @@ public class Windfury extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(Player player) {
-        WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
+    public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
         warlordsPlayer.subtractEnergy(energyCost);
         warlordsPlayer.setWindfuryDuration(8);
         warlordsPlayer.setFirstProc(true);

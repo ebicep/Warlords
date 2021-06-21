@@ -1,14 +1,10 @@
 package com.ebicep.warlords.classes.abilties;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
-import com.ebicep.warlords.util.Utils;
-import org.bukkit.GameMode;
-import org.bukkit.entity.Entity;
+import com.ebicep.warlords.util.PlayerFilter;
 import org.bukkit.entity.Player;
 
-import java.util.List;
 
 
 public class InspiringPresence extends AbstractAbility {
@@ -23,20 +19,14 @@ public class InspiringPresence extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(Player player) {
-        WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
-        warlordsPlayer.getSpeed().changeCurrentSpeed("Inspiring Presence", 30, 12 * 20, "BASE");
-        warlordsPlayer.setPresence(12 * 20);
-
-        // TODO: make range a circle instead of square
-        List<Entity> near = player.getNearbyEntities(6.0D, 2.0D, 6.0D);
-        near = Utils.filterOnlyTeammates(near, player);
-        for (Entity entity : near) {
-            if (entity instanceof Player && ((Player) entity).getGameMode() != GameMode.SPECTATOR) {
-                warlordsPlayer.getSpeed().changeCurrentSpeed("Inspiring Presence", 30, 12 * 20, "BASE");
-                Warlords.getPlayer((Player) entity).setPresence(12 * 20);
-            }
-        }
+    public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
+        PlayerFilter.entitiesAround(warlordsPlayer, 6, 2, 6)
+            .aliveTeammatesOf(warlordsPlayer)
+            .concat(warlordsPlayer)
+            .forEach((nearPlayer) -> {
+                nearPlayer.getSpeed().addSpeedModifier("Inspiring Presence", 30, 12 * 20, "BASE");
+                nearPlayer.setPresence(12 * 20);
+            });
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "paladin.inspiringpresence.activation", 2, 1);

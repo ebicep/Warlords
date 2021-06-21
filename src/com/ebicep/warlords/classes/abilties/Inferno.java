@@ -1,6 +1,5 @@
 package com.ebicep.warlords.classes.abilties;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
 import org.bukkit.entity.Player;
@@ -16,8 +15,7 @@ public class Inferno extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(Player player) {
-        WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
+    public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
         warlordsPlayer.setInferno(18);
 
         for (Player player1 : player.getWorld().getPlayers()) {

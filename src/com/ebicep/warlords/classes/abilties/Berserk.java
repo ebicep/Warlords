@@ -1,6 +1,5 @@
 package com.ebicep.warlords.classes.abilties;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
 import org.bukkit.entity.Player;
@@ -16,9 +15,8 @@ public class Berserk extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(Player player) {
-        WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
-        warlordsPlayer.getSpeed().changeCurrentSpeed("Berserk", 30, 18 * 20, "BASE");
+    public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
+        warlordsPlayer.getSpeed().addSpeedModifier("Berserk", 30, 18 * 20, "BASE");
         warlordsPlayer.setBerserk(18 * 20);
         warlordsPlayer.subtractEnergy(energyCost);
 

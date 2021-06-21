@@ -1,6 +1,7 @@
 package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.util.Matrix4d;
 import com.ebicep.warlords.util.ParticleEffect;
@@ -26,8 +27,8 @@ public class Projectile extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(Player player) {
-        Warlords.getPlayer(player).subtractEnergy(energyCost);
+    public void onActivate(WarlordsPlayer wp, Player player) {
+        wp.subtractEnergy(energyCost);
 
         CustomProjectile customProjectile = new CustomProjectile(player, player.getLocation(), player.getLocation(), player.getLocation().getDirection(), maxDistance,
                 new Projectile(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier, description, maxDistance));
@@ -155,7 +156,7 @@ public class Projectile extends AbstractAbility {
                                     player1.playSound(location, "mage.frostbolt.impact", 2F, 1);
                                 }
 
-                                Warlords.getPlayer(victim).getSpeed().changeCurrentSpeed("Frostbolt", -25, 2 * 20);
+                                Warlords.getPlayer(victim).getSpeed().addSpeedModifier("Frostbolt", -25, 2 * 20);
                                 if (location.distanceSquared(customProjectile.getStartingLocation()) >= customProjectile.getMaxDistance() * customProjectile.getMaxDistance()) {
                                     double toReduceBy = (1 - ((location.distance(customProjectile.getStartingLocation()) - customProjectile.getMaxDistance()) / 100.0));
                                     if (toReduceBy < 0) toReduceBy = 0;

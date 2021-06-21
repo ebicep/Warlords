@@ -1,9 +1,9 @@
 package com.ebicep.warlords.commands;
 
+import com.ebicep.warlords.PlayerSettings;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.maps.Game;
-import com.ebicep.warlords.maps.Game.State;
 import com.ebicep.warlords.maps.GameMap;
 import com.ebicep.warlords.util.Classes;
 import org.bukkit.Bukkit;
@@ -16,8 +16,12 @@ import org.bukkit.entity.Player;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.ebicep.warlords.maps.Game.State.GAME;
+import com.ebicep.warlords.maps.state.PlayingState;
+import com.ebicep.warlords.maps.state.PreLobbyState;
 import static com.ebicep.warlords.menu.GameMenu.openMainMenu;
+import com.ebicep.warlords.util.PlayerFilter;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class Commands implements TabExecutor {
 
@@ -46,15 +50,12 @@ public class Commands implements TabExecutor {
                 }
             }
 
-            if(game.getState() != State.PRE_GAME) {
+            if(!(game.getState() instanceof PreLobbyState)) {
                 sender.sendMessage(ChatColor.RED + "The game has already started!");
                 return true;
             }
 
-            for (Player player : game.clearAllPlayers()) {
-                player.teleport(Bukkit.getWorlds().get(0).getSpawnLocation());
-            }
-            game.resetTimer();
+            game.clearAllPlayers();
             if (map != null) {
                 if (game.getMap() != map) {
                     game.changeMap(map);
@@ -81,75 +82,71 @@ public class Commands implements TabExecutor {
                 sender.sendMessage("§cYou do not have permission to do that.");
                 return true;
             }
-            if (Warlords.game.getState() != GAME) {
+            Game game = Warlords.game; // In the future allow the user to select a game player
+            if(game.getState() instanceof PreLobbyState) {
                 sender.sendMessage(ChatColor.RED + "There are no games currently running!");
                 return true;
             }
 
-            Warlords.game.forceDraw();
+            if(game.getState() instanceof PlayingState) {
+                PlayingState playingState = (PlayingState) game.getState();
+                playingState.endGame();
+            }
+            
             sender.sendMessage(ChatColor.RED + "Game has been terminated. Warping back to lobby...");
 
         } else if (command.getName().equalsIgnoreCase("class")) {
-
-            if (Warlords.game.getState() == GAME) {
-                sender.sendMessage(ChatColor.RED + "You cannot do that while the game is running!");
-                return true;
-            }
-
-            if (!(sender instanceof Player)) {
-                return true;
-            }
-
-            Player player = (Player) sender;
-
-            if (args.length != 0) {
-                try {
-                    Classes selectedClass = Classes.valueOf(args[0].toUpperCase(Locale.ROOT));
-                    Classes.setSelected(player, selectedClass);
-                } catch (IllegalArgumentException e) {
-                    sender.sendMessage(ChatColor.RED + args[0] + " was not found, valid classes: " + Arrays.toString(Classes.values()));
-                    return true;
+            Player player = requirePlayerOutsideGame(sender);
+            if(player != null) {
+                PlayerSettings settings = Warlords.getPlayerSettings(player.getUniqueId());
+                if (args.length != 0) {
+                    try {
+                        Classes selectedClass = Classes.valueOf(args[0].toUpperCase(Locale.ROOT));
+                        settings.selectedClass(selectedClass);
+                    } catch (IllegalArgumentException e) {
+                        sender.sendMessage(ChatColor.RED + args[0] + " was not found, valid classes: " + Arrays.toString(Classes.values()));
+                        return true;
+                    }
                 }
-            }
 
-            Classes selected = Classes.getSelected(player);
-            player.sendMessage(ChatColor.BLUE + "Your selected class: §7" + selected);
+                Classes selected = settings.selectedClass();
+                player.sendMessage(ChatColor.BLUE + "Your selected class: §7" + selected);
+            }
+            return true;
         } else if (command.getName().equalsIgnoreCase("menu")) {
-            if (!(sender instanceof Player)) {
-                return true;
+            Player player = requirePlayerOutsideGame(sender);
+            if(player != null) {
+                openMainMenu(player);
             }
-
-            Player player = (Player) sender;
-            openMainMenu(player);
+            return true;
         } else if (command.getName().equalsIgnoreCase("shout") && args.length > 0) {
-            if (!(sender instanceof Player)) {
-                return true;
-            }
-            if (Warlords.game.getState() == GAME && Warlords.hasPlayer((Player) sender)) {
-                String message;
-                if (Warlords.game.isBlueTeam((Player) sender)) {
-                    message = ChatColor.BLUE + "[SHOUT] ";
-                } else {
-                    message = ChatColor.RED + "[SHOUT] ";
-                }
+            WarlordsPlayer player = requireWarlordsPlayer(sender);
+            if (player != null) { // We only have a warlords player if the game is running
+                String message = player.getTeam().teamColor() + "[SHOUT] ";
                 message += ChatColor.AQUA + sender.getName() + ChatColor.WHITE + ": ";
                 for (String arg : args) {
-                    message += arg + " ";
+                    message += arg + " "; // TODO use a stringbuilder
                 }
-
-                for (Player player : Warlords.getPlayers().keySet()) {
-                    player.sendMessage(message);
+                
+                for (WarlordsPlayer p : PlayerFilter.playingGame(player.getGame()).aliveTeammatesOf(player)) {
+                    p.sendMessage(message);
                 }
             }
+            return true;
         } else if (command.getName().equals("hotkeymode")) {
-            if (Warlords.game.getState() == GAME) {
-                WarlordsPlayer warlordsPlayer = Warlords.getPlayer((Player) sender);
-                if (warlordsPlayer.isHotKeyMode()) {
+            Player player = requirePlayer(sender);
+            if (player != null) {
+                PlayerSettings settings = Warlords.getPlayerSettings(player.getUniqueId());
+                if (settings.hotKeyMode()) {
                     sender.sendMessage(ChatColor.GREEN + "Hotkey Mode " + ChatColor.AQUA + "Classic " + ChatColor.GREEN + "enabled.");
                 } else {
                     sender.sendMessage(ChatColor.GREEN + "Hotkey Mode " + ChatColor.YELLOW + "NEW " + ChatColor.GREEN + "enabled.");
                 }
-                warlordsPlayer.setHotKeyMode(!warlordsPlayer.isHotKeyMode());
+                settings.hotKeyMode(!settings.hotKeyMode());
+                WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
+                if (warlordsPlayer != null) {
+                    warlordsPlayer.setHotKeyMode(!warlordsPlayer.isHotKeyMode());
+                }
             }
         }
         return true;
@@ -177,5 +174,40 @@ public class Commands implements TabExecutor {
         }
 
         return Collections.emptyList();
+    }
+    
+    @Nullable
+    private Player requirePlayerOutsideGame(@Nonnull CommandSender sender) {
+        if (!(sender instanceof Player)) {
+            sender.sendMessage(ChatColor.RED + "This command requires a player!");
+            return null;
+        }
+        if (Warlords.hasPlayer((Player)sender)) {
+            sender.sendMessage(ChatColor.RED + "You cannot use this command inside a game!");
+            return null;
+        }
+        return (Player)sender;
+    }
+    
+    @Nullable
+    private Player requirePlayer(@Nonnull CommandSender sender) {
+        if (!(sender instanceof Player)) {
+            sender.sendMessage(ChatColor.RED + "This command requires a player!");
+            return null;
+        }
+        return (Player)sender;
+    }
+    
+    @Nullable
+    private WarlordsPlayer requireWarlordsPlayer(@Nonnull CommandSender sender) {
+        if (!(sender instanceof Player)) {
+            sender.sendMessage(ChatColor.RED + "This command requires a player!");
+            return null;
+        }
+        WarlordsPlayer player = Warlords.getPlayer((Player)sender);
+        if(player == null) {
+            sender.sendMessage(ChatColor.RED + "You are not in an active game!");
+        }
+        return player;
     }
 }

@@ -14,15 +14,13 @@ import com.ebicep.warlords.classes.shaman.specs.thunderlord.ThunderLord;
 import com.ebicep.warlords.classes.warrior.specs.berserker.Berserker;
 import com.ebicep.warlords.classes.warrior.specs.defender.Defender;
 import com.ebicep.warlords.classes.warrior.specs.revenant.Revenant;
-import org.bukkit.entity.Player;
-import org.bukkit.metadata.FixedMetadataValue;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
-import java.util.function.Function;
 
 import static com.ebicep.warlords.util.ClassesSkillBoosts.*;
+import java.util.function.Supplier;
+import org.bukkit.OfflinePlayer;
 
 public enum Classes {
     PYROMANCER("Pyromancer", Pyromancer::new, "§7A damage-oriented Mage specialization that uses the destructive Fire spells to obliterate enemies.", FIREBALL, FLAME_BURST),
@@ -44,40 +42,58 @@ public enum Classes {
     ;
 
     public final String name;
-    public final Function<Player, PlayerClass> create;
+    public final Supplier<PlayerClass> create;
     public final String description;
     public final List<ClassesSkillBoosts> skillBoosts;
 
-    Classes(String name, Function<Player, PlayerClass> create, String description, ClassesSkillBoosts... skillBoosts) {
+    Classes(String name, Supplier<PlayerClass> create, String description, ClassesSkillBoosts... skillBoosts) {
         this.name = name;
         this.create = create;
         this.description = description;
         this.skillBoosts = Arrays.asList(skillBoosts);
     }
 
-    public static Classes getSelected(Player player) {
-        return player.getMetadata("selected-class").stream()
-                .map(v -> v.value() instanceof Classes ? (Classes) v.value() : null)
-                .filter(Objects::nonNull)
-                .findAny()
-                .orElse(Classes.CRYOMANCER);
+    /**
+     * 
+     * @param player
+     * @return
+     * @deprecated Trivial method, call {@code Warlords.getPlayerSettings(player.getUniqueId()).selectedClass()} instead
+     */
+    @Deprecated
+    public static Classes getSelected(OfflinePlayer player) {
+        return Warlords.getPlayerSettings(player.getUniqueId()).selectedClass();
     }
 
-    public static void setSelected(Player player, Classes selectedClass) {
-        player.removeMetadata("selected-class", Warlords.getInstance());
-        player.setMetadata("selected-class", new FixedMetadataValue(Warlords.getInstance(), selectedClass));
+    /**
+     * 
+     * @param player
+     * @param selectedClass
+     * @deprecated Trivial method, call {@code Warlords.getPlayerSettings(player.getUniqueId()).selectedClass(selectedClass)} instead
+     */
+    @Deprecated
+    public static void setSelected(OfflinePlayer player, Classes selectedClass) {
+        Warlords.getPlayerSettings(player.getUniqueId()).selectedClass(selectedClass);
+    }
+    
+    /**
+     * 
+     * @param player
+     * @return
+     * @deprecated Trivial method, call {@code Warlords.getPlayerSettings(player.getUniqueId()).classesSkillBoosts()} instead
+     */
+    @Deprecated
+    public static ClassesSkillBoosts getSelectedBoost(OfflinePlayer player) {
+        return Warlords.getPlayerSettings(player.getUniqueId()).classesSkillBoosts();
     }
 
-    public static ClassesSkillBoosts getSelectedBoost(Player player) {
-        return player.getMetadata("selected-boost").stream()
-                .map(v -> v.value() instanceof ClassesSkillBoosts ? (ClassesSkillBoosts) v.value() : null)
-                .filter(Objects::nonNull)
-                .findAny()
-                .orElse(getSelected(player).skillBoosts.get(0));
-    }
-
-    public static void setSelectedBoost(Player player, ClassesSkillBoosts selectedBoost) {
-        player.removeMetadata("selected-boost", Warlords.getInstance());
-        player.setMetadata("selected-boost", new FixedMetadataValue(Warlords.getInstance(), selectedBoost));
+    /**
+     * 
+     * @param player
+     * @param selectedBoost
+     * @deprecated Trivial method, call {@code Warlords.getPlayerSettings(player.getUniqueId()).classesSkillBoosts(selectedBoost)} instead
+     */
+    @Deprecated
+    public static void setSelectedBoost(OfflinePlayer player, ClassesSkillBoosts selectedBoost) {
+        Warlords.getPlayerSettings(player.getUniqueId()).classesSkillBoosts(selectedBoost);
     }
 }

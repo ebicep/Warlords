@@ -2,12 +2,11 @@ package com.ebicep.warlords.classes.shaman.specs.earthwarden;
 
 import com.ebicep.warlords.classes.abilties.*;
 import com.ebicep.warlords.classes.shaman.AbstractShaman;
-import org.bukkit.entity.Player;
 
 public class Earthwarden extends AbstractShaman {
 
-    public Earthwarden(Player player) {
-        super(player, 5530, 305, 10,
+    public Earthwarden() {
+        super(5530, 305, 10,
                 new EarthenSpike(),
                 new Boulder(),
                 new Earthliving(),

@@ -2,12 +2,11 @@ package com.ebicep.warlords.classes.paladin.specs.avenger;
 
 import com.ebicep.warlords.classes.abilties.*;
 import com.ebicep.warlords.classes.paladin.AbstractPaladin;
-import org.bukkit.entity.Player;
 
 public class Avenger extends AbstractPaladin {
 
-    public Avenger(Player player) {
-        super(player, 6300, 305, 0,
+    public Avenger() {
+        super(6300, 305, 0,
                 new Strike("Avenger's Strike", -431, -582, 0, 90, 25, 185,
                         "§7Strike the targeted enemy player,\n" +
                         "§7causing §c%dynamic.value% §7- §c%dynamic.value% §7damage\n" +

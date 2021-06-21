@@ -3,13 +3,11 @@ package com.ebicep.warlords.util;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import static com.ebicep.warlords.util.Classes.*;
-import org.bukkit.ChatColor;
 
 public enum ClassesGroup {
     MAGE(

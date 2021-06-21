@@ -1,6 +1,5 @@
 package com.ebicep.warlords.maps;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 
