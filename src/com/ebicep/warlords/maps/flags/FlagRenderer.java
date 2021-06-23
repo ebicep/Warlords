@@ -125,8 +125,8 @@ class FlagRenderer {
         renderedArmorStands.clear();
         for (Player p : affectedPlayers) {
             WarlordsPlayer wp = Warlords.getPlayer(p);
-            if(wp != null) {
-                ArmorManager.resetArmor(wp, p);
+            if (wp != null) {
+                ArmorManager.resetArmor(p, wp.getSpecClass(), wp.getTeam());
             }
             p.getInventory().setItem(6, null);
         }

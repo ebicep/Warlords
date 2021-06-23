@@ -3,8 +3,13 @@ package com.ebicep.warlords.classes.abilties;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.util.PlayerFilter;
+import com.ebicep.warlords.util.Matrix4d;
+import com.ebicep.warlords.util.ParticleEffect;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.ArrayList;
 
 public class LastStand extends AbstractAbility {
 
@@ -34,6 +39,32 @@ public class LastStand extends AbstractAbility {
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "warrior.laststand.activation", 2, 1);
+        }
+
+        Location loc = player.getEyeLocation();
+        loc.setPitch(0);
+        loc.setYaw(0);
+        Matrix4d matrix = new Matrix4d();
+        for (int i = 0; i < 3; i++) {
+            loc.setYaw(loc.getYaw() + 360F / 3F);
+            matrix.updateFromLocation(loc);
+            for (int c = 0; c < 20; c++) {
+                double angle = c / 20D * Math.PI * 2;
+                double width = 1.2;
+                double distance = 3;
+
+                ParticleEffect.FLAME.display(0, 0, 0, 0, 1,
+                        matrix.translateVector(player.getWorld(), distance, Math.sin(angle) * width, Math.cos(angle) * width), 500);
+            }
+
+            for (int c = 0; c < 10; c++) {
+                double angle = c / 10D * Math.PI * 2;
+                double width = 0.6;
+                double distance = 3;
+
+                ParticleEffect.REDSTONE.display(0, 0, 0, 0, 1,
+                        matrix.translateVector(player.getWorld(), distance, Math.sin(angle) * width, Math.cos(angle) * width), 500);
+            }
         }
     }
 }

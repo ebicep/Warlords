@@ -40,6 +40,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 
 import static com.ebicep.warlords.menu.GameMenu.openMainMenu;
+import static com.ebicep.warlords.menu.GameMenu.openTeamMenu;
 
 public class WarlordsEvents implements Listener {
 
@@ -124,14 +125,16 @@ public class WarlordsEvents implements Listener {
 
     @EventHandler
     public void onEntityDamage(EntityDamageByEntityEvent e) {
-        if (e.getEntity() instanceof Player && e.getDamager() instanceof Player) {
+        if ((e.getEntity() instanceof Player || e.getEntity() instanceof Zombie) && e.getDamager() instanceof Player) {
             Player attacker = (Player) e.getDamager();
             Player victim = (Player) e.getEntity();
             WarlordsPlayer warlordsPlayerAttacker = Warlords.getPlayer(attacker);
             WarlordsPlayer warlordsPlayerVictim = Warlords.getPlayer(victim);
             if (warlordsPlayerAttacker != null && warlordsPlayerVictim != null && warlordsPlayerAttacker.isEnemy(warlordsPlayerVictim)) {
                 if (attacker.getInventory().getHeldItemSlot() == 0 && warlordsPlayerAttacker.getHitCooldown() == 0) {
-                    attacker.playSound(victim.getLocation(), Sound.HURT_FLESH, 1, 1);
+                    for (Player player1 : attacker.getWorld().getPlayers()) {
+                        player1.playSound(victim.getLocation(), Sound.HURT_FLESH, 1, 1);
+                    }
                     warlordsPlayerAttacker.setHitCooldown(12);
                     warlordsPlayerAttacker.subtractEnergy(warlordsPlayerAttacker.getSpec().getEnergyOnHit() * -1);
                         if (warlordsPlayerAttacker.getSpec() instanceof Spiritguard && warlordsPlayerAttacker.getSoulBindCooldown() != 0) {
@@ -229,7 +232,7 @@ public class WarlordsEvents implements Listener {
                 openMainMenu(player);
             } else if (itemHeld.getType() == Material.NOTE_BLOCK) {
                 //team selector
-                player.sendMessage("this does jack shit right now :D");
+                openTeamMenu(player);
             }
 
 

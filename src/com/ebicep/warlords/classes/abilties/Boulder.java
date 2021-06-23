@@ -28,14 +28,14 @@ public class Boulder extends AbstractAbility {
     public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
 
         Location location = player.getLocation();
-        Vector speed = player.getLocation().getDirection().multiply(0.475);
-        ArmorStand stand = (ArmorStand) location.getWorld().spawnEntity(location.clone().add(0, 0, 0), EntityType.ARMOR_STAND);
+        Vector speed = player.getLocation().getDirection().multiply(0.55);
+        ArmorStand stand = (ArmorStand) location.getWorld().spawnEntity(location.clone().add(0, 0.25, 0), EntityType.ARMOR_STAND);
         stand.setHelmet(new ItemStack(Material.LONG_GRASS, 1, (short) 2));
         stand.setCustomName("Boulder");
         stand.setCustomNameVisible(false);
         stand.setGravity(false);
         stand.setVisible(false);
-        stand.setMarker(true);
+        stand.setMarker(false);
         
         warlordsPlayer.subtractEnergy(energyCost);
 
@@ -56,7 +56,7 @@ public class Boulder extends AbstractAbility {
                     return;
                 }
 
-                speed.add(new Vector(0, -0.0075, 0));
+                speed.add(new Vector(0, -0.00765, 0));
                 Location newLoc = stand.getLocation();
                 newLoc.add(speed);
                 stand.teleport(newLoc);
@@ -88,15 +88,16 @@ public class Boulder extends AbstractAbility {
                         player1.playSound(newLoc, "shaman.boulder.impact", 2, 1);
                     }
                     
-                    PlayerFilter.entitiesAround(newLoc, 6, 6, 6)
+                    for(WarlordsPlayer p : PlayerFilter
+                        .entitiesAround(newLoc, 6, 6, 6)
                         .aliveEnemiesOf(warlordsPlayer)
-                        .forEach((p) -> {
+                    ) {
                         p.addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
                         
                         Entity entity = p.getEntity();
-                        Vector v = entity.getLocation().toVector().subtract(newLoc.toVector()).normalize().multiply(0.9).setY(0.2);
+                        Vector v = entity.getLocation().toVector().subtract(newLoc.toVector()).normalize().multiply(1.05).setY(0.3);
                         entity.setVelocity(v);
-                    });
+                    }
                     newLoc.setPitch(-12);
                     newLoc.add(0, 1, 0);
                     for (int i = 0; i < 24; i++) {
@@ -115,8 +116,9 @@ public class Boulder extends AbstractAbility {
                                 default:
                                     throw new IllegalStateException("Unexpected value: " + (int) (Math.random() * 3));
                             }
-                            fallingBlock.setVelocity(newLoc.getDirection().normalize().multiply(.55));
+                            fallingBlock.setVelocity(newLoc.getDirection().add(new Vector(0, 0.2, 0)).normalize().multiply(.5));
                             fallingBlock.setDropItem(false);
+                            fallingBlock.setTicksLived(4);
                             newLoc.setYaw((float) (newLoc.getYaw() + Math.random() * 25 + 12));
                             WarlordsEvents.addEntityUUID(fallingBlock.getUniqueId());
                         }

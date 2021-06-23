@@ -5,6 +5,7 @@ import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.maps.state.InitState;
 import com.ebicep.warlords.maps.state.PreLobbyState;
 import com.ebicep.warlords.maps.state.State;
+import com.ebicep.warlords.util.Classes;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.apache.commons.lang.Validate;
 import org.bukkit.*;
@@ -93,17 +94,26 @@ public class Game implements Runnable {
             online.setGameMode(GameMode.ADVENTURE);
         }
         this.players.put(player.getUniqueId(), team);
-        switch(team) {
-            case BLUE:
-                if (online != null) {
-                    online.teleport(this.map.blueLobbySpawnPoint);
-                }
-                break;
-            case RED:
-                if (online != null) {
-                    online.teleport(this.map.redLobbySpawnPoint);
-                }
-                break;
+        Location loc = this.map.getLobbySpawnPoint(team);
+        Warlords.setRejoinPoint(player.getUniqueId(), loc);
+        if (online != null) {
+            online.teleport(loc);
+        }
+    }
+
+    public void setPlayerTeam(@Nonnull OfflinePlayer player, @Nonnull Team team) {
+        Validate.notNull(player, "player");
+        Validate.notNull(team, "team");
+        Player online = player.getPlayer();
+        Team oldTeam = this.players.get(player.getUniqueId());
+        if (team == oldTeam) {
+            return;
+        }
+        this.players.put(player.getUniqueId(), team);
+        Location loc = this.map.getLobbySpawnPoint(team);
+        Warlords.setRejoinPoint(player.getUniqueId(), loc);
+        if (online != null) {
+            online.teleport(loc);
         }
     }
     /**
@@ -215,8 +225,8 @@ public class Game implements Runnable {
         sideBar.getScore(ChatColor.WHITE + "allow time for ").setScore(7);
         sideBar.getScore(ChatColor.WHITE + "additional players").setScore(6);
         sideBar.getScore("   ").setScore(5);
-        //sideBar.getScore(ChatColor.GOLD + "Lv90 " + warlordsPlayer.getSpec().getClassName()).setScore(4);
-        //sideBar.getScore(ChatColor.WHITE + "Spec: " + ChatColor.GREEN + warlordsPlayer.getSpec().getClass().getSimpleName()).setScore(3);
+        sideBar.getScore(ChatColor.GOLD + "Lv90 " + Classes.getClassesGroup(Classes.getSelected(player)).name).setScore(4);
+        sideBar.getScore(ChatColor.WHITE + "Spec: " + ChatColor.GREEN + Classes.getSelected(player).name).setScore(3);
         sideBar.getScore("    ").setScore(2);
         sideBar.getScore(ChatColor.YELLOW + "WL 2.0 master_b-v0.0.3 ").setScore(1);
 

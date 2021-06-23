@@ -13,12 +13,16 @@ import com.ebicep.warlords.util.CustomScoreboard;
 import com.ebicep.warlords.util.PacketUtils;
 import com.ebicep.warlords.util.RemoveEntities;
 import static com.ebicep.warlords.util.Utils.sendMessage;
-import java.util.EnumMap;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
+import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 
 public class PlayingState implements State, TimerDebugAble {
@@ -134,6 +138,42 @@ public class PlayingState implements State, TimerDebugAble {
         this.powerupTimer = POWERUP_TIMER;
         RemoveEntities.doRemove(this.game.getMap());
         this.flags = new FlagManager(this, game.getMap().getRedFlag(), game.getMap().getBlueFlag());
+        Set<UUID> wantedTeamBlue = new HashSet<>();
+        Set<UUID> wantedTeamRed = new HashSet<>();
+        Set<UUID> wantedNoTeam = new HashSet<>();
+        
+        // Collect players by their preferences
+        Map<Team, List<OfflinePlayer>> preferedTeams = this.game.offlinePlayers().collect(
+            Collectors.groupingBy(entry -> {
+                OfflinePlayer p = entry.getKey();
+                Team team = p.getPlayer() != null ? Team.getSelected((Player) p.getPlayer()) : null;
+                return team;
+            },
+            Collectors.mapping(
+                Map.Entry::getKey,
+                Collectors.toList()
+            )
+        ));
+        List<OfflinePlayer> wantedRed = preferedTeams.get(Team.RED);
+        List<OfflinePlayer> wantedBlue = preferedTeams.get(Team.BLUE);
+        for (OfflinePlayer p : preferedTeams.get(null)) {
+            Bukkit.broadcastMessage(p.getName() + " did not choose a team!");
+            if (wantedRed.size() < wantedBlue.size()) {
+                wantedRed.add(p);
+            } else {
+                wantedBlue.add(p);
+            }
+        }
+        
+        for (Map.Entry<Team, List<OfflinePlayer>> list : preferedTeams.entrySet()) {
+            if (list.getKey() == null) {
+                continue;
+            }
+            for (OfflinePlayer peep : list.getValue()) {
+                this.game.setPlayerTeam(peep, list.getKey());
+            }
+        }
+        
         this.game.forEachOfflinePlayer((player, team) -> {
             PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
             Warlords.addPlayer(new WarlordsPlayer(

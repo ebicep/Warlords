@@ -63,7 +63,7 @@ public class Projectile extends AbstractAbility {
                 boolean hitPlayer = false;
                 //BALLS
                 if (customProjectile.getBall().getName().contains("Fire")) {
-                    location.add(customProjectile.getDirection().clone().multiply(2.3));
+                    location.add(customProjectile.getDirection().clone().multiply(2));
                     location.add(0, 1.5, 0);
                     ParticleEffect.DRIP_LAVA.display(0, 0, 0, 0.35F, 5, location, 500);
                     ParticleEffect.SMOKE_NORMAL.display(0, 0, 0, 0.001F, 7, location, 500);
@@ -95,7 +95,7 @@ public class Projectile extends AbstractAbility {
                                             customProjectile.getBall().getCritMultiplier()
                                     );
 
-                                    List<Entity> near = victim.getNearbyEntities(3.5D, 3.5D, 3.5D);
+                                    List<Entity> near = victim.getNearbyEntities(3.25D, 3.25D, 3.25D);
                                     near = Utils.filterOutTeammates(near, customProjectile.getShooter());
                                     for (Entity nearEntity : near) {
                                         if (nearEntity instanceof Player && ((Player) nearEntity).getGameMode() != GameMode.SPECTATOR && ((Player) nearEntity).getGameMode() != GameMode.SPECTATOR) {
@@ -118,7 +118,7 @@ public class Projectile extends AbstractAbility {
                                             customProjectile.getBall().getCritChance(),
                                             customProjectile.getBall().getCritMultiplier());
 
-                                    List<Entity> near = victim.getNearbyEntities(3.5D, 3.5D, 3.5D);
+                                    List<Entity> near = victim.getNearbyEntities(3.25D, 3.25D, 3.25D);
                                     near = Utils.filterOutTeammates(near, customProjectile.getShooter());
                                     for (Entity nearEntity : near) {
                                         if (nearEntity instanceof Player && ((Player) nearEntity).getGameMode() != GameMode.SPECTATOR) {
@@ -139,7 +139,7 @@ public class Projectile extends AbstractAbility {
                         }
                     }
                 } else if (customProjectile.getBall().getName().contains("Frost")) {
-                    location.add(customProjectile.getDirection().clone().multiply(2.1));
+                    location.add(customProjectile.getDirection().clone().multiply(2));
                     location.add(0, 1.5, 0);
                     ParticleEffect.CLOUD.display(0, 0, 0, 0F, 1, location, 500);
                     List<Entity> entities = (List<Entity>) location.getWorld().getNearbyEntities(location, 5, 5, 5);
@@ -390,7 +390,7 @@ public class Projectile extends AbstractAbility {
                 //hit block or out of range
                 if ((location.getWorld().getBlockAt(location).getType() != Material.AIR && location.getWorld().getBlockAt(location).getType() != Material.WATER) && !hitPlayer) {
                     if (customProjectile.getBall().getName().contains("Water")) {
-                        ParticleEffect.HEART.display(1, 1, 1, 0.2F, 5, location, 500);
+                        ParticleEffect.HEART.display(1, 1, 1, 0.2F, 3, location, 500);
                         ParticleEffect.VILLAGER_HAPPY.display(1, 1, 1, 0.2F, 5, location, 500);
 
                         for (Player player1 : player.getWorld().getPlayers()) {

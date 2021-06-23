@@ -24,7 +24,7 @@ public class Intervene extends AbstractAbility {
 
     @Override
     public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
-        PlayerFilter.entitiesAround(warlordsPlayer, 6, 6, 6)
+        PlayerFilter.entitiesAround(warlordsPlayer, 10, 10, 10)
             .aliveTeammatesOfExcludingSelf(warlordsPlayer)
             .requireLineOfSight(warlordsPlayer)
             .closestFirst(warlordsPlayer)

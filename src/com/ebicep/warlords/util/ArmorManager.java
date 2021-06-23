@@ -203,9 +203,8 @@ public class ArmorManager {
         }
     }
 
-    public static void resetArmor(WarlordsPlayer wp, Player player) {
-        Classes selectedClass = wp.getSpecClass();
-        boolean onBlueTeam = wp.getTeam() == Team.BLUE;
+    public static void resetArmor(Player player, Classes selectedClass, Team team) {
+        boolean onBlueTeam = team == Team.BLUE;
         ItemStack[] armor = new ItemStack[4];
         if (selectedClass == PYROMANCER || selectedClass == CRYOMANCER || selectedClass == AQUAMANCER) {
             armor[2] = new ItemBuilder(onBlueTeam ? ArmorSets.getSelected(player).get(0).itemBlue : ArmorSets.getSelected(player).get(0).itemRed)

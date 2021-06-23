@@ -15,7 +15,7 @@ public class Pyromancer extends AbstractMage {
                         "§7direct hit will cause the enemy\n" +
                         "§7to take an additional §c15% §7extra\n" +
                         "§7damage.\n" +
-                        "''\n" +
+                        "\n" +
                         "§7Has an optimal range of §e50 §7blocks.", 50),
 
                 new Projectile("Flame Burst", -557, -753, 10, 60, 25, 185,

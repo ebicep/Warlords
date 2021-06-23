@@ -67,7 +67,7 @@ public class EndState implements State, TimerDebugAble {
         TextComponent totalDamage = new TextComponent("" + ChatColor.RED + ChatColor.BOLD + "✚ TOP DAMAGE ✚");
         totalDamage.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.RED + "Total Damage (everyone)" + ChatColor.GRAY + ": " + ChatColor.GOLD + Utils.addCommaAndRound((float) players.stream().mapToDouble(WarlordsPlayer::getTotalDamage).sum())).create()));
         sendCenteredHoverableMessageToAllGamePlayer(game, Collections.singletonList(totalDamage));
-        players = players.stream().sorted(Comparator.comparing(WarlordsPlayer::getTotalDamage)).collect(Collectors.toList());
+        players = players.stream().sorted(Comparator.comparing(WarlordsPlayer::getTotalDamage).reversed()).collect(Collectors.toList());
         List<TextComponent> leaderboardPlayersDamage = new ArrayList<>();
         for (int i = 0; i < players.size() && i < 3; i++) {
             WarlordsPlayer warlordsPlayer = players.get(i);
@@ -83,7 +83,7 @@ public class EndState implements State, TimerDebugAble {
         TextComponent totalHealing = new TextComponent("" + ChatColor.GREEN + ChatColor.BOLD + "✚ TOP HEALING ✚");
         totalHealing.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.GREEN + "Total Healing (everyone)" + ChatColor.GRAY + ": " + ChatColor.GOLD + Utils.addCommaAndRound((float) players.stream().mapToDouble(WarlordsPlayer::getTotalHealing).sum())).create()));
         sendCenteredHoverableMessageToAllGamePlayer(game, Collections.singletonList(totalHealing));
-        players = players.stream().sorted(Comparator.comparing(WarlordsPlayer::getTotalHealing)).collect(Collectors.toList());
+        players = players.stream().sorted(Comparator.comparing(WarlordsPlayer::getTotalHealing).reversed()).collect(Collectors.toList());
         List<TextComponent> leaderboardPlayersHealing = new ArrayList<>();
         for (int i = 0; i < players.size() && i < 3; i++) {
             WarlordsPlayer warlordsPlayer = players.get(i);

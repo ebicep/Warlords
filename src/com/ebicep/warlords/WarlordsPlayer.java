@@ -47,8 +47,8 @@ public final class WarlordsPlayer {
     private final PlayingState gameState;
     private final Team team;
     private PlayerClass spec;
-    private Classes specClass;
-    private Weapons weapon;
+    private final Classes specClass;
+    private final Weapons weapon;
     private boolean hotKeyMode = true;
     private int health;
     private int maxHealth;
@@ -586,7 +586,7 @@ public final class WarlordsPlayer {
             if (ability.isEmpty()) {
                 sendMessage("" + ChatColor.RED + "\u00AB" + ChatColor.GRAY + " You took " + ChatColor.RED + min * -1 + ChatColor.GRAY + " melee damage.");
                 regenTimer = 10;
-                if (health + min < 0) {
+                if (health + min <= 0) {
                     setUndyingArmyDead(false);
                     if (entity instanceof Player) {
                         ((Player)entity).getInventory().remove(UndyingArmy.BONE);
@@ -697,16 +697,16 @@ public final class WarlordsPlayer {
                     damageHealValue *= totalReduction;
                     damageHealValue *= .5;
                     if (isCrit) {
-                        intervenedBy.sendMessage("" + ChatColor.RED + "\u00AB" + ChatColor.GRAY + " " + attacker.getName() + "'s Intervene hit you for " + ChatColor.RED + "§l" + (int) damageHealValue * -1 + "! " + ChatColor.GRAY + "critical damage.");
-                        attacker.sendMessage(ChatColor.GREEN + "\u00BB" + ChatColor.GRAY + " Your Intervene hit " + intervenedBy.getName() + " for " + ChatColor.RED + "§l" + (int) damageHealValue * -1 + "! " + ChatColor.GRAY + "critical damage.");
+                        intervenedBy.sendMessage("" + ChatColor.RED + "\u00AB" + ChatColor.GRAY + " " + attacker.getName() + "'s Intervene hit you for " + ChatColor.RED + "§l" + Math.round(damageHealValue) * -1 + "! " + ChatColor.GRAY + "critical damage.");
+                        attacker.sendMessage(ChatColor.GREEN + "\u00BB" + ChatColor.GRAY + " Your Intervene hit " + intervenedBy.getName() + " for " + ChatColor.RED + "§l" + Math.round(damageHealValue) * -1 + "! " + ChatColor.GRAY + "critical damage.");
                         Location loc = getLocation();
 
-                        gameState.getGame().forEachOnlinePlayer((p, t) -> {
-                            p.playSound(loc, "warrior.intervene.block3", 2, 1);
+                        gameState.getGame().forEachOnlinePlayer((player1, t) -> {
+                            player1.playSound(loc, "warrior.intervene.block.3", 2, 1);
                         });
                     } else {
-                        intervenedBy.sendMessage("" + ChatColor.RED + "\u00AB" + ChatColor.GRAY + " " + attacker.getName() + "'s Intervene hit you for " + ChatColor.RED + (int) damageHealValue * -1 + ChatColor.GRAY + " damage.");
-                        attacker.sendMessage(ChatColor.GREEN + "\u00BB" + ChatColor.GRAY + " Your Intervene hit " + intervenedBy.getName() + " for " + ChatColor.RED + (int) damageHealValue * -1 + ChatColor.GRAY + " damage.");
+                        intervenedBy.sendMessage("" + ChatColor.RED + "\u00AB" + ChatColor.GRAY + " " + attacker.getName() + "'s Intervene hit you for " + ChatColor.RED + Math.round(damageHealValue) * -1 + ChatColor.GRAY + " damage.");
+                        attacker.sendMessage(ChatColor.GREEN + "\u00BB" + ChatColor.GRAY + " Your Intervene hit " + intervenedBy.getName() + " for " + ChatColor.RED + Math.round(damageHealValue) * -1 + ChatColor.GRAY + " damage.");
 
 
                         Location loc = getLocation();
@@ -740,7 +740,6 @@ public final class WarlordsPlayer {
                     addAbsorbed(-damageHealValue);
                 }
                 arcaneShieldHealth += damageHealValue;
-                System.out.println((float) ((float) arcaneShieldHealth / (maxHealth * .5) * 20));
                 if (entity instanceof Player) {
                     ((EntityLiving) ((CraftPlayer) entity).getHandle()).setAbsorptionHearts((float) ((float) arcaneShieldHealth / (maxHealth * .5) * 20));
                 }
@@ -763,9 +762,9 @@ public final class WarlordsPlayer {
                     damageHealValue = Math.round(damageHealValue);
                     if (damageHealValue != 0) {
                         if (isCrit) {
-                            sendMessage(ChatColor.GREEN + "\u00AB" + ChatColor.GRAY + " Your " + ability + " critically healed you for " + ChatColor.GREEN + "§l" + (int) damageHealValue + "! " + ChatColor.GRAY + "health.");
+                            sendMessage(ChatColor.GREEN + "\u00AB" + ChatColor.GRAY + " Your " + ability + " critically healed you for " + ChatColor.GREEN + "§l" + Math.round(damageHealValue) + "! " + ChatColor.GRAY + "health.");
                         } else {
-                            sendMessage(ChatColor.GREEN + "\u00AB" + ChatColor.GRAY + " Your " + ability + " healed you for " + ChatColor.GREEN + "" + (int) damageHealValue + " " + ChatColor.GRAY + "health.");
+                            sendMessage(ChatColor.GREEN + "\u00AB" + ChatColor.GRAY + " Your " + ability + " healed you for " + ChatColor.GREEN + "" + Math.round(damageHealValue) + " " + ChatColor.GRAY + "health.");
                         }
                     }
                     addHealing(damageHealValue);
@@ -817,19 +816,19 @@ public final class WarlordsPlayer {
 
                         if (isCrit) {
                             if (ability.isEmpty()) {
-                                sendMessage(ChatColor.RED + "\u00AB" + ChatColor.GRAY + " " + attacker.getName() + " hit you for " + ChatColor.RED + "§l" + (int) damageHealValue * -1 + "! " + ChatColor.GRAY + "critical melee damage.");
-                                attacker.sendMessage(ChatColor.GREEN + "\u00BB" + ChatColor.GRAY + " " + "You hit " + name + " for " + ChatColor.RED + "§l" + (int) damageHealValue * -1 + "! " + ChatColor.GRAY + "critical melee damage.");
+                                sendMessage(ChatColor.RED + "\u00AB" + ChatColor.GRAY + " " + attacker.getName() + " hit you for " + ChatColor.RED + "§l" + Math.round(damageHealValue) * -1 + "! " + ChatColor.GRAY + "critical melee damage.");
+                                attacker.sendMessage(ChatColor.GREEN + "\u00BB" + ChatColor.GRAY + " " + "You hit " + name + " for " + ChatColor.RED + "§l" + Math.round(damageHealValue) * -1 + "! " + ChatColor.GRAY + "critical melee damage.");
                             } else {
-                                sendMessage(ChatColor.RED + "\u00AB" + ChatColor.GRAY + " " + attacker.getName() + "'s " + ability + " hit you for " + ChatColor.RED + "§l" + (int) damageHealValue * -1 + "! " + ChatColor.GRAY + "critical damage.");
-                                attacker.sendMessage(ChatColor.GREEN + "\u00BB" + ChatColor.GRAY + " " + "Your " + ability + " hit " + name + " for " + ChatColor.RED + "§l" + (int) damageHealValue * -1 + "! " + ChatColor.GRAY + "critical damage.");
+                                sendMessage(ChatColor.RED + "\u00AB" + ChatColor.GRAY + " " + attacker.getName() + "'s " + ability + " hit you for " + ChatColor.RED + "§l" + Math.round(damageHealValue) * -1 + "! " + ChatColor.GRAY + "critical damage.");
+                                attacker.sendMessage(ChatColor.GREEN + "\u00BB" + ChatColor.GRAY + " " + "Your " + ability + " hit " + name + " for " + ChatColor.RED + "§l" + Math.round(damageHealValue) * -1 + "! " + ChatColor.GRAY + "critical damage.");
                             }
                         } else {
                             if (ability.isEmpty()) {
-                                sendMessage(ChatColor.RED + "\u00AB" + ChatColor.GRAY + " " + attacker.getName() + " hit you for " + ChatColor.RED + (int) damageHealValue * -1 + " " + ChatColor.GRAY + "melee damage.");
-                                attacker.sendMessage(ChatColor.GREEN + "\u00BB" + ChatColor.GRAY + " " + "You hit " + name + " for " + ChatColor.RED + (int) damageHealValue * -1 + " " + ChatColor.GRAY + "melee damage.");
+                                sendMessage(ChatColor.RED + "\u00AB" + ChatColor.GRAY + " " + attacker.getName() + " hit you for " + ChatColor.RED + Math.round(damageHealValue) * -1 + " " + ChatColor.GRAY + "melee damage.");
+                                attacker.sendMessage(ChatColor.GREEN + "\u00BB" + ChatColor.GRAY + " " + "You hit " + name + " for " + ChatColor.RED + Math.round(damageHealValue) * -1 + " " + ChatColor.GRAY + "melee damage.");
                             } else {
-                                sendMessage(ChatColor.RED + "\u00AB" + ChatColor.GRAY + " " + attacker.getName() + "'s " + ability + " hit you for " + ChatColor.RED + (int) damageHealValue * -1 + " " + ChatColor.GRAY + "damage.");
-                                attacker.sendMessage(ChatColor.GREEN + "\u00BB" + ChatColor.GRAY + " " + "Your " + ability + " hit " + name + " for " + ChatColor.RED + (int) damageHealValue * -1 + " " + ChatColor.GRAY + "damage.");
+                                sendMessage(ChatColor.RED + "\u00AB" + ChatColor.GRAY + " " + attacker.getName() + "'s " + ability + " hit you for " + ChatColor.RED + Math.round(damageHealValue) * -1 + " " + ChatColor.GRAY + "damage.");
+                                attacker.sendMessage(ChatColor.GREEN + "\u00BB" + ChatColor.GRAY + " " + "Your " + ability + " hit " + name + " for " + ChatColor.RED + Math.round(damageHealValue) * -1 + " " + ChatColor.GRAY + "damage.");
                             }
                         }
                         //REPENTANCE
@@ -889,11 +888,11 @@ public final class WarlordsPlayer {
                             }
                             if (damageHealValue != 0) {
                                 if (isCrit) {
-                                    sendMessage(ChatColor.GREEN + "\u00AB" + ChatColor.GRAY + " " + attacker.getName() + "'s " + ability + " critically healed you for " + ChatColor.GREEN + "§l" + (int) damageHealValue + "! " + ChatColor.GRAY + "health.");
-                                    attacker.sendMessage(ChatColor.GREEN + "\u00BB" + ChatColor.GRAY + " " + "Your " + ability + " critically healed " + name + " for " + ChatColor.GREEN + "§l" + (int) damageHealValue + "! " + ChatColor.GRAY + "health.");
+                                    sendMessage(ChatColor.GREEN + "\u00AB" + ChatColor.GRAY + " " + attacker.getName() + "'s " + ability + " critically healed you for " + ChatColor.GREEN + "§l" + Math.round(damageHealValue) + "! " + ChatColor.GRAY + "health.");
+                                    attacker.sendMessage(ChatColor.GREEN + "\u00BB" + ChatColor.GRAY + " " + "Your " + ability + " critically healed " + name + " for " + ChatColor.GREEN + "§l" + Math.round(damageHealValue) + "! " + ChatColor.GRAY + "health.");
                                 } else {
-                                    sendMessage(ChatColor.GREEN + "\u00AB" + ChatColor.GRAY + " " + attacker.getName() + "'s " + ability + " healed for " + ChatColor.GREEN + "" + (int) damageHealValue + " " + ChatColor.GRAY + "health.");
-                                    attacker.sendMessage(ChatColor.GREEN + "\u00BB" + ChatColor.GRAY + " " + "Your " + ability + " healed " + name + " for " + ChatColor.GREEN + "" + (int) damageHealValue + " " + ChatColor.GRAY + "health.");
+                                    sendMessage(ChatColor.GREEN + "\u00AB" + ChatColor.GRAY + " " + attacker.getName() + "'s " + ability + " healed for " + ChatColor.GREEN + "" + Math.round(damageHealValue) + " " + ChatColor.GRAY + "health.");
+                                    attacker.sendMessage(ChatColor.GREEN + "\u00BB" + ChatColor.GRAY + " " + "Your " + ability + " healed " + name + " for " + ChatColor.GREEN + "" + Math.round(damageHealValue) + " " + ChatColor.GRAY + "health.");
                                 }
                             }
                         }
@@ -970,8 +969,8 @@ public final class WarlordsPlayer {
                         windfuryActivate = 0;
                     }
                     if (windfuryActivate < 35) {
-                        gameState.getGame().forEachOnlinePlayer((p, t) -> {
-                            p.playSound(getLocation(), "shaman.windfuryweapon.impact", 1.5F, 1);
+                        gameState.getGame().forEachOnlinePlayer((player1, t) -> {
+                            player1.playSound(getLocation(), "shaman.windfuryweapon.impact", 2, 1);
                         });
                         addHealth(attacker, "Windfury Weapon", min, max, 25, 235);
                         if (health > 0)
@@ -986,8 +985,8 @@ public final class WarlordsPlayer {
                             attacker.addHealth(attacker, "Earthliving Weapon", (int) (damageHealValue * -2.4), (int) (damageHealValue * -2.4), -1, 100);
                         }
 
-                        gameState.getGame().forEachOnlinePlayer((p, t) -> {
-                            p.playSound(getLocation(), "shaman.earthlivingweapon.impact", 1, 1);
+                        gameState.getGame().forEachOnlinePlayer((player1, t) -> {
+                            player1.playSound(getLocation(), "shaman.earthlivingweapon.impact", 2, 1);
                         });
 
                         attacker.setFirstProc(false);
@@ -1022,6 +1021,8 @@ public final class WarlordsPlayer {
                     attacker.getSoulBindedPlayers().add(new Soulbinding.SoulBoundPlayer(this, 2));
                 }
             }
+            System.out.println(attacker.name + " - " + attacker.getTotalDamage());
+
         }
     }
 
@@ -1754,7 +1755,7 @@ public final class WarlordsPlayer {
             player.closeInventory();
             ((EntityLiving) ((CraftPlayer) player).getHandle()).setAbsorptionHearts(0);
             this.assignItemLore(player);
-            ArmorManager.resetArmor(this, player);
+            ArmorManager.resetArmor(player, getSpecClass(), getTeam());
             player.setScoreboard(this.getScoreboard().getScoreboard());
             // TODO Update the inventory based on the status of isUndyingArmyDead here
         }

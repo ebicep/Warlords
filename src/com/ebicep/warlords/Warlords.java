@@ -446,10 +446,8 @@ public class Warlords extends JavaPlugin {
                         // Blood Lust
                         if (warlordsPlayer.getBloodLustDuration() != 0) {
                             Location location = warlordsPlayer.getLocation();
-                            location.add(0, 1.2, 0);
-                            //PacketPlayOutWorldParticles p1 = new PacketPlayOutWorldParticles(EnumParticle.REDSTONE, true, 1, 1, 1, 255, 255, 255, 0, 0);
-                            // TODO: make it not a rainbow lol
-                            ParticleEffect.REDSTONE.display(0.3F, 0.2F, 0.3F, 0.1F, 3, location, 500);
+                            location.add((Math.random() - 0.5) * 1, 1.2, (Math.random() - 0.5) * 1);
+                            ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(255,0,0), location, 500);
                         }
                         // Earthliving
                         if (warlordsPlayer.getEarthlivingDuration() != 0) {
