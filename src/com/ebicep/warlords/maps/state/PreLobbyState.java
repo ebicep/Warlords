@@ -28,6 +28,10 @@ public class PreLobbyState implements State, TimerDebugAble {
         if (players >= game.getMap().getMinPlayers()) {
             if (timer % 20 == 0) {
                 int time = timer / 20;
+                game.forEachOnlinePlayer((player, team) -> {
+                    // updateTimeLeft(player, remaining / 20, game);
+                    // updatePlayers(player, players, game);
+                });
                 if (time == 30) {
                     game.forEachOnlinePlayer((player, team) -> {
                         sendMessage(player, false, ChatColor.YELLOW + "The game starts in " + ChatColor.GREEN + "30 " + ChatColor.YELLOW + "seconds!");

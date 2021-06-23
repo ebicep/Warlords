@@ -26,7 +26,8 @@ public class Protector extends AbstractPaladin {
                 new HolyRadiance(10, 30, 15, 175,
                         "§7Radiate with holy energy, healing\n" +
                         "§7yourself and all nearby allies for\n" +
-                        "§a%dynamic.value% §7- §a%dynamic.value% §7health."),
+                        "§a582 §7- §a760 §7health."),
+
                 new HammerOfLight());
     }
 

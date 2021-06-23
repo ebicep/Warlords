@@ -4,14 +4,19 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.util.PlayerFilter;
+import com.ebicep.warlords.classes.paladin.specs.protector.Protector;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.HashSet;
+import org.bukkit.entity.Entity;
 
 public class HammerOfLight extends AbstractAbility {
+
     public HammerOfLight() {
         super("Hammer of Light", -119, -158, 60 + 11, 30, 20, 175,
                 "§7Throw down a Hammer of Light on\n" +
@@ -27,10 +32,12 @@ public class HammerOfLight extends AbstractAbility {
 
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
+        if (player.getTargetBlock((HashSet<Byte>) null, 15).getType() == Material.AIR) return;
         DamageHealCircle damageHealCircle = new DamageHealCircle(wp, player.getTargetBlock((HashSet<Byte>) null, 15).getLocation().add(1, 0, 1), 6, 8, minDamageHeal, maxDamageHeal, critChance, critMultiplier, name);
         damageHealCircle.spawnHammer();
         damageHealCircle.getLocation().add(0, 1, 0);
         wp.subtractEnergy(energyCost);
+        wp.getSpec().getOrange().setCurrentCooldown(cooldown);
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "paladin.hammeroflight.impact", 2, 1);
@@ -61,5 +68,18 @@ public class HammerOfLight extends AbstractAbility {
             }
 
         }.runTaskTimer(Warlords.getInstance(), 0, 20);
+    }
+
+    public static boolean standingInHammer(WarlordsPlayer owner, Entity standing) {
+        if (!(owner.getSpec() instanceof Protector)) return false;
+        for (Entity entity : owner.getWorld().getEntities()) {
+            if (entity instanceof ArmorStand && entity.hasMetadata("Hammer of Light - " + owner.getName())) {
+                if (entity.getLocation().clone().add(0, 2, 0).distanceSquared(standing.getLocation()) < 5 * 5.25) {
+                    return true;
+                }
+                break;
+            }
+        }
+        return false;
     }
 }

@@ -3,8 +3,14 @@ package com.ebicep.warlords.classes.abilties;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.util.PlayerFilter;
+import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.util.Utils;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
@@ -40,10 +46,23 @@ public class LightningRod extends AbstractAbility {
                 }
             });
 
-        // TODO: add effects around player with armorstands
+        ArmorStand totem = getTotem(warlordsPlayer);
+        if (totem != null) {
+            new FallingBlockWaveEffect(totem.getLocation(), 4, 1.1, Material.SAPLING, (byte) 0).play();
+        }
         player.getWorld().spigot().strikeLightningEffect(playerLocation, true);
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "shaman.lightningrod.activation", 2, 1);
         }
+    }
+
+    @Nullable
+    private ArmorStand getTotem(@Nonnull WarlordsPlayer player) {
+        for (Entity entity : player.getEntity().getNearbyEntities(20, 17, 20)) {
+            if (entity instanceof ArmorStand && entity.hasMetadata("Capacitor Totem - " + player.getName())) {
+                return (ArmorStand) entity;
+            }
+        }
+        return null;
     }
 }

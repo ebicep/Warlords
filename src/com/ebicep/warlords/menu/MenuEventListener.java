@@ -24,9 +24,7 @@ public class MenuEventListener implements Listener {
         Optional<MetadataValue> menu = evt.getWhoClicked().getMetadata(METADATA_CUSTOM_INVENTORY).stream()
                 .filter(e -> e.value() instanceof MenuBase)
                 .findAny();
-        if (menu.isPresent()) {
-            ((MenuBase)menu.get().value()).doOnClickAction(evt);
-        }
+        menu.ifPresent(metadataValue -> ((MenuBase) metadataValue.value()).doOnClickAction(evt));
 
     }
 
@@ -36,15 +34,15 @@ public class MenuEventListener implements Listener {
         int matchedIndex = -1;
         for (int i = 0; i < meta.size(); i++) {
             MetadataValue mdv = meta.get(i);
-            if(mdv.value() instanceof MenuBase && ((MenuBase)mdv.value()).getInventory() == evt.getInventory()) {
+            if (mdv.value() instanceof MenuBase && ((MenuBase)mdv.value()).getInventory() == evt.getInventory()) {
                 matchedIndex = i;
             }
         }
         evt.getPlayer().removeMetadata(METADATA_CUSTOM_INVENTORY, plugin);
         if (matchedIndex >= 0) {
             // Restore other entries
-            for(int i = 0; i < meta.size(); i++) {
-                if(matchedIndex != i) {
+            for (int i = 0; i < meta.size(); i++) {
+                if (matchedIndex != i) {
                     evt.getPlayer().setMetadata(METADATA_CUSTOM_INVENTORY, meta.get(i));
                 }
             }

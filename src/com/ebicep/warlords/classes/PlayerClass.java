@@ -127,8 +127,10 @@ public abstract class PlayerClass {
             } else if (slot == 4) {
                 if (orange.getCurrentCooldown() == 0 && player.getLevel() >= orange.getEnergyCost()) {
                     orange.onActivate(wp, player);
-                    orange.setCurrentCooldown(orange.cooldown);
-                    sendRightClickPacket(player);
+                    if (!orange.getName().contains("Hammer") && !orange.getName().contains("Rain")) {
+                        orange.setCurrentCooldown(orange.cooldown);
+                        sendRightClickPacket(player);
+                    }
                 }
             }
             player.getInventory().setHeldItemSlot(0);

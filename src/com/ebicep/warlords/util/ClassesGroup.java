@@ -31,7 +31,7 @@ public enum ClassesGroup {
     SHAMAN(
             "Shaman",
             new ItemStack(Material.INK_SACK, 1, (short) 2),
-            "§7The Shaman has an unbreakable bond\n§7with nature. This grans him access to devastating abilities that are\n§7empowered by the elements.",
+            "§7The Shaman has an unbreakable bond\n§7with nature. This grants him access to\n§7devastating abilities that are\n§7empowered by the elements.",
             THUNDERLORD, SPIRITGUARD, EARTHWARDEN
     ),
     ;
@@ -42,8 +42,8 @@ public enum ClassesGroup {
 
     ClassesGroup(String name, ItemStack item, String description, Classes ... subclasses) {
         this.name = name;
+        this.item = item;
         this.description = description;
         this.subclasses = Collections.unmodifiableList(Arrays.asList(subclasses));
-        this.item = item;
     }
 }

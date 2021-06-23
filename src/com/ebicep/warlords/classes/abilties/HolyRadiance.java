@@ -25,14 +25,11 @@ public class HolyRadiance extends AbstractAbility {
         warlordsPlayer.addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
 
         for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "paladin.holyradiance.activation", 1.5F, 1);
+            player1.playSound(player.getLocation(), "paladin.holyradiance.activation", 2, 1);
         }
 
-        for (int i = 0; i < 10; i++) {
-            Location particleLoc = player.getLocation().add(0, 1.2, 0);
-            ParticleEffect.VILLAGER_HAPPY.display(1F, 1F, 1F, 0.1F, 2, particleLoc, 500);
-            ParticleEffect.SPELL.display(1F, 1F, 1F, 0.1F, 2, particleLoc, 500);
-            ParticleEffect.HEART.display(0, 0, 0, 0.1F, 1, particleLoc, 500);
-        }
+        Location particleLoc = player.getLocation().add(0, 1.2, 0);
+        ParticleEffect.VILLAGER_HAPPY.display(1F, 1F, 1F, 0.1F, 2, particleLoc, 500);
+        ParticleEffect.SPELL.display(1F, 1F, 1F, 0.06F, 12, particleLoc, 500);
     }
 }

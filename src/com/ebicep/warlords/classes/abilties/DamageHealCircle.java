@@ -1,5 +1,6 @@
 package com.ebicep.warlords.classes.abilties;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.effects.circle.AreaEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
@@ -12,6 +13,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.EulerAngle;
 
 import org.bukkit.Bukkit;
@@ -32,10 +34,8 @@ public class DamageHealCircle {
     public DamageHealCircle(WarlordsPlayer warlordsPlayer, Location location, int radius, int duration, int minDamage, int maxDamage, int critChance, int critMultiplier, String name) {
         this.warlordsPlayer = warlordsPlayer;
         this.location = location;
-        for (int i = 0; i < 10; i++) {
-            if (location.getWorld().getBlockAt(location.clone().add(0, -1, 0)).getType() == Material.AIR) {
-                location.add(0, -1, 0);
-            }
+        if (!location.getWorld().getBlockAt(location).getType().isSolid()) {
+            location.add(0, -1, 0);
         }
         this.radius = radius;
         this.duration = duration;
@@ -47,8 +47,8 @@ public class DamageHealCircle {
         this.circle = new CircleEffect(warlordsPlayer.getGame(), warlordsPlayer.getTeam(), location, radius);
         if (name.contains("Healing Rain")) {
             this.circle.addEffect(new CircumferenceEffect(ParticleEffect.VILLAGER_HAPPY, ParticleEffect.REDSTONE));
-            this.circle.addEffect(new AreaEffect(5, ParticleEffect.CLOUD).particlesPerSurface(0.1));
-            this.circle.addEffect(new AreaEffect(5, ParticleEffect.DRIP_WATER).particlesPerSurface(0.1));
+            this.circle.addEffect(new AreaEffect(5, ParticleEffect.CLOUD).particlesPerSurface(0.05));
+            this.circle.addEffect(new AreaEffect(5, ParticleEffect.DRIP_WATER).particlesPerSurface(0.05));
         } else if (name.equals("Consecrate")) {
             this.circle.addEffect(new CircumferenceEffect(ParticleEffect.VILLAGER_HAPPY, ParticleEffect.REDSTONE));
             this.circle.addEffect(new DoubleLineEffect(ParticleEffect.SPELL));
@@ -70,6 +70,7 @@ public class DamageHealCircle {
         }
         newLocation.add(0, -1, 0);
         hammer = (ArmorStand) location.getWorld().spawnEntity(newLocation.clone().add(.25, 1.9, -.25), EntityType.ARMOR_STAND);
+        hammer.setMetadata("Hammer of Light - " + getWarlordsPlayer().getName(), new FixedMetadataValue(Warlords.getInstance(), true));
         hammer.setRightArmPose(new EulerAngle(20.25, 0, 0));
         hammer.setItemInHand(new ItemStack(Material.STRING));
         hammer.setGravity(false);

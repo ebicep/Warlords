@@ -17,9 +17,9 @@ import org.bukkit.util.Vector;
 public class Boulder extends AbstractAbility {
 
     public Boulder() {
-        super("Boulder", -588, -877, 8, 80, 15, 175,
+        super("Boulder", -490, -731, 8, 80, 15, 175,
                 "§7Launch a giant boulder that shatters\n" +
-                        "§7and deals §c%dynamic.value% §7- §c%dynamic.value% §7damage\n" +
+                        "§7and deals §c490 §7- §c731 §7damage\n" +
                         "§7to all enemies near the impact point\n" +
                         "§7and knocks them back slightly.");
     }
@@ -53,6 +53,7 @@ public class Boulder extends AbstractAbility {
 
                 if (!stand.isValid()) {
                     this.cancel();
+                    return;
                 }
 
                 speed.add(new Vector(0, -0.0075, 0));
@@ -80,6 +81,7 @@ public class Boulder extends AbstractAbility {
                         .aliveEnemiesOf(warlordsPlayer).findAny().isPresent();
                 }
 
+
                 if (shouldExplode) {
                     stand.remove();
                     for (Player player1 : player.getWorld().getPlayers()) {
@@ -92,7 +94,7 @@ public class Boulder extends AbstractAbility {
                         p.addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
                         
                         Entity entity = p.getEntity();
-                        Vector v = entity.getLocation().toVector().subtract(newLoc.toVector()).normalize().multiply(0.9).setY(0.1);
+                        Vector v = entity.getLocation().toVector().subtract(newLoc.toVector()).normalize().multiply(0.9).setY(0.2);
                         entity.setVelocity(v);
                     });
                     newLoc.setPitch(-12);

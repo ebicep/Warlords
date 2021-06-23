@@ -140,9 +140,8 @@ public class PlayingState implements State, TimerDebugAble {
                 player,
                 this,
                 team,
-                playerSettings.selectedClass(),
                 false,
-                playerSettings.hotKeyMode()
+                playerSettings
             ));
         });
         this.game.forEachOfflinePlayer((p, team) -> {
@@ -188,9 +187,9 @@ public class PlayingState implements State, TimerDebugAble {
         if (getStats(Team.BLUE).points >= this.pointLimit || getStats(Team.RED).points >= this.pointLimit) {
             return nextStateByPoints();
         }
-        if(gateTimer >= 0) {
+        if (gateTimer >= 0) {
             gateTimer--;
-            if(gateTimer % 20 == 0) {
+            if (gateTimer % 20 == 0) {
                 int remaining = gateTimer / 20;
                 game.forEachOnlinePlayer((player, team) -> {
                     player.playSound(player.getLocation(), remaining == 0 ? Sound.WITHER_SPAWN : Sound.NOTE_STICKS, 1, 1);

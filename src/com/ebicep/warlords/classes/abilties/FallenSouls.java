@@ -3,6 +3,7 @@ package com.ebicep.warlords.classes.abilties;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -24,9 +25,9 @@ public class FallenSouls extends AbstractAbility {
     private static final float fallenSoulSpeed = 2.0f;
 
     public FallenSouls() {
-        super("Fallen Souls", -197, -254, 0, 55, 20, 180,
+        super("Fallen Souls", -164, -212, 0, 55, 20, 180,
                 "§7Summon a wave of fallen souls, dealing\n" +
-                        "§c%dynamic.value% §7- §c%dynamic.value% §7damage to all enemies they\n" +
+                        "§c164 §7- §c212 §7damage to all enemies they\n" +
                         "§7pass through. Each target hit reduces the\n" +
                         "§7cooldown of Spirit Link by §62 §7seconds.");
     }
@@ -81,20 +82,24 @@ public class FallenSouls extends AbstractAbility {
                 damageNearByPlayers(nearMiddle, wp, player, fallenSoul);
                 damageNearByPlayers(nearRight, wp, player, fallenSoul);
 
+                ParticleEffect.SPELL_WITCH.display(0, 0, 0, 1F, 1, leftSoul.getLocation().add(0, 2, 0), 500);
+                ParticleEffect.SPELL_WITCH.display(0, 0, 0, 1F, 1, middleSoul.getLocation().add(0, 2, 0), 500);
+                ParticleEffect.SPELL_WITCH.display(0, 0, 0, 1F, 1, rightSoul.getLocation().add(0, 2, 0), 500);
+
                 if (!fallenSoul.isLeftRemoved() && leftSoul.getLocation().getWorld().getBlockAt(leftSoul.getLocation().clone().add(0, 2, 0)).getType() != Material.AIR || fallenSoul.getFallenSoulLeft().getTicksLived() > 50 / fallenSoulSpeed * 1.2) {
-                    //TODO add explosion thingy
+                    ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.5F, 1, leftSoul.getLocation().add(0, 1, 0), 500);
                     fallenSoul.getFallenSoulLeft().remove();
                     fallenSoul.setLeftRemoved(true);
                 }
 
                 if (!fallenSoul.isMiddleRemoved() && middleSoul.getLocation().getWorld().getBlockAt(middleSoul.getLocation().clone().add(0, 2, 0)).getType() != Material.AIR || fallenSoul.getFallenSoulMiddle().getTicksLived() > 50 / fallenSoulSpeed * 1.2) {
-                    //TODO add explosion thingy
+                    ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.5F, 1, middleSoul.getLocation().add(0, 1, 0), 500);
                     fallenSoul.getFallenSoulMiddle().remove();
                     fallenSoul.setMiddleRemoved(true);
                 }
 
                 if (!fallenSoul.isRightRemoved() && rightSoul.getLocation().getWorld().getBlockAt(rightSoul.getLocation().clone().add(0, 2, 0)).getType() != Material.AIR || fallenSoul.getFallenSoulRight().getTicksLived() > 50 / fallenSoulSpeed * 1.2) {
-                    //TODO add explosion thingy
+                    ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.5F, 1, rightSoul.getLocation().add(0, 1, 0), 500);
                     fallenSoul.getFallenSoulRight().remove();
                     fallenSoul.setRightRemoved(true);
                 }

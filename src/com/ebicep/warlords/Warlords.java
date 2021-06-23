@@ -2,6 +2,7 @@ package com.ebicep.warlords;
 
 import com.ebicep.warlords.classes.abilties.OrbsOfLife;
 import com.ebicep.warlords.classes.abilties.Soulbinding;
+import com.ebicep.warlords.classes.abilties.UndyingArmy;
 import com.ebicep.warlords.commands.Commands;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.maps.Game;
@@ -12,10 +13,8 @@ import com.ebicep.warlords.util.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.Bukkit;
@@ -171,7 +170,7 @@ public class Warlords extends JavaPlugin {
         new BukkitRunnable() {
             @Override
             public void run() {
-                for(Player player : getServer().getOnlinePlayers()) {
+                for (Player player : getServer().getOnlinePlayers()) {
                     player.setFoodLevel(20);
                     player.setSaturation(1);
                 }
@@ -250,6 +249,7 @@ public class Warlords extends JavaPlugin {
                         Player player = warlordsPlayer.getEntity() instanceof Player ? (Player)warlordsPlayer.getEntity() : null;
                         
                         if(player != null) {
+                            Location location = player.getLocation();
                             player.setCompassTarget(warlordsPlayer
                                     .getGameState()
                                     .flags()
@@ -257,6 +257,11 @@ public class Warlords extends JavaPlugin {
                                     .getFlag()
                                     .getLocation()
                             );
+                            //dismount directly downwards
+                            if (player.isSneaking() && player.getVehicle() != null) {
+                                player.getVehicle().remove();
+                            }
+
                         }
 
 
@@ -297,12 +302,13 @@ public class Warlords extends JavaPlugin {
                             warlordsPlayer.setRespawnTimer(-1);
                             warlordsPlayer.setSpawnProtection(10);
                             warlordsPlayer.setSpawnDamage(5);
+                            warlordsPlayer.setDead(false);
                             Location respawnPoint = game.getMap().getRespawn(warlordsPlayer.getTeam());
                             warlordsPlayer.teleport(respawnPoint);
                             new BukkitRunnable() {
                                 @Override
                                 public void run() {
-                                    if (player.getLocation().distanceSquared(respawnPoint) > 5 * 5) {
+                                    if (player.getLocation().distanceSquared(game.getMap().getBlueRespawn()) > 5 * 5) {
                                         warlordsPlayer.setSpawnProtection(0);
                                     }
                                     if (warlordsPlayer.getSpawnProtection() == 0) {
@@ -325,7 +331,7 @@ public class Warlords extends JavaPlugin {
                             warlordsPlayer.setUndyingArmyDead(true);
                             warlordsPlayer.setUndyingArmyDuration(0);
                             if (player != null) {
-                                player.getInventory().setItem(5, new ItemStack(Material.BONE));
+                                player.getInventory().setItem(5, UndyingArmy.BONE);
                             }
                             newHealth = 40;
                         }
@@ -333,7 +339,7 @@ public class Warlords extends JavaPlugin {
                             if (warlordsPlayer.isUndyingArmyDead()) {
                                 warlordsPlayer.setUndyingArmyDead(false);
                                 if (player != null) {
-                                    player.getInventory().remove(Material.BONE);
+                                    player.getInventory().remove(UndyingArmy.BONE);
                                 }
                             }
                             warlordsPlayer.respawn();
@@ -445,12 +451,32 @@ public class Warlords extends JavaPlugin {
                             // TODO: make it not a rainbow lol
                             ParticleEffect.REDSTONE.display(0.3F, 0.2F, 0.3F, 0.1F, 3, location, 500);
                         }
-
                         // Earthliving
                         if (warlordsPlayer.getEarthlivingDuration() != 0) {
                             Location location = warlordsPlayer.getLocation();
                             location.add(0, 1.2, 0);
                             ParticleEffect.VILLAGER_HAPPY.display(0.3F, 0.3F, 0.3F, 0.1F, 3, location, 500);
+                        }
+
+                        // Wrath
+                        if (warlordsPlayer.getWrathDuration() != 0) {
+                            Location location = warlordsPlayer.getLocation();
+                            location.add(0, 1.2, 0);
+                            ParticleEffect.SPELL.display(0.3F, 0.1F, 0.3F, 0.2F, 6, location, 500);
+                        }
+
+                        // Windfury
+                        if (warlordsPlayer.getWindfuryDuration() != 0) {
+                            Location location = warlordsPlayer.getLocation();
+                            location.add(0, 1.2, 0);
+                            ParticleEffect.CRIT.display(0.2F, 0F, 0.2F, 0.1F, 3, location, 500);
+                        }
+
+                        // Soulbinding Weapon
+                        if (warlordsPlayer.getSoulBindCooldown() != 0) {
+                            Location location = warlordsPlayer.getLocation();
+                            location.add(0, 1.2, 0);
+                            ParticleEffect.SPELL_WITCH.display(0.2F, 0F, 0.2F, 0.1F, 1, location, 500);
                         }
                     }
                 }
@@ -459,11 +485,11 @@ public class Warlords extends JavaPlugin {
                 if (counter % 2 == 0) {
                     for (WarlordsPlayer warlordsPlayer : players.values()) {
                         //UPDATES SCOREBOARD HEALTHS
-                        warlordsPlayer.getScoreboard().updateHealth();
+                        Entity player = warlordsPlayer.getEntity();
 
                         // Inferno
                         if (warlordsPlayer.getInferno() != 0) {
-                            Location location = warlordsPlayer.getLocation();
+                            Location location = player.getLocation();
                             location.add(0, 1.2, 0);
                             ParticleEffect.DRIP_LAVA.display(0.5F, 0.3F, 0.5F, 0.4F, 1, location, 500);
                             ParticleEffect.FLAME.display(0.5F, 0.3F, 0.5F, 0.0001F, 1, location, 500);
@@ -487,15 +513,17 @@ public class Warlords extends JavaPlugin {
 
                         // Infusion
                         if (warlordsPlayer.getInfusion() != 0) {
-                            Location location = warlordsPlayer.getLocation();
-                            location.add(0, 1.5, 0);
+                            Location location = player.getLocation();
+                            location.add(0, 1.2, 0);
+                            ParticleEffect.SPELL.display(0.3F, 0.1F, 0.3F, 0.2F, 2, location, 500);
                         }
 
                         // Presence
                         if (warlordsPlayer.getPresence() != 0) {
-                            Location location = warlordsPlayer.getLocation();
+                            Location location = player.getLocation();
                             location.add(0, 1.5, 0);
                             ParticleEffect.SMOKE_NORMAL.display(0.3F, 0.3F, 0.3F, 0.02F, 1, location, 500);
+                            ParticleEffect.SPELL.display(0.3F, 0.3F, 0.3F, 0.5F, 2, location, 500);
                         }
                     }
                 }
@@ -542,23 +570,25 @@ public class Warlords extends JavaPlugin {
                         //ABILITY COOLDOWN
                         if (warlordsPlayer.getSpec().getRed().getCurrentCooldown() != 0 && warlordsPlayer.getSpec().getRed().getCurrentCooldown() != warlordsPlayer.getSpec().getRed().getCooldown()) {
                             warlordsPlayer.getSpec().getRed().subtractCooldown(1);
-                            if(player != null) warlordsPlayer.updateRedItem(player);
+                            warlordsPlayer.updateRedItem();
                         }
                         if (warlordsPlayer.getSpec().getPurple().getCurrentCooldown() != 0 && warlordsPlayer.getSpec().getPurple().getCurrentCooldown() != warlordsPlayer.getSpec().getPurple().getCooldown()) {
                             warlordsPlayer.getSpec().getPurple().subtractCooldown(1);
-                            if(player != null) warlordsPlayer.updatePurpleItem(player);
+                            warlordsPlayer.updatePurpleItem();
                         }
                         if (warlordsPlayer.getSpec().getBlue().getCurrentCooldown() != 0 && warlordsPlayer.getSpec().getBlue().getCurrentCooldown() != warlordsPlayer.getSpec().getBlue().getCooldown()) {
                             warlordsPlayer.getSpec().getBlue().subtractCooldown(1);
-                            if(player != null) warlordsPlayer.updateBlueItem(player);
+                            warlordsPlayer.updateBlueItem();
                         }
                         if (warlordsPlayer.getSpec().getOrange().getCurrentCooldown() != 0 && warlordsPlayer.getSpec().getOrange().getCurrentCooldown() != warlordsPlayer.getSpec().getOrange().getCooldown()) {
                             warlordsPlayer.getSpec().getOrange().subtractCooldown(1);
-                            if(player != null) warlordsPlayer.updateOrangeItem(player);
+                            warlordsPlayer.updateOrangeItem();
                         }
                         if (warlordsPlayer.getHorseCooldown() != 0 && !warlordsPlayer.getEntity().isInsideVehicle()) {
                             warlordsPlayer.setHorseCooldown(warlordsPlayer.getHorseCooldown() - 1);
-                            if(player != null) warlordsPlayer.updateHorseItem(player);
+                            if(warlordsPlayer.getEntity() instanceof Player) {
+                                warlordsPlayer.updateHorseItem((Player)warlordsPlayer.getEntity());
+                            }
                         }
                         //COOLDOWNS
                         if (warlordsPlayer.getSpawnProtection() != 0) {
@@ -601,15 +631,7 @@ public class Warlords extends JavaPlugin {
                                 warlordsPlayer.addHealth(warlordsPlayer.getUndyingArmyBy(), "Undying Army", healing, healing, -1, 100);
                             }
                         } else if (warlordsPlayer.isUndyingArmyDead()) {
-                            if (warlordsPlayer.getHealth() - 500 < 0) {
-                                warlordsPlayer.setHealth(0);
-                                warlordsPlayer.setUndyingArmyDead(false);
-                                if(player != null) {
-                                    player.getInventory().remove(Material.BONE);
-                                }
-                            } else {
-                                warlordsPlayer.setHealth(warlordsPlayer.getHealth() - 500);
-                            }
+                            warlordsPlayer.addHealth(warlordsPlayer, "", -500, -500, -1, 100);
                         }
                         if (warlordsPlayer.getWindfuryDuration() != 0) {
                             warlordsPlayer.setWindfuryDuration(warlordsPlayer.getWindfuryDuration() - 1);

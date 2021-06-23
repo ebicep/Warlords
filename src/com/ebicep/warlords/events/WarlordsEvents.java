@@ -2,6 +2,9 @@ package com.ebicep.warlords.events;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
+import com.ebicep.warlords.classes.abilties.Soulbinding;
+import com.ebicep.warlords.classes.abilties.UndyingArmy;
+import com.ebicep.warlords.classes.shaman.specs.spiritguard.Spiritguard;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.flags.GroundFlagLocation;
 import com.ebicep.warlords.maps.flags.PlayerFlagLocation;
@@ -27,7 +30,6 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.ItemStack;
-import org.spigotmc.event.entity.EntityDismountEvent;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -36,6 +38,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+
+import static com.ebicep.warlords.menu.GameMenu.openMainMenu;
 
 public class WarlordsEvents implements Listener {
 
@@ -93,15 +97,14 @@ public class WarlordsEvents implements Listener {
             player.sendMessage(ChatColor.GRAY + "Developed by " + ChatColor.RED + "sumSmash " + ChatColor.GRAY + "&" + ChatColor.RED + " Plikie");
             player.sendMessage(" ");
             player.sendMessage(ChatColor.GRAY + "/class [ClASS] to choose your class!");
+            player.sendMessage(ChatColor.GRAY + "/hotkeymode to change your hotkey mode.");
             player.sendMessage(" ");
             player.sendMessage(ChatColor.GRAY + "NOTE: We're still in beta, bugs and/or missing features are still present. Please report any bugs you might find.");
             player.sendMessage(" ");
             player.sendMessage(ChatColor.GRAY + "CURRENT MISSING FEATURES: ");
             player.sendMessage(ChatColor.RED + "- Weapon Skill boosts");
             player.sendMessage(ChatColor.RED + "- Revenant's Orbs of Life being hidden for the enemy team");
-            player.sendMessage(ChatColor.RED + "- Being able to swap weapon/armor skins.");
             player.sendMessage(ChatColor.RED + "- Flag damage modifier currently does not carry over to a new flag holder.");
-            player.sendMessage(ChatColor.RED + "- Thunderlord/Earthwarden's Totem does not have proc animations!");
             
             player.getInventory().clear();
             player.getInventory().addItem(new ItemBuilder(Material.EMERALD).name("Open class selector").get());
@@ -131,6 +134,21 @@ public class WarlordsEvents implements Listener {
                     attacker.playSound(victim.getLocation(), Sound.HURT_FLESH, 1, 1);
                     warlordsPlayerAttacker.setHitCooldown(12);
                     warlordsPlayerAttacker.subtractEnergy(warlordsPlayerAttacker.getSpec().getEnergyOnHit() * -1);
+                        if (warlordsPlayerAttacker.getSpec() instanceof Spiritguard && warlordsPlayerAttacker.getSoulBindCooldown() != 0) {
+                            if (warlordsPlayerAttacker.hasBoundPlayer(warlordsPlayerVictim)) {
+                                for (Soulbinding.SoulBoundPlayer soulBindedPlayer : warlordsPlayerAttacker.getSoulBindedPlayers()) {
+                                    if (soulBindedPlayer.getBoundPlayer() == warlordsPlayerVictim) {
+                                        System.out.println(soulBindedPlayer.getTimeLeft());
+                                        soulBindedPlayer.setTimeLeft(3);
+                                        break;
+                                    }
+                                }
+                            } else {
+                                victim.sendMessage(ChatColor.RED + "\u00AB " + ChatColor.GRAY + "You have been bound by " + warlordsPlayerAttacker.getName() + "'s " + ChatColor.LIGHT_PURPLE + "Soulbinding Weapon " + ChatColor.GRAY + "!");
+                                warlordsPlayerAttacker.sendMessage(ChatColor.GREEN + "\u00BB " + ChatColor.GRAY + "Your " + ChatColor.LIGHT_PURPLE + "Soulbinding Weapon " + ChatColor.GRAY + "has bound " + victim.getName() + "!");
+                                warlordsPlayerAttacker.getSoulBindedPlayers().add(new Soulbinding.SoulBoundPlayer(warlordsPlayerVictim, 3));
+                            }
+                        }
                     warlordsPlayerVictim.addHealth(warlordsPlayerAttacker, "", -132, -179, 25, 200);
                 }
 
@@ -171,18 +189,15 @@ public class WarlordsEvents implements Listener {
             ItemStack itemHeld = player.getItemInHand();
             if (player.getInventory().getHeldItemSlot() == 7 && itemHeld.getType() == Material.GOLD_BARDING && player.getVehicle() == null) {
                 if (location.getWorld().getBlockAt((int) location.getX(), 2, (int) location.getZ()).getType() == Material.NETHERRACK) { //&& !Utils.tunnelUnder(e.getPlayer())) {
-                    player.sendMessage(ChatColor.RED + "You cannot mount here!");
+                    player.sendMessage(ChatColor.RED + "You can't mount here!");
                 } else {
                     double distance = player.getLocation().getY() - player.getWorld().getHighestBlockYAt(player.getLocation());
                     if (distance > 2) {
-                        player.sendMessage(ChatColor.RED + "You cannot mount in the air");
+                        player.sendMessage(ChatColor.RED + "You can't mount in the air");
                     } else if (wp.getFlagDamageMultipler() > 0) {
-                        player.sendMessage(ChatColor.RED + "You cannot mount while holding the flag!");
+                        player.sendMessage(ChatColor.RED + "You can't mount while holding the flag!");
                     } else {
-                        for (Player player1 : player.getWorld().getPlayers()) {
-                            player1.playSound(player1.getLocation(), "mountup", 1, 1);
-                        }
-
+                        player.playSound(player.getLocation(), "mountup", 1, 1);
                         Horse horse = (Horse) player.getWorld().spawnEntity(player.getLocation(), EntityType.HORSE);
                         horse.setTamed(true);
                         horse.getInventory().setSaddle(new ItemStack(Material.SADDLE));
@@ -197,7 +212,7 @@ public class WarlordsEvents implements Listener {
                     }
                 }
             } else if (itemHeld.getType() == Material.BONE) {
-                player.getInventory().remove(Material.BONE);
+                player.getInventory().remove(UndyingArmy.BONE);
                 wp.addHealth(wp, "", -100000, -100000, -1, 100);
                 wp.setUndyingArmyDead(false);
             } else if (itemHeld.getType() == Material.BANNER) {
@@ -209,6 +224,12 @@ public class WarlordsEvents implements Listener {
                 }
             } else if (player.getInventory().getHeldItemSlot() == 8) {
                 wp.toggleTeamFlagCompass();
+            } else if (itemHeld.getType() == Material.NETHER_STAR) {
+                //menu
+                openMainMenu(player);
+            } else if (itemHeld.getType() == Material.NOTE_BLOCK) {
+                //team selector
+                player.sendMessage("this does jack shit right now :D");
             }
 
 
@@ -216,15 +237,6 @@ public class WarlordsEvents implements Listener {
             if (action == Action.LEFT_CLICK_AIR) {
 
             }
-        }
-    }
-
-
-    @EventHandler
-    public static void onPlayerDismount(EntityDismountEvent e) {
-        Entity entity = e.getDismounted();
-        if (entity instanceof Horse) {
-            entity.remove();
         }
     }
 
@@ -252,13 +264,23 @@ public class WarlordsEvents implements Listener {
 
     @EventHandler
     public void onInvClick(InventoryClickEvent e) {
+        WarlordsPlayer wp = Warlords.getPlayer(e.getWhoClicked());
+        if (wp != null && e.getSlot() == 0) {
+            if (e.isLeftClick()) {
+                wp.weaponLeftClick((Player)e.getWhoClicked());
+            } else if (e.isRightClick()) {
+                wp.weaponRightClick((Player)e.getWhoClicked());
+            }
+        }
         e.setCancelled(true);
     }
 
     @EventHandler
     public void onOpenInventory(InventoryOpenEvent e) {
-        if (e.getInventory().getHolder().getInventory().getTitle().equals("Horse")) {
-            e.setCancelled(true);
+        if (e.getPlayer().getVehicle() != null) {
+            if (e.getInventory().getHolder().getInventory().getTitle().equals("Horse")) {
+                e.setCancelled(true);
+            }
         }
     }
 
@@ -299,6 +321,11 @@ public class WarlordsEvents implements Listener {
 
             e.setCancelled(true);
         }
+    }
+
+    @EventHandler
+    public void onEntityDeath(EntityDeathEvent e) {
+        e.getDrops().clear();
     }
 
     @EventHandler

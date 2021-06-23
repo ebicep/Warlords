@@ -23,12 +23,12 @@ import java.util.List;
 public class LightningBolt extends AbstractAbility {
 
     public LightningBolt() {
-        super("Lightning Bolt", -249, -462, 0, 60, 20, 200,
+        super("Lightning Bolt", -207, -385, 0, 60, 20, 200,
                 "§7Hurl a fast, piercing bolt of lightning that\n" +
-                        "§7deals §c%dynamic.value% §7- §c%dynamic.value% §7damage to all enemies it\n" +
+                        "§7deals §c207 §7- §c385 §7damage to all enemies it\n" +
                         "§7passes through. Each target hit reduces the\n" +
                         "§7cooldown of Chain Lightning by §62 §7seconds.\n" +
-                        "''\n" +
+                        "\n" +
                         "§7Has a maximum range of §e60 §7blocks.");
     }
 
@@ -56,7 +56,7 @@ public class LightningBolt extends AbstractAbility {
                         warlordsPlayer.addHealth(bolt.getShooter(), bolt.getLightningBolt().getName(), bolt.getLightningBolt().getMinDamageHeal(), bolt.getLightningBolt().getMaxDamageHeal(), bolt.getLightningBolt().getCritChance(), bolt.getLightningBolt().getCritMultiplier());
 
                         for (Player player1 : warlordsPlayer.getWorld().getPlayers()) {
-                            player1.playSound(warlordsPlayer.getLocation(), "shaman.lightningbolt.impact", 1.5F, 1);
+                            player1.playSound(warlordsPlayer.getLocation(), "shaman.lightningbolt.impact", 2F, 1);
                         }
 
                         //reducing chain cooldown
@@ -69,6 +69,9 @@ public class LightningBolt extends AbstractAbility {
                 Block blockInsideBolt = location.getWorld().getBlockAt(bolt.getBoltLocation().subtract(bolt.getTeleportDirection().clone().multiply(2)));
                 if (blockInsideBolt.getType() != Material.AIR && blockInsideBolt.getType() != Material.WATER || bolt.getArmorStand().getTicksLived() > 50) {
                     ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.0F, 1, bolt.getBoltLocation().subtract(bolt.getTeleportDirection().clone().multiply(2.5)), 500);
+                    for (Player player1 : player.getWorld().getPlayers()) {
+                        player1.playSound(bolt.getLocation(), "shaman.lightningbolt.impact", 2, 1);
+                    }
                     bolt.getArmorStand().remove();
                     this.cancel();
                 }

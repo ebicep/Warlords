@@ -3,11 +3,16 @@ package com.ebicep.warlords.classes.abilties;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
+import java.util.HashSet;
+import java.util.Optional;
 import com.ebicep.warlords.util.PlayerFilter;
-import com.ebicep.warlords.util.Utils;
 import java.util.*;
+import com.ebicep.warlords.util.Utils;
+import net.minecraft.server.v1_8_R3.PacketPlayOutAnimation;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -93,9 +98,8 @@ public class Chain extends AbstractAbility {
 
     @Override
     public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
-
         //TODO add Your enemy is too far away!
-        // TODO Chain pulse animation
+
         /* CHAINS
            TOTEM -> PLAYER -> PLAYER
            PLAYER -> TOTEM -> PLAYER
@@ -185,6 +189,8 @@ public class Chain extends AbstractAbility {
         }
 
         if (hitCounter != 0) {
+            PacketPlayOutAnimation playOutAnimation = new PacketPlayOutAnimation(((CraftPlayer) player).getHandle(), 0);
+            ((CraftPlayer) player).getHandle().playerConnection.sendPacket(playOutAnimation);
             warlordsPlayer.subtractEnergy(energyCost);
             if (name.contains("Lightning")) {
                 warlordsPlayer.setChainLightning(hitCounter);
@@ -193,8 +199,8 @@ public class Chain extends AbstractAbility {
 
                 for (Player player1 : player.getWorld().getPlayers()) {
                     player1.playSound(player.getLocation(), "shaman.chainlightning.activation", 2, 1);
-                    player1.playSound(player.getLocation(), "shaman.chainlightning.impact", 0.6F, 1);
                 }
+                player.playSound(player.getLocation(), "shaman.chainlightning.impact", 1F, 1);
 
             } else if (name.contains("Heal")) {
                 if (hitCounter * 2 > warlordsPlayer.getSpec().getRed().getCurrentCooldown()) {
@@ -204,22 +210,20 @@ public class Chain extends AbstractAbility {
                 }
                 warlordsPlayer.updateRedItem(player);
                 warlordsPlayer.getSpec().getBlue().setCurrentCooldown(cooldown);
+                warlordsPlayer.updateBlueItem();
 
                 for (Player player1 : player.getWorld().getPlayers()) {
                     player1.playSound(player.getLocation(), "shaman.chainheal.activation", 2, 1);
                 }
                 warlordsPlayer.updateBlueItem(player);
             } else if (name.contains("Spirit")) {
-                // TODO: add dmg reduction
                 // speed buff
                 warlordsPlayer.getSpeed().addSpeedModifier("Spirit Link", 40, 30); // 30 is ticks
                 warlordsPlayer.setSpiritLink(30);
 
                 warlordsPlayer.getSpec().getRed().setCurrentCooldown(cooldown);
 
-                for (Player player1 : player.getWorld().getPlayers()) {
-                    player1.playSound(player.getLocation(), "mage.firebreath.activation", 1.5F, 1);
-                }
+                player.playSound(player.getLocation(), "mage.firebreath.activation", 1.5F, 1);
             }
         }
 
@@ -238,7 +242,7 @@ public class Chain extends AbstractAbility {
             .aliveTeammatesOf(warlordsPlayer)
             .limit(2)
         ) {
-            nearPlayer.addHealth(warlordsPlayer, warlordsPlayer.getSpec().getRed().getName(), 420, 420, -1, 100);
+            nearPlayer.addHealth(warlordsPlayer, "Soulbinding Weapon", 420, 420, -1, 100);
         }
     }
 

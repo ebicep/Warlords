@@ -15,7 +15,7 @@ public class LastStand extends AbstractAbility {
                         "§c50% §7for §612 §7seconds and also\n" +
                         "§7reduces all damage nearby allies take\n" +
                         "§7by §c40% §7for §66 §7seconds. You are\n" +
-                        "§ahealed §7for the amount of damage\n" +
+                        "§chealed §7for the amount of damage\n" +
                         "§7prevented on allies.");
     }
 

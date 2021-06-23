@@ -23,6 +23,10 @@ public class Soulbinding extends AbstractAbility {
     @Override
     public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
         warlordsPlayer.setSoulBindCooldown(12);
+
+        for (Player player1 : player.getWorld().getPlayers()) {
+            player1.playSound(player.getLocation(), "shaman.boulder.activation", 2, 1.5F);
+        }
     }
 
     public static class SoulBoundPlayer {

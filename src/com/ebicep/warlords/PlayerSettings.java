@@ -2,6 +2,7 @@ package com.ebicep.warlords;
 
 import com.ebicep.warlords.util.Classes;
 import com.ebicep.warlords.util.ClassesSkillBoosts;
+import com.ebicep.warlords.util.Weapons;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -10,6 +11,7 @@ public class PlayerSettings implements ConfigurationSerializable {
     private Classes selectedClass = Classes.CRYOMANCER;
     private ClassesSkillBoosts classesSkillBoosts = selectedClass.skillBoosts.get(0);
     private boolean hotKeyMode = true;
+    private Weapons weapon = Weapons.FELFLAME_BLADE;
 
     public Classes selectedClass() {
         return selectedClass;
@@ -59,6 +61,14 @@ public class PlayerSettings implements ConfigurationSerializable {
 
     public void hotKeyMode(boolean hotKeyMode) {
         this.hotKeyMode = hotKeyMode;
+    } 
+
+    public Weapons weapon() {
+        return weapon;
+    }
+
+    public void weapon(Weapons weapon) {
+        this.weapon = weapon;
     }
     
 }

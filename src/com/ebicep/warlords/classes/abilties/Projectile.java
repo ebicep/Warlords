@@ -153,7 +153,7 @@ public class Projectile extends AbstractAbility {
                                 Player victim = (Player) entity;
 
                                 for (Player player1 : player.getWorld().getPlayers()) {
-                                    player1.playSound(location, "mage.frostbolt.impact", 2F, 1);
+                                    player1.playSound(location, "mage.frostbolt.impact", 2, 1);
                                 }
 
                                 Warlords.getPlayer(victim).getSpeed().addSpeedModifier("Frostbolt", -25, 2 * 20);
@@ -228,7 +228,7 @@ public class Projectile extends AbstractAbility {
                                 Player victim = (Player) entity;
 
                                 for (Player player1 : player.getWorld().getPlayers()) {
-                                    player1.playSound(entity.getLocation(), "mage.waterbolt.impact", 2F, 1);
+                                    player1.playSound(entity.getLocation(), "mage.waterbolt.impact", 2, 1);
                                 }
 
                                 if (location.distanceSquared(customProjectile.getStartingLocation()) >= customProjectile.getMaxDistance() * customProjectile.getMaxDistance()) {
@@ -349,7 +349,7 @@ public class Projectile extends AbstractAbility {
                         if (entity instanceof Player && ((Player) entity).getGameMode() != GameMode.SPECTATOR && entity != customProjectile.getShooter()) {
                             if (entity.getLocation().clone().add(0, 1, 0).distanceSquared(location) < hitBox * hitBox) {
                                 hitPlayer = true;
-                                ParticleEffect.EXPLOSION_HUGE.display(0, 0, 0, 0.0F, 2, entity.getLocation().add(0, 1, 0), 500);
+                                ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.5F, 2, entity.getLocation().add(0, 1, 0), 500);
                                 ParticleEffect.LAVA.display(0.5F, 0, 0.5F, 2F, 10, entity.getLocation().add(0, 1, 0), 500);
                                 Player victim = (Player) entity;
 
