@@ -14,8 +14,8 @@ import java.util.Collections;
 import java.util.Objects;
 
 public enum Team {
-    RED("Red", ChatColor.RED, Color.fromRGB(153, 51, 51), new ItemStack(Material.WOOL, 1, (short) 14)),
-    BLUE("Blue", ChatColor.BLUE, Color.fromRGB(51, 76, 178), new ItemStack(Material.WOOL, 1, (short) 11)),
+    RED(ChatColor.RED, "Red", Color.fromRGB(153, 51, 51), new ItemStack(Material.WOOL, 1, (short) 14)),
+    BLUE(ChatColor.BLUE, "Blue", Color.fromRGB(51, 76, 178), new ItemStack(Material.WOOL, 1, (short) 11)),
     ;
     private final static Team[] inverseMapping;
 
@@ -24,16 +24,20 @@ public enum Team {
         Collections.reverse(Arrays.asList(inverseMapping));
     }
 
-    public final String name;
     private final ChatColor teamColor;
-    private final Color armorColor;
+    private final String chatTag;
     public ItemStack item;
+    private final String chatTagColored;
+    private final String chatTagBoldColored;
+    private final Color armorColor;
 
-    Team(String name, ChatColor teamColor, Color armorColor, ItemStack item) {
-        this.name = name;
+    Team(ChatColor teamColor, String chatTag, Color armorColor, ItemStack item) {
         this.teamColor = teamColor;
-        this.armorColor = armorColor;
+        this.chatTag = chatTag;
         this.item = item;
+        this.chatTagColored = teamColor + chatTag;
+        this.chatTagBoldColored = teamColor.toString() + ChatColor.BOLD + chatTag;
+        this.armorColor = armorColor;
     }
 
     @Nonnull
@@ -44,6 +48,21 @@ public enum Team {
     @Nonnull
     public Color armorColor() {
         return armorColor;
+    }
+
+    @Nonnull
+    public String prefix() {
+        return chatTag;
+    }
+
+    @Nonnull
+    public String coloredPrefix() {
+        return chatTagColored;
+    }
+
+    @Nonnull
+    public String boldColoredPrefix() {
+        return chatTagBoldColored;
     }
 
     @Nonnull
