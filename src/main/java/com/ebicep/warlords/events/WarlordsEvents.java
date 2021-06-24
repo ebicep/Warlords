@@ -8,7 +8,6 @@ import com.ebicep.warlords.classes.shaman.specs.spiritguard.Spiritguard;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.flags.GroundFlagLocation;
 import com.ebicep.warlords.maps.flags.PlayerFlagLocation;
-import com.ebicep.warlords.util.ItemBuilder;
 import com.ebicep.warlords.maps.flags.SpawnFlagLocation;
 import com.ebicep.warlords.maps.flags.WaitingFlagLocation;
 import com.ebicep.warlords.util.ItemBuilder;
@@ -31,6 +30,7 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -78,6 +78,12 @@ public class WarlordsEvents implements Listener {
 
     @EventHandler
     public static void onPlayerJoin(PlayerJoinEvent e) {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                Warlords.databaseManager.loadPlayer(e.getPlayer());
+            }
+        }.runTaskAsynchronously(Warlords.getInstance());
         //e.setJoinMessage(null);
         Player player = e.getPlayer();
         Location rejoinPoint = Warlords.getRejoinPoint(player.getUniqueId());
@@ -104,7 +110,6 @@ public class WarlordsEvents implements Listener {
             player.sendMessage(ChatColor.GRAY + "NOTE: We're still in beta, bugs and/or missing features are still present. Please report any bugs you might find.");
             player.sendMessage(" ");
             player.sendMessage(ChatColor.GRAY + "CURRENT MISSING FEATURES: ");
-            player.sendMessage(ChatColor.RED + "- Weapon Skill boosts");
             player.sendMessage(ChatColor.RED + "- Revenant's Orbs of Life being hidden for the enemy team");
             player.sendMessage(ChatColor.RED + "- Flag damage modifier currently does not carry over to a new flag holder.");
 
@@ -138,7 +143,8 @@ public class WarlordsEvents implements Listener {
                             if (warlordsPlayerAttacker.hasBoundPlayer(warlordsPlayerVictim)) {
                                 for (Soulbinding.SoulBoundPlayer soulBindedPlayer : warlordsPlayerAttacker.getSoulBindedPlayers()) {
                                     if (soulBindedPlayer.getBoundPlayer() == warlordsPlayerVictim) {
-                                        System.out.println(soulBindedPlayer.getTimeLeft());
+                                        soulBindedPlayer.setHitWithLink(false);
+                                        soulBindedPlayer.setHitWithSoul(false);
                                         soulBindedPlayer.setTimeLeft(3);
                                         break;
                                     }
@@ -348,6 +354,7 @@ public class WarlordsEvents implements Listener {
     public void onPlayerChat(AsyncPlayerChatEvent e) {
         Player player = e.getPlayer();
         try {
+            // We need to do this in a callSyncMethod, because we need it to happenon the main thread. Else weird bugs can happen in other threads
             Bukkit.getScheduler().callSyncMethod(Warlords.getInstance(), () -> {
                 WarlordsPlayer wp = Warlords.getPlayer(player);
                 if (wp == null) {

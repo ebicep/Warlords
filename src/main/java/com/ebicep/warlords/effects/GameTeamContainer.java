@@ -5,7 +5,6 @@ import com.ebicep.warlords.maps.Team;
 import java.util.stream.Stream;
 import org.bukkit.entity.Player;
 
-import java.util.Collection;
 
 
 // Class to quickly get a team's teammates and enemies

@@ -3,19 +3,17 @@ package com.ebicep.warlords.maps.state;
 import com.ebicep.warlords.PlayerSettings;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
+import com.ebicep.warlords.database.FieldUpdateOperators;
 import com.ebicep.warlords.events.WarlordsPointsChangedEvent;
 import com.ebicep.warlords.maps.flags.FlagManager;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Gates;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.powerups.PowerupManager;
-import com.ebicep.warlords.util.CustomScoreboard;
-import com.ebicep.warlords.util.PacketUtils;
-import com.ebicep.warlords.util.RemoveEntities;
+import com.ebicep.warlords.util.*;
 import static com.ebicep.warlords.util.Utils.sendMessage;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.bukkit.Bukkit;
@@ -23,6 +21,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 public class PlayingState implements State, TimerDebugAble {
@@ -193,6 +192,29 @@ public class PlayingState implements State, TimerDebugAble {
                 PacketUtils.sendTitle((Player)wp.getEntity(), ChatColor.GREEN + "GO!", ChatColor.YELLOW + "Steal and capture the enemy flag!", 0, 40, 20);
             }
         });
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                //DATABASE SHIT
+                // TODO: Also loop over offline players, as player can be offline at any stage
+                game.forEachOnlinePlayer((player, team) -> {
+                    HashMap<String, Object> newInfo = new HashMap<>();
+                    newInfo.put("last_spec", Classes.getSelected(player).name);
+                    newInfo.put("last_weapon", Weapons.getSelected(player).name);
+                    newInfo.put("mage_helm", ArmorManager.Helmets.getSelected(player).get(0).name);
+                    newInfo.put("mage_armor", ArmorManager.ArmorSets.getSelected(player).get(0).name);
+                    newInfo.put("warrior_helm", ArmorManager.Helmets.getSelected(player).get(1).name);
+                    newInfo.put("warrior_armor", ArmorManager.ArmorSets.getSelected(player).get(1).name);
+                    newInfo.put("paladin_helm", ArmorManager.Helmets.getSelected(player).get(2).name);
+                    newInfo.put("paladin_armor", ArmorManager.ArmorSets.getSelected(player).get(2).name);
+                    newInfo.put("shaman_helm", ArmorManager.Helmets.getSelected(player).get(3).name);
+                    newInfo.put("shaman_armor", ArmorManager.ArmorSets.getSelected(player).get(3).name);
+                    newInfo.put("powerup", Settings.Powerup.getSelected(player).name());
+                    newInfo.put("hotkeymode", Settings.HotkeyMode.getSelected(player).name());
+                    Warlords.databaseManager.updatePlayerInformation(player, newInfo, FieldUpdateOperators.SET);
+                });
+            }
+        }.runTaskAsynchronously(Warlords.getInstance());
     }
 
     @Override
@@ -206,7 +228,7 @@ public class PlayingState implements State, TimerDebugAble {
                 return getEndState(null);
             } else {
                 State next = nextStateByPoints();
-                if(next == null) {
+                if (next == null) {
                     this.timer = OVERTIME_TIME;
                     this.overTimeActive = true;
                     assert getStats(Team.BLUE).points == getStats(Team.RED).points;
@@ -289,6 +311,10 @@ public class PlayingState implements State, TimerDebugAble {
             this.powerUps.cancel();
             this.powerUps = null;
         }
+        Team winner = forceEnd ? null : calculateWinnerByPoints();
+        if (winner != null) {
+            Warlords.databaseManager.addGame(this);
+        }
     }
 
     @Override
@@ -347,6 +373,10 @@ public class PlayingState implements State, TimerDebugAble {
 
     public void endGame() {
         this.forceEnd = true;
+    }
+
+    public boolean isForceEnd() {
+        return forceEnd;
     }
 
     public class Stats {

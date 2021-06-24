@@ -53,23 +53,24 @@ public class LightningBolt extends AbstractAbility {
 
             @Override
             public void run() {
-                PlayerFilter.entitiesAround(bolt.getLocation(), .9, .85, .9)
+                for(WarlordsPlayer player : PlayerFilter
+                    .entitiesAround(bolt.getLocation(), 1.05, 1, 1.05)
                     .aliveEnemiesOf(wp)
-                    .forEach((warlordsPlayer) -> {
-                        //hitting player
-                        bolt.getPlayersHit().add(warlordsPlayer);
-                        warlordsPlayer.addHealth(bolt.getShooter(), bolt.getLightningBolt().getName(), bolt.getLightningBolt().getMinDamageHeal(), bolt.getLightningBolt().getMaxDamageHeal(), bolt.getLightningBolt().getCritChance(), bolt.getLightningBolt().getCritMultiplier());
+                ) {
+                    //hitting player
+                    bolt.getPlayersHit().add(player);
+                    player.addHealth(bolt.getShooter(), bolt.getLightningBolt().getName(), bolt.getLightningBolt().getMinDamageHeal(), bolt.getLightningBolt().getMaxDamageHeal(), bolt.getLightningBolt().getCritChance(), bolt.getLightningBolt().getCritMultiplier());
 
-                        for (Player player1 : warlordsPlayer.getWorld().getPlayers()) {
-                            player1.playSound(warlordsPlayer.getLocation(), "shaman.lightningbolt.impact", 2F, 1);
-                        }
+                    for (Player player1 : player.getWorld().getPlayers()) {
+                        player1.playSound(player.getLocation(), "shaman.lightningbolt.impact", 2F, 1);
+                    }
 
-                        //reducing chain cooldown
-                        bolt.getShooter().getSpec().getRed().subtractCooldown(2);
-                        if (wp.getEntity() instanceof Player) {
-                            wp.updateRedItem((Player)wp.getEntity());
-                        }
-                    });
+                    //reducing chain cooldown
+                    bolt.getShooter().getSpec().getRed().subtractCooldown(2);
+                    if (wp.getEntity() instanceof Player) {
+                        wp.updateRedItem((Player)wp.getEntity());
+                    }
+                }
                 //hitting block or out of range
                 Block blockInsideBolt = location.getWorld().getBlockAt(bolt.getBoltLocation().subtract(bolt.getTeleportDirection().clone().multiply(2)));
                 if (blockInsideBolt.getType() != Material.AIR && blockInsideBolt.getType() != Material.WATER || bolt.getArmorStand().getTicksLived() > 50) {
@@ -79,7 +80,7 @@ public class LightningBolt extends AbstractAbility {
                     }
 
                     for (WarlordsPlayer warlordsPlayer : PlayerFilter
-                        .entitiesAround(bolt.getBoltLocation(), 1, 1, 1)
+                        .entitiesAround(bolt.getBoltLocation(), 2.1, 2.1, 2.1)
                         .aliveEnemiesOf(wp)
                     ) {
                         //hitting player

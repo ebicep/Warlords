@@ -4,16 +4,13 @@ import com.ebicep.warlords.classes.abilties.OrbsOfLife;
 import com.ebicep.warlords.classes.abilties.Soulbinding;
 import com.ebicep.warlords.classes.abilties.UndyingArmy;
 import com.ebicep.warlords.commands.Commands;
+import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.menu.MenuEventListener;
 import com.ebicep.warlords.util.PacketUtils;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.Utils;
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
-import com.mongodb.client.MongoDatabase;
-import net.minecraft.server.v1_8_R3.EntityLiving;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -31,6 +28,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
@@ -149,6 +148,7 @@ public class Warlords extends JavaPlugin {
 
     //TODO remove static EVERYWHERE FUCK ME
     public static Game game;
+    public static DatabaseManager databaseManager;
 
     @Override
     public void onEnable() {
@@ -168,6 +168,8 @@ public class Warlords extends JavaPlugin {
         getCommand("class").setTabCompleter(commands);
 
         game = new Game();
+        getData();
+
         startTask();
         getServer().getScheduler().runTaskTimer(this, game, 1, 1);
 
@@ -181,7 +183,7 @@ public class Warlords extends JavaPlugin {
             }
         }.runTaskTimer(this, 50, 50);
 
-        getData();
+        Logger.getLogger("org.mongodb.driver").setLevel(Level.WARNING);
         getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords]: Plugin is enabled");
     }
 
@@ -198,11 +200,7 @@ public class Warlords extends JavaPlugin {
             @Override
             public void run() {
                 try {
-                    MongoClient mongoClient = MongoClients.create(
-                            "mongodb+srv://user123:bananapeel@cluster0.xphds.mongodb.net/Cluster0?retryWrites=true&w=majority");
-                    MongoDatabase database = mongoClient.getDatabase("temp");
-                    database.createCollection("tempCollection2");
-                    getServer().getConsoleSender().sendMessage(ChatColor.RED + "HERE2222");
+                    databaseManager = new DatabaseManager();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -312,7 +310,7 @@ public class Warlords extends JavaPlugin {
                             }
                         }
                         if (warlordsPlayer.getHorseCooldown() != 0 && !warlordsPlayer.getEntity().isInsideVehicle()) {
-                            warlordsPlayer.setHorseCooldown(warlordsPlayer.getHorseCooldown() - 1);
+                            warlordsPlayer.setHorseCooldown(warlordsPlayer.getHorseCooldown() - .05f);
                             if (player != null) {
                                 warlordsPlayer.updateHorseItem(player);
                             }

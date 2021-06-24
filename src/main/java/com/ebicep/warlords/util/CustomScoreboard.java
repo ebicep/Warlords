@@ -90,7 +90,6 @@ public class CustomScoreboard {
                 String entryUnformatted = entry;
                 if (entryUnformatted.contains("Wins in:") || entryUnformatted.contains("Time Left:")) {
                     scoreboard.resetScores(entry);
-
                     com.ebicep.warlords.maps.Team team = gameState.calculateWinnerByPoints();
                     if (team != null) {
                         sideBar.getScore(team.coloredPrefix() + " " + ChatColor.GOLD + "Wins in: " + ChatColor.GREEN + timeLeft).setScore(10);

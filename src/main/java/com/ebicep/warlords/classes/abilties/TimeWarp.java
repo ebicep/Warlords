@@ -28,8 +28,8 @@ public class TimeWarp extends AbstractAbility {
 
     @Override
     public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
-        TimeWarpPlayer timeWarpPlayer = new TimeWarpPlayer(warlordsPlayer, player.getLocation(), player.getLocation().getDirection(), 5);
-        warlordsPlayer.getActionBarStats().add(new ActionBarStats(warlordsPlayer, "TIME", 5));
+        TimeWarpPlayer timeWarpPlayer = new TimeWarpPlayer(warlordsPlayer, player.getLocation(), player.getLocation().getDirection(), 4);
+        warlordsPlayer.getActionBarStats().add(new ActionBarStats(warlordsPlayer, "TIME", 4));
         warlordsPlayer.subtractEnergy(energyCost);
 
         for (Player player1 : player.getWorld().getPlayers()) {
@@ -46,6 +46,21 @@ public class TimeWarp extends AbstractAbility {
                 }
 
                 //PARTICLES
+                if (counter % 2 == 0) {
+                    if (timeWarpPlayer.getTime() != 0) {
+                        for (Location location : warlordsPlayer.getTrail()) {
+                            ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(175, 0, 175), location, 500);
+                        }
+                    }
+                }
+
+                if (counter % 6 == 0) {
+
+                    if (timeWarpPlayer.getTime() != 0) {
+                        warlordsPlayer.getTrail().add(player.getLocation());
+                    }
+                }
+
                 if (counter % 4 == 0) {
                     if (timeWarpPlayer.getTime() != 0) {
                         ParticleEffect.SPELL_WITCH.display(0F, 0F, 0F, 0.001F, 6, timeWarpPlayer.getLocation(), 500);

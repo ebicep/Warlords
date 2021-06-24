@@ -13,7 +13,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-				<version>3.8.1</version>
+                <version>3.8.1</version>
                 <configuration>
                     <encoding>UTF-8</encoding>
                     <source>1.8</source>
@@ -31,22 +31,21 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <minimizeJar>true</minimizeJar>
-							<artifactSet>
-								<excludes>
-									<exclude>org.spigotmc:spigot-api</exclude>
-									<exclude>org.spigotmc:spigot</exclude>
-									<exclude>org.bukkit:bukkit</exclude>
-									<exclude>commons-lang:commons-lang</exclude>
-									<exclude>com.googlecode.json-simple:json-simple</exclude>
-									<exclude>junit:junit</exclude>
-									<exclude>com.google.guava:guava</exclude>
-									<exclude>com.google.code.gson:gson</exclude>
-									<exclude>org.avaje:ebean</exclude>
-									<exclude>org.yaml:snakeyaml</exclude>
-									<exclude>org.hamcrest:hamcrest-core</exclude>
-								</excludes> 
-							</artifactSet>
+                            <artifactSet>
+                                <excludes>
+                                    <exclude>org.spigotmc:spigot-api</exclude>
+                                    <exclude>org.spigotmc:spigot</exclude>
+                                    <exclude>org.bukkit:bukkit</exclude>
+                                    <exclude>commons-lang:commons-lang</exclude>
+                                    <exclude>com.googlecode.json-simple:json-simple</exclude>
+                                    <exclude>junit:junit</exclude>
+                                    <exclude>com.google.guava:guava</exclude>
+                                    <exclude>com.google.code.gson:gson</exclude>
+                                    <exclude>org.avaje:ebean</exclude>
+                                    <exclude>org.yaml:snakeyaml</exclude>
+                                    <exclude>org.hamcrest:hamcrest-core</exclude>
+                                </excludes> 
+                            </artifactSet>
                         </configuration>
                     </execution>
                 </executions>

@@ -14,7 +14,6 @@ import com.ebicep.warlords.classes.shaman.specs.thunderlord.ThunderLord;
 import com.ebicep.warlords.classes.warrior.specs.berserker.Berserker;
 import com.ebicep.warlords.classes.warrior.specs.defender.Defender;
 import com.ebicep.warlords.classes.warrior.specs.revenant.Revenant;
-import com.ebicep.warlords.maps.Game;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -102,6 +101,15 @@ public enum Classes {
         this.description = description;
         this.icon = icon;
         this.skillBoosts = Arrays.asList(skillBoosts);
+    }
+
+    public static Classes getClass(String name) {
+        for (Classes value : Classes.values()) {
+            if (value.name.equals(name)) {
+                return value;
+            }
+        }
+        return CRYOMANCER;
     }
 
     public static ClassesGroup getClassesGroup(Classes selected) {

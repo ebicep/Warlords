@@ -63,7 +63,7 @@ public final class WarlordsPlayer {
     private boolean dead = false;
     private float energy;
     private float maxEnergy;
-    private int horseCooldown;
+    private float horseCooldown;
     private int flagCooldown;
     private int hitCooldown;
     private int spawnProtection;
@@ -81,6 +81,8 @@ public final class WarlordsPlayer {
     private final float[] damage = new float[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
     private final float[] healing = new float[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
     private final float[] absorbed = new float[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
+
+    private final List<Location> trail = new ArrayList<>();
 
     private final CalculateSpeed speed;
 
@@ -460,7 +462,7 @@ public final class WarlordsPlayer {
     }
 
     public void updateItem(Player player, int slot, AbstractAbility ability, ItemStack item) {
-        if (ability.getCurrentCooldown() != 0) {
+        if (ability.getCurrentCooldown() > 0) {
             ItemStack cooldown = new ItemStack(Material.INK_SACK, ability.getCurrentCooldownItem(), (byte)8);
             player.getInventory().setItem(slot, cooldown);
         } else {
@@ -521,8 +523,8 @@ public final class WarlordsPlayer {
     }
 
     public void updateHorseItem(Player player) {
-        if (horseCooldown != 0) {
-            ItemStack cooldown = new ItemStack(Material.IRON_BARDING, horseCooldown);
+        if (horseCooldown > 0) {
+            ItemStack cooldown = new ItemStack(Material.IRON_BARDING, (int) (horseCooldown + .5));
             player.getInventory().setItem(7, cooldown);
         } else {
             ItemStack horse = new ItemStack(Material.GOLD_BARDING);
@@ -606,7 +608,7 @@ public final class WarlordsPlayer {
         if (spawnProtection != 0 || (dead && !undyingArmyDead)) return;
         if (attacker == this && (ability.equals("Fall") || ability.isEmpty())) {
             if (ability.isEmpty()) {
-                sendMessage("" + ChatColor.RED + "\u00AB" + ChatColor.GRAY + " You took " + ChatColor.RED + min * -1 + ChatColor.GRAY + " melee damage.");
+                sendMessage("" + ChatColor.RED + "\u00AB" + ChatColor.GRAY + " You took " + ChatColor.RED + Math.round(min * -1) + ChatColor.GRAY + " melee damage.");
                 regenTimer = 10;
                 if (health + min <= 0) {
                     dead = true;
@@ -633,7 +635,8 @@ public final class WarlordsPlayer {
                     gameState.addKill(team, false);
                     showDeathAnimation();
                     if (entity instanceof Player)
-                        PacketUtils.sendTitle((Player)entity, ChatColor.RED + "YOU DIED!", ChatColor.GRAY + "You took " + ChatColor.RED + (min * -1) + ChatColor.GRAY + " melee damage and died.", 0, 40, 0);
+                        PacketUtils.sendTitle((Player)entity, ChatColor.RED + "YOU DIED!", ChatColor.GRAY + "You took " + ChatColor.RED + Math.round(min * -1) + ChatColor.GRAY + " melee damage and died.", 0, 40, 0);
+
 
                     health = 0;
                 } else {
@@ -666,8 +669,9 @@ public final class WarlordsPlayer {
                     showDeathAnimation();
 
                     //title YOU DIED
-                    if(entity instanceof Player)
-                        PacketUtils.sendTitle((Player)entity, ChatColor.RED + "YOU DIED!", ChatColor.GRAY + "You took " + ChatColor.RED + (min * -1) + ChatColor.GRAY + " fall damage and died.", 0, 40, 0);
+                    if (entity instanceof Player) {
+                        PacketUtils.sendTitle((Player)entity, ChatColor.RED + "YOU DIED!", ChatColor.GRAY + "You took " + ChatColor.RED + Math.round(min * -1) + ChatColor.GRAY + " fall damage and died.", 0, 40, 0);
+                    }
 
                     health = 0;
                 } else {
@@ -700,7 +704,7 @@ public final class WarlordsPlayer {
                 totalReduction = 1 - spec.getDamageResistance() / 100f;
                 //add damage
                 if (attacker.getPowerUpDamage() != 0) {
-                    totalReduction += .3;
+                    totalReduction += .2;
                 } else if (attacker.getSpawnDamage() != 0) {
                     totalReduction += .2;
                 }
@@ -803,7 +807,6 @@ public final class WarlordsPlayer {
                         }
                     }
                     addHealing(damageHealValue);
-
                 } else {
                     damageHealValue *= totalReduction;
                     //DAMAGE
@@ -946,9 +949,9 @@ public final class WarlordsPlayer {
                     this.health += Math.round(damageHealValue);
                 }
                 if (damageHealValue < 0) {
+                    attacker.addDamage(-damageHealValue);
                     this.entity.playEffect(EntityEffect.HURT);
                 }
-                attacker.addDamage(-damageHealValue);
                 if (this.health <= 0 && undyingArmyDuration == 0) {
                     dead = true;
                     powerUpDamage = 0;
@@ -991,8 +994,8 @@ public final class WarlordsPlayer {
                     }
                 } else {
                     if (!ability.isEmpty() && !ability.equals("Time Warp") && !ability.equals("Healing Rain") && !ability.equals("Hammer of Light")) {
-                        if(attacker.entity instanceof Player) {
-                            ((Player)attacker.entity).playSound(attacker.getLocation(), Sound.ORB_PICKUP, 500f, 0.3f);
+                        if (attacker.entity instanceof Player) {
+                            ((Player)attacker.entity).playSound(attacker.getLocation(), Sound.ORB_PICKUP, 0.95f, 0.3f);
                         }
                     }
                 }
@@ -1206,11 +1209,11 @@ public final class WarlordsPlayer {
         this.maxEnergy = maxEnergy;
     }
 
-    public int getHorseCooldown() {
+    public float getHorseCooldown() {
         return horseCooldown;
     }
 
-    public void setHorseCooldown(int horseCooldown) {
+    public void setHorseCooldown(float horseCooldown) {
         this.horseCooldown = horseCooldown;
     }
 
@@ -1889,4 +1892,5 @@ public final class WarlordsPlayer {
         this.dead = dead;
     }
 
+    public List<Location> getTrail() { return trail; }
 }

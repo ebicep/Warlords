@@ -1,10 +1,5 @@
 package com.ebicep.warlords.util;
 
-import com.ebicep.warlords.WarlordsPlayer;
-import com.ebicep.warlords.classes.PlayerClass;
-import com.ebicep.warlords.classes.mage.AbstractMage;
-import com.ebicep.warlords.classes.paladin.AbstractPaladin;
-import com.ebicep.warlords.classes.warrior.AbstractWarrior;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.Warlords;
 import org.bukkit.ChatColor;
@@ -60,6 +55,42 @@ public class ArmorManager {
             this.name = name;
             this.itemRed = itemRed;
             this.itemBlue = itemBlue;
+        }
+
+        public static Helmets getMageHelmet(String name) {
+            for (Helmets value : Helmets.values()) {
+                if (value.name.equals(name)) {
+                    return value;
+                }
+            }
+            return SIMPLE_MAGE_HELMET;
+        }
+
+        public static Helmets getWarriorHelmet(String name) {
+            for (Helmets value : Helmets.values()) {
+                if (value.name.equals(name)) {
+                    return value;
+                }
+            }
+            return SIMPLE_WARRIOR_HELMET;
+        }
+
+        public static Helmets getPaladinHelmet(String name) {
+            for (Helmets value : Helmets.values()) {
+                if (value.name.equals(name)) {
+                    return value;
+                }
+            }
+            return SIMPLE_PALADIN_HELMET;
+        }
+
+        public static Helmets getShamanHelmet(String name) {
+            for (Helmets value : Helmets.values()) {
+                if (value.name.equals(name)) {
+                    return value;
+                }
+            }
+            return SIMPLE_SHAMAN_HELMET;
         }
 
         public static List<Helmets> getSelected(Player player) {
@@ -144,6 +175,42 @@ public class ArmorManager {
             this.name = name;
             this.itemRed = itemRed;
             this.itemBlue = itemBlue;
+        }
+
+        public static ArmorSets getMageArmor(String name) {
+            for (ArmorSets value : ArmorSets.values()) {
+                if (value.name.equals(name)) {
+                    return value;
+                }
+            }
+            return SIMPLE_CHESTPLATE_MAGE;
+        }
+
+        public static ArmorSets getWarriorArmor(String name) {
+            for (ArmorSets value : ArmorSets.values()) {
+                if (value.name.equals(name)) {
+                    return value;
+                }
+            }
+            return SIMPLE_CHESTPLATE_WARRIOR;
+        }
+
+        public static ArmorSets getPaladinArmor(String name) {
+            for (ArmorSets value : ArmorSets.values()) {
+                if (value.name.equals(name)) {
+                    return value;
+                }
+            }
+            return SIMPLE_CHESTPLATE_PALADIN;
+        }
+
+        public static ArmorSets getShamanArmor(String name) {
+            for (ArmorSets value : ArmorSets.values()) {
+                if (value.name.equals(name)) {
+                    return value;
+                }
+            }
+            return SIMPLE_CHESTPLATE_SHAMAN;
         }
 
         public static ItemStack applyColor(ItemStack itemStack, boolean blueColor) {

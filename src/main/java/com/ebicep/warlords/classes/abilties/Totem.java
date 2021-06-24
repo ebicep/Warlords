@@ -138,7 +138,7 @@ public class Totem extends EntityArmorStand {
         private final int debt = 0;
 
         public TotemSpiritguard() {
-            super("Death's Debt", 0, 0, 60 + 12, 20, -1, 100);
+            super("Death's Debt", 0, 0, 60 + 10.49f, 20, -1, 100);
         }
 
         @Override
@@ -285,7 +285,7 @@ public class Totem extends EntityArmorStand {
     public static class TotemEarthwarden extends AbstractAbility {
 
         public TotemEarthwarden() {
-            super("Healing Totem", 168, 841, 60 + 12, 60, 15, 200);
+            super("Healing Totem", 168, 841, 60f + 10.49f, 60, 15, 200);
 
             //168 - 227
             //841 - 1138

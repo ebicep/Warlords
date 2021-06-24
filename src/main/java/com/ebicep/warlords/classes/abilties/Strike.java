@@ -43,24 +43,24 @@ public class Strike extends AbstractAbility {
                     "§a100% §7of the damage done. Also\n" +
                     "§7heals yourself by §a50% §7of the\n" +
                     "§7damage done.";
-        } else if (name.contains("Berserker")) {
-            description = "§7Strike the targeted enemy player,\n" +
-                    "§7causing §c" + -minDamageHeal + " §7- §c" + -maxDamageHeal + " §7damage\n" +
-                    "§7and §cwounding §7them for §63 §7seconds.\n" +
-                    "§7A wounded player receives §c35% §7less\n" +
-                    "§7healing for the duration of the effect.";
-        } else if (name.contains("Defender")) {
-            description = "§7Strike the targeted enemy player,\n" +
-                    "§7causing §c" + -minDamageHeal + " §7- §c" + -maxDamageHeal + " §7damage\n" +
-                    "§7and §cwounding §7them for §63 §7seconds.\n" +
-                    "§7A wounded player receives §c25% §7less\n" +
-                    "§7healing for the duration of the effect.";
-        } else if (name.contains("Revenant")) {
+        } else if (name.contains("Crippling")) {
             description = "§7Strike the targeted enemy player,\n" +
                     "§7causing §c" + -minDamageHeal + " §7- §c" + -maxDamageHeal + " §7damage\n" +
                     "§7and §ccrippling §7them for §63 §7seconds.\n" +
                     "§7A §ccrippled §7player deals §c12.5% §7less\n" +
                     "§7damage for the duration of the effect.";
+        } else if (critMultiplier == 175) {
+            description = "§7Strike the targeted enemy player,\n" +
+                    "§7causing §c" + -minDamageHeal + " §7- §c" + -maxDamageHeal + " §7damage\n" +
+                    "§7and §cwounding §7them for §63 §7seconds.\n" +
+                    "§7A wounded player receives §c35% §7less\n" +
+                    "§7healing for the duration of the effect.";
+        } else if (critMultiplier == 200) {
+            description = "§7Strike the targeted enemy player,\n" +
+                    "§7causing §c" + -minDamageHeal + " §7- §c" + -maxDamageHeal + " §7damage\n" +
+                    "§7and §cwounding §7them for §63 §7seconds.\n" +
+                    "§7A wounded player receives §c25% §7less\n" +
+                    "§7healing for the duration of the effect.";
         }
     }
 
@@ -114,7 +114,7 @@ public class Strike extends AbstractAbility {
                             nearPlayer.addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
                         }
                         //reloops near players to give energy to
-                        PlayerFilter.entitiesAround(warlordsPlayer, 5, 5, 5)
+                        PlayerFilter.entitiesAround(warlordsPlayer, 10.0D, 10.0D, 10.0D)
                             .aliveTeammatesOfExcludingSelf(warlordsPlayer)
                             .closestFirst(warlordsPlayer)
                             .limit(2)
