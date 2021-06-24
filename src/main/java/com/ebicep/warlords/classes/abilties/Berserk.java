@@ -11,7 +11,7 @@ public class Berserk extends AbstractAbility {
     }
 
     @Override
-    public void updateDescription() {
+    public void updateDescription(Player player) {
         description = "§7You go into a berserker rage,\n" +
                 "§7increasing your damage by §c25% §7and\n" +
                 "§7movement speed by §e30%§7. While active,\n" +
@@ -21,7 +21,7 @@ public class Berserk extends AbstractAbility {
     @Override
     public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
         warlordsPlayer.getSpeed().addSpeedModifier("Berserk", 30, 18 * 20, "BASE");
-        warlordsPlayer.setBerserk(18 * 20);
+        warlordsPlayer.setBerserk(18);
         warlordsPlayer.subtractEnergy(energyCost);
 
         for (Player player1 : player.getWorld().getPlayers()) {

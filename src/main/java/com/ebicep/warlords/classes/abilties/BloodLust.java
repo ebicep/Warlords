@@ -11,7 +11,7 @@ public class BloodLust extends AbstractAbility {
     }
 
     @Override
-    public void updateDescription() {
+    public void updateDescription(Player player) {
         description = "§7You lust for blood, healing yourself\n" +
                 "§7for §a65% §7of all the damage you deal.\n" +
                 "§7Lasts §615 §7seconds.";

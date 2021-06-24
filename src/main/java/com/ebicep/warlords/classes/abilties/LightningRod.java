@@ -22,7 +22,7 @@ public class LightningRod extends AbstractAbility {
     }
 
     @Override
-    public void updateDescription() {
+    public void updateDescription(Player player) {
         description = "§7Call down an energizing bolt of lightning\n" +
                 "§7upon yourself, restoring §a30% §7health and\n" +
                 "§e160 §7energy and knock all nearby enemies back.";
@@ -46,7 +46,7 @@ public class LightningRod extends AbstractAbility {
                 p.setVelocity(v);
 
                 // pulsedamage
-                if (Utils.totemDownAndClose(warlordsPlayer, p.getEntity())) {
+                if (Utils.getTotemDownAndClose(warlordsPlayer, p.getEntity()) != null) {
                     p.addHealth(warlordsPlayer, warlordsPlayer.getSpec().getOrange().getName(), warlordsPlayer.getSpec().getOrange().getMinDamageHeal(), warlordsPlayer.getSpec().getOrange().getMaxDamageHeal(), warlordsPlayer.getSpec().getOrange().getCritChance(), warlordsPlayer.getSpec().getOrange().getCritMultiplier());
                 }
             });

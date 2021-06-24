@@ -11,7 +11,7 @@ public class Soulbinding extends AbstractAbility {
     }
 
     @Override
-    public void updateDescription() {
+    public void updateDescription(Player player) {
         description = "§7Your melee attacks §dBIND\n" +
                 "§7enemies for §62 §7seconds.\n" +
                 "§7Against §dBOUND §7targets, your\n" +

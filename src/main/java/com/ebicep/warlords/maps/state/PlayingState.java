@@ -187,8 +187,8 @@ public class PlayingState implements State, TimerDebugAble {
             scoreboard.updateBasedOnGameState(this);
             scoreboard.updateKillsAssists();
             scoreboard.updateNames();
-            wp.applySkillBoost();
             if (wp.getEntity() instanceof Player) {
+                wp.applySkillBoost((Player)wp.getEntity());
                 PacketUtils.sendTitle((Player)wp.getEntity(), ChatColor.GREEN + "GO!", ChatColor.YELLOW + "Steal and capture the enemy flag!", 0, 40, 20);
             }
         });

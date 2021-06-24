@@ -19,7 +19,7 @@ public class TimeWarp extends AbstractAbility {
     }
 
     @Override
-    public void updateDescription() {
+    public void updateDescription(Player player) {
         description = "§7Activate to place a time rune on\n" +
                 "§7the ground. After §65 §7seconds,\n" +
                 "§7you will warp back to that location\n" +
@@ -28,8 +28,8 @@ public class TimeWarp extends AbstractAbility {
 
     @Override
     public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
-        TimeWarpPlayer timeWarpPlayer = new TimeWarpPlayer(warlordsPlayer, player.getLocation(), player.getLocation().getDirection(), 4);
-        warlordsPlayer.getActionBarStats().add(new ActionBarStats(warlordsPlayer, "TIME", 4));
+        TimeWarpPlayer timeWarpPlayer = new TimeWarpPlayer(warlordsPlayer, player.getLocation(), player.getLocation().getDirection(), 5);
+        warlordsPlayer.getActionBarStats().add(new ActionBarStats(warlordsPlayer, "TIME", 5));
         warlordsPlayer.subtractEnergy(energyCost);
 
         for (Player player1 : player.getWorld().getPlayers()) {
@@ -54,7 +54,7 @@ public class TimeWarp extends AbstractAbility {
                     }
                 }
 
-                if (counter % 6 == 0) {
+                if (counter % 4 == 0) {
 
                     if (timeWarpPlayer.getTime() != 0) {
                         warlordsPlayer.getTrail().add(player.getLocation());
@@ -91,6 +91,7 @@ public class TimeWarp extends AbstractAbility {
                         timeWarpPlayer.getLocation().setDirection(timeWarpPlayer.getFacing());
                         player.getEntity().teleport(timeWarpPlayer.getLocation());
 
+                        warlordsPlayer.getTrail().clear();
                         counter = 0;
                         this.cancel();
                     }

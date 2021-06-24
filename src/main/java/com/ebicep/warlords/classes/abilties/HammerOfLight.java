@@ -5,6 +5,8 @@ import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.util.PlayerFilter;
 import com.ebicep.warlords.classes.paladin.specs.protector.Protector;
+import com.ebicep.warlords.util.Classes;
+import com.ebicep.warlords.util.ClassesSkillBoosts;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
@@ -18,12 +20,12 @@ import org.bukkit.entity.Entity;
 public class HammerOfLight extends AbstractAbility {
 
     public HammerOfLight() {
-        super("Hammer of Light", 159.85f, 216.2f, 60f + 10.47f, 30, 20, 175
+        super("Hammer of Light", 159.85f, 216.2f, 62.64f, 30, 20, 175
         );
     }
 
     @Override
-    public void updateDescription() {
+    public void updateDescription(Player player) {
         description = "§7Throw down a Hammer of Light on\n" +
                 "§7the ground, dealing §c118.8 §7-\n" +
                 "§c158.4 §7damage every second to\n" +
@@ -56,7 +58,7 @@ public class HammerOfLight extends AbstractAbility {
             public void run() {
                 damageHealCircle.setDuration(damageHealCircle.getDuration() - 1);
                 for (WarlordsPlayer warlordsPlayer : PlayerFilter
-                    .entitiesAround(damageHealCircle.getLocation(), 5, 4, 5)
+                    .entitiesAround(damageHealCircle.getLocation(), 8, 4, 8)
                     .isAlive()
                 ) {
                     if (damageHealCircle.getWarlordsPlayer().isTeammate(warlordsPlayer)) {

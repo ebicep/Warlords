@@ -27,7 +27,7 @@ public class SeismicWave extends AbstractAbility {
     }
 
     @Override
-    public void updateDescription() {
+    public void updateDescription(Player player) {
         description = "§7Slam the ground, creating a shockwave\n" +
                 "§7around you that deals §c" + -minDamageHeal + " §7- §c" + -maxDamageHeal + "\n" +
                 "§7damage and knocks enemies back slightly.";
@@ -47,15 +47,16 @@ public class SeismicWave extends AbstractAbility {
         }
 
         //INSTANT DMG
-        PlayerFilter.entitiesAround(player, 8.5, 3, 8.5)
+        for (WarlordsPlayer p : PlayerFilter
+            .entitiesAround(player, 8, 4.5, 8)
             .aliveEnemiesOf(wp)
             .lookingAtWave(player)
-            .forEach((p) -> {
-                final Location loc = p.getLocation();
-                final Vector v = player.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1.15).setY(0.35);
-                p.setVelocity(v);
-                p.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
-            });
+        ) {
+            final Location loc = p.getLocation();
+            final Vector v = player.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1.15).setY(0.35);
+            p.setVelocity(v);
+            p.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+        }
 
         new BukkitRunnable() {
 

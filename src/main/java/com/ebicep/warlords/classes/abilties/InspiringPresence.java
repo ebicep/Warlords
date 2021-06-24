@@ -15,7 +15,7 @@ public class InspiringPresence extends AbstractAbility {
     }
 
     @Override
-    public void updateDescription() {
+    public void updateDescription(Player player) {
         description = "§7Your presence on the battlefield\n" +
                 "§7inspires your allies, increasing\n" +
                 "§7their energy regeneration by §e10\n" +
@@ -25,12 +25,12 @@ public class InspiringPresence extends AbstractAbility {
 
     @Override
     public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
-        PlayerFilter.entitiesAround(warlordsPlayer, 6, 2, 6)
+        PlayerFilter.entitiesAround(warlordsPlayer, 6.0D, 6.0D, 6.0D)
             .aliveTeammatesOf(warlordsPlayer)
             .concat(warlordsPlayer)
             .forEach((nearPlayer) -> {
                 nearPlayer.getSpeed().addSpeedModifier("Inspiring Presence", 30, 12 * 20, "BASE");
-                nearPlayer.setPresence(12 * 20);
+                nearPlayer.setPresence(12);
             });
 
         for (Player player1 : player.getWorld().getPlayers()) {

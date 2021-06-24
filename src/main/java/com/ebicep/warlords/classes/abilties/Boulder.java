@@ -21,7 +21,7 @@ public class Boulder extends AbstractAbility {
     }
 
     @Override
-    public void updateDescription() {
+    public void updateDescription(Player player) {
         description = "§7Launch a giant boulder that shatters\n" +
                 "§7and deals §c" + -minDamageHeal + " §7- §c" + -maxDamageHeal + " §7damage\n" +
                 "§7to all enemies near the impact point\n" +
@@ -99,7 +99,7 @@ public class Boulder extends AbstractAbility {
                         p.addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
 
                         Entity entity = p.getEntity();
-                        Vector v = entity.getLocation().toVector().subtract(newLoc.toVector()).normalize().multiply(1.05).setY(0.3);
+                        Vector v = entity.getLocation().toVector().subtract(newLoc.toVector()).normalize().multiply(1.1).setY(0.3);
                         entity.setVelocity(v);
                     }
                     newLoc.setPitch(-12);

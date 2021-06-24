@@ -21,7 +21,7 @@ public class Consecrate extends AbstractAbility {
     }
 
     @Override
-    public void updateDescription() {
+    public void updateDescription(Player player) {
         description = "§7Consecrate the ground below your\n" +
                 "§7feet, declaring it sacred. Enemies\n" +
                 "§7standing on it will take §c" + -minDamageHeal + " §7-\n" +

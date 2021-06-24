@@ -14,14 +14,12 @@ import org.bukkit.scheduler.BukkitTask;
 import java.util.HashSet;
 
 public class HealingRain extends AbstractAbility {
-
     public HealingRain() {
-        super("Healing Rain", 170, 230, 52.85f, 50, 15, 200
-        );
+        super("Healing Rain", 170, 230, 52.85f, 50, 15, 200);
     }
 
     @Override
-    public void updateDescription() {
+    public void updateDescription(Player player) {
         description = "§7Conjure rain at targeted\n" +
                 "§7location that will restore §a" + minDamageHeal + "\n" +
                 "§7- §a" + maxDamageHeal + " §7health every second to\n" +

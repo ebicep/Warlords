@@ -27,7 +27,7 @@ public class UndyingArmy extends AbstractAbility {
     }
 
     @Override
-    public void updateDescription() {
+    public void updateDescription(Player player) {
         description = "§7When you or nearby allies take\n" +
                 "§7fatal damage within §610 §7seconds,\n" +
                 "§7instantly restore them to §a100% §7health\n" +

@@ -20,16 +20,32 @@ import java.util.List;
 
 public class FallenSouls extends AbstractAbility {
 
-    private static final float fallenSoulHitBox = .9f;
-    private static final float fallenSoulSpeed = 2.0f;
+    private static float fallenSoulHitBox = 1.18f;
+    private static float fallenSoulSpeed = 1.95f;
+
+    public static float getFallenSoulHitBox() {
+        return fallenSoulHitBox;
+    }
+
+    public static void setFallenSoulHitBox(float fallenSoulHitBox) {
+        FallenSouls.fallenSoulHitBox = fallenSoulHitBox;
+    }
+
+    public static float getFallenSoulSpeed() {
+        return fallenSoulSpeed;
+    }
+
+    public static void setFallenSoulSpeed(float fallenSoulSpeed) {
+        FallenSouls.fallenSoulSpeed = fallenSoulSpeed;
+    }
 
     public FallenSouls() {
-        super("Fallen Souls", -164, -212, 0, 55, 20, 180
+        super("Fallen Souls", -164f, -212f, 0, 55, 20, 180
         );
     }
 
     @Override
-    public void updateDescription() {
+    public void updateDescription(Player player) {
         description = "§7Summon a wave of fallen souls, dealing\n" +
                 "§c" + -minDamageHeal + " §7- §c" + -maxDamageHeal + " §7damage to all enemies they\n" +
                 "§7pass through. Each target hit reduces the\n" +
@@ -41,8 +57,7 @@ public class FallenSouls extends AbstractAbility {
         Location location = player.getLocation().add(player.getLocation().getDirection().multiply(-1));
         ArmorStand fallenSoulLeft = player.getWorld().spawn(location.subtract(0, .5, 0), ArmorStand.class);
         Location locationLeft = player.getLocation().add(player.getLocation().getDirection().multiply(-1));
-        //TODO fix spread, gets shorter the higher the pitch
-        locationLeft.setYaw(location.getYaw() - 15);// - (int)(location.getPitch()/-10f * 1.6));
+        locationLeft.setYaw(location.getYaw() - 13);// - (int)(location.getPitch()/-10f * 1.6));
         location.add(0, .5, 0);
         ArmorStand fallenSoulMiddle = player.getWorld().spawn(location.subtract(0, .5, 0), ArmorStand.class);
         Location locationMiddle = player.getLocation().add(player.getLocation().getDirection().multiply(-1));
@@ -50,7 +65,7 @@ public class FallenSouls extends AbstractAbility {
         location.add(0, .5, 0);
         ArmorStand fallenSoulRight = player.getWorld().spawn(location.subtract(0, .5, 0), ArmorStand.class);
         Location locationRight = player.getLocation().add(player.getLocation().getDirection().multiply(-1));
-        locationRight.setYaw(location.getYaw() + 15);// + (int)(location.getPitch()/-10f * 1.6));
+        locationRight.setYaw(location.getYaw() + 13);// + (int)(location.getPitch()/-10f * 1.6));
         location.add(0, .5, 0);
 
         FallenSoul fallenSoul = new FallenSoul(Warlords.getPlayer(player), fallenSoulLeft, fallenSoulMiddle, fallenSoulRight, player.getLocation(), player.getLocation(), player.getLocation(), locationLeft.getDirection(), locationMiddle.getDirection(), locationRight.getDirection(), this);
@@ -78,9 +93,9 @@ public class FallenSouls extends AbstractAbility {
                 middleSoul.teleport(middleSoul.getLocation().add(fallenSoul.getDirectionMiddle().clone().multiply(fallenSoulSpeed)));
                 rightSoul.teleport(rightSoul.getLocation().add(fallenSoul.getDirectionRight().clone().multiply(fallenSoulSpeed)));
 
-                List<Entity> nearLeft = (List<Entity>) leftSoul.getWorld().getNearbyEntities(leftSoul.getLocation().clone().add(0, 2, 0), fallenSoulHitBox, 0, fallenSoulHitBox);
-                List<Entity> nearMiddle = (List<Entity>) middleSoul.getWorld().getNearbyEntities(middleSoul.getLocation().clone().add(0, 2, 0), fallenSoulHitBox, 0, fallenSoulHitBox);
-                List<Entity> nearRight = (List<Entity>) rightSoul.getWorld().getNearbyEntities(rightSoul.getLocation().clone().add(0, 2, 0), fallenSoulHitBox, 0, fallenSoulHitBox);
+                List<Entity> nearLeft = (List<Entity>) leftSoul.getWorld().getNearbyEntities(leftSoul.getLocation().clone().add(0, 2, 0), fallenSoulHitBox, 1, fallenSoulHitBox);
+                List<Entity> nearMiddle = (List<Entity>) middleSoul.getWorld().getNearbyEntities(middleSoul.getLocation().clone().add(0, 2, 0), fallenSoulHitBox, 1, fallenSoulHitBox);
+                List<Entity> nearRight = (List<Entity>) rightSoul.getWorld().getNearbyEntities(rightSoul.getLocation().clone().add(0, 2, 0), fallenSoulHitBox, 1, fallenSoulHitBox);
 
                 damageNearByPlayers(nearLeft, wp, player, fallenSoul);
                 damageNearByPlayers(nearMiddle, wp, player, fallenSoul);

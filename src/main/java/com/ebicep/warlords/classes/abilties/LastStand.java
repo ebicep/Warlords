@@ -17,13 +17,13 @@ public class LastStand extends AbstractAbility {
     }
 
     @Override
-    public void updateDescription() {
+    public void updateDescription(Player player) {
         description = "§7Enter a defensive stance,\n" +
                 "§7reducing all damage you take by\n" +
                 "§c50% §7for §612 §7seconds and also\n" +
                 "§7reduces all damage nearby allies take\n" +
                 "§7by §c40% §7for §66 §7seconds. You are\n" +
-                "§chealed §7for the amount of damage\n" +
+                "§7healed §7for the amount of damage\n" +
                 "§7prevented on allies.";
     }
 

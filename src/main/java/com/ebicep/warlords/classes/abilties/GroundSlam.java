@@ -27,7 +27,7 @@ public class GroundSlam extends AbstractAbility {
     }
 
     @Override
-    public void updateDescription() {
+    public void updateDescription(Player player) {
         description = "§7Slam the ground, creating a shockwave\n" +
                 "§7around you that deals §c" + -minDamageHeal + " §7- §c" + -maxDamageHeal + "\n" +
                 "§7damage and knocks enemies back slightly.";

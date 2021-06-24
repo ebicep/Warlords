@@ -14,7 +14,7 @@ public class HolyRadiance extends AbstractAbility {
     }
 
     @Override
-    public void updateDescription() {
+    public void updateDescription(Player player) {
         description = "§7Radiate with holy energy, healing\n" +
                 "§7yourself and all nearby allies for\n" +
                 "§a" + minDamageHeal + " §7- §a" + maxDamageHeal + " §7health.";
@@ -22,11 +22,12 @@ public class HolyRadiance extends AbstractAbility {
 
     @Override
     public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
-        PlayerFilter.entitiesAround(player, 6, 6, 6)
+        for(WarlordsPlayer p : PlayerFilter
+            .entitiesAround(player, 3.6D, 3.6D, 3.6D)
             .aliveEnemiesOf(warlordsPlayer)
-            .forEach((p) -> {
-                p.addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
-            });
+        ) {
+            p.addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+        }
 
         warlordsPlayer.subtractEnergy(energyCost);
         warlordsPlayer.addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);

@@ -89,7 +89,7 @@ public class Totem extends EntityArmorStand {
         }
 
         @Override
-        public void updateDescription() {
+        public void updateDescription(Player player) {
             description = "§7Place a highly conductive totem\n" +
                     "§7on the ground. Casting Chain Lightning\n" +
                     "§7or Lightning Rod on the totem will cause\n" +
@@ -108,7 +108,7 @@ public class Totem extends EntityArmorStand {
             totemStand.setGravity(false);
             totemStand.setMarker(true);
             totemStand.setHelmet(new ItemStack(Material.RED_ROSE, 1, (short) 4));
-            totemStand.setMetadata("Capacitor Totem - " + player.getName(), new FixedMetadataValue(Warlords.getInstance(), true));
+            totemStand.setMetadata("capacitor-totem-" + player.getName().toLowerCase(), new FixedMetadataValue(Warlords.getInstance(), true));
 
             Totem capacitorTotem = new Totem(((CraftWorld) player.getWorld()).getHandle(), warlordsPlayer, totemStand, 8);
 
@@ -135,14 +135,13 @@ public class Totem extends EntityArmorStand {
 
     public static class TotemSpiritguard extends AbstractAbility {
         private float delayedDamage = 0;
-        private final int debt = 0;
 
         public TotemSpiritguard() {
-            super("Death's Debt", 0, 0, 60 + 10.49f, 20, -1, 100);
+            super("Death's Debt", 0, 0, 60f + 10.49f, 20, -1, 100);
         }
 
         @Override
-        public void updateDescription() {
+        public void updateDescription(Player player) {
             description = "§2Spirits’ Respite§7: Place down a totem that\n" +
                     "§7delays §c100% §7of incoming damage towards\n" +
                     "§7yourself. Transforms into §dDeath’s Debt §7after\n" +
@@ -294,7 +293,7 @@ public class Totem extends EntityArmorStand {
 
 
         @Override
-        public void updateDescription() {
+        public void updateDescription(Player player) {
             description = "§7Place a totem on the ground that\n" +
                     "§7pulses constantly, healing nearby\n" +
                     "§7allies for §a" + minDamageHeal + " §7- §a" + Math.floor(minDamageHeal * 1.354) + " §7every\n" +
@@ -314,6 +313,7 @@ public class Totem extends EntityArmorStand {
             totemStand.setGravity(false);
             totemStand.setMarker(true);
             totemStand.setHelmet(new ItemStack(Material.RED_ROSE, 1, (short) 7));
+            totemStand.setMetadata("healing-totem-" + player.getName(), new FixedMetadataValue(Warlords.getInstance(), true));
 
             Totem healingTotem = new Totem(((CraftWorld) player.getWorld()).getHandle(), warlordsPlayer, totemStand, 5);
 

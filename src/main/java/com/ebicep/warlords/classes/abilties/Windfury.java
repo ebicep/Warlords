@@ -11,7 +11,7 @@ public class Windfury extends AbstractAbility {
     }
 
     @Override
-    public void updateDescription() {
+    public void updateDescription(Player player) {
         description = "§7Imbue your weapon with the power\n" +
                 "§7of the wind, causing each of your\n" +
                 "§7melee attacks to have a §e35% §7chance\n" +

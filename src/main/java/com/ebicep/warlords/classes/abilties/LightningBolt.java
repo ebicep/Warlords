@@ -28,7 +28,7 @@ public class LightningBolt extends AbstractAbility {
     }
 
     @Override
-    public void updateDescription() {
+    public void updateDescription(Player player) {
         description = "§7Hurl a fast, piercing bolt of lightning that\n" +
                 "§7deals §c" + -minDamageHeal + " §7- §c" + -maxDamageHeal + " §7damage to all enemies it\n" +
                 "§7passes through. Each target hit reduces the\n" +
@@ -42,7 +42,7 @@ public class LightningBolt extends AbstractAbility {
         Location location = player.getLocation();
         Vector direction = location.getDirection();
 
-        Bolt bolt = new Bolt(wp, (ArmorStand) location.getWorld().spawnEntity(location.clone().subtract(direction.getX() * -.5, .3, direction.getZ() * -.5), EntityType.ARMOR_STAND), location.clone().subtract(direction.getX() * -.5, .3, direction.getZ() * -.5), direction, this);
+        Bolt bolt = new Bolt(wp, (ArmorStand) location.getWorld().spawnEntity(location.clone().subtract(direction.getX() * -.1, .3, direction.getZ() * -.1), EntityType.ARMOR_STAND), location.clone().subtract(direction.getX() * -.1, .3, direction.getZ() * -.1), direction, this);
         wp.subtractEnergy(energyCost);
 
         for (Player player1 : player.getWorld().getPlayers()) {

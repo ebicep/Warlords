@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
 import java.util.HashSet;
+import com.ebicep.warlords.util.Classes;
 import java.util.Optional;
 import com.ebicep.warlords.util.PlayerFilter;
 import java.util.*;
@@ -32,8 +33,9 @@ public class Chain extends AbstractAbility {
     }
 
         @Override
-    public void updateDescription() {
-        if (name.contains("Lightning")) {
+    public void updateDescription(Player player) {
+        Classes selected = Classes.getSelected(player);
+        if (selected == Classes.THUNDERLORD) {
             description = "§7Discharge a bolt of lightning at the\n" +
                     "§7targeted enemy player that deals\n" +
                     "§c" + -minDamageHeal + " §7- §c" + -maxDamageHeal + " §7damage and jumps to\n" +
@@ -43,7 +45,7 @@ public class Chain extends AbstractAbility {
                     "§7You gain §e10% §7damage resistance for\n" +
                     "§7each target hit, up to §e30% §7damage\n" +
                     "§7resistance. This buff lasts §64.5 §7seconds.";
-        } else if (name.contains("Heal")) {
+        } else if (selected == Classes.EARTHWARDEN) {
             description = "§7Discharge a beam of energizing lightning\n" +
                     "§7that heals you and a targeted friendly\n" +
                     "§7player for §a" + minDamageHeal + " §7- §a" + maxDamageHeal + " §7health and\n" +
@@ -52,7 +54,7 @@ public class Chain extends AbstractAbility {
                     "\n\n" +
                     "§7Each ally healed reduces the cooldown of\n" +
                     "§7Boulder by §62 §7seconds.";
-        } else if (name.contains("Spirit")) {
+        } else if (selected == Classes.SPIRITGUARD) {
             description = "§7Links your spirit with up to §c3 §7enemy\n" +
                     "§7players, dealing §c" + -minDamageHeal + " §7- §c" + -maxDamageHeal + " §7damage\n" +
                     "§7to the first target hit. Each additional hit\n" +
@@ -248,7 +250,7 @@ public class Chain extends AbstractAbility {
             } else if (name.contains("Spirit")) {
                 // speed buff
                 warlordsPlayer.getSpeed().addSpeedModifier("Spirit Link", 40, 30); // 30 is ticks
-                warlordsPlayer.setSpiritLink(30);
+                warlordsPlayer.setSpiritLink(4.5f);
 
                 warlordsPlayer.getSpec().getRed().setCurrentCooldown(cooldown);
 
@@ -265,7 +267,7 @@ public class Chain extends AbstractAbility {
     }
 
     private void healNearPlayers(WarlordsPlayer warlordsPlayer) {
-        warlordsPlayer.addHealth(warlordsPlayer, warlordsPlayer.getSpec().getRed().getName(), 420, 420, -1, 100);
+        warlordsPlayer.addHealth(warlordsPlayer, "Soulbinding Weapon", 420, 420, -1, 100);
         for (WarlordsPlayer nearPlayer : PlayerFilter
             .entitiesAround(warlordsPlayer, 2.5D, 2D, 2.5D)
             .aliveTeammatesOf(warlordsPlayer)
@@ -348,7 +350,7 @@ public class Chain extends AbstractAbility {
         Location eye = player.getEyeLocation();
         eye.setY(eye.getY() + .5);
         for (Entity entity : player.getNearbyEntities(20, 17, 20)) {
-            if (entity instanceof ArmorStand && entity.hasMetadata("Capacitor Totem - " + player.getName())) {
+            if (entity instanceof ArmorStand && entity.hasMetadata("capacitor-totem-" + player.getName().toLowerCase())) {
                 Vector toEntity = ((ArmorStand) entity).getEyeLocation().add(0, 1, 0).toVector().subtract(eye.toVector());
                 float dot = (float) toEntity.normalize().dot(eye.getDirection());
                 return dot > .95f;
@@ -360,7 +362,7 @@ public class Chain extends AbstractAbility {
     @Nullable
     private ArmorStand getTotem(@Nonnull WarlordsPlayer player) {
         for (Entity entity : player.getEntity().getNearbyEntities(20, 17, 20)) {
-            if (entity instanceof ArmorStand && entity.hasMetadata("Capacitor Totem - " + player.getName())) {
+            if (entity instanceof ArmorStand && entity.hasMetadata("Capacitor Totem - " + player.getName().toLowerCase())) {
                 return (ArmorStand) entity;
             }
         }

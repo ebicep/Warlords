@@ -48,7 +48,7 @@ public abstract class PlayerClass {
         }
         if (blue instanceof ArcaneShield) {
             ((ArcaneShield) blue).maxShieldHealth = maxHealth / 2;
-            blue.updateDescription();
+            blue.updateDescription(null); // Arcaneshield does not use the player in its description
         }
     }
 

@@ -56,7 +56,7 @@ public class Utils {
         eye.setPitch(0);
         Vector toEntity = player1.getEyeLocation().toVector().subtract(eye.toVector());
         float dot = (float) toEntity.normalize().dot(eye.getDirection());
-        return dot > 0.935D;
+        return dot > 0.91D;
     }
 
     public static boolean hasLineOfSight(LivingEntity player, LivingEntity player2) {
@@ -66,21 +66,13 @@ public class Utils {
     @Nullable
     public static ArmorStand getTotemDownAndClose(WarlordsPlayer warlordsPlayer, Entity searchNearby) {
         for (Entity entity : searchNearby.getNearbyEntities(5, 3, 5)) {
-            if (entity instanceof ArmorStand && entity.hasMetadata("Capacitor Totem - " + warlordsPlayer.getName())) {
+            if (entity instanceof ArmorStand && (entity.hasMetadata("capacitor-totem-" + warlordsPlayer.getName().toLowerCase()) || entity.hasMetadata("healing-totem-" + warlordsPlayer.getName().toLowerCase()))) {
                 return (ArmorStand)entity;
             }
         }
         return null;
     }
 
-    public static boolean totemDownAndClose(WarlordsPlayer warlordsPlayer, Entity searchNearby) {
-        for (Entity entity : searchNearby.getNearbyEntities(5, 3, 5)) {
-            if (entity instanceof ArmorStand && entity.hasMetadata("Capacitor Totem - " + warlordsPlayer.getName())) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     public static class ArmorStandComparator implements Comparator<Entity> {
         @Override

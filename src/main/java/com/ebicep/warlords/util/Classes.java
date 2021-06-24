@@ -137,7 +137,7 @@ public enum Classes {
     public static void setSelected(OfflinePlayer player, Classes selectedClass) {
         Warlords.getPlayerSettings(player.getUniqueId()).selectedClass(selectedClass);
         // Game.State.updateTempPlayer(player);
-        // setSelectedBoost(player, selectedClass.skillBoosts.get(0));
+        // setSelectedBoost(player, selectedClass.skillBoosts.get(0)); // This is already done by the player settings
     }
 
     /**

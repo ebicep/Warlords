@@ -14,7 +14,7 @@ public class Repentance extends AbstractAbility {
     }
 
     @Override
-    public void updateDescription() {
+    public void updateDescription(Player player) {
         description = "§7Taking damage empowers your damaging\n" +
                 "§7abilities and melee hits, restoring health\n" +
                 "§7and energy based on §c10 §7+ §c10% §7of the\n" +
