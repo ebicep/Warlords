@@ -2,7 +2,6 @@ package com.ebicep.warlords.util;
 
 import com.ebicep.warlords.Warlords;
 import org.bukkit.Material;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;

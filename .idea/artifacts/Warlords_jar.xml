@@ -3,7 +3,6 @@
     <output-path>$PROJECT_DIR$/../Server2/plugins</output-path>
     <root id="archive" name="Warlords.jar">
       <element id="module-output" name="Warlords" />
-      <element id="file-copy" path="$PROJECT_DIR$/../Server2/spigot-1.8.8.jar" />
     </root>
   </artifact>
 </component>
