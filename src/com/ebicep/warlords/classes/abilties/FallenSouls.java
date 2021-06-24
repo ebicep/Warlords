@@ -20,16 +20,20 @@ import java.util.List;
 
 public class FallenSouls extends AbstractAbility {
 
-    private List<FallenSoul> fallenSouls = new ArrayList<>();
     private static final float fallenSoulHitBox = .9f;
     private static final float fallenSoulSpeed = 2.0f;
 
     public FallenSouls() {
-        super("Fallen Souls", -164, -212, 0, 55, 20, 180,
-                "§7Summon a wave of fallen souls, dealing\n" +
-                        "§c164 §7- §c212 §7damage to all enemies they\n" +
-                        "§7pass through. Each target hit reduces the\n" +
-                        "§7cooldown of Spirit Link by §62 §7seconds.");
+        super("Fallen Souls", -164, -212, 0, 55, 20, 180
+        );
+    }
+
+    @Override
+    public void updateDescription() {
+        description = "§7Summon a wave of fallen souls, dealing\n" +
+                "§c" + minDamageHeal + " §7- §c" + maxDamageHeal + " §7damage to all enemies they\n" +
+                "§7pass through. Each target hit reduces the\n" +
+                "§7cooldown of Spirit Link by §62 §7seconds.";
     }
 
     @Override
@@ -134,7 +138,7 @@ public class FallenSouls extends AbstractAbility {
                         .closestFirst(player)
                         .limit(2)
                         .forEach((warlordsPlayer1) -> {
-                        
+
                             warlordsPlayer1.getSpec().getRed().subtractCooldown(.5F);
                             warlordsPlayer1.getSpec().getPurple().subtractCooldown(.5F);
                             warlordsPlayer1.getSpec().getBlue().subtractCooldown(.5F);

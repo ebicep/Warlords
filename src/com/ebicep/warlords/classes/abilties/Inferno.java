@@ -7,11 +7,16 @@ import org.bukkit.entity.Player;
 public class Inferno extends AbstractAbility {
 
     public Inferno() {
-        super("Inferno", 0, 0, 47, 0, 30, 30,
-                "§7Combust into a molten inferno,\n" +
-                        "§7increasing your Crit Chance by §c30%\n" +
-                        "§7and your Crit Multiplier by §c30%§7. Lasts\n" +
-                        "§618 §7seconds.");
+        super("Inferno", 0, 0, 46.98f, 0, 30, 30
+        );
+    }
+
+    @Override
+    public void updateDescription() {
+        description = "§7Combust into a molten inferno,\n" +
+                "§7increasing your Crit Chance by §c30%\n" +
+                "§7and your Crit Multiplier by §c30%§7. Lasts\n" +
+                "§618 §7seconds.";
     }
 
     @Override

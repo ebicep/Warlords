@@ -22,8 +22,15 @@ public class SeismicWave extends AbstractAbility {
     private final List<CustomFallingBlock> customFallingBlocks = new ArrayList<>();
     private List<Player> playersHit = new ArrayList<>();
 
-    public SeismicWave(String name, int minDamageHeal, int maxDamageHeal, int cooldown, int energyCost, int critChance, int critMultiplier, String description) {
-        super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier, description);
+    public SeismicWave(String name, float minDamageHeal, float maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier) {
+        super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
+    }
+
+    @Override
+    public void updateDescription() {
+        description = "§7Slam the ground, creating a shockwave\n" +
+                "§7around you that deals §c" + -minDamageHeal + " §7- §c" + -maxDamageHeal + "\n" +
+                "§7damage and knocks enemies back slightly.";
     }
 
     @Override

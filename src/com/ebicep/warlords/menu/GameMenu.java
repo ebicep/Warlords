@@ -73,7 +73,10 @@ public class GameMenu {
                     9 / 2 - values.length / 2 + i * 2 - 1,
                     1,
                     item,
-                    (n, e) -> openClassMenu(player, group)
+                    (n, e) -> {
+                        openClassMenu(player, group);
+                        //TODO change inventory to spec stuff
+                    }
             );
         }
         menu.setItem(1, 3, MENU_SKINS, (n, e) -> openWeaponMenu(player, 1));
@@ -127,7 +130,7 @@ public class GameMenu {
         List<ClassesSkillBoosts> values = selectedGroup.skillBoosts;
         for (int i = 0; i < values.size(); i++) {
             ClassesSkillBoosts subClass = values.get(i);
-            ItemBuilder builder = new ItemBuilder(player.getInventory().getItem(0))
+            ItemBuilder builder = new ItemBuilder(getSelected(player).icon)
                     .name(subClass == selectedBoost ? ChatColor.GREEN + subClass.name + " (" + selectedClass.name + ")" : ChatColor.RED + subClass.name + " (" + selectedClass.name + ")")
                     .flags(ItemFlag.HIDE_ENCHANTS);
             List<String> lore = new ArrayList<>();
@@ -141,7 +144,7 @@ public class GameMenu {
             }
             builder.lore(lore);
             menu.setItem(
-                    9 / 2 - values.size() % 2 + i * 2 - 1,
+                    6 - values.size() + i * 2 - 1,
                     1,
                     builder.get(),
                     (n, e) -> {

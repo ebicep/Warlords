@@ -17,11 +17,15 @@ import org.bukkit.util.Vector;
 public class Boulder extends AbstractAbility {
 
     public Boulder() {
-        super("Boulder", -490, -731, 8, 80, 15, 175,
-                "§7Launch a giant boulder that shatters\n" +
-                        "§7and deals §c490 §7- §c731 §7damage\n" +
-                        "§7to all enemies near the impact point\n" +
-                        "§7and knocks them back slightly.");
+        super("Boulder", -490, -731, 7.05f, 80, 15, 175);
+    }
+
+    @Override
+    public void updateDescription() {
+        description = "§7Launch a giant boulder that shatters\n" +
+                "§7and deals §c" + -minDamageHeal + " §7- §c" + -maxDamageHeal + " §7damage\n" +
+                "§7to all enemies near the impact point\n" +
+                "§7and knocks them back slightly.";
     }
 
     @Override
@@ -36,7 +40,7 @@ public class Boulder extends AbstractAbility {
         stand.setGravity(false);
         stand.setVisible(false);
         stand.setMarker(false);
-        
+
         warlordsPlayer.subtractEnergy(energyCost);
 
         new BukkitRunnable() {
@@ -87,13 +91,13 @@ public class Boulder extends AbstractAbility {
                     for (Player player1 : player.getWorld().getPlayers()) {
                         player1.playSound(newLoc, "shaman.boulder.impact", 2, 1);
                     }
-                    
+
                     for(WarlordsPlayer p : PlayerFilter
-                        .entitiesAround(newLoc, 6, 6, 6)
+                        .entitiesAround(newLoc, 5.5, 5.5, 5.5)
                         .aliveEnemiesOf(warlordsPlayer)
                     ) {
                         p.addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
-                        
+
                         Entity entity = p.getEntity();
                         Vector v = entity.getLocation().toVector().subtract(newLoc.toVector()).normalize().multiply(1.05).setY(0.3);
                         entity.setVelocity(v);

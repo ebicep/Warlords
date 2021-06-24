@@ -15,11 +15,15 @@ public class TimeWarp extends AbstractAbility {
     private int counter = 0;
 
     public TimeWarp() {
-        super("Time Warp", 0, 0, 29, 30, -1, 100,
-                "§7Activate to place a time rune on\n" +
-                        "§7the ground. After §65 §7seconds,\n" +
-                        "§7you will warp back to that location\n" +
-                        "§7and restore §a30% §7of your health");
+        super("Time Warp", 0, 0, 28.19f, 30, -1, 100);
+    }
+
+    @Override
+    public void updateDescription() {
+        description = "§7Activate to place a time rune on\n" +
+                "§7the ground. After §65 §7seconds,\n" +
+                "§7you will warp back to that location\n" +
+                "§7and restore §a30% §7of your health";
     }
 
     @Override
@@ -43,19 +47,19 @@ public class TimeWarp extends AbstractAbility {
 
                 //PARTICLES
                 if (counter % 4 == 0) {
-                        if (timeWarpPlayer.getTime() != 0) {
-                            ParticleEffect.SPELL_WITCH.display(0F, 0F, 0F, 0.001F, 6, timeWarpPlayer.getLocation(), 500);
-                        }
+                    if (timeWarpPlayer.getTime() != 0) {
+                        ParticleEffect.SPELL_WITCH.display(0F, 0F, 0F, 0.001F, 6, timeWarpPlayer.getLocation(), 500);
+                    }
 
-                        int points = 6;
-                        double radius = 0.5d;
-                        Location origin = timeWarpPlayer.getLocation();
+                    int points = 6;
+                    double radius = 0.5d;
+                    Location origin = timeWarpPlayer.getLocation();
 
-                        for (int e = 0; e < points; e++) {
-                            double angle = 2 * Math.PI * e / points;
-                            Location point = origin.clone().add(radius * Math.sin(angle), 0.0d, radius * Math.cos(angle));
-                            ParticleEffect.CLOUD.display(0.1F, 0F, 0.1F, 0.001F, 1, point, 500);
-                        }
+                    for (int e = 0; e < points; e++) {
+                        double angle = 2 * Math.PI * e / points;
+                        Location point = origin.clone().add(radius * Math.sin(angle), 0.0d, radius * Math.cos(angle));
+                        ParticleEffect.CLOUD.display(0.1F, 0F, 0.1F, 0.001F, 1, point, 500);
+                    }
 
                 }
 
@@ -64,13 +68,13 @@ public class TimeWarp extends AbstractAbility {
                     if (timeWarpPlayer.getTime() != 0) {
                         timeWarpPlayer.setTime(timeWarpPlayer.getTime() - 1);
                     } else {
-                        WarlordsPlayer wp = timeWarpPlayer.getWarlordsPlayer();
-                        wp.addHealth(wp, "Time Warp", (int) (wp.getMaxHealth() * .3), (int) (wp.getMaxHealth() * .3), -1, 100);
-                        for (Player player1 : player.getWorld().getPlayers()) {
+                        WarlordsPlayer player = timeWarpPlayer.getWarlordsPlayer();
+                        player.addHealth(player, "Time Warp", (player.getMaxHealth() * .3f), (player.getMaxHealth() * .3f), -1, 100);
+                        for (Player player1 : player.getEntity().getWorld().getPlayers()) {
                             player1.playSound(timeWarpPlayer.getLocation(), "mage.timewarp.teleport", 1, 1);
                         }
                         timeWarpPlayer.getLocation().setDirection(timeWarpPlayer.getFacing());
-                        wp.teleport(timeWarpPlayer.getLocation());
+                        player.getEntity().teleport(timeWarpPlayer.getLocation());
 
                         counter = 0;
                         this.cancel();

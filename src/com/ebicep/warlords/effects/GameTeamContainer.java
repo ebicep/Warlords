@@ -5,11 +5,13 @@ import com.ebicep.warlords.maps.Team;
 import java.util.stream.Stream;
 import org.bukkit.entity.Player;
 
+import java.util.Collection;
+
 
 // Class to quickly get a team's teammates and enemies
 
 public class GameTeamContainer {
-	
+
     private final Game game;
     private final Team team;
 
@@ -33,5 +35,5 @@ public class GameTeamContainer {
     public static Stream<Player> getEnemyPlayers(Game game, Team team) {
         return game.onlinePlayers().filter(e -> e.getValue() != team).map(e -> e.getKey());
     }
-	
+
 }

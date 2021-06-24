@@ -22,13 +22,22 @@ public class GroundSlam extends AbstractAbility {
     private final List<CustomFallingBlock> customFallingBlocks = new ArrayList<>();
     private final List<WarlordsPlayer> playersHit = new ArrayList<>();
 
-    public GroundSlam(String name, int minDamageHeal, int maxDamageHeal, int cooldown, int energyCost, int critChance, int critMultiplier, String description) {
-        super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier, description);
+    public GroundSlam(String name, float minDamageHeal, float maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier) {
+        super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
+    }
+
+    @Override
+    public void updateDescription() {
+        description = "§7Slam the ground, creating a shockwave\n" +
+                "§7around you that deals §c" + -minDamageHeal + " §7- §c" + -maxDamageHeal + "\n" +
+                "§7damage and knocks enemies back slightly.";
     }
 
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
         playersHit.clear();
+        fallingBlockLocations.clear();
+        customFallingBlocks.clear();
 
         Location location = player.getLocation();
 
@@ -69,7 +78,7 @@ public class GroundSlam extends AbstractAbility {
                 for (int i = 0; i < customFallingBlocks.size(); i++) {
                     CustomFallingBlock customFallingBlock = customFallingBlocks.get(i);
                     customFallingBlock.setTicksLived(customFallingBlock.getTicksLived() + 1);
-                    
+
                     for (WarlordsPlayer player : PlayerFilter.playingGame(wp.getGame()).isAlive()) {
                         if (player != customFallingBlock.getOwner()) {
                             AbstractAbility ability = customFallingBlock.getAbility();
@@ -84,16 +93,12 @@ public class GroundSlam extends AbstractAbility {
                             }
                         }
                     }
-                    //TODO fix bug where the blocks dont get removed if ability used near high wall - stuck in block?
-                    //System.out.println(customFallingBlock.getCustomFallingBlock().getLocation().getY());
-                    //System.out.println(customFallingBlock.getyLevel());
-                    if (customFallingBlock.getFallingBlock().getLocation().getY() <= customFallingBlock.getyLevel() || customFallingBlock.getFallingBlock().getTicksLived() > 10) {
+                    if (customFallingBlock.getFallingBlock().getLocation().getY() <= customFallingBlock.getyLevel() || customFallingBlock.getTicksLived() > 10) {
                         customFallingBlock.getFallingBlock().remove();
                         customFallingBlocks.remove(i);
                         i--;
                     }
                 }
-
                 if (fallingBlockLocations.isEmpty() && customFallingBlocks.isEmpty()) {
                     this.cancel();
                 }

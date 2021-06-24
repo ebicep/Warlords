@@ -2,13 +2,14 @@ package com.ebicep.warlords.effects.circle;
 
 import com.ebicep.warlords.effects.AbstractEffectPlayer;
 import com.ebicep.warlords.effects.TeamBasedEffect;
+import com.ebicep.warlords.util.ParticleEffect;
+import org.bukkit.Location;
+
+import javax.annotation.Nonnull;
+import java.util.function.DoubleUnaryOperator;
+
 import static com.ebicep.warlords.effects.circle.CircleEffect.LOCATION_CACHE;
 import static com.ebicep.warlords.effects.circle.CircleEffect.RANDOM;
-import com.ebicep.warlords.util.ParticleEffect;
-import java.util.function.DoubleUnaryOperator;
-import javax.annotation.Nonnull;
-
-import org.bukkit.Location;
 
 public class CircumferenceEffect extends AbstractEffectPlayer<CircleEffect> {
 
@@ -19,28 +20,30 @@ public class CircumferenceEffect extends AbstractEffectPlayer<CircleEffect> {
     private DoubleUnaryOperator particles = INITIAL_PARTICLES;
     private double cachedParticles;
     private double pendingParticles;
-    
+
     public CircumferenceEffect(ParticleEffect own, ParticleEffect other) {
         this(new TeamBasedEffect(own, other));
     }
+
     public CircumferenceEffect(ParticleEffect effect) {
         this(new TeamBasedEffect(effect));
     }
+
     public CircumferenceEffect(TeamBasedEffect effect) {
         this.effect = effect;
     }
-    
-    
+
+
     @Override
     public void playEffect(CircleEffect baseData) {
         Location center = baseData.getCenter();
         double radius = baseData.getRadius();
         LOCATION_CACHE.setY(center.getY());
-        
+
         double newParticles = pendingParticles + cachedParticles;
-        int maxCircleParticles = (int)newParticles;
+        int maxCircleParticles = (int) newParticles;
         pendingParticles = newParticles - maxCircleParticles;
-        for(int i = 0; i < maxCircleParticles; i++) {
+        for (int i = 0; i < maxCircleParticles; i++) {
             double angle = RANDOM.nextInt(360) * Math.PI / 180;
             LOCATION_CACHE.setX(radius * Math.sin(angle) + center.getX());
             LOCATION_CACHE.setZ(radius * Math.cos(angle) + center.getZ());
@@ -58,23 +61,23 @@ public class CircumferenceEffect extends AbstractEffectPlayer<CircleEffect> {
         needsUpdate = false;
     }
 
-    
+
     public CircumferenceEffect effect(@Nonnull ParticleEffect effect) {
         this.effect = new TeamBasedEffect(effect);
         return this;
     }
-    
+
     public CircumferenceEffect effect(@Nonnull ParticleEffect ownTeam, @Nonnull ParticleEffect enemyTeam) {
         this.effect = new TeamBasedEffect(ownTeam, enemyTeam);
         return this;
     }
-    
+
     public CircumferenceEffect particles(double particles) {
         this.particles = d -> particles;
         this.needsUpdate = true;
         return this;
     }
-    
+
     public CircumferenceEffect particlesPerCircumference(double particles) {
         this.particles = d -> Math.PI * 2 * d * particles;
         this.needsUpdate = true;

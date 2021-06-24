@@ -8,6 +8,7 @@ import com.ebicep.warlords.classes.shaman.specs.spiritguard.Spiritguard;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.flags.GroundFlagLocation;
 import com.ebicep.warlords.maps.flags.PlayerFlagLocation;
+import com.ebicep.warlords.util.ItemBuilder;
 import com.ebicep.warlords.maps.flags.SpawnFlagLocation;
 import com.ebicep.warlords.maps.flags.WaitingFlagLocation;
 import com.ebicep.warlords.util.ItemBuilder;
@@ -106,9 +107,10 @@ public class WarlordsEvents implements Listener {
             player.sendMessage(ChatColor.RED + "- Weapon Skill boosts");
             player.sendMessage(ChatColor.RED + "- Revenant's Orbs of Life being hidden for the enemy team");
             player.sendMessage(ChatColor.RED + "- Flag damage modifier currently does not carry over to a new flag holder.");
-            
+
             player.getInventory().clear();
-            player.getInventory().addItem(new ItemBuilder(Material.EMERALD).name("Open class selector").get());
+            player.getInventory().setArmorContents(new ItemStack[]{null, null, null, null});
+            player.getInventory().setItem(4, new ItemBuilder(Material.NETHER_STAR).name("§aSelection Menu").get());
         }
         WarlordsPlayer p = Warlords.getPlayer(player);
         if (p != null) {
@@ -116,11 +118,6 @@ public class WarlordsEvents implements Listener {
             p.updatePlayerReference(player);
         }
 
-    }
-
-    @EventHandler
-    public static void onEntityDamage(EntityDamageEvent e) {
-        
     }
 
     @EventHandler
@@ -267,13 +264,23 @@ public class WarlordsEvents implements Listener {
 
     @EventHandler
     public void onInvClick(InventoryClickEvent e) {
-        WarlordsPlayer wp = Warlords.getPlayer(e.getWhoClicked());
-        if (wp != null && e.getSlot() == 0) {
-            if (e.isLeftClick()) {
-                wp.weaponLeftClick((Player)e.getWhoClicked());
-            } else if (e.isRightClick()) {
-                wp.weaponRightClick((Player)e.getWhoClicked());
-            }
+        if (e.getSlot() == 0) {
+            Player player = (Player) e.getWhoClicked();
+            WarlordsPlayer wp = Warlords.getPlayer(player);
+            if (wp != null) {
+                if (e.isLeftClick()) {
+                    wp.weaponLeftClick(player);
+                } else if (e.isRightClick()) {
+                    wp.weaponRightClick(player);
+                }
+            }/* else if (Warlords.game.getState() == Game.State.PRE_GAME) {
+                WarlordsPlayer temp = Game.State.updateTempPlayer(player);
+                if (e.isLeftClick()) {
+                    temp.weaponLeftClick();
+                } else if (e.isRightClick()) {
+                    temp.weaponRightClick();
+                }
+            }*/
         }
         e.setCancelled(true);
     }
@@ -442,7 +449,7 @@ public class WarlordsEvents implements Listener {
                     String message = "§c" + pfl.getPlayer().getName() + " §ehas captured the "+loser.coloredPrefix()+" §eflag!";
                     p.sendMessage(message);
                     PacketUtils.sendTitle(p, "", message, 0, 60, 0);
-                    
+
                     if (event.getTeam() == t) {
                         p.playSound(pfl.getLocation(), "ctf.enemyflagcaptured", 500, 1);
                     } else {

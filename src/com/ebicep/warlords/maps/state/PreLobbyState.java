@@ -8,7 +8,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 
 public class PreLobbyState implements State, TimerDebugAble {
-    
+
     private int timer = 0;
     private final Game game;
 
@@ -21,7 +21,7 @@ public class PreLobbyState implements State, TimerDebugAble {
         timer = game.getMap().getCountdownTimerInTicks();
         Gates.changeGates(game.getMap(), false);
     }
-   
+
     @Override
     public State run() {
         int players = game.playersCount();
@@ -90,5 +90,5 @@ public class PreLobbyState implements State, TimerDebugAble {
     public void resetTimer() throws IllegalStateException {
         this.timer = game.getMap().getCountdownTimerInTicks();
     }
-    
+
 }

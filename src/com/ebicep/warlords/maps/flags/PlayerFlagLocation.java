@@ -29,11 +29,11 @@ public class PlayerFlagLocation implements FlagLocation {
     public void setPickUpTicks(int modifier) {
         this.pickUpTicks = modifier;
     }
-    
+
     public double getComputedMultiplier() {
         return 1 + (this.pickUpTicks / (20 * 30)) * 0.1;
     }
-    
+
     public double getComputedHumanMultiplier() {
         return (this.pickUpTicks / (20 * 30)) * 10;
     }

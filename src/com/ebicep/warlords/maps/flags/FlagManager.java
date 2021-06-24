@@ -30,17 +30,17 @@ public class FlagManager implements Listener {
 
     private final BukkitTask task;
     final PlayingState gameState;
-    
+
     @Nonnull
     public FlagInfo getRed() {
         return red;
     }
-    
+
     @Nonnull
     public FlagInfo getBlue() {
         return blue;
     }
-    
+
     @Nonnull
     public FlagInfo get(@Nonnull Team team) {
         return team == Team.RED ? this.red : this.blue;
@@ -59,7 +59,7 @@ public class FlagManager implements Listener {
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
         this.gameState = gameState;
     }
-    
+
     public void checkScore(Team team) {
         if(
             this.get(team).getFlag() instanceof SpawnFlagLocation &&
@@ -72,7 +72,7 @@ public class FlagManager implements Listener {
             }
         }
     }
-    
+
     public void tick() {
         checkScore(Team.RED);
         checkScore(Team.BLUE);

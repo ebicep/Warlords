@@ -144,15 +144,15 @@ public class Game implements Runnable {
         assert this.players.isEmpty();
         return toRemove;
     }
-    
+
     public int playersCount() {
         return this.players.size();
     }
-    
+
     public Stream<Map.Entry<UUID, Team>> players() {
         return this.players.entrySet().stream();
     }
-    
+
     public Stream<Map.Entry<OfflinePlayer, Team>> offlinePlayers() {
         return this.players.entrySet()
             .stream()
@@ -161,7 +161,7 @@ public class Game implements Runnable {
                 e.getValue()
             ));
     }
-    
+
     public Stream<Map.Entry<Player, Team>> onlinePlayers() {
         return this.players.entrySet()
             .stream()
@@ -171,19 +171,19 @@ public class Game implements Runnable {
             ))
             .filter(e -> e.getKey() != null);
     }
-    
+
     public void forEachOfflinePlayer(BiConsumer<OfflinePlayer, Team> consumer) {
         offlinePlayers().forEach(entry -> consumer.accept(entry.getKey(), entry.getValue()));
     }
-    
+
     public void forEachOfflineWarlordsPlayer(Consumer<WarlordsPlayer> consumer) {
         offlinePlayers().map(w -> Warlords.getPlayer(w.getKey())).filter(Objects::nonNull).forEach(consumer);
     }
-    
+
     public void forEachOnlinePlayer(BiConsumer<Player, Team> consumer) {
         onlinePlayers().forEach(entry -> consumer.accept(entry.getKey(), entry.getValue()));
     }
-    
+
     public void forEachOnlineWarlordsPlayer(Consumer<WarlordsPlayer> consumer) {
         onlinePlayers().map(w -> Warlords.getPlayer(w.getKey())).filter(Objects::nonNull).forEach(consumer);
     }

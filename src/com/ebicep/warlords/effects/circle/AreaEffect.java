@@ -2,12 +2,14 @@ package com.ebicep.warlords.effects.circle;
 
 import com.ebicep.warlords.effects.AbstractEffectPlayer;
 import com.ebicep.warlords.effects.TeamBasedEffect;
+import com.ebicep.warlords.util.ParticleEffect;
+import org.bukkit.Location;
+
+import javax.annotation.Nonnull;
+import java.util.function.DoubleUnaryOperator;
+
 import static com.ebicep.warlords.effects.circle.CircleEffect.LOCATION_CACHE;
 import static com.ebicep.warlords.effects.circle.CircleEffect.RANDOM;
-import com.ebicep.warlords.util.ParticleEffect;
-import java.util.function.DoubleUnaryOperator;
-import javax.annotation.Nonnull;
-import org.bukkit.Location;
 
 public final class AreaEffect extends AbstractEffectPlayer<CircleEffect> {
 
@@ -23,24 +25,26 @@ public final class AreaEffect extends AbstractEffectPlayer<CircleEffect> {
     public AreaEffect(double yOffset, ParticleEffect own, ParticleEffect other) {
         this(yOffset, new TeamBasedEffect(own, other));
     }
+
     public AreaEffect(double yOffset, ParticleEffect effect) {
         this(yOffset, new TeamBasedEffect(effect));
     }
+
     public AreaEffect(double yOffset, TeamBasedEffect effect) {
         this.yOffset = yOffset;
         this.effect = effect;
     }
-    
+
     @Override
     public void playEffect(CircleEffect baseData) {
         Location center = baseData.getCenter();
         double radius = baseData.getRadius();
         LOCATION_CACHE.setY(center.getY() + yOffset);
-        
+
         double newParticles = pendingParticles + cachedParticles;
-        int maxParticles = (int)newParticles;
+        int maxParticles = (int) newParticles;
         pendingParticles = newParticles - maxParticles;
-        for(int i = 0; i < maxParticles; i++) {
+        for (int i = 0; i < maxParticles; i++) {
             double x;
             double z;
             double distanceSquared;
@@ -48,8 +52,8 @@ public final class AreaEffect extends AbstractEffectPlayer<CircleEffect> {
                 x = RANDOM.nextDouble() * radius * 2 - radius;
                 z = RANDOM.nextDouble() * radius * 2 - radius;
                 distanceSquared = x * x + z * z;
-            } while(distanceSquared > radius * radius);
-            
+            } while (distanceSquared > radius * radius);
+
             LOCATION_CACHE.setX(x + center.getX());
             LOCATION_CACHE.setZ(z + center.getZ());
             this.effect.display(baseData.players, 0, 0, 0, 0.01F, 1, LOCATION_CACHE);
@@ -61,23 +65,23 @@ public final class AreaEffect extends AbstractEffectPlayer<CircleEffect> {
         cachedParticles = particles.applyAsDouble(baseData.getRadius());
         needsUpdate = false;
     }
-    
+
     public AreaEffect effect(@Nonnull ParticleEffect effect) {
         this.effect = new TeamBasedEffect(effect);
         return this;
     }
-    
+
     public AreaEffect effect(@Nonnull ParticleEffect ownTeam, @Nonnull ParticleEffect enemyTeam) {
         this.effect = new TeamBasedEffect(ownTeam, enemyTeam);
         return this;
     }
-    
+
     public AreaEffect particles(double particles) {
         this.particles = d -> particles;
         this.needsUpdate = true;
         return this;
     }
-    
+
     public AreaEffect particlesPerSurface(double particles) {
         this.particles = d -> Math.PI * d * d * particles;
         this.needsUpdate = true;

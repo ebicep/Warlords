@@ -116,7 +116,7 @@ public class Utils {
      * Map the list of entities to valid WarlordPlayer who are part off the enemy of the team of the player
      * @param entities
      * @param player
-     * @return 
+     * @return
      */
     @Deprecated
     public static Stream<WarlordsPlayer> filterOnlyEnemies(Collection<Entity> entities, Entity player) {
@@ -128,8 +128,8 @@ public class Utils {
     public static Predicate<WarlordsPlayer> filterOnlyEnemies(@Nullable WarlordsPlayer wp) {
         return wp == null ? (player) -> false : wp::isEnemy;
     }
-    
-    
+
+
     @Deprecated
     public static Stream<WarlordsPlayer> filterOnlyTeammatesSorted(WarlordsPlayer entity, double x, double y, double z, Entity player) {
         return filterOnlyTeammatesSorted(entity.getLocation(LOCATION_CONTAINER), x, y, z, player);
@@ -160,7 +160,7 @@ public class Utils {
      * Map the list of entities to valid WarlordPlayer who are part on the team of the player
      * @param entities
      * @param player
-     * @return 
+     * @return
      */
     @Deprecated
     public static Stream<WarlordsPlayer> filterOnlyTeammates(Collection<Entity> entities, Entity player) {
@@ -172,7 +172,7 @@ public class Utils {
     public static Predicate<WarlordsPlayer> filterOnlyTeammates(@Nullable WarlordsPlayer wp) {
         return wp == null ? (player) -> false : wp::isTeammate;
     }
-    
+
     // Old methods:
     @Deprecated
     public static List<Entity> filterOutTeammates(Collection<Entity> entities, Player player) {
@@ -188,7 +188,7 @@ public class Utils {
             .filter(e -> wp.isTeammate(e))
             .collect(Collectors.toList());
     }
-    
+
     private static final Location LOCATION_CACHE_SORT = new Location(null, 0, 0, 0);
     public static Comparator<Entity> sortClosestBy(Location loc) {
         return sortClosestBy(Entity::getLocation, loc);
@@ -199,7 +199,7 @@ public class Utils {
             return LOCATION_CACHE_SORT.distanceSquared(loc);
         });
     }
-    
+
     private static final Location LOCATION_CACHE_DISTANCE = new Location(null, 0, 0, 0);
     public static Predicate<Entity> radiusAround(Location loc, double radius) {
         return radiusAround(loc, radius, radius, radius);
@@ -283,9 +283,7 @@ public class Utils {
                 previousCode = true;
             } else if (previousCode) {
                 previousCode = false;
-                if (c == 'l' || c == 'L') {
-                    isBold = true;
-                } else isBold = false;
+                isBold = c == 'l' || c == 'L';
             } else {
                 DefaultFontInfo dFI = DefaultFontInfo.getDefaultFontInfo(c);
                 messagePxSize += isBold ? dFI.getBoldLength() : dFI.getLength();
@@ -321,9 +319,7 @@ public class Utils {
                 previousCode = true;
             } else if (previousCode) {
                 previousCode = false;
-                if (c == 'l' || c == 'L') {
-                    isBold = true;
-                } else isBold = false;
+                isBold = c == 'l' || c == 'L';
             } else {
                 DefaultFontInfo dFI = DefaultFontInfo.getDefaultFontInfo(c);
                 messagePxSize += isBold ? dFI.getBoldLength() : dFI.getLength();

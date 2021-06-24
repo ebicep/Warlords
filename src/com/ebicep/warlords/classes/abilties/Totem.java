@@ -28,7 +28,7 @@ import java.util.List;
 
 public class Totem extends EntityArmorStand {
 
-    private WarlordsPlayer owner;
+    private final WarlordsPlayer owner;
     private ArmorStand totemArmorStand;
     private int secondsLeft;
     private List<WarlordsPlayer> playersHit;
@@ -43,9 +43,7 @@ public class Totem extends EntityArmorStand {
 
     public static double getLocationUnderPlayer(Player player) {
         Location location = player.getLocation().clone();
-        if (player.getWorld().getHighestBlockYAt(location) < player.getLocation().getY()) {
-            return player.getWorld().getHighestBlockYAt(location);
-        } else {
+        location.setY(location.getBlockY() + 2);
             for (int i = 0; i < 20; i++) {
                 if (player.getWorld().getBlockAt(location).getType() == Material.AIR) {
                     location.add(0, -1, 0);
@@ -54,7 +52,6 @@ public class Totem extends EntityArmorStand {
                 }
             }
             return location.getY();
-        }
     }
 
     public WarlordsPlayer getOwner() {
@@ -88,12 +85,16 @@ public class Totem extends EntityArmorStand {
     public static class TotemThunderlord extends AbstractAbility {
 
         public TotemThunderlord() {
-            super("Capacitor Totem", -404, -523, 60 + 2, 20, 20, 200,
-                    "§7Place a highly conductive totem\n" +
-                            "§7on the ground. Casting Chain Lightning\n" +
-                            "§7or Lightning Rod on the totem will cause\n" +
-                            "§7it to pulse, dealing §c404 §7- §c523 §7damage\n" +
-                            "§7to all enemies nearby. Lasts §68 §7seconds.");
+            super("Capacitor Totem", -404, -523, 60 + 2, 20, 20, 200);
+        }
+
+        @Override
+        public void updateDescription() {
+            description = "§7Place a highly conductive totem\n" +
+                    "§7on the ground. Casting Chain Lightning\n" +
+                    "§7or Lightning Rod on the totem will cause\n" +
+                    "§7it to pulse, dealing §c" + -minDamageHeal + " §7- §c" + -maxDamageHeal + " §7damage\n" +
+                    "§7to all enemies nearby. Lasts §68 §7seconds.";
         }
 
         @Override
@@ -134,21 +135,25 @@ public class Totem extends EntityArmorStand {
 
     public static class TotemSpiritguard extends AbstractAbility {
         private float delayedDamage = 0;
-        private int debt = 0;
+        private final int debt = 0;
 
         public TotemSpiritguard() {
-            super("Death's Debt", 0, 0, 60 + 12, 20, -1, 100,
-                    "§2Spirits’ Respite§7: Place down a totem that\n" +
-                            "§7delays §c100% §7of incoming damage towards\n" +
-                            "§7yourself. Transforms into §dDeath’s Debt §7after\n" +
-                            "§64 §7- §68 §7seconds (increases with higher health),\n" +
-                            "§7or when you exit its §e10 §7block radius.\n" +
-                            "\n" +
-                            "§dDeath’s Debt§7: Take §c100% §7of the damage delayed\n" +
-                            "§7by §2Spirit's Respite §7over §66 §7seconds. The totem\n" +
-                            "§7will heal nearby allies for §a15% §7of all damage\n" +
-                            "§7that you take. If you survive, deal §c15% §7of the\n" +
-                            "§7damage delayed to nearby enemies.");
+            super("Death's Debt", 0, 0, 60 + 12, 20, -1, 100);
+        }
+
+        @Override
+        public void updateDescription() {
+            description = "§2Spirits’ Respite§7: Place down a totem that\n" +
+                    "§7delays §c100% §7of incoming damage towards\n" +
+                    "§7yourself. Transforms into §dDeath’s Debt §7after\n" +
+                    "§64 §7- §68 §7seconds (increases with higher health),\n" +
+                    "§7or when you exit its §e10 §7block radius.\n" +
+                    "\n" +
+                    "§dDeath’s Debt§7: Take §c100% §7of the damage delayed\n" +
+                    "§7by §2Spirit's Respite §7over §66 §7seconds. The totem\n" +
+                    "§7will heal nearby allies for §a15% §7of all damage\n" +
+                    "§7that you take. If you survive, deal §c15% §7of the\n" +
+                    "§7damage delayed to nearby enemies.";
         }
 
         @Override
@@ -189,7 +194,7 @@ public class Totem extends EntityArmorStand {
                             isPlayerInRadius ? Integer.MAX_VALUE : 0
                     );
                     deathsDebtTotem.setSecondsLeft(secondsLeft);
-                    if(secondsLeft > 0) {
+                    if (secondsLeft > 0) {
                         for (Player player1 : player.getWorld().getPlayers()) {
                             player1.playSound(standLocation, "shaman.earthlivingweapon.impact", 2, 1.5F);
                         }
@@ -201,7 +206,7 @@ public class Totem extends EntityArmorStand {
                             warlordsPlayer.getActionBarStats().add(new ActionBarStats(deathsDebtTotem.getOwner(), "DEBT", 6));
                             player.removeMetadata("TOTEM", Warlords.getInstance());
 
-                            if(!isPlayerInRadius) {
+                            if (!isPlayerInRadius) {
                                 player.sendMessage("§7You walked outside your §dDeath's Debt §7radius");
                             } else {
                                 player.sendMessage("§c\u00AB §2Spirit's Respite §7delayed §c" + -Math.round(getDelayedDamage()) + " §7damage. §dYour debt must now be paid.");
@@ -218,7 +223,7 @@ public class Totem extends EntityArmorStand {
                             }
 
                             // 100% of damage over 6 seconds
-                            int damage = (int) (TotemSpiritguard.this.getDelayedDamage() * .1667);
+                            float damage = (TotemSpiritguard.this.getDelayedDamage() * .1667f);
                             // Player damage
                             deathsDebtTotem.getOwner().addHealth(deathsDebtTotem.getOwner(), "",
                                     damage,
@@ -231,8 +236,8 @@ public class Totem extends EntityArmorStand {
                                 .aliveTeammatesOf(warlordsPlayer)
                                 .forEach((nearPlayer) -> {
                                     nearPlayer.addHealth(deathsDebtTotem.getOwner(), deathsDebtTotem.getOwner().getSpec().getOrange().getName(),
-                                            (int) (damage * -.15),
-                                            (int) (damage * -.15),
+                                            damage * -.15f,
+                                            damage * -.15f,
                                             deathsDebtTotem.getOwner().getSpec().getOrange().getCritChance(), deathsDebtTotem.getOwner().getSpec().getOrange().getCritMultiplier());
                                 });
                         } else {
@@ -242,8 +247,8 @@ public class Totem extends EntityArmorStand {
                                 .aliveEnemiesOf(warlordsPlayer)
                                 .forEach((nearPlayer) -> {
                                     nearPlayer.addHealth(deathsDebtTotem.getOwner(), deathsDebtTotem.getOwner().getSpec().getOrange().getName(),
-                                            (int) (TotemSpiritguard.this.getDelayedDamage() * .15),
-                                            (int) (TotemSpiritguard.this.getDelayedDamage() * .15),
+                                            TotemSpiritguard.this.getDelayedDamage() * .15f,
+                                            TotemSpiritguard.this.getDelayedDamage() * .15f,
                                             deathsDebtTotem.getOwner().getSpec().getOrange().getCritChance(), deathsDebtTotem.getOwner().getSpec().getOrange().getCritMultiplier());
                                 });
                             // 6 damage waves, stop the function
@@ -280,17 +285,22 @@ public class Totem extends EntityArmorStand {
     public static class TotemEarthwarden extends AbstractAbility {
 
         public TotemEarthwarden() {
-            super("Healing Totem", 168, 841, 60 + 12, 60, 15, 200,
-                    "§7Place a totem on the ground that\n" +
-                            "§7pulses constantly, healing nearby\n" +
-                            "§7allies for §a168 §7- §a227 §7every\n" +
-                            "§7second. Before disappearing, the totem\n" +
-                            "§7will let out a final pulse that heals for\n" +
-                            "§a841 §7- §a1138§7. Lasts §65 §7seconds.");
+            super("Healing Totem", 168, 841, 60 + 12, 60, 15, 200);
 
             //168 - 227
             //841 - 1138
-            //1.35x
+            //1.354x
+        }
+
+
+        @Override
+        public void updateDescription() {
+            description = "§7Place a totem on the ground that\n" +
+                    "§7pulses constantly, healing nearby\n" +
+                    "§7allies for §a" + minDamageHeal + " §7- §a" + Math.floor(minDamageHeal * 1.354) + " §7every\n" +
+                    "§7second. Before disappearing, the totem\n" +
+                    "§7will let out a final pulse that heals for\n" +
+                    "§a" + maxDamageHeal + " §7- §a" + Math.floor(maxDamageHeal * 1.354) + "§7. Lasts §65 §7seconds.";
         }
 
         @Override
@@ -328,7 +338,7 @@ public class Totem extends EntityArmorStand {
                             player1.playSound(player.getLocation(), "shaman.earthlivingweapon.impact", 2, 1);
                         }
 
-                        
+
                         PlayerFilter.entitiesAround(healingTotem.getTotemArmorStand(), 4, 4, 4)
                             .aliveTeammatesOf(warlordsPlayer)
                             .forEach((nearPlayer) -> {
@@ -336,7 +346,7 @@ public class Totem extends EntityArmorStand {
                                         healingTotem.getOwner(),
                                         healingTotem.getOwner().getSpec().getOrange().getName(),
                                         healingTotem.getOwner().getSpec().getOrange().getMinDamageHeal(),
-                                        (int) (healingTotem.getOwner().getSpec().getOrange().getMinDamageHeal() * 1.35),
+                                        healingTotem.getOwner().getSpec().getOrange().getMinDamageHeal() * 1.35f,
                                         healingTotem.getOwner().getSpec().getOrange().getCritChance(),
                                         healingTotem.getOwner().getSpec().getOrange().getCritMultiplier()
                                     );
@@ -347,7 +357,7 @@ public class Totem extends EntityArmorStand {
                             player1.playSound(player.getLocation(), "shaman.heal.impact", 2, 1);
                         }
 
-                        new FallingBlockWaveEffect(totemStand.getLocation().clone().add(0, 1, 0), 5, 1.2, Material.SAPLING, (byte) 1).play();
+                        new FallingBlockWaveEffect(totemStand.getLocation().clone().add(0, 1, 0), 7, 1.2, Material.SAPLING, (byte) 1).play();
 
                         PlayerFilter.entitiesAround(healingTotem.getTotemArmorStand(), 4, 4, 4)
                             .aliveTeammatesOf(warlordsPlayer)
@@ -356,12 +366,12 @@ public class Totem extends EntityArmorStand {
                                     healingTotem.getOwner(),
                                     healingTotem.getOwner().getSpec().getOrange().getName(),
                                     healingTotem.getOwner().getSpec().getOrange().getMaxDamageHeal(),
-                                    (int) (healingTotem.getOwner().getSpec().getOrange().getMaxDamageHeal() * 1.35),
+                                    healingTotem.getOwner().getSpec().getOrange().getMaxDamageHeal() * 1.35f,
                                     healingTotem.getOwner().getSpec().getOrange().getCritChance(),
                                     healingTotem.getOwner().getSpec().getOrange().getCritMultiplier()
                                 );
                             });
-                        
+
                         healingTotem.getTotemArmorStand().remove();
                         this.cancel();
                     }

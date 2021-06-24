@@ -52,7 +52,7 @@ public class Commands implements TabExecutor {
                 }
             }
 
-            if(!(game.getState() instanceof PreLobbyState)) {
+            if (!(game.getState() instanceof PreLobbyState)) {
                 sender.sendMessage(ChatColor.RED + "The game has already started!");
                 return true;
             }
@@ -84,6 +84,7 @@ public class Commands implements TabExecutor {
                         .get());
                 Warlords.game.addPlayer(player, teamBlueAssessment);
                 game.giveLobbyScoreboard(player);
+                // Game.State.updateTempPlayer(player);
                 teamBlueAssessment = !teamBlueAssessment;
             }
 
@@ -104,7 +105,7 @@ public class Commands implements TabExecutor {
                 PlayingState playingState = (PlayingState) game.getState();
                 playingState.endGame();
             }
-            
+
             sender.sendMessage(ChatColor.RED + "Game has been terminated. Warping back to lobby...");
 
         } else if (command.getName().equalsIgnoreCase("class")) {
@@ -139,7 +140,7 @@ public class Commands implements TabExecutor {
                 for (String arg : args) {
                     message += arg + " "; // TODO use a stringbuilder
                 }
-                
+
                 for (WarlordsPlayer p : PlayerFilter.playingGame(player.getGame()).aliveTeammatesOf(player)) {
                     p.sendMessage(message);
                 }
@@ -187,7 +188,7 @@ public class Commands implements TabExecutor {
 
         return Collections.emptyList();
     }
-    
+
     @Nullable
     private Player requirePlayerOutsideGame(@Nonnull CommandSender sender) {
         if (!(sender instanceof Player)) {
@@ -200,7 +201,7 @@ public class Commands implements TabExecutor {
         }
         return (Player)sender;
     }
-    
+
     @Nullable
     private Player requirePlayer(@Nonnull CommandSender sender) {
         if (!(sender instanceof Player)) {
@@ -209,7 +210,7 @@ public class Commands implements TabExecutor {
         }
         return (Player)sender;
     }
-    
+
     @Nullable
     private WarlordsPlayer requireWarlordsPlayer(@Nonnull CommandSender sender) {
         if (!(sender instanceof Player)) {

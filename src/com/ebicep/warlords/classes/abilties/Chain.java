@@ -28,18 +28,49 @@ import org.bukkit.entity.LivingEntity;
 
 public class Chain extends AbstractAbility {
 
-    public Chain(String name, int minDamageHeal, int maxDamageHeal, int cooldown, int energyCost, int critChance, int critMultiplier, String description) {
-        super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier, description);
+    public Chain(String name, float minDamageHeal, float maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier) {
+        super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
     }
-    
+
+        @Override
+    public void updateDescription() {
+        if (name.contains("Lightning")) {
+            description = "§7Discharge a bolt of lightning at the\n" +
+                    "§7targeted enemy player that deals\n" +
+                    "§c" + -minDamageHeal + " §7- §c" + -maxDamageHeal + " §7damage and jumps to\n" +
+                    "§e4 §7additional targets within §e15\n" +
+                    "§7blocks. Each time the lightning jumps\n" +
+                    "§7the damage is decreased by §c15%§7.\n" +
+                    "§7You gain §e10% §7damage resistance for\n" +
+                    "§7each target hit, up to §e30% §7damage\n" +
+                    "§7resistance. This buff lasts §64.5 §7seconds.";
+        } else if (name.contains("Heal")) {
+            description = "§7Discharge a beam of energizing lightning\n" +
+                    "§7that heals you and a targeted friendly\n" +
+                    "§7player for §a" + minDamageHeal + " §7- §a" + maxDamageHeal + " §7health and\n" +
+                    "§7jumps to §e2 §7additional targets within\n" +
+                    "§e10 §7blocks." +
+                    "\n\n" +
+                    "§7Each ally healed reduces the cooldown of\n" +
+                    "§7Boulder by §62 §7seconds.";
+        } else if (name.contains("Spirit")) {
+            description = "§7Links your spirit with up to §c3 §7enemy\n" +
+                    "§7players, dealing §c" + -minDamageHeal + " §7- §c" + -maxDamageHeal + " §7damage\n" +
+                    "§7to the first target hit. Each additional hit\n" +
+                    "§7deals §c10% §7reduced damage. You gain §e40%\n" +
+                    "§7speed for §61.5 §7seconds, and take §c20%\n" +
+                    "§7reduced damage for §64.5 §7seconds.";
+        }
+    }
+
     private void partOfChainLightningPulseDamage(WarlordsPlayer warlordsPlayer, Entity totem) {
         pulseDamage(warlordsPlayer, PlayerFilter.entitiesAround(totem, 4, 4, 4).aliveEnemiesOf(warlordsPlayer).stream());
     }
-    
+
     private final int LIGHTING_MAX_PLAYERS_NO_TOTEM = 2;
     private final int LIGHTING_MAX_PLAYERS_WITH_TOTEM = 2;
-    
-    
+
+
     private int partOfChainLightning(WarlordsPlayer warlordsPlayer, Set<WarlordsPlayer> playersHit, Entity checkFrom, boolean hasHitTotem) {
         int playersSize = playersHit.size();
         if (playersSize >= (hasHitTotem ? LIGHTING_MAX_PLAYERS_WITH_TOTEM : LIGHTING_MAX_PLAYERS_NO_TOTEM)) {
@@ -66,30 +97,30 @@ public class Chain extends AbstractAbility {
         } // no else
         PlayerFilter filter = firstCheck ?
             PlayerFilter.entitiesAround(checkFrom, 20, 18, 20)
-                .filter(e -> 
+                .filter(e ->
                     Utils.getLookingAtChain(warlordsPlayer.getEntity(), e.getEntity()) &&
                     Utils.hasLineOfSight(warlordsPlayer.getEntity(), e.getEntity())
-                ) : 
+                ) :
             PlayerFilter.entitiesAround(checkFrom, 10, 9, 10);
         Optional<WarlordsPlayer> foundPlayer = filter.closestFirst(warlordsPlayer).aliveEnemiesOf(warlordsPlayer).excluding(playersHit).findFirst();
         if (foundPlayer.isPresent()) {
             WarlordsPlayer hit = foundPlayer.get();
-            double damageMultiplier;
+            float damageMultiplier;
             switch(playersSize) {
                 case 0:
                     // We hit the first player
-                    damageMultiplier = 1;
+                    damageMultiplier = 1f;
                     break;
                 case 1:
                     // We hit the second player
-                    damageMultiplier = .85;
+                    damageMultiplier = .85f;
                     break;
                 default:
-                    damageMultiplier = .7;
+                    damageMultiplier = .7f;
                     break;
             }
             playersHit.add(hit);
-            hit.addHealth(warlordsPlayer, name, (int) (minDamageHeal * damageMultiplier), (int) (maxDamageHeal * damageMultiplier), critChance, critMultiplier);
+            hit.addHealth(warlordsPlayer, name, minDamageHeal * damageMultiplier, maxDamageHeal * damageMultiplier, critChance, critMultiplier);
             return partOfChainLightning(warlordsPlayer, playersHit, hit.getEntity(), hasHitTotem);
         } else {
             return playersSize;
@@ -124,7 +155,7 @@ public class Chain extends AbstractAbility {
                         .excluding(warlordsPlayer, nearPlayer)
                     ) {
                         chain(nearPlayer.getLocation(), nearNearPlayer.getLocation());
-                        nearNearPlayer.addHealth(warlordsPlayer, name, (int) (minDamageHeal * .9), (int) (maxDamageHeal * .9), critChance, critMultiplier);
+                        nearNearPlayer.addHealth(warlordsPlayer, name, minDamageHeal * .9f, maxDamageHeal * .9f, critChance, critMultiplier);
                         hitCounter++;
 
                         for (WarlordsPlayer nearNearNearPlayer : PlayerFilter
@@ -133,7 +164,7 @@ public class Chain extends AbstractAbility {
                             .excluding(warlordsPlayer, nearPlayer, nearNearPlayer)
                         ) {
                             chain(nearNearPlayer.getLocation(), nearNearNearPlayer.getLocation());
-                            nearNearPlayer.addHealth(warlordsPlayer, name, (int) (minDamageHeal * .8), (int) (maxDamageHeal * .8), critChance, critMultiplier);
+                            nearNearPlayer.addHealth(warlordsPlayer, name, minDamageHeal * .8f, maxDamageHeal * .8f, critChance, critMultiplier);
                             hitCounter++;
                             break;
                         }
@@ -161,7 +192,7 @@ public class Chain extends AbstractAbility {
                         .excluding(nearPlayer)
                     ) {
                         chain(nearPlayer.getLocation(), nearNearPlayer.getLocation());
-                        nearNearPlayer.addHealth(warlordsPlayer, name, (int) (minDamageHeal * .8), (int) (maxDamageHeal * .8), critChance, critMultiplier);
+                        nearNearPlayer.addHealth(warlordsPlayer, name, minDamageHeal * .8f, maxDamageHeal * .8f, critChance, critMultiplier);
                         hitCounter++;
 
                         if (warlordsPlayer.hasBoundPlayerLink(nearNearPlayer)) {
@@ -173,7 +204,7 @@ public class Chain extends AbstractAbility {
                             .excluding(nearPlayer, nearNearPlayer)
                         ) {
                             chain(nearNearPlayer.getLocation(), nearNearNearPlayer.getLocation());
-                            nearNearPlayer.addHealth(warlordsPlayer, name, (int) (minDamageHeal * .6), (int) (maxDamageHeal * .6), critChance, critMultiplier);
+                            nearNearPlayer.addHealth(warlordsPlayer, name, minDamageHeal * .6f, maxDamageHeal * .6f, critChance, critMultiplier);
                             hitCounter++;
 
                             if (warlordsPlayer.hasBoundPlayerLink(nearNearNearPlayer)) {
@@ -210,7 +241,6 @@ public class Chain extends AbstractAbility {
                 }
                 warlordsPlayer.updateRedItem(player);
                 warlordsPlayer.getSpec().getBlue().setCurrentCooldown(cooldown);
-                warlordsPlayer.updateBlueItem();
 
                 for (Player player1 : player.getWorld().getPlayers()) {
                     player1.playSound(player.getLocation(), "shaman.chainheal.activation", 2, 1);

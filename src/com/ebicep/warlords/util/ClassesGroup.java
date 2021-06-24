@@ -40,7 +40,7 @@ public enum ClassesGroup {
     public final String description;
     public final List<Classes> subclasses;
 
-    ClassesGroup(String name, ItemStack item, String description, Classes ... subclasses) {
+    ClassesGroup(String name, ItemStack item, String description, Classes... subclasses) {
         this.name = name;
         this.item = item;
         this.description = description;

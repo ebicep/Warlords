@@ -7,21 +7,24 @@ import com.ebicep.warlords.util.Matrix4d;
 import com.ebicep.warlords.util.ParticleEffect;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.ArrayList;
 
 public class LastStand extends AbstractAbility {
 
     public LastStand() {
-        super("Last Stand", 0, 0, 58, 40, 0, 0,
-                "§7Enter a defensive stance,\n" +
-                        "§7reducing all damage you take by\n" +
-                        "§c50% §7for §612 §7seconds and also\n" +
-                        "§7reduces all damage nearby allies take\n" +
-                        "§7by §c40% §7for §66 §7seconds. You are\n" +
-                        "§chealed §7for the amount of damage\n" +
-                        "§7prevented on allies.");
+        super("Last Stand", 0, 0, 56.38f, 40, 0, 0
+        );
+    }
+
+    @Override
+    public void updateDescription() {
+        description = "§7Enter a defensive stance,\n" +
+                "§7reducing all damage you take by\n" +
+                "§c50% §7for §612 §7seconds and also\n" +
+                "§7reduces all damage nearby allies take\n" +
+                "§7by §c40% §7for §66 §7seconds. You are\n" +
+                "§chealed §7for the amount of damage\n" +
+                "§7prevented on allies.";
     }
 
     @Override

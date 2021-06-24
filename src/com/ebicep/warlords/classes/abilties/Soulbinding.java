@@ -7,8 +7,12 @@ import org.bukkit.entity.Player;
 public class Soulbinding extends AbstractAbility {
 
     public Soulbinding() {
-        super("Soulbinding Weapon", 0, 0, 23, 30, -1, 100,
-                "§7Your melee attacks §dBIND\n" +
+        super("Soulbinding Weapon", 0, 0, 21.92f, 30, -1, 100);
+    }
+
+    @Override
+    public void updateDescription() {
+        description = "§7Your melee attacks §dBIND\n" +
                 "§7enemies for §62 §7seconds.\n" +
                 "§7Against §dBOUND §7targets, your\n" +
                 "§7next Spirit Link ill heal you and\n" +
@@ -17,7 +21,7 @@ public class Soulbinding extends AbstractAbility {
                 "§7cooldown of all abilities by §61.5\n" +
                 "§7seconds. (§60.5 §7seconds for §e2 §7nearby\n" +
                 "§7allies). Both buffs may be activated for\n" +
-                "§7every melee hit. Lasts §612 §7seconds.");
+                "§7every melee hit. Lasts §612 §7seconds.";
     }
 
     @Override
@@ -25,7 +29,7 @@ public class Soulbinding extends AbstractAbility {
         warlordsPlayer.setSoulBindCooldown(12);
 
         for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "shaman.boulder.activation", 2, 1.5F);
+            player1.playSound(player.getLocation(), "paladin.consecrate.activation", 2, 2);
         }
     }
 

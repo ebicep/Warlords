@@ -46,7 +46,7 @@ public class CustomScoreboard {
         this.gameState = gameState;
         this.warlordsPlayer = warlordsPlayer;
     }
-    
+
     public void updateHealth() {
         if(health != null) {
             health.unregister();
@@ -60,7 +60,7 @@ public class CustomScoreboard {
             score.setScore(s.getHealth());
         });
     }
-    
+
     public void updateNames() {
         this.gameState.getGame().forEachOfflinePlayer((player, team) -> {
             WarlordsPlayer s = Warlords.getPlayer(player);
@@ -161,7 +161,7 @@ public class CustomScoreboard {
                     }
                 }
             }
-        }   
+        }
     }
 
     public void updateKillsAssists() {

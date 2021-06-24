@@ -7,11 +7,15 @@ import org.bukkit.entity.Player;
 public class Berserk extends AbstractAbility {
 
     public Berserk() {
-        super("Berserk", 0, 0, 47, 30, 0, 0,
-                "§7You go into a berserker rage,\n" +
+        super("Berserk", 0, 0, 46.98f, 30, 0, 0);
+    }
+
+    @Override
+    public void updateDescription() {
+        description = "§7You go into a berserker rage,\n" +
                 "§7increasing your damage by §c25% §7and\n" +
                 "§7movement speed by §e30%§7. While active,\n" +
-                "§7you also take §c10% §7more damage.\n" + "§7Lasts §618 §7seconds.");
+                "§7you also take §c10% §7more damage.\n" + "§7Lasts §618 §7seconds.";
     }
 
     @Override

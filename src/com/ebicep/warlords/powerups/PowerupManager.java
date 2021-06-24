@@ -13,8 +13,8 @@ import java.util.stream.Collectors;
 
 public class PowerupManager extends BukkitRunnable {
 
-    private List<AbstractPowerUp> powerUps = new ArrayList<>();
-    private GameMap map;
+    private final List<AbstractPowerUp> powerUps = new ArrayList<>();
+    private final GameMap map;
 
     public PowerupManager(GameMap map) {
         this.map = map;
@@ -53,7 +53,7 @@ public class PowerupManager extends BukkitRunnable {
                     } else if (powerUp instanceof SpeedPowerUp) {
                         Warlords.getPlayer((Player) entitiesNear.get(0)).setPowerUpSpeed(powerUp.getDuration());
                         entitiesNear.get(0).sendMessage("§6You activated the §e§lSPEED §6powerup! §a+40% §6Speed for §a10 §6seconds!");
-                        warlordsPlayer.getSpeed().addSpeedModifier("Speed Powerup", 40, 10 * 20);
+                        warlordsPlayer.getSpeed().addSpeedModifier("Speed Powerup", 40, 10 * 20, "BASE");
 
                         for (Player player1 : powerUp.getLocation().getWorld().getPlayers()) {
                             player1.playSound(powerUp.getLocation(), "ctf.powerup.speed", 2, 1);

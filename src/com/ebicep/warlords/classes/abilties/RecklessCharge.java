@@ -4,15 +4,11 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.util.Utils;
-import org.bukkit.Effect;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.potion.Potion;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
@@ -24,13 +20,17 @@ public class RecklessCharge extends AbstractAbility {
     private List<Player> playersHit = new ArrayList<>();
 
     public RecklessCharge() {
-        super("Reckless Charge", -466, -612, 11, 60, 20, 200,
-                "§7Charge forward, dealing §c466\n" +
-                        "§7- §c612 §7damage to all enemies\n" +
-                        "§7you pass through. Enemies hit are\n" +
-                        "§5IMMOBILIZED§7, preventing movement\n" +
-                        "§7for §60.5 §7seconds. Charge is reduced\n" +
-                        "§7when carrying a flag.");
+        super("Reckless Charge", -466, -612, 9.98f, 60, 20, 200);
+    }
+
+    @Override
+    public void updateDescription() {
+        description = "§7Charge forward, dealing §c" + minDamageHeal + "\n" +
+                "§7- §c" + maxDamageHeal + " §7damage to all enemies\n" +
+                "§7you pass through. Enemies hit are\n" +
+                "§5IMMOBILIZED§7, preventing movement\n" +
+                "§7for §60.5 §7seconds. Charge is reduced\n" +
+                "§7when carrying a flag.";
     }
 
     @Override

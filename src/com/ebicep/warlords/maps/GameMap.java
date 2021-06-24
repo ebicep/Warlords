@@ -1,10 +1,11 @@
 package com.ebicep.warlords.maps;
 
-import java.util.Arrays;
-import java.util.List;
 import javax.annotation.Nonnull;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+
+import java.util.Arrays;
+import java.util.List;
 
 // MAPS:
 // "Crossfire"
@@ -43,10 +44,10 @@ public enum GameMap {
 
             Arrays.asList(
                     new Cuboid(Bukkit.getWorld("Rift"), -79, 45, -29, -79, 49, -24), // BLUE GATES 1
-                    new Cuboid(Bukkit.getWorld("Rift"),-91, 45, -6, -86, 49, -6), // BLUE GATES 2
+                    new Cuboid(Bukkit.getWorld("Rift"), -91, 45, -6, -86, 49, -6), // BLUE GATES 2
 
-                    new Cuboid(Bukkit.getWorld("Rift"),79, 45, 25, 79, 49, 29), // RED GATES 1
-                    new Cuboid(Bukkit.getWorld("Rift"),87, 45, 6, 91, 49, 6) // RED GATES 2
+                    new Cuboid(Bukkit.getWorld("Rift"), 79, 45, 25, 79, 49, 29), // RED GATES 1
+                    new Cuboid(Bukkit.getWorld("Rift"), 87, 45, 6, 91, 49, 6) // RED GATES 2
             )
     ),
 
@@ -265,30 +266,103 @@ public enum GameMap {
         this.fenceGates = fenceGates;
     }
 
-    public String getMapName() { return mapName; }
-    public int getMaxPlayers() { return maxPlayers; }
-    public int getMinPlayers() { return minPlayers; }
-    public int getGameTimerInTicks() { return gameTimerInTicks; }
-    public int getCountdownTimerInTicks() { return countdownTimerInTicks; }
-    public String getMapDirPath() { return mapDirPath; }
+    public String getMapName() {
+        return mapName;
+    }
 
-    public Location getDamagePowerupBlue() { return damagePowerupBlue; }
-    public Location getDamagePowerupRed() { return damagePowerupRed; }
-    public Location getDamagePowerup(@Nonnull Team team) { return team == Team.RED  ? damagePowerupRed : damagePowerupBlue; }
-    public Location getSpeedPowerupBlue() { return speedPowerupBlue; }
-    public Location getSpeedPowerupRed() { return speedPowerupRed; }
-    public Location getSpeedPowerup(@Nonnull Team team) { return team == Team.RED  ? speedPowerupRed : speedPowerupBlue; }
-    public Location getHealingPowerupBlue() { return healingPowerupBlue; }
-    public Location getHealingPowerupRed() { return healingPowerupRed; }
-    public Location getHealingPowerup(@Nonnull Team team) { return team == Team.RED  ? healingPowerupRed : healingPowerupBlue; }
-    public Location getBlueLobbySpawnPoint() { return blueLobbySpawnPoint; }
-    public Location getRedLobbySpawnPoint() { return redLobbySpawnPoint; }
-    public Location getLobbySpawnPoint(@Nonnull Team team) { return team == Team.RED  ? redLobbySpawnPoint : blueLobbySpawnPoint; }
-    public Location getBlueRespawn() { return blueRespawn; }
-    public Location getRedRespawn() { return redRespawn; }
-    public Location getRespawn(@Nonnull Team team) { return team == Team.RED  ? redRespawn : blueRespawn; }
-    public Location getBlueFlag() { return blueFlag; }
-    public Location getRedFlag() { return redFlag; }
-    public Location getFlag(@Nonnull Team team) { return team == Team.RED  ? redFlag : blueFlag; }
-    public List<Cuboid> getFenceGates() { return fenceGates; }
+    public int getMaxPlayers() {
+        return maxPlayers;
+    }
+
+    public Location getDamagePowerup(@Nonnull Team team) {
+        return team == Team.RED  ? damagePowerupRed : damagePowerupBlue;
+    }
+
+    public int getMinPlayers() {
+        return minPlayers;
+    }
+    public Location getSpeedPowerup(@Nonnull Team team) {
+        return team == Team.RED  ? speedPowerupRed : speedPowerupBlue;
+    }
+
+
+    public Location getHealingPowerup(@Nonnull Team team) {
+        return team == Team.RED  ? healingPowerupRed : healingPowerupBlue;
+    }
+
+    public int getGameTimerInTicks() {
+        return gameTimerInTicks;
+    }
+
+    public Location getLobbySpawnPoint(@Nonnull Team team) {
+        return team == Team.RED  ? redLobbySpawnPoint : blueLobbySpawnPoint;
+    }
+
+    public int getCountdownTimerInTicks() {
+        return countdownTimerInTicks;
+    }
+
+    public Location getRespawn(@Nonnull Team team) {
+        return team == Team.RED  ? redRespawn : blueRespawn;
+    }
+
+    public String getMapDirPath() {
+        return mapDirPath;
+    }
+
+    public Location getFlag(@Nonnull Team team) {
+        return team == Team.RED  ? redFlag : blueFlag;
+    }
+
+    public Location getDamagePowerupBlue() {
+        return damagePowerupBlue;
+    }
+
+    public Location getDamagePowerupRed() {
+        return damagePowerupRed;
+    }
+
+    public Location getSpeedPowerupBlue() {
+        return speedPowerupBlue;
+    }
+
+    public Location getSpeedPowerupRed() {
+        return speedPowerupRed;
+    }
+
+    public Location getHealingPowerupBlue() {
+        return healingPowerupBlue;
+    }
+
+    public Location getHealingPowerupRed() {
+        return healingPowerupRed;
+    }
+
+    public Location getBlueLobbySpawnPoint() {
+        return blueLobbySpawnPoint;
+    }
+
+    public Location getRedLobbySpawnPoint() {
+        return redLobbySpawnPoint;
+    }
+
+    public Location getBlueRespawn() {
+        return blueRespawn;
+    }
+
+    public Location getRedRespawn() {
+        return redRespawn;
+    }
+
+    public Location getBlueFlag() {
+        return blueFlag;
+    }
+
+    public Location getRedFlag() {
+        return redFlag;
+    }
+
+    public List<Cuboid> getFenceGates() {
+        return fenceGates;
+    }
 }

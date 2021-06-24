@@ -5,6 +5,8 @@ import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.state.PlayingState.Stats;
+import com.ebicep.warlords.util.PacketUtils;
+import com.ebicep.warlords.util.PlayerFilter;
 import com.ebicep.warlords.util.Utils;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -99,10 +101,10 @@ public class EndState implements State, TimerDebugAble {
         TextComponent yourStatistics = new TextComponent("" + ChatColor.GOLD + ChatColor.BOLD + "✚ YOUR STATISTICS ✚");
         yourStatistics.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.WHITE + "Total Kills (everyone): " + ChatColor.GREEN + Utils.addCommaAndRound((float) players.stream().mapToDouble(WarlordsPlayer::getTotalKills).sum()) + "\n" + ChatColor.WHITE + "Total Assists (everyone): " + ChatColor.GREEN + Utils.addCommaAndRound((float) players.stream().mapToDouble(WarlordsPlayer::getTotalAssists).sum()) + "\n" + ChatColor.WHITE + "Total Deaths (everyone): " + ChatColor.GREEN + Utils.addCommaAndRound((float) players.stream().mapToDouble(WarlordsPlayer::getTotalDeaths).sum())).create()));
         sendCenteredHoverableMessageToAllGamePlayer(game, Collections.singletonList(yourStatistics));
-        for (WarlordsPlayer value : Warlords.getPlayers().values()) {
+        for (WarlordsPlayer value : PlayerFilter.playingGame(game)) {
             Player player = Bukkit.getPlayer(value.getUuid());
-            if(player == null) continue;
-            
+            if (player == null) continue;
+
             TextComponent kills = new TextComponent(ChatColor.WHITE + "Kills: " + ChatColor.GOLD + Utils.addCommaAndRound(value.getTotalKills()));
             TextComponent assists = new TextComponent(ChatColor.WHITE + "Assists: " + ChatColor.GOLD + Utils.addCommaAndRound(value.getTotalAssists()));
             TextComponent deaths = new TextComponent(ChatColor.WHITE + "Deaths: " + ChatColor.GOLD + Utils.addCommaAndRound(value.getTotalDeaths()));
@@ -124,10 +126,17 @@ public class EndState implements State, TimerDebugAble {
             absorb.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new ComponentBuilder(absorbedJson).create()));
             Utils.sendCenteredHoverableMessage(player, Arrays.asList(damage, Game.spacer, heal, Game.spacer, absorb));
             player.setGameMode(GameMode.ADVENTURE);
+            if (value.getTeam() == winner) {
+                player.playSound(player.getLocation(), "victory", 500, 1);
+                PacketUtils.sendTitle(player, "§6§lVICTORY!", "", 0, 100, 0);
+            } else {
+                player.playSound(player.getLocation(), "defeat", 500, 1);
+                PacketUtils.sendTitle(player, "§c§lDEFEAT!", "", 0, 100, 0);
+            }
         }
         sendMessageToAllGamePlayer(game, "" + ChatColor.GREEN + ChatColor.BOLD + "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬", false);
     }
-    
+
     @Override
     public State run() {
         timer--;

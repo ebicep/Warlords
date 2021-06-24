@@ -5,8 +5,10 @@ import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.util.PlayerFilter;
 import com.ebicep.warlords.util.Utils;
+import net.minecraft.server.v1_8_R3.PacketPlayOutAnimation;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -18,13 +20,18 @@ import java.util.List;
 public class EarthenSpike extends AbstractAbility {
 
     public EarthenSpike() {
-        super("Earthen Spike", -476, -662, 0, 120, 15, 175,
-                "§7Send forth an underground earth spike\n" +
-                        "§7that locks onto a targeted enemy player.\n" +
-                        "§7When the spike reaches its target it\n" +
-                        "§7emerges from the ground, dealing §c476 §7-\n" +
-                        "§c662 §7damage to any nearby enemies and\n" +
-                        "§7launches them up into the air.");
+        super("Earthen Spike", -476, -662, 0, 120, 15, 175
+        );
+    }
+
+    @Override
+    public void updateDescription() {
+        description = "§7Send forth an underground earth spike\n" +
+                "§7that locks onto a targeted enemy player.\n" +
+                "§7When the spike reaches its target it\n" +
+                "§7emerges from the ground, dealing §c" + -minDamageHeal + " §7-\n" +
+                "§c" + -maxDamageHeal + " §7damage to any nearby enemies and\n" +
+                "§7launches them up into the air.";
     }
 
     @Override
@@ -34,6 +41,10 @@ public class EarthenSpike extends AbstractAbility {
             .aliveEnemiesOf(wp)
             .forEach((p) -> {
             if (Utils.getLookingAt(player, p.getEntity()) && Utils.hasLineOfSight(player, p.getEntity())) {
+                    PacketPlayOutAnimation playOutAnimation = new PacketPlayOutAnimation(((CraftPlayer) player).getHandle(), 0);
+                    ((CraftPlayer) player).getHandle().playerConnection.sendPacket(playOutAnimation);
+
+                    //TODO fix block getting glitched into world
                 FallingBlock block = player.getWorld().spawnFallingBlock(location.clone(), location.getWorld().getBlockAt((int) location.getX(), (int) location.getY(), (int) location.getZ()).getType(), (byte) 0);
                 block.setVelocity(new Vector(0, .2, 0));
                 p.subtractEnergy(energyCost);
@@ -50,41 +61,48 @@ public class EarthenSpike extends AbstractAbility {
                         WarlordsPlayer target = earthenSpikeBlock.getTarget();
                         WarlordsPlayer user = earthenSpikeBlock.getUser();
 
+                            for (Player player1 : player.getWorld().getPlayers()) {
+                                player1.playSound(lastFallingBlock.getLocation(), "shaman.earthenspike.animation.d", 2, 1);
+                            }
+
                         if (earthenSpikeBlock.getDuration() > 30) {
                             //out of time
                             earthenSpikeBlock.setDuration(-1);
                             this.cancel();
                         } else if (Math.abs(target.getLocation().getX() - lastFallingBlock.getLocation().getX()) + Math.abs(target.getLocation().getZ() - lastFallingBlock.getLocation().getZ()) > 1) {
 
-                            // TODO: make sounds actually sound accurate to live instead of an earthquake, just threw them in for now
-                            for (Player player1 : player.getWorld().getPlayers()) {
-                                player1.playSound(lastFallingBlock.getLocation(), "shaman.earthenspike.animation.d", 1.5F, 1);
-                            }
-
                             Location newLocation = lastFallingBlock.getLocation();
                             //moving diagonally
-                            if (Math.abs(target.getLocation().getX() - newLocation.getX()) >= Math.abs(target.getLocation().getZ() - newLocation.getZ())) {
-
+                            if (Math.abs(target.getLocation().getBlockX() - newLocation.getBlockX()) > 0) {
                                 if (target.getLocation().getX() < newLocation.getX()) {
                                     newLocation.add(-1, 0, 0);
                                 } else {
                                     newLocation.add(1, 0, 0);
                                 }
-                            } else {
-
-                                for (Player player1 : player.getWorld().getPlayers()) {
-                                    player1.playSound(lastFallingBlock.getLocation(), "shaman.earthenspike.animation.b", 1.5F, 1);
+                                    if (Math.abs(target.getLocation().getBlockZ() - newLocation.getBlockZ()) > 0) {
+                                        if (target.getLocation().getZ() < newLocation.getZ()) {
+                                            FallingBlock newBlock = target.getWorld().spawnFallingBlock(newLocation, newLocation.getWorld().getBlockAt(newLocation.clone().add(0, -1, -1)).getType(), newLocation.getWorld().getBlockAt(newLocation.clone().add(0, -1, 0)).getData());
+                                            newBlock.setVelocity(new Vector(0, .25, 0));
+                                            newBlock.setDropItem(false);
+                                            customFallingBlocks.add(new CustomFallingBlock(newBlock, newBlock.getLocation().getY() - .20));
+                                        } else {
+                                            FallingBlock newBlock = target.getWorld().spawnFallingBlock(newLocation, newLocation.getWorld().getBlockAt(newLocation.clone().add(0, -1, 1)).getType(), newLocation.getWorld().getBlockAt(newLocation.clone().add(0, -1, 0)).getData());
+                                            newBlock.setVelocity(new Vector(0, .25, 0));
+                                            newBlock.setDropItem(false);
+                                            customFallingBlocks.add(new CustomFallingBlock(newBlock, newBlock.getLocation().getY() - .20));
+                                        }
+                                    }
                                 }
-
+                                if (Math.abs(target.getLocation().getBlockZ() - newLocation.getBlockZ()) > 0) {
                                 if (target.getLocation().getZ() < newLocation.getZ()) {
                                     newLocation.add(0, 0, -1);
                                 } else {
                                     newLocation.add(0, 0, 1);
                                 }
                             }
+
                             //moving vertically
                             if (target.getLocation().getY() < newLocation.getY()) {
-
                                 for (int j = 0; j < 10; j++) {
                                     if (newLocation.getWorld().getBlockAt(newLocation.clone().add(0, -1, 0)).getType() == Material.AIR) {
                                         newLocation.add(0, -1, 0);
@@ -104,19 +122,19 @@ public class EarthenSpike extends AbstractAbility {
                             FallingBlock newBlock = target.getWorld().spawnFallingBlock(newLocation, newLocation.getWorld().getBlockAt(newLocation.clone().add(0, -1, 0)).getType(), newLocation.getWorld().getBlockAt(newLocation.clone().add(0, -1, 0)).getData());
                             newBlock.setVelocity(new Vector(0, .2, 0));
                             newBlock.setDropItem(false);
-                            System.out.println(newLocation);
                             customFallingBlocks.add(new CustomFallingBlock(newBlock, newBlock.getLocation().getY() - .20));
                         } else {
                             //impact
                             Location targetLocation = target.getLocation();
-                            PlayerFilter.entitiesAround(targetLocation, .6, 1.5, .6)
+                            for(WarlordsPlayer warlordsPlayer : PlayerFilter
+                                .entitiesAround(targetLocation, .6, 1.5, .6)
                                 .aliveEnemiesOf(wp)
-                                .forEach(warlordsPlayer -> {
+                            ) {
                                 warlordsPlayer.addHealth(user, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
                                 if (Utils.getDistance(warlordsPlayer, 1) < 2.5) {
                                     warlordsPlayer.setVelocity(new Vector(0, .6, 0));
                                 }
-                            });
+                            }
 
                             for (Player player1 : wp.getWorld().getPlayers()) {
                                 player1.playSound(wp.getLocation(), "shaman.earthenspike.impact", 2, 1);
@@ -156,7 +174,7 @@ public class EarthenSpike extends AbstractAbility {
                         System.out.println(earthenSpikeBlock.duration);
                     }
 
-                }.runTaskTimer(Warlords.getInstance(), 0, (long) 2);
+                }.runTaskTimer(Warlords.getInstance(), 0, 2);
 
                 new BukkitRunnable() {
 

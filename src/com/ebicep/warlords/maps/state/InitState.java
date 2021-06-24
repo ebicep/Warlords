@@ -13,7 +13,7 @@ public class InitState implements State {
     @Override
     public void begin( ) {
     }
-    
+
     @Override
     public State run() {
         return new PreLobbyState(game);
@@ -22,5 +22,5 @@ public class InitState implements State {
     @Override
     public void end( ) {
     }
-    
+
 }

@@ -23,13 +23,18 @@ import java.util.List;
 public class LightningBolt extends AbstractAbility {
 
     public LightningBolt() {
-        super("Lightning Bolt", -207, -385, 0, 60, 20, 200,
-                "§7Hurl a fast, piercing bolt of lightning that\n" +
-                        "§7deals §c207 §7- §c385 §7damage to all enemies it\n" +
-                        "§7passes through. Each target hit reduces the\n" +
-                        "§7cooldown of Chain Lightning by §62 §7seconds.\n" +
-                        "\n" +
-                        "§7Has a maximum range of §e60 §7blocks.");
+        super("Lightning Bolt", -207, -385, 0, 60, 20, 200
+        );
+    }
+
+    @Override
+    public void updateDescription() {
+        description = "§7Hurl a fast, piercing bolt of lightning that\n" +
+                "§7deals §c" + -minDamageHeal + " §7- §c" + -maxDamageHeal + " §7damage to all enemies it\n" +
+                "§7passes through. Each target hit reduces the\n" +
+                "§7cooldown of Chain Lightning by §62 §7seconds.\n" +
+                "\n" +
+                "§7Has a maximum range of §e60 §7blocks.";
     }
 
     @Override
@@ -72,6 +77,26 @@ public class LightningBolt extends AbstractAbility {
                     for (Player player1 : player.getWorld().getPlayers()) {
                         player1.playSound(bolt.getLocation(), "shaman.lightningbolt.impact", 2, 1);
                     }
+
+                    for (WarlordsPlayer warlordsPlayer : PlayerFilter
+                        .entitiesAround(bolt.getBoltLocation(), 1, 1, 1)
+                        .aliveEnemiesOf(wp)
+                    ) {
+                        //hitting player
+                        if (!bolt.getPlayersHit().contains(warlordsPlayer)) {
+                            bolt.getPlayersHit().add(warlordsPlayer);
+                            warlordsPlayer.addHealth(bolt.getShooter(), bolt.getLightningBolt().getName(), bolt.getLightningBolt().getMinDamageHeal(), bolt.getLightningBolt().getMaxDamageHeal(), bolt.getLightningBolt().getCritChance(), bolt.getLightningBolt().getCritMultiplier());
+
+                            for (Player player1 : warlordsPlayer.getWorld().getPlayers()) {
+                                player1.playSound(warlordsPlayer.getLocation(), "shaman.lightningbolt.impact", 2, 1);
+                            }
+
+                            //reducing chain cooldown
+                            bolt.getShooter().getSpec().getRed().subtractCooldown(2);
+                            bolt.getShooter().updateRedItem();
+                        }
+                    }
+
                     bolt.getArmorStand().remove();
                     this.cancel();
                 }

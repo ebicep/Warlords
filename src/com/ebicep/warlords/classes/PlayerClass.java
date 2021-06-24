@@ -2,6 +2,7 @@ package com.ebicep.warlords.classes;
 
 import com.ebicep.warlords.WarlordsPlayer;
 import javax.annotation.Nonnull;
+import com.ebicep.warlords.classes.abilties.*;
 import net.minecraft.server.v1_8_R3.PacketPlayOutAnimation;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
@@ -45,6 +46,10 @@ public abstract class PlayerClass {
             className = "Shaman";
             classNameShort = "SHA";
         }
+        if (blue instanceof ArcaneShield) {
+            ((ArcaneShield) blue).maxShieldHealth = maxHealth / 2;
+            blue.updateDescription();
+        }
     }
 
     public void onRightClick(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
@@ -54,17 +59,17 @@ public abstract class PlayerClass {
         if (player.getInventory().getHeldItemSlot() == 0) {
             if (player.getLevel() >= weapon.getEnergyCost()) {
                 weapon.onActivate(wp, player);
-                if (!weapon.getName().contains("Strike"))
+                if (!(weapon instanceof Strike) && !(weapon instanceof EarthenSpike)) {
                     sendRightClickPacket(player);
+                }
             }
         } else if (player.getInventory().getHeldItemSlot() == 1) {
             if (red.getCurrentCooldown() == 0 && player.getLevel() >= red.getEnergyCost()) {
                 red.onActivate(wp, player);
-                if (!red.getName().contains("Chain") && !red.getName().contains("Link")) {
+                if (!(red instanceof Chain)) {
                     red.setCurrentCooldown(red.cooldown);
                     sendRightClickPacket(player);
                 }
-
             }
         } else if (player.getInventory().getHeldItemSlot() == 2) {
             if (purple.getCurrentCooldown() == 0 && player.getLevel() >= purple.getEnergyCost()) {
@@ -75,7 +80,7 @@ public abstract class PlayerClass {
         } else if (player.getInventory().getHeldItemSlot() == 3) {
             if (blue.getCurrentCooldown() == 0 && player.getLevel() >= blue.getEnergyCost()) {
                 blue.onActivate(wp, player);
-                if (!blue.getName().contains("Chain") && !blue.getName().contains("Intervene")) {
+                if (!(blue instanceof Chain) && !(blue instanceof Intervene)) {
                     blue.setCurrentCooldown(blue.cooldown);
                     sendRightClickPacket(player);
                 }
@@ -83,11 +88,12 @@ public abstract class PlayerClass {
         } else if (player.getInventory().getHeldItemSlot() == 4) {
             if (orange.getCurrentCooldown() == 0 && player.getLevel() >= orange.getEnergyCost()) {
                 orange.onActivate(wp, player);
-                orange.setCurrentCooldown(orange.cooldown);
-                sendRightClickPacket(player);
+                if (!(orange instanceof HammerOfLight) && !(orange instanceof HealingRain)) {
+                    orange.setCurrentCooldown(orange.cooldown);
+                    sendRightClickPacket(player);
+                }
             }
         }
-
         if (player.getVehicle() != null) {
             player.getVehicle().remove();
         }
@@ -99,16 +105,17 @@ public abstract class PlayerClass {
             if (slot == 0) {
                 if (player.getLevel() >= weapon.getEnergyCost()) {
                     weapon.onActivate(wp, player);
-                    if (!weapon.getName().contains("Strike"))
+                    if (!(weapon instanceof Strike) && !(weapon instanceof EarthenSpike))
                         sendRightClickPacket(player);
                 }
             } else if (slot == 1) {
                 if (red.getCurrentCooldown() == 0 && player.getLevel() >= red.getEnergyCost()) {
                     red.onActivate(wp, player);
-                    if (!red.getName().contains("Chain") && !red.getName().contains("Link")) {
+                    if (!(red instanceof Chain)) {
                         red.setCurrentCooldown(red.cooldown);
                         sendRightClickPacket(player);
                     }
+
                 }
             } else if (slot == 2) {
                 if (purple.getCurrentCooldown() == 0 && player.getLevel() >= purple.getEnergyCost()) {
@@ -119,7 +126,7 @@ public abstract class PlayerClass {
             } else if (slot == 3) {
                 if (blue.getCurrentCooldown() == 0 && player.getLevel() >= blue.getEnergyCost()) {
                     blue.onActivate(wp, player);
-                    if (!blue.getName().contains("Chain") && !blue.getName().contains("Intervene")) {
+                    if (!(blue instanceof Chain) && !(blue instanceof Intervene)) {
                         blue.setCurrentCooldown(blue.cooldown);
                         sendRightClickPacket(player);
                     }
@@ -127,7 +134,7 @@ public abstract class PlayerClass {
             } else if (slot == 4) {
                 if (orange.getCurrentCooldown() == 0 && player.getLevel() >= orange.getEnergyCost()) {
                     orange.onActivate(wp, player);
-                    if (!orange.getName().contains("Hammer") && !orange.getName().contains("Rain")) {
+                    if (!(orange instanceof HammerOfLight) && !(orange instanceof HealingRain)) {
                         orange.setCurrentCooldown(orange.cooldown);
                         sendRightClickPacket(player);
                     }

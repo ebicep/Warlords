@@ -40,7 +40,7 @@ public class PlayerSettings implements ConfigurationSerializable {
         config.put("hotKeyMode", Boolean.toString(hotKeyMode));
         return config;
     }
-    
+
     public static PlayerSettings deserialize(Map<String, Object> config) {
         PlayerSettings settings = new PlayerSettings();
         try {
@@ -53,7 +53,7 @@ public class PlayerSettings implements ConfigurationSerializable {
         }
         settings.hotKeyMode = !"false".equals(config.get("hotKeyMode"));
         return settings;
-    } 
+    }
 
     public boolean hotKeyMode() {
         return hotKeyMode;
@@ -61,7 +61,7 @@ public class PlayerSettings implements ConfigurationSerializable {
 
     public void hotKeyMode(boolean hotKeyMode) {
         this.hotKeyMode = hotKeyMode;
-    } 
+    }
 
     public Weapons weapon() {
         return weapon;
@@ -70,5 +70,5 @@ public class PlayerSettings implements ConfigurationSerializable {
     public void weapon(Weapons weapon) {
         this.weapon = weapon;
     }
-    
+
 }

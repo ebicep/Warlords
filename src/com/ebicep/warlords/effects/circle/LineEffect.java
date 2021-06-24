@@ -2,12 +2,14 @@ package com.ebicep.warlords.effects.circle;
 
 import com.ebicep.warlords.effects.AbstractEffectPlayer;
 import com.ebicep.warlords.effects.TeamBasedEffect;
+import com.ebicep.warlords.util.ParticleEffect;
+import org.bukkit.Location;
+
+import javax.annotation.Nonnull;
+import java.util.function.DoubleUnaryOperator;
+
 import static com.ebicep.warlords.effects.circle.CircleEffect.LOCATION_CACHE;
 import static com.ebicep.warlords.effects.circle.CircleEffect.RANDOM;
-import com.ebicep.warlords.util.ParticleEffect;
-import java.util.function.DoubleUnaryOperator;
-import javax.annotation.Nonnull;
-import org.bukkit.Location;
 
 public class LineEffect extends AbstractEffectPlayer<CircleEffect> {
 
@@ -25,20 +27,22 @@ public class LineEffect extends AbstractEffectPlayer<CircleEffect> {
     public LineEffect(Location target, ParticleEffect own, ParticleEffect other) {
         this(target, new TeamBasedEffect(own, other));
     }
+
     public LineEffect(Location target, ParticleEffect effect) {
         this(target, new TeamBasedEffect(effect));
     }
+
     public LineEffect(Location target, TeamBasedEffect effect) {
         this.target = target;
         this.effect = effect;
     }
-    
+
     @Override
     public void playEffect(CircleEffect baseData) {
         Location center = baseData.getCenter();
         double radius = baseData.getRadius();
         LOCATION_CACHE.setY(center.getY());
-        
+
         double newLines = pendingPeriod + period;
         int maxNewLines = (int) newLines;
         pendingPeriod = newLines - maxNewLines;

@@ -23,22 +23,26 @@ public class UndyingArmy extends AbstractAbility {
             .get();
 
     public UndyingArmy() {
-        super("Undying Army", 0, 0, 60 + 10, 20, 0, 0,
-                "§7When you or nearby allies take\n" +
-                        "§7fatal damage within §610 §7seconds,\n" +
-                        "§7instantly restore them to §a100% §7health\n" +
-                        "§7instead. They will take §c500 §7TRUE DAMAGE\n" +
-                        "§7every second for the rest of their life.\n" +
-                        "§7Allies not revived will heal for §a200 §7+\n" +
-                        "§a35% §7of their missing health §610 §7seconds\n" +
-                        "§7after this abilty was cast.");
+        super("Undying Army", 0, 0, 60f + 10.47f, 20, 0, 0);
+    }
+
+    @Override
+    public void updateDescription() {
+        description = "§7When you or nearby allies take\n" +
+                "§7fatal damage within §610 §7seconds,\n" +
+                "§7instantly restore them to §a100% §7health\n" +
+                "§7instead. They will take §c500 §7TRUE DAMAGE\n" +
+                "§7every second for the rest of their life.\n" +
+                "§7Allies not revived will heal for §a200 §7+\n" +
+                "§a35% §7of their missing health §610 §7seconds\n" +
+                "§7after this abilty was cast.";
     }
 
     @Override
     public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
         warlordsPlayer.setUndyingArmyDuration(10);
         warlordsPlayer.setUndyingArmyBy(warlordsPlayer);
-        
+
         Iterator<WarlordsPlayer> iterator = PlayerFilter.entitiesAround(warlordsPlayer, 4, 4, 4)
                 .aliveTeammatesOfExcludingSelf(warlordsPlayer)
                 .iterator();
@@ -53,13 +57,13 @@ public class UndyingArmy extends AbstractAbility {
         }
         String allies = numberOfPlayersWithArmy == 1 ? "ally." : "allies.";
         warlordsPlayer.sendMessage("§a\u00BB§7 " + ChatColor.GRAY + "Your Undying Army is protecting " + ChatColor.YELLOW + numberOfPlayersWithArmy + ChatColor.GRAY + " nearby " + allies);
-        
+
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), Sound.ZOMBIE_IDLE, 1, 1.1f);
         }
 
         CircleEffect circle = new CircleEffect(warlordsPlayer.getGame(), warlordsPlayer.getTeam(), player.getLocation(), 5);
-        circle.addEffect(new CircumferenceEffect(ParticleEffect.VILLAGER_HAPPY).particlesPerCircumference(10));
+        circle.addEffect(new CircumferenceEffect(ParticleEffect.VILLAGER_HAPPY).particlesPerCircumference(1));
         circle.playEffects();
     }
 }

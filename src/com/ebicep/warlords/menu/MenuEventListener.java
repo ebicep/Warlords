@@ -1,7 +1,5 @@
 package com.ebicep.warlords.menu;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -9,6 +7,8 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public class MenuEventListener implements Listener {
@@ -34,7 +34,7 @@ public class MenuEventListener implements Listener {
         int matchedIndex = -1;
         for (int i = 0; i < meta.size(); i++) {
             MetadataValue mdv = meta.get(i);
-            if (mdv.value() instanceof MenuBase && ((MenuBase)mdv.value()).getInventory() == evt.getInventory()) {
+            if (mdv.value() instanceof MenuBase && ((MenuBase) mdv.value()).getInventory() == evt.getInventory()) {
                 matchedIndex = i;
             }
         }

@@ -32,9 +32,10 @@ public class PlayingState implements State, TimerDebugAble {
 
     private static final int SCORE_KILL_POINTS = 5;
     private static final int SCORE_CAPTURE_POINTS = 250;
-    
+
     private static final int ENDING_SCORE_LIMIT = 1000;
-    
+    private static final int MERCY_LIMIT = 550;
+
     private int timer = 0;
     private int gateTimer = 0;
     private int powerupTimer = 0;
@@ -42,12 +43,12 @@ public class PlayingState implements State, TimerDebugAble {
     private int pointLimit = 0;
     private final Game game;
     private boolean forceEnd;
-    
+
     private final EnumMap<Team, Stats> stats = new EnumMap(Team.class);
     {
         resetStats();
     }
-    
+
 
     @Nullable
     private FlagManager flags = null;
@@ -73,7 +74,7 @@ public class PlayingState implements State, TimerDebugAble {
                 break;
         }
     }
-    
+
     @Nonnull
     public Stats getStats(@Nonnull Team team) {
         return stats.get(team);
@@ -82,7 +83,7 @@ public class PlayingState implements State, TimerDebugAble {
     public void addPoints(@Nonnull Team team, int i) {
         getStats(team).addPoints(i);
     }
-    
+
     @Deprecated
     public int getBluePoints() {
         return stats.get(Team.BLUE).points();
@@ -92,7 +93,7 @@ public class PlayingState implements State, TimerDebugAble {
     public void addBluePoints(int i) {
         this.addPoints(Team.BLUE, i);
     }
-    
+
     @Deprecated
     public int getRedPoints() {
         return stats.get(Team.RED).points();
@@ -138,10 +139,7 @@ public class PlayingState implements State, TimerDebugAble {
         this.powerupTimer = POWERUP_TIMER;
         RemoveEntities.doRemove(this.game.getMap());
         this.flags = new FlagManager(this, game.getMap().getRedFlag(), game.getMap().getBlueFlag());
-        Set<UUID> wantedTeamBlue = new HashSet<>();
-        Set<UUID> wantedTeamRed = new HashSet<>();
-        Set<UUID> wantedNoTeam = new HashSet<>();
-        
+
         // Collect players by their preferences
         Map<Team, List<OfflinePlayer>> preferedTeams = this.game.offlinePlayers().collect(
             Collectors.groupingBy(entry -> {
@@ -164,7 +162,7 @@ public class PlayingState implements State, TimerDebugAble {
                 wantedBlue.add(p);
             }
         }
-        
+
         for (Map.Entry<Team, List<OfflinePlayer>> list : preferedTeams.entrySet()) {
             if (list.getKey() == null) {
                 continue;
@@ -173,7 +171,7 @@ public class PlayingState implements State, TimerDebugAble {
                 this.game.setPlayerTeam(peep, list.getKey());
             }
         }
-        
+
         this.game.forEachOfflinePlayer((player, team) -> {
             PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
             Warlords.addPlayer(new WarlordsPlayer(
@@ -184,16 +182,16 @@ public class PlayingState implements State, TimerDebugAble {
                 playerSettings
             ));
         });
-        this.game.forEachOfflinePlayer((p, team) -> {
-            CustomScoreboard scoreboard = Warlords.getPlayer(p).getScoreboard();
+        this.game.forEachOfflineWarlordsPlayer(wp -> {
+            CustomScoreboard scoreboard = wp.getScoreboard();
             scoreboard.updateHealth();
             scoreboard.updateBasedOnGameState(this);
             scoreboard.updateKillsAssists();
             scoreboard.updateNames();
-        });
-        this.game.forEachOnlinePlayer((player, team) -> {
-            Warlords.getPlayer(player).updatePlayerReference(player);
-            PacketUtils.sendTitle(player, ChatColor.GREEN + "GO!", ChatColor.YELLOW + "Steal and capture the enemy flag!", 0, 40, 20);
+            wp.applySkillBoost();
+            if (wp.getEntity() instanceof Player) {
+                PacketUtils.sendTitle((Player)wp.getEntity(), ChatColor.GREEN + "GO!", ChatColor.YELLOW + "Steal and capture the enemy flag!", 0, 40, 20);
+            }
         });
     }
 
@@ -224,7 +222,9 @@ public class PlayingState implements State, TimerDebugAble {
         for (WarlordsPlayer value : Warlords.getPlayers().values()) {
             value.getScoreboard().updateBasedOnGameState(this);
         }
-        if (getStats(Team.BLUE).points >= this.pointLimit || getStats(Team.RED).points >= this.pointLimit) {
+        int redPoints = getStats(Team.RED).points;
+        int bluePoints = getStats(Team.BLUE).points;
+        if (redPoints >= this.pointLimit || bluePoints >= this.pointLimit || Math.abs(redPoints - bluePoints) > MERCY_LIMIT) {
             return nextStateByPoints();
         }
         if (gateTimer >= 0) {
@@ -307,11 +307,11 @@ public class PlayingState implements State, TimerDebugAble {
         this.pointLimit = ENDING_SCORE_LIMIT;
         this.overTimeActive = false;
     }
-    
+
     private EndState getEndState(@Nullable Team winner) {
         return new EndState(this.game, winner, this.getStats(Team.RED), this.getStats(Team.BLUE));
     }
-    
+
     @Nullable
     public Team calculateWinnerByPoints() {
         int redPoints = getStats(Team.RED).points();
@@ -324,7 +324,7 @@ public class PlayingState implements State, TimerDebugAble {
         }
         return null;
     }
-    
+
     @Nullable
     private State nextStateByPoints() {
         Team winner = calculateWinnerByPoints();
@@ -333,7 +333,7 @@ public class PlayingState implements State, TimerDebugAble {
         }
         return null;
     }
-    
+
     public void resetStats() {
         for(Team team : Team.values()) {
             stats.put(team, new Stats(team));
@@ -348,7 +348,7 @@ public class PlayingState implements State, TimerDebugAble {
     public void endGame() {
         this.forceEnd = true;
     }
-    
+
     public class Stats {
         private final Team team;
         int points;
@@ -402,6 +402,6 @@ public class PlayingState implements State, TimerDebugAble {
         public String toString() {
             return "Stats{" + "points=" + points + ", kills=" + kills + ", captures=" + captures + ", deaths=" + deaths + '}';
         }
-        
+
     }
 }

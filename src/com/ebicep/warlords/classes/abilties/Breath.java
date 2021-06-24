@@ -13,8 +13,23 @@ import org.bukkit.util.Vector;
 
 public class Breath extends AbstractAbility {
 
-    public Breath(String name, int minDamageHeal, int maxDamageHeal, int cooldown, int energyCost, int critChance, int critMultiplier, String description) {
-        super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier, description);
+    public Breath(String name, float minDamageHeal, float maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier) {
+        super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
+    }
+
+    @Override
+    public void updateDescription() {
+        if (name.contains("Water")) {
+            description = "§7Breathe water in a cone in front of you,\n" +
+                    "§7Knocking back enemies and restoring §a" + minDamageHeal + "\n" +
+                    "§7- §a" + maxDamageHeal + " §7health to yourself and all\n" +
+                    "§7allies hit.";
+        } else if (name.contains("Freezing")) {
+            description = "§7Breathe cold air in a cone in front\n" +
+                    "§7of you, dealing §c" + -minDamageHeal + " §7- §c" + -maxDamageHeal + " §7damage\n" +
+                    "§7to all enemies hit and slowing them by\n" +
+                    "§e35% §7for §64 §7seconds.";
+        }
     }
 
     @Override
@@ -63,7 +78,7 @@ public class Breath extends AbstractAbility {
                 }
 
                 int animationTimer = 0;
-                Matrix4d center = new Matrix4d(player.getEyeLocation());
+                final Matrix4d center = new Matrix4d(player.getEyeLocation());
 
                 public void playEffect() {
 
@@ -103,7 +118,7 @@ public class Breath extends AbstractAbility {
                 }
 
                 int animationTimer = 0;
-                Matrix4d center = new Matrix4d(player.getEyeLocation());
+                final Matrix4d center = new Matrix4d(player.getEyeLocation());
 
                 public void playEffect() {
 

@@ -7,13 +7,18 @@ import org.bukkit.entity.Player;
 public class Earthliving extends AbstractAbility {
 
     public Earthliving() {
-        super("Earthliving Weapon", 0, 0, 16, 30, 25, 240,
-                "§7Imbue your weapon with the power of the\n" +
+        super("Earthliving Weapon", 0, 0, 15.66f, 30, 25, 240
+        );
+    }
+
+    @Override
+    public void updateDescription() {
+        description = "§7Imbue your weapon with the power of the\n" +
                 "§7Earth, causing each of your melee attacks\n" +
                 "§7to have a §e40% §7chance to heal you and §e2\n" +
                 "§7nearby allies for §a240% §7weapon damage.\n" +
                 "§7Lasts §68 §7seconds.\n" + "\n" +
-                "§7The first hit is guaranteed to activate Earthliving.");
+                "§7The first hit is guaranteed to activate Earthliving.";
     }
 
     @Override
