@@ -1,7 +1,7 @@
 package com.ebicep.warlords.maps.flags;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.WarlordsPlayer;
+import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.events.WarlordsDeathEvent;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.state.PlayingState;

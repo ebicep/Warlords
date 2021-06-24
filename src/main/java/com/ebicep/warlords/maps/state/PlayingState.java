@@ -1,8 +1,6 @@
 package com.ebicep.warlords.maps.state;
 
-import com.ebicep.warlords.PlayerSettings;
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.database.FieldUpdateOperators;
 import com.ebicep.warlords.events.WarlordsPointsChangedEvent;
 import com.ebicep.warlords.maps.flags.FlagManager;
@@ -11,6 +9,7 @@ import com.ebicep.warlords.maps.Gates;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.powerups.PowerupManager;
 import com.ebicep.warlords.util.*;
+import com.ebicep.warlords.player.*;
 import static com.ebicep.warlords.util.Utils.sendMessage;
 import java.util.*;
 import java.util.stream.Collectors;

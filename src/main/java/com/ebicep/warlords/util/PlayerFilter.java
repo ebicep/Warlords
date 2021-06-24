@@ -1,7 +1,7 @@
 package com.ebicep.warlords.util;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.WarlordsPlayer;
+import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Team;
 import static com.ebicep.warlords.util.Utils.radiusAround;

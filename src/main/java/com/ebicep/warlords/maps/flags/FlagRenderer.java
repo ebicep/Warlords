@@ -1,9 +1,9 @@
 package com.ebicep.warlords.maps.flags;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.WarlordsPlayer;
+import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.maps.Team;
-import com.ebicep.warlords.util.ArmorManager;
+import com.ebicep.warlords.player.ArmorManager;
 import com.ebicep.warlords.util.ItemBuilder;
 import java.util.ArrayList;
 import java.util.List;

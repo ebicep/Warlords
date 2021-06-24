@@ -1,4 +1,4 @@
-package com.ebicep.warlords.util;
+package com.ebicep.warlords.player;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static com.ebicep.warlords.util.Classes.*;
+import static com.ebicep.warlords.player.Classes.*;
 
 public enum ClassesGroup {
     MAGE(

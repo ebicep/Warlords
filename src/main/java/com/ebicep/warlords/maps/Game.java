@@ -1,11 +1,11 @@
 package com.ebicep.warlords.maps;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.maps.state.InitState;
 import com.ebicep.warlords.maps.state.PreLobbyState;
 import com.ebicep.warlords.maps.state.State;
-import com.ebicep.warlords.util.Classes;
+import com.ebicep.warlords.player.Classes;
+import com.ebicep.warlords.player.WarlordsPlayer;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.apache.commons.lang.Validate;
 import org.bukkit.*;

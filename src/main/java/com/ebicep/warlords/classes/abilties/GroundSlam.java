@@ -2,7 +2,7 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.customentities.CustomFallingBlock;
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.WarlordsPlayer;
+import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.util.PlayerFilter;
 import org.bukkit.Location;
@@ -82,7 +82,7 @@ public class GroundSlam extends AbstractAbility {
                     for (WarlordsPlayer player : PlayerFilter.playingGame(wp.getGame()).isAlive()) {
                         if (player != customFallingBlock.getOwner()) {
                             AbstractAbility ability = customFallingBlock.getAbility();
-                            if (!((GroundSlam) ability).getPlayersHit().contains(player) && !Warlords.game.onSameTeam(player, customFallingBlock.getOwner())) {
+                            if (!((GroundSlam) ability).getPlayersHit().contains(player) && player.isEnemy(customFallingBlock.getOwner())) {
                                 if (player.getLocation().distanceSquared(customFallingBlock.getFallingBlock().getLocation()) < 1.5) {
                                     ((GroundSlam) ability).getPlayersHit().add(player);
                                     final Location loc = player.getLocation();

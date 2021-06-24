@@ -1,9 +1,9 @@
 package com.ebicep.warlords.classes.abilties;
 
-import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.util.PlayerFilter;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
+import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.Utils;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

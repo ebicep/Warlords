@@ -1,4 +1,4 @@
-package com.ebicep.warlords.util;
+package com.ebicep.warlords.player;
 
 import com.ebicep.warlords.classes.abilties.*;
 

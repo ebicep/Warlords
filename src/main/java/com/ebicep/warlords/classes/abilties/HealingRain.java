@@ -1,10 +1,10 @@
 package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
-import com.ebicep.warlords.classes.ActionBarStats;
+import com.ebicep.warlords.player.ActionBarStats;
 import com.ebicep.warlords.util.PlayerFilter;
+import com.ebicep.warlords.player.WarlordsPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;

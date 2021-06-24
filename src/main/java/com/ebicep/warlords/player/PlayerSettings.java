@@ -1,8 +1,8 @@
-package com.ebicep.warlords;
+package com.ebicep.warlords.player;
 
-import com.ebicep.warlords.util.Classes;
-import com.ebicep.warlords.util.ClassesSkillBoosts;
-import com.ebicep.warlords.util.Weapons;
+import com.ebicep.warlords.player.Classes;
+import com.ebicep.warlords.player.ClassesSkillBoosts;
+import com.ebicep.warlords.player.Weapons;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;

@@ -1,6 +1,6 @@
 package com.ebicep.warlords.classes;
 
-import com.ebicep.warlords.WarlordsPlayer;
+import com.ebicep.warlords.player.WarlordsPlayer;
 import javax.annotation.Nonnull;
 import org.bukkit.entity.Player;
 

@@ -1,13 +1,13 @@
 package com.ebicep.warlords.classes;
 
-import com.ebicep.warlords.WarlordsPlayer;
+import com.ebicep.warlords.player.WarlordsPlayer;
 import javax.annotation.Nonnull;
 import com.ebicep.warlords.classes.abilties.*;
 import net.minecraft.server.v1_8_R3.PacketPlayOutAnimation;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
-public abstract class PlayerClass {
+public abstract class AbstractPlayerClass {
 
     protected int maxHealth;
     protected int maxEnergy;
@@ -22,7 +22,7 @@ public abstract class PlayerClass {
     protected String className;
     protected String classNameShort;
 
-    public PlayerClass(int maxHealth, int maxEnergy, int energyPerSec, int energyOnHit, int damageResistance, AbstractAbility weapon, AbstractAbility red, AbstractAbility purple, AbstractAbility blue, AbstractAbility orange) {
+    public AbstractPlayerClass(int maxHealth, int maxEnergy, int energyPerSec, int energyOnHit, int damageResistance, AbstractAbility weapon, AbstractAbility red, AbstractAbility purple, AbstractAbility blue, AbstractAbility orange) {
         this.maxHealth = maxHealth;
         this.maxEnergy = maxEnergy;
         this.energyPerSec = energyPerSec;

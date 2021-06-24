@@ -1,13 +1,13 @@
 package com.ebicep.warlords.events;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.WarlordsPlayer;
 import com.ebicep.warlords.classes.abilties.Soulbinding;
 import com.ebicep.warlords.classes.abilties.UndyingArmy;
 import com.ebicep.warlords.classes.shaman.specs.spiritguard.Spiritguard;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.flags.GroundFlagLocation;
 import com.ebicep.warlords.maps.flags.PlayerFlagLocation;
+import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.maps.flags.SpawnFlagLocation;
 import com.ebicep.warlords.maps.flags.WaitingFlagLocation;
 import com.ebicep.warlords.util.ItemBuilder;
@@ -186,42 +186,42 @@ public class WarlordsEvents implements Listener {
             ItemStack itemHeld = player.getItemInHand();
             if (player.getInventory().getHeldItemSlot() == 0 || !wp.isHotKeyMode()) {
                 wp.getSpec().onRightClick(wp, player);
-                }
-                if (player.getInventory().getHeldItemSlot() == 7 && itemHeld.getType() == Material.GOLD_BARDING && player.getVehicle() == null) {
-                    if (location.getWorld().getBlockAt((int) location.getX(), 2, (int) location.getZ()).getType() == Material.NETHERRACK) { //&& !Utils.tunnelUnder(e.getPlayer())) {
-                        player.sendMessage(ChatColor.RED + "You can't mount here!");
+            }
+            if (player.getInventory().getHeldItemSlot() == 7 && itemHeld.getType() == Material.GOLD_BARDING && player.getVehicle() == null) {
+                if (location.getWorld().getBlockAt((int) location.getX(), 2, (int) location.getZ()).getType() == Material.NETHERRACK) { //&& !Utils.tunnelUnder(e.getPlayer())) {
+                    player.sendMessage(ChatColor.RED + "You can't mount here!");
+                } else {
+                    double distance = player.getLocation().getY() - player.getWorld().getHighestBlockYAt(player.getLocation());
+                    if (distance > 2) {
+                        player.sendMessage(ChatColor.RED + "You can't mount in the air");
+                    } else if (wp.getFlagDamageMultipler() > 0) {
+                        player.sendMessage(ChatColor.RED + "You can't mount while holding the flag!");
                     } else {
-                        double distance = player.getLocation().getY() - player.getWorld().getHighestBlockYAt(player.getLocation());
-                        if (distance > 2) {
-                            player.sendMessage(ChatColor.RED + "You can't mount in the air");
-                        } else if (wp.getFlagDamageMultipler() > 0) {
-                            player.sendMessage(ChatColor.RED + "You can't mount while holding the flag!");
-                        } else {
-                            player.playSound(player.getLocation(), "mountup", 1, 1);
-                            Horse horse = (Horse) player.getWorld().spawnEntity(player.getLocation(), EntityType.HORSE);
-                            horse.setTamed(true);
-                            horse.getInventory().setSaddle(new ItemStack(Material.SADDLE));
-                            horse.setOwner(player);
-                            horse.setJumpStrength(0);
-                            horse.setVariant(Horse.Variant.HORSE);
-                            horse.setAdult();
-                            ((EntityLiving) ((CraftEntity) horse).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(.308);
-                            //((EntityLiving) ((CraftEntity) horse).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(1);
-                            horse.setPassenger(player);
+                        player.playSound(player.getLocation(), "mountup", 1, 1);
+                        Horse horse = (Horse) player.getWorld().spawnEntity(player.getLocation(), EntityType.HORSE);
+                        horse.setTamed(true);
+                        horse.getInventory().setSaddle(new ItemStack(Material.SADDLE));
+                        horse.setOwner(player);
+                        horse.setJumpStrength(0);
+                        horse.setVariant(Horse.Variant.HORSE);
+                        horse.setAdult();
+                        ((EntityLiving) ((CraftEntity) horse).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(.308);
+                        //((EntityLiving) ((CraftEntity) horse).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(1);
+                        horse.setPassenger(player);
                         wp.setHorseCooldown(15);
-                        }
                     }
-                } else if (itemHeld.getType() == Material.BONE) {
-                    player.getInventory().remove(UndyingArmy.BONE);
+                }
+            } else if (itemHeld.getType() == Material.BONE) {
+                player.getInventory().remove(UndyingArmy.BONE);
                 wp.addHealth(wp, "", -100000, -100000, -1, 100);
                 wp.setUndyingArmyDead(false);
-                } else if (itemHeld.getType() == Material.BANNER) {
+            } else if (itemHeld.getType() == Material.BANNER) {
                 if (wp.getFlagCooldown() > 0) {
-                        player.sendMessage("§cYou cannot drop the flag yet, please wait 5 seconds!");
-                    } else {
+                    player.sendMessage("§cYou cannot drop the flag yet, please wait 5 seconds!");
+                } else {
                     wp.getGameState().flags().dropFlag(player);
                     wp.setFlagCooldown(5);
-                    }
+                }
             } else if (player.getInventory().getHeldItemSlot() == 8) {
                 wp.toggleTeamFlagCompass();
                 if (itemHeld.getType() == Material.NETHER_STAR) {

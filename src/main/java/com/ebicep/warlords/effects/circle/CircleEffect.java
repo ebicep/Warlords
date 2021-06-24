@@ -1,6 +1,6 @@
 package com.ebicep.warlords.effects.circle;
 
-import com.ebicep.warlords.WarlordsPlayer;
+import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.effects.BaseAreaEffect;
 import com.ebicep.warlords.effects.EffectPlayer;
 import com.ebicep.warlords.effects.GameTeamContainer;

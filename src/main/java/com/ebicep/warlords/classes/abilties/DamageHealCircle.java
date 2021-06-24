@@ -1,7 +1,7 @@
 package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.WarlordsPlayer;
+import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.effects.circle.*;
 import com.ebicep.warlords.util.ParticleEffect;
 import org.bukkit.Bukkit;

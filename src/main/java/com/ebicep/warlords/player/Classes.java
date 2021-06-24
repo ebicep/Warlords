@@ -1,7 +1,7 @@
-package com.ebicep.warlords.util;
+package com.ebicep.warlords.player;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.classes.PlayerClass;
+import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.classes.mage.specs.aquamancer.Aquamancer;
 import com.ebicep.warlords.classes.mage.specs.cryomancer.Cryomancer;
 import com.ebicep.warlords.classes.mage.specs.pyromancer.Pyromancer;
@@ -21,7 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.ebicep.warlords.util.ClassesSkillBoosts.*;
+import static com.ebicep.warlords.player.ClassesSkillBoosts.*;
 import java.util.function.Supplier;
 import org.bukkit.OfflinePlayer;
 
@@ -90,12 +90,12 @@ public enum Classes {
     ;
 
     public final String name;
-    public final Supplier<PlayerClass> create;
+    public final Supplier<AbstractPlayerClass> create;
     public final String description;
     public final ItemStack icon;
     public final List<ClassesSkillBoosts> skillBoosts;
 
-    Classes(String name, Supplier<PlayerClass> create, String description, ItemStack icon, ClassesSkillBoosts... skillBoosts) {
+    Classes(String name, Supplier<AbstractPlayerClass> create, String description, ItemStack icon, ClassesSkillBoosts... skillBoosts) {
         this.name = name;
         this.create = create;
         this.description = description;

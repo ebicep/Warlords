@@ -1,8 +1,8 @@
-package com.ebicep.warlords;
+package com.ebicep.warlords.player;
 
 import com.ebicep.warlords.classes.AbstractAbility;
-import com.ebicep.warlords.classes.ActionBarStats;
-import com.ebicep.warlords.classes.PlayerClass;
+import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.classes.abilties.HammerOfLight;
 import com.ebicep.warlords.classes.abilties.OrbsOfLife;
 import com.ebicep.warlords.classes.abilties.Soulbinding;
@@ -13,15 +13,10 @@ import com.ebicep.warlords.maps.flags.FlagInfo;
 import com.ebicep.warlords.maps.flags.FlagLocation;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Team;
+import com.ebicep.warlords.util.ItemBuilder;
 import com.ebicep.warlords.maps.flags.GroundFlagLocation;
 import com.ebicep.warlords.maps.flags.PlayerFlagLocation;
 import com.ebicep.warlords.maps.state.PlayingState;
-import com.ebicep.warlords.util.ArmorManager;
-import com.ebicep.warlords.util.CalculateSpeed;
-import com.ebicep.warlords.util.Classes;
-import com.ebicep.warlords.util.CustomScoreboard;
-import com.ebicep.warlords.util.PacketUtils;
-import com.ebicep.warlords.util.Utils;
 import com.ebicep.warlords.util.*;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -52,7 +47,7 @@ public final class WarlordsPlayer {
     private final UUID uuid;
     private final PlayingState gameState;
     private final Team team;
-    private PlayerClass spec;
+    private AbstractPlayerClass spec;
     private final Classes specClass;
     private final Weapons weapon;
     private boolean hotKeyMode = true;
@@ -547,11 +542,11 @@ public final class WarlordsPlayer {
         return uuid;
     }
 
-    public PlayerClass getSpec() {
+    public AbstractPlayerClass getSpec() {
         return spec;
     }
 
-    public void setSpec(PlayerClass spec) {
+    public void setSpec(AbstractPlayerClass spec) {
         this.spec = spec;
     }
 

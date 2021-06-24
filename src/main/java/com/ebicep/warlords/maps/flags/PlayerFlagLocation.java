@@ -1,6 +1,6 @@
 package com.ebicep.warlords.maps.flags;
 
-import com.ebicep.warlords.WarlordsPlayer;
+import com.ebicep.warlords.player.WarlordsPlayer;
 import org.bukkit.Location;
 
 public class PlayerFlagLocation implements FlagLocation {

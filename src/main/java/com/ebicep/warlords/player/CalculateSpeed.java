@@ -1,4 +1,4 @@
-package com.ebicep.warlords.util;
+package com.ebicep.warlords.player;
 
 import java.util.*;
 import java.util.function.Consumer;
