@@ -3,9 +3,7 @@ package com.ebicep.warlords.maps;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
-import javax.annotation.Nonnull;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 // MAPS:
@@ -218,7 +216,7 @@ public enum GameMap {
             new Location(Bukkit.getWorld("WLDebug"), 703.5, 8.5, 212.5), // BLUE FLAG
             new Location(Bukkit.getWorld("WLDebug"), 720.5, 8.5, 212.5), // RED FLAG
 
-            Collections.singletonList(
+            Arrays.asList(
                     new Cuboid(Bukkit.getWorld("WLDebug"), 713, 7, 195, 713, 10, 198) // BLUE GATE
             )
     );
@@ -299,20 +297,12 @@ public enum GameMap {
         return damagePowerupRed;
     }
 
-    public Location getDamagePowerup(@Nonnull Team team) {
-        return team == Team.RED ? damagePowerupRed : damagePowerupBlue;
-    }
-
     public Location getSpeedPowerupBlue() {
         return speedPowerupBlue;
     }
 
     public Location getSpeedPowerupRed() {
         return speedPowerupRed;
-    }
-
-    public Location getSpeedPowerup(@Nonnull Team team) {
-        return team == Team.RED ? speedPowerupRed : speedPowerupBlue;
     }
 
     public Location getHealingPowerupBlue() {
@@ -323,20 +313,12 @@ public enum GameMap {
         return healingPowerupRed;
     }
 
-    public Location getHealingPowerup(@Nonnull Team team) {
-        return team == Team.RED ? healingPowerupRed : healingPowerupBlue;
-    }
-
     public Location getBlueLobbySpawnPoint() {
         return blueLobbySpawnPoint;
     }
 
     public Location getRedLobbySpawnPoint() {
         return redLobbySpawnPoint;
-    }
-
-    public Location getLobbySpawnPoint(@Nonnull Team team) {
-        return team == Team.RED ? redLobbySpawnPoint : blueLobbySpawnPoint;
     }
 
     public Location getBlueRespawn() {
@@ -347,20 +329,12 @@ public enum GameMap {
         return redRespawn;
     }
 
-    public Location getRespawn(@Nonnull Team team) {
-        return team == Team.RED ? redRespawn : blueRespawn;
-    }
-
     public Location getBlueFlag() {
         return blueFlag;
     }
 
     public Location getRedFlag() {
         return redFlag;
-    }
-
-    public Location getFlag(@Nonnull Team team) {
-        return team == Team.RED ? redFlag : blueFlag;
     }
 
     public List<Cuboid> getFenceGates() {

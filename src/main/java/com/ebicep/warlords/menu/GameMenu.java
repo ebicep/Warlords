@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.util.ItemBuilder;
+import com.ebicep.warlords.util.Settings;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -18,7 +19,7 @@ import java.util.List;
 import static com.ebicep.warlords.menu.Menu.ACTION_CLOSE_MENU;
 import static com.ebicep.warlords.player.ArmorManager.*;
 import static com.ebicep.warlords.player.Classes.*;
-import static com.ebicep.warlords.player.Settings.*;
+import static com.ebicep.warlords.util.Settings.*;
 
 public class GameMenu {
     private static final ItemStack MENU_CLOSE = new ItemBuilder(Material.BARRIER)

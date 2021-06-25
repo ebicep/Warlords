@@ -1,32 +1,38 @@
 package com.ebicep.warlords.util;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.maps.flags.GroundFlagLocation;
-import com.ebicep.warlords.maps.flags.PlayerFlagLocation;
-import com.ebicep.warlords.maps.flags.SpawnFlagLocation;
-import com.ebicep.warlords.maps.state.PlayingState;
+import com.ebicep.warlords.maps.FlagManager.GroundFlagLocation;
+import com.ebicep.warlords.maps.FlagManager.PlayerFlagLocation;
+import com.ebicep.warlords.maps.FlagManager.SpawnFlagLocation;
+import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.*;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 public class CustomScoreboard {
 
-    private final WarlordsPlayer warlordsPlayer;
+    private Player player;
     private final Scoreboard scoreboard;
+    private Objective tab;
     private final Objective sideBar;
     private Objective health;
-    private final PlayingState gameState;
+    private final List<WarlordsPlayer> blueTeam;
+    private final List<WarlordsPlayer> redTeam;
+    private final Game game;
 
-    public CustomScoreboard(WarlordsPlayer warlordsPlayer, PlayingState gameState) {
+    public CustomScoreboard(WarlordsPlayer warlordsPlayer, List<WarlordsPlayer> blueTeam, List<WarlordsPlayer> redTeam, Game game) {
+        Player player = warlordsPlayer.getPlayer();
         ScoreboardManager manager = Bukkit.getScoreboardManager();
-        scoreboard = manager.getNewScoreboard();
+        Scoreboard board = manager.getNewScoreboard();
         SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
         String dateString = format.format(new Date());
-        sideBar = scoreboard.registerNewObjective(dateString, "");
+        Objective sideBar = board.registerNewObjective(dateString, "");
         sideBar.setDisplaySlot(DisplaySlot.SIDEBAR);
         sideBar.setDisplayName("§e§lWARLORDS");
         sideBar.getScore(ChatColor.GRAY + dateString).setScore(15);
@@ -39,127 +45,128 @@ public class CustomScoreboard {
         sideBar.getScore(ChatColor.RED + "RED Flag: " + ChatColor.GREEN + "Safe").setScore(8);
         sideBar.getScore(ChatColor.BLUE + "BLU Flag: " + ChatColor.GREEN + "Safe").setScore(7);
         sideBar.getScore("    ").setScore(6);
-        sideBar.getScore(ChatColor.WHITE + "Class: " + ChatColor.GREEN + warlordsPlayer.getSpec().getClass().getSimpleName()).setScore(5);
+        sideBar.getScore(ChatColor.WHITE + "Class: " + ChatColor.GREEN + Warlords.getPlayer(player).getSpec().getClass().getSimpleName()).setScore(5);
         sideBar.getScore("     ").setScore(4);
-        sideBar.getScore("" + ChatColor.GREEN + warlordsPlayer.getTotalKills() + ChatColor.RESET + " Kills " + ChatColor.GREEN + warlordsPlayer.getTotalAssists() + ChatColor.RESET + " Assists").setScore(3);
+        sideBar.getScore("" + ChatColor.GREEN + Warlords.getPlayer(player).getTotalKills() + ChatColor.RESET + " Kills " + ChatColor.GREEN + Warlords.getPlayer(player).getTotalAssists() + ChatColor.RESET + " Assists").setScore(3);
         sideBar.getScore("      ").setScore(2);
         sideBar.getScore(ChatColor.YELLOW + "WL 2.0 master_b-v0.0.4").setScore(1);
-        this.gameState = gameState;
-        this.warlordsPlayer = warlordsPlayer;
+
+        for (WarlordsPlayer s : blueTeam) {
+            Team temp = board.registerNewTeam(s.getName());
+            temp.setPrefix(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + s.getSpec().getClassNameShort() + ChatColor.DARK_GRAY + "] " + ChatColor.BLUE);
+            temp.addPlayer(s.getPlayer());
+            temp.setSuffix(ChatColor.DARK_GRAY + " [" + ChatColor.GOLD + "Lv90" + ChatColor.DARK_GRAY + "]");
+        }
+        for (WarlordsPlayer s : redTeam) {
+            Team temp = board.registerNewTeam(s.getName());
+            temp.setPrefix(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + s.getSpec().getClassNameShort() + ChatColor.DARK_GRAY + "] " + ChatColor.RED);
+            temp.addPlayer(s.getPlayer());
+            temp.setSuffix(ChatColor.DARK_GRAY + " [" + ChatColor.GOLD + "Lv90" + ChatColor.DARK_GRAY + "]");
+        }
+
+        player.setScoreboard(board);
+        this.scoreboard = board;
+        this.sideBar = sideBar;
+        this.player = player;
+        this.blueTeam = blueTeam;
+        this.redTeam = redTeam;
+        this.game = game;
     }
 
-    public void updateHealth() {
-        if (health != null) {
-            health.unregister();
-        }
-        health = scoreboard.registerNewObjective("health", "dummy");
+    public void refreshScoreboard(Player player) {
+        this.player = player;
+        player.setScoreboard(scoreboard);
+    }
+
+    public void addHealths() {
+        Objective health = scoreboard.registerNewObjective("health", "dummy");
         health.setDisplaySlot(DisplaySlot.BELOW_NAME);
         health.setDisplayName(ChatColor.RED + "❤");
-        this.gameState.getGame().forEachOfflinePlayer((player, team) -> {
-            WarlordsPlayer s = Warlords.getPlayer(player);
-            Score score = health.getScore(s.getName());
-            score.setScore(s.getHealth());
-        });
+        for (WarlordsPlayer value : Warlords.getPlayers().values()) {
+            Score score = health.getScore(value.getPlayer());
+            score.setScore(value.getHealth());
+        }
+        this.health = health;
     }
 
-    public void updateNames() {
-        this.gameState.getGame().forEachOfflinePlayer((player, team) -> {
-            WarlordsPlayer s = Warlords.getPlayer(player);
-            Team temp = scoreboard.registerNewTeam(s.getName());
-            temp.setPrefix(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + s.getSpec().getClassNameShort() + ChatColor.DARK_GRAY + "] " + team.prefix());
-            temp.addEntry(s.getName());
-            temp.setSuffix(ChatColor.DARK_GRAY + " [" + ChatColor.GOLD + "Lv90" + ChatColor.DARK_GRAY + "]");
-        });
+    public void updateHealths() {
+        health.unregister();
+        addHealths();
     }
 
-    public void updateBasedOnGameState(PlayingState gameState) {
-        // Timer
-        {
-            int secondsRemaining = gameState.getTimer() / 20;
-            int minute = secondsRemaining / 60;
-            int second = secondsRemaining % 60;
-            String timeLeft = "";
-            if (minute < 10) {
-                timeLeft += "0";
+    public void updatePoints() {
+        for (String entry : scoreboard.getEntries()) {
+            String entryUnformatted = ChatColor.stripColor(entry);
+            //System.out.println(entry);
+            //System.out.println(scoreboard.getObjectives().iterator().next().getName());
+            if (entryUnformatted.contains("BLU:")) {
+                scoreboard.resetScores(entry);
+                sideBar.getScore(ChatColor.BLUE + "BLU: " + ChatColor.AQUA + Warlords.game.getBluePoints() + ChatColor.GOLD + "/1000").setScore(13);
+            } else if (entryUnformatted.contains("RED:")) {
+                scoreboard.resetScores(entry);
+                sideBar.getScore(ChatColor.RED + "RED: " + ChatColor.AQUA + Warlords.game.getRedPoints() + ChatColor.GOLD + "/1000").setScore(12);
             }
-            timeLeft += minute + ":";
-            if (second < 10) {
-                timeLeft += "0";
-            }
-            timeLeft += second;
-            for (String entry : scoreboard.getEntries()) {
-                String entryUnformatted = ChatColor.stripColor(entry);
-                if (entryUnformatted.contains("Wins in:") || entryUnformatted.contains("Time Left:")) {
-                    scoreboard.resetScores(entry);
+        }
+    }
 
-                    com.ebicep.warlords.maps.Team team = gameState.calculateWinnerByPoints();
-                    if (team != null) {
-                        sideBar.getScore(team.coloredPrefix() + " " + ChatColor.GOLD + "Wins in: " + ChatColor.GREEN + timeLeft).setScore(10);
-                    } else {
-                        sideBar.getScore(ChatColor.WHITE + "Time Left: " + ChatColor.GREEN + timeLeft).setScore(10);
-                    }
+    public void updateTime() {
+        for (String entry : scoreboard.getEntries()) {
+            String entryUnformatted = ChatColor.stripColor(entry);
+            if (entryUnformatted.contains("Wins in:") || entryUnformatted.contains("Time Left:")) {
+                scoreboard.resetScores(entry);
+                if (Warlords.game.getBluePoints() > Warlords.game.getRedPoints()) {
+                    sideBar.getScore(ChatColor.BLUE + "BLU " + ChatColor.GOLD + "Wins in: " + ChatColor.GREEN + game.getScoreboardTime()).setScore(10);
+                } else if (Warlords.game.getRedPoints() > Warlords.game.getBluePoints()) {
+                    sideBar.getScore(ChatColor.RED + "RED " + ChatColor.GOLD + "Wins in: " + ChatColor.GREEN + game.getScoreboardTime()).setScore(10);
+                } else {
+                    sideBar.getScore(ChatColor.WHITE + "Time Left: " + ChatColor.GREEN + game.getScoreboardTime()).setScore(10);
                 }
             }
         }
-        // Points
-        {
-            for (String entry : scoreboard.getEntries()) {
-                String entryUnformatted = ChatColor.stripColor(entry);
-                //System.out.println(entry);
-                //System.out.println(scoreboard.getObjectives().iterator().next().getName());
-                if (entryUnformatted.contains("BLU:")) {
-                    scoreboard.resetScores(entry);
-                    sideBar.getScore(ChatColor.BLUE + "BLU: " + ChatColor.AQUA + gameState.getBluePoints() + ChatColor.GOLD + "/1000").setScore(13);
-                } else if (entryUnformatted.contains("RED:")) {
-                    scoreboard.resetScores(entry);
-                    sideBar.getScore(ChatColor.RED + "RED: " + ChatColor.AQUA + gameState.getRedPoints() + ChatColor.GOLD + "/1000").setScore(12);
+    }
+
+    public void updateFlagStatus() {
+        for (String entry : scoreboard.getEntries()) {
+            String entryUnformatted = ChatColor.stripColor(entry);
+            if (entryUnformatted.contains("RED Flag")) {
+                scoreboard.resetScores(entry);
+                if (Warlords.game.getFlags().getRed().getFlag() instanceof SpawnFlagLocation) {
+                    sideBar.getScore(ChatColor.RED + "RED Flag: " + ChatColor.GREEN + "Safe").setScore(8);
+                } else if (Warlords.game.getFlags().getRed().getFlag() instanceof PlayerFlagLocation) {
+
+                    PlayerFlagLocation flag = (PlayerFlagLocation) Warlords.game.getFlags().getRed().getFlag();
+
+                    if (flag.getModifier() == 0) {
+                        sideBar.getScore(ChatColor.RED + "RED Flag: " + ChatColor.RED + "Stolen!").setScore(8);
+                    } else {
+                        sideBar.getScore(ChatColor.RED + "RED Flag: " + ChatColor.RED + "Stolen!" + ChatColor.YELLOW + " +" + flag.getModifier() + "§e%").setScore(8);
+                    }
+
+                } else if (Warlords.game.getFlags().getRed().getFlag() instanceof GroundFlagLocation) {
+                    sideBar.getScore(ChatColor.RED + "RED Flag: " + ChatColor.YELLOW + "Dropped!" + ChatColor.GRAY).setScore(8);
+                } else {
+                    sideBar.getScore(ChatColor.RED + "RED Flag: " + ChatColor.GRAY + "Respawning...").setScore(8);
                 }
             }
-        }
-        // Flags
-        {
-            for (String entry : scoreboard.getEntries()) {
-                String entryUnformatted = ChatColor.stripColor(entry);
-                if (entryUnformatted.contains("RED Flag")) {
-                    scoreboard.resetScores(entry);
-                    if (gameState.flags().getRed().getFlag() instanceof com.ebicep.warlords.maps.flags.SpawnFlagLocation) {
-                        sideBar.getScore(ChatColor.RED + "RED Flag: " + ChatColor.GREEN + "Safe").setScore(8);
-                    } else if (gameState.flags().getRed().getFlag() instanceof com.ebicep.warlords.maps.flags.PlayerFlagLocation) {
 
-                        com.ebicep.warlords.maps.flags.PlayerFlagLocation flag = (com.ebicep.warlords.maps.flags.PlayerFlagLocation) gameState.flags().getRed().getFlag();
+            if (entryUnformatted.contains("BLU Flag")) {
+                scoreboard.resetScores(entry);
+                if (Warlords.game.getFlags().getBlue().getFlag() instanceof SpawnFlagLocation) {
+                    sideBar.getScore(ChatColor.BLUE + "BLU Flag: " + ChatColor.GREEN + "Safe").setScore(7);
+                } else if (Warlords.game.getFlags().getBlue().getFlag() instanceof PlayerFlagLocation) {
 
-                        if (flag.getPickUpTicks() == 0) {
-                            sideBar.getScore(ChatColor.RED + "RED Flag: " + ChatColor.RED + "Stolen!").setScore(8);
-                        } else {
-                            sideBar.getScore(ChatColor.RED + "RED Flag: " + ChatColor.RED + "Stolen!" + ChatColor.YELLOW + " +" + flag.getPickUpTicks() + "§e%").setScore(8);
-                        }
+                    PlayerFlagLocation flag = (PlayerFlagLocation) Warlords.game.getFlags().getBlue().getFlag();
 
-                    } else if (gameState.flags().getRed().getFlag() instanceof com.ebicep.warlords.maps.flags.GroundFlagLocation) {
-                        sideBar.getScore(ChatColor.RED + "RED Flag: " + ChatColor.YELLOW + "Dropped!" + ChatColor.GRAY).setScore(8);
+                    if (flag.getModifier() == 0) {
+                        sideBar.getScore(ChatColor.BLUE + "BLU Flag: " + ChatColor.RED + "Stolen!").setScore(7);
                     } else {
-                        sideBar.getScore(ChatColor.RED + "RED Flag: " + ChatColor.GRAY + "Respawning...").setScore(8);
+                        sideBar.getScore(ChatColor.BLUE + "BLU Flag: " + ChatColor.RED + "Stolen!" + ChatColor.YELLOW + " +" + flag.getModifier() + "§e%").setScore(7);
                     }
-                }
 
-                if (entryUnformatted.contains("BLU Flag")) {
-                    scoreboard.resetScores(entry);
-                    if (gameState.flags().getBlue().getFlag() instanceof SpawnFlagLocation) {
-                        sideBar.getScore(ChatColor.BLUE + "BLU Flag: " + ChatColor.GREEN + "Safe").setScore(7);
-                    } else if (gameState.flags().getBlue().getFlag() instanceof com.ebicep.warlords.maps.flags.PlayerFlagLocation) {
-
-                        com.ebicep.warlords.maps.flags.PlayerFlagLocation flag = (PlayerFlagLocation) gameState.flags().getBlue().getFlag();
-
-                        if (flag.getPickUpTicks() == 0) {
-                            sideBar.getScore(ChatColor.BLUE + "BLU Flag: " + ChatColor.RED + "Stolen!").setScore(7);
-                        } else {
-                            sideBar.getScore(ChatColor.BLUE + "BLU Flag: " + ChatColor.RED + "Stolen!" + ChatColor.YELLOW + " +" + flag.getPickUpTicks() + "§e%").setScore(7);
-                        }
-
-                    } else if (gameState.flags().getBlue().getFlag() instanceof GroundFlagLocation) {
-                        sideBar.getScore(ChatColor.BLUE + "BLU Flag: " + ChatColor.YELLOW + "Dropped!" + ChatColor.GRAY).setScore(7);
-                    } else {
-                        sideBar.getScore(ChatColor.BLUE + "BLU Flag: " + ChatColor.GRAY + "Respawning...").setScore(7);
-                    }
+                } else if (Warlords.game.getFlags().getBlue().getFlag() instanceof GroundFlagLocation) {
+                    sideBar.getScore(ChatColor.BLUE + "BLU Flag: " + ChatColor.YELLOW + "Dropped!" + ChatColor.GRAY).setScore(7);
+                } else {
+                    sideBar.getScore(ChatColor.BLUE + "BLU Flag: " + ChatColor.GRAY + "Respawning...").setScore(7);
                 }
             }
         }
@@ -170,9 +177,17 @@ public class CustomScoreboard {
             String entryUnformatted = ChatColor.stripColor(entry);
             if (entryUnformatted.contains("Kills")) {
                 scoreboard.resetScores(entry);
-                sideBar.getScore("" + ChatColor.GREEN + warlordsPlayer.getTotalKills() + ChatColor.RESET + " Kills " + ChatColor.GREEN + warlordsPlayer.getTotalAssists() + ChatColor.RESET + " Assists").setScore(3);
+                sideBar.getScore("" + ChatColor.GREEN + Warlords.getPlayer(player).getTotalKills() + ChatColor.RESET + " Kills " + ChatColor.GREEN + Warlords.getPlayer(player).getTotalAssists() + ChatColor.RESET + " Assists").setScore(3);
             }
         }
+    }
+
+    public boolean onSameTeam(Player player) {
+        return blueTeam.contains(this.player.getName()) && blueTeam.contains(player.getName()) || redTeam.contains(this.player.getName()) && redTeam.contains(player.getName());
+    }
+
+    public Player getPlayer() {
+        return player;
     }
 
     public Scoreboard getScoreboard() {
@@ -187,4 +202,11 @@ public class CustomScoreboard {
         return health;
     }
 
+    public List<WarlordsPlayer> getBlueTeam() {
+        return blueTeam;
+    }
+
+    public List<WarlordsPlayer> getRedTeam() {
+        return redTeam;
+    }
 }

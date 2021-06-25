@@ -19,10 +19,6 @@ public class CircleEffect extends BaseAreaEffect<EffectPlayer<? super CircleEffe
     @Nonnull
     final GameTeamContainer players;
 
-    public CircleEffect(@Nonnull WarlordsPlayer wp, @Nonnull Location center, double radius) {
-        this(wp.getGame(), wp.getTeam(), center, radius);
-    }
-
     public CircleEffect(@Nonnull Game game, @Nonnull Team team, @Nonnull Location center, double radius) {
         Validate.notNull(game, "game");
         Validate.notNull(team, "team");
