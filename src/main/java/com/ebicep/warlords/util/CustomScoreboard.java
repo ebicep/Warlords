@@ -129,7 +129,7 @@ public class CustomScoreboard {
                         if (flag.getPickUpTicks() == 0) {
                             sideBar.getScore(ChatColor.RED + "RED Flag: " + ChatColor.RED + "Stolen!").setScore(8);
                         } else {
-                            sideBar.getScore(ChatColor.RED + "RED Flag: " + ChatColor.RED + "Stolen!" + ChatColor.YELLOW + " +" + flag.getPickUpTicks() + "§e%").setScore(8);
+                            sideBar.getScore(ChatColor.RED + "RED Flag: " + ChatColor.RED + "Stolen!" + ChatColor.YELLOW + " +" + flag.getComputedHumanMultiplier() + "§e%").setScore(8);
                         }
 
                     } else if (gameState.flags().getRed().getFlag() instanceof GroundFlagLocation) {
@@ -150,7 +150,7 @@ public class CustomScoreboard {
                         if (flag.getPickUpTicks() == 0) {
                             sideBar.getScore(ChatColor.BLUE + "BLU Flag: " + ChatColor.RED + "Stolen!").setScore(7);
                         } else {
-                            sideBar.getScore(ChatColor.BLUE + "BLU Flag: " + ChatColor.RED + "Stolen!" + ChatColor.YELLOW + " +" + flag.getPickUpTicks() + "§e%").setScore(7);
+                            sideBar.getScore(ChatColor.BLUE + "BLU Flag: " + ChatColor.RED + "Stolen!" + ChatColor.YELLOW + " +" + flag.getComputedHumanMultiplier() + "§e%").setScore(7);
                         }
 
                     } else if (gameState.flags().getBlue().getFlag() instanceof GroundFlagLocation) {

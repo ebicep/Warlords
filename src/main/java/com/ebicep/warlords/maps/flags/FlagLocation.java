@@ -9,10 +9,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.bukkit.Location;
 
-/**
- *
- * @author fernando
- */
 public interface FlagLocation {
 
     @Nonnull

@@ -10,10 +10,6 @@ import com.ebicep.warlords.maps.Team;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
-/**
- *
- * @author fernando
- */
 public class FlagInfo {
 	
     private FlagLocation flag;

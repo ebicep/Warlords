@@ -160,6 +160,7 @@ public class EndState implements State, TimerDebugAble {
 
     @Override
     public void end() {
+        game.clearAllPlayers();
     }
 
     @Override

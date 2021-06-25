@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 
 import com.ebicep.warlords.maps.state.PlayingState;
 import com.ebicep.warlords.maps.state.PreLobbyState;
+import com.ebicep.warlords.maps.state.TimerDebugAble;
 import static com.ebicep.warlords.menu.GameMenu.openMainMenu;
 import com.ebicep.warlords.util.PlayerFilter;
 import javax.annotation.Nonnull;
@@ -89,8 +90,7 @@ public class Commands implements TabExecutor {
                 // Game.State.updateTempPlayer(player);
                 teamBlueAssessment = !teamBlueAssessment;
             }
-
-
+            return true;
         } else if (command.getName().equalsIgnoreCase("endgame")) {
 
             if (!sender.isOp()) {
@@ -110,6 +110,46 @@ public class Commands implements TabExecutor {
 
             sender.sendMessage(ChatColor.RED + "Game has been terminated. Warping back to lobby...");
 
+            return true;
+        }  else if (command.getName().equalsIgnoreCase("wl-debug")) {
+
+            if (!sender.isOp()) {
+                sender.sendMessage("§cYou do not have permission to do that.");
+                return true;
+            }
+            Game game = Warlords.game; // In the future allow the user to select a game player
+            if (args.length < 1) {
+                sender.sendMessage("§cYou need to pass an argument, valid arguments: [timer]");
+                return true;
+            }
+            switch(args[0]) {
+                case "timer":
+                    if (!(game.getState() instanceof TimerDebugAble)) {
+                        sender.sendMessage("This gamestate cannot be manipulated by the timer debug option");
+                        return true;
+                    }
+                    TimerDebugAble timerDebugAble = (TimerDebugAble) game.getState();
+                    if (args.length < 2) {
+                        sender.sendMessage("§cTimer required 2 or more arguments, valid arguments: [skip, reset]");
+                        return true;
+                    }
+                    switch(args[1]) {
+                        case "reset":
+                            timerDebugAble.resetTimer();
+                            sender.sendMessage(ChatColor.GREEN + "Timer has been reset!");
+                            return true;
+                        case "skip":
+                            timerDebugAble.skipTimer();
+                            sender.sendMessage(ChatColor.GREEN + "Timer has been skipped!");
+                            return true;
+                        default:
+                            sender.sendMessage("Invalid option!");
+                            return true;
+                    }
+                default:
+                    sender.sendMessage("Invalid option!");
+                    return true;
+            }
         } else if (command.getName().equalsIgnoreCase("class")) {
             Player player = requirePlayerOutsideGame(sender);
             if(player != null) {
@@ -163,18 +203,22 @@ public class Commands implements TabExecutor {
                     warlordsPlayer.setHotKeyMode(!warlordsPlayer.isHotKeyMode());
                 }
             }
+            return true;
         } else if (command.getName().equals("hitbox")) {
             if (args.length != 0) {
                 FallenSouls.setFallenSoulHitBox(Float.parseFloat(args[0]));
             }
             sender.sendMessage("hitbox is " + FallenSouls.getFallenSoulHitBox());
+            return true;
         } else if (command.getName().equals("speed")) {
             if (args.length != 0) {
                 FallenSouls.setFallenSoulSpeed(Float.parseFloat(args[0]));
             }
             sender.sendMessage("speed is " + FallenSouls.getFallenSoulSpeed());
+            return true;
+        } else {
+            return false;
         }
-        return true;
     }
 
     @Override

@@ -143,7 +143,7 @@ public class FlagManager implements Listener {
             } else if (info.getFlag() instanceof SpawnFlagLocation) {
                 if (team == info.getTeam()) {
                     // Nothing
-                    player.sendMessage("This is your flag");
+                    player.sendMessage("§cYou can't steal your own team's flag!");
                 } else {
                     // Steal flag
                     info.setFlag(new PlayerFlagLocation(wp, 0));

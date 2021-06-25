@@ -31,17 +31,17 @@ public class PlayerFlagLocation implements FlagLocation {
     }
 
     public double getComputedMultiplier() {
-        return 1 + (this.pickUpTicks / (20 * 30)) * 0.1;
+        return 1 + (this.pickUpTicks / (20 * 3)) * 0.01;
     }
 
-    public double getComputedHumanMultiplier() {
-        return (this.pickUpTicks / (20 * 30)) * 10;
+    public int getComputedHumanMultiplier() {
+        return (this.pickUpTicks / (20 * 3));
     }
 
     @Override
     public FlagLocation update(FlagInfo info) {
         this.pickUpTicks++;
-        return this.pickUpTicks % (20 * 30) == 0 ? new PlayerFlagLocation(player, pickUpTicks) : null;
+        return this.pickUpTicks % (20 * 3) == 0 ? new PlayerFlagLocation(player, pickUpTicks) : null;
     }
 	
 }

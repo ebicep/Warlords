@@ -391,9 +391,12 @@ public class WarlordsEvents implements Listener {
 
     @EventHandler
     public void onFlagChange(WarlordsFlagUpdatedEvent event) {
+        Bukkit.broadcastMessage(event.getTeam() + " " + event.getOld().getClass().getSimpleName() + " => " + event.getNew().getClass().getSimpleName());
         if(event.getOld() instanceof PlayerFlagLocation) {
             ((PlayerFlagLocation) event.getOld()).getPlayer().setFlagDamageMultipler(0);
-        } else if(event.getNew() instanceof PlayerFlagLocation) {
+        }
+
+        if (event.getNew() instanceof PlayerFlagLocation) {
             PlayerFlagLocation pfl = (PlayerFlagLocation) event.getNew();
             WarlordsPlayer player = pfl.getPlayer();
             player.setFlagDamageMultipler(pfl.getComputedMultiplier());
@@ -402,7 +405,7 @@ public class WarlordsEvents implements Listener {
                 // or SPAWN -> PLAYER
                 ChatColor enemyColor = event.getTeam().enemy().teamColor();
                 event.getGame().forEachOnlinePlayer((p, t) -> {
-                    p.sendMessage(enemyColor + player.getName() + " §ehas picked up the " + event.getTeam() + " §eflag!");
+                    p.sendMessage(enemyColor + player.getName() + " §ehas picked up the " + event.getTeam().coloredPrefix() + " §eflag!");
                     PacketUtils.sendTitle(p, "", enemyColor + player.getName() + " §ehas picked up the " + event.getTeam().coloredPrefix() + " §eflag!", 0, 60, 0);
                     if(t == event.getTeam()) {
                         p.playSound(player.getLocation(), "ctf.enemyflagtaken", 500, 1);
@@ -412,9 +415,11 @@ public class WarlordsEvents implements Listener {
                 });
             } else {
                 // PLAYER -> PLAYER only happens if the multiplier gets to a new scale
-                event.getGame().forEachOnlinePlayer((p, t) -> {
-                    p.sendMessage("§eThe " + event.getTeam().coloredPrefix() + " §eflag carrier now takes §c" + pfl.getComputedHumanMultiplier() + "§c% Â§eincreased damage!");
-                });
+                if (pfl.getComputedHumanMultiplier() % 10 == 0) {
+                    event.getGame().forEachOnlinePlayer((p, t) -> {
+                        p.sendMessage("§eThe " + event.getTeam().coloredPrefix() + " §eflag carrier now takes §c" + pfl.getComputedHumanMultiplier() + "§e% §eincreased damage!");
+                    });
+                }
             }
         } else if (event.getNew() instanceof SpawnFlagLocation) {
             String toucher = ((SpawnFlagLocation) event.getNew()).getLastToucher();
@@ -428,7 +433,7 @@ public class WarlordsEvents implements Listener {
                     });
                 } else {
                     event.getGame().forEachOnlinePlayer((p, t) -> {
-                        p.sendMessage("The " + event.getTeam() + " has respawned");
+                        p.sendMessage("§eThe " + event.getTeam().coloredPrefix() + " §eflag has returned to its base.");
                     });
                 }
             }
@@ -438,7 +443,8 @@ public class WarlordsEvents implements Listener {
                 String flag = event.getTeam().coloredPrefix();
                 ChatColor playerColor = event.getTeam().enemy().teamColor();
                 event.getGame().forEachOnlinePlayer((p, t) -> {
-                    p.sendMessage(playerColor + pfl.getPlayer().getName() + " has dropped " + flag);
+                    PacketUtils.sendTitle(p, "", playerColor + pfl.getPlayer().getName() + " §ehas dropped the " + flag + " §eflag!", 0, 60, 0);
+                    p.sendMessage(playerColor + pfl.getPlayer().getName() + " §ehas dropped the " + flag + " §eflag!");
                 });
             }
         } else if (event.getNew() instanceof WaitingFlagLocation && ((WaitingFlagLocation) event.getNew()).wasWinner()) {

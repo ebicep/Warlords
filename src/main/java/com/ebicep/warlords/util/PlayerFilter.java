@@ -187,7 +187,7 @@ public class PlayerFilter implements Iterable<WarlordsPlayer> {
 
     public boolean first(@Nonnull Consumer<? super WarlordsPlayer> action) {
         Optional<WarlordsPlayer> findAny = this.findAny();
-        if (findAny.isEmpty()) {
+        if (!findAny.isPresent()) {
             return false;
         }
         action.accept(findAny.get());

@@ -12,6 +12,11 @@ import com.ebicep.warlords.util.*;
 import com.ebicep.warlords.player.*;
 import static com.ebicep.warlords.util.Utils.sendMessage;
 import java.util.*;
+import java.util.function.BiConsumer;
+import java.util.function.BinaryOperator;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -138,20 +143,22 @@ public class PlayingState implements State, TimerDebugAble {
         RemoveEntities.doRemove(this.game.getMap());
         this.flags = new FlagManager(this, game.getMap().getRedFlag(), game.getMap().getBlueFlag());
 
-        // Collect players by their preferences
         Map<Team, List<OfflinePlayer>> preferedTeams = this.game.offlinePlayers().collect(
-            Collectors.groupingBy(entry -> {
-                OfflinePlayer p = entry.getKey();
-                Team team = p.getPlayer() != null ? Team.getSelected((Player) p.getPlayer()) : null;
-                return team;
-            },
-            Collectors.mapping(
-                Map.Entry::getKey,
-                Collectors.toList()
-            )
-        ));
-        List<OfflinePlayer> wantedRed = preferedTeams.get(Team.RED);
-        List<OfflinePlayer> wantedBlue = preferedTeams.get(Team.BLUE);
+                groupingBy(
+                        entry -> {
+                            OfflinePlayer p = entry.getKey();
+                            Team team = p.getPlayer() != null ? Team.getSelected((Player) p.getPlayer()) : null;
+                            return team;
+                        },
+                        HashMap::new,
+                        Collectors.mapping(
+                                Map.Entry::getKey,
+                                Collectors.toList()
+                        )
+                )
+        );
+        List<OfflinePlayer> wantedRed = preferedTeams.computeIfAbsent(Team.RED, (k) -> new ArrayList<>());
+        List<OfflinePlayer> wantedBlue = preferedTeams.computeIfAbsent(Team.BLUE, (k) -> new ArrayList<>());
         for (OfflinePlayer p : preferedTeams.get(null)) {
             Bukkit.broadcastMessage(p.getName() + " did not choose a team!");
             if (wantedRed.size() < wantedBlue.size()) {
@@ -281,7 +288,7 @@ public class PlayingState implements State, TimerDebugAble {
                     case 10:
                         game.forEachOnlinePlayer((player, team) -> {
                             String s = remaining == 1 ? "" : "s";
-                            sendMessage(player, false, ChatColor.YELLOW + "The gates will fall in " + ChatColor.RED + "10" + ChatColor.YELLOW + " second" + s + "!");
+                            sendMessage(player, false, ChatColor.YELLOW + "The gates will fall in " + ChatColor.RED + remaining + ChatColor.YELLOW + " second" + s + "!");
                         });
                         break;
                 }
@@ -304,7 +311,6 @@ public class PlayingState implements State, TimerDebugAble {
     public void end() {
         if(this.flags != null) {
             this.flags.stop();
-            this.flags = null;
         }
         if(this.powerUps != null) {
             this.powerUps.cancel();
@@ -376,6 +382,45 @@ public class PlayingState implements State, TimerDebugAble {
 
     public boolean isForceEnd() {
         return forceEnd;
+    }
+
+    private static <K, V, M extends Map<K,V>> BinaryOperator<M> mapMerger(BinaryOperator<V> mergeFunction) {
+        return (m1, m2) -> {
+            for (Map.Entry<K,V> e : m2.entrySet())
+                m1.merge(e.getKey(), e.getValue(), mergeFunction);
+            return m1;
+        };
+    }
+
+    // We have to copy this to allow null keys
+    public static <T, K, D, A, M extends Map<K, D>> Collector<T, ?, M> groupingBy(
+            Function<? super T, ? extends K> classifier,
+            Supplier<M> mapFactory,
+            Collector<? super T, A, D> downstream
+    ) {
+        Supplier<A> downstreamSupplier = downstream.supplier();
+        BiConsumer<A, ? super T> downstreamAccumulator = downstream.accumulator();
+        BiConsumer<Map<K, A>, T> accumulator = (m, t) -> {
+            K key = classifier.apply(t);
+            A container = m.computeIfAbsent(key, k -> downstreamSupplier.get());
+            downstreamAccumulator.accept(container, t);
+        };
+        BinaryOperator<Map<K, A>> merger = PlayingState.<K, A, Map<K, A>>mapMerger(downstream.combiner());
+        @SuppressWarnings("unchecked")
+        Supplier<Map<K, A>> mangledFactory = (Supplier<Map<K, A>>) mapFactory;
+        @SuppressWarnings("unchecked")
+        Function<A, A> downstreamFinisher = (Function<A, A>) downstream.finisher();
+        Function<Map<K, A>, M> finisher = intermediate -> {
+            intermediate.replaceAll((k, v) -> downstreamFinisher.apply(v));
+            @SuppressWarnings("unchecked")
+            M castResult = (M) intermediate;
+            return castResult;
+        };
+        if (downstream.characteristics().contains(Collector.Characteristics.IDENTITY_FINISH)) {
+            return Collector.of(mangledFactory, accumulator, merger, finisher, Collector.Characteristics.IDENTITY_FINISH);
+        } else {
+            return Collector.of(mangledFactory, accumulator, merger, finisher);
+        }
     }
 
     public class Stats {
