@@ -1,11 +1,11 @@
 package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.util.ParticleEffect;
-import com.ebicep.warlords.util.Utils;
-import org.bukkit.GameMode;
+import com.ebicep.warlords.util.PlayerFilter;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.*;
@@ -13,9 +13,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
-
-import java.util.Collection;
-import java.util.List;
 
 public class Boulder extends AbstractAbility {
 
@@ -32,7 +29,7 @@ public class Boulder extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(Player player) {
+    public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
 
         Location location = player.getLocation();
         Vector speed = player.getLocation().getDirection().multiply(0.55);
@@ -44,7 +41,7 @@ public class Boulder extends AbstractAbility {
         stand.setVisible(false);
         stand.setMarker(false);
 
-        Warlords.getPlayer(player).subtractEnergy(energyCost);
+        warlordsPlayer.subtractEnergy(energyCost);
 
         new BukkitRunnable() {
 
@@ -74,59 +71,36 @@ public class Boulder extends AbstractAbility {
                     stand.setHeadPose(new EulerAngle(speed.getY() * -1, 0, 0));
                 }
 
-                boolean boulderExplode = false;
-                List<Entity> near = null;
+                boolean shouldExplode;
 
                 if (last) {
                     Location particleLoc = newLoc.clone().add(0, 2, 0);
                     ParticleEffect.CRIT.display(0.3F, 0.3F, 0.3F, 0.1F, 4, particleLoc, 500);
                 }
                 if (!newLoc.getBlock().isEmpty()) {
-                    boulderExplode = true;
-                    near = (List<Entity>) newLoc.getWorld().getNearbyEntities(newLoc, 5, 5, 5);
-                    near = Utils.filterOutTeammates(near, player);
+                    // Explode based on collision
+                    shouldExplode = true;
+                } else {
+                    shouldExplode = PlayerFilter.entitiesAround(newLoc, 1.25, 1.25, 1.25)
+                        .aliveEnemiesOf(warlordsPlayer).findAny().isPresent();
+                }
 
+
+                if (shouldExplode) {
+                    stand.remove();
                     for (Player player1 : player.getWorld().getPlayers()) {
                         player1.playSound(newLoc, "shaman.boulder.impact", 2, 1);
                     }
 
-                } else {
-                    Collection<Entity> nearbyEntities = stand.getWorld().getNearbyEntities(stand.getLocation().clone().add(0, .5, 0), 1.25, 1.25, 1.25);
-                    for (Entity entity : nearbyEntities) {
-                        if (entity instanceof Player) {
-                            if (!Warlords.game.onSameTeam(player, (Player) entity) && ((Player) entity).getGameMode() != GameMode.SPECTATOR) {
-                                boulderExplode = true;
-                                near = (List<Entity>) newLoc.getWorld().getNearbyEntities(newLoc, 5.5, 5.5, 5.5);
-                                near = Utils.filterOutTeammates(near, player);
-                                near.remove(entity);
+                    for(WarlordsPlayer p : PlayerFilter
+                        .entitiesAround(newLoc, 5.5, 5.5, 5.5)
+                        .aliveEnemiesOf(warlordsPlayer)
+                    ) {
+                        p.addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
 
-                                for (Player player1 : player.getWorld().getPlayers()) {
-                                    player1.playSound(newLoc, "shaman.boulder.impact", 2, 1);
-                                }
-
-                                final Vector v = entity.getLocation().toVector().subtract(location.toVector()).normalize().multiply(1.1).setY(0.3);
-                                entity.setVelocity(v);
-
-                                Warlords.getPlayer((Player) entity).addHealth(Warlords.getPlayer(player), name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
-
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                if (boulderExplode) {
-                    stand.remove();
-                    for (Entity entity2 : near) {
-                        if (entity2 instanceof Player) {
-                            Player nearPlayer = (Player) entity2;
-                            if (nearPlayer.getGameMode() != GameMode.SPECTATOR) {
-                                final Vector v = nearPlayer.getLocation().toVector().subtract(newLoc.toVector()).normalize().multiply(1.1).setY(0.3);
-                                nearPlayer.setVelocity(v);
-
-                                Warlords.getPlayer(nearPlayer).addHealth(Warlords.getPlayer(player), name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
-                            }
-                        }
+                        Entity entity = p.getEntity();
+                        Vector v = entity.getLocation().toVector().subtract(newLoc.toVector()).normalize().multiply(1.1).setY(0.3);
+                        entity.setVelocity(v);
                     }
                     newLoc.setPitch(-12);
                     newLoc.add(0, 1, 0);

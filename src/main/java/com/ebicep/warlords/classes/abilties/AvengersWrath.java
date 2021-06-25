@@ -1,6 +1,6 @@
 package com.ebicep.warlords.classes.abilties;
 
-import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
 import org.bukkit.entity.Player;
 
@@ -22,8 +22,8 @@ public class AvengersWrath extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(Player player) {
-        Warlords.getPlayer(player).setWrathDuration(12);
+    public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
+        warlordsPlayer.setWrathDuration(12);
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "paladin.avengerswrath.activation", 2, 1);

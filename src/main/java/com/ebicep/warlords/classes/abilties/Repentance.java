@@ -22,7 +22,7 @@ public class Repentance extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(Player player) {
+    public void onActivate(WarlordsPlayer wp, Player player) {
         WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
         warlordsPlayer.setRepentanceDuration(12);
         warlordsPlayer.setRepentanceCounter(warlordsPlayer.getRepentanceCounter() + 2000);

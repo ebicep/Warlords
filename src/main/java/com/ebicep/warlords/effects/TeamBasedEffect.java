@@ -1,6 +1,7 @@
 package com.ebicep.warlords.effects;
 
 import com.ebicep.warlords.util.ParticleEffect;
+import java.util.stream.Collectors;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
@@ -23,28 +24,28 @@ public class TeamBasedEffect {
     }
 
     public void display(GameTeamContainer teams, float offsetX, float offsetY, float offsetZ, float speed, int amount, Location center) {
-        ownTeam.display(offsetX, offsetY, offsetZ, speed, amount, center, teams.getAllyPlayers());
-        enemyTeam.display(offsetX, offsetY, offsetZ, speed, amount, center, teams.getEnemyPlayers());
+        ownTeam.display(offsetX, offsetY, offsetZ, speed, amount, center, teams.getAllyPlayers().collect(Collectors.toList()));
+        enemyTeam.display(offsetX, offsetY, offsetZ, speed, amount, center, teams.getEnemyPlayers().collect(Collectors.toList()));
     }
 
     public void display(GameTeamContainer teams, Vector direction, float speed, Location center) {
-        ownTeam.display(direction, speed, center, teams.getAllyPlayers());
-        enemyTeam.display(direction, speed, center, teams.getEnemyPlayers());
+        ownTeam.display(direction, speed, center, teams.getAllyPlayers().collect(Collectors.toList()));
+        enemyTeam.display(direction, speed, center, teams.getEnemyPlayers().collect(Collectors.toList()));
     }
 
     public void display(GameTeamContainer teams, ParticleEffect.ParticleColor color, Location center) {
-        ownTeam.display(color, center, teams.getAllyPlayers());
-        enemyTeam.display(color, center, teams.getEnemyPlayers());
+        ownTeam.display(color, center, teams.getAllyPlayers().collect(Collectors.toList()));
+        enemyTeam.display(color, center, teams.getEnemyPlayers().collect(Collectors.toList()));
     }
 
     public void display(GameTeamContainer teams, ParticleEffect.ParticleData data, float offsetX, float offsetY, float offsetZ, float speed, int amount, Location center) {
-        ownTeam.display(data, offsetX, offsetY, offsetZ, speed, amount, center, teams.getAllyPlayers());
-        enemyTeam.display(data, offsetX, offsetY, offsetZ, speed, amount, center, teams.getEnemyPlayers());
+        ownTeam.display(data, offsetX, offsetY, offsetZ, speed, amount, center, teams.getAllyPlayers().collect(Collectors.toList()));
+        enemyTeam.display(data, offsetX, offsetY, offsetZ, speed, amount, center, teams.getEnemyPlayers().collect(Collectors.toList()));
     }
 
     public void display(GameTeamContainer teams, ParticleEffect.ParticleData data, Vector direction, float speed, Location center) {
-        ownTeam.display(data, direction, speed, center, teams.getAllyPlayers());
-        enemyTeam.display(data, direction, speed, center, teams.getEnemyPlayers());
+        ownTeam.display(data, direction, speed, center, teams.getAllyPlayers().collect(Collectors.toList()));
+        enemyTeam.display(data, direction, speed, center, teams.getEnemyPlayers().collect(Collectors.toList()));
     }
 
     @Override

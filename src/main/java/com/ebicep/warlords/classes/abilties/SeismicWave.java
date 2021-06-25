@@ -2,12 +2,12 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.customentities.CustomFallingBlock;
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.util.PlayerFilter;
 import com.ebicep.warlords.util.Utils;
-import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -20,12 +20,10 @@ public class SeismicWave extends AbstractAbility {
 
     private List<List<Location>> fallingBlockLocations = new ArrayList<>();
     private final List<CustomFallingBlock> customFallingBlocks = new ArrayList<>();
-    private Player owner;
     private List<Player> playersHit = new ArrayList<>();
 
-    public SeismicWave(String name, float minDamageHeal, float maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier, Player owner) {
+    public SeismicWave(String name, float minDamageHeal, float maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier) {
         super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
-        this.owner = owner;
     }
 
     @Override
@@ -36,7 +34,7 @@ public class SeismicWave extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(Player player) {
+    public void onActivate(WarlordsPlayer wp, Player player) {
         playersHit.clear();
 
         Location location = player.getLocation();
@@ -49,15 +47,15 @@ public class SeismicWave extends AbstractAbility {
         }
 
         //INSTANT DMG
-        List<Entity> near = player.getNearbyEntities(8, 4.5, 8);
-        near = Utils.filterOutTeammates(near, player);
-        for (Entity entity : near) {
-            if (entity instanceof Player && ((Player) entity).getGameMode() != GameMode.SPECTATOR && Utils.getLookingAtWave(player, (Player) entity)) {
-                final Location loc = entity.getLocation();
-                final Vector v = player.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1.15).setY(0.35);
-                entity.setVelocity(v);
-                Warlords.getPlayer((Player) entity).addHealth(Warlords.getPlayer(player), name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
-            }
+        for (WarlordsPlayer p : PlayerFilter
+            .entitiesAround(player, 8, 4.5, 8)
+            .aliveEnemiesOf(wp)
+            .lookingAtWave(player)
+        ) {
+            final Location loc = p.getLocation();
+            final Vector v = player.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1.15).setY(0.35);
+            p.setVelocity(v);
+            p.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
         }
 
         new BukkitRunnable() {
@@ -69,7 +67,7 @@ public class SeismicWave extends AbstractAbility {
                     for (Location location : fallingBlockLocation) {
                         if (location.getWorld().getBlockAt(location.clone().add(0, 1, 0)).getType() == Material.AIR) {
                             FallingBlock fallingBlock = addFallingBlock(location);
-                            customFallingBlocks.add(new CustomFallingBlock(fallingBlock, location.getY() + .25, getOwner(), SeismicWave.this));
+                            customFallingBlocks.add(new CustomFallingBlock(fallingBlock, location.getY() + .25, wp, SeismicWave.this));
                         }
                     }
                     SeismicWave.this.getFallingBlockLocations().remove(fallingBlockLocation);
@@ -90,7 +88,7 @@ public class SeismicWave extends AbstractAbility {
                     }
                 }
 
-                if (fallingBlockLocations.size() == 0 && customFallingBlocks.size() == 0) {
+                if (fallingBlockLocations.isEmpty() && customFallingBlocks.isEmpty()) {
                     System.out.println("WAVE CANCEL");
                     this.cancel();
                 }
@@ -120,14 +118,6 @@ public class SeismicWave extends AbstractAbility {
 
     public void setFallingBlockLocations(List<List<Location>> fallingBlockLocations) {
         this.fallingBlockLocations = fallingBlockLocations;
-    }
-
-    public Player getOwner() {
-        return owner;
-    }
-
-    public void setOwner(Player owner) {
-        this.owner = owner;
     }
 
     public List<Player> getPlayersHit() {

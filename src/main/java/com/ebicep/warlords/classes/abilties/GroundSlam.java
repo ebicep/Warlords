@@ -2,8 +2,9 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.customentities.CustomFallingBlock;
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
-import org.bukkit.GameMode;
+import com.ebicep.warlords.util.PlayerFilter;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -19,12 +20,10 @@ public class GroundSlam extends AbstractAbility {
 
     private List<List<Location>> fallingBlockLocations = new ArrayList<>();
     private final List<CustomFallingBlock> customFallingBlocks = new ArrayList<>();
-    private Player owner;
-    private List<Player> playersHit = new ArrayList<>();
+    private final List<WarlordsPlayer> playersHit = new ArrayList<>();
 
-    public GroundSlam(String name, float minDamageHeal, float maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier, Player owner) {
+    public GroundSlam(String name, float minDamageHeal, float maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier) {
         super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
-        this.owner = owner;
     }
 
     @Override
@@ -35,7 +34,7 @@ public class GroundSlam extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(Player player) {
+    public void onActivate(WarlordsPlayer wp, Player player) {
         playersHit.clear();
         fallingBlockLocations.clear();
         customFallingBlocks.clear();
@@ -58,7 +57,7 @@ public class GroundSlam extends AbstractAbility {
                     for (Location location : fallingBlockLocation) {
                         if (location.getWorld().getBlockAt(location.clone().add(0, 1, 0)).getType() == Material.AIR) {
                             FallingBlock fallingBlock = addFallingBlock(location);
-                            customFallingBlocks.add(new CustomFallingBlock(fallingBlock, location.getY() + .25, getOwner(), GroundSlam.this));
+                            customFallingBlocks.add(new CustomFallingBlock(fallingBlock, location.getY() + .25, wp, GroundSlam.this));
                         }
                     }
                     GroundSlam.this.getFallingBlockLocations().remove(fallingBlockLocation);
@@ -79,10 +78,11 @@ public class GroundSlam extends AbstractAbility {
                 for (int i = 0; i < customFallingBlocks.size(); i++) {
                     CustomFallingBlock customFallingBlock = customFallingBlocks.get(i);
                     customFallingBlock.setTicksLived(customFallingBlock.getTicksLived() + 1);
-                    for (Player player : Warlords.getPlayers().keySet()) {
-                        if (player != customFallingBlock.getOwner() && player.getGameMode() != GameMode.SPECTATOR) {
+
+                    for (WarlordsPlayer player : PlayerFilter.playingGame(wp.getGame()).isAlive()) {
+                        if (player != customFallingBlock.getOwner()) {
                             AbstractAbility ability = customFallingBlock.getAbility();
-                            if (!((GroundSlam) ability).getPlayersHit().contains(player) && !Warlords.game.onSameTeam(player, customFallingBlock.getOwner())) {
+                            if (!((GroundSlam) ability).getPlayersHit().contains(player) && player.isEnemy(customFallingBlock.getOwner())) {
                                 if (player.getLocation().distanceSquared(customFallingBlock.getFallingBlock().getLocation()) < 1.5) {
                                     ((GroundSlam) ability).getPlayersHit().add(player);
                                     final Location loc = player.getLocation();
@@ -144,20 +144,8 @@ public class GroundSlam extends AbstractAbility {
         this.fallingBlockLocations = fallingBlockLocations;
     }
 
-    public Player getOwner() {
-        return owner;
-    }
-
-    public void setOwner(Player owner) {
-        this.owner = owner;
-    }
-
-    public List<Player> getPlayersHit() {
+    public List<WarlordsPlayer> getPlayersHit() {
         return playersHit;
-    }
-
-    public void setPlayersHit(List<Player> playersHit) {
-        this.playersHit = playersHit;
     }
 
     private FallingBlock addFallingBlock(Location location) {

@@ -1,5 +1,6 @@
 package com.ebicep.warlords.player;
 
+import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.util.ItemBuilder;
 import org.bukkit.ChatColor;
@@ -270,8 +271,8 @@ public class ArmorManager {
         }
     }
 
-    public static void resetArmor(Player player, Classes selectedClass) {
-        boolean onBlueTeam = Warlords.game.getCachedTeamBlue().contains(player);
+    public static void resetArmor(Player player, Classes selectedClass, Team team) {
+        boolean onBlueTeam = team == Team.BLUE;
         ItemStack[] armor = new ItemStack[4];
         if (selectedClass == PYROMANCER || selectedClass == CRYOMANCER || selectedClass == AQUAMANCER) {
             armor[2] = new ItemBuilder(onBlueTeam ? ArmorSets.getSelected(player).get(0).itemBlue : ArmorSets.getSelected(player).get(0).itemRed)

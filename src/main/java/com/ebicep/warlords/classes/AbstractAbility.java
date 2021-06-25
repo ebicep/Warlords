@@ -1,5 +1,7 @@
 package com.ebicep.warlords.classes;
 
+import com.ebicep.warlords.player.WarlordsPlayer;
+import javax.annotation.Nonnull;
 import org.bukkit.entity.Player;
 
 public abstract class AbstractAbility {
@@ -28,7 +30,8 @@ public abstract class AbstractAbility {
 
     public abstract void updateDescription(Player player);
 
-    public abstract void onActivate(Player player);
+    public abstract void onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player);
+
 
     public void boostSkill() {
         boosted = true;

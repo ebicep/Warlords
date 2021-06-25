@@ -1,17 +1,13 @@
 package com.ebicep.warlords.classes.abilties;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.util.PlayerFilter;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.Matrix4d;
 import com.ebicep.warlords.util.ParticleEffect;
-import com.ebicep.warlords.util.Utils;
-import org.bukkit.GameMode;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-import java.util.List;
 
 public class LastStand extends AbstractAbility {
 
@@ -32,22 +28,16 @@ public class LastStand extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(Player player) {
-        WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
+    public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
         warlordsPlayer.setLastStandedBy(warlordsPlayer);
         warlordsPlayer.setLastStandDuration(12);
-        List<Entity> near = player.getNearbyEntities(4.0D, 4.0D, 4.0D);
-        near = Utils.filterOnlyTeammates(near, player);
-        for (Entity entity : near) {
-            if (entity instanceof Player) {
-                Player nearPlayer = (Player) entity;
-                if (nearPlayer.getGameMode() != GameMode.SPECTATOR) {
-                    Warlords.getPlayer(nearPlayer).setLastStandDuration(6);
-                    Warlords.getPlayer(nearPlayer).setLastStandedBy(warlordsPlayer);
-                    player.sendMessage("you last standed " + nearPlayer.getName());
-                }
-            }
-        }
+        PlayerFilter.entitiesAround(warlordsPlayer, 4, 4, 4)
+            .aliveTeammatesOfExcludingSelf(warlordsPlayer)
+            .forEach((nearPlayer) -> {
+                nearPlayer.setLastStandDuration(6);
+                nearPlayer.setLastStandedBy(warlordsPlayer);
+                player.sendMessage("you last standed " + nearPlayer.getName());
+            });
         warlordsPlayer.subtractEnergy(energyCost);
 
         for (Player player1 : player.getWorld().getPlayers()) {

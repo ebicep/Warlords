@@ -5,7 +5,6 @@ import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.player.ActionBarStats;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.ParticleEffect;
-import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -28,8 +27,7 @@ public class TimeWarp extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(Player player) {
-        WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
+    public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
         TimeWarpPlayer timeWarpPlayer = new TimeWarpPlayer(warlordsPlayer, player.getLocation(), player.getLocation().getDirection(), 5);
         warlordsPlayer.getActionBarStats().add(new ActionBarStats(warlordsPlayer, "TIME", 5));
         warlordsPlayer.subtractEnergy(energyCost);
@@ -42,7 +40,7 @@ public class TimeWarp extends AbstractAbility {
 
             @Override
             public void run() {
-                if (timeWarpPlayer.getWarlordsPlayer().getPlayer().getGameMode() == GameMode.SPECTATOR) {
+                if (timeWarpPlayer.getWarlordsPlayer().isDeath()) {
                     counter = 0;
                     this.cancel();
                 }
@@ -87,11 +85,11 @@ public class TimeWarp extends AbstractAbility {
                     } else {
                         WarlordsPlayer player = timeWarpPlayer.getWarlordsPlayer();
                         player.addHealth(player, "Time Warp", (player.getMaxHealth() * .3f), (player.getMaxHealth() * .3f), -1, 100);
-                        for (Player player1 : player.getPlayer().getWorld().getPlayers()) {
+                        for (Player player1 : player.getEntity().getWorld().getPlayers()) {
                             player1.playSound(timeWarpPlayer.getLocation(), "mage.timewarp.teleport", 1, 1);
                         }
-                        player.getPlayer().teleport(timeWarpPlayer.getLocation());
-                        player.getPlayer().getLocation().setDirection(timeWarpPlayer.getFacing());
+                        timeWarpPlayer.getLocation().setDirection(timeWarpPlayer.getFacing());
+                        player.getEntity().teleport(timeWarpPlayer.getLocation());
 
                         warlordsPlayer.getTrail().clear();
                         counter = 0;

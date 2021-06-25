@@ -1,12 +1,13 @@
 package com.ebicep.warlords.database;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.maps.Game;
+import com.ebicep.warlords.maps.Team;
+import com.ebicep.warlords.maps.state.PlayingState;
+import com.ebicep.warlords.util.*;
 import com.ebicep.warlords.player.ArmorManager;
 import com.ebicep.warlords.player.Classes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.Weapons;
-import com.ebicep.warlords.util.Settings;
 import com.mongodb.MongoException;
 import com.mongodb.MongoWriteException;
 import com.mongodb.client.MongoClient;
@@ -357,21 +358,21 @@ public class DatabaseManager {
     }
 
 
-    public void addGame(Game game) {
+    public void addGame(PlayingState gameState) {
         List<Document> blue = new ArrayList<>();
         List<Document> red = new ArrayList<>();
-        for (WarlordsPlayer value : Warlords.getPlayers().values()) {
+        for (WarlordsPlayer value : PlayerFilter.playingGame(gameState.getGame())) {
             int totalKills = value.getTotalKills();
             int totalAssists = value.getTotalAssists();
             int totalDeaths = value.getTotalDeaths();
-            boolean won = game.isBlueTeam(value.getPlayer()) && game.getBluePoints() > game.getRedPoints() || game.isRedTeam(value.getPlayer()) && game.getRedPoints() > game.getBluePoints();
+            boolean won = !gameState.isForceEnd() && gameState.getStats(value.getTeam()).points() > gameState.getStats(value.getTeam().enemy()).points();
             int flagsCaptured = value.getFlagsCaptured();
             int flagsReturned = value.getFlagsReturned();
             int damage = (int) value.getTotalDamage();
             int healing = (int) value.getTotalHealing();
             int absorbed = (int) value.getTotalAbsorbed();
             String className = value.getSpec().getClassName().toLowerCase();
-            String specName = Classes.getSelected(value.getPlayer()).name.toLowerCase();
+            String specName = value.getSpecClass().name.toLowerCase();
             HashMap<String, Object> playerInfo = new HashMap<>();
             playerInfo.put("kills", totalKills);
             playerInfo.put("assists", totalAssists);
@@ -403,21 +404,25 @@ public class DatabaseManager {
             playerInfo.put(className + "." + specName + ".damage", damage);
             playerInfo.put(className + "." + specName + ".healing", healing);
             playerInfo.put(className + "." + specName + ".absorbed", absorbed);
-            updatePlayerInformation(value.getPlayer(), playerInfo, FieldUpdateOperators.INCREMENT);
-            if (game.isBlueTeam(value.getPlayer())) {
+            if (value.getEntity() instanceof Player) {
+                // TODO: We need to update the player info, even if he/she is offline
+                updatePlayerInformation((Player)value.getEntity(), playerInfo, FieldUpdateOperators.INCREMENT);
+            }
+            if (value.getTeam() == Team.BLUE) {
                 gameAddPlayerStats(blue, value);
             } else {
                 gameAddPlayerStats(red, value);
             }
         }
         DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm");
+        Team winner = gameState.calculateWinnerByPoints();
         Document document = new Document("date", dateFormat.format(new Date()))
-                .append("time_left", game.getScoreboardTime())
-                .append("winner", game.isForceEnd() ? "DRAW" : game.getBluePoints() > game.getRedPoints() ? "BLUE" : "RED")
-                .append("blue_points", game.getBluePoints())
-                .append("red_points", game.getRedPoints())
+                .append("time_left", gameState.getTimerInSeconds())
+                .append("winner", gameState.isForceEnd() || winner == null ? "DRAW" : winner.name.toUpperCase(Locale.ROOT))
+                .append("blue_points", gameState.getStats(Team.BLUE).points())
+                .append("red_points", gameState.getStats(Team.RED).points())
                 .append("players", new Document("blue", blue).append("red", red))
-                .append("stat_info", game.getWarlordsPlusEndGameStats());
+                .append("stat_info", getWarlordsPlusEndGameStats(gameState));
         try {
             gamesInformation.insertOne(document);
         } catch (MongoWriteException e) {
@@ -425,10 +430,38 @@ public class DatabaseManager {
             System.out.println("Error trying to insert game stats");
         }
     }
+    
+    public String getWarlordsPlusEndGameStats(PlayingState gameState) {
+        StringBuilder output = new StringBuilder("Winners:");
+        int bluePoints = gameState.getStats(Team.RED).points();
+        int redPoints = gameState.getStats(Team.BLUE).points();
+        if (bluePoints > redPoints) {
+            for (WarlordsPlayer player : PlayerFilter.playingGame(gameState.getGame()).matchingTeam(Team.BLUE)) {
+                output.append(player.getUuid().toString().replace("-", "")).append("[").append(player.getTotalKills()).append(":").append(player.getTotalDeaths()).append("],");
+            }
+            output.setLength(output.length() - 1);
+            output.append("Losers:");
+            for (WarlordsPlayer player : PlayerFilter.playingGame(gameState.getGame()).matchingTeam(Team.RED)) {
+                output.append(player.getUuid().toString().replace("-", "")).append("[").append(player.getTotalKills()).append(":").append(player.getTotalDeaths()).append("],");
+            }
+        } else if (redPoints > bluePoints) {
+            for (WarlordsPlayer player : PlayerFilter.playingGame(gameState.getGame()).matchingTeam(Team.RED)) {
+                output.append(player.getUuid().toString().replace("-", "")).append("[").append(player.getTotalKills()).append(":").append(player.getTotalDeaths()).append("],");
+            }
+            output.setLength(output.length() - 1);
+            output.append("Losers:");
+            for (WarlordsPlayer player : PlayerFilter.playingGame(gameState.getGame()).matchingTeam(Team.BLUE)) {
+                output.append(player.getUuid().toString().replace("-", "")).append("[").append(player.getTotalKills()).append(":").append(player.getTotalDeaths()).append("],");
+            }
+        }
+        // TODO: What about a draw?
+        output.setLength(output.length() - 1);
+        return output.toString();
+    }
 
     public void gameAddPlayerStats(List<Document> list, WarlordsPlayer warlordsPlayer) {
         list.add(new Document(warlordsPlayer.getUuid().toString(), new Document("name", warlordsPlayer.getName())
-                .append("spec", Classes.getSelected(warlordsPlayer.getPlayer()).name)
+                .append("spec", Warlords.getPlayerSettings(warlordsPlayer.getUuid()).selectedClass().name)
                 .append("kills", new BsonArray(Arrays.stream(warlordsPlayer.getKills()).mapToObj(BsonInt64::new).collect(Collectors.toList())))
                 .append("deaths", new BsonArray(Arrays.stream(warlordsPlayer.getDeaths()).mapToObj(BsonInt64::new).collect(Collectors.toList())))
                 .append("assists", new BsonArray(Arrays.stream(warlordsPlayer.getAssists()).mapToObj(BsonInt64::new).collect(Collectors.toList())))

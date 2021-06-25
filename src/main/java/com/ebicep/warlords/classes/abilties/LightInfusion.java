@@ -1,6 +1,5 @@
 package com.ebicep.warlords.classes.abilties;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.ParticleEffect;
@@ -22,9 +21,8 @@ public class LightInfusion extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(Player player) {
-        WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
-        warlordsPlayer.getSpeed().changeCurrentSpeed("Infusion", 40, 3 * 20, "BASE");
+    public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
+        warlordsPlayer.getSpeed().addSpeedModifier("Infusion", 40, 3 * 20);
         warlordsPlayer.setInfusion(3);
         warlordsPlayer.subtractEnergy(energyCost);
 
