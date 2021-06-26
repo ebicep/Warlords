@@ -1,11 +1,10 @@
-package com.ebicep.warlords.util;
+package com.ebicep.warlords.player;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.maps.FlagManager.GroundFlagLocation;
 import com.ebicep.warlords.maps.FlagManager.PlayerFlagLocation;
 import com.ebicep.warlords.maps.FlagManager.SpawnFlagLocation;
 import com.ebicep.warlords.maps.Game;
-import com.ebicep.warlords.player.WarlordsPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;

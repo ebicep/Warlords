@@ -47,7 +47,7 @@ public class UndyingArmy extends AbstractAbility {
         WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
         warlordsPlayer.getCooldownManager().addCooldown(UndyingArmy.this.getClass(), "ARMY", 10, warlordsPlayer, CooldownTypes.ABILITY);
 
-        List<Entity> near = player.getNearbyEntities(4.0D, 4.0D, 4.0D);
+        List<Entity> near = player.getNearbyEntities(5.5D, 4.5D, 5.5D);
         near = Utils.filterOnlyTeammates(near, player);
         int numberOfPlayersWithArmy = 0;
         for (Entity entity : near) {

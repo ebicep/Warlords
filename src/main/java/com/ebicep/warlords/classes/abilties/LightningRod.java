@@ -53,6 +53,13 @@ public class LightningRod extends AbstractAbility {
             }
         }
 
+        if (Utils.totemDownAndClose(warlordsPlayer, player)) {
+            ArmorStand totem = getTotem(warlordsPlayer.getPlayer());
+            if (totem != null) {
+                new FallingBlockWaveEffect(totem.getLocation(), 4, 1.1, Material.SAPLING, (byte) 0).play();
+            }
+        }
+
         pulseDamage(warlordsPlayer, near);
 
         new FallingBlockWaveEffect(playerLocation, 4, 1.1, Material.RED_ROSE, (byte) 5).play();
@@ -63,12 +70,10 @@ public class LightningRod extends AbstractAbility {
     }
 
     private void pulseDamage(WarlordsPlayer warlordsPlayer, List<Entity> near) {
-        ArmorStand totem = getTotem(warlordsPlayer.getPlayer());
         for (Entity entity : near) {
             if (entity instanceof Player) {
                 Player nearPlayer = (Player) entity;
                 if (Utils.totemDownAndClose(warlordsPlayer, nearPlayer) && nearPlayer.getGameMode() != GameMode.SPECTATOR) {
-                    new FallingBlockWaveEffect(totem.getLocation(), 4, 1.1, Material.SAPLING, (byte) 0).play();
                     Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, warlordsPlayer.getSpec().getOrange().getName(), warlordsPlayer.getSpec().getOrange().getMinDamageHeal(), warlordsPlayer.getSpec().getOrange().getMaxDamageHeal(), warlordsPlayer.getSpec().getOrange().getCritChance(), warlordsPlayer.getSpec().getOrange().getCritMultiplier());
                 }
             }
@@ -77,7 +82,7 @@ public class LightningRod extends AbstractAbility {
 
     private ArmorStand getTotem(Player player) {
         for (Entity entity : player.getNearbyEntities(20, 17, 20)) {
-            if (entity instanceof ArmorStand && entity.hasMetadata("Capacitor Totem - " + player.getName())) {
+            if (entity instanceof ArmorStand && entity.hasMetadata("capacitor-totem-" + player.getName().toLowerCase())) {
                 return (ArmorStand) entity;
             }
         }

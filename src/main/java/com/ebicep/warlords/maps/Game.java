@@ -2,12 +2,12 @@ package com.ebicep.warlords.maps;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.FieldUpdateOperators;
-import com.ebicep.warlords.player.ArmorManager;
-import com.ebicep.warlords.player.Classes;
-import com.ebicep.warlords.player.WarlordsPlayer;
-import com.ebicep.warlords.player.Weapons;
+import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.powerups.PowerupManager;
-import com.ebicep.warlords.util.*;
+import com.ebicep.warlords.util.ItemBuilder;
+import com.ebicep.warlords.util.PacketUtils;
+import com.ebicep.warlords.util.RemoveEntities;
+import com.ebicep.warlords.util.Utils;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -254,6 +254,14 @@ public class Game implements Runnable {
                         }
                     }
                 }.runTaskAsynchronously(Warlords.getInstance());
+
+                //SKILL TREE JUICERS
+                for (Player player : Warlords.getPlayers().keySet()) {
+                    player.getInventory().setItem(6, new ItemBuilder(Material.FIREWORK_CHARGE)
+                            .name(ChatColor.GREEN + "Skill Tree" + ChatColor.GRAY + " - " + ChatColor.YELLOW + "Right-Click!")
+                            .lore(ChatColor.GRAY + "Opens your Skill Tree to upgrade your class!")
+                            .get());
+                }
             }
 
             @Override

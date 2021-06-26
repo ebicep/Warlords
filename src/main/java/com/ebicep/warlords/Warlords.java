@@ -139,6 +139,7 @@ public class Warlords extends JavaPlugin {
                     // MOVEMENT
                     for (WarlordsPlayer warlordsPlayer : players.values()) {
                         warlordsPlayer.getSpeed().updateSpeed();
+                        warlordsPlayer.getScoreboard().updateHealths();
                     }
 
                     for (WarlordsPlayer warlordsPlayer : players.values()) {
@@ -314,8 +315,8 @@ public class Warlords extends JavaPlugin {
                         //orbs
                         for (int i = 0; i < orbs.size(); i++) {
                             OrbsOfLife.Orb orb = orbs.get(i);
-                            Location orbPosition = orb.getBukkitEntity().getLocation();
-                            if (game.onSameTeam(orb.getOwner(), warlordsPlayer) && orbPosition.distanceSquared(location) < 1.75 * 1.75) {
+                            Location orbPosition = orb.getArmorStand().getLocation();
+                            if (game.onSameTeam(orb.getOwner(), warlordsPlayer) && orbPosition.distanceSquared(location) < 1.5 * 1.5) {
                                 orb.getArmorStand().remove();
                                 orb.getBukkitEntity().remove();
                                 orbs.remove(i);

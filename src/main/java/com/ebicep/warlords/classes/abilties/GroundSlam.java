@@ -83,7 +83,7 @@ public class GroundSlam extends AbstractAbility {
                         if (player != customFallingBlock.getOwner() && player.getGameMode() != GameMode.SPECTATOR) {
                             AbstractAbility ability = customFallingBlock.getAbility();
                             if (!((GroundSlam) ability).getPlayersHit().contains(player) && !Warlords.game.onSameTeam(player, customFallingBlock.getOwner())) {
-                                if (player.getLocation().distanceSquared(customFallingBlock.getFallingBlock().getLocation()) < 1.5) {
+                                if (player.getLocation().distanceSquared(customFallingBlock.getFallingBlock().getLocation()) < 2) {
                                     ((GroundSlam) ability).getPlayersHit().add(player);
                                     final Location loc = player.getLocation();
                                     final Vector v = customFallingBlock.getOwner().getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1.15).setY(0.35);

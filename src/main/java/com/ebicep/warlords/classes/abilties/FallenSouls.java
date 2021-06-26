@@ -21,7 +21,7 @@ import java.util.List;
 
 public class FallenSouls extends AbstractAbility {
 
-    private static float fallenSoulHitBox = 1.18f;
+    private static float fallenSoulHitBox = 1.25f;
     private static float fallenSoulSpeed = 1.95f;
 
     public static float getFallenSoulHitBox() {
@@ -58,6 +58,7 @@ public class FallenSouls extends AbstractAbility {
         Location location = player.getLocation().add(player.getLocation().getDirection().multiply(-1));
         ArmorStand fallenSoulLeft = player.getWorld().spawn(location.subtract(0, .5, 0), ArmorStand.class);
         Location locationLeft = player.getLocation().add(player.getLocation().getDirection().multiply(-1));
+        locationLeft.add(Utils.getLeftDirection(location).multiply(1));
         locationLeft.setYaw(location.getYaw() - 13);// - (int)(location.getPitch()/-10f * 1.6));
         location.add(0, .5, 0);
         ArmorStand fallenSoulMiddle = player.getWorld().spawn(location.subtract(0, .5, 0), ArmorStand.class);
@@ -66,6 +67,7 @@ public class FallenSouls extends AbstractAbility {
         location.add(0, .5, 0);
         ArmorStand fallenSoulRight = player.getWorld().spawn(location.subtract(0, .5, 0), ArmorStand.class);
         Location locationRight = player.getLocation().add(player.getLocation().getDirection().multiply(-1));
+        locationRight.add(Utils.getRightDirection(location).multiply(1));
         locationRight.setYaw(location.getYaw() + 13);// + (int)(location.getPitch()/-10f * 1.6));
         location.add(0, .5, 0);
 

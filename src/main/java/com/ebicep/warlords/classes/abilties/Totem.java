@@ -214,7 +214,7 @@ public class Totem extends EntityArmorStand {
                                 player.sendMessage("§c\u00AB §2Spirit's Respite §7delayed §c" + -Math.round(getDelayedDamage()) + " §7damage. §dYour debt must now be paid.");
                             }
                             circle.replaceEffects(e -> e instanceof DoubleLineEffect, new DoubleLineEffect(ParticleEffect.SPELL_WITCH));
-                            circle.setRadius(7);
+                            circle.setRadius(7.5);
                         }
 
                         int damageTick = -secondsLeft;
@@ -234,7 +234,7 @@ public class Totem extends EntityArmorStand {
                                     TotemSpiritguard.this.getCritMultiplier()
                             );
                             // Teammate heal
-                            List<Entity> near = deathsDebtTotem.getTotemArmorStand().getNearbyEntities(14.0D, 8.0D, 14.0D);
+                            List<Entity> near = deathsDebtTotem.getTotemArmorStand().getNearbyEntities(8.0D, 7.0D, 8.0D);
                             near = Utils.filterOnlyTeammates(near, deathsDebtTotem.getOwner().getPlayer());
                             for (Entity entity : near) {
                                 if (entity instanceof Player) {
@@ -250,7 +250,7 @@ public class Totem extends EntityArmorStand {
                         } else {
                             // Enemy damage
                             player.getWorld().spigot().strikeLightningEffect(standLocation, false);
-                            List<Entity> near = deathsDebtTotem.getTotemArmorStand().getNearbyEntities(14.0D, 7.0D, 14.0D);
+                            List<Entity> near = (List<Entity>) deathsDebtTotem.getTotemArmorStand().getWorld().getNearbyEntities(deathsDebtTotem.getTotemArmorStand().getLocation().clone().subtract(0, 1, 0), 6.5D, 7.0D, 6.5D);
                             near = Utils.filterOutTeammates(near, deathsDebtTotem.getOwner().getPlayer());
                             for (Entity entity : near) {
                                 if (entity instanceof Player) {

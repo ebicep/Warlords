@@ -24,6 +24,12 @@ public abstract class AbstractPlayerClass {
     protected String className;
     protected String classNameShort;
 
+    protected int weaponUpgrade = 0;
+    protected int redUpgrade = 0;
+    protected int purpleUpgrade = 0;
+    protected int blueUpgrade = 0;
+    protected int orangeUpgrade = 0;
+
     public AbstractPlayerClass(Player player, int maxHealth, int maxEnergy, int energyPerSec, int energyOnHit, int damageResistance, AbstractAbility weapon, AbstractAbility red, AbstractAbility purple, AbstractAbility blue, AbstractAbility orange) {
         this.player = player;
         this.maxHealth = maxHealth;
@@ -249,5 +255,45 @@ public abstract class AbstractPlayerClass {
 
     public String getClassNameShort() {
         return classNameShort;
+    }
+
+    public int getWeaponUpgrade() {
+        return weaponUpgrade;
+    }
+
+    public void addWeaponUpgrade() {
+        this.weaponUpgrade++;
+    }
+
+    public int getRedUpgrade() {
+        return redUpgrade;
+    }
+
+    public void addRedUpgrade() {
+        this.redUpgrade++;
+    }
+
+    public int getPurpleUpgrade() {
+        return purpleUpgrade;
+    }
+
+    public void addPurpleUpgrade() {
+        this.purpleUpgrade++;
+    }
+
+    public int getBlueUpgrade() {
+        return blueUpgrade;
+    }
+
+    public void addBlueUpgrade() {
+        this.blueUpgrade++;
+    }
+
+    public int getOrangeUpgrade() {
+        return orangeUpgrade;
+    }
+
+    public void addOrangeUpgrade() {
+        this.orangeUpgrade++;
     }
 }

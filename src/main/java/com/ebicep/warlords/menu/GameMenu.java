@@ -4,13 +4,14 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.util.ItemBuilder;
-import com.ebicep.warlords.util.Settings;
 import org.bukkit.ChatColor;
+import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.Dye;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,7 +20,7 @@ import java.util.List;
 import static com.ebicep.warlords.menu.Menu.ACTION_CLOSE_MENU;
 import static com.ebicep.warlords.player.ArmorManager.*;
 import static com.ebicep.warlords.player.Classes.*;
-import static com.ebicep.warlords.util.Settings.*;
+import static com.ebicep.warlords.player.Settings.*;
 
 public class GameMenu {
     private static final ItemStack MENU_CLOSE = new ItemBuilder(Material.BARRIER)
@@ -432,6 +433,74 @@ public class GameMenu {
         }
 
         menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
+        menu.openForPlayer(player);
+    }
+
+    public static void openSkillTreeMenu(Player player) {
+        Menu menu = new Menu("Skill Tree", 9 * 6);
+        menu.setItem(1, 1,
+                new ItemBuilder(getClassesGroup(getSelected(player)).item)
+                        .name(ChatColor.GREEN + "Class Upgrades")
+                        .get(),
+                (n, e) -> {
+                }
+        );
+        menu.setItem(3, 1,
+                new ItemBuilder(Weapons.getSelected(player).item)
+                        .name(ChatColor.GREEN + "Weapon Upgrades")
+                        .get(),
+                (n, e) -> {
+                }
+        );
+        menu.setItem(5, 1,
+                new ItemBuilder(Material.BANNER)
+                        .name(ChatColor.GREEN + "Flag Upgrades")
+                        .get(),
+                (n, e) -> {
+                }
+        );
+        menu.setItem(7, 1,
+                new ItemBuilder(Material.GOLD_BARDING)
+                        .name(ChatColor.GREEN + "Horse Upgrades")
+                        .get(),
+                (n, e) -> {
+                }
+        );
+        Dye redDye = new Dye();
+        redDye.setColor(DyeColor.RED);
+        menu.setItem(1, 3,
+                new ItemBuilder(redDye.toItemStack(1))
+                        .name(ChatColor.GREEN + "Red Upgrades")
+                        .get(),
+                (n, e) -> {
+                }
+        );
+        menu.setItem(3, 3,
+                new ItemBuilder(Material.GLOWSTONE_DUST)
+                        .name(ChatColor.GREEN + "Purple Upgrades")
+                        .get(),
+                (n, e) -> {
+                }
+        );
+        Dye limeDye = new Dye();
+        limeDye.setColor(DyeColor.LIME);
+        menu.setItem(5, 3,
+                new ItemBuilder(limeDye.toItemStack(1))
+                        .name(ChatColor.GREEN + "Blue Upgrades")
+                        .get(),
+                (n, e) -> {
+                }
+        );
+        Dye orangeDye = new Dye();
+        orangeDye.setColor(DyeColor.ORANGE);
+        menu.setItem(7, 3,
+                new ItemBuilder(orangeDye.toItemStack(1))
+                        .name(ChatColor.GREEN + "Orange Upgrades")
+                        .get(),
+                (n, e) -> {
+                }
+        );
+        menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
     }
 }

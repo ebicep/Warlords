@@ -9,7 +9,6 @@ import com.ebicep.warlords.classes.warrior.specs.defender.Defender;
 import com.ebicep.warlords.events.WarlordsDeathEvent;
 import com.ebicep.warlords.maps.FlagManager;
 import com.ebicep.warlords.powerups.DamagePowerUp;
-import com.ebicep.warlords.util.CustomScoreboard;
 import com.ebicep.warlords.util.ItemBuilder;
 import com.ebicep.warlords.util.PacketUtils;
 import com.ebicep.warlords.util.Utils;
@@ -24,6 +23,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.Dye;
 import org.bukkit.metadata.MetadataValue;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -168,6 +168,7 @@ public class WarlordsPlayer {
     public CooldownManager getCooldownManager() {
         return cooldownManager;
     }
+
 
     public WarlordsPlayer(Player player, String name, UUID uuid, AbstractPlayerClass spec, Weapons weapon) {
         this.player = player;
@@ -773,7 +774,7 @@ public class WarlordsPlayer {
                             Location location = player.getLocation();
                             OrbsOfLife.Orb orb = new OrbsOfLife.Orb(((CraftWorld) player.getWorld()).getHandle(), location, attacker);
                             //TODO Add team whitelist
-                            ArmorStand orbStand = (ArmorStand) location.getWorld().spawnEntity(location.add(Math.random() * 5 - 2.5, 0, Math.random() * 5 - 2.5), EntityType.ARMOR_STAND);
+                            ArmorStand orbStand = (ArmorStand) location.getWorld().spawnEntity(location.add(Math.random() * 3 - 1.5, 0, Math.random() * 3 - 1.5), EntityType.ARMOR_STAND);
                             orbStand.setVisible(false);
                             //WOW need to set passenger to orb or else the orb will move   like ???
                             orbStand.setPassenger(orb.spawn(location).getBukkitEntity());
@@ -923,12 +924,20 @@ public class WarlordsPlayer {
                         windfuryActivate = 0;
                     }
                     if (windfuryActivate < 35) {
-                        for (Player player1 : Bukkit.getOnlinePlayers()) {
-                            player1.playSound(player.getLocation(), "shaman.windfuryweapon.impact", 2, 1);
-                        }
-                        addHealth(attacker, "Windfury Weapon", min, max, 25, 235);
-                        if (health > 0)
-                            addHealth(attacker, "Windfury Weapon", min, max, 25, 235);
+                        final int[] counter = {0};
+                        new BukkitRunnable() {
+                            @Override
+                            public void run() {
+                                for (Player player1 : Bukkit.getOnlinePlayers()) {
+                                    player1.playSound(player.getLocation(), "shaman.windfuryweapon.impact", 2, 1);
+                                }
+                                addHealth(attacker, "Windfury Weapon", min, max, 25, 235);
+                                counter[0]++;
+                                if (counter[0] == 2) {
+                                    this.cancel();
+                                }
+                            }
+                        }.runTaskTimer(Warlords.getInstance(), 3, 3);
                     }
                 } else if (attacker.getCooldownManager().getCooldown(Earthliving.class).size() > 0) {
                     int earthlivingActivate = (int) (Math.random() * 100);

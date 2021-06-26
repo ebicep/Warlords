@@ -34,8 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static com.ebicep.warlords.menu.GameMenu.openMainMenu;
-import static com.ebicep.warlords.menu.GameMenu.openTeamMenu;
+import static com.ebicep.warlords.menu.GameMenu.*;
 
 public class WarlordsEvents implements Listener {
 
@@ -214,6 +213,8 @@ public class WarlordsEvents implements Listener {
                         Warlords.game.getFlags().dropFlag(player);
                         Warlords.getPlayer(player).setFlagCooldown(5);
                     }
+                } else if (itemHeld.getType() == Material.FIREWORK_CHARGE) {
+                    openSkillTreeMenu(player);
                 }
             } else {
                 if (itemHeld.getType() == Material.NETHER_STAR) {

@@ -37,7 +37,7 @@ public class LastStand extends AbstractAbility {
         WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
         warlordsPlayer.getCooldownManager().addCooldown(LastStand.this.getClass(), "LAST", 12, warlordsPlayer, CooldownTypes.BUFF);
 
-        List<Entity> near = player.getNearbyEntities(4.0D, 4.0D, 4.0D);
+        List<Entity> near = player.getNearbyEntities(5.5D, 4.5D, 5.5D);
         near = Utils.filterOnlyTeammates(near, player);
         for (Entity entity : near) {
             if (entity instanceof Player) {

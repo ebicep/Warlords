@@ -514,12 +514,13 @@ public class Chain extends AbstractAbility {
 
     private boolean lookingAtTotem(Player player) {
         Location eye = player.getEyeLocation();
-        eye.setY(eye.getY() + .5);
+        //eye.setY(eye.getY() + .5);
         for (Entity entity : player.getNearbyEntities(20, 17, 20)) {
             if (entity instanceof ArmorStand && entity.hasMetadata("capacitor-totem-" + player.getName().toLowerCase())) {
                 Vector toEntity = ((ArmorStand) entity).getEyeLocation().add(0, 1, 0).toVector().subtract(eye.toVector());
                 float dot = (float) toEntity.normalize().dot(eye.getDirection());
-                return dot > .95f;
+                player.sendMessage("" + dot);
+                return dot > .93f;
             }
         }
         return false;
