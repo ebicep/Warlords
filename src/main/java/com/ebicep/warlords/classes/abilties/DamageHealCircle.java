@@ -1,8 +1,8 @@
 package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.effects.circle.*;
+import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.ParticleEffect;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -88,6 +88,7 @@ public class DamageHealCircle {
 
     public void setLocation(Location location) {
         this.location = location;
+        circle.setCenter(location);
     }
 
     public int getRadius() {

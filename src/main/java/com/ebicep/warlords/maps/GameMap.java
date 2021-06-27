@@ -1,9 +1,9 @@
 package com.ebicep.warlords.maps;
 
-import javax.annotation.Nonnull;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.List;
 

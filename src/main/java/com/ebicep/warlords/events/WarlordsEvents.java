@@ -7,20 +7,18 @@ import com.ebicep.warlords.classes.shaman.specs.spiritguard.Spiritguard;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.flags.GroundFlagLocation;
 import com.ebicep.warlords.maps.flags.PlayerFlagLocation;
-import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.maps.flags.SpawnFlagLocation;
 import com.ebicep.warlords.maps.flags.WaitingFlagLocation;
+import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.ItemBuilder;
 import com.ebicep.warlords.util.PacketUtils;
 import net.minecraft.server.v1_8_R3.EntityLiving;
 import net.minecraft.server.v1_8_R3.GenericAttributes;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -37,8 +35,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
 
 import static com.ebicep.warlords.menu.GameMenu.openMainMenu;
 import static com.ebicep.warlords.menu.GameMenu.openTeamMenu;
@@ -104,14 +100,12 @@ public class WarlordsEvents implements Listener {
             player.sendMessage(" ");
             player.sendMessage(ChatColor.GRAY + "Developed by " + ChatColor.RED + "sumSmash " + ChatColor.GRAY + "&" + ChatColor.RED + " Plikie");
             player.sendMessage(" ");
-            player.sendMessage(ChatColor.GRAY + "/class [ClASS] to choose your class!");
             player.sendMessage(ChatColor.GRAY + "/hotkeymode to change your hotkey mode.");
             player.sendMessage(" ");
-            player.sendMessage(ChatColor.GRAY + "NOTE: We're still in beta, bugs and/or missing features are still present. Please report any bugs you might find.");
+            player.sendMessage(ChatColor.GRAY + "Click the Nether Star or do /menu to open the selection menu.");
             player.sendMessage(" ");
-            player.sendMessage(ChatColor.GRAY + "CURRENT MISSING FEATURES: ");
-            player.sendMessage(ChatColor.RED + "- Revenant's Orbs of Life being hidden for the enemy team");
-            player.sendMessage(ChatColor.RED + "- Flag damage modifier currently does not carry over to a new flag holder.");
+            player.sendMessage(ChatColor.GRAY + "BUILD: " + ChatColor.RED + "RC-1 maven_b-v1.0.0");
+
 
             player.getInventory().clear();
             player.getInventory().setArmorContents(new ItemStack[]{null, null, null, null});
@@ -129,33 +123,32 @@ public class WarlordsEvents implements Listener {
     public void onEntityDamage(EntityDamageByEntityEvent e) {
         if ((e.getEntity() instanceof Player || e.getEntity() instanceof Zombie) && e.getDamager() instanceof Player) {
             Player attacker = (Player) e.getDamager();
-            Player victim = (Player) e.getEntity();
             WarlordsPlayer warlordsPlayerAttacker = Warlords.getPlayer(attacker);
-            WarlordsPlayer warlordsPlayerVictim = Warlords.getPlayer(victim);
-            if (warlordsPlayerAttacker != null && warlordsPlayerVictim != null && warlordsPlayerAttacker.isEnemy(warlordsPlayerVictim)) {
+            WarlordsPlayer warlordsPlayerVictim = Warlords.getPlayer(e.getEntity());
+            if (warlordsPlayerAttacker != null && warlordsPlayerAttacker.isEnemy(warlordsPlayerVictim)) {
                 if (attacker.getInventory().getHeldItemSlot() == 0 && warlordsPlayerAttacker.getHitCooldown() == 0) {
                     for (Player player1 : attacker.getWorld().getPlayers()) {
-                        player1.playSound(victim.getLocation(), Sound.HURT_FLESH, 1, 1);
+                        player1.playSound(warlordsPlayerVictim.getLocation(), Sound.HURT_FLESH, 1, 1);
                     }
                     warlordsPlayerAttacker.setHitCooldown(12);
                     warlordsPlayerAttacker.subtractEnergy(warlordsPlayerAttacker.getSpec().getEnergyOnHit() * -1);
 
-                        if (warlordsPlayerAttacker.getSpec() instanceof Spiritguard && warlordsPlayerAttacker.getSoulBindCooldown() > 0) {
-                            if (warlordsPlayerAttacker.hasBoundPlayer(warlordsPlayerVictim)) {
-                                for (Soulbinding.SoulBoundPlayer soulBindedPlayer : warlordsPlayerAttacker.getSoulBindedPlayers()) {
-                                    if (soulBindedPlayer.getBoundPlayer() == warlordsPlayerVictim) {
-                                        soulBindedPlayer.setHitWithLink(false);
-                                        soulBindedPlayer.setHitWithSoul(false);
-                                        soulBindedPlayer.setTimeLeft(3);
-                                        break;
-                                    }
+                    if (warlordsPlayerAttacker.getSpec() instanceof Spiritguard && warlordsPlayerAttacker.getSoulBindCooldown() > 0) {
+                        if (warlordsPlayerAttacker.hasBoundPlayer(warlordsPlayerVictim)) {
+                            for (Soulbinding.SoulBoundPlayer soulBindedPlayer : warlordsPlayerAttacker.getSoulBindedPlayers()) {
+                                if (soulBindedPlayer.getBoundPlayer() == warlordsPlayerVictim) {
+                                    soulBindedPlayer.setHitWithLink(false);
+                                    soulBindedPlayer.setHitWithSoul(false);
+                                    soulBindedPlayer.setTimeLeft(3);
+                                    break;
                                 }
-                            } else {
-                                victim.sendMessage(ChatColor.RED + "\u00AB " + ChatColor.GRAY + "You have been bound by " + warlordsPlayerAttacker.getName() + "'s " + ChatColor.LIGHT_PURPLE + "Soulbinding Weapon " + ChatColor.GRAY + "!");
-                                warlordsPlayerAttacker.sendMessage(ChatColor.GREEN + "\u00BB " + ChatColor.GRAY + "Your " + ChatColor.LIGHT_PURPLE + "Soulbinding Weapon " + ChatColor.GRAY + "has bound " + victim.getName() + "!");
-                                warlordsPlayerAttacker.getSoulBindedPlayers().add(new Soulbinding.SoulBoundPlayer(warlordsPlayerVictim, 3));
                             }
+                        } else {
+                            warlordsPlayerVictim.sendMessage(ChatColor.RED + "\u00AB " + ChatColor.GRAY + "You have been bound by " + warlordsPlayerAttacker.getName() + "'s " + ChatColor.LIGHT_PURPLE + "Soulbinding Weapon " + ChatColor.GRAY + "!");
+                            warlordsPlayerAttacker.sendMessage(ChatColor.GREEN + "\u00BB " + ChatColor.GRAY + "Your " + ChatColor.LIGHT_PURPLE + "Soulbinding Weapon " + ChatColor.GRAY + "has bound " + warlordsPlayerVictim.getName() + "!");
+                            warlordsPlayerAttacker.getSoulBindedPlayers().add(new Soulbinding.SoulBoundPlayer(warlordsPlayerVictim, 3));
                         }
+                    }
 
                     warlordsPlayerVictim.addHealth(warlordsPlayerAttacker, "", -132, -179, 25, 200);
                 }
@@ -345,10 +338,11 @@ public class WarlordsEvents implements Listener {
     }
 
     @EventHandler
+    (priority = EventPriority.HIGHEST)
     public void onPlayerChat(AsyncPlayerChatEvent e) {
         Player player = e.getPlayer();
         try {
-            // We need to do this in a callSyncMethod, because we need it to happenon the main thread. Else weird bugs can happen in other threads
+            // We need to do this in a callSyncMethod, because we need it to happen in the main thread. or else weird bugs can happen in other threads
             Bukkit.getScheduler().callSyncMethod(Warlords.getInstance(), () -> {
                 WarlordsPlayer wp = Warlords.getPlayer(player);
                 if (wp == null) {
@@ -453,7 +447,7 @@ public class WarlordsEvents implements Listener {
                 Team loser = event.getTeam();
                 event.getGameState().addCapture(pfl.getPlayer());
                 event.getGame().forEachOnlinePlayer((p, t) -> {
-                    String message = "§c" + pfl.getPlayer().getName() + " §ehas captured the "+loser.coloredPrefix()+" §eflag!";
+                    String message = pfl.getPlayer().getColoredName() + " §ehas captured the "+loser.coloredPrefix()+" §eflag!";
                     p.sendMessage(message);
                     PacketUtils.sendTitle(p, "", message, 0, 60, 0);
 

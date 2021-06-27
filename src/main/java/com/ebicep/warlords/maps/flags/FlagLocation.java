@@ -5,9 +5,10 @@
  */
 package com.ebicep.warlords.maps.flags;
 
+import org.bukkit.Location;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import org.bukkit.Location;
 
 public interface FlagLocation {
 

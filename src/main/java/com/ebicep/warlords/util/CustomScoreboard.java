@@ -42,7 +42,7 @@ public class CustomScoreboard {
         sideBar.getScore("     ").setScore(4);
         sideBar.getScore("" + ChatColor.GREEN + warlordsPlayer.getTotalKills() + ChatColor.RESET + " Kills " + ChatColor.GREEN + warlordsPlayer.getTotalAssists() + ChatColor.RESET + " Assists").setScore(3);
         sideBar.getScore("      ").setScore(2);
-        sideBar.getScore(ChatColor.YELLOW + "WL 2.0 master_b-v0.0.4").setScore(1);
+        sideBar.getScore(ChatColor.YELLOW + "WL 2.0 RC-1").setScore(1);
         this.gameState = gameState;
         this.warlordsPlayer = warlordsPlayer;
     }
@@ -65,13 +65,16 @@ public class CustomScoreboard {
         this.gameState.getGame().forEachOfflinePlayer((player, team) -> {
             WarlordsPlayer s = Warlords.getPlayer(player);
             Team temp = scoreboard.registerNewTeam(s.getName());
-            temp.setPrefix(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + s.getSpec().getClassNameShort() + ChatColor.DARK_GRAY + "] " + team.prefix());
+            temp.setPrefix(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + s.getSpec().getClassNameShort() + ChatColor.DARK_GRAY + "] " + team.teamColor());
             temp.addEntry(s.getName());
             temp.setSuffix(ChatColor.DARK_GRAY + " [" + ChatColor.GOLD + "Lv90" + ChatColor.DARK_GRAY + "]");
         });
     }
 
     public void updateBasedOnGameState(PlayingState gameState) {
+
+        this.updateHealth();
+
         // Timer
         {
             int secondsRemaining = gameState.getTimer() / 20;

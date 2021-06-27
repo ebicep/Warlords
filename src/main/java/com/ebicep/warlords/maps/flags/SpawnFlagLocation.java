@@ -1,7 +1,8 @@
 package com.ebicep.warlords.maps.flags;
 
-import javax.annotation.Nullable;
 import org.bukkit.Location;
+
+import javax.annotation.Nullable;
 
 public class SpawnFlagLocation extends AbstractLocationBasedFlagLocation {
 

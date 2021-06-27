@@ -1,20 +1,22 @@
 package com.ebicep.warlords.util;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Team;
-import static com.ebicep.warlords.util.Utils.radiusAround;
-import static com.ebicep.warlords.util.Utils.sortClosestBy;
+import com.ebicep.warlords.player.WarlordsPlayer;
+import org.bukkit.Location;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+
+import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-import javax.annotation.Nonnull;
-import org.bukkit.Location;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
+
+import static com.ebicep.warlords.util.Utils.radiusAround;
+import static com.ebicep.warlords.util.Utils.sortClosestBy;
 
 // TODO run regex
 // Search: (\n +)Utils\.filterOnlyEnemies\(([a-z]+), ([0-9.DF]+), ([0-9.DF]+), ([0-9.DF]+), ([a-z]+)\)

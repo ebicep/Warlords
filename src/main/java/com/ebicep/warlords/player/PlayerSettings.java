@@ -1,11 +1,9 @@
 package com.ebicep.warlords.player;
 
-import com.ebicep.warlords.player.Classes;
-import com.ebicep.warlords.player.ClassesSkillBoosts;
-import com.ebicep.warlords.player.Weapons;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
 public class PlayerSettings implements ConfigurationSerializable {
     private Classes selectedClass = Classes.CRYOMANCER;

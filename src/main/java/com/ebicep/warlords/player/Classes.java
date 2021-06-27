@@ -15,15 +15,15 @@ import com.ebicep.warlords.classes.warrior.specs.berserker.Berserker;
 import com.ebicep.warlords.classes.warrior.specs.defender.Defender;
 import com.ebicep.warlords.classes.warrior.specs.revenant.Revenant;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.player.ClassesSkillBoosts.*;
-import java.util.function.Supplier;
-import org.bukkit.OfflinePlayer;
 
 public enum Classes {
     PYROMANCER("Pyromancer",

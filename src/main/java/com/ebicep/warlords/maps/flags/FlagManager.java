@@ -1,11 +1,11 @@
 package com.ebicep.warlords.maps.flags;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.events.WarlordsDeathEvent;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.state.PlayingState;
-import org.bukkit.*;
+import com.ebicep.warlords.player.WarlordsPlayer;
+import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -68,7 +68,7 @@ public class FlagManager implements Listener {
         ) {
             for(Team t : Team.values()) {
                 FlagInfo info = get(t);
-                info.setFlag(new WaitingFlagLocation(info.getSpawnLocation(), t == team));
+                info.setFlag(new WaitingFlagLocation(info.getSpawnLocation(), t != team));
             }
         }
     }

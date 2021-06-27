@@ -1,11 +1,11 @@
 package com.ebicep.warlords.effects;
 
 import com.ebicep.warlords.util.ParticleEffect;
-import java.util.stream.Collectors;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
+import java.util.stream.Collectors;
 
 public class TeamBasedEffect {
 

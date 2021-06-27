@@ -11,10 +11,12 @@ import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
+import javax.annotation.Nullable;
 import java.text.DecimalFormat;
 import java.util.Collection;
 import java.util.Collections;
@@ -24,8 +26,6 @@ import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.annotation.Nullable;
-import org.bukkit.entity.LivingEntity;
 
 public class Utils {
 
@@ -205,9 +205,9 @@ public class Utils {
     public static <T> Predicate<T> radiusAround(BiConsumer<T, Location> map, Location loc, double x, double y, double z) {
         return entity -> {
             map.accept(entity, LOCATION_CACHE_DISTANCE);
-            double xDif = (loc.getX() - LOCATION_CACHE_DISTANCE.getX()) * 2 / x;
-            double yDif = (loc.getY() - LOCATION_CACHE_DISTANCE.getY()) * 2 / y;
-            double zDif = (loc.getZ() - LOCATION_CACHE_DISTANCE.getZ()) * 2 / z;
+            double xDif = (loc.getX() - LOCATION_CACHE_DISTANCE.getX()) / x;
+            double yDif = (loc.getY() - LOCATION_CACHE_DISTANCE.getY()) / y;
+            double zDif = (loc.getZ() - LOCATION_CACHE_DISTANCE.getZ()) / z;
             return xDif * xDif + yDif * yDif + zDif * zDif <= 1;
         };
     }

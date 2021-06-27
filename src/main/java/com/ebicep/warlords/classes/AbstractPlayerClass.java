@@ -1,11 +1,12 @@
 package com.ebicep.warlords.classes;
 
-import com.ebicep.warlords.player.WarlordsPlayer;
-import javax.annotation.Nonnull;
 import com.ebicep.warlords.classes.abilties.*;
+import com.ebicep.warlords.player.WarlordsPlayer;
 import net.minecraft.server.v1_8_R3.PacketPlayOutAnimation;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
+
+import javax.annotation.Nonnull;
 
 public abstract class AbstractPlayerClass {
 
@@ -107,36 +108,60 @@ public abstract class AbstractPlayerClass {
                     weapon.onActivate(wp, player);
                     if (!(weapon instanceof Strike) && !(weapon instanceof EarthenSpike))
                         sendRightClickPacket(player);
+                } else {
+                    player.sendMessage("§cYou can't do that yet!");
+                    player.playSound(player.getLocation(), "notreadyalert", 1, 1);
                 }
+
             } else if (slot == 1) {
-                if (red.getCurrentCooldown() == 0 && player.getLevel() >= red.getEnergyCost()) {
-                    red.onActivate(wp, player);
-                    if (!(red instanceof Chain)) {
-                        red.setCurrentCooldown(red.cooldown);
-                        sendRightClickPacket(player);
+                if (red.getCurrentCooldown() == 0) {
+                    if (player.getLevel() >= red.getEnergyCost()) {
+                        red.onActivate(wp, player);
+                        if (!(red instanceof Chain)) {
+                            red.setCurrentCooldown(red.cooldown);
+                            sendRightClickPacket(player);
+                        }
+                    } else {
+                        player.sendMessage("§cYou can't do that yet!");
+                        player.playSound(player.getLocation(), "notreadyalert", 1, 1);
                     }
 
                 }
             } else if (slot == 2) {
-                if (purple.getCurrentCooldown() == 0 && player.getLevel() >= purple.getEnergyCost()) {
-                    purple.onActivate(wp, player);
-                    purple.setCurrentCooldown(purple.cooldown);
-                    sendRightClickPacket(player);
+                if (purple.getCurrentCooldown() == 0) {
+                    if (player.getLevel() >= purple.getEnergyCost()) {
+                        purple.onActivate(wp, player);
+                        purple.setCurrentCooldown(purple.cooldown);
+                        sendRightClickPacket(player);
+                    } else {
+                        player.sendMessage("§cYou can't do that yet!");
+                        player.playSound(player.getLocation(), "notreadyalert", 1, 1);
+                    }
                 }
             } else if (slot == 3) {
-                if (blue.getCurrentCooldown() == 0 && player.getLevel() >= blue.getEnergyCost()) {
-                    blue.onActivate(wp, player);
-                    if (!(blue instanceof Chain) && !(blue instanceof Intervene)) {
-                        blue.setCurrentCooldown(blue.cooldown);
-                        sendRightClickPacket(player);
+                if (blue.getCurrentCooldown() == 0) {
+                    if (player.getLevel() >= blue.getEnergyCost()) {
+                        blue.onActivate(wp, player);
+                        if (!(blue instanceof Chain) && !(blue instanceof Intervene)) {
+                            blue.setCurrentCooldown(blue.cooldown);
+                            sendRightClickPacket(player);
+                        } else {
+                            player.sendMessage("§cYou can't do that yet!");
+                            player.playSound(player.getLocation(), "notreadyalert", 1, 1);
+                        }
                     }
                 }
             } else if (slot == 4) {
-                if (orange.getCurrentCooldown() == 0 && player.getLevel() >= orange.getEnergyCost()) {
-                    orange.onActivate(wp, player);
-                    if (!(orange instanceof HammerOfLight) && !(orange instanceof HealingRain)) {
-                        orange.setCurrentCooldown(orange.cooldown);
-                        sendRightClickPacket(player);
+                if (orange.getCurrentCooldown() == 0) {
+                    if (player.getLevel() >= orange.getEnergyCost()) {
+                        orange.onActivate(wp, player);
+                        if (!(orange instanceof HammerOfLight) && !(orange instanceof HealingRain)) {
+                            orange.setCurrentCooldown(orange.cooldown);
+                            sendRightClickPacket(player);
+                        } else {
+                            player.sendMessage("§cYou can't do that yet!");
+                            player.playSound(player.getLocation(), "notreadyalert", 1, 1);
+                        }
                     }
                 }
             }

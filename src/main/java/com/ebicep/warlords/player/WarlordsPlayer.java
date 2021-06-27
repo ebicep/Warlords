@@ -1,45 +1,40 @@
 package com.ebicep.warlords.player;
 
-import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.classes.abilties.HammerOfLight;
 import com.ebicep.warlords.classes.abilties.OrbsOfLife;
 import com.ebicep.warlords.classes.abilties.Soulbinding;
 import com.ebicep.warlords.classes.abilties.Totem;
 import com.ebicep.warlords.events.WarlordsDeathEvent;
-import com.ebicep.warlords.maps.flags.FlagManager;
-import com.ebicep.warlords.maps.flags.FlagInfo;
-import com.ebicep.warlords.maps.flags.FlagLocation;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Team;
-import com.ebicep.warlords.util.ItemBuilder;
-import com.ebicep.warlords.maps.flags.GroundFlagLocation;
-import com.ebicep.warlords.maps.flags.PlayerFlagLocation;
+import com.ebicep.warlords.maps.flags.*;
 import com.ebicep.warlords.maps.state.PlayingState;
 import com.ebicep.warlords.util.*;
+import net.minecraft.server.v1_8_R3.EntityLiving;
+import net.minecraft.server.v1_8_R3.GenericAttributes;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.IntStream;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import net.minecraft.server.v1_8_R3.EntityLiving;
-import net.minecraft.server.v1_8_R3.GenericAttributes;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
-import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.metadata.FixedMetadataValue;
 
 public final class WarlordsPlayer {
 
@@ -295,7 +290,7 @@ public final class WarlordsPlayer {
                 break;
         }
         if (powerUpDamage > 0) {
-            actionBarMessage.append(ChatColor.GREEN).append("DAMAGE").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append((int) powerUpDamage).append(" ");
+            actionBarMessage.append(ChatColor.GREEN).append("DMG").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append((int) powerUpDamage).append(" ");
         }
         if (powerUpEnergy > 0) {
             actionBarMessage.append(ChatColor.GREEN).append("ENERGY").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append((int) powerUpEnergy).append(" ");
@@ -304,7 +299,7 @@ public final class WarlordsPlayer {
             actionBarMessage.append(ChatColor.GREEN).append("SPEED").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append((int) powerUpSpeed).append(" ");
         }
         if (spawnDamage > 0) {
-            actionBarMessage.append(ChatColor.GREEN).append("DAMAGE").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append(spawnDamage).append(" ");
+            actionBarMessage.append(ChatColor.GREEN).append("DMG").append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append(spawnDamage).append(" ");
         }
         PacketUtils.sendActionBar(player, actionBarMessage.toString());
     }
@@ -456,15 +451,15 @@ public final class WarlordsPlayer {
 
     public void updateItem(Player player, int slot, AbstractAbility ability, ItemStack item) {
         if (ability.getCurrentCooldown() > 0) {
-            ItemStack cooldown = new ItemStack(Material.INK_SACK, ability.getCurrentCooldownItem(), (byte)8);
+            ItemStack cooldown = new ItemStack(Material.INK_SACK, ability.getCurrentCooldownItem(), (byte) 8);
             player.getInventory().setItem(slot, cooldown);
         } else {
             player.getInventory().setItem(
-                    1,
+                    slot,
                     new ItemBuilder(item)
                             .name(ChatColor.GOLD + ability.getName())
                             .lore(ChatColor.GRAY + "Cooldown: " + ChatColor.AQUA + ability.getCooldown() + " seconds",
-                                    ability.getEnergyCost() != 0
+                                    ability.getEnergyCost() != 0 && ability.getEnergyCost() != -120
                                             ? ChatColor.GRAY + "Energy Cost: " + ChatColor.YELLOW + ability.getEnergyCost() + "\n" +
                                             (ability.getCritChance() != 0 && ability.getCritChance() != -1 && ability.getCritMultiplier() != 100
                                                     ? ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + ability.getCritChance() + "%" + "\n"
@@ -630,7 +625,6 @@ public final class WarlordsPlayer {
                     if (entity instanceof Player)
                         PacketUtils.sendTitle((Player)entity, ChatColor.RED + "YOU DIED!", ChatColor.GRAY + "You took " + ChatColor.RED + Math.round(min * -1) + ChatColor.GRAY + " melee damage and died.", 0, 40, 0);
 
-
                     health = 0;
                 } else {
                     health += min;
@@ -658,7 +652,7 @@ public final class WarlordsPlayer {
                     Bukkit.getPluginManager().callEvent(new WarlordsDeathEvent(this));
 
 
-                    gameState.addKill(team, false); // TODO, fall damage is only a suicide if it happens more than 5 seconda fter the last damage
+                    gameState.addKill(team, false); // TODO, fall damage is only a suicide if it happens more than 5 seconds after the last damage
                     showDeathAnimation();
 
                     //title YOU DIED
@@ -967,7 +961,7 @@ public final class WarlordsPlayer {
                     addGrave();
 
                     showDeathAnimation();
-                    if(attacker.entity instanceof Player) {
+                    if (attacker.entity instanceof Player) {
                         ((Player)attacker.entity).playSound(attacker.getLocation(), Sound.ORB_PICKUP, 500f, 0.3f);
                     }
 
@@ -987,7 +981,7 @@ public final class WarlordsPlayer {
                             p.sendMessage(getColoredName() + ChatColor.GRAY + " was killed by " + ChatColor.BLUE + attacker.getName());
                         }
                     });
-                    gameState.addKill(team.enemy(), false);
+                    gameState.addKill(team, false);
 
                     if (team == Team.BLUE) {
                         Warlords.redKills++;
@@ -1002,7 +996,7 @@ public final class WarlordsPlayer {
                 } else {
                     if (!ability.isEmpty() && !ability.equals("Time Warp") && !ability.equals("Healing Rain") && !ability.equals("Hammer of Light")) {
                         if (attacker.entity instanceof Player) {
-                            ((Player)attacker.entity).playSound(attacker.getLocation(), Sound.ORB_PICKUP, 0.95f, 0.3f);
+                            ((Player)attacker.entity).playSound(attacker.getLocation(), Sound.ORB_PICKUP, 0.95f, 1);
                         }
                     }
                 }
@@ -1067,9 +1061,6 @@ public final class WarlordsPlayer {
 
     public void addGrave() {
         LivingEntity player = this.entity;
-        if(player == null) {
-            return;
-        }
 
         Location deathLocation = player.getLocation();
         Block bestGraveCandidate = null;
@@ -1795,6 +1786,12 @@ public final class WarlordsPlayer {
             player.setMaxHealth(40);
             player.setLevel((int) this.getMaxEnergy());
             player.getInventory().clear();
+            this.spec.getWeapon().updateDescription(player);
+            this.spec.getRed().updateDescription(player);
+            this.spec.getPurple().updateDescription(player);
+            this.spec.getBlue().updateDescription(player);
+            this.spec.getOrange().updateDescription(player);
+            applySkillBoost(player);
             player.closeInventory();
             ((EntityLiving) ((CraftPlayer) player).getHandle()).setAbsorptionHearts(0);
             this.assignItemLore(player);
@@ -1817,7 +1814,7 @@ public final class WarlordsPlayer {
     }
 
     public boolean isDeath() {
-        return this.health <= 0;
+        return this.health <= 0 || this.dead;
     }
 
     public boolean isAlive() {

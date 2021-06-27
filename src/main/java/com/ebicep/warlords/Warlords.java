@@ -1,6 +1,5 @@
 package com.ebicep.warlords;
 
-import com.ebicep.warlords.player.PlayerSettings;
 import com.ebicep.warlords.classes.abilties.OrbsOfLife;
 import com.ebicep.warlords.classes.abilties.Soulbinding;
 import com.ebicep.warlords.classes.abilties.UndyingArmy;
@@ -9,33 +8,25 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.menu.MenuEventListener;
+import com.ebicep.warlords.player.PlayerSettings;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.PacketUtils;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.RemoveEntities;
 import com.ebicep.warlords.util.Utils;
-import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
+import org.bukkit.*;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.metadata.MetadataValue;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import org.bukkit.configuration.serialization.ConfigurationSerialization;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 public class Warlords extends JavaPlugin {
@@ -168,6 +159,7 @@ public class Warlords extends JavaPlugin {
         getCommand("hotkeymode").setExecutor(commands);
         getCommand("hitbox").setExecutor(commands);
         getCommand("speed").setExecutor(commands);
+        getCommand("wldebug").setExecutor(commands);
 
         getCommand("start").setTabCompleter(commands);
         getCommand("class").setTabCompleter(commands);
@@ -365,7 +357,7 @@ public class Warlords extends JavaPlugin {
                                     player.getInventory().remove(UndyingArmy.BONE);
                                 }
                             }
-                            warlordsPlayer.respawn();
+                            // warlordsPlayer.respawn();
                             if (player != null) {
                                 player.setGameMode(GameMode.SPECTATOR);
                             }
@@ -410,7 +402,6 @@ public class Warlords extends JavaPlugin {
 
                         }
                         //energy
-                        if (player == null || player.getGameMode() == GameMode.CREATIVE) {
                             if (warlordsPlayer.getEnergy() < warlordsPlayer.getMaxEnergy()) {
                                 float newEnergy = warlordsPlayer.getEnergy() + warlordsPlayer.getSpec().getEnergyPerSec() / 20f;
                                 if (warlordsPlayer.getWrathDuration() > 0) {
@@ -424,11 +415,12 @@ public class Warlords extends JavaPlugin {
                                 }
                                 warlordsPlayer.setEnergy(newEnergy);
                             }
+
                             if (player != null) {
                                 player.setLevel((int) warlordsPlayer.getEnergy());
                                 player.setExp(warlordsPlayer.getEnergy() / warlordsPlayer.getMaxEnergy());
                             }
-                        }
+
                         //melee cooldown
                         if (warlordsPlayer.getHitCooldown() > 0) {
                             warlordsPlayer.setHitCooldown(warlordsPlayer.getHitCooldown() - 1);

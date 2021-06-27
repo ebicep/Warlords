@@ -2,9 +2,10 @@ package com.ebicep.warlords.events;
 
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Team;
-import javax.annotation.Nonnull;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+
+import javax.annotation.Nonnull;
 
 public class WarlordsPointsChangedEvent extends Event {
 

@@ -3,23 +3,16 @@ package com.ebicep.warlords.maps.state;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.FieldUpdateOperators;
 import com.ebicep.warlords.events.WarlordsPointsChangedEvent;
-import com.ebicep.warlords.maps.flags.FlagManager;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Gates;
 import com.ebicep.warlords.maps.Team;
-import com.ebicep.warlords.powerups.PowerupManager;
-import com.ebicep.warlords.util.*;
+import com.ebicep.warlords.maps.flags.FlagManager;
 import com.ebicep.warlords.player.*;
-import static com.ebicep.warlords.util.Utils.sendMessage;
-import java.util.*;
-import java.util.function.BiConsumer;
-import java.util.function.BinaryOperator;
-import java.util.function.Function;
-import java.util.function.Supplier;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import com.ebicep.warlords.powerups.PowerupManager;
+import com.ebicep.warlords.util.CustomScoreboard;
+import com.ebicep.warlords.util.PacketUtils;
+import com.ebicep.warlords.util.RemoveEntities;
+import com.ebicep.warlords.util.Settings;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -27,6 +20,18 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.*;
+import java.util.function.BiConsumer;
+import java.util.function.BinaryOperator;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+
+import static com.ebicep.warlords.util.Utils.sendMessage;
 
 public class PlayingState implements State, TimerDebugAble {
     private static final int GATE_TIMER = 10 * 20;
@@ -51,7 +56,6 @@ public class PlayingState implements State, TimerDebugAble {
     {
         resetStats();
     }
-
 
     @Nullable
     private FlagManager flags = null;
@@ -123,7 +127,7 @@ public class PlayingState implements State, TimerDebugAble {
     @SuppressWarnings("null")
     public FlagManager flags() {
         if (this.flags == null) {
-            throw new IllegalStateException("Cannot acces flag sub component, state not enabled");
+            throw new IllegalStateException("Cannot access flag sub component, state not enabled");
         }
         return this.flags;
     }

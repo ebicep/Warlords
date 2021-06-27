@@ -15,13 +15,13 @@ import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public class Game implements Runnable {
 
@@ -228,7 +228,7 @@ public class Game implements Runnable {
         sideBar.getScore(ChatColor.GOLD + "Lv90 " + Classes.getClassesGroup(Classes.getSelected(player)).name).setScore(4);
         sideBar.getScore(ChatColor.WHITE + "Spec: " + ChatColor.GREEN + Classes.getSelected(player).name).setScore(3);
         sideBar.getScore("    ").setScore(2);
-        sideBar.getScore(ChatColor.YELLOW + "WL 2.0 master_b-v0.0.3 ").setScore(1);
+        sideBar.getScore(ChatColor.YELLOW + "WL 2.0 RC-1").setScore(1);
 
         player.setScoreboard(board);
     }

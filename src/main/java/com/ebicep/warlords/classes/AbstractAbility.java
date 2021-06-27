@@ -1,8 +1,9 @@
 package com.ebicep.warlords.classes;
 
 import com.ebicep.warlords.player.WarlordsPlayer;
-import javax.annotation.Nonnull;
 import org.bukkit.entity.Player;
+
+import javax.annotation.Nonnull;
 
 public abstract class AbstractAbility {
 
@@ -32,18 +33,21 @@ public abstract class AbstractAbility {
 
     public abstract void onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player);
 
-
     public void boostSkill() {
-        boosted = true;
-        this.minDamageHeal *= 1.2;
-        this.maxDamageHeal *= 1.2;
+        if (!boosted) {
+            boosted = true;
+            this.minDamageHeal *= 1.2;
+            this.maxDamageHeal *= 1.2;
+        }
     }
 
     // purely for fun now, perhaps may actually use this later
     public void boostOrange() {
-        boosted = true;
-        this.minDamageHeal *= 1.4;
-        this.maxDamageHeal *= 1.4;
+        if (!boosted) {
+            boosted = true;
+            this.minDamageHeal *= 1.3;
+            this.maxDamageHeal *= 1.3;
+        }
     }
 
     public String getName() {

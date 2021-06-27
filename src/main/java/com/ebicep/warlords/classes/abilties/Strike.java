@@ -2,7 +2,6 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.classes.paladin.specs.avenger.Avenger;
-import com.ebicep.warlords.util.PlayerFilter;
 import com.ebicep.warlords.classes.paladin.specs.crusader.Crusader;
 import com.ebicep.warlords.classes.paladin.specs.protector.Protector;
 import com.ebicep.warlords.classes.warrior.specs.berserker.Berserker;
@@ -11,15 +10,15 @@ import com.ebicep.warlords.classes.warrior.specs.revenant.Revenant;
 import com.ebicep.warlords.player.Classes;
 import com.ebicep.warlords.player.ClassesSkillBoosts;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.util.PlayerFilter;
 import com.ebicep.warlords.util.Utils;
 import net.minecraft.server.v1_8_R3.PacketPlayOutAnimation;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 
 public class Strike extends AbstractAbility {
 
@@ -71,7 +70,7 @@ public class Strike extends AbstractAbility {
 
     @Override
     public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
-        PlayerFilter.entitiesAround(warlordsPlayer, 3.6, 3.6, 3.6)
+        PlayerFilter.entitiesAround(warlordsPlayer, 3.45, 3.45, 3.45)
             .aliveEnemiesOf(warlordsPlayer)
             .closestFirst(warlordsPlayer)
             .requireLineOfSight(warlordsPlayer)
@@ -96,9 +95,10 @@ public class Strike extends AbstractAbility {
                         nearPlayer.subtractEnergy(6);
                         if (warlordsPlayer.getWrathDuration() != -1) {
                             for(WarlordsPlayer nearNearPlayer : PlayerFilter
-                                .entitiesAround(nearPlayer, 3.6, 3.6, 3.6)
+                                .entitiesAround(nearPlayer, 5, 3, 5)
                                 .aliveEnemiesOf(warlordsPlayer)
                                 .closestFirst(nearPlayer)
+                                .excluding(nearPlayer)
                                 .limit(2)
                             ) {
                                 System.out.println("NEAR NEAR HIT " + nearNearPlayer);
@@ -123,7 +123,7 @@ public class Strike extends AbstractAbility {
                             .aliveTeammatesOfExcludingSelf(warlordsPlayer)
                             .closestFirst(warlordsPlayer)
                             .limit(2)
-                            .first((nearTeamPlayer) ->
+                            .forEach((nearTeamPlayer) ->
                                 nearTeamPlayer.addEnergy(warlordsPlayer, name, 24)
                             );
                     } else if (warlordsPlayer.getSpec() instanceof Protector) {

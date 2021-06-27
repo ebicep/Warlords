@@ -3,9 +3,15 @@ package com.ebicep.warlords.maps.state;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Gates;
 import com.ebicep.warlords.util.Utils;
-import static com.ebicep.warlords.util.Utils.sendMessage;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
+import org.bukkit.entity.Player;
+import org.bukkit.scoreboard.Scoreboard;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import static com.ebicep.warlords.util.Utils.sendMessage;
 
 public class PreLobbyState implements State, TimerDebugAble {
 
@@ -29,8 +35,8 @@ public class PreLobbyState implements State, TimerDebugAble {
             if (timer % 20 == 0) {
                 int time = timer / 20;
                 game.forEachOnlinePlayer((player, team) -> {
-                    // updateTimeLeft(player, remaining / 20, game);
-                    // updatePlayers(player, players, game);
+                    updateTimeLeft(player, time);
+                    updatePlayers(player, players, game);
                 });
                 if (time == 30) {
                     game.forEachOnlinePlayer((player, team) -> {
@@ -49,7 +55,7 @@ public class PreLobbyState implements State, TimerDebugAble {
                     });
                 } else if (time <= 5 && time != 0) {
                     game.forEachOnlinePlayer((player, team) -> {
-                        String s = time == 1 ? "" : "s";
+                        String s = time == 1 ? "!" : "s!";
                         sendMessage(player, false, ChatColor.YELLOW + "The game starts in " + ChatColor.RED + time + ChatColor.YELLOW + " second" + s);
                         player.playSound(player.getLocation(), Sound.NOTE_STICKS, 1, 1);
                     });
@@ -89,6 +95,37 @@ public class PreLobbyState implements State, TimerDebugAble {
     @Override
     public void resetTimer() throws IllegalStateException {
         this.timer = game.getMap().getCountdownTimerInTicks();
+    }
+
+    public void updatePlayers(Player player, int players, Game game) {
+        SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
+        String dateString = format.format(new Date());
+        Scoreboard scoreboard = player.getScoreboard();
+        for (String entry : scoreboard.getEntries()) {
+            String entryUnformatted = ChatColor.stripColor(entry);
+            if (entryUnformatted.contains("Players")) {
+                scoreboard.resetScores(entry);
+                scoreboard.getObjective(dateString).getScore(ChatColor.WHITE + "Players: " + ChatColor.GREEN + players + "/" + game.getMap().getMaxPlayers()).setScore(10);
+            }
+        }
+    }
+
+    public void updateTimeLeft(Player player, int time) {
+        SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
+        String dateString = format.format(new Date());
+        Scoreboard scoreboard = player.getScoreboard();
+        time += 1;
+        for (String entry : scoreboard.getEntries()) {
+            String entryUnformatted = ChatColor.stripColor(entry);
+            if (entryUnformatted.contains("Starting in")) {
+                scoreboard.resetScores(entry);
+                if (time < 10) {
+                    scoreboard.getObjective(dateString).getScore(ChatColor.WHITE + "Starting in: " + ChatColor.GREEN + "00:0" + time + ChatColor.WHITE + " to").setScore(8);
+                } else {
+                    scoreboard.getObjective(dateString).getScore(ChatColor.WHITE + "Starting in: " + ChatColor.GREEN + "00:" + time + ChatColor.WHITE + " to").setScore(8);
+                }
+            }
+        }
     }
 
 }
