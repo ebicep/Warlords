@@ -1,6 +1,8 @@
 package com.ebicep.warlords.database;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.maps.Game;
+import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.state.PlayingState;
 import com.ebicep.warlords.player.ArmorManager;
@@ -431,7 +433,7 @@ public class DatabaseManager {
             System.out.println("Error trying to insert game stats");
         }
     }
-    
+
     public String getWarlordsPlusEndGameStats(PlayingState gameState) {
         StringBuilder output = new StringBuilder("Winners:");
         int bluePoints = gameState.getStats(Team.RED).points();

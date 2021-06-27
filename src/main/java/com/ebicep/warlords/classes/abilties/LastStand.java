@@ -1,11 +1,13 @@
 package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.Matrix4d;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
 import org.bukkit.Location;
+import org.bukkit.Warning;
 import org.bukkit.entity.Player;
 
 
@@ -30,13 +32,12 @@ public class LastStand extends AbstractAbility {
     @Override
     public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
         warlordsPlayer.setLastStandedBy(warlordsPlayer);
-        warlordsPlayer.setLastStandDuration(12);
-        PlayerFilter.entitiesAround(warlordsPlayer, 4, 4, 4)
+        warlordsPlayer.getCooldownManager().addCooldown(LastStand.this.getClass(), "LAST", 12, warlordsPlayer, CooldownTypes.BUFF);
+        PlayerFilter.entitiesAround(warlordsPlayer, 5, 5, 5)
             .aliveTeammatesOfExcludingSelf(warlordsPlayer)
             .forEach((nearPlayer) -> {
-                nearPlayer.setLastStandDuration(6);
-                nearPlayer.setLastStandedBy(warlordsPlayer);
-                player.sendMessage("you last standed " + nearPlayer.getName());
+                nearPlayer.getCooldownManager().addCooldown(LastStand.this.getClass(), "LAST", 6, warlordsPlayer, CooldownTypes.BUFF);
+                player.sendMessage("§7you last standed §e" + nearPlayer.getName());
             });
         warlordsPlayer.subtractEnergy(energyCost);
 

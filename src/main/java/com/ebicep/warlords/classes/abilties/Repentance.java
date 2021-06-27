@@ -2,15 +2,32 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.maps.Game;
+import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.ParticleEffect;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class Repentance extends AbstractAbility {
+    private float pool = 0;
 
     public Repentance() {
         super("Repentance", 0, 0, 31.32f, 20, 0, 0);
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                if (pool > 0) {
+                    float newPool = pool * .8f - 60;
+                    pool = Math.max(newPool, 0);
+                }
+                if (Warlords.game.getState() == Game.State.END) {
+                    this.cancel();
+                }
+            }
+        }.runTaskTimer(Warlords.getInstance(), 0, 20);
     }
 
     @Override
@@ -24,8 +41,8 @@ public class Repentance extends AbstractAbility {
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
         WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
-        warlordsPlayer.setRepentanceDuration(12);
-        warlordsPlayer.setRepentanceCounter(warlordsPlayer.getRepentanceCounter() + 2000);
+        pool += 2000;
+        warlordsPlayer.getCooldownManager().addCooldown(Repentance.this.getClass(), "REPE", 12, warlordsPlayer, CooldownTypes.ABILITY);
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "paladin.barrieroflight.impact", 2, 1.35f);
@@ -44,5 +61,17 @@ public class Repentance extends AbstractAbility {
                 ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(255, 255, 255), particleLoc, 500);
             }
         }
+    }
+
+    public float getPool() {
+        return pool;
+    }
+
+    public void addToPool(float amount) {
+        this.pool += amount;
+    }
+
+    public void setPool(float pool) {
+        this.pool = pool;
     }
 }

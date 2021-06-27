@@ -20,7 +20,7 @@ import java.util.List;
 
 public class FallenSouls extends AbstractAbility {
 
-    private static float fallenSoulHitBox = 1.18f;
+    private static float fallenSoulHitBox = 1.25f;
     private static float fallenSoulSpeed = 1.95f;
 
     public static float getFallenSoulHitBox() {
@@ -57,6 +57,7 @@ public class FallenSouls extends AbstractAbility {
         Location location = player.getLocation().add(player.getLocation().getDirection().multiply(-1));
         ArmorStand fallenSoulLeft = player.getWorld().spawn(location.subtract(0, .5, 0), ArmorStand.class);
         Location locationLeft = player.getLocation().add(player.getLocation().getDirection().multiply(-1));
+        locationLeft.add(Utils.getLeftDirection(location).multiply(1));
         locationLeft.setYaw(location.getYaw() - 13);// - (int)(location.getPitch()/-10f * 1.6));
         location.add(0, .5, 0);
         ArmorStand fallenSoulMiddle = player.getWorld().spawn(location.subtract(0, .5, 0), ArmorStand.class);
@@ -65,6 +66,7 @@ public class FallenSouls extends AbstractAbility {
         location.add(0, .5, 0);
         ArmorStand fallenSoulRight = player.getWorld().spawn(location.subtract(0, .5, 0), ArmorStand.class);
         Location locationRight = player.getLocation().add(player.getLocation().getDirection().multiply(-1));
+        locationRight.add(Utils.getRightDirection(location).multiply(1));
         locationRight.setYaw(location.getYaw() + 13);// + (int)(location.getPitch()/-10f * 1.6));
         location.add(0, .5, 0);
 
@@ -137,7 +139,7 @@ public class FallenSouls extends AbstractAbility {
                 fallenSoul.getPlayersHit().add(warlordsPlayer);
                 fallenSoul.getShooter().getSpec().getRed().subtractCooldown(2);
                 fallenSoul.getShooter().updateRedItem(player);
-                if (fallenSoul.getShooter().getSoulBindCooldown() != 0 && fallenSoul.getShooter().hasBoundPlayerSoul(warlordsPlayer)) {
+                if (fallenSoul.getShooter().getCooldownManager().getCooldown(Soulbinding.class).size() > 0 && fallenSoul.getShooter().hasBoundPlayerSoul(warlordsPlayer)) {
                     fallenSoul.getShooter().getSpec().getRed().subtractCooldown(1.5F);
                     fallenSoul.getShooter().getSpec().getPurple().subtractCooldown(1.5F);
                     fallenSoul.getShooter().getSpec().getBlue().subtractCooldown(1.5F);

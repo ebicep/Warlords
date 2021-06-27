@@ -6,7 +6,7 @@ import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.effects.circle.DoubleLineEffect;
-import com.ebicep.warlords.player.ActionBarStats;
+import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
@@ -111,8 +111,7 @@ public class Totem extends EntityArmorStand {
             totemStand.setMetadata("capacitor-totem-" + player.getName().toLowerCase(), new FixedMetadataValue(Warlords.getInstance(), true));
 
             Totem capacitorTotem = new Totem(((CraftWorld) player.getWorld()).getHandle(), warlordsPlayer, totemStand, 8);
-
-            warlordsPlayer.getActionBarStats().add(new ActionBarStats(warlordsPlayer, "TOTEM", capacitorTotem.getSecondsLeft()));
+            warlordsPlayer.getCooldownManager().addCooldown(TotemThunderlord.this.getClass(), "TOTEM", 8, warlordsPlayer, CooldownTypes.ABILITY);
 
             for (Player player1 : player.getWorld().getPlayers()) {
                 player1.playSound(player.getLocation(), "shaman.totem.activation", 1, 1);
@@ -172,9 +171,9 @@ public class Totem extends EntityArmorStand {
                 player1.playSound(standLocation, "shaman.chainlightning.impact", 2, 2);
             }
 
-            Totem deathsDebtTotem = new Totem(((CraftWorld) player.getWorld()).getHandle(), warlordsPlayer, totemStand, 4 + (4 * (int) Math.round((double) warlordsPlayer.getHealth() / warlordsPlayer.getMaxHealth())));
-
-            warlordsPlayer.getActionBarStats().add(new ActionBarStats(warlordsPlayer, "RESP", deathsDebtTotem.getSecondsLeft()));
+            int secondsLeft = 4 + (4 * (int) Math.round((double) warlordsPlayer.getHealth() / warlordsPlayer.getMaxHealth()));
+            Totem deathsDebtTotem = new Totem(((CraftWorld) player.getWorld()).getHandle(), warlordsPlayer, totemStand, secondsLeft);
+            warlordsPlayer.getCooldownManager().addCooldown(TotemSpiritguard.this.getClass(), "RESP", secondsLeft, warlordsPlayer, CooldownTypes.ABILITY);
 
             player.setMetadata("TOTEM", new FixedMetadataValue(Warlords.getInstance(), this));
 
@@ -201,8 +200,8 @@ public class Totem extends EntityArmorStand {
                         player.sendMessage("§c\u00AB §2Spirit's Respite §7delayed §c" + -Math.round(getDelayedDamage()) + " §7damage. §6" + secondsLeft + " §7seconds left.");
                     } else {
                         if (secondsLeft == 0) {
-                            warlordsPlayer.getActionBarStats().removeIf(actionBarStats -> actionBarStats.getName().equals("RESP"));
-                            warlordsPlayer.getActionBarStats().add(new ActionBarStats(deathsDebtTotem.getOwner(), "DEBT", 6));
+                            warlordsPlayer.getCooldownManager().getCooldowns().removeIf(cd -> cd.getName().equals("RESP"));
+                            warlordsPlayer.getCooldownManager().addCooldown(TotemSpiritguard.this.getClass(), "DEBT", 6, warlordsPlayer, CooldownTypes.ABILITY);
                             player.removeMetadata("TOTEM", Warlords.getInstance());
 
                             if (!isPlayerInRadius) {
@@ -211,7 +210,7 @@ public class Totem extends EntityArmorStand {
                                 player.sendMessage("§c\u00AB §2Spirit's Respite §7delayed §c" + -Math.round(getDelayedDamage()) + " §7damage. §dYour debt must now be paid.");
                             }
                             circle.replaceEffects(e -> e instanceof DoubleLineEffect, new DoubleLineEffect(ParticleEffect.SPELL_WITCH));
-                            circle.setRadius(7);
+                            circle.setRadius(7.5);
                         }
 
                         int damageTick = -secondsLeft;
@@ -231,7 +230,7 @@ public class Totem extends EntityArmorStand {
                                     TotemSpiritguard.this.getCritMultiplier()
                             );
                             // Teammate heal
-                            PlayerFilter.entitiesAround(deathsDebtTotem.getTotemArmorStand(), 14.0D, 8.0D, 14.0D)
+                            PlayerFilter.entitiesAround(deathsDebtTotem.getTotemArmorStand(), 8.0D, 7.0D, 8.0D)
                                 .aliveTeammatesOf(warlordsPlayer)
                                 .forEach((nearPlayer) -> {
                                     nearPlayer.addHealth(deathsDebtTotem.getOwner(), deathsDebtTotem.getOwner().getSpec().getOrange().getName(),
@@ -242,7 +241,7 @@ public class Totem extends EntityArmorStand {
                         } else {
                             player.getWorld().spigot().strikeLightningEffect(standLocation, false);
                             // Enemy damage
-                            PlayerFilter.entitiesAround(deathsDebtTotem.getTotemArmorStand(), 14.0D, 7.0D, 14.0D)
+                            PlayerFilter.entitiesAround(deathsDebtTotem.getTotemArmorStand(), 8.0D, 7.0D, 8.0D)
                                 .aliveEnemiesOf(warlordsPlayer)
                                 .forEach((nearPlayer) -> {
                                     nearPlayer.addHealth(deathsDebtTotem.getOwner(), deathsDebtTotem.getOwner().getSpec().getOrange().getName(),
@@ -316,8 +315,7 @@ public class Totem extends EntityArmorStand {
             totemStand.setMetadata("healing-totem-" + player.getName(), new FixedMetadataValue(Warlords.getInstance(), true));
 
             Totem healingTotem = new Totem(((CraftWorld) player.getWorld()).getHandle(), warlordsPlayer, totemStand, 5);
-
-            warlordsPlayer.getActionBarStats().add(new ActionBarStats(warlordsPlayer, "TOTEM", healingTotem.getSecondsLeft()));
+            warlordsPlayer.getCooldownManager().addCooldown(TotemEarthwarden.this.getClass(), "TOTEM", 5, warlordsPlayer, CooldownTypes.ABILITY);
 
             for (Player player1 : player.getWorld().getPlayers()) {
                 player1.playSound(player.getLocation(), "shaman.totem.activation", 2, 1);

@@ -50,7 +50,6 @@ public class LightningBolt extends AbstractAbility {
         }
 
         new BukkitRunnable() {
-
             @Override
             public void run() {
                 for(WarlordsPlayer player : PlayerFilter
@@ -72,9 +71,9 @@ public class LightningBolt extends AbstractAbility {
                     }
                 }
                 //hitting block or out of range
-                Block blockInsideBolt = location.getWorld().getBlockAt(bolt.getBoltLocation().subtract(bolt.getTeleportDirection().clone().multiply(2)));
+                Block blockInsideBolt = location.getWorld().getBlockAt(bolt.getBoltLocation());
                 if (blockInsideBolt.getType() != Material.AIR && blockInsideBolt.getType() != Material.WATER || bolt.getArmorStand().getTicksLived() > 50) {
-                    ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.0F, 1, bolt.getBoltLocation().subtract(bolt.getTeleportDirection().clone().multiply(2.5)), 500);
+                    ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.0F, 1, bolt.getBoltLocation(), 500);
                     for (Player player1 : player.getWorld().getPlayers()) {
                         player1.playSound(bolt.getLocation(), "shaman.lightningbolt.impact", 2, 1);
                     }

@@ -3,6 +3,7 @@ package com.ebicep.warlords.classes.abilties;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.player.Classes;
+import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.PlayerFilter;
 import com.ebicep.warlords.util.Utils;
@@ -223,8 +224,8 @@ public class Chain extends AbstractAbility {
             ((CraftPlayer) player).getHandle().playerConnection.sendPacket(playOutAnimation);
             warlordsPlayer.subtractEnergy(energyCost);
             if (name.contains("Lightning")) {
-                warlordsPlayer.setChainLightning(hitCounter);
-                warlordsPlayer.setChainLightningCooldown(4);
+                warlordsPlayer.getCooldownManager().addCooldown(Chain.this.getClass(), "CHAIN(" + hitCounter + ")", 4, warlordsPlayer, CooldownTypes.BUFF);
+
                 warlordsPlayer.getSpec().getRed().setCurrentCooldown(cooldown);
 
                 for (Player player1 : player.getWorld().getPlayers()) {
@@ -248,7 +249,7 @@ public class Chain extends AbstractAbility {
             } else if (name.contains("Spirit")) {
                 // speed buff
                 warlordsPlayer.getSpeed().addSpeedModifier("Spirit Link", 40, 30); // 30 is ticks
-                warlordsPlayer.setSpiritLink(4.5f);
+                warlordsPlayer.getCooldownManager().addCooldown(Chain.this.getClass(), "LINK", 4.5f, warlordsPlayer, CooldownTypes.BUFF);
 
                 warlordsPlayer.getSpec().getRed().setCurrentCooldown(cooldown);
 
@@ -346,12 +347,13 @@ public class Chain extends AbstractAbility {
 
     private boolean lookingAtTotem(@Nonnull LivingEntity player) {
         Location eye = player.getEyeLocation();
-        eye.setY(eye.getY() + .5);
+        //eye.setY(eye.getY() + .5);
         for (Entity entity : player.getNearbyEntities(20, 17, 20)) {
             if (entity instanceof ArmorStand && entity.hasMetadata("capacitor-totem-" + player.getName().toLowerCase())) {
                 Vector toEntity = ((ArmorStand) entity).getEyeLocation().add(0, 1, 0).toVector().subtract(eye.toVector());
                 float dot = (float) toEntity.normalize().dot(eye.getDirection());
-                return dot > .95f;
+                player.sendMessage("" + dot);
+                return dot > .93f;
             }
         }
         return false;

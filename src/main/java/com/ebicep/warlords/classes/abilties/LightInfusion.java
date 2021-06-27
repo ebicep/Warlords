@@ -1,10 +1,12 @@
 package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.ParticleEffect;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class LightInfusion extends AbstractAbility {
 
@@ -22,9 +24,9 @@ public class LightInfusion extends AbstractAbility {
 
     @Override
     public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
-        warlordsPlayer.getSpeed().addSpeedModifier("Infusion", 40, 3 * 20);
-        warlordsPlayer.setInfusion(3);
+        warlordsPlayer.getSpeed().addSpeedModifier("Infusion", 40, 3 * 20, "BASE");
         warlordsPlayer.subtractEnergy(energyCost);
+        warlordsPlayer.getCooldownManager().addCooldown(LightInfusion.this.getClass(), "INF", 3, warlordsPlayer, CooldownTypes.BUFF);
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "paladin.infusionoflight.activation", 2, 1);
@@ -34,5 +36,19 @@ public class LightInfusion extends AbstractAbility {
             Location particleLoc = player.getLocation().add(0, 1.5, 0);
             ParticleEffect.SPELL.display(1F, 0F, 1F, 0.3F, 5, particleLoc, 500);
         }
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                if (warlordsPlayer.getCooldownManager().getCooldown(LightInfusion.class).size() > 0) {
+                    Location location = player.getLocation();
+                    location.add(0, 1.2, 0);
+                    ParticleEffect.SPELL.display(0.3F, 0.1F, 0.3F, 0.2F, 2, location, 500);
+                } else {
+                    this.cancel();
+                }
+            }
+        }.runTaskTimer(Warlords.getInstance(), 0, 2);
+
     }
 }

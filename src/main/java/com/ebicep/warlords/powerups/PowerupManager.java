@@ -2,6 +2,8 @@ package com.ebicep.warlords.powerups;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.maps.GameMap;
+import com.ebicep.warlords.player.CooldownTypes;
+import com.ebicep.warlords.player.Settings;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -38,11 +40,11 @@ public class PowerupManager extends BukkitRunnable {
                 if (entitiesNear.size() != 0) {
                     WarlordsPlayer warlordsPlayer = Warlords.getPlayer((Player) entitiesNear.get(0));
                     if (powerUp instanceof DamagePowerUp) {
-                        if (warlordsPlayer.isEnergyPowerup()) {
-                            Warlords.getPlayer((Player) entitiesNear.get(0)).setPowerUpEnergy(powerUp.getDuration());
+                        if (Settings.Powerup.getSelected(warlordsPlayer.getPlayer()) == Settings.Powerup.ENERGY) {
+                            warlordsPlayer.getCooldownManager().addCooldown(EnergyPowerUp.class, "ENERGY", powerUp.getDuration(), warlordsPlayer, CooldownTypes.BUFF);
                             entitiesNear.get(0).sendMessage("picked up energy");
                         } else {
-                            Warlords.getPlayer((Player) entitiesNear.get(0)).setPowerUpDamage(powerUp.getDuration());
+                            warlordsPlayer.getCooldownManager().addCooldown(DamagePowerUp.class, "DMG", powerUp.getDuration(), warlordsPlayer, CooldownTypes.BUFF);
                             entitiesNear.get(0).sendMessage("§6You activated the §c§lDAMAGE §6powerup! §a+20% §6Damage for §a30 §6seconds!");
 
                         }
@@ -51,7 +53,7 @@ public class PowerupManager extends BukkitRunnable {
                         entitiesNear.get(0).sendMessage("§6You activated the §a§lHEALING §6powerup! §a+10% §6Health per second for §a10 §6seconds!");
 
                     } else if (powerUp instanceof SpeedPowerUp) {
-                        Warlords.getPlayer((Player) entitiesNear.get(0)).setPowerUpSpeed(powerUp.getDuration());
+                        warlordsPlayer.getCooldownManager().addCooldown(SpeedPowerUp.class, "SPEED", powerUp.getDuration(), warlordsPlayer, CooldownTypes.BUFF);
                         entitiesNear.get(0).sendMessage("§6You activated the §e§lSPEED §6powerup! §a+40% §6Speed for §a10 §6seconds!");
                         warlordsPlayer.getSpeed().addSpeedModifier("Speed Powerup", 40, 10 * 20, "BASE");
 

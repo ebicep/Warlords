@@ -1,8 +1,12 @@
 package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.util.ParticleEffect;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class Berserk extends AbstractAbility {
 
@@ -20,12 +24,26 @@ public class Berserk extends AbstractAbility {
 
     @Override
     public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
+        WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
         warlordsPlayer.getSpeed().addSpeedModifier("Berserk", 30, 18 * 20, "BASE");
-        warlordsPlayer.setBerserk(18);
         warlordsPlayer.subtractEnergy(energyCost);
+        warlordsPlayer.getCooldownManager().addCooldown(Berserk.this.getClass(), "BERS", 18, warlordsPlayer, CooldownTypes.BUFF);
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "warrior.berserk.activation", 2, 1);
         }
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                if (warlordsPlayer.getCooldownManager().getCooldown(Berserk.class).size() > 0) {
+                    Location location = player.getLocation();
+                    location.add(0, 2.1, 0);
+                    ParticleEffect.VILLAGER_ANGRY.display(0, 0, 0, 0.1F, 1, location, 500);
+                } else {
+                    this.cancel();
+                }
+            }
+        }.runTaskTimer(Warlords.getInstance(), 0, 2);
     }
 }

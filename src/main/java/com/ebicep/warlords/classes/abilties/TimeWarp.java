@@ -2,7 +2,7 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
-import com.ebicep.warlords.player.ActionBarStats;
+import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.ParticleEffect;
 import org.bukkit.Location;
@@ -29,7 +29,7 @@ public class TimeWarp extends AbstractAbility {
     @Override
     public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
         TimeWarpPlayer timeWarpPlayer = new TimeWarpPlayer(warlordsPlayer, player.getLocation(), player.getLocation().getDirection(), 5);
-        warlordsPlayer.getActionBarStats().add(new ActionBarStats(warlordsPlayer, "TIME", 5));
+        warlordsPlayer.getCooldownManager().addCooldown(TimeWarp.this.getClass(), "TIME", 5, warlordsPlayer, CooldownTypes.ABILITY);
         warlordsPlayer.subtractEnergy(energyCost);
 
         for (Player player1 : player.getWorld().getPlayers()) {

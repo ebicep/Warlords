@@ -1,19 +1,22 @@
 package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.scheduler.BukkitRunnable;
 
 
 public class Intervene extends AbstractAbility {
+    private float damagePrevented = 0;
 
     public Intervene() {
-        super("Intervene", 0, 0, 14.09f, 20, 0, 0
-        );
+        super("Intervene", 0, 0, 14.09f, 20, 0, 0);
     }
 
     @Override
@@ -29,6 +32,7 @@ public class Intervene extends AbstractAbility {
 
     @Override
     public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
+        setDamagePrevented(0);
         PlayerFilter.entitiesAround(warlordsPlayer, 10, 10, 10)
             .aliveTeammatesOfExcludingSelf(warlordsPlayer)
             .requireLineOfSight(warlordsPlayer)
@@ -42,21 +46,63 @@ public class Intervene extends AbstractAbility {
                     lineLocation.add(lineLocation.getDirection().multiply(.25));
                 }
 
-                warlordsPlayer.setIntervened(nearWarlordsPlayer);
                 warlordsPlayer.sendMessage("§a\u00BB§7 You are now protecting " + nearWarlordsPlayer.getName() + " with your §eIntervene!");
+                warlordsPlayer.getCooldownManager().addCooldown(Intervene.this.getClass(), "VENE", 6, warlordsPlayer, CooldownTypes.ABILITY);
                 nearWarlordsPlayer.sendMessage("§a\u00BB§7 " + warlordsPlayer.getName() + " is shielding you with their " + ChatColor.YELLOW + "Intervene" + ChatColor.GRAY + "!");
-                nearWarlordsPlayer.setIntervenedBy(warlordsPlayer);
-                nearWarlordsPlayer.setInterveneDuration(6);
-                nearWarlordsPlayer.setInterveneDamage(0);
+                // TODO: This is impossible with offline player support @epic
+                //nearPlayer.removeMetadata("INTERVENE", Warlords.getInstance());
+                //nearPlayer.setMetadata("INTERVENE", new FixedMetadataValue(Warlords.getInstance(), this));
+                nearWarlordsPlayer.getCooldownManager().getCooldowns().removeAll(nearWarlordsPlayer.getCooldownManager().getCooldown(Intervene.this.getClass()));
+                nearWarlordsPlayer.getCooldownManager().addCooldown(Intervene.this.getClass(), "VENE", 6, warlordsPlayer, CooldownTypes.ABILITY);
 
                 warlordsPlayer.getSpec().getBlue().setCurrentCooldown(cooldown);
                 warlordsPlayer.updateBlueItem();
 
-                for (Player player1 : player.getWorld().getPlayers()) {
-                    player1.playSound(player.getLocation(), "warrior.intervene.impact", 1, 1);
+                    for (Player player1 : player.getWorld().getPlayers()) {
+                        player1.playSound(player.getLocation(), "warrior.intervene.impact", 1, 1);
+                    }
+
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            if (nearWarlordsPlayer.getCooldownManager().getCooldown(Intervene.class).size() > 0) {
+                                if (nearWarlordsPlayer.getCooldownManager().getCooldown(Intervene.class).get(0).getTimeLeft() <= 1)
+                                    nearWarlordsPlayer.getPlayer().sendMessage("§a\u00BB§7 " + warlordsPlayer.getName() + "'s §eIntervene §7will expire in §6" + (int) (nearWarlordsPlayer.getCooldownManager().getCooldown(Intervene.class).get(0).getTimeLeft() + .5) + "§7 second!");
+                                else
+                                    nearWarlordsPlayer.getPlayer().sendMessage("§a\u00BB§7 " + warlordsPlayer.getName() + "'s §eIntervene §7will expire in §6" + (int) (nearWarlordsPlayer.getCooldownManager().getCooldown(Intervene.class).get(0).getTimeLeft() + .5) + "§7 seconds!");
+                            } else {
+                                this.cancel();
+                            }
+                        }
+                    }.runTaskTimer(Warlords.getInstance(), 0, 20);
+
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            if (nearWarlordsPlayer.getCooldownManager().getCooldown(Intervene.class).size() > 0) {
+                                if (nearWarlordsPlayer.getCooldownManager().getCooldown(Intervene.class).get(0).getFrom().isDead() ||
+                                        nearWarlordsPlayer.getPlayer().getLocation().distanceSquared(nearWarlordsPlayer.getCooldownManager().getCooldown(Intervene.class).get(0).getFrom().getPlayer().getLocation()) > 15 * 15
+                                ) {
+                                    nearWarlordsPlayer.getPlayer().sendMessage("§c\u00AB§7 " + nearWarlordsPlayer.getCooldownManager().getCooldown(Intervene.class).get(0).getFrom().getName() + "'s " + ChatColor.YELLOW + "Intervene " + ChatColor.GRAY + "has expired!");
+                                    nearWarlordsPlayer.getCooldownManager().getCooldowns().remove(nearWarlordsPlayer.getCooldownManager().getCooldown(Intervene.class).get(0));
+                                    nearWarlordsPlayer.getPlayer().removeMetadata("INTERVENE", Warlords.getInstance());
+                                }
+                            }
+                        }
+                    }.runTaskTimer(Warlords.getInstance(), 0, 0);
                 }
             });
 
-
+    public void setDamagePrevented(float damagePrevented) {
+        this.damagePrevented = damagePrevented;
     }
+
+    public float getDamagePrevented() {
+        return damagePrevented;
+    }
+
+    public void addDamagePrevented(float amount) {
+        this.damagePrevented += amount;
+    }
+
 }
