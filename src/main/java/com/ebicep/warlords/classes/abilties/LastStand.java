@@ -7,7 +7,6 @@ import com.ebicep.warlords.util.Matrix4d;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
 import org.bukkit.Location;
-import org.bukkit.Warning;
 import org.bukkit.entity.Player;
 
 
@@ -31,7 +30,6 @@ public class LastStand extends AbstractAbility {
 
     @Override
     public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
-        warlordsPlayer.setLastStandedBy(warlordsPlayer);
         warlordsPlayer.getCooldownManager().addCooldown(LastStand.this.getClass(), "LAST", 12, warlordsPlayer, CooldownTypes.BUFF);
         PlayerFilter.entitiesAround(warlordsPlayer, 5, 5, 5)
             .aliveTeammatesOfExcludingSelf(warlordsPlayer)

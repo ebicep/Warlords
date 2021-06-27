@@ -2,7 +2,7 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
-import com.ebicep.warlords.maps.Game;
+import com.ebicep.warlords.maps.state.EndState;
 import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.ParticleEffect;
@@ -23,7 +23,7 @@ public class Repentance extends AbstractAbility {
                     float newPool = pool * .8f - 60;
                     pool = Math.max(newPool, 0);
                 }
-                if (Warlords.game.getState() == Game.State.END) {
+                if (Warlords.game.getState() instanceof EndState) {
                     this.cancel();
                 }
             }

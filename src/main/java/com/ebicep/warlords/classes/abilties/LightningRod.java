@@ -57,13 +57,6 @@ public class LightningRod extends AbstractAbility {
             new FallingBlockWaveEffect(totem.getLocation(), 4, 1.1, Material.SAPLING, (byte) 0).play();
         }
 
-        if (Utils.totemDownAndClose(warlordsPlayer, player)) {
-            ArmorStand totem = getTotem(warlordsPlayer.getPlayer());
-            if (totem != null) {
-                new FallingBlockWaveEffect(totem.getLocation(), 4, 1.1, Material.SAPLING, (byte) 0).play();
-            }
-        }
-
         //pulseDamage(warlordsPlayer, near);
 
         new FallingBlockWaveEffect(playerLocation, 4, 1.1, Material.RED_ROSE, (byte) 5).play();

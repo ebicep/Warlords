@@ -1,5 +1,6 @@
 package com.ebicep.warlords.classes.abilties;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
@@ -30,7 +31,6 @@ public class Soulbinding extends AbstractAbility {
 
     @Override
     public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
-        WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
         warlordsPlayer.getCooldownManager().addCooldown(Soulbinding.this.getClass(), "SOUL", 12, warlordsPlayer, CooldownTypes.ABILITY);
 
         for (Player player1 : player.getWorld().getPlayers()) {

@@ -1,16 +1,10 @@
 package com.ebicep.warlords.database;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.maps.Game;
-import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.state.PlayingState;
-import com.ebicep.warlords.player.ArmorManager;
-import com.ebicep.warlords.player.Classes;
-import com.ebicep.warlords.player.WarlordsPlayer;
-import com.ebicep.warlords.player.Weapons;
+import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.util.PlayerFilter;
-import com.ebicep.warlords.util.Settings;
 import com.mongodb.MongoException;
 import com.mongodb.MongoWriteException;
 import com.mongodb.client.MongoClient;

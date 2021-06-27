@@ -1,5 +1,6 @@
 package com.ebicep.warlords.classes.abilties;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.classes.paladin.specs.avenger.Avenger;
 import com.ebicep.warlords.classes.paladin.specs.crusader.Crusader;
@@ -9,6 +10,7 @@ import com.ebicep.warlords.classes.warrior.specs.defender.Defender;
 import com.ebicep.warlords.classes.warrior.specs.revenant.Revenant;
 import com.ebicep.warlords.player.Classes;
 import com.ebicep.warlords.player.ClassesSkillBoosts;
+import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.PlayerFilter;
 import com.ebicep.warlords.util.Utils;
@@ -93,7 +95,7 @@ public class Strike extends AbstractAbility {
                             nearPlayer.addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
                         }
                         nearPlayer.subtractEnergy(6);
-                        if (warlordsPlayer.getWrathDuration() != -1) {
+                        if (warlordsPlayer.getCooldownManager().getCooldown(AvengersWrath.class).size() > 0) {
                             for(WarlordsPlayer nearNearPlayer : PlayerFilter
                                 .entitiesAround(nearPlayer, 5, 3, 5)
                                 .aliveEnemiesOf(warlordsPlayer)
@@ -134,22 +136,10 @@ public class Strike extends AbstractAbility {
                         }
                     }
 
-                } else if (warlordsPlayer.getSpec() instanceof Berserker) {
-                    nearPlayer.setBerserkerWounded(3);
-                    nearPlayer.addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+                } else if (warlordsPlayer.getSpec() instanceof Berserker || warlordsPlayer.getSpec() instanceof Defender || warlordsPlayer.getSpec() instanceof Revenant) {
+                    Warlords.getPlayer(nearPlayer).getCooldownManager().addCooldown(Strike.this.getClass(),
+                            warlordsPlayer.getSpec() instanceof Revenant ? "CRIP" : "WND", 3, warlordsPlayer, CooldownTypes.DEBUFF);
 
-                    nearPlayer.getGame().forEachOnlinePlayer((player1, t) ->
-                        player1.playSound(player.getLocation(), "warrior.mortalstrike.impact", 2, 1)
-                    );
-                } else if (warlordsPlayer.getSpec() instanceof Defender) {
-                    nearPlayer.setDefenderWounded(3);
-                    nearPlayer.addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
-
-                    for (Player player1 : Bukkit.getOnlinePlayers()) {
-                        player1.playSound(player.getLocation(), "warrior.mortalstrike.impact", 2, 1);
-                    }
-                } else if (warlordsPlayer.getSpec() instanceof Revenant) {
-                    nearPlayer.setCrippled(3);
                     nearPlayer.addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
 
                     for (Player player1 : Bukkit.getOnlinePlayers()) {

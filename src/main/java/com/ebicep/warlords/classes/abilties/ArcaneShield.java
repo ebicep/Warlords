@@ -1,5 +1,6 @@
 package com.ebicep.warlords.classes.abilties;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
@@ -30,7 +31,6 @@ public class ArcaneShield extends AbstractAbility {
 
     @Override
     public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
-        WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
         warlordsPlayer.getCooldownManager().addCooldown(ArcaneShield.this.getClass(), "ARCA", 6, warlordsPlayer, CooldownTypes.ABILITY);
         warlordsPlayer.subtractEnergy(energyCost);
         ((EntityLiving) ((CraftPlayer) player).getHandle()).setAbsorptionHearts(20);

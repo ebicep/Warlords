@@ -1,11 +1,11 @@
 package com.ebicep.warlords.classes.abilties;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.ParticleEffect;
 import org.bukkit.Location;
-import com.ebicep.warlords.player.WarlordsPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -28,7 +28,6 @@ public class AvengersWrath extends AbstractAbility {
 
     @Override
     public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
-        WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
         warlordsPlayer.getCooldownManager().addCooldown(AvengersWrath.this.getClass(), "WRATH", 12, warlordsPlayer, CooldownTypes.BUFF);
 
         for (Player player1 : player.getWorld().getPlayers()) {

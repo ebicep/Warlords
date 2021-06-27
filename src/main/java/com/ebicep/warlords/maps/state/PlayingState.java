@@ -9,10 +9,8 @@ import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.flags.FlagManager;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.powerups.PowerupManager;
-import com.ebicep.warlords.util.CustomScoreboard;
 import com.ebicep.warlords.util.PacketUtils;
 import com.ebicep.warlords.util.RemoveEntities;
-import com.ebicep.warlords.util.Settings;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -187,7 +185,6 @@ public class PlayingState implements State, TimerDebugAble {
                 player,
                 this,
                 team,
-                false,
                 playerSettings
             ));
         });

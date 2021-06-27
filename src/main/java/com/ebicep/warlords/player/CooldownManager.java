@@ -5,6 +5,7 @@ import com.ebicep.warlords.classes.abilties.Intervene;
 import com.ebicep.warlords.classes.abilties.UndyingArmy;
 import net.minecraft.server.v1_8_R3.EntityLiving;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,12 +39,14 @@ public class CooldownManager {
             cooldown.subtractTime(.05f);
             if (cooldown.getTimeLeft() == 0) {
                 if (cooldown.getCooldownClass() == Intervene.class) {
-                    warlordsPlayer.getPlayer().sendMessage("§c\u00AB§7 " + cooldown.getFrom().getName() + "'s §eIntervene §7has expired!");
+                    warlordsPlayer.sendMessage("§c\u00AB§7 " + cooldown.getFrom().getName() + "'s §eIntervene §7has expired!");
                 } else if (cooldown.getCooldownClass() == UndyingArmy.class) {
                     int healing = (int) ((warlordsPlayer.getMaxHealth() - warlordsPlayer.getHealth()) * .35 + 200);
                     warlordsPlayer.addHealth(cooldown.getFrom(), "Undying Army", healing, healing, -1, 100);
                 } else if (cooldown.getCooldownClass() == ArcaneShield.class) {
-                    ((EntityLiving) ((CraftPlayer) warlordsPlayer.getPlayer()).getHandle()).setAbsorptionHearts(0);
+                    if (warlordsPlayer.getEntity() instanceof Player) {
+                        ((EntityLiving) ((CraftPlayer) warlordsPlayer.getEntity()).getHandle()).setAbsorptionHearts(0);
+                    }
                 }
                 cooldowns.remove(i);
                 i--;

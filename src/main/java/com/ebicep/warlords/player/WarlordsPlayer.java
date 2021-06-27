@@ -8,16 +8,15 @@ import com.ebicep.warlords.classes.shaman.specs.spiritguard.Spiritguard;
 import com.ebicep.warlords.classes.warrior.specs.berserker.Berserker;
 import com.ebicep.warlords.classes.warrior.specs.defender.Defender;
 import com.ebicep.warlords.events.WarlordsDeathEvent;
-import com.ebicep.warlords.maps.FlagManager;
-import com.ebicep.warlords.powerups.DamagePowerUp;
-import com.ebicep.warlords.util.ItemBuilder;
-import com.ebicep.warlords.util.PacketUtils;
-import com.ebicep.warlords.util.Utils;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.flags.*;
 import com.ebicep.warlords.maps.state.PlayingState;
-import com.ebicep.warlords.util.*;
+import com.ebicep.warlords.powerups.DamagePowerUp;
+import com.ebicep.warlords.util.ItemBuilder;
+import com.ebicep.warlords.util.PacketUtils;
+import com.ebicep.warlords.util.PlayerFilter;
+import com.ebicep.warlords.util.Utils;
 import net.minecraft.server.v1_8_R3.EntityLiving;
 import net.minecraft.server.v1_8_R3.GenericAttributes;
 import org.bukkit.*;
@@ -156,6 +155,10 @@ public final class WarlordsPlayer {
         return cooldownManager;
     }
 
+    public CustomScoreboard getScoreboard() {
+        return scoreboard;
+    }
+
     private void setWalkSpeed(float walkspeed) {
         this.walkspeed = walkspeed;
         Player player = Bukkit.getPlayer(uuid);
@@ -181,7 +184,9 @@ public final class WarlordsPlayer {
             actionBarMessage.append(ChatColor.GREEN).append(cooldown.getName()).append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append((int) cooldown.getTimeLeft() + 1).append(" ");
 
         }
-        PacketUtils.sendActionBar(player, actionBarMessage.toString());
+        if (entity instanceof Player) {
+            PacketUtils.sendActionBar((Player) entity, actionBarMessage.toString());
+        }
     }
 
 
@@ -213,63 +218,6 @@ public final class WarlordsPlayer {
                 PacketUtils.sendActionBar(player, start + ChatColor.GREEN + "Flag is safe");
             }
         }
-    }
-
-    private boolean undyingArmyDead = false;
-
-    //SHAMAN
-    private List<Soulbinding.SoulBoundPlayer> soulBindedPlayers = new ArrayList<>();
-    private boolean firstProc = false;
-
-    //POWERUPS
-    private boolean powerUpHeal = false;
-
-    private static final Dye grayDye = new Dye();
-    private CooldownManager cooldownManager = new CooldownManager(this);
-
-    private CustomScoreboard scoreboard;
-
-    public CustomScoreboard getScoreboard() {
-        return scoreboard;
-    }
-
-    public void setScoreboard(CustomScoreboard scoreboard) {
-        this.scoreboard = scoreboard;
-    }
-
-    private final boolean energyPowerup;
-
-    public boolean isEnergyPowerup() {
-        return energyPowerup;
-    }
-
-    private Location deathLocation;
-    private ArmorStand deathStand;
-
-
-    public WarlordsPlayer(Player player, String name, UUID uuid, AbstractPlayerClass spec, Weapons weapon, boolean energyPowerup) {
-        this.player = player;
-        this.name = name;
-        this.uuid = uuid;
-        this.spec = spec;
-        this.spec.getWeapon().updateDescription(player);
-        this.spec.getRed().updateDescription(player);
-        this.spec.getPurple().updateDescription(player);
-        this.spec.getBlue().updateDescription(player);
-        this.spec.getOrange().updateDescription(player);
-        this.weapon = weapon;
-        this.health = spec.getMaxHealth();
-        this.maxHealth = spec.getMaxHealth();
-        this.respawnTimer = -1;
-        this.energy = 0;
-        this.maxEnergy = spec.getMaxEnergy();
-        this.horseCooldown = 0;
-        this.flagCooldown = 0;
-        this.hitCooldown = 20;
-        this.spawnProtection = 0;
-        this.speed = new CalculateSpeed(player::setWalkSpeed, 13);
-        grayDye.setColor(DyeColor.GRAY);
-        this.energyPowerup = energyPowerup;
     }
 
     public void applySkillBoost(Player player) {
@@ -506,14 +454,6 @@ public final class WarlordsPlayer {
         this.maxHealth = maxHealth;
     }
 
-    public CustomScoreboard getScoreboard() {
-        return scoreboard;
-    }
-
-    public boolean isEnergyPowerup() {
-        return energyPowerup;
-    }
-
     public void showDeathAnimation() {
         if(this.entity instanceof Zombie) {
             this.entity.damage(200);
@@ -659,19 +599,19 @@ public final class WarlordsPlayer {
                     //totalReduction -= .125;
                 }
             }
-            if (cooldownManager.getCooldown(Intervene.class).size() > 0 && cooldownManager.getCooldown(Intervene.class).get(0).getFrom() != this && !HammerOfLight.standingInHammer(attacker.getPlayer(), player)) {
+            if (cooldownManager.getCooldown(Intervene.class).size() > 0 && cooldownManager.getCooldown(Intervene.class).get(0).getFrom() != this && !HammerOfLight.standingInHammer(attacker, entity)) {
                 if (this.isEnemy(attacker)) {
                     damageHealValue *= totalReduction;
                     damageHealValue *= .5;
                     if (isCrit) {
-                        cooldownManager.getCooldown(Intervene.class).get(0).getFrom().getPlayer().sendMessage("" + ChatColor.RED + "\u00AB" + ChatColor.GRAY + " " + attacker.getName() + "'s Intervene hit you for " + ChatColor.RED + "§l" + Math.round(damageHealValue) * -1 + "! " + ChatColor.GRAY + "critical damage.");
+                        cooldownManager.getCooldown(Intervene.class).get(0).getFrom().sendMessage("" + ChatColor.RED + "\u00AB" + ChatColor.GRAY + " " + attacker.getName() + "'s Intervene hit you for " + ChatColor.RED + "§l" + Math.round(damageHealValue) * -1 + "! " + ChatColor.GRAY + "critical damage.");
                         attacker.sendMessage(ChatColor.GREEN + "\u00BB" + ChatColor.GRAY + " Your Intervene hit " + cooldownManager.getCooldown(Intervene.class).get(0).getFrom().getName() + " for " + ChatColor.RED + "§l" + Math.round(damageHealValue) * -1 + "! " + ChatColor.GRAY + "critical damage.");
-
+                        Location loc = getLocation();
                         gameState.getGame().forEachOnlinePlayer((player1, t) -> {
                             player1.playSound(loc, "warrior.intervene.block.3", 2, 1);
                         });
                     } else {
-                        cooldownManager.getCooldown(Intervene.class).get(0).getFrom().getPlayer().sendMessage("" + ChatColor.RED + "\u00AB" + ChatColor.GRAY + " " + attacker.getName() + "'s Intervene hit you for " + ChatColor.RED + Math.round(damageHealValue) * -1 + ChatColor.GRAY + " damage.");
+                        cooldownManager.getCooldown(Intervene.class).get(0).getFrom().sendMessage("" + ChatColor.RED + "\u00AB" + ChatColor.GRAY + " " + attacker.getName() + "'s Intervene hit you for " + ChatColor.RED + Math.round(damageHealValue) * -1 + ChatColor.GRAY + " damage.");
                         attacker.sendMessage(ChatColor.GREEN + "\u00BB" + ChatColor.GRAY + " Your Intervene hit " + cooldownManager.getCooldown(Intervene.class).get(0).getFrom().getName() + " for " + ChatColor.RED + Math.round(damageHealValue) * -1 + ChatColor.GRAY + " damage.");
 
 
@@ -682,10 +622,10 @@ public final class WarlordsPlayer {
                     }
 
                     cooldownManager.getCooldown(Intervene.class).get(0).getFrom().setHealth((int) (cooldownManager.getCooldown(Intervene.class).get(0).getFrom().getHealth() + damageHealValue));
-                    cooldownManager.getCooldown(Intervene.class).get(0).getFrom().getPlayer().playEffect(EntityEffect.HURT);
+                    cooldownManager.getCooldown(Intervene.class).get(0).getFrom().getEntity().playEffect(EntityEffect.HURT);
                     cooldownManager.getCooldown(Intervene.class).get(0).getFrom().setRegenTimer(10);
 
-                    Optional<MetadataValue> intervene = player.getMetadata("INTERVENE").stream()
+                    /*Optional<MetadataValue> intervene = player.getMetadata("INTERVENE").stream()
                             .filter(e -> e.value() instanceof Intervene)
                             .findAny();
                     if (intervene.isPresent()) {
@@ -696,11 +636,11 @@ public final class WarlordsPlayer {
                             cooldownManager.getCooldowns().remove(cooldownManager.getCooldown(Intervene.class).get(0));
                             player.removeMetadata("INTERVENE", Warlords.getInstance());
                         }
-                    }
+                    }*/
                     this.addAbsorbed(-damageHealValue);
                     attacker.addAbsorbed(-damageHealValue);
                 }
-            } else if (cooldownManager.getCooldown(ArcaneShield.class).size() > 0 && this.isEnemy(attacker) && !HammerOfLight.standingInHammer(attacker.getPlayer(), player)) {
+            } else if (cooldownManager.getCooldown(ArcaneShield.class).size() > 0 && this.isEnemy(attacker) && !HammerOfLight.standingInHammer(attacker, entity )) {
                 damageHealValue *= totalReduction;
                 //TODO check teammate heal
                 if (((ArcaneShield) spec.getBlue()).getShieldHealth() + damageHealValue < 0) {
@@ -963,7 +903,7 @@ public final class WarlordsPlayer {
                             public void run() {
                                 gameState.getGame().forEachOnlinePlayer((player1, t) -> {
                                     player1.playSound(getLocation(), "shaman.windfuryweapon.impact", 2, 1);
-                                }
+                                });
                                 addHealth(attacker, "Windfury Weapon", min, max, 25, 235);
                                 counter[0]++;
                                 if (counter[0] == 2) {
@@ -1004,7 +944,7 @@ public final class WarlordsPlayer {
                             nearPlayer.addHealth(attacker, "Earthliving Weapon", 132 * 2.4f, 179 * 2.4f, 25, 200);
                         }
                     }
-                } else if (attacker.getSoulBindCooldown() != 0) {
+                } else if (!attacker.getCooldownManager().getCooldown(Soulbinding.class).isEmpty()) {
                     attacker.sendMessage("§a\u00BB§7 " + ChatColor.GRAY + "Your " + ChatColor.LIGHT_PURPLE + "Soulbinding Weapon " + ChatColor.GRAY + "has bound " + getName());
                     attacker.getSoulBindedPlayers().add(new Soulbinding.SoulBoundPlayer(this, 2));
                 }
@@ -1452,6 +1392,12 @@ public final class WarlordsPlayer {
             ArmorManager.resetArmor(player, getSpecClass(), getTeam());
             player.setScoreboard(this.getScoreboard().getScoreboard());
             // TODO Update the inventory based on the status of isUndyingArmyDead here
+
+            //SKILL TREE JUICERS
+            player.getInventory().setItem(6, new ItemBuilder(Material.FIREWORK_CHARGE)
+                    .name(ChatColor.GREEN + "Skill Tree" + ChatColor.GRAY + " - " + ChatColor.YELLOW + "Right-Click!")
+                    .lore(ChatColor.GRAY + "Opens your Skill Tree to upgrade your class!")
+                    .get());
         }
     }
 

@@ -1,5 +1,6 @@
 package com.ebicep.warlords.classes.abilties;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
@@ -8,7 +9,6 @@ import com.ebicep.warlords.util.PlayerFilter;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
 
 
@@ -67,9 +67,9 @@ public class Intervene extends AbstractAbility {
                         public void run() {
                             if (nearWarlordsPlayer.getCooldownManager().getCooldown(Intervene.class).size() > 0) {
                                 if (nearWarlordsPlayer.getCooldownManager().getCooldown(Intervene.class).get(0).getTimeLeft() <= 1)
-                                    nearWarlordsPlayer.getPlayer().sendMessage("§a\u00BB§7 " + warlordsPlayer.getName() + "'s §eIntervene §7will expire in §6" + (int) (nearWarlordsPlayer.getCooldownManager().getCooldown(Intervene.class).get(0).getTimeLeft() + .5) + "§7 second!");
+                                    nearWarlordsPlayer.sendMessage("§a\u00BB§7 " + warlordsPlayer.getName() + "'s §eIntervene §7will expire in §6" + (int) (nearWarlordsPlayer.getCooldownManager().getCooldown(Intervene.class).get(0).getTimeLeft() + .5) + "§7 second!");
                                 else
-                                    nearWarlordsPlayer.getPlayer().sendMessage("§a\u00BB§7 " + warlordsPlayer.getName() + "'s §eIntervene §7will expire in §6" + (int) (nearWarlordsPlayer.getCooldownManager().getCooldown(Intervene.class).get(0).getTimeLeft() + .5) + "§7 seconds!");
+                                    nearWarlordsPlayer.sendMessage("§a\u00BB§7 " + warlordsPlayer.getName() + "'s §eIntervene §7will expire in §6" + (int) (nearWarlordsPlayer.getCooldownManager().getCooldown(Intervene.class).get(0).getTimeLeft() + .5) + "§7 seconds!");
                             } else {
                                 this.cancel();
                             }
@@ -81,17 +81,18 @@ public class Intervene extends AbstractAbility {
                         public void run() {
                             if (nearWarlordsPlayer.getCooldownManager().getCooldown(Intervene.class).size() > 0) {
                                 if (nearWarlordsPlayer.getCooldownManager().getCooldown(Intervene.class).get(0).getFrom().isDead() ||
-                                        nearWarlordsPlayer.getPlayer().getLocation().distanceSquared(nearWarlordsPlayer.getCooldownManager().getCooldown(Intervene.class).get(0).getFrom().getPlayer().getLocation()) > 15 * 15
+                                        nearWarlordsPlayer.getLocation().distanceSquared(nearWarlordsPlayer.getCooldownManager().getCooldown(Intervene.class).get(0).getFrom().getEntity().getLocation()) > 15 * 15
                                 ) {
-                                    nearWarlordsPlayer.getPlayer().sendMessage("§c\u00AB§7 " + nearWarlordsPlayer.getCooldownManager().getCooldown(Intervene.class).get(0).getFrom().getName() + "'s " + ChatColor.YELLOW + "Intervene " + ChatColor.GRAY + "has expired!");
+                                    nearWarlordsPlayer.sendMessage("§c\u00AB§7 " + nearWarlordsPlayer.getCooldownManager().getCooldown(Intervene.class).get(0).getFrom().getName() + "'s " + ChatColor.YELLOW + "Intervene " + ChatColor.GRAY + "has expired!");
                                     nearWarlordsPlayer.getCooldownManager().getCooldowns().remove(nearWarlordsPlayer.getCooldownManager().getCooldown(Intervene.class).get(0));
-                                    nearWarlordsPlayer.getPlayer().removeMetadata("INTERVENE", Warlords.getInstance());
+                                    // TODO: This is impossible with offline player support
+                                    //nearWarlordsPlayer.removeMetadata("INTERVENE", Warlords.getInstance());
                                 }
                             }
                         }
                     }.runTaskTimer(Warlords.getInstance(), 0, 0);
-                }
-            });
+                });
+            }
 
     public void setDamagePrevented(float damagePrevented) {
         this.damagePrevented = damagePrevented;

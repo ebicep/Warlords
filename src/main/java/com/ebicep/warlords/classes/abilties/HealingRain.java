@@ -27,7 +27,7 @@ public class HealingRain extends AbstractAbility {
         description = "§7Conjure rain at targeted\n" +
                 "location that will restore §a" + minDamageHeal + "\n" +
                 "§7- §a" + maxDamageHeal + " §7health every second to\n" +
-                "allies. Lasts §612 §7seconds.\n\nYou may\n" +
+                "allies. Lasts §612 §7seconds.\n\nYou may" +
                 "move Healing Rain to your location\n" +
                 "every §63 §7seconds using your SNEAK key.";
     }

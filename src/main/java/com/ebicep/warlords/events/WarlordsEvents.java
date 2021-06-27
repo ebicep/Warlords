@@ -133,30 +133,30 @@ public class WarlordsEvents implements Listener {
                     warlordsPlayerAttacker.setHitCooldown(12);
                     warlordsPlayerAttacker.subtractEnergy(warlordsPlayerAttacker.getSpec().getEnergyOnHit() * -1);
 
-                        if (warlordsPlayerAttacker.getSpec() instanceof Spiritguard && warlordsPlayerAttacker.getCooldownManager().getCooldown(Soulbinding.class).size() > 0) {
-                            if (warlordsPlayerAttacker.hasBoundPlayer(warlordsPlayerVictim)) {
-                                for (Soulbinding.SoulBoundPlayer soulBindedPlayer : warlordsPlayerAttacker.getSoulBindedPlayers()) {
-                                    if (soulBindedPlayer.getBoundPlayer() == warlordsPlayerVictim) {
-                                        soulBindedPlayer.setHitWithLink(false);
-                                        soulBindedPlayer.setHitWithSoul(false);
-                                        soulBindedPlayer.setTimeLeft(3);
-                                        break;
-                                    }
+                    if (warlordsPlayerAttacker.getSpec() instanceof Spiritguard && warlordsPlayerAttacker.getCooldownManager().getCooldown(Soulbinding.class).size() > 0) {
+                        if (warlordsPlayerAttacker.hasBoundPlayer(warlordsPlayerVictim)) {
+                            for (Soulbinding.SoulBoundPlayer soulBindedPlayer : warlordsPlayerAttacker.getSoulBindedPlayers()) {
+                                if (soulBindedPlayer.getBoundPlayer() == warlordsPlayerVictim) {
+                                    soulBindedPlayer.setHitWithLink(false);
+                                    soulBindedPlayer.setHitWithSoul(false);
+                                    soulBindedPlayer.setTimeLeft(3);
+                                    break;
                                 }
-                            } else {
-                                warlordsPlayerVictim.sendMessage(ChatColor.RED + "\u00AB " + ChatColor.GRAY + "You have been bound by " + warlordsPlayerAttacker.getName() + "'s " + ChatColor.LIGHT_PURPLE + "Soulbinding Weapon " + ChatColor.GRAY + "!");
-                                warlordsPlayerAttacker.sendMessage(ChatColor.GREEN + "\u00BB " + ChatColor.GRAY + "Your " + ChatColor.LIGHT_PURPLE + "Soulbinding Weapon " + ChatColor.GRAY + "has bound " + victim.getName() + "!");
-                                warlordsPlayerAttacker.getSoulBindedPlayers().add(new Soulbinding.SoulBoundPlayer(warlordsPlayerVictim, 3));
                             }
+                        } else {
+                            warlordsPlayerVictim.sendMessage(ChatColor.RED + "\u00AB " + ChatColor.GRAY + "You have been bound by " + warlordsPlayerAttacker.getName() + "'s " + ChatColor.LIGHT_PURPLE + "Soulbinding Weapon " + ChatColor.GRAY + "!");
+                            warlordsPlayerAttacker.sendMessage(ChatColor.GREEN + "\u00BB " + ChatColor.GRAY + "Your " + ChatColor.LIGHT_PURPLE + "Soulbinding Weapon " + ChatColor.GRAY + "has bound " + warlordsPlayerVictim.getName() + "!");
+                            warlordsPlayerAttacker.getSoulBindedPlayers().add(new Soulbinding.SoulBoundPlayer(warlordsPlayerVictim, 3));
                         }
+                    }
 
                     warlordsPlayerVictim.addHealth(warlordsPlayerAttacker, "", -132, -179, 25, 200);
                 }
 
-                    if (warlordsPlayerVictim.getCooldownManager().getCooldown(IceBarrier.class).size() > 0) {
-                        warlordsPlayerAttacker.getSpeed().addSpeedModifier("Ice Barrier", -20, 2 * 20);
-                    }
+                if (warlordsPlayerVictim.getCooldownManager().getCooldown(IceBarrier.class).size() > 0) {
+                    warlordsPlayerAttacker.getSpeed().addSpeedModifier("Ice Barrier", -20, 2 * 20);
                 }
+            }
 
 
         }
@@ -169,15 +169,12 @@ public class WarlordsEvents implements Listener {
         Action action = e.getAction();
         Location location = player.getLocation();
         WarlordsPlayer wp = Warlords.getPlayer(player);
-        if (wp == null) {
-            return;
-        }
 
         if (action == Action.RIGHT_CLICK_BLOCK || action == Action.RIGHT_CLICK_AIR) {
             ItemStack itemHeld = player.getItemInHand();
-            if (Warlords.game.getState() == Game.State.GAME) {
-                if (Warlords.hasPlayer(player) && (player.getInventory().getHeldItemSlot() == 0 || !Warlords.getPlayer(player).isHotKeyMode())) {
-                    Warlords.getPlayer(player).getSpec().onRightClick(player);
+            if (wp != null) {
+                if (player.getInventory().getHeldItemSlot() == 0 || !wp.isHotKeyMode()) {
+                    wp.getSpec().onRightClick(wp, player);
                 }
                 if (player.getInventory().getHeldItemSlot() == 7 && itemHeld.getType() == Material.GOLD_BARDING && player.getVehicle() == null) {
                     if (location.getWorld().getBlockAt((int) location.getX(), 2, (int) location.getZ()).getType() == Material.NETHERRACK) { //&& !Utils.tunnelUnder(e.getPlayer())) {
@@ -186,7 +183,7 @@ public class WarlordsEvents implements Listener {
                         double distance = player.getLocation().getY() - player.getWorld().getHighestBlockYAt(player.getLocation());
                         if (distance > 2) {
                             player.sendMessage(ChatColor.RED + "You can't mount in the air");
-                        } else if (!player.getMetadata(FlagManager.FLAG_DAMAGE_MULTIPLIER).isEmpty()) {
+                        } else if (wp.getFlagDamageMultipler() > 0) {
                             player.sendMessage(ChatColor.RED + "You can't mount while holding the flag!");
                         } else {
                             player.playSound(player.getLocation(), "mountup", 1, 1);
@@ -200,19 +197,20 @@ public class WarlordsEvents implements Listener {
                             ((EntityLiving) ((CraftEntity) horse).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(.308);
                             //((EntityLiving) ((CraftEntity) horse).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(1);
                             horse.setPassenger(player);
-                            Warlords.getPlayer(player).setHorseCooldown(15);
+                            wp.setHorseCooldown(15);
                         }
                     }
+
                 } else if (itemHeld.getType() == Material.BONE) {
                     player.getInventory().remove(UndyingArmy.BONE);
-                    Warlords.getPlayer(player).addHealth(Warlords.getPlayer(player), "", -100000, -100000, -1, 100);
-                    Warlords.getPlayer(player).setUndyingArmyDead(false);
+                    wp.addHealth(Warlords.getPlayer(player), "", -100000, -100000, -1, 100);
+                    wp.setUndyingArmyDead(false);
                 } else if (itemHeld.getType() == Material.BANNER) {
-                    if (Warlords.getPlayer(player).getFlagCooldown() > 0) {
+                    if (wp.getFlagCooldown() > 0) {
                         player.sendMessage("§cYou cannot drop the flag yet, please wait 5 seconds!");
                     } else {
-                        Warlords.game.getFlags().dropFlag(player);
-                        Warlords.getPlayer(player).setFlagCooldown(5);
+                        wp.getGameState().flags().dropFlag(player);
+                        wp.setFlagCooldown(5);
                     }
                 } else if (itemHeld.getType() == Material.FIREWORK_CHARGE) {
                     openSkillTreeMenu(player);
@@ -300,9 +298,9 @@ public class WarlordsEvents implements Listener {
 
     @EventHandler
     public void onPlayerDamage(EntityDamageEvent e) {
-        if(e.getCause() == EntityDamageEvent.DamageCause.VOID && e.getEntity() instanceof Player) {
+        if (e.getCause() == EntityDamageEvent.DamageCause.VOID && e.getEntity() instanceof Player) {
             e.setCancelled(true);
-            e.getEntity().teleport(Warlords.getRejoinPoint(((Player)e.getEntity()).getUniqueId()));
+            e.getEntity().teleport(Warlords.getRejoinPoint(((Player) e.getEntity()).getUniqueId()));
         } else if (e.getCause() == EntityDamageEvent.DamageCause.FALL) {
             //HEIGHT - DAMAGE
             //PLAYER
@@ -339,7 +337,7 @@ public class WarlordsEvents implements Listener {
     }
 
     @EventHandler
-    (priority = EventPriority.HIGHEST)
+            (priority = EventPriority.HIGHEST)
     public void onPlayerChat(AsyncPlayerChatEvent e) {
         Player player = e.getPlayer();
         try {
@@ -387,7 +385,7 @@ public class WarlordsEvents implements Listener {
     @EventHandler
     public void onFlagChange(WarlordsFlagUpdatedEvent event) {
         Bukkit.broadcastMessage(event.getTeam() + " " + event.getOld().getClass().getSimpleName() + " => " + event.getNew().getClass().getSimpleName());
-        if(event.getOld() instanceof PlayerFlagLocation) {
+        if (event.getOld() instanceof PlayerFlagLocation) {
             ((PlayerFlagLocation) event.getOld()).getPlayer().setFlagDamageMultipler(0);
         }
 
@@ -395,14 +393,14 @@ public class WarlordsEvents implements Listener {
             PlayerFlagLocation pfl = (PlayerFlagLocation) event.getNew();
             WarlordsPlayer player = pfl.getPlayer();
             player.setFlagDamageMultipler(pfl.getComputedMultiplier());
-            if(!(event.getOld() instanceof PlayerFlagLocation)) {
+            if (!(event.getOld() instanceof PlayerFlagLocation)) {
                 // eg GROUND -> PLAYER
                 // or SPAWN -> PLAYER
                 ChatColor enemyColor = event.getTeam().enemy().teamColor();
                 event.getGame().forEachOnlinePlayer((p, t) -> {
                     p.sendMessage(enemyColor + player.getName() + " §ehas picked up the " + event.getTeam().coloredPrefix() + " §eflag!");
                     PacketUtils.sendTitle(p, "", enemyColor + player.getName() + " §ehas picked up the " + event.getTeam().coloredPrefix() + " §eflag!", 0, 60, 0);
-                    if(t == event.getTeam()) {
+                    if (t == event.getTeam()) {
                         p.playSound(player.getLocation(), "ctf.enemyflagtaken", 500, 1);
                     } else {
                         p.playSound(player.getLocation(), "ctf.friendlyflagtaken", 500, 1);
@@ -418,8 +416,8 @@ public class WarlordsEvents implements Listener {
             }
         } else if (event.getNew() instanceof SpawnFlagLocation) {
             String toucher = ((SpawnFlagLocation) event.getNew()).getLastToucher();
-            if(event.getOld() instanceof GroundFlagLocation) {
-                if(toucher != null) {
+            if (event.getOld() instanceof GroundFlagLocation) {
+                if (toucher != null) {
                     event.getGame().forEachOnlinePlayer((p, t) -> {
                         ChatColor color = event.getTeam().teamColor();
                         p.sendMessage(color + toucher + " §ehas returned the " + event.getTeam().coloredPrefix() + " §eflag!");
@@ -432,8 +430,8 @@ public class WarlordsEvents implements Listener {
                     });
                 }
             }
-        } else if(event.getNew() instanceof GroundFlagLocation) {
-            if(event.getOld() instanceof PlayerFlagLocation) {
+        } else if (event.getNew() instanceof GroundFlagLocation) {
+            if (event.getOld() instanceof PlayerFlagLocation) {
                 PlayerFlagLocation pfl = (PlayerFlagLocation) event.getOld();
                 String flag = event.getTeam().coloredPrefix();
                 ChatColor playerColor = event.getTeam().enemy().teamColor();
@@ -443,12 +441,12 @@ public class WarlordsEvents implements Listener {
                 });
             }
         } else if (event.getNew() instanceof WaitingFlagLocation && ((WaitingFlagLocation) event.getNew()).wasWinner()) {
-            if(event.getOld() instanceof PlayerFlagLocation) {
+            if (event.getOld() instanceof PlayerFlagLocation) {
                 PlayerFlagLocation pfl = (PlayerFlagLocation) event.getOld();
                 Team loser = event.getTeam();
                 event.getGameState().addCapture(pfl.getPlayer());
                 event.getGame().forEachOnlinePlayer((p, t) -> {
-                    String message = pfl.getPlayer().getColoredName() + " §ehas captured the "+loser.coloredPrefix()+" §eflag!";
+                    String message = pfl.getPlayer().getColoredName() + " §ehas captured the " + loser.coloredPrefix() + " §eflag!";
                     p.sendMessage(message);
                     PacketUtils.sendTitle(p, "", message, 0, 60, 0);
 
