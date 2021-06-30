@@ -32,14 +32,17 @@ public class Boulder extends AbstractAbility {
     public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
 
         Location location = player.getLocation();
-        Vector speed = player.getLocation().getDirection().multiply(0.55);
+        Vector speed = player.getLocation().getDirection().multiply(0.6);
         ArmorStand stand = (ArmorStand) location.getWorld().spawnEntity(location.clone().add(0, 0.25, 0), EntityType.ARMOR_STAND);
         stand.setHelmet(new ItemStack(Material.LONG_GRASS, 1, (short) 2));
         stand.setCustomName("Boulder");
         stand.setCustomNameVisible(false);
         stand.setGravity(false);
+        stand.setBasePlate(false);
+        stand.setArms(false);
+        stand.setLeftLegPose(new EulerAngle(Math.toRadians(180), Math.toRadians(0), Math.toRadians(0)));
+        stand.setRightLegPose(new EulerAngle(Math.toRadians(180), Math.toRadians(0), Math.toRadians(0)));
         stand.setVisible(false);
-        stand.setMarker(false);
 
         warlordsPlayer.subtractEnergy(energyCost);
 
@@ -60,7 +63,7 @@ public class Boulder extends AbstractAbility {
                     return;
                 }
 
-                speed.add(new Vector(0, -0.00765, 0));
+                speed.add(new Vector(0, -0.009, 0));
                 Location newLoc = stand.getLocation();
                 newLoc.add(speed);
                 stand.teleport(newLoc);
@@ -81,7 +84,7 @@ public class Boulder extends AbstractAbility {
                     // Explode based on collision
                     shouldExplode = true;
                 } else {
-                    shouldExplode = PlayerFilter.entitiesAround(newLoc, 1.25, 1.25, 1.25)
+                    shouldExplode = PlayerFilter.entitiesAround(newLoc, 1.05, 1.05, 1.05)
                         .aliveEnemiesOf(warlordsPlayer).findAny().isPresent();
                 }
 
@@ -120,7 +123,7 @@ public class Boulder extends AbstractAbility {
                                 default:
                                     throw new IllegalStateException("Unexpected value: " + (int) (Math.random() * 3));
                             }
-                            fallingBlock.setVelocity(newLoc.getDirection().add(new Vector(0, 0.2, 0)).normalize().multiply(.5));
+                            fallingBlock.setVelocity(newLoc.getDirection().add(new Vector(0, 0.2, 0)).normalize().multiply(.45));
                             fallingBlock.setDropItem(false);
                             fallingBlock.setTicksLived(4);
                             newLoc.setYaw((float) (newLoc.getYaw() + Math.random() * 25 + 12));

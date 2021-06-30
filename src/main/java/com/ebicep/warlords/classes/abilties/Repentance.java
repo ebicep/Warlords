@@ -40,8 +40,10 @@ public class Repentance extends AbstractAbility {
 
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
+        wp.subtractEnergy(energyCost);
         WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
         pool += 2000;
+        assert warlordsPlayer != null;
         warlordsPlayer.getCooldownManager().addCooldown(Repentance.this.getClass(), "REPE", 12, warlordsPlayer, CooldownTypes.ABILITY);
 
         for (Player player1 : player.getWorld().getPlayers()) {

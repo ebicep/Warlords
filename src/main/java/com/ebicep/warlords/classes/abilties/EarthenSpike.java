@@ -50,8 +50,8 @@ public class EarthenSpike extends AbstractAbility {
                     //TODO fix block getting glitched into world
                 FallingBlock block = player.getWorld().spawnFallingBlock(location.clone(), location.getWorld().getBlockAt((int) location.getX(), (int) location.getY(), (int) location.getZ()).getType(), (byte) 0);
                 block.setVelocity(new Vector(0, .2, 0));
-                p.subtractEnergy(energyCost);
                 EarthenSpikeBlock earthenSpikeBlock = new EarthenSpikeBlock(new CustomFallingBlock(block, block.getLocation().getY() - .2), p, wp);
+                wp.subtractEnergy(energyCost);
 
                 new BukkitRunnable() {
 

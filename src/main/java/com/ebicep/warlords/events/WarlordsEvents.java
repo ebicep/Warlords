@@ -104,7 +104,7 @@ public class WarlordsEvents implements Listener {
             player.sendMessage(" ");
             player.sendMessage(ChatColor.GRAY + "Click the Nether Star or do /menu to open the selection menu.");
             player.sendMessage(" ");
-            player.sendMessage(ChatColor.GRAY + "BUILD: " + ChatColor.RED + "RC-1 maven_b-v1.0.0");
+            player.sendMessage(ChatColor.GRAY + "BUILD: " + ChatColor.RED + "RC-2 maven_b-v1.0.0");
 
 
             player.getInventory().clear();
@@ -157,8 +157,11 @@ public class WarlordsEvents implements Listener {
                     warlordsPlayerAttacker.getSpeed().addSpeedModifier("Ice Barrier", -20, 2 * 20);
                 }
             }
-
-
+        /*} else if (e.getEntity() instanceof Horse && e.getDamager() instanceof Player) {
+            if (!Warlords.game.onSameTeam((Player) e.getEntity().getPassenger(), (Player) e.getDamager())) {
+                e.getEntity().remove();
+            }
+        }*/
         }
         e.setCancelled(true);
     }
@@ -384,7 +387,7 @@ public class WarlordsEvents implements Listener {
 
     @EventHandler
     public void onFlagChange(WarlordsFlagUpdatedEvent event) {
-        Bukkit.broadcastMessage(event.getTeam() + " " + event.getOld().getClass().getSimpleName() + " => " + event.getNew().getClass().getSimpleName());
+        //Bukkit.broadcastMessage(event.getTeam() + " " + event.getOld().getClass().getSimpleName() + " => " + event.getNew().getClass().getSimpleName());
         if (event.getOld() instanceof PlayerFlagLocation) {
             ((PlayerFlagLocation) event.getOld()).getPlayer().setFlagDamageMultipler(0);
         }
@@ -401,9 +404,9 @@ public class WarlordsEvents implements Listener {
                     p.sendMessage(enemyColor + player.getName() + " §ehas picked up the " + event.getTeam().coloredPrefix() + " §eflag!");
                     PacketUtils.sendTitle(p, "", enemyColor + player.getName() + " §ehas picked up the " + event.getTeam().coloredPrefix() + " §eflag!", 0, 60, 0);
                     if (t == event.getTeam()) {
-                        p.playSound(player.getLocation(), "ctf.enemyflagtaken", 500, 1);
-                    } else {
                         p.playSound(player.getLocation(), "ctf.friendlyflagtaken", 500, 1);
+                    } else {
+                        p.playSound(player.getLocation(), "ctf.enemyflagtaken", 500, 1);
                     }
                 });
             } else {
@@ -451,9 +454,9 @@ public class WarlordsEvents implements Listener {
                     PacketUtils.sendTitle(p, "", message, 0, 60, 0);
 
                     if (event.getTeam() == t) {
-                        p.playSound(pfl.getLocation(), "ctf.enemyflagcaptured", 500, 1);
-                    } else {
                         p.playSound(pfl.getLocation(), "ctf.enemycapturedtheflag", 500, 1);
+                    } else {
+                        p.playSound(pfl.getLocation(), "ctf.enemyflagcaptured", 500, 1);
                     }
                 });
             }

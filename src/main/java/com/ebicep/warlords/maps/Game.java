@@ -228,7 +228,7 @@ public class Game implements Runnable {
         sideBar.getScore(ChatColor.GOLD + "Lv90 " + Classes.getClassesGroup(Classes.getSelected(player)).name).setScore(4);
         sideBar.getScore(ChatColor.WHITE + "Spec: " + ChatColor.GREEN + Classes.getSelected(player).name).setScore(3);
         sideBar.getScore("    ").setScore(2);
-        sideBar.getScore(ChatColor.YELLOW + "WL 2.0 RC-1").setScore(1);
+        sideBar.getScore(ChatColor.YELLOW + "WL 2.0 RC-2").setScore(1);
 
         player.setScoreboard(board);
     }

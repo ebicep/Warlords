@@ -72,7 +72,7 @@ public class Strike extends AbstractAbility {
 
     @Override
     public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
-        PlayerFilter.entitiesAround(warlordsPlayer, 3.45, 3.45, 3.45)
+        PlayerFilter.entitiesAround(warlordsPlayer, 3.75, 3.75, 3.75)
             .aliveEnemiesOf(warlordsPlayer)
             .closestFirst(warlordsPlayer)
             .requireLineOfSight(warlordsPlayer)

@@ -390,7 +390,8 @@ public class Warlords extends JavaPlugin {
                                 orb.getBukkitEntity().remove();
                                 itr.remove();
                                 warlordsPlayer.addHealth(warlordsPlayer, "Orbs of Life", 502, 502, -1, 100);
-                                Utils.filterOnlyTeammates(player, 3, 3, 3, player).forEach((nearPlayer) -> {
+                                Utils.filterOnlyTeammates(player, 3, 3, 3, player)
+                                    .forEach((nearPlayer) -> {
                                     nearPlayer.addHealth(warlordsPlayer, "Orbs of Life", 420, 420, -1, 100);
                                 });
                             }

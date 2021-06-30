@@ -52,38 +52,10 @@ public class LightningRod extends AbstractAbility {
                 }
             });
 
-        ArmorStand totem = getTotem(warlordsPlayer);
-        if (totem != null) {
-            new FallingBlockWaveEffect(totem.getLocation(), 4, 1.1, Material.SAPLING, (byte) 0).play();
-        }
-
-        //pulseDamage(warlordsPlayer, near);
-
         new FallingBlockWaveEffect(playerLocation, 4, 1.1, Material.RED_ROSE, (byte) 5).play();
         player.getWorld().spigot().strikeLightningEffect(playerLocation, true);
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "shaman.lightningrod.activation", 2, 1);
         }
-    }
-
-    /*private void pulseDamage(WarlordsPlayer warlordsPlayer, List<Entity> near) {
-        for (Entity entity : near) {
-            if (entity instanceof Player) {
-                Player nearPlayer = (Player) entity;
-                if (Utils.totemDownAndClose(warlordsPlayer, nearPlayer) && nearPlayer.getGameMode() != GameMode.SPECTATOR) {
-                    Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, warlordsPlayer.getSpec().getOrange().getName(), warlordsPlayer.getSpec().getOrange().getMinDamageHeal(), warlordsPlayer.getSpec().getOrange().getMaxDamageHeal(), warlordsPlayer.getSpec().getOrange().getCritChance(), warlordsPlayer.getSpec().getOrange().getCritMultiplier());
-                }
-            }
-        }
-    }*/
-
-    @Nullable
-    private ArmorStand getTotem(@Nonnull WarlordsPlayer player) {
-        for (Entity entity : player.getEntity().getNearbyEntities(20, 17, 20)) {
-            if (entity instanceof ArmorStand && entity.hasMetadata("capacitor-totem-" + player.getName().toLowerCase())) {
-                return (ArmorStand) entity;
-            }
-        }
-        return null;
     }
 }

@@ -30,16 +30,17 @@ public class InspiringPresence extends AbstractAbility {
 
     @Override
     public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
+        warlordsPlayer.getCooldownManager().addCooldown(InspiringPresence.this.getClass(), "PRES", 12, warlordsPlayer, CooldownTypes.BUFF);
         PlayerFilter.entitiesAround(warlordsPlayer, 6.0D, 6.0D, 6.0D)
             .aliveTeammatesOf(warlordsPlayer)
             .concat(warlordsPlayer)
             .forEach((nearPlayer) -> {
                 nearPlayer.getSpeed().addSpeedModifier("Inspiring Presence", 30, 12 * 20, "BASE");
-                warlordsPlayer.getCooldownManager().addCooldown(InspiringPresence.this.getClass(), "PRES", 12, warlordsPlayer, CooldownTypes.BUFF);
+                nearPlayer.getCooldownManager().addCooldown(InspiringPresence.this.getClass(), "PRES", 12, warlordsPlayer, CooldownTypes.BUFF);
             });
 
         for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "paladin.inspiringpresence.activation", 2, 1);
+            player1.playSound(player.getLocation(), "paladin.inspiringpresence.activation", 2, 0.1f);
         }
 
         new BukkitRunnable() {

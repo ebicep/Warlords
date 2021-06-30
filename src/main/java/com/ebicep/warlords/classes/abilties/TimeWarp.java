@@ -80,7 +80,7 @@ public class TimeWarp extends AbstractAbility {
 
                 //TIME WARPS
                 if (counter % 20 == 0) {
-                    if (timeWarpPlayer.getTime() != 0) {
+                    if (timeWarpPlayer.getTime() > 0) {
                         timeWarpPlayer.setTime(timeWarpPlayer.getTime() - 1);
                     } else {
                         WarlordsPlayer player = timeWarpPlayer.getWarlordsPlayer();

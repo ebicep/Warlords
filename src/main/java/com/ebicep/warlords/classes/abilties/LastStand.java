@@ -40,7 +40,7 @@ public class LastStand extends AbstractAbility {
         warlordsPlayer.subtractEnergy(energyCost);
 
         for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "warrior.laststand.activation", 2, 1);
+            player1.playSound(player.getLocation(), "warrior.laststand.activation", 2, 0.1f);
         }
 
         Location loc = player.getEyeLocation();

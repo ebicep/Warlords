@@ -6,7 +6,7 @@
 
     <groupId>com.ebicep</groupId>
     <artifactId>Warlords</artifactId>
-    <version>1.0.0-MAVEN-RC1</version>
+    <version>1.0.0-MAVEN-RC2</version>
 
     <build>
         <plugins>

@@ -34,7 +34,7 @@ public abstract class AbstractPowerUp {
             powerUp.setHelmet(new ItemStack(Material.WOOL, 1, (short) 1));
         } else if (this instanceof HealingPowerUp) {
             powerUp.setCustomName("§a§lHEALING");
-            powerUp.setHelmet(new ItemStack(Material.WOOL, 1, (short) 5));
+            powerUp.setHelmet(new ItemStack(Material.WOOL, 1, (short) 13));
         } else if (this instanceof SpeedPowerUp) {
             powerUp.setCustomName("§b§lSPEED");
             powerUp.setHelmet(new ItemStack(Material.WOOL, 1, (short) 4));

@@ -24,7 +24,7 @@ public class HolyRadiance extends AbstractAbility {
     public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
         for(WarlordsPlayer p : PlayerFilter
             .entitiesAround(player, 3.6D, 3.6D, 3.6D)
-            .aliveEnemiesOf(warlordsPlayer)
+            .aliveTeammatesOfExcludingSelf(warlordsPlayer)
         ) {
             p.addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
         }

@@ -43,7 +43,7 @@ public class ArcaneShield extends AbstractAbility {
         new BukkitRunnable() {
             @Override
             public void run() {
-                if (warlordsPlayer.getCooldownManager().getCooldown(Arc.class).size() > 0) {
+                if (warlordsPlayer.getCooldownManager().getCooldown(ArcaneShield.class).size() > 0) {
                     Location location = player.getLocation();
                     location.add(0, 1.5, 0);
                     ParticleEffect.CLOUD.display(0.15F, 0.3F, 0.15F, 0.01F, 2, location, 500);

@@ -162,7 +162,7 @@ public class PlayingState implements State, TimerDebugAble {
         List<OfflinePlayer> wantedRed = preferedTeams.computeIfAbsent(Team.RED, (k) -> new ArrayList<>());
         List<OfflinePlayer> wantedBlue = preferedTeams.computeIfAbsent(Team.BLUE, (k) -> new ArrayList<>());
         for (OfflinePlayer p : preferedTeams.get(null)) {
-            Bukkit.broadcastMessage(p.getName() + " did not choose a team!");
+            Bukkit.broadcastMessage(ChatColor.GOLD + p.getName() + " §7did not choose a team!");
             if (wantedRed.size() < wantedBlue.size()) {
                 wantedRed.add(p);
             } else {
@@ -241,7 +241,7 @@ public class PlayingState implements State, TimerDebugAble {
                     assert getStats(Team.BLUE).points == getStats(Team.RED).points;
                     this.pointLimit = getStats(Team.BLUE).points + 25;
                     this.game.forEachOnlinePlayer((player, team) -> {
-                        player.sendMessage("Overtime is now active!");
+                        player.sendMessage("§7Overtime is now active!");
                     });
                 } else {
                     return next;
