@@ -1,16 +1,11 @@
 package com.ebicep.warlords.classes.abilties;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.ParticleEffect;
-import com.ebicep.warlords.util.Utils;
-import org.bukkit.GameMode;
+import com.ebicep.warlords.util.PlayerFilter;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-
-import java.util.List;
 
 public class HolyRadiance extends AbstractAbility {
 
@@ -26,18 +21,12 @@ public class HolyRadiance extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(Player player) {
-        WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
-        List<Entity> near = player.getNearbyEntities(6.5D, 6.5D, 6.5D);
-        near = Utils.filterOnlyTeammates(near, player);
-        for (Entity entity : near) {
-            if (entity instanceof Player) {
-                Player nearPlayer = (Player) entity;
-                double distance = player.getLocation().distanceSquared(nearPlayer.getLocation());
-                if (nearPlayer.getGameMode() != GameMode.SPECTATOR && distance < 3.6 * 3.6) {
-                    Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
-                }
-            }
+    public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
+        for(WarlordsPlayer p : PlayerFilter
+            .entitiesAround(player, 3.6D, 3.6D, 3.6D)
+            .aliveTeammatesOfExcludingSelf(warlordsPlayer)
+        ) {
+            p.addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
         }
 
         warlordsPlayer.subtractEnergy(energyCost);

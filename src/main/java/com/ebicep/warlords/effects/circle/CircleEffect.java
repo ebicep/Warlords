@@ -5,6 +5,7 @@ import com.ebicep.warlords.effects.EffectPlayer;
 import com.ebicep.warlords.effects.GameTeamContainer;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Team;
+import com.ebicep.warlords.player.WarlordsPlayer;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
 
@@ -18,6 +19,9 @@ public class CircleEffect extends BaseAreaEffect<EffectPlayer<? super CircleEffe
     private double radius;
     @Nonnull
     final GameTeamContainer players;
+    public CircleEffect(@Nonnull WarlordsPlayer wp, @Nonnull Location center, double radius) {
+        this(wp.getGame(), wp.getTeam(), center, radius);
+    }
 
     public CircleEffect(@Nonnull Game game, @Nonnull Team team, @Nonnull Location center, double radius) {
         Validate.notNull(game, "game");

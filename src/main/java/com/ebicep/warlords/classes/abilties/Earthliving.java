@@ -26,8 +26,7 @@ public class Earthliving extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(Player player) {
-        WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
+    public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
         warlordsPlayer.subtractEnergy(energyCost);
         warlordsPlayer.getCooldownManager().addCooldown(Earthliving.this.getClass(), "EARTH", 8, warlordsPlayer, CooldownTypes.ABILITY);
 

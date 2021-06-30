@@ -2,20 +2,19 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.effects.circle.*;
+import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.ParticleEffect;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.EulerAngle;
 
 public class DamageHealCircle {
-
-    private Player player;
+    private final WarlordsPlayer warlordsPlayer;
     private Location location;
     private int radius;
     private int duration;
@@ -27,8 +26,8 @@ public class DamageHealCircle {
     private ArmorStand hammer;
     private final CircleEffect circle;
 
-    public DamageHealCircle(Player player, Location location, int radius, int duration, float minDamage, float maxDamage, int critChance, int critMultiplier, String name) {
-        this.player = player;
+    public DamageHealCircle(WarlordsPlayer warlordsPlayer, Location location, int radius, int duration, float minDamage, float maxDamage, int critChance, int critMultiplier, String name) {
+        this.warlordsPlayer = warlordsPlayer;
         this.location = location;
         this.radius = radius;
         this.duration = duration;
@@ -37,11 +36,11 @@ public class DamageHealCircle {
         this.critChance = critChance;
         this.critMultiplier = critMultiplier;
         this.name = name;
-        this.circle = new CircleEffect(Warlords.game, Warlords.game.getPlayerTeam(player), location, radius);
+        this.circle = new CircleEffect(warlordsPlayer.getGame(), warlordsPlayer.getTeam(), location, radius);
         if (name.contains("Healing Rain")) {
             this.circle.addEffect(new CircumferenceEffect(ParticleEffect.VILLAGER_HAPPY, ParticleEffect.REDSTONE));
-            this.circle.addEffect(new AreaEffect(5, ParticleEffect.CLOUD).particlesPerSurface(0.05));
-            this.circle.addEffect(new AreaEffect(5, ParticleEffect.DRIP_WATER).particlesPerSurface(0.05));
+            this.circle.addEffect(new AreaEffect(5, ParticleEffect.CLOUD).particlesPerSurface(0.025));
+            this.circle.addEffect(new AreaEffect(5, ParticleEffect.DRIP_WATER).particlesPerSurface(0.025));
         } else if (name.equals("Consecrate")) {
             this.circle.addEffect(new CircumferenceEffect(ParticleEffect.VILLAGER_HAPPY, ParticleEffect.REDSTONE));
             this.circle.addEffect(new DoubleLineEffect(ParticleEffect.SPELL));
@@ -63,7 +62,7 @@ public class DamageHealCircle {
         }
         newLocation.add(0, -1, 0);
         hammer = (ArmorStand) location.getWorld().spawnEntity(newLocation.clone().add(.25, 1.9, -.25), EntityType.ARMOR_STAND);
-        hammer.setMetadata("Hammer of Light - " + player.getName(), new FixedMetadataValue(Warlords.getInstance(), true));
+        hammer.setMetadata("Hammer of Light - " + getWarlordsPlayer().getName(), new FixedMetadataValue(Warlords.getInstance(), true));
         hammer.setRightArmPose(new EulerAngle(20.25, 0, 0));
         hammer.setItemInHand(new ItemStack(Material.STRING));
         hammer.setGravity(false);
@@ -79,12 +78,8 @@ public class DamageHealCircle {
         this.circle.playEffects();
     }
 
-    public Player getPlayer() {
-        return player;
-    }
-
-    public void setPlayer(Player player) {
-        this.player = player;
+    public WarlordsPlayer getWarlordsPlayer() {
+        return warlordsPlayer;
     }
 
     public Location getLocation() {
@@ -93,6 +88,7 @@ public class DamageHealCircle {
 
     public void setLocation(Location location) {
         this.location = location;
+        circle.setCenter(location);
     }
 
     public int getRadius() {

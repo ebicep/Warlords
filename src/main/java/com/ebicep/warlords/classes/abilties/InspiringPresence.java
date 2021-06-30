@@ -5,14 +5,11 @@ import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.ParticleEffect;
-import com.ebicep.warlords.util.Utils;
-import org.bukkit.GameMode;
+import com.ebicep.warlords.util.PlayerFilter;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.List;
 
 
 public class InspiringPresence extends AbstractAbility {
@@ -32,25 +29,18 @@ public class InspiringPresence extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(Player player) {
-        WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
-        warlordsPlayer.getSpeed().changeCurrentSpeed("Inspiring Presence", 30, 12 * 20, "BASE");
+    public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
         warlordsPlayer.getCooldownManager().addCooldown(InspiringPresence.this.getClass(), "PRES", 12, warlordsPlayer, CooldownTypes.BUFF);
-
-
-        // TODO: make range a circle instead of square
-        // TODO: give near players pres after initial onactivate
-        List<Entity> near = player.getNearbyEntities(6.0D, 6.0D, 6.0D);
-        near = Utils.filterOnlyTeammates(near, player);
-        for (Entity entity : near) {
-            if (entity instanceof Player && ((Player) entity).getGameMode() != GameMode.SPECTATOR) {
-                Warlords.getPlayer((Player) entity).getSpeed().changeCurrentSpeed("Inspiring Presence", 30, 12 * 20, "BASE");
-                Warlords.getPlayer((Player) entity).getCooldownManager().addCooldown(InspiringPresence.this.getClass(), "PRES", 12, warlordsPlayer, CooldownTypes.BUFF);
-            }
-        }
+        PlayerFilter.entitiesAround(warlordsPlayer, 6.0D, 6.0D, 6.0D)
+            .aliveTeammatesOf(warlordsPlayer)
+            .concat(warlordsPlayer)
+            .forEach((nearPlayer) -> {
+                nearPlayer.getSpeed().addSpeedModifier("Inspiring Presence", 30, 12 * 20, "BASE");
+                nearPlayer.getCooldownManager().addCooldown(InspiringPresence.this.getClass(), "PRES", 12, warlordsPlayer, CooldownTypes.BUFF);
+            });
 
         for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "paladin.inspiringpresence.activation", 2, 1);
+            player1.playSound(player.getLocation(), "paladin.inspiringpresence.activation", 2, 0.1f);
         }
 
         new BukkitRunnable() {

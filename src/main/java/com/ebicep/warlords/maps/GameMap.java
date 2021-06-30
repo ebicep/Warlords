@@ -3,6 +3,7 @@ package com.ebicep.warlords.maps;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.List;
 
@@ -273,20 +274,44 @@ public enum GameMap {
         return maxPlayers;
     }
 
+    public Location getDamagePowerup(@Nonnull Team team) {
+        return team == Team.RED  ? damagePowerupRed : damagePowerupBlue;
+    }
+
     public int getMinPlayers() {
         return minPlayers;
+    }
+    public Location getSpeedPowerup(@Nonnull Team team) {
+        return team == Team.RED  ? speedPowerupRed : speedPowerupBlue;
+    }
+
+
+    public Location getHealingPowerup(@Nonnull Team team) {
+        return team == Team.RED  ? healingPowerupRed : healingPowerupBlue;
     }
 
     public int getGameTimerInTicks() {
         return gameTimerInTicks;
     }
 
+    public Location getLobbySpawnPoint(@Nonnull Team team) {
+        return team == Team.RED  ? redLobbySpawnPoint : blueLobbySpawnPoint;
+    }
+
     public int getCountdownTimerInTicks() {
         return countdownTimerInTicks;
     }
 
+    public Location getRespawn(@Nonnull Team team) {
+        return team == Team.RED  ? redRespawn : blueRespawn;
+    }
+
     public String getMapDirPath() {
         return mapDirPath;
+    }
+
+    public Location getFlag(@Nonnull Team team) {
+        return team == Team.RED  ? redFlag : blueFlag;
     }
 
     public Location getDamagePowerupBlue() {

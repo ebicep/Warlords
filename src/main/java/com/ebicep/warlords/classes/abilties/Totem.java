@@ -9,16 +9,14 @@ import com.ebicep.warlords.effects.circle.DoubleLineEffect;
 import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.ParticleEffect;
-import com.ebicep.warlords.util.Utils;
+import com.ebicep.warlords.util.PlayerFilter;
 import net.minecraft.server.v1_8_R3.EntityArmorStand;
 import net.minecraft.server.v1_8_R3.World;
 import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -87,7 +85,7 @@ public class Totem extends EntityArmorStand {
     public static class TotemThunderlord extends AbstractAbility {
 
         public TotemThunderlord() {
-            super("Capacitor Totem", -404, -523, 60 + 2, 20, 20, 200);
+            super("Capacitor Totem", -404, -523, 62.64f, 20, 20, 200);
         }
 
         @Override
@@ -100,8 +98,7 @@ public class Totem extends EntityArmorStand {
         }
 
         @Override
-        public void onActivate(Player player) {
-            WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
+        public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
 
             Location standLocation = player.getLocation();
             standLocation.setYaw(0);
@@ -158,8 +155,7 @@ public class Totem extends EntityArmorStand {
         }
 
         @Override
-        public void onActivate(Player player) {
-            WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
+        public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
 
             Location standLocation = player.getLocation();
             standLocation.setYaw(0);
@@ -181,7 +177,7 @@ public class Totem extends EntityArmorStand {
 
             player.setMetadata("TOTEM", new FixedMetadataValue(Warlords.getInstance(), this));
 
-            CircleEffect circle = new CircleEffect(Warlords.game, Warlords.game.getPlayerTeam(player), standLocation.clone().add(0, 1, 0), 10);
+            CircleEffect circle = new CircleEffect(warlordsPlayer, standLocation.clone().add(0, 1, 0), 10);
             circle.addEffect(new CircumferenceEffect(ParticleEffect.SPELL));
             circle.addEffect(new DoubleLineEffect(ParticleEffect.REDSTONE));
             BukkitTask task = Bukkit.getScheduler().runTaskTimer(Warlords.getInstance(), circle::playEffects, 0, 1);
@@ -234,35 +230,25 @@ public class Totem extends EntityArmorStand {
                                     TotemSpiritguard.this.getCritMultiplier()
                             );
                             // Teammate heal
-                            List<Entity> near = deathsDebtTotem.getTotemArmorStand().getNearbyEntities(8.0D, 7.0D, 8.0D);
-                            near = Utils.filterOnlyTeammates(near, deathsDebtTotem.getOwner().getPlayer());
-                            for (Entity entity : near) {
-                                if (entity instanceof Player) {
-                                    Player nearPlayer = (Player) entity;
-                                    if (nearPlayer.getGameMode() != GameMode.SPECTATOR) {
-                                        Warlords.getPlayer(nearPlayer).addHealth(deathsDebtTotem.getOwner(), deathsDebtTotem.getOwner().getSpec().getOrange().getName(),
-                                                (damage * -.15f),
-                                                (damage * -.15f),
-                                                deathsDebtTotem.getOwner().getSpec().getOrange().getCritChance(), deathsDebtTotem.getOwner().getSpec().getOrange().getCritMultiplier());
-                                    }
-                                }
-                            }
+                            PlayerFilter.entitiesAround(deathsDebtTotem.getTotemArmorStand(), 8.0D, 7.0D, 8.0D)
+                                .aliveTeammatesOf(warlordsPlayer)
+                                .forEach((nearPlayer) -> {
+                                    nearPlayer.addHealth(deathsDebtTotem.getOwner(), deathsDebtTotem.getOwner().getSpec().getOrange().getName(),
+                                            damage * -.15f,
+                                            damage * -.15f,
+                                            deathsDebtTotem.getOwner().getSpec().getOrange().getCritChance(), deathsDebtTotem.getOwner().getSpec().getOrange().getCritMultiplier());
+                                });
                         } else {
-                            // Enemy damage
                             player.getWorld().spigot().strikeLightningEffect(standLocation, false);
-                            List<Entity> near = (List<Entity>) deathsDebtTotem.getTotemArmorStand().getWorld().getNearbyEntities(deathsDebtTotem.getTotemArmorStand().getLocation().clone().subtract(0, 1, 0), 6.5D, 7.0D, 6.5D);
-                            near = Utils.filterOutTeammates(near, deathsDebtTotem.getOwner().getPlayer());
-                            for (Entity entity : near) {
-                                if (entity instanceof Player) {
-                                    Player nearPlayer = (Player) entity;
-                                    if (nearPlayer.getGameMode() != GameMode.SPECTATOR) {
-                                        Warlords.getPlayer(nearPlayer).addHealth(deathsDebtTotem.getOwner(), deathsDebtTotem.getOwner().getSpec().getOrange().getName(),
-                                                (TotemSpiritguard.this.getDelayedDamage() * .15f),
-                                                (TotemSpiritguard.this.getDelayedDamage() * .15f),
-                                                deathsDebtTotem.getOwner().getSpec().getOrange().getCritChance(), deathsDebtTotem.getOwner().getSpec().getOrange().getCritMultiplier());
-                                    }
-                                }
-                            }
+                            // Enemy damage
+                            PlayerFilter.entitiesAround(deathsDebtTotem.getTotemArmorStand(), 8.0D, 7.0D, 8.0D)
+                                .aliveEnemiesOf(warlordsPlayer)
+                                .forEach((nearPlayer) -> {
+                                    nearPlayer.addHealth(deathsDebtTotem.getOwner(), deathsDebtTotem.getOwner().getSpec().getOrange().getName(),
+                                            TotemSpiritguard.this.getDelayedDamage() * .15f,
+                                            TotemSpiritguard.this.getDelayedDamage() * .15f,
+                                            deathsDebtTotem.getOwner().getSpec().getOrange().getCritChance(), deathsDebtTotem.getOwner().getSpec().getOrange().getCritMultiplier());
+                                });
                             // 6 damage waves, stop the function
                             deathsDebtTotem.getTotemArmorStand().remove();
                             this.cancel();
@@ -297,7 +283,7 @@ public class Totem extends EntityArmorStand {
     public static class TotemEarthwarden extends AbstractAbility {
 
         public TotemEarthwarden() {
-            super("Healing Totem", 168, 841, 60f + 10.49f, 60, 15, 200);
+            super("Healing Totem", 168, 841, 62.64f, 60, 15, 200);
 
             //168 - 227
             //841 - 1138
@@ -316,8 +302,7 @@ public class Totem extends EntityArmorStand {
         }
 
         @Override
-        public void onActivate(Player player) {
-            WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
+        public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
 
             Location standLocation = player.getLocation();
             standLocation.setYaw(0);
@@ -351,21 +336,19 @@ public class Totem extends EntityArmorStand {
                             player1.playSound(player.getLocation(), "shaman.earthlivingweapon.impact", 2, 1);
                         }
 
-                        List<Entity> near = healingTotem.getTotemArmorStand().getNearbyEntities(4.0D, 4.0D, 4.0D);
-                        near = Utils.filterOnlyTeammates(near, healingTotem.getOwner().getPlayer());
-                        for (Entity entity : near) {
-                            if (entity instanceof Player) {
-                                Player nearPlayer = (Player) entity;
-                                if (nearPlayer.getGameMode() != GameMode.SPECTATOR) {
-                                    Warlords.getPlayer(nearPlayer).addHealth(healingTotem.getOwner(),
-                                            healingTotem.getOwner().getSpec().getOrange().getName(),
-                                            healingTotem.getOwner().getSpec().getOrange().getMinDamageHeal(),
-                                            (healingTotem.getOwner().getSpec().getOrange().getMinDamageHeal() * 1.35f),
-                                            healingTotem.getOwner().getSpec().getOrange().getCritChance(),
-                                            healingTotem.getOwner().getSpec().getOrange().getCritMultiplier());
-                                }
-                            }
-                        }
+
+                        PlayerFilter.entitiesAround(healingTotem.getTotemArmorStand(), 5, 5, 5)
+                            .aliveTeammatesOf(warlordsPlayer)
+                            .forEach((nearPlayer) -> {
+                                    nearPlayer.addHealth(
+                                        healingTotem.getOwner(),
+                                        healingTotem.getOwner().getSpec().getOrange().getName(),
+                                        healingTotem.getOwner().getSpec().getOrange().getMinDamageHeal(),
+                                        healingTotem.getOwner().getSpec().getOrange().getMinDamageHeal() * 1.35f,
+                                        healingTotem.getOwner().getSpec().getOrange().getCritChance(),
+                                        healingTotem.getOwner().getSpec().getOrange().getCritMultiplier()
+                                    );
+                            });
                     } else {
 
                         for (Player player1 : player.getWorld().getPlayers()) {
@@ -374,21 +357,19 @@ public class Totem extends EntityArmorStand {
 
                         new FallingBlockWaveEffect(totemStand.getLocation().clone().add(0, 1, 0), 7, 1.2, Material.SAPLING, (byte) 1).play();
 
-                        List<Entity> near = healingTotem.getTotemArmorStand().getNearbyEntities(4.0D, 4.0D, 4.0D);
-                        near = Utils.filterOnlyTeammates(near, healingTotem.getOwner().getPlayer());
-                        for (Entity entity : near) {
-                            if (entity instanceof Player) {
-                                Player nearPlayer = (Player) entity;
-                                if (nearPlayer.getGameMode() != GameMode.SPECTATOR) {
-                                    Warlords.getPlayer(nearPlayer).addHealth(healingTotem.getOwner(),
-                                            healingTotem.getOwner().getSpec().getOrange().getName(),
-                                            healingTotem.getOwner().getSpec().getOrange().getMaxDamageHeal(),
-                                            (healingTotem.getOwner().getSpec().getOrange().getMaxDamageHeal() * 1.35f),
-                                            healingTotem.getOwner().getSpec().getOrange().getCritChance(),
-                                            healingTotem.getOwner().getSpec().getOrange().getCritMultiplier());
-                                }
-                            }
-                        }
+                        PlayerFilter.entitiesAround(healingTotem.getTotemArmorStand(), 5, 5, 5)
+                            .aliveTeammatesOf(warlordsPlayer)
+                            .forEach((nearPlayer) -> {
+                                nearPlayer.addHealth(
+                                    healingTotem.getOwner(),
+                                    healingTotem.getOwner().getSpec().getOrange().getName(),
+                                    healingTotem.getOwner().getSpec().getOrange().getMaxDamageHeal(),
+                                    healingTotem.getOwner().getSpec().getOrange().getMaxDamageHeal() * 1.35f,
+                                    healingTotem.getOwner().getSpec().getOrange().getCritChance(),
+                                    healingTotem.getOwner().getSpec().getOrange().getCritMultiplier()
+                                );
+                            });
+
                         healingTotem.getTotemArmorStand().remove();
                         this.cancel();
                     }

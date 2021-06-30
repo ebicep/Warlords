@@ -4,7 +4,8 @@ import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Team;
 import org.bukkit.entity.Player;
 
-import java.util.Collection;
+import java.util.stream.Stream;
+
 
 
 // Class to quickly get a team's teammates and enemies
@@ -19,20 +20,20 @@ public class GameTeamContainer {
         this.team = team;
     }
 
-    public Collection<Player> getAllyPlayers() {
+    public Stream<Player> getAllyPlayers() {
         return getAllyPlayers(game, team);
     }
 
-    public static Collection<Player> getAllyPlayers(Game game, Team team) {
-        return team == Team.RED ? game.getTeamRedProtected() : game.getTeamBlueProtected();
+    public static Stream<Player> getAllyPlayers(Game game, Team team) {
+        return game.onlinePlayers().filter(e -> e.getValue() == team).map(e -> e.getKey());
     }
 
-    public Collection<Player> getEnemyPlayers() {
+    public Stream<Player> getEnemyPlayers() {
         return getEnemyPlayers(game, team);
     }
 
-    public static Collection<Player> getEnemyPlayers(Game game, Team team) {
-        return team == Team.BLUE ? game.getTeamRedProtected() : game.getTeamBlueProtected();
+    public static Stream<Player> getEnemyPlayers(Game game, Team team) {
+        return game.onlinePlayers().filter(e -> e.getValue() != team).map(e -> e.getKey());
     }
 
 }

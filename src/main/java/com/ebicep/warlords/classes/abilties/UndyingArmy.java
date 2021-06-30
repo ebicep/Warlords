@@ -1,6 +1,5 @@
 package com.ebicep.warlords.classes.abilties;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
@@ -8,16 +7,15 @@ import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.ItemBuilder;
 import com.ebicep.warlords.util.ParticleEffect;
-import com.ebicep.warlords.util.Utils;
+import com.ebicep.warlords.util.PlayerFilter;
 import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.List;
+import java.util.Iterator;
+
 
 public class UndyingArmy extends AbstractAbility {
 
@@ -43,40 +41,28 @@ public class UndyingArmy extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(Player player) {
-        WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
+    public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
         warlordsPlayer.getCooldownManager().addCooldown(UndyingArmy.this.getClass(), "ARMY", 10, warlordsPlayer, CooldownTypes.ABILITY);
 
-        List<Entity> near = player.getNearbyEntities(5.5D, 4.5D, 5.5D);
-        near = Utils.filterOnlyTeammates(near, player);
+        Iterator<WarlordsPlayer> iterator = PlayerFilter.entitiesAround(warlordsPlayer, 5, 5, 5)
+                .aliveTeammatesOfExcludingSelf(warlordsPlayer)
+                .iterator();
         int numberOfPlayersWithArmy = 0;
-        for (Entity entity : near) {
-            if (entity instanceof Player) {
-                Player nearPlayer = (Player) entity;
-                if (nearPlayer.getGameMode() != GameMode.SPECTATOR) {
-                    if (Warlords.game.isBlueTeam(player)) {
-                        warlordsPlayer.getPlayer().sendMessage("§a\u00BB§7 " + ChatColor.GRAY + "Your Undying Army is protecting " + ChatColor.BLUE + nearPlayer.getName() + ChatColor.GRAY + ".");
-                    } else if (Warlords.game.isRedTeam(player)) {
-                        warlordsPlayer.getPlayer().sendMessage("§a\u00BB§7 " + ChatColor.GRAY + "Your Undying Army is protecting " + ChatColor.RED + nearPlayer.getName() + ChatColor.GRAY + ".");
-                    }
-                    WarlordsPlayer warlordsNearPlayer = Warlords.getPlayer(nearPlayer);
-                    warlordsNearPlayer.getCooldownManager().addCooldown(UndyingArmy.this.getClass(), "ARMY", 10, warlordsPlayer, CooldownTypes.ABILITY);
-                    warlordsNearPlayer.getPlayer().sendMessage("§a\u00BB§7 " + ChatColor.GRAY + warlordsPlayer.getName() + "'s Undying Army protects you for " + ChatColor.GOLD + "10 " + ChatColor.GRAY + "seconds.");
-                    numberOfPlayersWithArmy++;
-                }
-            }
+        while(iterator.hasNext()) {
+            WarlordsPlayer warlordsNearPlayer = iterator.next();
+            warlordsPlayer.sendMessage("§a\u00BB§7 " + ChatColor.GRAY + "Your Undying Army is protecting " + warlordsNearPlayer.getColoredName()+ ChatColor.GRAY + ".");
+            warlordsNearPlayer.getCooldownManager().addCooldown(UndyingArmy.this.getClass(), "ARMY", 10, warlordsPlayer, CooldownTypes.ABILITY);
+            warlordsNearPlayer.sendMessage("§a\u00BB§7 " + ChatColor.GRAY + warlordsPlayer.getName() + "'s Undying Army protects you for " + ChatColor.GOLD + "10 " + ChatColor.GRAY + "seconds.");
+            numberOfPlayersWithArmy++;
         }
-        if (numberOfPlayersWithArmy == 1) {
-            warlordsPlayer.getPlayer().sendMessage("§a\u00BB§7 " + ChatColor.GRAY + "Your Undying Army is protecting " + ChatColor.YELLOW + numberOfPlayersWithArmy + ChatColor.GRAY + " nearby ally.");
-        } else {
-            warlordsPlayer.getPlayer().sendMessage("§a\u00BB§7 " + ChatColor.GRAY + "Your Undying Army is protecting " + ChatColor.YELLOW + numberOfPlayersWithArmy + ChatColor.GRAY + " nearby allies.");
-        }
+        String allies = numberOfPlayersWithArmy == 1 ? "ally." : "allies.";
+        warlordsPlayer.sendMessage("§a\u00BB§7 " + ChatColor.GRAY + "Your Undying Army is protecting " + ChatColor.YELLOW + numberOfPlayersWithArmy + ChatColor.GRAY + " nearby " + allies);
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), Sound.ZOMBIE_IDLE, 1, 1.1f);
         }
 
-        CircleEffect circle = new CircleEffect(Warlords.game, Warlords.game.getPlayerTeam(player), player.getLocation(), 5);
+        CircleEffect circle = new CircleEffect(warlordsPlayer.getGame(), warlordsPlayer.getTeam(), player.getLocation(), 5);
         circle.addEffect(new CircumferenceEffect(ParticleEffect.VILLAGER_HAPPY).particlesPerCircumference(1));
         circle.playEffects();
     }

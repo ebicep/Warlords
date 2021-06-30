@@ -23,8 +23,7 @@ public class BloodLust extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(Player player) {
-        WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
+    public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
         warlordsPlayer.subtractEnergy(energyCost);
         warlordsPlayer.getCooldownManager().addCooldown(BloodLust.this.getClass(), "LUST", 15, warlordsPlayer, CooldownTypes.ABILITY);
 

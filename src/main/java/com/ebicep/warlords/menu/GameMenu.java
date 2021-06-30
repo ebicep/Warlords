@@ -116,8 +116,7 @@ public class GameMenu {
                     (n, e) -> {
                         player.sendMessage(ChatColor.WHITE + "Class: §6" + subClass);
                         setSelected(player, subClass);
-                        ArmorManager.resetArmor(player, subClass);
-                        Warlords.game.updateClass(player);
+                        ArmorManager.resetArmor(player, subClass, Team.BLUE);
                         openClassMenu(player, selectedGroup);
                     }
             );
@@ -232,7 +231,7 @@ public class GameMenu {
     }
 
     public static void openArmorMenu(Player player, int pageNumber) {
-        boolean onBlueTeam = Warlords.game.getCachedTeamBlue().contains(player);
+        boolean onBlueTeam = Warlords.game.getPlayerTeamOrNull(player.getUniqueId()) == Team.BLUE;
         List<Helmets> selectedHelmet = Helmets.getSelected(player);
         List<ArmorSets> selectedArmorSet = ArmorSets.getSelected(player);
         Menu menu = new Menu("Armor Sets & Helmets", 9 * 6);
@@ -423,8 +422,7 @@ public class GameMenu {
                     (n, e) -> {
                         if (selectedTeam != team) {
                             player.sendMessage(ChatColor.GREEN + "You have joined the " + team.teamColor() + team.name + ChatColor.GREEN + " team!");
-                            Warlords.game.removePlayer(player);
-                            Warlords.game.addPlayer(player, team == Team.BLUE);
+                            Warlords.game.setPlayerTeam(player, team);
                             Team.setSelected(player, team);
                         }
                         openTeamMenu(player);

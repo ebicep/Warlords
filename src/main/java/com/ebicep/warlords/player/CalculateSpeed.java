@@ -99,7 +99,7 @@ public class CalculateSpeed {
      * @param toDisable The modifiers this should override for as long as it is active
      * @return A runnable that can be used to manually remove this entry
      */
-    public Runnable changeCurrentSpeed(String name, int modifier, int duration, String... toDisable) {
+    public Runnable addSpeedModifier(String name, int modifier, int duration, String... toDisable) {
         return changeCurrentSpeed(name, modifier, duration, Arrays.asList(toDisable));
     }
 

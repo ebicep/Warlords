@@ -12,16 +12,15 @@ import com.ebicep.warlords.player.Classes;
 import com.ebicep.warlords.player.ClassesSkillBoosts;
 import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.util.PlayerFilter;
 import com.ebicep.warlords.util.Utils;
 import net.minecraft.server.v1_8_R3.PacketPlayOutAnimation;
 import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-
-import java.util.List;
 
 public class Strike extends AbstractAbility {
 
@@ -72,101 +71,89 @@ public class Strike extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(Player player) {
-        List<Entity> near = player.getNearbyEntities(5.0D, 5.0D, 5.0D);
-        near = Utils.filterOutTeammates(near, player);
-        for (Entity entity : near) {
-            if (entity instanceof Player && ((Player) entity).getGameMode() != GameMode.SPECTATOR) {
-                Player nearPlayer = (Player) entity;
-                //TODO check if you should just remove distance because near gets nearest already
-                double distance = player.getLocation().distanceSquared(nearPlayer.getLocation());
-                if (Utils.getLookingAt(player, nearPlayer) && distance < 3.6 * 3.6 && Utils.hasLineOfSight(player, nearPlayer)) {
-                    PacketPlayOutAnimation playOutAnimation = new PacketPlayOutAnimation(((CraftPlayer) player).getHandle(), 0);
-                    ((CraftPlayer) player).getHandle().playerConnection.sendPacket(playOutAnimation);
-                    WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
-                    warlordsPlayer.subtractEnergy(energyCost);
+    public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
+        PlayerFilter.entitiesAround(warlordsPlayer, 3.75, 3.75, 3.75)
+            .aliveEnemiesOf(warlordsPlayer)
+            .closestFirst(warlordsPlayer)
+            .requireLineOfSight(warlordsPlayer)
+            .first((nearPlayer) -> {
+            if (Utils.getLookingAt(player, nearPlayer.getEntity()) && Utils.hasLineOfSight(player, nearPlayer.getEntity())) {
+                PacketPlayOutAnimation playOutAnimation = new PacketPlayOutAnimation(((CraftPlayer) player).getHandle(), 0);
+                ((CraftPlayer) player).getHandle().playerConnection.sendPacket(playOutAnimation);
+                warlordsPlayer.subtractEnergy(energyCost);
 
-                    //PALADIN
-                    if (warlordsPlayer.getSpec() instanceof Avenger || warlordsPlayer.getSpec() instanceof Crusader || warlordsPlayer.getSpec() instanceof Protector) {
-                        for (Player player1 : player.getWorld().getPlayers()) {
-                            player1.playSound(player.getLocation(), "paladin.paladinstrike.activation", 2, 1);
+                //PALADIN
+                if (warlordsPlayer.getSpec() instanceof Avenger || warlordsPlayer.getSpec() instanceof Crusader || warlordsPlayer.getSpec() instanceof Protector) {
+                    for (Player player1 : player.getWorld().getPlayers()) {
+                        player1.playSound(player.getLocation(), "paladin.paladinstrike.activation", 2, 1);
+                    }
+                    //check consecrate then boost dmg
+                    if (warlordsPlayer.getSpec() instanceof Avenger) {
+                        if (standingOnConsecrate(player, nearPlayer.getEntity())) {
+                            nearPlayer.addHealth(warlordsPlayer, name, (minDamageHeal * 1.2f), (maxDamageHeal * 1.2f), critChance, critMultiplier);
+                        } else {
+                            nearPlayer.addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
                         }
-                        //check consecrate then boost dmg
-                        if (warlordsPlayer.getSpec() instanceof Avenger) {
-                            if (standingOnConsecrate(player, nearPlayer)) {
-                                Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, name, (minDamageHeal * 1.2f), (maxDamageHeal * 1.2f), critChance, critMultiplier);
-                            } else {
-                                Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
-                            }
-                            Warlords.getPlayer(nearPlayer).subtractEnergy(6);
-                            if (warlordsPlayer.getCooldownManager().getCooldown(AvengersWrath.class).size() > 0) {
-                                List<Entity> nearNearPlayers = nearPlayer.getNearbyEntities(5.0D, 5.0D, 5.0D);
-                                nearNearPlayers = Utils.filterOutTeammates(nearNearPlayers, player);
-                                int counter = 0;
-                                for (Entity nearEntity : nearNearPlayers) {
-                                    if (nearEntity instanceof Player) {
-                                        Player nearNearPlayer = (Player) nearEntity;
-                                        double distanceNearPlayer = nearPlayer.getLocation().distanceSquared(nearNearPlayer.getLocation());
-                                        if (nearNearPlayer.getGameMode() != GameMode.SPECTATOR && distanceNearPlayer < 3.6 * 3.6) {
-                                            System.out.println("NEAR NEAR HIT " + nearNearPlayer);
-                                            //checking if player is in consecrate
-                                            if (standingOnConsecrate(player, nearNearPlayer)) {
-                                                Warlords.getPlayer(nearNearPlayer).addHealth(warlordsPlayer, name, (minDamageHeal * 1.2f), (maxDamageHeal * 1.2f), critChance, critMultiplier);
-                                            } else {
-                                                Warlords.getPlayer(nearNearPlayer).addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
-                                            }
-                                            Warlords.getPlayer(nearNearPlayer).subtractEnergy(6);
-                                            counter++;
-                                            if (counter == 2)
-                                                break;
-                                        }
-                                    }
+                        nearPlayer.subtractEnergy(6);
+                        if (warlordsPlayer.getCooldownManager().getCooldown(AvengersWrath.class).size() > 0) {
+                            for(WarlordsPlayer nearNearPlayer : PlayerFilter
+                                .entitiesAround(nearPlayer, 5, 3, 5)
+                                .aliveEnemiesOf(warlordsPlayer)
+                                .closestFirst(nearPlayer)
+                                .excluding(nearPlayer)
+                                .limit(2)
+                            ) {
+                                System.out.println("NEAR NEAR HIT " + nearNearPlayer);
+                                //checking if player is in consecrate
+                                if (standingOnConsecrate(player, nearNearPlayer.getEntity())) {
+                                    nearNearPlayer.addHealth(warlordsPlayer, name, minDamageHeal * 1.2f, maxDamageHeal * 1.2f, critChance, critMultiplier);
+                                } else {
+                                    nearNearPlayer.addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
                                 }
-                            }
-                        } else if (warlordsPlayer.getSpec() instanceof Crusader) {
-                            int counter = 0;
-                            //checking if player is in consecrate
-                            if (standingOnConsecrate(player, nearPlayer)) {
-                                Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, name, (minDamageHeal * 1.15f), (maxDamageHeal * 1.15f), critChance, critMultiplier);
-                            } else {
-                                Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
-                            }
-                            //reloops near players to give energy to
-                            List<Entity> nearNearPlayers = nearPlayer.getNearbyEntities(10.0D, 10.0D, 10.0D);
-                            nearNearPlayers.remove(player);
-                            nearNearPlayers = Utils.filterOnlyTeammates(nearNearPlayers, player);
-                            for (Entity nearEntity2 : nearNearPlayers) {
-                                if (nearEntity2 instanceof Player) {
-                                    Player nearTeamPlayer = (Player) nearEntity2;
-                                    Warlords.getPlayer(nearTeamPlayer).addEnergy(warlordsPlayer, name, 24);
-                                    counter++;
-                                    if (counter == 2)
-                                        break;
-                                }
-                            }
-                        } else if (warlordsPlayer.getSpec() instanceof Protector) {
-                            if (standingOnConsecrate(player, nearPlayer)) {
-                                Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, name, (minDamageHeal * 1.15f), (maxDamageHeal * 1.15f), critChance, critMultiplier);
-                            } else {
-                                Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+                                nearNearPlayer.subtractEnergy(6);
                             }
                         }
-
-                    } else if (warlordsPlayer.getSpec() instanceof Berserker || warlordsPlayer.getSpec() instanceof Defender || warlordsPlayer.getSpec() instanceof Revenant) {
-                        Warlords.getPlayer(nearPlayer).getCooldownManager().addCooldown(Strike.this.getClass(), warlordsPlayer.getSpec() instanceof Revenant ? "CRIP" : "WND", 3, warlordsPlayer, CooldownTypes.DEBUFF);
-                        Warlords.getPlayer(nearPlayer).addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
-
-                        for (Player player1 : Bukkit.getOnlinePlayers()) {
-                            player1.playSound(player.getLocation(), "warrior.mortalstrike.impact", 2, 1);
+                    } else if (warlordsPlayer.getSpec() instanceof Crusader) {
+                        //checking if player is in consecrate
+                        if (standingOnConsecrate(player, nearPlayer)) {
+                            nearPlayer.addHealth(warlordsPlayer, name, minDamageHeal * 1.15f, maxDamageHeal * 1.15f, critChance, critMultiplier);
+                        } else {
+                            nearPlayer.addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+                        }
+                        //reloops near players to give energy to
+                        PlayerFilter.entitiesAround(warlordsPlayer, 10.0D, 10.0D, 10.0D)
+                            .aliveTeammatesOfExcludingSelf(warlordsPlayer)
+                            .closestFirst(warlordsPlayer)
+                            .limit(2)
+                            .forEach((nearTeamPlayer) ->
+                                nearTeamPlayer.addEnergy(warlordsPlayer, name, 24)
+                            );
+                    } else if (warlordsPlayer.getSpec() instanceof Protector) {
+                        if (standingOnConsecrate(player, nearPlayer)) {
+                            nearPlayer.addHealth(warlordsPlayer, name, minDamageHeal * 1.15f, maxDamageHeal * 1.15f, critChance, critMultiplier);
+                        } else {
+                            nearPlayer.addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
                         }
                     }
-                    break;
+
+                } else if (warlordsPlayer.getSpec() instanceof Berserker || warlordsPlayer.getSpec() instanceof Defender || warlordsPlayer.getSpec() instanceof Revenant) {
+                    Warlords.getPlayer(nearPlayer).getCooldownManager().addCooldown(Strike.this.getClass(),
+                            warlordsPlayer.getSpec() instanceof Revenant ? "CRIP" : "WND", 3, warlordsPlayer, CooldownTypes.DEBUFF);
+
+                    nearPlayer.addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+
+                    for (Player player1 : Bukkit.getOnlinePlayers()) {
+                        player1.playSound(player.getLocation(), "warrior.mortalstrike.impact", 2, 1);
+                    }
                 }
             }
-        }
+        });
     }
 
-    private boolean standingOnConsecrate(Player owner, Player standing) {
+    private boolean standingOnConsecrate(Player owner, WarlordsPlayer standing) {
+        return standingOnConsecrate(owner, standing.getEntity());
+    }
+    private boolean standingOnConsecrate(Player owner, LivingEntity standing) {
         for (Entity entity : owner.getWorld().getEntities()) {
             if (entity instanceof ArmorStand && entity.hasMetadata("Consecrate - " + owner.getName())) {
                 if (entity.getLocation().clone().add(0, 2, 0).distanceSquared(standing.getLocation()) < 5 * 5.25) {

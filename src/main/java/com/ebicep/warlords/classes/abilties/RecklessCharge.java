@@ -38,10 +38,9 @@ public class RecklessCharge extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(Player player) {
+    public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
         playersHit.clear();
-
-        WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
+        warlordsPlayer.subtractEnergy(energyCost);
         Location eyeLocation = player.getLocation();
         eyeLocation.setPitch(-10);
 

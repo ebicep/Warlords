@@ -1,18 +1,14 @@
 package com.ebicep.warlords.classes.abilties;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.Matrix4d;
 import com.ebicep.warlords.util.ParticleEffect;
-import com.ebicep.warlords.util.Utils;
-import org.bukkit.GameMode;
+import com.ebicep.warlords.util.PlayerFilter;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-import java.util.List;
 
 public class LastStand extends AbstractAbility {
 
@@ -33,25 +29,18 @@ public class LastStand extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(Player player) {
-        WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
+    public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
         warlordsPlayer.getCooldownManager().addCooldown(LastStand.this.getClass(), "LAST", 12, warlordsPlayer, CooldownTypes.BUFF);
-
-        List<Entity> near = player.getNearbyEntities(5.5D, 4.5D, 5.5D);
-        near = Utils.filterOnlyTeammates(near, player);
-        for (Entity entity : near) {
-            if (entity instanceof Player) {
-                Player nearPlayer = (Player) entity;
-                if (nearPlayer.getGameMode() != GameMode.SPECTATOR) {
-                    Warlords.getPlayer(nearPlayer).getCooldownManager().addCooldown(LastStand.this.getClass(), "LAST", 12, warlordsPlayer, CooldownTypes.BUFF);
-                    player.sendMessage("you last standed " + nearPlayer.getName());
-                }
-            }
-        }
+        PlayerFilter.entitiesAround(warlordsPlayer, 5, 5, 5)
+            .aliveTeammatesOfExcludingSelf(warlordsPlayer)
+            .forEach((nearPlayer) -> {
+                nearPlayer.getCooldownManager().addCooldown(LastStand.this.getClass(), "LAST", 6, warlordsPlayer, CooldownTypes.BUFF);
+                player.sendMessage("§7you last standed §e" + nearPlayer.getName());
+            });
         warlordsPlayer.subtractEnergy(energyCost);
 
         for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "warrior.laststand.activation", 2, 1);
+            player1.playSound(player.getLocation(), "warrior.laststand.activation", 2, 0.1f);
         }
 
         Location loc = player.getEyeLocation();

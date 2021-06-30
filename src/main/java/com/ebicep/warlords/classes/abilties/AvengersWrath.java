@@ -27,8 +27,7 @@ public class AvengersWrath extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(Player player) {
-        WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
+    public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
         warlordsPlayer.getCooldownManager().addCooldown(AvengersWrath.this.getClass(), "WRATH", 12, warlordsPlayer, CooldownTypes.BUFF);
 
         for (Player player1 : player.getWorld().getPlayers()) {

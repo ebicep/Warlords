@@ -6,7 +6,7 @@
 
     <groupId>com.ebicep</groupId>
     <artifactId>Warlords</artifactId>
-    <version>0.0.3-SNAPSHOT</version>
+    <version>1.0.0-MAVEN-RC2</version>
 
     <build>
         <plugins>
@@ -30,6 +30,23 @@
                         <goals>
                             <goal>shade</goal>
                         </goals>
+                        <configuration>
+                            <artifactSet>
+                                <excludes>
+                                    <exclude>org.spigotmc:spigot-api</exclude>
+                                    <exclude>org.spigotmc:spigot</exclude>
+                                    <exclude>org.bukkit:bukkit</exclude>
+                                    <exclude>commons-lang:commons-lang</exclude>
+                                    <exclude>com.googlecode.json-simple:json-simple</exclude>
+                                    <exclude>junit:junit</exclude>
+                                    <exclude>com.google.guava:guava</exclude>
+                                    <exclude>com.google.code.gson:gson</exclude>
+                                    <exclude>org.avaje:ebean</exclude>
+                                    <exclude>org.yaml:snakeyaml</exclude>
+                                    <exclude>org.hamcrest:hamcrest-core</exclude>
+                                </excludes> 
+                            </artifactSet>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -70,7 +87,4 @@
             <scope>compile</scope>
         </dependency>
     </dependencies>
-
-
 </project>
-

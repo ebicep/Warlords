@@ -5,15 +5,11 @@ import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.Utils;
 import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
 import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
-
-import java.util.List;
 
 public class Consecrate extends AbstractAbility {
 
@@ -36,12 +32,12 @@ public class Consecrate extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(Player player) {
-        DamageHealCircle damageHealCircle = new DamageHealCircle(player, player.getLocation(), 4, 5, minDamageHeal, maxDamageHeal, critChance, critMultiplier, name);
-        Warlords.getPlayer(player).subtractEnergy(energyCost);
+    public void onActivate(WarlordsPlayer wp, Player player) {
+        DamageHealCircle damageHealCircle = new DamageHealCircle(wp, player.getLocation(), 4, 5, minDamageHeal, maxDamageHeal, critChance, critMultiplier, name);
+        wp.subtractEnergy(energyCost);
 
         for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "paladin.consecrate.activation", 2, 1);
+            player1.playSound(player.getLocation(), "paladin.consecrate.activation", 2, 1f);
         }
 
         ArmorStand consecrate = player.getLocation().getWorld().spawn(player.getLocation().clone().add(0, -2, 0), ArmorStand.class);
@@ -56,15 +52,9 @@ public class Consecrate extends AbstractAbility {
             @Override
             public void run() {
                 damageHealCircle.setDuration(damageHealCircle.getDuration() - 1);
-                List<Entity> near = (List<Entity>) damageHealCircle.getLocation().getWorld().getNearbyEntities(damageHealCircle.getLocation(), 5, 3, 5);
-                near = Utils.filterOutTeammates(near, player);
-                for (Entity entity : near) {
-                    if (entity instanceof Player && ((Player) entity).getGameMode() != GameMode.SPECTATOR) {
-                        Player player = (Player) entity;
-                        WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
-                        warlordsPlayer.addHealth(Warlords.getPlayer(damageHealCircle.getPlayer()), damageHealCircle.getName(), damageHealCircle.getMinDamage(), damageHealCircle.getMaxDamage(), damageHealCircle.getCritChance(), damageHealCircle.getCritMultiplier());
-                    }
-                }
+                Utils.filterOnlyEnemies(damageHealCircle.getLocation(), 5, 3, 5, player).forEach(warlordsPlayer -> {
+                    warlordsPlayer.addHealth(damageHealCircle.getWarlordsPlayer(), damageHealCircle.getName(), damageHealCircle.getMinDamage(), damageHealCircle.getMaxDamage(), damageHealCircle.getCritChance(), damageHealCircle.getCritMultiplier());
+                });
                 if (damageHealCircle.getDuration() == 0) {
                     consecrate.remove();
                     this.cancel();

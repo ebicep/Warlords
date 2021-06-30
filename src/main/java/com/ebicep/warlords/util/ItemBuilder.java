@@ -67,7 +67,7 @@ public class ItemBuilder {
                     if (loreRow.contains("\n")) {
                         String chatColor = "";
                         for (String split : loreRow.split("\n")) {
-                            String combined = !split.isEmpty() && split.charAt(0) != ChatColor.COLOR_CHAR ? split : chatColor + split;
+                            String combined = !split.isEmpty() && split.charAt(0) == ChatColor.COLOR_CHAR ? split : chatColor + split;
                             newLore.add(combined);
                             chatColor = ChatColor.getLastColors(combined);
                         }

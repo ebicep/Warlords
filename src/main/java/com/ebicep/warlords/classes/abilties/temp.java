@@ -1,6 +1,7 @@
 package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.player.WarlordsPlayer;
 import org.bukkit.entity.Player;
 
 public class temp extends AbstractAbility {
@@ -15,7 +16,7 @@ public class temp extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(Player player) {
+    public void onActivate(WarlordsPlayer wp, Player player) {
 
     }
 

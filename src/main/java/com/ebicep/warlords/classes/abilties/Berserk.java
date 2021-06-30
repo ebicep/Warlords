@@ -24,9 +24,8 @@ public class Berserk extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(Player player) {
-        WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
-        warlordsPlayer.getSpeed().changeCurrentSpeed("Berserk", 30, 18 * 20, "BASE");
+    public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
+        warlordsPlayer.getSpeed().addSpeedModifier("Berserk", 30, 18 * 20, "BASE");
         warlordsPlayer.subtractEnergy(energyCost);
         warlordsPlayer.getCooldownManager().addCooldown(Berserk.this.getClass(), "BERS", 18, warlordsPlayer, CooldownTypes.BUFF);
 
