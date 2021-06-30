@@ -80,7 +80,7 @@ public class Chain extends AbstractAbility {
         int playersSize = playersHit.size();
         if (playersSize >= (hasHitTotem ? LIGHTING_MAX_PLAYERS_WITH_TOTEM : LIGHTING_MAX_PLAYERS_NO_TOTEM)) {
 
-            return playersSize;
+            return playersSize + (hasHitTotem ? 1 : 0);
         }
         /**
          * The first check has double the radius for checking, and only targets a totem when the player is looking at it.
@@ -133,7 +133,7 @@ public class Chain extends AbstractAbility {
             hit.addHealth(warlordsPlayer, name, minDamageHeal * damageMultiplier, maxDamageHeal * damageMultiplier, critChance, critMultiplier);
             return partOfChainLightning(warlordsPlayer, playersHit, hit.getEntity(), hasHitTotem);
         } else {
-            return playersSize;
+            return playersSize + (hasHitTotem ? 1 : 0);
         }
     }
 
@@ -235,7 +235,6 @@ public class Chain extends AbstractAbility {
             warlordsPlayer.subtractEnergy(energyCost);
             if (name.contains("Lightning")) {
                 warlordsPlayer.getCooldownManager().addCooldown(Chain.this.getClass(), "CHAIN(" + hitCounter + ")", 4, warlordsPlayer, CooldownTypes.BUFF);
-
                 warlordsPlayer.getSpec().getRed().setCurrentCooldown(cooldown);
 
                 player.playSound(player.getLocation(), "shaman.chainlightning.impact", 2, 1);

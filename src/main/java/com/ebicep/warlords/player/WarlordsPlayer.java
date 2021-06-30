@@ -580,7 +580,7 @@ public final class WarlordsPlayer {
                 }
 
                 //reduce damage
-                if (attacker.getCooldownManager().getCooldown(IceBarrier.class).size() > 0) {
+                if (cooldownManager.getCooldown(IceBarrier.class).size() > 0) {
                     totalReduction *= .5;
                     //totalReduction -= .5;
                 }
@@ -843,10 +843,12 @@ public final class WarlordsPlayer {
                 }
                 if (this.health <= 0 && cooldownManager.getCooldown(UndyingArmy.class).size() == 0) {
                     dead = true;
+                    health = 0;
 
                     addGrave();
 
                     showDeathAnimation();
+
                     if (attacker.entity instanceof Player) {
                         ((Player)attacker.entity).playSound(attacker.getLocation(), Sound.ORB_PICKUP, 500f, 0.3f);
                     }
@@ -1373,6 +1375,7 @@ public final class WarlordsPlayer {
             if (this.entity instanceof Zombie) { // This could happen if there was a problem during the quit event
                 this.entity.remove();
             }
+            player.teleport(loc);
             this.entity = player;
             player.removeMetadata("WARLORDS_PLAYER", Warlords.getInstance());
             player.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));

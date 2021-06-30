@@ -45,7 +45,7 @@ public class HammerOfLight extends AbstractAbility {
         wp.getSpec().getOrange().setCurrentCooldown(cooldown);
 
         for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "paladin.hammeroflight.impact", 2, 0.1f);
+            player1.playSound(player.getLocation(), "paladin.hammeroflight.impact", 2, 1);
         }
 
         BukkitTask task = Bukkit.getScheduler().runTaskTimer(Warlords.getInstance(), damageHealCircle::spawn, 0, 1);
@@ -59,12 +59,14 @@ public class HammerOfLight extends AbstractAbility {
                     .entitiesAround(damageHealCircle.getLocation(), 6, 4, 6)
                     .isAlive()
                 ) {
+                    Bukkit.broadcastMessage(warlordsPlayer + "");
                     if (damageHealCircle.getWarlordsPlayer().isTeammate(warlordsPlayer)) {
                         warlordsPlayer.addHealth(damageHealCircle.getWarlordsPlayer(), damageHealCircle.getName(), damageHealCircle.getMinDamage(), damageHealCircle.getMaxDamage(), damageHealCircle.getCritChance(), damageHealCircle.getCritMultiplier());
                     } else {
                         warlordsPlayer.addHealth(damageHealCircle.getWarlordsPlayer(), damageHealCircle.getName(), -118.8f, -158.4f, damageHealCircle.getCritChance(), damageHealCircle.getCritMultiplier());
                     }
                 }
+
                 if (damageHealCircle.getDuration() == 0) {
                     damageHealCircle.removeHammer();
                     this.cancel();

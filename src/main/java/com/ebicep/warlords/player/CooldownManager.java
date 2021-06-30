@@ -78,6 +78,10 @@ public class CooldownManager {
         cooldowns.add(cooldown);
     }
 
+    public void clear() {
+        cooldowns.clear();
+    }
+
 }
 
 

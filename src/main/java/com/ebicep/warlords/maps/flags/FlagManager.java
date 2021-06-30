@@ -61,12 +61,12 @@ public class FlagManager implements Listener {
     }
 
     public void checkScore(Team team) {
-        if(
-            this.get(team).getFlag() instanceof SpawnFlagLocation &&
-            this.get(team.enemy()).getFlag() instanceof PlayerFlagLocation &&
-            this.get(team.enemy()).getFlag().getLocation().distanceSquared(this.get(team).getSpawnLocation()) < 2 * 2
+        if (
+                this.get(team).getFlag() instanceof SpawnFlagLocation &&
+                        this.get(team.enemy()).getFlag() instanceof PlayerFlagLocation &&
+                        this.get(team.enemy()).getFlag().getLocation().distanceSquared(this.get(team).getSpawnLocation()) < 2 * 2
         ) {
-            for(Team t : Team.values()) {
+            for (Team t : Team.values()) {
                 FlagInfo info = get(t);
                 info.setFlag(new WaitingFlagLocation(info.getSpawnLocation(), t != team));
             }
@@ -92,14 +92,15 @@ public class FlagManager implements Listener {
     public boolean dropFlag(Player player) {
         return dropFlag(Warlords.getPlayer(player));
     }
+
     public boolean dropFlag(@Nullable WarlordsPlayer player) {
-        if(player == null) {
+        if (player == null) {
             return false;
         }
         FlagInfo info = get(player.getTeam().enemy());
-        if(info.getFlag() instanceof PlayerFlagLocation) {
+        if (info.getFlag() instanceof PlayerFlagLocation) {
             PlayerFlagLocation playerFlagLocation = (PlayerFlagLocation) info.getFlag();
-            if(playerFlagLocation.getPlayer() == player) {
+            if (playerFlagLocation.getPlayer() == player) {
                 info.setFlag(new GroundFlagLocation(player.getLocation(), playerFlagLocation.getPickUpTicks()));
                 return true;
             }
@@ -125,7 +126,7 @@ public class FlagManager implements Listener {
             }
             Player player = (Player) event.getDamager();
             WarlordsPlayer wp = Warlords.getPlayer(player);
-            if(wp == null) {
+            if (wp == null) {
                 return;
             }
             FlagInfo info = get(standTeam);
@@ -138,7 +139,10 @@ public class FlagManager implements Listener {
                     info.setFlag(new SpawnFlagLocation(info.getSpawnLocation(), wp.getName()));
                 } else {
                     // Steal flag
-                info.setFlag(new PlayerFlagLocation(wp, groundFlagLocation.getDamageTimer()));
+                    info.setFlag(new PlayerFlagLocation(wp, groundFlagLocation.getDamageTimer()));
+                    if (player.getVehicle() != null) {
+                        player.getVehicle().remove();
+                    }
                 }
             } else if (info.getFlag() instanceof SpawnFlagLocation) {
                 if (team == info.getTeam()) {
@@ -160,9 +164,4 @@ public class FlagManager implements Listener {
     }
 
 
-
-
-
-
-
-    }
+}

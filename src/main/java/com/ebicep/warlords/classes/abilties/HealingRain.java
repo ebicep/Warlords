@@ -42,7 +42,7 @@ public class HealingRain extends AbstractAbility {
         warlordsPlayer.getSpec().getOrange().setCurrentCooldown(cooldown);
 
         for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(damageHealCircle.getLocation(), "mage.healingrain.impact", 2, 1);
+            player1.playSound(player.getLocation(), "mage.healingrain.impact", 2, 1);
         }
 
         BukkitTask task = Bukkit.getScheduler().runTaskTimer(Warlords.getInstance(), damageHealCircle::spawn, 0, 1);
@@ -56,7 +56,7 @@ public class HealingRain extends AbstractAbility {
                         player.sendMessage("§cYour recast ability is on cooldown, please wait 3 seconds!");
                     } else {
                         player.playSound(player.getLocation(), "mage.timewarp.teleport", 2, 1.35f);
-                        player.sendMessage("§7You moved your §cHealing Rain §7to your current location.");
+                        player.sendMessage("§7You moved your §aHealing Rain §7to your current location.");
                         damageHealCircle.setLocation(player.getLocation());
                         recastCooldown = 3;
                     }
