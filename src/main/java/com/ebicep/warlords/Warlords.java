@@ -1,7 +1,7 @@
 package com.ebicep.warlords;
 
 import com.ebicep.warlords.classes.abilties.*;
-import com.ebicep.warlords.commands.Commands;
+import com.ebicep.warlords.commands.*;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.maps.Game;
@@ -95,6 +95,8 @@ public class Warlords extends JavaPlugin {
             if (!(wp.getEntity() instanceof Player)) {
                 wp.getEntity().remove();
             }
+
+            wp.getCooldownManager().clear();
         }
         Location loc = spawnPoints.remove(player);
         Player p = Bukkit.getPlayer(player);
@@ -149,19 +151,13 @@ public class Warlords extends JavaPlugin {
         instance = this;
         getServer().getPluginManager().registerEvents(new WarlordsEvents(), this);
         getServer().getPluginManager().registerEvents(new MenuEventListener(this), this);
-        Commands commands = new Commands();
-        getCommand("start").setExecutor(commands);
-        getCommand("endgame").setExecutor(commands);
-        getCommand("class").setExecutor(commands);
-        getCommand("menu").setExecutor(commands);
-        getCommand("shout").setExecutor(commands);
-        getCommand("hotkeymode").setExecutor(commands);
-        getCommand("hitbox").setExecutor(commands);
-        getCommand("speed").setExecutor(commands);
-        getCommand("wldebug").setExecutor(commands);
 
-        getCommand("start").setTabCompleter(commands);
-        getCommand("class").setTabCompleter(commands);
+        new StartCommand().register(this);
+        new EndgameCommand().register(this);
+        new MenuCommand().register(this);
+        new ShoutCommand().register(this);
+        new HotkeyModeCommand().register(this);
+        new DebugCommand().register(this);
 
         game = new Game();
         getData();
@@ -390,7 +386,8 @@ public class Warlords extends JavaPlugin {
                                 orb.getBukkitEntity().remove();
                                 itr.remove();
                                 warlordsPlayer.addHealth(warlordsPlayer, "Orbs of Life", 502, 502, -1, 100);
-                                Utils.filterOnlyTeammates(player, 3, 3, 3, player).forEach((nearPlayer) -> {
+                                Utils.filterOnlyTeammates(player, 3, 3, 3, player)
+                                    .forEach((nearPlayer) -> {
                                     nearPlayer.addHealth(warlordsPlayer, "Orbs of Life", 420, 420, -1, 100);
                                 });
                             }

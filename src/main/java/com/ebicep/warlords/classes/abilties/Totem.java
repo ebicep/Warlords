@@ -85,7 +85,7 @@ public class Totem extends EntityArmorStand {
     public static class TotemThunderlord extends AbstractAbility {
 
         public TotemThunderlord() {
-            super("Capacitor Totem", -404, -523, 60 + 2, 20, 20, 200);
+            super("Capacitor Totem", -404, -523, 62.64f, 20, 20, 200);
         }
 
         @Override
@@ -283,7 +283,7 @@ public class Totem extends EntityArmorStand {
     public static class TotemEarthwarden extends AbstractAbility {
 
         public TotemEarthwarden() {
-            super("Healing Totem", 168, 841, 60f + 10.49f, 60, 15, 200);
+            super("Healing Totem", 168, 841, 62.64f, 60, 15, 200);
 
             //168 - 227
             //841 - 1138
@@ -337,7 +337,7 @@ public class Totem extends EntityArmorStand {
                         }
 
 
-                        PlayerFilter.entitiesAround(healingTotem.getTotemArmorStand(), 4, 4, 4)
+                        PlayerFilter.entitiesAround(healingTotem.getTotemArmorStand(), 5, 5, 5)
                             .aliveTeammatesOf(warlordsPlayer)
                             .forEach((nearPlayer) -> {
                                     nearPlayer.addHealth(
@@ -357,7 +357,7 @@ public class Totem extends EntityArmorStand {
 
                         new FallingBlockWaveEffect(totemStand.getLocation().clone().add(0, 1, 0), 7, 1.2, Material.SAPLING, (byte) 1).play();
 
-                        PlayerFilter.entitiesAround(healingTotem.getTotemArmorStand(), 4, 4, 4)
+                        PlayerFilter.entitiesAround(healingTotem.getTotemArmorStand(), 5, 5, 5)
                             .aliveTeammatesOf(warlordsPlayer)
                             .forEach((nearPlayer) -> {
                                 nearPlayer.addHealth(

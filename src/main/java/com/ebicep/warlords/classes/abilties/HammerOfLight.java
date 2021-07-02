@@ -56,15 +56,17 @@ public class HammerOfLight extends AbstractAbility {
             public void run() {
                 damageHealCircle.setDuration(damageHealCircle.getDuration() - 1);
                 for (WarlordsPlayer warlordsPlayer : PlayerFilter
-                    .entitiesAround(damageHealCircle.getLocation(), 8, 4, 8)
+                    .entitiesAround(damageHealCircle.getLocation(), 6, 4, 6)
                     .isAlive()
                 ) {
+                    Bukkit.broadcastMessage(warlordsPlayer + "");
                     if (damageHealCircle.getWarlordsPlayer().isTeammate(warlordsPlayer)) {
                         warlordsPlayer.addHealth(damageHealCircle.getWarlordsPlayer(), damageHealCircle.getName(), damageHealCircle.getMinDamage(), damageHealCircle.getMaxDamage(), damageHealCircle.getCritChance(), damageHealCircle.getCritMultiplier());
                     } else {
                         warlordsPlayer.addHealth(damageHealCircle.getWarlordsPlayer(), damageHealCircle.getName(), -118.8f, -158.4f, damageHealCircle.getCritChance(), damageHealCircle.getCritMultiplier());
                     }
                 }
+
                 if (damageHealCircle.getDuration() == 0) {
                     damageHealCircle.removeHammer();
                     this.cancel();

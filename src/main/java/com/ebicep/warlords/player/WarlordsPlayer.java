@@ -580,7 +580,7 @@ public final class WarlordsPlayer {
                 }
 
                 //reduce damage
-                if (attacker.getCooldownManager().getCooldown(IceBarrier.class).size() > 0) {
+                if (cooldownManager.getCooldown(IceBarrier.class).size() > 0) {
                     totalReduction *= .5;
                     //totalReduction -= .5;
                 }
@@ -785,7 +785,7 @@ public final class WarlordsPlayer {
                                 tempNewCritChance = -1;
                             }
 
-                            if (Warlords.getPlayerSettings(uuid).classesSkillBoosts() == ClassesSkillBoosts.PROTECTOR_STRIKE) {
+                            if (Warlords.getPlayerSettings(attacker.uuid).classesSkillBoosts() == ClassesSkillBoosts.PROTECTOR_STRIKE) {
                                 attacker.addHealth(attacker, ability, -damageHealValue / 1.43f, -damageHealValue / 1.43f, tempNewCritChance, 100);
                             } else {
                                 attacker.addHealth(attacker, ability, -damageHealValue / 2, -damageHealValue / 2, tempNewCritChance, 100);
@@ -794,10 +794,10 @@ public final class WarlordsPlayer {
                             //reloops near players to give health to
                             for(WarlordsPlayer nearTeamPlayer : PlayerFilter
                                 .entitiesAround(attacker, 5, 5, 5)
-                                .teammatesOf(attacker)
+                                .aliveTeammatesOfExcludingSelf(attacker)
                                 .limit(2)
                             ) {
-                                if (Warlords.getPlayerSettings(uuid).classesSkillBoosts() == ClassesSkillBoosts.PROTECTOR_STRIKE) {
+                                if (Warlords.getPlayerSettings(attacker.uuid).classesSkillBoosts() == ClassesSkillBoosts.PROTECTOR_STRIKE) {
                                     nearTeamPlayer.addHealth(attacker, ability, -damageHealValue * 1.2f, -damageHealValue * 1.2f, tempNewCritChance, 100);
                                 } else {
                                     nearTeamPlayer.addHealth(attacker, ability, -damageHealValue, -damageHealValue, tempNewCritChance, 100);
@@ -843,10 +843,12 @@ public final class WarlordsPlayer {
                 }
                 if (this.health <= 0 && cooldownManager.getCooldown(UndyingArmy.class).size() == 0) {
                     dead = true;
+                    health = 0;
 
                     addGrave();
 
                     showDeathAnimation();
+
                     if (attacker.entity instanceof Player) {
                         ((Player)attacker.entity).playSound(attacker.getLocation(), Sound.ORB_PICKUP, 500f, 0.3f);
                     }
@@ -914,7 +916,7 @@ public final class WarlordsPlayer {
                     }
                 } else if (attacker.getCooldownManager().getCooldown(Earthliving.class).size() > 0) {
                     int earthlivingActivate = (int) (Math.random() * 100);
-                    if (attacker.isFirstProc()) {
+                    if (attacker.isFirstProc() || Utils.getTotemDownAndClose(attacker, attacker.getEntity()) != null) {
                         //self heal
                         attacker.addHealth(attacker, "Earthliving Weapon", (132 * 2.4f), (179 * 2.4f), 25, 200);
 
@@ -925,7 +927,7 @@ public final class WarlordsPlayer {
                         attacker.setFirstProc(false);
                         for (WarlordsPlayer nearPlayer : PlayerFilter
                             .entitiesAround(attacker, 3, 3, 3)
-                            .aliveTeammatesOf(attacker)
+                            .aliveTeammatesOfExcludingSelf(attacker)
                             .limit(2)
                         ) {
                             nearPlayer.addHealth(attacker, "Earthliving Weapon", 132 * 2.4f, 179 * 2.4f, 25, 200);
@@ -938,7 +940,7 @@ public final class WarlordsPlayer {
                         });
 
                         for (WarlordsPlayer nearPlayer : PlayerFilter.entitiesAround(attacker, 3, 3, 3)
-                            .aliveTeammatesOf(attacker)
+                            .aliveTeammatesOfExcludingSelf(attacker)
                             .limit(2)
                         ) {
                             nearPlayer.addHealth(attacker, "Earthliving Weapon", 132 * 2.4f, 179 * 2.4f, 25, 200);
@@ -1373,6 +1375,7 @@ public final class WarlordsPlayer {
             if (this.entity instanceof Zombie) { // This could happen if there was a problem during the quit event
                 this.entity.remove();
             }
+            player.teleport(loc);
             this.entity = player;
             player.removeMetadata("WARLORDS_PLAYER", Warlords.getInstance());
             player.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));

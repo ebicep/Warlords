@@ -35,6 +35,7 @@ public class GroundSlam extends AbstractAbility {
 
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
+        wp.subtractEnergy(energyCost);
         playersHit.clear();
         fallingBlockLocations.clear();
         customFallingBlocks.clear();

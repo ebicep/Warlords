@@ -10,7 +10,7 @@ import com.ebicep.warlords.classes.paladin.specs.crusader.Crusader;
 import com.ebicep.warlords.classes.paladin.specs.protector.Protector;
 import com.ebicep.warlords.classes.shaman.specs.earthwarden.Earthwarden;
 import com.ebicep.warlords.classes.shaman.specs.spiritguard.Spiritguard;
-import com.ebicep.warlords.classes.shaman.specs.thunderlord.ThunderLord;
+import com.ebicep.warlords.classes.shaman.specs.thunderlord.Thunderlord;
 import com.ebicep.warlords.classes.warrior.specs.berserker.Berserker;
 import com.ebicep.warlords.classes.warrior.specs.defender.Defender;
 import com.ebicep.warlords.classes.warrior.specs.revenant.Revenant;
@@ -72,7 +72,7 @@ public enum Classes {
             new ItemStack(Material.INK_SACK, 1, (short) 6),
             PROTECTOR_STRIKE, HOLY_RADIANCE, HAMMER_OF_LIGHT),
     THUNDERLORD("Thunderlord",
-            ThunderLord::new,
+            Thunderlord::new,
             "§7A damage-oriented Shaman specialization that calls upon the power of Lightning to electrocute enemies.",
             new ItemStack(Material.NETHER_STALK, 1),
             LIGHTNING_BOLT, CHAIN_LIGHTNING, WINDFURY_WEAPON, CAPACITOR_TOTEM),

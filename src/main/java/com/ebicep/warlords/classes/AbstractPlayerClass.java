@@ -69,27 +69,42 @@ public abstract class AbstractPlayerClass {
                 if (!(weapon instanceof Strike) && !(weapon instanceof EarthenSpike)) {
                     sendRightClickPacket(player);
                 }
+            } else {
+                player.sendMessage("§cYou can't do that yet!");
+                player.playSound(player.getLocation(), "notreadyalert", 1, 1);
             }
         } else if (player.getInventory().getHeldItemSlot() == 1) {
-            if (red.getCurrentCooldown() == 0 && player.getLevel() >= red.getEnergyCost()) {
-                red.onActivate(wp, player);
-                if (!(red instanceof Chain)) {
-                    red.setCurrentCooldown(red.cooldown);
-                    sendRightClickPacket(player);
+            if (red.getCurrentCooldown() == 0) {
+                if (player.getLevel() >= red.getEnergyCost()) {
+                    red.onActivate(wp, player);
+                    if (!(red instanceof Chain)) {
+                        red.setCurrentCooldown(red.cooldown);
+                        sendRightClickPacket(player);
+                    }
+                } else {
+                    player.sendMessage("§cYou can't do that yet!");
+                    player.playSound(player.getLocation(), "notreadyalert", 1, 1);
                 }
             }
         } else if (player.getInventory().getHeldItemSlot() == 2) {
-            if (purple.getCurrentCooldown() == 0 && player.getLevel() >= purple.getEnergyCost()) {
-                purple.onActivate(wp, player);
-                purple.setCurrentCooldown(purple.cooldown);
-                sendRightClickPacket(player);
+            if (purple.getCurrentCooldown() == 0) {
+                if (player.getLevel() >= purple.getEnergyCost()) {
+                    purple.onActivate(wp, player);
+                    purple.setCurrentCooldown(purple.cooldown);
+                    sendRightClickPacket(player);
+                } else {
+                    player.sendMessage("§cYou can't do that yet!");
+                    player.playSound(player.getLocation(), "notreadyalert", 1, 1);
+                }
             }
         } else if (player.getInventory().getHeldItemSlot() == 3) {
-            if (blue.getCurrentCooldown() == 0 && player.getLevel() >= blue.getEnergyCost()) {
-                blue.onActivate(wp, player);
-                if (!(blue instanceof Chain) && !(blue instanceof Intervene)) {
-                    blue.setCurrentCooldown(blue.cooldown);
-                    sendRightClickPacket(player);
+            if (blue.getCurrentCooldown() == 0) {
+                if (player.getLevel() >= blue.getEnergyCost()) {
+                    blue.onActivate(wp, player);
+                    if (!(blue instanceof Chain) && !(blue instanceof Intervene)) {
+                        blue.setCurrentCooldown(blue.cooldown);
+                        sendRightClickPacket(player);
+                    }
                 }
             }
         } else if (player.getInventory().getHeldItemSlot() == 4) {

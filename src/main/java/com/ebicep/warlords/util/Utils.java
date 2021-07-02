@@ -34,7 +34,7 @@ public class Utils {
         eye.setY(eye.getY() + 0.7);
         Vector toEntity = player1.getEyeLocation().toVector().subtract(eye.toVector());
         float dot = (float) toEntity.normalize().dot(eye.getDirection());
-        return dot > 0.975D;
+        return dot > 0.925D;
     }
 
     //15 blocks = 6.6
@@ -47,7 +47,7 @@ public class Utils {
         eye.setY(eye.getY() + 0.7);
         Vector toEntity = player1.getEyeLocation().toVector().subtract(eye.toVector());
         float dot = (float) toEntity.normalize().dot(eye.getDirection());
-        return dot > 0.965D + (player.getLocation().distanceSquared(player1.getLocation()) / 10000);
+        return dot > 0.95D + (player.getLocation().distanceSquared(player1.getLocation()) / 10000);
     }
 
     public static boolean getLookingAtWave(LivingEntity player, LivingEntity player1) {

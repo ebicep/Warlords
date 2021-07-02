@@ -1,11 +1,12 @@
 package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.player.Classes;
-import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.Matrix4d;
 import com.ebicep.warlords.util.ParticleEffect;
+import com.ebicep.warlords.util.PlayerFilter;
 import com.ebicep.warlords.util.Utils;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -94,6 +95,7 @@ public class Projectile extends AbstractAbility {
 
             @Override
             public void run() {
+                WarlordsPlayer shooter = wp;
                 Location location = customProjectile.getCurrentLocation();
                 boolean hitPlayer = false;
                 //BALLS
@@ -103,148 +105,139 @@ public class Projectile extends AbstractAbility {
                     ParticleEffect.DRIP_LAVA.display(0, 0, 0, 0.35F, 5, location, 500);
                     ParticleEffect.SMOKE_NORMAL.display(0, 0, 0, 0.001F, 7, location, 500);
                     ParticleEffect.FLAME.display(0, 0, 0, 0.06F, 1, location, 500);
-                    List<Entity> entities = (List<Entity>) location.getWorld().getNearbyEntities(location, 5, 5, 5);
-                    entities = Utils.filterOutTeammates(entities, customProjectile.getShooter());
-                    for (Entity entity : entities) {
-                        if (entity instanceof Player && ((Player) entity).getGameMode() != GameMode.SPECTATOR && entity != customProjectile.getShooter()) {
-                            if (entity.getLocation().clone().add(0, 1, 0).distanceSquared(location) < hitBox * hitBox) {
-                                hitPlayer = true;
-                                ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.5F, 1, entity.getLocation().add(0, 1, 0), 500);
-                                ParticleEffect.LAVA.display(0.5F, 0, 0.5F, 2F, 10, entity.getLocation().add(0, 1, 0), 500);
-                                ParticleEffect.CLOUD.display(0.3F, 0.3F, 0.3F, 1F, 3, entity.getLocation().add(0, 1, 0), 500);
-                                Player victim = (Player) entity;
+                    WarlordsPlayer victim = PlayerFilter
+                            .entitiesAround(location.clone().add(0, 1, 0), hitBox, hitBox, hitBox)
+                            .isAlive()
+                            .excluding(shooter)
+                            .findAnyOrNull();
+                    if (victim != null) {
+                        hitPlayer = true;
+                        ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.5F, 1, victim.getLocation().add(0, 1, 0), 500);
+                        ParticleEffect.LAVA.display(0.5F, 0, 0.5F, 2F, 10, victim.getLocation().add(0, 1, 0), 500);
+                        ParticleEffect.CLOUD.display(0.3F, 0.3F, 0.3F, 1F, 3, victim.getLocation().add(0, 1, 0), 500);
 
-                                for (Player player1 : victim.getWorld().getPlayers()) {
-                                    player1.playSound(victim.getLocation(), "mage.fireball.impact", 2, 1);
-                                }
+                        for (Player player1 : victim.getWorld().getPlayers()) {
+                            player1.playSound(victim.getLocation(), "mage.fireball.impact", 2, 1);
+                        }
 
-                                if (location.distanceSquared(customProjectile.getStartingLocation()) >= customProjectile.getMaxDistance() * customProjectile.getMaxDistance()) {
-                                    double toReduceBy = (1 - ((location.distance(customProjectile.getStartingLocation()) - customProjectile.getMaxDistance()) / 100.0));
-                                    if (toReduceBy < 0) toReduceBy = 0;
-                                    Warlords.getPlayer(victim).addHealth(
-                                            Warlords.getPlayer(customProjectile.getShooter()),
-                                            customProjectile.getBall().getName(),
-                                            (float) (customProjectile.getBall().getMinDamageHeal() * 1.15 * toReduceBy),
-                                            (float) (customProjectile.getBall().getMaxDamageHeal() * 1.15 * toReduceBy),
-                                            customProjectile.getBall().getCritChance(),
-                                            customProjectile.getBall().getCritMultiplier()
-                                    );
+                        if (location.distanceSquared(customProjectile.getStartingLocation()) >= customProjectile.getMaxDistance() * customProjectile.getMaxDistance()) {
+                            double toReduceBy = (1 - ((location.distance(customProjectile.getStartingLocation()) - customProjectile.getMaxDistance()) / 100.0));
+                            if (toReduceBy < 0) toReduceBy = 0;
+                            victim.addHealth(
+                                    Warlords.getPlayer(customProjectile.getShooter()),
+                                    customProjectile.getBall().getName(),
+                                    (float) (customProjectile.getBall().getMinDamageHeal() * 1.15 * toReduceBy),
+                                    (float) (customProjectile.getBall().getMaxDamageHeal() * 1.15 * toReduceBy),
+                                    customProjectile.getBall().getCritChance(),
+                                    customProjectile.getBall().getCritMultiplier()
+                            );
 
-                                    List<Entity> near = victim.getNearbyEntities(3.25D, 3.25D, 3.25D);
-                                    near = Utils.filterOutTeammates(near, customProjectile.getShooter());
-                                    for (Entity nearEntity : near) {
-                                        if (nearEntity instanceof Player && ((Player) nearEntity).getGameMode() != GameMode.SPECTATOR && ((Player) nearEntity).getGameMode() != GameMode.SPECTATOR) {
-                                            Warlords.getPlayer((Player) nearEntity).addHealth(
-                                                    Warlords.getPlayer(customProjectile.getShooter()),
-                                                    customProjectile.getBall().getName(),
-                                                    (float) (customProjectile.getBall().getMinDamageHeal() * toReduceBy),
-                                                    (float) (customProjectile.getBall().getMaxDamageHeal() * toReduceBy),
-                                                    customProjectile.getBall().getCritChance(),
-                                                    customProjectile.getBall().getCritMultiplier()
-                                            );
-                                        }
-                                    }
-                                } else {
-                                    Warlords.getPlayer(victim).addHealth(
-                                            Warlords.getPlayer(customProjectile.getShooter()),
-                                            customProjectile.getBall().getName(),
-                                            (float) (customProjectile.getBall().getMinDamageHeal() * 1.15),
-                                            (float) (customProjectile.getBall().getMaxDamageHeal() * 1.15),
-                                            customProjectile.getBall().getCritChance(),
-                                            customProjectile.getBall().getCritMultiplier());
+                            for (WarlordsPlayer nearEntity : PlayerFilter
+                                    .entitiesAround(victim, 3, 3, 3)
+                                    .aliveEnemiesOf(shooter)
+                            ) {
+                                nearEntity.addHealth(
+                                        Warlords.getPlayer(customProjectile.getShooter()),
+                                        customProjectile.getBall().getName(),
+                                        (float) (customProjectile.getBall().getMinDamageHeal() * toReduceBy),
+                                        (float) (customProjectile.getBall().getMaxDamageHeal() * toReduceBy),
+                                        customProjectile.getBall().getCritChance(),
+                                        customProjectile.getBall().getCritMultiplier()
+                                );
+                            }
+                        } else {
+                            victim.addHealth(
+                                    Warlords.getPlayer(customProjectile.getShooter()),
+                                    customProjectile.getBall().getName(),
+                                    (float) (customProjectile.getBall().getMinDamageHeal() * 1.15),
+                                    (float) (customProjectile.getBall().getMaxDamageHeal() * 1.15),
+                                    customProjectile.getBall().getCritChance(),
+                                    customProjectile.getBall().getCritMultiplier()
+                            );
 
-                                    List<Entity> near = victim.getNearbyEntities(3.25D, 3.25D, 3.25D);
-                                    near = Utils.filterOutTeammates(near, customProjectile.getShooter());
-                                    for (Entity nearEntity : near) {
-                                        if (nearEntity instanceof Player && ((Player) nearEntity).getGameMode() != GameMode.SPECTATOR) {
-                                            Warlords.getPlayer((Player) nearEntity).addHealth(
-                                                    Warlords.getPlayer(customProjectile.getShooter()),
-                                                    customProjectile.getBall().getName(),
-                                                    customProjectile.getBall().getMinDamageHeal(),
-                                                    customProjectile.getBall().getMaxDamageHeal(),
-                                                    customProjectile.getBall().getCritChance(),
-                                                    customProjectile.getBall().getCritMultiplier()
-                                            );
-                                        }
-                                    }
-                                }
-                                customProjectile.setRemove(true);
-                                break;
+                            for (WarlordsPlayer nearEntity : PlayerFilter
+                                    .entitiesAround(victim, 3, 3, 3)
+                                    .aliveEnemiesOf(shooter)
+                            ) {
+                                nearEntity.addHealth(
+                                        Warlords.getPlayer(customProjectile.getShooter()),
+                                        customProjectile.getBall().getName(),
+                                        customProjectile.getBall().getMinDamageHeal(),
+                                        customProjectile.getBall().getMaxDamageHeal(),
+                                        customProjectile.getBall().getCritChance(),
+                                        customProjectile.getBall().getCritMultiplier()
+                                );
                             }
                         }
+                        customProjectile.setRemove(true);
                     }
                 } else if (customProjectile.getBall().getName().contains("Frost")) {
                     location.add(customProjectile.getDirection().clone().multiply(2));
                     location.add(0, 1.5, 0);
                     ParticleEffect.CLOUD.display(0, 0, 0, 0F, 1, location, 500);
-                    List<Entity> entities = (List<Entity>) location.getWorld().getNearbyEntities(location, 5, 5, 5);
-                    entities = Utils.filterOutTeammates(entities, customProjectile.getShooter());
-                    for (Entity entity : entities) {
-                        if (entity instanceof Player && ((Player) entity).getGameMode() != GameMode.SPECTATOR && entity != customProjectile.getShooter()) {
-                            if (entity.getLocation().clone().add(0, 1, 0).distanceSquared(location) < hitBox * hitBox) {
-                                hitPlayer = true;
-                                ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.0F, 1, entity.getLocation().add(0, 1, 0), 500);
-                                ParticleEffect.CLOUD.display(0.3F, 0.3F, 0.3F, 1F, 3, entity.getLocation().add(0, 1, 0), 500);
-                                Player victim = (Player) entity;
+                    WarlordsPlayer victim = PlayerFilter
+                            .entitiesAround(location.clone().add(0, 1, 0), hitBox, hitBox, hitBox)
+                            .isAlive()
+                            .excluding(shooter)
+                            .findAnyOrNull();
+                    if (victim != null) {
+                        hitPlayer = true;
+                        ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.0F, 1, victim.getLocation().add(0, 1, 0), 500);
+                        ParticleEffect.CLOUD.display(0.3F, 0.3F, 0.3F, 1F, 3, victim.getLocation().add(0, 1, 0), 500);
 
-                                for (Player player1 : player.getWorld().getPlayers()) {
-                                    player1.playSound(location, "mage.frostbolt.impact", 2, 1);
-                                }
+                        for (Player player1 : player.getWorld().getPlayers()) {
+                            player1.playSound(location, "mage.frostbolt.impact", 2, 1);
+                        }
 
-                                Warlords.getPlayer(victim).getSpeed().addSpeedModifier("Frostbolt", -25, 2 * 20);
-                                if (location.distanceSquared(customProjectile.getStartingLocation()) >= customProjectile.getMaxDistance() * customProjectile.getMaxDistance()) {
-                                    double toReduceBy = (1 - ((location.distance(customProjectile.getStartingLocation()) - customProjectile.getMaxDistance()) / 100.0));
-                                    if (toReduceBy < 0) toReduceBy = 0;
-                                    Warlords.getPlayer(victim).addHealth(
+                        victim.getSpeed().addSpeedModifier("Frostbolt", -25, 2 * 20);
+                        if (location.distanceSquared(customProjectile.getStartingLocation()) >= customProjectile.getMaxDistance() * customProjectile.getMaxDistance()) {
+                            double toReduceBy = (1 - ((location.distance(customProjectile.getStartingLocation()) - customProjectile.getMaxDistance()) / 100.0));
+                            if (toReduceBy < 0) toReduceBy = 0;
+                            victim.addHealth(
+                                    Warlords.getPlayer(customProjectile.getShooter()),
+                                    customProjectile.getBall().getName(),
+                                    (float) (customProjectile.getBall().getMinDamageHeal() * 1.3 * toReduceBy),
+                                    (float) (customProjectile.getBall().getMaxDamageHeal() * 1.3 * toReduceBy),
+                                    customProjectile.getBall().getCritChance(),
+                                    customProjectile.getBall().getCritMultiplier()
+                            );
+                            for (WarlordsPlayer nearEntity : PlayerFilter
+                                    .entitiesAround(victim, 3, 3, 3)
+                                    .aliveEnemiesOf(shooter)
+                            ) {
+                                nearEntity.addHealth(
+                                        Warlords.getPlayer(customProjectile.getShooter()),
+                                        customProjectile.getBall().getName(),
+                                        (float) (customProjectile.getBall().getMinDamageHeal() * toReduceBy),
+                                        (float) (customProjectile.getBall().getMaxDamageHeal() * toReduceBy),
+                                        customProjectile.getBall().getCritChance(),
+                                        customProjectile.getBall().getCritMultiplier()
+                                );
+                            }
+                        } else {
+                            victim.addHealth(
+                                    Warlords.getPlayer(customProjectile.getShooter()),
+                                    customProjectile.getBall().getName(),
+                                    (float) (customProjectile.getBall().getMinDamageHeal() * 1.15),
+                                    (float) (customProjectile.getBall().getMaxDamageHeal() * 1.15),
+                                    customProjectile.getBall().getCritChance(),
+                                    customProjectile.getBall().getCritMultiplier()
+                            );
+                            for (WarlordsPlayer nearEntity : PlayerFilter
+                                    .entitiesAround(victim, 3, 3, 3)
+                                    .aliveEnemiesOf(shooter)
+                            ) {
+                                    nearEntity.addHealth(
                                             Warlords.getPlayer(customProjectile.getShooter()),
                                             customProjectile.getBall().getName(),
-                                            (float) (customProjectile.getBall().getMinDamageHeal() * 1.3 * toReduceBy),
-                                            (float) (customProjectile.getBall().getMaxDamageHeal() * 1.3 * toReduceBy),
+                                            customProjectile.getBall().getMinDamageHeal(),
+                                            customProjectile.getBall().getMaxDamageHeal(),
                                             customProjectile.getBall().getCritChance(),
                                             customProjectile.getBall().getCritMultiplier()
                                     );
-                                    List<Entity> near = victim.getNearbyEntities(3.5D, 3.5D, 3.5D);
-                                    near = Utils.filterOutTeammates(near, customProjectile.getShooter());
-                                    for (Entity nearEntity : near) {
-                                        if (nearEntity instanceof Player && ((Player) nearEntity).getGameMode() != GameMode.SPECTATOR) {
-                                            Warlords.getPlayer((Player) nearEntity).addHealth(
-                                                    Warlords.getPlayer(customProjectile.getShooter()),
-                                                    customProjectile.getBall().getName(),
-                                                    (float) (customProjectile.getBall().getMinDamageHeal() * toReduceBy),
-                                                    (float) (customProjectile.getBall().getMaxDamageHeal() * toReduceBy),
-                                                    customProjectile.getBall().getCritChance(),
-                                                    customProjectile.getBall().getCritMultiplier()
-                                            );
-                                        }
-                                    }
-                                } else {
-                                    Warlords.getPlayer(victim).addHealth(
-                                            Warlords.getPlayer(customProjectile.getShooter()),
-                                            customProjectile.getBall().getName(),
-                                            (float) (customProjectile.getBall().getMinDamageHeal() * 1.3),
-                                            (float) (customProjectile.getBall().getMaxDamageHeal() * 1.3),
-                                            customProjectile.getBall().getCritChance(),
-                                            customProjectile.getBall().getCritMultiplier()
-                                    );
-                                    List<Entity> near = victim.getNearbyEntities(3.5D, 3.5D, 3.5D);
-                                    near = Utils.filterOutTeammates(near, customProjectile.getShooter());
-                                    for (Entity nearEntity : near) {
-                                        if (nearEntity instanceof Player && ((Player) nearEntity).getGameMode() != GameMode.SPECTATOR) {
-                                            Warlords.getPlayer((Player) nearEntity).addHealth(
-                                                    Warlords.getPlayer(customProjectile.getShooter()),
-                                                    customProjectile.getBall().getName(),
-                                                    customProjectile.getBall().getMinDamageHeal(),
-                                                    customProjectile.getBall().getMaxDamageHeal(),
-                                                    customProjectile.getBall().getCritChance(),
-                                                    customProjectile.getBall().getCritMultiplier()
-                                            );
-                                        }
-                                    }
-                                }
-                                customProjectile.setRemove(true);
-                                break;
                             }
                         }
+                        customProjectile.setRemove(true);
                     }
                 } else if (customProjectile.getBall().getName().contains("Water")) {
                     location.add(customProjectile.getDirection().clone().multiply(2));

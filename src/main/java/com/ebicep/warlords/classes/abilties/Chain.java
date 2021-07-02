@@ -2,6 +2,7 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.player.Classes;
 import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
@@ -64,7 +65,11 @@ public class Chain extends AbstractAbility {
     }
 
     private void partOfChainLightningPulseDamage(WarlordsPlayer warlordsPlayer, Entity totem) {
-        pulseDamage(warlordsPlayer, PlayerFilter.entitiesAround(totem, 4, 4, 4).aliveEnemiesOf(warlordsPlayer).stream());
+        pulseDamage(warlordsPlayer, PlayerFilter.entitiesAround(totem, 5, 4, 5).aliveEnemiesOf(warlordsPlayer).stream());
+        new FallingBlockWaveEffect(totem.getLocation().add(0, 1, 0), 5, 1.2, Material.SAPLING, (byte) 0).play();
+        for (Player player1 : warlordsPlayer.getWorld().getPlayers()) {
+            player1.playSound(warlordsPlayer.getLocation(), "shaman.capacitortotem.pulse", 2, 1);
+        }
     }
 
     private final int LIGHTING_MAX_PLAYERS_NO_TOTEM = 2;
@@ -74,7 +79,8 @@ public class Chain extends AbstractAbility {
     private int partOfChainLightning(WarlordsPlayer warlordsPlayer, Set<WarlordsPlayer> playersHit, Entity checkFrom, boolean hasHitTotem) {
         int playersSize = playersHit.size();
         if (playersSize >= (hasHitTotem ? LIGHTING_MAX_PLAYERS_WITH_TOTEM : LIGHTING_MAX_PLAYERS_NO_TOTEM)) {
-            return playersSize;
+
+            return playersSize + (hasHitTotem ? 1 : 0);
         }
         /**
          * The first check has double the radius for checking, and only targets a totem when the player is looking at it.
@@ -84,12 +90,15 @@ public class Chain extends AbstractAbility {
             if (firstCheck) {
                 if (checkFrom instanceof LivingEntity && lookingAtTotem((LivingEntity)checkFrom)) {
                     ArmorStand totem = getTotem(warlordsPlayer);
+                    assert totem != null;
+                    chain(checkFrom.getLocation(), totem.getLocation());
                     partOfChainLightningPulseDamage(warlordsPlayer, totem);
                     return partOfChainLightning(warlordsPlayer, playersHit, totem, true);
                 } // no else
             } else {
                 ArmorStand totem = Utils.getTotemDownAndClose(warlordsPlayer, checkFrom);
                 if (totem != null) {
+                    chain(checkFrom.getLocation(), totem.getLocation());
                     partOfChainLightningPulseDamage(warlordsPlayer, totem);
                     return partOfChainLightning(warlordsPlayer, playersHit, totem, true);
                 } // no else
@@ -105,6 +114,7 @@ public class Chain extends AbstractAbility {
         Optional<WarlordsPlayer> foundPlayer = filter.closestFirst(warlordsPlayer).aliveEnemiesOf(warlordsPlayer).excluding(playersHit).findFirst();
         if (foundPlayer.isPresent()) {
             WarlordsPlayer hit = foundPlayer.get();
+            chain(checkFrom.getLocation(), hit.getLocation());
             float damageMultiplier;
             switch(playersSize) {
                 case 0:
@@ -123,7 +133,7 @@ public class Chain extends AbstractAbility {
             hit.addHealth(warlordsPlayer, name, minDamageHeal * damageMultiplier, maxDamageHeal * damageMultiplier, critChance, critMultiplier);
             return partOfChainLightning(warlordsPlayer, playersHit, hit.getEntity(), hasHitTotem);
         } else {
-            return playersSize;
+            return playersSize + (hasHitTotem ? 1 : 0);
         }
     }
 
@@ -225,13 +235,12 @@ public class Chain extends AbstractAbility {
             warlordsPlayer.subtractEnergy(energyCost);
             if (name.contains("Lightning")) {
                 warlordsPlayer.getCooldownManager().addCooldown(Chain.this.getClass(), "CHAIN(" + hitCounter + ")", 4, warlordsPlayer, CooldownTypes.BUFF);
-
                 warlordsPlayer.getSpec().getRed().setCurrentCooldown(cooldown);
 
+                player.playSound(player.getLocation(), "shaman.chainlightning.impact", 2, 1);
                 for (Player player1 : player.getWorld().getPlayers()) {
                     player1.playSound(player.getLocation(), "shaman.chainlightning.activation", 2, 1);
                 }
-                player.playSound(player.getLocation(), "shaman.chainlightning.impact", 1F, 1);
 
             } else if (name.contains("Heal")) {
                 if (hitCounter * 2 > warlordsPlayer.getSpec().getRed().getCurrentCooldown()) {
@@ -269,7 +278,7 @@ public class Chain extends AbstractAbility {
         warlordsPlayer.addHealth(warlordsPlayer, "Soulbinding Weapon", 420, 420, -1, 100);
         for (WarlordsPlayer nearPlayer : PlayerFilter
             .entitiesAround(warlordsPlayer, 2.5D, 2D, 2.5D)
-            .aliveTeammatesOf(warlordsPlayer)
+            .aliveTeammatesOfExcludingSelf(warlordsPlayer)
             .limit(2)
         ) {
             nearPlayer.addHealth(warlordsPlayer, "Soulbinding Weapon", 420, 420, -1, 100);
@@ -295,6 +304,7 @@ public class Chain extends AbstractAbility {
                 chain.setHeadPose(new EulerAngle(location.getDirection().getY() * -1, 0, 0));
                 chain.setGravity(false);
                 chain.setVisible(false);
+                chain.setBasePlate(false);
                 chain.setMarker(true);
                 chain.setHelmet(new ItemStack(Material.RED_MUSHROOM));
                 location.add(location.getDirection().multiply(1.2));
@@ -306,6 +316,7 @@ public class Chain extends AbstractAbility {
                 chain.setHeadPose(new EulerAngle(location.getDirection().getY() * -1, 0, 0));
                 chain.setGravity(false);
                 chain.setVisible(false);
+                chain.setBasePlate(false);
                 chain.setMarker(true);
                 chain.setHelmet(new ItemStack(Material.RED_ROSE, 1, (short) 1));
                 location.add(location.getDirection().multiply(1.2));
@@ -317,6 +328,7 @@ public class Chain extends AbstractAbility {
                 chain.setHeadPose(new EulerAngle(location.getDirection().getY() * -1, 0, 0));
                 chain.setGravity(false);
                 chain.setVisible(false);
+                chain.setBasePlate(false);
                 chain.setMarker(true);
                 chain.setHelmet(new ItemStack(Material.SPRUCE_FENCE_GATE));
                 location.add(location.getDirection().multiply(1.2));
@@ -362,7 +374,7 @@ public class Chain extends AbstractAbility {
     @Nullable
     private ArmorStand getTotem(@Nonnull WarlordsPlayer player) {
         for (Entity entity : player.getEntity().getNearbyEntities(20, 17, 20)) {
-            if (entity instanceof ArmorStand && entity.hasMetadata("Capacitor Totem - " + player.getName().toLowerCase())) {
+            if (entity instanceof ArmorStand && entity.hasMetadata("capacitor-totem-" + player.getName().toLowerCase())) {
                 return (ArmorStand) entity;
             }
         }

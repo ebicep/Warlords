@@ -9,6 +9,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -286,6 +287,16 @@ public class PlayerFilter implements Iterable<WarlordsPlayer> {
     @Nonnull
     public Optional<WarlordsPlayer> findFirst() {
         return stream.findFirst();
+    }
+
+    @Nullable
+    public WarlordsPlayer findAnyOrNull() {
+        return findAny().orElse(null);
+    }
+
+    @Nullable
+    public WarlordsPlayer findFirstOrNull() {
+        return findFirst().orElse(null);
     }
 
     @Nonnull

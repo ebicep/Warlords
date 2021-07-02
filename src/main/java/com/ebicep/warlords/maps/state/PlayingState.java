@@ -13,7 +13,6 @@ import com.ebicep.warlords.util.PacketUtils;
 import com.ebicep.warlords.util.RemoveEntities;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -27,7 +26,6 @@ import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.util.Utils.sendMessage;
 
@@ -207,7 +205,7 @@ public class PlayingState implements State, TimerDebugAble {
                     assert getStats(Team.BLUE).points == getStats(Team.RED).points;
                     this.pointLimit = getStats(Team.BLUE).points + 25;
                     this.game.forEachOnlinePlayer((player, team) -> {
-                        player.sendMessage("Overtime is now active!");
+                        player.sendMessage("§7Overtime is now active!");
                     });
                 } else {
                     return next;

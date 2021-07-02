@@ -36,6 +36,7 @@ public class SeismicWave extends AbstractAbility {
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
         playersHit.clear();
+        wp.subtractEnergy(energyCost);
 
         Location location = player.getLocation();
         for (int i = 0; i < 9; i++) {

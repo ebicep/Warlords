@@ -27,8 +27,8 @@ public class HealingRain extends AbstractAbility {
         description = "§7Conjure rain at targeted\n" +
                 "location that will restore §a" + minDamageHeal + "\n" +
                 "§7- §a" + maxDamageHeal + " §7health every second to\n" +
-                "allies. Lasts §612 §7seconds.\n\nYou may" +
-                "move Healing Rain to your location\n" +
+                "allies. Lasts §612 §7seconds.\n\n" +
+                "You may move Healing Rain to your location\n" +
                 "every §63 §7seconds using your SNEAK key.";
     }
 
@@ -55,7 +55,8 @@ public class HealingRain extends AbstractAbility {
                     if (recastCooldown != 0) {
                         player.sendMessage("§cYour recast ability is on cooldown, please wait 3 seconds!");
                     } else {
-                        player.playSound(player.getLocation(), "mage.waterbreath.activation", 2, 1.5f);
+                        player.playSound(player.getLocation(), "mage.timewarp.teleport", 2, 1.35f);
+                        player.sendMessage("§7You moved your §aHealing Rain §7to your current location.");
                         damageHealCircle.setLocation(player.getLocation());
                         recastCooldown = 3;
                     }

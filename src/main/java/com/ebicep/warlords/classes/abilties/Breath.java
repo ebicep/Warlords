@@ -42,7 +42,7 @@ public class Breath extends AbstractAbility {
         }
 
         Vector viewDirection = player.getLocation().getDirection();
-        PlayerFilter.entitiesAround(player, 6.0D, 3.5D, 6.0D)
+        PlayerFilter.entitiesAround(player, 8.0D, 4.5D, 8.0D)
             .forEach(target -> {
                 Vector direction = target.getLocation().subtract(player.getLocation()).toVector().normalize();
                 if (viewDirection.dot(direction) > .7) {

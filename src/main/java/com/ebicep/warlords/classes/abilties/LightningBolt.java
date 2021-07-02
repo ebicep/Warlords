@@ -53,7 +53,7 @@ public class LightningBolt extends AbstractAbility {
             @Override
             public void run() {
                 for(WarlordsPlayer player : PlayerFilter
-                    .entitiesAround(bolt.getLocation(), 1.05, 1, 1.05)
+                    .entitiesAround(bolt.getLocation(), 1.65, 1.55, 1.65)
                     .aliveEnemiesOf(wp)
                 ) {
                     //hitting player
@@ -61,7 +61,7 @@ public class LightningBolt extends AbstractAbility {
                     player.addHealth(bolt.getShooter(), bolt.getLightningBolt().getName(), bolt.getLightningBolt().getMinDamageHeal(), bolt.getLightningBolt().getMaxDamageHeal(), bolt.getLightningBolt().getCritChance(), bolt.getLightningBolt().getCritMultiplier());
 
                     for (Player player1 : player.getWorld().getPlayers()) {
-                        player1.playSound(player.getLocation(), "shaman.lightningbolt.impact", 2F, 1);
+                        player1.playSound(player.getLocation(), "shaman.lightningbolt.impact", 2, 1);
                     }
 
                     //reducing chain cooldown
@@ -79,7 +79,7 @@ public class LightningBolt extends AbstractAbility {
                     }
 
                     for (WarlordsPlayer warlordsPlayer : PlayerFilter
-                        .entitiesAround(bolt.getBoltLocation(), 2.1, 2.1, 2.1)
+                        .entitiesAround(bolt.getBoltLocation(), 2.3, 2.3, 2.3)
                         .aliveEnemiesOf(wp)
                     ) {
                         //hitting player

@@ -31,6 +31,7 @@ public class Soulbinding extends AbstractAbility {
 
     @Override
     public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
+        warlordsPlayer.subtractEnergy(energyCost);
         warlordsPlayer.getCooldownManager().addCooldown(Soulbinding.this.getClass(), "SOUL", 12, warlordsPlayer, CooldownTypes.ABILITY);
 
         for (Player player1 : player.getWorld().getPlayers()) {
