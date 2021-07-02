@@ -78,7 +78,6 @@ public class GameMenu {
                     item,
                     (n, e) -> {
                         openClassMenu(player, group);
-                        //TODO change inventory to spec stuff
                     }
             );
         }

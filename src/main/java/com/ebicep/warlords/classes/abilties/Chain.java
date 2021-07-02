@@ -151,7 +151,9 @@ public class Chain extends AbstractAbility {
         if (name.contains("Lightning")) {
             hitCounter = partOfChainLightning(warlordsPlayer, new HashSet<>(), warlordsPlayer.getEntity(), false);
         } else if (name.contains("Heal")) {
-            for (WarlordsPlayer nearPlayer : PlayerFilter.entitiesAround(player, 10, 9, 10).aliveTeammatesOf(warlordsPlayer)) {
+            for (WarlordsPlayer nearPlayer : PlayerFilter
+                    .entitiesAround(player, 10, 9, 10)
+                    .aliveTeammatesOfExcludingSelf(warlordsPlayer)) {
                 if (Utils.getLookingAtChain(player, nearPlayer.getEntity()) && Utils.hasLineOfSight(player, nearPlayer.getEntity())) {
                     //self heal
                     warlordsPlayer.addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
@@ -277,7 +279,7 @@ public class Chain extends AbstractAbility {
     private void healNearPlayers(WarlordsPlayer warlordsPlayer) {
         warlordsPlayer.addHealth(warlordsPlayer, "Soulbinding Weapon", 420, 420, -1, 100);
         for (WarlordsPlayer nearPlayer : PlayerFilter
-            .entitiesAround(warlordsPlayer, 2.5D, 2D, 2.5D)
+            .entitiesAround(warlordsPlayer, 2.5, 2.5, 2.5)
             .aliveTeammatesOfExcludingSelf(warlordsPlayer)
             .limit(2)
         ) {
