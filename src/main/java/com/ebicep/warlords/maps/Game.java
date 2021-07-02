@@ -96,9 +96,6 @@ public class Game implements Runnable {
         this.players.put(player.getUniqueId(), team);
         Location loc = this.map.getLobbySpawnPoint(team);
         Warlords.setRejoinPoint(player.getUniqueId(), loc);
-        if (online != null) {
-            online.teleport(loc);
-        }
     }
 
     public void setPlayerTeam(@Nonnull OfflinePlayer player, @Nonnull Team team) {

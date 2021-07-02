@@ -1,7 +1,9 @@
 package com.ebicep.warlords.maps.state;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Gates;
+import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.util.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
@@ -12,11 +14,15 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import static com.ebicep.warlords.util.Utils.sendMessage;
+import java.util.*;
+import java.util.stream.Collectors;
+import org.bukkit.Bukkit;
 
 public class PreLobbyState implements State, TimerDebugAble {
 
     private int timer = 0;
     private final Game game;
+    private final Map<UUID, TeamPreference> teamPreferences = new HashMap<>();
 
     public PreLobbyState(Game game) {
         this.game = game;
@@ -85,6 +91,84 @@ public class PreLobbyState implements State, TimerDebugAble {
 
     @Override
     public void end() {
+        updateTeamPreferences();
+        distributePeopleOverTeams();
+    }
+
+    private void updateTeamPreferences() {
+        this.game.offlinePlayers().forEach((e) -> {
+            Team selectedTeam = Warlords.getPlayerSettings(e.getKey().getUniqueId()).wantedTeam();
+            if (selectedTeam == null) {
+                Bukkit.broadcastMessage(ChatColor.GOLD + e.getKey().getName() + " §7did not choose a team!");
+            }
+            TeamPreference newPref = new TeamPreference(
+                e.getValue(),
+                selectedTeam == null ? e.getValue() : selectedTeam,
+                selectedTeam == null ? TeamPriority.NO_PREFERENCE : TeamPriority.PLAYER_PREFERENCE
+            );
+            teamPreferences.compute(e.getKey().getUniqueId(), (k, oldPref) ->
+                oldPref.priority() < newPref.priority() ? newPref : oldPref
+            );
+        });
+    }
+
+    private boolean tryMovePeep(Map.Entry<UUID, TeamPreference> entry, Team target) {
+        boolean canSwitchPeepTeam;
+        if(entry.getValue().wantedTeam != target) {
+            switch(entry.getValue().priority) {
+                case FORCED_PREFERENCE:
+                    canSwitchPeepTeam = false;
+                    break;
+                case PLAYER_PREFERENCE:
+                    canSwitchPeepTeam = false; // Always enforce teams people manually have picked, probably set to true in the future
+                    break;
+                default:
+                    canSwitchPeepTeam = true;
+            }
+        } else {
+            canSwitchPeepTeam = true;
+        }
+
+        if (canSwitchPeepTeam) {
+            this.game.setPlayerTeam(Bukkit.getOfflinePlayer(entry.getKey()), entry.getValue().wantedTeam);
+            return true;
+        }
+        return false;
+    }
+
+    private void distributePeopleOverTeams() {
+        List<Map.Entry<UUID, TeamPreference>> prefs = teamPreferences.entrySet().stream().collect(Collectors.toList());
+
+        if (!prefs.isEmpty()) {
+            int redIndex = 0;
+            int blueIndex = prefs.size() - 1;
+
+            boolean canPickRed = true;
+            boolean canPickBlue = true;
+
+            do {
+                if (redIndex == blueIndex && canPickBlue && canPickRed) {
+                    //We have 1 person remaining, and both teams still have room, put the player at its wanted team
+                    tryMovePeep(prefs.get(redIndex), prefs.get(redIndex).getValue().wantedTeam);
+                    canPickBlue = false;
+                    canPickRed = false;
+                }
+                if (canPickRed) {
+                    if (tryMovePeep(prefs.get(redIndex), Team.RED)) {
+                        redIndex++;
+                    } else {
+                        canPickRed = false;
+                    }
+                }
+                if (canPickBlue && redIndex <= blueIndex) {
+                    if (tryMovePeep(prefs.get(blueIndex), Team.BLUE)) {
+                        blueIndex--;
+                    } else {
+                        canPickBlue = false;
+                    }
+                }
+            } while(canPickRed || canPickBlue || redIndex > blueIndex);
+        }
     }
 
     @Override
@@ -128,4 +212,36 @@ public class PreLobbyState implements State, TimerDebugAble {
         }
     }
 
+    private final class TeamPreference implements Comparable<TeamPreference> {
+        final Team wantedTeam;
+        final TeamPriority priority;
+        final Team currentTeam;
+
+        public TeamPreference(Team currentTeam, Team wantedTeam, TeamPriority priority) {
+            this.currentTeam = currentTeam;
+            this.wantedTeam = wantedTeam;
+            this.priority = priority;
+        }
+
+        public int priority() {
+            return this.priority.ordinal() * 2 + 1 + (wantedTeam == currentTeam ? 1 : 0);
+        }
+
+        // Team red is negative, blue is positive
+        public int toInt() {
+            return (wantedTeam == Team.RED ? -1 : 1) * priority();
+        }
+
+        @Override
+        public int compareTo(TeamPreference o) {
+            return Integer.compare(toInt(), o.toInt());
+        }
+
+    }
+
+    private enum TeamPriority {
+        FORCED_PREFERENCE,
+        PLAYER_PREFERENCE,
+        NO_PREFERENCE,
+    }
 }

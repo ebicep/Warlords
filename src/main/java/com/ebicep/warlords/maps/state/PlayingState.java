@@ -145,40 +145,6 @@ public class PlayingState implements State, TimerDebugAble {
         RemoveEntities.doRemove(this.game.getMap());
         this.flags = new FlagManager(this, game.getMap().getRedFlag(), game.getMap().getBlueFlag());
 
-        Map<Team, List<OfflinePlayer>> preferedTeams = this.game.offlinePlayers().collect(
-                groupingBy(
-                        entry -> {
-                            OfflinePlayer p = entry.getKey();
-                            Team team = p.getPlayer() != null ? Team.getSelected((Player) p.getPlayer()) : null;
-                            return team;
-                        },
-                        HashMap::new,
-                        Collectors.mapping(
-                                Map.Entry::getKey,
-                                Collectors.toList()
-                        )
-                )
-        );
-        List<OfflinePlayer> wantedRed = preferedTeams.computeIfAbsent(Team.RED, (k) -> new ArrayList<>());
-        List<OfflinePlayer> wantedBlue = preferedTeams.computeIfAbsent(Team.BLUE, (k) -> new ArrayList<>());
-        for (OfflinePlayer p : preferedTeams.get(null)) {
-            Bukkit.broadcastMessage(p.getName() + " did not choose a team!");
-            if (wantedRed.size() < wantedBlue.size()) {
-                wantedRed.add(p);
-            } else {
-                wantedBlue.add(p);
-            }
-        }
-
-        for (Map.Entry<Team, List<OfflinePlayer>> list : preferedTeams.entrySet()) {
-            if (list.getKey() == null) {
-                continue;
-            }
-            for (OfflinePlayer peep : list.getValue()) {
-                this.game.setPlayerTeam(peep, list.getKey());
-            }
-        }
-
         this.game.forEachOfflinePlayer((player, team) -> {
             PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
             Warlords.addPlayer(new WarlordsPlayer(
