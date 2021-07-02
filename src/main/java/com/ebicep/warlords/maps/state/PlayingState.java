@@ -13,7 +13,6 @@ import com.ebicep.warlords.util.PacketUtils;
 import com.ebicep.warlords.util.RemoveEntities;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -27,7 +26,6 @@ import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.util.Utils.sendMessage;
 
@@ -144,40 +142,6 @@ public class PlayingState implements State, TimerDebugAble {
         this.powerupTimer = POWERUP_TIMER;
         RemoveEntities.doRemove(this.game.getMap());
         this.flags = new FlagManager(this, game.getMap().getRedFlag(), game.getMap().getBlueFlag());
-
-        Map<Team, List<OfflinePlayer>> preferedTeams = this.game.offlinePlayers().collect(
-                groupingBy(
-                        entry -> {
-                            OfflinePlayer p = entry.getKey();
-                            Team team = p.getPlayer() != null ? Team.getSelected((Player) p.getPlayer()) : null;
-                            return team;
-                        },
-                        HashMap::new,
-                        Collectors.mapping(
-                                Map.Entry::getKey,
-                                Collectors.toList()
-                        )
-                )
-        );
-        List<OfflinePlayer> wantedRed = preferedTeams.computeIfAbsent(Team.RED, (k) -> new ArrayList<>());
-        List<OfflinePlayer> wantedBlue = preferedTeams.computeIfAbsent(Team.BLUE, (k) -> new ArrayList<>());
-        for (OfflinePlayer p : preferedTeams.get(null)) {
-            Bukkit.broadcastMessage(ChatColor.GOLD + p.getName() + " §7did not choose a team!");
-            if (wantedRed.size() < wantedBlue.size()) {
-                wantedRed.add(p);
-            } else {
-                wantedBlue.add(p);
-            }
-        }
-
-        for (Map.Entry<Team, List<OfflinePlayer>> list : preferedTeams.entrySet()) {
-            if (list.getKey() == null) {
-                continue;
-            }
-            for (OfflinePlayer peep : list.getValue()) {
-                this.game.setPlayerTeam(peep, list.getKey());
-            }
-        }
 
         this.game.forEachOfflinePlayer((player, team) -> {
             PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
