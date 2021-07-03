@@ -50,7 +50,7 @@ public final class WarlordsPlayer {
     private AbstractPlayerClass spec;
     private final Classes specClass;
     private final Weapons weapon;
-    private boolean hotKeyMode = true;
+    private boolean hotKeyMode;
     private int health;
     private int maxHealth;
     private int regenTimer;
@@ -81,7 +81,6 @@ public final class WarlordsPlayer {
 
     private final CalculateSpeed speed;
 
-    private final List<ActionBarStats> actionBarStats = new ArrayList<>();
     private boolean teamFlagCompass = true;
 
     private boolean undyingArmyDead = false;
@@ -624,19 +623,18 @@ public final class WarlordsPlayer {
                     cooldownManager.getCooldown(Intervene.class).get(0).getFrom().setHealth((int) (cooldownManager.getCooldown(Intervene.class).get(0).getFrom().getHealth() + damageHealValue));
                     cooldownManager.getCooldown(Intervene.class).get(0).getFrom().getEntity().playEffect(EntityEffect.HURT);
                     cooldownManager.getCooldown(Intervene.class).get(0).getFrom().setRegenTimer(10);
+                    ((Intervene) cooldownManager.getCooldown(Intervene.class).get(0).getFrom().getSpec().getBlue()).addDamagePrevented(-damageHealValue);
 
-                    /*Optional<MetadataValue> intervene = player.getMetadata("INTERVENE").stream()
-                            .filter(e -> e.value() instanceof Intervene)
-                            .findAny();
-                    if (intervene.isPresent()) {
-                        Intervene vene = (Intervene) intervene.get().value();
-                        vene.addDamagePrevented(-damageHealValue);
-                        if (vene.getDamagePrevented() >= 3600) {
-                            player.sendMessage("§c\u00AB§7 " + cooldownManager.getCooldown(Intervene.class).get(0).getFrom().getName() + "'s " + ChatColor.YELLOW + "Intervene " + ChatColor.GRAY + "has expired!");
-                            cooldownManager.getCooldowns().remove(cooldownManager.getCooldown(Intervene.class).get(0));
-                            player.removeMetadata("INTERVENE", Warlords.getInstance());
-                        }
-                    }*/
+                    //removing intervene if out damaged
+                    if (((Intervene) cooldownManager.getCooldown(Intervene.class).get(0).getFrom().getSpec().getBlue()).getDamagePrevented() >= 3600) {
+                        //remove from intervener
+                        cooldownManager.getCooldown(Intervene.class).get(0).getFrom().sendMessage("§c\u00AB§7 " + "Your " + ChatColor.YELLOW + "Intervene " + ChatColor.GRAY + "has expired!");
+                        cooldownManager.getCooldown(Intervene.class).get(0).getFrom().getCooldownManager().getCooldowns().remove(cooldownManager.getCooldown(Intervene.class).get(0));
+                        //remove from intervened
+                        sendMessage("§c\u00AB§7 " + cooldownManager.getCooldown(Intervene.class).get(0).getFrom().getName() + "'s " + ChatColor.YELLOW + "Intervene " + ChatColor.GRAY + "has expired!");
+                        cooldownManager.getCooldowns().remove(cooldownManager.getCooldown(Intervene.class).get(0));
+                    }
+
                     this.addAbsorbed(-damageHealValue);
                     attacker.addAbsorbed(-damageHealValue);
                 }
