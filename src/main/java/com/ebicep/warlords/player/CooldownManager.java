@@ -4,8 +4,12 @@ import com.ebicep.warlords.classes.abilties.ArcaneShield;
 import com.ebicep.warlords.classes.abilties.Intervene;
 import com.ebicep.warlords.classes.abilties.UndyingArmy;
 import net.minecraft.server.v1_8_R3.EntityLiving;
+import org.bukkit.Color;
+import org.bukkit.FireworkEffect;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.meta.FireworkMeta;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +47,10 @@ public class CooldownManager {
                 } else if (cooldown.getCooldownClass() == UndyingArmy.class) {
                     int healing = (int) ((warlordsPlayer.getMaxHealth() - warlordsPlayer.getHealth()) * .35 + 200);
                     warlordsPlayer.addHealth(cooldown.getFrom(), "Undying Army", healing, healing, -1, 100);
+
+                    for (Player player1 : warlordsPlayer.getWorld().getPlayers()) {
+                        player1.playSound(warlordsPlayer.getLocation(), "paladin.holyradiance.activation", 0.5f, 1);
+                    }
                 } else if (cooldown.getCooldownClass() == ArcaneShield.class) {
                     if (warlordsPlayer.getEntity() instanceof Player) {
                         ((EntityLiving) ((CraftPlayer) warlordsPlayer.getEntity()).getHandle()).setAbsorptionHearts(0);

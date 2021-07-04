@@ -16,7 +16,9 @@ import com.ebicep.warlords.util.Utils;
 import org.bukkit.*;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -295,8 +297,26 @@ public class Warlords extends JavaPlugin {
                         if (warlordsPlayer.getCooldownManager().getCooldown(UndyingArmy.class).size() > 0 && newHealth <= 0) {
                             if (warlordsPlayer.getCooldownManager().getCooldown(UndyingArmy.class).get(0).getFrom() == warlordsPlayer) {
                                 warlordsPlayer.sendMessage("§a\u00BB§7 " + ChatColor.LIGHT_PURPLE + "Your Undying Army revived you with temporary health. Fight until your death! Your health will decay by " + ChatColor.RED + "500 " + ChatColor.LIGHT_PURPLE + "every second.");
+
+                                Firework firework = warlordsPlayer.getWorld().spawn(warlordsPlayer.getLocation(), Firework.class);
+                                FireworkMeta meta = firework.getFireworkMeta();
+                                meta.addEffects(FireworkEffect.builder().withColor(Color.GREEN).with(FireworkEffect.Type.BALL).build());
+                                meta.setPower(1);
+                                firework.setFireworkMeta(meta);
+                                firework.detonate();
+
+                                player.getWorld().spigot().strikeLightningEffect(warlordsPlayer.getLocation(), false);
                             } else {
                                 warlordsPlayer.sendMessage("§a\u00BB§7 " + ChatColor.LIGHT_PURPLE + warlordsPlayer.getCooldownManager().getCooldown(UndyingArmy.class).get(0).getFrom().getName() + "'s Undying Army revived you with temporary health. Fight until your death! Your health will decay by " + ChatColor.RED + "500 " + ChatColor.LIGHT_PURPLE + "every second.");
+
+                                Firework firework = warlordsPlayer.getWorld().spawn(warlordsPlayer.getLocation(), Firework.class);
+                                FireworkMeta meta = firework.getFireworkMeta();
+                                meta.addEffects(FireworkEffect.builder().withColor(Color.GREEN).with(FireworkEffect.Type.BALL).build());
+                                meta.setPower(1);
+                                firework.setFireworkMeta(meta);
+                                firework.detonate();
+
+                                player.getWorld().spigot().strikeLightningEffect(warlordsPlayer.getLocation(), false);
                             }
                             warlordsPlayer.respawn();
                             warlordsPlayer.setUndyingArmyDead(true);

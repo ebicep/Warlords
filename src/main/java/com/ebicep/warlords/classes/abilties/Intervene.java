@@ -48,7 +48,7 @@ public class Intervene extends AbstractAbility {
                 }
 
                 //new cooldown, both players have same instance of intervene now
-                Cooldown interveneCooldown = new Cooldown(Intervene.this.getClass(), "VENE", 6, warlordsPlayer, CooldownTypes.ABILITY);
+                Cooldown interveneCooldown = new Cooldown(Intervene.this.getClass(), "VENE", 5, warlordsPlayer, CooldownTypes.ABILITY);
 
                 warlordsPlayer.sendMessage("§a\u00BB§7 You are now protecting " + nearWarlordsPlayer.getName() + " with your §eIntervene!");
                 warlordsPlayer.getCooldownManager().addCooldown(interveneCooldown);

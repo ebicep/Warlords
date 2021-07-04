@@ -35,12 +35,12 @@ public class LastStand extends AbstractAbility {
             .aliveTeammatesOfExcludingSelf(warlordsPlayer)
             .forEach((nearPlayer) -> {
                 nearPlayer.getCooldownManager().addCooldown(LastStand.this.getClass(), "LAST", 6, warlordsPlayer, CooldownTypes.BUFF);
-                player.sendMessage("§7you last standed §e" + nearPlayer.getName());
+                player.sendMessage("§7You last standed §e" + nearPlayer.getName());
             });
         warlordsPlayer.subtractEnergy(energyCost);
 
         for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "warrior.laststand.activation", 2, 0.1f);
+            player1.playSound(player.getLocation(), "warrior.laststand.activation", 2, 1);
         }
 
         Location loc = player.getEyeLocation();

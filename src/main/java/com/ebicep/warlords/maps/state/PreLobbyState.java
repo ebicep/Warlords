@@ -14,8 +14,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import static com.ebicep.warlords.util.Utils.sendMessage;
+
 import java.util.*;
 import java.util.stream.Collectors;
+
 import org.bukkit.Bukkit;
 
 public class PreLobbyState implements State, TimerDebugAble {
@@ -29,7 +31,7 @@ public class PreLobbyState implements State, TimerDebugAble {
     }
 
     @Override
-    public void begin( ) {
+    public void begin() {
         timer = game.getMap().getCountdownTimerInTicks();
         Gates.changeGates(game.getMap(), false);
     }
@@ -102,20 +104,20 @@ public class PreLobbyState implements State, TimerDebugAble {
                 Bukkit.broadcastMessage(ChatColor.GOLD + e.getKey().getName() + " §7did not choose a team!");
             }
             TeamPreference newPref = new TeamPreference(
-                e.getValue(),
-                selectedTeam == null ? e.getValue() : selectedTeam,
-                selectedTeam == null ? TeamPriority.NO_PREFERENCE : TeamPriority.PLAYER_PREFERENCE
+                    e.getValue(),
+                    selectedTeam == null ? e.getValue() : selectedTeam,
+                    selectedTeam == null ? TeamPriority.NO_PREFERENCE : TeamPriority.PLAYER_PREFERENCE
             );
             teamPreferences.compute(e.getKey().getUniqueId(), (k, oldPref) ->
-                oldPref.priority() < newPref.priority() ? newPref : oldPref
+                    oldPref == null || oldPref.priority() < newPref.priority() ? newPref : oldPref
             );
         });
     }
 
     private boolean tryMovePeep(Map.Entry<UUID, TeamPreference> entry, Team target) {
         boolean canSwitchPeepTeam;
-        if(entry.getValue().wantedTeam != target) {
-            switch(entry.getValue().priority) {
+        if (entry.getValue().wantedTeam != target) {
+            switch (entry.getValue().priority) {
                 case FORCED_PREFERENCE:
                     canSwitchPeepTeam = false;
                     break;
@@ -156,6 +158,7 @@ public class PreLobbyState implements State, TimerDebugAble {
                 if (canPickRed) {
                     if (tryMovePeep(prefs.get(redIndex), Team.RED)) {
                         redIndex++;
+                        canPickRed = redIndex < prefs.size();
                     } else {
                         canPickRed = false;
                     }
@@ -163,11 +166,12 @@ public class PreLobbyState implements State, TimerDebugAble {
                 if (canPickBlue && redIndex <= blueIndex) {
                     if (tryMovePeep(prefs.get(blueIndex), Team.BLUE)) {
                         blueIndex--;
+                        canPickBlue = blueIndex >= 0;
                     } else {
                         canPickBlue = false;
                     }
                 }
-            } while(canPickRed || canPickBlue || redIndex > blueIndex);
+            } while ((canPickRed || canPickBlue) && redIndex <= blueIndex);
         }
     }
 
