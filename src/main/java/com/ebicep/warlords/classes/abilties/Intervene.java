@@ -2,6 +2,7 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.player.Cooldown;
 import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.ParticleEffect;
@@ -46,21 +47,24 @@ public class Intervene extends AbstractAbility {
                     lineLocation.add(lineLocation.getDirection().multiply(.25));
                 }
 
+                //new cooldown, both players have same instance of intervene now
+                Cooldown interveneCooldown = new Cooldown(Intervene.this.getClass(), "VENE", 6, warlordsPlayer, CooldownTypes.ABILITY);
+
                 warlordsPlayer.sendMessage("§a\u00BB§7 You are now protecting " + nearWarlordsPlayer.getName() + " with your §eIntervene!");
-                warlordsPlayer.getCooldownManager().addCooldown(Intervene.this.getClass(), "VENE", 6, warlordsPlayer, CooldownTypes.ABILITY);
-                nearWarlordsPlayer.sendMessage("§a\u00BB§7 " + warlordsPlayer.getName() + " is shielding you with their " + ChatColor.YELLOW + "Intervene" + ChatColor.GRAY + "!");
-                // TODO: This is impossible with offline player support @epic
-                //nearPlayer.removeMetadata("INTERVENE", Warlords.getInstance());
-                //nearPlayer.setMetadata("INTERVENE", new FixedMetadataValue(Warlords.getInstance(), this));
+                warlordsPlayer.getCooldownManager().addCooldown(interveneCooldown);
+
+                //removing all other intervenes bc less work
                 nearWarlordsPlayer.getCooldownManager().getCooldowns().removeAll(nearWarlordsPlayer.getCooldownManager().getCooldown(Intervene.this.getClass()));
-                nearWarlordsPlayer.getCooldownManager().addCooldown(Intervene.this.getClass(), "VENE", 6, warlordsPlayer, CooldownTypes.ABILITY);
+
+                nearWarlordsPlayer.sendMessage("§a\u00BB§7 " + warlordsPlayer.getName() + " is shielding you with their " + ChatColor.YELLOW + "Intervene" + ChatColor.GRAY + "!");
+                nearWarlordsPlayer.getCooldownManager().addCooldown(interveneCooldown);
 
                 warlordsPlayer.getSpec().getBlue().setCurrentCooldown(cooldown);
                 warlordsPlayer.updateBlueItem();
 
-                    for (Player player1 : player.getWorld().getPlayers()) {
-                        player1.playSound(player.getLocation(), "warrior.intervene.impact", 1, 1);
-                    }
+                for (Player player1 : player.getWorld().getPlayers()) {
+                    player1.playSound(player.getLocation(), "warrior.intervene.impact", 1, 1);
+                }
 
                     new BukkitRunnable() {
                         @Override
