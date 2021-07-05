@@ -300,10 +300,11 @@ public class Warlords extends JavaPlugin {
 
                                 Firework firework = warlordsPlayer.getWorld().spawn(warlordsPlayer.getLocation(), Firework.class);
                                 FireworkMeta meta = firework.getFireworkMeta();
-                                meta.addEffects(FireworkEffect.builder().withColor(Color.GREEN).with(FireworkEffect.Type.BALL).build());
-                                meta.setPower(1);
+                                meta.addEffects(FireworkEffect.builder().withColor(Color.LIME)
+                                        .with(FireworkEffect.Type.BALL)
+                                        .build());
+                                meta.setPower(0);
                                 firework.setFireworkMeta(meta);
-                                firework.detonate();
 
                                 player.getWorld().spigot().strikeLightningEffect(warlordsPlayer.getLocation(), false);
                             } else {
@@ -311,10 +312,11 @@ public class Warlords extends JavaPlugin {
 
                                 Firework firework = warlordsPlayer.getWorld().spawn(warlordsPlayer.getLocation(), Firework.class);
                                 FireworkMeta meta = firework.getFireworkMeta();
-                                meta.addEffects(FireworkEffect.builder().withColor(Color.GREEN).with(FireworkEffect.Type.BALL).build());
-                                meta.setPower(1);
+                                meta.addEffects(FireworkEffect.builder().withColor(Color.LIME)
+                                        .with(FireworkEffect.Type.BALL)
+                                        .build());
+                                meta.setPower(0);
                                 firework.setFireworkMeta(meta);
-                                firework.detonate();
 
                                 player.getWorld().spigot().strikeLightningEffect(warlordsPlayer.getLocation(), false);
                             }

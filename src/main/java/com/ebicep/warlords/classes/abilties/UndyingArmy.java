@@ -41,28 +41,28 @@ public class UndyingArmy extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
-        warlordsPlayer.getCooldownManager().addCooldown(UndyingArmy.this.getClass(), "ARMY", 10, warlordsPlayer, CooldownTypes.ABILITY);
+    public void onActivate(WarlordsPlayer wp, Player player) {
+        wp.getCooldownManager().addCooldown(UndyingArmy.this.getClass(), "ARMY", 10, wp, CooldownTypes.ABILITY);
 
-        Iterator<WarlordsPlayer> iterator = PlayerFilter.entitiesAround(warlordsPlayer, 5, 5, 5)
-                .aliveTeammatesOfExcludingSelf(warlordsPlayer)
+        Iterator<WarlordsPlayer> iterator = PlayerFilter.entitiesAround(wp, 5, 5, 5)
+                .aliveTeammatesOfExcludingSelf(wp)
                 .iterator();
         int numberOfPlayersWithArmy = 0;
         while(iterator.hasNext()) {
             WarlordsPlayer warlordsNearPlayer = iterator.next();
-            warlordsPlayer.sendMessage("§a\u00BB§7 " + ChatColor.GRAY + "Your Undying Army is protecting " + warlordsNearPlayer.getColoredName()+ ChatColor.GRAY + ".");
-            warlordsNearPlayer.getCooldownManager().addCooldown(UndyingArmy.this.getClass(), "ARMY", 10, warlordsPlayer, CooldownTypes.ABILITY);
-            warlordsNearPlayer.sendMessage("§a\u00BB§7 " + ChatColor.GRAY + warlordsPlayer.getName() + "'s Undying Army protects you for " + ChatColor.GOLD + "10 " + ChatColor.GRAY + "seconds.");
+            wp.sendMessage("§a\u00BB§7 " + ChatColor.GRAY + "Your Undying Army is protecting " + warlordsNearPlayer.getColoredName()+ ChatColor.GRAY + ".");
+            warlordsNearPlayer.getCooldownManager().addCooldown(UndyingArmy.this.getClass(), "ARMY", 10, wp, CooldownTypes.ABILITY);
+            warlordsNearPlayer.sendMessage("§a\u00BB§7 " + ChatColor.GRAY + wp.getName() + "'s Undying Army protects you for " + ChatColor.GOLD + "10 " + ChatColor.GRAY + "seconds.");
             numberOfPlayersWithArmy++;
         }
         String allies = numberOfPlayersWithArmy == 1 ? "ally." : "allies.";
-        warlordsPlayer.sendMessage("§a\u00BB§7 " + ChatColor.GRAY + "Your Undying Army is protecting " + ChatColor.YELLOW + numberOfPlayersWithArmy + ChatColor.GRAY + " nearby " + allies);
+        wp.sendMessage("§a\u00BB§7 " + ChatColor.GRAY + "Your Undying Army is protecting " + ChatColor.YELLOW + numberOfPlayersWithArmy + ChatColor.GRAY + " nearby " + allies);
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), Sound.ZOMBIE_IDLE, 1, 1.1f);
         }
 
-        CircleEffect circle = new CircleEffect(warlordsPlayer.getGame(), warlordsPlayer.getTeam(), player.getLocation(), 5);
+        CircleEffect circle = new CircleEffect(wp.getGame(), wp.getTeam(), player.getLocation(), 5);
         circle.addEffect(new CircumferenceEffect(ParticleEffect.VILLAGER_HAPPY).particlesPerCircumference(1));
         circle.playEffects();
     }

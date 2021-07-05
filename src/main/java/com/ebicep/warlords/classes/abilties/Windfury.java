@@ -27,11 +27,11 @@ public class Windfury extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
-        warlordsPlayer.subtractEnergy(energyCost);
-        warlordsPlayer.getCooldownManager().addCooldown(Windfury.this.getClass(), "FURY", 8, warlordsPlayer, CooldownTypes.ABILITY);
+    public void onActivate(WarlordsPlayer wp, Player player) {
+        wp.subtractEnergy(energyCost);
+        wp.getCooldownManager().addCooldown(Windfury.this.getClass(), "FURY", 8, wp, CooldownTypes.ABILITY);
 
-        warlordsPlayer.setFirstProc(true);
+        wp.setFirstProc(true);
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "shaman.windfuryweapon.activation", 2, 1);
@@ -40,7 +40,7 @@ public class Windfury extends AbstractAbility {
         new BukkitRunnable() {
             @Override
             public void run() {
-                if (warlordsPlayer.getCooldownManager().getCooldown(Windfury.class).size() > 0) {
+                if (wp.getCooldownManager().getCooldown(Windfury.class).size() > 0) {
                     Location location = player.getLocation();
                     location.add(0, 1.2, 0);
                     ParticleEffect.CRIT.display(0.2F, 0F, 0.2F, 0.1F, 3, location, 500);

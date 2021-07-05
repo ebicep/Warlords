@@ -64,11 +64,11 @@ public class Chain extends AbstractAbility {
         }
     }
 
-    private void partOfChainLightningPulseDamage(WarlordsPlayer warlordsPlayer, Entity totem) {
-        pulseDamage(warlordsPlayer, PlayerFilter.entitiesAround(totem, 5, 4, 5).aliveEnemiesOf(warlordsPlayer).stream());
+    private void partOfChainLightningPulseDamage(WarlordsPlayer wp, Entity totem) {
+        pulseDamage(wp, PlayerFilter.entitiesAround(totem, 5, 4, 5).aliveEnemiesOf(wp).stream());
         new FallingBlockWaveEffect(totem.getLocation().add(0, 1, 0), 5, 1.2, Material.SAPLING, (byte) 0).play();
-        for (Player player1 : warlordsPlayer.getWorld().getPlayers()) {
-            player1.playSound(warlordsPlayer.getLocation(), "shaman.capacitortotem.pulse", 2, 1);
+        for (Player player1 : wp.getWorld().getPlayers()) {
+            player1.playSound(wp.getLocation(), "shaman.capacitortotem.pulse", 2, 1);
         }
     }
 

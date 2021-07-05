@@ -17,7 +17,7 @@ import org.bukkit.util.Vector;
 public class Boulder extends AbstractAbility {
 
     private static final double SPEED = 0.52;
-    private static final double GRAVITY = -0.0135;
+    private static final double GRAVITY = -0.0138;
 
     public Boulder() {
         super("Boulder", -490, -731, 7.05f, 80, 15, 175);
@@ -32,7 +32,7 @@ public class Boulder extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
+    public void onActivate(WarlordsPlayer wp, Player player) {
 
         Location location = player.getLocation();
         Vector speed = player.getLocation().getDirection().multiply(SPEED);
@@ -43,11 +43,9 @@ public class Boulder extends AbstractAbility {
         stand.setGravity(false);
         stand.setBasePlate(false);
         stand.setArms(false);
-        stand.setLeftLegPose(new EulerAngle(Math.toRadians(180), Math.toRadians(0), Math.toRadians(0)));
-        stand.setRightLegPose(new EulerAngle(Math.toRadians(180), Math.toRadians(0), Math.toRadians(0)));
         stand.setVisible(false);
 
-        warlordsPlayer.subtractEnergy(energyCost);
+        wp.subtractEnergy(energyCost);
 
         new BukkitRunnable() {
 
@@ -88,7 +86,7 @@ public class Boulder extends AbstractAbility {
                     shouldExplode = true;
                 } else {
                     shouldExplode = PlayerFilter.entitiesAround(newLoc, 1.15, 1.15, 1.15)
-                        .aliveEnemiesOf(warlordsPlayer).findAny().isPresent();
+                        .aliveEnemiesOf(wp).findAny().isPresent();
                 }
 
 
@@ -100,9 +98,9 @@ public class Boulder extends AbstractAbility {
 
                     for(WarlordsPlayer p : PlayerFilter
                         .entitiesAround(newLoc, 5, 5, 5)
-                        .aliveEnemiesOf(warlordsPlayer)
+                        .aliveEnemiesOf(wp)
                     ) {
-                        p.addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+                        p.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
 
                         Entity entity = p.getEntity();
                         Vector v = entity.getLocation().toVector().subtract(newLoc.toVector()).normalize().multiply(1.1).setY(0.3);

@@ -30,9 +30,9 @@ public class Soulbinding extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
-        warlordsPlayer.subtractEnergy(energyCost);
-        warlordsPlayer.getCooldownManager().addCooldown(Soulbinding.this.getClass(), "SOUL", 12, warlordsPlayer, CooldownTypes.ABILITY);
+    public void onActivate(WarlordsPlayer wp, Player player) {
+        wp.subtractEnergy(energyCost);
+        wp.getCooldownManager().addCooldown(Soulbinding.this.getClass(), "SOUL", 12, wp, CooldownTypes.ABILITY);
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "paladin.consecrate.activation", 2, 2);
@@ -41,7 +41,7 @@ public class Soulbinding extends AbstractAbility {
         new BukkitRunnable() {
             @Override
             public void run() {
-                if (warlordsPlayer.getCooldownManager().getCooldown(Soulbinding.class).size() > 0) {
+                if (wp.getCooldownManager().getCooldown(Soulbinding.class).size() > 0) {
                     Location location = player.getLocation();
                     location.add(0, 1.2, 0);
                     ParticleEffect.SPELL_WITCH.display(0.2F, 0F, 0.2F, 0.1F, 1, location, 500);

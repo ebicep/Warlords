@@ -27,10 +27,10 @@ public class TimeWarp extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
-        TimeWarpPlayer timeWarpPlayer = new TimeWarpPlayer(warlordsPlayer, player.getLocation(), player.getLocation().getDirection(), 5);
-        warlordsPlayer.getCooldownManager().addCooldown(TimeWarp.this.getClass(), "TIME", 5, warlordsPlayer, CooldownTypes.ABILITY);
-        warlordsPlayer.subtractEnergy(energyCost);
+    public void onActivate(WarlordsPlayer wp, Player player) {
+        TimeWarpPlayer timeWarpPlayer = new TimeWarpPlayer(wp, player.getLocation(), player.getLocation().getDirection(), 5);
+        wp.getCooldownManager().addCooldown(TimeWarp.this.getClass(), "TIME", 5, wp, CooldownTypes.ABILITY);
+        wp.subtractEnergy(energyCost);
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "mage.timewarp.activation", 2, 1);
@@ -48,7 +48,7 @@ public class TimeWarp extends AbstractAbility {
                 //PARTICLES
                 if (counter % 2 == 0) {
                     if (timeWarpPlayer.getTime() != 0) {
-                        for (Location location : warlordsPlayer.getTrail()) {
+                        for (Location location : wp.getTrail()) {
                             ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(175, 0, 175), location, 500);
                         }
                     }
@@ -57,7 +57,7 @@ public class TimeWarp extends AbstractAbility {
                 if (counter % 4 == 0) {
 
                     if (timeWarpPlayer.getTime() != 0) {
-                        warlordsPlayer.getTrail().add(player.getLocation());
+                        wp.getTrail().add(player.getLocation());
                     }
                 }
 
@@ -91,7 +91,7 @@ public class TimeWarp extends AbstractAbility {
                         timeWarpPlayer.getLocation().setDirection(timeWarpPlayer.getFacing());
                         player.getEntity().teleport(timeWarpPlayer.getLocation());
 
-                        warlordsPlayer.getTrail().clear();
+                        wp.getTrail().clear();
                         counter = 0;
                         this.cancel();
                     }

@@ -27,8 +27,8 @@ public class IceBarrier extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
-        warlordsPlayer.getCooldownManager().addCooldown(IceBarrier.this.getClass(), "ICE", 6, warlordsPlayer, CooldownTypes.ABILITY);
+    public void onActivate(WarlordsPlayer wp, Player player) {
+        wp.getCooldownManager().addCooldown(IceBarrier.this.getClass(), "ICE", 6, wp, CooldownTypes.ABILITY);
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "mage.icebarrier.activation", 2, 1);
@@ -37,7 +37,7 @@ public class IceBarrier extends AbstractAbility {
         new BukkitRunnable() {
             @Override
             public void run() {
-                if (warlordsPlayer.getCooldownManager().getCooldown(IceBarrier.class).size() > 0) {
+                if (wp.getCooldownManager().getCooldown(IceBarrier.class).size() > 0) {
                     Location location = player.getLocation();
                     location.add(0, 1.5, 0);
                     ParticleEffect.CLOUD.display(0.2F, 0.2F, 0.2F, 0.001F, 1, location, 500);

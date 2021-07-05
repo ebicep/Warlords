@@ -35,10 +35,10 @@ public class Breath extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
+    public void onActivate(WarlordsPlayer wp, Player player) {
 
         if (name.contains("Water")) {
-            warlordsPlayer.addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+            wp.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
         }
 
         Vector viewDirection = player.getLocation().getDirection();
@@ -47,8 +47,8 @@ public class Breath extends AbstractAbility {
                 Vector direction = target.getLocation().subtract(player.getLocation()).toVector().normalize();
                 if (viewDirection.dot(direction) > .7) {
                     if (name.contains("Water")) {
-                        if (warlordsPlayer.isTeammate(target)) {
-                            target.addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+                        if (wp.isTeammate(target)) {
+                            target.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
                         } else {
                             Location eye = player.getEyeLocation();
                             eye.setY(eye.getY() + .7);
@@ -58,13 +58,13 @@ public class Breath extends AbstractAbility {
 
                             target.setVelocity(v);
                         }
-                    } else if (name.contains("Freezing") && warlordsPlayer.isEnemy(target)) {
-                        target.addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+                    } else if (name.contains("Freezing") && wp.isEnemy(target)) {
+                        target.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
                         target.getSpeed().addSpeedModifier("Freezing Breath", -35, 4 * 20);
                     }
                 }
             });
-        warlordsPlayer.subtractEnergy(energyCost);
+        wp.subtractEnergy(energyCost);
 
         if (name.contains("Water")) {
             for (Player player1 : player.getWorld().getPlayers()) {

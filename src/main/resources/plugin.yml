@@ -1,5 +1,5 @@
 name: Warlords
-version: 0.0.3
+version: 1.0.0
 author: ebic
 main: com.ebicep.warlords.Warlords
 depend: [ MultiWorld ]
@@ -10,11 +10,8 @@ commands:
   endgame:
     description: Force stops the game.
     usage: /endgame
-  class:
-    description: Select your class.
-    usage: /class [CLASS]
   menu:
-    description: Opens the game menu. Later to be removed.
+    description: Opens the game menu.
     usage: /menu
   shout:
     description: Shouts in game
@@ -22,12 +19,6 @@ commands:
   hotkeymode:
     description: Switches between hotkeymode and classic
     usage: /hotkeymode
-  hitbox:
-    description: changes hitbox of fallen soul
-    usage: /hitbox
-  speed:
-    description: changes speed of fallen soul
-    usage: /speed
   wldebug:
     description: Debug tools.
     usage: /wldebug [args]

@@ -29,15 +29,15 @@ public class LastStand extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
-        warlordsPlayer.getCooldownManager().addCooldown(LastStand.this.getClass(), "LAST", 12, warlordsPlayer, CooldownTypes.BUFF);
-        PlayerFilter.entitiesAround(warlordsPlayer, 5, 5, 5)
-            .aliveTeammatesOfExcludingSelf(warlordsPlayer)
+    public void onActivate(WarlordsPlayer wp, Player player) {
+        wp.getCooldownManager().addCooldown(LastStand.this.getClass(), "LAST", 12, wp, CooldownTypes.BUFF);
+        PlayerFilter.entitiesAround(wp, 5, 5, 5)
+            .aliveTeammatesOfExcludingSelf(wp)
             .forEach((nearPlayer) -> {
-                nearPlayer.getCooldownManager().addCooldown(LastStand.this.getClass(), "LAST", 6, warlordsPlayer, CooldownTypes.BUFF);
+                nearPlayer.getCooldownManager().addCooldown(LastStand.this.getClass(), "LAST", 6, wp, CooldownTypes.BUFF);
                 player.sendMessage("§7You last standed §e" + nearPlayer.getName());
             });
-        warlordsPlayer.subtractEnergy(energyCost);
+        wp.subtractEnergy(energyCost);
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "warrior.laststand.activation", 2, 1);

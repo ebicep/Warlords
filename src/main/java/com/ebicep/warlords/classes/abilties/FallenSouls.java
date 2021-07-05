@@ -21,24 +21,8 @@ import java.util.List;
 
 public class FallenSouls extends AbstractAbility {
 
-    private static float fallenSoulHitBox = 1.25f;
-    private static float fallenSoulSpeed = 1.95f;
-
-    public static float getFallenSoulHitBox() {
-        return fallenSoulHitBox;
-    }
-
-    public static void setFallenSoulHitBox(float fallenSoulHitBox) {
-        FallenSouls.fallenSoulHitBox = fallenSoulHitBox;
-    }
-
-    public static float getFallenSoulSpeed() {
-        return fallenSoulSpeed;
-    }
-
-    public static void setFallenSoulSpeed(float fallenSoulSpeed) {
-        FallenSouls.fallenSoulSpeed = fallenSoulSpeed;
-    }
+    private static final float fallenSoulHitBox = 1.25f;
+    private static final float fallenSoulSpeed = 1.95f;
 
     public FallenSouls() {
         super("Fallen Souls", -164f, -212f, 0, 55, 20, 180
