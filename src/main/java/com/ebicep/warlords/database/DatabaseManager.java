@@ -5,6 +5,7 @@ import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.state.PlayingState;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.util.PlayerFilter;
+import com.ebicep.warlords.util.Utils;
 import com.mongodb.MongoException;
 import com.mongodb.MongoWriteException;
 import com.mongodb.client.MongoClient;
@@ -146,6 +147,15 @@ public class DatabaseManager {
         }
     }
 
+    public List<Document> getPlayersSortedByKey(String key) {
+        try {
+            return playersInformation.find().into(new ArrayList<>()).stream().sorted(Comparator.comparing(d -> (Integer) ((Document) d).get(key)).reversed()).collect(Collectors.toList());
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Problem getting top winners");
+            return null;
+        }
+    }
 
     public void clearPlayerCache() {
         cachedPlayerInfo.clear();
@@ -414,6 +424,7 @@ public class DatabaseManager {
         DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm");
         Team winner = gameState.calculateWinnerByPoints();
         Document document = new Document("date", dateFormat.format(new Date()))
+                .append("map", gameState.getGame().getMap().getMapName())
                 .append("time_left", gameState.getTimerInSeconds())
                 .append("winner", gameState.isForceEnd() || winner == null ? "DRAW" : winner.name.toUpperCase(Locale.ROOT))
                 .append("blue_points", gameState.getStats(Team.BLUE).points())
@@ -422,6 +433,7 @@ public class DatabaseManager {
                 .append("stat_info", getWarlordsPlusEndGameStats(gameState));
         try {
             gamesInformation.insertOne(document);
+            System.out.println("Added game");
         } catch (MongoWriteException e) {
             e.printStackTrace();
             System.out.println("Error trying to insert game stats");
@@ -459,6 +471,9 @@ public class DatabaseManager {
     public void gameAddPlayerStats(List<Document> list, WarlordsPlayer warlordsPlayer) {
         list.add(new Document(warlordsPlayer.getUuid().toString(), new Document("name", warlordsPlayer.getName())
                 .append("spec", Warlords.getPlayerSettings(warlordsPlayer.getUuid()).selectedClass().name)
+                .append("blocks_travelled", Utils.getPlayerMovementStatistics((Player) warlordsPlayer.getEntity()) / 100)
+                .append("seconds_in_combat", warlordsPlayer.getTimeInCombat())
+                .append("seconds_in_respawn", warlordsPlayer.getRespawnTimeSpent())
                 .append("kills", new BsonArray(Arrays.stream(warlordsPlayer.getKills()).mapToObj(BsonInt64::new).collect(Collectors.toList())))
                 .append("deaths", new BsonArray(Arrays.stream(warlordsPlayer.getDeaths()).mapToObj(BsonInt64::new).collect(Collectors.toList())))
                 .append("assists", new BsonArray(Arrays.stream(warlordsPlayer.getAssists()).mapToObj(BsonInt64::new).collect(Collectors.toList())))

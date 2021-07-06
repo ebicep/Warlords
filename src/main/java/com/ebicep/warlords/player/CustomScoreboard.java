@@ -5,8 +5,10 @@ import com.ebicep.warlords.maps.flags.GroundFlagLocation;
 import com.ebicep.warlords.maps.flags.PlayerFlagLocation;
 import com.ebicep.warlords.maps.flags.SpawnFlagLocation;
 import com.ebicep.warlords.maps.state.PlayingState;
+import com.ebicep.warlords.util.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.*;
 
 import java.text.SimpleDateFormat;
@@ -23,11 +25,10 @@ public class CustomScoreboard {
         ScoreboardManager manager = Bukkit.getScoreboardManager();
         scoreboard = manager.getNewScoreboard();
         SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
-        String dateString = format.format(new Date());
-        sideBar = scoreboard.registerNewObjective(dateString, "");
+        sideBar = scoreboard.registerNewObjective("WARLORDS", "");
         sideBar.setDisplaySlot(DisplaySlot.SIDEBAR);
         sideBar.setDisplayName("§e§lWARLORDS");
-        sideBar.getScore(ChatColor.GRAY + dateString).setScore(15);
+        sideBar.getScore(ChatColor.GRAY + format.format(new Date())).setScore(15);
         sideBar.getScore(" ").setScore(14);
         sideBar.getScore(ChatColor.BLUE + "BLU: " + ChatColor.AQUA + gameState.getStats(com.ebicep.warlords.maps.Team.RED).points() + ChatColor.GOLD + "/1000").setScore(13);
         sideBar.getScore(ChatColor.RED + "RED: " + ChatColor.AQUA + gameState.getStats(com.ebicep.warlords.maps.Team.BLUE).points() + ChatColor.GOLD + "/1000").setScore(12);
@@ -47,7 +48,7 @@ public class CustomScoreboard {
     }
 
     public void updateHealth() {
-        if(health != null) {
+        if (health != null) {
             health.unregister();
         }
         health = scoreboard.registerNewObjective("health", "dummy");
@@ -185,5 +186,29 @@ public class CustomScoreboard {
 
     public Objective getHealth() {
         return health;
+    }
+
+
+    public static void giveMainLobbyScoreboard(Player player) {
+        Scoreboard mainLobbyScoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
+        Objective sideBar = mainLobbyScoreboard.registerNewObjective("WARLORDS", "");
+        sideBar.setDisplaySlot(DisplaySlot.SIDEBAR);
+        sideBar.setDisplayName("§e§lWARLORDS");
+        sideBar.getScore("").setScore(15);
+        sideBar.getScore("Kills: " + ChatColor.GREEN + Utils.addCommaAndRound(((Integer) Warlords.databaseManager.getPlayerInformation(player, "kills")))).setScore(14);
+        sideBar.getScore("Assists: " + ChatColor.GREEN + Utils.addCommaAndRound(((Integer) Warlords.databaseManager.getPlayerInformation(player, "assists")))).setScore(13);
+        sideBar.getScore("Deaths: " + ChatColor.GREEN + Utils.addCommaAndRound(((Integer) Warlords.databaseManager.getPlayerInformation(player, "deaths")))).setScore(12);
+        sideBar.getScore(" ").setScore(11);
+        sideBar.getScore("Wins: " + ChatColor.GREEN + Utils.addCommaAndRound(((Integer) Warlords.databaseManager.getPlayerInformation(player, "wins")))).setScore(10);
+        sideBar.getScore("Losses: " + ChatColor.GREEN + Utils.addCommaAndRound(((Integer) Warlords.databaseManager.getPlayerInformation(player, "losses")))).setScore(9);
+        sideBar.getScore("  ").setScore(8);
+        sideBar.getScore("Damage: " + ChatColor.DARK_RED + Utils.addCommaAndRound(((Integer) Warlords.databaseManager.getPlayerInformation(player, "damage")))).setScore(7);
+        sideBar.getScore("Healing: " + ChatColor.DARK_GREEN + Utils.addCommaAndRound(((Integer) Warlords.databaseManager.getPlayerInformation(player, "healing")))).setScore(6);
+        sideBar.getScore("Absorbed: " + ChatColor.GOLD + Utils.addCommaAndRound(((Integer) Warlords.databaseManager.getPlayerInformation(player, "absorbed")))).setScore(5);
+        sideBar.getScore("   ").setScore(4);
+        sideBar.getScore("dubious").setScore(3);
+        sideBar.getScore("    ").setScore(2);
+        sideBar.getScore(ChatColor.YELLOW + "WL 2.0 RC-2").setScore(1);
+        player.setScoreboard(mainLobbyScoreboard);
     }
 }

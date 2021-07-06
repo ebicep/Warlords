@@ -1,15 +1,12 @@
 package com.ebicep.warlords.player;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.abilties.ArcaneShield;
 import com.ebicep.warlords.classes.abilties.Intervene;
 import com.ebicep.warlords.classes.abilties.UndyingArmy;
 import net.minecraft.server.v1_8_R3.EntityLiving;
-import org.bukkit.Color;
-import org.bukkit.FireworkEffect;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
-import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.meta.FireworkMeta;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -86,8 +83,11 @@ public class CooldownManager {
         cooldowns.add(cooldown);
     }
 
-    public void clear() {
+    public void clearCooldowns() {
         cooldowns.clear();
+        for (WarlordsPlayer value : Warlords.getPlayers().values()) {
+            value.getCooldownManager().getCooldowns().removeIf(cd -> cd.getFrom() == warlordsPlayer);
+        }
     }
 
 }

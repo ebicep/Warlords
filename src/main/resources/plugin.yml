@@ -3,6 +3,7 @@ version: 1.0.0
 author: ebic
 main: com.ebicep.warlords.Warlords
 depend: [ MultiWorld ]
+softdepend: [ HolographicDisplays ]
 commands:
   start:
     description: Starts a new game.

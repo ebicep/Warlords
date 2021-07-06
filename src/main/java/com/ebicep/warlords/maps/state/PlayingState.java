@@ -11,6 +11,7 @@ import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.powerups.PowerupManager;
 import com.ebicep.warlords.util.PacketUtils;
 import com.ebicep.warlords.util.RemoveEntities;
+import com.ebicep.warlords.util.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
@@ -20,7 +21,9 @@ import org.bukkit.scheduler.BukkitTask;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
@@ -243,6 +246,8 @@ public class PlayingState implements State, TimerDebugAble {
                         game.forEachOnlinePlayer((player, team) -> {
                             sendMessage(player, false, ChatColor.YELLOW + "Gates opened! " + ChatColor.RED + "FIGHT!");
                             PacketUtils.sendTitle(player, ChatColor.GREEN + "GO!", ChatColor.YELLOW + "Steal and capture the enemy flag!", 0, 40, 20);
+
+                            Utils.resetPlayerMovementStatistics(player);
                         });
                         break;
                     case 1:
@@ -277,7 +282,7 @@ public class PlayingState implements State, TimerDebugAble {
         if(this.flags != null) {
             this.flags.stop();
         }
-        if(this.powerUps != null) {
+        if (this.powerUps != null) {
             this.powerUps.cancel();
             this.powerUps = null;
         }
@@ -285,6 +290,9 @@ public class PlayingState implements State, TimerDebugAble {
         if (winner != null) {
             Warlords.databaseManager.addGame(this);
         }
+        game.forEachOnlinePlayer(((player, team) -> {
+            CustomScoreboard.giveMainLobbyScoreboard(player);
+        }));
     }
 
     @Override

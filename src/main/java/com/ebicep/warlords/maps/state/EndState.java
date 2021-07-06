@@ -55,11 +55,6 @@ public class EndState implements State, TimerDebugAble {
         mvp.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.LIGHT_PURPLE + "Total Flag Captures (everyone): " + ChatColor.GOLD + Utils.addCommaAndRound((float) players.stream().mapToDouble(WarlordsPlayer::getFlagsCaptured).sum()) + "\n" + ChatColor.LIGHT_PURPLE + "Total Flag Returns (everyone): " + ChatColor.GOLD + Utils.addCommaAndRound((float) players.stream().mapToDouble(WarlordsPlayer::getFlagsCaptured).sum())).create()));
         sendCenteredHoverableMessageToAllGamePlayer(game, Collections.singletonList(mvp));
         players = players.stream().sorted(Comparator.comparing(WarlordsPlayer::getTotalCapsAndReturns)).collect(Collectors.toList());
-        for (WarlordsPlayer player : players) {
-            System.out.println(player.getName());
-            System.out.println(player.getFlagsCaptured());
-            System.out.println(player.getFlagsReturned());
-        }
         TextComponent playerMvp = new TextComponent(ChatColor.AQUA + players.get(0).getName());
         playerMvp.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.LIGHT_PURPLE + "Flag Captures: " + ChatColor.GOLD + players.get(0).getFlagsCaptured() + "\n" + ChatColor.LIGHT_PURPLE + "Flag Returns: " + ChatColor.GOLD + players.get(0).getFlagsReturned()).create()));
         sendCenteredHoverableMessageToAllGamePlayer(game, Collections.singletonList(playerMvp));

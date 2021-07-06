@@ -47,5 +47,6 @@
     <orderEntry type="library" name="Maven: org.mongodb:mongodb-driver:3.8.1" level="project" />
     <orderEntry type="library" name="Maven: org.mongodb:bson:3.8.1" level="project" />
     <orderEntry type="library" name="Maven: org.mongodb:mongodb-driver-core:3.8.1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.gmail.filoghost.holographicdisplays:holographicdisplays-api:2.4.0" level="project" />
   </component>
 </module>

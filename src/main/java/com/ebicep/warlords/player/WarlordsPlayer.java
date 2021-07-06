@@ -54,7 +54,9 @@ public final class WarlordsPlayer {
     private int health;
     private int maxHealth;
     private int regenTimer;
+    private int timeInCombat = 0;
     private int respawnTimer;
+    private int respawnTimeSpent = 0;
     private boolean dead = false;
     private float energy;
     private float maxEnergy;
@@ -65,7 +67,6 @@ public final class WarlordsPlayer {
     private int spawnDamage = 0;
     private int flagsCaptured = 0;
     private int flagsReturned = 0;
-
     // We have to store these in here as the new player might logout midgame
     private float walkspeed = 1;
 
@@ -496,8 +497,11 @@ public final class WarlordsPlayer {
 
                     gameState.addKill(team, false);
                     showDeathAnimation();
+
+                    cooldownManager.clearCooldowns();
+
                     if (entity instanceof Player)
-                        PacketUtils.sendTitle((Player)entity, ChatColor.RED + "YOU DIED!", ChatColor.GRAY + "You took " + ChatColor.RED + Math.round(min * -1) + ChatColor.GRAY + " melee damage and died.", 0, 40, 0);
+                        PacketUtils.sendTitle((Player) entity, ChatColor.RED + "YOU DIED!", ChatColor.GRAY + "You took " + ChatColor.RED + Math.round(min * -1) + ChatColor.GRAY + " melee damage and died.", 0, 40, 0);
 
                     health = 0;
                 } else {
@@ -527,9 +531,11 @@ public final class WarlordsPlayer {
                     gameState.addKill(team, false); // TODO, fall damage is only a suicide if it happens more than 5 seconds after the last damage
                     showDeathAnimation();
 
+                    cooldownManager.clearCooldowns();
+
                     //title YOU DIED
                     if (entity instanceof Player) {
-                        PacketUtils.sendTitle((Player)entity, ChatColor.RED + "YOU DIED!", ChatColor.GRAY + "You took " + ChatColor.RED + Math.round(min * -1) + ChatColor.GRAY + " fall damage and died.", 0, 40, 0);
+                        PacketUtils.sendTitle((Player) entity, ChatColor.RED + "YOU DIED!", ChatColor.GRAY + "You took " + ChatColor.RED + Math.round(min * -1) + ChatColor.GRAY + " fall damage and died.", 0, 40, 0);
                     }
 
                     health = 0;
@@ -875,9 +881,12 @@ public final class WarlordsPlayer {
                         Warlords.blueKills++;
                     }
 
+                    //removing cooldowns
+                    cooldownManager.clearCooldowns();
+
                     //title YOU DIED
                     if (this.entity instanceof Player) {
-                        PacketUtils.sendTitle((Player)entity, ChatColor.RED + "YOU DIED!", ChatColor.GRAY + attacker.getName() + " killed you.", 0, 40, 0);
+                        PacketUtils.sendTitle((Player) entity, ChatColor.RED + "YOU DIED!", ChatColor.GRAY + attacker.getName() + " killed you.", 0, 40, 0);
                     }
                 } else {
                     if (!ability.isEmpty() && !ability.equals("Time Warp") && !ability.equals("Healing Rain") && !ability.equals("Hammer of Light")) {
@@ -1492,5 +1501,21 @@ public final class WarlordsPlayer {
 
     public List<Location> getTrail() {
         return trail;
+    }
+
+    public void addTimeInCombat() {
+        timeInCombat++;
+    }
+
+    public int getTimeInCombat() {
+        return timeInCombat;
+    }
+
+    public void addTotalRespawnTime() {
+        respawnTimeSpent += respawnTimer;
+    }
+
+    public int getRespawnTimeSpent() {
+        return respawnTimeSpent;
     }
 }

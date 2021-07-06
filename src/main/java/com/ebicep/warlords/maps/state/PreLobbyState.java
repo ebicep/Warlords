@@ -5,20 +5,17 @@ import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Gates;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.util.Utils;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Scoreboard;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import static com.ebicep.warlords.util.Utils.sendMessage;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
-import org.bukkit.Bukkit;
+import static com.ebicep.warlords.util.Utils.sendMessage;
 
 public class PreLobbyState implements State, TimerDebugAble {
 
@@ -81,10 +78,13 @@ public class PreLobbyState implements State, TimerDebugAble {
                     });
                 }
             }
+
             if (timer <= 0) {
                 return new PlayingState(game);
             }
             timer--;
+            //TESTING
+            //return new PlayingState(game);
         } else {
             timer = game.getMap().getCountdownTimerInTicks();
         }
@@ -202,7 +202,7 @@ public class PreLobbyState implements State, TimerDebugAble {
         SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
         String dateString = format.format(new Date());
         Scoreboard scoreboard = player.getScoreboard();
-        time += 1;
+        //time += 1;
         for (String entry : scoreboard.getEntries()) {
             String entryUnformatted = ChatColor.stripColor(entry);
             if (entryUnformatted.contains("Starting in")) {
