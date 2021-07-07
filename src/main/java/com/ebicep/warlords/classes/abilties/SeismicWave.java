@@ -15,6 +15,7 @@ import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class SeismicWave extends AbstractAbility {
 
@@ -50,28 +51,22 @@ public class SeismicWave extends AbstractAbility {
         //INSTANT DMG
         Location lookingLocation = player.getLocation().clone();
         lookingLocation.setPitch(0);
-        Location waveLocation = lookingLocation.add(lookingLocation.getDirection().multiply(3.5));
+        //wave = rectangle, 5 x 10
+        Location waveLocation1 = lookingLocation.clone().add(lookingLocation.getDirection().multiply(2.5));
+        Location waveLocation2 = lookingLocation.clone().add(lookingLocation.getDirection().multiply(7.5));
         for (WarlordsPlayer p : PlayerFilter
-            .entitiesAround(waveLocation, 2.75, 2.75, 2.75)
-            .aliveEnemiesOf(wp)
-            .lookingAtWave(player)
+                .entitiesAround(waveLocation1, 2.5, 2, 2.5)
+                .aliveEnemiesOf(wp)
+                .concat(PlayerFilter
+                        .entitiesAround(waveLocation2, 2.5, 2, 2.5)
+                        .aliveEnemiesOf(wp)
+                        .stream().collect(Collectors.toList()).toArray(new WarlordsPlayer[0]))
         ) {
             final Location loc = p.getLocation();
             final Vector v = player.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1.15).setY(0.35);
             p.setVelocity(v);
             p.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
         }
-
-//        List<Entity> near = player.getNearbyEntities(8, 4.5, 8);
-//        near = Utils.filterOutTeammates(near, player);
-//        for (Entity entity : near) {
-//            if (entity instanceof Player && ((Player) entity).getGameMode() != GameMode.SPECTATOR && Utils.getLookingAtWave(player, (Player) entity)) {
-//                final Location loc = entity.getLocation();
-//                final Vector v = player.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1.15).setY(0.35);
-//                entity.setVelocity(v);
-//                Warlords.getPlayer((Player) entity).addHealth(Warlords.getPlayer(player), name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
-//            }
-//        }
 
         new BukkitRunnable() {
 

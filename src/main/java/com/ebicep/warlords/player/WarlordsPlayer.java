@@ -592,7 +592,7 @@ public final class WarlordsPlayer {
                     totalReduction *= 1 - Integer.parseInt(chainName.charAt(chainName.indexOf("(") + 1) + "") * .1;
                 }
 
-                for (Cooldown cooldown : attacker.getCooldownManager().getCooldown("LINK")) {
+                for (Cooldown cooldown : cooldownManager.getCooldown("LINK")) {
                     totalReduction *= .8;
                 }
 
