@@ -30,14 +30,15 @@ public class InspiringPresence extends AbstractAbility {
 
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
-        wp.getCooldownManager().addCooldown(InspiringPresence.this.getClass(), "PRES", 12, wp, CooldownTypes.BUFF);
+        InspiringPresence tempPresence = new InspiringPresence();
+        wp.getCooldownManager().addCooldown(InspiringPresence.this.getClass(), tempPresence, "PRES", 12, wp, CooldownTypes.BUFF);
         PlayerFilter.entitiesAround(wp, 6.0D, 6.0D, 6.0D)
-            .aliveTeammatesOf(wp)
-            .concat(wp)
-            .forEach((nearPlayer) -> {
-                nearPlayer.getSpeed().addSpeedModifier("Inspiring Presence", 30, 12 * 20, "BASE");
-                nearPlayer.getCooldownManager().addCooldown(InspiringPresence.this.getClass(), "PRES", 12, wp, CooldownTypes.BUFF);
-            });
+                .aliveTeammatesOf(wp)
+                .concat(wp)
+                .forEach((nearPlayer) -> {
+                    nearPlayer.getSpeed().addSpeedModifier("Inspiring Presence", 30, 12 * 20, "BASE");
+                    nearPlayer.getCooldownManager().addCooldown(InspiringPresence.this.getClass(), tempPresence, "PRES", 12, wp, CooldownTypes.BUFF);
+                });
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "paladin.inspiringpresence.activation", 2, 1);
@@ -46,7 +47,7 @@ public class InspiringPresence extends AbstractAbility {
         new BukkitRunnable() {
             @Override
             public void run() {
-                if (wp.getCooldownManager().getCooldown(InspiringPresence.class).size() > 0) {
+                if (!wp.getCooldownManager().getCooldown(InspiringPresence.class).isEmpty()) {
                     Location location = player.getLocation();
                     location.add(0, 1.5, 0);
                     ParticleEffect.SMOKE_NORMAL.display(0.3F, 0.3F, 0.3F, 0.02F, 1, location, 500);

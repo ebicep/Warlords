@@ -75,8 +75,8 @@ public class CooldownManager {
         return cooldowns.stream().filter(cooldown -> cooldown.getCooldownType() == CooldownTypes.ABILITY).collect(Collectors.toList());
     }
 
-    public void addCooldown(Class cooldownClass, String name, float timeLeft, WarlordsPlayer from, CooldownTypes cooldownType) {
-        cooldowns.add(new Cooldown(cooldownClass, name, timeLeft, from, cooldownType));
+    public void addCooldown(Class cooldownClass, Object cooldownObject, String name, float timeLeft, WarlordsPlayer from, CooldownTypes cooldownType) {
+        cooldowns.add(new Cooldown(cooldownClass, cooldownObject, name, timeLeft, from, cooldownType));
     }
 
     public void addCooldown(Cooldown cooldown) {

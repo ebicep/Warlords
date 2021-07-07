@@ -111,7 +111,7 @@ public class Totem extends EntityArmorStand {
             totemStand.setMetadata("capacitor-totem-" + player.getName().toLowerCase(), new FixedMetadataValue(Warlords.getInstance(), true));
 
             Totem capacitorTotem = new Totem(((CraftWorld) player.getWorld()).getHandle(), wp, totemStand, 8);
-            wp.getCooldownManager().addCooldown(TotemThunderlord.this.getClass(), "TOTEM", 8, wp, CooldownTypes.ABILITY);
+            wp.getCooldownManager().addCooldown(TotemThunderlord.this.getClass(), new TotemThunderlord(), "TOTEM", 8, wp, CooldownTypes.ABILITY);
 
             for (Player player1 : player.getWorld().getPlayers()) {
                 player1.playSound(player.getLocation(), "shaman.totem.activation", 1, 1);
@@ -173,7 +173,7 @@ public class Totem extends EntityArmorStand {
 
             int secondsLeft = 4 + (4 * (int) Math.round((double) wp.getHealth() / wp.getMaxHealth()));
             Totem deathsDebtTotem = new Totem(((CraftWorld) player.getWorld()).getHandle(), wp, totemStand, secondsLeft);
-            wp.getCooldownManager().addCooldown(TotemSpiritguard.this.getClass(), "RESP", secondsLeft, wp, CooldownTypes.ABILITY);
+            wp.getCooldownManager().addCooldown(TotemSpiritguard.this.getClass(), new Repentance(), "RESP", secondsLeft, wp, CooldownTypes.ABILITY);
 
             player.setMetadata("TOTEM", new FixedMetadataValue(Warlords.getInstance(), this));
 
@@ -201,7 +201,7 @@ public class Totem extends EntityArmorStand {
                     } else {
                         if (secondsLeft == 0) {
                             wp.getCooldownManager().getCooldowns().removeIf(cd -> cd.getName().equals("RESP"));
-                            wp.getCooldownManager().addCooldown(TotemSpiritguard.this.getClass(), "DEBT", 6, wp, CooldownTypes.ABILITY);
+                            wp.getCooldownManager().addCooldown(TotemSpiritguard.this.getClass(), new TotemSpiritguard(), "DEBT", 6, wp, CooldownTypes.ABILITY);
                             player.removeMetadata("TOTEM", Warlords.getInstance());
 
                             if (!isPlayerInRadius) {
@@ -315,7 +315,7 @@ public class Totem extends EntityArmorStand {
             totemStand.setMetadata("healing-totem-" + player.getName(), new FixedMetadataValue(Warlords.getInstance(), true));
 
             Totem healingTotem = new Totem(((CraftWorld) player.getWorld()).getHandle(), wp, totemStand, 5);
-            wp.getCooldownManager().addCooldown(TotemEarthwarden.this.getClass(), "TOTEM", 5, wp, CooldownTypes.ABILITY);
+            wp.getCooldownManager().addCooldown(TotemEarthwarden.this.getClass(), new TotemEarthwarden(), "TOTEM", 5, wp, CooldownTypes.ABILITY);
 
             for (Player player1 : player.getWorld().getPlayers()) {
                 player1.playSound(player.getLocation(), "shaman.totem.activation", 2, 1);

@@ -25,7 +25,7 @@ public class BloodLust extends AbstractAbility {
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
         wp.subtractEnergy(energyCost);
-        wp.getCooldownManager().addCooldown(BloodLust.this.getClass(), "LUST", 15, wp, CooldownTypes.ABILITY);
+        wp.getCooldownManager().addCooldown(BloodLust.this.getClass(), new BloodLust(), "LUST", 15, wp, CooldownTypes.ABILITY);
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "warrior.bloodlust.activation", 2, 1);
@@ -34,7 +34,7 @@ public class BloodLust extends AbstractAbility {
         new BukkitRunnable() {
             @Override
             public void run() {
-                if (wp.getCooldownManager().getCooldown(BloodLust.class).size() > 0) {
+                if (!wp.getCooldownManager().getCooldown(BloodLust.class).isEmpty()) {
                     Location location = player.getLocation();
                     location.add((Math.random() - 0.5) * 1, 1.2, (Math.random() - 0.5) * 1);
                     ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(255, 0, 0), location, 500);

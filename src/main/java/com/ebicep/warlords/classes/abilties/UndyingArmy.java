@@ -42,16 +42,17 @@ public class UndyingArmy extends AbstractAbility {
 
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
-        wp.getCooldownManager().addCooldown(UndyingArmy.this.getClass(), "ARMY", 10, wp, CooldownTypes.ABILITY);
+        UndyingArmy tempUndyingArmy = new UndyingArmy();
+        wp.getCooldownManager().addCooldown(UndyingArmy.this.getClass(), tempUndyingArmy, "ARMY", 10, wp, CooldownTypes.ABILITY);
 
         Iterator<WarlordsPlayer> iterator = PlayerFilter.entitiesAround(wp, 5, 5, 5)
                 .aliveTeammatesOfExcludingSelf(wp)
                 .iterator();
         int numberOfPlayersWithArmy = 0;
-        while(iterator.hasNext()) {
+        while (iterator.hasNext()) {
             WarlordsPlayer warlordsNearPlayer = iterator.next();
-            wp.sendMessage("§a\u00BB§7 " + ChatColor.GRAY + "Your Undying Army is protecting " + warlordsNearPlayer.getColoredName()+ ChatColor.GRAY + ".");
-            warlordsNearPlayer.getCooldownManager().addCooldown(UndyingArmy.this.getClass(), "ARMY", 10, wp, CooldownTypes.ABILITY);
+            wp.sendMessage("§a\u00BB§7 " + ChatColor.GRAY + "Your Undying Army is protecting " + warlordsNearPlayer.getColoredName() + ChatColor.GRAY + ".");
+            warlordsNearPlayer.getCooldownManager().addCooldown(UndyingArmy.this.getClass(), tempUndyingArmy, "ARMY", 10, wp, CooldownTypes.ABILITY);
             warlordsNearPlayer.sendMessage("§a\u00BB§7 " + ChatColor.GRAY + wp.getName() + "'s Undying Army protects you for " + ChatColor.GOLD + "10 " + ChatColor.GRAY + "seconds.");
             numberOfPlayersWithArmy++;
         }

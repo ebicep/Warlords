@@ -30,13 +30,14 @@ public class LastStand extends AbstractAbility {
 
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
-        wp.getCooldownManager().addCooldown(LastStand.this.getClass(), "LAST", 12, wp, CooldownTypes.BUFF);
+        LastStand tempLastStand = new LastStand();
+        wp.getCooldownManager().addCooldown(LastStand.this.getClass(), tempLastStand, "LAST", 12, wp, CooldownTypes.BUFF);
         PlayerFilter.entitiesAround(wp, 5, 5, 5)
-            .aliveTeammatesOfExcludingSelf(wp)
-            .forEach((nearPlayer) -> {
-                nearPlayer.getCooldownManager().addCooldown(LastStand.this.getClass(), "LAST", 6, wp, CooldownTypes.BUFF);
-                player.sendMessage("§7You last standed §e" + nearPlayer.getName());
-            });
+                .aliveTeammatesOfExcludingSelf(wp)
+                .forEach((nearPlayer) -> {
+                    nearPlayer.getCooldownManager().addCooldown(LastStand.this.getClass(), tempLastStand, "LAST", 6, wp, CooldownTypes.BUFF);
+                    player.sendMessage("§7You last standed §e" + nearPlayer.getName());
+                });
         wp.subtractEnergy(energyCost);
 
         for (Player player1 : player.getWorld().getPlayers()) {

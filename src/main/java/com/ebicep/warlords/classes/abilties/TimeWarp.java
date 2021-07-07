@@ -29,7 +29,7 @@ public class TimeWarp extends AbstractAbility {
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
         TimeWarpPlayer timeWarpPlayer = new TimeWarpPlayer(wp, player.getLocation(), player.getLocation().getDirection(), 5);
-        wp.getCooldownManager().addCooldown(TimeWarp.this.getClass(), "TIME", 5, wp, CooldownTypes.ABILITY);
+        wp.getCooldownManager().addCooldown(TimeWarp.this.getClass(), new TimeWarp(), "TIME", 5, wp, CooldownTypes.ABILITY);
         wp.subtractEnergy(energyCost);
 
         for (Player player1 : player.getWorld().getPlayers()) {

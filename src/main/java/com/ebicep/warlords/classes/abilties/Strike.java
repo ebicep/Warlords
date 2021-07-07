@@ -24,7 +24,7 @@ import org.bukkit.entity.Player;
 
 public class Strike extends AbstractAbility {
 
-    public Strike(String name, float minDamageHeal, float maxDamageHeal, int cooldown, int energyCost, int critChance, int critMultiplier) {
+    public Strike(String name, float minDamageHeal, float maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier) {
         super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
     }
 
@@ -95,13 +95,13 @@ public class Strike extends AbstractAbility {
                             nearPlayer.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
                         }
                         nearPlayer.subtractEnergy(6);
-                        if (wp.getCooldownManager().getCooldown(AvengersWrath.class).size() > 0) {
-                            for(WarlordsPlayer nearNearPlayer : PlayerFilter
-                                .entitiesAround(nearPlayer, 5, 3, 5)
-                                .aliveEnemiesOf(wp)
-                                .closestFirst(nearPlayer)
-                                .excluding(nearPlayer)
-                                .limit(2)
+                        if (!wp.getCooldownManager().getCooldown(AvengersWrath.class).isEmpty()) {
+                            for (WarlordsPlayer nearNearPlayer : PlayerFilter
+                                    .entitiesAround(nearPlayer, 5, 3, 5)
+                                    .aliveEnemiesOf(wp)
+                                    .closestFirst(nearPlayer)
+                                    .excluding(nearPlayer)
+                                    .limit(2)
                             ) {
                                 System.out.println("NEAR NEAR HIT " + nearNearPlayer);
                                 //checking if player is in consecrate
@@ -138,6 +138,7 @@ public class Strike extends AbstractAbility {
 
                 } else if (wp.getSpec() instanceof Berserker || wp.getSpec() instanceof Defender || wp.getSpec() instanceof Revenant) {
                     Warlords.getPlayer(nearPlayer).getCooldownManager().addCooldown(Strike.this.getClass(),
+                            new Strike(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier),
                             wp.getSpec() instanceof Revenant ? "CRIP" : "WND", 3, wp, CooldownTypes.DEBUFF);
 
                     nearPlayer.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);

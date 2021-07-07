@@ -5,7 +5,6 @@ import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.ParticleEffect;
-import javafx.scene.shape.Arc;
 import net.minecraft.server.v1_8_R3.EntityLiving;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
@@ -31,7 +30,7 @@ public class ArcaneShield extends AbstractAbility {
 
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
-        wp.getCooldownManager().addCooldown(ArcaneShield.this.getClass(), "ARCA", 6, wp, CooldownTypes.ABILITY);
+        wp.getCooldownManager().addCooldown(ArcaneShield.this.getClass(), new ArcaneShield(), "ARCA", 6, wp, CooldownTypes.ABILITY);
         wp.subtractEnergy(energyCost);
         ((EntityLiving) ((CraftPlayer) player).getHandle()).setAbsorptionHearts(20);
         shieldHealth = maxShieldHealth;
@@ -43,7 +42,7 @@ public class ArcaneShield extends AbstractAbility {
         new BukkitRunnable() {
             @Override
             public void run() {
-                if (wp.getCooldownManager().getCooldown(ArcaneShield.class).size() > 0) {
+                if (!wp.getCooldownManager().getCooldown(ArcaneShield.class).isEmpty()) {
                     Location location = player.getLocation();
                     location.add(0, 1.5, 0);
                     ParticleEffect.CLOUD.display(0.15F, 0.3F, 0.15F, 0.01F, 2, location, 500);

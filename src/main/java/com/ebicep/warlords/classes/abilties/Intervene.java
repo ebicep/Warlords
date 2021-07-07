@@ -48,7 +48,7 @@ public class Intervene extends AbstractAbility {
                 }
 
                 //new cooldown, both players have same instance of intervene now
-                Cooldown interveneCooldown = new Cooldown(Intervene.this.getClass(), "VENE", 5, wp, CooldownTypes.ABILITY);
+                Cooldown interveneCooldown = new Cooldown(Intervene.this.getClass(), new Intervene(), "VENE", 5, wp, CooldownTypes.ABILITY);
 
                 wp.sendMessage("§a\u00BB§7 You are now protecting " + nearWarlordsPlayer.getName() + " with your §eIntervene!");
                 wp.getCooldownManager().addCooldown(interveneCooldown);
@@ -69,7 +69,7 @@ public class Intervene extends AbstractAbility {
                     new BukkitRunnable() {
                         @Override
                         public void run() {
-                            if (nearWarlordsPlayer.getCooldownManager().getCooldown(Intervene.class).size() > 0) {
+                            if (!nearWarlordsPlayer.getCooldownManager().getCooldown(Intervene.class).isEmpty()) {
                                 if (nearWarlordsPlayer.getCooldownManager().getCooldown(Intervene.class).get(0).getTimeLeft() <= 1)
                                     nearWarlordsPlayer.sendMessage("§a\u00BB§7 " + wp.getName() + "'s §eIntervene §7will expire in §6" + (int) (nearWarlordsPlayer.getCooldownManager().getCooldown(Intervene.class).get(0).getTimeLeft() + .5) + "§7 second!");
                                 else
@@ -83,14 +83,12 @@ public class Intervene extends AbstractAbility {
                     new BukkitRunnable() {
                         @Override
                         public void run() {
-                            if (nearWarlordsPlayer.getCooldownManager().getCooldown(Intervene.class).size() > 0) {
+                            if (!nearWarlordsPlayer.getCooldownManager().getCooldown(Intervene.class).isEmpty()) {
                                 if (nearWarlordsPlayer.getCooldownManager().getCooldown(Intervene.class).get(0).getFrom().isDead() ||
                                         nearWarlordsPlayer.getLocation().distanceSquared(nearWarlordsPlayer.getCooldownManager().getCooldown(Intervene.class).get(0).getFrom().getEntity().getLocation()) > 15 * 15
                                 ) {
                                     nearWarlordsPlayer.sendMessage("§c\u00AB§7 " + nearWarlordsPlayer.getCooldownManager().getCooldown(Intervene.class).get(0).getFrom().getName() + "'s " + ChatColor.YELLOW + "Intervene " + ChatColor.GRAY + "has expired!");
                                     nearWarlordsPlayer.getCooldownManager().getCooldowns().remove(nearWarlordsPlayer.getCooldownManager().getCooldown(Intervene.class).get(0));
-                                    // TODO: This is impossible with offline player support
-                                    //nearWarlordsPlayer.removeMetadata("INTERVENE", Warlords.getInstance());
                                 }
                             }
                         }

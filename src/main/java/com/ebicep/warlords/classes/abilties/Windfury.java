@@ -29,7 +29,7 @@ public class Windfury extends AbstractAbility {
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
         wp.subtractEnergy(energyCost);
-        wp.getCooldownManager().addCooldown(Windfury.this.getClass(), "FURY", 8, wp, CooldownTypes.ABILITY);
+        wp.getCooldownManager().addCooldown(Windfury.this.getClass(), new Windfury(), "FURY", 8, wp, CooldownTypes.ABILITY);
 
         wp.setFirstProc(true);
 
@@ -40,7 +40,7 @@ public class Windfury extends AbstractAbility {
         new BukkitRunnable() {
             @Override
             public void run() {
-                if (wp.getCooldownManager().getCooldown(Windfury.class).size() > 0) {
+                if (!wp.getCooldownManager().getCooldown(Windfury.class).isEmpty()) {
                     Location location = player.getLocation();
                     location.add(0, 1.2, 0);
                     ParticleEffect.CRIT.display(0.2F, 0F, 0.2F, 0.1F, 3, location, 500);

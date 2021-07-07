@@ -2,6 +2,7 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.player.Cooldown;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
@@ -117,45 +118,49 @@ public class FallenSouls extends AbstractAbility {
 
     public void damageNearByPlayers(List<Entity> near, WarlordsPlayer wp, Player player, FallenSoul fallenSoul) {
         PlayerFilter.entities(near)
-            .filter(p -> !fallenSoul.getPlayersHit().contains(p))
-            .aliveEnemiesOf(wp)
-            .forEach((warlordsPlayer) -> {
-                warlordsPlayer.addHealth(fallenSoul.getShooter(), fallenSoul.getFallenSouls().getName(), fallenSoul.getFallenSouls().getMinDamageHeal(), fallenSoul.getFallenSouls().getMaxDamageHeal(), fallenSoul.getFallenSouls().getCritChance(), fallenSoul.getFallenSouls().getCritMultiplier());
-                fallenSoul.getPlayersHit().add(warlordsPlayer);
-                fallenSoul.getShooter().getSpec().getRed().subtractCooldown(2);
-                fallenSoul.getShooter().updateRedItem(player);
-                if (fallenSoul.getShooter().getCooldownManager().getCooldown(Soulbinding.class).size() > 0 && fallenSoul.getShooter().hasBoundPlayerSoul(warlordsPlayer)) {
-                    fallenSoul.getShooter().getSpec().getRed().subtractCooldown(1.5F);
-                    fallenSoul.getShooter().getSpec().getPurple().subtractCooldown(1.5F);
-                    fallenSoul.getShooter().getSpec().getBlue().subtractCooldown(1.5F);
-                    fallenSoul.getShooter().getSpec().getOrange().subtractCooldown(1.5F);
-
+                .filter(p -> !fallenSoul.getPlayersHit().contains(p))
+                .aliveEnemiesOf(wp)
+                .forEach((warlordsPlayer) -> {
+                    warlordsPlayer.addHealth(fallenSoul.getShooter(), fallenSoul.getFallenSouls().getName(), fallenSoul.getFallenSouls().getMinDamageHeal(), fallenSoul.getFallenSouls().getMaxDamageHeal(), fallenSoul.getFallenSouls().getCritChance(), fallenSoul.getFallenSouls().getCritMultiplier());
+                    fallenSoul.getPlayersHit().add(warlordsPlayer);
+                    fallenSoul.getShooter().getSpec().getRed().subtractCooldown(2);
                     fallenSoul.getShooter().updateRedItem(player);
-                    fallenSoul.getShooter().updatePurpleItem(player);
-                    fallenSoul.getShooter().updateBlueItem(player);
-                    fallenSoul.getShooter().updateOrangeItem(player);
+                    fallenSoul.getShooter().getCooldownManager().getCooldown(Soulbinding.class).stream()
+                            .map(Cooldown::getCooldownObject)
+                            .map(Soulbinding.class::cast)
+                            .filter(soulbinding -> soulbinding.hasBoundPlayerSoul(warlordsPlayer))
+                            .forEach(sb -> {
+                                fallenSoul.getShooter().getSpec().getRed().subtractCooldown(1.5F);
+                                fallenSoul.getShooter().getSpec().getPurple().subtractCooldown(1.5F);
+                                fallenSoul.getShooter().getSpec().getBlue().subtractCooldown(1.5F);
+                                fallenSoul.getShooter().getSpec().getOrange().subtractCooldown(1.5F);
 
-                    PlayerFilter.entitiesAround(player, 2, 2, 2)
-                        .aliveTeammatesOf(wp)
-                        .closestFirst(player)
-                        .limit(2)
-                        .forEach((warlordsPlayer1) -> {
+                                fallenSoul.getShooter().updateRedItem(player);
+                                fallenSoul.getShooter().updatePurpleItem(player);
+                                fallenSoul.getShooter().updateBlueItem(player);
+                                fallenSoul.getShooter().updateOrangeItem(player);
 
-                            warlordsPlayer1.getSpec().getRed().subtractCooldown(.5F);
-                            warlordsPlayer1.getSpec().getPurple().subtractCooldown(.5F);
-                            warlordsPlayer1.getSpec().getBlue().subtractCooldown(.5F);
-                            warlordsPlayer1.getSpec().getOrange().subtractCooldown(.5F);
+                                PlayerFilter.entitiesAround(player, 2, 2, 2)
+                                        .aliveTeammatesOf(wp)
+                                        .closestFirst(player)
+                                        .limit(2)
+                                        .forEach((warlordsPlayer1) -> {
 
-                            if(warlordsPlayer1.getEntity() instanceof Player) {
-                                Player p = (Player) warlordsPlayer1.getEntity();
-                                warlordsPlayer1.updateRedItem(p);
-                                warlordsPlayer1.updatePurpleItem(p);
-                                warlordsPlayer1.updateBlueItem(p);
-                                warlordsPlayer1.updateOrangeItem(p);
-                            }
-                        });
-                }
-            });
+                                            warlordsPlayer1.getSpec().getRed().subtractCooldown(.5F);
+                                            warlordsPlayer1.getSpec().getPurple().subtractCooldown(.5F);
+                                            warlordsPlayer1.getSpec().getBlue().subtractCooldown(.5F);
+                                            warlordsPlayer1.getSpec().getOrange().subtractCooldown(.5F);
+
+                                            if (warlordsPlayer1.getEntity() instanceof Player) {
+                                                Player p = (Player) warlordsPlayer1.getEntity();
+                                                warlordsPlayer1.updateRedItem(p);
+                                                warlordsPlayer1.updatePurpleItem(p);
+                                                warlordsPlayer1.updateBlueItem(p);
+                                                warlordsPlayer1.updateOrangeItem(p);
+                                            }
+                                        });
+                            });
+                });
     }
 
 
