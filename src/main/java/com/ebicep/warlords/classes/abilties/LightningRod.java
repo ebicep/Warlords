@@ -30,15 +30,15 @@ public class LightningRod extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
-        warlordsPlayer.addEnergy(warlordsPlayer, name, 160);
-        warlordsPlayer.addHealth(warlordsPlayer, name, (warlordsPlayer.getMaxHealth() * .3f), (warlordsPlayer.getMaxHealth() * .3f), critChance, critMultiplier);
+    public void onActivate(WarlordsPlayer wp, Player player) {
+        wp.addEnergy(wp, name, 160);
+        wp.addHealth(wp, name, (wp.getMaxHealth() * .3f), (wp.getMaxHealth() * .3f), critChance, critMultiplier);
 
         Location playerLocation = player.getLocation();
 
 
         PlayerFilter.entitiesAround(player, 5.5, 5.5, 5.5)
-            .aliveEnemiesOf(warlordsPlayer)
+            .aliveEnemiesOf(wp)
             .forEach((p) -> {
                 //knockback
                 final Location loc = p.getLocation();
@@ -47,8 +47,8 @@ public class LightningRod extends AbstractAbility {
                 p.setVelocity(v);
 
                 // pulsedamage
-                if (Utils.getTotemDownAndClose(warlordsPlayer, p.getEntity()) != null) {
-                    p.addHealth(warlordsPlayer, warlordsPlayer.getSpec().getOrange().getName(), warlordsPlayer.getSpec().getOrange().getMinDamageHeal(), warlordsPlayer.getSpec().getOrange().getMaxDamageHeal(), warlordsPlayer.getSpec().getOrange().getCritChance(), warlordsPlayer.getSpec().getOrange().getCritMultiplier());
+                if (Utils.getTotemDownAndClose(wp, p.getEntity()) != null) {
+                    p.addHealth(wp, wp.getSpec().getOrange().getName(), wp.getSpec().getOrange().getMinDamageHeal(), wp.getSpec().getOrange().getMaxDamageHeal(), wp.getSpec().getOrange().getCritChance(), wp.getSpec().getOrange().getCritMultiplier());
                 }
             });
 

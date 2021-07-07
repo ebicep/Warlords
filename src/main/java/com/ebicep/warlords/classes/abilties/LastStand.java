@@ -29,18 +29,19 @@ public class LastStand extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
-        warlordsPlayer.getCooldownManager().addCooldown(LastStand.this.getClass(), "LAST", 12, warlordsPlayer, CooldownTypes.BUFF);
-        PlayerFilter.entitiesAround(warlordsPlayer, 5, 5, 5)
-            .aliveTeammatesOfExcludingSelf(warlordsPlayer)
-            .forEach((nearPlayer) -> {
-                nearPlayer.getCooldownManager().addCooldown(LastStand.this.getClass(), "LAST", 6, warlordsPlayer, CooldownTypes.BUFF);
-                player.sendMessage("§7you last standed §e" + nearPlayer.getName());
-            });
-        warlordsPlayer.subtractEnergy(energyCost);
+    public void onActivate(WarlordsPlayer wp, Player player) {
+        LastStand tempLastStand = new LastStand();
+        wp.getCooldownManager().addCooldown(LastStand.this.getClass(), tempLastStand, "LAST", 12, wp, CooldownTypes.BUFF);
+        PlayerFilter.entitiesAround(wp, 5, 5, 5)
+                .aliveTeammatesOfExcludingSelf(wp)
+                .forEach((nearPlayer) -> {
+                    nearPlayer.getCooldownManager().addCooldown(LastStand.this.getClass(), tempLastStand, "LAST", 6, wp, CooldownTypes.BUFF);
+                    player.sendMessage("§7You last standed §e" + nearPlayer.getName());
+                });
+        wp.subtractEnergy(energyCost);
 
         for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "warrior.laststand.activation", 2, 0.1f);
+            player1.playSound(player.getLocation(), "warrior.laststand.activation", 2, 1);
         }
 
         Location loc = player.getEyeLocation();

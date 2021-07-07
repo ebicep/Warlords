@@ -11,9 +11,9 @@ import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.powerups.PowerupManager;
 import com.ebicep.warlords.util.PacketUtils;
 import com.ebicep.warlords.util.RemoveEntities;
+import com.ebicep.warlords.util.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -21,13 +21,14 @@ import org.bukkit.scheduler.BukkitTask;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.util.Utils.sendMessage;
 
@@ -145,40 +146,6 @@ public class PlayingState implements State, TimerDebugAble {
         RemoveEntities.doRemove(this.game.getMap());
         this.flags = new FlagManager(this, game.getMap().getRedFlag(), game.getMap().getBlueFlag());
 
-        Map<Team, List<OfflinePlayer>> preferedTeams = this.game.offlinePlayers().collect(
-                groupingBy(
-                        entry -> {
-                            OfflinePlayer p = entry.getKey();
-                            Team team = p.getPlayer() != null ? Team.getSelected((Player) p.getPlayer()) : null;
-                            return team;
-                        },
-                        HashMap::new,
-                        Collectors.mapping(
-                                Map.Entry::getKey,
-                                Collectors.toList()
-                        )
-                )
-        );
-        List<OfflinePlayer> wantedRed = preferedTeams.computeIfAbsent(Team.RED, (k) -> new ArrayList<>());
-        List<OfflinePlayer> wantedBlue = preferedTeams.computeIfAbsent(Team.BLUE, (k) -> new ArrayList<>());
-        for (OfflinePlayer p : preferedTeams.get(null)) {
-            Bukkit.broadcastMessage(ChatColor.GOLD + p.getName() + " §7did not choose a team!");
-            if (wantedRed.size() < wantedBlue.size()) {
-                wantedRed.add(p);
-            } else {
-                wantedBlue.add(p);
-            }
-        }
-
-        for (Map.Entry<Team, List<OfflinePlayer>> list : preferedTeams.entrySet()) {
-            if (list.getKey() == null) {
-                continue;
-            }
-            for (OfflinePlayer peep : list.getValue()) {
-                this.game.setPlayerTeam(peep, list.getKey());
-            }
-        }
-
         this.game.forEachOfflinePlayer((player, team) -> {
             PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
             Warlords.addPlayer(new WarlordsPlayer(
@@ -203,7 +170,6 @@ public class PlayingState implements State, TimerDebugAble {
             @Override
             public void run() {
                 //DATABASE SHIT
-                // TODO: Also loop over offline players, as player can be offline at any stage
                 game.forEachOnlinePlayer((player, team) -> {
                     HashMap<String, Object> newInfo = new HashMap<>();
                     newInfo.put("last_spec", Classes.getSelected(player).name);
@@ -218,6 +184,22 @@ public class PlayingState implements State, TimerDebugAble {
                     newInfo.put("shaman_armor", ArmorManager.ArmorSets.getSelected(player).get(3).name);
                     newInfo.put("powerup", Settings.Powerup.getSelected(player).name());
                     newInfo.put("hotkeymode", Settings.HotkeyMode.getSelected(player).name());
+                    Warlords.databaseManager.updatePlayerInformation(player, newInfo, FieldUpdateOperators.SET);
+                });
+                game.forEachOfflinePlayer((player, team) -> {
+                    HashMap<String, Object> newInfo = new HashMap<>();
+                    newInfo.put("last_spec", Classes.getSelected(player).name);
+                    newInfo.put("last_weapon", Weapons.getSelected(player.getPlayer()).name);
+                    newInfo.put("mage_helm", ArmorManager.Helmets.getSelected(player.getPlayer()).get(0).name);
+                    newInfo.put("mage_armor", ArmorManager.ArmorSets.getSelected(player.getPlayer()).get(0).name);
+                    newInfo.put("warrior_helm", ArmorManager.Helmets.getSelected(player.getPlayer()).get(1).name);
+                    newInfo.put("warrior_armor", ArmorManager.ArmorSets.getSelected(player.getPlayer()).get(1).name);
+                    newInfo.put("paladin_helm", ArmorManager.Helmets.getSelected(player.getPlayer()).get(2).name);
+                    newInfo.put("paladin_armor", ArmorManager.ArmorSets.getSelected(player.getPlayer()).get(2).name);
+                    newInfo.put("shaman_helm", ArmorManager.Helmets.getSelected(player.getPlayer()).get(3).name);
+                    newInfo.put("shaman_armor", ArmorManager.ArmorSets.getSelected(player.getPlayer()).get(3).name);
+                    newInfo.put("powerup", Settings.Powerup.getSelected(player.getPlayer()).name());
+                    newInfo.put("hotkeymode", Settings.HotkeyMode.getSelected(player.getPlayer()).name());
                     Warlords.databaseManager.updatePlayerInformation(player, newInfo, FieldUpdateOperators.SET);
                 });
             }
@@ -279,6 +261,8 @@ public class PlayingState implements State, TimerDebugAble {
                         game.forEachOnlinePlayer((player, team) -> {
                             sendMessage(player, false, ChatColor.YELLOW + "Gates opened! " + ChatColor.RED + "FIGHT!");
                             PacketUtils.sendTitle(player, ChatColor.GREEN + "GO!", ChatColor.YELLOW + "Steal and capture the enemy flag!", 0, 40, 20);
+
+                            Utils.resetPlayerMovementStatistics(player);
                         });
                         break;
                     case 1:
@@ -313,7 +297,7 @@ public class PlayingState implements State, TimerDebugAble {
         if(this.flags != null) {
             this.flags.stop();
         }
-        if(this.powerUps != null) {
+        if (this.powerUps != null) {
             this.powerUps.cancel();
             this.powerUps = null;
         }
@@ -321,6 +305,9 @@ public class PlayingState implements State, TimerDebugAble {
         if (winner != null) {
             Warlords.databaseManager.addGame(this);
         }
+        game.forEachOnlinePlayer(((player, team) -> {
+            CustomScoreboard.giveMainLobbyScoreboard(player);
+        }));
     }
 
     @Override

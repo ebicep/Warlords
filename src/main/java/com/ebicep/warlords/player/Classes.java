@@ -55,7 +55,7 @@ public enum Classes {
             Revenant::new,
             "§7A support-oriented Warrior specialization that can give allies a second chance of life.",
             new ItemStack(Material.INK_SACK, 1, (short) 6),
-            CRIPPLING_STRIKE, ORBS_OF_LIFE),
+            CRIPPLING_STRIKE, RECKLESS_CHARGE, ORBS_OF_LIFE),
     AVENGER("Avenger",
             Avenger::new,
             "§7A damage-oriented Paladin specialization that focuses on draining energy from enemies and has access to minor healing.",

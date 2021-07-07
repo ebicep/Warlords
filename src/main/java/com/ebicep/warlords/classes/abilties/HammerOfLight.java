@@ -59,7 +59,6 @@ public class HammerOfLight extends AbstractAbility {
                     .entitiesAround(damageHealCircle.getLocation(), 6, 4, 6)
                     .isAlive()
                 ) {
-                    Bukkit.broadcastMessage(warlordsPlayer + "");
                     if (damageHealCircle.getWarlordsPlayer().isTeammate(warlordsPlayer)) {
                         warlordsPlayer.addHealth(damageHealCircle.getWarlordsPlayer(), damageHealCircle.getName(), damageHealCircle.getMinDamage(), damageHealCircle.getMaxDamage(), damageHealCircle.getCritChance(), damageHealCircle.getCritMultiplier());
                     } else {

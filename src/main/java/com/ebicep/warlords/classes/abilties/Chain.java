@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.player.Classes;
+import com.ebicep.warlords.player.Cooldown;
 import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.PlayerFilter;
@@ -32,7 +33,7 @@ public class Chain extends AbstractAbility {
         super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
     }
 
-        @Override
+    @Override
     public void updateDescription(Player player) {
         Classes selected = Classes.getSelected(player);
         if (selected == Classes.THUNDERLORD) {
@@ -64,11 +65,11 @@ public class Chain extends AbstractAbility {
         }
     }
 
-    private void partOfChainLightningPulseDamage(WarlordsPlayer warlordsPlayer, Entity totem) {
-        pulseDamage(warlordsPlayer, PlayerFilter.entitiesAround(totem, 5, 4, 5).aliveEnemiesOf(warlordsPlayer).stream());
+    private void partOfChainLightningPulseDamage(WarlordsPlayer wp, Entity totem) {
+        pulseDamage(wp, PlayerFilter.entitiesAround(totem, 5, 4, 5).aliveEnemiesOf(wp).stream());
         new FallingBlockWaveEffect(totem.getLocation().add(0, 1, 0), 5, 1.2, Material.SAPLING, (byte) 0).play();
-        for (Player player1 : warlordsPlayer.getWorld().getPlayers()) {
-            player1.playSound(warlordsPlayer.getLocation(), "shaman.capacitortotem.pulse", 2, 1);
+        for (Player player1 : wp.getWorld().getPlayers()) {
+            player1.playSound(wp.getLocation(), "shaman.capacitortotem.pulse", 2, 1);
         }
     }
 
@@ -88,7 +89,7 @@ public class Chain extends AbstractAbility {
         boolean firstCheck = checkFrom == warlordsPlayer.getEntity();
         if (!hasHitTotem) {
             if (firstCheck) {
-                if (checkFrom instanceof LivingEntity && lookingAtTotem((LivingEntity)checkFrom)) {
+                if (checkFrom instanceof LivingEntity && lookingAtTotem((LivingEntity) checkFrom)) {
                     ArmorStand totem = getTotem(warlordsPlayer);
                     assert totem != null;
                     chain(checkFrom.getLocation(), totem.getLocation());
@@ -105,18 +106,18 @@ public class Chain extends AbstractAbility {
             }
         } // no else
         PlayerFilter filter = firstCheck ?
-            PlayerFilter.entitiesAround(checkFrom, 20, 18, 20)
-                .filter(e ->
-                    Utils.getLookingAtChain(warlordsPlayer.getEntity(), e.getEntity()) &&
-                    Utils.hasLineOfSight(warlordsPlayer.getEntity(), e.getEntity())
-                ) :
-            PlayerFilter.entitiesAround(checkFrom, 10, 9, 10);
+                PlayerFilter.entitiesAround(checkFrom, 20, 18, 20)
+                        .filter(e ->
+                                Utils.getLookingAtChain(warlordsPlayer.getEntity(), e.getEntity()) &&
+                                        Utils.hasLineOfSight(warlordsPlayer.getEntity(), e.getEntity())
+                        ) :
+                PlayerFilter.entitiesAround(checkFrom, 10, 9, 10);
         Optional<WarlordsPlayer> foundPlayer = filter.closestFirst(warlordsPlayer).aliveEnemiesOf(warlordsPlayer).excluding(playersHit).findFirst();
         if (foundPlayer.isPresent()) {
             WarlordsPlayer hit = foundPlayer.get();
             chain(checkFrom.getLocation(), hit.getLocation());
             float damageMultiplier;
-            switch(playersSize) {
+            switch (playersSize) {
                 case 0:
                     // We hit the first player
                     damageMultiplier = 1f;
@@ -139,8 +140,6 @@ public class Chain extends AbstractAbility {
 
     @Override
     public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
-        //TODO add Your enemy is too far away!
-
         /* CHAINS
            TOTEM -> PLAYER -> PLAYER
            PLAYER -> TOTEM -> PLAYER
@@ -162,18 +161,18 @@ public class Chain extends AbstractAbility {
                     hitCounter++;
 
                     for (WarlordsPlayer nearNearPlayer : PlayerFilter
-                        .entitiesAround(nearPlayer, 5.0D, 4.0D, 5.0D)
-                        .aliveTeammatesOf(warlordsPlayer)
-                        .excluding(warlordsPlayer, nearPlayer)
+                            .entitiesAround(nearPlayer, 5.0D, 4.0D, 5.0D)
+                            .aliveTeammatesOf(warlordsPlayer)
+                            .excluding(warlordsPlayer, nearPlayer)
                     ) {
                         chain(nearPlayer.getLocation(), nearNearPlayer.getLocation());
                         nearNearPlayer.addHealth(warlordsPlayer, name, minDamageHeal * .9f, maxDamageHeal * .9f, critChance, critMultiplier);
                         hitCounter++;
 
                         for (WarlordsPlayer nearNearNearPlayer : PlayerFilter
-                            .entitiesAround(nearNearPlayer, 5.0D, 4.0D, 5.0D)
-                            .aliveTeammatesOf(warlordsPlayer)
-                            .excluding(warlordsPlayer, nearPlayer, nearNearPlayer)
+                                .entitiesAround(nearNearPlayer, 5.0D, 4.0D, 5.0D)
+                                .aliveTeammatesOf(warlordsPlayer)
+                                .excluding(warlordsPlayer, nearPlayer, nearNearPlayer)
                         ) {
                             chain(nearNearPlayer.getLocation(), nearNearNearPlayer.getLocation());
                             nearNearPlayer.addHealth(warlordsPlayer, name, minDamageHeal * .8f, maxDamageHeal * .8f, critChance, critMultiplier);
@@ -187,41 +186,49 @@ public class Chain extends AbstractAbility {
             }
         } else if (name.contains("Spirit")) {
             for (WarlordsPlayer nearPlayer : PlayerFilter
-                .entitiesAround(player, 15.0D, 13.0D, 15.0D)
-                .aliveEnemiesOf(warlordsPlayer)
+                    .entitiesAround(player, 15.0D, 13.0D, 15.0D)
+                    .aliveEnemiesOf(warlordsPlayer)
             ) {
                 if (Utils.getLookingAtChain(player, nearPlayer.getEntity()) && Utils.hasLineOfSight(player, nearPlayer.getEntity())) {
                     chain(player.getLocation(), nearPlayer.getLocation());
                     nearPlayer.addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
                     hitCounter++;
 
-                    if (warlordsPlayer.hasBoundPlayerLink(nearPlayer)) {
-                        healNearPlayers(warlordsPlayer);
-                    }
+                    warlordsPlayer.getCooldownManager().getCooldown(Soulbinding.class).stream()
+                            .map(Cooldown::getCooldownObject)
+                            .map(Soulbinding.class::cast)
+                            .filter(soulbinding -> soulbinding.hasBoundPlayerLink(nearPlayer))
+                            .forEach(sb -> healNearPlayers(warlordsPlayer));
                     for (WarlordsPlayer nearNearPlayer : PlayerFilter
-                        .entitiesAround(nearPlayer, 10.0D, 9.0D, 10.0D)
-                        .aliveEnemiesOf(warlordsPlayer)
-                        .excluding(nearPlayer)
+                            .entitiesAround(nearPlayer, 10.0D, 9.0D, 10.0D)
+                            .aliveEnemiesOf(warlordsPlayer)
+                            .excluding(nearPlayer)
                     ) {
                         chain(nearPlayer.getLocation(), nearNearPlayer.getLocation());
                         nearNearPlayer.addHealth(warlordsPlayer, name, minDamageHeal * .8f, maxDamageHeal * .8f, critChance, critMultiplier);
                         hitCounter++;
 
-                        if (warlordsPlayer.hasBoundPlayerLink(nearNearPlayer)) {
-                            healNearPlayers(warlordsPlayer);
-                        }
+                        warlordsPlayer.getCooldownManager().getCooldown(Soulbinding.class).stream()
+                                .map(Cooldown::getCooldownObject)
+                                .map(Soulbinding.class::cast)
+                                .filter(soulbinding -> soulbinding.hasBoundPlayerLink(nearPlayer))
+                                .forEach(sb -> healNearPlayers(warlordsPlayer));
+
                         for (WarlordsPlayer nearNearNearPlayer : PlayerFilter
-                            .entitiesAround(nearNearPlayer, 10.0D, 9.0D, 10.0D)
-                            .aliveEnemiesOf(warlordsPlayer)
-                            .excluding(nearPlayer, nearNearPlayer)
+                                .entitiesAround(nearNearPlayer, 10.0D, 9.0D, 10.0D)
+                                .aliveEnemiesOf(warlordsPlayer)
+                                .excluding(nearPlayer, nearNearPlayer)
                         ) {
                             chain(nearNearPlayer.getLocation(), nearNearNearPlayer.getLocation());
                             nearNearPlayer.addHealth(warlordsPlayer, name, minDamageHeal * .6f, maxDamageHeal * .6f, critChance, critMultiplier);
                             hitCounter++;
 
-                            if (warlordsPlayer.hasBoundPlayerLink(nearNearNearPlayer)) {
-                                healNearPlayers(warlordsPlayer);
-                            }
+                            warlordsPlayer.getCooldownManager().getCooldown(Soulbinding.class).stream()
+                                    .map(Cooldown::getCooldownObject)
+                                    .map(Soulbinding.class::cast)
+                                    .filter(soulbinding -> soulbinding.hasBoundPlayerLink(nearPlayer))
+                                    .forEach(sb -> healNearPlayers(warlordsPlayer));
+
                             break;
                         }
                         break;
@@ -230,13 +237,12 @@ public class Chain extends AbstractAbility {
                 }
             }
         }
-
         if (hitCounter != 0) {
             PacketPlayOutAnimation playOutAnimation = new PacketPlayOutAnimation(((CraftPlayer) player).getHandle(), 0);
             ((CraftPlayer) player).getHandle().playerConnection.sendPacket(playOutAnimation);
             warlordsPlayer.subtractEnergy(energyCost);
             if (name.contains("Lightning")) {
-                warlordsPlayer.getCooldownManager().addCooldown(Chain.this.getClass(), "CHAIN(" + hitCounter + ")", 4, warlordsPlayer, CooldownTypes.BUFF);
+                warlordsPlayer.getCooldownManager().addCooldown(Chain.this.getClass(), new Chain(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier), "CHAIN(" + hitCounter + ")", 4, warlordsPlayer, CooldownTypes.BUFF);
                 warlordsPlayer.getSpec().getRed().setCurrentCooldown(cooldown);
 
                 player.playSound(player.getLocation(), "shaman.chainlightning.impact", 2, 1);
@@ -260,7 +266,7 @@ public class Chain extends AbstractAbility {
             } else if (name.contains("Spirit")) {
                 // speed buff
                 warlordsPlayer.getSpeed().addSpeedModifier("Spirit Link", 40, 30); // 30 is ticks
-                warlordsPlayer.getCooldownManager().addCooldown(Chain.this.getClass(), "LINK", 4.5f, warlordsPlayer, CooldownTypes.BUFF);
+                warlordsPlayer.getCooldownManager().addCooldown(Chain.this.getClass(), new Chain(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier), "LINK", 4.5f, warlordsPlayer, CooldownTypes.BUFF);
 
                 warlordsPlayer.getSpec().getRed().setCurrentCooldown(cooldown);
 
@@ -279,9 +285,9 @@ public class Chain extends AbstractAbility {
     private void healNearPlayers(WarlordsPlayer warlordsPlayer) {
         warlordsPlayer.addHealth(warlordsPlayer, "Soulbinding Weapon", 420, 420, -1, 100);
         for (WarlordsPlayer nearPlayer : PlayerFilter
-            .entitiesAround(warlordsPlayer, 2.5, 2.5, 2.5)
-            .aliveTeammatesOfExcludingSelf(warlordsPlayer)
-            .limit(2)
+                .entitiesAround(warlordsPlayer, 2.5, 2.5, 2.5)
+                .aliveTeammatesOfExcludingSelf(warlordsPlayer)
+                .limit(2)
         ) {
             nearPlayer.addHealth(warlordsPlayer, "Soulbinding Weapon", 420, 420, -1, 100);
         }
@@ -290,6 +296,7 @@ public class Chain extends AbstractAbility {
     private void chain(Entity from, WarlordsPlayer to) {
         chain(from.getLocation(), to.getLocation());
     }
+
     private void chain(Location from, Location to) {
         Location location = from.subtract(0, .5, 0);
         location.setDirection(location.toVector().subtract(to.subtract(0, .5, 0).toVector()).multiply(-1));

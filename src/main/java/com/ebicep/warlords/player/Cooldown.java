@@ -3,13 +3,15 @@ package com.ebicep.warlords.player;
 public class Cooldown {
 
     private Class cooldownClass;
+    private Object cooldownObject;
     private String name;
     private float timeLeft;
     private WarlordsPlayer from;
     private CooldownTypes cooldownType;
 
-    public Cooldown(Class ability, String name, float timeLeft, WarlordsPlayer from, CooldownTypes cooldownType) {
+    public Cooldown(Class ability, Object cooldownObject, String name, float timeLeft, WarlordsPlayer from, CooldownTypes cooldownType) {
         this.cooldownClass = ability;
+        this.cooldownObject = cooldownObject;
         this.name = name;
         this.timeLeft = timeLeft;
         this.from = from;
@@ -18,6 +20,10 @@ public class Cooldown {
 
     public Class getCooldownClass() {
         return cooldownClass;
+    }
+
+    public Object getCooldownObject() {
+        return cooldownObject;
     }
 
     public String getName() {

@@ -5,6 +5,7 @@ import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.state.PlayingState;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.util.PlayerFilter;
+import com.ebicep.warlords.util.Utils;
 import com.mongodb.MongoException;
 import com.mongodb.MongoWriteException;
 import com.mongodb.client.MongoClient;
@@ -16,6 +17,7 @@ import org.bson.BsonDouble;
 import org.bson.BsonInt64;
 import org.bson.Document;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.text.DateFormat;
@@ -49,10 +51,10 @@ public class DatabaseManager {
         }
     }
 
-    public boolean hasPlayer(Player player) {
-        if (cachedPlayerInfo.containsKey(player.getUniqueId())) return true;
+    public boolean hasPlayer(UUID uuid) {
+        if (cachedPlayerInfo.containsKey(uuid)) return true;
         try {
-            Document document = playersInformation.find(eq("uuid", player.getUniqueId().toString())).first();
+            Document document = playersInformation.find(eq("uuid", uuid.toString())).first();
             return document != null;
         } catch (MongoException e) {
             e.printStackTrace();
@@ -63,7 +65,7 @@ public class DatabaseManager {
 
     public void loadPlayer(Player player) {
         try {
-            if (hasPlayer(player)) {
+            if (hasPlayer(player.getUniqueId())) {
                 Document playerInfo = playersInformation.find(eq("uuid", player.getUniqueId().toString())).first();
                 cachedPlayerInfo.put(player.getUniqueId(), playerInfo);
                 Classes.setSelected(player, Classes.getClass((String) getPlayerInformation(player, "last_spec")));
@@ -90,7 +92,7 @@ public class DatabaseManager {
 
     public void updatePlayerInformation(Player player, String key, String newValue) {
         try {
-            if (hasPlayer(player)) {
+            if (hasPlayer(player.getUniqueId())) {
                 playersInformation.updateOne(
                         eq("uuid", player.getUniqueId().toString()),
                         combine(set(key, newValue))
@@ -108,7 +110,7 @@ public class DatabaseManager {
 
     public void updatePlayerInformation(Player player, HashMap<String, Object> newInfo, FieldUpdateOperators operator) {
         try {
-            if (hasPlayer(player)) {
+            if (hasPlayer(player.getUniqueId())) {
                 Document history = new Document();
                 for (String s : newInfo.keySet()) {
                     history.append(s, newInfo.get(s));
@@ -126,11 +128,31 @@ public class DatabaseManager {
         }
     }
 
+    public void updatePlayerInformation(OfflinePlayer player, HashMap<String, Object> newInfo, FieldUpdateOperators operator) {
+        try {
+            if (hasPlayer(player.getUniqueId())) {
+                Document history = new Document();
+                for (String s : newInfo.keySet()) {
+                    history.append(s, newInfo.get(s));
+                }
+                Document update = new Document(operator.operator, history);
+                playersInformation.updateOne(eq("uuid", player.getUniqueId().toString()), update);
+                cachedPlayerInfo.remove(player.getUniqueId());
+                loadPlayer(player.getPlayer());
+                System.out.println(player.getUniqueId() + " - " + player.getName() + " was updated");
+            } else {
+                System.out.println("Could not update player " + player.getName() + " - Not in the database!");
+            }
+        } catch (MongoWriteException e) {
+            System.out.println("There was an error trying to update information of player " + player.getName());
+        }
+    }
+
     public Object getPlayerInformation(Player player, String key) {
         try {
             if (cachedPlayerInfo.containsKey(player.getUniqueId())) {
                 return cachedPlayerInfo.get(player.getUniqueId()).get(key);
-            } else if (hasPlayer(player)) {
+            } else if (hasPlayer(player.getUniqueId())) {
                 Document playerInfo = playersInformation.find(eq("uuid", player.getUniqueId().toString())).first();
                 cachedPlayerInfo.put(player.getUniqueId(), playerInfo);
                 assert playerInfo != null;
@@ -146,6 +168,15 @@ public class DatabaseManager {
         }
     }
 
+    public List<Document> getPlayersSortedByKey(String key) {
+        try {
+            return playersInformation.find().into(new ArrayList<>()).stream().sorted(Comparator.comparing(d -> (Integer) ((Document) d).get(key)).reversed()).collect(Collectors.toList());
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Problem getting top winners");
+            return null;
+        }
+    }
 
     public void clearPlayerCache() {
         cachedPlayerInfo.clear();
@@ -153,7 +184,7 @@ public class DatabaseManager {
 
     public void addPlayer(Player player) {
         try {
-            if (!hasPlayer(player)) {
+            if (!hasPlayer(player.getUniqueId())) {
                 Document newPlayerDocument = new Document("uuid", player.getUniqueId().toString())
                         .append("name", player.getName())
                         .append("kills", 0)
@@ -402,8 +433,9 @@ public class DatabaseManager {
             playerInfo.put(className + "." + specName + ".healing", healing);
             playerInfo.put(className + "." + specName + ".absorbed", absorbed);
             if (value.getEntity() instanceof Player) {
-                // TODO: We need to update the player info, even if he/she is offline
-                updatePlayerInformation((Player)value.getEntity(), playerInfo, FieldUpdateOperators.INCREMENT);
+                updatePlayerInformation((Player) value.getEntity(), playerInfo, FieldUpdateOperators.INCREMENT);
+            } else if (value.getEntity() instanceof OfflinePlayer) {
+                updatePlayerInformation((OfflinePlayer) value.getEntity(), playerInfo, FieldUpdateOperators.INCREMENT);
             }
             if (value.getTeam() == Team.BLUE) {
                 gameAddPlayerStats(blue, value);
@@ -414,6 +446,7 @@ public class DatabaseManager {
         DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm");
         Team winner = gameState.calculateWinnerByPoints();
         Document document = new Document("date", dateFormat.format(new Date()))
+                .append("map", gameState.getGame().getMap().getMapName())
                 .append("time_left", gameState.getTimerInSeconds())
                 .append("winner", gameState.isForceEnd() || winner == null ? "DRAW" : winner.name.toUpperCase(Locale.ROOT))
                 .append("blue_points", gameState.getStats(Team.BLUE).points())
@@ -422,6 +455,7 @@ public class DatabaseManager {
                 .append("stat_info", getWarlordsPlusEndGameStats(gameState));
         try {
             gamesInformation.insertOne(document);
+            System.out.println("Added game");
         } catch (MongoWriteException e) {
             e.printStackTrace();
             System.out.println("Error trying to insert game stats");
@@ -450,8 +484,15 @@ public class DatabaseManager {
             for (WarlordsPlayer player : PlayerFilter.playingGame(gameState.getGame()).matchingTeam(Team.BLUE)) {
                 output.append(player.getUuid().toString().replace("-", "")).append("[").append(player.getTotalKills()).append(":").append(player.getTotalDeaths()).append("],");
             }
+        } else {
+            output.setLength(0);
+            for (WarlordsPlayer player : PlayerFilter.playingGame(gameState.getGame()).matchingTeam(Team.BLUE)) {
+                output.append(player.getUuid().toString().replace("-", "")).append("[").append(player.getTotalKills()).append(":").append(player.getTotalDeaths()).append("],");
+            }
+            for (WarlordsPlayer player : PlayerFilter.playingGame(gameState.getGame()).matchingTeam(Team.RED)) {
+                output.append(player.getUuid().toString().replace("-", "")).append("[").append(player.getTotalKills()).append(":").append(player.getTotalDeaths()).append("],");
+            }
         }
-        // TODO: What about a draw?
         output.setLength(output.length() - 1);
         return output.toString();
     }
@@ -459,6 +500,9 @@ public class DatabaseManager {
     public void gameAddPlayerStats(List<Document> list, WarlordsPlayer warlordsPlayer) {
         list.add(new Document(warlordsPlayer.getUuid().toString(), new Document("name", warlordsPlayer.getName())
                 .append("spec", Warlords.getPlayerSettings(warlordsPlayer.getUuid()).selectedClass().name)
+                .append("blocks_travelled", Utils.getPlayerMovementStatistics((Player) warlordsPlayer.getEntity()) / 100)
+                .append("seconds_in_combat", warlordsPlayer.getTimeInCombat())
+                .append("seconds_in_respawn", warlordsPlayer.getRespawnTimeSpent())
                 .append("kills", new BsonArray(Arrays.stream(warlordsPlayer.getKills()).mapToObj(BsonInt64::new).collect(Collectors.toList())))
                 .append("deaths", new BsonArray(Arrays.stream(warlordsPlayer.getDeaths()).mapToObj(BsonInt64::new).collect(Collectors.toList())))
                 .append("assists", new BsonArray(Arrays.stream(warlordsPlayer.getAssists()).mapToObj(BsonInt64::new).collect(Collectors.toList())))

@@ -38,9 +38,9 @@ public class RecklessCharge extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
+    public void onActivate(WarlordsPlayer wp, Player player) {
         playersHit.clear();
-        warlordsPlayer.subtractEnergy(energyCost);
+        wp.subtractEnergy(energyCost);
         Location eyeLocation = player.getLocation();
         eyeLocation.setPitch(-10);
 
@@ -77,18 +77,18 @@ public class RecklessCharge extends AbstractAbility {
                 }
 
                 List<Entity> playersInside = player.getNearbyEntities(2.5, 2, 2.5);
-                playersInside.removeAll(((RecklessCharge) warlordsPlayer.getSpec().getRed()).getPlayersHit());
+                playersInside.removeAll(((RecklessCharge) wp.getSpec().getRed()).getPlayersHit());
                 playersInside = Utils.filterOutTeammates(playersInside, player);
                 for (Entity entity : playersInside) {
                     if (entity instanceof Player && ((Player) entity).getGameMode() != GameMode.SPECTATOR) {
-                        ((RecklessCharge) warlordsPlayer.getSpec().getRed()).getPlayersHit().add((Player) entity);
+                        ((RecklessCharge) wp.getSpec().getRed()).getPlayersHit().add((Player) entity);
 
-                        Warlords.getPlayer((Player) entity).addHealth(warlordsPlayer,
-                                warlordsPlayer.getSpec().getRed().getName(),
-                                warlordsPlayer.getSpec().getRed().getMinDamageHeal(),
-                                warlordsPlayer.getSpec().getRed().getMaxDamageHeal(),
-                                warlordsPlayer.getSpec().getRed().getCritChance(),
-                                warlordsPlayer.getSpec().getRed().getCritMultiplier());
+                        Warlords.getPlayer((Player) entity).addHealth(wp,
+                                wp.getSpec().getRed().getName(),
+                                wp.getSpec().getRed().getMinDamageHeal(),
+                                wp.getSpec().getRed().getMaxDamageHeal(),
+                                wp.getSpec().getRed().getCritChance(),
+                                wp.getSpec().getRed().getCritMultiplier());
 
                         // little scuffed might wanna change
                         ((Player) entity).addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 17, 50));

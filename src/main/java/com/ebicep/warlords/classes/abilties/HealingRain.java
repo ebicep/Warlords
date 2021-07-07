@@ -34,13 +34,13 @@ public class HealingRain extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
+    public void onActivate(WarlordsPlayer wp, Player player) {
         if (player.getTargetBlock((HashSet<Byte>) null, 15).getType() == Material.AIR) return;
-        DamageHealCircle damageHealCircle = new DamageHealCircle(warlordsPlayer, player.getTargetBlock((HashSet<Byte>) null, 15).getLocation(), 6, 12, minDamageHeal, maxDamageHeal, critChance, critMultiplier, name);
+        DamageHealCircle damageHealCircle = new DamageHealCircle(wp, player.getTargetBlock((HashSet<Byte>) null, 15).getLocation(), 6, 12, minDamageHeal, maxDamageHeal, critChance, critMultiplier, name);
         damageHealCircle.getLocation().add(0, 1, 0);
-        warlordsPlayer.getCooldownManager().addCooldown(HealingRain.this.getClass(), "RAIN", 12, warlordsPlayer, CooldownTypes.ABILITY);
-        warlordsPlayer.subtractEnergy(energyCost);
-        warlordsPlayer.getSpec().getOrange().setCurrentCooldown(cooldown);
+        wp.getCooldownManager().addCooldown(HealingRain.this.getClass(), new HealingRain(), "RAIN", 12, wp, CooldownTypes.ABILITY);
+        wp.subtractEnergy(energyCost);
+        wp.getSpec().getOrange().setCurrentCooldown(cooldown);
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "mage.healingrain.impact", 2, 1);
@@ -74,7 +74,7 @@ public class HealingRain extends AbstractAbility {
                 damageHealCircle.setDuration(damageHealCircle.getDuration() - 1);
 
                 PlayerFilter.entitiesAround(damageHealCircle.getLocation(), 6, 4, 6)
-                    .aliveTeammatesOf(warlordsPlayer)
+                    .aliveTeammatesOf(wp)
                     .forEach((warlordsPlayer) -> {
                         double distance = damageHealCircle.getLocation().distanceSquared(player.getLocation());
                         if (distance < damageHealCircle.getRadius() * damageHealCircle.getRadius()) {

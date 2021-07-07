@@ -16,8 +16,8 @@ import org.bukkit.util.Vector;
 
 public class Boulder extends AbstractAbility {
 
-    private static final double SPEED = 0.54;
-    private static final double GRAVITY = -0.013;
+    private static final double SPEED = 0.52;
+    private static final double GRAVITY = -0.0138;
 
     public Boulder() {
         super("Boulder", -490, -731, 7.05f, 80, 15, 175);
@@ -32,7 +32,7 @@ public class Boulder extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
+    public void onActivate(WarlordsPlayer wp, Player player) {
 
         Location location = player.getLocation();
         Vector speed = player.getLocation().getDirection().multiply(SPEED);
@@ -43,11 +43,9 @@ public class Boulder extends AbstractAbility {
         stand.setGravity(false);
         stand.setBasePlate(false);
         stand.setArms(false);
-        stand.setLeftLegPose(new EulerAngle(Math.toRadians(180), Math.toRadians(0), Math.toRadians(0)));
-        stand.setRightLegPose(new EulerAngle(Math.toRadians(180), Math.toRadians(0), Math.toRadians(0)));
         stand.setVisible(false);
 
-        warlordsPlayer.subtractEnergy(energyCost);
+        wp.subtractEnergy(energyCost);
 
         new BukkitRunnable() {
 
@@ -88,7 +86,7 @@ public class Boulder extends AbstractAbility {
                     shouldExplode = true;
                 } else {
                     shouldExplode = PlayerFilter.entitiesAround(newLoc, 1.15, 1.15, 1.15)
-                        .aliveEnemiesOf(warlordsPlayer).findAny().isPresent();
+                        .aliveEnemiesOf(wp).findAny().isPresent();
                 }
 
 
@@ -100,9 +98,9 @@ public class Boulder extends AbstractAbility {
 
                     for(WarlordsPlayer p : PlayerFilter
                         .entitiesAround(newLoc, 5, 5, 5)
-                        .aliveEnemiesOf(warlordsPlayer)
+                        .aliveEnemiesOf(wp)
                     ) {
-                        p.addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+                        p.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
 
                         Entity entity = p.getEntity();
                         Vector v = entity.getLocation().toVector().subtract(newLoc.toVector()).normalize().multiply(1.1).setY(0.3);
@@ -113,20 +111,24 @@ public class Boulder extends AbstractAbility {
                     for (int i = 0; i < 24; i++) {
                         if (location.getWorld().getBlockAt(newLoc).getType() == Material.AIR) {
                             FallingBlock fallingBlock;
+                            Location spawnLoc = newLoc.clone().add(0, 0.5, 0);
+                            Vector velocity = newLoc.getDirection().add(new Vector(0, 0.2, 0)).normalize().multiply(.45);
+                            double initialCircleRadius = 2;
+                            spawnLoc.add(new Vector(initialCircleRadius, 0, initialCircleRadius).multiply(velocity));
                             switch ((int) (Math.random() * 3)) {
                                 case 0:
-                                    fallingBlock = newLoc.getWorld().spawnFallingBlock(newLoc.clone().add(0, 0.5, 0), Material.DIRT, (byte) 0);
+                                    fallingBlock = newLoc.getWorld().spawnFallingBlock(spawnLoc, Material.DIRT, (byte) 0);
                                     break;
                                 case 1:
-                                    fallingBlock = newLoc.getWorld().spawnFallingBlock(newLoc.clone().add(0, 0.5, 0), Material.STONE, (byte) 0);
+                                    fallingBlock = newLoc.getWorld().spawnFallingBlock(spawnLoc, Material.STONE, (byte) 0);
                                     break;
                                 case 2:
-                                    fallingBlock = newLoc.getWorld().spawnFallingBlock(newLoc.clone().add(0, 0.5, 0), Material.DIRT, (byte) 2);
+                                    fallingBlock = newLoc.getWorld().spawnFallingBlock(spawnLoc, Material.DIRT, (byte) 2);
                                     break;
                                 default:
                                     throw new IllegalStateException("Unexpected value: " + (int) (Math.random() * 3));
                             }
-                            fallingBlock.setVelocity(newLoc.getDirection().add(new Vector(0, 0.2, 0)).normalize().multiply(.45));
+                            fallingBlock.setVelocity(velocity);
                             fallingBlock.setDropItem(false);
                             fallingBlock.setTicksLived(4);
                             newLoc.setYaw((float) (newLoc.getYaw() + Math.random() * 25 + 12));
@@ -141,7 +143,7 @@ public class Boulder extends AbstractAbility {
 
 
         for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "shaman.boulder.activation", 1.5F, 1);
+            player1.playSound(player.getLocation(), "shaman.boulder.activation", 2, 1);
         }
     }
 }

@@ -9,10 +9,15 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Soulbinding extends AbstractAbility {
 
+    private List<SoulBoundPlayer> soulBindedPlayers = new ArrayList<>();
+
     public Soulbinding() {
-        super("Soulbinding Weapon", 0, 0, 21.92f, 30, -1, 100);
+        super("Soulbinding Weapon", 0, 0, 2.192f, 30, -1, 100);
     }
 
     @Override
@@ -30,9 +35,9 @@ public class Soulbinding extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
-        warlordsPlayer.subtractEnergy(energyCost);
-        warlordsPlayer.getCooldownManager().addCooldown(Soulbinding.this.getClass(), "SOUL", 12, warlordsPlayer, CooldownTypes.ABILITY);
+    public void onActivate(WarlordsPlayer wp, Player player) {
+        wp.subtractEnergy(energyCost);
+        wp.getCooldownManager().addCooldown(Soulbinding.this.getClass(), new Soulbinding(), "SOUL", 12, wp, CooldownTypes.ABILITY);
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "paladin.consecrate.activation", 2, 2);
@@ -41,7 +46,7 @@ public class Soulbinding extends AbstractAbility {
         new BukkitRunnable() {
             @Override
             public void run() {
-                if (warlordsPlayer.getCooldownManager().getCooldown(Soulbinding.class).size() > 0) {
+                if (!wp.getCooldownManager().getCooldown(Soulbinding.class).isEmpty()) {
                     Location location = player.getLocation();
                     location.add(0, 1.2, 0);
                     ParticleEffect.SPELL_WITCH.display(0.2F, 0F, 0.2F, 0.1F, 1, location, 500);
@@ -50,6 +55,45 @@ public class Soulbinding extends AbstractAbility {
                 }
             }
         }.runTaskTimer(Warlords.getInstance(), 0, 4);
+    }
+
+    public List<SoulBoundPlayer> getSoulBindedPlayers() {
+        return soulBindedPlayers;
+    }
+
+    public boolean hasBoundPlayer(WarlordsPlayer warlordsPlayer) {
+        for (SoulBoundPlayer soulBindedPlayer : soulBindedPlayers) {
+            if (soulBindedPlayer.getBoundPlayer() == warlordsPlayer) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean hasBoundPlayerSoul(WarlordsPlayer warlordsPlayer) {
+        for (SoulBoundPlayer soulBindedPlayer : soulBindedPlayers) {
+            if (soulBindedPlayer.getBoundPlayer() == warlordsPlayer) {
+                if (!soulBindedPlayer.isHitWithSoul()) {
+                    soulBindedPlayer.setHitWithSoul(true);
+                    return true;
+                }
+                break;
+            }
+        }
+        return false;
+    }
+
+    public boolean hasBoundPlayerLink(WarlordsPlayer warlordsPlayer) {
+        for (SoulBoundPlayer soulBindedPlayer : soulBindedPlayers) {
+            if (soulBindedPlayer.getBoundPlayer() == warlordsPlayer) {
+                if (!soulBindedPlayer.isHitWithLink()) {
+                    soulBindedPlayer.setHitWithLink(true);
+                    return true;
+                }
+                break;
+            }
+        }
+        return false;
     }
 
     public static class SoulBoundPlayer {
@@ -75,6 +119,10 @@ public class Soulbinding extends AbstractAbility {
 
         public int getTimeLeft() {
             return timeLeft;
+        }
+
+        public void decrementTimeLeft() {
+            this.timeLeft--;
         }
 
         public void setTimeLeft(int timeLeft) {

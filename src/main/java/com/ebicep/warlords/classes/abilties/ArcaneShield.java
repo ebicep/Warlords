@@ -29,9 +29,9 @@ public class ArcaneShield extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
-        warlordsPlayer.getCooldownManager().addCooldown(ArcaneShield.this.getClass(), "ARCA", 6, warlordsPlayer, CooldownTypes.ABILITY);
-        warlordsPlayer.subtractEnergy(energyCost);
+    public void onActivate(WarlordsPlayer wp, Player player) {
+        wp.getCooldownManager().addCooldown(ArcaneShield.this.getClass(), new ArcaneShield(), "ARCA", 6, wp, CooldownTypes.ABILITY);
+        wp.subtractEnergy(energyCost);
         ((EntityLiving) ((CraftPlayer) player).getHandle()).setAbsorptionHearts(20);
         shieldHealth = maxShieldHealth;
 
@@ -42,7 +42,7 @@ public class ArcaneShield extends AbstractAbility {
         new BukkitRunnable() {
             @Override
             public void run() {
-                if (warlordsPlayer.getCooldownManager().getCooldown(ArcaneShield.class).size() > 0) {
+                if (!wp.getCooldownManager().getCooldown(ArcaneShield.class).isEmpty()) {
                     Location location = player.getLocation();
                     location.add(0, 1.5, 0);
                     ParticleEffect.CLOUD.display(0.15F, 0.3F, 0.15F, 0.01F, 2, location, 500);

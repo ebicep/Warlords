@@ -24,7 +24,7 @@ import org.bukkit.entity.Player;
 
 public class Strike extends AbstractAbility {
 
-    public Strike(String name, float minDamageHeal, float maxDamageHeal, int cooldown, int energyCost, int critChance, int critMultiplier) {
+    public Strike(String name, float minDamageHeal, float maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier) {
         super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
     }
 
@@ -51,7 +51,7 @@ public class Strike extends AbstractAbility {
                     "§7damage done.";
         } else if (selected == Classes.BERSERKER) {
             description = "§7Strike the targeted enemy player,\n" +
-                    "§7causing §c" + -minDamageHeal + " §7- §c" + -maxDamageHeal + " §7damage\n" +
+                    "§7causing §c" + Math.floor(-minDamageHeal) + " §7- §c" + Math.floor(-maxDamageHeal) + " §7damage\n" +
                     "§7and §cwounding §7them for §63 §7seconds.\n" +
                     "§7A wounded player receives §c35% §7less\n" +
                     "§7healing for the duration of the effect.";
@@ -71,76 +71,77 @@ public class Strike extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
-        PlayerFilter.entitiesAround(warlordsPlayer, 3.75, 3.75, 3.75)
-            .aliveEnemiesOf(warlordsPlayer)
-            .closestFirst(warlordsPlayer)
-            .requireLineOfSight(warlordsPlayer)
+    public void onActivate(WarlordsPlayer wp, Player player) {
+        PlayerFilter.entitiesAround(wp, 3.8, 3.8, 3.8)
+            .aliveEnemiesOf(wp)
+            .closestFirst(wp)
+            .requireLineOfSight(wp)
             .first((nearPlayer) -> {
             if (Utils.getLookingAt(player, nearPlayer.getEntity()) && Utils.hasLineOfSight(player, nearPlayer.getEntity())) {
                 PacketPlayOutAnimation playOutAnimation = new PacketPlayOutAnimation(((CraftPlayer) player).getHandle(), 0);
                 ((CraftPlayer) player).getHandle().playerConnection.sendPacket(playOutAnimation);
-                warlordsPlayer.subtractEnergy(energyCost);
+                wp.subtractEnergy(energyCost);
 
                 //PALADIN
-                if (warlordsPlayer.getSpec() instanceof Avenger || warlordsPlayer.getSpec() instanceof Crusader || warlordsPlayer.getSpec() instanceof Protector) {
+                if (wp.getSpec() instanceof Avenger || wp.getSpec() instanceof Crusader || wp.getSpec() instanceof Protector) {
                     for (Player player1 : player.getWorld().getPlayers()) {
                         player1.playSound(player.getLocation(), "paladin.paladinstrike.activation", 2, 1);
                     }
                     //check consecrate then boost dmg
-                    if (warlordsPlayer.getSpec() instanceof Avenger) {
+                    if (wp.getSpec() instanceof Avenger) {
                         if (standingOnConsecrate(player, nearPlayer.getEntity())) {
-                            nearPlayer.addHealth(warlordsPlayer, name, (minDamageHeal * 1.2f), (maxDamageHeal * 1.2f), critChance, critMultiplier);
+                            nearPlayer.addHealth(wp, name, (minDamageHeal * 1.2f), (maxDamageHeal * 1.2f), critChance, critMultiplier);
                         } else {
-                            nearPlayer.addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+                            nearPlayer.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
                         }
                         nearPlayer.subtractEnergy(6);
-                        if (warlordsPlayer.getCooldownManager().getCooldown(AvengersWrath.class).size() > 0) {
-                            for(WarlordsPlayer nearNearPlayer : PlayerFilter
-                                .entitiesAround(nearPlayer, 5, 3, 5)
-                                .aliveEnemiesOf(warlordsPlayer)
-                                .closestFirst(nearPlayer)
-                                .excluding(nearPlayer)
-                                .limit(2)
+                        if (!wp.getCooldownManager().getCooldown(AvengersWrath.class).isEmpty()) {
+                            for (WarlordsPlayer nearNearPlayer : PlayerFilter
+                                    .entitiesAround(nearPlayer, 5, 3, 5)
+                                    .aliveEnemiesOf(wp)
+                                    .closestFirst(nearPlayer)
+                                    .excluding(nearPlayer)
+                                    .limit(2)
                             ) {
                                 System.out.println("NEAR NEAR HIT " + nearNearPlayer);
                                 //checking if player is in consecrate
                                 if (standingOnConsecrate(player, nearNearPlayer.getEntity())) {
-                                    nearNearPlayer.addHealth(warlordsPlayer, name, minDamageHeal * 1.2f, maxDamageHeal * 1.2f, critChance, critMultiplier);
+                                    nearNearPlayer.addHealth(wp, name, minDamageHeal * 1.2f, maxDamageHeal * 1.2f, critChance, critMultiplier);
                                 } else {
-                                    nearNearPlayer.addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+                                    nearNearPlayer.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
                                 }
                                 nearNearPlayer.subtractEnergy(6);
                             }
                         }
-                    } else if (warlordsPlayer.getSpec() instanceof Crusader) {
+                    } else if (wp.getSpec() instanceof Crusader) {
                         //checking if player is in consecrate
                         if (standingOnConsecrate(player, nearPlayer)) {
-                            nearPlayer.addHealth(warlordsPlayer, name, minDamageHeal * 1.15f, maxDamageHeal * 1.15f, critChance, critMultiplier);
+                            nearPlayer.addHealth(wp, name, minDamageHeal * 1.15f, maxDamageHeal * 1.15f, critChance, critMultiplier);
                         } else {
-                            nearPlayer.addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+                            nearPlayer.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
                         }
                         //reloops near players to give energy to
-                        PlayerFilter.entitiesAround(warlordsPlayer, 10.0D, 10.0D, 10.0D)
-                            .aliveTeammatesOfExcludingSelf(warlordsPlayer)
-                            .closestFirst(warlordsPlayer)
+                        PlayerFilter.entitiesAround(wp, 10.0D, 10.0D, 10.0D)
+                            .aliveTeammatesOfExcludingSelf(wp)
+                            .closestFirst(wp)
                             .limit(2)
                             .forEach((nearTeamPlayer) ->
-                                nearTeamPlayer.addEnergy(warlordsPlayer, name, 24)
+                                nearTeamPlayer.addEnergy(wp, name, 24)
                             );
-                    } else if (warlordsPlayer.getSpec() instanceof Protector) {
+                    } else if (wp.getSpec() instanceof Protector) {
                         if (standingOnConsecrate(player, nearPlayer)) {
-                            nearPlayer.addHealth(warlordsPlayer, name, minDamageHeal * 1.15f, maxDamageHeal * 1.15f, critChance, critMultiplier);
+                            nearPlayer.addHealth(wp, name, minDamageHeal * 1.15f, maxDamageHeal * 1.15f, critChance, critMultiplier);
                         } else {
-                            nearPlayer.addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+                            nearPlayer.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
                         }
                     }
 
-                } else if (warlordsPlayer.getSpec() instanceof Berserker || warlordsPlayer.getSpec() instanceof Defender || warlordsPlayer.getSpec() instanceof Revenant) {
+                } else if (wp.getSpec() instanceof Berserker || wp.getSpec() instanceof Defender || wp.getSpec() instanceof Revenant) {
                     Warlords.getPlayer(nearPlayer).getCooldownManager().addCooldown(Strike.this.getClass(),
-                            warlordsPlayer.getSpec() instanceof Revenant ? "CRIP" : "WND", 3, warlordsPlayer, CooldownTypes.DEBUFF);
+                            new Strike(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier),
+                            wp.getSpec() instanceof Revenant ? "CRIP" : "WND", 3, wp, CooldownTypes.DEBUFF);
 
-                    nearPlayer.addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+                    nearPlayer.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
 
                     for (Player player1 : Bukkit.getOnlinePlayers()) {
                         player1.playSound(player.getLocation(), "warrior.mortalstrike.impact", 2, 1);

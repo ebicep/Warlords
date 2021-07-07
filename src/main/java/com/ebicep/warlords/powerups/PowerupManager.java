@@ -43,8 +43,8 @@ public class PowerupManager extends BukkitRunnable {
                             warlordsPlayer.getCooldownManager().addCooldown(EnergyPowerUp.class, "ENERGY", powerUp.getDuration(), warlordsPlayer, CooldownTypes.BUFF);
                             entitiesNear.get(0).sendMessage("picked up energy");
                         } else {*/
-                            warlordsPlayer.getCooldownManager().addCooldown(DamagePowerUp.class, "DMG", powerUp.getDuration(), warlordsPlayer, CooldownTypes.BUFF);
-                            entitiesNear.get(0).sendMessage("§6You activated the §c§lDAMAGE §6powerup! §a+20% §6Damage for §a30 §6seconds!");
+                            warlordsPlayer.getCooldownManager().addCooldown(DamagePowerUp.class, this, "DMG", powerUp.getDuration(), warlordsPlayer, CooldownTypes.BUFF);
+                        entitiesNear.get(0).sendMessage("§6You activated the §c§lDAMAGE §6powerup! §a+20% §6Damage for §a30 §6seconds!");
 
                         //}
                     } else if (powerUp instanceof HealingPowerUp) {
@@ -52,7 +52,7 @@ public class PowerupManager extends BukkitRunnable {
                         entitiesNear.get(0).sendMessage("§6You activated the §a§lHEALING §6powerup! §a+10% §6Health per second for §a10 §6seconds!");
 
                     } else if (powerUp instanceof SpeedPowerUp) {
-                        warlordsPlayer.getCooldownManager().addCooldown(SpeedPowerUp.class, "SPEED", powerUp.getDuration(), warlordsPlayer, CooldownTypes.BUFF);
+                        warlordsPlayer.getCooldownManager().addCooldown(SpeedPowerUp.class, this, "SPEED", powerUp.getDuration(), warlordsPlayer, CooldownTypes.BUFF);
                         entitiesNear.get(0).sendMessage("§6You activated the §e§lSPEED §6powerup! §a+40% §6Speed for §a10 §6seconds!");
                         warlordsPlayer.getSpeed().addSpeedModifier("Speed Powerup", 40, 10 * 20, "BASE");
 

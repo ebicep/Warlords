@@ -72,17 +72,4 @@ public enum Team {
         return inverseMapping[ordinal()];
     }
 
-    public static Team getSelected(Player player) {
-        return player.getMetadata("selected-team").stream()
-                .map(v -> v.value() instanceof Team ? (Team) v.value() : null)
-                .filter(Objects::nonNull)
-                .findAny()
-                .orElse(null);
-    }
-
-    public static void setSelected(Player player, Team selectedTeam) {
-        player.removeMetadata("selected-team", Warlords.getInstance());
-        player.setMetadata("selected-team", new FixedMetadataValue(Warlords.getInstance(), selectedTeam));
-    }
-
 }

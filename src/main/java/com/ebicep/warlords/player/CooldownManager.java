@@ -1,5 +1,6 @@
 package com.ebicep.warlords.player;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.abilties.ArcaneShield;
 import com.ebicep.warlords.classes.abilties.Intervene;
 import com.ebicep.warlords.classes.abilties.UndyingArmy;
@@ -43,6 +44,10 @@ public class CooldownManager {
                 } else if (cooldown.getCooldownClass() == UndyingArmy.class) {
                     int healing = (int) ((warlordsPlayer.getMaxHealth() - warlordsPlayer.getHealth()) * .35 + 200);
                     warlordsPlayer.addHealth(cooldown.getFrom(), "Undying Army", healing, healing, -1, 100);
+
+                    for (Player player1 : warlordsPlayer.getWorld().getPlayers()) {
+                        player1.playSound(warlordsPlayer.getLocation(), "paladin.holyradiance.activation", 0.5f, 1);
+                    }
                 } else if (cooldown.getCooldownClass() == ArcaneShield.class) {
                     if (warlordsPlayer.getEntity() instanceof Player) {
                         ((EntityLiving) ((CraftPlayer) warlordsPlayer.getEntity()).getHandle()).setAbsorptionHearts(0);
@@ -70,16 +75,19 @@ public class CooldownManager {
         return cooldowns.stream().filter(cooldown -> cooldown.getCooldownType() == CooldownTypes.ABILITY).collect(Collectors.toList());
     }
 
-    public void addCooldown(Class cooldownClass, String name, float timeLeft, WarlordsPlayer from, CooldownTypes cooldownType) {
-        cooldowns.add(new Cooldown(cooldownClass, name, timeLeft, from, cooldownType));
+    public void addCooldown(Class cooldownClass, Object cooldownObject, String name, float timeLeft, WarlordsPlayer from, CooldownTypes cooldownType) {
+        cooldowns.add(new Cooldown(cooldownClass, cooldownObject, name, timeLeft, from, cooldownType));
     }
 
     public void addCooldown(Cooldown cooldown) {
         cooldowns.add(cooldown);
     }
 
-    public void clear() {
+    public void clearCooldowns() {
         cooldowns.clear();
+        for (WarlordsPlayer value : Warlords.getPlayers().values()) {
+            value.getCooldownManager().getCooldowns().removeIf(cd -> cd.getFrom() == warlordsPlayer);
+        }
     }
 
 }

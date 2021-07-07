@@ -15,14 +15,14 @@ public class ShoutCommand implements CommandExecutor {
 
         WarlordsPlayer player = BaseCommand.requireWarlordsPlayer(sender);
         if (player != null) { // We only have a warlords player if the game is running
-            String message = player.getTeam().teamColor() + "[SHOUT] ";
-            message += ChatColor.AQUA + sender.getName() + ChatColor.WHITE + ": ";
+            StringBuilder message = new StringBuilder(player.getTeam().teamColor() + "[SHOUT] ");
+            message.append(ChatColor.AQUA).append(sender.getName()).append(ChatColor.WHITE).append(": ");
             for (String arg : args) {
-                message += arg + " "; // TODO use a stringbuilder
+                message.append(arg).append(" ");
             }
 
             for (WarlordsPlayer p : PlayerFilter.playingGame(player.getGame()).aliveTeammatesOf(player)) {
-                p.sendMessage(message);
+                p.sendMessage(message.toString());
             }
         }
 

@@ -8,6 +8,7 @@ import net.minecraft.server.v1_8_R3.NBTTagCompound;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Statistic;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -240,6 +241,17 @@ public class Utils {
         return distance;
     }
 
+    public static void resetPlayerMovementStatistics(Player player) {
+        player.setStatistic(Statistic.WALK_ONE_CM, 0);
+        player.setStatistic(Statistic.HORSE_ONE_CM, 0);
+    }
+
+    public static int getPlayerMovementStatistics(Player player) {
+        int walkStatistic = player.getStatistic(Statistic.WALK_ONE_CM);
+        int horseStatistic = player.getStatistic(Statistic.HORSE_ONE_CM);
+        return walkStatistic + horseStatistic;
+    }
+
     public static boolean tunnelUnder(Player p) {
         Location location = p.getLocation().clone();
         for (int i = 0; i < 15; i++) {
@@ -338,8 +350,7 @@ public class Utils {
     public static String addCommaAndRound(float amount) {
         amount = Math.round(amount);
         DecimalFormat formatter = new DecimalFormat("#,###");
-        String output = formatter.format(amount);
-        return output;
+        return formatter.format(amount);
     }
 
     /**

@@ -98,7 +98,7 @@ public class Totem extends EntityArmorStand {
         }
 
         @Override
-        public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
+        public void onActivate(WarlordsPlayer wp, Player player) {
 
             Location standLocation = player.getLocation();
             standLocation.setYaw(0);
@@ -110,8 +110,8 @@ public class Totem extends EntityArmorStand {
             totemStand.setHelmet(new ItemStack(Material.RED_ROSE, 1, (short) 4));
             totemStand.setMetadata("capacitor-totem-" + player.getName().toLowerCase(), new FixedMetadataValue(Warlords.getInstance(), true));
 
-            Totem capacitorTotem = new Totem(((CraftWorld) player.getWorld()).getHandle(), warlordsPlayer, totemStand, 8);
-            warlordsPlayer.getCooldownManager().addCooldown(TotemThunderlord.this.getClass(), "TOTEM", 8, warlordsPlayer, CooldownTypes.ABILITY);
+            Totem capacitorTotem = new Totem(((CraftWorld) player.getWorld()).getHandle(), wp, totemStand, 8);
+            wp.getCooldownManager().addCooldown(TotemThunderlord.this.getClass(), new TotemThunderlord(), "TOTEM", 8, wp, CooldownTypes.ABILITY);
 
             for (Player player1 : player.getWorld().getPlayers()) {
                 player1.playSound(player.getLocation(), "shaman.totem.activation", 1, 1);
@@ -155,7 +155,7 @@ public class Totem extends EntityArmorStand {
         }
 
         @Override
-        public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
+        public void onActivate(WarlordsPlayer wp, Player player) {
 
             Location standLocation = player.getLocation();
             standLocation.setYaw(0);
@@ -171,13 +171,13 @@ public class Totem extends EntityArmorStand {
                 player1.playSound(standLocation, "shaman.chainlightning.impact", 2, 2);
             }
 
-            int secondsLeft = 4 + (4 * (int) Math.round((double) warlordsPlayer.getHealth() / warlordsPlayer.getMaxHealth()));
-            Totem deathsDebtTotem = new Totem(((CraftWorld) player.getWorld()).getHandle(), warlordsPlayer, totemStand, secondsLeft);
-            warlordsPlayer.getCooldownManager().addCooldown(TotemSpiritguard.this.getClass(), "RESP", secondsLeft, warlordsPlayer, CooldownTypes.ABILITY);
+            int secondsLeft = 4 + (4 * (int) Math.round((double) wp.getHealth() / wp.getMaxHealth()));
+            Totem deathsDebtTotem = new Totem(((CraftWorld) player.getWorld()).getHandle(), wp, totemStand, secondsLeft);
+            wp.getCooldownManager().addCooldown(TotemSpiritguard.this.getClass(), new Repentance(), "RESP", secondsLeft, wp, CooldownTypes.ABILITY);
 
             player.setMetadata("TOTEM", new FixedMetadataValue(Warlords.getInstance(), this));
 
-            CircleEffect circle = new CircleEffect(warlordsPlayer, standLocation.clone().add(0, 1, 0), 10);
+            CircleEffect circle = new CircleEffect(wp, standLocation.clone().add(0, 1, 0), 10);
             circle.addEffect(new CircumferenceEffect(ParticleEffect.SPELL));
             circle.addEffect(new DoubleLineEffect(ParticleEffect.REDSTONE));
             BukkitTask task = Bukkit.getScheduler().runTaskTimer(Warlords.getInstance(), circle::playEffects, 0, 1);
@@ -200,8 +200,8 @@ public class Totem extends EntityArmorStand {
                         player.sendMessage("§c\u00AB §2Spirit's Respite §7delayed §c" + -Math.round(getDelayedDamage()) + " §7damage. §6" + secondsLeft + " §7seconds left.");
                     } else {
                         if (secondsLeft == 0) {
-                            warlordsPlayer.getCooldownManager().getCooldowns().removeIf(cd -> cd.getName().equals("RESP"));
-                            warlordsPlayer.getCooldownManager().addCooldown(TotemSpiritguard.this.getClass(), "DEBT", 6, warlordsPlayer, CooldownTypes.ABILITY);
+                            wp.getCooldownManager().getCooldowns().removeIf(cd -> cd.getName().equals("RESP"));
+                            wp.getCooldownManager().addCooldown(TotemSpiritguard.this.getClass(), new TotemSpiritguard(), "DEBT", 6, wp, CooldownTypes.ABILITY);
                             player.removeMetadata("TOTEM", Warlords.getInstance());
 
                             if (!isPlayerInRadius) {
@@ -231,7 +231,7 @@ public class Totem extends EntityArmorStand {
                             );
                             // Teammate heal
                             PlayerFilter.entitiesAround(deathsDebtTotem.getTotemArmorStand(), 8.0D, 7.0D, 8.0D)
-                                .aliveTeammatesOf(warlordsPlayer)
+                                .aliveTeammatesOf(wp)
                                 .forEach((nearPlayer) -> {
                                     nearPlayer.addHealth(deathsDebtTotem.getOwner(), deathsDebtTotem.getOwner().getSpec().getOrange().getName(),
                                             damage * -.15f,
@@ -242,7 +242,7 @@ public class Totem extends EntityArmorStand {
                             player.getWorld().spigot().strikeLightningEffect(standLocation, false);
                             // Enemy damage
                             PlayerFilter.entitiesAround(deathsDebtTotem.getTotemArmorStand(), 8.0D, 7.0D, 8.0D)
-                                .aliveEnemiesOf(warlordsPlayer)
+                                .aliveEnemiesOf(wp)
                                 .forEach((nearPlayer) -> {
                                     nearPlayer.addHealth(deathsDebtTotem.getOwner(), deathsDebtTotem.getOwner().getSpec().getOrange().getName(),
                                             TotemSpiritguard.this.getDelayedDamage() * .15f,
@@ -256,7 +256,7 @@ public class Totem extends EntityArmorStand {
                         }
                     }
 
-                    if (warlordsPlayer.getHealth() <= 0) {
+                    if (wp.getHealth() <= 0) {
                         deathsDebtTotem.getTotemArmorStand().remove();
                         this.cancel();
                         task.cancel();
@@ -302,7 +302,7 @@ public class Totem extends EntityArmorStand {
         }
 
         @Override
-        public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
+        public void onActivate(WarlordsPlayer wp, Player player) {
 
             Location standLocation = player.getLocation();
             standLocation.setYaw(0);
@@ -314,8 +314,8 @@ public class Totem extends EntityArmorStand {
             totemStand.setHelmet(new ItemStack(Material.RED_ROSE, 1, (short) 7));
             totemStand.setMetadata("healing-totem-" + player.getName(), new FixedMetadataValue(Warlords.getInstance(), true));
 
-            Totem healingTotem = new Totem(((CraftWorld) player.getWorld()).getHandle(), warlordsPlayer, totemStand, 5);
-            warlordsPlayer.getCooldownManager().addCooldown(TotemEarthwarden.this.getClass(), "TOTEM", 5, warlordsPlayer, CooldownTypes.ABILITY);
+            Totem healingTotem = new Totem(((CraftWorld) player.getWorld()).getHandle(), wp, totemStand, 5);
+            wp.getCooldownManager().addCooldown(TotemEarthwarden.this.getClass(), new TotemEarthwarden(), "TOTEM", 5, wp, CooldownTypes.ABILITY);
 
             for (Player player1 : player.getWorld().getPlayers()) {
                 player1.playSound(player.getLocation(), "shaman.totem.activation", 2, 1);
@@ -338,7 +338,7 @@ public class Totem extends EntityArmorStand {
 
 
                         PlayerFilter.entitiesAround(healingTotem.getTotemArmorStand(), 5, 5, 5)
-                            .aliveTeammatesOf(warlordsPlayer)
+                            .aliveTeammatesOf(wp)
                             .forEach((nearPlayer) -> {
                                     nearPlayer.addHealth(
                                         healingTotem.getOwner(),
@@ -358,7 +358,7 @@ public class Totem extends EntityArmorStand {
                         new FallingBlockWaveEffect(totemStand.getLocation().clone().add(0, 1, 0), 7, 1.2, Material.SAPLING, (byte) 1).play();
 
                         PlayerFilter.entitiesAround(healingTotem.getTotemArmorStand(), 5, 5, 5)
-                            .aliveTeammatesOf(warlordsPlayer)
+                            .aliveTeammatesOf(wp)
                             .forEach((nearPlayer) -> {
                                 nearPlayer.addHealth(
                                     healingTotem.getOwner(),

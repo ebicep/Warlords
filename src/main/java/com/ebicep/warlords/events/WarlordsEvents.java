@@ -10,6 +10,8 @@ import com.ebicep.warlords.maps.flags.GroundFlagLocation;
 import com.ebicep.warlords.maps.flags.PlayerFlagLocation;
 import com.ebicep.warlords.maps.flags.SpawnFlagLocation;
 import com.ebicep.warlords.maps.flags.WaitingFlagLocation;
+import com.ebicep.warlords.player.Cooldown;
+import com.ebicep.warlords.player.CustomScoreboard;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.ItemBuilder;
 import com.ebicep.warlords.util.PacketUtils;
@@ -109,13 +111,14 @@ public class WarlordsEvents implements Listener {
             player.getInventory().clear();
             player.getInventory().setArmorContents(new ItemStack[]{null, null, null, null});
             player.getInventory().setItem(4, new ItemBuilder(Material.NETHER_STAR).name("§aSelection Menu").get());
+
+            CustomScoreboard.giveMainLobbyScoreboard(player);
         }
         WarlordsPlayer p = Warlords.getPlayer(player);
         if (p != null) {
             player.teleport(p.getLocation());
             p.updatePlayerReference(player);
         }
-
     }
 
     @EventHandler
@@ -132,30 +135,33 @@ public class WarlordsEvents implements Listener {
                     warlordsPlayerAttacker.setHitCooldown(12);
                     warlordsPlayerAttacker.subtractEnergy(warlordsPlayerAttacker.getSpec().getEnergyOnHit() * -1);
 
-                    if (warlordsPlayerAttacker.getSpec() instanceof Spiritguard && warlordsPlayerAttacker.getCooldownManager().getCooldown(Soulbinding.class).size() > 0) {
-                        if (warlordsPlayerAttacker.hasBoundPlayer(warlordsPlayerVictim)) {
-                            for (Soulbinding.SoulBoundPlayer soulBindedPlayer : warlordsPlayerAttacker.getSoulBindedPlayers()) {
-                                if (soulBindedPlayer.getBoundPlayer() == warlordsPlayerVictim) {
-                                    soulBindedPlayer.setHitWithLink(false);
-                                    soulBindedPlayer.setHitWithSoul(false);
-                                    soulBindedPlayer.setTimeLeft(3);
-                                    break;
-                                }
-                            }
-                        } else {
-                            warlordsPlayerVictim.sendMessage(ChatColor.RED + "\u00AB " + ChatColor.GRAY + "You have been bound by " + warlordsPlayerAttacker.getName() + "'s " + ChatColor.LIGHT_PURPLE + "Soulbinding Weapon " + ChatColor.GRAY + "!");
-                            warlordsPlayerAttacker.sendMessage(ChatColor.GREEN + "\u00BB " + ChatColor.GRAY + "Your " + ChatColor.LIGHT_PURPLE + "Soulbinding Weapon " + ChatColor.GRAY + "has bound " + warlordsPlayerVictim.getName() + "!");
-                            warlordsPlayerAttacker.getSoulBindedPlayers().add(new Soulbinding.SoulBoundPlayer(warlordsPlayerVictim, 3));
-                            for (Player player1 : warlordsPlayerVictim.getWorld().getPlayers()) {
-                                player1.playSound(warlordsPlayerVictim.getLocation(), "shaman.earthliving.activation", 2, 1);
-                            }
-                        }
+                    if (warlordsPlayerAttacker.getSpec() instanceof Spiritguard && !warlordsPlayerAttacker.getCooldownManager().getCooldown(Soulbinding.class).isEmpty()) {
+                        warlordsPlayerAttacker.getCooldownManager().getCooldown(Soulbinding.class).stream()
+                                .map(Cooldown::getCooldownObject)
+                                .map(Soulbinding.class::cast)
+                                .forEach(soulbinding -> {
+                                    if (soulbinding.hasBoundPlayer(warlordsPlayerVictim)) {
+                                        soulbinding.getSoulBindedPlayers().stream()
+                                                .filter(p -> p.getBoundPlayer() == warlordsPlayerVictim)
+                                                .forEach(boundPlayer -> {
+                                                    boundPlayer.setHitWithSoul(false);
+                                                    boundPlayer.setHitWithLink(false);
+                                                    boundPlayer.setTimeLeft(3);
+                                                });
+                                    } else {
+                                        warlordsPlayerVictim.sendMessage(ChatColor.RED + "\u00AB " + ChatColor.GRAY + "You have been bound by " + warlordsPlayerAttacker.getName() + "'s " + ChatColor.LIGHT_PURPLE + "Soulbinding Weapon" + ChatColor.GRAY + "!");
+                                        warlordsPlayerAttacker.sendMessage(ChatColor.GREEN + "\u00BB " + ChatColor.GRAY + "Your " + ChatColor.LIGHT_PURPLE + "Soulbinding Weapon " + ChatColor.GRAY + "has bound " + warlordsPlayerVictim.getName() + "!");
+                                        soulbinding.getSoulBindedPlayers().add(new Soulbinding.SoulBoundPlayer(warlordsPlayerVictim, 3));
+                                        for (Player player1 : warlordsPlayerVictim.getWorld().getPlayers()) {
+                                            player1.playSound(warlordsPlayerVictim.getLocation(), "shaman.earthliving.activation", 2, 1);
+                                        }
+                                    }
+                                });
                     }
-
                     warlordsPlayerVictim.addHealth(warlordsPlayerAttacker, "", -132, -179, 25, 200);
                 }
 
-                if (warlordsPlayerVictim.getCooldownManager().getCooldown(IceBarrier.class).size() > 0) {
+                if (!warlordsPlayerVictim.getCooldownManager().getCooldown(IceBarrier.class).isEmpty()) {
                     warlordsPlayerAttacker.getSpeed().addSpeedModifier("Ice Barrier", -20, 2 * 20);
                 }
             }

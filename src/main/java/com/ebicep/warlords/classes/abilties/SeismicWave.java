@@ -93,9 +93,6 @@ public class SeismicWave extends AbstractAbility {
                 for (int i = 0; i < customFallingBlocks.size(); i++) {
                     CustomFallingBlock customFallingBlock = customFallingBlocks.get(i);
                     customFallingBlock.setTicksLived(customFallingBlock.getTicksLived() + 1);
-                    //TODO fix bug where the blocks dont get removed if ability used near high wall - stuck in block?
-                    //System.out.println(customFallingBlock.getCustomFallingBlock().getLocation().getY());
-                    //System.out.println(customFallingBlock.getyLevel());
                     if (customFallingBlock.getFallingBlock().getLocation().getY() <= customFallingBlock.getyLevel() || customFallingBlock.getFallingBlock().getTicksLived() > 10) {
                         customFallingBlock.getFallingBlock().remove();
                         customFallingBlocks.remove(i);

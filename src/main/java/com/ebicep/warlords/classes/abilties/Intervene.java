@@ -32,12 +32,12 @@ public class Intervene extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
+    public void onActivate(WarlordsPlayer wp, Player player) {
         setDamagePrevented(0);
-        PlayerFilter.entitiesAround(warlordsPlayer, 10, 10, 10)
-            .aliveTeammatesOfExcludingSelf(warlordsPlayer)
-            .requireLineOfSight(warlordsPlayer)
-            .closestFirst(warlordsPlayer)
+        PlayerFilter.entitiesAround(wp, 10, 10, 10)
+            .aliveTeammatesOfExcludingSelf(wp)
+            .requireLineOfSight(wp)
+            .closestFirst(wp)
             .first((nearWarlordsPlayer) -> {
                 //green line thingy
                 Location lineLocation = player.getLocation().add(0, 1, 0);
@@ -48,19 +48,19 @@ public class Intervene extends AbstractAbility {
                 }
 
                 //new cooldown, both players have same instance of intervene now
-                Cooldown interveneCooldown = new Cooldown(Intervene.this.getClass(), "VENE", 6, warlordsPlayer, CooldownTypes.ABILITY);
+                Cooldown interveneCooldown = new Cooldown(Intervene.this.getClass(), new Intervene(), "VENE", 5, wp, CooldownTypes.ABILITY);
 
-                warlordsPlayer.sendMessage("§a\u00BB§7 You are now protecting " + nearWarlordsPlayer.getName() + " with your §eIntervene!");
-                warlordsPlayer.getCooldownManager().addCooldown(interveneCooldown);
+                wp.sendMessage("§a\u00BB§7 You are now protecting " + nearWarlordsPlayer.getName() + " with your §eIntervene!");
+                wp.getCooldownManager().addCooldown(interveneCooldown);
 
                 //removing all other intervenes bc less work
                 nearWarlordsPlayer.getCooldownManager().getCooldowns().removeAll(nearWarlordsPlayer.getCooldownManager().getCooldown(Intervene.this.getClass()));
 
-                nearWarlordsPlayer.sendMessage("§a\u00BB§7 " + warlordsPlayer.getName() + " is shielding you with their " + ChatColor.YELLOW + "Intervene" + ChatColor.GRAY + "!");
+                nearWarlordsPlayer.sendMessage("§a\u00BB§7 " + wp.getName() + " is shielding you with their " + ChatColor.YELLOW + "Intervene" + ChatColor.GRAY + "!");
                 nearWarlordsPlayer.getCooldownManager().addCooldown(interveneCooldown);
 
-                warlordsPlayer.getSpec().getBlue().setCurrentCooldown(cooldown);
-                warlordsPlayer.updateBlueItem();
+                wp.getSpec().getBlue().setCurrentCooldown(cooldown);
+                wp.updateBlueItem();
 
                 for (Player player1 : player.getWorld().getPlayers()) {
                     player1.playSound(player.getLocation(), "warrior.intervene.impact", 1, 1);
@@ -69,11 +69,11 @@ public class Intervene extends AbstractAbility {
                     new BukkitRunnable() {
                         @Override
                         public void run() {
-                            if (nearWarlordsPlayer.getCooldownManager().getCooldown(Intervene.class).size() > 0) {
+                            if (!nearWarlordsPlayer.getCooldownManager().getCooldown(Intervene.class).isEmpty()) {
                                 if (nearWarlordsPlayer.getCooldownManager().getCooldown(Intervene.class).get(0).getTimeLeft() <= 1)
-                                    nearWarlordsPlayer.sendMessage("§a\u00BB§7 " + warlordsPlayer.getName() + "'s §eIntervene §7will expire in §6" + (int) (nearWarlordsPlayer.getCooldownManager().getCooldown(Intervene.class).get(0).getTimeLeft() + .5) + "§7 second!");
+                                    nearWarlordsPlayer.sendMessage("§a\u00BB§7 " + wp.getName() + "'s §eIntervene §7will expire in §6" + (int) (nearWarlordsPlayer.getCooldownManager().getCooldown(Intervene.class).get(0).getTimeLeft() + .5) + "§7 second!");
                                 else
-                                    nearWarlordsPlayer.sendMessage("§a\u00BB§7 " + warlordsPlayer.getName() + "'s §eIntervene §7will expire in §6" + (int) (nearWarlordsPlayer.getCooldownManager().getCooldown(Intervene.class).get(0).getTimeLeft() + .5) + "§7 seconds!");
+                                    nearWarlordsPlayer.sendMessage("§a\u00BB§7 " + wp.getName() + "'s §eIntervene §7will expire in §6" + (int) (nearWarlordsPlayer.getCooldownManager().getCooldown(Intervene.class).get(0).getTimeLeft() + .5) + "§7 seconds!");
                             } else {
                                 this.cancel();
                             }
@@ -83,14 +83,12 @@ public class Intervene extends AbstractAbility {
                     new BukkitRunnable() {
                         @Override
                         public void run() {
-                            if (nearWarlordsPlayer.getCooldownManager().getCooldown(Intervene.class).size() > 0) {
+                            if (!nearWarlordsPlayer.getCooldownManager().getCooldown(Intervene.class).isEmpty()) {
                                 if (nearWarlordsPlayer.getCooldownManager().getCooldown(Intervene.class).get(0).getFrom().isDead() ||
                                         nearWarlordsPlayer.getLocation().distanceSquared(nearWarlordsPlayer.getCooldownManager().getCooldown(Intervene.class).get(0).getFrom().getEntity().getLocation()) > 15 * 15
                                 ) {
                                     nearWarlordsPlayer.sendMessage("§c\u00AB§7 " + nearWarlordsPlayer.getCooldownManager().getCooldown(Intervene.class).get(0).getFrom().getName() + "'s " + ChatColor.YELLOW + "Intervene " + ChatColor.GRAY + "has expired!");
                                     nearWarlordsPlayer.getCooldownManager().getCooldowns().remove(nearWarlordsPlayer.getCooldownManager().getCooldown(Intervene.class).get(0));
-                                    // TODO: This is impossible with offline player support
-                                    //nearWarlordsPlayer.removeMetadata("INTERVENE", Warlords.getInstance());
                                 }
                             }
                         }

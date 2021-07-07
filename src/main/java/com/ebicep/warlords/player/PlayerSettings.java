@@ -1,33 +1,51 @@
 package com.ebicep.warlords.player;
 
+import com.ebicep.warlords.maps.Team;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class PlayerSettings implements ConfigurationSerializable {
     private Classes selectedClass = Classes.CRYOMANCER;
     private ClassesSkillBoosts classesSkillBoosts = selectedClass.skillBoosts.get(0);
     private boolean hotKeyMode = true;
     private Weapons weapon = Weapons.FELFLAME_BLADE;
+    /**
+     * Preferred team in the upcoming warlords game
+     */
+    private transient Team wantedTeam = null;
 
+    @Nonnull
     public Classes selectedClass() {
         return selectedClass;
     }
 
-    public void selectedClass(Classes selectedClass) {
+    public void selectedClass(@Nonnull Classes selectedClass) {
         this.selectedClass = selectedClass;
         if (!selectedClass.skillBoosts.contains(classesSkillBoosts)) {
             classesSkillBoosts = selectedClass.skillBoosts.get(0);
         }
     }
 
+    @Nonnull
     public ClassesSkillBoosts classesSkillBoosts() {
         return classesSkillBoosts;
     }
 
-    public void classesSkillBoosts(ClassesSkillBoosts classesSkillBoosts) {
+    public void classesSkillBoosts(@Nonnull ClassesSkillBoosts classesSkillBoosts) {
         this.classesSkillBoosts = classesSkillBoosts;
+    }
+
+    @Nullable
+    public Team wantedTeam() {
+        return wantedTeam;
+    }
+
+    public void wantedTeam(@Nullable Team wantedTeam) {
+        this.wantedTeam = wantedTeam;
     }
 
     @Override
@@ -39,7 +57,8 @@ public class PlayerSettings implements ConfigurationSerializable {
         return config;
     }
 
-    public static PlayerSettings deserialize(Map<String, Object> config) {
+    @Nonnull
+    public static PlayerSettings deserialize(@Nonnull Map<String, Object> config) {
         PlayerSettings settings = new PlayerSettings();
         try {
             settings.selectedClass(Classes.valueOf(config.get("class").toString()));

@@ -21,16 +21,16 @@ public class HolyRadiance extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
-        for(WarlordsPlayer p : PlayerFilter
-            .entitiesAround(player, 3.6D, 3.6D, 3.6D)
-            .aliveTeammatesOfExcludingSelf(warlordsPlayer)
+    public void onActivate(WarlordsPlayer wp, Player player) {
+        for (WarlordsPlayer p : PlayerFilter
+            .entitiesAround(player, 4, 4, 4)
+            .aliveTeammatesOfExcludingSelf(wp)
         ) {
-            p.addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+            p.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
         }
 
-        warlordsPlayer.subtractEnergy(energyCost);
-        warlordsPlayer.addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+        wp.subtractEnergy(energyCost);
+        wp.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "paladin.holyradiance.activation", 2, 1);

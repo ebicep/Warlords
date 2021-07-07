@@ -398,7 +398,7 @@ public class GameMenu {
     }
 
     public static void openTeamMenu(Player player) {
-        Team selectedTeam = Team.getSelected(player);
+        Team selectedTeam = Warlords.getPlayerSettings(player.getUniqueId()).wantedTeam();
         Menu menu = new Menu("Team Selector", 9 * 4);
         List<Team> values = new ArrayList<>(Arrays.asList(Team.values()));
         for (int i = 0; i < values.size(); i++) {
@@ -422,7 +422,7 @@ public class GameMenu {
                         if (selectedTeam != team) {
                             player.sendMessage(ChatColor.GREEN + "You have joined the " + team.teamColor() + team.name + ChatColor.GREEN + " team!");
                             Warlords.game.setPlayerTeam(player, team);
-                            Team.setSelected(player, team);
+                            Warlords.getPlayerSettings(player.getUniqueId()).wantedTeam(team);
                         }
                         openTeamMenu(player);
                     }

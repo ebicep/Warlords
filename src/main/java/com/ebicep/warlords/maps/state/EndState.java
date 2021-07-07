@@ -55,11 +55,6 @@ public class EndState implements State, TimerDebugAble {
         mvp.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.LIGHT_PURPLE + "Total Flag Captures (everyone): " + ChatColor.GOLD + Utils.addCommaAndRound((float) players.stream().mapToDouble(WarlordsPlayer::getFlagsCaptured).sum()) + "\n" + ChatColor.LIGHT_PURPLE + "Total Flag Returns (everyone): " + ChatColor.GOLD + Utils.addCommaAndRound((float) players.stream().mapToDouble(WarlordsPlayer::getFlagsCaptured).sum())).create()));
         sendCenteredHoverableMessageToAllGamePlayer(game, Collections.singletonList(mvp));
         players = players.stream().sorted(Comparator.comparing(WarlordsPlayer::getTotalCapsAndReturns)).collect(Collectors.toList());
-        for (WarlordsPlayer player : players) {
-            System.out.println(player.getName());
-            System.out.println(player.getFlagsCaptured());
-            System.out.println(player.getFlagsReturned());
-        }
         TextComponent playerMvp = new TextComponent(ChatColor.AQUA + players.get(0).getName());
         playerMvp.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.LIGHT_PURPLE + "Flag Captures: " + ChatColor.GOLD + players.get(0).getFlagsCaptured() + "\n" + ChatColor.LIGHT_PURPLE + "Flag Returns: " + ChatColor.GOLD + players.get(0).getFlagsReturned()).create()));
         sendCenteredHoverableMessageToAllGamePlayer(game, Collections.singletonList(playerMvp));
@@ -71,7 +66,7 @@ public class EndState implements State, TimerDebugAble {
         List<TextComponent> leaderboardPlayersDamage = new ArrayList<>();
         for (int i = 0; i < players.size() && i < 3; i++) {
             WarlordsPlayer warlordsPlayer = players.get(i);
-            TextComponent player = new TextComponent(ChatColor.AQUA + warlordsPlayer.getName() + ChatColor.GRAY + ": " + ChatColor.GOLD + warlordsPlayer.getTotalHealing() + "k");
+            TextComponent player = new TextComponent(ChatColor.AQUA + warlordsPlayer.getName() + ChatColor.GRAY + ": " + ChatColor.GOLD + getSimplifiedNumber((long) warlordsPlayer.getTotalDamage()));
             player.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.DARK_GRAY + "Lv" + ChatColor.GRAY + "90 " + ChatColor.GOLD + warlordsPlayer.getSpec().getClassName() + ChatColor.GREEN + " (" + warlordsPlayer.getSpec().getClass().getSimpleName() + ")").create()));
             leaderboardPlayersDamage.add(player);
             if (i != players.size() - 1) {
@@ -87,7 +82,7 @@ public class EndState implements State, TimerDebugAble {
         List<TextComponent> leaderboardPlayersHealing = new ArrayList<>();
         for (int i = 0; i < players.size() && i < 3; i++) {
             WarlordsPlayer warlordsPlayer = players.get(i);
-            TextComponent player = new TextComponent(ChatColor.AQUA + warlordsPlayer.getName() + ChatColor.GRAY + ": " + ChatColor.GOLD + warlordsPlayer.getTotalHealing() + "k");
+            TextComponent player = new TextComponent(ChatColor.AQUA + warlordsPlayer.getName() + ChatColor.GRAY + ": " + ChatColor.GOLD + getSimplifiedNumber((long) warlordsPlayer.getTotalHealing()));
             player.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.DARK_GRAY + "Lv" + ChatColor.GRAY + "90 " + ChatColor.GOLD + warlordsPlayer.getSpec().getClassName() + ChatColor.GREEN + " (" + warlordsPlayer.getSpec().getClass().getSimpleName() + ")").create()));
             leaderboardPlayersHealing.add(player);
             if (i != players.size() - 1) {
@@ -184,5 +179,31 @@ public class EndState implements State, TimerDebugAble {
         game.forEachOnlinePlayer((p, team) -> {
             Utils.sendCenteredHoverableMessage(p, message);
         });
+    }
+
+    private static final NavigableMap<Long, String> suffixes = new TreeMap<>();
+
+    static {
+        suffixes.put(1_000L, "k");
+        suffixes.put(1_000_000L, "m");
+        suffixes.put(1_000_000_000L, "b");
+        suffixes.put(1_000_000_000_000L, "t");
+        suffixes.put(1_000_000_000_000_000L, "p");
+        suffixes.put(1_000_000_000_000_000_000L, "e");
+    }
+
+    public static String getSimplifiedNumber(long value) {
+        //Long.MIN_VALUE == -Long.MIN_VALUE so we need an adjustment here
+        if (value == Long.MIN_VALUE) return getSimplifiedNumber(Long.MIN_VALUE + 1);
+        if (value < 0) return "-" + getSimplifiedNumber(-value);
+        if (value < 1000) return Long.toString(value); //deal with easy case
+
+        Map.Entry<Long, String> e = suffixes.floorEntry(value);
+        Long divideBy = e.getKey();
+        String suffix = e.getValue();
+
+        long truncated = value / (divideBy / 10); //the number part of the output times 10
+        boolean hasDecimal = truncated < 100 && (truncated / 10d) != (truncated / 10);
+        return hasDecimal ? (truncated / 10d) + suffix : (truncated / 10) + suffix;
     }
 }

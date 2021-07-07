@@ -26,11 +26,11 @@ public class Earthliving extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(WarlordsPlayer warlordsPlayer, Player player) {
-        warlordsPlayer.subtractEnergy(energyCost);
-        warlordsPlayer.getCooldownManager().addCooldown(Earthliving.this.getClass(), "EARTH", 8, warlordsPlayer, CooldownTypes.ABILITY);
+    public void onActivate(WarlordsPlayer wp, Player player) {
+        wp.subtractEnergy(energyCost);
+        wp.getCooldownManager().addCooldown(Earthliving.this.getClass(), new Earthliving(), "EARTH", 8, wp, CooldownTypes.ABILITY);
 
-        warlordsPlayer.setFirstProc(true);
+        wp.setFirstProc(true);
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "shaman.earthlivingweapon.activation", 2, 1);
@@ -39,7 +39,7 @@ public class Earthliving extends AbstractAbility {
         new BukkitRunnable() {
             @Override
             public void run() {
-                if (warlordsPlayer.getCooldownManager().getCooldown(Earthliving.class).size() > 0) {
+                if (!wp.getCooldownManager().getCooldown(Earthliving.class).isEmpty()) {
                     Location location = player.getLocation();
                     location.add(0, 1.2, 0);
                     ParticleEffect.VILLAGER_HAPPY.display(0.3F, 0.3F, 0.3F, 0.1F, 3, location, 500);
