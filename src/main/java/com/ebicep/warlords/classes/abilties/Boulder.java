@@ -86,7 +86,7 @@ public class Boulder extends AbstractAbility {
                     shouldExplode = true;
                 } else {
                     shouldExplode = PlayerFilter.entitiesAround(newLoc, 1.15, 1.15, 1.15)
-                        .aliveEnemiesOf(wp).findAny().isPresent();
+                            .aliveEnemiesOf(wp).findAny().isPresent();
                 }
 
 
@@ -96,9 +96,9 @@ public class Boulder extends AbstractAbility {
                         player1.playSound(newLoc, "shaman.boulder.impact", 2, 1);
                     }
 
-                    for(WarlordsPlayer p : PlayerFilter
-                        .entitiesAround(newLoc, 5, 5, 5)
-                        .aliveEnemiesOf(wp)
+                    for (WarlordsPlayer p : PlayerFilter
+                            .entitiesAround(newLoc, 5, 5, 5)
+                            .aliveEnemiesOf(wp)
                     ) {
                         p.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
 
