@@ -11,15 +11,15 @@ import org.bukkit.entity.Player;
 
 public class FlameBurst extends ProjectileBase {
 
-    private static final int HITBOX = 5;
+    private static final float HITBOX = 2.5f;
     
     public FlameBurst() {
-        super("Flame Burst", -557, -753, 9.4f, 60, 25, 185, 1.05, 50);
+        super("Flame Burst", -557, -753, 9.4f, 60, 25, 185, 2, 300);
     }
 
     @Override
     protected String getActivationSound() {
-        return "mage.flameburst.activation";
+        return "mage.fireball.activation";
     }
 
     @Override

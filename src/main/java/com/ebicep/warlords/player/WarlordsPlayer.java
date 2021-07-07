@@ -697,7 +697,7 @@ public final class WarlordsPlayer {
                         }
                         if (powerUpHeal) {
                             powerUpHeal = false;
-                            sendMessage("heal cancelled");
+                            sendMessage(ChatColor.GRAY + "Your §aHealing Powerup §7has worn off.");
                         }
                         if (entity.getVehicle() != null) {
                             entity.getVehicle().remove();
@@ -1370,10 +1370,10 @@ public final class WarlordsPlayer {
             // TODO Update the inventory based on the status of isUndyingArmyDead here
 
             //SKILL TREE JUICERS
-            player.getInventory().setItem(6, new ItemBuilder(Material.FIREWORK_CHARGE)
+            /*player.getInventory().setItem(6, new ItemBuilder(Material.FIREWORK_CHARGE)
                     .name(ChatColor.GREEN + "Skill Tree" + ChatColor.GRAY + " - " + ChatColor.YELLOW + "Right-Click!")
                     .lore(ChatColor.GRAY + "Opens your Skill Tree to upgrade your class!")
-                    .get());
+                    .get());*/
         }
     }
 

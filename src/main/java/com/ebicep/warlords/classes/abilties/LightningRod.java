@@ -38,19 +38,23 @@ public class LightningRod extends AbstractAbility {
 
 
         PlayerFilter.entitiesAround(player, 5.5, 5.5, 5.5)
-            .aliveEnemiesOf(wp)
-            .forEach((p) -> {
-                //knockback
-                final Location loc = p.getLocation();
-                final Vector v = player.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1.5).setY(0.4);
+                .aliveEnemiesOf(wp)
+                .forEach((p) -> {
+                    //knockback
+                    final Location loc = p.getLocation();
+                    final Vector v = player.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1.5).setY(0.4);
 
-                p.setVelocity(v);
+                    p.setVelocity(v);
 
-                // pulsedamage
-                if (Utils.getTotemDownAndClose(wp, p.getEntity()) != null) {
-                    p.addHealth(wp, wp.getSpec().getOrange().getName(), wp.getSpec().getOrange().getMinDamageHeal(), wp.getSpec().getOrange().getMaxDamageHeal(), wp.getSpec().getOrange().getCritChance(), wp.getSpec().getOrange().getCritMultiplier());
-                }
-            });
+                    // pulsedamage
+                    if (Utils.getTotemDownAndClose(wp, p.getEntity()) != null) {
+                        p.addHealth(wp, wp.getSpec().getOrange().getName(), wp.getSpec().getOrange().getMinDamageHeal(), wp.getSpec().getOrange().getMaxDamageHeal(), wp.getSpec().getOrange().getCritChance(), wp.getSpec().getOrange().getCritMultiplier());
+                        new FallingBlockWaveEffect(p.getLocation().add(0, 1, 0), 5, 1.2, Material.SAPLING, (byte) 0).play();
+                        for (Player player1 : wp.getWorld().getPlayers()) {
+                            player1.playSound(wp.getLocation(), "shaman.capacitortotem.pulse", 2, 1);
+                        }
+                    }
+                });
 
         new FallingBlockWaveEffect(playerLocation, 4, 1.1, Material.RED_ROSE, (byte) 5).play();
         player.getWorld().spigot().strikeLightningEffect(playerLocation, true);

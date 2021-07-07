@@ -421,7 +421,7 @@ public class WarlordsEvents implements Listener {
                 // PLAYER -> PLAYER only happens if the multiplier gets to a new scale
                 if (pfl.getComputedHumanMultiplier() % 10 == 0) {
                     event.getGame().forEachOnlinePlayer((p, t) -> {
-                        p.sendMessage("§eThe " + event.getTeam().coloredPrefix() + " §eflag carrier now takes §c" + pfl.getComputedHumanMultiplier() + "§e% §eincreased damage!");
+                        p.sendMessage("§eThe " + event.getTeam().coloredPrefix() + " §eflag carrier now takes §c" + pfl.getComputedHumanMultiplier() + "% §eincreased damage!");
                     });
                 }
             }

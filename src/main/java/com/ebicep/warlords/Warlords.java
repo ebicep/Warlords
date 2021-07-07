@@ -352,7 +352,8 @@ public class Warlords extends JavaPlugin {
 
                                 Firework firework = warlordsPlayer.getWorld().spawn(warlordsPlayer.getLocation(), Firework.class);
                                 FireworkMeta meta = firework.getFireworkMeta();
-                                meta.addEffects(FireworkEffect.builder().withColor(Color.LIME)
+                                meta.addEffects(FireworkEffect.builder()
+                                        .withColor(Color.LIME)
                                         .with(FireworkEffect.Type.BALL)
                                         .build());
                                 meta.setPower(0);
@@ -364,7 +365,8 @@ public class Warlords extends JavaPlugin {
 
                                 Firework firework = warlordsPlayer.getWorld().spawn(warlordsPlayer.getLocation(), Firework.class);
                                 FireworkMeta meta = firework.getFireworkMeta();
-                                meta.addEffects(FireworkEffect.builder().withColor(Color.LIME)
+                                meta.addEffects(FireworkEffect.builder()
+                                        .withColor(Color.LIME)
                                         .with(FireworkEffect.Type.BALL)
                                         .build());
                                 meta.setPower(0);

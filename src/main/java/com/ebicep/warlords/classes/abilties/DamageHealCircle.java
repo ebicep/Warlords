@@ -26,8 +26,8 @@ public class DamageHealCircle {
     private ArmorStand hammer;
     private final CircleEffect circle;
 
-    public DamageHealCircle(WarlordsPlayer warlordsPlayer, Location location, int radius, int duration, float minDamage, float maxDamage, int critChance, int critMultiplier, String name) {
-        this.warlordsPlayer = warlordsPlayer;
+    public DamageHealCircle(WarlordsPlayer wp, Location location, int radius, int duration, float minDamage, float maxDamage, int critChance, int critMultiplier, String name) {
+        this.warlordsPlayer = wp;
         this.location = location;
         this.radius = radius;
         this.duration = duration;
@@ -36,7 +36,7 @@ public class DamageHealCircle {
         this.critChance = critChance;
         this.critMultiplier = critMultiplier;
         this.name = name;
-        this.circle = new CircleEffect(warlordsPlayer.getGame(), warlordsPlayer.getTeam(), location, radius);
+        this.circle = new CircleEffect(wp.getGame(), wp.getTeam(), location, radius);
         if (name.contains("Healing Rain")) {
             this.circle.addEffect(new CircumferenceEffect(ParticleEffect.VILLAGER_HAPPY, ParticleEffect.REDSTONE));
             this.circle.addEffect(new AreaEffect(5, ParticleEffect.CLOUD).particlesPerSurface(0.025));

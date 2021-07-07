@@ -73,6 +73,7 @@ public abstract class AbstractPlayerClass {
                 player.sendMessage("§cYou can't do that yet!");
                 player.playSound(player.getLocation(), "notreadyalert", 1, 1);
             }
+
         } else if (player.getInventory().getHeldItemSlot() == 1) {
             if (red.getCurrentCooldown() == 0) {
                 if (player.getLevel() >= red.getEnergyCost()) {
@@ -81,9 +82,6 @@ public abstract class AbstractPlayerClass {
                         red.setCurrentCooldown(red.cooldown);
                         sendRightClickPacket(player);
                     }
-                } else {
-                    player.sendMessage("§cYou can't do that yet!");
-                    player.playSound(player.getLocation(), "notreadyalert", 1, 1);
                 }
             }
         } else if (player.getInventory().getHeldItemSlot() == 2) {
@@ -92,9 +90,6 @@ public abstract class AbstractPlayerClass {
                     purple.onActivate(wp, player);
                     purple.setCurrentCooldown(purple.cooldown);
                     sendRightClickPacket(player);
-                } else {
-                    player.sendMessage("§cYou can't do that yet!");
-                    player.playSound(player.getLocation(), "notreadyalert", 1, 1);
                 }
             }
         } else if (player.getInventory().getHeldItemSlot() == 3) {
@@ -142,9 +137,6 @@ public abstract class AbstractPlayerClass {
                             red.setCurrentCooldown(red.cooldown);
                             sendRightClickPacket(player);
                         }
-                    } else {
-                        player.sendMessage("§cYou can't do that yet!");
-                        player.playSound(player.getLocation(), "notreadyalert", 1, 1);
                     }
 
                 }
@@ -154,9 +146,6 @@ public abstract class AbstractPlayerClass {
                         purple.onActivate(wp, player);
                         purple.setCurrentCooldown(purple.cooldown);
                         sendRightClickPacket(player);
-                    } else {
-                        player.sendMessage("§cYou can't do that yet!");
-                        player.playSound(player.getLocation(), "notreadyalert", 1, 1);
                     }
                 }
             } else if (slot == 3) {
@@ -166,9 +155,6 @@ public abstract class AbstractPlayerClass {
                         if (!(blue instanceof Chain) && !(blue instanceof Intervene)) {
                             blue.setCurrentCooldown(blue.cooldown);
                             sendRightClickPacket(player);
-                        } else {
-                            player.sendMessage("§cYou can't do that yet!");
-                            player.playSound(player.getLocation(), "notreadyalert", 1, 1);
                         }
                     }
                 }
@@ -179,9 +165,6 @@ public abstract class AbstractPlayerClass {
                         if (!(orange instanceof HammerOfLight) && !(orange instanceof HealingRain)) {
                             orange.setCurrentCooldown(orange.cooldown);
                             sendRightClickPacket(player);
-                        } else {
-                            player.sendMessage("§cYou can't do that yet!");
-                            player.playSound(player.getLocation(), "notreadyalert", 1, 1);
                         }
                     }
                 }

@@ -62,7 +62,7 @@ public abstract class ProjectileBase extends AbstractAbility {
             public void run() {
                 MovingObjectPosition hasCollided = checkCollisionAndMove(currentLocation, speed, shooter);
                 if (hasCollided != null) {
-                    onHit(shooter, currentLocation, startingLocation, hasCollided.entity.getBukkitEntity());
+                    onHit(shooter, currentLocation, startingLocation, hasCollided.entity == null ? null : hasCollided.entity.getBukkitEntity());
                     cancel();
                 } else if (ticksLived >= maxTicks) {
                     cancel();

@@ -13,10 +13,10 @@ public class FrostBolt extends ProjectileBase {
 
     private static final int MAX_FULL_DAMAGE_DISTANCE = 30;
     private static final double DIRECT_HIT_MULTIPLIER = 1.15;
-    private static final int HITBOX = 3;
+    private static final float HITBOX = 2;
     
     public FrostBolt() {
-        super("Frostbolt", -268.8f, -345.45f, 0, 70, 20, 175, 2, 200);
+        super("Frostbolt", -268.8f, -345.45f, 0, 70, 20, 175, 2, 250);
     }
 
     @Override
@@ -44,6 +44,7 @@ public class FrostBolt extends ProjectileBase {
         if (toReduceBy < 0) toReduceBy = 0;
         WarlordsPlayer victim = Warlords.getPlayer(hit);
         if (victim != null && victim.isAlive() && victim.isEnemy(shooter)) {
+            victim.getSpeed().addSpeedModifier("Frostbolt", -25, 2 * 20);
             victim.addHealth(
                     shooter,
                     name,
@@ -59,6 +60,7 @@ public class FrostBolt extends ProjectileBase {
                 .excluding(victim)
                 .aliveEnemiesOf(shooter)
         ) {
+            nearEntity.getSpeed().addSpeedModifier("Frostbolt", -25, 2 * 20);
             nearEntity.addHealth(
                     shooter,
                     name,

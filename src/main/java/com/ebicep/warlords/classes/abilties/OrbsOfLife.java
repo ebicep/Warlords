@@ -48,16 +48,6 @@ public class OrbsOfLife extends AbstractAbility {
             this.owner = owner;
         }
 
-        @Override
-        public void d(EntityHuman entityhuman) {
-
-        }
-
-        @Override
-        public void t_() {
-
-        }
-
         public Orb spawn(Location loc) {
             World w = ((CraftWorld) loc.getWorld()).getHandle();
             this.setPosition(loc.getX(), loc.getY(), loc.getZ());
