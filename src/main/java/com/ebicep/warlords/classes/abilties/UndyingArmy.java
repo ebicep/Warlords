@@ -24,6 +24,18 @@ public class UndyingArmy extends AbstractAbility {
             .lore("§7Right-click this item to die\n§7instantly instead of waiting for\n§7the decay.")
             .get();
 
+    private boolean armyDead = false;
+
+    //dead = true - take 500 dmg
+    //dead = false - heal
+    public boolean isArmyDead() {
+        return this.armyDead;
+    }
+
+    public void pop() {
+        this.armyDead = true;
+    }
+
     public UndyingArmy() {
         super("Undying Army", 0, 0, 60f + 10.47f, 20, 0, 0);
     }

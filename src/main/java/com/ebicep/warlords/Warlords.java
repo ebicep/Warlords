@@ -345,45 +345,54 @@ public class Warlords extends JavaPlugin {
                         }
                         //damage or heal
                         float newHealth = (float) warlordsPlayer.getHealth() / warlordsPlayer.getMaxHealth() * 40;
-                        if (!warlordsPlayer.getCooldownManager().getCooldown(UndyingArmy.class).isEmpty() && newHealth <= 0) {
-                            if (warlordsPlayer.getCooldownManager().getCooldown(UndyingArmy.class).get(0).getFrom() == warlordsPlayer) {
-                                warlordsPlayer.sendMessage("§a\u00BB§7 " + ChatColor.LIGHT_PURPLE + "Your Undying Army revived you with temporary health. Fight until your death! Your health will decay by " + ChatColor.RED + "500 " + ChatColor.LIGHT_PURPLE + "every second.");
+                        //UNDYING ARMY
+                        //check if player has any unpopped armies
+                        if (warlordsPlayer.getCooldownManager().checkUndyingArmy(false) && newHealth <= 0) {
+                            //set the first unpopped to popped
+                            for (Cooldown cooldown : warlordsPlayer.getCooldownManager().getCooldown(UndyingArmy.class)) {
+                                if (!((UndyingArmy) cooldown.getCooldownObject()).isArmyDead()) {
+                                    ((UndyingArmy) cooldown.getCooldownObject()).pop();
+                                    //sending message + check if getFrom is self
+                                    if (cooldown.getFrom() == warlordsPlayer) {
+                                        warlordsPlayer.sendMessage("§a\u00BB§7 " + ChatColor.LIGHT_PURPLE + "Your Undying Army revived you with temporary health. Fight until your death! Your health will decay by " + ChatColor.RED + "500 " + ChatColor.LIGHT_PURPLE + "every second.");
+                                    } else {
+                                        warlordsPlayer.sendMessage("§a\u00BB§7 " + ChatColor.LIGHT_PURPLE + cooldown.getFrom().getName() + "'s Undying Army revived you with temporary health. Fight until your death! Your health will decay by " + ChatColor.RED + "500 " + ChatColor.LIGHT_PURPLE + "every second.");
+                                    }
+                                    Firework firework = warlordsPlayer.getWorld().spawn(warlordsPlayer.getLocation(), Firework.class);
+                                    FireworkMeta meta = firework.getFireworkMeta();
+                                    meta.addEffects(FireworkEffect.builder()
+                                            .withColor(Color.LIME)
+                                            .with(FireworkEffect.Type.BALL)
+                                            .build());
+                                    meta.setPower(0);
+                                    firework.setFireworkMeta(meta);
 
-                                Firework firework = warlordsPlayer.getWorld().spawn(warlordsPlayer.getLocation(), Firework.class);
-                                FireworkMeta meta = firework.getFireworkMeta();
-                                meta.addEffects(FireworkEffect.builder()
-                                        .withColor(Color.LIME)
-                                        .with(FireworkEffect.Type.BALL)
-                                        .build());
-                                meta.setPower(0);
-                                firework.setFireworkMeta(meta);
+                                    player.getWorld().spigot().strikeLightningEffect(warlordsPlayer.getLocation(), false);
+                                    warlordsPlayer.respawn();
+                                    if (player != null) {
+                                        player.getInventory().setItem(5, UndyingArmy.BONE);
+                                    }
+                                    newHealth = 40;
 
-                                player.getWorld().spigot().strikeLightningEffect(warlordsPlayer.getLocation(), false);
-                            } else {
-                                warlordsPlayer.sendMessage("§a\u00BB§7 " + ChatColor.LIGHT_PURPLE + warlordsPlayer.getCooldownManager().getCooldown(UndyingArmy.class).get(0).getFrom().getName() + "'s Undying Army revived you with temporary health. Fight until your death! Your health will decay by " + ChatColor.RED + "500 " + ChatColor.LIGHT_PURPLE + "every second.");
+                                    new BukkitRunnable() {
+                                        @Override
+                                        public void run() {
+                                            //UNDYING ARMY - dmg -500 each popped army
+                                            warlordsPlayer.addHealth(warlordsPlayer, "", -500, -500, -1, 100);
 
-                                Firework firework = warlordsPlayer.getWorld().spawn(warlordsPlayer.getLocation(), Firework.class);
-                                FireworkMeta meta = firework.getFireworkMeta();
-                                meta.addEffects(FireworkEffect.builder()
-                                        .withColor(Color.LIME)
-                                        .with(FireworkEffect.Type.BALL)
-                                        .build());
-                                meta.setPower(0);
-                                firework.setFireworkMeta(meta);
+                                            if (warlordsPlayer.getRespawnTimer() > 0) {
+                                                this.cancel();
+                                            }
+                                        }
+                                    }.runTaskTimer(Warlords.this, 0, 20);
 
-                                player.getWorld().spigot().strikeLightningEffect(warlordsPlayer.getLocation(), false);
+                                    break;
+                                }
                             }
-                            warlordsPlayer.respawn();
-                            warlordsPlayer.setUndyingArmyDead(true);
-                            warlordsPlayer.getCooldownManager().getCooldowns().remove(warlordsPlayer.getCooldownManager().getCooldown(UndyingArmy.class).get(0));
-                            if (player != null) {
-                                player.getInventory().setItem(5, UndyingArmy.BONE);
-                            }
-                            newHealth = 40;
                         }
                         if (newHealth <= 0) {
-                            if (warlordsPlayer.isUndyingArmyDead()) {
-                                warlordsPlayer.setUndyingArmyDead(false);
+                            //checking if all undying armies are popped (this should never be true as last if statement bypasses this) then removing all boners
+                            if (!warlordsPlayer.getCooldownManager().checkUndyingArmy(false)) {
                                 if (player != null) {
                                     player.getInventory().remove(UndyingArmy.BONE);
                                 }
@@ -420,6 +429,7 @@ public class Warlords extends JavaPlugin {
                             if (respawn <= 4) {
                                 respawn += 12;
                             }
+                            warlordsPlayer.heal();
                             warlordsPlayer.setRespawnTimer(respawn);
                             warlordsPlayer.addTotalRespawnTime();
                         } else {
@@ -534,10 +544,6 @@ public class Warlords extends JavaPlugin {
                             if (warlordsPlayer.getFlagCooldown() > 0) {
                                 warlordsPlayer.setFlagCooldown(warlordsPlayer.getFlagCooldown() - 1);
                             }
-                            if (warlordsPlayer.isUndyingArmyDead()) {
-                                warlordsPlayer.addHealth(warlordsPlayer, "", -500, -500, -1, 100);
-                            }
-
                             //SoulBinding - decrementing time left
                             warlordsPlayer.getCooldownManager().getCooldown(Soulbinding.class).stream()
                                     .map(Cooldown::getCooldownObject)

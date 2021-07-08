@@ -39,6 +39,7 @@ public class CooldownManager {
         for (int i = 0; i < cooldowns.size(); i++) {
             Cooldown cooldown = cooldowns.get(i);
             Class cooldownClass = cooldown.getCooldownClass();
+            Object cooldownObject = cooldown.getCooldownObject();
             if (cooldownClass == Intervene.class) {
                 cooldown.subtractTime(.10f);
             } else {
@@ -48,11 +49,13 @@ public class CooldownManager {
                 if (cooldownClass == Intervene.class) {
                     warlordsPlayer.sendMessage("§c\u00AB§7 " + cooldown.getFrom().getName() + "'s §eIntervene §7has expired!");
                 } else if (cooldownClass == UndyingArmy.class) {
-                    int healing = (int) ((warlordsPlayer.getMaxHealth() - warlordsPlayer.getHealth()) * .35 + 200);
-                    warlordsPlayer.addHealth(cooldown.getFrom(), "Undying Army", healing, healing, -1, 100);
+                    if (!((UndyingArmy) cooldownObject).isArmyDead()) {
+                        int healing = (int) ((warlordsPlayer.getMaxHealth() - warlordsPlayer.getHealth()) * .35 + 200);
+                        warlordsPlayer.addHealth(cooldown.getFrom(), "Undying Army", healing, healing, -1, 100);
 
-                    for (Player player1 : warlordsPlayer.getWorld().getPlayers()) {
-                        player1.playSound(warlordsPlayer.getLocation(), "paladin.holyradiance.activation", 0.5f, 1);
+                        for (Player player1 : warlordsPlayer.getWorld().getPlayers()) {
+                            player1.playSound(warlordsPlayer.getLocation(), "paladin.holyradiance.activation", 0.5f, 1);
+                        }
                     }
                 } else if (cooldownClass == ArcaneShield.class) {
                     if (warlordsPlayer.getEntity() instanceof Player) {
@@ -102,6 +105,26 @@ public class CooldownManager {
                 return true;
             }
         }
+        return false;
+    }
+
+    public boolean checkUndyingArmy(boolean popped) {
+        for (Cooldown cooldown : getCooldown(UndyingArmy.class)) {
+            if (popped) {
+                //returns true if any undying is popped
+                if (((UndyingArmy) cooldown.getCooldownObject()).isArmyDead()) {
+                    return true;
+                }
+            } else {
+                //return true if theres any unpopped armies
+                if (!((UndyingArmy) cooldown.getCooldownObject()).isArmyDead()) {
+                    return true;
+                }
+            }
+
+        }
+        //if popped returns false - all undying armies are not popped (there is no popped armies)
+        //if !popped return false - all undying armies are popped (there is no unpopped armies)
         return false;
     }
 

@@ -218,7 +218,6 @@ public class WarlordsEvents implements Listener {
                 } else if (itemHeld.getType() == Material.BONE) {
                     player.getInventory().remove(UndyingArmy.BONE);
                     wp.addHealth(Warlords.getPlayer(player), "", -100000, -100000, -1, 100);
-                    wp.setUndyingArmyDead(false);
                 } else if (itemHeld.getType() == Material.BANNER) {
                     if (wp.getFlagCooldown() > 0) {
                         player.sendMessage("§cYou cannot drop the flag yet, please wait 5 seconds!");

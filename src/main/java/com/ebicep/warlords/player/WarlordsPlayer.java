@@ -84,8 +84,6 @@ public final class WarlordsPlayer {
 
     private boolean teamFlagCompass = true;
 
-    private boolean undyingArmyDead = false;
-
     //SHAMAN
     private boolean firstProc = false;
 
@@ -469,7 +467,7 @@ public final class WarlordsPlayer {
     }
 
     public void addHealth(WarlordsPlayer attacker, String ability, float min, float max, int critChance, int critMultiplier) {
-        if (spawnProtection != 0 || (dead && !undyingArmyDead)) return;
+        if (spawnProtection != 0 || (dead && !cooldownManager.checkUndyingArmy(false))) return;
         if (attacker == this && (ability.equals("Fall") || ability.isEmpty())) {
             if (ability.isEmpty()) {
                 sendMessage("" + ChatColor.RED + "\u00AB" + ChatColor.GRAY + " You took " + ChatColor.RED + Math.round(min * -1) + ChatColor.GRAY + " melee damage.");
@@ -1031,6 +1029,10 @@ public final class WarlordsPlayer {
         }
     }
 
+    public void heal() {
+        this.health = this.maxHealth;
+    }
+
     public void respawn() {
         this.health = this.maxHealth;
         if (deathStand != null) {
@@ -1130,14 +1132,6 @@ public final class WarlordsPlayer {
 
     public void setHitCooldown(int hitCooldown) {
         this.hitCooldown = hitCooldown;
-    }
-
-    public boolean isUndyingArmyDead() {
-        return undyingArmyDead;
-    }
-
-    public void setUndyingArmyDead(boolean undyingArmyDead) {
-        this.undyingArmyDead = undyingArmyDead;
     }
 
     public boolean isPowerUpHeal() {
