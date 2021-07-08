@@ -805,7 +805,7 @@ public final class WarlordsPlayer {
 
                             //reloops near players to give health to
                             for(WarlordsPlayer nearTeamPlayer : PlayerFilter
-                                .entitiesAround(attacker, 5, 5, 5)
+                                .entitiesAround(attacker, 6, 6, 6)
                                 .aliveTeammatesOfExcludingSelf(attacker)
                                 .limit(2)
                             ) {

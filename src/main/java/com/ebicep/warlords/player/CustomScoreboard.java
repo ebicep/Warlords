@@ -42,7 +42,7 @@ public class CustomScoreboard {
         sideBar.getScore("     ").setScore(4);
         sideBar.getScore("" + ChatColor.GREEN + warlordsPlayer.getTotalKills() + ChatColor.RESET + " Kills " + ChatColor.GREEN + warlordsPlayer.getTotalAssists() + ChatColor.RESET + " Assists").setScore(3);
         sideBar.getScore("      ").setScore(2);
-        sideBar.getScore(ChatColor.YELLOW + "WL 2.0 RC-2").setScore(1);
+        sideBar.getScore(ChatColor.YELLOW + "WL 2.0 RC-3").setScore(1);
         this.gameState = gameState;
         this.warlordsPlayer = warlordsPlayer;
     }
@@ -208,7 +208,7 @@ public class CustomScoreboard {
         sideBar.getScore("   ").setScore(4);
         sideBar.getScore("dubious").setScore(3);
         sideBar.getScore("    ").setScore(2);
-        sideBar.getScore(ChatColor.YELLOW + "WL 2.0 RC-2").setScore(1);
+        sideBar.getScore(ChatColor.YELLOW + "WL 2.0 RC-3").setScore(1);
         player.setScoreboard(mainLobbyScoreboard);
     }
 }

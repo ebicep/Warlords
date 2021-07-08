@@ -397,20 +397,20 @@ public class Warlords extends JavaPlugin {
                             for (int i = 1; i < warlordsPlayer.getHitBy().size(); i++) {
                                 WarlordsPlayer assisted = warlordsPlayer.getHitBy().get(i);
                                 if (warlordsPlayer.getHitBy().get(0) == warlordsPlayer) {
-                                    assisted.sendMessage(
+                                    /*assisted.sendMessage(
                                             ChatColor.GRAY +
                                                     "You assisted in killing " +
                                                     warlordsPlayer.getColoredName()
-                                    );
+                                    );*/
                                 } else {
-                                    assisted.sendMessage(
+                                    /*assisted.sendMessage(
                                             ChatColor.GRAY +
                                                     "You assisted " +
                                                     ChatColor.BLUE +
                                                     warlordsPlayer.getHitBy().get(0).getColoredName() +
                                                     ChatColor.GRAY + " in killing " +
                                                     ChatColor.RED + warlordsPlayer.getName()
-                                    );
+                                    );*/
                                 }
                                 assisted.addAssist();
                                 assisted.getScoreboard().updateKillsAssists();

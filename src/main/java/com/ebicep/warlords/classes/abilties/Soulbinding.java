@@ -17,7 +17,7 @@ public class Soulbinding extends AbstractAbility {
     private List<SoulBoundPlayer> soulBindedPlayers = new ArrayList<>();
 
     public Soulbinding() {
-        super("Soulbinding Weapon", 0, 0, 2.192f, 30, -1, 100);
+        super("Soulbinding Weapon", 0, 0, 21.92f, 30, -1, 100);
     }
 
     @Override

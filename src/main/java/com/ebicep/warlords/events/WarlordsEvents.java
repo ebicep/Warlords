@@ -106,7 +106,7 @@ public class WarlordsEvents implements Listener {
             player.sendMessage(" ");
             player.sendMessage(ChatColor.GRAY + "Click the Nether Star or do /menu to open the selection menu.");
             player.sendMessage(" ");
-            player.sendMessage(ChatColor.GRAY + "BUILD: " + ChatColor.RED + "RC-2 maven_b-v1.0.0");
+            player.sendMessage(ChatColor.GRAY + "BUILD: " + ChatColor.RED + "RC-3 maven_b-v1.0.0");
 
             player.getInventory().clear();
             player.getInventory().setArmorContents(new ItemStack[]{null, null, null, null});

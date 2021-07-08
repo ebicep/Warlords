@@ -111,7 +111,7 @@ public class Chain extends AbstractAbility {
                                 Utils.getLookingAtChain(warlordsPlayer.getEntity(), e.getEntity()) &&
                                         Utils.hasLineOfSight(warlordsPlayer.getEntity(), e.getEntity())
                         ) :
-                PlayerFilter.entitiesAround(checkFrom, 10, 9, 10);
+                PlayerFilter.entitiesAround(checkFrom, 15, 14, 15);
         Optional<WarlordsPlayer> foundPlayer = filter.closestFirst(warlordsPlayer).aliveEnemiesOf(warlordsPlayer).excluding(playersHit).findFirst();
         if (foundPlayer.isPresent()) {
             WarlordsPlayer hit = foundPlayer.get();
