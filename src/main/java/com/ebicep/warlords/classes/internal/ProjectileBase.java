@@ -24,12 +24,14 @@ public abstract class ProjectileBase extends AbstractAbility {
     protected final double projectileSpeed;
     protected final int maxTicks;
     protected final double maxDistance;
+    protected final boolean hitTeammates;
 
-    public ProjectileBase(String name, float minDamageHeal, float maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier, double projectileSpeed, double maxDistance) {
+    public ProjectileBase(String name, float minDamageHeal, float maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier, double projectileSpeed, double maxDistance, boolean hitTeammates) {
         super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
         this.projectileSpeed = projectileSpeed;
         this.maxDistance = maxDistance;
         this.maxTicks = (int)(maxDistance / projectileSpeed) + 1;
+        this.hitTeammates = hitTeammates;
     }
 
     @Nonnull
@@ -41,7 +43,7 @@ public abstract class ProjectileBase extends AbstractAbility {
         @Nonnull WarlordsPlayer shooter,
         @Nonnull Location currentLocation,
         @Nonnull Location startingLocation,
-        @Nullable Entity hit
+        @Nullable WarlordsPlayer hit
     );
     
     @Override
@@ -62,7 +64,12 @@ public abstract class ProjectileBase extends AbstractAbility {
             public void run() {
                 MovingObjectPosition hasCollided = checkCollisionAndMove(currentLocation, speed, shooter);
                 if (hasCollided != null) {
-                    onHit(shooter, currentLocation, startingLocation, hasCollided.entity == null ? null : hasCollided.entity.getBukkitEntity());
+                    onHit(
+                            shooter,
+                            currentLocation,
+                            startingLocation,
+                            hasCollided.entity == null ? null : getFromEntity(hasCollided.entity.getBukkitEntity())
+                    );
                     cancel();
                 } else if (ticksLived >= maxTicks) {
                     cancel();
@@ -74,6 +81,14 @@ public abstract class ProjectileBase extends AbstractAbility {
     }
     
     @Nullable
+    private WarlordsPlayer getFromEntity(Entity e) {
+        if (e instanceof Horse) {
+            return Warlords.getPlayer(e.getPassenger());
+        }
+        return Warlords.getPlayer(e);
+    }
+    
+    @Nullable
     private MovingObjectPosition checkCollisionAndMove(Location currentLocation, Vector speed, WarlordsPlayer shooter) {
         Vec3D before = new Vec3D(currentLocation.getX(), currentLocation.getY(), currentLocation.getZ());
         currentLocation.add(speed);
@@ -82,11 +97,8 @@ public abstract class ProjectileBase extends AbstractAbility {
         MovingObjectPosition hit = null;
         double hitDistance = 0;
         for (Entity entity : currentLocation.getWorld().getEntities()) {
-            if (
-                (entity instanceof Zombie || entity instanceof Player || entity instanceof Horse) &&
-                entity != shooter.getEntity() &&
-                (!(entity instanceof Player) || ((Player)entity).getGameMode() != GameMode.SPECTATOR)
-            ) {
+            WarlordsPlayer wp = getFromEntity(entity);
+            if (wp != null && (!hitTeammates || shooter.isEnemy(wp)) && wp.isAlive()) {
                 // This logic does not properly deal with an EnderDragon entity, as it has an complex hitbox
                 assert entity instanceof CraftEntity;
                 net.minecraft.server.v1_8_R3.Entity nmsEntity = ((CraftEntity) entity).getHandle();
@@ -110,7 +122,7 @@ public abstract class ProjectileBase extends AbstractAbility {
         );
         while (itr.hasNext()) {
             Block block = itr.next();
-            if (!block.isEmpty()) {
+            if (block.getType().isSolid()) {
                 BlockPosition pos = new BlockPosition(block.getX(), block.getY(), block.getZ());
                 WorldServer world = ((CraftWorld) block.getWorld()).getHandle();
                 IBlockData type = world.getType(pos);

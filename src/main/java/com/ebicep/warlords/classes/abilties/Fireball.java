@@ -1,12 +1,10 @@
 package com.ebicep.warlords.classes.abilties;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.internal.ProjectileBase;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 public class Fireball extends ProjectileBase {
@@ -16,7 +14,7 @@ public class Fireball extends ProjectileBase {
     private static final float HITBOX = 4;
     
     public Fireball() {
-        super("Fireball", -334.4f, -433.4f, 0, 70, 20, 175, 2, 250);
+        super("Fireball", -334.4f, -433.4f, 0, 70, 20, 175, 2, 250, false);
     }
 
     @Override
@@ -32,7 +30,7 @@ public class Fireball extends ProjectileBase {
     }
 
     @Override
-    protected void onHit(WarlordsPlayer shooter, Location currentLocation, Location startingLocation, Entity hit) {
+    protected void onHit(WarlordsPlayer shooter, Location currentLocation, Location startingLocation, WarlordsPlayer victim) {
         ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.5F, 1, currentLocation, 500);
         ParticleEffect.LAVA.display(0.5F, 0, 0.5F, 2F, 10, currentLocation, 500);
         ParticleEffect.CLOUD.display(0.3F, 0.3F, 0.3F, 1F, 3, currentLocation, 500);
@@ -45,8 +43,7 @@ public class Fireball extends ProjectileBase {
         double toReduceBy = MAX_FULL_DAMAGE_DISTANCE * MAX_FULL_DAMAGE_DISTANCE > distanceSquared ? 1 : 
             1 - (Math.sqrt(distanceSquared) - MAX_FULL_DAMAGE_DISTANCE) / 100.;
         if (toReduceBy < 0) toReduceBy = 0;
-        WarlordsPlayer victim = Warlords.getPlayer(hit);
-        if (victim != null && victim.isAlive() && victim.isEnemy(shooter)) {
+        if (victim != null) {
             victim.addHealth(
                     shooter,
                     name,

@@ -1,12 +1,10 @@
 package com.ebicep.warlords.classes.abilties;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.internal.ProjectileBase;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 public class FrostBolt extends ProjectileBase {
@@ -16,7 +14,7 @@ public class FrostBolt extends ProjectileBase {
     private static final float HITBOX = 2;
     
     public FrostBolt() {
-        super("Frostbolt", -268.8f, -345.45f, 0, 70, 20, 175, 2, 250);
+        super("Frostbolt", -268.8f, -345.45f, 0, 70, 20, 175, 2, 250, false);
     }
 
     @Override
@@ -30,7 +28,7 @@ public class FrostBolt extends ProjectileBase {
     }
 
     @Override
-    protected void onHit(WarlordsPlayer shooter, Location currentLocation, Location startingLocation, Entity hit) {
+    protected void onHit(WarlordsPlayer shooter, Location currentLocation, Location startingLocation, WarlordsPlayer victim) {
         ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.0F, 1, currentLocation, 500);
         ParticleEffect.CLOUD.display(0.3F, 0.3F, 0.3F, 1F, 3, currentLocation, 500);
 
@@ -42,8 +40,7 @@ public class FrostBolt extends ProjectileBase {
         double toReduceBy = MAX_FULL_DAMAGE_DISTANCE * MAX_FULL_DAMAGE_DISTANCE > distanceSquared ? 1 : 
             1 - (Math.sqrt(distanceSquared) - MAX_FULL_DAMAGE_DISTANCE) / 100.;
         if (toReduceBy < 0) toReduceBy = 0;
-        WarlordsPlayer victim = Warlords.getPlayer(hit);
-        if (victim != null && victim.isAlive() && victim.isEnemy(shooter)) {
+        if (victim != null) {
             victim.getSpeed().addSpeedModifier("Frostbolt", -25, 2 * 20);
             victim.addHealth(
                     shooter,

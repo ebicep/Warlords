@@ -1,12 +1,10 @@
 package com.ebicep.warlords.classes.abilties;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.internal.ProjectileBase;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 public class WaterBolt extends ProjectileBase {
@@ -16,7 +14,7 @@ public class WaterBolt extends ProjectileBase {
     private static final float HITBOX = 4;
     
     public WaterBolt() {
-        super("Water Bolt", 328, 452, 0, 85, 20, 175, 2, 250);
+        super("Water Bolt", 328, 452, 0, 85, 20, 175, 2, 250, true);
     }
 
     @Override
@@ -33,7 +31,7 @@ public class WaterBolt extends ProjectileBase {
     }
 
     @Override
-    protected void onHit(WarlordsPlayer shooter, Location currentLocation, Location startingLocation, Entity hit) {
+    protected void onHit(WarlordsPlayer shooter, Location currentLocation, Location startingLocation, WarlordsPlayer victim) {
         ParticleEffect.HEART.display(1, 1, 1, 0.2F, 3, currentLocation, 500);
         ParticleEffect.VILLAGER_HAPPY.display(1, 1, 1, 0.2F, 5, currentLocation, 500);
 
@@ -45,8 +43,7 @@ public class WaterBolt extends ProjectileBase {
         double toReduceBy = MAX_FULL_DAMAGE_DISTANCE * MAX_FULL_DAMAGE_DISTANCE > distanceSquared ? 1 : 
             1 - (Math.sqrt(distanceSquared) - MAX_FULL_DAMAGE_DISTANCE) / 100.;
         if (toReduceBy < 0) toReduceBy = 0;
-        WarlordsPlayer victim = Warlords.getPlayer(hit);
-        if (victim != null && victim.isAlive()) {
+        if (victim != null) {
             if (victim.isTeammate(shooter)) {
                 victim.addHealth(shooter,
                         name,

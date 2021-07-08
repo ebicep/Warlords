@@ -6,7 +6,6 @@ import com.ebicep.warlords.util.Matrix4d;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 public class FlameBurst extends ProjectileBase {
@@ -14,7 +13,7 @@ public class FlameBurst extends ProjectileBase {
     private static final float HITBOX = 5;
     
     public FlameBurst() {
-        super("Flame Burst", -557, -753, 9.4f, 60, 25, 185, 2, 300);
+        super("Flame Burst", -557, -753, 9.4f, 60, 25, 185, 2, 300, false);
     }
 
     @Override
@@ -35,7 +34,7 @@ public class FlameBurst extends ProjectileBase {
     }
 
     @Override
-    protected void onHit(WarlordsPlayer shooter, Location currentLocation, Location startingLocation, Entity hit) {
+    protected void onHit(WarlordsPlayer shooter, Location currentLocation, Location startingLocation, WarlordsPlayer victim) {
         ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.5F, 2, currentLocation, 500);
         ParticleEffect.LAVA.display(0.5F, 0, 0.5F, 2F, 10, currentLocation, 500);
 
