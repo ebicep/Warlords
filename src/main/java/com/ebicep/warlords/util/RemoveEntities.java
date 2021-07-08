@@ -2,6 +2,7 @@ package com.ebicep.warlords.util;
 
 import com.ebicep.warlords.maps.GameMap;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
@@ -17,6 +18,10 @@ public class RemoveEntities {
         Bukkit.getWorlds().stream().skip(1).forEachOrdered(world -> {
             world.getEntities().stream().filter(entity -> (entity instanceof Horse && entity.getPassenger() == null)).forEach(Entity::remove);
         });
+    }
+
+    public static void removeArmorStands() {
+        Bukkit.getWorlds().forEach(world -> world.getEntities().stream().filter(entity -> (entity instanceof ArmorStand)).forEach(Entity::remove));
     }
 }
 

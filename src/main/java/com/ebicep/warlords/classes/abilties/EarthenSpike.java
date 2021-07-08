@@ -134,8 +134,8 @@ public class EarthenSpike extends AbstractAbility {
                                 .aliveEnemiesOf(wp)
                             ) {
                                 warlordsPlayer.addHealth(user, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
-                                if (Utils.getDistance(warlordsPlayer, 1) < 2.5) {
-                                    warlordsPlayer.setVelocity(new Vector(0, .6, 0));
+                                if (Utils.getDistance(warlordsPlayer, 1) < 2.3) {
+                                    warlordsPlayer.setVelocity(new Vector(0, .75, 0));
                                 }
                             }
 

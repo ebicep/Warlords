@@ -500,7 +500,7 @@ public class DatabaseManager {
     public void gameAddPlayerStats(List<Document> list, WarlordsPlayer warlordsPlayer) {
         list.add(new Document(warlordsPlayer.getUuid().toString(), new Document("name", warlordsPlayer.getName())
                 .append("spec", Warlords.getPlayerSettings(warlordsPlayer.getUuid()).selectedClass().name)
-                .append("blocks_travelled", Utils.getPlayerMovementStatistics((Player) warlordsPlayer.getEntity()) / 100)
+                .append("blocks_travelled", Utils.getPlayerMovementStatistics(Bukkit.getPlayer(warlordsPlayer.getUuid())) / 100)
                 .append("seconds_in_combat", warlordsPlayer.getTimeInCombat())
                 .append("seconds_in_respawn", warlordsPlayer.getRespawnTimeSpent())
                 .append("kills", new BsonArray(Arrays.stream(warlordsPlayer.getKills()).mapToObj(BsonInt64::new).collect(Collectors.toList())))

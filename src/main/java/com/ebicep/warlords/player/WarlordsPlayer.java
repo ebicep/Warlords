@@ -396,7 +396,7 @@ public final class WarlordsPlayer {
 
     public void updateHorseItem(Player player) {
         if (horseCooldown > 0) {
-            ItemStack cooldown = new ItemStack(Material.IRON_BARDING, (int) (horseCooldown + .5));
+            ItemStack cooldown = new ItemStack(Material.IRON_BARDING, (int) horseCooldown + 1);
             player.getInventory().setItem(7, cooldown);
         } else {
             ItemStack horse = new ItemStack(Material.GOLD_BARDING);
@@ -1264,10 +1264,6 @@ public final class WarlordsPlayer {
 
     public boolean isTeamFlagCompass() {
         return teamFlagCompass;
-    }
-
-    public void setTeamFlagCompass(boolean teamFlagCompass) {
-        this.teamFlagCompass = teamFlagCompass;
     }
 
     public void toggleTeamFlagCompass() {

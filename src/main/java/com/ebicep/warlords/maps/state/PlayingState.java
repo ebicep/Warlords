@@ -157,7 +157,6 @@ public class PlayingState implements State, TimerDebugAble {
         });
         this.game.forEachOfflineWarlordsPlayer(wp -> {
             CustomScoreboard scoreboard = wp.getScoreboard();
-            scoreboard.updateHealth();
             scoreboard.updateBasedOnGameState(this);
             scoreboard.updateKillsAssists();
             scoreboard.updateNames();
@@ -305,9 +304,6 @@ public class PlayingState implements State, TimerDebugAble {
         if (winner != null) {
             Warlords.databaseManager.addGame(this);
         }
-        game.forEachOnlinePlayer(((player, team) -> {
-            CustomScoreboard.giveMainLobbyScoreboard(player);
-        }));
     }
 
     @Override

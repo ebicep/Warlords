@@ -109,12 +109,17 @@ public class PlayerFilter implements Iterable<WarlordsPlayer> {
 
     @Nonnull
     public PlayerFilter leastEnergeticFirst() {
-        return sorted(Comparator.<WarlordsPlayer, Double>comparing(wp -> wp.getEnergy() / (double)wp.getMaxEnergy()));
+        return sorted(Comparator.<WarlordsPlayer, Double>comparing(wp -> wp.getEnergy() / (double) wp.getMaxEnergy()));
     }
 
     @Nonnull
     public PlayerFilter mostEnergeticFirst() {
-        return sorted(Comparator.<WarlordsPlayer, Double>comparing(wp -> wp.getEnergy() / (double)wp.getMaxEnergy()).reversed());
+        return sorted(Comparator.<WarlordsPlayer, Double>comparing(wp -> wp.getEnergy() / (double) wp.getMaxEnergy()).reversed());
+    }
+
+    @Nonnull
+    public PlayerFilter soulBindedFirst(WarlordsPlayer owner) {
+        return sorted(Comparator.comparing(wp -> owner.getCooldownManager().hasBoundPlayer(wp)));
     }
 
     @Nonnull

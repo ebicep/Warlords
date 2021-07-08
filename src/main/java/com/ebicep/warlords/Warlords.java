@@ -12,7 +12,6 @@ import com.ebicep.warlords.player.PlayerSettings;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.powerups.EnergyPowerUp;
 import com.ebicep.warlords.util.PacketUtils;
-import com.ebicep.warlords.util.RemoveEntities;
 import com.ebicep.warlords.util.Utils;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
@@ -259,7 +258,7 @@ public class Warlords extends JavaPlugin {
 
             @Override
             public void run() {
-                RemoveEntities.removeHorsesInGame();
+                //RemoveEntities.removeHorsesInGame();
                 // EVERY TICK
                 {
                     // MOVEMENT
@@ -397,24 +396,25 @@ public class Warlords extends JavaPlugin {
                             for (int i = 1; i < warlordsPlayer.getHitBy().size(); i++) {
                                 WarlordsPlayer assisted = warlordsPlayer.getHitBy().get(i);
                                 if (warlordsPlayer.getHitBy().get(0) == warlordsPlayer) {
-                                    /*assisted.sendMessage(
+                                    assisted.sendMessage(
                                             ChatColor.GRAY +
                                                     "You assisted in killing " +
                                                     warlordsPlayer.getColoredName()
-                                    );*/
+                                    );
                                 } else {
-                                    /*assisted.sendMessage(
+                                    assisted.sendMessage(
                                             ChatColor.GRAY +
                                                     "You assisted " +
                                                     ChatColor.BLUE +
                                                     warlordsPlayer.getHitBy().get(0).getColoredName() +
                                                     ChatColor.GRAY + " in killing " +
                                                     ChatColor.RED + warlordsPlayer.getName()
-                                    );*/
+                                    );
                                 }
                                 assisted.addAssist();
                                 assisted.getScoreboard().updateKillsAssists();
                             }
+                            warlordsPlayer.getHitBy().clear();
                             //respawn timer
                             int respawn = warlordsPlayer.getGameState().getTimerInSeconds() % 12;
                             if (respawn <= 4) {

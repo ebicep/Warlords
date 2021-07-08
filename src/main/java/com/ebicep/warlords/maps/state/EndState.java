@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.state.PlayingState.Stats;
+import com.ebicep.warlords.player.CustomScoreboard;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.PacketUtils;
 import com.ebicep.warlords.util.PlayerFilter;
@@ -69,7 +70,7 @@ public class EndState implements State, TimerDebugAble {
             TextComponent player = new TextComponent(ChatColor.AQUA + warlordsPlayer.getName() + ChatColor.GRAY + ": " + ChatColor.GOLD + getSimplifiedNumber((long) warlordsPlayer.getTotalDamage()));
             player.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.DARK_GRAY + "Lv" + ChatColor.GRAY + "90 " + ChatColor.GOLD + warlordsPlayer.getSpec().getClassName() + ChatColor.GREEN + " (" + warlordsPlayer.getSpec().getClass().getSimpleName() + ")").create()));
             leaderboardPlayersDamage.add(player);
-            if (i != players.size() - 1) {
+            if (i != players.size() - 1 && i != 2) {
                 leaderboardPlayersDamage.add(Game.spacer);
             }
         }
@@ -85,7 +86,7 @@ public class EndState implements State, TimerDebugAble {
             TextComponent player = new TextComponent(ChatColor.AQUA + warlordsPlayer.getName() + ChatColor.GRAY + ": " + ChatColor.GOLD + getSimplifiedNumber((long) warlordsPlayer.getTotalHealing()));
             player.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.DARK_GRAY + "Lv" + ChatColor.GRAY + "90 " + ChatColor.GOLD + warlordsPlayer.getSpec().getClassName() + ChatColor.GREEN + " (" + warlordsPlayer.getSpec().getClass().getSimpleName() + ")").create()));
             leaderboardPlayersHealing.add(player);
-            if (i != players.size() - 1) {
+            if (i != players.size() - 1 && i != 2) {
                 leaderboardPlayersHealing.add(Game.spacer);
             }
         }
@@ -119,7 +120,10 @@ public class EndState implements State, TimerDebugAble {
             absorb.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new ComponentBuilder(absorbedJson).create()));
             Utils.sendCenteredHoverableMessage(player, Arrays.asList(damage, Game.spacer, heal, Game.spacer, absorb));
             player.setGameMode(GameMode.ADVENTURE);
-            if (value.getTeam() == winner) {
+
+            if (winner == null) {
+                PacketUtils.sendTitle(player, "§d§lDRAW???", "", 0, 100, 0);
+            } else if (value.getTeam() == winner) {
                 player.playSound(player.getLocation(), "victory", 500, 1);
                 PacketUtils.sendTitle(player, "§6§lVICTORY!", "", 0, 100, 0);
             } else {
@@ -152,6 +156,9 @@ public class EndState implements State, TimerDebugAble {
 
     @Override
     public void end() {
+        game.forEachOnlinePlayer(((player, team) -> {
+            CustomScoreboard.giveMainLobbyScoreboard(player);
+        }));
         game.clearAllPlayers();
     }
 

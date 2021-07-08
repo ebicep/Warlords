@@ -41,20 +41,15 @@ public class FallenSouls extends AbstractAbility {
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
         Location location = player.getLocation().add(player.getLocation().getDirection().multiply(-1));
-        ArmorStand fallenSoulLeft = player.getWorld().spawn(location.subtract(0, .5, 0), ArmorStand.class);
+        ArmorStand fallenSoulLeft = player.getWorld().spawn(location.clone().subtract(0, .5, 0).add(Utils.getLeftDirection(location).multiply(.15)), ArmorStand.class);
         Location locationLeft = player.getLocation().add(player.getLocation().getDirection().multiply(-1));
-        locationLeft.add(Utils.getLeftDirection(location).multiply(1));
         locationLeft.setYaw(location.getYaw() - 13);// - (int)(location.getPitch()/-10f * 1.6));
-        location.add(0, .5, 0);
-        ArmorStand fallenSoulMiddle = player.getWorld().spawn(location.subtract(0, .5, 0), ArmorStand.class);
+        ArmorStand fallenSoulMiddle = player.getWorld().spawn(location.clone().subtract(0, .5, 0), ArmorStand.class);
         Location locationMiddle = player.getLocation().add(player.getLocation().getDirection().multiply(-1));
         locationMiddle.setYaw(location.getYaw() - 0);
-        location.add(0, .5, 0);
-        ArmorStand fallenSoulRight = player.getWorld().spawn(location.subtract(0, .5, 0), ArmorStand.class);
+        ArmorStand fallenSoulRight = player.getWorld().spawn(location.clone().subtract(0, .5, 0).add(Utils.getRightDirection(location).multiply(.15)), ArmorStand.class);
         Location locationRight = player.getLocation().add(player.getLocation().getDirection().multiply(-1));
-        locationRight.add(Utils.getRightDirection(location).multiply(1));
         locationRight.setYaw(location.getYaw() + 13);// + (int)(location.getPitch()/-10f * 1.6));
-        location.add(0, .5, 0);
 
         FallenSoul fallenSoul = new FallenSoul(Warlords.getPlayer(player), fallenSoulLeft, fallenSoulMiddle, fallenSoulRight, player.getLocation(), player.getLocation(), player.getLocation(), locationLeft.getDirection(), locationMiddle.getDirection(), locationRight.getDirection(), this);
 

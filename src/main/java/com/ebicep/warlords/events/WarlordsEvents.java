@@ -186,8 +186,7 @@ public class WarlordsEvents implements Listener {
             if (wp != null) {
                 if (player.getInventory().getHeldItemSlot() == 0 || !wp.isHotKeyMode()) {
                     wp.getSpec().onRightClick(wp, player);
-                }
-                if (player.getInventory().getHeldItemSlot() == 7 && itemHeld.getType() == Material.GOLD_BARDING && player.getVehicle() == null) {
+                } else if (player.getInventory().getHeldItemSlot() == 7 && itemHeld.getType() == Material.GOLD_BARDING && player.getVehicle() == null) {
                     if (location.getWorld().getBlockAt((int) location.getX(), 2, (int) location.getZ()).getType() == Material.NETHERRACK) { //&& !Utils.tunnelUnder(e.getPlayer())) {
                         player.sendMessage(ChatColor.RED + "You can't mount here!");
                     } else {
@@ -225,6 +224,8 @@ public class WarlordsEvents implements Listener {
                     }
                 } else if (itemHeld.getType() == Material.FIREWORK_CHARGE) {
                     openSkillTreeMenu(player);
+                } else if (itemHeld.getType() == Material.COMPASS) {
+                    wp.toggleTeamFlagCompass();
                 }
             } else {
                 if (itemHeld.getType() == Material.NETHER_STAR) {
@@ -312,6 +313,10 @@ public class WarlordsEvents implements Listener {
         if (e.getCause() == EntityDamageEvent.DamageCause.VOID && e.getEntity() instanceof Player) {
             e.setCancelled(true);
             e.getEntity().teleport(Warlords.getRejoinPoint(((Player) e.getEntity()).getUniqueId()));
+            WarlordsPlayer wp = Warlords.getPlayer(e.getEntity());
+            if (wp != null) {
+                wp.addHealth(wp, "Fall", -1000000, -1000000, -1, 100);
+            }
         } else if (e.getCause() == EntityDamageEvent.DamageCause.FALL) {
             //HEIGHT - DAMAGE
             //PLAYER
@@ -332,6 +337,8 @@ public class WarlordsEvents implements Listener {
                 }
             }
 
+            e.setCancelled(true);
+        } else if (e.getCause() == EntityDamageEvent.DamageCause.SUFFOCATION) {
             e.setCancelled(true);
         }
     }

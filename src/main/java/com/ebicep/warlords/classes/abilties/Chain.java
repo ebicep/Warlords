@@ -151,7 +151,7 @@ public class Chain extends AbstractAbility {
             hitCounter = partOfChainLightning(warlordsPlayer, new HashSet<>(), warlordsPlayer.getEntity(), false);
         } else if (name.contains("Heal")) {
             for (WarlordsPlayer nearPlayer : PlayerFilter
-                    .entitiesAround(player, 10, 9, 10)
+                    .entitiesAround(player, 15, 9, 15)
                     .aliveTeammatesOfExcludingSelf(warlordsPlayer)) {
                 if (Utils.getLookingAtChain(player, nearPlayer.getEntity()) && Utils.hasLineOfSight(player, nearPlayer.getEntity())) {
                     //self heal
@@ -203,6 +203,7 @@ public class Chain extends AbstractAbility {
                             .entitiesAround(nearPlayer, 10.0D, 9.0D, 10.0D)
                             .aliveEnemiesOf(warlordsPlayer)
                             .excluding(nearPlayer)
+                            .soulBindedFirst(warlordsPlayer)
                     ) {
                         chain(nearPlayer.getLocation(), nearNearPlayer.getLocation());
                         nearNearPlayer.addHealth(warlordsPlayer, name, minDamageHeal * .8f, maxDamageHeal * .8f, critChance, critMultiplier);
@@ -218,6 +219,7 @@ public class Chain extends AbstractAbility {
                                 .entitiesAround(nearNearPlayer, 10.0D, 9.0D, 10.0D)
                                 .aliveEnemiesOf(warlordsPlayer)
                                 .excluding(nearPlayer, nearNearPlayer)
+                                .soulBindedFirst(warlordsPlayer)
                         ) {
                             chain(nearNearPlayer.getLocation(), nearNearNearPlayer.getLocation());
                             nearNearPlayer.addHealth(warlordsPlayer, name, minDamageHeal * .6f, maxDamageHeal * .6f, critChance, critMultiplier);
@@ -251,10 +253,10 @@ public class Chain extends AbstractAbility {
                 }
 
             } else if (name.contains("Heal")) {
-                if (hitCounter * 2 > warlordsPlayer.getSpec().getRed().getCurrentCooldown()) {
+                if ((hitCounter + 1) * 2 > warlordsPlayer.getSpec().getRed().getCurrentCooldown()) {
                     warlordsPlayer.getSpec().getRed().setCurrentCooldown(0);
                 } else {
-                    warlordsPlayer.getSpec().getRed().setCurrentCooldown(warlordsPlayer.getSpec().getRed().getCurrentCooldown() - hitCounter * 2);
+                    warlordsPlayer.getSpec().getRed().setCurrentCooldown(warlordsPlayer.getSpec().getRed().getCurrentCooldown() - (hitCounter + 1) * 2);
                 }
                 warlordsPlayer.updateRedItem(player);
                 warlordsPlayer.getSpec().getBlue().setCurrentCooldown(cooldown);

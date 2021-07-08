@@ -35,10 +35,14 @@ public class GroundFlagLocation extends AbstractLocationBasedFlagLocation implem
         return despawnTimer;
     }
 
+    public int getDespawnTimerSeconds() {
+        return this.despawnTimer / 20;
+    }
+
     @Override
     public FlagLocation update(FlagInfo info) {
         this.despawnTimer--;
         return this.despawnTimer <= 0 ? new SpawnFlagLocation(info.getSpawnLocation(), null) : null;
     }
-	
+
 }
