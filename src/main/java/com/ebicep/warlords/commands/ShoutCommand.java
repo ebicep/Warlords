@@ -21,7 +21,7 @@ public class ShoutCommand implements CommandExecutor {
                 message.append(arg).append(" ");
             }
 
-            for (WarlordsPlayer p : PlayerFilter.playingGame(player.getGame()).aliveTeammatesOf(player)) {
+            for (WarlordsPlayer p : PlayerFilter.playingGame(player.getGame())) {
                 p.sendMessage(message.toString());
             }
         }

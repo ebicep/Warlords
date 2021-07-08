@@ -95,7 +95,7 @@ public class CooldownManager {
     public void clearCooldowns() {
         cooldowns.clear();
         for (WarlordsPlayer value : Warlords.getPlayers().values()) {
-            value.getCooldownManager().getCooldowns().removeIf(cd -> cd.getFrom() == warlordsPlayer && cd.getCooldownClass() != UndyingArmy.class);
+            value.getCooldownManager().getCooldowns().removeIf(cd -> cd.getFrom() == warlordsPlayer && (cd.getCooldownClass() == Intervene.class));
         }
     }
 
