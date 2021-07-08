@@ -67,6 +67,8 @@ public class StartCommand implements TabExecutor {
         boolean teamBlueAssessment = true;
         for (Player player : people) {
             Warlords.databaseManager.addPlayer(player);
+            player.getInventory().clear();
+
             player.getInventory().setItem(5, new ItemBuilder(Material.NOTE_BLOCK)
                     .name(ChatColor.GREEN + "Team Selector " + ChatColor.GRAY + "(Right-Click)")
                     .lore(ChatColor.YELLOW + "Click to select your team!")

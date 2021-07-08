@@ -83,8 +83,6 @@ public class PreLobbyState implements State, TimerDebugAble {
                 return new PlayingState(game);
             }
             timer--;
-            //TESTING
-            //return new PlayingState(game);
         } else {
             timer = game.getMap().getCountdownTimerInTicks();
         }

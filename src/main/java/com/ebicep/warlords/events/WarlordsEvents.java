@@ -98,7 +98,7 @@ public class WarlordsEvents implements Listener {
         }
         if (isSpawnWorld) {
             player.setGameMode(GameMode.ADVENTURE);
-            player.sendMessage(ChatColor.GRAY + "Welcome " + ChatColor.RED + player.getPlayerListName() + ChatColor.GRAY + " to the Warlords comp games server.");
+            player.sendMessage(ChatColor.GRAY + "Player: " + ChatColor.RED + player.getPlayerListName());
             player.sendMessage(" ");
             player.sendMessage(ChatColor.GRAY + "Developed by " + ChatColor.RED + "sumSmash " + ChatColor.GRAY + "&" + ChatColor.RED + " Plikie");
             player.sendMessage(" ");
@@ -106,7 +106,7 @@ public class WarlordsEvents implements Listener {
             player.sendMessage(" ");
             player.sendMessage(ChatColor.GRAY + "Click the Nether Star or do /menu to open the selection menu.");
             player.sendMessage(" ");
-            player.sendMessage(ChatColor.GRAY + "BUILD: " + ChatColor.RED + "RC-3 maven_b-v1.0.0");
+            player.sendMessage(ChatColor.GRAY + "BUILD: " + ChatColor.RED + "RC-3");
 
             player.getInventory().clear();
             player.getInventory().setArmorContents(new ItemStack[]{null, null, null, null});

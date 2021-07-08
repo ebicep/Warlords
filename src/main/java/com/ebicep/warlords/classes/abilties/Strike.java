@@ -72,7 +72,7 @@ public class Strike extends AbstractAbility {
 
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
-        PlayerFilter.entitiesAround(wp, 4, 4, 4)
+        PlayerFilter.entitiesAround(wp, 5, 5, 5)
             .aliveEnemiesOf(wp)
             .closestFirst(wp)
             .requireLineOfSight(wp)
@@ -121,7 +121,7 @@ public class Strike extends AbstractAbility {
                             nearPlayer.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
                         }
                         //reloops near players to give energy to
-                        PlayerFilter.entitiesAround(wp, 10.0D, 10.0D, 10.0D)
+                        PlayerFilter.entitiesAround(wp, 10.0, 10.0, 10.0)
                             .aliveTeammatesOfExcludingSelf(wp)
                             .closestFirst(wp)
                             .limit(2)

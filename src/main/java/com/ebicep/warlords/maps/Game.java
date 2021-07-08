@@ -1,6 +1,7 @@
 package com.ebicep.warlords.maps;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.maps.state.InitState;
 import com.ebicep.warlords.maps.state.PreLobbyState;
 import com.ebicep.warlords.maps.state.State;
@@ -10,6 +11,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.apache.commons.lang.Validate;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
@@ -131,6 +133,10 @@ public class Game implements Runnable {
     public void removePlayer(UUID player) {
         this.players.remove(player);
         Warlords.removePlayer(player);
+        Player p = Bukkit.getPlayer(player);
+        if (p != null) {
+            WarlordsEvents.onPlayerJoin(new PlayerJoinEvent(p, ""));
+        }
     }
 
     public List<UUID> clearAllPlayers() {
