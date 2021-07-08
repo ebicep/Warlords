@@ -135,7 +135,7 @@ public class Game implements Runnable {
         Warlords.removePlayer(player);
         Player p = Bukkit.getPlayer(player);
         if (p != null) {
-            WarlordsEvents.onPlayerJoin(new PlayerJoinEvent(p, ""));
+            WarlordsEvents.joinInteraction(p);
         }
     }
 

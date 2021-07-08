@@ -2,6 +2,7 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.PlayerFilter;
 import com.ebicep.warlords.util.Utils;
@@ -22,6 +23,13 @@ import java.util.List;
 
 public class EarthenSpike extends AbstractAbility {
 
+    private static final String[] REPEATING_SOUND = new String[] {
+            "shaman.earthenspike.animation.a",
+            "shaman.earthenspike.animation.b",
+            "shaman.earthenspike.animation.c",
+            "shaman.earthenspike.animation.d",
+    };
+
     public EarthenSpike() {
         super("Earthen Spike", -476, -662, 0, 120, 15, 175
         );
@@ -40,7 +48,7 @@ public class EarthenSpike extends AbstractAbility {
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
         Location location = player.getLocation();
-        PlayerFilter.entitiesAround(player, 8.5D, 6.0D, 8.5D)
+        PlayerFilter.entitiesAround(player, 10, 10, 10)
                 .aliveEnemiesOf(wp)
                 .forEach((p) -> {
                     if (Utils.getLookingAt(player, p.getEntity()) && Utils.hasLineOfSight(player, p.getEntity())) {
@@ -64,8 +72,10 @@ public class EarthenSpike extends AbstractAbility {
                                 WarlordsPlayer target = earthenSpikeBlock.getTarget();
                                 WarlordsPlayer user = earthenSpikeBlock.getUser();
 
-                                for (Player player1 : player.getWorld().getPlayers()) {
-                                    player1.playSound(lastFallingBlock.getLocation(), "shaman.earthenspike.animation.d", 2, 1);
+                                if (earthenSpikeBlock.getDuration() % 5 == 1) {
+                                    for (Player player1 : player.getWorld().getPlayers()) {
+                                        player1.playSound(lastFallingBlock.getLocation(), REPEATING_SOUND[(earthenSpikeBlock.getDuration() / 5) % 4], 2, 1);
+                                    }
                                 }
 
                                 if (earthenSpikeBlock.getDuration() > 30) {
@@ -125,6 +135,7 @@ public class EarthenSpike extends AbstractAbility {
                                     FallingBlock newBlock = target.getWorld().spawnFallingBlock(newLocation, newLocation.getWorld().getBlockAt(newLocation.clone().add(0, -1, 0)).getType(), newLocation.getWorld().getBlockAt(newLocation.clone().add(0, -1, 0)).getData());
                                     newBlock.setVelocity(new Vector(0, .2, 0));
                                     newBlock.setDropItem(false);
+                                    WarlordsEvents.addEntityUUID(newBlock.getUniqueId());
                                     customFallingBlocks.add(new CustomFallingBlock(newBlock, newBlock.getLocation().getY() - .20));
                                 } else {
                                     //impact
@@ -134,7 +145,7 @@ public class EarthenSpike extends AbstractAbility {
                                             .aliveEnemiesOf(wp)
                                     ) {
                                         warlordsPlayer.addHealth(user, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
-                                        if (Utils.getDistance(warlordsPlayer, 1) < 2.3) {
+                                        if (Utils.getDistance(warlordsPlayer, 1) < 3.3) {
                                             warlordsPlayer.setVelocity(new Vector(0, .6, 0));
                                         }
                                     }

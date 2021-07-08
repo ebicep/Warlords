@@ -74,16 +74,7 @@ public class WarlordsEvents implements Listener {
         }
     }
 
-    @EventHandler
-    public static void onPlayerJoin(PlayerJoinEvent e) {
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                Warlords.databaseManager.loadPlayer(e.getPlayer());
-            }
-        }.runTaskAsynchronously(Warlords.getInstance());
-        //e.setJoinMessage(null);
-        Player player = e.getPlayer();
+    public static void joinInteraction(Player player) {
         Location rejoinPoint = Warlords.getRejoinPoint(player.getUniqueId());
         boolean isSpawnWorld = Bukkit.getWorlds().get(0).getName().equals(rejoinPoint.getWorld().getName());
         boolean playerIsInWrongWorld = !player.getWorld().getName().equals(rejoinPoint.getWorld().getName());
@@ -98,7 +89,7 @@ public class WarlordsEvents implements Listener {
         }
         if (isSpawnWorld) {
             player.setGameMode(GameMode.ADVENTURE);
-            player.sendMessage(ChatColor.GRAY + "Player: " + ChatColor.RED + player.getPlayerListName());
+            player.sendMessage(ChatColor.GRAY + "You are now on Warlords 2.0");
             player.sendMessage(" ");
             player.sendMessage(ChatColor.GRAY + "Developed by " + ChatColor.RED + "sumSmash " + ChatColor.GRAY + "&" + ChatColor.RED + " Plikie");
             player.sendMessage(" ");
@@ -110,7 +101,7 @@ public class WarlordsEvents implements Listener {
 
             player.getInventory().clear();
             player.getInventory().setArmorContents(new ItemStack[]{null, null, null, null});
-            player.getInventory().setItem(4, new ItemBuilder(Material.NETHER_STAR).name("§aSelection Menu").get());
+            player.getInventory().setItem(4, new ItemBuilder(Material.NETHER_STAR).name("Â§aSelection Menu").get());
 
             CustomScoreboard.giveMainLobbyScoreboard(player);
         }
@@ -119,6 +110,19 @@ public class WarlordsEvents implements Listener {
             player.teleport(p.getLocation());
             p.updatePlayerReference(player);
         }
+    }
+
+    @EventHandler
+    public static void onPlayerJoin(PlayerJoinEvent e) {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                Warlords.databaseManager.loadPlayer(e.getPlayer());
+            }
+        }.runTaskAsynchronously(Warlords.getInstance());
+        //e.setJoinMessage(null);
+        Player player = e.getPlayer();
+        joinInteraction(player);
     }
 
     @EventHandler

@@ -98,7 +98,7 @@ public abstract class ProjectileBase extends AbstractAbility {
         double hitDistance = 0;
         for (Entity entity : currentLocation.getWorld().getEntities()) {
             WarlordsPlayer wp = getFromEntity(entity);
-            if (wp != null && (!hitTeammates || shooter.isEnemy(wp)) && wp.isAlive()) {
+            if (wp != null && (!hitTeammates || shooter.isEnemy(wp)) && wp.isAlive() && wp != shooter) {
                 // This logic does not properly deal with an EnderDragon entity, as it has a complex hitbox
                 assert entity instanceof CraftEntity;
                 net.minecraft.server.v1_8_R3.Entity nmsEntity = ((CraftEntity) entity).getHandle();
