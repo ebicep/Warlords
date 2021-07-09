@@ -2,6 +2,7 @@ package com.ebicep.warlords.player;
 
 import com.ebicep.warlords.Warlords;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -76,17 +77,14 @@ public enum Weapons {
         item.setItemMeta(itemMeta);
     }
 
-    public static Weapons getSelected(Player player) {
-        return player.getMetadata("selected-weapon").stream()
-                .map(v -> v.value() instanceof Weapons ? (Weapons) v.value() : null)
-                .filter(Objects::nonNull)
-                .findAny()
-                .orElse(Weapons.FELFLAME_BLADE);
+    @Deprecated
+    public static Weapons getSelected(OfflinePlayer player) {
+        return Warlords.getPlayerSettings(player.getUniqueId()).weapon();
     }
 
-    public static void setSelected(Player player, Weapons selectedWeapon) {
-        player.removeMetadata("selected-weapon", Warlords.getInstance());
-        player.setMetadata("selected-weapon", new FixedMetadataValue(Warlords.getInstance(), selectedWeapon));
+    @Deprecated
+    public static void setSelected(OfflinePlayer player, Weapons selectedWeapon) {
+        Warlords.getPlayerSettings(player.getUniqueId()).weapon(selectedWeapon);
     }
 
     public static Weapons getWeapon(String name) {

@@ -149,7 +149,7 @@ public class CustomScoreboard {
                     scoreboard.getTeam("team_7").setSuffix("olen!" + ChatColor.YELLOW + " +" + flag.getComputedHumanMultiplier() + "§e%");
                 }
             } else if (gameState.flags().getBlue().getFlag() instanceof GroundFlagLocation) {
-                GroundFlagLocation flag = (GroundFlagLocation) gameState.flags().getRed().getFlag();
+                GroundFlagLocation flag = (GroundFlagLocation) gameState.flags().getBlue().getFlag();
                 scoreboard.getTeam("team_7").setPrefix(ChatColor.BLUE + "BLU Flag: ");
                 scoreboard.getTeam("team_7").setSuffix(ChatColor.YELLOW + "Dropped! " + ChatColor.GRAY + flag.getDespawnTimerSeconds());
             } else {

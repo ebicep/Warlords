@@ -12,6 +12,7 @@ import com.ebicep.warlords.player.PlayerSettings;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.powerups.EnergyPowerUp;
 import com.ebicep.warlords.util.PacketUtils;
+import com.ebicep.warlords.util.PlayerFilter;
 import com.ebicep.warlords.util.Utils;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
@@ -279,11 +280,6 @@ public class Warlords extends JavaPlugin {
                                     .getFlag()
                                     .getLocation()
                             );
-                            //dismount directly downwards
-                            if (player.isSneaking() && player.getVehicle() != null) {
-                                player.getVehicle().remove();
-                            }
-
                         }
 
 
@@ -366,10 +362,10 @@ public class Warlords extends JavaPlugin {
                                             .build());
                                     meta.setPower(0);
                                     firework.setFireworkMeta(meta);
-
-                                    player.getWorld().spigot().strikeLightningEffect(warlordsPlayer.getLocation(), false);
                                     warlordsPlayer.respawn();
+
                                     if (player != null) {
+                                        player.getWorld().spigot().strikeLightningEffect(warlordsPlayer.getLocation(), false);
                                         player.getInventory().setItem(5, UndyingArmy.BONE);
                                     }
                                     newHealth = 40;
@@ -478,11 +474,13 @@ public class Warlords extends JavaPlugin {
                                 orb.getArmorStand().remove();
                                 orb.getBukkitEntity().remove();
                                 itr.remove();
-                                warlordsPlayer.addHealth(warlordsPlayer, "Orbs of Life", 502, 502, -1, 100);
-                                Utils.filterOnlyTeammates(player, 3, 3, 3, player)
-                                    .forEach((nearPlayer) -> {
-                                    nearPlayer.addHealth(warlordsPlayer, "Orbs of Life", 420, 420, -1, 100);
-                                });
+                                warlordsPlayer.addHealth(warlordsPlayer, "Orbs of Life", 420, 420, -1, 100);
+                                for (WarlordsPlayer nearPlayer : PlayerFilter
+                                        .entitiesAround(warlordsPlayer,4, 4, 4)
+                                        .aliveTeammatesOfExcludingSelf(warlordsPlayer)
+                                ) {
+                                    nearPlayer.addHealth(warlordsPlayer, "Orbs of Life", 252, 252, -1, 100);
+                                }
                             }
                             if (orb.getBukkitEntity().getTicksLived() > 160) {
                                 orb.getArmorStand().remove();

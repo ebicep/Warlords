@@ -19,6 +19,7 @@ import com.ebicep.warlords.util.PlayerFilter;
 import com.ebicep.warlords.util.Utils;
 import net.minecraft.server.v1_8_R3.EntityLiving;
 import net.minecraft.server.v1_8_R3.GenericAttributes;
+import net.minecraft.server.v1_8_R3.PacketPlayOutEntityDestroy;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
@@ -241,7 +242,7 @@ public final class WarlordsPlayer {
 
     public void assignItemLore(Player player) {
         //§
-        ItemStack weapon = new ItemStack(Material.COOKED_FISH, 1, (short) 1);
+        ItemStack weapon = new ItemStack(this.weapon.item);
         ItemMeta weaponMeta = weapon.getItemMeta();
         weaponMeta.setDisplayName("§cWarlord's Felflame of the " + spec.getWeapon().getName());
         ArrayList<String> weaponLore = new ArrayList<>();
@@ -507,6 +508,9 @@ public final class WarlordsPlayer {
 
                 if (min < 0) {
                     this.entity.playEffect(EntityEffect.HURT);
+                    for (Player player1 : attacker.getWorld().getPlayers()) {
+                        player1.playSound(entity.getLocation(), Sound.HURT_FLESH, 1, 1);
+                    }
                 }
             } else {
                 //TODO FIX FIX IT JUST GETS MORE MESSY LETS GOOOOOOOOOOOOOOO
@@ -540,6 +544,9 @@ public final class WarlordsPlayer {
                     health += min;
                 }
                 entity.playEffect(EntityEffect.HURT);
+                for (Player player1 : attacker.getWorld().getPlayers()) {
+                    player1.playSound(entity.getLocation(), Sound.HURT_FLESH, 1, 1);
+                }
             }
         } else {
             if (!attacker.getCooldownManager().getCooldown(Inferno.class).isEmpty() && (!ability.isEmpty() && !ability.equals("Time Warp"))) {
@@ -609,7 +616,7 @@ public final class WarlordsPlayer {
                         attacker.sendMessage(ChatColor.GREEN + "\u00BB" + ChatColor.GRAY + " Your Intervene hit " + cooldownManager.getCooldown(Intervene.class).get(0).getFrom().getName() + " for " + ChatColor.RED + "§l" + Math.round(damageHealValue) * -1 + "! " + ChatColor.GRAY + "critical damage.");
                         Location loc = getLocation();
                         gameState.getGame().forEachOnlinePlayer((player1, t) -> {
-                            player1.playSound(loc, "warrior.intervene.block.3", 2, 1);
+                            player1.playSound(loc, "warrior.intervene.block", 2, 1);
                         });
                     } else {
                         cooldownManager.getCooldown(Intervene.class).get(0).getFrom().sendMessage("" + ChatColor.RED + "\u00AB" + ChatColor.GRAY + " " + attacker.getName() + "'s Intervene hit you for " + ChatColor.RED + Math.round(damageHealValue) * -1 + ChatColor.GRAY + " damage.");
@@ -618,7 +625,7 @@ public final class WarlordsPlayer {
 
                         Location loc = getLocation();
                         gameState.getGame().forEachOnlinePlayer((p, t) -> {
-                            p.playSound(loc, "warrior.intervene.block.1", 2, 1);
+                            p.playSound(loc, "warrior.intervene.block", 2, 1);
                         });
                     }
 
@@ -663,6 +670,9 @@ public final class WarlordsPlayer {
                     ((EntityLiving) ((CraftPlayer) entity).getHandle()).setAbsorptionHearts((float) (((ArcaneShield) spec.getBlue()).getShieldHealth() / (maxHealth * .5) * 20));
                 }
                 this.entity.playEffect(EntityEffect.HURT);
+                for (Player player1 : attacker.getWorld().getPlayers()) {
+                    player1.playSound(entity.getLocation(), Sound.HURT_FLESH, 1, 1);
+                }
             } else {
                 System.out.println(attacker.getName() + " hit " + name + " for " + damageHealValue);
                 boolean debt = false;
@@ -783,6 +793,20 @@ public final class WarlordsPlayer {
                             orbStand.setPassenger(orb.spawn(location).getBukkitEntity());
                             orb.setArmorStand(orbStand);
                             Warlords.getOrbs().add(orb);
+
+                            // Hacky way
+                            new BukkitRunnable() {
+                                @Override
+                                public void run() {
+                                    for (WarlordsPlayer player : PlayerFilter.playingGame(attacker.getGame()).enemiesOf(attacker)) {
+                                        if (player.getEntity() instanceof Player) {
+                                            ((CraftPlayer)player.getEntity()).getHandle().playerConnection.sendPacket(
+                                                    new PacketPlayOutEntityDestroy(orb.getId())
+                                            );
+                                        }
+                                    }
+                                }
+                            }.runTaskLater(Warlords.getInstance(), 1);
                         }
 
                         //prot strike
@@ -850,6 +874,9 @@ public final class WarlordsPlayer {
                 if (damageHealValue < 0) {
                     attacker.addDamage(-damageHealValue);
                     this.entity.playEffect(EntityEffect.HURT);
+                    for (Player player1 : attacker.getWorld().getPlayers()) {
+                        player1.playSound(entity.getLocation(), Sound.HURT_FLESH, 1, 1);
+                    }
                 }
                 if (this.health <= 0 && cooldownManager.getCooldown(UndyingArmy.class).size() == 0) {
                     dead = true;
@@ -876,7 +903,7 @@ public final class WarlordsPlayer {
                     attacker.sendMessage(ChatColor.GRAY + "You killed " + getColoredName());
                     gameState.getGame().forEachOnlinePlayer((p, t) -> {
                         if(p != this.entity && p != attacker.entity) {
-                            p.sendMessage(getColoredName() + ChatColor.GRAY + " was killed by " + ChatColor.BLUE + attacker.getName());
+                            p.sendMessage(getColoredName() + ChatColor.GRAY + " was killed by " + attacker.getColoredName());
                         }
                     });
                     gameState.addKill(team, false);

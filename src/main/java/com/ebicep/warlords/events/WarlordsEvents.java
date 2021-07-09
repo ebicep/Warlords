@@ -29,6 +29,7 @@ import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.*;
+import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -113,6 +114,11 @@ public class WarlordsEvents implements Listener {
     }
 
     @EventHandler
+    public void onDismount(VehicleExitEvent evt) {
+        evt.getVehicle().remove();
+    }
+
+    @EventHandler
     public static void onPlayerJoin(PlayerJoinEvent e) {
         new BukkitRunnable() {
             @Override
@@ -133,9 +139,6 @@ public class WarlordsEvents implements Listener {
             WarlordsPlayer warlordsPlayerVictim = Warlords.getPlayer(e.getEntity());
             if (warlordsPlayerAttacker != null && warlordsPlayerAttacker.isEnemy(warlordsPlayerVictim)) {
                 if (attacker.getInventory().getHeldItemSlot() == 0 && warlordsPlayerAttacker.getHitCooldown() == 0) {
-                    for (Player player1 : attacker.getWorld().getPlayers()) {
-                        player1.playSound(warlordsPlayerVictim.getLocation(), Sound.HURT_FLESH, 1, 1);
-                    }
                     warlordsPlayerAttacker.setHitCooldown(12);
                     warlordsPlayerAttacker.subtractEnergy(warlordsPlayerAttacker.getSpec().getEnergyOnHit() * -1);
 

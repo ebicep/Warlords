@@ -85,7 +85,7 @@ public class Boulder extends AbstractAbility {
                     // Explode based on collision
                     shouldExplode = true;
                 } else {
-                    shouldExplode = PlayerFilter.entitiesAround(newLoc, 1.15, 1.15, 1.15)
+                    shouldExplode = PlayerFilter.entitiesAround(newLoc, 1.75, 1.75, 1.75)
                             .aliveEnemiesOf(wp).findAny().isPresent();
                 }
 

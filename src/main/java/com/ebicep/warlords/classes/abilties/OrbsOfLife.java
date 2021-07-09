@@ -48,6 +48,12 @@ public class OrbsOfLife extends AbstractAbility {
             this.owner = owner;
         }
 
+        // Makes it so they cannot be picked up
+        @Override
+        public void d(EntityHuman entityHuman) {
+
+        }
+
         public Orb spawn(Location loc) {
             World w = ((CraftWorld) loc.getWorld()).getHandle();
             this.setPosition(loc.getX(), loc.getY(), loc.getZ());

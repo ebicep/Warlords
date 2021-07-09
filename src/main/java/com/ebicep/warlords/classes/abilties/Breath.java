@@ -42,10 +42,10 @@ public class Breath extends AbstractAbility {
         }
 
         Vector viewDirection = player.getLocation().getDirection();
-        PlayerFilter.entitiesAround(player, 8.0D, 4.5D, 8.0D)
+        PlayerFilter.entitiesAround(player, 8.0, 4.5, 8.0)
             .forEach(target -> {
                 Vector direction = target.getLocation().subtract(player.getLocation()).toVector().normalize();
-                if (viewDirection.dot(direction) > .7) {
+                if (viewDirection.dot(direction) > .68) {
                     if (name.contains("Water")) {
                         if (wp.isTeammate(target)) {
                             target.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
@@ -89,7 +89,7 @@ public class Breath extends AbstractAbility {
                         //Bukkit.broadcastMessage(String.valueOf(center));
                     }
 
-                    ParticleEffect.HEART.display(0F, 0F, 0F, 1F, 2, center.translateVector(player.getWorld(), 0, 0, 0), 500);
+                    ParticleEffect.HEART.display(0.2f, 0.2f, 0.2f, 1F, 1, center.translateVector(player.getWorld(), 0, 0, 0), 500);
 
                     for (int i = 0; i < 4; i++) {
                         double angle = Math.toRadians(i * 90) + animationTimer * 0.15;

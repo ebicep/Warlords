@@ -73,8 +73,8 @@ public class Chain extends AbstractAbility {
         }
     }
 
-    private final int LIGHTING_MAX_PLAYERS_NO_TOTEM = 2;
-    private final int LIGHTING_MAX_PLAYERS_WITH_TOTEM = 2;
+    private final int LIGHTING_MAX_PLAYERS_NO_TOTEM = 3;
+    private final int LIGHTING_MAX_PLAYERS_WITH_TOTEM = 3;
 
 
     private int partOfChainLightning(WarlordsPlayer warlordsPlayer, Set<WarlordsPlayer> playersHit, Entity checkFrom, boolean hasHitTotem) {
@@ -375,7 +375,6 @@ public class Chain extends AbstractAbility {
             if (entity instanceof ArmorStand && entity.hasMetadata("capacitor-totem-" + player.getName().toLowerCase())) {
                 Vector toEntity = ((ArmorStand) entity).getEyeLocation().add(0, 1, 0).toVector().subtract(eye.toVector());
                 float dot = (float) toEntity.normalize().dot(eye.getDirection());
-                player.sendMessage("" + dot);
                 return dot > .93f;
             }
         }

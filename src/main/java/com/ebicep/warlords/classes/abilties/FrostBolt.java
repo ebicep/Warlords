@@ -11,7 +11,7 @@ public class FrostBolt extends ProjectileBase {
 
     private static final int MAX_FULL_DAMAGE_DISTANCE = 30;
     private static final double DIRECT_HIT_MULTIPLIER = 1.15;
-    private static final float HITBOX = 2;
+    private static final float HITBOX = 3.5f;
     
     public FrostBolt() {
         super("Frostbolt", -268.8f, -345.45f, 0, 70, 20, 175, 2, 250, false);
@@ -40,7 +40,7 @@ public class FrostBolt extends ProjectileBase {
         double toReduceBy = MAX_FULL_DAMAGE_DISTANCE * MAX_FULL_DAMAGE_DISTANCE > distanceSquared ? 1 : 
             1 - (Math.sqrt(distanceSquared) - MAX_FULL_DAMAGE_DISTANCE) / 100.;
         if (toReduceBy < 0) toReduceBy = 0;
-        if (victim != null) {
+        if (victim != null && victim.isEnemy(shooter)) {
             victim.getSpeed().addSpeedModifier("Frostbolt", -25, 2 * 20);
             victim.addHealth(
                     shooter,

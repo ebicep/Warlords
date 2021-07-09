@@ -11,7 +11,7 @@ public class WaterBolt extends ProjectileBase {
 
     private static final int MAX_FULL_DAMAGE_DISTANCE = 40;
     private static final double DIRECT_HIT_MULTIPLIER = 1.15;
-    private static final float HITBOX = 4;
+    private static final float HITBOX = 3.5f;
     
     public WaterBolt() {
         super("Water Bolt", 328, 452, 0, 85, 20, 175, 2, 250, true);

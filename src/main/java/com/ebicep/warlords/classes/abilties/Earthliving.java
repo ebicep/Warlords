@@ -42,7 +42,7 @@ public class Earthliving extends AbstractAbility {
                 if (!wp.getCooldownManager().getCooldown(Earthliving.class).isEmpty()) {
                     Location location = player.getLocation();
                     location.add(0, 1.2, 0);
-                    ParticleEffect.VILLAGER_HAPPY.display(0.3F, 0.3F, 0.3F, 0.1F, 3, location, 500);
+                    ParticleEffect.VILLAGER_HAPPY.display(0.3F, 0.3F, 0.3F, 0.1F, 2, location, 500);
                 } else {
                     this.cancel();
                 }

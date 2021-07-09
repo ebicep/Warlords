@@ -35,7 +35,7 @@ public class LightInfusion extends AbstractAbility {
 
         for (int i = 0; i < 10; i++) {
             Location particleLoc = player.getLocation().add(0, 1.5, 0);
-            ParticleEffect.SPELL.display(1F, 0F, 1F, 0.3F, 5, particleLoc, 500);
+            ParticleEffect.SPELL.display(1F, 0F, 1F, 0.3F, 3, particleLoc, 500);
         }
 
         new BukkitRunnable() {
