@@ -40,11 +40,9 @@ public class CooldownManager {
             Cooldown cooldown = cooldowns.get(i);
             Class cooldownClass = cooldown.getCooldownClass();
             Object cooldownObject = cooldown.getCooldownObject();
-            if (cooldownClass == Intervene.class) {
-                cooldown.subtractTime(.10f);
-            } else {
-                cooldown.subtractTime(.05f);
-            }
+
+            cooldown.subtractTime(.05f);
+
             if (cooldown.getTimeLeft() <= 0) {
                 if (cooldownClass == Intervene.class) {
                     warlordsPlayer.sendMessage("§c\u00AB§7 " + cooldown.getFrom().getName() + "'s §eIntervene §7has expired!");

@@ -35,36 +35,36 @@ public class Intervene extends AbstractAbility {
     public void onActivate(WarlordsPlayer wp, Player player) {
         setDamagePrevented(0);
         PlayerFilter.entitiesAround(wp, 10, 10, 10)
-            .aliveTeammatesOfExcludingSelf(wp)
-            .requireLineOfSight(wp)
-            .closestFirst(wp)
-            .first((nearWarlordsPlayer) -> {
-                //green line thingy
-                Location lineLocation = player.getLocation().add(0, 1, 0);
-                lineLocation.setDirection(lineLocation.toVector().subtract(nearWarlordsPlayer.getLocation().add(0, 1, 0).toVector()).multiply(-1));
-                for (int i = 0; i < Math.floor(player.getLocation().distance(nearWarlordsPlayer.getLocation())) * 4; i++) {
-                    ParticleEffect.VILLAGER_HAPPY.display(0, 0, 0, 0.35F, 1, lineLocation, 500);
-                    lineLocation.add(lineLocation.getDirection().multiply(.25));
-                }
+                .aliveTeammatesOfExcludingSelf(wp)
+                .requireLineOfSight(wp)
+                .closestFirst(wp)
+                .first((nearWarlordsPlayer) -> {
+                    //green line thingy
+                    Location lineLocation = player.getLocation().add(0, 1, 0);
+                    lineLocation.setDirection(lineLocation.toVector().subtract(nearWarlordsPlayer.getLocation().add(0, 1, 0).toVector()).multiply(-1));
+                    for (int i = 0; i < Math.floor(player.getLocation().distance(nearWarlordsPlayer.getLocation())) * 4; i++) {
+                        ParticleEffect.VILLAGER_HAPPY.display(0, 0, 0, 0.35F, 1, lineLocation, 500);
+                        lineLocation.add(lineLocation.getDirection().multiply(.25));
+                    }
 
-                //new cooldown, both players have same instance of intervene now
-                Cooldown interveneCooldown = new Cooldown(Intervene.this.getClass(), new Intervene(), "VENE", 5, wp, CooldownTypes.ABILITY);
+                    //new cooldown, both players have same instance of intervene now
+                    Intervene tempIntervene = new Intervene();
 
-                wp.sendMessage("§a\u00BB§7 You are now protecting " + nearWarlordsPlayer.getName() + " with your §eIntervene!");
-                wp.getCooldownManager().addCooldown(interveneCooldown);
+                    wp.sendMessage("§a\u00BB§7 You are now protecting " + nearWarlordsPlayer.getName() + " with your §eIntervene!");
+                    wp.getCooldownManager().addCooldown(new Cooldown(Intervene.this.getClass(), tempIntervene, "VENE", 5, wp, CooldownTypes.ABILITY));
 
-                //removing all other intervenes bc less work
-                nearWarlordsPlayer.getCooldownManager().getCooldowns().removeAll(nearWarlordsPlayer.getCooldownManager().getCooldown(Intervene.this.getClass()));
+                    //removing all other intervenes bc less work
+                    nearWarlordsPlayer.getCooldownManager().getCooldowns().removeAll(nearWarlordsPlayer.getCooldownManager().getCooldown(Intervene.this.getClass()));
 
-                nearWarlordsPlayer.sendMessage("§a\u00BB§7 " + wp.getName() + " is shielding you with their " + ChatColor.YELLOW + "Intervene" + ChatColor.GRAY + "!");
-                nearWarlordsPlayer.getCooldownManager().addCooldown(interveneCooldown);
+                    nearWarlordsPlayer.sendMessage("§a\u00BB§7 " + wp.getName() + " is shielding you with their " + ChatColor.YELLOW + "Intervene" + ChatColor.GRAY + "!");
+                    nearWarlordsPlayer.getCooldownManager().addCooldown(new Cooldown(Intervene.this.getClass(), tempIntervene, "VENE", 5, wp, CooldownTypes.ABILITY));
 
-                wp.getSpec().getBlue().setCurrentCooldown(cooldown);
-                wp.updateBlueItem();
+                    wp.getSpec().getBlue().setCurrentCooldown(cooldown);
+                    wp.updateBlueItem();
 
-                for (Player player1 : player.getWorld().getPlayers()) {
-                    player1.playSound(player.getLocation(), "warrior.intervene.impact", 1, 1);
-                }
+                    for (Player player1 : player.getWorld().getPlayers()) {
+                        player1.playSound(player.getLocation(), "warrior.intervene.impact", 1, 1);
+                    }
 
                     new BukkitRunnable() {
                         @Override
@@ -94,7 +94,7 @@ public class Intervene extends AbstractAbility {
                         }
                     }.runTaskTimer(Warlords.getInstance(), 0, 0);
                 });
-            }
+    }
 
     public void setDamagePrevented(float damagePrevented) {
         this.damagePrevented = damagePrevented;
