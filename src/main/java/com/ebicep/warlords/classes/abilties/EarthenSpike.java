@@ -132,6 +132,13 @@ public class EarthenSpike extends AbstractAbility {
                                             }
                                         }
                                     }
+                                    //temp fix for block glitch
+                                    for (int i = 0; i < 10; i++) {
+                                        if (newLocation.getWorld().getBlockAt(newLocation).getType() != Material.AIR) {
+                                            newLocation.add(0, 1, 0);
+                                        }
+                                    }
+
                                     FallingBlock newBlock = target.getWorld().spawnFallingBlock(newLocation, newLocation.getWorld().getBlockAt(newLocation.clone().add(0, -1, 0)).getType(), newLocation.getWorld().getBlockAt(newLocation.clone().add(0, -1, 0)).getData());
                                     newBlock.setVelocity(new Vector(0, .2, 0));
                                     newBlock.setDropItem(false);
