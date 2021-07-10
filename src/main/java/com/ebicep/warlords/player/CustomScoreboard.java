@@ -181,9 +181,9 @@ public class CustomScoreboard {
         sideBar.getScore("Wins: " + ChatColor.GREEN + Utils.addCommaAndRound(((Integer) Warlords.databaseManager.getPlayerInformation(player, "wins")))).setScore(10);
         sideBar.getScore("Losses: " + ChatColor.GREEN + Utils.addCommaAndRound(((Integer) Warlords.databaseManager.getPlayerInformation(player, "losses")))).setScore(9);
         sideBar.getScore("  ").setScore(8);
-        sideBar.getScore("Damage: " + ChatColor.DARK_RED + Utils.addCommaAndRound(((Integer) Warlords.databaseManager.getPlayerInformation(player, "damage")))).setScore(7);
-        sideBar.getScore("Healing: " + ChatColor.DARK_GREEN + Utils.addCommaAndRound(((Integer) Warlords.databaseManager.getPlayerInformation(player, "healing")))).setScore(6);
-        sideBar.getScore("Absorbed: " + ChatColor.GOLD + Utils.addCommaAndRound(((Integer) Warlords.databaseManager.getPlayerInformation(player, "absorbed")))).setScore(5);
+        sideBar.getScore("Damage: " + ChatColor.DARK_RED + Utils.addCommaAndRound(((Number) Warlords.databaseManager.getPlayerInformation(player, "damage")).doubleValue())).setScore(7);
+        sideBar.getScore("Healing: " + ChatColor.DARK_GREEN + Utils.addCommaAndRound(((Number) Warlords.databaseManager.getPlayerInformation(player, "healing")).doubleValue())).setScore(6);
+        sideBar.getScore("Absorbed: " + ChatColor.GOLD + Utils.addCommaAndRound(((Number) Warlords.databaseManager.getPlayerInformation(player, "absorbed")).doubleValue())).setScore(5);
         sideBar.getScore("   ").setScore(4);
         sideBar.getScore("dubious").setScore(3);
         sideBar.getScore("    ").setScore(2);

@@ -3,6 +3,7 @@ package com.ebicep.warlords.classes.abilties;
 import com.ebicep.customentities.CustomFallingBlock;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.PlayerFilter;
 import org.bukkit.Location;
@@ -165,6 +166,7 @@ public class GroundSlam extends AbstractAbility {
                 location.getWorld().getBlockAt(blockToGet).getData());
         fallingBlock.setVelocity(new Vector(0, .14, 0));
         fallingBlock.setDropItem(false);
+        WarlordsEvents.addEntityUUID(fallingBlock.getUniqueId());
         return fallingBlock;
     }
 }

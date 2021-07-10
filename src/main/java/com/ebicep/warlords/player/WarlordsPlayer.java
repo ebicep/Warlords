@@ -70,6 +70,8 @@ public final class WarlordsPlayer {
     private int flagsReturned = 0;
     // We have to store these in here as the new player might logout midgame
     private float walkspeed = 1;
+    private boolean infiniteEnergy = false;
+    private boolean disableCooldowns = false;
 
     private final int[] kills = new int[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
     private final int[] assists = new int[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
@@ -880,7 +882,6 @@ public final class WarlordsPlayer {
                 }
                 if (this.health <= 0 && cooldownManager.getCooldown(UndyingArmy.class).size() == 0) {
                     dead = true;
-                    health = 0;
 
                     addGrave();
 
@@ -1122,10 +1123,12 @@ public final class WarlordsPlayer {
     }
 
     public void subtractEnergy(int amount) {
-        if (energy - amount > maxEnergy) {
-            energy = maxEnergy;
-        } else {
-            this.energy -= amount;
+        if (!infiniteEnergy) {
+            if (energy - amount > maxEnergy) {
+                energy = maxEnergy;
+            } else {
+                this.energy -= amount;
+            }
         }
     }
 
@@ -1500,5 +1503,21 @@ public final class WarlordsPlayer {
 
     public int getRespawnTimeSpent() {
         return respawnTimeSpent;
+    }
+
+    public boolean getInfiniteEnergy() {
+        return infiniteEnergy;
+    }
+
+    public void setInfiniteEnergy(boolean infiniteEnergy) {
+        this.infiniteEnergy = infiniteEnergy;
+    }
+
+    public boolean getDisableCooldowns() {
+        return disableCooldowns;
+    }
+
+    public void setDisableCooldowns(boolean disableCooldowns) {
+        this.disableCooldowns = disableCooldowns;
     }
 }

@@ -47,7 +47,7 @@ public class Earthliving extends AbstractAbility {
                     this.cancel();
                 }
             }
-        }.runTaskTimer(Warlords.getInstance(), 0, 2);
+        }.runTaskTimer(Warlords.getInstance(), 0, 4);
     }
 }
 

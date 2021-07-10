@@ -102,7 +102,7 @@ public class WarlordsEvents implements Listener {
 
             player.getInventory().clear();
             player.getInventory().setArmorContents(new ItemStack[]{null, null, null, null});
-            player.getInventory().setItem(4, new ItemBuilder(Material.NETHER_STAR).name("Â§aSelection Menu").get());
+            player.getInventory().setItem(4, new ItemBuilder(Material.NETHER_STAR).name("§aSelection Menu").get());
 
             CustomScoreboard.giveMainLobbyScoreboard(player);
         }
@@ -191,9 +191,7 @@ public class WarlordsEvents implements Listener {
         if (action == Action.RIGHT_CLICK_BLOCK || action == Action.RIGHT_CLICK_AIR) {
             ItemStack itemHeld = player.getItemInHand();
             if (wp != null) {
-                if (player.getInventory().getHeldItemSlot() == 0 || !wp.isHotKeyMode()) {
-                    wp.getSpec().onRightClick(wp, player);
-                } else if (player.getInventory().getHeldItemSlot() == 7 && itemHeld.getType() == Material.GOLD_BARDING && player.getVehicle() == null) {
+                if (player.getInventory().getHeldItemSlot() == 7 && itemHeld.getType() == Material.GOLD_BARDING && player.getVehicle() == null) {
                     if (location.getWorld().getBlockAt((int) location.getX(), 2, (int) location.getZ()).getType() == Material.NETHERRACK) { //&& !Utils.tunnelUnder(e.getPlayer())) {
                         player.sendMessage(ChatColor.RED + "You can't mount here!");
                     } else {
@@ -232,6 +230,8 @@ public class WarlordsEvents implements Listener {
                     openSkillTreeMenu(player);
                 } else if (itemHeld.getType() == Material.COMPASS) {
                     wp.toggleTeamFlagCompass();
+                } else if (player.getInventory().getHeldItemSlot() == 0 || !wp.isHotKeyMode()) {
+                    wp.getSpec().onRightClick(wp, player);
                 }
             } else {
                 if (itemHeld.getType() == Material.NETHER_STAR) {
@@ -302,6 +302,11 @@ public class WarlordsEvents implements Listener {
                 e.setCancelled(true);
             }
         }
+    }
+
+    @EventHandler
+    public void onPlayerDropEvent(PlayerDropItemEvent e) {
+        e.setCancelled(true);
     }
 
     @EventHandler

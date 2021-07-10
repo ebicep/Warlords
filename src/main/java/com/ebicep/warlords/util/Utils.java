@@ -347,7 +347,7 @@ public class Utils {
         player.spigot().sendMessage(componentBuilder.create());
     }
 
-    public static String addCommaAndRound(float amount) {
+    public static String addCommaAndRound(double amount) {
         amount = Math.round(amount);
         DecimalFormat formatter = new DecimalFormat("#,###");
         return formatter.format(amount);

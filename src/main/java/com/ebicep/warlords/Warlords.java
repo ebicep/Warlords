@@ -36,6 +36,8 @@ import java.util.logging.Logger;
 
 public class Warlords extends JavaPlugin {
 
+    private static final int SPAWN_PROTECTION_RADIUS = 5;
+
     private static Warlords instance;
 
     public static Warlords getInstance() {
@@ -282,6 +284,12 @@ public class Warlords extends JavaPlugin {
                             );
                         }
 
+                        if (warlordsPlayer.getDisableCooldowns()) {
+                            warlordsPlayer.getSpec().getRed().setCooldown(0);
+                            warlordsPlayer.getSpec().getPurple().setCooldown(0);
+                            warlordsPlayer.getSpec().getBlue().setCooldown(0);
+                            warlordsPlayer.getSpec().getOrange().setCooldown(0);
+                        }
 
                         //ABILITY COOLDOWN
                         if (warlordsPlayer.getSpec().getRed().getCurrentCooldown() > 0) {
@@ -328,7 +336,12 @@ public class Warlords extends JavaPlugin {
                             new BukkitRunnable() {
                                 @Override
                                 public void run() {
-                                    if (player.getLocation().distanceSquared(game.getMap().getBlueRespawn()) > 5 * 5) {
+                                    Location location = warlordsPlayer.getLocation();
+                                    Location respawn = game.getMap().getRespawn(warlordsPlayer.getTeam());
+                                    if (
+                                            location.getWorld() != respawn.getWorld() ||
+                                                    location.distanceSquared(respawn) > SPAWN_PROTECTION_RADIUS * SPAWN_PROTECTION_RADIUS
+                                    ) {
                                         warlordsPlayer.setSpawnProtection(0);
                                     }
                                     if (warlordsPlayer.getSpawnProtection() == 0) {
@@ -445,11 +458,6 @@ public class Warlords extends JavaPlugin {
                             }
                             if (!cooldownManager.getCooldown(EnergyPowerUp.class).isEmpty()) {
                                 newEnergy += .35;
-                            }
-
-                            //TESTING
-                            if (player.getGameMode() == GameMode.CREATIVE) {
-                                newEnergy = warlordsPlayer.getMaxEnergy();
                             }
 
                             warlordsPlayer.setEnergy(newEnergy);
