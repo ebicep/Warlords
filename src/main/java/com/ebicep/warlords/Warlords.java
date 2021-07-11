@@ -399,7 +399,7 @@ public class Warlords extends JavaPlugin {
                                 }
                             }
                         }
-                        if (newHealth <= 0) {
+                        if (newHealth <= 0 && warlordsPlayer.getRespawnTimer() == -1) {
                             //checking if all undying armies are popped (this should never be true as last if statement bypasses this) then removing all boners
                             if (!warlordsPlayer.getCooldownManager().checkUndyingArmy(false)) {
                                 if (player != null) {
@@ -433,17 +433,24 @@ public class Warlords extends JavaPlugin {
                                 assisted.getScoreboard().updateKillsAssists();
                             }
                             warlordsPlayer.getHitBy().clear();
-                            //respawn timer
-                            int respawn = warlordsPlayer.getGameState().getTimerInSeconds() % 12;
-                            if (respawn <= 4) {
-                                respawn += 12;
-                            }
-                            warlordsPlayer.heal();
-                            warlordsPlayer.setRespawnTimer(respawn);
+                            warlordsPlayer.setRegenTimer(0);
+                            warlordsPlayer.giveRespawnTimer();
                             warlordsPlayer.addTotalRespawnTime();
+
+                            warlordsPlayer.heal();
                         } else {
                             if (player != null) {
-                                player.setHealth(newHealth);
+                                //precaution
+                                if (newHealth > 0) {
+                                    player.setHealth(newHealth);
+                                }
+                            }
+                        }
+
+                        //respawn fix after leaving or stuck
+                        if (player != null) {
+                            if (warlordsPlayer.getRespawnTimer() == -1 && player.getGameMode() == GameMode.SPECTATOR) {
+                                warlordsPlayer.giveRespawnTimer();
                             }
                         }
 
@@ -496,6 +503,10 @@ public class Warlords extends JavaPlugin {
                                 itr.remove();
                             }
                         }
+
+                        if (player != null) {
+                            warlordsPlayer.setBlocksTravelledCM(Utils.getPlayerMovementStatistics(player));
+                        }
                     }
 
                     //EVERY SECOND
@@ -518,11 +529,7 @@ public class Warlords extends JavaPlugin {
                                 }
                             } else {
                                 int healthToAdd = (int) (warlordsPlayer.getMaxHealth() / 55.3);
-                                if (warlordsPlayer.getHealth() + healthToAdd >= warlordsPlayer.getMaxHealth()) {
-                                    warlordsPlayer.setHealth(warlordsPlayer.getMaxHealth());
-                                } else {
-                                    warlordsPlayer.setHealth(warlordsPlayer.getHealth() + (int) (warlordsPlayer.getMaxHealth() / 55.3));
-                                }
+                                warlordsPlayer.setHealth(Math.min(warlordsPlayer.getHealth() + healthToAdd, warlordsPlayer.getMaxHealth()));
                             }
                             //RESPAWN
                             int respawn = warlordsPlayer.getRespawnTimer();

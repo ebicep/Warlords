@@ -19,6 +19,7 @@ import com.ebicep.warlords.util.PlayerFilter;
 import com.ebicep.warlords.util.Utils;
 import net.minecraft.server.v1_8_R3.EntityLiving;
 import net.minecraft.server.v1_8_R3.GenericAttributes;
+import net.minecraft.server.v1_8_R3.NBTTagCompound;
 import net.minecraft.server.v1_8_R3.PacketPlayOutEntityDestroy;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -70,6 +71,7 @@ public final class WarlordsPlayer {
     private int flagsReturned = 0;
     // We have to store these in here as the new player might logout midgame
     private float walkspeed = 1;
+    private int blocksTravelledCM = 0;
     private boolean infiniteEnergy = false;
     private boolean disableCooldowns = false;
 
@@ -136,12 +138,20 @@ public final class WarlordsPlayer {
 
     public Zombie spawnJimmy(@Nonnull Location loc, @Nullable PlayerInventory inv) {
         Zombie jimmy = loc.getWorld().spawn(loc, Zombie.class);
+        jimmy.setBaby(false);
         jimmy.setCustomNameVisible(true);
-        jimmy.setCustomName(this.getColoredName()); // TODO add level and class into the name of this jimmy
+        jimmy.setCustomName(this.getSpec().getClassNameShortWithBrackets() + " " + this.getColoredName() + " " + ChatColor.RED + this.health + "❤"); // TODO add level and class into the name of this jimmy
         jimmy.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));
         ((EntityLiving) ((CraftEntity) jimmy).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0);
         ((EntityLiving) ((CraftEntity) jimmy).getHandle()).getAttributeInstance(GenericAttributes.FOLLOW_RANGE).setValue(0);
-        if(inv != null) {
+        //prevents jimmy from moving
+        net.minecraft.server.v1_8_R3.Entity nmsEn = ((CraftEntity) jimmy).getHandle();
+        NBTTagCompound compound = new NBTTagCompound();
+        nmsEn.c(compound);
+        compound.setByte("NoAI", (byte) 1);
+        nmsEn.f(compound);
+
+        if (inv != null) {
             jimmy.getEquipment().setBoots(inv.getBoots());
             jimmy.getEquipment().setLeggings(inv.getLeggings());
             jimmy.getEquipment().setChestplate(inv.getChestplate());
@@ -369,7 +379,7 @@ public final class WarlordsPlayer {
 
     public void updatePurpleItem() {
         if (entity instanceof Player) {
-            updateRedItem((Player)entity);
+            updatePurpleItem((Player) entity);
         }
     }
 
@@ -379,7 +389,7 @@ public final class WarlordsPlayer {
 
     public void updateBlueItem() {
         if (entity instanceof Player) {
-            updateRedItem((Player)entity);
+            updateBlueItem((Player) entity);
         }
     }
     public void updateBlueItem(Player player) {
@@ -388,7 +398,7 @@ public final class WarlordsPlayer {
 
     public void updateOrangeItem() {
         if (entity instanceof Player) {
-            updateRedItem((Player)entity);
+            updateOrangeItem((Player) entity);
         }
     }
     public void updateOrangeItem(Player player) {
@@ -1095,6 +1105,14 @@ public final class WarlordsPlayer {
         this.respawnTimer = respawnTimer;
     }
 
+    public void giveRespawnTimer() {
+        int respawn = gameState.getTimerInSeconds() % 12;
+        if (respawn <= 4) {
+            respawn += 12;
+        }
+        setRespawnTimer(respawn);
+    }
+
     public float getEnergy() {
         return energy;
     }
@@ -1387,6 +1405,11 @@ public final class WarlordsPlayer {
             this.assignItemLore(player);
             ArmorManager.resetArmor(player, getSpecClass(), getTeam());
             player.setScoreboard(this.getScoreboard().getScoreboard());
+
+            if (isDeath()) {
+                player.setGameMode(GameMode.SPECTATOR);
+                giveRespawnTimer();
+            }
             // TODO Update the inventory based on the status of isUndyingArmyDead here
 
             //SKILL TREE JUICERS
@@ -1519,5 +1542,13 @@ public final class WarlordsPlayer {
 
     public void setDisableCooldowns(boolean disableCooldowns) {
         this.disableCooldowns = disableCooldowns;
+    }
+
+    public int getBlocksTravelledCM() {
+        return blocksTravelledCM;
+    }
+
+    public void setBlocksTravelledCM(int blocksTravelledCM) {
+        this.blocksTravelledCM = blocksTravelledCM;
     }
 }

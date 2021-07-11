@@ -71,7 +71,9 @@ public class WarlordsEvents implements Listener {
     public static void onPlayerQuit(PlayerQuitEvent e) {
         WarlordsPlayer player = Warlords.getPlayer(e.getPlayer());
         if (player != null) {
-            player.updatePlayerReference(null);
+            if (!player.isDeath()) {
+                player.updatePlayerReference(null);
+            }
         }
     }
 
@@ -172,6 +174,16 @@ public class WarlordsEvents implements Listener {
                                 });
                     }
                     warlordsPlayerVictim.addHealth(warlordsPlayerAttacker, "", -132, -179, 25, 200);
+
+                    if (warlordsPlayerVictim.getEntity() instanceof Zombie) {
+                        if (warlordsPlayerVictim.isDeath()) {
+                            warlordsPlayerVictim.getEntity().setCustomName("");
+                        } else {
+                            String oldName = warlordsPlayerVictim.getEntity().getCustomName();
+                            String newName = oldName.substring(0, oldName.lastIndexOf(" ") + 1) + ChatColor.RED + warlordsPlayerVictim.getHealth() + "❤";
+                            warlordsPlayerVictim.getEntity().setCustomName(newName);
+                        }
+                    }
                 }
 
                 if (!warlordsPlayerVictim.getCooldownManager().getCooldown(IceBarrier.class).isEmpty()) {

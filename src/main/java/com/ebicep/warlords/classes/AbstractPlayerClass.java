@@ -3,6 +3,7 @@ package com.ebicep.warlords.classes;
 import com.ebicep.warlords.classes.abilties.*;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import net.minecraft.server.v1_8_R3.PacketPlayOutAnimation;
+import org.bukkit.ChatColor;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
@@ -268,6 +269,10 @@ public abstract class AbstractPlayerClass {
 
     public String getClassNameShort() {
         return classNameShort;
+    }
+
+    public String getClassNameShortWithBrackets() {
+        return ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + this.classNameShort + ChatColor.DARK_GRAY + "]";
     }
 
     public int getWeaponUpgrade() {

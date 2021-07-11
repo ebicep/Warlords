@@ -5,7 +5,6 @@ import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.state.PlayingState;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.util.PlayerFilter;
-import com.ebicep.warlords.util.Utils;
 import com.mongodb.MongoException;
 import com.mongodb.MongoWriteException;
 import com.mongodb.client.MongoClient;
@@ -500,7 +499,7 @@ public class DatabaseManager {
     public void gameAddPlayerStats(List<Document> list, WarlordsPlayer warlordsPlayer) {
         list.add(new Document(warlordsPlayer.getUuid().toString(), new Document("name", warlordsPlayer.getName())
                 .append("spec", Warlords.getPlayerSettings(warlordsPlayer.getUuid()).selectedClass().name)
-                .append("blocks_travelled", Utils.getPlayerMovementStatistics(Bukkit.getPlayer(warlordsPlayer.getUuid())) / 100)
+                .append("blocks_travelled", warlordsPlayer.getBlocksTravelledCM() / 100)
                 .append("seconds_in_combat", warlordsPlayer.getTimeInCombat())
                 .append("seconds_in_respawn", warlordsPlayer.getRespawnTimeSpent())
                 .append("kills", new BsonArray(Arrays.stream(warlordsPlayer.getKills()).mapToObj(BsonInt64::new).collect(Collectors.toList())))
