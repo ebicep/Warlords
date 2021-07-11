@@ -99,6 +99,12 @@ public class WarlordsEvents implements Listener {
             player.sendMessage(ChatColor.GRAY + "Click the Nether Star or do /menu to open the selection menu.");
             player.sendMessage(" ");
             player.sendMessage(ChatColor.GRAY + "BUILD: " + ChatColor.RED + "RC-3");
+            if (player.isOp()) {
+                player.sendMessage(" ");
+                player.sendMessage(ChatColor.GRAY + "Skip Timer: /wldebug timer skip/reset");
+                player.sendMessage(ChatColor.GRAY + "Infinite Energy: /wldebug energy disable/enable");
+                player.sendMessage(ChatColor.GRAY + "Endless Cooldown: /wldebug cooldown disable/enable");
+            }
 
             player.getInventory().clear();
             player.getInventory().setArmorContents(new ItemStack[]{null, null, null, null});
