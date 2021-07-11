@@ -22,7 +22,10 @@ public class FallingBlockWaveEffect {
                 if (distanceSquared < doubleRange) {
                     stands.add(new Stand(center.clone().add(x, 0, z), (int) (-Math.sqrt(distanceSquared) / speed), material, damage));
                 }
+                if ((int) (Math.random() * 5) == 1) z++;
             }
+            //hypixel random ass holes effect = more immersion
+            if ((int) (Math.random() * 5) == 1) x++;
         }
         Collections.sort(stands, Comparator.comparing(Stand::getTimer).reversed());
     }

@@ -3,10 +3,7 @@ package com.ebicep.warlords.classes.internal;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.player.WarlordsPlayer;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import net.minecraft.server.v1_8_R3.*;
-import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
@@ -14,13 +11,15 @@ import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Zombie;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 public abstract class ProjectileBase extends AbstractAbility {
-    
+
     protected final double projectileSpeed;
     protected final int maxTicks;
     protected final double maxDistance;
@@ -52,7 +51,7 @@ public abstract class ProjectileBase extends AbstractAbility {
         Location startingLocation = player.getEyeLocation();
         
         for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(startingLocation, getActivationSound(), 2, 1);
+            player1.playSound(startingLocation, getActivationSound(), 2.3f, 1);
         }
         new BukkitRunnable() {
 

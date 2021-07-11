@@ -168,6 +168,7 @@ public class Totem extends EntityArmorStand {
             setDelayedDamage(0);
 
             for (Player player1 : player.getWorld().getPlayers()) {
+                //TODO find the right sound - this aint right chief
                 player1.playSound(standLocation, "shaman.chainlightning.impact", 2, 2);
             }
 

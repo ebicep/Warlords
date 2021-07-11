@@ -68,25 +68,30 @@ public class Boulder extends AbstractAbility {
                 Location newLoc = stand.getLocation();
                 newLoc.add(speed);
                 stand.teleport(newLoc);
-                newLoc.add(0, 2, 0);
+                newLoc.add(0, speed.getY() * 3, 0);
 
                 if (speed.getY() < 0) {
                     stand.setHeadPose(new EulerAngle(speed.getY() / 2 * -1, 0, 0));
                 } else {
                     stand.setHeadPose(new EulerAngle(speed.getY() * -1, 0, 0));
                 }
-
                 boolean shouldExplode;
 
                 if (last) {
                     ParticleEffect.CRIT.display(0.3F, 0.3F, 0.3F, 0.1F, 4, newLoc, 500);
                 }
-                if (!newLoc.getBlock().isEmpty()) {
+
+                WarlordsPlayer directHit = null;
+                if (!newLoc.clone().add(0, 2.5, 0).getBlock().isEmpty()) {
                     // Explode based on collision
                     shouldExplode = true;
                 } else {
-                    shouldExplode = PlayerFilter.entitiesAround(newLoc, 1.75, 1.75, 1.75)
+                    shouldExplode = PlayerFilter
+                            .entitiesAround(newLoc, 1.25, 1.25, 1.25)
                             .aliveEnemiesOf(wp).findAny().isPresent();
+                    directHit = PlayerFilter
+                            .entitiesAround(newLoc, 1.25, 1.25, 1.25)
+                            .aliveEnemiesOf(wp).findFirstOrNull();
                 }
 
 
@@ -103,11 +108,17 @@ public class Boulder extends AbstractAbility {
                         p.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
 
                         Entity entity = p.getEntity();
-                        Vector v = entity.getLocation().toVector().subtract(newLoc.toVector()).normalize().multiply(1.1).setY(0.3);
+                        Vector v;
+                        if (p == directHit) {
+                            v = player.getLocation().toVector().subtract(p.getLocation().toVector()).normalize().multiply(-1.1).setY(0.3);
+                        } else {
+                            v = entity.getLocation().toVector().subtract(newLoc.toVector()).normalize().multiply(1.1).setY(0.3);
+                        }
                         entity.setVelocity(v);
+
                     }
                     newLoc.setPitch(-12);
-                    newLoc.add(0, 1, 0);
+                    newLoc.add(0, 3, 0);
                     for (int i = 0; i < 24; i++) {
                         if (location.getWorld().getBlockAt(newLoc).getType() == Material.AIR) {
                             FallingBlock fallingBlock;
@@ -140,7 +151,6 @@ public class Boulder extends AbstractAbility {
             }
 
         }.runTaskTimer(Warlords.getInstance(), 0, 1);
-
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "shaman.boulder.activation", 2, 1);

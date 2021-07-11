@@ -933,9 +933,16 @@ public final class WarlordsPlayer {
                         PacketUtils.sendTitle((Player) entity, ChatColor.RED + "YOU DIED!", ChatColor.GRAY + attacker.getName() + " killed you.", 0, 40, 0);
                     }
                 } else {
-                    if (!ability.isEmpty() && !ability.equals("Time Warp") && !ability.equals("Healing Rain") && !ability.equals("Hammer of Light")) {
+                    if (!ability.isEmpty() && !ability.equals("Time Warp") &&
+                            !ability.equals("Healing Rain") &&
+                            !ability.equals("Hammer of Light") &&
+                            !ability.equals("Blood Lust") &&
+                            !ability.equals("Undying Army") &&
+                            !ability.equals("Lightning Rod") &&
+                            !ability.equals("Repentance")
+                    ) {
                         if (attacker.entity instanceof Player) {
-                            ((Player)attacker.entity).playSound(attacker.getLocation(), Sound.ORB_PICKUP, 0.95f, 1);
+                            ((Player) attacker.entity).playSound(attacker.getLocation(), Sound.ORB_PICKUP, 0.95f, 1);
                         }
                     }
                 }

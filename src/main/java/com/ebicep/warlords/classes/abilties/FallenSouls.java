@@ -26,8 +26,7 @@ public class FallenSouls extends AbstractAbility {
     private static final float fallenSoulSpeed = 1.95f;
 
     public FallenSouls() {
-        super("Fallen Souls", -164f, -212f, 0, 55, 20, 180
-        );
+        super("Fallen Souls", -164f, -212f, 0, 55, 20, 180);
     }
 
     @Override
@@ -40,15 +39,15 @@ public class FallenSouls extends AbstractAbility {
 
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
-        Location location = player.getLocation().add(player.getLocation().getDirection().multiply(-1));
-        ArmorStand fallenSoulLeft = player.getWorld().spawn(location.clone().subtract(0, .5, 0).add(Utils.getLeftDirection(location).multiply(.15)), ArmorStand.class);
-        Location locationLeft = player.getLocation().add(player.getLocation().getDirection().multiply(-1));
+        Location location = player.getLocation();
+        ArmorStand fallenSoulLeft = player.getWorld().spawn(location.clone().subtract(0, .5, 0).add(Utils.getLeftDirection(location).multiply(.5)), ArmorStand.class);
+        Location locationLeft = player.getLocation().add(player.getLocation().getDirection().multiply(.2));
         locationLeft.setYaw(location.getYaw() - 13);// - (int)(location.getPitch()/-10f * 1.6));
         ArmorStand fallenSoulMiddle = player.getWorld().spawn(location.clone().subtract(0, .5, 0), ArmorStand.class);
-        Location locationMiddle = player.getLocation().add(player.getLocation().getDirection().multiply(-1));
+        Location locationMiddle = player.getLocation().add(player.getLocation().getDirection().multiply(.2));
         locationMiddle.setYaw(location.getYaw() - 0);
-        ArmorStand fallenSoulRight = player.getWorld().spawn(location.clone().subtract(0, .5, 0).add(Utils.getRightDirection(location).multiply(.15)), ArmorStand.class);
-        Location locationRight = player.getLocation().add(player.getLocation().getDirection().multiply(-1));
+        ArmorStand fallenSoulRight = player.getWorld().spawn(location.clone().subtract(0, .5, 0).add(Utils.getRightDirection(location).multiply(.5)), ArmorStand.class);
+        Location locationRight = player.getLocation().add(player.getLocation().getDirection().multiply(.2));
         locationRight.setYaw(location.getYaw() + 13);// + (int)(location.getPitch()/-10f * 1.6));
 
         FallenSoul fallenSoul = new FallenSoul(Warlords.getPlayer(player), fallenSoulLeft, fallenSoulMiddle, fallenSoulRight, player.getLocation(), player.getLocation(), player.getLocation(), locationLeft.getDirection(), locationMiddle.getDirection(), locationRight.getDirection(), this);
@@ -84,23 +83,23 @@ public class FallenSouls extends AbstractAbility {
                 damageNearByPlayers(nearMiddle, wp, player, fallenSoul);
                 damageNearByPlayers(nearRight, wp, player, fallenSoul);
 
-                ParticleEffect.SPELL_WITCH.display(0, 0, 0, 0, 1, leftSoul.getLocation().add(0, 2, 0), 500);
-                ParticleEffect.SPELL_WITCH.display(0, 0, 0, 0, 1, middleSoul.getLocation().add(0, 2, 0), 500);
-                ParticleEffect.SPELL_WITCH.display(0, 0, 0, 0, 1, rightSoul.getLocation().add(0, 2, 0), 500);
+                ParticleEffect.SPELL_WITCH.display(0, 0, 0, 0, 1, leftSoul.getLocation().add(0, 1.5, 0), 500);
+                ParticleEffect.SPELL_WITCH.display(0, 0, 0, 0, 1, middleSoul.getLocation().add(0, 1.5, 0), 500);
+                ParticleEffect.SPELL_WITCH.display(0, 0, 0, 0, 1, rightSoul.getLocation().add(0, 1.5, 0), 500);
 
-                if (!fallenSoul.isLeftRemoved() && leftSoul.getLocation().getWorld().getBlockAt(leftSoul.getLocation().clone().add(0, 2, 0)).getType() != Material.AIR || fallenSoul.getFallenSoulLeft().getTicksLived() > 50 / fallenSoulSpeed * 1.2) {
+                if (!fallenSoul.isLeftRemoved() && leftSoul.getLocation().getWorld().getBlockAt(leftSoul.getLocation().clone().add(0, 2, 0)).getType() != Material.AIR || fallenSoul.getFallenSoulLeft().getTicksLived() > 25 / fallenSoulSpeed * 1.2) {
                     ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.7F, 1, leftSoul.getLocation().add(0, 1, 0), 500);
                     fallenSoul.getFallenSoulLeft().remove();
                     fallenSoul.setLeftRemoved(true);
                 }
 
-                if (!fallenSoul.isMiddleRemoved() && middleSoul.getLocation().getWorld().getBlockAt(middleSoul.getLocation().clone().add(0, 2, 0)).getType() != Material.AIR || fallenSoul.getFallenSoulMiddle().getTicksLived() > 50 / fallenSoulSpeed * 1.2) {
+                if (!fallenSoul.isMiddleRemoved() && middleSoul.getLocation().getWorld().getBlockAt(middleSoul.getLocation().clone().add(0, 2, 0)).getType() != Material.AIR || fallenSoul.getFallenSoulMiddle().getTicksLived() > 25 / fallenSoulSpeed * 1.2) {
                     ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.7F, 1, middleSoul.getLocation().add(0, 1, 0), 500);
                     fallenSoul.getFallenSoulMiddle().remove();
                     fallenSoul.setMiddleRemoved(true);
                 }
 
-                if (!fallenSoul.isRightRemoved() && rightSoul.getLocation().getWorld().getBlockAt(rightSoul.getLocation().clone().add(0, 2, 0)).getType() != Material.AIR || fallenSoul.getFallenSoulRight().getTicksLived() > 50 / fallenSoulSpeed * 1.2) {
+                if (!fallenSoul.isRightRemoved() && rightSoul.getLocation().getWorld().getBlockAt(rightSoul.getLocation().clone().add(0, 2, 0)).getType() != Material.AIR || fallenSoul.getFallenSoulRight().getTicksLived() > 25 / fallenSoulSpeed * 1.2) {
                     ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.7F, 1, rightSoul.getLocation().add(0, 1, 0), 500);
                     fallenSoul.getFallenSoulRight().remove();
                     fallenSoul.setRightRemoved(true);
@@ -184,8 +183,7 @@ public class FallenSouls extends AbstractAbility {
             fallenSoulLeft.setGravity(false);
             fallenSoulLeft.setVisible(false);
             fallenSoulLeft.setMarker(true);
-            fallenSoulLeft.setHeadPose(new EulerAngle(directionLeft.getY() * -fallenSoulSpeed, 0, 0));
-            //fallenSoulLeft.setHeadPose(new EulerAngle(directionLeft.getY() * -fallenSoulSpeed, -.25, 0));
+            fallenSoulLeft.setHeadPose(new EulerAngle(directionLeft.getY() * -fallenSoulSpeed, -.2, 0));
             this.fallenSoulMiddle = fallenSoulMiddle;
             fallenSoulMiddle.setHelmet(new ItemStack(Material.ACACIA_FENCE_GATE));
             fallenSoulMiddle.setGravity(false);
@@ -197,8 +195,7 @@ public class FallenSouls extends AbstractAbility {
             fallenSoulRight.setGravity(false);
             fallenSoulRight.setVisible(false);
             fallenSoulRight.setMarker(true);
-            fallenSoulRight.setHeadPose(new EulerAngle(directionRight.getY() * -fallenSoulSpeed, 0, 0));
-            //fallenSoulRight.setHeadPose(new EulerAngle(directionRight.getY() * -fallenSoulSpeed, .25, 0));
+            fallenSoulRight.setHeadPose(new EulerAngle(directionRight.getY() * -fallenSoulSpeed, .2, 0));
             this.locationLeft = locationLeft;
             this.locationMiddle = locationMiddle;
             this.locationRight = locationRight;

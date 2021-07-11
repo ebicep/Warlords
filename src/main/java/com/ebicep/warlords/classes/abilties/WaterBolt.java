@@ -14,7 +14,7 @@ public class WaterBolt extends ProjectileBase {
     private static final float HITBOX = 3.8f;
     
     public WaterBolt() {
-        super("Water Bolt", 328, 452, 0, 85, 20, 175, 2, 250, true);
+        super("Water Bolt", 328, 452, 0, 85, 20, 175, 1.85, 250, true);
     }
 
     @Override
