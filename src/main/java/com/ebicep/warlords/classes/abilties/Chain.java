@@ -4,7 +4,6 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.player.Classes;
-import com.ebicep.warlords.player.Cooldown;
 import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.PlayerFilter;
@@ -222,11 +221,9 @@ public class Chain extends AbstractAbility {
                             nearNearPlayer.addHealth(warlordsPlayer, name, minDamageHeal * .6f, maxDamageHeal * .6f, critChance, critMultiplier);
                             hitCounter++;
 
-                            warlordsPlayer.getCooldownManager().getCooldown(Soulbinding.class).stream()
-                                    .map(Cooldown::getCooldownObject)
-                                    .map(Soulbinding.class::cast)
-                                    .filter(soulbinding -> soulbinding.hasBoundPlayer(nearPlayer))
-                                    .forEach(sb -> healNearPlayers(warlordsPlayer));
+                            if (warlordsPlayer.getCooldownManager().hasBoundPlayer(nearPlayer)) {
+                                healNearPlayers(warlordsPlayer);
+                            }
 
                             break;
                         }
