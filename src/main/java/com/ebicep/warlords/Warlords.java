@@ -354,6 +354,12 @@ public class Warlords extends JavaPlugin {
                         }
                         //damage or heal
                         float newHealth = (float) warlordsPlayer.getHealth() / warlordsPlayer.getMaxHealth() * 40;
+                        //EVEN MORE PRECAUTIONS
+                        if (newHealth < 0) {
+                            newHealth = 0;
+                        } else if (newHealth > 40) {
+                            newHealth = 40;
+                        }
                         //UNDYING ARMY
                         //check if player has any unpopped armies
                         if (warlordsPlayer.getCooldownManager().checkUndyingArmy(false) && newHealth <= 0) {
@@ -441,7 +447,7 @@ public class Warlords extends JavaPlugin {
                         } else {
                             if (player != null) {
                                 //precaution
-                                if (newHealth > 0) {
+                                if (newHealth >= 0 && newHealth <= 40) {
                                     player.setHealth(newHealth);
                                 }
                             }

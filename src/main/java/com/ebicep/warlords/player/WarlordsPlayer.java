@@ -662,13 +662,17 @@ public final class WarlordsPlayer {
                     attacker.addAbsorbed(-damageHealValue);
                 }
             } else if (!cooldownManager.getCooldown(ArcaneShield.class).isEmpty() && this.isEnemy(attacker) && !HammerOfLight.standingInHammer(attacker, entity)) {
+                System.out.println(((ArcaneShield) spec.getBlue()).getShieldHealth());
                 damageHealValue *= totalReduction;
                 if (((ArcaneShield) spec.getBlue()).getShieldHealth() + damageHealValue < 0) {
-                    cooldownManager.getCooldowns().remove(cooldownManager.getCooldown(ArcaneShield.class).get(0));
+                    cooldownManager.removeCooldown(ArcaneShield.class);
                     addHealth(attacker, ability, (((ArcaneShield) spec.getBlue()).getShieldHealth() + damageHealValue), (((ArcaneShield) spec.getBlue()).getShieldHealth() + damageHealValue), isCrit ? 100 : -1, 100);
 
                     addAbsorbed(-(((ArcaneShield) spec.getBlue()).getShieldHealth()));
+                    attacker.addAbsorbed(-(((ArcaneShield) spec.getBlue()).getShieldHealth()));
                 } else {
+                    ((ArcaneShield) spec.getBlue()).addShieldHealth(damageHealValue);
+
                     if (ability.isEmpty()) {
                         sendMessage("" + ChatColor.RED + "\u00AB" + ChatColor.GRAY + " You absorbed " + attacker.getName() + "'s melee " + ChatColor.GRAY + "hit.");
                         attacker.sendMessage(ChatColor.GREEN + "\u00BB" + ChatColor.GRAY + " Your melee hit was absorbed by " + name);
@@ -678,8 +682,8 @@ public final class WarlordsPlayer {
                     }
 
                     addAbsorbed(-damageHealValue);
+                    attacker.addAbsorbed(-damageHealValue);
                 }
-                ((ArcaneShield) spec.getBlue()).addShieldHealth(damageHealValue);
                 if (entity instanceof Player) {
                     ((EntityLiving) ((CraftPlayer) entity).getHandle()).setAbsorptionHearts((float) (((ArcaneShield) spec.getBlue()).getShieldHealth() / (maxHealth * .5) * 20));
                 }

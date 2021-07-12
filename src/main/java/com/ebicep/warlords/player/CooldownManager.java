@@ -90,6 +90,10 @@ public class CooldownManager {
         cooldowns.add(cooldown);
     }
 
+    public void removeCooldown(Class cooldownClass) {
+        cooldowns.removeIf(cd -> cd.getCooldownClass() == cooldownClass);
+    }
+
     public void clearCooldowns() {
         cooldowns.clear();
         for (WarlordsPlayer value : Warlords.getPlayers().values()) {
