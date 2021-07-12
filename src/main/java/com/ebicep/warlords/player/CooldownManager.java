@@ -106,6 +106,15 @@ public class CooldownManager {
         return false;
     }
 
+    public boolean hasBoundPlayerLink(WarlordsPlayer warlordsPlayer) {
+        for (Cooldown cooldown : getCooldown(Soulbinding.class)) {
+            if (((Soulbinding) cooldown.getCooldownObject()).hasBoundPlayerLink(warlordsPlayer)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public boolean checkUndyingArmy(boolean popped) {
         for (Cooldown cooldown : getCooldown(UndyingArmy.class)) {
             if (popped) {
