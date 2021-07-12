@@ -248,7 +248,8 @@ public class Totem extends EntityArmorStand {
                                     nearPlayer.addHealth(deathsDebtTotem.getOwner(), deathsDebtTotem.getOwner().getSpec().getOrange().getName(),
                                             TotemSpiritguard.this.getDelayedDamage() * .15f,
                                             TotemSpiritguard.this.getDelayedDamage() * .15f,
-                                            deathsDebtTotem.getOwner().getSpec().getOrange().getCritChance(), deathsDebtTotem.getOwner().getSpec().getOrange().getCritMultiplier());
+                                            deathsDebtTotem.getOwner().getSpec().getOrange().getCritChance(),
+                                            deathsDebtTotem.getOwner().getSpec().getOrange().getCritMultiplier());
                                 });
                             // 6 damage waves, stop the function
                             deathsDebtTotem.getTotemArmorStand().remove();

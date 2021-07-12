@@ -449,10 +449,14 @@ public class Warlords extends JavaPlugin {
 
                         //respawn fix after leaving or stuck
                         if (player != null) {
+                            if (warlordsPlayer.getHealth() <= 0 && player.getGameMode() == GameMode.SPECTATOR) {
+                                warlordsPlayer.heal();
+                            }
                             if (warlordsPlayer.getRespawnTimer() == -1 && player.getGameMode() == GameMode.SPECTATOR) {
                                 warlordsPlayer.giveRespawnTimer();
                             }
                         }
+
 
                         //energy
                         if (warlordsPlayer.getEnergy() < warlordsPlayer.getMaxEnergy()) {
