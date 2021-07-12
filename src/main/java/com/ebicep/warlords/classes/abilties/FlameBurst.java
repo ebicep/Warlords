@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 
 public class FlameBurst extends ProjectileBase {
 
-    private static final float HITBOX = 5;
+    private static final float HITBOX = 4.5f;
     
     public FlameBurst() {
         super("Flame Burst", -557, -753, 9.4f, 60, 25, 185, 1.5, 300, false);
