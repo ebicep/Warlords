@@ -85,7 +85,7 @@ public class GroundSlam extends AbstractAbility {
                         if (player != customFallingBlock.getOwner()) {
                             AbstractAbility ability = customFallingBlock.getAbility();
                             if (!((GroundSlam) ability).getPlayersHit().contains(player) && player.isEnemy(customFallingBlock.getOwner())) {
-                                if (player.getLocation().distanceSquared(customFallingBlock.getFallingBlock().getLocation()) < 2) {
+                                if (player.getLocation().distanceSquared(customFallingBlock.getFallingBlock().getLocation()) < 3) {
                                     ((GroundSlam) ability).getPlayersHit().add(player);
                                     final Location loc = player.getLocation();
                                     final Vector v = customFallingBlock.getOwner().getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1.15).setY(0.35);

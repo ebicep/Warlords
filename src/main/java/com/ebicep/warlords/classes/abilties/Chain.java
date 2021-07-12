@@ -194,11 +194,10 @@ public class Chain extends AbstractAbility {
                     nearPlayer.addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
                     hitCounter++;
 
-                    warlordsPlayer.getCooldownManager().getCooldown(Soulbinding.class).stream()
-                            .map(Cooldown::getCooldownObject)
-                            .map(Soulbinding.class::cast)
-                            .filter(soulbinding -> soulbinding.hasBoundPlayerLink(nearPlayer))
-                            .forEach(sb -> healNearPlayers(warlordsPlayer));
+                    if (warlordsPlayer.getCooldownManager().hasBoundPlayer(nearPlayer)) {
+                        healNearPlayers(warlordsPlayer);
+                    }
+
                     for (WarlordsPlayer nearNearPlayer : PlayerFilter
                             .entitiesAround(nearPlayer, 10.0D, 9.0D, 10.0D)
                             .aliveEnemiesOf(warlordsPlayer)
@@ -209,11 +208,9 @@ public class Chain extends AbstractAbility {
                         nearNearPlayer.addHealth(warlordsPlayer, name, minDamageHeal * .8f, maxDamageHeal * .8f, critChance, critMultiplier);
                         hitCounter++;
 
-                        warlordsPlayer.getCooldownManager().getCooldown(Soulbinding.class).stream()
-                                .map(Cooldown::getCooldownObject)
-                                .map(Soulbinding.class::cast)
-                                .filter(soulbinding -> soulbinding.hasBoundPlayerLink(nearPlayer))
-                                .forEach(sb -> healNearPlayers(warlordsPlayer));
+                        if (warlordsPlayer.getCooldownManager().hasBoundPlayer(nearPlayer)) {
+                            healNearPlayers(warlordsPlayer);
+                        }
 
                         for (WarlordsPlayer nearNearNearPlayer : PlayerFilter
                                 .entitiesAround(nearNearPlayer, 10.0D, 9.0D, 10.0D)
@@ -228,7 +225,7 @@ public class Chain extends AbstractAbility {
                             warlordsPlayer.getCooldownManager().getCooldown(Soulbinding.class).stream()
                                     .map(Cooldown::getCooldownObject)
                                     .map(Soulbinding.class::cast)
-                                    .filter(soulbinding -> soulbinding.hasBoundPlayerLink(nearPlayer))
+                                    .filter(soulbinding -> soulbinding.hasBoundPlayer(nearPlayer))
                                     .forEach(sb -> healNearPlayers(warlordsPlayer));
 
                             break;

@@ -646,6 +646,9 @@ public final class WarlordsPlayer {
                     cooldownManager.getCooldown(Intervene.class).get(0).getFrom().setRegenTimer(10);
                     ((Intervene) cooldownManager.getCooldown(Intervene.class).get(0).getCooldownObject()).addDamagePrevented(-damageHealValue);
 
+                    removeHorse();
+                    cooldownManager.getCooldown(Intervene.class).get(0).getFrom().removeHorse();
+
                     //removing intervene if out damaged
                     if (((Intervene) cooldownManager.getCooldown(Intervene.class).get(0).getCooldownObject()).getDamagePrevented() >= 3600) {
                         //remove from intervener
@@ -655,7 +658,6 @@ public final class WarlordsPlayer {
                         sendMessage("§c\u00AB§7 " + cooldownManager.getCooldown(Intervene.class).get(0).getFrom().getName() + "'s " + ChatColor.YELLOW + "Intervene " + ChatColor.GRAY + "has expired!");
                         cooldownManager.getCooldowns().remove(cooldownManager.getCooldown(Intervene.class).get(0));
                     }
-
                     this.addAbsorbed(-damageHealValue);
                     attacker.addAbsorbed(-damageHealValue);
                 }
@@ -685,6 +687,8 @@ public final class WarlordsPlayer {
                 for (Player player1 : attacker.getWorld().getPlayers()) {
                     player1.playSound(entity.getLocation(), Sound.HURT_FLESH, 1, 1);
                 }
+
+                removeHorse();
             } else {
                 System.out.println(attacker.getName() + " hit " + name + " for " + damageHealValue);
                 boolean debt = false;
@@ -719,9 +723,7 @@ public final class WarlordsPlayer {
                             powerUpHeal = false;
                             sendMessage(ChatColor.GRAY + "Your §aHealing Powerup §7has worn off.");
                         }
-                        if (entity.getVehicle() != null) {
-                            entity.getVehicle().remove();
-                        }
+                        removeHorse();
                         regenTimer = 10;
                         if (!cooldownManager.getCooldown(LastStand.class).isEmpty() && !HammerOfLight.standingInHammer(attacker, entity)) {
                             for (Cooldown cooldown : cooldownManager.getCooldown(LastStand.class)) {
@@ -999,7 +1001,7 @@ public final class WarlordsPlayer {
 
                         for (WarlordsPlayer nearPlayer : PlayerFilter.entitiesAround(attacker, 3, 3, 3)
                             .aliveTeammatesOfExcludingSelf(attacker)
-                            .limit(2)
+                                .limit(2)
                         ) {
                             nearPlayer.addHealth(attacker, "Earthliving Weapon", 132 * 2.4f, 179 * 2.4f, 25, 200);
                         }
@@ -1007,6 +1009,12 @@ public final class WarlordsPlayer {
                 }
             }
             System.out.println(attacker.name + " - " + attacker.getTotalDamage());
+        }
+    }
+
+    public void removeHorse() {
+        if (entity.getVehicle() != null) {
+            entity.getVehicle().remove();
         }
     }
 
