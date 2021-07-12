@@ -100,7 +100,7 @@ public class WarlordsEvents implements Listener {
             player.sendMessage(" ");
             player.sendMessage(ChatColor.GRAY + "Click the Nether Star or do /menu to open the selection menu.");
             player.sendMessage(" ");
-            player.sendMessage(ChatColor.GRAY + "BUILD: " + ChatColor.RED + "RC-3");
+            player.sendMessage(ChatColor.GRAY + "BUILD: " + ChatColor.RED + "RC-4");
             if (player.isOp()) {
                 player.sendMessage(" ");
                 player.sendMessage(ChatColor.GRAY + "Skip Timer: /wldebug timer skip/reset");

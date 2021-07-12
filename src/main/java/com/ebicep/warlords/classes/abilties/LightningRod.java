@@ -51,7 +51,7 @@ public class LightningRod extends AbstractAbility {
                     }
                 });
 
-        new FallingBlockWaveEffect(playerLocation, 6, .85, Material.RED_ROSE, (byte) 5).play();
+        new FallingBlockWaveEffect(playerLocation, 5, 1, Material.RED_ROSE, (byte) 5).play();
         player.getWorld().spigot().strikeLightningEffect(playerLocation, true);
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "shaman.lightningrod.activation", 2, 1);

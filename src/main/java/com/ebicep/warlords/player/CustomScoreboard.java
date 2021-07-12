@@ -35,7 +35,7 @@ public class CustomScoreboard {
             tempTeam.addEntry(teamEntries[i]);
             switch (i + 1) {
                 case 1:
-                    tempTeam.setPrefix(ChatColor.YELLOW + "WL 2.0 RC-3");
+                    tempTeam.setPrefix(ChatColor.YELLOW + "WL 2.0 RC-4");
                     break;
                 case 5:
                     tempTeam.setPrefix(ChatColor.WHITE + "Class: ");
@@ -187,7 +187,7 @@ public class CustomScoreboard {
         sideBar.getScore("   ").setScore(4);
         sideBar.getScore("dubious").setScore(3);
         sideBar.getScore("    ").setScore(2);
-        sideBar.getScore(ChatColor.YELLOW + "WL 2.0 RC-3").setScore(1);
+        sideBar.getScore(ChatColor.YELLOW + "WL 2.0 RC-4").setScore(1);
         player.setScoreboard(mainLobbyScoreboard);
     }
 }

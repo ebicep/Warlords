@@ -11,7 +11,7 @@ public class FrostBolt extends ProjectileBase {
 
     private static final int MAX_FULL_DAMAGE_DISTANCE = 30;
     private static final double DIRECT_HIT_MULTIPLIER = 1.15;
-    private static final float HITBOX = 3.8f;
+    private static final float HITBOX = 3.5f;
     
     public FrostBolt() {
         super("Frostbolt", -268.8f, -345.45f, 0, 70, 20, 175, 1.85, 250, false);
