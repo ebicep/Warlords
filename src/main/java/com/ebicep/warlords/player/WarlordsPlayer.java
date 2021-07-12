@@ -854,9 +854,9 @@ public final class WarlordsPlayer {
                     //HEALING
                     else {
                         if (isTeammate(attacker)) {
-                            if (!cooldownManager.getCooldown(Strike.class).isEmpty() && attacker.getCooldownManager().getCooldown(Strike.class).get(0).getFrom().getSpec() instanceof Berserker) {
+                            if (!cooldownManager.getCooldown(Strike.class).isEmpty() && cooldownManager.getCooldown(Strike.class).get(0).getFrom().getSpec() instanceof Berserker) {
                                 damageHealValue *= .65;
-                            } else if (!cooldownManager.getCooldown(Strike.class).isEmpty() && attacker.getCooldownManager().getCooldown(Strike.class).get(0).getFrom().getSpec() instanceof Defender) {
+                            } else if (!cooldownManager.getCooldown(Strike.class).isEmpty() && cooldownManager.getCooldown(Strike.class).get(0).getFrom().getSpec() instanceof Defender) {
                                 damageHealValue *= .75;
                             }
                             if (this.health + damageHealValue > maxHealth) {
