@@ -2,8 +2,8 @@ name: Warlords
 version: 1.0.0
 author: ebic
 main: com.ebicep.warlords.Warlords
-depend: [ MultiWorld ]
-softdepend: [ HolographicDisplays, Citizens ]
+depend: [ MultiWorld, HolographicDisplays, Citizens ]
+load: POSTWORLD
 commands:
   start:
     description: Starts a new game.

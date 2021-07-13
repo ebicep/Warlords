@@ -19,8 +19,6 @@ import com.ebicep.warlords.util.PlayerFilter;
 import com.ebicep.warlords.util.Utils;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
-import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.npc.NPCRegistry;
 import org.bson.Document;
 import org.bukkit.*;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
@@ -161,11 +159,7 @@ public class Warlords extends JavaPlugin {
     public static boolean citizensEnabled;
     public static NPCManager npcManager = new NPCManager();
 
-    public static final Location npcCTFLocation =
-            new LocationBuilder(Bukkit.getWorlds().get(0).getSpawnLocation())
-                    .add(Bukkit.getWorlds().get(0).getSpawnLocation().getDirection().multiply(12))
-                    .yaw(180)
-                    .get();
+    public Location npcCTFLocation;
 
     @Override
     public void onEnable() {
@@ -190,20 +184,24 @@ public class Warlords extends JavaPlugin {
         }
         addHologramLeaderboard();
         citizensEnabled = Bukkit.getPluginManager().isPluginEnabled("Citizens");
+        npcCTFLocation = new LocationBuilder(Bukkit.getWorlds().get(0).getSpawnLocation())
+                .add(Bukkit.getWorlds().get(0).getSpawnLocation().getDirection().multiply(12))
+                .yaw(180)
+                .get();
         if (citizensEnabled) {
-            CitizensAPI.getNPCRegistries().forEach(NPCRegistry::deregisterAll);
-            List<String> ctfInfo = new ArrayList<>();
-            ctfInfo.add(ChatColor.YELLOW + ChatColor.BOLD.toString() + "CLICK TO PLAY");
-            ctfInfo.add(ChatColor.AQUA + "Capture The Flag");
-            ctfInfo.add("");
-            ctfInfo.add(ChatColor.GRAY.toString() + game.playersCount() + " in Queue");
-            ctfInfo.add(ChatColor.YELLOW.toString() + game.playersCount() + " Players");
-            npcManager.createNPC(npcCTFLocation,
-                    UUID.fromString("28470830-94bf-20ce-a843-cb95a6235a2b"),
-                    "capture-the-flag",
-                    false,
-                    ctfInfo
-            );
+//            CitizensAPI.getNPCRegistries().forEach(NPCRegistry::deregisterAll);
+//            List<String> ctfInfo = new ArrayList<>();
+//            ctfInfo.add(ChatColor.YELLOW + ChatColor.BOLD.toString() + "CLICK TO PLAY");
+//            ctfInfo.add(ChatColor.AQUA + "Capture The Flag");
+//            ctfInfo.add("");
+//            ctfInfo.add(ChatColor.GRAY.toString() + game.playersCount() + " in Queue");
+//            ctfInfo.add(ChatColor.YELLOW.toString() + game.playersCount() + " Players");
+//            npcManager.createNPC(npcCTFLocation,
+//                    UUID.fromString("28470830-94bf-20ce-a843-cb95a6235a2b"),
+//                    "capture-the-flag",
+//                    false,
+//                    ctfInfo
+//            );
         }
         startTask();
         getServer().getScheduler().runTaskTimer(this, game, 1, 1);
