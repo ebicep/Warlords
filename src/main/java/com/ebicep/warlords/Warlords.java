@@ -1,5 +1,7 @@
 package com.ebicep.warlords;
 
+import com.ebicep.customentities.npc.NPCEvents;
+import com.ebicep.customentities.npc.NPCManager;
 import com.ebicep.warlords.classes.abilties.*;
 import com.ebicep.warlords.commands.*;
 import com.ebicep.warlords.database.DatabaseManager;
@@ -11,11 +13,14 @@ import com.ebicep.warlords.player.CooldownManager;
 import com.ebicep.warlords.player.PlayerSettings;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.powerups.EnergyPowerUp;
+import com.ebicep.warlords.util.LocationBuilder;
 import com.ebicep.warlords.util.PacketUtils;
 import com.ebicep.warlords.util.PlayerFilter;
 import com.ebicep.warlords.util.Utils;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
+import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.npc.NPCRegistry;
 import org.bson.Document;
 import org.bukkit.*;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
@@ -153,6 +158,14 @@ public class Warlords extends JavaPlugin {
     public static Game game;
     public static DatabaseManager databaseManager;
     public static boolean holographicDisplaysEnabled;
+    public static boolean citizensEnabled;
+    public static NPCManager npcManager = new NPCManager();
+
+    public static final Location npcCTFLocation =
+            new LocationBuilder(Bukkit.getWorlds().get(0).getSpawnLocation())
+                    .add(Bukkit.getWorlds().get(0).getSpawnLocation().getDirection().multiply(12))
+                    .yaw(180)
+                    .get();
 
     @Override
     public void onEnable() {
@@ -160,6 +173,7 @@ public class Warlords extends JavaPlugin {
         instance = this;
         getServer().getPluginManager().registerEvents(new WarlordsEvents(), this);
         getServer().getPluginManager().registerEvents(new MenuEventListener(this), this);
+        getServer().getPluginManager().registerEvents(new NPCEvents(), this);
 
         new StartCommand().register(this);
         new EndgameCommand().register(this);
@@ -170,10 +184,29 @@ public class Warlords extends JavaPlugin {
 
         game = new Game();
         getData();
-
+        holographicDisplaysEnabled = Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays");
+        if (holographicDisplaysEnabled) {
+            HologramsAPI.getHolograms(Warlords.this).forEach(Hologram::delete);
+        }
+        addHologramLeaderboard();
+        citizensEnabled = Bukkit.getPluginManager().isPluginEnabled("Citizens");
+        if (citizensEnabled) {
+            CitizensAPI.getNPCRegistries().forEach(NPCRegistry::deregisterAll);
+            List<String> ctfInfo = new ArrayList<>();
+            ctfInfo.add(ChatColor.YELLOW + ChatColor.BOLD.toString() + "CLICK TO PLAY");
+            ctfInfo.add(ChatColor.AQUA + "Capture The Flag");
+            ctfInfo.add("");
+            ctfInfo.add(ChatColor.GRAY.toString() + game.playersCount() + " in Queue");
+            ctfInfo.add(ChatColor.YELLOW.toString() + game.playersCount() + " Players");
+            npcManager.createNPC(npcCTFLocation,
+                    UUID.fromString("28470830-94bf-20ce-a843-cb95a6235a2b"),
+                    "capture-the-flag",
+                    false,
+                    ctfInfo
+            );
+        }
         startTask();
         getServer().getScheduler().runTaskTimer(this, game, 1, 1);
-
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -185,10 +218,6 @@ public class Warlords extends JavaPlugin {
         }.runTaskTimer(this, 30, 90);
 
         Logger.getLogger("org.mongodb.driver").setLevel(Level.WARNING);
-
-        holographicDisplaysEnabled = Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays");
-        addHologramLeaderboard();
-
         getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords]: Plugin is enabled");
     }
 
@@ -219,8 +248,6 @@ public class Warlords extends JavaPlugin {
             public void run() {
                 if (databaseManager != null) {
                     if (holographicDisplaysEnabled) {
-                        HologramsAPI.getHolograms(Warlords.this).forEach(Hologram::delete);
-
                         Location spawnPoint = Bukkit.getWorlds().get(0).getSpawnLocation().clone();
 
                         Location lifeTimeWinsLB = spawnPoint.clone().add(spawnPoint.getDirection().multiply(12));
@@ -501,7 +528,7 @@ public class Warlords extends JavaPlugin {
                                 itr.remove();
                                 warlordsPlayer.addHealth(warlordsPlayer, "Orbs of Life", 420, 420, -1, 100);
                                 for (WarlordsPlayer nearPlayer : PlayerFilter
-                                        .entitiesAround(warlordsPlayer,4, 4, 4)
+                                        .entitiesAround(warlordsPlayer, 4, 4, 4)
                                         .aliveTeammatesOfExcludingSelf(warlordsPlayer)
                                 ) {
                                     nearPlayer.addHealth(warlordsPlayer, "Orbs of Life", 252, 252, -1, 100);
@@ -522,7 +549,7 @@ public class Warlords extends JavaPlugin {
                     //EVERY SECOND
                     if (counter % 20 == 0) {
                         for (WarlordsPlayer warlordsPlayer : players.values()) {
-                            Player player = warlordsPlayer.getEntity() instanceof Player ? (Player)warlordsPlayer.getEntity() : null;
+                            Player player = warlordsPlayer.getEntity() instanceof Player ? (Player) warlordsPlayer.getEntity() : null;
                             if (player != null) {
                                 //ACTION BAR
                                 if (player.getInventory().getHeldItemSlot() != 8) {
