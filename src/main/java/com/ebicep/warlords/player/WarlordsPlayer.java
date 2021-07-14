@@ -191,8 +191,9 @@ public final class WarlordsPlayer {
         actionBarMessage.append("§l").append(health).append(ChatColor.GOLD).append("§l/§l").append(maxHealth).append("    ");
         actionBarMessage.append(team.boldColoredPrefix()).append(" TEAM  ");
         for (Cooldown cooldown : cooldownManager.getCooldowns()) {
-            actionBarMessage.append(ChatColor.GREEN).append(cooldown.getName()).append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append((int) cooldown.getTimeLeft() + 1).append(" ");
-
+            if (!cooldown.isHidden()) {
+                actionBarMessage.append(ChatColor.GREEN).append(cooldown.getName()).append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append((int) cooldown.getTimeLeft() + 1).append(" ");
+            }
         }
         if (entity instanceof Player) {
             PacketUtils.sendActionBar((Player) entity, actionBarMessage.toString());
@@ -802,29 +803,35 @@ public final class WarlordsPlayer {
 
                         //ORBS
                         if (!attacker.getCooldownManager().getCooldown(OrbsOfLife.class).isEmpty() && !ability.isEmpty()) {
-                            Location location = getLocation();
-                            OrbsOfLife.Orb orb = new OrbsOfLife.Orb(((CraftWorld) location.getWorld()).getHandle(), location, attacker);
-                            //TODO Add team whitelist
-                            ArmorStand orbStand = (ArmorStand) location.getWorld().spawnEntity(location.add(Math.random() * 3 - 1.5, 0, Math.random() * 3 - 1.5), EntityType.ARMOR_STAND);
-                            orbStand.setVisible(false);
-                            //WOW need to set passenger to orb or else the orb will move   like ???
-                            orbStand.setPassenger(orb.spawn(location).getBukkitEntity());
-                            orb.setArmorStand(orbStand);
-                            Warlords.getOrbs().add(orb);
+                            for (Cooldown cooldown : attacker.getCooldownManager().getCooldown(OrbsOfLife.class)) {
+                                OrbsOfLife orbsOfLife = (OrbsOfLife) cooldown.getCooldownObject();
+                                Location location = getLocation();
+                                Location spawnLocation = orbsOfLife.generateSpawnLocation(location);
 
-                            // Hacky way
-                            new BukkitRunnable() {
-                                @Override
-                                public void run() {
-                                    for (WarlordsPlayer player : PlayerFilter.playingGame(attacker.getGame()).enemiesOf(attacker)) {
-                                        if (player.getEntity() instanceof Player) {
-                                            ((CraftPlayer)player.getEntity()).getHandle().playerConnection.sendPacket(
-                                                    new PacketPlayOutEntityDestroy(orb.getId())
-                                            );
+                                OrbsOfLife.Orb orb = new OrbsOfLife.Orb(((CraftWorld) location.getWorld()).getHandle(), spawnLocation, attacker);
+                                ArmorStand orbStand = (ArmorStand) location.getWorld().spawnEntity(spawnLocation, EntityType.ARMOR_STAND);
+                                orbStand.setVisible(false);
+                                orbStand.setGravity(false);
+                                orbStand.setMarker(true);
+                                orbStand.setPassenger(orb.spawn(spawnLocation).getBukkitEntity());
+                                orb.setArmorStand(orbStand);
+
+                                orbsOfLife.getSpawnedOrbs().add(orb);
+
+                                // Hacky way
+                                new BukkitRunnable() {
+                                    @Override
+                                    public void run() {
+                                        for (WarlordsPlayer player : PlayerFilter.playingGame(attacker.getGame()).enemiesOf(attacker)) {
+                                            if (player.getEntity() instanceof Player) {
+                                                ((CraftPlayer) player.getEntity()).getHandle().playerConnection.sendPacket(
+                                                        new PacketPlayOutEntityDestroy(orb.getId())
+                                                );
+                                            }
                                         }
                                     }
-                                }
-                            }.runTaskLater(Warlords.getInstance(), 1);
+                                }.runTaskLater(Warlords.getInstance(), 1);
+                            }
                         }
 
                         //prot strike
@@ -939,7 +946,7 @@ public final class WarlordsPlayer {
                         PacketUtils.sendTitle((Player) entity, ChatColor.RED + "YOU DIED!", ChatColor.GRAY + attacker.getName() + " killed you.", 0, 40, 0);
                     }
                 } else {
-                    if (this != attacker) {
+                    if (!ability.isEmpty() && this != attacker) {
                         if (attacker.entity instanceof Player) {
                             ((Player) attacker.entity).playSound(attacker.getLocation(), Sound.ORB_PICKUP, 0.95f, 1);
                         }

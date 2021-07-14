@@ -8,6 +8,7 @@ public class Cooldown {
     private float timeLeft;
     private WarlordsPlayer from;
     private CooldownTypes cooldownType;
+    private boolean hidden;
 
     public Cooldown(Class ability, Object cooldownObject, String name, float timeLeft, WarlordsPlayer from, CooldownTypes cooldownType) {
         this.cooldownClass = ability;
@@ -16,6 +17,7 @@ public class Cooldown {
         this.timeLeft = timeLeft;
         this.from = from;
         this.cooldownType = cooldownType;
+        this.hidden = false;
     }
 
     public Class getCooldownClass() {
@@ -50,4 +52,11 @@ public class Cooldown {
         return cooldownType;
     }
 
+    public void setHidden(boolean hidden) {
+        this.hidden = hidden;
+    }
+
+    public boolean isHidden() {
+        return hidden;
+    }
 }

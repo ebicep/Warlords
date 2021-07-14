@@ -47,12 +47,6 @@ public class Warlords extends JavaPlugin {
         return instance;
     }
 
-    public static List<OrbsOfLife.Orb> orbs = new ArrayList<>();
-
-    public static List<OrbsOfLife.Orb> getOrbs() {
-        return orbs;
-    }
-
     private static final HashMap<UUID, WarlordsPlayer> players = new HashMap<>();
 
     public static void addPlayer(@Nonnull WarlordsPlayer warlordsPlayer) {
@@ -516,13 +510,18 @@ public class Warlords extends JavaPlugin {
                         }
                         //orbs
                         Location playerPosition = warlordsPlayer.getLocation();
+                        List<OrbsOfLife.Orb> orbs = new ArrayList<>();
+                        PlayerFilter.playingGame(warlordsPlayer.getGame()).teammatesOf(warlordsPlayer).forEach(p -> {
+                            p.getCooldownManager().getCooldown(OrbsOfLife.class).forEach(cd -> {
+                                orbs.addAll(((OrbsOfLife) cd.getCooldownObject()).getSpawnedOrbs());
+                            });
+                        });
                         Iterator<OrbsOfLife.Orb> itr = orbs.iterator();
                         while (itr.hasNext()) {
                             OrbsOfLife.Orb orb = itr.next();
                             Location orbPosition = orb.getArmorStand().getLocation();
                             if (orb.getOwner().isTeammate(warlordsPlayer) && orbPosition.distanceSquared(playerPosition) < 1.75 * 1.75) {
-                                orb.getArmorStand().remove();
-                                orb.getBukkitEntity().remove();
+                                orb.remove();
                                 itr.remove();
                                 warlordsPlayer.addHealth(warlordsPlayer, "Orbs of Life", 420, 420, -1, 100);
                                 for (WarlordsPlayer nearPlayer : PlayerFilter
@@ -533,8 +532,7 @@ public class Warlords extends JavaPlugin {
                                 }
                             }
                             if (orb.getBukkitEntity().getTicksLived() > 160) {
-                                orb.getArmorStand().remove();
-                                orb.getBukkitEntity().remove();
+                                orb.remove();
                                 itr.remove();
                             }
                         }

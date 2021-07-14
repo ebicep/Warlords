@@ -1,10 +1,7 @@
 package com.ebicep.warlords.player;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.classes.abilties.ArcaneShield;
-import com.ebicep.warlords.classes.abilties.Intervene;
-import com.ebicep.warlords.classes.abilties.Soulbinding;
-import com.ebicep.warlords.classes.abilties.UndyingArmy;
+import com.ebicep.warlords.classes.abilties.*;
 import net.minecraft.server.v1_8_R3.EntityLiving;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
@@ -60,8 +57,21 @@ public class CooldownManager {
                         ((EntityLiving) ((CraftPlayer) warlordsPlayer.getEntity()).getHandle()).setAbsorptionHearts(0);
                     }
                 }
-                cooldowns.remove(i);
-                i--;
+
+                if (cooldownClass != OrbsOfLife.class) {
+                    cooldowns.remove(i);
+                    i--;
+                } else {
+                    if (((OrbsOfLife) cooldownObject).getSpawnedOrbs().isEmpty()) {
+                        cooldowns.remove(i);
+                        i--;
+                    } else {
+                        if (!cooldown.isHidden()) {
+                            cooldown.setHidden(true);
+                        }
+                    }
+                }
+
             }
         }
     }
