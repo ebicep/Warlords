@@ -12,6 +12,7 @@ public class InitState implements State {
 
     @Override
     public void begin( ) {
+        game.setCooldownMode(false);
     }
 
     @Override

@@ -61,6 +61,7 @@ public abstract class ProjectileBase extends AbstractAbility {
 
             @Override
             public void run() {
+                updateSpeed(speed, ticksLived);
                 MovingObjectPosition hasCollided = checkCollisionAndMove(currentLocation, speed, shooter);
                 if (hasCollided != null) {
                     onHit(
@@ -85,6 +86,9 @@ public abstract class ProjectileBase extends AbstractAbility {
             return Warlords.getPlayer(e.getPassenger());
         }
         return Warlords.getPlayer(e);
+    }
+
+    protected void updateSpeed(Vector speedVector, int ticksLived) {
     }
     
     @Nullable

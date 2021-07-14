@@ -72,8 +72,10 @@ public final class WarlordsPlayer {
     // We have to store these in here as the new player might logout midgame
     private float walkspeed = 1;
     private int blocksTravelledCM = 0;
-    private boolean infiniteEnergy = false;
-    private boolean disableCooldowns = false;
+    private boolean infiniteEnergy;
+    private boolean disableCooldowns;
+    private double energyModifier = 1;
+    private double cooldownModifier = 1;
 
     private final int[] kills = new int[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
     private final int[] assists = new int[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
@@ -118,13 +120,15 @@ public final class WarlordsPlayer {
         this.team = team;
         this.specClass = settings.selectedClass();
         this.spec = specClass.create.get();
-        this.health = this.spec.getMaxHealth();
-        this.maxHealth = this.spec.getMaxHealth();
+        this.maxHealth = (int) (this.spec.getMaxHealth() * (gameState.getGame().getCooldownMode()? 1.5 : 1));
+        this.health = this.maxHealth;
         this.respawnTimer = -1;
         this.energy = this.spec.getMaxEnergy();
+        this.energyModifier = gameState.getGame().getCooldownMode() ? 0.5 : 1;
         this.maxEnergy = this.spec.getMaxEnergy();
         this.horseCooldown = 0;
         this.flagCooldown = 0;
+        this.cooldownModifier = gameState.getGame().getCooldownMode() ? 0.5 : 1;
         this.hitCooldown = 20;
         this.spawnProtection = 0;
         this.speed = new CalculateSpeed(this::setWalkSpeed, 13);
@@ -1161,6 +1165,7 @@ public final class WarlordsPlayer {
 
     public void subtractEnergy(int amount) {
         if (!infiniteEnergy) {
+            amount *= energyModifier;
             if (energy - amount > maxEnergy) {
                 energy = maxEnergy;
             } else {
@@ -1561,6 +1566,22 @@ public final class WarlordsPlayer {
 
     public void setDisableCooldowns(boolean disableCooldowns) {
         this.disableCooldowns = disableCooldowns;
+    }
+
+    public double getEnergyModifier() {
+        return energyModifier;
+    }
+
+    public void setEnergyModifier(double energyModifier) {
+        this.energyModifier = energyModifier;
+    }
+
+    public double getCooldownModifier() {
+        return cooldownModifier;
+    }
+
+    public void setCooldownModifier(double cooldownModifier) {
+        this.cooldownModifier = cooldownModifier;
     }
 
     public int getBlocksTravelledCM() {

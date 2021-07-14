@@ -16,8 +16,8 @@ import org.bukkit.util.Vector;
 
 public class Boulder extends AbstractAbility {
 
-    private static final double SPEED = 0.52;
-    private static final double GRAVITY = -0.0138;
+    private static final double SPEED = 0.5;
+    private static final double GRAVITY = -0.0139;
 
     public Boulder() {
         super("Boulder", -490, -731, 7.05f, 80, 15, 175);
@@ -68,7 +68,7 @@ public class Boulder extends AbstractAbility {
                 Location newLoc = stand.getLocation();
                 newLoc.add(speed);
                 stand.teleport(newLoc);
-                newLoc.add(0, speed.getY() * 3, 0);
+                newLoc.add(0, 1.7, 0);
 
                 if (speed.getY() < 0) {
                     stand.setHeadPose(new EulerAngle(speed.getY() / 2 * -1, 0, 0));
@@ -82,16 +82,14 @@ public class Boulder extends AbstractAbility {
                 }
 
                 WarlordsPlayer directHit = null;
-                if (!newLoc.clone().add(0, 2.5, 0).getBlock().isEmpty()) {
+                if (!newLoc.getBlock().isEmpty()) {
                     // Explode based on collision
                     shouldExplode = true;
                 } else {
-                    shouldExplode = PlayerFilter
-                            .entitiesAround(newLoc, 1.25, 1.25, 1.25)
-                            .aliveEnemiesOf(wp).findAny().isPresent();
                     directHit = PlayerFilter
-                            .entitiesAround(newLoc, 1.25, 1.25, 1.25)
+                            .entitiesAroundRectangle(newLoc, 1.25, 2.5, 1.25)
                             .aliveEnemiesOf(wp).findFirstOrNull();
+                    shouldExplode = directHit != null;
                 }
 
 
@@ -118,33 +116,33 @@ public class Boulder extends AbstractAbility {
 
                     }
                     newLoc.setPitch(-12);
-                    newLoc.add(0, 3, 0);
                     for (int i = 0; i < 24; i++) {
-                        if (location.getWorld().getBlockAt(newLoc).getType() == Material.AIR) {
-                            FallingBlock fallingBlock;
-                            Location spawnLoc = newLoc.clone().add(0, 0.5, 0);
-                            Vector velocity = newLoc.getDirection().add(new Vector(0, 0.2, 0)).normalize().multiply(.45);
-                            double initialCircleRadius = 2;
-                            spawnLoc.add(new Vector(initialCircleRadius, 0, initialCircleRadius).multiply(velocity));
-                            switch ((int) (Math.random() * 3)) {
-                                case 0:
-                                    fallingBlock = newLoc.getWorld().spawnFallingBlock(spawnLoc, Material.DIRT, (byte) 0);
-                                    break;
-                                case 1:
-                                    fallingBlock = newLoc.getWorld().spawnFallingBlock(spawnLoc, Material.STONE, (byte) 0);
-                                    break;
-                                case 2:
-                                    fallingBlock = newLoc.getWorld().spawnFallingBlock(spawnLoc, Material.DIRT, (byte) 2);
-                                    break;
-                                default:
-                                    throw new IllegalStateException("Unexpected value: " + (int) (Math.random() * 3));
-                            }
-                            fallingBlock.setVelocity(velocity);
-                            fallingBlock.setDropItem(false);
-                            fallingBlock.setTicksLived(4);
-                            newLoc.setYaw((float) (newLoc.getYaw() + Math.random() * 25 + 12));
-                            WarlordsEvents.addEntityUUID(fallingBlock.getUniqueId());
+                        FallingBlock fallingBlock;
+                        Location spawnLoc = newLoc.clone().add(0, 0.5, 0)
+                                .subtract(speed)
+                                .subtract(speed)
+                                .subtract(speed);
+                        Vector velocity = newLoc.getDirection().add(new Vector(0, 0.2, 0)).normalize().multiply(.45);
+                        double initialCircleRadius = 5;
+                        spawnLoc.add(new Vector(initialCircleRadius, 0, initialCircleRadius).multiply(velocity));
+                        switch ((int) (Math.random() * 3)) {
+                            case 0:
+                                fallingBlock = newLoc.getWorld().spawnFallingBlock(spawnLoc, Material.DIRT, (byte) 0);
+                                break;
+                            case 1:
+                                fallingBlock = newLoc.getWorld().spawnFallingBlock(spawnLoc, Material.STONE, (byte) 0);
+                                break;
+                            case 2:
+                                fallingBlock = newLoc.getWorld().spawnFallingBlock(spawnLoc, Material.DIRT, (byte) 2);
+                                break;
+                            default:
+                                throw new IllegalStateException("Unexpected value: " + (int) (Math.random() * 3));
                         }
+                        fallingBlock.setVelocity(velocity);
+                        fallingBlock.setDropItem(false);
+                        fallingBlock.setTicksLived(4);
+                        newLoc.setYaw((float) (newLoc.getYaw() + Math.random() * 25 + 12));
+                        WarlordsEvents.addEntityUUID(fallingBlock.getUniqueId());
                     }
                     this.cancel();
                 }

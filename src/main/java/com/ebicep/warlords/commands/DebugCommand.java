@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.state.TimerDebugAble;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -90,6 +91,31 @@ public class DebugCommand implements CommandExecutor {
                     case "enable":
                         player.setDisableCooldowns(false);
                         sender.sendMessage(ChatColor.GREEN + "Cooldown timers have been enabled!");
+                        return true;
+                    default:
+                        sender.sendMessage("§cInvalid option!");
+                        return false;
+                }
+            }
+
+            case "cooldownmode": {
+                if (args.length < 2) {
+                    sender.sendMessage("§cEnergy requires 2 or more arguments, valid arguments: [disable, enable]");
+                    return true;
+                }
+
+                switch (args[1]) {
+                    case "disable":
+                        sender.sendMessage(ChatColor.RED + "Cooldown Mode can't be disable in game!");
+                        return true;
+                    case "enable":
+                        game.setCooldownMode(true);
+                        Bukkit.broadcastMessage(ChatColor.GOLD + ChatColor.BOLD.toString() + "-------------------------------");
+                        Bukkit.broadcastMessage(ChatColor.GOLD + ChatColor.BOLD.toString() + "Cooldown Mode has been enabled!");
+                        Bukkit.broadcastMessage(ChatColor.GREEN + ChatColor.BOLD.toString() + "+50% Cooldown Reduction");
+                        Bukkit.broadcastMessage(ChatColor.YELLOW + ChatColor.BOLD.toString() + "-50% Energy Costs");
+                        Bukkit.broadcastMessage(ChatColor.GREEN + ChatColor.BOLD.toString() + "+50% Max Health");
+                        Bukkit.broadcastMessage(ChatColor.GOLD + ChatColor.BOLD.toString() + "-------------------------------");
                         return true;
                     default:
                         sender.sendMessage("§cInvalid option!");

@@ -31,6 +31,7 @@ public class Game implements Runnable {
     private State state = null;
     private final Map<UUID, Team> players = new HashMap<>();
     private GameMap map = GameMap.RIFT;
+    private boolean cooldownMode;
 
     public boolean isState(Class<? extends State> clazz) {
         return clazz.isAssignableFrom(this.state.getClass());
@@ -62,6 +63,14 @@ public class Game implements Runnable {
     @Nullable
     public Team getPlayerTeamOrNull(@Nonnull UUID player) {
         return this.players.get(player);
+    }
+
+    public boolean getCooldownMode() {
+        return this.cooldownMode;
+    }
+
+    public void setCooldownMode(boolean cooldownMode) {
+        this.cooldownMode = cooldownMode;
     }
 
     @Nonnull

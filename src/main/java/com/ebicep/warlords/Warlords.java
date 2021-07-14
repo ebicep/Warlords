@@ -350,13 +350,13 @@ public class Warlords extends JavaPlugin {
                             warlordsPlayer.setSpawnProtection(10);
                             warlordsPlayer.setSpawnDamage(5);
                             warlordsPlayer.setDead(false);
-                            Location respawnPoint = game.getMap().getRespawn(warlordsPlayer.getTeam());
+                            Location respawnPoint = warlordsPlayer.getGame().getMap().getRespawn(warlordsPlayer.getTeam());
                             warlordsPlayer.teleport(respawnPoint);
                             new BukkitRunnable() {
                                 @Override
                                 public void run() {
                                     Location location = warlordsPlayer.getLocation();
-                                    Location respawn = game.getMap().getRespawn(warlordsPlayer.getTeam());
+                                    Location respawn = warlordsPlayer.getGame().getMap().getRespawn(warlordsPlayer.getTeam());
                                     if (
                                             location.getWorld() != respawn.getWorld() ||
                                                     location.distanceSquared(respawn) > SPAWN_PROTECTION_RADIUS * SPAWN_PROTECTION_RADIUS

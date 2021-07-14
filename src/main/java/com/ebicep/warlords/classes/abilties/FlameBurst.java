@@ -7,6 +7,7 @@ import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 public class FlameBurst extends ProjectileBase {
 
@@ -14,6 +15,11 @@ public class FlameBurst extends ProjectileBase {
     
     public FlameBurst() {
         super("Flame Burst", -557, -753, 9.4f, 60, 25, 185, 1.5, 300, false);
+    }
+
+    @Override
+    protected void updateSpeed(Vector speedVector, int ticksLived) {
+        speedVector.multiply(1.05);
     }
 
     @Override
