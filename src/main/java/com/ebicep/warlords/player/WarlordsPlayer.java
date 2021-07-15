@@ -816,7 +816,6 @@ public final class WarlordsPlayer {
                                 ArmorStand orbStand = (ArmorStand) location.getWorld().spawnEntity(spawnLocation, EntityType.ARMOR_STAND);
                                 orbStand.setVisible(false);
                                 orbStand.setGravity(false);
-                                orbStand.setMarker(true);
                                 orbStand.setPassenger(orb.spawn(spawnLocation).getBukkitEntity());
                                 orb.setArmorStand(orbStand);
 

@@ -56,16 +56,14 @@ public class CustomScoreboard {
     }
 
     public void updateHealth() {
-        if (health != null) {
-            health.unregister();
+        if (health == null) {
+            health = scoreboard.registerNewObjective("health", "dummy");
+            health.setDisplaySlot(DisplaySlot.BELOW_NAME);
+            health.setDisplayName(ChatColor.RED + "❤");
         }
-        health = scoreboard.registerNewObjective("health", "dummy");
-        health.setDisplaySlot(DisplaySlot.BELOW_NAME);
-        health.setDisplayName(ChatColor.RED + "❤");
         this.gameState.getGame().forEachOfflinePlayer((player, team) -> {
             WarlordsPlayer s = Warlords.getPlayer(player);
-            Score score = health.getScore(s.getName());
-            score.setScore(s.getHealth());
+            health.getScore(s.getName()).setScore(s.getHealth());
         });
     }
 
