@@ -951,7 +951,7 @@ public final class WarlordsPlayer {
                 } else {
                     if (!ability.isEmpty() && this != attacker) {
                         if (attacker.entity instanceof Player) {
-                            ((Player) attacker.entity).playSound(attacker.getLocation(), Sound.ORB_PICKUP, 0.95f, 1);
+                            ((Player) attacker.entity).playSound(attacker.getLocation(), Sound.ORB_PICKUP, 1, 1);
                         }
                     }
                 }

@@ -14,7 +14,7 @@ public class FrostBolt extends ProjectileBase {
     private static final float HITBOX = 3.5f;
     
     public FrostBolt() {
-        super("Frostbolt", -268.8f, -345.45f, 0, 70, 20, 175, 1.85, 250, false);
+        super("Frostbolt", -268.8f, -345.45f, 0, 70, 20, 175, 2, 250, false);
     }
 
     @Override

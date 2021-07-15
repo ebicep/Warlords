@@ -5,6 +5,7 @@ import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
 import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 public class HolyRadiance extends AbstractAbility {
@@ -32,6 +33,7 @@ public class HolyRadiance extends AbstractAbility {
         wp.subtractEnergy(energyCost);
         wp.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
 
+        player.playSound(player.getLocation(), Sound.ORB_PICKUP, 1, 1);
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "paladin.holyradiance.activation", 2, 1);
         }
