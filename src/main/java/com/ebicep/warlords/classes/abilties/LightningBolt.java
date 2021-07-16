@@ -52,9 +52,10 @@ public class LightningBolt extends AbstractAbility {
         new BukkitRunnable() {
             @Override
             public void run() {
-                for(WarlordsPlayer player : PlayerFilter
-                    .entitiesAround(bolt.getLocation(), 1.65, 1.55, 1.65)
-                    .aliveEnemiesOf(wp)
+                for (WarlordsPlayer player : PlayerFilter
+                        .entitiesAround(bolt.getLocation(), 1.65, 1.55, 1.65)
+                        .aliveEnemiesOf(wp)
+                        .excluding(bolt.playersHit)
                 ) {
                     //hitting player
                     bolt.getPlayersHit().add(player);
@@ -67,7 +68,7 @@ public class LightningBolt extends AbstractAbility {
                     //reducing chain cooldown
                     bolt.getShooter().getSpec().getRed().subtractCooldown(2);
                     if (wp.getEntity() instanceof Player) {
-                        wp.updateRedItem((Player)wp.getEntity());
+                        wp.updateRedItem((Player) wp.getEntity());
                     }
                 }
                 //hitting block or out of range
@@ -84,18 +85,16 @@ public class LightningBolt extends AbstractAbility {
                             .excluding(bolt.playersHit)
                     ) {
                         //hitting player
-                        if (!bolt.getPlayersHit().contains(warlordsPlayer)) {
-                            bolt.getPlayersHit().add(warlordsPlayer);
-                            warlordsPlayer.addHealth(bolt.getShooter(), bolt.getLightningBolt().getName(), bolt.getLightningBolt().getMinDamageHeal(), bolt.getLightningBolt().getMaxDamageHeal(), bolt.getLightningBolt().getCritChance(), bolt.getLightningBolt().getCritMultiplier());
+                        bolt.getPlayersHit().add(warlordsPlayer);
+                        warlordsPlayer.addHealth(bolt.getShooter(), bolt.getLightningBolt().getName(), bolt.getLightningBolt().getMinDamageHeal(), bolt.getLightningBolt().getMaxDamageHeal(), bolt.getLightningBolt().getCritChance(), bolt.getLightningBolt().getCritMultiplier());
 
-                            for (Player player1 : warlordsPlayer.getWorld().getPlayers()) {
-                                player1.playSound(warlordsPlayer.getLocation(), "shaman.lightningbolt.impact", 2, 1);
-                            }
-
-                            //reducing chain cooldown
-                            bolt.getShooter().getSpec().getRed().subtractCooldown(2);
-                            bolt.getShooter().updateRedItem();
+                        for (Player player1 : warlordsPlayer.getWorld().getPlayers()) {
+                            player1.playSound(warlordsPlayer.getLocation(), "shaman.lightningbolt.impact", 2, 1);
                         }
+
+                        //reducing chain cooldown
+                        bolt.getShooter().getSpec().getRed().subtractCooldown(2);
+                        bolt.getShooter().updateRedItem();
                     }
 
                     bolt.getArmorStand().remove();
