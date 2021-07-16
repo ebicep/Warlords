@@ -3,6 +3,7 @@ package com.ebicep.warlords.classes.abilties;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.util.PlayerFilter;
 import com.ebicep.warlords.util.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.ArmorStand;
@@ -37,7 +38,7 @@ public class Consecrate extends AbstractAbility {
         wp.subtractEnergy(energyCost);
 
         for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "paladin.consecrate.activation", 2, 1f);
+            player1.playSound(player.getLocation(), "paladin.consecrate.activation", 2, 1);
         }
 
         ArmorStand consecrate = player.getLocation().getWorld().spawn(player.getLocation().clone().add(0, -2, 0), ArmorStand.class);
@@ -52,7 +53,9 @@ public class Consecrate extends AbstractAbility {
             @Override
             public void run() {
                 damageHealCircle.setDuration(damageHealCircle.getDuration() - 1);
-                Utils.filterOnlyEnemies(damageHealCircle.getLocation(), 5, 3, 5, player).forEach(warlordsPlayer -> {
+                PlayerFilter.entitiesAround(damageHealCircle.getLocation(), 4, 3, 4)
+                        .aliveEnemiesOf(wp)
+                        .forEach(warlordsPlayer -> {
                     warlordsPlayer.addHealth(damageHealCircle.getWarlordsPlayer(), damageHealCircle.getName(), damageHealCircle.getMinDamage(), damageHealCircle.getMaxDamage(), damageHealCircle.getCritChance(), damageHealCircle.getCritMultiplier());
                 });
                 if (damageHealCircle.getDuration() == 0) {

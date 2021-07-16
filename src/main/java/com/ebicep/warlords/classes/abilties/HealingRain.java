@@ -50,6 +50,7 @@ public class HealingRain extends AbstractAbility {
 
         BukkitTask task1 = new BukkitRunnable() {
             boolean wasSneaking = false;
+
             @Override
             public void run() {
                 if (wp.isAlive() && player.isSneaking() && !wasSneaking) {
@@ -73,15 +74,18 @@ public class HealingRain extends AbstractAbility {
             public void run() {
                 damageHealCircle.setDuration(damageHealCircle.getDuration() - 1);
 
-                PlayerFilter.entitiesAround(damageHealCircle.getLocation(), 6, 4, 6)
-                    .aliveTeammatesOf(wp)
-                    .forEach((warlordsPlayer) -> {
-                        double distance = damageHealCircle.getLocation().distanceSquared(player.getLocation());
-                        if (distance < damageHealCircle.getRadius() * damageHealCircle.getRadius()) {
-                            warlordsPlayer.addHealth(damageHealCircle.getWarlordsPlayer(), damageHealCircle.getName(), damageHealCircle.getMinDamage(), damageHealCircle.getMaxDamage(), damageHealCircle.getCritChance(), damageHealCircle.getCritMultiplier());
-                        }
-
-                    });
+                PlayerFilter.entitiesAround(damageHealCircle.getLocation(), damageHealCircle.getRadius(), 4, damageHealCircle.getRadius())
+                        .aliveTeammatesOf(wp)
+                        .forEach((warlordsPlayer) -> {
+                            warlordsPlayer.addHealth(
+                                    damageHealCircle.getWarlordsPlayer(),
+                                    damageHealCircle.getName(),
+                                    damageHealCircle.getMinDamage(),
+                                    damageHealCircle.getMaxDamage(),
+                                    damageHealCircle.getCritChance(),
+                                    damageHealCircle.getCritMultiplier()
+                            );
+                        });
                 if (damageHealCircle.getDuration() < 0) {
                     this.cancel();
                     task.cancel();

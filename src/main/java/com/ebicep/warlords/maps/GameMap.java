@@ -197,7 +197,7 @@ public enum GameMap {
             96,
             1,
             1800 * 20,
-            5 * 20,
+            30 * 20,
             "",
 
             new Location(Bukkit.getWorld("WLDebug"), 699.5, 8.5, 184.5), // BLUE DAMAGE

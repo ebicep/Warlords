@@ -108,9 +108,9 @@ public class Boulder extends AbstractAbility {
                         Entity entity = p.getEntity();
                         Vector v;
                         if (p == directHit) {
-                            v = player.getLocation().toVector().subtract(p.getLocation().toVector()).normalize().multiply(-1.1).setY(0.3);
+                            v = player.getLocation().toVector().subtract(p.getLocation().toVector()).normalize().multiply(-1.1).setY(0.4);
                         } else {
-                            v = entity.getLocation().toVector().subtract(newLoc.toVector()).normalize().multiply(1.1).setY(0.3);
+                            v = entity.getLocation().toVector().subtract(newLoc.toVector()).normalize().multiply(1.1).setY(0.4);
                         }
                         entity.setVelocity(v);
 

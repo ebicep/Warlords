@@ -61,6 +61,12 @@ public abstract class AbstractPlayerClass {
     }
 
     public void onRightClick(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
+
+        // Makes it so abilities cannot be used when the game is over
+        if (wp.getGameState() != wp.getGame().getState()) {
+            return;
+        }
+
         if (wp.isDeath()) {
             return;
         }
@@ -118,6 +124,12 @@ public abstract class AbstractPlayerClass {
     }
 
     public void onRightClickHotKey(WarlordsPlayer wp, Player player, int slot) {
+
+        // Makes it so abilities cannot be used when the game is over
+        if (wp.getGameState() != wp.getGame().getState()) {
+            return;
+        }
+
         if (!wp.isDeath()) {
 
             if (slot == 0) {

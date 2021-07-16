@@ -38,6 +38,10 @@ public class PowerupManager extends BukkitRunnable {
                 entitiesNear = entitiesNear.stream().filter(entity -> entity instanceof Player).collect(Collectors.toList());
                 if (entitiesNear.size() != 0) {
                     WarlordsPlayer warlordsPlayer = Warlords.getPlayer((Player) entitiesNear.get(0));
+                    if (warlordsPlayer == null || warlordsPlayer.isDead()) {
+                        continue;
+                    }
+
                     if (powerUp instanceof DamagePowerUp) {
                         /*if (Settings.Powerup.getSelected(warlordsPlayer.getUuid()) == Settings.Powerup.ENERGY) {
                             warlordsPlayer.getCooldownManager().addCooldown(EnergyPowerUp.class, "ENERGY", powerUp.getDuration(), warlordsPlayer, CooldownTypes.BUFF);

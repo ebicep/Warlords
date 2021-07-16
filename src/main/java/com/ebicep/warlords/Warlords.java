@@ -39,6 +39,8 @@ import java.util.logging.Logger;
 
 public class Warlords extends JavaPlugin {
 
+    public static String VERSION = "";
+
     private static final int SPAWN_PROTECTION_RADIUS = 5;
 
     private static Warlords instance;
@@ -157,6 +159,7 @@ public class Warlords extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        VERSION = this.getDescription().getVersion();
         ConfigurationSerialization.registerClass(PlayerSettings.class);
         instance = this;
         getServer().getPluginManager().registerEvents(new WarlordsEvents(), this);

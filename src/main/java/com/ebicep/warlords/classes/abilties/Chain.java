@@ -165,7 +165,7 @@ public class Chain extends AbstractAbility {
                             .excluding(warlordsPlayer, nearPlayer)
                     ) {
                         chain(nearPlayer.getLocation(), nearNearPlayer.getLocation());
-                        nearNearPlayer.addHealth(warlordsPlayer, name, minDamageHeal * .9f, maxDamageHeal * .9f, critChance, critMultiplier);
+                        nearNearPlayer.addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
                         hitCounter++;
 
                         for (WarlordsPlayer nearNearNearPlayer : PlayerFilter
@@ -174,7 +174,7 @@ public class Chain extends AbstractAbility {
                                 .excluding(warlordsPlayer, nearPlayer, nearNearPlayer)
                         ) {
                             chain(nearNearPlayer.getLocation(), nearNearNearPlayer.getLocation());
-                            nearNearPlayer.addHealth(warlordsPlayer, name, minDamageHeal * .8f, maxDamageHeal * .8f, critChance, critMultiplier);
+                            nearNearPlayer.addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
                             hitCounter++;
                             break;
                         }

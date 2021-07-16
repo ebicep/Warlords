@@ -15,10 +15,10 @@ public class DebugCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
 
-        if (!sender.isOp()) {
+        /*if (!sender.isOp()) {
             sender.sendMessage("§cYou do not have permission to do that.");
             return true;
-        }
+        }*/
         Game game = Warlords.game; // In the future allow the user to select a game player
         if (args.length < 1) {
             sender.sendMessage("§cYou need to pass an argument, valid arguments: [timer, energy]");
@@ -99,19 +99,20 @@ public class DebugCommand implements CommandExecutor {
             }
 
             case "cooldownmode": {
+
                 if (args.length < 2) {
-                    sender.sendMessage("§cEnergy requires 2 or more arguments, valid arguments: [disable, enable]");
+                    sender.sendMessage("§cCooldown Mode requires 2 or more arguments, valid arguments: [disable, enable]");
                     return true;
                 }
 
                 switch (args[1]) {
                     case "disable":
-                        sender.sendMessage(ChatColor.RED + "Cooldown Mode can't be disable in game!");
+                        sender.sendMessage(ChatColor.RED + "Cooldown Mode can't be disabled in game!");
                         return true;
                     case "enable":
                         game.setCooldownMode(true);
                         Bukkit.broadcastMessage(ChatColor.GOLD + ChatColor.BOLD.toString() + "-------------------------------");
-                        Bukkit.broadcastMessage(ChatColor.GOLD + ChatColor.BOLD.toString() + "Cooldown Mode has been enabled!");
+                        Bukkit.broadcastMessage(ChatColor.GOLD + ChatColor.BOLD.toString() + "Cooldown Mode has been enabled by §c§l" + sender.getName() + "§6!");
                         Bukkit.broadcastMessage(ChatColor.GREEN + ChatColor.BOLD.toString() + "+50% Cooldown Reduction");
                         Bukkit.broadcastMessage(ChatColor.YELLOW + ChatColor.BOLD.toString() + "-50% Energy Costs");
                         Bukkit.broadcastMessage(ChatColor.GREEN + ChatColor.BOLD.toString() + "+50% Max Health");
@@ -130,7 +131,7 @@ public class DebugCommand implements CommandExecutor {
     }
 
     public void register(Warlords instance) {
-        instance.getCommand("wldebug").setExecutor(this);
-        //instance.getCommand("wldebug").setTabCompleter(this);
+        instance.getCommand("wl").setExecutor(this);
+        //instance.getCommand("wl").setTabCompleter(this);
     }
 }
