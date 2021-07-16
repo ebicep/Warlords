@@ -119,7 +119,7 @@ public class Utils {
             .filter(filterOnlyEnemies(wp));
     }
     public static Predicate<WarlordsPlayer> filterOnlyEnemies(@Nullable WarlordsPlayer wp) {
-        return wp == null ? (player) -> false : wp::isEnemy;
+        return wp == null ? (player) -> false : wp::isEnemyAlive;
     }
 
 
@@ -163,7 +163,7 @@ public class Utils {
             .filter(filterOnlyTeammates(wp));
     }
     public static Predicate<WarlordsPlayer> filterOnlyTeammates(@Nullable WarlordsPlayer wp) {
-        return wp == null ? (player) -> false : wp::isTeammate;
+        return wp == null ? (player) -> false : wp::isTeammateAlive;
     }
 
     // Old methods:
@@ -171,14 +171,14 @@ public class Utils {
     public static List<Entity> filterOutTeammates(Collection<Entity> entities, Player player) {
         WarlordsPlayer wp = Warlords.getPlayer(player);
         return wp == null ? Collections.emptyList() : entities.stream()
-            .filter(e -> wp.isEnemy(e))
+                .filter(e -> wp.isEnemyAlive(e))
             .collect(Collectors.toList());
     }
     @Deprecated
     public static List<Entity> filterTeammates(Collection<Entity> entities, Player player) {
         WarlordsPlayer wp = Warlords.getPlayer(player);
         return wp == null ? Collections.emptyList() : entities.stream()
-            .filter(e -> wp.isTeammate(e))
+                .filter(e -> wp.isTeammateAlive(e))
             .collect(Collectors.toList());
     }
 

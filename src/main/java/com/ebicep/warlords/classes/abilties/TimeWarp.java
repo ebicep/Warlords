@@ -107,9 +107,9 @@ public class TimeWarp extends AbstractAbility {
         private WarlordsPlayer warlordsPlayer;
         private Location location;
         private Vector facing;
-        private int time;
+        private float time;
 
-        public TimeWarpPlayer(WarlordsPlayer warlordsPlayer, Location location, Vector facing, int time) {
+        public TimeWarpPlayer(WarlordsPlayer warlordsPlayer, Location location, Vector facing, float time) {
             this.warlordsPlayer = warlordsPlayer;
             this.location = location;
             this.facing = facing;
@@ -140,11 +140,11 @@ public class TimeWarp extends AbstractAbility {
             this.facing = facing;
         }
 
-        public int getTime() {
+        public float getTime() {
             return time;
         }
 
-        public void setTime(int time) {
+        public void setTime(float time) {
             this.time = time;
         }
     }

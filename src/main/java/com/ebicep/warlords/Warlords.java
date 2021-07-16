@@ -520,15 +520,18 @@ public class Warlords extends JavaPlugin {
                         while (itr.hasNext()) {
                             OrbsOfLife.Orb orb = itr.next();
                             Location orbPosition = orb.getArmorStand().getLocation();
-                            if (orb.getOwner().isTeammate(warlordsPlayer) && orbPosition.distanceSquared(playerPosition) < 1.75 * 1.75) {
+                            if (orbPosition.distanceSquared(playerPosition) < 1.75 * 1.75 && !warlordsPlayer.isDeath()) {
                                 orb.remove();
                                 itr.remove();
-                                warlordsPlayer.addHealth(warlordsPlayer, "Orbs of Life", 420, 420, -1, 100);
+
+                                //504 302
+                                warlordsPlayer.addHealth(orb.getOwner(), "Orbs of Life", 420, 420, -1, 100);
                                 for (WarlordsPlayer nearPlayer : PlayerFilter
                                         .entitiesAround(warlordsPlayer, 4, 4, 4)
                                         .aliveTeammatesOfExcludingSelf(warlordsPlayer)
+                                        .limit(2)
                                 ) {
-                                    nearPlayer.addHealth(warlordsPlayer, "Orbs of Life", 252, 252, -1, 100);
+                                    nearPlayer.addHealth(orb.getOwner(), "Orbs of Life", 252, 252, -1, 100);
                                 }
                             }
                             if (orb.getBukkitEntity().getTicksLived() > 160) {

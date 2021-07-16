@@ -84,7 +84,7 @@ public class GroundSlam extends AbstractAbility {
                     for (WarlordsPlayer player : PlayerFilter.playingGame(wp.getGame()).isAlive()) {
                         if (player != customFallingBlock.getOwner()) {
                             AbstractAbility ability = customFallingBlock.getAbility();
-                            if (!((GroundSlam) ability).getPlayersHit().contains(player) && player.isEnemy(customFallingBlock.getOwner())) {
+                            if (!((GroundSlam) ability).getPlayersHit().contains(player) && player.isEnemyAlive(customFallingBlock.getOwner())) {
                                 if (player.getLocation().distanceSquared(customFallingBlock.getFallingBlock().getLocation()) < 3) {
                                     ((GroundSlam) ability).getPlayersHit().add(player);
                                     final Location loc = player.getLocation();

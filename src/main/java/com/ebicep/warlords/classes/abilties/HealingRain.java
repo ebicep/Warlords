@@ -52,7 +52,7 @@ public class HealingRain extends AbstractAbility {
             boolean wasSneaking = false;
             @Override
             public void run() {
-                if (player.isSneaking() && !wasSneaking) {
+                if (wp.isAlive() && player.isSneaking() && !wasSneaking) {
                     if (recastCooldown != 0) {
                         player.sendMessage(ChatColor.RED + "Your recast ability is on cooldown, please wait 3 seconds!");
                     } else {

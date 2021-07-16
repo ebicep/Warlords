@@ -1,5 +1,6 @@
 package com.ebicep.warlords.maps;
 
+import com.ebicep.warlords.util.LocationBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
@@ -107,7 +108,7 @@ public enum GameMap {
             new Location(Bukkit.getWorld("Warsong"), 88.5, 40.5, 232.5), // RED LOBBY SPAWN
 
             new Location(Bukkit.getWorld("Warsong"), 38.5, 29.5, 14.5), // BLUE RESPAWN
-            new Location(Bukkit.getWorld("Warsong"), 119.5, 29.5, 124.5), // RED RESPAWN
+            new LocationBuilder(new Location(Bukkit.getWorld("Warsong"), 119.5, 29.5, 124.5)).yaw(180).get(), // RED RESPAWN *
 
             new Location(Bukkit.getWorld("Warsong"), 56.5, 39.5, -102.5), // BLUE FLAG
             new Location(Bukkit.getWorld("Warsong"), 88.5, 40.5, 241.5), // RED FLAG

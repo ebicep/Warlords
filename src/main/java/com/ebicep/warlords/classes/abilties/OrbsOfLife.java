@@ -3,7 +3,6 @@ package com.ebicep.warlords.classes.abilties;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
-import com.ebicep.warlords.util.PlayerFilter;
 import net.minecraft.server.v1_8_R3.EntityExperienceOrb;
 import net.minecraft.server.v1_8_R3.EntityHuman;
 import net.minecraft.server.v1_8_R3.World;
@@ -126,10 +125,8 @@ public class OrbsOfLife extends AbstractAbility {
         public void remove() {
             armorStand.remove();
             getBukkitEntity().remove();
-            PlayerFilter.playingGame(owner.getGame()).teammatesOf(owner).forEach(p -> {
-                p.getCooldownManager().getCooldown(OrbsOfLife.class).forEach(cd -> {
-                    ((OrbsOfLife) cd.getCooldownObject()).getSpawnedOrbs().remove(this);
-                });
+            owner.getCooldownManager().getCooldown(OrbsOfLife.class).forEach(cd -> {
+                ((OrbsOfLife) cd.getCooldownObject()).getSpawnedOrbs().remove(this);
             });
         }
 

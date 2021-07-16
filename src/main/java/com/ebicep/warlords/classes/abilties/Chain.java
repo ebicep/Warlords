@@ -207,7 +207,7 @@ public class Chain extends AbstractAbility {
                         nearNearPlayer.addHealth(warlordsPlayer, name, minDamageHeal * .8f, maxDamageHeal * .8f, critChance, critMultiplier);
                         hitCounter++;
 
-                        if (warlordsPlayer.getCooldownManager().hasBoundPlayerLink(nearPlayer)) {
+                        if (warlordsPlayer.getCooldownManager().hasBoundPlayerLink(nearNearPlayer)) {
                             healNearPlayers(warlordsPlayer);
                         }
 
@@ -221,7 +221,7 @@ public class Chain extends AbstractAbility {
                             nearNearPlayer.addHealth(warlordsPlayer, name, minDamageHeal * .6f, maxDamageHeal * .6f, critChance, critMultiplier);
                             hitCounter++;
 
-                            if (warlordsPlayer.getCooldownManager().hasBoundPlayerLink(nearPlayer)) {
+                            if (warlordsPlayer.getCooldownManager().hasBoundPlayerLink(nearNearNearPlayer)) {
                                 healNearPlayers(warlordsPlayer);
                             }
 

@@ -3,6 +3,7 @@ package com.ebicep.warlords.player;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.abilties.*;
 import net.minecraft.server.v1_8_R3.EntityLiving;
+import org.bukkit.ChatColor;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
@@ -24,6 +25,10 @@ public class CooldownManager {
         return cooldowns.stream().anyMatch(cooldown -> cooldown.getCooldownClass() == cooldownClass);
     }
 
+    public boolean hasCooldown(Object cooldownObject) {
+        return cooldowns.stream().anyMatch(cooldown -> cooldown.getCooldownObject() == cooldownObject);
+    }
+
     public List<Cooldown> getCooldown(Class cooldownClass) {
         return cooldowns.stream().filter(cooldown -> cooldown.getCooldownClass() == cooldownClass).collect(Collectors.toList());
     }
@@ -35,6 +40,7 @@ public class CooldownManager {
     public void reduceCooldowns() {
         for (int i = 0; i < cooldowns.size(); i++) {
             Cooldown cooldown = cooldowns.get(i);
+            String name = cooldown.getName();
             Class cooldownClass = cooldown.getCooldownClass();
             Object cooldownObject = cooldown.getCooldownObject();
 
@@ -52,16 +58,19 @@ public class CooldownManager {
                             player1.playSound(warlordsPlayer.getLocation(), "paladin.holyradiance.activation", 0.5f, 1);
                         }
                     }
-                } else if (cooldownClass == ArcaneShield.class) {
+                } else if (cooldownClass == ArcaneShield.class && getCooldown(ArcaneShield.class).size() == 1) {
                     if (warlordsPlayer.getEntity() instanceof Player) {
                         ((EntityLiving) ((CraftPlayer) warlordsPlayer.getEntity()).getHandle()).setAbsorptionHearts(0);
                     }
                 }
 
-                if (cooldownClass != OrbsOfLife.class) {
-                    cooldowns.remove(i);
-                    i--;
-                } else {
+                if (name.equals("WND")) {
+                    warlordsPlayer.sendMessage(ChatColor.GRAY + "You are no longer " + ChatColor.RED + "wounded" + ChatColor.GRAY + ".");
+                } else if (name.equals("CRIP")) {
+                    warlordsPlayer.sendMessage(ChatColor.GRAY + "You are no longer " + ChatColor.RED + "crippled" + ChatColor.GRAY + ".");
+                }
+
+                if (cooldownClass == OrbsOfLife.class) {
                     if (((OrbsOfLife) cooldownObject).getSpawnedOrbs().isEmpty()) {
                         cooldowns.remove(i);
                         i--;
@@ -70,7 +79,11 @@ public class CooldownManager {
                             cooldown.setHidden(true);
                         }
                     }
+                } else {
+                    cooldowns.remove(i);
+                    i--;
                 }
+
 
             }
         }
@@ -105,7 +118,9 @@ public class CooldownManager {
     }
 
     public void clearCooldowns() {
-        cooldowns.clear();
+        cooldowns.removeIf(cd ->
+                cd.getCooldownClass() != OrbsOfLife.class
+        );
         for (WarlordsPlayer value : Warlords.getPlayers().values()) {
             value.getCooldownManager().getCooldowns().removeIf(cd -> cd.getFrom() == warlordsPlayer && (cd.getCooldownClass() == Intervene.class));
         }

@@ -16,6 +16,7 @@ import com.ebicep.warlords.util.PlayerFilter;
 import com.ebicep.warlords.util.Utils;
 import net.minecraft.server.v1_8_R3.PacketPlayOutAnimation;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -142,6 +143,11 @@ public class Strike extends AbstractAbility {
                             wp.getSpec() instanceof Revenant ? "CRIP" : "WND", 3, wp, CooldownTypes.DEBUFF);
 
                     nearPlayer.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+                    nearPlayer.sendMessage(
+                            ChatColor.GRAY + "You are " + ChatColor.RED +
+                                    (wp.getSpec() instanceof Berserker || wp.getSpec() instanceof Defender ? "wounded" : "crippled")
+                                    + ChatColor.GRAY + "."
+                    );
 
                     for (Player player1 : Bukkit.getOnlinePlayers()) {
                         player1.playSound(player.getLocation(), "warrior.mortalstrike.impact", 2, 1);

@@ -196,7 +196,12 @@ public final class WarlordsPlayer {
         actionBarMessage.append(team.boldColoredPrefix()).append(" TEAM  ");
         for (Cooldown cooldown : cooldownManager.getCooldowns()) {
             if (!cooldown.isHidden()) {
-                actionBarMessage.append(ChatColor.GREEN).append(cooldown.getName()).append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append((int) cooldown.getTimeLeft() + 1).append(" ");
+                if (cooldown.getName().equals("WND") || cooldown.getName().equals("CRIP")) {
+                    actionBarMessage.append(ChatColor.RED);
+                } else {
+                    actionBarMessage.append(ChatColor.GREEN);
+                }
+                actionBarMessage.append(cooldown.getName()).append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append((int) cooldown.getTimeLeft() + 1).append(" ");
             }
         }
         if (entity instanceof Player) {
@@ -625,7 +630,7 @@ public final class WarlordsPlayer {
                 }
             }
             if (!cooldownManager.getCooldown(Intervene.class).isEmpty() && cooldownManager.getCooldown(Intervene.class).get(0).getFrom() != this && !HammerOfLight.standingInHammer(attacker, entity)) {
-                if (this.isEnemy(attacker)) {
+                if (this.isEnemyAlive(attacker)) {
                     damageHealValue *= totalReduction;
                     damageHealValue *= .5;
                     if (isCrit) {
@@ -666,10 +671,13 @@ public final class WarlordsPlayer {
                     this.addAbsorbed(-damageHealValue);
                     attacker.addAbsorbed(-damageHealValue);
                 }
-            } else if (!cooldownManager.getCooldown(ArcaneShield.class).isEmpty() && this.isEnemy(attacker) && !HammerOfLight.standingInHammer(attacker, entity)) {
-                System.out.println(((ArcaneShield) spec.getBlue()).getShieldHealth());
+            } else if (!cooldownManager.getCooldown(ArcaneShield.class).isEmpty() && this.isEnemyAlive(attacker) && !HammerOfLight.standingInHammer(attacker, entity)) {
                 damageHealValue *= totalReduction;
                 if (((ArcaneShield) spec.getBlue()).getShieldHealth() + damageHealValue < 0) {
+                    if (entity instanceof Player) {
+                        ((EntityLiving) ((CraftPlayer) entity).getHandle()).setAbsorptionHearts(0);
+                    }
+
                     cooldownManager.removeCooldown(ArcaneShield.class);
                     addHealth(attacker, ability, (((ArcaneShield) spec.getBlue()).getShieldHealth() + damageHealValue), (((ArcaneShield) spec.getBlue()).getShieldHealth() + damageHealValue), isCrit ? 100 : -1, 100);
 
@@ -677,6 +685,10 @@ public final class WarlordsPlayer {
                     attacker.addAbsorbed(-(((ArcaneShield) spec.getBlue()).getShieldHealth()));
                 } else {
                     ((ArcaneShield) spec.getBlue()).addShieldHealth(damageHealValue);
+
+                    if (entity instanceof Player) {
+                        ((EntityLiving) ((CraftPlayer) entity).getHandle()).setAbsorptionHearts((float) (((ArcaneShield) spec.getBlue()).getShieldHealth() / (maxHealth * .5) * 20));
+                    }
 
                     if (ability.isEmpty()) {
                         sendMessage("" + ChatColor.RED + "\u00AB" + ChatColor.GRAY + " You absorbed " + attacker.getName() + "'s melee " + ChatColor.GRAY + "hit.");
@@ -688,9 +700,6 @@ public final class WarlordsPlayer {
 
                     addAbsorbed(-damageHealValue);
                     attacker.addAbsorbed(-damageHealValue);
-                }
-                if (entity instanceof Player) {
-                    ((EntityLiving) ((CraftPlayer) entity).getHandle()).setAbsorptionHearts((float) (((ArcaneShield) spec.getBlue()).getShieldHealth() / (maxHealth * .5) * 20));
                 }
                 this.entity.playEffect(EntityEffect.HURT);
                 for (Player player1 : attacker.getWorld().getPlayers()) {
@@ -724,7 +733,7 @@ public final class WarlordsPlayer {
                 } else {
                     damageHealValue *= totalReduction;
                     //DAMAGE
-                    if (damageHealValue < 0 && isEnemy(attacker)) {
+                    if (damageHealValue < 0 && isEnemyAlive(attacker)) {
                         if (!hitBy.contains(attacker)) {
                             hitBy.add(attacker);
                         }
@@ -869,7 +878,7 @@ public final class WarlordsPlayer {
                     }
                     //HEALING
                     else {
-                        if (isTeammate(attacker)) {
+                        if (isTeammateAlive(attacker)) {
                             if (!cooldownManager.getCooldown(Strike.class).isEmpty() && cooldownManager.getCooldown(Strike.class).get(0).getFrom().getSpec() instanceof Berserker) {
                                 damageHealValue *= .65;
                             } else if (!cooldownManager.getCooldown(Strike.class).isEmpty() && cooldownManager.getCooldown(Strike.class).get(0).getFrom().getSpec() instanceof Defender) {
@@ -1456,7 +1465,7 @@ public final class WarlordsPlayer {
     }
 
     public boolean isDeath() {
-        return this.health <= 0 || this.dead;
+        return this.health <= 0 || this.dead || (entity instanceof Player && ((Player) entity).getGameMode() == GameMode.SPECTATOR);
     }
 
     public boolean isAlive() {
@@ -1478,25 +1487,38 @@ public final class WarlordsPlayer {
         return this.entity.getLocation(copyInto);
     }
 
-    public boolean isEnemy(Entity other) {
-        return isEnemy(Warlords.getPlayer(other));
+    public boolean isEnemyAlive(Entity other) {
+        return isEnemyAlive(Warlords.getPlayer(other));
+    }
+
+    public boolean isEnemyAlive(@Nullable WarlordsPlayer p) {
+        return p != null &&
+                p.getGame() == getGame() &&
+                !p.isDeath() &&
+                p.getTeam() != getTeam();
     }
 
     public boolean isEnemy(@Nullable WarlordsPlayer p) {
         return p != null &&
-            p.getGame() == getGame() &&
-            !p.isDeath() &&
-            p.getTeam() != getTeam();
+                p.getGame() == getGame() &&
+                p.getTeam() != getTeam();
     }
 
-    public boolean isTeammate(Entity other) {
-        return isEnemy(Warlords.getPlayer(other));
+    public boolean isTeammateAlive(Entity other) {
+        return isEnemyAlive(Warlords.getPlayer(other));
     }
+
+    public boolean isTeammateAlive(@Nullable WarlordsPlayer p) {
+        return p != null &&
+                p.getGame() == getGame() &&
+                !p.isDeath() &&
+                p.getTeam() == getTeam();
+    }
+
     public boolean isTeammate(@Nullable WarlordsPlayer p) {
         return p != null &&
-            p.getGame() == getGame() &&
-            !p.isDeath() &&
-            p.getTeam() == getTeam();
+                p.getGame() == getGame() &&
+                p.getTeam() == getTeam();
     }
 
     public void teleport(Location location) {

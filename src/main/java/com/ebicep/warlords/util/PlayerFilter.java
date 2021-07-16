@@ -139,7 +139,7 @@ public class PlayerFilter implements Iterable<WarlordsPlayer> {
 
     @Nonnull
     public PlayerFilter aliveEnemiesOf(@Nonnull WarlordsPlayer player) {
-        return filter(wp -> player.isEnemy(wp) && wp.isAlive());
+        return filter(wp -> player.isEnemyAlive(wp));
     }
 
     @Nonnull
@@ -149,7 +149,7 @@ public class PlayerFilter implements Iterable<WarlordsPlayer> {
 
     @Nonnull
     public PlayerFilter aliveTeammatesOf(@Nonnull WarlordsPlayer player) {
-        return filter(wp -> player.isTeammate(wp) && wp.isAlive());
+        return filter(wp -> player.isTeammateAlive(wp));
     }
 
     @Nonnull
@@ -159,7 +159,7 @@ public class PlayerFilter implements Iterable<WarlordsPlayer> {
 
     @Nonnull
     public PlayerFilter aliveTeammatesOfExcludingSelf(@Nonnull WarlordsPlayer player) {
-        return filter(wp -> player != wp && player.isTeammate(wp) && wp.isAlive());
+        return filter(wp -> player != wp && player.isTeammateAlive(wp));
     }
 
     @Nonnull

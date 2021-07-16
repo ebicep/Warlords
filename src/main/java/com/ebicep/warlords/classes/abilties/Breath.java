@@ -47,7 +47,7 @@ public class Breath extends AbstractAbility {
                 Vector direction = target.getLocation().subtract(player.getLocation()).toVector().normalize();
                 if (viewDirection.dot(direction) > .68) {
                     if (name.contains("Water")) {
-                        if (wp.isTeammate(target)) {
+                        if (wp.isTeammateAlive(target)) {
                             target.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
                         } else {
                             Location eye = player.getEyeLocation();
@@ -58,7 +58,7 @@ public class Breath extends AbstractAbility {
 
                             target.setVelocity(v);
                         }
-                    } else if (name.contains("Freezing") && wp.isEnemy(target)) {
+                    } else if (name.contains("Freezing") && wp.isEnemyAlive(target)) {
                         target.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
                         target.getSpeed().addSpeedModifier("Freezing Breath", -35, 4 * 20);
                     }

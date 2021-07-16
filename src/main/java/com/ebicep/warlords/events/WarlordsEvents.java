@@ -25,6 +25,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
@@ -145,7 +146,7 @@ public class WarlordsEvents implements Listener {
             Player attacker = (Player) e.getDamager();
             WarlordsPlayer warlordsPlayerAttacker = Warlords.getPlayer(attacker);
             WarlordsPlayer warlordsPlayerVictim = Warlords.getPlayer(e.getEntity());
-            if (warlordsPlayerAttacker != null && warlordsPlayerAttacker.isEnemy(warlordsPlayerVictim)) {
+            if (warlordsPlayerAttacker != null && warlordsPlayerAttacker.isEnemyAlive(warlordsPlayerVictim)) {
                 if (attacker.getInventory().getHeldItemSlot() == 0 && warlordsPlayerAttacker.getHitCooldown() == 0) {
                     warlordsPlayerAttacker.setHitCooldown(12);
                     warlordsPlayerAttacker.subtractEnergy(warlordsPlayerAttacker.getSpec().getEnergyOnHit() * -1);
@@ -394,14 +395,16 @@ public class WarlordsEvents implements Listener {
                 if (wp == null) {
                     return null;
                 }
-                e.setFormat(wp.getTeam().coloredPrefix() +
+                e.setFormat(
                         ChatColor.DARK_GRAY + "[" +
-                        ChatColor.GOLD + wp.getSpec().getClassNameShort() +
-                        ChatColor.DARK_GRAY + "][" +
-                        ChatColor.GOLD + "90" +
-                        ChatColor.DARK_GRAY + "] " +
-                        ChatColor.AQUA + "%1$s" +
-                        ChatColor.WHITE + ": %2$s"
+                                wp.getTeam().coloredPrefix() +
+                                ChatColor.DARK_GRAY + "][" +
+                                ChatColor.GOLD + wp.getSpec().getClassNameShort() +
+                                ChatColor.DARK_GRAY + "][" +
+                                ChatColor.GOLD + "90" +
+                                ChatColor.DARK_GRAY + "] " +
+                                ChatColor.AQUA + "%1$s" +
+                                ChatColor.WHITE + ": %2$s"
                 );
                 e.getRecipients().removeIf(p -> wp.getGame().getPlayerTeamOrNull(p.getUniqueId()) != wp.getTeam());
                 return null;
@@ -427,6 +430,11 @@ public class WarlordsEvents implements Listener {
     @EventHandler
     public void onWeatherChange(WeatherChangeEvent change) {
         change.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onBlockPhysics(BlockPhysicsEvent e) {
+        e.setCancelled(true);
     }
 
     @EventHandler
