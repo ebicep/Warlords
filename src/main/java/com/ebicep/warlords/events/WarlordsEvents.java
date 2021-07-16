@@ -302,16 +302,11 @@ public class WarlordsEvents implements Listener {
                 } else if (e.isRightClick()) {
                     wp.weaponRightClick(player);
                 }
-            }/* else if (Warlords.game.getState() == Game.State.PRE_GAME) {
-                WarlordsPlayer temp = Game.State.updateTempPlayer(player);
-                if (e.isLeftClick()) {
-                    temp.weaponLeftClick();
-                } else if (e.isRightClick()) {
-                    temp.weaponRightClick();
-                }
-            }*/
+            }
         }
-        e.setCancelled(true);
+        if (e.getWhoClicked().getGameMode() != GameMode.CREATIVE) {
+            e.setCancelled(true);
+        }
     }
 
     @EventHandler
@@ -342,7 +337,7 @@ public class WarlordsEvents implements Listener {
     public void onPlayerDamage(EntityDamageEvent e) {
         if (e.getCause() == EntityDamageEvent.DamageCause.VOID && e.getEntity() instanceof Player) {
             e.setCancelled(true);
-            e.getEntity().teleport(Warlords.getRejoinPoint(((Player) e.getEntity()).getUniqueId()));
+            e.getEntity().teleport(Warlords.getRejoinPoint(e.getEntity().getUniqueId()));
             WarlordsPlayer wp = Warlords.getPlayer(e.getEntity());
             if (wp != null) {
                 wp.addHealth(wp, "Fall", -1000000, -1000000, -1, 100);

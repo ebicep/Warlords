@@ -10,7 +10,6 @@ public abstract class AbstractPowerUp {
 
     protected Location location;
     protected ArmorStand powerUp;
-    //protected EntityArmorStand powerUp;
     protected int duration;
     protected int cooldown;
     protected int maxCooldown;
@@ -47,36 +46,6 @@ public abstract class AbstractPowerUp {
             player1.playSound(powerUp.getLocation(), "ctf.powerup.spawn", 2, 1);
         }
 
-        //TODO packets - energy vs damage display differently for every player
-//        WorldServer s = ((CraftWorld) location.getWorld()).getHandle();
-//        powerUp = new EntityArmorStand(s);
-//
-//        powerUp.setLocation(location.getX(), location.getY() - 1.5, location.getZ(), 0, 0);
-//        powerUp.setCustomNameVisible(true);
-//        powerUp.setGravity(false);
-//        powerUp.setInvisible(true);
-//
-//        for (WarlordsPlayer value : Warlords.getPlayers().values()) {
-//            if(value.isEnergyPowerup()) {
-//                powerUp.setCustomName("ENERGY");
-//                PacketPlayOutSpawnEntityLiving armorStand = new PacketPlayOutSpawnEntityLiving(powerUp);
-//                PacketPlayOutEntityEquipment wool = new PacketPlayOutEntityEquipment(powerUp.getId(), 4, CraftItemStack.asNMSCopy(new ItemStack(Material.WOOL, 1, (short) 4)));
-//
-//                ((CraftPlayer) value.getPlayer()).getHandle().playerConnection.sendPacket(armorStand);
-//                ((CraftPlayer) value.getPlayer()).getHandle().playerConnection.sendPacket(wool);
-//
-//            } else {
-//                powerUp.setCustomName("DAMAGE");
-//
-//                PacketPlayOutSpawnEntityLiving armorStand = new PacketPlayOutSpawnEntityLiving(powerUp);
-//                PacketPlayOutEntityEquipment wool = new PacketPlayOutEntityEquipment(powerUp.getId(), 4, CraftItemStack.asNMSCopy(new ItemStack(Material.WOOL, 1, (short) 14)));
-//
-//                ((CraftPlayer) value.getPlayer()).getHandle().playerConnection.sendPacket(armorStand);
-//                ((CraftPlayer) value.getPlayer()).getHandle().playerConnection.sendPacket(wool);
-//
-//            }
-//        }
-
     }
 
     public Location getLocation() {
@@ -94,14 +63,6 @@ public abstract class AbstractPowerUp {
     public void setPowerUp(ArmorStand powerUp) {
         this.powerUp = powerUp;
     }
-
-//    public EntityArmorStand getPowerUp() {
-//        return powerUp;
-//    }
-//
-//    public void setPowerUp(EntityArmorStand powerUp) {
-//        this.powerUp = powerUp;
-//    }
 
     public int getDuration() {
         return duration;
