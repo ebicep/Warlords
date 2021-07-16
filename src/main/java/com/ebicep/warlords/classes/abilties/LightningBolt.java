@@ -79,8 +79,9 @@ public class LightningBolt extends AbstractAbility {
                     }
 
                     for (WarlordsPlayer warlordsPlayer : PlayerFilter
-                        .entitiesAround(bolt.getBoltLocation(), 2.5, 2.5, 2.5)
-                        .aliveEnemiesOf(wp)
+                            .entitiesAround(bolt.getBoltLocation(), 2.5, 2.5, 2.5)
+                            .aliveEnemiesOf(wp)
+                            .excluding(bolt.playersHit)
                     ) {
                         //hitting player
                         if (!bolt.getPlayersHit().contains(warlordsPlayer)) {

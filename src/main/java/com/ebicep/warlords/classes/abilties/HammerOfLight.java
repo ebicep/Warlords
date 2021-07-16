@@ -42,7 +42,7 @@ public class HammerOfLight extends AbstractAbility {
         damageHealCircle.spawnHammer();
         damageHealCircle.getLocation().add(0, 1, 0);
         wp.subtractEnergy(energyCost);
-        wp.getSpec().getOrange().setCurrentCooldown(cooldown);
+        wp.getSpec().getOrange().setCurrentCooldown((float) (cooldown * wp.getCooldownModifier()));
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "paladin.hammeroflight.impact", 2, 1);

@@ -239,7 +239,7 @@ public class Chain extends AbstractAbility {
             warlordsPlayer.subtractEnergy(energyCost);
             if (name.contains("Lightning")) {
                 warlordsPlayer.getCooldownManager().addCooldown(Chain.this.getClass(), new Chain(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier), "CHAIN(" + hitCounter + ")", 4, warlordsPlayer, CooldownTypes.BUFF);
-                warlordsPlayer.getSpec().getRed().setCurrentCooldown(cooldown);
+                warlordsPlayer.getSpec().getRed().setCurrentCooldown((float) (cooldown * warlordsPlayer.getCooldownModifier()));
 
                 player.playSound(player.getLocation(), "shaman.chainlightning.impact", 2, 1);
                 for (Player player1 : player.getWorld().getPlayers()) {
@@ -253,7 +253,7 @@ public class Chain extends AbstractAbility {
                     warlordsPlayer.getSpec().getRed().setCurrentCooldown(warlordsPlayer.getSpec().getRed().getCurrentCooldown() - (hitCounter + 1) * 2);
                 }
                 warlordsPlayer.updateRedItem(player);
-                warlordsPlayer.getSpec().getBlue().setCurrentCooldown(cooldown);
+                warlordsPlayer.getSpec().getBlue().setCurrentCooldown((float) (cooldown * warlordsPlayer.getCooldownModifier()));
 
                 for (Player player1 : player.getWorld().getPlayers()) {
                     player1.playSound(player.getLocation(), "shaman.chainheal.activation", 2, 1);
@@ -264,7 +264,7 @@ public class Chain extends AbstractAbility {
                 warlordsPlayer.getSpeed().addSpeedModifier("Spirit Link", 40, 30); // 30 is ticks
                 warlordsPlayer.getCooldownManager().addCooldown(Chain.this.getClass(), new Chain(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier), "LINK", 4.5f, warlordsPlayer, CooldownTypes.BUFF);
 
-                warlordsPlayer.getSpec().getRed().setCurrentCooldown(cooldown);
+                warlordsPlayer.getSpec().getRed().setCurrentCooldown((float) (cooldown * warlordsPlayer.getCooldownModifier()));
 
                 player.playSound(player.getLocation(), "mage.firebreath.activation", 1.5F, 1);
             }

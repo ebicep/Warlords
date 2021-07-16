@@ -810,7 +810,7 @@ public final class WarlordsPlayer {
                                 int healthToAdd = (int) (((Repentance) attacker.getSpec().getBlue()).getPool() * .1) + 11;
                                 attacker.addHealth(attacker, "Repentance", healthToAdd, healthToAdd, -1, 100);
                                 ((Repentance) attacker.getSpec().getBlue()).setPool(((Repentance) attacker.getSpec().getBlue()).getPool() * .5f);
-                                attacker.addEnergy(attacker, "Repentance", (int) (healthToAdd * .035));
+                                attacker.addEnergy(attacker, "Repentance", (float) (healthToAdd * .035));
                             }
                         }
 
@@ -1152,17 +1152,19 @@ public final class WarlordsPlayer {
         this.energy = energy;
     }
 
-    public void addEnergy(WarlordsPlayer giver, String ability, int amount) {
+    public void addEnergy(WarlordsPlayer giver, String ability, float amount) {
         if (energy + amount > maxEnergy) {
             this.energy = maxEnergy;
         } else {
             this.energy += amount;
         }
-        if (this == giver) {
-            sendMessage(ChatColor.GREEN + "\u00AB" + ChatColor.GRAY + " Your " + ability + " gave you " + ChatColor.YELLOW + amount + " " + ChatColor.GRAY + "energy.");
-        } else {
-            sendMessage(ChatColor.GREEN + "\u00AB" + ChatColor.GRAY + " " + giver.getName() + "'s " + ability + " gave you " + ChatColor.YELLOW + amount + " " + ChatColor.GRAY + "energy.");
-            giver.sendMessage(ChatColor.GREEN + "\u00BB" + ChatColor.GRAY + " " + "Your " + ability + " gave " + name + " " + ChatColor.YELLOW + amount + " " + ChatColor.GRAY + "energy.");
+        if ((int) amount != 0) {
+            if (this == giver) {
+                sendMessage(ChatColor.GREEN + "\u00AB" + ChatColor.GRAY + " Your " + ability + " gave you " + ChatColor.YELLOW + (int) amount + " " + ChatColor.GRAY + "energy.");
+            } else {
+                sendMessage(ChatColor.GREEN + "\u00AB" + ChatColor.GRAY + " " + giver.getName() + "'s " + ability + " gave you " + ChatColor.YELLOW + (int) amount + " " + ChatColor.GRAY + "energy.");
+                giver.sendMessage(ChatColor.GREEN + "\u00BB" + ChatColor.GRAY + " " + "Your " + ability + " gave " + name + " " + ChatColor.YELLOW + (int) amount + " " + ChatColor.GRAY + "energy.");
+            }
         }
     }
     public void sendMessage(String message) {

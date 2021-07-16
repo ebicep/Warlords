@@ -84,7 +84,6 @@ public class EarthenSpike extends AbstractAbility {
                             earthenSpikeBlock.setDuration(-1);
                             this.cancel();
                         } else if (Math.abs(target.getLocation().getX() - lastFallingBlock.getLocation().getX()) + Math.abs(target.getLocation().getZ() - lastFallingBlock.getLocation().getZ()) > 1) {
-
                             Location newLocation = lastFallingBlock.getLocation();
                             //moving diagonally
                             if (Math.abs(target.getLocation().getBlockX() - newLocation.getBlockX()) > 0) {
@@ -137,6 +136,8 @@ public class EarthenSpike extends AbstractAbility {
                             for (int i = 0; i < 10; i++) {
                                 if (newLocation.getWorld().getBlockAt(newLocation).getType() != Material.AIR) {
                                     newLocation.add(0, 1, 0);
+                                } else {
+                                    break;
                                 }
                             }
 

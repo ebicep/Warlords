@@ -115,7 +115,7 @@ public class Utils {
     public static Stream<WarlordsPlayer> filterOnlyEnemies(Collection<Entity> entities, Entity player) {
         WarlordsPlayer wp = Warlords.getPlayer(player);
         return wp == null ? Stream.empty() : entities.stream()
-            .map(e -> Warlords.getPlayer(e))
+                .map(Warlords::getPlayer)
             .filter(filterOnlyEnemies(wp));
     }
     public static Predicate<WarlordsPlayer> filterOnlyEnemies(@Nullable WarlordsPlayer wp) {

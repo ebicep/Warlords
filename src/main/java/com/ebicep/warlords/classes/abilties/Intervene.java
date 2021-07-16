@@ -59,7 +59,7 @@ public class Intervene extends AbstractAbility {
                     nearWarlordsPlayer.sendMessage("§a\u00BB§7 " + wp.getName() + " is shielding you with their " + ChatColor.YELLOW + "Intervene" + ChatColor.GRAY + "!");
                     nearWarlordsPlayer.getCooldownManager().addCooldown(new Cooldown(Intervene.this.getClass(), tempIntervene, "VENE", 5, wp, CooldownTypes.ABILITY));
 
-                    wp.getSpec().getBlue().setCurrentCooldown(cooldown);
+                    wp.getSpec().getBlue().setCurrentCooldown((float) (cooldown * wp.getCooldownModifier()));
                     wp.updateBlueItem();
 
                     for (Player player1 : player.getWorld().getPlayers()) {

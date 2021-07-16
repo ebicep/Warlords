@@ -40,7 +40,7 @@ public class HealingRain extends AbstractAbility {
         damageHealCircle.getLocation().add(0, 1, 0);
         wp.getCooldownManager().addCooldown(HealingRain.this.getClass(), new HealingRain(), "RAIN", 12, wp, CooldownTypes.ABILITY);
         wp.subtractEnergy(energyCost);
-        wp.getSpec().getOrange().setCurrentCooldown(cooldown);
+        wp.getSpec().getOrange().setCurrentCooldown((float) (cooldown * wp.getCooldownModifier()));
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "mage.healingrain.impact", 2, 1);
