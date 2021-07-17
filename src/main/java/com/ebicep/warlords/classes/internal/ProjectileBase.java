@@ -112,7 +112,7 @@ public abstract class ProjectileBase extends AbstractAbility {
                         aabb.c - 0.4,
                         aabb.d + 0.4,
                         aabb.e + 0.4,
-                        aabb.f+0.4
+                        aabb.f + 0.4
                         );
                 MovingObjectPosition mop = aabb.a(after, before);
                 if (mop != null) {

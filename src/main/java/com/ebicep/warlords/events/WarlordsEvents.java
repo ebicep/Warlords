@@ -104,9 +104,10 @@ public class WarlordsEvents implements Listener {
             player.sendMessage(ChatColor.GRAY + "BUILD: " + ChatColor.RED + Warlords.VERSION);
             if (player.isOp()) {
                 player.sendMessage(" ");
-                player.sendMessage(ChatColor.GRAY + "Skip Timer: /wldebug timer skip/reset");
-                player.sendMessage(ChatColor.GRAY + "Infinite Energy: /wldebug energy disable/enable");
-                player.sendMessage(ChatColor.GRAY + "Endless Cooldown: /wldebug cooldown disable/enable");
+                player.sendMessage(ChatColor.GRAY + "Skip Timer: /wl timer skip/reset");
+                player.sendMessage(ChatColor.GRAY + "Infinite Energy: /wl energy disable/enable");
+                player.sendMessage(ChatColor.GRAY + "Endless Cooldown: /wl cooldown disable/enable");
+                player.sendMessage(ChatColor.GRAY + "Cooldown Mode: /wl cooldownmode disable/enable");
             }
 
             player.getInventory().clear();

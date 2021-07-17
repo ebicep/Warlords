@@ -15,10 +15,11 @@ public class DebugCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
 
-        /*if (!sender.isOp()) {
+        if (!sender.isOp()) {
             sender.sendMessage("§cYou do not have permission to do that.");
             return true;
-        }*/
+        }
+
         Game game = Warlords.game; // In the future allow the user to select a game player
         if (args.length < 1) {
             sender.sendMessage("§cYou need to pass an argument, valid arguments: [timer, energy]");
@@ -125,7 +126,7 @@ public class DebugCommand implements CommandExecutor {
             }
 
             default:
-                sender.sendMessage("Invalid option!");
+                sender.sendMessage("§cInvalid option! valid args: [cooldownmode, cooldown, energy");
                 return true;
         }
     }
