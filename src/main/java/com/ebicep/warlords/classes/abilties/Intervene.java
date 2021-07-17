@@ -37,7 +37,6 @@ public class Intervene extends AbstractAbility {
         PlayerFilter.entitiesAround(wp, 10, 10, 10)
                 .aliveTeammatesOfExcludingSelf(wp)
                 .requireLineOfSight(wp)
-                .closestFirst(wp)
                 .first((nearWarlordsPlayer) -> {
                     //green line thingy
                     Location lineLocation = player.getLocation().add(0, 1, 0);
