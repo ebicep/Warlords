@@ -597,14 +597,12 @@ public final class WarlordsPlayer {
                     damageHealValue *= totalReduction;
                     damageHealValue *= .5;
                     WarlordsPlayer intervenedBy = cooldownManager.getCooldown(Intervene.class).get(0).getFrom();
-                    intervenedBy.addHealth(attacker, "Intervene", damageHealValue, damageHealValue, isCrit ? 100 : -1, 100);
 
                     Location loc = getLocation();
                     gameState.getGame().forEachOnlinePlayer((player1, t) -> {
                         player1.playSound(loc, "warrior.intervene.block", 2, 1);
                     });
 
-                    intervenedBy.setHealth((int) (intervenedBy.getHealth() + damageHealValue));
                     intervenedBy.getEntity().playEffect(EntityEffect.HURT);
                     intervenedBy.setRegenTimer(10);
                     ((Intervene) cooldownManager.getCooldown(Intervene.class).get(0).getCooldownObject()).addDamagePrevented(-damageHealValue);
@@ -621,6 +619,8 @@ public final class WarlordsPlayer {
                         sendMessage("§c\u00AB§7 " + intervenedBy.getName() + "'s " + ChatColor.YELLOW + "Intervene " + ChatColor.GRAY + "has expired!");
                         cooldownManager.getCooldowns().remove(cooldownManager.getCooldown(Intervene.class).get(0));
                     }
+
+                    intervenedBy.addHealth(attacker, "Intervene", damageHealValue, damageHealValue, isCrit ? 100 : -1, 100);
 
                     this.addAbsorbed(-damageHealValue);
                     attacker.addAbsorbed(-damageHealValue);
