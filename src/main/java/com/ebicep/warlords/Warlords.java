@@ -448,10 +448,9 @@ public class Warlords extends JavaPlugin {
                                     assisted.sendMessage(
                                             ChatColor.GRAY +
                                                     "You assisted " +
-                                                    ChatColor.BLUE +
                                                     warlordsPlayer.getHitBy().get(0).getColoredName() +
                                                     ChatColor.GRAY + " in killing " +
-                                                    ChatColor.RED + warlordsPlayer.getName()
+                                                    warlordsPlayer.getColoredName()
                                     );
                                 }
                                 assisted.addAssist();

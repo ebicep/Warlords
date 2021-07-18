@@ -12,6 +12,26 @@ public class LocationBuilder {
         this.location = location;
     }
 
+    public LocationBuilder addXYZ(double x, double y, double z) {
+        location.add(x, y, z);
+        return this;
+    }
+
+    public LocationBuilder addX(double amount) {
+        location.add(amount, 0, 0);
+        return this;
+    }
+
+    public LocationBuilder addY(double amount) {
+        location.add(0, amount, 0);
+        return this;
+    }
+
+    public LocationBuilder addZ(double amount) {
+        location.add(0, 0, amount);
+        return this;
+    }
+
     public LocationBuilder add(Vector vector) {
         location.add(vector);
         return this;
@@ -34,6 +54,26 @@ public class LocationBuilder {
 
     public LocationBuilder yaw(float yaw) {
         location.setYaw(yaw);
+        return this;
+    }
+
+    public LocationBuilder forward(float amount) {
+        location.add(location.getDirection().multiply(amount));
+        return this;
+    }
+
+    public LocationBuilder backward(float amount) {
+        location.add(location.getDirection().multiply(-amount));
+        return this;
+    }
+
+    public LocationBuilder left(float amount) {
+        location.add(Utils.getLeftDirection(location).multiply(amount));
+        return this;
+    }
+
+    public LocationBuilder right(float amount) {
+        location.add(Utils.getRightDirection(location).multiply(amount));
         return this;
     }
 

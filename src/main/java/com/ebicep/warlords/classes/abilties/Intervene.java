@@ -37,6 +37,7 @@ public class Intervene extends AbstractAbility {
         PlayerFilter.entitiesAround(wp, 10, 10, 10)
                 .aliveTeammatesOfExcludingSelf(wp)
                 .requireLineOfSight(wp)
+                .lookingAtFirst(wp)
                 .first((nearWarlordsPlayer) -> {
                     //green line thingy
                     Location lineLocation = player.getLocation().add(0, 1, 0);
@@ -83,7 +84,7 @@ public class Intervene extends AbstractAbility {
                         @Override
                         public void run() {
                             if (!nearWarlordsPlayer.getCooldownManager().getCooldown(Intervene.class).isEmpty()) {
-                                if (nearWarlordsPlayer.getCooldownManager().getCooldown(Intervene.class).get(0).getFrom().isDead() ||
+                                if (nearWarlordsPlayer.getCooldownManager().getCooldown(Intervene.class).get(0).getFrom().isDeath() ||
                                         nearWarlordsPlayer.getLocation().distanceSquared(nearWarlordsPlayer.getCooldownManager().getCooldown(Intervene.class).get(0).getFrom().getEntity().getLocation()) > 15 * 15
                                 ) {
                                     nearWarlordsPlayer.sendMessage("§c\u00AB§7 " + nearWarlordsPlayer.getCooldownManager().getCooldown(Intervene.class).get(0).getFrom().getName() + "'s " + ChatColor.YELLOW + "Intervene " + ChatColor.GRAY + "has expired!");

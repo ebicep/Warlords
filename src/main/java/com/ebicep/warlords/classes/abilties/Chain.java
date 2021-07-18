@@ -107,7 +107,7 @@ public class Chain extends AbstractAbility {
         PlayerFilter filter = firstCheck ?
                 PlayerFilter.entitiesAround(checkFrom, 20, 18, 20)
                         .filter(e ->
-                                Utils.getLookingAtChain(warlordsPlayer.getEntity(), e.getEntity()) &&
+                                Utils.isLookingAtChain(warlordsPlayer.getEntity(), e.getEntity()) &&
                                         Utils.hasLineOfSight(warlordsPlayer.getEntity(), e.getEntity())
                         ) :
                 PlayerFilter.entitiesAround(checkFrom, 15, 14, 15);
@@ -152,7 +152,7 @@ public class Chain extends AbstractAbility {
             for (WarlordsPlayer nearPlayer : PlayerFilter
                     .entitiesAround(player, 15, 14, 15)
                     .aliveTeammatesOfExcludingSelf(warlordsPlayer)) {
-                if (Utils.getLookingAtChain(player, nearPlayer.getEntity()) && Utils.hasLineOfSight(player, nearPlayer.getEntity())) {
+                if (Utils.isLookingAtChain(player, nearPlayer.getEntity()) && Utils.hasLineOfSight(player, nearPlayer.getEntity())) {
                     //self heal
                     warlordsPlayer.addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
                     chain(player.getLocation(), nearPlayer.getLocation());
@@ -188,7 +188,7 @@ public class Chain extends AbstractAbility {
                     .entitiesAround(player, 15.0D, 13.0D, 15.0D)
                     .aliveEnemiesOf(warlordsPlayer)
             ) {
-                if (Utils.getLookingAtChain(player, nearPlayer.getEntity()) && Utils.hasLineOfSight(player, nearPlayer.getEntity())) {
+                if (Utils.isLookingAtChain(player, nearPlayer.getEntity()) && Utils.hasLineOfSight(player, nearPlayer.getEntity())) {
                     chain(player.getLocation(), nearPlayer.getLocation());
                     nearPlayer.addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
                     hitCounter++;

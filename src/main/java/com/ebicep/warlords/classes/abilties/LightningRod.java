@@ -13,8 +13,7 @@ import org.bukkit.util.Vector;
 public class LightningRod extends AbstractAbility {
 
     public LightningRod() {
-        super("Lightning Rod", 0, 0, 31.32f, 0, 0, 0
-        );
+        super("Lightning Rod", 0, 0, 31.32f, 0, -1, 0);
     }
 
     @Override

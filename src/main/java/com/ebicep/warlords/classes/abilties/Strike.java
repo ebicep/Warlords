@@ -78,7 +78,7 @@ public class Strike extends AbstractAbility {
             .closestFirst(wp)
             .requireLineOfSight(wp)
             .first((nearPlayer) -> {
-            if (Utils.getLookingAt(player, nearPlayer.getEntity()) && Utils.hasLineOfSight(player, nearPlayer.getEntity())) {
+            if (Utils.isLookingAt(player, nearPlayer.getEntity()) && Utils.hasLineOfSight(player, nearPlayer.getEntity())) {
                 PacketPlayOutAnimation playOutAnimation = new PacketPlayOutAnimation(((CraftPlayer) player).getHandle(), 0);
                 ((CraftPlayer) player).getHandle().playerConnection.sendPacket(playOutAnimation);
                 wp.subtractEnergy(energyCost);

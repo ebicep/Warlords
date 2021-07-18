@@ -14,12 +14,12 @@ public class FlameBurst extends ProjectileBase {
     private static final float HITBOX = 4.5f;
     
     public FlameBurst() {
-        super("Flame Burst", -557, -753, 9.4f, 60, 25, 185, 1.5, 300, false);
+        super("Flame Burst", -557, -753, 9.4f, 60, 25, 185, 1.65, 300, false);
     }
 
     @Override
     protected void updateSpeed(Vector speedVector, int ticksLived) {
-        speedVector.multiply(1.05);
+        speedVector.multiply(1.0275);
     }
 
     @Override

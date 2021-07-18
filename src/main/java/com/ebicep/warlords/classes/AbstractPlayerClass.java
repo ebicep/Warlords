@@ -130,63 +130,63 @@ public abstract class AbstractPlayerClass {
             return;
         }
 
-        if (!wp.isDeath()) {
+        if (wp.isDeath()) {
+            return;
+        }
+        if (slot == 0) {
+            if (player.getLevel() >= weapon.getEnergyCost() * wp.getEnergyModifier()) {
+                weapon.onActivate(wp, player);
+                if (!(weapon instanceof Strike) && !(weapon instanceof EarthenSpike))
+                    sendRightClickPacket(player);
+            } else {
+                player.sendMessage("§cYou can't do that yet!");
+                player.playSound(player.getLocation(), "notreadyalert", 1, 1);
+            }
 
-            if (slot == 0) {
-                if (player.getLevel() >= weapon.getEnergyCost() * wp.getEnergyModifier()) {
-                    weapon.onActivate(wp, player);
-                    if (!(weapon instanceof Strike) && !(weapon instanceof EarthenSpike))
-                        sendRightClickPacket(player);
-                } else {
-                    player.sendMessage("§cYou can't do that yet!");
-                    player.playSound(player.getLocation(), "notreadyalert", 1, 1);
-                }
-
-            } else if (slot == 1) {
-                if (red.getCurrentCooldown() == 0) {
-                    if (player.getLevel() >= red.getEnergyCost() * wp.getEnergyModifier()) {
-                        red.onActivate(wp, player);
-                        if (!(red instanceof Chain)) {
-                            red.setCurrentCooldown((float) (red.cooldown * wp.getCooldownModifier()));
-                            sendRightClickPacket(player);
-                        }
-                    }
-
-                }
-            } else if (slot == 2) {
-                if (purple.getCurrentCooldown() == 0) {
-                    if (player.getLevel() >= purple.getEnergyCost() * wp.getEnergyModifier()) {
-                        purple.onActivate(wp, player);
-                        purple.setCurrentCooldown((float) (purple.cooldown * wp.getCooldownModifier()));
+        } else if (slot == 1) {
+            if (red.getCurrentCooldown() == 0) {
+                if (player.getLevel() >= red.getEnergyCost() * wp.getEnergyModifier()) {
+                    red.onActivate(wp, player);
+                    if (!(red instanceof Chain)) {
+                        red.setCurrentCooldown((float) (red.cooldown * wp.getCooldownModifier()));
                         sendRightClickPacket(player);
                     }
                 }
-            } else if (slot == 3) {
-                if (blue.getCurrentCooldown() == 0) {
-                    if (player.getLevel() >= blue.getEnergyCost() * wp.getEnergyModifier()) {
-                        blue.onActivate(wp, player);
-                        if (!(blue instanceof Chain) && !(blue instanceof Intervene)) {
-                            blue.setCurrentCooldown((float) (blue.cooldown * wp.getCooldownModifier()));
-                            sendRightClickPacket(player);
-                        }
-                    }
-                }
-            } else if (slot == 4) {
-                if (orange.getCurrentCooldown() == 0) {
-                    if (player.getLevel() >= orange.getEnergyCost() * wp.getEnergyModifier()) {
-                        orange.onActivate(wp, player);
-                        if (!(orange instanceof HammerOfLight) && !(orange instanceof HealingRain)) {
-                            orange.setCurrentCooldown((float) (orange.cooldown * wp.getCooldownModifier()));
-                            sendRightClickPacket(player);
-                        }
-                    }
-                }
-            }
-            player.getInventory().setHeldItemSlot(0);
 
-            if (player.getVehicle() != null) {
-                player.getVehicle().remove();
             }
+        } else if (slot == 2) {
+            if (purple.getCurrentCooldown() == 0) {
+                if (player.getLevel() >= purple.getEnergyCost() * wp.getEnergyModifier()) {
+                    purple.onActivate(wp, player);
+                    purple.setCurrentCooldown((float) (purple.cooldown * wp.getCooldownModifier()));
+                    sendRightClickPacket(player);
+                }
+            }
+        } else if (slot == 3) {
+            if (blue.getCurrentCooldown() == 0) {
+                if (player.getLevel() >= blue.getEnergyCost() * wp.getEnergyModifier()) {
+                    blue.onActivate(wp, player);
+                    if (!(blue instanceof Chain) && !(blue instanceof Intervene)) {
+                        blue.setCurrentCooldown((float) (blue.cooldown * wp.getCooldownModifier()));
+                        sendRightClickPacket(player);
+                    }
+                }
+            }
+        } else if (slot == 4) {
+            if (orange.getCurrentCooldown() == 0) {
+                if (player.getLevel() >= orange.getEnergyCost() * wp.getEnergyModifier()) {
+                    orange.onActivate(wp, player);
+                    if (!(orange instanceof HammerOfLight) && !(orange instanceof HealingRain)) {
+                        orange.setCurrentCooldown((float) (orange.cooldown * wp.getCooldownModifier()));
+                        sendRightClickPacket(player);
+                    }
+                }
+            }
+        }
+        player.getInventory().setHeldItemSlot(0);
+
+        if (player.getVehicle() != null) {
+            player.getVehicle().remove();
         }
     }
 

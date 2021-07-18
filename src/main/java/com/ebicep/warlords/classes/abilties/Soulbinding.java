@@ -6,7 +6,9 @@ import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.ParticleEffect;
 import org.bukkit.Location;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
@@ -38,6 +40,10 @@ public class Soulbinding extends AbstractAbility {
     public void onActivate(WarlordsPlayer wp, Player player) {
         wp.subtractEnergy(energyCost);
         wp.getCooldownManager().addCooldown(Soulbinding.this.getClass(), new Soulbinding(), "SOUL", 12, wp, CooldownTypes.ABILITY);
+
+        ItemMeta newItemMeta = player.getItemInHand().getItemMeta();
+        newItemMeta.addEnchant(Enchantment.OXYGEN, 1, true);
+        player.getItemInHand().setItemMeta(newItemMeta);
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "paladin.consecrate.activation", 2, 2);

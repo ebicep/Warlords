@@ -73,10 +73,10 @@ public class Fireball extends ProjectileBase {
     @Override
     public void updateDescription(Player player) {
         description = "§7Shoot a fireball that will explode\n" +
-            "§7for §c" + -minDamageHeal + " §7- §c" + -maxDamageHeal + " §7damage. A\n" +
-            "§7direct hit will cause the enemy\n" +
-            "§7to take an additional §c15% §7extra\n" +
-            "§7damage. §7Has an optimal range of §e50 §7blocks.";
+                "§7for §c" + -minDamageHeal + " §7- §c" + -maxDamageHeal + " §7damage. A\n" +
+                "§7direct hit will cause the enemy\n" +
+                "§7to take an additional §c15% §7extra\n" +
+                "§7damage. §7Has an optimal range of §e" + MAX_FULL_DAMAGE_DISTANCE + " §7blocks.";
     }
 	
 }

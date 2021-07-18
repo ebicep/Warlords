@@ -1,10 +1,11 @@
 package com.ebicep.warlords.player;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.abilties.*;
+import com.ebicep.warlords.util.PlayerFilter;
 import net.minecraft.server.v1_8_R3.EntityLiving;
 import org.bukkit.ChatColor;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -61,6 +62,10 @@ public class CooldownManager {
                 } else if (cooldownClass == ArcaneShield.class && getCooldown(ArcaneShield.class).size() == 1) {
                     if (warlordsPlayer.getEntity() instanceof Player) {
                         ((EntityLiving) ((CraftPlayer) warlordsPlayer.getEntity()).getHandle()).setAbsorptionHearts(0);
+                    }
+                } else if (cooldownClass == Soulbinding.class && getCooldown(Soulbinding.class).size() == 1) {
+                    if (warlordsPlayer.getEntity() instanceof Player) {
+                        ((CraftPlayer) warlordsPlayer.getEntity()).getItemInHand().removeEnchantment(Enchantment.OXYGEN);
                     }
                 }
 
@@ -121,9 +126,9 @@ public class CooldownManager {
         cooldowns.removeIf(cd ->
                 cd.getCooldownClass() != OrbsOfLife.class
         );
-        for (WarlordsPlayer value : Warlords.getPlayers().values()) {
-            value.getCooldownManager().getCooldowns().removeIf(cd -> cd.getFrom() == warlordsPlayer && (cd.getCooldownClass() == Intervene.class));
-        }
+        PlayerFilter.playingGame(warlordsPlayer.getGame()).teammatesOf(warlordsPlayer).forEach(wp -> {
+            wp.getCooldownManager().getCooldowns().removeIf(cd -> cd.getFrom() == warlordsPlayer && cd.getCooldownClass() == Intervene.class);
+        });
     }
 
     public boolean hasBoundPlayer(WarlordsPlayer warlordsPlayer) {

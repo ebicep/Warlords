@@ -99,6 +99,31 @@ public class DebugCommand implements CommandExecutor {
                 }
             }
 
+            case "damage": {
+                WarlordsPlayer player = BaseCommand.requireWarlordsPlayer(sender);
+                if (player == null) { // We only have a warlords player if the game is running
+                    return true;
+                }
+                if (args.length < 2) {
+                    sender.sendMessage("§cDamage requires 2 or more arguments, valid arguments: [disable, enable]");
+                    return true;
+                }
+
+                switch (args[1]) {
+                    case "disable":
+                        player.setTakeDamage(false);
+                        sender.sendMessage(ChatColor.GREEN + "Damage have been disabled!");
+                        return true;
+                    case "enable":
+                        player.setTakeDamage(true);
+                        sender.sendMessage(ChatColor.GREEN + "Damage have been enabled!");
+                        return true;
+                    default:
+                        sender.sendMessage("§cInvalid option!");
+                        return false;
+                }
+            }
+
             case "cooldownmode": {
 
                 if (args.length < 2) {
@@ -126,7 +151,7 @@ public class DebugCommand implements CommandExecutor {
             }
 
             default:
-                sender.sendMessage("§cInvalid option! valid args: [cooldownmode, cooldown, energy");
+                sender.sendMessage("§cInvalid option! valid args: [cooldownmode, cooldown, energy, damage");
                 return true;
         }
     }

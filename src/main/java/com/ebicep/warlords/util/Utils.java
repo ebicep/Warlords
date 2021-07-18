@@ -30,34 +30,42 @@ import java.util.stream.Stream;
 
 public class Utils {
 
-    public static boolean getLookingAt(LivingEntity player, LivingEntity player1) {
-        Location eye = player.getEyeLocation().subtract(player.getLocation().getDirection().multiply(4));
-        eye.setY(eye.getY() + 0.7);
-        Vector toEntity = player1.getEyeLocation().toVector().subtract(eye.toVector());
-        float dot = (float) toEntity.normalize().dot(eye.getDirection());
-        return dot > 0.925D;
+    public static double getDotToPlayerEye(LivingEntity player1, LivingEntity player2) {
+        return getDotToLocation(player1.getEyeLocation(), player2.getEyeLocation());
     }
 
-    //15 blocks = 6.6
-    //10 blocks = 8
-    //7 blocks = 10
-    //5 blocks = 28
-    //2 blocks = WIDE
-    public static boolean getLookingAtChain(LivingEntity player, LivingEntity player1) {
-        Location eye = player.getEyeLocation().subtract(player.getLocation().getDirection().multiply(4));
-        eye.setY(eye.getY() + 0.7);
-        Vector toEntity = player1.getEyeLocation().toVector().subtract(eye.toVector());
-        float dot = (float) toEntity.normalize().dot(eye.getDirection());
-        return dot > 0.95D + (player.getLocation().distanceSquared(player1.getLocation()) / 10000);
+    public static double getDotToPlayerCenter(LivingEntity player1, LivingEntity player2) {
+        System.out.println(getDotToLocation(new LocationBuilder(player1.getEyeLocation()).addY(.7).get(), player2.getEyeLocation()));
+        return getDotToLocation(new LocationBuilder(player1.getEyeLocation()).addY(.7).get(), player2.getEyeLocation());
     }
 
-    public static boolean getLookingAtWave(LivingEntity player, LivingEntity player1) {
-        Location eye = player.getEyeLocation();
-        eye.setY(eye.getY() + 0.7);
-        eye.setPitch(0);
-        Vector toEntity = player1.getEyeLocation().toVector().subtract(eye.toVector());
-        float dot = (float) toEntity.normalize().dot(eye.getDirection());
-        return dot > 0.91D;
+    public static double getDotToLocation(Location location1, Location location2) {
+        Vector toEntity = location2.toVector().subtract(location1.toVector());
+        return toEntity.normalize().dot(location1.getDirection());
+    }
+
+    public static boolean isLookingAt(LivingEntity player1, LivingEntity player2) {
+        Location eye = new LocationBuilder(player1.getEyeLocation())
+                .backward(4)
+                .addY(.7)
+                .get();
+        return getDotToLocation(eye, player2.getEyeLocation()) > 0.925;
+    }
+
+    public static boolean isLookingAtChain(LivingEntity player1, LivingEntity player2) {
+        Location eye = new LocationBuilder(player1.getEyeLocation())
+                .backward(4)
+                .addY(.7)
+                .get();
+        return getDotToLocation(eye, player2.getEyeLocation()) > 0.95 + (player1.getLocation().distanceSquared(player2.getLocation()) / 10000);
+    }
+
+    public static boolean isLookingAtWave(LivingEntity player1, LivingEntity player2) {
+        Location eye = new LocationBuilder(player1.getEyeLocation())
+                .addY(.7)
+                .pitch(0)
+                .get();
+        return getDotToLocation(eye, player2.getEyeLocation()) > 0.91;
     }
 
     public static boolean hasLineOfSight(LivingEntity player, LivingEntity player2) {

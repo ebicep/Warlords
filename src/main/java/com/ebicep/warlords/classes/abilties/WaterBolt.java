@@ -14,7 +14,7 @@ public class WaterBolt extends ProjectileBase {
     private static final float HITBOX = 3.75f;
     
     public WaterBolt() {
-        super("Water Bolt", 328, 452, 0, 85, 20, 175, 2, 250, true);
+        super("Water Bolt", 328, 452, 0, 85, 20, 175, 2, 90, true);
     }
 
     @Override
@@ -92,11 +92,11 @@ public class WaterBolt extends ProjectileBase {
     @Override
     public void updateDescription(Player player) {
         description = "§7Shoot a bolt of water that will burst\n" +
-            "§7for §c231 §7- §c299 §7damage and restore\n" +
-            "§a" + minDamageHeal + " §7- §a" + maxDamageHeal + " §7health to allies. A\n" +
-            "§7direct hit will cause §a15% §7increased\n" +
-            "§7damage or healing for the target hit.\n" +
-            "§7Has an optimal range of §e" + maxDistance + " §7blocks.";
+                "§7for §c231 §7- §c299 §7damage and restore\n" +
+                "§a" + minDamageHeal + " §7- §a" + maxDamageHeal + " §7health to allies. A\n" +
+                "§7direct hit will cause §a15% §7increased\n" +
+                "§7damage or healing for the target hit.\n" +
+                "§7Has an optimal range of §e" + MAX_FULL_DAMAGE_DISTANCE + " §7blocks.";
     }
 	
 }

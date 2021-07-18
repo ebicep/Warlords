@@ -245,7 +245,8 @@ public class Totem extends EntityArmorStand {
                             PlayerFilter.entitiesAround(deathsDebtTotem.getTotemArmorStand(), 8.0D, 7.0D, 8.0D)
                                 .aliveEnemiesOf(wp)
                                 .forEach((nearPlayer) -> {
-                                    nearPlayer.addHealth(deathsDebtTotem.getOwner(), deathsDebtTotem.getOwner().getSpec().getOrange().getName(),
+                                    nearPlayer.addHealth(deathsDebtTotem.getOwner(),
+                                            deathsDebtTotem.getOwner().getSpec().getOrange().getName(),
                                             TotemSpiritguard.this.getDelayedDamage() * .15f,
                                             TotemSpiritguard.this.getDelayedDamage() * .15f,
                                             deathsDebtTotem.getOwner().getSpec().getOrange().getCritChance(),
