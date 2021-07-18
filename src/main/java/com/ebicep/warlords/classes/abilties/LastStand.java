@@ -36,7 +36,7 @@ public class LastStand extends AbstractAbility {
                 .aliveTeammatesOfExcludingSelf(wp)
                 .forEach((nearPlayer) -> {
                     nearPlayer.getCooldownManager().addCooldown(LastStand.this.getClass(), tempLastStand, "LAST", 6, wp, CooldownTypes.BUFF);
-                    player.sendMessage("§7You last standed §e" + nearPlayer.getName());
+                    player.sendMessage("§7Your Last Stand is now protecting §e" + nearPlayer.getName());
                 });
         wp.subtractEnergy(energyCost);
 

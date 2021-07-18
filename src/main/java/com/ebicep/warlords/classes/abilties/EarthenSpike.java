@@ -31,7 +31,7 @@ public class EarthenSpike extends AbstractAbility {
     };
 
     public EarthenSpike() {
-        super("Earthen Spike", -476, -662, 0, 120, 15, 175
+        super("Earthen Spike", -404, -562, 0, 100, 15, 175
         );
     }
 
@@ -158,7 +158,7 @@ public class EarthenSpike extends AbstractAbility {
                                 warlordsPlayer.addHealth(user, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
                                 wp.sendMessage("" + Utils.getDistance(warlordsPlayer, 1));
                                 if (Utils.getDistance(warlordsPlayer, 1) < 2.3) {
-                                    warlordsPlayer.setVelocity(new Vector(0, .6, 0));
+                                    warlordsPlayer.setVelocity(new Vector(0, .44, 0));
                                 }
                             }
 
