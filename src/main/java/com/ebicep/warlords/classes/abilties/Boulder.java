@@ -20,7 +20,7 @@ public class Boulder extends AbstractAbility {
     private static final double GRAVITY = -0.0139;
 
     public Boulder() {
-        super("Boulder", -490, -731, 7.05f, 80, 15, 175);
+        super("Boulder", -416, -621, 7.05f, 80, 15, 175);
     }
 
     @Override
@@ -108,9 +108,9 @@ public class Boulder extends AbstractAbility {
                         Entity entity = p.getEntity();
                         Vector v;
                         if (p == directHit) {
-                            v = player.getLocation().toVector().subtract(p.getLocation().toVector()).normalize().multiply(-1.1).setY(0.4);
+                            v = player.getLocation().toVector().subtract(p.getLocation().toVector()).normalize().multiply(-1.1).setY(0.3);
                         } else {
-                            v = entity.getLocation().toVector().subtract(newLoc.toVector()).normalize().multiply(1.1).setY(0.4);
+                            v = entity.getLocation().toVector().subtract(newLoc.toVector()).normalize().multiply(1.1).setY(0.3);
                         }
                         entity.setVelocity(v);
 

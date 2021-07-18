@@ -307,8 +307,9 @@ public class Totem extends EntityArmorStand {
         @Override
         public void onActivate(WarlordsPlayer wp, Player player) {
 
-            final int duration = 8;
+            final int duration = 7;
 
+            wp.subtractEnergy(energyCost);
             Location standLocation = player.getLocation();
             standLocation.setYaw(0);
             standLocation.setY(Totem.getLocationUnderPlayer(player));
