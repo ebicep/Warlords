@@ -572,17 +572,17 @@ public final class WarlordsPlayer {
                     totalReduction *= .5;
                 }
 
-                for (Cooldown cooldown : cooldownManager.getCooldown("CHAIN")) {
+                for (Cooldown cooldown : cooldownManager.getCooldown(ChainLightning.class)) {
                     String chainName = cooldown.getName();
                     totalReduction *= 1 - Integer.parseInt(chainName.charAt(chainName.indexOf("(") + 1) + "") * .1;
                 }
 
-                for (Cooldown cooldown : cooldownManager.getCooldown("LINK")) {
+                for (Cooldown cooldown : cooldownManager.getCooldown(SpiritLink.class)) {
                     totalReduction *= .8;
                 }
 
                 //TODO maybe change to hypixel warlords where crippling effects hammer
-                if (!attacker.getCooldownManager().getCooldown("CRIP").isEmpty()) {
+                if (!attacker.getCooldownManager().getCooldown(CripplingStrike.class).isEmpty()) {
                     totalReduction *= .875;
                     //totalReduction -= .125;
                 }

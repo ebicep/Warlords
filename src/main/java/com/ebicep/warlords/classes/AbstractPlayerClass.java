@@ -1,6 +1,7 @@
 package com.ebicep.warlords.classes;
 
 import com.ebicep.warlords.classes.abilties.*;
+import com.ebicep.warlords.classes.internal.AbstractChainBase;
 import com.ebicep.warlords.classes.internal.AbstractStrikeBase;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import net.minecraft.server.v1_8_R3.PacketPlayOutAnimation;
@@ -86,7 +87,7 @@ public abstract class AbstractPlayerClass {
             if (red.getCurrentCooldown() == 0) {
                 if (player.getLevel() >= red.getEnergyCost() * wp.getEnergyModifier()) {
                     red.onActivate(wp, player);
-                    if (!(red instanceof Chain)) {
+                    if (!(red instanceof AbstractChainBase)) {
                         red.setCurrentCooldown((float) (red.cooldown * wp.getCooldownModifier()));
                         sendRightClickPacket(player);
                     }
@@ -104,7 +105,7 @@ public abstract class AbstractPlayerClass {
             if (blue.getCurrentCooldown() == 0) {
                 if (player.getLevel() >= blue.getEnergyCost() * wp.getEnergyModifier()) {
                     blue.onActivate(wp, player);
-                    if (!(blue instanceof Chain) && !(blue instanceof Intervene)) {
+                    if (!(blue instanceof AbstractChainBase) && !(blue instanceof Intervene)) {
                         blue.setCurrentCooldown((float) (blue.cooldown * wp.getCooldownModifier()));
                         sendRightClickPacket(player);
                     }
@@ -148,7 +149,7 @@ public abstract class AbstractPlayerClass {
             if (red.getCurrentCooldown() == 0) {
                 if (player.getLevel() >= red.getEnergyCost() * wp.getEnergyModifier()) {
                     red.onActivate(wp, player);
-                    if (!(red instanceof Chain)) {
+                    if (!(red instanceof AbstractChainBase)) {
                         red.setCurrentCooldown((float) (red.cooldown * wp.getCooldownModifier()));
                         sendRightClickPacket(player);
                     }
@@ -167,7 +168,7 @@ public abstract class AbstractPlayerClass {
             if (blue.getCurrentCooldown() == 0) {
                 if (player.getLevel() >= blue.getEnergyCost() * wp.getEnergyModifier()) {
                     blue.onActivate(wp, player);
-                    if (!(blue instanceof Chain) && !(blue instanceof Intervene)) {
+                    if (!(blue instanceof AbstractChainBase) && !(blue instanceof Intervene)) {
                         blue.setCurrentCooldown((float) (blue.cooldown * wp.getCooldownModifier()));
                         sendRightClickPacket(player);
                     }
