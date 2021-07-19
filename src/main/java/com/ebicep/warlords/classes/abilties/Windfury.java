@@ -11,6 +11,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class Windfury extends AbstractAbility {
 
+    private boolean firstProc = false;
+
     public Windfury() {
         super("Windfury Weapon", 0, 0, 15.66f, 30, 25, 135);
     }
@@ -31,7 +33,7 @@ public class Windfury extends AbstractAbility {
         wp.subtractEnergy(energyCost);
         wp.getCooldownManager().addCooldown(Windfury.this.getClass(), new Windfury(), "FURY", 8, wp, CooldownTypes.ABILITY);
 
-        wp.setFirstProc(true);
+        firstProc = true;
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "shaman.windfuryweapon.activation", 2, 1);
@@ -49,5 +51,13 @@ public class Windfury extends AbstractAbility {
                 }
             }
         }.runTaskTimer(Warlords.getInstance(), 0, 4);
+    }
+
+    public boolean isFirstProc() {
+        return firstProc;
+    }
+
+    public void setFirstProc(boolean firstProc) {
+        this.firstProc = firstProc;
     }
 }

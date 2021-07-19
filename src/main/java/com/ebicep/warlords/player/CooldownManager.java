@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class CooldownManager {
@@ -32,6 +33,10 @@ public class CooldownManager {
 
     public List<Cooldown> getCooldown(Class cooldownClass) {
         return cooldowns.stream().filter(cooldown -> cooldown.getCooldownClass() == cooldownClass).collect(Collectors.toList());
+    }
+
+    public Optional<Cooldown> getCooldown(Object cooldownObject) {
+        return cooldowns.stream().filter(cooldown -> cooldown.getCooldownObject() == cooldownObject).findAny();
     }
 
     public List<Cooldown> getCooldown(String name) {
@@ -120,6 +125,10 @@ public class CooldownManager {
 
     public void removeCooldown(Class cooldownClass) {
         cooldowns.removeIf(cd -> cd.getCooldownClass() == cooldownClass);
+    }
+
+    public void removeCooldown(Object cooldownObject) {
+        cooldowns.removeIf(cd -> cd.getCooldownObject() == cooldownObject);
     }
 
     public void clearCooldowns() {

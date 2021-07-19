@@ -92,9 +92,6 @@ public final class WarlordsPlayer {
 
     private boolean teamFlagCompass = true;
 
-    //SHAMAN
-    private boolean firstProc = false;
-
     //POWERUPS
     private boolean powerUpHeal = false;
 
@@ -906,8 +903,8 @@ public final class WarlordsPlayer {
             if (ability.isEmpty()) {
                 if (!attacker.getCooldownManager().getCooldown(Windfury.class).isEmpty()) {
                     int windfuryActivate = (int) (Math.random() * 100);
-                    if (attacker.isFirstProc()) {
-                        attacker.setFirstProc(false);
+                    if (((Windfury) attacker.getSpec().getPurple()).isFirstProc()) {
+                        ((Windfury) attacker.getSpec().getPurple()).setFirstProc(false);
                         windfuryActivate = 0;
                     }
                     if (windfuryActivate < 35) {
@@ -928,7 +925,7 @@ public final class WarlordsPlayer {
                     }
                 } else if (!attacker.getCooldownManager().getCooldown(Earthliving.class).isEmpty()) {
                     int earthlivingActivate = (int) (Math.random() * 100);
-                    if (attacker.isFirstProc() || Utils.getTotemDownAndClose(attacker, attacker.getEntity()) != null) {
+                    if (((Earthliving) attacker.getSpec().getPurple()).isFirstProc() || Utils.getTotemDownAndClose(attacker, attacker.getEntity()) != null) {
                         //self heal
                         attacker.addHealth(attacker, "Earthliving Weapon", (132 * 2.4f), (179 * 2.4f), 25, 200);
 
@@ -936,9 +933,9 @@ public final class WarlordsPlayer {
                             player1.playSound(getLocation(), "shaman.earthlivingweapon.impact", 2, 1);
                         });
 
-                        attacker.setFirstProc(false);
+                        ((Earthliving) attacker.getSpec().getPurple()).setFirstProc(false);
                         for (WarlordsPlayer nearPlayer : PlayerFilter
-                            .entitiesAround(attacker, 3, 3, 3)
+                                .entitiesAround(attacker, 3, 3, 3)
                             .aliveTeammatesOfExcludingSelf(attacker)
                             .limit(2)
                         ) {
@@ -1282,14 +1279,6 @@ public final class WarlordsPlayer {
         meta.setLore(lore);
         itemStack.setItemMeta(meta);
         return itemStack;
-    }
-
-    public boolean isFirstProc() {
-        return firstProc;
-    }
-
-    public void setFirstProc(boolean firstProc) {
-        this.firstProc = firstProc;
     }
 
     public boolean isTeamFlagCompass() {

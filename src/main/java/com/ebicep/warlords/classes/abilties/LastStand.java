@@ -35,6 +35,13 @@ public class LastStand extends AbstractAbility {
         PlayerFilter.entitiesAround(wp, 5, 5, 5)
                 .aliveTeammatesOfExcludingSelf(wp)
                 .forEach((nearPlayer) -> {
+                    //green line thingy
+                    Location lineLocation = player.getLocation().clone().add(0, 1, 0);
+                    lineLocation.setDirection(lineLocation.toVector().subtract(nearPlayer.getLocation().add(0, 1, 0).toVector()).multiply(-1));
+                    for (int i = 0; i < Math.floor(player.getLocation().distance(nearPlayer.getLocation())) * 2; i++) {
+                        ParticleEffect.VILLAGER_HAPPY.display(0, 0, 0, 0.35F, 1, lineLocation, 500);
+                        lineLocation.add(lineLocation.getDirection().multiply(.5));
+                    }
                     nearPlayer.getCooldownManager().addCooldown(LastStand.this.getClass(), tempLastStand, "LAST", 6, wp, CooldownTypes.BUFF);
                     player.sendMessage("§7Your Last Stand is now protecting §e" + nearPlayer.getName());
                 });

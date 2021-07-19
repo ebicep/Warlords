@@ -63,7 +63,7 @@ public class UndyingArmy extends AbstractAbility {
         int numberOfPlayersWithArmy = 0;
         while (iterator.hasNext()) {
             WarlordsPlayer warlordsNearPlayer = iterator.next();
-            wp.sendMessage("§a\u00BB§7 " + ChatColor.GRAY + "Your Undying Army is protecting " + warlordsNearPlayer.getColoredName() + ChatColor.GRAY + ".");
+            wp.sendMessage("§a\u00BB§7 " + ChatColor.GRAY + "Your Undying Army is now protecting " + warlordsNearPlayer.getColoredName() + ChatColor.GRAY + ".");
             warlordsNearPlayer.getCooldownManager().addCooldown(UndyingArmy.this.getClass(), tempUndyingArmy, "ARMY", 10, wp, CooldownTypes.ABILITY);
             warlordsNearPlayer.sendMessage("§a\u00BB§7 " + ChatColor.GRAY + wp.getName() + "'s Undying Army protects you for " + ChatColor.GOLD + "10 " + ChatColor.GRAY + "seconds.");
             numberOfPlayersWithArmy++;
