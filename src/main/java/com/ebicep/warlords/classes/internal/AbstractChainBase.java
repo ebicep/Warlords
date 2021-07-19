@@ -18,7 +18,6 @@ import java.util.List;
 
 public abstract class AbstractChainBase extends AbstractAbility {
 
-
     public AbstractChainBase(String name, float minDamageHeal, float maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier) {
         super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
     }
