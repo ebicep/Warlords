@@ -7,7 +7,7 @@ public class Avenger extends AbstractPaladin {
 
     public Avenger() {
         super(6300, 305, 0,
-                new Strike("Avenger's Strike", -359, -485, 0, 90, 25, 185),
+                new AvengersStrike(),
                 new Consecrate(-158.4f, -213.6f, 50, 20, 175, 20),
                 new LightInfusion(15.66f),
                 new HolyRadiance(19.57f, 20, 15, 175),

@@ -338,7 +338,7 @@ public class WarlordsEvents implements Listener {
 
     @EventHandler
     public void onPlayerDamage(EntityDamageEvent e) {
-        if (e.getEntity() instanceof Player) {
+        if (e.getEntity() instanceof Player || e.getEntity() instanceof Horse) {
             if (e.getCause() == EntityDamageEvent.DamageCause.VOID) {
                 e.getEntity().teleport(Warlords.getRejoinPoint(e.getEntity().getUniqueId()));
                 WarlordsPlayer wp = Warlords.getPlayer(e.getEntity());
@@ -357,12 +357,14 @@ public class WarlordsEvents implements Listener {
                 //HEIGHT - DAMAGE
                 //18 - 160
                 //HEIGHT x 40 - 200
-                WarlordsPlayer wp = Warlords.getPlayer(e.getEntity());
-                if (wp != null) {
-                    int damage = (int) e.getDamage();
-                    if (damage > 5) {
-                        wp.addHealth(wp, "Fall", -((damage + 3) * 40 - 200), -((damage + 3) * 40 - 200), -1, 100);
-                        wp.setRegenTimer(10);
+                if (e.getEntity() instanceof Player) {
+                    WarlordsPlayer wp = Warlords.getPlayer(e.getEntity());
+                    if (wp != null) {
+                        int damage = (int) e.getDamage();
+                        if (damage > 5) {
+                            wp.addHealth(wp, "Fall", -((damage + 3) * 40 - 200), -((damage + 3) * 40 - 200), -1, 100);
+                            wp.setRegenTimer(10);
+                        }
                     }
                 }
 

@@ -7,7 +7,7 @@ public class Protector extends AbstractPaladin {
 
     public Protector() {
         super(5750, 385, 0,
-                new Strike("Protector's Strike", -261, -352, 0, 90, 20, 175),
+                new ProtectorsStrike(),
                 new Consecrate(-96, -130, 10, 15, 200, 15),
                 new LightInfusion(15.66f),
                 new HolyRadiance(9.87f, 30, 15, 175),

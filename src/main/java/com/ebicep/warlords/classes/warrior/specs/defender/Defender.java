@@ -7,7 +7,7 @@ public class Defender extends AbstractWarrior {
 
     public Defender() {
         super(7400, 305, 10,
-                new Strike("Wounding Strike", -415.8f, -556.5f, 0, 100, 20, 200),
+                new WoundingStrikeDefender(),
                 new SeismicWave("Seismic Wave", -506, -685, 11.74f, 60, 25, 200),
                 new GroundSlam("Ground Slam", -326, -441, 7.34f, 0, 15, 200),
                 new Intervene(),

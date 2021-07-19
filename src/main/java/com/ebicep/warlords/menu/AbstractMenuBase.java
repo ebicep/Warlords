@@ -6,7 +6,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.metadata.FixedMetadataValue;
 
-public abstract class MenuBase {
+public abstract class AbstractMenuBase {
     protected abstract Inventory getInventory();
 
     public abstract void doOnClickAction(InventoryClickEvent event);

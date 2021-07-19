@@ -1,6 +1,6 @@
 package com.ebicep.warlords.classes.abilties;
 
-import com.ebicep.warlords.classes.internal.ProjectileBase;
+import com.ebicep.warlords.classes.internal.AbstractProjectileBase;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.Matrix4d;
 import com.ebicep.warlords.util.ParticleEffect;
@@ -9,10 +9,10 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-public class FlameBurst extends ProjectileBase {
+public class FlameBurst extends AbstractProjectileBase {
 
     private static final float HITBOX = 4.5f;
-    
+
     public FlameBurst() {
         super("Flame Burst", -557, -753, 9.4f, 60, 25, 185, 1.65, 300, false);
     }

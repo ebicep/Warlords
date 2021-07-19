@@ -22,9 +22,9 @@ public class MenuEventListener implements Listener {
     @EventHandler
     public void inventoryClick(InventoryClickEvent evt) {
         Optional<MetadataValue> menu = evt.getWhoClicked().getMetadata(METADATA_CUSTOM_INVENTORY).stream()
-                .filter(e -> e.value() instanceof MenuBase)
+                .filter(e -> e.value() instanceof AbstractMenuBase)
                 .findAny();
-        menu.ifPresent(metadataValue -> ((MenuBase) metadataValue.value()).doOnClickAction(evt));
+        menu.ifPresent(metadataValue -> ((AbstractMenuBase) metadataValue.value()).doOnClickAction(evt));
 
     }
 
@@ -34,7 +34,7 @@ public class MenuEventListener implements Listener {
         int matchedIndex = -1;
         for (int i = 0; i < meta.size(); i++) {
             MetadataValue mdv = meta.get(i);
-            if (mdv.value() instanceof MenuBase && ((MenuBase) mdv.value()).getInventory() == evt.getInventory()) {
+            if (mdv.value() instanceof AbstractMenuBase && ((AbstractMenuBase) mdv.value()).getInventory() == evt.getInventory()) {
                 matchedIndex = i;
             }
         }

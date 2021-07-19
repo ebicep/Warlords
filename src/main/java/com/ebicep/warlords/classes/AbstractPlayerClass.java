@@ -1,6 +1,7 @@
 package com.ebicep.warlords.classes;
 
 import com.ebicep.warlords.classes.abilties.*;
+import com.ebicep.warlords.classes.internal.AbstractStrikeBase;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import net.minecraft.server.v1_8_R3.PacketPlayOutAnimation;
 import org.bukkit.ChatColor;
@@ -73,7 +74,7 @@ public abstract class AbstractPlayerClass {
         if (player.getInventory().getHeldItemSlot() == 0) {
             if (player.getLevel() >= weapon.getEnergyCost() * wp.getEnergyModifier()) {
                 weapon.onActivate(wp, player);
-                if (!(weapon instanceof Strike) && !(weapon instanceof EarthenSpike)) {
+                if (!(weapon instanceof AbstractStrikeBase) && !(weapon instanceof EarthenSpike)) {
                     sendRightClickPacket(player);
                 }
             } else {
@@ -136,7 +137,7 @@ public abstract class AbstractPlayerClass {
         if (slot == 0) {
             if (player.getLevel() >= weapon.getEnergyCost() * wp.getEnergyModifier()) {
                 weapon.onActivate(wp, player);
-                if (!(weapon instanceof Strike) && !(weapon instanceof EarthenSpike))
+                if (!(weapon instanceof AbstractStrikeBase) && !(weapon instanceof EarthenSpike))
                     sendRightClickPacket(player);
             } else {
                 player.sendMessage("§cYou can't do that yet!");

@@ -5,8 +5,6 @@ import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.classes.abilties.*;
 import com.ebicep.warlords.classes.shaman.specs.spiritguard.Spiritguard;
-import com.ebicep.warlords.classes.warrior.specs.berserker.Berserker;
-import com.ebicep.warlords.classes.warrior.specs.defender.Defender;
 import com.ebicep.warlords.events.WarlordsDeathEvent;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Team;
@@ -664,9 +662,9 @@ public final class WarlordsPlayer {
 
                 //Self heal
                 if (this == attacker) {
-                    if (!cooldownManager.getCooldown(Strike.class).isEmpty() && attacker.getCooldownManager().getCooldown(Strike.class).get(0).getFrom().getSpec() instanceof Berserker) {
+                    if (!cooldownManager.getCooldown(WoundingStrikeBerserker.class).isEmpty()) {
                         damageHealValue *= .65;
-                    } else if (!cooldownManager.getCooldown(Strike.class).isEmpty() && attacker.getCooldownManager().getCooldown(Strike.class).get(0).getFrom().getSpec() instanceof Defender) {
+                    } else if (!cooldownManager.getCooldown(WoundingStrikeDefender.class).isEmpty()) {
                         damageHealValue *= .75;
                     }
                     if (this.health + damageHealValue > this.maxHealth) {
@@ -830,9 +828,9 @@ public final class WarlordsPlayer {
                     //HEALING
                     else {
                         if (isTeammateAlive(attacker)) {
-                            if (!cooldownManager.getCooldown(Strike.class).isEmpty() && cooldownManager.getCooldown(Strike.class).get(0).getFrom().getSpec() instanceof Berserker) {
+                            if (!cooldownManager.getCooldown(WoundingStrikeBerserker.class).isEmpty()) {
                                 damageHealValue *= .65;
-                            } else if (!cooldownManager.getCooldown(Strike.class).isEmpty() && cooldownManager.getCooldown(Strike.class).get(0).getFrom().getSpec() instanceof Defender) {
+                            } else if (!cooldownManager.getCooldown(WoundingStrikeDefender.class).isEmpty()) {
                                 damageHealValue *= .75;
                             }
                             if (this.health + damageHealValue > maxHealth) {

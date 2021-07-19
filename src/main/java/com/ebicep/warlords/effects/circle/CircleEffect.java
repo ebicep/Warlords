@@ -1,6 +1,6 @@
 package com.ebicep.warlords.effects.circle;
 
-import com.ebicep.warlords.effects.BaseAreaEffect;
+import com.ebicep.warlords.effects.AbstractBaseAreaEffect;
 import com.ebicep.warlords.effects.EffectPlayer;
 import com.ebicep.warlords.effects.GameTeamContainer;
 import com.ebicep.warlords.maps.Game;
@@ -12,13 +12,14 @@ import org.bukkit.Location;
 import javax.annotation.Nonnull;
 import java.util.Random;
 
-public class CircleEffect extends BaseAreaEffect<EffectPlayer<? super CircleEffect>> {
+public class CircleEffect extends AbstractBaseAreaEffect<EffectPlayer<? super CircleEffect>> {
 
     static final Random RANDOM = new Random();
     static final Location LOCATION_CACHE = new Location(null, 0, 0, 0);
     private double radius;
     @Nonnull
     final GameTeamContainer players;
+
     public CircleEffect(@Nonnull WarlordsPlayer wp, @Nonnull Location center, double radius) {
         this(wp.getGame(), wp.getTeam(), center, radius);
     }

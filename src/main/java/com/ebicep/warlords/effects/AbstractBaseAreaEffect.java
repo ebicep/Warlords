@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.function.Predicate;
 
-public abstract class BaseAreaEffect<T extends EffectPlayer<?>> implements Iterable<T> {
+public abstract class AbstractBaseAreaEffect<T extends EffectPlayer<?>> implements Iterable<T> {
 
     @Nonnull
     protected Location center;

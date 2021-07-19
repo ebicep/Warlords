@@ -18,18 +18,18 @@ import org.bukkit.util.Vector;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public abstract class ProjectileBase extends AbstractAbility {
+public abstract class AbstractProjectileBase extends AbstractAbility {
 
     protected final double projectileSpeed;
     protected final int maxTicks;
     protected final double maxDistance;
     protected final boolean hitTeammates;
 
-    public ProjectileBase(String name, float minDamageHeal, float maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier, double projectileSpeed, double maxDistance, boolean hitTeammates) {
+    public AbstractProjectileBase(String name, float minDamageHeal, float maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier, double projectileSpeed, double maxDistance, boolean hitTeammates) {
         super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
         this.projectileSpeed = projectileSpeed;
         this.maxDistance = maxDistance;
-        this.maxTicks = (int)(maxDistance / projectileSpeed) + 1;
+        this.maxTicks = (int) (maxDistance / projectileSpeed) + 1;
         this.hitTeammates = hitTeammates;
     }
 

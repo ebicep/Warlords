@@ -8,7 +8,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.function.BiConsumer;
 
-public class Menu extends MenuBase {
+public class Menu extends AbstractMenuBase {
     public static final BiConsumer<Menu, InventoryClickEvent> ACTION_CLOSE_MENU = (m, e) -> e.getWhoClicked().closeInventory();
     private final Inventory inventory;
     private final BiConsumer<Menu, InventoryClickEvent>[] onClick = (BiConsumer<Menu, InventoryClickEvent>[]) new BiConsumer<?, ?>[9 * 6];
