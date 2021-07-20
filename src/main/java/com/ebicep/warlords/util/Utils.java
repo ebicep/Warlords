@@ -260,14 +260,24 @@ public class Utils {
         return walkStatistic + horseStatistic;
     }
 
-    public static boolean tunnelUnder(Player p) {
-        Location location = p.getLocation().clone();
+    public static boolean isMountableZone(Location location) {
+        if (location.getWorld().getBlockAt((int) location.getX(), 2, (int) location.getZ()).getType() == Material.NETHERRACK) {
+            if (location.getWorld().getBlockAt((int) location.getX(), 4, (int) location.getZ()).getType() == Material.SOUL_SAND && !insideTunnel(location)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static boolean insideTunnel(Location location) {
+        Location newLocation = location.clone();
         for (int i = 0; i < 15; i++) {
-            location.add(0, -1, 0);
-            p.sendMessage("" + p.getWorld().getBlockAt(location).getType());
-            if (p.getWorld().getBlockAt(location).getType() == Material.AIR) {
+            if (newLocation.getWorld().getBlockAt(newLocation).getType() != Material.AIR) {
                 return true;
             }
+            newLocation.add(0, 1, 0);
         }
         return false;
     }

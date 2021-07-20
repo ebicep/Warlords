@@ -15,6 +15,7 @@ import com.ebicep.warlords.player.CustomScoreboard;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.ItemBuilder;
 import com.ebicep.warlords.util.PacketUtils;
+import com.ebicep.warlords.util.Utils;
 import net.minecraft.server.v1_8_R3.EntityLiving;
 import net.minecraft.server.v1_8_R3.GenericAttributes;
 import org.bukkit.*;
@@ -214,7 +215,7 @@ public class WarlordsEvents implements Listener {
             ItemStack itemHeld = player.getItemInHand();
             if (wp != null) {
                 if (player.getInventory().getHeldItemSlot() == 7 && itemHeld.getType() == Material.GOLD_BARDING && player.getVehicle() == null) {
-                    if (location.getWorld().getBlockAt((int) location.getX(), 2, (int) location.getZ()).getType() == Material.NETHERRACK) { //&& !Utils.tunnelUnder(e.getPlayer())) {
+                    if (!Utils.isMountableZone(location)) {
                         player.sendMessage(ChatColor.RED + "You can't mount here!");
                     } else {
                         double distance = player.getLocation().getY() - player.getWorld().getHighestBlockYAt(player.getLocation());
@@ -330,7 +331,7 @@ public class WarlordsEvents implements Listener {
     public void onPlayerMove(PlayerMoveEvent e) {
         if (e.getPlayer().getVehicle() instanceof Horse) {
             Location location = e.getPlayer().getLocation();
-            if (location.getWorld().getBlockAt((int) location.getX(), 2, (int) location.getZ()).getType() == Material.NETHERRACK) { // && !Utils.tunnelUnder(e.getPlayer())) {
+            if (!Utils.isMountableZone(location)) {
                 e.getPlayer().getVehicle().remove();
             }
         }
