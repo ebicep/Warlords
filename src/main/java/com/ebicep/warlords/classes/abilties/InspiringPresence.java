@@ -65,8 +65,8 @@ public class InspiringPresence extends AbstractAbility {
                         .aliveTeammatesOfExcludingSelf(wp)
                         .filter(p -> !p.getCooldownManager().hasCooldown(tempPresence))
                         .forEach((nearPlayer) -> {
-                            nearPlayer.getSpeed().addSpeedModifier("Inspiring Presence", 30, (int) tempPresence.getDuration() * 20, "BASE");
-                            nearPlayer.getCooldownManager().addCooldown(InspiringPresence.this.getClass(), tempPresence, "PRES", (int) tempPresence.getDuration(), wp, CooldownTypes.BUFF);
+                            nearPlayer.getSpeed().addSpeedModifier("Inspiring Presence", 30, 12 * 20, "BASE");
+                            nearPlayer.getCooldownManager().addCooldown(InspiringPresence.this.getClass(), tempPresence, "PRES", 12, wp, CooldownTypes.BUFF);
                         });
                 if (tempPresence.getDuration() <= 0) {
                     this.cancel();

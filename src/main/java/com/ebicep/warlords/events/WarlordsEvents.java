@@ -106,6 +106,7 @@ public class WarlordsEvents implements Listener {
             player.sendMessage(" ");
             player.sendMessage(ChatColor.GRAY + "BUILD: " + ChatColor.RED + Warlords.VERSION);
             if (player.isOp()) {
+                player.sendMessage(" ");
                 player.sendMessage(ChatColor.GRAY + "For staff members: ");
                 player.sendMessage(" ");
                 player.sendMessage(ChatColor.GRAY + "Skip Timer: /wl timer skip/reset");

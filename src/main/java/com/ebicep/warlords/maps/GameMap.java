@@ -123,7 +123,7 @@ public enum GameMap {
     ),
 
     GORGE(
-            "Gorge",
+            "Gorge Remastered",
             24,
             1,
             900 * 20,
@@ -133,8 +133,8 @@ public enum GameMap {
             new Location(Bukkit.getWorld("Gorge"), -2.5, 61.5, -236.5), // BLUE DAMAGE
             new Location(Bukkit.getWorld("Gorge"), -88.5, 61.5, -196.5), // RED DAMAGE
 
-            new Location(Bukkit.getWorld("Gorge"), 62.5, 76.5, -200.5), // BLUE SPEED
-            new Location(Bukkit.getWorld("Gorge"), -152.5, 76.5, -232.5), // RED SPEED
+            new Location(Bukkit.getWorld("Gorge"), 60.5, 75.5, -224.5), // BLUE SPEED
+            new Location(Bukkit.getWorld("Gorge"), -151.5, 75.5, -208.5), // RED SPEED
 
             new Location(Bukkit.getWorld("Gorge"), -12.5, 45.5, -194.5), // BLUE HEALING
             new Location(Bukkit.getWorld("Gorge"), -78.5, 45.5, -238.5), // RED HEALING
