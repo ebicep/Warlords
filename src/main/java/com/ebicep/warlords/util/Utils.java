@@ -49,7 +49,7 @@ public class Utils {
                 .backward(4)
                 .addY(.7)
                 .get();
-        return getDotToLocation(eye, player2.getEyeLocation()) > 0.925;
+        return getDotToLocation(eye, player2.getEyeLocation()) > 0.98;
     }
 
     public static boolean isLookingAtChain(LivingEntity player1, LivingEntity player2) {
