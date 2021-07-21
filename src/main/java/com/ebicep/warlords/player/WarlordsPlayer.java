@@ -553,10 +553,8 @@ public final class WarlordsPlayer {
                 //add damage
                 if (!attacker.getCooldownManager().getCooldown(DamagePowerUp.class).isEmpty()) {
                     totalReduction *= 1.2;
-                    //totalReduction += .2;
                 } else if (attacker.getSpawnDamage() > 0) {
                     totalReduction *= 1.2;
-                    //totalReduction += .2;
                 }
 
                 for (Cooldown cooldown : attacker.getCooldownManager().getCooldown(Berserk.class)) {
@@ -584,10 +582,9 @@ public final class WarlordsPlayer {
                 //TODO maybe change to hypixel warlords where crippling effects hammer
                 if (!attacker.getCooldownManager().getCooldown(CripplingStrike.class).isEmpty()) {
                     totalReduction *= .875;
-                    //totalReduction -= .125;
                 }
             }
-            if (!cooldownManager.getCooldown(Intervene.class).isEmpty() && cooldownManager.getCooldown(Intervene.class).get(0).getFrom() != this && !HammerOfLight.standingInHammer(attacker, entity)) {
+            if (!cooldownManager.getCooldown(Intervene.class).isEmpty() && cooldownManager.getCooldown(Intervene.class).get(0).getFrom() != this && !HammerOfLight.standingInHammer(attacker, entity) && this.isEnemyAlive(attacker)) {
                 if (this.isEnemyAlive(attacker)) {
                     damageHealValue *= totalReduction;
                     damageHealValue *= .5;
@@ -657,7 +654,6 @@ public final class WarlordsPlayer {
 
                 removeHorse();
             } else {
-                System.out.println(attacker.getName() + " hit " + name + " for " + damageHealValue);
                 boolean debt = false;
 
                 //Self heal
@@ -955,7 +951,6 @@ public final class WarlordsPlayer {
                     }
                 }
             }
-            System.out.println(attacker.name + " - " + attacker.getTotalDamage());
         }
     }
 

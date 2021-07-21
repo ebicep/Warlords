@@ -197,10 +197,9 @@ public class EarthenSpike extends AbstractAbility {
                             earthenSpikeBlock.setDuration(-1);
                             this.cancel();
                         }
-                        System.out.println(earthenSpikeBlock.duration);
                     }
 
-                }.runTaskTimer(Warlords.getInstance(), 0, 2);
+                }.runTaskTimer(Warlords.getInstance(), 0, 3);
 
                 new BukkitRunnable() {
 
