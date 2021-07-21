@@ -45,6 +45,6 @@ public class Inferno extends AbstractAbility {
                     this.cancel();
                 }
             }
-        }.runTaskTimer(Warlords.getInstance(), 0, 2);
+        }.runTaskTimer(Warlords.getInstance(), 0, 4);
     }
 }

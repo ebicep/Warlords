@@ -17,7 +17,7 @@ public class WoundingStrikeDefender extends AbstractStrikeBase {
     @Override
     public void updateDescription(Player player) {
         description = "§7Strike the targeted enemy player,\n" +
-                "§7causing §c" + -minDamageHeal + " §7- §c" + -maxDamageHeal + " §7damage\n" +
+                "§7causing §c" + Math.floor(-minDamageHeal) + " §7- §c" + Math.floor(-maxDamageHeal) + " §7damage\n" +
                 "§7and §cwounding §7them for §63 §7seconds.\n" +
                 "§7A wounded player receives §c25% §7less\n" +
                 "§7healing for the duration of the effect.";

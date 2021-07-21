@@ -12,7 +12,7 @@ import org.bukkit.inventory.ItemStack;
 public class ChainHeal extends AbstractChainBase {
 
     public ChainHeal() {
-        super("Chain Heal", 464, 623, 5.99f, 40, 20, 175);
+        super("Chain Heal", 474, 633, 7.99f, 40, 20, 175);
     }
 
     @Override
@@ -40,22 +40,22 @@ public class ChainHeal extends AbstractChainBase {
                 nearPlayer.addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
                 hitCounter++;
 
-                for (WarlordsPlayer nearNearPlayer : PlayerFilter
-                        .entitiesAround(nearPlayer, 5, 4, 5)
+                for (WarlordsPlayer chainPlayerOne : PlayerFilter
+                        .entitiesAround(nearPlayer, 10, 9, 10)
                         .aliveTeammatesOf(warlordsPlayer)
                         .excluding(warlordsPlayer, nearPlayer)
                 ) {
-                    chain(nearPlayer.getLocation(), nearNearPlayer.getLocation());
-                    nearNearPlayer.addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+                    chain(nearPlayer.getLocation(), chainPlayerOne.getLocation());
+                    chainPlayerOne.addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
                     hitCounter++;
 
-                    for (WarlordsPlayer nearNearNearPlayer : PlayerFilter
-                            .entitiesAround(nearNearPlayer, 5, 4, 5)
+                    for (WarlordsPlayer chainPlayerTwo : PlayerFilter
+                            .entitiesAround(chainPlayerOne, 10, 9, 10)
                             .aliveTeammatesOf(warlordsPlayer)
-                            .excluding(warlordsPlayer, nearPlayer, nearNearPlayer)
+                            .excluding(warlordsPlayer, nearPlayer, chainPlayerOne)
                     ) {
-                        chain(nearNearPlayer.getLocation(), nearNearNearPlayer.getLocation());
-                        nearNearPlayer.addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+                        chain(chainPlayerOne.getLocation(), chainPlayerTwo.getLocation());
+                        chainPlayerOne.addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
                         hitCounter++;
                         break;
                     }

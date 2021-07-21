@@ -286,7 +286,7 @@ public class Totem extends EntityArmorStand {
     public static class TotemEarthwarden extends AbstractAbility {
 
         public TotemEarthwarden() {
-            super("Healing Totem", 243, 630, 62.64f, 60, 25, 175);
+            super("Healing Totem", 168, 841, 62.64f, 60, 25, 175);
 
             //168 - 227
             //841 - 1138
@@ -298,16 +298,17 @@ public class Totem extends EntityArmorStand {
         public void updateDescription(Player player) {
             description = "§7Place a totem on the ground that\n" +
                     "§7pulses constantly, healing nearby\n" +
-                    "§7allies for §a" + minDamageHeal + " §7- §a" + Math.floor(minDamageHeal * 1.23) + " §7every\n" +
+                    "§7allies for §a" + minDamageHeal + " §7- §a" + Math.floor(minDamageHeal * 1.354) + " §7every\n" +
                     "§7second. Before disappearing, the totem\n" +
                     "§7will let out a final pulse that heals for\n" +
-                    "§a" + maxDamageHeal + " §7- §a" + Math.floor(maxDamageHeal * 1.354) + "§7. Lasts §68 §7seconds.";
+                    "§a" + maxDamageHeal + " §7- §a" + Math.floor(maxDamageHeal * 1.354) + "§7. Lasts §65" +
+                    " §7seconds.";
         }
 
         @Override
         public void onActivate(WarlordsPlayer wp, Player player) {
 
-            final int duration = 7;
+            final int duration = 5;
 
             wp.subtractEnergy(energyCost);
             Location standLocation = player.getLocation();
@@ -350,7 +351,7 @@ public class Totem extends EntityArmorStand {
                                         healingTotem.getOwner(),
                                         healingTotem.getOwner().getSpec().getOrange().getName(),
                                         healingTotem.getOwner().getSpec().getOrange().getMinDamageHeal(),
-                                        healingTotem.getOwner().getSpec().getOrange().getMinDamageHeal() * 1.35f,
+                                        healingTotem.getOwner().getSpec().getOrange().getMinDamageHeal() * 1.354f,
                                         healingTotem.getOwner().getSpec().getOrange().getCritChance(),
                                         healingTotem.getOwner().getSpec().getOrange().getCritMultiplier()
                                     );
@@ -370,7 +371,7 @@ public class Totem extends EntityArmorStand {
                                     healingTotem.getOwner(),
                                     healingTotem.getOwner().getSpec().getOrange().getName(),
                                     healingTotem.getOwner().getSpec().getOrange().getMaxDamageHeal(),
-                                    healingTotem.getOwner().getSpec().getOrange().getMaxDamageHeal() * 1.35f,
+                                    healingTotem.getOwner().getSpec().getOrange().getMaxDamageHeal() * 1.354f,
                                     healingTotem.getOwner().getSpec().getOrange().getCritChance(),
                                     healingTotem.getOwner().getSpec().getOrange().getCritMultiplier()
                                 );

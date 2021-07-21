@@ -31,7 +31,7 @@ public class EarthenSpike extends AbstractAbility {
     };
 
     public EarthenSpike() {
-        super("Earthen Spike", -404, -562, 0, 100, 15, 175
+        super("Earthen Spike", -476, -662, 0, 120, 15, 175
         );
     }
 
