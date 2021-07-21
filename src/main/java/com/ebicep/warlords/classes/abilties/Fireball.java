@@ -11,7 +11,7 @@ public class Fireball extends AbstractProjectileBase {
 
     private static final int MAX_FULL_DAMAGE_DISTANCE = 50;
     private static final double DIRECT_HIT_MULTIPLIER = 1.15;
-    private static final float HITBOX = 3.75f;
+    private static final float HITBOX = 4f;
 
     public Fireball() {
         super("Fireball", -334.4f, -433.4f, 0, 70, 20, 175, 2, 250, false);

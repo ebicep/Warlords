@@ -652,6 +652,11 @@ public final class WarlordsPlayer {
                     player1.playSound(entity.getLocation(), Sound.HURT_FLESH, 1, 1);
                 }
 
+                if (!ability.isEmpty()) {
+                    if (attacker.entity instanceof Player) {
+                        ((Player) attacker.entity).playSound(attacker.getLocation(), Sound.ORB_PICKUP, 1, 1);
+                    }
+                }
                 removeHorse();
             } else {
                 boolean debt = false;
