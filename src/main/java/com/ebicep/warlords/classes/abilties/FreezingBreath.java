@@ -30,6 +30,7 @@ public class FreezingBreath extends AbstractAbility {
     public void onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
         Vector viewDirection = player.getLocation().getDirection();
         PlayerFilter.entitiesAround(player, 8.0, 4.5, 8.0)
+                .aliveEnemiesOf(wp)
                 .forEach(target -> {
                     Vector direction = target.getLocation().subtract(player.getLocation()).toVector().normalize();
                     if (viewDirection.dot(direction) > .68) {

@@ -35,18 +35,16 @@ public class WaterBreath extends AbstractAbility {
                 .forEach(target -> {
                     Vector direction = target.getLocation().subtract(player.getLocation()).toVector().normalize();
                     if (viewDirection.dot(direction) > .68) {
-                        if (name.contains("Water")) {
-                            if (wp.isTeammateAlive(target)) {
-                                target.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
-                            } else {
-                                Location eye = player.getEyeLocation();
-                                eye.setY(eye.getY() + .7);
+                        if (wp.isTeammateAlive(target)) {
+                            target.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+                        } else {
+                            Location eye = player.getEyeLocation();
+                            eye.setY(eye.getY() + .7);
 
-                                final Location loc = target.getLocation();
-                                final Vector v = player.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-0.85).setY(0.3);
+                            final Location loc = target.getLocation();
+                            final Vector v = player.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-0.85).setY(0.3);
 
-                                target.setVelocity(v);
-                            }
+                            target.setVelocity(v);
                         }
                     }
                 });
