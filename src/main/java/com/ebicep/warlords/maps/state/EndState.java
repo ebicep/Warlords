@@ -123,6 +123,7 @@ public class EndState implements State, TimerDebugAble {
 
             if (winner == null) {
                 PacketUtils.sendTitle(player, "§d§lDRAW???", "", 0, 100, 0);
+                player.playSound(player.getLocation(), "defeat", 500, 1);
             } else if (value.getTeam() == winner) {
                 player.playSound(player.getLocation(), "victory", 500, 1);
                 PacketUtils.sendTitle(player, "§6§lVICTORY!", "", 0, 100, 0);

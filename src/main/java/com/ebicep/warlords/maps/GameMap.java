@@ -130,30 +130,32 @@ public enum GameMap {
             30 * 20,
             "",
 
-            new Location(Bukkit.getWorld("Gorge"), 36.5, 26.5, -36.5), // BLUE DAMAGE
-            new Location(Bukkit.getWorld("Gorge"), -35.5, 26.5, 37.5), // RED DAMAGE
+            new Location(Bukkit.getWorld("Gorge"), -2.5, 61.5, -236.5), // BLUE DAMAGE
+            new Location(Bukkit.getWorld("Gorge"), -88.5, 61.5, -196.5), // RED DAMAGE
 
-            // NO SPEED ON GORGE (YET)
-            new Location(Bukkit.getWorld("Gorge"), 999, 34.5, 999), // BLUE SPEED
-            new Location(Bukkit.getWorld("Gorge"), 999, 35.5, 999), // RED SPEED
-            // NO SPEED ON GORGE (YET)
+            new Location(Bukkit.getWorld("Gorge"), 62.5, 76.5, -200.5), // BLUE SPEED
+            new Location(Bukkit.getWorld("Gorge"), -152.5, 76.5, -232.5), // RED SPEED
 
-            // ONLY 1 HEALING
-            new Location(Bukkit.getWorld("Gorge"), 0.5, 15.5, 0.5), // BLUE HEALING
-            new Location(Bukkit.getWorld("Gorge"), 999, 22.5, 999), // RED HEALING
+            new Location(Bukkit.getWorld("Gorge"), -12.5, 45.5, -194.5), // BLUE HEALING
+            new Location(Bukkit.getWorld("Gorge"), -78.5, 45.5, -238.5), // RED HEALING
 
-            new Location(Bukkit.getWorld("Gorge"), 84.5, 41.5, 0.5), // BLUE LOBBY SPAWN
-            new Location(Bukkit.getWorld("Gorge"), -85.5, 41.5, 0.5), // RED LOBBY SPAWN
+            new Location(Bukkit.getWorld("Gorge"), 43.5, 76.5, -216.5), // BLUE LOBBY SPAWN
+            new Location(Bukkit.getWorld("Gorge"), -134.5, 76.5, -216.5), // RED LOBBY SPAWN
 
-            new Location(Bukkit.getWorld("Gorge"), 65.5, 42.5, -36.5), // BLUE RESPAWN
-            new Location(Bukkit.getWorld("Gorge"), -65.5, 42.5, 35.5), // RED RESPAWN
+            new Location(Bukkit.getWorld("Gorge"), 5.5, 71.5, -159.5), // BLUE RESPAWN
+            new Location(Bukkit.getWorld("Gorge"), -96.5, 71.5, -273.5), // RED RESPAWN
 
-            new Location(Bukkit.getWorld("Gorge"), 99.5, 47.5, 0.5), // BLUE FLAG
-            new Location(Bukkit.getWorld("Gorge"), -99.5, 47.5, 0.5), // RED FLAG
+            new Location(Bukkit.getWorld("Gorge"), 56.5, 82.5, -216.5), // BLUE FLAG
+            new Location(Bukkit.getWorld("Gorge"), -148.5, 82.5, -216.5), // RED FLAG
 
             Arrays.asList(
-                    new Cuboid(Bukkit.getWorld("Gorge"), 76, 41, -3, 76, 45, 4), // BLUE GATE
-                    new Cuboid(Bukkit.getWorld("Gorge"), -76, 41, -4, -76, 45, 3) // RED GATE
+                    new Cuboid(Bukkit.getWorld("Gorge"), 34, 76, -220, 34, 80, -213), // BLUE GATE
+                    new Cuboid(Bukkit.getWorld("Gorge"), 41, 76, -201, 41, 80, -198), // BLUE GATE 2
+                    new Cuboid(Bukkit.getWorld("Gorge"), 52, 76, -221, 55, 78, -221), // BLUE GATE 3
+
+                    new Cuboid(Bukkit.getWorld("Gorge"), -125, 76, -220, -125, 80, -213), // RED GATE
+                    new Cuboid(Bukkit.getWorld("Gorge"), -132, 76, -235, -132, 80, -232), // RED GATE 2
+                    new Cuboid(Bukkit.getWorld("Gorge"), -146, 76, -213, -143, 78, -213) // RED GATE 3
             )
     ),
 
