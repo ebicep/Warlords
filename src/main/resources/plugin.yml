@@ -23,3 +23,6 @@ commands:
   wl:
     description: Debug tools.
     usage: /wl [args]
+  class:
+    description: Select your class.
+    usage: /class [class]
