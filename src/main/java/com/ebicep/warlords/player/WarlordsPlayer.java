@@ -128,7 +128,7 @@ public final class WarlordsPlayer {
         this.hitCooldown = 20;
         this.spawnProtection = 0;
         this.speed = new CalculateSpeed(this::setWalkSpeed, 13);
-        this.scoreboard = new CustomScoreboard(this, gameState);
+        this.scoreboard = new CustomScoreboard(this, gameState, 15);
         Player p = player.getPlayer();
         this.entity = spawnJimmy(p == null ? Warlords.getRejoinPoint(uuid) : p.getLocation(), null);
         this.weapon = settings.weapon();

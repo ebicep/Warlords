@@ -22,7 +22,7 @@ public class CustomScoreboard {
     private Objective health;
     private final PlayingState gameState;
 
-    public CustomScoreboard(WarlordsPlayer warlordsPlayer, PlayingState gameState) {
+    public CustomScoreboard(WarlordsPlayer warlordsPlayer, PlayingState gameState, int numberOfEntries) {
         ScoreboardManager manager = Bukkit.getScoreboardManager();
         scoreboard = manager.getNewScoreboard();
 
@@ -30,7 +30,7 @@ public class CustomScoreboard {
         sideBar.setDisplaySlot(DisplaySlot.SIDEBAR);
         sideBar.setDisplayName("§e§lWARLORDS");
 
-        for (int i = 0; i < teamEntries.length; i++) {
+        for (int i = 0; i < numberOfEntries; i++) {
             Team tempTeam = scoreboard.registerNewTeam("team_" + (i + 1));
             tempTeam.addEntry(teamEntries[i]);
             switch (i + 1) {
@@ -38,14 +38,18 @@ public class CustomScoreboard {
                     tempTeam.setPrefix(ChatColor.YELLOW + Warlords.VERSION);
                     break;
                 case 5:
-                    tempTeam.setPrefix(ChatColor.WHITE + "Class: ");
-                    tempTeam.setSuffix(ChatColor.GREEN + warlordsPlayer.getSpec().getClass().getSimpleName());
+                    if (gameState != null) {
+                        tempTeam.setPrefix(ChatColor.WHITE + "Class: ");
+                        tempTeam.setSuffix(ChatColor.GREEN + warlordsPlayer.getSpec().getClass().getSimpleName());
+                    }
                     break;
-                case 15:
-                    SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
-                    SimpleDateFormat format2 = new SimpleDateFormat("kk:mm");
-                    tempTeam.setPrefix(ChatColor.GRAY + format.format(new Date()) + " - ");
-                    tempTeam.setSuffix(format2.format(new Date()));
+                default:
+                    if (i == numberOfEntries - 1) {
+                        SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
+                        SimpleDateFormat format2 = new SimpleDateFormat("kk:mm");
+                        tempTeam.setPrefix(ChatColor.GRAY + format.format(new Date()) + " - ");
+                        tempTeam.setSuffix(format2.format(new Date()));
+                    }
                     break;
             }
             sideBar.getScore(teamEntries[i]).setScore(i + 1);

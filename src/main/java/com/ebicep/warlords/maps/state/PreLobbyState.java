@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Gates;
 import com.ebicep.warlords.maps.Team;
+import com.ebicep.warlords.player.Classes;
 import com.ebicep.warlords.util.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -40,8 +41,11 @@ public class PreLobbyState implements State, TimerDebugAble {
             if (timer % 20 == 0) {
                 int time = timer / 20;
                 game.forEachOnlinePlayer((player, team) -> {
+                    //TODO rewrite all not in game scoreboards with the team shit
                     updateTimeLeft(player, time);
                     updatePlayers(player, players, game);
+                    //F U N C T I O N A L
+                    updateClass(player);
                 });
                 if (time == 30) {
                     game.forEachOnlinePlayer((player, team) -> {
@@ -210,6 +214,22 @@ public class PreLobbyState implements State, TimerDebugAble {
                 } else {
                     scoreboard.getObjective(dateString).getScore(ChatColor.WHITE + "Starting in: " + ChatColor.GREEN + "00:" + time + ChatColor.WHITE + " to").setScore(8);
                 }
+            }
+        }
+    }
+
+    public void updateClass(Player player) {
+        SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
+        String dateString = format.format(new Date());
+        Scoreboard scoreboard = player.getScoreboard();
+        for (String entry : scoreboard.getEntries()) {
+            String entryUnformatted = ChatColor.stripColor(entry);
+            if (entryUnformatted.contains("Lv90 ")) {
+                scoreboard.resetScores(entry);
+                scoreboard.getObjective(dateString).getScore(ChatColor.GOLD + "Lv90 " + Classes.getClassesGroup(Warlords.getPlayerSettings(player.getUniqueId()).selectedClass()).name).setScore(4);
+            } else if (entryUnformatted.contains("Spec: ")) {
+                scoreboard.resetScores(entry);
+                scoreboard.getObjective(dateString).getScore(ChatColor.WHITE + "Spec: " + ChatColor.GREEN + Warlords.getPlayerSettings(player.getUniqueId()).selectedClass().name).setScore(3);
             }
         }
     }
