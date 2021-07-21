@@ -68,6 +68,9 @@ public class InspiringPresence extends AbstractAbility {
                             nearPlayer.getSpeed().addSpeedModifier("Inspiring Presence", 30, (int) tempPresence.getDuration() * 20, "BASE");
                             nearPlayer.getCooldownManager().addCooldown(InspiringPresence.this.getClass(), tempPresence, "PRES", (int) tempPresence.getDuration(), wp, CooldownTypes.BUFF);
                         });
+                if (tempPresence.getDuration() <= 0) {
+                    this.cancel();
+                }
                 tempPresence.decrementDuration();
             }
         }.runTaskTimer(Warlords.getInstance(), 0, 0);
