@@ -107,13 +107,13 @@ public abstract class AbstractProjectileBase extends AbstractAbility {
                 net.minecraft.server.v1_8_R3.Entity nmsEntity = ((CraftEntity) entity).getHandle();
                 AxisAlignedBB aabb = nmsEntity.getBoundingBox();
                 aabb = new AxisAlignedBB(
-                        aabb.a - 0.4,
-                        aabb.b - 0.4,
-                        aabb.c - 0.4,
-                        aabb.d + 0.4,
-                        aabb.e + 0.4,
-                        aabb.f + 0.4
-                        );
+                        aabb.a - 0.8,
+                        aabb.b - 0.8,
+                        aabb.c - 0.8,
+                        aabb.d + 0.8,
+                        aabb.e + 0.8,
+                        aabb.f + 0.8
+                );
                 MovingObjectPosition mop = aabb.a(after, before);
                 if (mop != null) {
                     mop.entity = nmsEntity;
