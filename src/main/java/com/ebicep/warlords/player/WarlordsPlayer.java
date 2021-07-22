@@ -1109,8 +1109,10 @@ public final class WarlordsPlayer {
     public void addEnergy(WarlordsPlayer giver, String ability, float amount) {
         if (energy + amount > maxEnergy) {
             this.energy = maxEnergy;
-        } else {
+        } else if (energy + amount > 0) {
             this.energy += amount;
+        } else {
+            this.energy = 0;
         }
         if ((int) amount != 0) {
             if (this == giver) {

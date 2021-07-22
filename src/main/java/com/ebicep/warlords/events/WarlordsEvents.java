@@ -2,7 +2,6 @@ package com.ebicep.warlords.events;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.abilties.IceBarrier;
-import com.ebicep.warlords.classes.abilties.RecklessCharge;
 import com.ebicep.warlords.classes.abilties.Soulbinding;
 import com.ebicep.warlords.classes.abilties.UndyingArmy;
 import com.ebicep.warlords.classes.shaman.specs.spiritguard.Spiritguard;
@@ -179,7 +178,7 @@ public class WarlordsEvents implements Listener {
                                         warlordsPlayerAttacker.sendMessage(ChatColor.GREEN + "\u00BB " + ChatColor.GRAY + "Your " + ChatColor.LIGHT_PURPLE + "Soulbinding Weapon " + ChatColor.GRAY + "has bound " + warlordsPlayerVictim.getName() + "!");
                                         soulbinding.getSoulBindedPlayers().add(new Soulbinding.SoulBoundPlayer(warlordsPlayerVictim, 3));
                                         for (Player player1 : warlordsPlayerVictim.getWorld().getPlayers()) {
-                                            player1.playSound(warlordsPlayerVictim.getLocation(), "shaman.earthliving.activation", 2, 1);
+                                            player1.playSound(warlordsPlayerVictim.getLocation(), "shaman.earthlivingweapon.activation", 2, 1);
                                         }
                                     }
                                 });

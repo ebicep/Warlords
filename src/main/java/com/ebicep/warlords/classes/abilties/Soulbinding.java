@@ -41,9 +41,9 @@ public class Soulbinding extends AbstractAbility {
         wp.subtractEnergy(energyCost);
         wp.getCooldownManager().addCooldown(Soulbinding.this.getClass(), new Soulbinding(), "SOUL", 12, wp, CooldownTypes.ABILITY);
 
-        ItemMeta newItemMeta = player.getItemInHand().getItemMeta();
+        ItemMeta newItemMeta = player.getInventory().getItem(0).getItemMeta();
         newItemMeta.addEnchant(Enchantment.OXYGEN, 1, true);
-        player.getItemInHand().setItemMeta(newItemMeta);
+        player.getInventory().getItem(0).setItemMeta(newItemMeta);
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "paladin.consecrate.activation", 2, 2);
