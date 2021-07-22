@@ -36,7 +36,7 @@ public class Intervene extends AbstractAbility {
         setDamagePrevented(0);
         PlayerFilter.entitiesAround(wp, 10, 10, 10)
                 .aliveTeammatesOfExcludingSelf(wp)
-                .requireLineOfSight(wp)
+                .requireLineOfSightIntervene(wp)
                 .lookingAtFirst(wp)
                 .first((nearWarlordsPlayer) -> {
                     //green line thingy
@@ -69,6 +69,8 @@ public class Intervene extends AbstractAbility {
 
                     wp.getSpec().getBlue().setCurrentCooldown((float) (cooldown * wp.getCooldownModifier()));
                     wp.updateBlueItem();
+
+                    wp.subtractEnergy(energyCost);
 
                     for (Player player1 : player.getWorld().getPlayers()) {
                         player1.playSound(player.getLocation(), "warrior.intervene.impact", 1, 1);

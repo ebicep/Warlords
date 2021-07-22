@@ -124,7 +124,7 @@ public class PlayerFilter implements Iterable<WarlordsPlayer> {
 
     @Nonnull
     public PlayerFilter lookingAtFirst(WarlordsPlayer user) {
-        return sorted(Comparator.comparing(wp -> -Utils.getDotToPlayerCenter(user.getEntity(), wp.getEntity())));
+        return sorted(Comparator.comparing(wp -> -Utils.getDotToPlayer(user.getEntity(), wp.getEntity(), 0)));
     }
 
     @Nonnull
@@ -317,6 +317,16 @@ public class PlayerFilter implements Iterable<WarlordsPlayer> {
     @Nonnull
     public PlayerFilter requireLineOfSight(@Nonnull LivingEntity entity) {
         return filter(wp -> Utils.isLookingAt(entity, wp.getEntity()) && Utils.hasLineOfSight(entity, wp.getEntity()));
+    }
+
+    @Nonnull
+    public PlayerFilter requireLineOfSightIntervene(@Nonnull WarlordsPlayer warlordsPlayer) {
+        return requireLineOfSightIntervene(warlordsPlayer.getEntity());
+    }
+
+    @Nonnull
+    public PlayerFilter requireLineOfSightIntervene(@Nonnull LivingEntity entity) {
+        return filter(wp -> Utils.isLookingAtIntervene(entity, wp.getEntity()) && Utils.hasLineOfSight(entity, wp.getEntity()));
     }
 
     @Nonnull

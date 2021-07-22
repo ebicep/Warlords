@@ -9,25 +9,18 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
-import java.util.EventListener;
 import java.util.List;
 
-public class RecklessCharge extends AbstractAbility implements Listener {
+public class RecklessCharge extends AbstractAbility {
 
     public List<Player> playersHit = new ArrayList<>();
     private Location chargeLocation;
-    private int charge;
+    private int charge = 0;
 
     public RecklessCharge() {
         super("Reckless Charge", -466, -612, 9.98f, 60, 20, 200);
@@ -89,12 +82,31 @@ public class RecklessCharge extends AbstractAbility implements Listener {
                     if (entity instanceof Player && ((Player) entity).getGameMode() != GameMode.SPECTATOR) {
                         ((RecklessCharge) wp.getSpec().getRed()).getPlayersHit().add((Player) entity);
 
-                        Warlords.getPlayer((Player) entity).addHealth(wp,
+                        WarlordsPlayer nearPlayer = Warlords.getPlayer((Player) entity);
+
+                        nearPlayer.addHealth(wp,
                                 wp.getSpec().getRed().getName(),
                                 wp.getSpec().getRed().getMinDamageHeal(),
                                 wp.getSpec().getRed().getMaxDamageHeal(),
                                 wp.getSpec().getRed().getCritChance(),
                                 wp.getSpec().getRed().getCritMultiplier());
+
+                        new BukkitRunnable() {
+                            Location stunLocation = nearPlayer.getLocation();
+                            int timer = 0;
+
+                            @Override
+                            public void run() {
+                                stunLocation.setPitch(entity.getLocation().getPitch());
+                                stunLocation.setYaw(entity.getLocation().getYaw());
+                                entity.teleport(stunLocation);
+                                //.75 seconds
+                                if (timer >= 15) {
+                                    this.cancel();
+                                }
+                                timer++;
+                            }
+                        }.runTaskTimer(Warlords.getInstance(), 0, 0);
 
                         PacketUtils.sendTitle((Player) entity, "", "§dIMMOBILIZED", 0, 30, 0);
                     }
@@ -107,12 +119,6 @@ public class RecklessCharge extends AbstractAbility implements Listener {
             }
 
         }.runTaskTimer(Warlords.getInstance(), 0, 0);
-    }
-
-    // TODO: something with this to stun people idk how yet (maybe runnable?)
-    @EventHandler
-    public void onPlayerMove(PlayerMoveEvent e) {
-        //e.setCancelled();
     }
 
     public List<Player> getPlayersHit() {

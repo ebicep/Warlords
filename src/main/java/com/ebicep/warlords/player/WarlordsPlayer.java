@@ -595,6 +595,7 @@ public final class WarlordsPlayer {
                         player1.playSound(loc, "warrior.intervene.block", 2, 1);
                     });
 
+                    entity.playEffect(EntityEffect.HURT);
                     intervenedBy.getEntity().playEffect(EntityEffect.HURT);
                     intervenedBy.setRegenTimer(10);
                     ((Intervene) cooldownManager.getCooldown(Intervene.class).get(0).getCooldownObject()).addDamagePrevented(-damageHealValue);
@@ -890,7 +891,11 @@ public final class WarlordsPlayer {
                         PacketUtils.sendTitle((Player) entity, ChatColor.RED + "YOU DIED!", ChatColor.GRAY + attacker.getName() + " killed you.", 0, 40, 0);
                     }
                 } else {
-                    if (!ability.isEmpty() && this != attacker && damageHealValue != 0) {
+                    if (!ability.isEmpty() &&
+                            this != attacker &&
+                            damageHealValue != 0 &&
+                            !ability.equals("Intervene")
+                    ) {
                         if (attacker.entity instanceof Player) {
                             ((Player) attacker.entity).playSound(attacker.getLocation(), Sound.ORB_PICKUP, 1, 1);
                         }
@@ -1562,5 +1567,9 @@ public final class WarlordsPlayer {
 
     public void setBlocksTravelledCM(int blocksTravelledCM) {
         this.blocksTravelledCM = blocksTravelledCM;
+    }
+
+    public float getWalkspeed() {
+        return walkspeed;
     }
 }

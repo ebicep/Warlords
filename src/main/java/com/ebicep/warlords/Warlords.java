@@ -159,7 +159,6 @@ public class Warlords extends JavaPlugin {
         ConfigurationSerialization.registerClass(PlayerSettings.class);
         instance = this;
         getServer().getPluginManager().registerEvents(new WarlordsEvents(), this);
-        getServer().getPluginManager().registerEvents(new RecklessCharge(), this);
         getServer().getPluginManager().registerEvents(new MenuEventListener(this), this);
         getServer().getPluginManager().registerEvents(new NPCEvents(), this);
 
