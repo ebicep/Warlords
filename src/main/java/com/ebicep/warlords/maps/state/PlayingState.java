@@ -35,7 +35,7 @@ import static com.ebicep.warlords.util.Utils.sendMessage;
 public class PlayingState implements State, TimerDebugAble {
     private static final int GATE_TIMER = 10 * 20;
     private static final int POWERUP_TIMER = 60 * 20;
-    private static final int OVERTIME_TIME = 30 * 20;
+    private static final int OVERTIME_TIME = 60 * 20;
 
     private static final int SCORE_KILL_POINTS = 5;
     private static final int SCORE_CAPTURE_POINTS = 250;

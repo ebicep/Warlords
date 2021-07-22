@@ -2,6 +2,7 @@ package com.ebicep.warlords.events;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.abilties.IceBarrier;
+import com.ebicep.warlords.classes.abilties.RecklessCharge;
 import com.ebicep.warlords.classes.abilties.Soulbinding;
 import com.ebicep.warlords.classes.abilties.UndyingArmy;
 import com.ebicep.warlords.classes.shaman.specs.spiritguard.Spiritguard;
@@ -107,6 +108,7 @@ public class WarlordsEvents implements Listener {
             player.sendMessage(ChatColor.GRAY + "BUILD: " + ChatColor.RED + Warlords.VERSION);
             if (player.isOp()) {
                 player.sendMessage(" ");
+                player.sendMessage(ChatColor.GRAY + "(DO NOT USE THESE IN REAL GAMES)");
                 player.sendMessage(ChatColor.GRAY + "For staff members: ");
                 player.sendMessage(" ");
                 player.sendMessage(ChatColor.GRAY + "Skip Timer: /wl timer skip/reset");

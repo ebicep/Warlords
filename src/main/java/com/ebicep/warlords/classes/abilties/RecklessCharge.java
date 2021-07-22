@@ -3,23 +3,29 @@ package com.ebicep.warlords.classes.abilties;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.util.PacketUtils;
 import com.ebicep.warlords.util.Utils;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
+import java.util.EventListener;
 import java.util.List;
 
-public class RecklessCharge extends AbstractAbility {
+public class RecklessCharge extends AbstractAbility implements Listener {
 
-    private List<Player> playersHit = new ArrayList<>();
+    public List<Player> playersHit = new ArrayList<>();
     private Location chargeLocation;
     private int charge;
 
@@ -90,9 +96,7 @@ public class RecklessCharge extends AbstractAbility {
                                 wp.getSpec().getRed().getCritChance(),
                                 wp.getSpec().getRed().getCritMultiplier());
 
-                        // little scuffed might wanna change
-                        ((Player) entity).addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 17, 50));
-                        ((Player) entity).addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 17, 150));
+                        PacketUtils.sendTitle((Player) entity, "", "§dIMMOBILIZED", 0, 30, 0);
                     }
                 }
                 //cancel charge if hit a block, making the player stand still
@@ -103,6 +107,12 @@ public class RecklessCharge extends AbstractAbility {
             }
 
         }.runTaskTimer(Warlords.getInstance(), 0, 0);
+    }
+
+    // TODO: something with this to stun people idk how yet (maybe runnable?)
+    @EventHandler
+    public void onPlayerMove(PlayerMoveEvent e) {
+        //e.setCancelled();
     }
 
     public List<Player> getPlayersHit() {

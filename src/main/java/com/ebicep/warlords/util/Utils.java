@@ -49,6 +49,15 @@ public class Utils {
                 .backward(4)
                 .addY(.7)
                 .get();
+        return getDotToLocation(eye, player2.getEyeLocation()) > 0.925;
+    }
+
+    // TODO: use this seperately for vene, otherwise strike radius is dogshit again @epic
+    public static boolean isLookingAtIntervene(LivingEntity player1, LivingEntity player2) {
+        Location eye = new LocationBuilder(player1.getEyeLocation())
+                .backward(4)
+                .addY(.7)
+                .get();
         return getDotToLocation(eye, player2.getEyeLocation()) > 0.98;
     }
 

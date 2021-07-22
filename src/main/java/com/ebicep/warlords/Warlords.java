@@ -145,7 +145,6 @@ public class Warlords extends JavaPlugin {
 
     private int counter = 0;
 
-    //TODO remove static EVERYWHERE FUCK ME
     public static Game game;
     public static DatabaseManager databaseManager;
     public static boolean holographicDisplaysEnabled;
@@ -160,6 +159,7 @@ public class Warlords extends JavaPlugin {
         ConfigurationSerialization.registerClass(PlayerSettings.class);
         instance = this;
         getServer().getPluginManager().registerEvents(new WarlordsEvents(), this);
+        getServer().getPluginManager().registerEvents(new RecklessCharge(), this);
         getServer().getPluginManager().registerEvents(new MenuEventListener(this), this);
         getServer().getPluginManager().registerEvents(new NPCEvents(), this);
 
