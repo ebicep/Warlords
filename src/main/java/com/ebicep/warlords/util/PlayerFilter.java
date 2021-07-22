@@ -124,7 +124,19 @@ public class PlayerFilter implements Iterable<WarlordsPlayer> {
 
     @Nonnull
     public PlayerFilter lookingAtFirst(WarlordsPlayer user) {
-        return sorted(Comparator.comparing(wp -> -Utils.getDotToPlayer(user.getEntity(), wp.getEntity(), 0)));
+        return sorted((wp1, wp2) -> {
+            int output;
+            double wp1Dot = -Utils.getDotToPlayer(user.getEntity(), wp1.getEntity(), 0);
+            double wp2Dot = -Utils.getDotToPlayer(user.getEntity(), wp2.getEntity(), 0);
+            output = Double.compare(wp1Dot, wp2Dot);
+            if (Math.abs(wp1Dot - wp2Dot) < .01) {
+                Location userLocation = user.getLocation();
+                Location w1Location = wp1.getLocation();
+                Location w2Location = wp2.getLocation();
+                output = Double.compare(userLocation.distanceSquared(w1Location), userLocation.distanceSquared(w2Location));
+            }
+            return output;
+        });
     }
 
     @Nonnull
