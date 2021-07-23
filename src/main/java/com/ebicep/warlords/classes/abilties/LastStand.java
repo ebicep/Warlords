@@ -30,6 +30,7 @@ public class LastStand extends AbstractAbility {
 
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
+        wp.subtractEnergy(energyCost);
         LastStand tempLastStand = new LastStand();
         wp.getCooldownManager().addCooldown(LastStand.this.getClass(), tempLastStand, "LAST", 12, wp, CooldownTypes.BUFF);
         PlayerFilter.entitiesAround(wp, 5, 5, 5)
@@ -45,7 +46,6 @@ public class LastStand extends AbstractAbility {
                     nearPlayer.getCooldownManager().addCooldown(LastStand.this.getClass(), tempLastStand, "LAST", 6, wp, CooldownTypes.BUFF);
                     player.sendMessage("§7Your Last Stand is now protecting §e" + nearPlayer.getName());
                 });
-        wp.subtractEnergy(energyCost);
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "warrior.laststand.activation", 2, 1);

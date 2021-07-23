@@ -29,7 +29,7 @@ public class CrusadersStrike extends AbstractStrikeBase {
             nearPlayer.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
         }
         //reloops near players to give energy to
-        PlayerFilter.entitiesAround(wp, 10.0, 10.0, 10.0)
+        PlayerFilter.entitiesAround(wp, 10, 10, 10)
                 .aliveTeammatesOfExcludingSelf(wp)
                 .closestFirst(wp)
                 .limit(2)

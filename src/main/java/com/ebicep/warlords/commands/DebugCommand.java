@@ -28,7 +28,7 @@ public class DebugCommand implements CommandExecutor {
         switch (args[0]) {
             case "timer":
                 if (!(game.getState() instanceof TimerDebugAble)) {
-                    sender.sendMessage("This gamestate cannot be manipulated by the timer debug option");
+                    sender.sendMessage("§cThis gamestate cannot be manipulated by the timer debug option");
                     return true;
                 }
                 TimerDebugAble timerDebugAble = (TimerDebugAble) game.getState();
@@ -39,11 +39,11 @@ public class DebugCommand implements CommandExecutor {
                 switch (args[1]) {
                     case "reset":
                         timerDebugAble.resetTimer();
-                        sender.sendMessage(ChatColor.GREEN + "Timer has been reset!");
+                        sender.sendMessage(ChatColor.RED + "DEV: §aTimer has been reset!");
                         return true;
                     case "skip":
                         timerDebugAble.skipTimer();
-                        sender.sendMessage(ChatColor.GREEN + "Timer has been skipped!");
+                        sender.sendMessage(ChatColor.RED + "DEV: §aTimer has been skipped!");
                         return true;
                     default:
                         sender.sendMessage("§cInvalid option!");
@@ -62,11 +62,11 @@ public class DebugCommand implements CommandExecutor {
                 switch (args[1]) {
                     case "disable":
                         player.setInfiniteEnergy(true);
-                        sender.sendMessage(ChatColor.GREEN + "Energy consumption has been disabled!");
+                        sender.sendMessage(ChatColor.RED + "DEV: §aEnergy consumption has been disabled!");
                         return true;
                     case "enable":
                         player.setInfiniteEnergy(false);
-                        sender.sendMessage(ChatColor.GREEN + "Energy consumption has been enabled!");
+                        sender.sendMessage(ChatColor.RED + "DEV: §aEnergy consumption has been enabled!");
                         return true;
                     default:
                         sender.sendMessage("§cInvalid option!");
@@ -87,11 +87,11 @@ public class DebugCommand implements CommandExecutor {
                 switch (args[1]) {
                     case "disable":
                         player.setDisableCooldowns(true);
-                        sender.sendMessage(ChatColor.GREEN + "Cooldown timers have been disabled!");
+                        sender.sendMessage(ChatColor.RED + "DEV: §aCooldown timers have been disabled!");
                         return true;
                     case "enable":
                         player.setDisableCooldowns(false);
-                        sender.sendMessage(ChatColor.GREEN + "Cooldown timers have been enabled!");
+                        sender.sendMessage(ChatColor.RED + "DEV: §aCooldown timers have been enabled!");
                         return true;
                     default:
                         sender.sendMessage("§cInvalid option!");
@@ -112,11 +112,11 @@ public class DebugCommand implements CommandExecutor {
                 switch (args[1]) {
                     case "disable":
                         player.setTakeDamage(false);
-                        sender.sendMessage(ChatColor.GREEN + "Damage have been disabled!");
+                        sender.sendMessage(ChatColor.RED + "§cDEV: §aTaking damage has been disabled!");
                         return true;
                     case "enable":
                         player.setTakeDamage(true);
-                        sender.sendMessage(ChatColor.GREEN + "Damage have been enabled!");
+                        sender.sendMessage(ChatColor.RED + "§cDEV: §aTaking damage has been enabled!");
                         return true;
                     default:
                         sender.sendMessage("§cInvalid option!");

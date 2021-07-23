@@ -39,11 +39,12 @@ public class LightningBolt extends AbstractAbility {
 
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
+        wp.subtractEnergy(energyCost);
+
         Location location = player.getLocation();
         Vector direction = location.getDirection();
 
         Bolt bolt = new Bolt(wp, (ArmorStand) location.getWorld().spawnEntity(location.clone().subtract(direction.getX() * -.1, .3, direction.getZ() * -.1), EntityType.ARMOR_STAND), location.clone().subtract(direction.getX() * -.1, .3, direction.getZ() * -.1), direction, this);
-        wp.subtractEnergy(energyCost);
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "shaman.lightningbolt.activation", 2, 1);

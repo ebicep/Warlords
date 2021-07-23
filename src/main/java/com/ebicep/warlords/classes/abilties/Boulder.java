@@ -33,6 +33,7 @@ public class Boulder extends AbstractAbility {
 
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
+        wp.subtractEnergy(energyCost);
 
         Location location = player.getLocation();
         Vector speed = player.getLocation().getDirection().multiply(SPEED);
@@ -44,8 +45,6 @@ public class Boulder extends AbstractAbility {
         stand.setBasePlate(false);
         stand.setArms(false);
         stand.setVisible(false);
-
-        wp.subtractEnergy(energyCost);
 
         new BukkitRunnable() {
 

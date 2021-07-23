@@ -53,7 +53,8 @@ public class StartCommand implements TabExecutor {
             if (game.getMap() != map) {
                 game.changeMap(map);
             }
-            sender.sendMessage(ChatColor.GREEN + "Changing map to " + map.getMapName());
+            sender.sendMessage("§cDEV: §aChanging map to " + map.getMapName());
+            Bukkit.broadcastMessage(ChatColor.GRAY + "§lThe map has been changed to §6§l" + map.getMapName() + " §7§lby §c§l" + sender.getName());
         }
         Collection<? extends Player> online = Bukkit.getOnlinePlayers();
         if (online.size() < game.getMap().getMinPlayers()) {
@@ -88,12 +89,12 @@ public class StartCommand implements TabExecutor {
     @Override
     public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] args) {
 
-            return Arrays
-                    .stream(GameMap.values())
-                    .map(Enum::name)
-                    .filter(e -> e.startsWith(args[args.length - 1].toUpperCase(Locale.ROOT)))
-                    .map(e -> e.charAt(0) + e.substring(1).toLowerCase(Locale.ROOT))
-                    .collect(Collectors.toList());
+        return Arrays
+                .stream(GameMap.values())
+                .map(Enum::name)
+                .filter(e -> e.startsWith(args[args.length - 1].toUpperCase(Locale.ROOT)))
+                .map(e -> e.charAt(0) + e.substring(1).toLowerCase(Locale.ROOT))
+                .collect(Collectors.toList());
 
     }
 

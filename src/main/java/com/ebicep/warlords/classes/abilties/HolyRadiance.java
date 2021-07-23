@@ -23,6 +23,8 @@ public class HolyRadiance extends AbstractAbility {
 
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
+        wp.subtractEnergy(energyCost);
+
         for (WarlordsPlayer p : PlayerFilter
                 .entitiesAround(player, 4, 4, 4)
                 .aliveTeammatesOfExcludingSelf(wp)
@@ -30,7 +32,6 @@ public class HolyRadiance extends AbstractAbility {
             p.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
         }
 
-        wp.subtractEnergy(energyCost);
         wp.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
 
         player.playSound(player.getLocation(), Sound.ORB_PICKUP, 1, 1);
