@@ -579,6 +579,15 @@ public final class WarlordsPlayer {
                     totalReduction *= .8;
                 }
 
+                for (Cooldown cooldown : cooldownManager.getCooldown(LastStand.class)) {
+                    WarlordsPlayer lastStandedBy = cooldown.getFrom();
+                    if (lastStandedBy == this) {
+                        damageHealValue *= .5;
+                    } else {
+                        damageHealValue *= .4;
+                    }
+                }
+
                 //TODO maybe change to hypixel warlords where crippling effects hammer
                 if (!attacker.getCooldownManager().getCooldown(CripplingStrike.class).isEmpty()) {
                     totalReduction *= .875;
@@ -697,11 +706,6 @@ public final class WarlordsPlayer {
                         if (!cooldownManager.getCooldown(LastStand.class).isEmpty() && !HammerOfLight.standingInHammer(attacker, entity)) {
                             for (Cooldown cooldown : cooldownManager.getCooldown(LastStand.class)) {
                                 WarlordsPlayer lastStandedBy = cooldown.getFrom();
-                                if (lastStandedBy == this) {
-                                    damageHealValue *= .5;
-                                } else {
-                                    damageHealValue *= .4;
-                                }
 
                                 //HEALING FROM LASTSTAND
                                 if (lastStandedBy != this) {
