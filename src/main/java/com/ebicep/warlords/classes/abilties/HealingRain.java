@@ -35,6 +35,7 @@ public class HealingRain extends AbstractAbility {
 
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
+        wp.subtractEnergy(energyCost);
 
         final int duration = 12;
 
@@ -42,7 +43,6 @@ public class HealingRain extends AbstractAbility {
         DamageHealCircle damageHealCircle = new DamageHealCircle(wp, player.getTargetBlock((HashSet<Byte>) null, 15).getLocation(), 6, duration, minDamageHeal, maxDamageHeal, critChance, critMultiplier, name);
         damageHealCircle.getLocation().add(0, 1, 0);
         wp.getCooldownManager().addCooldown(HealingRain.this.getClass(), new HealingRain(), "RAIN", duration, wp, CooldownTypes.ABILITY);
-        wp.subtractEnergy(energyCost);
         wp.getSpec().getOrange().setCurrentCooldown((float) (cooldown * wp.getCooldownModifier()));
 
         for (Player player1 : player.getWorld().getPlayers()) {

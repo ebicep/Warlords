@@ -25,8 +25,8 @@ public class LightInfusion extends AbstractAbility {
 
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
-        wp.getSpeed().addSpeedModifier("Infusion", 40, 3 * 20, "BASE");
         wp.subtractEnergy(energyCost);
+        wp.getSpeed().addSpeedModifier("Infusion", 40, 3 * 20, "BASE");
         wp.getCooldownManager().addCooldown(LightInfusion.this.getClass(), new LightInfusion(cooldown), "INF", 3, wp, CooldownTypes.BUFF);
 
         for (Player player1 : player.getWorld().getPlayers()) {

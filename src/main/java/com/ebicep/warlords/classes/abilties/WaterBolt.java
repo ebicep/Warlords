@@ -14,7 +14,7 @@ public class WaterBolt extends AbstractProjectileBase {
     private static final float HITBOX = 4;
 
     public WaterBolt() {
-        super("Water Bolt", 328, 452, 0, 85, 20, 175, 2, 90, true);
+        super("Water Bolt", 328, 452, 0, 85, 20, 175, 2, 250, true);
     }
 
     @Override

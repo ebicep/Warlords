@@ -71,7 +71,7 @@ public class WaterBreath extends AbstractAbility {
                     this.cancel();
                 }
 
-                ParticleEffect.HEART.display(0.2f, 0.2f, 0.2f, 1F, 1, center.translateVector(player.getWorld(), 0, 0, 0), 500);
+                ParticleEffect.HEART.display(0.6f, 0.6f, 0.6f, 1, 1, center.translateVector(player.getWorld(), 0, 0, 0), 500);
 
                 for (int i = 0; i < 4; i++) {
                     double angle = Math.toRadians(i * 90) + animationTimer * 0.15;
