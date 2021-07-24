@@ -54,7 +54,7 @@ public class StartCommand implements TabExecutor {
                 game.changeMap(map);
             }
             sender.sendMessage("§cDEV: §aChanging map to " + map.getMapName());
-            Bukkit.broadcastMessage(ChatColor.GRAY + "§lThe map has been changed to §6§l" + map.getMapName() + " §7§lby §c§l" + sender.getName());
+            //Bukkit.broadcastMessage(ChatColor.GRAY + "§lThe map has been changed to §6§l" + map.getMapName() + " §7§lby §c§l" + sender.getName());
         }
         Collection<? extends Player> online = Bukkit.getOnlinePlayers();
         if (online.size() < game.getMap().getMinPlayers()) {
