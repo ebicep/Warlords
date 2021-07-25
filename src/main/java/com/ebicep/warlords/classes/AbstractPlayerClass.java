@@ -72,7 +72,9 @@ public abstract class AbstractPlayerClass {
         if (wp.isDeath()) {
             return;
         }
-        if (player.getInventory().getHeldItemSlot() == 0) {
+
+        int slot = player.getInventory().getHeldItemSlot();
+        if (slot == 0) {
             if (player.getLevel() >= weapon.getEnergyCost() * wp.getEnergyModifier()) {
                 weapon.onActivate(wp, player);
                 if (!(weapon instanceof AbstractStrikeBase) && !(weapon instanceof EarthenSpike)) {
@@ -83,7 +85,7 @@ public abstract class AbstractPlayerClass {
                 player.playSound(player.getLocation(), "notreadyalert", 1, 1);
             }
 
-        } else if (player.getInventory().getHeldItemSlot() == 1) {
+        } else if (slot == 1) {
             if (red.getCurrentCooldown() == 0) {
                 if (player.getLevel() >= red.getEnergyCost() * wp.getEnergyModifier()) {
                     red.onActivate(wp, player);
@@ -93,7 +95,7 @@ public abstract class AbstractPlayerClass {
                     }
                 }
             }
-        } else if (player.getInventory().getHeldItemSlot() == 2) {
+        } else if (slot == 2) {
             if (purple.getCurrentCooldown() == 0) {
                 if (player.getLevel() >= purple.getEnergyCost() * wp.getEnergyModifier()) {
                     purple.onActivate(wp, player);
@@ -101,7 +103,7 @@ public abstract class AbstractPlayerClass {
                     sendRightClickPacket(player);
                 }
             }
-        } else if (player.getInventory().getHeldItemSlot() == 3) {
+        } else if (slot == 3) {
             if (blue.getCurrentCooldown() == 0) {
                 if (player.getLevel() >= blue.getEnergyCost() * wp.getEnergyModifier()) {
                     blue.onActivate(wp, player);
@@ -111,7 +113,7 @@ public abstract class AbstractPlayerClass {
                     }
                 }
             }
-        } else if (player.getInventory().getHeldItemSlot() == 4) {
+        } else if (slot == 4) {
             if (orange.getCurrentCooldown() == 0 && player.getLevel() >= orange.getEnergyCost() * wp.getEnergyModifier()) {
                 orange.onActivate(wp, player);
                 if (!(orange instanceof HammerOfLight) && !(orange instanceof HealingRain)) {
@@ -120,8 +122,11 @@ public abstract class AbstractPlayerClass {
                 }
             }
         }
-        if (player.getVehicle() != null) {
-            player.getVehicle().remove();
+
+        if (slot == 0 || slot == 1 || slot == 3 || slot == 4) {
+            if (player.getVehicle() != null) {
+                player.getVehicle().remove();
+            }
         }
     }
 
