@@ -19,8 +19,8 @@ public class Inferno extends AbstractAbility {
     @Override
     public void updateDescription(Player player) {
         description = "§7Combust into a molten inferno,\n" +
-                "§7increasing your Crit Chance by §c30%\n" +
-                "§7and your Crit Multiplier by §c30%§7. Lasts\n" +
+                "§7increasing your Crit Chance by §c" + critChance + "%\n" +
+                "§7and your Crit Multiplier by §c" + critMultiplier + "%§7. Lasts\n" +
                 "§618 §7seconds.";
     }
 
@@ -45,6 +45,6 @@ public class Inferno extends AbstractAbility {
                     this.cancel();
                 }
             }
-        }.runTaskTimer(Warlords.getInstance(), 0, 4);
+        }.runTaskTimer(Warlords.getInstance(), 0, 3);
     }
 }

@@ -58,7 +58,7 @@ public class UndyingArmy extends AbstractAbility {
         UndyingArmy tempUndyingArmy = new UndyingArmy();
         wp.getCooldownManager().addCooldown(UndyingArmy.this.getClass(), tempUndyingArmy, "ARMY", 10, wp, CooldownTypes.ABILITY);
 
-        Iterator<WarlordsPlayer> iterator = PlayerFilter.entitiesAround(wp, 5, 5, 5)
+        Iterator<WarlordsPlayer> iterator = PlayerFilter.entitiesAround(wp, 6, 6, 6)
                 .aliveTeammatesOfExcludingSelf(wp)
                 .iterator();
         int numberOfPlayersWithArmy = 0;

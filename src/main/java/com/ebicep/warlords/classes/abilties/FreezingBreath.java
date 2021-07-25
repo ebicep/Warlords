@@ -28,6 +28,7 @@ public class FreezingBreath extends AbstractAbility {
 
     @Override
     public void onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
+        wp.subtractEnergy(energyCost);
         Vector viewDirection = player.getLocation().getDirection();
         PlayerFilter.entitiesAround(player, 8.0, 4.5, 8.0)
                 .aliveEnemiesOf(wp)
@@ -38,7 +39,6 @@ public class FreezingBreath extends AbstractAbility {
                         target.getSpeed().addSpeedModifier("Freezing Breath", -35, 4 * 20);
                     }
                 });
-        wp.subtractEnergy(energyCost);
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "mage.freezingbreath.activation", 2, 1);

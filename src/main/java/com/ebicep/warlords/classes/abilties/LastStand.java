@@ -33,7 +33,7 @@ public class LastStand extends AbstractAbility {
         wp.subtractEnergy(energyCost);
         LastStand tempLastStand = new LastStand();
         wp.getCooldownManager().addCooldown(LastStand.this.getClass(), tempLastStand, "LAST", 12, wp, CooldownTypes.BUFF);
-        PlayerFilter.entitiesAround(wp, 5, 5, 5)
+        PlayerFilter.entitiesAround(wp, 6, 6, 6)
                 .aliveTeammatesOfExcludingSelf(wp)
                 .forEach((nearPlayer) -> {
                     //green line thingy

@@ -77,7 +77,7 @@ public class HealingRain extends AbstractAbility {
             public void run() {
                 damageHealCircle.setDuration(damageHealCircle.getDuration() - 1);
 
-                PlayerFilter.entitiesAround(damageHealCircle.getLocation(), damageHealCircle.getRadius(), 4, damageHealCircle.getRadius())
+                PlayerFilter.entitiesAround(damageHealCircle.getLocation(), damageHealCircle.getRadius(), 8, damageHealCircle.getRadius())
                         .aliveTeammatesOf(wp)
                         .forEach((warlordsPlayer) -> {
                             warlordsPlayer.addHealth(

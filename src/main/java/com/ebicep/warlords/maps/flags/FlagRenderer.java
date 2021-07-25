@@ -137,5 +137,4 @@ class FlagRenderer {
         }
         runningTasksCancel.clear();
     }
-	
 }

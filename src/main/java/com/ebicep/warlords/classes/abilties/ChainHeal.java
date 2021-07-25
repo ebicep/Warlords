@@ -30,35 +30,35 @@ public class ChainHeal extends AbstractChainBase {
     }
 
     @Override
-    protected int getHitCounterAndActivate(WarlordsPlayer warlordsPlayer, Player player) {
+    protected int getHitCounterAndActivate(WarlordsPlayer wp, Player player) {
         int hitCounter = 0;
         for (WarlordsPlayer nearPlayer : PlayerFilter
                 .entitiesAround(player, 15, 14, 15)
-                .aliveTeammatesOfExcludingSelf(warlordsPlayer)) {
+                .aliveTeammatesOfExcludingSelf(wp)) {
             if (Utils.isLookingAtChain(player, nearPlayer.getEntity()) && Utils.hasLineOfSight(player, nearPlayer.getEntity())) {
                 //self heal
                 player.playSound(player.getLocation(), Sound.ORB_PICKUP, 1, 1);
-                warlordsPlayer.addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+                wp.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
                 chain(player.getLocation(), nearPlayer.getLocation());
-                nearPlayer.addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+                nearPlayer.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
                 hitCounter++;
 
                 for (WarlordsPlayer chainPlayerOne : PlayerFilter
                         .entitiesAround(nearPlayer, 10, 9, 10)
-                        .aliveTeammatesOf(warlordsPlayer)
-                        .excluding(warlordsPlayer, nearPlayer)
+                        .aliveTeammatesOf(wp)
+                        .excluding(wp, nearPlayer)
                 ) {
                     chain(nearPlayer.getLocation(), chainPlayerOne.getLocation());
-                    chainPlayerOne.addHealth(warlordsPlayer, name, minDamageHeal * 0.92f, maxDamageHeal * 0.92f, critChance, critMultiplier);
+                    chainPlayerOne.addHealth(wp, name, minDamageHeal * 0.92f, maxDamageHeal * 0.92f, critChance, critMultiplier);
                     hitCounter++;
 
                     for (WarlordsPlayer chainPlayerTwo : PlayerFilter
                             .entitiesAround(chainPlayerOne, 10, 9, 10)
-                            .aliveTeammatesOf(warlordsPlayer)
-                            .excluding(warlordsPlayer, nearPlayer, chainPlayerOne)
+                            .aliveTeammatesOf(wp)
+                            .excluding(wp, nearPlayer, chainPlayerOne)
                     ) {
                         chain(chainPlayerOne.getLocation(), chainPlayerTwo.getLocation());
-                        chainPlayerOne.addHealth(warlordsPlayer, name, minDamageHeal * 0.84f, maxDamageHeal * 0.84f, critChance, critMultiplier);
+                        chainPlayerOne.addHealth(wp, name, minDamageHeal * 0.84f, maxDamageHeal * 0.84f, critChance, critMultiplier);
                         hitCounter++;
                         break;
                     }

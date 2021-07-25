@@ -42,8 +42,8 @@ public class ChainLightning extends AbstractChainBase {
     }
 
     @Override
-    protected int getHitCounterAndActivate(WarlordsPlayer warlordsPlayer, Player player) {
-        return partOfChainLightning(warlordsPlayer, new HashSet<>(), warlordsPlayer.getEntity(), false);
+    protected int getHitCounterAndActivate(WarlordsPlayer wp, Player player) {
+        return partOfChainLightning(wp, new HashSet<>(), wp.getEntity(), false);
     }
 
     @Override
@@ -65,7 +65,7 @@ public class ChainLightning extends AbstractChainBase {
     private final int LIGHTING_MAX_PLAYERS_NO_TOTEM = 3;
     private final int LIGHTING_MAX_PLAYERS_WITH_TOTEM = 3;
 
-    private int partOfChainLightning(WarlordsPlayer warlordsPlayer, Set<WarlordsPlayer> playersHit, Entity checkFrom, boolean hasHitTotem) {
+    private int partOfChainLightning(WarlordsPlayer wp, Set<WarlordsPlayer> playersHit, Entity checkFrom, boolean hasHitTotem) {
         int playersSize = playersHit.size();
         if (playersSize >= (hasHitTotem ? LIGHTING_MAX_PLAYERS_WITH_TOTEM : LIGHTING_MAX_PLAYERS_NO_TOTEM)) {
 
@@ -74,33 +74,33 @@ public class ChainLightning extends AbstractChainBase {
         /**
          * The first check has double the radius for checking, and only targets a totem when the player is looking at it.
          */
-        boolean firstCheck = checkFrom == warlordsPlayer.getEntity();
+        boolean firstCheck = checkFrom == wp.getEntity();
         if (!hasHitTotem) {
             if (firstCheck) {
                 if (checkFrom instanceof LivingEntity && lookingAtTotem((LivingEntity) checkFrom)) {
-                    ArmorStand totem = getTotem(warlordsPlayer);
+                    ArmorStand totem = getTotem(wp);
                     assert totem != null;
                     chain(checkFrom.getLocation(), totem.getLocation());
-                    partOfChainLightningPulseDamage(warlordsPlayer, totem);
-                    return partOfChainLightning(warlordsPlayer, playersHit, totem, true);
+                    partOfChainLightningPulseDamage(wp, totem);
+                    return partOfChainLightning(wp, playersHit, totem, true);
                 } // no else
             } else {
-                ArmorStand totem = Utils.getTotemDownAndClose(warlordsPlayer, checkFrom);
+                ArmorStand totem = Utils.getTotemDownAndClose(wp, checkFrom);
                 if (totem != null) {
                     chain(checkFrom.getLocation(), totem.getLocation());
-                    partOfChainLightningPulseDamage(warlordsPlayer, totem);
-                    return partOfChainLightning(warlordsPlayer, playersHit, totem, true);
+                    partOfChainLightningPulseDamage(wp, totem);
+                    return partOfChainLightning(wp, playersHit, totem, true);
                 } // no else
             }
         } // no else
         PlayerFilter filter = firstCheck ?
                 PlayerFilter.entitiesAround(checkFrom, 20, 18, 20)
                         .filter(e ->
-                                Utils.isLookingAtChain(warlordsPlayer.getEntity(), e.getEntity()) &&
-                                        Utils.hasLineOfSight(warlordsPlayer.getEntity(), e.getEntity())
+                                Utils.isLookingAtChain(wp.getEntity(), e.getEntity()) &&
+                                        Utils.hasLineOfSight(wp.getEntity(), e.getEntity())
                         ) :
                 PlayerFilter.entitiesAround(checkFrom, 15, 14, 15);
-        Optional<WarlordsPlayer> foundPlayer = filter.closestFirst(warlordsPlayer).aliveEnemiesOf(warlordsPlayer).excluding(playersHit).findFirst();
+        Optional<WarlordsPlayer> foundPlayer = filter.closestFirst(wp).aliveEnemiesOf(wp).excluding(playersHit).findFirst();
         if (foundPlayer.isPresent()) {
             WarlordsPlayer hit = foundPlayer.get();
             chain(checkFrom.getLocation(), hit.getLocation());
@@ -119,8 +119,8 @@ public class ChainLightning extends AbstractChainBase {
                     break;
             }
             playersHit.add(hit);
-            hit.addHealth(warlordsPlayer, name, minDamageHeal * damageMultiplier, maxDamageHeal * damageMultiplier, critChance, critMultiplier);
-            return partOfChainLightning(warlordsPlayer, playersHit, hit.getEntity(), hasHitTotem);
+            hit.addHealth(wp, name, minDamageHeal * damageMultiplier, maxDamageHeal * damageMultiplier, critChance, critMultiplier);
+            return partOfChainLightning(wp, playersHit, hit.getEntity(), hasHitTotem);
         } else {
             return playersSize + (hasHitTotem ? 1 : 0);
         }

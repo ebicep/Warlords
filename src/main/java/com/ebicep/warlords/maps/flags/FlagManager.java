@@ -81,7 +81,6 @@ public class FlagManager implements Listener {
         this.blue.update();
         this.redRenderer.checkRender();
         this.blueRenderer.checkRender();
-
     }
 
     @EventHandler

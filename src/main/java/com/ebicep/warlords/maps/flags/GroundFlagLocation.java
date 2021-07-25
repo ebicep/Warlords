@@ -7,10 +7,6 @@ package com.ebicep.warlords.maps.flags;
 
 import org.bukkit.Location;
 
-/**
- *
- * @author fernando
- */
 public class GroundFlagLocation extends AbstractLocationBasedFlagLocation implements FlagLocation {
 	
     final int damageTimer;
@@ -44,5 +40,4 @@ public class GroundFlagLocation extends AbstractLocationBasedFlagLocation implem
         this.despawnTimer--;
         return this.despawnTimer <= 0 ? new SpawnFlagLocation(info.getSpawnLocation(), null) : null;
     }
-
 }

@@ -27,47 +27,47 @@ public class SpiritLink extends AbstractChainBase {
     }
 
     @Override
-    protected int getHitCounterAndActivate(WarlordsPlayer warlordsPlayer, Player player) {
+    protected int getHitCounterAndActivate(WarlordsPlayer wp, Player player) {
         int hitCounter = 0;
         for (WarlordsPlayer nearPlayer : PlayerFilter
-                .entitiesAround(player, 15.0D, 13.0D, 15.0D)
-                .aliveEnemiesOf(warlordsPlayer)
+                .entitiesAround(player, 15, 13, 15)
+                .aliveEnemiesOf(wp)
         ) {
             if (Utils.isLookingAtChain(player, nearPlayer.getEntity()) && Utils.hasLineOfSight(player, nearPlayer.getEntity())) {
                 chain(player.getLocation(), nearPlayer.getLocation());
-                nearPlayer.addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+                nearPlayer.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
                 hitCounter++;
 
-                if (warlordsPlayer.getCooldownManager().hasBoundPlayerLink(nearPlayer)) {
-                    healNearPlayers(warlordsPlayer);
+                if (wp.getCooldownManager().hasBoundPlayerLink(nearPlayer)) {
+                    healNearPlayers(wp);
                 }
 
                 for (WarlordsPlayer nearNearPlayer : PlayerFilter
-                        .entitiesAround(nearPlayer, 10.0D, 9.0D, 10.0D)
-                        .aliveEnemiesOf(warlordsPlayer)
+                        .entitiesAround(nearPlayer, 10, 9, 10)
+                        .aliveEnemiesOf(wp)
                         .excluding(nearPlayer)
-                        .soulBindedFirst(warlordsPlayer)
+                        .soulBindedFirst(wp)
                 ) {
                     chain(nearPlayer.getLocation(), nearNearPlayer.getLocation());
-                    nearNearPlayer.addHealth(warlordsPlayer, name, minDamageHeal * .8f, maxDamageHeal * .8f, critChance, critMultiplier);
+                    nearNearPlayer.addHealth(wp, name, minDamageHeal * .8f, maxDamageHeal * .8f, critChance, critMultiplier);
                     hitCounter++;
 
-                    if (warlordsPlayer.getCooldownManager().hasBoundPlayerLink(nearNearPlayer)) {
-                        healNearPlayers(warlordsPlayer);
+                    if (wp.getCooldownManager().hasBoundPlayerLink(nearNearPlayer)) {
+                        healNearPlayers(wp);
                     }
 
                     for (WarlordsPlayer nearNearNearPlayer : PlayerFilter
-                            .entitiesAround(nearNearPlayer, 10.0D, 9.0D, 10.0D)
-                            .aliveEnemiesOf(warlordsPlayer)
+                            .entitiesAround(nearNearPlayer, 10, 9, 10)
+                            .aliveEnemiesOf(wp)
                             .excluding(nearPlayer, nearNearPlayer)
-                            .soulBindedFirst(warlordsPlayer)
+                            .soulBindedFirst(wp)
                     ) {
                         chain(nearNearPlayer.getLocation(), nearNearNearPlayer.getLocation());
-                        nearNearPlayer.addHealth(warlordsPlayer, name, minDamageHeal * .6f, maxDamageHeal * .6f, critChance, critMultiplier);
+                        nearNearPlayer.addHealth(wp, name, minDamageHeal * .6f, maxDamageHeal * .6f, critChance, critMultiplier);
                         hitCounter++;
 
-                        if (warlordsPlayer.getCooldownManager().hasBoundPlayerLink(nearNearNearPlayer)) {
-                            healNearPlayers(warlordsPlayer);
+                        if (wp.getCooldownManager().hasBoundPlayerLink(nearNearNearPlayer)) {
+                            healNearPlayers(wp);
                         }
 
                         break;

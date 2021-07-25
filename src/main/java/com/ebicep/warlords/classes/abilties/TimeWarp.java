@@ -28,9 +28,9 @@ public class TimeWarp extends AbstractAbility {
 
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
+        wp.subtractEnergy(energyCost);
         TimeWarpPlayer timeWarpPlayer = new TimeWarpPlayer(wp, player.getLocation(), player.getLocation().getDirection(), 5);
         wp.getCooldownManager().addCooldown(TimeWarp.this.getClass(), new TimeWarp(), "TIME", 5, wp, CooldownTypes.ABILITY);
-        wp.subtractEnergy(energyCost);
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "mage.timewarp.activation", 2, 1);
@@ -55,7 +55,6 @@ public class TimeWarp extends AbstractAbility {
                 }
 
                 if (counter % 4 == 0) {
-
                     if (timeWarpPlayer.getTime() != 0) {
                         wp.getTrail().add(player.getLocation());
                     }

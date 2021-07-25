@@ -48,7 +48,7 @@ public class DamageHealCircle {
             this.circle.addEffect(new CircumferenceEffect(ParticleEffect.VILLAGER_HAPPY, ParticleEffect.REDSTONE));
             this.circle.addEffect(new LineEffect(this.location.clone().add(0, 2.3, 0), ParticleEffect.SPELL));
         } else {
-            Bukkit.broadcastMessage("Notice, no particle effect definition for " + this.name + ", no effect is played!!");
+            Bukkit.broadcastMessage("§cNotice, no particle effect definition for " + this.name + ", no effect is played!");
         }
 
     }

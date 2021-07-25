@@ -343,8 +343,7 @@ public class Totem extends EntityArmorStand {
                             player1.playSound(totemStand.getLocation(), "shaman.earthlivingweapon.impact", 2, 1);
                         }
 
-
-                        PlayerFilter.entitiesAround(healingTotem.getTotemArmorStand(), 5, 5, 5)
+                        PlayerFilter.entitiesAround(healingTotem.getTotemArmorStand(), 6, 6, 6)
                             .aliveTeammatesOf(wp)
                             .forEach((nearPlayer) -> {
                                     nearPlayer.addHealth(
