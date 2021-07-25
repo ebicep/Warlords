@@ -592,7 +592,14 @@ public final class WarlordsPlayer {
                 if (!attacker.getCooldownManager().getCooldown(CripplingStrike.class).isEmpty()) {
                     totalReduction *= .875;
                 }
+            } else if (min > 0) {
+                if (!cooldownManager.getCooldown(WoundingStrikeBerserker.class).isEmpty()) {
+                    damageHealValue *= .65;
+                } else if (!cooldownManager.getCooldown(WoundingStrikeDefender.class).isEmpty()) {
+                    damageHealValue *= .75;
+                }
             }
+
             if (!cooldownManager.getCooldown(Intervene.class).isEmpty() && cooldownManager.getCooldown(Intervene.class).get(0).getFrom() != this && !HammerOfLight.standingInHammer(attacker, entity) && this.isEnemyAlive(attacker)) {
                 if (this.isEnemyAlive(attacker)) {
                     damageHealValue *= totalReduction;
@@ -673,11 +680,6 @@ public final class WarlordsPlayer {
 
                 //Self heal
                 if (this == attacker) {
-                    if (!cooldownManager.getCooldown(WoundingStrikeBerserker.class).isEmpty()) {
-                        damageHealValue *= .65;
-                    } else if (!cooldownManager.getCooldown(WoundingStrikeDefender.class).isEmpty()) {
-                        damageHealValue *= .75;
-                    }
                     if (this.health + damageHealValue > this.maxHealth) {
                         damageHealValue = this.maxHealth - this.health;
                     }
@@ -834,11 +836,6 @@ public final class WarlordsPlayer {
                     //HEALING
                     else {
                         if (isTeammateAlive(attacker)) {
-                            if (!cooldownManager.getCooldown(WoundingStrikeBerserker.class).isEmpty()) {
-                                damageHealValue *= .65;
-                            } else if (!cooldownManager.getCooldown(WoundingStrikeDefender.class).isEmpty()) {
-                                damageHealValue *= .75;
-                            }
                             if (this.health + damageHealValue > maxHealth) {
                                 damageHealValue = maxHealth - this.health;
                             }
