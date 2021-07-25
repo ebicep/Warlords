@@ -45,8 +45,8 @@ public abstract class AbstractAbility {
     public void boostOrange() {
         if (!boosted) {
             boosted = true;
-            this.minDamageHeal *= 1.3;
-            this.maxDamageHeal *= 1.3;
+            this.minDamageHeal *= 1.4;
+            this.maxDamageHeal *= 1.4;
         }
     }
 

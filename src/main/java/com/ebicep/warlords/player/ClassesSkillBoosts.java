@@ -80,8 +80,8 @@ public enum ClassesSkillBoosts {
             "§aIncreases the amount of\n§ahealth you restore with\n§aHoly Radiance by §c20%",
             HolyRadiance.class),
     HAMMER_OF_LIGHT("Hammer of Light",
-            "§7Increases the amount of\n§7health you restore with\n§7Hammer of Light by 30%",
-            "§aIncreases the amount of\n§ahealth you restore with\n§aHammer of Light by §c30%",
+            "§7Increases the amount of\n§7health you restore with\n§7Hammer of Light by 40%",
+            "§aIncreases the amount of\n§ahealth you restore with\n§aHammer of Light by §c40%",
             HammerOfLight.class),
     LIGHTNING_BOLT("Lightning Bolt",
             "§7Increase the damage you\n§7deal with Lightning Bolt by\n§720%",
@@ -120,8 +120,8 @@ public enum ClassesSkillBoosts {
             "§aIncreases the amount of\n§ahealth you restore with\n§aChain Heal by §c20%",
             ChainHeal.class),
     HEALING_TOTEM("Healing Totem",
-            "§7Increases the amount of\n§7health you restore with\n§7Healing Totem by 30%",
-            "§aIncreases the amount of\n§ahealth you restore with\n§aHealing Totem by §c30%",
+            "§7Increases the amount of\n§7health you restore with\n§7Healing Totem by 40%",
+            "§aIncreases the amount of\n§ahealth you restore with\n§aHealing Totem by §c40%",
             Totem.TotemEarthwarden.class);
 
     public final String name;

@@ -1,5 +1,5 @@
 name: Warlords
-version: WL 2.0 RC-6
+version: WL 2 Release
 author: ebic
 main: com.ebicep.warlords.Warlords
 depend: [ MultiWorld, HolographicDisplays ]
@@ -22,7 +22,7 @@ commands:
     usage: /hotkeymode
   wl:
     description: Debug tools.
-    usage: /wl [args]
+    usage: /wl [args] [bonus args]
   class:
     description: Select your class.
     usage: /class [class]

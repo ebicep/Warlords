@@ -22,7 +22,7 @@ public class DebugCommand implements CommandExecutor {
 
         Game game = Warlords.game; // In the future allow the user to select a game player
         if (args.length < 1) {
-            sender.sendMessage("§cYou need to pass an argument, valid arguments: [timer, energy]");
+            sender.sendMessage("§cYou need to pass an argument, valid arguments: [timer, energy, cooldown, cooldownmode, takedamage]");
             return true;
         }
         switch (args[0]) {
@@ -124,6 +124,39 @@ public class DebugCommand implements CommandExecutor {
                 }
             }
 
+            case "takedamage": {
+                WarlordsPlayer player = BaseCommand.requireWarlordsPlayer(sender);
+                if (player == null) { // We only have a warlords player if the game is running
+                    return true;
+                }
+                if (args.length < 2) {
+                    sender.sendMessage("§cTake Damage requires more arguments, valid arguments: [1000, 2000, 3000, 4000]");
+                    return true;
+                }
+
+                switch (args[1]) {
+                    case "1000":
+                        player.addHealth(player, "debug", -1000, -1000, -1, 100);
+                        sender.sendMessage(ChatColor.RED + "§cDEV: §aYou took 1000 damage!");
+                        return true;
+                    case "2000":
+                        player.addHealth(player, "debug", -2000, -2000, -1, 100);
+                        sender.sendMessage(ChatColor.RED + "§cDEV: §aYou took 2000 damage!");
+                        return true;
+                    case "3000":
+                        player.addHealth(player, "debug", -3000, -3000, -1, 100);
+                        sender.sendMessage(ChatColor.RED + "§cDEV: §aYou took 3000 damage!");
+                        return true;
+                    case "4000":
+                        player.addHealth(player, "debug", -4000, -4000, -1, 100);
+                        sender.sendMessage(ChatColor.RED + "§cDEV: §aYou took 4000 damage!");
+                        return true;
+                    default:
+                        sender.sendMessage("§cInvalid option! [Options: 1000, 2000, 3000]");
+                        return false;
+                }
+            }
+
             case "cooldownmode": {
 
                 if (args.length < 2) {
@@ -151,7 +184,7 @@ public class DebugCommand implements CommandExecutor {
             }
 
             default:
-                sender.sendMessage("§cInvalid option! valid args: [cooldownmode, cooldown, energy, damage");
+                sender.sendMessage("§cInvalid option! valid args: [cooldownmode, cooldown, energy, damage, takedamage");
                 return true;
         }
     }
