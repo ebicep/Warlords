@@ -629,6 +629,10 @@ public class Warlords extends JavaPlugin {
                             if (warlordsPlayer.getRegenTimer() > 6) {
                                 warlordsPlayer.addTimeInCombat();
                             }
+
+                            if (warlordsPlayer.getName().equals("sumSmash")) {
+
+                            }
                         }
 
                     }

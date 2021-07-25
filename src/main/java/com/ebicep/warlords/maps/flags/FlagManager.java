@@ -163,5 +163,19 @@ public class FlagManager implements Listener {
         HandlerList.unregisterAll(this);
     }
 
+    public WarlordsPlayer getPlayerWithBlueFlag() {
+        if (blue.getFlag() instanceof PlayerFlagLocation) {
+            return ((PlayerFlagLocation) blue.getFlag()).getPlayer();
+        }
+        return null;
+    }
+
+    public WarlordsPlayer getPlayerWithRedFlag() {
+        if (red.getFlag() instanceof PlayerFlagLocation) {
+            return ((PlayerFlagLocation) red.getFlag()).getPlayer();
+        }
+        return null;
+    }
+
 
 }
