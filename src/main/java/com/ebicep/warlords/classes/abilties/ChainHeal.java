@@ -5,6 +5,7 @@ import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.PlayerFilter;
 import com.ebicep.warlords.util.Utils;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -12,7 +13,7 @@ import org.bukkit.inventory.ItemStack;
 public class ChainHeal extends AbstractChainBase {
 
     public ChainHeal() {
-        super("Chain Heal", 474, 633, 7.99f, 40, 20, 175);
+        super("Chain Heal", 499, 674, 7.99f, 40, 20, 175);
     }
 
     @Override
@@ -21,7 +22,8 @@ public class ChainHeal extends AbstractChainBase {
                 "§7that heals you and a targeted friendly\n" +
                 "§7player for §a" + minDamageHeal + " §7- §a" + maxDamageHeal + " §7health and\n" +
                 "§7jumps to §e2 §7additional targets within\n" +
-                "§e10 §7blocks." +
+                "§e10 §7blocks. Each jump reduces the healing\n" +
+                "§7by §c8%§7." +
                 "\n\n" +
                 "§7Each ally healed reduces the cooldown of\n" +
                 "§7Boulder by §62 §7seconds.";
@@ -35,6 +37,7 @@ public class ChainHeal extends AbstractChainBase {
                 .aliveTeammatesOfExcludingSelf(warlordsPlayer)) {
             if (Utils.isLookingAtChain(player, nearPlayer.getEntity()) && Utils.hasLineOfSight(player, nearPlayer.getEntity())) {
                 //self heal
+                player.playSound(player.getLocation(), Sound.ORB_PICKUP, 1, 1);
                 warlordsPlayer.addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
                 chain(player.getLocation(), nearPlayer.getLocation());
                 nearPlayer.addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
@@ -46,7 +49,7 @@ public class ChainHeal extends AbstractChainBase {
                         .excluding(warlordsPlayer, nearPlayer)
                 ) {
                     chain(nearPlayer.getLocation(), chainPlayerOne.getLocation());
-                    chainPlayerOne.addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+                    chainPlayerOne.addHealth(warlordsPlayer, name, minDamageHeal * 0.92f, maxDamageHeal * 0.92f, critChance, critMultiplier);
                     hitCounter++;
 
                     for (WarlordsPlayer chainPlayerTwo : PlayerFilter
@@ -55,7 +58,7 @@ public class ChainHeal extends AbstractChainBase {
                             .excluding(warlordsPlayer, nearPlayer, chainPlayerOne)
                     ) {
                         chain(chainPlayerOne.getLocation(), chainPlayerTwo.getLocation());
-                        chainPlayerOne.addHealth(warlordsPlayer, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+                        chainPlayerOne.addHealth(warlordsPlayer, name, minDamageHeal * 0.84f, maxDamageHeal * 0.84f, critChance, critMultiplier);
                         hitCounter++;
                         break;
                     }
