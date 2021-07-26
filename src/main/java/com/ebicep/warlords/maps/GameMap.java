@@ -21,7 +21,7 @@ public enum GameMap {
             "Rift",
             24,
             1,
-            300 * 20, // seconds * ticks
+            900 * 20, // seconds * ticks
             30 * 20, // seconds * ticks
             "",
 
@@ -56,7 +56,7 @@ public enum GameMap {
             "Crossfire",
             24,
             1,
-            300 * 20, // seconds * ticks
+            900 * 20, // seconds * ticks
             30 * 20, // seconds * ticks
             "",
 
@@ -91,7 +91,7 @@ public enum GameMap {
             "Warsong",
             24,
             1,
-            300 * 20,
+            900 * 20,
             30 * 20,
             "",
 
@@ -126,7 +126,7 @@ public enum GameMap {
             "Gorge Remastered",
             24,
             1,
-            300 * 20,
+            900 * 20,
             30 * 20,
             "",
 
@@ -163,7 +163,7 @@ public enum GameMap {
             "Valley",
             32,
             1,
-            300 * 20,
+            900 * 20,
             30 * 20,
             "",
 
