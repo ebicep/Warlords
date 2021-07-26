@@ -31,6 +31,5 @@ public class CripplingStrike extends AbstractStrikeBase {
         }
         nearPlayer.getCooldownManager().removeCooldown(CripplingStrike.class);
         nearPlayer.getCooldownManager().addCooldown(this.getClass(), new CripplingStrike(), "CRIP", 3, wp, CooldownTypes.DEBUFF);
-        nearPlayer.sendMessage(ChatColor.GRAY + "You are " + ChatColor.RED + "crippled" + ChatColor.GRAY + ".");
     }
 }
