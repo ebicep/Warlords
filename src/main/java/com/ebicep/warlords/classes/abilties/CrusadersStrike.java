@@ -18,7 +18,7 @@ public class CrusadersStrike extends AbstractStrikeBase {
         description = "§7Strike the targeted enemy player,\n" +
                 "§7causing §c" + -minDamageHeal + " §7- §c" + -maxDamageHeal + " damage\n" +
                 "§7and restoring §e24 §7energy to two nearby\n" +
-                "§7within §e10 §7blocks.";
+                "§7allies within §e10 §7blocks.";
     }
 
     @Override

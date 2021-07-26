@@ -57,7 +57,7 @@ public class FlameBurst extends AbstractProjectileBase {
                     name,
                     minDamageHeal,
                     maxDamageHeal,
-                    critChance + (int) Math.pow(currentLocation.distanceSquared(startingLocation), 2),
+                    critChance + (int) Math.pow(startingLocation.distanceSquared(currentLocation), 2),
                     critMultiplier
             );
         }
@@ -66,7 +66,7 @@ public class FlameBurst extends AbstractProjectileBase {
     @Override
     public void updateDescription(Player player) {
         description = "§7Launch a flame burst that will explode\n" +
-            "§7for §c" + -minDamageHeal + " §7- §c" + Math.round(-maxDamageHeal) + " §7damage. The critical\n" +
+            "§7for §c" + -minDamageHeal + " §7- §c" + -maxDamageHeal + " §7damage. The critical\n" +
             "§7chance increases by §c1% §7for each\n" +
             "§7travelled block. Up to 100%.";
     }

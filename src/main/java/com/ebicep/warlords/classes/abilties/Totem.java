@@ -363,7 +363,7 @@ public class Totem extends EntityArmorStand {
 
                         new FallingBlockWaveEffect(totemStand.getLocation().clone().add(0, 1, 0), 7, 1.2, Material.SAPLING, (byte) 1).play();
 
-                        PlayerFilter.entitiesAround(healingTotem.getTotemArmorStand(), 5, 5, 5)
+                        PlayerFilter.entitiesAround(healingTotem.getTotemArmorStand(), 6, 6, 6)
                             .aliveTeammatesOf(wp)
                             .forEach((nearPlayer) -> {
                                 nearPlayer.addHealth(

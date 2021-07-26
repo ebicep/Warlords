@@ -58,7 +58,7 @@ public class ChainHeal extends AbstractChainBase {
                             .excluding(wp, nearPlayer, chainPlayerOne)
                     ) {
                         chain(chainPlayerOne.getLocation(), chainPlayerTwo.getLocation());
-                        chainPlayerOne.addHealth(wp, name, minDamageHeal * 0.84f, maxDamageHeal * 0.84f, critChance, critMultiplier);
+                        chainPlayerTwo.addHealth(wp, name, minDamageHeal * 0.84f, maxDamageHeal * 0.84f, critChance, critMultiplier);
                         hitCounter++;
                         break;
                     }

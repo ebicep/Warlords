@@ -18,7 +18,7 @@ import java.util.HashSet;
 public class HammerOfLight extends AbstractAbility {
 
     public HammerOfLight() {
-        super("Hammer of Light", 179.85f, 236.2f, 62.64f, 30, 20, 175
+        super("Hammer of Light", 159.85f, 216.2f, 62.64f, 30, 20, 175
         );
     }
 
@@ -61,7 +61,7 @@ public class HammerOfLight extends AbstractAbility {
                     } else {
                         warlordsPlayer.addHealth(
                                 damageHealCircle.getWarlordsPlayer(),
-                                damageHealCircle.getName(), -154.4f, -205.9f,
+                                damageHealCircle.getName(), -159.85f, -216.2f,
                                 damageHealCircle.getCritChance(),
                                 damageHealCircle.getCritMultiplier()
                         );
@@ -94,8 +94,8 @@ public class HammerOfLight extends AbstractAbility {
     @Override
     public void updateDescription(Player player) {
         description = "§7Throw down a Hammer of Light on\n" +
-                "§7the ground, dealing §c154.4 §7-\n" +
-                "§c205.9 §7damage every second to\n" +
+                "§7the ground, dealing §c159.85 §7-\n" +
+                "§c216.2 §7damage every second to\n" +
                 "§7nearby enemies and healing nearby\n" +
                 "§7allies for §a" + Math.floor(minDamageHeal) + " §7- §a" + Math.floor(maxDamageHeal) + " §7every\n" +
                 "§7second. Your Protector Strike pierces\n" +

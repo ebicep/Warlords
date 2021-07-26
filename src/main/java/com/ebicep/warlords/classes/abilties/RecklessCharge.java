@@ -104,15 +104,15 @@ public class RecklessCharge extends AbstractAbility {
                                 stunLocation.setPitch(entity.getLocation().getPitch());
                                 stunLocation.setYaw(entity.getLocation().getYaw());
                                 entity.teleport(stunLocation);
-                                //.75 seconds
-                                if (timer >= 15) {
+                                //.5 seconds
+                                if (timer >= 10) {
                                     this.cancel();
                                 }
                                 timer++;
                             }
                         }.runTaskTimer(Warlords.getInstance(), 0, 0);
 
-                        PacketUtils.sendTitle((Player) entity, "", "§dIMMOBILIZED", 0, 30, 0);
+                        PacketUtils.sendTitle((Player) entity, "", "§dIMMOBILIZED", 0, 10, 0);
                     }
                 }
                 //cancel charge if hit a block, making the player stand still

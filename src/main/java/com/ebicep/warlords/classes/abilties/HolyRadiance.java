@@ -26,7 +26,7 @@ public class HolyRadiance extends AbstractAbility {
         wp.subtractEnergy(energyCost);
 
         for (WarlordsPlayer p : PlayerFilter
-                .entitiesAround(player, 4, 4, 4)
+                .entitiesAround(player, 4.5, 4.5, 4.5)
                 .aliveTeammatesOfExcludingSelf(wp)
         ) {
             p.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);

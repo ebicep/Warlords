@@ -31,7 +31,7 @@ public class WaterBreath extends AbstractAbility {
     public void onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
         wp.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
         Vector viewDirection = player.getLocation().getDirection();
-        PlayerFilter.entitiesAround(player, 8.0, 4.5, 8.0)
+        PlayerFilter.entitiesAround(player, 8.0, 5.5, 8.0)
                 .forEach(target -> {
                     Vector direction = target.getLocation().subtract(player.getLocation()).toVector().normalize();
                     if (viewDirection.dot(direction) > .68) {
@@ -42,7 +42,7 @@ public class WaterBreath extends AbstractAbility {
                             eye.setY(eye.getY() + .7);
 
                             final Location loc = target.getLocation();
-                            final Vector v = player.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-0.85).setY(0.3);
+                            final Vector v = player.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1).setY(0.3);
 
                             target.setVelocity(v);
                         }

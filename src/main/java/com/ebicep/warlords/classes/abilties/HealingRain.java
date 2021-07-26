@@ -58,12 +58,12 @@ public class HealingRain extends AbstractAbility {
             public void run() {
                 if (wp.isAlive() && player.isSneaking() && !wasSneaking) {
                     if (recastCooldown != 0) {
-                        player.sendMessage(ChatColor.RED + "Your recast ability is on cooldown, please wait 3 seconds!");
+                        player.sendMessage(ChatColor.RED + "Your recast ability is on cooldown, please wait 2 seconds!");
                     } else {
                         player.playSound(player.getLocation(), "mage.timewarp.teleport", 2, 1.35f);
                         player.sendMessage("§7You moved your §aHealing Rain §7to your current location.");
                         damageHealCircle.setLocation(player.getLocation());
-                        recastCooldown = 3;
+                        recastCooldown = 2;
                     }
                 }
 
