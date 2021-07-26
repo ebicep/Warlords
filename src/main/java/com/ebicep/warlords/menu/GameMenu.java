@@ -95,7 +95,7 @@ public class GameMenu {
         List<Classes> values = selectedGroup.subclasses;
         for (int i = 0; i < values.size(); i++) {
             Classes subClass = values.get(i);
-            ItemBuilder builder = new ItemBuilder(subClass.icon)
+            ItemBuilder builder = new ItemBuilder(subClass.specType.itemStack)
                     .name(ChatColor.GREEN + "Specialization: " + subClass.name)
                     .flags(ItemFlag.HIDE_ENCHANTS);
             List<String> lore = new ArrayList<>();
@@ -132,7 +132,7 @@ public class GameMenu {
         List<ClassesSkillBoosts> values = selectedGroup.skillBoosts;
         for (int i = 0; i < values.size(); i++) {
             ClassesSkillBoosts subClass = values.get(i);
-            ItemBuilder builder = new ItemBuilder(getSelected(player).icon)
+            ItemBuilder builder = new ItemBuilder(getSelected(player).specType.itemStack)
                     .name(subClass == selectedBoost ? ChatColor.GREEN + subClass.name + " (" + selectedClass.name + ")" : ChatColor.RED + subClass.name + " (" + selectedClass.name + ")")
                     .flags(ItemFlag.HIDE_ENCHANTS);
             List<String> lore = new ArrayList<>();

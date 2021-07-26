@@ -404,12 +404,14 @@ public class WarlordsEvents implements Listener {
                     return null;
                 }
                 e.setFormat(
-                        ChatColor.DARK_GRAY + "[" +
-                                wp.getTeam().coloredPrefix() +
-                                ChatColor.DARK_GRAY + "][" +
+                        wp.getTeam().teamColor() + "[" +
+                                wp.getTeam().prefix() + "]" +
+                                ChatColor.DARK_GRAY + "[" +
                                 ChatColor.GOLD + wp.getSpec().getClassNameShort() +
                                 ChatColor.DARK_GRAY + "][" +
                                 ChatColor.GOLD + "90" +
+                                ChatColor.DARK_GRAY + "][" +
+                                Warlords.getPlayerSettings(wp.getUuid()).selectedClass().specType.getColoredSymbol() +
                                 ChatColor.DARK_GRAY + "] " +
                                 ChatColor.AQUA + "%1$s" +
                                 ChatColor.WHITE + ": %2$s"
