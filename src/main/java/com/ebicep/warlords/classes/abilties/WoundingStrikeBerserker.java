@@ -26,9 +26,11 @@ public class WoundingStrikeBerserker extends AbstractStrikeBase {
     @Override
     protected void onHit(@Nonnull WarlordsPlayer wp, @Nonnull Player player, @Nonnull WarlordsPlayer nearPlayer) {
         nearPlayer.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+        if (!(nearPlayer.getCooldownManager().hasCooldown(WoundingStrikeBerserker.class) || nearPlayer.getCooldownManager().hasCooldown(WoundingStrikeDefender.class))) {
+            nearPlayer.sendMessage(ChatColor.GRAY + "You are " + ChatColor.RED + "wounded" + ChatColor.GRAY + ".");
+        }
         nearPlayer.getCooldownManager().removeCooldown(WoundingStrikeBerserker.class);
         nearPlayer.getCooldownManager().removeCooldown(WoundingStrikeDefender.class);
         nearPlayer.getCooldownManager().addCooldown(this.getClass(), new WoundingStrikeBerserker(), "WND", 3, wp, CooldownTypes.DEBUFF);
-        nearPlayer.sendMessage(ChatColor.GRAY + "You are " + ChatColor.RED + "wounded" + ChatColor.GRAY + ".");
     }
 }
