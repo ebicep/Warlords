@@ -55,6 +55,10 @@ public class RecklessCharge extends AbstractAbility {
             player.setVelocity(eyeLocation.getDirection().multiply(1.6));
             charge = (int) Math.pow(9 - Utils.getDistance(player, .1) * 2, 2);
         }
+
+        if (wp.getGameState().flags().hasFlag(wp)) {
+            charge /= 5;
+        }
         // warlordsplayer charged variable
         // check distance from start to "end" every tick
         // check collision of every player

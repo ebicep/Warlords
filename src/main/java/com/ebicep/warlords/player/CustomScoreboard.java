@@ -66,24 +66,37 @@ public class CustomScoreboard {
             health.setDisplayName(ChatColor.RED + "❤");
         }
         this.gameState.getGame().forEachOfflinePlayer((player, team) -> {
-            WarlordsPlayer s = Warlords.getPlayer(player);
-            health.getScore(s.getName()).setScore(s.getHealth());
+            WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
+            if (warlordsPlayer != null) {
+                health.getScore(warlordsPlayer.getName()).setScore(warlordsPlayer.getHealth());
+            }
         });
     }
 
     public void updateNames() {
         this.gameState.getGame().forEachOfflinePlayer((player, team) -> {
-            WarlordsPlayer s = Warlords.getPlayer(player);
-            Team temp = scoreboard.registerNewTeam(s.getName());
-            temp.setPrefix(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + s.getSpec().getClassNameShort() + ChatColor.DARK_GRAY + "] " + team.teamColor());
-            temp.addEntry(s.getName());
-            temp.setSuffix(ChatColor.DARK_GRAY + " [" + ChatColor.GOLD + "Lv90" + ChatColor.DARK_GRAY + "]");
+            WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
+            if (warlordsPlayer != null) {
+                if (scoreboard.getTeam(warlordsPlayer.getName()) == null) {
+                    Team temp = scoreboard.registerNewTeam(warlordsPlayer.getName());
+                    temp.setPrefix(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + warlordsPlayer.getSpec().getClassNameShort() + ChatColor.DARK_GRAY + "] " + team.teamColor());
+                    temp.addEntry(warlordsPlayer.getName());
+                    temp.setSuffix(ChatColor.DARK_GRAY + " [" + ChatColor.GOLD + "Lv90" + ChatColor.DARK_GRAY + "]");
+                } else {
+                    if (warlordsPlayer.getGameState().flags().hasFlag(warlordsPlayer)) {
+                        scoreboard.getTeam(warlordsPlayer.getName()).setSuffix(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + "Lv90" + ChatColor.DARK_GRAY + "]" + ChatColor.WHITE + "⚑");
+                    } else {
+                        scoreboard.getTeam(warlordsPlayer.getName()).setSuffix(ChatColor.DARK_GRAY + " [" + ChatColor.GOLD + "Lv90" + ChatColor.DARK_GRAY + "]");
+                    }
+                }
+            }
         });
     }
 
     public void updateBasedOnGameState(PlayingState gameState) {
 
         this.updateHealth();
+        this.updateNames();
 
         // Timer
         {
