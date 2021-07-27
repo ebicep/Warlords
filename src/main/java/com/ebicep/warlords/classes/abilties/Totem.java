@@ -223,10 +223,11 @@ public class Totem extends EntityArmorStand {
 
                             // 100% of damage over 6 seconds
                             float damage = (TotemSpiritguard.this.getDelayedDamage() * .1667f);
+
                             // Player damage
                             deathsDebtTotem.getOwner().addHealth(deathsDebtTotem.getOwner(), "",
-                                    damage,
-                                    damage,
+                                    (float) (damage * Math.pow(.8, wp.getCooldownManager().getCooldown(SpiritLink.class).size())),
+                                    (float) (damage * Math.pow(.8, wp.getCooldownManager().getCooldown(SpiritLink.class).size())),
                                     TotemSpiritguard.this.getCritChance(),
                                     TotemSpiritguard.this.getCritMultiplier()
                             );

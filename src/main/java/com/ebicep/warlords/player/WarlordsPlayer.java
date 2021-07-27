@@ -552,12 +552,12 @@ public final class WarlordsPlayer {
                 //base
                 totalReduction = 1 - spec.getDamageResistance() / 100f;
                 //add damage
+
                 if (!attacker.getCooldownManager().getCooldown(DamagePowerUp.class).isEmpty()) {
                     totalReduction *= 1.2;
                 } else if (attacker.getSpawnDamage() > 0) {
                     totalReduction *= 1.2;
                 }
-
                 for (Cooldown cooldown : attacker.getCooldownManager().getCooldown(Berserk.class)) {
                     totalReduction *= 1.25;
                 }
