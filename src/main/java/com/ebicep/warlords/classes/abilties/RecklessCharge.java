@@ -79,7 +79,7 @@ public class RecklessCharge extends AbstractAbility {
                     this.cancel();
                 }
 
-                List<Entity> playersInside = player.getNearbyEntities(2.5, 4, 2.5);
+                List<Entity> playersInside = player.getNearbyEntities(2.25, 4, 2.25);
                 playersInside.removeAll(((RecklessCharge) wp.getSpec().getRed()).getPlayersHit());
                 playersInside = Utils.filterOutTeammates(playersInside, player);
                 for (Entity entity : playersInside) {
