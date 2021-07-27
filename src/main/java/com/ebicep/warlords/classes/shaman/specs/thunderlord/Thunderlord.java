@@ -10,6 +10,7 @@ public class Thunderlord extends AbstractShaman {
                 new ChainLightning(),
                 new Windfury(),
                 new LightningRod(),
-                new Totem.TotemThunderlord());
+                new CapacitorTotem()
+        );
     }
 }

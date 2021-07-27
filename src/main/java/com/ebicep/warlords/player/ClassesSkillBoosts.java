@@ -98,7 +98,7 @@ public enum ClassesSkillBoosts {
     CAPACITOR_TOTEM("Capacitor Totem",
             "§7Increase the damage you\n§7deal with Capacitor Totem\n§7by 30%",
             "§aIncrease the damage you\n§adeal with Capacitor Totem\n§aby §c30%",
-            Totem.TotemThunderlord.class),
+            CapacitorTotem.class),
     FALLEN_SOULS("Fallen Souls",
             "§7Increase the damage you\n§7deal with Fallen Souls by\n§720%",
             "§aIncrease the damage you\n§adeal with Fallen Souls by\n§c20%",
@@ -122,7 +122,7 @@ public enum ClassesSkillBoosts {
     HEALING_TOTEM("Healing Totem",
             "§7Increases the amount of\n§7health you restore with\n§7Healing Totem by 40%",
             "§aIncreases the amount of\n§ahealth you restore with\n§aHealing Totem by §c40%",
-            Totem.TotemEarthwarden.class);
+            HealingTotem.class);
 
     public final String name;
     public final String description;

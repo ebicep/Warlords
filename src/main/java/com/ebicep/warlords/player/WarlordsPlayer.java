@@ -734,10 +734,10 @@ public final class WarlordsPlayer {
                         // this metadata is only active on the sg class
                         // the cooldown of the ability prevents multiple from being active at the same time
                         Optional<MetadataValue> totem = entity.getMetadata("TOTEM").stream()
-                                .filter(e -> e.value() instanceof Totem.TotemSpiritguard)
+                                .filter(e -> e.value() instanceof DeathsDebt)
                                 .findAny();
                         if (totem.isPresent()) {
-                            Totem.TotemSpiritguard t = (Totem.TotemSpiritguard) totem.get().value();
+                            DeathsDebt t = (DeathsDebt) totem.get().value();
                             t.addDelayedDamage(damageHealValue);
                             debt = true;
                         }
@@ -1339,8 +1339,8 @@ public final class WarlordsPlayer {
         this.flagsReturned++;
     }
 
-    public int getTotalCapsAndReturns() {
-        return this.flagsCaptured + this.flagsReturned;
+    public int getTotalCapsAndReturnsWeighted() {
+        return (this.flagsCaptured * 5) + this.flagsReturned;
     }
 
     public int getSpawnProtection() {

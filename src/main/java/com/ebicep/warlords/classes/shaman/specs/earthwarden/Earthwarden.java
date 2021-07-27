@@ -11,7 +11,8 @@ public class Earthwarden extends AbstractShaman {
                 new Boulder(),
                 new Earthliving(),
                 new ChainHeal(),
-                new Totem.TotemEarthwarden());
+                new HealingTotem()
+        );
     }
 
 }

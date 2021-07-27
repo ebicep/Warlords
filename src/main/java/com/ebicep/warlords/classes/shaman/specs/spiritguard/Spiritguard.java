@@ -10,7 +10,8 @@ public class Spiritguard extends AbstractShaman {
                 new SpiritLink(),
                 new Soulbinding(),
                 new Repentance(),
-                new Totem.TotemSpiritguard());
+                new DeathsDebt()
+        );
     }
 
 }

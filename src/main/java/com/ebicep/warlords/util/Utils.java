@@ -31,9 +31,6 @@ import java.util.stream.Stream;
 public class Utils {
 
     public static double getDotToPlayer(LivingEntity player1, LivingEntity player2, double yIncrease) {
-        System.out.println(player1.getName() + " to " + player2.getName());
-        System.out.println(getDotToLocation(new LocationBuilder(player1.getEyeLocation()).addY(.7).get(), player2.getEyeLocation()));
-        System.out.println("-----");
         return getDotToLocation(new LocationBuilder(player1.getEyeLocation()).addY(yIncrease).get(), player2.getEyeLocation());
     }
 
@@ -304,8 +301,6 @@ public class Utils {
         location.setPitch(0);
         Location headLocationForward = location.clone().add(location.clone().getDirection().multiply(1)).add(0, 1, 0);
         Location footLocationForward = location.clone().add(location.clone().getDirection().multiply(1));
-        System.out.println(location.getWorld().getBlockAt(headLocationForward).getType());
-        System.out.println(location.getWorld().getBlockAt(footLocationForward).getType());
         return location.getWorld().getBlockAt(headLocationForward).getType() != Material.AIR && location.getWorld().getBlockAt(footLocationForward).getType() != Material.AIR;
     }
 

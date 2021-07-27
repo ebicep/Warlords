@@ -272,6 +272,16 @@ public class WarlordsEvents implements Listener {
     }
 
     @EventHandler
+    public void onPlayerTeleport(PlayerTeleportEvent e) {
+        if (e.getCause() == PlayerTeleportEvent.TeleportCause.UNKNOWN) {
+            if (e.getPlayer().getGameMode() == GameMode.SPECTATOR) {
+                e.setCancelled(true);
+                e.getPlayer().setSpectatorTarget(null);
+            }
+        }
+    }
+
+    @EventHandler
     public void regenEvent(EntityRegainHealthEvent e) {
         e.setCancelled(true);
     }

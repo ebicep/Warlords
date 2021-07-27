@@ -10,7 +10,7 @@ public class Protector extends AbstractPaladin {
                 new ProtectorsStrike(),
                 new Consecrate(-96, -130, 10, 15, 200, 15),
                 new LightInfusion(15.66f),
-                new HolyRadiance(9.87f, 30, 15, 175),
+                new HolyRadiance(9.87f, 60, 15, 175),
                 new HammerOfLight());
     }
 

@@ -10,10 +10,7 @@ import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.menu.MenuEventListener;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.powerups.EnergyPowerUp;
-import com.ebicep.warlords.util.LocationBuilder;
-import com.ebicep.warlords.util.PacketUtils;
-import com.ebicep.warlords.util.PlayerFilter;
-import com.ebicep.warlords.util.Utils;
+import com.ebicep.warlords.util.*;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import org.bson.Document;
@@ -280,7 +277,6 @@ public class Warlords extends JavaPlugin {
 
             @Override
             public void run() {
-                //RemoveEntities.removeHorsesInGame();
                 // EVERY TICK
                 {
                     // MOVEMENT
@@ -524,7 +520,7 @@ public class Warlords extends JavaPlugin {
                                 itr.remove();
 
                                 //504 302
-                                if (Warlords.getPlayerSettings(warlordsPlayer.getUuid()).classesSkillBoosts() == ClassesSkillBoosts.ORBS_OF_LIFE) {
+                                if (Warlords.getPlayerSettings(orb.getOwner().getUuid()).classesSkillBoosts() == ClassesSkillBoosts.ORBS_OF_LIFE) {
                                     warlordsPlayer.addHealth(orb.getOwner(), "Orbs of Life", 420 * 1.2f, 420 * 1.2f, -1, 100);
                                 } else {
                                     warlordsPlayer.addHealth(orb.getOwner(), "Orbs of Life", 420, 420, -1, 100);
@@ -534,7 +530,7 @@ public class Warlords extends JavaPlugin {
                                         .aliveTeammatesOfExcludingSelf(warlordsPlayer)
                                         .limit(2)
                                 ) {
-                                    if (Warlords.getPlayerSettings(warlordsPlayer.getUuid()).classesSkillBoosts() == ClassesSkillBoosts.ORBS_OF_LIFE) {
+                                    if (Warlords.getPlayerSettings(orb.getOwner().getUuid()).classesSkillBoosts() == ClassesSkillBoosts.ORBS_OF_LIFE) {
                                         nearPlayer.addHealth(orb.getOwner(), "Orbs of Life", 252 * 1.2f, 252 * 1.2f, -1, 100);
                                     } else {
                                         nearPlayer.addHealth(orb.getOwner(), "Orbs of Life", 252, 252, -1, 100);
@@ -554,6 +550,7 @@ public class Warlords extends JavaPlugin {
 
                     //EVERY SECOND
                     if (counter % 20 == 0) {
+                        RemoveEntities.removeHorsesInGame();
                         for (WarlordsPlayer warlordsPlayer : players.values()) {
                             Player player = warlordsPlayer.getEntity() instanceof Player ? (Player) warlordsPlayer.getEntity() : null;
                             if (player != null) {
