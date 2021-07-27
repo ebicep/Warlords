@@ -630,6 +630,7 @@ public class Warlords extends JavaPlugin {
 
                             }
                         }
+                        WarlordsEvents.entityList.removeIf(e -> !e.isValid());
                     }
                 }
                 counter++;

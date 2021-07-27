@@ -142,7 +142,7 @@ public class GroundSlam extends AbstractAbility {
                 location.getWorld().getBlockAt(blockToGet).getData());
         fallingBlock.setVelocity(new Vector(0, .14, 0));
         fallingBlock.setDropItem(false);
-        WarlordsEvents.addEntityUUID(fallingBlock.getUniqueId());
+        WarlordsEvents.addEntityUUID(fallingBlock);
         return fallingBlock;
     }
 }

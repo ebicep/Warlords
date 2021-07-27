@@ -74,7 +74,7 @@ public class FallingBlockWaveEffect {
                 fallingBlock = loc.getWorld().spawnFallingBlock(loc, material, damage);
                 fallingBlock.setVelocity(new Vector(0, 0.05, 0));
                 fallingBlock.setDropItem(false);
-                WarlordsEvents.addEntityUUID(fallingBlock.getUniqueId());
+                WarlordsEvents.addEntityUUID(fallingBlock);
 
                 return false;
             } else if (timer == 6) {

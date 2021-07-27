@@ -39,7 +39,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 
@@ -47,19 +46,19 @@ import static com.ebicep.warlords.menu.GameMenu.*;
 
 public class WarlordsEvents implements Listener {
 
-    public static Set<UUID> entityList = new HashSet<>();
+    public static Set<Entity> entityList = new HashSet<>();
 
     @EventHandler
     public void onEntityChangeBlock(EntityChangeBlockEvent event) {
         if (event.getEntity() instanceof FallingBlock) {
-            if (entityList.remove(event.getEntity().getUniqueId())) {
+            if (entityList.remove(event.getEntity())) {
                 event.setCancelled(true);
             }
         }
     }
 
-    public static void addEntityUUID(UUID id) {
-        entityList.add(id);
+    public static void addEntityUUID(Entity entity) {
+        entityList.add(entity);
     }
 
     @EventHandler

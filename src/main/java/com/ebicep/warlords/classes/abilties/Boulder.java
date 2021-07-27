@@ -141,7 +141,7 @@ public class Boulder extends AbstractAbility {
                         fallingBlock.setDropItem(false);
                         fallingBlock.setTicksLived(4);
                         newLoc.setYaw((float) (newLoc.getYaw() + Math.random() * 25 + 12));
-                        WarlordsEvents.addEntityUUID(fallingBlock.getUniqueId());
+                        WarlordsEvents.addEntityUUID(fallingBlock);
                     }
                     this.cancel();
                 }
