@@ -31,12 +31,12 @@ public class LightningRod extends AbstractAbility {
         Location playerLocation = player.getLocation();
 
 
-        PlayerFilter.entitiesAround(player, 5.5, 5.5, 5.5)
+        PlayerFilter.entitiesAround(player, 5, 5, 5)
                 .aliveEnemiesOf(wp)
                 .forEach((p) -> {
                     //knockback
                     final Location loc = p.getLocation();
-                    final Vector v = player.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1.5).setY(0.4);
+                    final Vector v = player.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1.45).setY(0.4);
 
                     p.setVelocity(v);
 

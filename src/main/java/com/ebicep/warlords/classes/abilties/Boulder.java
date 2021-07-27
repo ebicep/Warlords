@@ -107,9 +107,9 @@ public class Boulder extends AbstractAbility {
                         Entity entity = p.getEntity();
                         Vector v;
                         if (p == directHit) {
-                            v = player.getLocation().toVector().subtract(p.getLocation().toVector()).normalize().multiply(-1.1).setY(0.3);
+                            v = player.getLocation().toVector().subtract(p.getLocation().toVector()).normalize().multiply(-1.06).setY(0.2);
                         } else {
-                            v = entity.getLocation().toVector().subtract(newLoc.toVector()).normalize().multiply(1.1).setY(0.3);
+                            v = entity.getLocation().toVector().subtract(newLoc.toVector()).normalize().multiply(1.06).setY(0.2);
                         }
                         entity.setVelocity(v);
 
@@ -118,6 +118,7 @@ public class Boulder extends AbstractAbility {
                     for (int i = 0; i < 24; i++) {
                         FallingBlock fallingBlock;
                         Location spawnLoc = newLoc.clone().add(0, 0.5, 0)
+                                .subtract(speed)
                                 .subtract(speed)
                                 .subtract(speed)
                                 .subtract(speed);
