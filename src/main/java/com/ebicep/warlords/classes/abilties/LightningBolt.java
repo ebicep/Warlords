@@ -54,7 +54,7 @@ public class LightningBolt extends AbstractAbility {
             @Override
             public void run() {
                 for (WarlordsPlayer player : PlayerFilter
-                        .entitiesAround(bolt.getLocation(), 1.65, 1.55, 1.65)
+                        .entitiesAround(bolt.getLocation(), 1.65, 1.65, 1.65)
                         .aliveEnemiesOf(wp)
                         .excluding(bolt.playersHit)
                 ) {

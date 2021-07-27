@@ -43,6 +43,7 @@ public class FlameBurst extends AbstractProjectileBase {
     protected void onHit(WarlordsPlayer shooter, Location currentLocation, Location startingLocation, WarlordsPlayer victim) {
         ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.5F, 2, currentLocation, 500);
         ParticleEffect.LAVA.display(0.5F, 0, 0.5F, 2F, 10, currentLocation, 500);
+        ParticleEffect.CLOUD.display(0.3F, 0.3F, 0.3F, 1, 3, currentLocation, 500);
 
         for (Player player1 : currentLocation.getWorld().getPlayers()) {
             player1.playSound(currentLocation, "mage.flameburst.impact", 2, 1);

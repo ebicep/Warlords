@@ -29,6 +29,7 @@ public class WaterBreath extends AbstractAbility {
 
     @Override
     public void onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
+        wp.subtractEnergy(energyCost);
         wp.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
         Vector viewDirection = player.getLocation().getDirection();
         PlayerFilter.entitiesAround(player, 8.0, 5.5, 8.0)
@@ -48,7 +49,6 @@ public class WaterBreath extends AbstractAbility {
                         }
                     }
                 });
-        wp.subtractEnergy(energyCost);
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "mage.waterbreath.activation", 2, 1);
