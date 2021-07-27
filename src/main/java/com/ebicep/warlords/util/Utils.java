@@ -90,7 +90,7 @@ public class Utils {
     public static ArmorStand getTotemDownAndClose(WarlordsPlayer warlordsPlayer, Entity searchNearby) {
         for (Entity entity : searchNearby.getNearbyEntities(5, 3, 5)) {
             if (entity instanceof ArmorStand && (entity.hasMetadata("capacitor-totem-" + warlordsPlayer.getName().toLowerCase()) || entity.hasMetadata("healing-totem-" + warlordsPlayer.getName().toLowerCase()))) {
-                return (ArmorStand)entity;
+                return (ArmorStand) entity;
             }
         }
         return null;
@@ -105,30 +105,37 @@ public class Utils {
     }
 
     private static final Location LOCATION_CONTAINER = new Location(null, 0, 0, 0);
+
     @Deprecated
     public static Stream<WarlordsPlayer> filterOnlyEnemiesSorted(WarlordsPlayer entity, double x, double y, double z, Entity player) {
         return filterOnlyEnemiesSorted(entity.getLocation(LOCATION_CONTAINER), x, y, z, player);
     }
+
     @Deprecated
     public static Stream<WarlordsPlayer> filterOnlyEnemiesSorted(Entity entity, double x, double y, double z, Entity player) {
         return filterOnlyEnemiesSorted(entity.getLocation(LOCATION_CONTAINER), x, y, z, player);
     }
+
     @Deprecated
     public static Stream<WarlordsPlayer> filterOnlyEnemiesSorted(Location loc, double x, double y, double z, Entity player) {
         return filterOnlyEnemies(loc.getWorld().getNearbyEntities(loc, x, y, z), player)
-            .sorted(sortClosestBy(WarlordsPlayer::getLocation, loc));
+                .sorted(sortClosestBy(WarlordsPlayer::getLocation, loc));
     }
+
     @Deprecated
     public static Stream<WarlordsPlayer> filterOnlyEnemies(Entity entity, double x, double y, double z, Entity player) {
         return filterOnlyEnemies(entity.getLocation(LOCATION_CONTAINER), x, y, z, player);
     }
+
     @Deprecated
     public static Stream<WarlordsPlayer> filterOnlyEnemies(Location loc, double x, double y, double z, Entity player) {
         return filterOnlyEnemies(loc.getWorld().getNearbyEntities(loc, x, y, z), player)
-            .filter(radiusAround(WarlordsPlayer::getLocation, loc, x, y, z));
+                .filter(radiusAround(WarlordsPlayer::getLocation, loc, x, y, z));
     }
+
     /**
      * Map the list of entities to valid WarlordPlayer who are part off the enemy of the team of the player
+     *
      * @param entities
      * @param player
      * @return
@@ -138,8 +145,9 @@ public class Utils {
         WarlordsPlayer wp = Warlords.getPlayer(player);
         return wp == null ? Stream.empty() : entities.stream()
                 .map(Warlords::getPlayer)
-            .filter(filterOnlyEnemies(wp));
+                .filter(filterOnlyEnemies(wp));
     }
+
     public static Predicate<WarlordsPlayer> filterOnlyEnemies(@Nullable WarlordsPlayer wp) {
         return wp == null ? (player) -> false : wp::isEnemyAlive;
     }
@@ -149,30 +157,37 @@ public class Utils {
     public static Stream<WarlordsPlayer> filterOnlyTeammatesSorted(WarlordsPlayer entity, double x, double y, double z, Entity player) {
         return filterOnlyTeammatesSorted(entity.getLocation(LOCATION_CONTAINER), x, y, z, player);
     }
+
     @Deprecated
     public static Stream<WarlordsPlayer> filterOnlyTeammatesSorted(Entity entity, double x, double y, double z, Entity player) {
         return filterOnlyTeammatesSorted(entity.getLocation(LOCATION_CONTAINER), x, y, z, player);
     }
+
     @Deprecated
     public static Stream<WarlordsPlayer> filterOnlyTeammatesSorted(Location loc, double x, double y, double z, Entity player) {
         return filterOnlyTeammates(loc.getWorld().getNearbyEntities(loc, x, y, z), player)
-            .sorted(sortClosestBy(WarlordsPlayer::getLocation, loc));
+                .sorted(sortClosestBy(WarlordsPlayer::getLocation, loc));
     }
+
     @Deprecated
     public static Stream<WarlordsPlayer> filterOnlyTeammates(Entity entity, double x, double y, double z, Entity player) {
         return filterOnlyTeammates(entity.getLocation(LOCATION_CONTAINER), x, y, z, player);
     }
+
     @Deprecated
     public static Stream<WarlordsPlayer> filterOnlyTeammates(WarlordsPlayer entity, double x, double y, double z, Entity player) {
         return filterOnlyTeammates(entity.getLocation(LOCATION_CONTAINER), x, y, z, player);
     }
+
     @Deprecated
     public static Stream<WarlordsPlayer> filterOnlyTeammates(Location loc, double x, double y, double z, Entity player) {
         return filterOnlyTeammates(loc.getWorld().getNearbyEntities(loc, x, y, z), player)
-            .filter(radiusAround(WarlordsPlayer::getLocation, loc, x, y, z));
+                .filter(radiusAround(WarlordsPlayer::getLocation, loc, x, y, z));
     }
+
     /**
      * Map the list of entities to valid WarlordPlayer who are part on the team of the player
+     *
      * @param entities
      * @param player
      * @return
@@ -181,9 +196,10 @@ public class Utils {
     public static Stream<WarlordsPlayer> filterOnlyTeammates(Collection<Entity> entities, Entity player) {
         WarlordsPlayer wp = Warlords.getPlayer(player);
         return wp == null ? Stream.empty() : entities.stream()
-            .map(e -> Warlords.getPlayer(e))
-            .filter(filterOnlyTeammates(wp));
+                .map(e -> Warlords.getPlayer(e))
+                .filter(filterOnlyTeammates(wp));
     }
+
     public static Predicate<WarlordsPlayer> filterOnlyTeammates(@Nullable WarlordsPlayer wp) {
         return wp == null ? (player) -> false : wp::isTeammateAlive;
     }
@@ -194,20 +210,23 @@ public class Utils {
         WarlordsPlayer wp = Warlords.getPlayer(player);
         return wp == null ? Collections.emptyList() : entities.stream()
                 .filter(e -> wp.isEnemyAlive(e))
-            .collect(Collectors.toList());
+                .collect(Collectors.toList());
     }
+
     @Deprecated
     public static List<Entity> filterTeammates(Collection<Entity> entities, Player player) {
         WarlordsPlayer wp = Warlords.getPlayer(player);
         return wp == null ? Collections.emptyList() : entities.stream()
                 .filter(e -> wp.isTeammateAlive(e))
-            .collect(Collectors.toList());
+                .collect(Collectors.toList());
     }
 
     private static final Location LOCATION_CACHE_SORT = new Location(null, 0, 0, 0);
+
     public static Comparator<Entity> sortClosestBy(Location loc) {
         return sortClosestBy(Entity::getLocation, loc);
     }
+
     public static <T> Comparator<T> sortClosestBy(BiConsumer<T, Location> map, Location loc) {
         return Comparator.comparing(e -> {
             map.accept(e, LOCATION_CACHE_SORT);
@@ -216,15 +235,19 @@ public class Utils {
     }
 
     private static final Location LOCATION_CACHE_DISTANCE = new Location(null, 0, 0, 0);
+
     public static Predicate<Entity> radiusAround(Location loc, double radius) {
         return radiusAround(loc, radius, radius, radius);
     }
+
     public static Predicate<Entity> radiusAround(Location loc, double x, double y, double z) {
         return radiusAround(Entity::getLocation, loc, x, y, z);
     }
+
     public static <T> Predicate<T> radiusAround(BiConsumer<T, Location> map, Location loc, double radius) {
         return radiusAround(map, loc, radius, radius, radius);
     }
+
     public static <T> Predicate<T> radiusAround(BiConsumer<T, Location> map, Location loc, double x, double y, double z) {
         return entity -> {
             map.accept(entity, LOCATION_CACHE_DISTANCE);
@@ -248,9 +271,11 @@ public class Utils {
     public static double getDistance(WarlordsPlayer e, double accuracy) {
         return getDistance(e.getLocation(), accuracy);
     }
+
     public static double getDistance(Entity e, double accuracy) {
         return getDistance(e.getLocation(), accuracy);
     }
+
     public static double getDistance(Location original, double accuracy) {
         Location loc = original.clone(); // Using .clone so you aren't messing with the direct location object from the entity
         double distance = 0; // Shouldn't start at -2 unless you're wanting the eye height from the ground (I don't know why you'd want that)
@@ -274,13 +299,19 @@ public class Utils {
         return walkStatistic + horseStatistic;
     }
 
+    public static boolean blocksInFrontOfLocation(Location location) {
+        location = location.clone();
+        location.setPitch(0);
+        Location headLocationForward = location.clone().add(location.clone().getDirection().multiply(1)).add(0, 1, 0);
+        Location footLocationForward = location.clone().add(location.clone().getDirection().multiply(1));
+        System.out.println(location.getWorld().getBlockAt(headLocationForward).getType());
+        System.out.println(location.getWorld().getBlockAt(footLocationForward).getType());
+        return location.getWorld().getBlockAt(headLocationForward).getType() != Material.AIR && location.getWorld().getBlockAt(footLocationForward).getType() != Material.AIR;
+    }
+
     public static boolean isMountableZone(Location location) {
         if (location.getWorld().getBlockAt((int) location.getX(), 2, (int) location.getZ()).getType() == Material.NETHERRACK) {
-            if (location.getWorld().getBlockAt((int) location.getX(), 4, (int) location.getZ()).getType() == Material.SOUL_SAND && !insideTunnel(location)) {
-                return true;
-            } else {
-                return false;
-            }
+            return location.getWorld().getBlockAt((int) location.getX(), 4, (int) location.getZ()).getType() == Material.SOUL_SAND && !insideTunnel(location);
         }
         return true;
     }
@@ -300,12 +331,13 @@ public class Utils {
 
 
     public static void sendMessage(Player player, boolean centered, String message) {
-        if(centered) {
+        if (centered) {
             Utils.sendCenteredMessage(player, message);
         } else {
             player.sendMessage(message);
         }
     }
+
     public static void sendCenteredMessage(Player player, String message) {
         if (message == null || message.equals("")) player.sendMessage("");
         message = ChatColor.translateAlternateColorCodes('&', message);

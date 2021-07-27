@@ -293,7 +293,6 @@ public class Warlords extends JavaPlugin {
                         Player player = warlordsPlayer.getEntity() instanceof Player ? (Player) warlordsPlayer.getEntity() : null;
 
                         if (player != null) {
-                            Location location = player.getLocation();
                             player.setCompassTarget(warlordsPlayer
                                     .getGameState()
                                     .flags()
@@ -308,6 +307,7 @@ public class Warlords extends JavaPlugin {
                             warlordsPlayer.getSpec().getPurple().setCooldown(0);
                             warlordsPlayer.getSpec().getBlue().setCooldown(0);
                             warlordsPlayer.getSpec().getOrange().setCooldown(0);
+                            warlordsPlayer.setHorseCooldown(0);
                         }
 
                         //ABILITY COOLDOWN
@@ -611,7 +611,6 @@ public class Warlords extends JavaPlugin {
                                     .map(Soulbinding.class::cast)
                                     .forEach(soulbinding -> soulbinding.getSoulBindedPlayers()
                                             .removeIf(boundPlayer -> boundPlayer.getTimeLeft() == 0 || (boundPlayer.isHitWithSoul() && boundPlayer.isHitWithLink())));
-
                             if (warlordsPlayer.isPowerUpHeal()) {
                                 int heal = (int) (warlordsPlayer.getMaxHealth() * .1);
                                 if (warlordsPlayer.getHealth() + heal > warlordsPlayer.getMaxHealth()) {
@@ -634,7 +633,6 @@ public class Warlords extends JavaPlugin {
 
                             }
                         }
-
                     }
                 }
                 counter++;

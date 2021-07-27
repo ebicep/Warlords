@@ -75,7 +75,8 @@ public abstract class AbstractPlayerClass {
                     sendRightClickPacket(player);
                 }
             } else {
-                player.sendMessage("§cYou can't do that yet!");
+                //annoying as fuck
+                //player.sendMessage("§cYou can't do that yet!");
                 player.playSound(player.getLocation(), "notreadyalert", 1, 1);
             }
 
@@ -140,7 +141,7 @@ public abstract class AbstractPlayerClass {
                 if (!(weapon instanceof AbstractStrikeBase) && !(weapon instanceof EarthenSpike))
                     sendRightClickPacket(player);
             } else {
-                player.sendMessage("§cYou can't do that yet!");
+                //player.sendMessage("§cYou can't do that yet!");
                 player.playSound(player.getLocation(), "notreadyalert", 1, 1);
             }
 

@@ -10,6 +10,7 @@ import com.ebicep.warlords.maps.flags.GroundFlagLocation;
 import com.ebicep.warlords.maps.flags.PlayerFlagLocation;
 import com.ebicep.warlords.maps.flags.SpawnFlagLocation;
 import com.ebicep.warlords.maps.flags.WaitingFlagLocation;
+import com.ebicep.warlords.maps.state.EndState;
 import com.ebicep.warlords.player.Cooldown;
 import com.ebicep.warlords.player.CustomScoreboard;
 import com.ebicep.warlords.player.WarlordsPlayer;
@@ -59,14 +60,6 @@ public class WarlordsEvents implements Listener {
 
     public static void addEntityUUID(UUID id) {
         entityList.add(id);
-    }
-
-    public void removeEntityBlock(UUID id) {
-        entityList.remove(id);
-    }
-
-    public boolean containsBlock(UUID id) {
-        return entityList.contains(id);
     }
 
     @EventHandler
@@ -220,7 +213,7 @@ public class WarlordsEvents implements Listener {
             ItemStack itemHeld = player.getItemInHand();
             if (wp != null) {
                 if (player.getInventory().getHeldItemSlot() == 7 && itemHeld.getType() == Material.GOLD_BARDING && player.getVehicle() == null) {
-                    if (!Utils.isMountableZone(location)) {
+                    if (!Utils.isMountableZone(location) || Utils.blocksInFrontOfLocation(location)) {
                         player.sendMessage(ChatColor.RED + "You can't mount here!");
                     } else {
                         double distance = player.getLocation().getY() - player.getWorld().getHighestBlockYAt(player.getLocation());
@@ -238,7 +231,6 @@ public class WarlordsEvents implements Listener {
                             horse.setVariant(Horse.Variant.HORSE);
                             horse.setAdult();
                             ((EntityLiving) ((CraftEntity) horse).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(.308);
-                            //((EntityLiving) ((CraftEntity) horse).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(1);
                             horse.setPassenger(player);
                             wp.setHorseCooldown(15);
                         }
@@ -257,6 +249,7 @@ public class WarlordsEvents implements Listener {
                 } else if (itemHeld.getType() == Material.FIREWORK_CHARGE) {
                     openSkillTreeMenu(player);
                 } else if (itemHeld.getType() == Material.COMPASS) {
+                    //TODO sound
                     wp.toggleTeamFlagCompass();
                 } else if (player.getInventory().getHeldItemSlot() == 0 || !wp.isHotKeyMode()) {
                     wp.getSpec().onRightClick(wp, player);
@@ -416,7 +409,9 @@ public class WarlordsEvents implements Listener {
                                 ChatColor.AQUA + "%1$s" +
                                 ChatColor.WHITE + ": %2$s"
                 );
-                e.getRecipients().removeIf(p -> wp.getGame().getPlayerTeamOrNull(p.getUniqueId()) != wp.getTeam());
+                if (!(wp.getGame().getState() instanceof EndState)) {
+                    e.getRecipients().removeIf(p -> wp.getGame().getPlayerTeamOrNull(p.getUniqueId()) != wp.getTeam());
+                }
                 return null;
             }).get();
         } catch (InterruptedException | ExecutionException ex) {

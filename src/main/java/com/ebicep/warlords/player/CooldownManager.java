@@ -70,7 +70,7 @@ public class CooldownManager {
                     }
                 } else if (cooldownClass == Soulbinding.class && getCooldown(Soulbinding.class).size() == 1) {
                     if (warlordsPlayer.getEntity() instanceof Player) {
-                        ((CraftPlayer) warlordsPlayer.getEntity()).getItemInHand().removeEnchantment(Enchantment.OXYGEN);
+                        ((CraftPlayer) warlordsPlayer.getEntity()).getInventory().getItem(0).removeEnchantment(Enchantment.OXYGEN);
                     }
                 }
 
@@ -149,13 +149,14 @@ public class CooldownManager {
         return false;
     }
 
-    public boolean hasBoundPlayerLink(WarlordsPlayer warlordsPlayer) {
+    public int getNumberOfBoundPlayersLink(WarlordsPlayer warlordsPlayer) {
+        int counter = 0;
         for (Cooldown cooldown : getCooldown(Soulbinding.class)) {
             if (((Soulbinding) cooldown.getCooldownObject()).hasBoundPlayerLink(warlordsPlayer)) {
-                return true;
+                counter++;
             }
         }
-        return false;
+        return counter;
     }
 
     public boolean checkUndyingArmy(boolean popped) {

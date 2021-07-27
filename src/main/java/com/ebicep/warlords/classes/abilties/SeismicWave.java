@@ -51,16 +51,17 @@ public class SeismicWave extends AbstractAbility {
         //INSTANT DMG
         Location lookingLocation = player.getLocation().clone();
         lookingLocation.setPitch(0);
-        //wave = rectangle, 5 x 10
-        Location waveLocation1 = lookingLocation.clone().add(lookingLocation.getDirection().multiply(2.5));
-        Location waveLocation2 = lookingLocation.clone().add(lookingLocation.getDirection().multiply(7.5));
+        //wave = rectangle, 5 x 8
+        Location waveLocation1 = lookingLocation.clone().add(lookingLocation.getDirection().multiply(2));
+        Location waveLocation2 = lookingLocation.clone().add(lookingLocation.getDirection().multiply(6));
         for (WarlordsPlayer p : PlayerFilter
-                .entitiesAround(waveLocation1, 2.25, 3.5, 2.25)
+                .entitiesAround(waveLocation1, 2, 4, 2)
                 .aliveEnemiesOf(wp)
                 .concat(PlayerFilter
-                        .entitiesAround(waveLocation2, 2.25, 3.5, 2.25)
+                        .entitiesAround(waveLocation2, 2, 4, 2)
                         .aliveEnemiesOf(wp)
                         .stream().collect(Collectors.toList()).toArray(new WarlordsPlayer[0]))
+                .closestFirst(wp)
         ) {
             final Location loc = p.getLocation();
             final Vector v = player.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1.15).setY(0.35);
@@ -96,7 +97,6 @@ public class SeismicWave extends AbstractAbility {
                 }
 
                 if (fallingBlockLocations.isEmpty() && customFallingBlocks.isEmpty()) {
-                    System.out.println("WAVE CANCEL");
                     this.cancel();
                 }
 

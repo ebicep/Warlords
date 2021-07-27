@@ -59,7 +59,7 @@ public class ChainLightning extends AbstractChainBase {
 
     @Override
     protected ItemStack getChainItem() {
-        return new ItemStack(Material.RED_MUSHROOM);
+        return new ItemStack(Material.STAINED_GLASS, 1, (byte) 7);
     }
 
     private final int LIGHTING_MAX_PLAYERS_NO_TOTEM = 3;

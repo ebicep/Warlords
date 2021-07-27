@@ -61,13 +61,13 @@ public enum GameMap {
             "",
 
             new Location(Bukkit.getWorld("Crossfire"), 158.5, 6.5, 28.5), // BLUE DAMAGE
-            new Location(Bukkit.getWorld("Crossfire"), 65.5, 6.5, 97.5), // RED DAMAGE
+            new Location(Bukkit.getWorld("Crossfire"), 65.5, 6.5, 98.5), // RED DAMAGE
 
             new Location(Bukkit.getWorld("Crossfire"), 217.5, 36.5, 89.5), // BLUE SPEED
             new Location(Bukkit.getWorld("Crossfire"), 6.5, 36.5, 39.5), // RED SPEED
 
             new Location(Bukkit.getWorld("Crossfire"), 96.5, 6.5, 108.5), // BLUE HEALING
-            new Location(Bukkit.getWorld("Crossfire"), 126.5, 6.5, 19.5), // RED HEALING
+            new Location(Bukkit.getWorld("Crossfire"), 127.5, 6.5, 19.5), // RED HEALING
 
             new Location(Bukkit.getWorld("Crossfire"), 215.5, 36.5, 109.5), // BLUE LOBBY SPAWN
             new Location(Bukkit.getWorld("Crossfire"), 7.5, 36.5, 19.5), // RED LOBBY SPAWN
