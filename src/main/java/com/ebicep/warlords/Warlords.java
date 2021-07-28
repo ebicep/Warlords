@@ -496,6 +496,9 @@ public class Warlords extends JavaPlugin {
                         }
 
                         if (player != null) {
+                            if (warlordsPlayer.getEnergy() < 0) {
+                                warlordsPlayer.setEnergy(1);
+                            }
                             player.setLevel((int) warlordsPlayer.getEnergy());
                             player.setExp(warlordsPlayer.getEnergy() / warlordsPlayer.getMaxEnergy());
                         }

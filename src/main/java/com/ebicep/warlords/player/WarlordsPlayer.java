@@ -1121,7 +1121,7 @@ public final class WarlordsPlayer {
         } else if (energy + amount > 0) {
             this.energy += amount;
         } else {
-            this.energy = 0;
+            this.energy = 1;
         }
         if ((int) amount != 0) {
             if (this == giver) {
