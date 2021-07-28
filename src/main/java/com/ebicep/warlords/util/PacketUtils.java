@@ -8,7 +8,6 @@ import java.lang.reflect.Field;
 
 public class PacketUtils {
 
-
     public static void sendTitle(Player player, String title, String subtitle, int fadeIn, int stay, int fadeOut) {
         CraftPlayer craftplayer = (CraftPlayer) player;
         PlayerConnection connection = craftplayer.getHandle().playerConnection;
@@ -21,7 +20,6 @@ public class PacketUtils {
         connection.sendPacket(titlePacket);
         connection.sendPacket(subtitlePacket);
     }
-
 
     public static void sendTabHF(Player player, String header, String footer) {
 
@@ -46,8 +44,6 @@ public class PacketUtils {
         }
 
         connection.sendPacket(packet);
-
-
     }
 
     public static void sendActionBar(Player p, String message) {
