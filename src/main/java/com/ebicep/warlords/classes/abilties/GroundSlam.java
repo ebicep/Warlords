@@ -6,6 +6,7 @@ import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.PlayerFilter;
+import com.ebicep.warlords.util.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -54,7 +55,8 @@ public class GroundSlam extends AbstractAbility {
                     for (Location location : fallingBlockLocation) {
                         if (location.getWorld().getBlockAt(location.clone().add(0, 1, 0)).getType() == Material.AIR) {
                             FallingBlock fallingBlock = addFallingBlock(location.clone());
-                            customFallingBlocks.add(new CustomFallingBlock(fallingBlock, location.getY() + .25, wp, GroundSlam.this));
+                            customFallingBlocks.add(new CustomFallingBlock(fallingBlock, wp, GroundSlam.this));
+                            WarlordsEvents.addEntityUUID(fallingBlock);
                         }
                         //DAMAGE
                         PlayerFilter.entitiesAround(location.clone().add(0, -.25, 0), 1, 3, 1)
@@ -88,7 +90,7 @@ public class GroundSlam extends AbstractAbility {
                 for (int i = 0; i < customFallingBlocks.size(); i++) {
                     CustomFallingBlock customFallingBlock = customFallingBlocks.get(i);
                     customFallingBlock.setTicksLived(customFallingBlock.getTicksLived() + 1);
-                    if (customFallingBlock.getFallingBlock().getLocation().getY() <= customFallingBlock.getyLevel() || customFallingBlock.getTicksLived() > 10) {
+                    if (Utils.getDistance(customFallingBlock.getFallingBlock().getLocation(), .05) <= .25 || customFallingBlock.getTicksLived() > 10) {
                         customFallingBlock.getFallingBlock().remove();
                         customFallingBlocks.remove(i);
                         i--;
@@ -137,9 +139,17 @@ public class GroundSlam extends AbstractAbility {
                 blockToGet.add(0, -1, 0);
             }
         }
+        Material type = location.getWorld().getBlockAt(blockToGet).getType();
+        byte data = location.getWorld().getBlockAt(blockToGet).getData();
+        if (type == Material.GRASS) {
+            if ((int) (Math.random() * 3) == 2) {
+                type = Material.DIRT;
+                data = 0;
+            }
+        }
         FallingBlock fallingBlock = location.getWorld().spawnFallingBlock(location,
-                location.getWorld().getBlockAt(blockToGet).getType(),
-                location.getWorld().getBlockAt(blockToGet).getData());
+                type,
+                data);
         fallingBlock.setVelocity(new Vector(0, .14, 0));
         fallingBlock.setDropItem(false);
         WarlordsEvents.addEntityUUID(fallingBlock);
