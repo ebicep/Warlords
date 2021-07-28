@@ -26,3 +26,6 @@ commands:
   class:
     description: Select your class.
     usage: /class [class]
+  getplayers:
+    description: Gets Players in lobby
+    usage: /getplayers

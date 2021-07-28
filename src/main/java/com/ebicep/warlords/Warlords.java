@@ -166,6 +166,7 @@ public class Warlords extends JavaPlugin {
         new HotkeyModeCommand().register(this);
         new DebugCommand().register(this);
         new ClassCommand().register(this);
+        new GetPlayersCommand().register(this);
 
         game = new Game();
         getData();

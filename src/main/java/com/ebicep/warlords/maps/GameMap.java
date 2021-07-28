@@ -35,10 +35,10 @@ public enum GameMap {
             new Location(Bukkit.getWorld("Rift"), 1.5, 24.5, -62.5), // RED HEALING
 
             new Location(Bukkit.getWorld("Rift"), -86.5, 45.5, -33.5), // BLUE LOBBY SPAWN
-            new Location(Bukkit.getWorld("Rift"), 87, 45.5, 35.5), // RED LOBBY SPAWN
+            new LocationBuilder(new Location(Bukkit.getWorld("Rift"), 87, 45.5, 35.5)).yaw(180).get(), // RED LOBBY SPAWN
 
-            new Location(Bukkit.getWorld("Rift"), -32.5, 34.5, -43.5), // BLUE RESPAWN
-            new Location(Bukkit.getWorld("Rift"), 34.5, 34.5, 42.5), // RED RESPAWN
+            new LocationBuilder(new Location(Bukkit.getWorld("Rift"), -32.5, 34.5, -43.5)).yaw(-90).get(), // BLUE RESPAWN
+            new LocationBuilder(new Location(Bukkit.getWorld("Rift"), 34.5, 34.5, 42.5)).yaw(90).get(), // RED RESPAWN
 
             new Location(Bukkit.getWorld("Rift"), -98.5, 45.5, -17.5), // BLUE FLAG
             new Location(Bukkit.getWorld("Rift"), 99.5, 45.5, 17.5), // RED FLAG
@@ -70,10 +70,10 @@ public enum GameMap {
             new Location(Bukkit.getWorld("Crossfire"), 127.5, 6.5, 19.5), // RED HEALING
 
             new Location(Bukkit.getWorld("Crossfire"), 215.5, 36.5, 109.5), // BLUE LOBBY SPAWN
-            new Location(Bukkit.getWorld("Crossfire"), 7.5, 36.5, 19.5), // RED LOBBY SPAWN
+            new LocationBuilder(new Location(Bukkit.getWorld("Crossfire"), 7.5, 36.5, 19.5)).yaw(180).get(), // RED LOBBY SPAWN
 
-            new Location(Bukkit.getWorld("Crossfire"), 133, 11.5, 130.5), // BLUE RESPAWN
-            new Location(Bukkit.getWorld("Crossfire"), 90.5, 11.5, 0.5), // RED RESPAWN
+            new LocationBuilder(new Location(Bukkit.getWorld("Crossfire"), 133, 11.5, 130.5)).yaw(125).get(), // BLUE RESPAWN
+            new LocationBuilder(new Location(Bukkit.getWorld("Crossfire"), 90.5, 11.5, 0.5)).yaw(-45).get(), // RED RESPAWN
 
             new Location(Bukkit.getWorld("Crossfire"), 217.5, 36.5, 126.5), // BLUE FLAG
             new Location(Bukkit.getWorld("Crossfire"), 5.5, 36.5, 1.5), // RED FLAG
@@ -176,11 +176,11 @@ public enum GameMap {
             new Location(Bukkit.getWorld("Atherrough_Valley"), 57.5, 15.5, 1.5), // BLUE HEALING
             new Location(Bukkit.getWorld("Atherrough_Valley"), -56.5, 15.5, -0.5), // RED HEALING
 
-            new Location(Bukkit.getWorld("Atherrough_Valley"), -22.5, 38.5, -83.5), // BLUE LOBBY SPAWN
+            new LocationBuilder(new Location(Bukkit.getWorld("Atherrough_Valley"), -22.5, 38.5, -83.5)).yaw(180).get(), // BLUE LOBBY SPAWN
             new Location(Bukkit.getWorld("Atherrough_Valley"), 23.5, 38.5, 83.5), // RED LOBBY SPAWN
 
             new Location(Bukkit.getWorld("Atherrough_Valley"), 39.5, 28.5, -97.5), // BLUE RESPAWN
-            new Location(Bukkit.getWorld("Atherrough_Valley"), -38.5, 28.5, 97.5), // RED RESPAWN
+            new LocationBuilder(new Location(Bukkit.getWorld("Atherrough_Valley"), -38.5, 28.5, 97.5)).yaw(180).get(), // RED RESPAWN
 
             new Location(Bukkit.getWorld("Atherrough_Valley"), -29.5, 38.5, -88.5), // BLUE FLAG
             new Location(Bukkit.getWorld("Atherrough_Valley"), 30.5, 38.5, 89.5), // RED FLAG
