@@ -601,9 +601,10 @@ public final class WarlordsPlayer {
                 }
             }
 
+            damageHealValue *= totalReduction;
+
             if (!cooldownManager.getCooldown(Intervene.class).isEmpty() && cooldownManager.getCooldown(Intervene.class).get(0).getFrom() != this && !HammerOfLight.standingInHammer(attacker, entity) && this.isEnemyAlive(attacker)) {
                 if (this.isEnemyAlive(attacker)) {
-                    damageHealValue *= totalReduction;
                     damageHealValue *= .5;
                     WarlordsPlayer intervenedBy = cooldownManager.getCooldown(Intervene.class).get(0).getFrom();
 
@@ -636,7 +637,6 @@ public final class WarlordsPlayer {
                     attacker.addAbsorbed(-damageHealValue);
                 }
             } else if (!cooldownManager.getCooldown(ArcaneShield.class).isEmpty() && this.isEnemyAlive(attacker) && !HammerOfLight.standingInHammer(attacker, entity)) {
-                damageHealValue *= totalReduction;
                 if (((ArcaneShield) spec.getBlue()).getShieldHealth() + damageHealValue < 0) {
                     if (entity instanceof Player) {
                         ((EntityLiving) ((CraftPlayer) entity).getHandle()).setAbsorptionHearts(0);
@@ -694,7 +694,6 @@ public final class WarlordsPlayer {
                     }
                     addHealing(damageHealValue);
                 } else {
-                    damageHealValue *= totalReduction;
                     //DAMAGE
                     if (damageHealValue < 0 && isEnemyAlive(attacker)) {
                         if (!hitBy.contains(attacker)) {
