@@ -28,7 +28,7 @@ public class CustomScoreboard {
 
         sideBar = scoreboard.registerNewObjective("WARLORDS", "dummy");
         sideBar.setDisplaySlot(DisplaySlot.SIDEBAR);
-        sideBar.setDisplayName("§e§lWARLORDS");
+        sideBar.setDisplayName("§e§lWARLORDS 2.0");
 
         for (int i = 0; i < numberOfEntries; i++) {
             Team tempTeam = scoreboard.registerNewTeam("team_" + (i + 1));

@@ -152,7 +152,7 @@ public class DebugCommand implements CommandExecutor {
                         sender.sendMessage(ChatColor.RED + "§cDEV: §aYou took 4000 damage!");
                         return true;
                     default:
-                        sender.sendMessage("§cInvalid option! [Options: 1000, 2000, 3000]");
+                        sender.sendMessage("§cInvalid option! [Options: 1000, 2000, 3000, 4000]");
                         return false;
                 }
             }

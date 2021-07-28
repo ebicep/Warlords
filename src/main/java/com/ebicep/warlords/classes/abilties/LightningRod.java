@@ -36,7 +36,7 @@ public class LightningRod extends AbstractAbility {
                 .forEach((p) -> {
                     //knockback
                     final Location loc = p.getLocation();
-                    final Vector v = player.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1.45).setY(0.4);
+                    final Vector v = player.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1.45).setY(0.35);
 
                     p.setVelocity(v);
 

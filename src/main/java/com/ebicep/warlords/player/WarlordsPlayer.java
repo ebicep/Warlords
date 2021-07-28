@@ -701,7 +701,7 @@ public final class WarlordsPlayer {
                         }
                         if (powerUpHeal) {
                             powerUpHeal = false;
-                            sendMessage(ChatColor.GRAY + "Your §aHealing Powerup §7has worn off.");
+                            sendMessage(ChatColor.GOLD + "Your §a§lHealing Powerup §6has worn off.");
                         }
                         removeHorse();
                         regenTimer = 10;
@@ -821,7 +821,7 @@ public final class WarlordsPlayer {
 
                             //reloops near players to give health to
                             for(WarlordsPlayer nearTeamPlayer : PlayerFilter
-                                .entitiesAround(attacker, 6, 6, 6)
+                                .entitiesAround(attacker, 10, 10, 10)
                                 .aliveTeammatesOfExcludingSelf(attacker)
                                 .limit(2)
                             ) {
@@ -960,7 +960,7 @@ public final class WarlordsPlayer {
                             p.playSound(getLocation(), "shaman.earthlivingweapon.impact", 1, 1);
                         });
 
-                        for (WarlordsPlayer nearPlayer : PlayerFilter.entitiesAround(attacker, 3, 3, 3)
+                        for (WarlordsPlayer nearPlayer : PlayerFilter.entitiesAround(attacker, 4, 4, 4)
                             .aliveTeammatesOfExcludingSelf(attacker)
                                 .limit(2)
                         ) {

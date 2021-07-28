@@ -29,20 +29,20 @@ public class AvengersStrike extends AbstractStrikeBase {
         }
         nearPlayer.subtractEnergy(6);
         if (!wp.getCooldownManager().getCooldown(AvengersWrath.class).isEmpty()) {
-            for (WarlordsPlayer nearNearPlayer : PlayerFilter
-                    .entitiesAround(nearPlayer, 5, 3, 5)
+            for (WarlordsPlayer wrathTarget : PlayerFilter
+                    .entitiesAround(nearPlayer, 5, 4, 5)
                     .aliveEnemiesOf(wp)
                     .closestFirst(nearPlayer)
                     .excluding(nearPlayer)
                     .limit(2)
             ) {
                 //checking if player is in consecrate
-                if (standingOnConsecrate(player, nearNearPlayer.getEntity())) {
-                    nearNearPlayer.addHealth(wp, name, minDamageHeal * 1.2f, maxDamageHeal * 1.2f, critChance, critMultiplier);
+                if (standingOnConsecrate(player, wrathTarget.getEntity())) {
+                    wrathTarget.addHealth(wp, name, minDamageHeal * 1.2f, maxDamageHeal * 1.2f, critChance, critMultiplier);
                 } else {
-                    nearNearPlayer.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+                    wrathTarget.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
                 }
-                nearNearPlayer.subtractEnergy(6);
+                wrathTarget.subtractEnergy(6);
             }
         }
     }
