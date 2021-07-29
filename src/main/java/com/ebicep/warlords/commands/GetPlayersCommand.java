@@ -25,7 +25,7 @@ public class GetPlayersCommand implements CommandExecutor {
             players.setLength(players.length() - 1);
             TextComponent message = new TextComponent(ChatColor.GREEN.toString() + ChatColor.UNDERLINE + ChatColor.BOLD + "CLICK ME FOR PLAYERS");
             message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Copy the URL without (https://)").create()));
-            message.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, players.toString()));
+            message.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://" + players.toString()));
             player.spigot().sendMessage(message);
         }
         return true;
