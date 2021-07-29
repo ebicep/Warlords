@@ -3,7 +3,9 @@ package com.ebicep.warlords.commands;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.GameMap;
+import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.state.PreLobbyState;
+import com.ebicep.warlords.player.ArmorManager;
 import com.ebicep.warlords.util.ItemBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -79,7 +81,8 @@ public class StartCommand implements TabExecutor {
                     .get());
             Warlords.game.addPlayer(player, teamBlueAssessment);
             game.giveLobbyScoreboard(player);
-            // Game.State.updateTempPlayer(player);
+            ArmorManager.resetArmor(player, Warlords.getPlayerSettings(player.getUniqueId()).selectedClass(), teamBlueAssessment ? Team.BLUE : Team.RED);
+            Warlords.getPlayerSettings(player.getUniqueId()).wantedTeam(teamBlueAssessment ? Team.BLUE : Team.RED);
             teamBlueAssessment = !teamBlueAssessment;
         }
 

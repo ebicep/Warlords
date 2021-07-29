@@ -3,10 +3,10 @@ package com.ebicep.warlords.player;
 import com.ebicep.warlords.maps.Team;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class PlayerSettings implements ConfigurationSerializable {
     private Classes selectedClass = Classes.CRYOMANCER;

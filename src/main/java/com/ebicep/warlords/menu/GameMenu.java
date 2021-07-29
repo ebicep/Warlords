@@ -422,6 +422,7 @@ public class GameMenu {
                         if (selectedTeam != team) {
                             player.sendMessage(ChatColor.GREEN + "You have joined the " + team.teamColor() + team.name + ChatColor.GREEN + " team!");
                             Warlords.game.setPlayerTeam(player, team);
+                            ArmorManager.resetArmor(player, Warlords.getPlayerSettings(player.getUniqueId()).selectedClass(), team);
                             Warlords.getPlayerSettings(player.getUniqueId()).wantedTeam(team);
                         }
                         openTeamMenu(player);
