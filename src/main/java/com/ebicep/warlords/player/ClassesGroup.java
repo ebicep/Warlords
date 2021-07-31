@@ -19,13 +19,13 @@ public enum ClassesGroup {
     WARRIOR(
             "Warrior",
             new ItemStack(Material.COAL, 1, (short) 1),
-            "§7The Warrior uses brute force to\n§7overpower his opponents in melee\n§7combat or to defend his allies",
+            "§7The Warrior uses brute force to\n§7overpower his opponents in melee\n§7combat or to defend his allies.",
             BERSERKER, DEFENDER, REVENANT
     ),
     PALADIN(
             "Paladin",
             new ItemStack(Material.INK_SACK, 1, (short) 11),
-            "§7The Paladin's strongest ally is the\n§7light. He uses it to empower his\n§7weapon in order to vanquish foes and\n§7protect teammates",
+            "§7The Paladin's strongest ally is the\n§7light. He uses it to empower his\n§7weapon in order to vanquish foes and\n§7protect teammates.",
             AVENGER, CRUSADER, PROTECTOR
     ),
     SHAMAN(

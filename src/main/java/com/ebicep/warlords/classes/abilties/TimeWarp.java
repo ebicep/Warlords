@@ -14,6 +14,8 @@ public class TimeWarp extends AbstractAbility {
 
     private int counter = 0;
 
+    private final int duration = 5;
+
     public TimeWarp() {
         super("Time Warp", 0, 0, 28.19f, 30, -1, 100);
     }
@@ -21,7 +23,7 @@ public class TimeWarp extends AbstractAbility {
     @Override
     public void updateDescription(Player player) {
         description = "§7Activate to place a time rune on\n" +
-                "§7the ground. After §65 §7seconds,\n" +
+                "§7the ground. After §6" + duration + " §7seconds,\n" +
                 "§7you will warp back to that location\n" +
                 "§7and restore §a30% §7of your health";
     }
@@ -29,8 +31,8 @@ public class TimeWarp extends AbstractAbility {
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
         wp.subtractEnergy(energyCost);
-        TimeWarpPlayer timeWarpPlayer = new TimeWarpPlayer(wp, player.getLocation(), player.getLocation().getDirection(), 5);
-        wp.getCooldownManager().addCooldown(TimeWarp.this.getClass(), new TimeWarp(), "TIME", 5, wp, CooldownTypes.ABILITY);
+        TimeWarpPlayer timeWarpPlayer = new TimeWarpPlayer(wp, player.getLocation(), player.getLocation().getDirection(), duration);
+        wp.getCooldownManager().addCooldown(TimeWarp.this.getClass(), new TimeWarp(), "TIME", duration, wp, CooldownTypes.ABILITY);
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "mage.timewarp.activation", 2, 1);

@@ -18,6 +18,8 @@ public class Soulbinding extends AbstractAbility {
 
     private List<SoulBoundPlayer> soulBindedPlayers = new ArrayList<>();
 
+    private final int duration = 12;
+
     public Soulbinding() {
         super("Soulbinding Weapon", 0, 0, 21.92f, 30, -1, 100);
     }
@@ -33,13 +35,13 @@ public class Soulbinding extends AbstractAbility {
                 "§7cooldown of all abilities by §61.5\n" +
                 "§7seconds. (§60.5 §7seconds for §e2 §7nearby\n" +
                 "§7allies). Both buffs may be activated for\n" +
-                "§7every melee hit. Lasts §612 §7seconds.";
+                "§7every melee hit. Lasts §6" + duration + " §7seconds.";
     }
 
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
         wp.subtractEnergy(energyCost);
-        wp.getCooldownManager().addCooldown(Soulbinding.this.getClass(), new Soulbinding(), "SOUL", 12, wp, CooldownTypes.ABILITY);
+        wp.getCooldownManager().addCooldown(Soulbinding.this.getClass(), new Soulbinding(), "SOUL", duration, wp, CooldownTypes.ABILITY);
 
         ItemMeta newItemMeta = player.getInventory().getItem(0).getItemMeta();
         newItemMeta.addEnchant(Enchantment.OXYGEN, 1, true);

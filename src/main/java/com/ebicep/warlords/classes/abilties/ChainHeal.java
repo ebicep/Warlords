@@ -12,8 +12,10 @@ import org.bukkit.inventory.ItemStack;
 
 public class ChainHeal extends AbstractChainBase {
 
+    private final int bounceRange = 10;
+
     public ChainHeal() {
-        super("Chain Heal", 499, 674, 7.99f, 40, 20, 175);
+        super("Chain Heal", 508, 686, 7.99f, 40, 20, 175);
     }
 
     @Override
@@ -22,7 +24,7 @@ public class ChainHeal extends AbstractChainBase {
                 "§7that heals you and a targeted friendly\n" +
                 "§7player for §a" + minDamageHeal + " §7- §a" + maxDamageHeal + " §7health and\n" +
                 "§7jumps to §e2 §7additional targets within\n" +
-                "§e10 §7blocks. Each jump reduces the healing\n" +
+                "§e" + bounceRange + " §7blocks. Each jump reduces the healing\n" +
                 "§7by §c8%§7." +
                 "\n\n" +
                 "§7Each ally healed reduces the cooldown of\n" +
@@ -44,7 +46,7 @@ public class ChainHeal extends AbstractChainBase {
                 hitCounter++;
 
                 for (WarlordsPlayer chainPlayerOne : PlayerFilter
-                        .entitiesAround(nearPlayer, 10, 9, 10)
+                        .entitiesAround(nearPlayer, bounceRange, 9, bounceRange)
                         .aliveTeammatesOf(wp)
                         .excluding(wp, nearPlayer)
                 ) {
@@ -53,7 +55,7 @@ public class ChainHeal extends AbstractChainBase {
                     hitCounter++;
 
                     for (WarlordsPlayer chainPlayerTwo : PlayerFilter
-                            .entitiesAround(chainPlayerOne, 10, 9, 10)
+                            .entitiesAround(chainPlayerOne, bounceRange, 9, bounceRange)
                             .aliveTeammatesOf(wp)
                             .excluding(wp, nearPlayer, chainPlayerOne)
                     ) {

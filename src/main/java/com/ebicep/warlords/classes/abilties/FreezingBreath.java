@@ -14,6 +14,8 @@ import javax.annotation.Nonnull;
 
 public class FreezingBreath extends AbstractAbility {
 
+    private final int slowDuration = 4;
+
     public FreezingBreath() {
         super("Freezing Breath", -422, -585, 6.3f, 60, 20, 175);
     }
@@ -23,7 +25,7 @@ public class FreezingBreath extends AbstractAbility {
         description = "§7Breathe cold air in a cone in front\n" +
                 "§7of you, dealing §c" + -minDamageHeal + " §7- §c" + -maxDamageHeal + " §7damage\n" +
                 "§7to all enemies hit and slowing them by\n" +
-                "§e35% §7for §64 §7seconds.";
+                "§e35% §7for §6" + slowDuration +  " §7seconds.";
     }
 
     @Override
@@ -36,7 +38,7 @@ public class FreezingBreath extends AbstractAbility {
                     Vector direction = target.getLocation().subtract(player.getLocation()).toVector().normalize();
                     if (viewDirection.dot(direction) > .68) {
                         target.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
-                        target.getSpeed().addSpeedModifier("Freezing Breath", -35, 4 * 20);
+                        target.getSpeed().addSpeedModifier("Freezing Breath", -35, slowDuration * 20);
                     }
                 });
 

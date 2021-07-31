@@ -9,6 +9,8 @@ import javax.annotation.Nonnull;
 
 public class AvengersStrike extends AbstractStrikeBase {
 
+    private final int energySteal = 10;
+
     public AvengersStrike() {
         super("Avenger's Strike", -359, -485, 0, 90, 25, 185);
     }
@@ -17,7 +19,7 @@ public class AvengersStrike extends AbstractStrikeBase {
     public void updateDescription(Player player) {
         description = "§7Strike the targeted enemy player,\n" +
                 "§7causing §c" + -minDamageHeal + " §7- §c" + -maxDamageHeal + " §7damage\n" +
-                "§7and removing §e6 §7energy.";
+                "§7and removing §e" + energySteal + " §7energy.";
     }
 
     @Override
@@ -42,7 +44,7 @@ public class AvengersStrike extends AbstractStrikeBase {
                 } else {
                     wrathTarget.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
                 }
-                wrathTarget.subtractEnergy(6);
+                wrathTarget.subtractEnergy(energySteal);
             }
         }
     }

@@ -19,6 +19,8 @@ public class HealingRain extends AbstractAbility {
 
     private int recastCooldown = 0;
 
+    private final int duration = 12;
+
     public HealingRain() {
         super("Healing Rain", 170, 230, 52.85f, 50, 15, 200);
     }
@@ -28,16 +30,14 @@ public class HealingRain extends AbstractAbility {
         description = "§7Conjure rain at targeted\n" +
                 "location that will restore §a" + minDamageHeal + "\n" +
                 "§7- §a" + maxDamageHeal + " §7health every second to\n" +
-                "allies. Lasts §612 §7seconds.\n\n" +
+                "allies. Lasts §6" + duration + " §7seconds.\n\n" +
                 "You may move Healing Rain to your location\n" +
-                "every §63 §7seconds using your SNEAK key.";
+                "every §62 §7seconds using your SNEAK key.";
     }
 
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
         wp.subtractEnergy(energyCost);
-
-        final int duration = 12;
 
         if (player.getTargetBlock((HashSet<Byte>) null, 15).getType() == Material.AIR) return;
         DamageHealCircle damageHealCircle = new DamageHealCircle(wp, player.getTargetBlock((HashSet<Byte>) null, 15).getLocation(), 6, duration, minDamageHeal, maxDamageHeal, critChance, critMultiplier, name);

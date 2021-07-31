@@ -58,7 +58,7 @@ public class FlameBurst extends AbstractProjectileBase {
                     name,
                     minDamageHeal,
                     maxDamageHeal,
-                    critChance + (int) Math.pow(startingLocation.distanceSquared(currentLocation), 2),
+                    critChance + (int) Math.pow(currentLocation.distanceSquared(startingLocation), 0.6),
                     critMultiplier
             );
         }

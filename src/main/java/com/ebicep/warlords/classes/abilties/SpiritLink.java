@@ -12,6 +12,8 @@ import org.bukkit.inventory.ItemStack;
 
 public class SpiritLink extends AbstractChainBase {
 
+    private final int bounceRange = 10;
+
     public SpiritLink() {
         super("Spirit Link", -236.25f, -446.25f, 8.61f, 40, 20, 175);
     }
@@ -43,32 +45,32 @@ public class SpiritLink extends AbstractChainBase {
                     healNearPlayers(wp);
                 }
 
-                for (WarlordsPlayer nearNearPlayer : PlayerFilter
-                        .entitiesAround(nearPlayer, 10, 9, 10)
+                for (WarlordsPlayer ChainPlayerOne : PlayerFilter
+                        .entitiesAround(nearPlayer, bounceRange, 9, bounceRange)
                         .aliveEnemiesOf(wp)
                         .excluding(nearPlayer)
                         .soulBindedFirst(wp)
                 ) {
-                    chain(nearPlayer.getLocation(), nearNearPlayer.getLocation());
-                    nearNearPlayer.addHealth(wp, name, minDamageHeal * .8f, maxDamageHeal * .8f, critChance, critMultiplier);
+                    chain(nearPlayer.getLocation(), ChainPlayerOne.getLocation());
+                    ChainPlayerOne.addHealth(wp, name, minDamageHeal * .8f, maxDamageHeal * .8f, critChance, critMultiplier);
                     hitCounter++;
 
-                    numberOfHeals = wp.getCooldownManager().getNumberOfBoundPlayersLink(nearNearPlayer);
+                    numberOfHeals = wp.getCooldownManager().getNumberOfBoundPlayersLink(ChainPlayerOne);
                     for (int i = 0; i < numberOfHeals; i++) {
                         healNearPlayers(wp);
                     }
 
-                    for (WarlordsPlayer nearNearNearPlayer : PlayerFilter
-                            .entitiesAround(nearNearPlayer, 10, 9, 10)
+                    for (WarlordsPlayer ChainPlayerTwo : PlayerFilter
+                            .entitiesAround(ChainPlayerOne, bounceRange, 9, bounceRange)
                             .aliveEnemiesOf(wp)
-                            .excluding(nearPlayer, nearNearPlayer)
+                            .excluding(nearPlayer, ChainPlayerOne)
                             .soulBindedFirst(wp)
                     ) {
-                        chain(nearNearPlayer.getLocation(), nearNearNearPlayer.getLocation());
-                        nearNearPlayer.addHealth(wp, name, minDamageHeal * .6f, maxDamageHeal * .6f, critChance, critMultiplier);
+                        chain(ChainPlayerOne.getLocation(), ChainPlayerTwo.getLocation());
+                        ChainPlayerOne.addHealth(wp, name, minDamageHeal * .6f, maxDamageHeal * .6f, critChance, critMultiplier);
                         hitCounter++;
 
-                        numberOfHeals = wp.getCooldownManager().getNumberOfBoundPlayersLink(nearNearNearPlayer);
+                        numberOfHeals = wp.getCooldownManager().getNumberOfBoundPlayersLink(ChainPlayerTwo);
                         for (int i = 0; i < numberOfHeals; i++) {
                             healNearPlayers(wp);
                         }

@@ -11,7 +11,7 @@ import javax.annotation.Nonnull;
 public class WoundingStrikeBerserker extends AbstractStrikeBase {
 
     public WoundingStrikeBerserker() {
-        super("Wounding Strike", -496.65f, -632.1f, 0, 100, 20, 175);
+        super("Wounding Strike", -496.65f, -632.1f, 0, 100, 20, 200);
     }
 
     @Override
@@ -19,7 +19,7 @@ public class WoundingStrikeBerserker extends AbstractStrikeBase {
         description = "§7Strike the targeted enemy player,\n" +
                 "§7causing §c" + Math.floor(-minDamageHeal) + " §7- §c" + Math.floor(-maxDamageHeal) + " §7damage\n" +
                 "§7and §cwounding §7them for §63 §7seconds.\n" +
-                "§7A wounded player receives §c35% §7less\n" +
+                "§7A wounded player receives §c50% §7less\n" +
                 "§7healing for the duration of the effect.";
     }
 
