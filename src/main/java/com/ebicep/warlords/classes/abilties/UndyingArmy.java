@@ -76,7 +76,7 @@ public class UndyingArmy extends AbstractAbility {
             player1.playSound(player.getLocation(), Sound.ZOMBIE_IDLE, 1, 1.1f);
         }
 
-        CircleEffect circle = new CircleEffect(wp.getGame(), wp.getTeam(), player.getLocation(), 5);
+        CircleEffect circle = new CircleEffect(wp.getGame(), wp.getTeam(), player.getLocation(), 6);
         circle.addEffect(new CircumferenceEffect(ParticleEffect.VILLAGER_HAPPY).particlesPerCircumference(1));
         circle.playEffects();
     }

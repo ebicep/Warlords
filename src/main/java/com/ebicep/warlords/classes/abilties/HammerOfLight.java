@@ -3,6 +3,7 @@ package com.ebicep.warlords.classes.abilties;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.classes.paladin.specs.protector.Protector;
+import com.ebicep.warlords.player.ClassesSkillBoosts;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.PlayerFilter;
 import org.bukkit.Bukkit;
@@ -17,6 +18,10 @@ import java.util.HashSet;
 
 public class HammerOfLight extends AbstractAbility {
 
+    private final static int radius = 6;
+    private final float hammerMinDamage = 159.85f;
+    private final float hammerMaxDamage = 216.2f;
+
     public HammerOfLight() {
         super("Hammer of Light", 159.85f, 216.2f, 62.64f, 30, 20, 175
         );
@@ -24,8 +29,6 @@ public class HammerOfLight extends AbstractAbility {
 
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
-
-        final int radius = 6;
 
         if (player.getTargetBlock((HashSet<Byte>) null, 15).getType() == Material.AIR) return;
         DamageHealCircle damageHealCircle = new DamageHealCircle(wp, player.getTargetBlock((HashSet<Byte>) null, 15).getLocation().add(1, 0, 1), radius, 8, minDamageHeal, maxDamageHeal, critChance, critMultiplier, name);
@@ -61,7 +64,9 @@ public class HammerOfLight extends AbstractAbility {
                     } else {
                         warlordsPlayer.addHealth(
                                 damageHealCircle.getWarlordsPlayer(),
-                                damageHealCircle.getName(), -159.85f, -216.2f,
+                                damageHealCircle.getName(),
+                                hammerMinDamage,
+                                hammerMaxDamage,
                                 damageHealCircle.getCritChance(),
                                 damageHealCircle.getCritMultiplier()
                         );
@@ -94,8 +99,8 @@ public class HammerOfLight extends AbstractAbility {
     @Override
     public void updateDescription(Player player) {
         description = "§7Throw down a Hammer of Light on\n" +
-                "§7the ground, dealing §c159.85 §7-\n" +
-                "§c216.2 §7damage every second to\n" +
+                "§7the ground, dealing §c" + hammerMinDamage + " §7-\n" +
+                "§c" + hammerMaxDamage + " §7damage every second to\n" +
                 "§7nearby enemies and healing nearby\n" +
                 "§7allies for §a" + Math.floor(minDamageHeal) + " §7- §a" + Math.floor(maxDamageHeal) + " §7every\n" +
                 "§7second. Your Protector Strike pierces\n" +

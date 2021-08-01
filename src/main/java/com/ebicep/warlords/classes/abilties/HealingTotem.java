@@ -17,6 +17,9 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class HealingTotem extends AbstractTotemBase {
 
+    private final int range = 6;
+    private final int duration = 5;
+
     public HealingTotem() {
         super("Healing Totem", 168, 841, 62.64f, 60, 25, 175);
     }
@@ -28,7 +31,7 @@ public class HealingTotem extends AbstractTotemBase {
                 "§7allies for §a" + minDamageHeal + " §7- §a" + Math.floor(minDamageHeal * 1.354) + " §7every\n" +
                 "§7second. Before disappearing, the totem\n" +
                 "§7will let out a final pulse that heals for\n" +
-                "§a" + maxDamageHeal + " §7- §a" + Math.floor(maxDamageHeal * 1.354) + "§7. Lasts §65" +
+                "§a" + maxDamageHeal + " §7- §a" + Math.floor(maxDamageHeal * 1.354) + "§7. Lasts §6" + duration +
                 " §7seconds.";
     }
 
@@ -51,7 +54,7 @@ public class HealingTotem extends AbstractTotemBase {
 
     @Override
     protected void onActivation(WarlordsPlayer wp, Player player, ArmorStand totemStand) {
-        wp.getCooldownManager().addCooldown(this.getClass(), new HealingTotem(), "TOTEM", 5, wp, CooldownTypes.ABILITY);
+        wp.getCooldownManager().addCooldown(this.getClass(), new HealingTotem(), "TOTEM", duration, wp, CooldownTypes.ABILITY);
 
 
         new BukkitRunnable() {
@@ -87,9 +90,9 @@ public class HealingTotem extends AbstractTotemBase {
                         player1.playSound(totemStand.getLocation(), "shaman.heal.impact", 2, 1);
                     }
 
-                    new FallingBlockWaveEffect(totemStand.getLocation().clone().add(0, 1, 0), 7, 1.2, Material.SAPLING, (byte) 1).play();
+                    new FallingBlockWaveEffect(totemStand.getLocation().clone().add(0, 1, 0), range, 1.2, Material.SAPLING, (byte) 1).play();
 
-                    PlayerFilter.entitiesAround(totemStand, 6, 6, 6)
+                    PlayerFilter.entitiesAround(totemStand, range, range, range)
                             .aliveTeammatesOf(wp)
                             .forEach((nearPlayer) -> {
                                 nearPlayer.addHealth(

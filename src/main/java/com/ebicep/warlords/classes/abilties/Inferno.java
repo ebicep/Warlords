@@ -11,6 +11,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class Inferno extends AbstractAbility {
 
+    private final int duration = 18;
+
     public Inferno() {
         super("Inferno", 0, 0, 46.98f, 0, 30, 30
         );
@@ -21,12 +23,12 @@ public class Inferno extends AbstractAbility {
         description = "§7Combust into a molten inferno,\n" +
                 "§7increasing your Crit Chance by §c" + critChance + "%\n" +
                 "§7and your Crit Multiplier by §c" + critMultiplier + "%§7. Lasts\n" +
-                "§618 §7seconds.";
+                "§6" + duration + " §7seconds.";
     }
 
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
-        wp.getCooldownManager().addCooldown(Inferno.this.getClass(), new Inferno(), "INFR", 18, wp, CooldownTypes.BUFF);
+        wp.getCooldownManager().addCooldown(Inferno.this.getClass(), new Inferno(), "INFR", duration, wp, CooldownTypes.BUFF);
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "mage.inferno.activation", 2, 1);

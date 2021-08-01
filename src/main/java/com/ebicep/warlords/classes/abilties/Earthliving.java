@@ -11,6 +11,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class Earthliving extends AbstractAbility {
 
+    private final int duration = 8;
+
     private boolean firstProc = false;
 
     public Earthliving() {
@@ -23,14 +25,14 @@ public class Earthliving extends AbstractAbility {
                 "§7Earth, causing each of your melee attacks\n" +
                 "§7to have a §e40% §7chance to heal you and §e2\n" +
                 "§7nearby allies for §a240% §7weapon damage.\n" +
-                "§7Lasts §68 §7seconds.\n" + "\n" +
+                "§7Lasts §6" + duration + " §7seconds.\n" + "\n" +
                 "§7The first hit is guaranteed to activate Earthliving.";
     }
 
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
         wp.subtractEnergy(energyCost);
-        wp.getCooldownManager().addCooldown(Earthliving.this.getClass(), new Earthliving(), "EARTH", 8, wp, CooldownTypes.ABILITY);
+        wp.getCooldownManager().addCooldown(Earthliving.this.getClass(), new Earthliving(), "EARTH", duration, wp, CooldownTypes.ABILITY);
 
         firstProc = true;
 

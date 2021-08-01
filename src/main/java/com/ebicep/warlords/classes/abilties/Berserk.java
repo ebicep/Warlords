@@ -11,6 +11,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class Berserk extends AbstractAbility {
 
+    private final int duration = 18;
+
     public Berserk() {
         super("Berserk", 0, 0, 46.98f, 30, 0, 0);
     }
@@ -20,14 +22,14 @@ public class Berserk extends AbstractAbility {
         description = "§7You go into a berserker rage,\n" +
                 "§7increasing your damage by §c25% §7and\n" +
                 "§7movement speed by §e30%§7. While active,\n" +
-                "§7you also take §c10% §7more damage.\n" + "§7Lasts §618 §7seconds.";
+                "§7you also take §c10% §7more damage.\n" + "§7Lasts §6" + duration + " §7seconds.";
     }
 
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
         wp.subtractEnergy(energyCost);
-        wp.getSpeed().addSpeedModifier("Berserk", 30, 18 * 20, "BASE");
-        wp.getCooldownManager().addCooldown(Berserk.this.getClass(), new Berserk(), "BERS", 18, wp, CooldownTypes.BUFF);
+        wp.getSpeed().addSpeedModifier("Berserk", 30, duration * 20, "BASE");
+        wp.getCooldownManager().addCooldown(Berserk.this.getClass(), new Berserk(), "BERS", duration, wp, CooldownTypes.BUFF);
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "warrior.berserk.activation", 2, 1);

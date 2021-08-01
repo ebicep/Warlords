@@ -11,6 +11,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class IceBarrier extends AbstractAbility {
 
+    private final int duration = 6;
+
     public IceBarrier() {
         super("Ice Barrier", 0, 0, 46.98f, 0, 0, 0
         );
@@ -23,12 +25,12 @@ public class IceBarrier extends AbstractAbility {
                 "§c50%§7, While active, taking melee\n" +
                 "§7damage reduces the attacker's movement\n" +
                 "§7speed by §e20% §7for §62 §7seconds. Lasts\n" +
-                "§66 §7seconds.";
+                "§6" + duration + " §7seconds.";
     }
 
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
-        wp.getCooldownManager().addCooldown(IceBarrier.this.getClass(), new IceBarrier(), "ICE", 6, wp, CooldownTypes.ABILITY);
+        wp.getCooldownManager().addCooldown(IceBarrier.this.getClass(), new IceBarrier(), "ICE", duration, wp, CooldownTypes.ABILITY);
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "mage.icebarrier.activation", 2, 1);

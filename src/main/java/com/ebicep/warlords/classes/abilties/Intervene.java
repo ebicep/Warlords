@@ -14,7 +14,10 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 
 public class Intervene extends AbstractAbility {
+
     private float damagePrevented = 0;
+
+    private final int duration = 5;
 
     public Intervene() {
         super("Intervene", 0, 0, 14.09f, 20, 0, 0);
@@ -28,7 +31,7 @@ public class Intervene extends AbstractAbility {
                 "§7they would have taken back to you.\n" +
                 "§7You can protect the target for a maximum\n" +
                 "§7of §c3600 §7damage. You must remain within\n" +
-                "§e15 §7blocks of each other. Lasts §65 §7seconds.";
+                "§e15 §7blocks of each other. Lasts §6" + duration + " §7seconds.";
     }
 
     @Override
@@ -63,9 +66,9 @@ public class Intervene extends AbstractAbility {
                     });
 
                     wp.sendMessage("§a\u00BB§7 You are now protecting " + nearWarlordsPlayer.getName() + " with your §eIntervene!");
-                    wp.getCooldownManager().addCooldown(new Cooldown(Intervene.this.getClass(), tempIntervene, "VENE", 5, wp, CooldownTypes.ABILITY));
+                    wp.getCooldownManager().addCooldown(new Cooldown(Intervene.this.getClass(), tempIntervene, "VENE", duration, wp, CooldownTypes.ABILITY));
                     nearWarlordsPlayer.sendMessage("§a\u00BB§7 " + wp.getName() + " is shielding you with their " + ChatColor.YELLOW + "Intervene" + ChatColor.GRAY + "!");
-                    nearWarlordsPlayer.getCooldownManager().addCooldown(new Cooldown(Intervene.this.getClass(), tempIntervene, "VENE", 5, wp, CooldownTypes.ABILITY));
+                    nearWarlordsPlayer.getCooldownManager().addCooldown(new Cooldown(Intervene.this.getClass(), tempIntervene, "VENE", duration, wp, CooldownTypes.ABILITY));
 
                     wp.getSpec().getBlue().setCurrentCooldown((float) (cooldown * wp.getCooldownModifier()));
                     wp.updateBlueItem();

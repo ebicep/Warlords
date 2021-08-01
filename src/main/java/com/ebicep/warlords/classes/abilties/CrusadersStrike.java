@@ -9,6 +9,8 @@ import javax.annotation.Nonnull;
 
 public class CrusadersStrike extends AbstractStrikeBase {
 
+    private final int energyGiven = 24;
+
     public CrusadersStrike() {
         super("Crusader's Strike", -326, -441, 0, 90, 25, 175);
     }
@@ -17,7 +19,7 @@ public class CrusadersStrike extends AbstractStrikeBase {
     public void updateDescription(Player player) {
         description = "§7Strike the targeted enemy player,\n" +
                 "§7causing §c" + -minDamageHeal + " §7- §c" + -maxDamageHeal + " damage\n" +
-                "§7and restoring §e24 §7energy to two nearby\n" +
+                "§7and restoring §e" + energyGiven + " §7energy to two nearby\n" +
                 "§7allies within §e10 §7blocks.";
     }
 
@@ -34,7 +36,7 @@ public class CrusadersStrike extends AbstractStrikeBase {
                 .closestFirst(wp)
                 .limit(2)
                 .forEach((nearTeamPlayer) ->
-                        nearTeamPlayer.addEnergy(wp, name, 24)
+                        nearTeamPlayer.addEnergy(wp, name, energyGiven)
                 );
     }
 }

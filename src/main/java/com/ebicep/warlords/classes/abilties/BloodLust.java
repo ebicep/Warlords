@@ -11,6 +11,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class BloodLust extends AbstractAbility {
 
+    private final int duration = 15;
+
     public BloodLust() {
         super("Blood Lust", 0, 0, 31.32f, 20, 0, 0);
     }
@@ -19,13 +21,13 @@ public class BloodLust extends AbstractAbility {
     public void updateDescription(Player player) {
         description = "§7You lust for blood, healing yourself\n" +
                 "§7for §a65% §7of all the damage you deal.\n" +
-                "§7Lasts §615 §7seconds.";
+                "§7Lasts §6" + duration + " §7seconds.";
     }
 
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
         wp.subtractEnergy(energyCost);
-        wp.getCooldownManager().addCooldown(BloodLust.this.getClass(), new BloodLust(), "LUST", 15, wp, CooldownTypes.ABILITY);
+        wp.getCooldownManager().addCooldown(BloodLust.this.getClass(), new BloodLust(), "LUST", duration, wp, CooldownTypes.ABILITY);
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "warrior.bloodlust.activation", 2, 1);

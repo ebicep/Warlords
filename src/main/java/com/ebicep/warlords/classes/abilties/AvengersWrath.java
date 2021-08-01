@@ -11,6 +11,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class AvengersWrath extends AbstractAbility {
 
+    private final int duration = 12;
+
     public AvengersWrath() {
         super("Avenger's Wrath", 0, 0, 52.85f, 0, 0, 0);
     }
@@ -23,12 +25,12 @@ public class AvengersWrath extends AbstractAbility {
                 "§7that are within §e5 §7blocks of your\n" +
                 "§7target. Your energy per second is\n" +
                 "§7increased by §e20 §7for the duration\n" +
-                "§7of the effect. Lasts §612 §7seconds.";
+                "§7of the effect. Lasts §6" + duration + " §7seconds.";
     }
 
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
-        wp.getCooldownManager().addCooldown(AvengersWrath.this.getClass(), new AvengersWrath(), "WRATH", 12, wp, CooldownTypes.BUFF);
+        wp.getCooldownManager().addCooldown(AvengersWrath.this.getClass(), new AvengersWrath(), "WRATH", duration, wp, CooldownTypes.BUFF);
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "paladin.avengerswrath.activation", 2, 1);

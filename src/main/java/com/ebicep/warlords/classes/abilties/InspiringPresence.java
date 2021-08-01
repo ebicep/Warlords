@@ -14,7 +14,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class InspiringPresence extends AbstractAbility {
 
-    private float duration = 12;
+    private int duration = 12;
 
     public InspiringPresence() {
         super("Inspiring Presence", 0, 0, 60f + 10.47f, 0, 0, 0);
@@ -32,13 +32,13 @@ public class InspiringPresence extends AbstractAbility {
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
         InspiringPresence tempPresence = new InspiringPresence();
-        wp.getCooldownManager().addCooldown(InspiringPresence.this.getClass(), tempPresence, "PRES", 12, wp, CooldownTypes.BUFF);
-        wp.getSpeed().addSpeedModifier("Inspiring Presence", 30, 12 * 20, "BASE");
+        wp.getCooldownManager().addCooldown(InspiringPresence.this.getClass(), tempPresence, "PRES", duration, wp, CooldownTypes.BUFF);
+        wp.getSpeed().addSpeedModifier("Inspiring Presence", 30, duration * 20, "BASE");
         PlayerFilter.entitiesAround(wp, 10, 10, 10)
                 .aliveTeammatesOfExcludingSelf(wp)
                 .forEach((nearPlayer) -> {
-                    nearPlayer.getSpeed().addSpeedModifier("Inspiring Presence", 30, 12 * 20, "BASE");
-                    nearPlayer.getCooldownManager().addCooldown(InspiringPresence.this.getClass(), tempPresence, "PRES", 12, wp, CooldownTypes.BUFF);
+                    nearPlayer.getSpeed().addSpeedModifier("Inspiring Presence", 30, duration * 20, "BASE");
+                    nearPlayer.getCooldownManager().addCooldown(InspiringPresence.this.getClass(), tempPresence, "PRES", duration, wp, CooldownTypes.BUFF);
                 });
 
         for (Player player1 : player.getWorld().getPlayers()) {
