@@ -18,8 +18,8 @@ public class PowerupManager extends BukkitRunnable {
 
     public PowerupManager(GameMap map) {
         this.map = map;
-        powerUps.add(new DamagePowerUp(map.getDamagePowerupBlue(), 30, 45 * 20, 60));
-        powerUps.add(new DamagePowerUp(map.getDamagePowerupRed(), 30, 45 * 20, 60));
+        powerUps.add(new EnergyPowerUp(map.getDamagePowerupBlue(), 30, 45 * 20, 60));
+        powerUps.add(new EnergyPowerUp(map.getDamagePowerupRed(), 30, 45 * 20, 60));
         powerUps.add(new HealingPowerUp(map.getHealingPowerupBlue(), 0, 45 * 20, 60));
         powerUps.add(new HealingPowerUp(map.getHealingPowerupRed(), 0, 45 * 20, 60));
         powerUps.add(new SpeedPowerUp(map.getSpeedPowerupBlue(), 10, 45 * 20, 60));
@@ -40,9 +40,9 @@ public class PowerupManager extends BukkitRunnable {
                         .collect(Collectors.toList());
                 if (entitiesNear.size() != 0) {
                     WarlordsPlayer warlordsPlayer = entitiesNear.get(0);
-                    if (powerUp instanceof DamagePowerUp) {
-                        warlordsPlayer.getCooldownManager().addCooldown(DamagePowerUp.class, this, "DMG", powerUp.getDuration(), warlordsPlayer, CooldownTypes.BUFF);
-                        entitiesNear.get(0).sendMessage("§6You activated the §c§lDAMAGE §6powerup! §a+20% §6Damage for §a30 §6seconds!");
+                    if (powerUp instanceof EnergyPowerUp) {
+                        warlordsPlayer.getCooldownManager().addCooldown(EnergyPowerUp.class, this, "ENERGY", powerUp.getDuration(), warlordsPlayer, CooldownTypes.BUFF);
+                        entitiesNear.get(0).sendMessage("§6You activated the §lENERGY §6powerup! §a+40% §6Energy gain for §a30 §6seconds!");
                     } else if (powerUp instanceof HealingPowerUp) {
                         warlordsPlayer.setPowerUpHeal(true);
                         entitiesNear.get(0).sendMessage("§6You activated the §a§lHEALING §6powerup! §a+10% §6Health per second for §a10 §6seconds!");

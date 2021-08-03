@@ -3,7 +3,6 @@ package com.ebicep.warlords.classes.abilties;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.classes.paladin.specs.protector.Protector;
-import com.ebicep.warlords.player.ClassesSkillBoosts;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.PlayerFilter;
 import org.bukkit.Bukkit;
@@ -14,7 +13,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 public class HammerOfLight extends AbstractAbility {
 
@@ -65,8 +66,8 @@ public class HammerOfLight extends AbstractAbility {
                         warlordsPlayer.addHealth(
                                 damageHealCircle.getWarlordsPlayer(),
                                 damageHealCircle.getName(),
-                                hammerMinDamage,
-                                hammerMaxDamage,
+                                -hammerMinDamage,
+                                -hammerMaxDamage,
                                 damageHealCircle.getCritChance(),
                                 damageHealCircle.getCritMultiplier()
                         );
@@ -94,6 +95,22 @@ public class HammerOfLight extends AbstractAbility {
             }
         }
         return false;
+    }
+
+    public static List<WarlordsPlayer> getStandingInHammer(WarlordsPlayer owner) {
+        List<WarlordsPlayer> playersInHammer = new ArrayList<>();
+        for (Entity entity : owner.getWorld().getEntities()) {
+            if (entity instanceof ArmorStand && entity.hasMetadata("Hammer of Light - " + owner.getName())) {
+                for (WarlordsPlayer enemy : PlayerFilter
+                        .entitiesAround(entity, radius, 4, radius)
+                        .enemiesOf(owner)
+                        .isAlive()) {
+                    playersInHammer.add(enemy);
+                }
+                break;
+            }
+        }
+        return playersInHammer;
     }
 
     @Override

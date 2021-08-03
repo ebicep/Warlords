@@ -79,6 +79,7 @@ public class StartCommand implements TabExecutor {
                     .name(ChatColor.AQUA + "Pre-game Menu ")
                     .lore(ChatColor.GRAY + "Allows you to change your class, select a\n" + ChatColor.GRAY + "weapon, and edit your settings.")
                     .get());
+
             Warlords.game.addPlayer(player, teamBlueAssessment);
             game.giveLobbyScoreboard(player);
             ArmorManager.resetArmor(player, Warlords.getPlayerSettings(player.getUniqueId()).selectedClass(), teamBlueAssessment ? Team.BLUE : Team.RED);

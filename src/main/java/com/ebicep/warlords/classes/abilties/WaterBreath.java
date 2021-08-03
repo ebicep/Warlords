@@ -30,6 +30,7 @@ public class WaterBreath extends AbstractAbility {
     @Override
     public void onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
         wp.subtractEnergy(energyCost);
+        wp.getCooldownManager().removeDebuffCooldowns();
         wp.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
         Vector viewDirection = player.getLocation().getDirection();
         PlayerFilter.entitiesAround(player, 8.0, 5.5, 8.0)
@@ -37,6 +38,7 @@ public class WaterBreath extends AbstractAbility {
                     Vector direction = target.getLocation().subtract(player.getLocation()).toVector().normalize();
                     if (viewDirection.dot(direction) > .68) {
                         if (wp.isTeammateAlive(target)) {
+                            target.getCooldownManager().removeDebuffCooldowns();
                             target.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
                         } else {
                             Location eye = player.getEyeLocation();

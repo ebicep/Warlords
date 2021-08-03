@@ -72,7 +72,7 @@ public class HealingTotem extends AbstractTotemBase {
                         player1.playSound(totemStand.getLocation(), "shaman.earthlivingweapon.impact", 2, 1);
                     }
 
-                    PlayerFilter.entitiesAround(totemStand, 6, 6, 6)
+                    PlayerFilter.entitiesAround(totemStand, range, range, range)
                             .aliveTeammatesOf(wp)
                             .forEach((nearPlayer) -> {
                                 nearPlayer.addHealth(

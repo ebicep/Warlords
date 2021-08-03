@@ -344,8 +344,8 @@ public class Warlords extends JavaPlugin {
                         //respawn
                         if (warlordsPlayer.getRespawnTimer() == 0) {
                             warlordsPlayer.setRespawnTimer(-1);
-                            warlordsPlayer.setSpawnProtection(10);
-                            warlordsPlayer.setSpawnDamage(5);
+                            warlordsPlayer.setSpawnProtection(3);
+                            warlordsPlayer.setEnergy(warlordsPlayer.getMaxEnergy() / 2);
                             warlordsPlayer.setDead(false);
                             Location respawnPoint = warlordsPlayer.getGame().getMap().getRespawn(warlordsPlayer.getTeam());
                             warlordsPlayer.teleport(respawnPoint);
@@ -380,14 +380,15 @@ public class Warlords extends JavaPlugin {
                         //check if player has any unpopped armies
                         if (warlordsPlayer.getCooldownManager().checkUndyingArmy(false) && newHealth <= 0) {
                             //set the first unpopped to popped
+
                             for (Cooldown cooldown : warlordsPlayer.getCooldownManager().getCooldown(UndyingArmy.class)) {
                                 if (!((UndyingArmy) cooldown.getCooldownObject()).isArmyDead()) {
                                     ((UndyingArmy) cooldown.getCooldownObject()).pop();
                                     //sending message + check if getFrom is self
                                     if (cooldown.getFrom() == warlordsPlayer) {
-                                        warlordsPlayer.sendMessage("§a\u00BB§7 " + ChatColor.LIGHT_PURPLE + "Your Undying Army revived you with temporary health. Fight until your death! Your health will decay by " + ChatColor.RED + "500 " + ChatColor.LIGHT_PURPLE + "every second.");
+                                        warlordsPlayer.sendMessage("§a\u00BB§7 " + ChatColor.LIGHT_PURPLE + "Your Undying Army revived you with temporary health. Fight until your death! Your health will decay by " + ChatColor.RED + (warlordsPlayer.getMaxHealth() / 10) + ChatColor.LIGHT_PURPLE + " every second.");
                                     } else {
-                                        warlordsPlayer.sendMessage("§a\u00BB§7 " + ChatColor.LIGHT_PURPLE + cooldown.getFrom().getName() + "'s Undying Army revived you with temporary health. Fight until your death! Your health will decay by " + ChatColor.RED + "500 " + ChatColor.LIGHT_PURPLE + "every second.");
+                                        warlordsPlayer.sendMessage("§a\u00BB§7 " + ChatColor.LIGHT_PURPLE + cooldown.getFrom().getName() + "'s Undying Army revived you with temporary health. Fight until your death! Your health will decay by " + ChatColor.RED + (warlordsPlayer.getMaxHealth() / 10) + ChatColor.LIGHT_PURPLE + " every second.");
                                     }
                                     Firework firework = warlordsPlayer.getWorld().spawn(warlordsPlayer.getLocation(), Firework.class);
                                     FireworkMeta meta = firework.getFireworkMeta();
@@ -405,17 +406,22 @@ public class Warlords extends JavaPlugin {
                                     }
                                     newHealth = 40;
 
+                                    //gives 50% of max energy if player is less than half
+                                    if (warlordsPlayer.getEnergy() < warlordsPlayer.getMaxEnergy() / 2) {
+                                        warlordsPlayer.setEnergy(warlordsPlayer.getMaxEnergy() / 2);
+                                    }
+
                                     new BukkitRunnable() {
                                         @Override
                                         public void run() {
-                                            //UNDYING ARMY - dmg -500 each popped army
-                                            warlordsPlayer.addHealth(warlordsPlayer, "", -500, -500, -1, 100);
-
                                             if (warlordsPlayer.getRespawnTimer() > 0) {
                                                 this.cancel();
+                                            } else {
+                                                //UNDYING ARMY - dmg 10% of max health each popped army
+                                                warlordsPlayer.addHealth(warlordsPlayer, "", warlordsPlayer.getMaxHealth() / -10f, warlordsPlayer.getMaxHealth() / -10f, -1, 100);
                                             }
                                         }
-                                    }.runTaskTimer(Warlords.this, 0, 20);
+                                    }.runTaskTimer(Warlords.this, 0, 15);
 
                                     break;
                                 }
@@ -428,6 +434,10 @@ public class Warlords extends JavaPlugin {
                                     player.getInventory().remove(UndyingArmy.BONE);
                                 }
                             }
+
+                            //removing cooldowns here so undying army doesnt get removed
+                            cooldownManager.clearCooldowns();
+
                             // warlordsPlayer.respawn();
                             if (player != null) {
                                 player.setGameMode(GameMode.SPECTATOR);
@@ -489,7 +499,7 @@ public class Warlords extends JavaPlugin {
                                 newEnergy += .5;
                             }
                             if (!cooldownManager.getCooldown(EnergyPowerUp.class).isEmpty()) {
-                                newEnergy += .35;
+                                newEnergy += warlordsPlayer.getSpec().getEnergyPerSec() / 20f * .4;
                             }
 
                             warlordsPlayer.setEnergy(newEnergy);
@@ -529,6 +539,16 @@ public class Warlords extends JavaPlugin {
                                 } else {
                                     warlordsPlayer.addHealth(orb.getOwner(), "Orbs of Life", 420, 420, -1, 100);
                                 }
+                                //damage resistance
+                                for (Cooldown cooldown : warlordsPlayer.getCooldownManager().getCooldown(UndyingArmy.class)) {
+                                    if (!((UndyingArmy) cooldown.getCooldownObject()).isArmyDead()) {
+                                        warlordsPlayer.getCooldownManager().removeCooldown("RES");
+                                        warlordsPlayer.getCooldownManager().addCooldown(null, null, "RES", 2, orb.getOwner(), CooldownTypes.BUFF);
+                                        break;
+                                    }
+                                }
+
+
                                 for (WarlordsPlayer nearPlayer : PlayerFilter
                                         .entitiesAround(warlordsPlayer, 4, 4, 4)
                                         .aliveTeammatesOfExcludingSelf(warlordsPlayer)

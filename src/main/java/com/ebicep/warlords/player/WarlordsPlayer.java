@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.classes.abilties.*;
+import com.ebicep.warlords.classes.paladin.specs.protector.Protector;
 import com.ebicep.warlords.classes.shaman.specs.spiritguard.Spiritguard;
 import com.ebicep.warlords.events.WarlordsDeathEvent;
 import com.ebicep.warlords.maps.Game;
@@ -13,7 +14,6 @@ import com.ebicep.warlords.maps.flags.FlagManager;
 import com.ebicep.warlords.maps.flags.GroundFlagLocation;
 import com.ebicep.warlords.maps.flags.PlayerFlagLocation;
 import com.ebicep.warlords.maps.state.PlayingState;
-import com.ebicep.warlords.powerups.DamagePowerUp;
 import com.ebicep.warlords.util.ItemBuilder;
 import com.ebicep.warlords.util.PacketUtils;
 import com.ebicep.warlords.util.PlayerFilter;
@@ -122,7 +122,7 @@ public final class WarlordsPlayer {
         this.maxHealth = (int) (this.spec.getMaxHealth() * (gameState.getGame().getCooldownMode()? 1.5 : 1));
         this.health = this.maxHealth;
         this.respawnTimer = -1;
-        this.energy = this.spec.getMaxEnergy();
+        this.energy = 0;
         this.energyModifier = gameState.getGame().getCooldownMode() ? 0.5 : 1;
         this.maxEnergy = this.spec.getMaxEnergy();
         this.horseCooldown = 0;
@@ -492,7 +492,7 @@ public final class WarlordsPlayer {
             if (ability.isEmpty()) {
                 sendMessage("" + ChatColor.RED + "\u00AB" + ChatColor.GRAY + " You took " + ChatColor.RED + Math.round(min * -1) + ChatColor.GRAY + " melee damage.");
                 regenTimer = 10;
-                if (health + min <= 0) {
+                if (health + min <= 0 && cooldownManager.getCooldown(UndyingArmy.class).size() == 0) {
                     die(attacker);
                     gameState.addKill(team, false);
                     if (entity instanceof Player)
@@ -512,7 +512,7 @@ public final class WarlordsPlayer {
                 //TODO FIX FIX IT JUST GETS MORE MESSY LETS GOOOOOOOOOOOOOOO
                 sendMessage("" + ChatColor.RED + "\u00AB" + ChatColor.GRAY + " You took " + ChatColor.RED + Math.round(min * -1) + ChatColor.GRAY + " fall damage.");
                 regenTimer = 10;
-                if (health + min < 0) {
+                if (health + min < 0 && cooldownManager.getCooldown(UndyingArmy.class).size() == 0 && min < -10000) {
                     die(attacker);
                     gameState.addKill(team, false); // TODO, fall damage is only a suicide if it happens more than 5 seconds after the last damage
                     //title YOU DIED
@@ -552,12 +552,6 @@ public final class WarlordsPlayer {
                 //base
                 totalReduction = 1 - spec.getDamageResistance() / 100f;
                 //add damage
-
-                if (!attacker.getCooldownManager().getCooldown(DamagePowerUp.class).isEmpty()) {
-                    totalReduction *= 1.2;
-                } else if (attacker.getSpawnDamage() > 0) {
-                    totalReduction *= 1.2;
-                }
                 for (Cooldown cooldown : attacker.getCooldownManager().getCooldown(Berserk.class)) {
                     totalReduction *= 1.25;
                 }
@@ -583,21 +577,35 @@ public final class WarlordsPlayer {
                 for (Cooldown cooldown : cooldownManager.getCooldown(LastStand.class)) {
                     WarlordsPlayer lastStandedBy = cooldown.getFrom();
                     if (lastStandedBy == this) {
-                        damageHealValue *= .5;
+                        totalReduction *= .5;
                     } else {
-                        damageHealValue *= .4;
+                        totalReduction *= .4;
                     }
+                }
+
+                for (Cooldown cooldown : cooldownManager.getCooldown("RES")) {
+                    totalReduction *= .95;
+                    break;
                 }
 
                 //TODO maybe change to hypixel warlords where crippling effects hammer
                 if (!attacker.getCooldownManager().getCooldown(CripplingStrike.class).isEmpty()) {
-                    totalReduction *= .875;
+                    totalReduction *= .85;
                 }
             } else if (min > 0) {
                 if (!cooldownManager.getCooldown(WoundingStrikeBerserker.class).isEmpty()) {
-                    damageHealValue *= .65;
+                    totalReduction *= .65;
                 } else if (!cooldownManager.getCooldown(WoundingStrikeDefender.class).isEmpty()) {
-                    damageHealValue *= .75;
+                    totalReduction *= .75;
+                }
+            }
+            //HAMMER OF LIGHT DMG/HEAL BOOST
+            if (attacker.getSpec() instanceof Protector) {
+                int playersInHammer = HammerOfLight.getStandingInHammer(attacker).size();
+                if (playersInHammer >= 4) {
+                    totalReduction *= Math.pow(1.03, 4);
+                } else {
+                    totalReduction *= Math.pow(1.03, playersInHammer);
                 }
             }
 
@@ -991,9 +999,6 @@ public final class WarlordsPlayer {
         this.addDeath();
         this.scoreboard.updateKillsAssists();
         Bukkit.getPluginManager().callEvent(new WarlordsDeathEvent(this));
-
-        cooldownManager.clearCooldowns();
-
     }
 
     public void addGrave() {
