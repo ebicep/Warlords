@@ -499,7 +499,7 @@ public class Warlords extends JavaPlugin {
                                 newEnergy += .5;
                             }
                             if (!cooldownManager.getCooldown(EnergyPowerUp.class).isEmpty()) {
-                                newEnergy += warlordsPlayer.getSpec().getEnergyPerSec() / 20f * .4;
+                                newEnergy *= 1.4;
                             }
 
                             warlordsPlayer.setEnergy(newEnergy);
