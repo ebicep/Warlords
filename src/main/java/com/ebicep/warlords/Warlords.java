@@ -513,18 +513,17 @@ public class Warlords extends JavaPlugin {
 
                         //energy
                         if (warlordsPlayer.getEnergy() < warlordsPlayer.getMaxEnergy()) {
-                            float newEnergy = warlordsPlayer.getEnergy() + warlordsPlayer.getSpec().getEnergyPerSec() / 20f;
+                            float energyGainPerTick = warlordsPlayer.getSpec().getEnergyPerSec() / 20f;
                             if (!cooldownManager.getCooldown(AvengersWrath.class).isEmpty()) {
-                                newEnergy += 1;
+                                energyGainPerTick += 1;
                             }
                             if (!cooldownManager.getCooldown(InspiringPresence.class).isEmpty()) {
-                                newEnergy += .5;
+                                energyGainPerTick += .5;
                             }
                             if (!cooldownManager.getCooldown(EnergyPowerUp.class).isEmpty()) {
-                                newEnergy *= 1.4;
+                                energyGainPerTick *= 1.4;
                             }
-
-                            warlordsPlayer.setEnergy(newEnergy);
+                            warlordsPlayer.setEnergy(warlordsPlayer.getEnergy() + energyGainPerTick);
                         }
 
                         if (player != null) {
