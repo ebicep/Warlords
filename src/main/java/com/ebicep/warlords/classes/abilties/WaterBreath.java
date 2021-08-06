@@ -22,9 +22,9 @@ public class WaterBreath extends AbstractAbility {
     @Override
     public void updateDescription(Player player) {
         description = "§7Breathe water in a cone in front of you,\n" +
-                "§7Knocking back enemies and restoring §a" + minDamageHeal + "\n" +
-                "§7- §a" + maxDamageHeal + " §7health to yourself and all\n" +
-                "§7allies hit.";
+                "§7knocking back enemies, cleansing all §ede-buffs §7and\n" +
+                "restoring §a" + minDamageHeal + "§7- §a" + maxDamageHeal + " §7health to yourself\n" +
+                "§7and all allies hit.";
     }
 
     @Override

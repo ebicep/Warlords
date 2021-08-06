@@ -565,7 +565,7 @@ public class Warlords extends JavaPlugin {
                                 for (Cooldown cooldown : warlordsPlayer.getCooldownManager().getCooldown(UndyingArmy.class)) {
                                     if (!((UndyingArmy) cooldown.getCooldownObject()).isArmyDead()) {
                                         warlordsPlayer.getCooldownManager().removeCooldown("RES");
-                                        warlordsPlayer.getCooldownManager().addCooldown(null, null, "RES", 2, orb.getOwner(), CooldownTypes.BUFF);
+                                        warlordsPlayer.getCooldownManager().addCooldown(null, null, "RES", 3, orb.getOwner(), CooldownTypes.BUFF);
                                         break;
                                     }
                                 }

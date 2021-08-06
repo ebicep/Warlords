@@ -1,5 +1,5 @@
 name: Warlords
-version: WL 2 Release
+version: New Leaf
 author: ebic
 main: com.ebicep.warlords.Warlords
 depend: [ MultiWorld, HolographicDisplays ]

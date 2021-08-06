@@ -14,6 +14,7 @@ public class LastStand extends AbstractAbility {
 
     private final int selfDuration = 12;
     private final int allyDuration = 6;
+    private final int radius = 6;
 
     public LastStand() {
         super("Last Stand", 0, 0, 56.38f, 40, 0, 0
@@ -28,7 +29,9 @@ public class LastStand extends AbstractAbility {
                 "§7reduces all damage nearby allies take\n" +
                 "§7by §c40% §7for §6" + allyDuration + " §7seconds. You are\n" +
                 "§7healed §7for the amount of damage\n" +
-                "§7prevented on allies.";
+                "§7prevented on allies." +
+                "\n\n" +
+                "§7Has a maximum range of §e" + radius + " §7blocks.";
     }
 
     @Override
@@ -36,7 +39,7 @@ public class LastStand extends AbstractAbility {
         wp.subtractEnergy(energyCost);
         LastStand tempLastStand = new LastStand();
         wp.getCooldownManager().addCooldown(LastStand.this.getClass(), tempLastStand, "LAST", selfDuration, wp, CooldownTypes.BUFF);
-        PlayerFilter.entitiesAround(wp, 6, 6, 6)
+        PlayerFilter.entitiesAround(wp, radius, radius, radius)
                 .aliveTeammatesOfExcludingSelf(wp)
                 .forEach((nearPlayer) -> {
                     //green line thingy

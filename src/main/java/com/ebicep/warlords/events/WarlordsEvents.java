@@ -102,15 +102,10 @@ public class WarlordsEvents implements Listener {
             player.sendMessage(ChatColor.GRAY + "BUILD: " + ChatColor.RED + Warlords.VERSION);
             if (player.isOp()) {
                 player.sendMessage(" ");
-                player.sendMessage(ChatColor.GRAY + "(DO NOT USE THESE IN REAL GAMES)");
-                player.sendMessage(ChatColor.GRAY + "For staff members: ");
+                player.sendMessage(ChatColor.GRAY + "For developers: ");
                 player.sendMessage(" ");
-                player.sendMessage(ChatColor.GRAY + "Skip Timer: /wl timer skip/reset");
-                player.sendMessage(ChatColor.GRAY + "Infinite Energy: /wl energy disable/enable");
-                player.sendMessage(ChatColor.GRAY + "Endless Cooldown: /wl cooldown disable/enable");
-                player.sendMessage(ChatColor.GRAY + "Disable Damage: /wl damage disable/enable");
+                player.sendMessage(ChatColor.GRAY + "Debug menu: /wl");
                 player.sendMessage(" ");
-                player.sendMessage(ChatColor.GRAY + "Cooldown Mode: /wl cooldownmode disable/enable");
             }
 
             player.getInventory().clear();
@@ -250,7 +245,7 @@ public class WarlordsEvents implements Listener {
                 } else if (itemHeld.getType() == Material.FIREWORK_CHARGE) {
                     openSkillTreeMenu(player);
                 } else if (itemHeld.getType() == Material.COMPASS) {
-                    //TODO sound
+                    player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 1);
                     wp.toggleTeamFlagCompass();
                 } else if (player.getInventory().getHeldItemSlot() == 0 || !wp.isHotKeyMode()) {
                     wp.getSpec().onRightClick(wp, player);

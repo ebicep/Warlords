@@ -29,7 +29,8 @@ public class AvengersStrike extends AbstractStrikeBase {
         } else {
             nearPlayer.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
         }
-        nearPlayer.subtractEnergy(6);
+        nearPlayer.subtractEnergy(energySteal);
+
         if (!wp.getCooldownManager().getCooldown(AvengersWrath.class).isEmpty()) {
             for (WarlordsPlayer wrathTarget : PlayerFilter
                     .entitiesAround(nearPlayer, 5, 4, 5)

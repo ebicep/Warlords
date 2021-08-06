@@ -19,7 +19,7 @@ public class CripplingStrike extends AbstractStrikeBase {
         description = "§7Strike the targeted enemy player,\n" +
                 "§7causing §c" + Math.floor(-minDamageHeal) + " §7- §c" + -maxDamageHeal + " §7damage\n" +
                 "§7and §ccrippling §7them for §63 §7seconds.\n" +
-                "§7A §ccrippled §7player deals §c12.5% §7less\n" +
+                "§7A §ccrippled §7player deals §c15% §7less\n" +
                 "§7damage for the duration of the effect.";
     }
 
