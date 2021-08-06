@@ -32,7 +32,7 @@ public class DebugMenu {
                 (n, e) -> openGameMenu(player)
         );
         items.put(new ItemBuilder(CraftItemStack.asBukkitCopy(Warlords.getPlayerHeads().get(player.getUniqueId()))).name(ChatColor.GREEN + "Player Options").get(),
-                (n, e) -> openPlayerMenu(player)
+                (n, e) -> openPlayerMenu(player, Warlords.getPlayer(player))
         );
         items.put(new ItemBuilder(Material.NOTE_BLOCK).name(ChatColor.GREEN + "Team Options").get(),
                 (n, e) -> {
@@ -89,8 +89,9 @@ public class DebugMenu {
         menu.openForPlayer(player);
     }
 
-    public static void openPlayerMenu(Player player) {
-        Menu menu = new Menu("Player Options", 9 * 4);
+    public static void openPlayerMenu(Player player, WarlordsPlayer target) {
+        String targetName = target != null ? target.getName() : "";
+        Menu menu = new Menu("Player Options - " + (target != null ? targetName : player.getName()), 9 * 4);
         ItemStack[] itemStack = {
                 new ItemBuilder(Material.EXP_BOTTLE)
                         .name(ChatColor.GREEN + "Energy")
@@ -110,20 +111,19 @@ public class DebugMenu {
             int index = i + 1;
             menu.setItem(index, 1, itemStack[i],
                     (n, e) -> {
-                        WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
-                        if (warlordsPlayer != null) {
+                        if (target != null) {
                             switch (index) {
                                 case 1:
-                                    Bukkit.getServer().dispatchCommand(player, "wl energy " + (warlordsPlayer.isInfiniteEnergy() ? "enable" : "disable"));
+                                    Bukkit.getServer().dispatchCommand(player, "wl energy " + (target.isInfiniteEnergy() ? "enable" : "disable") + " " + targetName);
                                     break;
                                 case 2:
-                                    Bukkit.getServer().dispatchCommand(player, "wl cooldown " + (warlordsPlayer.isDisableCooldowns() ? "enable" : "disable"));
+                                    Bukkit.getServer().dispatchCommand(player, "wl cooldown " + (target.isDisableCooldowns() ? "enable" : "disable") + " " + targetName);
                                     break;
                                 case 3:
-                                    Bukkit.getServer().dispatchCommand(player, "wl damage " + (warlordsPlayer.isTakeDamage() ? "disable" : "enable"));
+                                    Bukkit.getServer().dispatchCommand(player, "wl damage " + (target.isTakeDamage() ? "disable" : "enable") + " " + targetName);
                                     break;
                                 case 4:
-                                    openTakeDamageMenu(player);
+                                    openTakeDamageMenu(player, target);
                                     break;
                             }
                         }
@@ -191,6 +191,7 @@ public class DebugMenu {
                                 .lore(getPlayerStatLore(wp))
                                 .get(),
                         (n, e) -> {
+                            openPlayerMenu(player, wp);
                         }
                 );
             }
@@ -206,6 +207,7 @@ public class DebugMenu {
                                 .lore(getPlayerStatLore(wp))
                                 .get(),
                         (n, e) -> {
+                            openPlayerMenu(player, wp);
                         }
                 );
             }
@@ -240,18 +242,19 @@ public class DebugMenu {
         };
     }
 
-    public static void openTakeDamageMenu(Player player) {
-        Menu menu = new Menu("Take Damage", 9 * 4);
+    public static void openTakeDamageMenu(Player player, WarlordsPlayer target) {
+        String targetName = target != null ? target.getName() : "";
+        Menu menu = new Menu("Take Damage - " + (target != null ? targetName : player.getName()), 9 * 4);
         for (int i = 1; i <= 5; i++) {
             int damage = i * 1000;
             menu.setItem(i + 1, 1,
                     new ItemBuilder(Utils.woolSortedByColor[i - 1])
                             .name(ChatColor.RED.toString() + damage)
                             .get(),
-                    (n, e) -> Bukkit.getServer().dispatchCommand(player, "wl takedamage " + damage)
+                    (n, e) -> Bukkit.getServer().dispatchCommand(player, "wl takedamage " + damage + " " + targetName)
             );
         }
-        menu.setItem(3, 3, MENU_BACK, (n, e) -> openPlayerMenu(player));
+        menu.setItem(3, 3, MENU_BACK, (n, e) -> openPlayerMenu(player, target));
         menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
     }
