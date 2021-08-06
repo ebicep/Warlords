@@ -38,10 +38,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.IntStream;
 
 public final class WarlordsPlayer {
@@ -81,7 +78,9 @@ public final class WarlordsPlayer {
 
     private final int[] kills = new int[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
     private final int[] assists = new int[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
-    private List<WarlordsPlayer> hitBy = new ArrayList<>();
+    //assists = player - timeLeft(10 seconds)
+    private LinkedHashMap<WarlordsPlayer, Integer> hitBy = new LinkedHashMap<>();
+    private LinkedHashMap<WarlordsPlayer, Integer> healedBy = new LinkedHashMap<>();
     private final int[] deaths = new int[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
     private final float[] damage = new float[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
     private final float[] healing = new float[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
@@ -137,6 +136,14 @@ public final class WarlordsPlayer {
         this.weapon = settings.weapon();
         this.hotKeyMode = settings.hotKeyMode();
         updatePlayerReference(p);
+    }
+
+    @Override
+    public String toString() {
+        return "WarlordsPlayer{" +
+                "name='" + name + '\'' +
+                ", uuid=" + uuid +
+                '}';
     }
 
     public Zombie spawnJimmy(@Nonnull Location loc, @Nullable PlayerInventory inv) {
@@ -704,9 +711,8 @@ public final class WarlordsPlayer {
                 } else {
                     //DAMAGE
                     if (damageHealValue < 0 && isEnemyAlive(attacker)) {
-                        if (!hitBy.contains(attacker)) {
-                            hitBy.add(attacker);
-                        }
+                        hitBy.put(attacker, 10);
+
                         if (powerUpHeal) {
                             powerUpHeal = false;
                             sendMessage(ChatColor.GOLD + "Your §a§lHealing Powerup §6has worn off.");
@@ -844,6 +850,8 @@ public final class WarlordsPlayer {
                     //HEALING
                     else {
                         if (isTeammateAlive(attacker)) {
+                            healedBy.put(attacker, 10);
+
                             if (this.health + damageHealValue > maxHealth) {
                                 damageHealValue = maxHealth - this.health;
                             }
@@ -993,8 +1001,12 @@ public final class WarlordsPlayer {
 
         showDeathAnimation();
 
+        if (attacker != this) {
+            hitBy.putAll(attacker.getHealedBy());
+        }
+
         hitBy.remove(attacker);
-        hitBy.add(0, attacker);
+        hitBy.put(attacker, 10);
 
         this.addDeath();
         this.scoreboard.updateKillsAssists();
@@ -1217,12 +1229,12 @@ public final class WarlordsPlayer {
         return IntStream.of(assists).sum();
     }
 
-    public List<WarlordsPlayer> getHitBy() {
+    public LinkedHashMap<WarlordsPlayer, Integer> getHitBy() {
         return hitBy;
     }
 
-    public void setHitBy(List<WarlordsPlayer> hitBy) {
-        this.hitBy = hitBy;
+    public LinkedHashMap<WarlordsPlayer, Integer> getHealedBy() {
+        return healedBy;
     }
 
     public int[] getDeaths() {
@@ -1530,7 +1542,7 @@ public final class WarlordsPlayer {
         return respawnTimeSpent;
     }
 
-    public boolean getInfiniteEnergy() {
+    public boolean isInfiniteEnergy() {
         return infiniteEnergy;
     }
 
@@ -1538,7 +1550,7 @@ public final class WarlordsPlayer {
         this.infiniteEnergy = infiniteEnergy;
     }
 
-    public boolean getDisableCooldowns() {
+    public boolean isDisableCooldowns() {
         return disableCooldowns;
     }
 

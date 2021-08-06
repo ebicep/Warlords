@@ -132,6 +132,7 @@ public class WarlordsEvents implements Listener {
             @Override
             public void run() {
                 Warlords.databaseManager.loadPlayer(e.getPlayer());
+                Warlords.updateHeads();
             }
         }.runTaskAsynchronously(Warlords.getInstance());
         //e.setJoinMessage(null);

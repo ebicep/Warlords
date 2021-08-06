@@ -3,12 +3,14 @@ package com.ebicep.warlords.commands;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.state.TimerDebugAble;
+import com.ebicep.warlords.menu.DebugMenu;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 public class DebugCommand implements CommandExecutor {
 
@@ -22,7 +24,8 @@ public class DebugCommand implements CommandExecutor {
 
         Game game = Warlords.game; // In the future allow the user to select a game player
         if (args.length < 1) {
-            sender.sendMessage("§cYou need to pass an argument, valid arguments: [timer, energy, cooldown, cooldownmode, takedamage]");
+            DebugMenu.openDebugMenu((Player) sender);
+            //sender.sendMessage("§cYou need to pass an argument, valid arguments: [timer, energy, cooldown, cooldownmode, takedamage]");
             return true;
         }
         switch (args[0]) {
@@ -150,6 +153,10 @@ public class DebugCommand implements CommandExecutor {
                     case "4000":
                         player.addHealth(player, "debug", -4000, -4000, -1, 100);
                         sender.sendMessage(ChatColor.RED + "§cDEV: §aYou took 4000 damage!");
+                        return true;
+                    case "5000":
+                        player.addHealth(player, "debug", -5000, -5000, -1, 100);
+                        sender.sendMessage(ChatColor.RED + "§cDEV: §aYou took 5000 damage!");
                         return true;
                     default:
                         sender.sendMessage("§cInvalid option! [Options: 1000, 2000, 3000, 4000]");

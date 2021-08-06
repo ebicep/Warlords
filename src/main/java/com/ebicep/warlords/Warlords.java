@@ -16,10 +16,13 @@ import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import org.bson.Document;
 import org.bukkit.*;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
+import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -137,10 +140,22 @@ public class Warlords extends JavaPlugin {
         return settings;
     }
 
-    public static int blueKills;
-    public static int redKills;
+    private final static HashMap<UUID, net.minecraft.server.v1_8_R3.ItemStack> playerHeads = new HashMap<>();
 
-    private int counter = 0;
+    public static HashMap<UUID, net.minecraft.server.v1_8_R3.ItemStack> getPlayerHeads() {
+        return playerHeads;
+    }
+
+    public static void updateHeads() {
+        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+            ItemStack playerSkull = new ItemStack(Material.SKULL_ITEM, 1, (short) SkullType.PLAYER.ordinal());
+            SkullMeta skullMeta = (SkullMeta) playerSkull.getItemMeta();
+            skullMeta.setOwner(onlinePlayer.getName());
+            playerSkull.setItemMeta(skullMeta);
+            playerHeads.put(onlinePlayer.getUniqueId(), CraftItemStack.asNMSCopy(playerSkull));
+        }
+    }
+
 
     public static Game game;
     public static DatabaseManager databaseManager;
@@ -167,6 +182,8 @@ public class Warlords extends JavaPlugin {
         new DebugCommand().register(this);
         new ClassCommand().register(this);
         new GetPlayersCommand().register(this);
+
+        updateHeads();
 
         game = new Game();
         getData();
@@ -236,7 +253,7 @@ public class Warlords extends JavaPlugin {
         new BukkitRunnable() {
             @Override
             public void run() {
-                if (databaseManager != null) {
+                if (databaseManager != null && databaseManager.isConnected()) {
                     if (holographicDisplaysEnabled) {
                         Location spawnPoint = Bukkit.getWorlds().get(0).getSpawnLocation().clone();
 
@@ -275,7 +292,7 @@ public class Warlords extends JavaPlugin {
 
     public void startTask() {
         new BukkitRunnable() {
-
+            int counter = 0;
             @Override
             public void run() {
                 // EVERY TICK
@@ -299,7 +316,7 @@ public class Warlords extends JavaPlugin {
                             );
                         }
 
-                        if (warlordsPlayer.getDisableCooldowns()) {
+                        if (warlordsPlayer.isDisableCooldowns()) {
                             warlordsPlayer.getSpec().getRed().setCooldown(0);
                             warlordsPlayer.getSpec().getPurple().setCooldown(0);
                             warlordsPlayer.getSpec().getBlue().setCooldown(0);
@@ -443,26 +460,31 @@ public class Warlords extends JavaPlugin {
                                 player.setGameMode(GameMode.SPECTATOR);
                             }
                             //giving out assists
-                            for (int i = 1; i < warlordsPlayer.getHitBy().size(); i++) {
-                                WarlordsPlayer assisted = warlordsPlayer.getHitBy().get(i);
-                                if (warlordsPlayer.getHitBy().get(0) == warlordsPlayer) {
-                                    assisted.sendMessage(
-                                            ChatColor.GRAY +
-                                                    "You assisted in killing " +
-                                                    warlordsPlayer.getColoredName()
-                                    );
-                                } else {
-                                    assisted.sendMessage(
-                                            ChatColor.GRAY +
-                                                    "You assisted " +
-                                                    warlordsPlayer.getHitBy().get(0).getColoredName() +
-                                                    ChatColor.GRAY + " in killing " +
-                                                    warlordsPlayer.getColoredName()
-                                    );
+                            int lastElementIndex = warlordsPlayer.getHitBy().size() - 1;
+                            WarlordsPlayer killedBy = warlordsPlayer.getHitBy().entrySet().stream().skip(lastElementIndex).iterator().next().getKey();
+                            final int[] counter = {0};
+                            warlordsPlayer.getHitBy().forEach((assisted, value) -> {
+                                if (counter[0] != lastElementIndex) {
+                                    if (killedBy == assisted) {
+                                        assisted.sendMessage(
+                                                ChatColor.GRAY +
+                                                        "You assisted in killing " +
+                                                        warlordsPlayer.getColoredName()
+                                        );
+                                    } else {
+                                        assisted.sendMessage(
+                                                ChatColor.GRAY +
+                                                        "You assisted " +
+                                                        killedBy.getColoredName() +
+                                                        ChatColor.GRAY + " in killing " +
+                                                        warlordsPlayer.getColoredName()
+                                        );
+                                    }
+                                    assisted.addAssist();
+                                    assisted.getScoreboard().updateKillsAssists();
                                 }
-                                assisted.addAssist();
-                                assisted.getScoreboard().updateKillsAssists();
-                            }
+                                counter[0]++;
+                            });
                             warlordsPlayer.getHitBy().clear();
                             warlordsPlayer.setRegenTimer(0);
                             warlordsPlayer.giveRespawnTimer();
@@ -650,8 +672,14 @@ public class Warlords extends JavaPlugin {
                                 warlordsPlayer.addTimeInCombat();
                             }
 
-                            if (warlordsPlayer.getName().equals("sumSmash")) {
+                            //ASSISTS - 10 SECOND COOLDOWN
+                            warlordsPlayer.getHitBy().forEach(((wp, integer) -> warlordsPlayer.getHitBy().put(wp, integer - 1)));
+                            warlordsPlayer.getHealedBy().forEach(((wp, integer) -> warlordsPlayer.getHealedBy().put(wp, integer - 1)));
+                            warlordsPlayer.getHitBy().entrySet().removeIf(p -> p.getValue() <= 0);
+                            warlordsPlayer.getHealedBy().entrySet().removeIf(p -> p.getValue() <= 0);
 
+                            if (warlordsPlayer.getName().equals("sumTrash")) {
+                                System.out.println(warlordsPlayer.getHitBy());
                             }
                         }
                         WarlordsEvents.entityList.removeIf(e -> !e.isValid());
