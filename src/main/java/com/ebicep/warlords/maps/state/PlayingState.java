@@ -71,14 +71,6 @@ public class PlayingState implements State, TimerDebugAble {
         Stats enemyStats = getStats(victim.enemy());
         enemyStats.kills++;
         addPoints(victim.enemy(), SCORE_KILL_POINTS);
-        switch(victim) { // TODO We already track this in stats, is this still needed?
-            case RED:
-                Warlords.blueKills++;
-                break;
-            case BLUE:
-                Warlords.redKills++;
-                break;
-        }
     }
 
     @Nonnull

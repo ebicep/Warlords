@@ -30,6 +30,25 @@ import java.util.stream.Stream;
 
 public class Utils {
 
+    public static final ItemStack[] woolSortedByColor = {
+            new ItemStack(Material.WOOL, 1, (byte) 0),
+            new ItemStack(Material.WOOL, 1, (byte) 8),
+            new ItemStack(Material.WOOL, 1, (byte) 7),
+            new ItemStack(Material.WOOL, 1, (byte) 15),
+            new ItemStack(Material.WOOL, 1, (byte) 12),
+            new ItemStack(Material.WOOL, 1, (byte) 14),
+            new ItemStack(Material.WOOL, 1, (byte) 1),
+            new ItemStack(Material.WOOL, 1, (byte) 4),
+            new ItemStack(Material.WOOL, 1, (byte) 5),
+            new ItemStack(Material.WOOL, 1, (byte) 13),
+            new ItemStack(Material.WOOL, 1, (byte) 9),
+            new ItemStack(Material.WOOL, 1, (byte) 3),
+            new ItemStack(Material.WOOL, 1, (byte) 11),
+            new ItemStack(Material.WOOL, 1, (byte) 10),
+            new ItemStack(Material.WOOL, 1, (byte) 2),
+            new ItemStack(Material.WOOL, 1, (byte) 6),
+    };
+
     public static double getDotToPlayer(LivingEntity player1, LivingEntity player2, double yIncrease) {
         return getDotToLocation(new LocationBuilder(player1.getEyeLocation()).addY(yIncrease).get(), player2.getEyeLocation());
     }

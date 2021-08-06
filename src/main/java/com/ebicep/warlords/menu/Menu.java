@@ -1,6 +1,8 @@
 package com.ebicep.warlords.menu;
 
+import com.ebicep.warlords.util.ItemBuilder;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
@@ -13,6 +15,13 @@ public class Menu extends AbstractMenuBase {
     private final Inventory inventory;
     private final BiConsumer<Menu, InventoryClickEvent>[] onClick = (BiConsumer<Menu, InventoryClickEvent>[]) new BiConsumer<?, ?>[9 * 6];
     private int nextItemIndex = 0;
+
+    public static final ItemStack MENU_CLOSE = new ItemBuilder(Material.BARRIER)
+            .name(ChatColor.RED + "Close")
+            .get();
+    public static final ItemStack MENU_BACK = new ItemBuilder(Material.ARROW)
+            .name(ChatColor.GREEN + "Back")
+            .get();
 
     @Override
     public Inventory getInventory() {

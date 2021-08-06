@@ -140,6 +140,7 @@ public abstract class AbstractProjectileBase extends AbstractAbility {
                 WorldServer world = ((CraftWorld) block.getWorld()).getHandle();
                 IBlockData type = world.getType(pos);
                 AxisAlignedBB box = type.getBlock().a(world, pos, type);
+                //TODO fix nullpointer when shooting flag (hitbox weirdo?)
                 MovingObjectPosition mop = box.a(after, before);
                 if (mop != null) {
                     double distance = before.distanceSquared(mop.pos);

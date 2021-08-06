@@ -5,7 +5,6 @@ import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.state.PlayingState;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.util.PlayerFilter;
-import com.mongodb.MongoException;
 import com.mongodb.MongoWriteException;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
@@ -16,9 +15,12 @@ import org.bson.BsonDouble;
 import org.bson.BsonInt64;
 import org.bson.Document;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -31,6 +33,7 @@ import static com.mongodb.client.model.Updates.set;
 
 public class DatabaseManager {
 
+    private boolean connected;
     private MongoClient mongoClient;
     private MongoDatabase warlordsPlayersDatabase;
     private MongoDatabase warlordsGamesDatabase;
@@ -38,24 +41,43 @@ public class DatabaseManager {
     private MongoCollection<Document> gamesInformation;
     private HashMap<UUID, Document> cachedPlayerInfo;
 
+    public boolean isConnected() {
+        return connected;
+    }
+
     public DatabaseManager() {
-        mongoClient = MongoClients.create("mongodb+srv://warlords_user:ngPnQ076v9MRFAou@warlords.xphds.mongodb.net/myFirstDatabase?retryWrites=true&w=majority");
-        warlordsPlayersDatabase = mongoClient.getDatabase("Warlords_Players");
-        warlordsGamesDatabase = mongoClient.getDatabase("Warlords_Games");
-        playersInformation = warlordsPlayersDatabase.getCollection("Players_Information");
-        gamesInformation = warlordsGamesDatabase.getCollection("Games_Information");
-        cachedPlayerInfo = new HashMap<>();
-        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-            loadPlayer(onlinePlayer);
+        try {
+            System.out.println(System.getProperty("user.dir"));
+            File myObj = new File(System.getProperty("user.dir") + "/plugins/Warlords/database_key.TXT");
+            Scanner myReader = new Scanner(myObj);
+            if (myReader.hasNextLine()) {
+                String data = myReader.nextLine();
+                mongoClient = MongoClients.create(data);
+                warlordsPlayersDatabase = mongoClient.getDatabase("Warlords_Players");
+                warlordsGamesDatabase = mongoClient.getDatabase("Warlords_Games");
+                playersInformation = warlordsPlayersDatabase.getCollection("Players_Information");
+                gamesInformation = warlordsGamesDatabase.getCollection("Games_Information");
+                cachedPlayerInfo = new HashMap<>();
+                for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+                    loadPlayer(onlinePlayer);
+                }
+                Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords]: Database Connected");
+                connected = true;
+            }
+            myReader.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            connected = false;
         }
     }
 
     public boolean hasPlayer(UUID uuid) {
+        if (!connected) return false;
         if (cachedPlayerInfo.containsKey(uuid)) return true;
         try {
             Document document = playersInformation.find(eq("uuid", uuid.toString())).first();
             return document != null;
-        } catch (MongoException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Some error while trying to find document");
             return false;
@@ -63,6 +85,7 @@ public class DatabaseManager {
     }
 
     public void loadPlayer(Player player) {
+        if (!connected) return;
         try {
             if (hasPlayer(player.getUniqueId())) {
                 Document playerInfo = playersInformation.find(eq("uuid", player.getUniqueId().toString())).first();
@@ -90,6 +113,7 @@ public class DatabaseManager {
     }
 
     public void updatePlayerInformation(Player player, String key, String newValue) {
+        if (!connected) return;
         try {
             if (hasPlayer(player.getUniqueId())) {
                 playersInformation.updateOne(
@@ -108,6 +132,7 @@ public class DatabaseManager {
     }
 
     public void updatePlayerInformation(Player player, HashMap<String, Object> newInfo, FieldUpdateOperators operator) {
+        if (!connected) return;
         try {
             if (hasPlayer(player.getUniqueId())) {
                 Document history = new Document();
@@ -122,12 +147,13 @@ public class DatabaseManager {
             } else {
                 System.out.println("Could not update player " + player.getName() + " - Not in the database!");
             }
-        } catch (MongoWriteException e) {
+        } catch (Exception e) {
             System.out.println("There was an error trying to update information of player " + player.getName());
         }
     }
 
     public void updatePlayerInformation(OfflinePlayer player, HashMap<String, Object> newInfo, FieldUpdateOperators operator) {
+        if (!connected) return;
         try {
             if (hasPlayer(player.getUniqueId())) {
                 Document history = new Document();
@@ -142,12 +168,13 @@ public class DatabaseManager {
             } else {
                 System.out.println("Could not update player " + player.getName() + " - Not in the database!");
             }
-        } catch (MongoWriteException e) {
+        } catch (Exception e) {
             System.out.println("There was an error trying to update information of player " + player.getName());
         }
     }
 
     public Object getPlayerInformation(Player player, String key) {
+        if (!connected) return null;
         try {
             if (cachedPlayerInfo.containsKey(player.getUniqueId())) {
                 return cachedPlayerInfo.get(player.getUniqueId()).get(key);
@@ -160,7 +187,7 @@ public class DatabaseManager {
                 System.out.println("Couldn't get player " + player.getName() + " - Not in the database!");
                 return null;
             }
-        } catch (MongoWriteException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             System.out.println("There was an error trying to get player " + player.getName());
             return null;
@@ -168,6 +195,7 @@ public class DatabaseManager {
     }
 
     public List<Document> getPlayersSortedByKey(String key) {
+        if (!connected) return null;
         try {
             return playersInformation.find().into(new ArrayList<>()).stream().sorted(Comparator.comparing(d -> (Integer) ((Document) d).get(key)).reversed()).collect(Collectors.toList());
         } catch (Exception e) {
@@ -181,7 +209,21 @@ public class DatabaseManager {
         cachedPlayerInfo.clear();
     }
 
+    private Document getBaseStatDocument() {
+        return new Document("kills", 0)
+                .append("assists", 0)
+                .append("deaths", 0)
+                .append("wins", 0)
+                .append("losses", 0)
+                .append("flags_captured", 0)
+                .append("flags_returned", 0)
+                .append("damage", 0)
+                .append("healing", 0)
+                .append("absorbed", 0);
+    }
+
     public void addPlayer(Player player) {
+        if (!connected) return;
         try {
             if (!hasPlayer(player.getUniqueId())) {
                 Document newPlayerDocument = new Document("uuid", player.getUniqueId().toString())
@@ -196,185 +238,25 @@ public class DatabaseManager {
                         .append("damage", 0)
                         .append("healing", 0)
                         .append("absorbed", 0)
-                        .append("mage",
-                                new Document("kills", 0)
-                                        .append("assists", 0)
-                                        .append("deaths", 0)
-                                        .append("wins", 0)
-                                        .append("losses", 0)
-                                        .append("flags_captured", 0)
-                                        .append("flags_returned", 0)
-                                        .append("damage", 0)
-                                        .append("healing", 0)
-                                        .append("absorbed", 0)
-                                        .append("pyromancer",
-                                                new Document("kills", 0)
-                                                        .append("assists", 0)
-                                                        .append("deaths", 0)
-                                                        .append("wins", 0)
-                                                        .append("losses", 0)
-                                                        .append("flags_captured", 0)
-                                                        .append("flags_returned", 0)
-                                                        .append("damage", 0)
-                                                        .append("healing", 0)
-                                                        .append("absorbed", 0))
-                                        .append("cryomancer",
-                                                new Document("kills", 0)
-                                                        .append("assists", 0)
-                                                        .append("deaths", 0)
-                                                        .append("wins", 0)
-                                                        .append("losses", 0)
-                                                        .append("flags_captured", 0)
-                                                        .append("flags_returned", 0)
-                                                        .append("damage", 0)
-                                                        .append("healing", 0)
-                                                        .append("absorbed", 0))
-                                        .append("aquamancer",
-                                                new Document("kills", 0)
-                                                        .append("assists", 0)
-                                                        .append("deaths", 0)
-                                                        .append("wins", 0)
-                                                        .append("losses", 0)
-                                                        .append("flags_captured", 0)
-                                                        .append("flags_returned", 0)
-                                                        .append("damage", 0)
-                                                        .append("healing", 0)
-                                                        .append("absorbed", 0))
+                        .append("mage", getBaseStatDocument()
+                                .append("pyromancer", getBaseStatDocument())
+                                .append("cryomancer", getBaseStatDocument())
+                                .append("aquamancer", getBaseStatDocument())
                         )
-                        .append("warrior",
-                                new Document("kills", 0)
-                                        .append("assists", 0)
-                                        .append("deaths", 0)
-                                        .append("wins", 0)
-                                        .append("losses", 0)
-                                        .append("flags_captured", 0)
-                                        .append("flags_returned", 0)
-                                        .append("damage", 0)
-                                        .append("healing", 0)
-                                        .append("absorbed", 0)
-                                        .append("berserker",
-                                                new Document("kills", 0)
-                                                        .append("assists", 0)
-                                                        .append("deaths", 0)
-                                                        .append("wins", 0)
-                                                        .append("losses", 0)
-                                                        .append("flags_captured", 0)
-                                                        .append("flags_returned", 0)
-                                                        .append("damage", 0)
-                                                        .append("healing", 0)
-                                                        .append("absorbed", 0))
-                                        .append("defender",
-                                                new Document("kills", 0)
-                                                        .append("assists", 0)
-                                                        .append("deaths", 0)
-                                                        .append("wins", 0)
-                                                        .append("losses", 0)
-                                                        .append("flags_captured", 0)
-                                                        .append("flags_returned", 0)
-                                                        .append("damage", 0)
-                                                        .append("healing", 0)
-                                                        .append("absorbed", 0))
-                                        .append("revenant",
-                                                new Document("kills", 0)
-                                                        .append("assists", 0)
-                                                        .append("deaths", 0)
-                                                        .append("wins", 0)
-                                                        .append("losses", 0)
-                                                        .append("flags_captured", 0)
-                                                        .append("flags_returned", 0)
-                                                        .append("damage", 0)
-                                                        .append("healing", 0)
-                                                        .append("absorbed", 0))
+                        .append("warrior", getBaseStatDocument()
+                                .append("berserker", getBaseStatDocument())
+                                .append("defender", getBaseStatDocument())
+                                .append("revenant", getBaseStatDocument())
                         )
-                        .append("paladin",
-                                new Document("kills", 0)
-                                        .append("assists", 0)
-                                        .append("deaths", 0)
-                                        .append("wins", 0)
-                                        .append("losses", 0)
-                                        .append("flags_captured", 0)
-                                        .append("flags_returned", 0)
-                                        .append("damage", 0)
-                                        .append("healing", 0)
-                                        .append("absorbed", 0)
-                                        .append("avenger",
-                                                new Document("kills", 0)
-                                                        .append("assists", 0)
-                                                        .append("deaths", 0)
-                                                        .append("wins", 0)
-                                                        .append("losses", 0)
-                                                        .append("flags_captured", 0)
-                                                        .append("flags_returned", 0)
-                                                        .append("damage", 0)
-                                                        .append("healing", 0)
-                                                        .append("absorbed", 0))
-                                        .append("crusader",
-                                                new Document("kills", 0)
-                                                        .append("assists", 0)
-                                                        .append("deaths", 0)
-                                                        .append("wins", 0)
-                                                        .append("losses", 0)
-                                                        .append("flags_captured", 0)
-                                                        .append("flags_returned", 0)
-                                                        .append("damage", 0)
-                                                        .append("healing", 0)
-                                                        .append("absorbed", 0))
-                                        .append("protector",
-                                                new Document("kills", 0)
-                                                        .append("assists", 0)
-                                                        .append("deaths", 0)
-                                                        .append("wins", 0)
-                                                        .append("losses", 0)
-                                                        .append("flags_captured", 0)
-                                                        .append("flags_returned", 0)
-                                                        .append("damage", 0)
-                                                        .append("healing", 0)
-                                                        .append("absorbed", 0))
+                        .append("paladin", getBaseStatDocument()
+                                .append("avenger", getBaseStatDocument())
+                                .append("crusader", getBaseStatDocument())
+                                .append("protector", getBaseStatDocument())
                         )
-                        .append("shaman",
-                                new Document("kills", 0)
-                                        .append("assists", 0)
-                                        .append("deaths", 0)
-                                        .append("wins", 0)
-                                        .append("losses", 0)
-                                        .append("flags_captured", 0)
-                                        .append("flags_returned", 0)
-                                        .append("damage", 0)
-                                        .append("healing", 0)
-                                        .append("absorbed", 0)
-                                        .append("thunderlord",
-                                                new Document("kills", 0)
-                                                        .append("assists", 0)
-                                                        .append("deaths", 0)
-                                                        .append("wins", 0)
-                                                        .append("losses", 0)
-                                                        .append("flags_captured", 0)
-                                                        .append("flags_returned", 0)
-                                                        .append("damage", 0)
-                                                        .append("healing", 0)
-                                                        .append("absorbed", 0))
-                                        .append("spiritguard",
-                                                new Document("kills", 0)
-                                                        .append("assists", 0)
-                                                        .append("deaths", 0)
-                                                        .append("wins", 0)
-                                                        .append("losses", 0)
-                                                        .append("flags_captured", 0)
-                                                        .append("flags_returned", 0)
-                                                        .append("damage", 0)
-                                                        .append("healing", 0)
-                                                        .append("absorbed", 0))
-                                        .append("earthwarden",
-                                                new Document("kills", 0)
-                                                        .append("assists", 0)
-                                                        .append("deaths", 0)
-                                                        .append("wins", 0)
-                                                        .append("losses", 0)
-                                                        .append("flags_captured", 0)
-                                                        .append("flags_returned", 0)
-                                                        .append("damage", 0)
-                                                        .append("healing", 0)
-                                                        .append("absorbed", 0))
+                        .append("shaman", getBaseStatDocument()
+                                .append("thunderlord", getBaseStatDocument())
+                                .append("spiritguard", getBaseStatDocument())
+                                .append("earthwarden", getBaseStatDocument())
                         );
                 playersInformation.insertOne(newPlayerDocument);
                 System.out.println(player.getUniqueId() + " - " + player.getName() + " was added to the player database");
@@ -386,6 +268,7 @@ public class DatabaseManager {
 
 
     public void addGame(PlayingState gameState) {
+        if (!connected) return;
         List<Document> blue = new ArrayList<>();
         List<Document> red = new ArrayList<>();
         for (WarlordsPlayer value : PlayerFilter.playingGame(gameState.getGame())) {
