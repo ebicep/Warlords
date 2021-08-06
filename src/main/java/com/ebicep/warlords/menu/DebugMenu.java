@@ -120,7 +120,7 @@ public class DebugMenu {
                                     Bukkit.getServer().dispatchCommand(player, "wl cooldown " + (warlordsPlayer.isDisableCooldowns() ? "enable" : "disable"));
                                     break;
                                 case 3:
-                                    Bukkit.getServer().dispatchCommand(player, "wl energy " + (warlordsPlayer.isTakeDamage() ? "disable" : "enable"));
+                                    Bukkit.getServer().dispatchCommand(player, "wl damage " + (warlordsPlayer.isTakeDamage() ? "disable" : "enable"));
                                     break;
                                 case 4:
                                     openTakeDamageMenu(player);

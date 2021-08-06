@@ -7,9 +7,11 @@ import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.ItemBuilder;
+import com.ebicep.warlords.util.Matrix4d;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -24,7 +26,7 @@ public class UndyingArmy extends AbstractAbility {
             .lore("§7Right-click this item to die\n§7instantly instead of waiting for\n§7the decay.")
             .get();
 
-    private final int radius = 15;
+    private final int radius = 12;
 
     private boolean armyDead = false;
 
@@ -66,10 +68,7 @@ public class UndyingArmy extends AbstractAbility {
                     if (!((UndyingArmy) wp.getCooldownManager().getCooldown(tempUndyingArmy).get().getCooldownObject()).isArmyDead()) {
                         float healAmount = 100 + (wp.getMaxHealth() - wp.getHealth()) / 10f;
                         wp.addHealth(wp, name, healAmount, healAmount, -1, 100);
-
-                        for (Player player1 : wp.getWorld().getPlayers()) {
-                            player1.playSound(wp.getLocation(), "paladin.holyradiance.activation", 0.5f, 1);
-                        }
+                        player.playSound(wp.getLocation(), "paladin.holyradiance.activation", 0.35f, 0.75f);
                     } else {
                         this.cancel();
                     }
@@ -93,10 +92,7 @@ public class UndyingArmy extends AbstractAbility {
                         if (!((UndyingArmy) teammate.getCooldownManager().getCooldown(tempUndyingArmy).get().getCooldownObject()).isArmyDead()) {
                             float healAmount = 100 + (teammate.getMaxHealth() - teammate.getHealth()) / 10f;
                             teammate.addHealth(wp, name, healAmount, healAmount, -1, 100);
-
-                            for (Player player1 : teammate.getWorld().getPlayers()) {
-                                player1.playSound(teammate.getLocation(), "paladin.holyradiance.activation", 0.5f, 1);
-                            }
+                            player.playSound(teammate.getLocation(), "paladin.holyradiance.activation", 0.35f, 0.75f);
                         } else {
                             this.cancel();
                         }
@@ -116,11 +112,35 @@ public class UndyingArmy extends AbstractAbility {
         wp.sendMessage("§a\u00BB§7 " + ChatColor.GRAY + "Your Undying Army is now protecting " + ChatColor.YELLOW + numberOfPlayersWithArmy + ChatColor.GRAY + " nearby " + allies);
 
         for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), Sound.ZOMBIE_IDLE, 1, 1.1f);
+            player1.playSound(player.getLocation(), Sound.ZOMBIE_IDLE, 2, 0.3f);
         }
 
-        CircleEffect circle = new CircleEffect(wp.getGame(), wp.getTeam(), player.getLocation(), 6);
-        circle.addEffect(new CircumferenceEffect(ParticleEffect.VILLAGER_HAPPY).particlesPerCircumference(1));
+        Location loc = player.getEyeLocation();
+        loc.setPitch(0);
+        loc.setYaw(0);
+        Matrix4d matrix = new Matrix4d();
+        for (int i = 0; i < 9; i++) {
+            loc.setYaw(loc.getYaw() + 360F / 9F);
+            matrix.updateFromLocation(loc);
+            for (int c = 0; c < 30; c++) {
+                double angle = c / 30D * Math.PI * 2;
+                double width = 1.5;
+
+                ParticleEffect.ENCHANTMENT_TABLE.display(0, 0.1f, 0, 0, 1,
+                        matrix.translateVector(player.getWorld(), radius, Math.sin(angle) * width, Math.cos(angle) * width), 500);
+            }
+
+            for (int c = 0; c < 15; c++) {
+                double angle = c / 15D * Math.PI * 2;
+                double width = 0.6;
+
+                ParticleEffect.SPELL.display(0, 0, 0, 0, 1,
+                        matrix.translateVector(player.getWorld(), radius, Math.sin(angle) * width, Math.cos(angle) * width), 500);
+            }
+        }
+
+        CircleEffect circle = new CircleEffect(wp.getGame(), wp.getTeam(), player.getLocation(), radius);
+        circle.addEffect(new CircumferenceEffect(ParticleEffect.VILLAGER_HAPPY).particlesPerCircumference(2));
         circle.playEffects();
     }
 }
