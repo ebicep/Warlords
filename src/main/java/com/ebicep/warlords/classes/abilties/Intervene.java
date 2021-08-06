@@ -18,6 +18,7 @@ public class Intervene extends AbstractAbility {
     private float damagePrevented = 0;
 
     private final int duration = 5;
+    private final int radius = 10;
 
     public Intervene() {
         super("Intervene", 0, 0, 14.09f, 20, 0, 0);
@@ -31,13 +32,15 @@ public class Intervene extends AbstractAbility {
                 "§7they would have taken back to you.\n" +
                 "§7You can protect the target for a maximum\n" +
                 "§7of §c3600 §7damage. You must remain within\n" +
-                "§e15 §7blocks of each other. Lasts §6" + duration + " §7seconds.";
+                "§e15 §7blocks of each other. Lasts §6" + duration + " §7seconds." +
+                "\n\n" +
+                "§7Has an initial cast range of §e" + radius + " §7blocks.";;
     }
 
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
         setDamagePrevented(0);
-        PlayerFilter.entitiesAround(wp, 10, 10, 10)
+        PlayerFilter.entitiesAround(wp, radius, radius, radius)
                 .aliveTeammatesOfExcludingSelf(wp)
                 .requireLineOfSightIntervene(wp)
                 .lookingAtFirst(wp)

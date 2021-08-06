@@ -26,7 +26,8 @@ public class UndyingArmy extends AbstractAbility {
             .lore("§7Right-click this item to die\n§7instantly instead of waiting for\n§7the decay.")
             .get();
 
-    private final int radius = 12;
+    private final int radius = 15;
+    private final int duration = 10;
 
     private boolean armyDead = false;
 
@@ -41,26 +42,32 @@ public class UndyingArmy extends AbstractAbility {
     }
 
     public UndyingArmy() {
-        super("Undying Army", 0, 0, 65, 20, 0, 0);
+        super("Undying Army", 0, 0, 62.64f, 20, 0, 0);
     }
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7When you or nearby allies take\n" +
-                "§7fatal damage within §610 §7seconds,\n" +
-                "§7instantly restore them to §a100% §7health\n" +
-                "§7instead. They will take §c500 §7TRUE DAMAGE\n" +
-                "§7every second for the rest of their life.\n" +
-                "§7Allies not revived will heal for §a200 §7+\n" +
-                "§a35% §7of their missing health §610 §7seconds\n" +
-                "§7after this abilty was cast.";
+        description = "§7You may chain up to §e5 §7allies in a §e" + radius + "\n" +
+                "§7block radius to heal them for §a100 §7+\n" +
+                "§7§a10% §7of their missing health every §62 §7seconds.\n" +
+                "Lasts §6" + duration + " §7seconds." +
+                "\n\n" +
+                "§7Chained allies that take fatal damage\n" +
+                "§7will be revived with §a100% §7of their max health\n" +
+                "§7and §e50% §7max energy. Revived allies rapidly\n" +
+                "§7take §c10% §7of their max health as damage every\n" +
+                "§70.75 seconds." +
+                "\n\n" +
+                "§7Picking up orbs while being under the effect of undying\n" +
+                "§7army will grant you §e5% §7damage reduction for\n" +
+                "§63 §7seconds.";
     }
 
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
         wp.subtractEnergy(energyCost);
         UndyingArmy tempUndyingArmy = new UndyingArmy();
-        wp.getCooldownManager().addCooldown(UndyingArmy.this.getClass(), tempUndyingArmy, "ARMY", 10, wp, CooldownTypes.ABILITY);
+        wp.getCooldownManager().addCooldown(UndyingArmy.this.getClass(), tempUndyingArmy, "ARMY", duration, wp, CooldownTypes.ABILITY);
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -68,7 +75,21 @@ public class UndyingArmy extends AbstractAbility {
                     if (!((UndyingArmy) wp.getCooldownManager().getCooldown(tempUndyingArmy).get().getCooldownObject()).isArmyDead()) {
                         float healAmount = 100 + (wp.getMaxHealth() - wp.getHealth()) / 10f;
                         wp.addHealth(wp, name, healAmount, healAmount, -1, 100);
-                        player.playSound(wp.getLocation(), "paladin.holyradiance.activation", 0.35f, 0.75f);
+                        player.playSound(wp.getLocation(), "paladin.holyradiance.activation", 0.25f, 0.8f);
+                        Location playerLoc = player.getLocation();
+                        playerLoc.add(0, 2.1, 0);
+                        Location particleLoc = playerLoc.clone();
+                        for (int i = 0; i < 1; i++) {
+                            for (int j = 0; j < 10; j++) {
+                                double angle = j / 10D * Math.PI * 2;
+                                double width = 0.5;
+                                particleLoc.setX(playerLoc.getX() + Math.sin(angle) * width);
+                                particleLoc.setY(playerLoc.getY() + i / 5D);
+                                particleLoc.setZ(playerLoc.getZ() + Math.cos(angle) * width);
+
+                                ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(255, 255, 255), particleLoc, 500);
+                            }
+                        }
                     } else {
                         this.cancel();
                     }
@@ -83,8 +104,8 @@ public class UndyingArmy extends AbstractAbility {
                 .aliveTeammatesOfExcludingSelf(wp)
         ) {
             wp.sendMessage("§a\u00BB§7 " + ChatColor.GRAY + "Your Undying Army is now protecting " + teammate.getColoredName() + ChatColor.GRAY + ".");
-            teammate.getCooldownManager().addCooldown(UndyingArmy.this.getClass(), tempUndyingArmy, "ARMY", 10, wp, CooldownTypes.ABILITY);
-            teammate.sendMessage("§a\u00BB§7 " + ChatColor.GRAY + wp.getName() + "'s Undying Army protects you for " + ChatColor.GOLD + "10 " + ChatColor.GRAY + "seconds.");
+            teammate.getCooldownManager().addCooldown(UndyingArmy.this.getClass(), tempUndyingArmy, "ARMY", duration, wp, CooldownTypes.ABILITY);
+            teammate.sendMessage("§a\u00BB§7 " + ChatColor.GRAY + wp.getName() + "'s Undying Army protects you for " + ChatColor.GOLD + duration + ChatColor.GRAY + " seconds.");
             new BukkitRunnable() {
                 @Override
                 public void run() {
@@ -92,7 +113,21 @@ public class UndyingArmy extends AbstractAbility {
                         if (!((UndyingArmy) teammate.getCooldownManager().getCooldown(tempUndyingArmy).get().getCooldownObject()).isArmyDead()) {
                             float healAmount = 100 + (teammate.getMaxHealth() - teammate.getHealth()) / 10f;
                             teammate.addHealth(wp, name, healAmount, healAmount, -1, 100);
-                            player.playSound(teammate.getLocation(), "paladin.holyradiance.activation", 0.35f, 0.75f);
+                            player.playSound(teammate.getLocation(), "paladin.holyradiance.activation", 0.25f, 0.8f);
+                            Location playerLoc = player.getLocation();
+                            playerLoc.add(0, 2.1, 0);
+                            Location particleLoc = playerLoc.clone();
+                            for (int i = 0; i < 1; i++) {
+                                for (int j = 0; j < 10; j++) {
+                                    double angle = j / 10D * Math.PI * 2;
+                                    double width = 0.5;
+                                    particleLoc.setX(playerLoc.getX() + Math.sin(angle) * width);
+                                    particleLoc.setY(playerLoc.getY() + i / 5D);
+                                    particleLoc.setZ(playerLoc.getZ() + Math.cos(angle) * width);
+
+                                    ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(255, 255, 255), particleLoc, 500);
+                                }
+                            }
                         } else {
                             this.cancel();
                         }
@@ -108,13 +143,16 @@ public class UndyingArmy extends AbstractAbility {
                 break;
             }
         }
+
         String allies = numberOfPlayersWithArmy == 1 ? "ally." : "allies.";
         wp.sendMessage("§a\u00BB§7 " + ChatColor.GRAY + "Your Undying Army is now protecting " + ChatColor.YELLOW + numberOfPlayersWithArmy + ChatColor.GRAY + " nearby " + allies);
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), Sound.ZOMBIE_IDLE, 2, 0.3f);
+            player1.playSound(player.getLocation(), Sound.AMBIENCE_THUNDER, 2, 0.9f);
         }
 
+        // Effects
         Location loc = player.getEyeLocation();
         loc.setPitch(0);
         loc.setYaw(0);
