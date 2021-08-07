@@ -6,6 +6,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.potion.Potion;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,6 +31,11 @@ public class ItemBuilder {
 
     public ItemBuilder(ItemStack stack) throws IllegalArgumentException {
         item = new ItemStack(stack);
+    }
+
+    public ItemBuilder(Potion potion, int amount, boolean splash) {
+        potion.setSplash(splash);
+        item = potion.toItemStack(amount);
     }
 
     protected ItemMeta meta() {
@@ -57,7 +63,6 @@ public class ItemBuilder {
     public ItemBuilder lore(String... lore) {
         return lore(Arrays.asList(lore));
     }
-
     public ItemBuilder lore(Collection<String> lore) {
         for (String row : lore) {
             if (row.contains("\n")) {

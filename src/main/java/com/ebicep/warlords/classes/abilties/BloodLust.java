@@ -27,7 +27,7 @@ public class BloodLust extends AbstractAbility {
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
         wp.subtractEnergy(energyCost);
-        wp.getCooldownManager().addCooldown(BloodLust.this.getClass(), new BloodLust(), "LUST", duration, wp, CooldownTypes.ABILITY);
+        wp.getCooldownManager().addCooldown(name, BloodLust.this.getClass(), new BloodLust(), "LUST", duration, wp, CooldownTypes.ABILITY);
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "warrior.bloodlust.activation", 2, 1);

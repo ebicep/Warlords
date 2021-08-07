@@ -17,6 +17,7 @@ public class CooldownManager {
 
     private WarlordsPlayer warlordsPlayer;
     private List<Cooldown> cooldowns;
+    private int totalCooldowns = 0;
 
     public CooldownManager(WarlordsPlayer warlordsPlayer) {
         this.warlordsPlayer = warlordsPlayer;
@@ -40,13 +41,13 @@ public class CooldownManager {
     }
 
     public List<Cooldown> getCooldown(String name) {
-        return cooldowns.stream().filter(cooldown -> cooldown.getName().contains(name)).collect(Collectors.toList());
+        return cooldowns.stream().filter(cooldown -> cooldown.getActionBarName().contains(name)).collect(Collectors.toList());
     }
 
     public void reduceCooldowns() {
         for (int i = 0; i < cooldowns.size(); i++) {
             Cooldown cooldown = cooldowns.get(i);
-            String name = cooldown.getName();
+            String name = cooldown.getActionBarName();
             Class cooldownClass = cooldown.getCooldownClass();
             Object cooldownObject = cooldown.getCooldownObject();
 
@@ -103,23 +104,41 @@ public class CooldownManager {
         return cooldowns;
     }
 
+    public int getTotalCooldowns() {
+        return totalCooldowns;
+    }
+
     public List<Cooldown> getBuffCooldowns() {
         return cooldowns.stream().filter(cooldown -> cooldown.getCooldownType() == CooldownTypes.BUFF).collect(Collectors.toList());
+    }
+
+    public void removeBuffCooldowns() {
+        cooldowns.removeIf(cd -> cd.getCooldownType() == CooldownTypes.BUFF);
     }
 
     public List<Cooldown> getDebuffCooldowns() {
         return cooldowns.stream().filter(cooldown -> cooldown.getCooldownType() == CooldownTypes.DEBUFF).collect(Collectors.toList());
     }
 
+    public void removeDebuffCooldowns() {
+        cooldowns.removeIf(cd -> cd.getCooldownType() == CooldownTypes.DEBUFF);
+    }
+
     public List<Cooldown> getAbilityCooldowns() {
         return cooldowns.stream().filter(cooldown -> cooldown.getCooldownType() == CooldownTypes.ABILITY).collect(Collectors.toList());
     }
 
-    public void addCooldown(Class cooldownClass, Object cooldownObject, String name, float timeLeft, WarlordsPlayer from, CooldownTypes cooldownType) {
-        cooldowns.add(new Cooldown(cooldownClass, cooldownObject, name, timeLeft, from, cooldownType));
+    public void removeAbilityCooldowns() {
+        cooldowns.removeIf(cd -> cd.getCooldownType() == CooldownTypes.ABILITY);
+    }
+
+    public void addCooldown(String name, Class cooldownClass, Object cooldownObject, String actionBarName, float timeLeft, WarlordsPlayer from, CooldownTypes cooldownType) {
+        this.totalCooldowns++;
+        cooldowns.add(new Cooldown(name, cooldownClass, cooldownObject, actionBarName, timeLeft, from, cooldownType));
     }
 
     public void addCooldown(Cooldown cooldown) {
+        this.totalCooldowns++;
         cooldowns.add(cooldown);
     }
 

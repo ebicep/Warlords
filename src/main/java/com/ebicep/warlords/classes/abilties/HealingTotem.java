@@ -54,7 +54,7 @@ public class HealingTotem extends AbstractTotemBase {
 
     @Override
     protected void onActivation(WarlordsPlayer wp, Player player, ArmorStand totemStand) {
-        wp.getCooldownManager().addCooldown(this.getClass(), new HealingTotem(), "TOTEM", duration, wp, CooldownTypes.ABILITY);
+        wp.getCooldownManager().addCooldown(name, this.getClass(), new HealingTotem(), "TOTEM", duration, wp, CooldownTypes.ABILITY);
 
 
         new BukkitRunnable() {

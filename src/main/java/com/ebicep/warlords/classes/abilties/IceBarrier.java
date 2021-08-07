@@ -30,7 +30,7 @@ public class IceBarrier extends AbstractAbility {
 
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
-        wp.getCooldownManager().addCooldown(IceBarrier.this.getClass(), new IceBarrier(), "ICE", duration, wp, CooldownTypes.ABILITY);
+        wp.getCooldownManager().addCooldown(name, IceBarrier.this.getClass(), new IceBarrier(), "ICE", duration, wp, CooldownTypes.ABILITY);
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "mage.icebarrier.activation", 2, 1);

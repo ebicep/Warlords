@@ -2,22 +2,28 @@ package com.ebicep.warlords.player;
 
 public class Cooldown {
 
+    private String name;
     private Class cooldownClass;
     private Object cooldownObject;
-    private String name;
+    private String actionBarName;
     private float timeLeft;
     private WarlordsPlayer from;
     private CooldownTypes cooldownType;
     private boolean hidden;
 
-    public Cooldown(Class ability, Object cooldownObject, String name, float timeLeft, WarlordsPlayer from, CooldownTypes cooldownType) {
+    public Cooldown(String name, Class ability, Object cooldownObject, String actionBarName, float timeLeft, WarlordsPlayer from, CooldownTypes cooldownType) {
+        this.name = name;
         this.cooldownClass = ability;
         this.cooldownObject = cooldownObject;
-        this.name = name;
+        this.actionBarName = actionBarName;
         this.timeLeft = timeLeft;
         this.from = from;
         this.cooldownType = cooldownType;
         this.hidden = false;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public Class getCooldownClass() {
@@ -28,8 +34,8 @@ public class Cooldown {
         return cooldownObject;
     }
 
-    public String getName() {
-        return name;
+    public String getActionBarName() {
+        return actionBarName;
     }
 
     public float getTimeLeft() {

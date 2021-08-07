@@ -29,7 +29,7 @@ public class Berserk extends AbstractAbility {
     public void onActivate(WarlordsPlayer wp, Player player) {
         wp.subtractEnergy(energyCost);
         wp.getSpeed().addSpeedModifier("Berserk", 30, duration * 20, "BASE");
-        wp.getCooldownManager().addCooldown(Berserk.this.getClass(), new Berserk(), "BERS", duration, wp, CooldownTypes.BUFF);
+        wp.getCooldownManager().addCooldown(name, Berserk.this.getClass(), new Berserk(), "BERS", duration, wp, CooldownTypes.BUFF);
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "warrior.berserk.activation", 2, 1);

@@ -61,7 +61,7 @@ public class DeathsDebt extends AbstractTotemBase {
     @Override
     protected void onActivation(WarlordsPlayer wp, Player player, ArmorStand totemStand) {
         final int secondsLeft = 4 + (4 * (int) Math.round((double) wp.getHealth() / wp.getMaxHealth()));
-        wp.getCooldownManager().addCooldown(this.getClass(), new Repentance(), "RESP", secondsLeft, wp, CooldownTypes.ABILITY);
+        wp.getCooldownManager().addCooldown("Spirits Respite", this.getClass(), new Repentance(), "RESP", secondsLeft, wp, CooldownTypes.ABILITY);
 
         player.setMetadata("TOTEM", new FixedMetadataValue(Warlords.getInstance(), this));
 
@@ -86,8 +86,8 @@ public class DeathsDebt extends AbstractTotemBase {
                     player.sendMessage("§c\u00AB §2Spirit's Respite §7delayed §c" + -Math.round(getDelayedDamage()) + " §7damage. §6" + timeLeft[0] + " §7seconds left.");
                 } else {
                     if (timeLeft[0] == 0) {
-                        wp.getCooldownManager().getCooldowns().removeIf(cd -> cd.getName().equals("RESP"));
-                        wp.getCooldownManager().addCooldown(this.getClass(), new DeathsDebt(), "DEBT", 6, wp, CooldownTypes.ABILITY);
+                        wp.getCooldownManager().getCooldowns().removeIf(cd -> cd.getActionBarName().equals("RESP"));
+                        wp.getCooldownManager().addCooldown(name, this.getClass(), new DeathsDebt(), "DEBT", 6, wp, CooldownTypes.ABILITY);
                         player.removeMetadata("TOTEM", Warlords.getInstance());
 
                         if (!isPlayerInRadius) {

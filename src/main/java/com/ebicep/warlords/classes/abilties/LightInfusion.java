@@ -29,7 +29,7 @@ public class LightInfusion extends AbstractAbility {
     public void onActivate(WarlordsPlayer wp, Player player) {
         wp.subtractEnergy(energyCost);
         wp.getSpeed().addSpeedModifier("Infusion", 40, duration * 20, "BASE");
-        wp.getCooldownManager().addCooldown(LightInfusion.this.getClass(), new LightInfusion(cooldown), "INF", duration, wp, CooldownTypes.BUFF);
+        wp.getCooldownManager().addCooldown(name, LightInfusion.this.getClass(), new LightInfusion(cooldown), "INF", duration, wp, CooldownTypes.BUFF);
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "paladin.infusionoflight.activation", 2, 1);

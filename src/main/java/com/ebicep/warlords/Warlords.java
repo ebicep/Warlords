@@ -317,10 +317,10 @@ public class Warlords extends JavaPlugin {
                         }
 
                         if (warlordsPlayer.isDisableCooldowns()) {
-                            warlordsPlayer.getSpec().getRed().setCooldown(0);
-                            warlordsPlayer.getSpec().getPurple().setCooldown(0);
-                            warlordsPlayer.getSpec().getBlue().setCooldown(0);
-                            warlordsPlayer.getSpec().getOrange().setCooldown(0);
+                            warlordsPlayer.getSpec().getRed().setCurrentCooldown(0);
+                            warlordsPlayer.getSpec().getPurple().setCurrentCooldown(0);
+                            warlordsPlayer.getSpec().getBlue().setCurrentCooldown(0);
+                            warlordsPlayer.getSpec().getOrange().setCurrentCooldown(0);
                             warlordsPlayer.setHorseCooldown(0);
                         }
 
@@ -659,7 +659,7 @@ public class Warlords extends JavaPlugin {
                             warlordsPlayer.getHealedBy().entrySet().removeIf(p -> p.getValue() <= 0);
 
                             if (warlordsPlayer.getName().equals("sumTrash")) {
-                                System.out.println(warlordsPlayer.getHitBy());
+
                             }
                         }
                         WarlordsEvents.entityList.removeIf(e -> !e.isValid());

@@ -31,7 +31,7 @@ public class WoundingStrikeDefender extends AbstractStrikeBase {
         }
         if (!nearPlayer.getCooldownManager().hasCooldown(WoundingStrikeBerserker.class)) {
             nearPlayer.getCooldownManager().removeCooldown(WoundingStrikeDefender.class);
-            nearPlayer.getCooldownManager().addCooldown(this.getClass(), new WoundingStrikeDefender(), "WND", 3, wp, CooldownTypes.DEBUFF);
+            nearPlayer.getCooldownManager().addCooldown(name, this.getClass(), new WoundingStrikeDefender(), "WND", 3, wp, CooldownTypes.DEBUFF);
         }
     }
 }

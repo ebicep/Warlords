@@ -337,20 +337,20 @@ public class GameMenu {
         HotkeyMode selectedHotkeyMode = HotkeyMode.getSelected(player);
 
         Menu menu = new Menu("Settings", 9 * 6);
-        menu.setItem(
-                1,
-                1,
-                new ItemBuilder(selectedPowerup.item)
-                        .name(Settings.powerupsName)
-                        .lore(Settings.powerupsDescription, "", selectedPowerup == Powerup.ENERGY ? ChatColor.GREEN + ">>> ACTIVE <<<" : ChatColor.YELLOW + "> Click to activate! <")
-                        .flags(ItemFlag.HIDE_ENCHANTS)
-                        .get(),
-                (n, e) -> {
-                    player.sendMessage(selectedPowerup == Powerup.DAMAGE ? ChatColor.GREEN + "You have enabled energy powerups!" : ChatColor.RED + "You have disabled energy powerups!");
-                    Powerup.setSelected(player, selectedPowerup == Powerup.DAMAGE ? Powerup.ENERGY : Powerup.DAMAGE);
-                    openSettingsMenu(player);
-                }
-        );
+//        menu.setItem(
+//                1,
+//                1,
+//                new ItemBuilder(selectedPowerup.item)
+//                        .name(Settings.powerupsName)
+//                        .lore(Settings.powerupsDescription, "", selectedPowerup == Powerup.ENERGY ? ChatColor.GREEN + ">>> ACTIVE <<<" : ChatColor.YELLOW + "> Click to activate! <")
+//                        .flags(ItemFlag.HIDE_ENCHANTS)
+//                        .get(),
+//                (n, e) -> {
+//                    player.sendMessage(selectedPowerup == Powerup.DAMAGE ? ChatColor.GREEN + "You have enabled energy powerups!" : ChatColor.RED + "You have disabled energy powerups!");
+//                    Powerup.setSelected(player, selectedPowerup == Powerup.DAMAGE ? Powerup.ENERGY : Powerup.DAMAGE);
+//                    openSettingsMenu(player);
+//                }
+//        );
         menu.setItem(
                 3,
                 1,

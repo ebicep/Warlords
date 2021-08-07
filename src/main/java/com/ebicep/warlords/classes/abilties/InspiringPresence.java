@@ -32,13 +32,13 @@ public class InspiringPresence extends AbstractAbility {
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
         InspiringPresence tempPresence = new InspiringPresence();
-        wp.getCooldownManager().addCooldown(InspiringPresence.this.getClass(), tempPresence, "PRES", duration, wp, CooldownTypes.BUFF);
+        wp.getCooldownManager().addCooldown(name, InspiringPresence.this.getClass(), tempPresence, "PRES", duration, wp, CooldownTypes.BUFF);
         wp.getSpeed().addSpeedModifier("Inspiring Presence", 30, duration * 20, "BASE");
         PlayerFilter.entitiesAround(wp, 10, 10, 10)
                 .aliveTeammatesOfExcludingSelf(wp)
                 .forEach((nearPlayer) -> {
                     nearPlayer.getSpeed().addSpeedModifier("Inspiring Presence", 30, duration * 20, "BASE");
-                    nearPlayer.getCooldownManager().addCooldown(InspiringPresence.this.getClass(), tempPresence, "PRES", duration, wp, CooldownTypes.BUFF);
+                    nearPlayer.getCooldownManager().addCooldown(name, InspiringPresence.this.getClass(), tempPresence, "PRES", duration, wp, CooldownTypes.BUFF);
                 });
 
         for (Player player1 : player.getWorld().getPlayers()) {
