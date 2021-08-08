@@ -658,7 +658,7 @@ public class Warlords extends JavaPlugin {
                             warlordsPlayer.getHitBy().entrySet().removeIf(p -> p.getValue() <= 0);
                             warlordsPlayer.getHealedBy().entrySet().removeIf(p -> p.getValue() <= 0);
 
-                            if (warlordsPlayer.getName().equals("sumTrash")) {
+                            if (warlordsPlayer.getName().equals("sumSmash")) {
 
                             }
                         }

@@ -30,6 +30,10 @@ public class PlayerFlagLocation implements FlagLocation {
         this.pickUpTicks = modifier;
     }
 
+    public void addPickUpTicks(int amount) {
+        this.pickUpTicks += amount;
+    }
+
     public double getComputedMultiplier() {
         return 1 + (this.pickUpTicks / (20 * 3)) * 0.01;
     }

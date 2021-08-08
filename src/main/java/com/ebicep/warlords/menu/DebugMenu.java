@@ -2,6 +2,11 @@ package com.ebicep.warlords.menu;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.maps.GameMap;
+import com.ebicep.warlords.maps.Team;
+import com.ebicep.warlords.maps.flags.FlagManager;
+import com.ebicep.warlords.maps.flags.GroundFlagLocation;
+import com.ebicep.warlords.maps.flags.PlayerFlagLocation;
+import com.ebicep.warlords.maps.flags.SpawnFlagLocation;
 import com.ebicep.warlords.player.Cooldown;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.ItemBuilder;
@@ -129,6 +134,13 @@ public class DebugMenu {
                 new ItemBuilder(Material.BREWING_STAND_ITEM)
                         .name(ChatColor.GREEN + "Cooldowns")
                         .get(),
+                new ItemBuilder(Material.AIR)
+                        .get(),
+                new ItemBuilder(Material.AIR)
+                        .get(),
+                new ItemBuilder(Material.BANNER)
+                        .name(ChatColor.GREEN + "Flag Options")
+                        .get(),
         };
         for (int i = 0; i < firstRow.length; i++) {
             int index = i + 1;
@@ -170,6 +182,9 @@ public class DebugMenu {
                                     break;
                                 case 4:
                                     openCooldownsMenu(player, target);
+                                    break;
+                                case 7:
+                                    openFlagOptionMenu(player, target);
                                     break;
                             }
                         }
@@ -456,6 +471,16 @@ public class DebugMenu {
                                     target.getCooldownManager().getCooldowns().remove(cooldown);
                                     player.sendMessage(ChatColor.RED + "DEV: " + target.getColoredName() + "'s §a" + cooldown.getName() + " was removed");
                                     openCooldownManagerMenu(player, target);
+                                    new BukkitRunnable() {
+                                        @Override
+                                        public void run() {
+                                            if (player.getOpenInventory().getTopInventory().getName().equals("Cooldown Manager - " + target.getName())) {
+                                                openCooldownManagerMenu(player, target);
+                                            } else {
+                                                this.cancel();
+                                            }
+                                        }
+                                    }.runTaskTimer(Warlords.getInstance(), 20, 20);
                                     break;
                                 case 2:
                                     openCooldownTimerMenu(player, target, cooldown);
@@ -514,6 +539,131 @@ public class DebugMenu {
             );
         }
         menu.setItem(3, 3, MENU_BACK, (n, e) -> openCooldownsMenu(player, target));
+        menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
+        menu.openForPlayer(player);
+    }
+
+    public static void openFlagOptionMenu(Player player, WarlordsPlayer target) {
+        Menu menu = new Menu("Flag Options - " + target.getName(), 9 * 4);
+        ItemStack[] flagOptions = {
+                new ItemBuilder(Material.BANNER)
+                        .name(ChatColor.GREEN + "Pick Up Flag")
+                        .get(),
+                new ItemBuilder(Material.BED)
+                        .name(ChatColor.GREEN + "Return the Flag")
+                        .get(),
+                new ItemBuilder(Material.GRASS)
+                        .name(ChatColor.GREEN + "Drop Flag")
+                        .get(),
+                new ItemBuilder(Material.REDSTONE_COMPARATOR)
+                        .name(ChatColor.GREEN + "Set Multiplier")
+                        .get(),
+        };
+        for (int i = 0; i < flagOptions.length; i++) {
+            int finalI = i;
+            menu.setItem(i + 1, 1, flagOptions[i],
+                    (n, e) -> {
+                        FlagManager flagManager = target.getGameState().flags();
+                        WarlordsPlayer blueFlagPlayer = flagManager.getPlayerWithBlueFlag();
+                        WarlordsPlayer redFlagPlayer = flagManager.getPlayerWithRedFlag();
+                        switch (finalI) {
+                            case 0:
+                                if ((target.getTeam() == Team.RED && blueFlagPlayer == target) || (target.getTeam() == Team.BLUE && redFlagPlayer == target)) {
+                                    player.sendMessage(ChatColor.RED + "DEV: §aThat player already has the flag");
+                                } else {
+                                    if (target.getTeam() == Team.BLUE) {
+                                        if (redFlagPlayer != null) {
+                                            //dropping flag from teammate
+                                            flagManager.dropFlag(redFlagPlayer);
+                                            //repicking it
+                                            flagManager.getRed().setFlag(new PlayerFlagLocation(target, ((GroundFlagLocation) flagManager.getRed().getFlag()).getDamageTimer()));
+                                        } else {
+                                            //picking up flag
+                                            flagManager.getRed().setFlag(new PlayerFlagLocation(target, 0));
+                                        }
+                                    } else if (target.getTeam() == Team.RED) {
+                                        if (blueFlagPlayer != null) {
+                                            //dropping flag from teammate
+                                            flagManager.dropFlag(blueFlagPlayer);
+                                            //repicking it
+                                            flagManager.getBlue().setFlag(new PlayerFlagLocation(target, ((GroundFlagLocation) flagManager.getBlue().getFlag()).getDamageTimer()));
+                                        } else {
+                                            //picking up flag
+                                            flagManager.getBlue().setFlag(new PlayerFlagLocation(target, 0));
+                                        }
+                                    }
+                                }
+                                break;
+                            case 1:
+                                if (flagManager.hasFlag(target)) {
+                                    flagManager.dropFlag(target);
+                                    if (target.getTeam() == Team.BLUE) {
+                                        flagManager.getRed().setFlag(new SpawnFlagLocation(flagManager.getRed().getSpawnLocation(), player.getName()));
+                                    } else {
+                                        flagManager.getBlue().setFlag(new SpawnFlagLocation(flagManager.getBlue().getSpawnLocation(), player.getName()));
+                                    }
+                                } else {
+                                    player.sendMessage(ChatColor.RED + "DEV: §aThat player does not have the flag");
+                                }
+                                break;
+                            case 2:
+                                if (flagManager.hasFlag(target)) {
+                                    flagManager.dropFlag(target);
+                                } else {
+                                    player.sendMessage(ChatColor.RED + "DEV: §aThat player does not have the flag");
+                                }
+                                break;
+                            case 3:
+                                if (flagManager.hasFlag(target)) {
+                                    openFlagMultiplierMenu(player, target);
+                                } else {
+                                    player.sendMessage(ChatColor.RED + "DEV: §aThat player does not have the flag");
+                                }
+                                break;
+                        }
+                    }
+            );
+        }
+        menu.setItem(3, 3, MENU_BACK, (n, e) -> openPlayerMenu(player, target));
+        menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
+        menu.openForPlayer(player);
+    }
+
+    public static void openFlagMultiplierMenu(Player player, WarlordsPlayer target) {
+        Menu menu = new Menu("Flag Multiplier - " + target.getName(), 9 * 4);
+        int[] multipliers = {5, 10, 30, 60, 100, 150, 300};
+        for (int i = 0; i < 7; i++) {
+            int finalI = i;
+            menu.setItem(i + 1, 1,
+                    new ItemBuilder(Utils.woolSortedByColor[i + 5])
+                            .name(ChatColor.GREEN.toString() + multipliers[i])
+                            .get(),
+                    (n, e) -> {
+                        FlagManager flagManager = target.getGameState().flags();
+                        int amount = e.isLeftClick() ? multipliers[finalI] : -multipliers[finalI];
+                        if (target.getTeam() == Team.BLUE) {
+                            if (flagManager.getPlayerWithRedFlag() != null) {
+                                PlayerFlagLocation redFlag = ((PlayerFlagLocation) flagManager.getRed().getFlag());
+                                if (redFlag.getPickUpTicks() + (60 * amount) < 0) {
+                                    amount = -redFlag.getPickUpTicks() / 60;
+                                }
+                                redFlag.addPickUpTicks(60 * amount);
+                                player.sendMessage(ChatColor.RED + "DEV: §aThe blue flag carrier gained " + amount + "%");
+                            }
+                        } else if (target.getTeam() == Team.RED) {
+                            if (flagManager.getPlayerWithBlueFlag() != null) {
+                                PlayerFlagLocation blueFlag = ((PlayerFlagLocation) flagManager.getBlue().getFlag());
+                                if (blueFlag.getPickUpTicks() + (60 * amount) < 0) {
+                                    amount = -blueFlag.getPickUpTicks() / 60;
+                                }
+                                blueFlag.addPickUpTicks(60 * amount);
+                                player.sendMessage(ChatColor.RED + "DEV: §aThe red flag carrier gained " + amount + "%");
+                            }
+                        }
+                    }
+            );
+        }
+        menu.setItem(3, 3, MENU_BACK, (n, e) -> openFlagOptionMenu(player, target));
         menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
     }
