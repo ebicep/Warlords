@@ -34,6 +34,7 @@ public class SpiritLink extends AbstractChainBase {
         for (WarlordsPlayer nearPlayer : PlayerFilter
                 .entitiesAround(player, 15, 13, 15)
                 .aliveEnemiesOf(wp)
+                .lookingAtFirst(wp)
         ) {
             if (Utils.isLookingAtChain(player, nearPlayer.getEntity()) && Utils.hasLineOfSight(player, nearPlayer.getEntity())) {
                 chain(player.getLocation(), nearPlayer.getLocation());

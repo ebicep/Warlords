@@ -36,7 +36,9 @@ public class ChainHeal extends AbstractChainBase {
         int hitCounter = 0;
         for (WarlordsPlayer nearPlayer : PlayerFilter
                 .entitiesAround(player, 15, 14, 15)
-                .aliveTeammatesOfExcludingSelf(wp)) {
+                .aliveTeammatesOfExcludingSelf(wp)
+                .lookingAtFirst(wp)
+        ) {
             if (Utils.isLookingAtChain(player, nearPlayer.getEntity()) && Utils.hasLineOfSight(player, nearPlayer.getEntity())) {
                 //self heal
                 player.playSound(player.getLocation(), Sound.ORB_PICKUP, 1, 1);
