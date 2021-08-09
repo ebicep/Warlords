@@ -28,6 +28,15 @@ public class MenuEventListener implements Listener {
 
     @EventHandler
     public void inventoryClose(InventoryCloseEvent evt) {
+//        new BukkitRunnable() {
+//            @Override
+//            public void run() {
+//                if(evt.getPlayer().getOpenInventory().getTopInventory().getTitle().equals("container.crafting")) {
+//                    evt.getPlayer().removeMetadata(METADATA_CUSTOM_INVENTORY, Warlords.getInstance());
+//                }
+//            }
+//        }.runTaskLater(Warlords.getInstance(), 1);
+
 //        List<MetadataValue> meta = new ArrayList<>(evt.getPlayer().getMetadata(METADATA_CUSTOM_INVENTORY));
 //        int matchedIndex = -1;
 //        for (int i = 0; i < meta.size(); i++) {

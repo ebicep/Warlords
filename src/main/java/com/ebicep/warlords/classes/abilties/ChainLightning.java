@@ -48,7 +48,7 @@ public class ChainLightning extends AbstractChainBase {
 
     @Override
     protected void onHit(WarlordsPlayer warlordsPlayer, Player player, int hitCounter) {
-        warlordsPlayer.getCooldownManager().addCooldown(this.getClass(), new ChainLightning(), "CHAIN(" + hitCounter + ")", 4, warlordsPlayer, CooldownTypes.BUFF);
+        warlordsPlayer.getCooldownManager().addCooldown(name, this.getClass(), new ChainLightning(), "CHAIN(" + hitCounter + ")", 4, warlordsPlayer, CooldownTypes.BUFF);
         warlordsPlayer.getSpec().getRed().setCurrentCooldown((float) (cooldown * warlordsPlayer.getCooldownModifier()));
 
         player.playSound(player.getLocation(), "shaman.chainlightning.impact", 2, 1);

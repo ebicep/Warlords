@@ -39,7 +39,7 @@ public class OrbsOfLife extends AbstractAbility {
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
         wp.subtractEnergy(energyCost);
-        wp.getCooldownManager().addCooldown(OrbsOfLife.this.getClass(), new OrbsOfLife(), "ORBS", 13, wp, CooldownTypes.ABILITY);
+        wp.getCooldownManager().addCooldown(name, OrbsOfLife.this.getClass(), new OrbsOfLife(), "ORBS", 13, wp, CooldownTypes.ABILITY);
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "warrior.revenant.orbsoflife", 2, 1);

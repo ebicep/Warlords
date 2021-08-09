@@ -2,6 +2,7 @@ package com.ebicep.warlords.commands;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.player.PlayerSettings;
+import com.ebicep.warlords.player.Settings;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -27,6 +28,7 @@ public class HotkeyModeCommand implements CommandExecutor {
             if (warlordsPlayer != null) {
                 warlordsPlayer.setHotKeyMode(!warlordsPlayer.isHotKeyMode());
             }
+            Warlords.databaseManager.updatePlayerInformation(player, "hotkeymode", settings.hotKeyMode() ? Settings.HotkeyMode.NEW_MODE.name() : Settings.HotkeyMode.CLASSIC_MODE.name());
         }
 
         return true;

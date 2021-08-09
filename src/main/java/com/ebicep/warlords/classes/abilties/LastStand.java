@@ -38,7 +38,7 @@ public class LastStand extends AbstractAbility {
     public void onActivate(WarlordsPlayer wp, Player player) {
         wp.subtractEnergy(energyCost);
         LastStand tempLastStand = new LastStand();
-        wp.getCooldownManager().addCooldown(LastStand.this.getClass(), tempLastStand, "LAST", selfDuration, wp, CooldownTypes.BUFF);
+        wp.getCooldownManager().addCooldown(name, LastStand.this.getClass(), tempLastStand, "LAST", selfDuration, wp, CooldownTypes.BUFF);
         PlayerFilter.entitiesAround(wp, radius, radius, radius)
                 .aliveTeammatesOfExcludingSelf(wp)
                 .forEach((nearPlayer) -> {
@@ -49,7 +49,7 @@ public class LastStand extends AbstractAbility {
                         ParticleEffect.VILLAGER_HAPPY.display(0, 0, 0, 0.35F, 1, lineLocation, 500);
                         lineLocation.add(lineLocation.getDirection().multiply(.5));
                     }
-                    nearPlayer.getCooldownManager().addCooldown(LastStand.this.getClass(), tempLastStand, "LAST", allyDuration, wp, CooldownTypes.BUFF);
+                    nearPlayer.getCooldownManager().addCooldown(name, LastStand.this.getClass(), tempLastStand, "LAST", allyDuration, wp, CooldownTypes.BUFF);
                     player.sendMessage("§7Your Last Stand is now protecting §e" + nearPlayer.getName());
                 });
 

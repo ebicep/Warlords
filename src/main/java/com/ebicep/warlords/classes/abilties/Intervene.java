@@ -69,9 +69,9 @@ public class Intervene extends AbstractAbility {
                     });
 
                     wp.sendMessage("§a\u00BB§7 You are now protecting " + nearWarlordsPlayer.getName() + " with your §eIntervene!");
-                    wp.getCooldownManager().addCooldown(new Cooldown(Intervene.this.getClass(), tempIntervene, "VENE", duration, wp, CooldownTypes.ABILITY));
+                    wp.getCooldownManager().addCooldown(new Cooldown(name, Intervene.this.getClass(), tempIntervene, "VENE", duration, wp, CooldownTypes.ABILITY));
                     nearWarlordsPlayer.sendMessage("§a\u00BB§7 " + wp.getName() + " is shielding you with their " + ChatColor.YELLOW + "Intervene" + ChatColor.GRAY + "!");
-                    nearWarlordsPlayer.getCooldownManager().addCooldown(new Cooldown(Intervene.this.getClass(), tempIntervene, "VENE", duration, wp, CooldownTypes.ABILITY));
+                    nearWarlordsPlayer.getCooldownManager().addCooldown(new Cooldown(name, Intervene.this.getClass(), tempIntervene, "VENE", duration, wp, CooldownTypes.ABILITY));
 
                     wp.getSpec().getBlue().setCurrentCooldown((float) (cooldown * wp.getCooldownModifier()));
                     wp.updateBlueItem();

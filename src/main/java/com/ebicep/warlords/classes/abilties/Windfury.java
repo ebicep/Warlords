@@ -36,7 +36,7 @@ public class Windfury extends AbstractAbility {
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
         wp.subtractEnergy(energyCost);
-        wp.getCooldownManager().addCooldown(Windfury.this.getClass(), new Windfury(), "FURY", duration, wp, CooldownTypes.ABILITY);
+        wp.getCooldownManager().addCooldown(name, Windfury.this.getClass(), new Windfury(), "FURY", duration, wp, CooldownTypes.ABILITY);
 
         firstProc = true;
 

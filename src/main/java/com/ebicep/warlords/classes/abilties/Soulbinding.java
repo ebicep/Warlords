@@ -41,7 +41,7 @@ public class Soulbinding extends AbstractAbility {
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
         wp.subtractEnergy(energyCost);
-        wp.getCooldownManager().addCooldown(Soulbinding.this.getClass(), new Soulbinding(), "SOUL", duration, wp, CooldownTypes.ABILITY);
+        wp.getCooldownManager().addCooldown(name, Soulbinding.this.getClass(), new Soulbinding(), "SOUL", duration, wp, CooldownTypes.ABILITY);
 
         ItemMeta newItemMeta = player.getInventory().getItem(0).getItemMeta();
         newItemMeta.addEnchant(Enchantment.OXYGEN, 1, true);

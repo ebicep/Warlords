@@ -79,8 +79,8 @@ public final class WarlordsPlayer {
     private final int[] kills = new int[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
     private final int[] assists = new int[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
     //assists = player - timeLeft(10 seconds)
-    private LinkedHashMap<WarlordsPlayer, Integer> hitBy = new LinkedHashMap<>();
-    private LinkedHashMap<WarlordsPlayer, Integer> healedBy = new LinkedHashMap<>();
+    private final LinkedHashMap<WarlordsPlayer, Integer> hitBy = new LinkedHashMap<>();
+    private final LinkedHashMap<WarlordsPlayer, Integer> healedBy = new LinkedHashMap<>();
     private final int[] deaths = new int[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
     private final float[] damage = new float[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
     private final float[] healing = new float[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
@@ -202,12 +202,12 @@ public final class WarlordsPlayer {
         actionBarMessage.append(team.boldColoredPrefix()).append(" TEAM  ");
         for (Cooldown cooldown : cooldownManager.getCooldowns()) {
             if (!cooldown.isHidden()) {
-                if (cooldown.getName().equals("WND") || cooldown.getName().equals("CRIP")) {
+                if (cooldown.getActionBarName().equals("WND") || cooldown.getActionBarName().equals("CRIP")) {
                     actionBarMessage.append(ChatColor.RED);
                 } else {
                     actionBarMessage.append(ChatColor.GREEN);
                 }
-                actionBarMessage.append(cooldown.getName()).append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append((int) cooldown.getTimeLeft() + 1).append(" ");
+                actionBarMessage.append(cooldown.getActionBarName()).append(ChatColor.GRAY).append(":").append(ChatColor.GOLD).append((int) cooldown.getTimeLeft() + 1).append(" ");
             }
         }
         if (entity instanceof Player) {
@@ -573,7 +573,7 @@ public final class WarlordsPlayer {
                 }
 
                 for (Cooldown cooldown : cooldownManager.getCooldown(ChainLightning.class)) {
-                    String chainName = cooldown.getName();
+                    String chainName = cooldown.getActionBarName();
                     totalReduction *= 1 - Integer.parseInt(chainName.charAt(chainName.indexOf("(") + 1) + "") * .1;
                 }
 
