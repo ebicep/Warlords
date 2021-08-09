@@ -179,6 +179,11 @@ public class CustomScoreboard {
         scoreboard.getTeam("team_3").setSuffix(ChatColor.GREEN.toString() + warlordsPlayer.getTotalAssists() + ChatColor.RESET + " Assists");
     }
 
+    public void updateClass() {
+        scoreboard.getTeam("team_5").setPrefix(ChatColor.WHITE + "Class: ");
+        scoreboard.getTeam("team_5").setSuffix(ChatColor.GREEN + warlordsPlayer.getSpec().getClass().getSimpleName());
+    }
+
     public Scoreboard getScoreboard() {
         return scoreboard;
     }

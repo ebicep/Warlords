@@ -6,7 +6,7 @@ import com.ebicep.warlords.classes.paladin.AbstractPaladin;
 public class Crusader extends AbstractPaladin {
 
     public Crusader() {
-        super(6850, 305, 20,
+        super("Crusader", 6850, 305, 20,
                 new CrusadersStrike(),
                 new Consecrate(-144, -194.4f, 50, 15, 200, 15),
                 new LightInfusion(15.66f),

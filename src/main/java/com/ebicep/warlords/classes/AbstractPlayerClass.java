@@ -23,10 +23,11 @@ public abstract class AbstractPlayerClass {
     protected AbstractAbility purple;
     protected AbstractAbility blue;
     protected AbstractAbility orange;
+    protected String name;
     protected String className;
     protected String classNameShort;
 
-    public AbstractPlayerClass(int maxHealth, int maxEnergy, int energyPerSec, int energyOnHit, int damageResistance, AbstractAbility weapon, AbstractAbility red, AbstractAbility purple, AbstractAbility blue, AbstractAbility orange) {
+    public AbstractPlayerClass(String name, int maxHealth, int maxEnergy, int energyPerSec, int energyOnHit, int damageResistance, AbstractAbility weapon, AbstractAbility red, AbstractAbility purple, AbstractAbility blue, AbstractAbility orange) {
         this.maxHealth = maxHealth;
         this.maxEnergy = maxEnergy;
         this.energyPerSec = energyPerSec;
@@ -37,6 +38,7 @@ public abstract class AbstractPlayerClass {
         this.purple = purple;
         this.blue = blue;
         this.orange = orange;
+        this.name = name;
         if (red.getName().contains("Consecrate")) {
             className = "Paladin";
             classNameShort = "PAL";
@@ -275,6 +277,10 @@ public abstract class AbstractPlayerClass {
 
     public void setOrange(AbstractAbility orange) {
         this.orange = orange;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public String getClassName() {

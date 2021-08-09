@@ -5,7 +5,7 @@ import com.ebicep.warlords.classes.mage.AbstractMage;
 
 public class Pyromancer extends AbstractMage {
     public Pyromancer() {
-        super(5200, 305, 20, 14, 0,
+        super("Pyromancer", 5200, 305, 20, 14, 0,
                 new Fireball(),
                 new FlameBurst(),
                 new TimeWarp(),

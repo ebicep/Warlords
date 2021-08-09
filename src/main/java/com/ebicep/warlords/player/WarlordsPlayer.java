@@ -48,7 +48,7 @@ public final class WarlordsPlayer {
     private final PlayingState gameState;
     private final Team team;
     private AbstractPlayerClass spec;
-    private final Classes specClass;
+    private Classes specClass;
     private final Weapons weapon;
     private boolean hotKeyMode;
     private int health;
@@ -450,8 +450,25 @@ public final class WarlordsPlayer {
         return spec;
     }
 
-    public void setSpec(AbstractPlayerClass spec) {
+    public void setSpec(AbstractPlayerClass spec, ClassesSkillBoosts skillBoosts) {
+        Warlords.getPlayerSettings(uuid).selectedClass(Classes.getClass(spec.getName()));
+        Warlords.getPlayerSettings(uuid).classesSkillBoosts(skillBoosts);
+        Player player = Bukkit.getPlayer(uuid);
         this.spec = spec;
+        this.specClass = Warlords.getPlayerSettings(uuid).selectedClass();
+        ArmorManager.resetArmor(player, specClass, team);
+        applySkillBoost(player);
+        this.spec.getWeapon().updateDescription(player);
+        this.spec.getRed().updateDescription(player);
+        this.spec.getPurple().updateDescription(player);
+        this.spec.getBlue().updateDescription(player);
+        this.spec.getOrange().updateDescription(player);
+        this.maxHealth = (int) (this.spec.getMaxHealth() * (gameState.getGame().getCooldownMode() ? 1.5 : 1));
+        this.health = this.maxHealth;
+        this.maxEnergy = this.spec.getMaxEnergy();
+        this.energy = this.maxEnergy;
+        this.scoreboard.updateClass();
+        assignItemLore(Bukkit.getPlayer(uuid));
     }
 
     public boolean isHotKeyMode() {
