@@ -51,6 +51,7 @@ public class EarthenSpike extends AbstractAbility {
         for (WarlordsPlayer p : PlayerFilter
                 .entitiesAround(player, 10, 10, 10)
                 .aliveEnemiesOf(wp)
+                .lookingAtFirst(wp)
         ) {
             if (Utils.isLookingAt(player, p.getEntity()) && Utils.hasLineOfSight(player, p.getEntity())) {
                 PacketPlayOutAnimation playOutAnimation = new PacketPlayOutAnimation(((CraftPlayer) player).getHandle(), 0);
