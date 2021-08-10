@@ -330,7 +330,7 @@ public class WarlordsEvents implements Listener {
     @EventHandler
     public void onOpenInventory(InventoryOpenEvent e) {
         if (e.getPlayer().getVehicle() != null) {
-            if (e.getInventory().getHolder().getInventory().getTitle().equals("Horse")) {
+            if (e.getInventory().getHolder() != null && e.getInventory().getHolder().getInventory().getTitle().equals("Horse")) {
                 e.setCancelled(true);
             }
         }
