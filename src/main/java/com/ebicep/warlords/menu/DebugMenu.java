@@ -12,6 +12,7 @@ import com.ebicep.warlords.util.ItemBuilder;
 import com.ebicep.warlords.util.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.enchantments.Enchantment;
@@ -115,11 +116,12 @@ public class DebugMenu {
                         .get(),
                 new ItemBuilder(Material.AIR)
                         .get(),
-                new ItemBuilder(Material.AIR)
-                        .get(),
                 new ItemBuilder(new Potion(PotionType.INSTANT_DAMAGE), 1, true)
                         .name(ChatColor.GREEN + "Kill")
                         .flags(ItemFlag.HIDE_POTION_EFFECTS)
+                        .get(),
+                new ItemBuilder(Material.WOOL, 1, (short) (Warlords.getPlayerSettings(player.getUniqueId()).wantedTeam() == Team.BLUE ? 14 : 11))
+                        .name(ChatColor.GREEN + "Swap to the " + (Warlords.getPlayerSettings(player.getUniqueId()).wantedTeam() == Team.BLUE ? Team.RED.coloredPrefix() : Team.BLUE.coloredPrefix()) + ChatColor.GREEN + " team")
                         .get(),
         };
         ItemStack[] secondRow = {
@@ -137,7 +139,8 @@ public class DebugMenu {
                 new ItemBuilder(Material.BREWING_STAND_ITEM)
                         .name(ChatColor.GREEN + "Cooldowns")
                         .get(),
-                new ItemBuilder(Material.AIR)
+                new ItemBuilder(Material.EYE_OF_ENDER)
+                        .name(ChatColor.GREEN + "Teleport To")
                         .get(),
                 new ItemBuilder(Material.BANNER)
                         .name(ChatColor.GREEN + "Flag Options")
@@ -161,8 +164,22 @@ public class DebugMenu {
                                 case 3:
                                     Bukkit.getServer().dispatchCommand(player, "wl damage " + (target.isTakeDamage() ? "disable" : "enable") + " " + targetName);
                                     break;
-                                case 7:
+                                case 6:
                                     Bukkit.getServer().dispatchCommand(player, "kill " + targetName);
+                                    break;
+                                case 7:
+                                    Team currentTeam = target.getTeam();
+                                    Team otherTeam = target.getTeam() == Team.BLUE ? Team.RED : Team.BLUE;
+                                    target.getGame().getPlayers().remove(target.getUuid());
+                                    target.getGame().getPlayers().put(target.getUuid(), otherTeam);
+                                    //todo something with rejoin point?
+                                    target.setTeam(otherTeam);
+                                    target.getScoreboard().updatePlayerName();
+                                    Warlords.getPlayerSettings(target.getUuid()).wantedTeam(otherTeam);
+                                    target.teleport(otherTeam == Team.RED ? target.getGame().getMap().getRedLobbySpawnPoint() : target.getGame().getMap().getBlueLobbySpawnPoint());
+                                    ArmorManager.resetArmor(Bukkit.getPlayer(target.getUuid()), Warlords.getPlayerSettings(target.getUuid()).selectedClass(), otherTeam);
+                                    player.sendMessage(ChatColor.RED + "DEV: " + currentTeam.teamColor() + target.getName() + "§a was swapped to the " + otherTeam.coloredPrefix() + " §ateam");
+                                    openPlayerMenu(player, target);
                                     break;
                             }
                         }
@@ -186,6 +203,9 @@ public class DebugMenu {
                                     break;
                                 case 4:
                                     openCooldownsMenu(player, target);
+                                    break;
+                                case 5:
+                                    openTeleportLocations(player, target);
                                     break;
                                 case 6:
                                     openFlagOptionMenu(player, target);
@@ -550,6 +570,39 @@ public class DebugMenu {
         menu.openForPlayer(player);
     }
 
+    public static void openTeleportLocations(Player player, WarlordsPlayer target) {
+        Menu menu = new Menu("Teleport To - " + target.getName(), 9 * 5);
+        GameMap gameMap = target.getGame().getMap();
+        LinkedHashMap<ItemStack, Location> teleportLocationsBlue = new LinkedHashMap<>();
+        teleportLocationsBlue.put(new ItemBuilder(Material.BEACON).name(ChatColor.BLUE + "Lobby Spawn Point").get(), gameMap.getBlueLobbySpawnPoint());
+        teleportLocationsBlue.put(new ItemBuilder(Material.BED).name(ChatColor.BLUE + "Respawn Point").get(), gameMap.getBlueRespawn());
+        teleportLocationsBlue.put(new ItemBuilder(Material.BANNER).name(ChatColor.BLUE + "Flag").get(), gameMap.getBlueFlag());
+        teleportLocationsBlue.put(new ItemBuilder(Material.WOOL, 1, (short) 1).name(ChatColor.BLUE + "Energy Powerup").get(), gameMap.getDamagePowerupBlue());
+        teleportLocationsBlue.put(new ItemBuilder(Material.WOOL, 1, (short) 5).name(ChatColor.BLUE + "Healing Powerup").get(), gameMap.getHealingPowerupBlue());
+        teleportLocationsBlue.put(new ItemBuilder(Material.WOOL, 1, (short) 4).name(ChatColor.BLUE + "Speed Powerup").get(), gameMap.getSpeedPowerupBlue());
+        LinkedHashMap<ItemStack, Location> teleportLocationsRed = new LinkedHashMap<>();
+        teleportLocationsRed.put(new ItemBuilder(Material.BEACON).name(ChatColor.RED + "Lobby Spawn Point").get(), gameMap.getBlueLobbySpawnPoint());
+        teleportLocationsRed.put(new ItemBuilder(Material.BED).name(ChatColor.RED + "Respawn Point").get(), gameMap.getBlueRespawn());
+        teleportLocationsRed.put(new ItemBuilder(Material.BANNER).name(ChatColor.RED + "Flag").get(), gameMap.getBlueFlag());
+        teleportLocationsRed.put(new ItemBuilder(Material.WOOL, 1, (short) 1).name(ChatColor.RED + "Energy Powerup").get(), gameMap.getDamagePowerupBlue());
+        teleportLocationsRed.put(new ItemBuilder(Material.WOOL, 1, (short) 5).name(ChatColor.RED + "Healing Powerup").get(), gameMap.getHealingPowerupBlue());
+        teleportLocationsRed.put(new ItemBuilder(Material.WOOL, 1, (short) 4).name(ChatColor.RED + "Speed Powerup").get(), gameMap.getSpeedPowerupBlue());
+        for (int i = 0; i < teleportLocationsBlue.entrySet().size(); i++) {
+            int finalI = i;
+            menu.setItem(i + 1, 1, (ItemStack) teleportLocationsBlue.keySet().toArray()[i], (n, e) -> {
+                target.teleport(teleportLocationsBlue.get((ItemStack) teleportLocationsBlue.keySet().toArray()[finalI]));
+                player.sendMessage(ChatColor.RED + "DEV: " + target.getColoredName() + "§a was teleported to the " + ChatColor.BLUE + "Blue " + ((ItemStack) teleportLocationsBlue.keySet().toArray()[finalI]).getItemMeta().getDisplayName());
+            });
+            menu.setItem(i + 1, 2, (ItemStack) teleportLocationsRed.keySet().toArray()[i], (n, e) -> {
+                target.teleport(teleportLocationsRed.get((ItemStack) teleportLocationsRed.keySet().toArray()[finalI]));
+                player.sendMessage(ChatColor.RED + "DEV: " + target.getColoredName() + "§a was teleported to the " + ChatColor.RED + "Red " + ((ItemStack) teleportLocationsRed.keySet().toArray()[finalI]).getItemMeta().getDisplayName());
+            });
+        }
+        menu.setItem(3, 4, MENU_BACK, (n, e) -> openPlayerMenu(player, target));
+        menu.setItem(4, 4, MENU_CLOSE, ACTION_CLOSE_MENU);
+        menu.openForPlayer(player);
+    }
+
     public static void openFlagOptionMenu(Player player, WarlordsPlayer target) {
         Menu menu = new Menu("Flag Options - " + target.getName(), 9 * 4);
         ItemStack[] flagOptions = {
@@ -721,6 +774,7 @@ public class DebugMenu {
                     (n, e) -> {
                         setSelectedBoost(Bukkit.getPlayer(target.getUuid()), skillBoost);
                         target.setSpec(selectedClass.create.get(), skillBoost);
+                        target.getScoreboard().updatePlayerName();
                         player.sendMessage(ChatColor.RED + "DEV: " + target.getColoredName() + "'s §aspec was changed to " + selectedClass.name);
                         openSpecMenu(player, target);
                     }

@@ -112,7 +112,7 @@ public class GameMenu {
                     (n, e) -> {
                         player.sendMessage(ChatColor.WHITE + "Class: §6" + subClass);
                         setSelected(player, subClass);
-                        ArmorManager.resetArmor(player, subClass, Team.BLUE);
+                        ArmorManager.resetArmor(player, subClass, Warlords.getPlayerSettings(player.getUniqueId()).wantedTeam());
                         openClassMenu(player, selectedGroup);
                     }
             );

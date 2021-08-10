@@ -46,7 +46,7 @@ public final class WarlordsPlayer {
     private final String name;
     private final UUID uuid;
     private final PlayingState gameState;
-    private final Team team;
+    private Team team;
     private AbstractPlayerClass spec;
     private Classes specClass;
     private final Weapons weapon;
@@ -444,6 +444,10 @@ public final class WarlordsPlayer {
 
     public UUID getUuid() {
         return uuid;
+    }
+
+    public void setTeam(Team team) {
+        this.team = team;
     }
 
     public AbstractPlayerClass getSpec() {

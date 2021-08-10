@@ -93,6 +93,16 @@ public class CustomScoreboard {
         });
     }
 
+    public void updatePlayerName() {
+        this.gameState.getGame().forEachOfflinePlayer((player, team) -> {
+            WarlordsPlayer wp = Warlords.getPlayer(player);
+            if (wp != null) {
+                wp.getScoreboard().getScoreboard().getTeam(warlordsPlayer.getName()).setPrefix(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + warlordsPlayer.getSpec().getClassNameShort() + ChatColor.DARK_GRAY + "] " + warlordsPlayer.getTeam().teamColor());
+                wp.getScoreboard().getScoreboard().getTeam(warlordsPlayer.getName()).setSuffix(ChatColor.DARK_GRAY + " [" + ChatColor.GOLD + "Lv90" + ChatColor.DARK_GRAY + "]");
+            }
+        });
+    }
+
     public void updateBasedOnGameState(PlayingState gameState) {
 
         this.updateHealth();
