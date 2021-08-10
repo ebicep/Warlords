@@ -593,7 +593,7 @@ public class Warlords extends JavaPlugin {
                                 }
                             }
                             //8 seconds until orb expires
-                            if (orb.getBukkitEntity().getTicksLived() > 160) {
+                            if (orb.getBukkitEntity().getTicksLived() > 160 || (orb.getPlayerToMoveTowards() != null && orb.getPlayerToMoveTowards().isDeath())) {
                                 orb.remove();
                                 itr.remove();
                             }
