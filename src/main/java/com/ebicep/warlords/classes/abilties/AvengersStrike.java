@@ -9,7 +9,7 @@ import javax.annotation.Nonnull;
 
 public class AvengersStrike extends AbstractStrikeBase {
 
-    private final int energySteal = 10;
+    private final int energySteal = 6;
 
     public AvengersStrike() {
         super("Avenger's Strike", -359, -485, 0, 90, 25, 185);
@@ -30,7 +30,6 @@ public class AvengersStrike extends AbstractStrikeBase {
             nearPlayer.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
         }
         nearPlayer.subtractEnergy(energySteal);
-
         if (!wp.getCooldownManager().getCooldown(AvengersWrath.class).isEmpty()) {
             for (WarlordsPlayer wrathTarget : PlayerFilter
                     .entitiesAround(nearPlayer, 5, 4, 5)

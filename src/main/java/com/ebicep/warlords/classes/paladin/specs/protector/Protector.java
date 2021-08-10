@@ -6,7 +6,7 @@ import com.ebicep.warlords.classes.paladin.AbstractPaladin;
 public class Protector extends AbstractPaladin {
 
     public Protector() {
-        super(5750, 385, 0,
+        super("Protector", 5750, 385, 0,
                 new ProtectorsStrike(),
                 new Consecrate(-96, -130, 10, 15, 200, 15),
                 new LightInfusion(15.66f),

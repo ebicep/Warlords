@@ -11,7 +11,6 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.apache.commons.lang.Validate;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
@@ -91,17 +90,21 @@ public class Game implements Runnable {
             throw new IllegalStateException("Cannot change map!");
         }
         this.map = map;
-        if(state != null) {
+        if (state != null) {
             state.end();
             state = null;
         }
+    }
+
+    public Map<UUID, Team> getPlayers() {
+        return players;
     }
 
     public void addPlayer(@Nonnull OfflinePlayer player, @Nonnull Team team) {
         Validate.notNull(player, "player");
         Validate.notNull(team, "team");
         Player online = player.getPlayer();
-        if(online != null) {
+        if (online != null) {
             online.setGameMode(GameMode.ADVENTURE);
         }
         this.players.put(player.getUniqueId(), team);
