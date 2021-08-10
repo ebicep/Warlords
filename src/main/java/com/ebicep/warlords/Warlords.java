@@ -549,39 +549,50 @@ public class Warlords extends JavaPlugin {
                         Iterator<OrbsOfLife.Orb> itr = orbs.iterator();
                         while (itr.hasNext()) {
                             OrbsOfLife.Orb orb = itr.next();
+                            orb.incrementTicksLived();
                             Location orbPosition = orb.getArmorStand().getLocation();
-                            if (orbPosition.distanceSquared(playerPosition) < 1.75 * 1.75 && !warlordsPlayer.isDeath()) {
+                            if (orbPosition.distanceSquared(playerPosition) < 1.70 * 1.70 && !warlordsPlayer.isDeath()) {
                                 orb.remove();
                                 itr.remove();
 
-                                //504 302
+                                float minHeal = 252;
+                                float maxHeal = 420;
                                 if (Warlords.getPlayerSettings(orb.getOwner().getUuid()).classesSkillBoosts() == ClassesSkillBoosts.ORBS_OF_LIFE) {
-                                    warlordsPlayer.addHealth(orb.getOwner(), "Orbs of Life", 420 * 1.2f, 420 * 1.2f, -1, 100);
-                                } else {
-                                    warlordsPlayer.addHealth(orb.getOwner(), "Orbs of Life", 420, 420, -1, 100);
+                                    minHeal *= 1.2;
+                                    maxHeal *= 1.2;
                                 }
+                                //BASE                           = 252 - 420
+                                //BASE + WEAP BOOST              = 302 - 504 (x1.2)
+                                //BASE + TIME LIVED              = 378 - 630 (x1.5 = 8 seconds)
+                                //BASE + WEAP BOOST + TIME LIVED = 453 - 756 (x1.8 = x1.2 * x1.5)
+
+                                //increasing heal for low long orb lived for (up to +50%)
+                                //8 seconds = 1 + (160/320) = 1.5
+                                //504 *= 1.5 = 756
+                                //302 *= 1.5 = 453
+                                if (orb.getPlayerToMoveTowards() == null) {
+                                    minHeal *= 1 + orb.getTicksLived() / 320f;
+                                    maxHeal *= 1 + orb.getTicksLived() / 320f;
+                                }
+
+                                warlordsPlayer.addHealth(orb.getOwner(), "Orbs of Life", maxHeal, maxHeal, -1, 100);
                                 //damage resistance
-                                for (Cooldown cooldown : warlordsPlayer.getCooldownManager().getCooldown(UndyingArmy.class)) {
-                                    if (!((UndyingArmy) cooldown.getCooldownObject()).isArmyDead()) {
-                                        warlordsPlayer.getCooldownManager().removeCooldown("RES");
-                                        warlordsPlayer.getCooldownManager().addCooldown("Resistance", null, null, "RES", 3, orb.getOwner(), CooldownTypes.BUFF);
-                                        break;
-                                    }
+                                if (warlordsPlayer.getCooldownManager().getCooldown(UndyingArmy.class).stream().anyMatch(cd -> !((UndyingArmy) cd.getCooldownObject()).isArmyDead())) {
+                                    warlordsPlayer.getCooldownManager().removeCooldown("RES");
+                                    warlordsPlayer.getCooldownManager().addCooldown("Resistance", null, null, "RES", 3, orb.getOwner(), CooldownTypes.BUFF);
                                 }
-
-
-                                for (WarlordsPlayer nearPlayer : PlayerFilter
-                                        .entitiesAround(warlordsPlayer, 4, 4, 4)
-                                        .aliveTeammatesOfExcludingSelf(warlordsPlayer)
-                                        .limit(2)
-                                ) {
-                                    if (Warlords.getPlayerSettings(orb.getOwner().getUuid()).classesSkillBoosts() == ClassesSkillBoosts.ORBS_OF_LIFE) {
-                                        nearPlayer.addHealth(orb.getOwner(), "Orbs of Life", 252 * 1.2f, 252 * 1.2f, -1, 100);
-                                    } else {
-                                        nearPlayer.addHealth(orb.getOwner(), "Orbs of Life", 252, 252, -1, 100);
+                                //only heals teammate if orb doesnt have a target
+                                if (orb.getPlayerToMoveTowards() == null) {
+                                    for (WarlordsPlayer nearPlayer : PlayerFilter
+                                            .entitiesAround(warlordsPlayer, 4, 4, 4)
+                                            .aliveTeammatesOfExcludingSelf(warlordsPlayer)
+                                            .limit(2)
+                                    ) {
+                                        nearPlayer.addHealth(orb.getOwner(), "Orbs of Life", minHeal, minHeal, -1, 100);
                                     }
                                 }
                             }
+                            //8 seconds until orb expires
                             if (orb.getBukkitEntity().getTicksLived() > 160) {
                                 orb.remove();
                                 itr.remove();

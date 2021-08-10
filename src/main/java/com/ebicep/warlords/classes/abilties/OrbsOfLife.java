@@ -1,17 +1,24 @@
 package com.ebicep.warlords.classes.abilties;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.util.LocationBuilder;
+import com.ebicep.warlords.util.PlayerFilter;
 import net.minecraft.server.v1_8_R3.EntityExperienceOrb;
 import net.minecraft.server.v1_8_R3.EntityHuman;
 import net.minecraft.server.v1_8_R3.World;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,11 +46,61 @@ public class OrbsOfLife extends AbstractAbility {
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
         wp.subtractEnergy(energyCost);
-        wp.getCooldownManager().addCooldown(name, OrbsOfLife.this.getClass(), new OrbsOfLife(), "ORBS", 13, wp, CooldownTypes.ABILITY);
+        OrbsOfLife tempOrbsOfLight = new OrbsOfLife();
+        wp.getCooldownManager().addCooldown(name, OrbsOfLife.this.getClass(), tempOrbsOfLight, "ORBS", 13, wp, CooldownTypes.ABILITY);
+
+        tempOrbsOfLight.getSpawnedOrbs().add(new Orb(((CraftWorld) player.getLocation().getWorld()).getHandle(), generateSpawnLocation(player.getLocation()), wp));
+        tempOrbsOfLight.getSpawnedOrbs().add(new Orb(((CraftWorld) player.getLocation().getWorld()).getHandle(), generateSpawnLocation(player.getLocation()), wp));
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "warrior.revenant.orbsoflife", 2, 1);
         }
+
+        new BukkitRunnable() {
+            int counter = 0;
+
+            @Override
+            public void run() {
+                counter++;
+                if (wp.isAlive() && player.isSneaking()) {
+                    //setting target player to move towards (includes self)
+                    tempOrbsOfLight.getSpawnedOrbs().forEach(orb -> orb.setPlayerToMoveTowards(PlayerFilter
+                            .entitiesAround(orb.armorStand.getLocation(), 15, 15, 15)
+                            .aliveTeammatesOf(wp)
+                            .closestFirst(orb.getArmorStand().getLocation())
+                            .findFirstOrNull()
+                    ));
+                    //moving orb
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            tempOrbsOfLight.getSpawnedOrbs().stream().filter(orb -> orb.getPlayerToMoveTowards() != null).forEach(targetOrb -> {
+                                WarlordsPlayer target = targetOrb.getPlayerToMoveTowards();
+                                ArmorStand orbArmorStand = targetOrb.getArmorStand();
+                                Location orbLocation = orbArmorStand.getLocation();
+                                Entity orb = orbArmorStand.getPassenger();
+                                //must eject passenger then reassign it before teleporting bc ???
+                                orbArmorStand.eject();
+                                orbArmorStand.teleport(
+                                        new LocationBuilder(orbLocation.clone())
+                                                .add(target.getLocation().toVector().subtract(orbLocation.toVector()).normalize().multiply(.5))
+                                                .get()
+                                );
+                                orbArmorStand.setPassenger(orb);
+                            });
+                            if (tempOrbsOfLight.getSpawnedOrbs().stream().noneMatch(orb -> orb.getPlayerToMoveTowards() != null)) {
+                                this.cancel();
+                            }
+                        }
+                    }.runTaskTimer(Warlords.getInstance(), 0, 0);
+                    player.sendMessage(ChatColor.GREEN + "Your current orbs will now levitate towards a teammate!");
+                    this.cancel();
+                }
+                if (counter >= 20 * 13 || wp.isDeath()) {
+                    this.cancel();
+                }
+            }
+        }.runTaskTimer(Warlords.getInstance(), 0, 0);
     }
 
     public Location generateSpawnLocation(Location location) {
@@ -104,10 +161,26 @@ public class OrbsOfLife extends AbstractAbility {
 
         private ArmorStand armorStand;
         private final WarlordsPlayer owner;
+        private int ticksLived = 0;
+        private WarlordsPlayer playerToMoveTowards = null;
 
         public Orb(World world, Location location, WarlordsPlayer owner) {
             super(world, location.getX(), location.getY(), location.getZ(), 1000);
             this.owner = owner;
+            ArmorStand orbStand = (ArmorStand) location.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
+            orbStand.setVisible(false);
+            orbStand.setGravity(false);
+            orbStand.setPassenger(spawn(location).getBukkitEntity());
+            this.armorStand = orbStand;
+        }
+
+        @Override
+        public String toString() {
+            return "Orb{" +
+                    "owner=" + owner +
+                    ", ticksLived=" + ticksLived +
+                    ", playerToMoveTowards=" + playerToMoveTowards +
+                    '}';
         }
 
         // Makes it so they cannot be picked up
@@ -135,12 +208,24 @@ public class OrbsOfLife extends AbstractAbility {
             return armorStand;
         }
 
-        public void setArmorStand(ArmorStand armorStand) {
-            this.armorStand = armorStand;
-        }
-
         public WarlordsPlayer getOwner() {
             return owner;
+        }
+
+        public int getTicksLived() {
+            return ticksLived;
+        }
+
+        public void incrementTicksLived() {
+            this.ticksLived++;
+        }
+
+        public WarlordsPlayer getPlayerToMoveTowards() {
+            return playerToMoveTowards;
+        }
+
+        public void setPlayerToMoveTowards(WarlordsPlayer playerToMoveTowards) {
+            this.playerToMoveTowards = playerToMoveTowards;
         }
     }
 }

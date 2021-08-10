@@ -793,12 +793,6 @@ public final class WarlordsPlayer {
                                 Location spawnLocation = orbsOfLife.generateSpawnLocation(location);
 
                                 OrbsOfLife.Orb orb = new OrbsOfLife.Orb(((CraftWorld) location.getWorld()).getHandle(), spawnLocation, attacker);
-                                ArmorStand orbStand = (ArmorStand) location.getWorld().spawnEntity(spawnLocation, EntityType.ARMOR_STAND);
-                                orbStand.setVisible(false);
-                                orbStand.setGravity(false);
-                                orbStand.setPassenger(orb.spawn(spawnLocation).getBukkitEntity());
-                                orb.setArmorStand(orbStand);
-
                                 orbsOfLife.getSpawnedOrbs().add(orb);
 
                                 // Hacky way
