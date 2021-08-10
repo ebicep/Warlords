@@ -20,7 +20,7 @@ import java.util.List;
 
 public class HammerOfLight extends AbstractAbility {
 
-    private final static int radius = 6;
+    private final static int radius = 7;
     private final float hammerMinDamage = 159.85f;
     private final float hammerMaxDamage = 216.2f;
 

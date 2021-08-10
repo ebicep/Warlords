@@ -48,7 +48,7 @@ public class ChainHeal extends AbstractChainBase {
                 hitCounter++;
 
                 for (WarlordsPlayer chainPlayerOne : PlayerFilter
-                        .entitiesAround(nearPlayer, bounceRange, 9, bounceRange)
+                        .entitiesAround(nearPlayer, bounceRange, bounceRange, bounceRange)
                         .aliveTeammatesOf(wp)
                         .excluding(wp, nearPlayer)
                 ) {
@@ -57,7 +57,7 @@ public class ChainHeal extends AbstractChainBase {
                     hitCounter++;
 
                     for (WarlordsPlayer chainPlayerTwo : PlayerFilter
-                            .entitiesAround(chainPlayerOne, bounceRange, 9, bounceRange)
+                            .entitiesAround(chainPlayerOne, bounceRange, bounceRange, bounceRange)
                             .aliveTeammatesOf(wp)
                             .excluding(wp, nearPlayer, chainPlayerOne)
                     ) {

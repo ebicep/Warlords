@@ -5,6 +5,7 @@ import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.LocationBuilder;
+import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
 import net.minecraft.server.v1_8_R3.EntityExperienceOrb;
 import net.minecraft.server.v1_8_R3.EntityHuman;
@@ -12,6 +13,7 @@ import net.minecraft.server.v1_8_R3.World;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -29,25 +31,33 @@ public class OrbsOfLife extends AbstractAbility {
     public static final double SPAWN_RADIUS = 1.75;
     private List<Orb> spawnedOrbs = new ArrayList<>();
 
+    private final int duration = 14;
+    private final int floatingOrbRadius = 20;
+
     public OrbsOfLife() {
         super("Orbs of Life", 252, 420, 19.57f, 20, 0, 0);
     }
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Striking and hitting enemies with\n" +
-                "§7abilities causes them to drop an orb of\n" +
-                "§7life that lasts §68 §7seconds, restoring\n" +
-                "§a" + maxDamageHeal + " §7health to the ally that pick it up.\n" +
-                "§7Other nearby allies recover §a" + minDamageHeal + " §7health.\n" +
-                "§7Lasts §613.2 §7seconds.";
+        description = "§7Spawn §e2 §7initial orbs on cast." +
+                "\n\n" +
+                "§7Striking and hitting enemies with abilities\n" +
+                "§7causes them to drop an orb of life that lasts §68\n" +
+                "§7§7seconds, restoring §a" + maxDamageHeal + " §7health to the ally that\n" +
+                "§7picks it up. Other nearby allies recover §a" + minDamageHeal + "\n" +
+                "§7health. Lasts §6" + duration + " §7seconds." +
+                "\n\n" +
+                "§7You may SNEAK once per Orbs of Life cast to make the\n" +
+                "§7orbs levitate towards the nearest ally in a §e" + floatingOrbRadius + " §7block\n" +
+                "§7radius, healing them for §a" + maxDamageHeal + " §7health.";
     }
 
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
         wp.subtractEnergy(energyCost);
         OrbsOfLife tempOrbsOfLight = new OrbsOfLife();
-        wp.getCooldownManager().addCooldown(name, OrbsOfLife.this.getClass(), tempOrbsOfLight, "ORBS", 13, wp, CooldownTypes.ABILITY);
+        wp.getCooldownManager().addCooldown(name, OrbsOfLife.this.getClass(), tempOrbsOfLight, "ORBS", duration, wp, CooldownTypes.ABILITY);
 
         tempOrbsOfLight.getSpawnedOrbs().add(new Orb(((CraftWorld) player.getLocation().getWorld()).getHandle(), generateSpawnLocation(player.getLocation()), wp));
         tempOrbsOfLight.getSpawnedOrbs().add(new Orb(((CraftWorld) player.getLocation().getWorld()).getHandle(), generateSpawnLocation(player.getLocation()), wp));
@@ -65,7 +75,7 @@ public class OrbsOfLife extends AbstractAbility {
                 if (wp.isAlive() && player.isSneaking()) {
                     //setting target player to move towards (includes self)
                     tempOrbsOfLight.getSpawnedOrbs().forEach(orb -> orb.setPlayerToMoveTowards(PlayerFilter
-                            .entitiesAround(orb.armorStand.getLocation(), 15, 15, 15)
+                            .entitiesAround(orb.armorStand.getLocation(), floatingOrbRadius, floatingOrbRadius, floatingOrbRadius)
                             .aliveTeammatesOf(wp)
                             .closestFirst(orb.getArmorStand().getLocation())
                             .findFirstOrNull()
@@ -83,7 +93,7 @@ public class OrbsOfLife extends AbstractAbility {
                                 orbArmorStand.eject();
                                 orbArmorStand.teleport(
                                         new LocationBuilder(orbLocation.clone())
-                                                .add(target.getLocation().toVector().subtract(orbLocation.toVector()).normalize().multiply(.5))
+                                                .add(target.getLocation().toVector().subtract(orbLocation.toVector()).normalize().multiply(.75))
                                                 .get()
                                 );
                                 orbArmorStand.setPassenger(orb);
@@ -93,10 +103,14 @@ public class OrbsOfLife extends AbstractAbility {
                             }
                         }
                     }.runTaskTimer(Warlords.getInstance(), 0, 1);
-                    player.sendMessage(ChatColor.GREEN + "Your current orbs will now levitate towards a teammate!");
+                    player.sendMessage(ChatColor.GREEN + "Your current orbs will now levitate towards you or a teammate!");
+                    for (Player player1 : player.getWorld().getPlayers()) {
+                        player1.playSound(player.getLocation(), Sound.LEVEL_UP, 2, 0.7f);
+                    }
+                    ParticleEffect.ENCHANTMENT_TABLE.display(0.8f, 0, 0.8f, 0, 3, player.getLocation(), 500);
                     this.cancel();
                 }
-                if (counter >= 20 * 13 || wp.isDeath()) {
+                if (counter >= 20 * duration || wp.isDeath()) {
                     this.cancel();
                 }
             }
