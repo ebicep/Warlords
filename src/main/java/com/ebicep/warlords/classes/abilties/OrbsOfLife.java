@@ -92,7 +92,7 @@ public class OrbsOfLife extends AbstractAbility {
                                 this.cancel();
                             }
                         }
-                    }.runTaskTimer(Warlords.getInstance(), 0, 0);
+                    }.runTaskTimer(Warlords.getInstance(), 0, 1);
                     player.sendMessage(ChatColor.GREEN + "Your current orbs will now levitate towards a teammate!");
                     this.cancel();
                 }

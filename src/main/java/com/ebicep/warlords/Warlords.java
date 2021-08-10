@@ -551,7 +551,8 @@ public class Warlords extends JavaPlugin {
                             OrbsOfLife.Orb orb = itr.next();
                             orb.incrementTicksLived();
                             Location orbPosition = orb.getArmorStand().getLocation();
-                            if (orbPosition.distanceSquared(playerPosition) < 1.70 * 1.70 && !warlordsPlayer.isDeath()) {
+                            if ((orb.getPlayerToMoveTowards() == null || (orb.getPlayerToMoveTowards() != null && orb.getPlayerToMoveTowards() == warlordsPlayer)) &&
+                                    orbPosition.distanceSquared(playerPosition) < 1.70 * 1.70 && !warlordsPlayer.isDeath()) {
                                 orb.remove();
                                 itr.remove();
 
