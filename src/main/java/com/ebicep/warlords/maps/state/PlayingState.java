@@ -161,22 +161,6 @@ public class PlayingState implements State, TimerDebugAble {
             @Override
             public void run() {
                 //DATABASE SHIT
-                game.forEachOnlinePlayer((player, team) -> {
-                    HashMap<String, Object> newInfo = new HashMap<>();
-                    newInfo.put("last_spec", Classes.getSelected(player).name);
-                    newInfo.put("last_weapon", Weapons.getSelected(player).name);
-                    newInfo.put("mage_helm", ArmorManager.Helmets.getSelected(player).get(0).name);
-                    newInfo.put("mage_armor", ArmorManager.ArmorSets.getSelected(player).get(0).name);
-                    newInfo.put("warrior_helm", ArmorManager.Helmets.getSelected(player).get(1).name);
-                    newInfo.put("warrior_armor", ArmorManager.ArmorSets.getSelected(player).get(1).name);
-                    newInfo.put("paladin_helm", ArmorManager.Helmets.getSelected(player).get(2).name);
-                    newInfo.put("paladin_armor", ArmorManager.ArmorSets.getSelected(player).get(2).name);
-                    newInfo.put("shaman_helm", ArmorManager.Helmets.getSelected(player).get(3).name);
-                    newInfo.put("shaman_armor", ArmorManager.ArmorSets.getSelected(player).get(3).name);
-                    newInfo.put("powerup", Settings.Powerup.getSelected(player).name());
-                    newInfo.put("hotkeymode", Settings.HotkeyMode.getSelected(player).name());
-                    Warlords.databaseManager.updatePlayerInformation(player, newInfo, FieldUpdateOperators.SET);
-                });
                 game.forEachOfflinePlayer((player, team) -> {
                     HashMap<String, Object> newInfo = new HashMap<>();
                     newInfo.put("last_spec", Classes.getSelected(player).name);

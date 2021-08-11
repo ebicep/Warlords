@@ -5,6 +5,7 @@ import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.state.PlayingState;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.util.PlayerFilter;
+import com.google.common.collect.Lists;
 import com.mongodb.MongoWriteException;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
@@ -24,10 +25,13 @@ import java.io.FileNotFoundException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static com.mongodb.client.model.Aggregates.sort;
 import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Sorts.descending;
 import static com.mongodb.client.model.Updates.combine;
 import static com.mongodb.client.model.Updates.set;
 
@@ -39,7 +43,8 @@ public class DatabaseManager {
     private MongoDatabase warlordsGamesDatabase;
     private MongoCollection<Document> playersInformation;
     private MongoCollection<Document> gamesInformation;
-    private HashMap<UUID, Document> cachedPlayerInfo;
+    private HashMap<UUID, Document> cachedPlayerInfo = new HashMap<>();
+    private HashMap<String, Long> cachedTotalKeyValues = new HashMap<>();
 
     public boolean isConnected() {
         return connected;
@@ -57,12 +62,21 @@ public class DatabaseManager {
                 warlordsGamesDatabase = mongoClient.getDatabase("Warlords_Games");
                 playersInformation = warlordsPlayersDatabase.getCollection("Players_Information");
                 gamesInformation = warlordsGamesDatabase.getCollection("Games_Information");
-                cachedPlayerInfo = new HashMap<>();
+                List<UUID> uuids = new ArrayList<>();
+                playersInformation.find().forEach((Consumer<? super Document>) document -> {
+                    UUID uuid = UUID.fromString((String) document.get("uuid"));
+                    uuids.add(uuid);
+                    cachedPlayerInfo.put(UUID.fromString((String) document.get("uuid")), document);
+                });
                 for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
                     loadPlayer(onlinePlayer);
                 }
                 Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords]: Database Connected");
                 connected = true;
+//                playersInformation.deleteMany(new Document());
+//                for (UUID uuid : uuids) {
+//                    addPlayer(uuid);
+//                }
             }
             myReader.close();
         } catch (FileNotFoundException e) {
@@ -89,6 +103,7 @@ public class DatabaseManager {
         try {
             if (hasPlayer(player.getUniqueId())) {
                 Document playerInfo = playersInformation.find(eq("uuid", player.getUniqueId().toString())).first();
+                //todo update name
                 cachedPlayerInfo.put(player.getUniqueId(), playerInfo);
                 Classes.setSelected(player, Classes.getClass((String) getPlayerInformation(player, "last_spec")));
                 Weapons.setSelected(player, Weapons.getWeapon((String) getPlayerInformation(player, "last_weapon")));
@@ -122,6 +137,8 @@ public class DatabaseManager {
                 );
                 cachedPlayerInfo.remove(player.getUniqueId());
                 loadPlayer(player);
+
+                cachedTotalKeyValues.clear();
                 System.out.println(player.getUniqueId() + " - " + player.getName() + " - " + key + " was updated to " + newValue);
             } else {
                 System.out.println("Could not update player " + player.getName() + " - Not in the database!");
@@ -143,6 +160,8 @@ public class DatabaseManager {
                 playersInformation.updateOne(eq("uuid", player.getUniqueId().toString()), update);
                 cachedPlayerInfo.remove(player.getUniqueId());
                 loadPlayer(player);
+
+                cachedTotalKeyValues.clear();
                 System.out.println(player.getUniqueId() + " - " + player.getName() + " was updated");
             } else {
                 System.out.println("Could not update player " + player.getName() + " - Not in the database!");
@@ -164,6 +183,8 @@ public class DatabaseManager {
                 playersInformation.updateOne(eq("uuid", player.getUniqueId().toString()), update);
                 cachedPlayerInfo.remove(player.getUniqueId());
                 loadPlayer(player.getPlayer());
+
+                cachedTotalKeyValues.clear();
                 System.out.println(player.getUniqueId() + " - " + player.getName() + " was updated");
             } else {
                 System.out.println("Could not update player " + player.getName() + " - Not in the database!");
@@ -194,13 +215,117 @@ public class DatabaseManager {
         }
     }
 
+    public Object getPlayerInformation(UUID uuid, String key) {
+        if (!connected) return null;
+        try {
+            if (cachedPlayerInfo.containsKey(uuid)) {
+                return cachedPlayerInfo.get(uuid).get(key);
+            } else if (hasPlayer(uuid)) {
+                Document playerInfo = playersInformation.find(eq("uuid", uuid.toString())).first();
+                cachedPlayerInfo.put(uuid, playerInfo);
+                assert playerInfo != null;
+                return playerInfo.get(key);
+            } else {
+                System.out.println("Couldn't get player " + uuid + " - Not in the database!");
+                return null;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("There was an error trying to get player " + uuid);
+            return null;
+        }
+    }
+
+    public long getPlayerTotalKey(String key) {
+        if (cachedTotalKeyValues.containsKey(key)) return cachedTotalKeyValues.get(key);
+        try {
+            long total = 0;
+            for (Map.Entry<UUID, Document> uuidDocumentEntry : cachedPlayerInfo.entrySet()) {
+                total += (Integer) uuidDocumentEntry.getValue().get(key);
+            }
+            cachedTotalKeyValues.put(key, total);
+            return total;
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("There was an error trying to total of " + key);
+            return 0L;
+        }
+    }
+
+    public int getSR(Player player) {
+        double dhp = averageAdjustedDHP(player) * 2000;
+        double wl = averageAdjustedWL(player) * 2000;
+        double kda = averageAdjustedKDA(player) * 1000;
+        return (int) Math.round(dhp + wl + kda);
+    }
+
+    public int getSR(UUID uuid) {
+        double dhp = averageAdjustedDHP(uuid) * 2000;
+        double wl = averageAdjustedWL(uuid) * 2000;
+        double kda = averageAdjustedKDA(uuid) * 1000;
+        return (int) Math.round(dhp + wl + kda);
+    }
+
+    private double averageAdjusted(long playerAverage, long total) {
+        double average = playerAverage / ((total / (double) playersInformation.countDocuments()));
+        if (average >= 5) return 1;
+        if (average <= 0) return 0;
+        return 1.00699 + (-1.02107 / (1.01398 + Math.pow(average, 3.09248)));
+    }
+
+
+    private double averageAdjustedDHP(Player player) {
+        return averageAdjustedDHP(player.getUniqueId());
+    }
+
+    private double averageAdjustedWL(Player player) {
+        return averageAdjustedWL(player.getUniqueId());
+    }
+
+    private double averageAdjustedKDA(Player player) {
+        return averageAdjustedKDA(player.getUniqueId());
+    }
+
+    private double averageAdjustedDHP(UUID uuid) {
+        long playerDHP = (Integer) getPlayerInformation(uuid, "damage") + (Integer) getPlayerInformation(uuid, "healing") + (Integer) getPlayerInformation(uuid, "absorbed");
+        long totalDHP = getPlayerTotalKey("damage") + getPlayerTotalKey("healing") + getPlayerTotalKey("absorbed");
+        return averageAdjusted(playerDHP, totalDHP);
+    }
+
+    private double averageAdjustedWL(UUID uuid) {
+        long playerWL = (Integer) getPlayerInformation(uuid, "wins") / Math.max((Integer) getPlayerInformation(uuid, "losses"), 1);
+        long totalWL = getPlayerTotalKey("wins") / Math.max(getPlayerTotalKey("losses"), 1);
+        return averageAdjusted(playerWL, totalWL);
+    }
+
+    private double averageAdjustedKDA(UUID uuid) {
+        long playerDHP = ((Integer) getPlayerInformation(uuid, "kills") + (Integer) getPlayerInformation(uuid, "assists")) / Math.max((Integer) getPlayerInformation(uuid, "deaths"), 1);
+        long totalDHP = (getPlayerTotalKey("kills") + getPlayerTotalKey("assists")) / Math.max(getPlayerTotalKey("deaths"), 1);
+        return averageAdjusted(playerDHP, totalDHP);
+    }
+
+    public HashMap<Document, Integer> getPlayersSortedBySR() {
+        if (!connected) return null;
+        try {
+            HashMap<Document, Integer> playersSr = new HashMap<>();
+            for (Document document : playersInformation.find()) {
+                playersSr.put(document, getSR(UUID.fromString((String) document.get("uuid"))));
+            }
+            return playersSr;
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Problem getting players sorted by sr");
+            return null;
+        }
+    }
+
     public List<Document> getPlayersSortedByKey(String key) {
         if (!connected) return null;
         try {
-            return playersInformation.find().into(new ArrayList<>()).stream().sorted(Comparator.comparing(d -> (Integer) ((Document) d).get(key)).reversed()).collect(Collectors.toList());
+            return Lists.newArrayList(playersInformation.aggregate(Collections.singletonList(sort(descending(key)))));
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("Problem getting top winners");
+            System.out.println("Problem getting " + key);
             return null;
         }
     }
@@ -263,6 +388,50 @@ public class DatabaseManager {
             }
         } catch (MongoWriteException e) {
             System.out.println("There was an error trying to add player " + player.getName());
+        }
+    }
+
+    public void addPlayer(UUID uuid) {
+        if (!connected) return;
+        try {
+            if (!hasPlayer(uuid)) {
+                Document newPlayerDocument = new Document("uuid", uuid.toString())
+                        .append("name", Bukkit.getServer().getOfflinePlayer(uuid).getName())
+                        .append("kills", 0)
+                        .append("assists", 0)
+                        .append("deaths", 0)
+                        .append("wins", 0)
+                        .append("losses", 0)
+                        .append("flags_captured", 0)
+                        .append("flags_returned", 0)
+                        .append("damage", 0)
+                        .append("healing", 0)
+                        .append("absorbed", 0)
+                        .append("mage", getBaseStatDocument()
+                                .append("pyromancer", getBaseStatDocument())
+                                .append("cryomancer", getBaseStatDocument())
+                                .append("aquamancer", getBaseStatDocument())
+                        )
+                        .append("warrior", getBaseStatDocument()
+                                .append("berserker", getBaseStatDocument())
+                                .append("defender", getBaseStatDocument())
+                                .append("revenant", getBaseStatDocument())
+                        )
+                        .append("paladin", getBaseStatDocument()
+                                .append("avenger", getBaseStatDocument())
+                                .append("crusader", getBaseStatDocument())
+                                .append("protector", getBaseStatDocument())
+                        )
+                        .append("shaman", getBaseStatDocument()
+                                .append("thunderlord", getBaseStatDocument())
+                                .append("spiritguard", getBaseStatDocument())
+                                .append("earthwarden", getBaseStatDocument())
+                        );
+                playersInformation.insertOne(newPlayerDocument);
+                System.out.println(uuid + " - " + Bukkit.getServer().getOfflinePlayer(uuid).getName() + " was added to the player database");
+            }
+        } catch (MongoWriteException e) {
+            System.out.println("There was an error trying to add player " + Bukkit.getServer().getOfflinePlayer(uuid).getName());
         }
     }
 
