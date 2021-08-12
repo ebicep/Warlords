@@ -259,12 +259,14 @@ public class Warlords extends JavaPlugin {
         }.runTaskAsynchronously(this);
     }
 
-    public void addHologramLeaderboard() {
+    public static void addHologramLeaderboard() {
         new BukkitRunnable() {
             @Override
             public void run() {
                 if (databaseManager != null && databaseManager.isConnected()) {
                     if (holographicDisplaysEnabled) {
+                        HologramsAPI.getHolograms(instance).forEach(Hologram::delete);
+
                         Location spawnPoint = Bukkit.getWorlds().get(0).getSpawnLocation().clone();
 
                         Location lifeTimeWinsLB = new LocationBuilder(spawnPoint.clone())
@@ -332,7 +334,7 @@ public class Warlords extends JavaPlugin {
                     this.cancel();
                 }
             }
-        }.runTaskTimer(this, 10, 0);
+        }.runTaskTimer(instance, 10, 0);
     }
 
     public void gameLoop() {

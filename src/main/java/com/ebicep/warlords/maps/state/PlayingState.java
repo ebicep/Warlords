@@ -10,6 +10,7 @@ import com.ebicep.warlords.maps.flags.FlagManager;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.powerups.PowerupManager;
 import com.ebicep.warlords.util.PacketUtils;
+import com.ebicep.warlords.util.PlayerFilter;
 import com.ebicep.warlords.util.RemoveEntities;
 import com.ebicep.warlords.util.Utils;
 import org.bukkit.Bukkit;
@@ -280,7 +281,17 @@ public class PlayingState implements State, TimerDebugAble {
         }
         Team winner = forceEnd ? null : calculateWinnerByPoints();
         if (winner != null) {
-            Warlords.databaseManager.addGame(this);
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    Warlords.databaseManager.addGame(PlayingState.this);
+                    for (WarlordsPlayer player : PlayerFilter.playingGame(game)) {
+                        if (player.getEntity() instanceof Player) {
+                            Warlords.databaseManager.loadPlayer((Player) player.getEntity());
+                        }
+                    }
+                }
+            }.runTaskAsynchronously(Warlords.getInstance());
         }
     }
 
