@@ -493,6 +493,10 @@ public class Warlords extends JavaPlugin {
                                     player.getInventory().remove(UndyingArmy.BONE);
                                 }
                             }
+
+                            //removing cooldowns here so undying army doesnt get removed
+                            cooldownManager.clearCooldowns();
+
                             // warlordsPlayer.respawn();
                             if (player != null) {
                                 player.setGameMode(GameMode.SPECTATOR);
