@@ -181,7 +181,7 @@ public class OrbsOfLife extends AbstractAbility {
         private WarlordsPlayer playerToMoveTowards = null;
 
         public Orb(World world, Location location, WarlordsPlayer owner) {
-            super(world, location.getX(), location.getY(), location.getZ(), 1000);
+            super(world, location.getX(), location.getY(), location.getZ(), 2500);
             this.owner = owner;
             ArmorStand orbStand = (ArmorStand) location.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
             orbStand.setVisible(false);
