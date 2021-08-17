@@ -15,6 +15,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class CapacitorTotem extends AbstractTotemBase {
 
+    private final int duration = 8;
+
     public CapacitorTotem() {
         super("Capacitor Totem", -404, -523, 62.64f, 20, 20, 200);
     }
@@ -25,7 +27,7 @@ public class CapacitorTotem extends AbstractTotemBase {
                 "§7on the ground. Casting Chain Lightning\n" +
                 "§7or Lightning Rod on the totem will cause\n" +
                 "§7it to pulse, dealing §c" + -minDamageHeal + " §7- §c" + -maxDamageHeal + " §7damage\n" +
-                "§7to all enemies nearby. Lasts §68 §7seconds.";
+                "§7to all enemies nearby. Lasts §6" + duration + " §7seconds.";
     }
 
     @Override
@@ -47,7 +49,7 @@ public class CapacitorTotem extends AbstractTotemBase {
 
     @Override
     protected void onActivation(WarlordsPlayer wp, Player player, ArmorStand totemStand) {
-        wp.getCooldownManager().addCooldown(name, this.getClass(), new CapacitorTotem(), "TOTEM", 8, wp, CooldownTypes.ABILITY);
+        wp.getCooldownManager().addCooldown(name, this.getClass(), new CapacitorTotem(), "TOTEM", duration, wp, CooldownTypes.ABILITY);
 
         new BukkitRunnable() {
             int timeLeft = 8;

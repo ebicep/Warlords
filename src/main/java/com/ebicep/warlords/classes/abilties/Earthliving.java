@@ -25,7 +25,8 @@ public class Earthliving extends AbstractAbility {
                 "§7Earth, causing each of your melee attacks\n" +
                 "§7to have a §e40% §7chance to heal you and §e2\n" +
                 "§7nearby allies for §a240% §7weapon damage.\n" +
-                "§7Lasts §6" + duration + " §7seconds.\n" + "\n" +
+                "§7Lasts §6" + duration + " §7seconds." +
+                "\n\n" +
                 "§7The first hit is guaranteed to activate Earthliving.";
     }
 

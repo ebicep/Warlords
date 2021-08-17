@@ -13,7 +13,7 @@ import org.bukkit.util.Vector;
 public class LightningRod extends AbstractAbility {
 
     private final int energyRestore = 160;
-    private final int knockbackRange = 5;
+    private final int knockbackRadius = 5;
 
     public LightningRod() {
         super("Lightning Rod", 0, 0, 31.32f, 0, -1, 0);
@@ -23,7 +23,8 @@ public class LightningRod extends AbstractAbility {
     public void updateDescription(Player player) {
         description = "§7Call down an energizing bolt of lightning\n" +
                 "§7upon yourself, restoring §a30% §7health and\n" +
-                "§e" + energyRestore + " §7energy and knock all nearby enemies back.";
+                "§e" + energyRestore + " §7energy and knock all nearby enemies " +
+                "§7in a §e" + knockbackRadius + " §7block radius back.";
     }
 
     @Override
@@ -34,7 +35,7 @@ public class LightningRod extends AbstractAbility {
         Location playerLocation = player.getLocation();
 
 
-        PlayerFilter.entitiesAround(player, knockbackRange, knockbackRange, knockbackRange)
+        PlayerFilter.entitiesAround(player, knockbackRadius, knockbackRadius, knockbackRadius)
                 .aliveEnemiesOf(wp)
                 .forEach((p) -> {
                     //knockback
@@ -61,7 +62,7 @@ public class LightningRod extends AbstractAbility {
                     }
                 });
 
-        new FallingBlockWaveEffect(playerLocation, knockbackRange, 1, Material.RED_ROSE, (byte) 5).play();
+        new FallingBlockWaveEffect(playerLocation, knockbackRadius, 1, Material.RED_ROSE, (byte) 5).play();
         player.getWorld().spigot().strikeLightningEffect(playerLocation, true);
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "shaman.lightningrod.activation", 2, 1);
