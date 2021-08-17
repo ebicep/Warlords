@@ -10,6 +10,7 @@ import javax.annotation.Nonnull;
 public class CrusadersStrike extends AbstractStrikeBase {
 
     private final int energyGiven = 24;
+    private final int energyRange = 10;
 
     public CrusadersStrike() {
         super("Crusader's Strike", -326, -441, 0, 90, 25, 175);
@@ -20,7 +21,7 @@ public class CrusadersStrike extends AbstractStrikeBase {
         description = "§7Strike the targeted enemy player,\n" +
                 "§7causing §c" + -minDamageHeal + " §7- §c" + -maxDamageHeal + " damage\n" +
                 "§7and restoring §e" + energyGiven + " §7energy to two nearby\n" +
-                "§7allies within §e10 §7blocks.";
+                "§7allies within §e" + energyRange + " §7blocks.";
     }
 
     @Override
@@ -31,7 +32,7 @@ public class CrusadersStrike extends AbstractStrikeBase {
             nearPlayer.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
         }
         //reloops near players to give energy to
-        PlayerFilter.entitiesAround(wp, 10, 10, 10)
+        PlayerFilter.entitiesAround(wp, energyRange, energyRange, energyRange)
                 .aliveTeammatesOfExcludingSelf(wp)
                 .closestFirst(wp)
                 .limit(2)

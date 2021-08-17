@@ -46,32 +46,32 @@ public class SpiritLink extends AbstractChainBase {
                     healNearPlayers(wp);
                 }
 
-                for (WarlordsPlayer ChainPlayerOne : PlayerFilter
-                        .entitiesAround(nearPlayer, bounceRange, 9, bounceRange)
+                for (WarlordsPlayer chainPlayerOne : PlayerFilter
+                        .entitiesAround(nearPlayer, bounceRange, bounceRange, bounceRange)
                         .aliveEnemiesOf(wp)
                         .excluding(nearPlayer)
                         .soulBindedFirst(wp)
                 ) {
-                    chain(nearPlayer.getLocation(), ChainPlayerOne.getLocation());
-                    ChainPlayerOne.addHealth(wp, name, minDamageHeal * .8f, maxDamageHeal * .8f, critChance, critMultiplier);
+                    chain(nearPlayer.getLocation(), chainPlayerOne.getLocation());
+                    chainPlayerOne.addHealth(wp, name, minDamageHeal * .8f, maxDamageHeal * .8f, critChance, critMultiplier);
                     hitCounter++;
 
-                    numberOfHeals = wp.getCooldownManager().getNumberOfBoundPlayersLink(ChainPlayerOne);
+                    numberOfHeals = wp.getCooldownManager().getNumberOfBoundPlayersLink(chainPlayerOne);
                     for (int i = 0; i < numberOfHeals; i++) {
                         healNearPlayers(wp);
                     }
 
-                    for (WarlordsPlayer ChainPlayerTwo : PlayerFilter
-                            .entitiesAround(ChainPlayerOne, bounceRange, 9, bounceRange)
+                    for (WarlordsPlayer chainPlayerTwo : PlayerFilter
+                            .entitiesAround(chainPlayerOne, bounceRange, bounceRange, bounceRange)
                             .aliveEnemiesOf(wp)
-                            .excluding(nearPlayer, ChainPlayerOne)
+                            .excluding(nearPlayer, chainPlayerOne)
                             .soulBindedFirst(wp)
                     ) {
-                        chain(ChainPlayerOne.getLocation(), ChainPlayerTwo.getLocation());
-                        ChainPlayerOne.addHealth(wp, name, minDamageHeal * .6f, maxDamageHeal * .6f, critChance, critMultiplier);
+                        chain(chainPlayerOne.getLocation(), chainPlayerTwo.getLocation());
+                        chainPlayerOne.addHealth(wp, name, minDamageHeal * .6f, maxDamageHeal * .6f, critChance, critMultiplier);
                         hitCounter++;
 
-                        numberOfHeals = wp.getCooldownManager().getNumberOfBoundPlayersLink(ChainPlayerTwo);
+                        numberOfHeals = wp.getCooldownManager().getNumberOfBoundPlayersLink(chainPlayerTwo);
                         for (int i = 0; i < numberOfHeals; i++) {
                             healNearPlayers(wp);
                         }

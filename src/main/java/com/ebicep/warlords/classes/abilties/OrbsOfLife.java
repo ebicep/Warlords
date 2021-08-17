@@ -10,10 +10,7 @@ import com.ebicep.warlords.util.PlayerFilter;
 import net.minecraft.server.v1_8_R3.EntityExperienceOrb;
 import net.minecraft.server.v1_8_R3.EntityHuman;
 import net.minecraft.server.v1_8_R3.World;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -48,9 +45,9 @@ public class OrbsOfLife extends AbstractAbility {
                 "§7picks it up. Other nearby allies recover §a" + minDamageHeal + "\n" +
                 "§7health. Lasts §6" + duration + " §7seconds." +
                 "\n\n" +
-                "§7You may SNEAK once per Orbs of Life cast to make the\n" +
-                "§7orbs levitate towards the nearest ally in a §e" + floatingOrbRadius + " §7block\n" +
-                "§7radius, healing them for §a" + maxDamageHeal + " §7health.";
+                "§7You may SNEAK once per Orbs of Life cast to make\n" +
+                "§7the orbs levitate towards the nearest ally in a §e" + floatingOrbRadius + "\n" +
+                "§7block radius, healing them for §a" + maxDamageHeal + "§7health.";
     }
 
     @Override
@@ -93,21 +90,26 @@ public class OrbsOfLife extends AbstractAbility {
                                 orbArmorStand.eject();
                                 orbArmorStand.teleport(
                                         new LocationBuilder(orbLocation.clone())
-                                                .add(target.getLocation().toVector().subtract(orbLocation.toVector()).normalize().multiply(.75))
+                                                .add(target.getLocation().toVector().subtract(orbLocation.toVector()).normalize().multiply(.95))
                                                 .get()
                                 );
                                 orbArmorStand.setPassenger(orb);
+                                ParticleEffect.VILLAGER_HAPPY.display(0, 0, 0, 0, 1, orbArmorStand.getLocation().add(0, 1.7, 0), 500);
                             });
                             if (tempOrbsOfLight.getSpawnedOrbs().stream().noneMatch(orb -> orb.getPlayerToMoveTowards() != null)) {
                                 this.cancel();
                             }
                         }
                     }.runTaskTimer(Warlords.getInstance(), 0, 1);
+
                     player.sendMessage(ChatColor.GREEN + "Your current orbs will now levitate towards you or a teammate!");
                     for (Player player1 : player.getWorld().getPlayers()) {
                         player1.playSound(player.getLocation(), Sound.LEVEL_UP, 2, 0.7f);
                     }
-                    ParticleEffect.ENCHANTMENT_TABLE.display(0.8f, 0, 0.8f, 0, 3, player.getLocation(), 500);
+                    Location particleLoc = player.getLocation();
+                    particleLoc.add(0, 1.5, 0);
+                    ParticleEffect.ENCHANTMENT_TABLE.display(0.8f, 0, 0.8f, 0.2f, 10, particleLoc, 500);
+
                     this.cancel();
                 }
                 if (counter >= 20 * duration || wp.isDeath()) {
