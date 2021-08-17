@@ -280,7 +280,7 @@ public class PlayingState implements State, TimerDebugAble {
             this.powerUps = null;
         }
         Team winner = forceEnd ? null : calculateWinnerByPoints();
-        if (winner != null) {
+        if (winner != null || game.playersCount() > 16) {
             new BukkitRunnable() {
                 @Override
                 public void run() {

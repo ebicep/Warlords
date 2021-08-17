@@ -6,6 +6,7 @@ import com.ebicep.warlords.maps.state.PlayingState;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.util.PlayerFilter;
 import com.google.common.collect.Lists;
+import com.mongodb.MongoException;
 import com.mongodb.MongoWriteException;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
@@ -62,10 +63,10 @@ public class DatabaseManager {
                 warlordsGamesDatabase = mongoClient.getDatabase("Warlords_Games");
                 playersInformation = warlordsPlayersDatabase.getCollection("Players_Information");
                 gamesInformation = warlordsGamesDatabase.getCollection("Games_Information");
-                List<UUID> uuids = new ArrayList<>();
+                //List<UUID> uuids = new ArrayList<>();
                 playersInformation.find().forEach((Consumer<? super Document>) document -> {
-                    UUID uuid = UUID.fromString((String) document.get("uuid"));
-                    uuids.add(uuid);
+                    //UUID uuid = UUID.fromString((String) document.get("uuid"));
+                    //uuids.add(uuid);
                     cachedPlayerInfo.put(UUID.fromString((String) document.get("uuid")), document);
                 });
                 for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
@@ -105,18 +106,18 @@ public class DatabaseManager {
                 Document playerInfo = playersInformation.find(eq("uuid", player.getUniqueId().toString())).first();
                 //todo update name
                 cachedPlayerInfo.put(player.getUniqueId(), playerInfo);
-                Classes.setSelected(player, Classes.getClass((String) getPlayerInformation(player, "last_spec")));
-                Weapons.setSelected(player, Weapons.getWeapon((String) getPlayerInformation(player, "last_weapon")));
-                ArmorManager.Helmets.setSelectedMage(player, ArmorManager.Helmets.getMageHelmet((String) getPlayerInformation(player, "mage_helm")));
-                ArmorManager.ArmorSets.setSelectedMage(player, ArmorManager.ArmorSets.getMageArmor((String) getPlayerInformation(player, "mage_armor")));
-                ArmorManager.Helmets.setSelectedWarrior(player, ArmorManager.Helmets.getWarriorHelmet((String) getPlayerInformation(player, "warrior_helm")));
-                ArmorManager.ArmorSets.setSelectedWarrior(player, ArmorManager.ArmorSets.getWarriorArmor((String) getPlayerInformation(player, "warrior_armor")));
-                ArmorManager.Helmets.setSelectedPaladin(player, ArmorManager.Helmets.getPaladinHelmet((String) getPlayerInformation(player, "paladin_helm")));
-                ArmorManager.ArmorSets.setSelectedPaladin(player, ArmorManager.ArmorSets.getPaladinArmor((String) getPlayerInformation(player, "paladin_armor")));
-                ArmorManager.Helmets.setSelectedShaman(player, ArmorManager.Helmets.getShamanHelmet((String) getPlayerInformation(player, "shaman_helm")));
-                ArmorManager.ArmorSets.setSelectedShaman(player, ArmorManager.ArmorSets.getShamanArmor((String) getPlayerInformation(player, "shaman_armor")));
-                Settings.Powerup.setSelected(player, Settings.Powerup.getPowerup((String) getPlayerInformation(player, "powerup")));
-                Settings.HotkeyMode.setSelected(player, Settings.HotkeyMode.getHotkeyMode((String) getPlayerInformation(player, "hotkeymode")));
+                Classes.setSelected(player, Classes.getClass((String) getPlayerInfoWithDotNotation(player, "last_spec")));
+                Weapons.setSelected(player, Weapons.getWeapon((String) getPlayerInfoWithDotNotation(player, "last_weapon")));
+                ArmorManager.Helmets.setSelectedMage(player, ArmorManager.Helmets.getMageHelmet((String) getPlayerInfoWithDotNotation(player, "mage_helm")));
+                ArmorManager.ArmorSets.setSelectedMage(player, ArmorManager.ArmorSets.getMageArmor((String) getPlayerInfoWithDotNotation(player, "mage_armor")));
+                ArmorManager.Helmets.setSelectedWarrior(player, ArmorManager.Helmets.getWarriorHelmet((String) getPlayerInfoWithDotNotation(player, "warrior_helm")));
+                ArmorManager.ArmorSets.setSelectedWarrior(player, ArmorManager.ArmorSets.getWarriorArmor((String) getPlayerInfoWithDotNotation(player, "warrior_armor")));
+                ArmorManager.Helmets.setSelectedPaladin(player, ArmorManager.Helmets.getPaladinHelmet((String) getPlayerInfoWithDotNotation(player, "paladin_helm")));
+                ArmorManager.ArmorSets.setSelectedPaladin(player, ArmorManager.ArmorSets.getPaladinArmor((String) getPlayerInfoWithDotNotation(player, "paladin_armor")));
+                ArmorManager.Helmets.setSelectedShaman(player, ArmorManager.Helmets.getShamanHelmet((String) getPlayerInfoWithDotNotation(player, "shaman_helm")));
+                ArmorManager.ArmorSets.setSelectedShaman(player, ArmorManager.ArmorSets.getShamanArmor((String) getPlayerInfoWithDotNotation(player, "shaman_armor")));
+                Settings.Powerup.setSelected(player, Settings.Powerup.getPowerup((String) getPlayerInfoWithDotNotation(player, "powerup")));
+                Settings.HotkeyMode.setSelected(player, Settings.HotkeyMode.getHotkeyMode((String) getPlayerInfoWithDotNotation(player, "hotkeymode")));
                 System.out.println("Loaded player " + player.getName());
             } else {
                 addPlayer(player);
@@ -194,46 +195,45 @@ public class DatabaseManager {
         }
     }
 
-    public Object getPlayerInformation(Player player, String key) {
-        if (!connected) return null;
-        try {
-            if (cachedPlayerInfo.containsKey(player.getUniqueId())) {
-                return cachedPlayerInfo.get(player.getUniqueId()).get(key);
-            } else if (hasPlayer(player.getUniqueId())) {
-                Document playerInfo = playersInformation.find(eq("uuid", player.getUniqueId().toString())).first();
-                cachedPlayerInfo.put(player.getUniqueId(), playerInfo);
-                assert playerInfo != null;
-                return playerInfo.get(key);
-            } else {
-                System.out.println("Couldn't get player " + player.getName() + " - Not in the database!");
-                return null;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("There was an error trying to get player " + player.getName());
-            return null;
-        }
+    public Object getPlayerInfoWithDotNotation(Player player, String dots) {
+        return getPlayerInfoWithDotNotation(player.getUniqueId(), dots);
     }
 
-    public Object getPlayerInformation(UUID uuid, String key) {
+    public Object getPlayerInfoWithDotNotation(UUID uuid, String dots) throws MongoException {
         if (!connected) return null;
-        try {
-            if (cachedPlayerInfo.containsKey(uuid)) {
-                return cachedPlayerInfo.get(uuid).get(key);
-            } else if (hasPlayer(uuid)) {
-                Document playerInfo = playersInformation.find(eq("uuid", uuid.toString())).first();
-                cachedPlayerInfo.put(uuid, playerInfo);
-                assert playerInfo != null;
-                return playerInfo.get(key);
-            } else {
-                System.out.println("Couldn't get player " + uuid + " - Not in the database!");
-                return null;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("There was an error trying to get player " + uuid);
+
+        Document doc;
+        if (cachedPlayerInfo.containsKey(uuid)) {
+            doc = cachedPlayerInfo.get(uuid);
+        } else if (hasPlayer(uuid)) {
+            doc = playersInformation.find(eq("uuid", uuid.toString())).first();
+        } else {
+            System.out.println("Couldn't get player " + uuid + " - Not in the database!");
             return null;
         }
+
+        if (doc == null) {
+            return null;
+        }
+
+        return getPlayerInfoWithDotNotation(doc, dots);
+    }
+
+    public Object getPlayerInfoWithDotNotation(Document document, String dots) throws MongoException {
+        if (!connected) return null;
+
+        String[] keys = dots.split("\\.");
+        Document doc = document;
+
+        for (int i = 0; i < keys.length - 1; i++) {
+            Object o = doc.get(keys[i]);
+            if (!(o instanceof Document)) {
+                throw new MongoException(String.format("Field '%s' does not exist or s not a Document", keys[i]));
+            }
+            doc = (Document) o;
+        }
+
+        return doc.get(keys[keys.length - 1]);
     }
 
     public long getPlayerTotalKey(String key) {
@@ -241,7 +241,7 @@ public class DatabaseManager {
         try {
             long total = 0;
             for (Map.Entry<UUID, Document> uuidDocumentEntry : cachedPlayerInfo.entrySet()) {
-                total += (Integer) uuidDocumentEntry.getValue().get(key);
+                total += (Integer) getPlayerInfoWithDotNotation(uuidDocumentEntry.getValue(), key);
             }
             cachedTotalKeyValues.put(key, total);
             return total;
@@ -253,16 +253,24 @@ public class DatabaseManager {
     }
 
     public int getSR(Player player) {
-        double dhp = averageAdjustedDHP(player) * 2000;
-        double wl = averageAdjustedWL(player) * 2000;
-        double kda = averageAdjustedKDA(player) * 1000;
-        return (int) Math.round(dhp + wl + kda);
+        return getSR(player.getUniqueId());
     }
 
     public int getSR(UUID uuid) {
-        double dhp = averageAdjustedDHP(uuid) * 2000;
-        double wl = averageAdjustedWL(uuid) * 2000;
-        double kda = averageAdjustedKDA(uuid) * 1000;
+        double dhp = averageAdjustedDHP(uuid, "") * 2000;
+        double wl = averageAdjustedWL(uuid, "") * 2000;
+        double kda = averageAdjustedKDA(uuid, "") * 1000;
+        return (int) Math.round(dhp + wl + kda);
+    }
+
+    public int getSRClass(Player player, String optionalClass) {
+        return getSRClass(player.getUniqueId(), optionalClass);
+    }
+
+    public int getSRClass(UUID uuid, String optionalClass) {
+        double dhp = averageAdjustedDHP(uuid, optionalClass) * 2000;
+        double wl = averageAdjustedWL(uuid, optionalClass) * 2000;
+        double kda = averageAdjustedKDA(uuid, optionalClass) * 1000;
         return (int) Math.round(dhp + wl + kda);
     }
 
@@ -273,43 +281,39 @@ public class DatabaseManager {
         return 1.00699 + (-1.02107 / (1.01398 + Math.pow(average, 3.09248)));
     }
 
-
-    private double averageAdjustedDHP(Player player) {
-        return averageAdjustedDHP(player.getUniqueId());
-    }
-
-    private double averageAdjustedWL(Player player) {
-        return averageAdjustedWL(player.getUniqueId());
-    }
-
-    private double averageAdjustedKDA(Player player) {
-        return averageAdjustedKDA(player.getUniqueId());
-    }
-
-    private double averageAdjustedDHP(UUID uuid) {
-        long playerDHP = (Integer) getPlayerInformation(uuid, "damage") + (Integer) getPlayerInformation(uuid, "healing") + (Integer) getPlayerInformation(uuid, "absorbed");
-        long totalDHP = getPlayerTotalKey("damage") + getPlayerTotalKey("healing") + getPlayerTotalKey("absorbed");
+    private double averageAdjustedDHP(UUID uuid, String optionalClass) {
+        if (!optionalClass.isEmpty()) {
+            optionalClass += ".";
+        }
+        long playerDHP = (Integer) getPlayerInfoWithDotNotation(uuid, optionalClass + "damage") + (Integer) getPlayerInfoWithDotNotation(uuid, optionalClass + "healing") + (Integer) getPlayerInfoWithDotNotation(uuid, optionalClass + "absorbed");
+        long totalDHP = getPlayerTotalKey(optionalClass + "damage") + getPlayerTotalKey(optionalClass + "healing") + getPlayerTotalKey(optionalClass + "absorbed");
         return averageAdjusted(playerDHP, totalDHP);
     }
 
-    private double averageAdjustedWL(UUID uuid) {
-        long playerWL = (Integer) getPlayerInformation(uuid, "wins") / Math.max((Integer) getPlayerInformation(uuid, "losses"), 1);
-        long totalWL = getPlayerTotalKey("wins") / Math.max(getPlayerTotalKey("losses"), 1);
+    private double averageAdjustedWL(UUID uuid, String optionalClass) {
+        if (!optionalClass.isEmpty()) {
+            optionalClass += ".";
+        }
+        long playerWL = (Integer) getPlayerInfoWithDotNotation(uuid, optionalClass + "wins") / Math.max((Integer) getPlayerInfoWithDotNotation(uuid, optionalClass + "losses"), 1);
+        long totalWL = getPlayerTotalKey(optionalClass + "wins") / Math.max(getPlayerTotalKey(optionalClass + "losses"), 1);
         return averageAdjusted(playerWL, totalWL);
     }
 
-    private double averageAdjustedKDA(UUID uuid) {
-        long playerDHP = ((Integer) getPlayerInformation(uuid, "kills") + (Integer) getPlayerInformation(uuid, "assists")) / Math.max((Integer) getPlayerInformation(uuid, "deaths"), 1);
-        long totalDHP = (getPlayerTotalKey("kills") + getPlayerTotalKey("assists")) / Math.max(getPlayerTotalKey("deaths"), 1);
+    private double averageAdjustedKDA(UUID uuid, String optionalClass) {
+        if (!optionalClass.isEmpty()) {
+            optionalClass += ".";
+        }
+        long playerDHP = ((Integer) getPlayerInfoWithDotNotation(uuid, optionalClass + "kills") + (Integer) getPlayerInfoWithDotNotation(uuid, optionalClass + "assists")) / Math.max((Integer) getPlayerInfoWithDotNotation(uuid, optionalClass + "deaths"), 1);
+        long totalDHP = (getPlayerTotalKey(optionalClass + "kills") + getPlayerTotalKey(optionalClass + "assists")) / Math.max(getPlayerTotalKey(optionalClass + "deaths"), 1);
         return averageAdjusted(playerDHP, totalDHP);
     }
 
-    public HashMap<Document, Integer> getPlayersSortedBySR() {
+    public HashMap<Document, Integer> getPlayersSortedBySR(String optionalClass) {
         if (!connected) return null;
         try {
             HashMap<Document, Integer> playersSr = new HashMap<>();
             for (Document document : playersInformation.find()) {
-                playersSr.put(document, getSR(UUID.fromString((String) document.get("uuid"))));
+                playersSr.put(document, getSRClass(UUID.fromString((String) document.get("uuid")), optionalClass));
             }
             return playersSr;
         } catch (Exception e) {
