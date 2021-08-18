@@ -289,6 +289,8 @@ public class PlayingState implements State, TimerDebugAble {
                         game.forEachOnlinePlayer(((player, team) -> CustomScoreboard.giveMainLobbyScoreboard(player)));
                     })
                     .execute();
+        } else {
+            System.out.println("This game was not added to the database");
         }
     }
 
