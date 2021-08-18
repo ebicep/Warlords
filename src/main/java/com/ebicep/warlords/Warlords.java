@@ -1,5 +1,8 @@
 package com.ebicep.warlords;
 
+import co.aikar.taskchain.BukkitTaskChainFactory;
+import co.aikar.taskchain.TaskChain;
+import co.aikar.taskchain.TaskChainFactory;
 import com.ebicep.customentities.npc.NPCManager;
 import com.ebicep.warlords.classes.abilties.*;
 import com.ebicep.warlords.commands.*;
@@ -28,8 +31,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.time.Duration;
-import java.time.Instant;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -39,12 +40,20 @@ public class Warlords extends JavaPlugin {
 
     public static String VERSION = "";
 
-    private static final int SPAWN_PROTECTION_RADIUS = 5;
-
     private static Warlords instance;
 
     public static Warlords getInstance() {
         return instance;
+    }
+
+    private static TaskChainFactory taskChainFactory;
+
+    public static <T> TaskChain<T> newChain() {
+        return taskChainFactory.newChain();
+    }
+
+    public static <T> TaskChain<T> newSharedChain(String name) {
+        return taskChainFactory.newSharedChain(name);
     }
 
     private static final HashMap<UUID, WarlordsPlayer> players = new HashMap<>();
@@ -166,10 +175,13 @@ public class Warlords extends JavaPlugin {
 
     public Location npcCTFLocation;
 
+    private static final int SPAWN_PROTECTION_RADIUS = 5;
+
     @Override
     public void onEnable() {
         VERSION = this.getDescription().getVersion();
         ConfigurationSerialization.registerClass(PlayerSettings.class);
+        taskChainFactory = BukkitTaskChainFactory.create(this);
         instance = this;
         getServer().getPluginManager().registerEvents(new WarlordsEvents(), this);
         getServer().getPluginManager().registerEvents(new MenuEventListener(this), this);
@@ -188,13 +200,16 @@ public class Warlords extends JavaPlugin {
 
         game = new Game();
 
-        getData();
-        Bukkit.getOnlinePlayers().forEach(CustomScoreboard::giveMainLobbyScoreboard);
-
         holographicDisplaysEnabled = Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays");
-        if (holographicDisplaysEnabled) {
-            addHologramLeaderboard();
-        }
+
+        //gets data then loads scoreboard then loads holograms (all callbacks i think)
+        Warlords.newChain()
+                .asyncFirst(() -> databaseManager = new DatabaseManager())
+                .syncLast(input -> {
+                    Bukkit.getOnlinePlayers().forEach(CustomScoreboard::giveMainLobbyScoreboard);
+                    addHologramLeaderboards();
+                })
+                .execute();
 
 //        citizensEnabled = Bukkit.getPluginManager().isPluginEnabled("Citizens");
 //        npcCTFLocation = new LocationBuilder(Bukkit.getWorlds().get(0).getSpawnLocation())
@@ -243,204 +258,108 @@ public class Warlords extends JavaPlugin {
         // TODO persist this.playerSettings to a database
     }
 
-    public void getData() {
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                try {
-                    databaseManager = new DatabaseManager();
-                    Bukkit.getOnlinePlayers().forEach(p -> {
-                        databaseManager.loadPlayer(p);
-                    });
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }.runTaskAsynchronously(this);
+    public static void addHologramLeaderboards() {
+        if (databaseManager != null && databaseManager.isConnected() && holographicDisplaysEnabled) {
+            HologramsAPI.getHolograms(instance).forEach(Hologram::delete);
+
+            System.out.println("Adding Holograms");
+            Location spawnPoint = Bukkit.getWorlds().get(0).getSpawnLocation().clone();
+            Location lifeTimeWinsLB = new LocationBuilder(spawnPoint.clone()).forward(12).left(3).addY(6).get();
+            Location lifeTimeKillsLB = new LocationBuilder(spawnPoint.clone()).forward(12).right(3).addY(6).get();
+            Location srLB = new LocationBuilder(spawnPoint.clone()).forward(12).addY(10).get();
+            Location srLBMage = new LocationBuilder(spawnPoint.clone()).backward(6).right(6).addY(6).left(7).get();
+            Location srLBWarrior = new LocationBuilder(spawnPoint.clone()).backward(6).right(2).addY(6).left(7).get();
+            Location srLBPaladin = new LocationBuilder(spawnPoint.clone()).backward(6).left(2).addY(6).left(7).get();
+            Location srLBShaman = new LocationBuilder(spawnPoint.clone()).backward(6).left(6).addY(6).left(7).get();
+            Warlords.newChain()
+                    .asyncFirst(() -> databaseManager.getPlayersSortedByKey("wins"))
+                    .abortIfNull()
+                    .syncLast((topWinners) -> {
+                        List<String> hologramLines = new ArrayList<>();
+                        for (int i = 0; i < 10 && i < topWinners.size(); i++) {
+                            Document player = topWinners.get(i);
+                            hologramLines.add(ChatColor.YELLOW.toString() + (i + 1) + ". " + ChatColor.AQUA + player.get("name") + ChatColor.GRAY + " - " + ChatColor.YELLOW + (Utils.addCommaAndRound((Integer) player.get("wins"))));
+                        }
+                        createLeaderboard(lifeTimeWinsLB, ChatColor.AQUA + ChatColor.BOLD.toString() + "Lifetime Wins", hologramLines);
+                    })
+                    .execute();
+            Warlords.newChain()
+                    .asyncFirst(() -> databaseManager.getPlayersSortedByKey("kills"))
+                    .abortIfNull()
+                    .syncLast((topKillers) -> {
+                        List<String> hologramLines = new ArrayList<>();
+                        for (int i = 0; i < 10 && i < topKillers.size(); i++) {
+                            Document player = topKillers.get(i);
+                            hologramLines.add(ChatColor.YELLOW.toString() + (i + 1) + ". " + ChatColor.AQUA + player.get("name") + ChatColor.GRAY + " - " + ChatColor.YELLOW + (Utils.addCommaAndRound((Integer) player.get("kills"))));
+                        }
+                        createLeaderboard(lifeTimeKillsLB, ChatColor.AQUA + ChatColor.BOLD.toString() + "Lifetime Kills", hologramLines);
+                    })
+                    .execute();
+            Warlords.newChain()
+                    .asyncFirst(() -> databaseManager.getPlayersSortedBySR(""))
+                    .abortIfNull()
+                    .syncLast((topSR) -> {
+                        createLeaderboard(srLB, ChatColor.AQUA + ChatColor.BOLD.toString() + "SR Ranking", getHologramLines(topSR));
+                    })
+                    .execute();
+            Warlords.newChain()
+                    .asyncFirst(() -> databaseManager.getPlayersSortedBySR("mage"))
+                    .abortIfNull()
+                    .syncLast((topSRMage) -> {
+                        createLeaderboard(srLBMage, ChatColor.AQUA + ChatColor.BOLD.toString() + "Mage SR Ranking", getHologramLines(topSRMage));
+                    })
+                    .execute();
+            Warlords.newChain()
+                    .asyncFirst(() -> databaseManager.getPlayersSortedBySR("warrior"))
+                    .abortIfNull()
+                    .syncLast((topSRWarrior) -> {
+                        createLeaderboard(srLBWarrior, ChatColor.AQUA + ChatColor.BOLD.toString() + "Warrior SR Ranking", getHologramLines(topSRWarrior));
+                    })
+                    .execute();
+            Warlords.newChain()
+                    .asyncFirst(() -> databaseManager.getPlayersSortedBySR("paladin"))
+                    .abortIfNull()
+                    .syncLast((topSRPaladin) -> {
+                        createLeaderboard(srLBPaladin, ChatColor.AQUA + ChatColor.BOLD.toString() + "Paladin SR Ranking", getHologramLines(topSRPaladin));
+                    })
+                    .execute();
+            Warlords.newChain()
+                    .asyncFirst(() -> databaseManager.getPlayersSortedBySR("shaman"))
+                    .abortIfNull()
+                    .syncLast((topSRShaman) -> {
+                        createLeaderboard(srLBShaman, ChatColor.AQUA + ChatColor.BOLD.toString() + "Shaman SR Ranking", getHologramLines(topSRShaman));
+                    })
+                    .execute();
+        }
     }
 
-    public static void addHologramLeaderboard() {
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                if (databaseManager != null && databaseManager.isConnected()) {
-                    if (holographicDisplaysEnabled) {
-                        HologramsAPI.getHolograms(instance).forEach(Hologram::delete);
+    private static List<String> getHologramLines(HashMap<Document, Integer> players) {
+        List<Document> sorted = getDocumentInSortedList(players);
+        List<String> hologramLines = new ArrayList<>();
+        for (int i = 0; i < 10 && i < sorted.size(); i++) {
+            Document player = sorted.get(i);
+            hologramLines.add(ChatColor.YELLOW.toString() + (i + 1) + ". " + ChatColor.AQUA + player.get("name") + ChatColor.GRAY + " - " + ChatColor.YELLOW + (Utils.addCommaAndRound(players.get(player))));
+        }
+        return hologramLines;
+    }
 
-                        Location spawnPoint = Bukkit.getWorlds().get(0).getSpawnLocation().clone();
+    private static List<Document> getDocumentInSortedList(HashMap<Document, Integer> map) {
+        List<Document> sorted = new ArrayList<>();
+        map.entrySet().stream()
+                .sorted(Map.Entry.comparingByValue())
+                .forEach(documentIntegerEntry -> sorted.add(documentIntegerEntry.getKey()));
+        Collections.reverse(sorted);
+        return sorted;
+    }
 
-                        Location lifeTimeWinsLB = new LocationBuilder(spawnPoint.clone())
-                                .forward(12)
-                                .left(3)
-                                .addY(6)
-                                .get();
-                        Location srLB = new LocationBuilder(spawnPoint.clone())
-                                .forward(12)
-                                .addY(10)
-                                .get();
-                        Location lifeTimeKillsLB = new LocationBuilder(spawnPoint.clone())
-                                .forward(12)
-                                .right(3)
-                                .addY(6)
-                                .get();
-
-                        Location srLBMage = new LocationBuilder(spawnPoint.clone())
-                                .backward(6)
-                                .right(6)
-                                .addY(6)
-                                .left(7)
-                                .get();
-                        Location srLBWarrior = new LocationBuilder(spawnPoint.clone())
-                                .backward(6)
-                                .right(2)
-                                .addY(6)
-                                .left(7)
-                                .get();
-                        Location srLBPaladin = new LocationBuilder(spawnPoint.clone())
-                                .backward(6)
-                                .left(2)
-                                .addY(6)
-                                .left(7)
-                                .get();
-                        Location srLBShaman = new LocationBuilder(spawnPoint.clone())
-                                .backward(6)
-                                .left(6)
-                                .addY(6)
-                                .left(7)
-                                .get();
-
-                        List<Document> topWinners = databaseManager.getPlayersSortedByKey("wins");
-                        List<Document> topKillers = databaseManager.getPlayersSortedByKey("kills");
-
-                        Instant start = Instant.now();
-                        HashMap<Document, Integer> topSR = databaseManager.getPlayersSortedBySR("");
-                        HashMap<Document, Integer> topSRMage = databaseManager.getPlayersSortedBySR("mage");
-                        HashMap<Document, Integer> topSRWarrior = databaseManager.getPlayersSortedBySR("warrior");
-                        HashMap<Document, Integer> topSRPaladin = databaseManager.getPlayersSortedBySR("paladin");
-                        HashMap<Document, Integer> topSRShaman = databaseManager.getPlayersSortedBySR("shaman");
-                        Instant finish = Instant.now();
-                        System.out.println(Duration.between(start, finish).toMillis());
-
-                        if (topWinners != null) {
-                            Hologram winsHologram = HologramsAPI.createHologram(instance, lifeTimeWinsLB);
-                            winsHologram.appendTextLine(ChatColor.AQUA + ChatColor.BOLD.toString() + "Lifetime Wins");
-                            winsHologram.appendTextLine("");
-                            for (int i = 0; i < 10 && i < topWinners.size(); i++) {
-                                Document player = topWinners.get(i);
-                                winsHologram.appendTextLine(ChatColor.YELLOW.toString() + (i + 1) + ". " + ChatColor.AQUA + player.get("name") + ChatColor.GRAY + " - " + ChatColor.YELLOW + (Utils.addCommaAndRound((Integer) player.get("wins"))));
-                            }
-                        }
-                        if (topSR != null) {
-                            Hologram srHologram = HologramsAPI.createHologram(instance, srLB);
-                            srHologram.appendTextLine(ChatColor.AQUA + ChatColor.BOLD.toString() + "SR Ranking");
-                            srHologram.appendTextLine("");
-                            List<Document> sortedSR = new ArrayList<>();
-                            topSR.entrySet().stream()
-                                    .sorted(Map.Entry.comparingByValue())
-                                    .forEach(documentIntegerEntry -> {
-                                        sortedSR.add(documentIntegerEntry.getKey());
-                                    });
-                            Collections.reverse(sortedSR);
-//                            topSR.forEach((document, integer) -> {
-//                                System.out.println(document.get("name") + " - " + integer);
-//                            });
-                            for (int i = 0; i < 10 && i < sortedSR.size(); i++) {
-                                Document player = sortedSR.get(i);
-                                srHologram.appendTextLine(ChatColor.YELLOW.toString() + (i + 1) + ". " + ChatColor.AQUA + player.get("name") + ChatColor.GRAY + " - " + ChatColor.YELLOW + (Utils.addCommaAndRound(topSR.get(player))));
-                            }
-                        }
-                        if (topKillers != null) {
-                            Hologram killsHologram = HologramsAPI.createHologram(instance, lifeTimeKillsLB);
-                            killsHologram.appendTextLine(ChatColor.AQUA + ChatColor.BOLD.toString() + "Lifetime Kills");
-                            killsHologram.appendTextLine("");
-                            for (int i = 0; i < 10 && i < topKillers.size(); i++) {
-                                Document player = topKillers.get(i);
-                                killsHologram.appendTextLine(ChatColor.YELLOW.toString() + (i + 1) + ". " + ChatColor.AQUA + player.get("name") + ChatColor.GRAY + " - " + ChatColor.YELLOW + (Utils.addCommaAndRound((Integer) player.get("kills"))));
-                            }
-                        }
-
-                        if (topSRMage != null) {
-                            Hologram srHologram = HologramsAPI.createHologram(instance, srLBMage);
-                            srHologram.appendTextLine(ChatColor.AQUA + ChatColor.BOLD.toString() + "Mage SR Ranking");
-                            srHologram.appendTextLine("");
-                            List<Document> sortedSR = new ArrayList<>();
-                            topSRMage.entrySet().stream()
-                                    .sorted(Map.Entry.comparingByValue())
-                                    .forEach(documentIntegerEntry -> {
-                                        sortedSR.add(documentIntegerEntry.getKey());
-                                    });
-                            Collections.reverse(sortedSR);
-//                            topSR.forEach((document, integer) -> {
-//                                System.out.println(document.get("name") + " - " + integer);
-//                            });
-                            for (int i = 0; i < 10 && i < sortedSR.size(); i++) {
-                                Document player = sortedSR.get(i);
-                                srHologram.appendTextLine(ChatColor.YELLOW.toString() + (i + 1) + ". " + ChatColor.AQUA + player.get("name") + ChatColor.GRAY + " - " + ChatColor.YELLOW + (Utils.addCommaAndRound(topSRMage.get(player))));
-                            }
-                        }
-                        if (topSRWarrior != null) {
-                            Hologram srHologram = HologramsAPI.createHologram(instance, srLBWarrior);
-                            srHologram.appendTextLine(ChatColor.AQUA + ChatColor.BOLD.toString() + "Warrior SR Ranking");
-                            srHologram.appendTextLine("");
-                            List<Document> sortedSR = new ArrayList<>();
-                            topSRWarrior.entrySet().stream()
-                                    .sorted(Map.Entry.comparingByValue())
-                                    .forEach(documentIntegerEntry -> {
-                                        sortedSR.add(documentIntegerEntry.getKey());
-                                    });
-                            Collections.reverse(sortedSR);
-//                            topSR.forEach((document, integer) -> {
-//                                System.out.println(document.get("name") + " - " + integer);
-//                            });
-                            for (int i = 0; i < 10 && i < sortedSR.size(); i++) {
-                                Document player = sortedSR.get(i);
-                                srHologram.appendTextLine(ChatColor.YELLOW.toString() + (i + 1) + ". " + ChatColor.AQUA + player.get("name") + ChatColor.GRAY + " - " + ChatColor.YELLOW + (Utils.addCommaAndRound(topSRWarrior.get(player))));
-                            }
-                        }
-                        if (topSRPaladin != null) {
-                            Hologram srHologram = HologramsAPI.createHologram(instance, srLBPaladin);
-                            srHologram.appendTextLine(ChatColor.AQUA + ChatColor.BOLD.toString() + "Paladin SR Ranking");
-                            srHologram.appendTextLine("");
-                            List<Document> sortedSR = new ArrayList<>();
-                            topSRPaladin.entrySet().stream()
-                                    .sorted(Map.Entry.comparingByValue())
-                                    .forEach(documentIntegerEntry -> {
-                                        sortedSR.add(documentIntegerEntry.getKey());
-                                    });
-                            Collections.reverse(sortedSR);
-//                            topSR.forEach((document, integer) -> {
-//                                System.out.println(document.get("name") + " - " + integer);
-//                            });
-                            for (int i = 0; i < 10 && i < sortedSR.size(); i++) {
-                                Document player = sortedSR.get(i);
-                                srHologram.appendTextLine(ChatColor.YELLOW.toString() + (i + 1) + ". " + ChatColor.AQUA + player.get("name") + ChatColor.GRAY + " - " + ChatColor.YELLOW + (Utils.addCommaAndRound(topSRPaladin.get(player))));
-                            }
-                        }
-                        if (topSRShaman != null) {
-                            Hologram srHologram = HologramsAPI.createHologram(instance, srLBShaman);
-                            srHologram.appendTextLine(ChatColor.AQUA + ChatColor.BOLD.toString() + "Shaman SR Ranking");
-                            srHologram.appendTextLine("");
-                            List<Document> sortedSR = new ArrayList<>();
-                            topSRShaman.entrySet().stream()
-                                    .sorted(Map.Entry.comparingByValue())
-                                    .forEach(documentIntegerEntry -> {
-                                        sortedSR.add(documentIntegerEntry.getKey());
-                                    });
-                            Collections.reverse(sortedSR);
-//                            topSR.forEach((document, integer) -> {
-//                                System.out.println(document.get("name") + " - " + integer);
-//                            });
-                            for (int i = 0; i < 10 && i < sortedSR.size(); i++) {
-                                Document player = sortedSR.get(i);
-                                srHologram.appendTextLine(ChatColor.YELLOW.toString() + (i + 1) + ". " + ChatColor.AQUA + player.get("name") + ChatColor.GRAY + " - " + ChatColor.YELLOW + (Utils.addCommaAndRound(topSRShaman.get(player))));
-                            }
-                        }
-                        System.out.println("Loaded Holograms");
-                    }
-                    this.cancel();
-                }
-            }
-        }.runTaskTimer(instance, 10, 0);
+    public static void createLeaderboard(Location location, String title, List<String> lines) {
+        Hologram hologram = HologramsAPI.createHologram(instance, location);
+        hologram.appendTextLine(title);
+        hologram.appendTextLine("");
+        for (String line : lines) {
+            hologram.appendTextLine(line);
+        }
+        Bukkit.getServer().getConsoleSender().sendMessage("Created Hologram - " + title);
     }
 
     public void gameLoop() {

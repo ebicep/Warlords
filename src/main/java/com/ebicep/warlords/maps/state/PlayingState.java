@@ -53,6 +53,7 @@ public class PlayingState implements State, TimerDebugAble {
     private boolean forceEnd;
 
     private final EnumMap<Team, Stats> stats = new EnumMap(Team.class);
+
     {
         resetStats();
     }
@@ -142,10 +143,10 @@ public class PlayingState implements State, TimerDebugAble {
         this.game.forEachOfflinePlayer((player, team) -> {
             PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
             Warlords.addPlayer(new WarlordsPlayer(
-                player,
-                this,
-                team,
-                playerSettings
+                    player,
+                    this,
+                    team,
+                    playerSettings
             ));
         });
         this.game.forEachOfflineWarlordsPlayer(wp -> {
@@ -154,8 +155,8 @@ public class PlayingState implements State, TimerDebugAble {
             scoreboard.updateKillsAssists();
             scoreboard.updateNames();
             if (wp.getEntity() instanceof Player) {
-                wp.applySkillBoost((Player)wp.getEntity());
-                PacketUtils.sendTitle((Player)wp.getEntity(), ChatColor.GREEN + "GO!", ChatColor.YELLOW + "Steal and capture the enemy flag!", 0, 40, 20);
+                wp.applySkillBoost((Player) wp.getEntity());
+                PacketUtils.sendTitle((Player) wp.getEntity(), ChatColor.GREEN + "GO!", ChatColor.YELLOW + "Steal and capture the enemy flag!", 0, 40, 20);
             }
         });
         new BukkitRunnable() {
@@ -233,7 +234,7 @@ public class PlayingState implements State, TimerDebugAble {
                     number += remaining;
                     PacketUtils.sendTitle(player, number, "", 0, 40, 0);
                 });
-                switch(remaining) {
+                switch (remaining) {
                     case 0:
                         Gates.changeGates(game.getMap(), true);
                         game.forEachOnlinePlayer((player, team) -> {
@@ -272,7 +273,7 @@ public class PlayingState implements State, TimerDebugAble {
     @Override
     @SuppressWarnings("null")
     public void end() {
-        if(this.flags != null) {
+        if (this.flags != null) {
             this.flags.stop();
         }
         if (this.powerUps != null) {
@@ -281,23 +282,29 @@ public class PlayingState implements State, TimerDebugAble {
         }
         Team winner = forceEnd ? null : calculateWinnerByPoints();
         if (winner != null || game.playersCount() > 16) {
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    Warlords.databaseManager.addGame(PlayingState.this);
-                    for (WarlordsPlayer player : PlayerFilter.playingGame(game)) {
-                        if (player.getEntity() instanceof Player) {
-                            Warlords.databaseManager.loadPlayer((Player) player.getEntity());
-                        }
-                    }
-                }
-            }.runTaskAsynchronously(Warlords.getInstance());
+            Warlords.newChain()
+                    .asyncFirst(this::addGameAndLoadPlayers)
+                    .syncLast((t) -> {
+                        Warlords.addHologramLeaderboards();
+                        game.forEachOnlinePlayer(((player, team) -> CustomScoreboard.giveMainLobbyScoreboard(player)));
+                    })
+                    .execute();
         }
+    }
+
+    private boolean addGameAndLoadPlayers() {
+        Warlords.databaseManager.addGame(PlayingState.this);
+        for (WarlordsPlayer player : PlayerFilter.playingGame(game)) {
+            if (player.getEntity() instanceof Player) {
+                Warlords.databaseManager.loadPlayer((Player) player.getEntity());
+            }
+        }
+        return true;
     }
 
     @Override
     public void skipTimer() {
-        if(this.gateTimer > 0) {
+        if (this.gateTimer > 0) {
             this.timer -= this.gateTimer - 1;
             this.gateTimer = 1;
         } else {
@@ -320,10 +327,10 @@ public class PlayingState implements State, TimerDebugAble {
     public Team calculateWinnerByPoints() {
         int redPoints = getStats(Team.RED).points();
         int bluePoints = getStats(Team.BLUE).points();
-        if(redPoints > bluePoints) {
+        if (redPoints > bluePoints) {
             return Team.RED;
         }
-        if(bluePoints > redPoints) {
+        if (bluePoints > redPoints) {
             return Team.BLUE;
         }
         return null;
@@ -339,7 +346,7 @@ public class PlayingState implements State, TimerDebugAble {
     }
 
     public void resetStats() {
-        for(Team team : Team.values()) {
+        for (Team team : Team.values()) {
             stats.put(team, new Stats(team));
         }
     }
@@ -357,9 +364,9 @@ public class PlayingState implements State, TimerDebugAble {
         return forceEnd;
     }
 
-    private static <K, V, M extends Map<K,V>> BinaryOperator<M> mapMerger(BinaryOperator<V> mergeFunction) {
+    private static <K, V, M extends Map<K, V>> BinaryOperator<M> mapMerger(BinaryOperator<V> mergeFunction) {
         return (m1, m2) -> {
-            for (Map.Entry<K,V> e : m2.entrySet())
+            for (Map.Entry<K, V> e : m2.entrySet())
                 m1.merge(e.getKey(), e.getValue(), mergeFunction);
             return m1;
         };

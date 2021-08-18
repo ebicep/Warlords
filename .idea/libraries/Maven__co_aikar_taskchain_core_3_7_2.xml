@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: co.aikar:taskchain-core:3.7.2">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/co/aikar/taskchain-core/3.7.2/taskchain-core-3.7.2.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/co/aikar/taskchain-core/3.7.2/taskchain-core-3.7.2-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/co/aikar/taskchain-core/3.7.2/taskchain-core-3.7.2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

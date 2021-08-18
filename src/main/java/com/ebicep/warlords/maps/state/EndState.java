@@ -4,7 +4,6 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.state.PlayingState.Stats;
-import com.ebicep.warlords.player.CustomScoreboard;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.PacketUtils;
 import com.ebicep.warlords.util.PlayerFilter;
@@ -145,11 +144,7 @@ public class EndState implements State, TimerDebugAble {
 
     @Override
     public void end() {
-        game.forEachOnlinePlayer(((player, team) -> {
-            CustomScoreboard.giveMainLobbyScoreboard(player);
-        }));
         game.clearAllPlayers();
-        Warlords.addHologramLeaderboard();
     }
 
     @Override
