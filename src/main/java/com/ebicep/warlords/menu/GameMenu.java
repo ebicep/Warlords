@@ -110,7 +110,7 @@ public class GameMenu {
                     1,
                     builder.get(),
                     (n, e) -> {
-                        player.sendMessage(ChatColor.WHITE + "Class: §6" + subClass);
+                        player.sendMessage(ChatColor.BLUE + "You have changed your class to: §6" + subClass);
                         setSelected(player, subClass);
                         ArmorManager.resetArmor(player, subClass, Warlords.getPlayerSettings(player.getUniqueId()).wantedTeam());
                         openClassMenu(player, selectedGroup);

@@ -33,7 +33,7 @@ public class HealingTotem extends AbstractTotemBase {
                 "§7pulses constantly, healing nearby\n" +
                 "§7allies in a §e" + radius + " §7block radius for §a" + minDamageHeal + " §7- §a" + maxDamageHeal + "\n" +
                 "§7every second. The healing will gradually\n" +
-                "§7increase by §a40% §7(up to 200%) every.\n" +
+                "§7increase by §a40% §7(up to 200%) every\n" +
                 "§7second. Lasts §6" + duration + " §7seconds." +
                 "\n\n" +
                 "§7Using Chain Heal on your totem causes it to\n" +
@@ -70,7 +70,7 @@ public class HealingTotem extends AbstractTotemBase {
             @Override
             public void run() {
 
-                if (timeLeft >= 0) {
+                if (timeLeft != 0) {
                     Location initParticleLoc = totemStand.getLocation().clone().add(0, 1.6, 0);
                     ParticleEffect.VILLAGER_HAPPY.display(0.4F, 0.2F, 0.4F, 0.05F, 5, initParticleLoc, 500);
 

@@ -47,7 +47,7 @@ public class OrbsOfLife extends AbstractAbility {
                 "\n\n" +
                 "§7You may SNEAK once per Orbs of Life cast to make\n" +
                 "§7the orbs levitate towards the nearest ally in a §e" + floatingOrbRadius + "\n" +
-                "§7block radius, healing them for §a" + maxDamageHeal + "§7health.";
+                "§7block radius, healing them for §a" + maxDamageHeal + " §7health.";
     }
 
     @Override

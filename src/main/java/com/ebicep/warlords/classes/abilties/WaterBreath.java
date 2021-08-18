@@ -56,6 +56,8 @@ public class WaterBreath extends AbstractAbility {
             player1.playSound(player.getLocation(), "mage.waterbreath.activation", 2, 1);
         }
 
+        ParticleEffect.HEART.display(0.6f, 0.6f, 0.6f, 1, 2, player.getLocation().add(0, 0.7, 0), 500);
+
         new BukkitRunnable() {
 
             @Override
@@ -72,8 +74,6 @@ public class WaterBreath extends AbstractAbility {
                 if (animationTimer > 12) {
                     this.cancel();
                 }
-
-                ParticleEffect.HEART.display(0.6f, 0.6f, 0.6f, 1, 1, center.translateVector(player.getWorld(), 0, 0, 0), 500);
 
                 for (int i = 0; i < 4; i++) {
                     double angle = Math.toRadians(i * 90) + animationTimer * 0.15;

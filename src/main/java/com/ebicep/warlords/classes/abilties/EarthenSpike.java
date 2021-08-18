@@ -23,6 +23,8 @@ import java.util.List;
 
 public class EarthenSpike extends AbstractAbility {
 
+    private final int radius = 10;
+
     private static final String[] REPEATING_SOUND = new String[]{
             "shaman.earthenspike.animation.a",
             "shaman.earthenspike.animation.b",
@@ -42,14 +44,16 @@ public class EarthenSpike extends AbstractAbility {
                 "§7When the spike reaches its target it\n" +
                 "§7emerges from the ground, dealing §c" + -minDamageHeal + " §7-\n" +
                 "§c" + -maxDamageHeal + " §7damage to any nearby enemies and\n" +
-                "§7launches them up into the air.";
+                "§7launches them up into the air." +
+                "\n\n" +
+                "§7Has an initial cast range of §e" + radius + " §7blocks.";
     }
 
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
         Location location = player.getLocation();
         for (WarlordsPlayer p : PlayerFilter
-                .entitiesAround(player, 10, 10, 10)
+                .entitiesAround(player, radius, radius, radius)
                 .aliveEnemiesOf(wp)
                 .lookingAtFirst(wp)
         ) {

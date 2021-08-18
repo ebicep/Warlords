@@ -76,7 +76,9 @@ public class Fireball extends AbstractProjectileBase {
                 "§7for §c" + -minDamageHeal + " §7- §c" + -maxDamageHeal + " §7damage. A\n" +
                 "§7direct hit will cause the enemy\n" +
                 "§7to take an additional §c15% §7extra\n" +
-                "§7damage. §7Has an optimal range of §e" + MAX_FULL_DAMAGE_DISTANCE + " §7blocks.";
+                "§7damage." +
+                "\n\n" +
+                "§7Has an optimal range of §e" + MAX_FULL_DAMAGE_DISTANCE + " §7blocks.";
     }
 	
 }
