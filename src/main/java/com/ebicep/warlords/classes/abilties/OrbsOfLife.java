@@ -94,7 +94,7 @@ public class OrbsOfLife extends AbstractAbility {
                                                 .get()
                                 );
                                 orbArmorStand.setPassenger(orb);
-                                ParticleEffect.VILLAGER_HAPPY.display(0, 0, 0, 0, 1, orbArmorStand.getLocation().add(0, 1.7, 0), 500);
+                                ParticleEffect.VILLAGER_HAPPY.display(0, 0, 0, 0, 1, orbArmorStand.getLocation().add(0, 1.65, 0), 500);
                             });
                             if (tempOrbsOfLight.getSpawnedOrbs().stream().noneMatch(orb -> orb.getPlayerToMoveTowards() != null)) {
                                 this.cancel();
