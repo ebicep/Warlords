@@ -22,14 +22,13 @@ import org.bukkit.scheduler.BukkitTask;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.util.Utils.sendMessage;
 
@@ -295,11 +294,17 @@ public class PlayingState implements State, TimerDebugAble {
     }
 
     private boolean addGameAndLoadPlayers() {
-        Warlords.databaseManager.addGame(PlayingState.this);
-        for (WarlordsPlayer player : PlayerFilter.playingGame(game)) {
-            if (player.getEntity() instanceof Player) {
-                Warlords.databaseManager.loadPlayer((Player) player.getEntity());
+        List<WarlordsPlayer> players = new ArrayList<>(Warlords.getPlayers().values());
+        players = players.stream().sorted(Comparator.comparing(WarlordsPlayer::getTotalDamage).reversed()).collect(Collectors.toList());
+        if (players.get(0).getTotalDamage() <= 500000) {
+            Warlords.databaseManager.addGame(PlayingState.this);
+            for (WarlordsPlayer player : PlayerFilter.playingGame(game)) {
+                if (player.getEntity() instanceof Player) {
+                    Warlords.databaseManager.loadPlayer((Player) player.getEntity());
+                }
             }
+        } else {
+            System.out.println("This game was not added to the database (INVALID DAMAGE)");
         }
         return true;
     }

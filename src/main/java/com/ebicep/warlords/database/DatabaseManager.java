@@ -63,10 +63,10 @@ public class DatabaseManager {
                 warlordsGamesDatabase = mongoClient.getDatabase("Warlords_Games");
                 playersInformation = warlordsPlayersDatabase.getCollection("Players_Information");
                 gamesInformation = warlordsGamesDatabase.getCollection("Games_Information");
-                //List<UUID> uuids = new ArrayList<>();
+//                List<UUID> uuids = new ArrayList<>();
                 playersInformation.find().forEach((Consumer<? super Document>) document -> {
-                    //UUID uuid = UUID.fromString((String) document.get("uuid"));
-                    //uuids.add(uuid);
+//                    UUID uuid = UUID.fromString((String) document.get("uuid"));
+//                    uuids.add(uuid);
                     cachedPlayerInfo.put(UUID.fromString((String) document.get("uuid")), document);
                 });
                 for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
@@ -241,7 +241,12 @@ public class DatabaseManager {
         try {
             long total = 0;
             for (Map.Entry<UUID, Document> uuidDocumentEntry : cachedPlayerInfo.entrySet()) {
-                total += (Integer) getPlayerInfoWithDotNotation(uuidDocumentEntry.getValue(), key);
+                Object info = getPlayerInfoWithDotNotation(uuidDocumentEntry.getValue(), key);
+                if (info instanceof Integer) {
+                    total += (Integer) info;
+                } else if (info instanceof Long) {
+                    total += (Long) info;
+                }
             }
             cachedTotalKeyValues.put(key, total);
             return total;
@@ -285,7 +290,7 @@ public class DatabaseManager {
         if (!optionalClass.isEmpty()) {
             optionalClass += ".";
         }
-        long playerDHP = (Integer) getPlayerInfoWithDotNotation(uuid, optionalClass + "damage") + (Integer) getPlayerInfoWithDotNotation(uuid, optionalClass + "healing") + (Integer) getPlayerInfoWithDotNotation(uuid, optionalClass + "absorbed");
+        long playerDHP = (Long) getPlayerInfoWithDotNotation(uuid, optionalClass + "damage") + (Long) getPlayerInfoWithDotNotation(uuid, optionalClass + "healing") + (Long) getPlayerInfoWithDotNotation(uuid, optionalClass + "absorbed");
         long totalDHP = getPlayerTotalKey(optionalClass + "damage") + getPlayerTotalKey(optionalClass + "healing") + getPlayerTotalKey(optionalClass + "absorbed");
         return averageAdjusted(playerDHP, totalDHP);
     }
@@ -346,9 +351,9 @@ public class DatabaseManager {
                 .append("losses", 0)
                 .append("flags_captured", 0)
                 .append("flags_returned", 0)
-                .append("damage", 0)
-                .append("healing", 0)
-                .append("absorbed", 0);
+                .append("damage", 0L)
+                .append("healing", 0L)
+                .append("absorbed", 0L);
     }
 
     public void addPlayer(Player player) {
@@ -364,9 +369,9 @@ public class DatabaseManager {
                         .append("losses", 0)
                         .append("flags_captured", 0)
                         .append("flags_returned", 0)
-                        .append("damage", 0)
-                        .append("healing", 0)
-                        .append("absorbed", 0)
+                        .append("damage", 0L)
+                        .append("healing", 0L)
+                        .append("absorbed", 0L)
                         .append("mage", getBaseStatDocument()
                                 .append("pyromancer", getBaseStatDocument())
                                 .append("cryomancer", getBaseStatDocument())
@@ -408,9 +413,9 @@ public class DatabaseManager {
                         .append("losses", 0)
                         .append("flags_captured", 0)
                         .append("flags_returned", 0)
-                        .append("damage", 0)
-                        .append("healing", 0)
-                        .append("absorbed", 0)
+                        .append("damage", 0L)
+                        .append("healing", 0L)
+                        .append("absorbed", 0L)
                         .append("mage", getBaseStatDocument()
                                 .append("pyromancer", getBaseStatDocument())
                                 .append("cryomancer", getBaseStatDocument())
