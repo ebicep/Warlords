@@ -9,7 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class PlayerSettings implements ConfigurationSerializable {
-    private Classes selectedClass = Classes.CRYOMANCER;
+    private Classes selectedClass = Classes.PYROMANCER;
     private ClassesSkillBoosts classesSkillBoosts = selectedClass.skillBoosts.get(0);
     private boolean hotKeyMode = true;
     private Weapons weapon = Weapons.FELFLAME_BLADE;

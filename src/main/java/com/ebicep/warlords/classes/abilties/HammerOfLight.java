@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.classes.paladin.specs.protector.Protector;
 import com.ebicep.warlords.player.ClassesSkillBoosts;
+import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.PlayerFilter;
 import org.bukkit.Bukkit;
@@ -21,26 +22,39 @@ import java.util.List;
 public class HammerOfLight extends AbstractAbility {
 
     private final static int radius = 7;
-    private final float hammerMinDamage = 159.85f;
-    private final float hammerMaxDamage = 216.2f;
+    private final int duration = 8;
 
     public HammerOfLight() {
-        super("Hammer of Light", 159.85f, 216.2f, 62.64f, 30, 20, 175
+        super("Hammer of Light", 192, 259, 62.64f, 30, 25, 175
         );
+    }
+
+    @Override
+    public void updateDescription(Player player) {
+        description = "§7Throw down a Hammer of Light on\n" +
+                "§7the ground, dealing §c" + minDamageHeal + " §7-\n" +
+                "§c" + maxDamageHeal + " §7damage every second to\n" +
+                "§7nearby enemies and healing nearby\n" +
+                "§7allies for §a" + minDamageHeal + " §7- §a" + maxDamageHeal + " §7every\n" +
+                "§7second in a §e" + radius + " §7block radius. Your Protector\n" +
+                "§7Strike pierces shields and defenses of enemies\n" +
+                "§7standing on top of the Hammer of Light.\n" +
+                "§7Lasts §6" + duration + " §7seconds.";
     }
 
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
 
         if (player.getTargetBlock((HashSet<Byte>) null, 15).getType() == Material.AIR) return;
-        DamageHealCircle damageHealCircle = new DamageHealCircle(wp, player.getTargetBlock((HashSet<Byte>) null, 15).getLocation().add(1, 0, 1), radius, 8, minDamageHeal, maxDamageHeal, critChance, critMultiplier, name);
+        DamageHealCircle damageHealCircle = new DamageHealCircle(wp, player.getTargetBlock((HashSet<Byte>) null, 15).getLocation().add(1, 0, 1), radius, duration, minDamageHeal, maxDamageHeal, critChance, critMultiplier, name);
         damageHealCircle.spawnHammer();
         damageHealCircle.getLocation().add(0, 1, 0);
         wp.subtractEnergy(energyCost);
         wp.getSpec().getOrange().setCurrentCooldown((float) (cooldown * wp.getCooldownModifier()));
+        wp.getCooldownManager().addCooldown(name, this.getClass(), new HammerOfLight(), "HAMMER", duration, wp, CooldownTypes.ABILITY);
 
         for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "paladin.hammeroflight.impact", 2, 1);
+            player1.playSound(player.getLocation(), "paladin.hammeroflight.impact", 2, 0.85f);
         }
 
         BukkitTask task = Bukkit.getScheduler().runTaskTimer(Warlords.getInstance(), damageHealCircle::spawn, 0, 1);
@@ -67,15 +81,15 @@ public class HammerOfLight extends AbstractAbility {
                         warlordsPlayer.addHealth(
                                 damageHealCircle.getWarlordsPlayer(),
                                 damageHealCircle.getName(),
-                                -hammerMinDamage,
-                                -hammerMaxDamage,
+                                -damageHealCircle.getMinDamage(),
+                                -damageHealCircle.getMaxDamage(),
                                 damageHealCircle.getCritChance(),
                                 damageHealCircle.getCritMultiplier()
                         );
                     }
                 }
 
-                if (damageHealCircle.getDuration() == 0) {
+                if (damageHealCircle.getDuration() <= 0) {
                     damageHealCircle.removeHammer();
                     this.cancel();
                     task.cancel();
@@ -112,18 +126,5 @@ public class HammerOfLight extends AbstractAbility {
             }
         }
         return playersInHammer;
-    }
-
-    @Override
-    public void updateDescription(Player player) {
-        description = "§7Throw down a Hammer of Light on\n" +
-                "§7the ground, dealing §c" + hammerMinDamage + " §7-\n" +
-                "§c" + hammerMaxDamage + " §7damage every second to\n" +
-                "§7nearby enemies and healing nearby\n" +
-                "§7allies for §a" + Math.floor(minDamageHeal) + " §7- §a" + Math.floor(maxDamageHeal) + " §7every\n" +
-                "§7second. Your Protector Strike pierces\n" +
-                "§7shields and defenses of enemies standing\n" +
-                "§7on top of the Hammer of Light. §7Lasts §68\n" +
-                "§7seconds.";
     }
 }

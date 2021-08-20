@@ -108,7 +108,7 @@ public enum Classes {
                 return value;
             }
         }
-        return CRYOMANCER;
+        return PYROMANCER;
     }
 
     public static ClassesGroup getClassesGroup(Classes selected) {

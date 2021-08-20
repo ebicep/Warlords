@@ -34,7 +34,7 @@ public class Intervene extends AbstractAbility {
                 "§7of §c3600 §7damage. You must remain within\n" +
                 "§e15 §7blocks of each other. Lasts §6" + duration + " §7seconds." +
                 "\n\n" +
-                "§7Has an initial cast range of §e" + radius + " §7blocks.";;
+                "§7Has an initial cast range of §e" + radius + " §7blocks.";
     }
 
     @Override

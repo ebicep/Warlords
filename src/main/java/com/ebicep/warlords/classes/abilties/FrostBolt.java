@@ -76,7 +76,9 @@ public class FrostBolt extends AbstractProjectileBase {
                 "§7by §e25% §7for §62 §7seconds. A\n" +
                 "§7direct hit will cause the enemy\n" +
                 "§7to take an additional §c15% §7extra\n" +
-                "§7damage." + "\n\n§7Has an optimal range of §e" + MAX_FULL_DAMAGE_DISTANCE + "\n" +
+                "§7damage." +
+                "\n\n" +
+                "§7Has an optimal range of §e" + MAX_FULL_DAMAGE_DISTANCE + "\n" +
                 "§7blocks.";
     }
 	
