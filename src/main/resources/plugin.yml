@@ -1,5 +1,5 @@
 name: Warlords
-version: WL 2 Release
+version: Release
 author: ebic
 main: com.ebicep.warlords.Warlords
 depend: [ MultiWorld, HolographicDisplays ]
