@@ -28,7 +28,6 @@ public class HealingTotem extends AbstractTotemBase {
 
     @Override
     public void updateDescription(Player player) {
-        //TODO change this
         description = "§7Place a totem on the ground that\n" +
                 "§7pulses constantly, healing nearby\n" +
                 "§7allies in a §e" + radius + " §7block radius for §a" + minDamageHeal + " §7- §a" + maxDamageHeal + "\n" +
