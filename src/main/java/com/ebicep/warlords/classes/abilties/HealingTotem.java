@@ -129,6 +129,25 @@ public class HealingTotem extends AbstractTotemBase {
             }
 
         }.runTaskTimer(Warlords.getInstance(), 0, 20);
+
+        new BukkitRunnable() {
+            int counter = 0;
+
+            @Override
+            public void run() {
+                if (wp.isDeath() || counter >= 20 * duration) {
+                    this.cancel();
+                } else if (player.isSneaking()) {
+                    PlayerFilter.entitiesAround(totemStand.getLocation(), radius, radius, radius)
+                            .aliveEnemiesOf(wp)
+                            .forEach((p) -> {
+                                p.getCooldownManager().addCooldown("Crippling", HealingTotem.class, new HealingTotem(), "CRIP", 3, wp, CooldownTypes.DEBUFF);
+                            });
+                    this.cancel();
+                }
+                counter++;
+            }
+        }.runTaskTimer(Warlords.getInstance(), 0, 0);
     }
 
 

@@ -617,7 +617,9 @@ public final class WarlordsPlayer {
                 }
 
                 //TODO maybe change to hypixel warlords where crippling effects hammer
-                if (!attacker.getCooldownManager().getCooldown(CripplingStrike.class).isEmpty()) {
+                if (!cooldownManager.getCooldown(HealingTotem.class).isEmpty()) {
+                    totalReduction *= .75;
+                } else if (!attacker.getCooldownManager().getCooldown(CripplingStrike.class).isEmpty()) {
                     totalReduction *= .85;
                 }
             } else if (min > 0) {
