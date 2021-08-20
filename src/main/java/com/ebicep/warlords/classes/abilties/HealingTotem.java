@@ -2,6 +2,7 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.internal.AbstractTotemBase;
+import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.player.CooldownTypes;
@@ -35,7 +36,7 @@ public class HealingTotem extends AbstractTotemBase {
                 "§7increase by §a30% §7(up to 180%) every\n" +
                 "§7second. Lasts §6" + duration + " §7seconds." +
                 "\n\n" +
-                "§7Using Chain Heal on your totem causes it to\n" +
+                "§7Pressing SHIFT causes your totem to\n" +
                 "§7pulse with immense darkness, crippling all\n" +
                 "§7enemies for §63 §7seconds. Crippled enemies\n" +
                 "§7deal §c25% §7less damage.";
@@ -75,7 +76,6 @@ public class HealingTotem extends AbstractTotemBase {
 
                     for (Player player1 : player.getWorld().getPlayers()) {
                         player1.playSound(totemStand.getLocation(), "shaman.earthlivingweapon.impact", 2, 0.9f);
-                        player1.playSound(totemStand.getLocation(), Sound.AMBIENCE_CAVE, 0.25f, 0.3f);
                     }
 
                     Location totemLoc = totemStand.getLocation();
@@ -143,6 +143,11 @@ public class HealingTotem extends AbstractTotemBase {
                             .forEach((p) -> {
                                 p.getCooldownManager().addCooldown("Crippling", HealingTotem.class, new HealingTotem(), "CRIP", 3, wp, CooldownTypes.DEBUFF);
                             });
+                    for (Player player1 : player.getWorld().getPlayers()) {
+                        player1.playSound(totemStand.getLocation(), "paladin.hammeroflight.impact", 1.5f, 0.2f);
+                    }
+                    player.sendMessage("§aAll enemies in your totem are now §ccrippled §afor 3 seconds!");
+                    new FallingBlockWaveEffect(totemStand.getLocation().add(0, 1, 0), 7, 2, Material.SAPLING, (byte) 1).play();
                     this.cancel();
                 }
                 counter++;

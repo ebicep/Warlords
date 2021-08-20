@@ -245,7 +245,7 @@ public class WarlordsEvents implements Listener {
                 } else if (itemHeld.getType() == Material.FIREWORK_CHARGE) {
                     openSkillTreeMenu(player);
                 } else if (itemHeld.getType() == Material.COMPASS) {
-                    player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 1);
+                    player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 1.5f);
                     wp.toggleTeamFlagCompass();
                 } else if (player.getInventory().getHeldItemSlot() == 0 || !wp.isHotKeyMode()) {
                     wp.getSpec().onRightClick(wp, player);

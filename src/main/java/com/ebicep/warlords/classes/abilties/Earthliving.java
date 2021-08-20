@@ -16,7 +16,7 @@ public class Earthliving extends AbstractAbility {
     private boolean firstProc = false;
 
     public Earthliving() {
-        super("Earthliving Weapon", 0, 0, 15.66f, 30, 25, 240);
+        super("Earthliving Weapon", 0, 0, 15.66f, 30, 25, 200);
     }
 
     @Override
