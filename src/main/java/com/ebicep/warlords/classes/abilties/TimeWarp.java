@@ -64,7 +64,7 @@ public class TimeWarp extends AbstractAbility {
 
                 if (counter % 4 == 0) {
                     if (timeWarpPlayer.getTime() != 0) {
-                        ParticleEffect.SPELL_WITCH.display(0F, 0F, 0F, 0.001F, 6, timeWarpPlayer.getLocation(), 500);
+                        ParticleEffect.SPELL_WITCH.display(0, 0, 0, 0.001F, 6, timeWarpPlayer.getLocation(), 500);
                     }
 
                     int points = 6;
@@ -74,7 +74,7 @@ public class TimeWarp extends AbstractAbility {
                     for (int e = 0; e < points; e++) {
                         double angle = 2 * Math.PI * e / points;
                         Location point = origin.clone().add(radius * Math.sin(angle), 0.0d, radius * Math.cos(angle));
-                        ParticleEffect.CLOUD.display(0.1F, 0F, 0.1F, 0.001F, 1, point, 500);
+                        ParticleEffect.CLOUD.display(0.1F, 0, 0.1F, 0.001F, 1, point, 500);
                     }
 
                 }

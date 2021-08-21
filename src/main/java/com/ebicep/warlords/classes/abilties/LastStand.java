@@ -14,7 +14,7 @@ public class LastStand extends AbstractAbility {
 
     private final int selfDuration = 12;
     private final int allyDuration = 6;
-    private final int radius = 6;
+    private final int radius = 4;
 
     public LastStand() {
         super("Last Stand", 0, 0, 56.38f, 40, 0, 0

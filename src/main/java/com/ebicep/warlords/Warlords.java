@@ -3,6 +3,12 @@ package com.ebicep.warlords;
 import co.aikar.taskchain.BukkitTaskChainFactory;
 import co.aikar.taskchain.TaskChain;
 import co.aikar.taskchain.TaskChainFactory;
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
+import com.comphenix.protocol.events.ListenerPriority;
+import com.comphenix.protocol.events.PacketAdapter;
+import com.comphenix.protocol.events.PacketEvent;
 import com.ebicep.customentities.npc.NPCManager;
 import com.ebicep.warlords.classes.abilties.*;
 import com.ebicep.warlords.commands.*;
@@ -199,6 +205,26 @@ public class Warlords extends JavaPlugin {
         updateHeads();
 
         game = new Game();
+
+        ProtocolManager protocolManager;
+
+        protocolManager = ProtocolLibrary.getProtocolManager();
+
+        protocolManager.addPacketListener(
+                new PacketAdapter(this, ListenerPriority.HIGHEST,
+                        PacketType.Play.Server.WORLD_PARTICLES) {
+                    int counter = 0;
+                    @Override
+                    public void onPacketSending(PacketEvent event) {
+                        // Item packets (id: 0x29)
+                        if (event.getPacketType() ==
+                                PacketType.Play.Server.WORLD_PARTICLES) {
+                            if(counter++ % 2 == 0) {
+                                event.setCancelled(true);
+                            }
+                        }
+                    }
+                });
 
         holographicDisplaysEnabled = Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays");
 

@@ -49,7 +49,7 @@ public class UndyingArmy extends AbstractAbility {
     public void updateDescription(Player player) {
         description = "§7You may chain up to §e5 §7allies in a §e" + radius + "\n" +
                 "§7block radius to heal them for §a100 §7+\n" +
-                "§7§a10% §7of their missing health every 2 §7seconds.\n" +
+                "§7§a10% §7of their missing health every 2 seconds.\n" +
                 "Lasts §6" + duration + " §7seconds." +
                 "\n\n" +
                 "§7Chained allies that take fatal damage\n" +

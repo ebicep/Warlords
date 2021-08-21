@@ -10,6 +10,8 @@ import org.bukkit.entity.Player;
 
 public class HolyRadiance extends AbstractAbility {
 
+    private final int radius = 4;
+
     public HolyRadiance(float cooldown, int energyCost, int critChance, int critMultiplier) {
         super("Holy Radiance", 582, 760, cooldown, energyCost, critChance, critMultiplier);
     }
@@ -18,7 +20,9 @@ public class HolyRadiance extends AbstractAbility {
     public void updateDescription(Player player) {
         description = "§7Radiate with holy energy, healing\n" +
                 "§7yourself and all nearby allies for\n" +
-                "§a" + minDamageHeal + " §7- §a" + maxDamageHeal + " §7health.";
+                "§a" + minDamageHeal + " §7- §a" + maxDamageHeal + " §7health." +
+                "\n\n" +
+                "§7Has a maximum range of §e" + radius + " §7blocks.";
     }
 
     @Override
@@ -26,7 +30,7 @@ public class HolyRadiance extends AbstractAbility {
         wp.subtractEnergy(energyCost);
 
         for (WarlordsPlayer p : PlayerFilter
-                .entitiesAround(player, 4.5, 4.5, 4.5)
+                .entitiesAround(player, radius, radius, radius)
                 .aliveTeammatesOfExcludingSelf(wp)
         ) {
             p.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
