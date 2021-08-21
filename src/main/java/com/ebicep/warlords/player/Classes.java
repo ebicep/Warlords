@@ -84,7 +84,7 @@ public enum Classes {
             Earthwarden::new,
             WordWrap.wrapWithNewline("§7A healing-oriented Shaman specialization that calls upon the power of Earth to crush enemies and to aid allies.", 200),
             SpecType.HEALER,
-            EARTHEN_SPIKE, BOULDER, CHAIN_HEAL, HEALING_TOTEM),
+            EARTHEN_SPIKE, BOULDER, CHAIN_HEAL),
 
     ;
 

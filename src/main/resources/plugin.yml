@@ -2,7 +2,7 @@ name: Warlords
 version: Release
 author: ebic
 main: com.ebicep.warlords.Warlords
-depend: [ MultiWorld, HolographicDisplays ]
+depend: [ MultiWorld, HolographicDisplays, ProtocolLib ]
 load: POSTWORLD
 commands:
   start:

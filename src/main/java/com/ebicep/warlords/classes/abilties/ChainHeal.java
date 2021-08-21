@@ -39,7 +39,7 @@ public class ChainHeal extends AbstractChainBase {
                 .aliveTeammatesOfExcludingSelf(wp)
                 .lookingAtFirst(wp)
         ) {
-            if (Utils.isLookingAtChain(player, nearPlayer.getEntity()) && Utils.hasLineOfSight(player, nearPlayer.getEntity())) {
+            if (Utils.isLookingAtChain(player, nearPlayer.getEntity())) {
                 //self heal
                 player.playSound(player.getLocation(), Sound.ORB_PICKUP, 1, 1);
                 wp.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);

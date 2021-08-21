@@ -212,7 +212,7 @@ public class CustomScoreboard {
                     Scoreboard mainLobbyScoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
                     Objective sideBar = mainLobbyScoreboard.registerNewObjective("WARLORDS", "");
                     sideBar.setDisplaySlot(DisplaySlot.SIDEBAR);
-                    sideBar.setDisplayName("     §e§lWARLORDS   ");
+                    sideBar.setDisplayName("     §e§lWARLORDS 2.0   ");
                     sideBar.getScore("").setScore(15);
                     sideBar.getScore("Kills: " + ChatColor.GREEN + Utils.addCommaAndRound(((Integer) Warlords.databaseManager.getPlayerInfoWithDotNotation(player, "kills")))).setScore(14);
                     sideBar.getScore("Assists: " + ChatColor.GREEN + Utils.addCommaAndRound(((Integer) Warlords.databaseManager.getPlayerInfoWithDotNotation(player, "assists")))).setScore(13);

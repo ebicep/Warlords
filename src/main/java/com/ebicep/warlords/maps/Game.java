@@ -230,7 +230,7 @@ public class Game implements Runnable {
         String dateString = format.format(new Date());
         Objective sideBar = board.registerNewObjective(dateString, "");
         sideBar.setDisplaySlot(DisplaySlot.SIDEBAR);
-        sideBar.setDisplayName("§e§lWARLORDS");
+        sideBar.setDisplayName("§e§lWARLORDS 2.0");
         sideBar.getScore(ChatColor.GRAY + dateString).setScore(13);
         sideBar.getScore(" ").setScore(12);
         sideBar.getScore(ChatColor.WHITE + "Map: " + ChatColor.GREEN + getMap().getMapName()).setScore(11);
