@@ -5,6 +5,7 @@ import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
@@ -135,19 +136,20 @@ public abstract class AbstractProjectileBase extends AbstractAbility {
         );
         while (itr.hasNext()) {
             Block block = itr.next();
-            if (block.getType().isSolid()) {
+            if (block.getType().isSolid() && block.getType() != Material.BARRIER) {
                 BlockPosition pos = new BlockPosition(block.getX(), block.getY(), block.getZ());
                 WorldServer world = ((CraftWorld) block.getWorld()).getHandle();
                 IBlockData type = world.getType(pos);
                 AxisAlignedBB box = type.getBlock().a(world, pos, type);
-                //TODO fix nullpointer when shooting flag (hitbox weirdo?)
-                MovingObjectPosition mop = box.a(after, before);
-                if (mop != null) {
-                    double distance = before.distanceSquared(mop.pos);
-                    if (hit == null || distance < hitDistance) {
-                        hit = mop;
+                if (box != null) {
+                    MovingObjectPosition mop = box.a(after, before);
+                    if (mop != null) {
+                        double distance = before.distanceSquared(mop.pos);
+                        if (hit == null || distance < hitDistance) {
+                            hit = mop;
+                        }
+                        break;
                     }
-                    break;
                 }
             }
         }

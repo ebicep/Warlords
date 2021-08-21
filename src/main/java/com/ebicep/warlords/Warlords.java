@@ -1,6 +1,8 @@
 package com.ebicep.warlords;
 
-import com.ebicep.customentities.npc.NPCEvents;
+import co.aikar.taskchain.BukkitTaskChainFactory;
+import co.aikar.taskchain.TaskChain;
+import co.aikar.taskchain.TaskChainFactory;
 import com.ebicep.customentities.npc.NPCManager;
 import com.ebicep.warlords.classes.abilties.*;
 import com.ebicep.warlords.commands.*;
@@ -38,12 +40,20 @@ public class Warlords extends JavaPlugin {
 
     public static String VERSION = "";
 
-    private static final int SPAWN_PROTECTION_RADIUS = 5;
-
     private static Warlords instance;
 
     public static Warlords getInstance() {
         return instance;
+    }
+
+    private static TaskChainFactory taskChainFactory;
+
+    public static <T> TaskChain<T> newChain() {
+        return taskChainFactory.newChain();
+    }
+
+    public static <T> TaskChain<T> newSharedChain(String name) {
+        return taskChainFactory.newSharedChain(name);
     }
 
     private static final HashMap<UUID, WarlordsPlayer> players = new HashMap<>();
@@ -165,14 +175,17 @@ public class Warlords extends JavaPlugin {
 
     public Location npcCTFLocation;
 
+    private static final int SPAWN_PROTECTION_RADIUS = 5;
+
     @Override
     public void onEnable() {
         VERSION = this.getDescription().getVersion();
         ConfigurationSerialization.registerClass(PlayerSettings.class);
+        taskChainFactory = BukkitTaskChainFactory.create(this);
         instance = this;
         getServer().getPluginManager().registerEvents(new WarlordsEvents(), this);
         getServer().getPluginManager().registerEvents(new MenuEventListener(this), this);
-        getServer().getPluginManager().registerEvents(new NPCEvents(), this);
+        //getServer().getPluginManager().registerEvents(new NPCEvents(), this);
 
         new StartCommand().register(this);
         new EndgameCommand().register(this);
@@ -186,18 +199,24 @@ public class Warlords extends JavaPlugin {
         updateHeads();
 
         game = new Game();
-        getData();
+
         holographicDisplaysEnabled = Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays");
-        if (holographicDisplaysEnabled) {
-            HologramsAPI.getHolograms(Warlords.this).forEach(Hologram::delete);
-        }
-        addHologramLeaderboard();
-        citizensEnabled = Bukkit.getPluginManager().isPluginEnabled("Citizens");
-        npcCTFLocation = new LocationBuilder(Bukkit.getWorlds().get(0).getSpawnLocation())
-                .add(Bukkit.getWorlds().get(0).getSpawnLocation().getDirection().multiply(12))
-                .yaw(180)
-                .get();
-        if (citizensEnabled) {
+
+        //gets data then loads scoreboard then loads holograms (all callbacks i think)
+        Warlords.newChain()
+                .asyncFirst(() -> databaseManager = new DatabaseManager())
+                .syncLast(input -> {
+                    Bukkit.getOnlinePlayers().forEach(CustomScoreboard::giveMainLobbyScoreboard);
+                    addHologramLeaderboards();
+                })
+                .execute();
+
+//        citizensEnabled = Bukkit.getPluginManager().isPluginEnabled("Citizens");
+//        npcCTFLocation = new LocationBuilder(Bukkit.getWorlds().get(0).getSpawnLocation())
+//                .add(Bukkit.getWorlds().get(0).getSpawnLocation().getDirection().multiply(12))
+//                .yaw(180)
+//                .get();
+//        if (citizensEnabled) {
 //            CitizensAPI.getNPCRegistries().forEach(NPCRegistry::deregisterAll);
 //            List<String> ctfInfo = new ArrayList<>();
 //            ctfInfo.add(ChatColor.YELLOW + ChatColor.BOLD.toString() + "CLICK TO PLAY");
@@ -211,8 +230,8 @@ public class Warlords extends JavaPlugin {
 //                    false,
 //                    ctfInfo
 //            );
-        }
-        startTask();
+//        }
+        gameLoop();
         getServer().getScheduler().runTaskTimer(this, game, 1, 1);
         new BukkitRunnable() {
             @Override
@@ -232,67 +251,121 @@ public class Warlords extends JavaPlugin {
     @Override
     public void onDisable() {
         game.clearAllPlayers();
+        if (holographicDisplaysEnabled) {
+            HologramsAPI.getHolograms(instance).forEach(Hologram::delete);
+        }
         getServer().getConsoleSender().sendMessage(ChatColor.RED + "[Warlords]: Plugin is disabled");
         // TODO persist this.playerSettings to a database
     }
 
-    public void getData() {
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                try {
-                    databaseManager = new DatabaseManager();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }.runTaskAsynchronously(this);
-    }
+    public static void addHologramLeaderboards() {
+        if (databaseManager != null && databaseManager.isConnected() && holographicDisplaysEnabled) {
+            HologramsAPI.getHolograms(instance).forEach(Hologram::delete);
 
-    public void addHologramLeaderboard() {
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                if (databaseManager != null && databaseManager.isConnected()) {
-                    if (holographicDisplaysEnabled) {
-                        Location spawnPoint = Bukkit.getWorlds().get(0).getSpawnLocation().clone();
-
-                        Location lifeTimeWinsLB = spawnPoint.clone().add(spawnPoint.getDirection().multiply(12));
-                        lifeTimeWinsLB.add(Utils.getLeftDirection(spawnPoint).multiply(3));
-                        lifeTimeWinsLB.add(0, 7, 0);
-
-                        Hologram winsHologram = HologramsAPI.createHologram(Warlords.this, lifeTimeWinsLB);
-                        winsHologram.appendTextLine(ChatColor.AQUA + ChatColor.BOLD.toString() + "Lifetime Wins");
-                        winsHologram.appendTextLine("");
-                        List<Document> topWinners = databaseManager.getPlayersSortedByKey("wins");
+            System.out.println("Adding Holograms");
+            Location spawnPoint = Bukkit.getWorlds().get(0).getSpawnLocation().clone();
+            Location lifeTimeWinsLB = new LocationBuilder(spawnPoint.clone()).forward(12).left(3).addY(6).get();
+            Location lifeTimeKillsLB = new LocationBuilder(spawnPoint.clone()).forward(12).right(3).addY(6).get();
+            Location srLB = new LocationBuilder(spawnPoint.clone()).forward(12).addY(10).get();
+            Location srLBMage = new LocationBuilder(spawnPoint.clone()).backward(6).right(6).addY(6).left(7).get();
+            Location srLBWarrior = new LocationBuilder(spawnPoint.clone()).backward(6).right(2).addY(6).left(7).get();
+            Location srLBPaladin = new LocationBuilder(spawnPoint.clone()).backward(6).left(2).addY(6).left(7).get();
+            Location srLBShaman = new LocationBuilder(spawnPoint.clone()).backward(6).left(6).addY(6).left(7).get();
+            Warlords.newChain()
+                    .asyncFirst(() -> databaseManager.getPlayersSortedByKey("wins"))
+                    .abortIfNull()
+                    .syncLast((topWinners) -> {
+                        List<String> hologramLines = new ArrayList<>();
                         for (int i = 0; i < 10 && i < topWinners.size(); i++) {
                             Document player = topWinners.get(i);
-                            winsHologram.appendTextLine(ChatColor.YELLOW.toString() + (i + 1) + ". " + ChatColor.AQUA + player.get("name") + ChatColor.GRAY + " - " + ChatColor.YELLOW + (Utils.addCommaAndRound((Integer) player.get("wins"))));
+                            hologramLines.add(ChatColor.YELLOW.toString() + (i + 1) + ". " + ChatColor.AQUA + player.get("name") + ChatColor.GRAY + " - " + ChatColor.YELLOW + (Utils.addCommaAndRound((Integer) player.get("wins"))));
                         }
-
-                        Location lifeTimeKillsLB = spawnPoint.clone().add(spawnPoint.getDirection().multiply(12));
-                        lifeTimeKillsLB.add(Utils.getRightDirection(spawnPoint).multiply(3));
-                        lifeTimeKillsLB.add(0, 7, 0);
-
-                        Hologram killsHologram = HologramsAPI.createHologram(Warlords.this, lifeTimeKillsLB);
-                        killsHologram.appendTextLine(ChatColor.AQUA + ChatColor.BOLD.toString() + "Lifetime Kills");
-                        killsHologram.appendTextLine("");
-                        List<Document> topKillers = databaseManager.getPlayersSortedByKey("kills");
+                        createLeaderboard(lifeTimeWinsLB, ChatColor.AQUA + ChatColor.BOLD.toString() + "Lifetime Wins", hologramLines);
+                    })
+                    .execute();
+            Warlords.newChain()
+                    .asyncFirst(() -> databaseManager.getPlayersSortedByKey("kills"))
+                    .abortIfNull()
+                    .syncLast((topKillers) -> {
+                        List<String> hologramLines = new ArrayList<>();
                         for (int i = 0; i < 10 && i < topKillers.size(); i++) {
                             Document player = topKillers.get(i);
-                            killsHologram.appendTextLine(ChatColor.YELLOW.toString() + (i + 1) + ". " + ChatColor.AQUA + player.get("name") + ChatColor.GRAY + " - " + ChatColor.YELLOW + (Utils.addCommaAndRound((Integer) player.get("kills"))));
+                            hologramLines.add(ChatColor.YELLOW.toString() + (i + 1) + ". " + ChatColor.AQUA + player.get("name") + ChatColor.GRAY + " - " + ChatColor.YELLOW + (Utils.addCommaAndRound((Integer) player.get("kills"))));
                         }
-
-                    }
-                    this.cancel();
-                }
-            }
-        }.runTaskTimer(this, 10, 0);
+                        createLeaderboard(lifeTimeKillsLB, ChatColor.AQUA + ChatColor.BOLD.toString() + "Lifetime Kills", hologramLines);
+                    })
+                    .execute();
+            Warlords.newChain()
+                    .asyncFirst(() -> databaseManager.getPlayersSortedBySR(""))
+                    .abortIfNull()
+                    .syncLast((topSR) -> {
+                        createLeaderboard(srLB, ChatColor.AQUA + ChatColor.BOLD.toString() + "SR Ranking", getHologramLines(topSR));
+                    })
+                    .execute();
+            Warlords.newChain()
+                    .asyncFirst(() -> databaseManager.getPlayersSortedBySR("mage"))
+                    .abortIfNull()
+                    .syncLast((topSRMage) -> {
+                        createLeaderboard(srLBMage, ChatColor.AQUA + ChatColor.BOLD.toString() + "Mage SR Ranking", getHologramLines(topSRMage));
+                    })
+                    .execute();
+            Warlords.newChain()
+                    .asyncFirst(() -> databaseManager.getPlayersSortedBySR("warrior"))
+                    .abortIfNull()
+                    .syncLast((topSRWarrior) -> {
+                        createLeaderboard(srLBWarrior, ChatColor.AQUA + ChatColor.BOLD.toString() + "Warrior SR Ranking", getHologramLines(topSRWarrior));
+                    })
+                    .execute();
+            Warlords.newChain()
+                    .asyncFirst(() -> databaseManager.getPlayersSortedBySR("paladin"))
+                    .abortIfNull()
+                    .syncLast((topSRPaladin) -> {
+                        createLeaderboard(srLBPaladin, ChatColor.AQUA + ChatColor.BOLD.toString() + "Paladin SR Ranking", getHologramLines(topSRPaladin));
+                    })
+                    .execute();
+            Warlords.newChain()
+                    .asyncFirst(() -> databaseManager.getPlayersSortedBySR("shaman"))
+                    .abortIfNull()
+                    .syncLast((topSRShaman) -> {
+                        createLeaderboard(srLBShaman, ChatColor.AQUA + ChatColor.BOLD.toString() + "Shaman SR Ranking", getHologramLines(topSRShaman));
+                    })
+                    .execute();
+        }
     }
 
-    public void startTask() {
+    private static List<String> getHologramLines(HashMap<Document, Integer> players) {
+        List<Document> sorted = getDocumentInSortedList(players);
+        List<String> hologramLines = new ArrayList<>();
+        for (int i = 0; i < 10 && i < sorted.size(); i++) {
+            Document player = sorted.get(i);
+            hologramLines.add(ChatColor.YELLOW.toString() + (i + 1) + ". " + ChatColor.AQUA + player.get("name") + ChatColor.GRAY + " - " + ChatColor.YELLOW + (Utils.addCommaAndRound(players.get(player))));
+        }
+        return hologramLines;
+    }
+
+    private static List<Document> getDocumentInSortedList(HashMap<Document, Integer> map) {
+        List<Document> sorted = new ArrayList<>();
+        map.entrySet().stream()
+                .sorted(Map.Entry.comparingByValue())
+                .forEach(documentIntegerEntry -> sorted.add(documentIntegerEntry.getKey()));
+        Collections.reverse(sorted);
+        return sorted;
+    }
+
+    public static void createLeaderboard(Location location, String title, List<String> lines) {
+        Hologram hologram = HologramsAPI.createHologram(instance, location);
+        hologram.appendTextLine(title);
+        hologram.appendTextLine("");
+        for (String line : lines) {
+            hologram.appendTextLine(line);
+        }
+        Bukkit.getServer().getConsoleSender().sendMessage("Created Hologram - " + title);
+    }
+
+    public void gameLoop() {
         new BukkitRunnable() {
             int counter = 0;
+
             @Override
             public void run() {
                 // EVERY TICK
@@ -303,6 +376,12 @@ public class Warlords extends JavaPlugin {
                     }
 
                     for (WarlordsPlayer warlordsPlayer : players.values()) {
+                        if (warlordsPlayer.getName().equals("sumSmash")) {
+                            if (warlordsPlayer.getEntity().getVehicle() != null) {
+
+                            }
+                        }
+
                         CooldownManager cooldownManager = warlordsPlayer.getCooldownManager();
                         Player player = warlordsPlayer.getEntity() instanceof Player ? (Player) warlordsPlayer.getEntity() : null;
 

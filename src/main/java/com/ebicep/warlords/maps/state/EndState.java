@@ -4,7 +4,6 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.state.PlayingState.Stats;
-import com.ebicep.warlords.player.CustomScoreboard;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.PacketUtils;
 import com.ebicep.warlords.util.PlayerFilter;
@@ -16,7 +15,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -133,17 +131,6 @@ public class EndState implements State, TimerDebugAble {
             }
         }
         sendMessageToAllGamePlayer(game, "" + ChatColor.GREEN + ChatColor.BOLD + "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬", false);
-        
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                for (WarlordsPlayer player : PlayerFilter.playingGame(game)) {
-                    if (player.getEntity() instanceof Player) {
-                        Warlords.databaseManager.loadPlayer((Player)player.getEntity());
-                    }
-                }
-            }
-        }.runTaskAsynchronously(Warlords.getInstance());
     }
 
     @Override
@@ -157,9 +144,6 @@ public class EndState implements State, TimerDebugAble {
 
     @Override
     public void end() {
-        game.forEachOnlinePlayer(((player, team) -> {
-            CustomScoreboard.giveMainLobbyScoreboard(player);
-        }));
         game.clearAllPlayers();
     }
 
