@@ -83,8 +83,8 @@ public class StartCommand implements TabExecutor {
 
             Warlords.game.addPlayer(player, teamBlueAssessment);
             game.giveLobbyScoreboard(player);
-            ArmorManager.resetArmor(player, Warlords.getPlayerSettings(player.getUniqueId()).selectedClass(), teamBlueAssessment ? Team.BLUE : Team.RED);
-            Warlords.getPlayerSettings(player.getUniqueId()).wantedTeam(teamBlueAssessment ? Team.BLUE : Team.RED);
+            ArmorManager.resetArmor(player, Warlords.getPlayerSettings(player.getUniqueId()).getSelectedClass(), teamBlueAssessment ? Team.BLUE : Team.RED);
+            Warlords.getPlayerSettings(player.getUniqueId()).setWantedTeam(teamBlueAssessment ? Team.BLUE : Team.RED);
             teamBlueAssessment = !teamBlueAssessment;
         }
 

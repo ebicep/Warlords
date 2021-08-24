@@ -202,6 +202,7 @@ public class Warlords extends JavaPlugin {
         new ClassCommand().register(this);
         new GetPlayersCommand().register(this);
         new TestCommand().register(this);
+        new ParticleQualityCommand().register(this);
 
         updateHeads();
 
@@ -217,6 +218,30 @@ public class Warlords extends JavaPlugin {
                     addHologramLeaderboards();
                 })
                 .execute();
+
+        ProtocolManager protocolManager;
+
+        protocolManager = ProtocolLibrary.getProtocolManager();
+
+        protocolManager.addPacketListener(
+                new PacketAdapter(this, ListenerPriority.HIGHEST,
+                        PacketType.Play.Server.WORLD_PARTICLES) {
+                    int counter = 0;
+
+                    @Override
+                    public void onPacketSending(PacketEvent event) {
+                        // Item packets (id: 0x29)
+                        if (event.getPacketType() == PacketType.Play.Server.WORLD_PARTICLES) {
+                            Player player = event.getPlayer();
+                            if (Warlords.game.getPlayers().containsKey(player.getUniqueId())) {
+                                if (counter++ % playerSettings.get(player.getUniqueId()).getParticleQuality().particleReduction == 0) {
+                                    System.out.println(counter);
+                                    event.setCancelled(true);
+                                }
+                            }
+                        }
+                    }
+                });
 
 //        citizensEnabled = Bukkit.getPluginManager().isPluginEnabled("Citizens");
 //        npcCTFLocation = new LocationBuilder(Bukkit.getWorlds().get(0).getSpawnLocation())
@@ -637,7 +662,7 @@ public class Warlords extends JavaPlugin {
 
                                 float minHeal = 252;
                                 float maxHeal = 420;
-                                if (Warlords.getPlayerSettings(orb.getOwner().getUuid()).classesSkillBoosts() == ClassesSkillBoosts.ORBS_OF_LIFE) {
+                                if (Warlords.getPlayerSettings(orb.getOwner().getUuid()).getClassesSkillBoosts() == ClassesSkillBoosts.ORBS_OF_LIFE) {
                                     minHeal *= 1.2;
                                     maxHeal *= 1.2;
                                 }

@@ -2,7 +2,7 @@ name: Warlords
 version: New Leaf
 author: ebic
 main: com.ebicep.warlords.Warlords
-depend: [ MultiWorld, HolographicDisplays ]
+depend: [ MultiWorld, HolographicDisplays, ProtocolLib ]
 load: POSTWORLD
 commands:
   start:
@@ -32,3 +32,6 @@ commands:
   test:
     description: Test Command
     usage: /test
+  pq:
+    description: Sets particle quality
+    usage: /pq [LOW,MEDIUM,HIGH]

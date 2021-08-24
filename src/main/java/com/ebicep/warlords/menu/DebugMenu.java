@@ -120,8 +120,8 @@ public class DebugMenu {
                         .name(ChatColor.GREEN + "Kill")
                         .flags(ItemFlag.HIDE_POTION_EFFECTS)
                         .get(),
-                new ItemBuilder(Material.WOOL, 1, (short) (Warlords.getPlayerSettings(player.getUniqueId()).wantedTeam() == Team.BLUE ? 14 : 11))
-                        .name(ChatColor.GREEN + "Swap to the " + (Warlords.getPlayerSettings(player.getUniqueId()).wantedTeam() == Team.BLUE ? Team.RED.coloredPrefix() : Team.BLUE.coloredPrefix()) + ChatColor.GREEN + " team")
+                new ItemBuilder(Material.WOOL, 1, (short) (Warlords.getPlayerSettings(player.getUniqueId()).getWantedTeam() == Team.BLUE ? 14 : 11))
+                        .name(ChatColor.GREEN + "Swap to the " + (Warlords.getPlayerSettings(player.getUniqueId()).getWantedTeam() == Team.BLUE ? Team.RED.coloredPrefix() : Team.BLUE.coloredPrefix()) + ChatColor.GREEN + " team")
                         .get(),
         };
         ItemStack[] secondRow = {
@@ -175,9 +175,9 @@ public class DebugMenu {
                                     //todo something with rejoin point?
                                     target.setTeam(otherTeam);
                                     target.getScoreboard().updatePlayerName();
-                                    Warlords.getPlayerSettings(target.getUuid()).wantedTeam(otherTeam);
+                                    Warlords.getPlayerSettings(target.getUuid()).setWantedTeam(otherTeam);
                                     target.teleport(otherTeam == Team.RED ? target.getGame().getMap().getRedLobbySpawnPoint() : target.getGame().getMap().getBlueLobbySpawnPoint());
-                                    ArmorManager.resetArmor(Bukkit.getPlayer(target.getUuid()), Warlords.getPlayerSettings(target.getUuid()).selectedClass(), otherTeam);
+                                    ArmorManager.resetArmor(Bukkit.getPlayer(target.getUuid()), Warlords.getPlayerSettings(target.getUuid()).getSelectedClass(), otherTeam);
                                     player.sendMessage(ChatColor.RED + "DEV: " + currentTeam.teamColor() + target.getName() + "§a was swapped to the " + otherTeam.coloredPrefix() + " §ateam");
                                     openPlayerMenu(player, target);
                                     break;

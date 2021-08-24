@@ -3,13 +3,9 @@ package com.ebicep.warlords.player;
 import com.ebicep.warlords.Warlords;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.metadata.FixedMetadataValue;
-
-import java.util.Objects;
 
 public enum Weapons {
 
@@ -79,12 +75,12 @@ public enum Weapons {
 
     @Deprecated
     public static Weapons getSelected(OfflinePlayer player) {
-        return Warlords.getPlayerSettings(player.getUniqueId()).weapon();
+        return Warlords.getPlayerSettings(player.getUniqueId()).getWeapon();
     }
 
     @Deprecated
     public static void setSelected(OfflinePlayer player, Weapons selectedWeapon) {
-        Warlords.getPlayerSettings(player.getUniqueId()).weapon(selectedWeapon);
+        Warlords.getPlayerSettings(player.getUniqueId()).setWeapon(selectedWeapon);
     }
 
     public static Weapons getWeapon(String name) {

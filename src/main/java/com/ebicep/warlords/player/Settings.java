@@ -97,18 +97,20 @@ public class Settings {
 
     public enum ParticleQuality {
 
-        LOW(new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) 1).name(ChatColor.GOLD + "Low Quality").get(), ChatColor.GRAY + "Heavily reduces the amount of\n" + ChatColor.GRAY + "particles you will see."),
-        MEDIUM(new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) 4).name(ChatColor.YELLOW + "Medium Quality").get(), ChatColor.GRAY + "Reduces the amount of particles\n" + ChatColor.GRAY + "seem."),
-        HIGH(new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) 5).name(ChatColor.GREEN + "High Quality").get(), ChatColor.GRAY + "Shows all particles for the best\n" + ChatColor.GRAY + "experience."),
+        LOW(new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) 1).name(ChatColor.GOLD + "Low Quality").get(), ChatColor.GRAY + "Heavily reduces the amount of\n" + ChatColor.GRAY + "particles you will see.", 2),
+        MEDIUM(new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) 4).name(ChatColor.YELLOW + "Medium Quality").get(), ChatColor.GRAY + "Reduces the amount of particles\n" + ChatColor.GRAY + "seem.", 4),
+        HIGH(new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (short) 5).name(ChatColor.GREEN + "High Quality").get(), ChatColor.GRAY + "Shows all particles for the best\n" + ChatColor.GRAY + "experience.", 100000),
 
         ;
 
         public ItemStack item;
         public String description;
+        public int particleReduction;
 
-        ParticleQuality(ItemStack item, String description) {
+        ParticleQuality(ItemStack item, String description, int particleReduction) {
             this.item = item;
             this.description = description;
+            this.particleReduction = particleReduction;
         }
 
         public static ParticleQuality getSelected(Player player) {

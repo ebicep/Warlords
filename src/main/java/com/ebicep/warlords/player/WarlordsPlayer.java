@@ -116,7 +116,7 @@ public final class WarlordsPlayer {
         this.uuid = player.getUniqueId();
         this.gameState = gameState;
         this.team = team;
-        this.specClass = settings.selectedClass();
+        this.specClass = settings.getSelectedClass();
         this.spec = specClass.create.get();
         this.maxHealth = (int) (this.spec.getMaxHealth() * (gameState.getGame().getCooldownMode()? 1.5 : 1));
         this.health = this.maxHealth;
@@ -133,8 +133,8 @@ public final class WarlordsPlayer {
         this.scoreboard = new CustomScoreboard(this, gameState, 15);
         Player p = player.getPlayer();
         this.entity = spawnJimmy(p == null ? Warlords.getRejoinPoint(uuid) : p.getLocation(), null);
-        this.weapon = settings.weapon();
-        this.hotKeyMode = settings.hotKeyMode();
+        this.weapon = settings.getWeapon();
+        this.hotKeyMode = settings.getHotKeyMode();
         updatePlayerReference(p);
     }
 
@@ -455,11 +455,11 @@ public final class WarlordsPlayer {
     }
 
     public void setSpec(AbstractPlayerClass spec, ClassesSkillBoosts skillBoosts) {
-        Warlords.getPlayerSettings(uuid).selectedClass(Classes.getClass(spec.getName()));
-        Warlords.getPlayerSettings(uuid).classesSkillBoosts(skillBoosts);
+        Warlords.getPlayerSettings(uuid).setSelectedClass(Classes.getClass(spec.getName()));
+        Warlords.getPlayerSettings(uuid).setClassesSkillBoosts(skillBoosts);
         Player player = Bukkit.getPlayer(uuid);
         this.spec = spec;
-        this.specClass = Warlords.getPlayerSettings(uuid).selectedClass();
+        this.specClass = Warlords.getPlayerSettings(uuid).getSelectedClass();
         ArmorManager.resetArmor(player, specClass, team);
         applySkillBoost(player);
         this.spec.getWeapon().updateDescription(player);
@@ -845,7 +845,7 @@ public final class WarlordsPlayer {
                                 tempNewCritChance = -1;
                             }
 
-                            if (Warlords.getPlayerSettings(attacker.uuid).classesSkillBoosts() == ClassesSkillBoosts.PROTECTOR_STRIKE) {
+                            if (Warlords.getPlayerSettings(attacker.uuid).getClassesSkillBoosts() == ClassesSkillBoosts.PROTECTOR_STRIKE) {
                                 attacker.addHealth(attacker, ability, -damageHealValue / 1.43f, -damageHealValue / 1.43f, tempNewCritChance, 100);
                             } else {
                                 attacker.addHealth(attacker, ability, -damageHealValue / 2, -damageHealValue / 2, tempNewCritChance, 100);
@@ -857,7 +857,7 @@ public final class WarlordsPlayer {
                                 .aliveTeammatesOfExcludingSelf(attacker)
                                 .limit(2)
                             ) {
-                                if (Warlords.getPlayerSettings(attacker.uuid).classesSkillBoosts() == ClassesSkillBoosts.PROTECTOR_STRIKE) {
+                                if (Warlords.getPlayerSettings(attacker.uuid).getClassesSkillBoosts() == ClassesSkillBoosts.PROTECTOR_STRIKE) {
                                     nearTeamPlayer.addHealth(attacker, ability, -damageHealValue * 1.2f, -damageHealValue * 1.2f, tempNewCritChance, 100);
                                 } else {
                                     nearTeamPlayer.addHealth(attacker, ability, -damageHealValue, -damageHealValue, tempNewCritChance, 100);
@@ -955,7 +955,7 @@ public final class WarlordsPlayer {
                                     player1.playSound(getLocation(), "shaman.windfuryweapon.impact", 2, 1);
                                 });
 
-                                if (Warlords.getPlayerSettings(attacker.uuid).classesSkillBoosts() == ClassesSkillBoosts.WINDFURY_WEAPON) {
+                                if (Warlords.getPlayerSettings(attacker.uuid).getClassesSkillBoosts() == ClassesSkillBoosts.WINDFURY_WEAPON) {
                                     addHealth(attacker, "Windfury Weapon", (min * 1.35f) * 1.2f, (max * 1.35f) * 1.2f, 25, 200);
                                 } else {
                                     addHealth(attacker, "Windfury Weapon", (min * 1.35f), (max * 1.35f), 25, 200);

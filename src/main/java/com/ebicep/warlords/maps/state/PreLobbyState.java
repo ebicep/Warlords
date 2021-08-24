@@ -101,7 +101,7 @@ public class PreLobbyState implements State, TimerDebugAble {
 
     private void updateTeamPreferences() {
         this.game.offlinePlayers().forEach((e) -> {
-            Team selectedTeam = Warlords.getPlayerSettings(e.getKey().getUniqueId()).wantedTeam();
+            Team selectedTeam = Warlords.getPlayerSettings(e.getKey().getUniqueId()).getWantedTeam();
             if (selectedTeam == null) {
                 Bukkit.broadcastMessage(ChatColor.GOLD + e.getKey().getName() + " §7did not choose a team!");
             }
@@ -226,10 +226,10 @@ public class PreLobbyState implements State, TimerDebugAble {
             String entryUnformatted = ChatColor.stripColor(entry);
             if (entryUnformatted.contains("Lv90 ")) {
                 scoreboard.resetScores(entry);
-                scoreboard.getObjective(dateString).getScore(ChatColor.GOLD + "Lv90 " + Classes.getClassesGroup(Warlords.getPlayerSettings(player.getUniqueId()).selectedClass()).name).setScore(4);
+                scoreboard.getObjective(dateString).getScore(ChatColor.GOLD + "Lv90 " + Classes.getClassesGroup(Warlords.getPlayerSettings(player.getUniqueId()).getSelectedClass()).name).setScore(4);
             } else if (entryUnformatted.contains("Spec: ")) {
                 scoreboard.resetScores(entry);
-                scoreboard.getObjective(dateString).getScore(ChatColor.WHITE + "Spec: " + ChatColor.GREEN + Warlords.getPlayerSettings(player.getUniqueId()).selectedClass().name).setScore(3);
+                scoreboard.getObjective(dateString).getScore(ChatColor.WHITE + "Spec: " + ChatColor.GREEN + Warlords.getPlayerSettings(player.getUniqueId()).getSelectedClass().name).setScore(3);
             }
         }
     }
