@@ -235,7 +235,6 @@ public class Warlords extends JavaPlugin {
                             Player player = event.getPlayer();
                             if (Warlords.game.getPlayers().containsKey(player.getUniqueId())) {
                                 if (counter++ % playerSettings.get(player.getUniqueId()).getParticleQuality().particleReduction == 0) {
-                                    System.out.println(counter);
                                     event.setCancelled(true);
                                 }
                             }
