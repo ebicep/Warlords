@@ -19,10 +19,7 @@ import org.bukkit.util.Vector;
 
 import javax.annotation.Nullable;
 import java.text.DecimalFormat;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -444,5 +441,15 @@ public class Utils {
         net.minecraft.server.v1_8_R3.NBTTagCompound compound = new NBTTagCompound();
         nmsItemStack.save(compound);
         return compound.toString();
+    }
+
+    public static <T, E> Set<T> getKeysByValue(Map<T, E> map, E value) {
+        Set<T> keys = new HashSet<T>();
+        for (Map.Entry<T, E> entry : map.entrySet()) {
+            if (Objects.equals(value, entry.getValue())) {
+                keys.add(entry.getKey());
+            }
+        }
+        return keys;
     }
 }

@@ -1,6 +1,7 @@
 package com.ebicep.warlords.player;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.maps.flags.GroundFlagLocation;
 import com.ebicep.warlords.maps.flags.PlayerFlagLocation;
 import com.ebicep.warlords.maps.flags.SpawnFlagLocation;
@@ -206,24 +207,24 @@ public class CustomScoreboard {
             @Override
             public void run() {
                 counter++;
-                if ((Warlords.databaseManager != null && !Warlords.databaseManager.isConnected()) || counter >= 200) {
+                if ((!DatabaseManager.isConnected()) || counter >= 200) {
                     this.cancel();
-                } else if (Warlords.databaseManager != null && Warlords.databaseManager.hasPlayer(player.getUniqueId())) {
+                } else if (DatabaseManager.hasPlayer(player.getUniqueId())) {
                     Scoreboard mainLobbyScoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
                     Objective sideBar = mainLobbyScoreboard.registerNewObjective("WARLORDS", "");
                     sideBar.setDisplaySlot(DisplaySlot.SIDEBAR);
                     sideBar.setDisplayName("    §e§lWARLORDS 2.0    ");
                     sideBar.getScore("").setScore(15);
-                    sideBar.getScore("Kills: " + ChatColor.GREEN + Utils.addCommaAndRound(((Integer) Warlords.databaseManager.getPlayerInfoWithDotNotation(player, "kills")))).setScore(14);
-                    sideBar.getScore("Assists: " + ChatColor.GREEN + Utils.addCommaAndRound(((Integer) Warlords.databaseManager.getPlayerInfoWithDotNotation(player, "assists")))).setScore(13);
-                    sideBar.getScore("Deaths: " + ChatColor.GREEN + Utils.addCommaAndRound(((Integer) Warlords.databaseManager.getPlayerInfoWithDotNotation(player, "deaths")))).setScore(12);
+                    sideBar.getScore("Kills: " + ChatColor.GREEN + Utils.addCommaAndRound(((Integer) DatabaseManager.getPlayerInfoWithDotNotation(player, "kills")))).setScore(14);
+                    sideBar.getScore("Assists: " + ChatColor.GREEN + Utils.addCommaAndRound(((Integer) DatabaseManager.getPlayerInfoWithDotNotation(player, "assists")))).setScore(13);
+                    sideBar.getScore("Deaths: " + ChatColor.GREEN + Utils.addCommaAndRound(((Integer) DatabaseManager.getPlayerInfoWithDotNotation(player, "deaths")))).setScore(12);
                     sideBar.getScore(" ").setScore(11);
-                    sideBar.getScore("Wins: " + ChatColor.GREEN + Utils.addCommaAndRound(((Integer) Warlords.databaseManager.getPlayerInfoWithDotNotation(player, "wins")))).setScore(10);
-                    sideBar.getScore("Losses: " + ChatColor.GREEN + Utils.addCommaAndRound(((Integer) Warlords.databaseManager.getPlayerInfoWithDotNotation(player, "losses")))).setScore(9);
+                    sideBar.getScore("Wins: " + ChatColor.GREEN + Utils.addCommaAndRound(((Integer) DatabaseManager.getPlayerInfoWithDotNotation(player, "wins")))).setScore(10);
+                    sideBar.getScore("Losses: " + ChatColor.GREEN + Utils.addCommaAndRound(((Integer) DatabaseManager.getPlayerInfoWithDotNotation(player, "losses")))).setScore(9);
                     sideBar.getScore("  ").setScore(8);
-                    sideBar.getScore("Damage: " + ChatColor.RED + Utils.addCommaAndRound(((Number) Warlords.databaseManager.getPlayerInfoWithDotNotation(player, "damage")).doubleValue())).setScore(7);
-                    sideBar.getScore("Healing: " + ChatColor.DARK_GREEN + Utils.addCommaAndRound(((Number) Warlords.databaseManager.getPlayerInfoWithDotNotation(player, "healing")).doubleValue())).setScore(6);
-                    sideBar.getScore("Absorbed: " + ChatColor.GOLD + Utils.addCommaAndRound(((Number) Warlords.databaseManager.getPlayerInfoWithDotNotation(player, "absorbed")).doubleValue())).setScore(5);
+                    sideBar.getScore("Damage: " + ChatColor.RED + Utils.addCommaAndRound(((Number) DatabaseManager.getPlayerInfoWithDotNotation(player, "damage")).doubleValue())).setScore(7);
+                    sideBar.getScore("Healing: " + ChatColor.DARK_GREEN + Utils.addCommaAndRound(((Number) DatabaseManager.getPlayerInfoWithDotNotation(player, "healing")).doubleValue())).setScore(6);
+                    sideBar.getScore("Absorbed: " + ChatColor.GOLD + Utils.addCommaAndRound(((Number) DatabaseManager.getPlayerInfoWithDotNotation(player, "absorbed")).doubleValue())).setScore(5);
                     sideBar.getScore("    ").setScore(4);
                     sideBar.getScore("    ").setScore(3);
                     sideBar.getScore("         §e§lUpdate I").setScore(2);

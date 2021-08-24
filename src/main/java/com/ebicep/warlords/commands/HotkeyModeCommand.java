@@ -1,6 +1,7 @@
 package com.ebicep.warlords.commands;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.player.PlayerSettings;
 import com.ebicep.warlords.player.Settings;
 import com.ebicep.warlords.player.WarlordsPlayer;
@@ -28,7 +29,7 @@ public class HotkeyModeCommand implements CommandExecutor {
             if (warlordsPlayer != null) {
                 warlordsPlayer.setHotKeyMode(!warlordsPlayer.isHotKeyMode());
             }
-            Warlords.databaseManager.updatePlayerInformation(player, "hotkeymode", settings.hotKeyMode() ? Settings.HotkeyMode.NEW_MODE.name() : Settings.HotkeyMode.CLASSIC_MODE.name());
+            DatabaseManager.updatePlayerInformation(player, "hotkeymode", settings.hotKeyMode() ? Settings.HotkeyMode.NEW_MODE.name() : Settings.HotkeyMode.CLASSIC_MODE.name());
         }
 
         return true;

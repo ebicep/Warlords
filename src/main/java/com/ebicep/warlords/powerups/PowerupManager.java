@@ -1,10 +1,8 @@
 package com.ebicep.warlords.powerups;
 
 import com.ebicep.warlords.maps.GameMap;
-import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.PlayerFilter;
-import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
@@ -40,21 +38,7 @@ public class PowerupManager extends BukkitRunnable {
                         .collect(Collectors.toList());
                 if (entitiesNear.size() != 0) {
                     WarlordsPlayer warlordsPlayer = entitiesNear.get(0);
-                    if (powerUp instanceof EnergyPowerUp) {
-                        warlordsPlayer.getCooldownManager().addCooldown("Energy", EnergyPowerUp.class, this, "ENERGY", powerUp.getDuration(), warlordsPlayer, CooldownTypes.BUFF);
-                        entitiesNear.get(0).sendMessage("§6You activated the §lENERGY §6powerup! §a+40% §6Energy gain for §a30 §6seconds!");
-                    } else if (powerUp instanceof HealingPowerUp) {
-                        warlordsPlayer.setPowerUpHeal(true);
-                        entitiesNear.get(0).sendMessage("§6You activated the §a§lHEALING §6powerup! §a+10% §6Health per second for §a10 §6seconds!");
-                    } else if (powerUp instanceof SpeedPowerUp) {
-                        warlordsPlayer.getCooldownManager().addCooldown("Speed", SpeedPowerUp.class, this, "SPEED", powerUp.getDuration(), warlordsPlayer, CooldownTypes.BUFF);
-                        entitiesNear.get(0).sendMessage("§6You activated the §e§lSPEED §6powerup! §a+40% §6Speed for §a10 §6seconds!");
-                        warlordsPlayer.getSpeed().addSpeedModifier("Speed Powerup", 40, 10 * 20, "BASE");
-
-                        for (Player player1 : powerUp.getLocation().getWorld().getPlayers()) {
-                            player1.playSound(powerUp.getLocation(), "ctf.powerup.speed", 2, 1);
-                        }
-                    }
+                    powerUp.onPickUp(warlordsPlayer);
                     powerUp.getPowerUp().remove();
                     powerUp.setCooldown(powerUp.getMaxCooldown());
                 }

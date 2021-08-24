@@ -174,7 +174,6 @@ public class Warlords extends JavaPlugin {
 
 
     public static Game game;
-    public static DatabaseManager databaseManager;
     public static boolean holographicDisplaysEnabled;
     public static boolean citizensEnabled;
     public static NPCManager npcManager = new NPCManager();
@@ -185,10 +184,11 @@ public class Warlords extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        VERSION = this.getDescription().getVersion();
-        ConfigurationSerialization.registerClass(PlayerSettings.class);
-        taskChainFactory = BukkitTaskChainFactory.create(this);
         instance = this;
+        VERSION = this.getDescription().getVersion();
+        taskChainFactory = BukkitTaskChainFactory.create(this);
+
+        ConfigurationSerialization.registerClass(PlayerSettings.class);
         getServer().getPluginManager().registerEvents(new WarlordsEvents(), this);
         getServer().getPluginManager().registerEvents(new MenuEventListener(this), this);
         //getServer().getPluginManager().registerEvents(new NPCEvents(), this);
@@ -201,6 +201,7 @@ public class Warlords extends JavaPlugin {
         new DebugCommand().register(this);
         new ClassCommand().register(this);
         new GetPlayersCommand().register(this);
+        new TestCommand().register(this);
 
         updateHeads();
 
@@ -210,7 +211,7 @@ public class Warlords extends JavaPlugin {
 
         //gets data then loads scoreboard then loads holograms (all callbacks i think)
         Warlords.newChain()
-                .asyncFirst(() -> databaseManager = new DatabaseManager())
+                .asyncFirst(DatabaseManager::connect)
                 .syncLast(input -> {
                     Bukkit.getOnlinePlayers().forEach(CustomScoreboard::giveMainLobbyScoreboard);
                     addHologramLeaderboards();
@@ -239,18 +240,8 @@ public class Warlords extends JavaPlugin {
 //        }
         gameLoop();
         getServer().getScheduler().runTaskTimer(this, game, 1, 1);
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                for (Player player : getServer().getOnlinePlayers()) {
-                    player.setFoodLevel(20);
-                    player.setSaturation(2);
-                }
-            }
-        }.runTaskTimer(this, 30, 90);
-
         Logger.getLogger("org.mongodb.driver").setLevel(Level.WARNING);
-        getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords]: Plugin is enabled");
+        getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Plugin is enabled");
     }
 
 
@@ -260,15 +251,15 @@ public class Warlords extends JavaPlugin {
         if (holographicDisplaysEnabled) {
             HologramsAPI.getHolograms(instance).forEach(Hologram::delete);
         }
-        getServer().getConsoleSender().sendMessage(ChatColor.RED + "[Warlords]: Plugin is disabled");
+        getServer().getConsoleSender().sendMessage(ChatColor.RED + "[Warlords] Plugin is disabled");
         // TODO persist this.playerSettings to a database
     }
 
     public static void addHologramLeaderboards() {
-        if (databaseManager != null && databaseManager.isConnected() && holographicDisplaysEnabled) {
+        if (DatabaseManager.isConnected() && holographicDisplaysEnabled) {
             HologramsAPI.getHolograms(instance).forEach(Hologram::delete);
 
-            System.out.println("Adding Holograms");
+            Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Adding Holograms");
             Location spawnPoint = Bukkit.getWorlds().get(0).getSpawnLocation().clone();
             Location lifeTimeWinsLB = new LocationBuilder(spawnPoint.clone()).forward(12).left(3).addY(6).get();
             Location lifeTimeKillsLB = new LocationBuilder(spawnPoint.clone()).forward(12).right(3).addY(6).get();
@@ -278,7 +269,7 @@ public class Warlords extends JavaPlugin {
             Location srLBPaladin = new LocationBuilder(spawnPoint.clone()).backward(6).left(2).addY(6).left(7).get();
             Location srLBShaman = new LocationBuilder(spawnPoint.clone()).backward(6).left(6).addY(6).left(7).get();
             Warlords.newChain()
-                    .asyncFirst(() -> databaseManager.getPlayersSortedByKey("wins"))
+                    .asyncFirst(() -> DatabaseManager.getPlayersSortedByKey("wins"))
                     .abortIfNull()
                     .syncLast((topWinners) -> {
                         List<String> hologramLines = new ArrayList<>();
@@ -290,7 +281,7 @@ public class Warlords extends JavaPlugin {
                     })
                     .execute();
             Warlords.newChain()
-                    .asyncFirst(() -> databaseManager.getPlayersSortedByKey("kills"))
+                    .asyncFirst(() -> DatabaseManager.getPlayersSortedByKey("kills"))
                     .abortIfNull()
                     .syncLast((topKillers) -> {
                         List<String> hologramLines = new ArrayList<>();
@@ -302,40 +293,43 @@ public class Warlords extends JavaPlugin {
                     })
                     .execute();
             Warlords.newChain()
-                    .asyncFirst(() -> databaseManager.getPlayersSortedBySR(""))
+                    .asyncFirst(() -> DatabaseManager.getPlayersSortedBySR(""))
                     .abortIfNull()
                     .syncLast((topSR) -> {
                         createLeaderboard(srLB, ChatColor.AQUA + ChatColor.BOLD.toString() + "SR Ranking", getHologramLines(topSR));
                     })
                     .execute();
             Warlords.newChain()
-                    .asyncFirst(() -> databaseManager.getPlayersSortedBySR("mage"))
+                    .asyncFirst(() -> DatabaseManager.getPlayersSortedBySR("mage"))
                     .abortIfNull()
                     .syncLast((topSRMage) -> {
                         createLeaderboard(srLBMage, ChatColor.AQUA + ChatColor.BOLD.toString() + "Mage SR Ranking", getHologramLines(topSRMage));
                     })
                     .execute();
             Warlords.newChain()
-                    .asyncFirst(() -> databaseManager.getPlayersSortedBySR("warrior"))
+                    .asyncFirst(() -> DatabaseManager.getPlayersSortedBySR("warrior"))
                     .abortIfNull()
                     .syncLast((topSRWarrior) -> {
                         createLeaderboard(srLBWarrior, ChatColor.AQUA + ChatColor.BOLD.toString() + "Warrior SR Ranking", getHologramLines(topSRWarrior));
                     })
                     .execute();
             Warlords.newChain()
-                    .asyncFirst(() -> databaseManager.getPlayersSortedBySR("paladin"))
+                    .asyncFirst(() -> DatabaseManager.getPlayersSortedBySR("paladin"))
                     .abortIfNull()
                     .syncLast((topSRPaladin) -> {
                         createLeaderboard(srLBPaladin, ChatColor.AQUA + ChatColor.BOLD.toString() + "Paladin SR Ranking", getHologramLines(topSRPaladin));
                     })
                     .execute();
             Warlords.newChain()
-                    .asyncFirst(() -> databaseManager.getPlayersSortedBySR("shaman"))
+                    .asyncFirst(() -> DatabaseManager.getPlayersSortedBySR("shaman"))
                     .abortIfNull()
                     .syncLast((topSRShaman) -> {
                         createLeaderboard(srLBShaman, ChatColor.AQUA + ChatColor.BOLD.toString() + "Shaman SR Ranking", getHologramLines(topSRShaman));
                     })
                     .execute();
+
+            Location lastGameLocation = new LocationBuilder(spawnPoint.clone()).forward(3).right(8).addY(8).get();
+            DatabaseManager.addLastGameHologram(lastGameLocation);
         }
     }
 
@@ -365,7 +359,7 @@ public class Warlords extends JavaPlugin {
         for (String line : lines) {
             hologram.appendTextLine(line);
         }
-        Bukkit.getServer().getConsoleSender().sendMessage("Created Hologram - " + title);
+        Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Created Hologram - " + title);
     }
 
     public void gameLoop() {
