@@ -5,6 +5,7 @@ import com.ebicep.warlords.classes.abilties.IceBarrier;
 import com.ebicep.warlords.classes.abilties.Soulbinding;
 import com.ebicep.warlords.classes.abilties.UndyingArmy;
 import com.ebicep.warlords.classes.shaman.specs.spiritguard.Spiritguard;
+import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.flags.GroundFlagLocation;
 import com.ebicep.warlords.maps.flags.PlayerFlagLocation;
@@ -134,7 +135,7 @@ public class WarlordsEvents implements Listener {
         new BukkitRunnable() {
             @Override
             public void run() {
-                Warlords.databaseManager.loadPlayer(e.getPlayer());
+                DatabaseManager.loadPlayer(e.getPlayer());
                 Warlords.updateHeads();
             }
         }.runTaskAsynchronously(Warlords.getInstance());
@@ -454,6 +455,17 @@ public class WarlordsEvents implements Listener {
     @EventHandler
     public void onWeatherChange(WeatherChangeEvent change) {
         change.setCancelled(true);
+        if (change.getWorld().hasStorm()) {
+            change.getWorld().setWeatherDuration(0);
+        }
+    }
+
+    @EventHandler
+    public void onFoodChange(FoodLevelChangeEvent change) {
+        change.setCancelled(true);
+        if (change.getEntity() instanceof Player) {
+            ((Player) change.getEntity()).setFoodLevel(20);
+        }
     }
 
     @EventHandler

@@ -1,10 +1,9 @@
 package com.ebicep.warlords.powerups;
 
+import com.ebicep.warlords.player.WarlordsPlayer;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 public abstract class AbstractPowerUp {
 
@@ -23,21 +22,15 @@ public abstract class AbstractPowerUp {
         this.timeToSpawn = timeToSpawn;
     }
 
+    public abstract void onPickUp(WarlordsPlayer warlordsPlayer);
+
+    public abstract void setNameAndItem(ArmorStand armorStand);
+
     public void spawn() {
         powerUp = location.getWorld().spawn(location.clone().add(0, -1.5, 0), ArmorStand.class);
-        if (this instanceof DamagePowerUp) {
-            powerUp.setCustomName("§c§lDAMAGE");
-            powerUp.setHelmet(new ItemStack(Material.WOOL, 1, (short) 14));
-        } else if (this instanceof EnergyPowerUp) {
-            powerUp.setCustomName("§6§lENERGY");
-            powerUp.setHelmet(new ItemStack(Material.WOOL, 1, (short) 1));
-        } else if (this instanceof HealingPowerUp) {
-            powerUp.setCustomName("§a§lHEALING");
-            powerUp.setHelmet(new ItemStack(Material.WOOL, 1, (short) 13));
-        } else if (this instanceof SpeedPowerUp) {
-            powerUp.setCustomName("§b§lSPEED");
-            powerUp.setHelmet(new ItemStack(Material.WOOL, 1, (short) 4));
-        }
+
+        setNameAndItem(powerUp);
+
         powerUp.setGravity(false);
         powerUp.setVisible(false);
         powerUp.setCustomNameVisible(true);

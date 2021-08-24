@@ -1,6 +1,7 @@
 package com.ebicep.warlords.maps.state;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.FieldUpdateOperators;
 import com.ebicep.warlords.events.WarlordsPointsChangedEvent;
 import com.ebicep.warlords.maps.Game;
@@ -176,7 +177,7 @@ public class PlayingState implements State, TimerDebugAble {
                     newInfo.put("shaman_armor", ArmorManager.ArmorSets.getSelected(player.getPlayer()).get(3).name);
                     newInfo.put("powerup", Settings.Powerup.getSelected(player.getPlayer()).name());
                     newInfo.put("hotkeymode", Settings.HotkeyMode.getSelected(player.getPlayer()).name());
-                    Warlords.databaseManager.updatePlayerInformation(player, newInfo, FieldUpdateOperators.SET);
+                    DatabaseManager.updatePlayerInformation(player, newInfo, FieldUpdateOperators.SET);
                 });
             }
         }.runTaskAsynchronously(Warlords.getInstance());
@@ -289,7 +290,7 @@ public class PlayingState implements State, TimerDebugAble {
                     })
                     .execute();
         } else {
-            System.out.println("This game was not added to the database");
+            System.out.println(ChatColor.GREEN + "[Warlords] This game was not added to the database");
         }
     }
 
@@ -297,14 +298,14 @@ public class PlayingState implements State, TimerDebugAble {
         List<WarlordsPlayer> players = new ArrayList<>(Warlords.getPlayers().values());
         players = players.stream().sorted(Comparator.comparing(WarlordsPlayer::getTotalDamage).reversed()).collect(Collectors.toList());
         if (players.get(0).getTotalDamage() <= 500000) {
-            Warlords.databaseManager.addGame(PlayingState.this);
+            DatabaseManager.addGame(PlayingState.this);
             for (WarlordsPlayer player : PlayerFilter.playingGame(game)) {
                 if (player.getEntity() instanceof Player) {
-                    Warlords.databaseManager.loadPlayer((Player) player.getEntity());
+                    DatabaseManager.loadPlayer((Player) player.getEntity());
                 }
             }
         } else {
-            System.out.println("This game was not added to the database (INVALID DAMAGE)");
+            System.out.println(ChatColor.GREEN + "[Warlords] This game was not added to the database (INVALID DAMAGE)");
         }
         return true;
     }
