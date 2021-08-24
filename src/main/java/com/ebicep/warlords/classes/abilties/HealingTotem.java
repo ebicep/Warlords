@@ -33,7 +33,7 @@ public class HealingTotem extends AbstractTotemBase {
                 "§7pulses constantly, healing nearby\n" +
                 "§7allies in a §e" + radius + " §7block radius for §a" + minDamageHeal + " §7- §a" + maxDamageHeal + "\n" +
                 "§7every second. The healing will gradually\n" +
-                "§7increase by §a30% §7(up to 180%) every\n" +
+                "§7increase by §a40% §7(up to 240%) every\n" +
                 "§7second. Lasts §6" + duration + " §7seconds." +
                 "\n\n" +
                 "§7Pressing SHIFT causes your totem to\n" +
@@ -99,13 +99,13 @@ public class HealingTotem extends AbstractTotemBase {
                     circle.playEffects();
 
                     //1
-                    //1.3
-                    //1.6
-                    //1.9
+                    //1.4
+                    //1.8
                     //2.2
-                    //2.5
-                    //2.8
-                    float healMultiplier = 1 + (.3f * (6 - timeLeft));
+                    //2.6
+                    //3.0
+                    //3.4
+                    float healMultiplier = 1 + (.4f * (6 - timeLeft));
                     PlayerFilter.entitiesAround(totemStand, radius, radius, radius)
                             .aliveTeammatesOf(wp)
                             .forEach((nearPlayer) -> {

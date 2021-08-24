@@ -47,7 +47,7 @@ public class HealingRain extends AbstractAbility {
         wp.getSpec().getOrange().setCurrentCooldown((float) (cooldown * wp.getCooldownModifier()));
 
         for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "mage.healingrain.impact", 2, 1);
+            player1.playSound(damageHealCircle.getLocation(), "mage.healingrain.impact", 2, 1);
         }
 
         BukkitTask task = Bukkit.getScheduler().runTaskTimer(Warlords.getInstance(), damageHealCircle::spawn, 0, 1);

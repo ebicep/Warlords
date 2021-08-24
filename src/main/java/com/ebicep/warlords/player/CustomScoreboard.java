@@ -212,7 +212,7 @@ public class CustomScoreboard {
                     Scoreboard mainLobbyScoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
                     Objective sideBar = mainLobbyScoreboard.registerNewObjective("WARLORDS", "");
                     sideBar.setDisplaySlot(DisplaySlot.SIDEBAR);
-                    sideBar.setDisplayName("     §e§lWARLORDS 2.0   ");
+                    sideBar.setDisplayName("    §e§lWARLORDS 2.0    ");
                     sideBar.getScore("").setScore(15);
                     sideBar.getScore("Kills: " + ChatColor.GREEN + Utils.addCommaAndRound(((Integer) Warlords.databaseManager.getPlayerInfoWithDotNotation(player, "kills")))).setScore(14);
                     sideBar.getScore("Assists: " + ChatColor.GREEN + Utils.addCommaAndRound(((Integer) Warlords.databaseManager.getPlayerInfoWithDotNotation(player, "assists")))).setScore(13);
@@ -224,10 +224,10 @@ public class CustomScoreboard {
                     sideBar.getScore("Damage: " + ChatColor.RED + Utils.addCommaAndRound(((Number) Warlords.databaseManager.getPlayerInfoWithDotNotation(player, "damage")).doubleValue())).setScore(7);
                     sideBar.getScore("Healing: " + ChatColor.DARK_GREEN + Utils.addCommaAndRound(((Number) Warlords.databaseManager.getPlayerInfoWithDotNotation(player, "healing")).doubleValue())).setScore(6);
                     sideBar.getScore("Absorbed: " + ChatColor.GOLD + Utils.addCommaAndRound(((Number) Warlords.databaseManager.getPlayerInfoWithDotNotation(player, "absorbed")).doubleValue())).setScore(5);
-                    sideBar.getScore("   ").setScore(4);
-                    sideBar.getScore("   ").setScore(3);
-                    sideBar.getScore("    ").setScore(2);
-                    sideBar.getScore(ChatColor.YELLOW + Warlords.VERSION).setScore(1);
+                    sideBar.getScore("    ").setScore(4);
+                    sideBar.getScore("    ").setScore(3);
+                    sideBar.getScore("         §e§lUpdate I").setScore(2);
+                    sideBar.getScore("         " + ChatColor.GREEN + ChatColor.BOLD + Warlords.VERSION).setScore(1);
                     player.setScoreboard(mainLobbyScoreboard);
                     this.cancel();
                 }
