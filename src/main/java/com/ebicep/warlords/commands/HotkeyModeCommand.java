@@ -19,17 +19,17 @@ public class HotkeyModeCommand implements CommandExecutor {
         Player player = BaseCommand.requirePlayer(sender);
         if (player != null) {
             PlayerSettings settings = Warlords.getPlayerSettings(player.getUniqueId());
-            if (settings.hotKeyMode()) {
+            if (settings.getHotKeyMode()) {
                 sender.sendMessage(ChatColor.GREEN + "Hotkey Mode " + ChatColor.AQUA + "Classic " + ChatColor.GREEN + "enabled.");
             } else {
                 sender.sendMessage(ChatColor.GREEN + "Hotkey Mode " + ChatColor.YELLOW + "NEW " + ChatColor.GREEN + "enabled.");
             }
-            settings.hotKeyMode(!settings.hotKeyMode());
+            settings.setHotKeyMode(!settings.getHotKeyMode());
             WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
             if (warlordsPlayer != null) {
                 warlordsPlayer.setHotKeyMode(!warlordsPlayer.isHotKeyMode());
             }
-            DatabaseManager.updatePlayerInformation(player, "hotkeymode", settings.hotKeyMode() ? Settings.HotkeyMode.NEW_MODE.name() : Settings.HotkeyMode.CLASSIC_MODE.name());
+            DatabaseManager.updatePlayerInformation(player, "hotkeymode", settings.getHotKeyMode() ? Settings.HotkeyMode.NEW_MODE.name() : Settings.HotkeyMode.CLASSIC_MODE.name());
         }
 
         return true;

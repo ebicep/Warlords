@@ -123,7 +123,7 @@ public enum Classes {
      */
     @Deprecated
     public static Classes getSelected(OfflinePlayer player) {
-        return Warlords.getPlayerSettings(player.getUniqueId()).selectedClass();
+        return Warlords.getPlayerSettings(player.getUniqueId()).getSelectedClass();
     }
 
     /**
@@ -134,7 +134,7 @@ public enum Classes {
      */
     @Deprecated
     public static void setSelected(OfflinePlayer player, Classes selectedClass) {
-        Warlords.getPlayerSettings(player.getUniqueId()).selectedClass(selectedClass);
+        Warlords.getPlayerSettings(player.getUniqueId()).setSelectedClass(selectedClass);
         // Game.State.updateTempPlayer(player);
         // setSelectedBoost(player, selectedClass.skillBoosts.get(0)); // This is already done by the player settings
     }
@@ -147,7 +147,7 @@ public enum Classes {
      */
     @Deprecated
     public static ClassesSkillBoosts getSelectedBoost(OfflinePlayer player) {
-        return Warlords.getPlayerSettings(player.getUniqueId()).classesSkillBoosts();
+        return Warlords.getPlayerSettings(player.getUniqueId()).getClassesSkillBoosts();
     }
 
     /**
@@ -158,7 +158,7 @@ public enum Classes {
      */
     @Deprecated
     public static void setSelectedBoost(OfflinePlayer player, ClassesSkillBoosts selectedBoost) {
-        Warlords.getPlayerSettings(player.getUniqueId()).classesSkillBoosts(selectedBoost);
+        Warlords.getPlayerSettings(player.getUniqueId()).setClassesSkillBoosts(selectedBoost);
         // Game.State.updateTempPlayer(player);
     }
 }

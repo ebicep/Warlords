@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.util.ItemBuilder;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
@@ -112,7 +113,7 @@ public class GameMenu {
                     (n, e) -> {
                         player.sendMessage(ChatColor.WHITE + "Class: §6" + subClass);
                         setSelected(player, subClass);
-                        ArmorManager.resetArmor(player, subClass, Warlords.getPlayerSettings(player.getUniqueId()).wantedTeam());
+                        ArmorManager.resetArmor(player, subClass, Warlords.getPlayerSettings(player.getUniqueId()).getWantedTeam());
                         openClassMenu(player, selectedGroup);
                     }
             );
@@ -336,7 +337,7 @@ public class GameMenu {
         Powerup selectedPowerup = Powerup.getSelected(player);
         HotkeyMode selectedHotkeyMode = HotkeyMode.getSelected(player);
 
-        Menu menu = new Menu("Settings", 9 * 6);
+        Menu menu = new Menu("Settings", 9 * 4);
 //        menu.setItem(
 //                1,
 //                1,
@@ -361,9 +362,14 @@ public class GameMenu {
                     openSettingsMenu(player);
                 }
         );
+        menu.setItem(
+                1,
+                1,
+                MENU_SETTINGS_PARTICLE_QUALITY,
+                (n, e) -> openParticleQualityMenu(player)
+        );
 
-        menu.setItem(1, 3, MENU_SETTINGS_PARTICLE_QUALITY, (n, e) -> openParticleQualityMenu(player));
-        menu.setItem(4, 5, MENU_BACK_PREGAME, (n, e) -> openMainMenu(player));
+        menu.setItem(4, 3, MENU_BACK_PREGAME, (n, e) -> openMainMenu(player));
         menu.openForPlayer(player);
     }
 
@@ -384,8 +390,7 @@ public class GameMenu {
                             .flags(ItemFlag.HIDE_ENCHANTS)
                             .get(),
                     (n, e) -> {
-                        player.sendMessage(ChatColor.GREEN + "Particle quality set to " + particleQuality.name());
-                        ParticleQuality.setSelected(player, particleQuality);
+                        Bukkit.getServer().dispatchCommand(player, "pq " + particleQuality.name());
                         openParticleQualityMenu(player);
                     }
             );
@@ -395,7 +400,7 @@ public class GameMenu {
     }
 
     public static void openTeamMenu(Player player) {
-        Team selectedTeam = Warlords.getPlayerSettings(player.getUniqueId()).wantedTeam();
+        Team selectedTeam = Warlords.getPlayerSettings(player.getUniqueId()).getWantedTeam();
         Menu menu = new Menu("Team Selector", 9 * 4);
         List<Team> values = new ArrayList<>(Arrays.asList(Team.values()));
         for (int i = 0; i < values.size(); i++) {
@@ -419,8 +424,8 @@ public class GameMenu {
                         if (selectedTeam != team) {
                             player.sendMessage(ChatColor.GREEN + "You have joined the " + team.teamColor() + team.name + ChatColor.GREEN + " team!");
                             Warlords.game.setPlayerTeam(player, team);
-                            ArmorManager.resetArmor(player, Warlords.getPlayerSettings(player.getUniqueId()).selectedClass(), team);
-                            Warlords.getPlayerSettings(player.getUniqueId()).wantedTeam(team);
+                            ArmorManager.resetArmor(player, Warlords.getPlayerSettings(player.getUniqueId()).getSelectedClass(), team);
+                            Warlords.getPlayerSettings(player.getUniqueId()).setWantedTeam(team);
                         }
                         openTeamMenu(player);
                     }

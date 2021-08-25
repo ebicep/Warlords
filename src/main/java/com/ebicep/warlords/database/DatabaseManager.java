@@ -124,6 +124,7 @@ public class DatabaseManager {
                 ArmorManager.ArmorSets.setSelectedShaman(player, ArmorManager.ArmorSets.getShamanArmor((String) getPlayerInfoWithDotNotation(player, "shaman_armor")));
                 Settings.Powerup.setSelected(player, Settings.Powerup.getPowerup((String) getPlayerInfoWithDotNotation(player, "powerup")));
                 Settings.HotkeyMode.setSelected(player, Settings.HotkeyMode.getHotkeyMode((String) getPlayerInfoWithDotNotation(player, "hotkeymode")));
+                Settings.ParticleQuality.setSelected(player, Settings.ParticleQuality.valueOf((String) getPlayerInfoWithDotNotation(player, "particle_quality")));
                 System.out.println(ChatColor.GREEN + "[Warlords] Loaded player " + player.getName());
             } else {
                 addPlayer(player);
@@ -363,47 +364,7 @@ public class DatabaseManager {
     }
 
     public static void addPlayer(Player player) {
-        if (!connected) return;
-        try {
-            if (!hasPlayer(player.getUniqueId())) {
-                Document newPlayerDocument = new Document("uuid", player.getUniqueId().toString())
-                        .append("name", player.getName())
-                        .append("kills", 0)
-                        .append("assists", 0)
-                        .append("deaths", 0)
-                        .append("wins", 0)
-                        .append("losses", 0)
-                        .append("flags_captured", 0)
-                        .append("flags_returned", 0)
-                        .append("damage", 0L)
-                        .append("healing", 0L)
-                        .append("absorbed", 0L)
-                        .append("mage", getBaseStatDocument()
-                                .append("pyromancer", getBaseStatDocument())
-                                .append("cryomancer", getBaseStatDocument())
-                                .append("aquamancer", getBaseStatDocument())
-                        )
-                        .append("warrior", getBaseStatDocument()
-                                .append("berserker", getBaseStatDocument())
-                                .append("defender", getBaseStatDocument())
-                                .append("revenant", getBaseStatDocument())
-                        )
-                        .append("paladin", getBaseStatDocument()
-                                .append("avenger", getBaseStatDocument())
-                                .append("crusader", getBaseStatDocument())
-                                .append("protector", getBaseStatDocument())
-                        )
-                        .append("shaman", getBaseStatDocument()
-                                .append("thunderlord", getBaseStatDocument())
-                                .append("spiritguard", getBaseStatDocument())
-                                .append("earthwarden", getBaseStatDocument())
-                        );
-                playersInformation.insertOne(newPlayerDocument);
-                System.out.println(ChatColor.GREEN + "[Warlords] " + player.getUniqueId() + " - " + player.getName() + " was added to the player database");
-            }
-        } catch (MongoWriteException e) {
-            System.out.println(ChatColor.GREEN + "[Warlords] There was an error trying to add player " + player.getName());
-        }
+        addPlayer(player.getUniqueId());
     }
 
     public static void addPlayer(UUID uuid) {
@@ -621,7 +582,7 @@ public class DatabaseManager {
         list.add(new Document()
                 .append("uuid", warlordsPlayer.getUuid().toString())
                 .append("name", warlordsPlayer.getName())
-                .append("spec", Warlords.getPlayerSettings(warlordsPlayer.getUuid()).selectedClass().name)
+                .append("spec", Warlords.getPlayerSettings(warlordsPlayer.getUuid()).getSelectedClass().name)
                 .append("blocks_travelled", warlordsPlayer.getBlocksTravelledCM() / 100)
                 .append("seconds_in_combat", warlordsPlayer.getTimeInCombat())
                 .append("seconds_in_respawn", warlordsPlayer.getRespawnTimeSpent())

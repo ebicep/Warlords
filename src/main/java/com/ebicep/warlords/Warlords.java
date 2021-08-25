@@ -3,6 +3,12 @@ package com.ebicep.warlords;
 import co.aikar.taskchain.BukkitTaskChainFactory;
 import co.aikar.taskchain.TaskChain;
 import co.aikar.taskchain.TaskChainFactory;
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
+import com.comphenix.protocol.events.ListenerPriority;
+import com.comphenix.protocol.events.PacketAdapter;
+import com.comphenix.protocol.events.PacketEvent;
 import com.ebicep.customentities.npc.NPCManager;
 import com.ebicep.warlords.classes.abilties.*;
 import com.ebicep.warlords.commands.*;
@@ -196,6 +202,7 @@ public class Warlords extends JavaPlugin {
         new ClassCommand().register(this);
         new GetPlayersCommand().register(this);
         new TestCommand().register(this);
+        new ParticleQualityCommand().register(this);
 
         updateHeads();
 
@@ -211,6 +218,29 @@ public class Warlords extends JavaPlugin {
                     addHologramLeaderboards();
                 })
                 .execute();
+
+        ProtocolManager protocolManager;
+
+        protocolManager = ProtocolLibrary.getProtocolManager();
+
+        protocolManager.addPacketListener(
+                new PacketAdapter(this, ListenerPriority.HIGHEST,
+                        PacketType.Play.Server.WORLD_PARTICLES) {
+                    int counter = 0;
+
+                    @Override
+                    public void onPacketSending(PacketEvent event) {
+                        // Item packets (id: 0x29)
+                        if (event.getPacketType() == PacketType.Play.Server.WORLD_PARTICLES) {
+                            Player player = event.getPlayer();
+                            if (Warlords.game.getPlayers().containsKey(player.getUniqueId())) {
+                                if (counter++ % playerSettings.get(player.getUniqueId()).getParticleQuality().particleReduction == 0) {
+                                    event.setCancelled(true);
+                                }
+                            }
+                        }
+                    }
+                });
 
 //        citizensEnabled = Bukkit.getPluginManager().isPluginEnabled("Citizens");
 //        npcCTFLocation = new LocationBuilder(Bukkit.getWorlds().get(0).getSpawnLocation())
@@ -623,7 +653,7 @@ public class Warlords extends JavaPlugin {
                                 itr.remove();
 
                                 //504 302
-                                if (Warlords.getPlayerSettings(orb.getOwner().getUuid()).classesSkillBoosts() == ClassesSkillBoosts.ORBS_OF_LIFE) {
+                                if (Warlords.getPlayerSettings(orb.getOwner().getUuid()).getClassesSkillBoosts() == ClassesSkillBoosts.ORBS_OF_LIFE) {
                                     warlordsPlayer.addHealth(orb.getOwner(), "Orbs of Life", 420 * 1.2f, 420 * 1.2f, -1, 100);
                                 } else {
                                     warlordsPlayer.addHealth(orb.getOwner(), "Orbs of Life", 420, 420, -1, 100);
@@ -633,7 +663,7 @@ public class Warlords extends JavaPlugin {
                                         .aliveTeammatesOfExcludingSelf(warlordsPlayer)
                                         .limit(2)
                                 ) {
-                                    if (Warlords.getPlayerSettings(orb.getOwner().getUuid()).classesSkillBoosts() == ClassesSkillBoosts.ORBS_OF_LIFE) {
+                                    if (Warlords.getPlayerSettings(orb.getOwner().getUuid()).getClassesSkillBoosts() == ClassesSkillBoosts.ORBS_OF_LIFE) {
                                         nearPlayer.addHealth(orb.getOwner(), "Orbs of Life", 252 * 1.2f, 252 * 1.2f, -1, 100);
                                     } else {
                                         nearPlayer.addHealth(orb.getOwner(), "Orbs of Life", 252, 252, -1, 100);

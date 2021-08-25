@@ -44,7 +44,7 @@
                                     <exclude>org.avaje:ebean</exclude>
                                     <exclude>org.yaml:snakeyaml</exclude>
                                     <exclude>org.hamcrest:hamcrest-core</exclude>
-                                </excludes> 
+                                </excludes>
                             </artifactSet>
                         </configuration>
                     </execution>
@@ -73,10 +73,10 @@
             <id>aikar</id>
             <url>https://repo.aikar.co/content/groups/aikar/</url>
         </repository>
-        <!--        <repository>-->
-        <!--            <id>dmulloy2-repo</id>-->
-        <!--            <url>https://repo.dmulloy2.net/repository/public/</url>-->
-        <!--        </repository>-->
+        <repository>
+            <id>dmulloy2-repo</id>
+            <url>https://repo.dmulloy2.net/repository/public/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -109,7 +109,7 @@
         <dependency>
             <groupId>com.gmail.filoghost.holographicdisplays</groupId>
             <artifactId>holographicdisplays-api</artifactId>
-            <version>2.4.0</version>
+            <version>2.4.9</version>
             <scope>provided</scope>
         </dependency>
         <!-- Citizens -->
@@ -127,11 +127,11 @@
             <version>3.7.2</version>
             <scope>compile</scope>
         </dependency>
-        <!--        &lt;!&ndash; ProtocolLib &ndash;&gt;-->
-        <!--        <dependency>-->
-        <!--            <groupId>com.comphenix.protocol</groupId>-->
-        <!--            <artifactId>ProtocolLib</artifactId>-->
-        <!--            <version>4.7.0</version>-->
-        <!--        </dependency>-->
+        <!-- ProtocolLib -->
+        <dependency>
+            <groupId>com.comphenix.protocol</groupId>
+            <artifactId>ProtocolLib</artifactId>
+            <version>4.7.0</version>
+        </dependency>
     </dependencies>
 </project>
