@@ -782,7 +782,6 @@ public class Warlords extends JavaPlugin {
                             } else {
                                 locations.add(player.getLocation());
                             }
-                            System.out.println(warlordsPlayer.getLocations());
                         }
                     }
                 }
