@@ -5,7 +5,6 @@ import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.state.PlayingState;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.util.PlayerFilter;
-import com.ebicep.warlords.util.Utils;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import com.google.common.collect.Lists;
@@ -432,37 +431,73 @@ public class DatabaseManager {
         gameInfo.appendTextLine(ChatColor.GREEN.toString() + getDocumentInfoWithDotNotation(lastGame, "map") + ChatColor.GRAY + "  -  " + ChatColor.GREEN + timeLeft / 60 + ":" + timeLeft % 60 + (timeLeft % 60 < 10 ? "0" : ""));
         gameInfo.appendTextLine(ChatColor.BLUE.toString() + getDocumentInfoWithDotNotation(lastGame, "blue_points") + ChatColor.GRAY + "  -  " + ChatColor.RED.toString() + getDocumentInfoWithDotNotation(lastGame, "red_points"));
 
-        HashMap<String, String> blueNameWithSpec = new HashMap<>();
-        HashMap<String, String> redNameWithSpec = new HashMap<>();
         List<String> players = new ArrayList<>();
+        List<DatabasePlayer> databasePlayers = new ArrayList<>();
 
         for (Document o : ((ArrayList<Document>) getDocumentInfoWithDotNotation(lastGame, "players.blue"))) {
-            blueNameWithSpec.put((String) o.get("name"), (String) o.get("spec"));
+            databasePlayers.add(new DatabasePlayer((String) o.get("name"), ChatColor.BLUE, (String) o.get("spec"), (ArrayList<Integer>) o.get("kills"), (ArrayList<Integer>) o.get("assists"), (ArrayList<Integer>) o.get("deaths")));
         }
         for (Document o : ((ArrayList<Document>) getDocumentInfoWithDotNotation(lastGame, "players.red"))) {
-            redNameWithSpec.put((String) o.get("name"), (String) o.get("spec"));
+            databasePlayers.add(new DatabasePlayer((String) o.get("name"), ChatColor.RED, (String) o.get("spec"), (ArrayList<Integer>) o.get("kills"), (ArrayList<Integer>) o.get("assists"), (ArrayList<Integer>) o.get("deaths")));
         }
 
-        HashMap<String, String> blueAndRedWithSpecs = new HashMap<>();
-        blueAndRedWithSpecs.putAll(blueNameWithSpec);
-        blueAndRedWithSpecs.putAll(redNameWithSpec);
-
         for (String s : specsOrdered) {
-            boolean add = false;
             StringBuilder playerSpecs = new StringBuilder(ChatColor.AQUA + s).append(": ");
-            if (blueAndRedWithSpecs.containsValue(s)) {
-                Utils.getKeysByValue(blueAndRedWithSpecs, s).forEach(p -> {
-                    playerSpecs.append(blueNameWithSpec.containsKey(p) ? ChatColor.BLUE : ChatColor.RED).append(p).append(ChatColor.GRAY).append(", ");
-                });
+            final boolean[] add = {false};
+            databasePlayers.stream().filter(o -> o.getSpec().equals(s)).forEach(p -> {
+                playerSpecs.append(p.getColoredName()).append(p.getKDA()).append(ChatColor.GRAY).append(", ");
+                add[0] = true;
+            });
+            if (add[0]) {
                 playerSpecs.setLength(playerSpecs.length() - 2);
-                add = true;
-            }
-            if (add) {
                 players.add(playerSpecs.toString());
             }
         }
 
         players.forEach(gameInfo::appendTextLine);
+
+    }
+
+    static class DatabasePlayer {
+        private String name;
+        private ChatColor teamColor;
+        private String spec;
+        private ArrayList<Integer> kills;
+        private ArrayList<Integer> assists;
+        private ArrayList<Integer> deaths;
+
+        public DatabasePlayer(String name, ChatColor teamColor, String spec, ArrayList<Integer> kills, ArrayList<Integer> assists, ArrayList<Integer> deaths) {
+            this.name = name;
+            this.teamColor = teamColor;
+            this.spec = spec;
+            this.kills = kills;
+            this.assists = assists;
+            this.deaths = deaths;
+        }
+
+        public String getColoredName() {
+            return this.teamColor + this.name;
+        }
+
+        public String getSpec() {
+            return spec;
+        }
+
+        public String getKDA() {
+            return ChatColor.DARK_GRAY + "[" + ChatColor.GREEN + getTotalKills() + ChatColor.GRAY + ":" + ChatColor.GOLD + getTotalAssists() + ChatColor.GRAY + ":" + ChatColor.RED + getTotalDeaths() + ChatColor.DARK_GRAY + "]";
+        }
+
+        public int getTotalKills() {
+            return kills.stream().reduce(0, Integer::sum);
+        }
+
+        public int getTotalAssists() {
+            return assists.stream().reduce(0, Integer::sum);
+        }
+
+        public int getTotalDeaths() {
+            return deaths.stream().reduce(0, Integer::sum);
+        }
 
     }
 
@@ -525,6 +560,7 @@ public class DatabaseManager {
             }
         }
         DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm");
+        dateFormat.setTimeZone(TimeZone.getTimeZone("EST"));
         Team winner = gameState.calculateWinnerByPoints();
         Document document = new Document("date", dateFormat.format(new Date()))
                 .append("map", gameState.getGame().getMap().getMapName())
@@ -579,6 +615,12 @@ public class DatabaseManager {
     }
 
     public static void gameAddPlayerStats(List<Document> list, WarlordsPlayer warlordsPlayer) {
+        StringBuilder xLocations = new StringBuilder();
+        StringBuilder zLocations = new StringBuilder();
+        for (Location location : warlordsPlayer.getLocations()) {
+            xLocations.append((int) location.getX()).append(",");
+            zLocations.append((int) location.getZ()).append(",");
+        }
         list.add(new Document()
                 .append("uuid", warlordsPlayer.getUuid().toString())
                 .append("name", warlordsPlayer.getName())
@@ -586,6 +628,8 @@ public class DatabaseManager {
                 .append("blocks_travelled", warlordsPlayer.getBlocksTravelledCM() / 100)
                 .append("seconds_in_combat", warlordsPlayer.getTimeInCombat())
                 .append("seconds_in_respawn", warlordsPlayer.getRespawnTimeSpent())
+                .append("x_locations", xLocations.toString())
+                .append("z_locations", zLocations.toString())
                 .append("kills", new BsonArray(Arrays.stream(warlordsPlayer.getKills()).mapToObj(BsonInt32::new).collect(Collectors.toList())))
                 .append("deaths", new BsonArray(Arrays.stream(warlordsPlayer.getDeaths()).mapToObj(BsonInt32::new).collect(Collectors.toList())))
                 .append("assists", new BsonArray(Arrays.stream(warlordsPlayer.getAssists()).mapToObj(BsonInt32::new).collect(Collectors.toList())))

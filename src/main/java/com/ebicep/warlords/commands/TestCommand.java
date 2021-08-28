@@ -14,13 +14,16 @@ public class TestCommand implements CommandExecutor {
         if (player != null) {
             //do stuff
 //            Document doc = DatabaseManager.getLastGame();
-//            System.out.println(doc);
-//            System.out.println(DatabaseManager.getDocumentInfoWithDotNotation(doc, "players.blue"));
-//            for (Document o : ((ArrayList<Document>) DatabaseManager.getDocumentInfoWithDotNotation(doc, "players.blue"))) {
-//                System.out.println(o.entrySet().stream().iterator().next().getKey());
+////            System.out.println(doc);
+//            System.out.println(DatabaseManager.getDocumentInfoWithDotNotation(doc, "players.red"));
+//            for (Document o : ((ArrayList<Document>) DatabaseManager.getDocumentInfoWithDotNotation(doc, "players.red"))) {
+//                System.out.println(DatabaseManager.getDocumentInfoWithDotNotation(o, "kills"));
+//                System.out.println(((ArrayList<Integer>)DatabaseManager.getDocumentInfoWithDotNotation(o, "kills")).stream().reduce(0, Integer::sum));
+//                System.out.println("----------");
 //            }
             //System.out.println(((Player) sender).getUniqueId());
             //System.out.println(DatabaseManager.getDocumentInfoWithDotNotation(doc, "players.blue" + ((Player) sender).getUniqueId()));
+
             Warlords.addHologramLeaderboards();
         }
         return true;
