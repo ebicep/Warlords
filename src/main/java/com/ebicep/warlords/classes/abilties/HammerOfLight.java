@@ -65,8 +65,8 @@ public class HammerOfLight extends AbstractAbility {
                         warlordsPlayer.addHealth(
                                 damageHealCircle.getWarlordsPlayer(),
                                 damageHealCircle.getName(),
-                                hammerMinDamage,
-                                hammerMaxDamage,
+                                -hammerMinDamage,
+                                -hammerMaxDamage,
                                 damageHealCircle.getCritChance(),
                                 damageHealCircle.getCritMultiplier()
                         );
