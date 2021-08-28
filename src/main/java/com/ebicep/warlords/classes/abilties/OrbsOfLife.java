@@ -32,7 +32,7 @@ public class OrbsOfLife extends AbstractAbility {
     private final int floatingOrbRadius = 20;
 
     public OrbsOfLife() {
-        super("Orbs of Life", 252, 420, 19.57f, 20, 0, 0);
+        super("Orbs of Life", 240, 400, 21.57f, 20, 0, 0);
     }
 
     @Override
