@@ -113,6 +113,15 @@ public class Settings {
             this.particleReduction = particleReduction;
         }
 
+        public static ParticleQuality getParticleQuality(String name) {
+            for (ParticleQuality value : ParticleQuality.values()) {
+                if (value.name().equals(name)) {
+                    return value;
+                }
+            }
+            return HIGH;
+        }
+
         public static ParticleQuality getSelected(Player player) {
             return player.getMetadata("selected-particle-quality").stream()
                     .map(v -> v.value() instanceof ParticleQuality ? (ParticleQuality) v.value() : null)

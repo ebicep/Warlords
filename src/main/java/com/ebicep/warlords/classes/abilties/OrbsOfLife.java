@@ -10,7 +10,10 @@ import com.ebicep.warlords.util.PlayerFilter;
 import net.minecraft.server.v1_8_R3.EntityExperienceOrb;
 import net.minecraft.server.v1_8_R3.EntityHuman;
 import net.minecraft.server.v1_8_R3.World;
-import org.bukkit.*;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -188,6 +191,17 @@ public class OrbsOfLife extends AbstractAbility {
             orbStand.setGravity(false);
             orbStand.setPassenger(spawn(location).getBukkitEntity());
             this.armorStand = orbStand;
+            new BukkitRunnable() {
+
+                @Override
+                public void run() {
+                    if (!armorStand.isValid()) {
+                        this.cancel();
+                    } else {
+                        ticksLived++;
+                    }
+                }
+            }.runTaskTimer(Warlords.getInstance(), 30, 0);
         }
 
         @Override
@@ -230,10 +244,6 @@ public class OrbsOfLife extends AbstractAbility {
 
         public int getTicksLived() {
             return ticksLived;
-        }
-
-        public void incrementTicksLived() {
-            this.ticksLived++;
         }
 
         public WarlordsPlayer getPlayerToMoveTowards() {

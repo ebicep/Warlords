@@ -224,8 +224,7 @@ public class Warlords extends JavaPlugin {
         protocolManager = ProtocolLibrary.getProtocolManager();
 
         protocolManager.addPacketListener(
-                new PacketAdapter(this, ListenerPriority.HIGHEST,
-                        PacketType.Play.Server.WORLD_PARTICLES) {
+                new PacketAdapter(this, ListenerPriority.HIGHEST, PacketType.Play.Server.WORLD_PARTICLES) {
                     int counter = 0;
 
                     @Override
@@ -652,7 +651,6 @@ public class Warlords extends JavaPlugin {
                         Iterator<OrbsOfLife.Orb> itr = orbs.iterator();
                         while (itr.hasNext()) {
                             OrbsOfLife.Orb orb = itr.next();
-                            orb.incrementTicksLived();
                             Location orbPosition = orb.getArmorStand().getLocation();
                             if ((orb.getPlayerToMoveTowards() == null || (orb.getPlayerToMoveTowards() != null && orb.getPlayerToMoveTowards() == warlordsPlayer)) &&
                                     orbPosition.distanceSquared(playerPosition) < 1.70 * 1.70 && !warlordsPlayer.isDeath()) {
@@ -671,12 +669,12 @@ public class Warlords extends JavaPlugin {
                                 //BASE + WEAP BOOST + TIME LIVED = 453 - 756 (x1.8 = x1.2 * x1.5)
 
                                 //increasing heal for low long orb lived for (up to +50%)
-                                //8 seconds = 1 + (160/320) = 1.5
+                                //6.5 seconds = 1 + (130/260) = 1.5
                                 //504 *= 1.5 = 756
                                 //302 *= 1.5 = 453
                                 if (orb.getPlayerToMoveTowards() == null) {
-                                    minHeal *= 1 + orb.getTicksLived() / 320f;
-                                    maxHeal *= 1 + orb.getTicksLived() / 320f;
+                                    minHeal *= 1 + orb.getTicksLived() / 260f;
+                                    maxHeal *= 1 + orb.getTicksLived() / 260f;
                                 }
 
                                 warlordsPlayer.addHealth(orb.getOwner(), "Orbs of Life", maxHeal, maxHeal, -1, 100);

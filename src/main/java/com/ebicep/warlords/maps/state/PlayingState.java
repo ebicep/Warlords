@@ -281,7 +281,7 @@ public class PlayingState implements State, TimerDebugAble {
             this.powerUps = null;
         }
         Team winner = forceEnd ? null : calculateWinnerByPoints();
-        if (winner != null || game.playersCount() > 16) {
+        if (!forceEnd && game.playersCount() > 16) {
             Warlords.newChain()
                     .asyncFirst(this::addGameAndLoadPlayers)
                     .syncLast((t) -> {

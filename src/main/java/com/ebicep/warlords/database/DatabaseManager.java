@@ -124,7 +124,7 @@ public class DatabaseManager {
                 ArmorManager.ArmorSets.setSelectedShaman(player, ArmorManager.ArmorSets.getShamanArmor((String) getPlayerInfoWithDotNotation(player, "shaman_armor")));
                 Settings.Powerup.setSelected(player, Settings.Powerup.getPowerup((String) getPlayerInfoWithDotNotation(player, "powerup")));
                 Settings.HotkeyMode.setSelected(player, Settings.HotkeyMode.getHotkeyMode((String) getPlayerInfoWithDotNotation(player, "hotkeymode")));
-                Settings.ParticleQuality.setSelected(player, Settings.ParticleQuality.valueOf((String) getPlayerInfoWithDotNotation(player, "particle_quality")));
+                Settings.ParticleQuality.setSelected(player, Settings.ParticleQuality.getParticleQuality((String) getPlayerInfoWithDotNotation(player, "particle_quality")));
                 System.out.println(ChatColor.GREEN + "[Warlords] Loaded player " + player.getName());
             } else {
                 addPlayer(player);
