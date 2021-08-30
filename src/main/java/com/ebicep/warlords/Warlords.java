@@ -622,6 +622,9 @@ public class Warlords extends JavaPlugin {
                                 newEnergy += .35;
                             }
 
+                            if (newEnergy > warlordsPlayer.getMaxEnergy()) {
+                                newEnergy = warlordsPlayer.getMaxEnergy();
+                            }
                             warlordsPlayer.setEnergy(newEnergy);
                         }
 

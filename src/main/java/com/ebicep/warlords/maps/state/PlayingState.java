@@ -281,17 +281,17 @@ public class PlayingState implements State, TimerDebugAble {
             this.powerUps = null;
         }
         Team winner = forceEnd ? null : calculateWinnerByPoints();
-        //if (winner != null && game.playersCount() > 16) {
-        Warlords.newChain()
-                .asyncFirst(this::addGameAndLoadPlayers)
-                .syncLast((t) -> {
-                    Warlords.addHologramLeaderboards();
-                    game.forEachOnlinePlayer(((player, team) -> CustomScoreboard.giveMainLobbyScoreboard(player)));
-                })
-                .execute();
-//        } else {
-//            System.out.println(ChatColor.GREEN + "[Warlords] This game was not added to the database");
-//        }
+        if (!forceEnd && game.playersCount() > 16) {
+            Warlords.newChain()
+                    .asyncFirst(this::addGameAndLoadPlayers)
+                    .syncLast((t) -> {
+                        Warlords.addHologramLeaderboards();
+                        game.forEachOnlinePlayer(((player, team) -> CustomScoreboard.giveMainLobbyScoreboard(player)));
+                    })
+                    .execute();
+        } else {
+            System.out.println(ChatColor.GREEN + "[Warlords] This game was not added to the database");
+        }
     }
 
     private boolean addGameAndLoadPlayers() {
