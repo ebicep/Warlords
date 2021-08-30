@@ -86,6 +86,12 @@ public final class WarlordsPlayer {
     private final float[] healing = new float[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
     private final float[] absorbed = new float[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
 
+    private final List<Location> locations = new ArrayList<>();
+
+    public List<Location> getLocations() {
+        return locations;
+    }
+
     private final List<Location> trail = new ArrayList<>();
 
     private final CalculateSpeed speed;

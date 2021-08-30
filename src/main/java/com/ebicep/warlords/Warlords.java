@@ -27,6 +27,7 @@ import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Firework;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
@@ -351,7 +352,7 @@ public class Warlords extends JavaPlugin {
                     })
                     .execute();
 
-            Location lastGameLocation = new LocationBuilder(spawnPoint.clone()).forward(3).right(8).addY(8).get();
+            Location lastGameLocation = new LocationBuilder(spawnPoint.clone()).forward(.5f).left(21).addY(8).get();
             DatabaseManager.addLastGameHologram(lastGameLocation);
         }
     }
@@ -625,7 +626,13 @@ public class Warlords extends JavaPlugin {
                             if (!cooldownManager.getCooldown(EnergyPowerUp.class).isEmpty()) {
                                 energyGainPerTick *= 1.4;
                             }
-                            warlordsPlayer.setEnergy(warlordsPlayer.getEnergy() + energyGainPerTick);
+
+                            float newEnergy = warlordsPlayer.getEnergy() + energyGainPerTick;
+                            if (newEnergy > warlordsPlayer.getMaxEnergy()) {
+                                newEnergy = warlordsPlayer.getMaxEnergy();
+                            }
+
+                            warlordsPlayer.setEnergy(newEnergy);
                         }
 
                         if (player != null) {
@@ -795,6 +802,18 @@ public class Warlords extends JavaPlugin {
                             }
                         }
                         WarlordsEvents.entityList.removeIf(e -> !e.isValid());
+                    }
+
+                    if (counter % 60 == 0) {
+                        for (WarlordsPlayer warlordsPlayer : players.values()) {
+                            LivingEntity player = warlordsPlayer.getEntity();
+                            List<Location> locations = warlordsPlayer.getLocations();
+                            if (warlordsPlayer.isDeath()) {
+                                locations.add(locations.get(locations.size() - 1));
+                            } else {
+                                locations.add(player.getLocation());
+                            }
+                        }
                     }
                 }
                 counter++;

@@ -23,6 +23,8 @@ public class HammerOfLight extends AbstractAbility {
 
     private final static int radius = 7;
     private final int duration = 8;
+    private final float hammerMinDamage = 159.85f;
+    private final float hammerMaxDamage = 216.2f;
 
     public HammerOfLight() {
         super("Hammer of Light", 192, 259, 62.64f, 30, 25, 175
@@ -32,8 +34,8 @@ public class HammerOfLight extends AbstractAbility {
     @Override
     public void updateDescription(Player player) {
         description = "§7Throw down a Hammer of Light on\n" +
-                "§7the ground, dealing §c" + minDamageHeal + " §7-\n" +
-                "§c" + maxDamageHeal + " §7damage every second to\n" +
+                "§7the ground, dealing §c" + hammerMinDamage + " §7-\n" +
+                "§c" + hammerMaxDamage + " §7damage every second to\n" +
                 "§7nearby enemies and healing nearby\n" +
                 "§7allies for §a" + minDamageHeal + " §7- §a" + maxDamageHeal + " §7every\n" +
                 "§7second in a §e" + radius + " §7block radius. Your Protector\n" +
@@ -81,8 +83,8 @@ public class HammerOfLight extends AbstractAbility {
                         warlordsPlayer.addHealth(
                                 damageHealCircle.getWarlordsPlayer(),
                                 damageHealCircle.getName(),
-                                -damageHealCircle.getMinDamage(),
-                                -damageHealCircle.getMaxDamage(),
+                                -hammerMinDamage,
+                                -hammerMaxDamage,
                                 damageHealCircle.getCritChance(),
                                 damageHealCircle.getCritMultiplier()
                         );
