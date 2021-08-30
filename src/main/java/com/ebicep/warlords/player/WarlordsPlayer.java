@@ -526,7 +526,7 @@ public final class WarlordsPlayer {
             if (ability.isEmpty()) {
                 sendMessage("" + ChatColor.RED + "\u00AB" + ChatColor.GRAY + " You took " + ChatColor.RED + Math.round(min * -1) + ChatColor.GRAY + " melee damage.");
                 regenTimer = 10;
-                if (health + min <= 0 && cooldownManager.getCooldown(UndyingArmy.class).size() == 0) {
+                if (health + min <= 0 && !cooldownManager.checkUndyingArmy(false)) {
                     die(attacker);
                     gameState.addKill(team, false);
                     if (entity instanceof Player)
@@ -546,7 +546,7 @@ public final class WarlordsPlayer {
                 //TODO FIX FIX IT JUST GETS MORE MESSY LETS GOOOOOOOOOOOOOOO
                 sendMessage("" + ChatColor.RED + "\u00AB" + ChatColor.GRAY + " You took " + ChatColor.RED + Math.round(min * -1) + ChatColor.GRAY + " fall damage.");
                 regenTimer = 10;
-                if (health + min < 0 && cooldownManager.getCooldown(UndyingArmy.class).size() == 0 && min < -10000) {
+                if (health + min < 0 && !cooldownManager.checkUndyingArmy(false) && min < -10000) {
                     die(attacker);
                     gameState.addKill(team, false); // TODO, fall damage is only a suicide if it happens more than 5 seconds after the last damage
                     //title YOU DIED
@@ -908,9 +908,9 @@ public final class WarlordsPlayer {
                         player1.playSound(entity.getLocation(), Sound.HURT_FLESH, 1, 1);
                     }
                 }
-                if (this.health <= 0 && cooldownManager.getCooldown(UndyingArmy.class).size() == 0) {
+                if (this.health <= 0 && !cooldownManager.checkUndyingArmy(false)) {
                     if (attacker.entity instanceof Player) {
-                        ((Player)attacker.entity).playSound(attacker.getLocation(), Sound.ORB_PICKUP, 500f, 0.3f);
+                        ((Player) attacker.entity).playSound(attacker.getLocation(), Sound.ORB_PICKUP, 500f, 0.3f);
                     }
 
                     die(attacker);
