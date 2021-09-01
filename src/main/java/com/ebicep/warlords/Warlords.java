@@ -402,9 +402,6 @@ public class Warlords extends JavaPlugin {
 
                     for (WarlordsPlayer warlordsPlayer : players.values()) {
                         if (warlordsPlayer.getName().equals("sumSmash")) {
-                            if (warlordsPlayer.getEntity().getVehicle() != null) {
-
-                            }
                         }
 
                         CooldownManager cooldownManager = warlordsPlayer.getCooldownManager();
