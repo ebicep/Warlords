@@ -53,7 +53,7 @@ public class ChainLightning extends AbstractChainBase {
 
         player.playSound(player.getLocation(), "shaman.chainlightning.impact", 2, 1);
         for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "shaman.chainlightning.activation", 2, 1);
+            player1.playSound(player.getLocation(), "shaman.chainlightning.activation", 1, 1);
         }
     }
 

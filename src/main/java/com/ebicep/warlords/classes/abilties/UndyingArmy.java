@@ -78,7 +78,7 @@ public class UndyingArmy extends AbstractAbility {
                         player.playSound(wp.getLocation(), "paladin.holyradiance.activation", 0.25f, 0.8f);
 
                         // particles
-                        Location playerLoc = player.getLocation();
+                        Location playerLoc = wp.getLocation();
                         playerLoc.add(0, 2.1, 0);
                         Location particleLoc = playerLoc.clone();
                         for (int i = 0; i < 1; i++) {
@@ -113,12 +113,12 @@ public class UndyingArmy extends AbstractAbility {
                 public void run() {
                     if (teammate.getCooldownManager().getCooldown(tempUndyingArmy).isPresent()) {
                         if (!((UndyingArmy) teammate.getCooldownManager().getCooldown(tempUndyingArmy).get().getCooldownObject()).isArmyDead()) {
-                            float healAmount = 100 + (teammate.getMaxHealth() - teammate.getHealth()) / 10f;
+                            float healAmount = 100 + (teammate.getMaxHealth() - teammate.getHealth()) / 12f;
                             teammate.addHealth(wp, name, healAmount, healAmount, -1, 100);
                             player.playSound(teammate.getLocation(), "paladin.holyradiance.activation", 0.25f, 0.8f);
 
                             // particles
-                            Location playerLoc = player.getLocation();
+                            Location playerLoc = teammate.getLocation();
                             playerLoc.add(0, 2.1, 0);
                             Location particleLoc = playerLoc.clone();
                             for (int i = 0; i < 1; i++) {

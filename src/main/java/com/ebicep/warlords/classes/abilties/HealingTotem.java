@@ -95,7 +95,7 @@ public class HealingTotem extends AbstractTotemBase {
                     }
 
                     CircleEffect circle = new CircleEffect(wp.getGame(), wp.getTeam(), totemStand.getLocation().add(0, 1, 0), radius);
-                    circle.addEffect(new CircumferenceEffect(ParticleEffect.VILLAGER_HAPPY, ParticleEffect.REDSTONE).particlesPerCircumference(4));
+                    circle.addEffect(new CircumferenceEffect(ParticleEffect.VILLAGER_HAPPY, ParticleEffect.REDSTONE).particlesPerCircumference(2));
                     circle.playEffects();
 
                     //1
