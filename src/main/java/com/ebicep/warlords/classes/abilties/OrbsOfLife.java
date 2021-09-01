@@ -21,6 +21,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +36,7 @@ public class OrbsOfLife extends AbstractAbility {
     private final int floatingOrbRadius = 20;
 
     public OrbsOfLife() {
-        super("Orbs of Life", 230, 360, 21.57f, 20, 0, 0);
+        super("Orbs of Life", 240, 360, 21.57f, 20, 0, 0);
     }
 
     @Override
@@ -49,8 +50,8 @@ public class OrbsOfLife extends AbstractAbility {
                 "§7health. Lasts §6" + duration + " §7seconds." +
                 "\n\n" +
                 "§7You may SNEAK once per Orbs of Life cast to make\n" +
-                "§7the orbs levitate towards the nearest ally in a §e" + floatingOrbRadius + "\n" +
-                "§7block radius, healing them for §a" + maxDamageHeal + " §7health.";
+                "§7the orbs levitate towards you or the nearest ally in\n" +
+                "§7a §e" + floatingOrbRadius + " §7block radius.";
     }
 
     @Override
@@ -93,7 +94,7 @@ public class OrbsOfLife extends AbstractAbility {
                                 orbArmorStand.eject();
                                 orbArmorStand.teleport(
                                         new LocationBuilder(orbLocation.clone())
-                                                .add(target.getLocation().toVector().subtract(orbLocation.toVector()).normalize().multiply(.95))
+                                                .add(target.getLocation().toVector().subtract(orbLocation.toVector()).normalize().multiply(1))
                                                 .get()
                                 );
                                 orbArmorStand.setPassenger(orb);
@@ -107,7 +108,7 @@ public class OrbsOfLife extends AbstractAbility {
 
                     player.sendMessage(ChatColor.GREEN + "Your current orbs will now levitate towards you or a teammate!");
                     for (Player player1 : player.getWorld().getPlayers()) {
-                        player1.playSound(player.getLocation(), Sound.LEVEL_UP, 2, 0.7f);
+                        player1.playSound(player.getLocation(), Sound.LEVEL_UP, 1.5f, 0.7f);
                     }
                     Location particleLoc = player.getLocation();
                     particleLoc.add(0, 1.5, 0);
