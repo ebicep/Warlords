@@ -81,9 +81,9 @@ public class TimeWarp extends AbstractAbility {
 
 
                 //TIME WARPS
-                if (counter % 10 == 0) {
-                    if (timeWarpPlayer.getTime() != 0) {
-                        timeWarpPlayer.setTime(timeWarpPlayer.getTime() - 0.5f);
+                if (counter % 5 == 0) {
+                    if (timeWarpPlayer.getTime() != 0.25f) {
+                        timeWarpPlayer.setTime(timeWarpPlayer.getTime() - 0.25f);
                     } else {
                         WarlordsPlayer player = timeWarpPlayer.getWarlordsPlayer();
                         player.addHealth(player, "Time Warp", (player.getMaxHealth() * .3f), (player.getMaxHealth() * .3f), -1, 100);

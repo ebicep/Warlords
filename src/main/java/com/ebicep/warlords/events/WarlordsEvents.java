@@ -230,7 +230,7 @@ public class WarlordsEvents implements Listener {
                             horse.setJumpStrength(0);
                             horse.setVariant(Horse.Variant.HORSE);
                             horse.setAdult();
-                            ((EntityLiving) ((CraftEntity) horse).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(.308);
+                            ((EntityLiving) ((CraftEntity) horse).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(.314);
                             horse.setPassenger(player);
                             wp.setHorseCooldown(15);
                         }

@@ -44,9 +44,9 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: net.md-5:bungeecord-chat:1.8-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.spigotmc:spigot:1.8.8-R0.1-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.bukkit:bukkit:1.8.8-R0.1-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: org.mongodb:mongodb-driver:3.8.1" level="project" />
-    <orderEntry type="library" name="Maven: org.mongodb:bson:3.8.1" level="project" />
-    <orderEntry type="library" name="Maven: org.mongodb:mongodb-driver-core:3.8.1" level="project" />
+    <orderEntry type="library" name="Maven: org.mongodb:mongodb-driver:3.12.10" level="project" />
+    <orderEntry type="library" name="Maven: org.mongodb:bson:3.12.10" level="project" />
+    <orderEntry type="library" name="Maven: org.mongodb:mongodb-driver-core:3.12.10" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.gmail.filoghost.holographicdisplays:holographicdisplays-api:2.4.9" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: net.citizensnpcs:citizensapi:2.0.16-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: co.aikar:taskchain-bukkit:3.7.2" level="project" />
