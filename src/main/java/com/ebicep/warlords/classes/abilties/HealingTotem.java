@@ -37,7 +37,7 @@ public class HealingTotem extends AbstractTotemBase {
                 "§7second. Lasts §6" + duration + " §7seconds." +
                 "\n\n" +
                 "§7Pressing SHIFT causes your totem to\n" +
-                "§7pulse with immense darkness, crippling all\n" +
+                "§7pulse with immense force, crippling all\n" +
                 "§7enemies for §63 §7seconds. Crippled enemies\n" +
                 "§7deal §c25% §7less damage.";
     }

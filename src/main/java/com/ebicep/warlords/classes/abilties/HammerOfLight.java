@@ -38,7 +38,10 @@ public class HammerOfLight extends AbstractAbility {
                 "§7second in a §e" + radius + " §7block radius. Your Protector\n" +
                 "§7Strike pierces shields and defenses of enemies\n" +
                 "§7standing on top of the Hammer of Light.\n" +
-                "§7Lasts §6" + duration + " §7seconds.";
+                "§7Lasts §6" + duration + " §7seconds." +
+                "\n\n" +
+                "§7Each enemy standing in your hammer increases your\n" +
+                "§7overall healing and damage by 3% (max 12%)";
     }
 
     @Override

@@ -108,7 +108,7 @@ public class OrbsOfLife extends AbstractAbility {
 
                     player.sendMessage(ChatColor.GREEN + "Your current orbs will now levitate towards you or a teammate!");
                     for (Player player1 : player.getWorld().getPlayers()) {
-                        player1.playSound(player.getLocation(), Sound.LEVEL_UP, 1.5f, 0.7f);
+                        player1.playSound(player.getLocation(), Sound.LEVEL_UP, 1, 0.7f);
                     }
                     Location particleLoc = player.getLocation();
                     particleLoc.add(0, 1.5, 0);

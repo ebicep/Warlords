@@ -55,10 +55,10 @@ public class SeismicWave extends AbstractAbility {
         Location waveLocation1 = lookingLocation.clone().add(lookingLocation.getDirection().multiply(2));
         Location waveLocation2 = lookingLocation.clone().add(lookingLocation.getDirection().multiply(6));
         for (WarlordsPlayer p : PlayerFilter
-                .entitiesAround(waveLocation1, 2, 4, 2)
+                .entitiesAround(waveLocation1, 2.1, 4, 2.1)
                 .aliveEnemiesOf(wp)
                 .concat(PlayerFilter
-                        .entitiesAround(waveLocation2, 2, 4, 2)
+                        .entitiesAround(waveLocation2, 2.1, 4, 2.1)
                         .aliveEnemiesOf(wp)
                         .stream().collect(Collectors.toList()).toArray(new WarlordsPlayer[0]))
                 .closestFirst(wp)
