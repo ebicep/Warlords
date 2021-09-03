@@ -352,45 +352,37 @@ public class WarlordsEvents implements Listener {
 
     @EventHandler
     public void onPlayerDamage(EntityDamageEvent e) {
-        if (e.getEntity() instanceof Player || e.getEntity() instanceof Horse) {
-            if(Warlords.hasPlayer((OfflinePlayer) e.getEntity())) {
-                if (e.getCause() == EntityDamageEvent.DamageCause.VOID) {
-                    e.getEntity().teleport(Warlords.getRejoinPoint(e.getEntity().getUniqueId()));
+        if (e.getEntity() instanceof Player && Warlords.hasPlayer((OfflinePlayer) e.getEntity())) {
+            if (e.getCause() == EntityDamageEvent.DamageCause.VOID) {
+                e.getEntity().teleport(Warlords.getRejoinPoint(e.getEntity().getUniqueId()));
+                WarlordsPlayer wp = Warlords.getPlayer(e.getEntity());
+                if (wp != null) {
+                    wp.addHealth(wp, "Fall", -1000000, -1000000, -1, 100);
+                }
+            } else if (e.getCause() == EntityDamageEvent.DamageCause.FALL) {
+                //HEIGHT - DAMAGE
+                //PLAYER
+                //9 - 160 - 6
+                //15 - 400 - 12
+                //30ish - 1040
+
+                //HORSE
+                //HEIGHT - DAMAGE
+                //18 - 160
+                //HEIGHT x 40 - 200
+                if (e.getEntity() instanceof Player) {
                     WarlordsPlayer wp = Warlords.getPlayer(e.getEntity());
                     if (wp != null) {
-                        wp.addHealth(wp, "Fall", -1000000, -1000000, -1, 100);
-                    }
-                    e.setCancelled(true);
-                } else if (e.getCause() == EntityDamageEvent.DamageCause.FALL) {
-                    //HEIGHT - DAMAGE
-                    //PLAYER
-                    //9 - 160 - 6
-                    //15 - 400 - 12
-                    //30ish - 1040
-
-                    //HORSE
-                    //HEIGHT - DAMAGE
-                    //18 - 160
-                    //HEIGHT x 40 - 200
-                    if (e.getEntity() instanceof Player) {
-                        WarlordsPlayer wp = Warlords.getPlayer(e.getEntity());
-                        if (wp != null) {
-                            int damage = (int) e.getDamage();
-                            if (damage > 5) {
-                                wp.addHealth(wp, "Fall", -((damage + 3) * 40 - 200), -((damage + 3) * 40 - 200), -1, 100);
-                                wp.setRegenTimer(10);
-                            }
+                        int damage = (int) e.getDamage();
+                        if (damage > 5) {
+                            wp.addHealth(wp, "Fall", -((damage + 3) * 40 - 200), -((damage + 3) * 40 - 200), -1, 100);
+                            wp.setRegenTimer(10);
                         }
                     }
-
-                    e.setCancelled(true);
-                } else if (e.getCause() == EntityDamageEvent.DamageCause.SUFFOCATION) {
-                    e.setCancelled(true);
                 }
-            } else {
-                e.setCancelled(true);
             }
         }
+        e.setCancelled(true);
     }
 
     @EventHandler
