@@ -64,7 +64,7 @@ public class SeismicWave extends AbstractAbility {
                 .closestFirst(wp)
         ) {
             final Location loc = p.getLocation();
-            final Vector v = player.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1.08).setY(0.35);
+            final Vector v = player.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1.08).setY(0.3);
             p.setVelocity(v);
             p.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
         }
