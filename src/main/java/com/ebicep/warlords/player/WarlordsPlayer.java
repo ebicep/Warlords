@@ -824,20 +824,6 @@ public final class WarlordsPlayer {
 
                                 OrbsOfLife.Orb orb = new OrbsOfLife.Orb(((CraftWorld) location.getWorld()).getHandle(), spawnLocation, attacker);
                                 orbsOfLife.getSpawnedOrbs().add(orb);
-
-                                // Hacky way
-                                new BukkitRunnable() {
-                                    @Override
-                                    public void run() {
-                                        for (WarlordsPlayer player : PlayerFilter.playingGame(attacker.getGame()).enemiesOf(attacker)) {
-                                            if (player.getEntity() instanceof Player) {
-                                                ((CraftPlayer) player.getEntity()).getHandle().playerConnection.sendPacket(
-                                                        new PacketPlayOutEntityDestroy(orb.getId())
-                                                );
-                                            }
-                                        }
-                                    }
-                                }.runTaskLater(Warlords.getInstance(), 1);
                             }
                         }
 

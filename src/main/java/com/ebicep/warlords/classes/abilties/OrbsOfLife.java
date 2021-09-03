@@ -9,12 +9,14 @@ import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
 import net.minecraft.server.v1_8_R3.EntityExperienceOrb;
 import net.minecraft.server.v1_8_R3.EntityHuman;
+import net.minecraft.server.v1_8_R3.PacketPlayOutEntityDestroy;
 import net.minecraft.server.v1_8_R3.World;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -191,6 +193,16 @@ public class OrbsOfLife extends AbstractAbility {
             orbStand.setVisible(false);
             orbStand.setGravity(false);
             orbStand.setPassenger(spawn(location).getBukkitEntity());
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    for (WarlordsPlayer player : PlayerFilter.playingGame(owner.getGame()).enemiesOf(owner)) {
+                        if (player.getEntity() instanceof Player) {
+                            ((CraftPlayer) player.getEntity()).getHandle().playerConnection.sendPacket(new PacketPlayOutEntityDestroy(getId()));
+                        }
+                    }
+                }
+            }.runTaskLater(Warlords.getInstance(), 1);
             this.armorStand = orbStand;
             new BukkitRunnable() {
 
