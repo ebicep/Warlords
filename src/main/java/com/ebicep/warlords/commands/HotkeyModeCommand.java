@@ -25,10 +25,6 @@ public class HotkeyModeCommand implements CommandExecutor {
                 sender.sendMessage(ChatColor.GREEN + "Hotkey Mode " + ChatColor.YELLOW + "NEW " + ChatColor.GREEN + "enabled.");
             }
             settings.setHotKeyMode(!settings.getHotKeyMode());
-            WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
-            if (warlordsPlayer != null) {
-                warlordsPlayer.setHotKeyMode(!warlordsPlayer.isHotKeyMode());
-            }
             DatabaseManager.updatePlayerInformation(player, "hotkeymode", settings.getHotKeyMode() ? Settings.HotkeyMode.NEW_MODE.name() : Settings.HotkeyMode.CLASSIC_MODE.name());
         }
 

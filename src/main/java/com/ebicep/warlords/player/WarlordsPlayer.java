@@ -50,7 +50,6 @@ public final class WarlordsPlayer {
     private AbstractPlayerClass spec;
     private Classes specClass;
     private final Weapons weapon;
-    private boolean hotKeyMode;
     private int health;
     private int maxHealth;
     private int regenTimer;
@@ -140,7 +139,6 @@ public final class WarlordsPlayer {
         Player p = player.getPlayer();
         this.entity = spawnJimmy(p == null ? Warlords.getRejoinPoint(uuid) : p.getLocation(), null);
         this.weapon = settings.getWeapon();
-        this.hotKeyMode = settings.getHotKeyMode();
         updatePlayerReference(p);
     }
 
@@ -479,14 +477,6 @@ public final class WarlordsPlayer {
         this.energy = this.maxEnergy;
         this.scoreboard.updateClass();
         assignItemLore(Bukkit.getPlayer(uuid));
-    }
-
-    public boolean isHotKeyMode() {
-        return hotKeyMode;
-    }
-
-    public void setHotKeyMode(boolean hotKeyMode) {
-        this.hotKeyMode = hotKeyMode;
     }
 
     public int getHealth() {

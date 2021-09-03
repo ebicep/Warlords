@@ -14,6 +14,7 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.result.UpdateResult;
 import org.bson.BsonArray;
 import org.bson.BsonInt32;
 import org.bson.BsonInt64;
@@ -72,11 +73,12 @@ public class DatabaseManager {
 //                    uuids.add(uuid);
                     cachedPlayerInfo.put(UUID.fromString((String) document.get("uuid")), document);
                 });
+
+                Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Database Connected");
+                connected = true;
                 for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
                     loadPlayer(onlinePlayer);
                 }
-                Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Database Connected");
-                connected = true;
 //                playersInformation.deleteMany(new Document());
 //                for (UUID uuid : uuids) {
 //                    addPlayer(uuid);
@@ -104,13 +106,14 @@ public class DatabaseManager {
         }
     }
 
-    public static void loadPlayer(Player player) {
+    public static void loadPlayer(UUID uuid) {
         if (!connected) return;
+        Player player = Bukkit.getPlayer(uuid);
         try {
-            if (hasPlayer(player.getUniqueId())) {
-                Document playerInfo = playersInformation.find(eq("uuid", player.getUniqueId().toString())).first();
+            if (hasPlayer(uuid)) {
+                Document playerInfo = playersInformation.find(eq("uuid", uuid.toString())).first();
                 //todo update name
-                cachedPlayerInfo.put(player.getUniqueId(), playerInfo);
+                cachedPlayerInfo.put(uuid, playerInfo);
                 Classes.setSelected(player, Classes.getClass((String) getPlayerInfoWithDotNotation(player, "last_spec")));
                 Weapons.setSelected(player, Weapons.getWeapon((String) getPlayerInfoWithDotNotation(player, "last_weapon")));
                 ArmorManager.Helmets.setSelectedMage(player, ArmorManager.Helmets.getMageHelmet((String) getPlayerInfoWithDotNotation(player, "mage_helm")));
@@ -134,6 +137,10 @@ public class DatabaseManager {
         }
     }
 
+    public static void loadPlayer(Player player) {
+        loadPlayer(player.getUniqueId());
+    }
+
     public static void updatePlayerInformation(Player player, String key, String newValue) {
         if (!connected) return;
         try {
@@ -143,10 +150,10 @@ public class DatabaseManager {
                         combine(set(key, newValue))
                 );
                 cachedPlayerInfo.remove(player.getUniqueId());
-                loadPlayer(player);
-
                 cachedTotalKeyValues.clear();
+
                 System.out.println(ChatColor.GREEN + "[Warlords] " + player.getUniqueId() + " - " + player.getName() + " - " + key + " was updated to " + newValue);
+                loadPlayer(player);
             } else {
                 System.out.println(ChatColor.GREEN + "[Warlords] Could not update player " + player.getName() + " - Not in the database!");
             }
@@ -155,50 +162,36 @@ public class DatabaseManager {
         }
     }
 
-    public static void updatePlayerInformation(Player player, HashMap<String, Object> newInfo, FieldUpdateOperators operator) {
+    public static void updatePlayerInformation(UUID uuid, HashMap<String, Object> newInfo, FieldUpdateOperators operator) {
         if (!connected) return;
+        String name = Bukkit.getPlayer(uuid).getName();
         try {
-            if (hasPlayer(player.getUniqueId())) {
+            if (hasPlayer(uuid)) {
                 Document history = new Document();
                 for (String s : newInfo.keySet()) {
                     history.append(s, newInfo.get(s));
                 }
                 Document update = new Document(operator.operator, history);
-                playersInformation.updateOne(eq("uuid", player.getUniqueId().toString()), update);
-                cachedPlayerInfo.remove(player.getUniqueId());
-                loadPlayer(player);
-
+                playersInformation.updateOne(eq("uuid", uuid.toString()), update);
+                cachedPlayerInfo.remove(uuid);
                 cachedTotalKeyValues.clear();
-                System.out.println(ChatColor.GREEN + "[Warlords] " + player.getUniqueId() + " - " + player.getName() + " was updated");
+
+                System.out.println(ChatColor.GREEN + "[Warlords] " + uuid + " - " + name + " was updated");
+                loadPlayer(uuid);
             } else {
-                System.out.println(ChatColor.GREEN + "[Warlords] Could not update player " + player.getName() + " - Not in the database!");
+                System.out.println(ChatColor.GREEN + "[Warlords] Could not update player " + name + " - Not in the database!");
             }
         } catch (Exception e) {
-            System.out.println(ChatColor.GREEN + "[Warlords] There was an error trying to update information of player " + player.getName());
+            System.out.println(ChatColor.GREEN + "[Warlords] There was an error trying to update information of player " + name);
         }
     }
 
-    public static void updatePlayerInformation(OfflinePlayer player, HashMap<String, Object> newInfo, FieldUpdateOperators operator) {
-        if (!connected) return;
-        try {
-            if (hasPlayer(player.getUniqueId())) {
-                Document history = new Document();
-                for (String s : newInfo.keySet()) {
-                    history.append(s, newInfo.get(s));
-                }
-                Document update = new Document(operator.operator, history);
-                playersInformation.updateOne(eq("uuid", player.getUniqueId().toString()), update);
-                cachedPlayerInfo.remove(player.getUniqueId());
-                loadPlayer(player.getPlayer());
+    public static void updatePlayerInformation(Player player, HashMap<String, Object> newInfo, FieldUpdateOperators operator) {
+        updatePlayerInformation(player.getUniqueId(), newInfo, operator);
+    }
 
-                cachedTotalKeyValues.clear();
-                System.out.println(ChatColor.GREEN + "[Warlords] " + player.getUniqueId() + " - " + player.getName() + " was updated");
-            } else {
-                System.out.println(ChatColor.GREEN + "[Warlords] Could not update player " + player.getName() + " - Not in the database!");
-            }
-        } catch (Exception e) {
-            System.out.println(ChatColor.GREEN + "[Warlords] There was an error trying to update information of player " + player.getName());
-        }
+    public static void updatePlayerInformation(OfflinePlayer player, HashMap<String, Object> newInfo, FieldUpdateOperators operator) {
+        updatePlayerInformation(player.getUniqueId(), newInfo, operator);
     }
 
     public static Object getPlayerInfoWithDotNotation(Player player, String dots) {

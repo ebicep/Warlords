@@ -2,6 +2,7 @@ package com.ebicep.warlords.player;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.util.ItemBuilder;
+import com.sun.org.apache.bcel.internal.generic.NEW;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -92,6 +93,7 @@ public class Settings {
         public static void setSelected(Player player, HotkeyMode selectedHotkeyMode) {
             player.removeMetadata("selected-hotkeymode", Warlords.getInstance());
             player.setMetadata("selected-hotkeymode", new FixedMetadataValue(Warlords.getInstance(), selectedHotkeyMode));
+            Warlords.getPlayerSettings(player.getUniqueId()).setHotKeyMode(selectedHotkeyMode == NEW_MODE);
         }
     }
 
@@ -133,6 +135,7 @@ public class Settings {
         public static void setSelected(Player player, ParticleQuality selectedParticleQuality) {
             player.removeMetadata("selected-particle-quality", Warlords.getInstance());
             player.setMetadata("selected-particle-quality", new FixedMetadataValue(Warlords.getInstance(), selectedParticleQuality));
+            Warlords.getPlayerSettings(player.getUniqueId()).setParticleQuality(selectedParticleQuality);
         }
     }
 }
