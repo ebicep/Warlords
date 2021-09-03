@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 
 public class HolyRadiance extends AbstractAbility {
 
-    private final int radius = 4;
+    private final float radius = 4.5f;
 
     public HolyRadiance(float cooldown, int energyCost, int critChance, int critMultiplier) {
         super("Holy Radiance", 582, 760, cooldown, energyCost, critChance, critMultiplier);
