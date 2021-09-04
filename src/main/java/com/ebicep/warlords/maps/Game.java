@@ -31,6 +31,7 @@ public class Game implements Runnable {
     private final Map<UUID, Team> players = new HashMap<>();
     private GameMap map = GameMap.RIFT;
     private boolean cooldownMode;
+    private boolean gameFreeze = false;
 
     public boolean isState(Class<? extends State> clazz) {
         return clazz.isAssignableFrom(this.state.getClass());
@@ -223,6 +224,14 @@ public class Game implements Runnable {
         return onSameTeam(player1.getUuid(), player2.getUuid());
     }
 
+    public boolean isGameFreeze() {
+        return gameFreeze;
+    }
+
+    public void setGameFreeze(boolean gameFreeze) {
+        this.gameFreeze = gameFreeze;
+    }
+
     public void giveLobbyScoreboard(Player player) {
         ScoreboardManager manager = Bukkit.getScoreboardManager();
         Scoreboard board = manager.getNewScoreboard();
@@ -255,11 +264,13 @@ public class Game implements Runnable {
             this.state = new InitState(this);
             this.state.begin();
         }
-        State newState = state.run();
-        if (newState != null) {
-            this.state.end();
-            this.state = newState;
-            newState.begin();
+        if (!gameFreeze) {
+            State newState = state.run();
+            if (newState != null) {
+                this.state.end();
+                this.state = newState;
+                newState.begin();
+            }
         }
     }
 }

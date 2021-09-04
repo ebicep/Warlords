@@ -39,6 +39,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
@@ -153,7 +154,7 @@ public class WarlordsEvents implements Listener {
             Player attacker = (Player) e.getDamager();
             WarlordsPlayer warlordsPlayerAttacker = Warlords.getPlayer(attacker);
             WarlordsPlayer warlordsPlayerVictim = Warlords.getPlayer(e.getEntity());
-            if (warlordsPlayerAttacker != null && warlordsPlayerAttacker.isEnemyAlive(warlordsPlayerVictim)) {
+            if (warlordsPlayerAttacker != null && warlordsPlayerAttacker.isEnemyAlive(warlordsPlayerVictim) && !warlordsPlayerAttacker.getGame().isGameFreeze()) {
                 if (attacker.getInventory().getHeldItemSlot() == 0 && warlordsPlayerAttacker.getHitCooldown() == 0) {
                     warlordsPlayerAttacker.setHitCooldown(12);
                     warlordsPlayerAttacker.subtractEnergy(warlordsPlayerAttacker.getSpec().getEnergyOnHit() * -1);
@@ -216,7 +217,7 @@ public class WarlordsEvents implements Listener {
 
         if (action == Action.RIGHT_CLICK_BLOCK || action == Action.RIGHT_CLICK_AIR) {
             ItemStack itemHeld = player.getItemInHand();
-            if (wp != null) {
+            if (wp != null && !wp.getGame().isGameFreeze()) {
                 if (player.getInventory().getHeldItemSlot() == 7 && itemHeld.getType() == Material.GOLD_BARDING && player.getVehicle() == null) {
                     if (!Utils.isMountableZone(location) || Utils.blocksInFrontOfLocation(location)) {
                         player.sendMessage(ChatColor.RED + "You can't mount here!");
@@ -306,9 +307,11 @@ public class WarlordsEvents implements Listener {
         int slot = e.getNewSlot();
         WarlordsPlayer wp = Warlords.getPlayer(e.getPlayer());
         if (wp != null) {
-            if (Warlords.getPlayerSettings(wp.getUuid()).getHotKeyMode() && (slot == 1 || slot == 2 || slot == 3 || slot == 4)) {
-                wp.getSpec().onRightClickHotKey(wp, e.getPlayer(), slot);
-                e.setCancelled(true);
+            if (!wp.getGame().isGameFreeze()) {
+                if (Warlords.getPlayerSettings(wp.getUuid()).getHotKeyMode() && (slot == 1 || slot == 2 || slot == 3 || slot == 4)) {
+                    wp.getSpec().onRightClickHotKey(wp, e.getPlayer(), slot);
+                    e.setCancelled(true);
+                }
             }
         }
     }
@@ -346,7 +349,19 @@ public class WarlordsEvents implements Listener {
     }
 
     @EventHandler
+    public void onHorseJump(HorseJumpEvent e) {
+        e.setCancelled(true);
+    }
+
+    @EventHandler
     public void onPlayerMove(PlayerMoveEvent e) {
+        if(Warlords.hasPlayer(e.getPlayer()) && Objects.requireNonNull(Warlords.getPlayer(e.getPlayer())).getGame().isGameFreeze()) {
+            if (e.getPlayer().getVehicle() == null) {
+                e.setTo(e.getFrom());
+            } else {
+                e.setCancelled(true);
+            }
+        }
         if (e.getPlayer().getVehicle() instanceof Horse) {
             Location location = e.getPlayer().getLocation();
             if (!Utils.isMountableZone(location)) {
