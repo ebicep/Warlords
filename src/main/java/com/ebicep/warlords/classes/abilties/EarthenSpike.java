@@ -97,10 +97,10 @@ public class EarthenSpike extends AbstractAbility {
                                 }
                                 if (Math.abs(target.getLocation().getBlockZ() - newLocation.getBlockZ()) > 0) {
                                     if (target.getLocation().getZ() < newLocation.getZ()) {
-                                        FallingBlock newBlock = spawnFallingBlock(newLocation, newLocation.clone().add(0, -1, -1));
+                                        FallingBlock newBlock = spawnFallingBlock(newLocation, newLocation.clone().add(0, 0, -1));
                                         customFallingBlocks.add(new CustomFallingBlock(newBlock, newBlock.getLocation().getY() - .20));
                                     } else {
-                                        FallingBlock newBlock = spawnFallingBlock(newLocation, newLocation.clone().add(0, -1, 1));
+                                        FallingBlock newBlock = spawnFallingBlock(newLocation, newLocation.clone().add(0, 0, 1));
                                         customFallingBlocks.add(new CustomFallingBlock(newBlock, newBlock.getLocation().getY() - .20));
                                     }
                                 }

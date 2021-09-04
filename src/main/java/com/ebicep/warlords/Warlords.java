@@ -394,14 +394,15 @@ public class Warlords extends JavaPlugin {
             public void run() {
                 // EVERY TICK
                 {
-                    // MOVEMENT
                     for (WarlordsPlayer warlordsPlayer : players.values()) {
-                        warlordsPlayer.getSpeed().updateSpeed();
-                    }
-
-                    for (WarlordsPlayer warlordsPlayer : players.values()) {
+                        if(warlordsPlayer.getGame().isGameFreeze()) {
+                            continue;
+                        }
                         if (warlordsPlayer.getName().equals("sumSmash")) {
                         }
+
+                        // MOVEMENT
+                        warlordsPlayer.getSpeed().updateSpeed();
 
                         CooldownManager cooldownManager = warlordsPlayer.getCooldownManager();
                         Player player = warlordsPlayer.getEntity() instanceof Player ? (Player) warlordsPlayer.getEntity() : null;
@@ -711,6 +712,9 @@ public class Warlords extends JavaPlugin {
                     if (counter % 20 == 0) {
                         RemoveEntities.removeHorsesInGame();
                         for (WarlordsPlayer warlordsPlayer : players.values()) {
+                            if(warlordsPlayer.getGame().isGameFreeze()) {
+                                continue;
+                            }
                             Player player = warlordsPlayer.getEntity() instanceof Player ? (Player) warlordsPlayer.getEntity() : null;
                             if (player != null) {
                                 //ACTION BAR
@@ -798,8 +802,12 @@ public class Warlords extends JavaPlugin {
                         WarlordsEvents.entityList.removeIf(e -> !e.isValid());
                     }
 
-                    if (counter % 60 == 0) {
+                    //EVERY 2.5 SECONDS
+                    if (counter % 50 == 0) {
                         for (WarlordsPlayer warlordsPlayer : players.values()) {
+                            if(warlordsPlayer.getGame().isGameFreeze()) {
+                                continue;
+                            }
                             LivingEntity player = warlordsPlayer.getEntity();
                             List<Location> locations = warlordsPlayer.getLocations();
                             if (warlordsPlayer.isDeath()) {

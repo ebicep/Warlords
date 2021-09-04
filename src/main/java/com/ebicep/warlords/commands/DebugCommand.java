@@ -42,6 +42,7 @@ public class DebugCommand implements CommandExecutor {
                 return true;
             }
         }
+
         switch (args[0]) {
             case "timer":
                 if (!(game.getState() instanceof TimerDebugAble)) {
@@ -176,6 +177,12 @@ public class DebugCommand implements CommandExecutor {
                     default:
                         sender.sendMessage("§cInvalid option!");
                         return false;
+                }
+            }
+
+            case "freeze": {
+                if (player != null) {
+                    player.getGame().setGameFreeze(!player.getGame().isGameFreeze());
                 }
             }
 
