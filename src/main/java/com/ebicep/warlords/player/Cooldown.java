@@ -16,7 +16,7 @@ public class Cooldown {
         this.cooldownClass = ability;
         this.cooldownObject = cooldownObject;
         this.actionBarName = actionBarName;
-        this.timeLeft = timeLeft;
+        this.timeLeft = timeLeft - 1;
         this.from = from;
         this.cooldownType = cooldownType;
         this.hidden = false;
