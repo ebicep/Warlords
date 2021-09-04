@@ -344,9 +344,18 @@ public class WarlordsEvents implements Listener {
     }
 
     @EventHandler
+    public void onHorseJump(HorseJumpEvent e) {
+        e.setCancelled(true);
+    }
+
+    @EventHandler
     public void onPlayerMove(PlayerMoveEvent e) {
         if(Warlords.hasPlayer(e.getPlayer()) && Objects.requireNonNull(Warlords.getPlayer(e.getPlayer())).getGame().isGameFreeze()) {
-            e.setCancelled(true);
+            if (e.getPlayer().getVehicle() == null) {
+                e.setTo(e.getFrom());
+            } else {
+                e.setCancelled(true);
+            }
         }
         if (e.getPlayer().getVehicle() instanceof Horse) {
             Location location = e.getPlayer().getLocation();
