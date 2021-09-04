@@ -40,7 +40,7 @@ public class SeismicWave extends AbstractAbility {
         List<CustomFallingBlock> customFallingBlocks = new ArrayList<>();
 
         Location location = player.getLocation();
-        for (int i = 0; i < 9; i++) {
+        for (int i = 0; i < 8; i++) {
             fallingBlockLocations.add(getWave(location, i));
         }
 
@@ -48,25 +48,42 @@ public class SeismicWave extends AbstractAbility {
             player1.playSound(player.getLocation(), "warrior.seismicwave.activation", 2, 1);
         }
 
-        //INSTANT DMG
-        Location lookingLocation = player.getLocation().clone();
-        lookingLocation.setPitch(0);
-        //wave = rectangle, 5 x 8
-        Location waveLocation1 = lookingLocation.clone().add(lookingLocation.getDirection().multiply(2));
-        Location waveLocation2 = lookingLocation.clone().add(lookingLocation.getDirection().multiply(6));
-        for (WarlordsPlayer p : PlayerFilter
-                .entitiesAroundRectangle(waveLocation1, 2, 4, 2)
-                .aliveEnemiesOf(wp)
-                .concat(PlayerFilter
-                        .entitiesAroundRectangle(waveLocation2, 2, 4, 2)
+//        //INSTANT DMG
+//        Location lookingLocation = player.getLocation().clone();
+//        lookingLocation.setPitch(0);
+//        //wave = rectangle, 5 x 8
+//        Location waveLocation1 = lookingLocation.clone().add(lookingLocation.getDirection().multiply(2));
+//        Location waveLocation2 = lookingLocation.clone().add(lookingLocation.getDirection().multiply(6));
+//        for (WarlordsPlayer p : PlayerFilter
+//                .entitiesAroundRectangle(waveLocation1, 2, 4, 2)
+//                .aliveEnemiesOf(wp)
+//                .concat(PlayerFilter
+//                        .entitiesAroundRectangle(waveLocation2, 2, 4, 2)
+//                        .aliveEnemiesOf(wp)
+//                        .stream().collect(Collectors.toList()).toArray(new WarlordsPlayer[0]))
+//                .closestFirst(wp)
+//        ) {
+//            final Location loc = p.getLocation();
+//            final Vector v = player.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1.08).setY(0.3);
+//            p.setVelocity(v);
+//            p.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+//        }
+
+        List<WarlordsPlayer> playersHit = new ArrayList<>();
+        for (List<Location> fallingBlockLocation : fallingBlockLocations) {
+            for (Location loc : fallingBlockLocation) {
+                for (WarlordsPlayer p : PlayerFilter
+                        .entitiesAroundRectangle(loc, .5, 4, .5)
                         .aliveEnemiesOf(wp)
-                        .stream().collect(Collectors.toList()).toArray(new WarlordsPlayer[0]))
-                .closestFirst(wp)
-        ) {
-            final Location loc = p.getLocation();
-            final Vector v = player.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1.08).setY(0.3);
-            p.setVelocity(v);
-            p.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+                        .excluding(playersHit)
+                        .closestFirst(wp)
+                ) {
+                    playersHit.add(p);
+                    final Vector v = player.getLocation().toVector().subtract(p.getLocation().toVector()).normalize().multiply(-1.08).setY(0.3);
+                    p.setVelocity(v);
+                    p.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+                }
+            }
         }
 
         new BukkitRunnable() {
