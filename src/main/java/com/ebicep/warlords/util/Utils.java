@@ -290,13 +290,14 @@ public class Utils {
     }
 
     public static double getDistance(Location original, double accuracy) {
-        Location loc = original.clone(); // Using .clone so you aren't messing with the direct location object from the entity
-        double distance = 0; // Shouldn't start at -2 unless you're wanting the eye height from the ground (I don't know why you'd want that)
-        for (double i = loc.getY(); i >= original.getY() - 2; i -= accuracy) {
+        Location loc = original.clone();
+        double distance = 0;
+        for (double i = loc.getY(); i >= -100; i -= accuracy) {
             loc.setY(i);
             distance += accuracy;
-            if (loc.getBlock().getType().isSolid()) // Makes a little more sense than checking if it's air
+            if (loc.getBlock().getType().isSolid()) {
                 break;
+            }
         }
         return distance;
     }

@@ -116,11 +116,7 @@ public class Boulder extends AbstractAbility {
 
                     }
                     newLoc.setPitch(-12);
-                    Location impactLocation = newLoc.clone().add(0, -.5, 0)
-                            .subtract(speed)
-                            .subtract(speed)
-                            .subtract(speed)
-                            .subtract(speed);
+                    Location impactLocation = newLoc.clone().subtract(speed);
 
                     //ParticleEffect.VILLAGER_HAPPY.display(0 , 0 ,0, 0, 10, impactLocation, 1000);
 

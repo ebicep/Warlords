@@ -61,9 +61,7 @@ public class EarthenSpike extends AbstractAbility {
                 PacketPlayOutAnimation playOutAnimation = new PacketPlayOutAnimation(((CraftPlayer) player).getHandle(), 0);
                 ((CraftPlayer) player).getHandle().playerConnection.sendPacket(playOutAnimation);
 
-                FallingBlock block = player.getWorld().spawnFallingBlock(location.clone(), location.getWorld().getBlockAt((int) location.getX(), (int) location.getY(), (int) location.getZ()).getType(), (byte) 0);
-                block.setVelocity(new Vector(0, .2, 0));
-                WarlordsEvents.addEntityUUID(block);
+                FallingBlock block = spawnFallingBlock(location, location);
                 EarthenSpikeBlock earthenSpikeBlock = new EarthenSpikeBlock(new CustomFallingBlock(block, block.getLocation().getY() - .2), p, wp);
                 wp.subtractEnergy(energyCost);
 
@@ -99,16 +97,10 @@ public class EarthenSpike extends AbstractAbility {
                                 }
                                 if (Math.abs(target.getLocation().getBlockZ() - newLocation.getBlockZ()) > 0) {
                                     if (target.getLocation().getZ() < newLocation.getZ()) {
-                                        FallingBlock newBlock = target.getWorld().spawnFallingBlock(newLocation, newLocation.getWorld().getBlockAt(newLocation.clone().add(0, -1, -1)).getType(), newLocation.getWorld().getBlockAt(newLocation.clone().add(0, -1, 0)).getData());
-                                        newBlock.setVelocity(new Vector(0, .25, 0));
-                                        newBlock.setDropItem(false);
-                                        WarlordsEvents.addEntityUUID(newBlock);
+                                        FallingBlock newBlock = spawnFallingBlock(newLocation, newLocation.clone().add(0, -1, -1));
                                         customFallingBlocks.add(new CustomFallingBlock(newBlock, newBlock.getLocation().getY() - .20));
                                     } else {
-                                        FallingBlock newBlock = target.getWorld().spawnFallingBlock(newLocation, newLocation.getWorld().getBlockAt(newLocation.clone().add(0, -1, 1)).getType(), newLocation.getWorld().getBlockAt(newLocation.clone().add(0, -1, 0)).getData());
-                                        newBlock.setVelocity(new Vector(0, .25, 0));
-                                        newBlock.setDropItem(false);
-                                        WarlordsEvents.addEntityUUID(newBlock);
+                                        FallingBlock newBlock = spawnFallingBlock(newLocation, newLocation.clone().add(0, -1, 1));
                                         customFallingBlocks.add(new CustomFallingBlock(newBlock, newBlock.getLocation().getY() - .20));
                                     }
                                 }
@@ -124,7 +116,7 @@ public class EarthenSpike extends AbstractAbility {
                             //moving vertically
                             if (target.getLocation().getY() < newLocation.getY()) {
                                 for (int j = 0; j < 10; j++) {
-                                    if (newLocation.getWorld().getBlockAt(newLocation.clone().add(0, -1, 0)).getType() == Material.AIR) {
+                                    if (newLocation.clone().add(0, -1, 0).getBlock().getType() == Material.AIR) {
                                         newLocation.add(0, -1, 0);
                                     } else {
                                         break;
@@ -132,7 +124,7 @@ public class EarthenSpike extends AbstractAbility {
                                 }
                             } else {
                                 for (int j = 0; j < 10; j++) {
-                                    if (newLocation.getWorld().getBlockAt(newLocation).getType() != Material.AIR) {
+                                    if (newLocation.getBlock().getType() != Material.AIR) {
                                         newLocation.add(0, 1, 0);
                                     } else {
                                         break;
@@ -141,17 +133,14 @@ public class EarthenSpike extends AbstractAbility {
                             }
                             //temp fix for block glitch
                             for (int i = 0; i < 10; i++) {
-                                if (newLocation.getWorld().getBlockAt(newLocation).getType() != Material.AIR) {
+                                if (newLocation.getBlock().getType() != Material.AIR) {
                                     newLocation.add(0, 1, 0);
                                 } else {
                                     break;
                                 }
                             }
 
-                            FallingBlock newBlock = target.getWorld().spawnFallingBlock(newLocation, newLocation.getWorld().getBlockAt(newLocation.clone().add(0, -1, 0)).getType(), newLocation.getWorld().getBlockAt(newLocation.clone().add(0, -1, 0)).getData());
-                            newBlock.setVelocity(new Vector(0, .2, 0));
-                            newBlock.setDropItem(false);
-                            WarlordsEvents.addEntityUUID(newBlock);
+                            FallingBlock newBlock = spawnFallingBlock(newLocation, newLocation);
                             customFallingBlocks.add(new CustomFallingBlock(newBlock, newBlock.getLocation().getY() - .20));
                         } else {
                             //impact
@@ -161,7 +150,8 @@ public class EarthenSpike extends AbstractAbility {
                                     .aliveEnemiesOf(wp)
                             ) {
                                 warlordsPlayer.addHealth(user, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
-                                if (Utils.getDistance(warlordsPlayer, .1) < 2.3) {
+                                //todo tweak distance to ground where you cant get kbed up (1.4 is max jump blocks)
+                                if (Utils.getDistance(warlordsPlayer.getEntity(), .1) < 1.4) {
                                     warlordsPlayer.setVelocity(new Vector(0, .6, 0));
                                 }
                             }
@@ -171,8 +161,8 @@ public class EarthenSpike extends AbstractAbility {
                             }
 
                             targetLocation.setYaw(0);
-                            for (int i = 0; i < 25; i++) {
-                                if (targetLocation.getWorld().getBlockAt(targetLocation.clone().add(0, -1, 0)).getType() == Material.AIR) {
+                            for (int i = 0; i < 100; i++) {
+                                if (targetLocation.clone().add(0, -1, 0).getBlock().getType() == Material.AIR) {
                                     targetLocation.add(0, -1, 0);
                                 } else {
                                     break;
@@ -227,6 +217,27 @@ public class EarthenSpike extends AbstractAbility {
                 break;
             }
         }
+    }
+
+
+    private FallingBlock spawnFallingBlock(Location location, Location blockTypeAndData) {
+        Location spawnLocation = location.clone();
+        for (int i = 0; i < 100; i++) {
+            if(spawnLocation.getBlock().getType() != Material.AIR) {
+                spawnLocation.add(0, 1, 0);
+            } else {
+                break;
+            }
+        }
+        FallingBlock newBlock = spawnLocation.getWorld().spawnFallingBlock(
+                spawnLocation,
+                blockTypeAndData.clone().add(0, -1, 0).getBlock().getType(),
+                blockTypeAndData.clone().add(0, -1, 0).getBlock().getData()
+        );
+        newBlock.setVelocity(new Vector(0, .25, 0));
+        newBlock.setDropItem(false);
+        WarlordsEvents.addEntityUUID(newBlock);
+        return newBlock;
     }
 
     public class EarthenSpikeBlock {
