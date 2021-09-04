@@ -5,6 +5,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.util.Matrix4d;
 import com.ebicep.warlords.util.PlayerFilter;
 import com.ebicep.warlords.util.Utils;
 import org.bukkit.Location;
@@ -64,7 +65,7 @@ public class SeismicWave extends AbstractAbility {
                 .closestFirst(wp)
         ) {
             final Location loc = p.getLocation();
-            final Vector v = player.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1.08).setY(0.3);
+            final Vector v = player.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1.1).setY(0.25);
             p.setVelocity(v);
             p.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
         }

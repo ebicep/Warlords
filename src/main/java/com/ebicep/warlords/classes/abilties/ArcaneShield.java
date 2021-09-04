@@ -54,7 +54,7 @@ public class ArcaneShield extends AbstractAbility {
                     this.cancel();
                 }
             }
-        }.runTaskTimer(Warlords.getInstance(), 0, 4);
+        }.runTaskTimer(Warlords.getInstance(), 0, 3);
     }
 
     public float getShieldHealth() {
