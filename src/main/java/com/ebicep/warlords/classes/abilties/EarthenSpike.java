@@ -225,7 +225,6 @@ public class EarthenSpike extends AbstractAbility {
                 break;
             }
         }
-        System.out.println(spawnLocation.getBlock().getType());
         FallingBlock newBlock = spawnLocation.getWorld().spawnFallingBlock(
                 spawnLocation,
                 blockTypeAndData.clone().add(0, -1, 0).getBlock().getType(),
