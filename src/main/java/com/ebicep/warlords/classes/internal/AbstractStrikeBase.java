@@ -25,7 +25,7 @@ public abstract class AbstractStrikeBase extends AbstractAbility {
 
     @Override
     public void onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
-        PlayerFilter.entitiesAround(wp, 5, 5, 5)
+        PlayerFilter.entitiesAround(wp, 4.8, 4.8, 4.8)
                 .aliveEnemiesOf(wp)
                 .closestFirst(wp)
                 .requireLineOfSight(wp)
@@ -38,11 +38,11 @@ public abstract class AbstractStrikeBase extends AbstractAbility {
 
                         if (this instanceof AvengersStrike || this instanceof CrusadersStrike || this instanceof ProtectorsStrike) {
                             for (Player player1 : player.getWorld().getPlayers()) {
-                                player1.playSound(player.getLocation(), "paladin.paladinstrike.activation", 2, 1);
+                                player1.playSound(nearPlayer.getLocation(), "paladin.paladinstrike.activation", 2, 1);
                             }
                         } else if (this instanceof WoundingStrikeBerserker || this instanceof WoundingStrikeDefender || this instanceof CripplingStrike) {
                             for (Player player1 : Bukkit.getOnlinePlayers()) {
-                                player1.playSound(player.getLocation(), "warrior.mortalstrike.impact", 2, 1);
+                                player1.playSound(nearPlayer.getLocation(), "warrior.mortalstrike.impact", 2, 1);
                             }
                         }
 

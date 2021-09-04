@@ -24,7 +24,7 @@ public class Boulder extends AbstractAbility {
     private static final double GRAVITY = -0.01075;
 
     public Boulder() {
-        super("Boulder", -465, -694, 7.05f, 80, 15, 175);
+        super("Boulder", -490, -731, 7.05f, 80, 15, 175);
     }
 
     @Override
