@@ -16,9 +16,12 @@ public class Cooldown {
         this.cooldownClass = ability;
         this.cooldownObject = cooldownObject;
         this.actionBarName = actionBarName;
-        this.timeLeft = timeLeft - 1;
+        this.timeLeft = timeLeft;
         this.from = from;
         this.cooldownType = cooldownType;
+        if(cooldownType == CooldownTypes.ABILITY) {
+            this.timeLeft--;
+        }
         this.hidden = false;
     }
 
