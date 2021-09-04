@@ -712,7 +712,7 @@ public class Warlords extends JavaPlugin {
                             //RESPAWN
                             int respawn = warlordsPlayer.getRespawnTimer();
                             if (respawn != -1) {
-                                if (respawn <= 6) {
+                                if (respawn <= 11) {
                                     if (respawn == 1) {
                                         if (player != null) {
                                             PacketUtils.sendTitle(player, "", "", 0, 0, 0);

@@ -78,6 +78,9 @@ public class DebugMenu {
                 new ItemBuilder(Material.DIODE)
                         .name(ChatColor.GREEN + "Timer")
                         .get(),
+                new ItemBuilder(Material.ICE)
+                        .name(ChatColor.GREEN + "Freeze Game")
+                        .get()
         };
         for (int i = 0; i < itemStack.length; i++) {
             int index = i + 1;
@@ -89,6 +92,9 @@ public class DebugMenu {
                                 break;
                             case 2:
                                 openTimerMenu(player);
+                                break;
+                            case 3:
+                                Bukkit.getServer().dispatchCommand(player, "wl freeze");
                                 break;
                         }
                     }
