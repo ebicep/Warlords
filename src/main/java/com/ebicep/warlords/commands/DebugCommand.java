@@ -194,7 +194,7 @@ public class DebugCommand implements CommandExecutor {
                         WarlordsPlayer finalPlayer = player;
                         finalPlayer.getGame().forEachOnlinePlayer((p, team) -> {
                             p.removePotionEffect(PotionEffectType.BLINDNESS);
-                            p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 120, 100000));
+                            p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 100, 100000));
                         });
                         new BukkitRunnable() {
                             int counter = 0;
@@ -211,7 +211,7 @@ public class DebugCommand implements CommandExecutor {
                                     this.cancel();
                                 } else {
                                     finalPlayer.getGame().forEachOnlinePlayer((p, team) -> {
-                                        PacketUtils.sendTitle(p, ChatColor.RED + "RESUMING IN ... " + ChatColor.GREEN + (5 - counter), "", 0, 40, 0);
+                                        PacketUtils.sendTitle(p, ChatColor.RED + "Resuming in... " + ChatColor.GREEN + (5 - counter), "", 0, 40, 0);
                                     });
                                     counter++;
                                 }
@@ -226,7 +226,7 @@ public class DebugCommand implements CommandExecutor {
                                 ((EntityLiving) ((CraftEntity) p.getVehicle()).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0);
                             }
                             p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 9999999, 100000));
-                            PacketUtils.sendTitle(p, ChatColor.RED + "GAME PAUSED","", 0, 9999999, 0);
+                            PacketUtils.sendTitle(p, ChatColor.RED + "Game Paused","", 0, 9999999, 0);
                         });
                     }
                 }

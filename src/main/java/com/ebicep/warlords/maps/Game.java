@@ -38,8 +38,8 @@ public class Game implements Runnable {
     }
 
     public <T extends State> Optional<T> getState(Class<T> clazz) {
-        if(clazz.isAssignableFrom(this.state.getClass())) {
-            return Optional.of((T)this.state);
+        if (clazz.isAssignableFrom(this.state.getClass())) {
+            return Optional.of((T) this.state);
         }
         return Optional.empty();
     }
@@ -128,8 +128,10 @@ public class Game implements Runnable {
             online.teleport(loc);
         }
     }
+
     /**
      * Adds a player to the game
+     *
      * @param player
      * @param teamBlue
      * @deprecated use {@link #addPlayer(Player, Team) addPlayer(Player, Team)} instead
@@ -153,6 +155,18 @@ public class Game implements Runnable {
     }
 
     public List<UUID> clearAllPlayers() {
+        try {
+            //making hidden players visible again
+            Warlords.getPlayers().forEach(((uuid, warlordsPlayer) -> {
+                if (warlordsPlayer.getEntity() instanceof Player) {
+                    Bukkit.getOnlinePlayers().forEach(onlinePlayer -> {
+                        ((Player) warlordsPlayer.getEntity()).showPlayer(onlinePlayer);
+                    });
+                }
+            }));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         List<UUID> toRemove = new ArrayList<>(this.players.keySet());
         for (UUID p : toRemove) {
             this.removePlayer(p);
@@ -171,21 +185,21 @@ public class Game implements Runnable {
 
     public Stream<Map.Entry<OfflinePlayer, Team>> offlinePlayers() {
         return this.players.entrySet()
-            .stream()
-            .map(e -> new AbstractMap.SimpleImmutableEntry<>(
-                Bukkit.getOfflinePlayer(e.getKey()),
-                e.getValue()
-            ));
+                .stream()
+                .map(e -> new AbstractMap.SimpleImmutableEntry<>(
+                        Bukkit.getOfflinePlayer(e.getKey()),
+                        e.getValue()
+                ));
     }
 
     public Stream<Map.Entry<Player, Team>> onlinePlayers() {
         return this.players.entrySet()
-            .stream()
-            .<Map.Entry<Player, Team>>map(e -> new AbstractMap.SimpleImmutableEntry<>(
-                Bukkit.getPlayer(e.getKey()),
-                e.getValue()
-            ))
-            .filter(e -> e.getKey() != null);
+                .stream()
+                .<Map.Entry<Player, Team>>map(e -> new AbstractMap.SimpleImmutableEntry<>(
+                        Bukkit.getPlayer(e.getKey()),
+                        e.getValue()
+                ))
+                .filter(e -> e.getKey() != null);
     }
 
     public void forEachOfflinePlayer(BiConsumer<OfflinePlayer, Team> consumer) {
@@ -214,6 +228,7 @@ public class Game implements Runnable {
 
     /**
      * See if players are on the same team
+     *
      * @param player1 First player
      * @param player2 Second player
      * @return true is they are on the same team (eg BLUE && BLUE, RED && RED or &lt;not player> && &lt;not playing>
@@ -260,7 +275,7 @@ public class Game implements Runnable {
 
     @Override
     public void run() {
-        if(this.state == null) {
+        if (this.state == null) {
             this.state = new InitState(this);
             this.state.begin();
         }

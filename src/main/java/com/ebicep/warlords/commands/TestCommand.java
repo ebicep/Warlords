@@ -1,6 +1,8 @@
 package com.ebicep.warlords.commands;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.player.WarlordsPlayer;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -10,7 +12,7 @@ public class TestCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
-        Player player = BaseCommand.requirePlayerOutsideGame(sender);
+        WarlordsPlayer player = BaseCommand.requireWarlordsPlayer(sender);
         if (player != null) {
             //do stuff
 //            Document doc = DatabaseManager.getLastGame();
@@ -24,8 +26,10 @@ public class TestCommand implements CommandExecutor {
             //System.out.println(((Player) sender).getUniqueId());
             //System.out.println(DatabaseManager.getDocumentInfoWithDotNotation(doc, "players.blue" + ((Player) sender).getUniqueId()));
 
-            Warlords.addHologramLeaderboards();
+            //player.teleport(player.getLocation());
+            //System.out.println("TELEPORTED");
         }
+        //Warlords.addHologramLeaderboards();
         return true;
     }
 
