@@ -1,17 +1,24 @@
 package com.ebicep.warlords.classes.abilties;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.util.PlayerFilter;
 import net.minecraft.server.v1_8_R3.EntityExperienceOrb;
 import net.minecraft.server.v1_8_R3.EntityHuman;
+import net.minecraft.server.v1_8_R3.PacketPlayOutEntityDestroy;
 import net.minecraft.server.v1_8_R3.World;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +26,7 @@ import java.util.Random;
 
 public class OrbsOfLife extends AbstractAbility {
 
-    public static final double SPAWN_RADIUS = 1.75;
+    public static final double SPAWN_RADIUS = 1.15;
     private List<Orb> spawnedOrbs = new ArrayList<>();
 
     public OrbsOfLife() {
@@ -49,10 +56,10 @@ public class OrbsOfLife extends AbstractAbility {
     public Location generateSpawnLocation(Location location) {
         Location spawnLocation;
         int counter = 0;
+        Random rand = new Random();
         do {
             counter++;
             //generate random  position in circle
-            Random rand = new Random();
             double angle = rand.nextDouble() * 360;
             double x = SPAWN_RADIUS * Math.cos(angle) + (rand.nextDouble() - .5);
             double z = SPAWN_RADIUS * Math.sin(angle) + (rand.nextDouble() - .5);
@@ -62,29 +69,30 @@ public class OrbsOfLife extends AbstractAbility {
     }
 
     public boolean orbsInsideBlock(Location location) {
-        if (location.getWorld().getBlockAt(location).getType() != Material.AIR) {
-            for (int i = 1; i < 3; i++) {
-                if (location.getWorld().getBlockAt(location.clone().add(0, i, 0)).getType() == Material.AIR &&
-                        location.getWorld().getBlockAt(location.clone().add(0, i + 1.75, 0)).getType() == Material.AIR
-                ) {
-                    location.add(0, i, 0);
-                    return false;
-                }
-            }
-            return true;
-        } else if (location.getWorld().getBlockAt(location.clone().add(0, -3, 0)).getType() == Material.AIR ||
-                location.getWorld().getBlockAt(location.clone().add(0, -2, 0)).getType() == Material.AIR ||
-                location.getWorld().getBlockAt(location.clone().add(0, -1, 0)).getType() == Material.AIR
-        ) {
-            for (int i = 3; i > 0; i--) {
-                if (location.getWorld().getBlockAt(location.clone().add(0, -i, 0)).getType() == Material.AIR) {
-                    location.add(0, -i, 0);
-                    return false;
-                }
-            }
-            return true;
-        }
-        return false;
+        return location.getBlock().getType() != Material.AIR;
+//        if (location.getWorld().getBlockAt(location).getType() != Material.AIR) {
+//            for (int i = 1; i < 3; i++) {
+//                if (location.getWorld().getBlockAt(location.clone().add(0, i, 0)).getType() == Material.AIR &&
+//                        location.getWorld().getBlockAt(location.clone().add(0, i + 1.75, 0)).getType() == Material.AIR
+//                ) {
+//                    location.add(0, i, 0);
+//                    return false;
+//                }
+//            }
+//            return true;
+//        } else if (location.getWorld().getBlockAt(location.clone().add(0, -3, 0)).getType() == Material.AIR ||
+//                location.getWorld().getBlockAt(location.clone().add(0, -2, 0)).getType() == Material.AIR ||
+//                location.getWorld().getBlockAt(location.clone().add(0, -1, 0)).getType() == Material.AIR
+//        ) {
+//            for (int i = 3; i > 0; i--) {
+//                if (location.getWorld().getBlockAt(location.clone().add(0, -i, 0)).getType() == Material.AIR) {
+//                    location.add(0, -i, 0);
+//                    return false;
+//                }
+//            }
+//            return true;
+//        }
+//        return false;
     }
 
     public boolean nearLocation(Location location) {
@@ -106,8 +114,23 @@ public class OrbsOfLife extends AbstractAbility {
         private final WarlordsPlayer owner;
 
         public Orb(World world, Location location, WarlordsPlayer owner) {
-            super(world, location.getX(), location.getY(), location.getZ(), 1000);
+            super(world, location.getX(), location.getY() + 2, location.getZ(), 1000);
             this.owner = owner;
+            ArmorStand orbStand = (ArmorStand) location.getWorld().spawnEntity(location.clone().add(0, 1.5, 0), EntityType.ARMOR_STAND);
+            orbStand.setVisible(false);
+            orbStand.setGravity(true);
+            orbStand.setPassenger(spawn(location).getBukkitEntity());
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    for (WarlordsPlayer player : PlayerFilter.playingGame(owner.getGame()).enemiesOf(owner)) {
+                        if (player.getEntity() instanceof Player) {
+                            ((CraftPlayer) player.getEntity()).getHandle().playerConnection.sendPacket(new PacketPlayOutEntityDestroy(getId()));
+                        }
+                    }
+                }
+            }.runTaskLater(Warlords.getInstance(), 1);
+            this.armorStand = orbStand;
         }
 
         // Makes it so they cannot be picked up

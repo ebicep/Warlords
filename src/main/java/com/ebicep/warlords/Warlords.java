@@ -204,6 +204,7 @@ public class Warlords extends JavaPlugin {
         new GetPlayersCommand().register(this);
         new TestCommand().register(this);
         new ParticleQualityCommand().register(this);
+        new SpawnTestDummyCommand().register(this);
 
         updateHeads();
 

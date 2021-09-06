@@ -80,7 +80,7 @@ public class DebugMenu {
                         .get(),
                 new ItemBuilder(Material.ICE)
                         .name(ChatColor.GREEN + "Freeze Game")
-                        .get()
+                        .get(),
         };
         for (int i = 0; i < itemStack.length; i++) {
             int index = i + 1;
@@ -771,7 +771,7 @@ public class DebugMenu {
             menu.setItem(
                     6 - values.size() + i * 2 - 1,
                     1,
-                    new ItemBuilder(getSelected(player).specType.itemStack)
+                    new ItemBuilder(selectedClass.specType.itemStack)
                             .name(ChatColor.RED + skillBoost.name + " (" + selectedClass.name + ")")
                             .lore(skillBoost.description,
                                     "",
@@ -826,6 +826,5 @@ public class DebugMenu {
         menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
     }
-
 
 }
