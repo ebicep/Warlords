@@ -120,7 +120,7 @@ public class HealingTotem extends AbstractTotemBase {
                             });
                 } else {
                     for (Player player1 : player.getWorld().getPlayers()) {
-                        player1.playSound(totemStand.getLocation(), Sound.BLAZE_DEATH, 1, 0.7f);
+                        player1.playSound(totemStand.getLocation(), Sound.BLAZE_DEATH, 1.2f, 0.7f);
                     }
                     totemStand.remove();
                     this.cancel();
