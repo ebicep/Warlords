@@ -141,7 +141,7 @@ public class HealingTotem extends AbstractTotemBase {
                     PlayerFilter.entitiesAround(totemStand.getLocation(), radius, radius, radius)
                             .aliveEnemiesOf(wp)
                             .forEach((p) -> {
-                                p.getCooldownManager().addCooldown("Crippling", HealingTotem.class, new HealingTotem(), "CRIP", 3, wp, CooldownTypes.DEBUFF);
+                                p.getCooldownManager().addCooldown("Totem Crippling", HealingTotem.class, new HealingTotem(), "CRIP", 3, wp, CooldownTypes.DEBUFF);
                             });
                     for (Player player1 : player.getWorld().getPlayers()) {
                         player1.playSound(totemStand.getLocation(), "paladin.hammeroflight.impact", 1.5f, 0.2f);

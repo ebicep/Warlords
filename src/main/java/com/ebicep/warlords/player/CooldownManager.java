@@ -44,6 +44,10 @@ public class CooldownManager {
         return cooldowns.stream().filter(cooldown -> cooldown.getActionBarName().contains(name)).collect(Collectors.toList());
     }
 
+    public List<Cooldown> getCooldown(Class cooldownClass, String name) {
+        return cooldowns.stream().filter(cooldown -> cooldown.getCooldownClass() == cooldownClass && cooldown.getActionBarName().contains(name)).collect(Collectors.toList());
+    }
+
     public void reduceCooldowns() {
         for (int i = 0; i < cooldowns.size(); i++) {
             Cooldown cooldown = cooldowns.get(i);
