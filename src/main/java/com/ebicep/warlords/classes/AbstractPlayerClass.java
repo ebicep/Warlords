@@ -120,7 +120,7 @@ public abstract class AbstractPlayerClass {
             }
         }
 
-        if (slot == 0 || slot == 1 || slot == 3 || slot == 4) {
+        if (slot == 0 || slot == 1 || slot == 2 || slot == 3 || slot == 4) {
             if (player.getVehicle() != null) {
                 player.getVehicle().remove();
             }

@@ -64,7 +64,7 @@ public class FlagManager implements Listener {
         if (
                 this.get(team).getFlag() instanceof SpawnFlagLocation &&
                         this.get(team.enemy()).getFlag() instanceof PlayerFlagLocation &&
-                        this.get(team.enemy()).getFlag().getLocation().distanceSquared(this.get(team).getSpawnLocation()) < 2 * 2
+                        this.get(team.enemy()).getFlag().getLocation().distanceSquared(this.get(team).getSpawnLocation()) < 4 * 4
         ) {
             for (Team t : Team.values()) {
                 FlagInfo info = get(t);

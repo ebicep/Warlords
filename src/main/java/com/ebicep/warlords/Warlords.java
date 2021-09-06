@@ -204,6 +204,7 @@ public class Warlords extends JavaPlugin {
         new GetPlayersCommand().register(this);
         new TestCommand().register(this);
         new ParticleQualityCommand().register(this);
+        new SpawnTestDummyCommand().register(this);
 
         updateHeads();
 
@@ -285,13 +286,13 @@ public class Warlords extends JavaPlugin {
 
             Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Adding Holograms");
             Location spawnPoint = Bukkit.getWorlds().get(0).getSpawnLocation().clone();
-            Location lifeTimeWinsLB = new LocationBuilder(spawnPoint.clone()).forward(12).left(3).addY(6).get();
-            Location lifeTimeKillsLB = new LocationBuilder(spawnPoint.clone()).forward(12).right(3).addY(6).get();
-            Location srLB = new LocationBuilder(spawnPoint.clone()).forward(12).addY(10).get();
-            Location srLBMage = new LocationBuilder(spawnPoint.clone()).backward(6).right(6).addY(6).left(7).get();
-            Location srLBWarrior = new LocationBuilder(spawnPoint.clone()).backward(6).right(2).addY(6).left(7).get();
-            Location srLBPaladin = new LocationBuilder(spawnPoint.clone()).backward(6).left(2).addY(6).left(7).get();
-            Location srLBShaman = new LocationBuilder(spawnPoint.clone()).backward(6).left(6).addY(6).left(7).get();
+            Location lifeTimeWinsLB = new LocationBuilder(spawnPoint.clone()).backward(27).left(4).addY(3.5).get();
+            Location lifeTimeKillsLB = new LocationBuilder(spawnPoint.clone()).backward(27).right(4).addY(3.5).get();
+            Location srLB = new LocationBuilder(spawnPoint.clone()).backward(27).addY(3.5).get();
+            Location srLBMage = new LocationBuilder(spawnPoint.clone()).backward(27).left(11).addY(3.5).get();
+            Location srLBWarrior = new LocationBuilder(spawnPoint.clone()).backward(27).left(15).addY(3.5).get();
+            Location srLBPaladin = new LocationBuilder(spawnPoint.clone()).backward(27).left(19).addY(3.5).get();
+            Location srLBShaman = new LocationBuilder(spawnPoint.clone()).backward(27).left(23).addY(3.5).get();
             Warlords.newChain()
                     .asyncFirst(() -> DatabaseManager.getPlayersSortedByKey("wins"))
                     .abortIfNull()
@@ -352,7 +353,7 @@ public class Warlords extends JavaPlugin {
                     })
                     .execute();
 
-            Location lastGameLocation = new LocationBuilder(spawnPoint.clone()).forward(.5f).left(21).addY(8).get();
+            Location lastGameLocation = new LocationBuilder(spawnPoint.clone()).forward(29).left(16).addY(3.5).get();
             DatabaseManager.addLastGameHologram(lastGameLocation);
         }
     }
@@ -458,7 +459,14 @@ public class Warlords extends JavaPlugin {
                         }
 
                         warlordsPlayer.getCooldownManager().reduceCooldowns();
-
+                        if (player != null) {
+                            //ACTION BAR
+                            if (player.getInventory().getHeldItemSlot() != 8) {
+                                warlordsPlayer.displayActionBar();
+                            } else {
+                                warlordsPlayer.displayFlagActionBar(player);
+                            }
+                        }
                         //respawn
                         if (warlordsPlayer.getRespawnTimer() == 0) {
                             warlordsPlayer.setRespawnTimer(-1);
@@ -501,6 +509,10 @@ public class Warlords extends JavaPlugin {
 
                             for (Cooldown cooldown : warlordsPlayer.getCooldownManager().getCooldown(UndyingArmy.class)) {
                                 if (!((UndyingArmy) cooldown.getCooldownObject()).isArmyDead()) {
+                                    //DROPPING FLAG
+                                    if(warlordsPlayer.getGameState().flags().hasFlag(warlordsPlayer)) {
+                                        warlordsPlayer.getGameState().flags().dropFlag(warlordsPlayer);
+                                    }
                                     ((UndyingArmy) cooldown.getCooldownObject()).pop();
                                     //sending message + check if getFrom is self
                                     if (cooldown.getFrom() == warlordsPlayer) {
@@ -566,7 +578,7 @@ public class Warlords extends JavaPlugin {
                             final int[] counter = {0};
                             warlordsPlayer.getHitBy().forEach((assisted, value) -> {
                                 if (counter[0] != lastElementIndex) {
-                                    if (killedBy == assisted) {
+                                    if (killedBy == assisted || killedBy == warlordsPlayer) {
                                         assisted.sendMessage(
                                                 ChatColor.GRAY +
                                                         "You assisted in killing " +
@@ -716,14 +728,6 @@ public class Warlords extends JavaPlugin {
                                 continue;
                             }
                             Player player = warlordsPlayer.getEntity() instanceof Player ? (Player) warlordsPlayer.getEntity() : null;
-                            if (player != null) {
-                                //ACTION BAR
-                                if (player.getInventory().getHeldItemSlot() != 8) {
-                                    warlordsPlayer.displayActionBar();
-                                } else {
-                                    warlordsPlayer.displayFlagActionBar(player);
-                                }
-                            }
                             //REGEN
                             if (warlordsPlayer.getRegenTimer() != 0) {
                                 warlordsPlayer.setRegenTimer(warlordsPlayer.getRegenTimer() - 1);

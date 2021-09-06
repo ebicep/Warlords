@@ -156,6 +156,18 @@ public class Game implements Runnable {
     }
 
     public List<UUID> clearAllPlayers() {
+        try {
+            //making hidden players visible again
+            Warlords.getPlayers().forEach(((uuid, warlordsPlayer) -> {
+                if (warlordsPlayer.getEntity() instanceof Player) {
+                    Bukkit.getOnlinePlayers().forEach(onlinePlayer -> {
+                        ((Player) warlordsPlayer.getEntity()).showPlayer(onlinePlayer);
+                    });
+                }
+            }));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         List<UUID> toRemove = new ArrayList<>(this.players.keySet());
         for (UUID p : toRemove) {
             this.removePlayer(p);

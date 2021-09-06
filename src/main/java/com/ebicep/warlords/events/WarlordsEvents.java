@@ -141,6 +141,15 @@ public class WarlordsEvents implements Listener {
         Bukkit.getOnlinePlayers().forEach(p -> {
             PacketUtils.sendTabHF(p, ChatColor.AQUA + "     Welcome to " + ChatColor.YELLOW + ChatColor.BOLD + "Warlords 2.0     ", ChatColor.GREEN + "Players Online: " + ChatColor.GRAY + Bukkit.getOnlinePlayers().size());
         });
+
+        //hiding players that arent in the game
+        if(!Warlords.hasPlayer(player)) {
+            Warlords.getPlayers().forEach(((uuid, warlordsPlayer) -> {
+                if(warlordsPlayer.getEntity() instanceof Player) {
+                    ((Player) warlordsPlayer.getEntity()).hidePlayer(player);
+                }
+            }));
+        }
     }
 
     @EventHandler
@@ -212,7 +221,7 @@ public class WarlordsEvents implements Listener {
 
         if (action == Action.RIGHT_CLICK_BLOCK || action == Action.RIGHT_CLICK_AIR) {
             ItemStack itemHeld = player.getItemInHand();
-            if (wp != null && !wp.getGame().isGameFreeze()) {
+            if (wp != null && wp.isAlive() && !wp.getGame().isGameFreeze()) {
                 if (player.getInventory().getHeldItemSlot() == 7 && itemHeld.getType() == Material.GOLD_BARDING && player.getVehicle() == null) {
                     if (!Utils.isMountableZone(location) || Utils.blocksInFrontOfLocation(location)) {
                         player.sendMessage(ChatColor.RED + "You can't mount here!");

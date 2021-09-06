@@ -6,6 +6,7 @@ import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.classes.abilties.*;
 import com.ebicep.warlords.classes.paladin.specs.protector.Protector;
 import com.ebicep.warlords.classes.shaman.specs.spiritguard.Spiritguard;
+import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.events.WarlordsDeathEvent;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Team;
@@ -35,6 +36,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -90,8 +92,6 @@ public final class WarlordsPlayer {
     public List<Location> getLocations() {
         return locations;
     }
-
-    private final List<Location> trail = new ArrayList<>();
 
     private final CalculateSpeed speed;
 
@@ -171,6 +171,8 @@ public final class WarlordsPlayer {
             jimmy.getEquipment().setChestplate(inv.getChestplate());
             jimmy.getEquipment().setHelmet(inv.getHelmet());
             jimmy.getEquipment().setItemInHand(inv.getItemInHand());
+        } else {
+            jimmy.getEquipment().setHelmet(new ItemStack(Material.DIAMOND_HELMET));
         }
         return jimmy;
     }
@@ -477,6 +479,13 @@ public final class WarlordsPlayer {
         this.energy = this.maxEnergy;
         this.scoreboard.updateClass();
         assignItemLore(Bukkit.getPlayer(uuid));
+        new BukkitRunnable() {
+
+            @Override
+            public void run() {
+                DatabaseManager.updatePlayerInformation(player, "last_spec", spec.getName());
+            }
+        }.runTaskAsynchronously(Warlords.getInstance());
     }
 
     public int getHealth() {
@@ -638,8 +647,8 @@ public final class WarlordsPlayer {
 
             damageHealValue *= totalReduction;
 
-            if (!cooldownManager.getCooldown(Intervene.class).isEmpty() && cooldownManager.getCooldown(Intervene.class).get(0).getFrom() != this && !HammerOfLight.standingInHammer(attacker, entity) && this.isEnemyAlive(attacker)) {
-                if (this.isEnemyAlive(attacker)) {
+            if (!cooldownManager.getCooldown(Intervene.class).isEmpty() && cooldownManager.getCooldown(Intervene.class).get(0).getFrom() != this && !HammerOfLight.standingInHammer(attacker, entity) && isEnemy(attacker)) {
+                if (isEnemy(attacker)) {
                     damageHealValue *= .5;
                     WarlordsPlayer intervenedBy = cooldownManager.getCooldown(Intervene.class).get(0).getFrom();
 
@@ -671,7 +680,7 @@ public final class WarlordsPlayer {
                     this.addAbsorbed(-damageHealValue);
                     attacker.addAbsorbed(-damageHealValue);
                 }
-            } else if (!cooldownManager.getCooldown(ArcaneShield.class).isEmpty() && this.isEnemyAlive(attacker) && !HammerOfLight.standingInHammer(attacker, entity)) {
+            } else if (!cooldownManager.getCooldown(ArcaneShield.class).isEmpty() && isEnemy(attacker) && !HammerOfLight.standingInHammer(attacker, entity)) {
                 if (((ArcaneShield) spec.getBlue()).getShieldHealth() + damageHealValue < 0) {
                     if (entity instanceof Player) {
                         ((EntityLiving) ((CraftPlayer) entity).getHandle()).setAbsorptionHearts(0);
@@ -730,7 +739,7 @@ public final class WarlordsPlayer {
                     addHealing(damageHealValue);
                 } else {
                     //DAMAGE
-                    if (damageHealValue < 0 && isEnemyAlive(attacker)) {
+                    if (damageHealValue < 0 && isEnemy(attacker)) {
                         hitBy.put(attacker, 10);
 
                         if (powerUpHeal) {
@@ -996,6 +1005,8 @@ public final class WarlordsPlayer {
 
     public void die(WarlordsPlayer attacker) {
         dead = true;
+
+        removeHorse();
 
         addGrave();
 
@@ -1520,10 +1531,6 @@ public final class WarlordsPlayer {
 
     public void setDead(boolean dead) {
         this.dead = dead;
-    }
-
-    public List<Location> getTrail() {
-        return trail;
     }
 
     public void addTimeInCombat() {

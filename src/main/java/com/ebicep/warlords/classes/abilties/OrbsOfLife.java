@@ -31,7 +31,7 @@ import java.util.Random;
 
 public class OrbsOfLife extends AbstractAbility {
 
-    public static final double SPAWN_RADIUS = 1.75;
+    public static final double SPAWN_RADIUS = 1.15;
     private List<Orb> spawnedOrbs = new ArrayList<>();
 
     private final int duration = 14;
@@ -128,10 +128,10 @@ public class OrbsOfLife extends AbstractAbility {
     public Location generateSpawnLocation(Location location) {
         Location spawnLocation;
         int counter = 0;
+        Random rand = new Random();
         do {
             counter++;
             //generate random  position in circle
-            Random rand = new Random();
             double angle = rand.nextDouble() * 360;
             double x = SPAWN_RADIUS * Math.cos(angle) + (rand.nextDouble() - .5);
             double z = SPAWN_RADIUS * Math.sin(angle) + (rand.nextDouble() - .5);
@@ -141,29 +141,30 @@ public class OrbsOfLife extends AbstractAbility {
     }
 
     public boolean orbsInsideBlock(Location location) {
-        if (location.getWorld().getBlockAt(location).getType() != Material.AIR) {
-            for (int i = 1; i < 3; i++) {
-                if (location.getWorld().getBlockAt(location.clone().add(0, i, 0)).getType() == Material.AIR &&
-                        location.getWorld().getBlockAt(location.clone().add(0, i + 1.75, 0)).getType() == Material.AIR
-                ) {
-                    location.add(0, i, 0);
-                    return false;
-                }
-            }
-            return true;
-        } else if (location.getWorld().getBlockAt(location.clone().add(0, -3, 0)).getType() == Material.AIR ||
-                location.getWorld().getBlockAt(location.clone().add(0, -2, 0)).getType() == Material.AIR ||
-                location.getWorld().getBlockAt(location.clone().add(0, -1, 0)).getType() == Material.AIR
-        ) {
-            for (int i = 3; i > 0; i--) {
-                if (location.getWorld().getBlockAt(location.clone().add(0, -i, 0)).getType() == Material.AIR) {
-                    location.add(0, -i, 0);
-                    return false;
-                }
-            }
-            return true;
-        }
-        return false;
+        return location.getBlock().getType() != Material.AIR;
+//        if (location.getWorld().getBlockAt(location).getType() != Material.AIR) {
+//            for (int i = 1; i < 3; i++) {
+//                if (location.getWorld().getBlockAt(location.clone().add(0, i, 0)).getType() == Material.AIR &&
+//                        location.getWorld().getBlockAt(location.clone().add(0, i + 1.75, 0)).getType() == Material.AIR
+//                ) {
+//                    location.add(0, i, 0);
+//                    return false;
+//                }
+//            }
+//            return true;
+//        } else if (location.getWorld().getBlockAt(location.clone().add(0, -3, 0)).getType() == Material.AIR ||
+//                location.getWorld().getBlockAt(location.clone().add(0, -2, 0)).getType() == Material.AIR ||
+//                location.getWorld().getBlockAt(location.clone().add(0, -1, 0)).getType() == Material.AIR
+//        ) {
+//            for (int i = 3; i > 0; i--) {
+//                if (location.getWorld().getBlockAt(location.clone().add(0, -i, 0)).getType() == Material.AIR) {
+//                    location.add(0, -i, 0);
+//                    return false;
+//                }
+//            }
+//            return true;
+//        }
+//        return false;
     }
 
     public boolean nearLocation(Location location) {
@@ -187,11 +188,11 @@ public class OrbsOfLife extends AbstractAbility {
         private WarlordsPlayer playerToMoveTowards = null;
 
         public Orb(World world, Location location, WarlordsPlayer owner) {
-            super(world, location.getX(), location.getY(), location.getZ(), 2500);
+            super(world, location.getX(), location.getY() + 2, location.getZ(), 2500);
             this.owner = owner;
-            ArmorStand orbStand = (ArmorStand) location.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
+            ArmorStand orbStand = (ArmorStand) location.getWorld().spawnEntity(location.clone().add(0, 1.5, 0), EntityType.ARMOR_STAND);
             orbStand.setVisible(false);
-            orbStand.setGravity(false);
+            orbStand.setGravity(true);
             orbStand.setPassenger(spawn(location).getBukkitEntity());
             new BukkitRunnable() {
                 @Override

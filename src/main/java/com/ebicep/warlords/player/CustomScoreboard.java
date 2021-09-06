@@ -15,6 +15,7 @@ import org.bukkit.scoreboard.*;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 public class CustomScoreboard {
     private final WarlordsPlayer warlordsPlayer;
@@ -49,6 +50,7 @@ public class CustomScoreboard {
                     if (i == numberOfEntries - 1) {
                         SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
                         SimpleDateFormat format2 = new SimpleDateFormat("kk:mm");
+                        format2.setTimeZone(TimeZone.getTimeZone("EST"));
                         tempTeam.setPrefix(ChatColor.GRAY + format.format(new Date()) + " - ");
                         tempTeam.setSuffix(format2.format(new Date()));
                     }

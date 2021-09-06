@@ -38,7 +38,7 @@ public enum GameMap {
             new LocationBuilder(new Location(Bukkit.getWorld("Rift"), 87, 45.5, 35.5)).yaw(180).get(), // RED LOBBY SPAWN
 
             new LocationBuilder(new Location(Bukkit.getWorld("Rift"), -32.5, 34.5, -43.5)).yaw(-90).get(), // BLUE RESPAWN
-            new LocationBuilder(new Location(Bukkit.getWorld("Rift"), 34.5, 34.5, 42.5)).yaw(90).get(), // RED RESPAWN
+            new LocationBuilder(new Location(Bukkit.getWorld("Rift"), 33, 34.5, 45)).yaw(90).get(), // RED RESPAWN
 
             new Location(Bukkit.getWorld("Rift"), -98.5, 45.5, -17.5), // BLUE FLAG
             new Location(Bukkit.getWorld("Rift"), 99.5, 45.5, 17.5), // RED FLAG

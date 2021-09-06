@@ -2,6 +2,7 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.maps.state.EndState;
 import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.ParticleEffect;
@@ -9,6 +10,9 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class TimeWarp extends AbstractAbility {
 
@@ -31,7 +35,6 @@ public class TimeWarp extends AbstractAbility {
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
         wp.subtractEnergy(energyCost);
-        TimeWarpPlayer timeWarpPlayer = new TimeWarpPlayer(wp, player.getLocation(), player.getLocation().getDirection(), duration);
         wp.getCooldownManager().addCooldown(name, TimeWarp.this.getClass(), new TimeWarp(), "TIME", duration, wp, CooldownTypes.ABILITY);
 
         for (Player player1 : player.getWorld().getPlayers()) {
@@ -40,40 +43,43 @@ public class TimeWarp extends AbstractAbility {
 
         new BukkitRunnable() {
 
+            float time = duration;
+            final Location warpLocation = wp.getLocation();
+            final List<Location> warpTrail = new ArrayList<>();
+
             @Override
             public void run() {
-                if (timeWarpPlayer.getWarlordsPlayer().isDeath()) {
+                if (wp.isDeath() || wp.getGame().getState() instanceof EndState) {
                     counter = 0;
                     this.cancel();
                 }
 
                 //PARTICLES
                 if (counter % 2 == 0) {
-                    if (timeWarpPlayer.getTime() != 0) {
-                        for (Location location : wp.getTrail()) {
+                    if (time != 0) {
+                        for (Location location : warpTrail) {
                             ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(175, 0, 175), location, 500);
                         }
                     }
                 }
 
                 if (counter % 4 == 0) {
-                    if (timeWarpPlayer.getTime() != 0) {
-                        wp.getTrail().add(player.getLocation());
+                    if (time != 0) {
+                        warpTrail.add(player.getLocation());
                     }
                 }
 
                 if (counter % 4 == 0) {
-                    if (timeWarpPlayer.getTime() != 0) {
-                        ParticleEffect.SPELL_WITCH.display(0, 0, 0, 0.001F, 6, timeWarpPlayer.getLocation(), 500);
+                    if (time != 0) {
+                        ParticleEffect.SPELL_WITCH.display(0, 0, 0, 0.001F, 6, warpLocation, 500);
                     }
 
                     int points = 6;
                     double radius = 0.5d;
-                    Location origin = timeWarpPlayer.getLocation();
 
                     for (int e = 0; e < points; e++) {
                         double angle = 2 * Math.PI * e / points;
-                        Location point = origin.clone().add(radius * Math.sin(angle), 0.0d, radius * Math.cos(angle));
+                        Location point = warpLocation.clone().add(radius * Math.sin(angle), 0.0d, radius * Math.cos(angle));
                         ParticleEffect.CLOUD.display(0.1F, 0, 0.1F, 0.001F, 1, point, 500);
                     }
 
@@ -82,18 +88,16 @@ public class TimeWarp extends AbstractAbility {
 
                 //TIME WARPS
                 if (counter % 5 == 0) {
-                    if (timeWarpPlayer.getTime() != 0.25f) {
-                        timeWarpPlayer.setTime(timeWarpPlayer.getTime() - 0.25f);
+                    if (time != 0.25f) {
+                        time -= 0.25f;
                     } else {
-                        WarlordsPlayer player = timeWarpPlayer.getWarlordsPlayer();
-                        player.addHealth(player, "Time Warp", (player.getMaxHealth() * .3f), (player.getMaxHealth() * .3f), -1, 100);
-                        for (Player player1 : player.getEntity().getWorld().getPlayers()) {
-                            player1.playSound(timeWarpPlayer.getLocation(), "mage.timewarp.teleport", 1, 1);
+                        wp.addHealth(wp, "Time Warp", (wp.getMaxHealth() * .3f), (wp.getMaxHealth() * .3f), -1, 100);
+                        for (Player player1 : wp.getEntity().getWorld().getPlayers()) {
+                            player1.playSound(wp.getLocation(), "mage.timewarp.teleport", 1, 1);
                         }
-                        timeWarpPlayer.getLocation().setDirection(timeWarpPlayer.getFacing());
-                        player.getEntity().teleport(timeWarpPlayer.getLocation());
+                        wp.getEntity().teleport(warpLocation);
 
-                        wp.getTrail().clear();
+                        warpTrail.clear();
                         counter = 0;
                         this.cancel();
                     }
@@ -102,52 +106,5 @@ public class TimeWarp extends AbstractAbility {
             }
 
         }.runTaskTimer(Warlords.getInstance(), 0, 0);
-    }
-
-    public static class TimeWarpPlayer {
-
-        private WarlordsPlayer warlordsPlayer;
-        private Location location;
-        private Vector facing;
-        private float time;
-
-        public TimeWarpPlayer(WarlordsPlayer warlordsPlayer, Location location, Vector facing, float time) {
-            this.warlordsPlayer = warlordsPlayer;
-            this.location = location;
-            this.facing = facing;
-            this.time = time;
-        }
-
-        public WarlordsPlayer getWarlordsPlayer() {
-            return warlordsPlayer;
-        }
-
-        public void setWarlordsPlayer(WarlordsPlayer warlordsPlayer) {
-            this.warlordsPlayer = warlordsPlayer;
-        }
-
-        public Location getLocation() {
-            return location;
-        }
-
-        public void setLocation(Location location) {
-            this.location = location;
-        }
-
-        public Vector getFacing() {
-            return facing;
-        }
-
-        public void setFacing(Vector facing) {
-            this.facing = facing;
-        }
-
-        public float getTime() {
-            return time;
-        }
-
-        public void setTime(float time) {
-            this.time = time;
-        }
     }
 }

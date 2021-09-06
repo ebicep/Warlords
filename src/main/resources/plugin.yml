@@ -35,3 +35,6 @@ commands:
   pq:
     description: Sets particle quality
     usage: /pq [LOW,MEDIUM,HIGH]
+  spawntestdummy:
+    description: Spawns Test Dummy
+    usage: /spawntestdummy [TEAM] [TAKE DAMAGE (TRUE/FALSE) ]

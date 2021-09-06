@@ -541,11 +541,9 @@ public class DatabaseManager {
             playerInfo.put(className + "." + specName + ".damage", damage);
             playerInfo.put(className + "." + specName + ".healing", healing);
             playerInfo.put(className + "." + specName + ".absorbed", absorbed);
-            if (value.getEntity() instanceof Player) {
-                updatePlayerInformation((Player) value.getEntity(), playerInfo, FieldUpdateOperators.INCREMENT);
-            } else if (value.getEntity() instanceof OfflinePlayer) {
-                updatePlayerInformation((OfflinePlayer) value.getEntity(), playerInfo, FieldUpdateOperators.INCREMENT);
-            }
+
+            updatePlayerInformation(value.getUuid(), playerInfo, FieldUpdateOperators.INCREMENT);
+
             if (value.getTeam() == Team.BLUE) {
                 gameAddPlayerStats(blue, value);
             } else {

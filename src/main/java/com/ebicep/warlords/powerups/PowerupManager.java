@@ -31,17 +31,13 @@ public class PowerupManager extends BukkitRunnable {
     public void run() {
         for (AbstractPowerUp powerUp : powerUps) {
             if (powerUp.getCooldown() == 0) {
-                List<WarlordsPlayer> entitiesNear = PlayerFilter
-                        .entitiesAround(powerUp.getLocation(), 1.25, 1.25, 1.25)
+                PlayerFilter.entitiesAround(powerUp.getLocation(), 1.4, 1.4, 1.4)
                         .isAlive()
-                        .stream()
-                        .collect(Collectors.toList());
-                if (entitiesNear.size() != 0) {
-                    WarlordsPlayer warlordsPlayer = entitiesNear.get(0);
-                    powerUp.onPickUp(warlordsPlayer);
-                    powerUp.getPowerUp().remove();
-                    powerUp.setCooldown(powerUp.getMaxCooldown());
-                }
+                        .first((nearPlayer) -> {
+                            powerUp.onPickUp(nearPlayer);
+                            powerUp.getPowerUp().remove();
+                            powerUp.setCooldown(powerUp.getMaxCooldown());
+                        });
             } else {
                 powerUp.setCooldown(powerUp.getCooldown() - 1);
                 if (powerUp.getCooldown() == 0) {

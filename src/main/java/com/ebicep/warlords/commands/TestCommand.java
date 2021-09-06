@@ -1,17 +1,31 @@
 package com.ebicep.warlords.commands;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.maps.Team;
+import com.ebicep.warlords.maps.flags.PlayerFlagLocation;
+import com.ebicep.warlords.player.PlayerSettings;
+import com.ebicep.warlords.player.WarlordsPlayer;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.SkullType;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.SkullMeta;
+
+import java.util.Objects;
 
 public class TestCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
-        Player player = BaseCommand.requirePlayerOutsideGame(sender);
+        WarlordsPlayer player = BaseCommand.requireWarlordsPlayer(sender);
         if (player != null) {
+
             //do stuff
 //            Document doc = DatabaseManager.getLastGame();
 ////            System.out.println(doc);
@@ -24,8 +38,10 @@ public class TestCommand implements CommandExecutor {
             //System.out.println(((Player) sender).getUniqueId());
             //System.out.println(DatabaseManager.getDocumentInfoWithDotNotation(doc, "players.blue" + ((Player) sender).getUniqueId()));
 
-            Warlords.addHologramLeaderboards();
+            //player.teleport(player.getLocation());
+            //System.out.println("TELEPORTED");
         }
+        //Warlords.addHologramLeaderboards();
         return true;
     }
 

@@ -3,6 +3,7 @@ package com.ebicep.warlords.classes.internal;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.classes.abilties.*;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
 import com.ebicep.warlords.util.Utils;
 import net.minecraft.server.v1_8_R3.PacketPlayOutAnimation;
@@ -25,7 +26,7 @@ public abstract class AbstractStrikeBase extends AbstractAbility {
 
     @Override
     public void onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
-        PlayerFilter.entitiesAround(wp, 5, 5, 5)
+        PlayerFilter.entitiesAround(wp, 4.8, 4.8, 4.8)
                 .aliveEnemiesOf(wp)
                 .closestFirst(wp)
                 .requireLineOfSight(wp)
@@ -40,9 +41,31 @@ public abstract class AbstractStrikeBase extends AbstractAbility {
                             for (Player player1 : player.getWorld().getPlayers()) {
                                 player1.playSound(nearPlayer.getLocation(), "paladin.paladinstrike.activation", 2, 1);
                             }
+                            for (int i = 0; i < 5; i++) {
+                                ParticleEffect.REDSTONE.display(
+                                        new ParticleEffect.OrdinaryColor(255, 0, 0),
+                                        nearPlayer.getLocation().clone().add((Math.random() * 2) - 1, 1.2 + (Math.random() * 2) - 1, (Math.random() * 2) - 1),
+                                        500);
+
+                            }
+                            ParticleEffect.SPELL.display(
+                                    (float) ((Math.random() * 2) - 1),
+                                    (float) ((Math.random() * 2) - 1),
+                                    (float) ((Math.random() * 2) - 1),
+                                    1,
+                                    4,
+                                    nearPlayer.getLocation().clone().add(0, 1, 0),
+                                    500);
                         } else if (this instanceof WoundingStrikeBerserker || this instanceof WoundingStrikeDefender || this instanceof CripplingStrike) {
                             for (Player player1 : Bukkit.getOnlinePlayers()) {
                                 player1.playSound(nearPlayer.getLocation(), "warrior.mortalstrike.impact", 2, 1);
+                            }
+                            for (int i = 0; i < 7; i++) {
+                                ParticleEffect.REDSTONE.display(
+                                        new ParticleEffect.OrdinaryColor(255, 0, 0),
+                                        nearPlayer.getLocation().clone().add((Math.random() * 2) - 1, 1.2 + (Math.random() * 2) - 1, (Math.random() * 2) - 1),
+                                        500);
+
                             }
                         }
 
