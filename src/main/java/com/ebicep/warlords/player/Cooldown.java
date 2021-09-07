@@ -22,6 +22,20 @@ public class Cooldown {
         this.hidden = false;
     }
 
+    @Override
+    public String toString() {
+        return "Cooldown{" +
+                "name='" + name + '\'' +
+                ", cooldownClass=" + cooldownClass +
+                ", cooldownObject=" + cooldownObject +
+                ", actionBarName='" + actionBarName + '\'' +
+                ", timeLeft=" + timeLeft +
+                ", from=" + from +
+                ", cooldownType=" + cooldownType +
+                ", hidden=" + hidden +
+                '}';
+    }
+
     public String getName() {
         return name;
     }
