@@ -508,12 +508,12 @@ public class Warlords extends JavaPlugin {
                         if (warlordsPlayer.getCooldownManager().checkUndyingArmy(false) && newHealth <= 0) {
                             //set the first unpopped to popped
                             for (Cooldown cooldown : warlordsPlayer.getCooldownManager().getCooldown(UndyingArmy.class)) {
-                                if (!((UndyingArmy) cooldown.getCooldownObject()).isArmyDead()) {
+                                if (!((UndyingArmy) cooldown.getCooldownObject()).isArmyDead(warlordsPlayer.getUuid())) {
                                     //DROPPING FLAG
                                     if(warlordsPlayer.getGameState().flags().hasFlag(warlordsPlayer)) {
                                         warlordsPlayer.getGameState().flags().dropFlag(warlordsPlayer);
                                     }
-                                    ((UndyingArmy) cooldown.getCooldownObject()).pop();
+                                    ((UndyingArmy) cooldown.getCooldownObject()).pop(warlordsPlayer.getUuid());
                                     //sending message + check if getFrom is self
                                     if (cooldown.getFrom() == warlordsPlayer) {
                                         warlordsPlayer.sendMessage("§a\u00BB§7 " + ChatColor.LIGHT_PURPLE + "Your Undying Army revived you with temporary health. Fight until your death! Your health will decay by " + ChatColor.RED + "500 " + ChatColor.LIGHT_PURPLE + "every second.");

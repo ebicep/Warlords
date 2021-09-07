@@ -639,7 +639,9 @@ public final class WarlordsPlayer {
             if (!cooldownManager.getCooldown(Intervene.class).isEmpty() && cooldownManager.getCooldown(Intervene.class).get(0).getFrom() != this && !HammerOfLight.standingInHammer(attacker, entity) && isEnemy(attacker)) {
                 if (isEnemy(attacker)) {
                     damageHealValue *= .5;
-                    WarlordsPlayer intervenedBy = cooldownManager.getCooldown(Intervene.class).get(0).getFrom();
+                    Cooldown interveneCooldown = cooldownManager.getCooldown(Intervene.class).get(0);
+                    Intervene intervene = (Intervene) interveneCooldown.getCooldownObject();
+                    WarlordsPlayer intervenedBy = interveneCooldown.getFrom();
 
                     Location loc = getLocation();
                     gameState.getGame().forEachOnlinePlayer((player1, t) -> {
@@ -649,19 +651,20 @@ public final class WarlordsPlayer {
                     entity.playEffect(EntityEffect.HURT);
                     intervenedBy.getEntity().playEffect(EntityEffect.HURT);
                     intervenedBy.setRegenTimer(10);
-                    ((Intervene) cooldownManager.getCooldown(Intervene.class).get(0).getCooldownObject()).addDamagePrevented(-damageHealValue);
+
+                    intervene.addDamagePrevented(-damageHealValue);
 
                     removeHorse();
                     intervenedBy.removeHorse();
 
                     //removing intervene if out damaged
-                    if (((Intervene) cooldownManager.getCooldown(Intervene.class).get(0).getCooldownObject()).getDamagePrevented() >= 3600) {
+                    if (intervene.getDamagePrevented() >= (3600 / 2.0)) {
                         //remove from intervener
-                        intervenedBy.sendMessage("§c\u00AB§7 " + "Your " + ChatColor.YELLOW + "Intervene " + ChatColor.GRAY + "has expired!");
-                        intervenedBy.getCooldownManager().getCooldowns().remove(cooldownManager.getCooldown(Intervene.class).get(0));
+                        intervenedBy.sendMessage("§c\u00AB§7 " + intervenedBy.getName() + "'s " + ChatColor.YELLOW + "Intervene " + ChatColor.GRAY + "has expired!");
+                        intervenedBy.getCooldownManager().removeCooldown(intervene);
                         //remove from intervened
                         sendMessage("§c\u00AB§7 " + intervenedBy.getName() + "'s " + ChatColor.YELLOW + "Intervene " + ChatColor.GRAY + "has expired!");
-                        cooldownManager.getCooldowns().remove(cooldownManager.getCooldown(Intervene.class).get(0));
+                        cooldownManager.removeCooldown(intervene);
                     }
 
                     intervenedBy.addHealth(attacker, "Intervene", damageHealValue, damageHealValue, isCrit ? 100 : -1, 100);

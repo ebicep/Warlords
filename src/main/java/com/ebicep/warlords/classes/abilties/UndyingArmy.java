@@ -14,7 +14,9 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.UUID;
 
 
 public class UndyingArmy extends AbstractAbility {
@@ -24,16 +26,18 @@ public class UndyingArmy extends AbstractAbility {
             .lore("§7Right-click this item to die\n§7instantly instead of waiting for\n§7the decay.")
             .get();
 
-    private boolean armyDead = false;
+    private HashMap<UUID, Boolean> playersPopped = new HashMap<>();
 
-    //dead = true - take 500 dmg
-    //dead = false - heal
-    public boolean isArmyDead() {
-        return this.armyDead;
+    public HashMap<UUID, Boolean> getPlayersPopped() {
+        return playersPopped;
     }
 
-    public void pop() {
-        this.armyDead = true;
+    public boolean isArmyDead(UUID uuid) {
+        return playersPopped.get(uuid);
+    }
+
+    public void pop(UUID uuid) {
+        playersPopped.put(uuid, true);
     }
 
     public UndyingArmy() {
@@ -56,6 +60,7 @@ public class UndyingArmy extends AbstractAbility {
     public void onActivate(WarlordsPlayer wp, Player player) {
         wp.subtractEnergy(energyCost);
         UndyingArmy tempUndyingArmy = new UndyingArmy();
+        tempUndyingArmy.getPlayersPopped().put(wp.getUuid(), false);
         wp.getCooldownManager().addCooldown(name, UndyingArmy.this.getClass(), tempUndyingArmy, "ARMY", 10, wp, CooldownTypes.ABILITY);
 
         Iterator<WarlordsPlayer> iterator = PlayerFilter.entitiesAround(wp, 6, 6, 6)
@@ -64,6 +69,7 @@ public class UndyingArmy extends AbstractAbility {
         int numberOfPlayersWithArmy = 0;
         while (iterator.hasNext()) {
             WarlordsPlayer warlordsNearPlayer = iterator.next();
+            tempUndyingArmy.getPlayersPopped().put(warlordsNearPlayer.getUuid(), false);
             wp.sendMessage("§a\u00BB§7 " + ChatColor.GRAY + "Your Undying Army is now protecting " + warlordsNearPlayer.getColoredName() + ChatColor.GRAY + ".");
             warlordsNearPlayer.getCooldownManager().addCooldown(name, UndyingArmy.this.getClass(), tempUndyingArmy, "ARMY", 10, wp, CooldownTypes.ABILITY);
             warlordsNearPlayer.sendMessage("§a\u00BB§7 " + ChatColor.GRAY + wp.getName() + "'s Undying Army protects you for " + ChatColor.GOLD + "10 " + ChatColor.GRAY + "seconds.");

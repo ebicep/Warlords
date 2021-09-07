@@ -57,7 +57,7 @@ public class CooldownManager {
                 if (cooldownClass == Intervene.class) {
                     warlordsPlayer.sendMessage("§c\u00AB§7 " + cooldown.getFrom().getName() + "'s §eIntervene §7has expired!");
                 } else if (cooldownClass == UndyingArmy.class) {
-                    if (!((UndyingArmy) cooldownObject).isArmyDead()) {
+                    if (!((UndyingArmy) cooldownObject).isArmyDead(warlordsPlayer.getUuid())) {
                         int healing = (int) ((warlordsPlayer.getMaxHealth() - warlordsPlayer.getHealth()) * .35 + 200);
                         warlordsPlayer.addHealth(cooldown.getFrom(), "Undying Army", healing, healing, -1, 100);
 
@@ -182,12 +182,12 @@ public class CooldownManager {
         for (Cooldown cooldown : getCooldown(UndyingArmy.class)) {
             if (popped) {
                 //returns true if any undying is popped
-                if (((UndyingArmy) cooldown.getCooldownObject()).isArmyDead()) {
+                if (((UndyingArmy) cooldown.getCooldownObject()).isArmyDead(warlordsPlayer.getUuid())) {
                     return true;
                 }
             } else {
                 //return true if theres any unpopped armies
-                if (!((UndyingArmy) cooldown.getCooldownObject()).isArmyDead()) {
+                if (!((UndyingArmy) cooldown.getCooldownObject()).isArmyDead(warlordsPlayer.getUuid())) {
                     return true;
                 }
             }
