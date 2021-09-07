@@ -15,7 +15,7 @@ public class ChainHeal extends AbstractChainBase {
     private final int bounceRange = 10;
 
     public ChainHeal() {
-        super("Chain Heal", 474, 633, 7.99f, 40, 20, 175);
+        super("Chain Heal", 508, 686, 7.99f, 40, 20, 175);
     }
 
     @Override

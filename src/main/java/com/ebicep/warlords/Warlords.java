@@ -670,7 +670,7 @@ public class Warlords extends JavaPlugin {
                             OrbsOfLife.Orb orb = itr.next();
                             Location orbPosition = orb.getArmorStand().getLocation();
                             if ((orb.getPlayerToMoveTowards() == null || (orb.getPlayerToMoveTowards() != null && orb.getPlayerToMoveTowards() == warlordsPlayer)) &&
-                                    orbPosition.distanceSquared(playerPosition) < 1.70 * 1.70 && !warlordsPlayer.isDeath()) {
+                                    orbPosition.distanceSquared(playerPosition) < 1.25 * 1.25 && !warlordsPlayer.isDeath()) {
                                 orb.remove();
                                 itr.remove();
 
@@ -701,7 +701,7 @@ public class Warlords extends JavaPlugin {
                                     warlordsPlayer.getCooldownManager().addCooldown("Resistance", null, null, "RES", 3, orb.getOwner(), CooldownTypes.BUFF);
                                 }
                                     for (WarlordsPlayer nearPlayer : PlayerFilter
-                                            .entitiesAround(warlordsPlayer, 4, 4, 4)
+                                            .entitiesAround(warlordsPlayer, 7, 7, 7)
                                             .aliveTeammatesOfExcludingSelf(warlordsPlayer)
                                             .limit(2)
                                     ) {

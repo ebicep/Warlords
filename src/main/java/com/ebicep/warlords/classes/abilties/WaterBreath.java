@@ -16,7 +16,7 @@ import javax.annotation.Nonnull;
 public class WaterBreath extends AbstractAbility {
 
     public WaterBreath() {
-        super("Water Breath", 556.5f, 753.9f, 12.53f, 60, 25, 175);
+        super("Water Breath", 556.5f, 753.9f, 10.96f, 60, 25, 175);
     }
 
     @Override
