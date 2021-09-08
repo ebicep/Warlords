@@ -1090,15 +1090,19 @@ public final class WarlordsPlayer {
             deathStand.remove();
             deathStand = null;
         }
+        removeGrave();
+        if (entity instanceof Player) {
+            ((Player)entity).setGameMode(GameMode.ADVENTURE);
+        }
+    }
+
+    public void removeGrave() {
         if (deathLocation != null) {
             Block deathBlock = deathLocation.getBlock();
             if (deathBlock.getType() == Material.SAPLING) {
                 deathBlock.setType(Material.AIR);
             }
             deathLocation = null;
-        }
-        if (entity instanceof Player) {
-            ((Player)entity).setGameMode(GameMode.ADVENTURE);
         }
     }
 

@@ -281,6 +281,7 @@ public class PlayingState implements State, TimerDebugAble {
             this.powerUps.cancel();
             this.powerUps = null;
         }
+        Warlords.getPlayers().forEach(((uuid, warlordsPlayer) -> warlordsPlayer.removeGrave()));
         Team winner = forceEnd ? null : calculateWinnerByPoints();
         if (!forceEnd && game.playersCount() > 16) {
             Warlords.newChain()
