@@ -3,6 +3,7 @@ package com.ebicep.warlords.maps.state;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.FieldUpdateOperators;
+import com.ebicep.warlords.database.LeaderboardRanking;
 import com.ebicep.warlords.events.WarlordsPointsChangedEvent;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Gates;
@@ -285,7 +286,7 @@ public class PlayingState implements State, TimerDebugAble {
             Warlords.newChain()
                     .asyncFirst(this::addGameAndLoadPlayers)
                     .syncLast((t) -> {
-                        Warlords.addHologramLeaderboards();
+                        LeaderboardRanking.addHologramLeaderboards();
                         game.forEachOnlinePlayer(((player, team) -> CustomScoreboard.giveMainLobbyScoreboard(player)));
                     })
                     .execute();

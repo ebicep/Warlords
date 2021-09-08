@@ -51,10 +51,6 @@ public class DatabaseManager {
     public static HashMap<UUID, Document> cachedPlayerInfo = new HashMap<>();
     public static HashMap<String, Long> cachedTotalKeyValues = new HashMap<>();
 
-    public static boolean isConnected() {
-        return connected;
-    }
-
     public static boolean connect() {
         try {
             System.out.println(System.getProperty("user.dir"));
@@ -253,88 +249,6 @@ public class DatabaseManager {
             e.printStackTrace();
             System.out.println(ChatColor.GREEN + "[Warlords] There was an error trying to total of " + key);
             return 0L;
-        }
-    }
-
-    public static int getSR(Player player) {
-        return getSR(player.getUniqueId());
-    }
-
-    public static int getSR(UUID uuid) {
-        double dhp = averageAdjustedDHP(uuid, "") * 2000;
-        double wl = averageAdjustedWL(uuid, "") * 2000;
-        double kda = averageAdjustedKDA(uuid, "") * 1000;
-        return (int) Math.round(dhp + wl + kda);
-    }
-
-    public static int getSRClass(Player player, String optionalClass) {
-        return getSRClass(player.getUniqueId(), optionalClass);
-    }
-
-    public static int getSRClass(UUID uuid, String optionalClass) {
-        double dhp = averageAdjustedDHP(uuid, optionalClass) * 2000;
-        double wl = averageAdjustedWL(uuid, optionalClass) * 2000;
-        double kda = averageAdjustedKDA(uuid, optionalClass) * 1000;
-        return (int) Math.round(dhp + wl + kda);
-    }
-
-    private static double averageAdjusted(long playerAverage, long total) {
-        double average = playerAverage / ((total / (double) playersInformation.countDocuments()));
-        if (average >= 5) return 1;
-        if (average <= 0) return 0;
-        return 1.00699 + (-1.02107 / (1.01398 + Math.pow(average, 3.09248)));
-    }
-
-    private static double averageAdjustedDHP(UUID uuid, String optionalClass) {
-        if (!optionalClass.isEmpty()) {
-            optionalClass += ".";
-        }
-        long playerDHP = (Long) getPlayerInfoWithDotNotation(uuid, optionalClass + "damage") + (Long) getPlayerInfoWithDotNotation(uuid, optionalClass + "healing") + (Long) getPlayerInfoWithDotNotation(uuid, optionalClass + "absorbed");
-        long totalDHP = getPlayerTotalKey(optionalClass + "damage") + getPlayerTotalKey(optionalClass + "healing") + getPlayerTotalKey(optionalClass + "absorbed");
-        return averageAdjusted(playerDHP, totalDHP);
-    }
-
-    private static double averageAdjustedWL(UUID uuid, String optionalClass) {
-        if (!optionalClass.isEmpty()) {
-            optionalClass += ".";
-        }
-        long playerWL = (Integer) getPlayerInfoWithDotNotation(uuid, optionalClass + "wins") / Math.max((Integer) getPlayerInfoWithDotNotation(uuid, optionalClass + "losses"), 1);
-        long totalWL = getPlayerTotalKey(optionalClass + "wins") / Math.max(getPlayerTotalKey(optionalClass + "losses"), 1);
-        return averageAdjusted(playerWL, totalWL);
-    }
-
-    private static double averageAdjustedKDA(UUID uuid, String optionalClass) {
-        if (!optionalClass.isEmpty()) {
-            optionalClass += ".";
-        }
-        long playerDHP = ((Integer) getPlayerInfoWithDotNotation(uuid, optionalClass + "kills") + (Integer) getPlayerInfoWithDotNotation(uuid, optionalClass + "assists")) / Math.max((Integer) getPlayerInfoWithDotNotation(uuid, optionalClass + "deaths"), 1);
-        long totalDHP = (getPlayerTotalKey(optionalClass + "kills") + getPlayerTotalKey(optionalClass + "assists")) / Math.max(getPlayerTotalKey(optionalClass + "deaths"), 1);
-        return averageAdjusted(playerDHP, totalDHP);
-    }
-
-    public static HashMap<Document, Integer> getPlayersSortedBySR(String optionalClass) {
-        if (!connected) return null;
-        try {
-            HashMap<Document, Integer> playersSr = new HashMap<>();
-            for (Document document : playersInformation.find()) {
-                playersSr.put(document, getSRClass(UUID.fromString((String) document.get("uuid")), optionalClass));
-            }
-            return playersSr;
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println(ChatColor.GREEN + "[Warlords] Problem getting players sorted by sr");
-            return null;
-        }
-    }
-
-    public static List<Document> getPlayersSortedByKey(String key) {
-        if (!connected) return null;
-        try {
-            return Lists.newArrayList(playersInformation.aggregate(Collections.singletonList(sort(descending(key)))));
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println(ChatColor.GREEN + "[Warlords] Problem getting " + key);
-            return null;
         }
     }
 

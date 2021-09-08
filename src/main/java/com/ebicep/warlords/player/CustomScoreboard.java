@@ -209,7 +209,7 @@ public class CustomScoreboard {
             @Override
             public void run() {
                 counter++;
-                if ((!DatabaseManager.isConnected()) || counter >= 200) {
+                if ((!DatabaseManager.connected) || counter >= 200) {
                     this.cancel();
                 } else if (DatabaseManager.hasPlayer(player.getUniqueId())) {
                     Scoreboard mainLobbyScoreboard = Bukkit.getScoreboardManager().getNewScoreboard();

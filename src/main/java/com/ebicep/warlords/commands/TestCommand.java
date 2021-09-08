@@ -1,6 +1,7 @@
 package com.ebicep.warlords.commands;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.database.LeaderboardRanking;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.flags.PlayerFlagLocation;
 import com.ebicep.warlords.player.PlayerSettings;
@@ -41,7 +42,7 @@ public class TestCommand implements CommandExecutor {
             //player.teleport(player.getLocation());
             //System.out.println("TELEPORTED");
         }
-        //Warlords.addHologramLeaderboards();
+        LeaderboardRanking.addHologramLeaderboards();
         return true;
     }
 
