@@ -65,11 +65,18 @@ public class WarlordsEvents implements Listener {
 
     @EventHandler
     public static void onPlayerQuit(PlayerQuitEvent e) {
-        WarlordsPlayer player = Warlords.getPlayer(e.getPlayer());
-        if (player != null) {
-            if (!player.isDeath()) {
-                player.updatePlayerReference(null);
+        WarlordsPlayer wp = Warlords.getPlayer(e.getPlayer());
+        if (wp != null) {
+            if (!wp.isDeath()) {
+                wp.updatePlayerReference(null);
             }
+            e.setQuitMessage(ChatColor.GREEN + "-----------------------------------\n" +
+                    wp.getColoredNameBold() + ChatColor.GOLD + ChatColor.BOLD + " left the game!\n" +
+                    ChatColor.GREEN + "-----------------------------------");
+        } else {
+            e.setQuitMessage(ChatColor.GREEN + "-----------------------------------\n" +
+                    ChatColor.AQUA + ChatColor.BOLD + e.getPlayer().getName() + ChatColor.GOLD + ChatColor.BOLD + " left the lobby!\n" +
+                    ChatColor.GREEN + "-----------------------------------");
         }
         if (e.getPlayer().getVehicle() != null) {
             e.getPlayer().getVehicle().remove();
@@ -94,24 +101,18 @@ public class WarlordsEvents implements Listener {
         }
         if (isSpawnWorld) {
             player.setGameMode(GameMode.ADVENTURE);
-            player.sendMessage(ChatColor.GRAY + "---------------------------");
-            player.sendMessage(ChatColor.GRAY + "You are now on Warlords 2.0");
-            player.sendMessage(ChatColor.GRAY + "---------------------------");
-            player.sendMessage(" ");
-            player.sendMessage(ChatColor.GRAY + "Developed by " + ChatColor.RED + "sumSmash " + ChatColor.GRAY + "&" + ChatColor.RED + " Plikie");
-            player.sendMessage(" ");
-            player.sendMessage(ChatColor.GRAY + "/hotkeymode to change your hotkey mode.");
-            player.sendMessage(" ");
-            player.sendMessage(ChatColor.GRAY + "Click the Nether Star or do /menu to open the selection menu.");
-            player.sendMessage(" ");
-            player.sendMessage(ChatColor.GRAY + "BUILD: " + ChatColor.RED + Warlords.VERSION);
-            if (player.isOp()) {
-                player.sendMessage(" ");
-                player.sendMessage(ChatColor.GRAY + "For developers: ");
-                player.sendMessage(" ");
-                player.sendMessage(ChatColor.GRAY + "Debug menu: /wl");
-                player.sendMessage(" ");
-            }
+
+            Utils.sendCenteredMessage(player, ChatColor.BLUE + "-----------------------------------------------------");
+            Utils.sendCenteredMessage(player, ChatColor.GOLD + "You are now on Warlords 2.0 " + ChatColor.GRAY + "(" + ChatColor.RED + Warlords.VERSION + ChatColor.GRAY + ")");
+            Utils.sendCenteredMessage(player, ChatColor.GOLD + "Developed by " + ChatColor.RED + "sumSmash " + ChatColor.GOLD + "&" + ChatColor.RED + " Plikie");
+            Utils.sendCenteredMessage(player, ChatColor.GREEN + "/hotkeymode " + ChatColor.GOLD +  "to change your hotkey mode.");
+            Utils.sendCenteredMessage(player, ChatColor.GOLD + "Click the Nether Star or do " + ChatColor.GREEN + "/menu" + ChatColor.GOLD + " to open the selection menu.");
+            Utils.sendCenteredMessage(player, ChatColor.BLUE + "-----------------------------------------------------");
+
+//            if (player.isOp()) {
+//                Utils.sendCenteredMessage(player, ChatColor.GRAY + "For developers: ");
+//                Utils.sendCenteredMessage(player, ChatColor.GRAY + "Debug menu: /wl");
+//            }
 
             player.getInventory().clear();
             player.getInventory().setArmorContents(new ItemStack[]{null, null, null, null});
@@ -135,7 +136,16 @@ public class WarlordsEvents implements Listener {
                 Warlords.updateHeads();
             }
         }.runTaskAsynchronously(Warlords.getInstance());
-        //e.setJoinMessage(null);
+        WarlordsPlayer wp = Warlords.getPlayer(e.getPlayer());
+        if (wp != null) {
+            e.setJoinMessage(ChatColor.GREEN + "-----------------------------------\n" +
+                    wp.getColoredNameBold() + ChatColor.GOLD + ChatColor.BOLD + " rejoined the game!\n" +
+                    ChatColor.GREEN + "-----------------------------------");
+        } else {
+            e.setJoinMessage(ChatColor.GREEN + "-----------------------------------\n" +
+                    ChatColor.AQUA + ChatColor.BOLD + e.getPlayer().getName() + ChatColor.GOLD + ChatColor.BOLD + " joined the lobby!\n" +
+                    ChatColor.GREEN + "-----------------------------------");
+        }
         Player player = e.getPlayer();
         joinInteraction(player);
         Bukkit.getOnlinePlayers().forEach(p -> {
@@ -458,6 +468,7 @@ public class WarlordsEvents implements Listener {
     public void onPlayerVelocity(PlayerVelocityEvent event) {
         Player player = event.getPlayer();
         EntityDamageEvent lastDamage = player.getLastDamageCause();
+        System.out.println(event.getVelocity());
 
         if ((!(lastDamage instanceof EntityDamageByEntityEvent))) {
             return;

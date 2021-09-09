@@ -74,7 +74,6 @@ public class LeaderboardRanking {
             List<Document> top = getDocumentInSortedList(players);
             for (int i = 0; i < top.size(); i++) {
                 Document document = top.get(i);
-                System.out.println((i + 1) + ". " + document.get("name") + " - " + (Utils.addCommaAndRound(players.get(document))));
                 if(document.get("uuid").equals(player.getUniqueId().toString())) {
                     hologram.appendTextLine(ChatColor.YELLOW.toString() + ChatColor.BOLD + (i + 1) + ". " + ChatColor.AQUA + ChatColor.BOLD + player.getName() + ChatColor.GRAY + ChatColor.BOLD + " - " + ChatColor.YELLOW + ChatColor.BOLD + (Utils.addCommaAndRound(players.get(document))));
                     break;

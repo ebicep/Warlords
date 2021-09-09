@@ -3,24 +3,18 @@ package com.ebicep.warlords.classes.abilties;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.player.WarlordsPlayer;
-import com.ebicep.warlords.util.PacketUtils;
-import com.ebicep.warlords.util.Utils;
-import org.bukkit.GameMode;
+import com.ebicep.warlords.util.*;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class RecklessCharge extends AbstractAbility {
-
-    public List<Player> playersHit = new ArrayList<>();
-    private Location chargeLocation;
-    private int charge = 0;
 
     public RecklessCharge() {
         super("Reckless Charge", -466, -612, 9.98f, 60, 20, 200);
@@ -39,97 +33,96 @@ public class RecklessCharge extends AbstractAbility {
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
         wp.subtractEnergy(energyCost);
-        playersHit.clear();
         Location eyeLocation = player.getLocation();
-        eyeLocation.setPitch(-10);
+        eyeLocation.setPitch(0);
 
-        chargeLocation = eyeLocation.clone();
+        Location chargeLocation = eyeLocation.clone();
+        double chargeDistance;
+        List<WarlordsPlayer> playersHit = new ArrayList<>();
 
+        BukkitTask runnable;
         if (eyeLocation.getWorld().getBlockAt(eyeLocation.clone().add(0, -1, 0)).getType() != Material.AIR) {
             //travels 5 blocks
-            player.setVelocity(eyeLocation.getDirection().multiply(2.5));
-            charge = 6 * 6 - 7;
-
+//            runnable = new BukkitRunnable() {
+//
+//                @Override
+//                public void run() {
+//                    player.setVelocity(eyeLocation.getDirection().multiply(1.4).setY(.3));
+//                }
+//            }.runTaskTimer(Warlords.getInstance(), 0 ,0);
+            player.setVelocity(eyeLocation.getDirection().multiply(3).setY(.3));
+            chargeDistance = 5;
         } else {
             //travels 7 at peak jump
-            player.setVelocity(eyeLocation.getDirection().multiply(1.6));
-            charge = (int) Math.pow(9 - Utils.getDistance(player, .1) * 2, 2);
+//            runnable = new BukkitRunnable() {
+//
+//                @Override
+//                public void run() {
+//                    player.setVelocity(eyeLocation.getDirection().multiply(1.4).setY(.15));
+//                }
+//            }.runTaskTimer(Warlords.getInstance(), 0 ,0);
+            player.setVelocity(eyeLocation.getDirection().multiply(2).setY(.3));
+            chargeDistance = Math.max(Math.min(Utils.getDistance(player, .1) * 5, 6.9), 6);
         }
 
+        Location target = new LocationBuilder(eyeLocation).forward((float) chargeDistance).get();
+        //player.setVelocity(player.getLocation().toVector().subtract(target.toVector()).normalize().multiply(-2));
+//        System.out.println("----------");
+//        System.out.println(eyeLocation);
+//        System.out.println(eyeLocation.getDirection());
+//        System.out.println(player.getLocation().toVector().subtract(target.toVector()).normalize().multiply(-2));
         if (wp.getGameState().flags().hasFlag(wp)) {
-            charge /= 5;
+            chargeDistance /= 4;
         }
-        // warlordsplayer charged variable
-        // check distance from start to "end" every tick
-        // check collision of every player
-        // if at end
-        // set x/z vel to 0
-        // charged false
+
+//        System.out.println(Utils.getDistance(player, .1));
+//        System.out.println(chargeDistance);
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "warrior.seismicwave.activation", 2, 1);
         }
 
+//        ParticleEffect.VILLAGER_HAPPY.display(0 , 0 ,0, 0, 10, target, 1000);
 
+
+        double finalChargeDistance = chargeDistance;
         new BukkitRunnable() {
 
             @Override
             public void run() {
-                if (charge == 0) {
+                //cancel charge if hit a block, making the player stand still
+                if (player.getLocation().distanceSquared(chargeLocation) > finalChargeDistance * finalChargeDistance ||
+                        (player.getVelocity().getX() == 0 && player.getVelocity().getZ() == 0)) {
+//                    runnable.cancel();
+                    player.setVelocity(new Vector(0, 0, 0));
                     this.cancel();
                 }
+                PlayerFilter.entitiesAround(player, 2.25, 5, 2.25)
+                        .excluding(playersHit)
+                        .aliveEnemiesOf(wp)
+                        .forEach(enemy -> {
+                            playersHit.add(enemy);
+                            enemy.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+                            new BukkitRunnable() {
+                                final Location stunLocation = enemy.getLocation();
+                                int timer = 0;
 
-                List<Entity> playersInside = player.getNearbyEntities(2.25, 4, 2.25);
-                playersInside.removeAll(((RecklessCharge) wp.getSpec().getRed()).getPlayersHit());
-                playersInside = Utils.filterOutTeammates(playersInside, player);
-                for (Entity entity : playersInside) {
-                    if (entity instanceof Player && ((Player) entity).getGameMode() != GameMode.SPECTATOR) {
-                        ((RecklessCharge) wp.getSpec().getRed()).getPlayersHit().add((Player) entity);
-
-                        WarlordsPlayer nearPlayer = Warlords.getPlayer((Player) entity);
-
-                        nearPlayer.addHealth(wp,
-                                wp.getSpec().getRed().getName(),
-                                wp.getSpec().getRed().getMinDamageHeal(),
-                                wp.getSpec().getRed().getMaxDamageHeal(),
-                                wp.getSpec().getRed().getCritChance(),
-                                wp.getSpec().getRed().getCritMultiplier());
-
-                        new BukkitRunnable() {
-                            Location stunLocation = nearPlayer.getLocation();
-                            int timer = 0;
-
-                            @Override
-                            public void run() {
-                                stunLocation.setPitch(entity.getLocation().getPitch());
-                                stunLocation.setYaw(entity.getLocation().getYaw());
-                                entity.teleport(stunLocation);
-                                //.5 seconds
-                                if (timer >= 10) {
-                                    this.cancel();
+                                @Override
+                                public void run() {
+                                    stunLocation.setPitch(enemy.getEntity().getLocation().getPitch());
+                                    stunLocation.setYaw(enemy.getEntity().getLocation().getYaw());
+                                    enemy.teleport(stunLocation);
+                                    //.5 seconds
+                                    if (timer >= 10) {
+                                        this.cancel();
+                                    }
+                                    timer++;
                                 }
-                                timer++;
-                            }
-                        }.runTaskTimer(Warlords.getInstance(), 0, 0);
-
-                        PacketUtils.sendTitle((Player) entity, "", "§dIMMOBILIZED", 0, 10, 0);
-                    }
-                }
-                //cancel charge if hit a block, making the player stand still
-                if (player.getLocation().distanceSquared(chargeLocation) > charge || (player.getVelocity().getX() == 0 && player.getVelocity().getZ() == 0)) {
-                    player.setVelocity(new Vector(0, 0, 0));
-                    charge = 0;
-                }
+                            }.runTaskTimer(Warlords.getInstance(), 0, 0);
+                            PacketUtils.sendTitle((Player) enemy.getEntity(), "", "§dIMMOBILIZED", 0, 10, 0);
+                        });
             }
 
         }.runTaskTimer(Warlords.getInstance(), 0, 0);
-    }
-
-    public List<Player> getPlayersHit() {
-        return playersHit;
-    }
-
-    public void setPlayersHit(List<Player> playersHit) {
-        this.playersHit = playersHit;
     }
 }

@@ -1517,6 +1517,10 @@ public final class WarlordsPlayer {
         return getTeam().teamColor() + getName();
     }
 
+    public String getColoredNameBold() {
+        return getTeam().teamColor().toString() + ChatColor.BOLD + getName();
+    }
+
     public void setVelocity(org.bukkit.util.Vector v) {
         this.entity.setVelocity(v);
     }
