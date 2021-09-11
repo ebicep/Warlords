@@ -23,6 +23,9 @@ import org.bukkit.material.Banner;
 import org.bukkit.material.MaterialData;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.Vector;
+
+import javax.annotation.Nullable;
+
 import static org.bukkit.block.BlockFace.*;
 
 import java.util.ArrayList;
@@ -48,6 +51,15 @@ class FlagRenderer {
 
     public List<Entity> getRenderedArmorStands() {
         return renderedArmorStands;
+    }
+
+    /**
+     * Returns the last state rendered, could be null
+     * @return
+     */
+    @Nullable
+    public FlagLocation getLastFlagState() {
+        return lastLocation;
     }
 
     public void checkRender() {

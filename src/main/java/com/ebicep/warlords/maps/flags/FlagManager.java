@@ -190,6 +190,10 @@ public class FlagManager implements Listener {
             return;
         }
 
+        if ((info.getTeam() == Team.BLUE ? this.blueRenderer : this.redRenderer).getLastFlagState() != info.getFlag()) {
+            return;
+        }
+
         if (info.getFlag() instanceof GroundFlagLocation) {
             GroundFlagLocation groundFlagLocation = (GroundFlagLocation) info.getFlag();
             if (team == info.getTeam()) {
