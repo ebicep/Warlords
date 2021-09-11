@@ -186,6 +186,9 @@ public class FlagManager implements Listener {
 
     private void onFlagInteract(WarlordsPlayer wp, FlagInfo info) {
         Team team = wp.getTeam();
+        if (wp.isDeath()) {
+            return;
+        }
 
         if (info.getFlag() instanceof GroundFlagLocation) {
             GroundFlagLocation groundFlagLocation = (GroundFlagLocation) info.getFlag();
