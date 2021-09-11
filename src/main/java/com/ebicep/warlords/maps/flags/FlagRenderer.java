@@ -91,10 +91,19 @@ class FlagRenderer {
             renderedArmorStands.add(stand);
             stand.setGravity(false);
             stand.setCanPickupItems(false);
-            stand.setCustomName(info.getTeam() == Team.BLUE ? ChatColor.BLUE + "BLU FLAG" : ChatColor.RED + "RED FLAG");
+            stand.setCustomName(info.getTeam() == Team.BLUE ? ChatColor.BLUE + "" + ChatColor.BOLD + "BLU FLAG" : ChatColor.RED + "" + ChatColor.BOLD + "RED FLAG");
             stand.setCustomNameVisible(true);
             stand.setMetadata("TEAM", new FixedMetadataValue(plugin, info.getTeam()));
             stand.setVisible(false);
+
+            ArmorStand stand1 = this.lastLocation.getLocation().getWorld().spawn(block.getLocation().add(.5, -0.3, .5), ArmorStand.class);
+            renderedArmorStands.add(stand1);
+            stand1.setGravity(false);
+            stand1.setCanPickupItems(false);
+            stand1.setCustomName(ChatColor.WHITE + "" + ChatColor.BOLD + "LEFT-CLICK TO STEAL IT");
+            stand1.setCustomNameVisible(true);
+            stand1.setMetadata("TEAM", new FixedMetadataValue(plugin, info.getTeam()));
+            stand1.setVisible(false);
         } else if (this.lastLocation instanceof PlayerFlagLocation) {
             PlayerFlagLocation flag = (PlayerFlagLocation) this.lastLocation;
             runningTasksCancel.add(flag.getPlayer().getSpeed().addSpeedModifier("FLAG", -20, 0));

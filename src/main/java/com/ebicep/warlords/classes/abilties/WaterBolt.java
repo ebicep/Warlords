@@ -8,6 +8,8 @@ import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
+import javax.annotation.Nonnull;
+
 public class WaterBolt extends AbstractProjectileBase {
 
     private static final int MAX_FULL_DAMAGE_DISTANCE = 40;
@@ -29,6 +31,12 @@ public class WaterBolt extends AbstractProjectileBase {
         ParticleEffect.ENCHANTMENT_TABLE.display(0, 0, 0, 0.1F, 1, currentLocation, 500);
         ParticleEffect.VILLAGER_HAPPY.display(0, 0, 0, 0.1F, 1, currentLocation, 500);
         ParticleEffect.CLOUD.display(0, 0, 0, 0F, 1, currentLocation, 500);
+    }
+
+    @Override
+    protected void onSpawn(@Nonnull InternalProjectile projectile) {
+        super.onSpawn(projectile);
+        this.playEffect(projectile);
     }
 
     @Override

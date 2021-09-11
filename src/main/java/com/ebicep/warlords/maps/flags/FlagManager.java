@@ -30,6 +30,7 @@ public class FlagManager implements Listener {
 
     private final BukkitTask task;
     final PlayingState gameState;
+    private int scoreTick = 0;
 
     @Nonnull
     public FlagInfo getRed() {
@@ -74,8 +75,11 @@ public class FlagManager implements Listener {
     }
 
     public void tick() {
-        checkScore(Team.RED);
-        checkScore(Team.BLUE);
+        if(++scoreTick > 7) {
+            checkScore(Team.RED);
+            checkScore(Team.BLUE);
+            scoreTick = 0;
+        }
 
         this.red.update();
         this.blue.update();

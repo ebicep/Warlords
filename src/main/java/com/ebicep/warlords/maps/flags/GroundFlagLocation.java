@@ -9,7 +9,7 @@ import org.bukkit.Location;
 
 public class GroundFlagLocation extends AbstractLocationBasedFlagLocation implements FlagLocation {
 	
-    final int damageTimer;
+    int damageTimer;
     int despawnTimer;
 
     public GroundFlagLocation(Location location, int damageTimer) {
@@ -38,6 +38,7 @@ public class GroundFlagLocation extends AbstractLocationBasedFlagLocation implem
     @Override
     public FlagLocation update(FlagInfo info) {
         this.despawnTimer--;
+        this.damageTimer++;
         return this.despawnTimer <= 0 ? new SpawnFlagLocation(info.getSpawnLocation(), null) : null;
     }
 }

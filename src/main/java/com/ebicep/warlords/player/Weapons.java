@@ -56,7 +56,7 @@ public enum Weapons {
     ABBADON("Abbadon", new ItemStack(Material.WOOD_PICKAXE)),
     FROSTBITE("Frostbite", new ItemStack(Material.RAW_FISH)),
     BROCCOMACE("Broccomace", new ItemStack(Material.BAKED_POTATO)),
-    VOID_TWIG("Void_twig", new ItemStack(Material.DIAMOND_PICKAXE)),
+    VOID_TWIG("Void Twig", new ItemStack(Material.DIAMOND_PICKAXE)),
     RUBY_THORN("Ruby Thorn", new ItemStack(Material.POISONOUS_POTATO)),
     ENDERFIST("Enderfist", new ItemStack(Material.APPLE)),
 

@@ -567,7 +567,7 @@ public class Warlords extends JavaPlugin {
                                     warlordsPlayer.addHealth(orb.getOwner(), "Orbs of Life", 420, 420, -1, 100);
                                 }
                                 for (WarlordsPlayer nearPlayer : PlayerFilter
-                                        .entitiesAround(warlordsPlayer, 4, 4, 4)
+                                        .entitiesAround(warlordsPlayer, 6, 6, 6)
                                         .aliveTeammatesOfExcludingSelf(warlordsPlayer)
                                         .limit(2)
                                 ) {

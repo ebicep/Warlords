@@ -7,6 +7,8 @@ import com.ebicep.warlords.util.PlayerFilter;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+import javax.annotation.Nonnull;
+
 public class Fireball extends AbstractProjectileBase {
 
     private static final int MAX_FULL_DAMAGE_DISTANCE = 50;
@@ -27,6 +29,12 @@ public class Fireball extends AbstractProjectileBase {
         ParticleEffect.DRIP_LAVA.display(0, 0, 0, 0.35F, 5, currentLocation, 500);
         ParticleEffect.SMOKE_NORMAL.display(0, 0, 0, 0.001F, 7, currentLocation, 500);
         ParticleEffect.FLAME.display(0, 0, 0, 0.06F, 1, currentLocation, 500);
+    }
+
+    @Override
+    protected void onSpawn(@Nonnull InternalProjectile projectile) {
+        super.onSpawn(projectile);
+        this.playEffect(projectile);
     }
 
     @Override
