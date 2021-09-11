@@ -22,6 +22,8 @@ import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.material.Banner;
 import org.bukkit.material.MaterialData;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.util.Vector;
+import static org.bukkit.block.BlockFace.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +40,14 @@ class FlagRenderer {
 
     public FlagRenderer(FlagInfo info) {
         this.info = info;
+    }
+
+    public FlagInfo getInfo() {
+        return info;
+    }
+
+    public List<Entity> getRenderedArmorStands() {
+        return renderedArmorStands;
     }
 
     public void checkRender() {
@@ -72,17 +82,35 @@ class FlagRenderer {
                 banner.addPattern(new Pattern(DyeColor.BLACK, PatternType.TRIANGLES_TOP));
                 banner.update();
                 MaterialData newData = block.getState().getData();
-                BlockFace dir;
-                if (banner.getWorld().getBlockAt(block.getLocation().add(0, 0, -5)).getType() == Material.AIR) {
-                    dir = BlockFace.NORTH;
-                } else if (banner.getWorld().getBlockAt(block.getLocation().add(0, 0, 5)).getType() == Material.AIR) {
-                    dir = BlockFace.SOUTH;
-                } else if (banner.getWorld().getBlockAt(block.getLocation().add(-5, 0, 0)).getType() == Material.AIR) {
-                    dir = BlockFace.WEST;
-                } else if (banner.getWorld().getBlockAt(block.getLocation().add(5, 0, 0)).getType() == Material.AIR) {
-                    dir = BlockFace.EAST;
-                } else {
-                    dir = BlockFace.SOUTH;
+                Vector target = this.lastLocation.getLocation().getDirection();
+                Vector toTest = new Vector(0,0,0);
+                BlockFace dir = SOUTH;
+                double distance = Double.MAX_VALUE;
+                for (BlockFace face : new BlockFace[]{
+                        SOUTH,
+                        SOUTH_SOUTH_WEST,
+                        SOUTH_WEST,
+                        WEST_SOUTH_WEST,
+                        WEST,
+                        WEST_NORTH_WEST,
+                        NORTH_WEST,
+                        NORTH_NORTH_WEST,
+                        NORTH,
+                        NORTH_NORTH_EAST,
+                        NORTH_EAST,
+                        EAST_NORTH_EAST,
+                        EAST,
+                        EAST_SOUTH_EAST,
+                        SOUTH_SOUTH_EAST,
+                        SOUTH_EAST,
+                }) {
+                    toTest.setX(face.getModX());
+                    toTest.setZ(face.getModZ());
+                    double newDistance = toTest.distanceSquared(target);
+                    if (newDistance < distance) {
+                        dir = face;
+                        distance = newDistance;
+                    }
                 }
                 ((Banner) newData).setFacingDirection(dir);
                 block.setData(newData.getData());

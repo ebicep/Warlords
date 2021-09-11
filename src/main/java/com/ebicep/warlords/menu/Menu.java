@@ -64,7 +64,7 @@ public class Menu extends AbstractMenuBase {
         //- clicked inventory has the same reference as the menu inventory
         //- not air
         //- something with size
-        if (event.getClickedInventory().equals(inventory) && event.getCurrentItem().getType() != Material.AIR && event.getRawSlot() < inventory.getSize()) {
+        if (event.getClickedInventory().equals(inventory) && event.getCurrentItem() != null && event.getCurrentItem().getType() != Material.AIR && event.getRawSlot() < inventory.getSize()) {
             event.setCancelled(true);
             this.onClick[event.getRawSlot()].accept(this, event);
         }

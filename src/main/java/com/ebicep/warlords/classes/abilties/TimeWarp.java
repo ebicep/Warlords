@@ -16,8 +16,6 @@ import java.util.List;
 
 public class TimeWarp extends AbstractAbility {
 
-    private int counter = 0;
-
     private final int duration = 5;
 
     public TimeWarp() {
@@ -43,7 +41,8 @@ public class TimeWarp extends AbstractAbility {
 
         new BukkitRunnable() {
 
-            float time = duration;
+            int time = duration - 1;
+            private int counter = 1;
             final Location warpLocation = wp.getLocation();
             final List<Location> warpTrail = new ArrayList<>();
 
@@ -85,11 +84,10 @@ public class TimeWarp extends AbstractAbility {
 
                 }
 
-
                 //TIME WARPS
-                if (counter % 5 == 0) {
-                    if (time != 0.25f) {
-                        time -= 0.25f;
+                if (counter % 20 == 0) {
+                    if (time != 0) {
+                        time -= 1;
                     } else {
                         wp.addHealth(wp, "Time Warp", (wp.getMaxHealth() * .3f), (wp.getMaxHealth() * .3f), -1, 100);
                         for (Player player1 : wp.getEntity().getWorld().getPlayers()) {

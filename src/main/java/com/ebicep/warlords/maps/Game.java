@@ -107,6 +107,7 @@ public class Game implements Runnable {
         Player online = player.getPlayer();
         if (online != null) {
             online.setGameMode(GameMode.ADVENTURE);
+            online.setAllowFlight(false);
         }
         this.players.put(player.getUniqueId(), team);
         Location loc = this.map.getLobbySpawnPoint(team);

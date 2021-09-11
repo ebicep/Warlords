@@ -138,10 +138,12 @@ public class WarlordsEvents implements Listener {
         }.runTaskAsynchronously(Warlords.getInstance());
         WarlordsPlayer wp = Warlords.getPlayer(e.getPlayer());
         if (wp != null) {
+            e.getPlayer().setAllowFlight(false);
             e.setJoinMessage(ChatColor.GREEN + "-----------------------------------\n" +
                     wp.getColoredNameBold() + ChatColor.GOLD + ChatColor.BOLD + " rejoined the game!\n" +
                     ChatColor.GREEN + "-----------------------------------");
         } else {
+            e.getPlayer().setAllowFlight(true);
             e.setJoinMessage(ChatColor.GREEN + "-----------------------------------\n" +
                     ChatColor.AQUA + ChatColor.BOLD + e.getPlayer().getName() + ChatColor.GOLD + ChatColor.BOLD + " joined the lobby!\n" +
                     ChatColor.GREEN + "-----------------------------------");
@@ -539,7 +541,9 @@ public class WarlordsEvents implements Listener {
                         ChatColor color = event.getTeam().teamColor();
                         p.sendMessage(color + toucher + " §ehas returned the " + event.getTeam().coloredPrefix() + " §eflag!");
                         PacketUtils.sendTitle(p, "", color + toucher + " §ehas returned the " + event.getTeam().coloredPrefix() + " §eflag!", 0, 60, 0);
-                        p.playSound(event.getNew().getLocation(), "ctf.flagreturned", 500, 1);
+                        if (t == event.getTeam()) {
+                            p.playSound(p.getLocation(), "ctf.flagreturned", 500, 1);
+                        }
                     });
                 } else {
                     event.getGame().forEachOnlinePlayer((p, t) -> {

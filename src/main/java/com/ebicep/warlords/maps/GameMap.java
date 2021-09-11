@@ -40,8 +40,8 @@ public enum GameMap {
             new LocationBuilder(new Location(Bukkit.getWorld("Rift"), -32.5, 34.5, -43.5)).yaw(-90).get(), // BLUE RESPAWN
             new LocationBuilder(new Location(Bukkit.getWorld("Rift"), 33, 34.5, 45)).yaw(90).get(), // RED RESPAWN
 
-            new Location(Bukkit.getWorld("Rift"), -98.5, 45.5, -17.5), // BLUE FLAG
-            new Location(Bukkit.getWorld("Rift"), 99.5, 45.5, 17.5), // RED FLAG
+            new Location(Bukkit.getWorld("Rift"), -98.5, 45.5, -17.5, -90, 0), // BLUE FLAG
+            new Location(Bukkit.getWorld("Rift"), 99.5, 45.5, 17.5, 90, 0), // RED FLAG
 
             Arrays.asList(
                     new Cuboid(Bukkit.getWorld("Rift"), -79, 45, -29, -79, 49, -24), // BLUE GATES 1
@@ -75,8 +75,8 @@ public enum GameMap {
             new LocationBuilder(new Location(Bukkit.getWorld("Crossfire"), 133, 11.5, 130.5)).yaw(125).get(), // BLUE RESPAWN
             new LocationBuilder(new Location(Bukkit.getWorld("Crossfire"), 90.5, 11.5, 0.5)).yaw(-45).get(), // RED RESPAWN
 
-            new Location(Bukkit.getWorld("Crossfire"), 217.5, 36.5, 126.5), // BLUE FLAG
-            new Location(Bukkit.getWorld("Crossfire"), 5.5, 36.5, 1.5), // RED FLAG
+            new Location(Bukkit.getWorld("Crossfire"), 217.5, 36.5, 126.5, 150, 0), // BLUE FLAG
+            new Location(Bukkit.getWorld("Crossfire"), 5.5, 36.5, 1.5, -25, 0), // RED FLAG
 
             Arrays.asList(
                     new Cuboid(Bukkit.getWorld("Crossfire"), 203, 36, 119, 203, 42, 124), // BLUE GATES 1
@@ -182,8 +182,8 @@ public enum GameMap {
             new Location(Bukkit.getWorld("Atherrough_Valley"), 39.5, 28.5, -97.5), // BLUE RESPAWN
             new LocationBuilder(new Location(Bukkit.getWorld("Atherrough_Valley"), -38.5, 28.5, 97.5)).yaw(180).get(), // RED RESPAWN
 
-            new Location(Bukkit.getWorld("Atherrough_Valley"), -29.5, 38.5, -88.5), // BLUE FLAG
-            new Location(Bukkit.getWorld("Atherrough_Valley"), 30.5, 38.5, 89.5), // RED FLAG
+            new Location(Bukkit.getWorld("Atherrough_Valley"), -29.5, 38.5, -88.5, -90, 0), // BLUE FLAG
+            new Location(Bukkit.getWorld("Atherrough_Valley"), 30.5, 38.5, 89.5, 90, 0), // RED FLAG
 
             Arrays.asList(
                     new Cuboid(Bukkit.getWorld("Atherrough_Valley"), -26, 33, -96, -19, 40, -96), // BLUE GATES 1
