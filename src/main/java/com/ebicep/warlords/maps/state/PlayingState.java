@@ -265,7 +265,7 @@ public class PlayingState implements State, TimerDebugAble {
                 if (this.powerUps != null) {
                     this.powerUps.cancel();
                 }
-                this.powerUps = new PowerupManager(game.getMap()).runTaskTimer(Warlords.getInstance(), 0, 0);
+                this.powerUps = new PowerupManager(game).runTaskTimer(Warlords.getInstance(), 0, 0);
             }
         }
         return null;

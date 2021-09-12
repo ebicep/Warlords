@@ -470,7 +470,6 @@ public class WarlordsEvents implements Listener {
     public void onPlayerVelocity(PlayerVelocityEvent event) {
         Player player = event.getPlayer();
         EntityDamageEvent lastDamage = player.getLastDamageCause();
-        System.out.println(event.getVelocity());
 
         if ((!(lastDamage instanceof EntityDamageByEntityEvent))) {
             return;

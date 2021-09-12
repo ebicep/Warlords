@@ -8,6 +8,8 @@ import java.util.Collections;
 import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import com.ebicep.warlords.util.LocationBuilder;
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -253,7 +255,7 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
     @Override
     public void onActivate(WarlordsPlayer shooter, Player player) {
         shooter.subtractEnergy(energyCost);
-        Location startingLocation = player.getEyeLocation();
+        Location startingLocation = new LocationBuilder(player.getEyeLocation().clone()).addY(-.1).forward(.75f).get();
         InternalProjectile projectile = new InternalProjectile(shooter, startingLocation);
         onSpawn(projectile);
         projectile.runTaskTimer(Warlords.getInstance(), 0, 1);

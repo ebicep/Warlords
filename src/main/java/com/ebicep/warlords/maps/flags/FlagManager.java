@@ -81,16 +81,18 @@ public class FlagManager implements Listener {
     }
 
     public void tick() {
-        if (++scoreTick > 7) {
-            checkScore(Team.RED);
-            checkScore(Team.BLUE);
-            scoreTick = 0;
-        }
+        if(!gameState.getGame().isGameFreeze()) {
+            if (++scoreTick > 7) {
+                checkScore(Team.RED);
+                checkScore(Team.BLUE);
+                scoreTick = 0;
+            }
 
-        this.red.update();
-        this.blue.update();
-        this.redRenderer.checkRender();
-        this.blueRenderer.checkRender();
+            this.red.update();
+            this.blue.update();
+            this.redRenderer.checkRender();
+            this.blueRenderer.checkRender();
+        }
     }
 
     @EventHandler
