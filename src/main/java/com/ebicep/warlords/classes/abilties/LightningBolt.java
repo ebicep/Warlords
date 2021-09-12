@@ -2,6 +2,7 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.classes.internal.AbstractPiercingProjectileBase;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.util.LocationBuilder;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
 import org.bukkit.Location;
@@ -95,8 +96,7 @@ public class LightningBolt extends AbstractPiercingProjectileBase {
 
     @Override
     protected Location getProjectileStartingLocation(WarlordsPlayer shooter, Location startingLocation) {
-        Vector direction = startingLocation.getDirection();
-        return startingLocation.clone().subtract(direction.getX() * -.1, 0, direction.getZ() * -.1);
+        return new LocationBuilder(startingLocation.clone()).addY(-.1).forward(.75f).get();
     }
 
     @Override

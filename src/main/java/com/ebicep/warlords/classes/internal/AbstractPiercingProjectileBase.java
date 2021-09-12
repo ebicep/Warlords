@@ -255,7 +255,7 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
     @Override
     public void onActivate(WarlordsPlayer shooter, Player player) {
         shooter.subtractEnergy(energyCost);
-        Location startingLocation = new LocationBuilder(player.getEyeLocation().clone()).addY(-.1).forward(.75f).get();
+        Location startingLocation = player.getEyeLocation();
         InternalProjectile projectile = new InternalProjectile(shooter, startingLocation);
         onSpawn(projectile);
         projectile.runTaskTimer(Warlords.getInstance(), 0, 1);
