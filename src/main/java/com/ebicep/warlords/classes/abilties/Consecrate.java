@@ -55,7 +55,14 @@ public class Consecrate extends AbstractAbility {
                 PlayerFilter.entitiesAround(damageHealCircle.getLocation(), 4, 6, 4)
                         .aliveEnemiesOf(wp)
                         .forEach(warlordsPlayer -> {
-                    warlordsPlayer.addHealth(damageHealCircle.getWarlordsPlayer(), damageHealCircle.getName(), damageHealCircle.getMinDamage(), damageHealCircle.getMaxDamage(), damageHealCircle.getCritChance(), damageHealCircle.getCritMultiplier(), false);
+                    warlordsPlayer.addHealth(
+                            damageHealCircle.getWarlordsPlayer(),
+                            damageHealCircle.getName(),
+                            damageHealCircle.getMinDamage(),
+                            damageHealCircle.getMaxDamage(),
+                            damageHealCircle.getCritChance(),
+                            damageHealCircle.getCritMultiplier(),
+                            false);
                 });
                 if (damageHealCircle.getDuration() == 0) {
                     consecrate.remove();

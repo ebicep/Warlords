@@ -25,7 +25,7 @@ public class ChainHeal extends AbstractChainBase {
                 "§7player for §a" + minDamageHeal + " §7- §a" + maxDamageHeal + " §7health and\n" +
                 "§7jumps to §e2 §7additional targets within\n" +
                 "§e" + bounceRange + " §7blocks. Each jump reduces the healing\n" +
-                "§7by §c8%§7." +
+                "§7by §c10%§7." +
                 "\n\n" +
                 "§7Each ally healed reduces the cooldown of\n" +
                 "§7Boulder by §62 §7seconds.";
@@ -53,7 +53,7 @@ public class ChainHeal extends AbstractChainBase {
                         .excluding(wp, nearPlayer)
                 ) {
                     chain(nearPlayer.getLocation(), chainPlayerOne.getLocation());
-                    chainPlayerOne.addHealth(wp, name, minDamageHeal * 0.92f, maxDamageHeal * 0.92f, critChance, critMultiplier, false);
+                    chainPlayerOne.addHealth(wp, name, minDamageHeal * 0.9f, maxDamageHeal * 0.9f, critChance, critMultiplier, false);
                     hitCounter++;
 
                     for (WarlordsPlayer chainPlayerTwo : PlayerFilter
@@ -62,7 +62,7 @@ public class ChainHeal extends AbstractChainBase {
                             .excluding(wp, nearPlayer, chainPlayerOne)
                     ) {
                         chain(chainPlayerOne.getLocation(), chainPlayerTwo.getLocation());
-                        chainPlayerTwo.addHealth(wp, name, minDamageHeal * 0.84f, maxDamageHeal * 0.84f, critChance, critMultiplier, false);
+                        chainPlayerTwo.addHealth(wp, name, minDamageHeal * 0.8f, maxDamageHeal * 0.8f, critChance, critMultiplier, false);
                         hitCounter++;
                         break;
                     }

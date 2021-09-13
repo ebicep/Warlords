@@ -42,7 +42,7 @@ public class HammerOfLight extends AbstractAbility {
                 "\n\n" +
                 "§7Each enemy standing in your hammer increases\n" +
                 "§7your overall healing and damage by §f3%" +
-                "(max 12%)";
+                "§7(max 12%)";
     }
 
     @Override
@@ -68,7 +68,7 @@ public class HammerOfLight extends AbstractAbility {
             public void run() {
                 damageHealCircle.setDuration(damageHealCircle.getDuration() - 1);
                 for (WarlordsPlayer warlordsPlayer : PlayerFilter
-                    .entitiesAround(damageHealCircle.getLocation(), radius, 4, radius)
+                    .entitiesAround(damageHealCircle.getLocation(), radius, 5, radius)
                     .isAlive()
                 ) {
                     if (damageHealCircle.getWarlordsPlayer().isTeammateAlive(warlordsPlayer)) {

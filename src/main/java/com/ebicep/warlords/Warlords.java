@@ -595,7 +595,7 @@ public class Warlords extends JavaPlugin {
                                 }
 
                                 for (WarlordsPlayer nearPlayer : PlayerFilter
-                                        .entitiesAround(warlordsPlayer, 7, 7, 7)
+                                        .entitiesAround(warlordsPlayer, 6, 6, 6)
                                         .aliveTeammatesOfExcludingSelf(warlordsPlayer)
                                         .limit(2)
                                 ) {

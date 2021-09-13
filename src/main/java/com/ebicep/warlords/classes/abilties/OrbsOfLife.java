@@ -49,7 +49,8 @@ public class OrbsOfLife extends AbstractAbility {
                 "§7causes them to drop an orb of life that lasts §68\n" +
                 "§7§7seconds, restoring §a" + maxDamageHeal + " §7health to the ally that\n" +
                 "§7picks it up. Other nearby allies recover §a" + minDamageHeal + "\n" +
-                "§7health. Lasts §6" + duration + " §7seconds." +
+                "§7health. After 1.5 seconds the healing will increase by §a50%" +
+                "§7over 6.5 seconds. Lasts §6" + duration + " §7seconds." +
                 "\n\n" +
                 "§7You may SNEAK once per Orbs of Life cast to make\n" +
                 "§7the orbs levitate towards you or the nearest ally in\n" +

@@ -60,11 +60,7 @@ public class UndyingArmy extends AbstractAbility {
                 "§7will be revived with §a100% §7of their max health\n" +
                 "§7and §e50% §7max energy. Revived allies rapidly\n" +
                 "§7take §c10% §7of their max health as damage every\n" +
-                "§70.75 seconds." +
-                "\n\n" +
-                "§7Picking up orbs while being under the effect\n" +
-                "§7of undying army will grant you §e5% §7damage\n" +
-                "§7reduction for §63 §7seconds.";
+                "§70.75 seconds.";
     }
 
     @Override
