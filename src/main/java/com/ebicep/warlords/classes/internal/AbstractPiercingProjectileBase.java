@@ -134,6 +134,7 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
 
     @Nullable
     protected MovingObjectPosition checkCollisionAndMove(InternalProjectile projectile, Location currentLocation, Vector speed, WarlordsPlayer shooter) {
+        System.out.println(projectile.getStartingLocation());
         Vec3D before = new Vec3D(currentLocation.getX(), currentLocation.getY(), currentLocation.getZ());
         currentLocation.add(speed);
         Vec3D after = new Vec3D(currentLocation.getX(), currentLocation.getY(), currentLocation.getZ());
@@ -274,7 +275,20 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
             this.currentLocation = getProjectileStartingLocation(shooter, startingLocation);
             this.speed = getProjectileStartingSpeed(shooter, startingLocation);
             this.shooter = shooter;
-            this.startingLocation = currentLocation;
+            this.startingLocation = currentLocation.clone();
+        }
+
+        @Override
+        public String toString() {
+            return "InternalProjectile{" +
+                    "hit=" + hit +
+                    ", tasks=" + tasks +
+                    ", startingLocation=" + startingLocation +
+                    ", currentLocation=" + currentLocation +
+                    ", speed=" + speed +
+                    ", ticksLived=" + ticksLived +
+                    ", shooter=" + shooter +
+                    '}';
         }
 
         @Override

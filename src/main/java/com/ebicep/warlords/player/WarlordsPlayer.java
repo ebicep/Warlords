@@ -520,7 +520,7 @@ public final class WarlordsPlayer {
     }
 
     public void addHealth(WarlordsPlayer attacker, String ability, float min, float max, int critChance, int critMultiplier) {
-        if (spawnProtection != 0 || (dead && !cooldownManager.checkUndyingArmy(false))) return;
+        if (spawnProtection != 0 || (dead && !cooldownManager.checkUndyingArmy(false)) || getGameState() != getGame().getState()) return;
         if (attacker == this && (ability.equals("Fall") || ability.isEmpty())) {
             if (ability.isEmpty()) {
                 sendMessage("" + ChatColor.RED + "\u00AB" + ChatColor.GRAY + " You took " + ChatColor.RED + Math.round(min * -1) + ChatColor.GRAY + " melee damage.");
@@ -673,21 +673,23 @@ public final class WarlordsPlayer {
                     attacker.addAbsorbed(-damageHealValue);
                 }
             } else if (!cooldownManager.getCooldown(ArcaneShield.class).isEmpty() && isEnemy(attacker) && !HammerOfLight.standingInHammer(attacker, entity)) {
-                if (((ArcaneShield) spec.getBlue()).getShieldHealth() + damageHealValue < 0) {
+                ArcaneShield arcaneShield = (ArcaneShield) spec.getBlue();
+                //adding dmg to shield
+                arcaneShield.addShieldHealth(damageHealValue);
+                //check if broken
+                if(arcaneShield.getShieldHealth() < 0) {
                     if (entity instanceof Player) {
                         ((EntityLiving) ((CraftPlayer) entity).getHandle()).setAbsorptionHearts(0);
                     }
 
                     cooldownManager.removeCooldown(ArcaneShield.class);
-                    addHealth(attacker, ability, (((ArcaneShield) spec.getBlue()).getShieldHealth() + damageHealValue), (((ArcaneShield) spec.getBlue()).getShieldHealth() + damageHealValue), isCrit ? 100 : -1, 100);
+                    addHealth(attacker, ability, arcaneShield.getShieldHealth(), arcaneShield.getShieldHealth(), isCrit ? 100 : -1, 100);
 
                     addAbsorbed(-(((ArcaneShield) spec.getBlue()).getShieldHealth()));
                     attacker.addAbsorbed(-(((ArcaneShield) spec.getBlue()).getShieldHealth()));
                 } else {
-                    ((ArcaneShield) spec.getBlue()).addShieldHealth(damageHealValue);
-
                     if (entity instanceof Player) {
-                        ((EntityLiving) ((CraftPlayer) entity).getHandle()).setAbsorptionHearts((float) (((ArcaneShield) spec.getBlue()).getShieldHealth() / (maxHealth * .5) * 20));
+                        ((EntityLiving) ((CraftPlayer) entity).getHandle()).setAbsorptionHearts((float) (arcaneShield.getShieldHealth() / (maxHealth * .5) * 20));
                     }
 
                     if (ability.isEmpty()) {
@@ -850,7 +852,7 @@ public final class WarlordsPlayer {
                     }
                     //HEALING
                     else {
-                        if (isTeammateAlive(attacker)) {
+                        if (isTeammate(attacker)) {
                             healedBy.put(attacker, 10);
 
                             if (this.health + damageHealValue > maxHealth) {

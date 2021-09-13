@@ -107,7 +107,7 @@ public class DebugMenu {
 
     public static void openPlayerMenu(Player player, WarlordsPlayer target) {
         String targetName = target != null ? target.getName() : "";
-        Menu menu = new Menu("Player Options - " + (target != null ? targetName : player.getName()), 9 * 5);
+        Menu menu = new Menu("Player Options: " + (target != null ? targetName : player.getName()), 9 * 5);
         ItemStack[] firstRow = {
                 new ItemBuilder(Material.EXP_BOTTLE)
                         .name(ChatColor.GREEN + "Energy")
@@ -352,7 +352,7 @@ public class DebugMenu {
     public static void openAmountMenu(Player player, WarlordsPlayer target, String commandType) {
         String targetName = target != null ? target.getName() : "";
         String commandName = commandType.equals("heal") ? "Give Health" : "Take Damage";
-        Menu menu = new Menu(commandName + " - " + (target != null ? targetName : player.getName()), 9 * 4);
+        Menu menu = new Menu(commandName + ": " + (target != null ? targetName : player.getName()), 9 * 4);
         for (int i = 1; i <= 5; i++) {
             int amount = i * 1000;
             menu.setItem(i + 1, 1,
@@ -369,7 +369,7 @@ public class DebugMenu {
 
     public static void openCooldownsMenu(Player player, WarlordsPlayer target) {
         int menuY = Math.min(5 + StatusEffectCooldowns.values().length / 7, 6);
-        Menu menu = new Menu("Cooldowns - " + target.getName(), 9 * menuY);
+        Menu menu = new Menu("Cooldowns: " + target.getName(), 9 * menuY);
         //general options
         ItemStack[] generalOptionItems = {
                 new ItemBuilder(Material.BEACON)
@@ -397,7 +397,7 @@ public class DebugMenu {
                         new BukkitRunnable() {
                             @Override
                             public void run() {
-                                if (player.getOpenInventory().getTopInventory().getName().equals("Cooldown Manager - " + target.getName())) {
+                                if (player.getOpenInventory().getTopInventory().getName().equals("Cooldown Manager: " + target.getName())) {
                                     openCooldownManagerMenu(player, target);
                                 } else {
                                     this.cancel();
@@ -446,7 +446,7 @@ public class DebugMenu {
 
     public static void openCooldownManagerMenu(Player player, WarlordsPlayer target) {
         //int menuY = Math.min(4 + target.getCooldownManager().getCooldowns().size() / 7, 6); Menu shift annoying
-        Menu menu = new Menu("Cooldown Manager - " + target.getName(), 9 * 6);
+        Menu menu = new Menu("Cooldown Manager: " + target.getName(), 9 * 6);
         //general info
         menu.setItem(4, 0,
                 new ItemBuilder(CraftItemStack.asBukkitCopy(Warlords.getPlayerHeads().get(player.getUniqueId())))
@@ -485,7 +485,7 @@ public class DebugMenu {
     }
 
     public static void openCooldownMenu(Player player, WarlordsPlayer target, Cooldown cooldown) {
-        Menu menu = new Menu(cooldown.getName() + " - " + target.getName(), 9 * 4);
+        Menu menu = new Menu(cooldown.getName() + ": " + target.getName(), 9 * 4);
         ItemStack[] cooldownOptions = {
                 new ItemBuilder(Material.MILK_BUCKET)
                         .name(ChatColor.AQUA + "Remove")
@@ -507,7 +507,7 @@ public class DebugMenu {
                                     new BukkitRunnable() {
                                         @Override
                                         public void run() {
-                                            if (player.getOpenInventory().getTopInventory().getName().equals("Cooldown Manager - " + target.getName())) {
+                                            if (player.getOpenInventory().getTopInventory().getName().equals("Cooldown Manager: " + target.getName())) {
                                                 openCooldownManagerMenu(player, target);
                                             } else {
                                                 this.cancel();
@@ -532,7 +532,7 @@ public class DebugMenu {
     }
 
     public static void openCooldownTimerMenu(Player player, WarlordsPlayer target, Cooldown cooldown) {
-        Menu menu = new Menu(cooldown.getName() + "Duration - " + target.getName(), 9 * 4);
+        Menu menu = new Menu(cooldown.getName() + "Duration: " + target.getName(), 9 * 4);
         int[] durations = {5, 15, 30, 60, 120, 300, 600};
         for (int i = 0; i < durations.length; i++) {
             int finalI = i;
@@ -557,7 +557,7 @@ public class DebugMenu {
     }
 
     public static void openStatusEffectTimeMenu(Player player, WarlordsPlayer target, StatusEffectCooldowns cooldown) {
-        Menu menu = new Menu("Cooldown Time - " + target.getName(), 9 * 4);
+        Menu menu = new Menu("Cooldown Time: " + target.getName(), 9 * 4);
         int[] durations = {5, 15, 30, 60, 120, 300, 600};
         for (int i = 0; i < durations.length; i++) {
             int finalI = i;
@@ -577,7 +577,7 @@ public class DebugMenu {
     }
 
     public static void openTeleportLocations(Player player, WarlordsPlayer target) {
-        Menu menu = new Menu("Teleport To - " + target.getName(), 9 * 5);
+        Menu menu = new Menu("Teleport To: " + target.getName(), 9 * 5);
         GameMap gameMap = target.getGame().getMap();
         LinkedHashMap<ItemStack, Location> teleportLocationsBlue = new LinkedHashMap<>();
         teleportLocationsBlue.put(new ItemBuilder(Material.BEACON).name(ChatColor.BLUE + "Lobby Spawn Point").get(), gameMap.getBlueLobbySpawnPoint());
@@ -610,7 +610,7 @@ public class DebugMenu {
     }
 
     public static void openFlagOptionMenu(Player player, WarlordsPlayer target) {
-        Menu menu = new Menu("Flag Options - " + target.getName(), 9 * 4);
+        Menu menu = new Menu("Flag Options: " + target.getName(), 9 * 4);
         ItemStack[] flagOptions = {
                 new ItemBuilder(Material.BANNER)
                         .name(ChatColor.GREEN + "Pick Up Flag")
@@ -696,7 +696,7 @@ public class DebugMenu {
     }
 
     public static void openFlagMultiplierMenu(Player player, WarlordsPlayer target) {
-        Menu menu = new Menu("Flag Multiplier - " + target.getName(), 9 * 4);
+        Menu menu = new Menu("Flag Multiplier: " + target.getName(), 9 * 4);
         int[] multipliers = {5, 10, 30, 60, 100, 150, 300};
         for (int i = 0; i < 7; i++) {
             int finalI = i;
@@ -735,7 +735,7 @@ public class DebugMenu {
     }
 
     public static void openSpecMenu(Player player, WarlordsPlayer target) {
-        Menu menu = new Menu("Spec Menu - " + target.getName(), 9 * 5);
+        Menu menu = new Menu("Spec Menu: " + target.getName(), 9 * 5);
         ClassesGroup[] values = ClassesGroup.values();
         for (int i = 0; i < values.length; i++) {
             ClassesGroup group = values[i];
@@ -764,7 +764,7 @@ public class DebugMenu {
     }
 
     public static void openSkillBoostMenu(Player player, WarlordsPlayer target, Classes selectedClass) {
-        Menu menu = new Menu("Skill Boost - " + target.getName(), 9 * 4);
+        Menu menu = new Menu("Skill Boost: " + target.getName(), 9 * 4);
         List<ClassesSkillBoosts> values = selectedClass.skillBoosts;
         for (int i = 0; i < values.size(); i++) {
             ClassesSkillBoosts skillBoost = values.get(i);

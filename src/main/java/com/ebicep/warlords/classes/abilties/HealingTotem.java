@@ -64,7 +64,6 @@ public class HealingTotem extends AbstractTotemBase {
             public void run() {
 
                 if (timeLeft != 0) {
-
                     Location particleLoc = totemStand.getLocation().clone().add(0, 1.6, 0);
                     ParticleEffect.VILLAGER_HAPPY.display(0.4F, 0.2F, 0.4F, 0.05F, 5, particleLoc, 500);
 
@@ -85,7 +84,6 @@ public class HealingTotem extends AbstractTotemBase {
                                 );
                             });
                 } else {
-
                     for (Player player1 : player.getWorld().getPlayers()) {
                         player1.playSound(totemStand.getLocation(), "shaman.heal.impact", 2, 1);
                     }
