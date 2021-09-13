@@ -578,19 +578,19 @@ public final class WarlordsPlayer {
                 damageHealValue *= critMultiplier / 100f;
             }
 
-            if(!ignoreReduction) {
+            if (!ignoreReduction) {
                 // Flag carriers take more damage
                 damageHealValue *= damageHealValue > 0 || flagDamageMultiplier == 0 ? 1 : flagDamageMultiplier;
 
-            //reduction beginning with base resistance
-            float totalReduction = 1;
-            if (min < 0 && !HammerOfLight.standingInHammer(attacker, entity)) {
-                //base
-                totalReduction = 1 - spec.getDamageResistance() / 100f;
-                //add damage
-                for (Cooldown cooldown : attacker.getCooldownManager().getCooldown(Berserk.class)) {
-                    totalReduction *= 1.25;
-                }
+                //reduction beginning with base resistance
+                float totalReduction = 1;
+                if (min < 0 && !HammerOfLight.standingInHammer(attacker, entity)) {
+                    //base
+                    totalReduction = 1 - spec.getDamageResistance() / 100f;
+                    //add damage
+                    for (Cooldown cooldown : attacker.getCooldownManager().getCooldown(Berserk.class)) {
+                        totalReduction *= 1.25;
+                    }
 
                     for (Cooldown cooldown : cooldownManager.getCooldown(Berserk.class)) {
                         totalReduction *= 1.1;
@@ -616,19 +616,19 @@ public final class WarlordsPlayer {
                             totalReduction *= .5;
                         } else {
                             totalReduction *= .4;
+                        }
                     }
-                }
 
-                for (Cooldown cooldown : cooldownManager.getCooldown("RES")) {
-                    totalReduction *= .95;
-                    break;
-                }
+                    for (Cooldown cooldown : cooldownManager.getCooldown("RES")) {
+                        totalReduction *= .95;
+                        break;
+                    }
 
                     //TODO maybe change to hypixel warlords where crippling effects hammer
                     if (!cooldownManager.getCooldown("Totem Crippling").isEmpty()) {
-                    totalReduction *= .75;
-                }
-                if (!attacker.getCooldownManager().getCooldown(CripplingStrike.class).isEmpty()) {
+                        totalReduction *= .75;
+                    }
+                    if (!attacker.getCooldownManager().getCooldown(CripplingStrike.class).isEmpty()) {
                         totalReduction *= .85;
                     }
                 } else if (min > 0) {
@@ -636,17 +636,17 @@ public final class WarlordsPlayer {
                         totalReduction *= .65;
                     } else if (!cooldownManager.getCooldown(WoundingStrikeDefender.class).isEmpty()) {
                         totalReduction *= .75;
+                    }
                 }
-            }
-            //HAMMER OF LIGHT DMG/HEAL BOOST
-            if (attacker.getSpec() instanceof Protector) {
-                int playersInHammer = HammerOfLight.getStandingInHammer(attacker).size();
-                if (playersInHammer >= 4) {
-                    totalReduction *= Math.pow(1.03, 4);
-                } else {
-                    totalReduction *= Math.pow(1.03, playersInHammer);
+                //HAMMER OF LIGHT DMG/HEAL BOOST
+                if (attacker.getSpec() instanceof Protector) {
+                    int playersInHammer = HammerOfLight.getStandingInHammer(attacker).size();
+                    if (playersInHammer >= 4) {
+                        totalReduction *= Math.pow(1.03, 4);
+                    } else {
+                        totalReduction *= Math.pow(1.03, playersInHammer);
+                    }
                 }
-            }
 
                 damageHealValue *= totalReduction;
             }

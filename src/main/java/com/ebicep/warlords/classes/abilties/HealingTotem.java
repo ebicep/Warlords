@@ -123,9 +123,9 @@ public class HealingTotem extends AbstractTotemBase {
                         player1.playSound(totemStand.getLocation(), Sound.BLAZE_DEATH, 1.2f, 0.7f);
                     }
 
-                    new FallingBlockWaveEffect(totemStand.getLocation().clone().add(0, 1, 0), range, 1.2, Material.SAPLING, (byte) 1).play();
+                    new FallingBlockWaveEffect(totemStand.getLocation().clone().add(0, 1, 0), radius, 1.2, Material.SAPLING, (byte) 1).play();
 
-                    PlayerFilter.entitiesAround(totemStand, range, range, range)
+                    PlayerFilter.entitiesAround(totemStand, radius, radius, radius)
                             .aliveTeammatesOf(wp)
                             .forEach((nearPlayer) -> {
                                 nearPlayer.addHealth(

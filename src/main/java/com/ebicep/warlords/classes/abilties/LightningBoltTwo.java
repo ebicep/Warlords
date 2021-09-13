@@ -43,7 +43,8 @@ public class LightningBoltTwo extends AbstractProjectileBase {
                     minDamageHeal,
                     maxDamageHeal,
                     critChance,
-                    critMultiplier
+                    critMultiplier,
+                    false
             );
         }
 
@@ -58,7 +59,8 @@ public class LightningBoltTwo extends AbstractProjectileBase {
                     minDamageHeal,
                     maxDamageHeal,
                     critChance,
-                    critMultiplier
+                    critMultiplier,
+                    false
             );
         }
     }

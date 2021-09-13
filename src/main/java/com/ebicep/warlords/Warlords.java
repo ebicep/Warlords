@@ -289,7 +289,7 @@ public class Warlords extends JavaPlugin {
                 // EVERY TICK
                 {
                     for (WarlordsPlayer warlordsPlayer : players.values()) {
-                        if(warlordsPlayer.getGame().isGameFreeze()) {
+                        if (warlordsPlayer.getGame().isGameFreeze()) {
                             continue;
                         }
                         if (warlordsPlayer.getName().equals("sumSmash")) {
@@ -403,7 +403,7 @@ public class Warlords extends JavaPlugin {
                             for (Cooldown cooldown : warlordsPlayer.getCooldownManager().getCooldown(UndyingArmy.class)) {
                                 if (!((UndyingArmy) cooldown.getCooldownObject()).isArmyDead(warlordsPlayer.getUuid())) {
                                     //DROPPING FLAG
-                                    if(warlordsPlayer.getGameState().flags().hasFlag(warlordsPlayer)) {
+                                    if (warlordsPlayer.getGameState().flags().hasFlag(warlordsPlayer)) {
                                         warlordsPlayer.getGameState().flags().dropFlag(warlordsPlayer);
                                     }
                                     ((UndyingArmy) cooldown.getCooldownObject()).pop(warlordsPlayer.getUuid());
@@ -441,7 +441,7 @@ public class Warlords extends JavaPlugin {
                                                 this.cancel();
                                             } else {
                                                 //UNDYING ARMY - dmg 10% of max health each popped army
-                                                warlordsPlayer.addHealth(warlordsPlayer, "", warlordsPlayer.getMaxHealth() / -10f, warlordsPlayer.getMaxHealth() / -10f, -1, 100);
+                                                warlordsPlayer.addHealth(warlordsPlayer, "", warlordsPlayer.getMaxHealth() / -10f, warlordsPlayer.getMaxHealth() / -10f, -1, 100, false);
                                             }
                                         }
                                     }.runTaskTimer(Warlords.this, 0, 15);
@@ -587,19 +587,20 @@ public class Warlords extends JavaPlugin {
                                     maxHeal *= 1 + orb.getTicksLived() / 260f;
                                 }
 
-                                warlordsPlayer.addHealth(orb.getOwner(), "Orbs of Life", maxHeal, maxHeal, -1, 100);
+                                warlordsPlayer.addHealth(orb.getOwner(), "Orbs of Life", maxHeal, maxHeal, -1, 100, false);
                                 //damage resistance
-                                if (warlordsPlayer.getCooldownManager().getCooldown(UndyingArmy.class).stream().anyMatch(cd -> !((UndyingArmy) cd.getCooldownObject()).isArmyDead())) {
+                                if (warlordsPlayer.getCooldownManager().getCooldown(UndyingArmy.class).stream().anyMatch(cd -> !((UndyingArmy) cd.getCooldownObject()).isArmyDead(warlordsPlayer.getUuid()))) {
                                     warlordsPlayer.getCooldownManager().removeCooldown("RES");
                                     warlordsPlayer.getCooldownManager().addCooldown("Resistance", null, null, "RES", 3, orb.getOwner(), CooldownTypes.BUFF);
                                 }
-                                    for (WarlordsPlayer nearPlayer : PlayerFilter
-                                            .entitiesAround(warlordsPlayer, 7, 7, 7)
-                                            .aliveTeammatesOfExcludingSelf(warlordsPlayer)
-                                            .limit(2)
-                                    ) {
-                                        nearPlayer.addHealth(orb.getOwner(), "Orbs of Life", minHeal, minHeal, -1, 100);
-                                    }
+
+                                for (WarlordsPlayer nearPlayer : PlayerFilter
+                                        .entitiesAround(warlordsPlayer, 7, 7, 7)
+                                        .aliveTeammatesOfExcludingSelf(warlordsPlayer)
+                                        .limit(2)
+                                ) {
+                                    nearPlayer.addHealth(orb.getOwner(), "Orbs of Life", minHeal, minHeal, -1, 100, false);
+                                }
                             }
                             //8 seconds until orb expires
                             if (orb.getBukkitEntity().getTicksLived() > 160 || (orb.getPlayerToMoveTowards() != null && orb.getPlayerToMoveTowards().isDeath())) {
@@ -617,7 +618,7 @@ public class Warlords extends JavaPlugin {
                     if (counter % 20 == 0) {
                         RemoveEntities.removeHorsesInGame();
                         for (WarlordsPlayer warlordsPlayer : players.values()) {
-                            if(warlordsPlayer.getGame().isGameFreeze()) {
+                            if (warlordsPlayer.getGame().isGameFreeze()) {
                                 continue;
                             }
                             Player player = warlordsPlayer.getEntity() instanceof Player ? (Player) warlordsPlayer.getEntity() : null;
@@ -702,7 +703,7 @@ public class Warlords extends JavaPlugin {
                     //EVERY 2.5 SECONDS
                     if (counter % 50 == 0) {
                         for (WarlordsPlayer warlordsPlayer : players.values()) {
-                            if(warlordsPlayer.getGame().isGameFreeze()) {
+                            if (warlordsPlayer.getGame().isGameFreeze()) {
                                 continue;
                             }
                             LivingEntity player = warlordsPlayer.getEntity();

@@ -71,46 +71,11 @@ public class UndyingArmy extends AbstractAbility {
     public void onActivate(WarlordsPlayer wp, Player player) {
         wp.subtractEnergy(energyCost);
         UndyingArmy tempUndyingArmy = new UndyingArmy();
-        tempUndyingArmy.getPlayersPopped().put(wp.getUuid(), false);
-        wp.getCooldownManager().addCooldown(name, UndyingArmy.this.getClass(), tempUndyingArmy, "ARMY", duration, wp, CooldownTypes.ABILITY);
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                if (wp.getCooldownManager().getCooldown(tempUndyingArmy).isPresent()) {
-                    if (!((UndyingArmy) wp.getCooldownManager().getCooldown(tempUndyingArmy).get().getCooldownObject()).isArmyDead()) {
-                        float healAmount = 100 + (wp.getMaxHealth() - wp.getHealth()) / 12f;
-                        wp.addHealth(wp, name, healAmount, healAmount, -1, 100);
-                        player.playSound(wp.getLocation(), "paladin.holyradiance.activation", 0.25f, 0.8f);
-
-                        // particles
-                        Location playerLoc = wp.getLocation();
-                        playerLoc.add(0, 2.1, 0);
-                        Location particleLoc = playerLoc.clone();
-                        for (int i = 0; i < 1; i++) {
-                            for (int j = 0; j < 10; j++) {
-                                double angle = j / 10D * Math.PI * 2;
-                                double width = 0.5;
-                                particleLoc.setX(playerLoc.getX() + Math.sin(angle) * width);
-                                particleLoc.setY(playerLoc.getY() + i / 5D);
-                                particleLoc.setZ(playerLoc.getZ() + Math.cos(angle) * width);
-
-                                ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(255, 255, 255), particleLoc, 500);
-                            }
-                        }
-                    } else {
-                        this.cancel();
-                    }
-                } else {
-                    this.cancel();
-                }
-            }
-        }.runTaskTimer(Warlords.getInstance(), 0, 40);
-
         int numberOfPlayersWithArmy = 0;
         for (WarlordsPlayer teammate : PlayerFilter.entitiesAround(wp, radius, radius, radius)
-                .aliveTeammatesOfExcludingSelf(wp)
+                .aliveTeammatesOf(wp)
         ) {
-            tempUndyingArmy.getPlayersPopped().put(warlordsNearPlayer.getUuid(), false);
+            tempUndyingArmy.getPlayersPopped().put(teammate.getUuid(), false);
             wp.sendMessage("§a\u00BB§7 " + ChatColor.GRAY + "Your Undying Army is now protecting " + teammate.getColoredName() + ChatColor.GRAY + ".");
             teammate.getCooldownManager().addCooldown(name, UndyingArmy.this.getClass(), tempUndyingArmy, "ARMY", duration, wp, CooldownTypes.ABILITY);
             teammate.sendMessage("§a\u00BB§7 " + ChatColor.GRAY + wp.getName() + "'s Undying Army protects you for " + ChatColor.GOLD + duration + ChatColor.GRAY + " seconds.");
@@ -118,9 +83,9 @@ public class UndyingArmy extends AbstractAbility {
                 @Override
                 public void run() {
                     if (teammate.getCooldownManager().getCooldown(tempUndyingArmy).isPresent()) {
-                        if (!((UndyingArmy) teammate.getCooldownManager().getCooldown(tempUndyingArmy).get().getCooldownObject()).isArmyDead()) {
+                        if (!((UndyingArmy) teammate.getCooldownManager().getCooldown(tempUndyingArmy).get().getCooldownObject()).isArmyDead(teammate.getUuid())) {
                             float healAmount = 100 + (teammate.getMaxHealth() - teammate.getHealth()) / 12f;
-                            teammate.addHealth(wp, name, healAmount, healAmount, -1, 100);
+                            teammate.addHealth(wp, name, healAmount, healAmount, -1, 100, false);
                             player.playSound(teammate.getLocation(), "paladin.holyradiance.activation", 0.25f, 0.8f);
 
                             // particles
