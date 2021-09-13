@@ -87,8 +87,8 @@ public class HealingRain extends AbstractAbility {
                                     damageHealCircle.getMinDamage(),
                                     damageHealCircle.getMaxDamage(),
                                     damageHealCircle.getCritChance(),
-                                    damageHealCircle.getCritMultiplier()
-                            );
+                                    damageHealCircle.getCritMultiplier(),
+                                    false);
                         });
                 if (damageHealCircle.getDuration() < 0) {
                     this.cancel();

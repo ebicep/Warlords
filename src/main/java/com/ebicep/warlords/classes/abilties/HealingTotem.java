@@ -115,13 +115,29 @@ public class HealingTotem extends AbstractTotemBase {
                                         minDamageHeal * healMultiplier,
                                         maxDamageHeal * healMultiplier,
                                         critChance,
-                                        critMultiplier
-                                );
+                                        critMultiplier,
+                                        false);
                             });
                 } else {
                     for (Player player1 : player.getWorld().getPlayers()) {
                         player1.playSound(totemStand.getLocation(), Sound.BLAZE_DEATH, 1.2f, 0.7f);
                     }
+
+                    new FallingBlockWaveEffect(totemStand.getLocation().clone().add(0, 1, 0), range, 1.2, Material.SAPLING, (byte) 1).play();
+
+                    PlayerFilter.entitiesAround(totemStand, range, range, range)
+                            .aliveTeammatesOf(wp)
+                            .forEach((nearPlayer) -> {
+                                nearPlayer.addHealth(
+                                        wp,
+                                        name,
+                                        maxDamageHeal,
+                                        maxDamageHeal * 1.354f,
+                                        critChance,
+                                        critMultiplier,
+                                        false);
+                            });
+
                     totemStand.remove();
                     this.cancel();
                 }

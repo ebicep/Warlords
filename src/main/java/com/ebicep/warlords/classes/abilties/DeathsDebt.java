@@ -114,8 +114,8 @@ public class DeathsDebt extends AbstractTotemBase {
                                 (float) (damage * Math.pow(.8, wp.getCooldownManager().getCooldown(SpiritLink.class).size())),
                                 (float) (damage * Math.pow(.8, wp.getCooldownManager().getCooldown(SpiritLink.class).size())),
                                 critChance,
-                                critMultiplier
-                        );
+                                critMultiplier,
+                                false);
                         // Teammate heal
                         PlayerFilter.entitiesAround(totemStand, 8.0D, 7.0D, 8.0D)
                                 .aliveTeammatesOf(wp)
@@ -123,7 +123,7 @@ public class DeathsDebt extends AbstractTotemBase {
                                     nearPlayer.addHealth(wp, name,
                                             damage * -.15f,
                                             damage * -.15f,
-                                            critChance, critMultiplier);
+                                            critChance, critMultiplier, false);
                                 });
                     } else {
                         player.getWorld().spigot().strikeLightningEffect(totemStand.getLocation(), false);
@@ -136,7 +136,7 @@ public class DeathsDebt extends AbstractTotemBase {
                                             getDelayedDamage() * .15f,
                                             getDelayedDamage() * .15f,
                                             critChance,
-                                            critMultiplier);
+                                            critMultiplier, false);
                                 });
                         // 6 damage waves, stop the function
                         totemStand.remove();

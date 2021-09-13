@@ -8,15 +8,11 @@ import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
-
-import java.util.ArrayList;
-import java.util.Random;
 
 public class Boulder extends AbstractAbility {
 
@@ -103,7 +99,7 @@ public class Boulder extends AbstractAbility {
                             .entitiesAround(newLoc, 5, 5, 5)
                             .aliveEnemiesOf(wp)
                     ) {
-                        p.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+                        p.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
 
                         Entity entity = p.getEntity();
                         Vector v;

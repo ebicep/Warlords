@@ -5,8 +5,9 @@ import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
 import org.bukkit.Location;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+
+import javax.annotation.Nonnull;
 
 public class WaterBolt extends AbstractProjectileBase {
 
@@ -32,6 +33,12 @@ public class WaterBolt extends AbstractProjectileBase {
     }
 
     @Override
+    protected void onSpawn(@Nonnull InternalProjectile projectile) {
+        super.onSpawn(projectile);
+        this.playEffect(projectile);
+    }
+
+    @Override
     protected void onHit(WarlordsPlayer shooter, Location currentLocation, Location startingLocation, WarlordsPlayer victim) {
         ParticleEffect.HEART.display(1, 1, 1, 0.2F, 3, currentLocation, 500);
         ParticleEffect.VILLAGER_HAPPY.display(1, 1, 1, 0.2F, 5, currentLocation, 500);
@@ -51,16 +58,16 @@ public class WaterBolt extends AbstractProjectileBase {
                         (float) (minDamageHeal * DIRECT_HIT_MULTIPLIER * toReduceBy),
                         (float) (maxDamageHeal * DIRECT_HIT_MULTIPLIER * toReduceBy),
                         critChance,
-                        critMultiplier
-                );
+                        critMultiplier,
+                        false);
             } else {
                 victim.addHealth(shooter,
                         name,
                         (float) (-231 * DIRECT_HIT_MULTIPLIER * toReduceBy),
                         (float) (-299 * DIRECT_HIT_MULTIPLIER * toReduceBy),
                         critChance,
-                        critMultiplier
-                );
+                        critMultiplier,
+                        false);
             }
         }
         for (WarlordsPlayer nearEntity : PlayerFilter
@@ -75,8 +82,8 @@ public class WaterBolt extends AbstractProjectileBase {
                         (float) (minDamageHeal * toReduceBy),
                         (float) (maxDamageHeal * toReduceBy),
                         critChance,
-                        critMultiplier
-                );
+                        critMultiplier,
+                        false);
             } else {
                 nearEntity.addHealth(
                         shooter,
@@ -84,8 +91,8 @@ public class WaterBolt extends AbstractProjectileBase {
                         (float) (-231 * toReduceBy),
                         (float) (-299 * toReduceBy),
                         critChance,
-                        critMultiplier
-                );
+                        critMultiplier,
+                        false);
             }
         }
     }

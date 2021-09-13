@@ -118,6 +118,7 @@ public class EndState implements State, TimerDebugAble {
             absorb.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new ComponentBuilder(absorbedJson).create()));
             Utils.sendCenteredHoverableMessage(player, Arrays.asList(damage, Game.spacer, heal, Game.spacer, absorb));
             player.setGameMode(GameMode.ADVENTURE);
+            player.setAllowFlight(true);
 
             if (winner == null) {
                 PacketUtils.sendTitle(player, "§d§lDRAW", "", 0, 100, 0);

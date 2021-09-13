@@ -7,6 +7,8 @@ import com.ebicep.warlords.util.PlayerFilter;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+import javax.annotation.Nonnull;
+
 public class Fireball extends AbstractProjectileBase {
 
     private static final int MAX_FULL_DAMAGE_DISTANCE = 50;
@@ -30,9 +32,15 @@ public class Fireball extends AbstractProjectileBase {
     }
 
     @Override
+    protected void onSpawn(@Nonnull InternalProjectile projectile) {
+        super.onSpawn(projectile);
+        this.playEffect(projectile);
+    }
+
+    @Override
     protected void onHit(WarlordsPlayer shooter, Location currentLocation, Location startingLocation, WarlordsPlayer victim) {
         ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.5F, 1, currentLocation, 500);
-        ParticleEffect.LAVA.display(0.5F, 0, 0.5F, 2F, 10, currentLocation, 500);
+        ParticleEffect.LAVA.display(0.5F, 0, 0.5F, 1.5f, 10, currentLocation, 500);
         ParticleEffect.CLOUD.display(0.3F, 0.3F, 0.3F, 1F, 3, currentLocation, 500);
 
         for (Player player1 : currentLocation.getWorld().getPlayers()) {
@@ -50,8 +58,8 @@ public class Fireball extends AbstractProjectileBase {
                     (float) (minDamageHeal * DIRECT_HIT_MULTIPLIER * toReduceBy),
                     (float) (maxDamageHeal * DIRECT_HIT_MULTIPLIER * toReduceBy),
                     critChance,
-                    critMultiplier
-            );
+                    critMultiplier,
+                    false);
         }
         
         for (WarlordsPlayer nearEntity : PlayerFilter
@@ -65,8 +73,8 @@ public class Fireball extends AbstractProjectileBase {
                     (float) (minDamageHeal * toReduceBy),
                     (float) (maxDamageHeal * toReduceBy),
                     critChance,
-                    critMultiplier
-            );
+                    critMultiplier,
+                    false);
         }
     }
 

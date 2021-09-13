@@ -9,14 +9,11 @@ import com.ebicep.warlords.util.ParticleEffect;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class TimeWarp extends AbstractAbility {
-
-    private int counter = 0;
 
     private final int duration = 5;
 
@@ -43,7 +40,8 @@ public class TimeWarp extends AbstractAbility {
 
         new BukkitRunnable() {
 
-            float time = duration;
+            int time = duration - 1;
+            private int counter = 1;
             final Location warpLocation = wp.getLocation();
             final List<Location> warpTrail = new ArrayList<>();
 
@@ -85,13 +83,12 @@ public class TimeWarp extends AbstractAbility {
 
                 }
 
-
                 //TIME WARPS
-                if (counter % 5 == 0) {
-                    if (time != 0.25f) {
-                        time -= 0.25f;
+                if (counter % 20 == 0) {
+                    if (time != 0) {
+                        time -= 1;
                     } else {
-                        wp.addHealth(wp, "Time Warp", (wp.getMaxHealth() * .3f), (wp.getMaxHealth() * .3f), -1, 100);
+                        wp.addHealth(wp, "Time Warp", (wp.getMaxHealth() * .3f), (wp.getMaxHealth() * .3f), -1, 100, false);
                         for (Player player1 : wp.getEntity().getWorld().getPlayers()) {
                             player1.playSound(wp.getLocation(), "mage.timewarp.teleport", 1, 1);
                         }

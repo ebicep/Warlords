@@ -22,6 +22,11 @@ import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.material.Banner;
 import org.bukkit.material.MaterialData;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.util.Vector;
+
+import javax.annotation.Nullable;
+
+import static org.bukkit.block.BlockFace.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +43,23 @@ class FlagRenderer {
 
     public FlagRenderer(FlagInfo info) {
         this.info = info;
+    }
+
+    public FlagInfo getInfo() {
+        return info;
+    }
+
+    public List<Entity> getRenderedArmorStands() {
+        return renderedArmorStands;
+    }
+
+    /**
+     * Returns the last state rendered, could be null
+     * @return
+     */
+    @Nullable
+    public FlagLocation getLastFlagState() {
+        return lastLocation;
     }
 
     public void checkRender() {
@@ -72,17 +94,35 @@ class FlagRenderer {
                 banner.addPattern(new Pattern(DyeColor.BLACK, PatternType.TRIANGLES_TOP));
                 banner.update();
                 MaterialData newData = block.getState().getData();
-                BlockFace dir;
-                if (banner.getWorld().getBlockAt(block.getLocation().add(0, 0, -5)).getType() == Material.AIR) {
-                    dir = BlockFace.NORTH;
-                } else if (banner.getWorld().getBlockAt(block.getLocation().add(0, 0, 5)).getType() == Material.AIR) {
-                    dir = BlockFace.SOUTH;
-                } else if (banner.getWorld().getBlockAt(block.getLocation().add(-5, 0, 0)).getType() == Material.AIR) {
-                    dir = BlockFace.WEST;
-                } else if (banner.getWorld().getBlockAt(block.getLocation().add(5, 0, 0)).getType() == Material.AIR) {
-                    dir = BlockFace.EAST;
-                } else {
-                    dir = BlockFace.SOUTH;
+                Vector target = this.lastLocation.getLocation().getDirection();
+                Vector toTest = new Vector(0,0,0);
+                BlockFace dir = SOUTH;
+                double distance = Double.MAX_VALUE;
+                for (BlockFace face : new BlockFace[]{
+                        SOUTH,
+                        SOUTH_SOUTH_WEST,
+                        SOUTH_WEST,
+                        WEST_SOUTH_WEST,
+                        WEST,
+                        WEST_NORTH_WEST,
+                        NORTH_WEST,
+                        NORTH_NORTH_WEST,
+                        NORTH,
+                        NORTH_NORTH_EAST,
+                        NORTH_EAST,
+                        EAST_NORTH_EAST,
+                        EAST,
+                        EAST_SOUTH_EAST,
+                        SOUTH_SOUTH_EAST,
+                        SOUTH_EAST,
+                }) {
+                    toTest.setX(face.getModX());
+                    toTest.setZ(face.getModZ());
+                    double newDistance = toTest.distanceSquared(target);
+                    if (newDistance < distance) {
+                        dir = face;
+                        distance = newDistance;
+                    }
                 }
                 ((Banner) newData).setFacingDirection(dir);
                 block.setData(newData.getData());
@@ -91,10 +131,19 @@ class FlagRenderer {
             renderedArmorStands.add(stand);
             stand.setGravity(false);
             stand.setCanPickupItems(false);
-            stand.setCustomName(info.getTeam() == Team.BLUE ? ChatColor.BLUE + "BLU FLAG" : ChatColor.RED + "RED FLAG");
+            stand.setCustomName(info.getTeam() == Team.BLUE ? ChatColor.BLUE + "" + ChatColor.BOLD + "BLU FLAG" : ChatColor.RED + "" + ChatColor.BOLD + "RED FLAG");
             stand.setCustomNameVisible(true);
             stand.setMetadata("TEAM", new FixedMetadataValue(plugin, info.getTeam()));
             stand.setVisible(false);
+
+            ArmorStand stand1 = this.lastLocation.getLocation().getWorld().spawn(block.getLocation().add(.5, -0.3, .5), ArmorStand.class);
+            renderedArmorStands.add(stand1);
+            stand1.setGravity(false);
+            stand1.setCanPickupItems(false);
+            stand1.setCustomName(ChatColor.WHITE + "" + ChatColor.BOLD + "LEFT-CLICK TO STEAL IT");
+            stand1.setCustomNameVisible(true);
+            stand1.setMetadata("TEAM", new FixedMetadataValue(plugin, info.getTeam()));
+            stand1.setVisible(false);
         } else if (this.lastLocation instanceof PlayerFlagLocation) {
             PlayerFlagLocation flag = (PlayerFlagLocation) this.lastLocation;
             runningTasksCancel.add(flag.getPlayer().getSpeed().addSpeedModifier("FLAG", -20, 0));

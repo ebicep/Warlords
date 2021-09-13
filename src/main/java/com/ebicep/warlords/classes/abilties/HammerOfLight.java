@@ -78,8 +78,8 @@ public class HammerOfLight extends AbstractAbility {
                                 damageHealCircle.getMinDamage(),
                                 damageHealCircle.getMaxDamage(),
                                 damageHealCircle.getCritChance(),
-                                damageHealCircle.getCritMultiplier()
-                        );
+                                damageHealCircle.getCritMultiplier(),
+                                false);
                     } else {
                         warlordsPlayer.addHealth(
                                 damageHealCircle.getWarlordsPlayer(),
@@ -87,8 +87,8 @@ public class HammerOfLight extends AbstractAbility {
                                 -damageHealCircle.getMinDamage(),
                                 -damageHealCircle.getMaxDamage(),
                                 damageHealCircle.getCritChance(),
-                                damageHealCircle.getCritMultiplier()
-                        );
+                                damageHealCircle.getCritMultiplier(),
+                                false);
                     }
                 }
 

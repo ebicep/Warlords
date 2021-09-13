@@ -3,6 +3,7 @@ package com.ebicep.warlords.maps.state;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.FieldUpdateOperators;
+import com.ebicep.warlords.database.LeaderboardRanking;
 import com.ebicep.warlords.events.WarlordsPointsChangedEvent;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Gates;
@@ -200,7 +201,7 @@ public class PlayingState implements State, TimerDebugAble {
                     assert getStats(Team.BLUE).points == getStats(Team.RED).points;
                     this.pointLimit = getStats(Team.BLUE).points + 25;
                     this.game.forEachOnlinePlayer((player, team) -> {
-                        PacketUtils.sendTitle(player, ChatColor.LIGHT_PURPLE + "OVERTIME!", "", 0, 60, 0);
+                        PacketUtils.sendTitle(player, ChatColor.LIGHT_PURPLE + "OVERTIME!", ChatColor.YELLOW + "First team to reach 20 points wins!", 0, 60, 0);
                         player.sendMessage("§7Overtime is now active!");
                         player.playSound(player.getLocation(), Sound.PORTAL_TRAVEL, 500, 1);
                     });
@@ -214,7 +215,7 @@ public class PlayingState implements State, TimerDebugAble {
         }
         int redPoints = getStats(Team.RED).points;
         int bluePoints = getStats(Team.BLUE).points;
-        if (redPoints >= this.pointLimit || bluePoints >= this.pointLimit || Math.abs(redPoints - bluePoints) > MERCY_LIMIT) {
+        if (redPoints >= this.pointLimit || bluePoints >= this.pointLimit || (Math.abs(redPoints - bluePoints) > MERCY_LIMIT && this.timer < game.getMap().getGameTimerInTicks() - 20 * 60 * 5)) {
             return nextStateByPoints();
         }
         if (gateTimer >= 0) {
@@ -264,7 +265,7 @@ public class PlayingState implements State, TimerDebugAble {
                 if (this.powerUps != null) {
                     this.powerUps.cancel();
                 }
-                this.powerUps = new PowerupManager(game.getMap()).runTaskTimer(Warlords.getInstance(), 0, 0);
+                this.powerUps = new PowerupManager(game).runTaskTimer(Warlords.getInstance(), 0, 0);
             }
         }
         return null;
@@ -280,12 +281,13 @@ public class PlayingState implements State, TimerDebugAble {
             this.powerUps.cancel();
             this.powerUps = null;
         }
+        Warlords.getPlayers().forEach(((uuid, warlordsPlayer) -> warlordsPlayer.removeGrave()));
         Team winner = forceEnd ? null : calculateWinnerByPoints();
         if (!forceEnd && game.playersCount() > 16) {
             Warlords.newChain()
                     .asyncFirst(this::addGameAndLoadPlayers)
                     .syncLast((t) -> {
-                        Warlords.addHologramLeaderboards();
+                        LeaderboardRanking.addHologramLeaderboards();
                         game.forEachOnlinePlayer(((player, team) -> CustomScoreboard.giveMainLobbyScoreboard(player)));
                     })
                     .execute();

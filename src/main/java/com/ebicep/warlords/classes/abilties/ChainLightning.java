@@ -119,7 +119,7 @@ public class ChainLightning extends AbstractChainBase {
                     break;
             }
             playersHit.add(hit);
-            hit.addHealth(wp, name, minDamageHeal * damageMultiplier, maxDamageHeal * damageMultiplier, critChance, critMultiplier);
+            hit.addHealth(wp, name, minDamageHeal * damageMultiplier, maxDamageHeal * damageMultiplier, critChance, critMultiplier, false);
             return partOfChainLightning(wp, playersHit, hit.getEntity(), hasHitTotem);
         } else {
             return playersSize + (hasHitTotem ? 1 : 0);
@@ -136,7 +136,7 @@ public class ChainLightning extends AbstractChainBase {
 
     private void pulseDamage(WarlordsPlayer warlordsPlayer, Stream<WarlordsPlayer> near) {
         near.forEach((player) -> {
-            player.addHealth(warlordsPlayer, warlordsPlayer.getSpec().getOrange().getName(), warlordsPlayer.getSpec().getOrange().getMinDamageHeal(), warlordsPlayer.getSpec().getOrange().getMaxDamageHeal(), warlordsPlayer.getSpec().getOrange().getCritChance(), warlordsPlayer.getSpec().getOrange().getCritMultiplier());
+            player.addHealth(warlordsPlayer, warlordsPlayer.getSpec().getOrange().getName(), warlordsPlayer.getSpec().getOrange().getMinDamageHeal(), warlordsPlayer.getSpec().getOrange().getMaxDamageHeal(), warlordsPlayer.getSpec().getOrange().getCritChance(), warlordsPlayer.getSpec().getOrange().getCritMultiplier(), false);
         });
     }
 

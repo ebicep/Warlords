@@ -30,7 +30,7 @@ public class LightningRod extends AbstractAbility {
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
         wp.addEnergy(wp, name, energyRestore);
-        wp.addHealth(wp, name, (wp.getMaxHealth() * .3f), (wp.getMaxHealth() * .3f), critChance, critMultiplier);
+        wp.addHealth(wp, name, (wp.getMaxHealth() * .3f), (wp.getMaxHealth() * .3f), critChance, critMultiplier, false);
 
         Location playerLocation = player.getLocation();
 
@@ -52,8 +52,8 @@ public class LightningRod extends AbstractAbility {
                                 wp.getSpec().getOrange().getMinDamageHeal(),
                                 wp.getSpec().getOrange().getMaxDamageHeal(),
                                 wp.getSpec().getOrange().getCritChance(),
-                                wp.getSpec().getOrange().getCritMultiplier()
-                        );
+                                wp.getSpec().getOrange().getCritMultiplier(),
+                                false);
 
                         new FallingBlockWaveEffect(p.getLocation().add(0, 1, 0), 6, 1.2, Material.SAPLING, (byte) 0).play();
                         for (Player player1 : wp.getWorld().getPlayers()) {

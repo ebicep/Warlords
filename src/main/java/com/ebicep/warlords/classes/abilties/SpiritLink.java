@@ -38,7 +38,7 @@ public class SpiritLink extends AbstractChainBase {
         ) {
             if (Utils.isLookingAtChain(player, nearPlayer.getEntity()) && Utils.hasLineOfSight(player, nearPlayer.getEntity())) {
                 chain(player.getLocation(), nearPlayer.getLocation());
-                nearPlayer.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+                nearPlayer.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
                 hitCounter++;
 
                 int numberOfHeals = wp.getCooldownManager().getNumberOfBoundPlayersLink(nearPlayer);
@@ -53,7 +53,7 @@ public class SpiritLink extends AbstractChainBase {
                         .soulBindedFirst(wp)
                 ) {
                     chain(nearPlayer.getLocation(), chainPlayerOne.getLocation());
-                    chainPlayerOne.addHealth(wp, name, minDamageHeal * .8f, maxDamageHeal * .8f, critChance, critMultiplier);
+                    chainPlayerOne.addHealth(wp, name, minDamageHeal * .8f, maxDamageHeal * .8f, critChance, critMultiplier, false);
                     hitCounter++;
 
                     numberOfHeals = wp.getCooldownManager().getNumberOfBoundPlayersLink(chainPlayerOne);
@@ -68,7 +68,7 @@ public class SpiritLink extends AbstractChainBase {
                             .soulBindedFirst(wp)
                     ) {
                         chain(chainPlayerOne.getLocation(), chainPlayerTwo.getLocation());
-                        chainPlayerOne.addHealth(wp, name, minDamageHeal * .6f, maxDamageHeal * .6f, critChance, critMultiplier);
+                        chainPlayerOne.addHealth(wp, name, minDamageHeal * .6f, maxDamageHeal * .6f, critChance, critMultiplier, false);
                         hitCounter++;
 
                         numberOfHeals = wp.getCooldownManager().getNumberOfBoundPlayersLink(chainPlayerTwo);
@@ -103,13 +103,13 @@ public class SpiritLink extends AbstractChainBase {
     }
 
     private void healNearPlayers(WarlordsPlayer warlordsPlayer) {
-        warlordsPlayer.addHealth(warlordsPlayer, "Soulbinding Weapon", 420, 420, -1, 100);
+        warlordsPlayer.addHealth(warlordsPlayer, "Soulbinding Weapon", 420, 420, -1, 100, false);
         for (WarlordsPlayer nearPlayer : PlayerFilter
                 .entitiesAround(warlordsPlayer, 2.5, 2.5, 2.5)
                 .aliveTeammatesOfExcludingSelf(warlordsPlayer)
                 .limit(2)
         ) {
-            nearPlayer.addHealth(warlordsPlayer, "Soulbinding Weapon", 420, 420, -1, 100);
+            nearPlayer.addHealth(warlordsPlayer, "Soulbinding Weapon", 420, 420, -1, 100, false);
         }
     }
 }

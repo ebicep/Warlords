@@ -16,7 +16,9 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import java.util.HashMap;
 import org.bukkit.scheduler.BukkitRunnable;
+import java.util.UUID;
 
 
 public class UndyingArmy extends AbstractAbility {
@@ -29,16 +31,18 @@ public class UndyingArmy extends AbstractAbility {
     private final int radius = 15;
     private final int duration = 10;
 
-    private boolean armyDead = false;
+    private HashMap<UUID, Boolean> playersPopped = new HashMap<>();
 
-    //dead = true - take 10% dmg
-    //dead = false - heal
-    public boolean isArmyDead() {
-        return this.armyDead;
+    public HashMap<UUID, Boolean> getPlayersPopped() {
+        return playersPopped;
     }
 
-    public void pop() {
-        this.armyDead = true;
+    public boolean isArmyDead(UUID uuid) {
+        return playersPopped.get(uuid);
+    }
+
+    public void pop(UUID uuid) {
+        playersPopped.put(uuid, true);
     }
 
     public UndyingArmy() {
@@ -67,6 +71,7 @@ public class UndyingArmy extends AbstractAbility {
     public void onActivate(WarlordsPlayer wp, Player player) {
         wp.subtractEnergy(energyCost);
         UndyingArmy tempUndyingArmy = new UndyingArmy();
+        tempUndyingArmy.getPlayersPopped().put(wp.getUuid(), false);
         wp.getCooldownManager().addCooldown(name, UndyingArmy.this.getClass(), tempUndyingArmy, "ARMY", duration, wp, CooldownTypes.ABILITY);
         new BukkitRunnable() {
             @Override
@@ -105,6 +110,7 @@ public class UndyingArmy extends AbstractAbility {
         for (WarlordsPlayer teammate : PlayerFilter.entitiesAround(wp, radius, radius, radius)
                 .aliveTeammatesOfExcludingSelf(wp)
         ) {
+            tempUndyingArmy.getPlayersPopped().put(warlordsNearPlayer.getUuid(), false);
             wp.sendMessage("§a\u00BB§7 " + ChatColor.GRAY + "Your Undying Army is now protecting " + teammate.getColoredName() + ChatColor.GRAY + ".");
             teammate.getCooldownManager().addCooldown(name, UndyingArmy.this.getClass(), tempUndyingArmy, "ARMY", duration, wp, CooldownTypes.ABILITY);
             teammate.sendMessage("§a\u00BB§7 " + ChatColor.GRAY + wp.getName() + "'s Undying Army protects you for " + ChatColor.GOLD + duration + ChatColor.GRAY + " seconds.");
