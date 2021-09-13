@@ -56,8 +56,8 @@ public class FrostBolt extends AbstractProjectileBase {
                     (float) (minDamageHeal * DIRECT_HIT_MULTIPLIER * toReduceBy),
                     (float) (maxDamageHeal * DIRECT_HIT_MULTIPLIER * toReduceBy),
                     critChance,
-                    critMultiplier
-            );
+                    critMultiplier,
+                    false);
         }
         
         for (WarlordsPlayer nearEntity : PlayerFilter
@@ -72,8 +72,8 @@ public class FrostBolt extends AbstractProjectileBase {
                     (float) (minDamageHeal * toReduceBy),
                     (float) (maxDamageHeal * toReduceBy),
                     critChance,
-                    critMultiplier
-            );
+                    critMultiplier,
+                    false);
         }
     }
 

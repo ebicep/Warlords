@@ -59,7 +59,7 @@ public class CooldownManager {
                 } else if (cooldownClass == UndyingArmy.class) {
                     if (!((UndyingArmy) cooldownObject).isArmyDead(warlordsPlayer.getUuid())) {
                         int healing = (int) ((warlordsPlayer.getMaxHealth() - warlordsPlayer.getHealth()) * .35 + 200);
-                        warlordsPlayer.addHealth(cooldown.getFrom(), "Undying Army", healing, healing, -1, 100);
+                        warlordsPlayer.addHealth(cooldown.getFrom(), "Undying Army", healing, healing, -1, 100, false);
 
                         for (Player player1 : warlordsPlayer.getWorld().getPlayers()) {
                             player1.playSound(warlordsPlayer.getLocation(), "paladin.holyradiance.activation", 0.5f, 1);

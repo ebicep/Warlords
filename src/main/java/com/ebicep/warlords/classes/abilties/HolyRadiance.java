@@ -29,10 +29,10 @@ public class HolyRadiance extends AbstractAbility {
                 .entitiesAround(player, 4.5, 4.5, 4.5)
                 .aliveTeammatesOfExcludingSelf(wp)
         ) {
-            p.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+            p.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
         }
 
-        wp.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+        wp.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
 
         player.playSound(player.getLocation(), Sound.ORB_PICKUP, 1, 1);
         for (Player player1 : player.getWorld().getPlayers()) {

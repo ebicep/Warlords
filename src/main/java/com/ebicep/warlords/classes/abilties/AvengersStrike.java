@@ -25,9 +25,9 @@ public class AvengersStrike extends AbstractStrikeBase {
     @Override
     protected void onHit(@Nonnull WarlordsPlayer wp, @Nonnull Player player, @Nonnull WarlordsPlayer nearPlayer) {
         if (standingOnConsecrate(player, nearPlayer.getEntity())) {
-            nearPlayer.addHealth(wp, name, (minDamageHeal * 1.2f), (maxDamageHeal * 1.2f), critChance, critMultiplier);
+            nearPlayer.addHealth(wp, name, (minDamageHeal * 1.2f), (maxDamageHeal * 1.2f), critChance, critMultiplier, false);
         } else {
-            nearPlayer.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+            nearPlayer.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
         }
         nearPlayer.subtractEnergy(energySteal);
         if (!wp.getCooldownManager().getCooldown(AvengersWrath.class).isEmpty()) {
@@ -40,9 +40,9 @@ public class AvengersStrike extends AbstractStrikeBase {
             ) {
                 //checking if player is in consecrate
                 if (standingOnConsecrate(player, wrathTarget.getEntity())) {
-                    wrathTarget.addHealth(wp, name, minDamageHeal * 1.2f, maxDamageHeal * 1.2f, critChance, critMultiplier);
+                    wrathTarget.addHealth(wp, name, minDamageHeal * 1.2f, maxDamageHeal * 1.2f, critChance, critMultiplier, false);
                 } else {
-                    wrathTarget.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+                    wrathTarget.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
                 }
                 wrathTarget.subtractEnergy(energySteal);
             }

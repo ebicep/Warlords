@@ -102,7 +102,7 @@ public class RecklessCharge extends AbstractAbility {
                         .aliveEnemiesOf(wp)
                         .forEach(enemy -> {
                             playersHit.add(enemy);
-                            enemy.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+                            enemy.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
                             new BukkitRunnable() {
                                 final Location stunLocation = enemy.getLocation();
                                 int timer = 0;

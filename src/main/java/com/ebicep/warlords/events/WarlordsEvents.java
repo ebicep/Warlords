@@ -198,7 +198,7 @@ public class WarlordsEvents implements Listener {
                                     }
                                 });
                     }
-                    warlordsPlayerVictim.addHealth(warlordsPlayerAttacker, "", -132, -179, 25, 200);
+                    warlordsPlayerVictim.addHealth(warlordsPlayerAttacker, "", -132, -179, 25, 200, false);
 
                     if (warlordsPlayerVictim.getEntity() instanceof Zombie) {
                         if (warlordsPlayerVictim.isDeath()) {
@@ -260,7 +260,7 @@ public class WarlordsEvents implements Listener {
 
                 } else if (itemHeld.getType() == Material.BONE) {
                     player.getInventory().remove(UndyingArmy.BONE);
-                    wp.addHealth(Warlords.getPlayer(player), "", -100000, -100000, -1, 100);
+                    wp.addHealth(Warlords.getPlayer(player), "", -100000, -100000, -1, 100, false);
                 } else if (itemHeld.getType() == Material.BANNER) {
                     if (wp.getFlagCooldown() > 0) {
                         player.sendMessage("§cYou cannot drop the flag yet, please wait 5 seconds!");
@@ -393,7 +393,7 @@ public class WarlordsEvents implements Listener {
                 e.getEntity().teleport(Warlords.getRejoinPoint(e.getEntity().getUniqueId()));
                 WarlordsPlayer wp = Warlords.getPlayer(e.getEntity());
                 if (wp != null) {
-                    wp.addHealth(wp, "Fall", -1000000, -1000000, -1, 100);
+                    wp.addHealth(wp, "Fall", -1000000, -1000000, -1, 100, false);
                 }
             } else if (e.getCause() == EntityDamageEvent.DamageCause.FALL) {
                 //HEIGHT - DAMAGE
@@ -411,7 +411,7 @@ public class WarlordsEvents implements Listener {
                     if (wp != null) {
                         int damage = (int) e.getDamage();
                         if (damage > 5) {
-                            wp.addHealth(wp, "Fall", -((damage + 3) * 40 - 200), -((damage + 3) * 40 - 200), -1, 100);
+                            wp.addHealth(wp, "Fall", -((damage + 3) * 40 - 200), -((damage + 3) * 40 - 200), -1, 100, false);
                             wp.setRegenTimer(10);
                         }
                     }

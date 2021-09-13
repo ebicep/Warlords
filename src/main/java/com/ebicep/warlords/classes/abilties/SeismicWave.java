@@ -16,7 +16,6 @@ import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class SeismicWave extends AbstractAbility {
 
@@ -81,7 +80,7 @@ public class SeismicWave extends AbstractAbility {
                     playersHit.add(p);
                     final Vector v = player.getLocation().toVector().subtract(p.getLocation().toVector()).normalize().multiply(-1.08).setY(0.3);
                     p.setVelocity(v);
-                    p.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+                    p.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
                 }
             }
         }

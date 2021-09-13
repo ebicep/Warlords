@@ -145,7 +145,7 @@ public class EarthenSpike extends AbstractAbility {
                                     .entitiesAround(targetLocation, 2, 2, 2)
                                     .aliveEnemiesOf(wp)
                             ) {
-                                warlordsPlayer.addHealth(user, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+                                warlordsPlayer.addHealth(user, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
                                 //todo tweak distance to ground where you cant get kbed up (1.4 is max jump blocks)
                                 if (Utils.getDistance(warlordsPlayer.getEntity(), .1) < 1.4) {
                                     warlordsPlayer.setVelocity(new Vector(0, .6, 0));

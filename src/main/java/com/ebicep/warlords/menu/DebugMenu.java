@@ -28,7 +28,6 @@ import java.util.*;
 import java.util.function.BiConsumer;
 
 import static com.ebicep.warlords.menu.Menu.*;
-import static com.ebicep.warlords.player.Classes.getSelected;
 import static com.ebicep.warlords.player.Classes.setSelectedBoost;
 import static com.ebicep.warlords.util.Utils.woolSortedByColor;
 
@@ -270,12 +269,12 @@ public class DebugMenu {
             menu.setItem(0, 0, blueInfo, (n, e) -> {
             });
             menu.setItem(3, 0, killTeam, (n, e) -> {
-                bluePlayers.forEach(wp -> wp.addHealth(wp, "", -69000, -69000, -1, 100));
+                bluePlayers.forEach(wp -> wp.addHealth(wp, "", -69000, -69000, -1, 100, false));
             });
             menu.setItem(5, 0, redInfo, (n, e) -> {
             });
             menu.setItem(8, 0, killTeam, (n, e) -> {
-                redPlayers.forEach(wp -> wp.addHealth(wp, "", -69000, -69000, -1, 100));
+                redPlayers.forEach(wp -> wp.addHealth(wp, "", -69000, -69000, -1, 100, false));
             });
 
             //players

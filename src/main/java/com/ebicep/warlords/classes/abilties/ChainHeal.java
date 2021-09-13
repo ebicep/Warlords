@@ -42,9 +42,9 @@ public class ChainHeal extends AbstractChainBase {
             if (Utils.isLookingAtChain(player, nearPlayer.getEntity())) {
                 //self heal
                 player.playSound(player.getLocation(), Sound.ORB_PICKUP, 1, 1);
-                wp.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+                wp.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
                 chain(player.getLocation(), nearPlayer.getLocation());
-                nearPlayer.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+                nearPlayer.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
                 hitCounter++;
 
                 for (WarlordsPlayer chainPlayerOne : PlayerFilter
@@ -53,7 +53,7 @@ public class ChainHeal extends AbstractChainBase {
                         .excluding(wp, nearPlayer)
                 ) {
                     chain(nearPlayer.getLocation(), chainPlayerOne.getLocation());
-                    chainPlayerOne.addHealth(wp, name, minDamageHeal * 0.92f, maxDamageHeal * 0.92f, critChance, critMultiplier);
+                    chainPlayerOne.addHealth(wp, name, minDamageHeal * 0.92f, maxDamageHeal * 0.92f, critChance, critMultiplier, false);
                     hitCounter++;
 
                     for (WarlordsPlayer chainPlayerTwo : PlayerFilter
@@ -62,7 +62,7 @@ public class ChainHeal extends AbstractChainBase {
                             .excluding(wp, nearPlayer, chainPlayerOne)
                     ) {
                         chain(chainPlayerOne.getLocation(), chainPlayerTwo.getLocation());
-                        chainPlayerTwo.addHealth(wp, name, minDamageHeal * 0.84f, maxDamageHeal * 0.84f, critChance, critMultiplier);
+                        chainPlayerTwo.addHealth(wp, name, minDamageHeal * 0.84f, maxDamageHeal * 0.84f, critChance, critMultiplier, false);
                         hitCounter++;
                         break;
                     }

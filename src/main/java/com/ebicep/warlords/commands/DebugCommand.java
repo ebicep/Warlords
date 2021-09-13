@@ -154,7 +154,7 @@ public class DebugCommand implements CommandExecutor {
                     if (args[0].equals("takedamage")) {
                         amount *= -1;
                     }
-                    player.addHealth(player, "debug", amount, amount, -1, 100);
+                    player.addHealth(player, "debug", amount, amount, -1, 100, false);
 
                     return true;
                 }

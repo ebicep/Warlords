@@ -9,7 +9,6 @@ import com.ebicep.warlords.util.ParticleEffect;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -89,7 +88,7 @@ public class TimeWarp extends AbstractAbility {
                     if (time != 0) {
                         time -= 1;
                     } else {
-                        wp.addHealth(wp, "Time Warp", (wp.getMaxHealth() * .3f), (wp.getMaxHealth() * .3f), -1, 100);
+                        wp.addHealth(wp, "Time Warp", (wp.getMaxHealth() * .3f), (wp.getMaxHealth() * .3f), -1, 100, false);
                         for (Player player1 : wp.getEntity().getWorld().getPlayers()) {
                             player1.playSound(wp.getLocation(), "mage.timewarp.teleport", 1, 1);
                         }

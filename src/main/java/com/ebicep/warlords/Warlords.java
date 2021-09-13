@@ -22,7 +22,6 @@ import com.ebicep.warlords.powerups.EnergyPowerUp;
 import com.ebicep.warlords.util.*;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
-import org.bson.Document;
 import org.bukkit.*;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
@@ -434,7 +433,7 @@ public class Warlords extends JavaPlugin {
                                         @Override
                                         public void run() {
                                             //UNDYING ARMY - dmg -500 each popped army
-                                            warlordsPlayer.addHealth(warlordsPlayer, "", -500, -500, -1, 100);
+                                            warlordsPlayer.addHealth(warlordsPlayer, "", -500, -500, -1, 100, false);
 
                                             if (warlordsPlayer.getRespawnTimer() > 0) {
                                                 this.cancel();
@@ -562,9 +561,9 @@ public class Warlords extends JavaPlugin {
 
                                 //504 302
                                 if (Warlords.getPlayerSettings(orb.getOwner().getUuid()).getClassesSkillBoosts() == ClassesSkillBoosts.ORBS_OF_LIFE) {
-                                    warlordsPlayer.addHealth(orb.getOwner(), "Orbs of Life", 420 * 1.2f, 420 * 1.2f, -1, 100);
+                                    warlordsPlayer.addHealth(orb.getOwner(), "Orbs of Life", 420 * 1.2f, 420 * 1.2f, -1, 100, false);
                                 } else {
-                                    warlordsPlayer.addHealth(orb.getOwner(), "Orbs of Life", 420, 420, -1, 100);
+                                    warlordsPlayer.addHealth(orb.getOwner(), "Orbs of Life", 420, 420, -1, 100, false);
                                 }
                                 for (WarlordsPlayer nearPlayer : PlayerFilter
                                         .entitiesAround(warlordsPlayer, 6, 6, 6)
@@ -572,9 +571,9 @@ public class Warlords extends JavaPlugin {
                                         .limit(2)
                                 ) {
                                     if (Warlords.getPlayerSettings(orb.getOwner().getUuid()).getClassesSkillBoosts() == ClassesSkillBoosts.ORBS_OF_LIFE) {
-                                        nearPlayer.addHealth(orb.getOwner(), "Orbs of Life", 252 * 1.2f, 252 * 1.2f, -1, 100);
+                                        nearPlayer.addHealth(orb.getOwner(), "Orbs of Life", 252 * 1.2f, 252 * 1.2f, -1, 100, false);
                                     } else {
-                                        nearPlayer.addHealth(orb.getOwner(), "Orbs of Life", 252, 252, -1, 100);
+                                        nearPlayer.addHealth(orb.getOwner(), "Orbs of Life", 252, 252, -1, 100, false);
                                     }
                                 }
                             }

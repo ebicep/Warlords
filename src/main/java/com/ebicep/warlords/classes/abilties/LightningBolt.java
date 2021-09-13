@@ -13,7 +13,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
-import org.bukkit.util.Vector;
 
 public class LightningBolt extends AbstractPiercingProjectileBase {
 
@@ -51,7 +50,7 @@ public class LightningBolt extends AbstractPiercingProjectileBase {
         WarlordsPlayer wp = projectile.getShooter();
         if (!projectile.getHit().contains(hit)) {
             projectile.getHit().add(hit);
-            hit.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+            hit.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
 
             for (Player player1 : hit.getWorld().getPlayers()) {
                 player1.playSound(impactLocation, "shaman.lightningbolt.impact", 2, 1);
@@ -80,7 +79,7 @@ public class LightningBolt extends AbstractPiercingProjectileBase {
                 .excluding(projectile.getHit())
         ) {
             //hitting player
-            warlordsPlayer.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier);
+            warlordsPlayer.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
 
             for (Player player1 : warlordsPlayer.getWorld().getPlayers()) {
                 player1.playSound(warlordsPlayer.getLocation(), "shaman.lightningbolt.impact", 2, 1);

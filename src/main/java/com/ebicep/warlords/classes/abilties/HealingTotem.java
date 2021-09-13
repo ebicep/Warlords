@@ -80,8 +80,8 @@ public class HealingTotem extends AbstractTotemBase {
                                         minDamageHeal,
                                         minDamageHeal * 1.354f,
                                         critChance,
-                                        critMultiplier
-                                );
+                                        critMultiplier,
+                                        false);
                             });
                 } else {
                     for (Player player1 : player.getWorld().getPlayers()) {
@@ -99,8 +99,8 @@ public class HealingTotem extends AbstractTotemBase {
                                         maxDamageHeal,
                                         maxDamageHeal * 1.354f,
                                         critChance,
-                                        critMultiplier
-                                );
+                                        critMultiplier,
+                                        false);
                             });
 
                     totemStand.remove();
