@@ -35,7 +35,7 @@ public class TimeWarp extends AbstractAbility {
         wp.getCooldownManager().addCooldown(name, TimeWarp.this.getClass(), new TimeWarp(), "TIME", duration, wp, CooldownTypes.ABILITY);
 
         for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "mage.timewarp.activation", 2, 1);
+            player1.playSound(player.getLocation(), "mage.timewarp.activation", 3, 1);
         }
 
         new BukkitRunnable() {
