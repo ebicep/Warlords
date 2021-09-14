@@ -3,6 +3,7 @@ package com.ebicep.warlords.party;
 import com.ebicep.warlords.Warlords;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.util.*;
@@ -44,7 +45,7 @@ public class Party {
     }
 
     public void leave(UUID uuid) {
-        Player player = Bukkit.getPlayer(uuid);
+        OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
         members.remove(uuid);
         if (leader.equals(uuid)) {
             if (members.keySet().stream().findAny().isPresent()) {
@@ -52,7 +53,7 @@ public class Party {
                 sendMessageToAllPartyPlayers(ChatColor.RED + player.getName() + " has left the party");
                 sendMessageToAllPartyPlayers(ChatColor.GREEN + Bukkit.getOfflinePlayer(leader).getName() + " is now the new party leader");
             } else {
-                player.sendMessage(ChatColor.RED + "The party was disbanded");
+                Bukkit.getPlayer(leader).sendMessage(ChatColor.RED + "The party was disbanded");
                 disband();
             }
         } else {
@@ -72,17 +73,48 @@ public class Party {
         if(members.size() > 1) {
             stringBuilder.append(ChatColor.YELLOW + "Party Members: " + ChatColor.AQUA);
         }
-        members.forEach((uuid, aBoolean) -> {
+        members.forEach((uuid, isOnline) -> {
             if(uuid != leader) {
-                stringBuilder.append(ChatColor.AQUA).append(Bukkit.getOfflinePlayer(uuid).getName()).append(aBoolean ? ChatColor.GREEN : ChatColor.RED).append(" ● ");
+                stringBuilder.append(ChatColor.AQUA).append(Bukkit.getOfflinePlayer(uuid).getName()).append(isOnline ? ChatColor.GREEN : ChatColor.RED).append(" ● ");
             }
         });
         stringBuilder.append(ChatColor.BLUE + "\n-----------------------------");
         return stringBuilder.toString();
     }
 
+    public void remove(String name) {
+        for (Map.Entry<UUID, Boolean> uuidBooleanEntry : members.entrySet()) {
+            String partyMemberName = Bukkit.getOfflinePlayer(uuidBooleanEntry.getKey()).getName();
+            if(partyMemberName.equalsIgnoreCase(name)) {
+                members.remove(uuidBooleanEntry.getKey());
+                sendMessageToAllPartyPlayers(ChatColor.RED + partyMemberName + " was removed from the party");
+                for (Player player : Bukkit.getOnlinePlayers()) {
+                    if(player.getUniqueId().equals(uuidBooleanEntry.getKey())) {
+                        player.sendMessage(ChatColor.RED + "You were removed from the party");
+                        break;
+                    }
+                }
+                break;
+            }
+        }
+    }
+
+    public void setOpen(boolean open) {
+        isOpen = open;
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            if(player.getUniqueId().equals(leader)) {
+                if(open) {
+                    player.sendMessage(ChatColor.GREEN + "The party is now open!");
+                } else {
+                    player.sendMessage(ChatColor.RED + "The party is now closed!");
+                }
+                break;
+            }
+        }
+    }
+
     public void sendMessageToAllPartyPlayers(String message) {
-        getAllPartyPeoplePlayer().forEach(partyMember -> {
+        getAllPartyPeoplePlayerOnline().forEach(partyMember -> {
             partyMember.sendMessage(message);
         });
     }
@@ -101,16 +133,6 @@ public class Party {
         return output;
     }
 
-    public List<Player> getAllPartyPeoplePlayer(boolean online) {
-        List<Player> output = new ArrayList<>();
-        members.forEach((uuid, isOnline) -> {
-            if (isOnline == online) {
-                output.add(Bukkit.getPlayer(uuid));
-            }
-        });
-        return output;
-    }
-
     public List<UUID> getAllPartyPeople() {
         return new ArrayList<>(members.keySet());
     }
@@ -119,7 +141,7 @@ public class Party {
         return members.values().stream().allMatch(b -> b);
     }
 
-    public List<Player> getAllPartyPeoplePlayer() {
+    public List<Player> getAllPartyPeoplePlayerOnline() {
         return Bukkit.getOnlinePlayers().stream()
                 .filter(player -> getAllPartyPeople().contains(player.getUniqueId()))
                 .collect(Collectors.toList());

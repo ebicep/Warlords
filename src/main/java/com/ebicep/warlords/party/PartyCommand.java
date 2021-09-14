@@ -14,26 +14,32 @@ public class PartyCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
-        switch(s) {
+        switch (s) {
             case "party":
             case "p":
-                if(args.length > 0) {
+                if (args.length > 0) {
                     Player player = (Player) sender;
                     Optional<Party> currentParty = Warlords.partyManager.getPartyFromAny(player.getUniqueId());
                     String input = args[0];
-                    switch(input) {
+                    if (!input.equals("join")) {
+                        if (!currentParty.isPresent()) {
+                            sender.sendMessage(ChatColor.RED + "You are not in a party");
+                            return true;
+                        }
+                    }
+                    switch (input) {
                         case "join":
-                            if(args.length > 1) {
-                                if(Warlords.partyManager.inAParty(player.getUniqueId())) {
+                            if (args.length > 1) {
+                                if (Warlords.partyManager.inAParty(player.getUniqueId())) {
                                     sender.sendMessage(ChatColor.RED + "You are already in a party");
                                     return true;
                                 }
                                 String playerWithParty = args[1];
-                                if(Bukkit.getOnlinePlayers().stream().anyMatch(p -> p.getName().equalsIgnoreCase(playerWithParty))) {
+                                if (Bukkit.getOnlinePlayers().stream().anyMatch(p -> p.getName().equalsIgnoreCase(playerWithParty))) {
                                     Player partyLeader = Bukkit.getOnlinePlayers().stream().filter(p -> p.getName().equalsIgnoreCase(playerWithParty)).findAny().get();
                                     Optional<Party> party = Warlords.partyManager.getPartyFromLeader(partyLeader.getUniqueId());
-                                    if(party.isPresent()) {
-                                        if(party.get().isOpen()) {
+                                    if (party.isPresent()) {
+                                        if (party.get().isOpen()) {
                                             party.get().join(player.getUniqueId());
                                         } else {
                                             sender.sendMessage(ChatColor.RED + "That party is not open!");
@@ -49,29 +55,36 @@ public class PartyCommand implements CommandExecutor {
                             }
                             break;
                         case "leave":
-                            if(currentParty.isPresent()) {
-                                currentParty.get().leave(player.getUniqueId());
-                                sender.sendMessage(ChatColor.GREEN + "You left the party");
-                            } else{
-                                sender.sendMessage(ChatColor.RED + "You are not in a party");
-                            }
+                            currentParty.get().leave(player.getUniqueId());
+                            sender.sendMessage(ChatColor.GREEN + "You left the party");
                             break;
                         case "disband":
-                            if(currentParty.isPresent()) {
-                                if(currentParty.get().getLeader().equals(player.getUniqueId())) {
-                                    currentParty.get().disband();
-                                } else {
-                                    sender.sendMessage(ChatColor.RED + "You are not the party leader");
-                                }
-                            } else{
-                                sender.sendMessage(ChatColor.RED + "You are not in a party");
+                            if (currentParty.get().getLeader().equals(player.getUniqueId())) {
+                                currentParty.get().disband();
+                            } else {
+                                sender.sendMessage(ChatColor.RED + "You are not the party leader");
                             }
                             break;
                         case "list":
-                            if(currentParty.isPresent()) {
-                                sender.sendMessage(ChatColor.GREEN + currentParty.get().getList());
+                            sender.sendMessage(currentParty.get().getList());
+                            break;
+                        case "kick":
+                        case "remove":
+                            if (args.length > 1) {
+                                String playerToRemove = args[1];
+                                //TODO moderators
+                                if (currentParty.get().getLeader().equals(player.getUniqueId())) {
+                                    if (player.getName().equalsIgnoreCase(playerToRemove)) {
+                                        sender.sendMessage(ChatColor.RED + "You cannot remove yourself from the party!");
+                                    } else {
+                                        currentParty.get().remove(playerToRemove);
+                                    }
+                                } else {
+                                    sender.sendMessage(ChatColor.RED + "Insufficient Permissions!");
+                                }
+
                             } else {
-                                sender.sendMessage(ChatColor.RED + "You are not in a party");
+                                sender.sendMessage(ChatColor.RED + "Invalid Arguments!");
                             }
                             break;
                     }
@@ -79,6 +92,12 @@ public class PartyCommand implements CommandExecutor {
                 break;
             case "pl":
                 Bukkit.getServer().dispatchCommand(sender, "party list");
+                break;
+            case "partyclose":
+                Warlords.partyManager.getPartyFromAny(((Player) sender).getUniqueId()).ifPresent(party -> party.setOpen(false));
+                break;
+            case "partyopen":
+                Warlords.partyManager.getPartyFromAny(((Player) sender).getUniqueId()).ifPresent(party -> party.setOpen(true));
                 break;
         }
 
