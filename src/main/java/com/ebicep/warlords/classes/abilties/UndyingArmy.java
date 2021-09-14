@@ -76,9 +76,11 @@ public class UndyingArmy extends AbstractAbility {
                 .aliveTeammatesOf(wp)
         ) {
             tempUndyingArmy.getPlayersPopped().put(teammate.getUuid(), false);
-            wp.sendMessage("§a\u00BB§7 " + ChatColor.GRAY + "Your Undying Army is now protecting " + teammate.getColoredName() + ChatColor.GRAY + ".");
+            if(teammate != wp) {
+                wp.sendMessage("§a\u00BB§7 " + ChatColor.GRAY + "Your Undying Army is now protecting " + teammate.getColoredName() + ChatColor.GRAY + ".");
+                teammate.sendMessage("§a\u00BB§7 " + ChatColor.GRAY + wp.getName() + "'s Undying Army protects you for " + ChatColor.GOLD + duration + ChatColor.GRAY + " seconds.");
+            }
             teammate.getCooldownManager().addCooldown(name, UndyingArmy.this.getClass(), tempUndyingArmy, "ARMY", duration, wp, CooldownTypes.ABILITY);
-            teammate.sendMessage("§a\u00BB§7 " + ChatColor.GRAY + wp.getName() + "'s Undying Army protects you for " + ChatColor.GOLD + duration + ChatColor.GRAY + " seconds.");
             new BukkitRunnable() {
                 @Override
                 public void run() {
@@ -117,7 +119,8 @@ public class UndyingArmy extends AbstractAbility {
                 break;
             }
         }
-
+        //subtracting to remove self
+        numberOfPlayersWithArmy--;
         String allies = numberOfPlayersWithArmy == 1 ? "ally." : "allies.";
         wp.sendMessage("§a\u00BB§7 " + ChatColor.GRAY + "Your Undying Army is now protecting " + ChatColor.YELLOW + numberOfPlayersWithArmy + ChatColor.GRAY + " nearby " + allies);
 

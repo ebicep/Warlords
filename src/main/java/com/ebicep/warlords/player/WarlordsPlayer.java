@@ -618,12 +618,6 @@ public final class WarlordsPlayer {
                             totalReduction *= .4;
                         }
                     }
-
-                    for (Cooldown cooldown : cooldownManager.getCooldown("RES")) {
-                        totalReduction *= .95;
-                        break;
-                    }
-
                     //TODO maybe change to hypixel warlords where crippling effects hammer
                     if (!cooldownManager.getCooldown("Totem Crippling").isEmpty()) {
                         totalReduction *= .75;

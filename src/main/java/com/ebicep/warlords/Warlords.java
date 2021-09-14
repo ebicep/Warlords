@@ -22,6 +22,7 @@ import com.ebicep.warlords.powerups.EnergyPowerUp;
 import com.ebicep.warlords.util.*;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
+import com.google.common.base.Supplier;
 import org.bukkit.*;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
@@ -217,6 +218,7 @@ public class Warlords extends JavaPlugin {
                 .asyncFirst(DatabaseManager::connect)
                 .syncLast(input -> {
                     Bukkit.getOnlinePlayers().forEach(CustomScoreboard::giveMainLobbyScoreboard);
+                    new LeaderboardRanking();
                     LeaderboardRanking.addHologramLeaderboards();
                 })
                 .execute();
@@ -242,7 +244,6 @@ public class Warlords extends JavaPlugin {
                         }
                     }
                 });
-
 //        citizensEnabled = Bukkit.getPluginManager().isPluginEnabled("Citizens");
 //        npcCTFLocation = new LocationBuilder(Bukkit.getWorlds().get(0).getSpawnLocation())
 //                .add(Bukkit.getWorlds().get(0).getSpawnLocation().getDirection().multiply(12))
@@ -588,11 +589,6 @@ public class Warlords extends JavaPlugin {
                                 }
 
                                 warlordsPlayer.addHealth(orb.getOwner(), "Orbs of Life", maxHeal, maxHeal, -1, 100, false);
-                                //damage resistance
-                                if (warlordsPlayer.getCooldownManager().getCooldown(UndyingArmy.class).stream().anyMatch(cd -> !((UndyingArmy) cd.getCooldownObject()).isArmyDead(warlordsPlayer.getUuid()))) {
-                                    warlordsPlayer.getCooldownManager().removeCooldown("RES");
-                                    warlordsPlayer.getCooldownManager().addCooldown("Resistance", null, null, "RES", 3, orb.getOwner(), CooldownTypes.BUFF);
-                                }
 
                                 for (WarlordsPlayer nearPlayer : PlayerFilter
                                         .entitiesAround(warlordsPlayer, 7, 7, 7)
