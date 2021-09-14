@@ -6,6 +6,7 @@ import com.ebicep.warlords.classes.abilties.Soulbinding;
 import com.ebicep.warlords.classes.abilties.UndyingArmy;
 import com.ebicep.warlords.classes.shaman.specs.spiritguard.Spiritguard;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.LeaderboardRanking;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.flags.GroundFlagLocation;
 import com.ebicep.warlords.maps.flags.PlayerFlagLocation;
@@ -151,7 +152,9 @@ public class WarlordsEvents implements Listener {
         Player player = e.getPlayer();
         joinInteraction(player);
         Bukkit.getOnlinePlayers().forEach(p -> {
-            PacketUtils.sendTabHF(p, ChatColor.AQUA + "     Welcome to " + ChatColor.YELLOW + ChatColor.BOLD + "Warlords 2.0     ", ChatColor.GREEN + "Players Online: " + ChatColor.GRAY + Bukkit.getOnlinePlayers().size());
+            PacketUtils.sendTabHF(p,
+                    ChatColor.AQUA + "     Welcome to " + ChatColor.YELLOW + ChatColor.BOLD + "Warlords 2.0     ",
+                    ChatColor.GREEN + "Players Online: " + ChatColor.GRAY + Bukkit.getOnlinePlayers().size());
         });
 
         //hiding players that arent in the game
@@ -162,6 +165,8 @@ public class WarlordsEvents implements Listener {
                 }
             }));
         }
+        //sending self leaderboard to player
+        LeaderboardRanking.addPlayerLeaderboards(player);
     }
 
     @EventHandler

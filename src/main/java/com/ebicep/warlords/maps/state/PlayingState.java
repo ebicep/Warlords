@@ -215,7 +215,7 @@ public class PlayingState implements State, TimerDebugAble {
         }
         int redPoints = getStats(Team.RED).points;
         int bluePoints = getStats(Team.BLUE).points;
-        if (redPoints >= this.pointLimit || bluePoints >= this.pointLimit || (Math.abs(redPoints - bluePoints) > MERCY_LIMIT && this.timer < game.getMap().getGameTimerInTicks() - 20 * 60 * 5)) {
+        if (redPoints >= this.pointLimit || bluePoints >= this.pointLimit || (Math.abs(redPoints - bluePoints) >= MERCY_LIMIT && this.timer < game.getMap().getGameTimerInTicks() - 20 * 60 * 5)) {
             return nextStateByPoints();
         }
         if (gateTimer >= 0) {

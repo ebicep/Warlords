@@ -217,6 +217,7 @@ public class Warlords extends JavaPlugin {
                 .asyncFirst(DatabaseManager::connect)
                 .syncLast(input -> {
                     Bukkit.getOnlinePlayers().forEach(CustomScoreboard::giveMainLobbyScoreboard);
+                    new LeaderboardRanking();
                     LeaderboardRanking.addHologramLeaderboards();
                 })
                 .execute();
