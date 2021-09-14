@@ -73,9 +73,9 @@ public class Party {
             stringBuilder.append(ChatColor.YELLOW + "Party Members: " + ChatColor.AQUA);
         }
         members.forEach((uuid, aBoolean) -> {
-            //if(uuid != leader) {
+            if(uuid != leader) {
                 stringBuilder.append(ChatColor.AQUA).append(Bukkit.getOfflinePlayer(uuid).getName()).append(aBoolean ? ChatColor.GREEN : ChatColor.RED).append(" ● ");
-            //}
+            }
         });
         stringBuilder.append(ChatColor.BLUE + "\n-----------------------------");
         return stringBuilder.toString();
