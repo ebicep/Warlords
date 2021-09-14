@@ -89,13 +89,12 @@ public class HealingTotem extends AbstractTotemBase {
                             particleLoc.setY(totemLoc.getY() + i / 2D);
                             particleLoc.setZ(totemLoc.getZ() + Math.cos(angle) * width);
 
-                            ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(0, 255, 40), particleLoc, 500);
                             ParticleEffect.FIREWORKS_SPARK.display(0, 0, 0, 0, 1, particleLoc, 500);
                         }
                     }
 
                     CircleEffect circle = new CircleEffect(wp.getGame(), wp.getTeam(), totemStand.getLocation().add(0, 1, 0), radius);
-                    circle.addEffect(new CircumferenceEffect(ParticleEffect.VILLAGER_HAPPY, ParticleEffect.REDSTONE).particlesPerCircumference(2));
+                    circle.addEffect(new CircumferenceEffect(ParticleEffect.VILLAGER_HAPPY, ParticleEffect.REDSTONE).particlesPerCircumference(1.5));
                     circle.playEffects();
 
                     //1
@@ -121,22 +120,9 @@ public class HealingTotem extends AbstractTotemBase {
                 } else {
                     for (Player player1 : player.getWorld().getPlayers()) {
                         player1.playSound(totemStand.getLocation(), Sound.BLAZE_DEATH, 1.2f, 0.7f);
+                        player1.playSound(totemStand.getLocation(), "shaman.heal.impact", 2, 1f);
                     }
-
-                    new FallingBlockWaveEffect(totemStand.getLocation().clone().add(0, 1, 0), radius, 1.2, Material.SAPLING, (byte) 1).play();
-
-                    PlayerFilter.entitiesAround(totemStand, radius, radius, radius)
-                            .aliveTeammatesOf(wp)
-                            .forEach((nearPlayer) -> {
-                                nearPlayer.addHealth(
-                                        wp,
-                                        name,
-                                        maxDamageHeal,
-                                        maxDamageHeal * 1.354f,
-                                        critChance,
-                                        critMultiplier,
-                                        false);
-                            });
+                    new FallingBlockWaveEffect(totemStand.getLocation().clone().add(0, 1, 0), 2, 0.8, Material.SAPLING, (byte) 1).play();
 
                     totemStand.remove();
                     this.cancel();

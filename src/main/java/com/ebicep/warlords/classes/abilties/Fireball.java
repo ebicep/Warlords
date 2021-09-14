@@ -47,9 +47,9 @@ public class Fireball extends AbstractProjectileBase {
             player1.playSound(currentLocation, "mage.fireball.impact", 2, 1);
         }
 
-        double distanceSquared = currentLocation.distanceSquared(startingLocation);
+        double distanceSquared = startingLocation.distanceSquared(currentLocation);
         double toReduceBy = MAX_FULL_DAMAGE_DISTANCE * MAX_FULL_DAMAGE_DISTANCE > distanceSquared ? 1 : 
-            1 - (Math.sqrt(distanceSquared) - MAX_FULL_DAMAGE_DISTANCE) / 85.;
+            1 - (Math.sqrt(distanceSquared) - MAX_FULL_DAMAGE_DISTANCE) / 70;
         if (toReduceBy < 0) toReduceBy = 0;
         if (victim != null) {
             victim.addHealth(
