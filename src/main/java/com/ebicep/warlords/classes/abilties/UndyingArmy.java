@@ -46,14 +46,14 @@ public class UndyingArmy extends AbstractAbility {
     }
 
     public UndyingArmy() {
-        super("Undying Army", 0, 0, 62.64f, 20, 0, 0);
+        super("Undying Army", 0, 0, 62.64f, 40, 0, 0);
     }
 
     @Override
     public void updateDescription(Player player) {
         description = "§7You may chain up to §e5 §7allies in a §e" + radius + "\n" +
                 "§7block radius to heal them for §a100 §7+\n" +
-                "§7§a8% §7of their missing health every 2 seconds.\n" +
+                "§7§a7% §7of their missing health every 2 seconds.\n" +
                 "Lasts §6" + duration + " §7seconds." +
                 "\n\n" +
                 "§7Chained allies that take fatal damage\n" +
@@ -82,7 +82,7 @@ public class UndyingArmy extends AbstractAbility {
                 public void run() {
                     if (teammate.getCooldownManager().getCooldown(tempUndyingArmy).isPresent()) {
                         if (!((UndyingArmy) teammate.getCooldownManager().getCooldown(tempUndyingArmy).get().getCooldownObject()).isArmyDead(teammate.getUuid())) {
-                            float healAmount = 100 + (teammate.getMaxHealth() - teammate.getHealth()) / 12f;
+                            float healAmount = 100 + (teammate.getMaxHealth() - teammate.getHealth()) / 14f;
                             teammate.addHealth(wp, name, healAmount, healAmount, -1, 100, false);
                             player.playSound(teammate.getLocation(), "paladin.holyradiance.activation", 0.25f, 0.8f);
 

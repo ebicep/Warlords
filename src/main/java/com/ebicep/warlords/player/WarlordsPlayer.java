@@ -974,7 +974,7 @@ public final class WarlordsPlayer {
 
                         ((Earthliving) attacker.getSpec().getPurple()).setFirstProc(false);
                         for (WarlordsPlayer nearPlayer : PlayerFilter
-                                .entitiesAround(attacker, 3, 3, 3)
+                                .entitiesAround(attacker, 6, 6, 6)
                                 .aliveTeammatesOfExcludingSelf(attacker)
                                 .limit(2)
                         ) {
@@ -987,7 +987,7 @@ public final class WarlordsPlayer {
                             p.playSound(getLocation(), "shaman.earthlivingweapon.impact", 1, 1);
                         });
 
-                        for (WarlordsPlayer nearPlayer : PlayerFilter.entitiesAround(attacker, 4, 4, 4)
+                        for (WarlordsPlayer nearPlayer : PlayerFilter.entitiesAround(attacker, 6, 6, 6)
                                 .aliveTeammatesOfExcludingSelf(attacker)
                                 .limit(2)
                         ) {
