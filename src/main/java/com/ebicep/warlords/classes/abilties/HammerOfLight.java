@@ -20,7 +20,7 @@ import java.util.List;
 
 public class HammerOfLight extends AbstractAbility {
 
-    private final static int radius = 7;
+    private final static int radius = 6;
     private final int duration = 8;
 
     public HammerOfLight() {
@@ -41,7 +41,7 @@ public class HammerOfLight extends AbstractAbility {
                 "§7Lasts §6" + duration + " §7seconds." +
                 "\n\n" +
                 "§7Each enemy standing in your hammer increases\n" +
-                "§7your overall healing and damage by §f3%" +
+                "§7your overall healing and damage by §f3%\n" +
                 "§7(max 12%)";
     }
 
