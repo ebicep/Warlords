@@ -576,16 +576,17 @@ public class Warlords extends JavaPlugin {
                                 }
                                 //BASE                           = 240 - 360
                                 //BASE + WEAP BOOST              = 288 - 432 (x1.2)
-                                //BASE + TIME LIVED              = 360 - 540 (x1.5 = 6.5 seconds)
-                                //BASE + WEAP BOOST + TIME LIVED = 432 - 648 (x1.8 = x1.2 * x1.5)
+                                //BASE + TIME LIVED              = 300 - 450 (x1.25 = 6.5 seconds)
+                                //BASE + WEAP BOOST + TIME LIVED = 360 - 540 (x1.5 = x1.2 * x1.25)
 
-                                //increasing heal for low long orb lived for (up to +50%)
-                                //6.5 seconds = 1 + (130/260) = 1.5
-                                //432 *= 1.5 = 648
-                                //288 *= 1.5 = 432
+                                //increasing heal for low long orb lived for (up to +25%)
+                                //6.5 seconds = 130 ticks
+                                //6.5 seconds = 1 + (130/520) = 1.25
+                                //432 *= 1.25 = 540
+                                //288 *= 1.25 = 360
                                 if (orb.getPlayerToMoveTowards() == null) {
-                                    minHeal *= 1 + orb.getTicksLived() / 260f;
-                                    maxHeal *= 1 + orb.getTicksLived() / 260f;
+                                    minHeal *= 1 + orb.getTicksLived() / 520f;
+                                    maxHeal *= 1 + orb.getTicksLived() / 520f;
                                 }
 
                                 warlordsPlayer.addHealth(orb.getOwner(), "Orbs of Life", maxHeal, maxHeal, -1, 100, false);

@@ -32,7 +32,7 @@ import java.util.Random;
 public class OrbsOfLife extends AbstractAbility {
 
     public static final double SPAWN_RADIUS = 1.15;
-    private List<Orb> spawnedOrbs = new ArrayList<>();
+    private final List<Orb> spawnedOrbs = new ArrayList<>();
 
     private final int duration = 14;
     private final int floatingOrbRadius = 20;
