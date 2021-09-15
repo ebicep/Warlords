@@ -1,6 +1,7 @@
-package com.ebicep.warlords.commands;
+package com.ebicep.warlords.commands.debugcommands;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.commands.BaseCommand;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.state.TimerDebugAble;
 import com.ebicep.warlords.menu.DebugMenu;
@@ -42,7 +43,9 @@ public class DebugCommand implements CommandExecutor {
                 args[0].equals("cooldown") ||
                 args[0].equals("damage") ||
                 args[0].equals("takedamage") ||
-                args[0].equals("heal")) {
+                args[0].equals("heal") ||
+                args[0].equals("crits")
+        ) {
             if (args.length == 3 && args[2] != null) {
                 player = Warlords.getPlayer(Bukkit.getPlayer(args[2]).getUniqueId());
             }
@@ -187,9 +190,29 @@ public class DebugCommand implements CommandExecutor {
                 }
             }
 
+            case "crits":
+                if (args.length < 2) {
+                    sender.sendMessage("§cCrits requires 2 or more arguments, valid arguments: [disable, enable]");
+                    return true;
+                }
+
+                switch (args[1]) {
+                    case "disable":
+                        player.setCanCrit(false);
+                        sender.sendMessage(ChatColor.RED + "§cDEV: " + player.getColoredName() + "'s §aCrits has been disabled!");
+                        return true;
+                    case "enable":
+                        player.setCanCrit(true);
+                        sender.sendMessage(ChatColor.RED + "§cDEV: " + player.getColoredName() + "'s §aCrits has been enabled!");
+                        return true;
+                    default:
+                        sender.sendMessage("§cInvalid option!");
+                        return false;
+                }
+
             case "freeze": {
                 if (player != null) {
-                    if(player.getGame().isGameFreeze()) {
+                    if (player.getGame().isGameFreeze()) {
                         //unfreeze
                         WarlordsPlayer finalPlayer = player;
                         finalPlayer.getGame().forEachOnlinePlayer((p, team) -> {
@@ -198,15 +221,16 @@ public class DebugCommand implements CommandExecutor {
                         });
                         new BukkitRunnable() {
                             int counter = 0;
+
                             @Override
                             public void run() {
                                 if (counter >= 5) {
                                     finalPlayer.getGame().setGameFreeze(false);
                                     finalPlayer.getGame().forEachOnlinePlayer((p, team) -> {
-                                        if(p.getVehicle() != null && p.getVehicle() instanceof Horse) {
+                                        if (p.getVehicle() != null && p.getVehicle() instanceof Horse) {
                                             ((EntityLiving) ((CraftEntity) p.getVehicle()).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(.314);
                                         }
-                                        PacketUtils.sendTitle(p, "","", 0, 0, 0);
+                                        PacketUtils.sendTitle(p, "", "", 0, 0, 0);
                                     });
                                     this.cancel();
                                 } else {
@@ -226,7 +250,7 @@ public class DebugCommand implements CommandExecutor {
                                 ((EntityLiving) ((CraftEntity) p.getVehicle()).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0);
                             }
                             p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 9999999, 100000));
-                            PacketUtils.sendTitle(p, ChatColor.RED + "Game Paused","", 0, 9999999, 0);
+                            PacketUtils.sendTitle(p, ChatColor.RED + "Game Paused", "", 0, 9999999, 0);
                         });
                     }
                 }

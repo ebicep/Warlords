@@ -117,7 +117,8 @@ public class DebugMenu {
                 new ItemBuilder(Material.DIAMOND_CHESTPLATE)
                         .name(ChatColor.GREEN + "Damage")
                         .get(),
-                new ItemBuilder(Material.AIR)
+                new ItemBuilder(Material.RABBIT_FOOT)
+                        .name(ChatColor.GREEN + "Crits")
                         .get(),
                 new ItemBuilder(Material.AIR)
                         .get(),
@@ -168,6 +169,9 @@ public class DebugMenu {
                                     break;
                                 case 3:
                                     Bukkit.getServer().dispatchCommand(player, "wl damage " + (target.isTakeDamage() ? "disable" : "enable") + " " + targetName);
+                                    break;
+                                case 4:
+                                    Bukkit.getServer().dispatchCommand(player, "wl crits " + (target.isCanCrit() ? "disable" : "enable") + " " + targetName);
                                     break;
                                 case 6:
                                     Bukkit.getServer().dispatchCommand(player, "kill " + targetName);

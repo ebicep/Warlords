@@ -1,4 +1,4 @@
-package com.ebicep.warlords.commands;
+package com.ebicep.warlords.party;
 
 import com.ebicep.warlords.Warlords;
 import org.bukkit.Bukkit;

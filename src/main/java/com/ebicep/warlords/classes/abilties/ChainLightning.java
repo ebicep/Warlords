@@ -22,10 +22,21 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
-public class ChainLightning extends AbstractChainBase {
+public class ChainLightning extends AbstractChainBase implements Comparable<ChainLightning>{
+
+    private int damageReduction = 0;
+
+    public int getDamageReduction() {
+        return damageReduction;
+    }
 
     public ChainLightning() {
         super("Chain Lightning", -294, -575, 9.4f, 40, 20, 175);
+    }
+
+    public ChainLightning(int damageReduction) {
+        super("Chain Lightning", -294, -575, 9.4f, 40, 20, 175);
+        this.damageReduction = damageReduction;
     }
 
     @Override
@@ -48,7 +59,7 @@ public class ChainLightning extends AbstractChainBase {
 
     @Override
     protected void onHit(WarlordsPlayer warlordsPlayer, Player player, int hitCounter) {
-        warlordsPlayer.getCooldownManager().addCooldown(name, this.getClass(), new ChainLightning(), "CHAIN(" + hitCounter + ")", 4, warlordsPlayer, CooldownTypes.BUFF);
+        warlordsPlayer.getCooldownManager().addCooldown(name, this.getClass(), new ChainLightning(hitCounter), "CHAIN", 4, warlordsPlayer, CooldownTypes.BUFF);
         warlordsPlayer.getSpec().getRed().setCurrentCooldown((float) (cooldown * warlordsPlayer.getCooldownModifier()));
 
         player.playSound(player.getLocation(), "shaman.chainlightning.impact", 2, 1);
@@ -161,5 +172,10 @@ public class ChainLightning extends AbstractChainBase {
             }
         }
         return null;
+    }
+
+    @Override
+    public int compareTo(ChainLightning chainLightning) {
+        return Integer.compare(this.damageReduction, chainLightning.damageReduction);
     }
 }

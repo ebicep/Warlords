@@ -44,3 +44,6 @@ commands:
   stream:
     description: Creates a new party where anyone can join
     usage: /stream
+  recordaveragedamage:
+    description: Prints average damage taken
+    usage: /recordaveragedamage

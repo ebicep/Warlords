@@ -1,4 +1,4 @@
-package com.ebicep.warlords.commands;
+package com.ebicep.warlords.commands.debugcommands;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;

@@ -39,6 +39,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public final class WarlordsPlayer {
@@ -74,6 +75,9 @@ public final class WarlordsPlayer {
     private double energyModifier;
     private double cooldownModifier;
     private boolean takeDamage = true;
+    private boolean canCrit = true;
+
+    private List<Float> recordDamage = new ArrayList<>();
 
     private final int[] kills = new int[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
     private final int[] assists = new int[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
@@ -573,12 +577,12 @@ public final class WarlordsPlayer {
             float damageHealValue = (int) ((Math.random() * (max - min)) + min);
             int crit = (int) ((Math.random() * (100)));
             boolean isCrit = false;
-            if (crit <= critChance) {
+            if (crit <= critChance && attacker.canCrit) {
                 isCrit = true;
                 damageHealValue *= critMultiplier / 100f;
             }
 
-            if(!ignoreReduction) {
+            if (!ignoreReduction) {
                 // Flag carriers take more damage
                 damageHealValue *= damageHealValue > 0 || flagDamageMultiplier == 0 ? 1 : flagDamageMultiplier;
 
@@ -607,11 +611,11 @@ public final class WarlordsPlayer {
                         totalReduction *= .5;
                     }
 
-                    for (Cooldown cooldown : cooldownManager.getCooldown(ChainLightning.class)) {
-                        String chainName = cooldown.getActionBarName();
-                        totalReduction *= 1 - Integer.parseInt(chainName.charAt(chainName.indexOf("(") + 1) + "") * .1;
+                    if (!cooldownManager.getCooldown(ChainLightning.class).isEmpty()) {
+                        totalReduction *= 1 - (Collections.max(cooldownManager.getCooldown(ChainLightning.class).stream()
+                                .map(cd -> ((ChainLightning) cd.getCooldownObject()).getDamageReduction())
+                                .collect(Collectors.toList())) * .1);
                     }
-
                     for (Cooldown cooldown : cooldownManager.getCooldown(SpiritLink.class)) {
                         totalReduction *= .8;
                     }
@@ -880,7 +884,7 @@ public final class WarlordsPlayer {
 
                 // adding/subtracing health
                 //debt and healing
-                if (!(debt && damageHealValue < 0) && takeDamage) {
+                if (!debt && takeDamage) {
                     this.health += Math.round(damageHealValue);
                 }
                 if (damageHealValue < 0) {
@@ -889,6 +893,7 @@ public final class WarlordsPlayer {
                     for (Player player1 : attacker.getWorld().getPlayers()) {
                         player1.playSound(entity.getLocation(), Sound.HURT_FLESH, 1, 1);
                     }
+                    recordDamage.add(-damageHealValue);
                 }
                 if (this.health <= 0 && !cooldownManager.checkUndyingArmy(false)) {
                     if (attacker.entity instanceof Player) {
@@ -1595,6 +1600,14 @@ public final class WarlordsPlayer {
         this.takeDamage = takeDamage;
     }
 
+    public boolean isCanCrit() {
+        return canCrit;
+    }
+
+    public void setCanCrit(boolean canCrit) {
+        this.canCrit = canCrit;
+    }
+
     public int getBlocksTravelledCM() {
         return blocksTravelledCM;
     }
@@ -1605,5 +1618,9 @@ public final class WarlordsPlayer {
 
     public float getWalkspeed() {
         return walkspeed;
+    }
+
+    public List<Float> getRecordDamage() {
+        return recordDamage;
     }
 }

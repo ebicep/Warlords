@@ -1,4 +1,4 @@
-package com.ebicep.warlords.commands;
+package com.ebicep.warlords.commands.debugcommands;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

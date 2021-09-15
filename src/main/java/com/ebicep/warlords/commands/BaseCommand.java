@@ -30,7 +30,7 @@ import static com.ebicep.warlords.menu.GameMenu.openMainMenu;
 public class BaseCommand {
 
     @Nullable
-    static Player requirePlayerOutsideGame(@Nonnull CommandSender sender) {
+    public static Player requirePlayerOutsideGame(@Nonnull CommandSender sender) {
         if (!(sender instanceof Player)) {
             sender.sendMessage(ChatColor.RED + "This command requires a player!");
             return null;
@@ -43,7 +43,7 @@ public class BaseCommand {
     }
 
     @Nullable
-    static Player requirePlayer(@Nonnull CommandSender sender) {
+    public static Player requirePlayer(@Nonnull CommandSender sender) {
         if (!(sender instanceof Player)) {
             sender.sendMessage(ChatColor.RED + "This command requires a player!");
             return null;
@@ -52,7 +52,7 @@ public class BaseCommand {
     }
 
     @Nullable
-    static WarlordsPlayer requireWarlordsPlayer(@Nonnull CommandSender sender) {
+    public static WarlordsPlayer requireWarlordsPlayer(@Nonnull CommandSender sender) {
         if (!(sender instanceof Player)) {
             sender.sendMessage(ChatColor.RED + "This command requires a player!");
             return null;
