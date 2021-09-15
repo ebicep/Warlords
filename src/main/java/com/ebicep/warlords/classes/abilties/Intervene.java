@@ -39,6 +39,7 @@ public class Intervene extends AbstractAbility {
         setDamagePrevented(0);
         PlayerFilter.entitiesAround(wp, 10, 10, 10)
                 .aliveTeammatesOfExcludingSelf(wp)
+                .requireLineOfSightIntervene(wp)
                 .lookingAtFirst(wp)
                 .first((nearWarlordsPlayer) -> {
                     //green line thingy
