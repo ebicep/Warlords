@@ -93,7 +93,7 @@ public class RecklessCharge extends AbstractAbility {
                 //cancel charge if hit a block, making the player stand still
                 if (player.getLocation().distanceSquared(chargeLocation) > finalChargeDistance * finalChargeDistance ||
                         (player.getVelocity().getX() == 0 && player.getVelocity().getZ() == 0)) {
-//                    runnable.cancel();
+//                   runnable.cancel();
                     player.setVelocity(new Vector(0, 0, 0));
                     this.cancel();
                 }
