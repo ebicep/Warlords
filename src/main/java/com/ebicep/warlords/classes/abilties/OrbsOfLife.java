@@ -195,17 +195,14 @@ public class OrbsOfLife extends AbstractAbility {
             orbStand.setVisible(false);
             orbStand.setGravity(true);
             orbStand.setPassenger(spawn(location).getBukkitEntity());
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    for (WarlordsPlayer player : PlayerFilter.playingGame(owner.getGame()).enemiesOf(owner)) {
-                        if (player.getEntity() instanceof Player) {
-                            ((CraftPlayer) player.getEntity()).getHandle().playerConnection.sendPacket(new PacketPlayOutEntityDestroy(getId()));
-                        }
-                    }
+            for (WarlordsPlayer player : PlayerFilter.playingGame(owner.getGame()).enemiesOf(owner)) {
+                if (player.getEntity() instanceof Player) {
+                    ((CraftPlayer) player.getEntity()).getHandle().playerConnection.sendPacket(new PacketPlayOutEntityDestroy(getId()));
                 }
-            }.runTaskLater(Warlords.getInstance(), 0);
+            }
             this.armorStand = orbStand;
+            //spawn ding
+            ((Player) owner.getEntity()).playSound(owner.getLocation(), Sound.ORB_PICKUP, 1, 1);
             new BukkitRunnable() {
 
                 @Override

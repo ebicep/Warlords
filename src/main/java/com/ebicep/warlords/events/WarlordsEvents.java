@@ -139,7 +139,9 @@ public class WarlordsEvents implements Listener {
         }.runTaskAsynchronously(Warlords.getInstance());
         WarlordsPlayer wp = Warlords.getPlayer(e.getPlayer());
         if (wp != null) {
-            e.getPlayer().setAllowFlight(false);
+            if(wp.isAlive()) {
+                e.getPlayer().setAllowFlight(false);
+            }
             e.setJoinMessage(ChatColor.GREEN + "-----------------------------------\n" +
                     wp.getColoredNameBold() + ChatColor.GOLD + ChatColor.BOLD + " rejoined the game!\n" +
                     ChatColor.GREEN + "-----------------------------------");
@@ -398,7 +400,11 @@ public class WarlordsEvents implements Listener {
                 e.getEntity().teleport(Warlords.getRejoinPoint(e.getEntity().getUniqueId()));
                 WarlordsPlayer wp = Warlords.getPlayer(e.getEntity());
                 if (wp != null) {
-                    wp.addHealth(wp, "Fall", -1000000, -1000000, -1, 100, false);
+                    if(wp.isDeath()) {
+                        wp.getEntity().teleport(wp.getLocation().clone().add(0, 100, 0));
+                    } else {
+                        wp.addHealth(wp, "Fall", -1000000, -1000000, -1, 100, false);
+                    }
                 }
             } else if (e.getCause() == EntityDamageEvent.DamageCause.FALL) {
                 //HEIGHT - DAMAGE

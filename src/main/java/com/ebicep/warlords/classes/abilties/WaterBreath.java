@@ -32,7 +32,9 @@ public class WaterBreath extends AbstractAbility {
         wp.subtractEnergy(energyCost);
         wp.getCooldownManager().removeDebuffCooldowns();
         wp.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
-        Vector viewDirection = player.getLocation().getDirection();
+        Location location = player.getEyeLocation();
+        location.setPitch(0);
+        Vector viewDirection = location.getDirection();
         PlayerFilter.entitiesAround(player, 8.0, 5.5, 8.0)
                 .forEach(target -> {
                     Vector direction = target.getLocation().subtract(player.getLocation()).toVector().normalize();
@@ -41,9 +43,6 @@ public class WaterBreath extends AbstractAbility {
                             target.getCooldownManager().removeDebuffCooldowns();
                             target.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
                         } else {
-                            Location eye = player.getEyeLocation();
-                            eye.setY(eye.getY() + .7);
-
                             final Location loc = target.getLocation();
                             final Vector v = player.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1).setY(0.3);
 
@@ -67,7 +66,7 @@ public class WaterBreath extends AbstractAbility {
             }
 
             int animationTimer = 0;
-            final Matrix4d center = new Matrix4d(player.getEyeLocation());
+            final Matrix4d center = new Matrix4d(location);
 
             public void playEffect() {
 

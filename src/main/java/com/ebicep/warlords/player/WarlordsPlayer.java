@@ -921,7 +921,7 @@ public final class WarlordsPlayer {
                     }
                 } else {
                     if (!ability.isEmpty() &&
-                            (this != attacker || ability.equals("Water Bolt")) &&
+                            (this != attacker || ability.equals("Water Bolt") || ability.equals("Orbs of Life")) &&
                             damageHealValue != 0 &&
                             !ability.equals("Intervene")
                     ) {

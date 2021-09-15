@@ -38,3 +38,9 @@ commands:
   spawntestdummy:
     description: Spawns Test Dummy
     usage: /spawntestdummy [TEAM] [TAKE DAMAGE (TRUE/FALSE) ]
+  party:
+    description: Party options
+    aliases: [party, p, pl, partyclose, partyopen]
+  stream:
+    description: Creates a new party where anyone can join
+    usage: /stream

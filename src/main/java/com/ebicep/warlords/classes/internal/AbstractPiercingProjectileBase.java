@@ -183,7 +183,7 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
         BlockIterator itr = new BlockIterator(currentLocation.getWorld(), new Vector(before.a, before.b, before.c), speed, 0, (int) (projectileSpeed + 1));
         while (itr.hasNext()) {
             Block block = itr.next();
-            if (block.getType().isSolid() && block.getType() != Material.BARRIER) {
+            if (block.getType().isSolid() && block.getType() != Material.BARRIER && block.getType() != Material.STANDING_BANNER) {
                 BlockPosition pos = new BlockPosition(block.getX(), block.getY(), block.getZ());
                 WorldServer world = ((CraftWorld) block.getWorld()).getHandle();
                 IBlockData type = world.getType(pos);

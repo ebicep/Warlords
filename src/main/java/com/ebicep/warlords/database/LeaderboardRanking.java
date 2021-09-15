@@ -104,7 +104,6 @@ public class LeaderboardRanking {
                 }
                 hologram.getVisibilityManager().showTo(player);
                 hologram.getVisibilityManager().setVisibleByDefault(false);
-
             }
         });
     }

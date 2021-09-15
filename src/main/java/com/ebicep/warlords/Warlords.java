@@ -17,6 +17,7 @@ import com.ebicep.warlords.database.LeaderboardRanking;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.menu.MenuEventListener;
+import com.ebicep.warlords.party.*;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.powerups.EnergyPowerUp;
 import com.ebicep.warlords.util.*;
@@ -184,6 +185,8 @@ public class Warlords extends JavaPlugin {
 
     private static final int SPAWN_PROTECTION_RADIUS = 5;
 
+    public static final PartyManager partyManager = new PartyManager();
+
     @Override
     public void onEnable() {
         instance = this;
@@ -193,6 +196,7 @@ public class Warlords extends JavaPlugin {
         ConfigurationSerialization.registerClass(PlayerSettings.class);
         getServer().getPluginManager().registerEvents(new WarlordsEvents(), this);
         getServer().getPluginManager().registerEvents(new MenuEventListener(this), this);
+        getServer().getPluginManager().registerEvents(new PartyListener(), this);
         //getServer().getPluginManager().registerEvents(new NPCEvents(), this);
 
         new StartCommand().register(this);
@@ -206,6 +210,8 @@ public class Warlords extends JavaPlugin {
         new TestCommand().register(this);
         new ParticleQualityCommand().register(this);
         new SpawnTestDummyCommand().register(this);
+        new PartyCommand().register(this);
+        new StreamCommand().register(this);
 
         updateHeads();
 

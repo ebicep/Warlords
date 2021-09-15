@@ -6,6 +6,7 @@ import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.GameMap;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.state.PreLobbyState;
+import com.ebicep.warlords.party.Party;
 import com.ebicep.warlords.player.ArmorManager;
 import com.ebicep.warlords.util.ItemBuilder;
 import org.bukkit.Bukkit;
@@ -64,8 +65,27 @@ public class StartCommand implements TabExecutor {
             sender.sendMessage(ChatColor.RED + "The map '" + game.getMap().getMapName() + "' requires " + game.getMap().getMinPlayers() + " players to start");
             return true;
         }
+        List<Player> people;
+        Optional<Party> party = Warlords.partyManager.getPartyFromLeader(((Player) sender).getUniqueId());
+        people = party.map(value -> new ArrayList<>(value.getAllPartyPeoplePlayerOnline())).orElseGet(() -> new ArrayList<>(online));
+        if (party.isPresent()) {
+            if (!party.get().allOnline()) {
+                sender.sendMessage(ChatColor.RED + "All party members must be online");
+                return true;
+            } else {
+                //hiding players not in party
+                List<Player> playersNotInParty = Bukkit.getOnlinePlayers().stream()
+                        .filter(onlinePlayer -> !party.get().getAllPartyPeople().contains(onlinePlayer.getUniqueId()))
+                        .collect(Collectors.toList());
+                Bukkit.getOnlinePlayers().stream()
+                        .filter(onlinePlayer -> party.get().getAllPartyPeople().contains(onlinePlayer.getUniqueId()))
+                        .forEach(playerInParty -> playersNotInParty.forEach(playerNotInParty -> {
+                            playerInParty.hidePlayer(playerNotInParty);
+                        }));
 
-        List<Player> people = new ArrayList<>(online);
+
+            }
+        }
         //Collections.shuffle(people);
         boolean teamBlueAssessment = true;
         for (Player player : people) {
