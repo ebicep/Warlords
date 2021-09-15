@@ -16,7 +16,7 @@ import org.bukkit.util.EulerAngle;
 public class DamageHealCircle {
     private final WarlordsPlayer warlordsPlayer;
     private Location location;
-    private int radius;
+    private float radius;
     private int duration;
     private float minDamage;
     private float maxDamage;
@@ -26,7 +26,7 @@ public class DamageHealCircle {
     private ArmorStand hammer;
     private final CircleEffect circle;
 
-    public DamageHealCircle(WarlordsPlayer wp, Location location, int radius, int duration, float minDamage, float maxDamage, int critChance, int critMultiplier, String name) {
+    public DamageHealCircle(WarlordsPlayer wp, Location location, float radius, int duration, float minDamage, float maxDamage, int critChance, int critMultiplier, String name) {
         this.warlordsPlayer = wp;
         this.location = location;
         this.radius = radius;
@@ -91,11 +91,11 @@ public class DamageHealCircle {
         circle.setCenter(location);
     }
 
-    public int getRadius() {
+    public float getRadius() {
         return radius;
     }
 
-    public void setRadius(int radius) {
+    public void setRadius(float radius) {
         this.radius = radius;
     }
 

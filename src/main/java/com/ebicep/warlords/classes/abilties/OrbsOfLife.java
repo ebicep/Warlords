@@ -11,6 +11,7 @@ import net.minecraft.server.v1_8_R3.PacketPlayOutEntityDestroy;
 import net.minecraft.server.v1_8_R3.World;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.ArmorStand;
@@ -131,6 +132,8 @@ public class OrbsOfLife extends AbstractAbility {
                 }
             }.runTaskLater(Warlords.getInstance(), 1);
             this.armorStand = orbStand;
+            //spawn ding
+            ((Player) owner.getEntity()).playSound(owner.getLocation(), Sound.ORB_PICKUP, 1, 1);
         }
 
         // Makes it so they cannot be picked up
