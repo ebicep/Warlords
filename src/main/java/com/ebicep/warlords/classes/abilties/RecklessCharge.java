@@ -110,7 +110,9 @@ public class RecklessCharge extends AbstractAbility {
                                     timer++;
                                 }
                             }.runTaskTimer(Warlords.getInstance(), 0, 0);
-                            PacketUtils.sendTitle((Player) enemy.getEntity(), "", "§dIMMOBILIZED", 0, 10, 0);
+                            if(enemy.getEntity() instanceof Player) {
+                                PacketUtils.sendTitle((Player) enemy.getEntity(), "", "§dIMMOBILIZED", 0, 10, 0);
+                            }
                         });
                 maxChargeDuration--;
             }
