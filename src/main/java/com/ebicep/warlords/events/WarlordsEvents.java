@@ -492,6 +492,9 @@ public class WarlordsEvents implements Listener {
                             e.getRecipients().retainAll(Warlords.partyManager.getPartyFromAny(uuid).get().getAllPartyPeoplePlayerOnline());
                         } else {
                             player.sendMessage(ChatColor.RED + "You are not in a party and were moved to the ALL channel.");
+                            Warlords.playerChatChannels.put(uuid, ChatChannels.ALL);
+                            e.setCancelled(true);
+                            return null;
                         }
                         break;
                 }

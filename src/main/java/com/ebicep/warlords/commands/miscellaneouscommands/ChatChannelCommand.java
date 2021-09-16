@@ -46,18 +46,42 @@ public class ChatChannelCommand implements CommandExecutor {
                 }
                 break;
             case "achat":
-            case "ac": {
-//                ChatChannels previousChannel = Warlords.playerChatChannels.get(uuid);
-//                Warlords.playerChatChannels.put(uuid, ChatChannels.ALL);
-//                Warlords.playerChatChannels.put(uuid, previousChannel);
-                return true;
-            }
+            case "ac":
             case "pchat":
             case "pc": {
-//                ChatChannels previousChannel = Warlords.playerChatChannels.get(uuid);
-//                Warlords.playerChatChannels.put(uuid, ChatChannels.PARTY);
-//                player.chat("hehehehehe");
-//                Warlords.playerChatChannels.put(uuid, previousChannel);
+                String input = "";
+                for (int i = 0; i < args.length; i++) {
+                    input += args[i] + " ";
+                }
+                if(!input.isEmpty()) {
+                    AsyncPlayerChatEvent event = new AsyncPlayerChatEvent(true, player, input, new HashSet<>(Bukkit.getOnlinePlayers()));
+                    ChatChannels previousChannel = Warlords.playerChatChannels.get(uuid);
+                    if(s.equalsIgnoreCase("achat") || s.equalsIgnoreCase("ac")) {
+                        Warlords.playerChatChannels.put(uuid, ChatChannels.ALL);
+                    } else {
+                        if(!Warlords.partyManager.inAParty(uuid)) {
+                            player.sendMessage(ChatColor.RED + "You must be in a party to type in the party channel");
+                            return true;
+                        }
+                        Warlords.playerChatChannels.put(uuid, ChatChannels.PARTY);
+                    }
+                    Bukkit.getServer().getScheduler().runTaskAsynchronously(Warlords.getInstance(), () -> {
+                        Bukkit.getPluginManager().callEvent(event);
+                        if (!event.isCancelled()) {
+                            Bukkit.getServer().getScheduler().callSyncMethod(Warlords.getInstance(), () -> {
+                                String message = String.format(event.getFormat(), event.getPlayer().getName(), event.getMessage());
+                                Bukkit.getServer().getConsoleSender().sendMessage(message);
+                                for (Player p : event.getRecipients()) {
+                                    p.sendMessage(message);
+                                }
+                                Warlords.playerChatChannels.put(uuid, previousChannel);
+                                return null;
+                            });
+                        }
+                    });
+                } else {
+                    sender.sendMessage(ChatColor.RED + "Invalid Option! /" + s.toLowerCase() + " message");
+                }
                 return true;
             }
         }
