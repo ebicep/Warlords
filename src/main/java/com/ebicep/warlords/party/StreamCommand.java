@@ -1,6 +1,7 @@
 package com.ebicep.warlords.party;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.util.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -18,13 +19,17 @@ public class StreamCommand implements CommandExecutor {
         }
 
         if (Warlords.partyManager.inAParty(((Player) sender).getUniqueId())) {
-            sender.sendMessage(ChatColor.RED + "You are already in a party");
+            Party.sendMessageToPlayer((Player) sender, ChatColor.RED + "You are already in a party", true, true);
             return true;
         }
 
         if (args.length == 0) {
-            Warlords.partyManager.getParties().add(new Party(((Player) sender).getUniqueId(), true));
-            sender.sendMessage(ChatColor.GREEN + "You created an open party!");
+            Party party = new Party(((Player) sender).getUniqueId(), true);
+            Warlords.partyManager.getParties().add(party);
+            party.sendMessageToAllPartyPlayers(ChatColor.GREEN + "You created a public party! Players can join with\n" +
+                    ChatColor.GOLD + ChatColor.BOLD + "/party join " + sender.getName(),
+                    true,
+                    true);
         }
 
         return true;

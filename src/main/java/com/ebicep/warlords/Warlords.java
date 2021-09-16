@@ -187,6 +187,8 @@ public class Warlords extends JavaPlugin {
 
     public static final PartyManager partyManager = new PartyManager();
 
+    public static HashMap<UUID, ChatChannels> playerChatChannels = new HashMap<>();
+
     @Override
     public void onEnable() {
         instance = this;
@@ -213,6 +215,7 @@ public class Warlords extends JavaPlugin {
         new PartyCommand().register(this);
         new StreamCommand().register(this);
         new RecordAverageDamage().register(this);
+        new ChatChannelCommand().register(this);
 
         updateHeads();
 

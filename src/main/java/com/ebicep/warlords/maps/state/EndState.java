@@ -106,7 +106,7 @@ public class EndState implements State, TimerDebugAble {
             kills.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new ComponentBuilder(killsJson).create()));
             assists.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new ComponentBuilder(assistsJson).create()));
             deaths.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new ComponentBuilder(deathsJson).create()));
-            Utils.sendCenteredHoverableMessage(player, Arrays.asList(kills, Game.spacer, assists, Game.spacer, deaths));
+            Utils.sendCenteredMessageWithEvents(player, Arrays.asList(kills, Game.spacer, assists, Game.spacer, deaths));
             TextComponent damage = new TextComponent(ChatColor.WHITE + "Damage: " + ChatColor.GOLD + Utils.addCommaAndRound(value.getTotalDamage()));
             TextComponent heal = new TextComponent(ChatColor.WHITE + "Healing: " + ChatColor.GOLD + Utils.addCommaAndRound(value.getTotalHealing()));
             TextComponent absorb = new TextComponent(ChatColor.WHITE + "Absorbed: " + ChatColor.GOLD + Utils.addCommaAndRound(value.getTotalAbsorbed()));
@@ -116,7 +116,7 @@ public class EndState implements State, TimerDebugAble {
             damage.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new ComponentBuilder(damageJson).create()));
             heal.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new ComponentBuilder(healingJson).create()));
             absorb.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new ComponentBuilder(absorbedJson).create()));
-            Utils.sendCenteredHoverableMessage(player, Arrays.asList(damage, Game.spacer, heal, Game.spacer, absorb));
+            Utils.sendCenteredMessageWithEvents(player, Arrays.asList(damage, Game.spacer, heal, Game.spacer, absorb));
             player.setGameMode(GameMode.ADVENTURE);
             player.setAllowFlight(true);
 
@@ -170,7 +170,7 @@ public class EndState implements State, TimerDebugAble {
 
     public void sendCenteredHoverableMessageToAllGamePlayer(Game game, List<TextComponent> message) {
         game.forEachOnlinePlayer((p, team) -> {
-            Utils.sendCenteredHoverableMessage(p, message);
+            Utils.sendCenteredMessageWithEvents(p, message);
         });
     }
 

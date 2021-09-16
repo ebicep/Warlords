@@ -436,7 +436,7 @@ public class Utils {
         player.sendMessage(sb.toString() + message);
     }
 
-    public static void sendCenteredHoverableMessage(Player player, List<TextComponent> textComponents) {
+    public static void sendCenteredMessageWithEvents(Player player, List<TextComponent> textComponents) {
         if (textComponents == null || textComponents.size() == 0) ;
         String message = "";
         for (TextComponent textComponent : textComponents) {
@@ -472,6 +472,7 @@ public class Utils {
         for (TextComponent textComponent : textComponents) {
             componentBuilder.append(textComponent.getText());
             componentBuilder.event(textComponent.getHoverEvent());
+            componentBuilder.event(textComponent.getClickEvent());
         }
         player.spigot().sendMessage(componentBuilder.create());
     }
