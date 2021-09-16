@@ -29,13 +29,13 @@ public class ChatChannelCommand implements CommandExecutor {
                         case "a":
                         case "all":
                             Warlords.playerChatChannels.put(uuid, ChatChannels.ALL);
-                            player.sendMessage(ChatColor.GREEN + "You are not in the" + ChatColor.GOLD + " ALL " + ChatColor.GREEN + "channel");
+                            player.sendMessage(ChatColor.GREEN + "You are now in the" + ChatColor.GOLD + " ALL " + ChatColor.GREEN + "channel");
                             return true;
                         case "p":
                         case "party":
                             if(Warlords.partyManager.inAParty(uuid)) {
                                 Warlords.playerChatChannels.put(uuid, ChatChannels.PARTY);
-                                player.sendMessage(ChatColor.GREEN + "You are not in the" + ChatColor.GOLD + " PARTY " + ChatColor.GREEN + "channel");
+                                player.sendMessage(ChatColor.GREEN + "You are now in the" + ChatColor.GOLD + " PARTY " + ChatColor.GREEN + "channel");
                             } else {
                                 player.sendMessage(ChatColor.RED + "You must be in a party to join the party channel");
                             }
