@@ -120,7 +120,7 @@ public class HealingTotem extends AbstractTotemBase {
                 } else {
                     for (Player player1 : player.getWorld().getPlayers()) {
                         player1.playSound(totemStand.getLocation(), Sound.BLAZE_DEATH, 1.2f, 0.7f);
-                        player1.playSound(totemStand.getLocation(), "shaman.heal.impact", 2, 1f);
+                        player1.playSound(totemStand.getLocation(), "shaman.heal.impact", 2, 1);
                     }
                     new FallingBlockWaveEffect(totemStand.getLocation().clone().add(0, 1, 0), 2, 0.8, Material.SAPLING, (byte) 1).play();
 

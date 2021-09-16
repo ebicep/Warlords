@@ -30,6 +30,7 @@ public class UndyingArmy extends AbstractAbility {
 
     private final int radius = 15;
     private final int duration = 10;
+    private final int maxArmyAllies = 5;
 
     private HashMap<UUID, Boolean> playersPopped = new HashMap<>();
 
@@ -46,12 +47,12 @@ public class UndyingArmy extends AbstractAbility {
     }
 
     public UndyingArmy() {
-        super("Undying Army", 0, 0, 62.64f, 40, 0, 0);
+        super("Undying Army", 0, 0, 62.64f, 60, 0, 0);
     }
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7You may chain up to §e5 §7allies in a §e" + radius + "\n" +
+        description = "§7You may chain up to §e" + maxArmyAllies + " §7allies in a §e" + radius + "\n" +
                 "§7block radius to heal them for §a100 §7+\n" +
                 "§7§a7% §7of their missing health every 2 seconds.\n" +
                 "Lasts §6" + duration + " §7seconds." +
@@ -111,7 +112,7 @@ public class UndyingArmy extends AbstractAbility {
             }.runTaskTimer(Warlords.getInstance(), 0, 40);
             numberOfPlayersWithArmy++;
 
-            if (numberOfPlayersWithArmy >= 5) {
+            if (numberOfPlayersWithArmy >= maxArmyAllies) {
                 break;
             }
         }

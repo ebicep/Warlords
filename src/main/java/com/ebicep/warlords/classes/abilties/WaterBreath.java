@@ -35,10 +35,10 @@ public class WaterBreath extends AbstractAbility {
         Location location = player.getEyeLocation();
         location.setPitch(0);
         Vector viewDirection = location.getDirection();
-        PlayerFilter.entitiesAround(player, 8.0, 5.5, 8.0)
+        PlayerFilter.entitiesAroundRectangle(player, 8.0, 5.5, 8.0)
                 .forEach(target -> {
                     Vector direction = target.getLocation().subtract(player.getLocation()).toVector().normalize();
-                    if (viewDirection.dot(direction) > .68) {
+                    if (viewDirection.dot(direction) > .675) {
                         if (wp.isTeammateAlive(target)) {
                             target.getCooldownManager().removeDebuffCooldowns();
                             target.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);

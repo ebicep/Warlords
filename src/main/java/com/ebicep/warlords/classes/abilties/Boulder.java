@@ -67,7 +67,7 @@ public class Boulder extends AbstractAbility {
                 Location newLoc = stand.getLocation();
                 newLoc.add(speed);
                 stand.teleport(newLoc);
-                newLoc.add(0, 1.7, 0);
+                newLoc.add(0, 1.75, 0);
 
                 stand.setHeadPose(new EulerAngle(-speed.getY() * 3, 0, 0));
 
@@ -78,7 +78,11 @@ public class Boulder extends AbstractAbility {
                 }
 
                 WarlordsPlayer directHit = null;
-                if (!newLoc.getBlock().isEmpty() && newLoc.getBlock().getType() != Material.GRASS && newLoc.getBlock().getType() != Material.BARRIER) {
+                if (!newLoc.getBlock().isEmpty()
+                        && newLoc.getBlock().getType() != Material.GRASS
+                        && newLoc.getBlock().getType() != Material.BARRIER
+                        && newLoc.getBlock().getType() != Material.VINE
+                ) {
                     // Explode based on collision
                     shouldExplode = true;
                 } else {
