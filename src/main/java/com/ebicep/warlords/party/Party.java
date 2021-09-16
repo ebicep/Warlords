@@ -68,6 +68,7 @@ public class Party {
         invites.remove(uuid);
         members.put(uuid, true);
         sendMessageToAllPartyPlayers(ChatColor.AQUA + Bukkit.getPlayer(uuid).getName() + ChatColor.GREEN + " joined the party", true, true);
+        Bukkit.getPlayer(uuid).sendMessage(getList());
     }
 
     public void leave(UUID uuid) {

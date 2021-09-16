@@ -22,8 +22,8 @@ public class PartyCommand implements CommandExecutor {
         switch (s) {
             case "party":
             case "p":
+                Player player = (Player) sender;
                 if (args.length > 0) {
-                    Player player = (Player) sender;
                     Optional<Party> currentParty = Warlords.partyManager.getPartyFromAny(player.getUniqueId());
                     String input = args[0];
                     if (!input.equals("join") && !input.equals("invite")) {
@@ -35,36 +35,39 @@ public class PartyCommand implements CommandExecutor {
                     switch (input) {
                         case "invite":
                             if (args.length > 1) {
-                                if (Warlords.partyManager.inAParty(player.getUniqueId())) {
-                                    Player partyLeader = Bukkit.getPlayer(currentParty.get().getLeader());
-                                    String playerToInvite = args[1];
-                                    Player invitedPlayer = Bukkit.getPlayer(playerToInvite);
-                                    if(invitedPlayer != null) {
-                                        if(!Warlords.partyManager.inSameParty(player.getUniqueId(), invitedPlayer.getUniqueId())) {
-                                            if(currentParty.get().getInvites().containsKey(invitedPlayer.getUniqueId())) {
-                                                Party.sendMessageToPlayer((Player) sender, ChatColor.RED + "That player has already been invited! (" + currentParty.get().getInvites().get(invitedPlayer.getUniqueId()) + ")", true, true);
-                                            } else {
-                                                currentParty.get().invite(playerToInvite);
-                                                currentParty.get().sendMessageToAllPartyPlayers(
-                                                        ChatColor.AQUA + player.getName() + ChatColor.YELLOW + " invited " + ChatColor.AQUA + invitedPlayer.getName() + ChatColor.YELLOW + " to the party!\n" +
-                                                                ChatColor.YELLOW + "They have" + ChatColor.RED + " 60 " + ChatColor.YELLOW + "seconds to accept!",
-                                                        true,
-                                                        true
-                                                );
-                                                Utils.sendCenteredMessage(invitedPlayer, ChatColor.BLUE.toString() + ChatColor.BOLD + "------------------------------------------");
-                                                Utils.sendCenteredMessage(invitedPlayer, ChatColor.AQUA + player.getName() + ChatColor.YELLOW + " has invited you to join " + (partyLeader.equals(player) ? "their party!" : ChatColor.AQUA + partyLeader.getName() + ChatColor.YELLOW + "'s party!"));
-                                                TextComponent message = new TextComponent(ChatColor.YELLOW + "You have" + ChatColor.RED + " 60 " + ChatColor.YELLOW + "seconds to accept. " + ChatColor.GOLD + "Click here to join!");
-                                                message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.GREEN + "Click to join the party!").create()));
-                                                message.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/party join " + partyLeader.getName()));
-                                                Utils.sendCenteredMessageWithEvents(invitedPlayer, Collections.singletonList(message));
-                                                Utils.sendCenteredMessage(invitedPlayer, ChatColor.BLUE.toString() + ChatColor.BOLD + "------------------------------------------");
-                                            }
+                                if(!currentParty.isPresent()) {
+                                    Party party = new Party(((Player) sender).getUniqueId(), false);
+                                    Warlords.partyManager.getParties().add(party);
+                                    currentParty = Optional.of(party);
+                                }
+                                Player partyLeader = Bukkit.getPlayer(currentParty.get().getLeader());
+                                String playerToInvite = args[1];
+                                Player invitedPlayer = Bukkit.getPlayer(playerToInvite);
+                                if(invitedPlayer != null) {
+                                    if(!Warlords.partyManager.inSameParty(player.getUniqueId(), invitedPlayer.getUniqueId())) {
+                                        if(currentParty.get().getInvites().containsKey(invitedPlayer.getUniqueId())) {
+                                            Party.sendMessageToPlayer((Player) sender, ChatColor.RED + "That player has already been invited! (" + currentParty.get().getInvites().get(invitedPlayer.getUniqueId()) + ")", true, true);
                                         } else {
-                                            Party.sendMessageToPlayer((Player) sender, ChatColor.RED + "That player is already in the party!", true, true);
+                                            currentParty.get().invite(playerToInvite);
+                                            currentParty.get().sendMessageToAllPartyPlayers(
+                                                    ChatColor.AQUA + player.getName() + ChatColor.YELLOW + " invited " + ChatColor.AQUA + invitedPlayer.getName() + ChatColor.YELLOW + " to the party!\n" +
+                                                            ChatColor.YELLOW + "They have" + ChatColor.RED + " 60 " + ChatColor.YELLOW + "seconds to accept!",
+                                                    true,
+                                                    true
+                                            );
+                                            Utils.sendCenteredMessage(invitedPlayer, ChatColor.BLUE.toString() + ChatColor.BOLD + "------------------------------------------");
+                                            Utils.sendCenteredMessage(invitedPlayer, ChatColor.AQUA + player.getName() + ChatColor.YELLOW + " has invited you to join " + (partyLeader.equals(player) ? "their party!" : ChatColor.AQUA + partyLeader.getName() + ChatColor.YELLOW + "'s party!"));
+                                            TextComponent message = new TextComponent(ChatColor.YELLOW + "You have" + ChatColor.RED + " 60 " + ChatColor.YELLOW + "seconds to accept. " + ChatColor.GOLD + "Click here to join!");
+                                            message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.GREEN + "Click to join the party!").create()));
+                                            message.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/party join " + partyLeader.getName()));
+                                            Utils.sendCenteredMessageWithEvents(invitedPlayer, Collections.singletonList(message));
+                                            Utils.sendCenteredMessage(invitedPlayer, ChatColor.BLUE.toString() + ChatColor.BOLD + "------------------------------------------");
                                         }
                                     } else {
-                                        Party.sendMessageToPlayer((Player) sender, ChatColor.RED + "Unable to invite that player!", true, true);
+                                        Party.sendMessageToPlayer((Player) sender, ChatColor.RED + "That player is already in the party!", true, true);
                                     }
+                                } else {
+                                    Party.sendMessageToPlayer((Player) sender, ChatColor.RED + "Unable to invite that player!", true, true);
                                 }
                             } else {
                                 Party.sendMessageToPlayer((Player) sender, ChatColor.RED + "Invalid Arguments!", true, true);
@@ -72,7 +75,7 @@ public class PartyCommand implements CommandExecutor {
                             return true;
                         case "join":
                             if (args.length > 1) {
-                                if (Warlords.partyManager.inAParty(player.getUniqueId())) {
+                                if (currentParty.isPresent()) {
                                     Party.sendMessageToPlayer((Player) sender, ChatColor.RED + "You are already in a party", true, true);
                                     return true;
                                 }
@@ -190,6 +193,18 @@ public class PartyCommand implements CommandExecutor {
                             }
                             return true;
                     }
+                } else {
+                    Party.sendMessageToPlayer(player, ChatColor.GOLD + "Party Comamnds: \n" +
+                            ChatColor.YELLOW + "/p invite <player>" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Invites another player to your party" + "\n" +
+                            ChatColor.YELLOW + "/p (l/list)" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Lists the players in your current party" + "\n" +
+                            ChatColor.YELLOW + "/p leave" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Leaves your current party" + "\n" +
+                            ChatColor.YELLOW + "/p disband" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Disbands the party" + "\n" +
+                            ChatColor.YELLOW + "/p (kick/remove) <player>" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Removes a player from your party" + "\n" +
+                            ChatColor.YELLOW + "/p poll <question/answer/answer...>" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Creates a poll to vote on" + "\n" +
+                            ChatColor.YELLOW + "/p(open/close)" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Opens/Closes the party" + "\n"
+                            ,
+                            true,
+                            false);
                 }
                 return true;
             case "pl":

@@ -475,6 +475,7 @@ public class WarlordsEvents implements Listener {
                                 ChatColor.DARK_GRAY + "][" +
                                 Warlords.getPlayerSettings(wp.getUuid()).getSelectedClass().specType.getColoredSymbol() +
                                 ChatColor.DARK_GRAY + "] " +
+                                (wp.isDeath() ? ChatColor.GRAY + "[SPECTATOR] " : "") +
                                 ChatColor.AQUA + "%1$s" +
                                 ChatColor.WHITE + ": %2$s"
                         );
