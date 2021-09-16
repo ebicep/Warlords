@@ -50,7 +50,7 @@ public final class WarlordsPlayer {
     private Team team;
     private AbstractPlayerClass spec;
     private Classes specClass;
-    private final Weapons weapon;
+    private Weapons weapon;
     private int health;
     private int maxHealth;
     private int regenTimer;
@@ -140,7 +140,7 @@ public final class WarlordsPlayer {
         this.scoreboard = new CustomScoreboard(this, gameState, 15);
         Player p = player.getPlayer();
         this.entity = spawnJimmy(p == null ? Warlords.getRejoinPoint(uuid) : p.getLocation(), null);
-        this.weapon = settings.getWeapon();
+        this.weapon = Weapons.getSelected(player, settings.getSelectedClass());
         updatePlayerReference(p);
     }
 
@@ -471,6 +471,7 @@ public final class WarlordsPlayer {
         Player player = Bukkit.getPlayer(uuid);
         this.spec = spec;
         this.specClass = Warlords.getPlayerSettings(uuid).getSelectedClass();
+        this.weapon = Weapons.getSelected(player, this.specClass);
         ArmorManager.resetArmor(player, specClass, team);
         applySkillBoost(player);
         this.spec.getWeapon().updateDescription(player);

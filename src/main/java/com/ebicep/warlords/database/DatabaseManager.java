@@ -102,8 +102,8 @@ public class DatabaseManager {
         }
     }
 
-    public static void loadPlayer(UUID uuid) {
-        if (!connected) return;
+    public static boolean loadPlayer(UUID uuid) {
+        if (!connected) return false;
         Player player = Bukkit.getPlayer(uuid);
         try {
             if (hasPlayer(uuid)) {
@@ -111,30 +111,36 @@ public class DatabaseManager {
                 //todo update name
                 cachedPlayerInfo.put(uuid, playerInfo);
                 Classes.setSelected(player, Classes.getClass((String) getPlayerInfoWithDotNotation(player, "last_spec")));
-                Weapons.setSelected(player, Weapons.getWeapon((String) getPlayerInfoWithDotNotation(player, "last_weapon")));
-                ArmorManager.Helmets.setSelectedMage(player, ArmorManager.Helmets.getMageHelmet((String) getPlayerInfoWithDotNotation(player, "mage_helm")));
-                ArmorManager.ArmorSets.setSelectedMage(player, ArmorManager.ArmorSets.getMageArmor((String) getPlayerInfoWithDotNotation(player, "mage_armor")));
-                ArmorManager.Helmets.setSelectedWarrior(player, ArmorManager.Helmets.getWarriorHelmet((String) getPlayerInfoWithDotNotation(player, "warrior_helm")));
-                ArmorManager.ArmorSets.setSelectedWarrior(player, ArmorManager.ArmorSets.getWarriorArmor((String) getPlayerInfoWithDotNotation(player, "warrior_armor")));
-                ArmorManager.Helmets.setSelectedPaladin(player, ArmorManager.Helmets.getPaladinHelmet((String) getPlayerInfoWithDotNotation(player, "paladin_helm")));
-                ArmorManager.ArmorSets.setSelectedPaladin(player, ArmorManager.ArmorSets.getPaladinArmor((String) getPlayerInfoWithDotNotation(player, "paladin_armor")));
-                ArmorManager.Helmets.setSelectedShaman(player, ArmorManager.Helmets.getShamanHelmet((String) getPlayerInfoWithDotNotation(player, "shaman_helm")));
-                ArmorManager.ArmorSets.setSelectedShaman(player, ArmorManager.ArmorSets.getShamanArmor((String) getPlayerInfoWithDotNotation(player, "shaman_armor")));
-                Settings.Powerup.setSelected(player, Settings.Powerup.getPowerup((String) getPlayerInfoWithDotNotation(player, "powerup")));
+                ArmorManager.Helmets.setSelectedMage(player, ArmorManager.Helmets.getMageHelmet((String) getPlayerInfoWithDotNotation(player, "mage.helm")));
+                ArmorManager.ArmorSets.setSelectedMage(player, ArmorManager.ArmorSets.getMageArmor((String) getPlayerInfoWithDotNotation(player, "mage.armor")));
+                ArmorManager.Helmets.setSelectedWarrior(player, ArmorManager.Helmets.getWarriorHelmet((String) getPlayerInfoWithDotNotation(player, "warrior.helm")));
+                ArmorManager.ArmorSets.setSelectedWarrior(player, ArmorManager.ArmorSets.getWarriorArmor((String) getPlayerInfoWithDotNotation(player, "warrior.armor")));
+                ArmorManager.Helmets.setSelectedPaladin(player, ArmorManager.Helmets.getPaladinHelmet((String) getPlayerInfoWithDotNotation(player, "paladin.helm")));
+                ArmorManager.ArmorSets.setSelectedPaladin(player, ArmorManager.ArmorSets.getPaladinArmor((String) getPlayerInfoWithDotNotation(player, "paladin.armor")));
+                ArmorManager.Helmets.setSelectedShaman(player, ArmorManager.Helmets.getShamanHelmet((String) getPlayerInfoWithDotNotation(player, "shaman.helm")));
+                ArmorManager.ArmorSets.setSelectedShaman(player, ArmorManager.ArmorSets.getShamanArmor((String) getPlayerInfoWithDotNotation(player, "shaman.armor")));
+                HashMap<Classes, Weapons> weaponSkins = new HashMap<>();
+                for (Classes value : Classes.values()) {
+                    weaponSkins.put(value, Weapons.getWeapon(
+                            (String) getPlayerInfoWithDotNotation(player, Classes.getClassesGroup(value).name.toLowerCase() + "." + value.name.toLowerCase() + ".weapon")));
+                }
+                Weapons.setSelected(player, weaponSkins);
                 Settings.HotkeyMode.setSelected(player, Settings.HotkeyMode.getHotkeyMode((String) getPlayerInfoWithDotNotation(player, "hotkeymode")));
                 Settings.ParticleQuality.setSelected(player, Settings.ParticleQuality.getParticleQuality((String) getPlayerInfoWithDotNotation(player, "particle_quality")));
                 System.out.println(ChatColor.GREEN + "[Warlords] Loaded player " + player.getName());
+                return true;
             } else {
-                addPlayer(player);
+                return addPlayer(player);
             }
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println(ChatColor.GREEN + "[Warlords] ERROR loading player - " + player.getName());
         }
+        return false;
     }
 
-    public static void loadPlayer(Player player) {
-        loadPlayer(player.getUniqueId());
+    public static boolean loadPlayer(Player player) {
+        return loadPlayer(player.getUniqueId());
     }
 
     public static void updatePlayerInformation(Player player, String key, String newValue) {
@@ -269,12 +275,12 @@ public class DatabaseManager {
                 .append("absorbed", 0L);
     }
 
-    public static void addPlayer(Player player) {
-        addPlayer(player.getUniqueId());
+    public static boolean addPlayer(Player player) {
+        return addPlayer(player.getUniqueId());
     }
 
-    public static void addPlayer(UUID uuid) {
-        if (!connected) return;
+    public static boolean addPlayer(UUID uuid) {
+        if (!connected) return false;
         try {
             if (!hasPlayer(uuid)) {
                 Document newPlayerDocument = new Document("uuid", uuid.toString())
@@ -311,10 +317,12 @@ public class DatabaseManager {
                         );
                 playersInformation.insertOne(newPlayerDocument);
                 System.out.println(ChatColor.GREEN + "[Warlords] " + uuid + " - " + Bukkit.getServer().getOfflinePlayer(uuid).getName() + " was added to the player database");
+                return true;
             }
         } catch (MongoWriteException e) {
             System.out.println(ChatColor.GREEN + "[Warlords] There was an error trying to add player " + Bukkit.getServer().getOfflinePlayer(uuid).getName());
         }
+        return false;
     }
 
     public static Document getLastGame() {

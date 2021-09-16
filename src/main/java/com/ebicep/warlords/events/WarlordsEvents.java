@@ -130,13 +130,6 @@ public class WarlordsEvents implements Listener {
 
     @EventHandler
     public static void onPlayerJoin(PlayerJoinEvent e) {
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                DatabaseManager.loadPlayer(e.getPlayer());
-                Warlords.updateHeads();
-            }
-        }.runTaskAsynchronously(Warlords.getInstance());
         WarlordsPlayer wp = Warlords.getPlayer(e.getPlayer());
         if (wp != null) {
             if(wp.isAlive()) {
@@ -167,8 +160,13 @@ public class WarlordsEvents implements Listener {
                 }
             }));
         }
-        //sending self leaderboard to player
-        LeaderboardRanking.addPlayerLeaderboards(player);
+
+        //???
+        Warlords.newChain()
+                .asyncFirst(() -> DatabaseManager.loadPlayer(e.getPlayer()))
+                .asyncLast((d) -> Warlords.updateHeads())
+                .syncLast((input) -> LeaderboardRanking.addPlayerLeaderboards(player))
+                .execute();
     }
 
     @EventHandler
@@ -275,8 +273,6 @@ public class WarlordsEvents implements Listener {
                         wp.getGameState().flags().dropFlag(player);
                         wp.setFlagCooldown(5);
                     }
-                } else if (itemHeld.getType() == Material.FIREWORK_CHARGE) {
-                    openSkillTreeMenu(player);
                 } else if (itemHeld.getType() == Material.COMPASS) {
                     player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 1.5f);
                     wp.toggleTeamFlagCompass();
