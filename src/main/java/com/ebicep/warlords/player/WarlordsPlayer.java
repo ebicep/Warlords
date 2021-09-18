@@ -430,6 +430,12 @@ public final class WarlordsPlayer {
         updateItem(player, 4, spec.getOrange(), new ItemStack(Material.INK_SACK, 1, (byte) 14));
     }
 
+    public void updateHorseItem() {
+        if (entity instanceof Player) {
+            updateHorseItem((Player) entity);
+        }
+    }
+
     public void updateHorseItem(Player player) {
         if (horseCooldown > 0) {
             ItemStack cooldown = new ItemStack(Material.IRON_BARDING, (int) horseCooldown + 1);
