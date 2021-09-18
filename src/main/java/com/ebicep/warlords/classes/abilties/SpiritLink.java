@@ -68,7 +68,7 @@ public class SpiritLink extends AbstractChainBase {
                             .soulBindedFirst(wp)
                     ) {
                         chain(chainPlayerOne.getLocation(), chainPlayerTwo.getLocation());
-                        chainPlayerOne.addHealth(wp, name, minDamageHeal * .6f, maxDamageHeal * .6f, critChance, critMultiplier, false);
+                        chainPlayerTwo.addHealth(wp, name, minDamageHeal * .6f, maxDamageHeal * .6f, critChance, critMultiplier, false);
                         hitCounter++;
 
                         numberOfHeals = wp.getCooldownManager().getNumberOfBoundPlayersLink(chainPlayerTwo);
