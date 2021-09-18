@@ -11,7 +11,8 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
 import com.ebicep.customentities.npc.NPCManager;
 import com.ebicep.warlords.classes.abilties.*;
-import com.ebicep.warlords.commands.*;
+import com.ebicep.warlords.commands.debugcommands.*;
+import com.ebicep.warlords.commands.miscellaneouscommands.*;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.LeaderboardRanking;
 import com.ebicep.warlords.events.WarlordsEvents;
@@ -187,6 +188,8 @@ public class Warlords extends JavaPlugin {
 
     public static final PartyManager partyManager = new PartyManager();
 
+    public static HashMap<UUID, ChatChannels> playerChatChannels = new HashMap<>();
+
     @Override
     public void onEnable() {
         instance = this;
@@ -212,6 +215,8 @@ public class Warlords extends JavaPlugin {
         new SpawnTestDummyCommand().register(this);
         new PartyCommand().register(this);
         new StreamCommand().register(this);
+        new RecordAverageDamage().register(this);
+        new ChatChannelCommand().register(this);
 
         updateHeads();
 

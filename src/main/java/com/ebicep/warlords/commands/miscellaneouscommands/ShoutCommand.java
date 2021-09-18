@@ -1,6 +1,7 @@
-package com.ebicep.warlords.commands;
+package com.ebicep.warlords.commands.miscellaneouscommands;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.commands.BaseCommand;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.PlayerFilter;
 import org.bukkit.ChatColor;

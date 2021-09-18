@@ -48,8 +48,8 @@ public class HammerOfLight extends AbstractAbility {
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
 
-        if (player.getTargetBlock((HashSet<Byte>) null, 15).getType() == Material.AIR) return;
-        DamageHealCircle damageHealCircle = new DamageHealCircle(wp, player.getTargetBlock((HashSet<Byte>) null, 15).getLocation().add(1, 0, 1), radius, duration, minDamageHeal, maxDamageHeal, critChance, critMultiplier, name);
+        if (player.getTargetBlock((HashSet<Byte>) null, 25).getType() == Material.AIR) return;
+        DamageHealCircle damageHealCircle = new DamageHealCircle(wp, player.getTargetBlock((HashSet<Byte>) null, 25).getLocation().add(1, 0, 1), radius, duration, minDamageHeal, maxDamageHeal, critChance, critMultiplier, name);
         damageHealCircle.spawnHammer();
         damageHealCircle.getLocation().add(0, 1, 0);
         wp.subtractEnergy(energyCost);
@@ -68,7 +68,7 @@ public class HammerOfLight extends AbstractAbility {
             public void run() {
                 damageHealCircle.setDuration(damageHealCircle.getDuration() - 1);
                 for (WarlordsPlayer warlordsPlayer : PlayerFilter
-                    .entitiesAround(damageHealCircle.getLocation(), radius, 5, radius)
+                    .entitiesAround(damageHealCircle.getLocation(), radius, 6, radius)
                     .isAlive()
                 ) {
                     if (damageHealCircle.getWarlordsPlayer().isTeammateAlive(warlordsPlayer)) {

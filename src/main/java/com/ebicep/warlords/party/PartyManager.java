@@ -28,4 +28,8 @@ public class PartyManager {
     public boolean inAParty(UUID uuid) {
         return parties.stream().anyMatch(party -> party.hasUUID(uuid));
     }
+
+    public boolean inSameParty(UUID uuid1, UUID uuid2) {
+        return parties.stream().anyMatch(party -> party.hasUUID(uuid1) && party.hasUUID(uuid2));
+    }
 }

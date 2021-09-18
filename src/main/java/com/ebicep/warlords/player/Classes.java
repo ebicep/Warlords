@@ -104,7 +104,7 @@ public enum Classes {
 
     public static Classes getClass(String name) {
         for (Classes value : Classes.values()) {
-            if (value.name.equals(name)) {
+            if (value.name.equalsIgnoreCase(name)) {
                 return value;
             }
         }

@@ -6,6 +6,7 @@ import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.Matrix4d;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
@@ -30,13 +31,16 @@ public class FreezingBreath extends AbstractAbility {
 
     @Override
     public void onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
+        Location playerLoc = player.getLocation();
+        playerLoc.setPitch(0);
+        playerLoc.add(0, 1.6, 0);
         wp.subtractEnergy(energyCost);
-        Vector viewDirection = player.getLocation().getDirection();
-        PlayerFilter.entitiesAroundRectangle(player, 8, 5.5, 8)
+        Vector viewDirection = playerLoc.getDirection();
+        PlayerFilter.entitiesAround(player, 7.5, 10, 7.5)
                 .aliveEnemiesOf(wp)
                 .forEach(target -> {
                     Vector direction = target.getLocation().subtract(player.getLocation()).toVector().normalize();
-                    if (viewDirection.dot(direction) > .675) {
+                    if (viewDirection.dot(direction) > .66) {
                         target.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
                         target.getSpeed().addSpeedModifier("Freezing Breath", -35, slowDuration * 20);
                     }
@@ -55,7 +59,7 @@ public class FreezingBreath extends AbstractAbility {
             }
 
             int animationTimer = 0;
-            final Matrix4d center = new Matrix4d(player.getEyeLocation());
+            final Matrix4d center = new Matrix4d(playerLoc);
 
             public void playEffect() {
 

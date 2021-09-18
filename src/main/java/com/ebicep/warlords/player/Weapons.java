@@ -7,6 +7,8 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.HashMap;
+
 public enum Weapons {
 
     BLUDGEON("Bludgeon", new ItemStack(Material.RABBIT_STEW)),
@@ -74,18 +76,28 @@ public enum Weapons {
     }
 
     @Deprecated
-    public static Weapons getSelected(OfflinePlayer player) {
-        return Warlords.getPlayerSettings(player.getUniqueId()).getWeapon();
+    public static HashMap<Classes, Weapons> getSelected(OfflinePlayer player) {
+        return Warlords.getPlayerSettings(player.getUniqueId()).getWeaponSkins();
     }
 
     @Deprecated
-    public static void setSelected(OfflinePlayer player, Weapons selectedWeapon) {
-        Warlords.getPlayerSettings(player.getUniqueId()).setWeapon(selectedWeapon);
+    public static Weapons getSelected(OfflinePlayer player, Classes classes) {
+        return Warlords.getPlayerSettings(player.getUniqueId()).getWeaponSkins().get(classes);
+    }
+
+    @Deprecated
+    public static void setSelected(OfflinePlayer player, HashMap<Classes, Weapons> weaponSkins) {
+        Warlords.getPlayerSettings(player.getUniqueId()).setWeaponSkins(weaponSkins);
+    }
+
+    @Deprecated
+    public static void setSelected(OfflinePlayer player, Classes classes, Weapons weapon) {
+        Warlords.getPlayerSettings(player.getUniqueId()).getWeaponSkins().put(classes, weapon);
     }
 
     public static Weapons getWeapon(String name) {
         for (Weapons value : Weapons.values()) {
-            if (value.name.equals(name)) {
+            if (value.name.equalsIgnoreCase(name)) {
                 return value;
             }
         }

@@ -5,6 +5,7 @@ import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -12,7 +13,7 @@ public class PlayerSettings implements ConfigurationSerializable {
     private Classes selectedClass = Classes.PYROMANCER;
     private ClassesSkillBoosts classesSkillBoosts = selectedClass.skillBoosts.get(0);
     private boolean hotKeyMode = true;
-    private Weapons weapon = Weapons.FELFLAME_BLADE;
+    private HashMap<Classes, Weapons> weaponSkins = new HashMap<>();
     private Settings.ParticleQuality particleQuality = Settings.ParticleQuality.HIGH;
     /**
      * Preferred team in the upcoming warlords game
@@ -86,12 +87,12 @@ public class PlayerSettings implements ConfigurationSerializable {
         this.hotKeyMode = hotKeyMode;
     }
 
-    public Weapons getWeapon() {
-        return weapon;
+    public HashMap<Classes, Weapons> getWeaponSkins() {
+        return weaponSkins;
     }
 
-    public void setWeapon(Weapons weapon) {
-        this.weapon = weapon;
+    public void setWeaponSkins(HashMap<Classes, Weapons> weaponSkins) {
+        this.weaponSkins = weaponSkins;
     }
 
     public Settings.ParticleQuality getParticleQuality() {

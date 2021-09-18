@@ -159,7 +159,8 @@ public class GameMenu {
     }
 
     public static void openWeaponMenu(Player player, int pageNumber) {
-        Weapons selectedWeapon = Weapons.getSelected(player);
+        Classes selectedClass = getSelected(player);
+        Weapons selectedWeapon = Weapons.getSelected(player, selectedClass);
         Menu menu = new Menu("Weapon Skin Selector", 9 * 6);
         List<Weapons> values = new ArrayList<>(Arrays.asList(Weapons.values()));
         for (int i = (pageNumber - 1) * 21; i < pageNumber * 21 && i < values.size(); i++) {
@@ -180,8 +181,8 @@ public class GameMenu {
                     (i - (pageNumber - 1) * 21) / 7 + 1,
                     builder.get(),
                     (n, e) -> {
-                        player.sendMessage(ChatColor.GREEN + "You have changed your weapon skin to: §b" + weapon.name + "!");
-                        Weapons.setSelected(player, weapon);
+                        player.sendMessage(ChatColor.GREEN + "You have changed your " + ChatColor.AQUA + selectedClass.name + ChatColor.GREEN + "'s weapon skin to: §b" + weapon.name + "!");
+                        Weapons.setSelected(player, selectedClass, weapon);
                         openWeaponMenu(player, pageNumber);
                     }
             );
@@ -433,74 +434,6 @@ public class GameMenu {
         }
 
         menu.setItem(4, 3, Menu.MENU_CLOSE, ACTION_CLOSE_MENU);
-        menu.openForPlayer(player);
-    }
-
-    public static void openSkillTreeMenu(Player player) {
-        Menu menu = new Menu("Skill Tree", 9 * 6);
-        menu.setItem(1, 1,
-                new ItemBuilder(getClassesGroup(getSelected(player)).item)
-                        .name(ChatColor.GREEN + "Class Upgrades")
-                        .get(),
-                (n, e) -> {
-                }
-        );
-        menu.setItem(3, 1,
-                new ItemBuilder(Weapons.getSelected(player).item)
-                        .name(ChatColor.GREEN + "Weapon Upgrades")
-                        .get(),
-                (n, e) -> {
-                }
-        );
-        menu.setItem(5, 1,
-                new ItemBuilder(Material.BANNER)
-                        .name(ChatColor.GREEN + "Flag Upgrades")
-                        .get(),
-                (n, e) -> {
-                }
-        );
-        menu.setItem(7, 1,
-                new ItemBuilder(Material.GOLD_BARDING)
-                        .name(ChatColor.GREEN + "Horse Upgrades")
-                        .get(),
-                (n, e) -> {
-                }
-        );
-        Dye redDye = new Dye();
-        redDye.setColor(DyeColor.RED);
-        menu.setItem(1, 3,
-                new ItemBuilder(redDye.toItemStack(1))
-                        .name(ChatColor.GREEN + "Red Upgrades")
-                        .get(),
-                (n, e) -> {
-                }
-        );
-        menu.setItem(3, 3,
-                new ItemBuilder(Material.GLOWSTONE_DUST)
-                        .name(ChatColor.GREEN + "Purple Upgrades")
-                        .get(),
-                (n, e) -> {
-                }
-        );
-        Dye limeDye = new Dye();
-        limeDye.setColor(DyeColor.LIME);
-        menu.setItem(5, 3,
-                new ItemBuilder(limeDye.toItemStack(1))
-                        .name(ChatColor.GREEN + "Blue Upgrades")
-                        .get(),
-                (n, e) -> {
-                }
-        );
-        Dye orangeDye = new Dye();
-        orangeDye.setColor(DyeColor.ORANGE);
-        menu.setItem(7, 3,
-                new ItemBuilder(orangeDye.toItemStack(1))
-                        .name(ChatColor.GREEN + "Orange Upgrades")
-                        .get(),
-                (n, e) -> {
-                }
-        );
-        menu.setItem(4, 5, Menu.MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
     }
 }
