@@ -110,7 +110,7 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
                                 Utils.isLookingAtChain(wp.getEntity(), e.getEntity()) &&
                                         Utils.hasLineOfSight(wp.getEntity(), e.getEntity())
                         ) :
-                PlayerFilter.entitiesAround(checkFrom, 15, 14, 15).lookingAtFirst(wp);
+                PlayerFilter.entitiesAround(checkFrom, 10, 9, 10).lookingAtFirst(wp);
         Optional<WarlordsPlayer> foundPlayer = filter.closestFirst(wp).aliveEnemiesOf(wp).excluding(playersHit).findFirst();
         if (foundPlayer.isPresent()) {
             WarlordsPlayer hit = foundPlayer.get();
