@@ -69,7 +69,7 @@ public class TimeWarp extends AbstractAbility {
 
                 if (counter % 4 == 0) {
                     if (time != 0) {
-                        ParticleEffect.SPELL_WITCH.display(0, 0, 0, 0.001F, 6, warpLocation, 500);
+                        ParticleEffect.SPELL_WITCH.display(0.1f, 0, 0.1f, 0.001f, 6, warpLocation, 500);
                     }
 
                     int points = 6;
