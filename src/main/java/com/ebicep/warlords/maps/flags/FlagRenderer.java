@@ -118,6 +118,7 @@ class FlagRenderer {
                 }) {
                     toTest.setX(face.getModX());
                     toTest.setZ(face.getModZ());
+                    toTest.normalize();
                     double newDistance = toTest.distanceSquared(target);
                     if (newDistance < distance) {
                         dir = face;

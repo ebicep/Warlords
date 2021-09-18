@@ -7,6 +7,7 @@ import com.ebicep.warlords.util.PlayerFilter;
 import com.ebicep.warlords.util.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
@@ -34,7 +35,6 @@ public class LightningRod extends AbstractAbility {
 
         Location playerLocation = player.getLocation();
 
-
         PlayerFilter.entitiesAround(player, knockbackRadius, knockbackRadius, knockbackRadius)
                 .aliveEnemiesOf(wp)
                 .forEach((p) -> {
@@ -45,7 +45,8 @@ public class LightningRod extends AbstractAbility {
                     p.setVelocity(v);
 
                     // pulsedamage
-                    if (Utils.getTotemDownAndClose(wp, p.getEntity()) != null) {
+                    ArmorStand totemDownAndClose = Utils.getTotemDownAndClose(wp, p.getEntity());
+                    if (totemDownAndClose != null) {
                         p.addHealth(
                                 wp,
                                 wp.getSpec().getOrange().getName(),
@@ -55,9 +56,9 @@ public class LightningRod extends AbstractAbility {
                                 wp.getSpec().getOrange().getCritMultiplier(),
                                 false);
 
-                        new FallingBlockWaveEffect(p.getLocation().add(0, 1, 0), 6, 1.2, Material.SAPLING, (byte) 0).play();
+                        new FallingBlockWaveEffect(totemDownAndClose.getLocation().add(0, 1, 0), 6, 1.2, Material.SAPLING, (byte) 0).play();
                         for (Player player1 : wp.getWorld().getPlayers()) {
-                            player1.playSound(wp.getLocation(), "shaman.capacitortotem.pulse", 2, 1);
+                            player1.playSound(totemDownAndClose.getLocation(), "shaman.capacitortotem.pulse", 2, 1);
                         }
                     }
                 });

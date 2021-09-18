@@ -119,12 +119,16 @@ public class WarlordsEvents implements Listener {
             player.getInventory().setArmorContents(new ItemStack[]{null, null, null, null});
             player.getInventory().setItem(4, new ItemBuilder(Material.NETHER_STAR).name("§aSelection Menu").get());
 
-            CustomScoreboard.giveMainLobbyScoreboard(player);
+            if (Warlords.getInstance().isEnabled()) {
+                CustomScoreboard.giveMainLobbyScoreboard(player);
+            }
         }
         WarlordsPlayer p = Warlords.getPlayer(player);
         if (p != null) {
             player.teleport(p.getLocation());
             p.updatePlayerReference(player);
+        } else {
+            player.setAllowFlight(true);
         }
     }
 
@@ -369,7 +373,7 @@ public class WarlordsEvents implements Listener {
 
     @EventHandler
     public void onHorseJump(HorseJumpEvent e) {
-        e.setCancelled(true);
+        //e.setCancelled(true);
     }
 
     @EventHandler

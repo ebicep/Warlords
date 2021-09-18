@@ -82,7 +82,7 @@ public enum Weapons {
 
     @Deprecated
     public static Weapons getSelected(OfflinePlayer player, Classes classes) {
-        return Warlords.getPlayerSettings(player.getUniqueId()).getWeaponSkins().get(classes);
+        return Warlords.getPlayerSettings(player.getUniqueId()).getWeaponSkins().getOrDefault(classes, FELFLAME_BLADE);
     }
 
     @Deprecated

@@ -26,6 +26,9 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
 
     private int damageReduction = 0;
 
+    private final int radius = 20;
+    private final int bounceRange = 10;
+
     public int getDamageReduction() {
         return damageReduction;
     }
@@ -44,12 +47,14 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
         description = "§7Discharge a bolt of lightning at the\n" +
                 "§7targeted enemy player that deals\n" +
                 "§c" + -minDamageHeal + " §7- §c" + -maxDamageHeal + " §7damage and jumps to\n" +
-                "§e4 §7additional targets within §e15\n" +
+                "§e4 §7additional targets within §e" + bounceRange + "\n" +
                 "§7blocks. Each time the lightning jumps\n" +
                 "§7the damage is decreased by §c15%§7.\n" +
                 "§7You gain §e10% §7damage resistance for\n" +
                 "§7each target hit, up to §e30% §7damage\n" +
-                "§7resistance. This buff lasts §64.5 §7seconds.";
+                "§7resistance. This buff lasts §64.5 §7seconds." +
+                "\n" +
+                "§7Has an initial cast range of §e" + radius + " §7blocks.";
     }
 
     @Override
@@ -105,12 +110,12 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
             }
         } // no else
         PlayerFilter filter = firstCheck ?
-                PlayerFilter.entitiesAround(checkFrom, 20, 18, 20)
+                PlayerFilter.entitiesAround(checkFrom, radius, 18, radius)
                         .filter(e ->
                                 Utils.isLookingAtChain(wp.getEntity(), e.getEntity()) &&
                                         Utils.hasLineOfSight(wp.getEntity(), e.getEntity())
                         ) :
-                PlayerFilter.entitiesAround(checkFrom, 10, 9, 10).lookingAtFirst(wp);
+                PlayerFilter.entitiesAround(checkFrom, bounceRange, bounceRange, bounceRange).lookingAtFirst(wp);
         Optional<WarlordsPlayer> foundPlayer = filter.closestFirst(wp).aliveEnemiesOf(wp).excluding(playersHit).findFirst();
         if (foundPlayer.isPresent()) {
             WarlordsPlayer hit = foundPlayer.get();
@@ -141,7 +146,7 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
         pulseDamage(wp, PlayerFilter.entitiesAround(totem, 5, 4, 5).aliveEnemiesOf(wp).stream());
         new FallingBlockWaveEffect(totem.getLocation().add(0, 1, 0), 6, 1.2, Material.SAPLING, (byte) 0).play();
         for (Player player1 : wp.getWorld().getPlayers()) {
-            player1.playSound(wp.getLocation(), "shaman.capacitortotem.pulse", 2, 1);
+            player1.playSound(totem.getLocation(), "shaman.capacitortotem.pulse", 2, 1);
         }
     }
 

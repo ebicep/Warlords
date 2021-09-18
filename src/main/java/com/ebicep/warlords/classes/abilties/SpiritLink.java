@@ -32,7 +32,7 @@ public class SpiritLink extends AbstractChainBase {
     protected int getHitCounterAndActivate(WarlordsPlayer wp, Player player) {
         int hitCounter = 0;
         for (WarlordsPlayer nearPlayer : PlayerFilter
-                .entitiesAround(player, 15, 13, 15)
+                .entitiesAround(player, 20, 18, 20)
                 .aliveEnemiesOf(wp)
                 .lookingAtFirst(wp)
         ) {
@@ -94,7 +94,7 @@ public class SpiritLink extends AbstractChainBase {
 
         warlordsPlayer.getSpec().getRed().setCurrentCooldown((float) (cooldown * warlordsPlayer.getCooldownModifier()));
 
-        player.playSound(player.getLocation(), "mage.firebreath.activation", 1.5F, 1);
+        player.playSound(player.getLocation(), "mage.firebreath.activation", 1, 1);
     }
 
     @Override
@@ -105,7 +105,7 @@ public class SpiritLink extends AbstractChainBase {
     private void healNearPlayers(WarlordsPlayer warlordsPlayer) {
         warlordsPlayer.addHealth(warlordsPlayer, "Soulbinding Weapon", 420, 420, -1, 100, false);
         for (WarlordsPlayer nearPlayer : PlayerFilter
-                .entitiesAround(warlordsPlayer, 2.5, 2.5, 2.5)
+                .entitiesAround(warlordsPlayer, 6, 6, 6)
                 .aliveTeammatesOfExcludingSelf(warlordsPlayer)
                 .limit(2)
         ) {

@@ -43,7 +43,7 @@ public class CapacitorTotem extends AbstractTotemBase {
     @Override
     protected void playSound(Player player, Location location) {
         for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(location, "shaman.totem.activation", 1, 1);
+            player1.playSound(location, "shaman.totem.activation", 2, 1);
         }
     }
 

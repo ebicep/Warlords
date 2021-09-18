@@ -53,10 +53,10 @@ public class TimeWarp extends AbstractAbility {
                 }
 
                 //PARTICLES
-                if (counter % 2 == 0) {
+                if (counter % 4 == 0) {
                     if (time != 0) {
                         for (Location location : warpTrail) {
-                            ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(175, 0, 175), location, 500);
+                            ParticleEffect.SPELL_WITCH.display(0.01f, 0, 0.01f, 0.001f, 1, location, 500);
                         }
                     }
                 }
@@ -69,7 +69,7 @@ public class TimeWarp extends AbstractAbility {
 
                 if (counter % 4 == 0) {
                     if (time != 0) {
-                        ParticleEffect.SPELL_WITCH.display(0.1f, 0, 0.1f, 0.001f, 6, warpLocation, 500);
+                        ParticleEffect.SPELL_WITCH.display(0.1f, 0, 0.1f, 0.001f, 4, warpLocation, 500);
                     }
 
                     int points = 6;

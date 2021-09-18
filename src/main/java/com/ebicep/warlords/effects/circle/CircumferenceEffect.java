@@ -47,6 +47,7 @@ public class CircumferenceEffect extends AbstractEffectPlayer<CircleEffect> {
             double angle = RANDOM.nextInt(360) * Math.PI / 180;
             LOCATION_CACHE.setX(radius * Math.sin(angle) + center.getX());
             LOCATION_CACHE.setZ(radius * Math.cos(angle) + center.getZ());
+            LOCATION_CACHE.setY(center.getY());
             do {
                 LOCATION_CACHE.setY(LOCATION_CACHE.getY() - 1);
             } while (LOCATION_CACHE.getY() >= 0 && !LOCATION_CACHE.getBlock().getType().isOccluding());

@@ -601,6 +601,11 @@ public class Warlords extends JavaPlugin {
                                 }
 
                                 warlordsPlayer.addHealth(orb.getOwner(), "Orbs of Life", maxHeal, maxHeal, -1, 100, false);
+                                if (player != null) {
+                                    for (Player player1 : player.getWorld().getPlayers()) {
+                                        player1.playSound(player.getLocation(), Sound.ORB_PICKUP, 0.5f, 1);
+                                    }
+                                }
 
                                 for (WarlordsPlayer nearPlayer : PlayerFilter
                                         .entitiesAround(warlordsPlayer, 6, 6, 6)
@@ -608,6 +613,11 @@ public class Warlords extends JavaPlugin {
                                         .limit(2)
                                 ) {
                                     nearPlayer.addHealth(orb.getOwner(), "Orbs of Life", minHeal, minHeal, -1, 100, false);
+                                    if (player != null) {
+                                        for (Player player1 : player.getWorld().getPlayers()) {
+                                            player1.playSound(player.getLocation(), Sound.ORB_PICKUP, 0.5f, 1);
+                                        }
+                                    }
                                 }
                             }
                             //8 seconds until orb expires

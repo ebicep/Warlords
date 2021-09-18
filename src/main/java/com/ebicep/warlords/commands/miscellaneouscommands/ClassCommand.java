@@ -31,7 +31,7 @@ public class ClassCommand implements CommandExecutor {
             }
 
             Classes selected = settings.getSelectedClass();
-            player.sendMessage(ChatColor.BLUE + "Your selected class: §7" + selected);
+            player.sendMessage(ChatColor.BLUE + "Your selected spec: §7" + selected);
         }
         return true;
     }

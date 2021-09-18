@@ -42,7 +42,7 @@ public class CustomScoreboard {
                     break;
                 case 5:
                     if (gameState != null) {
-                        tempTeam.setPrefix(ChatColor.WHITE + "Class: ");
+                        tempTeam.setPrefix(ChatColor.WHITE + "Spec: ");
                         tempTeam.setSuffix(ChatColor.GREEN + warlordsPlayer.getSpec().getClass().getSimpleName());
                     }
                     break;
@@ -194,7 +194,7 @@ public class CustomScoreboard {
     }
 
     public void updateClass() {
-        scoreboard.getTeam("team_5").setPrefix(ChatColor.WHITE + "Class: ");
+        scoreboard.getTeam("team_5").setPrefix(ChatColor.WHITE + "Spec: ");
         scoreboard.getTeam("team_5").setSuffix(ChatColor.GREEN + warlordsPlayer.getSpec().getClass().getSimpleName());
     }
 
@@ -229,7 +229,7 @@ public class CustomScoreboard {
                     sideBar.getScore("Absorbed: " + ChatColor.GOLD + Utils.addCommaAndRound(((Number) DatabaseManager.getPlayerInfoWithDotNotation(player, "absorbed")).doubleValue())).setScore(5);
                     sideBar.getScore("    ").setScore(4);
                     sideBar.getScore("    ").setScore(3);
-                    sideBar.getScore("         §e§lUpdate I").setScore(2);
+                    sideBar.getScore("          §e§lUpdate").setScore(2);
                     sideBar.getScore("         " + ChatColor.GREEN + ChatColor.BOLD + Warlords.VERSION).setScore(1);
                     player.setScoreboard(mainLobbyScoreboard);
                     this.cancel();

@@ -7,6 +7,7 @@ import com.ebicep.warlords.util.Matrix4d;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
 import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
@@ -32,6 +33,7 @@ public class WaterBreath extends AbstractAbility {
         wp.subtractEnergy(energyCost);
         wp.getCooldownManager().removeDebuffCooldowns();
         wp.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+        player.playSound(player.getLocation(), Sound.ORB_PICKUP, 1, 1);
         Location playerLoc = player.getLocation();
         playerLoc.setPitch(0);
         playerLoc.add(0, 1.6, 0);

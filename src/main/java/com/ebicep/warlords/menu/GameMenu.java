@@ -4,10 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.util.ItemBuilder;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.DyeColor;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
@@ -111,7 +108,8 @@ public class GameMenu {
                     1,
                     builder.get(),
                     (n, e) -> {
-                        player.sendMessage(ChatColor.BLUE + "You have changed your class to: §6" + subClass);
+                        player.sendMessage(ChatColor.WHITE + "Spec: §6" + subClass);
+                        player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 2);
                         setSelected(player, subClass);
                         ArmorManager.resetArmor(player, subClass, Warlords.getPlayerSettings(player.getUniqueId()).getWantedTeam());
                         openClassMenu(player, selectedGroup);

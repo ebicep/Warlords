@@ -12,6 +12,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class ChainHeal extends AbstractChainBase {
 
+    private final int radius = 15;
     private final int bounceRange = 10;
 
     public ChainHeal() {
@@ -28,14 +29,16 @@ public class ChainHeal extends AbstractChainBase {
                 "§7by §c10%§7." +
                 "\n\n" +
                 "§7Each ally healed reduces the cooldown of\n" +
-                "§7Boulder by §62 §7seconds.";
+                "§7Boulder by §62 §7seconds." +
+                "\n" +
+                "§7Has an initial cast range of §e" + radius + " §7blocks.";
     }
 
     @Override
     protected int getHitCounterAndActivate(WarlordsPlayer wp, Player player) {
         int hitCounter = 0;
         for (WarlordsPlayer nearPlayer : PlayerFilter
-                .entitiesAround(player, 15, 14, 15)
+                .entitiesAround(player, radius, radius, radius)
                 .aliveTeammatesOfExcludingSelf(wp)
                 .lookingAtFirst(wp)
         ) {
