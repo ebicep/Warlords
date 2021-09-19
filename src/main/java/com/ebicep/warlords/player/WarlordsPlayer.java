@@ -688,6 +688,9 @@ public final class WarlordsPlayer {
 
                     intervenedBy.addHealth(attacker, "Intervene", damageHealValue, damageHealValue, isCrit ? 100 : -1, 100, false);
 
+                    //ORBS
+                    spawnOrbs(ability, attacker);
+
                     this.addAbsorbed(-damageHealValue);
                     attacker.addAbsorbed(-damageHealValue);
                 }
@@ -722,6 +725,10 @@ public final class WarlordsPlayer {
                     addAbsorbed(-damageHealValue);
                     attacker.addAbsorbed(-damageHealValue);
                 }
+
+                //ORBS
+                spawnOrbs(ability, attacker);
+
                 this.entity.playEffect(EntityEffect.HURT);
                 for (Player player1 : attacker.getWorld().getPlayers()) {
                     player1.playSound(entity.getLocation(), Sound.HURT_FLESH, 1, 1);
@@ -828,16 +835,7 @@ public final class WarlordsPlayer {
                         }
 
                         //ORBS
-                        if (!attacker.getCooldownManager().getCooldown(OrbsOfLife.class).isEmpty() && !ability.isEmpty()) {
-                            for (Cooldown cooldown : attacker.getCooldownManager().getCooldown(OrbsOfLife.class)) {
-                                OrbsOfLife orbsOfLife = (OrbsOfLife) cooldown.getCooldownObject();
-                                Location location = getLocation();
-                                Location spawnLocation = orbsOfLife.generateSpawnLocation(location);
-
-                                OrbsOfLife.Orb orb = new OrbsOfLife.Orb(((CraftWorld) location.getWorld()).getHandle(), spawnLocation, attacker);
-                                orbsOfLife.getSpawnedOrbs().add(orb);
-                            }
-                        }
+                        spawnOrbs(ability, attacker);
 
                         //prot strike
                         if (ability.equals("Protector's Strike")) {
@@ -1007,6 +1005,20 @@ public final class WarlordsPlayer {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    public void spawnOrbs(String ability, WarlordsPlayer attacker) {
+        //ORBS
+        if (!attacker.getCooldownManager().getCooldown(OrbsOfLife.class).isEmpty() && !ability.isEmpty() && !ability.equals("Intervene")) {
+            for (Cooldown cooldown : attacker.getCooldownManager().getCooldown(OrbsOfLife.class)) {
+                OrbsOfLife orbsOfLife = (OrbsOfLife) cooldown.getCooldownObject();
+                Location location = getLocation();
+                Location spawnLocation = orbsOfLife.generateSpawnLocation(location);
+
+                OrbsOfLife.Orb orb = new OrbsOfLife.Orb(((CraftWorld) location.getWorld()).getHandle(), spawnLocation, attacker);
+                orbsOfLife.getSpawnedOrbs().add(orb);
             }
         }
     }
