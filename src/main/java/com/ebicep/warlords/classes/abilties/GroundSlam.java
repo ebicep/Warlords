@@ -59,7 +59,7 @@ public class GroundSlam extends AbstractAbility {
                             WarlordsEvents.addEntityUUID(fallingBlock);
                         }
                         //DAMAGE
-                        PlayerFilter.entitiesAround(location.clone().add(0, -.25, 0), 1, 3, 1)
+                        PlayerFilter.entitiesAround(location.clone().add(0, -.75, 0), 1, 3, 1)
                                 .enemiesOf(wp)
                                 .forEach(enemy -> {
                                     if (!playersHit.contains(enemy)) {

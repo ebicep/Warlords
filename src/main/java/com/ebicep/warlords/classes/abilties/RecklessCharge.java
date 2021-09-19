@@ -55,14 +55,18 @@ public class RecklessCharge extends AbstractAbility {
         }
 
         boolean finalInAir = inAir;
-        new BukkitRunnable() {
 
-            @Override
-            public void run() {
-                player.setVelocity(location.getDirection().multiply(finalInAir ? 2 : 1.5).setY(.2));
-            }
-        }.runTaskLater(Warlords.getInstance(), 1);
+        if (finalInAir) {
+            new BukkitRunnable() {
 
+                @Override
+                public void run() {
+                    player.setVelocity(location.getDirection().multiply(2).setY(.2));
+                }
+            }.runTaskLater(Warlords.getInstance(), 0);
+        } else {
+            player.setVelocity(location.getDirection().multiply(1.5).setY(.2));
+        }
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "warrior.seismicwave.activation", 2, 1);

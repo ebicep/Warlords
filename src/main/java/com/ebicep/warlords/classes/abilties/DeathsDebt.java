@@ -123,7 +123,7 @@ public class DeathsDebt extends AbstractTotemBase {
                                     critMultiplier,
                                     false);
                             // Teammate heal
-                            PlayerFilter.entitiesAround(totemStand, 8.0D, 7.0D, 8.0D)
+                            PlayerFilter.entitiesAround(totemStand, 8, 7, 8)
                                     .aliveTeammatesOf(wp)
                                     .forEach((nearPlayer) -> {
                                         nearPlayer.addHealth(wp, name,
@@ -134,7 +134,7 @@ public class DeathsDebt extends AbstractTotemBase {
                         } else {
                             player.getWorld().spigot().strikeLightningEffect(totemStand.getLocation(), false);
                             // Enemy damage
-                            PlayerFilter.entitiesAround(totemStand, 8.0D, 7.0D, 8.0D)
+                            PlayerFilter.entitiesAround(totemStand, 8, 7, 8)
                                     .aliveEnemiesOf(wp)
                                     .forEach((nearPlayer) -> {
                                         nearPlayer.addHealth(wp,

@@ -850,7 +850,7 @@ public final class WarlordsPlayer {
                             }
 
                             if (Warlords.getPlayerSettings(attacker.uuid).getClassesSkillBoosts() == ClassesSkillBoosts.PROTECTOR_STRIKE) {
-                                attacker.addHealth(attacker, ability, -damageHealValue / 1.43f, -damageHealValue / 1.43f, tempNewCritChance, 100, false);
+                                attacker.addHealth(attacker, ability, -damageHealValue / 1.67f, -damageHealValue / 1.67f, tempNewCritChance, 100, false);
                             } else {
                                 attacker.addHealth(attacker, ability, -damageHealValue / 2, -damageHealValue / 2, tempNewCritChance, 100, false);
                             }

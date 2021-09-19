@@ -17,7 +17,7 @@ public class ProtectorsStrike extends AbstractStrikeBase {
     @Override
     public void updateDescription(Player player) {
         int boost = Classes.getSelectedBoost(player) == ClassesSkillBoosts.PROTECTOR_STRIKE ? 120 : 100;
-        int selfBoost = Classes.getSelectedBoost(player) == ClassesSkillBoosts.PROTECTOR_STRIKE ? 70 : 50;
+        int selfBoost = Classes.getSelectedBoost(player) == ClassesSkillBoosts.PROTECTOR_STRIKE ? 60 : 50;
         description = "§7Strike the targeted enemy player,\n" +
                 "§7causing §c261 §7- §c352 §7damage\n" +
                 "§7and healing two nearby allies for\n" +

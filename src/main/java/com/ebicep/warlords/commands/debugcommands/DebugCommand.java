@@ -229,7 +229,7 @@ public class DebugCommand implements CommandExecutor {
                                     finalPlayer.getGame().setGameFreeze(false);
                                     finalPlayer.getGame().forEachOnlinePlayer((p, team) -> {
                                         if (p.getVehicle() != null && p.getVehicle() instanceof Horse) {
-                                            ((EntityLiving) ((CraftEntity) p.getVehicle()).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(.314);
+                                            ((EntityLiving) ((CraftEntity) p.getVehicle()).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(.318);
                                         }
                                         PacketUtils.sendTitle(p, "", "", 0, 0, 0);
                                     });

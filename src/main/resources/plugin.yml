@@ -50,3 +50,6 @@ commands:
   chatchannelcommand:
     description: Changes chat channel or sends a mesasage in a different channel
     aliases: [chat, achat, ac, pchat, pc]
+  me:
+    description: Not happening.
+    usage: /me
