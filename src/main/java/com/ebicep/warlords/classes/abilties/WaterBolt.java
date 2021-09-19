@@ -52,7 +52,7 @@ public class WaterBolt extends AbstractProjectileBase {
             1 - (Math.sqrt(distanceSquared) - MAX_FULL_DAMAGE_DISTANCE) / 70;
         if (toReduceBy < 0) toReduceBy = 0;
         if (victim != null) {
-            if (victim.isTeammateAlive(shooter)) {
+            if (victim.isTeammate(shooter)) {
                 victim.addHealth(shooter,
                         name,
                         (float) (minDamageHeal * DIRECT_HIT_MULTIPLIER * toReduceBy),
@@ -75,7 +75,7 @@ public class WaterBolt extends AbstractProjectileBase {
                 .excluding(victim)
                 .isAlive()
         ) {
-            if (nearEntity.isTeammateAlive(shooter)) {
+            if (nearEntity.isTeammate(shooter)) {
                 nearEntity.addHealth(
                         shooter,
                         name,
