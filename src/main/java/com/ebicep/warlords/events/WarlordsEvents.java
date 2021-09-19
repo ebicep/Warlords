@@ -474,6 +474,7 @@ public class WarlordsEvents implements Listener {
                                     ChatColor.AQUA + "%1$s" +
                                     ChatColor.WHITE + ": %2$s"
                             );
+                            e.getRecipients().removeIf(Warlords::hasPlayer);
                             return null;
                         }
                         e.setFormat(wp.getTeam().teamColor() + "[" +

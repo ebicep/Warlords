@@ -119,7 +119,7 @@ public class PlayerFilter implements Iterable<WarlordsPlayer> {
 
     @Nonnull
     public PlayerFilter soulBindedFirst(WarlordsPlayer owner) {
-        return sorted(Comparator.comparing(wp -> owner.getCooldownManager().hasBoundPlayer(wp)));
+        return sorted(Comparator.comparing(wp -> !owner.getCooldownManager().hasBoundPlayer(wp)));
     }
 
     @Nonnull
