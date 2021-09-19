@@ -329,6 +329,11 @@ public class Warlords extends JavaPlugin {
                             warlordsPlayer.getSpec().getBlue().setCurrentCooldown(0);
                             warlordsPlayer.getSpec().getOrange().setCurrentCooldown(0);
                             warlordsPlayer.setHorseCooldown(0);
+                            warlordsPlayer.updateRedItem();
+                            warlordsPlayer.updatePurpleItem();
+                            warlordsPlayer.updateBlueItem();
+                            warlordsPlayer.updateOrangeItem();
+                            warlordsPlayer.updateHorseItem();
                         }
 
                         //ABILITY COOLDOWN
@@ -356,7 +361,7 @@ public class Warlords extends JavaPlugin {
                                 warlordsPlayer.updateOrangeItem(player);
                             }
                         }
-                        if (warlordsPlayer.getHorseCooldown() != 0 && !warlordsPlayer.getEntity().isInsideVehicle()) {
+                        if (warlordsPlayer.getHorseCooldown() > 0 && !warlordsPlayer.getEntity().isInsideVehicle()) {
                             warlordsPlayer.setHorseCooldown(warlordsPlayer.getHorseCooldown() - .05f);
                             if (player != null) {
                                 warlordsPlayer.updateHorseItem(player);

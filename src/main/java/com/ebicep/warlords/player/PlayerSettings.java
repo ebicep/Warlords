@@ -13,8 +13,20 @@ public class PlayerSettings implements ConfigurationSerializable {
     private Classes selectedClass = Classes.PYROMANCER;
     private ClassesSkillBoosts classesSkillBoosts = selectedClass.skillBoosts.get(0);
     private boolean hotKeyMode = true;
-    private HashMap<Classes, Weapons> weaponSkins = new HashMap<>();
-    private Settings.ParticleQuality particleQuality = Settings.ParticleQuality.HIGH;
+    private HashMap<Classes, Weapons> weaponSkins = new HashMap<Classes, Weapons>() {{
+        put(Classes.PYROMANCER, Weapons.FELFLAME_BLADE);
+        put(Classes.CRYOMANCER, Weapons.FELFLAME_BLADE);
+        put(Classes.AQUAMANCER, Weapons.FELFLAME_BLADE);
+        put(Classes.BERSERKER, Weapons.FELFLAME_BLADE);
+        put(Classes.DEFENDER, Weapons.FELFLAME_BLADE);
+        put(Classes.REVENANT, Weapons.FELFLAME_BLADE);
+        put(Classes.AVENGER, Weapons.FELFLAME_BLADE);
+        put(Classes.CRUSADER, Weapons.FELFLAME_BLADE);
+        put(Classes.PROTECTOR, Weapons.FELFLAME_BLADE);
+        put(Classes.THUNDERLORD, Weapons.FELFLAME_BLADE);
+        put(Classes.SPIRITGUARD, Weapons.FELFLAME_BLADE);
+        put(Classes.EARTHWARDEN, Weapons.FELFLAME_BLADE);
+    }};    private Settings.ParticleQuality particleQuality = Settings.ParticleQuality.HIGH;
     /**
      * Preferred team in the upcoming warlords game
      */
