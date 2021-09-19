@@ -92,6 +92,11 @@ public class HolyRadiance extends AbstractAbility {
                 return;
             }
 
+            if (target.getWorld() != armorStand.getWorld()) {
+                this.cancel();
+                return;
+            }
+
             targetLocation.subtract(armorStandLocation);
             targetLocation.multiply(speed * speed / targetLocation.lengthSquared());
 

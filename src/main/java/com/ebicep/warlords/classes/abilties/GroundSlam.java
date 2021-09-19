@@ -65,7 +65,7 @@ public class GroundSlam extends AbstractAbility {
                                     if (!playersHit.contains(enemy)) {
                                         playersHit.add(enemy);
                                         final Location loc = enemy.getLocation();
-                                        final Vector v = wp.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1.1).setY(0.25);
+                                        final Vector v = wp.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1.05).setY(0.25);
                                         enemy.setVelocity(v);
                                         enemy.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
 
