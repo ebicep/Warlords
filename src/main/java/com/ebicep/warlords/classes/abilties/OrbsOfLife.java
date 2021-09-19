@@ -38,7 +38,7 @@ public class OrbsOfLife extends AbstractAbility {
     private final int floatingOrbRadius = 20;
 
     public OrbsOfLife() {
-        super("Orbs of Life", 240, 360, 21.57f, 20, 0, 0);
+        super("Orbs of Life", 240, 350, 21.57f, 20, 0, 0);
     }
 
     @Override
@@ -201,8 +201,6 @@ public class OrbsOfLife extends AbstractAbility {
                 }
             }
             this.armorStand = orbStand;
-            //spawn ding
-            ((Player) owner.getEntity()).playSound(owner.getLocation(), Sound.ORB_PICKUP, 1, 1);
             new BukkitRunnable() {
 
                 @Override

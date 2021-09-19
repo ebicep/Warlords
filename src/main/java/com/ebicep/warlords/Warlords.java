@@ -580,7 +580,7 @@ public class Warlords extends JavaPlugin {
                                 itr.remove();
 
                                 float minHeal = 240;
-                                float maxHeal = 360;
+                                float maxHeal = 350;
                                 if (Warlords.getPlayerSettings(orb.getOwner().getUuid()).getClassesSkillBoosts() == ClassesSkillBoosts.ORBS_OF_LIFE) {
                                     minHeal *= 1.2;
                                     maxHeal *= 1.2;

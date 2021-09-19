@@ -395,7 +395,7 @@ public class WarlordsEvents implements Listener {
 
     @EventHandler
     public void onPlayerDamage(EntityDamageEvent e) {
-        if (e.getEntity() instanceof Player && Warlords.hasPlayer((OfflinePlayer) e.getEntity())) {
+        if (e.getEntity() instanceof Player) {
             if (e.getCause() == EntityDamageEvent.DamageCause.VOID) {
                 e.getEntity().teleport(Warlords.getRejoinPoint(e.getEntity().getUniqueId()));
                 WarlordsPlayer wp = Warlords.getPlayer(e.getEntity());

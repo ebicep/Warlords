@@ -30,7 +30,7 @@ public class ChainHeal extends AbstractChainBase {
                 "\n\n" +
                 "§7Each ally healed reduces the cooldown of\n" +
                 "§7Boulder by §62 §7seconds." +
-                "\n" +
+                "\n\n" +
                 "§7Has an initial cast range of §e" + radius + " §7blocks.";
     }
 

@@ -24,7 +24,7 @@ public class HammerOfLight extends AbstractAbility {
     private final int duration = 8;
 
     public HammerOfLight() {
-        super("Hammer of Light", 192, 259, 62.64f, 30, 25, 175
+        super("Hammer of Light", 178, 244, 62.64f, 30, 25, 175
         );
     }
 
