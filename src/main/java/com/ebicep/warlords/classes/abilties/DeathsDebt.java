@@ -76,82 +76,84 @@ public class DeathsDebt extends AbstractTotemBase {
         new BukkitRunnable() {
             @Override
             public void run() {
-                boolean isPlayerInRadius = player.getLocation().distanceSquared(totemStand.getLocation()) < 10 * 10;
 
-                if (timeLeft[0] > 0) {
-                    for (Player player1 : player.getWorld().getPlayers()) {
-                        player1.playSound(totemStand.getLocation(), "shaman.earthlivingweapon.impact", 2, 1.5F);
-                    }
-
-                    player.sendMessage("§c\u00AB §2Spirit's Respite §7delayed §c" + -Math.round(getDelayedDamage()) + " §7damage. §6" + timeLeft[0] + " §7seconds left.");
-                } else {
-                    if (timeLeft[0] == 0) {
-                        wp.getCooldownManager().getCooldowns().removeIf(cd -> cd.getActionBarName().equals("RESP"));
-                        wp.getCooldownManager().addCooldown(name, this.getClass(), new DeathsDebt(), "DEBT", 6, wp, CooldownTypes.ABILITY);
-                        player.removeMetadata("TOTEM", Warlords.getInstance());
-
-                        if (!isPlayerInRadius) {
-                            player.sendMessage("§7You walked outside your §dDeath's Debt §7radius");
-                        } else {
-                            player.sendMessage("§c\u00AB §2Spirit's Respite §7delayed §c" + -Math.round(getDelayedDamage()) + " §7damage. §dYour debt must now be paid.");
-                        }
-                        circle.replaceEffects(e -> e instanceof DoubleLineEffect, new DoubleLineEffect(ParticleEffect.SPELL_WITCH));
-                        circle.setRadius(7.5);
-                    }
-
-                    int damageTick = -timeLeft[0];
-                    if (damageTick < 6) {
-
-                        for (Player player1 : player.getWorld().getPlayers()) {
-                            player1.playSound(totemStand.getLocation(), "shaman.lightningbolt.impact", 2, 1.5F);
-                        }
-
-                        // 100% of damage over 6 seconds
-                        float damage = (getDelayedDamage() * .1667f);
-
-                        // Player damage
-                        wp.addHealth(wp, "",
-                                (float) (damage * Math.pow(.8, wp.getCooldownManager().getCooldown(SpiritLink.class).size())),
-                                (float) (damage * Math.pow(.8, wp.getCooldownManager().getCooldown(SpiritLink.class).size())),
-                                critChance,
-                                critMultiplier,
-                                false);
-                        // Teammate heal
-                        PlayerFilter.entitiesAround(totemStand, 8.0D, 7.0D, 8.0D)
-                                .aliveTeammatesOf(wp)
-                                .forEach((nearPlayer) -> {
-                                    nearPlayer.addHealth(wp, name,
-                                            damage * -.15f,
-                                            damage * -.15f,
-                                            critChance, critMultiplier, false);
-                                });
-                    } else {
-                        player.getWorld().spigot().strikeLightningEffect(totemStand.getLocation(), false);
-                        // Enemy damage
-                        PlayerFilter.entitiesAround(totemStand, 8.0D, 7.0D, 8.0D)
-                                .aliveEnemiesOf(wp)
-                                .forEach((nearPlayer) -> {
-                                    nearPlayer.addHealth(wp,
-                                            name,
-                                            getDelayedDamage() * .15f,
-                                            getDelayedDamage() * .15f,
-                                            critChance,
-                                            critMultiplier, false);
-                                });
-                        // 6 damage waves, stop the function
-                        totemStand.remove();
-                        this.cancel();
-                        task.cancel();
-                    }
-                }
-
-                if (wp.getHealth() <= 0) {
+                if (wp.isDeath()) {
                     totemStand.remove();
                     this.cancel();
                     task.cancel();
+                } else {
+                    boolean isPlayerInRadius = player.getLocation().distanceSquared(totemStand.getLocation()) < 10 * 10;
+
+                    if (timeLeft[0] > 0) {
+                        for (Player player1 : player.getWorld().getPlayers()) {
+                            player1.playSound(totemStand.getLocation(), "shaman.earthlivingweapon.impact", 2, 1.5F);
+                        }
+
+                        player.sendMessage("§c\u00AB §2Spirit's Respite §7delayed §c" + -Math.round(getDelayedDamage()) + " §7damage. §6" + timeLeft[0] + " §7seconds left.");
+                    } else {
+                        if (timeLeft[0] == 0) {
+                            wp.getCooldownManager().getCooldowns().removeIf(cd -> cd.getActionBarName().equals("RESP"));
+                            wp.getCooldownManager().addCooldown(name, this.getClass(), new DeathsDebt(), "DEBT", 6, wp, CooldownTypes.ABILITY);
+                            player.removeMetadata("TOTEM", Warlords.getInstance());
+
+                            if (!isPlayerInRadius) {
+                                player.sendMessage("§7You walked outside your §dDeath's Debt §7radius");
+                            } else {
+                                player.sendMessage("§c\u00AB §2Spirit's Respite §7delayed §c" + -Math.round(getDelayedDamage()) + " §7damage. §dYour debt must now be paid.");
+                            }
+                            circle.replaceEffects(e -> e instanceof DoubleLineEffect, new DoubleLineEffect(ParticleEffect.SPELL_WITCH));
+                            circle.setRadius(7.5);
+                        }
+
+                        int damageTick = -timeLeft[0];
+                        if (damageTick < 6) {
+
+                            for (Player player1 : player.getWorld().getPlayers()) {
+                                player1.playSound(totemStand.getLocation(), "shaman.lightningbolt.impact", 2, 1.5F);
+                            }
+
+                            // 100% of damage over 6 seconds
+                            float damage = (getDelayedDamage() * .1667f);
+
+                            // Player damage
+                            wp.addHealth(wp, "",
+                                    (float) (damage * Math.pow(.8, wp.getCooldownManager().getCooldown(SpiritLink.class).size())),
+                                    (float) (damage * Math.pow(.8, wp.getCooldownManager().getCooldown(SpiritLink.class).size())),
+                                    critChance,
+                                    critMultiplier,
+                                    false);
+                            // Teammate heal
+                            PlayerFilter.entitiesAround(totemStand, 8.0D, 7.0D, 8.0D)
+                                    .aliveTeammatesOf(wp)
+                                    .forEach((nearPlayer) -> {
+                                        nearPlayer.addHealth(wp, name,
+                                                damage * -.15f,
+                                                damage * -.15f,
+                                                critChance, critMultiplier, false);
+                                    });
+                        } else {
+                            player.getWorld().spigot().strikeLightningEffect(totemStand.getLocation(), false);
+                            // Enemy damage
+                            PlayerFilter.entitiesAround(totemStand, 8.0D, 7.0D, 8.0D)
+                                    .aliveEnemiesOf(wp)
+                                    .forEach((nearPlayer) -> {
+                                        nearPlayer.addHealth(wp,
+                                                name,
+                                                getDelayedDamage() * .15f,
+                                                getDelayedDamage() * .15f,
+                                                critChance,
+                                                critMultiplier, false);
+                                    });
+                            // 6 damage waves, stop the function
+                            totemStand.remove();
+                            this.cancel();
+                            task.cancel();
+                        }
+                    }
+                    timeLeft[0] = Math.min(timeLeft[0] - 1, isPlayerInRadius ? Integer.MAX_VALUE : 0);
                 }
 
-                timeLeft[0] = Math.min(timeLeft[0] - 1, isPlayerInRadius ? Integer.MAX_VALUE : 0);
+
             }
 
         }.runTaskTimer(Warlords.getInstance(), 0, 20);
@@ -160,12 +162,16 @@ public class DeathsDebt extends AbstractTotemBase {
         new BukkitRunnable() {
             @Override
             public void run() {
-                boolean isPlayerInRadius = player.getLocation().distanceSquared(totemStand.getLocation()) < 10 * 10;
-                if (!isPlayerInRadius) {
-                    timeLeft[0] = 0;
-                }
-                if (timeLeft[0] <= 0) {
+                if(wp.isDeath()) {
                     this.cancel();
+                } else {
+                    boolean isPlayerInRadius = player.getLocation().distanceSquared(totemStand.getLocation()) < 10 * 10;
+                    if (!isPlayerInRadius) {
+                        timeLeft[0] = 0;
+                    }
+                    if (timeLeft[0] <= 0) {
+                        this.cancel();
+                    }
                 }
             }
         }.runTaskTimer(Warlords.getInstance(), 0, 0);
