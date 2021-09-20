@@ -574,7 +574,7 @@ public final class WarlordsPlayer {
                 for (Player player1 : attacker.getWorld().getPlayers()) {
                     player1.playSound(entity.getLocation(), Sound.HURT_FLESH, 1, 1);
                 }
-                addAbsorbed(min * spec.getDamageResistance() / 100);
+                addAbsorbed(-min * spec.getDamageResistance() / 100);
             }
         } else {
             if (!attacker.getCooldownManager().getCooldown(Inferno.class).isEmpty() && (!ability.isEmpty() && !ability.equals("Time Warp"))) {

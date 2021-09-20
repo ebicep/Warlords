@@ -285,8 +285,7 @@ public class PlayingState implements State, TimerDebugAble {
             this.powerUps = null;
         }
         Warlords.getPlayers().forEach(((uuid, warlordsPlayer) -> warlordsPlayer.removeGrave()));
-        Team winner = forceEnd ? null : calculateWinnerByPoints();
-        if (!forceEnd && game.playersCount() > 16) {
+        if (!forceEnd && game.playersCount() > 16 && timer <= 12000) {
             Warlords.newChain()
                     .asyncFirst(this::addGameAndLoadPlayers)
                     .syncLast((t) -> {
@@ -307,9 +306,17 @@ public class PlayingState implements State, TimerDebugAble {
             for (WarlordsPlayer player : PlayerFilter.playingGame(game)) {
                 if (player.getEntity() instanceof Player) {
                     DatabaseManager.loadPlayer((Player) player.getEntity());
+                    if(player.getEntity().isOp()) {
+                        player.sendMessage(ChatColor.GREEN + "This game was added to the database");
+                    }
                 }
             }
         } else {
+            game.forEachOnlinePlayer(((player, team) -> {
+                if(player.isOp()) {
+                    player.sendMessage(ChatColor.RED + "This game was not added to the database");
+                }
+            }));
             System.out.println(ChatColor.GREEN + "[Warlords] This game was not added to the database (INVALID DAMAGE)");
         }
         return true;
