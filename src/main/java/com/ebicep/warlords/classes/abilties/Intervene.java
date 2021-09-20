@@ -49,7 +49,7 @@ public class Intervene extends AbstractAbility {
                     Location lineLocation = player.getLocation().add(0, 1, 0);
                     lineLocation.setDirection(lineLocation.toVector().subtract(nearWarlordsPlayer.getLocation().add(0, 1, 0).toVector()).multiply(-1));
                     for (int i = 0; i < Math.floor(player.getLocation().distance(nearWarlordsPlayer.getLocation())) * 2; i++) {
-                        ParticleEffect.VILLAGER_HAPPY.display(0, 0, 0, 0.35F, 1, lineLocation, 500);
+                        ParticleEffect.VILLAGER_HAPPY.display(0, 0, 0, 0.1F, 1, lineLocation, 500);
                         lineLocation.add(lineLocation.getDirection().multiply(.5));
                     }
 

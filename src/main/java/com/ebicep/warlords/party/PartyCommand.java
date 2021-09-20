@@ -115,19 +115,23 @@ public class PartyCommand implements CommandExecutor {
                             return true;
                         case "kick":
                         case "remove":
+                        case "transfer":
                             if (args.length > 1) {
-                                String playerToRemove = args[1];
+                                String playerToActOn = args[1];
                                 //TODO moderators
                                 if (currentParty.get().getLeader().equals(player.getUniqueId())) {
-                                    if (player.getName().equalsIgnoreCase(playerToRemove)) {
-                                        Party.sendMessageToPlayer((Player) sender, ChatColor.RED + "You cannot remove yourself from the party!", true, true);
+                                    if (player.getName().equalsIgnoreCase(playerToActOn)) {
+                                        Party.sendMessageToPlayer((Player) sender, ChatColor.RED + "You cannot do this on yourself!", true, true);
                                     } else {
-                                        currentParty.get().remove(playerToRemove);
+                                        if(input.equalsIgnoreCase("remove") || input.equalsIgnoreCase("kick")) {
+                                            currentParty.get().remove(playerToActOn);
+                                        } else {
+                                            currentParty.get().transfer(playerToActOn);
+                                        }
                                     }
                                 } else {
                                     Party.sendMessageToPlayer((Player) sender, ChatColor.RED + "Insufficient Permissions!", true, true);
                                 }
-
                             } else {
                                 Party.sendMessageToPlayer((Player) sender, ChatColor.RED + "Invalid Arguments!", true, true);
                             }
@@ -146,7 +150,6 @@ public class PartyCommand implements CommandExecutor {
                                     } else {
                                         List<String> pollOptions = new ArrayList<>(Arrays.asList(pollInfo.split("/")));
                                         String question = pollOptions.get(0);
-                                        System.out.println(pollOptions);
                                         pollOptions.remove(question);
                                         currentParty.get().addPoll(question, pollOptions);
                                     }
@@ -192,6 +195,12 @@ public class PartyCommand implements CommandExecutor {
                                 Party.sendMessageToPlayer((Player) sender, ChatColor.RED + "There is no ongoing poll!", true, true);
                             }
                             return true;
+                        case "afk":
+                            currentParty.get().afk(player.getUniqueId());
+                            return true;
+                        default:
+                            Bukkit.getServer().dispatchCommand(sender, "p invite " + input);
+                            return true;
                     }
                 } else {
                     Party.sendMessageToPlayer(player, ChatColor.GOLD + "Party Comamnds: \n" +
@@ -235,7 +244,6 @@ public class PartyCommand implements CommandExecutor {
                 return true;
             }
         }
-
         return true;
     }
 

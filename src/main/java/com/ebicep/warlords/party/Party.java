@@ -88,6 +88,17 @@ public class Party {
         }
     }
 
+    public void transfer(String name) {
+        for (Map.Entry<UUID, Boolean> uuidBooleanEntry : members.entrySet()) {
+            String partyMemberName = Bukkit.getOfflinePlayer(uuidBooleanEntry.getKey()).getName();
+            if(partyMemberName.equalsIgnoreCase(name)) {
+                leader = uuidBooleanEntry.getKey();
+                sendMessageToAllPartyPlayers(ChatColor.GREEN + "The party was transferred to " + ChatColor.AQUA + partyMemberName, true, true);
+                break;
+            }
+        }
+    }
+
     public void disband() {
         Warlords.partyManager.disbandParty(this);
         sendMessageToAllPartyPlayers(ChatColor.DARK_RED + "The party was disbanded", true, true);
@@ -101,7 +112,11 @@ public class Party {
         if(members.size() > 1) {
             stringBuilder.append(ChatColor.YELLOW + "Party Members: " + ChatColor.AQUA);
         }
-        members.forEach((uuid, isOnline) -> {
+        members.entrySet().stream()
+                .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
+                .forEach((uuidBooleanEntry) -> {
+                    UUID uuid = uuidBooleanEntry.getKey();
+                    boolean isOnline = uuidBooleanEntry.getValue();
             if(uuid != leader) {
                 stringBuilder.append(ChatColor.AQUA).append(Bukkit.getOfflinePlayer(uuid).getName()).append(isOnline ? ChatColor.GREEN : ChatColor.RED).append(" ● ");
             }
@@ -130,8 +145,8 @@ public class Party {
     public void setOpen(boolean open) {
         isOpen = open;
         for (Player player : Bukkit.getOnlinePlayers()) {
-            if(player.getUniqueId().equals(leader)) {
-                if(open) {
+            if (player.getUniqueId().equals(leader)) {
+                if (open) {
                     sendMessageToAllPartyPlayers(ChatColor.GREEN + "The party is now open", true, true);
                 } else {
                     sendMessageToAllPartyPlayers(ChatColor.RED + "The party is now closed", true, true);
@@ -139,7 +154,17 @@ public class Party {
                 return;
             }
         }
+    }
 
+    public void afk(UUID uuid) {
+        if(members.get(uuid)) {
+            //now afk
+            sendMessageToAllPartyPlayers(ChatColor.AQUA + Bukkit.getOfflinePlayer(uuid).getName() + ChatColor.RED + " is now AFK", true, true);
+        } else {
+            //no longer afk
+            sendMessageToAllPartyPlayers(ChatColor.AQUA + Bukkit.getOfflinePlayer(uuid).getName() + ChatColor.GREEN + " is no longer AFK", true, true);
+        }
+        members.put(uuid, !members.get(uuid));
     }
 
     public static void sendMessageToPlayer(Player partyMember, String message, boolean withBorder, boolean centered) {

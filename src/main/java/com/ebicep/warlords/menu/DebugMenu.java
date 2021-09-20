@@ -570,6 +570,9 @@ public class DebugMenu {
                             .get(),
                     (n, e) -> {
                         target.getCooldownManager().addCooldown(cooldown.name, cooldown.cooldownClass, cooldown.cooldownObject, cooldown.actionBarName, durations[finalI], target, cooldown.cooldownType);
+                        if(cooldown == StatusEffectCooldowns.SPEED) {
+                            target.getSpeed().addSpeedModifier("Speed Powerup", 40, durations[finalI] * 20, "BASE");
+                        }
                         player.sendMessage(ChatColor.RED + "DEV: " + target.getColoredName() + "'s §aRecieved " + durations[finalI] + " seconds of " + cooldown.name);
                     }
             );
@@ -590,12 +593,12 @@ public class DebugMenu {
         teleportLocationsBlue.put(new ItemBuilder(Material.WOOL, 1, (short) 5).name(ChatColor.BLUE + "Healing Powerup").get(), gameMap.getHealingPowerupBlue());
         teleportLocationsBlue.put(new ItemBuilder(Material.WOOL, 1, (short) 4).name(ChatColor.BLUE + "Speed Powerup").get(), gameMap.getSpeedPowerupBlue());
         LinkedHashMap<ItemStack, Location> teleportLocationsRed = new LinkedHashMap<>();
-        teleportLocationsRed.put(new ItemBuilder(Material.BEACON).name(ChatColor.RED + "Lobby Spawn Point").get(), gameMap.getBlueLobbySpawnPoint());
-        teleportLocationsRed.put(new ItemBuilder(Material.BED).name(ChatColor.RED + "Respawn Point").get(), gameMap.getBlueRespawn());
-        teleportLocationsRed.put(new ItemBuilder(Material.BANNER).name(ChatColor.RED + "Flag").get(), gameMap.getBlueFlag());
-        teleportLocationsRed.put(new ItemBuilder(Material.WOOL, 1, (short) 1).name(ChatColor.RED + "Energy Powerup").get(), gameMap.getDamagePowerupBlue());
-        teleportLocationsRed.put(new ItemBuilder(Material.WOOL, 1, (short) 5).name(ChatColor.RED + "Healing Powerup").get(), gameMap.getHealingPowerupBlue());
-        teleportLocationsRed.put(new ItemBuilder(Material.WOOL, 1, (short) 4).name(ChatColor.RED + "Speed Powerup").get(), gameMap.getSpeedPowerupBlue());
+        teleportLocationsRed.put(new ItemBuilder(Material.BEACON).name(ChatColor.RED + "Lobby Spawn Point").get(), gameMap.getRedLobbySpawnPoint());
+        teleportLocationsRed.put(new ItemBuilder(Material.BED).name(ChatColor.RED + "Respawn Point").get(), gameMap.getRedRespawn());
+        teleportLocationsRed.put(new ItemBuilder(Material.BANNER).name(ChatColor.RED + "Flag").get(), gameMap.getRedFlag());
+        teleportLocationsRed.put(new ItemBuilder(Material.WOOL, 1, (short) 1).name(ChatColor.RED + "Energy Powerup").get(), gameMap.getDamagePowerupRed());
+        teleportLocationsRed.put(new ItemBuilder(Material.WOOL, 1, (short) 5).name(ChatColor.RED + "Healing Powerup").get(), gameMap.getHealingPowerupRed());
+        teleportLocationsRed.put(new ItemBuilder(Material.WOOL, 1, (short) 4).name(ChatColor.RED + "Speed Powerup").get(), gameMap.getSpeedPowerupRed());
         for (int i = 0; i < teleportLocationsBlue.entrySet().size(); i++) {
             int finalI = i;
             menu.setItem(i + 1, 1, (ItemStack) teleportLocationsBlue.keySet().toArray()[i], (n, e) -> {

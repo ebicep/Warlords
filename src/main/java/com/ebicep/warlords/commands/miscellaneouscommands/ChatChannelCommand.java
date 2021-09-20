@@ -22,20 +22,29 @@ public class ChatChannelCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
         Player player = (Player) sender;
         UUID uuid = player.getUniqueId();
+        ChatChannels chatChannel = Warlords.playerChatChannels.get(uuid);
         switch(s.toLowerCase()){
             case "chat":
                 if(args.length > 0) {
                     switch (args[0].toLowerCase()) {
                         case "a":
                         case "all":
-                            Warlords.playerChatChannels.put(uuid, ChatChannels.ALL);
-                            player.sendMessage(ChatColor.GREEN + "You are now in the" + ChatColor.GOLD + " ALL " + ChatColor.GREEN + "channel");
+                            if(chatChannel == ChatChannels.ALL) {
+                                player.sendMessage(ChatColor.RED + "You are already in this channel");
+                            } else {
+                                Warlords.playerChatChannels.put(uuid, ChatChannels.ALL);
+                                player.sendMessage(ChatColor.GREEN + "You are now in the" + ChatColor.GOLD + " ALL " + ChatColor.GREEN + "channel");
+                            }
                             return true;
                         case "p":
                         case "party":
                             if(Warlords.partyManager.inAParty(uuid)) {
-                                Warlords.playerChatChannels.put(uuid, ChatChannels.PARTY);
-                                player.sendMessage(ChatColor.GREEN + "You are now in the" + ChatColor.GOLD + " PARTY " + ChatColor.GREEN + "channel");
+                                if(chatChannel == ChatChannels.PARTY) {
+                                    player.sendMessage(ChatColor.RED + "You are already in this channel");
+                                } else {
+                                    Warlords.playerChatChannels.put(uuid, ChatChannels.PARTY);
+                                    player.sendMessage(ChatColor.GREEN + "You are now in the" + ChatColor.GOLD + " PARTY " + ChatColor.GREEN + "channel");
+                                }
                             } else {
                                 player.sendMessage(ChatColor.RED + "You must be in a party to join the party channel");
                             }
@@ -55,7 +64,6 @@ public class ChatChannelCommand implements CommandExecutor {
                 }
                 if(!input.isEmpty()) {
                     AsyncPlayerChatEvent event = new AsyncPlayerChatEvent(true, player, input, new HashSet<>(Bukkit.getOnlinePlayers()));
-                    ChatChannels previousChannel = Warlords.playerChatChannels.get(uuid);
                     if(s.equalsIgnoreCase("achat") || s.equalsIgnoreCase("ac")) {
                         Warlords.playerChatChannels.put(uuid, ChatChannels.ALL);
                     } else {
@@ -74,7 +82,7 @@ public class ChatChannelCommand implements CommandExecutor {
                                 for (Player p : event.getRecipients()) {
                                     p.sendMessage(message);
                                 }
-                                Warlords.playerChatChannels.put(uuid, previousChannel);
+                                Warlords.playerChatChannels.put(uuid, chatChannel);
                                 return null;
                             });
                         }

@@ -22,6 +22,7 @@ import net.minecraft.server.v1_8_R3.EntityLiving;
 import net.minecraft.server.v1_8_R3.GenericAttributes;
 import org.bukkit.*;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_8_R3.inventory.*;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -118,6 +119,9 @@ public class WarlordsEvents implements Listener {
             player.getInventory().clear();
             player.getInventory().setArmorContents(new ItemStack[]{null, null, null, null});
             player.getInventory().setItem(4, new ItemBuilder(Material.NETHER_STAR).name("§aSelection Menu").get());
+            if(player.isOp()) {
+                player.getInventory().setItem(3, new ItemBuilder(Material.EMERALD).name("§aDebug Menu").get());
+            }
 
             if (Warlords.getInstance().isEnabled()) {
                 CustomScoreboard.giveMainLobbyScoreboard(player);
@@ -290,6 +294,9 @@ public class WarlordsEvents implements Listener {
                 } else if (itemHeld.getType() == Material.NOTE_BLOCK) {
                     //team selector
                     openTeamMenu(player);
+                } else if (itemHeld.getType() == Material.EMERALD) {
+                    //wl command
+                    Bukkit.getServer().dispatchCommand(player, "wl");
                 }
             }
         } else if (action == Action.LEFT_CLICK_BLOCK || action == Action.LEFT_CLICK_AIR) {
@@ -363,6 +370,14 @@ public class WarlordsEvents implements Listener {
             if (e.getInventory().getHolder() != null && e.getInventory().getHolder().getInventory().getTitle().equals("Horse")) {
                 e.setCancelled(true);
             }
+        }
+        if(e.getInventory() instanceof CraftInventoryAnvil ||
+                e.getInventory() instanceof CraftInventoryBeacon ||
+                e.getInventory() instanceof CraftInventoryBrewer ||
+                e.getInventory() instanceof CraftInventoryCrafting ||
+                e.getInventory() instanceof CraftInventoryDoubleChest
+        ) {
+            e.setCancelled(true);
         }
     }
 
@@ -564,8 +579,8 @@ public class WarlordsEvents implements Listener {
                 // or SPAWN -> PLAYER
                 ChatColor enemyColor = event.getTeam().enemy().teamColor();
                 event.getGame().forEachOnlinePlayer((p, t) -> {
-                    p.sendMessage(enemyColor + player.getName() + " §ehas picked up the " + event.getTeam().coloredPrefix() + " §eflag!");
-                    PacketUtils.sendTitle(p, "", enemyColor + player.getName() + " §ehas picked up the " + event.getTeam().coloredPrefix() + " §eflag!", 0, 60, 0);
+                    p.sendMessage(enemyColor + player.getName() + " §epicked up the " + event.getTeam().coloredPrefix() + " §eflag!");
+                    PacketUtils.sendTitle(p, "", enemyColor + player.getName() + " §epicked up the " + event.getTeam().coloredPrefix() + " §eflag!", 0, 60, 0);
                     if (t == event.getTeam()) {
                         p.playSound(player.getLocation(), "ctf.friendlyflagtaken", 500, 1);
                     } else {
@@ -614,7 +629,7 @@ public class WarlordsEvents implements Listener {
                 Team loser = event.getTeam();
                 event.getGameState().addCapture(pfl.getPlayer());
                 event.getGame().forEachOnlinePlayer((p, t) -> {
-                    String message = pfl.getPlayer().getColoredName() + " §ehas captured the " + loser.coloredPrefix() + " §eflag!";
+                    String message = pfl.getPlayer().getColoredName() + " §ecaptured the " + loser.coloredPrefix() + " §eflag!";
                     p.sendMessage(message);
                     PacketUtils.sendTitle(p, "", message, 0, 60, 0);
 

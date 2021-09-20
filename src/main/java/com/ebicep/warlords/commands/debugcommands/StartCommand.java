@@ -66,11 +66,14 @@ public class StartCommand implements TabExecutor {
             return true;
         }
         List<Player> people;
-        Optional<Party> party = Warlords.partyManager.getPartyFromLeader(((Player) sender).getUniqueId());
+        Optional<Party> party = Warlords.partyManager.getPartyFromAny(((Player) sender).getUniqueId());
         people = party.map(value -> new ArrayList<>(value.getAllPartyPeoplePlayerOnline())).orElseGet(() -> new ArrayList<>(online));
         if (party.isPresent()) {
-            if (!party.get().allOnline()) {
-                sender.sendMessage(ChatColor.RED + "All party members must be online");
+            if(!party.get().getLeader().equals(((Player) sender).getUniqueId())) {
+                sender.sendMessage(ChatColor.RED + "You are not the party leader");
+                return true;
+            } else if (!party.get().allOnline()) {
+                sender.sendMessage(ChatColor.RED + "All party members must be online or not afk");
                 return true;
             } else {
                 //hiding players not in party

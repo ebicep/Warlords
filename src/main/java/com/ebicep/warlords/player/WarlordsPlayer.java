@@ -574,6 +574,7 @@ public final class WarlordsPlayer {
                 for (Player player1 : attacker.getWorld().getPlayers()) {
                     player1.playSound(entity.getLocation(), Sound.HURT_FLESH, 1, 1);
                 }
+                addAbsorbed(min * spec.getDamageResistance() / 100);
             }
         } else {
             if (!attacker.getCooldownManager().getCooldown(Inferno.class).isEmpty() && (!ability.isEmpty() && !ability.equals("Time Warp"))) {
@@ -589,6 +590,8 @@ public final class WarlordsPlayer {
                 damageHealValue *= critMultiplier / 100f;
             }
 
+            final float damageHealValueBeforeReduction = damageHealValue;
+
             if (!ignoreReduction) {
                 // Flag carriers take more damage
                 damageHealValue *= damageHealValue > 0 || flagDamageMultiplier == 0 ? 1 : flagDamageMultiplier;
@@ -598,6 +601,7 @@ public final class WarlordsPlayer {
                 if (min < 0 && !HammerOfLight.standingInHammer(attacker, entity)) {
                     //base
                     totalReduction = 1 - spec.getDamageResistance() / 100f;
+
                     //add damage
                     for (Cooldown cooldown : attacker.getCooldownManager().getCooldown(Berserk.class)) {
                         totalReduction *= 1.25;
@@ -636,6 +640,8 @@ public final class WarlordsPlayer {
                     if (!attacker.getCooldownManager().getCooldown(CripplingStrike.class).isEmpty()) {
                         totalReduction *= .85;
                     }
+
+                    addAbsorbed(-damageHealValue * (1 - totalReduction));
                 } else if (min > 0) {
                     if (!cooldownManager.getCooldown(WoundingStrikeBerserker.class).isEmpty()) {
                         totalReduction *= .65;
@@ -652,7 +658,7 @@ public final class WarlordsPlayer {
                         totalReduction *= Math.pow(1.03, playersInHammer);
                     }
                 }
-
+                System.out.println(totalReduction);
                 damageHealValue *= totalReduction;
             }
             if (!cooldownManager.getCooldown(Intervene.class).isEmpty() && cooldownManager.getCooldown(Intervene.class).get(0).getFrom() != this && !HammerOfLight.standingInHammer(attacker, entity) && isEnemy(attacker)) {
@@ -691,8 +697,8 @@ public final class WarlordsPlayer {
                     //ORBS
                     spawnOrbs(ability, attacker);
 
-                    this.addAbsorbed(-damageHealValue);
-                    attacker.addAbsorbed(-damageHealValue);
+                    this.addAbsorbed(-damageHealValueBeforeReduction);
+                    attacker.addAbsorbed(-damageHealValueBeforeReduction/10);
                 }
             } else if (!cooldownManager.getCooldown(ArcaneShield.class).isEmpty() && isEnemy(attacker) && !HammerOfLight.standingInHammer(attacker, entity)) {
                 ArcaneShield arcaneShield = (ArcaneShield) spec.getBlue();
@@ -722,8 +728,8 @@ public final class WarlordsPlayer {
                         attacker.sendMessage(ChatColor.GREEN + "\u00BB" + ChatColor.GRAY + " Your " + ability + " was absorbed by " + name + ChatColor.GRAY + ".");
                     }
 
-                    addAbsorbed(-damageHealValue);
-                    attacker.addAbsorbed(-damageHealValue);
+                    addAbsorbed(-damageHealValueBeforeReduction);
+                    attacker.addAbsorbed(-damageHealValueBeforeReduction);
                 }
 
                 //ORBS
@@ -788,7 +794,6 @@ public final class WarlordsPlayer {
 
                                             });
                                 }
-                                addAbsorbed(-damageHealValue);
                                 attacker.addAbsorbed(-damageHealValue);
                             }
                         }

@@ -18,7 +18,6 @@ import static com.ebicep.warlords.player.CooldownTypes.DEBUFF;
 public enum StatusEffectCooldowns {
 
     DAMAGE("Damage", new ItemStack(Material.WOOL, 1, (byte) 14), ChatColor.RED, DamagePowerUp.class, new DamagePowerUp(), "DMG", BUFF),
-    DAMAGE2("Damage", new ItemStack(Material.WOOL, 1, (byte) 14), ChatColor.RED, DamagePowerUp.class, new DamagePowerUp(), "DMG", BUFF),
     ENERGY("Energy", new ItemStack(Material.WOOL, 1, (byte) 1), ChatColor.GOLD, EnergyPowerUp.class, new EnergyPowerUp(), "ENERGY", BUFF),
     SPEED("Speed", new ItemStack(Material.WOOL, 1, (byte) 4), ChatColor.YELLOW, SpeedPowerUp.class, new SpeedPowerUp(), "SPEED", BUFF),
     RESISTANCE("Resistance", new ItemStack(Material.WOOL, 1, (byte) 8), ChatColor.GRAY, null, null, "RES", BUFF),

@@ -50,7 +50,7 @@ public class WaterBolt extends AbstractProjectileBase {
         double distanceSquared = currentLocation.distanceSquared(startingLocation);
         double toReduceBy = MAX_FULL_DAMAGE_DISTANCE * MAX_FULL_DAMAGE_DISTANCE > distanceSquared ? 1 : 
             1 - (Math.sqrt(distanceSquared) - MAX_FULL_DAMAGE_DISTANCE) / 75;
-        if (toReduceBy < 0) toReduceBy = 0;
+        if (toReduceBy < .2) toReduceBy = .2;
         if (victim != null) {
             if (victim.isTeammate(shooter)) {
                 victim.addHealth(shooter,
