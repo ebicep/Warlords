@@ -68,7 +68,7 @@ public class HammerOfLight extends AbstractAbility {
             public void run() {
                 damageHealCircle.setDuration(damageHealCircle.getDuration() - 1);
                 for (WarlordsPlayer warlordsPlayer : PlayerFilter
-                    .entitiesAround(damageHealCircle.getLocation(), radius, 6, radius)
+                    .entitiesAround(damageHealCircle.getLocation(), radius, radius, radius)
                     .isAlive()
                 ) {
                     if (damageHealCircle.getWarlordsPlayer().isTeammateAlive(warlordsPlayer)) {

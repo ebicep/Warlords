@@ -100,7 +100,7 @@ public class Boulder extends AbstractAbility {
                     }
 
                     for (WarlordsPlayer p : PlayerFilter
-                            .entitiesAround(newLoc, 5, 5, 5)
+                            .entitiesAround(newLoc, 5.5, 5.5, 5.5)
                             .aliveEnemiesOf(wp)
                     ) {
                         p.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
