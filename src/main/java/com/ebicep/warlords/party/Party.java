@@ -76,7 +76,7 @@ public class Party {
         members.remove(uuid);
         if (leader.equals(uuid)) {
             if (members.keySet().stream().findAny().isPresent()) {
-                leader = members.keySet().stream().findFirst().get();
+                leader = members.keySet().stream().max(Comparator.comparing(uuid1 -> Bukkit.getOfflinePlayer(uuid1).isOp())).get();
                 sendMessageToAllPartyPlayers(ChatColor.AQUA + player.getName() + ChatColor.RED + " left the party", true, true);
                 sendMessageToAllPartyPlayers(ChatColor.AQUA + Bukkit.getOfflinePlayer(leader).getName() + ChatColor.GREEN + " is now the new party leader", true, true);
             } else {

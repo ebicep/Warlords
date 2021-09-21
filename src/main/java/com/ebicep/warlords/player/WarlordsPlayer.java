@@ -655,7 +655,6 @@ public final class WarlordsPlayer {
                         totalReduction *= Math.pow(1.03, playersInHammer);
                     }
                 }
-                System.out.println(totalReduction);
                 damageHealValue *= totalReduction;
             }
             if (!cooldownManager.getCooldown(Intervene.class).isEmpty() && cooldownManager.getCooldown(Intervene.class).get(0).getFrom() != this && !HammerOfLight.standingInHammer(attacker, entity) && isEnemy(attacker)) {

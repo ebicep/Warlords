@@ -82,6 +82,11 @@ public class HolyRadiance extends AbstractAbility {
                 return;
             }
 
+            if (target.getWorld() != armorStand.getWorld()) {
+                this.cancel();
+                return;
+            }
+
             Location targetLocation = target.getLocation();
             Location armorStandLocation = armorStand.getLocation();
             double distance = targetLocation.distanceSquared(armorStandLocation);
@@ -92,13 +97,9 @@ public class HolyRadiance extends AbstractAbility {
                 return;
             }
 
-            if (target.getWorld() != armorStand.getWorld()) {
-                this.cancel();
-                return;
-            }
-
             targetLocation.subtract(armorStandLocation);
-            targetLocation.multiply(speed * speed / targetLocation.lengthSquared());
+            //System.out.println(Math.max(speed * 3.25 / targetLocation.lengthSquared() / 2, speed / 10));
+            targetLocation.multiply(Math.max(speed * 3.25 / targetLocation.lengthSquared() / 2, speed / 10));
 
             armorStandLocation.add(targetLocation);
             this.armorStand.teleport(armorStandLocation);
