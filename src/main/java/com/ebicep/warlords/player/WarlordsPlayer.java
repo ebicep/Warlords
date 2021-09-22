@@ -1573,9 +1573,9 @@ public final class WarlordsPlayer {
     }
 
     public void setVelocity(org.bukkit.util.Vector v, boolean kbAfterHorse) {
-        if((kbAfterHorse && this.entity.getVehicle() != null) || (!kbAfterHorse && this.entity.getVehicle() == null)) {
+        //if((kbAfterHorse && this.entity.getVehicle() != null) || (!kbAfterHorse && this.entity.getVehicle() == null)) {
             this.entity.setVelocity(v);
-        }
+        //}
     }
 
     public void setVelocity(Location from, double multipliedBy, double y, boolean kbAfterHorse) {
