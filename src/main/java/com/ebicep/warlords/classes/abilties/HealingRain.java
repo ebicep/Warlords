@@ -39,8 +39,8 @@ public class HealingRain extends AbstractAbility {
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
 
-        if (player.getTargetBlock((HashSet<Byte>) null, 15).getType() == Material.AIR) return;
-        DamageHealCircle damageHealCircle = new DamageHealCircle(wp, player.getTargetBlock((HashSet<Byte>) null, 15).getLocation(), 6, duration, minDamageHeal, maxDamageHeal, critChance, critMultiplier, name);
+        if (player.getTargetBlock((HashSet<Byte>) null, 25).getType() == Material.AIR) return;
+        DamageHealCircle damageHealCircle = new DamageHealCircle(wp, player.getTargetBlock((HashSet<Byte>) null, 25).getLocation(), 6, duration, minDamageHeal, maxDamageHeal, critChance, critMultiplier, name);
         damageHealCircle.getLocation().add(0, 1, 0);
         wp.subtractEnergy(energyCost);
         wp.getCooldownManager().addCooldown(name, HealingRain.this.getClass(), new HealingRain(), "RAIN", duration, wp, CooldownTypes.ABILITY);

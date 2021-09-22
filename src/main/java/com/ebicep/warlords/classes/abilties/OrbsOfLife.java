@@ -113,9 +113,7 @@ public class OrbsOfLife extends AbstractAbility {
                     for (Player player1 : player.getWorld().getPlayers()) {
                         player1.playSound(player.getLocation(), Sound.LEVEL_UP, 0.85f, 0.7f);
                     }
-                    Location particleLoc = player.getLocation();
-                    particleLoc.add(0, 1.5, 0);
-                    ParticleEffect.ENCHANTMENT_TABLE.display(0.8f, 0, 0.8f, 0.2f, 10, particleLoc, 500);
+                    ParticleEffect.ENCHANTMENT_TABLE.display(0.8f, 0, 0.8f, 0.2f, 10, player.getLocation().add(0, 1.5, 0), 500);
 
                     this.cancel();
                 }

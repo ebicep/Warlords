@@ -36,7 +36,7 @@ public class WaterBreath extends AbstractAbility {
         player.playSound(player.getLocation(), Sound.ORB_PICKUP, 1, 1);
         Location playerLoc = player.getLocation();
         playerLoc.setPitch(0);
-        playerLoc.add(0, 1.6, 0);
+        playerLoc.add(0, 1.7, 0);
         Vector viewDirection = playerLoc.getDirection();
         PlayerFilter.entitiesAround(player, 7.5, 10, 7.5)
                 .forEach(target -> {
