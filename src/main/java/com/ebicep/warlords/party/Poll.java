@@ -6,6 +6,7 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -28,7 +29,7 @@ public class Poll {
 
             @Override
             public void run() {
-                if (timeLeft <= 0) {
+                if (timeLeft <= 0 || party.getMembers().size() == playerAnsweredWithOption.size()) {
                     sendPollResults();
                     party.getPolls().remove(Poll.this);
                     this.cancel();
@@ -67,7 +68,7 @@ public class Poll {
             int finalI = i;
             numberOfVote[i] = (int) playerAnsweredWithOption.values().stream().filter(v -> v == finalI + 1).count();
 
-            int counter = (int) Math.round((double) numberOfVote[i] / options.size() * 10);
+            int counter = (int) Math.round((double) numberOfVote[i] / playerAnsweredWithOption.size() * 10);
             squareRatio[i] = ChatColor.GREEN.toString();
             for (int j = 0; j < counter; j++) {
                 squareRatio[i] += "■";
@@ -83,9 +84,20 @@ public class Poll {
             for (int i = 0; i < options.size(); i++) {
                 player.sendMessage(ChatColor.GOLD + options.get(i) + ChatColor.DARK_GRAY + " - " +
                         ChatColor.YELLOW + numberOfVote[i] +
-                        " (" + (Math.round((double) numberOfVote[i] / options.size() * 100)) + "%) " +
+                        " (" + (Math.round((double) numberOfVote[i] / playerAnsweredWithOption.size() * 100)) + "%) " +
                         ChatColor.GOLD + "[" + squareRatio[i] + ChatColor.GOLD + "]"
                         );
+            }
+            Set<UUID> nonVoters = new HashSet<>(party.getMembers().keySet());
+            nonVoters.removeAll(playerAnsweredWithOption.keySet());
+            StringBuilder playersThatDidntVote = new StringBuilder(ChatColor.YELLOW + "Non Voters: " + ChatColor.AQUA);
+            for (UUID nonVoter : nonVoters) {
+                playersThatDidntVote.append(ChatColor.AQUA).append(Bukkit.getOfflinePlayer(nonVoter).getName())
+                        .append(ChatColor.GRAY).append(", ");
+            }
+            playersThatDidntVote.setLength(playersThatDidntVote.length() - 2);
+            if(party.getMembers().size() != playerAnsweredWithOption.size() && (party.getLeader().equals(player.getUniqueId()) || party.getModerators().contains(player.getUniqueId()))) {
+                player.sendMessage(playersThatDidntVote.toString());
             }
             player.sendMessage(ChatColor.BLUE.toString() + ChatColor.BOLD + "------------------------------------------");
         });
