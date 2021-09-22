@@ -98,12 +98,12 @@ public class HealingTotem extends AbstractTotemBase {
                     circle.playEffects();
 
                     //1
-                    //1.4
-                    //1.8
-                    //2.2
-                    //2.6
-                    //3.0
-                    //3.4
+                    //1.35
+                    //1.7
+                    //2.05
+                    //2.4
+                    //2.85
+                    //3.1
                     float healMultiplier = 1 + (.35f * (6 - timeLeft));
                     PlayerFilter.entitiesAround(totemStand, radius, radius, radius)
                             .aliveTeammatesOf(wp)
