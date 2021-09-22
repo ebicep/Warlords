@@ -294,6 +294,11 @@ public class PlayingState implements State, TimerDebugAble {
                     })
                     .execute();
         } else {
+            game.forEachOnlinePlayer(((player, team) -> {
+                if(player.isOp()) {
+                    player.sendMessage(ChatColor.RED + "This game was not added to the database");
+                }
+            }));
             System.out.println(ChatColor.GREEN + "[Warlords] This game was not added to the database");
         }
     }

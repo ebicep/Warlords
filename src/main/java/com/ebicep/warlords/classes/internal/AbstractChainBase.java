@@ -43,23 +43,26 @@ public abstract class AbstractChainBase extends AbstractAbility {
     protected void chain(Location from, Location to) {
         Location location = from.subtract(0, .5, 0);
         location.setDirection(location.toVector().subtract(to.subtract(0, .5, 0).toVector()).multiply(-1));
-        spawnChain((int) Math.round(from.distance(to)), location);
+        spawnChain(to, location);
     }
 
-    protected void spawnChain(int distance, Location location) {
+    protected void spawnChain(Location to, Location from) {
 
         List<ArmorStand> chains = new ArrayList<>();
-
-        for (int i = 0; i < distance; i++) {
-            ArmorStand chain = location.getWorld().spawn(location, ArmorStand.class);
-            chain.setHeadPose(new EulerAngle(location.getDirection().getY() * -1, 0, 0));
+        int maxDistance = (int) Math.round(to.distance(from));
+        for (int i = 0; i < maxDistance; i++) {
+            ArmorStand chain = from.getWorld().spawn(from, ArmorStand.class);
+            chain.setHeadPose(new EulerAngle(from.getDirection().getY() * -1, 0, 0));
             chain.setGravity(false);
             chain.setVisible(false);
             chain.setBasePlate(false);
             chain.setMarker(true);
             chain.setHelmet(getChainItem());
-            location.add(location.getDirection().multiply(1.2));
+            from.add(from.getDirection().multiply(1.1));
             chains.add(chain);
+            if(to.distanceSquared(from) < .4) {
+                break;
+            }
         }
 
         new BukkitRunnable() {
@@ -72,7 +75,7 @@ public abstract class AbstractChainBase extends AbstractAbility {
 
                 for (int i = 0; i < chains.size(); i++) {
                     ArmorStand armorStand = chains.get(i);
-                    if (armorStand.getTicksLived() > 12) {
+                    if (armorStand.getTicksLived() > 9) {
                         armorStand.remove();
                         chains.remove(i);
                         i--;

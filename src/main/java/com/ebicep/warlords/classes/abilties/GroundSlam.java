@@ -5,6 +5,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
 import com.ebicep.warlords.util.Utils;
 import org.bukkit.Location;
@@ -58,15 +59,17 @@ public class GroundSlam extends AbstractAbility {
                             customFallingBlocks.add(new CustomFallingBlock(fallingBlock, wp, GroundSlam.this));
                             WarlordsEvents.addEntityUUID(fallingBlock);
                         }
+                        //ParticleEffect.VILLAGER_HAPPY.display(0 , 0 ,0, 0, 10, location, 1000);
+
                         //DAMAGE
-                        PlayerFilter.entitiesAround(location.clone().add(0, -.75, 0), 1, 4.5, 1)
+                        PlayerFilter.entitiesAround(location.clone().add(0, -.75, 0), .5, 4.5, .5)
                                 .enemiesOf(wp)
                                 .forEach(enemy -> {
                                     if (!playersHit.contains(enemy)) {
                                         playersHit.add(enemy);
                                         final Location loc = enemy.getLocation();
                                         final Vector v = wp.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1.05).setY(0.25);
-                                        enemy.setVelocity(v);
+                                        enemy.setVelocity(v, false);
                                         enemy.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
 
                                     }

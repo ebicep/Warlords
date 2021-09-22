@@ -80,7 +80,7 @@ public class SeismicWave extends AbstractAbility {
                 ) {
                     playersHit.add(p);
                     final Vector v = player.getLocation().toVector().subtract(p.getLocation().toVector()).normalize().multiply(-1.05).setY(0.25);
-                    p.setVelocity(v);
+                    p.setVelocity(v, false);
                     p.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
                 }
             }

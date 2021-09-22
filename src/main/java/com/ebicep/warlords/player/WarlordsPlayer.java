@@ -668,6 +668,9 @@ public final class WarlordsPlayer {
                     gameState.getGame().forEachOnlinePlayer((player1, t) -> {
                         player1.playSound(loc, "warrior.intervene.block", 2, 1);
                     });
+                    if (attacker.entity instanceof Player) {
+                        ((Player) attacker.entity).playSound(attacker.getLocation(), Sound.ORB_PICKUP, 1, 1);
+                    }
 
                     entity.playEffect(EntityEffect.HURT);
                     intervenedBy.getEntity().playEffect(EntityEffect.HURT);
@@ -692,6 +695,7 @@ public final class WarlordsPlayer {
                     Location lineLocation = getLocation().add(0, 1, 0);
                     lineLocation.setDirection(lineLocation.toVector().subtract(intervenedBy.getLocation().add(0, 1, 0).toVector()).multiply(-1));
                     for (int i = 0; i < Math.floor(getLocation().distance(intervenedBy.getLocation())) * 2; i++) {
+                        ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(255, 0, 0), lineLocation, 500);
                         ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(255, 0, 0), lineLocation, 500);
                         lineLocation.add(lineLocation.getDirection().multiply(.5));
                     }
@@ -941,8 +945,7 @@ public final class WarlordsPlayer {
                 } else {
                     if (!ability.isEmpty() &&
                             (this != attacker || ability.equals("Water Bolt") || ability.equals("Orbs of Life")) &&
-                            damageHealValue != 0 &&
-                            !ability.equals("Intervene")
+                            damageHealValue != 0
                     ) {
                         if (attacker.entity instanceof Player) {
                             ((Player) attacker.entity).playSound(attacker.getLocation(), Sound.ORB_PICKUP, 1, 1);
@@ -1566,7 +1569,23 @@ public final class WarlordsPlayer {
     }
 
     public void setVelocity(org.bukkit.util.Vector v) {
-        this.entity.setVelocity(v);
+        setVelocity(v, true);
+    }
+
+    public void setVelocity(org.bukkit.util.Vector v, boolean kbAfterHorse) {
+        if((kbAfterHorse && this.entity.getVehicle() != null) || (!kbAfterHorse && this.entity.getVehicle() == null)) {
+            this.entity.setVelocity(v);
+        }
+    }
+
+    public void setVelocity(Location from, double multipliedBy, double y, boolean kbAfterHorse) {
+        this.setVelocity(from, getLocation(), multipliedBy, y, kbAfterHorse);
+    }
+
+    public void setVelocity(Location from, Location to, double multipliedBy, double y, boolean kbAfterHorse) {
+        if((kbAfterHorse && this.entity.getVehicle() != null) || (!kbAfterHorse && this.entity.getVehicle() == null)) {
+            this.entity.setVelocity(to.toVector().subtract(from.toVector()).normalize().multiply(multipliedBy).setY(y));
+        }
     }
 
     public World getWorld() {

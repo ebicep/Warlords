@@ -103,17 +103,14 @@ public class Boulder extends AbstractAbility {
                             .entitiesAround(newLoc, 5.5, 5.5, 5.5)
                             .aliveEnemiesOf(wp)
                     ) {
-                        p.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
-
-                        Entity entity = p.getEntity();
                         Vector v;
                         if (p == directHit) {
                             v = player.getLocation().toVector().subtract(p.getLocation().toVector()).normalize().multiply(-1).setY(0.2);
                         } else {
-                            v = entity.getLocation().toVector().subtract(newLoc.toVector()).normalize().multiply(1).setY(0.2);
+                            v = p.getLocation().toVector().subtract(newLoc.toVector()).normalize().multiply(1).setY(0.2);
                         }
-                        entity.setVelocity(v);
-
+                        p.setVelocity(v, false);
+                        p.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
                     }
                     newLoc.setPitch(-12);
                     Location impactLocation = newLoc.clone().subtract(speed);
