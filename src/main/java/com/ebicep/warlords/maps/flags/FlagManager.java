@@ -196,6 +196,8 @@ public class FlagManager implements Listener {
             return;
         }
 
+        wp.setFlagCooldown(5);
+
         if (info.getFlag() instanceof GroundFlagLocation) {
             GroundFlagLocation groundFlagLocation = (GroundFlagLocation) info.getFlag();
             if (team == info.getTeam()) {

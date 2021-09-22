@@ -33,7 +33,7 @@ public class FreezingBreath extends AbstractAbility {
     public void onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
         Location playerLoc = player.getLocation();
         playerLoc.setPitch(0);
-        playerLoc.add(0, 1.6, 0);
+        playerLoc.add(0, 1.7, 0);
         wp.subtractEnergy(energyCost);
         Vector viewDirection = playerLoc.getDirection();
         PlayerFilter.entitiesAround(player, 7.5, 10, 7.5)
