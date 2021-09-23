@@ -25,6 +25,10 @@ public class TestCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
+
+        if(!sender.isOp()) {
+            return true;
+        }
         WarlordsPlayer player = BaseCommand.requireWarlordsPlayer(sender);
         if (player != null) {
 

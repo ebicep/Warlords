@@ -24,6 +24,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -63,10 +64,7 @@ public class DatabaseManager {
                 warlordsGamesDatabase = mongoClient.getDatabase("Warlords_Games");
                 playersInformation = warlordsPlayersDatabase.getCollection("Players_Information");
                 gamesInformation = warlordsGamesDatabase.getCollection("Games_Information");
-//                List<UUID> uuids = new ArrayList<>();
                 playersInformation.find().forEach((Consumer<? super Document>) document -> {
-//                    UUID uuid = UUID.fromString((String) document.get("uuid"));
-//                    uuids.add(uuid);
                     cachedPlayerInfo.put(UUID.fromString((String) document.get("uuid")), document);
                 });
 
@@ -75,10 +73,6 @@ public class DatabaseManager {
                 for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
                     loadPlayer(onlinePlayer);
                 }
-//                playersInformation.deleteMany(new Document());
-//                for (UUID uuid : uuids) {
-//                    addPlayer(uuid);
-//                }
                 return true;
             }
             myReader.close();
