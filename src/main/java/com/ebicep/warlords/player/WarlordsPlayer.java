@@ -571,7 +571,7 @@ public final class WarlordsPlayer {
                 for (Player player1 : attacker.getWorld().getPlayers()) {
                     player1.playSound(entity.getLocation(), Sound.HURT_FLESH, 1, 1);
                 }
-                addAbsorbed(-min * spec.getDamageResistance() / 100);
+                addAbsorbed(Math.abs(-min * spec.getDamageResistance() / 100));
             }
         } else {
             if (!attacker.getCooldownManager().getCooldown(Inferno.class).isEmpty() && (!ability.isEmpty() && !ability.equals("Time Warp"))) {
@@ -631,7 +631,7 @@ public final class WarlordsPlayer {
                         }
                     }
                     //TODO maybe change to hypixel warlords where crippling effects hammer
-                    if (!cooldownManager.getCooldown("Totem Crippling").isEmpty()) {
+                    if (!cooldownManager.getCooldownFromName("Totem Crippling").isEmpty()) {
                         totalReduction *= .75;
                     }
 
@@ -639,7 +639,7 @@ public final class WarlordsPlayer {
                         totalReduction *= .85;
                     }
 
-                    addAbsorbed(-damageHealValue * (1 - totalReduction));
+                    addAbsorbed(Math.abs(-damageHealValue * (1 - totalReduction)));
                 } else if (min > 0) {
                     if (!cooldownManager.getCooldown(WoundingStrikeBerserker.class).isEmpty()) {
                         totalReduction *= .65;
@@ -706,8 +706,8 @@ public final class WarlordsPlayer {
                     //ORBS
                     spawnOrbs(ability, attacker);
 
-                    this.addAbsorbed(-damageHealValueBeforeReduction);
-                    attacker.addAbsorbed(-damageHealValueBeforeReduction/10);
+                    this.addAbsorbed(Math.abs(damageHealValueBeforeReduction));
+                    attacker.addAbsorbed(Math.abs(-damageHealValueBeforeReduction/10));
                 }
             } else if (!cooldownManager.getCooldown(ArcaneShield.class).isEmpty() && isEnemy(attacker) && !HammerOfLight.standingInHammer(attacker, entity)) {
                 ArcaneShield arcaneShield = (ArcaneShield) spec.getBlue();
@@ -737,8 +737,8 @@ public final class WarlordsPlayer {
                         attacker.sendMessage(ChatColor.GREEN + "\u00BB" + ChatColor.GRAY + " Your " + ability + " was absorbed by " + name + ChatColor.GRAY + ".");
                     }
 
-                    addAbsorbed(-damageHealValueBeforeReduction);
-                    attacker.addAbsorbed(-damageHealValueBeforeReduction);
+                    addAbsorbed(Math.abs(-damageHealValueBeforeReduction));
+                    attacker.addAbsorbed(Math.abs(-damageHealValueBeforeReduction));
                 }
 
                 //ORBS
