@@ -634,6 +634,7 @@ public final class WarlordsPlayer {
                     if (!cooldownManager.getCooldown("Totem Crippling").isEmpty()) {
                         totalReduction *= .75;
                     }
+
                     if (!attacker.getCooldownManager().getCooldown(CripplingStrike.class).isEmpty()) {
                         totalReduction *= .85;
                     }

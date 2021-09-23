@@ -24,7 +24,7 @@ public class HealingTotem extends AbstractTotemBase {
     private final int duration = 6;
 
     public HealingTotem() {
-        super("Healing Totem", 168, 224, 62.64f, 60, 25, 175);
+        super("Healing Totem", 191, 224, 62.64f, 60, 25, 175);
     }
 
     @Override

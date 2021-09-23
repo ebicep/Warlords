@@ -24,7 +24,7 @@ public class ChainHeal extends AbstractChainBase {
         description = "§7Discharge a beam of energizing lightning\n" +
                 "§7that heals you and a targeted friendly\n" +
                 "§7player for §a" + minDamageHeal + " §7- §a" + maxDamageHeal + " §7health and\n" +
-                "§7jumps to §e2 §7additional targets within\n" +
+                "§7jumps to §e3 §7additional targets within\n" +
                 "§e" + bounceRange + " §7blocks. Each jump reduces the healing\n" +
                 "§7by §c10%§7." +
                 "\n\n" +
@@ -67,6 +67,17 @@ public class ChainHeal extends AbstractChainBase {
                         chain(chainPlayerOne.getLocation(), chainPlayerTwo.getLocation());
                         chainPlayerTwo.addHealth(wp, name, minDamageHeal * 0.8f, maxDamageHeal * 0.8f, critChance, critMultiplier, false);
                         hitCounter++;
+
+                        for (WarlordsPlayer chainPlayerThree : PlayerFilter
+                                .entitiesAround(chainPlayerTwo, bounceRange, bounceRange, bounceRange)
+                                .aliveTeammatesOf(wp)
+                                .excluding(wp, nearPlayer, chainPlayerOne, chainPlayerTwo)
+                        ) {
+                            chain(chainPlayerTwo.getLocation(), chainPlayerThree.getLocation());
+                            chainPlayerThree.addHealth(wp, name, minDamageHeal * 0.7f, maxDamageHeal * 0.7f, critChance, critMultiplier, false);
+                            hitCounter++;
+                            break;
+                        }
                         break;
                     }
                     break;
