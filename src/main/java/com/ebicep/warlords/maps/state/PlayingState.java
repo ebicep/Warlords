@@ -294,7 +294,7 @@ public class PlayingState implements State, TimerDebugAble {
             BotManager.sendMessageToNotificationChannel("A game ended with a **DRAW**");
         }
         Warlords.getPlayers().forEach(((uuid, warlordsPlayer) -> warlordsPlayer.removeGrave()));
-        if (!forceEnd && game.playersCount() > 16 && timer <= 12000) {
+        if (!forceEnd && game.playersCount() >= 16 && timer <= 12000) {
             Warlords.newChain()
                     .asyncFirst(this::addGameAndLoadPlayers)
                     .syncLast((t) -> {
