@@ -287,9 +287,9 @@ public class PlayingState implements State, TimerDebugAble {
             this.powerUps = null;
         }
         if(getBluePoints() > getRedPoints()) {
-            BotManager.sendMessageToNotificationChannel("A game ended with a **BLUE** winning " + getBluePoints() + " to " + getRedPoints());
+            BotManager.sendMessageToNotificationChannel("A game ended with **BLUE** winning " + getBluePoints() + " to " + getRedPoints());
         } else if(getBluePoints() < getRedPoints()) {
-            BotManager.sendMessageToNotificationChannel("A game ended with a **RED** winning " + getRedPoints() + " to " + getBluePoints());
+            BotManager.sendMessageToNotificationChannel("A game ended with **RED** winning " + getRedPoints() + " to " + getBluePoints());
         } else {
             BotManager.sendMessageToNotificationChannel("A game ended with a **DRAW**");
         }
