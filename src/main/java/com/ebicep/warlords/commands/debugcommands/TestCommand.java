@@ -54,8 +54,8 @@ public class TestCommand implements CommandExecutor {
         //LeaderboardRanking.addHologramLeaderboards();
 
 //        System.out.println(BotManager.getCompGamesServer().getTextChannels());
-//        Optional<TextChannel> botTeams = BotManager.getTextChannelByName("bot-teams");
-//        botTeams.ifPresent(textChannel -> textChannel.sendMessage("-bhelp").queue());
+        Optional<TextChannel> botTeams = BotManager.getTextChannelByName("bot-teams");
+        botTeams.ifPresent(textChannel -> textChannel.sendMessage("test").queue());
         //System.out.println(BotManager.getCompGamesServer().getTextChannels().get(6).sendMessage("HELLO"));
         return true;
     }

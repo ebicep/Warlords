@@ -61,7 +61,7 @@ public class BotCommands implements CommandExecutor {
                     sender.sendMessage(ChatColor.RED + "Invalid Image!");
                     return true;
                 }
-                BotManager.getTextChannelByName("games-backlog").ifPresent(textChannel -> textChannel.sendMessage("-" + input + DatabaseManager.lastWarlordsPlusString + " " + args[1]).queue());
+                BotManager.getTextChannelByName("games-backlog").ifPresent(textChannel -> textChannel.sendMessage("-" + input + " " + DatabaseManager.lastWarlordsPlusString + " " + args[1]).queue());
                 return true;
         }
         return true;

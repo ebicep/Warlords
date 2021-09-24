@@ -162,7 +162,7 @@ public class DatabaseManager {
 
     public static void updatePlayerInformation(UUID uuid, HashMap<String, Object> newInfo, FieldUpdateOperators operator) {
         if (!connected) return;
-        String name = Bukkit.getPlayer(uuid).getName();
+        String name = Bukkit.getOfflinePlayer(uuid).getName();
         try {
             if (hasPlayer(uuid)) {
                 Document history = new Document();
@@ -490,8 +490,8 @@ public class DatabaseManager {
 
     public static String getWarlordsPlusEndGameStats(PlayingState gameState) {
         StringBuilder output = new StringBuilder("Winners:");
-        int bluePoints = gameState.getStats(Team.RED).points();
-        int redPoints = gameState.getStats(Team.BLUE).points();
+        int bluePoints = gameState.getStats(Team.BLUE).points();
+        int redPoints = gameState.getStats(Team.RED).points();
         if (bluePoints > redPoints) {
             for (WarlordsPlayer player : PlayerFilter.playingGame(gameState.getGame()).matchingTeam(Team.BLUE)) {
                 output.append(player.getUuid().toString().replace("-", "")).append("[").append(player.getTotalKills()).append(":").append(player.getTotalDeaths()).append("],");
