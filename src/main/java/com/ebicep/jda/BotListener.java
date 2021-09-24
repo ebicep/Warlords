@@ -27,12 +27,16 @@ public class BotListener extends ListenerAdapter implements Listener {
 
     @EventHandler
     public static void onPlayerJoin(PlayerJoinEvent event) {
-        //BotManager.sendMessageToNotificationChannel("**" + event.getPlayer().getName() + "** joined the server (" + Bukkit.getOnlinePlayers().size() + "/" + Bukkit.getServer().getMaxPlayers() + ")!");
+        if(Bukkit.getOnlinePlayers().size() % 5 == 0) {
+            BotManager.sendMessageToNotificationChannel("**" + Bukkit.getOnlinePlayers().size() + "** players are now on the server!");
+        }
     }
 
     @EventHandler
     public static void onPlayerQuit(PlayerQuitEvent event) {
-        //BotManager.sendMessageToNotificationChannel("**" + event.getPlayer().getName() + "** left the server (" + (Bukkit.getOnlinePlayers().size() - 1) + "/" + Bukkit.getServer().getMaxPlayers() + ")!");
+        if(Bukkit.getOnlinePlayers().size() % 5 == 0) {
+            BotManager.sendMessageToNotificationChannel("**" + Bukkit.getOnlinePlayers().size() + "** players are now on the server!");
+        }
     }
 
     @Override
