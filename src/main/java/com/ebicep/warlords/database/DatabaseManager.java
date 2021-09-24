@@ -52,6 +52,7 @@ public class DatabaseManager {
     public static MongoCollection<Document> gamesInformation;
     public static HashMap<UUID, Document> cachedPlayerInfo = new HashMap<>();
     public static HashMap<String, Long> cachedTotalKeyValues = new HashMap<>();
+    public static String lastWarlordsPlusString = "";
 
     public static boolean connect() {
         try {
@@ -520,6 +521,7 @@ public class DatabaseManager {
         }
         output.setLength(output.length() - 1);
         BotManager.getTextChannelByName("games-backlog").ifPresent(textChannel -> textChannel.sendMessage(output.toString()).queue());
+        lastWarlordsPlusString = output.toString();
         return output.toString();
     }
 

@@ -1,6 +1,7 @@
 package com.ebicep.jda;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.party.Party;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.bukkit.Bukkit;
@@ -17,6 +18,11 @@ public class BotCommands implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
+        if(!sender.isOp()) {
+            sender.sendMessage(ChatColor.RED + "Insufficient Permissions!");
+            return true;
+        }
+
         Optional<TextChannel> botTeams = BotManager.getTextChannelByName("bot-teams");
         if (!botTeams.isPresent()) {
             sender.sendMessage(ChatColor.RED + "Could not find bot-teams!");
@@ -27,7 +33,7 @@ public class BotCommands implements CommandExecutor {
             return true;
         }
         String input = args[0];
-        switch (input) {
+        switch (input.toLowerCase()) {
             case "balance":
             case "balance2":
             case "experimental":
@@ -44,6 +50,18 @@ public class BotCommands implements CommandExecutor {
                 }
                 players.setLength(players.length() - 1);
                 botTeams.get().sendMessage("-" + input + " " + players).queue();
+                return true;
+            case "inputgame":
+            case "inputexperimental":
+                if(args.length < 2) {
+                    sender.sendMessage(ChatColor.RED + "Invalid Arguments!");
+                    return true;
+                }
+                if(!args[1].contains("png")) {
+                    sender.sendMessage(ChatColor.RED + "Invalid Image!");
+                    return true;
+                }
+                BotManager.getTextChannelByName("games-backlog").ifPresent(textChannel -> textChannel.sendMessage("-" + input + DatabaseManager.lastWarlordsPlusString + " " + args[1]).queue());
                 return true;
         }
         return true;
