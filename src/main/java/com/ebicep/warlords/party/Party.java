@@ -1,5 +1,6 @@
 package com.ebicep.warlords.party;
 
+import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.util.Utils;
 import org.bukkit.Bukkit;
@@ -68,11 +69,12 @@ public class Party {
     public void join(UUID uuid) {
         invites.remove(uuid);
         members.put(uuid, true);
-        sendMessageToAllPartyPlayers(ChatColor.AQUA + Bukkit.getPlayer(uuid).getName() + ChatColor.GREEN + " joined the party", true, true);
+        sendMessageToAllPartyPlayers(ChatColor.AQUA + Bukkit.getOfflinePlayer(uuid).getName() + ChatColor.GREEN + " joined the party", true, true);
         if(Bukkit.getOfflinePlayer(uuid).isOp()) {
             promote(Bukkit.getOfflinePlayer(uuid).getName());
         }
         Bukkit.getPlayer(uuid).sendMessage(getList());
+        BotManager.sendMessageToNotificationChannel("**" + Bukkit.getOfflinePlayer(uuid).getName() + "** joined the party! (" + members.size() + ")");
     }
 
     public void leave(UUID uuid) {
