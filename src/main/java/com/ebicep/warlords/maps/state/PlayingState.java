@@ -1,5 +1,6 @@
 package com.ebicep.warlords.maps.state;
 
+import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.FieldUpdateOperators;
@@ -32,6 +33,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
+import static com.ebicep.warlords.util.Utils.getRightDirection;
 import static com.ebicep.warlords.util.Utils.sendMessage;
 
 public class PlayingState implements State, TimerDebugAble {
@@ -283,6 +285,13 @@ public class PlayingState implements State, TimerDebugAble {
         if (this.powerUps != null) {
             this.powerUps.cancel();
             this.powerUps = null;
+        }
+        if(getBluePoints() > getRedPoints()) {
+            BotManager.sendMessageToNotificationChannel("A game ended with a **BLUE** winning " + getBluePoints() + " to " + getRedPoints());
+        } else if(getBluePoints() < getRedPoints()) {
+            BotManager.sendMessageToNotificationChannel("A game ended with a **RED** winning " + getRedPoints() + " to " + getBluePoints());
+        } else {
+            BotManager.sendMessageToNotificationChannel("A game ended with a **DRAW**");
         }
         Warlords.getPlayers().forEach(((uuid, warlordsPlayer) -> warlordsPlayer.removeGrave()));
         if (!forceEnd && game.playersCount() > 16 && timer <= 12000) {

@@ -1,5 +1,6 @@
 package com.ebicep.warlords.commands.debugcommands;
 
+import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.maps.Game;
@@ -90,7 +91,6 @@ public class StartCommand implements TabExecutor {
             }
         }
         //Collections.shuffle(people);
-        boolean teamBlueAssessment = true;
         for (Player player : people) {
             DatabaseManager.addPlayer(player);
             player.getInventory().clear();
@@ -104,12 +104,13 @@ public class StartCommand implements TabExecutor {
                     .lore(ChatColor.GRAY + "Allows you to change your class, select a\n" + ChatColor.GRAY + "weapon, and edit your settings.")
                     .get());
 
-            Warlords.game.addPlayer(player, teamBlueAssessment);
+            Team team = Warlords.getPlayerSettings(player.getUniqueId()).getWantedTeam();
+            Warlords.game.addPlayer(player, team == Team.BLUE);
             game.giveLobbyScoreboard(player);
-            ArmorManager.resetArmor(player, Warlords.getPlayerSettings(player.getUniqueId()).getSelectedClass(), teamBlueAssessment ? Team.BLUE : Team.RED);
-            Warlords.getPlayerSettings(player.getUniqueId()).setWantedTeam(teamBlueAssessment ? Team.BLUE : Team.RED);
-            teamBlueAssessment = !teamBlueAssessment;
+            ArmorManager.resetArmor(player, Warlords.getPlayerSettings(player.getUniqueId()).getSelectedClass(), team);
         }
+
+        BotManager.sendMessageToNotificationChannel("A **" + game.getMap().getMapName() + "** started with **" + people.size() + (people.size() == 1 ? "** player!" : "** players!"));
 
         return true;
     }

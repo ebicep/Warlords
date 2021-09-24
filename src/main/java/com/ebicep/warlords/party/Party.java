@@ -102,6 +102,8 @@ public class Party {
         for (Map.Entry<UUID, Boolean> uuidBooleanEntry : members.entrySet()) {
             String partyMemberName = Bukkit.getOfflinePlayer(uuidBooleanEntry.getKey()).getName();
             if(partyMemberName.equalsIgnoreCase(name)) {
+                moderators.remove(uuidBooleanEntry.getKey());
+                moderators.add(leader);
                 leader = uuidBooleanEntry.getKey();
                 sendMessageToAllPartyPlayers(ChatColor.GREEN + "The party was transferred to " + ChatColor.AQUA + partyMemberName, true, true);
                 break;
@@ -121,7 +123,9 @@ public class Party {
                 .append(ChatColor.YELLOW + "Party Leader: " + ChatColor.AQUA).append(Bukkit.getOfflinePlayer(leader).getName()).append(members.get(leader) ? ChatColor.GREEN : ChatColor.RED).append(" ● \n");
         if(!moderators.isEmpty()) {
             stringBuilder.append(ChatColor.YELLOW + "Party Moderators: " + ChatColor.AQUA);
-            moderators.forEach(uuid -> {
+            moderators.stream()
+                    .sorted(Collections.reverseOrder(Comparator.comparing(uuid -> members.get(uuid))))
+                    .forEach(uuid -> {
                 stringBuilder.append(ChatColor.AQUA).append(Bukkit.getOfflinePlayer(uuid).getName()).append(members.get(uuid) ? ChatColor.GREEN : ChatColor.RED).append(" ● ");
             });
             stringBuilder.append("\n");

@@ -1,5 +1,6 @@
 package com.ebicep.warlords.commands.debugcommands;
 
+import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.BaseCommand;
 import com.ebicep.warlords.database.LeaderboardRanking;
@@ -7,6 +8,8 @@ import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.flags.PlayerFlagLocation;
 import com.ebicep.warlords.player.PlayerSettings;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.TextChannel;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -20,6 +23,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.Objects;
+import java.util.Optional;
 
 public class TestCommand implements CommandExecutor {
 
@@ -47,7 +51,12 @@ public class TestCommand implements CommandExecutor {
             //player.teleport(player.getLocation());
             //System.out.println("TELEPORTED");
         }
-        LeaderboardRanking.addHologramLeaderboards();
+        //LeaderboardRanking.addHologramLeaderboards();
+
+//        System.out.println(BotManager.getCompGamesServer().getTextChannels());
+//        Optional<TextChannel> botTeams = BotManager.getTextChannelByName("bot-teams");
+//        botTeams.ifPresent(textChannel -> textChannel.sendMessage("-bhelp").queue());
+        //System.out.println(BotManager.getCompGamesServer().getTextChannels().get(6).sendMessage("HELLO"));
         return true;
     }
 

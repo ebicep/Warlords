@@ -1,5 +1,6 @@
 package com.ebicep.warlords.database;
 
+import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.state.PlayingState;
@@ -518,6 +519,7 @@ public class DatabaseManager {
             }
         }
         output.setLength(output.length() - 1);
+        BotManager.getTextChannelByName("games-backlog").ifPresent(textChannel -> textChannel.sendMessage(output.toString()).queue());
         return output.toString();
     }
 

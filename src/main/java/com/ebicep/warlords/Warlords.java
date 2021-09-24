@@ -10,6 +10,9 @@ import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
 import com.ebicep.customentities.npc.NPCManager;
+import com.ebicep.jda.BotCommands;
+import com.ebicep.jda.BotListener;
+import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.classes.abilties.*;
 import com.ebicep.warlords.commands.debugcommands.*;
 import com.ebicep.warlords.commands.miscellaneouscommands.*;
@@ -41,6 +44,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.security.auth.login.LoginException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -200,6 +204,7 @@ public class Warlords extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new WarlordsEvents(), this);
         getServer().getPluginManager().registerEvents(new MenuEventListener(this), this);
         getServer().getPluginManager().registerEvents(new PartyListener(), this);
+        getServer().getPluginManager().registerEvents(new BotListener(), this);
         //getServer().getPluginManager().registerEvents(new NPCEvents(), this);
 
         new StartCommand().register(this);
@@ -217,6 +222,7 @@ public class Warlords extends JavaPlugin {
         new StreamCommand().register(this);
         new RecordAverageDamage().register(this);
         new ChatChannelCommand().register(this);
+        new BotCommands().register(this);
 
         updateHeads();
 
@@ -233,6 +239,12 @@ public class Warlords extends JavaPlugin {
                     LeaderboardRanking.addHologramLeaderboards();
                 })
                 .execute();
+
+        try {
+            BotManager.connect();
+        } catch (LoginException e) {
+            e.printStackTrace();
+        }
 
         ProtocolManager protocolManager;
 
@@ -288,6 +300,7 @@ public class Warlords extends JavaPlugin {
         if (holographicDisplaysEnabled) {
             HologramsAPI.getHolograms(instance).forEach(Hologram::delete);
         }
+        BotManager.jda.shutdownNow();
         getServer().getConsoleSender().sendMessage(ChatColor.RED + "[Warlords] Plugin is disabled");
         // TODO persist this.playerSettings to a database
     }

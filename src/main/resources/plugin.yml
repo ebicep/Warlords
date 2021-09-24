@@ -53,3 +53,6 @@ commands:
   me:
     description: Not happening.
     usage: /me
+  bot:
+    description: Runs bot commands
+    usage: /bot
