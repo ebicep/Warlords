@@ -6,16 +6,20 @@ import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.*;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
-public class RecklessCharge extends AbstractAbility {
+public class RecklessCharge extends AbstractAbility implements Listener {
+
+    private static List<UUID> stunnedPlayers = new ArrayList<>();
 
     public RecklessCharge() {
         super("Reckless Charge", -466, -612, 9.98f, 60, 20, 200);
@@ -97,30 +101,29 @@ public class RecklessCharge extends AbstractAbility {
                         .aliveEnemiesOf(wp)
                         .forEach(enemy -> {
                             playersHit.add(enemy);
+                            stunnedPlayers.add(enemy.getUuid());
                             enemy.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
                             new BukkitRunnable() {
-                                final Location stunLocation = enemy.getLocation();
-                                int timer = 0;
-
                                 @Override
                                 public void run() {
-                                    stunLocation.setPitch(enemy.getEntity().getLocation().getPitch());
-                                    stunLocation.setYaw(enemy.getEntity().getLocation().getYaw());
-                                    enemy.teleport(stunLocation);
-                                    //.5 seconds
-                                    if (timer >= 10) {
-                                        this.cancel();
-                                    }
-                                    timer++;
+                                    stunnedPlayers.remove(enemy.getUuid());
                                 }
-                            }.runTaskTimer(Warlords.getInstance(), 0, 0);
+                            }.runTaskLater(Warlords.getInstance(), 7); //.35 seconds
                             if(enemy.getEntity() instanceof Player) {
                                 PacketUtils.sendTitle((Player) enemy.getEntity(), "", "§dIMMOBILIZED", 0, 10, 0);
                             }
                         });
+
                 maxChargeDuration--;
             }
 
         }.runTaskTimer(Warlords.getInstance(), 1, 0);
+    }
+
+    @EventHandler
+    public void onPlayerMove(PlayerMoveEvent e) {
+        if(stunnedPlayers.contains(e.getPlayer().getUniqueId())) {
+            e.setTo(e.getFrom());
+        }
     }
 }

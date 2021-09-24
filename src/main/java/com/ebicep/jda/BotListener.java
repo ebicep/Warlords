@@ -51,7 +51,6 @@ public class BotListener extends ListenerAdapter implements Listener {
                                 .replace("```", "")
                                 .replace(" ", "")
                                 .split("\n");
-
                         try {
                             Bukkit.getScheduler().callSyncMethod(Warlords.getInstance(), () -> {
                                 for (String player : players) {
@@ -59,7 +58,6 @@ public class BotListener extends ListenerAdapter implements Listener {
                                     String spec = player.substring(player.indexOf("-") + 1);
                                     Bukkit.getOnlinePlayers().stream().filter(p -> p.getName().equalsIgnoreCase(name)).findFirst().ifPresent(targetPlayer -> {
                                         targetPlayer.sendMessage(ChatColor.DARK_BLUE + "---------------------------------------");
-                                        Warlords.getPlayerSettings(targetPlayer.getUniqueId()).setSelectedClass(Classes.getClass(spec));
                                         if (fieldName.contains("Blue Team")) {
                                             Warlords.getPlayerSettings(targetPlayer.getUniqueId()).setWantedTeam(Team.BLUE);
                                             targetPlayer.sendMessage(ChatColor.GREEN + "You were automatically put into the " + ChatColor.BLUE + "BLUE" + ChatColor.GREEN + " team!");
@@ -67,7 +65,10 @@ public class BotListener extends ListenerAdapter implements Listener {
                                             Warlords.getPlayerSettings(targetPlayer.getUniqueId()).setWantedTeam(Team.RED);
                                             targetPlayer.sendMessage(ChatColor.GREEN + "You were automatically put into the " + ChatColor.RED + "RED" + ChatColor.GREEN + " team!");
                                         }
-                                        targetPlayer.sendMessage(ChatColor.GREEN + "Your spec was automatically changed to " + ChatColor.YELLOW + spec + ChatColor.GREEN + "!");
+                                        if(!spec.isEmpty()) {
+                                            Warlords.getPlayerSettings(targetPlayer.getUniqueId()).setSelectedClass(Classes.getClass(spec));
+                                            targetPlayer.sendMessage(ChatColor.GREEN + "Your spec was automatically changed to " + ChatColor.YELLOW + spec + ChatColor.GREEN + "!");
+                                        }
                                         targetPlayer.sendMessage(ChatColor.DARK_BLUE + "---------------------------------------");
                                     });
                                 }

@@ -56,7 +56,9 @@ public class PlayerSettings implements ConfigurationSerializable {
     @Nullable
     public Team getWantedTeam() {
         if(wantedTeam == null) {
-            return Math.random() <= .5 ? Team.BLUE : Team.RED;
+            Team newTeam = Math.random() <= .5 ? Team.BLUE : Team.RED;
+            setWantedTeam(newTeam);
+            return newTeam;
         }
         return wantedTeam;
     }

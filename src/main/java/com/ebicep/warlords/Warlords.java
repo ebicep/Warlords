@@ -205,6 +205,7 @@ public class Warlords extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new MenuEventListener(this), this);
         getServer().getPluginManager().registerEvents(new PartyListener(), this);
         getServer().getPluginManager().registerEvents(new BotListener(), this);
+        getServer().getPluginManager().registerEvents(new RecklessCharge(), this);
         //getServer().getPluginManager().registerEvents(new NPCEvents(), this);
 
         new StartCommand().register(this);
