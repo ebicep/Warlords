@@ -40,7 +40,10 @@ commands:
     usage: /spawntestdummy [TEAM] [TAKE DAMAGE (TRUE/FALSE) ]
   party:
     description: Party options
-    aliases: [party, p, pl, partyclose, partyopen, pclose, popen]
+    aliases: [ party, p,
+               partyclose, partyopen, pclose, popen,
+               partyoutside, poutside
+    ]
   stream:
     description: Creates a new party where anyone can join
     usage: /stream
@@ -49,10 +52,13 @@ commands:
     usage: /recordaveragedamage
   chatchannelcommand:
     description: Changes chat channel or sends a mesasage in a different channel
-    aliases: [chat, achat, ac, pchat, pc]
+    aliases: [ chat, achat, ac, pchat, pc ]
   me:
     description: Not happening.
     usage: /me
   bot:
     description: Runs bot commands
     usage: /bot
+  lb:
+    description: Leaderboard Commands
+    usage: /lb

@@ -17,6 +17,7 @@ import com.ebicep.warlords.classes.abilties.*;
 import com.ebicep.warlords.commands.debugcommands.*;
 import com.ebicep.warlords.commands.miscellaneouscommands.*;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.LeaderboardCommand;
 import com.ebicep.warlords.database.LeaderboardRanking;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.maps.Game;
@@ -224,6 +225,7 @@ public class Warlords extends JavaPlugin {
         new RecordAverageDamage().register(this);
         new ChatChannelCommand().register(this);
         new BotCommands().register(this);
+        new LeaderboardCommand().register(this);
 
         updateHeads();
 

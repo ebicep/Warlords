@@ -4,38 +4,38 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.player.Classes;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 public class BotListener extends ListenerAdapter implements Listener {
 
+    private static int lastPlayerCount = 0;
+
     @EventHandler
     public static void onPlayerJoin(PlayerJoinEvent event) {
-        if(Bukkit.getOnlinePlayers().size() % 5 == 0) {
-            BotManager.sendMessageToNotificationChannel("**" + Bukkit.getOnlinePlayers().size() + "** players are now on the server!");
+        int size = Bukkit.getOnlinePlayers().size();
+        if(size % 5 == 0 && size != lastPlayerCount) {
+            BotManager.sendMessageToNotificationChannel("**" + size + "** players are now on the server!");
+            lastPlayerCount = size;
         }
     }
 
     @EventHandler
     public static void onPlayerQuit(PlayerQuitEvent event) {
-        if(Bukkit.getOnlinePlayers().size() % 5 == 0) {
-            BotManager.sendMessageToNotificationChannel("**" + Bukkit.getOnlinePlayers().size() + "** players are now on the server!");
+        int size = Bukkit.getOnlinePlayers().size();
+        if((size - 1) % 5 == 0 && size != lastPlayerCount) {
+            BotManager.sendMessageToNotificationChannel("**" + (size - 1)+ "** players are now on the server!");
+            lastPlayerCount = size;
         }
     }
 

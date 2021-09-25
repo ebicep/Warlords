@@ -74,7 +74,10 @@ public class Party {
             promote(Bukkit.getOfflinePlayer(uuid).getName());
         }
         Bukkit.getPlayer(uuid).sendMessage(getList());
-        BotManager.sendMessageToNotificationChannel("**" + Bukkit.getOfflinePlayer(uuid).getName() + "** joined the party! (" + members.size() + ")");
+        int numberOfPartyMembers = members.size();
+        if((numberOfPartyMembers % 5 == 0 && numberOfPartyMembers <= 15) || (numberOfPartyMembers % 2 == 0 && numberOfPartyMembers >= 18)) {
+            BotManager.sendMessageToNotificationChannel("There are now **" + numberOfPartyMembers + "** players in " + Bukkit.getOfflinePlayer(leader).getName() + "'s party!");
+        }
     }
 
     public void leave(UUID uuid) {

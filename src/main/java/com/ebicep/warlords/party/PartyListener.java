@@ -1,9 +1,11 @@
 package com.ebicep.warlords.party;
 
 import com.ebicep.warlords.Warlords;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
@@ -23,6 +25,14 @@ public class PartyListener implements Listener {
         Player player = e.getPlayer();
         Optional<Party> party = Warlords.partyManager.getPartyFromAny(player.getUniqueId());
         party.ifPresent(value -> value.getMembers().put(player.getUniqueId(), false));
+    }
+
+    @EventHandler
+    public void onCommand(PlayerCommandPreprocessEvent e){
+        if(e.getMessage().equalsIgnoreCase("/pl")) {
+            Bukkit.getServer().dispatchCommand(e.getPlayer(), "party list");
+            e.setCancelled(true);
+        }
     }
 
 }

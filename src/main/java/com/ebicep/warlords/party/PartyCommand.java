@@ -226,9 +226,6 @@ public class PartyCommand implements CommandExecutor {
                             false);
                 }
                 return true;
-            case "pl":
-                Bukkit.getServer().dispatchCommand(sender, "party list");
-                return true;
             case "pclose":
             case "partyclose":
             case "popen":
@@ -236,17 +233,29 @@ public class PartyCommand implements CommandExecutor {
                 Optional<Party> currentParty = Warlords.partyManager.getPartyFromAny(((Player) sender).getUniqueId());
                 if (currentParty.isPresent()) {
                     if (currentParty.get().getLeader().equals(((Player) sender).getUniqueId())) {
-                        if(s.equalsIgnoreCase("pclose") || s.equalsIgnoreCase("partyclose")) {
-                            currentParty.get().setOpen(false);
-                        } else {
-                            currentParty.get().setOpen(true);
-                        }
+                        currentParty.get().setOpen(!s.equalsIgnoreCase("pclose") && !s.equalsIgnoreCase("partyclose"));
                     } else {
                         Party.sendMessageToPlayer((Player) sender, ChatColor.RED + "Insufficient Permissions!", true, true);
                     }
                 }
                 return true;
             }
+            case "poutside":
+            case "partyoutside":
+                Optional<Party> currentParty = Warlords.partyManager.getPartyFromAny(((Player) sender).getUniqueId());
+                if (currentParty.isPresent()) {
+                    StringBuilder outside = new StringBuilder(ChatColor.YELLOW + "Players Outside Party: ");
+                    Bukkit.getOnlinePlayers().forEach(p -> {
+                        if(!currentParty.get().getMembers().containsKey(p.getUniqueId())) {
+                            outside.append(ChatColor.GREEN).append(p.getName()).append(ChatColor.GRAY).append(", ");
+                        }
+                    });
+                    outside.setLength(outside.length() - 2);
+                    sender.sendMessage(outside.toString());
+                } else {
+                    sender.sendMessage(ChatColor.RED + "You are currently not in a party!");
+                }
+                return true;
         }
         return true;
     }

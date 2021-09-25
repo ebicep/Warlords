@@ -35,6 +35,8 @@ public class LeaderboardRanking {
     public static final HashMap<String, List<Document>> cachedSortedPlayers = new HashMap<>();
     public static final HashMap<String, HashMap<Document, Integer>> cachedSR = new HashMap<>();
 
+    public static boolean enabled = true;
+
     public LeaderboardRanking() {
         leaderboardLocations.put("wins", lifeTimeWinsLB);
         leaderboardLocations.put("kills", lifeTimeKillsLB);
@@ -48,64 +50,68 @@ public class LeaderboardRanking {
     public static void addHologramLeaderboards() {
         if (DatabaseManager.connected && Warlords.holographicDisplaysEnabled) {
             HologramsAPI.getHolograms(Warlords.getInstance()).forEach(Hologram::delete);
-            Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Adding Holograms");
+            if(enabled) {
+                Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Adding Holograms");
 
-            addLeaderboard("wins", lifeTimeWinsLB, ChatColor.AQUA + ChatColor.BOLD.toString() + "Lifetime Wins");
-            addLeaderboard("kills", lifeTimeKillsLB, ChatColor.AQUA + ChatColor.BOLD.toString() + "Lifetime Kills");
+                addLeaderboard("wins", lifeTimeWinsLB, ChatColor.AQUA + ChatColor.BOLD.toString() + "Lifetime Wins");
+                addLeaderboard("kills", lifeTimeKillsLB, ChatColor.AQUA + ChatColor.BOLD.toString() + "Lifetime Kills");
 
-            addLeaderboardSR("", srLB, ChatColor.AQUA + ChatColor.BOLD.toString() + "SR Ranking");
-            addLeaderboardSR("mage", srLBMage, ChatColor.AQUA + ChatColor.BOLD.toString() + "Mage SR Ranking");
-            addLeaderboardSR("warrior", srLBWarrior, ChatColor.AQUA + ChatColor.BOLD.toString() + "Warrior SR Ranking");
-            addLeaderboardSR("paladin", srLBPaladin, ChatColor.AQUA + ChatColor.BOLD.toString() + "Paladin SR Ranking");
-            addLeaderboardSR("shaman", srLBShaman, ChatColor.AQUA + ChatColor.BOLD.toString() + "Shaman SR Ranking");
+                addLeaderboardSR("", srLB, ChatColor.AQUA + ChatColor.BOLD.toString() + "SR Ranking");
+                addLeaderboardSR("mage", srLBMage, ChatColor.AQUA + ChatColor.BOLD.toString() + "Mage SR Ranking");
+                addLeaderboardSR("warrior", srLBWarrior, ChatColor.AQUA + ChatColor.BOLD.toString() + "Warrior SR Ranking");
+                addLeaderboardSR("paladin", srLBPaladin, ChatColor.AQUA + ChatColor.BOLD.toString() + "Paladin SR Ranking");
+                addLeaderboardSR("shaman", srLBShaman, ChatColor.AQUA + ChatColor.BOLD.toString() + "Shaman SR Ranking");
 
-            DatabaseManager.addLastGameHologram(lastGameLocation);
+                DatabaseManager.addLastGameHologram(lastGameLocation);
 
-            new BukkitRunnable() {
+                new BukkitRunnable() {
 
-                @Override
-                public void run() {
-                    Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Adding player leaderboards");
-                    addPlayerLeaderboardsToAll();
-                }
-            }.runTaskLater(Warlords.getInstance(), 20 * 13);
+                    @Override
+                    public void run() {
+                        Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Adding player leaderboards");
+                        addPlayerLeaderboardsToAll();
+                    }
+                }.runTaskLater(Warlords.getInstance(), 20 * 13);
+            }
         }
     }
 
     public static void addPlayerLeaderboards(Player player) {
-        leaderboardLocations.forEach((key, loc) -> {
-            Location location = loc.clone().add(0, -3.5, 0);
-            HologramsAPI.getHolograms(Warlords.getInstance()).stream()
-                    .filter(hologram -> hologram.getLocation().equals(location))
-                    .filter(hologram -> hologram.getVisibilityManager().isVisibleTo(player))
-                    .forEach(Hologram::delete);
-            if(key.equals("wins") || key.equals("kills")) {
-                List<Document> documents = cachedSortedPlayers.get(key);
-                Hologram hologram = HologramsAPI.createHologram(Warlords.getInstance(), location);
-                for (int i = 0; i < documents.size(); i++) {
-                    Document document = documents.get(i);
-                    if (document.get("uuid").equals(player.getUniqueId().toString())) {
-                        hologram.appendTextLine(ChatColor.YELLOW.toString() + ChatColor.BOLD + (i + 1) + ". " + ChatColor.AQUA + ChatColor.BOLD + player.getName() + ChatColor.GRAY + ChatColor.BOLD + " - " + ChatColor.YELLOW + ChatColor.BOLD + (Utils.addCommaAndRound((Integer) document.get(key))));
-                        break;
+        if(enabled) {
+            leaderboardLocations.forEach((key, loc) -> {
+                Location location = loc.clone().add(0, -3.5, 0);
+                HologramsAPI.getHolograms(Warlords.getInstance()).stream()
+                        .filter(hologram -> hologram.getLocation().equals(location))
+                        .filter(hologram -> hologram.getVisibilityManager().isVisibleTo(player))
+                        .forEach(Hologram::delete);
+                if (key.equals("wins") || key.equals("kills")) {
+                    List<Document> documents = cachedSortedPlayers.get(key);
+                    Hologram hologram = HologramsAPI.createHologram(Warlords.getInstance(), location);
+                    for (int i = 0; i < documents.size(); i++) {
+                        Document document = documents.get(i);
+                        if (document.get("uuid").equals(player.getUniqueId().toString())) {
+                            hologram.appendTextLine(ChatColor.YELLOW.toString() + ChatColor.BOLD + (i + 1) + ". " + ChatColor.AQUA + ChatColor.BOLD + player.getName() + ChatColor.GRAY + ChatColor.BOLD + " - " + ChatColor.YELLOW + ChatColor.BOLD + (Utils.addCommaAndRound((Integer) document.get(key))));
+                            break;
+                        }
                     }
-                }
-                hologram.getVisibilityManager().showTo(player);
-                hologram.getVisibilityManager().setVisibleByDefault(false);
-            } else {
-                HashMap<Document, Integer> documentIntegerHashMap = cachedSR.get(key);
-                List<Document> top = getDocumentInSortedList(documentIntegerHashMap);
-                Hologram hologram = HologramsAPI.createHologram(Warlords.getInstance(), location);
-                for (int i = 0; i < top.size(); i++) {
-                    Document document = top.get(i);
-                    if(document.get("uuid").equals(player.getUniqueId().toString())) {
-                        hologram.appendTextLine(ChatColor.YELLOW.toString() + ChatColor.BOLD + (i + 1) + ". " + ChatColor.AQUA + ChatColor.BOLD + player.getName() + ChatColor.GRAY + ChatColor.BOLD + " - " + ChatColor.YELLOW + ChatColor.BOLD + (Utils.addCommaAndRound(documentIntegerHashMap.get(document))));
-                        break;
+                    hologram.getVisibilityManager().showTo(player);
+                    hologram.getVisibilityManager().setVisibleByDefault(false);
+                } else {
+                    HashMap<Document, Integer> documentIntegerHashMap = cachedSR.get(key);
+                    List<Document> top = getDocumentInSortedList(documentIntegerHashMap);
+                    Hologram hologram = HologramsAPI.createHologram(Warlords.getInstance(), location);
+                    for (int i = 0; i < top.size(); i++) {
+                        Document document = top.get(i);
+                        if (document.get("uuid").equals(player.getUniqueId().toString())) {
+                            hologram.appendTextLine(ChatColor.YELLOW.toString() + ChatColor.BOLD + (i + 1) + ". " + ChatColor.AQUA + ChatColor.BOLD + player.getName() + ChatColor.GRAY + ChatColor.BOLD + " - " + ChatColor.YELLOW + ChatColor.BOLD + (Utils.addCommaAndRound(documentIntegerHashMap.get(document))));
+                            break;
+                        }
                     }
+                    hologram.getVisibilityManager().showTo(player);
+                    hologram.getVisibilityManager().setVisibleByDefault(false);
                 }
-                hologram.getVisibilityManager().showTo(player);
-                hologram.getVisibilityManager().setVisibleByDefault(false);
-            }
-        });
+            });
+        }
     }
 
     public static void addPlayerLeaderboardsToAll() {
