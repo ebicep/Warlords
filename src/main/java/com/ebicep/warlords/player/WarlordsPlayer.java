@@ -630,7 +630,7 @@ public final class WarlordsPlayer {
                     addAbsorbed(Math.abs(-damageHealValue * (1 - totalReduction)));
                 } else if (min > 0) {
                     if (!cooldownManager.getCooldown(WoundingStrikeBerserker.class).isEmpty()) {
-                        totalReduction *= .65;
+                        totalReduction *= .6;
                     } else if (!cooldownManager.getCooldown(WoundingStrikeDefender.class).isEmpty()) {
                         totalReduction *= .75;
                     }
