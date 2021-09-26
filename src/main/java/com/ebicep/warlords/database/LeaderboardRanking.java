@@ -85,30 +85,34 @@ public class LeaderboardRanking {
                         .filter(hologram -> hologram.getVisibilityManager().isVisibleTo(player))
                         .forEach(Hologram::delete);
                 if (key.equals("wins") || key.equals("kills")) {
-                    List<Document> documents = cachedSortedPlayers.get(key);
-                    Hologram hologram = HologramsAPI.createHologram(Warlords.getInstance(), location);
-                    for (int i = 0; i < documents.size(); i++) {
-                        Document document = documents.get(i);
-                        if (document.get("uuid").equals(player.getUniqueId().toString())) {
-                            hologram.appendTextLine(ChatColor.YELLOW.toString() + ChatColor.BOLD + (i + 1) + ". " + ChatColor.AQUA + ChatColor.BOLD + player.getName() + ChatColor.GRAY + ChatColor.BOLD + " - " + ChatColor.YELLOW + ChatColor.BOLD + (Utils.addCommaAndRound((Integer) document.get(key))));
-                            break;
+                    if(cachedSortedPlayers.containsKey(key)) {
+                        List<Document> documents = cachedSortedPlayers.get(key);
+                        Hologram hologram = HologramsAPI.createHologram(Warlords.getInstance(), location);
+                        for (int i = 0; i < documents.size(); i++) {
+                            Document document = documents.get(i);
+                            if (document.get("uuid").equals(player.getUniqueId().toString())) {
+                                hologram.appendTextLine(ChatColor.YELLOW.toString() + ChatColor.BOLD + (i + 1) + ". " + ChatColor.AQUA + ChatColor.BOLD + player.getName() + ChatColor.GRAY + ChatColor.BOLD + " - " + ChatColor.YELLOW + ChatColor.BOLD + (Utils.addCommaAndRound((Integer) document.get(key))));
+                                break;
+                            }
                         }
+                        hologram.getVisibilityManager().showTo(player);
+                        hologram.getVisibilityManager().setVisibleByDefault(false);
                     }
-                    hologram.getVisibilityManager().showTo(player);
-                    hologram.getVisibilityManager().setVisibleByDefault(false);
                 } else {
-                    HashMap<Document, Integer> documentIntegerHashMap = cachedSR.get(key);
-                    List<Document> top = getDocumentInSortedList(documentIntegerHashMap);
-                    Hologram hologram = HologramsAPI.createHologram(Warlords.getInstance(), location);
-                    for (int i = 0; i < top.size(); i++) {
-                        Document document = top.get(i);
-                        if (document.get("uuid").equals(player.getUniqueId().toString())) {
-                            hologram.appendTextLine(ChatColor.YELLOW.toString() + ChatColor.BOLD + (i + 1) + ". " + ChatColor.AQUA + ChatColor.BOLD + player.getName() + ChatColor.GRAY + ChatColor.BOLD + " - " + ChatColor.YELLOW + ChatColor.BOLD + (Utils.addCommaAndRound(documentIntegerHashMap.get(document))));
-                            break;
+                    if(cachedSR.containsKey(key)) {
+                        HashMap<Document, Integer> documentIntegerHashMap = cachedSR.get(key);
+                        List<Document> top = getDocumentInSortedList(documentIntegerHashMap);
+                        Hologram hologram = HologramsAPI.createHologram(Warlords.getInstance(), location);
+                        for (int i = 0; i < top.size(); i++) {
+                            Document document = top.get(i);
+                            if (document.get("uuid").equals(player.getUniqueId().toString())) {
+                                hologram.appendTextLine(ChatColor.YELLOW.toString() + ChatColor.BOLD + (i + 1) + ". " + ChatColor.AQUA + ChatColor.BOLD + player.getName() + ChatColor.GRAY + ChatColor.BOLD + " - " + ChatColor.YELLOW + ChatColor.BOLD + (Utils.addCommaAndRound(documentIntegerHashMap.get(document))));
+                                break;
+                            }
                         }
+                        hologram.getVisibilityManager().showTo(player);
+                        hologram.getVisibilityManager().setVisibleByDefault(false);
                     }
-                    hologram.getVisibilityManager().showTo(player);
-                    hologram.getVisibilityManager().setVisibleByDefault(false);
                 }
             });
         }

@@ -4,6 +4,7 @@ import com.ebicep.warlords.classes.internal.AbstractChainBase;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.util.LocationBuilder;
 import com.ebicep.warlords.util.PlayerFilter;
 import com.ebicep.warlords.util.Utils;
 import org.bukkit.Location;
@@ -157,7 +158,7 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
     }
 
     private boolean lookingAtTotem(@Nonnull LivingEntity player) {
-        Location eye = player.getEyeLocation();
+        Location eye = new LocationBuilder(player.getEyeLocation()).addY(.5).backward(1).get();
         //eye.setY(eye.getY() + .5);
         for (Entity entity : player.getNearbyEntities(20, 17, 20)) {
             if (entity instanceof ArmorStand && entity.hasMetadata("capacitor-totem-" + player.getName().toLowerCase())) {

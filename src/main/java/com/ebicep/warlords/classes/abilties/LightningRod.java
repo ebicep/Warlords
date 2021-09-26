@@ -11,6 +11,8 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import java.util.List;
+
 public class LightningRod extends AbstractAbility {
 
     private final int energyRestore = 160;
@@ -43,25 +45,26 @@ public class LightningRod extends AbstractAbility {
                     final Vector v = player.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1.45).setY(0.35);
 
                     p.setVelocity(v);
-
-                    // pulsedamage
-                    ArmorStand totemDownAndClose = Utils.getTotemDownAndClose(wp, p.getEntity());
-                    if (totemDownAndClose != null) {
-                        p.addHealth(
-                                wp,
-                                wp.getSpec().getOrange().getName(),
-                                wp.getSpec().getOrange().getMinDamageHeal(),
-                                wp.getSpec().getOrange().getMaxDamageHeal(),
-                                wp.getSpec().getOrange().getCritChance(),
-                                wp.getSpec().getOrange().getCritMultiplier(),
-                                false);
-
-                        new FallingBlockWaveEffect(totemDownAndClose.getLocation().add(0, 1, 0), 6, 1.2, Material.SAPLING, (byte) 0).play();
-                        for (Player player1 : wp.getWorld().getPlayers()) {
-                            player1.playSound(totemDownAndClose.getLocation(), "shaman.capacitortotem.pulse", 2, 1);
-                        }
-                    }
                 });
+
+        // pulsedamage
+        List<ArmorStand> totemDownAndClose = Utils.getCapacitorTotemDownAndClose(wp, wp.getEntity());
+        totemDownAndClose.forEach(totem -> {
+            PlayerFilter.entitiesAround(totem.getLocation(), 5, 4, 5).aliveEnemiesOf(wp).forEach(enemy -> {
+                enemy.addHealth(
+                        wp,
+                        wp.getSpec().getOrange().getName(),
+                        wp.getSpec().getOrange().getMinDamageHeal(),
+                        wp.getSpec().getOrange().getMaxDamageHeal(),
+                        wp.getSpec().getOrange().getCritChance(),
+                        wp.getSpec().getOrange().getCritMultiplier(),
+                        false);
+            });
+            new FallingBlockWaveEffect(totem.getLocation().add(0, 1, 0), 6, 1.2, Material.SAPLING, (byte) 0).play();
+            for (Player player1 : wp.getWorld().getPlayers()) {
+                player1.playSound(totem.getLocation(), "shaman.capacitortotem.pulse", 2, 1);
+            }
+        });
 
         new FallingBlockWaveEffect(playerLocation, knockbackRadius, 1, Material.RED_ROSE, (byte) 5).play();
         player.getWorld().spigot().strikeLightningEffect(playerLocation, true);

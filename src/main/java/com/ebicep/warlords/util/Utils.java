@@ -109,6 +109,16 @@ public class Utils {
         return null;
     }
 
+    public static List<ArmorStand> getCapacitorTotemDownAndClose(WarlordsPlayer warlordsPlayer, Entity searchNearby) {
+        List<ArmorStand> totems = new ArrayList<>();
+        for (Entity entity : searchNearby.getNearbyEntities(5, 3, 5)) {
+            if (entity instanceof ArmorStand && (entity.hasMetadata("capacitor-totem-" + warlordsPlayer.getName().toLowerCase()) || entity.hasMetadata("healing-totem-" + warlordsPlayer.getName().toLowerCase()))) {
+                totems.add((ArmorStand) entity);
+            }
+        }
+        return totems;
+    }
+
 
     public static class ArmorStandComparator implements Comparator<Entity> {
         @Override
