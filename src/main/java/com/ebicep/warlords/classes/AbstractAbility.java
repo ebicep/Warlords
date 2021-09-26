@@ -1,9 +1,15 @@
 package com.ebicep.warlords.classes;
 
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.util.ItemBuilder;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nonnull;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 
 public abstract class AbstractAbility {
 
@@ -114,6 +120,35 @@ public abstract class AbstractAbility {
 
     public String getDescription() {
         return description;
+    }
+
+    public ItemStack getItem(ItemStack baseItem) {
+        return new ItemBuilder(baseItem)
+                .name(ChatColor.GOLD + getName())
+                .lore(
+                        getCooldown() == 0 ? null :
+                                ChatColor.GRAY + "Cooldown: " + ChatColor.AQUA + getCooldown() + " seconds",
+                        getEnergyCost() == 0 || getEnergyCost() == -120 ? null :
+                                ChatColor.GRAY + "Energy Cost: " + ChatColor.YELLOW + getEnergyCost(),
+                        getCritChance() == 0 || getCritChance() == -1 || getCritMultiplier() == 100 ? null :
+                                ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + getCritChance() + "%" + "\n" +
+                                ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + getCritMultiplier() + "%",
+                        "",
+                        getDescription()
+                )
+                .unbreakable()
+                .flags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE)
+                .get();
+    }
+
+    private static final DecimalFormat decimalFormat = new DecimalFormat("#.#");
+
+    static {
+        decimalFormat.setDecimalSeparatorAlwaysShown(false);
+    }
+
+    public String format(double input) {
+        return decimalFormat.format(input);
     }
 
     /*

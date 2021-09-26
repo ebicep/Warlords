@@ -370,20 +370,8 @@ public final class WarlordsPlayer {
         } else {
             player.getInventory().setItem(
                     slot,
-                    new ItemBuilder(item)
-                            .name(ChatColor.GOLD + ability.getName())
-                            .lore(ChatColor.GRAY + "Cooldown: " + ChatColor.AQUA + ability.getCooldown() + " seconds",
-                                    ability.getEnergyCost() != 0 && ability.getEnergyCost() != -120
-                                            ? ChatColor.GRAY + "Energy Cost: " + ChatColor.YELLOW + ability.getEnergyCost() + "\n" +
-                                            (ability.getCritChance() != 0 && ability.getCritChance() != -1 && ability.getCritMultiplier() != 100
-                                                    ? ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + ability.getCritChance() + "%" + "\n"
-                                                    + ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + ability.getCritMultiplier() + "%" + "\n\n" + ability.getDescription()
-                                                    : "\n" + ability.getDescription())
-                                            : "\n" + ability.getDescription()
-                            )
-                            .unbreakable()
-                            .flags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE)
-                            .get());
+                    ability.getItem(item)
+            );
         }
     }
 

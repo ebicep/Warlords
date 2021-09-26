@@ -81,7 +81,7 @@ public class Fireball extends AbstractProjectileBase {
     @Override
     public void updateDescription(Player player) {
         description = "§7Shoot a fireball that will explode\n" +
-                "§7for §c" + -minDamageHeal + " §7- §c" + -maxDamageHeal + " §7damage. A\n" +
+                "§7for §c" + format(-minDamageHeal) + " §7- §c" + format(-maxDamageHeal) + " §7damage. A\n" +
                 "§7direct hit will cause the enemy\n" +
                 "§7to take an additional §c15% §7extra\n" +
                 "§7damage." +

@@ -24,7 +24,7 @@ public class FreezingBreath extends AbstractAbility {
     @Override
     public void updateDescription(Player player) {
         description = "§7Breathe cold air in a cone in front\n" +
-                "§7of you, dealing §c" + -minDamageHeal + " §7- §c" + -maxDamageHeal + " §7damage\n" +
+                "§7of you, dealing §c" + format(-minDamageHeal) + " §7- §c" + format(-maxDamageHeal) + " §7damage\n" +
                 "§7to all enemies hit and slowing them by\n" +
                 "§e35% §7for §6" + slowDuration +  " §7seconds.";
     }

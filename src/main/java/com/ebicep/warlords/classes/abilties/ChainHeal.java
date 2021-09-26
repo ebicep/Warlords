@@ -23,7 +23,7 @@ public class ChainHeal extends AbstractChainBase {
     public void updateDescription(Player player) {
         description = "§7Discharge a beam of energizing lightning\n" +
                 "§7that heals you and a targeted friendly\n" +
-                "§7player for §a" + minDamageHeal + " §7- §a" + maxDamageHeal + " §7health and\n" +
+                "§7player for §a" + format(minDamageHeal) + " §7- §a" + format(maxDamageHeal) + " §7health and\n" +
                 "§7jumps to §e3 §7additional targets within\n" +
                 "§e" + bounceRange + " §7blocks. Each jump reduces the healing\n" +
                 "§7by §c10%§7." +

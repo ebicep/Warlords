@@ -80,7 +80,7 @@ public class FrostBolt extends AbstractProjectileBase {
     @Override
     public void updateDescription(Player player) {
         description = "§7Shoot a frostbolt that will shatter\n" +
-                "§7for §c" + -minDamageHeal + " §7- §c" + -maxDamageHeal + " §7damage and slow\n" +
+                "§7for §c" + format(-minDamageHeal) + " §7- §c" + format(-maxDamageHeal) + " §7damage and slow\n" +
                 "§7by §e25% §7for §62 §7seconds. A\n" +
                 "§7direct hit will cause the enemy\n" +
                 "§7to take an additional §c15% §7extra\n" +

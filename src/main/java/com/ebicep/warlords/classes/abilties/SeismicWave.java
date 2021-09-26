@@ -27,7 +27,7 @@ public class SeismicWave extends AbstractAbility {
     @Override
     public void updateDescription(Player player) {
         description = "§7Send a wave of incredible force\n" +
-                "§7forward that deals §c" + -minDamageHeal + " §7- §c" + -maxDamageHeal + "\n" +
+                "§7forward that deals §c" + format(-minDamageHeal) + " §7- §c" + format(-maxDamageHeal) + "\n" +
                 "§7damage to all enemies hit and\n" +
                 "knocks them back slightly.";
     }

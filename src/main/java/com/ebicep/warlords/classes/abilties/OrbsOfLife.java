@@ -47,8 +47,8 @@ public class OrbsOfLife extends AbstractAbility {
                 "\n\n" +
                 "§7Striking and hitting enemies with abilities\n" +
                 "§7causes them to drop an orb of life that lasts §68\n" +
-                "§7§7seconds, restoring §a" + maxDamageHeal + " §7health to the ally that\n" +
-                "§7picks it up. Other nearby allies recover §a" + minDamageHeal + "\n" +
+                "§7§7seconds, restoring §a" + format(maxDamageHeal) + " §7health to the ally that\n" +
+                "§7picks it up. Other nearby allies recover §a" + format(minDamageHeal) + "\n" +
                 "§7health. After 1.5 seconds the healing will increase\n" +
                 "§7by §a25% §7over 6.5 seconds. Lasts §6" + duration + " §7seconds." +
                 "\n\n" +

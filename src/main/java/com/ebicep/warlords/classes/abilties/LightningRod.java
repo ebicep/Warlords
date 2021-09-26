@@ -26,7 +26,7 @@ public class LightningRod extends AbstractAbility {
     public void updateDescription(Player player) {
         description = "§7Call down an energizing bolt of lightning\n" +
                 "§7upon yourself, restoring §a30% §7health and\n" +
-                "§e" + energyRestore + " §7energy and knock all nearby enemies " +
+                "§e" + energyRestore + " §7energy and knock all nearby enemies\n" +
                 "§7in a §e" + knockbackRadius + " §7block radius back.";
     }
 

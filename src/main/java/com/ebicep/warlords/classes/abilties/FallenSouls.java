@@ -32,7 +32,7 @@ public class FallenSouls extends AbstractAbility {
     @Override
     public void updateDescription(Player player) {
         description = "§7Summon a wave of fallen souls, dealing\n" +
-                "§c" + -minDamageHeal + " §7- §c" + -maxDamageHeal + " §7damage to all enemies they\n" +
+                "§c" + format(-minDamageHeal) + " §7- §c" + format(-maxDamageHeal) + " §7damage to all enemies they\n" +
                 "§7pass through. Each target hit reduces the\n" +
                 "§7cooldown of Spirit Link by §62 §7seconds.";
     }

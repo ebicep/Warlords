@@ -14,6 +14,7 @@ import java.util.function.BiConsumer;
 
 public class Menu extends AbstractMenuBase {
     public static final BiConsumer<Menu, InventoryClickEvent> ACTION_CLOSE_MENU = (m, e) -> e.getWhoClicked().closeInventory();
+    public static final BiConsumer<Menu, InventoryClickEvent> ACTION_DO_NOTHING = (m, e) -> {};
     private final Inventory inventory;
     private final BiConsumer<Menu, InventoryClickEvent>[] onClick = (BiConsumer<Menu, InventoryClickEvent>[]) new BiConsumer<?, ?>[9 * 6];
     private int nextItemIndex = 0;

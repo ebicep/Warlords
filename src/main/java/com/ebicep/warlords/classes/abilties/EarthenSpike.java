@@ -42,8 +42,8 @@ public class EarthenSpike extends AbstractAbility {
         description = "§7Send forth an underground earth spike\n" +
                 "§7that locks onto a targeted enemy player.\n" +
                 "§7When the spike reaches its target it\n" +
-                "§7emerges from the ground, dealing §c" + -minDamageHeal + " §7-\n" +
-                "§c" + -maxDamageHeal + " §7damage to any nearby enemies and\n" +
+                "§7emerges from the ground, dealing §c" + format(-minDamageHeal) + " §7-\n" +
+                "§c" + format(-maxDamageHeal) + " §7damage to any nearby enemies and\n" +
                 "§7launches them up into the air." +
                 "\n\n" +
                 "§7Has an initial cast range of §e" + radius + " §7blocks.";

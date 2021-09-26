@@ -47,7 +47,7 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
     public void updateDescription(Player player) {
         description = "§7Discharge a bolt of lightning at the\n" +
                 "§7targeted enemy player that deals\n" +
-                "§c" + -minDamageHeal + " §7- §c" + -maxDamageHeal + " §7damage and jumps to\n" +
+                "§c" + format(-minDamageHeal) + " §7- §c" + format(-maxDamageHeal) + " §7damage and jumps to\n" +
                 "§e4 §7additional targets within §e" + bounceRange + "\n" +
                 "§7blocks. Each time the lightning jumps\n" +
                 "§7the damage is decreased by §c15%§7.\n" +

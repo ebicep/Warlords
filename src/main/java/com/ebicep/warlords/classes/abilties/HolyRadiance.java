@@ -24,7 +24,7 @@ public class HolyRadiance extends AbstractAbility {
     public void updateDescription(Player player) {
         description = "§7Radiate with holy energy, healing\n" +
                 "§7yourself and all nearby allies for\n" +
-                "§a" + minDamageHeal + " §7- §a" + maxDamageHeal + " §7health." +
+                "§a" + format(minDamageHeal) + " §7- §a" + format(maxDamageHeal) + " §7health." +
                 "\n\n" +
                 "§7Has a maximum range of §e" + radius + " §7blocks.";
     }

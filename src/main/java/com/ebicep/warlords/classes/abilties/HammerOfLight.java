@@ -31,10 +31,10 @@ public class HammerOfLight extends AbstractAbility {
     @Override
     public void updateDescription(Player player) {
         description = "§7Throw down a Hammer of Light on\n" +
-                "§7the ground, dealing §c" + minDamageHeal + " §7-\n" +
-                "§c" + maxDamageHeal + " §7damage every second to\n" +
+                "§7the ground, dealing §c" + format(minDamageHeal) + " §7-\n" +
+                "§c" + format(maxDamageHeal) + " §7damage every second to\n" +
                 "§7nearby enemies and healing nearby\n" +
-                "§7allies for §a" + minDamageHeal + " §7- §a" + maxDamageHeal + " §7every\n" +
+                "§7allies for §a" + format(minDamageHeal) + " §7- §a" + format(maxDamageHeal) + " §7every\n" +
                 "§7second in a §e" + radius + " §7block radius. Your Protector\n" +
                 "§7Strike pierces shields and defenses of enemies\n" +
                 "§7standing on top of the Hammer of Light.\n" +

@@ -31,7 +31,7 @@ public class HealingTotem extends AbstractTotemBase {
     public void updateDescription(Player player) {
         description = "§7Place a totem on the ground that\n" +
                 "§7pulses constantly, healing nearby\n" +
-                "§7allies in a §e" + radius + " §7block radius for §a" + minDamageHeal + " §7- §a" + maxDamageHeal + "\n" +
+                "§7allies in a §e" + radius + " §7block radius for §a" + format(minDamageHeal) + " §7- §a" + format(maxDamageHeal) + "\n" +
                 "§7every second. The healing will gradually\n" +
                 "§7increase by §a35% §7(up to 210%) every\n" +
                 "§7second. Lasts §6" + duration + " §7seconds." +

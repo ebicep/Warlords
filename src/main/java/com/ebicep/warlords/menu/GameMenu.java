@@ -1,21 +1,25 @@
 package com.ebicep.warlords.menu;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.util.ItemBuilder;
 import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Dye;
 
+import java.sql.Wrapper;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import static com.ebicep.warlords.menu.Menu.ACTION_CLOSE_MENU;
+import static com.ebicep.warlords.menu.Menu.ACTION_DO_NOTHING;
 import static com.ebicep.warlords.player.ArmorManager.*;
 import static com.ebicep.warlords.player.Classes.*;
 import static com.ebicep.warlords.player.Settings.*;
@@ -44,6 +48,10 @@ public class GameMenu {
     private static final ItemStack MENU_SETTINGS_PARTICLE_QUALITY = new ItemBuilder(Material.NETHER_STAR)
             .name(ChatColor.GREEN + "Particle Quality")
             .lore("§7Allows you to control, or\n§7disable, particles and the\n§7amount of them.")
+            .get();
+    private static final ItemStack MENU_ABILITY_DESCRIPTION = new ItemBuilder(Material.BOOK)
+            .name(ChatColor.GREEN + "Class Information")
+            .lore("§7Preview of your ability \ndescriptions and specialization \nstats.")
             .get();
 
 
@@ -81,6 +89,7 @@ public class GameMenu {
         menu.setItem(5, 3, MENU_BOOSTS, (n, e) -> openSkillBoostMenu(player, selectedClass));
         menu.setItem(7, 3, MENU_SETTINGS, (n, e) -> openSettingsMenu(player));
         menu.setItem(4, 5, Menu.MENU_CLOSE, ACTION_CLOSE_MENU);
+        menu.setItem(4, 2, MENU_ABILITY_DESCRIPTION, (n, e) -> openLobbyAbilityMenu(player));
         menu.openForPlayer(player);
     }
 
@@ -432,6 +441,57 @@ public class GameMenu {
         }
 
         menu.setItem(4, 3, Menu.MENU_CLOSE, ACTION_CLOSE_MENU);
+        menu.openForPlayer(player);
+    }
+
+    public static void openLobbyAbilityMenu(Player player) {
+        Menu menu = new Menu("Class Information", 9);
+        PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
+        Classes selectedClass = playerSettings.getSelectedClass();
+        AbstractPlayerClass apc = selectedClass.create.get();
+
+        ItemBuilder icon = new ItemBuilder(selectedClass.specType.itemStack);
+        icon.name(ChatColor.GREEN + selectedClass.name);
+        icon.lore(
+                selectedClass.description,
+                "",
+                "§6Specialization Stats:",
+                "",
+                "§7Health: §a" + apc.getMaxHealth(),
+                "§7Energy: §a" + apc.getMaxEnergy() + " §7/ §a+" + apc.getEnergyPerSec() + " §7per sec §7/ §a+" + apc.getEnergyOnHit() + " §7per hit",
+                "",
+                "§7Damage Reduction: §e" + apc.getDamageResistance() + "%"
+        );
+
+        ClassesSkillBoosts selectedBoost = playerSettings.getClassesSkillBoosts();
+        if (apc.getWeapon().getClass() == selectedBoost.ability) {
+            if (selectedBoost != ClassesSkillBoosts.PROTECTOR_STRIKE) {
+                apc.getWeapon().boostSkill();
+            }
+        } else if (apc.getRed().getClass() == selectedBoost.ability) {
+            apc.getRed().boostSkill();
+        } else if (apc.getPurple().getClass() == selectedBoost.ability) {
+            apc.getPurple().boostSkill();
+        } else if (apc.getBlue().getClass() == selectedBoost.ability) {
+            apc.getBlue().boostSkill();
+        } else if (apc.getOrange().getClass() == selectedBoost.ability) {
+            apc.getOrange().boostOrange();
+        }
+
+        apc.getWeapon().updateDescription(player);
+        apc.getRed().updateDescription(player);
+        apc.getPurple().updateDescription(player);
+        apc.getBlue().updateDescription(player);
+        apc.getOrange().updateDescription(player);
+
+        menu.setItem(0, icon.get(), ACTION_DO_NOTHING);
+        menu.setItem(2, apc.getWeapon().getItem(playerSettings.getWeaponSkins().getOrDefault(selectedClass, Weapons.FELFLAME_BLADE).item), ACTION_DO_NOTHING);
+        menu.setItem(3, apc.getRed().getItem(new ItemStack(Material.INK_SACK, 1, (byte) 1)), ACTION_DO_NOTHING);
+        menu.setItem(4, apc.getPurple().getItem(new ItemStack(Material.GLOWSTONE_DUST)), ACTION_DO_NOTHING);
+        menu.setItem(5, apc.getBlue().getItem(new ItemStack(Material.INK_SACK, 1, (byte) 10)), ACTION_DO_NOTHING);
+        menu.setItem(6, apc.getOrange().getItem(new ItemStack(Material.INK_SACK, 1, (byte) 14)), ACTION_DO_NOTHING);
+        menu.setItem(8, MENU_BACK_PREGAME, (n, e) -> openMainMenu(player));
+
         menu.openForPlayer(player);
     }
 }

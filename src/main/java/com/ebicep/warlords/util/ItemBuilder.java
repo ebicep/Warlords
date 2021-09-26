@@ -65,19 +65,21 @@ public class ItemBuilder {
     }
     public ItemBuilder lore(Collection<String> lore) {
         for (String row : lore) {
-            if (row.contains("\n")) {
-                // Fix for \n
+            if (row == null || row.contains("\n")) {
+                // Fix for \n and null
                 List<String> newLore = new ArrayList<>(Math.max(lore.size() * 2, 16));
                 for (String loreRow : lore) {
-                    if (loreRow.contains("\n")) {
-                        String chatColor = "";
-                        for (String split : loreRow.split("\n")) {
-                            String combined = !split.isEmpty() && split.charAt(0) == ChatColor.COLOR_CHAR ? split : chatColor + split;
-                            newLore.add(combined);
-                            chatColor = ChatColor.getLastColors(combined);
+                    if(loreRow != null) {
+                        if (loreRow.contains("\n")) {
+                            String chatColor = "";
+                            for (String split : loreRow.split("\n")) {
+                                String combined = !split.isEmpty() && split.charAt(0) == ChatColor.COLOR_CHAR ? split : chatColor + split;
+                                newLore.add(combined);
+                                chatColor = ChatColor.getLastColors(combined);
+                            }
+                        } else {
+                            newLore.add(loreRow);
                         }
-                    } else {
-                        newLore.add(loreRow);
                     }
                 }
                 meta().setLore(newLore);

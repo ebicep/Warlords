@@ -23,7 +23,7 @@ public class LightningBolt extends AbstractPiercingProjectileBase {
     @Override
     public void updateDescription(Player player) {
         description = "§7Hurl a fast, piercing bolt of lightning that\n" +
-                "§7deals §c" + -minDamageHeal + " §7- §c" + -maxDamageHeal + " §7damage to all enemies it\n" +
+                "§7deals §c" + format(-minDamageHeal) + " §7- §c" + format(-maxDamageHeal) + " §7damage to all enemies it\n" +
                 "§7passes through. Each target hit reduces the\n" +
                 "§7cooldown of Chain Lightning by §62 §7seconds.\n" +
                 "\n" +

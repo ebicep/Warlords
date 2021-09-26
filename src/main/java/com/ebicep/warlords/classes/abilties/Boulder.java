@@ -26,7 +26,7 @@ public class Boulder extends AbstractAbility {
     @Override
     public void updateDescription(Player player) {
         description = "§7Launch a giant boulder that shatters\n" +
-                "§7and deals §c" + -minDamageHeal + " §7- §c" + -maxDamageHeal + " §7damage\n" +
+                "§7and deals §c" + format(-minDamageHeal) + " §7- §c" + format(-maxDamageHeal) + " §7damage\n" +
                 "§7to all enemies near the impact point\n" +
                 "§7and knocks them back slightly.";
     }

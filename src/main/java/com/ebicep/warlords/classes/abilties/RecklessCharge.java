@@ -27,8 +27,8 @@ public class RecklessCharge extends AbstractAbility implements Listener {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Charge forward, dealing §c" + -minDamageHeal + "\n" +
-                "§7- §c" + -maxDamageHeal + " §7damage to all enemies\n" +
+        description = "§7Charge forward, dealing §c" + format(-minDamageHeal) + "\n" +
+                "§7- §c" + format(-maxDamageHeal) + " §7damage to all enemies\n" +
                 "§7you pass through. Enemies hit are\n" +
                 "§5IMMOBILIZED§7, preventing movement\n" +
                 "§7for §60.5 §7seconds. Charge is reduced\n" +

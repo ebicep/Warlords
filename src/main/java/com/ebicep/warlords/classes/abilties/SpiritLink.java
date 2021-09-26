@@ -21,7 +21,7 @@ public class SpiritLink extends AbstractChainBase {
     @Override
     public void updateDescription(Player player) {
         description = "§7Links your spirit with up to §c3 §7enemy\n" +
-                "§7players, dealing §c" + -minDamageHeal + " §7- §c" + -maxDamageHeal + " §7damage\n" +
+                "§7players, dealing §c" + format(-minDamageHeal) + " §7- §c" + format(-maxDamageHeal) + " §7damage\n" +
                 "§7to the first target hit. Each additional hit\n" +
                 "§7deals §c10% §7reduced damage. You gain §e40%\n" +
                 "§7speed for §61.5 §7seconds, and take §c20%\n" +

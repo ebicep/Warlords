@@ -28,8 +28,8 @@ public class HealingRain extends AbstractAbility {
     @Override
     public void updateDescription(Player player) {
         description = "§7Conjure rain at targeted\n" +
-                "location that will restore §a" + minDamageHeal + "\n" +
-                "§7- §a" + maxDamageHeal + " §7health every second to\n" +
+                "location that will restore §a" + format(minDamageHeal) + "\n" +
+                "§7- §a" + format(maxDamageHeal) + " §7health every second to\n" +
                 "allies. Lasts §6" + duration + " §7seconds." +
                 "\n\n" +
                 "You may move Healing Rain to your location\n" +
