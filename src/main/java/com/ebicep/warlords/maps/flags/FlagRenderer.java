@@ -147,7 +147,7 @@ class FlagRenderer {
             stand1.setVisible(false);
         } else if (this.lastLocation instanceof PlayerFlagLocation) {
             PlayerFlagLocation flag = (PlayerFlagLocation) this.lastLocation;
-            runningTasksCancel.add(flag.getPlayer().getSpeed().addSpeedModifier("FLAG", -20, 0));
+            runningTasksCancel.add(flag.getPlayer().getSpeed().addSpeedModifier("FLAG", -20, 0, true));
             LivingEntity entity = ((PlayerFlagLocation) this.lastLocation).getPlayer().getEntity();
             if (entity instanceof Player) {
                 Player player = (Player)entity;

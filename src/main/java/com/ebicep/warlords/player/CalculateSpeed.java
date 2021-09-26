@@ -21,7 +21,7 @@ public class CalculateSpeed {
         this.minspeed = BASE_SPEED * (1 + baseModifier / 100f) * (1 - .35f);
         this.maxspeed = BASE_SPEED * 1.40f;
         this.updateWalkingSpeed = updateWalkingSpeed;
-        this.modifiers.add(new Modifier("BASE", baseModifier, 0, Collections.emptyList()));
+        this.modifiers.add(new Modifier("BASE", baseModifier, 0, Collections.emptyList(), false));
     }
 
     /**
@@ -54,10 +54,12 @@ public class CalculateSpeed {
         if (changed) {
             changed = false;
             float speed = BASE_SPEED;
+
             Map<String, Modifier> appliedEffects = new HashMap<>();
-            Iterator<Modifier> iterator = this.modifiers.iterator();
-            while (iterator.hasNext()) {
-                Modifier next = iterator.next();
+            for (Modifier next : this.modifiers) {
+                if (next.afterLimit) {
+                    continue;
+                }
                 if (hasEffectAlteringEffects) {
                     for (String toDisable : next.toDisable) {
                         Modifier mod = appliedEffects.put(toDisable, null);
@@ -72,12 +74,33 @@ public class CalculateSpeed {
                 speed *= next.calculatedModifier;
                 appliedEffects.put(next.name, next);
             }
+
             if (speed < this.minspeed) {
                 speed = this.minspeed;
             }
             if (speed > this.maxspeed) {
                 speed = this.maxspeed;
             }
+
+            for (Modifier next : this.modifiers) {
+                if (!next.afterLimit) {
+                    continue;
+                }
+                if (hasEffectAlteringEffects) {
+                    for (String toDisable : next.toDisable) {
+                        Modifier mod = appliedEffects.put(toDisable, null);
+                        if (mod != null) {
+                            speed /= mod.calculatedModifier;
+                        }
+                    }
+                    if (appliedEffects.containsKey(next.name)) {
+                        continue;
+                    }
+                }
+                speed *= next.calculatedModifier;
+                appliedEffects.put(next.name, next);
+            }
+
             if (speed != lastSpeed) {
                 float walkSpeed = speed * BASE_SPEED_TO_WALKING_SPEED;
                 //Bukkit.broadcastMessage("Speed updated ("+lastSpeed+" --> " +speed + ") walkSpeed: "+walkSpeed+" causes:");
@@ -100,11 +123,19 @@ public class CalculateSpeed {
      * @return A runnable that can be used to manually remove this entry
      */
     public Runnable addSpeedModifier(String name, int modifier, int duration, String... toDisable) {
-        return changeCurrentSpeed(name, modifier, duration, Arrays.asList(toDisable));
+        return addSpeedModifier(name, modifier, duration, Arrays.asList(toDisable));
     }
 
-    public Runnable changeCurrentSpeed(String name, int modifier, int duration, Collection<String> toDisable) {
-        Modifier mod = new Modifier(name, modifier, duration == 0 ? 0 : duration + 1, toDisable); // add 1 tick to deal with effects lasting exactly as long
+    public Runnable addSpeedModifier(String name, int modifier, int duration, Collection<String> toDisable) {
+        return addSpeedModifier(name, modifier, duration, false, toDisable);
+    }
+
+    public Runnable addSpeedModifier(String name, int modifier, int duration, boolean afterLimit, String... toDisable) {
+        return addSpeedModifier(name, modifier, duration, afterLimit, Arrays.asList(toDisable));
+    }
+
+    public Runnable addSpeedModifier(String name, int modifier, int duration, boolean afterLimit, Collection<String> toDisable) {
+        Modifier mod = new Modifier(name, modifier, duration == 0 ? 0 : duration + 1, toDisable, afterLimit); // add 1 tick to deal with effects lasting exactly as long
         ListIterator<Modifier> iterator = this.modifiers.listIterator();
         while (iterator.hasNext()) {
             Modifier next = iterator.next();
@@ -126,19 +157,21 @@ public class CalculateSpeed {
         public final int modifier;
         public final float calculatedModifier;
         public int duration;
+        public final boolean afterLimit;
         public final Collection<String> toDisable;
 
-        public Modifier(String name, int modifier, int duration, Collection<String> toDisable) {
+        public Modifier(String name, int modifier, int duration, Collection<String> toDisable, boolean afterLimit) {
             this.name = name;
             this.modifier = modifier;
             this.calculatedModifier = 1 + modifier / 100f;
             this.duration = duration;
+            this.afterLimit = afterLimit;
             this.toDisable = toDisable;
         }
 
-        /*@Override
+        @Override
         public String toString() {
             return "Modifier{" + "name=" + name + ", modifier=" + modifier + " (" + calculatedModifier + "), duration=" + duration + ", toDisable=" + toDisable + '}';
-        }*/
+        }
     }
 }
