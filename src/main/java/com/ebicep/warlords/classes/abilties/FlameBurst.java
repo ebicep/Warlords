@@ -14,7 +14,7 @@ public class FlameBurst extends AbstractProjectileBase {
     private static final float HITBOX = 5;
 
     public FlameBurst() {
-        super("Flame Burst", -557, -753, 9.4f, 60, 25, 185, 1.65, 300, false);
+        super("Flame Burst", -557, -753, 9.4f, 60, 25, 185, 1.65, 500, false);
     }
 
     @Override
