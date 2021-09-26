@@ -31,15 +31,20 @@ public class FreezingBreath extends AbstractAbility {
 
     @Override
     public void onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
+        wp.subtractEnergy(energyCost);
         Location playerLoc = player.getLocation();
         playerLoc.setPitch(0);
         playerLoc.add(0, 1.7, 0);
-        wp.subtractEnergy(energyCost);
+
         Vector viewDirection = playerLoc.getDirection();
+
+        Location hitbox = player.getLocation();
+        hitbox.add(hitbox.getDirection().multiply(-0.75));
+
         PlayerFilter.entitiesAround(player, 7.5, 10, 7.5)
                 .aliveEnemiesOf(wp)
                 .forEach(target -> {
-                    Vector direction = target.getLocation().subtract(player.getLocation()).toVector().normalize();
+                    Vector direction = target.getLocation().subtract(hitbox).toVector().normalize();
                     if (viewDirection.dot(direction) > .66) {
                         target.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
                         target.getSpeed().addSpeedModifier("Freezing Breath", -35, slowDuration * 20);

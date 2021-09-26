@@ -34,13 +34,19 @@ public class WaterBreath extends AbstractAbility {
         wp.getCooldownManager().removeDebuffCooldowns();
         wp.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
         player.playSound(player.getLocation(), Sound.ORB_PICKUP, 1, 1);
+
         Location playerLoc = player.getLocation();
         playerLoc.setPitch(0);
         playerLoc.add(0, 1.7, 0);
+
         Vector viewDirection = playerLoc.getDirection();
+
+        Location hitbox = player.getLocation();
+        hitbox.add(hitbox.getDirection().multiply(-0.75));
+
         PlayerFilter.entitiesAround(player, 7.5, 10, 7.5)
                 .forEach(target -> {
-                    Vector direction = target.getLocation().subtract(player.getLocation()).toVector().normalize();
+                    Vector direction = target.getLocation().subtract(hitbox).toVector().normalize();
                     if (viewDirection.dot(direction) > .66) {
                         if (wp.isTeammateAlive(target)) {
                             target.getCooldownManager().removeDebuffCooldowns();
