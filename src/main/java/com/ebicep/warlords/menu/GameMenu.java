@@ -11,12 +11,16 @@ import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.Dye;
 
 import java.sql.Wrapper;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
+import static java.lang.Math.round;
 
 import static com.ebicep.warlords.menu.Menu.ACTION_CLOSE_MENU;
 import static com.ebicep.warlords.menu.Menu.ACTION_DO_NOTHING;
@@ -52,6 +56,10 @@ public class GameMenu {
     private static final ItemStack MENU_ABILITY_DESCRIPTION = new ItemBuilder(Material.BOOK)
             .name(ChatColor.GREEN + "Class Information")
             .lore("§7Preview of your ability \ndescriptions and specialization \nstats.")
+            .get();
+    private static final ItemStack MENU_ARCADE = new ItemBuilder(Material.GOLD_BLOCK)
+            .name(ChatColor.GREEN + "Mini Games")
+            .lore("§7Try your luck in rerolling or\nopening weapons here!\n(has NO effect on actual games.)")
             .get();
 
 
@@ -90,6 +98,7 @@ public class GameMenu {
         menu.setItem(7, 3, MENU_SETTINGS, (n, e) -> openSettingsMenu(player));
         menu.setItem(4, 5, Menu.MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.setItem(4, 2, MENU_ABILITY_DESCRIPTION, (n, e) -> openLobbyAbilityMenu(player));
+        menu.setItem(4, 4, MENU_ARCADE, (n, e) -> openArcadeMenu(player));
         menu.openForPlayer(player);
     }
 
@@ -492,6 +501,124 @@ public class GameMenu {
         menu.setItem(6, apc.getOrange().getItem(new ItemStack(Material.INK_SACK, 1, (byte) 14)), ACTION_DO_NOTHING);
         menu.setItem(8, MENU_BACK_PREGAME, (n, e) -> openMainMenu(player));
 
+        menu.openForPlayer(player);
+    }
+
+    private static final DecimalFormat decimalFormat = new DecimalFormat("#.#");
+
+    static {
+        decimalFormat.setDecimalSeparatorAlwaysShown(false);
+    }
+
+    private static double map(double value, double min, double max) {
+        return value * (max - min) + min;
+    }
+
+    private static String format(double value) {
+        return decimalFormat.format(value);
+    }
+
+    public static void openArcadeMenu(Player player) {
+        Menu menu = new Menu("Mini Games", 9 * 4);
+
+        ItemBuilder icon = new ItemBuilder(Material.GOLD_INGOT);
+        icon.name(ChatColor.GREEN + "Weapon Roller");
+        icon.lore(
+                "§7Is RNG with you today?"
+        );
+
+        menu.setItem(3, 1, icon.get(), (m, e) -> {
+            Random random = new Random();
+            double difficulty = 1;
+            double base = random.nextDouble() * (1 - difficulty);
+
+            double meleeDamageMin = random.nextDouble() * difficulty + base;
+            double meleeDamageMax = random.nextDouble() * difficulty + base;
+            double critChance = random.nextDouble() * difficulty + base;
+            double critMultiplier = random.nextDouble() * difficulty + base;
+            double skillBoost = random.nextDouble() * difficulty + base;
+            double health = random.nextDouble() * difficulty + base;
+            double energy = random.nextDouble() * difficulty + base;
+            double cooldown = random.nextDouble() * difficulty + base;
+            double speed = random.nextDouble() * difficulty + base;
+
+            double score =
+                    (
+                            meleeDamageMin +
+                                    meleeDamageMax +
+                                    critChance +
+                                    critMultiplier +
+                                    skillBoost +
+                                    health +
+                                    energy +
+                                    cooldown +
+                                    speed
+                    ) / 9;
+
+            meleeDamageMin = map(meleeDamageMin, 122, 132);
+            meleeDamageMax = map(meleeDamageMax, 166, 179);
+            critChance = map(critChance, 15, 25);
+            critMultiplier = map(critMultiplier, 180, 200);
+            skillBoost = map(skillBoost, 13, 20);
+            health = map(health, 500, 800);
+            energy = map(energy, 30, 35);
+            cooldown = map(cooldown, 7, 13);
+            speed = map(speed, 7, 13);
+
+            if (meleeDamageMin > meleeDamageMax) {
+                double temp = meleeDamageMin;
+                meleeDamageMin = meleeDamageMax;
+                meleeDamageMax = temp;
+            }
+
+            String displayScore = "§7Your weapon score is §a" + format(score * 100);
+
+            PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
+            Classes selectedClass = playerSettings.getSelectedClass();
+            AbstractPlayerClass apc = selectedClass.create.get();
+
+            ItemStack weapon = new ItemStack(Weapons.FELFLAME_BLADE.item);
+            ItemMeta weaponMeta = weapon.getItemMeta();
+            weaponMeta.setDisplayName("§6Warlord's Felflame of the " + apc.getWeapon().getName());
+            ArrayList<String> weaponLore = new ArrayList<>();
+            weaponLore.add("§7Damage: §c" + round(meleeDamageMin) + "§7-§c" + round(meleeDamageMax));
+            weaponLore.add("§7Crit Chance: §c" + round(critChance) + "%");
+            weaponLore.add("§7Crit Multiplier: §c" + round(critMultiplier) + "%");
+            weaponLore.add("");
+            String classNamePath = apc.getClass().getGenericSuperclass().getTypeName();
+            weaponLore.add("§a" + classNamePath.substring(classNamePath.indexOf("Abstract") + 8) + " (" + apc.getClass().getSimpleName() + "):");
+            weaponLore.add("§aIncreases the damage you");
+            weaponLore.add("§adeal with " + apc.getWeapon().getName() + " by §c" + round(skillBoost) + "%");
+            weaponLore.add("");
+            weaponLore.add("§7Health: §a+" + round(health));
+            weaponLore.add("§7Max Energy: §a+" + round(energy));
+            weaponLore.add("§7Cooldown Reduction: §a+" + round(cooldown) + "%");
+            weaponLore.add("§7Speed: §a+" + round(speed) + "%");
+            weaponLore.add("");
+            weaponLore.add("§3CRAFTED");
+            weaponLore.add("");
+            weaponLore.add(displayScore);
+            weaponLore.add("");
+            weaponLore.add("§7Left-click to roll again!");
+            weaponMeta.setLore(weaponLore);
+            weapon.setItemMeta(weaponMeta);
+            m.getInventory().setItem(e.getRawSlot(), weapon);
+
+            if (score > 0.85) {
+                Bukkit.broadcastMessage("§6" + player.getDisplayName() + " §frolled a weapon with a total score of §6" + format(score * 100) + "§f!");
+            }
+        });
+
+        ItemBuilder icon2 = new ItemBuilder(Material.SULPHUR);
+        icon2.name(ChatColor.GREEN + "Repair Weapons");
+        icon2.lore(
+                "§7Is RNG with you today?",
+                "",
+                "§cCOMING SOON"
+        );
+
+        menu.setItem(5, 1, icon2.get(), ACTION_DO_NOTHING);
+        menu.setItem(4, 3, MENU_BACK_PREGAME, (n, e) -> openMainMenu(player));
         menu.openForPlayer(player);
     }
 }

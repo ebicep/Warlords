@@ -86,8 +86,7 @@ public class FrostBolt extends AbstractProjectileBase {
                 "§7to take an additional §c15% §7extra\n" +
                 "§7damage." +
                 "\n\n" +
-                "§7Has an optimal range of §e" + MAX_FULL_DAMAGE_DISTANCE + "\n" +
-                "§7blocks.";
+                "§7Has an optimal range of §e" + MAX_FULL_DAMAGE_DISTANCE + " §7blocks.";
     }
 	
 }
