@@ -220,7 +220,8 @@ public class PartyCommand implements CommandExecutor {
                                     ChatColor.YELLOW + "/p promote <player>" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Promotes a player in the party" + "\n" +
                                     ChatColor.YELLOW + "/p demote <player>" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Demotes a player in the party" + "\n" +
                                     ChatColor.YELLOW + "/p poll <question/answer/answer...>" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Creates a poll to vote on" + "\n" +
-                                    ChatColor.YELLOW + "/p(open/close)" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Opens/Closes the party" + "\n"
+                                    ChatColor.YELLOW + "/p(open/close)" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Opens/Closes the party" + "\n" +
+                                    ChatColor.YELLOW + "/poutside" + ChatColor.DARK_GRAY + " - " + ChatColor.GRAY + ChatColor.ITALIC + "Shows the players outside of the party" + "\n"
                             ,
                             true,
                             false);
@@ -245,13 +246,19 @@ public class PartyCommand implements CommandExecutor {
                 Optional<Party> currentParty = Warlords.partyManager.getPartyFromAny(((Player) sender).getUniqueId());
                 if (currentParty.isPresent()) {
                     StringBuilder outside = new StringBuilder(ChatColor.YELLOW + "Players Outside Party: ");
+                    final int[] numberOfPlayersOutside = {0};
                     Bukkit.getOnlinePlayers().forEach(p -> {
                         if(!currentParty.get().getMembers().containsKey(p.getUniqueId())) {
+                            numberOfPlayersOutside[0]++;
                             outside.append(ChatColor.GREEN).append(p.getName()).append(ChatColor.GRAY).append(", ");
                         }
                     });
                     outside.setLength(outside.length() - 2);
-                    sender.sendMessage(outside.toString());
+                    if(numberOfPlayersOutside[0] == 0) {
+                        sender.sendMessage(ChatColor.YELLOW + "There are no players outside of the party");
+                    } else {
+                        sender.sendMessage(outside.toString());
+                    }
                 } else {
                     sender.sendMessage(ChatColor.RED + "You are currently not in a party!");
                 }

@@ -53,6 +53,9 @@ public class BotCommands implements CommandExecutor {
                 return true;
             case "inputgame":
             case "inputexperimental":
+                if(args.length == 1) {
+                    BotManager.getTextChannelByName("games-backlog").ifPresent(textChannel -> textChannel.sendMessage("-" + input + " " + DatabaseManager.lastWarlordsPlusString).queue());
+                }
                 if(args.length < 2) {
                     sender.sendMessage(ChatColor.RED + "Invalid Arguments!");
                     return true;
