@@ -24,7 +24,7 @@ public class WaterBreath extends AbstractAbility {
     public void updateDescription(Player player) {
         description = "§7Breathe water in a cone in front of you,\n" +
                 "§7knocking back enemies, cleansing all §ede-buffs\n" +
-                "and restoring §a" + format(minDamageHeal) + "§7- §a" + format(maxDamageHeal) + " §7health to\n" +
+                "§7and restoring §a" + format(minDamageHeal) + "§7- §a" + format(maxDamageHeal) + " §7health to\n" +
                 "§7yourself and all allies hit.";
     }
 

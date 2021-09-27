@@ -103,7 +103,8 @@ public class WaterBolt extends AbstractProjectileBase {
                 "§7for §c231 §7- §c299 §7damage and restore\n" +
                 "§a" + format(minDamageHeal) + " §7- §a" + format(maxDamageHeal) + " §7health to allies. A\n" +
                 "§7direct hit will cause §a15% §7increased\n" +
-                "§7damage or healing for the target hit.\n" +
+                "§7damage or healing for the target hit." +
+                "\n\n" +
                 "§7Has an optimal range of §e" + MAX_FULL_DAMAGE_DISTANCE + " §7blocks.";
     }
 	

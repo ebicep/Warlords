@@ -54,7 +54,7 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
                 "§7You gain §e10% §7damage resistance for\n" +
                 "§7each target hit, up to §e30% §7damage\n" +
                 "§7resistance. This buff lasts §64.5 §7seconds." +
-                "\n" +
+                "\n\n" +
                 "§7Has an initial cast range of §e" + radius + " §7blocks.";
     }
 
