@@ -45,6 +45,7 @@ public class WaterBreath extends AbstractAbility {
         hitbox.add(hitbox.getDirection().multiply(-0.75));
 
         PlayerFilter.entitiesAround(player, 7.5, 10, 7.5)
+                .excluding(wp)
                 .forEach(target -> {
                     Vector direction = target.getLocation().subtract(hitbox).toVector().normalize();
                     if (viewDirection.dot(direction) > .66) {
