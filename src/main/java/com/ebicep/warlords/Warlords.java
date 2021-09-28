@@ -477,7 +477,7 @@ public class Warlords extends JavaPlugin {
                                                 warlordsPlayer.addHealth(warlordsPlayer, "", warlordsPlayer.getMaxHealth() / -10f, warlordsPlayer.getMaxHealth() / -10f, -1, 100, false);
                                             }
                                         }
-                                    }.runTaskTimer(Warlords.this, 0, 15);
+                                    }.runTaskTimer(Warlords.this, 0, 20);
 
                                     break;
                                 }
