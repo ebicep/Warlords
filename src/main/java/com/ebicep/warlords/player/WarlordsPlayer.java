@@ -627,6 +627,11 @@ public final class WarlordsPlayer {
                         totalReduction *= .85;
                     }
 
+                    //flag dmg resistance
+                    if(!cooldownManager.getCooldownFromName("Flag Damage Reduction").isEmpty()) {
+                        totalReduction *= .9;
+                    }
+
                     addAbsorbed(Math.abs(-damageHealValue * (1 - totalReduction)));
                 } else if (min > 0) {
                     if (!cooldownManager.getCooldown(WoundingStrikeBerserker.class).isEmpty()) {
@@ -643,6 +648,10 @@ public final class WarlordsPlayer {
                     } else {
                         totalReduction *= Math.pow(1.03, playersInHammer);
                     }
+                }
+
+                if(totalReduction < .25) {
+                    totalReduction = .25f;
                 }
                 damageHealValue *= totalReduction;
             }
@@ -829,7 +838,7 @@ public final class WarlordsPlayer {
                         }
                         if (attacker.getSpec() instanceof Spiritguard) {
                             if (!attacker.getCooldownManager().getCooldown(Repentance.class).isEmpty()) {
-                                int healthToAdd = (int) (((Repentance) attacker.getSpec().getBlue()).getPool() * .1) + 11;
+                                int healthToAdd = (int) (((Repentance) attacker.getSpec().getBlue()).getPool() * .12) + 15;
                                 attacker.addHealth(attacker, "Repentance", healthToAdd, healthToAdd, -1, 100, false);
                                 ((Repentance) attacker.getSpec().getBlue()).setPool(((Repentance) attacker.getSpec().getBlue()).getPool() * .5f);
                                 attacker.addEnergy(attacker, "Repentance", (float) (healthToAdd * .035));
@@ -1558,11 +1567,13 @@ public final class WarlordsPlayer {
     }
 
     public void setVelocity(org.bukkit.util.Vector v) {
-        setVelocity(v, true);
+        if(!cooldownManager.hasCooldownFromName("Anti KB")) {
+            setVelocity(v, true);
+        }
     }
 
     public void setVelocity(org.bukkit.util.Vector v, boolean kbAfterHorse) {
-        if(kbAfterHorse || this.entity.getVehicle() == null) {
+        if((kbAfterHorse || this.entity.getVehicle() == null) && !cooldownManager.hasCooldownFromName("Anti KB")) {
             this.entity.setVelocity(v);
         }
     }
@@ -1572,7 +1583,7 @@ public final class WarlordsPlayer {
     }
 
     public void setVelocity(Location from, Location to, double multipliedBy, double y, boolean kbAfterHorse) {
-        if((kbAfterHorse && this.entity.getVehicle() != null) || (!kbAfterHorse && this.entity.getVehicle() == null)) {
+        if(((kbAfterHorse && this.entity.getVehicle() != null) || (!kbAfterHorse && this.entity.getVehicle() == null)) && !cooldownManager.hasCooldownFromName("Anti KB")) {
             this.entity.setVelocity(to.toVector().subtract(from.toVector()).normalize().multiply(multipliedBy).setY(y));
         }
     }

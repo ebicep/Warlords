@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.events.WarlordsDeathEvent;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.state.PlayingState;
+import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import net.minecraft.server.v1_8_R3.AxisAlignedBB;
 import net.minecraft.server.v1_8_R3.MovingObjectPosition;
@@ -112,7 +113,7 @@ public class FlagManager implements Listener {
         if (info.getFlag() instanceof PlayerFlagLocation) {
             PlayerFlagLocation playerFlagLocation = (PlayerFlagLocation) info.getFlag();
             if (playerFlagLocation.getPlayer() == player) {
-                info.setFlag(new GroundFlagLocation(player.getLocation(), playerFlagLocation.getPickUpTicks()));
+                info.setFlag(new GroundFlagLocation(player.getLocation(), playerFlagLocation.getPickUpTicks() + (player.isDeath() ? 10 * 60 : 0)));
                 return true;
             }
         }
@@ -217,6 +218,7 @@ public class FlagManager implements Listener {
             } else {
                 // Steal flag
                 info.setFlag(new PlayerFlagLocation(wp, 0));
+                wp.getCooldownManager().addCooldown("Flag Damage Reduction", SpawnFlagLocation.class, null, "RES", 15, wp, CooldownTypes.BUFF);
             }
         }
     }

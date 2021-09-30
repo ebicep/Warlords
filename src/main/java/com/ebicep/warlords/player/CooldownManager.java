@@ -24,6 +24,11 @@ public class CooldownManager {
         cooldowns = new ArrayList<>();
     }
 
+    public boolean hasCooldownFromName(String name) {
+        return cooldowns.stream().anyMatch(cooldown -> cooldown.getName().equalsIgnoreCase(name));
+    }
+
+
     public boolean hasCooldown(Class cooldownClass) {
         return cooldowns.stream().anyMatch(cooldown -> cooldown.getCooldownClass() == cooldownClass);
     }
@@ -150,6 +155,19 @@ public class CooldownManager {
         cooldowns.add(cooldown);
     }
 
+    public void incrementCooldown(Cooldown cooldown, int amount, int maxTime) {
+        if(hasCooldownFromName(cooldown.getName())) {
+            Cooldown cd = getCooldownFromName(cooldown.getName()).get(0);
+            if(cd.getTimeLeft() + amount >= maxTime) {
+                cd.setTimeLeft(maxTime);
+            } else {
+                cd.subtractTime(-amount);
+            }
+        } else {
+            addCooldown(cooldown);
+        }
+    }
+
     public void removeCooldown(Class cooldownClass) {
         cooldowns.removeIf(cd -> cd.getCooldownClass() == cooldownClass);
     }
@@ -183,6 +201,7 @@ public class CooldownManager {
                 counter++;
             }
         }
+        incrementCooldown(new Cooldown("Anti KB", null, null, "ANTI", counter, this.warlordsPlayer, CooldownTypes.BUFF), counter, 3);
         return counter;
     }
 
