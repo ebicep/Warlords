@@ -83,7 +83,7 @@ public class FlagManager implements Listener {
 
     public void tick() {
         if(!gameState.getGame().isGameFreeze()) {
-            if (++scoreTick > 7) {
+            if (++scoreTick >= 4) {
                 checkScore(Team.RED);
                 checkScore(Team.BLUE);
                 scoreTick = 0;
