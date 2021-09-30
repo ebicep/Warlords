@@ -21,6 +21,16 @@ import org.bukkit.scheduler.BukkitTask;
 
 public class DeathsDebt extends AbstractTotemBase {
     private float delayedDamage = 0;
+    private double timeLeftRespite = 0;
+    private double timeLeftDebt = 0;
+
+    public double getTimeLeftRespite() {
+        return timeLeftRespite;
+    }
+
+    public void addTimeLeftRespite() {
+        this.timeLeftRespite += .5;
+    }
 
     public DeathsDebt() {
         super("Death's Debt", 0, 0, 60f + 10.49f, 20, -1, 100);
@@ -61,17 +71,38 @@ public class DeathsDebt extends AbstractTotemBase {
     @Override
     protected void onActivation(WarlordsPlayer wp, Player player, ArmorStand totemStand) {
         final int secondsLeft = 4 + (2 * (int) Math.round((double) wp.getHealth() / wp.getMaxHealth()));
-        wp.getCooldownManager().addCooldown("Spirits Respite", this.getClass(), new Repentance(), "RESP", secondsLeft, wp, CooldownTypes.ABILITY);
+        wp.getCooldownManager().addCooldown("Spirits Respite", this.getClass(), new DeathsDebt(), "RESP", secondsLeft, wp, CooldownTypes.ABILITY);
 
         player.setMetadata("TOTEM", new FixedMetadataValue(Warlords.getInstance(), this));
 
         CircleEffect circle = new CircleEffect(wp, totemStand.getLocation().clone().add(0, 1.25, 0), 10);
         circle.addEffect(new CircumferenceEffect(ParticleEffect.SPELL));
         circle.addEffect(new DoubleLineEffect(ParticleEffect.REDSTONE));
-        BukkitTask task = Bukkit.getScheduler().runTaskTimer(Warlords.getInstance(), circle::playEffects, 0, 1);
+        BukkitTask particles = Bukkit.getScheduler().runTaskTimer(Warlords.getInstance(), circle::playEffects, 0, 1);
 
         delayedDamage = 0;
-        final int[] timeLeft = {secondsLeft};
+        timeLeftRespite = secondsLeft;
+
+        //more accurate
+        BukkitTask timer = new BukkitRunnable() {
+            @Override
+            public void run() {
+                if(wp.isDeath()) {
+                    this.cancel();
+                } else {
+                    boolean isPlayerInRadius = player.getLocation().distanceSquared(totemStand.getLocation()) < 10 * 10;
+                    if (!isPlayerInRadius) {
+                        timeLeftRespite = 0;
+                    }
+                    if(timeLeftRespite >= .05) {
+                        timeLeftRespite -= .05;
+                    }
+                    if(timeLeftDebt >= .05) {
+                        timeLeftDebt -= .05;
+                    }
+                }
+            }
+        }.runTaskTimer(Warlords.getInstance(), 0, 0);
 
         new BukkitRunnable() {
             @Override
@@ -80,18 +111,17 @@ public class DeathsDebt extends AbstractTotemBase {
                 if (wp.isDeath()) {
                     totemStand.remove();
                     this.cancel();
-                    task.cancel();
+                    particles.cancel();
                 } else {
                     boolean isPlayerInRadius = player.getLocation().distanceSquared(totemStand.getLocation()) < 10 * 10;
-
-                    if (timeLeft[0] > 0) {
+                    if (timeLeftRespite > 0) {
                         for (Player player1 : player.getWorld().getPlayers()) {
                             player1.playSound(totemStand.getLocation(), "shaman.earthlivingweapon.impact", 2, 1.5F);
                         }
 
-                        player.sendMessage("§c\u00AB §2Spirit's Respite §7delayed §c" + -Math.round(getDelayedDamage()) + " §7damage. §6" + timeLeft[0] + " §7seconds left.");
+                        player.sendMessage("§c\u00AB §2Spirit's Respite §7delayed §c" + -Math.round(getDelayedDamage()) + " §7damage. §6" + Math.round(timeLeftRespite) + " §7seconds left.");
                     } else {
-                        if (timeLeft[0] == 0) {
+                        if (timeLeftRespite == 0) {
                             wp.getCooldownManager().getCooldowns().removeIf(cd -> cd.getActionBarName().equals("RESP"));
                             wp.getCooldownManager().addCooldown(name, this.getClass(), new DeathsDebt(), "DEBT", 6, wp, CooldownTypes.ABILITY);
                             player.removeMetadata("TOTEM", Warlords.getInstance());
@@ -103,10 +133,11 @@ public class DeathsDebt extends AbstractTotemBase {
                             }
                             circle.replaceEffects(e -> e instanceof DoubleLineEffect, new DoubleLineEffect(ParticleEffect.SPELL_WITCH));
                             circle.setRadius(7.5);
+
+                            timeLeftDebt = 6;
                         }
 
-                        int damageTick = -timeLeft[0];
-                        if (damageTick < 6) {
+                        if (timeLeftDebt > 0) {
 
                             for (Player player1 : player.getWorld().getPlayers()) {
                                 player1.playSound(totemStand.getLocation(), "shaman.lightningbolt.impact", 2, 1.5F);
@@ -147,31 +178,23 @@ public class DeathsDebt extends AbstractTotemBase {
                             // 6 damage waves, stop the function
                             totemStand.remove();
                             this.cancel();
-                            task.cancel();
+                            particles.cancel();
+                            timer.cancel();
                         }
                     }
-                    timeLeft[0] = Math.min(timeLeft[0] - 1, isPlayerInRadius ? Integer.MAX_VALUE : 0);
                 }
-
-
             }
 
         }.runTaskTimer(Warlords.getInstance(), 0, 20);
 
-        //more accurate
         new BukkitRunnable() {
+
             @Override
             public void run() {
                 if(wp.isDeath()) {
+                    totemStand.remove();
+                    particles.cancel();
                     this.cancel();
-                } else {
-                    boolean isPlayerInRadius = player.getLocation().distanceSquared(totemStand.getLocation()) < 10 * 10;
-                    if (!isPlayerInRadius) {
-                        timeLeft[0] = 0;
-                    }
-                    if (timeLeft[0] <= 0) {
-                        this.cancel();
-                    }
                 }
             }
         }.runTaskTimer(Warlords.getInstance(), 0, 0);
