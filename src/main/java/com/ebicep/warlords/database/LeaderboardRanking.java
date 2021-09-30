@@ -64,14 +64,8 @@ public class LeaderboardRanking {
 
                 DatabaseManager.addLastGameHologram(lastGameLocation);
 
-//                new BukkitRunnable() {
-//
-//                    @Override
-//                    public void run() {
-                        Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Adding player leaderboards");
-                        addPlayerLeaderboardsToAll();
-//                    }
-//                }.runTaskLater(Warlords.getInstance(), 20 * 13);
+                Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Adding player leaderboards");
+                addPlayerLeaderboardsToAll();
             }
         }
     }
