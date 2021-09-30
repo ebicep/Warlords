@@ -16,6 +16,7 @@ import com.ebicep.warlords.util.PacketUtils;
 import com.ebicep.warlords.util.PlayerFilter;
 import com.ebicep.warlords.util.RemoveEntities;
 import com.ebicep.warlords.util.Utils;
+import com.sun.org.glassfish.external.statistics.Stats;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
@@ -33,7 +34,6 @@ import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
-import static com.ebicep.warlords.util.Utils.getRightDirection;
 import static com.ebicep.warlords.util.Utils.sendMessage;
 
 public class PlayingState implements State, TimerDebugAble {
@@ -287,11 +287,11 @@ public class PlayingState implements State, TimerDebugAble {
             this.powerUps = null;
         }
         if(getBluePoints() > getRedPoints()) {
-            BotManager.sendMessageToNotificationChannel("A game ended with **BLUE** winning " + getBluePoints() + " to " + getRedPoints());
+            BotManager.sendMessageToNotificationChannel("[GAME] A game ended with **BLUE** winning " + getBluePoints() + " to " + getRedPoints());
         } else if(getBluePoints() < getRedPoints()) {
-            BotManager.sendMessageToNotificationChannel("A game ended with **RED** winning " + getRedPoints() + " to " + getBluePoints());
+            BotManager.sendMessageToNotificationChannel("[GAME] A game ended with **RED** winning " + getRedPoints() + " to " + getBluePoints());
         } else {
-            BotManager.sendMessageToNotificationChannel("A game ended with a **DRAW**");
+            BotManager.sendMessageToNotificationChannel("[GAME] A game ended with a **DRAW**");
         }
         Warlords.getPlayers().forEach(((uuid, warlordsPlayer) -> warlordsPlayer.removeGrave()));
         if (!forceEnd && game.playersCount() >= 16 && timer <= 12000) {
@@ -302,6 +302,7 @@ public class PlayingState implements State, TimerDebugAble {
                         game.forEachOnlinePlayer(((player, team) -> CustomScoreboard.giveMainLobbyScoreboard(player)));
                     })
                     .execute();
+            //DatabaseManager.addGame(PlayingState.this);
         } else {
             game.forEachOnlinePlayer(((player, team) -> {
                 if(player.isOp()) {

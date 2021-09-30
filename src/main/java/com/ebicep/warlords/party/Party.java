@@ -76,7 +76,7 @@ public class Party {
         Bukkit.getPlayer(uuid).sendMessage(getList());
         int numberOfPartyMembers = members.size();
         if((numberOfPartyMembers % 5 == 0 && numberOfPartyMembers <= 15) || (numberOfPartyMembers % 2 == 0 && numberOfPartyMembers >= 18)) {
-            BotManager.sendMessageToNotificationChannel("There are now **" + numberOfPartyMembers + "** players in " + Bukkit.getOfflinePlayer(leader).getName() + "'s party!");
+            BotManager.sendMessageToNotificationChannel("[PARTY] There are now **" + numberOfPartyMembers + "** players in " + Bukkit.getOfflinePlayer(leader).getName() + "'s party!");
         }
     }
 

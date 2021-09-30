@@ -416,6 +416,7 @@ public class DatabaseManager {
         if (!connected) return;
         List<Document> blue = new ArrayList<>();
         List<Document> red = new ArrayList<>();
+        HashMap<UUID, HashMap<String, Object>> newPlayerInfo = new HashMap<>();
         for (WarlordsPlayer value : PlayerFilter.playingGame(gameState.getGame())) {
             int totalKills = value.getTotalKills();
             int totalAssists = value.getTotalAssists();
@@ -460,6 +461,7 @@ public class DatabaseManager {
             playerInfo.put(className + "." + specName + ".healing", healing);
             playerInfo.put(className + "." + specName + ".absorbed", absorbed);
 
+            //newPlayerInfo.put(value.getUuid(), playerInfo);
             updatePlayerInformation(value.getUuid(), playerInfo, FieldUpdateOperators.INCREMENT);
 
             if (value.getTeam() == Team.BLUE) {
@@ -481,6 +483,22 @@ public class DatabaseManager {
                 .append("stat_info", getWarlordsPlusEndGameStats(gameState));
         try {
             gamesInformation.insertOne(document);
+//            Warlords.newChain()
+//                    .async(() -> {
+//                        newPlayerInfo.forEach((uuid, stringObjectHashMap) -> {
+//                            updatePlayerInformation(uuid, stringObjectHashMap, FieldUpdateOperators.INCREMENT);
+//                        });
+//                        gamesInformation.insertOne(document);
+//                    })
+//                    .async(() -> {
+//                        for (WarlordsPlayer value : PlayerFilter.playingGame(gameState.getGame())) {
+//                            loadPlayer(value.getUuid());
+//                            if(value.getEntity().isOp()) {
+//                                value.sendMessage(ChatColor.GREEN + "This game was added to the database");
+//                            }
+//                        }
+//                    })
+//                    .execute();
             System.out.println(ChatColor.GREEN + "[Warlords] Added game");
         } catch (MongoWriteException e) {
             e.printStackTrace();
