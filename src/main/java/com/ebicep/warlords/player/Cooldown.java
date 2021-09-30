@@ -52,6 +52,10 @@ public class Cooldown {
         return actionBarName;
     }
 
+    public void setActionBarName(String actionBarName) {
+        this.actionBarName = actionBarName;
+    }
+
     public float getTimeLeft() {
         return timeLeft;
     }
