@@ -122,7 +122,6 @@ public class HammerOfLight extends AbstractAbility {
             @Override
             public void run() {
                 if(player.isSneaking()) {
-                    damageHealCircle.setDuration(0);
                     tempHammerOfLight.setCrownOfLight(true);
                     wp.getCooldownManager().getCooldown(tempHammerOfLight).ifPresent(cd -> {
                         cd.setActionBarName("CROWN");
@@ -165,6 +164,7 @@ public class HammerOfLight extends AbstractAbility {
                         }
                     }.runTaskTimer(Warlords.getInstance(), 5, 20);
                     this.cancel();
+                    damageHealCircle.setDuration(0);
                 }
             }
         }.runTaskTimer(Warlords.getInstance(), 0 ,0);
