@@ -63,7 +63,7 @@ public class DeathsDebt extends AbstractTotemBase {
 
     @Override
     protected void onActivation(WarlordsPlayer wp, Player player, ArmorStand totemStand) {
-        final int secondsLeft = 4 + (4 * (int) Math.round((double) wp.getHealth() / wp.getMaxHealth()));
+        final int secondsLeft = 4 + (2 * (int) Math.round((double) wp.getHealth() / wp.getMaxHealth()));
 
         DeathsDebt tempDeathsDebt = new DeathsDebt();
 
