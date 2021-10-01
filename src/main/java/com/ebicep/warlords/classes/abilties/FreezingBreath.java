@@ -45,7 +45,7 @@ public class FreezingBreath extends AbstractAbility {
                 .aliveEnemiesOf(wp)
                 .forEach(target -> {
                     Vector direction = target.getLocation().subtract(hitbox).toVector().normalize();
-                    if (viewDirection.dot(direction) > .66) {
+                    if (viewDirection.dot(direction) > .65) {
                         target.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
                         target.getSpeed().addSpeedModifier("Freezing Breath", -35, slowDuration * 20);
                     }

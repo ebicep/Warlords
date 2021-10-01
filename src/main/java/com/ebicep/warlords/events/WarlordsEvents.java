@@ -212,16 +212,7 @@ public class WarlordsEvents implements Listener {
                                 });
                     }
                     warlordsPlayerVictim.addHealth(warlordsPlayerAttacker, "", -132, -179, 25, 200, false);
-
-                    if (warlordsPlayerVictim.getEntity() instanceof Zombie) {
-                        if (warlordsPlayerVictim.isDeath()) {
-                            warlordsPlayerVictim.getEntity().setCustomName("");
-                        } else {
-                            String oldName = warlordsPlayerVictim.getEntity().getCustomName();
-                            String newName = oldName.substring(0, oldName.lastIndexOf(" ") + 1) + ChatColor.RED + warlordsPlayerVictim.getHealth() + "❤";
-                            warlordsPlayerVictim.getEntity().setCustomName(newName);
-                        }
-                    }
+                    warlordsPlayerVictim.updateJimmyHealth();
                 }
 
                 if (!warlordsPlayerVictim.getCooldownManager().getCooldown(IceBarrier.class).isEmpty()) {
@@ -599,6 +590,7 @@ public class WarlordsEvents implements Listener {
             String toucher = ((SpawnFlagLocation) event.getNew()).getLastToucher();
             if (event.getOld() instanceof GroundFlagLocation) {
                 if (toucher != null) {
+                    Objects.requireNonNull(Warlords.getPlayer(Bukkit.getPlayer(toucher).getUniqueId())).addFlagReturn();
                     event.getGame().forEachOnlinePlayer((p, t) -> {
                         ChatColor color = event.getTeam().teamColor();
                         p.sendMessage(color + toucher + " §ehas returned the " + event.getTeam().coloredPrefix() + " §eflag!");
@@ -628,6 +620,7 @@ public class WarlordsEvents implements Listener {
                 PlayerFlagLocation pfl = (PlayerFlagLocation) event.getOld();
                 Team loser = event.getTeam();
                 event.getGameState().addCapture(pfl.getPlayer());
+                pfl.getPlayer().addFlagCap();
                 event.getGame().forEachOnlinePlayer((p, t) -> {
                     String message = pfl.getPlayer().getColoredName() + " §ecaptured the " + loser.coloredPrefix() + " §eflag!";
                     p.sendMessage(message);

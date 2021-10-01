@@ -149,7 +149,7 @@ public class FlagManager implements Listener {
         WarlordsPlayer wp = Warlords.getPlayer(event.getPlayer());
         if (wp != null) {
             Location playerLocation = wp.getEntity().getEyeLocation();
-            Vector direction = wp.getEntity().getLocation().getDirection().multiply(3.5);
+            Vector direction = wp.getEntity().getLocation().getDirection().multiply(3);
             Vec3D from = new Vec3D(
                     playerLocation.getX(),
                     playerLocation.getY(),

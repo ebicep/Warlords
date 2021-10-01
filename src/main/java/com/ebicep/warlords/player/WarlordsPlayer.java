@@ -176,6 +176,18 @@ public final class WarlordsPlayer {
         return jimmy;
     }
 
+    public void updateJimmyHealth() {
+        if(getEntity() instanceof Zombie) {
+            if (isDeath()) {
+                getEntity().setCustomName("");
+            } else {
+                String oldName = getEntity().getCustomName();
+                String newName = oldName.substring(0, oldName.lastIndexOf(" ") + 1) + ChatColor.RED + getHealth() + "❤";
+                getEntity().setCustomName(newName);
+            }
+        }
+    }
+
     public CooldownManager getCooldownManager() {
         return cooldownManager;
     }
@@ -902,6 +914,8 @@ public final class WarlordsPlayer {
                         attacker.addHealth(attacker, "Blood Lust", Math.round(damageHealValue * -.65f), Math.round(damageHealValue * -.65f), -1, 100, false);
                     }
                 }
+
+                updateJimmyHealth();
 
                 // adding/subtracing health
                 //debt and healing

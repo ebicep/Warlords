@@ -17,7 +17,7 @@ import javax.annotation.Nonnull;
 public class WaterBreath extends AbstractAbility {
 
     public WaterBreath() {
-        super("Water Breath", 556.5f, 753.9f, 10.96f, 60, 25, 175);
+        super("Water Breath", 528, 723, 6.3f, 60, 25, 175);
     }
 
     @Override
@@ -48,13 +48,13 @@ public class WaterBreath extends AbstractAbility {
                 .excluding(wp)
                 .forEach(target -> {
                     Vector direction = target.getLocation().subtract(hitbox).toVector().normalize();
-                    if (viewDirection.dot(direction) > .66) {
+                    if (viewDirection.dot(direction) > .65) {
                         if (wp.isTeammateAlive(target)) {
                             target.getCooldownManager().removeDebuffCooldowns();
                             target.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
                         } else {
                             final Location loc = target.getLocation();
-                            final Vector v = player.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1).setY(0.3);
+                            final Vector v = player.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1.1).setY(0.2);
 
                             target.setVelocity(v);
                         }

@@ -10,6 +10,7 @@ import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
@@ -23,14 +24,6 @@ public class DeathsDebt extends AbstractTotemBase {
     private float delayedDamage = 0;
     private double timeLeftRespite = 0;
     private double timeLeftDebt = 0;
-
-    public double getTimeLeftRespite() {
-        return timeLeftRespite;
-    }
-
-    public void addTimeLeftRespite() {
-        this.timeLeftRespite += .5;
-    }
 
     public DeathsDebt() {
         super("Death's Debt", 0, 0, 60f + 10.49f, 20, -1, 100);
@@ -70,134 +63,128 @@ public class DeathsDebt extends AbstractTotemBase {
 
     @Override
     protected void onActivation(WarlordsPlayer wp, Player player, ArmorStand totemStand) {
-        final int secondsLeft = 4 + (2 * (int) Math.round((double) wp.getHealth() / wp.getMaxHealth()));
-        wp.getCooldownManager().addCooldown("Spirits Respite", this.getClass(), new DeathsDebt(), "RESP", secondsLeft, wp, CooldownTypes.ABILITY);
+        final int secondsLeft = 4 + (4 * (int) Math.round((double) wp.getHealth() / wp.getMaxHealth()));
 
-        player.setMetadata("TOTEM", new FixedMetadataValue(Warlords.getInstance(), this));
+        DeathsDebt tempDeathsDebt = new DeathsDebt();
+
+        wp.getCooldownManager().addCooldown("Spirits Respite", this.getClass(), tempDeathsDebt, "RESP", secondsLeft, wp, CooldownTypes.ABILITY);
+
+        player.setMetadata("TOTEM", new FixedMetadataValue(Warlords.getInstance(), tempDeathsDebt));
 
         CircleEffect circle = new CircleEffect(wp, totemStand.getLocation().clone().add(0, 1.25, 0), 10);
         circle.addEffect(new CircumferenceEffect(ParticleEffect.SPELL));
         circle.addEffect(new DoubleLineEffect(ParticleEffect.REDSTONE));
         BukkitTask particles = Bukkit.getScheduler().runTaskTimer(Warlords.getInstance(), circle::playEffects, 0, 1);
 
-        delayedDamage = 0;
-        timeLeftRespite = secondsLeft;
-
-        //more accurate
-        BukkitTask timer = new BukkitRunnable() {
-            @Override
-            public void run() {
-                if(wp.isDeath()) {
-                    this.cancel();
-                } else {
-                    boolean isPlayerInRadius = player.getLocation().distanceSquared(totemStand.getLocation()) < 10 * 10;
-                    if (!isPlayerInRadius) {
-                        timeLeftRespite = 0;
-                    }
-                    if(timeLeftRespite >= .05) {
-                        timeLeftRespite -= .05;
-                    }
-                    if(timeLeftDebt >= .05) {
-                        timeLeftDebt -= .05;
-                    }
-                }
-            }
-        }.runTaskTimer(Warlords.getInstance(), 0, 0);
-
+        tempDeathsDebt.setTimeLeftRespite(secondsLeft);
         new BukkitRunnable() {
+            int counter = 0;
+
             @Override
             public void run() {
-
                 if (wp.isDeath()) {
                     totemStand.remove();
-                    this.cancel();
                     particles.cancel();
+                    this.cancel();
                 } else {
                     boolean isPlayerInRadius = player.getLocation().distanceSquared(totemStand.getLocation()) < 10 * 10;
-                    if (timeLeftRespite > 0) {
-                        for (Player player1 : player.getWorld().getPlayers()) {
-                            player1.playSound(totemStand.getLocation(), "shaman.earthlivingweapon.impact", 2, 1.5F);
-                        }
+                    if(!isPlayerInRadius && tempDeathsDebt.getTimeLeftRespite() != -1) {
+                        tempDeathsDebt.setTimeLeftRespite(0);
+                    }
 
-                        player.sendMessage("§c\u00AB §2Spirit's Respite §7delayed §c" + -Math.round(getDelayedDamage()) + " §7damage. §6" + Math.round(timeLeftRespite) + " §7seconds left.");
-                    } else {
-                        if (timeLeftRespite == 0) {
-                            wp.getCooldownManager().getCooldowns().removeIf(cd -> cd.getActionBarName().equals("RESP"));
-                            wp.getCooldownManager().addCooldown(name, this.getClass(), new DeathsDebt(), "DEBT", 6, wp, CooldownTypes.ABILITY);
+                    int roundedTimeLeftRespite = (int) Math.round(tempDeathsDebt.getTimeLeftRespite());
+                    int roundedTimeLeftDebt = (int) Math.round(tempDeathsDebt.getTimeLeftDebt());
+                    //every second
+                    if (counter % 20 == 0) {
+                        if (roundedTimeLeftRespite > 0) {
+                            //respite
+                            for (Player player1 : player.getWorld().getPlayers()) {
+                                player1.playSound(totemStand.getLocation(), "shaman.earthlivingweapon.impact", 2, 1.5F);
+                            }
+                            player.sendMessage(ChatColor.GREEN + "\u00BB §2Spirit's Respite §7delayed §c" + -Math.round(tempDeathsDebt.getDelayedDamage()) + " §7damage. §6" + roundedTimeLeftRespite + " §7seconds left.");
+                        } else if (roundedTimeLeftRespite == 0) {
+                            //beginning debt
+                            wp.getCooldownManager().removeCooldown(tempDeathsDebt);
+                            wp.getCooldownManager().addCooldown(name, this.getClass(), tempDeathsDebt, "DEBT", 6, wp, CooldownTypes.ABILITY);
+
                             player.removeMetadata("TOTEM", Warlords.getInstance());
-
                             if (!isPlayerInRadius) {
                                 player.sendMessage("§7You walked outside your §dDeath's Debt §7radius");
                             } else {
-                                player.sendMessage("§c\u00AB §2Spirit's Respite §7delayed §c" + -Math.round(getDelayedDamage()) + " §7damage. §dYour debt must now be paid.");
+                                player.sendMessage("§c\u00AB §2Spirit's Respite §7delayed §c" + -Math.round(tempDeathsDebt.getDelayedDamage()) + " §7damage. §dYour debt must now be paid.");
                             }
                             circle.replaceEffects(e -> e instanceof DoubleLineEffect, new DoubleLineEffect(ParticleEffect.SPELL_WITCH));
                             circle.setRadius(7.5);
 
-                            timeLeftDebt = 6;
-                        }
+                            //blue to purple totem
+                            totemStand.setHelmet(new ItemStack(Material.DARK_OAK_FENCE_GATE));
 
-                        if (timeLeftDebt > 0) {
-
-                            for (Player player1 : player.getWorld().getPlayers()) {
-                                player1.playSound(totemStand.getLocation(), "shaman.lightningbolt.impact", 2, 1.5F);
-                            }
-
-                            // 100% of damage over 6 seconds
-                            float damage = (getDelayedDamage() * .1667f);
-
-                            // Player damage
-                            wp.addHealth(wp, "",
-                                    (float) (damage * Math.pow(.8, wp.getCooldownManager().getCooldown(SpiritLink.class).size())),
-                                    (float) (damage * Math.pow(.8, wp.getCooldownManager().getCooldown(SpiritLink.class).size())),
-                                    critChance,
-                                    critMultiplier,
-                                    false);
-                            // Teammate heal
-                            PlayerFilter.entitiesAround(totemStand, 8, 7, 8)
-                                    .aliveTeammatesOf(wp)
-                                    .forEach((nearPlayer) -> {
-                                        nearPlayer.addHealth(wp, name,
-                                                damage * -.15f,
-                                                damage * -.15f,
-                                                critChance, critMultiplier, false);
-                                    });
+                            //first dmg tick
+                            onDebtTick(wp, player, totemStand, tempDeathsDebt);
+                            //cancel respite and initiate debt
+                            tempDeathsDebt.setTimeLeftRespite(-1);
+                            tempDeathsDebt.setTimeLeftDebt(6);
                         } else {
-                            player.getWorld().spigot().strikeLightningEffect(totemStand.getLocation(), false);
-                            // Enemy damage
-                            PlayerFilter.entitiesAround(totemStand, 8, 7, 8)
-                                    .aliveEnemiesOf(wp)
-                                    .forEach((nearPlayer) -> {
-                                        nearPlayer.addHealth(wp,
-                                                name,
-                                                getDelayedDamage() * .15f,
-                                                getDelayedDamage() * .15f,
-                                                critChance,
-                                                critMultiplier, false);
-                                    });
-                            // 6 damage waves, stop the function
-                            totemStand.remove();
-                            this.cancel();
-                            particles.cancel();
-                            timer.cancel();
+                            //during debt
+                            if (roundedTimeLeftDebt > 0) {
+                                //5 dmg procs
+                                onDebtTick(wp, player, totemStand, tempDeathsDebt);
+                            } else {
+                                //final damage tick
+                                player.getWorld().spigot().strikeLightningEffect(totemStand.getLocation(), false);
+                                // Enemy damage
+                                PlayerFilter.entitiesAround(totemStand, 8, 7, 8)
+                                        .aliveEnemiesOf(wp)
+                                        .forEach((nearPlayer) -> {
+                                            nearPlayer.addHealth(wp,
+                                                    name,
+                                                    tempDeathsDebt.getDelayedDamage() * .15f,
+                                                    tempDeathsDebt.getDelayedDamage() * .15f,
+                                                    critChance,
+                                                    critMultiplier, false);
+                                        });
+                                // 6 damage waves, stop the function
+                                totemStand.remove();
+                                particles.cancel();
+                                this.cancel();
+                            }
                         }
                     }
-                }
-            }
-
-        }.runTaskTimer(Warlords.getInstance(), 0, 20);
-
-        new BukkitRunnable() {
-
-            @Override
-            public void run() {
-                if(wp.isDeath()) {
-                    totemStand.remove();
-                    particles.cancel();
-                    this.cancel();
+                    //counters
+                    if(tempDeathsDebt.getTimeLeftRespite() > 0) {
+                        tempDeathsDebt.setTimeLeftRespite(tempDeathsDebt.getTimeLeftRespite() - .05);
+                    }
+                    if(tempDeathsDebt.getTimeLeftDebt() > 0) {
+                        tempDeathsDebt.setTimeLeftDebt(tempDeathsDebt.getTimeLeftDebt() - .05);
+                    }
+                    counter++;
                 }
             }
         }.runTaskTimer(Warlords.getInstance(), 0, 0);
+    }
+
+    public void onDebtTick(WarlordsPlayer wp, Player player, ArmorStand totemStand, DeathsDebt tempDeathsDebt) {
+        for (Player player1 : player.getWorld().getPlayers()) {
+            player1.playSound(totemStand.getLocation(), "shaman.lightningbolt.impact", 2, 1.5F);
+        }
+        // 100% of damage over 6 seconds
+        float damage = (tempDeathsDebt.getDelayedDamage() * .1667f);
+        // Player damage
+        wp.addHealth(wp, "",
+                (float) (damage * Math.pow(.8, wp.getCooldownManager().getCooldown(SpiritLink.class).size())),
+                (float) (damage * Math.pow(.8, wp.getCooldownManager().getCooldown(SpiritLink.class).size())),
+                critChance,
+                critMultiplier,
+                false);
+        // Teammate heal
+        PlayerFilter.entitiesAround(totemStand, 8, 7, 8)
+                .aliveTeammatesOf(wp)
+                .forEach((nearPlayer) -> {
+                    nearPlayer.addHealth(wp, name,
+                            damage * -.15f,
+                            damage * -.15f,
+                            critChance, critMultiplier, false);
+                });
     }
 
     public float getDelayedDamage() {
@@ -208,4 +195,19 @@ public class DeathsDebt extends AbstractTotemBase {
         this.delayedDamage += delayedDamage;
     }
 
+    public double getTimeLeftRespite() {
+        return timeLeftRespite;
+    }
+
+    public void setTimeLeftRespite(double timeLeftRespite) {
+        this.timeLeftRespite = timeLeftRespite;
+    }
+
+    public double getTimeLeftDebt() {
+        return timeLeftDebt;
+    }
+
+    public void setTimeLeftDebt(double timeLeftDebt) {
+        this.timeLeftDebt = timeLeftDebt;
+    }
 }

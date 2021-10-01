@@ -50,7 +50,7 @@ public class LeaderboardRanking {
     public static void addHologramLeaderboards() {
         if (DatabaseManager.connected && Warlords.holographicDisplaysEnabled) {
             HologramsAPI.getHolograms(Warlords.getInstance()).forEach(Hologram::delete);
-            if(enabled) {
+            if (enabled) {
                 Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Adding Holograms");
 
                 addLeaderboard("wins", lifeTimeWinsLB, ChatColor.AQUA + ChatColor.BOLD.toString() + "Lifetime Wins");
@@ -64,20 +64,14 @@ public class LeaderboardRanking {
 
                 DatabaseManager.addLastGameHologram(lastGameLocation);
 
-                new BukkitRunnable() {
-
-                    @Override
-                    public void run() {
-                        Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Adding player leaderboards");
-                        addPlayerLeaderboardsToAll();
-                    }
-                }.runTaskLater(Warlords.getInstance(), 20 * 13);
+                Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Adding player leaderboards");
+                addPlayerLeaderboardsToAll();
             }
         }
     }
 
     public static void addPlayerLeaderboards(Player player) {
-        if(enabled) {
+        if (enabled) {
             leaderboardLocations.forEach((key, loc) -> {
                 Location location = loc.clone().add(0, -3.5, 0);
                 HologramsAPI.getHolograms(Warlords.getInstance()).stream()
@@ -85,7 +79,7 @@ public class LeaderboardRanking {
                         .filter(hologram -> hologram.getVisibilityManager().isVisibleTo(player))
                         .forEach(Hologram::delete);
                 if (key.equals("wins") || key.equals("kills")) {
-                    if(cachedSortedPlayers.containsKey(key)) {
+                    if (cachedSortedPlayers.containsKey(key)) {
                         List<Document> documents = cachedSortedPlayers.get(key);
                         Hologram hologram = HologramsAPI.createHologram(Warlords.getInstance(), location);
                         for (int i = 0; i < documents.size(); i++) {
@@ -99,7 +93,7 @@ public class LeaderboardRanking {
                         hologram.getVisibilityManager().setVisibleByDefault(false);
                     }
                 } else {
-                    if(cachedSR.containsKey(key)) {
+                    if (cachedSR.containsKey(key)) {
                         HashMap<Document, Integer> documentIntegerHashMap = cachedSR.get(key);
                         List<Document> top = getDocumentInSortedList(documentIntegerHashMap);
                         Hologram hologram = HologramsAPI.createHologram(Warlords.getInstance(), location);
@@ -119,11 +113,14 @@ public class LeaderboardRanking {
     }
 
     public static void addPlayerLeaderboardsToAll() {
-        Bukkit.getOnlinePlayers().forEach(LeaderboardRanking::addPlayerLeaderboards);
+        Warlords.newSharedChain("addingLeaderboard")
+                .sync(() -> {
+                    Bukkit.getOnlinePlayers().forEach(LeaderboardRanking::addPlayerLeaderboards);
+                }).execute();
     }
 
     private static void addLeaderboard(String key, Location location, String title) {
-        Warlords.newChain()
+        Warlords.newSharedChain("addingLeaderboard")
                 .asyncFirst(() -> getPlayersSortedByKey(key))
                 .abortIfNull()
                 .syncLast((top) -> {
@@ -139,7 +136,7 @@ public class LeaderboardRanking {
     }
 
     private static void addLeaderboardSR(String key, Location location, String title) {
-        Warlords.newChain()
+        Warlords.newSharedChain("addingLeaderboard")
                 .asyncFirst(() -> getPlayersSortedBySR(key))
                 .abortIfNull()
                 .syncLast((top) -> {
