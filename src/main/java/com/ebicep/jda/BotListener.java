@@ -25,7 +25,7 @@ public class BotListener extends ListenerAdapter implements Listener {
     public static void onPlayerJoin(PlayerJoinEvent event) {
         int size = Bukkit.getOnlinePlayers().size();
         if(size % 5 == 0 && size != lastPlayerCount) {
-            BotManager.sendMessageToNotificationChannel("**" + size + "** players are now on the server!");
+            BotManager.sendMessageToNotificationChannel("[SERVER] **" + size + "** players are now on the server!");
             lastPlayerCount = size;
         }
     }
@@ -34,7 +34,7 @@ public class BotListener extends ListenerAdapter implements Listener {
     public static void onPlayerQuit(PlayerQuitEvent event) {
         int size = Bukkit.getOnlinePlayers().size();
         if((size - 1) % 5 == 0 && size != lastPlayerCount) {
-            BotManager.sendMessageToNotificationChannel("**" + (size - 1)+ "** players are now on the server!");
+            BotManager.sendMessageToNotificationChannel("[SERVER] **" + (size - 1)+ "** players are now on the server!");
             lastPlayerCount = size;
         }
     }
