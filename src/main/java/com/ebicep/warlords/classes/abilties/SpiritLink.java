@@ -1,6 +1,7 @@
 package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.classes.internal.AbstractChainBase;
+import com.ebicep.warlords.player.Cooldown;
 import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.PlayerFilter;
@@ -103,6 +104,13 @@ public class SpiritLink extends AbstractChainBase {
     }
 
     private void healNearPlayers(WarlordsPlayer warlordsPlayer) {
+        //adding .5 to totem
+        if(warlordsPlayer.getCooldownManager().hasCooldownFromName("Spirits Respite")) {
+            Cooldown cooldown = warlordsPlayer.getCooldownManager().getCooldownFromName("Spirits Respite").get(0);
+            DeathsDebt deathsDebt = ((DeathsDebt) cooldown.getCooldownObject());
+            deathsDebt.setTimeLeftRespite(deathsDebt.getTimeLeftRespite() + .5);
+            cooldown.setTimeLeft((float) deathsDebt.getTimeLeftRespite());
+        }
         warlordsPlayer.addHealth(warlordsPlayer, "Soulbinding Weapon", 420, 420, -1, 100, false);
         for (WarlordsPlayer nearPlayer : PlayerFilter
                 .entitiesAround(warlordsPlayer, 6, 6, 6)

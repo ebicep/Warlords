@@ -76,10 +76,6 @@ public class Cooldown {
         }
     }
 
-    public void setTimeLeft(float timeLeft) {
-        this.timeLeft = timeLeft;
-    }
-
     public WarlordsPlayer getFrom() {
         return from;
     }
