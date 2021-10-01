@@ -19,7 +19,7 @@ import java.util.List;
 public enum GameMap {
     RIFT(
             "Rift",
-            24,
+            32,
             1,
             900 * 20, // seconds * ticks
             30 * 20, // seconds * ticks
@@ -54,7 +54,7 @@ public enum GameMap {
 
     CROSSFIRE(
             "Crossfire",
-            24,
+            32,
             1,
             900 * 20, // seconds * ticks
             30 * 20, // seconds * ticks
@@ -89,7 +89,7 @@ public enum GameMap {
 
     WARSONG(
             "Warsong",
-            24,
+            32,
             1,
             900 * 20,
             30 * 20,
@@ -124,7 +124,7 @@ public enum GameMap {
 
     GORGE(
             "Gorge Remastered",
-            24,
+            32,
             1,
             900 * 20,
             30 * 20,

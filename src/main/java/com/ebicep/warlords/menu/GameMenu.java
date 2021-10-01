@@ -607,6 +607,10 @@ public class GameMenu {
             if (score > 0.85) {
                 Bukkit.broadcastMessage("§6" + player.getDisplayName() + " §frolled a weapon with a total score of §6" + format(score * 100) + "§f!");
             }
+
+            if (score < 0.15) {
+                Bukkit.broadcastMessage("§6" + player.getDisplayName() + " §frolled a weapon with a total score of §c" + format(score * 100) + "§f! Unlucky!");
+            }
         });
 
         ItemBuilder icon2 = new ItemBuilder(Material.SULPHUR);
