@@ -439,7 +439,7 @@ public class Warlords extends JavaPlugin {
                                             .build());
                                     meta.setPower(0);
                                     firework.setFireworkMeta(meta);
-                                    warlordsPlayer.respawn();
+                                    warlordsPlayer.heal();
 
                                     if (player != null) {
                                         player.getWorld().spigot().strikeLightningEffect(warlordsPlayer.getLocation(), false);
