@@ -5,17 +5,14 @@ import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.util.ItemBuilder;
+import com.ebicep.warlords.util.Utils;
 import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.material.Dye;
 
-import java.sql.Wrapper;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -504,18 +501,8 @@ public class GameMenu {
         menu.openForPlayer(player);
     }
 
-    private static final DecimalFormat decimalFormat = new DecimalFormat("#.#");
-
-    static {
-        decimalFormat.setDecimalSeparatorAlwaysShown(false);
-    }
-
     private static double map(double value, double min, double max) {
         return value * (max - min) + min;
-    }
-
-    private static String format(double value) {
-        return decimalFormat.format(value);
     }
 
     public static void openArcadeMenu(Player player) {
@@ -571,7 +558,7 @@ public class GameMenu {
                 meleeDamageMax = temp;
             }
 
-            String displayScore = "§7Your weapon score is §a" + format(score * 100);
+            String displayScore = "§7Your weapon score is §a" + Utils.formatOptionalTenths(score * 100);
 
             PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
             Classes selectedClass = playerSettings.getSelectedClass();
@@ -605,11 +592,11 @@ public class GameMenu {
             m.getInventory().setItem(e.getRawSlot(), weapon);
 
             if (score > 0.85) {
-                Bukkit.broadcastMessage("§6" + player.getDisplayName() + " §frolled a weapon with a total score of §6" + format(score * 100) + "§f!");
+                Bukkit.broadcastMessage("§6" + player.getDisplayName() + " §frolled a weapon with a total score of §6" + Utils.formatOptionalTenths(score * 100) + "§f!");
             }
 
             if (score < 0.15) {
-                Bukkit.broadcastMessage("§6" + player.getDisplayName() + " §frolled a weapon with a total score of §c" + format(score * 100) + "§f! Unlucky!");
+                Bukkit.broadcastMessage("§6" + player.getDisplayName() + " §frolled a weapon with a total score of §c" + Utils.formatOptionalTenths(score * 100) + "§f! Unlucky!");
             }
         });
 

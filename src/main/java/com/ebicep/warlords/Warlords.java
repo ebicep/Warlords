@@ -28,7 +28,6 @@ import com.ebicep.warlords.powerups.EnergyPowerUp;
 import com.ebicep.warlords.util.*;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
-import com.google.common.base.Supplier;
 import org.bukkit.*;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
@@ -189,7 +188,7 @@ public class Warlords extends JavaPlugin {
     public static NPCManager npcManager = new NPCManager();
     public Location npcCTFLocation;
 
-    private static final int SPAWN_PROTECTION_RADIUS = 5;
+    public static final int SPAWN_PROTECTION_RADIUS = 5;
 
     public static final PartyManager partyManager = new PartyManager();
 
@@ -394,31 +393,17 @@ public class Warlords extends JavaPlugin {
                             }
                         }
                         //respawn
-                        if (warlordsPlayer.getRespawnTimer() == 0) {
-                            warlordsPlayer.setRespawnTimer(-1);
-                            warlordsPlayer.setSpawnProtection(3);
-                            warlordsPlayer.setEnergy(warlordsPlayer.getMaxEnergy() / 2);
-                            warlordsPlayer.setDead(false);
-                            Location respawnPoint = warlordsPlayer.getGame().getMap().getRespawn(warlordsPlayer.getTeam());
-                            warlordsPlayer.teleport(respawnPoint);
-                            new BukkitRunnable() {
-                                @Override
-                                public void run() {
-                                    Location location = warlordsPlayer.getLocation();
-                                    Location respawn = warlordsPlayer.getGame().getMap().getRespawn(warlordsPlayer.getTeam());
-                                    if (
-                                            location.getWorld() != respawn.getWorld() ||
-                                                    location.distanceSquared(respawn) > SPAWN_PROTECTION_RADIUS * SPAWN_PROTECTION_RADIUS
-                                    ) {
-                                        warlordsPlayer.setSpawnProtection(0);
-                                    }
-                                    if (warlordsPlayer.getSpawnProtection() == 0) {
-                                        this.cancel();
-                                    }
-                                }
-                            }.runTaskTimer(instance, 0, 5);
+                        if (Math.abs(warlordsPlayer.getRespawnTimer()) < .1 || warlordsPlayer.getRespawnTimer() < -1) {
                             warlordsPlayer.respawn();
-
+                        }
+                        float respawn = warlordsPlayer.getRespawnTimer();
+                        if (respawn != -1) {
+                            if (respawn <= 11) {
+                                if (player != null) {
+                                    PacketUtils.sendTitle(player, "", warlordsPlayer.getTeam().teamColor() + "Respawning in... " + ChatColor.YELLOW + Utils.formatTenths(respawn), 0, 40, 0);
+                                }
+                            }
+                            warlordsPlayer.setRespawnTimer(respawn - .05f);
                         }
                         //damage or heal
                         float newHealth = (float) warlordsPlayer.getHealth() / warlordsPlayer.getMaxHealth() * 40;
@@ -670,22 +655,6 @@ public class Warlords extends JavaPlugin {
                             } else {
                                 int healthToAdd = (int) (warlordsPlayer.getMaxHealth() / 55.3);
                                 warlordsPlayer.setHealth(Math.min(warlordsPlayer.getHealth() + healthToAdd, warlordsPlayer.getMaxHealth()));
-                            }
-                            //RESPAWN
-                            int respawn = warlordsPlayer.getRespawnTimer();
-                            if (respawn != -1) {
-                                if (respawn <= 11) {
-                                    if (respawn == 1) {
-                                        if (player != null) {
-                                            PacketUtils.sendTitle(player, "", "", 0, 0, 0);
-                                        }
-                                    } else {
-                                        if (player != null) {
-                                            PacketUtils.sendTitle(player, "", warlordsPlayer.getTeam().teamColor() + "Respawning in... " + ChatColor.YELLOW + (respawn - 1), 0, 40, 0);
-                                        }
-                                    }
-                                }
-                                warlordsPlayer.setRespawnTimer(respawn - 1);
                             }
                             //COOLDOWNS
                             if (warlordsPlayer.getSpawnProtection() > 0) {

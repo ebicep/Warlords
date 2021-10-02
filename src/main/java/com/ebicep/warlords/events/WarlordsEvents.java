@@ -72,13 +72,9 @@ public class WarlordsEvents implements Listener {
             if (!wp.isDeath()) {
                 wp.updatePlayerReference(null);
             }
-            e.setQuitMessage(ChatColor.GREEN + "-----------------------------------\n" +
-                    wp.getColoredNameBold() + ChatColor.GOLD + ChatColor.BOLD + " left the game!\n" +
-                    ChatColor.GREEN + "-----------------------------------");
+            e.setQuitMessage(wp.getColoredNameBold() + ChatColor.GOLD + " left the game!");
         } else {
-            e.setQuitMessage(ChatColor.GREEN + "-----------------------------------\n" +
-                    ChatColor.AQUA + ChatColor.BOLD + e.getPlayer().getName() + ChatColor.GOLD + ChatColor.BOLD + " left the lobby!\n" +
-                    ChatColor.GREEN + "-----------------------------------");
+            e.setQuitMessage(ChatColor.AQUA + e.getPlayer().getName() + ChatColor.GOLD + " left the lobby!");
         }
         if (e.getPlayer().getVehicle() != null) {
             e.getPlayer().getVehicle().remove();
@@ -143,14 +139,10 @@ public class WarlordsEvents implements Listener {
             if (wp.isAlive()) {
                 e.getPlayer().setAllowFlight(false);
             }
-            e.setJoinMessage(ChatColor.GREEN + "-----------------------------------\n" +
-                    wp.getColoredNameBold() + ChatColor.GOLD + ChatColor.BOLD + " rejoined the game!\n" +
-                    ChatColor.GREEN + "-----------------------------------");
+            e.setJoinMessage(wp.getColoredNameBold() + ChatColor.GOLD + " rejoined the game!");
         } else {
             e.getPlayer().setAllowFlight(true);
-            e.setJoinMessage(ChatColor.GREEN + "-----------------------------------\n" +
-                    ChatColor.AQUA + ChatColor.BOLD + e.getPlayer().getName() + ChatColor.GOLD + ChatColor.BOLD + " joined the lobby!\n" +
-                    ChatColor.GREEN + "-----------------------------------");
+            e.setJoinMessage(ChatColor.AQUA + e.getPlayer().getName() + ChatColor.GOLD + " joined the lobby!");
         }
         Player player = e.getPlayer();
         joinInteraction(player);

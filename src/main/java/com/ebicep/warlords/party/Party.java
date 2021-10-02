@@ -16,12 +16,13 @@ import java.util.stream.Collectors;
 public class Party {
 
     private UUID leader; //uuid of leader
-    private List<UUID> moderators = new ArrayList<>(); //list of moderators
-    private HashMap<UUID, Boolean> members = new HashMap<>(); //members include leader and moderators
+    private final List<UUID> moderators = new ArrayList<>(); //list of moderators
+    private final HashMap<UUID, Boolean> members = new HashMap<>(); //members include leader and moderators
     private boolean isOpen;
-    private List<Poll> polls = new ArrayList<>(); //in the future allow for multiple polls at once?
-    private HashMap<UUID, Integer> invites = new HashMap<>();
-    private BukkitTask partyTask;
+    private final List<Poll> polls = new ArrayList<>(); //in the future allow for multiple polls at once?
+    private final HashMap<UUID, Integer> invites = new HashMap<>();
+    private final HashMap<UUID, Integer> disconnects = new HashMap<>();
+    private final BukkitTask partyTask;
 
     public Party(UUID leader, boolean isOpen) {
         this.leader = leader;
@@ -40,6 +41,13 @@ public class Party {
                                 true);
                     }
                     return invite.getValue() <= 0;
+                });
+                disconnects.forEach((uuid, integer) -> disconnects.put(uuid, integer - 1));
+                disconnects.entrySet().removeIf(disconnect ->  {
+                    if(disconnect.getValue() <= 0) {
+                        leave(disconnect.getKey());
+                    }
+                    return disconnect .getValue() <= 0;
                 });
             }
         }.runTaskTimer(Warlords.getInstance(), 0, 20);
@@ -283,5 +291,9 @@ public class Party {
 
     public HashMap<UUID, Integer> getInvites() {
         return invites;
+    }
+
+    public HashMap<UUID, Integer> getDisconnects() {
+        return disconnects;
     }
 }

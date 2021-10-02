@@ -52,8 +52,8 @@ public final class WarlordsPlayer {
     private int maxHealth;
     private int regenTimer;
     private int timeInCombat = 0;
-    private int respawnTimer;
-    private int respawnTimeSpent = 0;
+    private float respawnTimer;
+    private float respawnTimeSpent = 0;
     private boolean dead = false;
     private float energy;
     private float maxEnergy;
@@ -1134,14 +1134,42 @@ public final class WarlordsPlayer {
     }
 
     public void respawn() {
-        this.health = this.maxHealth;
-        if (deathStand != null) {
-            deathStand.remove();
-            deathStand = null;
-        }
-        removeGrave();
-        if (entity instanceof Player) {
-            ((Player) entity).setGameMode(GameMode.ADVENTURE);
+        if(entity instanceof Player && ((Player) entity).isOnline()) {
+            PacketUtils.sendTitle((Player) entity, "", "", 0, 0, 0);
+            setRespawnTimer(-1);
+            setSpawnProtection(3);
+            setEnergy(getMaxEnergy() / 2);
+            setDead(false);
+            Location respawnPoint = getGame().getMap().getRespawn(getTeam());
+            teleport(respawnPoint);
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    Location location = getLocation();
+                    Location respawn = getGame().getMap().getRespawn(getTeam());
+                    if (
+                            location.getWorld() != respawn.getWorld() ||
+                                    location.distanceSquared(respawn) > Warlords.SPAWN_PROTECTION_RADIUS * Warlords.SPAWN_PROTECTION_RADIUS
+                    ) {
+                        setSpawnProtection(0);
+                    }
+                    if (getSpawnProtection() == 0) {
+                        this.cancel();
+                    }
+                }
+            }.runTaskTimer(Warlords.getInstance(), 0, 5);
+
+            this.health = this.maxHealth;
+            if (deathStand != null) {
+                deathStand.remove();
+                deathStand = null;
+            }
+            removeGrave();
+            if (entity instanceof Player) {
+                ((Player) entity).setGameMode(GameMode.ADVENTURE);
+            }
+        } else {
+            giveRespawnTimer();
         }
     }
 
@@ -1163,16 +1191,16 @@ public final class WarlordsPlayer {
         this.regenTimer = regenTimer;
     }
 
-    public int getRespawnTimer() {
+    public float getRespawnTimer() {
         return respawnTimer;
     }
 
-    public void setRespawnTimer(int respawnTimer) {
+    public void setRespawnTimer(float respawnTimer) {
         this.respawnTimer = respawnTimer;
     }
 
     public void giveRespawnTimer() {
-        int respawn = gameState.getTimerInSeconds() % 12;
+        float respawn = (gameState.getTimer() / 20f) % 12 - 1;
         if (respawn <= 4) {
             respawn += 12;
         }
@@ -1611,7 +1639,7 @@ public final class WarlordsPlayer {
         respawnTimeSpent += respawnTimer;
     }
 
-    public int getRespawnTimeSpent() {
+    public float getRespawnTimeSpent() {
         return respawnTimeSpent;
     }
 
