@@ -21,7 +21,7 @@ public class Berserk extends AbstractAbility {
     @Override
     public void updateDescription(Player player) {
         description = "§7You go into a berserker rage,\n" +
-                "§7increasing your damage by §c25% §7and\n" +
+                "§7increasing your damage by §c30% §7and\n" +
                 "§7movement speed by §e" + speedBuff + "%§7. While active,\n" +
                 "§7you also take §c10% §7more damage.\n" + "§7Lasts §6" + duration + " §7seconds.";
     }

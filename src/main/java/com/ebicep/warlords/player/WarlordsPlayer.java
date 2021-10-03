@@ -601,7 +601,7 @@ public final class WarlordsPlayer {
 
                     //add damage
                     for (Cooldown cooldown : attacker.getCooldownManager().getCooldown(Berserk.class)) {
-                        totalReduction *= 1.25;
+                        totalReduction *= 1.3;
                     }
 
                     for (Cooldown cooldown : cooldownManager.getCooldown(Berserk.class)) {

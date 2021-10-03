@@ -11,7 +11,7 @@ import javax.annotation.Nonnull;
 public class WoundingStrikeBerserker extends AbstractStrikeBase {
 
     public WoundingStrikeBerserker() {
-        super("Wounding Strike", -496.65f, -632.1f, 0, 100, 20, 175);
+        super("Wounding Strike", -507, -648, 0, 100, 20, 175);
     }
 
     @Override

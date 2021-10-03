@@ -87,7 +87,7 @@ public class Boulder extends AbstractAbility {
                     shouldExplode = true;
                 } else {
                     directHit = PlayerFilter
-                            .entitiesAroundRectangle(newLoc, 1.25, 2.5, 1.25)
+                            .entitiesAroundRectangle(newLoc, 1, 2, 1)
                             .aliveEnemiesOf(wp).findFirstOrNull();
                     shouldExplode = directHit != null;
                 }
