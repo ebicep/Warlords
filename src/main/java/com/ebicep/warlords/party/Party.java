@@ -102,7 +102,9 @@ public class Party {
                 sendMessageToAllPartyPlayers(ChatColor.AQUA + player.getName() + ChatColor.RED + " left the party", true, true);
                 sendMessageToAllPartyPlayers(ChatColor.AQUA + Bukkit.getOfflinePlayer(leader).getName() + ChatColor.GREEN + " is now the new party leader", true, true);
             } else {
-                Bukkit.getPlayer(leader).sendMessage(ChatColor.RED + "The party was disbanded");
+                if(Bukkit.getPlayer(leader) != null) {
+                    Bukkit.getPlayer(leader).sendMessage(ChatColor.RED + "The party was disbanded");
+                }
                 disband();
             }
         } else {
