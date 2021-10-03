@@ -127,6 +127,8 @@ public class WarlordsEvents implements Listener {
         if (p != null) {
             player.teleport(p.getLocation());
             p.updatePlayerReference(player);
+        } else {
+            player.setAllowFlight(true);
         }
     }
 
