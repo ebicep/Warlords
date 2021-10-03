@@ -95,6 +95,8 @@ public class StartCommand implements TabExecutor {
             DatabaseManager.addPlayer(player);
             player.getInventory().clear();
 
+            player.setAllowFlight(false);
+
             player.getInventory().setItem(5, new ItemBuilder(Material.NOTE_BLOCK)
                     .name(ChatColor.GREEN + "Team Selector " + ChatColor.GRAY + "(Right-Click)")
                     .lore(ChatColor.YELLOW + "Click to select your team!")
