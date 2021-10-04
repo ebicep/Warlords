@@ -285,15 +285,15 @@ public class PlayingState implements State, TimerDebugAble {
             this.powerUps.cancel();
             this.powerUps = null;
         }
-        if (getBluePoints() > getRedPoints()) {
-            BotManager.sendMessageToNotificationChannel("[GAME] A game ended with **BLUE** winning " + getBluePoints() + " to " + getRedPoints());
-        } else if (getBluePoints() < getRedPoints()) {
-            BotManager.sendMessageToNotificationChannel("[GAME] A game ended with **RED** winning " + getRedPoints() + " to " + getBluePoints());
-        } else {
-            BotManager.sendMessageToNotificationChannel("[GAME] A game ended with a **DRAW**");
-        }
         Warlords.getPlayers().forEach(((uuid, warlordsPlayer) -> warlordsPlayer.removeGrave()));
         if (!forceEnd && game.playersCount() >= 16 && timer <= 12000) {
+            if (getBluePoints() > getRedPoints()) {
+                BotManager.sendMessageToNotificationChannel("[GAME] A game ended with **BLUE** winning " + getBluePoints() + " to " + getRedPoints());
+            } else if (getBluePoints() < getRedPoints()) {
+                BotManager.sendMessageToNotificationChannel("[GAME] A game ended with **RED** winning " + getRedPoints() + " to " + getBluePoints());
+            } else {
+                BotManager.sendMessageToNotificationChannel("[GAME] A game ended with a **DRAW**");
+            }
             Warlords.newChain()
                     .asyncFirst(this::addGameAndLoadPlayers)
                     .syncLast((t) -> {

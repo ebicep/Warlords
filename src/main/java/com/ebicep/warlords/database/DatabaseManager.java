@@ -506,6 +506,57 @@ public class DatabaseManager {
         }
     }
 
+    private static HashMap<UUID, HashMap<String, Object>> getNewPlayerInfo(PlayingState gameState) {
+        HashMap<UUID, HashMap<String, Object>> newPlayerInfo = new HashMap<>();
+        for (WarlordsPlayer value : PlayerFilter.playingGame(gameState.getGame())) {
+            int totalKills = value.getTotalKills();
+            int totalAssists = value.getTotalAssists();
+            int totalDeaths = value.getTotalDeaths();
+            boolean won = !gameState.isForceEnd() && gameState.getStats(value.getTeam()).points() > gameState.getStats(value.getTeam().enemy()).points();
+            int flagsCaptured = value.getFlagsCaptured();
+            int flagsReturned = value.getFlagsReturned();
+            long damage = (int) value.getTotalDamage();
+            long healing = (int) value.getTotalHealing();
+            long absorbed = (int) value.getTotalAbsorbed();
+            String className = value.getSpec().getClassName().toLowerCase();
+            String specName = value.getSpecClass().name.toLowerCase();
+            HashMap<String, Object> playerInfo = new HashMap<>();
+            playerInfo.put("kills", totalKills);
+            playerInfo.put("assists", totalAssists);
+            playerInfo.put("deaths", totalDeaths);
+            playerInfo.put("wins", won ? 1 : 0);
+            playerInfo.put("losses", won ? 0 : 1);
+            playerInfo.put("flags_captured", flagsCaptured);
+            playerInfo.put("flags_returned", flagsReturned);
+            playerInfo.put("damage", damage);
+            playerInfo.put("healing", healing);
+            playerInfo.put("absorbed", absorbed);
+            playerInfo.put(className + ".kills", totalKills);
+            playerInfo.put(className + ".assists", totalAssists);
+            playerInfo.put(className + ".deaths", totalDeaths);
+            playerInfo.put(className + ".wins", won ? 1 : 0);
+            playerInfo.put(className + ".losses", won ? 0 : 1);
+            playerInfo.put(className + ".flags_captured", flagsCaptured);
+            playerInfo.put(className + ".flags_returned", flagsCaptured);
+            playerInfo.put(className + ".damage", damage);
+            playerInfo.put(className + ".healing", healing);
+            playerInfo.put(className + ".absorbed", absorbed);
+            playerInfo.put(className + "." + specName + ".kills", totalKills);
+            playerInfo.put(className + "." + specName + ".assists", totalAssists);
+            playerInfo.put(className + "." + specName + ".deaths", totalDeaths);
+            playerInfo.put(className + "." + specName + ".wins", won ? 1 : 0);
+            playerInfo.put(className + "." + specName + ".losses", won ? 0 : 1);
+            playerInfo.put(className + "." + specName + ".flags_captured", flagsCaptured);
+            playerInfo.put(className + "." + specName + ".flags_returned", flagsReturned);
+            playerInfo.put(className + "." + specName + ".damage", damage);
+            playerInfo.put(className + "." + specName + ".healing", healing);
+            playerInfo.put(className + "." + specName + ".absorbed", absorbed);
+
+            newPlayerInfo.put(value.getUuid(), playerInfo);
+        }
+        return newPlayerInfo;
+    }
+
     public static String getWarlordsPlusEndGameStats(PlayingState gameState) {
         StringBuilder output = new StringBuilder("Winners:");
         int bluePoints = gameState.getStats(Team.BLUE).points();

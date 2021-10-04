@@ -113,8 +113,9 @@ public class StartCommand implements TabExecutor {
             ArmorManager.resetArmor(player, Warlords.getPlayerSettings(player.getUniqueId()).getSelectedClass(), team);
         }
 
-        BotManager.sendMessageToNotificationChannel("[GAME] A **" + game.getMap().getMapName() + "** started with **" + people.size() + (people.size() == 1 ? "** player!" : "** players!"));
-
+        if(people.size() >= 16) {
+            BotManager.sendMessageToNotificationChannel("[GAME] A **" + game.getMap().getMapName() + "** started with **" + people.size() + (people.size() == 1 ? "** player!" : "** players!"));
+        }
         return true;
     }
 
