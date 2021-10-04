@@ -101,7 +101,7 @@ public class LightningBolt extends AbstractPiercingProjectileBase {
     @Override
     protected void onSpawn(InternalProjectile projectile) {
         super.onSpawn(projectile);
-        ArmorStand armorStand = projectile.getWorld().spawn(projectile.getStartingLocation().clone().add(0, -1.8, 0), ArmorStand.class);
+        ArmorStand armorStand = projectile.getWorld().spawn(projectile.getStartingLocation().clone().add(0, -1.7, 0), ArmorStand.class);
         armorStand.setGravity(false);
         armorStand.setVisible(false);
         armorStand.setMarker(true);
@@ -116,7 +116,7 @@ public class LightningBolt extends AbstractPiercingProjectileBase {
         projectile.addTask(new InternalProjectileTask() {
             @Override
             public void run(InternalProjectile projectile) {
-                armorStand.teleport(projectile.getCurrentLocation().clone().add(0, -1.8, 0), PlayerTeleportEvent.TeleportCause.PLUGIN);
+                armorStand.teleport(projectile.getCurrentLocation().clone().add(0, -1.7, 0), PlayerTeleportEvent.TeleportCause.PLUGIN);
             }
 
             @Override
