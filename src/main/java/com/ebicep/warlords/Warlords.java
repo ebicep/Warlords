@@ -172,12 +172,17 @@ public class Warlords extends JavaPlugin {
 
     public static void updateHeads() {
         for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-            ItemStack playerSkull = new ItemStack(Material.SKULL_ITEM, 1, (short) SkullType.PLAYER.ordinal());
-            SkullMeta skullMeta = (SkullMeta) playerSkull.getItemMeta();
-            skullMeta.setOwner(onlinePlayer.getName());
-            playerSkull.setItemMeta(skullMeta);
-            playerHeads.put(onlinePlayer.getUniqueId(), CraftItemStack.asNMSCopy(playerSkull));
+            updateHead(onlinePlayer);
         }
+        System.out.println("[WARLORDS] Heads updated");
+    }
+
+    public static void updateHead(Player player) {
+        ItemStack playerSkull = new ItemStack(Material.SKULL_ITEM, 1, (short) SkullType.PLAYER.ordinal());
+        SkullMeta skullMeta = (SkullMeta) playerSkull.getItemMeta();
+        skullMeta.setOwner(player.getName());
+        playerSkull.setItemMeta(skullMeta);
+        playerHeads.put(player.getUniqueId(), CraftItemStack.asNMSCopy(playerSkull));
     }
 
 

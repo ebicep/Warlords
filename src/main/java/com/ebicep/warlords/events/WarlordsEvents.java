@@ -161,11 +161,19 @@ public class WarlordsEvents implements Listener {
             }));
         }
 
-        //???
         Warlords.newChain()
-                .asyncFirst(() -> DatabaseManager.loadPlayer(e.getPlayer()))
-                .asyncLast((d) -> Warlords.updateHeads())
-                .syncLast((input) -> LeaderboardRanking.addPlayerLeaderboards(player))
+                .async(() -> {
+                    System.out.println("1");
+                    DatabaseManager.loadPlayer(e.getPlayer());
+                    System.out.println("2");
+                    Warlords.updateHead(e.getPlayer());
+                    System.out.println("3");
+                })
+                .syncLast((input) -> {
+                    System.out.println("4");
+                    LeaderboardRanking.addPlayerLeaderboards(player);
+                    System.out.println("5");
+                })
                 .execute();
     }
 

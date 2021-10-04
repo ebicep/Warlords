@@ -98,45 +98,94 @@ public class DatabaseManager {
         }
     }
 
-    public static boolean loadPlayer(UUID uuid) {
-        if (!connected) return false;
+    public static void loadPlayer(UUID uuid) {
+        if (!connected) return;
         Player player = Bukkit.getPlayer(uuid);
         try {
             if (hasPlayer(uuid)) {
-                Document playerInfo = playersInformation.find(eq("uuid", uuid.toString())).first();
-                //todo update name
-                cachedPlayerInfo.put(uuid, playerInfo);
-                Classes.setSelected(player, Classes.getClass((String) getPlayerInfoWithDotNotation(player, "last_spec")));
-                ArmorManager.Helmets.setSelectedMage(player, ArmorManager.Helmets.getMageHelmet((String) getPlayerInfoWithDotNotation(player, "mage.helm")));
-                ArmorManager.ArmorSets.setSelectedMage(player, ArmorManager.ArmorSets.getMageArmor((String) getPlayerInfoWithDotNotation(player, "mage.armor")));
-                ArmorManager.Helmets.setSelectedWarrior(player, ArmorManager.Helmets.getWarriorHelmet((String) getPlayerInfoWithDotNotation(player, "warrior.helm")));
-                ArmorManager.ArmorSets.setSelectedWarrior(player, ArmorManager.ArmorSets.getWarriorArmor((String) getPlayerInfoWithDotNotation(player, "warrior.armor")));
-                ArmorManager.Helmets.setSelectedPaladin(player, ArmorManager.Helmets.getPaladinHelmet((String) getPlayerInfoWithDotNotation(player, "paladin.helm")));
-                ArmorManager.ArmorSets.setSelectedPaladin(player, ArmorManager.ArmorSets.getPaladinArmor((String) getPlayerInfoWithDotNotation(player, "paladin.armor")));
-                ArmorManager.Helmets.setSelectedShaman(player, ArmorManager.Helmets.getShamanHelmet((String) getPlayerInfoWithDotNotation(player, "shaman.helm")));
-                ArmorManager.ArmorSets.setSelectedShaman(player, ArmorManager.ArmorSets.getShamanArmor((String) getPlayerInfoWithDotNotation(player, "shaman.armor")));
-                HashMap<Classes, Weapons> weaponSkins = new HashMap<>();
-                for (Classes value : Classes.values()) {
-                    weaponSkins.put(value, Weapons.getWeapon(
-                            (String) getPlayerInfoWithDotNotation(player, Classes.getClassesGroup(value).name.toLowerCase() + "." + value.name.toLowerCase() + ".weapon")));
-                }
-                Weapons.setSelected(player, weaponSkins);
-                Settings.HotkeyMode.setSelected(player, Settings.HotkeyMode.getHotkeyMode((String) getPlayerInfoWithDotNotation(player, "hotkeymode")));
-                Settings.ParticleQuality.setSelected(player, Settings.ParticleQuality.getParticleQuality((String) getPlayerInfoWithDotNotation(player, "particle_quality")));
-                System.out.println(ChatColor.GREEN + "[Warlords] Loaded player " + player.getName());
-                return true;
+                Warlords.newChain()
+                        .asyncFirst(() -> {
+                            System.out.println("11");
+//                            for (int i = 0; i < 10000000; i++) {
+//
+//                            }
+//                            for (int i = 0; i < 10000000; i++) {
+//
+//                            }
+//                            for (int i = 0; i < 10000000; i++) {
+//
+//                            }
+//                            for (int i = 0; i < 10000000; i++) {
+//
+//                            }
+//                            for (int i = 0; i < 10000000; i++) {
+//
+//                            }
+//                            for (int i = 0; i < 10000000; i++) {
+//
+//                            }
+//                            for (int i = 0; i < 10000000; i++) {
+//
+//                            }
+//                            for (int i = 0; i < 10000000; i++) {
+//
+//                            }
+//                            for (int i = 0; i < 10000000; i++) {
+//
+//                            }
+//                            for (int i = 0; i < 10000000; i++) {
+//
+//                            }
+//                            for (int i = 0; i < 10000000; i++) {
+//
+//                            }
+//                            for (int i = 0; i < 10000000; i++) {
+//
+//                            }
+//                            for (int i = 0; i < 10000000; i++) {
+//
+//                            }
+//                            for (int i = 0; i < 10000000; i++) {
+//
+//                            }
+                            System.out.println("11.1");
+                            return playersInformation.find(eq("uuid", uuid.toString())).first();
+                        })
+                        .syncLast(playerInfo -> {
+                            System.out.println("22");
+                            cachedPlayerInfo.put(uuid, playerInfo);
+                            Classes.setSelected(player, Classes.getClass((String) getPlayerInfoWithDotNotation(player, "last_spec")));
+                            ArmorManager.Helmets.setSelectedMage(player, ArmorManager.Helmets.getMageHelmet((String) getPlayerInfoWithDotNotation(player, "mage.helm")));
+                            ArmorManager.ArmorSets.setSelectedMage(player, ArmorManager.ArmorSets.getMageArmor((String) getPlayerInfoWithDotNotation(player, "mage.armor")));
+                            ArmorManager.Helmets.setSelectedWarrior(player, ArmorManager.Helmets.getWarriorHelmet((String) getPlayerInfoWithDotNotation(player, "warrior.helm")));
+                            ArmorManager.ArmorSets.setSelectedWarrior(player, ArmorManager.ArmorSets.getWarriorArmor((String) getPlayerInfoWithDotNotation(player, "warrior.armor")));
+                            ArmorManager.Helmets.setSelectedPaladin(player, ArmorManager.Helmets.getPaladinHelmet((String) getPlayerInfoWithDotNotation(player, "paladin.helm")));
+                            ArmorManager.ArmorSets.setSelectedPaladin(player, ArmorManager.ArmorSets.getPaladinArmor((String) getPlayerInfoWithDotNotation(player, "paladin.armor")));
+                            ArmorManager.Helmets.setSelectedShaman(player, ArmorManager.Helmets.getShamanHelmet((String) getPlayerInfoWithDotNotation(player, "shaman.helm")));
+                            ArmorManager.ArmorSets.setSelectedShaman(player, ArmorManager.ArmorSets.getShamanArmor((String) getPlayerInfoWithDotNotation(player, "shaman.armor")));
+                            HashMap<Classes, Weapons> weaponSkins = new HashMap<>();
+                            for (Classes value : Classes.values()) {
+                                weaponSkins.put(value, Weapons.getWeapon(
+                                        (String) getPlayerInfoWithDotNotation(player, Classes.getClassesGroup(value).name.toLowerCase() + "." + value.name.toLowerCase() + ".weapon")));
+                            }
+                            Weapons.setSelected(player, weaponSkins);
+                            Settings.HotkeyMode.setSelected(player, Settings.HotkeyMode.getHotkeyMode((String) getPlayerInfoWithDotNotation(player, "hotkeymode")));
+                            Settings.ParticleQuality.setSelected(player, Settings.ParticleQuality.getParticleQuality((String) getPlayerInfoWithDotNotation(player, "particle_quality")));
+                            System.out.println("33");
+                            //System.out.println(ChatColor.GREEN + "[Warlords] Loaded player " + player.getName());
+                        }).execute();
+                return;
             } else {
-                return addPlayer(player);
+                addPlayer(player);
             }
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println(ChatColor.GREEN + "[Warlords] ERROR loading player - " + player.getName());
         }
-        return false;
     }
 
-    public static boolean loadPlayer(Player player) {
-        return loadPlayer(player.getUniqueId());
+    public static void loadPlayer(Player player) {
+        loadPlayer(player.getUniqueId());
     }
 
     public static void updatePlayerInformation(Player player, String key, String newValue) {
@@ -416,54 +465,7 @@ public class DatabaseManager {
         if (!connected) return;
         List<Document> blue = new ArrayList<>();
         List<Document> red = new ArrayList<>();
-        HashMap<UUID, HashMap<String, Object>> newPlayerInfo = new HashMap<>();
         for (WarlordsPlayer value : PlayerFilter.playingGame(gameState.getGame())) {
-            int totalKills = value.getTotalKills();
-            int totalAssists = value.getTotalAssists();
-            int totalDeaths = value.getTotalDeaths();
-            boolean won = !gameState.isForceEnd() && gameState.getStats(value.getTeam()).points() > gameState.getStats(value.getTeam().enemy()).points();
-            int flagsCaptured = value.getFlagsCaptured();
-            int flagsReturned = value.getFlagsReturned();
-            long damage = (int) value.getTotalDamage();
-            long healing = (int) value.getTotalHealing();
-            long absorbed = (int) value.getTotalAbsorbed();
-            String className = value.getSpec().getClassName().toLowerCase();
-            String specName = value.getSpecClass().name.toLowerCase();
-            HashMap<String, Object> playerInfo = new HashMap<>();
-            playerInfo.put("kills", totalKills);
-            playerInfo.put("assists", totalAssists);
-            playerInfo.put("deaths", totalDeaths);
-            playerInfo.put("wins", won ? 1 : 0);
-            playerInfo.put("losses", won ? 0 : 1);
-            playerInfo.put("flags_captured", flagsCaptured);
-            playerInfo.put("flags_returned", flagsReturned);
-            playerInfo.put("damage", damage);
-            playerInfo.put("healing", healing);
-            playerInfo.put("absorbed", absorbed);
-            playerInfo.put(className + ".kills", totalKills);
-            playerInfo.put(className + ".assists", totalAssists);
-            playerInfo.put(className + ".deaths", totalDeaths);
-            playerInfo.put(className + ".wins", won ? 1 : 0);
-            playerInfo.put(className + ".losses", won ? 0 : 1);
-            playerInfo.put(className + ".flags_captured", flagsCaptured);
-            playerInfo.put(className + ".flags_returned", flagsCaptured);
-            playerInfo.put(className + ".damage", damage);
-            playerInfo.put(className + ".healing", healing);
-            playerInfo.put(className + ".absorbed", absorbed);
-            playerInfo.put(className + "." + specName + ".kills", totalKills);
-            playerInfo.put(className + "." + specName + ".assists", totalAssists);
-            playerInfo.put(className + "." + specName + ".deaths", totalDeaths);
-            playerInfo.put(className + "." + specName + ".wins", won ? 1 : 0);
-            playerInfo.put(className + "." + specName + ".losses", won ? 0 : 1);
-            playerInfo.put(className + "." + specName + ".flags_captured", flagsCaptured);
-            playerInfo.put(className + "." + specName + ".flags_returned", flagsReturned);
-            playerInfo.put(className + "." + specName + ".damage", damage);
-            playerInfo.put(className + "." + specName + ".healing", healing);
-            playerInfo.put(className + "." + specName + ".absorbed", absorbed);
-
-            //newPlayerInfo.put(value.getUuid(), playerInfo);
-            updatePlayerInformation(value.getUuid(), playerInfo, FieldUpdateOperators.INCREMENT);
-
             if (value.getTeam() == Team.BLUE) {
                 gameAddPlayerStats(blue, value);
             } else {

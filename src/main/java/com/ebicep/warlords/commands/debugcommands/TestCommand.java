@@ -3,6 +3,7 @@ package com.ebicep.warlords.commands.debugcommands;
 import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.BaseCommand;
+import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.LeaderboardRanking;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.flags.PlayerFlagLocation;
@@ -10,6 +11,7 @@ import com.ebicep.warlords.player.PlayerSettings;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
+import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -21,9 +23,12 @@ import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Objects;
 import java.util.Optional;
+
+import static com.mongodb.client.model.Filters.eq;
 
 public class TestCommand implements CommandExecutor {
 
@@ -54,8 +59,29 @@ public class TestCommand implements CommandExecutor {
         //LeaderboardRanking.addHologramLeaderboards();
 
 //        System.out.println(BotManager.getCompGamesServer().getTextChannels());
-        Optional<TextChannel> botTeams = BotManager.getTextChannelByName("bot-teams");
-        botTeams.ifPresent(textChannel -> textChannel.sendMessage("test").queue());
+//        Optional<TextChannel> botTeams = BotManager.getTextChannelByName("bot-teams");
+//        botTeams.ifPresent(textChannel -> textChannel.sendMessage("test").queue());
+
+//        System.out.println("0");
+//        new BukkitRunnable() {
+//
+//            @Override
+//            public void run() {
+//                System.out.println("1");
+//                new BukkitRunnable() {
+//
+//                    @Override
+//                    public void run() {
+//                        //Document document = DatabaseManager.playersInformation.find(eq("uuid", ((Player)sender).getUniqueId().toString())).first();
+//                        //System.out.println(document);
+//                        System.out.println("2");
+//                    }
+//                }.runTaskAsynchronously(Warlords.getInstance());
+//                System.out.println("3");
+//            }
+//        }.runTaskAsynchronously(Warlords.getInstance());
+//        System.out.println("4");
+
         //System.out.println(BotManager.getCompGamesServer().getTextChannels().get(6).sendMessage("HELLO"));
         return true;
     }
