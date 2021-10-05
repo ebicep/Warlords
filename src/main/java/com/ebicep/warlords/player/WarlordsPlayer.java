@@ -529,8 +529,12 @@ public final class WarlordsPlayer {
     }
 
     public void addHealth(WarlordsPlayer attacker, String ability, float min, float max, int critChance, int critMultiplier, boolean ignoreReduction) {
-        if (spawnProtection != 0 || (dead && !cooldownManager.checkUndyingArmy(false)) || getGameState() != getGame().getState())
+        if (spawnProtection != 0 || (dead && !cooldownManager.checkUndyingArmy(false)) || getGameState() != getGame().getState()) {
+            if(spawnProtection != 0) {
+                removeHorse();
+            }
             return;
+        }
         if (attacker == this && (ability.equals("Fall") || ability.isEmpty())) {
             if (ability.isEmpty()) {
                 sendMessage("" + ChatColor.RED + "\u00AB" + ChatColor.GRAY + " You took " + ChatColor.RED + Math.round(min * -1) + ChatColor.GRAY + " melee damage.");

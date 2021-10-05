@@ -398,11 +398,6 @@ public class Warlords extends JavaPlugin {
                         }
                         float respawn = warlordsPlayer.getRespawnTimer();
                         if (respawn != -1) {
-                            if (respawn <= 11) {
-                                if (player != null) {
-                                    PacketUtils.sendTitle(player, "", warlordsPlayer.getTeam().teamColor() + "Respawning in... " + ChatColor.YELLOW + Utils.formatTenths(respawn), 0, 40, 0);
-                                }
-                            }
                             warlordsPlayer.setRespawnTimer(respawn - .05f);
                         }
                         //damage or heal
@@ -655,6 +650,15 @@ public class Warlords extends JavaPlugin {
                             } else {
                                 int healthToAdd = (int) (warlordsPlayer.getMaxHealth() / 55.3);
                                 warlordsPlayer.setHealth(Math.min(warlordsPlayer.getHealth() + healthToAdd, warlordsPlayer.getMaxHealth()));
+                            }
+                            //RESPAWN DISPLAY
+                            float respawn = warlordsPlayer.getRespawnTimer();
+                            if (respawn != -1) {
+                                if (respawn <= 11) {
+                                    if (player != null) {
+                                        PacketUtils.sendTitle(player, "", warlordsPlayer.getTeam().teamColor() + "Respawning in... " + ChatColor.YELLOW + Math.round(respawn), 0, 40, 0);
+                                    }
+                                }
                             }
                             //COOLDOWNS
                             if (warlordsPlayer.getSpawnProtection() > 0) {
