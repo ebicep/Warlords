@@ -286,7 +286,7 @@ public class PlayingState implements State, TimerDebugAble {
             this.powerUps = null;
         }
         Warlords.getPlayers().forEach(((uuid, warlordsPlayer) -> warlordsPlayer.removeGrave()));
-        if (true || !forceEnd && game.playersCount() >= 16 && timer <= 12000) {
+        if (!forceEnd && game.playersCount() >= 16 && timer <= 12000) {
             if (getBluePoints() > getRedPoints()) {
                 BotManager.sendMessageToNotificationChannel("[GAME] A game ended with **BLUE** winning " + getBluePoints() + " to " + getRedPoints());
             } else if (getBluePoints() < getRedPoints()) {
