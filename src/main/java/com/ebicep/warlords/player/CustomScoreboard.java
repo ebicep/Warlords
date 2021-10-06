@@ -211,7 +211,7 @@ public class CustomScoreboard {
                 counter++;
                 if ((!DatabaseManager.connected) || counter >= 200) {
                     this.cancel();
-                } else if (DatabaseManager.hasPlayer(player.getUniqueId())) {
+                } else {//if (DatabaseManager.hasPlayer(player.getUniqueId())) {
                     Scoreboard mainLobbyScoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
                     Objective sideBar = mainLobbyScoreboard.registerNewObjective("WARLORDS", "");
                     sideBar.setDisplaySlot(DisplaySlot.SIDEBAR);

@@ -243,7 +243,7 @@ public class Warlords extends JavaPlugin {
                 .syncLast(input -> {
                     Bukkit.getOnlinePlayers().forEach(CustomScoreboard::giveMainLobbyScoreboard);
                     new LeaderboardRanking();
-                    LeaderboardRanking.addHologramLeaderboards();
+                    LeaderboardRanking.addHologramLeaderboards(UUID.randomUUID().toString());
                 })
                 .execute();
 

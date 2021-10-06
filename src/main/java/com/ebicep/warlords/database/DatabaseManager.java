@@ -8,14 +8,12 @@ import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.util.PlayerFilter;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
-import com.google.common.collect.Lists;
 import com.mongodb.MongoException;
 import com.mongodb.MongoWriteException;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.result.UpdateResult;
 import org.bson.BsonArray;
 import org.bson.BsonInt32;
 import org.bson.BsonInt64;
@@ -25,7 +23,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -36,7 +33,6 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static com.mongodb.client.model.Aggregates.sort;
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Sorts.descending;
 import static com.mongodb.client.model.Updates.combine;
@@ -56,7 +52,7 @@ public class DatabaseManager {
 
     public static boolean connect() {
         try {
-            System.out.println(System.getProperty("user.dir"));
+            Bukkit.getServer().getConsoleSender().sendMessage(System.getProperty("user.dir"));
             File myObj = new File(System.getProperty("user.dir") + "/plugins/Warlords/database_key.TXT");
             Scanner myReader = new Scanner(myObj);
             if (myReader.hasNextLine()) {
@@ -72,9 +68,7 @@ public class DatabaseManager {
 
                 Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Database Connected");
                 connected = true;
-                for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-                    loadPlayer(onlinePlayer);
-                }
+                loadAllPlayers();
                 return true;
             }
             myReader.close();
@@ -85,160 +79,147 @@ public class DatabaseManager {
         return false;
     }
 
-    public static boolean hasPlayer(UUID uuid) {
-        if (!connected) return false;
-        if (cachedPlayerInfo.containsKey(uuid)) return true;
+//    public static boolean hasPlayer(UUID uuid) {
+//        if (!connected) return false;
+//        if (cachedPlayerInfo.containsKey(uuid)) return true;
+//        try {
+//            Document document = playersInformation.find(eq("uuid", uuid.toString())).first();
+//            return document != null;
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Some error while trying to find document");
+//            return false;
+//        }
+//    }
+
+    public static void loadAllPlayers() {
+        if (!connected) return;
+        Collection<? extends Player> players = Bukkit.getOnlinePlayers();
         try {
-            Document document = playersInformation.find(eq("uuid", uuid.toString())).first();
-            return document != null;
+            Warlords.newChain()
+                    .asyncFirst(() -> {
+                        HashMap<UUID, Document> playerInfo = new HashMap<>();
+                        players.forEach(player -> {
+                            playerInfo.put(player.getUniqueId(), playersInformation.find(eq("uuid", player.getUniqueId().toString())).first());
+                        });
+                        return playerInfo;
+                    }).syncLast(playerInfo -> {
+                        playerInfo.forEach((uuid, document) -> {
+                            if(document != null) {
+                                cachedPlayerInfo.put(uuid, document);
+                                Player player = Bukkit.getPlayer(uuid);
+                                if (player != null) {
+                                    loadPlayerInfo(player);
+                                }
+                            }
+                        });
+                        Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Loaded all players");
+                    }).execute();
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println(ChatColor.GREEN + "[Warlords] Some error while trying to find document");
-            return false;
         }
     }
 
-    public static void loadPlayer(UUID uuid) {
+    public static void loadPlayer(String sharedChainName, UUID uuid) {
         if (!connected) return;
         Player player = Bukkit.getPlayer(uuid);
         try {
-            if (hasPlayer(uuid)) {
-                Warlords.newChain()
-                        .asyncFirst(() -> {
-                            System.out.println("11");
-//                            for (int i = 0; i < 10000000; i++) {
-//
-//                            }
-//                            for (int i = 0; i < 10000000; i++) {
-//
-//                            }
-//                            for (int i = 0; i < 10000000; i++) {
-//
-//                            }
-//                            for (int i = 0; i < 10000000; i++) {
-//
-//                            }
-//                            for (int i = 0; i < 10000000; i++) {
-//
-//                            }
-//                            for (int i = 0; i < 10000000; i++) {
-//
-//                            }
-//                            for (int i = 0; i < 10000000; i++) {
-//
-//                            }
-//                            for (int i = 0; i < 10000000; i++) {
-//
-//                            }
-//                            for (int i = 0; i < 10000000; i++) {
-//
-//                            }
-//                            for (int i = 0; i < 10000000; i++) {
-//
-//                            }
-//                            for (int i = 0; i < 10000000; i++) {
-//
-//                            }
-//                            for (int i = 0; i < 10000000; i++) {
-//
-//                            }
-//                            for (int i = 0; i < 10000000; i++) {
-//
-//                            }
-//                            for (int i = 0; i < 10000000; i++) {
-//
-//                            }
-                            System.out.println("11.1");
-                            return playersInformation.find(eq("uuid", uuid.toString())).first();
-                        })
-                        .syncLast(playerInfo -> {
-                            System.out.println("22");
+            Warlords.newSharedChain(sharedChainName)
+                    .asyncFirst(() -> playersInformation.find(eq("uuid", uuid.toString())).first())
+                    .syncLast(playerInfo -> {
+                        if (playerInfo == null) {
+                            addPlayer(uuid);
+                        } else {
                             cachedPlayerInfo.put(uuid, playerInfo);
-                            Classes.setSelected(player, Classes.getClass((String) getPlayerInfoWithDotNotation(player, "last_spec")));
-                            ArmorManager.Helmets.setSelectedMage(player, ArmorManager.Helmets.getMageHelmet((String) getPlayerInfoWithDotNotation(player, "mage.helm")));
-                            ArmorManager.ArmorSets.setSelectedMage(player, ArmorManager.ArmorSets.getMageArmor((String) getPlayerInfoWithDotNotation(player, "mage.armor")));
-                            ArmorManager.Helmets.setSelectedWarrior(player, ArmorManager.Helmets.getWarriorHelmet((String) getPlayerInfoWithDotNotation(player, "warrior.helm")));
-                            ArmorManager.ArmorSets.setSelectedWarrior(player, ArmorManager.ArmorSets.getWarriorArmor((String) getPlayerInfoWithDotNotation(player, "warrior.armor")));
-                            ArmorManager.Helmets.setSelectedPaladin(player, ArmorManager.Helmets.getPaladinHelmet((String) getPlayerInfoWithDotNotation(player, "paladin.helm")));
-                            ArmorManager.ArmorSets.setSelectedPaladin(player, ArmorManager.ArmorSets.getPaladinArmor((String) getPlayerInfoWithDotNotation(player, "paladin.armor")));
-                            ArmorManager.Helmets.setSelectedShaman(player, ArmorManager.Helmets.getShamanHelmet((String) getPlayerInfoWithDotNotation(player, "shaman.helm")));
-                            ArmorManager.ArmorSets.setSelectedShaman(player, ArmorManager.ArmorSets.getShamanArmor((String) getPlayerInfoWithDotNotation(player, "shaman.armor")));
-                            HashMap<Classes, Weapons> weaponSkins = new HashMap<>();
-                            for (Classes value : Classes.values()) {
-                                weaponSkins.put(value, Weapons.getWeapon(
-                                        (String) getPlayerInfoWithDotNotation(player, Classes.getClassesGroup(value).name.toLowerCase() + "." + value.name.toLowerCase() + ".weapon")));
-                            }
-                            Weapons.setSelected(player, weaponSkins);
-                            Settings.HotkeyMode.setSelected(player, Settings.HotkeyMode.getHotkeyMode((String) getPlayerInfoWithDotNotation(player, "hotkeymode")));
-                            Settings.ParticleQuality.setSelected(player, Settings.ParticleQuality.getParticleQuality((String) getPlayerInfoWithDotNotation(player, "particle_quality")));
-                            System.out.println("33");
-                            //System.out.println(ChatColor.GREEN + "[Warlords] Loaded player " + player.getName());
-                        }).execute();
-                return;
-            } else {
-                addPlayer(player);
-            }
+                            loadPlayerInfo(player);
+                            Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Loaded player " + player.getName());
+                        }
+                    }).execute();
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println(ChatColor.GREEN + "[Warlords] ERROR loading player - " + player.getName());
+            Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] ERROR loading player - " + player.getName());
         }
     }
 
-    public static void loadPlayer(Player player) {
-        loadPlayer(player.getUniqueId());
+    public static void loadPlayer(String sharedChainName, Player player) {
+        loadPlayer(sharedChainName, player.getUniqueId());
+    }
+
+    private static void loadPlayerInfo(Player player) {
+        Classes.setSelected(player, Classes.getClass((String) getPlayerInfoWithDotNotation(player, "last_spec")));
+        ArmorManager.Helmets.setSelectedMage(player, ArmorManager.Helmets.getMageHelmet((String) getPlayerInfoWithDotNotation(player, "mage.helm")));
+        ArmorManager.ArmorSets.setSelectedMage(player, ArmorManager.ArmorSets.getMageArmor((String) getPlayerInfoWithDotNotation(player, "mage.armor")));
+        ArmorManager.Helmets.setSelectedWarrior(player, ArmorManager.Helmets.getWarriorHelmet((String) getPlayerInfoWithDotNotation(player, "warrior.helm")));
+        ArmorManager.ArmorSets.setSelectedWarrior(player, ArmorManager.ArmorSets.getWarriorArmor((String) getPlayerInfoWithDotNotation(player, "warrior.armor")));
+        ArmorManager.Helmets.setSelectedPaladin(player, ArmorManager.Helmets.getPaladinHelmet((String) getPlayerInfoWithDotNotation(player, "paladin.helm")));
+        ArmorManager.ArmorSets.setSelectedPaladin(player, ArmorManager.ArmorSets.getPaladinArmor((String) getPlayerInfoWithDotNotation(player, "paladin.armor")));
+        ArmorManager.Helmets.setSelectedShaman(player, ArmorManager.Helmets.getShamanHelmet((String) getPlayerInfoWithDotNotation(player, "shaman.helm")));
+        ArmorManager.ArmorSets.setSelectedShaman(player, ArmorManager.ArmorSets.getShamanArmor((String) getPlayerInfoWithDotNotation(player, "shaman.armor")));
+        HashMap<Classes, Weapons> weaponSkins = new HashMap<>();
+        for (Classes value : Classes.values()) {
+            weaponSkins.put(value, Weapons.getWeapon(
+                    (String) getPlayerInfoWithDotNotation(player, Classes.getClassesGroup(value).name.toLowerCase() + "." + value.name.toLowerCase() + ".weapon")));
+        }
+        Weapons.setSelected(player, weaponSkins);
+        Settings.HotkeyMode.setSelected(player, Settings.HotkeyMode.getHotkeyMode((String) getPlayerInfoWithDotNotation(player, "hotkeymode")));
+        Settings.ParticleQuality.setSelected(player, Settings.ParticleQuality.getParticleQuality((String) getPlayerInfoWithDotNotation(player, "particle_quality")));
     }
 
     public static void updatePlayerInformation(Player player, String key, String newValue) {
         if (!connected) return;
         try {
-            if (hasPlayer(player.getUniqueId())) {
-                playersInformation.updateOne(
-                        eq("uuid", player.getUniqueId().toString()),
-                        combine(set(key, newValue))
-                );
-                cachedPlayerInfo.remove(player.getUniqueId());
-                cachedTotalKeyValues.clear();
+            Warlords.newChain()
+                    .asyncFirst(() -> playersInformation.find(eq("uuid", player.getUniqueId().toString())).first())
+                    .abortIfNull()
+                    .async(() -> {
+                        playersInformation.updateOne(
+                                eq("uuid", player.getUniqueId().toString()),
+                                combine(set(key, newValue))
+                        );
+                    }).sync(() -> {
+                        cachedPlayerInfo.remove(player.getUniqueId());
+                        cachedTotalKeyValues.clear();
 
-                System.out.println(ChatColor.GREEN + "[Warlords] " + player.getUniqueId() + " - " + player.getName() + " - " + key + " was updated to " + newValue);
-                loadPlayer(player);
-            } else {
-                System.out.println(ChatColor.GREEN + "[Warlords] Could not update player " + player.getName() + " - Not in the database!");
-            }
+                        Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] " + player.getUniqueId() + " - " + player.getName() + " - " + key + " was updated to " + newValue);
+                        //loadPlayer(UUID.randomUUID().toString(), player);
+                    }).execute();
         } catch (MongoWriteException e) {
-            System.out.println(ChatColor.GREEN + "[Warlords] There was an error trying to update information of player " + player.getName());
+            Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] There was an error trying to update information of player " + player.getName());
         }
     }
 
-    public static void updatePlayerInformation(UUID uuid, HashMap<String, Object> newInfo, FieldUpdateOperators operator) {
+    public static void updatePlayerInformation(String sharedChainName, UUID uuid, HashMap<String, Object> newInfo, FieldUpdateOperators operator) {
         if (!connected) return;
         String name = Bukkit.getOfflinePlayer(uuid).getName();
         try {
-            if (hasPlayer(uuid)) {
-                Document history = new Document();
-                for (String s : newInfo.keySet()) {
-                    history.append(s, newInfo.get(s));
-                }
-                Document update = new Document(operator.operator, history);
-                playersInformation.updateOne(eq("uuid", uuid.toString()), update);
-                cachedPlayerInfo.remove(uuid);
-                cachedTotalKeyValues.clear();
+            Warlords.newSharedChain(sharedChainName)
+                    .asyncFirst(() -> playersInformation.find(eq("uuid", uuid.toString())).first())
+                    .abortIfNull()
+                    .async(() -> {
+                        Document history = new Document();
+                        for (String s : newInfo.keySet()) {
+                            history.append(s, newInfo.get(s));
+                        }
+                        Document update = new Document(operator.operator, history);
+                        playersInformation.updateOne(eq("uuid", uuid.toString()), update);
+                    }).sync(() -> {
+                        cachedPlayerInfo.remove(uuid);
+                        cachedTotalKeyValues.clear();
 
-                System.out.println(ChatColor.GREEN + "[Warlords] " + uuid + " - " + name + " was updated");
-                loadPlayer(uuid);
-            } else {
-                System.out.println(ChatColor.GREEN + "[Warlords] Could not update player " + name + " - Not in the database!");
-            }
+                        Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] " + uuid + " - " + name + " was updated");
+                        //loadPlayer(sharedChainName, uuid);
+                    }).execute();
         } catch (Exception e) {
-            System.out.println(ChatColor.GREEN + "[Warlords] There was an error trying to update information of player " + name);
+            Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] There was an error trying to update information of player " + name);
         }
     }
 
-    public static void updatePlayerInformation(Player player, HashMap<String, Object> newInfo, FieldUpdateOperators operator) {
-        updatePlayerInformation(player.getUniqueId(), newInfo, operator);
+    public static void updatePlayerInformation(String sharedChainName, Player player, HashMap<String, Object> newInfo, FieldUpdateOperators operator) {
+        updatePlayerInformation(sharedChainName, player.getUniqueId(), newInfo, operator);
     }
 
-    public static void updatePlayerInformation(OfflinePlayer player, HashMap<String, Object> newInfo, FieldUpdateOperators operator) {
-        updatePlayerInformation(player.getUniqueId(), newInfo, operator);
+    public static void updatePlayerInformation(String sharedChainName, OfflinePlayer player, HashMap<String, Object> newInfo, FieldUpdateOperators operator) {
+        updatePlayerInformation(sharedChainName, player.getUniqueId(), newInfo, operator);
     }
 
     public static Object getPlayerInfoWithDotNotation(Player player, String dots) {
@@ -251,11 +232,8 @@ public class DatabaseManager {
         Document doc;
         if (cachedPlayerInfo.containsKey(uuid)) {
             doc = cachedPlayerInfo.get(uuid);
-        } else if (hasPlayer(uuid)) {
-            doc = playersInformation.find(eq("uuid", uuid.toString())).first();
         } else {
-            System.out.println(ChatColor.GREEN + "[Warlords] Couldn't get player " + uuid + " - Not in the database!");
-            return null;
+            doc = playersInformation.find(eq("uuid", uuid.toString())).first();
         }
 
         if (doc == null) {
@@ -298,7 +276,7 @@ public class DatabaseManager {
             return total;
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println(ChatColor.GREEN + "[Warlords] There was an error trying to total of " + key);
+            Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] There was an error trying to total of " + key);
             return 0L;
         }
     }
@@ -327,45 +305,51 @@ public class DatabaseManager {
     public static boolean addPlayer(UUID uuid) {
         if (!connected) return false;
         try {
-            if (!hasPlayer(uuid)) {
-                Document newPlayerDocument = new Document("uuid", uuid.toString())
-                        .append("name", Bukkit.getServer().getOfflinePlayer(uuid).getName())
-                        .append("kills", 0)
-                        .append("assists", 0)
-                        .append("deaths", 0)
-                        .append("wins", 0)
-                        .append("losses", 0)
-                        .append("flags_captured", 0)
-                        .append("flags_returned", 0)
-                        .append("damage", 0L)
-                        .append("healing", 0L)
-                        .append("absorbed", 0L)
-                        .append("mage", getBaseStatDocument()
-                                .append("pyromancer", getBaseStatDocument())
-                                .append("cryomancer", getBaseStatDocument())
-                                .append("aquamancer", getBaseStatDocument())
-                        )
-                        .append("warrior", getBaseStatDocument()
-                                .append("berserker", getBaseStatDocument())
-                                .append("defender", getBaseStatDocument())
-                                .append("revenant", getBaseStatDocument())
-                        )
-                        .append("paladin", getBaseStatDocument()
-                                .append("avenger", getBaseStatDocument())
-                                .append("crusader", getBaseStatDocument())
-                                .append("protector", getBaseStatDocument())
-                        )
-                        .append("shaman", getBaseStatDocument()
-                                .append("thunderlord", getBaseStatDocument())
-                                .append("spiritguard", getBaseStatDocument())
-                                .append("earthwarden", getBaseStatDocument())
-                        );
-                playersInformation.insertOne(newPlayerDocument);
-                System.out.println(ChatColor.GREEN + "[Warlords] " + uuid + " - " + Bukkit.getServer().getOfflinePlayer(uuid).getName() + " was added to the player database");
-                return true;
-            }
+            Warlords.newChain()
+                    .asyncFirst(() -> playersInformation.find(eq("uuid", uuid.toString())).first())
+                    .abortIf(Objects::nonNull)
+                    .asyncFirst(() -> {
+                        Document newPlayerDocument = new Document("uuid", uuid.toString())
+                                .append("name", Bukkit.getServer().getOfflinePlayer(uuid).getName())
+                                .append("kills", 0)
+                                .append("assists", 0)
+                                .append("deaths", 0)
+                                .append("wins", 0)
+                                .append("losses", 0)
+                                .append("flags_captured", 0)
+                                .append("flags_returned", 0)
+                                .append("damage", 0L)
+                                .append("healing", 0L)
+                                .append("absorbed", 0L)
+                                .append("mage", getBaseStatDocument()
+                                        .append("pyromancer", getBaseStatDocument())
+                                        .append("cryomancer", getBaseStatDocument())
+                                        .append("aquamancer", getBaseStatDocument())
+                                )
+                                .append("warrior", getBaseStatDocument()
+                                        .append("berserker", getBaseStatDocument())
+                                        .append("defender", getBaseStatDocument())
+                                        .append("revenant", getBaseStatDocument())
+                                )
+                                .append("paladin", getBaseStatDocument()
+                                        .append("avenger", getBaseStatDocument())
+                                        .append("crusader", getBaseStatDocument())
+                                        .append("protector", getBaseStatDocument())
+                                )
+                                .append("shaman", getBaseStatDocument()
+                                        .append("thunderlord", getBaseStatDocument())
+                                        .append("spiritguard", getBaseStatDocument())
+                                        .append("earthwarden", getBaseStatDocument())
+                                );
+                        playersInformation.insertOne(newPlayerDocument);
+                        Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] " + uuid + " - " + Bukkit.getServer().getOfflinePlayer(uuid).getName() + " was added to the player database");
+                        return newPlayerDocument;
+                    }).syncLast(doc -> {
+                        cachedPlayerInfo.put(uuid, doc);
+                    }).execute();
+            return true;
         } catch (MongoWriteException e) {
-            System.out.println(ChatColor.GREEN + "[Warlords] There was an error trying to add player " + Bukkit.getServer().getOfflinePlayer(uuid).getName());
+            Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] There was an error trying to add player " + Bukkit.getServer().getOfflinePlayer(uuid).getName());
         }
         return false;
     }
@@ -484,27 +468,26 @@ public class DatabaseManager {
                 .append("players", new Document("blue", blue).append("red", red))
                 .append("stat_info", getWarlordsPlusEndGameStats(gameState));
         try {
+            String sharedChainName = UUID.randomUUID().toString();
+            //updating all players + auto loads
+            getNewPlayerInfo(gameState).forEach((uuid, stringObjectHashMap) -> {
+                updatePlayerInformation(sharedChainName, uuid, stringObjectHashMap, FieldUpdateOperators.INCREMENT);
+            });
+            //adding game to db
             gamesInformation.insertOne(document);
-//            Warlords.newChain()
-//                    .async(() -> {
-//                        newPlayerInfo.forEach((uuid, stringObjectHashMap) -> {
-//                            updatePlayerInformation(uuid, stringObjectHashMap, FieldUpdateOperators.INCREMENT);
-//                        });
-//                        gamesInformation.insertOne(document);
-//                    })
-//                    .async(() -> {
-//                        for (WarlordsPlayer value : PlayerFilter.playingGame(gameState.getGame())) {
-//                            loadPlayer(value.getUuid());
-//                            if(value.getEntity().isOp()) {
-//                                value.sendMessage(ChatColor.GREEN + "This game was added to the database");
-//                            }
-//                        }
-//                    })
-//                    .execute();
-            System.out.println(ChatColor.GREEN + "[Warlords] Added game");
+            //sending message if game was added
+            for (WarlordsPlayer value : PlayerFilter.playingGame(gameState.getGame())) {
+                if(value.getEntity().isOp()) {
+                    value.sendMessage(ChatColor.GREEN + "This game was added to the database");
+                }
+            }
+            //reloading leaderboards
+            LeaderboardRanking.addHologramLeaderboards(sharedChainName);
+
+            Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Added game");
         } catch (MongoWriteException e) {
             e.printStackTrace();
-            System.out.println(ChatColor.GREEN + "[Warlords] Error trying to insert game stats");
+            Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Error trying to insert game stats");
         }
     }
 

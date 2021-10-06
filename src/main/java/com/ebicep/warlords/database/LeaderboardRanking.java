@@ -38,7 +38,7 @@ public class LeaderboardRanking {
     public static boolean enabled = true;
 
     public LeaderboardRanking() {
-        leaderboardLocations.put("wins", lifeTimeWinsLB);
+        leaderboardLocations.put("losses", lifeTimeWinsLB);
         leaderboardLocations.put("kills", lifeTimeKillsLB);
         leaderboardLocations.put("", srLB);
         leaderboardLocations.put("mage", srLBMage);
@@ -47,25 +47,31 @@ public class LeaderboardRanking {
         leaderboardLocations.put("shaman", srLBShaman);
     }
 
-    public static void addHologramLeaderboards() {
+    public static void addHologramLeaderboards(String sharedChainName) {
         if (DatabaseManager.connected && Warlords.holographicDisplaysEnabled) {
             HologramsAPI.getHolograms(Warlords.getInstance()).forEach(Hologram::delete);
             if (enabled) {
-                Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Adding Holograms");
+                Warlords.newSharedChain(sharedChainName)
+                        .sync(() -> Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Adding Holograms")).execute();
 
-                addLeaderboard("wins", lifeTimeWinsLB, ChatColor.AQUA + ChatColor.BOLD.toString() + "Lifetime Wins");
-                addLeaderboard("kills", lifeTimeKillsLB, ChatColor.AQUA + ChatColor.BOLD.toString() + "Lifetime Kills");
+                Warlords.newSharedChain(sharedChainName)
+                        .sync(() -> {
+                            Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Adding Game Hologram");
+                            DatabaseManager.addLastGameHologram(lastGameLocation);
+                        }).execute();
 
-                addLeaderboardSR("", srLB, ChatColor.AQUA + ChatColor.BOLD.toString() + "SR Ranking");
-                addLeaderboardSR("mage", srLBMage, ChatColor.AQUA + ChatColor.BOLD.toString() + "Mage SR Ranking");
-                addLeaderboardSR("warrior", srLBWarrior, ChatColor.AQUA + ChatColor.BOLD.toString() + "Warrior SR Ranking");
-                addLeaderboardSR("paladin", srLBPaladin, ChatColor.AQUA + ChatColor.BOLD.toString() + "Paladin SR Ranking");
-                addLeaderboardSR("shaman", srLBShaman, ChatColor.AQUA + ChatColor.BOLD.toString() + "Shaman SR Ranking");
+                addLeaderboard(sharedChainName,"losses", lifeTimeWinsLB, ChatColor.AQUA + ChatColor.BOLD.toString() + "Lifetime Wins");
+                addLeaderboard(sharedChainName,"kills", lifeTimeKillsLB, ChatColor.AQUA + ChatColor.BOLD.toString() + "Lifetime Kills");
 
-                DatabaseManager.addLastGameHologram(lastGameLocation);
+                addLeaderboardSR(sharedChainName,"", srLB, ChatColor.AQUA + ChatColor.BOLD.toString() + "SR Ranking");
+                addLeaderboardSR(sharedChainName,"mage", srLBMage, ChatColor.AQUA + ChatColor.BOLD.toString() + "Mage SR Ranking");
+                addLeaderboardSR(sharedChainName,"warrior", srLBWarrior, ChatColor.AQUA + ChatColor.BOLD.toString() + "Warrior SR Ranking");
+                addLeaderboardSR(sharedChainName,"paladin", srLBPaladin, ChatColor.AQUA + ChatColor.BOLD.toString() + "Paladin SR Ranking");
+                addLeaderboardSR(sharedChainName,"shaman", srLBShaman, ChatColor.AQUA + ChatColor.BOLD.toString() + "Shaman SR Ranking");
 
-                Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Adding player leaderboards");
-                addPlayerLeaderboardsToAll();
+                Warlords.newSharedChain(sharedChainName)
+                        .sync(() -> Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Adding player leaderboards")).execute();
+                addPlayerLeaderboardsToAll(sharedChainName);
             }
         }
     }
@@ -78,7 +84,7 @@ public class LeaderboardRanking {
                         .filter(hologram -> hologram.getLocation().equals(location))
                         .filter(hologram -> hologram.getVisibilityManager().isVisibleTo(player))
                         .forEach(Hologram::delete);
-                if (key.equals("wins") || key.equals("kills")) {
+                if (key.equals("losses") || key.equals("kills")) {
                     if (cachedSortedPlayers.containsKey(key)) {
                         List<Document> documents = cachedSortedPlayers.get(key);
                         Hologram hologram = HologramsAPI.createHologram(Warlords.getInstance(), location);
@@ -112,15 +118,15 @@ public class LeaderboardRanking {
         }
     }
 
-    public static void addPlayerLeaderboardsToAll() {
-        Warlords.newSharedChain("addingLeaderboard")
+    public static void addPlayerLeaderboardsToAll(String sharedChainName) {
+        Warlords.newSharedChain(sharedChainName)
                 .sync(() -> {
                     Bukkit.getOnlinePlayers().forEach(LeaderboardRanking::addPlayerLeaderboards);
                 }).execute();
     }
 
-    private static void addLeaderboard(String key, Location location, String title) {
-        Warlords.newSharedChain("addingLeaderboard")
+    private static void addLeaderboard(String sharedChainName, String key, Location location, String title) {
+        Warlords.newSharedChain(sharedChainName)
                 .asyncFirst(() -> getPlayersSortedByKey(key))
                 .abortIfNull()
                 .syncLast((top) -> {
@@ -135,8 +141,8 @@ public class LeaderboardRanking {
                 .execute();
     }
 
-    private static void addLeaderboardSR(String key, Location location, String title) {
-        Warlords.newSharedChain("addingLeaderboard")
+    private static void addLeaderboardSR(String sharedChainName, String key, Location location, String title) {
+        Warlords.newSharedChain(sharedChainName)
                 .asyncFirst(() -> getPlayersSortedBySR(key))
                 .abortIfNull()
                 .syncLast((top) -> {

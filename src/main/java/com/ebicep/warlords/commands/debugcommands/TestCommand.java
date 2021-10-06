@@ -1,32 +1,17 @@
 package com.ebicep.warlords.commands.debugcommands;
 
-import com.ebicep.jda.BotManager;
+import co.aikar.taskchain.TaskChain;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.BaseCommand;
 import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.database.LeaderboardRanking;
-import com.ebicep.warlords.maps.Team;
-import com.ebicep.warlords.maps.flags.PlayerFlagLocation;
-import com.ebicep.warlords.player.PlayerSettings;
 import com.ebicep.warlords.player.WarlordsPlayer;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.TextChannel;
 import org.bson.Document;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.SkullType;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.SkullMeta;
-import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.Objects;
-import java.util.Optional;
+import java.util.UUID;
 
 import static com.mongodb.client.model.Filters.eq;
 
@@ -35,7 +20,7 @@ public class TestCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
 
-        if(!sender.isOp()) {
+        if (!sender.isOp()) {
             return true;
         }
         WarlordsPlayer player = BaseCommand.requireWarlordsPlayer(sender);
@@ -81,6 +66,69 @@ public class TestCommand implements CommandExecutor {
 //            }
 //        }.runTaskAsynchronously(Warlords.getInstance());
 //        System.out.println("4");
+
+//        Warlords.newChain()
+//                .async(() -> {
+//                    System.out.println("1");
+//                    Warlords.newChain()
+//                            .async(() -> {
+//                                System.out.println("2");
+//                            }).execute();
+//                    System.out.println("3");
+//                }).execute();
+
+//        Warlords.newSharedChain("test")
+//                        .sync(() -> {
+//                            System.out.println("1");
+//                            Warlords.newSharedChain("test")
+//                                    .sync(() -> {
+//                                        System.out.println("2");
+//                                    }).execute();
+//                            System.out.println("3");
+//                        }).execute();
+        Warlords.newSharedChain("test")
+                .sync(() -> {
+                    System.out.println("1");
+                    Warlords.newSharedChain("test")
+                            .async(() -> {
+                                System.out.println("2");
+                                Warlords.newSharedChain("test")
+                                        .async(() -> {
+                                            System.out.println("3");
+                                        }).execute();
+                            }).execute();
+                }).execute();
+        Warlords.newSharedChain("test")
+                .sync(() -> {
+                    System.out.println("4");
+                }).execute();
+//        System.out.println("here");
+//        Warlords.newSharedChain("test")
+//                .sync(() -> {
+//                    System.out.println("1");
+//                    DatabaseManager.loadPlayer("test", (Player) sender);
+//                    System.out.println("2");
+//                    DatabaseManager.loadPlayer("test", (Player) sender);
+//                    System.out.println("3");
+//                }).execute();
+//        System.out.println("HERE");
+//        Warlords.newSharedChain("test")
+//                .sync(() -> {
+//                    System.out.println("4");
+//                }).execute();
+//        Warlords.newChain()
+//                .async(() -> {
+//                    System.out.println("1");
+//                    Warlords.newChain()
+//                            .async(() -> {
+//                                System.out.println("2");
+//                            }).sync(() -> {
+//                                System.out.println("3");
+//                            }).execute();
+//                    System.out.println("4");
+//                }).sync(() -> {
+//                    System.out.println("5");
+//                }).execute();
 
         //System.out.println(BotManager.getCompGamesServer().getTextChannels().get(6).sendMessage("HELLO"));
         return true;

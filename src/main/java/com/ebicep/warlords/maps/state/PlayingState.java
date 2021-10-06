@@ -182,7 +182,7 @@ public class PlayingState implements State, TimerDebugAble {
                     newInfo.put("shaman.helm", ArmorManager.Helmets.getSelected(player.getPlayer()).get(3).name);
                     newInfo.put("shaman.armor", ArmorManager.ArmorSets.getSelected(player.getPlayer()).get(3).name);
                     newInfo.put("hotkeymode", Settings.HotkeyMode.getSelected(player.getPlayer()).name());
-                    DatabaseManager.updatePlayerInformation(player, newInfo, FieldUpdateOperators.SET);
+                    DatabaseManager.updatePlayerInformation(UUID.randomUUID().toString(), player, newInfo, FieldUpdateOperators.SET);
                 });
             }
         }.runTaskAsynchronously(Warlords.getInstance());
@@ -286,7 +286,7 @@ public class PlayingState implements State, TimerDebugAble {
             this.powerUps = null;
         }
         Warlords.getPlayers().forEach(((uuid, warlordsPlayer) -> warlordsPlayer.removeGrave()));
-        if (!forceEnd && game.playersCount() >= 16 && timer <= 12000) {
+        if (true || !forceEnd && game.playersCount() >= 16 && timer <= 12000) {
             if (getBluePoints() > getRedPoints()) {
                 BotManager.sendMessageToNotificationChannel("[GAME] A game ended with **BLUE** winning " + getBluePoints() + " to " + getRedPoints());
             } else if (getBluePoints() < getRedPoints()) {
@@ -294,14 +294,26 @@ public class PlayingState implements State, TimerDebugAble {
             } else {
                 BotManager.sendMessageToNotificationChannel("[GAME] A game ended with a **DRAW**");
             }
-            Warlords.newChain()
-                    .asyncFirst(this::addGameAndLoadPlayers)
-                    .syncLast((t) -> {
-                        LeaderboardRanking.addHologramLeaderboards();
-                        game.forEachOnlinePlayer(((player, team) -> CustomScoreboard.giveMainLobbyScoreboard(player)));
-                    })
-                    .execute();
-            //DatabaseManager.addGame(PlayingState.this);
+//            Warlords.newChain()
+//                    .asyncFirst(this::addGameAndLoadPlayers)
+//                    .syncLast((t) -> {
+//                        LeaderboardRanking.addHologramLeaderboards();
+//                        game.forEachOnlinePlayer(((player, team) -> CustomScoreboard.giveMainLobbyScoreboard(player)));
+//                    })
+//                    .execute();
+            List<WarlordsPlayer> players = new ArrayList<>(Warlords.getPlayers().values());
+            float highestDamage = players.stream().sorted(Comparator.comparing(WarlordsPlayer::getTotalDamage).reversed()).collect(Collectors.toList()).get(0).getTotalDamage();
+            float highestHealing = players.stream().sorted(Comparator.comparing(WarlordsPlayer::getTotalHealing).reversed()).collect(Collectors.toList()).get(0).getTotalHealing();
+            if (highestDamage <= 500000 && highestHealing <= 500000) {
+                DatabaseManager.addGame(PlayingState.this);
+            } else {
+                game.forEachOnlinePlayer(((player, team) -> {
+                    if(player.isOp()) {
+                        player.sendMessage(ChatColor.RED + "This game was not added to the database");
+                    }
+                }));
+                System.out.println(ChatColor.GREEN + "[Warlords] This game was not added to the database (INVALID DAMAGE/HEALING)");
+            }
         } else {
             game.forEachOnlinePlayer(((player, team) -> {
                 if(player.isOp()) {
@@ -319,7 +331,7 @@ public class PlayingState implements State, TimerDebugAble {
             DatabaseManager.addGame(PlayingState.this);
             for (WarlordsPlayer player : PlayerFilter.playingGame(game)) {
                 if (player.getEntity() instanceof Player) {
-                    DatabaseManager.loadPlayer((Player) player.getEntity());
+                    //DatabaseManager.loadPlayer((Player) player.getEntity());
                     if(player.getEntity().isOp()) {
                         player.sendMessage(ChatColor.GREEN + "This game was added to the database");
                     }

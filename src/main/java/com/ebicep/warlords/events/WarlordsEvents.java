@@ -161,19 +161,11 @@ public class WarlordsEvents implements Listener {
             }));
         }
 
-        Warlords.newChain()
-                .async(() -> {
-                    System.out.println("1");
-                    DatabaseManager.loadPlayer(e.getPlayer());
-                    System.out.println("2");
-                    Warlords.updateHead(e.getPlayer());
-                    System.out.println("3");
-                })
-                .syncLast((input) -> {
-                    System.out.println("4");
-                    LeaderboardRanking.addPlayerLeaderboards(player);
-                    System.out.println("5");
-                })
+        String sharedChainName = UUID.randomUUID().toString();
+        DatabaseManager.loadPlayer(sharedChainName, e.getPlayer());
+        Warlords.newSharedChain(sharedChainName)
+                .async(() -> Warlords.updateHead(e.getPlayer()))
+                .syncLast((input) -> LeaderboardRanking.addPlayerLeaderboards(player))
                 .execute();
     }
 

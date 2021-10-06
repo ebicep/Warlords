@@ -6,6 +6,8 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
+import java.util.UUID;
+
 public class LeaderboardCommand implements CommandExecutor {
 
     @Override
@@ -27,11 +29,11 @@ public class LeaderboardCommand implements CommandExecutor {
                     sender.sendMessage(ChatColor.GREEN + "Leaderboards enabled");
                 }
                 LeaderboardRanking.enabled = !LeaderboardRanking.enabled;
-                LeaderboardRanking.addHologramLeaderboards();
+                LeaderboardRanking.addHologramLeaderboards(UUID.randomUUID().toString());
                 return true;
             case "reload":
                 sender.sendMessage(ChatColor.GREEN + "Leaderboards reloaded");
-                LeaderboardRanking.addHologramLeaderboards();
+                LeaderboardRanking.addHologramLeaderboards(UUID.randomUUID().toString());
                 return true;
         }
 
