@@ -38,7 +38,7 @@ public class LeaderboardRanking {
     public static boolean enabled = true;
 
     public LeaderboardRanking() {
-        leaderboardLocations.put("losses", lifeTimeWinsLB);
+        leaderboardLocations.put("wins", lifeTimeWinsLB);
         leaderboardLocations.put("kills", lifeTimeKillsLB);
         leaderboardLocations.put("", srLB);
         leaderboardLocations.put("mage", srLBMage);
@@ -60,7 +60,7 @@ public class LeaderboardRanking {
                             DatabaseManager.addLastGameHologram(lastGameLocation);
                         }).execute();
 
-                addLeaderboard(sharedChainName,"losses", lifeTimeWinsLB, ChatColor.AQUA + ChatColor.BOLD.toString() + "Lifetime Wins");
+                addLeaderboard(sharedChainName,"wins", lifeTimeWinsLB, ChatColor.AQUA + ChatColor.BOLD.toString() + "Lifetime Wins");
                 addLeaderboard(sharedChainName,"kills", lifeTimeKillsLB, ChatColor.AQUA + ChatColor.BOLD.toString() + "Lifetime Kills");
 
                 addLeaderboardSR(sharedChainName,"", srLB, ChatColor.AQUA + ChatColor.BOLD.toString() + "SR Ranking");
