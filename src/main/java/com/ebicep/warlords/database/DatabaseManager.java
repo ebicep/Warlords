@@ -95,6 +95,7 @@ public class DatabaseManager {
                                                     eq("uuid", player.getUniqueId().toString()),
                                                     combine(set("name", player.getName()))
                                             );
+                                            Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Updated player name " + player.getName());
                                         }).execute();
                             }
                             playerInfo.put(player.getUniqueId(), document);
@@ -125,10 +126,14 @@ public class DatabaseManager {
                     .asyncFirst(() -> {
                         Document document = playersInformation.find(eq("uuid", uuid.toString())).first();
                         if (document != null && !((String) document.get("name")).equalsIgnoreCase(player.getName())) {
-                            playersInformation.updateOne(
-                                    eq("uuid", player.getUniqueId().toString()),
-                                    combine(set("name", player.getName()))
-                            );
+                            Warlords.newChain()
+                                    .async(() -> {
+                                        playersInformation.updateOne(
+                                                eq("uuid", player.getUniqueId().toString()),
+                                                combine(set("name", player.getName()))
+                                        );
+                                        Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Updated player name " + player.getName());
+                                    }).execute();
                         }
                         return document;
                     })
