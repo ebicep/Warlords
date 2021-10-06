@@ -144,7 +144,7 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
     }
 
     private void partOfChainLightningPulseDamage(WarlordsPlayer wp, Entity totem) {
-        pulseDamage(wp, PlayerFilter.entitiesAround(totem, 5, 4, 5).aliveEnemiesOf(wp).stream());
+        pulseDamage(wp, PlayerFilter.entitiesAround(totem, 6, 4, 6).aliveEnemiesOf(wp).stream());
         new FallingBlockWaveEffect(totem.getLocation().add(0, 1, 0), 6, 1.2, Material.SAPLING, (byte) 0).play();
         for (Player player1 : wp.getWorld().getPlayers()) {
             player1.playSound(totem.getLocation(), "shaman.capacitortotem.pulse", 2, 1);
@@ -153,7 +153,15 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
 
     private void pulseDamage(WarlordsPlayer warlordsPlayer, Stream<WarlordsPlayer> near) {
         near.forEach((player) -> {
-            player.addHealth(warlordsPlayer, warlordsPlayer.getSpec().getOrange().getName(), warlordsPlayer.getSpec().getOrange().getMinDamageHeal(), warlordsPlayer.getSpec().getOrange().getMaxDamageHeal(), warlordsPlayer.getSpec().getOrange().getCritChance(), warlordsPlayer.getSpec().getOrange().getCritMultiplier(), false);
+            player.addHealth(
+                    warlordsPlayer,
+                    warlordsPlayer.getSpec().getOrange().getName(),
+                    warlordsPlayer.getSpec().getOrange().getMinDamageHeal(),
+                    warlordsPlayer.getSpec().getOrange().getMaxDamageHeal(),
+                    warlordsPlayer.getSpec().getOrange().getCritChance(),
+                    warlordsPlayer.getSpec().getOrange().getCritMultiplier(),
+                    false
+            );
         });
     }
 
