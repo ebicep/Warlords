@@ -107,11 +107,6 @@ public class WarlordsEvents implements Listener {
             Utils.sendCenteredMessage(player, ChatColor.GOLD + "Click the Nether Star or do " + ChatColor.GREEN + "/menu" + ChatColor.GOLD + " to open the selection menu.");
             Utils.sendCenteredMessage(player, ChatColor.BLUE + "-----------------------------------------------------");
 
-//            if (player.isOp()) {
-//                Utils.sendCenteredMessage(player, ChatColor.GRAY + "For developers: ");
-//                Utils.sendCenteredMessage(player, ChatColor.GRAY + "Debug menu: /wl");
-//            }
-
             player.getInventory().clear();
             player.getInventory().setArmorContents(new ItemStack[]{null, null, null, null});
             player.getInventory().setItem(4, new ItemBuilder(Material.NETHER_STAR).name("§aSelection Menu").get());
@@ -358,7 +353,8 @@ public class WarlordsEvents implements Listener {
                 e.getInventory() instanceof CraftInventoryBeacon ||
                 e.getInventory() instanceof CraftInventoryBrewer ||
                 e.getInventory() instanceof CraftInventoryCrafting ||
-                e.getInventory() instanceof CraftInventoryDoubleChest
+                e.getInventory() instanceof CraftInventoryDoubleChest ||
+                e.getInventory() instanceof CraftInventoryFurnace
         ) {
             e.setCancelled(true);
         }

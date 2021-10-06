@@ -35,7 +35,7 @@ public enum GameMap {
             new Location(Bukkit.getWorld("Rift"), 1.5, 24.5, -62.5), // RED HEALING
 
             new Location(Bukkit.getWorld("Rift"), -86.5, 45.5, -33.5), // BLUE LOBBY SPAWN
-            new LocationBuilder(new Location(Bukkit.getWorld("Rift"), 87, 45.5, 35.5)).yaw(180).get(), // RED LOBBY SPAWN
+            new Location(Bukkit.getWorld("Rift"), 87, 45.5, 35.5, 180, 0), // RED LOBBY SPAWN
 
             new LocationBuilder(new Location(Bukkit.getWorld("Rift"), -32.5, 34.5, -43.5)).yaw(-90).get(), // BLUE RESPAWN
             new LocationBuilder(new Location(Bukkit.getWorld("Rift"), 33, 34.5, 45)).yaw(90).get(), // RED RESPAWN
@@ -104,14 +104,14 @@ public enum GameMap {
             new Location(Bukkit.getWorld("Warsong"), 42.5, 20.5, 54.5), // BLUE HEALING
             new Location(Bukkit.getWorld("Warsong"), 102.5, 20.5, 89.5), // RED HEALING
 
-            new Location(Bukkit.getWorld("Warsong"), 71.5, 39.5, -97.5), // BLUE LOBBY SPAWN
-            new Location(Bukkit.getWorld("Warsong"), 73.5, 40.5, 236.5), // RED LOBBY SPAWN
+            new Location(Bukkit.getWorld("Warsong"), 71.5, 39.5, -97.5, 90, 0), // BLUE LOBBY SPAWN
+            new Location(Bukkit.getWorld("Warsong"), 73.5, 40.5, 236.5, -90, 0), // RED LOBBY SPAWN
 
-            new Location(Bukkit.getWorld("Warsong"), 38.5, 29.5, 14.5), // BLUE RESPAWN
-            new Location(Bukkit.getWorld("Warsong"), 119.5, 29.5, 124.5, 180, 0), // RED RESPAWN
+            new Location(Bukkit.getWorld("Warsong"), 45.5, 29.5, 15.5, -30, 0), // BLUE RESPAWN
+            new Location(Bukkit.getWorld("Warsong"), 99.5, 29.5, 128.5, 145, 0), // RED RESPAWN
 
             new Location(Bukkit.getWorld("Warsong"), 56.5, 39.5, -102.5), // BLUE FLAG
-            new Location(Bukkit.getWorld("Warsong"), 88.5, 40.5, 241.5), // RED FLAG
+            new Location(Bukkit.getWorld("Warsong"), 88.5, 40.5, 241.5, 180, 0), // RED FLAG
 
             Arrays.asList(
                     new Cuboid(Bukkit.getWorld("Warsong"), 42, 39, -80, 47, 45, -80), // BLUE GATES 1

@@ -200,9 +200,9 @@ public class LeaderboardRanking {
 
     private static double averageAdjusted(long playerAverage, long total) {
         double average = playerAverage / ((total / (double) DatabaseManager.playersInformation.countDocuments()));
-        if (average >= 5) return 1;
+        if (average >= 7) return 1;
         if (average <= 0) return 0;
-        return 1.00699 + (-1.02107 / (1.01398 + Math.pow(average, 3.09248)));
+        return 1.00005 + (-1.00008 / (2.01248 + Math.pow(average, 0.11248)));
     }
 
     private static double averageAdjustedDHP(UUID uuid, String optionalClass) {
