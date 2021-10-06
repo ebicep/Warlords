@@ -79,19 +79,6 @@ public class DatabaseManager {
         return false;
     }
 
-//    public static boolean hasPlayer(UUID uuid) {
-//        if (!connected) return false;
-//        if (cachedPlayerInfo.containsKey(uuid)) return true;
-//        try {
-//            Document document = playersInformation.find(eq("uuid", uuid.toString())).first();
-//            return document != null;
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Some error while trying to find document");
-//            return false;
-//        }
-//    }
-
     public static void loadAllPlayers() {
         if (!connected) return;
         Collection<? extends Player> players = Bukkit.getOnlinePlayers();
@@ -100,12 +87,22 @@ public class DatabaseManager {
                     .asyncFirst(() -> {
                         HashMap<UUID, Document> playerInfo = new HashMap<>();
                         players.forEach(player -> {
-                            playerInfo.put(player.getUniqueId(), playersInformation.find(eq("uuid", player.getUniqueId().toString())).first());
+                            Document document = playersInformation.find(eq("uuid", player.getUniqueId().toString())).first();
+                            if (document != null && !((String) document.get("name")).equalsIgnoreCase(player.getName())) {
+                                Warlords.newChain()
+                                        .async(() -> {
+                                            playersInformation.updateOne(
+                                                    eq("uuid", player.getUniqueId().toString()),
+                                                    combine(set("name", player.getName()))
+                                            );
+                                        }).execute();
+                            }
+                            playerInfo.put(player.getUniqueId(), document);
                         });
                         return playerInfo;
                     }).syncLast(playerInfo -> {
                         playerInfo.forEach((uuid, document) -> {
-                            if(document != null) {
+                            if (document != null) {
                                 cachedPlayerInfo.put(uuid, document);
                                 Player player = Bukkit.getPlayer(uuid);
                                 if (player != null) {
@@ -125,7 +122,16 @@ public class DatabaseManager {
         Player player = Bukkit.getPlayer(uuid);
         try {
             Warlords.newSharedChain(sharedChainName)
-                    .asyncFirst(() -> playersInformation.find(eq("uuid", uuid.toString())).first())
+                    .asyncFirst(() -> {
+                        Document document = playersInformation.find(eq("uuid", uuid.toString())).first();
+                        if (document != null && !((String) document.get("name")).equalsIgnoreCase(player.getName())) {
+                            playersInformation.updateOne(
+                                    eq("uuid", player.getUniqueId().toString()),
+                                    combine(set("name", player.getName()))
+                            );
+                        }
+                        return document;
+                    })
                     .syncLast(playerInfo -> {
                         if (playerInfo == null) {
                             addPlayer(uuid);
@@ -477,7 +483,7 @@ public class DatabaseManager {
             gamesInformation.insertOne(document);
             //sending message if game was added
             for (WarlordsPlayer value : PlayerFilter.playingGame(gameState.getGame())) {
-                if(value.getEntity().isOp()) {
+                if (value.getEntity().isOp()) {
                     value.sendMessage(ChatColor.GREEN + "This game was added to the database");
                 }
             }
