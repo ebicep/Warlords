@@ -138,9 +138,9 @@ public class CustomScoreboard {
         // Points
         {
             scoreboard.getTeam("team_13").setPrefix(ChatColor.BLUE + "BLU: ");
-            scoreboard.getTeam("team_13").setSuffix(ChatColor.AQUA.toString() + gameState.getBluePoints() + ChatColor.GOLD + "/1000");
+            scoreboard.getTeam("team_13").setSuffix(ChatColor.AQUA.toString() + gameState.getBluePoints() + ChatColor.GOLD + "/" + gameState.getPointLimit());
             scoreboard.getTeam("team_12").setPrefix(ChatColor.RED + "RED: ");
-            scoreboard.getTeam("team_12").setSuffix(ChatColor.AQUA.toString() + gameState.getRedPoints() + ChatColor.GOLD + "/1000");
+            scoreboard.getTeam("team_12").setSuffix(ChatColor.AQUA.toString() + gameState.getRedPoints() + ChatColor.GOLD + "/" + gameState.getPointLimit());
         }
         // Flags
         {

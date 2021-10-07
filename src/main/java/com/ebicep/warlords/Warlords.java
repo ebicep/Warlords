@@ -225,6 +225,8 @@ public class Warlords extends JavaPlugin {
         new ChatChannelCommand().register(this);
         new BotCommands().register(this);
         new LeaderboardCommand().register(this);
+        new RecordGamesCommand().register(this);
+        new GamesCommand().register(this);
 
         updateHeads();
 

@@ -37,6 +37,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static com.mongodb.client.model.Aggregates.sort;
+import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Sorts.descending;
 import static com.mongodb.client.model.Updates.combine;
@@ -53,6 +54,8 @@ public class DatabaseManager {
     public static HashMap<UUID, Document> cachedPlayerInfo = new HashMap<>();
     public static HashMap<String, Long> cachedTotalKeyValues = new HashMap<>();
     public static String lastWarlordsPlusString = "";
+
+    public static final List<GameInformation> previousGames = new ArrayList<>();
 
     public static boolean connect() {
         try {
@@ -412,7 +415,35 @@ public class DatabaseManager {
 
     }
 
-    public static void addGame(PlayingState gameState) {
+    public static void removeGameFromDatabase(GameInformation gameInformation) {
+        Warlords.newChain()
+                .async(() -> {
+                    gameInformation.oldPlayerInfo.forEach((uuid, stringObjectHashMap) -> {
+                        updatePlayerInformation(uuid, stringObjectHashMap, FieldUpdateOperators.INCREMENT);
+                    });
+                    gamesInformation.deleteOne(and(
+                            eq("date", gameInformation.getGameInfo().get("date")),
+                            eq("time_left", gameInformation.getGameInfo().get("time_left"))
+                    ));
+                }).execute();
+    }
+
+    public static void addGameToDatabase(GameInformation gameInformation) {
+        try {
+            gameInformation.playerInfo.forEach((uuid, stringObjectHashMap) -> {
+                updatePlayerInformation(uuid, stringObjectHashMap, FieldUpdateOperators.INCREMENT);
+            });
+            Warlords.newChain()
+                    .async(() -> gamesInformation.insertOne(gameInformation.getGameInfo()))
+                    .execute();
+            System.out.println(ChatColor.GREEN + "[Warlords] Added game");
+        } catch (MongoWriteException e) {
+            e.printStackTrace();
+            System.out.println(ChatColor.GREEN + "[Warlords] Error trying to insert game stats");
+        }
+    }
+
+    public static void addGame(PlayingState gameState, boolean addToDatabase) {
         if (!connected) return;
         List<Document> blue = new ArrayList<>();
         List<Document> red = new ArrayList<>();
@@ -461,8 +492,8 @@ public class DatabaseManager {
             playerInfo.put(className + "." + specName + ".healing", healing);
             playerInfo.put(className + "." + specName + ".absorbed", absorbed);
 
-            //newPlayerInfo.put(value.getUuid(), playerInfo);
-            updatePlayerInformation(value.getUuid(), playerInfo, FieldUpdateOperators.INCREMENT);
+            newPlayerInfo.put(value.getUuid(), playerInfo);
+            //updatePlayerInformation(value.getUuid(), playerInfo, FieldUpdateOperators.INCREMENT);
 
             if (value.getTeam() == Team.BLUE) {
                 gameAddPlayerStats(blue, value);
@@ -481,80 +512,19 @@ public class DatabaseManager {
                 .append("red_points", gameState.getStats(Team.RED).points())
                 .append("players", new Document("blue", blue).append("red", red))
                 .append("stat_info", getWarlordsPlusEndGameStats(gameState));
-        try {
-            gamesInformation.insertOne(document);
-//            Warlords.newChain()
-//                    .async(() -> {
-//                        newPlayerInfo.forEach((uuid, stringObjectHashMap) -> {
-//                            updatePlayerInformation(uuid, stringObjectHashMap, FieldUpdateOperators.INCREMENT);
-//                        });
-//                        gamesInformation.insertOne(document);
-//                    })
-//                    .async(() -> {
-//                        for (WarlordsPlayer value : PlayerFilter.playingGame(gameState.getGame())) {
-//                            loadPlayer(value.getUuid());
-//                            if(value.getEntity().isOp()) {
-//                                value.sendMessage(ChatColor.GREEN + "This game was added to the database");
-//                            }
-//                        }
-//                    })
-//                    .execute();
-            System.out.println(ChatColor.GREEN + "[Warlords] Added game");
-        } catch (MongoWriteException e) {
-            e.printStackTrace();
-            System.out.println(ChatColor.GREEN + "[Warlords] Error trying to insert game stats");
-        }
-    }
 
-    private static HashMap<UUID, HashMap<String, Object>> getNewPlayerInfo(PlayingState gameState) {
-        HashMap<UUID, HashMap<String, Object>> newPlayerInfo = new HashMap<>();
-        for (WarlordsPlayer value : PlayerFilter.playingGame(gameState.getGame())) {
-            int totalKills = value.getTotalKills();
-            int totalAssists = value.getTotalAssists();
-            int totalDeaths = value.getTotalDeaths();
-            boolean won = !gameState.isForceEnd() && gameState.getStats(value.getTeam()).points() > gameState.getStats(value.getTeam().enemy()).points();
-            int flagsCaptured = value.getFlagsCaptured();
-            int flagsReturned = value.getFlagsReturned();
-            long damage = (int) value.getTotalDamage();
-            long healing = (int) value.getTotalHealing();
-            long absorbed = (int) value.getTotalAbsorbed();
-            String className = value.getSpec().getClassName().toLowerCase();
-            String specName = value.getSpecClass().name.toLowerCase();
-            HashMap<String, Object> playerInfo = new HashMap<>();
-            playerInfo.put("kills", totalKills);
-            playerInfo.put("assists", totalAssists);
-            playerInfo.put("deaths", totalDeaths);
-            playerInfo.put("wins", won ? 1 : 0);
-            playerInfo.put("losses", won ? 0 : 1);
-            playerInfo.put("flags_captured", flagsCaptured);
-            playerInfo.put("flags_returned", flagsReturned);
-            playerInfo.put("damage", damage);
-            playerInfo.put("healing", healing);
-            playerInfo.put("absorbed", absorbed);
-            playerInfo.put(className + ".kills", totalKills);
-            playerInfo.put(className + ".assists", totalAssists);
-            playerInfo.put(className + ".deaths", totalDeaths);
-            playerInfo.put(className + ".wins", won ? 1 : 0);
-            playerInfo.put(className + ".losses", won ? 0 : 1);
-            playerInfo.put(className + ".flags_captured", flagsCaptured);
-            playerInfo.put(className + ".flags_returned", flagsCaptured);
-            playerInfo.put(className + ".damage", damage);
-            playerInfo.put(className + ".healing", healing);
-            playerInfo.put(className + ".absorbed", absorbed);
-            playerInfo.put(className + "." + specName + ".kills", totalKills);
-            playerInfo.put(className + "." + specName + ".assists", totalAssists);
-            playerInfo.put(className + "." + specName + ".deaths", totalDeaths);
-            playerInfo.put(className + "." + specName + ".wins", won ? 1 : 0);
-            playerInfo.put(className + "." + specName + ".losses", won ? 0 : 1);
-            playerInfo.put(className + "." + specName + ".flags_captured", flagsCaptured);
-            playerInfo.put(className + "." + specName + ".flags_returned", flagsReturned);
-            playerInfo.put(className + "." + specName + ".damage", damage);
-            playerInfo.put(className + "." + specName + ".healing", healing);
-            playerInfo.put(className + "." + specName + ".absorbed", absorbed);
-
-            newPlayerInfo.put(value.getUuid(), playerInfo);
+        GameInformation gameInformation = new GameInformation(document, newPlayerInfo);
+        previousGames.add(gameInformation);
+        if (addToDatabase) {
+            addGameToDatabase(gameInformation);
         }
-        return newPlayerInfo;
+//        try {
+//            gamesInformation.insertOne(document);
+//            System.out.println(ChatColor.GREEN + "[Warlords] Added game");
+//        } catch (MongoWriteException e) {
+//            e.printStackTrace();
+//            System.out.println(ChatColor.GREEN + "[Warlords] Error trying to insert game stats");
+//        }
     }
 
     public static String getWarlordsPlusEndGameStats(PlayingState gameState) {
@@ -622,5 +592,46 @@ public class DatabaseManager {
 
     public static MongoCollection<Document> getGamesInformation() {
         return gamesInformation;
+    }
+
+    public static class GameInformation {
+
+        private Document gameInfo;
+        private HashMap<UUID, HashMap<String, Object>> playerInfo;
+        private HashMap<UUID, HashMap<String, Object>> oldPlayerInfo = new HashMap<>();
+
+        public GameInformation(Document gameInfo, HashMap<UUID, HashMap<String, Object>> playerInfo) {
+            this.gameInfo = gameInfo;
+            this.playerInfo = playerInfo;
+            playerInfo.forEach((uuid, stringObjectHashMap) -> {
+                HashMap<String, Object> newHashMap = new HashMap<>();
+                stringObjectHashMap.forEach((s, o) -> {
+                    if (o instanceof Integer) {
+                        newHashMap.put(s, -((Integer) o));
+                    } else if (o instanceof Long) {
+                        newHashMap.put(s, -((Long) o));
+                    }
+                });
+                this.oldPlayerInfo.put(uuid, newHashMap);
+            });
+        }
+
+        public Document getGameInfo() {
+            return gameInfo;
+        }
+
+        public HashMap<UUID, HashMap<String, Object>> getPlayerInfo() {
+            return playerInfo;
+        }
+
+        public HashMap<UUID, HashMap<String, Object>> getOldPlayerInfo() {
+            return oldPlayerInfo;
+        }
+
+        public String getGameLabel() {
+            return ChatColor.GRAY.toString() + gameInfo.get("date") + ChatColor.DARK_GRAY + " - " +
+                    ChatColor.GREEN + gameInfo.get("map") + ChatColor.DARK_GRAY + " - " +
+                    ChatColor.GRAY + "(" + ChatColor.BLUE + gameInfo.get("blue_points") + ChatColor.GRAY + ":" + ChatColor.RED + gameInfo.get("red_points") + ChatColor.GRAY + ")";
+        }
     }
 }

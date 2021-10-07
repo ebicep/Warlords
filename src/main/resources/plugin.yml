@@ -62,3 +62,9 @@ commands:
   lb:
     description: Leaderboard Commands
     usage: /lb
+  recordgames:
+    description: Toggles recording games
+    aliases: [ recordgames, countgames ]
+  games:
+    description: Games stuff
+    aliases: [ games ]
