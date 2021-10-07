@@ -2,6 +2,7 @@ package com.ebicep.warlords.maps.state;
 
 import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.commands.debugcommands.RecordGamesCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.FieldUpdateOperators;
 import com.ebicep.warlords.database.LeaderboardRanking;
@@ -286,7 +287,7 @@ public class PlayingState implements State, TimerDebugAble {
             this.powerUps = null;
         }
         Warlords.getPlayers().forEach(((uuid, warlordsPlayer) -> warlordsPlayer.removeGrave()));
-        if (!forceEnd && game.playersCount() >= 16 && timer <= 12000) {
+        if (RecordGamesCommand.recordGames && !forceEnd && game.playersCount() >= 16 && timer <= 12000) {
             if (getBluePoints() > getRedPoints()) {
                 BotManager.sendMessageToNotificationChannel("[GAME] A game ended with **BLUE** winning " + getBluePoints() + " to " + getRedPoints());
             } else if (getBluePoints() < getRedPoints()) {
@@ -303,6 +304,7 @@ public class PlayingState implements State, TimerDebugAble {
                     .execute();
             //DatabaseManager.addGame(PlayingState.this);
         } else {
+            DatabaseManager.addGame(PlayingState.this, false);
             game.forEachOnlinePlayer(((player, team) -> {
                 if(player.isOp()) {
                     player.sendMessage(ChatColor.RED + "This game was not added to the database");
@@ -316,7 +318,7 @@ public class PlayingState implements State, TimerDebugAble {
         List<WarlordsPlayer> players = new ArrayList<>(Warlords.getPlayers().values());
         players = players.stream().sorted(Comparator.comparing(WarlordsPlayer::getTotalDamage).reversed()).collect(Collectors.toList());
         if (players.get(0).getTotalDamage() <= 500000) {
-            DatabaseManager.addGame(PlayingState.this);
+            DatabaseManager.addGame(PlayingState.this, true);
             for (WarlordsPlayer player : PlayerFilter.playingGame(game)) {
                 if (player.getEntity() instanceof Player) {
                     DatabaseManager.loadPlayer((Player) player.getEntity());
@@ -396,6 +398,10 @@ public class PlayingState implements State, TimerDebugAble {
 
     public boolean isForceEnd() {
         return forceEnd;
+    }
+
+    public int getPointLimit() {
+        return pointLimit;
     }
 
     private static <K, V, M extends Map<K, V>> BinaryOperator<M> mapMerger(BinaryOperator<V> mergeFunction) {
