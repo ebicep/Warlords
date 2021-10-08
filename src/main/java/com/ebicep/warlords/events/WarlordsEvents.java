@@ -466,7 +466,7 @@ public class WarlordsEvents implements Listener {
                 if (!Warlords.playerChatChannels.containsKey(uuid)) {
                     Warlords.playerChatChannels.put(uuid, ChatChannels.ALL);
                 }
-                switch (Warlords.playerChatChannels.get(uuid)) {
+                switch (Warlords.playerChatChannels.getOrDefault(uuid, ChatChannels.ALL)) {
                     case ALL:
                         WarlordsPlayer wp = Warlords.getPlayer(player);
                         if (wp == null) {
