@@ -535,8 +535,25 @@ public final class WarlordsPlayer {
             }
             return;
         }
+
+        if (!attacker.getCooldownManager().getCooldown(Inferno.class).isEmpty() && (!ability.isEmpty() && !ability.equals("Time Warp"))) {
+            critChance += attacker.getSpec().getOrange().getCritChance();
+            critMultiplier += attacker.getSpec().getOrange().getCritMultiplier();
+        }
+        //crit
+        float damageHealValue = (int) ((Math.random() * (max - min)) + min);
+        int crit = (int) ((Math.random() * (100)));
+        boolean isCrit = false;
+        if (crit <= critChance && attacker.canCrit) {
+            isCrit = true;
+            damageHealValue *= critMultiplier / 100f;
+        }
+        final float damageHealValueBeforeReduction = damageHealValue;
+        float totalReduction = 1 - spec.getDamageResistance() / 100f;
+
         if (attacker == this && (ability.equals("Fall") || ability.isEmpty())) {
             if (ability.isEmpty()) {
+                //TRUE DAMAGE
                 sendMessage("" + ChatColor.RED + "\u00AB" + ChatColor.GRAY + " You took " + ChatColor.RED + Math.round(min * -1) + ChatColor.GRAY + " melee damage.");
                 regenTimer = 10;
                 if (health + min <= 0 && !cooldownManager.checkUndyingArmy(false)) {
@@ -556,53 +573,35 @@ public final class WarlordsPlayer {
                     }
                 }
             } else {
-                //TODO FIX FIX IT JUST GETS MORE MESSY LETS GOOOOOOOOOOOOOOO
-                sendMessage("" + ChatColor.RED + "\u00AB" + ChatColor.GRAY + " You took " + ChatColor.RED + Math.round(min * -1) + ChatColor.GRAY + " fall damage.");
+                //FALL
+                damageHealValue *= totalReduction;
+
+                sendMessage("" + ChatColor.RED + "\u00AB" + ChatColor.GRAY + " You took " + ChatColor.RED + Math.round(damageHealValue * -1) + ChatColor.GRAY + " fall damage.");
                 regenTimer = 10;
-                if (health + min < 0 && !cooldownManager.checkUndyingArmy(false)) {
+                if (health + damageHealValue < 0 && !cooldownManager.checkUndyingArmy(false)) {
                     die(attacker);
                     gameState.addKill(team, false); // TODO, fall damage is only a suicide if it happens more than 5 seconds after the last damage
                     //title YOU DIED
                     if (entity instanceof Player) {
-                        PacketUtils.sendTitle((Player) entity, ChatColor.RED + "YOU DIED!", ChatColor.GRAY + "You took " + ChatColor.RED + Math.round(min * -1) + ChatColor.GRAY + " fall damage and died.", 0, 40, 0);
+                        PacketUtils.sendTitle((Player) entity, ChatColor.RED + "YOU DIED!", ChatColor.GRAY + "You took " + ChatColor.RED + Math.round(damageHealValue * -1) + ChatColor.GRAY + " fall damage and died.", 0, 40, 0);
                     }
 
                     health = 0;
                 } else {
-                    health += min;
+                    health += damageHealValue;
                 }
                 entity.playEffect(EntityEffect.HURT);
                 for (Player player1 : attacker.getWorld().getPlayers()) {
                     player1.playSound(entity.getLocation(), Sound.HURT_FLESH, 1, 1);
                 }
-                addAbsorbed(Math.abs(-min * spec.getDamageResistance() / 100));
+                addAbsorbed(Math.abs(-damageHealValue * spec.getDamageResistance() / 100));
             }
         } else {
-            if (!attacker.getCooldownManager().getCooldown(Inferno.class).isEmpty() && (!ability.isEmpty() && !ability.equals("Time Warp"))) {
-                critChance += attacker.getSpec().getOrange().getCritChance();
-                critMultiplier += attacker.getSpec().getOrange().getCritMultiplier();
-            }
-            //crit
-            float damageHealValue = (int) ((Math.random() * (max - min)) + min);
-            int crit = (int) ((Math.random() * (100)));
-            boolean isCrit = false;
-            if (crit <= critChance && attacker.canCrit) {
-                isCrit = true;
-                damageHealValue *= critMultiplier / 100f;
-            }
-
-            final float damageHealValueBeforeReduction = damageHealValue;
-
             if (!ignoreReduction) {
                 // Flag carriers take more damage
                 damageHealValue *= damageHealValue > 0 || flagDamageMultiplier == 0 ? 1 : flagDamageMultiplier;
 
-                //reduction beginning with base resistance
-                float totalReduction = 1;
                 if (min < 0 && !HammerOfLight.standingInHammer(attacker, entity)) {
-                    //base
-                    totalReduction = 1 - spec.getDamageResistance() / 100f;
-
                     //add damage
                     for (Cooldown cooldown : attacker.getCooldownManager().getCooldown(Berserk.class)) {
                         totalReduction *= 1.3;

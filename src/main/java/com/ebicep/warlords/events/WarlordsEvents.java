@@ -431,6 +431,15 @@ public class WarlordsEvents implements Listener {
                         }
                     }
                 }
+            } else if (e.getCause() == EntityDamageEvent.DamageCause.DROWNING) {
+                //100 flat
+                if (e.getEntity() instanceof Player) {
+                    WarlordsPlayer wp = Warlords.getPlayer(e.getEntity());
+                    if (wp != null) {
+                        wp.addHealth(wp, "Fall", -100, -100, -1, 100, false);
+                        wp.setRegenTimer(10);
+                    }
+                }
             }
         }
         e.setCancelled(true);
