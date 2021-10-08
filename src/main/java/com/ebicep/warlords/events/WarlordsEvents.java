@@ -154,6 +154,12 @@ public class WarlordsEvents implements Listener {
                     ((Player) warlordsPlayer.getEntity()).hidePlayer(player);
                 }
             }));
+        } else {
+            Bukkit.getOnlinePlayers().forEach(p -> {
+                if(!Warlords.hasPlayer(p)) {
+                    player.hidePlayer(p);
+                }
+            });
         }
 
         //???
