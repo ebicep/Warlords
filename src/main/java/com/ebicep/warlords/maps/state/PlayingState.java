@@ -204,7 +204,7 @@ public class PlayingState implements State, TimerDebugAble {
                     this.timer = OVERTIME_TIME;
                     this.overTimeActive = true;
                     assert getStats(Team.BLUE).points == getStats(Team.RED).points;
-                    this.pointLimit = getStats(Team.BLUE).points + 25;
+                    this.pointLimit = getStats(Team.BLUE).points + 20;
                     this.game.forEachOnlinePlayer((player, team) -> {
                         PacketUtils.sendTitle(player, ChatColor.LIGHT_PURPLE + "OVERTIME!", ChatColor.YELLOW + "First team to reach 20 points wins!", 0, 60, 0);
                         player.sendMessage("§dOvertime is now active!");
