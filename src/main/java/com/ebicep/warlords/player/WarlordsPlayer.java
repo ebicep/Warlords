@@ -549,7 +549,10 @@ public final class WarlordsPlayer {
             damageHealValue *= critMultiplier / 100f;
         }
         final float damageHealValueBeforeReduction = damageHealValue;
-        float totalReduction = 1 - spec.getDamageResistance() / 100f;
+        float totalReduction = 1;
+        if(min < 0) {
+            totalReduction *= 1 - spec.getDamageResistance() / 100f;
+        }
 
         if (attacker == this && (ability.equals("Fall") || ability.isEmpty())) {
             if (ability.isEmpty()) {
