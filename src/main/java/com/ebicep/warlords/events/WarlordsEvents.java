@@ -520,6 +520,10 @@ public class WarlordsEvents implements Listener {
             }).get();
         } catch (InterruptedException | ExecutionException ex) {
             Warlords.getInstance().getLogger().log(Level.SEVERE, null, ex);
+            System.out.println("UUID: " + uuid);
+            System.out.println("Chat Channels: " + Warlords.playerChatChannels);
+            System.out.println("Player Chat Channel: " + Warlords.playerChatChannels.get(uuid));
+            System.out.println("Contains UUID: " + Warlords.playerChatChannels.containsKey(uuid));
         }
     }
 
