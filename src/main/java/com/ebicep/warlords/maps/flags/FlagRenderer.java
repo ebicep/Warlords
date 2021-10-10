@@ -5,10 +5,7 @@ import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.player.ArmorManager;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.ItemBuilder;
-import org.bukkit.ChatColor;
-import org.bukkit.DyeColor;
-import org.bukkit.Effect;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.banner.Pattern;
@@ -128,23 +125,18 @@ class FlagRenderer {
                 ((Banner) newData).setFacingDirection(dir);
                 block.setData(newData.getData());
             }
-            ArmorStand stand = this.lastLocation.getLocation().getWorld().spawn(block.getLocation().add(.5, 0, .5), ArmorStand.class);
-            renderedArmorStands.add(stand);
-            stand.setGravity(false);
-            stand.setCanPickupItems(false);
-            stand.setCustomName(info.getTeam() == Team.BLUE ? ChatColor.BLUE + "" + ChatColor.BOLD + "BLU FLAG" : ChatColor.RED + "" + ChatColor.BOLD + "RED FLAG");
-            stand.setCustomNameVisible(true);
-            stand.setMetadata("TEAM", new FixedMetadataValue(plugin, info.getTeam()));
-            stand.setVisible(false);
 
-            ArmorStand stand1 = this.lastLocation.getLocation().getWorld().spawn(block.getLocation().add(.5, -0.3, .5), ArmorStand.class);
-            renderedArmorStands.add(stand1);
-            stand1.setGravity(false);
-            stand1.setCanPickupItems(false);
-            stand1.setCustomName(ChatColor.WHITE + "" + ChatColor.BOLD + "LEFT-CLICK TO STEAL IT");
-            stand1.setCustomNameVisible(true);
-            stand1.setMetadata("TEAM", new FixedMetadataValue(plugin, info.getTeam()));
-            stand1.setVisible(false);
+            spawnArmorStand(
+                    block.getLocation().add(.5, 0, .5),
+                    info.getTeam().boldColoredPrefix() + " FLAG",
+                    info.getTeam()
+            );
+            spawnArmorStand(
+                    block.getLocation().add(.5, -0.3, .5),
+                    ChatColor.WHITE + "" + ChatColor.BOLD + "LEFT-CLICK TO STEAL IT" + info.getTeam().teamColor(),
+                    info.getTeam()
+            );
+
         } else if (this.lastLocation instanceof PlayerFlagLocation) {
             PlayerFlagLocation flag = (PlayerFlagLocation) this.lastLocation;
             runningTasksCancel.add(flag.getPlayer().getSpeed().addSpeedModifier("FLAG", -20, 0, true));
@@ -161,6 +153,32 @@ class FlagRenderer {
                 player.getInventory().setHelmet(item);
                 player.getInventory().setItem(6, new ItemBuilder(Material.BANNER, 1).name("§aDrop Flag").get());
             }
+        }
+    }
+
+    private void spawnArmorStand(Location loc, String name, Team team) {
+        boolean hasOldFlag = false;
+        for (Entity entity : this.lastLocation.getLocation().getWorld().getEntities()) {
+            if (entity.getLocation().distanceSquared(loc) < 0.25 && entity instanceof ArmorStand && entity.getCustomName().equals(name)) {
+                hasOldFlag = true;
+                renderedArmorStands.add(entity);
+                ((ArmorStand) entity).setGravity(false);
+                ((ArmorStand) entity).setCanPickupItems(false);
+                entity.setCustomName(name);
+                entity.setCustomNameVisible(true);
+                entity.removeMetadata("TEAM", Warlords.getInstance());
+                entity.setMetadata("TEAM", new FixedMetadataValue(Warlords.getInstance(), info.getTeam()));
+            }
+        }
+        if (!hasOldFlag) {
+            ArmorStand stand = this.lastLocation.getLocation().getWorld().spawn(loc, ArmorStand.class);
+            renderedArmorStands.add(stand);
+            stand.setGravity(false);
+            stand.setCanPickupItems(false);
+            stand.setCustomName(name);
+            stand.setCustomNameVisible(true);
+            stand.setMetadata("TEAM", new FixedMetadataValue(Warlords.getInstance(), info.getTeam()));
+            stand.setVisible(false);
         }
     }
 
