@@ -126,16 +126,23 @@ class FlagRenderer {
                 block.setData(newData.getData());
             }
 
-            spawnArmorStand(
-                    block.getLocation().add(.5, 0, .5),
-                    info.getTeam().boldColoredPrefix() + " FLAG",
-                    info.getTeam()
-            );
-            spawnArmorStand(
-                    block.getLocation().add(.5, -0.3, .5),
-                    ChatColor.WHITE + "" + ChatColor.BOLD + "LEFT-CLICK TO STEAL IT" + info.getTeam().teamColor(),
-                    info.getTeam()
-            );
+            ArmorStand stand = this.lastLocation.getLocation().getWorld().spawn(block.getLocation().add(.5, 0, .5), ArmorStand.class);
+            renderedArmorStands.add(stand);
+            stand.setGravity(false);
+            stand.setCanPickupItems(false);
+            stand.setCustomName(info.getTeam() == Team.BLUE ? ChatColor.BLUE + "" + ChatColor.BOLD + "BLU FLAG" : ChatColor.RED + "" + ChatColor.BOLD + "RED FLAG");
+            stand.setCustomNameVisible(true);
+            stand.setMetadata("TEAM", new FixedMetadataValue(plugin, info.getTeam()));
+            stand.setVisible(false);
+
+            ArmorStand stand1 = this.lastLocation.getLocation().getWorld().spawn(block.getLocation().add(.5, -0.3, .5), ArmorStand.class);
+            renderedArmorStands.add(stand1);
+            stand1.setGravity(false);
+            stand1.setCanPickupItems(false);
+            stand1.setCustomName(ChatColor.WHITE + "" + ChatColor.BOLD + "LEFT-CLICK TO STEAL IT");
+            stand1.setCustomNameVisible(true);
+            stand1.setMetadata("TEAM", new FixedMetadataValue(plugin, info.getTeam()));
+            stand1.setVisible(false);
 
         } else if (this.lastLocation instanceof PlayerFlagLocation) {
             PlayerFlagLocation flag = (PlayerFlagLocation) this.lastLocation;
@@ -156,7 +163,7 @@ class FlagRenderer {
         }
     }
 
-    private void spawnArmorStand(Location loc, String name, Team team) {
+    /*private void spawnArmorStand(Location loc, String name, Team team) {
         boolean hasOldFlag = false;
         for (Entity entity : this.lastLocation.getLocation().getWorld().getEntities()) {
             if (entity.getLocation().distanceSquared(loc) < 0.25 && entity instanceof ArmorStand && entity.getCustomName().equals(name)) {
@@ -180,7 +187,7 @@ class FlagRenderer {
             stand.setMetadata("TEAM", new FixedMetadataValue(Warlords.getInstance(), info.getTeam()));
             stand.setVisible(false);
         }
-    }
+    }*/
 
     public void reset() {
         this.lastLocation = null;

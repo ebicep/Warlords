@@ -59,7 +59,8 @@ public class GameMenu {
             .lore("§7Try your luck in rerolling or\nopening weapons here!\n(has NO effect on actual games.)")
             .get();
 
-    private static final String[] weaponNames = new String[]{"Warlord", "Vanquisher", "Champion"};
+    private static final String[] legendaryNames = new String[]{"Warlord", "Vanquisher", "Champion"};
+    private static final String[] mythicNames = new String[]{"Mythical", "Ascendant", "Brilliant"};
     private static final Map<WeaponsRarity, List<Weapons>> weaponByRarity = Stream.of(Weapons.values()).collect(Collectors.groupingBy(Weapons::getRarity));
     private static final Random random = new Random();
     private static final Map<UUID, Long> openWeaponCooldown = new HashMap<>();
@@ -608,7 +609,7 @@ public class GameMenu {
         icon2.lore(
                 "§7Is RNG with you today?",
                 "",
-                "§7Left-click to roll 45 Enchanted weapons!"
+                "§7Left-click to roll 10 Enchanted weapons!"
         );
 
         menu.setItem(5, 1, icon2.get(), (m, e) -> {
@@ -621,10 +622,13 @@ public class GameMenu {
                 foundWeaponCount.put(rarity, 0);
             }
 
+            player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 2);
+
             if (weaponCooldown == null || weaponCooldown < System.currentTimeMillis()) {
                 openWeaponCooldown.put(player.getUniqueId(), System.currentTimeMillis() + 8 * 60 * 1000);
-                for (int i = 0; i < 45; i++) {
-                    String name = weaponNames[random.nextInt(weaponNames.length)];
+                for (int i = 0; i < 10; i++) {
+                    String legendaryName = legendaryNames[random.nextInt(legendaryNames.length)];
+                    String mythicName = mythicNames[random.nextInt(mythicNames.length)];
 
                     double chance = random.nextDouble() * 100;
 
@@ -633,44 +637,42 @@ public class GameMenu {
                     PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
                     Classes selectedClass = playerSettings.getSelectedClass();
 
-                    if (chance < 96.3) {
+                    if (chance < 96.39) {
                         rarity = WeaponsRarity.RARE;
-                    } else if (chance < 96.3 + 3) {
+                    } else if (chance < 96.39 + 3) {
                         rarity = WeaponsRarity.EPIC;
-                    } else if (chance < 96.3 + 3 + 0.6) {
+                    } else if (chance < 96.39 + 3 + 0.6) {
                         rarity = WeaponsRarity.LEGENDARY;
                     } else {
-                        rarity = WeaponsRarity.MYTHIC;
+                        // TODO: change october 13th
+                        rarity = WeaponsRarity.LEGENDARY;
                     }
 
                     foundWeaponCount.compute(rarity, (key, value) -> value == null ? 1 : value + 1);
                     List<Weapons> weapons = weaponByRarity.get(rarity);
 
-                    String message = rarity.getWeaponChatColor() + name + "'s " + weapons.get(random.nextInt(weapons.size())).getName() + " of the " + selectedClass.name;
+                    String message = rarity.getWeaponChatColor() + legendaryName + "'s " + weapons.get(random.nextInt(weapons.size())).getName() + " of the " + selectedClass.name;
+                    String mythicMessage = rarity.getWeaponChatColor() + "§l" + mythicName + " " + weapons.get(random.nextInt(weapons.size())).getName() + " of the " + selectedClass.name;
 
-                    if (rarity != WeaponsRarity.RARE) {
+                    if (rarity == WeaponsRarity.EPIC) {
                         Bukkit.broadcastMessage(ChatColor.AQUA + player.getDisplayName() + " §fgot lucky and found " + message);
                         player.sendMessage(ChatColor.GRAY + "You received: " + message);
                     }
 
-                    if (rarity == WeaponsRarity.EPIC) {
-                        for (Player player1 : player.getWorld().getPlayers()) {
-                            player1.playSound(player.getLocation(), "epicfind", 500, 1);
-                        }
-                    }
-
                     if (rarity == WeaponsRarity.LEGENDARY) {
                         for (Player player1 : player.getWorld().getPlayers()) {
-                            player1.playSound(player.getLocation(), "legendaryfind", 500, 1);
+                            player1.playSound(player.getLocation(), "legendaryfind", 1, 1);
                         }
+                        Bukkit.broadcastMessage(ChatColor.AQUA + player.getDisplayName() + " §fgot lucky and found " + message);
                         player.getWorld().spigot().strikeLightningEffect(player.getLocation(), false);
                     }
 
                     if (rarity == WeaponsRarity.MYTHIC) {
                         for (Player player1 : player.getWorld().getPlayers()) {
-                            player1.playSound(player.getLocation(), "legendaryfind", 500, 0.85f);
+                            player1.playSound(player.getLocation(), "legendaryfind", 500, 0.8f);
+                            player1.playSound(player.getLocation(), Sound.ENDERDRAGON_GROWL, 500, 0.8f);
                         }
-                        player.sendMessage("§7My, oh my, §b"+ player.getDisplayName() + "§7, what could this be? Perhaps it comes out soon...");
+                        Bukkit.broadcastMessage(ChatColor.AQUA + player.getDisplayName() + " §fgot lucky and found " + mythicMessage);
 
                         for (int j = 0; j < 10; j++) {
                             player.getWorld().spigot().strikeLightningEffect(player.getLocation(), false);
