@@ -44,6 +44,7 @@ public class PreLobbyState implements State, TimerDebugAble {
                     //TODO rewrite all not in game scoreboards with the team shit
                     updateTimeLeft(player, time);
                     updatePlayers(player, players, game);
+                    player.setAllowFlight(false);
                     //F U N C T I O N A L
                     updateClass(player);
                 });
@@ -79,6 +80,7 @@ public class PreLobbyState implements State, TimerDebugAble {
                         Utils.sendMessage(player, true, "");
                         Utils.sendMessage(player, false, "" + ChatColor.GREEN + ChatColor.BOLD + "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬");
                         player.playSound(player.getLocation(), "gamestart", 1, 1);
+                        player.setAllowFlight(false);
                     });
                 }
             }

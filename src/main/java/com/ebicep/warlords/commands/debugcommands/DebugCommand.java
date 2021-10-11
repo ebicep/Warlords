@@ -38,13 +38,14 @@ public class DebugCommand implements CommandExecutor {
             //sender.sendMessage("§cYou need to pass an argument, valid arguments: [timer, energy, cooldown, cooldownmode, takedamage]");
             return true;
         }
+        String input = args[0];
         WarlordsPlayer player = BaseCommand.requireWarlordsPlayer(sender);
-        if (args[0].equals("energy") ||
-                args[0].equals("cooldown") ||
-                args[0].equals("damage") ||
-                args[0].equals("takedamage") ||
-                args[0].equals("heal") ||
-                args[0].equals("crits")
+        if (input.equalsIgnoreCase("energy") ||
+                input.equalsIgnoreCase("cooldown") ||
+                input.equalsIgnoreCase("damage") ||
+                input.equalsIgnoreCase("takedamage") ||
+                input.equalsIgnoreCase("heal") ||
+                input.equalsIgnoreCase("crits")
         ) {
             if (args.length == 3 && args[2] != null) {
                 player = Warlords.getPlayer(Bukkit.getPlayer(args[2]).getUniqueId());
@@ -54,7 +55,16 @@ public class DebugCommand implements CommandExecutor {
             }
         }
 
-        switch (args[0]) {
+        if(input.equalsIgnoreCase("respawn")) {
+            if (args.length == 2 && args[1] != null) {
+                player = Warlords.getPlayer(Bukkit.getPlayer(args[1]).getUniqueId());
+            }
+            if (player == null) { // We only have a warlords player if the game is running
+                return true;
+            }
+        }
+
+        switch (input) {
             case "timer":
                 if (!(game.getState() instanceof TimerDebugAble)) {
                     sender.sendMessage("§cThis gamestate cannot be manipulated by the timer debug option");
@@ -141,7 +151,7 @@ public class DebugCommand implements CommandExecutor {
             case "heal":
             case "takedamage": {
                 if (args.length < 2) {
-                    sender.sendMessage("§c" + (args[0].equals("takedamage") ? "Take Damage" : "Heal") + " requires more arguments, valid arguments: [1000, 2000, 3000, 4000, 5000]");
+                    sender.sendMessage("§c" + (input.equals("takedamage") ? "Take Damage" : "Heal") + " requires more arguments, valid arguments: [1000, 2000, 3000, 4000, 5000]");
                     return true;
                 }
                 if (NumberUtils.isNumber(args[1])) {
@@ -152,10 +162,10 @@ public class DebugCommand implements CommandExecutor {
                         return false;
                     }
 
-                    String endMessage = args[0].equals("takedamage") ? "took " + amount + " damage!" : "got " + amount + " heath!";
+                    String endMessage = input.equals("takedamage") ? "took " + amount + " damage!" : "got " + amount + " heath!";
                     sender.sendMessage(ChatColor.RED + "§cDEV: " + player.getColoredName() + " §a" + endMessage);
 
-                    if (args[0].equals("takedamage")) {
+                    if (input.equals("takedamage")) {
                         amount *= -1;
                     }
                     player.addHealth(player, "debug", amount, amount, -1, 100, false);
@@ -210,6 +220,10 @@ public class DebugCommand implements CommandExecutor {
                         sender.sendMessage("§cInvalid option!");
                         return false;
                 }
+
+            case "respawn":
+                player.respawn();
+                return true;
 
             case "freeze": {
                 if (player != null) {

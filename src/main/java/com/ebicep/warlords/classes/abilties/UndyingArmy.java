@@ -71,6 +71,7 @@ public class UndyingArmy extends AbstractAbility {
         int numberOfPlayersWithArmy = 0;
         for (WarlordsPlayer teammate : PlayerFilter.entitiesAround(wp, radius, radius, radius)
                 .aliveTeammatesOf(wp)
+                .closestFirst(wp)
         ) {
             tempUndyingArmy.getPlayersPopped().put(teammate.getUuid(), false);
             if(teammate != wp) {

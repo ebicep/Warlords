@@ -72,13 +72,9 @@ public class WarlordsEvents implements Listener {
             if (!wp.isDeath()) {
                 wp.updatePlayerReference(null);
             }
-            e.setQuitMessage(ChatColor.GREEN + "-----------------------------------\n" +
-                    wp.getColoredNameBold() + ChatColor.GOLD + ChatColor.BOLD + " left the game!\n" +
-                    ChatColor.GREEN + "-----------------------------------");
+            e.setQuitMessage(wp.getColoredNameBold() + ChatColor.GOLD + " left the game!");
         } else {
-            e.setQuitMessage(ChatColor.GREEN + "-----------------------------------\n" +
-                    ChatColor.AQUA + ChatColor.BOLD + e.getPlayer().getName() + ChatColor.GOLD + ChatColor.BOLD + " left the lobby!\n" +
-                    ChatColor.GREEN + "-----------------------------------");
+            e.setQuitMessage(ChatColor.AQUA + e.getPlayer().getName() + ChatColor.GOLD + " left the lobby!");
         }
         if (e.getPlayer().getVehicle() != null) {
             e.getPlayer().getVehicle().remove();
@@ -111,11 +107,6 @@ public class WarlordsEvents implements Listener {
             Utils.sendCenteredMessage(player, ChatColor.GOLD + "Click the Nether Star or do " + ChatColor.GREEN + "/menu" + ChatColor.GOLD + " to open the selection menu.");
             Utils.sendCenteredMessage(player, ChatColor.BLUE + "-----------------------------------------------------");
 
-//            if (player.isOp()) {
-//                Utils.sendCenteredMessage(player, ChatColor.GRAY + "For developers: ");
-//                Utils.sendCenteredMessage(player, ChatColor.GRAY + "Debug menu: /wl");
-//            }
-
             player.getInventory().clear();
             player.getInventory().setArmorContents(new ItemStack[]{null, null, null, null});
             player.getInventory().setItem(4, new ItemBuilder(Material.NETHER_STAR).name("§aSelection Menu").get());
@@ -143,14 +134,10 @@ public class WarlordsEvents implements Listener {
             if (wp.isAlive()) {
                 e.getPlayer().setAllowFlight(false);
             }
-            e.setJoinMessage(ChatColor.GREEN + "-----------------------------------\n" +
-                    wp.getColoredNameBold() + ChatColor.GOLD + ChatColor.BOLD + " rejoined the game!\n" +
-                    ChatColor.GREEN + "-----------------------------------");
+            e.setJoinMessage(wp.getColoredNameBold() + ChatColor.GOLD + " rejoined the game!");
         } else {
             e.getPlayer().setAllowFlight(true);
-            e.setJoinMessage(ChatColor.GREEN + "-----------------------------------\n" +
-                    ChatColor.AQUA + ChatColor.BOLD + e.getPlayer().getName() + ChatColor.GOLD + ChatColor.BOLD + " joined the lobby!\n" +
-                    ChatColor.GREEN + "-----------------------------------");
+            e.setJoinMessage(ChatColor.AQUA + e.getPlayer().getName() + ChatColor.GOLD + " joined the lobby!");
         }
         Player player = e.getPlayer();
         joinInteraction(player);
@@ -167,6 +154,12 @@ public class WarlordsEvents implements Listener {
                     ((Player) warlordsPlayer.getEntity()).hidePlayer(player);
                 }
             }));
+        } else {
+            Bukkit.getOnlinePlayers().forEach(p -> {
+                if(!Warlords.hasPlayer(p)) {
+                    player.hidePlayer(p);
+                }
+            });
         }
 
         //???
@@ -212,16 +205,7 @@ public class WarlordsEvents implements Listener {
                                 });
                     }
                     warlordsPlayerVictim.addHealth(warlordsPlayerAttacker, "", -132, -179, 25, 200, false);
-
-                    if (warlordsPlayerVictim.getEntity() instanceof Zombie) {
-                        if (warlordsPlayerVictim.isDeath()) {
-                            warlordsPlayerVictim.getEntity().setCustomName("");
-                        } else {
-                            String oldName = warlordsPlayerVictim.getEntity().getCustomName();
-                            String newName = oldName.substring(0, oldName.lastIndexOf(" ") + 1) + ChatColor.RED + warlordsPlayerVictim.getHealth() + "❤";
-                            warlordsPlayerVictim.getEntity().setCustomName(newName);
-                        }
-                    }
+                    warlordsPlayerVictim.updateJimmyHealth();
                 }
 
                 if (!warlordsPlayerVictim.getCooldownManager().getCooldown(IceBarrier.class).isEmpty()) {
@@ -375,7 +359,8 @@ public class WarlordsEvents implements Listener {
                 e.getInventory() instanceof CraftInventoryBeacon ||
                 e.getInventory() instanceof CraftInventoryBrewer ||
                 e.getInventory() instanceof CraftInventoryCrafting ||
-                e.getInventory() instanceof CraftInventoryDoubleChest
+                e.getInventory() instanceof CraftInventoryDoubleChest ||
+                e.getInventory() instanceof CraftInventoryFurnace
         ) {
             e.setCancelled(true);
         }
@@ -446,6 +431,15 @@ public class WarlordsEvents implements Listener {
                         }
                     }
                 }
+            } else if (e.getCause() == EntityDamageEvent.DamageCause.DROWNING) {
+                //100 flat
+                if (e.getEntity() instanceof Player) {
+                    WarlordsPlayer wp = Warlords.getPlayer(e.getEntity());
+                    if (wp != null) {
+                        wp.addHealth(wp, "Fall", -100, -100, -1, 100, false);
+                        wp.setRegenTimer(10);
+                    }
+                }
             }
         }
         e.setCancelled(true);
@@ -472,7 +466,7 @@ public class WarlordsEvents implements Listener {
                 if (!Warlords.playerChatChannels.containsKey(uuid)) {
                     Warlords.playerChatChannels.put(uuid, ChatChannels.ALL);
                 }
-                switch (Warlords.playerChatChannels.get(uuid)) {
+                switch (Warlords.playerChatChannels.getOrDefault(uuid, ChatChannels.ALL)) {
                     case ALL:
                         WarlordsPlayer wp = Warlords.getPlayer(player);
                         if (wp == null) {
@@ -526,6 +520,10 @@ public class WarlordsEvents implements Listener {
             }).get();
         } catch (InterruptedException | ExecutionException ex) {
             Warlords.getInstance().getLogger().log(Level.SEVERE, null, ex);
+            System.out.println("UUID: " + uuid);
+            System.out.println("Chat Channels: " + Warlords.playerChatChannels);
+            System.out.println("Player Chat Channel: " + Warlords.playerChatChannels.get(uuid));
+            System.out.println("Contains UUID: " + Warlords.playerChatChannels.containsKey(uuid));
         }
     }
 
@@ -599,6 +597,7 @@ public class WarlordsEvents implements Listener {
             String toucher = ((SpawnFlagLocation) event.getNew()).getLastToucher();
             if (event.getOld() instanceof GroundFlagLocation) {
                 if (toucher != null) {
+                    Objects.requireNonNull(Warlords.getPlayer(Bukkit.getPlayer(toucher).getUniqueId())).addFlagReturn();
                     event.getGame().forEachOnlinePlayer((p, t) -> {
                         ChatColor color = event.getTeam().teamColor();
                         p.sendMessage(color + toucher + " §ehas returned the " + event.getTeam().coloredPrefix() + " §eflag!");
@@ -628,6 +627,7 @@ public class WarlordsEvents implements Listener {
                 PlayerFlagLocation pfl = (PlayerFlagLocation) event.getOld();
                 Team loser = event.getTeam();
                 event.getGameState().addCapture(pfl.getPlayer());
+                pfl.getPlayer().addFlagCap();
                 event.getGame().forEachOnlinePlayer((p, t) -> {
                     String message = pfl.getPlayer().getColoredName() + " §ecaptured the " + loser.coloredPrefix() + " §eflag!";
                     p.sendMessage(message);

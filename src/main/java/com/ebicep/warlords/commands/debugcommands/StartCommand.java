@@ -95,6 +95,8 @@ public class StartCommand implements TabExecutor {
             DatabaseManager.addPlayer(player);
             player.getInventory().clear();
 
+            player.setAllowFlight(false);
+
             player.getInventory().setItem(5, new ItemBuilder(Material.NOTE_BLOCK)
                     .name(ChatColor.GREEN + "Team Selector " + ChatColor.GRAY + "(Right-Click)")
                     .lore(ChatColor.YELLOW + "Click to select your team!")
@@ -111,8 +113,9 @@ public class StartCommand implements TabExecutor {
             ArmorManager.resetArmor(player, Warlords.getPlayerSettings(player.getUniqueId()).getSelectedClass(), team);
         }
 
-        BotManager.sendMessageToNotificationChannel("A **" + game.getMap().getMapName() + "** started with **" + people.size() + (people.size() == 1 ? "** player!" : "** players!"));
-
+        if(people.size() >= 16) {
+            BotManager.sendMessageToNotificationChannel("[GAME] A **" + game.getMap().getMapName() + "** started with **" + people.size() + (people.size() == 1 ? "** player!" : "** players!"));
+        }
         return true;
     }
 

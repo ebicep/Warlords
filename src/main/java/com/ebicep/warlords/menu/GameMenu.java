@@ -5,21 +5,18 @@ import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.util.ItemBuilder;
+import com.ebicep.warlords.util.Utils;
 import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.material.Dye;
 
-import java.sql.Wrapper;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import static java.lang.Math.round;
 
 import static com.ebicep.warlords.menu.Menu.ACTION_CLOSE_MENU;
@@ -62,6 +59,11 @@ public class GameMenu {
             .lore("§7Try your luck in rerolling or\nopening weapons here!\n(has NO effect on actual games.)")
             .get();
 
+    private static final String[] legendaryNames = new String[]{"Warlord", "Vanquisher", "Champion"};
+    private static final String[] mythicNames = new String[]{"Mythical", "Ascendant", "Brilliant"};
+    private static final Map<WeaponsRarity, List<Weapons>> weaponByRarity = Stream.of(Weapons.values()).collect(Collectors.groupingBy(Weapons::getRarity));
+    private static final Random random = new Random();
+    private static final Map<UUID, Long> openWeaponCooldown = new HashMap<>();
 
     public static void openMainMenu(Player player) {
         Classes selectedClass = getSelected(player);
@@ -504,18 +506,8 @@ public class GameMenu {
         menu.openForPlayer(player);
     }
 
-    private static final DecimalFormat decimalFormat = new DecimalFormat("#.#");
-
-    static {
-        decimalFormat.setDecimalSeparatorAlwaysShown(false);
-    }
-
     private static double map(double value, double min, double max) {
         return value * (max - min) + min;
-    }
-
-    private static String format(double value) {
-        return decimalFormat.format(value);
     }
 
     public static void openArcadeMenu(Player player) {
@@ -528,7 +520,6 @@ public class GameMenu {
         );
 
         menu.setItem(3, 1, icon.get(), (m, e) -> {
-            Random random = new Random();
             double difficulty = 1;
             double base = random.nextDouble() * (1 - difficulty);
 
@@ -571,7 +562,7 @@ public class GameMenu {
                 meleeDamageMax = temp;
             }
 
-            String displayScore = "§7Your weapon score is §a" + format(score * 100);
+            String displayScore = "§7Your weapon score is §a" + Utils.formatOptionalTenths(score * 100);
 
             PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
             Classes selectedClass = playerSettings.getSelectedClass();
@@ -605,7 +596,11 @@ public class GameMenu {
             m.getInventory().setItem(e.getRawSlot(), weapon);
 
             if (score > 0.85) {
-                Bukkit.broadcastMessage("§6" + player.getDisplayName() + " §frolled a weapon with a total score of §6" + format(score * 100) + "§f!");
+                Bukkit.broadcastMessage("§6" + player.getDisplayName() + " §frolled a weapon with a total score of §6" + Utils.formatOptionalTenths(score * 100) + "§f!");
+            }
+
+            if (score < 0.15) {
+                Bukkit.broadcastMessage("§6" + player.getDisplayName() + " §frolled a weapon with a total score of §c" + Utils.formatOptionalTenths(score * 100) + "§f!");
             }
         });
 
@@ -614,10 +609,87 @@ public class GameMenu {
         icon2.lore(
                 "§7Is RNG with you today?",
                 "",
-                "§cCOMING SOON"
+                "§7Left-click to roll 10 Enchanted weapons!"
         );
 
-        menu.setItem(5, 1, icon2.get(), ACTION_DO_NOTHING);
+        menu.setItem(5, 1, icon2.get(), (m, e) -> {
+
+            Long weaponCooldown = openWeaponCooldown.get(player.getUniqueId());
+
+            Map<WeaponsRarity, Integer> foundWeaponCount = new EnumMap<>(WeaponsRarity.class);
+
+            for(WeaponsRarity rarity : WeaponsRarity.values()) {
+                foundWeaponCount.put(rarity, 0);
+            }
+
+            if (weaponCooldown == null || weaponCooldown < System.currentTimeMillis()) {
+                openWeaponCooldown.put(player.getUniqueId(), System.currentTimeMillis() + 8 * 60 * 1000);
+                player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 2);
+                for (int i = 0; i < 45; i++) {
+                    String legendaryName = legendaryNames[random.nextInt(legendaryNames.length)];
+                    String mythicName = mythicNames[random.nextInt(mythicNames.length)];
+
+                    double chance = random.nextDouble() * 100;
+
+                    WeaponsRarity rarity;
+
+                    PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
+                    Classes selectedClass = playerSettings.getSelectedClass();
+
+                    if (chance < 96.39) {
+                        rarity = WeaponsRarity.RARE;
+                    } else if (chance < 96.39 + 3) {
+                        rarity = WeaponsRarity.EPIC;
+                    } else if (chance < 96.39 + 3 + 0.6) {
+                        rarity = WeaponsRarity.LEGENDARY;
+                    } else {
+                        // TODO: change october 13th
+                        rarity = WeaponsRarity.LEGENDARY;
+                    }
+
+                    foundWeaponCount.compute(rarity, (key, value) -> value == null ? 1 : value + 1);
+                    List<Weapons> weapons = weaponByRarity.get(rarity);
+
+                    String message = rarity.getWeaponChatColor() + legendaryName + "'s " + weapons.get(random.nextInt(weapons.size())).getName() + " of the " + selectedClass.name;
+                    String mythicMessage = rarity.getWeaponChatColor() + "§l" + mythicName + " " + weapons.get(random.nextInt(weapons.size())).getName() + " of the " + selectedClass.name;
+
+                    if (rarity == WeaponsRarity.EPIC) {
+                        Bukkit.broadcastMessage(ChatColor.AQUA + player.getDisplayName() + " §fgot lucky and found " + message);
+                        player.sendMessage(ChatColor.GRAY + "You received: " + message);
+                    }
+
+                    if (rarity == WeaponsRarity.LEGENDARY) {
+                        for (Player player1 : player.getWorld().getPlayers()) {
+                            player1.playSound(player.getLocation(), "legendaryfind", 1, 1);
+                        }
+                        Bukkit.broadcastMessage(ChatColor.AQUA + player.getDisplayName() + " §fgot lucky and found " + message);
+                        player.getWorld().spigot().strikeLightningEffect(player.getLocation(), false);
+                    }
+
+                    if (rarity == WeaponsRarity.MYTHIC) {
+                        for (Player player1 : player.getWorld().getPlayers()) {
+                            player1.playSound(player.getLocation(), "legendaryfind", 500, 0.8f);
+                            player1.playSound(player.getLocation(), Sound.ENDERDRAGON_GROWL, 500, 0.8f);
+                        }
+                        Bukkit.broadcastMessage(ChatColor.AQUA + player.getDisplayName() + " §fgot lucky and found " + mythicMessage);
+
+                        for (int j = 0; j < 10; j++) {
+                            player.getWorld().spigot().strikeLightningEffect(player.getLocation(), false);
+                        }
+                    }
+                }
+
+                player.sendMessage("");
+                player.sendMessage("§7You found:");
+                player.sendMessage("§7Rare: §9" + foundWeaponCount.get(WeaponsRarity.RARE));
+                player.sendMessage("§7Epic: §5" + foundWeaponCount.get(WeaponsRarity.EPIC));
+                player.sendMessage("§7Legendary: §6" + foundWeaponCount.get(WeaponsRarity.LEGENDARY));
+                player.sendMessage("§7Mythic: §c" + foundWeaponCount.get(WeaponsRarity.MYTHIC));
+            } else {
+                player.sendMessage(ChatColor.RED + "Please wait 8 minutes before opening weapons again!");
+            }
+        });
+
         menu.setItem(4, 3, MENU_BACK_PREGAME, (n, e) -> openMainMenu(player));
         menu.openForPlayer(player);
     }

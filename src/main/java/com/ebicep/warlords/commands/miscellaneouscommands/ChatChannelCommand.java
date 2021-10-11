@@ -82,7 +82,7 @@ public class ChatChannelCommand implements CommandExecutor {
                                 for (Player p : event.getRecipients()) {
                                     p.sendMessage(message);
                                 }
-                                Warlords.playerChatChannels.put(uuid, chatChannel);
+                                Warlords.playerChatChannels.put(uuid, chatChannel == null ? ChatChannels.ALL : chatChannel);
                                 return null;
                             });
                         }

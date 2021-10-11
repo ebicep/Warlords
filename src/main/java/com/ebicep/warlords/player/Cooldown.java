@@ -40,6 +40,10 @@ public class Cooldown {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public Class getCooldownClass() {
         return cooldownClass;
     }
@@ -66,6 +70,10 @@ public class Cooldown {
         } else {
             this.timeLeft -= amount;
         }
+    }
+
+    public void setTimeLeft(float timeLeft) {
+        this.timeLeft = timeLeft;
     }
 
     public WarlordsPlayer getFrom() {

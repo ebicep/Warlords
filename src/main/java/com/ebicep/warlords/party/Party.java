@@ -16,12 +16,13 @@ import java.util.stream.Collectors;
 public class Party {
 
     private UUID leader; //uuid of leader
-    private List<UUID> moderators = new ArrayList<>(); //list of moderators
-    private HashMap<UUID, Boolean> members = new HashMap<>(); //members include leader and moderators
+    private final List<UUID> moderators = new ArrayList<>(); //list of moderators
+    private final HashMap<UUID, Boolean> members = new HashMap<>(); //members include leader and moderators
     private boolean isOpen;
-    private List<Poll> polls = new ArrayList<>(); //in the future allow for multiple polls at once?
-    private HashMap<UUID, Integer> invites = new HashMap<>();
-    private BukkitTask partyTask;
+    private final List<Poll> polls = new ArrayList<>(); //in the future allow for multiple polls at once?
+    private final HashMap<UUID, Integer> invites = new HashMap<>();
+    private final HashMap<UUID, Integer> disconnects = new HashMap<>();
+    private final BukkitTask partyTask;
 
     public Party(UUID leader, boolean isOpen) {
         this.leader = leader;
@@ -40,6 +41,13 @@ public class Party {
                                 true);
                     }
                     return invite.getValue() <= 0;
+                });
+                disconnects.forEach((uuid, integer) -> disconnects.put(uuid, integer - 1));
+                disconnects.entrySet().removeIf(disconnect ->  {
+                    if(disconnect.getValue() <= 0) {
+                        leave(disconnect.getKey());
+                    }
+                    return disconnect .getValue() <= 0;
                 });
             }
         }.runTaskTimer(Warlords.getInstance(), 0, 20);
@@ -76,7 +84,7 @@ public class Party {
         Bukkit.getPlayer(uuid).sendMessage(getList());
         int numberOfPartyMembers = members.size();
         if((numberOfPartyMembers % 5 == 0 && numberOfPartyMembers <= 15) || (numberOfPartyMembers % 2 == 0 && numberOfPartyMembers >= 18)) {
-            BotManager.sendMessageToNotificationChannel("There are now **" + numberOfPartyMembers + "** players in " + Bukkit.getOfflinePlayer(leader).getName() + "'s party!");
+            BotManager.sendMessageToNotificationChannel("[PARTY] There are now **" + numberOfPartyMembers + "** players in " + Bukkit.getOfflinePlayer(leader).getName() + "'s party!");
         }
     }
 
@@ -94,7 +102,9 @@ public class Party {
                 sendMessageToAllPartyPlayers(ChatColor.AQUA + player.getName() + ChatColor.RED + " left the party", true, true);
                 sendMessageToAllPartyPlayers(ChatColor.AQUA + Bukkit.getOfflinePlayer(leader).getName() + ChatColor.GREEN + " is now the new party leader", true, true);
             } else {
-                Bukkit.getPlayer(leader).sendMessage(ChatColor.RED + "The party was disbanded");
+                if(Bukkit.getPlayer(leader) != null) {
+                    Bukkit.getPlayer(leader).sendMessage(ChatColor.RED + "The party was disbanded");
+                }
                 disband();
             }
         } else {
@@ -129,7 +139,7 @@ public class Party {
         if(!moderators.isEmpty()) {
             stringBuilder.append(ChatColor.YELLOW + "Party Moderators: " + ChatColor.AQUA);
             moderators.stream()
-                    .sorted(Collections.reverseOrder(Comparator.comparing(uuid -> members.get(uuid))))
+                    .sorted(Collections.reverseOrder(Comparator.comparing(members::get)))
                     .forEach(uuid -> {
                 stringBuilder.append(ChatColor.AQUA).append(Bukkit.getOfflinePlayer(uuid).getName()).append(members.get(uuid) ? ChatColor.GREEN : ChatColor.RED).append(" ● ");
             });
@@ -283,5 +293,9 @@ public class Party {
 
     public HashMap<UUID, Integer> getInvites() {
         return invites;
+    }
+
+    public HashMap<UUID, Integer> getDisconnects() {
+        return disconnects;
     }
 }
