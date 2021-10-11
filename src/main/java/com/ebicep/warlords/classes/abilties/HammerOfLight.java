@@ -135,6 +135,7 @@ public class HammerOfLight extends AbstractAbility {
 
                     for (Player player1 : player.getWorld().getPlayers()) {
                         player1.playSound(player.getLocation(), "warrior.revenant.orbsoflife", 2, 0.15f);
+                        player1.playSound(player.getLocation(), "mage.firebreath.activation", 2, 0.25f);
                     }
 
                     BukkitTask particles = new BukkitRunnable() {
@@ -177,7 +178,7 @@ public class HammerOfLight extends AbstractAbility {
                                 particles.cancel();
                             }
                         }
-                    }.runTaskTimer(Warlords.getInstance(), 5, 20);
+                    }.runTaskTimer(Warlords.getInstance(), 2, 20);
                     this.cancel();
                     damageHealCircle.setDuration(0);
                 }

@@ -877,7 +877,7 @@ public final class WarlordsPlayer {
                             for (WarlordsPlayer nearTeamPlayer : PlayerFilter
                                     .entitiesAround(attacker, 10, 10, 10)
                                     .aliveTeammatesOfExcludingSelf(attacker)
-                                    .limit(2)
+                                    .limit(3)
                             ) {
                                 if (Warlords.getPlayerSettings(attacker.uuid).getClassesSkillBoosts() == ClassesSkillBoosts.PROTECTOR_STRIKE) {
                                     nearTeamPlayer.addHealth(attacker, ability, -damageHealValue * 1.2f, -damageHealValue * 1.2f, tempNewCritChance, 100, false);
