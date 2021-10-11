@@ -622,11 +622,10 @@ public class GameMenu {
                 foundWeaponCount.put(rarity, 0);
             }
 
-            player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 2);
-
             if (weaponCooldown == null || weaponCooldown < System.currentTimeMillis()) {
                 openWeaponCooldown.put(player.getUniqueId(), System.currentTimeMillis() + 8 * 60 * 1000);
-                for (int i = 0; i < 10; i++) {
+                player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 2);
+                for (int i = 0; i < 45; i++) {
                     String legendaryName = legendaryNames[random.nextInt(legendaryNames.length)];
                     String mythicName = mythicNames[random.nextInt(mythicNames.length)];
 

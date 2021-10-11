@@ -847,7 +847,7 @@ public final class WarlordsPlayer {
                         }
                         if (attacker.getSpec() instanceof Spiritguard) {
                             if (!attacker.getCooldownManager().getCooldown(Repentance.class).isEmpty()) {
-                                int healthToAdd = (int) (((Repentance) attacker.getSpec().getBlue()).getPool() * .1) + 11;
+                                int healthToAdd = (int) (((Repentance) attacker.getSpec().getBlue()).getPool() * .1) + 10;
                                 attacker.addHealth(attacker, "Repentance", healthToAdd, healthToAdd, -1, 100, false);
                                 ((Repentance) attacker.getSpec().getBlue()).setPool(((Repentance) attacker.getSpec().getBlue()).getPool() * .5f);
                                 attacker.addEnergy(attacker, "Repentance", (float) (healthToAdd * .035));
