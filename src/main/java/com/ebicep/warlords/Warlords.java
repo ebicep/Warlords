@@ -722,7 +722,7 @@ public class Warlords extends JavaPlugin {
                             }
                             LivingEntity player = warlordsPlayer.getEntity();
                             List<Location> locations = warlordsPlayer.getLocations();
-                            if (warlordsPlayer.isDeath()) {
+                            if (warlordsPlayer.isDeath() && !locations.isEmpty()) {
                                 locations.add(locations.get(locations.size() - 1));
                             } else {
                                 locations.add(player.getLocation());
