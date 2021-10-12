@@ -68,17 +68,10 @@ public enum Weapons {
     ENDERFIST("Enderfist", new ItemStack(Material.APPLE), LEGENDARY),
 
     // mythic
-    // TODO: uncomment october 13th
-    //NEW_LEAF_SCYTHE("Daphne's Harvest", new ItemStack(Material.GHAST_TEAR), MYTHIC),
-    //NEW_LEAF_AXE("Fate of Daphne", new ItemStack(Material.LEATHER), MYTHIC),
-    //NEW_LEAF_SWORD("Canopy's Jade Edge", new ItemStack(Material.INK_SACK, 1, (short) 4), MYTHIC),
-    //NEW_LEAF_SPEAR("Daphne's Viper", new ItemStack(Material.INK_SACK, 1, (short) 3), MYTHIC),
-
-    //placeholder
-    PLACEHOLDER1("[REDACTED]", new ItemStack(Material.WOOD_AXE), MYTHIC),
-    PLACEHOLDER2("[REDACTED]", new ItemStack(Material.WOOD_AXE), MYTHIC),
-    PLACEHOLDER3("[REDACTED]", new ItemStack(Material.WOOD_AXE), MYTHIC),
-    PLACEHOLDER4("[REDACTED]", new ItemStack(Material.WOOD_AXE), MYTHIC),
+    NEW_LEAF_SCYTHE("Daphne's Harvest", new ItemStack(Material.GHAST_TEAR), MYTHIC),
+    NEW_LEAF_AXE("Fate of Daphne", new ItemStack(Material.LEATHER), MYTHIC),
+    NEW_LEAF_SWORD("Canopy's Jade Edge", new ItemStack(Material.INK_SACK, 1, (short) 4), MYTHIC),
+    NEW_LEAF_SPEAR("Daphne's Viper", new ItemStack(Material.INK_SACK, 1, (short) 3), MYTHIC),
 
     ;
 
