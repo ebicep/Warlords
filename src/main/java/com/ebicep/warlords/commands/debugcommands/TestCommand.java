@@ -6,10 +6,13 @@ import com.ebicep.warlords.commands.BaseCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import org.bson.Document;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.UUID;
 
@@ -86,22 +89,40 @@ public class TestCommand implements CommandExecutor {
 //                                    }).execute();
 //                            System.out.println("3");
 //                        }).execute();
-        Warlords.newSharedChain("test")
-                .sync(() -> {
-                    System.out.println("1");
-                    Warlords.newSharedChain("test")
-                            .async(() -> {
-                                System.out.println("2");
-                                Warlords.newSharedChain("test")
-                                        .async(() -> {
-                                            System.out.println("3");
-                                        }).execute();
-                            }).execute();
+        System.out.println("1");
+        Warlords.newChain()
+                .async(() -> {
+                    System.out.println("2");
+                    run((Player) sender);
+                    //runAsync((Player) sender);
+                    System.out.println("5");
+                }).sync(() -> {
+                    System.out.println("6");
                 }).execute();
-        Warlords.newSharedChain("test")
-                .sync(() -> {
-                    System.out.println("4");
-                }).execute();
+        System.out.println("7");
+//        System.out.println(Thread.currentThread());
+//        new BukkitRunnable() {
+//
+//            @Override
+//            public void run() {
+//                System.out.println(Thread.currentThread());
+//                new BukkitRunnable() {
+//
+//                    @Override
+//                    public void run() {
+//                        System.out.println(Thread.currentThread());
+//
+//                        new BukkitRunnable() {
+//
+//                            @Override
+//                            public void run() {
+//                                System.out.println(Thread.currentThread());
+//                            }
+//                        }.runTask(Warlords.getInstance());
+//                    }
+//                }.runTaskAsynchronously(Warlords.getInstance());
+//            }
+//        }.runTaskAsynchronously(Warlords.getInstance());
 //        System.out.println("here");
 //        Warlords.newSharedChain("test")
 //                .sync(() -> {
@@ -132,6 +153,22 @@ public class TestCommand implements CommandExecutor {
 
         //System.out.println(BotManager.getCompGamesServer().getTextChannels().get(6).sendMessage("HELLO"));
         return true;
+    }
+
+    private void runAsync(Player sender) {
+        Warlords.newChain()
+            .async(() -> {
+                DatabaseManager.playersInformation.find(eq("uuid", sender.getUniqueId().toString())).first();
+                System.out.println("3");
+            }).sync(() -> {
+                System.out.println("4");
+            }).execute();
+    }
+
+    private void run(Player sender) {
+        DatabaseManager.playersInformation.find(eq("uuid", sender.getUniqueId().toString())).first();
+        System.out.println("3");
+        System.out.println("4");
     }
 
     public void register(Warlords instance) {
