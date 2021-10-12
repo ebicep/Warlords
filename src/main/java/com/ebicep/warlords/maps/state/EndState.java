@@ -7,6 +7,7 @@ import com.ebicep.warlords.maps.state.PlayingState.Stats;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.PacketUtils;
 import com.ebicep.warlords.util.PlayerFilter;
+import com.ebicep.warlords.util.RemoveEntities;
 import com.ebicep.warlords.util.Utils;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -130,6 +131,8 @@ public class EndState implements State, TimerDebugAble {
                 player.playSound(player.getLocation(), "defeat", 500, 1);
                 PacketUtils.sendTitle(player, "§c§lDEFEAT!", "", 0, 100, 0);
             }
+
+            RemoveEntities.removeArmorStands();
         }
         sendMessageToAllGamePlayer(game, "" + ChatColor.GREEN + ChatColor.BOLD + "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬", false);
     }

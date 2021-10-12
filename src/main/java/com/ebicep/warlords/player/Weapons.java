@@ -74,6 +74,12 @@ public enum Weapons {
     //NEW_LEAF_SWORD("Signature of Daphne", new ItemStack(Material.INK_SACK, 1, (short) 4), MYTHIC),
     //NEW_LEAF_SPEAR("Daphne's Lance", new ItemStack(Material.INK_SACK, 1, (short) 3), MYTHIC),
 
+    //placeholder
+    PLACEHOLDER1("[REDACTED]", new ItemStack(Material.WOOD_AXE), MYTHIC),
+    PLACEHOLDER2("[REDACTED]", new ItemStack(Material.WOOD_AXE), MYTHIC),
+    PLACEHOLDER3("[REDACTED]", new ItemStack(Material.WOOD_AXE), MYTHIC),
+    PLACEHOLDER4("[REDACTED]", new ItemStack(Material.WOOD_AXE), MYTHIC),
+
     ;
 
     public final String name;
