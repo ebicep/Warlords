@@ -923,13 +923,13 @@ public final class WarlordsPlayer {
                     attacker.addDamage(-damageHealValue);
                     this.entity.playEffect(EntityEffect.HURT);
                     for (Player player1 : attacker.getWorld().getPlayers()) {
-                        player1.playSound(entity.getLocation(), Sound.HURT_FLESH, 1, 1);
+                        player1.playSound(entity.getLocation(), Sound.HURT_FLESH, 2, 1);
                     }
                     recordDamage.add(-damageHealValue);
                 }
                 if (this.health <= 0 && !cooldownManager.checkUndyingArmy(false)) {
                     if (attacker.entity instanceof Player) {
-                        ((Player) attacker.entity).playSound(attacker.getLocation(), Sound.ORB_PICKUP, 500f, 0.3f);
+                        ((Player) attacker.entity).playSound(attacker.getLocation(), Sound.ORB_PICKUP, 500f, 0.5f);
                     }
 
                     die(attacker);
