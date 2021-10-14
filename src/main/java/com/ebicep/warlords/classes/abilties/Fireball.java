@@ -25,7 +25,7 @@ public class Fireball extends AbstractProjectileBase {
     }
 
     @Override
-    protected void playEffect(Location currentLocation, int animationTimer) {
+    protected void playEffect(@Nonnull Location currentLocation, int animationTimer) {
         ParticleEffect.DRIP_LAVA.display(0, 0, 0, 0.35F, 5, currentLocation, 500);
         ParticleEffect.SMOKE_NORMAL.display(0, 0, 0, 0.001F, 7, currentLocation, 500);
         ParticleEffect.FLAME.display(0, 0, 0, 0.06F, 1, currentLocation, 500);
@@ -38,7 +38,7 @@ public class Fireball extends AbstractProjectileBase {
     }
 
     @Override
-    protected void onHit(WarlordsPlayer shooter, Location currentLocation, Location startingLocation, WarlordsPlayer victim) {
+    protected void onHit(@Nonnull WarlordsPlayer shooter, @Nonnull Location currentLocation, @Nonnull Location startingLocation, WarlordsPlayer victim) {
         ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.5F, 1, currentLocation, 500);
         ParticleEffect.LAVA.display(0.5F, 0, 0.5F, 1.5f, 10, currentLocation, 500);
         ParticleEffect.CLOUD.display(0.3F, 0.3F, 0.3F, 1F, 3, currentLocation, 500);

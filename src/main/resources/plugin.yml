@@ -55,7 +55,13 @@ commands:
     aliases: [ chat, achat, ac, pchat, pc ]
   me:
     description: Not happening.
-    usage: /me
+    usage: Not happening.
+  summon:
+    description: Not happening.
+    usage: Not happening.
+  give:
+    description: Not happening.
+    usage: Not happening.
   bot:
     description: Runs bot commands
     usage: /bot
