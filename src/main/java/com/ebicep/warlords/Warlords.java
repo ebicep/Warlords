@@ -598,10 +598,10 @@ public class Warlords extends JavaPlugin {
                                 //6.5 seconds = 1 + (130/520) = 1.25
                                 //432 *= 1.25 = 540
                                 //288 *= 1.25 = 360
-                                /*if (orb.getPlayerToMoveTowards() == null) {
+                                if (orb.getPlayerToMoveTowards() == null) {
                                     minHeal *= 1 + orb.getTicksLived() / 520f;
                                     maxHeal *= 1 + orb.getTicksLived() / 520f;
-                                }*/
+                                }
 
                                 warlordsPlayer.addHealth(orb.getOwner(), "Orbs of Life", maxHeal, maxHeal, -1, 100, false);
                                 if (player != null) {
