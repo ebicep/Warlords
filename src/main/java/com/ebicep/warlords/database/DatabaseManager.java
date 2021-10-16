@@ -336,11 +336,11 @@ public class DatabaseManager {
     public static void addLastGameHologram(Location location) {
         Hologram gameInfo = HologramsAPI.createHologram(Warlords.getInstance(), new LocationBuilder(location.clone()).left(5).get());
         gameInfo.appendTextLine(ChatColor.AQUA + ChatColor.BOLD.toString() + "Last Game Stats");
-        Hologram topDamage = HologramsAPI.createHologram(Warlords.getInstance(), new LocationBuilder(location.clone()).addY(1).right(.5f).get());
+        Hologram topDamage = HologramsAPI.createHologram(Warlords.getInstance(), new LocationBuilder(location.clone()).addY(2).right(.5f).get());
         topDamage.appendTextLine(ChatColor.AQUA + ChatColor.BOLD.toString() + "Top Damage");
-        Hologram topHealing = HologramsAPI.createHologram(Warlords.getInstance(), new LocationBuilder(location.clone()).addY(1).right(4).get());
+        Hologram topHealing = HologramsAPI.createHologram(Warlords.getInstance(), new LocationBuilder(location.clone()).addY(2).right(4).get());
         topHealing.appendTextLine(ChatColor.AQUA + ChatColor.BOLD.toString() + "Top Healing");
-        Hologram topAbsorbed = HologramsAPI.createHologram(Warlords.getInstance(), new LocationBuilder(location.clone()).addY(1).right(7.5f).get());
+        Hologram topAbsorbed = HologramsAPI.createHologram(Warlords.getInstance(), new LocationBuilder(location.clone()).addY(2).right(7.5f).get());
         topAbsorbed.appendTextLine(ChatColor.AQUA + ChatColor.BOLD.toString() + "Top Absorbed");
 
         Document lastGame = getLastGame();

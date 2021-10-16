@@ -63,7 +63,7 @@ public class FallenSouls extends AbstractAbility {
             @Override
             public void run() {
 
-                if (fallenSoul.isLeftRemoved() && fallenSoul.isMiddleRemoved() && fallenSoul.isRightRemoved()) {
+                if ((fallenSoul.isLeftRemoved() && fallenSoul.isMiddleRemoved() && fallenSoul.isRightRemoved()) || wp.getGameState() != wp.getGame().getState()) {
                     this.cancel();
                 }
 
