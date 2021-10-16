@@ -5,7 +5,9 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.state.PlayingState;
 import com.ebicep.warlords.player.*;
+import com.ebicep.warlords.util.LocationBuilder;
 import com.ebicep.warlords.util.PlayerFilter;
+import com.ebicep.warlords.util.Utils;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import com.mongodb.MongoException;
@@ -33,6 +35,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Sorts.descending;
 import static com.mongodb.client.model.Updates.combine;
@@ -49,6 +52,8 @@ public class DatabaseManager {
     public static HashMap<UUID, Document> cachedPlayerInfo = new HashMap<>();
     public static HashMap<String, Long> cachedTotalKeyValues = new HashMap<>();
     public static String lastWarlordsPlusString = "";
+
+    public static final List<GameInformation> previousGames = new ArrayList<>();
 
     public static boolean connect() {
         try {
@@ -377,8 +382,14 @@ public class DatabaseManager {
     public static final String[] specsOrdered = {"Pyromancer", "Cryomancer", "Aquamancer", "Berserker", "Defender", "Revenant", "Avenger", "Crusader", "Protector", "Thunderlord", "Spiritguard", "Earthwarden"};
 
     public static void addLastGameHologram(Location location) {
-        Hologram gameInfo = HologramsAPI.createHologram(Warlords.getInstance(), location);
+        Hologram gameInfo = HologramsAPI.createHologram(Warlords.getInstance(), new LocationBuilder(location.clone()).left(5).get());
         gameInfo.appendTextLine(ChatColor.AQUA + ChatColor.BOLD.toString() + "Last Game Stats");
+        Hologram topDamage = HologramsAPI.createHologram(Warlords.getInstance(), new LocationBuilder(location.clone()).addY(2).right(.5f).get());
+        topDamage.appendTextLine(ChatColor.AQUA + ChatColor.BOLD.toString() + "Top Damage");
+        Hologram topHealing = HologramsAPI.createHologram(Warlords.getInstance(), new LocationBuilder(location.clone()).addY(2).right(4).get());
+        topHealing.appendTextLine(ChatColor.AQUA + ChatColor.BOLD.toString() + "Top Healing");
+        Hologram topAbsorbed = HologramsAPI.createHologram(Warlords.getInstance(), new LocationBuilder(location.clone()).addY(2).right(7.5f).get());
+        topAbsorbed.appendTextLine(ChatColor.AQUA + ChatColor.BOLD.toString() + "Top Absorbed");
 
         Document lastGame = getLastGame();
         int timeLeft = (int) getDocumentInfoWithDotNotation(lastGame, "time_left");
@@ -386,15 +397,38 @@ public class DatabaseManager {
         gameInfo.appendTextLine(ChatColor.GREEN.toString() + getDocumentInfoWithDotNotation(lastGame, "map") + ChatColor.GRAY + "  -  " + ChatColor.GREEN + timeLeft / 60 + ":" + timeLeft % 60 + (timeLeft % 60 < 10 ? "0" : ""));
         gameInfo.appendTextLine(ChatColor.BLUE.toString() + getDocumentInfoWithDotNotation(lastGame, "blue_points") + ChatColor.GRAY + "  -  " + ChatColor.RED.toString() + getDocumentInfoWithDotNotation(lastGame, "red_points"));
 
-        List<String> players = new ArrayList<>();
         List<DatabasePlayer> databasePlayers = new ArrayList<>();
 
         for (Document o : ((ArrayList<Document>) getDocumentInfoWithDotNotation(lastGame, "players.blue"))) {
-            databasePlayers.add(new DatabasePlayer((String) o.get("name"), ChatColor.BLUE, (String) o.get("spec"), (ArrayList<Integer>) o.get("kills"), (ArrayList<Integer>) o.get("assists"), (ArrayList<Integer>) o.get("deaths")));
+            databasePlayers.add(new DatabasePlayer(
+                            (String) o.get("name"),
+                            ChatColor.BLUE,
+                            (String) o.get("spec"),
+                            (ArrayList<Integer>) o.get("kills"),
+                            (ArrayList<Integer>) o.get("assists"),
+                            (ArrayList<Integer>) o.get("deaths"),
+                            (ArrayList<Long>) o.get("damage"),
+                            (ArrayList<Long>) o.get("healing"),
+                            (ArrayList<Long>) o.get("absorbed")
+                    )
+            );
         }
         for (Document o : ((ArrayList<Document>) getDocumentInfoWithDotNotation(lastGame, "players.red"))) {
-            databasePlayers.add(new DatabasePlayer((String) o.get("name"), ChatColor.RED, (String) o.get("spec"), (ArrayList<Integer>) o.get("kills"), (ArrayList<Integer>) o.get("assists"), (ArrayList<Integer>) o.get("deaths")));
+            databasePlayers.add(new DatabasePlayer(
+                            (String) o.get("name"),
+                            ChatColor.RED,
+                            (String) o.get("spec"),
+                            (ArrayList<Integer>) o.get("kills"),
+                            (ArrayList<Integer>) o.get("assists"),
+                            (ArrayList<Integer>) o.get("deaths"),
+                            (ArrayList<Long>) o.get("damage"),
+                            (ArrayList<Long>) o.get("healing"),
+                            (ArrayList<Long>) o.get("absorbed")
+                    )
+            );
         }
+
+        List<String> players = new ArrayList<>();
 
         for (String s : specsOrdered) {
             StringBuilder playerSpecs = new StringBuilder(ChatColor.AQUA + s).append(": ");
@@ -408,26 +442,50 @@ public class DatabaseManager {
                 players.add(playerSpecs.toString());
             }
         }
-
         players.forEach(gameInfo::appendTextLine);
 
+        List<String> topDamagePlayers = new ArrayList<>();
+        List<String> topHealingPlayers = new ArrayList<>();
+        List<String> topAbsorbedPlayers = new ArrayList<>();
+
+        databasePlayers.stream().sorted(Comparator.comparingLong(DatabasePlayer::getTotalDamage).reversed()).forEach(databasePlayer -> {
+            topDamagePlayers.add(databasePlayer.getColoredName() + ": " + ChatColor.YELLOW + Utils.addCommaAndRound(databasePlayer.getTotalDamage()));
+        });
+
+        databasePlayers.stream().sorted(Comparator.comparingLong(DatabasePlayer::getTotalHealing).reversed()).forEach(databasePlayer -> {
+            topHealingPlayers.add(databasePlayer.getColoredName() + ": " + ChatColor.YELLOW + Utils.addCommaAndRound(databasePlayer.getTotalHealing()));
+        });
+
+        databasePlayers.stream().sorted(Comparator.comparingLong(DatabasePlayer::getTotalAbsorbed).reversed()).forEach(databasePlayer -> {
+            topAbsorbedPlayers.add(databasePlayer.getColoredName() + ": " + ChatColor.YELLOW + Utils.addCommaAndRound(databasePlayer.getTotalAbsorbed()));
+        });
+
+        topDamagePlayers.forEach(topDamage::appendTextLine);
+        topHealingPlayers.forEach(topHealing::appendTextLine);
+        topAbsorbedPlayers.forEach(topAbsorbed::appendTextLine);
     }
 
     static class DatabasePlayer {
-        private String name;
-        private ChatColor teamColor;
-        private String spec;
-        private ArrayList<Integer> kills;
-        private ArrayList<Integer> assists;
-        private ArrayList<Integer> deaths;
+        private final String name;
+        private final ChatColor teamColor;
+        private final String spec;
+        private final ArrayList<Integer> kills;
+        private final ArrayList<Integer> assists;
+        private final ArrayList<Integer> deaths;
+        private final ArrayList<Long> damage;
+        private final ArrayList<Long> healing;
+        private final ArrayList<Long> absorbed;
 
-        public DatabasePlayer(String name, ChatColor teamColor, String spec, ArrayList<Integer> kills, ArrayList<Integer> assists, ArrayList<Integer> deaths) {
+        public DatabasePlayer(String name, ChatColor teamColor, String spec, ArrayList<Integer> kills, ArrayList<Integer> assists, ArrayList<Integer> deaths, ArrayList<Long> damage, ArrayList<Long> healing, ArrayList<Long> absorbed) {
             this.name = name;
             this.teamColor = teamColor;
             this.spec = spec;
             this.kills = kills;
             this.assists = assists;
             this.deaths = deaths;
+            this.damage = damage;
+            this.healing = healing;
+            this.absorbed = absorbed;
         }
 
         public String getColoredName() {
@@ -454,9 +512,49 @@ public class DatabaseManager {
             return deaths.stream().reduce(0, Integer::sum);
         }
 
+        public Long getTotalDamage() {
+            return damage.stream().reduce(0L, Long::sum);
+        }
+
+        public Long getTotalHealing() {
+            return healing.stream().reduce(0L, Long::sum);
+        }
+
+        public Long getTotalAbsorbed() {
+            return absorbed.stream().reduce(0L, Long::sum);
+        }
+
     }
 
-    public static void addGame(PlayingState gameState) {
+    public static void removeGameFromDatabase(GameInformation gameInformation) {
+        Warlords.newChain()
+                .async(() -> {
+                    gameInformation.oldPlayerInfo.forEach((uuid, stringObjectHashMap) -> {
+                        updatePlayerInformation(uuid, stringObjectHashMap, FieldUpdateOperators.INCREMENT);
+                    });
+                    gamesInformation.deleteOne(and(
+                            eq("date", gameInformation.getGameInfo().get("date")),
+                            eq("time_left", gameInformation.getGameInfo().get("time_left"))
+                    ));
+                }).execute();
+    }
+
+    public static void addGameToDatabase(GameInformation gameInformation) {
+        try {
+            gameInformation.playerInfo.forEach((uuid, stringObjectHashMap) -> {
+                updatePlayerInformation(uuid, stringObjectHashMap, FieldUpdateOperators.INCREMENT);
+            });
+            Warlords.newChain()
+                    .async(() -> gamesInformation.insertOne(gameInformation.getGameInfo()))
+                    .execute();
+            System.out.println(ChatColor.GREEN + "[Warlords] Added game");
+        } catch (MongoWriteException e) {
+            e.printStackTrace();
+            System.out.println(ChatColor.GREEN + "[Warlords] Error trying to insert game stats");
+        }
+    }
+
+    public static void addGame(PlayingState gameState, boolean addToDatabase) {
         if (!connected) return;
         List<Document> blue = new ArrayList<>();
         List<Document> red = new ArrayList<>();
@@ -479,6 +577,11 @@ public class DatabaseManager {
                 .append("players", new Document("blue", blue).append("red", red))
                 .append("stat_info", getWarlordsPlusEndGameStats(gameState));
         try {
+            GameInformation gameInformation = new GameInformation(document, newPlayerInfo);
+            previousGames.add(gameInformation);
+            if (addToDatabase) {
+                addGameToDatabase(gameInformation);
+            }
             String sharedChainName = UUID.randomUUID().toString();
             //updating all players + auto loads
             getNewPlayerInfo(gameState).forEach((uuid, stringObjectHashMap) -> {
@@ -618,5 +721,46 @@ public class DatabaseManager {
 
     public static MongoCollection<Document> getGamesInformation() {
         return gamesInformation;
+    }
+
+    public static class GameInformation {
+
+        private Document gameInfo;
+        private HashMap<UUID, HashMap<String, Object>> playerInfo;
+        private HashMap<UUID, HashMap<String, Object>> oldPlayerInfo = new HashMap<>();
+
+        public GameInformation(Document gameInfo, HashMap<UUID, HashMap<String, Object>> playerInfo) {
+            this.gameInfo = gameInfo;
+            this.playerInfo = playerInfo;
+            playerInfo.forEach((uuid, stringObjectHashMap) -> {
+                HashMap<String, Object> newHashMap = new HashMap<>();
+                stringObjectHashMap.forEach((s, o) -> {
+                    if (o instanceof Integer) {
+                        newHashMap.put(s, -((Integer) o));
+                    } else if (o instanceof Long) {
+                        newHashMap.put(s, -((Long) o));
+                    }
+                });
+                this.oldPlayerInfo.put(uuid, newHashMap);
+            });
+        }
+
+        public Document getGameInfo() {
+            return gameInfo;
+        }
+
+        public HashMap<UUID, HashMap<String, Object>> getPlayerInfo() {
+            return playerInfo;
+        }
+
+        public HashMap<UUID, HashMap<String, Object>> getOldPlayerInfo() {
+            return oldPlayerInfo;
+        }
+
+        public String getGameLabel() {
+            return ChatColor.GRAY.toString() + gameInfo.get("date") + ChatColor.DARK_GRAY + " - " +
+                    ChatColor.GREEN + gameInfo.get("map") + ChatColor.DARK_GRAY + " - " +
+                    ChatColor.GRAY + "(" + ChatColor.BLUE + gameInfo.get("blue_points") + ChatColor.GRAY + ":" + ChatColor.RED + gameInfo.get("red_points") + ChatColor.GRAY + ")";
+        }
     }
 }

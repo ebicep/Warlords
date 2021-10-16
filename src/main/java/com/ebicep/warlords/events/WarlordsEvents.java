@@ -107,11 +107,6 @@ public class WarlordsEvents implements Listener {
             Utils.sendCenteredMessage(player, ChatColor.GOLD + "Click the Nether Star or do " + ChatColor.GREEN + "/menu" + ChatColor.GOLD + " to open the selection menu.");
             Utils.sendCenteredMessage(player, ChatColor.BLUE + "-----------------------------------------------------");
 
-//            if (player.isOp()) {
-//                Utils.sendCenteredMessage(player, ChatColor.GRAY + "For developers: ");
-//                Utils.sendCenteredMessage(player, ChatColor.GRAY + "Debug menu: /wl");
-//            }
-
             player.getInventory().clear();
             player.getInventory().setArmorContents(new ItemStack[]{null, null, null, null});
             player.getInventory().setItem(4, new ItemBuilder(Material.NETHER_STAR).name("§aSelection Menu").get());
@@ -159,6 +154,12 @@ public class WarlordsEvents implements Listener {
                     ((Player) warlordsPlayer.getEntity()).hidePlayer(player);
                 }
             }));
+        } else {
+            Bukkit.getOnlinePlayers().forEach(p -> {
+                if(!Warlords.hasPlayer(p)) {
+                    player.hidePlayer(p);
+                }
+            });
         }
 
         String sharedChainName = UUID.randomUUID().toString();
@@ -358,7 +359,8 @@ public class WarlordsEvents implements Listener {
                 e.getInventory() instanceof CraftInventoryBeacon ||
                 e.getInventory() instanceof CraftInventoryBrewer ||
                 e.getInventory() instanceof CraftInventoryCrafting ||
-                e.getInventory() instanceof CraftInventoryDoubleChest
+                e.getInventory() instanceof CraftInventoryDoubleChest ||
+                e.getInventory() instanceof CraftInventoryFurnace
         ) {
             e.setCancelled(true);
         }
@@ -429,6 +431,15 @@ public class WarlordsEvents implements Listener {
                         }
                     }
                 }
+            } else if (e.getCause() == EntityDamageEvent.DamageCause.DROWNING) {
+                //100 flat
+                if (e.getEntity() instanceof Player) {
+                    WarlordsPlayer wp = Warlords.getPlayer(e.getEntity());
+                    if (wp != null) {
+                        wp.addHealth(wp, "Fall", -100, -100, -1, 100, false);
+                        wp.setRegenTimer(10);
+                    }
+                }
             }
         }
         e.setCancelled(true);
@@ -455,7 +466,7 @@ public class WarlordsEvents implements Listener {
                 if (!Warlords.playerChatChannels.containsKey(uuid)) {
                     Warlords.playerChatChannels.put(uuid, ChatChannels.ALL);
                 }
-                switch (Warlords.playerChatChannels.get(uuid)) {
+                switch (Warlords.playerChatChannels.getOrDefault(uuid, ChatChannels.ALL)) {
                     case ALL:
                         WarlordsPlayer wp = Warlords.getPlayer(player);
                         if (wp == null) {
@@ -509,6 +520,10 @@ public class WarlordsEvents implements Listener {
             }).get();
         } catch (InterruptedException | ExecutionException ex) {
             Warlords.getInstance().getLogger().log(Level.SEVERE, null, ex);
+            System.out.println("UUID: " + uuid);
+            System.out.println("Chat Channels: " + Warlords.playerChatChannels);
+            System.out.println("Player Chat Channel: " + Warlords.playerChatChannels.get(uuid));
+            System.out.println("Contains UUID: " + Warlords.playerChatChannels.containsKey(uuid));
         }
     }
 

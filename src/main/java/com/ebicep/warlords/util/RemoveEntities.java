@@ -11,6 +11,7 @@ public class RemoveEntities {
 
     public static void doRemove(GameMap map) {
         map.getBlueFlag().getWorld().getEntities().stream().filter(entity -> !(entity instanceof Player)).forEach(Entity::remove);
+        map.getRedFlag().getWorld().getEntities().stream().filter(entity -> !(entity instanceof Player)).forEach(Entity::remove);
         // add more later
     }
 

@@ -28,7 +28,7 @@ public class LeaderboardRanking {
     public static final Location srLBWarrior = new LocationBuilder(spawnPoint.clone()).backward(27).left(14f).addY(3.5).get();
     public static final Location srLBPaladin = new LocationBuilder(spawnPoint.clone()).backward(27).left(18.5f).addY(3.5).get();
     public static final Location srLBShaman = new LocationBuilder(spawnPoint.clone()).backward(27).left(23f).addY(3.5).get();
-    public static final Location lastGameLocation = new LocationBuilder(spawnPoint.clone()).forward(29).left(16).addY(3.5).get();
+    public static final Location lastGameLocation = new LocationBuilder(spawnPoint.clone()).forward(28.5f).left(16.5f).addY(3.5).get();
     public static final Location center = new LocationBuilder(spawnPoint.clone()).forward(.5f).left(21).addY(2).get();
 
     public static final HashMap<String, Location> leaderboardLocations = new HashMap<>();
@@ -206,9 +206,9 @@ public class LeaderboardRanking {
 
     private static double averageAdjusted(long playerAverage, long total) {
         double average = playerAverage / ((total / (double) DatabaseManager.playersInformation.countDocuments()));
-        if (average >= 5) return 1;
+        if (average >= 7) return 1;
         if (average <= 0) return 0;
-        return 1.00699 + (-1.02107 / (1.01398 + Math.pow(average, 3.09248)));
+        return 1.00005 + (-1.00008 / (2.01248 + Math.pow(average, 0.11248)));
     }
 
     private static double averageAdjustedDHP(UUID uuid, String optionalClass) {

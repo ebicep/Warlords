@@ -87,6 +87,12 @@ public class DeathsDebt extends AbstractTotemBase {
                     particles.cancel();
                     this.cancel();
                 } else {
+                    if(player.getWorld() != totemStand.getWorld()) {
+                        totemStand.remove();
+                        particles.cancel();
+                        this.cancel();
+                        return;
+                    }
                     boolean isPlayerInRadius = player.getLocation().distanceSquared(totemStand.getLocation()) < 10 * 10;
                     if(!isPlayerInRadius && tempDeathsDebt.getTimeLeftRespite() != -1) {
                         tempDeathsDebt.setTimeLeftRespite(0);

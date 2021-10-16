@@ -55,10 +55,22 @@ commands:
     aliases: [ chat, achat, ac, pchat, pc ]
   me:
     description: Not happening.
-    usage: /me
+    usage: Not happening.
+  summon:
+    description: Not happening.
+    usage: Not happening.
+  give:
+    description: Not happening.
+    usage: Not happening.
   bot:
     description: Runs bot commands
     usage: /bot
   lb:
     description: Leaderboard Commands
     usage: /lb
+  recordgames:
+    description: Toggles recording games
+    aliases: [ recordgames, countgames ]
+  games:
+    description: Games stuff
+    aliases: [ games ]

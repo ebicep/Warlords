@@ -139,7 +139,7 @@ public class Party {
         if(!moderators.isEmpty()) {
             stringBuilder.append(ChatColor.YELLOW + "Party Moderators: " + ChatColor.AQUA);
             moderators.stream()
-                    .sorted(Collections.reverseOrder(Comparator.comparing(uuid -> members.get(uuid))))
+                    .sorted(Collections.reverseOrder(Comparator.comparing(members::get)))
                     .forEach(uuid -> {
                 stringBuilder.append(ChatColor.AQUA).append(Bukkit.getOfflinePlayer(uuid).getName()).append(members.get(uuid) ? ChatColor.GREEN : ChatColor.RED).append(" ● ");
             });

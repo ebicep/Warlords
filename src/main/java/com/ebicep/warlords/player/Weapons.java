@@ -6,73 +6,94 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import static com.ebicep.warlords.player.WeaponsRarity.*;
 
 import java.util.HashMap;
 
 public enum Weapons {
 
-    BLUDGEON("Bludgeon", new ItemStack(Material.RABBIT_STEW)),
-    TRAINING_SWORD("Training Sword", new ItemStack(Material.STONE_AXE)),
-    CLAWS("Claws", new ItemStack(Material.MUTTON)),
-    SCIMITAR("Scimitar", new ItemStack(Material.RAW_FISH, 1, (short) 1)),
-    ORC_AXE("Orc Axe", new ItemStack(Material.PUMPKIN_PIE)),
-    HATCHET("Hatchet", new ItemStack(Material.GOLD_HOE)),
-    PIKE("Pike", new ItemStack(Material.ROTTEN_FLESH)),
-    HAMMER("Hammer", new ItemStack(Material.IRON_SPADE)),
-    WALKING_STICK("Walking Stick", new ItemStack(Material.STONE_PICKAXE)),
-    STEEL_SWORD("Steel Sword", new ItemStack(Material.WOOD_AXE)),
+    // common
+    BLUDGEON("Bludgeon", new ItemStack(Material.RABBIT_STEW), COMMON),
+    TRAINING_SWORD("Training Sword", new ItemStack(Material.STONE_AXE), COMMON),
+    CLAWS("Claws", new ItemStack(Material.MUTTON), COMMON),
+    SCIMITAR("Scimitar", new ItemStack(Material.RAW_FISH, 1, (short) 1), COMMON),
+    ORC_AXE("Orc Axe", new ItemStack(Material.PUMPKIN_PIE), COMMON),
+    HATCHET("Hatchet", new ItemStack(Material.GOLD_HOE), COMMON),
+    PIKE("Pike", new ItemStack(Material.ROTTEN_FLESH), COMMON),
+    HAMMER("Hammer", new ItemStack(Material.IRON_SPADE), COMMON),
+    WALKING_STICK("Walking Stick", new ItemStack(Material.STONE_PICKAXE), COMMON),
+    STEEL_SWORD("Steel Sword", new ItemStack(Material.WOOD_AXE), COMMON),
 
-    WORLD_TREE_BRANCH("World Tree Branch", new ItemStack(Material.IRON_PICKAXE)),
-    GEM_AXE("Gem Axe", new ItemStack(Material.DIAMOND_HOE)),
-    DOUBLEAXE("Doubleaxe", new ItemStack(Material.COOKED_FISH)),
-    MANDIBLES("Mandibles", new ItemStack(Material.PORK)),
-    GOLDEN_GLADIUS("Golden Gladius", new ItemStack(Material.RAW_FISH, 1, (short) 3)),
-    STONE_MALLET("Stone Mallet", new ItemStack(Material.GOLD_SPADE)),
-    CUDGEL("Cudgel", new ItemStack(Material.COOKED_RABBIT)),
-    VENOMSTRIKE("Venomstrike", new ItemStack(Material.GOLD_AXE)),
-    HALBRED("Halbred", new ItemStack(Material.POTATO_ITEM)),
-    DEMONBLADE("Demonblade", new ItemStack(Material.IRON_AXE)),
+    // rare
+    WORLD_TREE_BRANCH("World Tree Branch", new ItemStack(Material.IRON_PICKAXE), RARE),
+    GEM_AXE("Gem Axe", new ItemStack(Material.DIAMOND_HOE), RARE),
+    DOUBLEAXE("Doubleaxe", new ItemStack(Material.COOKED_FISH), RARE),
+    MANDIBLES("Mandibles", new ItemStack(Material.PORK), RARE),
+    GOLDEN_GLADIUS("Golden Gladius", new ItemStack(Material.RAW_FISH, 1, (short) 3), RARE),
+    STONE_MALLET("Stone Mallet", new ItemStack(Material.GOLD_SPADE), RARE),
+    CUDGEL("Cudgel", new ItemStack(Material.COOKED_RABBIT), RARE),
+    VENOMSTRIKE("Venomstrike", new ItemStack(Material.GOLD_AXE), RARE),
+    HALBRED("Halbred", new ItemStack(Material.POTATO_ITEM), RARE),
+    DEMONBLADE("Demonblade", new ItemStack(Material.IRON_AXE), RARE),
 
-    RUNEBLADE("Runeblade", new ItemStack(Material.STONE_HOE)),
-    KATAR("Katar", new ItemStack(Material.RAW_BEEF)),
-    TENDERIZER("Tenderizer", new ItemStack(Material.COOKED_CHICKEN)),
-    FLAMEWEAVER("Flameweaver", new ItemStack(Material.GOLD_PICKAXE)),
-    NETHERSTEEL_KATANA("Nethersteel Katan", new ItemStack(Material.RAW_CHICKEN)),
-    RUNIC_AXE("Runic Axe", new ItemStack(Material.BREAD)),
-    NOMEGUSTA("Nomegusta", new ItemStack(Material.WOOD_SPADE)),
-    LUNAR_RELIC("Lunar Relic", new ItemStack(Material.MUSHROOM_SOUP)),
-    DIVINE_REACH("Divine Reach", new ItemStack(Material.MELON)),
-    GEMCRUSHER("Gemcrusher", new ItemStack(Material.DIAMOND_SPADE)),
-    ELVEN_GREATSWORD("Elven Greatsword", new ItemStack(Material.IRON_HOE)),
-    HAMMER_OF_LIGHT("Hammer of Light", new ItemStack(Material.STRING)),
-    MAGMASWORD("Magmasword", new ItemStack(Material.RAW_FISH, 1, (short) 2)),
-    DIAMONDSPARK("Diamondspark", new ItemStack(Material.DIAMOND_AXE)),
-    ZWEIREAPER("Zweireaper", new ItemStack(Material.WOOD_HOE)),
+    // epic
+    RUNEBLADE("Runeblade", new ItemStack(Material.STONE_HOE), EPIC),
+    KATAR("Katar", new ItemStack(Material.RAW_BEEF), EPIC),
+    TENDERIZER("Tenderizer", new ItemStack(Material.COOKED_CHICKEN), EPIC),
+    FLAMEWEAVER("Flameweaver", new ItemStack(Material.GOLD_PICKAXE), EPIC),
+    NETHERSTEEL_KATANA("Nethersteel Katan", new ItemStack(Material.RAW_CHICKEN), EPIC),
+    RUNIC_AXE("Runic Axe", new ItemStack(Material.BREAD), EPIC),
+    NOMEGUSTA("Nomegusta", new ItemStack(Material.WOOD_SPADE), EPIC),
+    LUNAR_RELIC("Lunar Relic", new ItemStack(Material.MUSHROOM_SOUP), EPIC),
+    DIVINE_REACH("Divine Reach", new ItemStack(Material.MELON), EPIC),
+    GEMCRUSHER("Gemcrusher", new ItemStack(Material.DIAMOND_SPADE), EPIC),
+    ELVEN_GREATSWORD("Elven Greatsword", new ItemStack(Material.IRON_HOE), EPIC),
+    HAMMER_OF_LIGHT("Hammer of Light", new ItemStack(Material.STRING), EPIC),
+    MAGMASWORD("Magmasword", new ItemStack(Material.RAW_FISH, 1, (short) 2), EPIC),
+    DIAMONDSPARK("Diamondspark", new ItemStack(Material.DIAMOND_AXE), EPIC),
+    ZWEIREAPER("Zweireaper", new ItemStack(Material.WOOD_HOE), EPIC),
 
-    VOID_EDGE("Void Edge", new ItemStack(Material.GOLDEN_CARROT)),
-    FELFLAME_BLADE("Felflame Blade", new ItemStack(Material.COOKED_FISH, 1, (short) 1)),
-    AMARANTH("Amaranth", new ItemStack(Material.COOKED_MUTTON)),
-    ARMBLADE("Armblade", new ItemStack(Material.COOKED_BEEF)),
-    GEMINI("Gemini", new ItemStack(Material.GRILLED_PORK)),
-    DRAKEFANG("Drakefang", new ItemStack(Material.STONE_SPADE)),
-    ABBADON("Abbadon", new ItemStack(Material.WOOD_PICKAXE)),
-    FROSTBITE("Frostbite", new ItemStack(Material.RAW_FISH)),
-    BROCCOMACE("Broccomace", new ItemStack(Material.BAKED_POTATO)),
-    VOID_TWIG("Void Twig", new ItemStack(Material.DIAMOND_PICKAXE)),
-    RUBY_THORN("Ruby Thorn", new ItemStack(Material.POISONOUS_POTATO)),
-    ENDERFIST("Enderfist", new ItemStack(Material.APPLE)),
+    // legendary
+    VOID_EDGE("Void Edge", new ItemStack(Material.GOLDEN_CARROT), LEGENDARY),
+    FELFLAME_BLADE("Felflame Blade", new ItemStack(Material.COOKED_FISH, 1, (short) 1), LEGENDARY),
+    AMARANTH("Amaranth", new ItemStack(Material.COOKED_MUTTON), LEGENDARY),
+    ARMBLADE("Armblade", new ItemStack(Material.COOKED_BEEF), LEGENDARY),
+    GEMINI("Gemini", new ItemStack(Material.GRILLED_PORK), LEGENDARY),
+    DRAKEFANG("Drakefang", new ItemStack(Material.STONE_SPADE), LEGENDARY),
+    ABBADON("Abbadon", new ItemStack(Material.WOOD_PICKAXE), LEGENDARY),
+    FROSTBITE("Frostbite", new ItemStack(Material.RAW_FISH), LEGENDARY),
+    BROCCOMACE("Broccomace", new ItemStack(Material.BAKED_POTATO), LEGENDARY),
+    VOID_TWIG("Void Twig", new ItemStack(Material.DIAMOND_PICKAXE), LEGENDARY),
+    RUBY_THORN("Ruby Thorn", new ItemStack(Material.POISONOUS_POTATO), LEGENDARY),
+    ENDERFIST("Enderfist", new ItemStack(Material.APPLE), LEGENDARY),
+
+    // mythic
+    NEW_LEAF_SCYTHE("Daphne's Harvest", new ItemStack(Material.GHAST_TEAR), MYTHIC),
+    NEW_LEAF_AXE("Fate of Daphne", new ItemStack(Material.LEATHER), MYTHIC),
+    NEW_LEAF_SWORD("Canopy's Jade Edge", new ItemStack(Material.INK_SACK, 1, (short) 4), MYTHIC),
+    NEW_LEAF_SPEAR("Daphne's Viper", new ItemStack(Material.INK_SACK, 1, (short) 3), MYTHIC),
 
     ;
 
     public final String name;
     public final ItemStack item;
+    public final WeaponsRarity rarity;
 
-    Weapons(String name, ItemStack item) {
+    Weapons(String name, ItemStack item, WeaponsRarity rarity) {
         this.name = name;
         this.item = item;
+        this.rarity = rarity;
         ItemMeta itemMeta = item.getItemMeta();
         itemMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         item.setItemMeta(itemMeta);
+    }
+
+    public WeaponsRarity getRarity() {
+        return this.rarity;
+    }
+
+    public String getName() {
+        return this.name;
     }
 
     @Deprecated

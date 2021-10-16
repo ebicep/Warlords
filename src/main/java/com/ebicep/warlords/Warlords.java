@@ -230,6 +230,8 @@ public class Warlords extends JavaPlugin {
         new ChatChannelCommand().register(this);
         new BotCommands().register(this);
         new LeaderboardCommand().register(this);
+        new RecordGamesCommand().register(this);
+        new GamesCommand().register(this);
 
         updateHeads();
 
@@ -403,11 +405,6 @@ public class Warlords extends JavaPlugin {
                         }
                         float respawn = warlordsPlayer.getRespawnTimer();
                         if (respawn != -1) {
-                            if (respawn <= 11) {
-                                if (player != null) {
-                                    PacketUtils.sendTitle(player, "", warlordsPlayer.getTeam().teamColor() + "Respawning in... " + ChatColor.YELLOW + Utils.formatTenths(respawn), 0, 40, 0);
-                                }
-                            }
                             warlordsPlayer.setRespawnTimer(respawn - .05f);
                         }
                         //damage or heal
@@ -590,8 +587,8 @@ public class Warlords extends JavaPlugin {
                                 orb.remove();
                                 itr.remove();
 
-                                float minHeal = 240;
-                                float maxHeal = 350;
+                                float minHeal = 250;
+                                float maxHeal = 375;
                                 if (Warlords.getPlayerSettings(orb.getOwner().getUuid()).getClassesSkillBoosts() == ClassesSkillBoosts.ORBS_OF_LIFE) {
                                     minHeal *= 1.2;
                                     maxHeal *= 1.2;
@@ -661,6 +658,15 @@ public class Warlords extends JavaPlugin {
                                 int healthToAdd = (int) (warlordsPlayer.getMaxHealth() / 55.3);
                                 warlordsPlayer.setHealth(Math.min(warlordsPlayer.getHealth() + healthToAdd, warlordsPlayer.getMaxHealth()));
                             }
+                            //RESPAWN DISPLAY
+                            float respawn = warlordsPlayer.getRespawnTimer();
+                            if (respawn != -1) {
+                                if (respawn <= 11) {
+                                    if (player != null) {
+                                        PacketUtils.sendTitle(player, "", warlordsPlayer.getTeam().teamColor() + "Respawning in... " + ChatColor.YELLOW + Math.round(respawn), 0, 40, 0);
+                                    }
+                                }
+                            }
                             //COOLDOWNS
                             if (warlordsPlayer.getSpawnProtection() > 0) {
                                 warlordsPlayer.setSpawnProtection(warlordsPlayer.getSpawnProtection() - 1);
@@ -721,7 +727,7 @@ public class Warlords extends JavaPlugin {
                             }
                             LivingEntity player = warlordsPlayer.getEntity();
                             List<Location> locations = warlordsPlayer.getLocations();
-                            if (warlordsPlayer.isDeath()) {
+                            if (warlordsPlayer.isDeath() && !locations.isEmpty()) {
                                 locations.add(locations.get(locations.size() - 1));
                             } else {
                                 locations.add(player.getLocation());

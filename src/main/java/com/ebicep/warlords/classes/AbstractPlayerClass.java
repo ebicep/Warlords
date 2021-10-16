@@ -95,8 +95,6 @@ public abstract class AbstractPlayerClass {
                     }
                 }.runTaskLater(Warlords.getInstance(), cooldownDelay);
             } else {
-                //annoying as fuck
-                //player.sendMessage("§cYou can't do that yet!");
                 player.playSound(player.getLocation(), "notreadyalert", 1, 1);
             }
         } else if (slot == 1) {
@@ -201,7 +199,6 @@ public abstract class AbstractPlayerClass {
                     }
                 }.runTaskLater(Warlords.getInstance(), cooldownDelay);
             } else {
-                //player.sendMessage("§cYou can't do that yet!");
                 player.playSound(player.getLocation(), "notreadyalert", 1, 1);
             }
         } else if (slot == 1) {
