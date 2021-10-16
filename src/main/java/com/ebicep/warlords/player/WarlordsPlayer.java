@@ -99,9 +99,6 @@ public final class WarlordsPlayer {
     //POWERUPS
     private boolean powerUpHeal = false;
 
-    @Nonnull
-    private final CustomScoreboard scoreboard;
-
     private Location deathLocation = null;
     private ArmorStand deathStand = null;
     private LivingEntity entity = null;
@@ -134,7 +131,6 @@ public final class WarlordsPlayer {
         this.hitCooldown = 20;
         this.spawnProtection = 0;
         this.speed = new CalculateSpeed(this::setWalkSpeed, 13);
-        this.scoreboard = new CustomScoreboard(this, gameState, 15);
         Player p = player.getPlayer();
         this.entity = spawnJimmy(p == null ? Warlords.getRejoinPoint(uuid) : p.getLocation(), null);
         this.weapon = Weapons.getSelected(player, settings.getSelectedClass());
@@ -190,10 +186,6 @@ public final class WarlordsPlayer {
 
     public CooldownManager getCooldownManager() {
         return cooldownManager;
-    }
-
-    public CustomScoreboard getScoreboard() {
-        return scoreboard;
     }
 
     private void setWalkSpeed(float walkspeed) {
@@ -486,7 +478,7 @@ public final class WarlordsPlayer {
         this.health = this.maxHealth;
         this.maxEnergy = this.spec.getMaxEnergy();
         this.energy = this.maxEnergy;
-        this.scoreboard.updateClass();
+        this.getGameState().updateClass(Warlords.playerScoreboards.get(uuid), this);
         assignItemLore(Bukkit.getPlayer(uuid));
         new BukkitRunnable() {
 
@@ -935,7 +927,7 @@ public final class WarlordsPlayer {
                     die(attacker);
 
                     attacker.addKill();
-                    attacker.scoreboard.updateKillsAssists();
+                    getGameState().updateKillsAssists(Warlords.playerScoreboards.get(attacker.getUuid()), attacker);
 
                     sendMessage(ChatColor.GRAY + "You were killed by " + attacker.getColoredName());
                     attacker.sendMessage(ChatColor.GRAY + "You killed " + getColoredName());
@@ -1067,7 +1059,7 @@ public final class WarlordsPlayer {
         hitBy.put(attacker, 10);
 
         this.addDeath();
-        this.scoreboard.updateKillsAssists();
+        getGameState().updateKillsAssists(Warlords.playerScoreboards.get(uuid), this);
         Bukkit.getPluginManager().callEvent(new WarlordsDeathEvent(this));
     }
 
@@ -1502,7 +1494,6 @@ public final class WarlordsPlayer {
             ((EntityLiving) ((CraftPlayer) player).getHandle()).setAbsorptionHearts(0);
             this.assignItemLore(player);
             ArmorManager.resetArmor(player, getSpecClass(), getTeam());
-            player.setScoreboard(this.getScoreboard().getScoreboard());
 
             if (isDeath()) {
                 player.setGameMode(GameMode.SPECTATOR);

@@ -11,6 +11,9 @@ import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Gates;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.flags.FlagManager;
+import com.ebicep.warlords.maps.flags.GroundFlagLocation;
+import com.ebicep.warlords.maps.flags.PlayerFlagLocation;
+import com.ebicep.warlords.maps.flags.SpawnFlagLocation;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.powerups.PowerupManager;
 import com.ebicep.warlords.util.PacketUtils;
@@ -23,6 +26,9 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
+import org.bukkit.scoreboard.DisplaySlot;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Scoreboard;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -153,10 +159,10 @@ public class PlayingState implements State, TimerDebugAble {
             ));
         });
         this.game.forEachOfflineWarlordsPlayer(wp -> {
-            CustomScoreboard scoreboard = wp.getScoreboard();
-            scoreboard.updateBasedOnGameState(this);
-            scoreboard.updateKillsAssists();
-            scoreboard.updateNames();
+            CustomScoreboard customScoreboard = Warlords.playerScoreboards.get(wp.getUuid());
+            updateBasedOnGameState(customScoreboard);
+            updateKillsAssists(customScoreboard, wp);
+            updateNames(customScoreboard);
             if (wp.getEntity() instanceof Player) {
                 wp.applySkillBoost((Player) wp.getEntity());
                 PacketUtils.sendTitle((Player) wp.getEntity(), ChatColor.GREEN + "GO!", ChatColor.YELLOW + "Steal and capture the enemy flag!", 0, 40, 20);
@@ -216,7 +222,7 @@ public class PlayingState implements State, TimerDebugAble {
             }
         }
         for (WarlordsPlayer value : Warlords.getPlayers().values()) {
-            value.getScoreboard().updateBasedOnGameState(this);
+            updateBasedOnGameState(Warlords.playerScoreboards.get(value.getUuid()));
         }
         int redPoints = getStats(Team.RED).points;
         int bluePoints = getStats(Team.BLUE).points;
@@ -402,6 +408,184 @@ public class PlayingState implements State, TimerDebugAble {
 
     public int getPointLimit() {
         return pointLimit;
+    }
+
+    //scoreboard to this game
+    public void giveScoreboard(UUID uuid) {
+        CustomScoreboard customScoreboard = Warlords.playerScoreboards.get(uuid);
+        Scoreboard scoreboard = customScoreboard.getScoreboard();
+        Objective health = customScoreboard.getHealth();
+
+    }
+
+    public void updateHealth(CustomScoreboard customScoreboard) {
+        Scoreboard scoreboard = customScoreboard.getScoreboard();
+        Objective health = customScoreboard.getHealth();
+        if (health == null) {
+            health = scoreboard.registerNewObjective("health", "dummy");
+            health.setDisplaySlot(DisplaySlot.BELOW_NAME);
+            health.setDisplayName(ChatColor.RED + "❤");
+            customScoreboard.setHealth(health);
+        }
+        Objective finalHealth = health;
+        this.getGame().forEachOfflinePlayer((player, team) -> {
+            WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
+            if (warlordsPlayer != null) {
+                finalHealth.getScore(warlordsPlayer.getName()).setScore(warlordsPlayer.getHealth());
+            }
+        });
+    }
+
+    public void updateNames(CustomScoreboard customScoreboard) {
+        Scoreboard scoreboard = customScoreboard.getScoreboard();
+
+        this.getGame().forEachOfflinePlayer((player, team) -> {
+            WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
+            if (warlordsPlayer != null) {
+                if (scoreboard.getTeam(warlordsPlayer.getName()) == null) {
+                    org.bukkit.scoreboard.Team temp = scoreboard.registerNewTeam(warlordsPlayer.getName());
+                    temp.setPrefix(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + warlordsPlayer.getSpec().getClassNameShort() + ChatColor.DARK_GRAY + "] " + team.teamColor());
+                    temp.addEntry(warlordsPlayer.getName());
+                    temp.setSuffix(ChatColor.DARK_GRAY + " [" + ChatColor.GOLD + "Lv90" + ChatColor.DARK_GRAY + "]");
+                } else {
+                    if (warlordsPlayer.getGameState().flags().hasFlag(warlordsPlayer)) {
+                        scoreboard.getTeam(warlordsPlayer.getName()).setSuffix(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + "Lv90" + ChatColor.DARK_GRAY + "]" + ChatColor.WHITE + "⚑");
+                    } else {
+                        scoreboard.getTeam(warlordsPlayer.getName()).setSuffix(ChatColor.DARK_GRAY + " [" + ChatColor.GOLD + "Lv90" + ChatColor.DARK_GRAY + "]");
+                    }
+                }
+            }
+        });
+    }
+
+    public void updateScoreboardNames(CustomScoreboard customScoreboard) {
+        Scoreboard scoreboard = customScoreboard.getScoreboard();
+
+        this.getGame().forEachOfflinePlayer((player, team) -> {
+            WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
+            if (warlordsPlayer != null) {
+                if (scoreboard.getTeam(warlordsPlayer.getName()) == null) {
+                    org.bukkit.scoreboard.Team temp = scoreboard.registerNewTeam(warlordsPlayer.getName());
+                    temp.setPrefix(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + warlordsPlayer.getSpec().getClassNameShort() + ChatColor.DARK_GRAY + "] " + team.teamColor());
+                    temp.addEntry(warlordsPlayer.getName());
+                    temp.setSuffix(ChatColor.DARK_GRAY + " [" + ChatColor.GOLD + "Lv90" + ChatColor.DARK_GRAY + "]");
+                } else {
+                    if (warlordsPlayer.getGameState().flags().hasFlag(warlordsPlayer)) {
+                        scoreboard.getTeam(warlordsPlayer.getName()).setSuffix(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + "Lv90" + ChatColor.DARK_GRAY + "]" + ChatColor.WHITE + "⚑");
+                    } else {
+                        scoreboard.getTeam(warlordsPlayer.getName()).setSuffix(ChatColor.DARK_GRAY + " [" + ChatColor.GOLD + "Lv90" + ChatColor.DARK_GRAY + "]");
+                    }
+                }
+            }
+        });
+    }
+
+    public void updatePlayerName(CustomScoreboard customScoreboard, WarlordsPlayer warlordsPlayer) {
+        Scoreboard scoreboard = customScoreboard.getScoreboard();
+
+        this.getGame().forEachOfflinePlayer((player, team) -> {
+            WarlordsPlayer wp = Warlords.getPlayer(player);
+            if (wp != null) {
+                scoreboard.getTeam(warlordsPlayer.getName()).setPrefix(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + warlordsPlayer.getSpec().getClassNameShort() + ChatColor.DARK_GRAY + "] " + warlordsPlayer.getTeam().teamColor());
+                scoreboard.getTeam(warlordsPlayer.getName()).setSuffix(ChatColor.DARK_GRAY + " [" + ChatColor.GOLD + "Lv90" + ChatColor.DARK_GRAY + "]");
+            }
+        });
+    }
+
+    public void updateBasedOnGameState(CustomScoreboard customScoreboard) {
+        Scoreboard scoreboard = customScoreboard.getScoreboard();
+
+        this.updateHealth(customScoreboard);
+        this.updateNames(customScoreboard);
+
+        // Timer
+        {
+            int secondsRemaining = this.getTimer() / 20;
+            int minute = secondsRemaining / 60;
+            int second = secondsRemaining % 60;
+            String timeLeft = "";
+            if (minute < 10) {
+                timeLeft += "0";
+            }
+            timeLeft += minute + ":";
+            if (second < 10) {
+                timeLeft += "0";
+            }
+            timeLeft += second;
+
+            com.ebicep.warlords.maps.Team team = this.calculateWinnerByPoints();
+            if (team != null) {
+                scoreboard.getTeam("team_10").setPrefix(team.coloredPrefix() + ChatColor.GOLD + " Wins in:");
+            } else {
+                scoreboard.getTeam("team_10").setPrefix(ChatColor.WHITE + "Time Left:");
+            }
+            scoreboard.getTeam("team_10").setSuffix(" " + ChatColor.GREEN + timeLeft);
+        }
+        // Points
+        {
+            scoreboard.getTeam("team_13").setPrefix(ChatColor.BLUE + "BLU: ");
+            scoreboard.getTeam("team_13").setSuffix(ChatColor.AQUA.toString() + this.getBluePoints() + ChatColor.GOLD + "/" + this.getPointLimit());
+            scoreboard.getTeam("team_12").setPrefix(ChatColor.RED + "RED: ");
+            scoreboard.getTeam("team_12").setSuffix(ChatColor.AQUA.toString() + this.getRedPoints() + ChatColor.GOLD + "/" + this.getPointLimit());
+        }
+        // Flags
+        {
+            if (this.flags().getRed().getFlag() instanceof SpawnFlagLocation) {
+                scoreboard.getTeam("team_8").setPrefix(ChatColor.RED + "RED Flag: ");
+                scoreboard.getTeam("team_8").setSuffix(ChatColor.GREEN + "Safe");
+            } else if (this.flags().getRed().getFlag() instanceof PlayerFlagLocation) {
+                PlayerFlagLocation flag = (PlayerFlagLocation) this.flags().getRed().getFlag();
+                if (flag.getPickUpTicks() == 0) {
+                    scoreboard.getTeam("team_8").setPrefix(ChatColor.RED + "RED Flag: ");
+                    scoreboard.getTeam("team_8").setSuffix(ChatColor.RED + "Stolen!");
+                } else {
+                    scoreboard.getTeam("team_8").setPrefix(ChatColor.RED + "RED Flag: " + ChatColor.RED + "St");
+                    scoreboard.getTeam("team_8").setSuffix("olen!" + ChatColor.YELLOW + " +" + flag.getComputedHumanMultiplier() + "§e%");
+                }
+            } else if (this.flags().getRed().getFlag() instanceof GroundFlagLocation) {
+                GroundFlagLocation flag = (GroundFlagLocation) this.flags().getRed().getFlag();
+                scoreboard.getTeam("team_8").setPrefix(ChatColor.RED + "RED Flag: ");
+                scoreboard.getTeam("team_8").setSuffix(ChatColor.YELLOW + "Dropped! " + ChatColor.GRAY + flag.getDespawnTimerSeconds());
+            } else {
+                scoreboard.getTeam("team_8").setPrefix(ChatColor.RED + "RED Flag: ");
+                scoreboard.getTeam("team_8").setSuffix(ChatColor.GRAY + "Respawning...");
+            }
+
+            if (this.flags().getBlue().getFlag() instanceof SpawnFlagLocation) {
+                scoreboard.getTeam("team_7").setPrefix(ChatColor.BLUE + "BLU Flag: ");
+                scoreboard.getTeam("team_7").setSuffix(ChatColor.GREEN + "Safe");
+            } else if (this.flags().getBlue().getFlag() instanceof PlayerFlagLocation) {
+                PlayerFlagLocation flag = (PlayerFlagLocation) this.flags().getBlue().getFlag();
+                if (flag.getPickUpTicks() == 0) {
+                    scoreboard.getTeam("team_7").setPrefix(ChatColor.BLUE + "BLU Flag: ");
+                    scoreboard.getTeam("team_7").setSuffix(ChatColor.RED + "Stolen!");
+                } else {
+                    scoreboard.getTeam("team_7").setPrefix(ChatColor.BLUE + "BLU Flag: " + ChatColor.RED + "St");
+                    scoreboard.getTeam("team_7").setSuffix("olen!" + ChatColor.YELLOW + " +" + flag.getComputedHumanMultiplier() + "§e%");
+                }
+            } else if (this.flags().getBlue().getFlag() instanceof GroundFlagLocation) {
+                GroundFlagLocation flag = (GroundFlagLocation) this.flags().getBlue().getFlag();
+                scoreboard.getTeam("team_7").setPrefix(ChatColor.BLUE + "BLU Flag: ");
+                scoreboard.getTeam("team_7").setSuffix(ChatColor.YELLOW + "Dropped! " + ChatColor.GRAY + flag.getDespawnTimerSeconds());
+            } else {
+                scoreboard.getTeam("team_7").setPrefix(ChatColor.BLUE + "BLU Flag: ");
+                scoreboard.getTeam("team_7").setSuffix(ChatColor.GRAY + "Respawning...");
+            }
+        }
+    }
+
+    public void updateKillsAssists(CustomScoreboard customScoreboard, WarlordsPlayer warlordsPlayer) {
+        Scoreboard scoreboard = customScoreboard.getScoreboard();
+
+        scoreboard.getTeam("team_3").setPrefix(ChatColor.GREEN.toString() + warlordsPlayer.getTotalKills() + ChatColor.RESET + " Kills ");
+        scoreboard.getTeam("team_3").setSuffix(ChatColor.GREEN.toString() + warlordsPlayer.getTotalAssists() + ChatColor.RESET + " Assists");
+    }
+
+    public void updateClass(CustomScoreboard customScoreboard, WarlordsPlayer warlordsPlayer) {
+        Scoreboard scoreboard = customScoreboard.getScoreboard();
+
+        scoreboard.getTeam("team_5").setPrefix(ChatColor.WHITE + "Spec: ");
+        scoreboard.getTeam("team_5").setSuffix(ChatColor.GREEN + warlordsPlayer.getSpec().getClass().getSimpleName());
     }
 
     private static <K, V, M extends Map<K, V>> BinaryOperator<M> mapMerger(BinaryOperator<V> mergeFunction) {

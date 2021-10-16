@@ -168,6 +168,11 @@ public class WarlordsEvents implements Listener {
                 .asyncLast((d) -> Warlords.updateHeads())
                 .syncLast((input) -> LeaderboardRanking.addPlayerLeaderboards(player))
                 .execute();
+
+        //scoreboard
+        if(!Warlords.playerScoreboards.containsKey(player.getUniqueId())) {
+            Warlords.playerScoreboards.put(player.getUniqueId(), new CustomScoreboard(player));
+        }
     }
 
     @EventHandler

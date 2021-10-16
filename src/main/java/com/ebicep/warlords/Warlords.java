@@ -194,6 +194,8 @@ public class Warlords extends JavaPlugin {
 
     public static HashMap<UUID, ChatChannels> playerChatChannels = new HashMap<>();
 
+    public static HashMap<UUID, CustomScoreboard> playerScoreboards = new HashMap<>();
+
     @Override
     public void onEnable() {
         instance = this;
@@ -249,6 +251,10 @@ public class Warlords extends JavaPlugin {
         } catch (LoginException e) {
             e.printStackTrace();
         }
+
+        Bukkit.getOnlinePlayers().forEach(player -> {
+            playerScoreboards.put(player.getUniqueId(), new CustomScoreboard(player));
+        });
 
         ProtocolManager protocolManager;
 
@@ -502,7 +508,7 @@ public class Warlords extends JavaPlugin {
                                         );
                                     }
                                     assisted.addAssist();
-                                    assisted.getScoreboard().updateKillsAssists();
+                                    assisted.getGameState().updateKillsAssists(Warlords.playerScoreboards.get(assisted.getUuid()), assisted);
                                 }
                                 counter[0]++;
                             });

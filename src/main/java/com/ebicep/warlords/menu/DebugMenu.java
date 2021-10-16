@@ -183,7 +183,7 @@ public class DebugMenu {
                                     target.getGame().getPlayers().put(target.getUuid(), otherTeam);
                                     //todo something with rejoin point?
                                     target.setTeam(otherTeam);
-                                    target.getScoreboard().updatePlayerName();
+                                    target.getGameState().updatePlayerName(Warlords.playerScoreboards.get(target.getUuid()), target);
                                     Warlords.getPlayerSettings(target.getUuid()).setWantedTeam(otherTeam);
                                     target.teleport(otherTeam == Team.RED ? target.getGame().getMap().getRedLobbySpawnPoint() : target.getGame().getMap().getBlueLobbySpawnPoint());
                                     ArmorManager.resetArmor(Bukkit.getPlayer(target.getUuid()), Warlords.getPlayerSettings(target.getUuid()).getSelectedClass(), otherTeam);
@@ -786,7 +786,7 @@ public class DebugMenu {
                     (n, e) -> {
                         setSelectedBoost(Bukkit.getPlayer(target.getUuid()), skillBoost);
                         target.setSpec(selectedClass.create.get(), skillBoost);
-                        target.getScoreboard().updatePlayerName();
+                        target.getGameState().updatePlayerName(Warlords.playerScoreboards.get(target.getUuid()), target);
                         player.sendMessage(ChatColor.RED + "DEV: " + target.getColoredName() + "'s §aspec was changed to " + selectedClass.name);
                         openSpecMenu(player, target);
                     }
