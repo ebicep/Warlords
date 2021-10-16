@@ -84,7 +84,7 @@ public class LeaderboardRanking {
                         .filter(hologram -> hologram.getLocation().equals(location))
                         .filter(hologram -> hologram.getVisibilityManager().isVisibleTo(player))
                         .forEach(Hologram::delete);
-                if (key.equals("losses") || key.equals("kills")) {
+                if (key.equals("wins") || key.equals("kills")) {
                     if (cachedSortedPlayers.containsKey(key)) {
                         List<Document> documents = cachedSortedPlayers.get(key);
                         Hologram hologram = HologramsAPI.createHologram(Warlords.getInstance(), location);
