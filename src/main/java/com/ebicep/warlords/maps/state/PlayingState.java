@@ -162,31 +162,29 @@ public class PlayingState implements State, TimerDebugAble {
                 PacketUtils.sendTitle((Player) wp.getEntity(), ChatColor.GREEN + "GO!", ChatColor.YELLOW + "Steal and capture the enemy flag!", 0, 40, 20);
             }
         });
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                //DATABASE SHIT
-                game.forEachOfflinePlayer((player, team) -> {
-                    HashMap<String, Object> newInfo = new HashMap<>();
-                    newInfo.put("last_spec", Classes.getSelected(player).name);
-                    Warlords.getPlayerSettings(player.getUniqueId()).getWeaponSkins().forEach((classes, weapons) -> {
-                        newInfo.put(
-                                Classes.getClassesGroup(classes).name.toLowerCase() + "." + classes.name.toLowerCase() + ".weapon",
-                                weapons.name);
+
+        Warlords.newChain()
+                .async(() -> {
+                    game.forEachOfflinePlayer((player, team) -> {
+                        HashMap<String, Object> newInfo = new HashMap<>();
+                        newInfo.put("last_spec", Classes.getSelected(player).name);
+                        Warlords.getPlayerSettings(player.getUniqueId()).getWeaponSkins().forEach((classes, weapons) -> {
+                            newInfo.put(
+                                    Classes.getClassesGroup(classes).name.toLowerCase() + "." + classes.name.toLowerCase() + ".weapon",
+                                    weapons.name);
+                        });
+                        newInfo.put("mage.helm", ArmorManager.Helmets.getSelected(player.getPlayer()).get(0).name);
+                        newInfo.put("mage.armor", ArmorManager.ArmorSets.getSelected(player.getPlayer()).get(0).name);
+                        newInfo.put("warrior.helm", ArmorManager.Helmets.getSelected(player.getPlayer()).get(1).name);
+                        newInfo.put("warrior.armor", ArmorManager.ArmorSets.getSelected(player.getPlayer()).get(1).name);
+                        newInfo.put("paladin.helm", ArmorManager.Helmets.getSelected(player.getPlayer()).get(2).name);
+                        newInfo.put("paladin.armor", ArmorManager.ArmorSets.getSelected(player.getPlayer()).get(2).name);
+                        newInfo.put("shaman.helm", ArmorManager.Helmets.getSelected(player.getPlayer()).get(3).name);
+                        newInfo.put("shaman.armor", ArmorManager.ArmorSets.getSelected(player.getPlayer()).get(3).name);
+                        newInfo.put("hotkeymode", Settings.HotkeyMode.getSelected(player.getPlayer()).name());
+                        DatabaseManager.updatePlayerInformation(player, newInfo, FieldUpdateOperators.SET, false);
                     });
-                    newInfo.put("mage.helm", ArmorManager.Helmets.getSelected(player.getPlayer()).get(0).name);
-                    newInfo.put("mage.armor", ArmorManager.ArmorSets.getSelected(player.getPlayer()).get(0).name);
-                    newInfo.put("warrior.helm", ArmorManager.Helmets.getSelected(player.getPlayer()).get(1).name);
-                    newInfo.put("warrior.armor", ArmorManager.ArmorSets.getSelected(player.getPlayer()).get(1).name);
-                    newInfo.put("paladin.helm", ArmorManager.Helmets.getSelected(player.getPlayer()).get(2).name);
-                    newInfo.put("paladin.armor", ArmorManager.ArmorSets.getSelected(player.getPlayer()).get(2).name);
-                    newInfo.put("shaman.helm", ArmorManager.Helmets.getSelected(player.getPlayer()).get(3).name);
-                    newInfo.put("shaman.armor", ArmorManager.ArmorSets.getSelected(player.getPlayer()).get(3).name);
-                    newInfo.put("hotkeymode", Settings.HotkeyMode.getSelected(player.getPlayer()).name());
-                    DatabaseManager.updatePlayerInformation(UUID.randomUUID().toString(), player, newInfo, FieldUpdateOperators.SET);
-                });
-            }
-        }.runTaskAsynchronously(Warlords.getInstance());
+                }).execute();
     }
 
     @Override
@@ -295,21 +293,15 @@ public class PlayingState implements State, TimerDebugAble {
             } else {
                 BotManager.sendMessageToNotificationChannel("[GAME] A game ended with a **DRAW**");
             }
-//            Warlords.newChain()
-//                    .asyncFirst(this::addGameAndLoadPlayers)
-//                    .syncLast((t) -> {
-//                        LeaderboardRanking.addHologramLeaderboards();
-//                        game.forEachOnlinePlayer(((player, team) -> CustomScoreboard.giveMainLobbyScoreboard(player)));
-//                    })
-//                    .execute();
             List<WarlordsPlayer> players = new ArrayList<>(Warlords.getPlayers().values());
             float highestDamage = players.stream().sorted(Comparator.comparing(WarlordsPlayer::getTotalDamage).reversed()).collect(Collectors.toList()).get(0).getTotalDamage();
             float highestHealing = players.stream().sorted(Comparator.comparing(WarlordsPlayer::getTotalHealing).reversed()).collect(Collectors.toList()).get(0).getTotalHealing();
             if (highestDamage <= 500000 && highestHealing <= 500000) {
-                DatabaseManager.addGame(PlayingState.this);
+                DatabaseManager.addGame(PlayingState.this, true);
             } else {
+                DatabaseManager.addGame(PlayingState.this, false);
                 game.forEachOnlinePlayer(((player, team) -> {
-                    if(player.isOp()) {
+                    if (player.isOp()) {
                         player.sendMessage(ChatColor.RED + "This game was not added to the database");
                     }
                 }));
@@ -318,36 +310,12 @@ public class PlayingState implements State, TimerDebugAble {
         } else {
             DatabaseManager.addGame(PlayingState.this, false);
             game.forEachOnlinePlayer(((player, team) -> {
-                if(player.isOp()) {
+                if (player.isOp()) {
                     player.sendMessage(ChatColor.RED + "This game was not added to the database");
                 }
             }));
             System.out.println(ChatColor.GREEN + "[Warlords] This game was not added to the database");
         }
-    }
-
-    private boolean addGameAndLoadPlayers() {
-        List<WarlordsPlayer> players = new ArrayList<>(Warlords.getPlayers().values());
-        players = players.stream().sorted(Comparator.comparing(WarlordsPlayer::getTotalDamage).reversed()).collect(Collectors.toList());
-        if (players.get(0).getTotalDamage() <= 500000) {
-            DatabaseManager.addGame(PlayingState.this, true);
-            for (WarlordsPlayer player : PlayerFilter.playingGame(game)) {
-                if (player.getEntity() instanceof Player) {
-                    //DatabaseManager.loadPlayer((Player) player.getEntity());
-                    if(player.getEntity().isOp()) {
-                        player.sendMessage(ChatColor.GREEN + "This game was added to the database");
-                    }
-                }
-            }
-        } else {
-            game.forEachOnlinePlayer(((player, team) -> {
-                if(player.isOp()) {
-                    player.sendMessage(ChatColor.RED + "This game was not added to the database");
-                }
-            }));
-            System.out.println(ChatColor.GREEN + "[Warlords] This game was not added to the database (INVALID DAMAGE)");
-        }
-        return true;
     }
 
     @Override

@@ -239,10 +239,10 @@ public class Warlords extends JavaPlugin {
 
         holographicDisplaysEnabled = Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays");
 
-        //gets data then loads scoreboard then loads holograms (all callbacks i think)
+        //connects to the database with callback
         Warlords.newChain()
-                .asyncFirst(DatabaseManager::connect)
-                .syncLast(input -> {
+                .async(DatabaseManager::connect)
+                .sync(() -> {
                     Bukkit.getOnlinePlayers().forEach(CustomScoreboard::giveMainLobbyScoreboard);
                     new LeaderboardRanking();
                     LeaderboardRanking.addHologramLeaderboards(UUID.randomUUID().toString());

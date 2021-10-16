@@ -103,6 +103,9 @@ public enum Classes {
     }
 
     public static Classes getClass(String name) {
+        if(name == null) {
+            return PYROMANCER;
+        }
         for (Classes value : Classes.values()) {
             if (value.name.equalsIgnoreCase(name)) {
                 return value;
