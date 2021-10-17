@@ -108,10 +108,19 @@ public class PreLobbyState implements State, TimerDebugAble {
         String dateString = format.format(new Date());
         int time = timer / 20;
 
+        String mapPrefix = ChatColor.WHITE + "Map: " + ChatColor.GREEN;
+        String mapSuffix;
+        if(game.getMap().getMapName().length() >= 16) {
+            mapPrefix += game.getMap().getMapName().substring(0, 7);
+            mapSuffix = game.getMap().getMapName().substring(7);
+        } else {
+            mapSuffix = game.getMap().getMapName();
+        }
+
         customScoreboard.giveNewSideBar(init,
                 new CustomScoreboardPair(ChatColor.GRAY + dateString, ""),
                 new CustomScoreboardPair("  ", ""),
-                new CustomScoreboardPair(ChatColor.WHITE + "Map: ", ChatColor.GREEN + game.getMap().getMapName()),
+                new CustomScoreboardPair(mapPrefix, mapSuffix),
                 new CustomScoreboardPair(ChatColor.WHITE + "Players: ", ChatColor.GREEN.toString() + game.playersCount() + "/" + game.getMap().getMaxPlayers()),
                 new CustomScoreboardPair("   ", ""),
                 new CustomScoreboardPair(ChatColor.WHITE + "Starting in: ", ChatColor.GREEN + (time < 10 ? "00:0" : "00:") + time + ChatColor.WHITE + " to"),
