@@ -41,6 +41,12 @@ public class CustomScoreboard {
     }
 
     public void setSideBarTeamPrefixAndSuffix(int team, String prefix, String suffix) {
+        if(prefix.length() > 16) {
+            prefix = "Error";
+        }
+        if(suffix.length() > 16) {
+            suffix = "";
+        }
         scoreboard.getTeam("team_" + team).setPrefix(prefix);
         scoreboard.getTeam("team_" + team).setSuffix(suffix);
     }
