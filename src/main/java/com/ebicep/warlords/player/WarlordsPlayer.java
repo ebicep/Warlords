@@ -479,13 +479,7 @@ public final class WarlordsPlayer {
         this.maxEnergy = this.spec.getMaxEnergy();
         this.energy = this.maxEnergy;
         assignItemLore(Bukkit.getPlayer(uuid));
-        new BukkitRunnable() {
-
-            @Override
-            public void run() {
-                DatabaseManager.updatePlayerInformation(player, "last_spec", spec.getName());
-            }
-        }.runTaskAsynchronously(Warlords.getInstance());
+        DatabaseManager.updatePlayerInformation(player, "last_spec", spec.getName());
     }
 
     public int getHealth() {

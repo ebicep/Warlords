@@ -133,22 +133,22 @@ public class ArmorManager {
 
         public static void setSelectedMage(Player player, Helmets selectedHelmet) {
             player.removeMetadata("selected-helmet-mage", Warlords.getInstance());
-            player.setMetadata("selected-helmet-mage", new FixedMetadataValue(Warlords.getInstance(), selectedHelmet));
+            player.setMetadata("selected-helmet-mage", new FixedMetadataValue(Warlords.getInstance(), selectedHelmet == null ? SIMPLE_MAGE_HELMET : selectedHelmet));
         }
 
         public static void setSelectedWarrior(Player player, Helmets selectedHelmet) {
             player.removeMetadata("selected-helmet-warrior", Warlords.getInstance());
-            player.setMetadata("selected-helmet-warrior", new FixedMetadataValue(Warlords.getInstance(), selectedHelmet));
+            player.setMetadata("selected-helmet-warrior", new FixedMetadataValue(Warlords.getInstance(), selectedHelmet == null ? SIMPLE_WARRIOR_HELMET : selectedHelmet));
         }
 
         public static void setSelectedPaladin(Player player, Helmets selectedHelmet) {
             player.removeMetadata("selected-helmet-paladin", Warlords.getInstance());
-            player.setMetadata("selected-helmet-paladin", new FixedMetadataValue(Warlords.getInstance(), selectedHelmet));
+            player.setMetadata("selected-helmet-paladin", new FixedMetadataValue(Warlords.getInstance(), selectedHelmet == null ? SIMPLE_PALADIN_HELMET : selectedHelmet));
         }
 
         public static void setSelectedShaman(Player player, Helmets selectedHelmet) {
             player.removeMetadata("selected-helmet-shaman", Warlords.getInstance());
-            player.setMetadata("selected-helmet-shaman", new FixedMetadataValue(Warlords.getInstance(), selectedHelmet));
+            player.setMetadata("selected-helmet-shaman", new FixedMetadataValue(Warlords.getInstance(), selectedHelmet == null ? SIMPLE_SHAMAN_HELMET : selectedHelmet));
         }
     }
 

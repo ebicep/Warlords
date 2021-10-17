@@ -117,6 +117,9 @@ public enum Weapons {
     }
 
     public static Weapons getWeapon(String name) {
+        if(name == null) {
+            return FELFLAME_BLADE;
+        }
         for (Weapons value : Weapons.values()) {
             if (value.name.equalsIgnoreCase(name)) {
                 return value;

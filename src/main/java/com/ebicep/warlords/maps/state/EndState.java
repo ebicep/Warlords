@@ -2,6 +2,7 @@ package com.ebicep.warlords.maps.state;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.events.WarlordsEvents;
+import com.ebicep.warlords.database.LeaderboardRanking;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.state.PlayingState.Stats;

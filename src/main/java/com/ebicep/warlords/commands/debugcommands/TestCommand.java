@@ -1,11 +1,12 @@
 package com.ebicep.warlords.commands.debugcommands;
 
-import com.ebicep.jda.BotManager;
+import co.aikar.taskchain.TaskChain;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.BaseCommand;
 import com.ebicep.warlords.database.LeaderboardRanking;
 import com.ebicep.warlords.maps.flags.PlayerFlagLocation;
 import com.ebicep.warlords.player.PlayerSettings;
+import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -21,6 +22,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.scoreboard.Team;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -30,35 +33,13 @@ public class TestCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
 
-        if(!sender.isOp()) {
+        if (!sender.isOp()) {
             return true;
         }
         WarlordsPlayer player = BaseCommand.requireWarlordsPlayer(sender);
         if (player != null) {
 
-            //do stuff
-//            Document doc = DatabaseManager.getLastGame();
-////            System.out.println(doc);
-//            System.out.println(DatabaseManager.getDocumentInfoWithDotNotation(doc, "players.red"));
-//            for (Document o : ((ArrayList<Document>) DatabaseManager.getDocumentInfoWithDotNotation(doc, "players.red"))) {
-//                System.out.println(DatabaseManager.getDocumentInfoWithDotNotation(o, "kills"));
-//                System.out.println(((ArrayList<Integer>)DatabaseManager.getDocumentInfoWithDotNotation(o, "kills")).stream().reduce(0, Integer::sum));
-//                System.out.println("----------");
-//            }
-            //System.out.println(((Player) sender).getUniqueId());
-            //System.out.println(DatabaseManager.getDocumentInfoWithDotNotation(doc, "players.blue" + ((Player) sender).getUniqueId()));
-
-            //player.teleport(player.getLocation());
-            //System.out.println("TELEPORTED");
         }
-        //LeaderboardRanking.addHologramLeaderboards();
-
-//        System.out.println(BotManager.getCompGamesServer().getTextChannels());
-//        Optional<TextChannel> botTeams = BotManager.getTextChannelByName("bot-teams");
-//        botTeams.ifPresent(textChannel -> textChannel.sendMessage("test").queue());
-        //System.out.println(BotManager.getCompGamesServer().getTextChannels().get(6).sendMessage("HELLO"));
-        //((Player)sender).setScoreboard(Warlords.playerScoreboards.get(((Player)sender).getUniqueId()).getScoreboard());
-        //((Player)sender).hidePlayer(((Player)sender));
         return true;
     }
 
