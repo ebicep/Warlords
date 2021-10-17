@@ -478,7 +478,6 @@ public final class WarlordsPlayer {
         this.health = this.maxHealth;
         this.maxEnergy = this.spec.getMaxEnergy();
         this.energy = this.maxEnergy;
-        this.getGameState().updateClass(Warlords.playerScoreboards.get(uuid), this);
         assignItemLore(Bukkit.getPlayer(uuid));
         new BukkitRunnable() {
 
@@ -927,13 +926,17 @@ public final class WarlordsPlayer {
                     die(attacker);
 
                     attacker.addKill();
-                    getGameState().updateKillsAssists(Warlords.playerScoreboards.get(attacker.getUuid()), attacker);
 
                     sendMessage(ChatColor.GRAY + "You were killed by " + attacker.getColoredName());
                     attacker.sendMessage(ChatColor.GRAY + "You killed " + getColoredName());
                     gameState.getGame().forEachOnlinePlayer((p, t) -> {
                         if (p != this.entity && p != attacker.entity) {
                             p.sendMessage(getColoredName() + ChatColor.GRAY + " was killed by " + attacker.getColoredName());
+                        }
+                    });
+                    gameState.getGame().getSpectators().forEach(offlinePlayer -> {
+                        if(offlinePlayer.isOnline()) {
+                            Bukkit.getPlayer(offlinePlayer.getUniqueId()).sendMessage(getColoredName() + ChatColor.GRAY + " was killed by " + attacker.getColoredName());
                         }
                     });
                     gameState.addKill(team, false);
@@ -1059,7 +1062,6 @@ public final class WarlordsPlayer {
         hitBy.put(attacker, 10);
 
         this.addDeath();
-        getGameState().updateKillsAssists(Warlords.playerScoreboards.get(uuid), this);
         Bukkit.getPluginManager().callEvent(new WarlordsDeathEvent(this));
     }
 

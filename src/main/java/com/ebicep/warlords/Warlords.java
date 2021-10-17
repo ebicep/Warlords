@@ -140,7 +140,7 @@ public class Warlords extends JavaPlugin {
         return players;
     }
 
-    private final static HashMap<UUID, Location> spawnPoints = new HashMap<>();
+    public final static HashMap<UUID, Location> spawnPoints = new HashMap<>();
 
     @Nonnull
     public static Location getRejoinPoint(@Nonnull UUID key) {
@@ -229,6 +229,7 @@ public class Warlords extends JavaPlugin {
         new LeaderboardCommand().register(this);
         new RecordGamesCommand().register(this);
         new GamesCommand().register(this);
+        new SpectateCommand().register(this);
 
         updateHeads();
 
@@ -236,11 +237,15 @@ public class Warlords extends JavaPlugin {
 
         holographicDisplaysEnabled = Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays");
 
+        Bukkit.getOnlinePlayers().forEach(player -> {
+            playerScoreboards.put(player.getUniqueId(), new CustomScoreboard(player));
+        });
+
         //gets data then loads scoreboard then loads holograms (all callbacks i think)
         Warlords.newChain()
                 .asyncFirst(DatabaseManager::connect)
                 .syncLast(input -> {
-                    Bukkit.getOnlinePlayers().forEach(CustomScoreboard::giveMainLobbyScoreboard);
+                    Bukkit.getOnlinePlayers().forEach(player -> playerScoreboards.get(player.getUniqueId()).giveMainLobbyScoreboard());
                     new LeaderboardRanking();
                     LeaderboardRanking.addHologramLeaderboards();
                 })
@@ -252,9 +257,6 @@ public class Warlords extends JavaPlugin {
             e.printStackTrace();
         }
 
-        Bukkit.getOnlinePlayers().forEach(player -> {
-            playerScoreboards.put(player.getUniqueId(), new CustomScoreboard(player));
-        });
 
         ProtocolManager protocolManager;
 
@@ -508,7 +510,6 @@ public class Warlords extends JavaPlugin {
                                         );
                                     }
                                     assisted.addAssist();
-                                    assisted.getGameState().updateKillsAssists(Warlords.playerScoreboards.get(assisted.getUuid()), assisted);
                                 }
                                 counter[0]++;
                             });

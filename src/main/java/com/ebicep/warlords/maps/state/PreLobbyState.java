@@ -5,12 +5,13 @@ import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Gates;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.player.Classes;
+import com.ebicep.warlords.player.CustomScoreboard;
+import com.ebicep.warlords.player.CustomScoreboardPair;
 import com.ebicep.warlords.util.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-import org.bukkit.scoreboard.Scoreboard;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -32,6 +33,9 @@ public class PreLobbyState implements State, TimerDebugAble {
     public void begin() {
         timer = game.getMap().getCountdownTimerInTicks();
         Gates.changeGates(game.getMap(), false);
+        game.forEachOnlinePlayer((player, team) -> {
+            giveLobbyScoreboard(true, player);
+        });
     }
 
     @Override
@@ -41,12 +45,8 @@ public class PreLobbyState implements State, TimerDebugAble {
             if (timer % 20 == 0) {
                 int time = timer / 20;
                 game.forEachOnlinePlayer((player, team) -> {
-                    //TODO rewrite all not in game scoreboards with the team shit
-                    updateTimeLeft(player, time);
-                    updatePlayers(player, players, game);
+                    giveLobbyScoreboard(false, player);
                     player.setAllowFlight(false);
-                    //F U N C T I O N A L
-                    updateClass(player);
                 });
                 if (time == 30) {
                     game.forEachOnlinePlayer((player, team) -> {
@@ -99,6 +99,32 @@ public class PreLobbyState implements State, TimerDebugAble {
     public void end() {
         updateTeamPreferences();
         distributePeopleOverTeams();
+    }
+
+    public void giveLobbyScoreboard(boolean init, Player player) {
+        CustomScoreboard customScoreboard = Warlords.playerScoreboards.get(player.getUniqueId());
+
+        SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
+        String dateString = format.format(new Date());
+        int time = timer / 20;
+
+        customScoreboard.giveNewSideBar(init,
+                new CustomScoreboardPair(ChatColor.GRAY + dateString, ""),
+                new CustomScoreboardPair("  ", ""),
+                new CustomScoreboardPair(ChatColor.WHITE + "Map: ", ChatColor.GREEN + game.getMap().getMapName()),
+                new CustomScoreboardPair(ChatColor.WHITE + "Players: ", ChatColor.GREEN.toString() + game.playersCount() + "/" + game.getMap().getMaxPlayers()),
+                new CustomScoreboardPair("   ", ""),
+                new CustomScoreboardPair(ChatColor.WHITE + "Starting in: ", ChatColor.GREEN + (time < 10 ? "00:0" : "00:") + time + ChatColor.WHITE + " to"),
+                new CustomScoreboardPair(ChatColor.WHITE + "allow time ", "for "),
+                new CustomScoreboardPair(ChatColor.WHITE + "additional ", "players"),
+                new CustomScoreboardPair("    ", ""),
+                new CustomScoreboardPair(ChatColor.GOLD + "Lv90 ", Classes.getClassesGroup(Warlords.getPlayerSettings(player.getUniqueId()).getSelectedClass()).name),
+                new CustomScoreboardPair(ChatColor.WHITE + "Spec: ", ChatColor.GREEN + Warlords.getPlayerSettings(player.getUniqueId()).getSelectedClass().name),
+                new CustomScoreboardPair("     ", ""),
+                new CustomScoreboardPair(ChatColor.YELLOW + Warlords.VERSION, "")
+        );
+
+
     }
 
     private void updateTeamPreferences() {
@@ -187,53 +213,6 @@ public class PreLobbyState implements State, TimerDebugAble {
     @Override
     public void resetTimer() throws IllegalStateException {
         this.timer = game.getMap().getCountdownTimerInTicks();
-    }
-
-    public void updatePlayers(Player player, int players, Game game) {
-        SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
-        String dateString = format.format(new Date());
-        Scoreboard scoreboard = player.getScoreboard();
-        for (String entry : scoreboard.getEntries()) {
-            String entryUnformatted = ChatColor.stripColor(entry);
-            if (entryUnformatted.contains("Players")) {
-                scoreboard.resetScores(entry);
-                scoreboard.getObjective(dateString).getScore(ChatColor.WHITE + "Players: " + ChatColor.GREEN + players + "/" + game.getMap().getMaxPlayers()).setScore(10);
-            }
-        }
-    }
-
-    public void updateTimeLeft(Player player, int time) {
-        SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
-        String dateString = format.format(new Date());
-        Scoreboard scoreboard = player.getScoreboard();
-        //time += 1;
-        for (String entry : scoreboard.getEntries()) {
-            String entryUnformatted = ChatColor.stripColor(entry);
-            if (entryUnformatted.contains("Starting in")) {
-                scoreboard.resetScores(entry);
-                if (time < 10) {
-                    scoreboard.getObjective(dateString).getScore(ChatColor.WHITE + "Starting in: " + ChatColor.GREEN + "00:0" + time + ChatColor.WHITE + " to").setScore(8);
-                } else {
-                    scoreboard.getObjective(dateString).getScore(ChatColor.WHITE + "Starting in: " + ChatColor.GREEN + "00:" + time + ChatColor.WHITE + " to").setScore(8);
-                }
-            }
-        }
-    }
-
-    public void updateClass(Player player) {
-        SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
-        String dateString = format.format(new Date());
-        Scoreboard scoreboard = player.getScoreboard();
-        for (String entry : scoreboard.getEntries()) {
-            String entryUnformatted = ChatColor.stripColor(entry);
-            if (entryUnformatted.contains("Lv90 ")) {
-                scoreboard.resetScores(entry);
-                scoreboard.getObjective(dateString).getScore(ChatColor.GOLD + "Lv90 " + Classes.getClassesGroup(Warlords.getPlayerSettings(player.getUniqueId()).getSelectedClass()).name).setScore(4);
-            } else if (entryUnformatted.contains("Spec: ")) {
-                scoreboard.resetScores(entry);
-                scoreboard.getObjective(dateString).getScore(ChatColor.WHITE + "Spec: " + ChatColor.GREEN + Warlords.getPlayerSettings(player.getUniqueId()).getSelectedClass().name).setScore(3);
-            }
-        }
     }
 
     private final class TeamPreference implements Comparable<TeamPreference> {

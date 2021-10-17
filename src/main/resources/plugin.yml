@@ -73,4 +73,7 @@ commands:
     aliases: [ recordgames, countgames ]
   games:
     description: Games stuff
-    aliases: [ games ]
+    aliases: [ recordgames, countgames ]
+  spectate:
+    description: Opens spectator menu
+    usage: /spectate

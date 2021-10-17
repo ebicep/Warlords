@@ -2,26 +2,17 @@ package com.ebicep.warlords.player;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.maps.flags.GroundFlagLocation;
-import com.ebicep.warlords.maps.flags.PlayerFlagLocation;
-import com.ebicep.warlords.maps.flags.SpawnFlagLocation;
-import com.ebicep.warlords.maps.state.PlayingState;
 import com.ebicep.warlords.util.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.*;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.TimeZone;
 
 public class CustomScoreboard {
 
     private final Player player;
     private final Scoreboard scoreboard;
-    private final Objective sideBar;
+    private Objective sideBar;
     private Objective health;
     private static final String[] teamEntries = new String[]{"🎂", "🎉", "🎁", "👹", "🏀", "⚽", "🍭", "🌠", "👾", "🐍", "🔮", "👽", "💣", "🍫", "🔫"};
 
@@ -32,12 +23,6 @@ public class CustomScoreboard {
         sideBar = scoreboard.registerNewObjective("WARLORDS", "dummy");
         sideBar.setDisplaySlot(DisplaySlot.SIDEBAR);
         sideBar.setDisplayName("§e§lWARLORDS 2.0");
-
-        for (int i = 0; i < 15; i++) {
-            Team tempTeam = scoreboard.registerNewTeam("team_" + (i + 1));
-            tempTeam.addEntry(teamEntries[i]);
-            sideBar.getScore(teamEntries[i]).setScore(i + 1);
-        }
 
         this.player = player;
         this.player.setScoreboard(scoreboard);
@@ -55,37 +40,62 @@ public class CustomScoreboard {
         this.health = health;
     }
 
-    public void setScoreboardTeamEntry(int team, String name) {
-        scoreboard.getTeam("team_" + team).addEntry(name);
-    }
-
-    public void setScoreboardTeamPrefix(int team, String prefix) {
+    public void setSideBarTeamPrefixAndSuffix(int team, String prefix, String suffix) {
         scoreboard.getTeam("team_" + team).setPrefix(prefix);
+        scoreboard.getTeam("team_" + team).setSuffix(suffix);
     }
 
-    public void setScoreboardTeamSuffix(int team, String suffix) {
-        scoreboard.getTeam("team_" + team).setSuffix(suffix);
+    public void giveNewSideBar(boolean forceClear, CustomScoreboardPair... pairs) {
+        //clearing all teams if size doesnt match
+        if(forceClear || pairs.length != scoreboard.getTeams().size() - 1) {
+            scoreboard.getTeams().forEach(Team::unregister);
+            clearSideBar();
+
+            //making new sidebar
+            for (int i = 0; i < pairs.length; i++) {
+                Team tempTeam = scoreboard.registerNewTeam("team_" + (i + 1));
+                tempTeam.addEntry(teamEntries[i]);
+                sideBar.getScore(teamEntries[i]).setScore(i + 1);
+            }
+        }
+
+        //giving prefix/suffix from pairs
+        for (int i = pairs.length; i > 0; i--) {
+            CustomScoreboardPair pair = pairs[pairs.length - i];
+            setSideBarTeamPrefixAndSuffix(i, pair.getPrefix(), pair.getSuffix());
+        }
+    }
+
+    private void clearSideBar() {
+        sideBar.unregister();
+        sideBar = scoreboard.registerNewObjective("WARLORDS", "dummy");
+        sideBar.setDisplaySlot(DisplaySlot.SIDEBAR);
+        sideBar.setDisplayName("§e§lWARLORDS 2.0");
     }
 
 
     public void giveMainLobbyScoreboard() {
-        if(!DatabaseManager.connected) return;
-        sideBar.setDisplaySlot(DisplaySlot.SIDEBAR);
-        sideBar.setDisplayName("    §e§lWARLORDS 2.0    ");
-        setScoreboardTeamEntry(15, "");
-        setScoreboardTeamEntry(14, "Kills: " + ChatColor.GREEN + Utils.addCommaAndRound(((Integer) DatabaseManager.getPlayerInfoWithDotNotation(player, "kills"))));
-        setScoreboardTeamEntry(13, "Assists: " + ChatColor.GREEN + Utils.addCommaAndRound(((Integer) DatabaseManager.getPlayerInfoWithDotNotation(player, "assists"))));
-        setScoreboardTeamEntry(12, "Deaths: " + ChatColor.GREEN + Utils.addCommaAndRound(((Integer) DatabaseManager.getPlayerInfoWithDotNotation(player, "deaths"))));
-        setScoreboardTeamEntry(11, " ");
-        setScoreboardTeamEntry(10, "Wins: " + ChatColor.GREEN + Utils.addCommaAndRound(((Integer) DatabaseManager.getPlayerInfoWithDotNotation(player, "wins"))));
-        setScoreboardTeamEntry(9, "Losses: " + ChatColor.GREEN + Utils.addCommaAndRound(((Integer) DatabaseManager.getPlayerInfoWithDotNotation(player, "losses"))));
-        setScoreboardTeamEntry(8, "  ");
-        setScoreboardTeamEntry(7, "Damage: " + ChatColor.RED + Utils.addCommaAndRound(((Number) DatabaseManager.getPlayerInfoWithDotNotation(player, "damage")).doubleValue()));
-        setScoreboardTeamEntry(6, "Healing: " + ChatColor.DARK_GREEN + Utils.addCommaAndRound(((Number) DatabaseManager.getPlayerInfoWithDotNotation(player, "healing")).doubleValue()));
-        setScoreboardTeamEntry(5, "Absorbed: " + ChatColor.GOLD + Utils.addCommaAndRound(((Number) DatabaseManager.getPlayerInfoWithDotNotation(player, "absorbed")).doubleValue()));
-        setScoreboardTeamEntry(4, "    ");
-        setScoreboardTeamEntry(3, "    ");
-        setScoreboardTeamEntry(2, "          §e§lUpdate");
-        setScoreboardTeamEntry(1, "         " + ChatColor.GREEN + ChatColor.BOLD + Warlords.VERSION);
+        if (!DatabaseManager.connected) return;
+        if(scoreboard.getObjective("health") != null) {
+            scoreboard.getObjective("health").unregister();
+            health = null;
+        }
+        giveNewSideBar(true,
+                new CustomScoreboardPair("", ""),
+                new CustomScoreboardPair("Kills: ", ChatColor.GREEN + Utils.addCommaAndRound(((Integer) DatabaseManager.getPlayerInfoWithDotNotation(player, "kills")))),
+                new CustomScoreboardPair("Assists: ", ChatColor.GREEN + Utils.addCommaAndRound(((Integer) DatabaseManager.getPlayerInfoWithDotNotation(player, "assists")))),
+                new CustomScoreboardPair("Deaths: ", ChatColor.GREEN + Utils.addCommaAndRound(((Integer) DatabaseManager.getPlayerInfoWithDotNotation(player, "deaths")))),
+                new CustomScoreboardPair(" ", ""),
+                new CustomScoreboardPair("Wins: ", ChatColor.GREEN + Utils.addCommaAndRound(((Integer) DatabaseManager.getPlayerInfoWithDotNotation(player, "wins")))),
+                new CustomScoreboardPair("Losses: ", ChatColor.GREEN + Utils.addCommaAndRound(((Integer) DatabaseManager.getPlayerInfoWithDotNotation(player, "losses")))),
+                new CustomScoreboardPair("  ", ""),
+                new CustomScoreboardPair("Damage: ", ChatColor.RED + Utils.addCommaAndRound(((Number) DatabaseManager.getPlayerInfoWithDotNotation(player, "damage")).doubleValue())),
+                new CustomScoreboardPair("Healing: ", ChatColor.DARK_GREEN + Utils.addCommaAndRound(((Number) DatabaseManager.getPlayerInfoWithDotNotation(player, "healing")).doubleValue())),
+                new CustomScoreboardPair("Absorbed: ", ChatColor.GOLD + Utils.addCommaAndRound(((Number) DatabaseManager.getPlayerInfoWithDotNotation(player, "absorbed")).doubleValue())),
+                new CustomScoreboardPair("    ", ""),
+                new CustomScoreboardPair("    ", ""),
+                new CustomScoreboardPair("          ", "§e§lUpdate"),
+                new CustomScoreboardPair("         ", ChatColor.GREEN.toString() + ChatColor.BOLD + Warlords.VERSION)
+        );
     }
 }

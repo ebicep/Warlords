@@ -4,7 +4,6 @@ import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.BaseCommand;
 import com.ebicep.warlords.database.LeaderboardRanking;
-import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.flags.PlayerFlagLocation;
 import com.ebicep.warlords.player.PlayerSettings;
 import com.ebicep.warlords.player.WarlordsPlayer;
@@ -21,6 +20,7 @@ import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.scoreboard.Team;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -54,9 +54,11 @@ public class TestCommand implements CommandExecutor {
         //LeaderboardRanking.addHologramLeaderboards();
 
 //        System.out.println(BotManager.getCompGamesServer().getTextChannels());
-        Optional<TextChannel> botTeams = BotManager.getTextChannelByName("bot-teams");
-        botTeams.ifPresent(textChannel -> textChannel.sendMessage("test").queue());
+//        Optional<TextChannel> botTeams = BotManager.getTextChannelByName("bot-teams");
+//        botTeams.ifPresent(textChannel -> textChannel.sendMessage("test").queue());
         //System.out.println(BotManager.getCompGamesServer().getTextChannels().get(6).sendMessage("HELLO"));
+        //((Player)sender).setScoreboard(Warlords.playerScoreboards.get(((Player)sender).getUniqueId()).getScoreboard());
+        //((Player)sender).hidePlayer(((Player)sender));
         return true;
     }
 
