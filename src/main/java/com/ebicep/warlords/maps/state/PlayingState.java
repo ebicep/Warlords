@@ -163,7 +163,6 @@ public class PlayingState implements State, TimerDebugAble {
         this.game.forEachOfflineWarlordsPlayer(wp -> {
             CustomScoreboard customScoreboard = Warlords.playerScoreboards.get(wp.getUuid());
             updateBasedOnGameState(true, customScoreboard, wp);
-            updateNames(customScoreboard);
             if (wp.getEntity() instanceof Player) {
                 wp.applySkillBoost((Player) wp.getEntity());
                 PacketUtils.sendTitle((Player) wp.getEntity(), ChatColor.GREEN + "GO!", ChatColor.YELLOW + "Steal and capture the enemy flag!", 0, 40, 20);
