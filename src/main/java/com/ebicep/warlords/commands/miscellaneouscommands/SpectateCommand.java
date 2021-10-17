@@ -2,6 +2,7 @@ package com.ebicep.warlords.commands.miscellaneouscommands;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.BaseCommand;
+import com.ebicep.warlords.maps.state.PreLobbyState;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.util.ItemBuilder;
 import org.bukkit.ChatColor;
@@ -18,10 +19,16 @@ public class SpectateCommand implements CommandExecutor {
 
         Player player = BaseCommand.requirePlayerOutsideGame(sender);
         if (player != null) {
-            if(Warlords.game.playersCount() != 0) {
+            if(Warlords.game.playersCount() == 0) {
                 sender.sendMessage(ChatColor.RED + "There are no active games right now!");
                 return true;
             }
+
+            if(Warlords.game.getPlayers().containsKey(((Player) sender).getUniqueId())) {
+                sender.sendMessage(ChatColor.RED + "You cannot use this command inside a game!");
+                return true;
+            }
+
             openSpectateMenu(player);
 
             return true;
@@ -43,10 +50,19 @@ public class SpectateCommand implements CommandExecutor {
                 new ItemBuilder(Material.BOOK)
                         .name(ChatColor.GREEN + "Game 1")
                         .get(),
-                (n, e) -> {
-                    Warlords.game.addSpectator(player);
-                }
+                (n, e) -> Warlords.game.addSpectator(player)
         );
+
+        if(Warlords.game.getSpectators().contains(player)) {
+            menu.setItem(
+                    4,
+                    2,
+                    new ItemBuilder(Material.BARRIER)
+                            .name(ChatColor.GREEN + "Return to the lobby")
+                            .get(),
+                    (n, e) -> Warlords.game.removeSpectator(player, true)
+            );
+        }
 
         menu.openForPlayer(player);
     }

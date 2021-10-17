@@ -261,6 +261,20 @@ public class Game implements Runnable {
         }
     }
 
+    public void removeSpectator(Player player, boolean fromMenu) {
+        if(fromMenu) {
+            spectators.remove(player);
+        }
+        Location loc = Warlords.spawnPoints.remove(player.getUniqueId());
+        Player p = Bukkit.getPlayer(player.getUniqueId());
+        if (p != null) {
+            if(loc != null) {
+                p.teleport(Warlords.getRejoinPoint(p.getUniqueId()));
+            }
+            WarlordsEvents.joinInteraction(p);
+        }
+    }
+
     @Override
     public void run() {
         if (this.state == null) {

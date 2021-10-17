@@ -425,7 +425,6 @@ public class PlayingState implements State, TimerDebugAble {
 
     public void updateNames(CustomScoreboard customScoreboard) {
         Scoreboard scoreboard = customScoreboard.getScoreboard();
-
         this.getGame().forEachOfflinePlayer((player, team) -> {
             WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
             if (warlordsPlayer != null) {

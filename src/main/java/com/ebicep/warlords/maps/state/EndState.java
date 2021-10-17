@@ -1,8 +1,6 @@
 package com.ebicep.warlords.maps.state;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.events.WarlordsEvents;
-import com.ebicep.warlords.database.LeaderboardRanking;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.state.PlayingState.Stats;
@@ -14,10 +12,7 @@ import com.ebicep.warlords.util.Utils;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -153,13 +148,8 @@ public class EndState implements State, TimerDebugAble {
     public void end() {
         game.clearAllPlayers();
         game.getSpectators().forEach(offlinePlayer -> {
-            Location loc = Warlords.spawnPoints.remove(offlinePlayer.getUniqueId());
-            Player p = Bukkit.getPlayer(offlinePlayer.getUniqueId());
-            if (p != null) {
-                if(loc != null) {
-                    p.teleport(Warlords.getRejoinPoint(offlinePlayer.getUniqueId()));
-                }
-                WarlordsEvents.joinInteraction(p);
+            if(Bukkit.getPlayer(offlinePlayer.getUniqueId()) != null) {
+                game.removeSpectator(Bukkit.getPlayer(offlinePlayer.getUniqueId()), false);
             }
         });
         game.getSpectators().clear();

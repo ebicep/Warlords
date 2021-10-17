@@ -47,7 +47,8 @@ public class CustomScoreboard {
 
     public void giveNewSideBar(boolean forceClear, CustomScoreboardPair... pairs) {
         //clearing all teams if size doesnt match
-        if(forceClear || pairs.length != scoreboard.getTeams().size() - 1) {
+        int sideBarTeams = (int) scoreboard.getTeams().stream().filter(team -> team.getName().contains("team")).count();
+        if(forceClear || pairs.length != sideBarTeams) {
             scoreboard.getTeams().forEach(Team::unregister);
             clearSideBar();
 
