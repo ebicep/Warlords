@@ -240,15 +240,17 @@ public class LeaderboardRanking {
 
     public static HashMap<Document, Integer> getPlayersSortedBySR(String optionalClass) {
         if (!DatabaseManager.connected) return null;
+        String lastUUID = "";
         try {
             HashMap<Document, Integer> playersSr = new HashMap<>();
             for (Document document : DatabaseManager.playersInformation.find()) {
+                lastUUID = (String) document.get ("uuid");
                 playersSr.put(document, getSRClass(UUID.fromString((String) document.get("uuid")), optionalClass));
             }
             return playersSr;
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println(ChatColor.GREEN + "[Warlords] Problem getting players sorted by sr");
+            System.out.println(ChatColor.GREEN + "[Warlords] Problem getting players sorted by sr - " + lastUUID);
             return null;
         }
     }
