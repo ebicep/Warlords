@@ -591,10 +591,11 @@ public class WarlordsEvents implements Listener {
                         p.playSound(player.getLocation(), "ctf.enemyflagtaken", 500, 1);
                     }
                 });
-                event.getGame().getSpectators().forEach(offlinePlayer -> {
-                    if(offlinePlayer.isOnline()) {
-                        Player p = Bukkit.getPlayer(offlinePlayer.getUniqueId());
+                event.getGame().getSpectators().forEach(uuid -> {
+                    if(Bukkit.getPlayer(uuid) != null) {
+                        Player p = Bukkit.getPlayer(uuid);
                         p.sendMessage(enemyColor + player.getName() + " §epicked up the " + event.getTeam().coloredPrefix() + " §eflag!");
+                        PacketUtils.sendTitle(p, "", enemyColor + player.getName() + " §epicked up the " + event.getTeam().coloredPrefix() + " §eflag!", 0, 60, 0);
                     }
                 });
             } else {
@@ -603,9 +604,9 @@ public class WarlordsEvents implements Listener {
                     event.getGame().forEachOnlinePlayer((p, t) -> {
                         p.sendMessage("§eThe " + event.getTeam().coloredPrefix() + " §eflag carrier now takes §c" + pfl.getComputedHumanMultiplier() + "% §eincreased damage!");
                     });
-                    event.getGame().getSpectators().forEach(offlinePlayer -> {
-                        if(offlinePlayer.isOnline()) {
-                            Player p = Bukkit.getPlayer(offlinePlayer.getUniqueId());
+                    event.getGame().getSpectators().forEach(uuid -> {
+                        if(Bukkit.getPlayer(uuid) != null) {
+                            Player p = Bukkit.getPlayer(uuid);
                             p.sendMessage("§eThe " + event.getTeam().coloredPrefix() + " §eflag carrier now takes §c" + pfl.getComputedHumanMultiplier() + "% §eincreased damage!");
                         }
                     });
@@ -624,9 +625,9 @@ public class WarlordsEvents implements Listener {
                             p.playSound(p.getLocation(), "ctf.flagreturned", 500, 1);
                         }
                     });
-                    event.getGame().getSpectators().forEach(offlinePlayer -> {
-                        if(offlinePlayer.isOnline()) {
-                            Player p = Bukkit.getPlayer(offlinePlayer.getUniqueId());
+                    event.getGame().getSpectators().forEach(uuid -> {
+                        if(Bukkit.getPlayer(uuid) != null) {
+                            Player p = Bukkit.getPlayer(uuid);
                             ChatColor color = event.getTeam().teamColor();
                             p.sendMessage(color + toucher + " §ehas returned the " + event.getTeam().coloredPrefix() + " §eflag!");
                             PacketUtils.sendTitle(p, "", color + toucher + " §ehas returned the " + event.getTeam().coloredPrefix() + " §eflag!", 0, 60, 0);
@@ -636,9 +637,9 @@ public class WarlordsEvents implements Listener {
                     event.getGame().forEachOnlinePlayer((p, t) -> {
                         p.sendMessage("§eThe " + event.getTeam().coloredPrefix() + " §eflag has returned to its base.");
                     });
-                    event.getGame().getSpectators().forEach(offlinePlayer -> {
-                        if(offlinePlayer.isOnline()) {
-                            Player p = Bukkit.getPlayer(offlinePlayer.getUniqueId());
+                    event.getGame().getSpectators().forEach(uuid -> {
+                        if(Bukkit.getPlayer(uuid) != null) {
+                            Player p = Bukkit.getPlayer(uuid);
                             p.sendMessage("§eThe " + event.getTeam().coloredPrefix() + " §eflag has returned to its base.");
                         }
                     });
@@ -653,9 +654,9 @@ public class WarlordsEvents implements Listener {
                     PacketUtils.sendTitle(p, "", playerColor + pfl.getPlayer().getName() + " §ehas dropped the " + flag + " §eflag!", 0, 60, 0);
                     p.sendMessage(playerColor + pfl.getPlayer().getName() + " §ehas dropped the " + flag + " §eflag!");
                 });
-                event.getGame().getSpectators().forEach(offlinePlayer -> {
-                    if(offlinePlayer.isOnline()) {
-                        Player p = Bukkit.getPlayer(offlinePlayer.getUniqueId());
+                event.getGame().getSpectators().forEach(uuid -> {
+                    if(Bukkit.getPlayer(uuid) != null) {
+                        Player p = Bukkit.getPlayer(uuid);
                         p.sendMessage(playerColor + pfl.getPlayer().getName() + " §ehas dropped the " + flag + " §eflag!");
                         PacketUtils.sendTitle(p, "", playerColor + pfl.getPlayer().getName() + " §ehas dropped the " + flag + " §eflag!", 0, 60, 0);
                     }
@@ -678,9 +679,9 @@ public class WarlordsEvents implements Listener {
                         p.playSound(pfl.getLocation(), "ctf.enemyflagcaptured", 500, 1);
                     }
                 });
-                event.getGame().getSpectators().forEach(offlinePlayer -> {
-                    if(offlinePlayer.isOnline()) {
-                        Player p = Bukkit.getPlayer(offlinePlayer.getUniqueId());
+                event.getGame().getSpectators().forEach(uuid -> {
+                    if(Bukkit.getPlayer(uuid) != null) {
+                        Player p = Bukkit.getPlayer(uuid);
                         String message = pfl.getPlayer().getColoredName() + " §ecaptured the " + loser.coloredPrefix() + " §eflag!";
                         p.sendMessage(message);
                         PacketUtils.sendTitle(p, "", message, 0, 60, 0);

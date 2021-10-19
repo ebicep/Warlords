@@ -928,9 +928,9 @@ public final class WarlordsPlayer {
                             p.sendMessage(getColoredName() + ChatColor.GRAY + " was killed by " + attacker.getColoredName());
                         }
                     });
-                    gameState.getGame().getSpectators().forEach(offlinePlayer -> {
-                        if(offlinePlayer.isOnline()) {
-                            Bukkit.getPlayer(offlinePlayer.getUniqueId()).sendMessage(getColoredName() + ChatColor.GRAY + " was killed by " + attacker.getColoredName());
+                    gameState.getGame().getSpectators().forEach(uuid -> {
+                        if(Bukkit.getPlayer(uuid) != null) {
+                            Bukkit.getPlayer(uuid).sendMessage(getColoredName() + ChatColor.GRAY + " was killed by " + attacker.getColoredName());
                         }
                     });
                     gameState.addKill(team, false);

@@ -45,7 +45,7 @@ public class CustomScoreboard {
             prefix = "Error";
         }
         if(suffix.length() > 16) {
-            suffix = "";
+            suffix = "Error";
         }
         scoreboard.getTeam("team_" + team).setPrefix(prefix);
         scoreboard.getTeam("team_" + team).setSuffix(suffix);

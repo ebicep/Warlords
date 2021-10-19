@@ -28,7 +28,7 @@ public class Game implements Runnable {
     private boolean cooldownMode;
     private boolean gameFreeze = false;
 
-    private List<OfflinePlayer> spectators = new ArrayList<>();
+    private List<UUID> spectators = new ArrayList<>();
 
     public boolean isState(Class<? extends State> clazz) {
         return clazz.isAssignableFrom(this.state.getClass());
@@ -245,12 +245,13 @@ public class Game implements Runnable {
         this.gameFreeze = gameFreeze;
     }
 
-    public List<OfflinePlayer> getSpectators() {
+    public List<UUID> getSpectators() {
         return spectators;
     }
 
-    public void addSpectator(Player player) {
-        spectators.add(player);
+    public void addSpectator(UUID uuid) {
+        spectators.add(uuid);
+        Player player = Bukkit.getPlayer(uuid);
         player.setGameMode(GameMode.SPECTATOR);
         player.teleport(this.getMap().blueRespawn);
         Warlords.setRejoinPoint(player.getUniqueId(), this.getMap().blueRespawn);
@@ -261,10 +262,11 @@ public class Game implements Runnable {
         }
     }
 
-    public void removeSpectator(Player player, boolean fromMenu) {
+    public void removeSpectator(UUID uuid, boolean fromMenu) {
         if(fromMenu) {
-            spectators.remove(player);
+            spectators.remove(uuid);
         }
+        Player player = Bukkit.getPlayer(uuid);
         Location loc = Warlords.spawnPoints.remove(player.getUniqueId());
         Player p = Bukkit.getPlayer(player.getUniqueId());
         if (p != null) {

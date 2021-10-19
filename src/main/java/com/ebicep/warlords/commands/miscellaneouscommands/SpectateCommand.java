@@ -50,17 +50,23 @@ public class SpectateCommand implements CommandExecutor {
                 new ItemBuilder(Material.BOOK)
                         .name(ChatColor.GREEN + "Game 1")
                         .get(),
-                (n, e) -> Warlords.game.addSpectator(player)
+                (n, e) -> {
+                    if(Warlords.game.getSpectators().contains(player.getUniqueId())) {
+                        player.sendMessage(ChatColor.RED + "You are already spectating this game");
+                    } else {
+                        Warlords.game.addSpectator(player.getUniqueId());
+                    }
+                }
         );
 
-        if(Warlords.game.getSpectators().contains(player)) {
+        if(Warlords.game.getSpectators().contains(player.getUniqueId())) {
             menu.setItem(
                     4,
                     2,
                     new ItemBuilder(Material.BARRIER)
                             .name(ChatColor.GREEN + "Return to the lobby")
                             .get(),
-                    (n, e) -> Warlords.game.removeSpectator(player, true)
+                    (n, e) -> Warlords.game.removeSpectator(player.getUniqueId(), true)
             );
         }
 

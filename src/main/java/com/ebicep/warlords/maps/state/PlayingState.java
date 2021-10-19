@@ -223,8 +223,8 @@ public class PlayingState implements State, TimerDebugAble {
             for (WarlordsPlayer value : Warlords.getPlayers().values()) {
                 updateBasedOnGameState(false, Warlords.playerScoreboards.get(value.getUuid()), value);
             }
-            for (OfflinePlayer spectator : game.getSpectators()) {
-                updateBasedOnGameState(false, Warlords.playerScoreboards.get(spectator.getUniqueId()), null);
+            for (UUID spectator : game.getSpectators()) {
+                updateBasedOnGameState(false, Warlords.playerScoreboards.get(spectator), null);
             }
         }
 
