@@ -99,16 +99,17 @@ public class Intervene extends AbstractAbility {
                     new BukkitRunnable() {
                         @Override
                         public void run() {
-                            if (nearWarlordsPlayer.getCooldownManager().hasCooldown(tempIntervene)) {
-                                if (nearWarlordsPlayer.getCooldownManager().getCooldown(tempIntervene).get().getFrom().isDeath() ||
-                                        nearWarlordsPlayer.getLocation().distanceSquared(nearWarlordsPlayer.getCooldownManager().getCooldown(tempIntervene).get().getFrom().getEntity().getLocation()) > 15 * 15
-                                ) {
-                                    wp.sendMessage("§c\u00AB§7 " + wp.getName() + "'s " + ChatColor.YELLOW + "Intervene " + ChatColor.GRAY + "has expired!");
-                                    wp.getCooldownManager().removeCooldown(tempIntervene);
+                            if (wp.isDeath() ||
+                                    !nearWarlordsPlayer.getCooldownManager().hasCooldown(tempIntervene) ||
+                                    nearWarlordsPlayer.getLocation().distanceSquared(nearWarlordsPlayer.getCooldownManager().getCooldown(tempIntervene).get().getFrom().getEntity().getLocation()) > 15 * 15
+                            ) {
+                                wp.sendMessage("§c\u00AB§7 " + wp.getName() + "'s " + ChatColor.YELLOW + "Intervene " + ChatColor.GRAY + "has expired!");
+                                wp.getCooldownManager().removeCooldown(tempIntervene);
 
-                                    nearWarlordsPlayer.sendMessage("§c\u00AB§7 " + wp.getName() + "'s " + ChatColor.YELLOW + "Intervene " + ChatColor.GRAY + "has expired!");
-                                    nearWarlordsPlayer.getCooldownManager().removeCooldown(tempIntervene);
-                                }
+                                nearWarlordsPlayer.sendMessage("§c\u00AB§7 " + wp.getName() + "'s " + ChatColor.YELLOW + "Intervene " + ChatColor.GRAY + "has expired!");
+                                nearWarlordsPlayer.getCooldownManager().removeCooldown(tempIntervene);
+
+                                this.cancel();
                             }
                         }
                     }.runTaskTimer(Warlords.getInstance(), 0, 0);

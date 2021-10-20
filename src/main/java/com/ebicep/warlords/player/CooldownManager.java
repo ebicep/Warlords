@@ -62,9 +62,7 @@ public class CooldownManager {
             cooldown.subtractTime(.05f);
 
             if (cooldown.getTimeLeft() <= 0) {
-                if (cooldownClass == Intervene.class) {
-                    warlordsPlayer.sendMessage("§c\u00AB§7 " + cooldown.getFrom().getName() + "'s §eIntervene §7has expired!");
-                } else if (cooldownClass == ArcaneShield.class && getCooldown(ArcaneShield.class).size() == 1) {
+                if (cooldownClass == ArcaneShield.class && getCooldown(ArcaneShield.class).size() == 1) {
                     if (warlordsPlayer.getEntity() instanceof Player) {
                         ((EntityLiving) ((CraftPlayer) warlordsPlayer.getEntity()).getHandle()).setAbsorptionHearts(0);
                     }

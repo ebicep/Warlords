@@ -33,9 +33,11 @@ import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.*;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -361,12 +363,14 @@ public class WarlordsEvents implements Listener {
                 e.setCancelled(true);
             }
         }
+
         if(e.getInventory() instanceof CraftInventoryAnvil ||
                 e.getInventory() instanceof CraftInventoryBeacon ||
                 e.getInventory() instanceof CraftInventoryBrewer ||
                 e.getInventory() instanceof CraftInventoryCrafting ||
                 e.getInventory() instanceof CraftInventoryDoubleChest ||
-                e.getInventory() instanceof CraftInventoryFurnace
+                e.getInventory() instanceof CraftInventoryFurnace ||
+                e.getInventory().getType() == InventoryType.HOPPER
         ) {
             e.setCancelled(true);
         }
