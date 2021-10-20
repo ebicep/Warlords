@@ -364,13 +364,14 @@ public class WarlordsEvents implements Listener {
             }
         }
 
-        if(e.getInventory() instanceof CraftInventoryAnvil ||
+        if (e.getInventory() instanceof CraftInventoryAnvil ||
                 e.getInventory() instanceof CraftInventoryBeacon ||
                 e.getInventory() instanceof CraftInventoryBrewer ||
                 e.getInventory() instanceof CraftInventoryCrafting ||
                 e.getInventory() instanceof CraftInventoryDoubleChest ||
                 e.getInventory() instanceof CraftInventoryFurnace ||
-                e.getInventory().getType() == InventoryType.HOPPER
+                e.getInventory().getType() == InventoryType.HOPPER ||
+                e.getInventory().getType() == InventoryType.DROPPER
         ) {
             e.setCancelled(true);
         }
