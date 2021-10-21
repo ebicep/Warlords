@@ -22,7 +22,7 @@ public class HealingRain extends AbstractAbility {
     private final int duration = 12;
 
     public HealingRain() {
-        super("Healing Rain", 210, 270, 52.85f, 50, 25, 200);
+        super("Healing Rain", 200, 250, 52.85f, 50, 25, 200);
     }
 
     @Override
