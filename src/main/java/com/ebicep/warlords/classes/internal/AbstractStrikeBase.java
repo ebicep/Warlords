@@ -35,7 +35,12 @@ public abstract class AbstractStrikeBase extends AbstractAbility {
                     if (Utils.isLookingAt(player, nearPlayer.getEntity()) && Utils.hasLineOfSight(player, nearPlayer.getEntity())) {
                         PacketPlayOutAnimation playOutAnimation = new PacketPlayOutAnimation(((CraftPlayer) player).getHandle(), 0);
                         ((CraftPlayer) player).getHandle().playerConnection.sendPacket(playOutAnimation);
-                        wp.subtractEnergy(energyCost);
+
+                        if(wp.getCooldownManager().hasCooldown(HammerOfLight.class)) {
+                            wp.subtractEnergy(energyCost - (((HammerOfLight) wp.getCooldownManager().getCooldown(HammerOfLight.class).get(0).getCooldownObject()).isCrownOfLight() ? 10 : 0));
+                        } else {
+                            wp.subtractEnergy(energyCost);
+                        }
 
                         if (this instanceof AvengersStrike || this instanceof CrusadersStrike || this instanceof ProtectorsStrike) {
                             for (Player player1 : player.getWorld().getPlayers()) {
