@@ -558,10 +558,12 @@ public class DatabaseManager {
         try {
             Warlords.newChain()
                     .async(() -> {
-                        //updating all players, blocks this async thread, so leaderboard updated after
-                        gameInformation.getPlayerInfoNegative().forEach((uuid, stringObjectHashMap) -> {
-                            updatePlayerInformation(uuid, stringObjectHashMap, FieldUpdateOperators.INCREMENT, false);
-                        });
+                        if (gameInformation.isUpdatePlayerStats()) {
+                            //updating all players, blocks this async thread, so leaderboard updated after
+                            gameInformation.getPlayerInfoNegative().forEach((uuid, stringObjectHashMap) -> {
+                                updatePlayerInformation(uuid, stringObjectHashMap, FieldUpdateOperators.INCREMENT, false);
+                            });
+                        }
                         //removing the game from the database
                         gamesInformation.deleteOne(and(
                                 eq("date", gameInformation.getGameInfo().get("date")),
@@ -581,10 +583,12 @@ public class DatabaseManager {
         try {
             Warlords.newChain()
                     .async(() -> {
-                        //updating all players, blocks this async thread, so leaderboard updated after
-                        gameInformation.getPlayerInfo().forEach((uuid, stringObjectHashMap) -> {
-                            updatePlayerInformation(uuid, stringObjectHashMap, FieldUpdateOperators.INCREMENT, false);
-                        });
+                        if (gameInformation.isUpdatePlayerStats()) {
+                            //updating all players, blocks this async thread, so leaderboard updated after
+                            gameInformation.getPlayerInfo().forEach((uuid, stringObjectHashMap) -> {
+                                updatePlayerInformation(uuid, stringObjectHashMap, FieldUpdateOperators.INCREMENT, false);
+                            });
+                        }
                         //inserting the game to the database
                         gamesInformation.insertOne(gameInformation.getGameInfo());
                         //reloading leaderboards
@@ -597,7 +601,7 @@ public class DatabaseManager {
         }
     }
 
-    public static void addGame(PlayingState gameState, boolean addToDatabase) {
+    public static void addGame(PlayingState gameState, boolean updatePlayerStats) {
         if (!connected) return;
         List<Document> blue = new ArrayList<>();
         List<Document> red = new ArrayList<>();
@@ -618,17 +622,21 @@ public class DatabaseManager {
                 .append("blue_points", gameState.getStats(Team.BLUE).points())
                 .append("red_points", gameState.getStats(Team.RED).points())
                 .append("players", new Document("blue", blue).append("red", red))
-                .append("stat_info", getWarlordsPlusEndGameStats(gameState));
+                .append("stat_info", getWarlordsPlusEndGameStats(gameState))
+                .append("counted", updatePlayerStats);
         try {
             HashMap<UUID, HashMap<String, Object>> newPlayerInfo = getNewPlayerInfo(gameState);
-            DatabaseGame gameInformation = new DatabaseGame(document, newPlayerInfo);
+            DatabaseGame gameInformation = new DatabaseGame(document, newPlayerInfo, updatePlayerStats);
             previousGames.add(gameInformation);
-            if (addToDatabase) {
-                addGameToDatabase(gameInformation);
-                //sending message if game was added
-                for (WarlordsPlayer value : PlayerFilter.playingGame(gameState.getGame())) {
-                    if (value.getEntity().isOp()) {
-                        value.sendMessage(ChatColor.GREEN + "This game was added to the database");
+            addGameToDatabase(gameInformation);
+
+            //sending message if player information remained the same
+            for (WarlordsPlayer value : PlayerFilter.playingGame(gameState.getGame())) {
+                if (value.getEntity().isOp()) {
+                    if (updatePlayerStats) {
+                        value.sendMessage(ChatColor.GREEN + "This game was added to the database and player information was updated");
+                    } else {
+                        value.sendMessage(ChatColor.GREEN + "This game was added to the database but player information remained the same");
                     }
                 }
             }

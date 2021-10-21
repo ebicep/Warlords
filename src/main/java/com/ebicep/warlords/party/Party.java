@@ -136,14 +136,26 @@ public class Party {
         StringBuilder stringBuilder = new StringBuilder(ChatColor.BLUE + "-----------------------------\n")
                 .append(ChatColor.GOLD + "Party Members (").append(members.size()).append(")\n \n")
                 .append(ChatColor.YELLOW + "Party Leader: " + ChatColor.AQUA).append(Bukkit.getOfflinePlayer(leader).getName()).append(members.get(leader) ? ChatColor.GREEN : ChatColor.RED).append(" ● \n");
-        if(!moderators.isEmpty()) {
-            stringBuilder.append(ChatColor.YELLOW + "Party Moderators: " + ChatColor.AQUA);
-            moderators.stream()
-                    .sorted(Collections.reverseOrder(Comparator.comparing(members::get)))
-                    .forEach(uuid -> {
-                stringBuilder.append(ChatColor.AQUA).append(Bukkit.getOfflinePlayer(uuid).getName()).append(members.get(uuid) ? ChatColor.GREEN : ChatColor.RED).append(" ● ");
-            });
-            stringBuilder.append("\n");
+        final UUID[] currentUUID = new UUID[1];
+        try {
+            if (!moderators.isEmpty()) {
+                stringBuilder.append(ChatColor.YELLOW + "Party Moderators: " + ChatColor.AQUA);
+                moderators.stream()
+                        .sorted(Collections.reverseOrder(Comparator.comparing(members::get)))
+                        .forEach(uuid -> {
+                            currentUUID[0] = uuid;
+                            stringBuilder.append(ChatColor.AQUA).append(Bukkit.getOfflinePlayer(uuid).getName()).append(members.get(uuid) ? ChatColor.GREEN : ChatColor.RED).append(" ● ");
+                        });
+                stringBuilder.append("\n");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("LEADER = " + leader);
+            System.out.println("MODERATORS = " + moderators);
+            System.out.println("MEMBERS = " + members);
+            System.out.println("CURRENT UUID = " + currentUUID[0]);
+            System.out.println("OFFLINE PLAYER = " + Bukkit.getOfflinePlayer(currentUUID[0]));
+            System.out.println("MEMBERS GET = " + members.get(currentUUID[0]));
         }
         if(members.size() > 1 + moderators.size()) {
             stringBuilder.append(ChatColor.YELLOW + "Party Members: " + ChatColor.AQUA);

@@ -312,21 +312,11 @@ public class PlayingState implements State, TimerDebugAble {
                 DatabaseManager.addGame(PlayingState.this, true);
             } else {
                 DatabaseManager.addGame(PlayingState.this, false);
-                game.forEachOnlinePlayer(((player, team) -> {
-                    if (player.isOp()) {
-                        player.sendMessage(ChatColor.RED + "This game was not added to the database");
-                    }
-                }));
-                System.out.println(ChatColor.GREEN + "[Warlords] This game was not added to the database (INVALID DAMAGE/HEALING)");
+                System.out.println(ChatColor.GREEN + "[Warlords] This game was added to the database (INVALID DAMAGE/HEALING) but player information remained the same");
             }
         } else {
             DatabaseManager.addGame(PlayingState.this, false);
-            game.forEachOnlinePlayer(((player, team) -> {
-                if (player.isOp()) {
-                    player.sendMessage(ChatColor.RED + "This game was not added to the database");
-                }
-            }));
-            System.out.println(ChatColor.GREEN + "[Warlords] This game was not added to the database");
+            System.out.println(ChatColor.GREEN + "[Warlords] This game was added to the database but player information remained the same");
         }
     }
 

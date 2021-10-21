@@ -11,8 +11,9 @@ public class DatabaseGame {
     private final Document gameInfo;
     private final HashMap<UUID, HashMap<String, Object>> playerInfo;
     private final HashMap<UUID, HashMap<String, Object>> playerInfoNegative = new HashMap<>();
+    private final boolean updatePlayerStats;
 
-    public DatabaseGame(Document gameInfo, HashMap<UUID, HashMap<String, Object>> playerInfo) {
+    public DatabaseGame(Document gameInfo, HashMap<UUID, HashMap<String, Object>> playerInfo, boolean updatePlayerStats) {
         this.gameInfo = gameInfo;
         this.playerInfo = playerInfo;
         playerInfo.forEach((uuid, stringObjectHashMap) -> {
@@ -26,6 +27,7 @@ public class DatabaseGame {
             });
             this.playerInfoNegative.put(uuid, newHashMap);
         });
+        this.updatePlayerStats = updatePlayerStats;
     }
 
     public Document getGameInfo() {
@@ -44,5 +46,9 @@ public class DatabaseGame {
         return ChatColor.GRAY.toString() + gameInfo.get("date") + ChatColor.DARK_GRAY + " - " +
                 ChatColor.GREEN + gameInfo.get("map") + ChatColor.DARK_GRAY + " - " +
                 ChatColor.GRAY + "(" + ChatColor.BLUE + gameInfo.get("blue_points") + ChatColor.GRAY + ":" + ChatColor.RED + gameInfo.get("red_points") + ChatColor.GRAY + ")";
+    }
+
+    public boolean isUpdatePlayerStats() {
+        return updatePlayerStats;
     }
 }
