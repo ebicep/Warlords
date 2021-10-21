@@ -22,7 +22,7 @@ public class RecklessCharge extends AbstractAbility implements Listener {
     private static List<UUID> stunnedPlayers = new ArrayList<>();
 
     public RecklessCharge() {
-        super("Reckless Charge", -466, -612, 9.98f, 60, 20, 200);
+        super("Reckless Charge", -457, -601, 9.32f, 60, 20, 200);
     }
 
     @Override

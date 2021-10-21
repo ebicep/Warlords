@@ -1,5 +1,5 @@
 name: Warlords
-version: NW-1 - Crown
+version: New Leaf
 author: ebic
 main: com.ebicep.warlords.Warlords
 depend: [ MultiWorld, HolographicDisplays, ProtocolLib ]

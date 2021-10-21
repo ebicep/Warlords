@@ -27,8 +27,6 @@ public class HammerOfLight extends AbstractAbility {
 
     private final static int radius = 6;
     private final int duration = 10;
-    private final int minHealing = 154;
-    private final int maxHealing = 226;
     private boolean isCrownOfLight = false;
 
     public boolean isCrownOfLight() {
@@ -40,26 +38,26 @@ public class HammerOfLight extends AbstractAbility {
     }
 
     public HammerOfLight() {
-        super("Hammer of Light", -196, -304, 62.64f, 50, 25, 175
+        super("Hammer of Light", 178, 244, 62.64f, 50, 25, 175
         );
     }
 
     @Override
     public void updateDescription(Player player) {
         description = "§7Throw down a Hammer of Light on\n" +
-                "§7the ground, dealing §c" + format(-minDamageHeal) + " §7- §c" + format(-maxDamageHeal) + " §7damage\n" +
-                "§7damage every second to nearby enemies and healing nearby\n" +
-                "§7allies for §a" + format(minHealing) + " §7- §a" + format(maxHealing) + " §7every second\n" +
+                "§7the ground, dealing §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage\n" +
+                "§7damage every second to nearby enemies and\n" +
+                "§7healing nearby allies for §a" + format(minDamageHeal) + " §7- §a" + format(maxDamageHeal) + " §7every second\n" +
                 "§7in a §e" + radius + " §7block radius. Your Protector\n" +
                 "§7Strike pierces shields and defenses of enemies\n" +
                 "§7standing on top of the Hammer of Light.\n" +
                 "§7Lasts §6" + duration + " §7seconds." +
                 "\n\n" +
                 "§7You may SNEAK to turn your hammer into a Crown of Light\n" +
-                "§7to carry effects of hammer with you. Removing the damage\n" +
-                "§7and piercing BUT increasing the healing §7by §a75% §7and\n" +
-                "§7reducing the energy cost of your Protector §7Strikes by\n" +
-                "§e10 §7energy. You cannot put the Hammer of Light" +
+                "§7Removing the damage and piercing BUT increasing\n" +
+                "§7the healing §7by §a60% §7and reducing the\n" +
+                "§7energy cost of your Protector Strike by\n" +
+                "§e10 §7energy. You cannot put the Hammer of Light\n" +
                 "§7back down after you converted it.";
     }
 
@@ -95,8 +93,8 @@ public class HammerOfLight extends AbstractAbility {
                             warlordsPlayer.addHealth(
                                     damageHealCircle.getWarlordsPlayer(),
                                     damageHealCircle.getName(),
-                                    minHealing,
-                                    maxHealing,
+                                    damageHealCircle.getMinDamage(),
+                                    damageHealCircle.getMaxDamage(),
                                     damageHealCircle.getCritChance(),
                                     damageHealCircle.getCritMultiplier(),
                                     false);
@@ -104,8 +102,8 @@ public class HammerOfLight extends AbstractAbility {
                             warlordsPlayer.addHealth(
                                     damageHealCircle.getWarlordsPlayer(),
                                     damageHealCircle.getName(),
-                                    damageHealCircle.getMinDamage(),
-                                    damageHealCircle.getMaxDamage(),
+                                    -damageHealCircle.getMinDamage(),
+                                    -damageHealCircle.getMaxDamage(),
                                     damageHealCircle.getCritChance(),
                                     damageHealCircle.getCritMultiplier(),
                                     false);
@@ -123,11 +121,12 @@ public class HammerOfLight extends AbstractAbility {
         }.runTaskTimer(Warlords.getInstance(), 0, 0);
 
         new BukkitRunnable() {
+            boolean wasSneaking = false;
+
             @Override
             public void run() {
-                boolean wasSneaking = false;
 
-                if (wp.isAlive() && player.isSneaking()) {
+                if (wp.isAlive() && player.isSneaking() && !wasSneaking) {
                     tempHammerOfLight.setCrownOfLight(true);
                     wp.getCooldownManager().getCooldown(tempHammerOfLight).ifPresent(cd -> {
                         cd.setActionBarName("CROWN");
@@ -155,7 +154,7 @@ public class HammerOfLight extends AbstractAbility {
                             circle.addEffect(new CircumferenceEffect(ParticleEffect.SPELL).particlesPerCircumference(0.5f));
                             circle.playEffects();
                         }
-                    }.runTaskTimer(Warlords.getInstance(), 0 ,5);
+                    }.runTaskTimer(Warlords.getInstance(), 0 ,6);
                     new BukkitRunnable() {
                         int timeLeft = damageHealCircle.getDuration();
                         @Override
@@ -166,8 +165,8 @@ public class HammerOfLight extends AbstractAbility {
                                         teammate.addHealth(
                                                 damageHealCircle.getWarlordsPlayer(),
                                                 "Crown of Light",
-                                                minHealing * 1.75f,
-                                                maxHealing * 1.75f,
+                                                damageHealCircle.getMinDamage() * 1.6f,
+                                                damageHealCircle.getMaxDamage() * 1.6f,
                                                 damageHealCircle.getCritChance(),
                                                 damageHealCircle.getCritMultiplier(),
                                                 false);
@@ -182,6 +181,8 @@ public class HammerOfLight extends AbstractAbility {
                     this.cancel();
                     damageHealCircle.setDuration(0);
                 }
+
+                wasSneaking = player.isSneaking();
             }
         }.runTaskTimer(Warlords.getInstance(), 0 ,0);
     }
