@@ -143,7 +143,7 @@ public class Party {
                     .sorted(Collections.reverseOrder(Comparator.comparing(members::get)))
                     .forEach(uuid -> {
                         currentUUID[0] = uuid;
-                        if (Bukkit.getOfflinePlayer(uuid) != null) {
+                        if (uuid != null && Bukkit.getOfflinePlayer(uuid) != null) {
                             stringBuilder.append(ChatColor.AQUA).append(Bukkit.getOfflinePlayer(uuid).getName()).append(members.get(uuid) ? ChatColor.GREEN : ChatColor.RED).append(" ● ");
                         } else {
                             System.out.println("ERROR");
