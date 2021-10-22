@@ -49,6 +49,7 @@ public class DatabaseManager {
     public static MongoDatabase warlordsGamesDatabase;
     public static MongoCollection<Document> playersInformation;
     public static MongoCollection<Document> gamesInformation;
+    public static MongoCollection<Document> testInformation;
     public static HashMap<UUID, Document> cachedPlayerInfo = new HashMap<>();
     public static HashMap<String, Long> cachedTotalKeyValues = new HashMap<>();
     public static String lastWarlordsPlusString = "";
@@ -67,6 +68,7 @@ public class DatabaseManager {
                 warlordsGamesDatabase = mongoClient.getDatabase("Warlords_Games");
                 playersInformation = warlordsPlayersDatabase.getCollection("Players_Information");
                 gamesInformation = warlordsGamesDatabase.getCollection("Games_Information");
+                testInformation = warlordsGamesDatabase.getCollection("Test");
                 playersInformation.find().forEach((Consumer<? super Document>) document -> {
                     cachedPlayerInfo.put(UUID.fromString((String) document.get("uuid")), document);
                 });

@@ -20,6 +20,7 @@ import com.ebicep.warlords.util.PacketUtils;
 import com.ebicep.warlords.util.PlayerFilter;
 import com.ebicep.warlords.util.RemoveEntities;
 import com.ebicep.warlords.util.Utils;
+import com.sun.org.glassfish.external.statistics.Stats;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -315,8 +316,12 @@ public class PlayingState implements State, TimerDebugAble {
                 System.out.println(ChatColor.GREEN + "[Warlords] This game was added to the database (INVALID DAMAGE/HEALING) but player information remained the same");
             }
         } else {
-            DatabaseManager.addGame(PlayingState.this, false);
-            System.out.println(ChatColor.GREEN + "[Warlords] This game was added to the database but player information remained the same");
+            if(game.playersCount() >= 6) {
+                DatabaseManager.addGame(PlayingState.this, false);
+                System.out.println(ChatColor.GREEN + "[Warlords] This game was added to the database but player information remained the same");
+            } else {
+                System.out.println(ChatColor.GREEN + "[Warlords] This game was not added to the database and player information remained the same");
+            }
         }
     }
 

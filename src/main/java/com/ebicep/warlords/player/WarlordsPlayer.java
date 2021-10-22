@@ -588,7 +588,6 @@ public final class WarlordsPlayer {
             if (!ignoreReduction) {
                 // Flag carriers take more damage
                 damageHealValue *= damageHealValue > 0 || flagDamageMultiplier == 0 ? 1 : flagDamageMultiplier;
-
                 if (min < 0 && !HammerOfLight.standingInHammer(attacker, entity)) {
                     //add damage
                     for (Cooldown cooldown : attacker.getCooldownManager().getCooldown(Berserk.class)) {
@@ -598,7 +597,8 @@ public final class WarlordsPlayer {
                     for (Cooldown cooldown : cooldownManager.getCooldown(Berserk.class)) {
                         totalReduction *= 1.1;
                     }
-
+                }
+                if (min < 0 && !HammerOfLight.standingInHammer(attacker, entity)) {
                     //reduce damage
                     for (Cooldown cooldown : cooldownManager.getCooldown(IceBarrier.class)) {
                         totalReduction *= .5;
@@ -697,8 +697,7 @@ public final class WarlordsPlayer {
                     //ORBS
                     spawnOrbs(ability, attacker);
 
-                    this.addAbsorbed(Math.abs(damageHealValueBeforeReduction));
-                    attacker.addAbsorbed(Math.abs(-damageHealValueBeforeReduction/10));
+                    addAbsorbed(Math.abs(damageHealValueBeforeReduction));
                 }
             } else if (!cooldownManager.getCooldown(ArcaneShield.class).isEmpty() && isEnemy(attacker) && !HammerOfLight.standingInHammer(attacker, entity)) {
                 ArcaneShield arcaneShield = (ArcaneShield) spec.getBlue();
@@ -714,7 +713,6 @@ public final class WarlordsPlayer {
                     addHealth(attacker, ability, arcaneShield.getShieldHealth(), arcaneShield.getShieldHealth(), isCrit ? 100 : -1, 100, true);
 
                     addAbsorbed(-(((ArcaneShield) spec.getBlue()).getShieldHealth()));
-                    attacker.addAbsorbed(-(((ArcaneShield) spec.getBlue()).getShieldHealth()));
                 } else {
                     if (entity instanceof Player) {
                         ((EntityLiving) ((CraftPlayer) entity).getHandle()).setAbsorptionHearts((float) (arcaneShield.getShieldHealth() / (maxHealth * .5) * 20));
@@ -729,7 +727,6 @@ public final class WarlordsPlayer {
                     }
 
                     addAbsorbed(Math.abs(-damageHealValueBeforeReduction));
-                    attacker.addAbsorbed(Math.abs(-damageHealValueBeforeReduction));
                 }
 
                 //ORBS

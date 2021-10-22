@@ -8,8 +8,11 @@ import com.ebicep.warlords.maps.flags.PlayerFlagLocation;
 import com.ebicep.warlords.player.PlayerSettings;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.mongodb.client.model.Filters;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
+import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -40,6 +43,18 @@ public class TestCommand implements CommandExecutor {
         if (player != null) {
 
         }
+
+//        DatabaseManager.warlordsGamesDatabase.createCollection("Games_Information_Backup");
+//        for (Document document : DatabaseManager.gamesInformation.find()) {
+//            DatabaseManager.warlordsGamesDatabase.getCollection("Games_Information_Backup").insertOne(document);
+//        }
+//        for (Document document2 : DatabaseManager.gamesInformation.find()) {
+//            if(document2.get("counted") == null) {
+//                Document document = new Document();
+//                document.put("counted", true);
+//                DatabaseManager.gamesInformation.updateOne(Filters.eq("_id", document2.get("_id")), new Document("$set", document));
+//            }
+//        }
         return true;
     }
 
