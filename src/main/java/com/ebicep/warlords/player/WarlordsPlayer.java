@@ -791,7 +791,6 @@ public final class WarlordsPlayer {
 
                                             });
                                 }
-                                attacker.addAbsorbed(-damageHealValue);
                             }
                         }
 
