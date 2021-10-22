@@ -48,12 +48,12 @@ public class HammerOfLight extends AbstractAbility {
                 "§7the ground, dealing §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage\n" +
                 "§7damage every second to nearby enemies and\n" +
                 "§7healing nearby allies for §a" + format(minDamageHeal) + " §7- §a" + format(maxDamageHeal) + " §7every second\n" +
-                "§7in a §e" + radius + " §7block radius. Your Protector\n" +
-                "§7Strike pierces shields and defenses of enemies\n" +
+                "§7in a §e" + radius + " §7block radius. Your Protector Strike\n" +
+                "§7pierces shields and defenses of enemies\n" +
                 "§7standing on top of the Hammer of Light.\n" +
                 "§7Lasts §6" + duration + " §7seconds." +
                 "\n\n" +
-                "§7You may SNEAK to turn your hammer into a Crown of Light\n" +
+                "§7You may SNEAK to turn your hammer into Crown of Light.\n" +
                 "§7Removing the damage and piercing BUT increasing\n" +
                 "§7the healing §7by §a60% §7and reducing the\n" +
                 "§7energy cost of your Protector Strike by\n" +
@@ -200,6 +200,7 @@ public class HammerOfLight extends AbstractAbility {
         return false;
     }
 
+    // in case we use it again
     public static List<WarlordsPlayer> getStandingInHammer(WarlordsPlayer owner) {
         List<WarlordsPlayer> playersInHammer = new ArrayList<>();
         for (Entity entity : owner.getWorld().getEntities()) {
