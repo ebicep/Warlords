@@ -639,14 +639,14 @@ public final class WarlordsPlayer {
                     }
                 }
                 //HAMMER OF LIGHT DMG/HEAL BOOST
-                if (attacker.getSpec() instanceof Protector) {
+                /*if (attacker.getSpec() instanceof Protector) {
                     int playersInHammer = HammerOfLight.getStandingInHammer(attacker).size();
                     if (playersInHammer >= 4) {
                         totalReduction *= Math.pow(1.03, 4);
                     } else {
                         totalReduction *= Math.pow(1.03, playersInHammer);
                     }
-                }
+                }*/
                 damageHealValue *= totalReduction;
             }
             if (!cooldownManager.getCooldown(Intervene.class).isEmpty() && cooldownManager.getCooldown(Intervene.class).get(0).getFrom() != this && !HammerOfLight.standingInHammer(attacker, entity) && isEnemy(attacker)) {
