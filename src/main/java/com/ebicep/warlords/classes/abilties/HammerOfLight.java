@@ -172,7 +172,8 @@ public class HammerOfLight extends AbstractAbility {
                                                 false);
                                     });
                             timeLeft--;
-                            if (timeLeft <= 0) {
+
+                            if (timeLeft <= 0 || wp.isDead()) {
                                 this.cancel();
                                 particles.cancel();
                             }
@@ -183,6 +184,10 @@ public class HammerOfLight extends AbstractAbility {
                 }
 
                 wasSneaking = player.isSneaking();
+
+                if (wp.isDead()) {
+                    this.cancel();
+                }
             }
         }.runTaskTimer(Warlords.getInstance(), 0 ,0);
     }
