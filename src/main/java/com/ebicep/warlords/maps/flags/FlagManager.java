@@ -169,14 +169,14 @@ public class FlagManager implements Listener {
         Location entityLoc = new Location(playerLocation.getWorld(), 0, 0, 0);
         for(Entity stand : render.getRenderedArmorStands()) {
             stand.getLocation(entityLoc);
-            if(entityLoc.getWorld() == playerLocation.getWorld() && entityLoc.distanceSquared(playerLocation) < 5 * 5) {
+            if (entityLoc.getWorld() == playerLocation.getWorld() && entityLoc.distanceSquared(playerLocation) < 5 * 5) {
                 AxisAlignedBB aabb = new AxisAlignedBB(
-                        entityLoc.getX() - 0.3,
+                        entityLoc.getX() - 0.5,
                         entityLoc.getY(),
-                        entityLoc.getZ() - 0.3,
-                        entityLoc.getX() + 0.3,
-                        entityLoc.getY() + 1.7,
-                        entityLoc.getZ() + 0.3
+                        entityLoc.getZ() - 0.5,
+                        entityLoc.getX() + 0.5,
+                        entityLoc.getY() + 2,
+                        entityLoc.getZ() + 0.5
                 );
                 MovingObjectPosition mop = aabb.a(from, to);
                 if(mop != null) {

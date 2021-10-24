@@ -19,7 +19,7 @@ import java.util.List;
 public enum GameMap {
     RIFT(
             "Rift",
-            24,
+            32,
             1,
             900 * 20, // seconds * ticks
             30 * 20, // seconds * ticks
@@ -35,7 +35,7 @@ public enum GameMap {
             new Location(Bukkit.getWorld("Rift"), 1.5, 24.5, -62.5), // RED HEALING
 
             new Location(Bukkit.getWorld("Rift"), -86.5, 45.5, -33.5), // BLUE LOBBY SPAWN
-            new LocationBuilder(new Location(Bukkit.getWorld("Rift"), 87, 45.5, 35.5)).yaw(180).get(), // RED LOBBY SPAWN
+            new Location(Bukkit.getWorld("Rift"), 87, 45.5, 35.5, 180, 0), // RED LOBBY SPAWN
 
             new LocationBuilder(new Location(Bukkit.getWorld("Rift"), -32.5, 34.5, -43.5)).yaw(-90).get(), // BLUE RESPAWN
             new LocationBuilder(new Location(Bukkit.getWorld("Rift"), 33, 34.5, 45)).yaw(90).get(), // RED RESPAWN
@@ -54,7 +54,7 @@ public enum GameMap {
 
     CROSSFIRE(
             "Crossfire",
-            24,
+            32,
             1,
             900 * 20, // seconds * ticks
             30 * 20, // seconds * ticks
@@ -70,10 +70,10 @@ public enum GameMap {
             new Location(Bukkit.getWorld("Crossfire"), 127.5, 6.5, 19.5), // RED HEALING
 
             new Location(Bukkit.getWorld("Crossfire"), 215.5, 36.5, 109.5), // BLUE LOBBY SPAWN
-            new LocationBuilder(new Location(Bukkit.getWorld("Crossfire"), 7.5, 36.5, 19.5)).yaw(180).get(), // RED LOBBY SPAWN
+            new Location(Bukkit.getWorld("Crossfire"), 7.5, 36.5, 19.5, 180, 0), // RED LOBBY SPAWN
 
-            new LocationBuilder(new Location(Bukkit.getWorld("Crossfire"), 133, 11.5, 130.5)).yaw(125).get(), // BLUE RESPAWN
-            new LocationBuilder(new Location(Bukkit.getWorld("Crossfire"), 90.5, 11.5, 0.5)).yaw(-45).get(), // RED RESPAWN
+            new Location(Bukkit.getWorld("Crossfire"), 133, 11.5, 130.5, 125, 0), // BLUE RESPAWN
+            new Location(Bukkit.getWorld("Crossfire"), 90.5, 11.5, 0.5, -45, 0), // RED RESPAWN
 
             new Location(Bukkit.getWorld("Crossfire"), 217.5, 36.5, 126.5, 150, 0), // BLUE FLAG
             new Location(Bukkit.getWorld("Crossfire"), 5.5, 36.5, 1.5, -25, 0), // RED FLAG
@@ -88,30 +88,30 @@ public enum GameMap {
     ),
 
     WARSONG(
-            "Warsong",
-            24,
+            "Warsong Remastered",
+            32,
             1,
             900 * 20,
             30 * 20,
             "",
 
-            new Location(Bukkit.getWorld("Warsong"), 112.5, 21.5, 51.5), // BLUE DAMAGE
-            new Location(Bukkit.getWorld("Warsong"), 43.5, 16.5, 89.5), // RED DAMAGE
+            new Location(Bukkit.getWorld("Warsong"), 102.5, 21.5, 51.5), // BLUE DAMAGE
+            new Location(Bukkit.getWorld("Warsong"), 42.5, 21.5, 92.5), // RED DAMAGE
 
             new Location(Bukkit.getWorld("Warsong"), 63.5, 34.5, -46.5), // BLUE SPEED
-            new Location(Bukkit.getWorld("Warsong"), 81.5, 35.5, 185.5), // RED SPEED
+            new Location(Bukkit.getWorld("Warsong"), 80.5, 35.5, 185.5), // RED SPEED
 
-            new Location(Bukkit.getWorld("Warsong"), 42.5, 17.5, 60.5), // BLUE HEALING
-            new Location(Bukkit.getWorld("Warsong"), 120.5, 22.5, 90.5), // RED HEALING
+            new Location(Bukkit.getWorld("Warsong"), 42.5, 20.5, 54.5), // BLUE HEALING
+            new Location(Bukkit.getWorld("Warsong"), 102.5, 20.5, 89.5), // RED HEALING
 
-            new Location(Bukkit.getWorld("Warsong"), 56.5, 39.5, -94.5), // BLUE LOBBY SPAWN
-            new Location(Bukkit.getWorld("Warsong"), 88.5, 40.5, 232.5), // RED LOBBY SPAWN
+            new Location(Bukkit.getWorld("Warsong"), 71.5, 39.5, -97.5, 90, 0), // BLUE LOBBY SPAWN
+            new Location(Bukkit.getWorld("Warsong"), 73.5, 40.5, 236.5, -90, 0), // RED LOBBY SPAWN
 
-            new Location(Bukkit.getWorld("Warsong"), 38.5, 29.5, 14.5), // BLUE RESPAWN
-            new LocationBuilder(new Location(Bukkit.getWorld("Warsong"), 119.5, 29.5, 124.5)).yaw(180).get(), // RED RESPAWN *
+            new Location(Bukkit.getWorld("Warsong"), 45.5, 29.5, 15.5, -30, 0), // BLUE RESPAWN
+            new Location(Bukkit.getWorld("Warsong"), 99.5, 29.5, 128.5, 145, 0), // RED RESPAWN
 
             new Location(Bukkit.getWorld("Warsong"), 56.5, 39.5, -102.5), // BLUE FLAG
-            new Location(Bukkit.getWorld("Warsong"), 88.5, 40.5, 241.5), // RED FLAG
+            new Location(Bukkit.getWorld("Warsong"), 88.5, 40.5, 241.5, 180, 0), // RED FLAG
 
             Arrays.asList(
                     new Cuboid(Bukkit.getWorld("Warsong"), 42, 39, -80, 47, 45, -80), // BLUE GATES 1
@@ -123,8 +123,8 @@ public enum GameMap {
     ),
 
     GORGE(
-            "Gorge Remastered",
-            24,
+            "Gorge Reforged",
+            32,
             1,
             900 * 20,
             30 * 20,

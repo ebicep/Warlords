@@ -44,6 +44,8 @@ public class GroundSlam extends AbstractAbility {
             fallingBlockLocations.add(getCircle(location, i, (i * ((int) (Math.PI * 2)))));
         }
 
+        fallingBlockLocations.get(0).add(player.getLocation());
+
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "warrior.groundslam.activation", 2, 1);
         }
@@ -59,7 +61,8 @@ public class GroundSlam extends AbstractAbility {
                             customFallingBlocks.add(new CustomFallingBlock(fallingBlock, wp, GroundSlam.this));
                             WarlordsEvents.addEntityUUID(fallingBlock);
                         }
-                        //ParticleEffect.VILLAGER_HAPPY.display(0 , 0 ,0, 0, 10, location, 1000);
+//                        ParticleEffect.VILLAGER_HAPPY.display(0 , 0 ,0, 0, 10, location.getBlock().getLocation(), 1000);
+//                        ParticleEffect.FLAME.display(0 , 0 ,0, 0, 10, location, 1000);
 
                         //DAMAGE
                         PlayerFilter.entitiesAroundRectangle(location.clone().add(0, -.75, 0), .6, 4.5, .6)

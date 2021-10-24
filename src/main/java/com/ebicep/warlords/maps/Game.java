@@ -6,20 +6,14 @@ import com.ebicep.warlords.maps.state.InitState;
 import com.ebicep.warlords.maps.state.PlayingState;
 import com.ebicep.warlords.maps.state.PreLobbyState;
 import com.ebicep.warlords.maps.state.State;
-import com.ebicep.warlords.player.Classes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.apache.commons.lang.Validate;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
-import org.bukkit.scoreboard.DisplaySlot;
-import org.bukkit.scoreboard.Objective;
-import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.ScoreboardManager;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -33,6 +27,8 @@ public class Game implements Runnable {
     private GameMap map = GameMap.RIFT;
     private boolean cooldownMode;
     private boolean gameFreeze = false;
+
+    private List<UUID> spectators = new ArrayList<>();
 
     public boolean isState(Class<? extends State> clazz) {
         return clazz.isAssignableFrom(this.state.getClass());
@@ -249,31 +245,37 @@ public class Game implements Runnable {
         this.gameFreeze = gameFreeze;
     }
 
-    public void giveLobbyScoreboard(Player player) {
-        ScoreboardManager manager = Bukkit.getScoreboardManager();
-        Scoreboard board = manager.getNewScoreboard();
-        SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
-        String dateString = format.format(new Date());
-        Objective sideBar = board.registerNewObjective(dateString, "");
-        sideBar.setDisplaySlot(DisplaySlot.SIDEBAR);
-        sideBar.setDisplayName("§e§lWARLORDS 2.0");
-        sideBar.getScore(ChatColor.GRAY + dateString).setScore(13);
-        sideBar.getScore(" ").setScore(12);
-        sideBar.getScore(ChatColor.WHITE + "Map: " + ChatColor.GREEN + getMap().getMapName()).setScore(11);
-        sideBar.getScore(ChatColor.WHITE + "Players: " + ChatColor.GREEN + "0/" + getMap().getMaxPlayers()).setScore(10);
-        sideBar.getScore("  ").setScore(9);
-        sideBar.getScore(ChatColor.WHITE + "Starting in: " + ChatColor.GREEN + "00:15 " + ChatColor.WHITE + "to").setScore(8);
-        sideBar.getScore(ChatColor.WHITE + "allow time for ").setScore(7);
-        sideBar.getScore(ChatColor.WHITE + "additional players").setScore(6);
-        sideBar.getScore("   ").setScore(5);
-        sideBar.getScore(ChatColor.GOLD + "Lv90 " + Classes.getClassesGroup(Classes.getSelected(player)).name).setScore(4);
-        sideBar.getScore(ChatColor.WHITE + "Spec: " + ChatColor.GREEN + Classes.getSelected(player).name).setScore(3);
-        sideBar.getScore("    ").setScore(2);
-        sideBar.getScore(ChatColor.YELLOW + Warlords.VERSION).setScore(1);
-
-        player.setScoreboard(board);
+    public List<UUID> getSpectators() {
+        return spectators;
     }
 
+    public void addSpectator(UUID uuid) {
+        spectators.add(uuid);
+        Player player = Bukkit.getPlayer(uuid);
+        player.setGameMode(GameMode.SPECTATOR);
+        player.teleport(this.getMap().blueRespawn);
+        Warlords.setRejoinPoint(player.getUniqueId(), this.getMap().blueRespawn);
+        if(state instanceof PreLobbyState) {
+            ((PreLobbyState) state).giveLobbyScoreboard(true, player);
+        } else if(state instanceof PlayingState) {
+            ((PlayingState) state).updateBasedOnGameState(true, Warlords.playerScoreboards.get(player.getUniqueId()), null);
+        }
+    }
+
+    public void removeSpectator(UUID uuid, boolean fromMenu) {
+        if(fromMenu) {
+            spectators.remove(uuid);
+        }
+        Player player = Bukkit.getPlayer(uuid);
+        Location loc = Warlords.spawnPoints.remove(player.getUniqueId());
+        Player p = Bukkit.getPlayer(player.getUniqueId());
+        if (p != null) {
+            if(loc != null) {
+                p.teleport(Warlords.getRejoinPoint(p.getUniqueId()));
+            }
+            WarlordsEvents.joinInteraction(p);
+        }
+    }
 
     @Override
     public void run() {

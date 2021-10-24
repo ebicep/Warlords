@@ -63,7 +63,7 @@ public class FallenSouls extends AbstractAbility {
             @Override
             public void run() {
 
-                if (fallenSoul.isLeftRemoved() && fallenSoul.isMiddleRemoved() && fallenSoul.isRightRemoved()) {
+                if ((fallenSoul.isLeftRemoved() && fallenSoul.isMiddleRemoved() && fallenSoul.isRightRemoved()) || wp.getGameState() != wp.getGame().getState()) {
                     this.cancel();
                 }
 
@@ -134,7 +134,7 @@ public class FallenSouls extends AbstractAbility {
                                 fallenSoul.getShooter().updateBlueItem(player);
                                 fallenSoul.getShooter().updateOrangeItem(player);
 
-                                PlayerFilter.entitiesAround(player, 2, 2, 2)
+                                PlayerFilter.entitiesAround(player, 6, 6, 6)
                                         .aliveTeammatesOf(wp)
                                         .closestFirst(player)
                                         .limit(2)

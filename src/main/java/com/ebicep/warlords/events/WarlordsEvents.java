@@ -33,9 +33,11 @@ import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.*;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -72,13 +74,9 @@ public class WarlordsEvents implements Listener {
             if (!wp.isDeath()) {
                 wp.updatePlayerReference(null);
             }
-            e.setQuitMessage(ChatColor.GREEN + "-----------------------------------\n" +
-                    wp.getColoredNameBold() + ChatColor.GOLD + ChatColor.BOLD + " left the game!\n" +
-                    ChatColor.GREEN + "-----------------------------------");
+            e.setQuitMessage(wp.getColoredNameBold() + ChatColor.GOLD + " left the game!");
         } else {
-            e.setQuitMessage(ChatColor.GREEN + "-----------------------------------\n" +
-                    ChatColor.AQUA + ChatColor.BOLD + e.getPlayer().getName() + ChatColor.GOLD + ChatColor.BOLD + " left the lobby!\n" +
-                    ChatColor.GREEN + "-----------------------------------");
+            e.setQuitMessage(ChatColor.AQUA + e.getPlayer().getName() + ChatColor.GOLD + " left the lobby!");
         }
         if (e.getPlayer().getVehicle() != null) {
             e.getPlayer().getVehicle().remove();
@@ -111,11 +109,6 @@ public class WarlordsEvents implements Listener {
             Utils.sendCenteredMessage(player, ChatColor.GOLD + "Click the Nether Star or do " + ChatColor.GREEN + "/menu" + ChatColor.GOLD + " to open the selection menu.");
             Utils.sendCenteredMessage(player, ChatColor.BLUE + "-----------------------------------------------------");
 
-//            if (player.isOp()) {
-//                Utils.sendCenteredMessage(player, ChatColor.GRAY + "For developers: ");
-//                Utils.sendCenteredMessage(player, ChatColor.GRAY + "Debug menu: /wl");
-//            }
-
             player.getInventory().clear();
             player.getInventory().setArmorContents(new ItemStack[]{null, null, null, null});
             player.getInventory().setItem(4, new ItemBuilder(Material.NETHER_STAR).name("§aSelection Menu").get());
@@ -123,9 +116,7 @@ public class WarlordsEvents implements Listener {
                 player.getInventory().setItem(3, new ItemBuilder(Material.EMERALD).name("§aDebug Menu").get());
             }
 
-            if (Warlords.getInstance().isEnabled()) {
-                CustomScoreboard.giveMainLobbyScoreboard(player);
-            }
+            Warlords.playerScoreboards.get(player.getUniqueId()).giveMainLobbyScoreboard();
         }
         WarlordsPlayer p = Warlords.getPlayer(player);
         if (p != null) {
@@ -143,16 +134,19 @@ public class WarlordsEvents implements Listener {
             if (wp.isAlive()) {
                 e.getPlayer().setAllowFlight(false);
             }
-            e.setJoinMessage(ChatColor.GREEN + "-----------------------------------\n" +
-                    wp.getColoredNameBold() + ChatColor.GOLD + ChatColor.BOLD + " rejoined the game!\n" +
-                    ChatColor.GREEN + "-----------------------------------");
+            e.setJoinMessage(wp.getColoredNameBold() + ChatColor.GOLD + " rejoined the game!");
         } else {
             e.getPlayer().setAllowFlight(true);
-            e.setJoinMessage(ChatColor.GREEN + "-----------------------------------\n" +
-                    ChatColor.AQUA + ChatColor.BOLD + e.getPlayer().getName() + ChatColor.GOLD + ChatColor.BOLD + " joined the lobby!\n" +
-                    ChatColor.GREEN + "-----------------------------------");
+            e.setJoinMessage(ChatColor.AQUA + e.getPlayer().getName() + ChatColor.GOLD + " joined the lobby!");
         }
         Player player = e.getPlayer();
+
+        //scoreboard
+        if(!Warlords.playerScoreboards.containsKey(player.getUniqueId())) {
+            Warlords.playerScoreboards.put(player.getUniqueId(), new CustomScoreboard(player));
+        }
+        player.setScoreboard(Warlords.playerScoreboards.get(player.getUniqueId()).getScoreboard());
+
         joinInteraction(player);
         Bukkit.getOnlinePlayers().forEach(p -> {
             PacketUtils.sendTabHF(p,
@@ -167,13 +161,20 @@ public class WarlordsEvents implements Listener {
                     ((Player) warlordsPlayer.getEntity()).hidePlayer(player);
                 }
             }));
+        } else {
+            Bukkit.getOnlinePlayers().forEach(p -> {
+                if(!Warlords.hasPlayer(p)) {
+                    player.hidePlayer(p);
+                }
+            });
         }
 
-        //???
         Warlords.newChain()
-                .asyncFirst(() -> DatabaseManager.loadPlayer(e.getPlayer()))
-                .asyncLast((d) -> Warlords.updateHeads())
-                .syncLast((input) -> LeaderboardRanking.addPlayerLeaderboards(player))
+                .async(() -> {
+                    DatabaseManager.loadPlayer(player, false);
+                    Warlords.updateHead(e.getPlayer());
+                })
+                .sync(() -> LeaderboardRanking.addPlayerLeaderboards(player))
                 .execute();
     }
 
@@ -362,11 +363,15 @@ public class WarlordsEvents implements Listener {
                 e.setCancelled(true);
             }
         }
-        if(e.getInventory() instanceof CraftInventoryAnvil ||
+
+        if (e.getInventory() instanceof CraftInventoryAnvil ||
                 e.getInventory() instanceof CraftInventoryBeacon ||
                 e.getInventory() instanceof CraftInventoryBrewer ||
                 e.getInventory() instanceof CraftInventoryCrafting ||
-                e.getInventory() instanceof CraftInventoryDoubleChest
+                e.getInventory() instanceof CraftInventoryDoubleChest ||
+                e.getInventory() instanceof CraftInventoryFurnace ||
+                e.getInventory().getType() == InventoryType.HOPPER ||
+                e.getInventory().getType() == InventoryType.DROPPER
         ) {
             e.setCancelled(true);
         }
@@ -437,6 +442,15 @@ public class WarlordsEvents implements Listener {
                         }
                     }
                 }
+            } else if (e.getCause() == EntityDamageEvent.DamageCause.DROWNING) {
+                //100 flat
+                if (e.getEntity() instanceof Player) {
+                    WarlordsPlayer wp = Warlords.getPlayer(e.getEntity());
+                    if (wp != null) {
+                        wp.addHealth(wp, "Fall", -100, -100, -1, 100, false);
+                        wp.setRegenTimer(10);
+                    }
+                }
             }
         }
         e.setCancelled(true);
@@ -463,7 +477,7 @@ public class WarlordsEvents implements Listener {
                 if (!Warlords.playerChatChannels.containsKey(uuid)) {
                     Warlords.playerChatChannels.put(uuid, ChatChannels.ALL);
                 }
-                switch (Warlords.playerChatChannels.get(uuid)) {
+                switch (Warlords.playerChatChannels.getOrDefault(uuid, ChatChannels.ALL)) {
                     case ALL:
                         WarlordsPlayer wp = Warlords.getPlayer(player);
                         if (wp == null) {
@@ -517,6 +531,10 @@ public class WarlordsEvents implements Listener {
             }).get();
         } catch (InterruptedException | ExecutionException ex) {
             Warlords.getInstance().getLogger().log(Level.SEVERE, null, ex);
+            System.out.println("UUID: " + uuid);
+            System.out.println("Chat Channels: " + Warlords.playerChatChannels);
+            System.out.println("Player Chat Channel: " + Warlords.playerChatChannels.get(uuid));
+            System.out.println("Contains UUID: " + Warlords.playerChatChannels.containsKey(uuid));
         }
     }
 
@@ -578,11 +596,24 @@ public class WarlordsEvents implements Listener {
                         p.playSound(player.getLocation(), "ctf.enemyflagtaken", 500, 1);
                     }
                 });
+                event.getGame().getSpectators().forEach(uuid -> {
+                    if(Bukkit.getPlayer(uuid) != null) {
+                        Player p = Bukkit.getPlayer(uuid);
+                        p.sendMessage(enemyColor + player.getName() + " §epicked up the " + event.getTeam().coloredPrefix() + " §eflag!");
+                        PacketUtils.sendTitle(p, "", enemyColor + player.getName() + " §epicked up the " + event.getTeam().coloredPrefix() + " §eflag!", 0, 60, 0);
+                    }
+                });
             } else {
                 // PLAYER -> PLAYER only happens if the multiplier gets to a new scale
                 if (pfl.getComputedHumanMultiplier() % 10 == 0) {
                     event.getGame().forEachOnlinePlayer((p, t) -> {
                         p.sendMessage("§eThe " + event.getTeam().coloredPrefix() + " §eflag carrier now takes §c" + pfl.getComputedHumanMultiplier() + "% §eincreased damage!");
+                    });
+                    event.getGame().getSpectators().forEach(uuid -> {
+                        if(Bukkit.getPlayer(uuid) != null) {
+                            Player p = Bukkit.getPlayer(uuid);
+                            p.sendMessage("§eThe " + event.getTeam().coloredPrefix() + " §eflag carrier now takes §c" + pfl.getComputedHumanMultiplier() + "% §eincreased damage!");
+                        }
                     });
                 }
             }
@@ -599,9 +630,23 @@ public class WarlordsEvents implements Listener {
                             p.playSound(p.getLocation(), "ctf.flagreturned", 500, 1);
                         }
                     });
+                    event.getGame().getSpectators().forEach(uuid -> {
+                        if(Bukkit.getPlayer(uuid) != null) {
+                            Player p = Bukkit.getPlayer(uuid);
+                            ChatColor color = event.getTeam().teamColor();
+                            p.sendMessage(color + toucher + " §ehas returned the " + event.getTeam().coloredPrefix() + " §eflag!");
+                            PacketUtils.sendTitle(p, "", color + toucher + " §ehas returned the " + event.getTeam().coloredPrefix() + " §eflag!", 0, 60, 0);
+                        }
+                    });
                 } else {
                     event.getGame().forEachOnlinePlayer((p, t) -> {
                         p.sendMessage("§eThe " + event.getTeam().coloredPrefix() + " §eflag has returned to its base.");
+                    });
+                    event.getGame().getSpectators().forEach(uuid -> {
+                        if(Bukkit.getPlayer(uuid) != null) {
+                            Player p = Bukkit.getPlayer(uuid);
+                            p.sendMessage("§eThe " + event.getTeam().coloredPrefix() + " §eflag has returned to its base.");
+                        }
                     });
                 }
             }
@@ -613,6 +658,13 @@ public class WarlordsEvents implements Listener {
                 event.getGame().forEachOnlinePlayer((p, t) -> {
                     PacketUtils.sendTitle(p, "", playerColor + pfl.getPlayer().getName() + " §ehas dropped the " + flag + " §eflag!", 0, 60, 0);
                     p.sendMessage(playerColor + pfl.getPlayer().getName() + " §ehas dropped the " + flag + " §eflag!");
+                });
+                event.getGame().getSpectators().forEach(uuid -> {
+                    if(Bukkit.getPlayer(uuid) != null) {
+                        Player p = Bukkit.getPlayer(uuid);
+                        p.sendMessage(playerColor + pfl.getPlayer().getName() + " §ehas dropped the " + flag + " §eflag!");
+                        PacketUtils.sendTitle(p, "", playerColor + pfl.getPlayer().getName() + " §ehas dropped the " + flag + " §eflag!", 0, 60, 0);
+                    }
                 });
             }
         } else if (event.getNew() instanceof WaitingFlagLocation && ((WaitingFlagLocation) event.getNew()).wasWinner()) {
@@ -630,6 +682,14 @@ public class WarlordsEvents implements Listener {
                         p.playSound(pfl.getLocation(), "ctf.enemycapturedtheflag", 500, 1);
                     } else {
                         p.playSound(pfl.getLocation(), "ctf.enemyflagcaptured", 500, 1);
+                    }
+                });
+                event.getGame().getSpectators().forEach(uuid -> {
+                    if(Bukkit.getPlayer(uuid) != null) {
+                        Player p = Bukkit.getPlayer(uuid);
+                        String message = pfl.getPlayer().getColoredName() + " §ecaptured the " + loser.coloredPrefix() + " §eflag!";
+                        p.sendMessage(message);
+                        PacketUtils.sendTitle(p, "", message, 0, 60, 0);
                     }
                 });
             }

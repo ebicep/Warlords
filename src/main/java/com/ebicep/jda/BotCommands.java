@@ -38,6 +38,7 @@ public class BotCommands implements CommandExecutor {
             case "balance2":
             case "experimental":
             case "experimental2":
+            case "experimental3":
                 Player player = (Player) sender;
                 Optional<Party> currentParty = Warlords.partyManager.getPartyFromAny(player.getUniqueId());
                 if (!currentParty.isPresent()) {
@@ -50,14 +51,13 @@ public class BotCommands implements CommandExecutor {
                 }
                 players.setLength(players.length() - 1);
                 botTeams.get().sendMessage("-" + input + " " + players).queue();
+                sender.sendMessage(ChatColor.GREEN + "Balanced party in bot-teams!");
                 return true;
             case "inputgame":
             case "inputexperimental":
                 if(args.length == 1) {
                     BotManager.getTextChannelByName("games-backlog").ifPresent(textChannel -> textChannel.sendMessage("-" + input + " " + DatabaseManager.lastWarlordsPlusString).queue());
-                }
-                if(args.length < 2) {
-                    sender.sendMessage(ChatColor.RED + "Invalid Arguments!");
+                    sender.sendMessage(ChatColor.GREEN + "Inputted game!");
                     return true;
                 }
                 if(!args[1].contains("png")) {

@@ -27,6 +27,22 @@ import java.util.stream.Stream;
 
 public class Utils {
 
+    private static final DecimalFormat decimalFormatOptionalTenths = new DecimalFormat("#.#");
+    private static final DecimalFormat decimalFormatTenths = new DecimalFormat("0.0");
+
+    static {
+        decimalFormatOptionalTenths.setDecimalSeparatorAlwaysShown(false);
+        decimalFormatTenths.setDecimalSeparatorAlwaysShown(false);
+    }
+
+    public static String formatOptionalTenths(double value) {
+        return decimalFormatOptionalTenths.format(value);
+    }
+
+    public static String formatTenths(double value) {
+        return decimalFormatTenths.format(value);
+    }
+
     public static final ItemStack[] woolSortedByColor = {
             new ItemStack(Material.WOOL, 1, (byte) 0),
             new ItemStack(Material.WOOL, 1, (byte) 8),
@@ -402,7 +418,7 @@ public class Utils {
 //        return blocksAbove && ((right && !left) || (!right && left));
     }
 
-    private final static int CENTER_PX = 154;
+    private final static int CENTER_PX = 164;
 
 
     public static void sendMessage(Player player, boolean centered, String message) {

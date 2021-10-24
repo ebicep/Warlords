@@ -28,7 +28,7 @@ public class LeaderboardRanking {
     public static final Location srLBWarrior = new LocationBuilder(spawnPoint.clone()).backward(27).left(14f).addY(3.5).get();
     public static final Location srLBPaladin = new LocationBuilder(spawnPoint.clone()).backward(27).left(18.5f).addY(3.5).get();
     public static final Location srLBShaman = new LocationBuilder(spawnPoint.clone()).backward(27).left(23f).addY(3.5).get();
-    public static final Location lastGameLocation = new LocationBuilder(spawnPoint.clone()).forward(29).left(16).addY(3.5).get();
+    public static final Location lastGameLocation = new LocationBuilder(spawnPoint.clone()).forward(28.5f).left(16.5f).addY(3.5).get();
     public static final Location center = new LocationBuilder(spawnPoint.clone()).forward(.5f).left(21).addY(2).get();
 
     public static final HashMap<String, Location> leaderboardLocations = new HashMap<>();
@@ -47,25 +47,31 @@ public class LeaderboardRanking {
         leaderboardLocations.put("shaman", srLBShaman);
     }
 
-    public static void addHologramLeaderboards() {
+    public static void addHologramLeaderboards(String sharedChainName) {
         if (DatabaseManager.connected && Warlords.holographicDisplaysEnabled) {
             HologramsAPI.getHolograms(Warlords.getInstance()).forEach(Hologram::delete);
             if (enabled) {
-                Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Adding Holograms");
+                Warlords.newSharedChain(sharedChainName)
+                        .sync(() -> Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Adding Holograms")).execute();
 
-                addLeaderboard("wins", lifeTimeWinsLB, ChatColor.AQUA + ChatColor.BOLD.toString() + "Lifetime Wins");
-                addLeaderboard("kills", lifeTimeKillsLB, ChatColor.AQUA + ChatColor.BOLD.toString() + "Lifetime Kills");
+                Warlords.newSharedChain(sharedChainName)
+                        .sync(() -> {
+                            Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Adding Game Hologram");
+                            DatabaseManager.addLastGameHologram(lastGameLocation);
+                        }).execute();
 
-                addLeaderboardSR("", srLB, ChatColor.AQUA + ChatColor.BOLD.toString() + "SR Ranking");
-                addLeaderboardSR("mage", srLBMage, ChatColor.AQUA + ChatColor.BOLD.toString() + "Mage SR Ranking");
-                addLeaderboardSR("warrior", srLBWarrior, ChatColor.AQUA + ChatColor.BOLD.toString() + "Warrior SR Ranking");
-                addLeaderboardSR("paladin", srLBPaladin, ChatColor.AQUA + ChatColor.BOLD.toString() + "Paladin SR Ranking");
-                addLeaderboardSR("shaman", srLBShaman, ChatColor.AQUA + ChatColor.BOLD.toString() + "Shaman SR Ranking");
+                addLeaderboard(sharedChainName,"wins", lifeTimeWinsLB, ChatColor.AQUA + ChatColor.BOLD.toString() + "Lifetime Wins");
+                addLeaderboard(sharedChainName,"kills", lifeTimeKillsLB, ChatColor.AQUA + ChatColor.BOLD.toString() + "Lifetime Kills");
 
-                DatabaseManager.addLastGameHologram(lastGameLocation);
+                addLeaderboardSR(sharedChainName,"", srLB, ChatColor.AQUA + ChatColor.BOLD.toString() + "SR Ranking");
+                addLeaderboardSR(sharedChainName,"mage", srLBMage, ChatColor.AQUA + ChatColor.BOLD.toString() + "Mage SR Ranking");
+                addLeaderboardSR(sharedChainName,"warrior", srLBWarrior, ChatColor.AQUA + ChatColor.BOLD.toString() + "Warrior SR Ranking");
+                addLeaderboardSR(sharedChainName,"paladin", srLBPaladin, ChatColor.AQUA + ChatColor.BOLD.toString() + "Paladin SR Ranking");
+                addLeaderboardSR(sharedChainName,"shaman", srLBShaman, ChatColor.AQUA + ChatColor.BOLD.toString() + "Shaman SR Ranking");
 
-                Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Adding player leaderboards");
-                addPlayerLeaderboardsToAll();
+                Warlords.newSharedChain(sharedChainName)
+                        .sync(() -> Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Adding player leaderboards")).execute();
+                addPlayerLeaderboardsToAll(sharedChainName);
             }
         }
     }
@@ -112,15 +118,15 @@ public class LeaderboardRanking {
         }
     }
 
-    public static void addPlayerLeaderboardsToAll() {
-        Warlords.newSharedChain("addingLeaderboard")
+    public static void addPlayerLeaderboardsToAll(String sharedChainName) {
+        Warlords.newSharedChain(sharedChainName)
                 .sync(() -> {
                     Bukkit.getOnlinePlayers().forEach(LeaderboardRanking::addPlayerLeaderboards);
                 }).execute();
     }
 
-    private static void addLeaderboard(String key, Location location, String title) {
-        Warlords.newSharedChain("addingLeaderboard")
+    private static void addLeaderboard(String sharedChainName, String key, Location location, String title) {
+        Warlords.newSharedChain(sharedChainName)
                 .asyncFirst(() -> getPlayersSortedByKey(key))
                 .abortIfNull()
                 .syncLast((top) -> {
@@ -135,8 +141,8 @@ public class LeaderboardRanking {
                 .execute();
     }
 
-    private static void addLeaderboardSR(String key, Location location, String title) {
-        Warlords.newSharedChain("addingLeaderboard")
+    private static void addLeaderboardSR(String sharedChainName, String key, Location location, String title) {
+        Warlords.newSharedChain(sharedChainName)
                 .asyncFirst(() -> getPlayersSortedBySR(key))
                 .abortIfNull()
                 .syncLast((top) -> {
@@ -200,9 +206,9 @@ public class LeaderboardRanking {
 
     private static double averageAdjusted(long playerAverage, long total) {
         double average = playerAverage / ((total / (double) DatabaseManager.playersInformation.countDocuments()));
-        if (average >= 5) return 1;
+        if (average >= 7) return 1;
         if (average <= 0) return 0;
-        return 1.00699 + (-1.02107 / (1.01398 + Math.pow(average, 3.09248)));
+        return 1.00005 + (-1.00008 / (2.01248 + Math.pow(average, 0.11248)));
     }
 
     private static double averageAdjustedDHP(UUID uuid, String optionalClass) {
@@ -234,15 +240,17 @@ public class LeaderboardRanking {
 
     public static HashMap<Document, Integer> getPlayersSortedBySR(String optionalClass) {
         if (!DatabaseManager.connected) return null;
+        String lastUUID = "";
         try {
             HashMap<Document, Integer> playersSr = new HashMap<>();
             for (Document document : DatabaseManager.playersInformation.find()) {
+                lastUUID = (String) document.get ("uuid");
                 playersSr.put(document, getSRClass(UUID.fromString((String) document.get("uuid")), optionalClass));
             }
             return playersSr;
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println(ChatColor.GREEN + "[Warlords] Problem getting players sorted by sr");
+            System.out.println(ChatColor.GREEN + "[Warlords] Problem getting players sorted by sr - " + lastUUID);
             return null;
         }
     }

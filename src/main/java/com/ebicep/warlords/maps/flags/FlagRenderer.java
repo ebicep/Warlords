@@ -5,10 +5,7 @@ import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.player.ArmorManager;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.ItemBuilder;
-import org.bukkit.ChatColor;
-import org.bukkit.DyeColor;
-import org.bukkit.Effect;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.banner.Pattern;
@@ -128,6 +125,7 @@ class FlagRenderer {
                 ((Banner) newData).setFacingDirection(dir);
                 block.setData(newData.getData());
             }
+
             ArmorStand stand = this.lastLocation.getLocation().getWorld().spawn(block.getLocation().add(.5, 0, .5), ArmorStand.class);
             renderedArmorStands.add(stand);
             stand.setGravity(false);
@@ -145,6 +143,7 @@ class FlagRenderer {
             stand1.setCustomNameVisible(true);
             stand1.setMetadata("TEAM", new FixedMetadataValue(plugin, info.getTeam()));
             stand1.setVisible(false);
+
         } else if (this.lastLocation instanceof PlayerFlagLocation) {
             PlayerFlagLocation flag = (PlayerFlagLocation) this.lastLocation;
             runningTasksCancel.add(flag.getPlayer().getSpeed().addSpeedModifier("FLAG", -20, 0, true));
@@ -163,6 +162,32 @@ class FlagRenderer {
             }
         }
     }
+
+    /*private void spawnArmorStand(Location loc, String name, Team team) {
+        boolean hasOldFlag = false;
+        for (Entity entity : this.lastLocation.getLocation().getWorld().getEntities()) {
+            if (entity.getLocation().distanceSquared(loc) < 0.25 && entity instanceof ArmorStand && entity.getCustomName().equals(name)) {
+                hasOldFlag = true;
+                renderedArmorStands.add(entity);
+                ((ArmorStand) entity).setGravity(false);
+                ((ArmorStand) entity).setCanPickupItems(false);
+                entity.setCustomName(name);
+                entity.setCustomNameVisible(true);
+                entity.removeMetadata("TEAM", Warlords.getInstance());
+                entity.setMetadata("TEAM", new FixedMetadataValue(Warlords.getInstance(), info.getTeam()));
+            }
+        }
+        if (!hasOldFlag) {
+            ArmorStand stand = this.lastLocation.getLocation().getWorld().spawn(loc, ArmorStand.class);
+            renderedArmorStands.add(stand);
+            stand.setGravity(false);
+            stand.setCanPickupItems(false);
+            stand.setCustomName(name);
+            stand.setCustomNameVisible(true);
+            stand.setMetadata("TEAM", new FixedMetadataValue(Warlords.getInstance(), info.getTeam()));
+            stand.setVisible(false);
+        }
+    }*/
 
     public void reset() {
         this.lastLocation = null;

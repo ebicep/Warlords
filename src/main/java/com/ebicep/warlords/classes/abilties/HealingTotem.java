@@ -65,7 +65,7 @@ public class HealingTotem extends AbstractTotemBase {
 
 
         new BukkitRunnable() {
-            int timeLeft = duration;
+            int timeLeft = 5;
 
             @Override
             public void run() {
@@ -103,8 +103,7 @@ public class HealingTotem extends AbstractTotemBase {
                     //2.05
                     //2.4
                     //2.85
-                    //3.1
-                    float healMultiplier = 1 + (.35f * (6 - timeLeft));
+                    float healMultiplier = 1 + (.35f * (5 - timeLeft));
                     PlayerFilter.entitiesAround(totemStand, radius, radius, radius)
                             .aliveTeammatesOf(wp)
                             .forEach((nearPlayer) -> {
@@ -118,11 +117,23 @@ public class HealingTotem extends AbstractTotemBase {
                                         false);
                             });
                 } else {
+                    PlayerFilter.entitiesAround(totemStand, radius, radius, radius)
+                            .aliveTeammatesOf(wp)
+                            .forEach((nearPlayer) -> {
+                                nearPlayer.addHealth(
+                                        wp,
+                                        name,
+                                        minDamageHeal * 3.1f,
+                                        maxDamageHeal * 3.1f,
+                                        critChance,
+                                        critMultiplier,
+                                        false);
+                            });
                     for (Player player1 : player.getWorld().getPlayers()) {
                         player1.playSound(totemStand.getLocation(), Sound.BLAZE_DEATH, 1.2f, 0.7f);
                         player1.playSound(totemStand.getLocation(), "shaman.heal.impact", 2, 1);
                     }
-                    new FallingBlockWaveEffect(totemStand.getLocation().clone().add(0, 1, 0), 2, 0.8, Material.SAPLING, (byte) 1).play();
+                    new FallingBlockWaveEffect(totemStand.getLocation().clone().add(0, 1, 0), 3, 0.8, Material.SAPLING, (byte) 1).play();
 
                     totemStand.remove();
                     this.cancel();

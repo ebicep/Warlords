@@ -28,7 +28,6 @@ import com.ebicep.warlords.powerups.EnergyPowerUp;
 import com.ebicep.warlords.util.*;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
-import com.google.common.base.Supplier;
 import org.bukkit.*;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
@@ -46,6 +45,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.security.auth.login.LoginException;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -141,7 +141,7 @@ public class Warlords extends JavaPlugin {
         return players;
     }
 
-    private final static HashMap<UUID, Location> spawnPoints = new HashMap<>();
+    public final static HashMap<UUID, Location> spawnPoints = new HashMap<>();
 
     @Nonnull
     public static Location getRejoinPoint(@Nonnull UUID key) {
@@ -173,12 +173,17 @@ public class Warlords extends JavaPlugin {
 
     public static void updateHeads() {
         for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-            ItemStack playerSkull = new ItemStack(Material.SKULL_ITEM, 1, (short) SkullType.PLAYER.ordinal());
-            SkullMeta skullMeta = (SkullMeta) playerSkull.getItemMeta();
-            skullMeta.setOwner(onlinePlayer.getName());
-            playerSkull.setItemMeta(skullMeta);
-            playerHeads.put(onlinePlayer.getUniqueId(), CraftItemStack.asNMSCopy(playerSkull));
+            updateHead(onlinePlayer);
         }
+        System.out.println("[WARLORDS] Heads updated");
+    }
+
+    public static void updateHead(Player player) {
+        ItemStack playerSkull = new ItemStack(Material.SKULL_ITEM, 1, (short) SkullType.PLAYER.ordinal());
+        SkullMeta skullMeta = (SkullMeta) playerSkull.getItemMeta();
+        skullMeta.setOwner(player.getName());
+        playerSkull.setItemMeta(skullMeta);
+        playerHeads.put(player.getUniqueId(), CraftItemStack.asNMSCopy(playerSkull));
     }
 
 
@@ -189,11 +194,13 @@ public class Warlords extends JavaPlugin {
     public static NPCManager npcManager = new NPCManager();
     public Location npcCTFLocation;
 
-    private static final int SPAWN_PROTECTION_RADIUS = 5;
+    public static final int SPAWN_PROTECTION_RADIUS = 5;
 
     public static final PartyManager partyManager = new PartyManager();
 
     public static HashMap<UUID, ChatChannels> playerChatChannels = new HashMap<>();
+
+    public static HashMap<UUID, CustomScoreboard> playerScoreboards = new HashMap<>();
 
     @Override
     public void onEnable() {
@@ -226,6 +233,9 @@ public class Warlords extends JavaPlugin {
         new ChatChannelCommand().register(this);
         new BotCommands().register(this);
         new LeaderboardCommand().register(this);
+        new RecordGamesCommand().register(this);
+        new GamesCommand().register(this);
+        new SpectateCommand().register(this);
 
         updateHeads();
 
@@ -233,13 +243,17 @@ public class Warlords extends JavaPlugin {
 
         holographicDisplaysEnabled = Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays");
 
-        //gets data then loads scoreboard then loads holograms (all callbacks i think)
+        Bukkit.getOnlinePlayers().forEach(player -> {
+            playerScoreboards.put(player.getUniqueId(), new CustomScoreboard(player));
+        });
+
+        //connects to the database with callback
         Warlords.newChain()
-                .asyncFirst(DatabaseManager::connect)
-                .syncLast(input -> {
-                    Bukkit.getOnlinePlayers().forEach(CustomScoreboard::giveMainLobbyScoreboard);
+                .async(DatabaseManager::connect)
+                .sync(() -> {
+                    Bukkit.getOnlinePlayers().forEach(player -> playerScoreboards.get(player.getUniqueId()).giveMainLobbyScoreboard());
                     new LeaderboardRanking();
-                    LeaderboardRanking.addHologramLeaderboards();
+                    LeaderboardRanking.addHologramLeaderboards(UUID.randomUUID().toString());
                 })
                 .execute();
 
@@ -248,6 +262,7 @@ public class Warlords extends JavaPlugin {
         } catch (LoginException e) {
             e.printStackTrace();
         }
+
 
         ProtocolManager protocolManager;
 
@@ -394,31 +409,17 @@ public class Warlords extends JavaPlugin {
                             }
                         }
                         //respawn
-                        if (warlordsPlayer.getRespawnTimer() == 0) {
-                            warlordsPlayer.setRespawnTimer(-1);
-                            warlordsPlayer.setSpawnProtection(3);
-                            warlordsPlayer.setEnergy(warlordsPlayer.getMaxEnergy() / 2);
-                            warlordsPlayer.setDead(false);
-                            Location respawnPoint = warlordsPlayer.getGame().getMap().getRespawn(warlordsPlayer.getTeam());
-                            warlordsPlayer.teleport(respawnPoint);
-                            new BukkitRunnable() {
-                                @Override
-                                public void run() {
-                                    Location location = warlordsPlayer.getLocation();
-                                    Location respawn = warlordsPlayer.getGame().getMap().getRespawn(warlordsPlayer.getTeam());
-                                    if (
-                                            location.getWorld() != respawn.getWorld() ||
-                                                    location.distanceSquared(respawn) > SPAWN_PROTECTION_RADIUS * SPAWN_PROTECTION_RADIUS
-                                    ) {
-                                        warlordsPlayer.setSpawnProtection(0);
-                                    }
-                                    if (warlordsPlayer.getSpawnProtection() == 0) {
-                                        this.cancel();
-                                    }
-                                }
-                            }.runTaskTimer(instance, 0, 5);
+                        if (warlordsPlayer.getRespawnTimer().doubleValue() == 0) {
                             warlordsPlayer.respawn();
-
+                        }
+                        BigDecimal respawn = warlordsPlayer.getRespawnTimer();
+                        if (respawn.doubleValue() != -1) {
+//                            System.out.println("-----------");
+//                            System.out.println(warlordsPlayer.getGameState().getTimer() / 20.0);
+//                            System.out.println(warlordsPlayer.getGameState().getTimer() / 20.0 % 12);
+//                            System.out.println(warlordsPlayer.getRespawnTimer());
+                            warlordsPlayer.setRespawnTimer(respawn.subtract(BigDecimal.valueOf(.05)));
+//                            System.out.println(warlordsPlayer.getRespawnTimer());
                         }
                         //damage or heal
                         float newHealth = (float) warlordsPlayer.getHealth() / warlordsPlayer.getMaxHealth() * 40;
@@ -454,7 +455,7 @@ public class Warlords extends JavaPlugin {
                                             .build());
                                     meta.setPower(0);
                                     firework.setFireworkMeta(meta);
-                                    warlordsPlayer.respawn();
+                                    warlordsPlayer.heal();
 
                                     if (player != null) {
                                         player.getWorld().spigot().strikeLightningEffect(warlordsPlayer.getLocation(), false);
@@ -470,7 +471,7 @@ public class Warlords extends JavaPlugin {
                                     new BukkitRunnable() {
                                         @Override
                                         public void run() {
-                                            if (warlordsPlayer.getRespawnTimer() > 0) {
+                                            if (warlordsPlayer.getRespawnTimer().doubleValue() > 0) {
                                                 this.cancel();
                                             } else {
                                                 //UNDYING ARMY - dmg 10% of max health each popped army
@@ -483,7 +484,7 @@ public class Warlords extends JavaPlugin {
                                 }
                             }
                         }
-                        if (newHealth <= 0 && warlordsPlayer.getRespawnTimer() == -1) {
+                        if (newHealth <= 0 && warlordsPlayer.getRespawnTimer().doubleValue() == -1) {
                             //checking if all undying armies are popped (this should never be true as last if statement bypasses this) then removing all boners
                             if (!warlordsPlayer.getCooldownManager().checkUndyingArmy(false)) {
                                 if (player != null) {
@@ -520,7 +521,6 @@ public class Warlords extends JavaPlugin {
                                         );
                                     }
                                     assisted.addAssist();
-                                    assisted.getScoreboard().updateKillsAssists();
                                 }
                                 counter[0]++;
                             });
@@ -544,7 +544,7 @@ public class Warlords extends JavaPlugin {
                             if (warlordsPlayer.getHealth() <= 0 && player.getGameMode() == GameMode.SPECTATOR) {
                                 warlordsPlayer.heal();
                             }
-                            if (warlordsPlayer.getRespawnTimer() == -1 && player.getGameMode() == GameMode.SPECTATOR) {
+                            if (warlordsPlayer.getRespawnTimer().doubleValue() == -1 && player.getGameMode() == GameMode.SPECTATOR) {
                                 warlordsPlayer.giveRespawnTimer();
                             }
                         }
@@ -600,8 +600,8 @@ public class Warlords extends JavaPlugin {
                                 orb.remove();
                                 itr.remove();
 
-                                float minHeal = 240;
-                                float maxHeal = 350;
+                                float minHeal = 250;
+                                float maxHeal = 375;
                                 if (Warlords.getPlayerSettings(orb.getOwner().getUuid()).getClassesSkillBoosts() == ClassesSkillBoosts.ORBS_OF_LIFE) {
                                     minHeal *= 1.2;
                                     maxHeal *= 1.2;
@@ -671,21 +671,14 @@ public class Warlords extends JavaPlugin {
                                 int healthToAdd = (int) (warlordsPlayer.getMaxHealth() / 55.3);
                                 warlordsPlayer.setHealth(Math.min(warlordsPlayer.getHealth() + healthToAdd, warlordsPlayer.getMaxHealth()));
                             }
-                            //RESPAWN
-                            int respawn = warlordsPlayer.getRespawnTimer();
-                            if (respawn != -1) {
-                                if (respawn <= 11) {
-                                    if (respawn == 1) {
-                                        if (player != null) {
-                                            PacketUtils.sendTitle(player, "", "", 0, 0, 0);
-                                        }
-                                    } else {
-                                        if (player != null) {
-                                            PacketUtils.sendTitle(player, "", warlordsPlayer.getTeam().teamColor() + "Respawning in... " + ChatColor.YELLOW + (respawn - 1), 0, 40, 0);
-                                        }
+                            //RESPAWN DISPLAY
+                            BigDecimal respawn = warlordsPlayer.getRespawnTimer();
+                            if (respawn.doubleValue() != -1) {
+                                if (respawn.doubleValue() <= 11) {
+                                    if (player != null) {
+                                        PacketUtils.sendTitle(player, "", warlordsPlayer.getTeam().teamColor() + "Respawning in... " + ChatColor.YELLOW + Math.round(respawn.doubleValue()), 0, 40, 0);
                                     }
                                 }
-                                warlordsPlayer.setRespawnTimer(respawn - 1);
                             }
                             //COOLDOWNS
                             if (warlordsPlayer.getSpawnProtection() > 0) {
@@ -747,7 +740,7 @@ public class Warlords extends JavaPlugin {
                             }
                             LivingEntity player = warlordsPlayer.getEntity();
                             List<Location> locations = warlordsPlayer.getLocations();
-                            if (warlordsPlayer.isDeath()) {
+                            if (warlordsPlayer.isDeath() && !locations.isEmpty()) {
                                 locations.add(locations.get(locations.size() - 1));
                             } else {
                                 locations.add(player.getLocation());

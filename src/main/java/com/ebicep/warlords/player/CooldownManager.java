@@ -67,18 +67,7 @@ public class CooldownManager {
             cooldown.subtractTime(.05f);
 
             if (cooldown.getTimeLeft() <= 0) {
-                if (cooldownClass == Intervene.class) {
-                    warlordsPlayer.sendMessage("§c\u00AB§7 " + cooldown.getFrom().getName() + "'s §eIntervene §7has expired!");
-                /*} else if (cooldownClass == UndyingArmy.class) {
-                    if (!((UndyingArmy) cooldownObject).isArmyDead(warlordsPlayer.getUuid())) {
-                        int healing = (int) ((warlordsPlayer.getMaxHealth() - warlordsPlayer.getHealth()) * .35 + 200);
-                        warlordsPlayer.addHealth(cooldown.getFrom(), "Undying Army", healing, healing, -1, 100, false);
-
-                        for (Player player1 : warlordsPlayer.getWorld().getPlayers()) {
-                            player1.playSound(warlordsPlayer.getLocation(), "paladin.holyradiance.activation", 0.5f, 1);
-                        }
-                    }*/
-                } else if (cooldownClass == ArcaneShield.class && getCooldown(ArcaneShield.class).size() == 1) {
+                if (cooldownClass == ArcaneShield.class && getCooldown(ArcaneShield.class).size() == 1) {
                     if (warlordsPlayer.getEntity() instanceof Player) {
                         ((EntityLiving) ((CraftPlayer) warlordsPlayer.getEntity()).getHandle()).setAbsorptionHearts(0);
                     }
@@ -183,6 +172,10 @@ public class CooldownManager {
         PlayerFilter.playingGame(warlordsPlayer.getGame()).teammatesOf(warlordsPlayer).forEach(wp -> {
             wp.getCooldownManager().getCooldowns().removeIf(cd -> cd.getFrom() == warlordsPlayer && cd.getCooldownClass() == Intervene.class);
         });
+        //removing sg shiny weapon
+        if (warlordsPlayer.getEntity() instanceof Player) {
+            ((CraftPlayer) warlordsPlayer.getEntity()).getInventory().getItem(0).removeEnchantment(Enchantment.OXYGEN);
+        }
     }
 
     public boolean hasBoundPlayer(WarlordsPlayer warlordsPlayer) {

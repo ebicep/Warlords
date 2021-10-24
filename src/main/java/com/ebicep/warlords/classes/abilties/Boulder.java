@@ -87,7 +87,7 @@ public class Boulder extends AbstractAbility {
                     shouldExplode = true;
                 } else {
                     directHit = PlayerFilter
-                            .entitiesAroundRectangle(newLoc, 1.25, 2.5, 1.25)
+                            .entitiesAroundRectangle(newLoc, 1, 2, 1)
                             .aliveEnemiesOf(wp).findFirstOrNull();
                     shouldExplode = directHit != null;
                 }
@@ -105,9 +105,9 @@ public class Boulder extends AbstractAbility {
                     ) {
                         Vector v;
                         if (p == directHit) {
-                            v = player.getLocation().toVector().subtract(p.getLocation().toVector()).normalize().multiply(-1).setY(0.2);
+                            v = player.getLocation().toVector().subtract(p.getLocation().toVector()).normalize().multiply(-1.05).setY(0.2);
                         } else {
-                            v = p.getLocation().toVector().subtract(newLoc.toVector()).normalize().multiply(1).setY(0.2);
+                            v = p.getLocation().toVector().subtract(newLoc.toVector()).normalize().multiply(1.05).setY(0.2);
                         }
                         p.setVelocity(v, false);
                         p.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
