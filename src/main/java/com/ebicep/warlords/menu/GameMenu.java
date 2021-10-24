@@ -653,7 +653,6 @@ public class GameMenu {
 
                         if (rarity == WeaponsRarity.EPIC) {
                             Bukkit.broadcastMessage(ChatColor.AQUA + player.getDisplayName() + " §fgot lucky and found " + message);
-                            player.sendMessage(ChatColor.GRAY + "You received: " + message);
                         }
 
                         if (rarity == WeaponsRarity.LEGENDARY) {

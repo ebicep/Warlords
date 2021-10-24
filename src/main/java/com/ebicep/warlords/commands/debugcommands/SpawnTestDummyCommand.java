@@ -25,6 +25,11 @@ public class SpawnTestDummyCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
         WarlordsPlayer player = BaseCommand.requireWarlordsPlayer(sender);
+
+        if(!sender.isOp()) {
+            return true;
+        }
+
         if (player != null) {
             if (args.length >= 1) {
                 String teamString = args[0];

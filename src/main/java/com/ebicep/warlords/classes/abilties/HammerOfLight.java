@@ -38,7 +38,7 @@ public class HammerOfLight extends AbstractAbility {
     }
 
     public HammerOfLight() {
-        super("Hammer of Light", 178, 244, 62.64f, 50, 25, 175
+        super("Hammer of Light", 178, 244, 62.64f, 50, 20, 175
         );
     }
 
@@ -55,7 +55,7 @@ public class HammerOfLight extends AbstractAbility {
                 "\n\n" +
                 "§7You may SNEAK to turn your hammer into Crown of Light.\n" +
                 "§7Removing the damage and piercing BUT increasing\n" +
-                "§7the healing §7by §a60% §7and reducing the\n" +
+                "§7the healing §7by §a50% §7and reducing the\n" +
                 "§7energy cost of your Protector Strike by\n" +
                 "§e10 §7energy. You cannot put the Hammer of Light\n" +
                 "§7back down after you converted it.";
@@ -165,8 +165,8 @@ public class HammerOfLight extends AbstractAbility {
                                         teammate.addHealth(
                                                 damageHealCircle.getWarlordsPlayer(),
                                                 "Crown of Light",
-                                                damageHealCircle.getMinDamage() * 1.6f,
-                                                damageHealCircle.getMaxDamage() * 1.6f,
+                                                damageHealCircle.getMinDamage() * 1.5f,
+                                                damageHealCircle.getMaxDamage() * 1.5f,
                                                 damageHealCircle.getCritChance(),
                                                 damageHealCircle.getCritMultiplier(),
                                                 false);
