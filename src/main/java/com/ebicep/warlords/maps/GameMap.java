@@ -110,7 +110,7 @@ public enum GameMap {
             new Location(Bukkit.getWorld("Warsong"), 45.5, 29.5, 15.5, -30, 0), // BLUE RESPAWN
             new Location(Bukkit.getWorld("Warsong"), 99.5, 29.5, 128.5, 145, 0), // RED RESPAWN
 
-            new Location(Bukkit.getWorld("Warsong"), 56.5, 39.5, -102.5), // BLUE FLAG
+            new Location(Bukkit.getWorld("Warsong"), 56.5, 39.5, -103.5), // BLUE FLAG
             new Location(Bukkit.getWorld("Warsong"), 88.5, 40.5, 241.5, 180, 0), // RED FLAG
 
             Arrays.asList(
