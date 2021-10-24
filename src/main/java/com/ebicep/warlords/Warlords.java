@@ -45,6 +45,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.security.auth.login.LoginException;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -408,12 +409,17 @@ public class Warlords extends JavaPlugin {
                             }
                         }
                         //respawn
-                        if (Math.abs(warlordsPlayer.getRespawnTimer()) < .1 || warlordsPlayer.getRespawnTimer() < -1) {
+                        if (warlordsPlayer.getRespawnTimer().doubleValue() == 0) {
                             warlordsPlayer.respawn();
                         }
-                        float respawn = warlordsPlayer.getRespawnTimer();
-                        if (respawn != -1) {
-                            warlordsPlayer.setRespawnTimer(respawn - .05f);
+                        BigDecimal respawn = warlordsPlayer.getRespawnTimer();
+                        if (respawn.doubleValue() != -1) {
+//                            System.out.println("-----------");
+//                            System.out.println(warlordsPlayer.getGameState().getTimer() / 20.0);
+//                            System.out.println(warlordsPlayer.getGameState().getTimer() / 20.0 % 12);
+//                            System.out.println(warlordsPlayer.getRespawnTimer());
+                            warlordsPlayer.setRespawnTimer(respawn.subtract(BigDecimal.valueOf(.05)));
+//                            System.out.println(warlordsPlayer.getRespawnTimer());
                         }
                         //damage or heal
                         float newHealth = (float) warlordsPlayer.getHealth() / warlordsPlayer.getMaxHealth() * 40;
@@ -465,7 +471,7 @@ public class Warlords extends JavaPlugin {
                                     new BukkitRunnable() {
                                         @Override
                                         public void run() {
-                                            if (warlordsPlayer.getRespawnTimer() > 0) {
+                                            if (warlordsPlayer.getRespawnTimer().doubleValue() > 0) {
                                                 this.cancel();
                                             } else {
                                                 //UNDYING ARMY - dmg 10% of max health each popped army
@@ -478,7 +484,7 @@ public class Warlords extends JavaPlugin {
                                 }
                             }
                         }
-                        if (newHealth <= 0 && warlordsPlayer.getRespawnTimer() == -1) {
+                        if (newHealth <= 0 && warlordsPlayer.getRespawnTimer().doubleValue() == -1) {
                             //checking if all undying armies are popped (this should never be true as last if statement bypasses this) then removing all boners
                             if (!warlordsPlayer.getCooldownManager().checkUndyingArmy(false)) {
                                 if (player != null) {
@@ -538,7 +544,7 @@ public class Warlords extends JavaPlugin {
                             if (warlordsPlayer.getHealth() <= 0 && player.getGameMode() == GameMode.SPECTATOR) {
                                 warlordsPlayer.heal();
                             }
-                            if (warlordsPlayer.getRespawnTimer() == -1 && player.getGameMode() == GameMode.SPECTATOR) {
+                            if (warlordsPlayer.getRespawnTimer().doubleValue() == -1 && player.getGameMode() == GameMode.SPECTATOR) {
                                 warlordsPlayer.giveRespawnTimer();
                             }
                         }
@@ -666,11 +672,11 @@ public class Warlords extends JavaPlugin {
                                 warlordsPlayer.setHealth(Math.min(warlordsPlayer.getHealth() + healthToAdd, warlordsPlayer.getMaxHealth()));
                             }
                             //RESPAWN DISPLAY
-                            float respawn = warlordsPlayer.getRespawnTimer();
-                            if (respawn != -1) {
-                                if (respawn <= 11) {
+                            BigDecimal respawn = warlordsPlayer.getRespawnTimer();
+                            if (respawn.doubleValue() != -1) {
+                                if (respawn.doubleValue() <= 11) {
                                     if (player != null) {
-                                        PacketUtils.sendTitle(player, "", warlordsPlayer.getTeam().teamColor() + "Respawning in... " + ChatColor.YELLOW + Math.round(respawn), 0, 40, 0);
+                                        PacketUtils.sendTitle(player, "", warlordsPlayer.getTeam().teamColor() + "Respawning in... " + ChatColor.YELLOW + Math.round(respawn.doubleValue()), 0, 40, 0);
                                     }
                                 }
                             }

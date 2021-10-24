@@ -35,6 +35,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -52,7 +53,7 @@ public final class WarlordsPlayer {
     private int maxHealth;
     private int regenTimer;
     private int timeInCombat = 0;
-    private float respawnTimer;
+    private BigDecimal respawnTimer;
     private float respawnTimeSpent = 0;
     private boolean dead = false;
     private float energy;
@@ -121,7 +122,7 @@ public final class WarlordsPlayer {
         this.spec = specClass.create.get();
         this.maxHealth = (int) (this.spec.getMaxHealth() * (gameState.getGame().getCooldownMode() ? 1.5 : 1));
         this.health = this.maxHealth;
-        this.respawnTimer = -1;
+        this.respawnTimer = BigDecimal.valueOf(-1);
         this.energy = 0;
         this.energyModifier = gameState.getGame().getCooldownMode() ? 0.5 : 1;
         this.maxEnergy = this.spec.getMaxEnergy();
@@ -1126,7 +1127,7 @@ public final class WarlordsPlayer {
     public void respawn() {
         if(entity instanceof Player && ((Player) entity).isOnline()) {
             PacketUtils.sendTitle((Player) entity, "", "", 0, 0, 0);
-            setRespawnTimer(-1);
+            setRespawnTimer(BigDecimal.valueOf(-1));
             setSpawnProtection(3);
             setEnergy(getMaxEnergy() / 2);
             setDead(false);
@@ -1181,18 +1182,18 @@ public final class WarlordsPlayer {
         this.regenTimer = regenTimer;
     }
 
-    public float getRespawnTimer() {
+    public BigDecimal getRespawnTimer() {
         return respawnTimer;
     }
 
-    public void setRespawnTimer(float respawnTimer) {
+    public void setRespawnTimer(BigDecimal respawnTimer) {
         this.respawnTimer = respawnTimer;
     }
 
     public void giveRespawnTimer() {
-        float respawn = (gameState.getTimer() / 20f) % 12 - 1;
-        if (respawn <= 4) {
-            respawn += 12;
+        BigDecimal respawn = BigDecimal.valueOf(gameState.getTimer() / 20.0).remainder(BigDecimal.valueOf(12));
+        if (respawn.doubleValue() <= 4) {
+            respawn = respawn.add(BigDecimal.valueOf(12));
         }
         setRespawnTimer(respawn);
     }
@@ -1625,7 +1626,7 @@ public final class WarlordsPlayer {
     }
 
     public void addTotalRespawnTime() {
-        respawnTimeSpent += respawnTimer;
+        respawnTimeSpent += respawnTimer.floatValue();
     }
 
     public float getRespawnTimeSpent() {
