@@ -481,6 +481,7 @@ public final class WarlordsPlayer {
         this.energy = this.maxEnergy;
         assignItemLore(Bukkit.getPlayer(uuid));
         DatabaseManager.updatePlayerInformation(player, "last_spec", spec.getName());
+        //
     }
 
     public int getHealth() {
