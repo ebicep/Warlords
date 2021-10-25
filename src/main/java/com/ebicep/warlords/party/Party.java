@@ -209,13 +209,11 @@ public class Party {
 
     public void promote(String name) {
         UUID uuid = Bukkit.getOfflinePlayer(name).getUniqueId();
-        if (!moderators.contains(uuid)) {
+        if(moderators.contains(uuid)) {
+            transfer(name);
+        } else {
             moderators.add(uuid);
             sendMessageToAllPartyPlayers(ChatColor.AQUA + Bukkit.getOfflinePlayer(uuid).getName() + ChatColor.YELLOW + " was promoted to Party Moderator", true, true);
-        } else {
-            Bukkit.getOnlinePlayers().stream().filter(p -> p.getUniqueId().equals(leader)).forEach(player -> {
-                sendMessageToPlayer(player, ChatColor.RED + "Unable to promote that player", true, true);
-            });
         }
     }
 

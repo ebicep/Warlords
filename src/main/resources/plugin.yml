@@ -42,7 +42,8 @@ commands:
     description: Party options
     aliases: [ party, p,
                partyclose, partyopen, pclose, popen,
-               partyoutside, poutside
+               partyoutside, poutside,
+               pleader
     ]
   stream:
     description: Creates a new party where anyone can join
