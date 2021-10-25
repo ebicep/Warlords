@@ -674,16 +674,6 @@ public final class WarlordsPlayer {
                     removeHorse();
                     intervenedBy.removeHorse();
 
-                    //removing intervene if out damaged
-                    if (intervene.getDamagePrevented() >= (3600 / 2.0)) {
-                        //remove from intervener
-                        intervenedBy.sendMessage("§c\u00AB§7 " + intervenedBy.getName() + "'s " + ChatColor.YELLOW + "Intervene " + ChatColor.GRAY + "has expired!");
-                        intervenedBy.getCooldownManager().removeCooldown(intervene);
-                        //remove from intervened
-                        sendMessage("§c\u00AB§7 " + intervenedBy.getName() + "'s " + ChatColor.YELLOW + "Intervene " + ChatColor.GRAY + "has expired!");
-                        cooldownManager.removeCooldown(intervene);
-                    }
-
                     //red line thingy
                     Location lineLocation = getLocation().add(0, 1, 0);
                     lineLocation.setDirection(lineLocation.toVector().subtract(intervenedBy.getLocation().add(0, 1, 0).toVector()).multiply(-1));

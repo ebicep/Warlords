@@ -100,6 +100,7 @@ public class Intervene extends AbstractAbility {
                         @Override
                         public void run() {
                             if (wp.isDeath() ||
+                                    tempIntervene.damagePrevented >= (3600 / 2.0) ||
                                     !nearWarlordsPlayer.getCooldownManager().hasCooldown(tempIntervene) ||
                                     nearWarlordsPlayer.getLocation().distanceSquared(nearWarlordsPlayer.getCooldownManager().getCooldown(tempIntervene).get().getFrom().getEntity().getLocation()) > 15 * 15
                             ) {
