@@ -141,8 +141,16 @@ public class WarlordsEvents implements Listener {
         }
         Player player = e.getPlayer();
 
+        Warlords.newChain()
+                .async(() -> {
+                    DatabaseManager.loadPlayer(player, false);
+                    Warlords.updateHead(e.getPlayer());
+                })
+                .sync(() -> LeaderboardRanking.addPlayerLeaderboards(player))
+                .execute();
+
         //scoreboard
-        if(!Warlords.playerScoreboards.containsKey(player.getUniqueId())) {
+        if(!Warlords.playerScoreboards.containsKey(player.getUniqueId()) || Warlords.playerScoreboards.get(player.getUniqueId()) == null) {
             Warlords.playerScoreboards.put(player.getUniqueId(), new CustomScoreboard(player));
         }
         player.setScoreboard(Warlords.playerScoreboards.get(player.getUniqueId()).getScoreboard());
@@ -169,13 +177,6 @@ public class WarlordsEvents implements Listener {
             });
         }
 
-        Warlords.newChain()
-                .async(() -> {
-                    DatabaseManager.loadPlayer(player, false);
-                    Warlords.updateHead(e.getPlayer());
-                })
-                .sync(() -> LeaderboardRanking.addPlayerLeaderboards(player))
-                .execute();
     }
 
     @EventHandler
