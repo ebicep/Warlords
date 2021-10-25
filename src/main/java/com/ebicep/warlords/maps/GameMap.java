@@ -34,8 +34,8 @@ public enum GameMap {
             new Location(Bukkit.getWorld("Rift"), -0.5, 24.5, 64.5), // BLUE HEALING
             new Location(Bukkit.getWorld("Rift"), 1.5, 24.5, -62.5), // RED HEALING
 
-            new Location(Bukkit.getWorld("Rift"), -86.5, 45.5, -33.5), // BLUE LOBBY SPAWN
-            new Location(Bukkit.getWorld("Rift"), 87, 45.5, 35.5, 180, 0), // RED LOBBY SPAWN
+            new Location(Bukkit.getWorld("Rift"), -86.5, 46, -33.5), // BLUE LOBBY SPAWN
+            new Location(Bukkit.getWorld("Rift"), 87, 46, 35.5, 180, 0), // RED LOBBY SPAWN
 
             new LocationBuilder(new Location(Bukkit.getWorld("Rift"), -32.5, 34.5, -43.5)).yaw(-90).get(), // BLUE RESPAWN
             new LocationBuilder(new Location(Bukkit.getWorld("Rift"), 33, 34.5, 45)).yaw(90).get(), // RED RESPAWN
@@ -69,8 +69,8 @@ public enum GameMap {
             new Location(Bukkit.getWorld("Crossfire"), 96.5, 6.5, 108.5), // BLUE HEALING
             new Location(Bukkit.getWorld("Crossfire"), 127.5, 6.5, 19.5), // RED HEALING
 
-            new Location(Bukkit.getWorld("Crossfire"), 215.5, 36.5, 109.5), // BLUE LOBBY SPAWN
-            new Location(Bukkit.getWorld("Crossfire"), 7.5, 36.5, 19.5, 180, 0), // RED LOBBY SPAWN
+            new Location(Bukkit.getWorld("Crossfire"), 215.5, 37, 109.5), // BLUE LOBBY SPAWN
+            new Location(Bukkit.getWorld("Crossfire"), 7.5, 37, 19.5, 180, 0), // RED LOBBY SPAWN
 
             new Location(Bukkit.getWorld("Crossfire"), 133, 11.5, 130.5, 125, 0), // BLUE RESPAWN
             new Location(Bukkit.getWorld("Crossfire"), 90.5, 11.5, 0.5, -45, 0), // RED RESPAWN
@@ -104,8 +104,8 @@ public enum GameMap {
             new Location(Bukkit.getWorld("Warsong"), 42.5, 20.5, 54.5), // BLUE HEALING
             new Location(Bukkit.getWorld("Warsong"), 102.5, 20.5, 89.5), // RED HEALING
 
-            new Location(Bukkit.getWorld("Warsong"), 71.5, 39.5, -97.5, 90, 0), // BLUE LOBBY SPAWN
-            new Location(Bukkit.getWorld("Warsong"), 73.5, 40.5, 236.5, -90, 0), // RED LOBBY SPAWN
+            new Location(Bukkit.getWorld("Warsong"), 71.5, 40, -97.5, 90, 0), // BLUE LOBBY SPAWN
+            new Location(Bukkit.getWorld("Warsong"), 73.5, 41, 236.5, -90, 0), // RED LOBBY SPAWN
 
             new Location(Bukkit.getWorld("Warsong"), 45.5, 29.5, 15.5, -30, 0), // BLUE RESPAWN
             new Location(Bukkit.getWorld("Warsong"), 99.5, 29.5, 128.5, 145, 0), // RED RESPAWN
@@ -139,8 +139,8 @@ public enum GameMap {
             new Location(Bukkit.getWorld("Gorge"), -12.5, 45.5, -194.5), // BLUE HEALING
             new Location(Bukkit.getWorld("Gorge"), -78.5, 45.5, -238.5), // RED HEALING
 
-            new Location(Bukkit.getWorld("Gorge"), 43.5, 76.5, -216.5), // BLUE LOBBY SPAWN
-            new Location(Bukkit.getWorld("Gorge"), -134.5, 76.5, -216.5), // RED LOBBY SPAWN
+            new Location(Bukkit.getWorld("Gorge"), 43.5, 77, -216.5), // BLUE LOBBY SPAWN
+            new Location(Bukkit.getWorld("Gorge"), -134.5, 77, -216.5), // RED LOBBY SPAWN
 
             new Location(Bukkit.getWorld("Gorge"), 5.5, 71.5, -159.5), // BLUE RESPAWN
             new Location(Bukkit.getWorld("Gorge"), -96.5, 71.5, -273.5), // RED RESPAWN
@@ -176,8 +176,8 @@ public enum GameMap {
             new Location(Bukkit.getWorld("Atherrough_Valley"), 57.5, 15.5, 1.5), // BLUE HEALING
             new Location(Bukkit.getWorld("Atherrough_Valley"), -56.5, 15.5, -0.5), // RED HEALING
 
-            new LocationBuilder(new Location(Bukkit.getWorld("Atherrough_Valley"), -22.5, 38.5, -83.5)).yaw(180).get(), // BLUE LOBBY SPAWN
-            new Location(Bukkit.getWorld("Atherrough_Valley"), 23.5, 38.5, 83.5), // RED LOBBY SPAWN
+            new LocationBuilder(new Location(Bukkit.getWorld("Atherrough_Valley"), -22.5, 39, -83.5)).yaw(180).get(), // BLUE LOBBY SPAWN
+            new Location(Bukkit.getWorld("Atherrough_Valley"), 23.5, 39, 83.5), // RED LOBBY SPAWN
 
             new Location(Bukkit.getWorld("Atherrough_Valley"), 39.5, 28.5, -97.5), // BLUE RESPAWN
             new LocationBuilder(new Location(Bukkit.getWorld("Atherrough_Valley"), -38.5, 28.5, 97.5)).yaw(180).get(), // RED RESPAWN
