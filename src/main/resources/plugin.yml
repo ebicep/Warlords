@@ -78,3 +78,6 @@ commands:
   spectate:
     description: Opens spectator menu
     usage: /spectate
+  debugmode:
+    description: Turns on debugmode
+    usage: /debugmode

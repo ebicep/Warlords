@@ -48,8 +48,8 @@ public class DatabaseManager {
     public static MongoDatabase warlordsPlayersDatabase;
     public static MongoDatabase warlordsGamesDatabase;
     public static MongoCollection<Document> playersInformation;
+    public static MongoCollection<Document> playersInformationWeekly;
     public static MongoCollection<Document> gamesInformation;
-    public static MongoCollection<Document> testInformation;
     public static HashMap<UUID, Document> cachedPlayerInfo = new HashMap<>();
     public static HashMap<String, Long> cachedTotalKeyValues = new HashMap<>();
     public static String lastWarlordsPlusString = "";
@@ -64,11 +64,14 @@ public class DatabaseManager {
             if (myReader.hasNextLine()) {
                 String data = myReader.nextLine();
                 mongoClient = MongoClients.create(data);
+
                 warlordsPlayersDatabase = mongoClient.getDatabase("Warlords_Players");
                 warlordsGamesDatabase = mongoClient.getDatabase("Warlords_Games");
+
                 playersInformation = warlordsPlayersDatabase.getCollection("Players_Information");
+                playersInformationWeekly = warlordsPlayersDatabase.getCollection("Players_Information_Weekly");
                 gamesInformation = warlordsGamesDatabase.getCollection("Games_Information");
-                testInformation = warlordsGamesDatabase.getCollection("Test");
+
                 playersInformation.find().forEach((Consumer<? super Document>) document -> {
                     cachedPlayerInfo.put(UUID.fromString((String) document.get("uuid")), document);
                 });
@@ -391,6 +394,41 @@ public class DatabaseManager {
         }
     }
 
+    private static Document getNewPlayerDocument(UUID uuid) {
+        return new Document("uuid", uuid.toString())
+                .append("name", Bukkit.getServer().getOfflinePlayer(uuid).getName())
+                .append("kills", 0)
+                .append("assists", 0)
+                .append("deaths", 0)
+                .append("wins", 0)
+                .append("losses", 0)
+                .append("flags_captured", 0)
+                .append("flags_returned", 0)
+                .append("damage", 0L)
+                .append("healing", 0L)
+                .append("absorbed", 0L)
+                .append("mage", getBaseStatDocument()
+                        .append("pyromancer", getBaseStatDocument())
+                        .append("cryomancer", getBaseStatDocument())
+                        .append("aquamancer", getBaseStatDocument())
+                )
+                .append("warrior", getBaseStatDocument()
+                        .append("berserker", getBaseStatDocument())
+                        .append("defender", getBaseStatDocument())
+                        .append("revenant", getBaseStatDocument())
+                )
+                .append("paladin", getBaseStatDocument()
+                        .append("avenger", getBaseStatDocument())
+                        .append("crusader", getBaseStatDocument())
+                        .append("protector", getBaseStatDocument())
+                )
+                .append("shaman", getBaseStatDocument()
+                        .append("thunderlord", getBaseStatDocument())
+                        .append("spiritguard", getBaseStatDocument())
+                        .append("earthwarden", getBaseStatDocument())
+                );
+    }
+
     private static Document getBaseStatDocument() {
         return new Document("kills", 0)
                 .append("assists", 0)
@@ -404,61 +442,27 @@ public class DatabaseManager {
                 .append("absorbed", 0L);
     }
 
-
-    public static boolean addPlayer(UUID uuid) {
-        if (!connected) return false;
+    public static void addPlayer(UUID uuid) {
+        if (!connected) return;
         try {
             Warlords.newChain()
                     .asyncFirst(() -> playersInformation.find(eq("uuid", uuid.toString())).first())
                     .abortIf(Objects::nonNull)
                     .asyncFirst(() -> {
-                        Document newPlayerDocument = new Document("uuid", uuid.toString())
-                                .append("name", Bukkit.getServer().getOfflinePlayer(uuid).getName())
-                                .append("kills", 0)
-                                .append("assists", 0)
-                                .append("deaths", 0)
-                                .append("wins", 0)
-                                .append("losses", 0)
-                                .append("flags_captured", 0)
-                                .append("flags_returned", 0)
-                                .append("damage", 0L)
-                                .append("healing", 0L)
-                                .append("absorbed", 0L)
-                                .append("mage", getBaseStatDocument()
-                                        .append("pyromancer", getBaseStatDocument())
-                                        .append("cryomancer", getBaseStatDocument())
-                                        .append("aquamancer", getBaseStatDocument())
-                                )
-                                .append("warrior", getBaseStatDocument()
-                                        .append("berserker", getBaseStatDocument())
-                                        .append("defender", getBaseStatDocument())
-                                        .append("revenant", getBaseStatDocument())
-                                )
-                                .append("paladin", getBaseStatDocument()
-                                        .append("avenger", getBaseStatDocument())
-                                        .append("crusader", getBaseStatDocument())
-                                        .append("protector", getBaseStatDocument())
-                                )
-                                .append("shaman", getBaseStatDocument()
-                                        .append("thunderlord", getBaseStatDocument())
-                                        .append("spiritguard", getBaseStatDocument())
-                                        .append("earthwarden", getBaseStatDocument())
-                                );
+                        Document newPlayerDocument = getNewPlayerDocument(uuid);
                         playersInformation.insertOne(newPlayerDocument);
                         Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] " + uuid + " - " + Bukkit.getServer().getOfflinePlayer(uuid).getName() + " was added to the player database");
                         return newPlayerDocument;
                     }).syncLast(doc -> {
                         cachedPlayerInfo.put(uuid, doc);
                     }).execute();
-            return true;
         } catch (MongoWriteException e) {
             Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] There was an error trying to add player " + Bukkit.getServer().getOfflinePlayer(uuid).getName());
         }
-        return false;
     }
 
-    public static boolean addPlayer(Player player) {
-        return addPlayer(player.getUniqueId());
+    public static void addPlayer(Player player) {
+        addPlayer(player.getUniqueId());
     }
 
     public static Document getLastGame() {
