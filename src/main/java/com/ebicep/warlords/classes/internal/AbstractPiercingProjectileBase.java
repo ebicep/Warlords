@@ -310,6 +310,10 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
             } else {
                 playEffect(this);
                 ticksLived++;
+                //cancel after 15 seconds
+                if(ticksLived > 15 * 20) {
+                    cancel();
+                }
             }
         }
 

@@ -32,19 +32,21 @@ public class BloodLust extends AbstractAbility {
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "warrior.bloodlust.activation", 2, 1);
         }
-
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                if (!wp.getCooldownManager().getCooldown(BloodLust.class).isEmpty()) {
-                    Location location = player.getLocation();
-                    location.add((Math.random() - 0.5) * 1, 1.2, (Math.random() - 0.5) * 1);
-                    ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(255, 0, 0), location, 500);
-                } else {
-                    this.cancel();
-                }
-            }
-        }.runTaskTimer(Warlords.getInstance(), 0, 4);
+        wp.getGame().getGameTasks().put(
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        if (!wp.getCooldownManager().getCooldown(BloodLust.class).isEmpty()) {
+                            Location location = player.getLocation();
+                            location.add((Math.random() - 0.5) * 1, 1.2, (Math.random() - 0.5) * 1);
+                            ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(255, 0, 0), location, 500);
+                        } else {
+                            this.cancel();
+                        }
+                    }
+                }.runTaskTimer(Warlords.getInstance(), 0, 4),
+                System.currentTimeMillis()
+        );
 
     }
 }

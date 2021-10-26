@@ -51,6 +51,7 @@ public class HealingRain extends AbstractAbility {
         }
 
         BukkitTask task = Bukkit.getScheduler().runTaskTimer(Warlords.getInstance(), damageHealCircle::spawn, 0, 1);
+        wp.getGame().getGameTasks().put(task, System.currentTimeMillis());
 
         BukkitTask task1 = new BukkitRunnable() {
             boolean wasSneaking = false;
@@ -71,38 +72,42 @@ public class HealingRain extends AbstractAbility {
                 wasSneaking = player.isSneaking();
             }
         }.runTaskTimer(Warlords.getInstance(), 0, 0);
+        wp.getGame().getGameTasks().put(task1, System.currentTimeMillis());
+        wp.getGame().getGameTasks().put(
 
-        new BukkitRunnable() {
+                new BukkitRunnable() {
 
-            @Override
-            public void run() {
-                damageHealCircle.setDuration(damageHealCircle.getDuration() - 1);
+                    @Override
+                    public void run() {
+                        damageHealCircle.setDuration(damageHealCircle.getDuration() - 1);
 
-                PlayerFilter.entitiesAround(damageHealCircle.getLocation(), damageHealCircle.getRadius(), 8, damageHealCircle.getRadius())
-                        .aliveTeammatesOf(wp)
-                        .forEach((warlordsPlayer) -> {
-                            warlordsPlayer.addHealth(
-                                    damageHealCircle.getWarlordsPlayer(),
-                                    damageHealCircle.getName(),
-                                    damageHealCircle.getMinDamage(),
-                                    damageHealCircle.getMaxDamage(),
-                                    damageHealCircle.getCritChance(),
-                                    damageHealCircle.getCritMultiplier(),
-                                    false);
-                        });
-                if (damageHealCircle.getDuration() < 0) {
-                    this.cancel();
-                    task.cancel();
-                    task1.cancel();
-                }
+                        PlayerFilter.entitiesAround(damageHealCircle.getLocation(), damageHealCircle.getRadius(), 8, damageHealCircle.getRadius())
+                                .aliveTeammatesOf(wp)
+                                .forEach((warlordsPlayer) -> {
+                                    warlordsPlayer.addHealth(
+                                            damageHealCircle.getWarlordsPlayer(),
+                                            damageHealCircle.getName(),
+                                            damageHealCircle.getMinDamage(),
+                                            damageHealCircle.getMaxDamage(),
+                                            damageHealCircle.getCritChance(),
+                                            damageHealCircle.getCritMultiplier(),
+                                            false);
+                                });
+                        if (damageHealCircle.getDuration() < 0) {
+                            this.cancel();
+                            task.cancel();
+                            task1.cancel();
+                        }
 
-                if (recastCooldown != 0) {
-                    recastCooldown--;
-                }
+                        if (recastCooldown != 0) {
+                            recastCooldown--;
+                        }
 
-            }
+                    }
 
-        }.runTaskTimer(Warlords.getInstance(), 0, 20);
+                }.runTaskTimer(Warlords.getInstance(), 0, 20),
+                System.currentTimeMillis()
+        );
 
     }
 }

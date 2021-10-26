@@ -50,20 +50,22 @@ public class CapacitorTotem extends AbstractTotemBase {
     @Override
     protected void onActivation(WarlordsPlayer wp, Player player, ArmorStand totemStand) {
         wp.getCooldownManager().addCooldown(name, this.getClass(), new CapacitorTotem(), "TOTEM", duration, wp, CooldownTypes.ABILITY);
+        wp.getGame().getGameTasks().put(
+                new BukkitRunnable() {
+                    int timeLeft = 8;
 
-        new BukkitRunnable() {
-            int timeLeft = 8;
+                    @Override
+                    public void run() {
+                        if (timeLeft == 0) {
+                            totemStand.remove();
+                            this.cancel();
+                        }
+                        timeLeft--;
+                    }
 
-            @Override
-            public void run() {
-                if (timeLeft == 0) {
-                    totemStand.remove();
-                    this.cancel();
-                }
-                timeLeft--;
-            }
-
-        }.runTaskTimer(Warlords.getInstance(), 0, 20);
+                }.runTaskTimer(Warlords.getInstance(), 0, 20),
+                System.currentTimeMillis()
+        );
     }
 
 

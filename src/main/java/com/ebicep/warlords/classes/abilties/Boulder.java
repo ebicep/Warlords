@@ -45,91 +45,96 @@ public class Boulder extends AbstractAbility {
         stand.setBasePlate(false);
         stand.setArms(false);
         stand.setVisible(false);
+        wp.getGame().getGameTasks().put(
+                new BukkitRunnable() {
 
-        new BukkitRunnable() {
-
-            @Override
-            public void run() {
-                quarterStep(false);
-                quarterStep(false);
-                quarterStep(false);
-                quarterStep(true);
-            }
-
-            private void quarterStep(boolean last) {
-
-                if (!stand.isValid()) {
-                    this.cancel();
-                    return;
-                }
-
-                speed.add(new Vector(0, GRAVITY * SPEED, 0));
-                Location newLoc = stand.getLocation();
-                newLoc.add(speed);
-                stand.teleport(newLoc);
-                newLoc.add(0, 1.75, 0);
-
-                stand.setHeadPose(new EulerAngle(-speed.getY() * 3, 0, 0));
-
-                boolean shouldExplode;
-
-                if (last) {
-                    ParticleEffect.CRIT.display(0.3F, 0.3F, 0.3F, 0.1F, 4, newLoc.clone().add(0, -1, 0), 500);
-                }
-
-                WarlordsPlayer directHit = null;
-                if (!newLoc.getBlock().isEmpty()
-                        && newLoc.getBlock().getType() != Material.GRASS
-                        && newLoc.getBlock().getType() != Material.BARRIER
-                        && newLoc.getBlock().getType() != Material.VINE
-                ) {
-                    // Explode based on collision
-                    shouldExplode = true;
-                } else {
-                    directHit = PlayerFilter
-                            .entitiesAroundRectangle(newLoc, 1, 2, 1)
-                            .aliveEnemiesOf(wp).findFirstOrNull();
-                    shouldExplode = directHit != null;
-                }
-
-
-                if (shouldExplode) {
-                    stand.remove();
-                    for (Player player1 : player.getWorld().getPlayers()) {
-                        player1.playSound(newLoc, "shaman.boulder.impact", 2, 1);
+                    @Override
+                    public void run() {
+                        quarterStep(false);
+                        quarterStep(false);
+                        quarterStep(false);
+                        quarterStep(true);
                     }
 
-                    for (WarlordsPlayer p : PlayerFilter
-                            .entitiesAround(newLoc, 5.5, 5.5, 5.5)
-                            .aliveEnemiesOf(wp)
-                    ) {
-                        Vector v;
-                        if (p == directHit) {
-                            v = player.getLocation().toVector().subtract(p.getLocation().toVector()).normalize().multiply(-1.05).setY(0.2);
+                    private void quarterStep(boolean last) {
+
+                        if (!stand.isValid()) {
+                            this.cancel();
+                            return;
+                        }
+
+                        speed.add(new Vector(0, GRAVITY * SPEED, 0));
+                        Location newLoc = stand.getLocation();
+                        newLoc.add(speed);
+                        stand.teleport(newLoc);
+                        newLoc.add(0, 1.75, 0);
+
+                        stand.setHeadPose(new EulerAngle(-speed.getY() * 3, 0, 0));
+
+                        boolean shouldExplode;
+
+                        if (last) {
+                            ParticleEffect.CRIT.display(0.3F, 0.3F, 0.3F, 0.1F, 4, newLoc.clone().add(0, -1, 0), 500);
+                        }
+
+                        WarlordsPlayer directHit = null;
+                        if (!newLoc.getBlock().isEmpty()
+                                && newLoc.getBlock().getType() != Material.GRASS
+                                && newLoc.getBlock().getType() != Material.BARRIER
+                                && newLoc.getBlock().getType() != Material.VINE
+                        ) {
+                            // Explode based on collision
+                            shouldExplode = true;
                         } else {
-                            v = p.getLocation().toVector().subtract(newLoc.toVector()).normalize().multiply(1.05).setY(0.2);
+                            directHit = PlayerFilter
+                                    .entitiesAroundRectangle(newLoc, 1, 2, 1)
+                                    .aliveEnemiesOf(wp).findFirstOrNull();
+                            shouldExplode = directHit != null;
                         }
-                        p.setVelocity(v, false);
-                        p.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+
+
+                        if (shouldExplode) {
+                            stand.remove();
+                            for (Player player1 : player.getWorld().getPlayers()) {
+                                player1.playSound(newLoc, "shaman.boulder.impact", 2, 1);
+                            }
+
+                            for (WarlordsPlayer p : PlayerFilter
+                                    .entitiesAround(newLoc, 5.5, 5.5, 5.5)
+                                    .aliveEnemiesOf(wp)
+                            ) {
+                                Vector v;
+                                if (p == directHit) {
+                                    v = player.getLocation().toVector().subtract(p.getLocation().toVector()).normalize().multiply(-1.05).setY(0.2);
+                                } else {
+                                    v = p.getLocation().toVector().subtract(newLoc.toVector()).normalize().multiply(1.05).setY(0.2);
+                                }
+                                p.setVelocity(v, false);
+                                p.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+                            }
+                            newLoc.setPitch(-12);
+                            Location impactLocation = newLoc.clone().subtract(speed);
+
+                            //ParticleEffect.VILLAGER_HAPPY.display(0 , 0 ,0, 0, 10, impactLocation, 1000);
+
+                            spawnFallingBlocks(impactLocation, 3, 10);
+                            wp.getGame().getGameTasks().put(
+                                    new BukkitRunnable() {
+
+                                        @Override
+                                        public void run() {
+                                            spawnFallingBlocks(impactLocation, 3.5, 20);
+                                        }
+                                    }.runTaskLater(Warlords.getInstance(), 1),
+                                    System.currentTimeMillis()
+                            );
+                            this.cancel();
+                        }
                     }
-                    newLoc.setPitch(-12);
-                    Location impactLocation = newLoc.clone().subtract(speed);
 
-                    //ParticleEffect.VILLAGER_HAPPY.display(0 , 0 ,0, 0, 10, impactLocation, 1000);
-
-                    spawnFallingBlocks(impactLocation, 3, 10);
-                    new BukkitRunnable() {
-
-                        @Override
-                        public void run() {
-                            spawnFallingBlocks(impactLocation, 3.5, 20);
-                        }
-                    }.runTaskLater(Warlords.getInstance(), 1);
-                    this.cancel();
-                }
-            }
-
-        }.runTaskTimer(Warlords.getInstance(), 0, 1);
+                }.runTaskTimer(Warlords.getInstance(), 0, 1),
+                System.currentTimeMillis()
+        );
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "shaman.boulder.activation", 2, 1);
@@ -151,7 +156,7 @@ public class Boulder extends AbstractAbility {
 
             //ParticleEffect.VILLAGER_HAPPY.display(0 , 0 ,0, 0, 1, spawnLoc, 100);
 
-            if(spawnLoc.getWorld().getBlockAt(spawnLoc).getType() == Material.AIR) {
+            if (spawnLoc.getWorld().getBlockAt(spawnLoc).getType() == Material.AIR) {
                 switch ((int) (Math.random() * 3)) {
                     case 0:
                         fallingBlock = impactLocation.getWorld().spawnFallingBlock(spawnLoc, Material.DIRT, (byte) 0);

@@ -221,7 +221,9 @@ public class PlayingState implements State, TimerDebugAble {
         }
         if(timer % 10 == 0) {
             for (WarlordsPlayer value : Warlords.getPlayers().values()) {
-                updateBasedOnGameState(false, Warlords.playerScoreboards.get(value.getUuid()), value);
+                if(Warlords.playerScoreboards.get(value.getUuid()) != null) {
+                    updateBasedOnGameState(false, Warlords.playerScoreboards.get(value.getUuid()), value);
+                }
             }
             for (UUID spectator : game.getSpectators()) {
                 updateBasedOnGameState(false, Warlords.playerScoreboards.get(spectator), null);
@@ -388,14 +390,6 @@ public class PlayingState implements State, TimerDebugAble {
 
     public int getPointLimit() {
         return pointLimit;
-    }
-
-    //scoreboard to this game
-    public void giveScoreboard(UUID uuid) {
-        CustomScoreboard customScoreboard = Warlords.playerScoreboards.get(uuid);
-        Scoreboard scoreboard = customScoreboard.getScoreboard();
-        Objective health = customScoreboard.getHealth();
-
     }
 
     public void updateHealth(CustomScoreboard customScoreboard) {

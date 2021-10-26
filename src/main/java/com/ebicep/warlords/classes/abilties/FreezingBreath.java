@@ -26,7 +26,7 @@ public class FreezingBreath extends AbstractAbility {
         description = "§7Breathe cold air in a cone in front\n" +
                 "§7of you, dealing §c" + format(-minDamageHeal) + " §7- §c" + format(-maxDamageHeal) + " §7damage\n" +
                 "§7to all enemies hit and slowing them by\n" +
-                "§e35% §7for §6" + slowDuration +  " §7seconds.";
+                "§e35% §7for §6" + slowDuration + " §7seconds.";
     }
 
     @Override
@@ -54,36 +54,38 @@ public class FreezingBreath extends AbstractAbility {
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "mage.freezingbreath.activation", 2, 1);
         }
+        wp.getGame().getGameTasks().put(
+                new BukkitRunnable() {
 
-        new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        this.playEffect();
+                        this.playEffect();
+                    }
 
-            @Override
-            public void run() {
-                this.playEffect();
-                this.playEffect();
-            }
+                    int animationTimer = 0;
+                    final Matrix4d center = new Matrix4d(playerLoc);
 
-            int animationTimer = 0;
-            final Matrix4d center = new Matrix4d(playerLoc);
+                    public void playEffect() {
 
-            public void playEffect() {
+                        if (animationTimer > 12) {
+                            this.cancel();
+                            //Bukkit.broadcastMessage(String.valueOf(center));
+                        }
 
-                if (animationTimer > 12) {
-                    this.cancel();
-                    //Bukkit.broadcastMessage(String.valueOf(center));
-                }
+                        ParticleEffect.CLOUD.display(0F, 0F, 0F, 0.6F, 5, center.translateVector(player.getWorld(), animationTimer / 2D, 0, 0), 500);
 
-                ParticleEffect.CLOUD.display(0F, 0F, 0F, 0.6F, 5, center.translateVector(player.getWorld(), animationTimer / 2D, 0, 0), 500);
+                        for (int i = 0; i < 4; i++) {
+                            double angle = Math.toRadians(i * 90) + animationTimer * 0.15;
+                            double width = animationTimer * 0.3;
+                            ParticleEffect.FIREWORKS_SPARK.display(0, 0, 0, 0, 1,
+                                    center.translateVector(player.getWorld(), animationTimer / 2D, Math.sin(angle) * width, Math.cos(angle) * width), 500);
+                        }
 
-                for (int i = 0; i < 4; i++) {
-                    double angle = Math.toRadians(i * 90) + animationTimer * 0.15;
-                    double width = animationTimer * 0.3;
-                    ParticleEffect.FIREWORKS_SPARK.display(0, 0, 0, 0, 1,
-                            center.translateVector(player.getWorld(), animationTimer / 2D, Math.sin(angle) * width, Math.cos(angle) * width), 500);
-                }
-
-                animationTimer++;
-            }
-        }.runTaskTimer(Warlords.getInstance(), 0, 1);
+                        animationTimer++;
+                    }
+                }.runTaskTimer(Warlords.getInstance(), 0, 1),
+                System.currentTimeMillis()
+        );
     }
 }

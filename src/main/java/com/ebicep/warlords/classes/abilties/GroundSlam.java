@@ -49,64 +49,68 @@ public class GroundSlam extends AbstractAbility {
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "warrior.groundslam.activation", 2, 1);
         }
+        wp.getGame().getGameTasks().put(
+                new BukkitRunnable() {
 
-        new BukkitRunnable() {
-
-            @Override
-            public void run() {
-                for (List<Location> fallingBlockLocation : fallingBlockLocations) {
-                    for (Location location : fallingBlockLocation) {
-                        if (location.getWorld().getBlockAt(location.clone().add(0, 1, 0)).getType() == Material.AIR) {
-                            FallingBlock fallingBlock = addFallingBlock(location.clone());
-                            customFallingBlocks.add(new CustomFallingBlock(fallingBlock, wp, GroundSlam.this));
-                            WarlordsEvents.addEntityUUID(fallingBlock);
-                        }
+                    @Override
+                    public void run() {
+                        for (List<Location> fallingBlockLocation : fallingBlockLocations) {
+                            for (Location location : fallingBlockLocation) {
+                                if (location.getWorld().getBlockAt(location.clone().add(0, 1, 0)).getType() == Material.AIR) {
+                                    FallingBlock fallingBlock = addFallingBlock(location.clone());
+                                    customFallingBlocks.add(new CustomFallingBlock(fallingBlock, wp, GroundSlam.this));
+                                    WarlordsEvents.addEntityUUID(fallingBlock);
+                                }
 //                        ParticleEffect.VILLAGER_HAPPY.display(0 , 0 ,0, 0, 10, location.getBlock().getLocation(), 1000);
 //                        ParticleEffect.FLAME.display(0 , 0 ,0, 0, 10, location, 1000);
 
-                        //DAMAGE
-                        PlayerFilter.entitiesAroundRectangle(location.clone().add(0, -.75, 0), .6, 4.5, .6)
-                                .enemiesOf(wp)
-                                .forEach(enemy -> {
-                                    if (!playersHit.contains(enemy)) {
-                                        playersHit.add(enemy);
-                                        final Location loc = enemy.getLocation();
-                                        final Vector v = wp.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1.25).setY(0.25);
-                                        enemy.setVelocity(v, false);
-                                        enemy.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
-                                    }
-                                });
+                                //DAMAGE
+                                PlayerFilter.entitiesAroundRectangle(location.clone().add(0, -.75, 0), .6, 4.5, .6)
+                                        .enemiesOf(wp)
+                                        .forEach(enemy -> {
+                                            if (!playersHit.contains(enemy)) {
+                                                playersHit.add(enemy);
+                                                final Location loc = enemy.getLocation();
+                                                final Vector v = wp.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1.25).setY(0.25);
+                                                enemy.setVelocity(v, false);
+                                                enemy.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+                                            }
+                                        });
+                            }
+                            fallingBlockLocations.remove(fallingBlockLocation);
+                            break;
+                        }
+
+                        if (fallingBlockLocations.isEmpty()) {
+                            this.cancel();
+                        }
                     }
-                    fallingBlockLocations.remove(fallingBlockLocation);
-                    break;
-                }
 
-                if (fallingBlockLocations.isEmpty()) {
-                    this.cancel();
-                }
-            }
+                }.runTaskTimer(Warlords.getInstance(), 0, 2),
+                System.currentTimeMillis()
+        );
+        wp.getGame().getGameTasks().put(
+                new BukkitRunnable() {
 
-        }.runTaskTimer(Warlords.getInstance(), 0, 2);
-
-        new BukkitRunnable() {
-
-            @Override
-            public void run() {
-                for (int i = 0; i < customFallingBlocks.size(); i++) {
-                    CustomFallingBlock customFallingBlock = customFallingBlocks.get(i);
-                    customFallingBlock.setTicksLived(customFallingBlock.getTicksLived() + 1);
-                    if (Utils.getDistance(customFallingBlock.getFallingBlock().getLocation(), .05) <= .25 || customFallingBlock.getTicksLived() > 10) {
-                        customFallingBlock.getFallingBlock().remove();
-                        customFallingBlocks.remove(i);
-                        i--;
+                    @Override
+                    public void run() {
+                        for (int i = 0; i < customFallingBlocks.size(); i++) {
+                            CustomFallingBlock customFallingBlock = customFallingBlocks.get(i);
+                            customFallingBlock.setTicksLived(customFallingBlock.getTicksLived() + 1);
+                            if (Utils.getDistance(customFallingBlock.getFallingBlock().getLocation(), .05) <= .25 || customFallingBlock.getTicksLived() > 10) {
+                                customFallingBlock.getFallingBlock().remove();
+                                customFallingBlocks.remove(i);
+                                i--;
+                            }
+                        }
+                        if (fallingBlockLocations.isEmpty() && customFallingBlocks.isEmpty()) {
+                            this.cancel();
+                        }
                     }
-                }
-                if (fallingBlockLocations.isEmpty() && customFallingBlocks.isEmpty()) {
-                    this.cancel();
-                }
-            }
 
-        }.runTaskTimer(Warlords.getInstance(), 0, 0);
+                }.runTaskTimer(Warlords.getInstance(), 0, 0),
+                System.currentTimeMillis()
+        );
     }
 
     /**

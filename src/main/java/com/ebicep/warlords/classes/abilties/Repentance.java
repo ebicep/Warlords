@@ -17,19 +17,19 @@ public class Repentance extends AbstractAbility {
 
     public Repentance() {
         super("Repentance", 0, 0, 31.32f, 20, 0, 0);
+        Warlords.game.getGameTasks().put(
 
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                if (pool > 0) {
-                    float newPool = pool * .8f - 60;
-                    pool = Math.max(newPool, 0);
-                }
-                if (Warlords.game.getState() instanceof EndState) {
-                    this.cancel();
-                }
-            }
-        }.runTaskTimer(Warlords.getInstance(), 0, 20);
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        if (pool > 0) {
+                            float newPool = pool * .8f - 60;
+                            pool = Math.max(newPool, 0);
+                        }
+                    }
+                }.runTaskTimer(Warlords.getInstance(), 0, 20),
+                System.currentTimeMillis()
+        );
     }
 
     @Override

@@ -11,6 +11,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.apache.commons.lang.Validate;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitTask;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -29,6 +30,8 @@ public class Game implements Runnable {
     private boolean gameFreeze = false;
 
     private List<UUID> spectators = new ArrayList<>();
+
+    private HashMap<BukkitTask, Long> gameTasks = new HashMap<>();
 
     public boolean isState(Class<? extends State> clazz) {
         return clazz.isAssignableFrom(this.state.getClass());
@@ -275,6 +278,10 @@ public class Game implements Runnable {
             }
             WarlordsEvents.joinInteraction(p);
         }
+    }
+
+    public HashMap<BukkitTask, Long> getGameTasks() {
+        return gameTasks;
     }
 
     @Override

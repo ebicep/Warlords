@@ -48,31 +48,33 @@ public class Consecrate extends AbstractAbility {
         consecrate.setVisible(false);
         consecrate.setMarker(true);
         BukkitTask task = Bukkit.getScheduler().runTaskTimer(Warlords.getInstance(), damageHealCircle::spawn, 0, 1);
+        wp.getGame().getGameTasks().put(
+                new BukkitRunnable() {
 
-        new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        damageHealCircle.setDuration(damageHealCircle.getDuration() - 1);
+                        PlayerFilter.entitiesAround(damageHealCircle.getLocation(), radius, 6, radius)
+                                .aliveEnemiesOf(wp)
+                                .forEach(warlordsPlayer -> {
+                                    warlordsPlayer.addHealth(
+                                            damageHealCircle.getWarlordsPlayer(),
+                                            damageHealCircle.getName(),
+                                            damageHealCircle.getMinDamage(),
+                                            damageHealCircle.getMaxDamage(),
+                                            damageHealCircle.getCritChance(),
+                                            damageHealCircle.getCritMultiplier(),
+                                            false);
+                                });
+                        if (damageHealCircle.getDuration() == 0) {
+                            consecrate.remove();
+                            this.cancel();
+                            task.cancel();
+                        }
+                    }
 
-            @Override
-            public void run() {
-                damageHealCircle.setDuration(damageHealCircle.getDuration() - 1);
-                PlayerFilter.entitiesAround(damageHealCircle.getLocation(), radius, 6, radius)
-                        .aliveEnemiesOf(wp)
-                        .forEach(warlordsPlayer -> {
-                    warlordsPlayer.addHealth(
-                            damageHealCircle.getWarlordsPlayer(),
-                            damageHealCircle.getName(),
-                            damageHealCircle.getMinDamage(),
-                            damageHealCircle.getMaxDamage(),
-                            damageHealCircle.getCritChance(),
-                            damageHealCircle.getCritMultiplier(),
-                            false);
-                });
-                if (damageHealCircle.getDuration() == 0) {
-                    consecrate.remove();
-                    this.cancel();
-                    task.cancel();
-                }
-            }
-
-        }.runTaskTimer(Warlords.getInstance(), 0, 20);
+                }.runTaskTimer(Warlords.getInstance(), 0, 20),
+                System.currentTimeMillis()
+        );
     }
 }

@@ -69,59 +69,66 @@ public class OrbsOfLife extends AbstractAbility {
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "warrior.revenant.orbsoflife", 2, 1);
         }
+        wp.getGame().getGameTasks().put(
 
-        new BukkitRunnable() {
-            int counter = 0;
+                new BukkitRunnable() {
+                    int counter = 0;
 
-            @Override
-            public void run() {
-                counter++;
-                if (wp.isAlive() && player.isSneaking()) {
-                    //setting target player to move towards (includes self)
-                    tempOrbsOfLight.getSpawnedOrbs().forEach(orb -> orb.setPlayerToMoveTowards(PlayerFilter
-                            .entitiesAround(orb.armorStand.getLocation(), floatingOrbRadius, floatingOrbRadius, floatingOrbRadius)
-                            .aliveTeammatesOf(wp)
-                            .closestFirst(orb.getArmorStand().getLocation())
-                            .findFirstOrNull()
-                    ));
-                    //moving orb
-                    new BukkitRunnable() {
-                        @Override
-                        public void run() {
-                            tempOrbsOfLight.getSpawnedOrbs().stream().filter(orb -> orb.getPlayerToMoveTowards() != null).forEach(targetOrb -> {
-                                WarlordsPlayer target = targetOrb.getPlayerToMoveTowards();
-                                ArmorStand orbArmorStand = targetOrb.getArmorStand();
-                                Location orbLocation = orbArmorStand.getLocation();
-                                Entity orb = orbArmorStand.getPassenger();
-                                //must eject passenger then reassign it before teleporting bc ???
-                                orbArmorStand.eject();
-                                orbArmorStand.teleport(
-                                        new LocationBuilder(orbLocation.clone())
-                                                .add(target.getLocation().toVector().subtract(orbLocation.toVector()).normalize().multiply(1))
-                                                .get()
-                                );
-                                orbArmorStand.setPassenger(orb);
-                                ParticleEffect.VILLAGER_HAPPY.display(0, 0, 0, 0, 1, orbArmorStand.getLocation().add(0, 1.65, 0), 500);
-                            });
-                            if (tempOrbsOfLight.getSpawnedOrbs().stream().noneMatch(orb -> orb.getPlayerToMoveTowards() != null)) {
-                                this.cancel();
+                    @Override
+                    public void run() {
+                        counter++;
+                        if (wp.isAlive() && player.isSneaking()) {
+                            //setting target player to move towards (includes self)
+                            tempOrbsOfLight.getSpawnedOrbs().forEach(orb -> orb.setPlayerToMoveTowards(PlayerFilter
+                                    .entitiesAround(orb.armorStand.getLocation(), floatingOrbRadius, floatingOrbRadius, floatingOrbRadius)
+                                    .aliveTeammatesOf(wp)
+                                    .closestFirst(orb.getArmorStand().getLocation())
+                                    .findFirstOrNull()
+                            ));
+                            //moving orb
+                            wp.getGame().getGameTasks().put(
+
+                                    new BukkitRunnable() {
+                                        @Override
+                                        public void run() {
+                                            tempOrbsOfLight.getSpawnedOrbs().stream().filter(orb -> orb.getPlayerToMoveTowards() != null).forEach(targetOrb -> {
+                                                WarlordsPlayer target = targetOrb.getPlayerToMoveTowards();
+                                                ArmorStand orbArmorStand = targetOrb.getArmorStand();
+                                                Location orbLocation = orbArmorStand.getLocation();
+                                                Entity orb = orbArmorStand.getPassenger();
+                                                //must eject passenger then reassign it before teleporting bc ???
+                                                orbArmorStand.eject();
+                                                orbArmorStand.teleport(
+                                                        new LocationBuilder(orbLocation.clone())
+                                                                .add(target.getLocation().toVector().subtract(orbLocation.toVector()).normalize().multiply(1))
+                                                                .get()
+                                                );
+                                                orbArmorStand.setPassenger(orb);
+                                                ParticleEffect.VILLAGER_HAPPY.display(0, 0, 0, 0, 1, orbArmorStand.getLocation().add(0, 1.65, 0), 500);
+                                            });
+                                            if (tempOrbsOfLight.getSpawnedOrbs().stream().noneMatch(orb -> orb.getPlayerToMoveTowards() != null)) {
+                                                this.cancel();
+                                            }
+                                        }
+                                    }.runTaskTimer(Warlords.getInstance(), 0, 1),
+                                    System.currentTimeMillis()
+                            );
+
+                            player.sendMessage(ChatColor.GREEN + "Your current orbs will now levitate towards you or a teammate!");
+                            for (Player player1 : player.getWorld().getPlayers()) {
+                                player1.playSound(player.getLocation(), Sound.LEVEL_UP, 0.85f, 0.7f);
                             }
+                            ParticleEffect.ENCHANTMENT_TABLE.display(0.8f, 0, 0.8f, 0.2f, 10, player.getLocation().add(0, 1.5, 0), 500);
+
+                            this.cancel();
                         }
-                    }.runTaskTimer(Warlords.getInstance(), 0, 1);
-
-                    player.sendMessage(ChatColor.GREEN + "Your current orbs will now levitate towards you or a teammate!");
-                    for (Player player1 : player.getWorld().getPlayers()) {
-                        player1.playSound(player.getLocation(), Sound.LEVEL_UP, 0.85f, 0.7f);
+                        if (counter >= 20 * duration || wp.isDeath()) {
+                            this.cancel();
+                        }
                     }
-                    ParticleEffect.ENCHANTMENT_TABLE.display(0.8f, 0, 0.8f, 0.2f, 10, player.getLocation().add(0, 1.5, 0), 500);
-
-                    this.cancel();
-                }
-                if (counter >= 20 * duration || wp.isDeath()) {
-                    this.cancel();
-                }
-            }
-        }.runTaskTimer(Warlords.getInstance(), 0, 0);
+                }.runTaskTimer(Warlords.getInstance(), 0, 0),
+                System.currentTimeMillis()
+        );
     }
 
     public Location generateSpawnLocation(Location location) {

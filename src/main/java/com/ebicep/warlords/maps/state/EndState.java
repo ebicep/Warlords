@@ -153,6 +153,7 @@ public class EndState implements State, TimerDebugAble {
             }
         });
         game.getSpectators().clear();
+        game.getGameTasks().forEach((task, timeCreated) -> task.cancel());
     }
 
     @Override
