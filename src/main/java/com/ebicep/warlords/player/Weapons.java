@@ -41,7 +41,7 @@ public enum Weapons {
     KATAR("Katar", new ItemStack(Material.RAW_BEEF), EPIC),
     TENDERIZER("Tenderizer", new ItemStack(Material.COOKED_CHICKEN), EPIC),
     FLAMEWEAVER("Flameweaver", new ItemStack(Material.GOLD_PICKAXE), EPIC),
-    NETHERSTEEL_KATANA("Nethersteel Katan", new ItemStack(Material.RAW_CHICKEN), EPIC),
+    NETHERSTEEL_KATANA("Nethersteel Katana", new ItemStack(Material.RAW_CHICKEN), EPIC),
     RUNIC_AXE("Runic Axe", new ItemStack(Material.BREAD), EPIC),
     NOMEGUSTA("Nomegusta", new ItemStack(Material.WOOD_SPADE), EPIC),
     LUNAR_RELIC("Lunar Relic", new ItemStack(Material.MUSHROOM_SOUP), EPIC),

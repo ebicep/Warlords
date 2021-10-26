@@ -136,16 +136,16 @@ public class FallenSouls extends AbstractAbility {
                                 fallenSoul.getShooter().updateBlueItem(player);
                                 fallenSoul.getShooter().updateOrangeItem(player);
 
-                                PlayerFilter.entitiesAround(player, 6, 6, 6)
+                                PlayerFilter.entitiesAround(player, 10, 10, 10)
                                         .aliveTeammatesOf(wp)
                                         .closestFirst(player)
                                         .limit(2)
                                         .forEach((warlordsPlayer1) -> {
 
-                                            warlordsPlayer1.getSpec().getRed().subtractCooldown(.5F);
-                                            warlordsPlayer1.getSpec().getPurple().subtractCooldown(.5F);
-                                            warlordsPlayer1.getSpec().getBlue().subtractCooldown(.5F);
-                                            warlordsPlayer1.getSpec().getOrange().subtractCooldown(.5F);
+                                            warlordsPlayer1.getSpec().getRed().subtractCooldown(1);
+                                            warlordsPlayer1.getSpec().getPurple().subtractCooldown(1);
+                                            warlordsPlayer1.getSpec().getBlue().subtractCooldown(1);
+                                            warlordsPlayer1.getSpec().getOrange().subtractCooldown(1);
 
                                             if (warlordsPlayer1.getEntity() instanceof Player) {
                                                 Player p = (Player) warlordsPlayer1.getEntity();

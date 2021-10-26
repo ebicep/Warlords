@@ -109,12 +109,12 @@ public class SpiritLink extends AbstractChainBase {
         if(warlordsPlayer.getCooldownManager().hasCooldownFromName("Spirits Respite")) {
             Cooldown cooldown = warlordsPlayer.getCooldownManager().getCooldownFromName("Spirits Respite").get(0);
             DeathsDebt deathsDebt = ((DeathsDebt) cooldown.getCooldownObject());
-            deathsDebt.setTimeLeftRespite(deathsDebt.getTimeLeftRespite() + .5);
+            deathsDebt.setTimeLeftRespite(deathsDebt.getTimeLeftRespite() + .25);
             cooldown.setTimeLeft((float) deathsDebt.getTimeLeftRespite());
         }
         warlordsPlayer.addHealth(warlordsPlayer, "Soulbinding Weapon", 420, 420, -1, 100, false);
         for (WarlordsPlayer nearPlayer : PlayerFilter
-                .entitiesAround(warlordsPlayer, 6, 6, 6)
+                .entitiesAround(warlordsPlayer, 10, 10, 10)
                 .aliveTeammatesOfExcludingSelf(warlordsPlayer)
                 .limit(2)
         ) {
