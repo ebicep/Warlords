@@ -242,19 +242,19 @@ public class PartyCommand implements CommandExecutor {
                 return true;
             }
             case "poutside":
-            case "partyoutside":
+            case "partyoutside": {
                 Optional<Party> currentParty = Warlords.partyManager.getPartyFromAny(((Player) sender).getUniqueId());
                 if (currentParty.isPresent()) {
                     StringBuilder outside = new StringBuilder(ChatColor.YELLOW + "Players Outside Party: ");
                     final int[] numberOfPlayersOutside = {0};
                     Bukkit.getOnlinePlayers().forEach(p -> {
-                        if(!currentParty.get().getMembers().containsKey(p.getUniqueId())) {
+                        if (!currentParty.get().getMembers().containsKey(p.getUniqueId())) {
                             numberOfPlayersOutside[0]++;
                             outside.append(ChatColor.GREEN).append(p.getName()).append(ChatColor.GRAY).append(", ");
                         }
                     });
                     outside.setLength(outside.length() - 2);
-                    if(numberOfPlayersOutside[0] == 0) {
+                    if (numberOfPlayersOutside[0] == 0) {
                         sender.sendMessage(ChatColor.YELLOW + "There are no players outside of the party");
                     } else {
                         sender.sendMessage(outside.toString());
@@ -263,6 +263,16 @@ public class PartyCommand implements CommandExecutor {
                     sender.sendMessage(ChatColor.RED + "You are currently not in a party!");
                 }
                 return true;
+            }
+            case "pleader": {
+                Optional<Party> currentParty = Warlords.partyManager.getPartyFromAny(((Player) sender).getUniqueId());
+                currentParty.ifPresent(party -> {
+                    if(sender.isOp()) {
+                        party.transfer(sender.getName());
+                    }
+                });
+                return true;
+            }
         }
         return true;
     }

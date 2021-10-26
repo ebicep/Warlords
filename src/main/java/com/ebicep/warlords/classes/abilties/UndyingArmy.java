@@ -16,8 +16,11 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
 import java.util.HashMap;
+
 import org.bukkit.scheduler.BukkitRunnable;
+
 import java.util.UUID;
 
 
@@ -74,43 +77,47 @@ public class UndyingArmy extends AbstractAbility {
                 .closestFirst(wp)
         ) {
             tempUndyingArmy.getPlayersPopped().put(teammate.getUuid(), false);
-            if(teammate != wp) {
+            if (teammate != wp) {
                 wp.sendMessage("§a\u00BB§7 " + ChatColor.GRAY + "Your Undying Army is now protecting " + teammate.getColoredName() + ChatColor.GRAY + ".");
                 teammate.sendMessage("§a\u00BB§7 " + ChatColor.GRAY + wp.getName() + "'s Undying Army protects you for " + ChatColor.GOLD + duration + ChatColor.GRAY + " seconds.");
             }
             teammate.getCooldownManager().addCooldown(name, UndyingArmy.this.getClass(), tempUndyingArmy, "ARMY", duration, wp, CooldownTypes.ABILITY);
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    if (teammate.getCooldownManager().getCooldown(tempUndyingArmy).isPresent()) {
-                        if (!((UndyingArmy) teammate.getCooldownManager().getCooldown(tempUndyingArmy).get().getCooldownObject()).isArmyDead(teammate.getUuid())) {
-                            float healAmount = 200 + (teammate.getMaxHealth() - teammate.getHealth()) / 14.3f;
-                            teammate.addHealth(wp, name, healAmount, healAmount, -1, 100, false);
-                            player.playSound(teammate.getLocation(), "paladin.holyradiance.activation", 0.25f, 0.8f);
+            wp.getGame().getGameTasks().put(
 
-                            // particles
-                            Location playerLoc = teammate.getLocation();
-                            playerLoc.add(0, 2.1, 0);
-                            Location particleLoc = playerLoc.clone();
-                            for (int i = 0; i < 1; i++) {
-                                for (int j = 0; j < 10; j++) {
-                                    double angle = j / 10D * Math.PI * 2;
-                                    double width = 0.5;
-                                    particleLoc.setX(playerLoc.getX() + Math.sin(angle) * width);
-                                    particleLoc.setY(playerLoc.getY() + i / 5D);
-                                    particleLoc.setZ(playerLoc.getZ() + Math.cos(angle) * width);
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            if (teammate.getCooldownManager().getCooldown(tempUndyingArmy).isPresent()) {
+                                if (!((UndyingArmy) teammate.getCooldownManager().getCooldown(tempUndyingArmy).get().getCooldownObject()).isArmyDead(teammate.getUuid())) {
+                                    float healAmount = 200 + (teammate.getMaxHealth() - teammate.getHealth()) / 14.3f;
+                                    teammate.addHealth(wp, name, healAmount, healAmount, -1, 100, false);
+                                    player.playSound(teammate.getLocation(), "paladin.holyradiance.activation", 0.25f, 0.8f);
 
-                                    ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(255, 255, 255), particleLoc, 500);
+                                    // particles
+                                    Location playerLoc = teammate.getLocation();
+                                    playerLoc.add(0, 2.1, 0);
+                                    Location particleLoc = playerLoc.clone();
+                                    for (int i = 0; i < 1; i++) {
+                                        for (int j = 0; j < 10; j++) {
+                                            double angle = j / 10D * Math.PI * 2;
+                                            double width = 0.5;
+                                            particleLoc.setX(playerLoc.getX() + Math.sin(angle) * width);
+                                            particleLoc.setY(playerLoc.getY() + i / 5D);
+                                            particleLoc.setZ(playerLoc.getZ() + Math.cos(angle) * width);
+
+                                            ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(255, 255, 255), particleLoc, 500);
+                                        }
+                                    }
+                                } else {
+                                    this.cancel();
                                 }
+                            } else {
+                                this.cancel();
                             }
-                        } else {
-                            this.cancel();
                         }
-                    } else {
-                        this.cancel();
-                    }
-                }
-            }.runTaskTimer(Warlords.getInstance(), 0, 40);
+                    }.runTaskTimer(Warlords.getInstance(), 0, 40),
+                    System.currentTimeMillis()
+            );
             numberOfPlayersWithArmy++;
 
             if (numberOfPlayersWithArmy >= maxArmyAllies) {

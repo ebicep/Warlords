@@ -11,7 +11,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 
-
 public class InspiringPresence extends AbstractAbility {
 
     private int duration = 12;
@@ -48,20 +47,23 @@ public class InspiringPresence extends AbstractAbility {
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "paladin.inspiringpresence.activation", 2, 1);
         }
+        wp.getGame().getGameTasks().put(
 
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                if (!wp.getCooldownManager().getCooldown(InspiringPresence.class).isEmpty()) {
-                    Location location = player.getLocation();
-                    location.add(0, 1.5, 0);
-                    ParticleEffect.SMOKE_NORMAL.display(0.3F, 0.3F, 0.3F, 0.02F, 1, location, 500);
-                    ParticleEffect.SPELL.display(0.3F, 0.3F, 0.3F, 0.5F, 2, location, 500);
-                } else {
-                    this.cancel();
-                }
-            }
-        }.runTaskTimer(Warlords.getInstance(), 0, 4);
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        if (!wp.getCooldownManager().getCooldown(InspiringPresence.class).isEmpty()) {
+                            Location location = player.getLocation();
+                            location.add(0, 1.5, 0);
+                            ParticleEffect.SMOKE_NORMAL.display(0.3F, 0.3F, 0.3F, 0.02F, 1, location, 500);
+                            ParticleEffect.SPELL.display(0.3F, 0.3F, 0.3F, 0.5F, 2, location, 500);
+                        } else {
+                            this.cancel();
+                        }
+                    }
+                }.runTaskTimer(Warlords.getInstance(), 0, 4),
+                System.currentTimeMillis()
+        );
     }
 
     public float getDuration() {

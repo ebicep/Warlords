@@ -36,18 +36,21 @@ public class AvengersWrath extends AbstractAbility {
             player1.playSound(player.getLocation(), "paladin.avengerswrath.activation", 2, 1);
         }
 
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                if (!wp.getCooldownManager().getCooldown(AvengersWrath.class).isEmpty()) {
-                    Location location = player.getLocation();
-                    location.add(0, 1.2, 0);
-                    ParticleEffect.SPELL.display(0.3F, 0.1F, 0.3F, 0.2F, 6, location, 500);
-                } else {
-                    this.cancel();
-                }
-            }
-        }.runTaskTimer(Warlords.getInstance(), 0, 4);
+        wp.getGame().getGameTasks().put(
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        if (!wp.getCooldownManager().getCooldown(AvengersWrath.class).isEmpty()) {
+                            Location location = player.getLocation();
+                            location.add(0, 1.2, 0);
+                            ParticleEffect.SPELL.display(0.3F, 0.1F, 0.3F, 0.2F, 6, location, 500);
+                        } else {
+                            this.cancel();
+                        }
+                    }
+                }.runTaskTimer(Warlords.getInstance(), 0, 4),
+                System.currentTimeMillis()
+        );
 
     }
 }

@@ -38,7 +38,10 @@ public class HolyRadiance extends AbstractAbility {
                 .aliveTeammatesOfExcludingSelf(wp)
         ) {
             //p.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
-            new FlyingArmorStand(wp.getLocation(), p, wp, 1.1).runTaskTimer(Warlords.getInstance(), 1,1);
+            wp.getGame().getGameTasks().put(
+                    new FlyingArmorStand(wp.getLocation(), p, wp, 1.1).runTaskTimer(Warlords.getInstance(), 1, 1),
+                    System.currentTimeMillis()
+            );
         }
 
         wp.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
@@ -104,7 +107,7 @@ public class HolyRadiance extends AbstractAbility {
             armorStandLocation.add(targetLocation);
             this.armorStand.teleport(armorStandLocation);
 
-            ParticleEffect.SPELL.display(0.01f, 0, 0.01f,0.1f, 2, armorStandLocation.add(0, 1.75, 0), 500);
+            ParticleEffect.SPELL.display(0.01f, 0, 0.01f, 0.1f, 2, armorStandLocation.add(0, 1.75, 0), 500);
         }
     }
 }

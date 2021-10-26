@@ -35,19 +35,22 @@ public class IceBarrier extends AbstractAbility {
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "mage.icebarrier.activation", 2, 1);
         }
+        wp.getGame().getGameTasks().put(
 
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                if (!wp.getCooldownManager().getCooldown(IceBarrier.class).isEmpty()) {
-                    Location location = player.getLocation();
-                    location.add(0, 1.5, 0);
-                    ParticleEffect.CLOUD.display(0.2F, 0.2F, 0.2F, 0.001F, 1, location, 500);
-                    ParticleEffect.FIREWORKS_SPARK.display(0.3F, 0.2F, 0.3F, 0.0001F, 1, location, 500);
-                } else {
-                    this.cancel();
-                }
-            }
-        }.runTaskTimer(Warlords.getInstance(), 0, 5);
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        if (!wp.getCooldownManager().getCooldown(IceBarrier.class).isEmpty()) {
+                            Location location = player.getLocation();
+                            location.add(0, 1.5, 0);
+                            ParticleEffect.CLOUD.display(0.2F, 0.2F, 0.2F, 0.001F, 1, location, 500);
+                            ParticleEffect.FIREWORKS_SPARK.display(0.3F, 0.2F, 0.3F, 0.0001F, 1, location, 500);
+                        } else {
+                            this.cancel();
+                        }
+                    }
+                }.runTaskTimer(Warlords.getInstance(), 0, 5),
+                System.currentTimeMillis()
+        );
     }
 }

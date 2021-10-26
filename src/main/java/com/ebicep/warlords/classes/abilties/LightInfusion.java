@@ -40,19 +40,22 @@ public class LightInfusion extends AbstractAbility {
             Location particleLoc = player.getLocation().add(0, 1.5, 0);
             ParticleEffect.SPELL.display(1, 0F, 1, 0.3F, 3, particleLoc, 500);
         }
+        wp.getGame().getGameTasks().put(
 
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                if (!wp.getCooldownManager().getCooldown(LightInfusion.class).isEmpty()) {
-                    Location location = player.getLocation();
-                    location.add(0, 1.2, 0);
-                    ParticleEffect.SPELL.display(0.3F, 0.1F, 0.3F, 0.2F, 2, location, 500);
-                } else {
-                    this.cancel();
-                }
-            }
-        }.runTaskTimer(Warlords.getInstance(), 0, 4);
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        if (!wp.getCooldownManager().getCooldown(LightInfusion.class).isEmpty()) {
+                            Location location = player.getLocation();
+                            location.add(0, 1.2, 0);
+                            ParticleEffect.SPELL.display(0.3F, 0.1F, 0.3F, 0.2F, 2, location, 500);
+                        } else {
+                            this.cancel();
+                        }
+                    }
+                }.runTaskTimer(Warlords.getInstance(), 0, 4),
+                System.currentTimeMillis()
+        );
 
     }
 }
