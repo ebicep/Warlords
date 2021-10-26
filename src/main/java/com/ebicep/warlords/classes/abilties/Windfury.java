@@ -18,7 +18,7 @@ public class Windfury extends AbstractAbility {
     private final int duration = 8;
 
     public Windfury() {
-        super("Windfury Weapon", 0, 0, 15.66f, 30, 25, 135);
+        super("Windfury Weapon", 0, 0, 15.66f, 30, 25, 200);
     }
 
     @Override
