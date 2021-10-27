@@ -2,10 +2,17 @@ package com.ebicep.warlords.commands.debugcommands;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.BaseCommand;
+import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import org.bson.Document;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+
+import java.util.ArrayList;
+
+import static com.ebicep.warlords.database.DatabaseManager.getDocumentInfoWithDotNotation;
+import static com.mongodb.client.model.Filters.eq;
 
 public class TestCommand implements CommandExecutor {
 
@@ -31,6 +38,25 @@ public class TestCommand implements CommandExecutor {
 //                DatabaseManager.gamesInformation.updateOne(Filters.eq("_id", document2.get("_id")), new Document("$set", document));
 //            }
 //        }
+//        Warlords.newChain().async(() -> {
+//            for (Document document : DatabaseManager.gamesInformation.find()) {
+//                ArrayList<Document> playersRed = new ArrayList<>((ArrayList<Document>) getDocumentInfoWithDotNotation(document, "players.red"));
+//                int counter = 0;
+//                for (Document document1 : playersRed) {
+//                    if(document1.get("seconds_in_respawn") instanceof Double) {
+//                        Document doc = new Document();
+//                        doc.put("players.red." + counter + ".seconds_in_respawn", (int)Math.round((Double) document1.get("seconds_in_respawn")));
+//                        Warlords.newChain().async(()-> {
+//                            DatabaseManager.gamesInformation.updateOne(eq("date", document.get("date")), new Document("$set", doc));
+//                        }).execute();
+//                        System.out.println(document1.get("name"));
+//                        System.out.println("players.blue." + counter + ".seconds_in_respawn");
+//                    }
+//                    counter++;
+//                }
+//            }
+//        }).execute();
+
         return true;
     }
 
