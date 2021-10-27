@@ -118,10 +118,6 @@ public enum Classes {
         return Arrays.stream(ClassesGroup.values()).filter(o -> o.subclasses.contains(selected)).collect(Collectors.toList()).get(0);
     }
 
-    public static ClassesGroup getClassesGroup(String specName) {
-        return Arrays.stream(ClassesGroup.values()).filter(o -> o.subclasses.stream().anyMatch(subClass -> subClass.name.equalsIgnoreCase(specName))).collect(Collectors.toList()).get(0);
-    }
-
     /**
      *
      * @param player
