@@ -85,14 +85,6 @@ public class Leaderboards {
                 Warlords.newSharedChain(sharedChainName)
                         .sync(() -> Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Adding Holograms")).execute();
 
-                Warlords.newSharedChain(sharedChainName)
-                        .sync(() -> {
-                            Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Adding Game Hologram");
-                            Bukkit.getOnlinePlayers().forEach(player -> {
-                                addGameHologram(lastGameLocation, player);
-                            });
-                        }).execute();
-
                 leaderboardLocations.forEach((s, location) -> {
                     addLeaderboard(sharedChainName, s, location, ChatColor.AQUA + ChatColor.BOLD.toString() + "Lifetime " + s.substring(0, 1).toUpperCase() + s.substring(1));
                 });
@@ -110,8 +102,7 @@ public class Leaderboards {
             leaderboardLocations.forEach((key, loc) -> {
                 Location location = loc.clone().add(0, -3.5, 0);
                 HologramsAPI.getHolograms(Warlords.getInstance()).stream()
-                        .filter(hologram -> hologram.getLocation().equals(location))
-                        .filter(hologram -> hologram.getVisibilityManager().isVisibleTo(player))
+                        .filter(hologram -> hologram.getLocation().equals(location) && hologram.getVisibilityManager().isVisibleTo(player))
                         .forEach(Hologram::delete);
                 if (cachedSortedPlayers.containsKey(key)) {
                     List<Document> documents = cachedSortedPlayers.get(key);

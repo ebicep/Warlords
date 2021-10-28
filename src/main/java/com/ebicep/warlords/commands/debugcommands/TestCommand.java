@@ -49,24 +49,24 @@ public class TestCommand implements CommandExecutor {
 //                DatabaseManager.gamesInformation.updateOne(Filters.eq("_id", document2.get("_id")), new Document("$set", document));
 //            }
 //        }
-//        Warlords.newChain().async(() -> {
-//            for (Document document : DatabaseManager.gamesInformation.find()) {
-//                ArrayList<Document> playersRed = new ArrayList<>((ArrayList<Document>) getDocumentInfoWithDotNotation(document, "players.blue"));
-//                int counter = 0;
-//                for (Document document1 : playersRed) {
-//                    if(document1.get("seconds_in_respawn") instanceof Double) {
-//                        Document doc = new Document();
-//                        doc.put("players.blue." + counter + ".seconds_in_respawn", (int)Math.round((Double) document1.get("seconds_in_respawn")));
-//                        Warlords.newChain().async(()-> {
-//                            DatabaseManager.gamesInformation.updateOne(eq("date", document.get("date")), new Document("$set", doc));
-//                        }).execute();
-//                        System.out.println(document1.get("name"));
-//                        System.out.println("players.blue." + counter + ".seconds_in_respawn");
-//                    }
-//                    counter++;
-//                }
-//            }
-//        }).execute();
+        Warlords.newChain().async(() -> {
+            for (Document document : DatabaseManager.gamesInformation.find()) {
+                ArrayList<Document> playersRed = new ArrayList<>((ArrayList<Document>) getDocumentInfoWithDotNotation(document, "players.red"));
+                int counter = 0;
+                for (Document document1 : playersRed) {
+                    if(document1.get("seconds_in_respawn") instanceof Double) {
+                        Document doc = new Document();
+                        doc.put("players.red." + counter + ".seconds_in_respawn", (int)Math.round((Double) document1.get("seconds_in_respawn")));
+                        Warlords.newChain().async(()-> {
+                            DatabaseManager.gamesInformation.updateOne(eq("date", document.get("date")), new Document("$set", doc));
+                        }).execute();
+                        System.out.println(document1.get("name"));
+                        System.out.println("players.blue." + counter + ".seconds_in_respawn");
+                    }
+                    counter++;
+                }
+            }
+        }).execute();
 //        MongoCollection<Document> temp = warlordsGamesDatabase.getCollection("Test");
 //        Document document = new Document();
 //        float[] array = {131232.8f,23122.32f,313.32f,4321.3123f,3125.1f,3129};
@@ -74,20 +74,20 @@ public class TestCommand implements CommandExecutor {
 //
 //        temp.insertOne(document);
 
-        System.out.println(HologramsAPI.getHolograms(Warlords.getInstance()).stream()
-                .filter(h -> h.getVisibilityManager().isVisibleTo((Player) sender) && h.getLocation().equals(Leaderboards.center))
-                .count());
-        Hologram center = HologramsAPI.getHolograms(Warlords.getInstance()).stream()
-                .filter(h -> h.getVisibilityManager().isVisibleTo((Player) sender) && h.getLocation() == Leaderboards.center)
-                .findAny()
-                .orElseGet(() -> HologramsAPI.createHologram(Warlords.getInstance(), Leaderboards.center));
-        System.out.println(center);
-        System.out.println(center.getLine(0));
-        center.clearLines();
-        center.appendTextLine("TEST");
-
-        center.getVisibilityManager().setVisibleByDefault(false);
-        center.getVisibilityManager().isVisibleTo((Player) sender);
+//        System.out.println(HologramsAPI.getHolograms(Warlords.getInstance()).stream()
+//                .filter(h -> h.getVisibilityManager().isVisibleTo((Player) sender) && h.getLocation().equals(Leaderboards.center))
+//                .count());
+//        Hologram center = HologramsAPI.getHolograms(Warlords.getInstance()).stream()
+//                .filter(h -> h.getVisibilityManager().isVisibleTo((Player) sender) && h.getLocation() == Leaderboards.center)
+//                .findAny()
+//                .orElseGet(() -> HologramsAPI.createHologram(Warlords.getInstance(), Leaderboards.center));
+//        System.out.println(center);
+//        System.out.println(center.getLine(0));
+//        center.clearLines();
+//        center.appendTextLine("TEST");
+//
+//        center.getVisibilityManager().setVisibleByDefault(false);
+//        center.getVisibilityManager().isVisibleTo((Player) sender);
 
         return true;
     }
