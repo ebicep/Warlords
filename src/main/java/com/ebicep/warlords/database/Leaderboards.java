@@ -2,7 +2,6 @@ package com.ebicep.warlords.database;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.util.LocationBuilder;
-import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.Utils;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
@@ -24,6 +23,7 @@ import static com.mongodb.client.model.Sorts.descending;
 public class Leaderboards {
 
     public static final Location spawnPoint = Bukkit.getWorlds().get(0).getSpawnLocation().clone();
+
     public static final Location winsLB = new LocationBuilder(spawnPoint.clone()).backward(27).right(4.5f).addY(3.5).get();
     public static final Location lossesLB = new LocationBuilder(spawnPoint.clone()).backward(27).right(.5f).addY(3.5).get();
 
@@ -35,14 +35,20 @@ public class Leaderboards {
     public static final Location healingLB = new LocationBuilder(spawnPoint.clone()).backward(27).right(-20.5f).addY(3.5).get();
     public static final Location absorbedLB = new LocationBuilder(spawnPoint.clone()).backward(27).right(-25f).addY(3.5).get();
 
+    public static final Location leaderboardSwitchLocation = new LocationBuilder(spawnPoint.clone()).backward(23).right(-28f).addY(.5f).get();
     public static final Location lastGameLocation = new LocationBuilder(spawnPoint.clone()).forward(28.5f).left(16.5f).addY(3.5).get();
 
     public static final Location center = new LocationBuilder(spawnPoint.clone()).forward(.5f).left(21).addY(2).get();
 
     public static final HashMap<String, Location> leaderboardLocations = new HashMap<>();
-    public static final HashMap<String, List<Document>> cachedSortedPlayers = new HashMap<>();
+    public static final HashMap<String, List<Document>> cachedSortedPlayersLifeTime = new HashMap<>();
+    public static final HashMap<String, List<Document>> cachedSortedPlayersWeekly = new HashMap<>();
 
     public static final HashMap<UUID, Integer> playerGameHolograms = new HashMap<>();
+    public static final HashMap<UUID, Integer> playerLeaderboardHolograms = new HashMap<>();
+
+    public static final List<Hologram> lifeTimeHolograms = new ArrayList<>();
+    public static final List<Hologram> weeklyHolograms = new ArrayList<>();
 
     public static boolean enabled = true;
 
@@ -63,12 +69,12 @@ public class Leaderboards {
                 //hiding players near game holograms
                 Bukkit.getWorlds().get(0).getPlayers().forEach(player -> {
                     Bukkit.getWorlds().get(0).getPlayers().forEach(otherPlayer -> {
-                        if(player.getLocation().distanceSquared(lastGameLocation) < 12 * 12) {
-                            if(otherPlayer.canSee(player)) {
+                        if (player.getLocation().distanceSquared(lastGameLocation) < 12 * 12) {
+                            if (otherPlayer.canSee(player)) {
                                 otherPlayer.hidePlayer(player);
                             }
                         } else {
-                            if(!otherPlayer.canSee(player)) {
+                            if (!otherPlayer.canSee(player)) {
                                 otherPlayer.showPlayer(player);
                             }
                         }
@@ -81,22 +87,95 @@ public class Leaderboards {
     public static void addHologramLeaderboards(String sharedChainName) {
         if (DatabaseManager.connected && Warlords.holographicDisplaysEnabled) {
             HologramsAPI.getHolograms(Warlords.getInstance()).forEach(Hologram::delete);
+            lifeTimeHolograms.clear();
+            weeklyHolograms.clear();
             if (enabled) {
-                Warlords.newSharedChain(sharedChainName)
-                        .sync(() -> Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Adding Holograms")).execute();
+                Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Adding Holograms");
 
+                //caching all sorted players for each lifetime and weekly
                 leaderboardLocations.forEach((s, location) -> {
-                    addLeaderboard(sharedChainName, s, location, ChatColor.AQUA + ChatColor.BOLD.toString() + "Lifetime " + s.substring(0, 1).toUpperCase() + s.substring(1));
+                    Warlords.newSharedChain(sharedChainName)
+                            .asyncFirst(() -> getPlayersSortedByKey(s, 0))
+                            .syncLast((sortedInformation) -> {
+                                cachedSortedPlayersLifeTime.put(s, sortedInformation);
+
+                                //creating leaderboard for lifetime
+                                addLeaderboard(cachedSortedPlayersLifeTime.get(s), s, location, ChatColor.AQUA + ChatColor.BOLD.toString() + "Lifetime " + s.substring(0, 1).toUpperCase() + s.substring(1));                //default making lifetime leaderboard visible to everyone
+                                HologramsAPI.getHolograms(Warlords.getInstance()).stream()
+                                        .filter(h -> h.getLocation().equals(location))
+                                        .forEach(lifeTimeHolograms::add);
+                            }).execute();
+                    Warlords.newSharedChain(sharedChainName)
+                            .asyncFirst(() -> getPlayersSortedByKey(s, 1))
+                            .syncLast((sortedInformation) -> {
+                                cachedSortedPlayersWeekly.put(s, sortedInformation);
+
+                                //creating leaderboard for weekly
+                                addLeaderboard(cachedSortedPlayersWeekly.get(s), s, location, ChatColor.AQUA + ChatColor.BOLD.toString() + "Weekly " + s.substring(0, 1).toUpperCase() + s.substring(1));
+                                HologramsAPI.getHolograms(Warlords.getInstance()).stream()
+                                        .filter(h -> h.getLocation().equals(location) && !lifeTimeHolograms.contains(h))
+                                        .forEach(weeklyHolograms::add);
+                            }).execute();
                 });
 
-                Warlords.newSharedChain(sharedChainName)
-                        .sync(() -> Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Adding player leaderboards")).execute();
-                addPlayerLeaderboardsToAll(sharedChainName);
+                //depending on what player has selected, set visibility
+                Warlords.newSharedChain(sharedChainName).sync(() -> {
+                    System.out.println("Setting Hologram Visibility");
+                    Bukkit.getOnlinePlayers().forEach(Leaderboards::setHologramVisibility);
+                }).execute();
             }
         }
     }
 
-    public static void addPlayerLeaderboards(Player player) {
+    public static void setHologramVisibility(Player player) {
+        if (!playerLeaderboardHolograms.containsKey(player.getUniqueId()) || playerLeaderboardHolograms.get(player.getUniqueId()) == null) {
+            playerLeaderboardHolograms.put(player.getUniqueId(), 0);
+        }
+        int selectedLeaderboard = playerLeaderboardHolograms.get(player.getUniqueId());
+        if (selectedLeaderboard == 0) {
+            lifeTimeHolograms.forEach(hologram -> hologram.getVisibilityManager().showTo(player));
+            weeklyHolograms.forEach(hologram -> hologram.getVisibilityManager().hideTo(player));
+        } else {
+            lifeTimeHolograms.forEach(hologram -> hologram.getVisibilityManager().hideTo(player));
+            weeklyHolograms.forEach(hologram -> hologram.getVisibilityManager().showTo(player));
+        }
+
+        createLeaderboardSwitcherHologram(player);
+        addPlayerPositionLeaderboards(player);
+    }
+
+    private static void createLeaderboardSwitcherHologram(Player player) {
+        HologramsAPI.getHolograms(Warlords.getInstance()).stream()
+                .filter(h -> h.getVisibilityManager().isVisibleTo(player) && h.getLocation().equals(leaderboardSwitchLocation))
+                .forEach(Hologram::delete);
+        Hologram leaderboardSwitcher = HologramsAPI.createHologram(Warlords.getInstance(), leaderboardSwitchLocation);
+        leaderboardSwitcher.appendTextLine(ChatColor.AQUA.toString() + ChatColor.UNDERLINE + "Click to Toggle");
+        leaderboardSwitcher.appendTextLine("");
+
+        int selectedLeaderboard = playerLeaderboardHolograms.get(player.getUniqueId());
+        if (selectedLeaderboard == 0) {
+            leaderboardSwitcher.appendTextLine(ChatColor.GREEN + "LifeTime");
+            TextLine weeklyLine = leaderboardSwitcher.appendTextLine(ChatColor.GRAY + "Weekly");
+
+            weeklyLine.setTouchHandler(p -> {
+                playerLeaderboardHolograms.put(player.getUniqueId(), 1);
+                setHologramVisibility(p);
+            });
+        } else {
+            TextLine lifeTimeLine = leaderboardSwitcher.appendTextLine(ChatColor.GRAY + "LifeTime");
+            leaderboardSwitcher.appendTextLine(ChatColor.GREEN + "Weekly");
+
+            lifeTimeLine.setTouchHandler(p -> {
+                playerLeaderboardHolograms.put(player.getUniqueId(), 0);
+                setHologramVisibility(p);
+            });
+        }
+
+        leaderboardSwitcher.getVisibilityManager().setVisibleByDefault(false);
+        leaderboardSwitcher.getVisibilityManager().showTo(player);
+    }
+
+    public static void addPlayerPositionLeaderboards(Player player) {
         if (enabled) {
             //leaderboards
             leaderboardLocations.forEach((key, loc) -> {
@@ -104,56 +183,87 @@ public class Leaderboards {
                 HologramsAPI.getHolograms(Warlords.getInstance()).stream()
                         .filter(hologram -> hologram.getLocation().equals(location) && hologram.getVisibilityManager().isVisibleTo(player))
                         .forEach(Hologram::delete);
-                if (cachedSortedPlayers.containsKey(key)) {
-                    List<Document> documents = cachedSortedPlayers.get(key);
-                    Hologram hologram = HologramsAPI.createHologram(Warlords.getInstance(), location);
-                    for (int i = 0; i < documents.size(); i++) {
-                        Document document = documents.get(i);
-                        if (document.get("uuid").equals(player.getUniqueId().toString())) {
-                            Object docKey = document.get(key);
-                            if (docKey instanceof Integer) {
-                                hologram.appendTextLine(ChatColor.YELLOW.toString() + ChatColor.BOLD + (i + 1) + ". " + ChatColor.AQUA + ChatColor.BOLD + player.getName() + ChatColor.GRAY + ChatColor.BOLD + " - " + ChatColor.YELLOW + ChatColor.BOLD + (Utils.addCommaAndRound((Integer) docKey)));
-                            } else if (docKey instanceof Long) {
-                                hologram.appendTextLine(ChatColor.YELLOW.toString() + ChatColor.BOLD + (i + 1) + ". " + ChatColor.AQUA + ChatColor.BOLD + player.getName() + ChatColor.GRAY + ChatColor.BOLD + " - " + ChatColor.YELLOW + ChatColor.BOLD + (Utils.addCommaAndRound((Long) docKey)));
-                            }
-                            break;
-                        }
-                    }
-                    hologram.getVisibilityManager().showTo(player);
-                    hologram.getVisibilityManager().setVisibleByDefault(false);
+
+                List<Document> documents;
+                if (playerLeaderboardHolograms.get(player.getUniqueId()) == 0 && cachedSortedPlayersLifeTime.containsKey(key)) {
+                    documents = cachedSortedPlayersLifeTime.get(key);
+                } else if (playerLeaderboardHolograms.get(player.getUniqueId()) == 1 && cachedSortedPlayersWeekly.containsKey(key)) {
+                    documents = cachedSortedPlayersWeekly.get(key);
+                } else {
+                    return;
                 }
+
+                Hologram hologram = HologramsAPI.createHologram(Warlords.getInstance(), location);
+                for (int i = 0; i < documents.size(); i++) {
+                    Document document = documents.get(i);
+                    if (document.get("uuid").equals(player.getUniqueId().toString())) {
+                        Object docKey = document.get(key);
+                        if (docKey instanceof Integer) {
+                            hologram.appendTextLine(ChatColor.YELLOW.toString() + ChatColor.BOLD + (i + 1) + ". " + ChatColor.AQUA + ChatColor.BOLD + player.getName() + ChatColor.GRAY + ChatColor.BOLD + " - " + ChatColor.YELLOW + ChatColor.BOLD + (Utils.addCommaAndRound((Integer) docKey)));
+                        } else if (docKey instanceof Long) {
+                            hologram.appendTextLine(ChatColor.YELLOW.toString() + ChatColor.BOLD + (i + 1) + ". " + ChatColor.AQUA + ChatColor.BOLD + player.getName() + ChatColor.GRAY + ChatColor.BOLD + " - " + ChatColor.YELLOW + ChatColor.BOLD + (Utils.addCommaAndRound((Long) docKey)));
+                        }
+                        break;
+                    }
+                }
+                hologram.getVisibilityManager().setVisibleByDefault(false);
+                hologram.getVisibilityManager().showTo(player);
             });
             //game
             addGameHologram(lastGameLocation, player);
         }
     }
 
-    public static void addPlayerLeaderboardsToAll(String sharedChainName) {
-        Warlords.newSharedChain(sharedChainName)
-                .sync(() -> {
-                    Bukkit.getOnlinePlayers().forEach(Leaderboards::addPlayerLeaderboards);
-                }).execute();
+    private static void addLeaderboard(List<Document> top, String key, Location location, String title) {
+        List<String> hologramLines = new ArrayList<>();
+        //formats top 10
+        for (int i = 0; i < 10 && i < top.size(); i++) {
+            Document p = top.get(i);
+            Object playerKey = p.get(key);
+            if (playerKey instanceof Integer) {
+                hologramLines.add(ChatColor.YELLOW.toString() + (i + 1) + ". " + ChatColor.AQUA + p.get("name") + ChatColor.GRAY + " - " + ChatColor.YELLOW + (Utils.addCommaAndRound((Integer) playerKey)));
+            } else if (playerKey instanceof Long) {
+                hologramLines.add(ChatColor.YELLOW.toString() + (i + 1) + ". " + ChatColor.AQUA + p.get("name") + ChatColor.GRAY + " - " + ChatColor.YELLOW + (Utils.addCommaAndRound((Long) playerKey)));
+            }
+        }
+        //creates actual leaderboard
+        createLeaderboard(location, title, hologramLines);
     }
 
-    private static void addLeaderboard(String sharedChainName, String key, Location location, String title) {
-        Warlords.newSharedChain(sharedChainName)
-                .asyncFirst(() -> getPlayersSortedByKey(key))
-                .abortIfNull()
-                .syncLast((top) -> {
-                    cachedSortedPlayers.put(key, top);
-                    List<String> hologramLines = new ArrayList<>();
-                    for (int i = 0; i < 10 && i < top.size(); i++) {
-                        Document player = top.get(i);
-                        Object playerKey = player.get(key);
-                        if (playerKey instanceof Integer) {
-                            hologramLines.add(ChatColor.YELLOW.toString() + (i + 1) + ". " + ChatColor.AQUA + player.get("name") + ChatColor.GRAY + " - " + ChatColor.YELLOW + (Utils.addCommaAndRound((Integer) playerKey)));
-                        } else if (playerKey instanceof Long) {
-                            hologramLines.add(ChatColor.YELLOW.toString() + (i + 1) + ". " + ChatColor.AQUA + player.get("name") + ChatColor.GRAY + " - " + ChatColor.YELLOW + (Utils.addCommaAndRound((Long) playerKey)));
-                        }
-                    }
-                    createLeaderboard(location, title, hologramLines);
-                })
-                .execute();
+    private static List<Document> getDocumentInSortedList(HashMap<Document, Integer> map) {
+        List<Document> sorted = new ArrayList<>();
+        map.entrySet().stream()
+                .sorted(Map.Entry.comparingByValue())
+                .forEach(documentIntegerEntry -> sorted.add(documentIntegerEntry.getKey()));
+        Collections.reverse(sorted);
+        return sorted;
+    }
+
+    public static Hologram createLeaderboard(Location location, String title, List<String> lines) {
+        Hologram hologram = HologramsAPI.createHologram(Warlords.getInstance(), location);
+        hologram.appendTextLine(title);
+        hologram.appendTextLine("");
+        for (String line : lines) {
+            hologram.appendTextLine(line);
+        }
+
+        hologram.getVisibilityManager().setVisibleByDefault(false);
+        return hologram;
+    }
+
+    public static List<Document> getPlayersSortedByKey(String key, int database) {
+        if (!DatabaseManager.connected) return null;
+        try {
+            if (database == 0) {
+                return Lists.newArrayList(DatabaseManager.playersInformation.aggregate(Collections.singletonList(sort(descending(key)))));
+            } else {
+                return Lists.newArrayList(playersInformationWeekly.aggregate(Collections.singletonList(sort(descending(key)))));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println(ChatColor.GREEN + "[Warlords] Problem getting " + key);
+            return null;
+        }
     }
 
     public static final String[] specsOrdered = {"Pyromancer", "Cryomancer", "Aquamancer", "Berserker", "Defender", "Revenant", "Avenger", "Crusader", "Protector", "Thunderlord", "Spiritguard", "Earthwarden"};
@@ -168,7 +278,7 @@ public class Leaderboards {
         //toggle game location
         hologramLocations.add(new LocationBuilder(location.clone()).backward(3).left(9.5f).addY(-2).get());
 
-        if(!playerGameHolograms.containsKey(player.getUniqueId()) || playerGameHolograms.get(player.getUniqueId()) == null) {
+        if (!playerGameHolograms.containsKey(player.getUniqueId()) || playerGameHolograms.get(player.getUniqueId()) == null) {
             playerGameHolograms.put(player.getUniqueId(), previousGames.size() - 1);
         }
         int selectedGame = playerGameHolograms.get(player.getUniqueId());
@@ -251,18 +361,18 @@ public class Leaderboards {
         int gameAfter = getGameAfter(selectedGame);
         TextLine beforeLine;
         TextLine afterLine;
-        if(gameBefore == previousGames.size() - 1) {
+        if (gameBefore == previousGames.size() - 1) {
             beforeLine = toggleGame.appendTextLine(ChatColor.GRAY + "Latest Game");
         } else {
             beforeLine = toggleGame.appendTextLine(ChatColor.GRAY.toString() + (gameBefore + 1) + ". " + previousGames.get(gameBefore).getDate());
         }
-        if(selectedGame == previousGames.size() - 1) {
+        if (selectedGame == previousGames.size() - 1) {
             toggleGame.appendTextLine(ChatColor.GREEN + "Latest Game");
         } else {
             toggleGame.appendTextLine(ChatColor.GREEN.toString() + (selectedGame + 1) + ". " + databaseGame.getDate());
         }
 
-        if(gameAfter == previousGames.size() - 1) {
+        if (gameAfter == previousGames.size() - 1) {
             afterLine = toggleGame.appendTextLine(ChatColor.GRAY + "Latest Game");
         } else {
             afterLine = toggleGame.appendTextLine(ChatColor.GRAY.toString() + (gameAfter + 1) + ". " + previousGames.get(gameAfter).getDate());
@@ -287,58 +397,17 @@ public class Leaderboards {
     }
 
     private static int getGameBefore(int currentGame) {
-        if(currentGame == 0) {
+        if (currentGame == 0) {
             return previousGames.size() - 1;
         }
         return currentGame - 1;
     }
 
     private static int getGameAfter(int currentGame) {
-        if(currentGame == previousGames.size() - 1) {
+        if (currentGame == previousGames.size() - 1) {
             return 0;
         }
         return currentGame + 1;
-    }
-
-    private static List<String> getHologramLines(HashMap<Document, Integer> players) {
-        List<Document> sorted = getDocumentInSortedList(players);
-        List<String> hologramLines = new ArrayList<>();
-        for (int i = 0; i < 10 && i < sorted.size(); i++) {
-            Document player = sorted.get(i);
-            hologramLines.add(ChatColor.YELLOW.toString() + (i + 1) + ". " + ChatColor.AQUA + player.get("name") + ChatColor.GRAY + " - " + ChatColor.YELLOW + (Utils.addCommaAndRound(players.get(player))));
-        }
-        return hologramLines;
-    }
-
-    private static List<Document> getDocumentInSortedList(HashMap<Document, Integer> map) {
-        List<Document> sorted = new ArrayList<>();
-        map.entrySet().stream()
-                .sorted(Map.Entry.comparingByValue())
-                .forEach(documentIntegerEntry -> sorted.add(documentIntegerEntry.getKey()));
-        Collections.reverse(sorted);
-        return sorted;
-    }
-
-    public static Hologram createLeaderboard(Location location, String title, List<String> lines) {
-        Hologram hologram = HologramsAPI.createHologram(Warlords.getInstance(), location);
-        hologram.appendTextLine(title);
-        hologram.appendTextLine("");
-        for (String line : lines) {
-            hologram.appendTextLine(line);
-        }
-        Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Created Hologram - " + title);
-        return hologram;
-    }
-
-    public static List<Document> getPlayersSortedByKey(String key) {
-        if (!DatabaseManager.connected) return null;
-        try {
-            return Lists.newArrayList(DatabaseManager.playersInformation.aggregate(Collections.singletonList(sort(descending(key)))));
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println(ChatColor.GREEN + "[Warlords] Problem getting " + key);
-            return null;
-        }
     }
 
 }

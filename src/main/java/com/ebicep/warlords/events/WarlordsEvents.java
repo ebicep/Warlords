@@ -37,9 +37,7 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.*;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashSet;
 import java.util.Objects;
@@ -146,7 +144,7 @@ public class WarlordsEvents implements Listener {
                     DatabaseManager.loadPlayer(player, false);
                     Warlords.updateHead(e.getPlayer());
                 })
-                .sync(() -> Leaderboards.addPlayerLeaderboards(player))
+                .sync(() -> Leaderboards.setHologramVisibility(player))
                 .execute();
 
         //scoreboard

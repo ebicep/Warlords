@@ -46,6 +46,7 @@ public class DatabaseManager {
     public static MongoDatabase warlordsGamesDatabase;
     public static MongoCollection<Document> playersInformation;
     public static MongoCollection<Document> playersInformationWeekly;
+    public static MongoCollection<Document> weeklyInfo;
     public static MongoCollection<Document> gamesInformation;
     public static HashMap<UUID, Document> cachedPlayerInfo = new HashMap<>();
     public static HashMap<String, Long> cachedTotalKeyValues = new HashMap<>();
@@ -59,104 +60,52 @@ public class DatabaseManager {
             File myObj = new File(System.getProperty("user.dir") + "/plugins/Warlords/database_key.TXT");
             Scanner myReader = new Scanner(myObj);
             if (myReader.hasNextLine()) {
-                String data = myReader.nextLine();
-                mongoClient = MongoClients.create(data);
+                //PRE CONNECT
+                {
+                    String data = myReader.nextLine();
+                    mongoClient = MongoClients.create(data);
 
-                warlordsPlayersDatabase = mongoClient.getDatabase("Warlords_Players");
-                warlordsGamesDatabase = mongoClient.getDatabase("Warlords_Games");
+                    warlordsPlayersDatabase = mongoClient.getDatabase("Warlords_Players");
+                    warlordsGamesDatabase = mongoClient.getDatabase("Warlords_Games");
 
-                playersInformation = warlordsPlayersDatabase.getCollection("Players_Information");
-                playersInformationWeekly = warlordsPlayersDatabase.getCollection("Players_Information_Weekly");
-                gamesInformation = warlordsGamesDatabase.getCollection("Games_Information");
+                    playersInformation = warlordsPlayersDatabase.getCollection("Players_Information");
+                    playersInformationWeekly = warlordsPlayersDatabase.getCollection("Players_Information_Weekly");
+                    weeklyInfo = warlordsPlayersDatabase.getCollection("Weekly_Info");
+                    gamesInformation = warlordsGamesDatabase.getCollection("Games_Information");
 
-                Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Database Connected");
-                connected = true;
+                    Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Database Connected");
+                    connected = true;
+                }
+                //POST CONNECT
+                {
+                    //checking weekly date, if over 10,000 minutes (10080 == 1 week) reset weekly
+                    Document weeklyDocumentInfo = weeklyInfo.find().first();
+                    if (weeklyDocumentInfo != null && weeklyDocumentInfo.get("last_reset") != null) {
+                        Date current = new Date();
+                        Date lastReset = weeklyDocumentInfo.getDate("last_reset");
+                        long timeDiff = current.getTime() - lastReset.getTime();
 
-                //caching all players
-                playersInformation.find().forEach((Consumer<? super Document>) document -> {
-                    cachedPlayerInfo.put(UUID.fromString((String) document.get("uuid")), document);
-                });
+                        System.out.println(timeDiff / 60000);
+                        if (timeDiff > 0 && timeDiff / (1000 * 60) > 10000) {
+                            //clearing weekly
+                            playersInformationWeekly.deleteMany(new Document());
+                            //updating date to current
+                            weeklyInfo.updateOne(eq("last_reset", lastReset), new Document("$set", new Document("last_reset", current)));
 
-                //caching all games
-                Warlords.newChain()
-                        .asyncFirst(() -> {
-                            List<DatabaseGame> tempPreviousGames = new ArrayList<>();
-                            gamesInformation.find()
-                                    .skip((int) (gamesInformation.countDocuments() - 20))
-                                    .forEach((Consumer<? super Document>) game -> {
+                            Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Weekly player information reset");
+                        }
+                    }
 
-                                        //player information
-                                        List<DatabaseGamePlayer> databaseGamePlayersBlue = new ArrayList<>();
-                                        List<DatabaseGamePlayer> databaseGamePlayersRed = new ArrayList<>();
+                    //caching all players
+                    playersInformation.find().forEach((Consumer<? super Document>) document -> {
+                        cachedPlayerInfo.put(UUID.fromString((String) document.get("uuid")), document);
+                    });
 
-                                        HashMap<UUID, HashMap<String, Object>> newPlayerInfo = new HashMap<>();
-                                        ArrayList<Document> players = new ArrayList<>();
-                                        ArrayList<Document> playersBlue = new ArrayList<>((ArrayList<Document>) getDocumentInfoWithDotNotation(game, "players.blue"));
-                                        ArrayList<Document> playersRed = new ArrayList<>((ArrayList<Document>) getDocumentInfoWithDotNotation(game, "players.red"));
-                                        players.addAll(playersBlue);
-                                        players.addAll(playersRed);
-
-                                        for (Document document : players) {
-                                            DatabaseGamePlayer databaseGamePlayer = new DatabaseGamePlayer(document, playersBlue.contains(document) ? ChatColor.BLUE : ChatColor.RED);
-                                            int totalKills = databaseGamePlayer.getTotalKills();
-                                            int totalAssists = databaseGamePlayer.getTotalAssists();
-                                            int totalDeaths = databaseGamePlayer.getTotalDeaths();
-                                            boolean won = game.get("winner") == "BLUE" && playersBlue.contains(document) || game.get("winner") == "RED" && playersRed.contains(document);
-                                            int flagsCaptured = databaseGamePlayer.getFlagCaptures();
-                                            int flagsReturned = databaseGamePlayer.getFlagReturns();
-                                            long damage = databaseGamePlayer.getTotalDamage();
-                                            long healing = databaseGamePlayer.getTotalHealing();
-                                            long absorbed = databaseGamePlayer.getTotalAbsorbed();
-                                            String className = Classes.getClassesGroup(databaseGamePlayer.getSpec()).name.toLowerCase();
-                                            String specName = databaseGamePlayer.getSpec().toLowerCase();
-                                            HashMap<String, Object> playerInfo = new HashMap<>();
-                                            playerInfo.put("kills", databaseGamePlayer.getTotalKills());
-                                            playerInfo.put("assists", databaseGamePlayer.getTotalAssists());
-                                            playerInfo.put("deaths", databaseGamePlayer.getTotalDeaths());
-                                            playerInfo.put("wins", won ? 1 : 0);
-                                            playerInfo.put("losses", won ? 0 : 1);
-                                            playerInfo.put("flags_captured", flagsCaptured);
-                                            playerInfo.put("flags_returned", flagsReturned);
-                                            playerInfo.put("damage", damage);
-                                            playerInfo.put("healing", healing);
-                                            playerInfo.put("absorbed", absorbed);
-                                            playerInfo.put(className + ".kills", totalKills);
-                                            playerInfo.put(className + ".assists", totalAssists);
-                                            playerInfo.put(className + ".deaths", totalDeaths);
-                                            playerInfo.put(className + ".wins", won ? 1 : 0);
-                                            playerInfo.put(className + ".losses", won ? 0 : 1);
-                                            playerInfo.put(className + ".flags_captured", flagsCaptured);
-                                            playerInfo.put(className + ".flags_returned", flagsCaptured);
-                                            playerInfo.put(className + ".damage", damage);
-                                            playerInfo.put(className + ".healing", healing);
-                                            playerInfo.put(className + ".absorbed", absorbed);
-                                            playerInfo.put(className + "." + specName + ".kills", totalKills);
-                                            playerInfo.put(className + "." + specName + ".assists", totalAssists);
-                                            playerInfo.put(className + "." + specName + ".deaths", totalDeaths);
-                                            playerInfo.put(className + "." + specName + ".wins", won ? 1 : 0);
-                                            playerInfo.put(className + "." + specName + ".losses", won ? 0 : 1);
-                                            playerInfo.put(className + "." + specName + ".flags_captured", flagsCaptured);
-                                            playerInfo.put(className + "." + specName + ".flags_returned", flagsReturned);
-                                            playerInfo.put(className + "." + specName + ".damage", damage);
-                                            playerInfo.put(className + "." + specName + ".healing", healing);
-                                            playerInfo.put(className + "." + specName + ".absorbed", absorbed);
-
-                                            if (databaseGamePlayer.getTeamColor() == ChatColor.BLUE) {
-                                                databaseGamePlayersBlue.add(databaseGamePlayer);
-                                            } else {
-                                                databaseGamePlayersRed.add(databaseGamePlayer);
-                                            }
-                                            newPlayerInfo.put(UUID.fromString(databaseGamePlayer.getUuid()), playerInfo);
-                                        }
-
-                                        tempPreviousGames.add(new DatabaseGame(game, databaseGamePlayersBlue, databaseGamePlayersRed, newPlayerInfo, (boolean) game.get("counted")));
-                                    });
-                            return tempPreviousGames;
-                        }).syncLast(previousGames::addAll)
-                        .execute();
-
-                //loading all players
-                loadAllPlayers();
+                    //caching last games
+                    cacheLastGames(20);
+                    //loading all players
+                    loadAllPlayers();
+                }
             }
             myReader.close();
         } catch (FileNotFoundException e) {
@@ -398,12 +347,45 @@ public class DatabaseManager {
         }
     }
 
-    public static void updatePlayerInformation(Player player, HashMap<String, Object> newInfo, FieldUpdateOperators operator, boolean runAsync) {
+    public static void updatePlayerInformation(OfflinePlayer player, HashMap<String, Object> newInfo, FieldUpdateOperators operator, boolean runAsync) {
         updatePlayerInformation(player.getUniqueId(), newInfo, operator, runAsync);
     }
 
-    public static void updatePlayerInformation(OfflinePlayer player, HashMap<String, Object> newInfo, FieldUpdateOperators operator, boolean runAsync) {
-        updatePlayerInformation(player.getUniqueId(), newInfo, operator, runAsync);
+    public static void updatePlayerInformationWeekly(UUID uuid, HashMap<String, Object> newInfo, FieldUpdateOperators operator, boolean runAsync) {
+        if (!connected) return;
+        String name = Bukkit.getOfflinePlayer(uuid).getName();
+        try {
+            if (runAsync) {
+                Warlords.newChain()
+                        .async(() -> {
+                            Document document = playersInformationWeekly.find(eq("uuid", uuid.toString())).first();
+                            if (document == null) {
+                                playersInformationWeekly.insertOne(getNewPlayerDocument(uuid));
+                                Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Added " + name + " to weekly");
+                            }
+                            Document history = new Document();
+                            for (String s : newInfo.keySet()) {
+                                history.append(s, newInfo.get(s));
+                            }
+                            Document update = new Document(operator.operator, history);
+                            playersInformationWeekly.updateOne(eq("uuid", uuid.toString()), update);
+                        }).execute();
+            } else {
+                Document document = playersInformationWeekly.find(eq("uuid", uuid.toString())).first();
+                if (document == null) {
+                    playersInformationWeekly.insertOne(getNewPlayerDocument(uuid));
+                    Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Added " + name + " to weekly");
+                }
+                Document history = new Document();
+                for (String s : newInfo.keySet()) {
+                    history.append(s, newInfo.get(s));
+                }
+                Document update = new Document(operator.operator, history);
+                playersInformationWeekly.updateOne(eq("uuid", uuid.toString()), update);
+            }
+        } catch (Exception e) {
+            Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] There was an error trying to update information of player " + name);
+        }
     }
 
     public static Object getPlayerInfoWithDotNotation(Player player, String dots) {
@@ -523,7 +505,7 @@ public class DatabaseManager {
     public static void addPlayer(UUID uuid, boolean runAsync) {
         if (!connected) return;
         try {
-            if(runAsync) {
+            if (runAsync) {
                 Warlords.newChain()
                         .asyncFirst(() -> playersInformation.find(eq("uuid", uuid.toString())).first())
                         .abortIf(Objects::nonNull)
@@ -537,7 +519,7 @@ public class DatabaseManager {
                         }).execute();
             } else {
                 Document playerDocument = playersInformation.find(eq("uuid", uuid.toString())).first();
-                if(playerDocument != null) return;
+                if (playerDocument != null) return;
                 Document newPlayerDocument = getNewPlayerDocument(uuid);
                 playersInformation.insertOne(newPlayerDocument);
                 Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] " + uuid + " - " + Bukkit.getServer().getOfflinePlayer(uuid).getName() + " was added to the player database");
@@ -549,10 +531,6 @@ public class DatabaseManager {
         }
     }
 
-    public static Document getLastGame() {
-        return gamesInformation.find().sort(Sorts.descending("_id")).limit(1).first();
-    }
-
     public static void removeGameFromDatabase(DatabaseGame gameInformation) {
         try {
             Warlords.newChain()
@@ -561,6 +539,7 @@ public class DatabaseManager {
                             //updating all players, blocks this async thread, so leaderboard updated after
                             gameInformation.getPlayerInfoNegative().forEach((uuid, stringObjectHashMap) -> {
                                 updatePlayerInformation(uuid, stringObjectHashMap, FieldUpdateOperators.INCREMENT, false);
+                                updatePlayerInformationWeekly(uuid, stringObjectHashMap, FieldUpdateOperators.INCREMENT, false);
                             });
                         }
                         //removing the game from the database
@@ -576,7 +555,7 @@ public class DatabaseManager {
                     }).execute();
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println(ChatColor.GREEN + "[Warlords] Error trying to remove game stats");
+            Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Error trying to remove game stats");
         }
     }
 
@@ -589,6 +568,7 @@ public class DatabaseManager {
                             //updating all players, blocks this async thread, so leaderboard updated after
                             gameInformation.getPlayerInfo().forEach((uuid, stringObjectHashMap) -> {
                                 updatePlayerInformation(uuid, stringObjectHashMap, FieldUpdateOperators.INCREMENT, false);
+                                updatePlayerInformationWeekly(uuid, stringObjectHashMap, FieldUpdateOperators.INCREMENT, false);
                             });
                         }
                         //inserting the game to the database
@@ -599,10 +579,10 @@ public class DatabaseManager {
                         });
                         Leaderboards.addHologramLeaderboards(UUID.randomUUID().toString());
                     }).execute();
-            System.out.println(ChatColor.GREEN + "[Warlords] Added game");
+            Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Added game");
         } catch (MongoWriteException e) {
             e.printStackTrace();
-            System.out.println(ChatColor.GREEN + "[Warlords] Error trying to insert game stats");
+            Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Error trying to insert game stats");
         }
     }
 
@@ -766,8 +746,88 @@ public class DatabaseManager {
                 .append("damage", IntStream.range(0, warlordsPlayer.getDamage().length).mapToLong(i -> (long) warlordsPlayer.getDamage()[i]).boxed().collect(Collectors.toList()))
                 .append("healing", IntStream.range(0, warlordsPlayer.getHealing().length).mapToLong(i -> (long) warlordsPlayer.getHealing()[i]).boxed().collect(Collectors.toList()))
                 .append("absorbed", IntStream.range(0, warlordsPlayer.getAbsorbed().length).mapToLong(i -> (long) warlordsPlayer.getAbsorbed()[i]).boxed().collect(Collectors.toList()))
-                .append("flag_captures",warlordsPlayer.getFlagsCaptured())
+                .append("flag_captures", warlordsPlayer.getFlagsCaptured())
                 .append("flag_returns", warlordsPlayer.getFlagsReturned())
         );
+    }
+
+    private static void cacheLastGames(int amount) {
+        Warlords.newChain()
+                .asyncFirst(() -> {
+                    List<DatabaseGame> tempPreviousGames = new ArrayList<>();
+                    gamesInformation.find()
+                            .skip((int) (gamesInformation.countDocuments() - amount))
+                            .forEach((Consumer<? super Document>) game -> {
+
+                                //player information
+                                List<DatabaseGamePlayer> databaseGamePlayersBlue = new ArrayList<>();
+                                List<DatabaseGamePlayer> databaseGamePlayersRed = new ArrayList<>();
+
+                                HashMap<UUID, HashMap<String, Object>> newPlayerInfo = new HashMap<>();
+                                ArrayList<Document> players = new ArrayList<>();
+                                ArrayList<Document> playersBlue = new ArrayList<>((ArrayList<Document>) getDocumentInfoWithDotNotation(game, "players.blue"));
+                                ArrayList<Document> playersRed = new ArrayList<>((ArrayList<Document>) getDocumentInfoWithDotNotation(game, "players.red"));
+                                players.addAll(playersBlue);
+                                players.addAll(playersRed);
+
+                                for (Document document : players) {
+                                    DatabaseGamePlayer databaseGamePlayer = new DatabaseGamePlayer(document, playersBlue.contains(document) ? ChatColor.BLUE : ChatColor.RED);
+                                    int totalKills = databaseGamePlayer.getTotalKills();
+                                    int totalAssists = databaseGamePlayer.getTotalAssists();
+                                    int totalDeaths = databaseGamePlayer.getTotalDeaths();
+                                    boolean won = game.get("winner") == "BLUE" && playersBlue.contains(document) || game.get("winner") == "RED" && playersRed.contains(document);
+                                    int flagsCaptured = databaseGamePlayer.getFlagCaptures();
+                                    int flagsReturned = databaseGamePlayer.getFlagReturns();
+                                    long damage = databaseGamePlayer.getTotalDamage();
+                                    long healing = databaseGamePlayer.getTotalHealing();
+                                    long absorbed = databaseGamePlayer.getTotalAbsorbed();
+                                    String className = Classes.getClassesGroup(databaseGamePlayer.getSpec()).name.toLowerCase();
+                                    String specName = databaseGamePlayer.getSpec().toLowerCase();
+                                    HashMap<String, Object> playerInfo = new HashMap<>();
+                                    playerInfo.put("kills", databaseGamePlayer.getTotalKills());
+                                    playerInfo.put("assists", databaseGamePlayer.getTotalAssists());
+                                    playerInfo.put("deaths", databaseGamePlayer.getTotalDeaths());
+                                    playerInfo.put("wins", won ? 1 : 0);
+                                    playerInfo.put("losses", won ? 0 : 1);
+                                    playerInfo.put("flags_captured", flagsCaptured);
+                                    playerInfo.put("flags_returned", flagsReturned);
+                                    playerInfo.put("damage", damage);
+                                    playerInfo.put("healing", healing);
+                                    playerInfo.put("absorbed", absorbed);
+                                    playerInfo.put(className + ".kills", totalKills);
+                                    playerInfo.put(className + ".assists", totalAssists);
+                                    playerInfo.put(className + ".deaths", totalDeaths);
+                                    playerInfo.put(className + ".wins", won ? 1 : 0);
+                                    playerInfo.put(className + ".losses", won ? 0 : 1);
+                                    playerInfo.put(className + ".flags_captured", flagsCaptured);
+                                    playerInfo.put(className + ".flags_returned", flagsCaptured);
+                                    playerInfo.put(className + ".damage", damage);
+                                    playerInfo.put(className + ".healing", healing);
+                                    playerInfo.put(className + ".absorbed", absorbed);
+                                    playerInfo.put(className + "." + specName + ".kills", totalKills);
+                                    playerInfo.put(className + "." + specName + ".assists", totalAssists);
+                                    playerInfo.put(className + "." + specName + ".deaths", totalDeaths);
+                                    playerInfo.put(className + "." + specName + ".wins", won ? 1 : 0);
+                                    playerInfo.put(className + "." + specName + ".losses", won ? 0 : 1);
+                                    playerInfo.put(className + "." + specName + ".flags_captured", flagsCaptured);
+                                    playerInfo.put(className + "." + specName + ".flags_returned", flagsReturned);
+                                    playerInfo.put(className + "." + specName + ".damage", damage);
+                                    playerInfo.put(className + "." + specName + ".healing", healing);
+                                    playerInfo.put(className + "." + specName + ".absorbed", absorbed);
+
+                                    if (databaseGamePlayer.getTeamColor() == ChatColor.BLUE) {
+                                        databaseGamePlayersBlue.add(databaseGamePlayer);
+                                    } else {
+                                        databaseGamePlayersRed.add(databaseGamePlayer);
+                                    }
+                                    newPlayerInfo.put(UUID.fromString(databaseGamePlayer.getUuid()), playerInfo);
+                                }
+
+                                tempPreviousGames.add(new DatabaseGame(game, databaseGamePlayersBlue, databaseGamePlayersRed, newPlayerInfo, (boolean) game.get("counted")));
+                            });
+                    return tempPreviousGames;
+                }).syncLast(previousGames::addAll)
+                .execute();
+
     }
 }
