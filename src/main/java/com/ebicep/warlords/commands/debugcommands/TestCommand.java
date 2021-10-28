@@ -93,20 +93,20 @@ public class TestCommand implements CommandExecutor {
 //        Document document = new Document();
 //        document.put("last_reset", new Date());
 //        DatabaseManager.weeklyInfo.insertOne(document);
-//        String string = "October 25, 2021 10:02:00";
+//        String string = "October 25, 2021 6:02:00";
 //        try {
 //            Date date = new SimpleDateFormat("MMMM d, yyyy hh:mm:ss").parse(string);
 //            weeklyInfo.insertOne(new Document("last_reset", date));
 //        } catch (ParseException e) {
 //            e.printStackTrace();
 //        }
-
-        Date date = new Date();
-        Date oldDate = (Date) DatabaseManager.weeklyInfo.find().first().get("last_reset");
-        System.out.println(date);
-        System.out.println(oldDate);
-        System.out.println(date.getTime() - oldDate.getTime());
-
+//
+//        Date date = new Date();
+//        Date oldDate = (Date) DatabaseManager.weeklyInfo.find().first().get("last_reset");
+//        System.out.println(date);
+//        System.out.println(oldDate);
+//        System.out.println(date.getTime() - oldDate.getTime());
+//
 
 
 
