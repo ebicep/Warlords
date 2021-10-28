@@ -95,7 +95,7 @@ public class LightningBolt extends AbstractPiercingProjectileBase {
 
     @Override
     protected Location getProjectileStartingLocation(WarlordsPlayer shooter, Location startingLocation) {
-        return new LocationBuilder(startingLocation.clone()).addY(-.1).forward(.75f).get();
+        return new LocationBuilder(startingLocation.clone()).addY(-.1).forward(0).get();
     }
 
     @Override
