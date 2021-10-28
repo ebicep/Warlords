@@ -177,7 +177,7 @@ public class DatabaseManager {
             return cachedPlayerInfo.get(uuid);
         }
         if (document == null) {
-            addPlayer(uuid);
+            addPlayer(uuid, false);
             return null;
         }
         return document;
@@ -231,7 +231,7 @@ public class DatabaseManager {
     private static void loadPlayer(Document document, UUID uuid) {
         updateName(document, Bukkit.getPlayer(uuid));
         if (document == null) {
-            addPlayer(uuid);
+            addPlayer(uuid, true);
         } else {
             Player player = Bukkit.getPlayer(uuid);
             cachedPlayerInfo.put(uuid, document);
@@ -520,27 +520,33 @@ public class DatabaseManager {
                 .append("absorbed", 0L);
     }
 
-    public static void addPlayer(UUID uuid) {
+    public static void addPlayer(UUID uuid, boolean runAsync) {
         if (!connected) return;
         try {
-            Warlords.newChain()
-                    .asyncFirst(() -> playersInformation.find(eq("uuid", uuid.toString())).first())
-                    .abortIf(Objects::nonNull)
-                    .asyncFirst(() -> {
-                        Document newPlayerDocument = getNewPlayerDocument(uuid);
-                        playersInformation.insertOne(newPlayerDocument);
-                        Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] " + uuid + " - " + Bukkit.getServer().getOfflinePlayer(uuid).getName() + " was added to the player database");
-                        return newPlayerDocument;
-                    }).syncLast(doc -> {
-                        cachedPlayerInfo.put(uuid, doc);
-                    }).execute();
+            if(runAsync) {
+                Warlords.newChain()
+                        .asyncFirst(() -> playersInformation.find(eq("uuid", uuid.toString())).first())
+                        .abortIf(Objects::nonNull)
+                        .asyncFirst(() -> {
+                            Document newPlayerDocument = getNewPlayerDocument(uuid);
+                            playersInformation.insertOne(newPlayerDocument);
+                            Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] " + uuid + " - " + Bukkit.getServer().getOfflinePlayer(uuid).getName() + " was added to the player database");
+                            return newPlayerDocument;
+                        }).syncLast(doc -> {
+                            cachedPlayerInfo.put(uuid, doc);
+                        }).execute();
+            } else {
+                Document playerDocument = playersInformation.find(eq("uuid", uuid.toString())).first();
+                if(playerDocument != null) return;
+                Document newPlayerDocument = getNewPlayerDocument(uuid);
+                playersInformation.insertOne(newPlayerDocument);
+                Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] " + uuid + " - " + Bukkit.getServer().getOfflinePlayer(uuid).getName() + " was added to the player database");
+                Warlords.newChain().sync(() -> cachedPlayerInfo.put(uuid, newPlayerDocument)).execute();
+            }
+
         } catch (MongoWriteException e) {
             Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] There was an error trying to add player " + Bukkit.getServer().getOfflinePlayer(uuid).getName());
         }
-    }
-
-    public static void addPlayer(Player player) {
-        addPlayer(player.getUniqueId());
     }
 
     public static Document getLastGame() {

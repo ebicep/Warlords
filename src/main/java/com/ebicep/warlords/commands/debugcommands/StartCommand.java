@@ -92,7 +92,6 @@ public class StartCommand implements TabExecutor {
         }
         //Collections.shuffle(people);
         for (Player player : people) {
-            DatabaseManager.addPlayer(player);
             player.getInventory().clear();
 
             player.setAllowFlight(false);

@@ -87,22 +87,26 @@ public class CustomScoreboard {
             scoreboard.getObjective("health").unregister();
             health = null;
         }
-        giveNewSideBar(true,
-                new CustomScoreboardPair("", ""),
-                new CustomScoreboardPair("Kills: ", ChatColor.GREEN + Utils.addCommaAndRound(((Integer) DatabaseManager.getPlayerInfoWithDotNotation(player, "kills")))),
-                new CustomScoreboardPair("Assists: ", ChatColor.GREEN + Utils.addCommaAndRound(((Integer) DatabaseManager.getPlayerInfoWithDotNotation(player, "assists")))),
-                new CustomScoreboardPair("Deaths: ", ChatColor.GREEN + Utils.addCommaAndRound(((Integer) DatabaseManager.getPlayerInfoWithDotNotation(player, "deaths")))),
-                new CustomScoreboardPair(" ", ""),
-                new CustomScoreboardPair("Wins: ", ChatColor.GREEN + Utils.addCommaAndRound(((Integer) DatabaseManager.getPlayerInfoWithDotNotation(player, "wins")))),
-                new CustomScoreboardPair("Losses: ", ChatColor.GREEN + Utils.addCommaAndRound(((Integer) DatabaseManager.getPlayerInfoWithDotNotation(player, "losses")))),
-                new CustomScoreboardPair("  ", ""),
-                new CustomScoreboardPair("Damage: ", ChatColor.RED + Utils.addCommaAndRound(((Number) DatabaseManager.getPlayerInfoWithDotNotation(player, "damage")).doubleValue())),
-                new CustomScoreboardPair("Healing: ", ChatColor.DARK_GREEN + Utils.addCommaAndRound(((Number) DatabaseManager.getPlayerInfoWithDotNotation(player, "healing")).doubleValue())),
-                new CustomScoreboardPair("Absorbed: ", ChatColor.GOLD + Utils.addCommaAndRound(((Number) DatabaseManager.getPlayerInfoWithDotNotation(player, "absorbed")).doubleValue())),
-                new CustomScoreboardPair("    ", ""),
-                new CustomScoreboardPair("    ", ""),
-                new CustomScoreboardPair("          ", "§e§lUpdate"),
-                new CustomScoreboardPair("         ", ChatColor.GREEN.toString() + ChatColor.BOLD + Warlords.VERSION)
-        );
+        Warlords.newChain()
+                .async(() -> DatabaseManager.addPlayer(player.getUniqueId(), false))
+                .sync(() -> {
+                    giveNewSideBar(true,
+                            new CustomScoreboardPair("", ""),
+                            new CustomScoreboardPair("Kills: ", ChatColor.GREEN + Utils.addCommaAndRound(((Integer) DatabaseManager.getPlayerInfoWithDotNotation(player, "kills")))),
+                            new CustomScoreboardPair("Assists: ", ChatColor.GREEN + Utils.addCommaAndRound(((Integer) DatabaseManager.getPlayerInfoWithDotNotation(player, "assists")))),
+                            new CustomScoreboardPair("Deaths: ", ChatColor.GREEN + Utils.addCommaAndRound(((Integer) DatabaseManager.getPlayerInfoWithDotNotation(player, "deaths")))),
+                            new CustomScoreboardPair(" ", ""),
+                            new CustomScoreboardPair("Wins: ", ChatColor.GREEN + Utils.addCommaAndRound(((Integer) DatabaseManager.getPlayerInfoWithDotNotation(player, "wins")))),
+                            new CustomScoreboardPair("Losses: ", ChatColor.GREEN + Utils.addCommaAndRound(((Integer) DatabaseManager.getPlayerInfoWithDotNotation(player, "losses")))),
+                            new CustomScoreboardPair("  ", ""),
+                            new CustomScoreboardPair("Damage: ", ChatColor.RED + Utils.addCommaAndRound(((Number) DatabaseManager.getPlayerInfoWithDotNotation(player, "damage")).doubleValue())),
+                            new CustomScoreboardPair("Healing: ", ChatColor.DARK_GREEN + Utils.addCommaAndRound(((Number) DatabaseManager.getPlayerInfoWithDotNotation(player, "healing")).doubleValue())),
+                            new CustomScoreboardPair("Absorbed: ", ChatColor.GOLD + Utils.addCommaAndRound(((Number) DatabaseManager.getPlayerInfoWithDotNotation(player, "absorbed")).doubleValue())),
+                            new CustomScoreboardPair("    ", ""),
+                            new CustomScoreboardPair("    ", ""),
+                            new CustomScoreboardPair("          ", "§e§lUpdate"),
+                            new CustomScoreboardPair("         ", ChatColor.GREEN.toString() + ChatColor.BOLD + Warlords.VERSION)
+                    );
+                }).execute();
     }
 }

@@ -156,6 +156,7 @@ public class WarlordsEvents implements Listener {
         player.setScoreboard(Warlords.playerScoreboards.get(player.getUniqueId()).getScoreboard());
 
         joinInteraction(player);
+
         Bukkit.getOnlinePlayers().forEach(p -> {
             PacketUtils.sendTabHF(p,
                     ChatColor.AQUA + "     Welcome to " + ChatColor.YELLOW + ChatColor.BOLD + "Warlords 2.0     ",
