@@ -74,7 +74,7 @@ public class LightningBolt extends AbstractPiercingProjectileBase {
 
         WarlordsPlayer wp = projectile.getShooter();
         for (WarlordsPlayer warlordsPlayer : PlayerFilter
-                .entitiesAround(currentLocation, 3, 3, 3)
+                .entitiesAround(currentLocation, 2.6, 2.6, 2.6)
                 .aliveEnemiesOf(wp)
                 .excluding(projectile.getHit())
         ) {
