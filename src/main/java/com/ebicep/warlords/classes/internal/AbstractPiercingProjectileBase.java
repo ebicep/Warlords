@@ -30,7 +30,7 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
     protected final int maxTicks;
     protected final double maxDistance;
     protected final boolean hitTeammates;
-    protected final float playerHitbox = 0.7f;
+    protected final float playerHitbox = 0.75f;
 
     public AbstractPiercingProjectileBase(String name, float minDamageHeal, float maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier, double projectileSpeed, double maxDistance, boolean hitTeammates) {
         super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
