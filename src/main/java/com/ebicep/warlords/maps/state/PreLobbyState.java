@@ -33,12 +33,6 @@ public class PreLobbyState implements State, TimerDebugAble {
     public void begin() {
         timer = game.getMap().getCountdownTimerInTicks();
         Gates.changeGates(game.getMap(), false);
-        game.forEachOnlinePlayer((player, team) -> {
-            giveLobbyScoreboard(true, player);
-            game.forEachOnlinePlayer((player2, team1) -> {
-                player.showPlayer(player2);
-            });
-        });
     }
 
     @Override

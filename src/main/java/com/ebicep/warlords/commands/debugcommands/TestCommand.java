@@ -108,8 +108,8 @@ public class TestCommand implements CommandExecutor {
 //        System.out.println(date.getTime() - oldDate.getTime());
 //
 
-
-
+        System.out.println(Warlords.game.getPlayers());
+        System.out.println(Warlords.game.getState());
         sender.sendMessage(ChatColor.GREEN + "DID THE THING");
         return true;
     }
