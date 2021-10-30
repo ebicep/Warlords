@@ -23,6 +23,8 @@ public class MenuEventListener implements Listener {
                 .filter(e -> e.value() instanceof AbstractMenuBase)
                 .findAny();
         menu.ifPresent(metadataValue -> ((AbstractMenuBase) metadataValue.value()).doOnClickAction(evt));
+        System.out.println(evt.getInventory().getSize());
+        System.out.println(evt.getClickedInventory().getSize());
 
     }
 

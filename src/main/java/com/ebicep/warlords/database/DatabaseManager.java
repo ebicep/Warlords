@@ -47,6 +47,7 @@ public class DatabaseManager {
     public static MongoCollection<Document> playersInformation;
     public static MongoCollection<Document> playersInformationWeekly;
     public static MongoCollection<Document> weeklyInfo;
+    public static MongoCollection<Document> weeklyLeaderboards;
     public static MongoCollection<Document> gamesInformation;
     public static HashMap<UUID, Document> cachedPlayerInfo = new HashMap<>();
     public static HashMap<String, Long> cachedTotalKeyValues = new HashMap<>();
@@ -71,6 +72,7 @@ public class DatabaseManager {
                     playersInformation = warlordsPlayersDatabase.getCollection("Players_Information");
                     playersInformationWeekly = warlordsPlayersDatabase.getCollection("Players_Information_Weekly");
                     weeklyInfo = warlordsPlayersDatabase.getCollection("Weekly_Info");
+                    weeklyLeaderboards = warlordsPlayersDatabase.getCollection("Weekly_Leaderboards");
                     gamesInformation = warlordsGamesDatabase.getCollection("Games_Information");
 
                     Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Database Connected");
@@ -87,12 +89,21 @@ public class DatabaseManager {
 
                         System.out.println(timeDiff / 60000);
                         if (timeDiff > 0 && timeDiff / (1000 * 60) > 10000) {
-                            //clearing weekly
-                            playersInformationWeekly.deleteMany(new Document());
-                            //updating date to current
-                            weeklyInfo.updateOne(eq("last_reset", lastReset), new Document("$set", new Document("last_reset", current)));
+                            String sharedChainName = UUID.randomUUID().toString();
+                            //caching lb
+                            Leaderboards.addHologramLeaderboards(sharedChainName);
+                            Warlords.newSharedChain(sharedChainName)
+                                    .async(() -> {
+                                        //adding new document with top weekly players
 
-                            Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Weekly player information reset");
+                                        //clearing weekly
+                                        playersInformationWeekly.deleteMany(new Document());
+                                        //updating date to current
+                                        weeklyInfo.updateOne(eq("last_reset", lastReset), new Document("$set", new Document("last_reset", current)));
+
+                                    }).sync(() -> {
+                                        Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Weekly player information reset");
+                                    }).execute();
                         }
                     }
 

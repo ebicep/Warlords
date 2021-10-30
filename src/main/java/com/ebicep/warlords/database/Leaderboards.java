@@ -61,27 +61,74 @@ public class Leaderboards {
         leaderboardLocations.put("damage", damageLB);
         leaderboardLocations.put("healing", healingLB);
         leaderboardLocations.put("absorbed", absorbedLB);
+    }
 
-        new BukkitRunnable() {
+    public static Document getTopPlayersOnLeaderboard() {
+        Document document = new Document("date", new Date());
+        leaderboardLocations.keySet().forEach(key -> {
+            appendTop(document, key);
+        });
+        appendTop(document, "plays", Integer.class, "wins", "losses");
+        appendTop(document, "dhp", Long.class, "damage", "healing", "absorbed");
+        return document;
+    }
 
-            @Override
-            public void run() {
-                //hiding players near game holograms
-                Bukkit.getWorlds().get(0).getPlayers().forEach(player -> {
-                    Bukkit.getWorlds().get(0).getPlayers().forEach(otherPlayer -> {
-                        if (player.getLocation().distanceSquared(lastGameLocation) < 12 * 12) {
-                            if (otherPlayer.canSee(player)) {
-                                otherPlayer.hidePlayer(player);
-                            }
-                        } else {
-                            if (!otherPlayer.canSee(player)) {
-                                otherPlayer.showPlayer(player);
-                            }
-                        }
-                    });
-                });
+    private static void appendTop(Document document, String key, Class subKeyClass, String... subKeys) {
+        long top = 0;
+        List<Document> topDocuments = new ArrayList<>();
+        for (Document d : cachedSortedPlayersWeekly.get("wins")) {
+            long currentTop = 0;
+            for (String subKey : subKeys) {
+                if (d.get(subKey) instanceof Integer) {
+                    currentTop += (int) d.get(subKey);
+                } else if (d.get(subKey) instanceof Long) {
+                    currentTop += (Long) d.get(subKey);
+                }
             }
-        }.runTaskTimer(Warlords.getInstance(), 20, 10);
+            if (currentTop > top) {
+                top = currentTop;
+            }
+
+            if (subKeyClass == Integer.class) {
+                topDocuments.add(new Document("name", d.get("name")).append(key, (int) currentTop));
+            } else {
+                topDocuments.add(new Document("name", d.get("name")).append(key, currentTop));
+            }
+        }
+
+        if (subKeyClass == Integer.class) {
+            document.append(key, new Document("amount", (int) top).append("players", getHighestPlayers(key, (int) top, topDocuments)));
+        } else {
+            document.append(key, new Document("amount", top).append("players", getHighestPlayers(key, top, topDocuments)));
+        }
+    }
+
+    private static void appendTop(Document document, String key) {
+        Object highest = getHighest(key);
+        if (highest != null) {
+            document.append(key, new Document("amount", highest).append("players", getHighestPlayers(key, highest, cachedSortedPlayersWeekly.get(key))));
+        }
+    }
+
+    private static Object getHighest(String key) {
+        if (cachedSortedPlayersWeekly.get(key).stream().findFirst().isPresent()) {
+            return cachedSortedPlayersWeekly.get(key).stream().findFirst().get().get(key);
+        } else {
+            return null;
+        }
+    }
+
+    private static String getHighestPlayers(String key, Object highest, List<Document> documentList) {
+        StringBuilder topPlayers = new StringBuilder();
+        for (Document document : documentList) {
+            if (document.get(key).equals(highest)) {
+                topPlayers.append(document.get("name")).append(",");
+            }
+        }
+        if (topPlayers.length() > 0) {
+            topPlayers.setLength(topPlayers.length() - 1);
+        }
+        return topPlayers.toString();
     }
 
     public static void addHologramLeaderboards(String sharedChainName) {
