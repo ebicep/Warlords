@@ -490,7 +490,8 @@ public class WarlordsEvents implements Listener {
                                     ChatColor.DARK_GRAY + "][" +
                                     playerSettings.getSelectedClass().specType.getColoredSymbol() +
                                     ChatColor.DARK_GRAY + "] " +
-                                    ChatColor.AQUA + "%1$s" +
+                                    (player.isOp() ? ChatColor.RED + "[C] " : "") +
+                                    (player.isOp() ? ChatColor.RED : ChatColor.AQUA) + "%1$s" +
                                     ChatColor.WHITE + ": %2$s"
                             );
                             e.getRecipients().removeIf(Warlords::hasPlayer);
@@ -506,7 +507,8 @@ public class WarlordsEvents implements Listener {
                                 Warlords.getPlayerSettings(wp.getUuid()).getSelectedClass().specType.getColoredSymbol() +
                                 ChatColor.DARK_GRAY + "] " +
                                 (wp.isDeath() ? ChatColor.GRAY + "[SPECTATOR] " : "") +
-                                ChatColor.AQUA + "%1$s" +
+                                (player.isOp() ? ChatColor.RED + "[C] " : "") +
+                                (player.isOp() ? ChatColor.RED : ChatColor.AQUA) + "%1$s" +
                                 ChatColor.WHITE + ": %2$s"
                         );
                         if (!(wp.getGame().getState() instanceof EndState)) {
@@ -516,7 +518,7 @@ public class WarlordsEvents implements Listener {
                     case PARTY:
                         if (Warlords.partyManager.getPartyFromAny(uuid).isPresent()) {
                             e.setFormat(ChatColor.BLUE + "Party" + ChatColor.DARK_GRAY + " > " +
-                                    ChatColor.AQUA + "%1$s" +
+                                    (player.isOp() ? ChatColor.RED : ChatColor.AQUA) + "%1$s" +
                                     ChatColor.WHITE + ": %2$s"
                             );
                             e.getRecipients().retainAll(Warlords.partyManager.getPartyFromAny(uuid).get().getAllPartyPeoplePlayerOnline());
