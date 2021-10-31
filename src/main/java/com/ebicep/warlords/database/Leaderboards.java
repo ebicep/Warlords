@@ -7,6 +7,9 @@ import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import com.gmail.filoghost.holographicdisplays.api.line.TextLine;
 import com.google.common.collect.Lists;
+import com.mongodb.client.model.Aggregates;
+import com.mongodb.client.model.Field;
+import com.mongodb.client.model.Filters;
 import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -17,7 +20,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.util.*;
 
 import static com.ebicep.warlords.database.DatabaseManager.*;
-import static com.mongodb.client.model.Aggregates.sort;
+import static com.mongodb.client.model.Aggregates.*;
 import static com.mongodb.client.model.Sorts.descending;
 
 public class Leaderboards {
