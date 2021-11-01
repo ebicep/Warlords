@@ -33,7 +33,7 @@ public enum Weapons {
     STONE_MALLET("Stone Mallet", new ItemStack(Material.GOLD_SPADE), RARE),
     CUDGEL("Cudgel", new ItemStack(Material.COOKED_RABBIT), RARE),
     VENOMSTRIKE("Venomstrike", new ItemStack(Material.GOLD_AXE), RARE),
-    HALBRED("Halbred", new ItemStack(Material.POTATO_ITEM), RARE),
+    HALBERD("Halberd", new ItemStack(Material.POTATO_ITEM), RARE),
     DEMONBLADE("Demonblade", new ItemStack(Material.IRON_AXE), RARE),
 
     // epic

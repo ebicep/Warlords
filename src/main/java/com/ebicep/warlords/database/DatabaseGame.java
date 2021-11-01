@@ -4,10 +4,14 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.util.Utils;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
+import com.gmail.filoghost.holographicdisplays.api.line.TextLine;
 import org.bson.Document;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 
 import java.util.*;
+
+import static com.ebicep.warlords.database.DatabaseManager.previousGames;
 
 public class DatabaseGame {
 
@@ -17,6 +21,8 @@ public class DatabaseGame {
     private final HashMap<UUID, HashMap<String, Object>> playerInfo;
     private final HashMap<UUID, HashMap<String, Object>> playerInfoNegative = new HashMap<>();
     private final boolean updatePlayerStats;
+
+    public static final String[] specsOrdered = {"Pyromancer", "Cryomancer", "Aquamancer", "Berserker", "Defender", "Revenant", "Avenger", "Crusader", "Protector", "Thunderlord", "Spiritguard", "Earthwarden"};
 
     private List<Hologram> holograms = new ArrayList<>();
 
@@ -133,7 +139,7 @@ public class DatabaseGame {
         List<DatabaseGamePlayer> databaseGamePlayers = getDatabasePlayers();
         List<String> players = new ArrayList<>();
 
-        for (String s : Leaderboards.specsOrdered) {
+        for (String s : specsOrdered) {
             StringBuilder playerSpecs = new StringBuilder(ChatColor.AQUA + s).append(": ");
             final boolean[] add = {false};
             databaseGamePlayers.stream().filter(o -> o.getSpec().equals(s)).forEach(p -> {
@@ -176,8 +182,85 @@ public class DatabaseGame {
         this.holograms = holograms;
     }
 
+    public static void setGameHologramVisibility(Player player) {
+        if (!Leaderboards.playerGameHolograms.containsKey(player.getUniqueId()) || Leaderboards.playerGameHolograms.get(player.getUniqueId()) == null) {
+            Leaderboards.playerGameHolograms.put(player.getUniqueId(), previousGames.size() - 1);
+        }
+        int selectedGame = Leaderboards.playerGameHolograms.get(player.getUniqueId());
+        for (int i = 0; i < previousGames.size(); i++) {
+            List<Hologram> gameHolograms = previousGames.get(i).getHolograms();
+            if (i == selectedGame) {
+                gameHolograms.forEach(hologram -> hologram.getVisibilityManager().showTo(player));
+            } else {
+                gameHolograms.forEach(hologram -> hologram.getVisibilityManager().hideTo(player));
+            }
+        }
+
+        createGameSwitcherHologram(player);
+    }
+
+    private static void createGameSwitcherHologram(Player player) {
+        HologramsAPI.getHolograms(Warlords.getInstance()).stream()
+                .filter(h -> h.getVisibilityManager().isVisibleTo(player) && h.getLocation().equals(Leaderboards.gameSwitchLocation))
+                .forEach(Hologram::delete);
+
+        Hologram gameSwitcher = HologramsAPI.createHologram(Warlords.getInstance(), Leaderboards.gameSwitchLocation);
+        gameSwitcher.appendTextLine(ChatColor.AQUA.toString() + ChatColor.UNDERLINE + "Last " + previousGames.size() + " Games");
+        gameSwitcher.appendTextLine("");
+
+        int selectedGame = Leaderboards.playerGameHolograms.get(player.getUniqueId());
+        int gameBefore = getGameBefore(selectedGame);
+        int gameAfter = getGameAfter(selectedGame);
+
+        TextLine beforeLine;
+        TextLine afterLine;
+        if (gameBefore == previousGames.size() - 1) {
+            beforeLine = gameSwitcher.appendTextLine(ChatColor.GRAY + "Latest Game");
+        } else {
+            beforeLine = gameSwitcher.appendTextLine(ChatColor.GRAY.toString() + (gameBefore + 1) + ". " + previousGames.get(gameBefore).getDate());
+        }
+        if (selectedGame == previousGames.size() - 1) {
+            gameSwitcher.appendTextLine(ChatColor.GREEN + "Latest Game");
+        } else {
+            gameSwitcher.appendTextLine(ChatColor.GREEN.toString() + (selectedGame + 1) + ". " + previousGames.get(selectedGame).getDate());
+        }
+
+        if (gameAfter == previousGames.size() - 1) {
+            afterLine = gameSwitcher.appendTextLine(ChatColor.GRAY + "Latest Game");
+        } else {
+            afterLine = gameSwitcher.appendTextLine(ChatColor.GRAY.toString() + (gameAfter + 1) + ". " + previousGames.get(gameAfter).getDate());
+        }
+
+        beforeLine.setTouchHandler((clicker) -> {
+            Leaderboards.playerGameHolograms.put(player.getUniqueId(), gameBefore);
+            setGameHologramVisibility(player);
+        });
+
+        afterLine.setTouchHandler((clicker) -> {
+            Leaderboards.playerGameHolograms.put(player.getUniqueId(), gameAfter);
+            setGameHologramVisibility(player);
+        });
+
+        gameSwitcher.getVisibilityManager().setVisibleByDefault(false);
+        gameSwitcher.getVisibilityManager().showTo(player);
+    }
+
+    private static int getGameBefore(int currentGame) {
+        if (currentGame == 0) {
+            return previousGames.size() - 1;
+        }
+        return currentGame - 1;
+    }
+
+    private static int getGameAfter(int currentGame) {
+        if (currentGame == previousGames.size() - 1) {
+            return 0;
+        }
+        return currentGame + 1;
+    }
+
     public List<Hologram> getHolograms() {
-        if(holograms.isEmpty()) {
+        if (holograms.isEmpty()) {
             createHolograms();
         }
         return holograms;

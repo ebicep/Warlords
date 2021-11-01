@@ -72,58 +72,113 @@ public class Leaderboards {
     }
 
     public static Document getTopPlayersOnLeaderboard() {
-        Document document = new Document("date", new Date());
-        leaderboardLocations.keySet().forEach(key -> {
-            appendTop(document, key);
-        });
-        appendTop(document, "plays", Integer.class, "wins", "losses");
-        appendTop(document, "dhp", Long.class, "damage", "healing", "absorbed");
+        Document document = new Document("date", new Date()).append("total_players", cachedSortedPlayersWeekly.get("wins").size());
+        leaderboardLocations.keySet().forEach(key -> appendTop(document, key));
+        appendTop(document, "plays");
+        appendTop(document, "dhp");
         return document;
     }
 
-    private static void appendTop(Document document, String key, Class subKeyClass, String... subKeys) {
-        long top = 0;
-        List<Document> topDocuments = new ArrayList<>();
+    private static void addCalculatedStatsToWeeklyCache() {
+        List<Document> plays = new ArrayList<>();
+        for (Document d : cachedSortedPlayersWeekly.get("wins")) {
+            int currentTop = 0;
+            currentTop += d.getInteger("wins");
+            currentTop += d.getInteger("losses");
+            plays.add(new Document("name", d.get("name")).append("plays", currentTop));
+        }
+
+        List<Document> dhp = new ArrayList<>();
         for (Document d : cachedSortedPlayersWeekly.get("wins")) {
             long currentTop = 0;
-            for (String subKey : subKeys) {
-                if (d.get(subKey) instanceof Integer) {
-                    currentTop += (int) d.get(subKey);
-                } else if (d.get(subKey) instanceof Long) {
-                    currentTop += (Long) d.get(subKey);
+            currentTop += d.getLong("damage");
+            currentTop += d.getLong("healing");
+            currentTop += d.getLong("absorbed");
+            dhp.add(new Document("name", d.get("name")).append("dhp", currentTop));
+        }
+
+        cachedSortedPlayersWeekly.put("plays", plays);
+        cachedSortedPlayersWeekly.put("dhp", dhp);
+    }
+
+    public static void appendTop(Document document, String key) {
+        Object[] highest = new Object[3];
+        Object total;
+        if (key.equals("wins") || key.equals("losses") || key.equals("kills") || key.equals("assists") || key.equals("deaths") || key.equals("plays")) {
+            int[] highestThreeInt = getHighestThreeInt(key);
+            highest[0] = highestThreeInt[0];
+            highest[1] = highestThreeInt[1];
+            highest[2] = highestThreeInt[2];
+            total = cachedSortedPlayersWeekly.get(key).stream().mapToInt(d -> d.getInteger(key)).sum();
+        } else {
+            long[] highestThreeLong = getHighestThreeLong(key);
+            highest[0] = highestThreeLong[0];
+            highest[1] = highestThreeLong[1];
+            highest[2] = highestThreeLong[2];
+            total = cachedSortedPlayersWeekly.get(key).stream().mapToLong(d -> d.getLong(key)).sum();
+        }
+        List<Document> documentList = new ArrayList<>();
+        documentList.add(new Document("players", getHighestPlayers(key, highest[0], cachedSortedPlayersWeekly.get(key))).append("amount", highest[0]));
+        documentList.add(new Document("players", getHighestPlayers(key, highest[1], cachedSortedPlayersWeekly.get(key))).append("amount", highest[1]));
+        documentList.add(new Document("players", getHighestPlayers(key, highest[2], cachedSortedPlayersWeekly.get(key))).append("amount", highest[2]));
+        document.append(key, new Document("total", total).append("top", documentList));
+    }
+
+    public static int[] getHighestThreeInt(String key) {
+        return findThreeLargestInt(cachedSortedPlayersWeekly.get(key).stream()
+                .sorted((d1, d2) -> d2.getInteger(key).compareTo(d1.getInteger(key)))
+                .mapToInt(d -> d.getInteger(key))
+                .toArray());
+    }
+
+    public static long[] getHighestThreeLong(String key) {
+        return findThreeLargestLong(cachedSortedPlayersWeekly.get(key).stream()
+                .sorted((d1, d2) -> d2.getLong(key).compareTo(d1.getLong(key)))
+                .mapToLong(d -> d.getLong(key))
+                .toArray());
+    }
+
+    private static int[] findThreeLargestInt(int[] arr) {
+        int[] output = new int[3];
+
+        Arrays.sort(arr);
+        int n = arr.length;
+        int check = 0, count = 1;
+
+        for (int i = 1; i <= n; i++) {
+            if (count < 4) {
+                if (check != arr[n - i]) {
+                    output[count - 1] = arr[n - i];
+                    check = arr[n - i];
+                    count++;
                 }
-            }
-            if (currentTop > top) {
-                top = currentTop;
-            }
-
-            if (subKeyClass == Integer.class) {
-                topDocuments.add(new Document("name", d.get("name")).append(key, (int) currentTop));
             } else {
-                topDocuments.add(new Document("name", d.get("name")).append(key, currentTop));
+                break;
             }
         }
-
-        if (subKeyClass == Integer.class) {
-            document.append(key, new Document("amount", (int) top).append("players", getHighestPlayers(key, (int) top, topDocuments)));
-        } else {
-            document.append(key, new Document("amount", top).append("players", getHighestPlayers(key, top, topDocuments)));
-        }
+        return output;
     }
 
-    private static void appendTop(Document document, String key) {
-        Object highest = getHighest(key);
-        if (highest != null) {
-            document.append(key, new Document("amount", highest).append("players", getHighestPlayers(key, highest, cachedSortedPlayersWeekly.get(key))));
-        }
-    }
+    private static long[] findThreeLargestLong(long[] arr) {
+        long[] output = new long[3];
 
-    private static Object getHighest(String key) {
-        if (cachedSortedPlayersWeekly.get(key).stream().findFirst().isPresent()) {
-            return cachedSortedPlayersWeekly.get(key).stream().findFirst().get().get(key);
-        } else {
-            return null;
+        Arrays.sort(arr);
+        int n = arr.length;
+        long check = 0;
+        int count = 1;
+
+        for (int i = 1; i <= n; i++) {
+            if (count < 4) {
+                if (check != arr[n - i]) {
+                    output[count - 1] = arr[n - i];
+                    check = arr[n - i];
+                    count++;
+                }
+            } else {
+                break;
+            }
         }
+        return output;
     }
 
     private static String getHighestPlayers(String key, Object highest, List<Document> documentList) {
@@ -142,7 +197,7 @@ public class Leaderboards {
     public static void addHologramLeaderboards(String sharedChainName) {
         if (DatabaseManager.connected && Warlords.holographicDisplaysEnabled) {
             HologramsAPI.getHolograms(Warlords.getInstance()).forEach(hologram -> {
-                if(!gameHologramLocations.contains(hologram.getLocation())) {
+                if (!gameHologramLocations.contains(hologram.getLocation())) {
                     hologram.delete();
                 }
             });
@@ -150,7 +205,6 @@ public class Leaderboards {
             weeklyHolograms.clear();
             if (enabled) {
                 Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Adding Holograms");
-
                 //caching all sorted players for each lifetime and weekly
                 leaderboardLocations.forEach((s, location) -> {
                     Warlords.newSharedChain(sharedChainName)
@@ -182,9 +236,11 @@ public class Leaderboards {
                     System.out.println("Setting Hologram Visibility");
                     Bukkit.getOnlinePlayers().forEach(player -> {
                         setLeaderboardHologramVisibility(player);
-                        setGameHologramVisibility(player);
+                        DatabaseGame.setGameHologramVisibility(player);
                     });
                 }).execute();
+
+                Warlords.newSharedChain(sharedChainName).sync(Leaderboards::addCalculatedStatsToWeeklyCache).execute();
             }
         }
     }
@@ -324,85 +380,6 @@ public class Leaderboards {
             System.out.println(ChatColor.GREEN + "[Warlords] Problem getting " + key);
             return null;
         }
-    }
-
-    public static final String[] specsOrdered = {"Pyromancer", "Cryomancer", "Aquamancer", "Berserker", "Defender", "Revenant", "Avenger", "Crusader", "Protector", "Thunderlord", "Spiritguard", "Earthwarden"};
-
-    public static void setGameHologramVisibility(Player player) {
-        if (!playerGameHolograms.containsKey(player.getUniqueId()) || playerGameHolograms.get(player.getUniqueId()) == null) {
-            playerGameHolograms.put(player.getUniqueId(), previousGames.size() - 1);
-        }
-        int selectedGame = playerGameHolograms.get(player.getUniqueId());
-        for (int i = 0; i < previousGames.size(); i++) {
-            List<Hologram> gameHolograms = previousGames.get(i).getHolograms();
-            if(i == selectedGame) {
-                gameHolograms.forEach(hologram -> hologram.getVisibilityManager().showTo(player));
-            } else {
-                gameHolograms.forEach(hologram -> hologram.getVisibilityManager().hideTo(player));
-            }
-        }
-
-        createGameSwitcherHologram(player);
-    }
-
-    private static void createGameSwitcherHologram(Player player) {
-        HologramsAPI.getHolograms(Warlords.getInstance()).stream()
-                .filter(h -> h.getVisibilityManager().isVisibleTo(player) && h.getLocation().equals(gameSwitchLocation))
-                .forEach(Hologram::delete);
-
-        Hologram gameSwitcher = HologramsAPI.createHologram(Warlords.getInstance(), gameSwitchLocation);
-        gameSwitcher.appendTextLine(ChatColor.AQUA.toString() + ChatColor.UNDERLINE + "Last " + previousGames.size() + " Games");
-        gameSwitcher.appendTextLine("");
-
-        int selectedGame = playerGameHolograms.get(player.getUniqueId());
-        int gameBefore = getGameBefore(selectedGame);
-        int gameAfter = getGameAfter(selectedGame);
-
-        TextLine beforeLine;
-        TextLine afterLine;
-        if (gameBefore == previousGames.size() - 1) {
-            beforeLine = gameSwitcher.appendTextLine(ChatColor.GRAY + "Latest Game");
-        } else {
-            beforeLine = gameSwitcher.appendTextLine(ChatColor.GRAY.toString() + (gameBefore + 1) + ". " + previousGames.get(gameBefore).getDate());
-        }
-        if (selectedGame == previousGames.size() - 1) {
-            gameSwitcher.appendTextLine(ChatColor.GREEN + "Latest Game");
-        } else {
-            gameSwitcher.appendTextLine(ChatColor.GREEN.toString() + (selectedGame + 1) + ". " + previousGames.get(selectedGame).getDate());
-        }
-
-        if (gameAfter == previousGames.size() - 1) {
-            afterLine = gameSwitcher.appendTextLine(ChatColor.GRAY + "Latest Game");
-        } else {
-            afterLine = gameSwitcher.appendTextLine(ChatColor.GRAY.toString() + (gameAfter + 1) + ". " + previousGames.get(gameAfter).getDate());
-        }
-
-        beforeLine.setTouchHandler((clicker) -> {
-            playerGameHolograms.put(player.getUniqueId(), gameBefore);
-            setGameHologramVisibility(player);
-        });
-
-        afterLine.setTouchHandler((clicker) -> {
-            playerGameHolograms.put(player.getUniqueId(), gameAfter);
-            setGameHologramVisibility(player);
-        });
-
-        gameSwitcher.getVisibilityManager().setVisibleByDefault(false);
-        gameSwitcher.getVisibilityManager().showTo(player);
-    }
-
-    private static int getGameBefore(int currentGame) {
-        if (currentGame == 0) {
-            return previousGames.size() - 1;
-        }
-        return currentGame - 1;
-    }
-
-    private static int getGameAfter(int currentGame) {
-        if (currentGame == previousGames.size() - 1) {
-            return 0;
-        }
-        return currentGame + 1;
     }
 
 }

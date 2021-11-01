@@ -6,6 +6,7 @@ import com.ebicep.warlords.classes.abilties.IceBarrier;
 import com.ebicep.warlords.classes.abilties.Soulbinding;
 import com.ebicep.warlords.classes.abilties.UndyingArmy;
 import com.ebicep.warlords.classes.shaman.specs.spiritguard.Spiritguard;
+import com.ebicep.warlords.database.DatabaseGame;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.Leaderboards;
 import com.ebicep.warlords.maps.Team;
@@ -146,7 +147,7 @@ public class WarlordsEvents implements Listener {
                 })
                 .sync(() -> Leaderboards.setLeaderboardHologramVisibility(player))
                 .execute();
-        Leaderboards.setGameHologramVisibility(player);
+        DatabaseGame.setGameHologramVisibility(player);
 
         //scoreboard
         if(!Warlords.playerScoreboards.containsKey(player.getUniqueId()) || Warlords.playerScoreboards.get(player.getUniqueId()) == null) {
