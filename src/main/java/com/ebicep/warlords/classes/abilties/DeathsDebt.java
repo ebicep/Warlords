@@ -210,7 +210,11 @@ public class DeathsDebt extends AbstractTotemBase {
     }
 
     public void setTimeLeftRespite(double timeLeftRespite) {
-        this.timeLeftRespite = timeLeftRespite;
+        if(timeLeftRespite > 6) {
+            this.timeLeftRespite = 6;
+        } else {
+            this.timeLeftRespite = timeLeftRespite;
+        }
     }
 
     public double getTimeLeftDebt() {

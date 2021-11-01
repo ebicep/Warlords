@@ -144,7 +144,7 @@ public class CooldownManager {
         cooldowns.add(cooldown);
     }
 
-    public void incrementCooldown(Cooldown cooldown, int amount, int maxTime) {
+    public void incrementCooldown(Cooldown cooldown, float amount, float maxTime) {
         if(hasCooldownFromName(cooldown.getName())) {
             Cooldown cd = getCooldownFromName(cooldown.getName()).get(0);
             if(cd.getTimeLeft() + amount >= maxTime) {
@@ -194,7 +194,7 @@ public class CooldownManager {
                 counter++;
             }
         }
-        incrementCooldown(new Cooldown("Anti KB", null, null, "ANTI", counter, this.warlordsPlayer, CooldownTypes.BUFF), counter, 3);
+        incrementCooldown(new Cooldown("KB Resistance", null, null, "KB", counter, this.warlordsPlayer, CooldownTypes.BUFF), counter * 1.2f, 3.6f);
         return counter;
     }
 

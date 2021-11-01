@@ -1590,14 +1590,20 @@ public final class WarlordsPlayer {
     }
 
     public void setVelocity(org.bukkit.util.Vector v) {
-        if(!cooldownManager.hasCooldownFromName("Anti KB")) {
+        if(cooldownManager.hasCooldownFromName("KB Resistance")) {
+            setVelocity(v.multiply(.5), true);
+        } else {
             setVelocity(v, true);
         }
     }
 
     public void setVelocity(org.bukkit.util.Vector v, boolean kbAfterHorse) {
-        if((kbAfterHorse || this.entity.getVehicle() == null) && !cooldownManager.hasCooldownFromName("Anti KB")) {
-            this.entity.setVelocity(v);
+        if((kbAfterHorse || this.entity.getVehicle() == null)) {
+            if(cooldownManager.hasCooldownFromName("KB Resistance")) {
+                this.entity.setVelocity(v.multiply(.5));
+            } else {
+                this.entity.setVelocity(v);
+            }
         }
     }
 
@@ -1606,8 +1612,12 @@ public final class WarlordsPlayer {
     }
 
     public void setVelocity(Location from, Location to, double multipliedBy, double y, boolean kbAfterHorse) {
-        if(((kbAfterHorse && this.entity.getVehicle() != null) || (!kbAfterHorse && this.entity.getVehicle() == null)) && !cooldownManager.hasCooldownFromName("Anti KB")) {
-            this.entity.setVelocity(to.toVector().subtract(from.toVector()).normalize().multiply(multipliedBy).setY(y));
+        if(((kbAfterHorse && this.entity.getVehicle() != null) || (!kbAfterHorse && this.entity.getVehicle() == null))) {
+            if(cooldownManager.hasCooldownFromName("KB Resistance")) {
+                this.entity.setVelocity((to.toVector().subtract(from.toVector()).normalize().multiply(multipliedBy).setY(y)).multiply(.5));
+            } else {
+                this.entity.setVelocity(to.toVector().subtract(from.toVector()).normalize().multiply(multipliedBy).setY(y));
+            }
         }
     }
 
