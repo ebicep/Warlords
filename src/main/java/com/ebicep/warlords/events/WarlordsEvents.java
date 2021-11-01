@@ -6,8 +6,9 @@ import com.ebicep.warlords.classes.abilties.IceBarrier;
 import com.ebicep.warlords.classes.abilties.Soulbinding;
 import com.ebicep.warlords.classes.abilties.UndyingArmy;
 import com.ebicep.warlords.classes.shaman.specs.spiritguard.Spiritguard;
+import com.ebicep.warlords.database.DatabaseGame;
 import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.database.LeaderboardRanking;
+import com.ebicep.warlords.database.Leaderboards;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.flags.GroundFlagLocation;
 import com.ebicep.warlords.maps.flags.PlayerFlagLocation;
@@ -37,9 +38,7 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.*;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashSet;
 import java.util.Objects;
@@ -146,8 +145,9 @@ public class WarlordsEvents implements Listener {
                     DatabaseManager.loadPlayer(player, false);
                     Warlords.updateHead(e.getPlayer());
                 })
-                .sync(() -> LeaderboardRanking.addPlayerLeaderboards(player))
+                .sync(() -> Leaderboards.setLeaderboardHologramVisibility(player))
                 .execute();
+        DatabaseGame.setGameHologramVisibility(player);
 
         //scoreboard
         if(!Warlords.playerScoreboards.containsKey(player.getUniqueId()) || Warlords.playerScoreboards.get(player.getUniqueId()) == null) {
@@ -156,6 +156,7 @@ public class WarlordsEvents implements Listener {
         player.setScoreboard(Warlords.playerScoreboards.get(player.getUniqueId()).getScoreboard());
 
         joinInteraction(player);
+
         Bukkit.getOnlinePlayers().forEach(p -> {
             PacketUtils.sendTabHF(p,
                     ChatColor.AQUA + "     Welcome to " + ChatColor.YELLOW + ChatColor.BOLD + "Warlords 2.0     ",

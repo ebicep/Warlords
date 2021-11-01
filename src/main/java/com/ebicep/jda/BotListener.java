@@ -33,7 +33,7 @@ public class BotListener extends ListenerAdapter implements Listener {
     @EventHandler
     public static void onPlayerQuit(PlayerQuitEvent event) {
         int size = Bukkit.getOnlinePlayers().size();
-        if((size - 1) % 5 == 0 && size != lastPlayerCount) {
+        if((size - 1) % 5 == 0 && size != lastPlayerCount && size > 4) {
             BotManager.sendMessageToNotificationChannel("[SERVER] **" + (size - 1)+ "** players are now on the server!");
             lastPlayerCount = size;
         }

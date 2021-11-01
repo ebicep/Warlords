@@ -5,7 +5,6 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.debugcommands.RecordGamesCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.FieldUpdateOperators;
-import com.ebicep.warlords.database.LeaderboardRanking;
 import com.ebicep.warlords.events.WarlordsPointsChangedEvent;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Gates;
@@ -220,19 +219,13 @@ public class PlayingState implements State, TimerDebugAble {
             }
         }
         if(timer % 10 == 0) {
-            for (WarlordsPlayer value : Warlords.getPlayers().values()) {
-                if(Warlords.playerScoreboards.get(value.getUuid()) != null) {
-                    updateBasedOnGameState(false, Warlords.playerScoreboards.get(value.getUuid()), value);
-                }
-            }
-            for (UUID spectator : game.getSpectators()) {
-                updateBasedOnGameState(false, Warlords.playerScoreboards.get(spectator), null);
-            }
+            giveScoreboard();
         }
 
         int redPoints = getStats(Team.RED).points;
         int bluePoints = getStats(Team.BLUE).points;
         if (redPoints >= this.pointLimit || bluePoints >= this.pointLimit || (Math.abs(redPoints - bluePoints) >= MERCY_LIMIT && this.timer < game.getMap().getGameTimerInTicks() - 20 * 60 * 5)) {
+            giveScoreboard();
             return nextStateByPoints();
         }
         if (gateTimer >= 0) {
@@ -298,6 +291,7 @@ public class PlayingState implements State, TimerDebugAble {
             this.powerUps.cancel();
             this.powerUps = null;
         }
+
         Warlords.getPlayers().forEach(((uuid, warlordsPlayer) -> warlordsPlayer.removeGrave()));
         if (RecordGamesCommand.recordGames && !forceEnd && game.playersCount() >= 16 && timer <= 12000) {
             if (getBluePoints() > getRedPoints()) {
@@ -390,6 +384,17 @@ public class PlayingState implements State, TimerDebugAble {
 
     public int getPointLimit() {
         return pointLimit;
+    }
+
+    private void giveScoreboard() {
+        for (WarlordsPlayer value : Warlords.getPlayers().values()) {
+            if(Warlords.playerScoreboards.get(value.getUuid()) != null) {
+                updateBasedOnGameState(false, Warlords.playerScoreboards.get(value.getUuid()), value);
+            }
+        }
+        for (UUID spectator : game.getSpectators()) {
+            updateBasedOnGameState(false, Warlords.playerScoreboards.get(spectator), null);
+        }
     }
 
     public void updateHealth(CustomScoreboard customScoreboard) {

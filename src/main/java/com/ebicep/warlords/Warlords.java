@@ -18,7 +18,7 @@ import com.ebicep.warlords.commands.debugcommands.*;
 import com.ebicep.warlords.commands.miscellaneouscommands.*;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.LeaderboardCommand;
-import com.ebicep.warlords.database.LeaderboardRanking;
+import com.ebicep.warlords.database.Leaderboards;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.menu.MenuEventListener;
@@ -248,14 +248,11 @@ public class Warlords extends JavaPlugin {
             playerScoreboards.put(player.getUniqueId(), new CustomScoreboard(player));
         });
 
-        //connects to the database with callback
+        Leaderboards.init();
+
+        //connects to the database
         Warlords.newChain()
                 .async(DatabaseManager::connect)
-                .sync(() -> {
-                    Bukkit.getOnlinePlayers().forEach(player -> playerScoreboards.get(player.getUniqueId()).giveMainLobbyScoreboard());
-                    new LeaderboardRanking();
-                    LeaderboardRanking.addHologramLeaderboards(UUID.randomUUID().toString());
-                })
                 .execute();
 
         try {

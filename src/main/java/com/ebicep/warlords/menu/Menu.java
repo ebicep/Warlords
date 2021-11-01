@@ -14,7 +14,8 @@ import java.util.function.BiConsumer;
 
 public class Menu extends AbstractMenuBase {
     public static final BiConsumer<Menu, InventoryClickEvent> ACTION_CLOSE_MENU = (m, e) -> e.getWhoClicked().closeInventory();
-    public static final BiConsumer<Menu, InventoryClickEvent> ACTION_DO_NOTHING = (m, e) -> {};
+    public static final BiConsumer<Menu, InventoryClickEvent> ACTION_DO_NOTHING = (m, e) -> {
+    };
     private final Inventory inventory;
     private final BiConsumer<Menu, InventoryClickEvent>[] onClick = (BiConsumer<Menu, InventoryClickEvent>[]) new BiConsumer<?, ?>[9 * 6];
     private int nextItemIndex = 0;
@@ -67,7 +68,12 @@ public class Menu extends AbstractMenuBase {
         //- clicked inventory has the same reference as the menu inventory
         //- not air
         //- something with size
-        if (event.getClickedInventory() != null && event.getClickedInventory().equals(inventory) && event.getCurrentItem() != null && event.getCurrentItem().getType() != Material.AIR && event.getRawSlot() < inventory.getSize()) {
+        if (event.getClickedInventory() != null &&
+                event.getClickedInventory().equals(inventory) &&
+                event.getCurrentItem() != null &&
+                event.getCurrentItem().getType() != Material.AIR &&
+                event.getRawSlot() < inventory.getSize()
+        ) {
             event.setCancelled(true);
             this.onClick[event.getRawSlot()].accept(this, event);
         }

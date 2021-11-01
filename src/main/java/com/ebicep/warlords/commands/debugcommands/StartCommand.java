@@ -92,7 +92,6 @@ public class StartCommand implements TabExecutor {
         }
         //Collections.shuffle(people);
         for (Player player : people) {
-            DatabaseManager.addPlayer(player);
             player.getInventory().clear();
 
             player.setAllowFlight(false);
@@ -107,8 +106,8 @@ public class StartCommand implements TabExecutor {
                     .get());
 
             Team team = Warlords.getPlayerSettings(player.getUniqueId()).getWantedTeam();
-            Warlords.game.addPlayer(player, team == Team.BLUE);
-            Warlords.game.setPlayerTeam(player, team);
+            Warlords.game.addPlayer(player, team == null ? Team.BLUE : team);
+            Warlords.game.setPlayerTeam(player, team == null ? Team.BLUE : team);
             ArmorManager.resetArmor(player, Warlords.getPlayerSettings(player.getUniqueId()).getSelectedClass(), team);
         }
 

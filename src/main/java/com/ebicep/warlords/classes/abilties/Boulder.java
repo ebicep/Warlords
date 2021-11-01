@@ -105,9 +105,9 @@ public class Boulder extends AbstractAbility {
                             ) {
                                 Vector v;
                                 if (p == directHit) {
-                                    v = player.getLocation().toVector().subtract(p.getLocation().toVector()).normalize().multiply(-1.05).setY(0.2);
+                                    v = player.getLocation().toVector().subtract(p.getLocation().toVector()).normalize().multiply(-1.1).setY(0.2);
                                 } else {
-                                    v = p.getLocation().toVector().subtract(newLoc.toVector()).normalize().multiply(1.05).setY(0.2);
+                                    v = p.getLocation().toVector().subtract(newLoc.toVector()).normalize().multiply(1.1).setY(0.2);
                                 }
                                 p.setVelocity(v, false);
                                 p.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);

@@ -72,7 +72,7 @@ public class ArmorManager {
 
         public static Helmets getWarriorHelmet(String name) {
             if(name == null) {
-                return SIMPLE_MAGE_HELMET;
+                return SIMPLE_WARRIOR_HELMET;
             }
             for (Helmets value : Helmets.values()) {
                 if (value.name.equals(name)) {
@@ -84,7 +84,7 @@ public class ArmorManager {
 
         public static Helmets getPaladinHelmet(String name) {
             if(name == null) {
-                return SIMPLE_MAGE_HELMET;
+                return SIMPLE_PALADIN_HELMET;
             }
             for (Helmets value : Helmets.values()) {
                 if (value.name.equals(name)) {
@@ -96,7 +96,7 @@ public class ArmorManager {
 
         public static Helmets getShamanHelmet(String name) {
             if(name == null) {
-                return SIMPLE_MAGE_HELMET;
+                return SIMPLE_SHAMAN_HELMET;
             }
             for (Helmets value : Helmets.values()) {
                 if (value.name.equals(name)) {

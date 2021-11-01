@@ -98,27 +98,27 @@ public enum GameMap {
             new Location(Bukkit.getWorld("Warsong"), 102.5, 21.5, 51.5), // BLUE DAMAGE
             new Location(Bukkit.getWorld("Warsong"), 42.5, 21.5, 92.5), // RED DAMAGE
 
-            new Location(Bukkit.getWorld("Warsong"), 63.5, 34.5, -46.5), // BLUE SPEED
-            new Location(Bukkit.getWorld("Warsong"), 80.5, 35.5, 185.5), // RED SPEED
+            new Location(Bukkit.getWorld("Warsong"), 63.5, 33.5, -31.5), // BLUE SPEED
+            new Location(Bukkit.getWorld("Warsong"), 80.5, 34.5, 174.5), // RED SPEED
 
-            new Location(Bukkit.getWorld("Warsong"), 42.5, 20.5, 54.5), // BLUE HEALING
-            new Location(Bukkit.getWorld("Warsong"), 102.5, 20.5, 89.5), // RED HEALING
+            new Location(Bukkit.getWorld("Warsong"), 44.5, 20.5, 42.5), // BLUE HEALING
+            new Location(Bukkit.getWorld("Warsong"), 100.5, 20.5, 101.5), // RED HEALING
 
-            new Location(Bukkit.getWorld("Warsong"), 71.5, 40, -97.5, 90, 0), // BLUE LOBBY SPAWN
-            new Location(Bukkit.getWorld("Warsong"), 73.5, 41, 236.5, -90, 0), // RED LOBBY SPAWN
+            new Location(Bukkit.getWorld("Warsong"), 71.5, 40, -82.5, 90, 0), // BLUE LOBBY SPAWN
+            new Location(Bukkit.getWorld("Warsong"), 73.5, 41, 225.5, -90, 0), // RED LOBBY SPAWN
 
             new Location(Bukkit.getWorld("Warsong"), 45.5, 29.5, 15.5, -30, 0), // BLUE RESPAWN
             new Location(Bukkit.getWorld("Warsong"), 99.5, 29.5, 128.5, 145, 0), // RED RESPAWN
 
-            new Location(Bukkit.getWorld("Warsong"), 56.5, 39.5, -103.5), // BLUE FLAG
-            new Location(Bukkit.getWorld("Warsong"), 88.5, 40.5, 241.5, 180, 0), // RED FLAG
+            new Location(Bukkit.getWorld("Warsong"), 56.5, 39.5, -88.5), // BLUE FLAG
+            new Location(Bukkit.getWorld("Warsong"), 88.5, 39.5, 230.5, 180, 0), // RED FLAG
 
             Arrays.asList(
-                    new Cuboid(Bukkit.getWorld("Warsong"), 42, 39, -80, 47, 45, -80), // BLUE GATES 1
-                    new Cuboid(Bukkit.getWorld("Warsong"), 69, 35, -79, 75, 43, -79), // BLUE GATES 2
+                    new Cuboid(Bukkit.getWorld("Warsong"), 42, 39, -64, 47, 45, -64), // BLUE GATES 1
+                    new Cuboid(Bukkit.getWorld("Warsong"), 69, 35, -64, 75, 43, -64), // BLUE GATES 2
 
-                    new Cuboid(Bukkit.getWorld("Warsong"), 70, 36, 217, 75, 43, 217), // RED GATES 1
-                    new Cuboid(Bukkit.getWorld("Warsong"), 97, 40, 218, 104, 45, 218) // RED GATES 2
+                    new Cuboid(Bukkit.getWorld("Warsong"), 70, 36, 207, 75, 43, 207), // RED GATES 1
+                    new Cuboid(Bukkit.getWorld("Warsong"), 97, 39, 208, 104, 45, 208) // RED GATES 2
             )
     ),
 
