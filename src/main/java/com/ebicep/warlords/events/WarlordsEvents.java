@@ -144,8 +144,9 @@ public class WarlordsEvents implements Listener {
                     DatabaseManager.loadPlayer(player, false);
                     Warlords.updateHead(e.getPlayer());
                 })
-                .sync(() -> Leaderboards.setHologramVisibility(player))
+                .sync(() -> Leaderboards.setLeaderboardHologramVisibility(player))
                 .execute();
+        Leaderboards.setGameHologramVisibility(player);
 
         //scoreboard
         if(!Warlords.playerScoreboards.containsKey(player.getUniqueId()) || Warlords.playerScoreboards.get(player.getUniqueId()) == null) {

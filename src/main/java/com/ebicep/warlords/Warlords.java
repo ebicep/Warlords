@@ -248,14 +248,11 @@ public class Warlords extends JavaPlugin {
             playerScoreboards.put(player.getUniqueId(), new CustomScoreboard(player));
         });
 
-        //connects to the database with callback
+        Leaderboards.init();
+
+        //connects to the database
         Warlords.newChain()
                 .async(DatabaseManager::connect)
-                .sync(() -> {
-                    Bukkit.getOnlinePlayers().forEach(player -> playerScoreboards.get(player.getUniqueId()).giveMainLobbyScoreboard());
-                    Leaderboards.init();
-                    Leaderboards.addHologramLeaderboards(UUID.randomUUID().toString());
-                })
                 .execute();
 
         try {

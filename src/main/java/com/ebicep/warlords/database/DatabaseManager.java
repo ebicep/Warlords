@@ -12,10 +12,6 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.Sorts;
-import org.bson.BsonArray;
-import org.bson.BsonInt32;
-import org.bson.BsonInt64;
 import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -112,8 +108,22 @@ public class DatabaseManager {
                         cachedPlayerInfo.put(UUID.fromString((String) document.get("uuid")), document);
                     });
 
-                    //caching last games
-                    cacheLastGames(20);
+                    //caching last games then giving leaderboards
+                    String sharedChainName = UUID.randomUUID().toString();
+                    Warlords.newSharedChain(sharedChainName)
+                            .asyncFirst(() -> getLastGames(10))
+                            .syncLast(previousGames::addAll)
+                            .sync(() -> {
+                                previousGames.forEach(DatabaseGame::createHolograms);
+                                Bukkit.getOnlinePlayers().forEach(player -> {
+                                    if(!Warlords.playerScoreboards.containsKey(player.getUniqueId()) || Warlords.playerScoreboards.get(player.getUniqueId()) == null) {
+                                        Warlords.playerScoreboards.put(player.getUniqueId(), new CustomScoreboard(player));
+                                    }
+                                    Warlords.playerScoreboards.get(player.getUniqueId()).giveMainLobbyScoreboard();
+                                });
+                                Leaderboards.addHologramLeaderboards(UUID.randomUUID().toString());
+                            })
+                            .execute();
                     //loading all players
                     loadAllPlayers();
                 }
@@ -628,7 +638,10 @@ public class DatabaseManager {
                     newPlayerInfo,
                     updatePlayerStats
             );
+            gameInformation.createHolograms();
             previousGames.add(gameInformation);
+            previousGames.get(0).deleteHologram();
+            previousGames.remove(0);
             addGameToDatabase(gameInformation);
 
             //sending message if player information remained the same
@@ -762,83 +775,78 @@ public class DatabaseManager {
         );
     }
 
-    private static void cacheLastGames(int amount) {
-        Warlords.newChain()
-                .asyncFirst(() -> {
-                    List<DatabaseGame> tempPreviousGames = new ArrayList<>();
-                    gamesInformation.find()
-                            .skip((int) (gamesInformation.countDocuments() - amount))
-                            .forEach((Consumer<? super Document>) game -> {
+    private static List<DatabaseGame> getLastGames(int amount) {
+        List<DatabaseGame> tempPreviousGames = new ArrayList<>();
+        gamesInformation.find()
+                .skip((int) (gamesInformation.countDocuments() - amount))
+                .forEach((Consumer<? super Document>) game -> {
 
-                                //player information
-                                List<DatabaseGamePlayer> databaseGamePlayersBlue = new ArrayList<>();
-                                List<DatabaseGamePlayer> databaseGamePlayersRed = new ArrayList<>();
+                    //player information
+                    List<DatabaseGamePlayer> databaseGamePlayersBlue = new ArrayList<>();
+                    List<DatabaseGamePlayer> databaseGamePlayersRed = new ArrayList<>();
 
-                                HashMap<UUID, HashMap<String, Object>> newPlayerInfo = new HashMap<>();
-                                ArrayList<Document> players = new ArrayList<>();
-                                ArrayList<Document> playersBlue = new ArrayList<>((ArrayList<Document>) getDocumentInfoWithDotNotation(game, "players.blue"));
-                                ArrayList<Document> playersRed = new ArrayList<>((ArrayList<Document>) getDocumentInfoWithDotNotation(game, "players.red"));
-                                players.addAll(playersBlue);
-                                players.addAll(playersRed);
+                    HashMap<UUID, HashMap<String, Object>> newPlayerInfo = new HashMap<>();
+                    ArrayList<Document> players = new ArrayList<>();
+                    ArrayList<Document> playersBlue = new ArrayList<>((ArrayList<Document>) getDocumentInfoWithDotNotation(game, "players.blue"));
+                    ArrayList<Document> playersRed = new ArrayList<>((ArrayList<Document>) getDocumentInfoWithDotNotation(game, "players.red"));
+                    players.addAll(playersBlue);
+                    players.addAll(playersRed);
 
-                                for (Document document : players) {
-                                    DatabaseGamePlayer databaseGamePlayer = new DatabaseGamePlayer(document, playersBlue.contains(document) ? ChatColor.BLUE : ChatColor.RED);
-                                    int totalKills = databaseGamePlayer.getTotalKills();
-                                    int totalAssists = databaseGamePlayer.getTotalAssists();
-                                    int totalDeaths = databaseGamePlayer.getTotalDeaths();
-                                    boolean won = game.get("winner") == "BLUE" && playersBlue.contains(document) || game.get("winner") == "RED" && playersRed.contains(document);
-                                    int flagsCaptured = databaseGamePlayer.getFlagCaptures();
-                                    int flagsReturned = databaseGamePlayer.getFlagReturns();
-                                    long damage = databaseGamePlayer.getTotalDamage();
-                                    long healing = databaseGamePlayer.getTotalHealing();
-                                    long absorbed = databaseGamePlayer.getTotalAbsorbed();
-                                    String className = Classes.getClassesGroup(databaseGamePlayer.getSpec()).name.toLowerCase();
-                                    String specName = databaseGamePlayer.getSpec().toLowerCase();
-                                    HashMap<String, Object> playerInfo = new HashMap<>();
-                                    playerInfo.put("kills", databaseGamePlayer.getTotalKills());
-                                    playerInfo.put("assists", databaseGamePlayer.getTotalAssists());
-                                    playerInfo.put("deaths", databaseGamePlayer.getTotalDeaths());
-                                    playerInfo.put("wins", won ? 1 : 0);
-                                    playerInfo.put("losses", won ? 0 : 1);
-                                    playerInfo.put("flags_captured", flagsCaptured);
-                                    playerInfo.put("flags_returned", flagsReturned);
-                                    playerInfo.put("damage", damage);
-                                    playerInfo.put("healing", healing);
-                                    playerInfo.put("absorbed", absorbed);
-                                    playerInfo.put(className + ".kills", totalKills);
-                                    playerInfo.put(className + ".assists", totalAssists);
-                                    playerInfo.put(className + ".deaths", totalDeaths);
-                                    playerInfo.put(className + ".wins", won ? 1 : 0);
-                                    playerInfo.put(className + ".losses", won ? 0 : 1);
-                                    playerInfo.put(className + ".flags_captured", flagsCaptured);
-                                    playerInfo.put(className + ".flags_returned", flagsCaptured);
-                                    playerInfo.put(className + ".damage", damage);
-                                    playerInfo.put(className + ".healing", healing);
-                                    playerInfo.put(className + ".absorbed", absorbed);
-                                    playerInfo.put(className + "." + specName + ".kills", totalKills);
-                                    playerInfo.put(className + "." + specName + ".assists", totalAssists);
-                                    playerInfo.put(className + "." + specName + ".deaths", totalDeaths);
-                                    playerInfo.put(className + "." + specName + ".wins", won ? 1 : 0);
-                                    playerInfo.put(className + "." + specName + ".losses", won ? 0 : 1);
-                                    playerInfo.put(className + "." + specName + ".flags_captured", flagsCaptured);
-                                    playerInfo.put(className + "." + specName + ".flags_returned", flagsReturned);
-                                    playerInfo.put(className + "." + specName + ".damage", damage);
-                                    playerInfo.put(className + "." + specName + ".healing", healing);
-                                    playerInfo.put(className + "." + specName + ".absorbed", absorbed);
+                    for (Document document : players) {
+                        DatabaseGamePlayer databaseGamePlayer = new DatabaseGamePlayer(document, playersBlue.contains(document) ? ChatColor.BLUE : ChatColor.RED);
+                        int totalKills = databaseGamePlayer.getTotalKills();
+                        int totalAssists = databaseGamePlayer.getTotalAssists();
+                        int totalDeaths = databaseGamePlayer.getTotalDeaths();
+                        boolean won = game.get("winner") == "BLUE" && playersBlue.contains(document) || game.get("winner") == "RED" && playersRed.contains(document);
+                        int flagsCaptured = databaseGamePlayer.getFlagCaptures();
+                        int flagsReturned = databaseGamePlayer.getFlagReturns();
+                        long damage = databaseGamePlayer.getTotalDamage();
+                        long healing = databaseGamePlayer.getTotalHealing();
+                        long absorbed = databaseGamePlayer.getTotalAbsorbed();
+                        String className = Classes.getClassesGroup(databaseGamePlayer.getSpec()).name.toLowerCase();
+                        String specName = databaseGamePlayer.getSpec().toLowerCase();
+                        HashMap<String, Object> playerInfo = new HashMap<>();
+                        playerInfo.put("kills", databaseGamePlayer.getTotalKills());
+                        playerInfo.put("assists", databaseGamePlayer.getTotalAssists());
+                        playerInfo.put("deaths", databaseGamePlayer.getTotalDeaths());
+                        playerInfo.put("wins", won ? 1 : 0);
+                        playerInfo.put("losses", won ? 0 : 1);
+                        playerInfo.put("flags_captured", flagsCaptured);
+                        playerInfo.put("flags_returned", flagsReturned);
+                        playerInfo.put("damage", damage);
+                        playerInfo.put("healing", healing);
+                        playerInfo.put("absorbed", absorbed);
+                        playerInfo.put(className + ".kills", totalKills);
+                        playerInfo.put(className + ".assists", totalAssists);
+                        playerInfo.put(className + ".deaths", totalDeaths);
+                        playerInfo.put(className + ".wins", won ? 1 : 0);
+                        playerInfo.put(className + ".losses", won ? 0 : 1);
+                        playerInfo.put(className + ".flags_captured", flagsCaptured);
+                        playerInfo.put(className + ".flags_returned", flagsCaptured);
+                        playerInfo.put(className + ".damage", damage);
+                        playerInfo.put(className + ".healing", healing);
+                        playerInfo.put(className + ".absorbed", absorbed);
+                        playerInfo.put(className + "." + specName + ".kills", totalKills);
+                        playerInfo.put(className + "." + specName + ".assists", totalAssists);
+                        playerInfo.put(className + "." + specName + ".deaths", totalDeaths);
+                        playerInfo.put(className + "." + specName + ".wins", won ? 1 : 0);
+                        playerInfo.put(className + "." + specName + ".losses", won ? 0 : 1);
+                        playerInfo.put(className + "." + specName + ".flags_captured", flagsCaptured);
+                        playerInfo.put(className + "." + specName + ".flags_returned", flagsReturned);
+                        playerInfo.put(className + "." + specName + ".damage", damage);
+                        playerInfo.put(className + "." + specName + ".healing", healing);
+                        playerInfo.put(className + "." + specName + ".absorbed", absorbed);
 
-                                    if (databaseGamePlayer.getTeamColor() == ChatColor.BLUE) {
-                                        databaseGamePlayersBlue.add(databaseGamePlayer);
-                                    } else {
-                                        databaseGamePlayersRed.add(databaseGamePlayer);
-                                    }
-                                    newPlayerInfo.put(UUID.fromString(databaseGamePlayer.getUuid()), playerInfo);
-                                }
+                        if (databaseGamePlayer.getTeamColor() == ChatColor.BLUE) {
+                            databaseGamePlayersBlue.add(databaseGamePlayer);
+                        } else {
+                            databaseGamePlayersRed.add(databaseGamePlayer);
+                        }
+                        newPlayerInfo.put(UUID.fromString(databaseGamePlayer.getUuid()), playerInfo);
+                    }
 
-                                tempPreviousGames.add(new DatabaseGame(game, databaseGamePlayersBlue, databaseGamePlayersRed, newPlayerInfo, (boolean) game.get("counted")));
-                            });
-                    return tempPreviousGames;
-                }).syncLast(previousGames::addAll)
-                .execute();
-
+                    tempPreviousGames.add(new DatabaseGame(game, databaseGamePlayersBlue, databaseGamePlayersRed, newPlayerInfo, (boolean) game.get("counted")));
+                });
+        return tempPreviousGames;
     }
 }
