@@ -33,9 +33,12 @@ public class Soulbinding extends AbstractAbility {
                 "§e2 §7nearby allies for §a420 §7health.\n" +
                 "§7Your next Fallen Souls will reduce the\n" +
                 "§7cooldown of all abilities by §61.5\n" +
-                "§7seconds. (§60.5 §7seconds for §e2 §7nearby\n" +
+                "§7seconds. (§61 §7second for §e2 §7nearby\n" +
                 "§7allies). Both buffs may be activated for\n" +
-                "§7every melee hit. Lasts §6" + duration + " §7seconds.";
+                "§7every melee hit. Lasts §6" + duration + " §7seconds." +
+                "\n\n" +
+                "§7Successful Soulbind procs will grant you 50% knockback\n" +
+                "§7resistance for §61.2 §7seconds. (max §63.6 §7seconds)";
     }
 
     @Override
