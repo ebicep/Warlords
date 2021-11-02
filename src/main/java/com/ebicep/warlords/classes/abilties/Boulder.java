@@ -100,7 +100,7 @@ public class Boulder extends AbstractAbility {
                             }
 
                             for (WarlordsPlayer p : PlayerFilter
-                                    .entitiesAround(newLoc, 5.5, 5.5, 5.5)
+                                    .entitiesAround(newLoc, 6, 6, 6)
                                     .aliveEnemiesOf(wp)
                             ) {
                                 Vector v;
