@@ -71,6 +71,8 @@ public class DatabaseManager {
                     weeklyLeaderboards = warlordsPlayersDatabase.getCollection("Weekly_Leaderboards");
                     gamesInformation = warlordsGamesDatabase.getCollection("Games_Information");
 
+                    FutureMessageManager.init();
+
                     Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Database Connected");
                     connected = true;
                 }
@@ -488,6 +490,7 @@ public class DatabaseManager {
                 .append("damage", 0L)
                 .append("healing", 0L)
                 .append("absorbed", 0L)
+                .append("experience", 0L)
                 .append("mage", getBaseStatDocument()
                         .append("pyromancer", getBaseStatDocument())
                         .append("cryomancer", getBaseStatDocument())
@@ -520,7 +523,8 @@ public class DatabaseManager {
                 .append("flags_returned", 0)
                 .append("damage", 0L)
                 .append("healing", 0L)
-                .append("absorbed", 0L);
+                .append("absorbed", 0L)
+                .append("experience", 0L);
     }
 
     public static void addPlayer(UUID uuid, boolean runAsync) {

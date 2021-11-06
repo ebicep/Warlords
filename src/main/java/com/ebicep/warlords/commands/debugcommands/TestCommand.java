@@ -1,13 +1,32 @@
 package com.ebicep.warlords.commands.debugcommands;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.classes.mage.specs.aquamancer.Aquamancer;
+import com.ebicep.warlords.classes.mage.specs.cryomancer.Cryomancer;
+import com.ebicep.warlords.classes.mage.specs.pyromancer.Pyromancer;
+import com.ebicep.warlords.classes.paladin.specs.avenger.Avenger;
+import com.ebicep.warlords.classes.paladin.specs.crusader.Crusader;
+import com.ebicep.warlords.classes.paladin.specs.protector.Protector;
+import com.ebicep.warlords.classes.shaman.specs.earthwarden.Earthwarden;
+import com.ebicep.warlords.classes.shaman.specs.spiritguard.Spiritguard;
+import com.ebicep.warlords.classes.shaman.specs.thunderlord.Thunderlord;
+import com.ebicep.warlords.classes.warrior.specs.berserker.Berserker;
+import com.ebicep.warlords.classes.warrior.specs.defender.Defender;
+import com.ebicep.warlords.classes.warrior.specs.revenant.Revenant;
 import com.ebicep.warlords.commands.BaseCommand;
+import com.ebicep.warlords.database.DatabaseGame;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.FutureMessageManager;
 import com.ebicep.warlords.database.Leaderboards;
+import com.ebicep.warlords.player.Classes;
+import com.ebicep.warlords.player.ExperienceManager;
+import com.ebicep.warlords.player.SpecType;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.util.Utils;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.Filters;
 import org.bson.Document;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -15,6 +34,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -38,10 +58,66 @@ public class TestCommand implements CommandExecutor {
         if (player != null) {
 
         }
+        DecimalFormat decimalFormat = new DecimalFormat("#.##");
+//        DatabaseManager.warlordsPlayersDatabase.createCollection("Players_Information_Test");
+        MongoCollection<Document> test = warlordsPlayersDatabase.getCollection("Players_Information_Test");
+        ExperienceManager.giveExpFromCurrentStats(((Player) sender).getUniqueId());
+//        int counter = 0;
+//        for (Document document : Leaderboards.cachedSortedPlayersLifeTime.get("wins")) {
+//            System.out.println(document.get("name") + " - Games Played: " + (document.getInteger("wins") + document.getInteger("losses")));
+//            for (String spec : DatabaseGame.specsOrdered) {
+//                long exp = getCalculatedExp(document, Classes.getClassesGroup(spec).name.toLowerCase() + "." + spec.toLowerCase());
+//                System.out.println(spec + " EXP: " + exp + " - Level: " +
+//                        decimalFormat.format(calculateLevelFromExp(exp)) +
+//                        " - Games Played: " + ((int) getDocumentInfoWithDotNotation(document, Classes.getClassesGroup(spec).name.toLowerCase() + "." + spec.toLowerCase() + ".wins") +
+//                        (int) getDocumentInfoWithDotNotation(document,Classes.getClassesGroup(spec).name.toLowerCase() + "." + spec.toLowerCase() + ".losses")));
+//            }
+//            counter++;
+//            if(counter == 10) {
+//                break;
+//            }
+//        }
 
-//        DatabaseManager.warlordsGamesDatabase.createCollection("Games_Information_Backup");
-//        for (Document document : DatabaseManager.playersInformation.find()) {
-//            DatabaseManager.playersInformationWeekly.insertOne(document);
+//        if(document.get("total_class_exp") == null) {
+//            long calculated
+//            Document expDocument = new Document("total_class_exp", 0);
+//            test.updateOne(Filters.eq("uuid", document.get("uuid")), new Document("$set", document));
+//        }
+//
+//        int totalDHP = 0;
+//        int totalDamage = 0;
+//        int totalHealing = 0;
+//        int totalAbsorbed = 0;
+//        for (String s1 : DatabaseGame.specsOrdered) {
+//            Classes specName = Classes.getClass(s1);
+//            String className = Classes.getClassesGroup(s1).name.toLowerCase();
+//            if(specName.specType == SpecType.HEALER) {
+//                int dhp = getTotalAverageDHP(className + "." + s1.toLowerCase());
+//                int damage = getTotalAverageDHPSelected(className + "." + s1.toLowerCase(), "damage");
+//                int healing = getTotalAverageDHPSelected(className + "." + s1.toLowerCase(), "healing");
+//                int absorbed = getTotalAverageDHPSelected(className + "." + s1.toLowerCase(), "absorbed");
+//                totalDHP += dhp;
+//                totalDamage += damage;
+//                totalHealing += healing;
+//                totalAbsorbed += absorbed;
+//                System.out.println(s1);
+//                System.out.println("Average DHP: " + dhp);
+//                System.out.println("Average Damage: " + damage);
+//                System.out.println("Average Healing: " + healing);
+//                System.out.println("Average Absorbed: " + absorbed);
+//            }
+//        }
+//        System.out.println("DPS");
+//        System.out.println("Average DHP: " + totalDHP / 4);
+//        System.out.println("Average Damage: " + totalDamage / 4);
+//        System.out.println("Average Healing: " + totalHealing / 4);
+//        System.out.println("Average Absorbed: " + totalAbsorbed / 4);
+//        System.out.println("Damage Ratio: " + (double) totalDamage / totalDHP);
+//        System.out.println("Healing Ratio: " + (double) totalHealing / totalDHP);
+//        System.out.println("Absorbed Ratio: " + (double) totalAbsorbed / totalDHP);
+
+//        for (Document document : DatabaseManager.playersInformation.find().filter(eq("name", "sumSmash"))) {
+//            test.insertOne(document);
 //        }
 //        for (Document document2 : DatabaseManager.gamesInformation.find()) {
 //            if(document2.get("counted") == null) {
@@ -68,47 +144,8 @@ public class TestCommand implements CommandExecutor {
 //                }
 //            }
 //        }).execute();
-//        MongoCollection<Document> temp = warlordsGamesDatabase.getCollection("Test");
-//        Document document = new Document();
-//        float[] array = {131232.8f,23122.32f,313.32f,4321.3123f,3125.1f,3129};
-//        document.append("damage", IntStream.range(0,array.length).mapToLong(i -> (long) array[i]).boxed().collect(Collectors.toList()));
-//
-//        temp.insertOne(document);
 
-//        System.out.println(HologramsAPI.getHolograms(Warlords.getInstance()).stream()
-//                .filter(h -> h.getVisibilityManager().isVisibleTo((Player) sender) && h.getLocation().equals(Leaderboards.center))
-//                .count());
-//        Hologram center = HologramsAPI.getHolograms(Warlords.getInstance()).stream()
-//                .filter(h -> h.getVisibilityManager().isVisibleTo((Player) sender) && h.getLocation() == Leaderboards.center)
-//                .findAny()
-//                .orElseGet(() -> HologramsAPI.createHologram(Warlords.getInstance(), Leaderboards.center));
-//        System.out.println(center);
-//        System.out.println(center.getLine(0));
-//        center.clearLines();
-//        center.appendTextLine("TEST");
-//
-//        center.getVisibilityManager().setVisibleByDefault(false);
-//        center.getVisibilityManager().isVisibleTo((Player) sender);
 
-//        Document document = new Document();
-//        document.put("last_reset", new Date());
-//        DatabaseManager.weeklyInfo.insertOne(document);
-//        String string = "October 25, 2021 6:02:00";
-//        try {
-//            Date date = new SimpleDateFormat("MMMM d, yyyy hh:mm:ss").parse(string);
-//            weeklyInfo.insertOne(new Document("last_reset", date));
-//        } catch (ParseException e) {
-//            e.printStackTrace();
-//        }
-//
-//        Date date = new Date();
-//        Date oldDate = (Date) DatabaseManager.weeklyInfo.find().first().get("last_reset");
-//        System.out.println(date);
-//        System.out.println(oldDate);
-//        System.out.println(date.getTime() - oldDate.getTime());
-//
-
-        weeklyLeaderboards.insertOne(Leaderboards.getTopPlayersOnLeaderboard());
         sender.sendMessage(ChatColor.GREEN + "DID THE THING");
         return true;
     }

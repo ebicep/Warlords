@@ -1,0 +1,237 @@
+package com.ebicep.warlords.player;
+
+import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.database.*;
+import com.ebicep.warlords.util.Utils;
+import com.mongodb.client.MongoCollection;
+import org.bson.Document;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
+
+import static com.ebicep.warlords.database.DatabaseManager.*;
+import static com.mongodb.client.model.Filters.*;
+
+public class ExperienceManager {
+
+    public static void giveExpFromCurrentStats(UUID uuid) {
+        MongoCollection<Document> test = warlordsPlayersDatabase.getCollection("Players_Information_Test");
+        Document playerInformation = test.find().filter(eq("uuid", uuid.toString())).first();
+        if(playerInformation != null) {
+            HashMap<String, Object> updatedInformation = new HashMap<>();
+            List<String> futureMessages = new ArrayList<>();
+            futureMessages.add(ChatColor.BLUE + "---------------------------------------------------");
+            futureMessages.add(ChatColor.GREEN + "Experience Gained from Your Current Stats\n ");
+            long totalExp = 0;
+            long classExp = 0;
+            for (int i = 0; i < DatabaseGame.specsOrdered.length; i++) {
+                String spec = DatabaseGame.specsOrdered[i];
+                String className = Classes.getClassesGroup(spec).name;
+                String classSpec = className.toLowerCase() + "." + spec.toLowerCase();
+
+                long exp = getCalculatedExp(playerInformation, classSpec);
+                totalExp += exp;
+                classExp += exp;
+
+                updatedInformation.put(classSpec + ".experience", exp);
+                futureMessages.add(ChatColor.DARK_GRAY + "+" + ChatColor.DARK_GREEN + Utils.addCommaAndRound(exp) + ChatColor.GRAY + " " + spec + " Experience");
+
+                if((i + 1) % 3 == 0) {
+                    updatedInformation.put(className.toLowerCase() + ".experience", classExp);
+                    futureMessages.add(ChatColor.DARK_GRAY + "+" + ChatColor.YELLOW + Utils.addCommaAndRound(classExp) + ChatColor.GOLD + " " + className + " Experience" + (i == 11 ? "\n " : ""));
+                    classExp = 0;
+                }
+            }
+            updatedInformation.put("experience", totalExp);
+            futureMessages.add(ChatColor.DARK_GRAY + "+" + ChatColor.DARK_AQUA + Utils.addCommaAndRound(totalExp) + ChatColor.GOLD + " Universal Experience");
+            futureMessages.add(ChatColor.BLUE + "---------------------------------------------------");
+            updatePlayerInformationTest(uuid, updatedInformation, FieldUpdateOperators.SET);
+            FutureMessageManager.addNewFutureMessageDocument(uuid, true, futureMessages.toArray(new String[0]));
+        }
+    }
+
+    public static void updatePlayerInformationTest(UUID uuid, HashMap<String, Object> newInfo, FieldUpdateOperators operator) {
+        Document history = new Document();
+        for (String s : newInfo.keySet()) {
+            history.append(s, newInfo.get(s));
+        }
+        Document update = new Document(operator.operator, history);
+        warlordsPlayersDatabase.getCollection("Players_Information_Test").updateOne(eq("uuid", uuid.toString()), update);
+    }
+    private int getTotalAverageDHP(String classSpec) {
+        long totalAverageDHP = 0;
+        int totalPlayers = 0;
+        for (Document document1 : playersInformation.find()) {
+            long averageDHP = getAverageDHP(document1, classSpec);
+            totalAverageDHP += averageDHP;
+            if (averageDHP != 0) {
+                totalPlayers++;
+            }
+        }
+        return (int) (totalAverageDHP / totalPlayers);
+    }
+
+    private int getTotalAverageDHPSelected(String classSpec, String selected) {
+        long totalAverageDHP = 0;
+        int totalPlayers = 0;
+        for (Document document1 : playersInformation.find()) {
+            long averageDHP = getAverageSelectedDHP(document1, classSpec, selected);
+            totalAverageDHP += averageDHP;
+            if (averageDHP != 0) {
+                totalPlayers++;
+            }
+        }
+        return (int) (totalAverageDHP / totalPlayers);
+    }
+
+    private long getAverageDHP(Document document, String classSpec) {
+        long dhp = (long) getDocumentInfoWithDotNotation(document, classSpec + ".damage") + (long) getDocumentInfoWithDotNotation(document, classSpec + ".healing") + (long) getDocumentInfoWithDotNotation(document, classSpec + ".absorbed");
+        int plays = (int) getDocumentInfoWithDotNotation(document, classSpec + ".wins") + (int) getDocumentInfoWithDotNotation(document, classSpec + ".losses");
+        return plays == 0 ? 0 : dhp / plays;
+    }
+
+    private long getAverageSelectedDHP(Document document, String classSpec, String selected) {
+        long selectedDHP = (long) getDocumentInfoWithDotNotation(document, classSpec + "." + selected);
+        int plays = (int) getDocumentInfoWithDotNotation(document, classSpec + ".wins") + (int) getDocumentInfoWithDotNotation(document, classSpec + ".losses");
+        return plays == 0 ? 0 : selectedDHP / plays;
+    }
+
+    public static long getCalculatedExp(Document document, String key) {
+        //500 per win
+        //250 per loss
+        //5 per kills/assist
+        //1 per 500 dhp based on multiplier
+
+        long exp = 0;
+
+        double damageMultiplier;
+        double healingMultiplier;
+        double absorbedMultiplier;
+
+        Classes classes = Classes.getClass(key.substring(key.indexOf(".") + 1));
+        if (classes.specType == SpecType.DAMAGE) {
+            damageMultiplier = .75;
+            healingMultiplier = .125;
+            absorbedMultiplier = .125;
+        } else if (classes.specType == SpecType.HEALER) {
+            damageMultiplier = .3;
+            healingMultiplier = .6;
+            absorbedMultiplier = .1;
+        } else { //tank
+            damageMultiplier = .55;
+            healingMultiplier = .15;
+            absorbedMultiplier = .3;
+        }
+
+        int wins = (int) getDocumentInfoWithDotNotation(document, key + ".wins");
+        int losses = (int) getDocumentInfoWithDotNotation(document, key + ".losses");
+        int kills = (int) getDocumentInfoWithDotNotation(document, key + ".kills");
+        int assists = (int) getDocumentInfoWithDotNotation(document, key + ".assists");
+        long damage = (long) getDocumentInfoWithDotNotation(document, key + ".damage");
+        long healing = (long) getDocumentInfoWithDotNotation(document, key + ".healing");
+        long absorbed = (long) getDocumentInfoWithDotNotation(document, key + ".absorbed");
+
+        double calculatedDHP = damage * damageMultiplier + healing * healingMultiplier + absorbed * absorbedMultiplier;
+
+        exp += wins * 500L;
+        exp += losses * 250L;
+        exp += (kills + assists) * 5L;
+        exp += calculatedDHP / 500;
+
+        return exp;
+    }
+
+    public static double calculateLevelFromExp(long exp) {
+        return Math.sqrt(exp / 100.0);
+    }
+}
+
+//Pyromancer
+//Average DHP: 181046
+//Average Damage: 136237
+//Average Healing: 10815
+//Average Absorbed: 33992
+//Cryomancer
+//Average DHP: 178083
+//Average Damage: 73422
+//Average Healing: 10124
+//Average Absorbed: 94534
+//Aquamancer
+//Average DHP: 236444
+//Average Damage: 33120
+//Average Healing: 168925
+//Average Absorbed: 34397
+//Berserker
+//Average DHP: 189292
+//Average Damage: 131381
+//Average Healing: 39767
+//Average Absorbed: 18142
+//Defender
+//Average DHP: 150763
+//Average Damage: 106301
+//Average Healing: 8983
+//Average Absorbed: 35477
+//Revenant
+//Average DHP: 230796
+//Average Damage: 93791
+//Average Healing: 121953
+//Average Absorbed: 15050
+//Avenger
+//Average DHP: 209579
+//Average Damage: 164426
+//Average Healing: 29768
+//Average Absorbed: 15384
+//Crusader
+//Average DHP: 177555
+//Average Damage: 105825
+//Average Healing: 30094
+//Average Absorbed: 41634
+//Protector
+//Average DHP: 274068
+//Average Damage: 106314
+//Average Healing: 156904
+//Average Absorbed: 10849
+//Thunderlord
+//Average DHP: 204834
+//Average Damage: 156515
+//Average Healing: 18486
+//Average Absorbed: 29832
+//Spiritguard
+//Average DHP: 286025
+//Average Damage: 170642
+//Average Healing: 51879
+//Average Absorbed: 63503
+//Earthwarden
+//Average DHP: 228875
+//Average Damage: 96707
+//Average Healing: 111221
+//Average Absorbed: 20945
+//DPS
+//Average DHP: 196187
+//Average Damage: 147139
+//Average Healing: 24709
+//Average Absorbed: 24337
+//Damage Ratio: 0.7499945842694052
+//Healing Ratio: 0.1259456821335685
+//Absorbed Ratio: 0.12405208785971601
+//TANK
+//Average DHP: 198106
+//Average Damage: 114047
+//Average Healing: 25270
+//Average Absorbed: 58787
+//Damage Ratio: 0.5756878244782478
+//Healing Ratio: 0.12755765207098202
+//Absorbed Ratio: 0.2967444278708674
+//HEALER
+//Average DHP: 242545
+//Average Damage: 82483
+//Average Healing: 139750
+//Average Absorbed: 20310
+//Damage Ratio: 0.3400719245750544
+//Healing Ratio: 0.5761830500019068
+//Absorbed Ratio: 0.08373781028939901
+//

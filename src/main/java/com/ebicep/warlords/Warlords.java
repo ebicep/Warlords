@@ -17,6 +17,7 @@ import com.ebicep.warlords.classes.abilties.*;
 import com.ebicep.warlords.commands.debugcommands.*;
 import com.ebicep.warlords.commands.miscellaneouscommands.*;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.FutureMessageManager;
 import com.ebicep.warlords.database.LeaderboardCommand;
 import com.ebicep.warlords.database.Leaderboards;
 import com.ebicep.warlords.events.WarlordsEvents;
@@ -214,6 +215,7 @@ public class Warlords extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PartyListener(), this);
         getServer().getPluginManager().registerEvents(new BotListener(), this);
         getServer().getPluginManager().registerEvents(new RecklessCharge(), this);
+        getServer().getPluginManager().registerEvents(new FutureMessageManager(), this);
         //getServer().getPluginManager().registerEvents(new NPCEvents(), this);
 
         new StartCommand().register(this);

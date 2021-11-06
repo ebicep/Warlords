@@ -29,10 +29,12 @@ public class Utils {
 
     private static final DecimalFormat decimalFormatOptionalTenths = new DecimalFormat("#.#");
     private static final DecimalFormat decimalFormatTenths = new DecimalFormat("0.0");
+    public static final DecimalFormat decimalFormatOptionalHundredths = new DecimalFormat("#.##");
 
     static {
         decimalFormatOptionalTenths.setDecimalSeparatorAlwaysShown(false);
         decimalFormatTenths.setDecimalSeparatorAlwaysShown(false);
+        decimalFormatOptionalHundredths.setDecimalSeparatorAlwaysShown(false);
     }
 
     public static String formatOptionalTenths(double value) {
