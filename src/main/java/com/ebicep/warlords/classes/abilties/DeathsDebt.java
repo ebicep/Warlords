@@ -42,7 +42,7 @@ public class DeathsDebt extends AbstractTotemBase {
                 "§7will heal nearby allies for §a15% §7of all damage\n" +
                 "§7that you take. If you survive, deal §c15% §7of the" +
                 "\n\n" +
-                "§7Successful souldbind procs on enemies add §60.25 §7seconds\n" +
+                "§7Successful souldbind procs on enemies add §60.5 §7seconds\n" +
                 "§7to your totem duration. (cap of 6 seconds)";
     }
 
