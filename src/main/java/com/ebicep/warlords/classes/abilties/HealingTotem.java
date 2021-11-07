@@ -38,7 +38,7 @@ public class HealingTotem extends AbstractTotemBase {
                 "\n\n" +
                 "§7Pressing SHIFT causes your totem to\n" +
                 "§7pulse with immense force, crippling all\n" +
-                "§7enemies for §63 §7seconds. Crippled enemies\n" +
+                "§7enemies for §65 §7seconds. Crippled enemies\n" +
                 "§7deal §c25% §7less damage.";
     }
 
@@ -158,12 +158,12 @@ public class HealingTotem extends AbstractTotemBase {
                             PlayerFilter.entitiesAround(totemStand.getLocation(), radius, radius, radius)
                                     .aliveEnemiesOf(wp)
                                     .forEach((p) -> {
-                                        p.getCooldownManager().addCooldown("Totem Crippling", HealingTotem.class, new HealingTotem(), "CRIP", 3, wp, CooldownTypes.DEBUFF);
+                                        p.getCooldownManager().addCooldown("Totem Crippling", HealingTotem.class, new HealingTotem(), "CRIP", 5, wp, CooldownTypes.DEBUFF);
                                     });
                             for (Player player1 : player.getWorld().getPlayers()) {
                                 player1.playSound(totemStand.getLocation(), "paladin.hammeroflight.impact", 1.5f, 0.2f);
                             }
-                            player.sendMessage("§aAll enemies in your totem are now §ccrippled §afor 3 seconds!");
+                            player.sendMessage("§aAll enemies in your totem are now §ccrippled §afor 5 seconds!");
                             new FallingBlockWaveEffect(totemStand.getLocation().add(0, 1, 0), 7, 2, Material.SAPLING, (byte) 1).play();
                             this.cancel();
                         }
