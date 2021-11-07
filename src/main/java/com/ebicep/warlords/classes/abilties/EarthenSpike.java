@@ -147,7 +147,7 @@ public class EarthenSpike extends AbstractAbility {
                                     //impact
                                     Location targetLocation = target.getLocation();
                                     for (WarlordsPlayer warlordsPlayer : PlayerFilter
-                                            .entitiesAround(targetLocation, 2, 2, 2)
+                                            .entitiesAround(targetLocation, 2.5, 2.5, 2.5)
                                             .aliveEnemiesOf(wp)
                                     ) {
                                         warlordsPlayer.addHealth(user, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);

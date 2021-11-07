@@ -103,7 +103,7 @@ public class RecklessCharge extends AbstractAbility implements Listener {
                                     player.getLocation().clone().add((Math.random() * 1.5) - .75, .5 + (Math.random() * 2) - 1, (Math.random() * 1.5) - .75),
                                     500);
                         }
-                        PlayerFilter.entitiesAround(player, 2.4, 5, 2.4)
+                        PlayerFilter.entitiesAround(player, 2.5, 5, 2.5)
                                 .excluding(playersHit)
                                 .aliveEnemiesOf(wp)
                                 .forEach(enemy -> {
