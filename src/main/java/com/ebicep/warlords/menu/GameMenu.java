@@ -56,7 +56,7 @@ public class GameMenu {
             .get();
     private static final ItemStack MENU_ARCADE = new ItemBuilder(Material.GOLD_BLOCK)
             .name(ChatColor.GREEN + "Mini Games")
-            .lore("§7Try your luck in rerolling or\nopening weapons here!\n(has NO effect on actual games.)")
+            .lore("§7Try your luck in rerolling or\nopening skin shards here!\n")
             .get();
 
     private static final String[] legendaryNames = new String[]{"Warlord", "Vanquisher", "Champion"};
@@ -183,25 +183,39 @@ public class GameMenu {
         List<Weapons> values = new ArrayList<>(Arrays.asList(Weapons.values()));
         for (int i = (pageNumber - 1) * 21; i < pageNumber * 21 && i < values.size(); i++) {
             Weapons weapon = values.get(i);
-            ItemBuilder builder = new ItemBuilder(weapon.item)
-                    .name(ChatColor.GREEN + weapon.name)
-                    .flags(ItemFlag.HIDE_ENCHANTS);
-            List<String> lore = new ArrayList<>();
-            if (weapon == selectedWeapon) {
-                lore.add(ChatColor.GREEN + "Currently selected!");
-                builder.enchant(Enchantment.OXYGEN, 1);
+            ItemBuilder builder;
+
+            if (weapon.isUnlocked) {
+
+                builder = new ItemBuilder(weapon.item)
+                        .name(ChatColor.GREEN + weapon.name)
+                        .flags(ItemFlag.HIDE_ENCHANTS);
+                List<String> lore = new ArrayList<>();
+
+                if (weapon == selectedWeapon) {
+                    lore.add(ChatColor.GREEN + "Currently selected!");
+                    builder.enchant(Enchantment.OXYGEN, 1);
+                } else {
+                    lore.add(ChatColor.YELLOW + "Click to select!");
+                }
+
+                builder.lore(lore);
             } else {
-                lore.add(ChatColor.YELLOW + "Click to select!");
+                builder = new ItemBuilder(Material.BARRIER).name(ChatColor.RED + "Locked Weapon Skin");
             }
-            builder.lore(lore);
+
             menu.setItem(
                     (i - (pageNumber - 1) * 21) % 7 + 1,
                     (i - (pageNumber - 1) * 21) / 7 + 1,
                     builder.get(),
                     (n, e) -> {
-                        player.sendMessage(ChatColor.GREEN + "You have changed your " + ChatColor.AQUA + selectedClass.name + ChatColor.GREEN + "'s weapon skin to: §b" + weapon.name + "!");
-                        Weapons.setSelected(player, selectedClass, weapon);
-                        openWeaponMenu(player, pageNumber);
+                        if (weapon.isUnlocked) {
+                            player.sendMessage(ChatColor.GREEN + "You have changed your " + ChatColor.AQUA + selectedClass.name + ChatColor.GREEN + "'s weapon skin to: §b" + weapon.name + "!");
+                            Weapons.setSelected(player, selectedClass, weapon);
+                            openWeaponMenu(player, pageNumber);
+                        } else {
+                            player.sendMessage(ChatColor.RED + "This weapon skin has not been unlocked yet!");
+                        }
                     }
             );
         }
@@ -605,11 +619,11 @@ public class GameMenu {
         });
 
         ItemBuilder icon2 = new ItemBuilder(Material.SULPHUR);
-        icon2.name(ChatColor.GREEN + "Repair Weapons");
+        icon2.name(ChatColor.GREEN + "Weapon Skin Roller");
         icon2.lore(
-                "§7Is RNG with you today?",
+                "§7Is RNG with you to give everyone a new awesome skin?",
                 "",
-                "§7Left-click to roll 20 Enchanted weapons!"
+                "§7Left-click to roll 15 skin shards!"
         );
 
         menu.setItem(5, 1, icon2.get(), (m, e) -> {
@@ -621,6 +635,9 @@ public class GameMenu {
             for(WeaponsRarity rarity : WeaponsRarity.values()) {
                 foundWeaponCount.put(rarity, 0);
             }
+
+            if (Bukkit.getOnlinePlayers().size() >= 2) {
+
                 if (weaponCooldown == null || weaponCooldown < System.currentTimeMillis()) {
                     openWeaponCooldown.put(player.getUniqueId(), System.currentTimeMillis() + 8 * 60 * 1000);
                     player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 2);
@@ -648,8 +665,9 @@ public class GameMenu {
                         foundWeaponCount.compute(rarity, (key, value) -> value == null ? 1 : value + 1);
                         List<Weapons> weapons = weaponByRarity.get(rarity);
 
-                        String message = rarity.getWeaponChatColor() + legendaryName + "'s " + weapons.get(random.nextInt(weapons.size())).getName() + " of the " + selectedClass.name;
-                        String mythicMessage = rarity.getWeaponChatColor() + "§l" + mythicName + " " + weapons.get(random.nextInt(weapons.size())).getName() + " of the " + selectedClass.name;
+                        Weapons weapon = weapons.get(random.nextInt(weapons.size()));
+                        String message = rarity.getWeaponChatColor() + legendaryName + "'s " + weapon.getName() + " of the " + selectedClass.name;
+                        String mythicMessage = rarity.getWeaponChatColor() + "§l" + mythicName + " " + weapon.getName() + " of the " + selectedClass.name;
 
                         if (rarity == WeaponsRarity.EPIC) {
                             Bukkit.broadcastMessage(ChatColor.AQUA + player.getDisplayName() + " §fgot lucky and found " + message);
@@ -674,6 +692,18 @@ public class GameMenu {
                                 player.getWorld().spigot().strikeLightningEffect(player.getLocation(), false);
                             }
                         }
+
+                        if (!weapon.isUnlocked) {
+                            weapon.isUnlocked = true;
+                            Warlords.getInstance().saveWeaponConfig();
+                            Bukkit.broadcastMessage("");
+                            Bukkit.broadcastMessage("§l" + rarity.getWeaponChatColor() + weapon.getName() + " §fis now unlocked for everyone!");
+                        } else {
+                            if (rarity == WeaponsRarity.MYTHIC) {
+                                Bukkit.broadcastMessage("");
+                                Bukkit.broadcastMessage("§l" + rarity.getWeaponChatColor() + weapon.getName() + " §fwas already found! Unlucky!");
+                            }
+                        }
                     }
 
                     player.sendMessage("");
@@ -683,8 +713,13 @@ public class GameMenu {
                     player.sendMessage("§7Legendary: §6" + foundWeaponCount.get(WeaponsRarity.LEGENDARY));
                     player.sendMessage("§7Mythic: §c" + foundWeaponCount.get(WeaponsRarity.MYTHIC));
                 } else {
-                    player.sendMessage(ChatColor.RED + "Please wait 8 minutes before opening weapons again!");
+                    long remainingTime = (weaponCooldown - System.currentTimeMillis()) / 1000;
+                    long remainingTimeinMinutes = remainingTime / 60;
+                    player.sendMessage(ChatColor.RED + "Please wait " + (remainingTime > 60 ? remainingTimeinMinutes + " minutes" : remainingTime + " seconds") + " before opening weapons again!");
                 }
+            } else {
+                player.sendMessage(ChatColor.RED + "There must be at least 16 players online to roll weapon skins!");
+            }
         });
 
         menu.setItem(4, 3, MENU_BACK_PREGAME, (n, e) -> openMainMenu(player));

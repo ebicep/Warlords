@@ -30,6 +30,7 @@ import com.ebicep.warlords.util.*;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import org.bukkit.*;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.entity.Entity;
@@ -46,6 +47,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.security.auth.login.LoginException;
+import java.io.File;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.logging.Level;
@@ -187,6 +189,29 @@ public class Warlords extends JavaPlugin {
         playerHeads.put(player.getUniqueId(), CraftItemStack.asNMSCopy(playerSkull));
     }
 
+    public void readWeaponConfig() {
+        try {
+            YamlConfiguration config = YamlConfiguration.loadConfiguration(new File(this.getDataFolder(), "weapons.yml"));
+            for (String key : config.getKeys(false)) {
+                Weapons.getWeapon(key).isUnlocked = config.getBoolean(key);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void saveWeaponConfig() {
+        try {
+            YamlConfiguration config = new YamlConfiguration();
+            for (Weapons weapons : Weapons.values()) {
+                config.set(weapons.getName(), weapons.isUnlocked);
+            }
+            config.save(new File(this.getDataFolder(), "weapons.yml"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
     public static Game game;
     public static boolean holographicDisplaysEnabled;
@@ -242,6 +267,9 @@ public class Warlords extends JavaPlugin {
 
         updateHeads();
 
+        readWeaponConfig();
+        saveWeaponConfig();
+
         game = new Game();
 
         holographicDisplaysEnabled = Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays");
@@ -262,7 +290,6 @@ public class Warlords extends JavaPlugin {
         } catch (LoginException e) {
             e.printStackTrace();
         }
-
 
         ProtocolManager protocolManager;
 

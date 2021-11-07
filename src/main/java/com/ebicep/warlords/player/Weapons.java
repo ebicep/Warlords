@@ -78,11 +78,13 @@ public enum Weapons {
     public final String name;
     public final ItemStack item;
     public final WeaponsRarity rarity;
+    public boolean isUnlocked;
 
     Weapons(String name, ItemStack item, WeaponsRarity rarity) {
         this.name = name;
         this.item = item;
         this.rarity = rarity;
+        this.isUnlocked = rarity != MYTHIC;
         ItemMeta itemMeta = item.getItemMeta();
         itemMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         item.setItemMeta(itemMeta);
