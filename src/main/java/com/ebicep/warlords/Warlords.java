@@ -559,6 +559,9 @@ public class Warlords extends JavaPlugin {
                             if (!cooldownManager.getCooldown(InspiringPresence.class).isEmpty()) {
                                 energyGainPerTick += .5;
                             }
+                            if (!cooldownManager.getCooldown(HolyRadiance.class).isEmpty()) {
+                                energyGainPerTick += .3;
+                            }
                             if (!cooldownManager.getCooldown(EnergyPowerUp.class).isEmpty()) {
                                 energyGainPerTick *= 1.4;
                             }

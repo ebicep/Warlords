@@ -1,5 +1,5 @@
 name: Warlords
-version: SG-MWI-2
+version: Untitled
 author: ebic
 main: com.ebicep.warlords.Warlords
 depend: [ MultiWorld, HolographicDisplays, ProtocolLib ]
