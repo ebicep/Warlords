@@ -3,9 +3,11 @@ package com.ebicep.warlords.classes.abilties;
 import com.ebicep.warlords.classes.internal.AbstractStrikeBase;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.PlayerFilter;
+import com.ebicep.warlords.util.Utils;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
+import java.util.Comparator;
 
 public class CrusadersStrike extends AbstractStrikeBase {
 
@@ -21,7 +23,10 @@ public class CrusadersStrike extends AbstractStrikeBase {
         description = "§7Strike the targeted enemy player,\n" +
                 "§7causing §c" + format(-minDamageHeal) + " §7- §c" + format(-maxDamageHeal) + " §7damage and\n" +
                 "§7restoring §e" + energyGiven + " §7energy to two nearby\n" +
-                "§7allies within §e" + energyRadius + " §7blocks.";
+                "§7allies within §e" + energyRadius + " §7blocks." +
+                "\n\n" +
+                "§7MARKED allies get priority in restoring energy and\n" +
+                "§7increases their speed by §e40% §7for §61 §7second.";
     }
 
     @Override
@@ -34,10 +39,19 @@ public class CrusadersStrike extends AbstractStrikeBase {
         //reloops near players to give energy to
         PlayerFilter.entitiesAround(wp, energyRadius, energyRadius, energyRadius)
                 .aliveTeammatesOfExcludingSelf(wp)
-                .closestFirst(wp)
+                .sorted(
+                        Comparator.comparing(
+                                (WarlordsPlayer p) -> p.getCooldownManager().hasCooldown(HolyRadiance.class) ? 0 : 1
+                        ).thenComparing(
+                                Utils.sortClosestBy(WarlordsPlayer::getLocation, wp.getLocation()
+                                )
+                        ))
                 .limit(2)
-                .forEach((nearTeamPlayer) ->
-                        nearTeamPlayer.addEnergy(wp, name, energyGiven)
-                );
+                .forEach((nearTeamPlayer) -> {
+                    if (nearTeamPlayer.getCooldownManager().hasCooldown(HolyRadiance.class)) {
+                        nearTeamPlayer.getSpeed().addSpeedModifier("MARK", 40, 20, "BASE"); // 20 ticks
+                    }
+                    nearTeamPlayer.addEnergy(wp, name, energyGiven);
+                });
     }
 }
