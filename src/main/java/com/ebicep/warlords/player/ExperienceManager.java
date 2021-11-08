@@ -7,6 +7,7 @@ import com.mongodb.client.MongoCollection;
 import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -145,8 +146,36 @@ public class ExperienceManager {
         return exp;
     }
 
+    public static int getLevelForSpec(UUID uuid, Classes spec) {
+        String className = Classes.getClassesGroup(spec).name;
+        String specName = spec.name;
+        String dots = className.toLowerCase() + "." + specName.toLowerCase() + ".experience";
+        if(getPlayerInfoWithDotNotation(uuid, dots) == null) {
+            return 0;
+        }
+        return (int) calculateLevelFromExp((Long) getPlayerInfoWithDotNotation(uuid, dots));
+    }
+
+    public static String getLevelString(int level) {
+        return level < 10 ? "0" + level : String.valueOf(level);
+    }
+
     public static double calculateLevelFromExp(long exp) {
         return Math.sqrt(exp / 100.0);
+    }
+
+    public static double calculateExpFromLevel(int level) {
+        return Math.pow(level, 2) * 100;
+    }
+
+    public static void giveExperienceBar(Player player) {
+        if(getPlayerInfoWithDotNotation(player, "experience") == null) {
+            return;
+        }
+        long experience = (Long) getPlayerInfoWithDotNotation(player, "experience");
+        int level = (int) calculateLevelFromExp(experience);
+        player.setLevel(level);
+        player.setExp((float) (experience / calculateExpFromLevel(level + 1)));
     }
 }
 

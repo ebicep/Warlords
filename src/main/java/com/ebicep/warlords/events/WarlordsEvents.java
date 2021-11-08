@@ -116,6 +116,7 @@ public class WarlordsEvents implements Listener {
             }
 
             Warlords.playerScoreboards.get(player.getUniqueId()).giveMainLobbyScoreboard();
+            ExperienceManager.giveExperienceBar(player);
         }
         WarlordsPlayer p = Warlords.getPlayer(player);
         if (p != null) {

@@ -7,6 +7,7 @@ import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.player.Classes;
 import com.ebicep.warlords.player.CustomScoreboard;
 import com.ebicep.warlords.player.CustomScoreboardPair;
+import com.ebicep.warlords.player.ExperienceManager;
 import com.ebicep.warlords.util.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -114,6 +115,7 @@ public class PreLobbyState implements State, TimerDebugAble {
             mapSuffix = game.getMap().getMapName();
         }
 
+        Classes classes = Warlords.getPlayerSettings(player.getUniqueId()).getSelectedClass();
         customScoreboard.giveNewSideBar(init,
                 new CustomScoreboardPair(ChatColor.GRAY + dateString, ""),
                 new CustomScoreboardPair("  ", ""),
@@ -124,8 +126,8 @@ public class PreLobbyState implements State, TimerDebugAble {
                 new CustomScoreboardPair(ChatColor.WHITE + "allow time ", "for "),
                 new CustomScoreboardPair(ChatColor.WHITE + "additional ", "players"),
                 new CustomScoreboardPair("    ", ""),
-                new CustomScoreboardPair(ChatColor.GOLD + "Lv90 ", Classes.getClassesGroup(Warlords.getPlayerSettings(player.getUniqueId()).getSelectedClass()).name),
-                new CustomScoreboardPair(ChatColor.WHITE + "Spec: ", ChatColor.GREEN + Warlords.getPlayerSettings(player.getUniqueId()).getSelectedClass().name),
+                new CustomScoreboardPair(ChatColor.GOLD + "Lv" + ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(player.getUniqueId(), classes)) + " ", Classes.getClassesGroup(classes).name),
+                new CustomScoreboardPair(ChatColor.WHITE + "Spec: ", ChatColor.GREEN + classes.name),
                 new CustomScoreboardPair("     ", ""),
                 new CustomScoreboardPair(ChatColor.YELLOW + Warlords.VERSION, "")
         );

@@ -82,7 +82,7 @@ public class GameMenu {
             lore.add("");
             lore.add(ChatColor.YELLOW + "Click here to select a " + group.name + "\n" + ChatColor.YELLOW + "specialization");
             ItemStack item = new ItemBuilder(group.item)
-                    .name(ChatColor.GOLD + group.name + ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + "Lv90" + ChatColor.DARK_GRAY + "]")
+                    .name(ChatColor.GOLD + group.name + ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + "Lv" + ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(player.getUniqueId(), selectedClass))  + ChatColor.DARK_GRAY + "]")
                     .lore(lore)
                     .get();
             menu.setItem(
