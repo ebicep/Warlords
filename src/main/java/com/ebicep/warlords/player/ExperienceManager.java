@@ -162,43 +162,34 @@ public class ExperienceManager {
     }
 
     public static long getExperienceForClass(UUID uuid, ClassesGroup classesGroup) {
-        String dots = classesGroup.name.toLowerCase() + ".experience";
-        if(getPlayerInfoWithDotNotation(uuid, dots) == null) {
-            return 0;
-        }
+        return getExperienceFromDotNotation(uuid, classesGroup.name.toLowerCase() + ".experience");
         //return warlordsPlayersDatabase.getCollection("Players_Information_Test").find().filter(eq("uuid", uuid.toString())).first().getEmbedded(Arrays.asList(dots.split("\\.")), Long.class);
-        return (int) calculateLevelFromExp((Long) getPlayerInfoWithDotNotation(uuid, dots));
     }
 
     public static long getExperienceForSpec(UUID uuid, Classes spec) {
         String className = Classes.getClassesGroup(spec).name;
         String specName = spec.name;
-        String dots = className.toLowerCase() + "." + specName.toLowerCase() + ".experience";
-        if(getPlayerInfoWithDotNotation(uuid, dots) == null) {
-            return 0;
-        }
+        return getExperienceFromDotNotation(uuid, className.toLowerCase() + "." + specName.toLowerCase() + ".experience");
         //return warlordsPlayersDatabase.getCollection("Players_Information_Test").find().filter(eq("uuid", uuid.toString())).first().getEmbedded(Arrays.asList(dots.split("\\.")), Long.class);
-        return (int) calculateLevelFromExp((Long) getPlayerInfoWithDotNotation(uuid, dots));
     }
 
     public static int getLevelForClass(UUID uuid, ClassesGroup classesGroup) {
         String dots = classesGroup.name.toLowerCase() + ".experience";
-        if(getPlayerInfoWithDotNotation(uuid, dots) == null) {
-            return 0;
-        }
         //return (int) calculateLevelFromExp(warlordsPlayersDatabase.getCollection("Players_Information_Test").find().filter(eq("uuid", uuid.toString())).first().getEmbedded(Arrays.asList(dots.split("\\.")), Long.class));
-        return (int) calculateLevelFromExp((Long) getPlayerInfoWithDotNotation(uuid, dots));
+        return (int) calculateLevelFromExp(getExperienceFromDotNotation(uuid, dots));
     }
 
     public static int getLevelForSpec(UUID uuid, Classes spec) {
         String className = Classes.getClassesGroup(spec).name;
         String specName = spec.name;
         String dots = className.toLowerCase() + "." + specName.toLowerCase() + ".experience";
-        if(getPlayerInfoWithDotNotation(uuid, dots) == null) {
-            return 0;
-        }
         //return (int) calculateLevelFromExp(warlordsPlayersDatabase.getCollection("Players_Information_Test").find().filter(eq("uuid", uuid.toString())).first().getEmbedded(Arrays.asList(dots.split("\\.")), Long.class));
-        return (int) calculateLevelFromExp((Long) getPlayerInfoWithDotNotation(uuid, dots));
+        return (int) calculateLevelFromExp(getExperienceFromDotNotation(uuid, dots));
+    }
+
+    private static long getExperienceFromDotNotation(UUID uuid, String dots) {
+        Object experience = getPlayerInfoWithDotNotation(uuid, dots);
+        return experience == null ? 0 : (int) calculateLevelFromExp((Long) experience);
     }
 
     public static String getLevelString(int level) {

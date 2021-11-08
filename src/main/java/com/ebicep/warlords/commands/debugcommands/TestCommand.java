@@ -2,22 +2,18 @@ package com.ebicep.warlords.commands.debugcommands;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.BaseCommand;
-import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.player.ExperienceManager;
 import com.ebicep.warlords.player.WarlordsPlayer;
-import com.google.common.collect.Lists;
 import com.mongodb.client.MongoCollection;
 import org.bson.Document;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.text.DecimalFormat;
-import java.util.*;
 
 import static com.ebicep.warlords.database.DatabaseManager.*;
-import static com.mongodb.client.model.Aggregates.sort;
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Sorts.descending;
 
@@ -36,7 +32,7 @@ public class TestCommand implements CommandExecutor {
         DecimalFormat decimalFormat = new DecimalFormat("#.##");
 //        DatabaseManager.warlordsPlayersDatabase.createCollection("Players_Information_Test");
         MongoCollection<Document> test = warlordsPlayersDatabase.getCollection("Players_Information_Test");
-        System.out.println(ExperienceManager.experienceLevel);
+        long temp = (long) getPlayerInfoWithDotNotation(((Player) sender), "dots");
 //        List<Document> documents = Lists.newArrayList(DatabaseManager.playersInformation.aggregate(Collections.singletonList(sort(descending("paladin.avenger.wins")))));
 //        System.out.println(documents.get(0));
 //        System.out.println(documents.get(1));

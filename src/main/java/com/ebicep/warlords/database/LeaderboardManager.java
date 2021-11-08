@@ -27,7 +27,7 @@ public class LeaderboardManager {
 
     public static final Location spawnPoint = Bukkit.getWorlds().get(0).getSpawnLocation().clone();
 
-    public static final Location leaderboardSwitchLocation = new Location(world, -2535, 53.5, 721);
+    public static final Location leaderboardSwitchLocation = new Location(world, -2535, 52.5, 721);
 
     public static final Location lastGameLocation = new Location(world, -2546.5, 55.5, 772.5);
     public static final Location gameSwitchLocation = new Location(world, -2537, 53.5, 769.5);
