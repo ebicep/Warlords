@@ -1,23 +1,38 @@
 package com.ebicep.warlords.player;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.*;
 import com.ebicep.warlords.util.Utils;
+import com.google.common.collect.ImmutableMap;
 import com.mongodb.client.MongoCollection;
 import org.bson.Document;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.text.DecimalFormat;
+import java.util.*;
 
 import static com.ebicep.warlords.database.DatabaseManager.*;
 import static com.mongodb.client.model.Filters.*;
 
 public class ExperienceManager {
+
+    public static Map<Integer, Long> levelExperience = new HashMap<>();
+    public static Map<Long, Integer> experienceLevel = new HashMap<>();
+    public static DecimalFormat currentExperienceDecimalFormat = new DecimalFormat("#,###.#");
+
+    static {
+        //caching all levels/experience
+        for (int i = 0; i < 101; i++) {
+            long exp = (long) calculateExpFromLevel(i);
+            levelExperience.put(i, exp);
+            experienceLevel.put(exp, i);
+        }
+
+        levelExperience = Collections.unmodifiableMap(levelExperience);
+        experienceLevel = Collections.unmodifiableMap(experienceLevel);
+
+        currentExperienceDecimalFormat.setDecimalSeparatorAlwaysShown(false);
+    }
 
     public static void giveExpFromCurrentStats(UUID uuid) {
         MongoCollection<Document> test = warlordsPlayersDatabase.getCollection("Players_Information_Test");
@@ -146,6 +161,35 @@ public class ExperienceManager {
         return exp;
     }
 
+    public static long getExperienceForClass(UUID uuid, ClassesGroup classesGroup) {
+        String dots = classesGroup.name.toLowerCase() + ".experience";
+        if(getPlayerInfoWithDotNotation(uuid, dots) == null) {
+            return 0;
+        }
+        //return warlordsPlayersDatabase.getCollection("Players_Information_Test").find().filter(eq("uuid", uuid.toString())).first().getEmbedded(Arrays.asList(dots.split("\\.")), Long.class);
+        return (int) calculateLevelFromExp((Long) getPlayerInfoWithDotNotation(uuid, dots));
+    }
+
+    public static long getExperienceForSpec(UUID uuid, Classes spec) {
+        String className = Classes.getClassesGroup(spec).name;
+        String specName = spec.name;
+        String dots = className.toLowerCase() + "." + specName.toLowerCase() + ".experience";
+        if(getPlayerInfoWithDotNotation(uuid, dots) == null) {
+            return 0;
+        }
+        //return warlordsPlayersDatabase.getCollection("Players_Information_Test").find().filter(eq("uuid", uuid.toString())).first().getEmbedded(Arrays.asList(dots.split("\\.")), Long.class);
+        return (int) calculateLevelFromExp((Long) getPlayerInfoWithDotNotation(uuid, dots));
+    }
+
+    public static int getLevelForClass(UUID uuid, ClassesGroup classesGroup) {
+        String dots = classesGroup.name.toLowerCase() + ".experience";
+        if(getPlayerInfoWithDotNotation(uuid, dots) == null) {
+            return 0;
+        }
+        //return (int) calculateLevelFromExp(warlordsPlayersDatabase.getCollection("Players_Information_Test").find().filter(eq("uuid", uuid.toString())).first().getEmbedded(Arrays.asList(dots.split("\\.")), Long.class));
+        return (int) calculateLevelFromExp((Long) getPlayerInfoWithDotNotation(uuid, dots));
+    }
+
     public static int getLevelForSpec(UUID uuid, Classes spec) {
         String className = Classes.getClassesGroup(spec).name;
         String specName = spec.name;
@@ -153,11 +197,33 @@ public class ExperienceManager {
         if(getPlayerInfoWithDotNotation(uuid, dots) == null) {
             return 0;
         }
+        //return (int) calculateLevelFromExp(warlordsPlayersDatabase.getCollection("Players_Information_Test").find().filter(eq("uuid", uuid.toString())).first().getEmbedded(Arrays.asList(dots.split("\\.")), Long.class));
         return (int) calculateLevelFromExp((Long) getPlayerInfoWithDotNotation(uuid, dots));
     }
 
     public static String getLevelString(int level) {
         return level < 10 ? "0" + level : String.valueOf(level);
+    }
+    
+    public static String getProgressString(long currentExperience, int nextLevel) {
+        String progress = ChatColor.GRAY + "Progress to Level " + nextLevel + ": " + ChatColor.YELLOW;
+
+        long experience = currentExperience - levelExperience.get(nextLevel - 1);
+        long experienceNeeded = levelExperience.get(nextLevel) - levelExperience.get(nextLevel - 1);
+        double progressPercentage = (double) experience / experienceNeeded * 100;
+
+        progress += Utils.formatOptionalTenths(progressPercentage) + "%\n" + ChatColor.GREEN;
+        int greenBars = (int) Math.round(progressPercentage * 20 / 100);
+        for (int i = 0; i < greenBars; i++) {
+            progress += "-";
+        }
+        progress += ChatColor.WHITE;
+        for (int i = greenBars; i < 20; i++) {
+            progress += "-";
+        }
+        progress += " " + ChatColor.YELLOW + currentExperienceDecimalFormat.format(experience) + ChatColor.GOLD + "/" + ChatColor.YELLOW + Utils.getSimplifiedNumber(experienceNeeded);
+
+        return progress;
     }
 
     public static double calculateLevelFromExp(long exp) {
@@ -175,7 +241,7 @@ public class ExperienceManager {
         long experience = (Long) getPlayerInfoWithDotNotation(player, "experience");
         int level = (int) calculateLevelFromExp(experience);
         player.setLevel(level);
-        player.setExp((float) (experience / calculateExpFromLevel(level + 1)));
+        player.setExp((float) (experience - levelExperience.get(level)) / (levelExperience.get(level + 1) - levelExperience.get(level)));
     }
 }
 

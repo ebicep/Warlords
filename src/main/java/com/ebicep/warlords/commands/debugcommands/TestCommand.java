@@ -3,6 +3,7 @@ package com.ebicep.warlords.commands.debugcommands;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.BaseCommand;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.player.ExperienceManager;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.google.common.collect.Lists;
 import com.mongodb.client.MongoCollection;
@@ -35,9 +36,10 @@ public class TestCommand implements CommandExecutor {
         DecimalFormat decimalFormat = new DecimalFormat("#.##");
 //        DatabaseManager.warlordsPlayersDatabase.createCollection("Players_Information_Test");
         MongoCollection<Document> test = warlordsPlayersDatabase.getCollection("Players_Information_Test");
-        List<Document> documents = Lists.newArrayList(DatabaseManager.playersInformation.aggregate(Collections.singletonList(sort(descending("paladin.avenger.wins")))));
-        System.out.println(documents.get(0));
-        System.out.println(documents.get(1));
+        System.out.println(ExperienceManager.experienceLevel);
+//        List<Document> documents = Lists.newArrayList(DatabaseManager.playersInformation.aggregate(Collections.singletonList(sort(descending("paladin.avenger.wins")))));
+//        System.out.println(documents.get(0));
+//        System.out.println(documents.get(1));
 //        int counter = 0;
 //        for (Document document : Leaderboards.cachedSortedPlayersLifeTime.get("wins")) {
 //            System.out.println(document.get("name") + " - Games Played: " + (document.getInteger("wins") + document.getInteger("losses")));
