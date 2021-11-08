@@ -1,50 +1,24 @@
 package com.ebicep.warlords.commands.debugcommands;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.classes.mage.specs.aquamancer.Aquamancer;
-import com.ebicep.warlords.classes.mage.specs.cryomancer.Cryomancer;
-import com.ebicep.warlords.classes.mage.specs.pyromancer.Pyromancer;
-import com.ebicep.warlords.classes.paladin.specs.avenger.Avenger;
-import com.ebicep.warlords.classes.paladin.specs.crusader.Crusader;
-import com.ebicep.warlords.classes.paladin.specs.protector.Protector;
-import com.ebicep.warlords.classes.shaman.specs.earthwarden.Earthwarden;
-import com.ebicep.warlords.classes.shaman.specs.spiritguard.Spiritguard;
-import com.ebicep.warlords.classes.shaman.specs.thunderlord.Thunderlord;
-import com.ebicep.warlords.classes.warrior.specs.berserker.Berserker;
-import com.ebicep.warlords.classes.warrior.specs.defender.Defender;
-import com.ebicep.warlords.classes.warrior.specs.revenant.Revenant;
 import com.ebicep.warlords.commands.BaseCommand;
-import com.ebicep.warlords.database.DatabaseGame;
 import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.database.FutureMessageManager;
-import com.ebicep.warlords.database.Leaderboards;
-import com.ebicep.warlords.player.Classes;
-import com.ebicep.warlords.player.ExperienceManager;
-import com.ebicep.warlords.player.SpecType;
 import com.ebicep.warlords.player.WarlordsPlayer;
-import com.ebicep.warlords.util.Utils;
-import com.gmail.filoghost.holographicdisplays.api.Hologram;
-import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
+import com.google.common.collect.Lists;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.model.Filters;
 import org.bson.Document;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import java.text.DecimalFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import static com.ebicep.warlords.database.DatabaseManager.*;
+import static com.mongodb.client.model.Aggregates.sort;
 import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Sorts.descending;
 
 public class TestCommand implements CommandExecutor {
 
@@ -61,7 +35,9 @@ public class TestCommand implements CommandExecutor {
         DecimalFormat decimalFormat = new DecimalFormat("#.##");
 //        DatabaseManager.warlordsPlayersDatabase.createCollection("Players_Information_Test");
         MongoCollection<Document> test = warlordsPlayersDatabase.getCollection("Players_Information_Test");
-        ExperienceManager.giveExpFromCurrentStats(((Player) sender).getUniqueId());
+        List<Document> documents = Lists.newArrayList(DatabaseManager.playersInformation.aggregate(Collections.singletonList(sort(descending("paladin.avenger.wins")))));
+        System.out.println(documents.get(0));
+        System.out.println(documents.get(1));
 //        int counter = 0;
 //        for (Document document : Leaderboards.cachedSortedPlayersLifeTime.get("wins")) {
 //            System.out.println(document.get("name") + " - Games Played: " + (document.getInteger("wins") + document.getInteger("losses")));

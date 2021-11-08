@@ -155,6 +155,10 @@ public class DatabaseGamePlayer {
         return absorbed.stream().reduce(0L, Long::sum);
     }
 
+    public Long getTotalDHP() {
+        return getTotalDamage() + getTotalHealing() + getTotalAbsorbed();
+    }
+
     public int getFlagCaptures() {
         return flagCaptures;
     }

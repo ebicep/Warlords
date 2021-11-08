@@ -114,24 +114,29 @@ public class DatabaseGame {
         List<Hologram> holograms = new ArrayList<>();
 
         //readding game holograms
-        Hologram lastGameStats = HologramsAPI.createHologram(Warlords.getInstance(), Leaderboards.gameHologramLocations.get(0));
+        Hologram lastGameStats = HologramsAPI.createHologram(Warlords.getInstance(), LeaderboardManager.gameHologramLocations.get(0));
         holograms.add(lastGameStats);
         lastGameStats.appendTextLine(ChatColor.AQUA + ChatColor.BOLD.toString() + "Last Game Stats");
 
-        Hologram topDamage = HologramsAPI.createHologram(Warlords.getInstance(), Leaderboards.gameHologramLocations.get(1));
+        Hologram topDamage = HologramsAPI.createHologram(Warlords.getInstance(), LeaderboardManager.gameHologramLocations.get(1));
         holograms.add(topDamage);
         topDamage.appendTextLine(ChatColor.AQUA + ChatColor.BOLD.toString() + "Top Damage");
 
-        Hologram topHealing = HologramsAPI.createHologram(Warlords.getInstance(), Leaderboards.gameHologramLocations.get(2));
+        Hologram topHealing = HologramsAPI.createHologram(Warlords.getInstance(), LeaderboardManager.gameHologramLocations.get(2));
         holograms.add(topHealing);
         topHealing.appendTextLine(ChatColor.AQUA + ChatColor.BOLD.toString() + "Top Healing");
 
-        Hologram topAbsorbed = HologramsAPI.createHologram(Warlords.getInstance(), Leaderboards.gameHologramLocations.get(3));
+        Hologram topAbsorbed = HologramsAPI.createHologram(Warlords.getInstance(), LeaderboardManager.gameHologramLocations.get(3));
         holograms.add(topAbsorbed);
         topAbsorbed.appendTextLine(ChatColor.AQUA + ChatColor.BOLD.toString() + "Top Absorbed");
 
+        Hologram topDHPPerMinute = HologramsAPI.createHologram(Warlords.getInstance(), LeaderboardManager.gameHologramLocations.get(4));
+        holograms.add(topDHPPerMinute);
+        topDHPPerMinute.appendTextLine(ChatColor.AQUA + ChatColor.BOLD.toString() + "Top DHP per Minute");
+
         //last game stats
         int timeLeft = getTimeLeft();
+        int minutes = (15 - (int) Math.round(timeLeft / 60.0)) == 0 ? 1 : 15 - (int) Math.round(timeLeft / 60.0);
         lastGameStats.appendTextLine(ChatColor.GRAY + getDate());
         lastGameStats.appendTextLine(ChatColor.GREEN + getMap() + ChatColor.GRAY + "  -  " + ChatColor.GREEN + timeLeft / 60 + ":" + timeLeft % 60 + (timeLeft % 60 < 10 ? "0" : ""));
         lastGameStats.appendTextLine(ChatColor.BLUE.toString() + getBluePoints() + ChatColor.GRAY + "  -  " + ChatColor.RED + getRedPoints());
@@ -153,10 +158,11 @@ public class DatabaseGame {
         }
         players.forEach(lastGameStats::appendTextLine);
 
-        //top dmg/healing/absorbed
+        //top dmg/healing/absorbed + dhp per game
         List<String> topDamagePlayers = new ArrayList<>();
         List<String> topHealingPlayers = new ArrayList<>();
         List<String> topAbsorbedPlayers = new ArrayList<>();
+        List<String> topDHPPerGamePlayers = new ArrayList<>();
 
         databaseGamePlayers.stream().sorted(Comparator.comparingLong(DatabaseGamePlayer::getTotalDamage).reversed()).forEach(databaseGamePlayer -> {
             topDamagePlayers.add(databaseGamePlayer.getColoredName() + ": " + ChatColor.YELLOW + Utils.addCommaAndRound(databaseGamePlayer.getTotalDamage()));
@@ -170,9 +176,18 @@ public class DatabaseGame {
             topAbsorbedPlayers.add(databaseGamePlayer.getColoredName() + ": " + ChatColor.YELLOW + Utils.addCommaAndRound(databaseGamePlayer.getTotalAbsorbed()));
         });
 
+        databaseGamePlayers.stream().sorted((o1, o2) -> {
+            Long p1DHPPerGame = o1.getTotalDHP() / minutes;
+            Long p2DHPPerGame = o2.getTotalDHP() / minutes;
+            return p2DHPPerGame.compareTo(p1DHPPerGame);
+        }).forEach(databaseGamePlayer -> {
+            topDHPPerGamePlayers.add(databaseGamePlayer.getColoredName() + ": " + ChatColor.YELLOW + Utils.addCommaAndRound(databaseGamePlayer.getTotalDHP() / minutes));
+        });
+
         topDamagePlayers.forEach(topDamage::appendTextLine);
         topHealingPlayers.forEach(topHealing::appendTextLine);
         topAbsorbedPlayers.forEach(topAbsorbed::appendTextLine);
+        topDHPPerGamePlayers.forEach(topDHPPerMinute::appendTextLine);
 
         //setting visibility to none
         holograms.forEach(hologram -> {
@@ -183,10 +198,10 @@ public class DatabaseGame {
     }
 
     public static void setGameHologramVisibility(Player player) {
-        if (!Leaderboards.playerGameHolograms.containsKey(player.getUniqueId()) || Leaderboards.playerGameHolograms.get(player.getUniqueId()) == null) {
-            Leaderboards.playerGameHolograms.put(player.getUniqueId(), previousGames.size() - 1);
+        if (!LeaderboardManager.playerGameHolograms.containsKey(player.getUniqueId()) || LeaderboardManager.playerGameHolograms.get(player.getUniqueId()) == null) {
+            LeaderboardManager.playerGameHolograms.put(player.getUniqueId(), previousGames.size() - 1);
         }
-        int selectedGame = Leaderboards.playerGameHolograms.get(player.getUniqueId());
+        int selectedGame = LeaderboardManager.playerGameHolograms.get(player.getUniqueId());
         for (int i = 0; i < previousGames.size(); i++) {
             List<Hologram> gameHolograms = previousGames.get(i).getHolograms();
             if (i == selectedGame) {
@@ -201,14 +216,14 @@ public class DatabaseGame {
 
     private static void createGameSwitcherHologram(Player player) {
         HologramsAPI.getHolograms(Warlords.getInstance()).stream()
-                .filter(h -> h.getVisibilityManager().isVisibleTo(player) && h.getLocation().equals(Leaderboards.gameSwitchLocation))
+                .filter(h -> h.getVisibilityManager().isVisibleTo(player) && h.getLocation().equals(LeaderboardManager.gameSwitchLocation))
                 .forEach(Hologram::delete);
 
-        Hologram gameSwitcher = HologramsAPI.createHologram(Warlords.getInstance(), Leaderboards.gameSwitchLocation);
+        Hologram gameSwitcher = HologramsAPI.createHologram(Warlords.getInstance(), LeaderboardManager.gameSwitchLocation);
         gameSwitcher.appendTextLine(ChatColor.AQUA.toString() + ChatColor.UNDERLINE + "Last " + previousGames.size() + " Games");
         gameSwitcher.appendTextLine("");
 
-        int selectedGame = Leaderboards.playerGameHolograms.get(player.getUniqueId());
+        int selectedGame = LeaderboardManager.playerGameHolograms.get(player.getUniqueId());
         int gameBefore = getGameBefore(selectedGame);
         int gameAfter = getGameAfter(selectedGame);
 
@@ -232,12 +247,12 @@ public class DatabaseGame {
         }
 
         beforeLine.setTouchHandler((clicker) -> {
-            Leaderboards.playerGameHolograms.put(player.getUniqueId(), gameBefore);
+            LeaderboardManager.playerGameHolograms.put(player.getUniqueId(), gameBefore);
             setGameHologramVisibility(player);
         });
 
         afterLine.setTouchHandler((clicker) -> {
-            Leaderboards.playerGameHolograms.put(player.getUniqueId(), gameAfter);
+            LeaderboardManager.playerGameHolograms.put(player.getUniqueId(), gameAfter);
             setGameHologramVisibility(player);
         });
 

@@ -89,11 +89,11 @@ public class DatabaseManager {
                         if (timeDiff > 0 && timeDiff / (1000 * 60) > 10000) {
                             String sharedChainName = UUID.randomUUID().toString();
                             //caching lb
-                            Leaderboards.addHologramLeaderboards(sharedChainName);
+                            LeaderboardManager.addHologramLeaderboards(sharedChainName);
                             Warlords.newSharedChain(sharedChainName)
                                     .async(() -> {
                                         //adding new document with top weekly players
-                                        weeklyLeaderboards.insertOne(Leaderboards.getTopPlayersOnLeaderboard());
+                                        weeklyLeaderboards.insertOne(LeaderboardManager.getTopPlayersOnLeaderboard());
                                         //clearing weekly
                                         playersInformationWeekly.deleteMany(new Document());
                                         //updating date to current
@@ -123,7 +123,7 @@ public class DatabaseManager {
                                     }
                                     Warlords.playerScoreboards.get(player.getUniqueId()).giveMainLobbyScoreboard();
                                 });
-                                Leaderboards.addHologramLeaderboards(UUID.randomUUID().toString());
+                                LeaderboardManager.addHologramLeaderboards(UUID.randomUUID().toString());
                             })
                             .execute();
                     //loading all players
@@ -573,10 +573,10 @@ public class DatabaseManager {
                                 eq("time_left", gameInformation.getGameInfo().get("time_left"))
                         ));
                         //reloading leaderboards
-                        Leaderboards.playerGameHolograms.forEach((uuid, integer) -> {
-                            Leaderboards.playerGameHolograms.put(uuid, previousGames.size() - 1);
+                        LeaderboardManager.playerGameHolograms.forEach((uuid, integer) -> {
+                            LeaderboardManager.playerGameHolograms.put(uuid, previousGames.size() - 1);
                         });
-                        Leaderboards.addHologramLeaderboards(UUID.randomUUID().toString());
+                        LeaderboardManager.addHologramLeaderboards(UUID.randomUUID().toString());
                     }).execute();
         } catch (Exception e) {
             e.printStackTrace();
@@ -599,10 +599,10 @@ public class DatabaseManager {
                         //inserting the game to the database
                         gamesInformation.insertOne(gameInformation.getGameInfo());
                         //reloading leaderboards
-                        Leaderboards.playerGameHolograms.forEach((uuid, integer) -> {
-                            Leaderboards.playerGameHolograms.put(uuid, previousGames.size() - 1);
+                        LeaderboardManager.playerGameHolograms.forEach((uuid, integer) -> {
+                            LeaderboardManager.playerGameHolograms.put(uuid, previousGames.size() - 1);
                         });
-                        Leaderboards.addHologramLeaderboards(UUID.randomUUID().toString());
+                        LeaderboardManager.addHologramLeaderboards(UUID.randomUUID().toString());
                     }).execute();
             Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Added game");
         } catch (MongoWriteException e) {

@@ -8,7 +8,7 @@ import com.ebicep.warlords.classes.abilties.UndyingArmy;
 import com.ebicep.warlords.classes.shaman.specs.spiritguard.Spiritguard;
 import com.ebicep.warlords.database.DatabaseGame;
 import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.database.Leaderboards;
+import com.ebicep.warlords.database.LeaderboardManager;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.flags.GroundFlagLocation;
 import com.ebicep.warlords.maps.flags.PlayerFlagLocation;
@@ -145,7 +145,7 @@ public class WarlordsEvents implements Listener {
                     DatabaseManager.loadPlayer(player, false);
                     Warlords.updateHead(e.getPlayer());
                 })
-                .sync(() -> Leaderboards.setLeaderboardHologramVisibility(player))
+                .sync(() -> LeaderboardManager.setLeaderboardHologramVisibility(player))
                 .execute();
         DatabaseGame.setGameHologramVisibility(player);
 

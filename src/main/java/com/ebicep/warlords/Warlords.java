@@ -19,7 +19,7 @@ import com.ebicep.warlords.commands.miscellaneouscommands.*;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.FutureMessageManager;
 import com.ebicep.warlords.database.LeaderboardCommand;
-import com.ebicep.warlords.database.Leaderboards;
+import com.ebicep.warlords.database.LeaderboardManager;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.menu.MenuEventListener;
@@ -250,7 +250,7 @@ public class Warlords extends JavaPlugin {
             playerScoreboards.put(player.getUniqueId(), new CustomScoreboard(player));
         });
 
-        Leaderboards.init();
+        LeaderboardManager.init();
 
         //connects to the database
         Warlords.newChain()
