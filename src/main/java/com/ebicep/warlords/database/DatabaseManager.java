@@ -436,18 +436,7 @@ public class DatabaseManager {
     public static Object getDocumentInfoWithDotNotation(Document document, String dots) throws MongoException {
         if (!connected) return null;
 
-        String[] keys = dots.split("\\.");
-        Document doc = document;
-
-        for (int i = 0; i < keys.length - 1; i++) {
-            Object o = doc.get(keys[i]);
-            if (!(o instanceof Document)) {
-                throw new MongoException(String.format(ChatColor.GREEN + "[Warlords] Field '%s' does not exist or is not a Document", keys[i]));
-            }
-            doc = (Document) o;
-        }
-
-        return doc.get(keys[keys.length - 1]);
+        return document.getEmbedded(Arrays.asList(dots.split("\\.")), Object.class);
     }
 
     /**

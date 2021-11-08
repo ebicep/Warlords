@@ -2,12 +2,8 @@ package com.ebicep.warlords.commands.debugcommands;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.BaseCommand;
-import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.Leaderboards;
 import com.ebicep.warlords.player.WarlordsPlayer;
-import com.gmail.filoghost.holographicdisplays.api.Hologram;
-import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
-import com.mongodb.client.MongoCollection;
 import org.bson.Document;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -15,13 +11,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import static com.ebicep.warlords.database.DatabaseManager.*;
 import static com.mongodb.client.model.Filters.eq;
@@ -38,6 +28,11 @@ public class TestCommand implements CommandExecutor {
         if (player != null) {
 
         }
+        long total = 0;
+        for (int i = 0; i < 1000000; i++) {
+            total += testMethod((Player) sender);
+        }
+        System.out.println(total / 1000000);
 
 //        DatabaseManager.warlordsGamesDatabase.createCollection("Games_Information_Backup");
 //        for (Document document : DatabaseManager.playersInformation.find()) {
@@ -111,6 +106,25 @@ public class TestCommand implements CommandExecutor {
         weeklyLeaderboards.insertOne(Leaderboards.getTopPlayersOnLeaderboard());
         sender.sendMessage(ChatColor.GREEN + "DID THE THING");
         return true;
+    }
+
+    private static long testMethod(Player player) {
+        long startTime = System.nanoTime();
+
+//        String[] keys = "paladin.avenger.wins".split("\\.");
+//        Document doc = cachedPlayerInfo.get(player.getUniqueId());
+//        for (int i = 0; i < keys.length - 1; i++) {
+//            Object o = doc.get(keys[i]);
+//            if (!(o instanceof Document)) {
+//                throw new MongoException(String.format(ChatColor.GREEN + "[Warlords] Field '%s' does not exist or is not a Document", keys[i]));
+//            }
+//            doc = (Document) o;
+//        }
+//        System.out.println(doc.get(keys[keys.length - 1]));
+ //       System.out.println(doc.getEmbedded(Arrays.asList("paladin", "avenger", "wins"), Integer.class));
+        System.out.println(getPlayerInfoWithDotNotation(player, "paladin.avenger.wins"));
+        long endTime = System.nanoTime();
+        return endTime - startTime;
     }
 
     public void register(Warlords instance) {
