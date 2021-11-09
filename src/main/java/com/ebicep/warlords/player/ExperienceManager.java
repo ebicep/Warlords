@@ -130,17 +130,17 @@ public class ExperienceManager {
 
         Classes classes = Classes.getClass(key.substring(key.indexOf(".") + 1));
         if (classes.specType == SpecType.DAMAGE) {
-            damageMultiplier = .75;
-            healingMultiplier = .125;
-            absorbedMultiplier = .125;
+            damageMultiplier = .80;
+            healingMultiplier = .10;
+            absorbedMultiplier = .10;
         } else if (classes.specType == SpecType.HEALER) {
-            damageMultiplier = .3;
-            healingMultiplier = .6;
-            absorbedMultiplier = .1;
+            damageMultiplier = .275;
+            healingMultiplier = .65;
+            absorbedMultiplier = .75;
         } else { //tank
-            damageMultiplier = .55;
-            healingMultiplier = .15;
-            absorbedMultiplier = .3;
+            damageMultiplier = .575;
+            healingMultiplier = .1;
+            absorbedMultiplier = .325;
         }
 
         int wins = (int) getDocumentInfoWithDotNotation(document, key + ".wins");

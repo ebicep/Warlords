@@ -2,7 +2,10 @@ package com.ebicep.warlords.commands.debugcommands;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.BaseCommand;
+import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.player.ExperienceManager;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.util.Utils;
 import com.mongodb.client.MongoCollection;
 import org.bson.Document;
 import org.bukkit.ChatColor;
@@ -14,8 +17,6 @@ import org.bukkit.entity.Player;
 import java.text.DecimalFormat;
 
 import static com.ebicep.warlords.database.DatabaseManager.*;
-import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.Sorts.descending;
 
 public class TestCommand implements CommandExecutor {
 
@@ -30,9 +31,19 @@ public class TestCommand implements CommandExecutor {
 
         }
         DecimalFormat decimalFormat = new DecimalFormat("#.##");
-//        DatabaseManager.warlordsPlayersDatabase.createCollection("Players_Information_Test");
-        MongoCollection<Document> test = warlordsPlayersDatabase.getCollection("Players_Information_Test");
-        long temp = (long) getPlayerInfoWithDotNotation(((Player) sender), "dots");
+        DatabaseManager.warlordsGamesDatabase.createCollection("Temp");
+        MongoCollection<Document> temp = warlordsGamesDatabase.getCollection("Temp");
+        for (Document document : gamesInformation.find().limit(10)) {
+            temp.insertOne(document);
+        }
+//        ExperienceManager.giveExpFromCurrentStats(((Player)sender).getUniqueId());
+//        MongoCollection<Document> test = warlordsPlayersDatabase.getCollection("Players_Information_Test");
+//        long temp = (long) getPlayerInfoWithDotNotation(((Player) sender), "dots");
+//        sender.sendMessage(ChatColor.BLUE + "---------------------------------------------------");
+//        Utils.sendCenteredMessage((Player) sender, ChatColor.WHITE + "Experience Summary");
+//        sender.sendMessage(ChatColor.BLUE + "---------------------------------------------------");
+//
+//        sender.sendMessage(ChatColor.BLUE + "---------------------------------------------------");
 //        List<Document> documents = Lists.newArrayList(DatabaseManager.playersInformation.aggregate(Collections.singletonList(sort(descending("paladin.avenger.wins")))));
 //        System.out.println(documents.get(0));
 //        System.out.println(documents.get(1));
