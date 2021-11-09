@@ -438,18 +438,7 @@ public class DatabaseManager {
     public static Object getDocumentInfoWithDotNotation(Document document, String dots) throws MongoException {
         if (!connected) return null;
 
-        String[] keys = dots.split("\\.");
-        Document doc = document;
-
-        for (int i = 0; i < keys.length - 1; i++) {
-            Object o = doc.get(keys[i]);
-            if (!(o instanceof Document)) {
-                throw new MongoException(String.format(ChatColor.GREEN + "[Warlords] Field '%s' does not exist or is not a Document", keys[i]));
-            }
-            doc = (Document) o;
-        }
-
-        return doc.get(keys[keys.length - 1]);
+        return document.getEmbedded(Arrays.asList(dots.split("\\.")), Object.class);
     }
 
     /**
@@ -695,7 +684,7 @@ public class DatabaseManager {
             playerInfo.put(className + ".wins", won ? 1 : 0);
             playerInfo.put(className + ".losses", won ? 0 : 1);
             playerInfo.put(className + ".flags_captured", flagsCaptured);
-            playerInfo.put(className + ".flags_returned", flagsCaptured);
+            playerInfo.put(className + ".flags_returned", flagsReturned);
             playerInfo.put(className + ".damage", damage);
             playerInfo.put(className + ".healing", healing);
             playerInfo.put(className + ".absorbed", absorbed);
@@ -768,6 +757,12 @@ public class DatabaseManager {
                 .append("seconds_in_respawn", Math.round(warlordsPlayer.getRespawnTimeSpent()))
                 .append("x_locations", xLocations.toString())
                 .append("z_locations", zLocations.toString())
+                .append("total_kills", warlordsPlayer.getTotalKills())
+                .append("total_assists", warlordsPlayer.getTotalAssists())
+                .append("total_deaths", warlordsPlayer.getTotalDeaths())
+                .append("total_damage", warlordsPlayer.getTotalDamage())
+                .append("total_healing", warlordsPlayer.getTotalHealing())
+                .append("total_absorbed", warlordsPlayer.getTotalAbsorbed())
                 .append("kills", Arrays.stream(warlordsPlayer.getKills()).boxed().collect(Collectors.toList()))
                 .append("deaths", Arrays.stream(warlordsPlayer.getDeaths()).boxed().collect(Collectors.toList()))
                 .append("assists", Arrays.stream(warlordsPlayer.getAssists()).boxed().collect(Collectors.toList()))
@@ -826,7 +821,7 @@ public class DatabaseManager {
                         playerInfo.put(className + ".wins", won ? 1 : 0);
                         playerInfo.put(className + ".losses", won ? 0 : 1);
                         playerInfo.put(className + ".flags_captured", flagsCaptured);
-                        playerInfo.put(className + ".flags_returned", flagsCaptured);
+                        playerInfo.put(className + ".flags_returned", flagsReturned);
                         playerInfo.put(className + ".damage", damage);
                         playerInfo.put(className + ".healing", healing);
                         playerInfo.put(className + ".absorbed", absorbed);

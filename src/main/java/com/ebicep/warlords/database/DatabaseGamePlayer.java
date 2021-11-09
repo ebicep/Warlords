@@ -1,10 +1,9 @@
 package com.ebicep.warlords.database;
 
-import org.bson.BsonArray;
 import org.bson.Document;
 import org.bukkit.ChatColor;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class DatabaseGamePlayer {
 
@@ -16,54 +15,46 @@ public class DatabaseGamePlayer {
     private final int secondsInRespawn;
     private final String xLocations;
     private final String zLocations;
-    private final ArrayList<Integer> kills;
-    private final ArrayList<Integer> assists;
-    private final ArrayList<Integer> deaths;
-    private final ArrayList<Long> damage;
-    private final ArrayList<Long> healing;
-    private final ArrayList<Long> absorbed;
+    private final int totalKills;
+    private final int totalAssists;
+    private final int totalDeaths;
+    private final long totalDamage;
+    private final long totalHealing;
+    private final long totalAbsorbed;
+    private final List<Integer> kills;
+    private final List<Integer> assists;
+    private final List<Integer> deaths;
+    private final List<Long> damage;
+    private final List<Long> healing;
+    private final List<Long> absorbed;
     private final int flagCaptures;
     private final int flagReturns;
 
     private final ChatColor teamColor;
 
     public DatabaseGamePlayer(Document document, ChatColor teamColor) {
-        this.uuid = (String) document.get("uuid");
-        this.name = (String) document.get("name");
-        this.spec = (String) document.get("spec");
-        this.blocksTravelled = (int) document.get("blocks_travelled");
-        this.secondsInCombat = (int) document.get("seconds_in_combat");
-        this.secondsInRespawn = (int) document.get("seconds_in_respawn");
-        this.xLocations = (String) document.get("x_locations");
-        this.zLocations = (String) document.get("z_locations");
-        this.kills = (ArrayList<Integer>) document.get("kills");
-        this.assists = (ArrayList<Integer>) document.get("assists");
-        this.deaths = (ArrayList<Integer>) document.get("deaths");
-        this.damage = (ArrayList<Long>) document.get("damage");
-        this.healing = (ArrayList<Long>) document.get("healing");
-        this.absorbed = (ArrayList<Long>) document.get("absorbed");
-        this.flagCaptures = (int) document.get("flag_captures");
-        this.flagReturns = (int) document.get("flag_returns");
-        this.teamColor = teamColor;
-    }
-
-    public DatabaseGamePlayer(String uuid, String name, String spec, int blocksTravelled, int secondsInCombat, int secondsInRespawn, String xLocations, String zLocations, ArrayList<Integer> kills, ArrayList<Integer> assists, ArrayList<Integer> deaths, ArrayList<Long> damage, ArrayList<Long> healing, ArrayList<Long> absorbed, int flagCaptures, int flagReturns, ChatColor teamColor) {
-        this.uuid = uuid;
-        this.name = name;
-        this.spec = spec;
-        this.blocksTravelled = blocksTravelled;
-        this.secondsInCombat = secondsInCombat;
-        this.secondsInRespawn = secondsInRespawn;
-        this.xLocations = xLocations;
-        this.zLocations = zLocations;
-        this.kills = kills;
-        this.assists = assists;
-        this.deaths = deaths;
-        this.damage = damage;
-        this.healing = healing;
-        this.absorbed = absorbed;
-        this.flagCaptures = flagCaptures;
-        this.flagReturns = flagReturns;
+        this.uuid = document.getString("uuid");
+        this.name = document.getString("name");
+        this.spec = document.getString("spec");
+        this.blocksTravelled = document.getInteger("blocks_travelled");
+        this.secondsInCombat = document.getInteger("seconds_in_combat");
+        this.secondsInRespawn = document.getInteger("seconds_in_respawn");
+        this.xLocations = document.getString("x_locations");
+        this.zLocations = document.getString("z_locations");
+        this.totalKills = document.getInteger("total_kills");
+        this.totalAssists = document.getInteger("total_assists");
+        this.totalDeaths = document.getInteger("total_deaths");
+        this.totalDamage = document.getLong("total_damage");
+        this.totalHealing = document.getLong("total_healing");
+        this.totalAbsorbed = document.getLong("total_absorbed");
+        this.kills = document.getList("kills", Integer.class);
+        this.assists = document.getList("assists", Integer.class);
+        this.deaths = document.getList("deaths", Integer.class);
+        this.damage = document.getList("damage", Long.class);
+        this.healing = document.getList("healing", Long.class);
+        this.absorbed = document.getList("absorbed", Long.class);
+        this.flagCaptures = document.getInteger("flag_captures");
+        this.flagReturns = document.getInteger("flag_returns");
         this.teamColor = teamColor;
     }
 
@@ -103,27 +94,27 @@ public class DatabaseGamePlayer {
         return zLocations;
     }
 
-    public ArrayList<Integer> getKills() {
+    public List<Integer> getKills() {
         return kills;
     }
 
-    public ArrayList<Integer> getAssists() {
+    public List<Integer> getAssists() {
         return assists;
     }
 
-    public ArrayList<Integer> getDeaths() {
+    public List<Integer> getDeaths() {
         return deaths;
     }
 
-    public ArrayList<Long> getDamage() {
+    public List<Long> getDamage() {
         return damage;
     }
 
-    public ArrayList<Long> getHealing() {
+    public List<Long> getHealing() {
         return healing;
     }
 
-    public ArrayList<Long> getAbsorbed() {
+    public List<Long> getAbsorbed() {
         return absorbed;
     }
 
@@ -132,27 +123,27 @@ public class DatabaseGamePlayer {
     }
 
     public int getTotalKills() {
-        return kills.stream().reduce(0, Integer::sum);
+        return totalKills;
     }
 
     public int getTotalAssists() {
-        return assists.stream().reduce(0, Integer::sum);
+        return totalAssists;
     }
 
     public int getTotalDeaths() {
-        return deaths.stream().reduce(0, Integer::sum);
+        return totalDeaths;
     }
 
-    public Long getTotalDamage() {
-        return damage.stream().reduce(0L, Long::sum);
+    public long getTotalDamage() {
+        return totalDamage;
     }
 
-    public Long getTotalHealing() {
-        return healing.stream().reduce(0L, Long::sum);
+    public long getTotalHealing() {
+        return totalHealing;
     }
 
-    public Long getTotalAbsorbed() {
-        return absorbed.stream().reduce(0L, Long::sum);
+    public long getTotalAbsorbed() {
+        return totalAbsorbed;
     }
 
     public Long getTotalDHP() {
