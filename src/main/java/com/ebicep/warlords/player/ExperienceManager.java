@@ -121,6 +121,8 @@ public class ExperienceManager {
         //250 per loss
         //5 per kills/assist
         //1 per 500 dhp based on multiplier
+        //150 per cap
+        //50 per ret
 
         long exp = 0;
 
@@ -150,6 +152,8 @@ public class ExperienceManager {
         long damage = (long) getDocumentInfoWithDotNotation(document, key + ".damage");
         long healing = (long) getDocumentInfoWithDotNotation(document, key + ".healing");
         long absorbed = (long) getDocumentInfoWithDotNotation(document, key + ".absorbed");
+        int caps = (int) getDocumentInfoWithDotNotation(document, key + ".flags_captured");
+        int rets = (int) getDocumentInfoWithDotNotation(document, key + ".flags_returned");
 
         double calculatedDHP = damage * damageMultiplier + healing * healingMultiplier + absorbed * absorbedMultiplier;
 
@@ -157,20 +161,22 @@ public class ExperienceManager {
         exp += losses * 250L;
         exp += (kills + assists) * 5L;
         exp += calculatedDHP / 500;
+        exp += caps * 150L;
+        exp += rets * 50L;
 
         return exp;
     }
 
     public static long getExperienceForClass(UUID uuid, ClassesGroup classesGroup) {
+        //return warlordsPlayersDatabase.getCollection("Players_Information_Test").find().filter(eq("uuid", uuid.toString())).first().getEmbedded(Arrays.asList((classesGroup.name.toLowerCase() + ".experience").split("\\.")), Long.class);
         return getExperienceFromDotNotation(uuid, classesGroup.name.toLowerCase() + ".experience");
-        //return warlordsPlayersDatabase.getCollection("Players_Information_Test").find().filter(eq("uuid", uuid.toString())).first().getEmbedded(Arrays.asList(dots.split("\\.")), Long.class);
     }
 
     public static long getExperienceForSpec(UUID uuid, Classes spec) {
         String className = Classes.getClassesGroup(spec).name;
         String specName = spec.name;
+        //return warlordsPlayersDatabase.getCollection("Players_Information_Test").find().filter(eq("uuid", uuid.toString())).first().getEmbedded(Arrays.asList((className.toLowerCase() + "." + specName.toLowerCase() + ".experience").split("\\.")), Long.class);
         return getExperienceFromDotNotation(uuid, className.toLowerCase() + "." + specName.toLowerCase() + ".experience");
-        //return warlordsPlayersDatabase.getCollection("Players_Information_Test").find().filter(eq("uuid", uuid.toString())).first().getEmbedded(Arrays.asList(dots.split("\\.")), Long.class);
     }
 
     public static int getLevelForClass(UUID uuid, ClassesGroup classesGroup) {
@@ -226,10 +232,8 @@ public class ExperienceManager {
     }
 
     public static void giveExperienceBar(Player player) {
-        if(getPlayerInfoWithDotNotation(player, "experience") == null) {
-            return;
-        }
-        long experience = (Long) getPlayerInfoWithDotNotation(player, "experience");
+        //long experience = warlordsPlayersDatabase.getCollection("Players_Information_Test").find().filter(eq("uuid", player.getUniqueId().toString())).first().getLong("experience");
+        long experience = getExperienceFromDotNotation(player.getUniqueId(), "experience");
         int level = (int) calculateLevelFromExp(experience);
         player.setLevel(level);
         player.setExp((float) (experience - levelExperience.get(level)) / (levelExperience.get(level + 1) - levelExperience.get(level)));

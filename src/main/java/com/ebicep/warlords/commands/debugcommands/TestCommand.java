@@ -31,12 +31,12 @@ public class TestCommand implements CommandExecutor {
 
         }
         DecimalFormat decimalFormat = new DecimalFormat("#.##");
-        DatabaseManager.warlordsGamesDatabase.createCollection("Temp");
-        MongoCollection<Document> temp = warlordsGamesDatabase.getCollection("Temp");
-        for (Document document : gamesInformation.find().limit(10)) {
-            temp.insertOne(document);
-        }
-//        ExperienceManager.giveExpFromCurrentStats(((Player)sender).getUniqueId());
+//        DatabaseManager.warlordsGamesDatabase.createCollection("Temp");
+//        MongoCollection<Document> temp = warlordsGamesDatabase.getCollection("Temp");
+//        for (Document document : gamesInformation.find().limit(10)) {
+//            temp.insertOne(document);
+//        }
+        ExperienceManager.giveExpFromCurrentStats(((Player)sender).getUniqueId());
 //        MongoCollection<Document> test = warlordsPlayersDatabase.getCollection("Players_Information_Test");
 //        long temp = (long) getPlayerInfoWithDotNotation(((Player) sender), "dots");
 //        sender.sendMessage(ChatColor.BLUE + "---------------------------------------------------");
