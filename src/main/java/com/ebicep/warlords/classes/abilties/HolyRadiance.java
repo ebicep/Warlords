@@ -46,7 +46,7 @@ public class HolyRadiance extends AbstractAbility {
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
 
-        if (player.isSneaking() && hasSneakingAbility) {
+        if (hasSneakingAbility) {
             for (WarlordsPlayer p : PlayerFilter
                     .entitiesAround(player, markRadius, markRadius, markRadius)
                     .aliveTeammatesOfExcludingSelf(wp)
@@ -94,31 +94,31 @@ public class HolyRadiance extends AbstractAbility {
                     );
                 }
             }
-        } else {
-            wp.subtractEnergy(energyCost);
-            for (WarlordsPlayer p : PlayerFilter
-                    .entitiesAround(player, radius, radius, radius)
-                    .aliveTeammatesOfExcludingSelf(wp)
-            ) {
-                //p.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
-                wp.getGame().getGameTasks().put(
-                        new FlyingArmorStand(wp.getLocation(), p, wp, 1.1).runTaskTimer(Warlords.getInstance(), 1, 1),
-                        System.currentTimeMillis()
-                );
-            }
-
-            wp.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
-            wp.getSpeed().addSpeedModifier("Radiance", 20, 3 * 20, "BASE");
-
-            player.playSound(player.getLocation(), Sound.ORB_PICKUP, 1, 1);
-            for (Player player1 : player.getWorld().getPlayers()) {
-                player1.playSound(player.getLocation(), "paladin.holyradiance.activation", 2, 1);
-            }
-
-            Location particleLoc = player.getLocation().add(0, 1.2, 0);
-            ParticleEffect.VILLAGER_HAPPY.display(1, 1, 1, 0.1F, 2, particleLoc, 500);
-            ParticleEffect.SPELL.display(1, 1, 1, 0.06F, 12, particleLoc, 500);
         }
+
+        wp.subtractEnergy(energyCost);
+        for (WarlordsPlayer p : PlayerFilter
+                .entitiesAround(player, radius, radius, radius)
+                .aliveTeammatesOfExcludingSelf(wp)
+        ) {
+            //p.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+            wp.getGame().getGameTasks().put(
+                    new FlyingArmorStand(wp.getLocation(), p, wp, 1.1).runTaskTimer(Warlords.getInstance(), 1, 1),
+                    System.currentTimeMillis()
+            );
+        }
+
+        wp.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+        wp.getSpeed().addSpeedModifier("Radiance", 20, 3 * 20, "BASE");
+
+        player.playSound(player.getLocation(), Sound.ORB_PICKUP, 1, 1);
+        for (Player player1 : player.getWorld().getPlayers()) {
+            player1.playSound(player.getLocation(), "paladin.holyradiance.activation", 2, 1);
+        }
+
+        Location particleLoc = player.getLocation().add(0, 1.2, 0);
+        ParticleEffect.VILLAGER_HAPPY.display(1, 1, 1, 0.1F, 2, particleLoc, 500);
+        ParticleEffect.SPELL.display(1, 1, 1, 0.06F, 12, particleLoc, 500);
     }
 
     private class FlyingArmorStand extends BukkitRunnable {
