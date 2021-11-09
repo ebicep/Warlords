@@ -2,8 +2,13 @@ package com.ebicep.warlords.commands.debugcommands;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.BaseCommand;
+import com.ebicep.warlords.database.DatabaseGamePlayer;
+import com.ebicep.warlords.database.DatabasePlayer;
 import com.ebicep.warlords.database.Leaderboards;
+import com.ebicep.warlords.player.Classes;
+import com.ebicep.warlords.player.ClassesGroup;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.mongodb.client.MongoCollection;
 import org.bson.Document;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -28,11 +33,54 @@ public class TestCommand implements CommandExecutor {
         if (player != null) {
 
         }
-        long total = 0;
-        for (int i = 0; i < 1000000; i++) {
-            total += testMethod((Player) sender);
+
+        MongoCollection<Document> temp = warlordsGamesDatabase.getCollection("Temp");
+//        for (Document document : gamesInformation.find()) {
+//            temp.insertOne(document);
+//        }
+//        for (Document document : gamesInformation.find()) {
+//            Document newDocument = new Document();
+//            ArrayList<Document> playersBlue = new ArrayList<>((ArrayList<Document>) getDocumentInfoWithDotNotation(document, "players.blue"));
+//            ArrayList<Document> playersRed = new ArrayList<>((ArrayList<Document>) getDocumentInfoWithDotNotation(document, "players.red"));
+//
+//            for (int i = 0; i < playersBlue.size(); i++) {
+//                DatabaseGamePlayer databasePlayer = new DatabaseGamePlayer(playersBlue.get(i), ChatColor.BLUE);
+//                newDocument.append("players.blue." + i + ".total_damage", databasePlayer.getTotalDamage());
+//                newDocument.append("players.blue." + i + ".total_healing", databasePlayer.getTotalHealing());
+//                newDocument.append("players.blue." + i + ".total_absorbed", databasePlayer.getTotalAbsorbed());
+//                newDocument.append("players.blue." + i + ".total_kills", databasePlayer.getTotalKills());
+//                newDocument.append("players.blue." + i + ".total_assists", databasePlayer.getTotalAssists());
+//                newDocument.append("players.blue." + i + ".total_deaths", databasePlayer.getTotalDeaths());
+//            }
+//
+//            for (int i = 0; i < playersRed.size(); i++) {
+//                DatabaseGamePlayer databasePlayer = new DatabaseGamePlayer(playersRed.get(i), ChatColor.RED);
+//                newDocument.append("players.red." + i + ".total_damage", databasePlayer.getTotalDamage());
+//                newDocument.append("players.red." + i + ".total_healing", databasePlayer.getTotalHealing());
+//                newDocument.append("players.red." + i + ".total_absorbed", databasePlayer.getTotalAbsorbed());
+//                newDocument.append("players.red." + i + ".total_kills", databasePlayer.getTotalKills());
+//                newDocument.append("players.red." + i + ".total_assists", databasePlayer.getTotalAssists());
+//                newDocument.append("players.red." + i + ".total_deaths", databasePlayer.getTotalDeaths());
+//            }
+//
+//            gamesInformation.updateOne(eq("date", document.getString("date")), new Document("$set", newDocument));
+//        }
+
+        MongoCollection<Document> test = warlordsPlayersDatabase.getCollection("Players_Information_Test");
+        for (Document document : playersInformation.find()) {
+            Document newDocument = new Document();
+            for (ClassesGroup value : ClassesGroup.values()) {
+                int cap = 0;
+                int ret = 0;
+                for (Classes subclass : value.subclasses) {
+                    cap += document.getEmbedded(Arrays.asList(value.name.toLowerCase(), subclass.name.toLowerCase(), "flags_captured"), Integer.class);
+                    ret += document.getEmbedded(Arrays.asList(value.name.toLowerCase(), subclass.name.toLowerCase(), "flags_returned"), Integer.class);
+                }
+                newDocument.put(value.name.toLowerCase() + ".flags_captured", cap);
+                newDocument.put(value.name.toLowerCase() + ".flags_returned", ret);
+            }
+            playersInformation.updateOne(eq("uuid", document.getString("uuid")), new Document("$set", newDocument));
         }
-        System.out.println(total / 1000000);
 
 //        DatabaseManager.warlordsGamesDatabase.createCollection("Games_Information_Backup");
 //        for (Document document : DatabaseManager.playersInformation.find()) {
