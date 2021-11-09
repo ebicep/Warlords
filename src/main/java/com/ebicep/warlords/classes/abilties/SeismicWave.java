@@ -73,7 +73,7 @@ public class SeismicWave extends AbstractAbility {
         for (List<Location> fallingBlockLocation : fallingBlockLocations) {
             for (Location loc : fallingBlockLocation) {
                 for (WarlordsPlayer p : PlayerFilter
-                        .entitiesAroundRectangle(loc, .5, 4, .5)
+                        .entitiesAroundRectangle(loc, .6, 4, .6)
                         .aliveEnemiesOf(wp)
                         .excluding(playersHit)
                         .closestFirst(wp)
