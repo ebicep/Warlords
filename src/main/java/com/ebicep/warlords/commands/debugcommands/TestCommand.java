@@ -66,21 +66,21 @@ public class TestCommand implements CommandExecutor {
 //            gamesInformation.updateOne(eq("date", document.getString("date")), new Document("$set", newDocument));
 //        }
 
-        MongoCollection<Document> test = warlordsPlayersDatabase.getCollection("Players_Information_Test");
-        for (Document document : playersInformation.find()) {
-            Document newDocument = new Document();
-            for (ClassesGroup value : ClassesGroup.values()) {
-                int cap = 0;
-                int ret = 0;
-                for (Classes subclass : value.subclasses) {
-                    cap += document.getEmbedded(Arrays.asList(value.name.toLowerCase(), subclass.name.toLowerCase(), "flags_captured"), Integer.class);
-                    ret += document.getEmbedded(Arrays.asList(value.name.toLowerCase(), subclass.name.toLowerCase(), "flags_returned"), Integer.class);
-                }
-                newDocument.put(value.name.toLowerCase() + ".flags_captured", cap);
-                newDocument.put(value.name.toLowerCase() + ".flags_returned", ret);
-            }
-            playersInformation.updateOne(eq("uuid", document.getString("uuid")), new Document("$set", newDocument));
-        }
+//        MongoCollection<Document> test = warlordsPlayersDatabase.getCollection("Players_Information_Test");
+//        for (Document document : playersInformation.find()) {
+//            Document newDocument = new Document();
+//            for (ClassesGroup value : ClassesGroup.values()) {
+//                int cap = 0;
+//                int ret = 0;
+//                for (Classes subclass : value.subclasses) {
+//                    cap += document.getEmbedded(Arrays.asList(value.name.toLowerCase(), subclass.name.toLowerCase(), "flags_captured"), Integer.class);
+//                    ret += document.getEmbedded(Arrays.asList(value.name.toLowerCase(), subclass.name.toLowerCase(), "flags_returned"), Integer.class);
+//                }
+//                newDocument.put(value.name.toLowerCase() + ".flags_captured", cap);
+//                newDocument.put(value.name.toLowerCase() + ".flags_returned", ret);
+//            }
+//            playersInformation.updateOne(eq("uuid", document.getString("uuid")), new Document("$set", newDocument));
+//        }
 
 //        DatabaseManager.warlordsGamesDatabase.createCollection("Games_Information_Backup");
 //        for (Document document : DatabaseManager.playersInformation.find()) {
