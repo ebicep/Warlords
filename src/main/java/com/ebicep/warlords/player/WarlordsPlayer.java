@@ -39,6 +39,7 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public final class WarlordsPlayer {
 
@@ -83,9 +84,9 @@ public final class WarlordsPlayer {
     private final LinkedHashMap<WarlordsPlayer, Integer> hitBy = new LinkedHashMap<>();
     private final LinkedHashMap<WarlordsPlayer, Integer> healedBy = new LinkedHashMap<>();
     private final int[] deaths = new int[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
-    private final float[] damage = new float[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
-    private final float[] healing = new float[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
-    private final float[] absorbed = new float[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
+    private final long[] damage = new long[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
+    private final long[] healing = new long[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
+    private final long[] absorbed = new long[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
 
     private final List<Location> locations = new ArrayList<>();
 
@@ -1315,7 +1316,7 @@ public final class WarlordsPlayer {
         this.deaths[this.gameState.getTimer() / (20 * 60)]++;
     }
 
-    public float[] getDamage() {
+    public long[] getDamage() {
         return damage;
     }
 
@@ -1323,11 +1324,11 @@ public final class WarlordsPlayer {
         this.damage[this.gameState.getTimer() / (20 * 60)] += amount;
     }
 
-    public float getTotalDamage() {
-        return (float) IntStream.range(0, damage.length).mapToDouble(i -> damage[i]).sum();
+    public long getTotalDamage() {
+        return Arrays.stream(damage).sum();
     }
 
-    public float[] getHealing() {
+    public long[] getHealing() {
         return healing;
     }
 
@@ -1335,11 +1336,11 @@ public final class WarlordsPlayer {
         this.healing[this.gameState.getTimer() / (20 * 60)] += amount;
     }
 
-    public float getTotalHealing() {
-        return (float) IntStream.range(0, healing.length).mapToDouble(i -> healing[i]).sum();
+    public long getTotalHealing() {
+        return Arrays.stream(healing).sum();
     }
 
-    public float[] getAbsorbed() {
+    public long[] getAbsorbed() {
         return absorbed;
     }
 
@@ -1347,8 +1348,8 @@ public final class WarlordsPlayer {
         this.absorbed[this.gameState.getTimer() / (20 * 60)] += amount;
     }
 
-    public float getTotalAbsorbed() {
-        return (float) IntStream.range(0, absorbed.length).mapToDouble(i -> absorbed[i]).sum();
+    public long getTotalAbsorbed() {
+        return Arrays.stream(absorbed).sum();
     }
 
     public ItemStack getStatItemStack(String name) {
