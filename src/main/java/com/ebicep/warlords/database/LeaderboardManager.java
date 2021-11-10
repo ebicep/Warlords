@@ -73,11 +73,19 @@ public class LeaderboardManager {
         leaderboards.put("shaman.spiritguard.wins", new Leaderboard("Spiritguard Wins", new Location(world, -2543, 65.5, 717)));
         leaderboards.put("shaman.earthwarden.wins", new Leaderboard("Earthwarden Wins", new Location(world, -2539, 65.5, 717)));
 
+        leaderboards.put("experience", new Leaderboard("Experience", new Location(world, -2563, 70.5, 717)));
+        leaderboards.put("paladin.experience", new Leaderboard("Paladin Experience", new Location(world, -2559, 70.5, 717)));
+        leaderboards.put("warrior.experience", new Leaderboard("Warrior Experience", new Location(world, -2555, 70.5, 717)));
+        leaderboards.put("mage.experience", new Leaderboard("Mage Experience", new Location(world, -2551, 70.5, 717)));
+        leaderboards.put("shaman.experience", new Leaderboard("Shaman Experience", new Location(world, -2547, 70.5, 717)));
+
         gameHologramLocations.add(new LocationBuilder(lastGameLocation.clone()).left(5).get());
         gameHologramLocations.add(new LocationBuilder(lastGameLocation.clone()).addY(2).right(.5f).get());
         gameHologramLocations.add(new LocationBuilder(lastGameLocation.clone()).addY(2).right(4).get());
         gameHologramLocations.add(new LocationBuilder(lastGameLocation.clone()).addY(2).right(7.5f).get());
         gameHologramLocations.add(new LocationBuilder(lastGameLocation.clone()).addY(2).right(11f).get());
+        gameHologramLocations.add(new LocationBuilder(lastGameLocation.clone()).addY(2).right(14.5f).get());
+        gameHologramLocations.add(new LocationBuilder(lastGameLocation.clone()).addY(2).right(18f).get());
 
     }
 
@@ -98,7 +106,7 @@ public class LeaderboardManager {
         //leaderboard position
         leaderboards.put("plays", new Leaderboard("Plays", new Location(world, -2559, 60.5, 717)));
         leaderboards.put("dhp", new Leaderboard("DHP", new Location(world, -2555, 60.5, 717)));
-        leaderboards.put("dhp_per_game", new Leaderboard("DHP per Game", new Location(world, -2555, 70.5, 717)));
+        leaderboards.put("dhp_per_game", new Leaderboard("DHP per Game", new Location(world, -2567, 70.5, 717)));
 
     }
 

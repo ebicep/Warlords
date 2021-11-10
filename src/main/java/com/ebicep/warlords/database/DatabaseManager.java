@@ -771,6 +771,10 @@ public class DatabaseManager {
                 .append("absorbed", Arrays.stream(warlordsPlayer.getAbsorbed()).boxed().collect(Collectors.toList()))
                 .append("flag_captures", warlordsPlayer.getFlagsCaptured())
                 .append("flag_returns", warlordsPlayer.getFlagsReturned())
+                .append("total_damage_on_carrier", warlordsPlayer.getTotalDamageOnCarrier())
+                .append("total_healing_on_carrier", warlordsPlayer.getTotalHealingOnCarrier())
+                .append("damage_on_carrier", warlordsPlayer.getDamageOnCarrier())
+                .append("healing_on_carrier", warlordsPlayer.getHealingOnCarrier())
         );
     }
 

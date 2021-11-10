@@ -3,6 +3,7 @@ package com.ebicep.warlords.database;
 import org.bson.Document;
 import org.bukkit.ChatColor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class DatabaseGamePlayer {
@@ -29,6 +30,10 @@ public class DatabaseGamePlayer {
     private final List<Long> absorbed;
     private final int flagCaptures;
     private final int flagReturns;
+    private final long totalDamageOnCarrier;
+    private final long totalHealingOnCarrier;
+    private final List<Long> damageOnCarrier;
+    private final List<Long> healingOnCarrier;
 
     private final ChatColor teamColor;
 
@@ -55,6 +60,12 @@ public class DatabaseGamePlayer {
         this.absorbed = document.getList("absorbed", Long.class);
         this.flagCaptures = document.getInteger("flag_captures");
         this.flagReturns = document.getInteger("flag_returns");
+
+        this.totalDamageOnCarrier = (long) document.getOrDefault("total_damage_on_carrier", 0L);
+        this.totalHealingOnCarrier = (long) document.getOrDefault("total_healing_on_carrier", 0L);
+        this.damageOnCarrier = (List<Long>) document.getOrDefault("damage_on_carrier", new ArrayList<Long>());
+        this.healingOnCarrier = (List<Long>) document.getOrDefault("healing_on_carrier", new ArrayList<Long>());
+
         this.teamColor = teamColor;
     }
 
@@ -156,6 +167,22 @@ public class DatabaseGamePlayer {
 
     public int getFlagReturns() {
         return flagReturns;
+    }
+
+    public long getTotalDamageOnCarrier() {
+        return totalDamageOnCarrier;
+    }
+
+    public long getTotalHealingOnCarrier() {
+        return totalHealingOnCarrier;
+    }
+
+    public List<Long> getDamageOnCarrier() {
+        return damageOnCarrier;
+    }
+
+    public List<Long> getHealingOnCarrier() {
+        return healingOnCarrier;
     }
 
     public ChatColor getTeamColor() {

@@ -88,6 +88,9 @@ public final class WarlordsPlayer {
     private final long[] healing = new long[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
     private final long[] absorbed = new long[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
 
+    private final long[] damageOnCarrier = new long[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
+    private final long[] healingOnCarrier = new long[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
+
     private final List<Location> locations = new ArrayList<>();
 
     public List<Location> getLocations() {
@@ -762,7 +765,7 @@ public final class WarlordsPlayer {
                         sendMessage(ChatColor.GREEN + "\u00BB" + ChatColor.GRAY + " Your " + ability + " healed you for " + ChatColor.GREEN + "" + Math.round(damageHealValue) + " " + ChatColor.GRAY + "health.");
                     }
                 }
-                addHealing(damageHealValue);
+                addHealing(damageHealValue, gameState.flags().hasFlag(this));
             } else {
                 //DAMAGE
                 if (damageHealValue < 0 && isEnemy(attacker)) {
@@ -888,7 +891,7 @@ public final class WarlordsPlayer {
                                 attacker.sendMessage(ChatColor.GREEN + "\u00BB" + ChatColor.GRAY + " " + "Your " + ability + " healed " + name + " for " + ChatColor.GREEN + "" + Math.round(damageHealValue) + " " + ChatColor.GRAY + "health.");
                             }
                         }
-                        attacker.addHealing(damageHealValue);
+                        attacker.addHealing(damageHealValue, gameState.flags().hasFlag(this));
                     }
                 }
                 if (!attacker.getCooldownManager().getCooldown(BloodLust.class).isEmpty() && damageHealValue < 0) {
@@ -904,7 +907,7 @@ public final class WarlordsPlayer {
                 this.health += Math.round(damageHealValue);
             }
             if (damageHealValue < 0) {
-                attacker.addDamage(-damageHealValue);
+                attacker.addDamage(-damageHealValue, gameState.flags().hasFlag(this));
                 this.entity.playEffect(EntityEffect.HURT);
                 for (Player player1 : attacker.getWorld().getPlayers()) {
                     player1.playSound(entity.getLocation(), Sound.HURT_FLESH, 2, 1);
@@ -1330,8 +1333,11 @@ public final class WarlordsPlayer {
         return damage;
     }
 
-    public void addDamage(float amount) {
+    public void addDamage(float amount, boolean onCarrier) {
         this.damage[this.gameState.getTimer() / (20 * 60)] += amount;
+        if (onCarrier) {
+            this.damageOnCarrier[this.gameState.getTimer() / (20 * 60)] += amount;
+        }
     }
 
     public long getTotalDamage() {
@@ -1342,8 +1348,11 @@ public final class WarlordsPlayer {
         return healing;
     }
 
-    public void addHealing(float amount) {
+    public void addHealing(float amount, boolean onCarrier) {
         this.healing[this.gameState.getTimer() / (20 * 60)] += amount;
+        if (onCarrier) {
+            this.healingOnCarrier[this.gameState.getTimer() / (20 * 60)] += amount;
+        }
     }
 
     public long getTotalHealing() {
@@ -1360,6 +1369,22 @@ public final class WarlordsPlayer {
 
     public long getTotalAbsorbed() {
         return Arrays.stream(absorbed).sum();
+    }
+
+    public long[] getDamageOnCarrier() {
+        return damageOnCarrier;
+    }
+
+    public long getTotalDamageOnCarrier() {
+        return Arrays.stream(damageOnCarrier).sum();
+    }
+
+    public long[] getHealingOnCarrier() {
+        return healingOnCarrier;
+    }
+
+    public long getTotalHealingOnCarrier() {
+        return Arrays.stream(healingOnCarrier).sum();
     }
 
     public ItemStack getStatItemStack(String name) {

@@ -134,6 +134,14 @@ public class DatabaseGame {
         holograms.add(topDHPPerMinute);
         topDHPPerMinute.appendTextLine(ChatColor.AQUA + ChatColor.BOLD.toString() + "Top DHP per Minute");
 
+        Hologram topDamageOnCarrier = HologramsAPI.createHologram(Warlords.getInstance(), LeaderboardManager.gameHologramLocations.get(5));
+        holograms.add(topDamageOnCarrier);
+        topDamageOnCarrier.appendTextLine(ChatColor.AQUA + ChatColor.BOLD.toString() + "Top Damage On Carrier");
+
+        Hologram topHealingOnCarrier = HologramsAPI.createHologram(Warlords.getInstance(), LeaderboardManager.gameHologramLocations.get(6));
+        holograms.add(topHealingOnCarrier);
+        topHealingOnCarrier.appendTextLine(ChatColor.AQUA + ChatColor.BOLD.toString() + "Top Healing On Carrier");
+
         //last game stats
         int timeLeft = getTimeLeft();
         int minutes = (15 - (int) Math.round(timeLeft / 60.0)) == 0 ? 1 : 15 - (int) Math.round(timeLeft / 60.0);
@@ -158,11 +166,13 @@ public class DatabaseGame {
         }
         players.forEach(lastGameStats::appendTextLine);
 
-        //top dmg/healing/absorbed + dhp per game
+        //top dmg/healing/absorbed + dhp per game + dmg/heal on carrier
         List<String> topDamagePlayers = new ArrayList<>();
         List<String> topHealingPlayers = new ArrayList<>();
         List<String> topAbsorbedPlayers = new ArrayList<>();
         List<String> topDHPPerGamePlayers = new ArrayList<>();
+        List<String> topDamageOnCarrierPlayers = new ArrayList<>();
+        List<String> topHealingOnCarrierPlayers = new ArrayList<>();
 
         databaseGamePlayers.stream().sorted(Comparator.comparingLong(DatabaseGamePlayer::getTotalDamage).reversed()).forEach(databaseGamePlayer -> {
             topDamagePlayers.add(databaseGamePlayer.getColoredName() + ": " + ChatColor.YELLOW + Utils.addCommaAndRound(databaseGamePlayer.getTotalDamage()));
@@ -184,10 +194,20 @@ public class DatabaseGame {
             topDHPPerGamePlayers.add(databaseGamePlayer.getColoredName() + ": " + ChatColor.YELLOW + Utils.addCommaAndRound(databaseGamePlayer.getTotalDHP() / minutes));
         });
 
+        databaseGamePlayers.stream().sorted(Comparator.comparingLong(DatabaseGamePlayer::getTotalDamageOnCarrier).reversed()).forEach(databaseGamePlayer -> {
+            topDamageOnCarrierPlayers.add(databaseGamePlayer.getColoredName() + ": " + ChatColor.YELLOW + Utils.addCommaAndRound(databaseGamePlayer.getTotalDamageOnCarrier()));
+        });
+
+        databaseGamePlayers.stream().sorted(Comparator.comparingLong(DatabaseGamePlayer::getTotalHealingOnCarrier).reversed()).forEach(databaseGamePlayer -> {
+            topHealingOnCarrierPlayers.add(databaseGamePlayer.getColoredName() + ": " + ChatColor.YELLOW + Utils.addCommaAndRound(databaseGamePlayer.getTotalHealingOnCarrier()));
+        });
+
         topDamagePlayers.forEach(topDamage::appendTextLine);
         topHealingPlayers.forEach(topHealing::appendTextLine);
         topAbsorbedPlayers.forEach(topAbsorbed::appendTextLine);
         topDHPPerGamePlayers.forEach(topDHPPerMinute::appendTextLine);
+        topDamageOnCarrierPlayers.forEach(topDamageOnCarrier::appendTextLine);
+        topHealingOnCarrierPlayers.forEach(topHealingOnCarrier::appendTextLine);
 
         //setting visibility to none
         holograms.forEach(hologram -> {
