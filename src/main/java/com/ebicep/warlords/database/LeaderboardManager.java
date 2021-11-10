@@ -48,6 +48,19 @@ public class LeaderboardManager {
     public static boolean enabled = true;
 
     public static void init() {
+        putLeaderboards();
+
+        gameHologramLocations.add(new LocationBuilder(lastGameLocation.clone()).left(5).get());
+        gameHologramLocations.add(new LocationBuilder(lastGameLocation.clone()).addY(2).right(.5f).get());
+        gameHologramLocations.add(new LocationBuilder(lastGameLocation.clone()).addY(2).right(4).get());
+        gameHologramLocations.add(new LocationBuilder(lastGameLocation.clone()).addY(2).right(7.5f).get());
+        gameHologramLocations.add(new LocationBuilder(lastGameLocation.clone()).addY(2).right(11f).get());
+        gameHologramLocations.add(new LocationBuilder(lastGameLocation.clone()).addY(2).right(14.5f).get());
+        gameHologramLocations.add(new LocationBuilder(lastGameLocation.clone()).addY(2).right(18f).get());
+
+    }
+
+    public static void putLeaderboards() {
         leaderboards.put("wins", new Leaderboard("Wins", new Location(world, -2567, 55.5, 717)));
         leaderboards.put("losses", new Leaderboard("Losses", new Location(world, -2563, 55.5, 717)));
         leaderboards.put("kills", new Leaderboard("Kills", new Location(world, -2559, 55.5, 717)));
@@ -60,32 +73,25 @@ public class LeaderboardManager {
         leaderboards.put("flags_captured", new Leaderboard("Flags Captured", new Location(world, -2567, 60.5, 717)));
         leaderboards.put("flags_returned", new Leaderboard("Flags Returned", new Location(world, -2563, 60.5, 717)));
 
-        leaderboards.put("paladin.avenger.wins", new Leaderboard("Avenger Wins", new Location(world, -2551, 60.5, 717)));
-        leaderboards.put("paladin.crusader.wins", new Leaderboard("Crusader Wins", new Location(world, -2547, 60.5, 717)));
-        leaderboards.put("paladin.protector.wins", new Leaderboard("Protector Wins", new Location(world, -2543, 60.5, 717)));
-        leaderboards.put("warrior.berserker.wins", new Leaderboard("Berserker Wins", new Location(world, -2539, 60.5, 717)));
-        leaderboards.put("warrior.defender.wins", new Leaderboard("Defender Wins", new Location(world, -2567, 65.5, 717)));
-        leaderboards.put("warrior.revenant.wins", new Leaderboard("Revenant Wins", new Location(world, -2563, 65.5, 717)));
-        leaderboards.put("mage.pyromancer.wins", new Leaderboard("Pyromancer Wins", new Location(world, -2559, 65.5, 717)));
-        leaderboards.put("mage.cryomancer.wins", new Leaderboard("Cryomancer Wins", new Location(world, -2555, 65.5, 717)));
-        leaderboards.put("mage.aquamancer.wins", new Leaderboard("Aquamancer Wins", new Location(world, -2551, 65.5, 717)));
-        leaderboards.put("shaman.thunderlord.wins", new Leaderboard("Thunderlord Wins", new Location(world, -2547, 65.5, 717)));
-        leaderboards.put("shaman.spiritguard.wins", new Leaderboard("Spiritguard Wins", new Location(world, -2543, 65.5, 717)));
-        leaderboards.put("shaman.earthwarden.wins", new Leaderboard("Earthwarden Wins", new Location(world, -2539, 65.5, 717)));
+        String statType = "Wins";
+        leaderboards.put("paladin.avenger." + statType.toLowerCase(), new Leaderboard("Avenger " + statType, new Location(world, -2551, 60.5, 717)));
+        leaderboards.put("paladin.crusader." + statType.toLowerCase(), new Leaderboard("Crusader " + statType, new Location(world, -2547, 60.5, 717)));
+        leaderboards.put("paladin.protector." + statType.toLowerCase(), new Leaderboard("Protector " + statType, new Location(world, -2543, 60.5, 717)));
+        leaderboards.put("warrior.berserker." + statType.toLowerCase(), new Leaderboard("Berserker " + statType, new Location(world, -2539, 60.5, 717)));
+        leaderboards.put("warrior.defender." + statType.toLowerCase(), new Leaderboard("Defender " + statType, new Location(world, -2567, 65.5, 717)));
+        leaderboards.put("warrior.revenant." + statType.toLowerCase(), new Leaderboard("Revenant " + statType, new Location(world, -2563, 65.5, 717)));
+        leaderboards.put("mage.pyromancer." + statType.toLowerCase(), new Leaderboard("Pyromancer " + statType, new Location(world, -2559, 65.5, 717)));
+        leaderboards.put("mage.cryomancer." + statType.toLowerCase(), new Leaderboard("Cryomancer " + statType, new Location(world, -2555, 65.5, 717)));
+        leaderboards.put("mage.aquamancer." + statType.toLowerCase(), new Leaderboard("Aquamancer " + statType, new Location(world, -2551, 65.5, 717)));
+        leaderboards.put("shaman.thunderlord." + statType.toLowerCase(), new Leaderboard("Thunderlord " + statType, new Location(world, -2547, 65.5, 717)));
+        leaderboards.put("shaman.spiritguard." + statType.toLowerCase(), new Leaderboard("Spiritguard " + statType, new Location(world, -2543, 65.5, 717)));
+        leaderboards.put("shaman.earthwarden." + statType.toLowerCase(), new Leaderboard("Earthwarden " + statType, new Location(world, -2539, 65.5, 717)));
 
         leaderboards.put("experience", new Leaderboard("Experience", new Location(world, -2563, 70.5, 717)));
         leaderboards.put("paladin.experience", new Leaderboard("Paladin Experience", new Location(world, -2559, 70.5, 717)));
         leaderboards.put("warrior.experience", new Leaderboard("Warrior Experience", new Location(world, -2555, 70.5, 717)));
         leaderboards.put("mage.experience", new Leaderboard("Mage Experience", new Location(world, -2551, 70.5, 717)));
         leaderboards.put("shaman.experience", new Leaderboard("Shaman Experience", new Location(world, -2547, 70.5, 717)));
-
-        gameHologramLocations.add(new LocationBuilder(lastGameLocation.clone()).left(5).get());
-        gameHologramLocations.add(new LocationBuilder(lastGameLocation.clone()).addY(2).right(.5f).get());
-        gameHologramLocations.add(new LocationBuilder(lastGameLocation.clone()).addY(2).right(4).get());
-        gameHologramLocations.add(new LocationBuilder(lastGameLocation.clone()).addY(2).right(7.5f).get());
-        gameHologramLocations.add(new LocationBuilder(lastGameLocation.clone()).addY(2).right(11f).get());
-        gameHologramLocations.add(new LocationBuilder(lastGameLocation.clone()).addY(2).right(14.5f).get());
-        gameHologramLocations.add(new LocationBuilder(lastGameLocation.clone()).addY(2).right(18f).get());
 
     }
 
@@ -107,18 +113,27 @@ public class LeaderboardManager {
         leaderboards.put("plays", new Leaderboard("Plays", new Location(world, -2559, 60.5, 717)));
         leaderboards.put("dhp", new Leaderboard("DHP", new Location(world, -2555, 60.5, 717)));
         leaderboards.put("dhp_per_game", new Leaderboard("DHP per Game", new Location(world, -2567, 70.5, 717)));
-
+        leaderboards.put("kills_per_game", new Leaderboard("Kills per Game", new Location(world, -2567, 75.5, 717)));
+        leaderboards.put("deaths_per_game", new Leaderboard("Deaths per Game", new Location(world, -2563, 75.5, 717)));
+        leaderboards.put("ka_per_game", new Leaderboard("Kills/Assists per Game", new Location(world, -2559, 75.5, 717)));
     }
 
     private static void addCalculatedStats(MongoCollection<Document> collection, HashMap<String, List<Document>> cache) {
         List<Document> plays = new ArrayList<>();
         List<Document> dhp = new ArrayList<>();
         List<Document> dhpPerGame = new ArrayList<>();
+        List<Document> killsPerGame = new ArrayList<>();
+        List<Document> deathsPerGame = new ArrayList<>();
+        List<Document> killAssistPerGame = new ArrayList<>();
         for (Document d : collection.find()) {
             //plays
             int currentTopWL = 0;
             currentTopWL += d.getInteger("wins");
             currentTopWL += d.getInteger("losses");
+            if(currentTopWL <= 8) {
+                continue;
+            }
+
             plays.add(new Document("name", d.getString("name")).append("uuid", d.getString("uuid")).append("plays", currentTopWL));
             //dhp
             long currentTopDHP = 0;
@@ -127,16 +142,29 @@ public class LeaderboardManager {
             currentTopDHP += d.getLong("absorbed");
             dhp.add(new Document("name", d.getString("name")).append("uuid", d.getString("uuid")).append("dhp", currentTopDHP));
             //dhp per game
-            dhpPerGame.add(new Document("name", d.getString("name")).append("uuid", d.getString("uuid")).append("dhp_per_game", currentTopWL == 0 ? 0L : currentTopDHP / currentTopWL));
+            dhpPerGame.add(new Document("name", d.getString("name")).append("uuid", d.getString("uuid")).append("dhp_per_game", currentTopDHP / currentTopWL));
+            //kills/deaths per game
+            int kills = d.getInteger("kills");
+            int assist = d.getInteger("assists");
+            int deaths = d.getInteger("deaths");
+            killsPerGame.add(new Document("name", d.getString("name")).append("uuid", d.getString("uuid")).append("kills_per_game", kills == 0 ? 0d : Math.round(((double) kills / currentTopWL) * 10) / 10d));
+            deathsPerGame.add(new Document("name", d.getString("name")).append("uuid", d.getString("uuid")).append("deaths_per_game", deaths == 0 ? 0d : Math.round(((double) deaths / currentTopWL) * 10) / 10d));
+            killAssistPerGame.add(new Document("name", d.getString("name")).append("uuid", d.getString("uuid")).append("ka_per_game", (kills + assist) == 0 ? 0d : Math.round(((double) (kills + assist) / currentTopWL) * 10) / 10d));
         }
 
         plays.sort((o1, o2) -> o2.getInteger("plays").compareTo(o1.getInteger("plays")));
         dhp.sort((o1, o2) -> o2.getLong("dhp").compareTo(o1.getLong("dhp")));
         dhpPerGame.sort((o1, o2) -> o2.getLong("dhp_per_game").compareTo(o1.getLong("dhp_per_game")));
+        killsPerGame.sort((o1, o2) -> o2.getDouble("kills_per_game").compareTo(o1.getDouble("kills_per_game")));
+        deathsPerGame.sort((o1, o2) -> o2.getDouble("deaths_per_game").compareTo(o1.getDouble("deaths_per_game")));
+        killAssistPerGame.sort((o1, o2) -> o2.getDouble("ka_per_game").compareTo(o1.getDouble("ka_per_game")));
 
         cache.put("plays", plays);
         cache.put("dhp", dhp);
         cache.put("dhp_per_game", dhpPerGame);
+        cache.put("kills_per_game", killsPerGame);
+        cache.put("deaths_per_game", deathsPerGame);
+        cache.put("ka_per_game", killAssistPerGame);
     }
 
     public static void appendTop(Document document, String key) {
@@ -241,6 +269,8 @@ public class LeaderboardManager {
             });
             lifeTimeHolograms.clear();
             weeklyHolograms.clear();
+
+            putLeaderboards();
             if (enabled) {
                 Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Adding Holograms");
 
@@ -252,7 +282,7 @@ public class LeaderboardManager {
                     Warlords.newSharedChain(sharedChainName)
                             .asyncFirst(() -> {
                                 //excluding calculated stats
-                                if (s.equals("plays") || s.equals("dhp") || s.equals("dhp_per_game")) {
+                                if (s.equals("plays") || s.equals("dhp") || s.equals("dhp_per_game") || s.equals("kills_per_game") || s.equals("deaths_per_game") || s.equals("ka_per_game")) {
                                     return null;
                                 }
                                 return getPlayersSortedByKey(s, 0);
@@ -271,7 +301,7 @@ public class LeaderboardManager {
                     Warlords.newSharedChain(sharedChainName)
                             .asyncFirst(() -> {
                                 //excluding calculated stats
-                                if (s.equals("plays") || s.equals("dhp") || s.equals("dhp_per_game")) {
+                                if (s.equals("plays") || s.equals("dhp") || s.equals("dhp_per_game") || s.equals("kills_per_game") || s.equals("deaths_per_game") || s.equals("ka_per_game")) {
                                     return null;
                                 }
                                 return getPlayersSortedByKey(s, 1);
@@ -377,6 +407,8 @@ public class LeaderboardManager {
                             hologram.appendTextLine(ChatColor.YELLOW.toString() + ChatColor.BOLD + (i + 1) + ". " + ChatColor.AQUA + ChatColor.BOLD + player.getName() + ChatColor.GRAY + ChatColor.BOLD + " - " + ChatColor.YELLOW + ChatColor.BOLD + (Utils.addCommaAndRound((Integer) docKey)));
                         } else if (docKey instanceof Long) {
                             hologram.appendTextLine(ChatColor.YELLOW.toString() + ChatColor.BOLD + (i + 1) + ". " + ChatColor.AQUA + ChatColor.BOLD + player.getName() + ChatColor.GRAY + ChatColor.BOLD + " - " + ChatColor.YELLOW + ChatColor.BOLD + (Utils.addCommaAndRound((Long) docKey)));
+                        } else if(docKey instanceof Double) {
+                            hologram.appendTextLine(ChatColor.YELLOW.toString() + ChatColor.BOLD + (i + 1) + ". " + ChatColor.AQUA + ChatColor.BOLD + player.getName() + ChatColor.GRAY + ChatColor.BOLD + " - " + ChatColor.YELLOW + ChatColor.BOLD + docKey);
                         }
                         break;
                     }
@@ -397,6 +429,8 @@ public class LeaderboardManager {
                 hologramLines.add(ChatColor.YELLOW.toString() + (i + 1) + ". " + ChatColor.AQUA + p.get("name") + ChatColor.GRAY + " - " + ChatColor.YELLOW + (Utils.addCommaAndRound((Integer) playerKey)));
             } else if (playerKey instanceof Long) {
                 hologramLines.add(ChatColor.YELLOW.toString() + (i + 1) + ". " + ChatColor.AQUA + p.get("name") + ChatColor.GRAY + " - " + ChatColor.YELLOW + (Utils.addCommaAndRound((Long) playerKey)));
+            } else if (playerKey instanceof Double) {
+                hologramLines.add(ChatColor.YELLOW.toString() + (i + 1) + ". " + ChatColor.AQUA + p.get("name") + ChatColor.GRAY + " - " + ChatColor.YELLOW + playerKey);
             }
         }
         //creates actual leaderboard
