@@ -65,7 +65,7 @@ public class GroundSlam extends AbstractAbility {
 //                        ParticleEffect.FLAME.display(0 , 0 ,0, 0, 10, location, 1000);
 
                                 //DAMAGE
-                                PlayerFilter.entitiesAroundRectangle(location.clone().add(0, -.75, 0), .6, 4.5, .6)
+                                PlayerFilter.entitiesAroundRectangle(location.clone().add(0, -.75, 0), 0.75, 4.5, 0.75)
                                         .enemiesOf(wp)
                                         .forEach(enemy -> {
                                             if (!playersHit.contains(enemy)) {

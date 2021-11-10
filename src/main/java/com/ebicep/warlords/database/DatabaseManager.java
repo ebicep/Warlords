@@ -766,9 +766,9 @@ public class DatabaseManager {
                 .append("kills", Arrays.stream(warlordsPlayer.getKills()).boxed().collect(Collectors.toList()))
                 .append("deaths", Arrays.stream(warlordsPlayer.getDeaths()).boxed().collect(Collectors.toList()))
                 .append("assists", Arrays.stream(warlordsPlayer.getAssists()).boxed().collect(Collectors.toList()))
-                .append("damage", IntStream.range(0, warlordsPlayer.getDamage().length).mapToLong(i -> (long) warlordsPlayer.getDamage()[i]).boxed().collect(Collectors.toList()))
-                .append("healing", IntStream.range(0, warlordsPlayer.getHealing().length).mapToLong(i -> (long) warlordsPlayer.getHealing()[i]).boxed().collect(Collectors.toList()))
-                .append("absorbed", IntStream.range(0, warlordsPlayer.getAbsorbed().length).mapToLong(i -> (long) warlordsPlayer.getAbsorbed()[i]).boxed().collect(Collectors.toList()))
+                .append("damage", Arrays.stream(warlordsPlayer.getDamage()).boxed().collect(Collectors.toList()))
+                .append("healing", Arrays.stream(warlordsPlayer.getHealing()).boxed().collect(Collectors.toList()))
+                .append("absorbed", Arrays.stream(warlordsPlayer.getAbsorbed()).boxed().collect(Collectors.toList()))
                 .append("flag_captures", warlordsPlayer.getFlagsCaptured())
                 .append("flag_returns", warlordsPlayer.getFlagsReturned())
         );

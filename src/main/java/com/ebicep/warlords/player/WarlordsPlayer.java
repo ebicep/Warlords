@@ -39,6 +39,7 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public final class WarlordsPlayer {
 
@@ -83,9 +84,9 @@ public final class WarlordsPlayer {
     private final LinkedHashMap<WarlordsPlayer, Integer> hitBy = new LinkedHashMap<>();
     private final LinkedHashMap<WarlordsPlayer, Integer> healedBy = new LinkedHashMap<>();
     private final int[] deaths = new int[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
-    private final float[] damage = new float[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
-    private final float[] healing = new float[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
-    private final float[] absorbed = new float[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
+    private final long[] damage = new long[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
+    private final long[] healing = new long[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
+    private final long[] absorbed = new long[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
 
     private final List<Location> locations = new ArrayList<>();
 
@@ -756,9 +757,9 @@ public final class WarlordsPlayer {
                 damageHealValue = Math.round(damageHealValue);
                 if (damageHealValue > 0) {
                     if (isCrit) {
-                        sendMessage(ChatColor.GREEN + "\u00AB" + ChatColor.GRAY + " Your " + ability + " critically healed you for " + ChatColor.GREEN + "§l" + Math.round(damageHealValue) + "! " + ChatColor.GRAY + "health.");
+                        sendMessage(ChatColor.GREEN + "\u00BB" + ChatColor.GRAY + " Your " + ability + " critically healed you for " + ChatColor.GREEN + "§l" + Math.round(damageHealValue) + "! " + ChatColor.GRAY + "health.");
                     } else {
-                        sendMessage(ChatColor.GREEN + "\u00AB" + ChatColor.GRAY + " Your " + ability + " healed you for " + ChatColor.GREEN + "" + Math.round(damageHealValue) + " " + ChatColor.GRAY + "health.");
+                        sendMessage(ChatColor.GREEN + "\u00BB" + ChatColor.GRAY + " Your " + ability + " healed you for " + ChatColor.GREEN + "" + Math.round(damageHealValue) + " " + ChatColor.GRAY + "health.");
                     }
                 }
                 addHealing(damageHealValue);
@@ -1325,7 +1326,7 @@ public final class WarlordsPlayer {
         this.deaths[this.gameState.getTimer() / (20 * 60)]++;
     }
 
-    public float[] getDamage() {
+    public long[] getDamage() {
         return damage;
     }
 
@@ -1333,11 +1334,11 @@ public final class WarlordsPlayer {
         this.damage[this.gameState.getTimer() / (20 * 60)] += amount;
     }
 
-    public float getTotalDamage() {
-        return (float) IntStream.range(0, damage.length).mapToDouble(i -> damage[i]).sum();
+    public long getTotalDamage() {
+        return Arrays.stream(damage).sum();
     }
 
-    public float[] getHealing() {
+    public long[] getHealing() {
         return healing;
     }
 
@@ -1345,11 +1346,11 @@ public final class WarlordsPlayer {
         this.healing[this.gameState.getTimer() / (20 * 60)] += amount;
     }
 
-    public float getTotalHealing() {
-        return (float) IntStream.range(0, healing.length).mapToDouble(i -> healing[i]).sum();
+    public long getTotalHealing() {
+        return Arrays.stream(healing).sum();
     }
 
-    public float[] getAbsorbed() {
+    public long[] getAbsorbed() {
         return absorbed;
     }
 
@@ -1357,8 +1358,8 @@ public final class WarlordsPlayer {
         this.absorbed[this.gameState.getTimer() / (20 * 60)] += amount;
     }
 
-    public float getTotalAbsorbed() {
-        return (float) IntStream.range(0, absorbed.length).mapToDouble(i -> absorbed[i]).sum();
+    public long getTotalAbsorbed() {
+        return Arrays.stream(absorbed).sum();
     }
 
     public ItemStack getStatItemStack(String name) {
@@ -1367,19 +1368,20 @@ public final class WarlordsPlayer {
         List<String> lore = new ArrayList<>();
         meta.setDisplayName(ChatColor.AQUA + "Stat Breakdown (" + name + "):");
         int minute = (this.gameState.getGame().getMap().getGameTimerInTicks() - this.gameState.getTimer()) / (20 * 60);
+        int totalMinutes = (gameState.getGame().getMap().getGameTimerInTicks() / 20 / 60) - 1;
         for (int i = 0; i < damage.length - 1 && i < minute + 1; i++) {
             if (name.equals("Kills")) {
-                lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + Utils.addCommaAndRound(kills[i + 1]));
+                lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + Utils.addCommaAndRound(kills[totalMinutes - i]));
             } else if (name.equals("Assists")) {
-                lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + Utils.addCommaAndRound(assists[i + 1]));
+                lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + Utils.addCommaAndRound(assists[totalMinutes - i]));
             } else if (name.equals("Deaths")) {
-                lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + Utils.addCommaAndRound(deaths[i + 1]));
+                lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + Utils.addCommaAndRound(deaths[totalMinutes - i]));
             } else if (name.equals("Damage")) {
-                lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + Utils.addCommaAndRound(damage[i + 1]));
+                lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + Utils.addCommaAndRound(damage[totalMinutes - i]));
             } else if (name.equals("Healing")) {
-                lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + Utils.addCommaAndRound(healing[i + 1]));
+                lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + Utils.addCommaAndRound(healing[totalMinutes - i]));
             } else if (name.equals("Absorbed")) {
-                lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + Utils.addCommaAndRound(absorbed[i + 1]));
+                lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + Utils.addCommaAndRound(absorbed[totalMinutes - i]));
             }
         }
         meta.setLore(lore);
