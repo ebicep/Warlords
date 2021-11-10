@@ -39,8 +39,9 @@ public class HolyRadiance extends AbstractAbility {
                 "\n\n" + (hasSneakingAbility ?
                 "§7You may SNEAK and look at an ally to\n" +
                 "§7mark them for §610 §7seconds. Increasing\n" +
-                "§7their EPS and EPH by §e6 §7for the duration.\n" +
-                "§7Mark has an optimal range of §e" + markRadius + " §7blocks." : "");
+                "§7their EPS by §e5 and speed by §e20%\n" +
+                "§7§7for the duration. Mark has an optimal\n" +
+                "&7range of §e" + markRadius + " §7blocks." : "");
     }
 
     @Override
@@ -65,6 +66,7 @@ public class HolyRadiance extends AbstractAbility {
 
                     HolyRadiance tempMark = new HolyRadiance(cooldown, energyCost, critChance, critMultiplier, true);
                     p.getCooldownManager().addCooldown(name, HolyRadiance.this.getClass(), tempMark, "MARK", 10, wp, CooldownTypes.BUFF);
+                    p.getSpeed().addSpeedModifier("Mark Speed", 20, 20 * 10, "BASE");
 
                     wp.getGame().getGameTasks().put(
 
