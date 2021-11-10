@@ -463,7 +463,7 @@ public class Utils {
     }
 
     public static void sendCenteredMessageWithEvents(Player player, List<TextComponent> textComponents) {
-        if (textComponents == null || textComponents.size() == 0) ;
+        if (textComponents == null || textComponents.size() == 0) return;
         String message = "";
         for (TextComponent textComponent : textComponents) {
             message += textComponent.getText();
