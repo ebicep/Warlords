@@ -644,12 +644,12 @@ public class GameMenu {
                 foundWeaponCount.put(rarity, 0);
             }
 
-            if (Bukkit.getOnlinePlayers().size() >= 2) {
+            if (Bukkit.getOnlinePlayers().size() >= 16) {
 
                 if (weaponCooldown == null || weaponCooldown < System.currentTimeMillis()) {
                     openWeaponCooldown.put(player.getUniqueId(), System.currentTimeMillis() + 8 * 60 * 1000);
                     player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 2);
-                    for (int i = 0; i < 20; i++) {
+                    for (int i = 0; i < 15; i++) {
                         String legendaryName = legendaryNames[random.nextInt(legendaryNames.length)];
                         String mythicName = mythicNames[random.nextInt(mythicNames.length)];
 
