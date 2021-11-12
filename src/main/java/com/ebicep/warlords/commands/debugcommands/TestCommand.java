@@ -28,9 +28,9 @@ public class TestCommand implements CommandExecutor {
         if (!sender.isOp()) {
             return true;
         }
-        WarlordsPlayer player = BaseCommand.requireWarlordsPlayer(sender);
-        if (player != null) {
-
+        WarlordsPlayer wp = BaseCommand.requireWarlordsPlayer(sender);
+        if (wp != null) {
+            wp.sendMessage(ChatColor.GRAY + "+" + ChatColor.DARK_GREEN + Utils.addCommaAndRound(3213) + " " + ChatColor.GOLD + wp.getSpec().getClassName() + " Experience " + ChatColor.GRAY + "(" + wp.getSpecClass().specType.chatColor + wp.getSpecClass().name + ChatColor.GRAY + ")");
         }
         DecimalFormat decimalFormat = new DecimalFormat("#.##");
 //        DatabaseManager.warlordsGamesDatabase.createCollection("Games_Information_Test");
