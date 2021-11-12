@@ -665,6 +665,7 @@ public class DatabaseManager {
             long damage = (int) value.getTotalDamage();
             long healing = (int) value.getTotalHealing();
             long absorbed = (int) value.getTotalAbsorbed();
+            long experienceEarned = ExperienceManager.getExpFromGameStats(value);
             String className = value.getSpec().getClassName().toLowerCase();
             String specName = value.getSpecClass().name.toLowerCase();
             HashMap<String, Object> playerInfo = new HashMap<>();
@@ -678,6 +679,7 @@ public class DatabaseManager {
             playerInfo.put("damage", damage);
             playerInfo.put("healing", healing);
             playerInfo.put("absorbed", absorbed);
+            playerInfo.put("experience", experienceEarned);
             playerInfo.put(className + ".kills", totalKills);
             playerInfo.put(className + ".assists", totalAssists);
             playerInfo.put(className + ".deaths", totalDeaths);
@@ -688,6 +690,7 @@ public class DatabaseManager {
             playerInfo.put(className + ".damage", damage);
             playerInfo.put(className + ".healing", healing);
             playerInfo.put(className + ".absorbed", absorbed);
+            playerInfo.put(className + ".experience", experienceEarned);
             playerInfo.put(className + "." + specName + ".kills", totalKills);
             playerInfo.put(className + "." + specName + ".assists", totalAssists);
             playerInfo.put(className + "." + specName + ".deaths", totalDeaths);
@@ -698,6 +701,7 @@ public class DatabaseManager {
             playerInfo.put(className + "." + specName + ".damage", damage);
             playerInfo.put(className + "." + specName + ".healing", healing);
             playerInfo.put(className + "." + specName + ".absorbed", absorbed);
+            playerInfo.put(className + "." + specName + ".experience", experienceEarned);
 
             newPlayerInfo.put(value.getUuid(), playerInfo);
         }
@@ -748,34 +752,40 @@ public class DatabaseManager {
             xLocations.append((int) location.getX()).append(",");
             zLocations.append((int) location.getZ()).append(",");
         }
-        list.add(new Document()
-                .append("uuid", warlordsPlayer.getUuid().toString())
-                .append("name", warlordsPlayer.getName())
-                .append("spec", Warlords.getPlayerSettings(warlordsPlayer.getUuid()).getSelectedClass().name)
-                .append("blocks_travelled", warlordsPlayer.getBlocksTravelledCM() / 100)
-                .append("seconds_in_combat", warlordsPlayer.getTimeInCombat())
-                .append("seconds_in_respawn", Math.round(warlordsPlayer.getRespawnTimeSpent()))
-                .append("x_locations", xLocations.toString())
-                .append("z_locations", zLocations.toString())
-                .append("total_kills", warlordsPlayer.getTotalKills())
-                .append("total_assists", warlordsPlayer.getTotalAssists())
-                .append("total_deaths", warlordsPlayer.getTotalDeaths())
-                .append("total_damage", warlordsPlayer.getTotalDamage())
-                .append("total_healing", warlordsPlayer.getTotalHealing())
-                .append("total_absorbed", warlordsPlayer.getTotalAbsorbed())
-                .append("kills", Arrays.stream(warlordsPlayer.getKills()).boxed().collect(Collectors.toList()))
-                .append("deaths", Arrays.stream(warlordsPlayer.getDeaths()).boxed().collect(Collectors.toList()))
-                .append("assists", Arrays.stream(warlordsPlayer.getAssists()).boxed().collect(Collectors.toList()))
-                .append("damage", Arrays.stream(warlordsPlayer.getDamage()).boxed().collect(Collectors.toList()))
-                .append("healing", Arrays.stream(warlordsPlayer.getHealing()).boxed().collect(Collectors.toList()))
-                .append("absorbed", Arrays.stream(warlordsPlayer.getAbsorbed()).boxed().collect(Collectors.toList()))
-                .append("flag_captures", warlordsPlayer.getFlagsCaptured())
-                .append("flag_returns", warlordsPlayer.getFlagsReturned())
-                .append("total_damage_on_carrier", warlordsPlayer.getTotalDamageOnCarrier())
-                .append("total_healing_on_carrier", warlordsPlayer.getTotalHealingOnCarrier())
-                .append("damage_on_carrier", warlordsPlayer.getDamageOnCarrier())
-                .append("healing_on_carrier", warlordsPlayer.getHealingOnCarrier())
-        );
+        try {
+            list.add(new Document()
+                    .append("uuid", warlordsPlayer.getUuid().toString())
+                    .append("name", warlordsPlayer.getName())
+                    .append("spec", Warlords.getPlayerSettings(warlordsPlayer.getUuid()).getSelectedClass().name)
+                    .append("blocks_travelled", warlordsPlayer.getBlocksTravelledCM() / 100)
+                    .append("seconds_in_combat", warlordsPlayer.getTimeInCombat())
+                    .append("seconds_in_respawn", Math.round(warlordsPlayer.getRespawnTimeSpent()))
+                    .append("x_locations", xLocations.toString())
+                    .append("z_locations", zLocations.toString())
+                    .append("total_kills", warlordsPlayer.getTotalKills())
+                    .append("total_assists", warlordsPlayer.getTotalAssists())
+                    .append("total_deaths", warlordsPlayer.getTotalDeaths())
+                    .append("total_damage", warlordsPlayer.getTotalDamage())
+                    .append("total_healing", warlordsPlayer.getTotalHealing())
+                    .append("total_absorbed", warlordsPlayer.getTotalAbsorbed())
+                    .append("kills", Arrays.stream(warlordsPlayer.getKills()).boxed().collect(Collectors.toList()))
+                    .append("deaths", Arrays.stream(warlordsPlayer.getDeaths()).boxed().collect(Collectors.toList()))
+                    .append("assists", Arrays.stream(warlordsPlayer.getAssists()).boxed().collect(Collectors.toList()))
+                    .append("damage", Arrays.stream(warlordsPlayer.getDamage()).boxed().collect(Collectors.toList()))
+                    .append("healing", Arrays.stream(warlordsPlayer.getHealing()).boxed().collect(Collectors.toList()))
+                    .append("absorbed", Arrays.stream(warlordsPlayer.getAbsorbed()).boxed().collect(Collectors.toList()))
+                    .append("flag_captures", warlordsPlayer.getFlagsCaptured())
+                    .append("flag_returns", warlordsPlayer.getFlagsReturned())
+                    .append("total_damage_on_carrier", warlordsPlayer.getTotalDamageOnCarrier())
+                    .append("total_healing_on_carrier", warlordsPlayer.getTotalHealingOnCarrier())
+                    .append("damage_on_carrier", Arrays.stream(warlordsPlayer.getDamageOnCarrier()).boxed().collect(Collectors.toList()))
+                    .append("healing_on_carrier", Arrays.stream(warlordsPlayer.getHealingOnCarrier()).boxed().collect(Collectors.toList()))
+                    .append("experience_earned", ExperienceManager.getExpFromGameStats(warlordsPlayer))
+            );
+        } catch (Exception e) {
+            Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Error appending new document");
+            e.printStackTrace();
+        }
     }
 
     private static List<DatabaseGame> getLastGames(int amount) {
@@ -806,6 +816,7 @@ public class DatabaseManager {
                         long damage = databaseGamePlayer.getTotalDamage();
                         long healing = databaseGamePlayer.getTotalHealing();
                         long absorbed = databaseGamePlayer.getTotalAbsorbed();
+                        long experienceEarned = databaseGamePlayer.getExperienceEarned();
                         String className = Classes.getClassesGroup(databaseGamePlayer.getSpec()).name.toLowerCase();
                         String specName = databaseGamePlayer.getSpec().toLowerCase();
                         HashMap<String, Object> playerInfo = new HashMap<>();
@@ -819,6 +830,7 @@ public class DatabaseManager {
                         playerInfo.put("damage", damage);
                         playerInfo.put("healing", healing);
                         playerInfo.put("absorbed", absorbed);
+                        playerInfo.put("experience", experienceEarned);
                         playerInfo.put(className + ".kills", totalKills);
                         playerInfo.put(className + ".assists", totalAssists);
                         playerInfo.put(className + ".deaths", totalDeaths);
@@ -829,6 +841,7 @@ public class DatabaseManager {
                         playerInfo.put(className + ".damage", damage);
                         playerInfo.put(className + ".healing", healing);
                         playerInfo.put(className + ".absorbed", absorbed);
+                        playerInfo.put(className + ".experience", experienceEarned);
                         playerInfo.put(className + "." + specName + ".kills", totalKills);
                         playerInfo.put(className + "." + specName + ".assists", totalAssists);
                         playerInfo.put(className + "." + specName + ".deaths", totalDeaths);
@@ -839,6 +852,7 @@ public class DatabaseManager {
                         playerInfo.put(className + "." + specName + ".damage", damage);
                         playerInfo.put(className + "." + specName + ".healing", healing);
                         playerInfo.put(className + "." + specName + ".absorbed", absorbed);
+                        playerInfo.put(className + "." + specName + ".experience", experienceEarned);
 
                         if (databaseGamePlayer.getTeamColor() == ChatColor.BLUE) {
                             databaseGamePlayersBlue.add(databaseGamePlayer);

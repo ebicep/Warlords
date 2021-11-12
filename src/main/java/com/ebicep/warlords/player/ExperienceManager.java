@@ -1,5 +1,6 @@
 package com.ebicep.warlords.player;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.*;
 import com.ebicep.warlords.util.Utils;
 import com.google.common.collect.ImmutableMap;
@@ -32,6 +33,38 @@ public class ExperienceManager {
         experienceLevel = Collections.unmodifiableMap(experienceLevel);
 
         currentExperienceDecimalFormat.setDecimalSeparatorAlwaysShown(false);
+    }
+
+    public static long getExpFromGameStats(WarlordsPlayer warlordsPlayer) {
+        long exp = 0;
+
+        exp += !warlordsPlayer.getGameState().isForceEnd() && warlordsPlayer.getGameState().getStats(warlordsPlayer.getTeam()).points() > warlordsPlayer.getGameState().getStats(warlordsPlayer.getTeam().enemy()).points() ? 500 : 250;
+        exp += 5L * (warlordsPlayer.getTotalKills() + warlordsPlayer.getTotalAssists());
+
+        double damageMultiplier;
+        double healingMultiplier;
+        double absorbedMultiplier;
+        Classes classes = warlordsPlayer.getSpecClass();
+        if (classes.specType == SpecType.DAMAGE) {
+            damageMultiplier = .80;
+            healingMultiplier = .10;
+            absorbedMultiplier = .10;
+        } else if (classes.specType == SpecType.HEALER) {
+            damageMultiplier = .275;
+            healingMultiplier = .65;
+            absorbedMultiplier = .75;
+        } else { //tank
+            damageMultiplier = .575;
+            healingMultiplier = .1;
+            absorbedMultiplier = .325;
+        }
+        double calculatedDHP = warlordsPlayer.getTotalDamage() * damageMultiplier + warlordsPlayer.getTotalHealing() * healingMultiplier + warlordsPlayer.getTotalAbsorbed() * absorbedMultiplier;
+        exp += calculatedDHP / 500L;
+
+        exp += warlordsPlayer.getFlagsCaptured() * 150L;
+        exp += warlordsPlayer.getFlagsReturned() * 50L;
+
+        return exp;
     }
 
     public static void giveExpFromCurrentStats(UUID uuid) {
@@ -71,12 +104,14 @@ public class ExperienceManager {
     }
 
     public static void updatePlayerInformationTest(UUID uuid, HashMap<String, Object> newInfo, FieldUpdateOperators operator) {
-        Document history = new Document();
-        for (String s : newInfo.keySet()) {
-            history.append(s, newInfo.get(s));
-        }
-        Document update = new Document(operator.operator, history);
-        warlordsPlayersDatabase.getCollection("Players_Information_Test").updateOne(eq("uuid", uuid.toString()), update);
+        Warlords.newChain().async(() -> {
+            Document history = new Document();
+            for (String s : newInfo.keySet()) {
+                history.append(s, newInfo.get(s));
+            }
+            Document update = new Document(operator.operator, history);
+            playersInformation.updateOne(eq("uuid", uuid.toString()), update);
+        }).execute();
     }
     private int getTotalAverageDHP(String classSpec) {
         long totalAverageDHP = 0;
@@ -195,7 +230,7 @@ public class ExperienceManager {
 
     private static long getExperienceFromDotNotation(UUID uuid, String dots) {
         Object experience = getPlayerInfoWithDotNotation(uuid, dots);
-        return experience == null ? 0 : (int) calculateLevelFromExp((Long) experience);
+        return experience == null ? 0 : (long) experience;
     }
 
     public static String getLevelString(int level) {

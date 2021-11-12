@@ -3,11 +3,13 @@ package com.ebicep.warlords.commands.debugcommands;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.BaseCommand;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.player.Classes;
 import com.ebicep.warlords.player.ExperienceManager;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.Utils;
 import com.mongodb.client.MongoCollection;
 import org.bson.Document;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -31,12 +33,14 @@ public class TestCommand implements CommandExecutor {
 
         }
         DecimalFormat decimalFormat = new DecimalFormat("#.##");
-//        DatabaseManager.warlordsGamesDatabase.createCollection("Temp");
-//        MongoCollection<Document> temp = warlordsGamesDatabase.getCollection("Temp");
-//        for (Document document : gamesInformation.find().limit(10)) {
+//        DatabaseManager.warlordsGamesDatabase.createCollection("Games_Information_Test");
+//        MongoCollection<Document> temp = warlordsGamesDatabase.getCollection("Games_Information_Test");
+//        for (Document document : gamesInformation.find()) {
 //            temp.insertOne(document);
 //        }
-        ExperienceManager.giveExpFromCurrentStats(((Player)sender).getUniqueId());
+//        Bukkit.getOnlinePlayers().forEach(p -> {
+//            ExperienceManager.giveExpFromCurrentStats(p.getUniqueId());
+//        });
 //        MongoCollection<Document> test = warlordsPlayersDatabase.getCollection("Players_Information_Test");
 //        long temp = (long) getPlayerInfoWithDotNotation(((Player) sender), "dots");
 //        sender.sendMessage(ChatColor.BLUE + "---------------------------------------------------");

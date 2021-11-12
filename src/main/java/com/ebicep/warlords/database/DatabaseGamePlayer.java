@@ -1,6 +1,7 @@
 package com.ebicep.warlords.database;
 
 import org.bson.Document;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
 import java.util.ArrayList;
@@ -8,65 +9,73 @@ import java.util.List;
 
 public class DatabaseGamePlayer {
 
-    private final String uuid;
-    private final String name;
-    private final String spec;
-    private final int blocksTravelled;
-    private final int secondsInCombat;
-    private final int secondsInRespawn;
-    private final String xLocations;
-    private final String zLocations;
-    private final int totalKills;
-    private final int totalAssists;
-    private final int totalDeaths;
-    private final long totalDamage;
-    private final long totalHealing;
-    private final long totalAbsorbed;
-    private final List<Integer> kills;
-    private final List<Integer> assists;
-    private final List<Integer> deaths;
-    private final List<Long> damage;
-    private final List<Long> healing;
-    private final List<Long> absorbed;
-    private final int flagCaptures;
-    private final int flagReturns;
-    private final long totalDamageOnCarrier;
-    private final long totalHealingOnCarrier;
-    private final List<Long> damageOnCarrier;
-    private final List<Long> healingOnCarrier;
+    private String uuid;
+    private String name;
+    private String spec;
+    private int blocksTravelled;
+    private int secondsInCombat;
+    private int secondsInRespawn;
+    private String xLocations;
+    private String zLocations;
+    private int totalKills;
+    private int totalAssists;
+    private int totalDeaths;
+    private long totalDamage;
+    private long totalHealing;
+    private long totalAbsorbed;
+    private List<Integer> kills;
+    private List<Integer> assists;
+    private List<Integer> deaths;
+    private List<Long> damage;
+    private List<Long> healing;
+    private List<Long> absorbed;
+    private int flagCaptures;
+    private int flagReturns;
+    private long totalDamageOnCarrier;
+    private long totalHealingOnCarrier;
+    private List<Long> damageOnCarrier;
+    private List<Long> healingOnCarrier;
+    private long experienceEarned;
 
-    private final ChatColor teamColor;
+    private ChatColor teamColor;
 
     public DatabaseGamePlayer(Document document, ChatColor teamColor) {
-        this.uuid = document.getString("uuid");
-        this.name = document.getString("name");
-        this.spec = document.getString("spec");
-        this.blocksTravelled = document.getInteger("blocks_travelled");
-        this.secondsInCombat = document.getInteger("seconds_in_combat");
-        this.secondsInRespawn = document.getInteger("seconds_in_respawn");
-        this.xLocations = document.getString("x_locations");
-        this.zLocations = document.getString("z_locations");
-        this.totalKills = document.getInteger("total_kills");
-        this.totalAssists = document.getInteger("total_assists");
-        this.totalDeaths = document.getInteger("total_deaths");
-        this.totalDamage = document.getLong("total_damage");
-        this.totalHealing = document.getLong("total_healing");
-        this.totalAbsorbed = document.getLong("total_absorbed");
-        this.kills = document.getList("kills", Integer.class);
-        this.assists = document.getList("assists", Integer.class);
-        this.deaths = document.getList("deaths", Integer.class);
-        this.damage = document.getList("damage", Long.class);
-        this.healing = document.getList("healing", Long.class);
-        this.absorbed = document.getList("absorbed", Long.class);
-        this.flagCaptures = document.getInteger("flag_captures");
-        this.flagReturns = document.getInteger("flag_returns");
+        try {
+            this.uuid = document.getString("uuid");
+            this.name = document.getString("name");
+            this.spec = document.getString("spec");
+            this.blocksTravelled = document.getInteger("blocks_travelled");
+            this.secondsInCombat = document.getInteger("seconds_in_combat");
+            this.secondsInRespawn = document.getInteger("seconds_in_respawn");
+            this.xLocations = document.getString("x_locations");
+            this.zLocations = document.getString("z_locations");
+            this.totalKills = document.getInteger("total_kills");
+            this.totalAssists = document.getInteger("total_assists");
+            this.totalDeaths = document.getInteger("total_deaths");
+            this.totalDamage = document.getLong("total_damage");
+            this.totalHealing = document.getLong("total_healing");
+            this.totalAbsorbed = document.getLong("total_absorbed");
+            this.kills = document.getList("kills", Integer.class);
+            this.assists = document.getList("assists", Integer.class);
+            this.deaths = document.getList("deaths", Integer.class);
+            this.damage = document.getList("damage", Long.class);
+            this.healing = document.getList("healing", Long.class);
+            this.absorbed = document.getList("absorbed", Long.class);
+            this.flagCaptures = document.getInteger("flag_captures");
+            this.flagReturns = document.getInteger("flag_returns");
 
-        this.totalDamageOnCarrier = (long) document.getOrDefault("total_damage_on_carrier", 0L);
-        this.totalHealingOnCarrier = (long) document.getOrDefault("total_healing_on_carrier", 0L);
-        this.damageOnCarrier = (List<Long>) document.getOrDefault("damage_on_carrier", new ArrayList<Long>());
-        this.healingOnCarrier = (List<Long>) document.getOrDefault("healing_on_carrier", new ArrayList<Long>());
+            this.totalDamageOnCarrier = (long) document.getOrDefault("total_damage_on_carrier", 0L);
+            this.totalHealingOnCarrier = (long) document.getOrDefault("total_healing_on_carrier", 0L);
+            this.damageOnCarrier = (List<Long>) document.getOrDefault("damage_on_carrier", new ArrayList<Long>());
+            this.healingOnCarrier = (List<Long>) document.getOrDefault("healing_on_carrier", new ArrayList<Long>());
 
-        this.teamColor = teamColor;
+            this.experienceEarned = (long) document.getOrDefault("experience_earned", 0L);
+
+            this.teamColor = teamColor;
+        } catch (Exception e) {
+            Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] DatabaseGamePlayer constructor ERROR");
+            e.printStackTrace();
+        }
     }
 
     public String getUuid() {
@@ -183,6 +192,10 @@ public class DatabaseGamePlayer {
 
     public List<Long> getHealingOnCarrier() {
         return healingOnCarrier;
+    }
+
+    public long getExperienceEarned() {
+        return experienceEarned;
     }
 
     public ChatColor getTeamColor() {
