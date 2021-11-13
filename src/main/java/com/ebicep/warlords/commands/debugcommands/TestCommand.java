@@ -39,7 +39,7 @@ public class TestCommand implements CommandExecutor {
         Document document = LeaderboardManager.getTopPlayersOnLeaderboard();
 //        weeklyLeaderboards.insertOne(document);
         document.keySet().forEach(System.out::println);
-
+        ExperienceManager.awardWeeklyExperience(document);
 //        DatabaseManager.warlordsGamesDatabase.createCollection("Games_Information_Test");
 //        MongoCollection<Document> temp = warlordsGamesDatabase.getCollection("Games_Information_Test");
 //        for (Document document : gamesInformation.find()) {

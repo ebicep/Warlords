@@ -5,12 +5,15 @@ import com.ebicep.warlords.database.*;
 import com.ebicep.warlords.util.Utils;
 import com.google.common.collect.ImmutableMap;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.UpdateManyModel;
+import com.mongodb.client.model.WriteModel;
 import org.bson.Document;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.text.DecimalFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.database.DatabaseManager.*;
 import static com.mongodb.client.model.Filters.*;
@@ -35,21 +38,58 @@ public class ExperienceManager {
         currentExperienceDecimalFormat.setDecimalSeparatorAlwaysShown(false);
     }
 
+    private static final Map<String, int[]> awardOrder = new LinkedHashMap<String, int[]>() {{
+        put("wins", new int[]{1000, 750, 500});
+        put("losses", new int[]{200, 150, 100});
+        put("kills", new int[]{850, 600, 350});
+        put("assists", new int[]{850, 600, 350});
+        put("deaths", new int[]{200, 150, 100});
+        put("dhp", new int[]{1000, 750, 500});
+        put("damage", new int[]{850, 600, 350});
+        put("healing", new int[]{850, 600, 350});
+        put("absorbed", new int[]{850, 600, 350});
+        put("flags_captured", new int[]{600, 400, 200});
+        put("flags_returned", new int[]{600, 400, 200});
+    }};
+
     public static void awardWeeklyExperience(Document weeklyDocument) {
-        HashMap<UUID, Document> documents = new HashMap<>();
-        weeklyDocument.forEach((key, value) -> {
-            if(!key.equals("date") && !key.equals("total_players")) {
-                String name = weeklyDocument.getEmbedded(Arrays.asList("key", "name"), String.class);
-                List<Document> top = weeklyDocument.getEmbedded(Arrays.asList("key", "top"), new ArrayList<>());
-                top.forEach(topDocument -> {
-                    String players = topDocument.getString("names");
-                    String uuids = topDocument.getString("uuids");
-                    int amount = topDocument.getInteger("amount");
-                });
-                //Document document = new Document("uuid", weeklyDocument.getEmbedded())
+        HashMap<String, Document> futureMessageDocuments = new HashMap<>();
+        List<WriteModel<Document>> updates = new ArrayList<>();
+        awardOrder.forEach((key, rewards) -> {
+            String name = weeklyDocument.getEmbedded(Arrays.asList(key, "name"), String.class);
+            List<Document> top = weeklyDocument.getEmbedded(Arrays.asList(key, "top"), new ArrayList<>());
+            for (int i = 0; i < top.size(); i++) {
+                Document topDocument = top.get(i);
+                String[] names = topDocument.getString("names").split(",");
+                String[] uuids = topDocument.getString("uuids").split(",");
+                for (int j = 0; j < uuids.length; j++) {
+                    int experienceGain = rewards[j];
+                    if (!futureMessageDocuments.containsKey(uuids[j])) {
+                        futureMessageDocuments.put(uuids[j], new Document("uuid", uuids[j])
+                                .append("name", names[j])
+                                .append("centered", true)
+                                .append("messages", new ArrayList<>(Arrays.asList(ChatColor.BLUE + "---------------------------------------------------",
+                                        ChatColor.GREEN + "Weekly Experience Bonus\n "))
+                                ).append("total_experience_gain", 0L)
+                        );
+                    }
+                    Document previousDocument = futureMessageDocuments.get(uuids[j]);
+                    previousDocument.getList("messages", String.class).add(ChatColor.YELLOW + "#" + (j + 2) + ". " + ChatColor.AQUA + name + ChatColor.WHITE + ": " + ChatColor.DARK_GRAY + "+" + ChatColor.DARK_AQUA + experienceGain + ChatColor.GOLD + " Universal Experience");
+                    previousDocument.put("total_experience_gain", previousDocument.getLong("total_experience_gain") + experienceGain);
+                }
             }
         });
-        //FutureMessageManager.
+        futureMessageDocuments.forEach((s, document) -> {
+            long expGain = document.getLong("total_experience_gain");
+            updates.add(new UpdateManyModel<>(
+                    new Document("uuid", document.getString("uuid")),
+                    new Document(FieldUpdateOperators.INCREMENT.operator, new Document("experience", expGain))
+            ));
+            document.getList("messages", String.class).add(ChatColor.GOLD + "Total Experience Gain" + ChatColor.WHITE + ": " + ChatColor.DARK_GRAY + "+" + ChatColor.DARK_AQUA + expGain);
+            document.getList("messages", String.class).addAll(Collections.singletonList(ChatColor.BLUE + "---------------------------------------------------"));
+        });
+        FutureMessageManager.addNewFutureMessageDocuments(new ArrayList<>(futureMessageDocuments.values()));
+        playersInformation.bulkWrite(updates);
     }
 
     public static long getExpFromGameStats(WarlordsPlayer warlordsPlayer) {
@@ -87,7 +127,7 @@ public class ExperienceManager {
     public static void giveExpFromCurrentStats(UUID uuid) {
         MongoCollection<Document> test = warlordsPlayersDatabase.getCollection("Players_Information_Test");
         Document playerInformation = test.find().filter(eq("uuid", uuid.toString())).first();
-        if(playerInformation != null) {
+        if (playerInformation != null) {
             HashMap<String, Object> updatedInformation = new HashMap<>();
             List<String> futureMessages = new ArrayList<>();
             futureMessages.add(ChatColor.BLUE + "---------------------------------------------------");
@@ -106,7 +146,7 @@ public class ExperienceManager {
                 updatedInformation.put(classSpec + ".experience", exp);
                 futureMessages.add(ChatColor.DARK_GRAY + "+" + ChatColor.DARK_GREEN + Utils.addCommaAndRound(exp) + ChatColor.GRAY + " " + spec + " Experience");
 
-                if((i + 1) % 3 == 0) {
+                if ((i + 1) % 3 == 0) {
                     updatedInformation.put(className.toLowerCase() + ".experience", classExp);
                     futureMessages.add(ChatColor.DARK_GRAY + "+" + ChatColor.YELLOW + Utils.addCommaAndRound(classExp) + ChatColor.GOLD + " " + className + " Experience" + (i == 11 ? "\n " : ""));
                     classExp = 0;
@@ -130,6 +170,7 @@ public class ExperienceManager {
             playersInformation.updateOne(eq("uuid", uuid.toString()), update);
         }).execute();
     }
+
     private int getTotalAverageDHP(String classSpec) {
         long totalAverageDHP = 0;
         int totalPlayers = 0;
@@ -253,7 +294,7 @@ public class ExperienceManager {
     public static String getLevelString(int level) {
         return level < 10 ? "0" + level : String.valueOf(level);
     }
-    
+
     public static String getProgressString(long currentExperience, int nextLevel) {
         String progress = ChatColor.GRAY + "Progress to Level " + nextLevel + ": " + ChatColor.YELLOW;
 
