@@ -158,17 +158,28 @@ public class DatabaseGame {
         List<String> topHealingPlayers = new ArrayList<>();
         List<String> topAbsorbedPlayers = new ArrayList<>();
 
+        Map<ChatColor, Long> totalDamage = new HashMap<>();
+        Map<ChatColor, Long> totalHealing = new HashMap<>();
+        Map<ChatColor, Long> totalAbsorbed = new HashMap<>();
+
         databaseGamePlayers.stream().sorted(Comparator.comparingLong(DatabaseGamePlayer::getTotalDamage).reversed()).forEach(databaseGamePlayer -> {
+            totalDamage.put(databaseGamePlayer.getTeamColor(), totalDamage.get(databaseGamePlayer.getTeamColor()) + databaseGamePlayer.getTotalDamage());
             topDamagePlayers.add(databaseGamePlayer.getColoredName() + ": " + ChatColor.YELLOW + Utils.addCommaAndRound(databaseGamePlayer.getTotalDamage()));
         });
 
         databaseGamePlayers.stream().sorted(Comparator.comparingLong(DatabaseGamePlayer::getTotalHealing).reversed()).forEach(databaseGamePlayer -> {
+            totalHealing.put(databaseGamePlayer.getTeamColor(), totalHealing.get(databaseGamePlayer.getTeamColor()) + databaseGamePlayer.getTotalHealing());
             topHealingPlayers.add(databaseGamePlayer.getColoredName() + ": " + ChatColor.YELLOW + Utils.addCommaAndRound(databaseGamePlayer.getTotalHealing()));
         });
 
         databaseGamePlayers.stream().sorted(Comparator.comparingLong(DatabaseGamePlayer::getTotalAbsorbed).reversed()).forEach(databaseGamePlayer -> {
+            totalAbsorbed.put(databaseGamePlayer.getTeamColor(), totalAbsorbed.get(databaseGamePlayer.getTeamColor()) + databaseGamePlayer.getTotalAbsorbed());
             topAbsorbedPlayers.add(databaseGamePlayer.getColoredName() + ": " + ChatColor.YELLOW + Utils.addCommaAndRound(databaseGamePlayer.getTotalAbsorbed()));
         });
+
+//        totalDamage.entrySet().stream().sorted(Map.Entry.<ChatColor, Long>comparingByValue().reversed()).forEach((key, value) -> {
+//                    topDamage.appendTextLine(key + (key == ChatColor.BLUE ? "Blue:" : "Red:") + ChatColor.YELLOW + value);
+//        });
 
         topDamagePlayers.forEach(topDamage::appendTextLine);
         topHealingPlayers.forEach(topHealing::appendTextLine);
