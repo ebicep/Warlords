@@ -34,7 +34,7 @@ public class TestCommand implements CommandExecutor {
 
         }
 
-        MongoCollection<Document> temp = warlordsGamesDatabase.getCollection("Temp");
+//        MongoCollection<Document> temp = warlordsGamesDatabase.getCollection("Temp");
 //        for (Document document : gamesInformation.find()) {
 //            temp.insertOne(document);
 //        }
@@ -151,7 +151,6 @@ public class TestCommand implements CommandExecutor {
 //        System.out.println(date.getTime() - oldDate.getTime());
 //
 
-        weeklyLeaderboards.insertOne(Leaderboards.getTopPlayersOnLeaderboard());
         sender.sendMessage(ChatColor.GREEN + "DID THE THING");
         return true;
     }
