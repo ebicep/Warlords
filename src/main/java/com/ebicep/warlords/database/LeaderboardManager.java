@@ -130,7 +130,7 @@ public class LeaderboardManager {
             int currentTopWL = 0;
             currentTopWL += d.getInteger("wins");
             currentTopWL += d.getInteger("losses");
-            if(currentTopWL <= 8) {
+            if (currentTopWL <= 8) {
                 continue;
             }
 
@@ -170,37 +170,43 @@ public class LeaderboardManager {
     public static void appendTop(Document document, String key) {
         Object[] highest = new Object[3];
         Object total;
-        if (key.equals("wins") || key.equals("losses") || key.equals("kills") || key.equals("assists") || key.equals("deaths") || key.equals("plays")) {
-            int[] highestThreeInt = getHighestThreeInt(key);
-            highest[0] = highestThreeInt[0];
-            highest[1] = highestThreeInt[1];
-            highest[2] = highestThreeInt[2];
-            total = cachedSortedPlayersWeekly.get(key).stream().mapToInt(d -> d.getInteger(key)).sum();
-        } else {
-            long[] highestThreeLong = getHighestThreeLong(key);
-            highest[0] = highestThreeLong[0];
-            highest[1] = highestThreeLong[1];
-            highest[2] = highestThreeLong[2];
-            total = cachedSortedPlayersWeekly.get(key).stream().mapToLong(d -> d.getLong(key)).sum();
+        Object classType = cachedSortedPlayersWeekly.get(key).get(0).get(key);
+        if (classType instanceof Integer || classType instanceof Long) {
+            if (classType instanceof Integer) {
+                int[] highestThreeInt = getHighestThreeInt(key);
+                highest[0] = highestThreeInt[0];
+                highest[1] = highestThreeInt[1];
+                highest[2] = highestThreeInt[2];
+                total = cachedSortedPlayersWeekly.get(key).stream().mapToInt(d -> (Integer) d.getOrDefault(key, 0)).sum();
+            } else {
+                long[] highestThreeLong = getHighestThreeLong(key);
+                highest[0] = highestThreeLong[0];
+                highest[1] = highestThreeLong[1];
+                highest[2] = highestThreeLong[2];
+                total = cachedSortedPlayersWeekly.get(key).stream().mapToLong(d -> (Long) d.getOrDefault(key, 0L)).sum();
+            }
+            List<Document> documentList = new ArrayList<>();
+            String[] highest1 = getHighestPlayers(key, highest[0], cachedSortedPlayersWeekly.get(key));
+            String[] highest2 = getHighestPlayers(key, highest[1], cachedSortedPlayersWeekly.get(key));
+            String[] highest3 = getHighestPlayers(key, highest[2], cachedSortedPlayersWeekly.get(key));
+            documentList.add(new Document("names", highest1[0]).append("uuids", highest1[1]).append("amount", highest[0]));
+            documentList.add(new Document("names", highest2[0]).append("uuids", highest2[1]).append("amount", highest[1]));
+            documentList.add(new Document("names", highest3[0]).append("uuids", highest3[1]).append("amount", highest[2]));
+            document.append(key, new Document("total", total).append("name", leaderboards.get(key).getTitle()).append("top", documentList));
         }
-        List<Document> documentList = new ArrayList<>();
-        documentList.add(new Document("players", getHighestPlayers(key, highest[0], cachedSortedPlayersWeekly.get(key))).append("amount", highest[0]));
-        documentList.add(new Document("players", getHighestPlayers(key, highest[1], cachedSortedPlayersWeekly.get(key))).append("amount", highest[1]));
-        documentList.add(new Document("players", getHighestPlayers(key, highest[2], cachedSortedPlayersWeekly.get(key))).append("amount", highest[2]));
-        document.append(key, new Document("total", total).append("top", documentList));
     }
 
     public static int[] getHighestThreeInt(String key) {
         return findThreeLargestInt(cachedSortedPlayersWeekly.get(key).stream()
-                .sorted((d1, d2) -> d2.getInteger(key).compareTo(d1.getInteger(key)))
-                .mapToInt(d -> d.getInteger(key))
+                .sorted((d1, d2) -> ((Integer) d2.getOrDefault(key, 0)).compareTo(((Integer) d1.getOrDefault(key, 0))))
+                .mapToInt(d -> (Integer) d.getOrDefault(key, 0))
                 .toArray());
     }
 
     public static long[] getHighestThreeLong(String key) {
         return findThreeLargestLong(cachedSortedPlayersWeekly.get(key).stream()
-                .sorted((d1, d2) -> d2.getLong(key).compareTo(d1.getLong(key)))
-                .mapToLong(d -> d.getLong(key))
+                .sorted((d1, d2) -> ((Long) d2.getOrDefault(key, 0L)).compareTo(((Long) d1.getOrDefault(key, 0L))))
+                .mapToLong(d -> (Long) d.getOrDefault(key, 0L))
                 .toArray());
     }
 
@@ -247,17 +253,22 @@ public class LeaderboardManager {
         return output;
     }
 
-    private static String getHighestPlayers(String key, Object highest, List<Document> documentList) {
-        StringBuilder topPlayers = new StringBuilder();
+    private static String[] getHighestPlayers(String key, Object highest, List<Document> documentList) {
+        StringBuilder topPlayersName = new StringBuilder();
+        StringBuilder topPlayersUUID = new StringBuilder();
         for (Document document : documentList) {
-            if (document.get(key).equals(highest)) {
-                topPlayers.append(document.get("name")).append(",");
+            if (document.get(key) != null && document.get(key).equals(highest)) {
+                topPlayersName.append(document.get("name")).append(",");
+                topPlayersUUID.append(document.get("uuid")).append(",");
             }
         }
-        if (topPlayers.length() > 0) {
-            topPlayers.setLength(topPlayers.length() - 1);
+        if (topPlayersName.length() > 0) {
+            topPlayersName.setLength(topPlayersName.length() - 1);
         }
-        return topPlayers.toString();
+        if (topPlayersUUID.length() > 0) {
+            topPlayersUUID.setLength(topPlayersUUID.length() - 1);
+        }
+        return new String[]{topPlayersName.toString(), topPlayersUUID.toString()};
     }
 
     public static void addHologramLeaderboards(String sharedChainName) {
@@ -407,7 +418,7 @@ public class LeaderboardManager {
                             hologram.appendTextLine(ChatColor.YELLOW.toString() + ChatColor.BOLD + (i + 1) + ". " + ChatColor.AQUA + ChatColor.BOLD + player.getName() + ChatColor.GRAY + ChatColor.BOLD + " - " + ChatColor.YELLOW + ChatColor.BOLD + (Utils.addCommaAndRound((Integer) docKey)));
                         } else if (docKey instanceof Long) {
                             hologram.appendTextLine(ChatColor.YELLOW.toString() + ChatColor.BOLD + (i + 1) + ". " + ChatColor.AQUA + ChatColor.BOLD + player.getName() + ChatColor.GRAY + ChatColor.BOLD + " - " + ChatColor.YELLOW + ChatColor.BOLD + (Utils.addCommaAndRound((Long) docKey)));
-                        } else if(docKey instanceof Double) {
+                        } else if (docKey instanceof Double) {
                             hologram.appendTextLine(ChatColor.YELLOW.toString() + ChatColor.BOLD + (i + 1) + ". " + ChatColor.AQUA + ChatColor.BOLD + player.getName() + ChatColor.GRAY + ChatColor.BOLD + " - " + ChatColor.YELLOW + ChatColor.BOLD + docKey);
                         }
                         break;

@@ -133,7 +133,7 @@ public class EndState implements State, TimerDebugAble {
             }
 
         }
-        if(DatabaseManager.previousGames.get(DatabaseManager.previousGames.size() - 1).isUpdatePlayerStats()) {
+        if(game.playersCount() >= 16 && DatabaseManager.previousGames.get(DatabaseManager.previousGames.size() - 1).isUpdatePlayerStats()) {
             sendMessageToAllGamePlayer(game, "", false);
             sendMessageToAllGamePlayer(game, ChatColor.YELLOW.toString() + ChatColor.BOLD + "✚ EXPERIENCE SUMMARY ✚", true);
             for (WarlordsPlayer wp : PlayerFilter.playingGame(game)) {

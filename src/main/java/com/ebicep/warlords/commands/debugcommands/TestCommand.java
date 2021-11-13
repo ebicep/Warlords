@@ -3,6 +3,8 @@ package com.ebicep.warlords.commands.debugcommands;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.BaseCommand;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.Leaderboard;
+import com.ebicep.warlords.database.LeaderboardManager;
 import com.ebicep.warlords.player.Classes;
 import com.ebicep.warlords.player.ExperienceManager;
 import com.ebicep.warlords.player.WarlordsPlayer;
@@ -33,6 +35,11 @@ public class TestCommand implements CommandExecutor {
             wp.sendMessage(ChatColor.GRAY + "+" + ChatColor.DARK_GREEN + Utils.addCommaAndRound(3213) + " " + ChatColor.GOLD + wp.getSpec().getClassName() + " Experience " + ChatColor.GRAY + "(" + wp.getSpecClass().specType.chatColor + wp.getSpecClass().name + ChatColor.GRAY + ")");
         }
         DecimalFormat decimalFormat = new DecimalFormat("#.##");
+
+        Document document = LeaderboardManager.getTopPlayersOnLeaderboard();
+//        weeklyLeaderboards.insertOne(document);
+        document.keySet().forEach(System.out::println);
+
 //        DatabaseManager.warlordsGamesDatabase.createCollection("Games_Information_Test");
 //        MongoCollection<Document> temp = warlordsGamesDatabase.getCollection("Games_Information_Test");
 //        for (Document document : gamesInformation.find()) {

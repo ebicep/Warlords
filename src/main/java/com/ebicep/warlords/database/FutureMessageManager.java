@@ -37,6 +37,10 @@ public class FutureMessageManager implements Listener {
         }
     }
 
+    public static void addNewFutureMessageDocuments(List<Document> documents) {
+        futureMessages.insertMany(documents);
+    }
+
     public static void editFutureMessage(UUID uuid, boolean centered, String... newMessages) {
         if (getPlayerDocument(uuid) != null) {
             futureMessages.updateOne(eq("uuid", uuid.toString()),

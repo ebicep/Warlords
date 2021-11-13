@@ -35,6 +35,23 @@ public class ExperienceManager {
         currentExperienceDecimalFormat.setDecimalSeparatorAlwaysShown(false);
     }
 
+    public static void awardWeeklyExperience(Document weeklyDocument) {
+        HashMap<UUID, Document> documents = new HashMap<>();
+        weeklyDocument.forEach((key, value) -> {
+            if(!key.equals("date") && !key.equals("total_players")) {
+                String name = weeklyDocument.getEmbedded(Arrays.asList("key", "name"), String.class);
+                List<Document> top = weeklyDocument.getEmbedded(Arrays.asList("key", "top"), new ArrayList<>());
+                top.forEach(topDocument -> {
+                    String players = topDocument.getString("names");
+                    String uuids = topDocument.getString("uuids");
+                    int amount = topDocument.getInteger("amount");
+                });
+                //Document document = new Document("uuid", weeklyDocument.getEmbedded())
+            }
+        });
+        //FutureMessageManager.
+    }
+
     public static long getExpFromGameStats(WarlordsPlayer warlordsPlayer) {
         long exp = 0;
 
