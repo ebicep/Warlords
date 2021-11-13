@@ -175,7 +175,7 @@ public final class WarlordsPlayer {
     }
 
     public void updateJimmyHealth() {
-        if(getEntity() instanceof Zombie) {
+        if (getEntity() instanceof Zombie) {
             if (isDeath()) {
                 getEntity().setCustomName("");
             } else {
@@ -517,7 +517,7 @@ public final class WarlordsPlayer {
 
     public void addHealth(WarlordsPlayer attacker, String ability, float min, float max, int critChance, int critMultiplier, boolean ignoreReduction) {
         if (spawnProtection != 0 || (dead && !cooldownManager.checkUndyingArmy(false)) || getGameState() != getGame().getState()) {
-            if(spawnProtection != 0) {
+            if (spawnProtection != 0) {
                 removeHorse();
             }
             return;
@@ -537,7 +537,7 @@ public final class WarlordsPlayer {
         }
         final float damageHealValueBeforeReduction = damageHealValue;
         float totalReduction = 1;
-        if(min < 0) {
+        if (min < 0) {
             totalReduction *= 1 - spec.getDamageResistance() / 100f;
         }
 
@@ -599,30 +599,10 @@ public final class WarlordsPlayer {
                     for (Cooldown cooldown : cooldownManager.getCooldown(Berserk.class)) {
                         totalReduction *= 1.1;
                     }
+
+                    damageHealValue *= totalReduction;
                 }
                 if (min < 0 && !HammerOfLight.standingInHammer(attacker, entity)) {
-                    //reduce damage
-                    for (Cooldown cooldown : cooldownManager.getCooldown(IceBarrier.class)) {
-                        totalReduction *= .5;
-                    }
-
-                    if (!cooldownManager.getCooldown(ChainLightning.class).isEmpty()) {
-                        totalReduction *= 1 - (Collections.max(cooldownManager.getCooldown(ChainLightning.class).stream()
-                                .map(cd -> ((ChainLightning) cd.getCooldownObject()).getDamageReduction())
-                                .collect(Collectors.toList())) * .1);
-                    }
-                    for (Cooldown cooldown : cooldownManager.getCooldown(SpiritLink.class)) {
-                        totalReduction *= .8;
-                    }
-
-                    for (Cooldown cooldown : cooldownManager.getCooldown(LastStand.class)) {
-                        WarlordsPlayer lastStandedBy = cooldown.getFrom();
-                        if (lastStandedBy == this) {
-                            totalReduction *= .5;
-                        } else {
-                            totalReduction *= .4;
-                        }
-                    }
                     //TODO maybe change to hypixel warlords where crippling effects hammer
                     if (!attacker.getCooldownManager().getCooldownFromName("Totem Crippling").isEmpty()) {
                         totalReduction *= .75;
@@ -631,32 +611,16 @@ public final class WarlordsPlayer {
                     if (!attacker.getCooldownManager().getCooldown(CripplingStrike.class).isEmpty()) {
                         totalReduction *= .85;
                     }
-
-                    addAbsorbed(Math.abs(-damageHealValue * (1 - totalReduction)));
-                } else if (min > 0) {
-                    if (!cooldownManager.getCooldown(WoundingStrikeBerserker.class).isEmpty()) {
-                        totalReduction *= .6;
-                    } else if (!cooldownManager.getCooldown(WoundingStrikeDefender.class).isEmpty()) {
-                        totalReduction *= .75;
-                    }
                 }
-                //HAMMER OF LIGHT DMG/HEAL BOOST
-                /*if (attacker.getSpec() instanceof Protector) {
-                    int playersInHammer = HammerOfLight.getStandingInHammer(attacker).size();
-                    if (playersInHammer >= 4) {
-                        totalReduction *= Math.pow(1.03, 4);
-                    } else {
-                        totalReduction *= Math.pow(1.03, playersInHammer);
-                    }
-                }*/
-                damageHealValue *= totalReduction;
             }
             if (!cooldownManager.getCooldown(Intervene.class).isEmpty() && cooldownManager.getCooldown(Intervene.class).get(0).getFrom() != this && !HammerOfLight.standingInHammer(attacker, entity) && isEnemy(attacker)) {
                 if (isEnemy(attacker)) {
-                    damageHealValue *= .5;
                     Cooldown interveneCooldown = cooldownManager.getCooldown(Intervene.class).get(0);
                     Intervene intervene = (Intervene) interveneCooldown.getCooldownObject();
                     WarlordsPlayer intervenedBy = interveneCooldown.getFrom();
+
+                    damageHealValue *= .5;
+                    intervenedBy.addAbsorbed(damageHealValue * -1);
 
                     Location loc = getLocation();
                     gameState.getGame().forEachOnlinePlayer((player1, t) -> {
@@ -688,258 +652,300 @@ public final class WarlordsPlayer {
 
                     //ORBS
                     spawnOrbs(ability, attacker);
-
-                    addAbsorbed(Math.abs(damageHealValueBeforeReduction));
                 }
-            } else if (!cooldownManager.getCooldown(ArcaneShield.class).isEmpty() && isEnemy(attacker) && !HammerOfLight.standingInHammer(attacker, entity)) {
-                ArcaneShield arcaneShield = (ArcaneShield) spec.getBlue();
-                //adding dmg to shield
-                arcaneShield.addShieldHealth(damageHealValue);
-                //check if broken
-                if (arcaneShield.getShieldHealth() < 0) {
-                    if (entity instanceof Player) {
-                        ((EntityLiving) ((CraftPlayer) entity).getHandle()).setAbsorptionHearts(0);
-                    }
-
-                    cooldownManager.removeCooldown(ArcaneShield.class);
-                    addHealth(attacker, ability, arcaneShield.getShieldHealth(), arcaneShield.getShieldHealth(), isCrit ? 100 : -1, 100, true);
-
-                    addAbsorbed(-(((ArcaneShield) spec.getBlue()).getShieldHealth()));
-                } else {
-                    if (entity instanceof Player) {
-                        ((EntityLiving) ((CraftPlayer) entity).getHandle()).setAbsorptionHearts((float) (arcaneShield.getShieldHealth() / (maxHealth * .5) * 20));
-                    }
-
-                    if (ability.isEmpty()) {
-                        sendMessage("" + ChatColor.RED + "\u00AB" + ChatColor.GRAY + " You absorbed " + attacker.getName() + "'s melee " + ChatColor.GRAY + "hit.");
-                        attacker.sendMessage(ChatColor.GREEN + "\u00BB" + ChatColor.GRAY + " Your melee hit was absorbed by " + name);
-                    } else {
-                        sendMessage("" + ChatColor.RED + "\u00AB" + ChatColor.GRAY + " You absorbed " + attacker.getName() + "'s " + ability + " " + ChatColor.GRAY + "hit.");
-                        attacker.sendMessage(ChatColor.GREEN + "\u00BB" + ChatColor.GRAY + " Your " + ability + " was absorbed by " + name + ChatColor.GRAY + ".");
-                    }
-
-                    addAbsorbed(Math.abs(-damageHealValueBeforeReduction));
-                }
-
-                //ORBS
-                spawnOrbs(ability, attacker);
-
-                this.entity.playEffect(EntityEffect.HURT);
-                for (Player player1 : attacker.getWorld().getPlayers()) {
-                    player1.playSound(entity.getLocation(), Sound.HURT_FLESH, 1, 1);
-                }
-
-                if (!ability.isEmpty()) {
-                    if (attacker.entity instanceof Player) {
-                        ((Player) attacker.entity).playSound(attacker.getLocation(), Sound.ORB_PICKUP, 1, 1);
-                    }
-                }
-                removeHorse();
             } else {
-                boolean debt = false;
-
-                //Self heal
-                if (this == attacker) {
-                    if (this.health + damageHealValue > this.maxHealth) {
-                        damageHealValue = this.maxHealth - this.health;
-                    }
-                    damageHealValue = Math.round(damageHealValue);
-                    if (damageHealValue > 0) {
-                        if (isCrit) {
-                            sendMessage(ChatColor.GREEN + "\u00BB" + ChatColor.GRAY + " Your " + ability + " critically healed you for " + ChatColor.GREEN + "§l" + Math.round(damageHealValue) + "! " + ChatColor.GRAY + "health.");
-                        } else {
-                            sendMessage(ChatColor.GREEN + "\u00BB" + ChatColor.GRAY + " Your " + ability + " healed you for " + ChatColor.GREEN + "" + Math.round(damageHealValue) + " " + ChatColor.GRAY + "health.");
-                        }
-                    }
-                    addHealing(damageHealValue);
-                } else {
-                    //DAMAGE
-                    if (damageHealValue < 0 && isEnemy(attacker)) {
-                        hitBy.put(attacker, 10);
-
-                        if (powerUpHeal) {
-                            powerUpHeal = false;
-                            sendMessage(ChatColor.GOLD + "Your §a§lHealing Powerup §6has worn off.");
-                        }
-                        removeHorse();
-                        regenTimer = 10;
-                        if (!cooldownManager.getCooldown(LastStand.class).isEmpty() && !HammerOfLight.standingInHammer(attacker, entity)) {
-                            for (Cooldown cooldown : cooldownManager.getCooldown(LastStand.class)) {
-                                WarlordsPlayer lastStandedBy = cooldown.getFrom();
-
-                                //HEALING FROM LASTSTAND
-                                if (lastStandedBy != this) {
-                                    float finalDamageHealValue = damageHealValue;
-                                    boolean finalIsCrit = isCrit;
-                                    //healing if multiple last stands
-                                    lastStandedBy.getCooldownManager().getCooldown(LastStand.class).stream()
-                                            .filter(cd -> cd.getCooldownObject() == cooldown.getCooldownObject() && cd.getTimeLeft() > 0)
-                                            .forEach(ls -> {
-                                                float healValue = finalDamageHealValue * -1;
-                                                if (finalIsCrit)
-                                                    lastStandedBy.addHealth(lastStandedBy, "Last Stand", Math.round(healValue), Math.round(healValue), 100, 100, false);
-                                                else
-                                                    lastStandedBy.addHealth(lastStandedBy, "Last Stand", Math.round(healValue), Math.round(healValue), -1, 100, false);
-
-                                            });
-                                }
-                            }
+                if (!ignoreReduction) {
+                    if (min < 0 && !HammerOfLight.standingInHammer(attacker, entity)) {
+                        //reduce damage
+                        for (Cooldown cooldown : cooldownManager.getCooldown(IceBarrier.class)) {
+                            totalReduction *= .5;
                         }
 
-                        // this metadata is only active on the sg class
-                        // the cooldown of the ability prevents multiple from being active at the same time
-                        Optional<MetadataValue> totem = entity.getMetadata("TOTEM").stream()
-                                .filter(e -> e.value() instanceof DeathsDebt)
-                                .findAny();
-                        if (totem.isPresent()) {
-                            DeathsDebt t = (DeathsDebt) totem.get().value();
-                            t.addDelayedDamage(damageHealValue);
-                            debt = true;
+                        if (!cooldownManager.getCooldown(ChainLightning.class).isEmpty()) {
+                            totalReduction *= 1 - (Collections.max(cooldownManager.getCooldown(ChainLightning.class).stream()
+                                    .map(cd -> ((ChainLightning) cd.getCooldownObject()).getDamageReduction())
+                                    .collect(Collectors.toList())) * .1);
+                        }
+                        for (Cooldown cooldown : cooldownManager.getCooldown(SpiritLink.class)) {
+                            totalReduction *= .8;
                         }
 
-                        if (isCrit) {
-                            if (ability.isEmpty()) {
-                                sendMessage(ChatColor.RED + "\u00AB" + ChatColor.GRAY + " " + attacker.getName() + " hit you for " + ChatColor.RED + "§l" + Math.round(damageHealValue) * -1 + "! " + ChatColor.GRAY + "critical melee damage.");
-                                attacker.sendMessage(ChatColor.GREEN + "\u00BB" + ChatColor.GRAY + " " + "You hit " + name + " for " + ChatColor.RED + "§l" + Math.round(damageHealValue) * -1 + "! " + ChatColor.GRAY + "critical melee damage.");
+                        addAbsorbed(Math.abs(-damageHealValue * (1 - totalReduction)));
+
+                        for (Cooldown cooldown : cooldownManager.getCooldown(LastStand.class)) {
+                            WarlordsPlayer lastStandedBy = cooldown.getFrom();
+                            if (lastStandedBy == this) {
+                                totalReduction *= .5;
                             } else {
-                                sendMessage(ChatColor.RED + "\u00AB" + ChatColor.GRAY + " " + attacker.getName() + "'s " + ability + " hit you for " + ChatColor.RED + "§l" + Math.round(damageHealValue) * -1 + "! " + ChatColor.GRAY + "critical damage.");
-                                attacker.sendMessage(ChatColor.GREEN + "\u00BB" + ChatColor.GRAY + " " + "Your " + ability + " hit " + name + " for " + ChatColor.RED + "§l" + Math.round(damageHealValue) * -1 + "! " + ChatColor.GRAY + "critical damage.");
-                            }
-                        } else {
-                            if (ability.isEmpty()) {
-                                sendMessage(ChatColor.RED + "\u00AB" + ChatColor.GRAY + " " + attacker.getName() + " hit you for " + ChatColor.RED + Math.round(damageHealValue) * -1 + " " + ChatColor.GRAY + "melee damage.");
-                                attacker.sendMessage(ChatColor.GREEN + "\u00BB" + ChatColor.GRAY + " " + "You hit " + name + " for " + ChatColor.RED + Math.round(damageHealValue) * -1 + " " + ChatColor.GRAY + "melee damage.");
-                            } else {
-                                sendMessage(ChatColor.RED + "\u00AB" + ChatColor.GRAY + " " + attacker.getName() + "'s " + ability + " hit you for " + ChatColor.RED + Math.round(damageHealValue) * -1 + " " + ChatColor.GRAY + "damage.");
-                                attacker.sendMessage(ChatColor.GREEN + "\u00BB" + ChatColor.GRAY + " " + "Your " + ability + " hit " + name + " for " + ChatColor.RED + Math.round(damageHealValue) * -1 + " " + ChatColor.GRAY + "damage.");
+                                totalReduction *= .4;
                             }
                         }
-                        //REPENTANCE
-                        if (spec instanceof Spiritguard) {
-                            ((Repentance) spec.getBlue()).addToPool(damageHealValue * -1);
-                        }
-                        if (attacker.getSpec() instanceof Spiritguard) {
-                            if (!attacker.getCooldownManager().getCooldown(Repentance.class).isEmpty()) {
-                                int healthToAdd = (int) (((Repentance) attacker.getSpec().getBlue()).getPool() * .1) + 10;
-                                attacker.addHealth(attacker, "Repentance", healthToAdd, healthToAdd, -1, 100, false);
-                                ((Repentance) attacker.getSpec().getBlue()).setPool(((Repentance) attacker.getSpec().getBlue()).getPool() * .5f);
-                                attacker.addEnergy(attacker, "Repentance", (float) (healthToAdd * .035));
-                            }
-                        }
-
-                        //ORBS
-                        spawnOrbs(ability, attacker);
-
-                        //prot strike
-                        if (ability.equals("Protector's Strike")) {
-                            //SELF HEAL
-                            int tempNewCritChance;
-                            if (isCrit) {
-                                tempNewCritChance = 100;
-                            } else {
-                                tempNewCritChance = -1;
-                            }
-
-                            if (Warlords.getPlayerSettings(attacker.uuid).getClassesSkillBoosts() == ClassesSkillBoosts.PROTECTOR_STRIKE) {
-                                attacker.addHealth(attacker, ability, -damageHealValue / 1.67f, -damageHealValue / 1.67f, tempNewCritChance, 100, false);
-                            } else {
-                                attacker.addHealth(attacker, ability, -damageHealValue / 2, -damageHealValue / 2, tempNewCritChance, 100, false);
-                            }
-
-                            //reloops near players to give health to
-                            for (WarlordsPlayer nearTeamPlayer : PlayerFilter
-                                    .entitiesAround(attacker, 10, 10, 10)
-                                    .aliveTeammatesOfExcludingSelf(attacker)
-                                    .limit(2)
-                            ) {
-                                if (Warlords.getPlayerSettings(attacker.uuid).getClassesSkillBoosts() == ClassesSkillBoosts.PROTECTOR_STRIKE) {
-                                    nearTeamPlayer.addHealth(attacker, ability, -damageHealValue * 1.2f, -damageHealValue * 1.2f, tempNewCritChance, 100, false);
-                                } else {
-                                    nearTeamPlayer.addHealth(attacker, ability, -damageHealValue, -damageHealValue, tempNewCritChance, 100, false);
-                                }
-                            }
+                    } else if (min > 0) {
+                        if (!cooldownManager.getCooldown(WoundingStrikeBerserker.class).isEmpty()) {
+                            totalReduction *= .6;
+                        } else if (!cooldownManager.getCooldown(WoundingStrikeDefender.class).isEmpty()) {
+                            totalReduction *= .75;
                         }
                     }
-                    //HEALING
-                    else {
-                        if (isTeammate(attacker)) {
-                            healedBy.put(attacker, 10);
-
-                            if (this.health + damageHealValue > maxHealth) {
-                                damageHealValue = maxHealth - this.health;
-                            }
-                            if (damageHealValue != 0) {
-                                if (isCrit) {
-                                    sendMessage(ChatColor.GREEN + "\u00AB" + ChatColor.GRAY + " " + attacker.getName() + "'s " + ability + " critically healed you for " + ChatColor.GREEN + "§l" + Math.round(damageHealValue) + "! " + ChatColor.GRAY + "health.");
-                                    attacker.sendMessage(ChatColor.GREEN + "\u00BB" + ChatColor.GRAY + " " + "Your " + ability + " critically healed " + name + " for " + ChatColor.GREEN + "§l" + Math.round(damageHealValue) + "! " + ChatColor.GRAY + "health.");
-                                } else {
-                                    sendMessage(ChatColor.GREEN + "\u00AB" + ChatColor.GRAY + " " + attacker.getName() + "'s " + ability + " healed for " + ChatColor.GREEN + "" + Math.round(damageHealValue) + " " + ChatColor.GRAY + "health.");
-                                    attacker.sendMessage(ChatColor.GREEN + "\u00BB" + ChatColor.GRAY + " " + "Your " + ability + " healed " + name + " for " + ChatColor.GREEN + "" + Math.round(damageHealValue) + " " + ChatColor.GRAY + "health.");
-                                }
-                            }
-                            attacker.addHealing(damageHealValue);
-                        }
+                    //HAMMER OF LIGHT DMG/HEAL BOOST
+                /*if (attacker.getSpec() instanceof Protector) {
+                    int playersInHammer = HammerOfLight.getStandingInHammer(attacker).size();
+                    if (playersInHammer >= 4) {
+                        totalReduction *= Math.pow(1.03, 4);
+                    } else {
+                        totalReduction *= Math.pow(1.03, playersInHammer);
                     }
-                    if (!attacker.getCooldownManager().getCooldown(BloodLust.class).isEmpty() && damageHealValue < 0) {
-                        attacker.addHealth(attacker, "Blood Lust", Math.round(damageHealValue * -.65f), Math.round(damageHealValue * -.65f), -1, 100, false);
-                    }
+                }*/
+                    damageHealValue *= totalReduction;
                 }
+                if (!cooldownManager.getCooldown(ArcaneShield.class).isEmpty() && isEnemy(attacker) && !HammerOfLight.standingInHammer(attacker, entity)) {
+                    ArcaneShield arcaneShield = (ArcaneShield) spec.getBlue();
+                    //adding dmg to shield
+                    arcaneShield.addShieldHealth(damageHealValue);
+                    //check if broken
+                    if (arcaneShield.getShieldHealth() < 0) {
+                        if (entity instanceof Player) {
+                            ((EntityLiving) ((CraftPlayer) entity).getHandle()).setAbsorptionHearts(0);
+                        }
 
-                updateJimmyHealth();
+                        cooldownManager.removeCooldown(ArcaneShield.class);
+                        addHealth(attacker, ability, arcaneShield.getShieldHealth(), arcaneShield.getShieldHealth(), isCrit ? 100 : -1, 100, true);
 
-                // adding/subtracing health
-                //debt and healing
-                if (!debt && takeDamage) {
-                    this.health += Math.round(damageHealValue);
-                }
-                if (damageHealValue < 0) {
-                    attacker.addDamage(-damageHealValue);
+                        addAbsorbed(-(((ArcaneShield) spec.getBlue()).getShieldHealth()));
+                    } else {
+                        if (entity instanceof Player) {
+                            ((EntityLiving) ((CraftPlayer) entity).getHandle()).setAbsorptionHearts((float) (arcaneShield.getShieldHealth() / (maxHealth * .5) * 20));
+                        }
+
+                        if (ability.isEmpty()) {
+                            sendMessage("" + ChatColor.RED + "\u00AB" + ChatColor.GRAY + " You absorbed " + attacker.getName() + "'s melee " + ChatColor.GRAY + "hit.");
+                            attacker.sendMessage(ChatColor.GREEN + "\u00BB" + ChatColor.GRAY + " Your melee hit was absorbed by " + name);
+                        } else {
+                            sendMessage("" + ChatColor.RED + "\u00AB" + ChatColor.GRAY + " You absorbed " + attacker.getName() + "'s " + ability + " " + ChatColor.GRAY + "hit.");
+                            attacker.sendMessage(ChatColor.GREEN + "\u00BB" + ChatColor.GRAY + " Your " + ability + " was absorbed by " + name + ChatColor.GRAY + ".");
+                        }
+
+                        addAbsorbed(Math.abs(-damageHealValueBeforeReduction));
+                    }
+
+                    //ORBS
+                    spawnOrbs(ability, attacker);
+
                     this.entity.playEffect(EntityEffect.HURT);
                     for (Player player1 : attacker.getWorld().getPlayers()) {
-                        player1.playSound(entity.getLocation(), Sound.HURT_FLESH, 2, 1);
-                    }
-                    recordDamage.add(-damageHealValue);
-                }
-                if (this.health <= 0 && !cooldownManager.checkUndyingArmy(false)) {
-                    if (attacker.entity instanceof Player) {
-                        ((Player) attacker.entity).playSound(attacker.getLocation(), Sound.ORB_PICKUP, 500f, 0.5f);
+                        player1.playSound(entity.getLocation(), Sound.HURT_FLESH, 1, 1);
                     }
 
-                    die(attacker);
-
-                    attacker.addKill();
-
-                    sendMessage(ChatColor.GRAY + "You were killed by " + attacker.getColoredName());
-                    attacker.sendMessage(ChatColor.GRAY + "You killed " + getColoredName());
-                    gameState.getGame().forEachOnlinePlayer((p, t) -> {
-                        if (p != this.entity && p != attacker.entity) {
-                            p.sendMessage(getColoredName() + ChatColor.GRAY + " was killed by " + attacker.getColoredName());
-                        }
-                    });
-                    gameState.getGame().getSpectators().forEach(uuid -> {
-                        if(Bukkit.getPlayer(uuid) != null) {
-                            Bukkit.getPlayer(uuid).sendMessage(getColoredName() + ChatColor.GRAY + " was killed by " + attacker.getColoredName());
-                        }
-                    });
-                    gameState.addKill(team, false);
-
-
-                    //title YOU DIED
-                    if (this.entity instanceof Player) {
-                        PacketUtils.sendTitle((Player) entity, ChatColor.RED + "YOU DIED!", ChatColor.GRAY + attacker.getName() + " killed you.", 0, 40, 0);
-                    }
-                } else {
-                    if (!ability.isEmpty() &&
-                            (this != attacker || ability.equals("Water Bolt") || ability.equals("Orbs of Life")) &&
-                            damageHealValue != 0
-                    ) {
+                    if (!ability.isEmpty()) {
                         if (attacker.entity instanceof Player) {
                             ((Player) attacker.entity).playSound(attacker.getLocation(), Sound.ORB_PICKUP, 1, 1);
                         }
                     }
+                    removeHorse();
+                } else {
+                    boolean debt = false;
+
+                    //Self heal
+                    if (this == attacker) {
+                        if (this.health + damageHealValue > this.maxHealth) {
+                            damageHealValue = this.maxHealth - this.health;
+                        }
+                        damageHealValue = Math.round(damageHealValue);
+                        if (damageHealValue > 0) {
+                            if (isCrit) {
+                                sendMessage(ChatColor.GREEN + "\u00BB" + ChatColor.GRAY + " Your " + ability + " critically healed you for " + ChatColor.GREEN + "§l" + Math.round(damageHealValue) + "! " + ChatColor.GRAY + "health.");
+                            } else {
+                                sendMessage(ChatColor.GREEN + "\u00BB" + ChatColor.GRAY + " Your " + ability + " healed you for " + ChatColor.GREEN + "" + Math.round(damageHealValue) + " " + ChatColor.GRAY + "health.");
+                            }
+                        }
+                        addHealing(damageHealValue);
+                    } else {
+                        //DAMAGE
+                        if (damageHealValue < 0 && isEnemy(attacker)) {
+                            hitBy.put(attacker, 10);
+
+                            if (powerUpHeal) {
+                                powerUpHeal = false;
+                                sendMessage(ChatColor.GOLD + "Your §a§lHealing Powerup §6has worn off.");
+                            }
+                            removeHorse();
+                            regenTimer = 10;
+                            if (!cooldownManager.getCooldown(LastStand.class).isEmpty() && !HammerOfLight.standingInHammer(attacker, entity)) {
+                                for (Cooldown cooldown : cooldownManager.getCooldown(LastStand.class)) {
+                                    WarlordsPlayer lastStandedBy = cooldown.getFrom();
+                                    lastStandedBy.addAbsorbed(damageHealValue * -1);
+                                    //HEALING FROM LASTSTAND
+                                    if (lastStandedBy != this) {
+                                        float finalDamageHealValue = damageHealValue;
+                                        boolean finalIsCrit = isCrit;
+                                        //healing if multiple last stands
+                                        lastStandedBy.getCooldownManager().getCooldown(LastStand.class).stream()
+                                                .filter(cd -> cd.getCooldownObject() == cooldown.getCooldownObject() && cd.getTimeLeft() > 0)
+                                                .forEach(ls -> {
+                                                    float healValue = finalDamageHealValue * -1;
+                                                    if (finalIsCrit)
+                                                        lastStandedBy.addHealth(lastStandedBy, "Last Stand", Math.round(healValue), Math.round(healValue), 100, 100, false);
+                                                    else
+                                                        lastStandedBy.addHealth(lastStandedBy, "Last Stand", Math.round(healValue), Math.round(healValue), -1, 100, false);
+                                                });
+                                    }
+                                }
+                            }
+
+                            // this metadata is only active on the sg class
+                            // the cooldown of the ability prevents multiple from being active at the same time
+                            Optional<MetadataValue> totem = entity.getMetadata("TOTEM").stream()
+                                    .filter(e -> e.value() instanceof DeathsDebt)
+                                    .findAny();
+                            if (totem.isPresent()) {
+                                DeathsDebt t = (DeathsDebt) totem.get().value();
+                                t.addDelayedDamage(damageHealValue);
+                                debt = true;
+                            }
+
+                            if (isCrit) {
+                                if (ability.isEmpty()) {
+                                    sendMessage(ChatColor.RED + "\u00AB" + ChatColor.GRAY + " " + attacker.getName() + " hit you for " + ChatColor.RED + "§l" + Math.round(damageHealValue) * -1 + "! " + ChatColor.GRAY + "critical melee damage.");
+                                    attacker.sendMessage(ChatColor.GREEN + "\u00BB" + ChatColor.GRAY + " " + "You hit " + name + " for " + ChatColor.RED + "§l" + Math.round(damageHealValue) * -1 + "! " + ChatColor.GRAY + "critical melee damage.");
+                                } else {
+                                    sendMessage(ChatColor.RED + "\u00AB" + ChatColor.GRAY + " " + attacker.getName() + "'s " + ability + " hit you for " + ChatColor.RED + "§l" + Math.round(damageHealValue) * -1 + "! " + ChatColor.GRAY + "critical damage.");
+                                    attacker.sendMessage(ChatColor.GREEN + "\u00BB" + ChatColor.GRAY + " " + "Your " + ability + " hit " + name + " for " + ChatColor.RED + "§l" + Math.round(damageHealValue) * -1 + "! " + ChatColor.GRAY + "critical damage.");
+                                }
+                            } else {
+                                if (ability.isEmpty()) {
+                                    sendMessage(ChatColor.RED + "\u00AB" + ChatColor.GRAY + " " + attacker.getName() + " hit you for " + ChatColor.RED + Math.round(damageHealValue) * -1 + " " + ChatColor.GRAY + "melee damage.");
+                                    attacker.sendMessage(ChatColor.GREEN + "\u00BB" + ChatColor.GRAY + " " + "You hit " + name + " for " + ChatColor.RED + Math.round(damageHealValue) * -1 + " " + ChatColor.GRAY + "melee damage.");
+                                } else {
+                                    sendMessage(ChatColor.RED + "\u00AB" + ChatColor.GRAY + " " + attacker.getName() + "'s " + ability + " hit you for " + ChatColor.RED + Math.round(damageHealValue) * -1 + " " + ChatColor.GRAY + "damage.");
+                                    attacker.sendMessage(ChatColor.GREEN + "\u00BB" + ChatColor.GRAY + " " + "Your " + ability + " hit " + name + " for " + ChatColor.RED + Math.round(damageHealValue) * -1 + " " + ChatColor.GRAY + "damage.");
+                                }
+                            }
+                            //REPENTANCE
+                            if (spec instanceof Spiritguard) {
+                                ((Repentance) spec.getBlue()).addToPool(damageHealValue * -1);
+                            }
+                            if (attacker.getSpec() instanceof Spiritguard) {
+                                if (!attacker.getCooldownManager().getCooldown(Repentance.class).isEmpty()) {
+                                    int healthToAdd = (int) (((Repentance) attacker.getSpec().getBlue()).getPool() * .1) + 10;
+                                    attacker.addHealth(attacker, "Repentance", healthToAdd, healthToAdd, -1, 100, false);
+                                    ((Repentance) attacker.getSpec().getBlue()).setPool(((Repentance) attacker.getSpec().getBlue()).getPool() * .5f);
+                                    attacker.addEnergy(attacker, "Repentance", (float) (healthToAdd * .035));
+                                }
+                            }
+
+                            //ORBS
+                            spawnOrbs(ability, attacker);
+
+                            //prot strike
+                            if (ability.equals("Protector's Strike")) {
+                                //SELF HEAL
+                                int tempNewCritChance;
+                                if (isCrit) {
+                                    tempNewCritChance = 100;
+                                } else {
+                                    tempNewCritChance = -1;
+                                }
+
+                                if (Warlords.getPlayerSettings(attacker.uuid).getClassesSkillBoosts() == ClassesSkillBoosts.PROTECTOR_STRIKE) {
+                                    attacker.addHealth(attacker, ability, -damageHealValue / 1.67f, -damageHealValue / 1.67f, tempNewCritChance, 100, false);
+                                } else {
+                                    attacker.addHealth(attacker, ability, -damageHealValue / 2, -damageHealValue / 2, tempNewCritChance, 100, false);
+                                }
+
+                                //reloops near players to give health to
+                                for (WarlordsPlayer nearTeamPlayer : PlayerFilter
+                                        .entitiesAround(attacker, 10, 10, 10)
+                                        .aliveTeammatesOfExcludingSelf(attacker)
+                                        .limit(2)
+                                ) {
+                                    if (Warlords.getPlayerSettings(attacker.uuid).getClassesSkillBoosts() == ClassesSkillBoosts.PROTECTOR_STRIKE) {
+                                        nearTeamPlayer.addHealth(attacker, ability, -damageHealValue * 1.2f, -damageHealValue * 1.2f, tempNewCritChance, 100, false);
+                                    } else {
+                                        nearTeamPlayer.addHealth(attacker, ability, -damageHealValue, -damageHealValue, tempNewCritChance, 100, false);
+                                    }
+                                }
+                            }
+                        }
+                        //HEALING
+                        else {
+                            if (isTeammate(attacker)) {
+                                healedBy.put(attacker, 10);
+
+                                if (this.health + damageHealValue > maxHealth) {
+                                    damageHealValue = maxHealth - this.health;
+                                }
+                                if (damageHealValue != 0) {
+                                    if (isCrit) {
+                                        sendMessage(ChatColor.GREEN + "\u00AB" + ChatColor.GRAY + " " + attacker.getName() + "'s " + ability + " critically healed you for " + ChatColor.GREEN + "§l" + Math.round(damageHealValue) + "! " + ChatColor.GRAY + "health.");
+                                        attacker.sendMessage(ChatColor.GREEN + "\u00BB" + ChatColor.GRAY + " " + "Your " + ability + " critically healed " + name + " for " + ChatColor.GREEN + "§l" + Math.round(damageHealValue) + "! " + ChatColor.GRAY + "health.");
+                                    } else {
+                                        sendMessage(ChatColor.GREEN + "\u00AB" + ChatColor.GRAY + " " + attacker.getName() + "'s " + ability + " healed for " + ChatColor.GREEN + "" + Math.round(damageHealValue) + " " + ChatColor.GRAY + "health.");
+                                        attacker.sendMessage(ChatColor.GREEN + "\u00BB" + ChatColor.GRAY + " " + "Your " + ability + " healed " + name + " for " + ChatColor.GREEN + "" + Math.round(damageHealValue) + " " + ChatColor.GRAY + "health.");
+                                    }
+                                }
+                                attacker.addHealing(damageHealValue);
+                            }
+                        }
+                        if (!attacker.getCooldownManager().getCooldown(BloodLust.class).isEmpty() && damageHealValue < 0) {
+                            attacker.addHealth(attacker, "Blood Lust", Math.round(damageHealValue * -.65f), Math.round(damageHealValue * -.65f), -1, 100, false);
+                        }
+                    }
+
+                    updateJimmyHealth();
+
+                    // adding/subtracing health
+                    //debt and healing
+                    if (!debt && takeDamage) {
+                        this.health += Math.round(damageHealValue);
+                    }
+                    if (damageHealValue < 0) {
+                        attacker.addDamage(-damageHealValue);
+                        this.entity.playEffect(EntityEffect.HURT);
+                        for (Player player1 : attacker.getWorld().getPlayers()) {
+                            player1.playSound(entity.getLocation(), Sound.HURT_FLESH, 2, 1);
+                        }
+                        recordDamage.add(-damageHealValue);
+                    }
+                    if (this.health <= 0 && !cooldownManager.checkUndyingArmy(false)) {
+                        if (attacker.entity instanceof Player) {
+                            ((Player) attacker.entity).playSound(attacker.getLocation(), Sound.ORB_PICKUP, 500f, 0.5f);
+                        }
+
+                        die(attacker);
+
+                        attacker.addKill();
+
+                        sendMessage(ChatColor.GRAY + "You were killed by " + attacker.getColoredName());
+                        attacker.sendMessage(ChatColor.GRAY + "You killed " + getColoredName());
+                        gameState.getGame().forEachOnlinePlayer((p, t) -> {
+                            if (p != this.entity && p != attacker.entity) {
+                                p.sendMessage(getColoredName() + ChatColor.GRAY + " was killed by " + attacker.getColoredName());
+                            }
+                        });
+                        gameState.getGame().getSpectators().forEach(uuid -> {
+                            if (Bukkit.getPlayer(uuid) != null) {
+                                Bukkit.getPlayer(uuid).sendMessage(getColoredName() + ChatColor.GRAY + " was killed by " + attacker.getColoredName());
+                            }
+                        });
+                        gameState.addKill(team, false);
+
+
+                        //title YOU DIED
+                        if (this.entity instanceof Player) {
+                            PacketUtils.sendTitle((Player) entity, ChatColor.RED + "YOU DIED!", ChatColor.GRAY + attacker.getName() + " killed you.", 0, 40, 0);
+                        }
+                    } else {
+                        if (!ability.isEmpty() &&
+                                (this != attacker || ability.equals("Water Bolt") || ability.equals("Orbs of Life")) &&
+                                damageHealValue != 0
+                        ) {
+                            if (attacker.entity instanceof Player) {
+                                ((Player) attacker.entity).playSound(attacker.getLocation(), Sound.ORB_PICKUP, 1, 1);
+                            }
+                        }
+                    }
                 }
             }
-
             if (ability.isEmpty()) {
                 if (!attacker.getCooldownManager().getCooldown(Windfury.class).isEmpty()) {
                     int windfuryActivate = (int) (Math.random() * 100);
@@ -1116,7 +1122,7 @@ public final class WarlordsPlayer {
     }
 
     public void respawn() {
-        if(entity instanceof Player && ((Player) entity).isOnline()) {
+        if (entity instanceof Player && ((Player) entity).isOnline()) {
             PacketUtils.sendTitle((Player) entity, "", "", 0, 0, 0);
             setRespawnTimer(BigDecimal.valueOf(-1));
             setSpawnProtection(3);
@@ -1586,7 +1592,7 @@ public final class WarlordsPlayer {
     }
 
     public void setVelocity(org.bukkit.util.Vector v, boolean kbAfterHorse) {
-        if(kbAfterHorse || this.entity.getVehicle() == null) {
+        if (kbAfterHorse || this.entity.getVehicle() == null) {
             this.entity.setVelocity(v);
         }
     }
@@ -1596,7 +1602,7 @@ public final class WarlordsPlayer {
     }
 
     public void setVelocity(Location from, Location to, double multipliedBy, double y, boolean kbAfterHorse) {
-        if((kbAfterHorse && this.entity.getVehicle() != null) || (!kbAfterHorse && this.entity.getVehicle() == null)) {
+        if ((kbAfterHorse && this.entity.getVehicle() != null) || (!kbAfterHorse && this.entity.getVehicle() == null)) {
             this.entity.setVelocity(to.toVector().subtract(from.toVector()).normalize().multiply(multipliedBy).setY(y));
         }
     }

@@ -163,23 +163,23 @@ public class DatabaseGame {
         Map<ChatColor, Long> totalAbsorbed = new HashMap<>();
 
         databaseGamePlayers.stream().sorted(Comparator.comparingLong(DatabaseGamePlayer::getTotalDamage).reversed()).forEach(databaseGamePlayer -> {
-            totalDamage.put(databaseGamePlayer.getTeamColor(), totalDamage.get(databaseGamePlayer.getTeamColor()) + databaseGamePlayer.getTotalDamage());
+            totalDamage.put(databaseGamePlayer.getTeamColor(), totalDamage.getOrDefault(databaseGamePlayer.getTeamColor(), 0L) + databaseGamePlayer.getTotalDamage());
             topDamagePlayers.add(databaseGamePlayer.getColoredName() + ": " + ChatColor.YELLOW + Utils.addCommaAndRound(databaseGamePlayer.getTotalDamage()));
         });
 
         databaseGamePlayers.stream().sorted(Comparator.comparingLong(DatabaseGamePlayer::getTotalHealing).reversed()).forEach(databaseGamePlayer -> {
-            totalHealing.put(databaseGamePlayer.getTeamColor(), totalHealing.get(databaseGamePlayer.getTeamColor()) + databaseGamePlayer.getTotalHealing());
+            totalHealing.put(databaseGamePlayer.getTeamColor(), totalHealing.getOrDefault(databaseGamePlayer.getTeamColor(), 0L) + databaseGamePlayer.getTotalHealing());
             topHealingPlayers.add(databaseGamePlayer.getColoredName() + ": " + ChatColor.YELLOW + Utils.addCommaAndRound(databaseGamePlayer.getTotalHealing()));
         });
 
         databaseGamePlayers.stream().sorted(Comparator.comparingLong(DatabaseGamePlayer::getTotalAbsorbed).reversed()).forEach(databaseGamePlayer -> {
-            totalAbsorbed.put(databaseGamePlayer.getTeamColor(), totalAbsorbed.get(databaseGamePlayer.getTeamColor()) + databaseGamePlayer.getTotalAbsorbed());
+            totalAbsorbed.put(databaseGamePlayer.getTeamColor(), totalAbsorbed.getOrDefault(databaseGamePlayer.getTeamColor(), 0L) + databaseGamePlayer.getTotalAbsorbed());
             topAbsorbedPlayers.add(databaseGamePlayer.getColoredName() + ": " + ChatColor.YELLOW + Utils.addCommaAndRound(databaseGamePlayer.getTotalAbsorbed()));
         });
 
-//        totalDamage.entrySet().stream().sorted(Map.Entry.<ChatColor, Long>comparingByValue().reversed()).forEach((key, value) -> {
-//                    topDamage.appendTextLine(key + (key == ChatColor.BLUE ? "Blue:" : "Red:") + ChatColor.YELLOW + value);
-//        });
+        appendTeamDHP(topDamage, totalDamage);
+        appendTeamDHP(topHealing, totalHealing);
+        appendTeamDHP(topAbsorbed, totalAbsorbed);
 
         topDamagePlayers.forEach(topDamage::appendTextLine);
         topHealingPlayers.forEach(topHealing::appendTextLine);
@@ -191,6 +191,14 @@ public class DatabaseGame {
         });
 
         this.holograms = holograms;
+    }
+
+    private void appendTeamDHP(Hologram hologram, Map<ChatColor, Long> map) {
+        map.entrySet().stream().sorted(Map.Entry.<ChatColor, Long>comparingByValue().reversed()).forEach(chatColorLongEntry -> {
+            ChatColor key = chatColorLongEntry.getKey();
+            Long value = chatColorLongEntry.getValue();
+            hologram.appendTextLine(key + (key == ChatColor.BLUE ? "Blue: " : "Red: ") + ChatColor.YELLOW + Utils.addCommaAndRound(value));
+        });
     }
 
     public static void setGameHologramVisibility(Player player) {

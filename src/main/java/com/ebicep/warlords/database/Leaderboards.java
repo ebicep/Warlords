@@ -65,9 +65,9 @@ public class Leaderboards {
         leaderboardLocations.put("absorbed", absorbedLB);
 
         gameHologramLocations.add(new LocationBuilder(lastGameLocation.clone()).left(5).get());
-        gameHologramLocations.add(new LocationBuilder(lastGameLocation.clone()).addY(2).right(.5f).get());
-        gameHologramLocations.add(new LocationBuilder(lastGameLocation.clone()).addY(2).right(4).get());
-        gameHologramLocations.add(new LocationBuilder(lastGameLocation.clone()).addY(2).right(7.5f).get());
+        gameHologramLocations.add(new LocationBuilder(lastGameLocation.clone()).addY(3.5).right(.5f).get());
+        gameHologramLocations.add(new LocationBuilder(lastGameLocation.clone()).addY(3.5).right(4).get());
+        gameHologramLocations.add(new LocationBuilder(lastGameLocation.clone()).addY(3.5).right(7.5f).get());
 
     }
 
