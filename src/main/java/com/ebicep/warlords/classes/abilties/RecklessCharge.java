@@ -22,13 +22,13 @@ public class RecklessCharge extends AbstractAbility implements Listener {
     private static List<UUID> stunnedPlayers = new ArrayList<>();
 
     public RecklessCharge() {
-        super("Reckless Charge", -457, -601, 9.32f, 60, 20, 200);
+        super("Reckless Charge", 457, 601, 9.32f, 60, 20, 200);
     }
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Charge forward, dealing §c" + format(-minDamageHeal) + "\n" +
-                "§7- §c" + format(-maxDamageHeal) + " §7damage to all enemies\n" +
+        description = "§7Charge forward, dealing §c" + format(minDamageHeal) + "\n" +
+                "§7- §c" + format(maxDamageHeal) + " §7damage to all enemies\n" +
                 "§7you pass through. Enemies hit are\n" +
                 "§5IMMOBILIZED§7, preventing movement\n" +
                 "§7for §60.5 §7seconds. Charge is reduced\n" +
@@ -109,7 +109,7 @@ public class RecklessCharge extends AbstractAbility implements Listener {
                                 .forEach(enemy -> {
                                     playersHit.add(enemy);
                                     stunnedPlayers.add(enemy.getUuid());
-                                    enemy.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+                                    enemy.damageHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
                                     wp.getGame().getGameTasks().put(
 
                                             new BukkitRunnable() {

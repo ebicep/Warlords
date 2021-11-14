@@ -109,7 +109,7 @@ public class DeathsDebt extends AbstractTotemBase {
                                     for (Player player1 : player.getWorld().getPlayers()) {
                                         player1.playSound(totemStand.getLocation(), "shaman.earthlivingweapon.impact", 2, 1.5F);
                                     }
-                                    player.sendMessage(ChatColor.GREEN + "\u00BB §2Spirit's Respite §7delayed §c" + -Math.round(tempDeathsDebt.getDelayedDamage()) + " §7damage. §6" + roundedTimeLeftRespite + " §7seconds left.");
+                                    player.sendMessage(ChatColor.GREEN + "\u00BB §2Spirit's Respite §7delayed §c" + Math.round(tempDeathsDebt.getDelayedDamage()) + " §7damage. §6" + roundedTimeLeftRespite + " §7seconds left.");
                                 } else if (roundedTimeLeftRespite == 0) {
                                     //beginning debt
                                     wp.getCooldownManager().removeCooldown(tempDeathsDebt);
@@ -119,7 +119,7 @@ public class DeathsDebt extends AbstractTotemBase {
                                     if (!isPlayerInRadius) {
                                         player.sendMessage("§7You walked outside your §dDeath's Debt §7radius");
                                     } else {
-                                        player.sendMessage("§c\u00AB §2Spirit's Respite §7delayed §c" + -Math.round(tempDeathsDebt.getDelayedDamage()) + " §7damage. §dYour debt must now be paid.");
+                                        player.sendMessage("§c\u00AB §2Spirit's Respite §7delayed §c" + Math.round(tempDeathsDebt.getDelayedDamage()) + " §7damage. §dYour debt must now be paid.");
                                     }
                                     circle.replaceEffects(e -> e instanceof DoubleLineEffect, new DoubleLineEffect(ParticleEffect.SPELL_WITCH));
                                     circle.setRadius(7.5);
@@ -144,7 +144,7 @@ public class DeathsDebt extends AbstractTotemBase {
                                         PlayerFilter.entitiesAround(totemStand, 8, 7, 8)
                                                 .aliveEnemiesOf(wp)
                                                 .forEach((nearPlayer) -> {
-                                                    nearPlayer.addHealth(wp,
+                                                    nearPlayer.damageHealth(wp,
                                                             name,
                                                             tempDeathsDebt.getDelayedDamage() * .15f,
                                                             tempDeathsDebt.getDelayedDamage() * .15f,
@@ -180,7 +180,7 @@ public class DeathsDebt extends AbstractTotemBase {
         // 100% of damage over 6 seconds
         float damage = (tempDeathsDebt.getDelayedDamage() * .1667f);
         // Player damage
-        wp.addHealth(wp, "",
+        wp.damageHealth(wp, "",
                 (float) (damage * Math.pow(.8, wp.getCooldownManager().getCooldown(SpiritLink.class).size())),
                 (float) (damage * Math.pow(.8, wp.getCooldownManager().getCooldown(SpiritLink.class).size())),
                 critChance,
@@ -190,9 +190,9 @@ public class DeathsDebt extends AbstractTotemBase {
         PlayerFilter.entitiesAround(totemStand, 8, 7, 8)
                 .aliveTeammatesOf(wp)
                 .forEach((nearPlayer) -> {
-                    nearPlayer.addHealth(wp, name,
-                            damage * -.15f,
-                            damage * -.15f,
+                    nearPlayer.healHealth(wp, name,
+                            damage * .15f,
+                            damage * .15f,
                             critChance, critMultiplier, false);
                 });
     }

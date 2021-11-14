@@ -18,7 +18,7 @@ public class CapacitorTotem extends AbstractTotemBase {
     private final int duration = 8;
 
     public CapacitorTotem() {
-        super("Capacitor Totem", -404, -523, 62.64f, 20, 20, 200);
+        super("Capacitor Totem", 404, 523, 62.64f, 20, 20, 200);
     }
 
     @Override
@@ -26,7 +26,7 @@ public class CapacitorTotem extends AbstractTotemBase {
         description = "§7Place a highly conductive totem\n" +
                 "§7on the ground. Casting Chain Lightning\n" +
                 "§7or Lightning Rod on the totem will cause\n" +
-                "§7it to pulse, dealing §c" + format(-minDamageHeal) + " §7- §c" + format(-maxDamageHeal) + " §7damage\n" +
+                "§7it to pulse, dealing §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage\n" +
                 "§7to all enemies nearby. Lasts §6" + duration + " §7seconds.";
     }
 

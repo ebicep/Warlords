@@ -53,7 +53,7 @@ public class WaterBolt extends AbstractProjectileBase {
         if (toReduceBy < .2) toReduceBy = .2;
         if (victim != null) {
             if (victim.isTeammate(shooter)) {
-                victim.addHealth(shooter,
+                victim.healHealth(shooter,
                         name,
                         (float) (minDamageHeal * DIRECT_HIT_MULTIPLIER * toReduceBy),
                         (float) (maxDamageHeal * DIRECT_HIT_MULTIPLIER * toReduceBy),
@@ -61,10 +61,10 @@ public class WaterBolt extends AbstractProjectileBase {
                         critMultiplier,
                         false);
             } else {
-                victim.addHealth(shooter,
+                victim.damageHealth(shooter,
                         name,
-                        (float) (-231 * DIRECT_HIT_MULTIPLIER * toReduceBy),
-                        (float) (-299 * DIRECT_HIT_MULTIPLIER * toReduceBy),
+                        (float) (231 * DIRECT_HIT_MULTIPLIER * toReduceBy),
+                        (float) (299 * DIRECT_HIT_MULTIPLIER * toReduceBy),
                         critChance,
                         critMultiplier,
                         false);
@@ -76,7 +76,7 @@ public class WaterBolt extends AbstractProjectileBase {
                 .isAlive()
         ) {
             if (nearEntity.isTeammate(shooter)) {
-                nearEntity.addHealth(
+                nearEntity.healHealth(
                         shooter,
                         name,
                         (float) (minDamageHeal * toReduceBy),
@@ -85,11 +85,11 @@ public class WaterBolt extends AbstractProjectileBase {
                         critMultiplier,
                         false);
             } else {
-                nearEntity.addHealth(
+                nearEntity.damageHealth(
                         shooter,
                         name,
-                        (float) (-231 * toReduceBy),
-                        (float) (-299 * toReduceBy),
+                        (float) (231 * toReduceBy),
+                        (float) (299 * toReduceBy),
                         critChance,
                         critMultiplier,
                         false);

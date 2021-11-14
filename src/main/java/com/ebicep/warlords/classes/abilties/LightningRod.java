@@ -33,7 +33,7 @@ public class LightningRod extends AbstractAbility {
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
         wp.addEnergy(wp, name, energyRestore);
-        wp.addHealth(wp, name, (wp.getMaxHealth() * .3f), (wp.getMaxHealth() * .3f), critChance, critMultiplier, false);
+        wp.healHealth(wp, name, (wp.getMaxHealth() * .3f), (wp.getMaxHealth() * .3f), critChance, critMultiplier, false);
 
         Location playerLocation = player.getLocation();
 
@@ -51,7 +51,7 @@ public class LightningRod extends AbstractAbility {
         List<ArmorStand> totemDownAndClose = Utils.getCapacitorTotemDownAndClose(wp, wp.getEntity());
         totemDownAndClose.forEach(totem -> {
             PlayerFilter.entitiesAround(totem.getLocation(), 6, 4, 6).aliveEnemiesOf(wp).forEach(enemy -> {
-                enemy.addHealth(
+                enemy.damageHealth(
                         wp,
                         wp.getSpec().getOrange().getName(),
                         wp.getSpec().getOrange().getMinDamageHeal(),

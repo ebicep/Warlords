@@ -20,13 +20,13 @@ public class Boulder extends AbstractAbility {
     private static final double GRAVITY = -0.01075;
 
     public Boulder() {
-        super("Boulder", -451, -673, 7.05f, 80, 15, 175);
+        super("Boulder", 451, 673, 7.05f, 80, 15, 175);
     }
 
     @Override
     public void updateDescription(Player player) {
         description = "§7Launch a giant boulder that shatters\n" +
-                "§7and deals §c" + format(-minDamageHeal) + " §7- §c" + format(-maxDamageHeal) + " §7damage\n" +
+                "§7and deals §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage\n" +
                 "§7to all enemies near the impact point\n" +
                 "§7and knocks them back slightly.";
     }
@@ -110,7 +110,7 @@ public class Boulder extends AbstractAbility {
                                     v = p.getLocation().toVector().subtract(newLoc.toVector()).normalize().multiply(1.1).setY(0.2);
                                 }
                                 p.setVelocity(v, false);
-                                p.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+                                p.damageHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
                             }
                             newLoc.setPitch(-12);
                             Location impactLocation = newLoc.clone().subtract(speed);

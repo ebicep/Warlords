@@ -473,7 +473,7 @@ public class Warlords extends JavaPlugin {
                                                 this.cancel();
                                             } else {
                                                 //UNDYING ARMY - dmg 10% of max health each popped army
-                                                warlordsPlayer.addHealth(warlordsPlayer, "", warlordsPlayer.getMaxHealth() / -10f, warlordsPlayer.getMaxHealth() / -10f, -1, 100, false);
+                                                warlordsPlayer.damageHealth(warlordsPlayer, "", warlordsPlayer.getMaxHealth() / 10f, warlordsPlayer.getMaxHealth() / 10f, -1, 100, false);
                                             }
                                         }
                                     }.runTaskTimer(Warlords.this, 0, 20);
@@ -619,7 +619,7 @@ public class Warlords extends JavaPlugin {
                                     maxHeal *= 1 + orb.getTicksLived() / 520f;
                                 }
 
-                                warlordsPlayer.addHealth(orb.getOwner(), "Orbs of Life", maxHeal, maxHeal, -1, 100, false);
+                                warlordsPlayer.healHealth(orb.getOwner(), "Orbs of Life", maxHeal, maxHeal, -1, 100, false);
                                 if (player != null) {
                                     for (Player player1 : player.getWorld().getPlayers()) {
                                         player1.playSound(player.getLocation(), Sound.ORB_PICKUP, 0.5f, 1);
@@ -631,7 +631,7 @@ public class Warlords extends JavaPlugin {
                                         .aliveTeammatesOfExcludingSelf(warlordsPlayer)
                                         .limit(2)
                                 ) {
-                                    nearPlayer.addHealth(orb.getOwner(), "Orbs of Life", minHeal, minHeal, -1, 100, false);
+                                    nearPlayer.healHealth(orb.getOwner(), "Orbs of Life", minHeal, minHeal, -1, 100, false);
                                     if (player != null) {
                                         for (Player player1 : player.getWorld().getPlayers()) {
                                             player1.playSound(player.getLocation(), Sound.ORB_PICKUP, 0.5f, 1);

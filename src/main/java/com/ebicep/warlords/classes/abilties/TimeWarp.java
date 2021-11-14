@@ -89,7 +89,7 @@ public class TimeWarp extends AbstractAbility {
                             if (time != 0) {
                                 time -= 1;
                             } else {
-                                wp.addHealth(wp, "Time Warp", (wp.getMaxHealth() * .3f), (wp.getMaxHealth() * .3f), -1, 100, false);
+                                wp.healHealth(wp, "Time Warp", wp.getMaxHealth() * .3f, wp.getMaxHealth() * .3f, -1, 100, false);
                                 for (Player player1 : wp.getEntity().getWorld().getPlayers()) {
                                     player1.playSound(wp.getLocation(), "mage.timewarp.teleport", 1, 1);
                                 }

@@ -11,13 +11,13 @@ import javax.annotation.Nonnull;
 public class CripplingStrike extends AbstractStrikeBase {
 
     public CripplingStrike() {
-        super("Crippling Strike", -362.25f, -498, 0, 100, 15, 200);
+        super("Crippling Strike", 362.25f, 498, 0, 100, 15, 200);
     }
 
     @Override
     public void updateDescription(Player player) {
         description = "§7Strike the targeted enemy player,\n" +
-                "§7causing §c" + format(-minDamageHeal) + " §7- §c" + format(-maxDamageHeal) + " §7damage\n" +
+                "§7causing §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage\n" +
                 "§7and §ccrippling §7them for §63 §7seconds.\n" +
                 "§7A §ccrippled §7player deals §c15% §7less\n" +
                 "§7damage for the duration of the effect.";
@@ -25,7 +25,7 @@ public class CripplingStrike extends AbstractStrikeBase {
 
     @Override
     protected void onHit(@Nonnull WarlordsPlayer wp, @Nonnull Player player, @Nonnull WarlordsPlayer nearPlayer) {
-        nearPlayer.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+        nearPlayer.damageHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
         if (!(nearPlayer.getCooldownManager().hasCooldown(CripplingStrike.class))) {
             nearPlayer.sendMessage(ChatColor.GRAY + "You are " + ChatColor.RED + "crippled" + ChatColor.GRAY + ".");
         }

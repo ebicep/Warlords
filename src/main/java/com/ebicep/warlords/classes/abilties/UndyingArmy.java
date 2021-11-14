@@ -90,7 +90,7 @@ public class UndyingArmy extends AbstractAbility {
                             if (teammate.getCooldownManager().getCooldown(tempUndyingArmy).isPresent()) {
                                 if (!((UndyingArmy) teammate.getCooldownManager().getCooldown(tempUndyingArmy).get().getCooldownObject()).isArmyDead(teammate.getUuid())) {
                                     float healAmount = 200 + (teammate.getMaxHealth() - teammate.getHealth()) / 14.3f;
-                                    teammate.addHealth(wp, name, healAmount, healAmount, -1, 100, false);
+                                    teammate.healHealth(wp, name, healAmount, healAmount, -1, 100, false);
                                     player.playSound(teammate.getLocation(), "paladin.holyradiance.activation", 0.25f, 0.8f);
 
                                     // particles
