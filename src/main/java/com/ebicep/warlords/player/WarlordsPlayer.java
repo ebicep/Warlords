@@ -536,9 +536,8 @@ public final class WarlordsPlayer {
             damageHealValue *= critMultiplier / 100f;
         }
         final float damageHealValueBeforeReduction = damageHealValue;
-        float totalReduction = 1;
         if (min < 0) {
-            totalReduction *= 1 - spec.getDamageResistance() / 100f;
+            damageHealValue *= 1 - spec.getDamageResistance() / 100f;
         }
 
         if (attacker == this && (ability.equals("Fall") || ability.isEmpty())) {
@@ -564,8 +563,6 @@ public final class WarlordsPlayer {
                 }
             } else {
                 //FALL
-                damageHealValue *= totalReduction;
-
                 sendMessage("" + ChatColor.RED + "\u00AB" + ChatColor.GRAY + " You took " + ChatColor.RED + Math.round(damageHealValue * -1) + ChatColor.GRAY + " fall damage.");
                 regenTimer = 10;
                 if (health + damageHealValue < 0 && !cooldownManager.checkUndyingArmy(false)) {
@@ -593,23 +590,21 @@ public final class WarlordsPlayer {
                 if (min < 0 && !HammerOfLight.standingInHammer(attacker, entity)) {
                     //add damage
                     for (Cooldown cooldown : attacker.getCooldownManager().getCooldown(Berserk.class)) {
-                        totalReduction *= 1.3;
+                        damageHealValue *= 1.3;
                     }
 
                     for (Cooldown cooldown : cooldownManager.getCooldown(Berserk.class)) {
-                        totalReduction *= 1.1;
+                        damageHealValue *= 1.1;
                     }
-
-                    damageHealValue *= totalReduction;
                 }
                 if (min < 0 && !HammerOfLight.standingInHammer(attacker, entity)) {
                     //TODO maybe change to hypixel warlords where crippling effects hammer
                     if (!attacker.getCooldownManager().getCooldownFromName("Totem Crippling").isEmpty()) {
-                        totalReduction *= .75;
+                        damageHealValue *= .75;
                     }
 
                     if (!attacker.getCooldownManager().getCooldown(CripplingStrike.class).isEmpty()) {
-                        totalReduction *= .85;
+                        damageHealValue *= .85;
                     }
                 }
             }
@@ -658,45 +653,33 @@ public final class WarlordsPlayer {
                     if (min < 0 && !HammerOfLight.standingInHammer(attacker, entity)) {
                         //reduce damage
                         for (Cooldown cooldown : cooldownManager.getCooldown(IceBarrier.class)) {
-                            totalReduction *= .5;
+                            addAbsorbed(Math.abs(damageHealValue - (damageHealValue *= .5)));
                         }
 
                         if (!cooldownManager.getCooldown(ChainLightning.class).isEmpty()) {
-                            totalReduction *= 1 - (Collections.max(cooldownManager.getCooldown(ChainLightning.class).stream()
+                            addAbsorbed(Math.abs(damageHealValue - (damageHealValue *= 1 - (Collections.max(cooldownManager.getCooldown(ChainLightning.class).stream()
                                     .map(cd -> ((ChainLightning) cd.getCooldownObject()).getDamageReduction())
-                                    .collect(Collectors.toList())) * .1);
+                                    .collect(Collectors.toList())) * .1))));
                         }
                         for (Cooldown cooldown : cooldownManager.getCooldown(SpiritLink.class)) {
-                            totalReduction *= .8;
+                            addAbsorbed(Math.abs(damageHealValue - (damageHealValue *= .8)));
                         }
-
-                        addAbsorbed(Math.abs(-damageHealValue * (1 - totalReduction)));
 
                         for (Cooldown cooldown : cooldownManager.getCooldown(LastStand.class)) {
                             WarlordsPlayer lastStandedBy = cooldown.getFrom();
                             if (lastStandedBy == this) {
-                                totalReduction *= .5;
+                                damageHealValue *= .5;
                             } else {
-                                totalReduction *= .4;
+                                damageHealValue *= .4;
                             }
                         }
                     } else if (min > 0) {
                         if (!cooldownManager.getCooldown(WoundingStrikeBerserker.class).isEmpty()) {
-                            totalReduction *= .6;
+                            damageHealValue *= .6;
                         } else if (!cooldownManager.getCooldown(WoundingStrikeDefender.class).isEmpty()) {
-                            totalReduction *= .75;
+                            damageHealValue *= .75;
                         }
                     }
-                    //HAMMER OF LIGHT DMG/HEAL BOOST
-                /*if (attacker.getSpec() instanceof Protector) {
-                    int playersInHammer = HammerOfLight.getStandingInHammer(attacker).size();
-                    if (playersInHammer >= 4) {
-                        totalReduction *= Math.pow(1.03, 4);
-                    } else {
-                        totalReduction *= Math.pow(1.03, playersInHammer);
-                    }
-                }*/
-                    damageHealValue *= totalReduction;
                 }
                 if (!cooldownManager.getCooldown(ArcaneShield.class).isEmpty() && isEnemy(attacker) && !HammerOfLight.standingInHammer(attacker, entity)) {
                     ArcaneShield arcaneShield = (ArcaneShield) spec.getBlue();
