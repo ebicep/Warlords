@@ -558,7 +558,7 @@ public final class WarlordsPlayer {
                 if (min < 0) {
                     this.entity.playEffect(EntityEffect.HURT);
                     for (Player player1 : attacker.getWorld().getPlayers()) {
-                        player1.playSound(entity.getLocation(), Sound.HURT_FLESH, 1, 1);
+                        player1.playSound(entity.getLocation(), Sound.HURT_FLESH, 2, 1);
                     }
                 }
             } else {
@@ -579,7 +579,7 @@ public final class WarlordsPlayer {
                 }
                 entity.playEffect(EntityEffect.HURT);
                 for (Player player1 : attacker.getWorld().getPlayers()) {
-                    player1.playSound(entity.getLocation(), Sound.HURT_FLESH, 1, 1);
+                    player1.playSound(entity.getLocation(), Sound.HURT_FLESH, 2, 1);
                 }
                 addAbsorbed(Math.abs(-damageHealValue * spec.getDamageResistance() / 100));
             }
@@ -716,7 +716,7 @@ public final class WarlordsPlayer {
 
                     this.entity.playEffect(EntityEffect.HURT);
                     for (Player player1 : attacker.getWorld().getPlayers()) {
-                        player1.playSound(entity.getLocation(), Sound.HURT_FLESH, 1, 1);
+                        player1.playSound(entity.getLocation(), Sound.HURT_FLESH, 2, 1);
                     }
 
                     if (!ability.isEmpty()) {
@@ -981,7 +981,7 @@ public final class WarlordsPlayer {
                         attacker.addHealth(attacker, "Earthliving Weapon", 132 * 2.4f, 179 * 2.4f, 25, 200, false);
 
                         gameState.getGame().forEachOnlinePlayer((p, t) -> {
-                            p.playSound(getLocation(), "shaman.earthlivingweapon.impact", 1, 1);
+                            p.playSound(getLocation(), "shaman.earthlivingweapon.impact", 2, 1);
                         });
 
                         for (WarlordsPlayer nearPlayer : PlayerFilter.entitiesAround(attacker, 6, 6, 6)

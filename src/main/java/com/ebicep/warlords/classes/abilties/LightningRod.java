@@ -64,6 +64,8 @@ public class LightningRod extends AbstractAbility {
             for (Player player1 : wp.getWorld().getPlayers()) {
                 player1.playSound(totem.getLocation(), "shaman.capacitortotem.pulse", 2, 1);
             }
+
+            player.playSound(player.getLocation(), "shaman.chainlightning.impact", 2, 1);
         });
 
         new FallingBlockWaveEffect(playerLocation, knockbackRadius, 1, Material.RED_ROSE, (byte) 5).play();
