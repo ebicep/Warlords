@@ -536,8 +536,9 @@ public final class WarlordsPlayer {
             damageHealValue *= critMultiplier / 100f;
         }
         final float damageHealValueBeforeReduction = damageHealValue;
+        System.out.println(damageHealValue);
         if (min < 0) {
-            damageHealValue *= 1 - spec.getDamageResistance() / 100f;
+            addAbsorbed(Math.abs(damageHealValue - (damageHealValue *= 1 - spec.getDamageResistance() / 100f)));
         }
 
         if (attacker == this && (ability.equals("Fall") || ability.isEmpty())) {
@@ -581,7 +582,6 @@ public final class WarlordsPlayer {
                 for (Player player1 : attacker.getWorld().getPlayers()) {
                     player1.playSound(entity.getLocation(), Sound.HURT_FLESH, 2, 1);
                 }
-                addAbsorbed(Math.abs(-damageHealValue * spec.getDamageResistance() / 100));
             }
         } else {
             if (!ignoreReduction) {

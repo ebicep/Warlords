@@ -127,7 +127,7 @@ public class EndState implements State, TimerDebugAble {
                 PacketUtils.sendTitle(player, "§6§lVICTORY!", "", 0, 100, 0);
             } else {
                 player.playSound(player.getLocation(), "defeat", 500, 1);
-                PacketUtils.sendTitle(player, "§c§lDEFEAT!", "", 0, 100, 0);
+                PacketUtils.sendTitle(player, "§c§lDEFEAT", "", 0, 100, 0);
             }
 
             RemoveEntities.removeArmorStands();
