@@ -69,6 +69,7 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
         warlordsPlayer.getSpec().getRed().setCurrentCooldown((float) (cooldown * warlordsPlayer.getCooldownModifier()));
 
         player.playSound(player.getLocation(), "shaman.chainlightning.impact", 2, 1);
+
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "shaman.chainlightning.activation", 3, 1);
         }
@@ -148,6 +149,11 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
         new FallingBlockWaveEffect(totem.getLocation().add(0, 1, 0), 6, 1.2, Material.SAPLING, (byte) 0).play();
         for (Player player1 : wp.getWorld().getPlayers()) {
             player1.playSound(totem.getLocation(), "shaman.capacitortotem.pulse", 2, 1);
+        }
+
+        if (wp.getEntity() instanceof Player) {
+            Player player = (Player)wp.getEntity();
+            player.playSound(player.getLocation(), "shaman.chainlightning.impact", 2, 1);
         }
     }
 
