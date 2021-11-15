@@ -536,7 +536,6 @@ public final class WarlordsPlayer {
             damageHealValue *= critMultiplier / 100f;
         }
         final float damageHealValueBeforeReduction = damageHealValue;
-        System.out.println(damageHealValue);
         if (min < 0) {
             addAbsorbed(Math.abs(damageHealValue - (damageHealValue *= 1 - spec.getDamageResistance() / 100f)));
         }
