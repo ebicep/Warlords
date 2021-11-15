@@ -105,7 +105,7 @@ public class CustomScoreboard {
                             new CustomScoreboardPair("    ", ""),
                             new CustomScoreboardPair("    ", ""),
                             new CustomScoreboardPair("          ", "§e§lUpdate"),
-                            new CustomScoreboardPair("         ", ChatColor.GREEN.toString() + ChatColor.BOLD + Warlords.VERSION)
+                            new CustomScoreboardPair("     ", ChatColor.GREEN.toString() + ChatColor.BOLD + Warlords.VERSION)
                     );
                 }).execute();
     }
