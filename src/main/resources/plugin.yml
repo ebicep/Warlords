@@ -1,5 +1,5 @@
 name: Warlords
-version: New Leaf
+version: New Leaf (aHRef)
 author: ebic
 main: com.ebicep.warlords.Warlords
 depend: [ MultiWorld, HolographicDisplays, ProtocolLib ]
