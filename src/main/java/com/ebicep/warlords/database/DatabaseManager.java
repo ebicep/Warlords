@@ -93,7 +93,9 @@ public class DatabaseManager {
                             Warlords.newSharedChain(sharedChainName)
                                     .async(() -> {
                                         //adding new document with top weekly players
-                                        weeklyLeaderboards.insertOne(LeaderboardManager.getTopPlayersOnLeaderboard());
+                                        Document topPlayers = LeaderboardManager.getTopPlayersOnLeaderboard();
+                                        weeklyLeaderboards.insertOne(topPlayers);
+                                        ExperienceManager.awardWeeklyExperience(topPlayers);
                                         //clearing weekly
                                         playersInformationWeekly.deleteMany(new Document());
                                         //updating date to current
