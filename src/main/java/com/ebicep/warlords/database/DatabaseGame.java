@@ -281,14 +281,14 @@ public class DatabaseGame {
     }
 
     private static int getGameBefore(int currentGame) {
-        if (currentGame == 0) {
+        if (currentGame <= 0) {
             return previousGames.size() - 1;
         }
         return currentGame - 1;
     }
 
     private static int getGameAfter(int currentGame) {
-        if (currentGame == previousGames.size() - 1) {
+        if (currentGame >= previousGames.size() - 1) {
             return 0;
         }
         return currentGame + 1;
