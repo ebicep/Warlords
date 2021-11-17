@@ -591,7 +591,7 @@ public final class WarlordsPlayer {
         //REDUCTION BEFORE VENE
         if (!ignoreReduction) {
             // Flag carriers take more damage
-            damageValue *= damageValue > 0 || flagDamageMultiplier == 0 ? 1 : flagDamageMultiplier;
+            damageValue *= flagDamageMultiplier == 0 ? 1 : flagDamageMultiplier;
             if (!HammerOfLight.standingInHammer(attacker, entity)) {
                 //add damage
                 for (Cooldown cooldown : attacker.getCooldownManager().getCooldown(Berserk.class)) {
