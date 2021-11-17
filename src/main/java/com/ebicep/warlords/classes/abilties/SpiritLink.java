@@ -114,11 +114,11 @@ public class SpiritLink extends AbstractChainBase {
         }
         warlordsPlayer.addHealth(warlordsPlayer, "Soulbinding Weapon", 420, 420, -1, 100, false);
         for (WarlordsPlayer nearPlayer : PlayerFilter
-                .entitiesAround(warlordsPlayer, 10, 10, 10)
+                .entitiesAround(warlordsPlayer, 8, 8, 8)
                 .aliveTeammatesOfExcludingSelf(warlordsPlayer)
                 .limit(2)
         ) {
-            nearPlayer.addHealth(warlordsPlayer, "Soulbinding Weapon", 210, 210, -1, 100, false);
+            nearPlayer.addHealth(warlordsPlayer, "Soulbinding Weapon", 420, 420, -1, 100, false);
         }
     }
 }

@@ -74,8 +74,11 @@ public enum Weapons {
     // mythic
     SILVER_PHANTASM_SCYTHE("Tenth Plague", new ItemStack(Material.PRISMARINE_CRYSTALS), MYTHIC),
     SILVER_PHANTASM_SWORD("Hyperion's Awakening", new ItemStack(Material.PRISMARINE_SHARD), MYTHIC),
+    SILVER_PHANTASM_SWORD_2("Blazeguard", new ItemStack(Material.FLINT), MYTHIC),
+    SILVER_PHANTASM_SWORD_3("Venom", new ItemStack(Material.COAL), MYTHIC),
     SILVER_PHANTASM_HAMMER("Wrath of Aether", new ItemStack(Material.QUARTZ), MYTHIC),
     SILVER_PHANTASM_STAFF("Wit of Oblivion", new ItemStack(Material.IRON_INGOT), MYTHIC),
+    SILVER_PHANTASM_STAFF_2("Lament", new ItemStack(Material.INK_SACK), MYTHIC),
 
     ;
 

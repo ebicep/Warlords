@@ -9,6 +9,7 @@ import com.ebicep.warlords.util.PlayerFilter;
 import com.ebicep.warlords.util.Utils;
 import com.sun.org.apache.xalan.internal.xsltc.dom.ArrayNodeListIterator;
 import net.minecraft.server.v1_8_R3.PacketPlayOutAnimation;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
@@ -44,8 +45,11 @@ public class HolyRadiance extends AbstractAbility {
                 "§7range of §e" + markRadius + " §7blocks." : "");
     }
 
+    private ArmorStand armorStand;
+
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
+
 
         if (hasSneakingAbility) {
             for (WarlordsPlayer p : PlayerFilter
@@ -64,9 +68,17 @@ public class HolyRadiance extends AbstractAbility {
                     PacketPlayOutAnimation playOutAnimation = new PacketPlayOutAnimation(((CraftPlayer) player).getHandle(), 0);
                     ((CraftPlayer) player).getHandle().playerConnection.sendPacket(playOutAnimation);
 
+                    Location lineLocation = player.getLocation().add(0, 1, 0);
+                    lineLocation.setDirection(lineLocation.toVector().subtract(p.getLocation().add(0, 1, 0).toVector()).multiply(-1));
+                    for (int i = 0; i < Math.floor(player.getLocation().distance(p.getLocation())) * 2; i++) {
+                        ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(250, 70, 200), lineLocation, 500);
+                        lineLocation.add(lineLocation.getDirection().multiply(.5));
+                    }
+
                     HolyRadiance tempMark = new HolyRadiance(minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier, true);
                     p.getCooldownManager().addCooldown(name, HolyRadiance.this.getClass(), tempMark, "MARK", 10, wp, CooldownTypes.BUFF);
                     p.getSpeed().addSpeedModifier("Mark Speed", 20, 20 * 10, "BASE");
+                    player.sendMessage(ChatColor.GRAY + "You have marked §e" + p.getName() + "§7!");
 
                     wp.getGame().getGameTasks().put(
 
@@ -78,10 +90,10 @@ public class HolyRadiance extends AbstractAbility {
                                         Location particleLoc = playerLoc.clone();
                                         for (int i = 0; i < 4; i++) {
                                             for (int j = 0; j < 10; j++) {
-                                                double angle = j / 5D * Math.PI * 2;
+                                                double angle = j / 6D * Math.PI * 2;
                                                 double width = 1;
                                                 particleLoc.setX(playerLoc.getX() + Math.sin(angle) * width);
-                                                particleLoc.setY(playerLoc.getY() + i / 5D);
+                                                particleLoc.setY(playerLoc.getY() + i / 6D);
                                                 particleLoc.setZ(playerLoc.getZ() + Math.cos(angle) * width);
 
                                                 ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(250, 70, 200), particleLoc, 500);
