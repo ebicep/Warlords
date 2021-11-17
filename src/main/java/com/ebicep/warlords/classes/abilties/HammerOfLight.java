@@ -93,7 +93,7 @@ public class HammerOfLight extends AbstractAbility {
                                     .isAlive()
                             ) {
                                 if (damageHealCircle.getWarlordsPlayer().isTeammateAlive(warlordsPlayer)) {
-                                    warlordsPlayer.addHealth(
+                                    warlordsPlayer.healHealth(
                                             damageHealCircle.getWarlordsPlayer(),
                                             damageHealCircle.getName(),
                                             damageHealCircle.getMinDamage(),
@@ -102,11 +102,11 @@ public class HammerOfLight extends AbstractAbility {
                                             damageHealCircle.getCritMultiplier(),
                                             false);
                                 } else {
-                                    warlordsPlayer.addHealth(
+                                    warlordsPlayer.damageHealth(
                                             damageHealCircle.getWarlordsPlayer(),
                                             damageHealCircle.getName(),
-                                            -damageHealCircle.getMinDamage(),
-                                            -damageHealCircle.getMaxDamage(),
+                                            damageHealCircle.getMinDamage(),
+                                            damageHealCircle.getMaxDamage(),
                                             damageHealCircle.getCritChance(),
                                             damageHealCircle.getCritMultiplier(),
                                             false);
@@ -171,7 +171,7 @@ public class HammerOfLight extends AbstractAbility {
                                             PlayerFilter.entitiesAround(wp.getLocation(), radius, radius, radius)
                                                     .aliveTeammatesOf(wp)
                                                     .forEach(teammate -> {
-                                                        teammate.addHealth(
+                                                        teammate.healHealth(
                                                                 damageHealCircle.getWarlordsPlayer(),
                                                                 "Crown of Light",
                                                                 damageHealCircle.getMinDamage() * 1.5f,

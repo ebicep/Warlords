@@ -32,7 +32,7 @@ public class WaterBreath extends AbstractAbility {
     public void onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
         wp.subtractEnergy(energyCost);
         wp.getCooldownManager().removeDebuffCooldowns();
-        wp.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+        wp.healHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
         player.playSound(player.getLocation(), Sound.ORB_PICKUP, 1, 1);
 
         Location playerLoc = player.getLocation();
@@ -51,7 +51,7 @@ public class WaterBreath extends AbstractAbility {
                     if (viewDirection.dot(direction) > .65) {
                         if (wp.isTeammateAlive(target)) {
                             target.getCooldownManager().removeDebuffCooldowns();
-                            target.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+                            target.healHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
                         } else {
                             final Location loc = target.getLocation();
                             final Vector v = player.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1.1).setY(0.2);

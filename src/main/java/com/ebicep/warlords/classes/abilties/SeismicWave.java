@@ -27,7 +27,7 @@ public class SeismicWave extends AbstractAbility {
     @Override
     public void updateDescription(Player player) {
         description = "§7Send a wave of incredible force\n" +
-                "§7forward that deals §c" + format(-minDamageHeal) + " §7- §c" + format(-maxDamageHeal) + "\n" +
+                "§7forward that deals §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + "\n" +
                 "§7damage to all enemies hit and\n" +
                 "knocks them back slightly.";
     }
@@ -81,7 +81,7 @@ public class SeismicWave extends AbstractAbility {
                     playersHit.add(p);
                     final Vector v = player.getLocation().toVector().subtract(p.getLocation().toVector()).normalize().multiply(-1.25).setY(0.25);
                     p.setVelocity(v, false);
-                    p.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+                    p.damageHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
                 }
             }
         }

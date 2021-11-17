@@ -16,7 +16,7 @@ public class FrostBolt extends AbstractProjectileBase {
     private static final float HITBOX = 4;
 
     public FrostBolt() {
-        super("Frostbolt", -268.8f, -345.45f, 0, 70, 20, 175, 2, 300, false);
+        super("Frostbolt", 268.8f, 345.45f, 0, 70, 20, 175, 2, 300, false);
     }
 
     @Override
@@ -50,7 +50,7 @@ public class FrostBolt extends AbstractProjectileBase {
         if (toReduceBy < .2) toReduceBy = .2;
         if (victim != null && victim.isEnemy(shooter)) {
             victim.getSpeed().addSpeedModifier("Frostbolt", -25, 2 * 20);
-            victim.addHealth(
+            victim.damageHealth(
                     shooter,
                     name,
                     (float) (minDamageHeal * DIRECT_HIT_MULTIPLIER * toReduceBy),
@@ -66,7 +66,7 @@ public class FrostBolt extends AbstractProjectileBase {
                 .aliveEnemiesOf(shooter)
         ) {
             nearEntity.getSpeed().addSpeedModifier("Frostbolt", -25, 2 * 20);
-            nearEntity.addHealth(
+            nearEntity.damageHealth(
                     shooter,
                     name,
                     (float) (minDamageHeal * toReduceBy),
@@ -80,7 +80,7 @@ public class FrostBolt extends AbstractProjectileBase {
     @Override
     public void updateDescription(Player player) {
         description = "§7Shoot a frostbolt that will shatter\n" +
-                "§7for §c" + format(-minDamageHeal) + " §7- §c" + format(-maxDamageHeal) + " §7damage and slow\n" +
+                "§7for §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage and slow\n" +
                 "§7by §e25% §7for §62 §7seconds. A\n" +
                 "§7direct hit will cause the enemy\n" +
                 "§7to take an additional §c15% §7extra\n" +

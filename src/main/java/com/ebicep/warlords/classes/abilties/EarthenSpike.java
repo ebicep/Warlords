@@ -33,7 +33,7 @@ public class EarthenSpike extends AbstractAbility {
     };
 
     public EarthenSpike() {
-        super("Earthen Spike", -404, -562, 0, 100, 15, 175
+        super("Earthen Spike", 404, 562, 0, 100, 15, 175
         );
     }
 
@@ -42,8 +42,8 @@ public class EarthenSpike extends AbstractAbility {
         description = "§7Send forth an underground earth spike\n" +
                 "§7that locks onto a targeted enemy player.\n" +
                 "§7When the spike reaches its target it\n" +
-                "§7emerges from the ground, dealing §c" + format(-minDamageHeal) + " §7-\n" +
-                "§c" + format(-maxDamageHeal) + " §7damage to any nearby enemies and\n" +
+                "§7emerges from the ground, dealing §c" + format(minDamageHeal) + " §7-\n" +
+                "§c" + format(maxDamageHeal) + " §7damage to any nearby enemies and\n" +
                 "§7launches them up into the air." +
                 "\n\n" +
                 "§7Has an initial cast range of §e" + radius + " §7blocks.";
@@ -150,7 +150,7 @@ public class EarthenSpike extends AbstractAbility {
                                             .entitiesAround(targetLocation, 2.5, 2.5, 2.5)
                                             .aliveEnemiesOf(wp)
                                     ) {
-                                        warlordsPlayer.addHealth(user, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+                                        warlordsPlayer.damageHealth(user, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
                                         //todo tweak distance to ground where you cant get kbed up (1.5 is max jump blocks)
                                         if (Utils.getDistance(warlordsPlayer.getEntity(), .1) < 1.5) {
                                             warlordsPlayer.setVelocity(new Vector(0, .625, 0));
