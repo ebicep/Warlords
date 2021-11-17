@@ -627,7 +627,7 @@ public class GameMenu {
         });
 
         ItemBuilder icon2 = new ItemBuilder(Material.SULPHUR);
-        icon2.name(ChatColor.GREEN + "Weapon Skin Roller");
+        icon2.name(ChatColor.GREEN + "Skin Shard Roller");
         icon2.lore(
                 "§7Is RNG with you to give everyone a new awesome skin?",
                 "",
@@ -660,11 +660,11 @@ public class GameMenu {
                         PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
                         Classes selectedClass = playerSettings.getSelectedClass();
 
-                        if (chance < 96.35) {
+                        if (chance < 96.3) {
                             rarity = WeaponsRarity.RARE;
-                        } else if (chance < 96.35 + 3) {
+                        } else if (chance < 96.3 + 3) {
                             rarity = WeaponsRarity.EPIC;
-                        } else if (chance < 96.35 + 3 + 0.6) {
+                        } else if (chance < 96.3 + 3 + 0.6) {
                             rarity = WeaponsRarity.LEGENDARY;
                         } else {
                             rarity = WeaponsRarity.MYTHIC;
@@ -706,6 +706,7 @@ public class GameMenu {
                             Warlords.getInstance().saveWeaponConfig();
                             Bukkit.broadcastMessage("");
                             Bukkit.broadcastMessage("§l" + rarity.getWeaponChatColor() + weapon.getName() + " §fis now unlocked for everyone!");
+                            Bukkit.broadcastMessage("");
                         } else {
                             if (rarity == WeaponsRarity.MYTHIC) {
                                 Bukkit.broadcastMessage("");
