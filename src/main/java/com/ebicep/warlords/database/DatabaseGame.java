@@ -89,6 +89,10 @@ public class DatabaseGame {
         return (int) gameInfo.get("red_points");
     }
 
+    public boolean isCounted() {
+        return gameInfo.getBoolean("counted");
+    }
+
     public HashMap<UUID, HashMap<String, Object>> getPlayerInfo() {
         return playerInfo;
     }
@@ -104,7 +108,7 @@ public class DatabaseGame {
     public String getGameLabel() {
         return ChatColor.GRAY.toString() + gameInfo.get("date") + ChatColor.DARK_GRAY + " - " +
                 ChatColor.GREEN + gameInfo.get("map") + ChatColor.DARK_GRAY + " - " +
-                ChatColor.GRAY + "(" + ChatColor.BLUE + gameInfo.get("blue_points") + ChatColor.GRAY + ":" + ChatColor.RED + gameInfo.get("red_points") + ChatColor.GRAY + ")";
+                ChatColor.GRAY + "(" + ChatColor.BLUE + gameInfo.get("blue_points") + ChatColor.GRAY + ":" + ChatColor.RED + gameInfo.get("red_points") + ChatColor.GRAY + ")" + ChatColor.DARK_GRAY + " - " + ChatColor.DARK_PURPLE + isCounted();
     }
 
     public boolean isUpdatePlayerStats() {

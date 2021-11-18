@@ -165,6 +165,10 @@ public class CooldownManager {
         cooldowns.removeIf(cd -> cd.getCooldownObject() == cooldownObject);
     }
 
+    public void clearAllCooldowns() {
+        cooldowns.clear();
+    }
+
     public void clearCooldowns() {
         cooldowns.removeIf(cd ->
                 cd.getCooldownClass() != OrbsOfLife.class

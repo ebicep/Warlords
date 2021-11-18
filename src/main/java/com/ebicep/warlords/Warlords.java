@@ -128,7 +128,7 @@ public class Warlords extends JavaPlugin {
                 wp.getEntity().remove();
             }
 
-            wp.getCooldownManager().clearCooldowns();
+            wp.getCooldownManager().clearAllCooldowns();
         }
         Location loc = spawnPoints.remove(player);
         Player p = Bukkit.getPlayer(player);
