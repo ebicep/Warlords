@@ -45,9 +45,9 @@ public class ChainHeal extends AbstractChainBase {
             if (Utils.isLookingAtChain(player, nearPlayer.getEntity())) {
                 //self heal
                 player.playSound(player.getLocation(), Sound.ORB_PICKUP, 1, 1);
-                wp.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+                wp.healHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
                 chain(player.getLocation(), nearPlayer.getLocation());
-                nearPlayer.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+                nearPlayer.healHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
                 hitCounter++;
 
                 for (WarlordsPlayer chainPlayerOne : PlayerFilter
@@ -56,7 +56,7 @@ public class ChainHeal extends AbstractChainBase {
                         .excluding(wp, nearPlayer)
                 ) {
                     chain(nearPlayer.getLocation(), chainPlayerOne.getLocation());
-                    chainPlayerOne.addHealth(wp, name, minDamageHeal * 0.9f, maxDamageHeal * 0.9f, critChance, critMultiplier, false);
+                    chainPlayerOne.healHealth(wp, name, minDamageHeal * 0.9f, maxDamageHeal * 0.9f, critChance, critMultiplier, false);
                     hitCounter++;
 
                     for (WarlordsPlayer chainPlayerTwo : PlayerFilter
@@ -65,7 +65,7 @@ public class ChainHeal extends AbstractChainBase {
                             .excluding(wp, nearPlayer, chainPlayerOne)
                     ) {
                         chain(chainPlayerOne.getLocation(), chainPlayerTwo.getLocation());
-                        chainPlayerTwo.addHealth(wp, name, minDamageHeal * 0.8f, maxDamageHeal * 0.8f, critChance, critMultiplier, false);
+                        chainPlayerTwo.healHealth(wp, name, minDamageHeal * 0.8f, maxDamageHeal * 0.8f, critChance, critMultiplier, false);
                         hitCounter++;
 
                         for (WarlordsPlayer chainPlayerThree : PlayerFilter
@@ -74,7 +74,7 @@ public class ChainHeal extends AbstractChainBase {
                                 .excluding(wp, nearPlayer, chainPlayerOne, chainPlayerTwo)
                         ) {
                             chain(chainPlayerTwo.getLocation(), chainPlayerThree.getLocation());
-                            chainPlayerThree.addHealth(wp, name, minDamageHeal * 0.7f, maxDamageHeal * 0.7f, critChance, critMultiplier, false);
+                            chainPlayerThree.healHealth(wp, name, minDamageHeal * 0.7f, maxDamageHeal * 0.7f, critChance, critMultiplier, false);
                             hitCounter++;
                             break;
                         }

@@ -26,8 +26,8 @@ public class Consecrate extends AbstractAbility {
     public void updateDescription(Player player) {
         description = "§7Consecrate the ground below your\n" +
                 "§7feet, declaring it sacred. Enemies\n" +
-                "§7standing on it will take §c" + format(-minDamageHeal) + " §7-\n" +
-                "§c" + format(-maxDamageHeal) + " §7damage per second and\n" +
+                "§7standing on it will take §c" + format(minDamageHeal) + " §7-\n" +
+                "§c" + format(maxDamageHeal) + " §7damage per second and\n" +
                 "§7take §c" + strikeDamageBoost + "% §7increased damage from\n" +
                 "§7your paladin strikes. Lasts §65\n" +
                 "§7seconds.";
@@ -57,7 +57,7 @@ public class Consecrate extends AbstractAbility {
                         PlayerFilter.entitiesAround(damageHealCircle.getLocation(), radius, 6, radius)
                                 .aliveEnemiesOf(wp)
                                 .forEach(warlordsPlayer -> {
-                                    warlordsPlayer.addHealth(
+                                    warlordsPlayer.damageHealth(
                                             damageHealCircle.getWarlordsPlayer(),
                                             damageHealCircle.getName(),
                                             damageHealCircle.getMinDamage(),

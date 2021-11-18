@@ -84,7 +84,7 @@ public class HealingRain extends AbstractAbility {
                         PlayerFilter.entitiesAround(damageHealCircle.getLocation(), damageHealCircle.getRadius(), 8, damageHealCircle.getRadius())
                                 .aliveTeammatesOf(wp)
                                 .forEach((warlordsPlayer) -> {
-                                    warlordsPlayer.addHealth(
+                                    warlordsPlayer.healHealth(
                                             damageHealCircle.getWarlordsPlayer(),
                                             damageHealCircle.getName(),
                                             damageHealCircle.getMinDamage(),

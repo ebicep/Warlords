@@ -213,6 +213,10 @@ public class DatabaseGame {
             topHealingOnCarrierPlayers.add(databaseGamePlayer.getColoredName() + ": " + ChatColor.YELLOW + Utils.addCommaAndRound(databaseGamePlayer.getTotalHealingOnCarrier()));
         });
 
+        appendTeamDHP(topDamage, totalDamage);
+        appendTeamDHP(topHealing, totalHealing);
+        appendTeamDHP(topAbsorbed, totalAbsorbed);
+
         topDamagePlayers.forEach(topDamage::appendTextLine);
         topHealingPlayers.forEach(topHealing::appendTextLine);
         topAbsorbedPlayers.forEach(topAbsorbed::appendTextLine);
@@ -226,6 +230,14 @@ public class DatabaseGame {
         });
 
         this.holograms = holograms;
+    }
+
+    private void appendTeamDHP(Hologram hologram, Map<ChatColor, Long> map) {
+        map.entrySet().stream().sorted(Map.Entry.<ChatColor, Long>comparingByValue().reversed()).forEach(chatColorLongEntry -> {
+            ChatColor key = chatColorLongEntry.getKey();
+            Long value = chatColorLongEntry.getValue();
+            hologram.appendTextLine(key + (key == ChatColor.BLUE ? "Blue: " : "Red: ") + ChatColor.YELLOW + Utils.addCommaAndRound(value));
+        });
     }
 
     public static void setGameHologramVisibility(Player player) {

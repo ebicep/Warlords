@@ -14,7 +14,7 @@ public class FlameBurst extends AbstractProjectileBase {
     private static final float HITBOX = 5;
 
     public FlameBurst() {
-        super("Flame Burst", -557, -753, 9.4f, 60, 25, 185, 1.65, 500, false);
+        super("Flame Burst", 557, 753, 9.4f, 60, 25, 185, 1.65, 500, false);
     }
 
     @Override
@@ -53,7 +53,7 @@ public class FlameBurst extends AbstractProjectileBase {
                 .entitiesAround(currentLocation, HITBOX, HITBOX, HITBOX)
                 .aliveEnemiesOf(shooter)
         ) {
-            nearEntity.addHealth(
+            nearEntity.damageHealth(
                     shooter,
                     name,
                     minDamageHeal,
@@ -67,7 +67,7 @@ public class FlameBurst extends AbstractProjectileBase {
     @Override
     public void updateDescription(Player player) {
         description = "§7Launch a flame burst that will explode\n" +
-            "§7for §c" + format(-minDamageHeal) + " §7- §c" + format(-maxDamageHeal) + " §7damage. The critical\n" +
+            "§7for §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage. The critical\n" +
             "§7chance increases by §c1% §7for each\n" +
             "§7travelled block. Up to 100%.";
     }

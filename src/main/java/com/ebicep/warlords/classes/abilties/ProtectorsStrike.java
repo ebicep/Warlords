@@ -11,7 +11,7 @@ import javax.annotation.Nonnull;
 public class ProtectorsStrike extends AbstractStrikeBase {
 
     public ProtectorsStrike() {
-        super("Protector's Strike", -261, -352, 0, 90, 20, 175);
+        super("Protector's Strike", 261, 352, 0, 90, 20, 175);
     }
 
     @Override
@@ -29,9 +29,9 @@ public class ProtectorsStrike extends AbstractStrikeBase {
     @Override
     protected void onHit(@Nonnull WarlordsPlayer wp, @Nonnull Player player, @Nonnull WarlordsPlayer nearPlayer) {
         if (standingOnConsecrate(player, nearPlayer)) {
-            nearPlayer.addHealth(wp, name, minDamageHeal * 1.15f, maxDamageHeal * 1.15f, critChance, critMultiplier, false);
+            nearPlayer.damageHealth(wp, name, minDamageHeal * 1.15f, maxDamageHeal * 1.15f, critChance, critMultiplier, false);
         } else {
-            nearPlayer.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+            nearPlayer.damageHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
         }
     }
 }

@@ -122,7 +122,7 @@ public class HolyRadiance extends AbstractAbility {
             );
         }
 
-        wp.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+        wp.healHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
         wp.getSpeed().addSpeedModifier("Radiance", 20, 3 * 20, "BASE");
 
         player.playSound(player.getLocation(), Sound.ORB_PICKUP, 1, 1);
@@ -174,7 +174,7 @@ public class HolyRadiance extends AbstractAbility {
             double distance = targetLocation.distanceSquared(armorStandLocation);
 
             if (distance < speed * speed) {
-                target.addHealth(owner, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+                target.healHealth(owner, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
                 target.getSpeed().addSpeedModifier("Radiance", 20, 3 * 20, "BASE");
                 this.cancel();
                 return;

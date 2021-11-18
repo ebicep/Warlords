@@ -26,13 +26,13 @@ public class FallenSouls extends AbstractAbility {
     private static final float fallenSoulSpeed = 1.95f;
 
     public FallenSouls() {
-        super("Fallen Souls", -164f, -212f, 0, 55, 20, 180);
+        super("Fallen Souls", 164f, 212f, 0, 55, 20, 180);
     }
 
     @Override
     public void updateDescription(Player player) {
         description = "§7Summon a wave of fallen souls, dealing\n" +
-                "§c" + format(-minDamageHeal) + " §7- §c" + format(-maxDamageHeal) + " §7damage to all enemies they\n" +
+                "§c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage to all enemies they\n" +
                 "§7pass through. Each target hit reduces the\n" +
                 "§7cooldown of Spirit Link by §62 §7seconds.";
     }
@@ -117,7 +117,7 @@ public class FallenSouls extends AbstractAbility {
                 .filter(p -> !fallenSoul.getPlayersHit().contains(p))
                 .aliveEnemiesOf(wp)
                 .forEach((warlordsPlayer) -> {
-                    warlordsPlayer.addHealth(fallenSoul.getShooter(), fallenSoul.getFallenSouls().getName(), fallenSoul.getFallenSouls().getMinDamageHeal(), fallenSoul.getFallenSouls().getMaxDamageHeal(), fallenSoul.getFallenSouls().getCritChance(), fallenSoul.getFallenSouls().getCritMultiplier(), false);
+                    warlordsPlayer.damageHealth(fallenSoul.getShooter(), fallenSoul.getFallenSouls().getName(), fallenSoul.getFallenSouls().getMinDamageHeal(), fallenSoul.getFallenSouls().getMaxDamageHeal(), fallenSoul.getFallenSouls().getCritChance(), fallenSoul.getFallenSouls().getCritMultiplier(), false);
                     fallenSoul.getPlayersHit().add(warlordsPlayer);
                     fallenSoul.getShooter().getSpec().getRed().subtractCooldown(2);
                     fallenSoul.getShooter().updateRedItem(player);

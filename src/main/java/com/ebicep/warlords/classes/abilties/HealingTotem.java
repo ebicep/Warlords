@@ -108,7 +108,7 @@ public class HealingTotem extends AbstractTotemBase {
                             PlayerFilter.entitiesAround(totemStand, radius, radius, radius)
                                     .aliveTeammatesOf(wp)
                                     .forEach((nearPlayer) -> {
-                                        nearPlayer.addHealth(
+                                        nearPlayer.healHealth(
                                                 wp,
                                                 name,
                                                 minDamageHeal * healMultiplier,
@@ -121,7 +121,7 @@ public class HealingTotem extends AbstractTotemBase {
                             PlayerFilter.entitiesAround(totemStand, radius, radius, radius)
                                     .aliveTeammatesOf(wp)
                                     .forEach((nearPlayer) -> {
-                                        nearPlayer.addHealth(
+                                        nearPlayer.healHealth(
                                                 wp,
                                                 name,
                                                 minDamageHeal * 3.1f,

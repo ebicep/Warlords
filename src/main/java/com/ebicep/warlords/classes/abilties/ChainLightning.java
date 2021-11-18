@@ -35,11 +35,11 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
     }
 
     public ChainLightning() {
-        super("Chain Lightning", -294, -575, 9.4f, 40, 20, 175);
+        super("Chain Lightning", 294, 575, 9.4f, 40, 20, 175);
     }
 
     public ChainLightning(int damageReduction) {
-        super("Chain Lightning", -294, -575, 9.4f, 40, 20, 175);
+        super("Chain Lightning", 294, 575, 9.4f, 40, 20, 175);
         this.damageReduction = damageReduction;
     }
 
@@ -47,7 +47,7 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
     public void updateDescription(Player player) {
         description = "§7Discharge a bolt of lightning at the\n" +
                 "§7targeted enemy player that deals\n" +
-                "§c" + format(-minDamageHeal) + " §7- §c" + format(-maxDamageHeal) + " §7damage and jumps to\n" +
+                "§c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage and jumps to\n" +
                 "§e4 §7additional targets within §e" + bounceRange + "\n" +
                 "§7blocks. Each time the lightning jumps\n" +
                 "§7the damage is decreased by §c15%§7.\n" +
@@ -69,6 +69,7 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
         warlordsPlayer.getSpec().getRed().setCurrentCooldown((float) (cooldown * warlordsPlayer.getCooldownModifier()));
 
         player.playSound(player.getLocation(), "shaman.chainlightning.impact", 2, 1);
+
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "shaman.chainlightning.activation", 3, 1);
         }
@@ -136,7 +137,7 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
                     break;
             }
             playersHit.add(hit);
-            hit.addHealth(wp, name, minDamageHeal * damageMultiplier, maxDamageHeal * damageMultiplier, critChance, critMultiplier, false);
+            hit.damageHealth(wp, name, minDamageHeal * damageMultiplier, maxDamageHeal * damageMultiplier, critChance, critMultiplier, false);
             return partOfChainLightning(wp, playersHit, hit.getEntity(), hasHitTotem);
         } else {
             return playersSize + (hasHitTotem ? 1 : 0);
@@ -149,11 +150,16 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
         for (Player player1 : wp.getWorld().getPlayers()) {
             player1.playSound(totem.getLocation(), "shaman.capacitortotem.pulse", 2, 1);
         }
+
+        if (wp.getEntity() instanceof Player) {
+            Player player = (Player)wp.getEntity();
+            player.playSound(player.getLocation(), "shaman.chainlightning.impact", 2, 1);
+        }
     }
 
     private void pulseDamage(WarlordsPlayer warlordsPlayer, Stream<WarlordsPlayer> near) {
         near.forEach((player) -> {
-            player.addHealth(
+            player.damageHealth(
                     warlordsPlayer,
                     warlordsPlayer.getSpec().getOrange().getName(),
                     warlordsPlayer.getSpec().getOrange().getMinDamageHeal(),
