@@ -24,6 +24,7 @@ import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -1067,6 +1068,13 @@ public final class WarlordsPlayer {
 
         this.addDeath();
         Bukkit.getPluginManager().callEvent(new WarlordsDeathEvent(this));
+
+        if (entity instanceof Player) {
+            //removing yellow hearts
+            ((EntityLiving) ((CraftPlayer) entity).getHandle()).setAbsorptionHearts(0);
+            //removing sg shiny weapon
+            ((CraftPlayer) entity).getInventory().getItem(0).removeEnchantment(Enchantment.OXYGEN);
+        }
     }
 
     public void addGrave() {

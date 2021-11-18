@@ -176,10 +176,6 @@ public class CooldownManager {
         PlayerFilter.playingGame(warlordsPlayer.getGame()).teammatesOf(warlordsPlayer).forEach(wp -> {
             wp.getCooldownManager().getCooldowns().removeIf(cd -> cd.getFrom() == warlordsPlayer && cd.getCooldownClass() == Intervene.class);
         });
-        //removing sg shiny weapon
-        if (warlordsPlayer.getEntity() instanceof Player) {
-            ((CraftPlayer) warlordsPlayer.getEntity()).getInventory().getItem(0).removeEnchantment(Enchantment.OXYGEN);
-        }
     }
 
     public boolean hasBoundPlayer(WarlordsPlayer warlordsPlayer) {
