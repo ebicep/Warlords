@@ -185,15 +185,22 @@ public class DatabaseGame {
         List<String> topDamageOnCarrierPlayers = new ArrayList<>();
         List<String> topHealingOnCarrierPlayers = new ArrayList<>();
 
+        Map<ChatColor, Long> totalDamage = new HashMap<>();
+        Map<ChatColor, Long> totalHealing = new HashMap<>();
+        Map<ChatColor, Long> totalAbsorbed = new HashMap<>();
+
         databaseGamePlayers.stream().sorted(Comparator.comparingLong(DatabaseGamePlayer::getTotalDamage).reversed()).forEach(databaseGamePlayer -> {
+            totalDamage.put(databaseGamePlayer.getTeamColor(), totalDamage.getOrDefault(databaseGamePlayer.getTeamColor(), 0L) + databaseGamePlayer.getTotalDamage());
             topDamagePlayers.add(databaseGamePlayer.getColoredName() + ": " + ChatColor.YELLOW + Utils.addCommaAndRound(databaseGamePlayer.getTotalDamage()));
         });
 
         databaseGamePlayers.stream().sorted(Comparator.comparingLong(DatabaseGamePlayer::getTotalHealing).reversed()).forEach(databaseGamePlayer -> {
+            totalHealing.put(databaseGamePlayer.getTeamColor(), totalHealing.getOrDefault(databaseGamePlayer.getTeamColor(), 0L) + databaseGamePlayer.getTotalHealing());
             topHealingPlayers.add(databaseGamePlayer.getColoredName() + ": " + ChatColor.YELLOW + Utils.addCommaAndRound(databaseGamePlayer.getTotalHealing()));
         });
 
         databaseGamePlayers.stream().sorted(Comparator.comparingLong(DatabaseGamePlayer::getTotalAbsorbed).reversed()).forEach(databaseGamePlayer -> {
+            totalAbsorbed.put(databaseGamePlayer.getTeamColor(), totalAbsorbed.getOrDefault(databaseGamePlayer.getTeamColor(), 0L) + databaseGamePlayer.getTotalAbsorbed());
             topAbsorbedPlayers.add(databaseGamePlayer.getColoredName() + ": " + ChatColor.YELLOW + Utils.addCommaAndRound(databaseGamePlayer.getTotalAbsorbed()));
         });
 

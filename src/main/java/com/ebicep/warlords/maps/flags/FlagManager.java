@@ -113,7 +113,7 @@ public class FlagManager implements Listener {
         if (info.getFlag() instanceof PlayerFlagLocation) {
             PlayerFlagLocation playerFlagLocation = (PlayerFlagLocation) info.getFlag();
             if (playerFlagLocation.getPlayer() == player) {
-                info.setFlag(new GroundFlagLocation(player.getLocation(), playerFlagLocation.getPickUpTicks() + (player.isDeath() ? 10 * 60 : 0)));
+                info.setFlag(new GroundFlagLocation(player.getLocation(), playerFlagLocation.getPickUpTicks() + (player.isDeath() || player.getCooldownManager().checkUndyingArmy(true)? 10 * 60 : 0)));
                 return true;
             }
         }

@@ -628,7 +628,7 @@ public final class WarlordsPlayer {
             intervenedBy.setRegenTimer(10);
             intervene.addDamagePrevented(damageValue);
             intervenedBy.damageHealth(attacker, "Intervene", damageValue, damageValue, isCrit ? 100 : -1, 100, false);    Location loc = getLocation();
-    //EFFECTS + SOUNDS
+            //EFFECTS + SOUNDS
             gameState.getGame().forEachOnlinePlayer((p, t) -> p.playSound(loc, "warrior.intervene.block", 2, 1));
                 if (attacker.entity instanceof Player) {
                     ((Player) attacker.entity).playSound(attacker.getLocation(), Sound.ORB_PICKUP, 1, 1);
@@ -679,6 +679,11 @@ public final class WarlordsPlayer {
                         } else {
                             damageValue *= .4;
                         }
+                    }
+
+                    //flag dmg resistance
+                    if (!cooldownManager.getCooldownFromName("Flag Damage Reduction").isEmpty()) {
+                        damageValue *= .9;
                     }
                 }
             }
@@ -848,7 +853,7 @@ public final class WarlordsPlayer {
                     this.health -= Math.round(damageValue);
                 }
 
-                attacker.addDamage(damageValue);
+                attacker.addDamage(damageValue, gameState.flags().hasFlag(this));
                 this.entity.playEffect(EntityEffect.HURT);
                 for (Player player1 : attacker.getWorld().getPlayers()) {
                     player1.playSound(entity.getLocation(), Sound.HURT_FLESH, 2, 1);
@@ -999,7 +1004,7 @@ public final class WarlordsPlayer {
                     sendMessage(RECEIVE_HEALTH + ChatColor.GRAY + " Your " + ability + " healed you for " + ChatColor.GREEN + "" + Math.round(healValue) + " " + ChatColor.GRAY + "health.");
                 }
                 health += healValue;
-                addHealing(healValue);
+                addHealing(healValue, gameState.flags().hasFlag(this));
             }
         } else {
             //TEAMMATE HEALING
@@ -1019,7 +1024,7 @@ public final class WarlordsPlayer {
                     }
                 }
                 health += healValue;
-                attacker.addHealing(healValue);
+                attacker.addHealing(healValue, gameState.flags().hasFlag(this));
             }
         }
     }
