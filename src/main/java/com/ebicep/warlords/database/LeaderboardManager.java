@@ -27,11 +27,7 @@ public class LeaderboardManager {
 
     public static final Location spawnPoint = Bukkit.getWorlds().get(0).getSpawnLocation().clone();
 
-    public static final Location leaderboardSwitchLocation = new Location(world, -2535, 52.5, 721);
-
-    public static final Location lastGameLocation = new Location(world, -2546.5, 55.5, 772.5);
-    public static final Location gameSwitchLocation = new Location(world, -2537, 53.5, 769.5);
-    public static final List<Location> gameHologramLocations = new ArrayList<>();
+    public static final Location leaderboardSwitchLocation = new Location(world, -2552.5, 52.5, 719.5);
 
     public static final Location center = new LocationBuilder(spawnPoint.clone()).forward(.5f).left(21).addY(2).get();
 
@@ -49,49 +45,40 @@ public class LeaderboardManager {
 
     public static void init() {
         putLeaderboards();
-
-        gameHologramLocations.add(new LocationBuilder(lastGameLocation.clone()).left(5).get());
-        gameHologramLocations.add(new LocationBuilder(lastGameLocation.clone()).addY(2).right(.5f).get());
-        gameHologramLocations.add(new LocationBuilder(lastGameLocation.clone()).addY(2).right(4).get());
-        gameHologramLocations.add(new LocationBuilder(lastGameLocation.clone()).addY(2).right(7.5f).get());
-        gameHologramLocations.add(new LocationBuilder(lastGameLocation.clone()).addY(2).right(11f).get());
-        gameHologramLocations.add(new LocationBuilder(lastGameLocation.clone()).addY(2).right(14.5f).get());
-        gameHologramLocations.add(new LocationBuilder(lastGameLocation.clone()).addY(2).right(18f).get());
-
     }
 
     public static void putLeaderboards() {
-        leaderboards.put("wins", new Leaderboard("Wins", new Location(world, -2567, 55.5, 717)));
-        leaderboards.put("losses", new Leaderboard("Losses", new Location(world, -2563, 55.5, 717)));
-        leaderboards.put("kills", new Leaderboard("Kills", new Location(world, -2559, 55.5, 717)));
-        leaderboards.put("assists", new Leaderboard("Assists", new Location(world, -2555, 55.5, 717)));
-        leaderboards.put("deaths", new Leaderboard("Deaths", new Location(world, -2551, 55.5, 717)));
-        leaderboards.put("damage", new Leaderboard("Damage", new Location(world, -2547, 55.5, 717)));
-        leaderboards.put("healing", new Leaderboard("Healing", new Location(world, -2543, 55.5, 717)));
-        leaderboards.put("absorbed", new Leaderboard("Absorbed", new Location(world, -2539, 55.5, 717)));
+        leaderboards.put("wins", new Leaderboard("Wins", new Location(world, -2558.5, 56, 712.5)));
+        leaderboards.put("losses", new Leaderboard("Losses", new Location(world, -2608.5, 52, 728.5)));
+        leaderboards.put("kills", new Leaderboard("Kills", new Location(world, -2552.5, 56, 712.5)));
+        leaderboards.put("assists", new Leaderboard("Assists", new Location(world, -2616.5, 52, 733.5)));
+        leaderboards.put("deaths", new Leaderboard("Deaths", new Location(world, -2616.5, 52, 723.5)));
+        leaderboards.put("damage", new Leaderboard("Damage", new Location(world, -2600.5, 52, 723.5)));
+        leaderboards.put("healing", new Leaderboard("Healing", new Location(world, -2608.5, 52, 719.5)));
+        leaderboards.put("absorbed", new Leaderboard("Absorbed", new Location(world, -2600.5, 52, 733.5)));
 
-        leaderboards.put("flags_captured", new Leaderboard("Flags Captured", new Location(world, -2567, 60.5, 717)));
-        leaderboards.put("flags_returned", new Leaderboard("Flags Returned", new Location(world, -2563, 60.5, 717)));
+        leaderboards.put("flags_captured", new Leaderboard("Flags Captured", new Location(world, -2540.5, 56, 712.5)));
+        leaderboards.put("flags_returned", new Leaderboard("Flags Returned", new Location(world, -2608.5, 52, 737.5)));
 
         String statType = "Wins";
-        leaderboards.put("paladin.avenger." + statType.toLowerCase(), new Leaderboard("Avenger " + statType, new Location(world, -2551, 60.5, 717)));
-        leaderboards.put("paladin.crusader." + statType.toLowerCase(), new Leaderboard("Crusader " + statType, new Location(world, -2547, 60.5, 717)));
-        leaderboards.put("paladin.protector." + statType.toLowerCase(), new Leaderboard("Protector " + statType, new Location(world, -2543, 60.5, 717)));
-        leaderboards.put("warrior.berserker." + statType.toLowerCase(), new Leaderboard("Berserker " + statType, new Location(world, -2539, 60.5, 717)));
-        leaderboards.put("warrior.defender." + statType.toLowerCase(), new Leaderboard("Defender " + statType, new Location(world, -2567, 65.5, 717)));
-        leaderboards.put("warrior.revenant." + statType.toLowerCase(), new Leaderboard("Revenant " + statType, new Location(world, -2563, 65.5, 717)));
-        leaderboards.put("mage.pyromancer." + statType.toLowerCase(), new Leaderboard("Pyromancer " + statType, new Location(world, -2559, 65.5, 717)));
-        leaderboards.put("mage.cryomancer." + statType.toLowerCase(), new Leaderboard("Cryomancer " + statType, new Location(world, -2555, 65.5, 717)));
-        leaderboards.put("mage.aquamancer." + statType.toLowerCase(), new Leaderboard("Aquamancer " + statType, new Location(world, -2551, 65.5, 717)));
-        leaderboards.put("shaman.thunderlord." + statType.toLowerCase(), new Leaderboard("Thunderlord " + statType, new Location(world, -2547, 65.5, 717)));
-        leaderboards.put("shaman.spiritguard." + statType.toLowerCase(), new Leaderboard("Spiritguard " + statType, new Location(world, -2543, 65.5, 717)));
-        leaderboards.put("shaman.earthwarden." + statType.toLowerCase(), new Leaderboard("Earthwarden " + statType, new Location(world, -2539, 65.5, 717)));
+        leaderboards.put("paladin.avenger." + statType.toLowerCase(), new Leaderboard("Avenger " + statType, new Location(world, -2631.5, 52, 719.5)));
+        leaderboards.put("paladin.crusader." + statType.toLowerCase(), new Leaderboard("Crusader " + statType, new Location(world, -2628.5, 52, 714.5)));
+        leaderboards.put("paladin.protector." + statType.toLowerCase(), new Leaderboard("Protector " + statType, new Location(world, -2623.5, 52, 711.5)));
+        leaderboards.put("warrior.berserker." + statType.toLowerCase(), new Leaderboard("Berserker " + statType, new Location(world, -2623.5, 52, 745.5)));
+        leaderboards.put("warrior.defender." + statType.toLowerCase(), new Leaderboard("Defender " + statType, new Location(world, -2628.5, 52, 742.5)));
+        leaderboards.put("warrior.revenant." + statType.toLowerCase(), new Leaderboard("Revenant " + statType, new Location(world, -2631.5, 52, 737.5)));
+        leaderboards.put("mage.pyromancer." + statType.toLowerCase(), new Leaderboard("Pyromancer " + statType, new Location(world, -2602.5, 53, 749.5)));
+        leaderboards.put("mage.cryomancer." + statType.toLowerCase(), new Leaderboard("Cryomancer " + statType, new Location(world, -2608.5, 53, 752.5)));
+        leaderboards.put("mage.aquamancer." + statType.toLowerCase(), new Leaderboard("Aquamancer " + statType, new Location(world, -2614.5, 53, 749.5)));
+        leaderboards.put("shaman.thunderlord." + statType.toLowerCase(), new Leaderboard("Thunderlord " + statType, new Location(world, -2614.5, 52, 706.5)));
+        leaderboards.put("shaman.spiritguard." + statType.toLowerCase(), new Leaderboard("Spiritguard " + statType, new Location(world, -2608.5, 52, 704.5)));
+        leaderboards.put("shaman.earthwarden." + statType.toLowerCase(), new Leaderboard("Earthwarden " + statType, new Location(world, -2602.5, 52, 706.5)));
 
-        leaderboards.put("experience", new Leaderboard("Experience", new Location(world, -2563, 70.5, 717)));
-        leaderboards.put("paladin.experience", new Leaderboard("Paladin Experience", new Location(world, -2559, 70.5, 717)));
-        leaderboards.put("warrior.experience", new Leaderboard("Warrior Experience", new Location(world, -2555, 70.5, 717)));
-        leaderboards.put("mage.experience", new Leaderboard("Mage Experience", new Location(world, -2551, 70.5, 717)));
-        leaderboards.put("shaman.experience", new Leaderboard("Shaman Experience", new Location(world, -2547, 70.5, 717)));
+        leaderboards.put("experience", new Leaderboard("Experience", new Location(world, -2526.5, 57, 744.5)));
+        leaderboards.put("mage.experience", new Leaderboard("Mage Experience", new Location(world, -2520.5, 58, 735.5)));
+        leaderboards.put("warrior.experience", new Leaderboard("Warrior Experience", new Location(world, -2519.5, 58, 741.5)));
+        leaderboards.put("paladin.experience", new Leaderboard("Paladin Experience", new Location(world, -2519.5, 58, 747.5)));
+        leaderboards.put("shaman.experience", new Leaderboard("Shaman Experience", new Location(world, -2520.5, 58, 753.5)));
 
     }
 
@@ -110,9 +97,9 @@ public class LeaderboardManager {
         //lifetime
         addCalculatedStats(playersInformation, cachedSortedPlayersLifeTime);
         //leaderboard position
-        leaderboards.put("plays", new Leaderboard("Plays", new Location(world, -2559, 60.5, 717)));
+        leaderboards.put("plays", new Leaderboard("Plays", new Location(world, -2564.5, 56, 712.5)));
         leaderboards.put("dhp", new Leaderboard("DHP", new Location(world, -2555, 60.5, 717)));
-        leaderboards.put("dhp_per_game", new Leaderboard("DHP per Game", new Location(world, -2567, 70.5, 717)));
+        leaderboards.put("dhp_per_game", new Leaderboard("DHP per Game", new Location(world, -2546.5, 56, 712.5)));
         leaderboards.put("kills_per_game", new Leaderboard("Kills per Game", new Location(world, -2567, 75.5, 717)));
         leaderboards.put("deaths_per_game", new Leaderboard("Deaths per Game", new Location(world, -2563, 75.5, 717)));
         leaderboards.put("ka_per_game", new Leaderboard("Kills/Assists per Game", new Location(world, -2559, 75.5, 717)));
@@ -274,7 +261,15 @@ public class LeaderboardManager {
     public static void addHologramLeaderboards(String sharedChainName) {
         if (DatabaseManager.connected && Warlords.holographicDisplaysEnabled) {
             HologramsAPI.getHolograms(Warlords.getInstance()).forEach(hologram -> {
-                if (!gameHologramLocations.contains(hologram.getLocation())) {
+                Location hologramLocation = hologram.getLocation();
+                if (!DatabaseGame.lastGameStatsLocation.equals(hologramLocation) &&
+                        !DatabaseGame.topDamageLocation.equals(hologramLocation) &&
+                        !DatabaseGame.topHealingLocation.equals(hologramLocation) &&
+                        !DatabaseGame.topAbsorbedLocation.equals(hologramLocation) &&
+                        !DatabaseGame.topDHPPerMinuteLocation.equals(hologramLocation) &&
+                        !DatabaseGame.topDamageOnCarrierLocation.equals(hologramLocation) &&
+                        !DatabaseGame.topHealingOnCarrierLocation.equals(hologramLocation)
+                ) {
                     hologram.delete();
                 }
             });

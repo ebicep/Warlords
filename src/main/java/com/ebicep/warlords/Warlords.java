@@ -264,6 +264,7 @@ public class Warlords extends JavaPlugin {
         new GamesCommand().register(this);
         new SpectateCommand().register(this);
         new DebugModeCommand().register(this);
+        new MyLocationCommand().register(this);
 
         updateHeads();
 

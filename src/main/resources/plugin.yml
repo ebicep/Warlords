@@ -81,3 +81,6 @@ commands:
   debugmode:
     description: Turns on debugmode
     usage: /debugmode
+  mylocation:
+    description: Prints your location
+    usage: /mylocation

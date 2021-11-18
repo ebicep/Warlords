@@ -7,6 +7,7 @@ import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import com.gmail.filoghost.holographicdisplays.api.line.TextLine;
 import org.bson.Document;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.*;
@@ -110,35 +111,45 @@ public class DatabaseGame {
         return updatePlayerStats;
     }
 
+    public static final Location lastGameStatsLocation = new Location(LeaderboardManager.world, -2532.5, 56, 766.5);
+    public static final Location topDamageLocation = new Location(LeaderboardManager.world, -2540.5, 58, 784.5);
+    public static final Location topHealingLocation = new Location(LeaderboardManager.world, -2546.5, 58, 784.5);
+    public static final Location topAbsorbedLocation = new Location(LeaderboardManager.world, -2552.5, 58, 784.5);
+    public static final Location topDHPPerMinuteLocation = new Location(LeaderboardManager.world, -2530.5, 59, 781.5);
+    public static final Location topDamageOnCarrierLocation = new Location(LeaderboardManager.world, -2558.5, 58, 781.5);
+    public static final Location topHealingOnCarrierLocation = new Location(LeaderboardManager.world, -2558.5, 58, 775.5);
+
+    public static final Location gameSwitchLocation = new Location(LeaderboardManager.world, -2543.5, 53.5, 769.5);
+
     public void createHolograms() {
         List<Hologram> holograms = new ArrayList<>();
 
         //readding game holograms
-        Hologram lastGameStats = HologramsAPI.createHologram(Warlords.getInstance(), LeaderboardManager.gameHologramLocations.get(0));
+        Hologram lastGameStats = HologramsAPI.createHologram(Warlords.getInstance(), DatabaseGame.lastGameStatsLocation);
         holograms.add(lastGameStats);
         lastGameStats.appendTextLine(ChatColor.AQUA + ChatColor.BOLD.toString() + "Last Game Stats");
 
-        Hologram topDamage = HologramsAPI.createHologram(Warlords.getInstance(), LeaderboardManager.gameHologramLocations.get(1));
+        Hologram topDamage = HologramsAPI.createHologram(Warlords.getInstance(), DatabaseGame.topDamageLocation);
         holograms.add(topDamage);
         topDamage.appendTextLine(ChatColor.AQUA + ChatColor.BOLD.toString() + "Top Damage");
 
-        Hologram topHealing = HologramsAPI.createHologram(Warlords.getInstance(), LeaderboardManager.gameHologramLocations.get(2));
+        Hologram topHealing = HologramsAPI.createHologram(Warlords.getInstance(), DatabaseGame.topHealingLocation);
         holograms.add(topHealing);
         topHealing.appendTextLine(ChatColor.AQUA + ChatColor.BOLD.toString() + "Top Healing");
 
-        Hologram topAbsorbed = HologramsAPI.createHologram(Warlords.getInstance(), LeaderboardManager.gameHologramLocations.get(3));
+        Hologram topAbsorbed = HologramsAPI.createHologram(Warlords.getInstance(), DatabaseGame.topAbsorbedLocation);
         holograms.add(topAbsorbed);
         topAbsorbed.appendTextLine(ChatColor.AQUA + ChatColor.BOLD.toString() + "Top Absorbed");
 
-        Hologram topDHPPerMinute = HologramsAPI.createHologram(Warlords.getInstance(), LeaderboardManager.gameHologramLocations.get(4));
+        Hologram topDHPPerMinute = HologramsAPI.createHologram(Warlords.getInstance(), DatabaseGame.topDHPPerMinuteLocation);
         holograms.add(topDHPPerMinute);
         topDHPPerMinute.appendTextLine(ChatColor.AQUA + ChatColor.BOLD.toString() + "Top DHP per Minute");
 
-        Hologram topDamageOnCarrier = HologramsAPI.createHologram(Warlords.getInstance(), LeaderboardManager.gameHologramLocations.get(5));
+        Hologram topDamageOnCarrier = HologramsAPI.createHologram(Warlords.getInstance(), DatabaseGame.topDamageOnCarrierLocation);
         holograms.add(topDamageOnCarrier);
         topDamageOnCarrier.appendTextLine(ChatColor.AQUA + ChatColor.BOLD.toString() + "Top Damage On Carrier");
 
-        Hologram topHealingOnCarrier = HologramsAPI.createHologram(Warlords.getInstance(), LeaderboardManager.gameHologramLocations.get(6));
+        Hologram topHealingOnCarrier = HologramsAPI.createHologram(Warlords.getInstance(), DatabaseGame.topHealingOnCarrierLocation);
         holograms.add(topHealingOnCarrier);
         topHealingOnCarrier.appendTextLine(ChatColor.AQUA + ChatColor.BOLD.toString() + "Top Healing On Carrier");
 
@@ -236,10 +247,10 @@ public class DatabaseGame {
 
     private static void createGameSwitcherHologram(Player player) {
         HologramsAPI.getHolograms(Warlords.getInstance()).stream()
-                .filter(h -> h.getVisibilityManager().isVisibleTo(player) && h.getLocation().equals(LeaderboardManager.gameSwitchLocation))
+                .filter(h -> h.getVisibilityManager().isVisibleTo(player) && h.getLocation().equals(DatabaseGame.gameSwitchLocation))
                 .forEach(Hologram::delete);
 
-        Hologram gameSwitcher = HologramsAPI.createHologram(Warlords.getInstance(), LeaderboardManager.gameSwitchLocation);
+        Hologram gameSwitcher = HologramsAPI.createHologram(Warlords.getInstance(), DatabaseGame.gameSwitchLocation);
         gameSwitcher.appendTextLine(ChatColor.AQUA.toString() + ChatColor.UNDERLINE + "Last " + previousGames.size() + " Games");
         gameSwitcher.appendTextLine("");
 
