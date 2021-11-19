@@ -4,25 +4,34 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.util.ItemBuilder;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
 import com.ebicep.warlords.util.Utils;
+import com.mongodb.client.model.FindOneAndReplaceOptions;
 import com.sun.org.apache.xalan.internal.xsltc.dom.ArrayNodeListIterator;
 import net.minecraft.server.v1_8_R3.PacketPlayOutAnimation;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.EulerAngle;
 
 import javax.management.AttributeList;
+import java.util.ArrayList;
+import java.util.List;
 
 public class HolyRadiance extends AbstractAbility {
 
     private final int radius = 6;
     private final int markRadius = 12;
+    private final int markDuration = 6;
     boolean hasSneakingAbility;
 
     public HolyRadiance(float minDamageHeal, float maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier, boolean hasSneakingAbility) {
@@ -35,17 +44,13 @@ public class HolyRadiance extends AbstractAbility {
         description = "§7Radiate with holy energy, healing\n" +
                 "§7yourself and all nearby allies for\n" +
                 "§a" + format(minDamageHeal) + " §7- §a" + format(maxDamageHeal) + " §7health." +
-                "\n\n" +
-                "§7Has a maximum range of §e" + radius + " §7blocks." +
                 "\n\n" + (hasSneakingAbility ?
                 "§7You may look at an ally to mark\n" +
-                "§7them for §610 §7seconds. Increasing\n" +
+                "§7them for §6" + markDuration + " §7seconds. Increasing\n" +
                 "§7their EPS by §e5 §7and speed by §e20%\n" +
                 "§7§7for the duration. Mark has an optimal\n" +
                 "§7range of §e" + markRadius + " §7blocks." : "");
     }
-
-    private ArmorStand armorStand;
 
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
@@ -58,7 +63,7 @@ public class HolyRadiance extends AbstractAbility {
                     .lookingAtFirst(wp)
                     .limit(1)
             ) {
-                if (Utils.isLookingAt(player, p.getEntity()) && Utils.hasLineOfSight(player, p.getEntity())) {
+                if (Utils.isLookingAtMark(player, p.getEntity()) && Utils.hasLineOfSight(player, p.getEntity())) {
                     wp.subtractEnergy(energyCost);
 
                     for (Player player1 : player.getWorld().getPlayers()) {
@@ -68,17 +73,62 @@ public class HolyRadiance extends AbstractAbility {
                     PacketPlayOutAnimation playOutAnimation = new PacketPlayOutAnimation(((CraftPlayer) player).getHandle(), 0);
                     ((CraftPlayer) player).getHandle().playerConnection.sendPacket(playOutAnimation);
 
-                    Location lineLocation = player.getLocation().add(0, 1, 0);
+                    // chain
+                    Location from = wp.getLocation();
+                    Location to = p.getLocation();
+                    List<ArmorStand> chains = new ArrayList<>();
+                    int maxDistance = (int) Math.round(to.distance(from));
+                    for (int i = 0; i < maxDistance; i++) {
+                        ArmorStand chain = from.getWorld().spawn(from, ArmorStand.class);
+                        chain.setHeadPose(new EulerAngle(from.getDirection().getY() * -1, Math.toRadians(90), 0));
+                        chain.setGravity(false);
+                        chain.setVisible(false);
+                        chain.setBasePlate(false);
+                        chain.setMarker(true);
+                        chain.setHelmet(new ItemStack(Material.PUMPKIN));
+                        from.add(from.getDirection().multiply(1));
+                        chains.add(chain);
+                        if(to.distanceSquared(from) < .3) {
+                            break;
+                        }
+                    }
+
+                    // chain particles
+                    Location lineLocation = player.getLocation().add(0, 1.75, 0);
                     lineLocation.setDirection(lineLocation.toVector().subtract(p.getLocation().add(0, 1, 0).toVector()).multiply(-1));
                     for (int i = 0; i < Math.floor(player.getLocation().distance(p.getLocation())) * 2; i++) {
                         ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(250, 70, 200), lineLocation, 500);
                         lineLocation.add(lineLocation.getDirection().multiply(.5));
                     }
 
+                    new BukkitRunnable() {
+
+                        @Override
+                        public void run() {
+                            if (chains.size() == 0) {
+                                this.cancel();
+                            }
+
+                            for (int i = 0; i < chains.size(); i++) {
+                                ArmorStand armorStand = chains.get(i);
+                                if (armorStand.getTicksLived() > 6) {
+                                    armorStand.remove();
+                                    chains.remove(i);
+                                    i--;
+                                }
+                            }
+
+                        }
+
+                    }.runTaskTimer(Warlords.getInstance(), 0, 0);
+
                     HolyRadiance tempMark = new HolyRadiance(minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier, true);
-                    p.getCooldownManager().addCooldown(name, HolyRadiance.this.getClass(), tempMark, "MARK", 10, wp, CooldownTypes.BUFF);
-                    p.getSpeed().addSpeedModifier("Mark Speed", 20, 20 * 10, "BASE");
+                    p.getCooldownManager().addCooldown(name, HolyRadiance.this.getClass(), tempMark, "MARK", markDuration, wp, CooldownTypes.BUFF);
+                    p.getSpeed().addSpeedModifier("Mark Speed", 20, 20 * markDuration, "BASE");
                     player.sendMessage(ChatColor.GRAY + "You have marked §e" + p.getName() + "§7!");
+                    for (Player player1 : player.getWorld().getPlayers()) {
+                        player1.playSound(player.getLocation(), "warrior.intervene.impact", 1, 2);
+                    }
 
                     wp.getGame().getGameTasks().put(
 
@@ -106,6 +156,8 @@ public class HolyRadiance extends AbstractAbility {
                             }.runTaskTimer(Warlords.getInstance(), 0, 10),
                             System.currentTimeMillis()
                     );
+                } else {
+                    player.sendMessage("§cYour mark was out of range or you did not target a player!");
                 }
             }
         }
