@@ -446,8 +446,9 @@ public class PlayingState implements State, TimerDebugAble {
         this.getGame().forEachOfflinePlayer((player, team) -> {
             WarlordsPlayer wp = Warlords.getPlayer(player);
             if (wp != null) {
+                int level = ExperienceManager.getLevelForSpec(wp.getUuid(), wp.getSpecClass());
                 scoreboard.getTeam(warlordsPlayer.getName()).setPrefix(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + warlordsPlayer.getSpec().getClassNameShort() + ChatColor.DARK_GRAY + "] " + warlordsPlayer.getTeam().teamColor());
-                scoreboard.getTeam(warlordsPlayer.getName()).setSuffix(ChatColor.DARK_GRAY + " [" + ChatColor.GOLD + "Lv90" + ChatColor.DARK_GRAY + "]");
+                scoreboard.getTeam(warlordsPlayer.getName()).setSuffix(ChatColor.DARK_GRAY + " [" + ChatColor.GOLD + "Lv" + (level < 10 ? "0" : "") + level + ChatColor.DARK_GRAY + "]");
             }
         });
     }

@@ -483,12 +483,13 @@ public class WarlordsEvents implements Listener {
                 switch (Warlords.playerChatChannels.getOrDefault(uuid, ChatChannels.ALL)) {
                     case ALL:
                         WarlordsPlayer wp = Warlords.getPlayer(player);
+                        PlayerSettings playerSettings = Warlords.getPlayerSettings(uuid);
+                        int level = ExperienceManager.getLevelForSpec(uuid, playerSettings.getSelectedClass());
                         if (wp == null) {
-                            PlayerSettings playerSettings = Warlords.getPlayerSettings(uuid);
                             e.setFormat(ChatColor.DARK_GRAY + "[" +
                                     ChatColor.GOLD + Classes.getClassesGroup(playerSettings.getSelectedClass()).name.toUpperCase().substring(0, 3) +
                                     ChatColor.DARK_GRAY + "][" +
-                                    ChatColor.GOLD + "90" +
+                                    ChatColor.GOLD + (level < 10 ? "0" : "") + level +
                                     ChatColor.DARK_GRAY + "][" +
                                     playerSettings.getSelectedClass().specType.getColoredSymbol() +
                                     ChatColor.DARK_GRAY + "] " +
@@ -504,9 +505,9 @@ public class WarlordsEvents implements Listener {
                                 ChatColor.DARK_GRAY + "[" +
                                 ChatColor.GOLD + wp.getSpec().getClassNameShort() +
                                 ChatColor.DARK_GRAY + "][" +
-                                ChatColor.GOLD + "90" +
+                                ChatColor.GOLD + (level < 10 ? "0" : "") + level +
                                 ChatColor.DARK_GRAY + "][" +
-                                Warlords.getPlayerSettings(wp.getUuid()).getSelectedClass().specType.getColoredSymbol() +
+                                playerSettings.getSelectedClass().specType.getColoredSymbol() +
                                 ChatColor.DARK_GRAY + "] " +
                                 (wp.isDeath() ? ChatColor.GRAY + "[SPECTATOR] " : "") +
                                 (player.isOp() ? ChatColor.RED + "[C] " : "") +

@@ -312,7 +312,6 @@ public class DatabaseManager {
                     })
                     .abortIfNull()
                     .sync(() -> {
-                        cachedPlayerInfo.remove(player.getUniqueId());
                         cachedTotalKeyValues.clear();
 
                         loadPlayer(player.getUniqueId(), true);
@@ -345,7 +344,6 @@ public class DatabaseManager {
                             Document update = new Document(operator.operator, history);
                             playersInformation.updateOne(eq("uuid", uuid.toString()), update);
                         }).sync(() -> {
-                            cachedPlayerInfo.remove(uuid);
                             cachedTotalKeyValues.clear();
 
                             loadPlayer(uuid, true);
@@ -361,7 +359,6 @@ public class DatabaseManager {
                 }
                 Document update = new Document(operator.operator, history);
                 playersInformation.updateOne(eq("uuid", uuid.toString()), update);
-                cachedPlayerInfo.remove(uuid);
                 cachedTotalKeyValues.clear();
 
                 loadPlayer(uuid, true);

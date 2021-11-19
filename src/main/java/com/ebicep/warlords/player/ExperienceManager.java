@@ -155,20 +155,9 @@ public class ExperienceManager {
             updatedInformation.put("experience", totalExp);
             futureMessages.add(ChatColor.DARK_GRAY + "+" + ChatColor.DARK_AQUA + Utils.addCommaAndRound(totalExp) + ChatColor.GOLD + " Universal Experience");
             futureMessages.add(ChatColor.BLUE + "---------------------------------------------------");
-            updatePlayerInformationTest(uuid, updatedInformation, FieldUpdateOperators.SET);
+            DatabaseManager.updatePlayerInformation(uuid, updatedInformation, FieldUpdateOperators.SET, true);
             FutureMessageManager.addNewFutureMessageDocument(uuid, true, futureMessages.toArray(new String[0]));
         }
-    }
-
-    public static void updatePlayerInformationTest(UUID uuid, HashMap<String, Object> newInfo, FieldUpdateOperators operator) {
-        Warlords.newChain().async(() -> {
-            Document history = new Document();
-            for (String s : newInfo.keySet()) {
-                history.append(s, newInfo.get(s));
-            }
-            Document update = new Document(operator.operator, history);
-            playersInformation.updateOne(eq("uuid", uuid.toString()), update);
-        }).execute();
     }
 
     private int getTotalAverageDHP(String classSpec) {
@@ -261,20 +250,17 @@ public class ExperienceManager {
     }
 
     public static long getExperienceForClass(UUID uuid, ClassesGroup classesGroup) {
-        //return warlordsPlayersDatabase.getCollection("Players_Information_Test").find().filter(eq("uuid", uuid.toString())).first().getEmbedded(Arrays.asList((classesGroup.name.toLowerCase() + ".experience").split("\\.")), Long.class);
         return getExperienceFromDotNotation(uuid, classesGroup.name.toLowerCase() + ".experience");
     }
 
     public static long getExperienceForSpec(UUID uuid, Classes spec) {
         String className = Classes.getClassesGroup(spec).name;
         String specName = spec.name;
-        //return warlordsPlayersDatabase.getCollection("Players_Information_Test").find().filter(eq("uuid", uuid.toString())).first().getEmbedded(Arrays.asList((className.toLowerCase() + "." + specName.toLowerCase() + ".experience").split("\\.")), Long.class);
         return getExperienceFromDotNotation(uuid, className.toLowerCase() + "." + specName.toLowerCase() + ".experience");
     }
 
     public static int getLevelForClass(UUID uuid, ClassesGroup classesGroup) {
         String dots = classesGroup.name.toLowerCase() + ".experience";
-        //return (int) calculateLevelFromExp(warlordsPlayersDatabase.getCollection("Players_Information_Test").find().filter(eq("uuid", uuid.toString())).first().getEmbedded(Arrays.asList(dots.split("\\.")), Long.class));
         return (int) calculateLevelFromExp(getExperienceFromDotNotation(uuid, dots));
     }
 
@@ -282,7 +268,6 @@ public class ExperienceManager {
         String className = Classes.getClassesGroup(spec).name;
         String specName = spec.name;
         String dots = className.toLowerCase() + "." + specName.toLowerCase() + ".experience";
-        //return (int) calculateLevelFromExp(warlordsPlayersDatabase.getCollection("Players_Information_Test").find().filter(eq("uuid", uuid.toString())).first().getEmbedded(Arrays.asList(dots.split("\\.")), Long.class));
         return (int) calculateLevelFromExp(getExperienceFromDotNotation(uuid, dots));
     }
 

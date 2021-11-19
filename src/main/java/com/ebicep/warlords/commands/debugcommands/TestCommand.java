@@ -36,10 +36,9 @@ public class TestCommand implements CommandExecutor {
         }
         DecimalFormat decimalFormat = new DecimalFormat("#.##");
 
-        Document document = LeaderboardManager.getTopPlayersOnLeaderboard();
 //        weeklyLeaderboards.insertOne(document);
-        document.keySet().forEach(System.out::println);
-        ExperienceManager.awardWeeklyExperience(document);
+
+        ExperienceManager.giveExpFromCurrentStats(((Player)sender).getUniqueId());
 //        DatabaseManager.warlordsGamesDatabase.createCollection("Games_Information_Test");
 //        MongoCollection<Document> temp = warlordsGamesDatabase.getCollection("Games_Information_Test");
 //        for (Document document : gamesInformation.find()) {
