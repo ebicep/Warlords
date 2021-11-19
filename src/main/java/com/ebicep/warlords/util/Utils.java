@@ -123,6 +123,14 @@ public class Utils {
         return getDotToLocation(eye, player2.getEyeLocation()) > 0.965;
     }
 
+    public static boolean isLookingAtMark(LivingEntity player1, LivingEntity player2) {
+        Location eye = new LocationBuilder(player1.getEyeLocation())
+                .backward(4)
+                .addY(.7)
+                .get();
+        return getDotToLocation(eye, player2.getEyeLocation()) > 0.975;
+    }
+
     public static boolean isLookingAtChain(LivingEntity player1, LivingEntity player2) {
         Location eye = new LocationBuilder(player1.getEyeLocation())
                 .backward(4)

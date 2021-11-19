@@ -1658,7 +1658,7 @@ public final class WarlordsPlayer {
     public void setVelocity(Location from, Location to, double multipliedBy, double y, boolean kbAfterHorse) {
         if (((kbAfterHorse && this.entity.getVehicle() != null) || (!kbAfterHorse && this.entity.getVehicle() == null))) {
             if(cooldownManager.hasCooldownFromName("KB Resistance")) {
-                this.entity.setVelocity((to.toVector().subtract(from.toVector()).normalize().multiply(multipliedBy).setY(y)).multiply(.5));
+                this.entity.setVelocity((to.toVector().subtract(from.toVector()).normalize().multiply(multipliedBy).setY(y)).multiply(.75));
             } else {
                 this.entity.setVelocity(to.toVector().subtract(from.toVector()).normalize().multiply(multipliedBy).setY(y));
             }
