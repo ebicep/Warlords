@@ -37,7 +37,7 @@ public class Soulbinding extends AbstractAbility {
                 "§7allies). Both buffs may be activated for\n" +
                 "§7every melee hit. Lasts §6" + duration + " §7seconds." +
                 "\n\n" +
-                "§7Successful Soulbind procs will grant you §625% §7knockback\n" +
+                "§7Successful soulbind procs will grant you §625% §7knockback\n" +
                 "§7resistance for §61.2 §7seconds. (max §63.6 §7seconds)";
     }
 

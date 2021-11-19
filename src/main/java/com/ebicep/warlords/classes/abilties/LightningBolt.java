@@ -17,7 +17,7 @@ import org.bukkit.util.EulerAngle;
 public class LightningBolt extends AbstractPiercingProjectileBase {
 
     public LightningBolt() {
-        super("Lightning Bolt", 207, 385, 0, 60, 20, 200, 2.5, 60, false);
+        super("Lightning Bolt", 238, 385, 0, 60, 20, 200, 2.5, 60, false);
     }
 
     @Override

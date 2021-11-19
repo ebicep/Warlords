@@ -9,7 +9,7 @@ import javax.annotation.Nonnull;
 
 public class AvengersStrike extends AbstractStrikeBase {
 
-    private final int energySteal = 8;
+    private final int energySteal = 10;
 
     public AvengersStrike() {
         super("Avenger's Strike", 359, 485, 0, 90, 25, 185);

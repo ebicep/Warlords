@@ -31,7 +31,7 @@ public class HolyRadiance extends AbstractAbility {
 
     private final int radius = 6;
     private final int markRadius = 12;
-    private final int markDuration = 6;
+    private final int markDuration = 7;
     boolean hasSneakingAbility;
 
     public HolyRadiance(float minDamageHeal, float maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier, boolean hasSneakingAbility) {

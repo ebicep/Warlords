@@ -112,13 +112,13 @@ public class SpiritLink extends AbstractChainBase {
             deathsDebt.setTimeLeftRespite(deathsDebt.getTimeLeftRespite() + .5);
             cooldown.setTimeLeft((float) deathsDebt.getTimeLeftRespite());
         }
-        warlordsPlayer.healHealth(warlordsPlayer, "Soulbinding Weapon", 420, 420, -1, 100, false);
+        warlordsPlayer.healHealth(warlordsPlayer, "Soulbinding Weapon", 400, 400, -1, 100, false);
         for (WarlordsPlayer nearPlayer : PlayerFilter
                 .entitiesAround(warlordsPlayer, 8, 8, 8)
                 .aliveTeammatesOfExcludingSelf(warlordsPlayer)
                 .limit(2)
         ) {
-            nearPlayer.healHealth(warlordsPlayer, "Soulbinding Weapon", 420, 420, -1, 100, false);
+            nearPlayer.healHealth(warlordsPlayer, "Soulbinding Weapon", 200, 200, -1, 100, false);
         }
     }
 }
