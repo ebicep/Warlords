@@ -73,7 +73,7 @@ public class HolyRadiance extends AbstractAbility {
                     ((CraftPlayer) player).getHandle().playerConnection.sendPacket(playOutAnimation);
 
                     // chain
-                    Location from = wp.getLocation();
+                    /*Location from = player.getLocation();
                     Location to = p.getLocation();
                     List<ArmorStand> chains = new ArrayList<>();
                     int maxDistance = (int) Math.round(to.distance(from));
@@ -90,17 +90,17 @@ public class HolyRadiance extends AbstractAbility {
                         if(to.distanceSquared(from) < .3) {
                             break;
                         }
-                    }
+                    }*/
 
                     // chain particles
-                    Location lineLocation = player.getLocation().add(0, 1.75, 0);
+                    Location lineLocation = player.getLocation().add(0, 1, 0);
                     lineLocation.setDirection(lineLocation.toVector().subtract(p.getLocation().add(0, 1, 0).toVector()).multiply(-1));
                     for (int i = 0; i < Math.floor(player.getLocation().distance(p.getLocation())) * 2; i++) {
                         ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(250, 70, 200), lineLocation, 500);
                         lineLocation.add(lineLocation.getDirection().multiply(.5));
                     }
 
-                    new BukkitRunnable() {
+                    /*new BukkitRunnable() {
 
                         @Override
                         public void run() {
@@ -119,15 +119,12 @@ public class HolyRadiance extends AbstractAbility {
 
                         }
 
-                    }.runTaskTimer(Warlords.getInstance(), 0, 0);
+                    }.runTaskTimer(Warlords.getInstance(), 0, 0);*/
 
                     HolyRadiance tempMark = new HolyRadiance(minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier, true);
                     p.getCooldownManager().addCooldown(name, HolyRadiance.this.getClass(), tempMark, "MARK", markDuration, wp, CooldownTypes.BUFF);
                     p.getSpeed().addSpeedModifier("Mark Speed", 20, 20 * markDuration, "BASE");
                     player.sendMessage(ChatColor.GRAY + "You have marked §e" + p.getName() + "§7!");
-                    for (Player player1 : player.getWorld().getPlayers()) {
-                        player1.playSound(player.getLocation(), "warrior.intervene.impact", 1, 2);
-                    }
 
                     wp.getGame().getGameTasks().put(
 
