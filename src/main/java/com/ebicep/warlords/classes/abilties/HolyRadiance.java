@@ -55,7 +55,6 @@ public class HolyRadiance extends AbstractAbility {
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
 
-
         if (hasSneakingAbility) {
             for (WarlordsPlayer p : PlayerFilter
                     .entitiesAround(player, markRadius, markRadius, markRadius)
