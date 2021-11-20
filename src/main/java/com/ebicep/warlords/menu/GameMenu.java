@@ -631,7 +631,7 @@ public class GameMenu {
         icon2.lore(
                 "§7Is RNG with you to give everyone a new awesome skin?",
                 "",
-                "§7Left-click to roll 15 skin shards!"
+                "§7Left-click to roll 10 skin shards!"
         );
 
         menu.setItem(5, 1, icon2.get(), (m, e) -> {
@@ -649,7 +649,7 @@ public class GameMenu {
                 if (weaponCooldown == null || weaponCooldown < System.currentTimeMillis()) {
                     openWeaponCooldown.put(player.getUniqueId(), System.currentTimeMillis() + 8 * 60 * 1000);
                     player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 2);
-                    for (int i = 0; i < 15; i++) {
+                    for (int i = 0; i < 10; i++) {
                         String legendaryName = legendaryNames[random.nextInt(legendaryNames.length)];
                         String mythicName = mythicNames[random.nextInt(mythicNames.length)];
 
@@ -660,11 +660,11 @@ public class GameMenu {
                         PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
                         Classes selectedClass = playerSettings.getSelectedClass();
 
-                        if (chance < 96.3) {
+                        if (chance < 96.35) {
                             rarity = WeaponsRarity.RARE;
-                        } else if (chance < 96.3 + 3) {
+                        } else if (chance < 96.35 + 3) {
                             rarity = WeaponsRarity.EPIC;
-                        } else if (chance < 96.3 + 3 + 0.6) {
+                        } else if (chance < 96.35 + 3 + 0.6) {
                             rarity = WeaponsRarity.LEGENDARY;
                         } else {
                             rarity = WeaponsRarity.MYTHIC;

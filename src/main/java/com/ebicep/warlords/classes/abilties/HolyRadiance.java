@@ -30,8 +30,8 @@ import java.util.List;
 public class HolyRadiance extends AbstractAbility {
 
     private final int radius = 6;
-    private final int markRadius = 12;
-    private final int markDuration = 7;
+    private final int markRadius = 15;
+    private final int markDuration = 8;
     boolean hasSneakingAbility;
 
     public HolyRadiance(float minDamageHeal, float maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier, boolean hasSneakingAbility) {
@@ -72,26 +72,6 @@ public class HolyRadiance extends AbstractAbility {
                     PacketPlayOutAnimation playOutAnimation = new PacketPlayOutAnimation(((CraftPlayer) player).getHandle(), 0);
                     ((CraftPlayer) player).getHandle().playerConnection.sendPacket(playOutAnimation);
 
-                    // chain
-                    /*Location from = player.getLocation();
-                    Location to = p.getLocation();
-                    List<ArmorStand> chains = new ArrayList<>();
-                    int maxDistance = (int) Math.round(to.distance(from));
-                    for (int i = 0; i < maxDistance; i++) {
-                        ArmorStand chain = from.getWorld().spawn(from, ArmorStand.class);
-                        chain.setHeadPose(new EulerAngle(from.getDirection().getY() * -1, Math.toRadians(90), 0));
-                        chain.setGravity(false);
-                        chain.setVisible(false);
-                        chain.setBasePlate(false);
-                        chain.setMarker(true);
-                        chain.setHelmet(new ItemStack(Material.PUMPKIN));
-                        from.add(from.getDirection().multiply(1));
-                        chains.add(chain);
-                        if(to.distanceSquared(from) < .3) {
-                            break;
-                        }
-                    }*/
-
                     // chain particles
                     Location lineLocation = player.getLocation().add(0, 1, 0);
                     lineLocation.setDirection(lineLocation.toVector().subtract(p.getLocation().add(0, 1, 0).toVector()).multiply(-1));
@@ -100,31 +80,11 @@ public class HolyRadiance extends AbstractAbility {
                         lineLocation.add(lineLocation.getDirection().multiply(.5));
                     }
 
-                    /*new BukkitRunnable() {
-
-                        @Override
-                        public void run() {
-                            if (chains.size() == 0) {
-                                this.cancel();
-                            }
-
-                            for (int i = 0; i < chains.size(); i++) {
-                                ArmorStand armorStand = chains.get(i);
-                                if (armorStand.getTicksLived() > 6) {
-                                    armorStand.remove();
-                                    chains.remove(i);
-                                    i--;
-                                }
-                            }
-
-                        }
-
-                    }.runTaskTimer(Warlords.getInstance(), 0, 0);*/
-
                     HolyRadiance tempMark = new HolyRadiance(minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier, true);
                     p.getCooldownManager().addCooldown(name, HolyRadiance.this.getClass(), tempMark, "MARK", markDuration, wp, CooldownTypes.BUFF);
                     p.getSpeed().addSpeedModifier("Mark Speed", 20, 20 * markDuration, "BASE");
                     player.sendMessage(ChatColor.GRAY + "You have marked §e" + p.getName() + "§7!");
+                    p.sendMessage(ChatColor.GRAY + "You have been marked by §e" + player.getName() + "§7!");
 
                     wp.getGame().getGameTasks().put(
 
