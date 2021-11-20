@@ -3,6 +3,7 @@ package com.ebicep.warlords.commands.debugcommands;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.BaseCommand;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.FieldUpdateOperators;
 import com.ebicep.warlords.database.Leaderboard;
 import com.ebicep.warlords.database.LeaderboardManager;
 import com.ebicep.warlords.player.Classes;
@@ -10,6 +11,8 @@ import com.ebicep.warlords.player.ExperienceManager;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.Utils;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.UpdateManyModel;
+import com.mongodb.client.model.WriteModel;
 import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -19,6 +22,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import java.util.function.Consumer;
 
 import static com.ebicep.warlords.database.DatabaseManager.*;
 
@@ -38,10 +45,14 @@ public class TestCommand implements CommandExecutor {
 
 //        weeklyLeaderboards.insertOne(document);
 
-        ExperienceManager.giveExpFromCurrentStats(((Player)sender).getUniqueId());
+        List<WriteModel<Document>> updates = new ArrayList<>();
+
+//        playersInformation.find().forEach((Consumer<? super Document>) document -> {
+//            ExperienceManager.giveExpFromCurrentStats(UUID.fromString(document.getString("uuid")));
+//        });
 //        DatabaseManager.warlordsGamesDatabase.createCollection("Games_Information_Test");
-//        MongoCollection<Document> temp = warlordsGamesDatabase.getCollection("Games_Information_Test");
-//        for (Document document : gamesInformation.find()) {
+//        MongoCollection<Document> temp = warlordsPlayersDatabase.getCollection("Players_Information_Test");
+//        for (Document document : playersInformation.find()) {
 //            temp.insertOne(document);
 //        }
 //        Bukkit.getOnlinePlayers().forEach(p -> {

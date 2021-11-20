@@ -203,7 +203,7 @@ public class DatabaseManager {
      * @param uuid     {@code UUID} of the player
      */
     private static void loadPlayer(Document document, UUID uuid) {
-        updateName(document, Bukkit.getPlayer(uuid));
+        updateName(document, Bukkit.getOfflinePlayer(uuid));
         if (document == null) {
             addPlayer(uuid, true);
         } else {
@@ -274,7 +274,7 @@ public class DatabaseManager {
      * @param document {@code Document} of player info
      * @param player   {@code Player} to be updated
      */
-    private static void updateName(Document document, Player player) {
+    private static void updateName(Document document, OfflinePlayer player) {
         if (document != null && !((String) document.get("name")).equalsIgnoreCase(player.getName())) {
             Warlords.newChain()
                     .async(() -> {
@@ -313,6 +313,7 @@ public class DatabaseManager {
                     .abortIfNull()
                     .sync(() -> {
                         cachedTotalKeyValues.clear();
+                        cachedPlayerInfo.remove(player.getUniqueId());
 
                         loadPlayer(player.getUniqueId(), true);
                         Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] " + player.getUniqueId() + " - " + player.getName() + " - " + key + " was updated to " + newValue);
@@ -345,6 +346,7 @@ public class DatabaseManager {
                             playersInformation.updateOne(eq("uuid", uuid.toString()), update);
                         }).sync(() -> {
                             cachedTotalKeyValues.clear();
+                            cachedPlayerInfo.remove(uuid);
 
                             loadPlayer(uuid, true);
                             Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] " + uuid + " - " + name + " was updated");
@@ -360,6 +362,7 @@ public class DatabaseManager {
                 Document update = new Document(operator.operator, history);
                 playersInformation.updateOne(eq("uuid", uuid.toString()), update);
                 cachedTotalKeyValues.clear();
+                cachedPlayerInfo.remove(uuid);
 
                 loadPlayer(uuid, true);
                 Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] " + uuid + " - " + name + " was updated");

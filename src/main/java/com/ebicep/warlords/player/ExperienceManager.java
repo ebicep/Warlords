@@ -302,11 +302,11 @@ public class ExperienceManager {
     }
 
     public static double calculateLevelFromExp(long exp) {
-        return Math.sqrt(exp / 100.0);
+        return Math.sqrt(exp / 25.0);
     }
 
     public static double calculateExpFromLevel(int level) {
-        return Math.pow(level, 2) * 100;
+        return Math.pow(level, 2) * 25;
     }
 
     public static void giveExperienceBar(Player player) {

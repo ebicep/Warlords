@@ -1006,6 +1006,12 @@ public final class WarlordsPlayer {
                 }
                 health += healValue;
                 addHealing(healValue, gameState.flags().hasFlag(this));
+
+                if (!ability.isEmpty()) {
+                    if (attacker.entity instanceof Player) {
+                        ((Player) attacker.entity).playSound(attacker.getLocation(), Sound.ORB_PICKUP, 1, 1);
+                    }
+                }
             }
         } else {
             //TEAMMATE HEALING
@@ -1026,6 +1032,12 @@ public final class WarlordsPlayer {
                 }
                 health += healValue;
                 attacker.addHealing(healValue, gameState.flags().hasFlag(this));
+
+                if (!ability.isEmpty()) {
+                    if (attacker.entity instanceof Player) {
+                        ((Player) attacker.entity).playSound(attacker.getLocation(), Sound.ORB_PICKUP, 1, 1);
+                    }
+                }
             }
         }
     }

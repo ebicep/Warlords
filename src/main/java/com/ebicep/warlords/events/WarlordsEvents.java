@@ -489,7 +489,7 @@ public class WarlordsEvents implements Listener {
                             e.setFormat(ChatColor.DARK_GRAY + "[" +
                                     ChatColor.GOLD + Classes.getClassesGroup(playerSettings.getSelectedClass()).name.toUpperCase().substring(0, 3) +
                                     ChatColor.DARK_GRAY + "][" +
-                                    ChatColor.GOLD + (level < 10 ? "0" : "") + level +
+                                    ChatColor.GRAY + (level < 10 ? "0" : "") + level +
                                     ChatColor.DARK_GRAY + "][" +
                                     playerSettings.getSelectedClass().specType.getColoredSymbol() +
                                     ChatColor.DARK_GRAY + "] " +
@@ -505,7 +505,7 @@ public class WarlordsEvents implements Listener {
                                 ChatColor.DARK_GRAY + "[" +
                                 ChatColor.GOLD + wp.getSpec().getClassNameShort() +
                                 ChatColor.DARK_GRAY + "][" +
-                                ChatColor.GOLD + (level < 10 ? "0" : "") + level +
+                                ChatColor.GRAY + (level < 10 ? "0" : "") + level +
                                 ChatColor.DARK_GRAY + "][" +
                                 playerSettings.getSelectedClass().specType.getColoredSymbol() +
                                 ChatColor.DARK_GRAY + "] " +
