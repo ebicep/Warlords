@@ -117,9 +117,9 @@ public class RecklessCharge extends AbstractAbility implements Listener {
                                                 public void run() {
                                                     stunnedPlayers.remove(enemy.getUuid());
                                                 }
-                                            }.runTaskLater(Warlords.getInstance(), 7),
+                                            }.runTaskLater(Warlords.getInstance(), 10),
                                             System.currentTimeMillis()
-                                    ); //.35 seconds
+                                    ); //.5 seconds
                                     if (enemy.getEntity() instanceof Player) {
                                         PacketUtils.sendTitle((Player) enemy.getEntity(), "", "§dIMMOBILIZED", 0, 10, 0);
                                     }
