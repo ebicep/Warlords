@@ -86,7 +86,7 @@ public class DeathsDebt extends AbstractTotemBase {
 
                     @Override
                     public void run() {
-                        if (wp.isDeath()) {
+                        if (wp.isDeath() || !wp.getCooldownManager().hasCooldown(tempDeathsDebt)) {
                             totemStand.remove();
                             particles.cancel();
                             this.cancel();
