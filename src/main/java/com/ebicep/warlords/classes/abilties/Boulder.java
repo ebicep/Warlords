@@ -152,7 +152,7 @@ public class Boulder extends AbstractAbility {
             double z = initialCircleRadius * Math.sin(angle);
             angle += 360.0 / amount + (int) (Math.random() * 4 - 2);
 
-            spawnLoc.add(x, 0, z);
+            spawnLoc.add(x, 1, z);
 
             //ParticleEffect.VILLAGER_HAPPY.display(0 , 0 ,0, 0, 1, spawnLoc, 100);
 

@@ -7,6 +7,7 @@ import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.PlayerFilter;
 import com.ebicep.warlords.util.Utils;
 import net.minecraft.server.v1_8_R3.PacketPlayOutAnimation;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
@@ -24,6 +25,7 @@ import java.util.List;
 public class EarthenSpike extends AbstractAbility {
 
     private final int radius = 10;
+    private boolean kbCooldown = true;
 
     private static final String[] REPEATING_SOUND = new String[]{
             "shaman.earthenspike.animation.a",
@@ -67,19 +69,24 @@ public class EarthenSpike extends AbstractAbility {
 
                 wp.getGame().getGameTasks().put(
                         new BukkitRunnable() {
+                            private final float SPEED = 1;
+                            private final float SPEED_SQUARED = SPEED * SPEED;
+                            private Location spikeLoc = location;
+                            {
+                                spikeLoc.setY(spikeLoc.getBlockY());
+                            }
 
                             @Override
                             public void run() {
                                 earthenSpikeBlock.addDuration();
 
                                 List<CustomFallingBlock> customFallingBlocks = earthenSpikeBlock.getFallingBlocks();
-                                FallingBlock lastFallingBlock = customFallingBlocks.get(customFallingBlocks.size() - 1).getBlock();
                                 WarlordsPlayer target = earthenSpikeBlock.getTarget();
                                 WarlordsPlayer user = earthenSpikeBlock.getUser();
 
                                 if (earthenSpikeBlock.getDuration() % 5 == 1) {
                                     for (Player player1 : player.getWorld().getPlayers()) {
-                                        player1.playSound(lastFallingBlock.getLocation(), REPEATING_SOUND[(earthenSpikeBlock.getDuration() / 5) % 4], 2, 1);
+                                        player1.playSound(spikeLoc, REPEATING_SOUND[(earthenSpikeBlock.getDuration() / 5) % 4], 2, 1);
                                     }
                                 }
 
@@ -87,46 +94,29 @@ public class EarthenSpike extends AbstractAbility {
                                     //out of time
                                     earthenSpikeBlock.setDuration(-1);
                                     this.cancel();
-                                } else if (Math.abs(target.getLocation().getX() - lastFallingBlock.getLocation().getX()) + Math.abs(target.getLocation().getZ() - lastFallingBlock.getLocation().getZ()) > 1) {
-                                    Location newLocation = lastFallingBlock.getLocation();
-                                    //moving diagonally
-                                    if (Math.abs(target.getLocation().getBlockX() - newLocation.getBlockX()) > 0) {
-                                        if (target.getLocation().getX() < newLocation.getX()) {
-                                            newLocation.add(-1, 0, 0);
-                                        } else {
-                                            newLocation.add(1, 0, 0);
-                                        }
-                                        if (Math.abs(target.getLocation().getBlockZ() - newLocation.getBlockZ()) > 0) {
-                                            if (target.getLocation().getZ() < newLocation.getZ()) {
-                                                FallingBlock newBlock = spawnFallingBlock(newLocation, newLocation.clone().add(0, 0, -1));
-                                                customFallingBlocks.add(new CustomFallingBlock(newBlock, newBlock.getLocation().getY() - .20));
-                                            } else {
-                                                FallingBlock newBlock = spawnFallingBlock(newLocation, newLocation.clone().add(0, 0, 1));
-                                                customFallingBlocks.add(new CustomFallingBlock(newBlock, newBlock.getLocation().getY() - .20));
-                                            }
-                                        }
-                                    }
-                                    if (Math.abs(target.getLocation().getBlockZ() - newLocation.getBlockZ()) > 0) {
-                                        if (target.getLocation().getZ() < newLocation.getZ()) {
-                                            newLocation.add(0, 0, -1);
-                                        } else {
-                                            newLocation.add(0, 0, 1);
-                                        }
-                                    }
+                                    return;
+                                }
+
+                                Vector change = target.getLocation().toVector().subtract(spikeLoc.toVector());
+                                change.setY(0);
+                                double length = change.lengthSquared();
+                                if (length > SPEED_SQUARED) {
+                                    change.multiply(1 / (Math.sqrt(length) / SPEED));
+                                    spikeLoc.add(change);
 
                                     //moving vertically
-                                    if (target.getLocation().getY() < newLocation.getY()) {
+                                    if (target.getLocation().getY() < spikeLoc.getY()) {
                                         for (int j = 0; j < 10; j++) {
-                                            if (newLocation.clone().add(0, -1, 0).getBlock().getType() == Material.AIR) {
-                                                newLocation.add(0, -1, 0);
+                                            if (spikeLoc.clone().add(0, -1, 0).getBlock().getType() == Material.AIR) {
+                                                spikeLoc.add(0, -1, 0);
                                             } else {
                                                 break;
                                             }
                                         }
                                     } else {
                                         for (int j = 0; j < 10; j++) {
-                                            if (newLocation.getBlock().getType() != Material.AIR) {
-                                                newLocation.add(0, 1, 0);
+                                            if (spikeLoc.getBlock().getType() != Material.AIR) {
+                                                spikeLoc.add(0, 1, 0);
                                             } else {
                                                 break;
                                             }
@@ -134,14 +124,14 @@ public class EarthenSpike extends AbstractAbility {
                                     }
                                     //temp fix for block glitch
                                     for (int i = 0; i < 10; i++) {
-                                        if (newLocation.getBlock().getType() != Material.AIR) {
-                                            newLocation.add(0, 1, 0);
+                                        if (spikeLoc.getBlock().getType() != Material.AIR) {
+                                            spikeLoc.add(0, 1, 0);
                                         } else {
                                             break;
                                         }
                                     }
 
-                                    FallingBlock newBlock = spawnFallingBlock(newLocation, newLocation);
+                                    FallingBlock newBlock = spawnFallingBlock(spikeLoc, spikeLoc);
                                     customFallingBlocks.add(new CustomFallingBlock(newBlock, newBlock.getLocation().getY() - .20));
                                 } else {
                                     //impact
@@ -151,9 +141,9 @@ public class EarthenSpike extends AbstractAbility {
                                             .aliveEnemiesOf(wp)
                                     ) {
                                         warlordsPlayer.damageHealth(user, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
-                                        //todo tweak distance to ground where you cant get kbed up (1.5 is max jump blocks)
-                                        if (Utils.getDistance(warlordsPlayer.getEntity(), .1) < 1.5) {
-                                            warlordsPlayer.setVelocity(new Vector(0, .625, 0));
+                                        //todo tweak distance to ground where you cant get kbed up (1.81 is max jump blocks, double spike kb might be possible with this)
+                                        if (Utils.getDistance(warlordsPlayer.getEntity(), .1) < 1.81) {
+                                            warlordsPlayer.setVelocity(new Vector(0, .615, 0));
                                         }
                                     }
 
