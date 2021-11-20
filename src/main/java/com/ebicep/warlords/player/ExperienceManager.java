@@ -26,7 +26,7 @@ public class ExperienceManager {
 
     static {
         //caching all levels/experience
-        for (int i = 0; i < 101; i++) {
+        for (int i = 0; i < 201; i++) {
             long exp = (long) calculateExpFromLevel(i);
             levelExperience.put(i, exp);
             experienceLevel.put(exp, i);
