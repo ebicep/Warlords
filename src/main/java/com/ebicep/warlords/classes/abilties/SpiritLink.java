@@ -106,12 +106,12 @@ public class SpiritLink extends AbstractChainBase {
 
     private void healNearPlayers(WarlordsPlayer warlordsPlayer) {
         //adding .25 to totem, cap 6 sec
-        if(warlordsPlayer.getCooldownManager().hasCooldownFromName("Spirits Respite")) {
-            Cooldown cooldown = warlordsPlayer.getCooldownManager().getCooldownFromName("Spirits Respite").get(0);
-            DeathsDebt deathsDebt = ((DeathsDebt) cooldown.getCooldownObject());
-            deathsDebt.setTimeLeftRespite(deathsDebt.getTimeLeftRespite() + .5);
-            cooldown.setTimeLeft((float) deathsDebt.getTimeLeftRespite());
-        }
+//        if(warlordsPlayer.getCooldownManager().hasCooldownFromName("Spirits Respite")) {
+//            Cooldown cooldown = warlordsPlayer.getCooldownManager().getCooldownFromName("Spirits Respite").get(0);
+//            DeathsDebt deathsDebt = ((DeathsDebt) cooldown.getCooldownObject());
+//            deathsDebt.setTimeLeftRespite(deathsDebt.getTimeLeftRespite() + .5);
+//            cooldown.setTimeLeft((float) deathsDebt.getTimeLeftRespite());
+//        }
         warlordsPlayer.healHealth(warlordsPlayer, "Soulbinding Weapon", 400, 400, -1, 100, false);
         for (WarlordsPlayer nearPlayer : PlayerFilter
                 .entitiesAround(warlordsPlayer, 8, 8, 8)
