@@ -558,11 +558,12 @@ public class DatabaseManager {
                                 updatePlayerInformationWeekly(uuid, stringObjectHashMap, FieldUpdateOperators.INCREMENT, false);
                             });
                         }
-                        //removing the game from the database
-                        gamesInformation.deleteOne(and(
+                        //set the game from the database to uncounted
+                        gamesInformation.updateOne(and(
                                 eq("date", gameInformation.getGameInfo().get("date")),
-                                eq("time_left", gameInformation.getGameInfo().get("time_left"))
-                        ));
+                                eq("time_left", gameInformation.getGameInfo().get("time_left"))),
+                                new Document(FieldUpdateOperators.SET.operator, new Document("counted", false))
+                        );
                         //reloading leaderboards
                         LeaderboardManager.playerGameHolograms.forEach((uuid, integer) -> {
                             LeaderboardManager.playerGameHolograms.put(uuid, previousGames.size() - 1);

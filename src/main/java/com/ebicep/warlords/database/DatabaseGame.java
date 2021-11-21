@@ -116,9 +116,9 @@ public class DatabaseGame {
     }
 
     public static final Location lastGameStatsLocation = new Location(LeaderboardManager.world, -2532.5, 56, 766.5);
-    public static final Location topDamageLocation = new Location(LeaderboardManager.world, -2540.5, 58, 784.5);
-    public static final Location topHealingLocation = new Location(LeaderboardManager.world, -2546.5, 58, 784.5);
-    public static final Location topAbsorbedLocation = new Location(LeaderboardManager.world, -2552.5, 58, 784.5);
+    public static final Location topDamageLocation = new Location(LeaderboardManager.world, -2540.5, 58, 785.5);
+    public static final Location topHealingLocation = new Location(LeaderboardManager.world, -2546.5, 58, 785.5);
+    public static final Location topAbsorbedLocation = new Location(LeaderboardManager.world, -2552.5, 58, 785.5);
     public static final Location topDHPPerMinuteLocation = new Location(LeaderboardManager.world, -2530.5, 59, 781.5);
     public static final Location topDamageOnCarrierLocation = new Location(LeaderboardManager.world, -2572.5, 58, 778.5);
     public static final Location topHealingOnCarrierLocation = new Location(LeaderboardManager.world, -2579.5, 58, 774.5);
