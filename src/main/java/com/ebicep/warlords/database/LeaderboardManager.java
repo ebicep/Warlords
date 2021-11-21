@@ -410,7 +410,7 @@ public class LeaderboardManager {
                     return;
                 }
 
-                if(weekly && (key.equals("plays") || key.equals("wins") || key.equals("kills") || key.equals("dhp_per_game") || key.equals("flags_captured"))) {
+                if(!weekly || (key.equals("plays") || key.equals("wins") || key.equals("kills") || key.equals("dhp_per_game") || key.equals("flags_captured"))) {
                     Hologram hologram = HologramsAPI.createHologram(Warlords.getInstance(), location);
                     for (int i = 0; i < documents.size(); i++) {
                         Document document = documents.get(i);

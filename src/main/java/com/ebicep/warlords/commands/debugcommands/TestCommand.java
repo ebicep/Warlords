@@ -39,8 +39,10 @@ public class TestCommand implements CommandExecutor {
         }
         WarlordsPlayer wp = BaseCommand.requireWarlordsPlayer(sender);
         if (wp != null) {
-            wp.sendMessage(ChatColor.GRAY + "+" + ChatColor.DARK_GREEN + Utils.addCommaAndRound(3213) + " " + ChatColor.GOLD + wp.getSpec().getClassName() + " Experience " + ChatColor.GRAY + "(" + wp.getSpecClass().specType.chatColor + wp.getSpecClass().name + ChatColor.GRAY + ")");
         }
+        Player player = (Player) sender;
+        Utils.sendMessage(player, true, ChatColor.GREEN.toString() + ChatColor.BOLD + ChatColor.MAGIC + "   " + ChatColor.AQUA + ChatColor.BOLD + " LEVEL UP! " + ChatColor.DARK_GRAY + ChatColor.BOLD + "[" + ChatColor.GRAY + ChatColor.BOLD + "23" + ChatColor.DARK_GRAY + ChatColor.BOLD + "]" + ChatColor.GREEN + ChatColor.BOLD + " > " + ChatColor.DARK_GRAY + ChatColor.BOLD + "[" + ChatColor.GRAY + ChatColor.BOLD + "24" + ChatColor.DARK_GRAY + ChatColor.BOLD + "] " + ChatColor.GREEN + ChatColor.MAGIC + ChatColor.BOLD + "   ");
+
         DecimalFormat decimalFormat = new DecimalFormat("#.##");
 
 //        weeklyLeaderboards.insertOne(document);

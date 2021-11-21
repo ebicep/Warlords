@@ -457,21 +457,19 @@ public class PlayingState implements State, TimerDebugAble {
         this.updateHealth(customScoreboard);
         this.updateNames(customScoreboard);
 
-        CustomScoreboardPair[] pairs = new CustomScoreboardPair[15];
-        for (int i = 0; i < pairs.length; i++) {
-            pairs[i] = new CustomScoreboardPair();
-        }
+        String[] entries = new String[15];
+        
 
         SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
         SimpleDateFormat format2 = new SimpleDateFormat("kk:mm");
         format2.setTimeZone(TimeZone.getTimeZone("EST"));
 
         //date
-        pairs[14].setPrefixAndSuffix(ChatColor.GRAY + format.format(new Date()) + " - ", format2.format(new Date()));
+        entries[14] = ChatColor.GRAY + format.format(new Date()) + " - " + format2.format(new Date());
 
         // Points
-        pairs[12].setPrefixAndSuffix(ChatColor.BLUE + "BLU: ", ChatColor.AQUA.toString() + this.getBluePoints() + ChatColor.GOLD + "/" + this.getPointLimit());
-        pairs[11].setPrefixAndSuffix(ChatColor.RED + "RED: ", ChatColor.AQUA.toString() + this.getRedPoints() + ChatColor.GOLD + "/" + this.getPointLimit());
+        entries[12] = ChatColor.BLUE + "BLU: " + ChatColor.AQUA + this.getBluePoints() + ChatColor.GOLD + "/" + this.getPointLimit();
+        entries[11] = ChatColor.RED + "RED: " + ChatColor.AQUA + this.getRedPoints() + ChatColor.GOLD + "/" + this.getPointLimit();
 
         // Timer
         int secondsRemaining = this.getTimer() / 20;
@@ -489,60 +487,56 @@ public class PlayingState implements State, TimerDebugAble {
 
         com.ebicep.warlords.maps.Team team = this.calculateWinnerByPoints();
         if (team != null) {
-            pairs[9].setPrefix(team.coloredPrefix() + ChatColor.GOLD + " Wins in:");
+            entries[9] = team.coloredPrefix() + ChatColor.GOLD + " Wins in: " + ChatColor.GREEN + timeLeft;
         } else {
-            pairs[9].setPrefix(ChatColor.WHITE + "Time Left:");
+            entries[9] = ChatColor.WHITE + "Time Left: " + ChatColor.GREEN + timeLeft;
         }
-        pairs[9].setSuffix(" " + ChatColor.GREEN + timeLeft);
-
 
         // Flags
         if (this.flags().getRed().getFlag() instanceof SpawnFlagLocation) {
-            pairs[7].setPrefixAndSuffix(ChatColor.RED + "RED Flag: ", ChatColor.GREEN + "Safe");
+            entries[7] = ChatColor.RED + "RED Flag: " + ChatColor.GREEN + "Safe";
         } else if (this.flags().getRed().getFlag() instanceof PlayerFlagLocation) {
             PlayerFlagLocation flag = (PlayerFlagLocation) this.flags().getRed().getFlag();
             if (flag.getPickUpTicks() == 0) {
-                pairs[7].setPrefixAndSuffix(ChatColor.RED + "RED Flag: ", ChatColor.RED + "Stolen!");
+                entries[7] = ChatColor.RED + "RED Flag: " + ChatColor.RED + "Stolen!";
             } else {
-                pairs[7].setPrefixAndSuffix(ChatColor.RED + "RED Flag: " + ChatColor.RED + "St", "olen!" + ChatColor.YELLOW + " +" + flag.getComputedHumanMultiplier() + "§e%");
+                entries[7] = ChatColor.RED + "RED Flag: " + ChatColor.RED + "Stolen!" + ChatColor.YELLOW + " +" + flag.getComputedHumanMultiplier() + "§e%";
             }
         } else if (this.flags().getRed().getFlag() instanceof GroundFlagLocation) {
             GroundFlagLocation flag = (GroundFlagLocation) this.flags().getRed().getFlag();
-            pairs[7].setPrefixAndSuffix(ChatColor.RED + "RED Flag: ", ChatColor.YELLOW + "Dropped! " + ChatColor.GRAY + flag.getDespawnTimerSeconds());
+            entries[7] = ChatColor.RED + "RED Flag: " + ChatColor.YELLOW + "Dropped! " + ChatColor.GRAY + flag.getDespawnTimerSeconds();
         } else {
-            pairs[7].setPrefixAndSuffix(ChatColor.RED + "RED Flag: ", ChatColor.GRAY + "Respawning...");
+            entries[7] = ChatColor.RED + "RED Flag: " + ChatColor.GRAY + "Respawning...";
         }
 
         if (this.flags().getBlue().getFlag() instanceof SpawnFlagLocation) {
-            pairs[6].setPrefixAndSuffix(ChatColor.BLUE + "BLU Flag: ", ChatColor.GREEN + "Safe");
+            entries[6] = ChatColor.BLUE + "BLU Flag: " + ChatColor.GREEN + "Safe";
         } else if (this.flags().getBlue().getFlag() instanceof PlayerFlagLocation) {
             PlayerFlagLocation flag = (PlayerFlagLocation) this.flags().getBlue().getFlag();
             if (flag.getPickUpTicks() == 0) {
-                pairs[6].setPrefixAndSuffix(ChatColor.BLUE + "BLU Flag: ", ChatColor.RED + "Stolen!");
+                entries[6] = ChatColor.BLUE + "BLU Flag: " + ChatColor.RED + "Stolen!";
             } else {
-                pairs[6].setPrefixAndSuffix(ChatColor.BLUE + "BLU Flag: " + ChatColor.RED + "St", "olen!" + ChatColor.YELLOW + " +" + flag.getComputedHumanMultiplier() + "§e%");
+                entries[6] = ChatColor.BLUE + "BLU Flag: " + ChatColor.RED + "Stolen!" + ChatColor.YELLOW + " +" + flag.getComputedHumanMultiplier() + "§e%";
             }
         } else if (this.flags().getBlue().getFlag() instanceof GroundFlagLocation) {
             GroundFlagLocation flag = (GroundFlagLocation) this.flags().getBlue().getFlag();
-            pairs[6].setPrefixAndSuffix(ChatColor.BLUE + "BLU Flag: ", ChatColor.YELLOW + "Dropped! " + ChatColor.GRAY + flag.getDespawnTimerSeconds());
+            entries[6] = ChatColor.BLUE + "BLU Flag: " + ChatColor.YELLOW + "Dropped! " + ChatColor.GRAY + flag.getDespawnTimerSeconds();
         } else {
-            pairs[6].setPrefixAndSuffix(ChatColor.BLUE + "BLU Flag: ", ChatColor.GRAY + "Respawning...");
+            entries[6] = ChatColor.BLUE + "BLU Flag: " + ChatColor.GRAY + "Respawning...";
         }
 
         if (warlordsPlayer != null) {
-            pairs[4].setPrefixAndSuffix(ChatColor.WHITE + "Spec: ", ChatColor.GREEN + warlordsPlayer.getSpec().getClass().getSimpleName());
+            entries[4] = ChatColor.WHITE + "Spec: " + ChatColor.GREEN + warlordsPlayer.getSpec().getClass().getSimpleName();
 
-            pairs[2].setPrefixAndSuffix(
-                    ChatColor.GREEN.toString() + warlordsPlayer.getTotalKills() + ChatColor.RESET + " Kills ",
-                    ChatColor.GREEN.toString() + warlordsPlayer.getTotalAssists() + ChatColor.RESET + " Assists"
-            );
+            entries[2] = ChatColor.GREEN.toString() + warlordsPlayer.getTotalKills() + ChatColor.RESET + " Kills " +
+                    ChatColor.GREEN + warlordsPlayer.getTotalAssists() + ChatColor.RESET + " Assists";
         }
 
-        pairs[0].setPrefixAndSuffix(ChatColor.YELLOW + Warlords.VERSION, "");
+        entries[0] = ChatColor.YELLOW + Warlords.VERSION;
 
-        Collections.reverse(Arrays.asList(pairs));
+        Collections.reverse(Arrays.asList(entries));
 
-        customScoreboard.giveNewSideBar(init, pairs);
+        customScoreboard.giveNewSideBar(init, entries);
     }
 
     private static <K, V, M extends Map<K, V>> BinaryOperator<M> mapMerger(BinaryOperator<V> mergeFunction) {

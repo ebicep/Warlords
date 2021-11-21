@@ -271,6 +271,10 @@ public class ExperienceManager {
         return (int) calculateLevelFromExp(getExperienceFromDotNotation(uuid, dots));
     }
 
+    public static long getUniversalLevel(UUID uuid) {
+        return getExperienceFromDotNotation(uuid, "experience");
+    }
+
     private static long getExperienceFromDotNotation(UUID uuid, String dots) {
         Object experience = getPlayerInfoWithDotNotation(uuid, dots);
         return experience == null ? 0 : (long) experience;
@@ -311,10 +315,18 @@ public class ExperienceManager {
 
     public static void giveExperienceBar(Player player) {
         //long experience = warlordsPlayersDatabase.getCollection("Players_Information_Test").find().filter(eq("uuid", player.getUniqueId().toString())).first().getLong("experience");
-        long experience = getExperienceFromDotNotation(player.getUniqueId(), "experience");
+        long experience = getUniversalLevel(player.getUniqueId());
         int level = (int) calculateLevelFromExp(experience);
         player.setLevel(level);
         player.setExp((float) (experience - levelExperience.get(level)) / (levelExperience.get(level + 1) - levelExperience.get(level)));
+    }
+
+    public static void giveLevelUpMessage(Player player, long expBefore, long expAfter) {
+        int levelBefore = (int) calculateLevelFromExp(expBefore);
+        int levelAfter = (int) calculateLevelFromExp(expAfter);
+        if(levelBefore != levelAfter) {
+            Utils.sendMessage(player, true, ChatColor.GREEN.toString() + ChatColor.BOLD + ChatColor.MAGIC + "   " + ChatColor.AQUA + ChatColor.BOLD + " LEVEL UP! " + ChatColor.DARK_GRAY + ChatColor.BOLD + "[" + ChatColor.GRAY + ChatColor.BOLD + levelBefore + ChatColor.DARK_GRAY + ChatColor.BOLD + "]" + ChatColor.GREEN + ChatColor.BOLD + " > " + ChatColor.DARK_GRAY + ChatColor.BOLD + "[" + ChatColor.GRAY + ChatColor.BOLD + levelAfter + ChatColor.DARK_GRAY + ChatColor.BOLD + "] " + ChatColor.GREEN + ChatColor.MAGIC + ChatColor.BOLD + "   ");
+        }
     }
 }
 

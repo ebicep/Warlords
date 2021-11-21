@@ -49,7 +49,7 @@ public class CooldownManager {
         return cooldowns.stream().filter(cooldown -> cooldown.getCooldownObject() == cooldownObject).findAny();
     }
 
-    public List<Cooldown> getCooldown(String name) {
+    public List<Cooldown> getCooldownFromActionbarName(String name) {
         return cooldowns.stream().filter(cooldown -> cooldown.getActionBarName().contains(name)).collect(Collectors.toList());
     }
 

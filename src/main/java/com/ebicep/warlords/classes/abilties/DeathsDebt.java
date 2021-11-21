@@ -9,6 +9,7 @@ import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
+import com.ebicep.warlords.util.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -71,8 +72,6 @@ public class DeathsDebt extends AbstractTotemBase {
 
         wp.getCooldownManager().addCooldown("Spirits Respite", this.getClass(), tempDeathsDebt, "RESP", secondsLeft, wp, CooldownTypes.ABILITY);
 
-        player.setMetadata("TOTEM", new FixedMetadataValue(Warlords.getInstance(), tempDeathsDebt));
-
         CircleEffect circle = new CircleEffect(wp, totemStand.getLocation().clone().add(0, 1.25, 0), 10);
         circle.addEffect(new CircumferenceEffect(ParticleEffect.SPELL));
         circle.addEffect(new DoubleLineEffect(ParticleEffect.REDSTONE));
@@ -117,7 +116,6 @@ public class DeathsDebt extends AbstractTotemBase {
                                     wp.getCooldownManager().removeCooldown(tempDeathsDebt);
                                     wp.getCooldownManager().addCooldown(name, this.getClass(), tempDeathsDebt, "DEBT", 6, wp, CooldownTypes.ABILITY);
 
-                                    player.removeMetadata("TOTEM", Warlords.getInstance());
                                     if (!isPlayerInRadius) {
                                         player.sendMessage("§7You walked outside your §dDeath's Debt §7radius");
                                     } else {

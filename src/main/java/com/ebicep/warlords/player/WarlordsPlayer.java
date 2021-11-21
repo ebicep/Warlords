@@ -4,7 +4,6 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.classes.abilties.*;
-import com.ebicep.warlords.classes.paladin.specs.protector.Protector;
 import com.ebicep.warlords.classes.shaman.specs.spiritguard.Spiritguard;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.events.WarlordsDeathEvent;
@@ -31,7 +30,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.metadata.MetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nonnull;
@@ -40,7 +38,6 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 public final class WarlordsPlayer {
 
@@ -767,14 +764,10 @@ public final class WarlordsPlayer {
                         }
                     }
 
-                    // this metadata is only active on the sg class
-                    // the cooldown of the ability prevents multiple from being active at the same time
-                    Optional<MetadataValue> totem = entity.getMetadata("TOTEM").stream()
-                            .filter(e -> e.value() instanceof DeathsDebt)
-                            .findAny();
-                    if (totem.isPresent()) {
-                        DeathsDebt t = (DeathsDebt) totem.get().value();
-                        t.addDelayedDamage(damageValue);
+
+                    List<Cooldown> debtsCooldown = cooldownManager.getCooldownFromName("Spirits Respite");
+                    if(!debtsCooldown.isEmpty()) {
+                        ((DeathsDebt) debtsCooldown.get(0).getCooldownObject()).addDelayedDamage(damageValue);
                         debt = true;
                     }
 

@@ -141,8 +141,12 @@ public class EndState implements State, TimerDebugAble {
                 if (player == null) continue;
 
                 long experienceEarned = ExperienceManager.getExpFromGameStats(wp);
+                long experienceOnSpec = ExperienceManager.getExperienceForSpec(wp.getUuid(), wp.getSpecClass());
+                long experienceUniversal = ExperienceManager.getUniversalLevel(wp.getUuid());
                 Utils.sendMessage(player, true, ChatColor.GRAY + "+" + ChatColor.DARK_GREEN + Utils.addCommaAndRound(experienceEarned) + " " + ChatColor.GOLD + wp.getSpec().getClassName() + " Experience " + ChatColor.GRAY + "(" + wp.getSpecClass().specType.chatColor + wp.getSpecClass().name + ChatColor.GRAY + ")");
+                ExperienceManager.giveLevelUpMessage(player, experienceOnSpec, experienceOnSpec + experienceEarned);
                 Utils.sendMessage(player, true, ChatColor.GRAY + "+" + ChatColor.DARK_AQUA + Utils.addCommaAndRound(experienceEarned) + " " + ChatColor.GOLD + "Universal Experience ");
+                ExperienceManager.giveLevelUpMessage(player, experienceUniversal, experienceUniversal + experienceEarned);
             }
         }
         sendMessageToAllGamePlayer(game, "" + ChatColor.GREEN + ChatColor.BOLD + "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬", false);

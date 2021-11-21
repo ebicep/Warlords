@@ -117,20 +117,19 @@ public class PreLobbyState implements State, TimerDebugAble {
 
         Classes classes = Warlords.getPlayerSettings(player.getUniqueId()).getSelectedClass();
         customScoreboard.giveNewSideBar(init,
-                new CustomScoreboardPair(ChatColor.GRAY + dateString, ""),
-                new CustomScoreboardPair("  ", ""),
-                new CustomScoreboardPair(mapPrefix, mapSuffix),
-                new CustomScoreboardPair(ChatColor.WHITE + "Players: ", ChatColor.GREEN.toString() + game.playersCount() + "/" + game.getMap().getMaxPlayers()),
-                new CustomScoreboardPair("   ", ""),
-                new CustomScoreboardPair(ChatColor.WHITE + "Starting in: ", ChatColor.GREEN + (time < 10 ? "00:0" : "00:") + time + ChatColor.WHITE + " to"),
-                new CustomScoreboardPair(ChatColor.WHITE + "allow time ", "for "),
-                new CustomScoreboardPair(ChatColor.WHITE + "additional ", "players"),
-                new CustomScoreboardPair("    ", ""),
-                new CustomScoreboardPair(ChatColor.GOLD + "Lv" + ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(player.getUniqueId(), classes)) + " ", Classes.getClassesGroup(classes).name),
-                new CustomScoreboardPair(ChatColor.WHITE + "Spec: ", ChatColor.GREEN + classes.name),
-                new CustomScoreboardPair("     ", ""),
-                new CustomScoreboardPair(ChatColor.YELLOW + Warlords.VERSION, "")
-        );
+                ChatColor.GRAY + dateString,
+                "  ",
+                mapPrefix + mapSuffix,
+                ChatColor.WHITE + "Players: " + ChatColor.GREEN + game.playersCount() + "/" + game.getMap().getMaxPlayers(),
+                "   ",
+                ChatColor.WHITE + "Starting in: " + ChatColor.GREEN + (time < 10 ? "00:0" : "00:") + time + ChatColor.WHITE + " to",
+                ChatColor.WHITE + "allow time for ",
+                ChatColor.WHITE + "additional players",
+                "    ",
+                ChatColor.GOLD + "Lv" + ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(player.getUniqueId(), classes)) + " " + Classes.getClassesGroup(classes).name,
+                ChatColor.WHITE + "Spec: " + ChatColor.GREEN + classes.name,
+                "     ",
+                ChatColor.YELLOW + Warlords.VERSION);
 
 
     }
