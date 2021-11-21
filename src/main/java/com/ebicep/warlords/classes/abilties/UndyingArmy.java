@@ -78,8 +78,8 @@ public class UndyingArmy extends AbstractAbility {
         ) {
             tempUndyingArmy.getPlayersPopped().put(teammate.getUuid(), false);
             if (teammate != wp) {
-                wp.sendMessage("§a\u00BB§7 " + ChatColor.GRAY + "Your Undying Army is now protecting " + teammate.getColoredName() + ChatColor.GRAY + ".");
-                teammate.sendMessage("§a\u00BB§7 " + ChatColor.GRAY + wp.getName() + "'s Undying Army protects you for " + ChatColor.GOLD + duration + ChatColor.GRAY + " seconds.");
+                wp.sendMessage("§a\u00BB§7 " + ChatColor.GRAY + "Your " + ChatColor.YELLOW + "Undying Army" + ChatColor.GRAY + " is now protecting " + teammate.getName() + ChatColor.GRAY + ".");
+                teammate.sendMessage("§a\u00BB§7 " + ChatColor.GRAY + wp.getName() + "'s " + ChatColor.YELLOW + "Undying Army" + ChatColor.GRAY + " is now protecting you for " + ChatColor.GOLD + duration + ChatColor.GRAY + " seconds.");
             }
             teammate.getCooldownManager().addCooldown(name, UndyingArmy.this.getClass(), tempUndyingArmy, "ARMY", duration, wp, CooldownTypes.ABILITY);
             wp.getGame().getGameTasks().put(
@@ -127,7 +127,7 @@ public class UndyingArmy extends AbstractAbility {
         //subtracting to remove self
         numberOfPlayersWithArmy--;
         String allies = numberOfPlayersWithArmy == 1 ? "ally." : "allies.";
-        wp.sendMessage("§a\u00BB§7 " + ChatColor.GRAY + "Your Undying Army is now protecting " + ChatColor.YELLOW + numberOfPlayersWithArmy + ChatColor.GRAY + " nearby " + allies);
+        wp.sendMessage("§a\u00BB§7 " + ChatColor.GRAY + "Your " + ChatColor.YELLOW + "Undying Army" + ChatColor.GRAY + " is now protecting " + ChatColor.YELLOW + numberOfPlayersWithArmy + ChatColor.GRAY + " nearby " + allies);
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), Sound.ZOMBIE_IDLE, 2, 0.3f);

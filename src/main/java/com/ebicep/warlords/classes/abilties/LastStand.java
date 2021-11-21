@@ -6,6 +6,7 @@ import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.Matrix4d;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -50,7 +51,7 @@ public class LastStand extends AbstractAbility {
                         lineLocation.add(lineLocation.getDirection().multiply(.5));
                     }
                     nearPlayer.getCooldownManager().addCooldown(name, LastStand.this.getClass(), tempLastStand, "LAST", allyDuration, wp, CooldownTypes.BUFF);
-                    player.sendMessage("§7Your Last Stand is now protecting §e" + nearPlayer.getName());
+                    player.sendMessage(WarlordsPlayer.RECEIVE_ARROW + "§7 Your " + ChatColor.YELLOW + "Last Stand" + ChatColor.GRAY + " is now protecting " + nearPlayer.getName() + ChatColor.GRAY + "!");
                 });
 
         for (Player player1 : player.getWorld().getPlayers()) {

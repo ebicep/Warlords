@@ -83,8 +83,8 @@ public class HolyRadiance extends AbstractAbility {
                     HolyRadiance tempMark = new HolyRadiance(minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier, true);
                     p.getCooldownManager().addCooldown(name, HolyRadiance.this.getClass(), tempMark, "MARK", markDuration, wp, CooldownTypes.BUFF);
                     p.getSpeed().addSpeedModifier("Mark Speed", 20, 20 * markDuration, "BASE");
-                    player.sendMessage(ChatColor.GRAY + "You have marked §e" + p.getName() + "§7!");
-                    p.sendMessage(ChatColor.GRAY + "You have been marked by §e" + player.getName() + "§7!");
+                    player.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " You have " + ChatColor.YELLOW + "marked " + ChatColor.GRAY + p.getName() + "!");
+                    p.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " You have been " + ChatColor.YELLOW + "marked" + ChatColor.GRAY + " by " + wp.getName() + "!");
 
                     wp.getGame().getGameTasks().put(
 
