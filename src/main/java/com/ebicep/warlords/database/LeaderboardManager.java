@@ -285,6 +285,7 @@ public class LeaderboardManager {
 
                 //caching all sorted players for each lifetime and weekly
                 leaderboards.forEach((s, leaderboard) -> {
+                    //LIFETIME
                     Warlords.newSharedChain(sharedChainName)
                             .asyncFirst(() -> {
                                 //excluding calculated stats
@@ -304,6 +305,7 @@ public class LeaderboardManager {
                                         .filter(h -> h.getLocation().equals(leaderboard.getLocation()))
                                         .forEach(lifeTimeHolograms::add);
                             }).execute();
+                    //WEEKLY
                     Warlords.newSharedChain(sharedChainName)
                             .asyncFirst(() -> {
                                 //excluding calculated stats
@@ -318,10 +320,12 @@ public class LeaderboardManager {
                                 }
 
                                 //creating leaderboard for weekly
-                                addLeaderboard(cachedSortedPlayersWeekly.get(s), s, leaderboard.getLocation(), ChatColor.AQUA + ChatColor.BOLD.toString() + "Weekly " + leaderboard.getTitle());
-                                HologramsAPI.getHolograms(Warlords.getInstance()).stream()
-                                        .filter(h -> h.getLocation().equals(leaderboard.getLocation()) && !lifeTimeHolograms.contains(h))
-                                        .forEach(weeklyHolograms::add);
+                                if(s.equals("plays") || s.equals("wins") || s.equals("kills") || s.equals("dhp_per_game") || s.equals("flags_captured")) {
+                                    addLeaderboard(cachedSortedPlayersWeekly.get(s), s, leaderboard.getLocation(), ChatColor.AQUA + ChatColor.BOLD.toString() + "Weekly " + leaderboard.getTitle());
+                                    HologramsAPI.getHolograms(Warlords.getInstance()).stream()
+                                            .filter(h -> h.getLocation().equals(leaderboard.getLocation()) && !lifeTimeHolograms.contains(h))
+                                            .forEach(weeklyHolograms::add);
+                                }
                             }).execute();
                 });
 
@@ -396,33 +400,46 @@ public class LeaderboardManager {
                         .forEach(Hologram::delete);
 
                 List<Document> documents;
+                boolean weekly = false;
                 if (playerLeaderboardHolograms.get(player.getUniqueId()) == 0 && cachedSortedPlayersLifeTime.containsKey(key)) {
                     documents = cachedSortedPlayersLifeTime.get(key);
                 } else if (playerLeaderboardHolograms.get(player.getUniqueId()) == 1 && cachedSortedPlayersWeekly.containsKey(key)) {
                     documents = cachedSortedPlayersWeekly.get(key);
+                    weekly = true;
                 } else {
                     return;
                 }
 
-                Hologram hologram = HologramsAPI.createHologram(Warlords.getInstance(), location);
-                for (int i = 0; i < documents.size(); i++) {
-                    Document document = documents.get(i);
-                    if (document.get("uuid").equals(player.getUniqueId().toString())) {
-                        Object docKey = document.getEmbedded(Arrays.asList(key.split("\\.")), Object.class);
-                        if (docKey instanceof Integer) {
-                            hologram.appendTextLine(ChatColor.YELLOW.toString() + ChatColor.BOLD + (i + 1) + ". " + ChatColor.AQUA + ChatColor.BOLD + player.getName() + ChatColor.GRAY + ChatColor.BOLD + " - " + ChatColor.YELLOW + ChatColor.BOLD + (Utils.addCommaAndRound((Integer) docKey)));
-                        } else if (docKey instanceof Long) {
-                            hologram.appendTextLine(ChatColor.YELLOW.toString() + ChatColor.BOLD + (i + 1) + ". " + ChatColor.AQUA + ChatColor.BOLD + player.getName() + ChatColor.GRAY + ChatColor.BOLD + " - " + ChatColor.YELLOW + ChatColor.BOLD + (Utils.addCommaAndRound((Long) docKey)));
-                        } else if (docKey instanceof Double) {
-                            hologram.appendTextLine(ChatColor.YELLOW.toString() + ChatColor.BOLD + (i + 1) + ". " + ChatColor.AQUA + ChatColor.BOLD + player.getName() + ChatColor.GRAY + ChatColor.BOLD + " - " + ChatColor.YELLOW + ChatColor.BOLD + docKey);
+                if(weekly && (key.equals("plays") || key.equals("wins") || key.equals("kills") || key.equals("dhp_per_game") || key.equals("flags_captured"))) {
+                    Hologram hologram = HologramsAPI.createHologram(Warlords.getInstance(), location);
+                    for (int i = 0; i < documents.size(); i++) {
+                        Document document = documents.get(i);
+                        if (document.get("uuid").equals(player.getUniqueId().toString())) {
+                            Object docKey = document.getEmbedded(Arrays.asList(key.split("\\.")), Object.class);
+                            if (docKey instanceof Integer) {
+                                hologram.appendTextLine(ChatColor.YELLOW.toString() + ChatColor.BOLD + (i + 1) + ". " + ChatColor.AQUA + ChatColor.BOLD + player.getName() + ChatColor.GRAY + ChatColor.BOLD + " - " + ChatColor.YELLOW + ChatColor.BOLD + (Utils.addCommaAndRound((Integer) docKey)));
+                            } else if (docKey instanceof Long) {
+                                hologram.appendTextLine(ChatColor.YELLOW.toString() + ChatColor.BOLD + (i + 1) + ". " + ChatColor.AQUA + ChatColor.BOLD + player.getName() + ChatColor.GRAY + ChatColor.BOLD + " - " + ChatColor.YELLOW + ChatColor.BOLD + (Utils.addCommaAndRound((Long) docKey)));
+                            } else if (docKey instanceof Double) {
+                                hologram.appendTextLine(ChatColor.YELLOW.toString() + ChatColor.BOLD + (i + 1) + ". " + ChatColor.AQUA + ChatColor.BOLD + player.getName() + ChatColor.GRAY + ChatColor.BOLD + " - " + ChatColor.YELLOW + ChatColor.BOLD + docKey);
+                            }
+                            break;
                         }
-                        break;
                     }
+                    hologram.getVisibilityManager().setVisibleByDefault(false);
+                    hologram.getVisibilityManager().showTo(player);
                 }
-                hologram.getVisibilityManager().setVisibleByDefault(false);
-                hologram.getVisibilityManager().showTo(player);
             });
         }
+    }
+
+    public static void removePlayerPositionLeaderboards(Player player) {
+        leaderboards.forEach((key, leaderboard) -> {
+            Location location = leaderboard.getLocation().clone().add(0, -3.5, 0);
+            HologramsAPI.getHolograms(Warlords.getInstance()).stream()
+                    .filter(hologram -> hologram.getLocation().equals(location) && hologram.getVisibilityManager().isVisibleTo(player))
+                    .forEach(Hologram::delete);
+        });
     }
 
     private static void addLeaderboard(List<Document> top, String key, Location location, String title) {

@@ -80,6 +80,9 @@ public class WarlordsEvents implements Listener {
         if (e.getPlayer().getVehicle() != null) {
             e.getPlayer().getVehicle().remove();
         }
+        //removing player position boards
+        LeaderboardManager.removePlayerPositionLeaderboards(e.getPlayer());
+
         Bukkit.getOnlinePlayers().forEach(p -> {
             PacketUtils.sendTabHF(p, ChatColor.AQUA + "     Welcome to " + ChatColor.YELLOW + ChatColor.BOLD + "Warlords 2.0     ", ChatColor.GREEN + "Players Online: " + ChatColor.GRAY + (Bukkit.getOnlinePlayers().size() - 1));
         });

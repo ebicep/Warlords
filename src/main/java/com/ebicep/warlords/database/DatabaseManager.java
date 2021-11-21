@@ -115,7 +115,7 @@ public class DatabaseManager {
                     //caching last games then giving leaderboards
                     String sharedChainName = UUID.randomUUID().toString();
                     Warlords.newSharedChain(sharedChainName)
-                            .asyncFirst(() -> getLastGames(10))
+                            .asyncFirst(() -> getLastGames(5))
                             .syncLast(previousGames::addAll)
                             .sync(() -> {
                                 previousGames.forEach(DatabaseGame::createHolograms);
