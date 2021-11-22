@@ -39,6 +39,7 @@ import org.bukkit.event.player.*;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.HashSet;
 import java.util.Objects;
@@ -496,8 +497,8 @@ public class WarlordsEvents implements Listener {
                                     ChatColor.DARK_GRAY + "][" +
                                     playerSettings.getSelectedClass().specType.getColoredSymbol() +
                                     ChatColor.DARK_GRAY + "] " +
-                                    (player.isOp() ? ChatColor.RED + "[C] " : "") +
-                                    (player.isOp() ? ChatColor.RED : ChatColor.AQUA) + "%1$s" +
+                                    (player.isOp() ? ChatColor.GOLD + "[C] " : "") +
+                                    (player.isOp() ? ChatColor.GOLD : ChatColor.AQUA) + "%1$s" +
                                     ChatColor.WHITE + ": %2$s"
                             );
                             e.getRecipients().removeIf(Warlords::hasPlayer);
@@ -513,8 +514,8 @@ public class WarlordsEvents implements Listener {
                                 playerSettings.getSelectedClass().specType.getColoredSymbol() +
                                 ChatColor.DARK_GRAY + "] " +
                                 (wp.isDeath() ? ChatColor.GRAY + "[SPECTATOR] " : "") +
-                                (player.isOp() ? ChatColor.RED + "[C] " : "") +
-                                (player.isOp() ? ChatColor.RED : ChatColor.AQUA) + "%1$s" +
+                                (player.isOp() ? ChatColor.GOLD + "[C] " : "") +
+                                (player.isOp() ? ChatColor.GOLD : ChatColor.AQUA) + "%1$s" +
                                 ChatColor.WHITE + ": %2$s"
                         );
                         if (!(wp.getGame().getState() instanceof EndState)) {
@@ -524,7 +525,7 @@ public class WarlordsEvents implements Listener {
                     case PARTY:
                         if (Warlords.partyManager.getPartyFromAny(uuid).isPresent()) {
                             e.setFormat(ChatColor.BLUE + "Party" + ChatColor.DARK_GRAY + " > " +
-                                    (player.isOp() ? ChatColor.RED : ChatColor.AQUA) + "%1$s" +
+                                    (player.isOp() ? ChatColor.GOLD : ChatColor.AQUA) + "%1$s" +
                                     ChatColor.WHITE + ": %2$s"
                             );
                             e.getRecipients().retainAll(Warlords.partyManager.getPartyFromAny(uuid).get().getAllPartyPeoplePlayerOnline());
