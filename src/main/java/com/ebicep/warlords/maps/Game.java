@@ -2,6 +2,7 @@ package com.ebicep.warlords.maps;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.events.WarlordsEvents;
+import com.ebicep.warlords.maps.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.maps.state.InitState;
 import com.ebicep.warlords.maps.state.PlayingState;
 import com.ebicep.warlords.maps.state.PreLobbyState;
@@ -32,6 +33,8 @@ public class Game implements Runnable {
     private List<UUID> spectators = new ArrayList<>();
 
     private HashMap<BukkitTask, Long> gameTasks = new HashMap<>();
+    
+    private final List<ScoreboardHandler> list = new ArrayList<>();
 
     public boolean isState(Class<? extends State> clazz) {
         return clazz.isAssignableFrom(this.state.getClass());
