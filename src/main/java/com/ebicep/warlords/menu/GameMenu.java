@@ -221,6 +221,12 @@ public class GameMenu {
                             player.sendMessage(ChatColor.GREEN + "You have changed your " + ChatColor.AQUA + selectedClass.name + ChatColor.GREEN + "'s weapon skin to: §b" + weapon.name + "!");
                             Weapons.setSelected(player, selectedClass, weapon);
                             openWeaponMenu(player, pageNumber);
+                            PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
+                            AbstractPlayerClass apc = selectedClass.create.get();
+                            player.getInventory().setItem(1, new ItemBuilder(apc.getWeapon().getItem(playerSettings.getWeaponSkins()
+                                    .getOrDefault(selectedClass, Weapons.FELFLAME_BLADE).item)).name("§aWeapon Skin Preview")
+                                    .lore("")
+                                    .get());
                         } else {
                             player.sendMessage(ChatColor.RED + "This weapon skin has not been unlocked yet!");
                         }

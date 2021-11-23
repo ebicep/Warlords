@@ -2,6 +2,7 @@ package com.ebicep.warlords.events;
 
 import com.ebicep.warlords.ChatChannels;
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.classes.abilties.IceBarrier;
 import com.ebicep.warlords.classes.abilties.Soulbinding;
 import com.ebicep.warlords.classes.abilties.UndyingArmy;
@@ -112,9 +113,17 @@ public class WarlordsEvents implements Listener {
             Utils.sendCenteredMessage(player, ChatColor.GOLD + "Click the Nether Star or do " + ChatColor.GREEN + "/menu" + ChatColor.GOLD + " to open the selection menu.");
             Utils.sendCenteredMessage(player, ChatColor.BLUE + "-----------------------------------------------------");
 
+            PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
+            Classes selectedClass = playerSettings.getSelectedClass();
+            AbstractPlayerClass apc = selectedClass.create.get();
+
             player.getInventory().clear();
             player.getInventory().setArmorContents(new ItemStack[]{null, null, null, null});
             player.getInventory().setItem(4, new ItemBuilder(Material.NETHER_STAR).name("§aSelection Menu").get());
+            player.getInventory().setItem(1, new ItemBuilder(apc.getWeapon().getItem(playerSettings.getWeaponSkins()
+                    .getOrDefault(selectedClass, Weapons.FELFLAME_BLADE).item)).name("§aWeapon Skin Preview")
+                    .lore("")
+                    .get());
             if(player.isOp()) {
                 player.getInventory().setItem(3, new ItemBuilder(Material.EMERALD).name("§aDebug Menu").get());
             }

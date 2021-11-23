@@ -2,6 +2,7 @@ package com.ebicep.warlords.commands.debugcommands;
 
 import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.GameMap;
@@ -9,6 +10,9 @@ import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.state.PreLobbyState;
 import com.ebicep.warlords.party.Party;
 import com.ebicep.warlords.player.ArmorManager;
+import com.ebicep.warlords.player.Classes;
+import com.ebicep.warlords.player.PlayerSettings;
+import com.ebicep.warlords.player.Weapons;
 import com.ebicep.warlords.util.ItemBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -94,6 +98,10 @@ public class StartCommand implements TabExecutor {
         for (Player player : people) {
             player.getInventory().clear();
 
+            PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
+            Classes selectedClass = playerSettings.getSelectedClass();
+            AbstractPlayerClass apc = selectedClass.create.get();
+
             player.setAllowFlight(false);
 
             player.getInventory().setItem(5, new ItemBuilder(Material.NOTE_BLOCK)
@@ -103,6 +111,12 @@ public class StartCommand implements TabExecutor {
             player.getInventory().setItem(6, new ItemBuilder(Material.NETHER_STAR)
                     .name(ChatColor.AQUA + "Pre-game Menu ")
                     .lore(ChatColor.GRAY + "Allows you to change your class, select a\n" + ChatColor.GRAY + "weapon, and edit your settings.")
+                    .get());
+            player.getInventory().setItem(1, new ItemBuilder(apc.getWeapon()
+                    .getItem(playerSettings.getWeaponSkins()
+                    .getOrDefault(selectedClass, Weapons.FELFLAME_BLADE).item))
+                    .name("§aWeapon Skin Preview")
+                    .lore("")
                     .get());
 
             Team team = Warlords.getPlayerSettings(player.getUniqueId()).getWantedTeam();
