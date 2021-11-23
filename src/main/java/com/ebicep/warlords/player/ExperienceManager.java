@@ -1,9 +1,7 @@
 package com.ebicep.warlords.player;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.*;
 import com.ebicep.warlords.util.Utils;
-import com.google.common.collect.ImmutableMap;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.UpdateManyModel;
 import com.mongodb.client.model.WriteModel;
@@ -13,7 +11,6 @@ import org.bukkit.entity.Player;
 
 import java.text.DecimalFormat;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.database.DatabaseManager.*;
 import static com.mongodb.client.model.Filters.*;
@@ -23,6 +20,7 @@ public class ExperienceManager {
     public static Map<Integer, Long> levelExperience = new HashMap<>();
     public static Map<Long, Integer> experienceLevel = new HashMap<>();
     public static DecimalFormat currentExperienceDecimalFormat = new DecimalFormat("#,###.#");
+    public static HashMap<UUID, LinkedHashMap<String, Long>> cachedPlayerExpSummary = new HashMap<>();
 
     static {
         //caching all levels/experience
@@ -92,11 +90,17 @@ public class ExperienceManager {
         playersInformation.bulkWrite(updates);
     }
 
-    public static long getExpFromGameStats(WarlordsPlayer warlordsPlayer) {
-        long exp = 0;
-
-        exp += !warlordsPlayer.getGameState().isForceEnd() && warlordsPlayer.getGameState().getStats(warlordsPlayer.getTeam()).points() > warlordsPlayer.getGameState().getStats(warlordsPlayer.getTeam().enemy()).points() ? 500 : 250;
-        exp += 5L * (warlordsPlayer.getTotalKills() + warlordsPlayer.getTotalAssists());
+    public static LinkedHashMap<String, Long> getExpFromGameStats(WarlordsPlayer warlordsPlayer, boolean removeFromCache) {
+        if(cachedPlayerExpSummary.containsKey(warlordsPlayer.getUuid()) && cachedPlayerExpSummary.get(warlordsPlayer.getUuid()) != null) {
+            if(removeFromCache) {
+                return cachedPlayerExpSummary.remove(warlordsPlayer.getUuid());
+            } else {
+                return cachedPlayerExpSummary.get(warlordsPlayer.getUuid());
+            }
+        }
+        boolean won = !warlordsPlayer.getGameState().isForceEnd() && warlordsPlayer.getGameState().getStats(warlordsPlayer.getTeam()).points() > warlordsPlayer.getGameState().getStats(warlordsPlayer.getTeam().enemy()).points();
+        long winLossExp = won ? 500 : 250;
+        long kaExp = 5L * (warlordsPlayer.getTotalKills() + warlordsPlayer.getTotalAssists());
 
         double damageMultiplier;
         double healingMultiplier;
@@ -116,12 +120,50 @@ public class ExperienceManager {
             absorbedMultiplier = .325;
         }
         double calculatedDHP = warlordsPlayer.getTotalDamage() * damageMultiplier + warlordsPlayer.getTotalHealing() * healingMultiplier + warlordsPlayer.getTotalAbsorbed() * absorbedMultiplier;
-        exp += calculatedDHP / 500L;
+        long dhpExp = (long) (calculatedDHP / 500L);
+        long flagCapExp = warlordsPlayer.getFlagsCaptured() * 150L;
+        long flagRetExp = warlordsPlayer.getFlagsReturned() * 50L;
 
-        exp += warlordsPlayer.getFlagsCaptured() * 150L;
-        exp += warlordsPlayer.getFlagsReturned() * 50L;
+        LinkedHashMap<String, Long> expGain = new LinkedHashMap<>();
+        expGain.put(won ? "Win" : "Loss", winLossExp);
+        if(kaExp != 0) {
+            expGain.put("Kills/Assists", kaExp);
+        }
+        if(dhpExp != 0) {
+            expGain.put("DHP", dhpExp);
+        }
+        if(flagCapExp != 0) {
+            expGain.put("Flags Captured", flagCapExp);
+        }
+        if(flagRetExp != 0) {
+            expGain.put("Flags Returned", flagRetExp);
+        }
 
-        return exp;
+        Document playerDaily = cachedPlayerInfoDaily.get(warlordsPlayer.getUuid());
+        if(playerDaily == null) {
+            expGain.put("First Game of the Day", 500L);
+        } else {
+            int plays = playerDaily.getInteger("wins") + playerDaily.getInteger("losses");
+            switch (plays) {
+                case 1:
+                    expGain.put("Second Game of the Day", 250L);
+                    break;
+                case 2:
+                    expGain.put("Third Game of the Day", 100L);
+                    break;
+            }
+        }
+
+
+        cachedPlayerExpSummary.put(warlordsPlayer.getUuid(), expGain);
+        return expGain;
+    }
+
+    public static long getSpecExpFromSummary(LinkedHashMap<String, Long> expSummary) {
+        return expSummary.values().stream().mapToLong(Long::longValue).sum()
+                - expSummary.getOrDefault("First Game of the Day", 0L)
+                - expSummary.getOrDefault("Second Game of the Day", 0L)
+                - expSummary.getOrDefault("Third Game of the Day", 0L);
     }
 
     public static void giveExpFromCurrentStats(UUID uuid) {
@@ -155,7 +197,7 @@ public class ExperienceManager {
             updatedInformation.put("experience", totalExp);
             futureMessages.add(ChatColor.DARK_GRAY + "+" + ChatColor.DARK_AQUA + Utils.addCommaAndRound(totalExp) + ChatColor.GOLD + " Universal Experience");
             futureMessages.add(ChatColor.BLUE + "---------------------------------------------------");
-            DatabaseManager.updatePlayerInformation(uuid, updatedInformation, FieldUpdateOperators.SET, true);
+            DatabaseManager.updatePlayerInformationAllTime(uuid, updatedInformation, FieldUpdateOperators.SET, true);
             FutureMessageManager.addNewFutureMessageDocument(uuid, true, futureMessages.toArray(new String[0]));
         }
     }

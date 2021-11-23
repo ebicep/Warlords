@@ -140,13 +140,31 @@ public class EndState implements State, TimerDebugAble {
                 Player player = Bukkit.getPlayer(wp.getUuid());
                 if (player == null) continue;
 
-                long experienceEarned = ExperienceManager.getExpFromGameStats(wp);
+                LinkedHashMap<String, Long> expSummary = ExperienceManager.getExpFromGameStats(wp, true);
+                long experienceEarnedUniversal = expSummary.values().stream().mapToLong(Long::longValue).sum();
+                long experienceEarnedSpec = ExperienceManager.getSpecExpFromSummary(expSummary);
                 long experienceOnSpec = ExperienceManager.getExperienceForSpec(wp.getUuid(), wp.getSpecClass());
                 long experienceUniversal = ExperienceManager.getUniversalLevel(wp.getUuid());
-                Utils.sendMessage(player, true, ChatColor.GRAY + "+" + ChatColor.DARK_GREEN + Utils.addCommaAndRound(experienceEarned) + " " + ChatColor.GOLD + wp.getSpec().getClassName() + " Experience " + ChatColor.GRAY + "(" + wp.getSpecClass().specType.chatColor + wp.getSpecClass().name + ChatColor.GRAY + ")");
-                ExperienceManager.giveLevelUpMessage(player, experienceOnSpec, experienceOnSpec + experienceEarned);
-                Utils.sendMessage(player, true, ChatColor.GRAY + "+" + ChatColor.DARK_AQUA + Utils.addCommaAndRound(experienceEarned) + " " + ChatColor.GOLD + "Universal Experience ");
-                ExperienceManager.giveLevelUpMessage(player, experienceUniversal, experienceUniversal + experienceEarned);
+                StringBuilder specExpSummary = new StringBuilder();
+                StringBuilder universalExpSummary = new StringBuilder();
+                expSummary.forEach((s, aLong) -> {
+                    if(!s.equals("First Game of the Day") && !s.equals("Second Game of the Day") && !s.equals("Third Game of the Day")) {
+                        specExpSummary.append(ChatColor.AQUA).append(s).append(ChatColor.WHITE).append(": ").append(ChatColor.DARK_GRAY).append("+").append(ChatColor.DARK_GREEN).append(aLong).append("\n");
+                    }
+                    universalExpSummary.append(ChatColor.AQUA).append(s).append(ChatColor.WHITE).append(": ").append(ChatColor.DARK_GRAY).append("+").append(ChatColor.DARK_GREEN).append(aLong).append("\n");
+                });
+                specExpSummary.setLength(specExpSummary.length() - 1);
+                universalExpSummary.setLength(universalExpSummary.length() - 1);
+
+                TextComponent classSpecExp = new TextComponent(ChatColor.GRAY + "+" + ChatColor.DARK_GREEN + Utils.addCommaAndRound(experienceEarnedSpec) + " " + ChatColor.GOLD + wp.getSpec().getClassName() + " Experience " + ChatColor.GRAY + "(" + wp.getSpecClass().specType.chatColor + wp.getSpecClass().name + ChatColor.GRAY + ")");
+                classSpecExp.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(specExpSummary.toString()).create()));
+                Utils.sendCenteredMessageWithEvents(player, Collections.singletonList(classSpecExp));
+                ExperienceManager.giveLevelUpMessage(player, experienceOnSpec, experienceOnSpec + experienceEarnedSpec);
+
+                TextComponent universalExp = new TextComponent(ChatColor.GRAY + "+" + ChatColor.DARK_AQUA + Utils.addCommaAndRound(experienceEarnedUniversal) + " " + ChatColor.GOLD + "Universal Experience ");
+                universalExp.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(universalExpSummary.toString()).create()));
+                Utils.sendCenteredMessageWithEvents(player, Collections.singletonList(universalExp));
+                ExperienceManager.giveLevelUpMessage(player, experienceUniversal, experienceUniversal + experienceEarnedUniversal);
             }
         }
         sendMessageToAllGamePlayer(game, "" + ChatColor.GREEN + ChatColor.BOLD + "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬", false);

@@ -273,6 +273,26 @@ public class PartyCommand implements CommandExecutor {
                 });
                 return true;
             }
+            case "pforcejoin": {
+                Optional<Party> currentParty = Warlords.partyManager.getPartyFromAny(((Player) sender).getUniqueId());
+                currentParty.ifPresent(party -> {
+                    if(sender.isOp()) {
+                        if(args.length > 0) {
+                            String input = args[0];
+                            if(input.equalsIgnoreCase("@a")) {
+                                Bukkit.getOnlinePlayers().stream()
+                                        .filter(p -> !p.getName().equalsIgnoreCase(party.getLeaderName()))
+                                        .forEach(p -> Bukkit.getServer().dispatchCommand(p, "p join " + party.getLeaderName()));
+                            } else {
+                                Bukkit.getOnlinePlayers().stream()
+                                        .filter(p -> p.getName().equalsIgnoreCase(input))
+                                        .forEach(p -> Bukkit.getServer().dispatchCommand(p, "p join " + party.getLeaderName()));
+                            }
+                        }
+                    }
+                });
+                return true;
+            }
         }
         return true;
     }

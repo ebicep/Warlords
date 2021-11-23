@@ -26,7 +26,6 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
@@ -42,10 +41,12 @@ public class DatabaseManager {
     public static MongoDatabase warlordsGamesDatabase;
     public static MongoCollection<Document> playersInformation;
     public static MongoCollection<Document> playersInformationWeekly;
-    public static MongoCollection<Document> weeklyInfo;
+    public static MongoCollection<Document> playersInformationDaily;
+    public static MongoCollection<Document> resetTimings;
     public static MongoCollection<Document> weeklyLeaderboards;
     public static MongoCollection<Document> gamesInformation;
     public static HashMap<UUID, Document> cachedPlayerInfo = new HashMap<>();
+    public static HashMap<UUID, Document> cachedPlayerInfoDaily = new HashMap<>();
     public static HashMap<String, Long> cachedTotalKeyValues = new HashMap<>();
     public static String lastWarlordsPlusString = "";
 
@@ -67,7 +68,8 @@ public class DatabaseManager {
 
                     playersInformation = warlordsPlayersDatabase.getCollection("Players_Information");
                     playersInformationWeekly = warlordsPlayersDatabase.getCollection("Players_Information_Weekly");
-                    weeklyInfo = warlordsPlayersDatabase.getCollection("Weekly_Info");
+                    playersInformationDaily = warlordsPlayersDatabase.getCollection("Players_Information_Daily");
+                    resetTimings = warlordsPlayersDatabase.getCollection("Reset_Timings");
                     weeklyLeaderboards = warlordsPlayersDatabase.getCollection("Weekly_Leaderboards");
                     gamesInformation = warlordsGamesDatabase.getCollection("Games_Information");
 
@@ -79,13 +81,13 @@ public class DatabaseManager {
                 //POST CONNECT
                 {
                     //checking weekly date, if over 10,000 minutes (10080 == 1 week) reset weekly
-                    Document weeklyDocumentInfo = weeklyInfo.find().first();
+                    Document weeklyDocumentInfo = resetTimings.find().filter(eq("time", "weekly")).first();
+                    Date current = new Date();
                     if (weeklyDocumentInfo != null && weeklyDocumentInfo.get("last_reset") != null) {
-                        Date current = new Date();
                         Date lastReset = weeklyDocumentInfo.getDate("last_reset");
                         long timeDiff = current.getTime() - lastReset.getTime();
 
-                        System.out.println(timeDiff / 60000);
+                        System.out.println("Reset Time: " + timeDiff / 60000);
                         if (timeDiff > 0 && timeDiff / (1000 * 60) > 10000) {
                             String sharedChainName = UUID.randomUUID().toString();
                             //caching lb
@@ -99,10 +101,34 @@ public class DatabaseManager {
                                         //clearing weekly
                                         playersInformationWeekly.deleteMany(new Document());
                                         //updating date to current
-                                        weeklyInfo.updateOne(eq("last_reset", lastReset), new Document("$set", new Document("last_reset", current)));
+                                        resetTimings.updateOne(and(eq("time", "weekly"),eq("last_reset", lastReset)),
+                                                new Document("$set", new Document("time", "weekly").append("last_reset", current))
+                                        );
 
                                     }).sync(() -> {
                                         Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Weekly player information reset");
+                                    }).execute();
+                        }
+                    }
+                    //checking daily date, if over 1,400 minutes (1440 == 1 day) reset daily
+                    Document dailyDocumentInfo = resetTimings.find().filter(eq("time", "daily")).first();
+                    if (dailyDocumentInfo != null && dailyDocumentInfo.get("last_reset") != null) {
+                        Date lastReset = dailyDocumentInfo.getDate("last_reset");
+                        long timeDiff = current.getTime() - lastReset.getTime();
+
+                        if (timeDiff > 0 && timeDiff / (1000 * 60) > 1400) {
+                            String sharedChainName = UUID.randomUUID().toString();
+
+                            Warlords.newSharedChain(sharedChainName)
+                                    .async(() -> {
+                                        //clearing daily
+                                        playersInformationDaily.deleteMany(new Document());
+                                        //updating date to current
+                                        resetTimings.updateOne(and(eq("time", "daily"),eq("last_reset", lastReset)),
+                                                new Document("$set", new Document("time", "daily").append("last_reset", current))
+                                        );
+                                    }).sync(() -> {
+                                        Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Daily player information reset");
                                     }).execute();
                         }
                     }
@@ -111,6 +137,8 @@ public class DatabaseManager {
                     playersInformation.find().forEach((Consumer<? super Document>) document -> {
                         cachedPlayerInfo.put(UUID.fromString((String) document.get("uuid")), document);
                     });
+
+                    updateDailyCache();
 
                     //caching last games then giving leaderboards
                     String sharedChainName = UUID.randomUUID().toString();
@@ -329,7 +357,7 @@ public class DatabaseManager {
      * @param operator {@code FieldUpdateOperators} operator to apply the new information
      * @param runAsync {@code true} if this method is to be run async; {@code false} if this method is to be run sync or to block the current thread to ensure this method runs before any code after
      */
-    public static void updatePlayerInformation(UUID uuid, HashMap<String, Object> newInfo, FieldUpdateOperators operator, boolean runAsync) {
+    public static void updatePlayerInformationAllTime(UUID uuid, HashMap<String, Object> newInfo, FieldUpdateOperators operator, boolean runAsync) {
         if (!connected) return;
         String name = Bukkit.getOfflinePlayer(uuid).getName();
         try {
@@ -337,14 +365,8 @@ public class DatabaseManager {
                 Warlords.newChain()
                         .asyncFirst(() -> getPlayer(uuid))
                         .abortIfNull()
-                        .async(() -> {
-                            Document history = new Document();
-                            for (String s : newInfo.keySet()) {
-                                history.append(s, newInfo.get(s));
-                            }
-                            Document update = new Document(operator.operator, history);
-                            playersInformation.updateOne(eq("uuid", uuid.toString()), update);
-                        }).sync(() -> {
+                        .async(() -> updatePlayerInformation(uuid, newInfo, operator, playersInformation))
+                        .sync(() -> {
                             cachedTotalKeyValues.clear();
                             cachedPlayerInfo.remove(uuid);
 
@@ -355,12 +377,7 @@ public class DatabaseManager {
                 if (getPlayer(uuid) == null) {
                     return;
                 }
-                Document history = new Document();
-                for (String s : newInfo.keySet()) {
-                    history.append(s, newInfo.get(s));
-                }
-                Document update = new Document(operator.operator, history);
-                playersInformation.updateOne(eq("uuid", uuid.toString()), update);
+                updatePlayerInformation(uuid, newInfo, operator, playersInformation);
                 cachedTotalKeyValues.clear();
                 cachedPlayerInfo.remove(uuid);
 
@@ -373,44 +390,42 @@ public class DatabaseManager {
     }
 
     public static void updatePlayerInformation(OfflinePlayer player, HashMap<String, Object> newInfo, FieldUpdateOperators operator, boolean runAsync) {
-        updatePlayerInformation(player.getUniqueId(), newInfo, operator, runAsync);
+        updatePlayerInformationAllTime(player.getUniqueId(), newInfo, operator, runAsync);
     }
 
-    public static void updatePlayerInformationWeekly(UUID uuid, HashMap<String, Object> newInfo, FieldUpdateOperators operator, boolean runAsync) {
+    public static void updatePlayerInformation(UUID uuid, HashMap<String, Object> newInfo, FieldUpdateOperators operator, boolean runAsync, MongoCollection<Document> collection) {
         if (!connected) return;
         String name = Bukkit.getOfflinePlayer(uuid).getName();
         try {
             if (runAsync) {
                 Warlords.newChain()
-                        .async(() -> {
-                            Document document = playersInformationWeekly.find(eq("uuid", uuid.toString())).first();
-                            if (document == null) {
-                                playersInformationWeekly.insertOne(getNewPlayerDocument(uuid));
-                                Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Added " + name + " to weekly");
-                            }
-                            Document history = new Document();
-                            for (String s : newInfo.keySet()) {
-                                history.append(s, newInfo.get(s));
-                            }
-                            Document update = new Document(operator.operator, history);
-                            playersInformationWeekly.updateOne(eq("uuid", uuid.toString()), update);
-                        }).execute();
+                        .async(() -> updatePlayerInformation(uuid, newInfo, operator, collection)).execute();
             } else {
-                Document document = playersInformationWeekly.find(eq("uuid", uuid.toString())).first();
-                if (document == null) {
-                    playersInformationWeekly.insertOne(getNewPlayerDocument(uuid));
-                    Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Added " + name + " to weekly");
-                }
-                Document history = new Document();
-                for (String s : newInfo.keySet()) {
-                    history.append(s, newInfo.get(s));
-                }
-                Document update = new Document(operator.operator, history);
-                playersInformationWeekly.updateOne(eq("uuid", uuid.toString()), update);
+                updatePlayerInformation(uuid, newInfo, operator, collection);
             }
         } catch (Exception e) {
             Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] There was an error trying to update information of player " + name);
         }
+    }
+
+    private static void updatePlayerInformation(UUID uuid, HashMap<String, Object> newInfo, FieldUpdateOperators operator, MongoCollection<Document> collection) {
+        Document document = collection.find(eq("uuid", uuid.toString())).first();
+        if (document == null) {
+            collection.insertOne(getNewPlayerDocument(uuid));
+            Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Added " + uuid + " to " + collection.getNamespace());
+        }
+        Document history = new Document();
+        for (String s : newInfo.keySet()) {
+            history.append(s, newInfo.get(s));
+        }
+        Document update = new Document(operator.operator, history);
+        collection.updateOne(eq("uuid", uuid.toString()), update);
+    }
+
+    private static void updateDailyCache() {
+        playersInformationDaily.find().forEach((Consumer<? super Document>) document -> {
+            cachedPlayerInfoDaily.put(UUID.fromString((String) document.get("uuid")), document);
+        });
     }
 
     public static Object getPlayerInfoWithDotNotation(Player player, String dots) {
@@ -554,8 +569,9 @@ public class DatabaseManager {
                         if (gameInformation.isUpdatePlayerStats()) {
                             //updating all players, blocks this async thread, so leaderboard updated after
                             gameInformation.getPlayerInfoNegative().forEach((uuid, stringObjectHashMap) -> {
-                                updatePlayerInformation(uuid, stringObjectHashMap, FieldUpdateOperators.INCREMENT, false);
-                                updatePlayerInformationWeekly(uuid, stringObjectHashMap, FieldUpdateOperators.INCREMENT, false);
+                                updatePlayerInformationAllTime(uuid, stringObjectHashMap, FieldUpdateOperators.INCREMENT, false);
+                                updatePlayerInformation(uuid, stringObjectHashMap, FieldUpdateOperators.INCREMENT, false, playersInformationWeekly);
+                                updatePlayerInformation(uuid, stringObjectHashMap, FieldUpdateOperators.INCREMENT, false, playersInformationDaily);
                             });
                         }
                         //set the game from the database to uncounted
@@ -569,6 +585,7 @@ public class DatabaseManager {
                             LeaderboardManager.playerGameHolograms.put(uuid, previousGames.size() - 1);
                         });
                         LeaderboardManager.addHologramLeaderboards(UUID.randomUUID().toString());
+                        updateDailyCache();
                     }).execute();
         } catch (Exception e) {
             e.printStackTrace();
@@ -584,8 +601,9 @@ public class DatabaseManager {
                         if (gameInformation.isUpdatePlayerStats()) {
                             //updating all players, blocks this async thread, so leaderboard updated after
                             gameInformation.getPlayerInfo().forEach((uuid, stringObjectHashMap) -> {
-                                updatePlayerInformation(uuid, stringObjectHashMap, FieldUpdateOperators.INCREMENT, false);
-                                updatePlayerInformationWeekly(uuid, stringObjectHashMap, FieldUpdateOperators.INCREMENT, false);
+                                updatePlayerInformationAllTime(uuid, stringObjectHashMap, FieldUpdateOperators.INCREMENT, false);
+                                updatePlayerInformation(uuid, stringObjectHashMap, FieldUpdateOperators.INCREMENT, false, playersInformationWeekly);
+                                updatePlayerInformation(uuid, stringObjectHashMap, FieldUpdateOperators.INCREMENT, false, playersInformationDaily);
                             });
                         }
                         //inserting the game to the database
@@ -595,6 +613,7 @@ public class DatabaseManager {
                             LeaderboardManager.playerGameHolograms.put(uuid, previousGames.size() - 1);
                         });
                         LeaderboardManager.addHologramLeaderboards(UUID.randomUUID().toString());
+                        updateDailyCache();
                     }).execute();
             Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Added game");
         } catch (MongoWriteException e) {
@@ -668,7 +687,9 @@ public class DatabaseManager {
             long damage = (int) value.getTotalDamage();
             long healing = (int) value.getTotalHealing();
             long absorbed = (int) value.getTotalAbsorbed();
-            long experienceEarned = ExperienceManager.getExpFromGameStats(value);
+            LinkedHashMap<String, Long> expSummary = ExperienceManager.getExpFromGameStats(value, false);
+            long experienceEarnedUniversal = expSummary.values().stream().mapToLong(Long::longValue).sum();
+            long experienceEarnedSpec = ExperienceManager.getSpecExpFromSummary(expSummary);
             String className = value.getSpec().getClassName().toLowerCase();
             String specName = value.getSpecClass().name.toLowerCase();
             HashMap<String, Object> playerInfo = new HashMap<>();
@@ -682,7 +703,7 @@ public class DatabaseManager {
             playerInfo.put("damage", damage);
             playerInfo.put("healing", healing);
             playerInfo.put("absorbed", absorbed);
-            playerInfo.put("experience", experienceEarned);
+            playerInfo.put("experience", experienceEarnedUniversal);
             playerInfo.put(className + ".kills", totalKills);
             playerInfo.put(className + ".assists", totalAssists);
             playerInfo.put(className + ".deaths", totalDeaths);
@@ -693,7 +714,7 @@ public class DatabaseManager {
             playerInfo.put(className + ".damage", damage);
             playerInfo.put(className + ".healing", healing);
             playerInfo.put(className + ".absorbed", absorbed);
-            playerInfo.put(className + ".experience", experienceEarned);
+            playerInfo.put(className + ".experience", experienceEarnedSpec);
             playerInfo.put(className + "." + specName + ".kills", totalKills);
             playerInfo.put(className + "." + specName + ".assists", totalAssists);
             playerInfo.put(className + "." + specName + ".deaths", totalDeaths);
@@ -704,7 +725,7 @@ public class DatabaseManager {
             playerInfo.put(className + "." + specName + ".damage", damage);
             playerInfo.put(className + "." + specName + ".healing", healing);
             playerInfo.put(className + "." + specName + ".absorbed", absorbed);
-            playerInfo.put(className + "." + specName + ".experience", experienceEarned);
+            playerInfo.put(className + "." + specName + ".experience", experienceEarnedSpec);
 
             newPlayerInfo.put(value.getUuid(), playerInfo);
         }
@@ -743,7 +764,13 @@ public class DatabaseManager {
             }
         }
         output.setLength(output.length() - 1);
-        BotManager.getTextChannelByName("games-backlog").ifPresent(textChannel -> textChannel.sendMessage(output.toString()).queue());
+        if(BotManager.numberOfMessagesSentLast30Sec > 15) {
+            if(BotManager.numberOfMessagesSentLast30Sec < 20) {
+                BotManager.getTextChannelByName("games-backlog").ifPresent(textChannel -> textChannel.sendMessage("SOMETHING BROKEN DETECTED <@239929120035700737> <@253971614998331393>").queue());
+            }
+        } else {
+            BotManager.getTextChannelByName("games-backlog").ifPresent(textChannel -> textChannel.sendMessage(output.toString()).queue());
+        }
         lastWarlordsPlusString = output.toString();
         return output.toString();
     }
@@ -783,7 +810,7 @@ public class DatabaseManager {
                     .append("total_healing_on_carrier", warlordsPlayer.getTotalHealingOnCarrier())
                     .append("damage_on_carrier", Arrays.stream(warlordsPlayer.getDamageOnCarrier()).boxed().collect(Collectors.toList()))
                     .append("healing_on_carrier", Arrays.stream(warlordsPlayer.getHealingOnCarrier()).boxed().collect(Collectors.toList()))
-                    .append("experience_earned", ExperienceManager.getExpFromGameStats(warlordsPlayer))
+                    .append("experience_earned", ExperienceManager.getSpecExpFromSummary(ExperienceManager.getExpFromGameStats(warlordsPlayer, false)))
             );
         } catch (Exception e) {
             Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Error appending new document");

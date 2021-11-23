@@ -43,7 +43,7 @@ commands:
     aliases: [ party, p,
                partyclose, partyopen, pclose, popen,
                partyoutside, poutside,
-               pleader
+               pleader, pforcejoin
     ]
   stream:
     description: Creates a new party where anyone can join

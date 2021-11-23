@@ -98,7 +98,7 @@ public class LeaderboardManager {
         addCalculatedStats(playersInformation, cachedSortedPlayersLifeTime);
         //leaderboard position
         leaderboards.put("plays", new Leaderboard("Plays", new Location(world, -2564.5, 56, 712.5)));
-//        leaderboards.put("dhp", new Leaderboard("DHP", new Location(world, -2555, 60.5, 717)));
+        leaderboards.put("dhp", new Leaderboard("DHP", new Location(world, -2555, 6000.5, 717)));
         leaderboards.put("dhp_per_game", new Leaderboard("DHP per Game", new Location(world, -2546.5, 56, 712.5)));
 //        leaderboards.put("kills_per_game", new Leaderboard("Kills per Game", new Location(world, -2567, 75.5, 717)));
         leaderboards.put("deaths_per_game", new Leaderboard("Deaths per Game", new Location(world, -2608.5, 62, 737.5)));
