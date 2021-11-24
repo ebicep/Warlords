@@ -141,6 +141,7 @@
             <version>4.7.0</version>
             <scope>provided</scope>
         </dependency>
+        <!-- Discord JDA -->
         <dependency>
             <groupId>net.dv8tion</groupId>
             <artifactId>JDA</artifactId>
