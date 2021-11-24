@@ -84,3 +84,6 @@ commands:
   mylocation:
     description: Prints your location
     usage: /mylocation
+  msg:
+    description: Message a player
+    aliases: [ msg, r, tell ]

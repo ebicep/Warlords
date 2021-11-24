@@ -18,22 +18,16 @@ import java.util.Scanner;
 public class BotManager {
 
     public static JDA jda;
+    public static String botToken;
     public static String compGamesServerID = "776590423501045760";
     public static int numberOfMessagesSentLast30Sec = 0;
 
     public static void connect() throws LoginException {
-        try {
-            File myObj = new File(System.getProperty("user.dir") + "/plugins/Warlords/botToken.TXT");
-            Scanner myReader = new Scanner(myObj);
-            if (myReader.hasNextLine()) {
-                jda = JDABuilder.createDefault(myReader.nextLine())
-                        .enableIntents(GatewayIntent.GUILD_MEMBERS)
-                        .addEventListeners(new BotListener())
-                        .build();
-                myReader.close();
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+        if(botToken != null) {
+            jda = JDABuilder.createDefault(botToken)
+                    .enableIntents(GatewayIntent.GUILD_MEMBERS)
+                    .addEventListeners(new BotListener())
+                    .build();
         }
 
         new BukkitRunnable() {

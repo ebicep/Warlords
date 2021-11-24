@@ -36,15 +36,21 @@ import static com.mongodb.client.model.Updates.set;
 public class DatabaseManager {
 
     public static boolean connected;
+
+    public static String key;
+
     public static MongoClient mongoClient;
     public static MongoDatabase warlordsPlayersDatabase;
     public static MongoDatabase warlordsGamesDatabase;
+
     public static MongoCollection<Document> playersInformation;
     public static MongoCollection<Document> playersInformationWeekly;
     public static MongoCollection<Document> playersInformationDaily;
+
     public static MongoCollection<Document> resetTimings;
     public static MongoCollection<Document> weeklyLeaderboards;
     public static MongoCollection<Document> gamesInformation;
+
     public static HashMap<UUID, Document> cachedPlayerInfo = new HashMap<>();
     public static HashMap<UUID, Document> cachedPlayerInfoDaily = new HashMap<>();
     public static HashMap<String, Long> cachedTotalKeyValues = new HashMap<>();
@@ -53,117 +59,107 @@ public class DatabaseManager {
     public static final List<DatabaseGame> previousGames = new ArrayList<>();
 
     public static void connect() {
-        try {
-            Bukkit.getServer().getConsoleSender().sendMessage(System.getProperty("user.dir"));
-            File myObj = new File(System.getProperty("user.dir") + "/plugins/Warlords/database_key.TXT");
-            Scanner myReader = new Scanner(myObj);
-            if (myReader.hasNextLine()) {
-                //PRE CONNECT
-                {
-                    String data = myReader.nextLine();
-                    mongoClient = MongoClients.create(data);
+        if (key != null) {
+            //PRE CONNECT
+            {
+                mongoClient = MongoClients.create(key);
 
-                    warlordsPlayersDatabase = mongoClient.getDatabase("Warlords_Players");
-                    warlordsGamesDatabase = mongoClient.getDatabase("Warlords_Games");
+                warlordsPlayersDatabase = mongoClient.getDatabase("Warlords_Players");
+                warlordsGamesDatabase = mongoClient.getDatabase("Warlords_Games");
 
-                    playersInformation = warlordsPlayersDatabase.getCollection("Players_Information");
-                    playersInformationWeekly = warlordsPlayersDatabase.getCollection("Players_Information_Weekly");
-                    playersInformationDaily = warlordsPlayersDatabase.getCollection("Players_Information_Daily");
-                    resetTimings = warlordsPlayersDatabase.getCollection("Reset_Timings");
-                    weeklyLeaderboards = warlordsPlayersDatabase.getCollection("Weekly_Leaderboards");
-                    gamesInformation = warlordsGamesDatabase.getCollection("Games_Information");
+                playersInformation = warlordsPlayersDatabase.getCollection("Players_Information");
+                playersInformationWeekly = warlordsPlayersDatabase.getCollection("Players_Information_Weekly");
+                playersInformationDaily = warlordsPlayersDatabase.getCollection("Players_Information_Daily");
+                resetTimings = warlordsPlayersDatabase.getCollection("Reset_Timings");
+                weeklyLeaderboards = warlordsPlayersDatabase.getCollection("Weekly_Leaderboards");
+                gamesInformation = warlordsGamesDatabase.getCollection("Games_Information");
 
-                    FutureMessageManager.init();
+                FutureMessageManager.init();
 
-                    Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Database Connected");
-                    connected = true;
-                }
-                //POST CONNECT
-                {
-                    //checking weekly date, if over 10,000 minutes (10080 == 1 week) reset weekly
-                    Document weeklyDocumentInfo = resetTimings.find().filter(eq("time", "weekly")).first();
-                    Date current = new Date();
-                    if (weeklyDocumentInfo != null && weeklyDocumentInfo.get("last_reset") != null) {
-                        Date lastReset = weeklyDocumentInfo.getDate("last_reset");
-                        long timeDiff = current.getTime() - lastReset.getTime();
-
-                        System.out.println("Reset Time: " + timeDiff / 60000);
-                        if (timeDiff > 0 && timeDiff / (1000 * 60) > 10000) {
-                            String sharedChainName = UUID.randomUUID().toString();
-                            //caching lb
-                            LeaderboardManager.addHologramLeaderboards(sharedChainName);
-                            Warlords.newSharedChain(sharedChainName)
-                                    .async(() -> {
-                                        //adding new document with top weekly players
-                                        Document topPlayers = LeaderboardManager.getTopPlayersOnLeaderboard();
-                                        weeklyLeaderboards.insertOne(topPlayers);
-                                        ExperienceManager.awardWeeklyExperience(topPlayers);
-                                        //clearing weekly
-                                        playersInformationWeekly.deleteMany(new Document());
-                                        //updating date to current
-                                        resetTimings.updateOne(and(eq("time", "weekly"),eq("last_reset", lastReset)),
-                                                new Document("$set", new Document("time", "weekly").append("last_reset", current))
-                                        );
-
-                                    }).sync(() -> {
-                                        Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Weekly player information reset");
-                                    }).execute();
-                        }
-                    }
-                    //checking daily date, if over 1,400 minutes (1440 == 1 day) reset daily
-                    Document dailyDocumentInfo = resetTimings.find().filter(eq("time", "daily")).first();
-                    if (dailyDocumentInfo != null && dailyDocumentInfo.get("last_reset") != null) {
-                        Date lastReset = dailyDocumentInfo.getDate("last_reset");
-                        long timeDiff = current.getTime() - lastReset.getTime();
-
-                        if (timeDiff > 0 && timeDiff / (1000 * 60) > 1400) {
-                            String sharedChainName = UUID.randomUUID().toString();
-
-                            Warlords.newSharedChain(sharedChainName)
-                                    .async(() -> {
-                                        //clearing daily
-                                        playersInformationDaily.deleteMany(new Document());
-                                        //updating date to current
-                                        resetTimings.updateOne(and(eq("time", "daily"),eq("last_reset", lastReset)),
-                                                new Document("$set", new Document("time", "daily").append("last_reset", current))
-                                        );
-                                    }).sync(() -> {
-                                        Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Daily player information reset");
-                                    }).execute();
-                        }
-                    }
-
-                    //caching all players
-                    playersInformation.find().forEach((Consumer<? super Document>) document -> {
-                        cachedPlayerInfo.put(UUID.fromString((String) document.get("uuid")), document);
-                    });
-
-                    updateDailyCache();
-
-                    //caching last games then giving leaderboards
-                    String sharedChainName = UUID.randomUUID().toString();
-                    Warlords.newSharedChain(sharedChainName)
-                            .asyncFirst(() -> getLastGames(5))
-                            .syncLast(previousGames::addAll)
-                            .sync(() -> {
-                                previousGames.forEach(DatabaseGame::createHolograms);
-                                Bukkit.getOnlinePlayers().forEach(player -> {
-                                    if(!Warlords.playerScoreboards.containsKey(player.getUniqueId()) || Warlords.playerScoreboards.get(player.getUniqueId()) == null) {
-                                        Warlords.playerScoreboards.put(player.getUniqueId(), new CustomScoreboard(player));
-                                    }
-                                    Warlords.playerScoreboards.get(player.getUniqueId()).giveMainLobbyScoreboard();
-                                });
-                                LeaderboardManager.addHologramLeaderboards(UUID.randomUUID().toString());
-                            })
-                            .execute();
-                    //loading all players
-                    loadAllPlayers();
-                }
+                Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Database Connected");
+                connected = true;
             }
-            myReader.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            connected = false;
+            //POST CONNECT
+            {
+                //checking weekly date, if over 10,000 minutes (10080 == 1 week) reset weekly
+                Document weeklyDocumentInfo = resetTimings.find().filter(eq("time", "weekly")).first();
+                Date current = new Date();
+                if (weeklyDocumentInfo != null && weeklyDocumentInfo.get("last_reset") != null) {
+                    Date lastReset = weeklyDocumentInfo.getDate("last_reset");
+                    long timeDiff = current.getTime() - lastReset.getTime();
+
+                    System.out.println("Reset Time: " + timeDiff / 60000);
+                    if (timeDiff > 0 && timeDiff / (1000 * 60) > 10000) {
+                        String sharedChainName = UUID.randomUUID().toString();
+                        //caching lb
+                        LeaderboardManager.addHologramLeaderboards(sharedChainName);
+                        Warlords.newSharedChain(sharedChainName)
+                                .async(() -> {
+                                    //adding new document with top weekly players
+                                    Document topPlayers = LeaderboardManager.getTopPlayersOnLeaderboard();
+                                    weeklyLeaderboards.insertOne(topPlayers);
+                                    ExperienceManager.awardWeeklyExperience(topPlayers);
+                                    //clearing weekly
+                                    playersInformationWeekly.deleteMany(new Document());
+                                    //updating date to current
+                                    resetTimings.updateOne(and(eq("time", "weekly"), eq("last_reset", lastReset)),
+                                            new Document("$set", new Document("time", "weekly").append("last_reset", current))
+                                    );
+
+                                }).sync(() -> {
+                                    Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Weekly player information reset");
+                                }).execute();
+                    }
+                }
+                //checking daily date, if over 1,400 minutes (1440 == 1 day) reset daily
+                Document dailyDocumentInfo = resetTimings.find().filter(eq("time", "daily")).first();
+                if (dailyDocumentInfo != null && dailyDocumentInfo.get("last_reset") != null) {
+                    Date lastReset = dailyDocumentInfo.getDate("last_reset");
+                    long timeDiff = current.getTime() - lastReset.getTime();
+
+                    if (timeDiff > 0 && timeDiff / (1000 * 60) > 1400) {
+                        String sharedChainName = UUID.randomUUID().toString();
+
+                        Warlords.newSharedChain(sharedChainName)
+                                .async(() -> {
+                                    //clearing daily
+                                    playersInformationDaily.deleteMany(new Document());
+                                    //updating date to current
+                                    resetTimings.updateOne(and(eq("time", "daily"), eq("last_reset", lastReset)),
+                                            new Document("$set", new Document("time", "daily").append("last_reset", current))
+                                    );
+                                }).sync(() -> {
+                                    Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Daily player information reset");
+                                }).execute();
+                    }
+                }
+
+                //caching all players
+                playersInformation.find().forEach((Consumer<? super Document>) document -> {
+                    cachedPlayerInfo.put(UUID.fromString((String) document.get("uuid")), document);
+                });
+
+                updateDailyCache();
+
+                //caching last games then giving leaderboards
+                String sharedChainName = UUID.randomUUID().toString();
+                Warlords.newSharedChain(sharedChainName)
+                        .asyncFirst(() -> getLastGames(5))
+                        .syncLast(previousGames::addAll)
+                        .sync(() -> {
+                            previousGames.forEach(DatabaseGame::createHolograms);
+                            Bukkit.getOnlinePlayers().forEach(player -> {
+                                if (!Warlords.playerScoreboards.containsKey(player.getUniqueId()) || Warlords.playerScoreboards.get(player.getUniqueId()) == null) {
+                                    Warlords.playerScoreboards.put(player.getUniqueId(), new CustomScoreboard(player));
+                                }
+                                Warlords.playerScoreboards.get(player.getUniqueId()).giveMainLobbyScoreboard();
+                            });
+                            LeaderboardManager.addHologramLeaderboards(UUID.randomUUID().toString());
+                        })
+                        .execute();
+                //loading all players
+                loadAllPlayers();
+            }
         }
     }
 
@@ -576,10 +572,12 @@ public class DatabaseManager {
                         }
                         //set the game from the database to uncounted
                         gamesInformation.updateOne(and(
-                                eq("date", gameInformation.getGameInfo().get("date")),
-                                eq("time_left", gameInformation.getGameInfo().get("time_left"))),
+                                        eq("date", gameInformation.getGameInfo().get("date")),
+                                        eq("time_left", gameInformation.getGameInfo().get("time_left"))),
                                 new Document(FieldUpdateOperators.SET.operator, new Document("counted", false))
                         );
+                        previousGames.clear();
+                        getLastGames(5);
                         //reloading leaderboards
                         LeaderboardManager.playerGameHolograms.forEach((uuid, integer) -> {
                             LeaderboardManager.playerGameHolograms.put(uuid, previousGames.size() - 1);
@@ -764,8 +762,8 @@ public class DatabaseManager {
             }
         }
         output.setLength(output.length() - 1);
-        if(BotManager.numberOfMessagesSentLast30Sec > 15) {
-            if(BotManager.numberOfMessagesSentLast30Sec < 20) {
+        if (BotManager.numberOfMessagesSentLast30Sec > 15) {
+            if (BotManager.numberOfMessagesSentLast30Sec < 20) {
                 BotManager.getTextChannelByName("games-backlog").ifPresent(textChannel -> textChannel.sendMessage("SOMETHING BROKEN DETECTED <@239929120035700737> <@253971614998331393>").queue());
             }
         } else {

@@ -189,6 +189,17 @@ public class Warlords extends JavaPlugin {
         playerHeads.put(player.getUniqueId(), CraftItemStack.asNMSCopy(playerSkull));
     }
 
+    public void readKeysConfig() {
+        try {
+            YamlConfiguration config = YamlConfiguration.loadConfiguration(new File(this.getDataFolder(), "keys.yml"));
+            DatabaseManager.key = config.getString("database_key");
+            BotManager.botToken = config.getString("botToken");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
     public void readWeaponConfig() {
         try {
             YamlConfiguration config = YamlConfiguration.loadConfiguration(new File(this.getDataFolder(), "weapons.yml"));
@@ -265,9 +276,11 @@ public class Warlords extends JavaPlugin {
         new SpectateCommand().register(this);
         new DebugModeCommand().register(this);
         new MyLocationCommand().register(this);
+        new MessageCommand().register(this);
 
         updateHeads();
 
+        readKeysConfig();
         readWeaponConfig();
         saveWeaponConfig();
 

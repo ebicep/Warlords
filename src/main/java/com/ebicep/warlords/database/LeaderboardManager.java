@@ -433,13 +433,16 @@ public class LeaderboardManager {
         }
     }
 
-    public static void removePlayerPositionLeaderboards(Player player) {
+    public static void removePlayerSpecificHolograms(Player player) {
         leaderboards.forEach((key, leaderboard) -> {
             Location location = leaderboard.getLocation().clone().add(0, -3.5, 0);
             HologramsAPI.getHolograms(Warlords.getInstance()).stream()
                     .filter(hologram -> hologram.getLocation().equals(location) && hologram.getVisibilityManager().isVisibleTo(player))
                     .forEach(Hologram::delete);
         });
+        HologramsAPI.getHolograms(Warlords.getInstance()).stream()
+                .filter(h -> h.getVisibilityManager().isVisibleTo(player) && (h.getLocation().equals(DatabaseGame.gameSwitchLocation) || h.getLocation().equals(leaderboardSwitchLocation)))
+                .forEach(Hologram::delete);
     }
 
     private static void addLeaderboard(List<Document> top, String key, Location location, String title) {

@@ -252,7 +252,10 @@ public class DatabaseGame {
     }
 
     public static void setGameHologramVisibility(Player player) {
-        if (!LeaderboardManager.playerGameHolograms.containsKey(player.getUniqueId()) || LeaderboardManager.playerGameHolograms.get(player.getUniqueId()) == null) {
+        if (!LeaderboardManager.playerGameHolograms.containsKey(player.getUniqueId()) ||
+                LeaderboardManager.playerGameHolograms.get(player.getUniqueId()) == null ||
+                LeaderboardManager.playerGameHolograms.get(player.getUniqueId()) < 0
+        ) {
             LeaderboardManager.playerGameHolograms.put(player.getUniqueId(), previousGames.size() - 1);
         }
         int selectedGame = LeaderboardManager.playerGameHolograms.get(player.getUniqueId());
