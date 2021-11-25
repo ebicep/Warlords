@@ -100,14 +100,14 @@ public class Boulder extends AbstractAbility {
                             }
 
                             for (WarlordsPlayer p : PlayerFilter
-                                    .entitiesAround(newLoc, 5.6, 5.6, 5.6)
+                                    .entitiesAround(newLoc, 5.75, 5.75, 5.75)
                                     .aliveEnemiesOf(wp)
                             ) {
                                 Vector v;
                                 if (p == directHit) {
-                                    v = player.getLocation().toVector().subtract(p.getLocation().toVector()).normalize().multiply(-1.1).setY(0.2);
+                                    v = player.getLocation().toVector().subtract(p.getLocation().toVector()).normalize().multiply(-1.15).setY(0.2);
                                 } else {
-                                    v = p.getLocation().toVector().subtract(newLoc.toVector()).normalize().multiply(1.1).setY(0.2);
+                                    v = p.getLocation().toVector().subtract(newLoc.toVector()).normalize().multiply(1.15).setY(0.2);
                                 }
                                 p.setVelocity(v, false);
                                 p.damageHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);

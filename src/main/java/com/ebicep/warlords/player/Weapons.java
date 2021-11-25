@@ -70,13 +70,13 @@ public enum Weapons {
     NEW_LEAF_AXE("Fate of Daphne", new ItemStack(Material.LEATHER), LEGENDARY),
     NEW_LEAF_SWORD("Canopy's Jade Edge", new ItemStack(Material.INK_SACK, 1, (short) 4), LEGENDARY),
     NEW_LEAF_SPEAR("Daphne's Viper", new ItemStack(Material.INK_SACK, 1, (short) 3), LEGENDARY),
+    SILVER_PHANTASM_SCYTHE("Tenth Plague", new ItemStack(Material.PRISMARINE_CRYSTALS), LEGENDARY),
+    SILVER_PHANTASM_SWORD("Hyperion's Awakening", new ItemStack(Material.PRISMARINE_SHARD), LEGENDARY),
+    SILVER_PHANTASM_SWORD_2("Blazeguard", new ItemStack(Material.FLINT), LEGENDARY),
+    SILVER_PHANTASM_SWORD_3("Venom", new ItemStack(Material.COAL), LEGENDARY),
+    SILVER_PHANTASM_HAMMER("Wrath of Aether", new ItemStack(Material.QUARTZ), LEGENDARY),
 
     // mythic
-    SILVER_PHANTASM_SCYTHE("Tenth Plague", new ItemStack(Material.PRISMARINE_CRYSTALS), MYTHIC),
-    SILVER_PHANTASM_SWORD("Hyperion's Awakening", new ItemStack(Material.PRISMARINE_SHARD), MYTHIC),
-    SILVER_PHANTASM_SWORD_2("Blazeguard", new ItemStack(Material.FLINT), MYTHIC),
-    SILVER_PHANTASM_SWORD_3("Venom", new ItemStack(Material.COAL), MYTHIC),
-    SILVER_PHANTASM_HAMMER("Wrath of Aether", new ItemStack(Material.QUARTZ), MYTHIC),
     SILVER_PHANTASM_STAFF("Wit of Oblivion", new ItemStack(Material.IRON_INGOT), MYTHIC),
     SILVER_PHANTASM_STAFF_2("Lament", new ItemStack(Material.INK_SACK), MYTHIC),
 
