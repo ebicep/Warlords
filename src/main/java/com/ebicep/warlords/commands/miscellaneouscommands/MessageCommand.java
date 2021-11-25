@@ -85,9 +85,9 @@ public class MessageCommand implements CommandExecutor {
 
             @Override
             public void run() {
-                lastPlayerMessages.entrySet().removeIf(playerMessageLongEntry -> System.currentTimeMillis() - playerMessageLongEntry.getValue() >= 5000);//300000);
+                lastPlayerMessages.entrySet().removeIf(playerMessageLongEntry -> System.currentTimeMillis() - playerMessageLongEntry.getValue() >= 300000);
             }
-        }.runTaskTimer(Warlords.getInstance(), 40, 20 * 5);//20 * 60 * 5);
+        }.runTaskTimer(Warlords.getInstance(), 40, 20 * 60 * 5);
     }
 
 }

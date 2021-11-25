@@ -808,7 +808,7 @@ public class DatabaseManager {
                     .append("total_healing_on_carrier", warlordsPlayer.getTotalHealingOnCarrier())
                     .append("damage_on_carrier", Arrays.stream(warlordsPlayer.getDamageOnCarrier()).boxed().collect(Collectors.toList()))
                     .append("healing_on_carrier", Arrays.stream(warlordsPlayer.getHealingOnCarrier()).boxed().collect(Collectors.toList()))
-                    .append("experience_earned", ExperienceManager.getSpecExpFromSummary(ExperienceManager.getExpFromGameStats(warlordsPlayer, false)))
+                    .append("experience_earned", ExperienceManager.getSpecExpFromSummary(ExperienceManager.getExpFromGameStats(warlordsPlayer, true)))
             );
         } catch (Exception e) {
             Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Error appending new document");

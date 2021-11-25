@@ -90,13 +90,9 @@ public class ExperienceManager {
         playersInformation.bulkWrite(updates);
     }
 
-    public static LinkedHashMap<String, Long> getExpFromGameStats(WarlordsPlayer warlordsPlayer, boolean removeFromCache) {
-        if(cachedPlayerExpSummary.containsKey(warlordsPlayer.getUuid()) && cachedPlayerExpSummary.get(warlordsPlayer.getUuid()) != null) {
-            if(removeFromCache) {
-                return cachedPlayerExpSummary.remove(warlordsPlayer.getUuid());
-            } else {
-                return cachedPlayerExpSummary.get(warlordsPlayer.getUuid());
-            }
+    public static LinkedHashMap<String, Long> getExpFromGameStats(WarlordsPlayer warlordsPlayer, boolean recalculate) {
+        if(!recalculate && cachedPlayerExpSummary.containsKey(warlordsPlayer.getUuid()) && cachedPlayerExpSummary.get(warlordsPlayer.getUuid()) != null) {
+            return cachedPlayerExpSummary.get(warlordsPlayer.getUuid());
         }
         boolean won = !warlordsPlayer.getGameState().isForceEnd() && warlordsPlayer.getGameState().getStats(warlordsPlayer.getTeam()).points() > warlordsPlayer.getGameState().getStats(warlordsPlayer.getTeam().enemy()).points();
         long winLossExp = won ? 500 : 250;
