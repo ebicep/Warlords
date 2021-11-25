@@ -22,6 +22,7 @@ public class HealingTotem extends AbstractTotemBase {
 
     private final int radius = 7;
     private final int duration = 6;
+    private final int crippleDuration = 6;
 
     public HealingTotem() {
         super("Healing Totem", 191, 224, 62.64f, 60, 25, 175);
@@ -38,7 +39,7 @@ public class HealingTotem extends AbstractTotemBase {
                 "\n\n" +
                 "§7Pressing SHIFT causes your totem to\n" +
                 "§7pulse with immense force, crippling all\n" +
-                "§7enemies for §66 §7seconds. Crippled enemies\n" +
+                "§7enemies for §6" + crippleDuration + " §7seconds. Crippled enemies\n" +
                 "§7deal §c25% §7less damage.";
     }
 
@@ -158,12 +159,12 @@ public class HealingTotem extends AbstractTotemBase {
                             PlayerFilter.entitiesAround(totemStand.getLocation(), radius, radius, radius)
                                     .aliveEnemiesOf(wp)
                                     .forEach((p) -> {
-                                        p.getCooldownManager().addCooldown("Totem Crippling", HealingTotem.class, new HealingTotem(), "CRIP", 6, wp, CooldownTypes.DEBUFF);
+                                        p.getCooldownManager().addCooldown("Totem Crippling", HealingTotem.class, new HealingTotem(), "CRIP", crippleDuration, wp, CooldownTypes.DEBUFF);
                                     });
                             for (Player player1 : player.getWorld().getPlayers()) {
                                 player1.playSound(totemStand.getLocation(), "paladin.hammeroflight.impact", 1.5f, 0.2f);
                             }
-                            player.sendMessage("§aAll enemies in your totem are now §ccrippled §afor 6 seconds!");
+                            player.sendMessage("§aAll enemies in your totem are now §ccrippled §afor §c" + crippleDuration + " §aseconds!");
                             new FallingBlockWaveEffect(totemStand.getLocation().add(0, 1, 0), 7, 2, Material.SAPLING, (byte) 1).play();
                             this.cancel();
                         }
