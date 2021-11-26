@@ -55,8 +55,8 @@ public class TestCommand implements CommandExecutor {
 //            ExperienceManager.giveExpFromCurrentStats(UUID.fromString(document.getString("uuid")));
 //        });
 //        DatabaseManager.warlordsGamesDatabase.createCollection("Games_Information_Test");
-//        MongoCollection<Document> temp = warlordsPlayersDatabase.getCollection("Players_Information_Test");
-//        for (Document document : playersInformation.find()) {
+//        MongoCollection<Document> temp = warlordsGamesDatabase.getCollection("Temp");
+//        for (Document document : gamesInformation.find().skip(640)) {
 //            temp.insertOne(document);
 //        }
 //        Bukkit.getOnlinePlayers().forEach(p -> {
