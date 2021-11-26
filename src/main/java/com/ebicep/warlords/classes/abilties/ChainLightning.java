@@ -145,7 +145,7 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
     }
 
     private void partOfChainLightningPulseDamage(WarlordsPlayer wp, Entity totem) {
-        pulseDamage(wp, PlayerFilter.entitiesAround(totem, 6, 4, 6).aliveEnemiesOf(wp).stream());
+        pulseDamage(wp, PlayerFilter.entitiesAround(totem, 6, 6, 6).aliveEnemiesOf(wp).stream());
         new FallingBlockWaveEffect(totem.getLocation().add(0, 1, 0), 6, 1.2, Material.SAPLING, (byte) 0).play();
         for (Player player1 : wp.getWorld().getPlayers()) {
             player1.playSound(totem.getLocation(), "shaman.capacitortotem.pulse", 2, 1);
