@@ -131,7 +131,6 @@ public class HolyRadiance extends AbstractAbility {
         }
 
         wp.healHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
-        wp.getSpeed().addSpeedModifier("Radiance", 20, 3 * 20, "BASE");
 
         player.playSound(player.getLocation(), Sound.ORB_PICKUP, 1, 1);
         for (Player player1 : player.getWorld().getPlayers()) {

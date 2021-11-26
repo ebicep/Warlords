@@ -50,7 +50,7 @@ public class LightningRod extends AbstractAbility {
         // pulsedamage
         List<ArmorStand> totemDownAndClose = Utils.getCapacitorTotemDownAndClose(wp, wp.getEntity());
         totemDownAndClose.forEach(totem -> {
-            PlayerFilter.entitiesAround(totem.getLocation(), 6, 4, 6).aliveEnemiesOf(wp).forEach(enemy -> {
+            PlayerFilter.entitiesAround(totem.getLocation(), 6, 6, 6).aliveEnemiesOf(wp).forEach(enemy -> {
                 enemy.damageHealth(
                         wp,
                         wp.getSpec().getOrange().getName(),
