@@ -30,8 +30,8 @@ public class HealingRain extends AbstractAbility {
     public void updateDescription(Player player) {
         description = "§7Conjure rain at targeted\n" +
                 "location that will restore §a" + format(minDamageHeal) + "\n" +
-                "§7- §a" + format(maxDamageHeal) + " §7health every second to\n" +
-                "allies. Lasts §6" + duration + " §7seconds." +
+                "§7- §a" + format(maxDamageHeal) + " §7health every 0.5 seconds\n" +
+                "to allies. Lasts §6" + duration + " §7seconds." +
                 "\n\n" +
                 "You may move Healing Rain to your location\n" +
                 "every §62 §7seconds using your SNEAK key.";
