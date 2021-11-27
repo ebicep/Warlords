@@ -596,16 +596,22 @@ public class DatabaseManager {
         try {
             Warlords.newChain()
                     .async(() -> {
-                        if (gameInformation.isUpdatePlayerStats()) {
+//                        if (gameInformation.isUpdatePlayerStats()) {
                             //updating all players, blocks this async thread, so leaderboard updated after
+
                             gameInformation.getPlayerInfo().forEach((uuid, stringObjectHashMap) -> {
                                 updatePlayerInformationAllTime(uuid, stringObjectHashMap, FieldUpdateOperators.INCREMENT, false);
                                 updatePlayerInformation(uuid, stringObjectHashMap, FieldUpdateOperators.INCREMENT, false, playersInformationWeekly);
                                 updatePlayerInformation(uuid, stringObjectHashMap, FieldUpdateOperators.INCREMENT, false, playersInformationDaily);
                             });
-                        }
+
+//                        }
                         //inserting the game to the database
-                        gamesInformation.insertOne(gameInformation.getGameInfo());
+                        gamesInformation.updateOne(and(
+                                        eq("date", gameInformation.getGameInfo().get("date")),
+                                        eq("time_left", gameInformation.getGameInfo().get("time_left"))),
+                                new Document(FieldUpdateOperators.SET.operator, new Document("counted", true))
+                        );
                         //reloading leaderboards
                         LeaderboardManager.playerGameHolograms.forEach((uuid, integer) -> {
                             LeaderboardManager.playerGameHolograms.put(uuid, previousGames.size() - 1);
@@ -838,7 +844,7 @@ public class DatabaseManager {
                         int totalKills = databaseGamePlayer.getTotalKills();
                         int totalAssists = databaseGamePlayer.getTotalAssists();
                         int totalDeaths = databaseGamePlayer.getTotalDeaths();
-                        boolean won = game.get("winner") == "BLUE" && playersBlue.contains(document) || game.get("winner") == "RED" && playersRed.contains(document);
+                        boolean won = (game.get("winner").equals("BLUE") && playersBlue.contains(document)) || (game.get("winner").equals("RED") && playersRed.contains(document));
                         int flagsCaptured = databaseGamePlayer.getFlagCaptures();
                         int flagsReturned = databaseGamePlayer.getFlagReturns();
                         long damage = databaseGamePlayer.getTotalDamage();

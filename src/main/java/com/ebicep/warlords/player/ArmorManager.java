@@ -240,22 +240,22 @@ public class ArmorManager {
         public static List<ArmorSets> getSelected(Player player) {
             List<ArmorSets> armorSets = new ArrayList<>();
             armorSets.add(player.getMetadata("selected-armor-mage").stream()
-                    .map(v -> v.value() instanceof ArmorSets ? (ArmorSets) v.value() : null)
+                    .map(v -> v.value() instanceof ArmorSets ? (ArmorSets) v.value() : SIMPLE_CHESTPLATE_MAGE)
                     .filter(Objects::nonNull)
                     .findAny()
                     .orElse(SIMPLE_CHESTPLATE_MAGE));
             armorSets.add(player.getMetadata("selected-armor-warrior").stream()
-                    .map(v -> v.value() instanceof ArmorSets ? (ArmorSets) v.value() : null)
+                    .map(v -> v.value() instanceof ArmorSets ? (ArmorSets) v.value() : SIMPLE_CHESTPLATE_WARRIOR)
                     .filter(Objects::nonNull)
                     .findAny()
                     .orElse(SIMPLE_CHESTPLATE_WARRIOR));
             armorSets.add(player.getMetadata("selected-armor-paladin").stream()
-                    .map(v -> v.value() instanceof ArmorSets ? (ArmorSets) v.value() : null)
+                    .map(v -> v.value() instanceof ArmorSets ? (ArmorSets) v.value() : SIMPLE_CHESTPLATE_PALADIN)
                     .filter(Objects::nonNull)
                     .findAny()
                     .orElse(SIMPLE_CHESTPLATE_PALADIN));
             armorSets.add(player.getMetadata("selected-armor-shaman").stream()
-                    .map(v -> v.value() instanceof ArmorSets ? (ArmorSets) v.value() : null)
+                    .map(v -> v.value() instanceof ArmorSets ? (ArmorSets) v.value() : SIMPLE_CHESTPLATE_SHAMAN)
                     .filter(Objects::nonNull)
                     .findAny()
                     .orElse(SIMPLE_CHESTPLATE_SHAMAN));
