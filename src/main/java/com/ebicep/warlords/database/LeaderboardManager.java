@@ -70,9 +70,9 @@ public class LeaderboardManager {
         leaderboards.put("mage.pyromancer." + statType.toLowerCase(), new Leaderboard("Pyromancer " + statType, new Location(world, -2602.5, 53, 749.5)));
         leaderboards.put("mage.cryomancer." + statType.toLowerCase(), new Leaderboard("Cryomancer " + statType, new Location(world, -2608.5, 53, 752.5)));
         leaderboards.put("mage.aquamancer." + statType.toLowerCase(), new Leaderboard("Aquamancer " + statType, new Location(world, -2614.5, 53, 749.5)));
-        leaderboards.put("shaman.thunderlord." + statType.toLowerCase(), new Leaderboard("Thunderlord " + statType, new Location(world, -2614.5, 52, 706.5)));
-        leaderboards.put("shaman.spiritguard." + statType.toLowerCase(), new Leaderboard("Spiritguard " + statType, new Location(world, -2608.5, 52, 704.5)));
-        leaderboards.put("shaman.earthwarden." + statType.toLowerCase(), new Leaderboard("Earthwarden " + statType, new Location(world, -2602.5, 52, 706.5)));
+        leaderboards.put("shaman.thunderlord." + statType.toLowerCase(), new Leaderboard("Thunderlord " + statType, new Location(world, -2614.5, 53, 707.5)));
+        leaderboards.put("shaman.spiritguard." + statType.toLowerCase(), new Leaderboard("Spiritguard " + statType, new Location(world, -2608.5, 53, 704.5)));
+        leaderboards.put("shaman.earthwarden." + statType.toLowerCase(), new Leaderboard("Earthwarden " + statType, new Location(world, -2602.5, 53, 707.5)));
 
         leaderboards.put("experience", new Leaderboard("Experience", new Location(world, -2526.5, 57, 744.5)));
         leaderboards.put("mage.experience", new Leaderboard("Mage Experience", new Location(world, -2520.5, 58, 735.5)));
@@ -98,11 +98,11 @@ public class LeaderboardManager {
         addCalculatedStats(playersInformation, cachedSortedPlayersLifeTime);
         //leaderboard position
         leaderboards.put("plays", new Leaderboard("Plays", new Location(world, -2564.5, 56, 712.5)));
-        leaderboards.put("dhp", new Leaderboard("DHP", new Location(world, -2555, 6000.5, 717)));
+        leaderboards.put("dhp", new Leaderboard("DHP", new Location(world, -2619.5, 66.5, 721.5)));
         leaderboards.put("dhp_per_game", new Leaderboard("DHP per Game", new Location(world, -2546.5, 56, 712.5)));
-//        leaderboards.put("kills_per_game", new Leaderboard("Kills per Game", new Location(world, -2567, 75.5, 717)));
-        leaderboards.put("deaths_per_game", new Leaderboard("Deaths per Game", new Location(world, -2608.5, 62, 737.5)));
-        leaderboards.put("ka_per_game", new Leaderboard("Kills/Assists per Game", new Location(world, -2608.5, 62, 719.5)));
+        leaderboards.put("kills_per_game", new Leaderboard("Kills per Game", new Location(world, -2619.5, 66.5, 735.5)));
+        leaderboards.put("deaths_per_game", new Leaderboard("Deaths per Game", new Location(world, -2608.5, 67, 738.5)));
+        leaderboards.put("ka_per_game", new Leaderboard("Kills/Assists per Game", new Location(world, -2608.5, 67, 719.5)));
     }
 
     private static void addCalculatedStats(MongoCollection<Document> collection, HashMap<String, List<Document>> cache) {
@@ -369,7 +369,7 @@ public class LeaderboardManager {
 
         int selectedLeaderboard = playerLeaderboardHolograms.get(player.getUniqueId());
         if (selectedLeaderboard == 0) {
-            leaderboardSwitcher.appendTextLine(ChatColor.GREEN + "LifeTime");
+            leaderboardSwitcher.appendTextLine(ChatColor.GREEN + "Lifetime");
             TextLine weeklyLine = leaderboardSwitcher.appendTextLine(ChatColor.GRAY + "Weekly");
 
             weeklyLine.setTouchHandler(p -> {
