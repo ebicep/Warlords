@@ -372,98 +372,110 @@ public class Warlords extends JavaPlugin {
             public void run() {
                 // EVERY TICK
                 {
-                    for (WarlordsPlayer warlordsPlayer : players.values()) {
-                        if (warlordsPlayer.getGame().isGameFreeze()) {
+                    for (WarlordsPlayer wp : players.values()) {
+                        if (wp.getGame().isGameFreeze()) {
                             continue;
                         }
-                        if (warlordsPlayer.getName().equals("sumSmash")) {
+                        if (wp.getName().equals("sumSmash")) {
                         }
 
                         // MOVEMENT
-                        warlordsPlayer.getSpeed().updateSpeed();
+                        wp.getSpeed().updateSpeed();
 
-                        CooldownManager cooldownManager = warlordsPlayer.getCooldownManager();
-                        Player player = warlordsPlayer.getEntity() instanceof Player ? (Player) warlordsPlayer.getEntity() : null;
+                        CooldownManager cooldownManager = wp.getCooldownManager();
+                        Player player = wp.getEntity() instanceof Player ? (Player) wp.getEntity() : null;
 
                         if (player != null) {
-                            player.setCompassTarget(warlordsPlayer
+                            player.setCompassTarget(wp
                                     .getGameState()
                                     .flags()
-                                    .get(warlordsPlayer.isTeamFlagCompass() ? warlordsPlayer.getTeam() : warlordsPlayer.getTeam().enemy())
+                                    .get(wp.isTeamFlagCompass() ? wp.getTeam() : wp.getTeam().enemy())
                                     .getFlag()
                                     .getLocation()
                             );
                         }
 
-                        if (warlordsPlayer.isDisableCooldowns()) {
-                            warlordsPlayer.getSpec().getRed().setCurrentCooldown(0);
-                            warlordsPlayer.getSpec().getPurple().setCurrentCooldown(0);
-                            warlordsPlayer.getSpec().getBlue().setCurrentCooldown(0);
-                            warlordsPlayer.getSpec().getOrange().setCurrentCooldown(0);
-                            warlordsPlayer.setHorseCooldown(0);
-                            warlordsPlayer.updateRedItem();
-                            warlordsPlayer.updatePurpleItem();
-                            warlordsPlayer.updateBlueItem();
-                            warlordsPlayer.updateOrangeItem();
-                            warlordsPlayer.updateHorseItem();
+                        if (wp.isDisableCooldowns()) {
+                            wp.getSpec().getRed().setCurrentCooldown(0);
+                            wp.getSpec().getPurple().setCurrentCooldown(0);
+                            wp.getSpec().getBlue().setCurrentCooldown(0);
+                            wp.getSpec().getOrange().setCurrentCooldown(0);
+                            wp.setHorseCooldown(0);
+                            wp.updateRedItem();
+                            wp.updatePurpleItem();
+                            wp.updateBlueItem();
+                            wp.updateOrangeItem();
+                            wp.updateHorseItem();
                         }
 
                         //ABILITY COOLDOWN
-                        if (warlordsPlayer.getSpec().getRed().getCurrentCooldown() > 0) {
-                            warlordsPlayer.getSpec().getRed().subtractCooldown(.05f);
+                        if (wp.getSpec().getRed().getCurrentCooldown() > 0) {
+                            wp.getSpec().getRed().subtractCooldown(.05f);
                             if (player != null) {
-                                warlordsPlayer.updateRedItem(player);
+                                wp.updateRedItem(player);
                             }
                         }
-                        if (warlordsPlayer.getSpec().getPurple().getCurrentCooldown() > 0) {
-                            warlordsPlayer.getSpec().getPurple().subtractCooldown(.05f);
+                        if (wp.getSpec().getPurple().getCurrentCooldown() > 0) {
+                            wp.getSpec().getPurple().subtractCooldown(.05f);
                             if (player != null) {
-                                warlordsPlayer.updatePurpleItem(player);
+                                wp.updatePurpleItem(player);
                             }
                         }
-                        if (warlordsPlayer.getSpec().getBlue().getCurrentCooldown() > 0) {
-                            warlordsPlayer.getSpec().getBlue().subtractCooldown(.05f);
+                        if (wp.getSpec().getBlue().getCurrentCooldown() > 0) {
+                            wp.getSpec().getBlue().subtractCooldown(.05f);
                             if (player != null) {
-                                warlordsPlayer.updateBlueItem(player);
+                                wp.updateBlueItem(player);
                             }
                         }
-                        if (warlordsPlayer.getSpec().getOrange().getCurrentCooldown() > 0) {
-                            warlordsPlayer.getSpec().getOrange().subtractCooldown(.05f);
+                        if (wp.getSpec().getOrange().getCurrentCooldown() > 0) {
+                            wp.getSpec().getOrange().subtractCooldown(.05f);
                             if (player != null) {
-                                warlordsPlayer.updateOrangeItem(player);
+                                wp.updateOrangeItem(player);
                             }
                         }
-                        if (warlordsPlayer.getHorseCooldown() > 0 && !warlordsPlayer.getEntity().isInsideVehicle()) {
-                            warlordsPlayer.setHorseCooldown(warlordsPlayer.getHorseCooldown() - .05f);
+                        if (wp.getHorseCooldown() > 0 && !wp.getEntity().isInsideVehicle()) {
+                            wp.setHorseCooldown(wp.getHorseCooldown() - .05f);
                             if (player != null) {
-                                warlordsPlayer.updateHorseItem(player);
+                                wp.updateHorseItem(player);
                             }
                         }
 
-                        warlordsPlayer.getCooldownManager().reduceCooldowns();
+                        wp.getCooldownManager().reduceCooldowns();
                         if (player != null) {
                             //ACTION BAR
                             if (player.getInventory().getHeldItemSlot() != 8) {
-                                warlordsPlayer.displayActionBar();
+                                wp.displayActionBar();
                             } else {
-                                warlordsPlayer.displayFlagActionBar(player);
+                                wp.displayFlagActionBar(player);
                             }
                         }
                         //respawn
-                        if (warlordsPlayer.getRespawnTimer().doubleValue() == 0) {
-                            warlordsPlayer.respawn();
+                        if (wp.getRespawnTimer().doubleValue() == 0) {
+                            wp.respawn();
                         }
-                        BigDecimal respawn = warlordsPlayer.getRespawnTimer();
+                        BigDecimal respawn = wp.getRespawnTimer();
                         if (respawn.doubleValue() != -1) {
 //                            System.out.println("-----------");
 //                            System.out.println(warlordsPlayer.getGameState().getTimer() / 20.0);
 //                            System.out.println(warlordsPlayer.getGameState().getTimer() / 20.0 % 12);
 //                            System.out.println(warlordsPlayer.getRespawnTimer());
-                            warlordsPlayer.setRespawnTimer(respawn.subtract(BigDecimal.valueOf(.05)));
+                            wp.setRespawnTimer(respawn.subtract(BigDecimal.valueOf(.05)));
 //                            System.out.println(warlordsPlayer.getRespawnTimer());
                         }
+
+                        boolean hasOverhealCooldown = wp.getCooldownManager().hasCooldown(Utils.OVERHEAL_MARKER);
+                        boolean hasTooMuchHealth = wp.getHealth() > wp.getMaxHealth();
+
+                        if (hasOverhealCooldown && !hasTooMuchHealth) {
+                            wp.getCooldownManager().removeCooldown(Utils.OVERHEAL_MARKER);
+                        }
+
+                        if (!hasOverhealCooldown && hasTooMuchHealth) {
+                            wp.setHealth(wp.getMaxHealth());
+                        }
+
                         //damage or heal
-                        float newHealth = (float) warlordsPlayer.getHealth() / warlordsPlayer.getMaxHealth() * 40;
+                        float newHealth = (float) wp.getHealth() / wp.getMaxHealth() * 40;
                         //EVEN MORE PRECAUTIONS
                         if (newHealth < 0) {
                             newHealth = 0;
@@ -472,23 +484,23 @@ public class Warlords extends JavaPlugin {
                         }
                         //UNDYING ARMY
                         //check if player has any unpopped armies
-                        if (warlordsPlayer.getCooldownManager().checkUndyingArmy(false) && newHealth <= 0) {
+                        if (wp.getCooldownManager().checkUndyingArmy(false) && newHealth <= 0) {
                             //set the first unpopped to popped
 
-                            for (Cooldown cooldown : warlordsPlayer.getCooldownManager().getCooldown(UndyingArmy.class)) {
-                                if (!((UndyingArmy) cooldown.getCooldownObject()).isArmyDead(warlordsPlayer.getUuid())) {
-                                    ((UndyingArmy) cooldown.getCooldownObject()).pop(warlordsPlayer.getUuid());
+                            for (Cooldown cooldown : wp.getCooldownManager().getCooldown(UndyingArmy.class)) {
+                                if (!((UndyingArmy) cooldown.getCooldownObject()).isArmyDead(wp.getUuid())) {
+                                    ((UndyingArmy) cooldown.getCooldownObject()).pop(wp.getUuid());
                                     //DROPPING FLAG
-                                    if (warlordsPlayer.getGameState().flags().hasFlag(warlordsPlayer)) {
-                                        warlordsPlayer.getGameState().flags().dropFlag(warlordsPlayer);
+                                    if (wp.getGameState().flags().hasFlag(wp)) {
+                                        wp.getGameState().flags().dropFlag(wp);
                                     }
                                     //sending message + check if getFrom is self
-                                    if (cooldown.getFrom() == warlordsPlayer) {
-                                        warlordsPlayer.sendMessage("§a\u00BB§7 " + ChatColor.LIGHT_PURPLE + "Your Undying Army revived you with temporary health. Fight until your death! Your health will decay by " + ChatColor.RED + (warlordsPlayer.getMaxHealth() / 10) + ChatColor.LIGHT_PURPLE + " every second.");
+                                    if (cooldown.getFrom() == wp) {
+                                        wp.sendMessage("§a\u00BB§7 " + ChatColor.LIGHT_PURPLE + "Your Undying Army revived you with temporary health. Fight until your death! Your health will decay by " + ChatColor.RED + (wp.getMaxHealth() / 10) + ChatColor.LIGHT_PURPLE + " every second.");
                                     } else {
-                                        warlordsPlayer.sendMessage("§a\u00BB§7 " + ChatColor.LIGHT_PURPLE + cooldown.getFrom().getName() + "'s Undying Army revived you with temporary health. Fight until your death! Your health will decay by " + ChatColor.RED + (warlordsPlayer.getMaxHealth() / 10) + ChatColor.LIGHT_PURPLE + " every second.");
+                                        wp.sendMessage("§a\u00BB§7 " + ChatColor.LIGHT_PURPLE + cooldown.getFrom().getName() + "'s Undying Army revived you with temporary health. Fight until your death! Your health will decay by " + ChatColor.RED + (wp.getMaxHealth() / 10) + ChatColor.LIGHT_PURPLE + " every second.");
                                     }
-                                    Firework firework = warlordsPlayer.getWorld().spawn(warlordsPlayer.getLocation(), Firework.class);
+                                    Firework firework = wp.getWorld().spawn(wp.getLocation(), Firework.class);
                                     FireworkMeta meta = firework.getFireworkMeta();
                                     meta.addEffects(FireworkEffect.builder()
                                             .withColor(Color.LIME)
@@ -496,27 +508,27 @@ public class Warlords extends JavaPlugin {
                                             .build());
                                     meta.setPower(0);
                                     firework.setFireworkMeta(meta);
-                                    warlordsPlayer.heal();
+                                    wp.heal();
 
                                     if (player != null) {
-                                        player.getWorld().spigot().strikeLightningEffect(warlordsPlayer.getLocation(), false);
+                                        player.getWorld().spigot().strikeLightningEffect(wp.getLocation(), false);
                                         player.getInventory().setItem(5, UndyingArmy.BONE);
                                     }
                                     newHealth = 40;
 
                                     //gives 50% of max energy if player is less than half
-                                    if (warlordsPlayer.getEnergy() < warlordsPlayer.getMaxEnergy() / 2) {
-                                        warlordsPlayer.setEnergy(warlordsPlayer.getMaxEnergy() / 2);
+                                    if (wp.getEnergy() < wp.getMaxEnergy() / 2) {
+                                        wp.setEnergy(wp.getMaxEnergy() / 2);
                                     }
 
                                     new BukkitRunnable() {
                                         @Override
                                         public void run() {
-                                            if (warlordsPlayer.getRespawnTimer().doubleValue() > 0) {
+                                            if (wp.getRespawnTimer().doubleValue() > 0) {
                                                 this.cancel();
                                             } else {
                                                 //UNDYING ARMY - dmg 10% of max health each popped army
-                                                warlordsPlayer.damageHealth(warlordsPlayer, "", warlordsPlayer.getMaxHealth() / 10f, warlordsPlayer.getMaxHealth() / 10f, -1, 100, false);
+                                                wp.damageHealth(wp, "", wp.getMaxHealth() / 10f, wp.getMaxHealth() / 10f, -1, 100, false);
                                             }
                                         }
                                     }.runTaskTimer(Warlords.this, 0, 20);
@@ -525,9 +537,9 @@ public class Warlords extends JavaPlugin {
                                 }
                             }
                         }
-                        if (newHealth <= 0 && warlordsPlayer.getRespawnTimer().doubleValue() == -1) {
+                        if (newHealth <= 0 && wp.getRespawnTimer().doubleValue() == -1) {
                             //checking if all undying armies are popped (this should never be true as last if statement bypasses this) then removing all boners
-                            if (!warlordsPlayer.getCooldownManager().checkUndyingArmy(false)) {
+                            if (!wp.getCooldownManager().checkUndyingArmy(false)) {
                                 if (player != null) {
                                     player.getInventory().remove(UndyingArmy.BONE);
                                 }
@@ -541,16 +553,16 @@ public class Warlords extends JavaPlugin {
                                 player.setGameMode(GameMode.SPECTATOR);
                             }
                             //giving out assists
-                            int lastElementIndex = warlordsPlayer.getHitBy().size() - 1;
-                            WarlordsPlayer killedBy = warlordsPlayer.getHitBy().entrySet().stream().skip(lastElementIndex).iterator().next().getKey();
+                            int lastElementIndex = wp.getHitBy().size() - 1;
+                            WarlordsPlayer killedBy = wp.getHitBy().entrySet().stream().skip(lastElementIndex).iterator().next().getKey();
                             final int[] counter = {0};
-                            warlordsPlayer.getHitBy().forEach((assisted, value) -> {
+                            wp.getHitBy().forEach((assisted, value) -> {
                                 if (counter[0] != lastElementIndex) {
-                                    if (killedBy == assisted || killedBy == warlordsPlayer) {
+                                    if (killedBy == assisted || killedBy == wp) {
                                         assisted.sendMessage(
                                                 ChatColor.GRAY +
                                                         "You assisted in killing " +
-                                                        warlordsPlayer.getColoredName()
+                                                        wp.getColoredName()
                                         );
                                     } else {
                                         assisted.sendMessage(
@@ -558,19 +570,19 @@ public class Warlords extends JavaPlugin {
                                                         "You assisted " +
                                                         killedBy.getColoredName() +
                                                         ChatColor.GRAY + " in killing " +
-                                                        warlordsPlayer.getColoredName()
+                                                        wp.getColoredName()
                                         );
                                     }
                                     assisted.addAssist();
                                 }
                                 counter[0]++;
                             });
-                            warlordsPlayer.getHitBy().clear();
-                            warlordsPlayer.setRegenTimer(0);
-                            warlordsPlayer.giveRespawnTimer();
-                            warlordsPlayer.addTotalRespawnTime();
+                            wp.getHitBy().clear();
+                            wp.setRegenTimer(0);
+                            wp.giveRespawnTimer();
+                            wp.addTotalRespawnTime();
 
-                            warlordsPlayer.heal();
+                            wp.heal();
                         } else {
                             if (player != null) {
                                 //precaution
@@ -582,18 +594,18 @@ public class Warlords extends JavaPlugin {
 
                         //respawn fix after leaving or stuck
                         if (player != null) {
-                            if (warlordsPlayer.getHealth() <= 0 && player.getGameMode() == GameMode.SPECTATOR) {
-                                warlordsPlayer.heal();
+                            if (wp.getHealth() <= 0 && player.getGameMode() == GameMode.SPECTATOR) {
+                                wp.heal();
                             }
-                            if (warlordsPlayer.getRespawnTimer().doubleValue() == -1 && player.getGameMode() == GameMode.SPECTATOR) {
-                                warlordsPlayer.giveRespawnTimer();
+                            if (wp.getRespawnTimer().doubleValue() == -1 && player.getGameMode() == GameMode.SPECTATOR) {
+                                wp.giveRespawnTimer();
                             }
                         }
 
 
                         //energy
-                        if (warlordsPlayer.getEnergy() < warlordsPlayer.getMaxEnergy()) {
-                            float energyGainPerTick = warlordsPlayer.getSpec().getEnergyPerSec() / 20f;
+                        if (wp.getEnergy() < wp.getMaxEnergy()) {
+                            float energyGainPerTick = wp.getSpec().getEnergyPerSec() / 20f;
                             if (!cooldownManager.getCooldown(AvengersWrath.class).isEmpty()) {
                                 energyGainPerTick += 1;
                             }
@@ -607,30 +619,30 @@ public class Warlords extends JavaPlugin {
                                 energyGainPerTick *= 1.4;
                             }
 
-                            float newEnergy = warlordsPlayer.getEnergy() + energyGainPerTick;
-                            if (newEnergy > warlordsPlayer.getMaxEnergy()) {
-                                newEnergy = warlordsPlayer.getMaxEnergy();
+                            float newEnergy = wp.getEnergy() + energyGainPerTick;
+                            if (newEnergy > wp.getMaxEnergy()) {
+                                newEnergy = wp.getMaxEnergy();
                             }
 
-                            warlordsPlayer.setEnergy(newEnergy);
+                            wp.setEnergy(newEnergy);
                         }
 
                         if (player != null) {
-                            if (warlordsPlayer.getEnergy() < 0) {
-                                warlordsPlayer.setEnergy(1);
+                            if (wp.getEnergy() < 0) {
+                                wp.setEnergy(1);
                             }
-                            player.setLevel((int) warlordsPlayer.getEnergy());
-                            player.setExp(warlordsPlayer.getEnergy() / warlordsPlayer.getMaxEnergy());
+                            player.setLevel((int) wp.getEnergy());
+                            player.setExp(wp.getEnergy() / wp.getMaxEnergy());
                         }
 
                         //melee cooldown
-                        if (warlordsPlayer.getHitCooldown() > 0) {
-                            warlordsPlayer.setHitCooldown(warlordsPlayer.getHitCooldown() - 1);
+                        if (wp.getHitCooldown() > 0) {
+                            wp.setHitCooldown(wp.getHitCooldown() - 1);
                         }
                         //orbs
-                        Location playerPosition = warlordsPlayer.getLocation();
+                        Location playerPosition = wp.getLocation();
                         List<OrbsOfLife.Orb> orbs = new ArrayList<>();
-                        PlayerFilter.playingGame(warlordsPlayer.getGame()).teammatesOf(warlordsPlayer).forEach(p -> {
+                        PlayerFilter.playingGame(wp.getGame()).teammatesOf(wp).forEach(p -> {
                             p.getCooldownManager().getCooldown(OrbsOfLife.class).forEach(cd -> {
                                 orbs.addAll(((OrbsOfLife) cd.getCooldownObject()).getSpawnedOrbs());
                             });
@@ -639,8 +651,8 @@ public class Warlords extends JavaPlugin {
                         while (itr.hasNext()) {
                             OrbsOfLife.Orb orb = itr.next();
                             Location orbPosition = orb.getArmorStand().getLocation();
-                            if ((orb.getPlayerToMoveTowards() == null || (orb.getPlayerToMoveTowards() != null && orb.getPlayerToMoveTowards() == warlordsPlayer)) &&
-                                    orbPosition.distanceSquared(playerPosition) < 1.35 * 1.35 && !warlordsPlayer.isDeath()) {
+                            if ((orb.getPlayerToMoveTowards() == null || (orb.getPlayerToMoveTowards() != null && orb.getPlayerToMoveTowards() == wp)) &&
+                                    orbPosition.distanceSquared(playerPosition) < 1.35 * 1.35 && !wp.isDeath()) {
                                 orb.remove();
                                 itr.remove();
 
@@ -665,7 +677,7 @@ public class Warlords extends JavaPlugin {
                                     maxHeal *= 1 + orb.getTicksLived() / 520f;
                                 }
 
-                                warlordsPlayer.healHealth(orb.getOwner(), "Orbs of Life", maxHeal, maxHeal, -1, 100, false);
+                                wp.healHealth(orb.getOwner(), "Orbs of Life", maxHeal, maxHeal, -1, 100, false);
                                 if (player != null) {
                                     for (Player player1 : player.getWorld().getPlayers()) {
                                         player1.playSound(player.getLocation(), Sound.ORB_PICKUP, 0.5f, 1);
@@ -673,8 +685,8 @@ public class Warlords extends JavaPlugin {
                                 }
 
                                 for (WarlordsPlayer nearPlayer : PlayerFilter
-                                        .entitiesAround(warlordsPlayer, 6, 6, 6)
-                                        .aliveTeammatesOfExcludingSelf(warlordsPlayer)
+                                        .entitiesAround(wp, 6, 6, 6)
+                                        .aliveTeammatesOfExcludingSelf(wp)
                                         .limit(2)
                                 ) {
                                     nearPlayer.healHealth(orb.getOwner(), "Orbs of Life", minHeal, minHeal, -1, 100, false);
@@ -693,7 +705,7 @@ public class Warlords extends JavaPlugin {
                         }
 
                         if (player != null) {
-                            warlordsPlayer.setBlocksTravelledCM(Utils.getPlayerMovementStatistics(player));
+                            wp.setBlocksTravelledCM(Utils.getPlayerMovementStatistics(player));
                         }
                     }
 
@@ -713,7 +725,10 @@ public class Warlords extends JavaPlugin {
                                 }
                             } else {
                                 int healthToAdd = (int) (warlordsPlayer.getMaxHealth() / 55.3);
-                                warlordsPlayer.setHealth(Math.min(warlordsPlayer.getHealth() + healthToAdd, warlordsPlayer.getMaxHealth()));
+                                warlordsPlayer.setHealth(Math.max(warlordsPlayer.getHealth(),
+                                                         Math.min(warlordsPlayer.getHealth() + healthToAdd,
+                                                         warlordsPlayer.getMaxHealth()
+                                                         )));
                             }
                             //RESPAWN DISPLAY
                             BigDecimal respawn = warlordsPlayer.getRespawnTimer();

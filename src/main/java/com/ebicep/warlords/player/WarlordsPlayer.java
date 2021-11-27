@@ -58,6 +58,8 @@ public final class WarlordsPlayer {
     private float energy;
     private float maxEnergy;
     private float horseCooldown;
+    private int overhealDuration;
+    private float currentHealthModifier = 1;
     private int flagCooldown;
     private int hitCooldown;
     private int spawnProtection;
@@ -856,6 +858,7 @@ public final class WarlordsPlayer {
 
                 if (this.health <= 0 && !cooldownManager.checkUndyingArmy(false)) {
                     if (attacker.entity instanceof Player) {
+                        ((Player) attacker.entity).playSound(attacker.getLocation(), Sound.ORB_PICKUP, 500f, 1);
                         ((Player) attacker.entity).playSound(attacker.getLocation(), Sound.ORB_PICKUP, 500f, 0.5f);
                     }
 
@@ -876,7 +879,6 @@ public final class WarlordsPlayer {
                         }
                     });
                     gameState.addKill(team, false);
-
 
                     //title YOU DIED
                     if (this.entity instanceof Player) {
@@ -991,6 +993,9 @@ public final class WarlordsPlayer {
             if (this.health + healValue > this.maxHealth) {
                 healValue = this.maxHealth - this.health;
             }
+
+            if (healValue < 0) return;
+
             if (healValue != 0) {
                 if (isCrit) {
                     sendMessage(RECEIVE_ARROW + ChatColor.GRAY + " Your " + ability + " critically healed you for " + ChatColor.GREEN + "§l" + Math.round(healValue) + "! " + ChatColor.GRAY + "health.");
@@ -1000,7 +1005,7 @@ public final class WarlordsPlayer {
                 health += healValue;
                 addHealing(healValue, gameState.flags().hasFlag(this));
 
-                if (!ability.isEmpty()) {
+                if (!ability.isEmpty() && !ability.equals("Healing Rain")) {
                     if (attacker.entity instanceof Player) {
                         ((Player) attacker.entity).playSound(attacker.getLocation(), Sound.ORB_PICKUP, 1, 1);
                     }
@@ -1011,9 +1016,17 @@ public final class WarlordsPlayer {
             if (isTeammate(attacker)) {
                 healedBy.put(attacker, 10);
 
+                int maxHealth = this.maxHealth;
+                if (ability.equals("Water Bolt") || ability.equals("Water Breath") || ability.equals("Healing Rain")) {
+                    maxHealth *= 1.1;
+                }
+
                 if (this.health + healValue > maxHealth) {
                     healValue = maxHealth - this.health;
                 }
+
+                if (healValue < 0) return;
+
                 if (healValue != 0) {
                     if (isCrit) {
                         sendMessage(ChatColor.GREEN + "\u00AB" + ChatColor.GRAY + " " + attacker.getName() + "'s " + ability + " critically healed you for " + ChatColor.GREEN + "§l" + Math.round(healValue) + "! " + ChatColor.GRAY + "health.");
@@ -1026,7 +1039,7 @@ public final class WarlordsPlayer {
                 health += healValue;
                 attacker.addHealing(healValue, gameState.flags().hasFlag(this));
 
-                if (!ability.isEmpty()) {
+                if (!ability.isEmpty() && !ability.equals("Healing Rain")) {
                     if (attacker.entity instanceof Player) {
                         ((Player) attacker.entity).playSound(attacker.getLocation(), Sound.ORB_PICKUP, 1, 1);
                     }
@@ -1756,5 +1769,25 @@ public final class WarlordsPlayer {
 
     public List<Float> getRecordDamage() {
         return recordDamage;
+    }
+
+    public float getCurrentHealthModifier() {
+        return currentHealthModifier;
+    }
+
+    public void setCurrentHealthModifier(float currentHealthModifier) {
+        this.currentHealthModifier = currentHealthModifier;
+    }
+
+    public int getOverhealDuration() {
+        return overhealDuration;
+    }
+
+    public void setOverhealDuration(int overhealDuration) {
+        this.overhealDuration = overhealDuration;
+    }
+
+    public void decrementOverhealDuration() {
+        this.overhealDuration--;
     }
 }
