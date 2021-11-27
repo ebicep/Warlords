@@ -53,7 +53,7 @@ public class HealingRain extends AbstractAbility {
         BukkitTask task = Bukkit.getScheduler().runTaskTimer(Warlords.getInstance(), damageHealCircle::spawn, 0, 1);
         wp.getGame().getGameTasks().put(task, System.currentTimeMillis());
 
-        BukkitTask task1 = new BukkitRunnable() {
+        BukkitTask rainSneakAbility = new BukkitRunnable() {
             boolean wasSneaking = false;
 
             @Override
@@ -72,7 +72,7 @@ public class HealingRain extends AbstractAbility {
                 wasSneaking = player.isSneaking();
             }
         }.runTaskTimer(Warlords.getInstance(), 0, 0);
-        wp.getGame().getGameTasks().put(task1, System.currentTimeMillis());
+        wp.getGame().getGameTasks().put(rainSneakAbility, System.currentTimeMillis());
         wp.getGame().getGameTasks().put(
 
                 new BukkitRunnable() {
@@ -96,7 +96,7 @@ public class HealingRain extends AbstractAbility {
                         if (damageHealCircle.getDuration() < 0) {
                             this.cancel();
                             task.cancel();
-                            task1.cancel();
+                            rainSneakAbility.cancel();
                         }
 
                         if (recastCooldown != 0) {

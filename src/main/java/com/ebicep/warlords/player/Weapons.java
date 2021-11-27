@@ -75,9 +75,9 @@ public enum Weapons {
     SILVER_PHANTASM_SWORD_2("Blazeguard", new ItemStack(Material.FLINT), LEGENDARY),
     SILVER_PHANTASM_SWORD_3("Venom", new ItemStack(Material.COAL), LEGENDARY),
     SILVER_PHANTASM_HAMMER("Wrath of Aether", new ItemStack(Material.QUARTZ), LEGENDARY),
+    SILVER_PHANTASM_STAFF("Wit of Oblivion", new ItemStack(Material.IRON_INGOT), LEGENDARY),
 
-    // mythic
-    SILVER_PHANTASM_STAFF("Wit of Oblivion", new ItemStack(Material.IRON_INGOT), MYTHIC),
+    // mythic,
     SILVER_PHANTASM_STAFF_2("Lament", new ItemStack(Material.INK_SACK), MYTHIC),
 
     ;
