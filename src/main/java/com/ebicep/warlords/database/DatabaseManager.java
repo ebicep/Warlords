@@ -596,7 +596,7 @@ public class DatabaseManager {
         try {
             Warlords.newChain()
                     .async(() -> {
-//                        if (gameInformation.isUpdatePlayerStats()) {
+                        if (gameInformation.isUpdatePlayerStats()) {
                             //updating all players, blocks this async thread, so leaderboard updated after
 
                             gameInformation.getPlayerInfo().forEach((uuid, stringObjectHashMap) -> {
@@ -605,13 +605,14 @@ public class DatabaseManager {
                                 updatePlayerInformation(uuid, stringObjectHashMap, FieldUpdateOperators.INCREMENT, false, playersInformationDaily);
                             });
 
-//                        }
+                        }
                         //inserting the game to the database
-                        gamesInformation.updateOne(and(
-                                        eq("date", gameInformation.getGameInfo().get("date")),
-                                        eq("time_left", gameInformation.getGameInfo().get("time_left"))),
-                                new Document(FieldUpdateOperators.SET.operator, new Document("counted", true))
-                        );
+                        gamesInformation.insertOne(gameInformation.getGameInfo());
+//                        gamesInformation.updateOne(and(
+//                                        eq("date", gameInformation.getGameInfo().get("date")),
+//                                        eq("time_left", gameInformation.getGameInfo().get("time_left"))),
+//                                new Document(FieldUpdateOperators.SET.operator, new Document("counted", true))
+//                        );
                         //reloading leaderboards
                         LeaderboardManager.playerGameHolograms.forEach((uuid, integer) -> {
                             LeaderboardManager.playerGameHolograms.put(uuid, previousGames.size() - 1);
