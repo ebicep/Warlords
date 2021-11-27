@@ -22,19 +22,19 @@ public class LeaderboardCommand implements CommandExecutor {
 
         String input = args[0];
         switch (input) {
-            case "toggle":
-                if(LeaderboardManager.enabled) {
-                    sender.sendMessage(ChatColor.RED + "Leaderboards disabled");
-                } else {
-                    sender.sendMessage(ChatColor.GREEN + "Leaderboards enabled");
-                }
-                LeaderboardManager.enabled = !LeaderboardManager.enabled;
-                LeaderboardManager.addHologramLeaderboards(UUID.randomUUID().toString());
-                return true;
-            case "reload":
-                sender.sendMessage(ChatColor.GREEN + "Leaderboards reloaded");
-                LeaderboardManager.addHologramLeaderboards(UUID.randomUUID().toString());
-                return true;
+//            case "toggle":
+//                if(LeaderboardManager.enabled) {
+//                    sender.sendMessage(ChatColor.RED + "Leaderboards disabled");
+//                } else {
+//                    sender.sendMessage(ChatColor.GREEN + "Leaderboards enabled");
+//                }
+//                LeaderboardManager.enabled = !LeaderboardManager.enabled;
+//                LeaderboardManager.addHologramLeaderboards(UUID.randomUUID().toString());
+//                return true;
+//            case "reload":
+//                sender.sendMessage(ChatColor.GREEN + "Leaderboards reloaded");
+//                LeaderboardManager.addHologramLeaderboards(UUID.randomUUID().toString());
+//                return true;
         }
 
         return true;

@@ -9,10 +9,7 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.security.auth.login.LoginException;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.Optional;
-import java.util.Scanner;
 
 
 public class BotManager {

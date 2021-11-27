@@ -6,9 +6,10 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import static com.ebicep.warlords.player.WeaponsRarity.*;
 
 import java.util.HashMap;
+
+import static com.ebicep.warlords.player.WeaponsRarity.*;
 
 public enum Weapons {
 

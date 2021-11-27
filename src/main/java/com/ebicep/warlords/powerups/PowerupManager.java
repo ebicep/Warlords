@@ -1,14 +1,11 @@
 package com.ebicep.warlords.powerups;
 
 import com.ebicep.warlords.maps.Game;
-import com.ebicep.warlords.maps.GameMap;
-import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.PlayerFilter;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class PowerupManager extends BukkitRunnable {
 

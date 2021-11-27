@@ -1,35 +1,27 @@
 package com.ebicep.warlords.commands.debugcommands;
 
-import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.BaseCommand;
-import com.ebicep.warlords.commands.miscellaneouscommands.MessageCommand;
-import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.database.FieldUpdateOperators;
-import com.ebicep.warlords.database.Leaderboard;
-import com.ebicep.warlords.database.LeaderboardManager;
-import com.ebicep.warlords.player.Classes;
-import com.ebicep.warlords.player.ExperienceManager;
+import com.ebicep.warlords.database.newdb.DatabaseManager;
+import com.ebicep.warlords.database.newdb.cache.MultipleCacheResolver;
+import com.ebicep.warlords.database.newdb.repositories.player.PlayerService;
+import com.ebicep.warlords.database.newdb.repositories.player.PlayersCollections;
+import com.ebicep.warlords.database.newdb.repositories.player.pojos.DatabasePlayer;
 import com.ebicep.warlords.player.WarlordsPlayer;
-import com.ebicep.warlords.util.Utils;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.model.UpdateManyModel;
+import com.github.benmanes.caffeine.cache.Cache;
 import com.mongodb.client.model.WriteModel;
 import org.bson.Document;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.springframework.cache.caffeine.CaffeineCache;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
-import java.util.function.Consumer;
 
-import static com.ebicep.warlords.database.DatabaseManager.*;
 
 public class TestCommand implements CommandExecutor {
 
@@ -42,9 +34,14 @@ public class TestCommand implements CommandExecutor {
         WarlordsPlayer warlordsPlayer = BaseCommand.requireWarlordsPlayer(sender);
         if (warlordsPlayer != null) {
             System.out.println(!warlordsPlayer.getGameState().isForceEnd() && warlordsPlayer.getGameState().getStats(warlordsPlayer.getTeam()).points() > warlordsPlayer.getGameState().getStats(warlordsPlayer.getTeam().enemy()).points());
-            System.out.println(ExperienceManager.getExpFromGameStats(warlordsPlayer, true));
+//            System.out.println(ExperienceManager.getExpFromGameStats(warlordsPlayer, true));
         }
         Player player = (Player) sender;
+
+        printCache();
+//        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
+//        printCache();
+//        System.out.println(databasePlayer);
 //        Utils.sendMessage(player, true, ChatColor.GREEN.toString() + ChatColor.BOLD + ChatColor.MAGIC + "   " + ChatColor.AQUA + ChatColor.BOLD + " LEVEL UP! " + ChatColor.DARK_GRAY + ChatColor.BOLD + "[" + ChatColor.GRAY + ChatColor.BOLD + "23" + ChatColor.DARK_GRAY + ChatColor.BOLD + "]" + ChatColor.GREEN + ChatColor.BOLD + " > " + ChatColor.DARK_GRAY + ChatColor.BOLD + "[" + ChatColor.GRAY + ChatColor.BOLD + "24" + ChatColor.DARK_GRAY + ChatColor.BOLD + "] " + ChatColor.GREEN + ChatColor.MAGIC + ChatColor.BOLD + "   ");
 
         DecimalFormat decimalFormat = new DecimalFormat("#.##");
@@ -165,4 +162,8 @@ public class TestCommand implements CommandExecutor {
         //instance.getCommand("class").setTabCompleter(this);
     }
 
+    private static void printCache() {
+        Cache<Object, Object> cache = ((CaffeineCache) MultipleCacheResolver.playersCacheManager.getCache(PlayersCollections.ALL_TIME.cacheName)).getNativeCache();
+        System.out.println("CACHE - " + cache.asMap());
+    }
 }

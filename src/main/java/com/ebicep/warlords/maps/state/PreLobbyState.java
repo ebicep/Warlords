@@ -6,8 +6,6 @@ import com.ebicep.warlords.maps.Gates;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.player.Classes;
 import com.ebicep.warlords.player.CustomScoreboard;
-import com.ebicep.warlords.player.CustomScoreboardPair;
-import com.ebicep.warlords.player.ExperienceManager;
 import com.ebicep.warlords.util.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -126,7 +124,7 @@ public class PreLobbyState implements State, TimerDebugAble {
                 ChatColor.WHITE + "allow time for ",
                 ChatColor.WHITE + "additional players",
                 "    ",
-                ChatColor.GOLD + "Lv" + ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(player.getUniqueId(), classes)) + " " + Classes.getClassesGroup(classes).name,
+                //ChatColor.GOLD + "Lv" + ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(player.getUniqueId(), classes)) + " " + Classes.getClassesGroup(classes).name,
                 ChatColor.WHITE + "Spec: " + ChatColor.GREEN + classes.name,
                 "     ",
                 ChatColor.YELLOW + Warlords.VERSION);

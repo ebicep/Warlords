@@ -1,11 +1,9 @@
 package com.ebicep.warlords.maps.state;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.state.PlayingState.Stats;
-import com.ebicep.warlords.player.ExperienceManager;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.PacketUtils;
 import com.ebicep.warlords.util.PlayerFilter;
@@ -14,7 +12,9 @@ import com.ebicep.warlords.util.Utils;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -133,40 +133,40 @@ public class EndState implements State, TimerDebugAble {
             }
 
         }
-        if(game.playersCount() >= 16 && DatabaseManager.previousGames.get(DatabaseManager.previousGames.size() - 1).isUpdatePlayerStats()) {
-            sendMessageToAllGamePlayer(game, "", false);
-            sendMessageToAllGamePlayer(game, ChatColor.YELLOW.toString() + ChatColor.BOLD + "✚ EXPERIENCE SUMMARY ✚", true);
-            for (WarlordsPlayer wp : PlayerFilter.playingGame(game)) {
-                Player player = Bukkit.getPlayer(wp.getUuid());
-                if (player == null) continue;
-
-                LinkedHashMap<String, Long> expSummary = ExperienceManager.getExpFromGameStats(wp, false);
-                long experienceEarnedUniversal = expSummary.values().stream().mapToLong(Long::longValue).sum();
-                long experienceEarnedSpec = ExperienceManager.getSpecExpFromSummary(expSummary);
-                long experienceOnSpec = ExperienceManager.getExperienceForSpec(wp.getUuid(), wp.getSpecClass());
-                long experienceUniversal = ExperienceManager.getUniversalLevel(wp.getUuid());
-                StringBuilder specExpSummary = new StringBuilder();
-                StringBuilder universalExpSummary = new StringBuilder();
-                expSummary.forEach((s, aLong) -> {
-                    if(!s.equals("First Game of the Day") && !s.equals("Second Game of the Day") && !s.equals("Third Game of the Day")) {
-                        specExpSummary.append(ChatColor.AQUA).append(s).append(ChatColor.WHITE).append(": ").append(ChatColor.DARK_GRAY).append("+").append(ChatColor.DARK_GREEN).append(aLong).append("\n");
-                    }
-                    universalExpSummary.append(ChatColor.AQUA).append(s).append(ChatColor.WHITE).append(": ").append(ChatColor.DARK_GRAY).append("+").append(ChatColor.DARK_GREEN).append(aLong).append("\n");
-                });
-                specExpSummary.setLength(specExpSummary.length() - 1);
-                universalExpSummary.setLength(universalExpSummary.length() - 1);
-
-                TextComponent classSpecExp = new TextComponent(ChatColor.GRAY + "+" + ChatColor.DARK_GREEN + Utils.addCommaAndRound(experienceEarnedSpec) + " " + ChatColor.GOLD + wp.getSpec().getClassName() + " Experience " + ChatColor.GRAY + "(" + wp.getSpecClass().specType.chatColor + wp.getSpecClass().name + ChatColor.GRAY + ")");
-                classSpecExp.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(specExpSummary.toString()).create()));
-                Utils.sendCenteredMessageWithEvents(player, Collections.singletonList(classSpecExp));
-                ExperienceManager.giveLevelUpMessage(player, experienceOnSpec, experienceOnSpec + experienceEarnedSpec);
-
-                TextComponent universalExp = new TextComponent(ChatColor.GRAY + "+" + ChatColor.DARK_AQUA + Utils.addCommaAndRound(experienceEarnedUniversal) + " " + ChatColor.GOLD + "Universal Experience ");
-                universalExp.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(universalExpSummary.toString()).create()));
-                Utils.sendCenteredMessageWithEvents(player, Collections.singletonList(universalExp));
-                ExperienceManager.giveLevelUpMessage(player, experienceUniversal, experienceUniversal + experienceEarnedUniversal);
-            }
-        }
+//        if(game.playersCount() >= 16 && DatabaseManager.previousGames.get(DatabaseManager.previousGames.size() - 1).isUpdatePlayerStats()) {
+//            sendMessageToAllGamePlayer(game, "", false);
+//            sendMessageToAllGamePlayer(game, ChatColor.YELLOW.toString() + ChatColor.BOLD + "✚ EXPERIENCE SUMMARY ✚", true);
+//            for (WarlordsPlayer wp : PlayerFilter.playingGame(game)) {
+//                Player player = Bukkit.getPlayer(wp.getUuid());
+//                if (player == null) continue;
+//
+//                LinkedHashMap<String, Long> expSummary = ExperienceManager.getExpFromGameStats(wp, false);
+//                long experienceEarnedUniversal = expSummary.values().stream().mapToLong(Long::longValue).sum();
+//                long experienceEarnedSpec = ExperienceManager.getSpecExpFromSummary(expSummary);
+//                long experienceOnSpec = ExperienceManager.getExperienceForSpec(wp.getUuid(), wp.getSpecClass());
+//                long experienceUniversal = ExperienceManager.getUniversalLevel(wp.getUuid());
+//                StringBuilder specExpSummary = new StringBuilder();
+//                StringBuilder universalExpSummary = new StringBuilder();
+//                expSummary.forEach((s, aLong) -> {
+//                    if(!s.equals("First Game of the Day") && !s.equals("Second Game of the Day") && !s.equals("Third Game of the Day")) {
+//                        specExpSummary.append(ChatColor.AQUA).append(s).append(ChatColor.WHITE).append(": ").append(ChatColor.DARK_GRAY).append("+").append(ChatColor.DARK_GREEN).append(aLong).append("\n");
+//                    }
+//                    universalExpSummary.append(ChatColor.AQUA).append(s).append(ChatColor.WHITE).append(": ").append(ChatColor.DARK_GRAY).append("+").append(ChatColor.DARK_GREEN).append(aLong).append("\n");
+//                });
+//                specExpSummary.setLength(specExpSummary.length() - 1);
+//                universalExpSummary.setLength(universalExpSummary.length() - 1);
+//
+//                TextComponent classSpecExp = new TextComponent(ChatColor.GRAY + "+" + ChatColor.DARK_GREEN + Utils.addCommaAndRound(experienceEarnedSpec) + " " + ChatColor.GOLD + wp.getSpec().getClassName() + " Experience " + ChatColor.GRAY + "(" + wp.getSpecClass().specType.chatColor + wp.getSpecClass().name + ChatColor.GRAY + ")");
+//                classSpecExp.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(specExpSummary.toString()).create()));
+//                Utils.sendCenteredMessageWithEvents(player, Collections.singletonList(classSpecExp));
+//                ExperienceManager.giveLevelUpMessage(player, experienceOnSpec, experienceOnSpec + experienceEarnedSpec);
+//
+//                TextComponent universalExp = new TextComponent(ChatColor.GRAY + "+" + ChatColor.DARK_AQUA + Utils.addCommaAndRound(experienceEarnedUniversal) + " " + ChatColor.GOLD + "Universal Experience ");
+//                universalExp.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(universalExpSummary.toString()).create()));
+//                Utils.sendCenteredMessageWithEvents(player, Collections.singletonList(universalExp));
+//                ExperienceManager.giveLevelUpMessage(player, experienceUniversal, experienceUniversal + experienceEarnedUniversal);
+//            }
+//        }
         sendMessageToAllGamePlayer(game, "" + ChatColor.GREEN + ChatColor.BOLD + "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬", false);
         RemoveEntities.removeArmorStands();
     }

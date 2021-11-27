@@ -3,8 +3,6 @@ package com.ebicep.warlords.maps.state;
 import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.debugcommands.RecordGamesCommand;
-import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.database.FieldUpdateOperators;
 import com.ebicep.warlords.events.WarlordsPointsChangedEvent;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Gates;
@@ -16,15 +14,12 @@ import com.ebicep.warlords.maps.flags.SpawnFlagLocation;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.powerups.PowerupManager;
 import com.ebicep.warlords.util.PacketUtils;
-import com.ebicep.warlords.util.PlayerFilter;
 import com.ebicep.warlords.util.RemoveEntities;
 import com.ebicep.warlords.util.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
@@ -187,7 +182,7 @@ public class PlayingState implements State, TimerDebugAble {
                         newInfo.put("shaman.helm", ArmorManager.Helmets.getSelected(player.getPlayer()).get(3).name);
                         newInfo.put("shaman.armor", ArmorManager.ArmorSets.getSelected(player.getPlayer()).get(3).name);
                         newInfo.put("hotkeymode", Settings.HotkeyMode.getSelected(player.getPlayer()).name());
-                        DatabaseManager.updatePlayerInformation(player, newInfo, FieldUpdateOperators.SET, false);
+//                        DatabaseManager.updatePlayerInformation(player, newInfo, FieldUpdateOperators.SET, false);
                     });
                 }).execute();
     }
@@ -308,14 +303,14 @@ public class PlayingState implements State, TimerDebugAble {
             float highestDamage = players.stream().sorted(Comparator.comparing(WarlordsPlayer::getTotalDamage).reversed()).collect(Collectors.toList()).get(0).getTotalDamage();
             float highestHealing = players.stream().sorted(Comparator.comparing(WarlordsPlayer::getTotalHealing).reversed()).collect(Collectors.toList()).get(0).getTotalHealing();
             if (highestDamage <= 500000 && highestHealing <= 500000) {
-                DatabaseManager.addGame(PlayingState.this, true);
+//                DatabaseManager.addGame(PlayingState.this, true);
             } else {
-                DatabaseManager.addGame(PlayingState.this, false);
+//                DatabaseManager.addGame(PlayingState.this, false);
                 System.out.println(ChatColor.GREEN + "[Warlords] This game was added to the database (INVALID DAMAGE/HEALING) but player information remained the same");
             }
         } else {
             if(game.playersCount() >= 6) {
-                DatabaseManager.addGame(PlayingState.this, false);
+//                DatabaseManager.addGame(PlayingState.this, false);
                 System.out.println(ChatColor.GREEN + "[Warlords] This game was added to the database but player information remained the same");
             } else {
                 System.out.println(ChatColor.GREEN + "[Warlords] This game was not added to the database and player information remained the same");
@@ -427,13 +422,13 @@ public class PlayingState implements State, TimerDebugAble {
                     org.bukkit.scoreboard.Team temp = scoreboard.registerNewTeam(warlordsPlayer.getName());
                     temp.setPrefix(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + warlordsPlayer.getSpec().getClassNameShort() + ChatColor.DARK_GRAY + "] " + team.teamColor());
                     temp.addEntry(warlordsPlayer.getName());
-                    temp.setSuffix(ChatColor.DARK_GRAY + " [" + ChatColor.GOLD + "Lv" + ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(warlordsPlayer.getUuid(), warlordsPlayer.getSpecClass())) + ChatColor.DARK_GRAY + "]");
+//                    temp.setSuffix(ChatColor.DARK_GRAY + " [" + ChatColor.GOLD + "Lv" + ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(warlordsPlayer.getUuid(), warlordsPlayer.getSpecClass())) + ChatColor.DARK_GRAY + "]");
                 } else {
                     scoreboard.getTeam(warlordsPlayer.getName()).setPrefix(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + warlordsPlayer.getSpec().getClassNameShort() + ChatColor.DARK_GRAY + "] " + team.teamColor());
                     if (warlordsPlayer.getGameState().flags().hasFlag(warlordsPlayer)) {
-                        scoreboard.getTeam(warlordsPlayer.getName()).setSuffix(ChatColor.DARK_GRAY + "[" + ChatColor.GRAY + "Lv" + ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(warlordsPlayer.getUuid(), warlordsPlayer.getSpecClass())) + ChatColor.DARK_GRAY + "]" + ChatColor.WHITE + "⚑");
+//                        scoreboard.getTeam(warlordsPlayer.getName()).setSuffix(ChatColor.DARK_GRAY + "[" + ChatColor.GRAY + "Lv" + ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(warlordsPlayer.getUuid(), warlordsPlayer.getSpecClass())) + ChatColor.DARK_GRAY + "]" + ChatColor.WHITE + "⚑");
                     } else {
-                        scoreboard.getTeam(warlordsPlayer.getName()).setSuffix(ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + "Lv" + ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(warlordsPlayer.getUuid(), warlordsPlayer.getSpecClass())) + ChatColor.DARK_GRAY + "]");
+//                        scoreboard.getTeam(warlordsPlayer.getName()).setSuffix(ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + "Lv" + ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(warlordsPlayer.getUuid(), warlordsPlayer.getSpecClass())) + ChatColor.DARK_GRAY + "]");
                     }
                 }
             }
@@ -446,7 +441,7 @@ public class PlayingState implements State, TimerDebugAble {
         this.getGame().forEachOfflinePlayer((player, team) -> {
             WarlordsPlayer wp = Warlords.getPlayer(player);
             if (wp != null) {
-                int level = ExperienceManager.getLevelForSpec(wp.getUuid(), wp.getSpecClass());
+                int level = 0;//ExperienceManager.getLevelForSpec(wp.getUuid(), wp.getSpecClass());
                 scoreboard.getTeam(warlordsPlayer.getName()).setPrefix(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + warlordsPlayer.getSpec().getClassNameShort() + ChatColor.DARK_GRAY + "] " + warlordsPlayer.getTeam().teamColor());
                 scoreboard.getTeam(warlordsPlayer.getName()).setSuffix(ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + "Lv" + (level < 10 ? "0" : "") + level + ChatColor.DARK_GRAY + "]");
             }

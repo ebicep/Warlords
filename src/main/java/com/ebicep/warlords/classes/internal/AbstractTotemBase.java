@@ -4,7 +4,6 @@ import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.classes.abilties.DeathsDebt;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;

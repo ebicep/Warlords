@@ -9,7 +9,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
 
 public class MessageCommand implements CommandExecutor {
 

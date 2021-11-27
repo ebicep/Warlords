@@ -2,7 +2,6 @@ package com.ebicep.warlords.commands.miscellaneouscommands;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.BaseCommand;
-import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.player.PlayerSettings;
 import com.ebicep.warlords.player.Settings;
 import org.bukkit.ChatColor;
@@ -31,7 +30,7 @@ public class ParticleQualityCommand implements TabExecutor {
                 if (Arrays.stream(Settings.ParticleQuality.values()).anyMatch((t) -> t.name().equals(args[0].toUpperCase()))) {
                     PlayerSettings settings = Warlords.getPlayerSettings(player.getUniqueId());
                     settings.setParticleQuality(Settings.ParticleQuality.valueOf(args[0].toUpperCase()));
-                    DatabaseManager.updatePlayerInformation(player, "particle_quality", settings.getParticleQuality().name());
+//                    DatabaseManager.updatePlayerInformation(player, "particle_quality", settings.getParticleQuality().name());
 
                     sender.sendMessage(ChatColor.GREEN + "Particle Quality set to " + args[0].toUpperCase());
                     return true;

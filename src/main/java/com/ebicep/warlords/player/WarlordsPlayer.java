@@ -5,7 +5,6 @@ import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.classes.abilties.*;
 import com.ebicep.warlords.classes.shaman.specs.spiritguard.Spiritguard;
-import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.events.WarlordsDeathEvent;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Team;
@@ -482,7 +481,7 @@ public final class WarlordsPlayer {
         this.maxEnergy = this.spec.getMaxEnergy();
         this.energy = this.maxEnergy;
         assignItemLore(Bukkit.getPlayer(uuid));
-        DatabaseManager.updatePlayerInformation(player, "last_spec", spec.getName());
+//        DatabaseManager.updatePlayerInformation(player, "last_spec", spec.getName());
         //
     }
 

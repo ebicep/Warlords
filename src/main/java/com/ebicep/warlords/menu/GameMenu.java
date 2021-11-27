@@ -6,7 +6,10 @@ import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.util.ItemBuilder;
 import com.ebicep.warlords.util.Utils;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
@@ -17,13 +20,12 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.lang.Math.round;
-
 import static com.ebicep.warlords.menu.Menu.ACTION_CLOSE_MENU;
 import static com.ebicep.warlords.menu.Menu.ACTION_DO_NOTHING;
 import static com.ebicep.warlords.player.ArmorManager.*;
 import static com.ebicep.warlords.player.Classes.*;
 import static com.ebicep.warlords.player.Settings.*;
+import static java.lang.Math.round;
 
 public class GameMenu {
     private static final ItemStack MENU_BACK_PREGAME = new ItemBuilder(Material.ARROW)
@@ -80,13 +82,13 @@ public class GameMenu {
                 lore.add((subClass == selectedClass ? ChatColor.GREEN : ChatColor.GRAY) + subClass.name);
             }
             lore.add("");
-            long experience = ExperienceManager.getExperienceForClass(player.getUniqueId(), group);
-            int level = (int) ExperienceManager.calculateLevelFromExp(experience);
-            lore.add(ExperienceManager.getProgressString(experience, level + 1));
+//            long experience = ExperienceManager.getExperienceForClass(player.getUniqueId(), group);
+//            int level = (int) ExperienceManager.calculateLevelFromExp(experience);
+//            lore.add(ExperienceManager.getProgressString(experience, level + 1));
             lore.add("");
             lore.add(ChatColor.YELLOW + "Click here to select a " + group.name + "\n" + ChatColor.YELLOW + "specialization");
             ItemStack item = new ItemBuilder(group.item)
-                    .name(ChatColor.GOLD + group.name + ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + "Lv" +  ExperienceManager.getLevelString(level) + ChatColor.DARK_GRAY + "]")
+                    .name(ChatColor.GOLD + group.name + ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + "Lv")// +  ExperienceManager.getLevelString(level) + ChatColor.DARK_GRAY + "]")
                     .lore(lore)
                     .get();
             menu.setItem(
@@ -115,14 +117,14 @@ public class GameMenu {
         for (int i = 0; i < values.size(); i++) {
             Classes subClass = values.get(i);
             ItemBuilder builder = new ItemBuilder(subClass.specType.itemStack)
-                    .name(ChatColor.GREEN + "Specialization: " + subClass.name + " " + ChatColor.DARK_GRAY + "[" + ChatColor.GRAY + "Lv" + ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(player.getUniqueId(), subClass)) + ChatColor.DARK_GRAY + "]")
+                    .name(ChatColor.GREEN + "Specialization: " + subClass.name + " " + ChatColor.DARK_GRAY + "[" + ChatColor.GRAY + "Lv")// + ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(player.getUniqueId(), subClass)) + ChatColor.DARK_GRAY + "]")
                     .flags(ItemFlag.HIDE_ENCHANTS);
             List<String> lore = new ArrayList<>();
             lore.add(subClass.description);
             lore.add("");
-            long experience = ExperienceManager.getExperienceForSpec(player.getUniqueId(), subClass);
-            int level = (int) ExperienceManager.calculateLevelFromExp(experience);
-            lore.add(ExperienceManager.getProgressString(experience, level + 1));
+//            long experience = ExperienceManager.getExperienceForSpec(player.getUniqueId(), subClass);
+//            int level = (int) ExperienceManager.calculateLevelFromExp(experience);
+//            lore.add(ExperienceManager.getProgressString(experience, level + 1));
             lore.add("");
             if (subClass == selectedClass) {
                 lore.add(ChatColor.GREEN + ">>> ACTIVE <<<");

@@ -2,10 +2,7 @@ package com.ebicep.warlords.commands.miscellaneouscommands;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.BaseCommand;
-import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.player.PlayerSettings;
-import com.ebicep.warlords.player.Settings;
-import com.ebicep.warlords.player.WarlordsPlayer;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -26,7 +23,7 @@ public class HotkeyModeCommand implements CommandExecutor {
                 sender.sendMessage(ChatColor.GREEN + "Hotkey Mode " + ChatColor.YELLOW + "NEW " + ChatColor.GREEN + "enabled.");
             }
             settings.setHotKeyMode(!settings.getHotKeyMode());
-            DatabaseManager.updatePlayerInformation(player, "hotkeymode", settings.getHotKeyMode() ? Settings.HotkeyMode.NEW_MODE.name() : Settings.HotkeyMode.CLASSIC_MODE.name());
+//            DatabaseManager.updatePlayerInformation(player, "hotkeymode", settings.getHotKeyMode() ? Settings.HotkeyMode.NEW_MODE.name() : Settings.HotkeyMode.CLASSIC_MODE.name());
         }
 
         return true;

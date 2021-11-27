@@ -7,9 +7,7 @@ import com.ebicep.warlords.classes.abilties.IceBarrier;
 import com.ebicep.warlords.classes.abilties.Soulbinding;
 import com.ebicep.warlords.classes.abilties.UndyingArmy;
 import com.ebicep.warlords.classes.shaman.specs.spiritguard.Spiritguard;
-import com.ebicep.warlords.database.DatabaseGame;
-import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.database.LeaderboardManager;
+import com.ebicep.warlords.database.newdb.DatabaseManager;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.flags.GroundFlagLocation;
 import com.ebicep.warlords.maps.flags.PlayerFlagLocation;
@@ -48,7 +46,8 @@ import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 
-import static com.ebicep.warlords.menu.GameMenu.*;
+import static com.ebicep.warlords.menu.GameMenu.openMainMenu;
+import static com.ebicep.warlords.menu.GameMenu.openTeamMenu;
 
 public class WarlordsEvents implements Listener {
 
@@ -82,7 +81,7 @@ public class WarlordsEvents implements Listener {
             e.getPlayer().getVehicle().remove();
         }
         //removing player position boards
-        LeaderboardManager.removePlayerSpecificHolograms(e.getPlayer());
+//        LeaderboardManager.removePlayerSpecificHolograms(e.getPlayer());
 
         Bukkit.getOnlinePlayers().forEach(p -> {
             PacketUtils.sendTabHF(p, ChatColor.AQUA + "     Welcome to " + ChatColor.YELLOW + ChatColor.BOLD + "Warlords 2.0     ", ChatColor.GREEN + "Players Online: " + ChatColor.GRAY + (Bukkit.getOnlinePlayers().size() - 1));
@@ -128,7 +127,7 @@ public class WarlordsEvents implements Listener {
             }
 
             Warlords.playerScoreboards.get(player.getUniqueId()).giveMainLobbyScoreboard();
-            ExperienceManager.giveExperienceBar(player);
+//            ExperienceManager.giveExperienceBar(player);
         }
         WarlordsPlayer p = Warlords.getPlayer(player);
         if (p != null) {
@@ -155,12 +154,17 @@ public class WarlordsEvents implements Listener {
 
         Warlords.newChain()
                 .async(() -> {
-                    DatabaseManager.loadPlayer(player, false);
+                    DatabaseManager.loadPlayer(e.getPlayer().getUniqueId());
                     Warlords.updateHead(e.getPlayer());
-                })
-                .sync(() -> LeaderboardManager.setLeaderboardHologramVisibility(player))
-                .execute();
-        DatabaseGame.setGameHologramVisibility(player);
+                }).execute();
+//        Warlords.newChain()
+//                .async(() -> {
+//                    DatabaseManager.loadPlayer(player, false);
+//                    Warlords.updateHead(e.getPlayer());
+//                })
+//                .sync(() -> LeaderboardManager.setLeaderboardHologramVisibility(player))
+//                .execute();
+//        DatabaseGame.setGameHologramVisibility(player);
 
         //scoreboard
         if(!Warlords.playerScoreboards.containsKey(player.getUniqueId()) || Warlords.playerScoreboards.get(player.getUniqueId()) == null) {
@@ -496,7 +500,7 @@ public class WarlordsEvents implements Listener {
                     case ALL:
                         WarlordsPlayer wp = Warlords.getPlayer(player);
                         PlayerSettings playerSettings = Warlords.getPlayerSettings(uuid);
-                        int level = ExperienceManager.getLevelForSpec(uuid, playerSettings.getSelectedClass());
+                        int level = 0;//ExperienceManager.getLevelForSpec(uuid, playerSettings.getSelectedClass());
                         if (wp == null) {
                             e.setFormat(ChatColor.DARK_GRAY + "[" +
                                     ChatColor.GOLD + Classes.getClassesGroup(playerSettings.getSelectedClass()).name.toUpperCase().substring(0, 3) +
