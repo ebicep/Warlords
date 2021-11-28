@@ -6,6 +6,7 @@ import com.ebicep.warlords.database.newdb.repositories.player.pojos.DatabasePlay
 import org.bukkit.Bukkit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
@@ -73,6 +74,11 @@ public class PlayerServiceImpl implements PlayerService {
     @Override
     public List<DatabasePlayer> findAll() {
         return playerRepository.findAll();
+    }
+
+    @Override
+    public BulkOperations bulkOps() {
+        return playerRepository.bulkOps();
     }
 
     @Override

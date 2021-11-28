@@ -1,39 +1,116 @@
 package com.ebicep.warlords.database.newdb.repositories.player.pojos;
 
 import com.ebicep.warlords.player.ArmorManager;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 public class DatabaseWarlordsClass {
 
-    protected int kills;
-    protected int assists;
-    protected int deaths;
-    protected int wins;
-    protected int losses;
-    protected int flagsCaptured;
-    protected int flagsReturned;
-    protected long damage;
-    protected long healing;
-    protected long absorbed;
-    protected ArmorManager.Helmets helmet;
-    protected ArmorManager.ArmorSets armor;
+    @Field
+    protected int kills = 0;
+    protected int assists = 0;
+    protected int deaths = 0;
+    protected int wins = 0;
+    protected int losses = 0;
+    protected int flagsCaptured = 0;
+    protected int flagsReturned = 0;
+    protected long damage = 0;
+    protected long healing = 0;
+    protected long absorbed = 0;
+    protected long experience = 0;
 
     public DatabaseWarlordsClass() {
-        this.kills = 0;
-        this.assists = 0;
-        this.deaths = 0;
-        this.wins = 0;
-        this.losses = 0;
-        this.flagsCaptured = 0;
-        this.flagsReturned = 0;
-        this.damage = 0L;
-        this.healing = 0L;
-        this.absorbed = 0L;
-        this.helmet = ArmorManager.Helmets.SIMPLE_MAGE_HELMET;
-        this.armor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE_MAGE;
     }
 
+    public int getKills() {
+        return kills;
+    }
 
-//    private static BasicDBObject getBaseSpecStats() {
+    public void setKills(int kills) {
+        this.kills = kills;
+    }
+
+    public int getAssists() {
+        return assists;
+    }
+
+    public void setAssists(int assists) {
+        this.assists = assists;
+    }
+
+    public int getDeaths() {
+        return deaths;
+    }
+
+    public void setDeaths(int deaths) {
+        this.deaths = deaths;
+    }
+
+    public int getWins() {
+        return wins;
+    }
+
+    public void setWins(int wins) {
+        this.wins = wins;
+    }
+
+    public int getLosses() {
+        return losses;
+    }
+
+    public void setLosses(int losses) {
+        this.losses = losses;
+    }
+
+    public int getFlagsCaptured() {
+        return flagsCaptured;
+    }
+
+    public void setFlagsCaptured(int flagsCaptured) {
+        this.flagsCaptured = flagsCaptured;
+    }
+
+    public int getFlagsReturned() {
+        return flagsReturned;
+    }
+
+    public void setFlagsReturned(int flagsReturned) {
+        this.flagsReturned = flagsReturned;
+    }
+
+    public long getDamage() {
+        return damage;
+    }
+
+    public void setDamage(long damage) {
+        this.damage = damage;
+    }
+
+    public long getHealing() {
+        return healing;
+    }
+
+    public void setHealing(long healing) {
+        this.healing = healing;
+    }
+
+    public long getAbsorbed() {
+        return absorbed;
+    }
+
+    public void setAbsorbed(long absorbed) {
+        this.absorbed = absorbed;
+    }
+
+    public long getExperience() {
+        return experience;
+    }
+
+    public void setExperience(long experience) {
+        this.experience = experience;
+    }
+
+    //    private static BasicDBObject getBaseSpecStats() {
 //        return new BasicDBObject("kills", 0)
 //                .append("assists", 0)
 //                .append("deaths", 0)

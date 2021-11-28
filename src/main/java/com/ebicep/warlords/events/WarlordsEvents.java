@@ -127,7 +127,7 @@ public class WarlordsEvents implements Listener {
             }
 
             Warlords.playerScoreboards.get(player.getUniqueId()).giveMainLobbyScoreboard();
-//            ExperienceManager.giveExperienceBar(player);
+            ExperienceManager.giveExperienceBar(player);
         }
         WarlordsPlayer p = Warlords.getPlayer(player);
         if (p != null) {
@@ -500,7 +500,7 @@ public class WarlordsEvents implements Listener {
                     case ALL:
                         WarlordsPlayer wp = Warlords.getPlayer(player);
                         PlayerSettings playerSettings = Warlords.getPlayerSettings(uuid);
-                        int level = 0;//ExperienceManager.getLevelForSpec(uuid, playerSettings.getSelectedClass());
+                        int level = ExperienceManager.getLevelForSpec(uuid, playerSettings.getSelectedClass());
                         if (wp == null) {
                             e.setFormat(ChatColor.DARK_GRAY + "[" +
                                     ChatColor.GOLD + Classes.getClassesGroup(playerSettings.getSelectedClass()).name.toUpperCase().substring(0, 3) +

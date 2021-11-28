@@ -3,6 +3,7 @@ package com.ebicep.warlords.database.newdb.repositories.games;
 import com.ebicep.warlords.database.newdb.repositories.games.pojos.DatabaseGame;
 import com.ebicep.warlords.database.newdb.repositories.player.pojos.DatabasePlayer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +26,8 @@ public class GameServiceImpl implements GameService {
 
     @Override
     public void update(DatabaseGame game) {
-
+        gameRepository.save(game);
+        System.out.println("Updated: - " + game);
     }
 
     @Override
@@ -39,12 +41,22 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
-    public List<DatabasePlayer> findAll() {
-        return null;
+    public List<DatabaseGame> findAll() {
+        return gameRepository.findAll();
     }
 
     @Override
     public DatabaseGame findByDate() {
         return null;
+    }
+
+    @Override
+    public List<DatabaseGame> getLastGames(int amount) {
+        return gameRepository.getLastGames(amount);
+    }
+
+    @Override
+    public BulkOperations bulkOps() {
+        return mongoTemplate.bulkOps(BulkOperations.BulkMode.UNORDERED, DatabaseGame.class);
     }
 }

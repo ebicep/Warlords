@@ -1,8 +1,11 @@
 package com.ebicep.warlords.database.newdb.repositories.player.pojos;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.player.Classes;
+import com.ebicep.warlords.player.ClassesGroup;
 import com.ebicep.warlords.player.Settings;
 import org.bukkit.Bukkit;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -30,12 +33,12 @@ public class DatabasePlayer {
     private long damage = 0;
     private long healing = 0;
     private long absorbed = 0;
-    private DatabaseWarlordsClass mage = new DatabaseMage();
-    private DatabaseWarlordsClass warrior = new DatabaseWarrior();
-    private DatabaseWarlordsClass paladin = new DatabasePaladin();
-    private DatabaseWarlordsClass shaman = new DatabaseShaman();
+    private DatabaseMage mage = new DatabaseMage();
+    private DatabaseWarrior warrior = new DatabaseWarrior();
+    private DatabasePaladin paladin = new DatabasePaladin();
+    private DatabaseShaman shaman = new DatabaseShaman();
     @Field("last_spec")
-    private String lastSpec = "Pyromancer";
+    private Classes lastSpec = Classes.PYROMANCER;
     @Field("hotkeymode")
     private Settings.HotkeyMode hotkeyMode = Settings.HotkeyMode.NEW_MODE;
     @Field("particle_quality")
@@ -50,13 +53,31 @@ public class DatabasePlayer {
         this.name = name;
     }
 
+
     @Override
     public String toString() {
-        return "Player{" +
-                "name='" + name + '\'' +
+        return "DatabasePlayer{" +
+                "id='" + id + '\'' +
                 ", uuid='" + uuid + '\'' +
+                ", name='" + name + '\'' +
+                ", kills=" + kills +
+                ", assists=" + assists +
+                ", deaths=" + deaths +
                 ", wins=" + wins +
+                ", losses=" + losses +
+                ", flagsCaptured=" + flagsCaptured +
+                ", flagsReturned=" + flagsReturned +
+                ", damage=" + damage +
+                ", healing=" + healing +
+                ", absorbed=" + absorbed +
+                ", mage=" + mage +
+                ", warrior=" + warrior +
+                ", paladin=" + paladin +
+                ", shaman=" + shaman +
                 ", lastSpec='" + lastSpec + '\'' +
+                ", hotkeyMode=" + hotkeyMode +
+                ", particleQuality=" + particleQuality +
+                ", experience=" + experience +
                 '}';
     }
 
@@ -152,27 +173,95 @@ public class DatabasePlayer {
         this.absorbed = absorbed;
     }
 
-    public DatabaseWarlordsClass getMage() {
+    public DatabaseSpecialization getSpec(Classes classes) {
+        switch (classes) {
+            case PYROMANCER:
+                return mage.getPyromancer();
+            case CRYOMANCER:
+                return mage.getCryomancer();
+            case AQUAMANCER:
+                return mage.getAquamancer();
+            case BERSERKER:
+                return warrior.getBerserker();
+            case DEFENDER:
+                return warrior.getDefender();
+            case REVENANT:
+                return warrior.getRevenant();
+            case AVENGER:
+                return paladin.getAvenger();
+            case CRUSADER:
+                return paladin.getCrusader();
+            case PROTECTOR:
+                return paladin.getProtector();
+            case THUNDERLORD:
+                return shaman.getThunderlord();
+            case SPIRITGUARD:
+                return shaman.getSpiritguard();
+            case EARTHWARDEN:
+                return shaman.getEarthwarden();
+        }
+        return null;
+    }
+
+    public DatabaseWarlordsClass getClass(ClassesGroup classesGroup) {
+        switch (classesGroup) {
+            case MAGE:
+                return mage;
+            case WARRIOR:
+                return warrior;
+            case PALADIN:
+                return paladin;
+            case SHAMAN:
+                return shaman;
+        }
+        return null;
+    }
+
+    public DatabaseMage getMage() {
         return mage;
     }
 
-    public DatabaseWarlordsClass getWarrior() {
+    public DatabaseWarrior getWarrior() {
         return warrior;
     }
-    public DatabaseWarlordsClass getPaladin() {
+
+    public DatabasePaladin getPaladin() {
         return paladin;
     }
 
-    public DatabaseWarlordsClass getShaman() {
+    public DatabaseShaman getShaman() {
         return shaman;
     }
 
-
-    public String getLastSpec() {
+    public Classes getLastSpec() {
         return lastSpec;
     }
 
-    public void setLastSpec(String lastSpec) {
+    public void setLastSpec(Classes lastSpec) {
         this.lastSpec = lastSpec;
+    }
+
+    public Settings.HotkeyMode getHotkeyMode() {
+        return hotkeyMode;
+    }
+
+    public void setHotkeyMode(Settings.HotkeyMode hotkeyMode) {
+        this.hotkeyMode = hotkeyMode;
+    }
+
+    public Settings.ParticleQuality getParticleQuality() {
+        return particleQuality;
+    }
+
+    public void setParticleQuality(Settings.ParticleQuality particleQuality) {
+        this.particleQuality = particleQuality;
+    }
+
+    public long getExperience() {
+        return experience;
+    }
+
+    public void setExperience(long experience) {
+        this.experience = experience;
     }
 }

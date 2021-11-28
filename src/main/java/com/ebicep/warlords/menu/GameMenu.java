@@ -82,13 +82,13 @@ public class GameMenu {
                 lore.add((subClass == selectedClass ? ChatColor.GREEN : ChatColor.GRAY) + subClass.name);
             }
             lore.add("");
-//            long experience = ExperienceManager.getExperienceForClass(player.getUniqueId(), group);
-//            int level = (int) ExperienceManager.calculateLevelFromExp(experience);
-//            lore.add(ExperienceManager.getProgressString(experience, level + 1));
+            long experience = ExperienceManager.getExperienceForClass(player.getUniqueId(), group);
+            int level = (int) ExperienceManager.calculateLevelFromExp(experience);
+            lore.add(ExperienceManager.getProgressString(experience, level + 1));
             lore.add("");
             lore.add(ChatColor.YELLOW + "Click here to select a " + group.name + "\n" + ChatColor.YELLOW + "specialization");
             ItemStack item = new ItemBuilder(group.item)
-                    .name(ChatColor.GOLD + group.name + ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + "Lv")// +  ExperienceManager.getLevelString(level) + ChatColor.DARK_GRAY + "]")
+                    .name(ChatColor.GOLD + group.name + ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + "Lv" + ExperienceManager.getLevelString(level) + ChatColor.DARK_GRAY + "]")
                     .lore(lore)
                     .get();
             menu.setItem(
@@ -117,14 +117,14 @@ public class GameMenu {
         for (int i = 0; i < values.size(); i++) {
             Classes subClass = values.get(i);
             ItemBuilder builder = new ItemBuilder(subClass.specType.itemStack)
-                    .name(ChatColor.GREEN + "Specialization: " + subClass.name + " " + ChatColor.DARK_GRAY + "[" + ChatColor.GRAY + "Lv")// + ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(player.getUniqueId(), subClass)) + ChatColor.DARK_GRAY + "]")
+                    .name(ChatColor.GREEN + "Specialization: " + subClass.name + " " + ChatColor.DARK_GRAY + "[" + ChatColor.GRAY + "Lv" + ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(player.getUniqueId(), subClass)) + ChatColor.DARK_GRAY + "]")
                     .flags(ItemFlag.HIDE_ENCHANTS);
             List<String> lore = new ArrayList<>();
             lore.add(subClass.description);
             lore.add("");
-//            long experience = ExperienceManager.getExperienceForSpec(player.getUniqueId(), subClass);
-//            int level = (int) ExperienceManager.calculateLevelFromExp(experience);
-//            lore.add(ExperienceManager.getProgressString(experience, level + 1));
+            long experience = ExperienceManager.getExperienceForSpec(player.getUniqueId(), subClass);
+            int level = (int) ExperienceManager.calculateLevelFromExp(experience);
+            lore.add(ExperienceManager.getProgressString(experience, level + 1));
             lore.add("");
             if (subClass == selectedClass) {
                 lore.add(ChatColor.GREEN + ">>> ACTIVE <<<");

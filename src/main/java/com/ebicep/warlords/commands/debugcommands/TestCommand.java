@@ -4,8 +4,11 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.BaseCommand;
 import com.ebicep.warlords.database.newdb.DatabaseManager;
 import com.ebicep.warlords.database.newdb.cache.MultipleCacheResolver;
+import com.ebicep.warlords.database.newdb.repositories.games.pojos.DatabaseGame;
+import com.ebicep.warlords.database.newdb.repositories.games.pojos.DatabaseGamePlayers;
 import com.ebicep.warlords.database.newdb.repositories.player.PlayerService;
 import com.ebicep.warlords.database.newdb.repositories.player.PlayersCollections;
+import com.ebicep.warlords.database.newdb.repositories.player.pojos.DatabaseMage;
 import com.ebicep.warlords.database.newdb.repositories.player.pojos.DatabasePlayer;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.github.benmanes.caffeine.cache.Cache;
@@ -17,6 +20,10 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.springframework.cache.caffeine.CaffeineCache;
+import org.springframework.data.mongodb.core.BulkOperations;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -38,8 +45,21 @@ public class TestCommand implements CommandExecutor {
         }
         Player player = (Player) sender;
 
-        printCache();
-//        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
+
+        int counter = 0;
+        for (DatabaseGame databaseGame : DatabaseManager.gameService.findAll()) {
+            System.out.println(databaseGame.getDate());
+            for (DatabaseGamePlayers.GamePlayer gamePlayer : databaseGame.getPlayers().getBlue()) {
+                gamePlayer.setSpec(gamePlayer.getSpec().toUpperCase());
+            }
+            for (DatabaseGamePlayers.GamePlayer gamePlayer : databaseGame.getPlayers().getRed()) {
+                gamePlayer.setSpec(gamePlayer.getSpec().toUpperCase());
+            }
+            DatabaseManager.gameService.update(databaseGame);
+            break;
+        }
+
+
 //        printCache();
 //        System.out.println(databasePlayer);
 //        Utils.sendMessage(player, true, ChatColor.GREEN.toString() + ChatColor.BOLD + ChatColor.MAGIC + "   " + ChatColor.AQUA + ChatColor.BOLD + " LEVEL UP! " + ChatColor.DARK_GRAY + ChatColor.BOLD + "[" + ChatColor.GRAY + ChatColor.BOLD + "23" + ChatColor.DARK_GRAY + ChatColor.BOLD + "]" + ChatColor.GREEN + ChatColor.BOLD + " > " + ChatColor.DARK_GRAY + ChatColor.BOLD + "[" + ChatColor.GRAY + ChatColor.BOLD + "24" + ChatColor.DARK_GRAY + ChatColor.BOLD + "] " + ChatColor.GREEN + ChatColor.MAGIC + ChatColor.BOLD + "   ");

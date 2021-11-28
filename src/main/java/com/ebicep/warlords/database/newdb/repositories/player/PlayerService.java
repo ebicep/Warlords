@@ -1,6 +1,7 @@
 package com.ebicep.warlords.database.newdb.repositories.player;
 
 import com.ebicep.warlords.database.newdb.repositories.player.pojos.DatabasePlayer;
+import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +28,8 @@ public interface PlayerService {
     DatabasePlayer findByUUID(UUID uuid);
 
     List<DatabasePlayer> findAll();
+
+    BulkOperations bulkOps();
 
     List<DatabasePlayer> getPlayersSortedByPlays();
 }

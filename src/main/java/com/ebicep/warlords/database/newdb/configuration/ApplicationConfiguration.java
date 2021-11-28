@@ -1,5 +1,6 @@
 package com.ebicep.warlords.database.newdb.configuration;
 
+import com.ebicep.warlords.database.newdb.DatabaseManager;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import org.springframework.context.annotation.Bean;
@@ -22,7 +23,11 @@ public class ApplicationConfiguration extends AbstractMongoClientConfiguration {
     @Bean
     public MongoClient mongoClient() {
         System.out.println("Getting mongoClient");
-        return MongoClients.create(key);
+        MongoClient mongoClient = MongoClients.create(key);
+        DatabaseManager.mongoClient = mongoClient;
+        DatabaseManager.warlordsDatabase = mongoClient.getDatabase("Warlords");
+        DatabaseManager.gamesInformation = DatabaseManager.warlordsDatabase.getCollection("Warlords_Information");
+        return mongoClient;
     }
 
     @Bean

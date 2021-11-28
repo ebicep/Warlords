@@ -2,6 +2,7 @@ package com.ebicep.warlords.database.newdb.repositories.player;
 
 import com.ebicep.warlords.database.newdb.repositories.player.pojos.DatabasePlayer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
@@ -27,5 +28,9 @@ public class CustomPlayerRepositoryImpl implements CustomPlayerRepository {
         return mongoTemplate.findOne(query, DatabasePlayer.class, collection);
     }
 
+    @Override
+    public BulkOperations bulkOps() {
+        return mongoTemplate.bulkOps(BulkOperations.BulkMode.UNORDERED, DatabasePlayer.class);
+    }
 
 }

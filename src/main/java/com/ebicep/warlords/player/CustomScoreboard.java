@@ -1,6 +1,10 @@
 package com.ebicep.warlords.player;
 
+import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.database.newdb.DatabaseManager;
+import com.ebicep.warlords.util.Utils;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.*;
 
@@ -122,31 +126,30 @@ public class CustomScoreboard {
 
 
     public void giveMainLobbyScoreboard() {
-//        if (!DatabaseManager.connected) return;
-//        if(scoreboard.getObjective("health") != null) {
-//            scoreboard.getObjective("health").unregister();
-//            health = null;
-//        }
-//        Warlords.newChain()
-//                .async(() -> DatabaseManager.addPlayer(player.getUniqueId(), false))
-//                .sync(() -> {
-//                    giveNewSideBar(true,
-//                            "",
-//                            "Kills: " + ChatColor.GREEN + Utils.addCommaAndRound(((Integer) DatabaseManager.getPlayerInfoWithDotNotation(player, "kills"))),
-//                            "Assists: " + ChatColor.GREEN + Utils.addCommaAndRound(((Integer) DatabaseManager.getPlayerInfoWithDotNotation(player, "assists"))),
-//                            "Deaths: " + ChatColor.GREEN + Utils.addCommaAndRound(((Integer) DatabaseManager.getPlayerInfoWithDotNotation(player, "deaths"))),
-//                            " " + "",
-//                            "Wins: " + ChatColor.GREEN + Utils.addCommaAndRound(((Integer) DatabaseManager.getPlayerInfoWithDotNotation(player, "wins"))),
-//                            "Losses: " + ChatColor.GREEN + Utils.addCommaAndRound(((Integer) DatabaseManager.getPlayerInfoWithDotNotation(player, "losses"))),
-//                            "  " + "",
-//                            "Damage: " + ChatColor.RED + Utils.addCommaAndRound(((Long) DatabaseManager.getPlayerInfoWithDotNotation(player, "damage"))),
-//                            "Healing: " + ChatColor.DARK_GREEN + Utils.addCommaAndRound(((Long) DatabaseManager.getPlayerInfoWithDotNotation(player, "healing"))),
-//                            "Absorbed: " + ChatColor.GOLD + Utils.addCommaAndRound(((Long) DatabaseManager.getPlayerInfoWithDotNotation(player, "absorbed"))),
-//                            "    ",
-//                            "     ",
-//                            "            " + ChatColor.YELLOW + ChatColor.BOLD + "Update",
-//                            "     " + ChatColor.GOLD + ChatColor.BOLD + Warlords.VERSION
-//                    );
-//                }).execute();
+        if(scoreboard.getObjective("health") != null) {
+            scoreboard.getObjective("health").unregister();
+            health = null;
+        }
+        Warlords.newChain()
+                .asyncFirst(() -> DatabaseManager.playerService.findByUUID(player.getUniqueId()))
+                .syncLast((databasePlayer) -> {
+                    giveNewSideBar(true,
+                            "",
+                            "Kills: " + ChatColor.GREEN + Utils.addCommaAndRound(databasePlayer.getKills()),
+                            "Assists: " + ChatColor.GREEN + Utils.addCommaAndRound(databasePlayer.getAssists()),
+                            "Deaths: " + ChatColor.GREEN + Utils.addCommaAndRound(databasePlayer.getDeaths()),
+                            " " + "",
+                            "Wins: " + ChatColor.GREEN + Utils.addCommaAndRound(databasePlayer.getWins()),
+                            "Losses: " + ChatColor.GREEN + Utils.addCommaAndRound(databasePlayer.getLosses()),
+                            "  " + "",
+                            "Damage: " + ChatColor.RED + Utils.addCommaAndRound(databasePlayer.getDamage()),
+                            "Healing: " + ChatColor.DARK_GREEN + Utils.addCommaAndRound(databasePlayer.getHealing()),
+                            "Absorbed: " + ChatColor.GOLD + Utils.addCommaAndRound(databasePlayer.getAbsorbed()),
+                            "    ",
+                            "     ",
+                            "            " + ChatColor.YELLOW + ChatColor.BOLD + "Update",
+                            "     " + ChatColor.GOLD + ChatColor.BOLD + Warlords.VERSION
+                    );
+                }).execute();
     }
 }
