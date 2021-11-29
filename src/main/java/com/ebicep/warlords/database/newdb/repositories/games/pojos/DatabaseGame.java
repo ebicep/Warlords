@@ -1,8 +1,16 @@
 package com.ebicep.warlords.database.newdb.repositories.games.pojos;
 
+import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.LeaderboardManager;
 import com.ebicep.warlords.database.newdb.DatabaseManager;
+import com.ebicep.warlords.database.newdb.repositories.player.PlayersCollections;
+import com.ebicep.warlords.database.newdb.repositories.player.pojos.DatabasePlayer;
+import com.ebicep.warlords.maps.Team;
+import com.ebicep.warlords.maps.state.PlayingState;
+import com.ebicep.warlords.player.Classes;
+import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.util.PlayerFilter;
 import com.ebicep.warlords.util.Utils;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
@@ -14,10 +22,12 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
+import org.springframework.data.mongodb.core.query.Criteria;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
-import static com.ebicep.warlords.database.newdb.DatabaseManager.previousGames;
 
 @Document(collection = "Games_Information")
 public class DatabaseGame {
@@ -38,15 +48,31 @@ public class DatabaseGame {
     protected String statInfo;
     protected boolean counted;
 
-    public DatabaseGame(String date, String map, int timeLeft, String winner, int bluePoints, int redPoints, DatabaseGamePlayers players, String statInfo, boolean counted) {
-        this.date = date;
-        this.map = map;
-        this.timeLeft = timeLeft;
-        this.winner = winner;
-        this.bluePoints = bluePoints;
-        this.redPoints = redPoints;
-        this.players = players;
-        this.statInfo = statInfo;
+    public DatabaseGame() {
+
+    }
+
+    public DatabaseGame(PlayingState gameState, boolean counted) {
+        DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm");
+        dateFormat.setTimeZone(TimeZone.getTimeZone("EST"));
+        Team winner = gameState.calculateWinnerByPoints();
+        List<DatabaseGamePlayers.GamePlayer> blue = new ArrayList<>();
+        List<DatabaseGamePlayers.GamePlayer> red = new ArrayList<>();
+        for (WarlordsPlayer warlordsPlayer : PlayerFilter.playingGame(gameState.getGame())) {
+            if (warlordsPlayer.getTeam() == Team.BLUE) {
+                blue.add(new DatabaseGamePlayers.GamePlayer(warlordsPlayer));
+            } else if (warlordsPlayer.getTeam() == Team.RED) {
+                red.add(new DatabaseGamePlayers.GamePlayer(warlordsPlayer));
+            }
+        }
+        this.date = dateFormat.format(new Date());
+        this.map = gameState.getGame().getMap().getMapName();
+        this.timeLeft = gameState.getTimerInSeconds();
+        this.winner = gameState.isForceEnd() || winner == null ? "DRAW" : winner.name.toUpperCase(Locale.ROOT);
+        this.bluePoints = gameState.getStats(Team.BLUE).points();
+        this.redPoints = gameState.getStats(Team.RED).points();
+        this.players = new DatabaseGamePlayers(blue, red);
+        this.statInfo = getWarlordsPlusEndGameStats(gameState);
         this.counted = counted;
     }
 
@@ -78,6 +104,9 @@ public class DatabaseGame {
     public static final Location topHealingOnCarrierLocation = new Location(LeaderboardManager.world, -2579.5, 58, 774.5);
     @Transient
     public static final Location gameSwitchLocation = new Location(LeaderboardManager.world, -2543.5, 53.5, 769.5);
+
+    @Transient
+    public static List<DatabaseGame> previousGames = new ArrayList<>();
 
     public void createHolograms() {
         List<Hologram> holograms = new ArrayList<>();
@@ -298,8 +327,142 @@ public class DatabaseGame {
         return holograms;
     }
 
-    public void deleteHologram() {
+    public void deleteHolograms() {
         holograms.forEach(Hologram::delete);
+    }
+
+    public static void addGame(PlayingState gameState, boolean updatePlayerStats) {
+        try {
+            previousGames.get(0).deleteHolograms();
+            previousGames.remove(0);
+            DatabaseGame databaseGame = new DatabaseGame(gameState, updatePlayerStats);
+            previousGames.add(databaseGame);
+            databaseGame.createHolograms();
+
+            addGameToDatabase(databaseGame);
+
+            //sending message if player information remained the same
+            for (WarlordsPlayer value : PlayerFilter.playingGame(gameState.getGame())) {
+                if (value.getEntity().isOp()) {
+                    if (updatePlayerStats) {
+                        value.sendMessage(ChatColor.GREEN + "This game was added to the database and player information was updated");
+                    } else {
+                        value.sendMessage(ChatColor.GREEN + "This game was added to the database but player information remained the same");
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("ERROR TRYING TO ADD GAME");
+        }
+
+    }
+
+    public static void addGameToDatabase(DatabaseGame databaseGame) {
+        //game in the database
+        if (DatabaseManager.gameService.exists(databaseGame)) {
+            System.out.println("1");
+            //if not counted then update player stats then set counted to true, else do nothing
+            if (!databaseGame.isCounted()) {
+                System.out.println("2");
+                updatePlayerStatsFromGame(databaseGame,true);
+                databaseGame.setCounted(true);
+                DatabaseManager.updateGameAsync(databaseGame);
+            }
+        } else {
+            System.out.println("3");
+            //game not in database then add game and update player stats if counted
+            if (databaseGame.isCounted()) {
+                System.out.println("4");
+                updatePlayerStatsFromGame(databaseGame,true);
+            }
+            Warlords.newChain().async(() -> DatabaseManager.gameService.create(databaseGame)).execute();
+        }
+    }
+
+    public static void removeGameFromDatabase(DatabaseGame databaseGame) {
+        //game in the database
+        if (DatabaseManager.gameService.exists(databaseGame)) {
+            //if counted then remove player stats then set counted to false, else do nothing
+            if (databaseGame.isCounted()) {
+                updatePlayerStatsFromGame(databaseGame,false);
+                databaseGame.setCounted(false);
+                DatabaseManager.updateGameAsync(databaseGame);
+            }
+        }
+        //else game not in database then do nothing
+    }
+
+    private static void updatePlayerStatsFromGame(DatabaseGame databaseGame, boolean add) {
+        databaseGame.getPlayers().getBlue().forEach(gamePlayer -> updatePlayerStatsFromTeam(databaseGame, add, gamePlayer, true));
+        databaseGame.getPlayers().getRed().forEach(gamePlayer -> updatePlayerStatsFromTeam(databaseGame, add, gamePlayer, false));
+    }
+
+    private static void updatePlayerStatsFromTeam(DatabaseGame databaseGame, boolean add, DatabaseGamePlayers.GamePlayer gamePlayer, boolean blue) {
+        DatabasePlayer databasePlayerAllTime = DatabaseManager.playerService.findByUUID(UUID.fromString(gamePlayer.getUuid()));
+        DatabasePlayer databasePlayerWeekly = DatabaseManager.playerService.findOne(Criteria.where("uuid").is(gamePlayer.getUuid()), PlayersCollections.WEEKLY);
+        DatabasePlayer databasePlayerDaily = DatabaseManager.playerService.findOne(Criteria.where("uuid").is(gamePlayer.getUuid()), PlayersCollections.DAILY);
+
+        updatePlayerStats(databaseGame, add, gamePlayer, databasePlayerAllTime, blue);
+        updatePlayerStats(databaseGame, add, gamePlayer, databasePlayerWeekly, blue);
+        updatePlayerStats(databaseGame, add, gamePlayer, databasePlayerDaily, blue);
+
+        DatabaseManager.updatePlayerAsync(databasePlayerAllTime);
+        DatabaseManager.updatePlayerAsync(databasePlayerWeekly, PlayersCollections.WEEKLY);
+        DatabaseManager.updatePlayerAsync(databasePlayerDaily, PlayersCollections.DAILY);
+    }
+
+    private static void updatePlayerStats(DatabaseGame databaseGame, boolean add, DatabaseGamePlayers.GamePlayer gamePlayer, DatabasePlayer databasePlayer, boolean checkBlueWin) {
+        boolean won = checkBlueWin ? databaseGame.bluePoints > databaseGame.redPoints : databaseGame.redPoints > databaseGame.bluePoints;
+        databasePlayer.updateStats(gamePlayer, won, add);
+        databasePlayer.getClass(Classes.getClassesGroup(gamePlayer.getSpec())).updateStats(gamePlayer, won, add);
+        databasePlayer.getSpec(Classes.getClass(gamePlayer.getSpec())).updateStats(gamePlayer, won, add);
+    }
+
+    @Transient
+    public static String lastWarlordsPlusString = "";
+
+    public static String getWarlordsPlusEndGameStats(PlayingState gameState) {
+        StringBuilder output = new StringBuilder("Winners:");
+        int bluePoints = gameState.getStats(Team.BLUE).points();
+        int redPoints = gameState.getStats(Team.RED).points();
+        if (bluePoints > redPoints) {
+            for (WarlordsPlayer player : PlayerFilter.playingGame(gameState.getGame()).matchingTeam(Team.BLUE)) {
+                output.append(player.getUuid().toString().replace("-", "")).append("[").append(player.getTotalKills()).append(":").append(player.getTotalDeaths()).append("],");
+            }
+            output.setLength(output.length() - 1);
+            output.append("Losers:");
+            for (WarlordsPlayer player : PlayerFilter.playingGame(gameState.getGame()).matchingTeam(Team.RED)) {
+                output.append(player.getUuid().toString().replace("-", "")).append("[").append(player.getTotalKills()).append(":").append(player.getTotalDeaths()).append("],");
+            }
+        } else if (redPoints > bluePoints) {
+            for (WarlordsPlayer player : PlayerFilter.playingGame(gameState.getGame()).matchingTeam(Team.RED)) {
+                output.append(player.getUuid().toString().replace("-", "")).append("[").append(player.getTotalKills()).append(":").append(player.getTotalDeaths()).append("],");
+            }
+            output.setLength(output.length() - 1);
+            output.append("Losers:");
+            for (WarlordsPlayer player : PlayerFilter.playingGame(gameState.getGame()).matchingTeam(Team.BLUE)) {
+                output.append(player.getUuid().toString().replace("-", "")).append("[").append(player.getTotalKills()).append(":").append(player.getTotalDeaths()).append("],");
+            }
+        } else {
+            output.setLength(0);
+            for (WarlordsPlayer player : PlayerFilter.playingGame(gameState.getGame()).matchingTeam(Team.BLUE)) {
+                output.append(player.getUuid().toString().replace("-", "")).append("[").append(player.getTotalKills()).append(":").append(player.getTotalDeaths()).append("],");
+            }
+            for (WarlordsPlayer player : PlayerFilter.playingGame(gameState.getGame()).matchingTeam(Team.RED)) {
+                output.append(player.getUuid().toString().replace("-", "")).append("[").append(player.getTotalKills()).append(":").append(player.getTotalDeaths()).append("],");
+            }
+        }
+        output.setLength(output.length() - 1);
+        if (BotManager.numberOfMessagesSentLast30Sec > 15) {
+            if (BotManager.numberOfMessagesSentLast30Sec < 20) {
+                BotManager.getTextChannelByName("games-backlog").ifPresent(textChannel -> textChannel.sendMessage("SOMETHING BROKEN DETECTED <@239929120035700737> <@253971614998331393>").queue());
+            }
+        } else {
+            BotManager.getTextChannelByName("games-backlog").ifPresent(textChannel -> textChannel.sendMessage(output.toString()).queue());
+        }
+        lastWarlordsPlusString = output.toString();
+        return output.toString();
     }
 
     public String getDate() {
@@ -372,5 +535,11 @@ public class DatabaseGame {
 
     public void setCounted(boolean counted) {
         this.counted = counted;
+    }
+
+    public String getGameLabel() {
+        return ChatColor.GRAY + date + ChatColor.DARK_GRAY + " - " +
+                ChatColor.GREEN + map + ChatColor.DARK_GRAY + " - " +
+                ChatColor.GRAY + "(" + ChatColor.BLUE + bluePoints + ChatColor.GRAY + ":" + ChatColor.RED + redPoints + ChatColor.GRAY + ")" + ChatColor.DARK_GRAY + " - " + ChatColor.DARK_PURPLE + isCounted();
     }
 }

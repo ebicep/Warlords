@@ -19,7 +19,7 @@ public interface PlayerService {
 
     void update(DatabasePlayer player);
 
-    void save(DatabasePlayer player, PlayersCollections collection);
+    void update(DatabasePlayer player, PlayersCollections collection);
 
     void delete(DatabasePlayer player);
 

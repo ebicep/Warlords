@@ -3,6 +3,7 @@ package com.ebicep.warlords.maps.state;
 import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.debugcommands.RecordGamesCommand;
+import com.ebicep.warlords.database.newdb.repositories.games.pojos.DatabaseGame;
 import com.ebicep.warlords.events.WarlordsPointsChangedEvent;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Gates;
@@ -303,14 +304,14 @@ public class PlayingState implements State, TimerDebugAble {
             float highestDamage = players.stream().sorted(Comparator.comparing(WarlordsPlayer::getTotalDamage).reversed()).collect(Collectors.toList()).get(0).getTotalDamage();
             float highestHealing = players.stream().sorted(Comparator.comparing(WarlordsPlayer::getTotalHealing).reversed()).collect(Collectors.toList()).get(0).getTotalHealing();
             if (highestDamage <= 500000 && highestHealing <= 500000) {
-//                DatabaseManager.addGame(PlayingState.this, true);
+                DatabaseGame.addGame(PlayingState.this, true);
             } else {
-//                DatabaseManager.addGame(PlayingState.this, false);
+                DatabaseGame.addGame(PlayingState.this, false);
                 System.out.println(ChatColor.GREEN + "[Warlords] This game was added to the database (INVALID DAMAGE/HEALING) but player information remained the same");
             }
         } else {
             if(game.playersCount() >= 6) {
-//                DatabaseManager.addGame(PlayingState.this, false);
+                DatabaseGame.addGame(PlayingState.this, false);
                 System.out.println(ChatColor.GREEN + "[Warlords] This game was added to the database but player information remained the same");
             } else {
                 System.out.println(ChatColor.GREEN + "[Warlords] This game was not added to the database and player information remained the same");

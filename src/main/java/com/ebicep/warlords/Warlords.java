@@ -305,8 +305,7 @@ public class Warlords extends JavaPlugin {
         });
 
 
-//        LeaderboardManager.init();
-//
+
         //connects to the database
         Warlords.newChain()
                 .async(DatabaseManager::init)

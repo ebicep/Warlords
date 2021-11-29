@@ -1,5 +1,6 @@
 package com.ebicep.warlords.database.newdb.repositories.player.pojos;
 
+import com.ebicep.warlords.database.newdb.repositories.games.pojos.DatabaseGamePlayers;
 import com.ebicep.warlords.player.Weapons;
 
 public class DatabaseSpecialization {
@@ -19,6 +20,24 @@ public class DatabaseSpecialization {
 
     public DatabaseSpecialization() {
 
+    }
+
+    public void updateStats(DatabaseGamePlayers.GamePlayer gamePlayer, boolean won, boolean add) {
+        int operation = add ? 1 : -1;
+        this.kills += gamePlayer.getTotalKills() * operation;
+        this.assists += gamePlayer.getTotalAssists() * operation;
+        this.deaths += gamePlayer.getTotalDeaths() * operation;
+        if(won) {
+            this.wins += 1;
+        } else {
+            this.losses += 1;
+        }
+        this.flagsCaptured += gamePlayer.getFlagCaptures() * operation;
+        this.flagsReturned += gamePlayer.getFlagReturns() * operation;
+        this.damage += gamePlayer.getTotalDamage() * operation;
+        this.healing += gamePlayer.getTotalHealing() * operation;
+        this.absorbed += gamePlayer.getTotalAbsorbed() * operation;
+        this.experience += gamePlayer.getExperienceEarnedSpec() * operation;
     }
 
     public int getKills() {

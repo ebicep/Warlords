@@ -5,6 +5,8 @@ import com.ebicep.warlords.database.newdb.repositories.player.pojos.DatabasePlay
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,6 +19,11 @@ public class GameServiceImpl implements GameService {
 
     @Autowired
     MongoTemplate mongoTemplate;
+
+    @Override
+    public boolean exists(DatabaseGame game) {
+        return mongoTemplate.exists(new Query().addCriteria(Criteria.where("date").is(game.getDate()).and("time_left").is(game.getTimeLeft())), "Games_Information");
+    }
 
     @Override
     public void create(DatabaseGame game) {
@@ -46,8 +53,8 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
-    public DatabaseGame findByDate() {
-        return null;
+    public DatabaseGame findByDate(String date) {
+        return gameRepository.findByDate(date);
     }
 
     @Override

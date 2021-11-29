@@ -7,7 +7,9 @@ import com.ebicep.warlords.classes.abilties.IceBarrier;
 import com.ebicep.warlords.classes.abilties.Soulbinding;
 import com.ebicep.warlords.classes.abilties.UndyingArmy;
 import com.ebicep.warlords.classes.shaman.specs.spiritguard.Spiritguard;
+import com.ebicep.warlords.database.LeaderboardManager;
 import com.ebicep.warlords.database.newdb.DatabaseManager;
+import com.ebicep.warlords.database.newdb.repositories.games.pojos.DatabaseGame;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.flags.GroundFlagLocation;
 import com.ebicep.warlords.maps.flags.PlayerFlagLocation;
@@ -81,7 +83,7 @@ public class WarlordsEvents implements Listener {
             e.getPlayer().getVehicle().remove();
         }
         //removing player position boards
-//        LeaderboardManager.removePlayerSpecificHolograms(e.getPlayer());
+        LeaderboardManager.removePlayerSpecificHolograms(e.getPlayer());
 
         Bukkit.getOnlinePlayers().forEach(p -> {
             PacketUtils.sendTabHF(p, ChatColor.AQUA + "     Welcome to " + ChatColor.YELLOW + ChatColor.BOLD + "Warlords 2.0     ", ChatColor.GREEN + "Players Online: " + ChatColor.GRAY + (Bukkit.getOnlinePlayers().size() - 1));
@@ -156,15 +158,9 @@ public class WarlordsEvents implements Listener {
                 .async(() -> {
                     DatabaseManager.loadPlayer(e.getPlayer().getUniqueId());
                     Warlords.updateHead(e.getPlayer());
-                }).execute();
-//        Warlords.newChain()
-//                .async(() -> {
-//                    DatabaseManager.loadPlayer(player, false);
-//                    Warlords.updateHead(e.getPlayer());
-//                })
-//                .sync(() -> LeaderboardManager.setLeaderboardHologramVisibility(player))
-//                .execute();
-//        DatabaseGame.setGameHologramVisibility(player);
+                }).sync(() -> LeaderboardManager.setLeaderboardHologramVisibility(player))
+                .execute();
+        DatabaseGame.setGameHologramVisibility(player);
 
         //scoreboard
         if(!Warlords.playerScoreboards.containsKey(player.getUniqueId()) || Warlords.playerScoreboards.get(player.getUniqueId()) == null) {

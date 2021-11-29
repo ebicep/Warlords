@@ -45,7 +45,7 @@ public class PlayerServiceImpl implements PlayerService {
 
     @Cacheable(cacheResolver = "cacheResolver", key = "#player.uuid", unless = "#player == null")
     @Override
-    public void save(DatabasePlayer player, PlayersCollections collection) {
+    public void update(DatabasePlayer player, PlayersCollections collection) {
         playerRepository.save(player, collection.collectionName);
         System.out.println("Updated: - " + player + " in " + collection);
     }

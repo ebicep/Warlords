@@ -40,6 +40,16 @@ public class Leaderboard {
         return Objects.hash(title, location);
     }
 
+    public List<DatabasePlayer> getSortedPlayers(PlayersCollections collections) {
+        switch (collections) {
+            case ALL_TIME:
+                return sortedAllTime;
+            case WEEKLY:
+                return sortedWeekly;
+        }
+        return new ArrayList<>();
+    }
+
     public void resetSortedPlayers(List<DatabasePlayer> newSortedPlayers, PlayersCollections collections) {
         switch (collections) {
             case ALL_TIME:

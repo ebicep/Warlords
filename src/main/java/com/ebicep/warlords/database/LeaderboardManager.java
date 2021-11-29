@@ -182,6 +182,8 @@ public class LeaderboardManager {
                 databasePlayer -> String.valueOf(Math.round((double) (databasePlayer.getKills() + databasePlayer.getAssists()) / (databasePlayer.getWins() + databasePlayer.getLosses()) * 10) / 10d)));
     }
 
+    private static final String[] weeklyExcludedLeaderboardsTitles = new String[] {"Plays", "Wins", "Kills", "DHP Per Game", "Flags Captured"};
+
     public static void addHologramLeaderboards(String sharedChainName) {
         if (Warlords.holographicDisplaysEnabled) {
             HologramsAPI.getHolograms(Warlords.getInstance()).forEach(hologram -> {
@@ -212,22 +214,28 @@ public class LeaderboardManager {
                             .syncLast((sortedInformation) -> {
                                 leaderboard.resetSortedPlayers(sortedInformation, PlayersCollections.ALL_TIME);
                                 //creating leaderboard for lifetime
-                                addLeaderboard(leaderboard, ChatColor.AQUA + ChatColor.BOLD.toString() + "LifeTime " + leaderboard.getTitle());
+                                addLeaderboard(leaderboard, PlayersCollections.ALL_TIME, ChatColor.AQUA + ChatColor.BOLD.toString() + "Lifetime " + leaderboard.getTitle());
                                 HologramsAPI.getHolograms(Warlords.getInstance()).stream()
                                         .filter(h -> h.getLocation().equals(leaderboard.getLocation()))
                                         .forEach(lifeTimeHolograms::add);
                             }).execute();
                     //WEEKLY
-//                    Warlords.newSharedChain(sharedChainName)
-//                            .asyncFirst(() -> DatabaseManager.playerService.getPlayersSorted(leaderboard.getAggregation(), PlayersCollections.WEEKLY))
-//                            .syncLast((sortedInformation) -> {
-//                                leaderboard.resetSortedPlayers(sortedInformation, PlayersCollections.WEEKLY);
-//                                //creating leaderboard for lifetime
-//                                addLeaderboard(leaderboard, ChatColor.AQUA + ChatColor.BOLD.toString() + "Weekly " + leaderboard.getTitle());
-//                                HologramsAPI.getHolograms(Warlords.getInstance()).stream()
-//                                        .filter(h -> h.getLocation().equals(leaderboard.getLocation()))
-//                                        .forEach(weeklyHolograms::add);
-//                            }).execute();
+                    Warlords.newSharedChain(sharedChainName)
+                            .asyncFirst(() -> {
+                                if(Arrays.stream(weeklyExcludedLeaderboardsTitles).noneMatch(title -> title.equalsIgnoreCase(leaderboard.getTitle()))) {
+                                    return null;
+                                }
+                                return DatabaseManager.playerService.getPlayersSorted(leaderboard.getAggregation(), PlayersCollections.WEEKLY);
+                            })
+                            .abortIfNull()
+                            .syncLast((sortedInformation) -> {
+                                leaderboard.resetSortedPlayers(sortedInformation, PlayersCollections.WEEKLY);
+                                //creating leaderboard for lifetime
+                                addLeaderboard(leaderboard, PlayersCollections.WEEKLY, ChatColor.AQUA + ChatColor.BOLD.toString() + "Weekly " + leaderboard.getTitle());
+                                HologramsAPI.getHolograms(Warlords.getInstance()).stream()
+                                        .filter(h -> !lifeTimeHolograms.contains(h) && h.getLocation().equals(leaderboard.getLocation()))
+                                        .forEach(weeklyHolograms::add);
+                            }).execute();
                 });
 
                 //depending on what player has selected, set visibility
@@ -334,8 +342,8 @@ public class LeaderboardManager {
                 .forEach(Hologram::delete);
     }
 
-    private static void addLeaderboard(Leaderboard leaderboard, String title) {
-        List<DatabasePlayer> databasePlayers = leaderboard.getSortedAllTime();
+    private static void addLeaderboard(Leaderboard leaderboard, PlayersCollections collections, String title) {
+        List<DatabasePlayer> databasePlayers = leaderboard.getSortedPlayers(collections);
         List<String> hologramLines = new ArrayList<>();
         for (int i = 0; i < 10 && i < databasePlayers.size(); i++) {
             DatabasePlayer databasePlayer = databasePlayers.get(i);

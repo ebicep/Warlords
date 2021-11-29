@@ -24,6 +24,8 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.ebicep.warlords.database.newdb.repositories.games.pojos.DatabaseGame.previousGames;
+
 public class EndState implements State, TimerDebugAble {
     @Nonnull
     private final Game game;
@@ -135,7 +137,7 @@ public class EndState implements State, TimerDebugAble {
             }
 
         }
-        if(game.playersCount() >= 16){// && DatabaseManager.previousGames.get(DatabaseManager.previousGames.size() - 1).isUpdatePlayerStats()) {
+        if(game.playersCount() >= 16 && previousGames.get(previousGames.size() - 1).isCounted()) {
             sendMessageToAllGamePlayer(game, "", false);
             sendMessageToAllGamePlayer(game, ChatColor.YELLOW.toString() + ChatColor.BOLD + "✚ EXPERIENCE SUMMARY ✚", true);
             for (WarlordsPlayer wp : PlayerFilter.playingGame(game)) {

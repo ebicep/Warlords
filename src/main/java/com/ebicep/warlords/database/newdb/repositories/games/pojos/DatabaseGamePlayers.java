@@ -1,15 +1,24 @@
 package com.ebicep.warlords.database.newdb.repositories.games.pojos;
 
 import com.ebicep.warlords.player.Classes;
+import com.ebicep.warlords.player.ExperienceManager;
+import com.ebicep.warlords.player.WarlordsPlayer;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class DatabaseGamePlayers {
 
     protected List<GamePlayer> blue;
     protected List<GamePlayer> red;
+
+    public DatabaseGamePlayers() {
+    }
 
     public DatabaseGamePlayers(List<GamePlayer> blue, List<GamePlayer> red) {
         this.blue = blue;
@@ -69,9 +78,52 @@ public class DatabaseGamePlayers {
         private List<Long> damageOnCarrier;
         @Field("healing_on_carrier")
         private List<Long> healingOnCarrier;
-        private long experienceEarned;
+        @Field("experience_earned_spec")
+        private long experienceEarnedSpec;
+        @Field("experience_earned_universal")
+        private long experienceEarnedUniversal;
 
         public GamePlayer() {
+        }
+
+        public GamePlayer(WarlordsPlayer warlordsPlayer) {
+            StringBuilder xLocations = new StringBuilder();
+            StringBuilder zLocations = new StringBuilder();
+            for (Location location : warlordsPlayer.getLocations()) {
+                xLocations.append((int) location.getX()).append(",");
+                zLocations.append((int) location.getZ()).append(",");
+            }
+            LinkedHashMap<String, Long> expSummary = ExperienceManager.getExpFromGameStats(warlordsPlayer, true);
+            long experienceEarnedUniversal = expSummary.values().stream().mapToLong(Long::longValue).sum();
+            long experienceEarnedSpec = ExperienceManager.getSpecExpFromSummary(expSummary);
+            this.uuid = warlordsPlayer.getUuid().toString();
+            this.name = warlordsPlayer.getName();
+            this.spec = warlordsPlayer.getSpecClass().name;
+            this.blocksTravelled = warlordsPlayer.getBlocksTravelledCM() / 100;
+            this.secondsInCombat = warlordsPlayer.getTimeInCombat();
+            this.secondsInRespawn = Math.round(warlordsPlayer.getRespawnTimeSpent());
+            this.xLocations = xLocations.toString();
+            this.zLocations = zLocations.toString();
+            this.totalKills = warlordsPlayer.getTotalKills();
+            this.totalAssists = warlordsPlayer.getTotalAssists();
+            this.totalDeaths = warlordsPlayer.getTotalDeaths();
+            this.totalDamage = warlordsPlayer.getTotalDamage();
+            this.totalHealing = warlordsPlayer.getTotalHealing();
+            this.totalAbsorbed = warlordsPlayer.getTotalAbsorbed();
+            this.kills = Arrays.stream(warlordsPlayer.getKills()).boxed().collect(Collectors.toList());
+            this.assists = Arrays.stream(warlordsPlayer.getAssists()).boxed().collect(Collectors.toList());
+            this.deaths = Arrays.stream(warlordsPlayer.getDeaths()).boxed().collect(Collectors.toList());
+            this.damage = Arrays.stream(warlordsPlayer.getDamage()).boxed().collect(Collectors.toList());
+            this.healing = Arrays.stream(warlordsPlayer.getHealing()).boxed().collect(Collectors.toList());
+            this.absorbed = Arrays.stream(warlordsPlayer.getAbsorbed()).boxed().collect(Collectors.toList());
+            this.flagCaptures = warlordsPlayer.getFlagsCaptured();
+            this.flagReturns = warlordsPlayer.getFlagsReturned();
+            this.totalDamageOnCarrier = warlordsPlayer.getTotalDamageOnCarrier();
+            this.totalHealingOnCarrier = warlordsPlayer.getTotalHealingOnCarrier();
+            this.damageOnCarrier = Arrays.stream(warlordsPlayer.getDamageOnCarrier()).boxed().collect(Collectors.toList());
+            this.healingOnCarrier = Arrays.stream(warlordsPlayer.getHealingOnCarrier()).boxed().collect(Collectors.toList());
+            this.experienceEarnedSpec = experienceEarnedSpec;
+            this.experienceEarnedUniversal = experienceEarnedUniversal;
         }
 
 
@@ -291,12 +343,20 @@ public class DatabaseGamePlayers {
             this.healingOnCarrier = healingOnCarrier;
         }
 
-        public long getExperienceEarned() {
-            return experienceEarned;
+        public long getExperienceEarnedSpec() {
+            return experienceEarnedSpec;
         }
 
-        public void setExperienceEarned(long experienceEarned) {
-            this.experienceEarned = experienceEarned;
+        public void setExperienceEarnedSpec(long experienceEarnedSpec) {
+            this.experienceEarnedSpec = experienceEarnedSpec;
+        }
+
+        public long getExperienceEarnedUniversal() {
+            return experienceEarnedUniversal;
+        }
+
+        public void setExperienceEarnedUniversal(long experienceEarnedUniversal) {
+            this.experienceEarnedUniversal = experienceEarnedUniversal;
         }
     }
 }

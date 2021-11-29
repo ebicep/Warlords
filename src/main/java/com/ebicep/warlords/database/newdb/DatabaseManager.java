@@ -6,6 +6,7 @@ import com.ebicep.warlords.database.newdb.configuration.ApplicationConfiguration
 import com.ebicep.warlords.database.newdb.repositories.games.GameService;
 import com.ebicep.warlords.database.newdb.repositories.games.pojos.DatabaseGame;
 import com.ebicep.warlords.database.newdb.repositories.player.PlayerService;
+import com.ebicep.warlords.database.newdb.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.newdb.repositories.player.pojos.*;
 import com.ebicep.warlords.player.*;
 import com.mongodb.client.MongoClient;
@@ -19,6 +20,8 @@ import org.springframework.context.support.AbstractApplicationContext;
 
 import java.util.*;
 
+import static com.ebicep.warlords.database.newdb.repositories.games.pojos.DatabaseGame.previousGames;
+
 public class DatabaseManager {
 
     public static MongoClient mongoClient;
@@ -29,8 +32,6 @@ public class DatabaseManager {
     public static GameService gameService;
 
     public static String lastWarlordsPlusString = "";
-
-    public static List<DatabaseGame> previousGames = new ArrayList<>();
 
     public static void init() {
         AbstractApplicationContext context = new AnnotationConfigApplicationContext(ApplicationConfiguration.class);
@@ -47,8 +48,11 @@ public class DatabaseManager {
 
         //Loading last 5 games
         Warlords.newChain()
-                .async(() -> previousGames.addAll(gameService.getLastGames(5)))
-                .sync(() -> LeaderboardManager.addHologramLeaderboards(UUID.randomUUID().toString()))
+                .asyncFirst(() -> gameService.getLastGames(5))
+                .syncLast((games) -> {
+                    previousGames.addAll(games);
+                    LeaderboardManager.addHologramLeaderboards(UUID.randomUUID().toString());
+                })
                 .execute();
 
     }
@@ -121,6 +125,13 @@ public class DatabaseManager {
 
     public static void updatePlayerAsync(DatabasePlayer databasePlayer) {
         Warlords.newChain().async(() -> playerService.update(databasePlayer)).execute();
+    }
+    public static void updatePlayerAsync(DatabasePlayer databasePlayer, PlayersCollections collections) {
+        Warlords.newChain().async(() -> playerService.update(databasePlayer, collections)).execute();
+    }
+
+    public static void updateGameAsync(DatabaseGame databaseGame) {
+        Warlords.newChain().async(() -> gameService.update(databaseGame)).execute();
     }
 
 }

@@ -1,5 +1,6 @@
 package com.ebicep.warlords.player;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.*;
 import com.ebicep.warlords.database.newdb.DatabaseManager;
 import com.ebicep.warlords.database.newdb.repositories.player.PlayersCollections;
@@ -137,19 +138,22 @@ public class ExperienceManager {
         }
 
 
-        DatabasePlayer databasePlayer = DatabaseManager.playerService.findOne(Criteria.where("uuid").is(warlordsPlayer.getUuid()), PlayersCollections.DAILY);
-        int plays = databasePlayer.getWins() + databasePlayer.getLosses();
-        switch (plays) {
-            case 0:
-                expGain.put("First Game of the Day", 500L);
-                break;
-            case 1:
-                expGain.put("Second Game of the Day", 250L);
-                break;
-            case 2:
-                expGain.put("Third Game of the Day", 100L);
-                break;
+        DatabasePlayer databasePlayer = DatabaseManager.playerService.findOne(Criteria.where("uuid").is(warlordsPlayer.getUuid().toString()), PlayersCollections.DAILY);
+        if(databasePlayer == null) {
+            expGain.put("First Game of the Day", 500L);
+            Warlords.newChain().async(() -> DatabaseManager.playerService.create(new DatabasePlayer(warlordsPlayer.getUuid(), warlordsPlayer.getName()), PlayersCollections.DAILY)).execute();
+        } else {
+            int plays = databasePlayer.getWins() + databasePlayer.getLosses();
+            switch (plays) {
+                case 1:
+                    expGain.put("Second Game of the Day", 250L);
+                    break;
+                case 2:
+                    expGain.put("Third Game of the Day", 100L);
+                    break;
+            }
         }
+
 
         cachedPlayerExpSummary.put(warlordsPlayer.getUuid(), expGain);
         return expGain;

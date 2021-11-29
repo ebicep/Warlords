@@ -8,6 +8,8 @@ import java.util.List;
 
 public interface GameService {
 
+    boolean exists(DatabaseGame game);
+
     void create(DatabaseGame game);
 
     void update(DatabaseGame game);
@@ -18,7 +20,7 @@ public interface GameService {
 
     List<DatabaseGame> findAll();
 
-    DatabaseGame findByDate();
+    DatabaseGame findByDate(String date);
 
     List<DatabaseGame> getLastGames(int amount);
 

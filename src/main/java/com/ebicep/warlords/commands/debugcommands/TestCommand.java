@@ -2,6 +2,7 @@ package com.ebicep.warlords.commands.debugcommands;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.BaseCommand;
+import com.ebicep.warlords.database.LeaderboardManager;
 import com.ebicep.warlords.database.newdb.DatabaseManager;
 import com.ebicep.warlords.database.newdb.cache.MultipleCacheResolver;
 import com.ebicep.warlords.database.newdb.repositories.games.pojos.DatabaseGame;
@@ -68,6 +69,8 @@ public class TestCommand implements CommandExecutor {
 //        System.out.println(databasePlayer);
 //        Utils.sendMessage(player, true, ChatColor.GREEN.toString() + ChatColor.BOLD + ChatColor.MAGIC + "   " + ChatColor.AQUA + ChatColor.BOLD + " LEVEL UP! " + ChatColor.DARK_GRAY + ChatColor.BOLD + "[" + ChatColor.GRAY + ChatColor.BOLD + "23" + ChatColor.DARK_GRAY + ChatColor.BOLD + "]" + ChatColor.GREEN + ChatColor.BOLD + " > " + ChatColor.DARK_GRAY + ChatColor.BOLD + "[" + ChatColor.GRAY + ChatColor.BOLD + "24" + ChatColor.DARK_GRAY + ChatColor.BOLD + "] " + ChatColor.GREEN + ChatColor.MAGIC + ChatColor.BOLD + "   ");
 
+        System.out.println(LeaderboardManager.leaderboards.get(0).getSortedAllTime().get(0));
+        System.out.println(LeaderboardManager.leaderboards.get(0).getSortedWeekly().get(0));
         DecimalFormat decimalFormat = new DecimalFormat("#.##");
 //        weeklyLeaderboards.insertOne(document);
         List<WriteModel<Document>> updates = new ArrayList<>();
