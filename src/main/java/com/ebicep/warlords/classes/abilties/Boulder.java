@@ -19,8 +19,8 @@ import org.bukkit.util.Vector;
 
 public class Boulder extends AbstractAbility {
 
-    private static final double SPEED = 0.480;
-    private static final double GRAVITY = -0.01075;
+    private static final double SPEED = 0.290;
+    private static final double GRAVITY = -0.0058;
 
     public Boulder() {
         super("Boulder", 451, 673, 7.05f, 80, 15, 175);
@@ -53,6 +53,9 @@ public class Boulder extends AbstractAbility {
 
                     @Override
                     public void run() {
+                        quarterStep(false);
+                        quarterStep(false);
+                        quarterStep(false);
                         quarterStep(false);
                         quarterStep(false);
                         quarterStep(false);
@@ -101,36 +104,43 @@ public class Boulder extends AbstractAbility {
                             for (Player player1 : player.getWorld().getPlayers()) {
                                 player1.playSound(newLoc, "shaman.boulder.impact", 2, 1);
                             }
-
-                            for (WarlordsPlayer p : PlayerFilter
-                                    .entitiesAround(newLoc, 5.75, 5.75, 5.75)
-                                    .aliveEnemiesOf(wp)
-                            ) {
-                                Vector v;
-                                if (p == directHit) {
-                                    v = player.getLocation().toVector().subtract(p.getLocation().toVector()).normalize().multiply(-1.15).setY(0.2);
-                                } else {
-                                    v = p.getLocation().toVector().subtract(newLoc.toVector()).normalize().multiply(1.15).setY(0.2);
-                                }
-                                p.setVelocity(v, false);
-                                p.damageHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
-                            }
-                            newLoc.setPitch(-12);
-                            Location impactLocation = newLoc.clone().subtract(speed);
-
-                            //ParticleEffect.VILLAGER_HAPPY.display(0 , 0 ,0, 0, 10, impactLocation, 1000);
-
-                            spawnFallingBlocks(impactLocation, 3, 10);
-                            wp.getGame().getGameTasks().put(
-                                    new BukkitRunnable() {
-
-                                        @Override
-                                        public void run() {
-                                            spawnFallingBlocks(impactLocation, 3.5, 20);
+                            WarlordsPlayer directHitFinal = directHit;
+                            wp.getGame().getGameTasks().put(new BukkitRunnable() {
+                                @Override
+                                public void run() {
+                                    for (WarlordsPlayer p : PlayerFilter
+                                            .entitiesAround(newLoc, 5.65, 5.65, 5.65)
+                                            .aliveEnemiesOf(wp)
+                                    ) {
+                                        Vector v;
+                                        if (p == directHitFinal) {
+                                            v = player.getLocation().toVector().subtract(p.getLocation().toVector()).normalize().multiply(-1.15).setY(0.2);
+                                        } else {
+                                            v = p.getLocation().toVector().subtract(newLoc.toVector()).normalize().multiply(1.15).setY(0.2);
                                         }
-                                    }.runTaskLater(Warlords.getInstance(), 1),
-                                    System.currentTimeMillis()
-                            );
+                                        p.setVelocity(v, false);
+                                        p.damageHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+                                    }
+                                    newLoc.setPitch(-12);
+                                    Location impactLocation = newLoc.clone().subtract(speed);
+
+                                    //ParticleEffect.VILLAGER_HAPPY.display(0 , 0 ,0, 0, 10, impactLocation, 1000);
+
+                                    spawnFallingBlocks(impactLocation, 3, 10);
+                                    wp.getGame().getGameTasks().put(
+                                            new BukkitRunnable() {
+
+                                                @Override
+                                                public void run() {
+                                                    spawnFallingBlocks(impactLocation, 3.5, 20);
+                                                }
+                                            }.runTaskLater(Warlords.getInstance(), 1),
+                                            System.currentTimeMillis()
+                                    );
+                                }
+                            }.runTaskLater(Warlords.getInstance(), 1),
+                                System.currentTimeMillis());
+
                             this.cancel();
                         }
                     }
