@@ -2,13 +2,18 @@ package com.ebicep.warlords.commands.debugcommands;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.BaseCommand;
+import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.LeaderboardManager;
 import com.ebicep.warlords.database.cache.MultipleCacheResolver;
+import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame;
+import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayers;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.mongodb.client.model.WriteModel;
 import org.bson.Document;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -19,6 +24,7 @@ import org.springframework.cache.caffeine.CaffeineCache;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 
 public class TestCommand implements CommandExecutor {
@@ -37,18 +43,35 @@ public class TestCommand implements CommandExecutor {
         Player player = (Player) sender;
 
 
-//        int counter = 0;
-//        for (DatabaseGame databaseGame : DatabaseManager.gameService.findAll()) {
-//            System.out.println(databaseGame.getDate());
+        int counter = 0;
+        List<DatabasePlayer> databasePlayers = DatabaseManager.playerService.findAll();
+        System.out.println(databasePlayers.size());
+        for (int i = 0; i < 200 && i < databasePlayers.size(); i++) {
+            DatabasePlayer databasePlayer = databasePlayers.get(i);
+            System.out.println(i + " - " + databasePlayer.getName());
+            DatabaseManager.updatePlayerAsync(databasePlayer);
+
+
 //            for (DatabaseGamePlayers.GamePlayer gamePlayer : databaseGame.getPlayers().getBlue()) {
 //                gamePlayer.setSpec(gamePlayer.getSpec().toUpperCase());
 //            }
 //            for (DatabaseGamePlayers.GamePlayer gamePlayer : databaseGame.getPlayers().getRed()) {
 //                gamePlayer.setSpec(gamePlayer.getSpec().toUpperCase());
 //            }
-//            DatabaseManager.gameService.update(databaseGame);
-//            break;
+        }
+//        for (DatabaseGame databaseGame : databaseGames) {
+//            System.out.println(counter++);
+//            System.out.println(databaseGame.getDate());
+//            System.out.println(databaseGame.getPlayers());
+//            for (DatabaseGamePlayers.GamePlayer gamePlayer : databaseGame.getPlayers().getBlue()) {
+//                gamePlayer.setSpec(gamePlayer.getSpec().toUpperCase());
+//            }
+//            for (DatabaseGamePlayers.GamePlayer gamePlayer : databaseGame.getPlayers().getRed()) {
+//                gamePlayer.setSpec(gamePlayer.getSpec().toUpperCase());
+//            }
+//            DatabaseManager.updateGameAsync(databaseGame);
 //        }
+
 
 //        for (DatabasePlayer databasePlayer : DatabaseManager.playerService.getPlayersSorted("", PlayersCollections.ALL_TIME)) {
 //            System.out.println(databasePlayer.getName() + " - " + (databasePlayer.getWins() + databasePlayer.getLosses()));
@@ -58,8 +81,8 @@ public class TestCommand implements CommandExecutor {
 //        System.out.println(databasePlayer);
 //        Utils.sendMessage(player, true, ChatColor.GREEN.toString() + ChatColor.BOLD + ChatColor.MAGIC + "   " + ChatColor.AQUA + ChatColor.BOLD + " LEVEL UP! " + ChatColor.DARK_GRAY + ChatColor.BOLD + "[" + ChatColor.GRAY + ChatColor.BOLD + "23" + ChatColor.DARK_GRAY + ChatColor.BOLD + "]" + ChatColor.GREEN + ChatColor.BOLD + " > " + ChatColor.DARK_GRAY + ChatColor.BOLD + "[" + ChatColor.GRAY + ChatColor.BOLD + "24" + ChatColor.DARK_GRAY + ChatColor.BOLD + "] " + ChatColor.GREEN + ChatColor.MAGIC + ChatColor.BOLD + "   ");
 
-        System.out.println(LeaderboardManager.leaderboards.get(0).getSortedAllTime().get(0));
-        System.out.println(LeaderboardManager.leaderboards.get(0).getSortedWeekly().get(0));
+//        System.out.println(LeaderboardManager.leaderboards.get(0).getSortedAllTime().get(0));
+//        System.out.println(LeaderboardManager.leaderboards.get(0).getSortedWeekly().get(0));
         DecimalFormat decimalFormat = new DecimalFormat("#.##");
 //        weeklyLeaderboards.insertOne(document);
         List<WriteModel<Document>> updates = new ArrayList<>();

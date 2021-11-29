@@ -1,9 +1,11 @@
 package com.ebicep.warlords.database.repositories.games.pojos;
 
+import com.ebicep.warlords.player.Classes;
 import com.ebicep.warlords.player.ExperienceManager;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.checkerframework.checker.units.qual.C;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.Arrays;
@@ -36,7 +38,7 @@ public class DatabaseGamePlayers {
 
         private String uuid;
         private String name;
-        private String spec;
+        private Classes spec;
         @Field("blocks_travelled")
         private int blocksTravelled;
         @Field("seconds_in_combat")
@@ -97,7 +99,7 @@ public class DatabaseGamePlayers {
             long experienceEarnedSpec = ExperienceManager.getSpecExpFromSummary(expSummary);
             this.uuid = warlordsPlayer.getUuid().toString();
             this.name = warlordsPlayer.getName();
-            this.spec = warlordsPlayer.getSpecClass().name;
+            this.spec = warlordsPlayer.getSpecClass();
             this.blocksTravelled = warlordsPlayer.getBlocksTravelledCM() / 100;
             this.secondsInCombat = warlordsPlayer.getTimeInCombat();
             this.secondsInRespawn = Math.round(warlordsPlayer.getRespawnTimeSpent());
@@ -142,11 +144,11 @@ public class DatabaseGamePlayers {
             this.name = name;
         }
 
-        public String getSpec() {
+        public Classes getSpec() {
             return spec;
         }
 
-        public void setSpec(String spec) {
+        public void setSpec(Classes spec) {
             this.spec = spec;
         }
 

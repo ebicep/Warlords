@@ -38,8 +38,7 @@ public class DatabasePlayer {
     private DatabasePaladin paladin = new DatabasePaladin();
     private DatabaseShaman shaman = new DatabaseShaman();
     @Field("last_spec")
-    private String lastSpec = "Pyromancer";
-    //private Classes lastSpec = Classes.PYROMANCER;
+    private Classes lastSpec = Classes.PYROMANCER;
     @Field("hotkeymode")
     private Settings.HotkeyMode hotkeyMode = Settings.HotkeyMode.NEW_MODE;
     @Field("particle_quality")
@@ -252,15 +251,13 @@ public class DatabasePlayer {
         return shaman;
     }
 
+    public Classes getLastSpec() {
+        return lastSpec;
+    }
 
-
-//    public Classes getLastSpec() {
-//        return lastSpec;
-//    }
-//
-//    public void setLastSpec(Classes lastSpec) {
-//        this.lastSpec = lastSpec;
-//    }
+    public void setLastSpec(Classes lastSpec) {
+        this.lastSpec = lastSpec;
+    }
 
     public Settings.HotkeyMode getHotkeyMode() {
         return hotkeyMode;

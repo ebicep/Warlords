@@ -14,7 +14,7 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 import javax.annotation.Nonnull;
 
 @Configuration
-@ComponentScan(basePackages = "com.ebicep.warlords.database.newdb")
+@ComponentScan(basePackages = "com.ebicep.warlords.database")
 @EnableMongoRepositories({"com.ebicep.warlords.database.repositories"})
 public class ApplicationConfiguration extends AbstractMongoClientConfiguration {
 

@@ -158,8 +158,7 @@ public class DatabaseGame {
         for (String s : specsOrdered) {
             StringBuilder playerSpecs = new StringBuilder(ChatColor.AQUA + s).append(": ");
             final boolean[] add = {false};
-            //allPlayers.stream().filter(o -> o.getSpec().name.equalsIgnoreCase(s)).forEach(p -> {
-            allPlayers.stream().filter(o -> o.getSpec().equalsIgnoreCase(s)).forEach(p -> {
+            allPlayers.stream().filter(o -> o.getSpec().name.equalsIgnoreCase(s)).forEach(p -> {
                 playerSpecs.append(bluePlayers.contains(p) ? ChatColor.BLUE : ChatColor.RED).append(p.getName()).append(p.getKDAString()).append(ChatColor.GRAY).append(", ");
                 add[0] = true;
             });
@@ -361,19 +360,15 @@ public class DatabaseGame {
     public static void addGameToDatabase(DatabaseGame databaseGame) {
         //game in the database
         if (DatabaseManager.gameService.exists(databaseGame)) {
-            System.out.println("1");
             //if not counted then update player stats then set counted to true, else do nothing
             if (!databaseGame.isCounted()) {
-                System.out.println("2");
                 updatePlayerStatsFromGame(databaseGame,true);
                 databaseGame.setCounted(true);
                 DatabaseManager.updateGameAsync(databaseGame);
             }
         } else {
-            System.out.println("3");
             //game not in database then add game and update player stats if counted
             if (databaseGame.isCounted()) {
-                System.out.println("4");
                 updatePlayerStatsFromGame(databaseGame,true);
             }
             Warlords.newChain().async(() -> DatabaseManager.gameService.create(databaseGame)).execute();
@@ -416,7 +411,7 @@ public class DatabaseGame {
         boolean won = checkBlueWin ? databaseGame.bluePoints > databaseGame.redPoints : databaseGame.redPoints > databaseGame.bluePoints;
         databasePlayer.updateStats(gamePlayer, won, add);
         databasePlayer.getClass(Classes.getClassesGroup(gamePlayer.getSpec())).updateStats(gamePlayer, won, add);
-        databasePlayer.getSpec(Classes.getClass(gamePlayer.getSpec())).updateStats(gamePlayer, won, add);
+        databasePlayer.getSpec(gamePlayer.getSpec()).updateStats(gamePlayer, won, add);
     }
 
     @Transient

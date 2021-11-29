@@ -8,6 +8,10 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame;
 import com.ebicep.warlords.database.repositories.player.PlayerService;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.*;
+import com.ebicep.warlords.player.ArmorManager;
+import com.ebicep.warlords.player.Classes;
+import com.ebicep.warlords.player.Settings;
+import com.ebicep.warlords.player.Weapons;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -74,34 +78,34 @@ public class DatabaseManager {
 
     private static void loadPlayerInfo(Player player) {
         DatabasePlayer databasePlayer = playerService.findByUUID(player.getUniqueId());
-//        Warlords.getPlayerSettings(player.getUniqueId()).setSelectedClass(databasePlayer.getLastSpec());
-//
-//        ArmorManager.Helmets.setSelectedMage(player, databasePlayer.getMage().getHelmet());
-//        ArmorManager.ArmorSets.setSelectedMage(player, databasePlayer.getMage().getArmor());
-//        ArmorManager.Helmets.setSelectedWarrior(player, databasePlayer.getWarrior().getHelmet());
-//        ArmorManager.ArmorSets.setSelectedWarrior(player, databasePlayer.getWarrior().getArmor());
-//        ArmorManager.Helmets.setSelectedPaladin(player, databasePlayer.getPaladin().getHelmet());
-//        ArmorManager.ArmorSets.setSelectedPaladin(player, databasePlayer.getPaladin().getArmor());
-//        ArmorManager.Helmets.setSelectedShaman(player, databasePlayer.getShaman().getHelmet());
-//        ArmorManager.ArmorSets.setSelectedShaman(player, databasePlayer.getShaman().getArmor());
-//
-//        HashMap<Classes, Weapons> weaponSkins = new HashMap<>();
-//        weaponSkins.put(Classes.PYROMANCER, databasePlayer.getMage().getPyromancer().getWeapon());
-//        weaponSkins.put(Classes.CRYOMANCER, databasePlayer.getMage().getCryomancer().getWeapon());
-//        weaponSkins.put(Classes.AQUAMANCER, databasePlayer.getMage().getAquamancer().getWeapon());
-//        weaponSkins.put(Classes.BERSERKER, databasePlayer.getWarrior().getBerserker().getWeapon());
-//        weaponSkins.put(Classes.DEFENDER, databasePlayer.getWarrior().getDefender().getWeapon());
-//        weaponSkins.put(Classes.REVENANT, databasePlayer.getWarrior().getRevenant().getWeapon());
-//        weaponSkins.put(Classes.AVENGER, databasePlayer.getPaladin().getAvenger().getWeapon());
-//        weaponSkins.put(Classes.CRUSADER, databasePlayer.getPaladin().getCrusader().getWeapon());
-//        weaponSkins.put(Classes.PROTECTOR, databasePlayer.getPaladin().getProtector().getWeapon());
-//        weaponSkins.put(Classes.THUNDERLORD, databasePlayer.getShaman().getThunderlord().getWeapon());
-//        weaponSkins.put(Classes.SPIRITGUARD, databasePlayer.getShaman().getSpiritguard().getWeapon());
-//        weaponSkins.put(Classes.EARTHWARDEN, databasePlayer.getShaman().getEarthwarden().getWeapon());
-//        Warlords.getPlayerSettings(player.getUniqueId()).setWeaponSkins(weaponSkins);
-//
-//        Settings.HotkeyMode.setSelected(player, databasePlayer.getHotkeyMode());
-//        Settings.ParticleQuality.setSelected(player, databasePlayer.getParticleQuality());
+        Warlords.getPlayerSettings(player.getUniqueId()).setSelectedClass(databasePlayer.getLastSpec());
+
+        ArmorManager.Helmets.setSelectedMage(player, databasePlayer.getMage().getHelmet());
+        ArmorManager.ArmorSets.setSelectedMage(player, databasePlayer.getMage().getArmor());
+        ArmorManager.Helmets.setSelectedWarrior(player, databasePlayer.getWarrior().getHelmet());
+        ArmorManager.ArmorSets.setSelectedWarrior(player, databasePlayer.getWarrior().getArmor());
+        ArmorManager.Helmets.setSelectedPaladin(player, databasePlayer.getPaladin().getHelmet());
+        ArmorManager.ArmorSets.setSelectedPaladin(player, databasePlayer.getPaladin().getArmor());
+        ArmorManager.Helmets.setSelectedShaman(player, databasePlayer.getShaman().getHelmet());
+        ArmorManager.ArmorSets.setSelectedShaman(player, databasePlayer.getShaman().getArmor());
+
+        HashMap<Classes, Weapons> weaponSkins = new HashMap<>();
+        weaponSkins.put(Classes.PYROMANCER, databasePlayer.getMage().getPyromancer().getWeapon());
+        weaponSkins.put(Classes.CRYOMANCER, databasePlayer.getMage().getCryomancer().getWeapon());
+        weaponSkins.put(Classes.AQUAMANCER, databasePlayer.getMage().getAquamancer().getWeapon());
+        weaponSkins.put(Classes.BERSERKER, databasePlayer.getWarrior().getBerserker().getWeapon());
+        weaponSkins.put(Classes.DEFENDER, databasePlayer.getWarrior().getDefender().getWeapon());
+        weaponSkins.put(Classes.REVENANT, databasePlayer.getWarrior().getRevenant().getWeapon());
+        weaponSkins.put(Classes.AVENGER, databasePlayer.getPaladin().getAvenger().getWeapon());
+        weaponSkins.put(Classes.CRUSADER, databasePlayer.getPaladin().getCrusader().getWeapon());
+        weaponSkins.put(Classes.PROTECTOR, databasePlayer.getPaladin().getProtector().getWeapon());
+        weaponSkins.put(Classes.THUNDERLORD, databasePlayer.getShaman().getThunderlord().getWeapon());
+        weaponSkins.put(Classes.SPIRITGUARD, databasePlayer.getShaman().getSpiritguard().getWeapon());
+        weaponSkins.put(Classes.EARTHWARDEN, databasePlayer.getShaman().getEarthwarden().getWeapon());
+        Warlords.getPlayerSettings(player.getUniqueId()).setWeaponSkins(weaponSkins);
+
+        Settings.HotkeyMode.setSelected(player, databasePlayer.getHotkeyMode());
+        Settings.ParticleQuality.setSelected(player, databasePlayer.getParticleQuality());
     }
 
     public static void updateName(UUID uuid) {
