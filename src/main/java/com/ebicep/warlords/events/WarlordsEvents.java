@@ -128,9 +128,6 @@ public class WarlordsEvents implements Listener {
             if(player.isOp()) {
                 player.getInventory().setItem(3, new ItemBuilder(Material.EMERALD).name("§aDebug Menu").get());
             }
-
-            Warlords.playerScoreboards.get(player.getUniqueId()).giveMainLobbyScoreboard();
-            ExperienceManager.giveExperienceBar(player);
         }
         WarlordsPlayer p = Warlords.getPlayer(player);
         if (p != null) {
@@ -159,9 +156,17 @@ public class WarlordsEvents implements Listener {
                 .async(() -> {
                     DatabaseManager.loadPlayer(e.getPlayer().getUniqueId(), PlayersCollections.ALL_TIME);
                     Warlords.updateHead(e.getPlayer());
-                }).sync(() -> LeaderboardManager.setLeaderboardHologramVisibility(player))
+                }).sync(() -> {
+                    LeaderboardManager.setLeaderboardHologramVisibility(player);
+                    DatabaseGame.setGameHologramVisibility(player);
+
+                    Location rejoinPoint = Warlords.getRejoinPoint(player.getUniqueId());
+                    if (Bukkit.getWorlds().get(0).getName().equals(rejoinPoint.getWorld().getName())) {
+                        Warlords.playerScoreboards.get(player.getUniqueId()).giveMainLobbyScoreboard();
+                        ExperienceManager.giveExperienceBar(player);
+                    }
+                })
                 .execute();
-        DatabaseGame.setGameHologramVisibility(player);
 
         //scoreboard
         if(!Warlords.playerScoreboards.containsKey(player.getUniqueId()) || Warlords.playerScoreboards.get(player.getUniqueId()) == null) {
