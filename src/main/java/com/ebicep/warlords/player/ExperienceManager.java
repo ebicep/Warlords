@@ -2,9 +2,9 @@ package com.ebicep.warlords.player;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.*;
-import com.ebicep.warlords.database.newdb.DatabaseManager;
-import com.ebicep.warlords.database.newdb.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.newdb.repositories.player.pojos.DatabasePlayer;
+import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
 import com.ebicep.warlords.util.Utils;
 import org.bson.Document;
 import org.bukkit.ChatColor;

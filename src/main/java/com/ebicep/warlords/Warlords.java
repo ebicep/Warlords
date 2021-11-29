@@ -16,9 +16,9 @@ import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.classes.abilties.*;
 import com.ebicep.warlords.commands.debugcommands.*;
 import com.ebicep.warlords.commands.miscellaneouscommands.*;
-import com.ebicep.warlords.database.LeaderboardCommand;
-import com.ebicep.warlords.database.newdb.DatabaseManager;
-import com.ebicep.warlords.database.newdb.configuration.ApplicationConfiguration;
+import com.ebicep.warlords.database.leaderboards.LeaderboardCommand;
+import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.configuration.ApplicationConfiguration;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.menu.MenuEventListener;
@@ -53,8 +53,6 @@ import javax.security.auth.login.LoginException;
 import java.io.File;
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 
 public class Warlords extends JavaPlugin {

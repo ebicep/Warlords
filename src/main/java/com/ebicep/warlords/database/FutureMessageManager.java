@@ -1,14 +1,12 @@
 package com.ebicep.warlords.database;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.database.newdb.DatabaseManager;
 import com.ebicep.warlords.util.Utils;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Updates;
 import org.bson.Document;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
@@ -22,10 +20,6 @@ import static com.mongodb.client.model.Filters.*;
 public class FutureMessageManager implements Listener {
 
     public static MongoCollection<Document> futureMessages;
-
-    public static void init() {
-        futureMessages = DatabaseManager.warlordsDatabase.getCollection("Future_Messages");
-    }
 
     public static void addNewFutureMessageDocument(UUID uuid, boolean centered, String... messages) {
         Document previousDocument = getPlayerDocument(uuid);

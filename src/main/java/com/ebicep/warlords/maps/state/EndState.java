@@ -1,7 +1,6 @@
 package com.ebicep.warlords.maps.state;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.database.newdb.DatabaseManager;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.state.PlayingState.Stats;
@@ -24,7 +23,7 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.ebicep.warlords.database.newdb.repositories.games.pojos.DatabaseGame.previousGames;
+import static com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame.previousGames;
 
 public class EndState implements State, TimerDebugAble {
     @Nonnull

@@ -2,15 +2,9 @@ package com.ebicep.warlords.commands.debugcommands;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.BaseCommand;
-import com.ebicep.warlords.database.LeaderboardManager;
-import com.ebicep.warlords.database.newdb.DatabaseManager;
-import com.ebicep.warlords.database.newdb.cache.MultipleCacheResolver;
-import com.ebicep.warlords.database.newdb.repositories.games.pojos.DatabaseGame;
-import com.ebicep.warlords.database.newdb.repositories.games.pojos.DatabaseGamePlayers;
-import com.ebicep.warlords.database.newdb.repositories.player.PlayerService;
-import com.ebicep.warlords.database.newdb.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.newdb.repositories.player.pojos.DatabaseMage;
-import com.ebicep.warlords.database.newdb.repositories.player.pojos.DatabasePlayer;
+import com.ebicep.warlords.database.leaderboards.LeaderboardManager;
+import com.ebicep.warlords.database.cache.MultipleCacheResolver;
+import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.mongodb.client.model.WriteModel;
@@ -21,14 +15,9 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.springframework.cache.caffeine.CaffeineCache;
-import org.springframework.data.mongodb.core.BulkOperations;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.Update;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 

@@ -1,15 +1,14 @@
 package com.ebicep.warlords.commands.debugcommands;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.database.newdb.DatabaseManager;
-import com.ebicep.warlords.database.newdb.repositories.games.pojos.DatabaseGame;
+import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
-import static com.ebicep.warlords.database.newdb.repositories.games.pojos.DatabaseGame.previousGames;
+import static com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame.previousGames;
 
 public class GamesCommand implements CommandExecutor {
 

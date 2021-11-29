@@ -1,7 +1,7 @@
 package com.ebicep.warlords.player;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.database.newdb.DatabaseManager;
+import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.util.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

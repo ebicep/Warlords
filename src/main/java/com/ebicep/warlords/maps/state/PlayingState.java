@@ -3,7 +3,7 @@ package com.ebicep.warlords.maps.state;
 import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.debugcommands.RecordGamesCommand;
-import com.ebicep.warlords.database.newdb.repositories.games.pojos.DatabaseGame;
+import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame;
 import com.ebicep.warlords.events.WarlordsPointsChangedEvent;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Gates;

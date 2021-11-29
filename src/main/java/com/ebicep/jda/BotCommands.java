@@ -1,7 +1,7 @@
 package com.ebicep.jda;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.database.newdb.DatabaseManager;
+import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.party.Party;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.bukkit.Bukkit;
