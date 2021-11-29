@@ -15,13 +15,21 @@ import com.ebicep.warlords.player.Weapons;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import org.apache.commons.io.IOUtils;
 import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
+import org.json.simple.parser.ParseException;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 
+import java.io.IOException;
+import java.net.URL;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame.previousGames;
 
@@ -109,21 +117,37 @@ public class DatabaseManager {
     }
 
     public static void updateName(UUID uuid) {
-        String currentName = Bukkit.getOfflinePlayer(uuid).getName();
+        AtomicReference<String> currentName = new AtomicReference<>(Bukkit.getOfflinePlayer(uuid).getName());
         Warlords.newChain().asyncFirst(() -> playerService.findByUUID(uuid))
                 .sync((player) -> {
-                    if (currentName == null || player.getName().equals(currentName)) {
+                    if (currentName.get() == null) {
+                        currentName.set(getName(uuid.toString()));
+                    } else if (player.getName().equals(currentName.get())) {
                         return null;
                     }
                     return player;
                 })
                 .abortIfNull()
                 .asyncLast((player) -> {
-                    System.out.println("Changing " + currentName + " name");
-                    player.setName(currentName);
+                    System.out.println("Changing " + player.getName() + "'s name to " + currentName);
+                    player.setName(currentName.get());
                     playerService.update(player);
                 }).execute();
 
+    }
+
+    public static String getName(String uuid) {
+        String url = "https://api.mojang.com/user/profiles/" + uuid.replace("-", "") + "/names";
+        try {
+            String nameJson = IOUtils.toString(new URL(url));
+            JSONArray nameValue = (JSONArray) JSONValue.parseWithException(nameJson);
+            String playerSlot = nameValue.get(nameValue.size() - 1).toString();
+            JSONObject nameObject = (JSONObject) JSONValue.parseWithException(playerSlot);
+            return nameObject.get("name").toString();
+        } catch (IOException | ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public static void updatePlayerAsync(DatabasePlayer databasePlayer) {

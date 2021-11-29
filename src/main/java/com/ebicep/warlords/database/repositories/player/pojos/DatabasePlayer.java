@@ -75,27 +75,8 @@ public class DatabasePlayer {
     @Override
     public String toString() {
         return "DatabasePlayer{" +
-                "id='" + id + '\'' +
-                ", uuid='" + uuid + '\'' +
+                "uuid='" + uuid + '\'' +
                 ", name='" + name + '\'' +
-                ", kills=" + kills +
-                ", assists=" + assists +
-                ", deaths=" + deaths +
-                ", wins=" + wins +
-                ", losses=" + losses +
-                ", flagsCaptured=" + flagsCaptured +
-                ", flagsReturned=" + flagsReturned +
-                ", damage=" + damage +
-                ", healing=" + healing +
-                ", absorbed=" + absorbed +
-                ", mage=" + mage +
-                ", warrior=" + warrior +
-                ", paladin=" + paladin +
-                ", shaman=" + shaman +
-                ", lastSpec='" + lastSpec + '\'' +
-                ", hotkeyMode=" + hotkeyMode +
-                ", particleQuality=" + particleQuality +
-                ", experience=" + experience +
                 '}';
     }
 
