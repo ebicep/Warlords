@@ -44,10 +44,13 @@ public class DatabaseManager {
             updateName(player.getUniqueId());
             Warlords.playerScoreboards.get(player.getUniqueId()).giveMainLobbyScoreboard();
         });
-        //Loading last 5 games
-        System.out.println(gameService.getLastGames(5));
 
-        LeaderboardManager.addHologramLeaderboards(UUID.randomUUID().toString());
+        //Loading last 5 games
+        Warlords.newChain()
+                .async(() -> previousGames.addAll(gameService.getLastGames(5)))
+                .sync(() -> LeaderboardManager.addHologramLeaderboards(UUID.randomUUID().toString()))
+                .execute();
+
     }
 
     public static void loadPlayer(UUID uuid) {
@@ -102,7 +105,7 @@ public class DatabaseManager {
         String currentName = Bukkit.getOfflinePlayer(uuid).getName();
         Warlords.newChain().asyncFirst(() -> playerService.findByUUID(uuid))
                 .sync((player) -> {
-                    if(currentName == null || player.getName().equals(currentName)) {
+                    if (currentName == null || player.getName().equals(currentName)) {
                         return null;
                     }
                     return player;

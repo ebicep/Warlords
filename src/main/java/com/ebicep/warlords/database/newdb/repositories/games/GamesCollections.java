@@ -1,4 +1,4 @@
-package com.ebicep.warlords.database;
+package com.ebicep.warlords.database.newdb.repositories.games;
 
 public enum GamesCollections {
 

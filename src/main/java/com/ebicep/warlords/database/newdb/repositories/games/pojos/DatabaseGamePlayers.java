@@ -2,6 +2,7 @@ package com.ebicep.warlords.database.newdb.repositories.games.pojos;
 
 import com.ebicep.warlords.player.Classes;
 import org.bukkit.ChatColor;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.List;
 
@@ -28,16 +29,27 @@ public class DatabaseGamePlayers {
         private String uuid;
         private String name;
         private String spec;
+        @Field("blocks_travelled")
         private int blocksTravelled;
+        @Field("seconds_in_combat")
         private int secondsInCombat;
+        @Field("seconds_in_respawn")
         private int secondsInRespawn;
+        @Field("x_locations")
         private String xLocations;
+        @Field("z_locations")
         private String zLocations;
+        @Field("total_kills")
         private int totalKills;
+        @Field("total_assists")
         private int totalAssists;
+        @Field("total_deaths")
         private int totalDeaths;
+        @Field("total_damage")
         private long totalDamage;
+        @Field("total_healing")
         private long totalHealing;
+        @Field("total_absorbed")
         private long totalAbsorbed;
         private List<Integer> kills;
         private List<Integer> assists;
@@ -45,17 +57,22 @@ public class DatabaseGamePlayers {
         private List<Long> damage;
         private List<Long> healing;
         private List<Long> absorbed;
+        @Field("flag_captures")
         private int flagCaptures;
+        @Field("flag_returns")
         private int flagReturns;
+        @Field("total_damage_on_carrier")
         private long totalDamageOnCarrier;
+        @Field("total_healing_on_carrier")
         private long totalHealingOnCarrier;
+        @Field("damage_on_carrier")
         private List<Long> damageOnCarrier;
+        @Field("healing_on_carrier")
         private List<Long> healingOnCarrier;
         private long experienceEarned;
 
         public GamePlayer() {
         }
-
 
 
         public String getUuid() {

@@ -131,7 +131,7 @@ public class DatabaseGame {
             final boolean[] add = {false};
             //allPlayers.stream().filter(o -> o.getSpec().name.equalsIgnoreCase(s)).forEach(p -> {
             allPlayers.stream().filter(o -> o.getSpec().equalsIgnoreCase(s)).forEach(p -> {
-                playerSpecs.append(bluePlayers.contains(p) ? ChatColor.BLUE : ChatColor.RED).append(p.getKDAString()).append(ChatColor.GRAY).append(", ");
+                playerSpecs.append(bluePlayers.contains(p) ? ChatColor.BLUE : ChatColor.RED).append(p.getName()).append(p.getKDAString()).append(ChatColor.GRAY).append(", ");
                 add[0] = true;
             });
             if (add[0]) {
