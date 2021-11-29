@@ -394,6 +394,9 @@ public class DatabaseGame {
     }
 
     private static void updatePlayerStatsFromTeam(DatabaseGame databaseGame, boolean add, DatabaseGamePlayers.GamePlayer gamePlayer, boolean blue) {
+        DatabaseManager.loadPlayer(UUID.fromString(gamePlayer.getUuid()), PlayersCollections.WEEKLY);
+        DatabaseManager.loadPlayer(UUID.fromString(gamePlayer.getUuid()), PlayersCollections.DAILY);
+
         DatabasePlayer databasePlayerAllTime = DatabaseManager.playerService.findByUUID(UUID.fromString(gamePlayer.getUuid()));
         DatabasePlayer databasePlayerWeekly = DatabaseManager.playerService.findOne(Criteria.where("uuid").is(gamePlayer.getUuid()), PlayersCollections.WEEKLY);
         DatabasePlayer databasePlayerDaily = DatabaseManager.playerService.findOne(Criteria.where("uuid").is(gamePlayer.getUuid()), PlayersCollections.DAILY);

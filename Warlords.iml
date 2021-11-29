@@ -5,6 +5,7 @@
       <configuration>
         <fileset id="fileset" name="ApplicationConfiguration" removed="false">
           <file>file://$MODULE_DIR$/src/main/java/com/ebicep/warlords/database/newdb/configuration/ApplicationConfiguration.java</file>
+          <file>file://$MODULE_DIR$/src/main/java/com/ebicep/warlords/database/configuration/ApplicationConfiguration.java</file>
         </fileset>
       </configuration>
     </facet>

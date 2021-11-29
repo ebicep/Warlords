@@ -25,6 +25,7 @@ import org.json.simple.JSONValue;
 import org.json.simple.parser.ParseException;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.data.mongodb.core.query.Criteria;
 
 import java.io.IOException;
 import java.net.URL;
@@ -52,7 +53,7 @@ public class DatabaseManager {
 
         //Loading all online players
         Bukkit.getOnlinePlayers().forEach(player -> {
-            loadPlayer(player.getUniqueId());
+            loadPlayer(player.getUniqueId(), PlayersCollections.ALL_TIME);
             updateName(player.getUniqueId());
             Warlords.playerScoreboards.get(player.getUniqueId()).giveMainLobbyScoreboard();
         });
@@ -68,19 +69,27 @@ public class DatabaseManager {
 
     }
 
-    public static void loadPlayer(UUID uuid) {
-        if (playerService.findByUUID(uuid) == null) {
-            Warlords.newChain().syncFirst(() -> {
+    public static void loadPlayer(UUID uuid, PlayersCollections collections) {
+        if (playerService.findOne(Criteria.where("uuid").is(uuid.toString()), collections) == null) {
+            Warlords.newChain()
+                    .syncFirst(() -> {
                         String name = Bukkit.getOfflinePlayer(uuid).getName();
                         if (name == null) {
-                            System.out.println("NULL NAME ERROR !!!!! " + uuid.toString());
+                            System.out.println("NULL NAME ERROR !!!!! " + uuid);
                         }
                         return name;
-                    }).asyncLast((name) -> playerService.create(new DatabasePlayer(uuid, name)))
-                    .sync(() -> loadPlayerInfo(Bukkit.getPlayer(uuid))).execute();
+                    })
+                    .asyncLast((name) -> playerService.create(new DatabasePlayer(uuid, name), collections))
+                    .sync(() -> {
+                        if (collections == PlayersCollections.ALL_TIME) {
+                            loadPlayerInfo(Bukkit.getPlayer(uuid));
+                        }
+                    }).execute();
         } else {
-            System.out.println("Loaded Player " + uuid);
-            loadPlayerInfo(Bukkit.getPlayer(uuid));
+            if (collections == PlayersCollections.ALL_TIME) {
+                System.out.println("Loaded Player " + uuid);
+                loadPlayerInfo(Bukkit.getPlayer(uuid));
+            }
         }
     }
 
