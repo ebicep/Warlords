@@ -41,6 +41,7 @@ import org.bukkit.event.player.*;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashSet;
 import java.util.Objects;
@@ -125,9 +126,18 @@ public class WarlordsEvents implements Listener {
                     .getOrDefault(selectedClass, Weapons.FELFLAME_BLADE).item)).name("§aWeapon Skin Preview")
                     .lore("")
                     .get());
-            if(player.isOp()) {
+            if (player.isOp()) {
                 player.getInventory().setItem(3, new ItemBuilder(Material.EMERALD).name("§aDebug Menu").get());
             }
+
+            new BukkitRunnable() {
+
+                @Override
+                public void run() {
+                    Warlords.playerScoreboards.get(player.getUniqueId()).giveMainLobbyScoreboard();
+                    ExperienceManager.giveExperienceBar(player);
+                }
+            }.runTaskLater(Warlords.getInstance(), 20 * 2);
         }
         WarlordsPlayer p = Warlords.getPlayer(player);
         if (p != null) {
@@ -159,12 +169,6 @@ public class WarlordsEvents implements Listener {
                 }).sync(() -> {
                     LeaderboardManager.setLeaderboardHologramVisibility(player);
                     DatabaseGame.setGameHologramVisibility(player);
-
-                    Location rejoinPoint = Warlords.getRejoinPoint(player.getUniqueId());
-                    if (Bukkit.getWorlds().get(0).getName().equals(rejoinPoint.getWorld().getName())) {
-                        Warlords.playerScoreboards.get(player.getUniqueId()).giveMainLobbyScoreboard();
-                        ExperienceManager.giveExperienceBar(player);
-                    }
                 })
                 .execute();
 
