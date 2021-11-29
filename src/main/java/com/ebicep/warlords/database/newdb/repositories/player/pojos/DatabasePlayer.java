@@ -7,6 +7,7 @@ import com.ebicep.warlords.player.Settings;
 import org.bukkit.Bukkit;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.IndexDirection;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -24,6 +25,7 @@ public class DatabasePlayer {
     private int kills = 0;
     private int assists = 0;
     private int deaths = 0;
+    @Indexed(direction = IndexDirection.ASCENDING, name = "wins_index")
     private int wins = 0;
     private int losses = 0;
     @Field("flags_captured")
@@ -38,7 +40,8 @@ public class DatabasePlayer {
     private DatabasePaladin paladin = new DatabasePaladin();
     private DatabaseShaman shaman = new DatabaseShaman();
     @Field("last_spec")
-    private Classes lastSpec = Classes.PYROMANCER;
+    private String lastSpec = "Pyromancer";
+    //private Classes lastSpec = Classes.PYROMANCER;
     @Field("hotkeymode")
     private Settings.HotkeyMode hotkeyMode = Settings.HotkeyMode.NEW_MODE;
     @Field("particle_quality")
@@ -233,13 +236,15 @@ public class DatabasePlayer {
         return shaman;
     }
 
-    public Classes getLastSpec() {
-        return lastSpec;
-    }
 
-    public void setLastSpec(Classes lastSpec) {
-        this.lastSpec = lastSpec;
-    }
+
+//    public Classes getLastSpec() {
+//        return lastSpec;
+//    }
+//
+//    public void setLastSpec(Classes lastSpec) {
+//        this.lastSpec = lastSpec;
+//    }
 
     public Settings.HotkeyMode getHotkeyMode() {
         return hotkeyMode;

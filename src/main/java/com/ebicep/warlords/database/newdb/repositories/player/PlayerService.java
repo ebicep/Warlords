@@ -1,7 +1,9 @@
 package com.ebicep.warlords.database.newdb.repositories.player;
 
 import com.ebicep.warlords.database.newdb.repositories.player.pojos.DatabasePlayer;
+import org.bson.conversions.Bson;
 import org.springframework.data.mongodb.core.BulkOperations;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 
@@ -32,4 +34,6 @@ public interface PlayerService {
     BulkOperations bulkOps();
 
     List<DatabasePlayer> getPlayersSortedByPlays();
+
+    List<DatabasePlayer> getPlayersSorted(Aggregation aggregation, PlayersCollections collections);
 }

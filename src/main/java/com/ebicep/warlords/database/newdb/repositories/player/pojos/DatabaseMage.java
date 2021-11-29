@@ -7,8 +7,8 @@ public class DatabaseMage extends DatabaseWarlordsClass {
     protected DatabaseSpecialization pyromancer = new DatabaseSpecialization();
     protected DatabaseSpecialization cryomancer = new DatabaseSpecialization();
     protected DatabaseSpecialization aquamancer = new DatabaseSpecialization();
-    protected ArmorManager.Helmets helmet = ArmorManager.Helmets.SIMPLE_MAGE_HELMET;
-    protected ArmorManager.ArmorSets armor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE_MAGE;
+//    protected ArmorManager.Helmets helmet = ArmorManager.Helmets.SIMPLE_MAGE_HELMET;
+//    protected ArmorManager.ArmorSets armor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE_MAGE;
 
     public DatabaseMage() {
         super();
@@ -26,11 +26,11 @@ public class DatabaseMage extends DatabaseWarlordsClass {
         return aquamancer;
     }
 
-    public ArmorManager.Helmets getHelmet() {
-        return helmet;
-    }
-
-    public ArmorManager.ArmorSets getArmor() {
-        return armor;
-    }
+//    public ArmorManager.Helmets getHelmet() {
+//        return helmet;
+//    }
+//
+//    public ArmorManager.ArmorSets getArmor() {
+//        return armor;
+//    }
 }

@@ -8,8 +8,8 @@ public class DatabaseWarrior extends DatabaseWarlordsClass {
     private DatabaseSpecialization berserker = new DatabaseSpecialization();
     private DatabaseSpecialization defender = new DatabaseSpecialization();
     private DatabaseSpecialization revenant = new DatabaseSpecialization();
-    protected ArmorManager.Helmets helmet = ArmorManager.Helmets.SIMPLE_WARRIOR_HELMET;
-    protected ArmorManager.ArmorSets armor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE_WARRIOR;
+//    protected ArmorManager.Helmets helmet = ArmorManager.Helmets.SIMPLE_WARRIOR_HELMET;
+//    protected ArmorManager.ArmorSets armor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE_WARRIOR;
 
     public DatabaseWarrior() {
         super();
@@ -27,11 +27,11 @@ public class DatabaseWarrior extends DatabaseWarlordsClass {
         return revenant;
     }
 
-    public ArmorManager.Helmets getHelmet() {
-        return helmet;
-    }
-
-    public ArmorManager.ArmorSets getArmor() {
-        return armor;
-    }
+//    public ArmorManager.Helmets getHelmet() {
+//        return helmet;
+//    }
+//
+//    public ArmorManager.ArmorSets getArmor() {
+//        return armor;
+//    }
 }

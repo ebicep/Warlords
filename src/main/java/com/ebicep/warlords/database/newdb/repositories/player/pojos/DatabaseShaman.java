@@ -7,8 +7,8 @@ public class DatabaseShaman extends DatabaseWarlordsClass {
     private DatabaseSpecialization thunderlord = new DatabaseSpecialization();
     private DatabaseSpecialization spiritguard = new DatabaseSpecialization();
     private DatabaseSpecialization earthwarden = new DatabaseSpecialization();
-    protected ArmorManager.Helmets helmet = ArmorManager.Helmets.SIMPLE_SHAMAN_HELMET;
-    protected ArmorManager.ArmorSets armor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE_SHAMAN;
+//    protected ArmorManager.Helmets helmet = ArmorManager.Helmets.SIMPLE_SHAMAN_HELMET;
+//    protected ArmorManager.ArmorSets armor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE_SHAMAN;
 
     public DatabaseShaman() {
         super();
@@ -26,11 +26,11 @@ public class DatabaseShaman extends DatabaseWarlordsClass {
         return earthwarden;
     }
 
-    public ArmorManager.Helmets getHelmet() {
-        return helmet;
-    }
-
-    public ArmorManager.ArmorSets getArmor() {
-        return armor;
-    }
+//    public ArmorManager.Helmets getHelmet() {
+//        return helmet;
+//    }
+//
+//    public ArmorManager.ArmorSets getArmor() {
+//        return armor;
+//    }
 }

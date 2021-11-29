@@ -14,7 +14,7 @@ public class DatabaseSpecialization {
     private long damage = 0;
     private long healing = 0;
     private long absorbed = 0;
-    private Weapons weapon = Weapons.FELFLAME_BLADE;
+//    private Weapons weapon = Weapons.FELFLAME_BLADE;
     private long experience = 0;
 
     public DatabaseSpecialization() {
@@ -101,13 +101,13 @@ public class DatabaseSpecialization {
         this.absorbed = absorbed;
     }
 
-    public Weapons getWeapon() {
-        return weapon;
-    }
-
-    public void setWeapon(Weapons weapon) {
-        this.weapon = weapon;
-    }
+//    public Weapons getWeapon() {
+//        return weapon;
+//    }
+//
+//    public void setWeapon(Weapons weapon) {
+//        this.weapon = weapon;
+//    }
 
     public long getExperience() {
         return experience;

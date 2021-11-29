@@ -3,10 +3,12 @@ package com.ebicep.warlords.database.newdb.repositories.player;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.newdb.repositories.player.pojos.DatabasePlayer;
+import org.bson.conversions.Bson;
 import org.bukkit.Bukkit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.mongodb.core.BulkOperations;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
@@ -84,6 +86,11 @@ public class PlayerServiceImpl implements PlayerService {
     @Override
     public List<DatabasePlayer> getPlayersSortedByPlays() {
         return playerRepository.getPlayersSortedByPlays();
+    }
+
+    @Override
+    public List<DatabasePlayer> getPlayersSorted(Aggregation aggregation, PlayersCollections collections) {
+        return playerRepository.getPlayersSorted(aggregation, collections);
     }
 
 

@@ -27,6 +27,7 @@ import org.springframework.data.mongodb.core.query.Update;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -46,19 +47,22 @@ public class TestCommand implements CommandExecutor {
         Player player = (Player) sender;
 
 
-        int counter = 0;
-        for (DatabaseGame databaseGame : DatabaseManager.gameService.findAll()) {
-            System.out.println(databaseGame.getDate());
-            for (DatabaseGamePlayers.GamePlayer gamePlayer : databaseGame.getPlayers().getBlue()) {
-                gamePlayer.setSpec(gamePlayer.getSpec().toUpperCase());
-            }
-            for (DatabaseGamePlayers.GamePlayer gamePlayer : databaseGame.getPlayers().getRed()) {
-                gamePlayer.setSpec(gamePlayer.getSpec().toUpperCase());
-            }
-            DatabaseManager.gameService.update(databaseGame);
-            break;
-        }
+//        int counter = 0;
+//        for (DatabaseGame databaseGame : DatabaseManager.gameService.findAll()) {
+//            System.out.println(databaseGame.getDate());
+//            for (DatabaseGamePlayers.GamePlayer gamePlayer : databaseGame.getPlayers().getBlue()) {
+//                gamePlayer.setSpec(gamePlayer.getSpec().toUpperCase());
+//            }
+//            for (DatabaseGamePlayers.GamePlayer gamePlayer : databaseGame.getPlayers().getRed()) {
+//                gamePlayer.setSpec(gamePlayer.getSpec().toUpperCase());
+//            }
+//            DatabaseManager.gameService.update(databaseGame);
+//            break;
+//        }
 
+//        for (DatabasePlayer databasePlayer : DatabaseManager.playerService.getPlayersSorted("", PlayersCollections.ALL_TIME)) {
+//            System.out.println(databasePlayer.getName() + " - " + (databasePlayer.getWins() + databasePlayer.getLosses()));
+//        }
 
 //        printCache();
 //        System.out.println(databasePlayer);
