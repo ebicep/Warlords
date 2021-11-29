@@ -41,7 +41,6 @@ import org.bukkit.event.player.*;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashSet;
 import java.util.Objects;
@@ -92,7 +91,7 @@ public class WarlordsEvents implements Listener {
         });
     }
 
-    public static void joinInteraction(Player player) {
+    public static void joinInteraction(Player player, boolean fromGame) {
         Location rejoinPoint = Warlords.getRejoinPoint(player.getUniqueId());
         boolean isSpawnWorld = Bukkit.getWorlds().get(0).getName().equals(rejoinPoint.getWorld().getName());
         boolean playerIsInWrongWorld = !player.getWorld().getName().equals(rejoinPoint.getWorld().getName());
@@ -130,14 +129,10 @@ public class WarlordsEvents implements Listener {
                 player.getInventory().setItem(3, new ItemBuilder(Material.EMERALD).name("§aDebug Menu").get());
             }
 
-            new BukkitRunnable() {
-
-                @Override
-                public void run() {
-                    Warlords.playerScoreboards.get(player.getUniqueId()).giveMainLobbyScoreboard();
-                    ExperienceManager.giveExperienceBar(player);
-                }
-            }.runTaskLater(Warlords.getInstance(), 20 * 2);
+            if (fromGame) {
+                Warlords.playerScoreboards.get(player.getUniqueId()).giveMainLobbyScoreboard();
+                ExperienceManager.giveExperienceBar(player);
+            }
         }
         WarlordsPlayer p = Warlords.getPlayer(player);
         if (p != null) {
@@ -169,6 +164,12 @@ public class WarlordsEvents implements Listener {
                 }).sync(() -> {
                     LeaderboardManager.setLeaderboardHologramVisibility(player);
                     DatabaseGame.setGameHologramVisibility(player);
+
+                    Location rejoinPoint = Warlords.getRejoinPoint(player.getUniqueId());
+                    if (Bukkit.getWorlds().get(0).getName().equals(rejoinPoint.getWorld().getName())) {
+                        Warlords.playerScoreboards.get(player.getUniqueId()).giveMainLobbyScoreboard();
+                        ExperienceManager.giveExperienceBar(player);
+                    }
                 })
                 .execute();
 
@@ -178,7 +179,7 @@ public class WarlordsEvents implements Listener {
         }
         player.setScoreboard(Warlords.playerScoreboards.get(player.getUniqueId()).getScoreboard());
 
-        joinInteraction(player);
+        joinInteraction(player, false);
 
         Bukkit.getOnlinePlayers().forEach(p -> {
             PacketUtils.sendTabHF(p,

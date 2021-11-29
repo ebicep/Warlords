@@ -151,7 +151,7 @@ public class Game implements Runnable {
         Warlords.removePlayer(player);
         Player p = Bukkit.getPlayer(player);
         if (p != null) {
-            WarlordsEvents.joinInteraction(p);
+            WarlordsEvents.joinInteraction(p, true);
         }
     }
 
@@ -276,7 +276,7 @@ public class Game implements Runnable {
             if(loc != null) {
                 p.teleport(Warlords.getRejoinPoint(p.getUniqueId()));
             }
-            WarlordsEvents.joinInteraction(p);
+            WarlordsEvents.joinInteraction(p, true);
         }
     }
 
