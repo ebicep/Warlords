@@ -11,7 +11,9 @@ public class DatabaseWarlordsClass {
     protected int deaths = 0;
     protected int wins = 0;
     protected int losses = 0;
+    @Field("flags_captured")
     protected int flagsCaptured = 0;
+    @Field("flags_returned")
     protected int flagsReturned = 0;
     protected long damage = 0;
     protected long healing = 0;

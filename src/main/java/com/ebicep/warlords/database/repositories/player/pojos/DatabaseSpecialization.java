@@ -2,6 +2,7 @@ package com.ebicep.warlords.database.repositories.player.pojos;
 
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayers;
 import com.ebicep.warlords.player.Weapons;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 public class DatabaseSpecialization {
 
@@ -10,7 +11,9 @@ public class DatabaseSpecialization {
     private int deaths = 0;
     private int wins = 0;
     private int losses = 0;
+    @Field("flags_captured")
     private int flagsCaptured = 0;
+    @Field("flags_returned")
     private int flagsReturned = 0;
     private long damage = 0;
     private long healing = 0;

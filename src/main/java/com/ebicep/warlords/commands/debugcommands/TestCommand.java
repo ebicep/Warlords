@@ -11,6 +11,7 @@ import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.github.benmanes.caffeine.cache.Cache;
+import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.WriteModel;
 import org.bson.Document;
 import org.bukkit.Bukkit;
@@ -23,8 +24,11 @@ import org.springframework.cache.caffeine.CaffeineCache;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+
+import static com.mongodb.client.model.Filters.eq;
 
 
 public class TestCommand implements CommandExecutor {
@@ -43,22 +47,39 @@ public class TestCommand implements CommandExecutor {
         Player player = (Player) sender;
 
 
-        int counter = 0;
-        List<DatabasePlayer> databasePlayers = DatabaseManager.playerService.findAll();
-        System.out.println(databasePlayers.size());
-        for (int i = 0; i < 200 && i < databasePlayers.size(); i++) {
-            DatabasePlayer databasePlayer = databasePlayers.get(i);
-            System.out.println(i + " - " + databasePlayer.getName());
-            DatabaseManager.updatePlayerAsync(databasePlayer);
-
-
-//            for (DatabaseGamePlayers.GamePlayer gamePlayer : databaseGame.getPlayers().getBlue()) {
-//                gamePlayer.setSpec(gamePlayer.getSpec().toUpperCase());
+//        int counter = 0;
+//        List<DatabasePlayer> databasePlayers = DatabaseManager.playerService.findAll();
+//        MongoCollection<Document> collection = DatabaseManager.warlordsDatabase.getCollection("Temp");
+//        System.out.println(databasePlayers.size());
+//        for (int i = 0; i < 200 && i < databasePlayers.size(); i++) {
+//            DatabasePlayer databasePlayer = databasePlayers.get(i);
+//            System.out.println(i + " - " + databasePlayer.getName());
+//            Document document = collection.find().filter(eq("uuid", databasePlayer.getUuid())).first();
+//            if (document != null) {
+//                databasePlayer.getShaman().getThunderlord().setFlagsCaptured(document.getEmbedded(Arrays.asList("shaman", "thunderlord", "flags_captured"), Integer.class));
+//                databasePlayer.getShaman().getSpiritguard().setFlagsCaptured(document.getEmbedded(Arrays.asList("shaman", "spiritguard", "flags_captured"), Integer.class));
+//                databasePlayer.getShaman().getEarthwarden().setFlagsCaptured(document.getEmbedded(Arrays.asList("shaman", "earthwarden", "flags_captured"), Integer.class));
+//
+//                databasePlayer.getShaman().getThunderlord().setFlagsReturned(document.getEmbedded(Arrays.asList("shaman", "thunderlord", "flags_returned"), Integer.class));
+//                databasePlayer.getShaman().getSpiritguard().setFlagsReturned(document.getEmbedded(Arrays.asList("shaman", "spiritguard", "flags_returned"), Integer.class));
+//                databasePlayer.getShaman().getEarthwarden().setFlagsReturned(document.getEmbedded(Arrays.asList("shaman", "earthwarden", "flags_returned"), Integer.class));
+//
+//                databasePlayer.getShaman().setFlagsCaptured(document.getEmbedded(Arrays.asList("shaman", "flags_captured"), Integer.class));
+//                databasePlayer.getShaman().setFlagsReturned(document.getEmbedded(Arrays.asList("shaman", "flags_returned"), Integer.class));
+//
 //            }
-//            for (DatabaseGamePlayers.GamePlayer gamePlayer : databaseGame.getPlayers().getRed()) {
-//                gamePlayer.setSpec(gamePlayer.getSpec().toUpperCase());
-//            }
-        }
+//
+//            DatabaseManager.updatePlayerAsync(databasePlayer);
+//
+//
+//
+////            for (DatabaseGamePlayers.GamePlayer gamePlayer : databaseGame.getPlayers().getBlue()) {
+////                gamePlayer.setSpec(gamePlayer.getSpec().toUpperCase());
+////            }
+////            for (DatabaseGamePlayers.GamePlayer gamePlayer : databaseGame.getPlayers().getRed()) {
+////                gamePlayer.setSpec(gamePlayer.getSpec().toUpperCase());
+////            }
+//        }
 //        for (DatabaseGame databaseGame : databaseGames) {
 //            System.out.println(counter++);
 //            System.out.println(databaseGame.getDate());
