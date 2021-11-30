@@ -3,6 +3,7 @@ package com.ebicep.warlords.database.repositories.player;
 
 import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
@@ -33,14 +34,14 @@ public class PlayerServiceImpl implements PlayerService {
         System.out.println("Created: - " + player + " in " + collection);
     }
 
-    @Cacheable(cacheResolver = "cacheResolver", key = "#player.uuid", unless = "#player == null")
+    @CachePut(cacheResolver = "cacheResolver", key = "#player.uuid", unless = "#player == null")
     @Override
     public void update(DatabasePlayer player) {
         DatabasePlayer p = playerRepository.save(player);
         System.out.println("Updated: - " + p);
     }
 
-    @Cacheable(cacheResolver = "cacheResolver", key = "#player.uuid", unless = "#player == null")
+    @CachePut(cacheResolver = "cacheResolver", key = "#player.uuid", unless = "#player == null")
     @Override
     public void update(DatabasePlayer player, PlayersCollections collection) {
         playerRepository.save(player, collection.collectionName);

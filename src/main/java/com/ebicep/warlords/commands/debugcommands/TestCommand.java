@@ -47,6 +47,10 @@ public class TestCommand implements CommandExecutor {
         Player player = (Player) sender;
 
 
+        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
+        System.out.println(databasePlayer.getShaman().getHelmet());
+        System.out.println(databasePlayer.getShaman().getArmor());
+
 //        int counter = 0;
 //        List<DatabasePlayer> databasePlayers = DatabaseManager.playerService.findAll();
 //        MongoCollection<Document> collection = DatabaseManager.warlordsDatabase.getCollection("Temp");

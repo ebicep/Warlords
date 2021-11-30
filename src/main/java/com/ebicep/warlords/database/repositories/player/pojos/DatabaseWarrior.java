@@ -34,4 +34,12 @@ public class DatabaseWarrior extends DatabaseWarlordsClass {
     public ArmorManager.ArmorSets getArmor() {
         return armor;
     }
+
+    public void setHelmet(ArmorManager.Helmets helmet) {
+        this.helmet = helmet;
+    }
+
+    public void setArmor(ArmorManager.ArmorSets armor) {
+        this.armor = armor;
+    }
 }

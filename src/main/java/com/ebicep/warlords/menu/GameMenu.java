@@ -2,6 +2,8 @@ package com.ebicep.warlords.menu;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
+import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.util.ItemBuilder;
@@ -229,6 +231,11 @@ public class GameMenu {
                                     .getOrDefault(selectedClass, Weapons.FELFLAME_BLADE).item)).name("§aWeapon Skin Preview")
                                     .lore("")
                                     .get());
+                            Warlords.newChain().async(() -> {
+                                DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
+                                databasePlayer.getSpec(selectedClass).setWeapon(weapon);
+                                DatabaseManager.updatePlayerAsync(databasePlayer);
+                            }).execute();
                         } else {
                             player.sendMessage(ChatColor.RED + "This weapon skin has not been unlocked yet!");
                         }
@@ -312,6 +319,15 @@ public class GameMenu {
                         } else if (helmet == Helmets.SIMPLE_SHAMAN_HELMET || helmet == Helmets.GREATER_SHAMAN_HELMET || helmet == Helmets.MASTERWORK_SHAMAN_HELMET || helmet == Helmets.LEGENDARY_SHAMAN_HELMET) {
                             Helmets.setSelectedShaman(player, helmet);
                         }
+                        List<Helmets> selectedHelmets = Helmets.getSelected(player);
+                        Warlords.newChain().async(() -> {
+                            DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
+                            databasePlayer.getMage().setHelmet(selectedHelmets.get(0));
+                            databasePlayer.getWarrior().setHelmet(selectedHelmets.get(1));
+                            databasePlayer.getPaladin().setHelmet(selectedHelmets.get(2));
+                            databasePlayer.getShaman().setHelmet(selectedHelmets.get(3));
+                            DatabaseManager.updatePlayerAsync(databasePlayer);
+                        }).execute();
                         openArmorMenu(player, pageNumber);
                     }
             );
@@ -348,6 +364,15 @@ public class GameMenu {
                         } else if (armorSet == ArmorSets.SIMPLE_CHESTPLATE_SHAMAN || armorSet == ArmorSets.GREATER_CHESTPLATE_SHAMAN || armorSet == ArmorSets.MASTERWORK_CHESTPLATE_SHAMAN) {
                             ArmorSets.setSelectedShaman(player, armorSet);
                         }
+                        List<ArmorSets> armorSetsList = ArmorSets.getSelected(player);
+                        Warlords.newChain().async(() -> {
+                            DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
+                            databasePlayer.getMage().setArmor(armorSetsList.get(0));
+                            databasePlayer.getWarrior().setArmor(armorSetsList.get(1));
+                            databasePlayer.getPaladin().setArmor(armorSetsList.get(2));
+                            databasePlayer.getShaman().setArmor(armorSetsList.get(3));
+                            DatabaseManager.updatePlayerAsync(databasePlayer);
+                        }).execute();
                         openArmorMenu(player, pageNumber);
                     }
             );
