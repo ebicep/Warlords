@@ -65,14 +65,14 @@ public class HolyRadiance extends AbstractAbility {
                     Location lineLocation = player.getLocation().add(0, 1, 0);
                     lineLocation.setDirection(lineLocation.toVector().subtract(p.getLocation().add(0, 1, 0).toVector()).multiply(-1));
                     for (int i = 0; i < Math.floor(player.getLocation().distance(p.getLocation())) * 2; i++) {
-                        ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(250, 70, 200), lineLocation, 500);
+                        ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(255, 170, 0), lineLocation, 500);
                         lineLocation.add(lineLocation.getDirection().multiply(.5));
                     }
 
                     HolyRadiance tempMark = new HolyRadiance(minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier, true);
                     p.getCooldownManager().addCooldown(name, HolyRadiance.this.getClass(), tempMark, "MARK", markDuration, wp, CooldownTypes.BUFF);
                     p.getSpeed().addSpeedModifier("Mark Speed", 20, 20 * markDuration, "BASE");
-                    player.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " You have " + ChatColor.YELLOW + "marked " + ChatColor.GRAY + p.getName() + "!");
+                    player.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " You have marked " + ChatColor.YELLOW + p.getName() + ChatColor.GRAY +"!");
                     p.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " You have been " + ChatColor.YELLOW + "marked" + ChatColor.GRAY + " by " + wp.getName() + "!");
 
                     wp.getGame().getGameTasks().put(
@@ -85,13 +85,13 @@ public class HolyRadiance extends AbstractAbility {
                                         Location particleLoc = playerLoc.clone();
                                         for (int i = 0; i < 4; i++) {
                                             for (int j = 0; j < 10; j++) {
-                                                double angle = j / 6D * Math.PI * 2;
+                                                double angle = j / 8D * Math.PI * 2;
                                                 double width = 1;
                                                 particleLoc.setX(playerLoc.getX() + Math.sin(angle) * width);
                                                 particleLoc.setY(playerLoc.getY() + i / 6D);
                                                 particleLoc.setZ(playerLoc.getZ() + Math.cos(angle) * width);
 
-                                                ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(250, 70, 200), particleLoc, 500);
+                                                ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(255, 170, 0), particleLoc, 500);
                                             }
                                         }
                                     } else {
