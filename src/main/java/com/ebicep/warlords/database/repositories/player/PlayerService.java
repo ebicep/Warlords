@@ -24,11 +24,15 @@ public interface PlayerService {
 
     void deleteAll();
 
+    void deleteAll(PlayersCollections collection);
+
     DatabasePlayer findOne(Criteria criteria, PlayersCollections collection);
 
     DatabasePlayer findByUUID(UUID uuid);
 
     List<DatabasePlayer> findAll();
+
+    List<DatabasePlayer> findAll(PlayersCollections collections);
 
     BulkOperations bulkOps();
 

@@ -30,7 +30,7 @@ public class PlayerServiceImpl implements PlayerService {
     @Cacheable(cacheResolver = "cacheResolver", key = "#player.uuid", unless = "#player == null")
     @Override
     public void create(DatabasePlayer player, PlayersCollections collection) {
-        playerRepository.create(player, collection.collectionName);
+        playerRepository.create(player, collection);
         System.out.println("Created: - " + player + " in " + collection);
     }
 
@@ -44,7 +44,7 @@ public class PlayerServiceImpl implements PlayerService {
     @CachePut(cacheResolver = "cacheResolver", key = "#player.uuid", unless = "#player == null")
     @Override
     public void update(DatabasePlayer player, PlayersCollections collection) {
-        playerRepository.save(player, collection.collectionName);
+        playerRepository.save(player, collection);
         System.out.println("Updated: - " + player + " in " + collection);
     }
 
@@ -59,10 +59,15 @@ public class PlayerServiceImpl implements PlayerService {
         playerRepository.deleteAll();
     }
 
+    @Override
+    public void deleteAll(PlayersCollections collection) {
+        playerRepository.deleteAll(collection);
+    }
+
     @Cacheable(cacheResolver = "cacheResolver", key = "#criteria.criteriaObject", unless = "#result == null")
     @Override
     public DatabasePlayer findOne(Criteria criteria, PlayersCollections collection) {
-        return playerRepository.findOne(new Query().addCriteria(criteria), collection.collectionName);
+        return playerRepository.findOne(new Query().addCriteria(criteria), collection);
     }
 
     @Cacheable(cacheResolver = "cacheResolver", key = "#uuid", unless = "#result == null")
@@ -74,6 +79,11 @@ public class PlayerServiceImpl implements PlayerService {
     @Override
     public List<DatabasePlayer> findAll() {
         return playerRepository.findAll();
+    }
+
+    @Override
+    public List<DatabasePlayer> findAll(PlayersCollections collections) {
+        return playerRepository.findAll(collections);
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.ebicep.warlords.commands.debugcommands;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.BaseCommand;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.leaderboards.Leaderboard;
 import com.ebicep.warlords.database.leaderboards.LeaderboardManager;
 import com.ebicep.warlords.database.cache.MultipleCacheResolver;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame;
@@ -47,9 +48,7 @@ public class TestCommand implements CommandExecutor {
         Player player = (Player) sender;
 
 
-        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
-        System.out.println(databasePlayer.getShaman().getHelmet());
-        System.out.println(databasePlayer.getShaman().getArmor());
+        DatabaseManager.warlordsDatabase.getCollection("Weekly_Leaderboards").insertOne(LeaderboardManager.getTopPlayersOnLeaderboard());
 
 //        int counter = 0;
 //        List<DatabasePlayer> databasePlayers = DatabaseManager.playerService.findAll();

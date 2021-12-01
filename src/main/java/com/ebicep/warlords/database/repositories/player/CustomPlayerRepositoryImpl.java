@@ -17,18 +17,29 @@ public class CustomPlayerRepositoryImpl implements CustomPlayerRepository {
     MongoTemplate mongoTemplate;
 
     @Override
-    public void create(DatabasePlayer player, String collection) {
-        mongoTemplate.insert(player, collection);
+    public void create(DatabasePlayer player, PlayersCollections collection) {
+        mongoTemplate.insert(player, collection.collectionName);
     }
 
     @Override
-    public void save(DatabasePlayer player, String collection) {
-        mongoTemplate.save(player, collection);
+    public void save(DatabasePlayer player, PlayersCollections collection) {
+        mongoTemplate.save(player, collection.collectionName);
     }
 
     @Override
-    public DatabasePlayer findOne(Query query, String collection) {
-        return mongoTemplate.findOne(query, DatabasePlayer.class, collection);
+    public void deleteAll(PlayersCollections collection) {
+        mongoTemplate.dropCollection(collection.collectionName);
+        mongoTemplate.createCollection(collection.collectionName);
+    }
+
+    @Override
+    public DatabasePlayer findOne(Query query, PlayersCollections collection) {
+        return mongoTemplate.findOne(query, DatabasePlayer.class, collection.collectionName);
+    }
+
+    @Override
+    public List<DatabasePlayer> findAll(PlayersCollections collection) {
+        return mongoTemplate.findAll(DatabasePlayer.class, collection.collectionName);
     }
 
     @Override
@@ -39,7 +50,7 @@ public class CustomPlayerRepositoryImpl implements CustomPlayerRepository {
     @Override
     public List<DatabasePlayer> getPlayersSorted(Aggregation aggregation, PlayersCollections collections) {
         return mongoTemplate.aggregate(aggregation,
-                collections.collectionName,
+                        collections.collectionName,
                 DatabasePlayer.class)
                 .getMappedResults();
     }
