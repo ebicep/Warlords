@@ -35,18 +35,18 @@ public class ChainHeal extends AbstractChainBase {
     }
 
     @Override
-    protected int getHitCounterAndActivate(WarlordsPlayer wp, Player player) {
+    protected int getHitCounterAndActivate(WarlordsPlayer wp, Player p) {
         int hitCounter = 0;
         for (WarlordsPlayer nearPlayer : PlayerFilter
-                .entitiesAround(player, radius, radius, radius)
+                .entitiesAround(p, radius, radius, radius)
                 .aliveTeammatesOfExcludingSelf(wp)
                 .lookingAtFirst(wp)
         ) {
-            if (Utils.isLookingAtChain(player, nearPlayer.getEntity())) {
+            if (Utils.isLookingAtChain(p, nearPlayer.getEntity())) {
                 //self heal
-                player.playSound(player.getLocation(), Sound.ORB_PICKUP, 1, 1);
+                p.playSound(p.getLocation(), Sound.ORB_PICKUP, 1, 1);
                 wp.healHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
-                chain(player.getLocation(), nearPlayer.getLocation());
+                chain(p.getLocation(), nearPlayer.getLocation());
                 nearPlayer.healHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
                 hitCounter++;
 

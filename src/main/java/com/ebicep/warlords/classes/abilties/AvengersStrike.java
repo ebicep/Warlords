@@ -23,8 +23,8 @@ public class AvengersStrike extends AbstractStrikeBase {
     }
 
     @Override
-    protected void onHit(@Nonnull WarlordsPlayer wp, @Nonnull Player player, @Nonnull WarlordsPlayer nearPlayer) {
-        if (standingOnConsecrate(player, nearPlayer.getEntity())) {
+    protected void onHit(@Nonnull WarlordsPlayer wp, @Nonnull Player p, @Nonnull WarlordsPlayer nearPlayer) {
+        if (standingOnConsecrate(p, nearPlayer.getEntity())) {
             nearPlayer.damageHealth(wp, name, minDamageHeal * 1.2f, maxDamageHeal * 1.2f, critChance, critMultiplier, false);
         } else {
             nearPlayer.damageHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
@@ -39,7 +39,7 @@ public class AvengersStrike extends AbstractStrikeBase {
                     .limit(2)
             ) {
                 //checking if player is in consecrate
-                if (standingOnConsecrate(player, wrathTarget.getEntity())) {
+                if (standingOnConsecrate(p, wrathTarget.getEntity())) {
                     wrathTarget.damageHealth(wp, name, minDamageHeal * 1.2f, maxDamageHeal * 1.2f, critChance, critMultiplier, false);
                 } else {
                     wrathTarget.damageHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);

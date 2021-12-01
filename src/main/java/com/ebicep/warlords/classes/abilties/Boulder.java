@@ -17,7 +17,7 @@ import org.bukkit.util.Vector;
 public class Boulder extends AbstractAbility {
 
     private static final double SPEED = 0.290;
-    private static final double GRAVITY = -0.0058;
+    private static final double GRAVITY = -0.0059;
 
     public Boulder() {
         super("Boulder", 451, 673, 7.05f, 80, 15, 175);

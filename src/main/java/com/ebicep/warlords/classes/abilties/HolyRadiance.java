@@ -83,6 +83,7 @@ public class HolyRadiance extends AbstractAbility {
                     HolyRadiance tempMark = new HolyRadiance(minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier, true);
                     p.getCooldownManager().addCooldown(name, HolyRadiance.this.getClass(), tempMark, "MARK", markDuration, wp, CooldownTypes.BUFF);
                     p.getSpeed().addSpeedModifier("Mark Speed", 20, 20 * markDuration, "BASE");
+
                     player.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " You have marked " + ChatColor.YELLOW + p.getName() + ChatColor.GRAY +"!");
                     p.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " You have been " + ChatColor.YELLOW + "marked" + ChatColor.GRAY + " by " + wp.getName() + "!");
 
@@ -182,7 +183,6 @@ public class HolyRadiance extends AbstractAbility {
 
             if (distance < speed * speed) {
                 target.healHealth(owner, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
-                target.getSpeed().addSpeedModifier("Radiance", 20, 3 * 20, "BASE");
                 this.cancel();
                 return;
             }
