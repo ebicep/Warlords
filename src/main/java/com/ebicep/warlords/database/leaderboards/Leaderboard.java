@@ -5,6 +5,8 @@ import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
 import org.bukkit.Location;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 
+import java.lang.reflect.Array;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -61,6 +63,42 @@ public class Leaderboard {
                 this.sortedWeekly.addAll(newSortedPlayers);
                 return;
         }
+    }
+
+    public <T extends Number> T[] getTopThree(Function<DatabasePlayer, Number> valueFunction) {
+        //current top value to compare to
+        Number topValue = valueFunction.apply(sortedWeekly.get(0));
+
+        Class<T> clazz = (Class<T>) topValue.getClass();
+        //ouput array of type clazz
+        T[] output = (T[]) Array.newInstance(clazz, 3);
+        //first top number is current top
+        output[0] = (T) topValue;
+
+        List<Number> topThree = new ArrayList<>();
+        int counter = 0;
+        //looping to get the next top two numbers
+        for (DatabasePlayer databasePlayer : sortedWeekly) {
+            Number currentTopValue = valueFunction.apply(databasePlayer);
+            if (counter < 2) {
+                if (compare(topValue, currentTopValue) > 0) {
+                    topThree.add(currentTopValue);
+                    topValue = currentTopValue;
+                    counter++;
+                }
+            } else {
+                break;
+            }
+        }
+        //adding last two top numbers
+        for (int i = 0; i < topThree.size(); i++) {
+            output[i + 1] = (T) topThree.get(i);
+        }
+        return output;
+    }
+
+    public static int compare(Number a, Number b) {
+        return new BigDecimal(a.toString()).compareTo(new BigDecimal(b.toString()));
     }
 
     public String getTitle() {

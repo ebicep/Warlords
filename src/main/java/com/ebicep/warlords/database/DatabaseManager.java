@@ -8,16 +8,14 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame;
 import com.ebicep.warlords.database.repositories.player.PlayerService;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.*;
-import com.ebicep.warlords.player.ArmorManager;
-import com.ebicep.warlords.player.Classes;
-import com.ebicep.warlords.player.Settings;
-import com.ebicep.warlords.player.Weapons;
+import com.ebicep.warlords.player.*;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.apache.commons.io.IOUtils;
 import org.bson.Document;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -33,6 +31,8 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame.previousGames;
+import static com.mongodb.client.model.Filters.and;
+import static com.mongodb.client.model.Filters.eq;
 
 public class DatabaseManager {
 
@@ -50,6 +50,57 @@ public class DatabaseManager {
 
         playerService = context.getBean("playerService", PlayerService.class);
         gameService = context.getBean("gameService", GameService.class);
+
+        MongoCollection<Document> resetTimings = warlordsDatabase.getCollection("Reset_Timings");
+        //checking weekly date, if over 10,000 minutes (10080 == 1 week) reset weekly
+        Document weeklyDocumentInfo = resetTimings.find().filter(eq("time", "weekly")).first();
+        Date current = new Date();
+        if (weeklyDocumentInfo != null && weeklyDocumentInfo.get("last_reset") != null) {
+            Date lastReset = weeklyDocumentInfo.getDate("last_reset");
+            long timeDiff = current.getTime() - lastReset.getTime();
+
+            System.out.println("Reset Time: " + timeDiff / 60000);
+            if (timeDiff > 0 && timeDiff / (1000 * 60) > 10000) {
+                String sharedChainName = UUID.randomUUID().toString();
+                //caching lb
+                LeaderboardManager.addHologramLeaderboards(sharedChainName);
+                Warlords.newSharedChain(sharedChainName)
+                        .async(() -> {
+                            //adding new document with top weekly players
+                            //TODO
+//                            Document topPlayers = LeaderboardManager.getTopPlayersOnLeaderboard();
+//                            weeklyLeaderboards.insertOne(topPlayers);
+//                            ExperienceManager.awardWeeklyExperience(topPlayers);
+//                            //clearing weekly
+//                            playersInformationWeekly.deleteMany(new Document());
+//                            //updating date to current
+//                            resetTimings.updateOne(and(eq("time", "weekly"), eq("last_reset", lastReset)),
+//                                    new Document("$set", new Document("time", "weekly").append("last_reset", current))
+//                            );
+                        }).sync(() -> Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Weekly player information reset"))
+                        .execute();
+            }
+        }
+        //checking daily date, if over 1,400 minutes (1440 == 1 day) reset daily
+        Document dailyDocumentInfo = resetTimings.find().filter(eq("time", "daily")).first();
+        if (dailyDocumentInfo != null && dailyDocumentInfo.get("last_reset") != null) {
+            Date lastReset = dailyDocumentInfo.getDate("last_reset");
+            long timeDiff = current.getTime() - lastReset.getTime();
+
+            if (timeDiff > 0 && timeDiff / (1000 * 60) > 1400) {
+                Warlords.newSharedChain(UUID.randomUUID().toString())
+                        .async(() -> {
+                            //clearing daily
+                            playerService.deleteAll(PlayersCollections.DAILY);
+                            //updating date to current
+                            resetTimings.updateOne(and(eq("time", "daily"), eq("last_reset", lastReset)),
+                                    new Document("$set", new Document("time", "daily").append("last_reset", current))
+                            );
+                        }).sync(() -> Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Daily player information reset"))
+                        .execute();
+            }
+        }
+
 
         //Loading all online players
         Bukkit.getOnlinePlayers().forEach(player -> {

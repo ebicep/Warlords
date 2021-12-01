@@ -24,6 +24,8 @@ public interface PlayerService {
 
     void deleteAll();
 
+    void deleteAll(PlayersCollections collection);
+
     DatabasePlayer findOne(Criteria criteria, PlayersCollections collection);
 
     DatabasePlayer findByUUID(UUID uuid);

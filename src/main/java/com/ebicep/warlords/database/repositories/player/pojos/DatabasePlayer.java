@@ -148,6 +148,14 @@ public class DatabasePlayer {
         this.flagsReturned = flagsReturned;
     }
 
+    public long getDHP() {
+        return damage + healing + absorbed;
+    }
+
+    public long getDHPPerGame() {
+        return (damage + healing + absorbed) / (wins + losses);
+    }
+
     public long getDamage() {
         return damage;
     }

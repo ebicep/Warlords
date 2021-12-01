@@ -20,6 +20,7 @@ import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.query.Criteria;
 
 import java.util.*;
+import java.util.function.Function;
 
 import static com.mongodb.client.model.Sorts.descending;
 import static org.springframework.data.domain.Sort.Direction.DESC;
@@ -180,7 +181,7 @@ public class LeaderboardManager {
                 databasePlayer -> String.valueOf(Math.round((double) (databasePlayer.getKills() + databasePlayer.getAssists()) / (databasePlayer.getWins() + databasePlayer.getLosses()) * 10) / 10d)));
     }
 
-    private static final String[] weeklyExcludedLeaderboardsTitles = new String[] {"Plays", "Wins", "Kills", "DHP Per Game", "Flags Captured"};
+    private static final String[] weeklyIncludedLeaderboardsTitles = new String[]{"Plays", "Wins", "Kills", "DHP Per Game", "Flags Captured"};
 
     public static void addHologramLeaderboards(String sharedChainName) {
         if (Warlords.holographicDisplaysEnabled) {
@@ -219,20 +220,18 @@ public class LeaderboardManager {
                             }).execute();
                     //WEEKLY
                     Warlords.newSharedChain(sharedChainName)
-                            .asyncFirst(() -> {
-                                if(Arrays.stream(weeklyExcludedLeaderboardsTitles).noneMatch(title -> title.equalsIgnoreCase(leaderboard.getTitle()))) {
-                                    return null;
-                                }
-                                return DatabaseManager.playerService.getPlayersSorted(leaderboard.getAggregation(), PlayersCollections.WEEKLY);
-                            })
+                            .asyncFirst(() -> DatabaseManager.playerService.getPlayersSorted(leaderboard.getAggregation(), PlayersCollections.WEEKLY))
                             .abortIfNull()
                             .syncLast((sortedInformation) -> {
                                 leaderboard.resetSortedPlayers(sortedInformation, PlayersCollections.WEEKLY);
                                 //creating leaderboard for lifetime
-                                addLeaderboard(leaderboard, PlayersCollections.WEEKLY, ChatColor.AQUA + ChatColor.BOLD.toString() + "Weekly " + leaderboard.getTitle());
-                                HologramsAPI.getHolograms(Warlords.getInstance()).stream()
-                                        .filter(h -> !lifeTimeHolograms.contains(h) && h.getLocation().equals(leaderboard.getLocation()))
-                                        .forEach(weeklyHolograms::add);
+                                if (Arrays.stream(weeklyIncludedLeaderboardsTitles).anyMatch(title -> title.equalsIgnoreCase(leaderboard.getTitle()))) {
+                                    System.out.println(leaderboard.getTitle());
+                                    addLeaderboard(leaderboard, PlayersCollections.WEEKLY, ChatColor.AQUA + ChatColor.BOLD.toString() + "Weekly " + leaderboard.getTitle());
+                                    HologramsAPI.getHolograms(Warlords.getInstance()).stream()
+                                            .filter(h -> !lifeTimeHolograms.contains(h) && h.getLocation().equals(leaderboard.getLocation()))
+                                            .forEach(weeklyHolograms::add);
+                                }
                             }).execute();
                 });
 
@@ -362,13 +361,35 @@ public class LeaderboardManager {
         return hologram;
     }
 
-    //    public static Document getTopPlayersOnLeaderboard() {
-//        Document document = new Document("date", new Date()).append("total_players", cachedSortedPlayersWeekly.get("wins").size());
-//        //leaderboards.keySet().forEach(key -> appendTop(document, key));
-//        appendTop(document, "plays");
-//        appendTop(document, "dhp");
-//        return document;
-//    }
+    private static final HashMap<String, Function<DatabasePlayer, Number>> weeklyExperienceLeaderboards = new HashMap<String, Function<DatabasePlayer, Number>>() {{
+        put("Wins", DatabasePlayer::getWins);
+        put("Losses", DatabasePlayer::getLosses);
+        put("Kills", DatabasePlayer::getKills);
+        put("Assists", DatabasePlayer::getAssists);
+        put("Deaths", DatabasePlayer::getDeaths);
+        put("DHP", DatabasePlayer::getDHP);
+        put("DHP Per Game", DatabasePlayer::getDHPPerGame);
+        put("Damage", DatabasePlayer::getDamage);
+        put("Healing", DatabasePlayer::getHealing);
+        put("Absorbed", DatabasePlayer::getAbsorbed);
+        put("Flags Captured", DatabasePlayer::getFlagsCaptured);
+        put("Flags Returned", DatabasePlayer::getFlagsReturned);
+    }};
+
+    public static Document getTopPlayersOnLeaderboard() {
+        Document document = new Document("date", new Date()).append("total_players", leaderboards.get(0).getSortedWeekly().size());
+        weeklyExperienceLeaderboards.forEach((title, function) -> {
+            System.out.println(title);
+            leaderboards.stream().filter(leaderboard -> leaderboard.getTitle().equals(title)).findFirst().ifPresent(leaderboard -> {
+                for (Number number : leaderboard.getTopThree(function)) {
+                    System.out.println(number);
+                }
+            });
+        });
+        return document;
+    }
+//
+//
 //    public static void appendTop(Document document, String key) {
 //        Object[] highest = new Object[3];
 //        Object total;

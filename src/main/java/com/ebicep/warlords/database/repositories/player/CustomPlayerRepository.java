@@ -12,11 +12,13 @@ import java.util.List;
 @Repository
 public interface CustomPlayerRepository {
 
-    void create(DatabasePlayer player, String collection);
+    void create(DatabasePlayer player, PlayersCollections collection);
 
-    void save(DatabasePlayer player, String collection);
+    void save(DatabasePlayer player, PlayersCollections collection);
 
-    DatabasePlayer findOne(Query query, String collection);
+    void deleteAll(PlayersCollections collection);
+
+    DatabasePlayer findOne(Query query, PlayersCollections collection);
 
     BulkOperations bulkOps();
 
