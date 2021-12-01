@@ -148,7 +148,7 @@ public class Warlords extends JavaPlugin {
 
     @Nonnull
     public static Location getRejoinPoint(@Nonnull UUID key) {
-        return spawnPoints.getOrDefault(key, Bukkit.getWorlds().get(0).getSpawnLocation());
+        return spawnPoints.getOrDefault(key, new LocationBuilder(Bukkit.getWorlds().get(0).getSpawnLocation()).yaw(-90).get());
     }
 
     public static void setRejoinPoint(@Nonnull UUID key, @Nonnull Location value) {

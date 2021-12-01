@@ -710,14 +710,15 @@ public class GameMenu {
                         if (!weapon.isUnlocked) {
                             weapon.isUnlocked = true;
                             Warlords.getInstance().saveWeaponConfig();
-                            Bukkit.broadcastMessage("");
-                            Bukkit.broadcastMessage("§l" + rarity.getWeaponChatColor() + weapon.getName() + " §l§fis now unlocked for everyone!");
-                            Bukkit.broadcastMessage("");
+                            // TODO: uncomment w/ new weapon patch
+                            //Bukkit.broadcastMessage("");
+                            //Bukkit.broadcastMessage("§l" + rarity.getWeaponChatColor() + weapon.getName() + " §l§fis now unlocked for everyone!");
+                            //Bukkit.broadcastMessage("");
                         } else {
                             if (rarity == WeaponsRarity.MYTHIC) {
-                                Bukkit.broadcastMessage("");
-                                Bukkit.broadcastMessage("§l" + rarity.getWeaponChatColor() + weapon.getName() + " §fwas already found! Unlucky!");
-                                Bukkit.broadcastMessage("");
+                                //Bukkit.broadcastMessage("");
+                                //Bukkit.broadcastMessage("§l" + rarity.getWeaponChatColor() + weapon.getName() + " §fwas already found! Unlucky!");
+                                //Bukkit.broadcastMessage("");
                             }
                         }
                     }

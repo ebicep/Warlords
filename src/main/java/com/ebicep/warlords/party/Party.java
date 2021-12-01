@@ -174,6 +174,7 @@ public class Party {
         for (Map.Entry<UUID, Boolean> uuidBooleanEntry : members.entrySet()) {
             String partyMemberName = Bukkit.getOfflinePlayer(uuidBooleanEntry.getKey()).getName();
             if (partyMemberName.equalsIgnoreCase(name)) {
+                disconnects.remove(uuidBooleanEntry.getKey());
                 members.remove(uuidBooleanEntry.getKey());
                 moderators.remove(uuidBooleanEntry.getKey());
                 sendMessageToAllPartyPlayers(ChatColor.AQUA + partyMemberName + ChatColor.RED + " was removed from the party", true, true);

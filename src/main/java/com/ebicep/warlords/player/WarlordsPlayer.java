@@ -1653,7 +1653,7 @@ public final class WarlordsPlayer {
 
     public void setVelocity(org.bukkit.util.Vector v) {
         if(cooldownManager.hasCooldownFromName("KB Resistance")) {
-            setVelocity(v.multiply(.5), true);
+            setVelocity(v.multiply(.75), true);
         } else {
             setVelocity(v, true);
         }
@@ -1662,7 +1662,7 @@ public final class WarlordsPlayer {
     public void setVelocity(org.bukkit.util.Vector v, boolean kbAfterHorse) {
         if ((kbAfterHorse || this.entity.getVehicle() == null)) {
             if(cooldownManager.hasCooldownFromName("KB Resistance")) {
-                this.entity.setVelocity(v.multiply(.5));
+                this.entity.setVelocity(v.multiply(.75));
             } else {
                 this.entity.setVelocity(v);
             }

@@ -274,7 +274,7 @@ public class PartyCommand implements CommandExecutor {
                 return true;
             }
             case "pforcejoin": {
-                Optional<Party> currentParty = Warlords.partyManager.getPartyFromAny(((Player) sender).getUniqueId());
+                Optional<Party> currentParty = Warlords.partyManager.getPartyFromLeader(((Player) sender).getUniqueId());
                 currentParty.ifPresent(party -> {
                     if(sender.isOp()) {
                         if(args.length > 0) {
