@@ -20,6 +20,8 @@ public interface CustomPlayerRepository {
 
     DatabasePlayer findOne(Query query, PlayersCollections collection);
 
+    List<DatabasePlayer> findAll(PlayersCollections collection);
+
     BulkOperations bulkOps();
 
     List<DatabasePlayer> getPlayersSorted(Aggregation aggregation, PlayersCollections collections);

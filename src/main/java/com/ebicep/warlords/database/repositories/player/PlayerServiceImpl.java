@@ -82,6 +82,11 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
     @Override
+    public List<DatabasePlayer> findAll(PlayersCollections collections) {
+        return playerRepository.findAll(collections);
+    }
+
+    @Override
     public BulkOperations bulkOps() {
         return playerRepository.bulkOps();
     }

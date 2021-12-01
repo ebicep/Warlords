@@ -3,13 +3,10 @@ package com.ebicep.warlords.database.leaderboards;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
 import org.bukkit.Location;
-import org.springframework.data.mongodb.core.aggregation.Aggregation;
 
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Function;
 
 public class Leaderboard {
@@ -18,15 +15,15 @@ public class Leaderboard {
     private final Location location;
     private final List<DatabasePlayer> sortedAllTime = new ArrayList<>();
     private final List<DatabasePlayer> sortedWeekly = new ArrayList<>();
-    private final Aggregation aggregation;
-    private final Function<DatabasePlayer, String> valueFunction;
+    private final Function<DatabasePlayer, Number> valueFunction;
+    private final Function<DatabasePlayer, String> stringFunction;
 
 
-    public Leaderboard(String title, Location location, Aggregation aggregation, Function<DatabasePlayer, String> valueFunction) {
+    public Leaderboard(String title, Location location, Function<DatabasePlayer, Number> valueFunction, Function<DatabasePlayer, String> stringFunction) {
         this.title = title;
         this.location = location;
-        this.aggregation = aggregation;
         this.valueFunction = valueFunction;
+        this.stringFunction = stringFunction;
     }
 
     @Override
@@ -65,7 +62,7 @@ public class Leaderboard {
         }
     }
 
-    public <T extends Number> T[] getTopThree(Function<DatabasePlayer, Number> valueFunction) {
+    public <T extends Number> T[] getTopThreeValues() {
         //current top value to compare to
         Number topValue = valueFunction.apply(sortedWeekly.get(0));
 
@@ -97,6 +94,30 @@ public class Leaderboard {
         return output;
     }
 
+    public String[] getTopThreePlayerNames(Number[] numbers, Function<DatabasePlayer, String> function) {
+        String[] topThreePlayers = new String[3];
+        Arrays.fill(topThreePlayers, "");
+
+        //matching top value with players
+        for (int i = 0; i < numbers.length; i++) {
+            Number topValue = numbers[i];
+            for (DatabasePlayer databasePlayer : sortedWeekly) {
+                if (Objects.equals(valueFunction.apply(databasePlayer), topValue)) {
+                    topThreePlayers[i] = topThreePlayers[i] + function.apply(databasePlayer) + ",";
+                }
+            }
+            if (i == 2) {
+                break;
+            }
+        }
+
+        //removing end comma
+        for (int i = 0; i < topThreePlayers.length; i++) {
+            topThreePlayers[i] = topThreePlayers[i].substring(0, topThreePlayers[i].length() - 1);
+        }
+        return topThreePlayers;
+    }
+
     public static int compare(Number a, Number b) {
         return new BigDecimal(a.toString()).compareTo(new BigDecimal(b.toString()));
     }
@@ -117,11 +138,11 @@ public class Leaderboard {
         return sortedWeekly;
     }
 
-    public Aggregation getAggregation() {
-        return aggregation;
+    public Function<DatabasePlayer, Number> getValueFunction() {
+        return valueFunction;
     }
 
-    public Function<DatabasePlayer, String> getValueFunction() {
-        return valueFunction;
+    public Function<DatabasePlayer, String> getStringFunction() {
+        return stringFunction;
     }
 }

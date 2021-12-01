@@ -38,6 +38,11 @@ public class CustomPlayerRepositoryImpl implements CustomPlayerRepository {
     }
 
     @Override
+    public List<DatabasePlayer> findAll(PlayersCollections collection) {
+        return mongoTemplate.findAll(DatabasePlayer.class, collection.collectionName);
+    }
+
+    @Override
     public BulkOperations bulkOps() {
         return mongoTemplate.bulkOps(BulkOperations.BulkMode.UNORDERED, DatabasePlayer.class);
     }
@@ -45,7 +50,7 @@ public class CustomPlayerRepositoryImpl implements CustomPlayerRepository {
     @Override
     public List<DatabasePlayer> getPlayersSorted(Aggregation aggregation, PlayersCollections collections) {
         return mongoTemplate.aggregate(aggregation,
-                collections.collectionName,
+                        collections.collectionName,
                 DatabasePlayer.class)
                 .getMappedResults();
     }

@@ -92,12 +92,22 @@ public class DatabasePlayer {
         return uuid;
     }
 
+    public double getKillsPerGame() {
+        int plays = getPlays();
+        return plays == 0 ? 0 : (double) kills / plays;
+    }
+
     public int getKills() {
         return kills;
     }
 
     public void setKills(int kills) {
         this.kills = kills;
+    }
+
+    public double getKillsAssistsPerGame() {
+        int plays = getPlays();
+        return plays == 0 ? 0 : (double) (kills + assists) / getPlays();
     }
 
     public int getAssists() {
@@ -108,12 +118,21 @@ public class DatabasePlayer {
         this.assists = assists;
     }
 
+    public double getDeathsPerGame() {
+        int plays = getPlays();
+        return plays == 0 ? 0 : (double) deaths / getPlays();
+    }
+
     public int getDeaths() {
         return deaths;
     }
 
     public void setDeaths(int deaths) {
         this.deaths = deaths;
+    }
+
+    public int getPlays() {
+        return wins + losses;
     }
 
     public int getWins() {
@@ -153,7 +172,8 @@ public class DatabasePlayer {
     }
 
     public long getDHPPerGame() {
-        return (damage + healing + absorbed) / (wins + losses);
+        int plays = getPlays();
+        return plays == 0 ? 0 : (damage + healing + absorbed) / (wins + losses);
     }
 
     public long getDamage() {

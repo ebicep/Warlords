@@ -87,3 +87,6 @@ commands:
   msg:
     description: Message a player
     aliases: [ msg, r, tell ]
+  experience:
+    description: Experience stuff
+    aliases: [ experience, exp ]

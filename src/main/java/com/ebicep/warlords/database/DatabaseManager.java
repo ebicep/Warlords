@@ -51,6 +51,22 @@ public class DatabaseManager {
         playerService = context.getBean("playerService", PlayerService.class);
         gameService = context.getBean("gameService", GameService.class);
 
+        //Loading all online players
+        Bukkit.getOnlinePlayers().forEach(player -> {
+            loadPlayer(player.getUniqueId(), PlayersCollections.ALL_TIME);
+            updateName(player.getUniqueId());
+            Warlords.playerScoreboards.get(player.getUniqueId()).giveMainLobbyScoreboard();
+        });
+
+        //Loading last 5 games
+        Warlords.newChain()
+                .asyncFirst(() -> gameService.getLastGames(5))
+                .syncLast((games) -> {
+                    previousGames.addAll(games);
+                    LeaderboardManager.addHologramLeaderboards(UUID.randomUUID().toString());
+                })
+                .execute();
+
         MongoCollection<Document> resetTimings = warlordsDatabase.getCollection("Reset_Timings");
         //checking weekly date, if over 10,000 minutes (10080 == 1 week) reset weekly
         Document weeklyDocumentInfo = resetTimings.find().filter(eq("time", "weekly")).first();
@@ -61,22 +77,24 @@ public class DatabaseManager {
 
             System.out.println("Reset Time: " + timeDiff / 60000);
             if (timeDiff > 0 && timeDiff / (1000 * 60) > 10000) {
-                String sharedChainName = UUID.randomUUID().toString();
-                //caching lb
-                LeaderboardManager.addHologramLeaderboards(sharedChainName);
-                Warlords.newSharedChain(sharedChainName)
+                Warlords.newSharedChain(UUID.randomUUID().toString())
+                        .delay(20 * 10) // to make sure leaderboards are cached
                         .async(() -> {
                             //adding new document with top weekly players
-                            //TODO
-//                            Document topPlayers = LeaderboardManager.getTopPlayersOnLeaderboard();
-//                            weeklyLeaderboards.insertOne(topPlayers);
-//                            ExperienceManager.awardWeeklyExperience(topPlayers);
-//                            //clearing weekly
-//                            playersInformationWeekly.deleteMany(new Document());
-//                            //updating date to current
-//                            resetTimings.updateOne(and(eq("time", "weekly"), eq("last_reset", lastReset)),
-//                                    new Document("$set", new Document("time", "weekly").append("last_reset", current))
-//                            );
+                            Document topPlayers = LeaderboardManager.getTopPlayersOnLeaderboard();
+
+                            MongoCollection<Document> weeklyLeaderboards = warlordsDatabase.getCollection("Weekly_Leaderboards");
+                            weeklyLeaderboards.insertOne(topPlayers);
+
+                            ExperienceManager.awardWeeklyExperience(topPlayers);
+                            //clearing weekly
+                            playerService.deleteAll(PlayersCollections.WEEKLY);
+                            //reloading boards
+                            LeaderboardManager.addHologramLeaderboards(UUID.randomUUID().toString());
+                            //updating date to current
+                            resetTimings.updateOne(and(eq("time", "weekly"), eq("last_reset", lastReset)),
+                                    new Document("$set", new Document("time", "weekly").append("last_reset", current))
+                            );
                         }).sync(() -> Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Weekly player information reset"))
                         .execute();
             }
@@ -100,24 +118,6 @@ public class DatabaseManager {
                         .execute();
             }
         }
-
-
-        //Loading all online players
-        Bukkit.getOnlinePlayers().forEach(player -> {
-            loadPlayer(player.getUniqueId(), PlayersCollections.ALL_TIME);
-            updateName(player.getUniqueId());
-            Warlords.playerScoreboards.get(player.getUniqueId()).giveMainLobbyScoreboard();
-        });
-
-        //Loading last 5 games
-        Warlords.newChain()
-                .asyncFirst(() -> gameService.getLastGames(5))
-                .syncLast((games) -> {
-                    previousGames.addAll(games);
-                    LeaderboardManager.addHologramLeaderboards(UUID.randomUUID().toString());
-                })
-                .execute();
-
     }
 
     public static void loadPlayer(UUID uuid, PlayersCollections collections) {

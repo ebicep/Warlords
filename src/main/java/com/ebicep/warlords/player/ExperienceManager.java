@@ -59,11 +59,12 @@ public class ExperienceManager {
         awardOrder.forEach((key, rewards) -> {
             String name = weeklyDocument.getEmbedded(Arrays.asList(key, "name"), String.class);
             List<Document> top = weeklyDocument.getEmbedded(Arrays.asList(key, "top"), new ArrayList<>());
-            for (Document topDocument : top) {
+            for (int i = 0; i < top.size(); i++) {
+                Document topDocument = top.get(i);
                 String[] names = topDocument.getString("names").split(",");
                 String[] uuids = topDocument.getString("uuids").split(",");
                 for (int j = 0; j < uuids.length; j++) {
-                    int experienceGain = rewards[j];
+                    int experienceGain = rewards[i];
                     if (!futureMessageDocuments.containsKey(uuids[j])) {
                         futureMessageDocuments.put(uuids[j], new Document("uuid", uuids[j])
                                 .append("name", names[j])
@@ -74,7 +75,7 @@ public class ExperienceManager {
                         );
                     }
                     Document previousDocument = futureMessageDocuments.get(uuids[j]);
-                    previousDocument.getList("messages", String.class).add(ChatColor.YELLOW + "#" + (j + 2) + ". " + ChatColor.AQUA + name + ChatColor.WHITE + ": " + ChatColor.DARK_GRAY + "+" + ChatColor.DARK_AQUA + experienceGain + ChatColor.GOLD + " Universal Experience");
+                    previousDocument.getList("messages", String.class).add(ChatColor.YELLOW + "#" + (i + 2) + ". " + ChatColor.AQUA + name + ChatColor.WHITE + ": " + ChatColor.DARK_GRAY + "+" + ChatColor.DARK_AQUA + experienceGain + ChatColor.GOLD + " Universal Experience");
                     previousDocument.put("total_experience_gain", previousDocument.getLong("total_experience_gain") + experienceGain);
                 }
             }

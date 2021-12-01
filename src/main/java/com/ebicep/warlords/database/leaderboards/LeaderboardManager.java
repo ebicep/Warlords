@@ -16,15 +16,10 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.springframework.data.mongodb.core.aggregation.Aggregation;
-import org.springframework.data.mongodb.core.query.Criteria;
 
 import java.util.*;
-import java.util.function.Function;
 
 import static com.mongodb.client.model.Sorts.descending;
-import static org.springframework.data.domain.Sort.Direction.DESC;
-import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 
 public class LeaderboardManager {
 
@@ -32,18 +27,32 @@ public class LeaderboardManager {
 
     public static final Location spawnPoint = Bukkit.getWorlds().get(0).getSpawnLocation().clone();
 
-    public static final Location leaderboardSwitchLocation = new Location(world, -2552.5, 52.5, 719.5);
+    public static final Location leaderboardSwitchLocation = new Location(world, -2571.5, 54, 720.5);
 
     public static final Location center = new LocationBuilder(spawnPoint.clone()).forward(.5f).left(21).addY(2).get();
 
     public static final List<Leaderboard> leaderboards = new ArrayList<>();
-    
+
     public static final HashMap<UUID, Integer> playerGameHolograms = new HashMap<>();
     public static final HashMap<UUID, Integer> playerLeaderboardHolograms = new HashMap<>();
 
     public static final List<Hologram> lifeTimeHolograms = new ArrayList<>();
     public static final List<Hologram> weeklyHolograms = new ArrayList<>();
-
+    private static final String[] weeklyIncludedLeaderboardsTitles = new String[]{"Plays", "Wins", "Kills", "DHP Per Game", "Flags Captured"};
+    private static final String[] weeklyExperienceLeaderboards = new String[]{
+            "Wins",
+            "Losses",
+            "Kills",
+            "Assists",
+            "Deaths",
+            "DHP",
+            "DHP Per Game",
+            "Damage",
+            "Healing",
+            "Absorbed",
+            "Flags Captured",
+            "Flags Returned",
+    };
     public static boolean enabled = true;
 
     public static void init() {
@@ -55,133 +64,109 @@ public class LeaderboardManager {
 
         leaderboards.add(new Leaderboard("Wins",
                 new Location(world, -2558.5, 56, 712.5),
-                Aggregation.newAggregation(sort(DESC, "wins")),
+                (DatabasePlayer::getWins),
                 databasePlayer -> Utils.addCommaAndRound(databasePlayer.getWins())));
         leaderboards.add(new Leaderboard("Losses", new Location(world, -2608.5, 52, 728.5),
-                Aggregation.newAggregation(sort(DESC, "losses")),
+                (DatabasePlayer::getLosses),
                 databasePlayer -> Utils.addCommaAndRound(databasePlayer.getLosses())));
         leaderboards.add(new Leaderboard("Kills", new Location(world, -2552.5, 56, 712.5),
-                Aggregation.newAggregation(sort(DESC, "kills")),
+                (DatabasePlayer::getKills),
                 databasePlayer -> Utils.addCommaAndRound(databasePlayer.getKills())));
         leaderboards.add(new Leaderboard("Assists", new Location(world, -2616.5, 52, 733.5),
-                Aggregation.newAggregation(sort(DESC, "assists")),
+                (DatabasePlayer::getAssists),
                 databasePlayer -> Utils.addCommaAndRound(databasePlayer.getAssists())));
         leaderboards.add(new Leaderboard("Deaths", new Location(world, -2616.5, 52, 723.5),
-                Aggregation.newAggregation(sort(DESC, "deaths")),
+                (DatabasePlayer::getDeaths),
                 databasePlayer -> Utils.addCommaAndRound(databasePlayer.getDeaths())));
         leaderboards.add(new Leaderboard("Damage", new Location(world, -2600.5, 52, 723.5),
-                Aggregation.newAggregation(sort(DESC, "damage")),
+                (DatabasePlayer::getDamage),
                 databasePlayer -> Utils.addCommaAndRound(databasePlayer.getDamage())));
         leaderboards.add(new Leaderboard("Healing", new Location(world, -2608.5, 52, 719.5),
-                Aggregation.newAggregation(sort(DESC, "healing")),
+                (DatabasePlayer::getHealing),
                 databasePlayer -> Utils.addCommaAndRound(databasePlayer.getHealing())));
         leaderboards.add(new Leaderboard("Absorbed", new Location(world, -2600.5, 52, 733.5),
-                Aggregation.newAggregation(sort(DESC, "absorbed")),
+                (DatabasePlayer::getAbsorbed),
                 databasePlayer -> Utils.addCommaAndRound(databasePlayer.getAbsorbed())));
 
         leaderboards.add(new Leaderboard("Flags Captured", new Location(world, -2540.5, 56, 712.5),
-                Aggregation.newAggregation(sort(DESC, "flags_captured")),
+                (DatabasePlayer::getFlagsCaptured),
                 databasePlayer -> Utils.addCommaAndRound(databasePlayer.getFlagsCaptured())));
         leaderboards.add(new Leaderboard("Flags Returned", new Location(world, -2608.5, 52, 737.5),
-                Aggregation.newAggregation(sort(DESC, "flags_returned")),
+                (DatabasePlayer::getFlagsReturned),
                 databasePlayer -> Utils.addCommaAndRound(databasePlayer.getFlagsReturned())));
 
         leaderboards.add(new Leaderboard("Avenger Wins", new Location(world, -2631.5, 52, 719.5),
-                Aggregation.newAggregation(sort(DESC, "absorbed")),
+                (o -> o.getPaladin().getAvenger().getWins()),
                 databasePlayer -> Utils.addCommaAndRound(databasePlayer.getPaladin().getAvenger().getWins())));
         leaderboards.add(new Leaderboard("Crusader Wins", new Location(world, -2628.5, 52, 714.5),
-                Aggregation.newAggregation(sort(DESC, "paladin.crusader.wins")),
+                (o -> o.getPaladin().getCrusader().getWins()),
                 databasePlayer -> Utils.addCommaAndRound(databasePlayer.getPaladin().getCrusader().getWins())));
         leaderboards.add(new Leaderboard("Protector Wins", new Location(world, -2623.5, 52, 711.5),
-                Aggregation.newAggregation(sort(DESC, "paladin.protector.wins")),
+                (o -> o.getPaladin().getProtector().getWins()),
                 databasePlayer -> Utils.addCommaAndRound(databasePlayer.getPaladin().getProtector().getWins())));
         leaderboards.add(new Leaderboard("Berserker Wins", new Location(world, -2623.5, 52, 745.5),
-                Aggregation.newAggregation(sort(DESC, "warrior.berserker.wins")),
+                (o -> o.getWarrior().getBerserker().getWins()),
                 databasePlayer -> Utils.addCommaAndRound(databasePlayer.getWarrior().getBerserker().getWins())));
         leaderboards.add(new Leaderboard("Defender Wins", new Location(world, -2628.5, 52, 742.5),
-                Aggregation.newAggregation(sort(DESC, "warrior.defender.wins")),
+                (o -> o.getWarrior().getDefender().getWins()),
                 databasePlayer -> Utils.addCommaAndRound(databasePlayer.getWarrior().getDefender().getWins())));
         leaderboards.add(new Leaderboard("Revenant Wins", new Location(world, -2631.5, 52, 737.5),
-                Aggregation.newAggregation(sort(DESC, "warrior.revenant.wins")),
+                (o -> o.getWarrior().getRevenant().getWins()),
                 databasePlayer -> Utils.addCommaAndRound(databasePlayer.getWarrior().getRevenant().getWins())));
         leaderboards.add(new Leaderboard("Pyromancer Wins", new Location(world, -2602.5, 53, 749.5),
-                Aggregation.newAggregation(sort(DESC, "mage.pyromancer.wins")),
+                (o -> o.getMage().getPyromancer().getWins()),
                 databasePlayer -> Utils.addCommaAndRound(databasePlayer.getMage().getPyromancer().getWins())));
         leaderboards.add(new Leaderboard("Cryomancer Wins", new Location(world, -2608.5, 53, 752.5),
-                Aggregation.newAggregation(sort(DESC, "mage.cryomancer.wins")),
+                (o -> o.getMage().getCryomancer().getWins()),
                 databasePlayer -> Utils.addCommaAndRound(databasePlayer.getMage().getCryomancer().getWins())));
         leaderboards.add(new Leaderboard("Aquamancer Wins", new Location(world, -2614.5, 53, 749.5),
-                Aggregation.newAggregation(sort(DESC, "mage.aquamancer.wins")),
+                (o -> o.getMage().getAquamancer().getWins()),
                 databasePlayer -> Utils.addCommaAndRound(databasePlayer.getMage().getAquamancer().getWins())));
         leaderboards.add(new Leaderboard("Thunderlord Wins", new Location(world, -2614.5, 52, 706.5),
-                Aggregation.newAggregation(sort(DESC, "shaman.thunderlord.wins")),
+                (o -> o.getShaman().getThunderlord().getWins()),
                 databasePlayer -> Utils.addCommaAndRound(databasePlayer.getShaman().getThunderlord().getWins())));
         leaderboards.add(new Leaderboard("Spiritguard Wins", new Location(world, -2608.5, 52, 704.5),
-                Aggregation.newAggregation(sort(DESC, "shaman.spiritguard.wins")),
+                (o -> o.getShaman().getSpiritguard().getWins()),
                 databasePlayer -> Utils.addCommaAndRound(databasePlayer.getShaman().getSpiritguard().getWins())));
         leaderboards.add(new Leaderboard("Earthwarden Wins", new Location(world, -2602.5, 52, 706.5),
-                Aggregation.newAggregation(sort(DESC, "shaman.earthwarden.wins")),
+                (o -> o.getShaman().getEarthwarden().getWins()),
                 databasePlayer -> Utils.addCommaAndRound(databasePlayer.getShaman().getEarthwarden().getWins())));
 
         leaderboards.add(new Leaderboard("Experience", new Location(world, -2526.5, 57, 744.5),
-                Aggregation.newAggregation(sort(DESC, "experience")),
+                (DatabasePlayer::getExperience),
                 databasePlayer -> Utils.addCommaAndRound(databasePlayer.getExperience())));
         leaderboards.add(new Leaderboard("Mage Experience", new Location(world, -2520.5, 58, 735.5),
-                Aggregation.newAggregation(sort(DESC, "mage.experience")),
+                (o -> o.getMage().getWins()),
                 databasePlayer -> Utils.addCommaAndRound(databasePlayer.getMage().getExperience())));
         leaderboards.add(new Leaderboard("Warrior Experience", new Location(world, -2519.5, 58, 741.5),
-                Aggregation.newAggregation(sort(DESC, "warrior.experience")),
+                (o -> o.getWarrior().getWins()),
                 databasePlayer -> Utils.addCommaAndRound(databasePlayer.getWarrior().getExperience())));
         leaderboards.add(new Leaderboard("Paladin Experience", new Location(world, -2519.5, 58, 747.5),
-                Aggregation.newAggregation(sort(DESC, "paladin.experience")),
+                (o -> o.getPaladin().getWins()),
                 databasePlayer -> Utils.addCommaAndRound(databasePlayer.getPaladin().getExperience())));
         leaderboards.add(new Leaderboard("Shaman Experience", new Location(world, -2520.5, 58, 753.5),
-                Aggregation.newAggregation(sort(DESC, "shaman.experience")),
+                (o -> o.getShaman().getWins()),
                 databasePlayer -> Utils.addCommaAndRound(databasePlayer.getShaman().getExperience())));
 
         leaderboards.add(new Leaderboard("Plays", new Location(world, -2564.5, 56, 712.5),
-                Aggregation.newAggregation(
-                        aoc -> new Document("$addFields", new Document("plays", new Document("$add", Arrays.asList("$wins", "$losses")))),
-                        sort(DESC, "plays")),
-                databasePlayer -> Utils.addCommaAndRound(databasePlayer.getWins() + databasePlayer.getLosses())));
+                (DatabasePlayer::getPlays),
+                databasePlayer -> Utils.addCommaAndRound(databasePlayer.getPlays())));
         leaderboards.add(new Leaderboard("DHP", new Location(world, -2619.5, 66.5, 721.5),
-                Aggregation.newAggregation(
-                        aoc -> new Document("$addFields", new Document("dhp", new Document("$add", Arrays.asList("$damage", "$healing", "$absorbed")))),
-                        sort(DESC, "dhp")),
-                databasePlayer -> Utils.addCommaAndRound(databasePlayer.getDamage() + databasePlayer.getHealing() + databasePlayer.getAbsorbed())));
+                (DatabasePlayer::getDHP),
+                databasePlayer -> Utils.addCommaAndRound(databasePlayer.getDHP())));
         leaderboards.add(new Leaderboard("DHP Per Game", new Location(world, -2546.5, 56, 712.5),
-                Aggregation.newAggregation(
-                        aoc -> new Document("$addFields", new Document("plays", new Document("$add", Arrays.asList("$wins", "$losses")))),
-                        match(Criteria.where("plays").gt(5)),
-                        aoc -> new Document("$addFields", new Document("dhp", new Document("$add", Arrays.asList("$damage", "$healing", "$absorbed")))),
-                        aoc -> new Document("$addFields", new Document("dhp_per_game", new Document("$divide", Arrays.asList("$dhp", "$plays")))),
-                        sort(DESC, "dhp_per_game")),
-                databasePlayer -> Utils.addCommaAndRound(Math.round((double) (databasePlayer.getDamage() + databasePlayer.getHealing() + databasePlayer.getAbsorbed()) / (databasePlayer.getWins() + databasePlayer.getLosses()) * 10) / 10d)));
+                (DatabasePlayer::getDHPPerGame),
+                databasePlayer -> Utils.addCommaAndRound(Math.round((double) (databasePlayer.getDHPPerGame()) * 10) / 10d)));
         leaderboards.add(new Leaderboard("Kills Per Game", new Location(world, -2619.5, 66.5, 735.5),
-                Aggregation.newAggregation(
-                        aoc -> new Document("$addFields", new Document("plays", new Document("$add", Arrays.asList("$wins", "$losses")))),
-                        match(Criteria.where("plays").gt(5)),
-                        aoc -> new Document("$addFields", new Document("kills_per_game", new Document("$divide", Arrays.asList("$kills", "$plays")))),
-                        sort(DESC, "kills_per_game")),
-                databasePlayer -> String.valueOf(Math.round((double) databasePlayer.getKills() / (databasePlayer.getWins() + databasePlayer.getLosses()) * 10) / 10d)));
+                (DatabasePlayer::getKillsPerGame),
+                databasePlayer -> String.valueOf(Math.round(databasePlayer.getKillsPerGame() * 10) / 10d)));
         leaderboards.add(new Leaderboard("Deaths Per Game", new Location(world, -2608.5, 67, 738.5),
-                Aggregation.newAggregation(
-                        aoc -> new Document("$addFields", new Document("plays", new Document("$add", Arrays.asList("$wins", "$losses")))),
-                        match(Criteria.where("plays").gt(5)),
-                        aoc -> new Document("$addFields", new Document("deaths_per_game", new Document("$divide", Arrays.asList("$deaths", "$plays")))),
-                        sort(DESC, "deaths_per_game")),
-                databasePlayer -> String.valueOf(Math.round((double) databasePlayer.getDeaths() / (databasePlayer.getWins() + databasePlayer.getLosses()) * 10) / 10d)));
+                (DatabasePlayer::getDeathsPerGame),
+                databasePlayer -> String.valueOf(Math.round(databasePlayer.getDeathsPerGame() * 10) / 10d)));
         leaderboards.add(new Leaderboard("Kills/Assists Per Game", new Location(world, -2608.5, 67, 719.5),
-                Aggregation.newAggregation(
-                        aoc -> new Document("$addFields", new Document("plays", new Document("$add", Arrays.asList("$wins", "$losses")))),
-                        match(Criteria.where("plays").gt(5)),
-                        aoc -> new Document("$addFields", new Document("ka", new Document("$add", Arrays.asList("$kills", "$assists")))),
-                        aoc -> new Document("$addFields", new Document("ka_per_game", new Document("$divide", Arrays.asList("$ka", "$plays")))),
-                        sort(DESC, "ka_per_game")),
-                databasePlayer -> String.valueOf(Math.round((double) (databasePlayer.getKills() + databasePlayer.getAssists()) / (databasePlayer.getWins() + databasePlayer.getLosses()) * 10) / 10d)));
+                (DatabasePlayer::getKillsAssistsPerGame),
+                databasePlayer -> String.valueOf(Math.round(databasePlayer.getKillsAssistsPerGame() * 10) / 10d)));
     }
-
-    private static final String[] weeklyIncludedLeaderboardsTitles = new String[]{"Plays", "Wins", "Kills", "DHP Per Game", "Flags Captured"};
 
     public static void addHologramLeaderboards(String sharedChainName) {
         if (Warlords.holographicDisplaysEnabled) {
@@ -206,10 +191,15 @@ public class LeaderboardManager {
                 Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Adding Holograms");
 
                 //caching all sorted players for each lifetime and weekly
+                long startTime = System.nanoTime();
                 leaderboards.forEach(leaderboard -> {
                     //LIFETIME
                     Warlords.newSharedChain(sharedChainName)
-                            .asyncFirst(() -> DatabaseManager.playerService.getPlayersSorted(leaderboard.getAggregation(), PlayersCollections.ALL_TIME))
+                            .asyncFirst(() -> {
+                                List<DatabasePlayer> databasePlayers = DatabaseManager.playerService.findAll(PlayersCollections.ALL_TIME);
+                                databasePlayers.sort((o1, o2) -> Leaderboard.compare(leaderboard.getValueFunction().apply(o2), leaderboard.getValueFunction().apply(o1)));
+                                return databasePlayers;
+                            })
                             .syncLast((sortedInformation) -> {
                                 leaderboard.resetSortedPlayers(sortedInformation, PlayersCollections.ALL_TIME);
                                 //creating leaderboard for lifetime
@@ -220,13 +210,16 @@ public class LeaderboardManager {
                             }).execute();
                     //WEEKLY
                     Warlords.newSharedChain(sharedChainName)
-                            .asyncFirst(() -> DatabaseManager.playerService.getPlayersSorted(leaderboard.getAggregation(), PlayersCollections.WEEKLY))
+                            .asyncFirst(() -> {
+                                List<DatabasePlayer> databasePlayers = DatabaseManager.playerService.findAll(PlayersCollections.WEEKLY);
+                                databasePlayers.sort((o1, o2) -> Leaderboard.compare(leaderboard.getValueFunction().apply(o2), leaderboard.getValueFunction().apply(o1)));
+                                return databasePlayers;
+                            })
                             .abortIfNull()
                             .syncLast((sortedInformation) -> {
                                 leaderboard.resetSortedPlayers(sortedInformation, PlayersCollections.WEEKLY);
                                 //creating leaderboard for lifetime
                                 if (Arrays.stream(weeklyIncludedLeaderboardsTitles).anyMatch(title -> title.equalsIgnoreCase(leaderboard.getTitle()))) {
-                                    System.out.println(leaderboard.getTitle());
                                     addLeaderboard(leaderboard, PlayersCollections.WEEKLY, ChatColor.AQUA + ChatColor.BOLD.toString() + "Weekly " + leaderboard.getTitle());
                                     HologramsAPI.getHolograms(Warlords.getInstance()).stream()
                                             .filter(h -> !lifeTimeHolograms.contains(h) && h.getLocation().equals(leaderboard.getLocation()))
@@ -237,6 +230,8 @@ public class LeaderboardManager {
 
                 //depending on what player has selected, set visibility
                 Warlords.newSharedChain(sharedChainName).sync(() -> {
+                    long endTime = System.nanoTime();
+                    System.out.println((endTime - startTime) / 1000000);
                     System.out.println("Setting Hologram Visibility");
                     Bukkit.getOnlinePlayers().forEach(player -> {
                         setLeaderboardHologramVisibility(player);
@@ -299,7 +294,7 @@ public class LeaderboardManager {
     public static void addPlayerPositionLeaderboards(Player player) {
         if (enabled) {
             //leaderboards
-            leaderboards.forEach(leaderboard -> {
+            for (Leaderboard leaderboard : leaderboards) {
                 Location location = leaderboard.getLocation().clone().add(0, -3.5, 0);
                 HologramsAPI.getHolograms(Warlords.getInstance()).stream()
                         .filter(hologram -> hologram.getLocation().equals(location) && hologram.getVisibilityManager().isVisibleTo(player))
@@ -310,6 +305,9 @@ public class LeaderboardManager {
                 if (playerLeaderboardHolograms.get(player.getUniqueId()) == 0) {
                     databasePlayers = leaderboard.getSortedAllTime();
                 } else if (playerLeaderboardHolograms.get(player.getUniqueId()) == 1) {
+                    if (Arrays.stream(weeklyIncludedLeaderboardsTitles).noneMatch(l -> l.equals(leaderboard.getTitle()))) {
+                        continue;
+                    }
                     databasePlayers = leaderboard.getSortedWeekly();
                 } else {
                     return;
@@ -317,13 +315,13 @@ public class LeaderboardManager {
                 for (int i = 0; i < databasePlayers.size(); i++) {
                     DatabasePlayer databasePlayer = databasePlayers.get(i);
                     if (databasePlayer.getUuid().equals(player.getUniqueId().toString())) {
-                        hologram.appendTextLine(ChatColor.YELLOW.toString() + ChatColor.BOLD + (i + 1) + ". " + ChatColor.AQUA + ChatColor.BOLD + databasePlayer.getName() + ChatColor.GRAY + ChatColor.BOLD + " - " + ChatColor.YELLOW + ChatColor.BOLD + leaderboard.getValueFunction().apply(databasePlayer));
+                        hologram.appendTextLine(ChatColor.YELLOW.toString() + ChatColor.BOLD + (i + 1) + ". " + ChatColor.AQUA + ChatColor.BOLD + databasePlayer.getName() + ChatColor.GRAY + ChatColor.BOLD + " - " + ChatColor.YELLOW + ChatColor.BOLD + leaderboard.getStringFunction().apply(databasePlayer));
                         break;
                     }
                 }
                 hologram.getVisibilityManager().setVisibleByDefault(false);
                 hologram.getVisibilityManager().showTo(player);
-            });
+            }
         }
     }
 
@@ -344,7 +342,7 @@ public class LeaderboardManager {
         List<String> hologramLines = new ArrayList<>();
         for (int i = 0; i < 10 && i < databasePlayers.size(); i++) {
             DatabasePlayer databasePlayer = databasePlayers.get(i);
-            hologramLines.add(ChatColor.YELLOW.toString() + (i + 1) + ". " + ChatColor.AQUA + databasePlayer.getName() + ChatColor.GRAY + " - " + ChatColor.YELLOW + leaderboard.getValueFunction().apply(databasePlayer));
+            hologramLines.add(ChatColor.YELLOW.toString() + (i + 1) + ". " + ChatColor.AQUA + databasePlayer.getName() + ChatColor.GRAY + " - " + ChatColor.YELLOW + leaderboard.getStringFunction().apply(databasePlayer));
         }
         createLeaderboard(leaderboard, title, hologramLines);
     }
@@ -361,137 +359,26 @@ public class LeaderboardManager {
         return hologram;
     }
 
-    private static final HashMap<String, Function<DatabasePlayer, Number>> weeklyExperienceLeaderboards = new HashMap<String, Function<DatabasePlayer, Number>>() {{
-        put("Wins", DatabasePlayer::getWins);
-        put("Losses", DatabasePlayer::getLosses);
-        put("Kills", DatabasePlayer::getKills);
-        put("Assists", DatabasePlayer::getAssists);
-        put("Deaths", DatabasePlayer::getDeaths);
-        put("DHP", DatabasePlayer::getDHP);
-        put("DHP Per Game", DatabasePlayer::getDHPPerGame);
-        put("Damage", DatabasePlayer::getDamage);
-        put("Healing", DatabasePlayer::getHealing);
-        put("Absorbed", DatabasePlayer::getAbsorbed);
-        put("Flags Captured", DatabasePlayer::getFlagsCaptured);
-        put("Flags Returned", DatabasePlayer::getFlagsReturned);
-    }};
-
     public static Document getTopPlayersOnLeaderboard() {
         Document document = new Document("date", new Date()).append("total_players", leaderboards.get(0).getSortedWeekly().size());
-        weeklyExperienceLeaderboards.forEach((title, function) -> {
-            System.out.println(title);
+        for (String title : weeklyExperienceLeaderboards) {
             leaderboards.stream().filter(leaderboard -> leaderboard.getTitle().equals(title)).findFirst().ifPresent(leaderboard -> {
-                for (Number number : leaderboard.getTopThree(function)) {
-                    System.out.println(number);
+                Number[] numbers = leaderboard.getTopThreeValues();
+                String[] names = leaderboard.getTopThreePlayerNames(numbers, DatabasePlayer::getName);
+                String[] uuids = leaderboard.getTopThreePlayerNames(numbers, DatabasePlayer::getUuid);
+                List<Document> topList = new ArrayList<>();
+                for (int i = 0; i < numbers.length; i++) {
+                    topList.add(new Document("names", names[i]).append("uuids", uuids[i]).append("amount", numbers[i]));
                 }
+                Document totalDocument = new Document();
+                if (numbers[0] instanceof Integer) {
+                    totalDocument = new Document("total", Arrays.stream(numbers).mapToInt(Number::intValue).sum());
+                } else if (numbers[0] instanceof Long) {
+                    totalDocument = new Document("total", Arrays.stream(numbers).mapToLong(Number::longValue).sum());
+                }
+                document.append(title.toLowerCase().replace(" ", "_"), totalDocument.append("name", title).append("top", topList));
             });
-        });
+        }
         return document;
     }
-//
-//
-//    public static void appendTop(Document document, String key) {
-//        Object[] highest = new Object[3];
-//        Object total;
-//        Object classType = cachedSortedPlayersWeekly.get(key).get(0).get(key);
-//        if (classType instanceof Integer || classType instanceof Long) {
-//            if (classType instanceof Integer) {
-//                int[] highestThreeInt = getHighestThreeInt(key);
-//                highest[0] = highestThreeInt[0];
-//                highest[1] = highestThreeInt[1];
-//                highest[2] = highestThreeInt[2];
-//                total = cachedSortedPlayersWeekly.get(key).stream().mapToInt(d -> (Integer) d.getOrDefault(key, 0)).sum();
-//            } else {
-//                long[] highestThreeLong = getHighestThreeLong(key);
-//                highest[0] = highestThreeLong[0];
-//                highest[1] = highestThreeLong[1];
-//                highest[2] = highestThreeLong[2];
-//                total = cachedSortedPlayersWeekly.get(key).stream().mapToLong(d -> (Long) d.getOrDefault(key, 0L)).sum();
-//            }
-//            List<Document> documentList = new ArrayList<>();
-//            String[] highest1 = getHighestPlayers(key, highest[0], cachedSortedPlayersWeekly.get(key));
-//            String[] highest2 = getHighestPlayers(key, highest[1], cachedSortedPlayersWeekly.get(key));
-//            String[] highest3 = getHighestPlayers(key, highest[2], cachedSortedPlayersWeekly.get(key));
-//            documentList.add(new Document("names", highest1[0]).append("uuids", highest1[1]).append("amount", highest[0]));
-//            documentList.add(new Document("names", highest2[0]).append("uuids", highest2[1]).append("amount", highest[1]));
-//            documentList.add(new Document("names", highest3[0]).append("uuids", highest3[1]).append("amount", highest[2]));
-//            //document.append(key, new Document("total", total).append("name", leaderboards.get(key).getTitle()).append("top", documentList));
-//        }
-//    }
-//
-//    public static int[] getHighestThreeInt(String key) {
-//        return findThreeLargestInt(cachedSortedPlayersWeekly.get(key).stream()
-//                .sorted((d1, d2) -> ((Integer) d2.getOrDefault(key, 0)).compareTo(((Integer) d1.getOrDefault(key, 0))))
-//                .mapToInt(d -> (Integer) d.getOrDefault(key, 0))
-//                .toArray());
-//    }
-//
-//    public static long[] getHighestThreeLong(String key) {
-//        return findThreeLargestLong(cachedSortedPlayersWeekly.get(key).stream()
-//                .sorted((d1, d2) -> ((Long) d2.getOrDefault(key, 0L)).compareTo(((Long) d1.getOrDefault(key, 0L))))
-//                .mapToLong(d -> (Long) d.getOrDefault(key, 0L))
-//                .toArray());
-//    }
-//
-//    private static int[] findThreeLargestInt(int[] arr) {
-//        int[] output = new int[3];
-//
-//        Arrays.sort(arr);
-//        int n = arr.length;
-//        int check = 0, count = 1;
-//
-//        for (int i = 1; i <= n; i++) {
-//            if (count < 4) {
-//                if (check != arr[n - i]) {
-//                    output[count - 1] = arr[n - i];
-//                    check = arr[n - i];
-//                    count++;
-//                }
-//            } else {
-//                break;
-//            }
-//        }
-//        return output;
-//    }
-//
-//    private static long[] findThreeLargestLong(long[] arr) {
-//        long[] output = new long[3];
-//
-//        Arrays.sort(arr);
-//        int n = arr.length;
-//        long check = 0;
-//        int count = 1;
-//
-//        for (int i = 1; i <= n; i++) {
-//            if (count < 4) {
-//                if (check != arr[n - i]) {
-//                    output[count - 1] = arr[n - i];
-//                    check = arr[n - i];
-//                    count++;
-//                }
-//            } else {
-//                break;
-//            }
-//        }
-//        return output;
-//    }
-//
-//    private static String[] getHighestPlayers(String key, Object highest, List<Document> documentList) {
-//        StringBuilder topPlayersName = new StringBuilder();
-//        StringBuilder topPlayersUUID = new StringBuilder();
-//        for (Document document : documentList) {
-//            if (document.get(key) != null && document.get(key).equals(highest)) {
-//                topPlayersName.append(document.get("name")).append(",");
-//                topPlayersUUID.append(document.get("uuid")).append(",");
-//            }
-//        }
-//        if (topPlayersName.length() > 0) {
-//            topPlayersName.setLength(topPlayersName.length() - 1);
-//        }
-//        if (topPlayersUUID.length() > 0) {
-//            topPlayersUUID.setLength(topPlayersUUID.length() - 1);
-//        }
-//        return new String[]{topPlayersName.toString(), topPlayersUUID.toString()};
-//    }
-
 }

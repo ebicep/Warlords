@@ -32,6 +32,8 @@ public interface PlayerService {
 
     List<DatabasePlayer> findAll();
 
+    List<DatabasePlayer> findAll(PlayersCollections collections);
+
     BulkOperations bulkOps();
 
     List<DatabasePlayer> getPlayersSortedByPlays();

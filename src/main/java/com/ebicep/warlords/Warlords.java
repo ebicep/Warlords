@@ -16,6 +16,7 @@ import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.classes.abilties.*;
 import com.ebicep.warlords.commands.debugcommands.*;
 import com.ebicep.warlords.commands.miscellaneouscommands.*;
+import com.ebicep.warlords.database.FutureMessageManager;
 import com.ebicep.warlords.database.leaderboards.LeaderboardCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.configuration.ApplicationConfiguration;
@@ -261,7 +262,7 @@ public class Warlords extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PartyListener(), this);
         getServer().getPluginManager().registerEvents(new BotListener(), this);
         getServer().getPluginManager().registerEvents(new RecklessCharge(), this);
-//        getServer().getPluginManager().registerEvents(new FutureMessageManager(), this);
+        getServer().getPluginManager().registerEvents(new FutureMessageManager(), this);
         //getServer().getPluginManager().registerEvents(new NPCEvents(), this);
 
         new StartCommand().register(this);
@@ -287,6 +288,7 @@ public class Warlords extends JavaPlugin {
         new DebugModeCommand().register(this);
         new MyLocationCommand().register(this);
         new MessageCommand().register(this);
+        new ExperienceCommand().register(this);
 
         updateHeads();
 
@@ -368,7 +370,6 @@ public class Warlords extends JavaPlugin {
         if (holographicDisplaysEnabled) {
             HologramsAPI.getHolograms(instance).forEach(Hologram::delete);
         }
-        BotManager.jda.shutdownNow();
         getServer().getConsoleSender().sendMessage(ChatColor.RED + "[Warlords] Plugin is disabled");
         // TODO persist this.playerSettings to a database
     }
