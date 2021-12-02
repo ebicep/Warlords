@@ -97,7 +97,7 @@ public class DatabaseGame {
     @Transient
     public static final Location topAbsorbedLocation = new Location(LeaderboardManager.world, -2552.5, 58, 785.5);
     @Transient
-    public static final Location topDHPPerMinuteLocation = new Location(LeaderboardManager.world, -2530.5, 59, 781.5);
+    public static final Location topDHPPerMinuteLocation = new Location(LeaderboardManager.world, -2530.5, 59.5, 781.5);
     @Transient
     public static final Location topDamageOnCarrierLocation = new Location(LeaderboardManager.world, -2572.5, 58, 778.5);
     @Transient

@@ -143,7 +143,7 @@ public class EndState implements State, TimerDebugAble {
                 Player player = Bukkit.getPlayer(wp.getUuid());
                 if (player == null) continue;
 
-                LinkedHashMap<String, Long> expSummary = ExperienceManager.getExpFromGameStats(wp, false);
+                LinkedHashMap<String, Long> expSummary = ExperienceManager.getExpFromGameStats(wp, true);
                 long experienceEarnedUniversal = expSummary.values().stream().mapToLong(Long::longValue).sum();
                 long experienceEarnedSpec = ExperienceManager.getSpecExpFromSummary(expSummary);
                 long experienceOnSpec = ExperienceManager.getExperienceForSpec(wp.getUuid(), wp.getSpecClass());

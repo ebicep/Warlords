@@ -14,6 +14,10 @@ public class ExperienceCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
 
+        if (!sender.isOp()) {
+            return true;
+        }
+
         if (args.length == 0) {
             sender.sendMessage(ChatColor.RED + "Invalid Arguments");
             return true;

@@ -138,14 +138,13 @@ public class ExperienceManager {
             expGain.put("Flags Returned", flagRetExp);
         }
 
-
-        DatabasePlayer databasePlayer = DatabaseManager.playerService.findOne(Criteria.where("uuid").is(warlordsPlayer.getUuid().toString()), PlayersCollections.DAILY);
-        if(databasePlayer == null) {
-            expGain.put("First Game of the Day", 500L);
-            Warlords.newChain().async(() -> DatabaseManager.playerService.create(new DatabasePlayer(warlordsPlayer.getUuid(), warlordsPlayer.getName()), PlayersCollections.DAILY)).execute();
-        } else {
+        try {
+            DatabasePlayer databasePlayer = DatabaseManager.playerService.findOne(Criteria.where("uuid").is(warlordsPlayer.getUuid().toString()), PlayersCollections.DAILY);
             int plays = databasePlayer.getWins() + databasePlayer.getLosses();
             switch (plays) {
+                case 0:
+                    expGain.put("First Game of the Day", 500L);
+                    break;
                 case 1:
                     expGain.put("Second Game of the Day", 250L);
                     break;
@@ -153,8 +152,9 @@ public class ExperienceManager {
                     expGain.put("Third Game of the Day", 100L);
                     break;
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
 
         cachedPlayerExpSummary.put(warlordsPlayer.getUuid(), expGain);
         return expGain;

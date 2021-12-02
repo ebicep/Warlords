@@ -48,7 +48,7 @@ public class TestCommand implements CommandExecutor {
         Player player = (Player) sender;
 
 
-        DatabaseManager.warlordsDatabase.getCollection("Weekly_Leaderboards").insertOne(LeaderboardManager.getTopPlayersOnLeaderboard());
+//        DatabaseManager.warlordsDatabase.getCollection("Weekly_Leaderboards").insertOne(LeaderboardManager.getTopPlayersOnLeaderboard());
 
 //        int counter = 0;
 //        List<DatabasePlayer> databasePlayers = DatabaseManager.playerService.findAll();
