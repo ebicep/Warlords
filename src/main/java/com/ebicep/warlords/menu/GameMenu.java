@@ -145,6 +145,13 @@ public class GameMenu {
                         setSelected(player, subClass);
                         ArmorManager.resetArmor(player, subClass, Warlords.getPlayerSettings(player.getUniqueId()).getWantedTeam());
                         openClassMenu(player, selectedGroup);
+                        PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
+                        AbstractPlayerClass apc = subClass.create.get();
+                        player.getInventory().setItem(1, new ItemBuilder(apc.getWeapon().getItem(playerSettings.getWeaponSkins()
+                                .getOrDefault(subClass, Weapons.FELFLAME_BLADE).item)).name("§aWeapon Skin Preview")
+                                .lore("")
+                                .get());
+
                     }
             );
         }

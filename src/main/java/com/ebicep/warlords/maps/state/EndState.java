@@ -186,11 +186,7 @@ public class EndState implements State, TimerDebugAble {
     @Override
     public void end() {
         game.clearAllPlayers();
-        game.getSpectators().forEach(uuid -> {
-            if(Bukkit.getPlayer(uuid) != null) {
-                game.removeSpectator(uuid, false);
-            }
-        });
+        game.getSpectators().forEach(uuid -> game.removeSpectator(uuid, false));
         game.getSpectators().clear();
         game.getGameTasks().forEach((task, timeCreated) -> task.cancel());
     }

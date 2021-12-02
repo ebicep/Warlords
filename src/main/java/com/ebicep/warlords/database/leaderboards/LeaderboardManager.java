@@ -136,16 +136,16 @@ public class LeaderboardManager {
                 (DatabasePlayer::getExperience),
                 databasePlayer -> Utils.addCommaAndRound(databasePlayer.getExperience())));
         leaderboards.add(new Leaderboard("Mage Experience", new Location(world, -2520.5, 58, 735.5),
-                (o -> o.getMage().getWins()),
+                (o -> o.getMage().getExperience()),
                 databasePlayer -> Utils.addCommaAndRound(databasePlayer.getMage().getExperience())));
         leaderboards.add(new Leaderboard("Warrior Experience", new Location(world, -2519.5, 58, 741.5),
-                (o -> o.getWarrior().getWins()),
+                (o -> o.getWarrior().getExperience()),
                 databasePlayer -> Utils.addCommaAndRound(databasePlayer.getWarrior().getExperience())));
         leaderboards.add(new Leaderboard("Paladin Experience", new Location(world, -2519.5, 58, 747.5),
-                (o -> o.getPaladin().getWins()),
+                (o -> o.getPaladin().getExperience()),
                 databasePlayer -> Utils.addCommaAndRound(databasePlayer.getPaladin().getExperience())));
         leaderboards.add(new Leaderboard("Shaman Experience", new Location(world, -2520.5, 58, 753.5),
-                (o -> o.getShaman().getWins()),
+                (o -> o.getShaman().getExperience()),
                 databasePlayer -> Utils.addCommaAndRound(databasePlayer.getShaman().getExperience())));
 
         leaderboards.add(new Leaderboard("Plays", new Location(world, -2564.5, 56, 712.5),
