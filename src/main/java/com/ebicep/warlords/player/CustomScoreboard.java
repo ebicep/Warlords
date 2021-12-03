@@ -2,7 +2,7 @@ package com.ebicep.warlords.player;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.util.Utils;
+import com.ebicep.warlords.util.NumberFormat;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -135,16 +135,16 @@ public class CustomScoreboard {
                 .syncLast((databasePlayer) -> {
                     giveNewSideBar(true,
                             "",
-                            "Kills: " + ChatColor.GREEN + Utils.addCommaAndRound(databasePlayer.getKills()),
-                            "Assists: " + ChatColor.GREEN + Utils.addCommaAndRound(databasePlayer.getAssists()),
-                            "Deaths: " + ChatColor.GREEN + Utils.addCommaAndRound(databasePlayer.getDeaths()),
+                            "Kills: " + ChatColor.GREEN + NumberFormat.addCommaAndRound(databasePlayer.getKills()),
+                            "Assists: " + ChatColor.GREEN + NumberFormat.addCommaAndRound(databasePlayer.getAssists()),
+                            "Deaths: " + ChatColor.GREEN + NumberFormat.addCommaAndRound(databasePlayer.getDeaths()),
                             " " + "",
-                            "Wins: " + ChatColor.GREEN + Utils.addCommaAndRound(databasePlayer.getWins()),
-                            "Losses: " + ChatColor.GREEN + Utils.addCommaAndRound(databasePlayer.getLosses()),
+                            "Wins: " + ChatColor.GREEN + NumberFormat.addCommaAndRound(databasePlayer.getWins()),
+                            "Losses: " + ChatColor.GREEN + NumberFormat.addCommaAndRound(databasePlayer.getLosses()),
                             "  " + "",
-                            "Damage: " + ChatColor.RED + Utils.addCommaAndRound(databasePlayer.getDamage()),
-                            "Healing: " + ChatColor.DARK_GREEN + Utils.addCommaAndRound(databasePlayer.getHealing()),
-                            "Absorbed: " + ChatColor.GOLD + Utils.addCommaAndRound(databasePlayer.getAbsorbed()),
+                            "Damage: " + ChatColor.RED + NumberFormat.addCommaAndRound(databasePlayer.getDamage()),
+                            "Healing: " + ChatColor.DARK_GREEN + NumberFormat.addCommaAndRound(databasePlayer.getHealing()),
+                            "Absorbed: " + ChatColor.GOLD + NumberFormat.addCommaAndRound(databasePlayer.getAbsorbed()),
                             "    ",
                             "     ",
                             "            " + ChatColor.YELLOW + ChatColor.BOLD + "Update",

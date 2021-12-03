@@ -40,7 +40,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
-import static com.ebicep.warlords.util.Utils.sendMessage;
+import static com.ebicep.warlords.util.ChatUtils.sendMessage;
 
 public class PlayingState implements State, TimerDebugAble {
     private static final int GATE_TIMER = 10 * 20;

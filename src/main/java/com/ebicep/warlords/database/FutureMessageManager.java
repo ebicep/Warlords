@@ -1,7 +1,7 @@
 package com.ebicep.warlords.database;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.util.Utils;
+import com.ebicep.warlords.util.ChatUtils;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Updates;
 import org.bson.Document;
@@ -61,7 +61,7 @@ public class FutureMessageManager implements Listener {
                         List<String> messages = playerDocument.getList("messages", String.class);
                         messages.forEach(m -> {
                             if(centered) {
-                                Utils.sendCenteredMessage(player, m);
+                                ChatUtils.sendCenteredMessage(player, m);
                             } else {
                                 player.sendMessage(m);
                             }

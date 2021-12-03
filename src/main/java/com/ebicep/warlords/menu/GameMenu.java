@@ -7,7 +7,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.util.ItemBuilder;
-import com.ebicep.warlords.util.Utils;
+import com.ebicep.warlords.util.NumberFormat;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -624,7 +624,7 @@ public class GameMenu {
                 meleeDamageMax = temp;
             }
 
-            String displayScore = "§7Your weapon score is §a" + Utils.formatOptionalTenths(score * 100);
+            String displayScore = "§7Your weapon score is §a" + NumberFormat.formatOptionalTenths(score * 100);
 
             PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
             Classes selectedClass = playerSettings.getSelectedClass();
@@ -658,11 +658,11 @@ public class GameMenu {
             m.getInventory().setItem(e.getRawSlot(), weapon);
 
             if (score > 0.85) {
-                Bukkit.broadcastMessage("§6" + player.getDisplayName() + " §frolled a weapon with a total score of §6" + Utils.formatOptionalTenths(score * 100) + "§f!");
+                Bukkit.broadcastMessage("§6" + player.getDisplayName() + " §frolled a weapon with a total score of §6" + NumberFormat.formatOptionalTenths(score * 100) + "§f!");
             }
 
             if (score < 0.15) {
-                Bukkit.broadcastMessage("§6" + player.getDisplayName() + " §frolled a weapon with a total score of §c" + Utils.formatOptionalTenths(score * 100) + "§f!");
+                Bukkit.broadcastMessage("§6" + player.getDisplayName() + " §frolled a weapon with a total score of §c" + NumberFormat.formatOptionalTenths(score * 100) + "§f!");
             }
         });
 

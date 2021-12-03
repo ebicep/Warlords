@@ -6,7 +6,7 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
 import com.ebicep.warlords.util.LocationBuilder;
-import com.ebicep.warlords.util.Utils;
+import com.ebicep.warlords.util.NumberFormat;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import com.gmail.filoghost.holographicdisplays.api.line.TextLine;
@@ -65,98 +65,98 @@ public class LeaderboardManager {
         leaderboards.add(new Leaderboard("Wins",
                 new Location(world, -2558.5, 56, 712.5),
                 (DatabasePlayer::getWins),
-                databasePlayer -> Utils.addCommaAndRound(databasePlayer.getWins())));
+                databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getWins())));
         leaderboards.add(new Leaderboard("Losses", new Location(world, -2608.5, 52, 728.5),
                 (DatabasePlayer::getLosses),
-                databasePlayer -> Utils.addCommaAndRound(databasePlayer.getLosses())));
+                databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getLosses())));
         leaderboards.add(new Leaderboard("Kills", new Location(world, -2552.5, 56, 712.5),
                 (DatabasePlayer::getKills),
-                databasePlayer -> Utils.addCommaAndRound(databasePlayer.getKills())));
+                databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getKills())));
         leaderboards.add(new Leaderboard("Assists", new Location(world, -2616.5, 52, 733.5),
                 (DatabasePlayer::getAssists),
-                databasePlayer -> Utils.addCommaAndRound(databasePlayer.getAssists())));
+                databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getAssists())));
         leaderboards.add(new Leaderboard("Deaths", new Location(world, -2616.5, 52, 723.5),
                 (DatabasePlayer::getDeaths),
-                databasePlayer -> Utils.addCommaAndRound(databasePlayer.getDeaths())));
+                databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getDeaths())));
         leaderboards.add(new Leaderboard("Damage", new Location(world, -2600.5, 52, 723.5),
                 (DatabasePlayer::getDamage),
-                databasePlayer -> Utils.addCommaAndRound(databasePlayer.getDamage())));
+                databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getDamage())));
         leaderboards.add(new Leaderboard("Healing", new Location(world, -2608.5, 52, 719.5),
                 (DatabasePlayer::getHealing),
-                databasePlayer -> Utils.addCommaAndRound(databasePlayer.getHealing())));
+                databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getHealing())));
         leaderboards.add(new Leaderboard("Absorbed", new Location(world, -2600.5, 52, 733.5),
                 (DatabasePlayer::getAbsorbed),
-                databasePlayer -> Utils.addCommaAndRound(databasePlayer.getAbsorbed())));
+                databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getAbsorbed())));
 
         leaderboards.add(new Leaderboard("Flags Captured", new Location(world, -2540.5, 56, 712.5),
                 (DatabasePlayer::getFlagsCaptured),
-                databasePlayer -> Utils.addCommaAndRound(databasePlayer.getFlagsCaptured())));
+                databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getFlagsCaptured())));
         leaderboards.add(new Leaderboard("Flags Returned", new Location(world, -2608.5, 52, 737.5),
                 (DatabasePlayer::getFlagsReturned),
-                databasePlayer -> Utils.addCommaAndRound(databasePlayer.getFlagsReturned())));
+                databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getFlagsReturned())));
 
         leaderboards.add(new Leaderboard("Avenger Wins", new Location(world, -2631.5, 52, 719.5),
                 (o -> o.getPaladin().getAvenger().getWins()),
-                databasePlayer -> Utils.addCommaAndRound(databasePlayer.getPaladin().getAvenger().getWins())));
+                databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getPaladin().getAvenger().getWins())));
         leaderboards.add(new Leaderboard("Crusader Wins", new Location(world, -2628.5, 52, 714.5),
                 (o -> o.getPaladin().getCrusader().getWins()),
-                databasePlayer -> Utils.addCommaAndRound(databasePlayer.getPaladin().getCrusader().getWins())));
+                databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getPaladin().getCrusader().getWins())));
         leaderboards.add(new Leaderboard("Protector Wins", new Location(world, -2623.5, 52, 711.5),
                 (o -> o.getPaladin().getProtector().getWins()),
-                databasePlayer -> Utils.addCommaAndRound(databasePlayer.getPaladin().getProtector().getWins())));
+                databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getPaladin().getProtector().getWins())));
         leaderboards.add(new Leaderboard("Berserker Wins", new Location(world, -2623.5, 52, 745.5),
                 (o -> o.getWarrior().getBerserker().getWins()),
-                databasePlayer -> Utils.addCommaAndRound(databasePlayer.getWarrior().getBerserker().getWins())));
+                databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getWarrior().getBerserker().getWins())));
         leaderboards.add(new Leaderboard("Defender Wins", new Location(world, -2628.5, 52, 742.5),
                 (o -> o.getWarrior().getDefender().getWins()),
-                databasePlayer -> Utils.addCommaAndRound(databasePlayer.getWarrior().getDefender().getWins())));
+                databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getWarrior().getDefender().getWins())));
         leaderboards.add(new Leaderboard("Revenant Wins", new Location(world, -2631.5, 52, 737.5),
                 (o -> o.getWarrior().getRevenant().getWins()),
-                databasePlayer -> Utils.addCommaAndRound(databasePlayer.getWarrior().getRevenant().getWins())));
+                databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getWarrior().getRevenant().getWins())));
         leaderboards.add(new Leaderboard("Pyromancer Wins", new Location(world, -2602.5, 53, 749.5),
                 (o -> o.getMage().getPyromancer().getWins()),
-                databasePlayer -> Utils.addCommaAndRound(databasePlayer.getMage().getPyromancer().getWins())));
+                databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getMage().getPyromancer().getWins())));
         leaderboards.add(new Leaderboard("Cryomancer Wins", new Location(world, -2608.5, 53, 752.5),
                 (o -> o.getMage().getCryomancer().getWins()),
-                databasePlayer -> Utils.addCommaAndRound(databasePlayer.getMage().getCryomancer().getWins())));
+                databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getMage().getCryomancer().getWins())));
         leaderboards.add(new Leaderboard("Aquamancer Wins", new Location(world, -2614.5, 53, 749.5),
                 (o -> o.getMage().getAquamancer().getWins()),
-                databasePlayer -> Utils.addCommaAndRound(databasePlayer.getMage().getAquamancer().getWins())));
+                databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getMage().getAquamancer().getWins())));
         leaderboards.add(new Leaderboard("Thunderlord Wins", new Location(world, -2614.5, 52, 706.5),
                 (o -> o.getShaman().getThunderlord().getWins()),
-                databasePlayer -> Utils.addCommaAndRound(databasePlayer.getShaman().getThunderlord().getWins())));
+                databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getShaman().getThunderlord().getWins())));
         leaderboards.add(new Leaderboard("Spiritguard Wins", new Location(world, -2608.5, 52, 704.5),
                 (o -> o.getShaman().getSpiritguard().getWins()),
-                databasePlayer -> Utils.addCommaAndRound(databasePlayer.getShaman().getSpiritguard().getWins())));
+                databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getShaman().getSpiritguard().getWins())));
         leaderboards.add(new Leaderboard("Earthwarden Wins", new Location(world, -2602.5, 52, 706.5),
                 (o -> o.getShaman().getEarthwarden().getWins()),
-                databasePlayer -> Utils.addCommaAndRound(databasePlayer.getShaman().getEarthwarden().getWins())));
+                databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getShaman().getEarthwarden().getWins())));
 
         leaderboards.add(new Leaderboard("Experience", new Location(world, -2526.5, 57, 744.5),
                 (DatabasePlayer::getExperience),
-                databasePlayer -> Utils.addCommaAndRound(databasePlayer.getExperience())));
+                databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getExperience())));
         leaderboards.add(new Leaderboard("Mage Experience", new Location(world, -2520.5, 58, 735.5),
                 (o -> o.getMage().getExperience()),
-                databasePlayer -> Utils.addCommaAndRound(databasePlayer.getMage().getExperience())));
+                databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getMage().getExperience())));
         leaderboards.add(new Leaderboard("Warrior Experience", new Location(world, -2519.5, 58, 741.5),
                 (o -> o.getWarrior().getExperience()),
-                databasePlayer -> Utils.addCommaAndRound(databasePlayer.getWarrior().getExperience())));
+                databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getWarrior().getExperience())));
         leaderboards.add(new Leaderboard("Paladin Experience", new Location(world, -2519.5, 58, 747.5),
                 (o -> o.getPaladin().getExperience()),
-                databasePlayer -> Utils.addCommaAndRound(databasePlayer.getPaladin().getExperience())));
+                databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getPaladin().getExperience())));
         leaderboards.add(new Leaderboard("Shaman Experience", new Location(world, -2520.5, 58, 753.5),
                 (o -> o.getShaman().getExperience()),
-                databasePlayer -> Utils.addCommaAndRound(databasePlayer.getShaman().getExperience())));
+                databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getShaman().getExperience())));
 
         leaderboards.add(new Leaderboard("Plays", new Location(world, -2564.5, 56, 712.5),
                 (DatabasePlayer::getPlays),
-                databasePlayer -> Utils.addCommaAndRound(databasePlayer.getPlays())));
+                databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getPlays())));
         leaderboards.add(new Leaderboard("DHP", new Location(world, -2619.5, 66.5, 721.5),
                 (DatabasePlayer::getDHP),
-                databasePlayer -> Utils.addCommaAndRound(databasePlayer.getDHP())));
+                databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getDHP())));
         leaderboards.add(new Leaderboard("DHP Per Game", new Location(world, -2546.5, 56, 712.5),
                 (DatabasePlayer::getDHPPerGame),
-                databasePlayer -> Utils.addCommaAndRound(Math.round((double) (databasePlayer.getDHPPerGame()) * 10) / 10d)));
+                databasePlayer -> NumberFormat.addCommaAndRound(Math.round((double) (databasePlayer.getDHPPerGame()) * 10) / 10d)));
         leaderboards.add(new Leaderboard("Kills Per Game", new Location(world, -2619.5, 66.5, 735.5),
                 (DatabasePlayer::getKillsPerGame),
                 databasePlayer -> String.valueOf(Math.round(databasePlayer.getKillsPerGame() * 10) / 10d)));

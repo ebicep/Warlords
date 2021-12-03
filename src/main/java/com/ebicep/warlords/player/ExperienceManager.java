@@ -1,11 +1,11 @@
 package com.ebicep.warlords.player;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.*;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
-import com.ebicep.warlords.util.Utils;
+import com.ebicep.warlords.util.ChatUtils;
+import com.ebicep.warlords.util.NumberFormat;
 import org.bson.Document;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -291,7 +291,7 @@ public class ExperienceManager {
         long experienceNeeded = levelExperience.get(nextLevel) - levelExperience.get(nextLevel - 1);
         double progressPercentage = (double) experience / experienceNeeded * 100;
 
-        progress += Utils.formatOptionalTenths(progressPercentage) + "%\n" + ChatColor.GREEN;
+        progress += NumberFormat.formatOptionalTenths(progressPercentage) + "%\n" + ChatColor.GREEN;
         int greenBars = (int) Math.round(progressPercentage * 20 / 100);
         for (int i = 0; i < greenBars; i++) {
             progress += "-";
@@ -300,7 +300,7 @@ public class ExperienceManager {
         for (int i = greenBars; i < 20; i++) {
             progress += "-";
         }
-        progress += " " + ChatColor.YELLOW + currentExperienceDecimalFormat.format(experience) + ChatColor.GOLD + "/" + ChatColor.YELLOW + Utils.getSimplifiedNumber(experienceNeeded);
+        progress += " " + ChatColor.YELLOW + currentExperienceDecimalFormat.format(experience) + ChatColor.GOLD + "/" + ChatColor.YELLOW + NumberFormat.getSimplifiedNumber(experienceNeeded);
 
         return progress;
     }
@@ -325,7 +325,7 @@ public class ExperienceManager {
         int levelBefore = (int) calculateLevelFromExp(expBefore);
         int levelAfter = (int) calculateLevelFromExp(expAfter);
         if (levelBefore != levelAfter) {
-            Utils.sendMessage(player, true, ChatColor.GREEN.toString() + ChatColor.BOLD + ChatColor.MAGIC + "   " + ChatColor.AQUA + ChatColor.BOLD + " LEVEL UP! " + ChatColor.DARK_GRAY + ChatColor.BOLD + "[" + ChatColor.GRAY + ChatColor.BOLD + levelBefore + ChatColor.DARK_GRAY + ChatColor.BOLD + "]" + ChatColor.GREEN + ChatColor.BOLD + " > " + ChatColor.DARK_GRAY + ChatColor.BOLD + "[" + ChatColor.GRAY + ChatColor.BOLD + levelAfter + ChatColor.DARK_GRAY + ChatColor.BOLD + "] " + ChatColor.GREEN + ChatColor.MAGIC + ChatColor.BOLD + "   ");
+            ChatUtils.sendMessage(player, true, ChatColor.GREEN.toString() + ChatColor.BOLD + ChatColor.MAGIC + "   " + ChatColor.AQUA + ChatColor.BOLD + " LEVEL UP! " + ChatColor.DARK_GRAY + ChatColor.BOLD + "[" + ChatColor.GRAY + ChatColor.BOLD + levelBefore + ChatColor.DARK_GRAY + ChatColor.BOLD + "]" + ChatColor.GREEN + ChatColor.BOLD + " > " + ChatColor.DARK_GRAY + ChatColor.BOLD + "[" + ChatColor.GRAY + ChatColor.BOLD + levelAfter + ChatColor.DARK_GRAY + ChatColor.BOLD + "] " + ChatColor.GREEN + ChatColor.MAGIC + ChatColor.BOLD + "   ");
         }
     }
 }
