@@ -59,9 +59,9 @@ public class DatabasePlayer {
         this.assists += gamePlayer.getTotalAssists() * operation;
         this.deaths += gamePlayer.getTotalDeaths() * operation;
         if(won) {
-            this.wins += 1;
+            this.wins += operation;
         } else {
-            this.losses += 1;
+            this.losses += operation;
         }
         this.flagsCaptured += gamePlayer.getFlagCaptures() * operation;
         this.flagsReturned += gamePlayer.getFlagReturns() * operation;
