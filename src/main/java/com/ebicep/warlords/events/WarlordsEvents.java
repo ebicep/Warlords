@@ -18,14 +18,13 @@ import com.ebicep.warlords.maps.flags.SpawnFlagLocation;
 import com.ebicep.warlords.maps.flags.WaitingFlagLocation;
 import com.ebicep.warlords.maps.state.EndState;
 import com.ebicep.warlords.player.*;
-import com.ebicep.warlords.util.ChatUtils;
-import com.ebicep.warlords.util.ItemBuilder;
-import com.ebicep.warlords.util.PacketUtils;
-import com.ebicep.warlords.util.Utils;
+import com.ebicep.warlords.util.*;
 import net.minecraft.server.v1_8_R3.EntityLiving;
 import net.minecraft.server.v1_8_R3.GenericAttributes;
+import net.minecraft.server.v1_8_R3.PacketPlayOutEntityDestroy;
 import org.bukkit.*;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.*;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -39,6 +38,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.*;
+import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.ItemStack;
@@ -48,6 +48,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 import static com.ebicep.warlords.menu.GameMenu.openMainMenu;
@@ -175,7 +176,7 @@ public class WarlordsEvents implements Listener {
                 .execute();
 
         //scoreboard
-        if(!Warlords.playerScoreboards.containsKey(player.getUniqueId()) || Warlords.playerScoreboards.get(player.getUniqueId()) == null) {
+        if (!Warlords.playerScoreboards.containsKey(player.getUniqueId()) || Warlords.playerScoreboards.get(player.getUniqueId()) == null) {
             Warlords.playerScoreboards.put(player.getUniqueId(), new CustomScoreboard(player));
         }
         player.setScoreboard(Warlords.playerScoreboards.get(player.getUniqueId()).getScoreboard());
@@ -197,7 +198,7 @@ public class WarlordsEvents implements Listener {
             }));
         } else {
             Bukkit.getOnlinePlayers().forEach(p -> {
-                if(!Warlords.hasPlayer(p)) {
+                if (!Warlords.hasPlayer(p)) {
                     player.hidePlayer(p);
                 }
             });
@@ -283,6 +284,8 @@ public class WarlordsEvents implements Listener {
                             horse.setOwner(player);
                             horse.setJumpStrength(0);
                             horse.setVariant(Horse.Variant.HORSE);
+                            horse.setColor(Horse.Color.BROWN);
+                            horse.setStyle(Horse.Style.NONE);
                             horse.setAdult();
                             ((EntityLiving) ((CraftEntity) horse).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(.318);
                             horse.setPassenger(player);
@@ -327,8 +330,19 @@ public class WarlordsEvents implements Listener {
     }
 
     @EventHandler
-    public void onDismount(VehicleExitEvent evt) {
-        evt.getVehicle().remove();
+    public void onMount(VehicleEnterEvent e) {
+//        if (e.getVehicle() instanceof Horse) {
+//            if (!((Horse) e.getVehicle()).getOwner().equals(e.getEntered())) {
+//                System.out.println(e.getEntered().getLocation());
+//                //e.getVehicle().remove();
+//                //e.setCancelled(true);
+//            }
+//        }
+    }
+
+    @EventHandler
+    public void onDismount(VehicleExitEvent e) {
+        e.getVehicle().remove();
     }
 
     @EventHandler
@@ -411,8 +425,8 @@ public class WarlordsEvents implements Listener {
 
     @EventHandler
     public void onHorseJump(HorseJumpEvent e) {
-        if(Warlords.hasPlayer((OfflinePlayer) e.getEntity().getPassenger())) {
-            if(Objects.requireNonNull(Warlords.getPlayer(e.getEntity().getPassenger())).getGame().isGameFreeze()) {
+        if (Warlords.hasPlayer((OfflinePlayer) e.getEntity().getPassenger())) {
+            if (Objects.requireNonNull(Warlords.getPlayer(e.getEntity().getPassenger())).getGame().isGameFreeze()) {
                 e.setCancelled(true);
             }
         }
@@ -627,7 +641,7 @@ public class WarlordsEvents implements Listener {
                     }
                 });
                 event.getGame().getSpectators().forEach(uuid -> {
-                    if(Bukkit.getPlayer(uuid) != null) {
+                    if (Bukkit.getPlayer(uuid) != null) {
                         Player p = Bukkit.getPlayer(uuid);
                         p.sendMessage(enemyColor + player.getName() + " §epicked up the " + event.getTeam().coloredPrefix() + " §eflag!");
                         PacketUtils.sendTitle(p, "", enemyColor + player.getName() + " §epicked up the " + event.getTeam().coloredPrefix() + " §eflag!", 0, 60, 0);
@@ -640,7 +654,7 @@ public class WarlordsEvents implements Listener {
                         p.sendMessage("§eThe " + event.getTeam().coloredPrefix() + " §eflag carrier now takes §c" + pfl.getComputedHumanMultiplier() + "% §eincreased damage!");
                     });
                     event.getGame().getSpectators().forEach(uuid -> {
-                        if(Bukkit.getPlayer(uuid) != null) {
+                        if (Bukkit.getPlayer(uuid) != null) {
                             Player p = Bukkit.getPlayer(uuid);
                             p.sendMessage("§eThe " + event.getTeam().coloredPrefix() + " §eflag carrier now takes §c" + pfl.getComputedHumanMultiplier() + "% §eincreased damage!");
                         }
@@ -661,7 +675,7 @@ public class WarlordsEvents implements Listener {
                         }
                     });
                     event.getGame().getSpectators().forEach(uuid -> {
-                        if(Bukkit.getPlayer(uuid) != null) {
+                        if (Bukkit.getPlayer(uuid) != null) {
                             Player p = Bukkit.getPlayer(uuid);
                             ChatColor color = event.getTeam().teamColor();
                             p.sendMessage(color + toucher + " §ehas returned the " + event.getTeam().coloredPrefix() + " §eflag!");
@@ -673,7 +687,7 @@ public class WarlordsEvents implements Listener {
                         p.sendMessage("§eThe " + event.getTeam().coloredPrefix() + " §eflag has returned to its base.");
                     });
                     event.getGame().getSpectators().forEach(uuid -> {
-                        if(Bukkit.getPlayer(uuid) != null) {
+                        if (Bukkit.getPlayer(uuid) != null) {
                             Player p = Bukkit.getPlayer(uuid);
                             p.sendMessage("§eThe " + event.getTeam().coloredPrefix() + " §eflag has returned to its base.");
                         }
@@ -690,7 +704,7 @@ public class WarlordsEvents implements Listener {
                     p.sendMessage(playerColor + pfl.getPlayer().getName() + " §ehas dropped the " + flag + " §eflag!");
                 });
                 event.getGame().getSpectators().forEach(uuid -> {
-                    if(Bukkit.getPlayer(uuid) != null) {
+                    if (Bukkit.getPlayer(uuid) != null) {
                         Player p = Bukkit.getPlayer(uuid);
                         p.sendMessage(playerColor + pfl.getPlayer().getName() + " §ehas dropped the " + flag + " §eflag!");
                         PacketUtils.sendTitle(p, "", playerColor + pfl.getPlayer().getName() + " §ehas dropped the " + flag + " §eflag!", 0, 60, 0);
@@ -715,7 +729,7 @@ public class WarlordsEvents implements Listener {
                     }
                 });
                 event.getGame().getSpectators().forEach(uuid -> {
-                    if(Bukkit.getPlayer(uuid) != null) {
+                    if (Bukkit.getPlayer(uuid) != null) {
                         Player p = Bukkit.getPlayer(uuid);
                         String message = pfl.getPlayer().getColoredName() + " §ecaptured the " + loser.coloredPrefix() + " §eflag!";
                         p.sendMessage(message);

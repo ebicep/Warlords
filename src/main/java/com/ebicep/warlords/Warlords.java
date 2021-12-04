@@ -36,10 +36,7 @@ import org.bukkit.*;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Firework;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -388,12 +385,17 @@ public class Warlords extends JavaPlugin {
                         }
                         if (warlordsPlayer.getName().equals("sumSmash")) {
                         }
-
                         // MOVEMENT
                         warlordsPlayer.getSpeed().updateSpeed();
 
                         CooldownManager cooldownManager = warlordsPlayer.getCooldownManager();
                         Player player = warlordsPlayer.getEntity() instanceof Player ? (Player) warlordsPlayer.getEntity() : null;
+
+//                        if(player != null) {
+//                            if(player.isSneaking() && player.getVehicle() instanceof Horse) {
+//                                player.teleport(player.getLocation().clone().add(0, 0, 0));
+//                            }
+//                        }
 
                         if (player != null) {
                             player.setCompassTarget(warlordsPlayer
