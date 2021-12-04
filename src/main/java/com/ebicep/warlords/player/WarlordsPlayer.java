@@ -833,10 +833,16 @@ public final class WarlordsPlayer {
                         }
                     }
                 }
+
                 if (!attacker.getCooldownManager().getCooldown(BloodLust.class).isEmpty()) {
                     attacker.healHealth(attacker, "Blood Lust", damageValue * .65f, damageValue * .65f, -1, 100, false);
                 }
 
+                if (ability.equals("Judgement Strike")) {
+                    if (isCrit) {
+                        attacker.getSpeed().addSpeedModifier("Judgement Speed", 20, 2 * 20, "BASE");
+                    }
+                }
 
                 updateJimmyHealth();
 

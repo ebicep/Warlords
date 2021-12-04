@@ -24,6 +24,5 @@ public class JudgementStrike extends AbstractStrikeBase {
     protected void onHit(@Nonnull WarlordsPlayer wp, @Nonnull Player player, @Nonnull WarlordsPlayer nearPlayer) {
 
         nearPlayer.damageHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
-
     }
 }

@@ -8,10 +8,10 @@ public class Assassin extends AbstractRogue {
     public Assassin() {
         super("Assassin", 5750, 355, 0,
                 new JudgementStrike(),
-                new temp(),
-                new temp(),
-                new temp(),
-                new temp()
+                new IncendiaryCurse(),
+                new BlindingAssault(),
+                new CrossVital(),
+                new OrderOfEviscerate()
         );
     }
 }

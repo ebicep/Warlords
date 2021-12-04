@@ -47,6 +47,9 @@ public class DamageHealCircle {
         } else if (name.equals("Hammer of Light")) {
             this.circle.addEffect(new CircumferenceEffect(ParticleEffect.VILLAGER_HAPPY, ParticleEffect.REDSTONE));
             this.circle.addEffect(new LineEffect(this.location.clone().add(0, 2.3, 0), ParticleEffect.SPELL));
+        } else if (name.equals("Incendiary Curse")) {
+            this.circle.addEffect(new AreaEffect(0, ParticleEffect.FLAME).particlesPerSurface(0.5));
+            this.circle.addEffect(new AreaEffect(0, ParticleEffect.CRIT).particlesPerSurface(0.3));
         } else {
             Bukkit.broadcastMessage("§cNotice, no particle effect definition for " + this.name + ", no effect is played!");
         }
