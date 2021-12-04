@@ -34,6 +34,12 @@ public enum ClassesGroup {
             "§7The Shaman has an unbreakable bond\n§7with nature. This grants him access to\n§7devastating abilities that are\n§7empowered by the elements.",
             THUNDERLORD, SPIRITGUARD, EARTHWARDEN
     ),
+    ROGUE(
+            "Rogue",
+            new ItemStack(Material.INK_SACK, 1, (short) 2),
+            "Strike enemies with deadly attacks.",
+            ASSASSIN
+    )
     ;
     public final String name;
     public final ItemStack item;

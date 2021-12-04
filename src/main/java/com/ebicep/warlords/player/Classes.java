@@ -8,6 +8,7 @@ import com.ebicep.warlords.classes.mage.specs.pyromancer.Pyromancer;
 import com.ebicep.warlords.classes.paladin.specs.avenger.Avenger;
 import com.ebicep.warlords.classes.paladin.specs.crusader.Crusader;
 import com.ebicep.warlords.classes.paladin.specs.protector.Protector;
+import com.ebicep.warlords.classes.rogue.specs.assassin.Assassin;
 import com.ebicep.warlords.classes.shaman.specs.earthwarden.Earthwarden;
 import com.ebicep.warlords.classes.shaman.specs.spiritguard.Spiritguard;
 import com.ebicep.warlords.classes.shaman.specs.thunderlord.Thunderlord;
@@ -85,6 +86,11 @@ public enum Classes {
             WordWrap.wrapWithNewline("§7A healing-oriented Shaman specialization that calls upon the power of Earth to crush enemies and to aid allies.", 200),
             SpecType.HEALER,
             EARTHEN_SPIKE, BOULDER, CHAIN_HEAL),
+    ASSASSIN("Assassin",
+            Assassin::new,
+            WordWrap.wrapWithNewline("Strike enemies with deadly attacks.", 200),
+            SpecType.DAMAGE,
+            JUDGEMENT_STRIKE),
 
     ;
 

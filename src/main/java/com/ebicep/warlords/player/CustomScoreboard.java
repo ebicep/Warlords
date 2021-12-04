@@ -148,7 +148,7 @@ public class CustomScoreboard {
                             "    ",
                             "     ",
                             "            " + ChatColor.YELLOW + ChatColor.BOLD + "Update",
-                            "     " + ChatColor.GOLD + ChatColor.BOLD + Warlords.VERSION
+                            "     " + ChatColor.RED + ChatColor.BOLD + Warlords.VERSION
                     );
                 }).execute();
     }

@@ -122,7 +122,13 @@ public enum ClassesSkillBoosts {
     HEALING_TOTEM("Healing Totem",
             "§7Increases the amount of\n§7health you restore with\n§7Healing Totem by 40%",
             "§aIncreases the amount of\n§ahealth you restore with\n§aHealing Totem by §c40%",
-            HealingTotem.class);
+            HealingTotem.class),
+    JUDGEMENT_STRIKE("Judgement Strike",
+            "§7Increase the damage you\n§7deal with Judgement Strike by\n§720%",
+            "§aIncrease the damage you\n§adeal with Judgement Strike by §c20%",
+            JudgementStrike.class)
+    ;
+
 
     public final String name;
     public final String description;

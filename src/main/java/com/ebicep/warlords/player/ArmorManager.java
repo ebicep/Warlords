@@ -304,7 +304,7 @@ public class ArmorManager {
                     .name(onBlueTeam ? ChatColor.BLUE + Helmets.getSelected(player).get(1).name : ChatColor.RED + Helmets.getSelected(player).get(1).name)
                     .lore(helmetDescription)
                     .get();
-        } else if (selectedClass == AVENGER || selectedClass == CRUSADER || selectedClass == PROTECTOR) {
+        } else if (selectedClass == AVENGER || selectedClass == CRUSADER || selectedClass == PROTECTOR || selectedClass == ASSASSIN) {
             armor[2] = new ItemBuilder(onBlueTeam ? ArmorSets.getSelected(player).get(2).itemBlue : ArmorSets.getSelected(player).get(2).itemRed)
                     .name(onBlueTeam ? ChatColor.BLUE + ArmorSets.getSelected(player).get(2).name : ChatColor.RED + ArmorSets.getSelected(player).get(2).name)
                     .lore(armorDescription)
