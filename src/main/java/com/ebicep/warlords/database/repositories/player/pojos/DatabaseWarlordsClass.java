@@ -11,6 +11,7 @@ public class DatabaseWarlordsClass {
     protected int deaths = 0;
     protected int wins = 0;
     protected int losses = 0;
+    protected int plays = 0;
     @Field("flags_captured")
     protected int flagsCaptured = 0;
     @Field("flags_returned")
@@ -33,6 +34,7 @@ public class DatabaseWarlordsClass {
         } else {
             this.losses += operation;
         }
+        this.plays += operation;
         this.flagsCaptured += gamePlayer.getFlagCaptures() * operation;
         this.flagsReturned += gamePlayer.getFlagReturns() * operation;
         this.damage += gamePlayer.getTotalDamage() * operation;
@@ -79,6 +81,14 @@ public class DatabaseWarlordsClass {
 
     public void setLosses(int losses) {
         this.losses = losses;
+    }
+
+    public int getPlays() {
+        return plays;
+    }
+
+    public void setPlays(int plays) {
+        this.plays = plays;
     }
 
     public int getFlagsCaptured() {

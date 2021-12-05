@@ -10,7 +10,9 @@ import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayers;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.DatabaseSpecialization;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.queuesystem.QueueManager;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.WriteModel;
@@ -47,41 +49,39 @@ public class TestCommand implements CommandExecutor {
         }
         Player player = (Player) sender;
 
-
-//        DatabaseManager.warlordsDatabase.getCollection("Weekly_Leaderboards").insertOne(LeaderboardManager.getTopPlayersOnLeaderboard());
-
+//        QueueManager.queue.clear();
+//
+////        DatabaseManager.warlordsDatabase.getCollection("Weekly_Leaderboards").insertOne(LeaderboardManager.getTopPlayersOnLeaderboard());
+//
 //        int counter = 0;
-//        List<DatabasePlayer> databasePlayers = DatabaseManager.playerService.findAll();
-//        MongoCollection<Document> collection = DatabaseManager.warlordsDatabase.getCollection("Temp");
-//        System.out.println(databasePlayers.size());
+//        List<DatabasePlayer> databasePlayers = DatabaseManager.playerService.findAll(PlayersCollections.WEEKLY);
+////        MongoCollection<Document> collection = DatabaseManager.warlordsDatabase.getCollection("Temp");
+////        System.out.println(databasePlayers.size());
 //        for (int i = 0; i < 200 && i < databasePlayers.size(); i++) {
 //            DatabasePlayer databasePlayer = databasePlayers.get(i);
 //            System.out.println(i + " - " + databasePlayer.getName());
-//            Document document = collection.find().filter(eq("uuid", databasePlayer.getUuid())).first();
-//            if (document != null) {
-//                databasePlayer.getShaman().getThunderlord().setFlagsCaptured(document.getEmbedded(Arrays.asList("shaman", "thunderlord", "flags_captured"), Integer.class));
-//                databasePlayer.getShaman().getSpiritguard().setFlagsCaptured(document.getEmbedded(Arrays.asList("shaman", "spiritguard", "flags_captured"), Integer.class));
-//                databasePlayer.getShaman().getEarthwarden().setFlagsCaptured(document.getEmbedded(Arrays.asList("shaman", "earthwarden", "flags_captured"), Integer.class));
 //
-//                databasePlayer.getShaman().getThunderlord().setFlagsReturned(document.getEmbedded(Arrays.asList("shaman", "thunderlord", "flags_returned"), Integer.class));
-//                databasePlayer.getShaman().getSpiritguard().setFlagsReturned(document.getEmbedded(Arrays.asList("shaman", "spiritguard", "flags_returned"), Integer.class));
-//                databasePlayer.getShaman().getEarthwarden().setFlagsReturned(document.getEmbedded(Arrays.asList("shaman", "earthwarden", "flags_returned"), Integer.class));
+//            databasePlayer.setPlays(databasePlayer.getWins() + databasePlayer.getLosses());
+//            databasePlayer.getMage().setPlays(databasePlayer.getMage().getWins() + databasePlayer.getMage().getLosses());
+//            databasePlayer.getWarrior().setPlays(databasePlayer.getWarrior().getPlays() + databasePlayer.getWarrior().getLosses());
+//            databasePlayer.getPaladin().setPlays(databasePlayer.getPaladin().getPlays() + databasePlayer.getPaladin().getLosses());
+//            databasePlayer.getShaman().setPlays(databasePlayer.getShaman().getPlays() + databasePlayer.getShaman().getLosses());
 //
-//                databasePlayer.getShaman().setFlagsCaptured(document.getEmbedded(Arrays.asList("shaman", "flags_captured"), Integer.class));
-//                databasePlayer.getShaman().setFlagsReturned(document.getEmbedded(Arrays.asList("shaman", "flags_returned"), Integer.class));
-//
+//            for (DatabaseSpecialization spec : databasePlayer.getMage().getSpecs()) {
+//                spec.setPlays(spec.getWins() + spec.getLosses());
+//            }
+//            for (DatabaseSpecialization spec : databasePlayer.getWarrior().getSpecs()) {
+//                spec.setPlays(spec.getWins() + spec.getLosses());
+//            }
+//            for (DatabaseSpecialization spec : databasePlayer.getPaladin().getSpecs()) {
+//                spec.setPlays(spec.getWins() + spec.getLosses());
+//            }
+//            for (DatabaseSpecialization spec : databasePlayer.getShaman().getSpecs()) {
+//                spec.setPlays(spec.getWins() + spec.getLosses());
 //            }
 //
-//            DatabaseManager.updatePlayerAsync(databasePlayer);
+//            DatabaseManager.updatePlayerAsync(databasePlayer, PlayersCollections.WEEKLY);
 //
-//
-//
-////            for (DatabaseGamePlayers.GamePlayer gamePlayer : databaseGame.getPlayers().getBlue()) {
-////                gamePlayer.setSpec(gamePlayer.getSpec().toUpperCase());
-////            }
-////            for (DatabaseGamePlayers.GamePlayer gamePlayer : databaseGame.getPlayers().getRed()) {
-////                gamePlayer.setSpec(gamePlayer.getSpec().toUpperCase());
-////            }
 //        }
 //        for (DatabaseGame databaseGame : databaseGames) {
 //            System.out.println(counter++);
