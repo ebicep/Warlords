@@ -211,8 +211,8 @@ public class BotListener extends ListenerAdapter implements Listener {
                                         Date date = new Date();
                                         int currentHour = Integer.parseInt(hourFormat.format(date));
                                         int currentMinute = Integer.parseInt(minuteFormat.format(date));
-                                        int hourDiff = Integer.parseInt(args[1].substring(0, args[1].indexOf(":"))) - currentHour;
-                                        int minuteDiff = Integer.parseInt(args[1].substring(args[1].indexOf(":") + 1)) - currentMinute;
+                                        int hourDiff = Integer.parseInt(futureTime.substring(0, futureTime.indexOf(":"))) - currentHour;
+                                        int minuteDiff = Integer.parseInt(futureTime.substring(futureTime.indexOf(":") + 1)) - currentMinute;
                                         if (hourDiff > 5) {
                                             textChannel.sendMessage("You cannot join the queue 3+ hours ahead").queue();
                                         } else if (hourDiff == 0 && minuteDiff < 20) {
