@@ -22,7 +22,7 @@ public class PartyListener implements Listener {
             p.getMembers().put(player.getUniqueId(), true);
             p.getDisconnects().remove(player.getUniqueId());
         });
-        if(!party.isPresent() && !Warlords.partyManager.getParties().isEmpty()) {
+        if (!party.isPresent() && !Warlords.partyManager.getParties().isEmpty()) {
             StringBuilder parties = new StringBuilder(ChatColor.YELLOW + "Current parties: ");
             for (Party partyManagerParty : Warlords.partyManager.getParties()) {
                 parties.append(ChatColor.AQUA).append(partyManagerParty.getLeaderName()).append(ChatColor.GRAY).append(", ");
@@ -30,6 +30,8 @@ public class PartyListener implements Listener {
             parties.setLength(parties.length() - 2);
             player.sendMessage(parties.toString());
         }
+        //queue
+        Bukkit.dispatchCommand(player, "queue");
     }
 
     @EventHandler

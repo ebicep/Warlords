@@ -15,6 +15,10 @@ public class DatabaseWarrior extends DatabaseWarlordsClass {
         super();
     }
 
+    public DatabaseSpecialization[] getSpecs() {
+        return new DatabaseSpecialization[]{berserker, defender, revenant};
+    }
+
     public DatabaseSpecialization getBerserker() {
         return berserker;
     }

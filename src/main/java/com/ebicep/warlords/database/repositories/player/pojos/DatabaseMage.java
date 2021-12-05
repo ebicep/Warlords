@@ -14,6 +14,10 @@ public class DatabaseMage extends DatabaseWarlordsClass {
         super();
     }
 
+    public DatabaseSpecialization[] getSpecs() {
+        return new DatabaseSpecialization[]{pyromancer, cryomancer, aquamancer};
+    }
+
     public DatabaseSpecialization getPyromancer() {
         return pyromancer;
     }

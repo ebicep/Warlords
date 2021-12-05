@@ -29,9 +29,12 @@ import com.ebicep.warlords.party.PartyManager;
 import com.ebicep.warlords.party.StreamCommand;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.powerups.EnergyPowerUp;
+import com.ebicep.warlords.queuesystem.QueueCommand;
 import com.ebicep.warlords.util.*;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
+import net.dv8tion.jda.api.JDA;
+import okhttp3.OkHttpClient;
 import org.bukkit.*;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
@@ -286,6 +289,7 @@ public class Warlords extends JavaPlugin {
         new MyLocationCommand().register(this);
         new MessageCommand().register(this);
         new ExperienceCommand().register(this);
+        new QueueCommand().register(this);
 
         updateHeads();
 
@@ -366,6 +370,11 @@ public class Warlords extends JavaPlugin {
         game.clearAllPlayers();
         if (holographicDisplaysEnabled) {
             HologramsAPI.getHolograms(instance).forEach(Hologram::delete);
+        }
+        try {
+            BotManager.jda.shutdownNow();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         getServer().getConsoleSender().sendMessage(ChatColor.RED + "[Warlords] Plugin is disabled");
         // TODO persist this.playerSettings to a database

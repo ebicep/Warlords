@@ -69,6 +69,9 @@ public class LeaderboardManager {
         leaderboards.add(new Leaderboard("Losses", new Location(world, -2608.5, 52, 728.5),
                 (DatabasePlayer::getLosses),
                 databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getLosses())));
+        leaderboards.add(new Leaderboard("Plays", new Location(world, -2564.5, 56, 712.5),
+                (DatabasePlayer::getPlays),
+                databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getPlays())));
         leaderboards.add(new Leaderboard("Kills", new Location(world, -2552.5, 56, 712.5),
                 (DatabasePlayer::getKills),
                 databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getKills())));
@@ -148,9 +151,6 @@ public class LeaderboardManager {
                 (o -> o.getShaman().getExperience()),
                 databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getShaman().getExperience())));
 
-        leaderboards.add(new Leaderboard("Plays", new Location(world, -2564.5, 56, 712.5),
-                (DatabasePlayer::getPlays),
-                databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getPlays())));
         leaderboards.add(new Leaderboard("DHP", new Location(world, -2619.5, 66.5, 721.5),
                 (DatabasePlayer::getDHP),
                 databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getDHP())));

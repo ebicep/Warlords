@@ -14,6 +14,10 @@ public class DatabasePaladin extends DatabaseWarlordsClass {
         super();
     }
 
+    public DatabaseSpecialization[] getSpecs() {
+        return new DatabaseSpecialization[]{avenger, crusader, protector};
+    }
+
     public DatabaseSpecialization getAvenger() {
         return avenger;
     }

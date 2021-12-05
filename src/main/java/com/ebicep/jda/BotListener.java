@@ -3,12 +3,10 @@ package com.ebicep.jda;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.player.Classes;
+import com.ebicep.warlords.queuesystem.QueueManager;
 import com.ebicep.warlords.util.PacketUtils;
 import com.ebicep.warlords.util.Utils;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.bukkit.Bukkit;
@@ -21,11 +19,10 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Random;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 public class BotListener extends ListenerAdapter implements Listener {
 
@@ -40,6 +37,7 @@ public class BotListener extends ListenerAdapter implements Listener {
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
+        Member member = event.getMember();
         Message message = event.getMessage();
         TextChannel textChannel = event.getTextChannel();
         switch (textChannel.getName().toLowerCase()) {
@@ -184,6 +182,80 @@ public class BotListener extends ListenerAdapter implements Listener {
                     }
                 }
                 break;
+            }
+            case "waiting": {
+                if (member != null && member.getUser().isBot()) {
+                    return;
+                }
+                String queueCommand = message.getContentRaw();
+                String[] args = queueCommand.substring(1).split(" ");
+                //System.out.println(Arrays.toString(args));
+                if (member != null) {
+                    String playerName = member.getEffectiveName();
+                    if (queueCommand.equalsIgnoreCase("-queue")) {
+                        textChannel.sendMessage(QueueManager.getQueueDiscord()).queue(QueueManager.queueMessages::add);
+                    } else if (queueCommand.startsWith("-queue") && args.length > 0) {
+                        switch (args[1]) {
+                            case "join": {
+                                if (QueueManager.queue.stream().anyMatch(uuid -> uuid.equals(Bukkit.getOfflinePlayer(playerName).getUniqueId())) || QueueManager.futureQueue.stream().anyMatch(futureQueuePlayer -> futureQueuePlayer.getUuid().equals(Bukkit.getOfflinePlayer(playerName).getUniqueId()))) {
+                                    message.reply("You are already in the queue!").queue();
+                                    break;
+                                }
+                                if (args.length == 3) { //adding to queue for future time
+                                    String futureTime = args[2];
+                                    SimpleDateFormat hourFormat = new SimpleDateFormat("hh");
+                                    SimpleDateFormat minuteFormat = new SimpleDateFormat("mm");
+                                    hourFormat.setTimeZone(TimeZone.getTimeZone("EST"));
+                                    minuteFormat.setTimeZone(TimeZone.getTimeZone("EST"));
+                                    Date date = new Date();
+                                    int currentHour = Integer.parseInt(hourFormat.format(date));
+                                    int currentMinute = Integer.parseInt(minuteFormat.format(date));
+                                    int hourDiff = Integer.parseInt(args[1].substring(0, args[1].indexOf(":"))) - currentHour;
+                                    int minuteDiff = Integer.parseInt(args[1].substring(args[1].indexOf(":") + 1)) - currentMinute;
+                                    if (hourDiff > 5) {
+                                        textChannel.sendMessage("You cannot join the queue 3+ hours ahead").queue();
+                                    } else if (hourDiff == 0 && minuteDiff < 20) {
+                                        textChannel.sendMessage("You cannot join the queue within 20 minutes. Join the server and type **/joinqueue** to join the queue now").queue();
+                                    } else if (hourDiff >= 0) {
+                                        long futureTimeMillis = System.currentTimeMillis();
+                                        futureTimeMillis += hourDiff * 3600000L;
+                                        futureTimeMillis += minuteDiff * 60000L;
+                                        long diff = futureTimeMillis - System.currentTimeMillis();
+                                        message.reply("You will join the queue in **" + TimeUnit.MILLISECONDS.toMinutes(diff) + "** minutes. Make sure you are online at that time or you will be automatically removed if there is an open party spot!").queue();
+                                        QueueManager.addPlayerToFutureQueue(playerName, futureTime, new BukkitRunnable() {
+
+                                            @Override
+                                            public void run() {
+                                                QueueManager.addPlayerToQueue(playerName, false);
+                                                QueueManager.futureQueue.removeIf(futureQueuePlayer -> futureQueuePlayer.getUuid().equals(Bukkit.getOfflinePlayer(member.getEffectiveName()).getUniqueId()));
+                                            }
+                                        }.runTaskLater(Warlords.getInstance(), TimeUnit.MILLISECONDS.toSeconds(diff) * 20));
+                                    } else {
+                                        message.reply("Invalid Time - HOUR:MINUTE").queue();
+                                    }
+                                } else { //adding to queue normally
+                                    QueueManager.addPlayerToQueue(member.getEffectiveName(), false);
+                                }
+
+                                break;
+                            }
+                            case "leave": {
+                                if (QueueManager.queue.stream().anyMatch(uuid -> uuid.equals(Bukkit.getOfflinePlayer(playerName).getUniqueId()))) {
+                                    QueueManager.removePlayerFromQueue(playerName);
+                                    message.reply("You left the queue!").queue();
+                                    break;
+                                } else if (QueueManager.futureQueue.stream().anyMatch(futureQueuePlayer -> futureQueuePlayer.getUuid().equals(Bukkit.getOfflinePlayer(playerName).getUniqueId()))) {
+                                    QueueManager.removePlayerFromFutureQueue(playerName);
+                                    message.reply("You left the future queue!").queue();
+                                    break;
+                                }
+                                break;
+                            }
+                        }
+                        QueueManager.sendNewQueue();
+                        break;
+                    }
+                }
             }
         }
     }

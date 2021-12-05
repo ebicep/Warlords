@@ -40,11 +40,7 @@ commands:
     usage: /spawntestdummy [TEAM] [TAKE DAMAGE (TRUE/FALSE) ]
   party:
     description: Party options
-    aliases: [ party, p,
-               partyclose, partyopen, pclose, popen,
-               partyoutside, poutside,
-               pleader, pforcejoin
-    ]
+    aliases: [ party, p ]
   stream:
     description: Creates a new party where anyone can join
     usage: /stream
@@ -90,3 +86,6 @@ commands:
   experience:
     description: Experience stuff
     aliases: [ experience, exp ]
+  queue:
+    description: Queue system
+    aliases: [ queue ]

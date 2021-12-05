@@ -23,9 +23,9 @@ public class DatabasePlayer {
     private int kills = 0;
     private int assists = 0;
     private int deaths = 0;
-    @Indexed(direction = IndexDirection.ASCENDING, name = "wins_index")
     private int wins = 0;
     private int losses = 0;
+    private int plays = 0;
     @Field("flags_captured")
     private int flagsCaptured = 0;
     @Field("flags_returned")
@@ -63,6 +63,7 @@ public class DatabasePlayer {
         } else {
             this.losses += operation;
         }
+        this.plays += operation;
         this.flagsCaptured += gamePlayer.getFlagCaptures() * operation;
         this.flagsReturned += gamePlayer.getFlagReturns() * operation;
         this.damage += gamePlayer.getTotalDamage() * operation;
@@ -93,7 +94,6 @@ public class DatabasePlayer {
     }
 
     public double getKillsPerGame() {
-        int plays = getPlays();
         return plays == 0 ? 0 : (double) kills / plays;
     }
 
@@ -106,8 +106,7 @@ public class DatabasePlayer {
     }
 
     public double getKillsAssistsPerGame() {
-        int plays = getPlays();
-        return plays == 0 ? 0 : (double) (kills + assists) / getPlays();
+        return plays == 0 ? 0 : (double) (kills + assists) / plays;
     }
 
     public int getAssists() {
@@ -119,8 +118,7 @@ public class DatabasePlayer {
     }
 
     public double getDeathsPerGame() {
-        int plays = getPlays();
-        return plays == 0 ? 0 : (double) deaths / getPlays();
+        return plays == 0 ? 0 : (double) deaths / plays;
     }
 
     public int getDeaths() {
@@ -132,7 +130,11 @@ public class DatabasePlayer {
     }
 
     public int getPlays() {
-        return wins + losses;
+        return plays;
+    }
+
+    public void setPlays(int plays) {
+        this.plays = plays;
     }
 
     public int getWins() {
@@ -172,7 +174,6 @@ public class DatabasePlayer {
     }
 
     public long getDHPPerGame() {
-        int plays = getPlays();
         return plays == 0 ? 0 : (damage + healing + absorbed) / (wins + losses);
     }
 

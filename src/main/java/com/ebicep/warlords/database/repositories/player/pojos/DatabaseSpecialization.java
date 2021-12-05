@@ -11,6 +11,7 @@ public class DatabaseSpecialization {
     private int deaths = 0;
     private int wins = 0;
     private int losses = 0;
+    private int plays = 0;
     @Field("flags_captured")
     private int flagsCaptured = 0;
     @Field("flags_returned")
@@ -35,6 +36,7 @@ public class DatabaseSpecialization {
         } else {
             this.losses += operation;
         }
+        this.plays += operation;
         this.flagsCaptured += gamePlayer.getFlagCaptures() * operation;
         this.flagsReturned += gamePlayer.getFlagReturns() * operation;
         this.damage += gamePlayer.getTotalDamage() * operation;
@@ -81,6 +83,14 @@ public class DatabaseSpecialization {
 
     public void setLosses(int losses) {
         this.losses = losses;
+    }
+
+    public int getPlays() {
+        return plays;
+    }
+
+    public void setPlays(int plays) {
+        this.plays = plays;
     }
 
     public int getFlagsCaptured() {
