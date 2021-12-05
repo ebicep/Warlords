@@ -18,19 +18,21 @@ import javax.annotation.Nonnull;
 
 public class OrderOfEviscerate extends AbstractAbility {
 
+    private final int duration = 5;
+
     public OrderOfEviscerate() {
         super("Order of Eviscerate", 0, 0, 60, 80, -1, 100);
     }
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Cloak yourself for §65 §7seconds, making you invisible\n" +
+        description = "§7Cloak yourself for §6" + duration + " §7seconds, making you invisible\n" +
                 "§7to the enemy for the duration. However, taking fall damage,\n" +
                 "§7§7dealing damage, or taking any type of ability damage will\n" +
                 "§7end your invisibility." +
                 "\n\n" +
                 "§7All your attacks against an enemy will mark them vulnerable,\n" +
-                "§7increasing the damage they take by §c25% for §65 §7seconds.\n" +
+                "§7increasing the damage they take by §c25% §7for §65 §7seconds.\n" +
                 "§7All attacks that hit your marked target from behind\n" +
                 "§7gain a §c100% §7crit chance. (Limited to marking 1 enemy\n" +
                 "§7at the same time.)";
@@ -38,9 +40,12 @@ public class OrderOfEviscerate extends AbstractAbility {
 
     @Override
     public void onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
-
-        player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 5 * 20, 0, true, false));
-        wp.getCooldownManager().addCooldown("Order of Eviscerate", OrderOfEviscerate.class, new OrderOfEviscerate(), "ORDER", 10, wp, CooldownTypes.ABILITY);
+        wp.getCooldownManager().removeCooldown(OrderOfEviscerate.class);
+        wp.getCooldownManager().addCooldown("Order of Eviscerate", OrderOfEviscerate.class, new OrderOfEviscerate(), "ORDER", duration, wp, CooldownTypes.ABILITY);
+        wp.getCooldownManager().addCooldown("Cloaked", OrderOfEviscerate.class, new OrderOfEviscerate(), "INVIS", duration, wp, CooldownTypes.BUFF);
+        Runnable cancelSpeed = wp.getSpeed().addSpeedModifier("Order of Eviscerate", 25, duration * 20, "BASE");
+        player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, duration * 20, 0, true, false));
+        wp.updateArmor();
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), Sound.GHAST_FIREBALL, 2, 1.2f);
         }
@@ -49,17 +54,16 @@ public class OrderOfEviscerate extends AbstractAbility {
                 new BukkitRunnable() {
                     @Override
                     public void run() {
-                        if (!wp.getCooldownManager().getCooldown(OrderOfEviscerate.class).isEmpty()) {
-                            wp.getSpeed().addSpeedModifier("Order of Eviscerate", 25, 2, "BASE");
-                            wp.getSpec().getWeapon().setCritChance(100);
-                        } else {
+                        if (wp.getCooldownManager().getCooldown(OrderOfEviscerate.class).isEmpty()) {
                             this.cancel();
-                            wp.getSpec().getWeapon().setCritChance(25);
+                            wp.updateArmor();
+                            wp.setMarkedTarget(null);
+                            player.removePotionEffect(PotionEffectType.INVISIBILITY);
+                            cancelSpeed.run();
                         }
                     }
                 }.runTaskTimer(Warlords.getInstance(), 0, 1),
                 System.currentTimeMillis()
         );
-
     }
 }

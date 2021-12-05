@@ -18,7 +18,7 @@ import java.util.List;
 
 public class BlindingAssault extends AbstractAbility {
 
-    int maxAssaultDuration = 12;
+    int maxAssaultDuration = 20;
 
     public BlindingAssault() {
         super("Blinding Assault", 466, 612, 16f, 40, 25, 200);
@@ -39,7 +39,7 @@ public class BlindingAssault extends AbstractAbility {
         player.setVelocity(playerLoc.getDirection().multiply(2).setY(.1));
 
         for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(playerLoc, "shaman.chainlightning.impact", 2, 1.7f);
+            player1.playSound(playerLoc, "shaman.chainlightning.impact", 2, 1.9f);
         }
 
         List<WarlordsPlayer> playersHit = new ArrayList<>();

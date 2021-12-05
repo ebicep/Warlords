@@ -28,7 +28,6 @@ public class CooldownManager {
         return cooldowns.stream().anyMatch(cooldown -> cooldown.getName().equalsIgnoreCase(name));
     }
 
-
     public boolean hasCooldown(Class cooldownClass) {
         return cooldowns.stream().anyMatch(cooldown -> cooldown.getCooldownClass() == cooldownClass);
     }
@@ -163,6 +162,10 @@ public class CooldownManager {
 
     public void removeCooldown(Object cooldownObject) {
         cooldowns.removeIf(cd -> cd.getCooldownObject() == cooldownObject);
+    }
+
+    public void removeCooldownByName(String cooldownName) {
+        cooldowns.removeIf(cd -> cd.getName().equals(cooldownName));
     }
 
     public void clearAllCooldowns() {

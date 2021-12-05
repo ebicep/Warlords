@@ -19,6 +19,8 @@ import net.minecraft.server.v1_8_R3.GenericAttributes;
 import net.minecraft.server.v1_8_R3.NBTTagCompound;
 import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.block.banner.Pattern;
+import org.bukkit.block.banner.PatternType;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
@@ -27,8 +29,10 @@ import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nonnull;
@@ -59,6 +63,7 @@ public final class WarlordsPlayer {
     private float horseCooldown;
     private int flagCooldown;
     private int hitCooldown;
+    private UUID markedTarget;
     private int spawnProtection;
     private int spawnDamage = 0;
     private int flagsCaptured = 0;
@@ -183,6 +188,30 @@ public final class WarlordsPlayer {
                 String newName = oldName.substring(0, oldName.lastIndexOf(" ") + 1) + ChatColor.RED + getHealth() + "❤";
                 getEntity().setCustomName(newName);
             }
+        }
+    }
+
+    public void updateArmor() {
+        if (!(this.entity instanceof Player)) {
+            return;
+        }
+
+        Player player = (Player) this.entity;
+
+        ArmorManager.resetArmor(player, getSpecClass(), getTeam());
+
+        if (cooldownManager.hasCooldownFromName("Cloaked")) {
+            player.getInventory().setArmorContents(new ItemStack[]{player.getInventory().getBoots(), null, null, null});
+        }
+
+        if (this.flagDamageMultiplier > 0) {
+            ItemStack item = new ItemStack(Material.BANNER);
+            BannerMeta banner = (BannerMeta) item.getItemMeta();
+            banner.setBaseColor(getTeam() == Team.RED ? DyeColor.BLUE : DyeColor.RED);
+            banner.addPattern(new Pattern(DyeColor.BLACK, PatternType.SKULL));
+            banner.addPattern(new Pattern(DyeColor.BLACK, PatternType.TRIANGLES_TOP));
+            item.setItemMeta(banner);
+            player.getInventory().setHelmet(item);
         }
     }
 
@@ -531,6 +560,20 @@ public final class WarlordsPlayer {
             critChance += attacker.getSpec().getOrange().getCritChance();
             critMultiplier += attacker.getSpec().getOrange().getCritMultiplier();
         }
+
+        // Assassin Mark crit chance increase
+        if (!attacker.getCooldownManager().getCooldown(OrderOfEviscerate.class).isEmpty()) {
+            if (!Utils.isLineOfSightAssassin(getEntity(), attacker.getEntity())) {
+                critChance = 100;
+            }
+        }
+
+        // Assasin takes damage, remove ability.
+        if (getCooldownManager().hasCooldownFromName("Cloaked")) {
+            getCooldownManager().removeCooldownByName("Cloaked");
+            this.getEntity().removePotionEffect(PotionEffectType.INVISIBILITY);
+            updateArmor();
+        }
         //crit
         float damageValue = (int) ((Math.random() * (max - min)) + min);
         int crit = (int) ((Math.random() * (100)));
@@ -611,7 +654,12 @@ public final class WarlordsPlayer {
                 if (!attacker.getCooldownManager().getCooldown(CripplingStrike.class).isEmpty()) {
                     damageValue *= .85;
                 }
+
+                if (attacker.getMarkedTarget() == uuid) {
+                    damageValue *= 1.25;
+                }
             }
+
         }
 
         //INTERVENE
@@ -844,6 +892,13 @@ public final class WarlordsPlayer {
                     }
                 }
 
+                if (!attacker.getCooldownManager().getCooldown(OrderOfEviscerate.class).isEmpty()) {
+                    if (attacker.getMarkedTarget() != uuid) {
+                        attacker.sendMessage("You have marked " + getName());
+                    }
+                    attacker.setMarkedTarget(uuid);
+                }
+
                 updateJimmyHealth();
 
                 // adding/subtracing health
@@ -870,11 +925,34 @@ public final class WarlordsPlayer {
 
                     sendMessage(ChatColor.GRAY + "You were killed by " + attacker.getColoredName());
                     attacker.sendMessage(ChatColor.GRAY + "You killed " + getColoredName());
+
+                    // Assassin Mark
+                    gameState.getGame().forEachOfflineWarlordsPlayer(p -> {
+                        if (p.getMarkedTarget() == uuid) {
+                          p.setMarkedTarget(null);
+                          if (attacker.getUuid() == p.getUuid()) {
+                              p.sendMessage("");
+                              p.sendMessage(ChatColor.GRAY + "You have killed your mark," + ChatColor.YELLOW + " your cooldowns have been reset" + ChatColor.GRAY + "!");
+                          } else {
+                              p.sendMessage(ChatColor.RED + "Your marked target has died!");
+                          }
+                          p.getSpec().getPurple().setCurrentCooldown(0);
+                          p.getSpec().getOrange().setCurrentCooldown(0);
+                          p.subtractEnergy(-p.getSpec().getPurple().getEnergyCost());
+                          p.subtractEnergy(-p.getSpec().getOrange().getEnergyCost());
+                          p.updatePurpleItem();
+                          p.updateOrangeItem();
+                        }
+                    });
+
+                    // Regular Kill Feed
                     gameState.getGame().forEachOnlinePlayer((p, t) -> {
                         if (p != this.entity && p != attacker.entity) {
                             p.sendMessage(getColoredName() + ChatColor.GRAY + " was killed by " + attacker.getColoredName());
                         }
                     });
+
+                    // Spectator Kill Feed
                     gameState.getGame().getSpectators().forEach(uuid -> {
                         if (Bukkit.getPlayer(uuid) != null) {
                             Bukkit.getPlayer(uuid).sendMessage(getColoredName() + ChatColor.GRAY + " was killed by " + attacker.getColoredName());
@@ -1761,5 +1839,13 @@ public final class WarlordsPlayer {
 
     public List<Float> getRecordDamage() {
         return recordDamage;
+    }
+
+    public UUID getMarkedTarget() {
+        return markedTarget;
+    }
+
+    public void setMarkedTarget(UUID markedTarget) {
+        this.markedTarget = markedTarget;
     }
 }

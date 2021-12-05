@@ -165,32 +165,6 @@ class FlagRenderer {
         }
     }
 
-    /*private void spawnArmorStand(Location loc, String name, Team team) {
-        boolean hasOldFlag = false;
-        for (Entity entity : this.lastLocation.getLocation().getWorld().getEntities()) {
-            if (entity.getLocation().distanceSquared(loc) < 0.25 && entity instanceof ArmorStand && entity.getCustomName().equals(name)) {
-                hasOldFlag = true;
-                renderedArmorStands.add(entity);
-                ((ArmorStand) entity).setGravity(false);
-                ((ArmorStand) entity).setCanPickupItems(false);
-                entity.setCustomName(name);
-                entity.setCustomNameVisible(true);
-                entity.removeMetadata("TEAM", Warlords.getInstance());
-                entity.setMetadata("TEAM", new FixedMetadataValue(Warlords.getInstance(), info.getTeam()));
-            }
-        }
-        if (!hasOldFlag) {
-            ArmorStand stand = this.lastLocation.getLocation().getWorld().spawn(loc, ArmorStand.class);
-            renderedArmorStands.add(stand);
-            stand.setGravity(false);
-            stand.setCanPickupItems(false);
-            stand.setCustomName(name);
-            stand.setCustomNameVisible(true);
-            stand.setMetadata("TEAM", new FixedMetadataValue(Warlords.getInstance(), info.getTeam()));
-            stand.setVisible(false);
-        }
-    }*/
-
     public void reset() {
         this.lastLocation = null;
         for (Block b : renderedBlocks) {
@@ -204,7 +178,7 @@ class FlagRenderer {
         for (Player p : affectedPlayers) {
             WarlordsPlayer wp = Warlords.getPlayer(p);
             if (wp != null) {
-                ArmorManager.resetArmor(p, wp.getSpecClass(), wp.getTeam());
+                wp.updateArmor();
             }
             p.getInventory().setItem(6, null);
         }
