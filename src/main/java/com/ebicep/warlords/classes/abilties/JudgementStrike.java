@@ -8,8 +8,10 @@ import javax.annotation.Nonnull;
 
 public class JudgementStrike extends AbstractStrikeBase {
 
+    int attacksDone = 0;
+
     public JudgementStrike() {
-        super("Judgement Strike", 326, 441, 0, 80, 25, 200);
+        super("Judgement Strike", 326, 441, 0, 40, 20, 200);
     }
 
     @Override
@@ -23,6 +25,12 @@ public class JudgementStrike extends AbstractStrikeBase {
     @Override
     protected void onHit(@Nonnull WarlordsPlayer wp, @Nonnull Player player, @Nonnull WarlordsPlayer nearPlayer) {
 
+        attacksDone++;
+        int critChance = this.critChance;
+        if (attacksDone == 3) {
+            attacksDone = 0;
+            critChance = 100;
+        }
         nearPlayer.damageHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
     }
 }

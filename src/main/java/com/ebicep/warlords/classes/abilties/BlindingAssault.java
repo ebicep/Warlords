@@ -8,6 +8,7 @@ import com.ebicep.warlords.util.PacketUtils;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
 import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
@@ -18,7 +19,7 @@ import java.util.List;
 
 public class BlindingAssault extends AbstractAbility {
 
-    int maxAssaultDuration = 20;
+    int maxAssaultDuration = 40;
 
     public BlindingAssault() {
         super("Blinding Assault", 466, 612, 16f, 40, 25, 200);
@@ -26,10 +27,10 @@ public class BlindingAssault extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Dash forward, dealing §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage to all enemies you pass\n" +
-                    "§7through. Hitting subsequent enemies reduces the\n" +
-                    "§7damage by §c10% §7(down to §c50%§7.) Blinding Assault\n" +
-                    "§7has no verticality.";
+        description = "§7Dash forward, dealing §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage to\n" +
+                    "§7all enemies you pass through. Hitting subsequent\n" +
+                    "§7enemies reduces the amage by §c10% §7(down to §c50%§7.)\n" +
+                    "§7Blinding Assault has no verticality.";
     }
 
     @Override
@@ -39,7 +40,8 @@ public class BlindingAssault extends AbstractAbility {
         player.setVelocity(playerLoc.getDirection().multiply(2).setY(.1));
 
         for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(playerLoc, "shaman.chainlightning.impact", 2, 1.9f);
+            player1.playSound(playerLoc, "shaman.chainlightning.impact", 2, 2);
+            player1.playSound(playerLoc, Sound.AMBIENCE_THUNDER, 2, 2);
         }
 
         List<WarlordsPlayer> playersHit = new ArrayList<>();
@@ -72,6 +74,7 @@ public class BlindingAssault extends AbstractAbility {
                         maxAssaultDuration--;
 
                         if (maxAssaultDuration <= 0 || wp.isDead()) {
+                            maxAssaultDuration = 40;
                             this.cancel();
                         }
                     }

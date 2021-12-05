@@ -936,10 +936,12 @@ public final class WarlordsPlayer {
                           } else {
                               p.sendMessage(ChatColor.RED + "Your marked target has died!");
                           }
+                          if (p.getEntity() instanceof Player) {
+                              ((Player) p.getEntity()).playSound(p.getLocation(), Sound.AMBIENCE_THUNDER, 1, 2);
+                          }
                           p.getSpec().getPurple().setCurrentCooldown(0);
                           p.getSpec().getOrange().setCurrentCooldown(0);
-                          p.subtractEnergy(-p.getSpec().getPurple().getEnergyCost());
-                          p.subtractEnergy(-p.getSpec().getOrange().getEnergyCost());
+                          p.subtractEnergy(-100);
                           p.updatePurpleItem();
                           p.updateOrangeItem();
                         }

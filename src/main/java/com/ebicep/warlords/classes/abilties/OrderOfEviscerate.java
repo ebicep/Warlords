@@ -21,7 +21,7 @@ public class OrderOfEviscerate extends AbstractAbility {
     private final int duration = 5;
 
     public OrderOfEviscerate() {
-        super("Order of Eviscerate", 0, 0, 60, 80, -1, 100);
+        super("Order of Eviscerate", 0, 0, 60, 30, -1, 100);
     }
 
     @Override
@@ -40,11 +40,13 @@ public class OrderOfEviscerate extends AbstractAbility {
 
     @Override
     public void onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
+        wp.subtractEnergy(energyCost);
         wp.getCooldownManager().removeCooldown(OrderOfEviscerate.class);
         wp.getCooldownManager().addCooldown("Order of Eviscerate", OrderOfEviscerate.class, new OrderOfEviscerate(), "ORDER", duration, wp, CooldownTypes.ABILITY);
+        wp.getCooldownManager().removeCooldownByName("Cloaked");
         wp.getCooldownManager().addCooldown("Cloaked", OrderOfEviscerate.class, new OrderOfEviscerate(), "INVIS", duration, wp, CooldownTypes.BUFF);
         Runnable cancelSpeed = wp.getSpeed().addSpeedModifier("Order of Eviscerate", 25, duration * 20, "BASE");
-        player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, duration * 20, 0, true, false));
+        player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, duration * 20, 0, true, false), true);
         wp.updateArmor();
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), Sound.GHAST_FIREBALL, 2, 1.2f);
