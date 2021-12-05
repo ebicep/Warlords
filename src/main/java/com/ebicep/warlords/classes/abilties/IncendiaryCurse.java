@@ -51,6 +51,5 @@ public class IncendiaryCurse extends AbstractAbility {
         }
 
         wp.subtractEnergy(energyCost);
-        wp.getSpec().getOrange().setCurrentCooldown(cooldown);
     }
 }

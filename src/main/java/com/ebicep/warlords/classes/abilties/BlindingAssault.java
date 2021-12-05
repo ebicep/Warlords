@@ -39,7 +39,7 @@ public class BlindingAssault extends AbstractAbility {
         player.setVelocity(playerLoc.getDirection().multiply(2).setY(.1));
 
         for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(playerLoc, "shaman.chainlightning.impact", 2, 1.5f);
+            player1.playSound(playerLoc, "shaman.chainlightning.impact", 2, 1.7f);
         }
 
         List<WarlordsPlayer> playersHit = new ArrayList<>();
@@ -50,9 +50,9 @@ public class BlindingAssault extends AbstractAbility {
 
                     @Override
                     public void run() {
-                        for (int i = 0; i < 7; i++) {
+                        for (int i = 0; i < 10; i++) {
                             ParticleEffect.REDSTONE.display(
-                                    new ParticleEffect.OrdinaryColor(255, 255, 255),
+                                    new ParticleEffect.OrdinaryColor(255, 0, 255),
                                     playerLoc.clone().add((Math.random() * 2) - 1, 1.2 + (Math.random() * 2) - 1, (Math.random() * 2) - 1),
                                     500);
 
