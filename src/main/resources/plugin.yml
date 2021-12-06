@@ -59,6 +59,9 @@ commands:
   give:
     description: Not happening.
     usage: Not happening.
+  effect:
+    description: Not happening.
+    usage: Not happening.
   bot:
     description: Runs bot commands
     usage: /bot
