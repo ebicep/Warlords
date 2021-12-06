@@ -612,7 +612,8 @@ public final class WarlordsPlayer {
                 }
 
                 if (!attacker.getCooldownManager().getCooldown(CripplingStrike.class).isEmpty()) {
-                    damageValue *= .85;
+                    CripplingStrike cripplingStrike = (CripplingStrike) attacker.getCooldownManager().getCooldown(CripplingStrike.class).get(0).getCooldownObject();
+                    damageValue *= .85 - (cripplingStrike.getConsecutiveStrikeCounter() * .075);
                 }
             }
         }
@@ -805,6 +806,9 @@ public final class WarlordsPlayer {
 
                     //ORBS
                     spawnOrbs(ability, attacker);
+                    if (ability.equals("Crippling Strike")) {
+                        spawnOrbs(ability, attacker);
+                    }
 
                     //prot strike
                     if (ability.equals("Protector's Strike")) {
