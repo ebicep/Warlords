@@ -1,19 +1,20 @@
 package com.ebicep.warlords.commands.debugcommands;
 
-import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.BaseCommand;
-import com.ebicep.warlords.commands.miscellaneouscommands.MessageCommand;
 import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.database.FieldUpdateOperators;
-import com.ebicep.warlords.database.Leaderboard;
-import com.ebicep.warlords.database.LeaderboardManager;
-import com.ebicep.warlords.player.Classes;
-import com.ebicep.warlords.player.ExperienceManager;
+import com.ebicep.warlords.database.leaderboards.Leaderboard;
+import com.ebicep.warlords.database.leaderboards.LeaderboardManager;
+import com.ebicep.warlords.database.cache.MultipleCacheResolver;
+import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame;
+import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayers;
+import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.DatabaseSpecialization;
 import com.ebicep.warlords.player.WarlordsPlayer;
-import com.ebicep.warlords.util.Utils;
+import com.ebicep.warlords.queuesystem.QueueManager;
+import com.github.benmanes.caffeine.cache.Cache;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.model.UpdateManyModel;
 import com.mongodb.client.model.WriteModel;
 import org.bson.Document;
 import org.bukkit.Bukkit;
@@ -22,14 +23,16 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.springframework.cache.caffeine.CaffeineCache;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
-import java.util.function.Consumer;
 
-import static com.ebicep.warlords.database.DatabaseManager.*;
+import static com.mongodb.client.model.Filters.eq;
+
 
 public class TestCommand implements CommandExecutor {
 
@@ -42,11 +45,68 @@ public class TestCommand implements CommandExecutor {
         WarlordsPlayer warlordsPlayer = BaseCommand.requireWarlordsPlayer(sender);
         if (warlordsPlayer != null) {
             System.out.println(!warlordsPlayer.getGameState().isForceEnd() && warlordsPlayer.getGameState().getStats(warlordsPlayer.getTeam()).points() > warlordsPlayer.getGameState().getStats(warlordsPlayer.getTeam().enemy()).points());
-            System.out.println(ExperienceManager.getExpFromGameStats(warlordsPlayer, true));
+//            System.out.println(ExperienceManager.getExpFromGameStats(warlordsPlayer, true));
         }
         Player player = (Player) sender;
+
+//        QueueManager.queue.clear();
+//
+////        DatabaseManager.warlordsDatabase.getCollection("Weekly_Leaderboards").insertOne(LeaderboardManager.getTopPlayersOnLeaderboard());
+//
+//        int counter = 0;
+//        List<DatabasePlayer> databasePlayers = DatabaseManager.playerService.findAll(PlayersCollections.WEEKLY);
+////        MongoCollection<Document> collection = DatabaseManager.warlordsDatabase.getCollection("Temp");
+////        System.out.println(databasePlayers.size());
+//        for (int i = 0; i < 200 && i < databasePlayers.size(); i++) {
+//            DatabasePlayer databasePlayer = databasePlayers.get(i);
+//            System.out.println(i + " - " + databasePlayer.getName());
+//
+//            databasePlayer.setPlays(databasePlayer.getWins() + databasePlayer.getLosses());
+//            databasePlayer.getMage().setPlays(databasePlayer.getMage().getWins() + databasePlayer.getMage().getLosses());
+//            databasePlayer.getWarrior().setPlays(databasePlayer.getWarrior().getPlays() + databasePlayer.getWarrior().getLosses());
+//            databasePlayer.getPaladin().setPlays(databasePlayer.getPaladin().getPlays() + databasePlayer.getPaladin().getLosses());
+//            databasePlayer.getShaman().setPlays(databasePlayer.getShaman().getPlays() + databasePlayer.getShaman().getLosses());
+//
+//            for (DatabaseSpecialization spec : databasePlayer.getMage().getSpecs()) {
+//                spec.setPlays(spec.getWins() + spec.getLosses());
+//            }
+//            for (DatabaseSpecialization spec : databasePlayer.getWarrior().getSpecs()) {
+//                spec.setPlays(spec.getWins() + spec.getLosses());
+//            }
+//            for (DatabaseSpecialization spec : databasePlayer.getPaladin().getSpecs()) {
+//                spec.setPlays(spec.getWins() + spec.getLosses());
+//            }
+//            for (DatabaseSpecialization spec : databasePlayer.getShaman().getSpecs()) {
+//                spec.setPlays(spec.getWins() + spec.getLosses());
+//            }
+//
+//            DatabaseManager.updatePlayerAsync(databasePlayer, PlayersCollections.WEEKLY);
+//
+//        }
+//        for (DatabaseGame databaseGame : databaseGames) {
+//            System.out.println(counter++);
+//            System.out.println(databaseGame.getDate());
+//            System.out.println(databaseGame.getPlayers());
+//            for (DatabaseGamePlayers.GamePlayer gamePlayer : databaseGame.getPlayers().getBlue()) {
+//                gamePlayer.setSpec(gamePlayer.getSpec().toUpperCase());
+//            }
+//            for (DatabaseGamePlayers.GamePlayer gamePlayer : databaseGame.getPlayers().getRed()) {
+//                gamePlayer.setSpec(gamePlayer.getSpec().toUpperCase());
+//            }
+//            DatabaseManager.updateGameAsync(databaseGame);
+//        }
+
+
+//        for (DatabasePlayer databasePlayer : DatabaseManager.playerService.getPlayersSorted("", PlayersCollections.ALL_TIME)) {
+//            System.out.println(databasePlayer.getName() + " - " + (databasePlayer.getWins() + databasePlayer.getLosses()));
+//        }
+
+//        printCache();
+//        System.out.println(databasePlayer);
 //        Utils.sendMessage(player, true, ChatColor.GREEN.toString() + ChatColor.BOLD + ChatColor.MAGIC + "   " + ChatColor.AQUA + ChatColor.BOLD + " LEVEL UP! " + ChatColor.DARK_GRAY + ChatColor.BOLD + "[" + ChatColor.GRAY + ChatColor.BOLD + "23" + ChatColor.DARK_GRAY + ChatColor.BOLD + "]" + ChatColor.GREEN + ChatColor.BOLD + " > " + ChatColor.DARK_GRAY + ChatColor.BOLD + "[" + ChatColor.GRAY + ChatColor.BOLD + "24" + ChatColor.DARK_GRAY + ChatColor.BOLD + "] " + ChatColor.GREEN + ChatColor.MAGIC + ChatColor.BOLD + "   ");
 
+//        System.out.println(LeaderboardManager.leaderboards.get(0).getSortedAllTime().get(0));
+//        System.out.println(LeaderboardManager.leaderboards.get(0).getSortedWeekly().get(0));
         DecimalFormat decimalFormat = new DecimalFormat("#.##");
 //        weeklyLeaderboards.insertOne(document);
         List<WriteModel<Document>> updates = new ArrayList<>();
@@ -165,4 +225,8 @@ public class TestCommand implements CommandExecutor {
         //instance.getCommand("class").setTabCompleter(this);
     }
 
+    private static void printCache() {
+        Cache<Object, Object> cache = ((CaffeineCache) MultipleCacheResolver.playersCacheManager.getCache(PlayersCollections.ALL_TIME.cacheName)).getNativeCache();
+        System.out.println("CACHE - " + cache.asMap());
+    }
 }

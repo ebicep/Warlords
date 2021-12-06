@@ -151,7 +151,7 @@ public class Game implements Runnable {
         Warlords.removePlayer(player);
         Player p = Bukkit.getPlayer(player);
         if (p != null) {
-            WarlordsEvents.joinInteraction(p);
+            WarlordsEvents.joinInteraction(p, true);
         }
     }
 
@@ -269,15 +269,15 @@ public class Game implements Runnable {
         if(fromMenu) {
             spectators.remove(uuid);
         }
-        Player player = Bukkit.getPlayer(uuid);
+        OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
         Location loc = Warlords.spawnPoints.remove(player.getUniqueId());
-        Player p = Bukkit.getPlayer(player.getUniqueId());
-        if (p != null) {
-            if(loc != null) {
-                p.teleport(Warlords.getRejoinPoint(p.getUniqueId()));
+        if (player.isOnline()) {
+            if (loc != null) {
+                player.getPlayer().teleport(Warlords.getRejoinPoint(player.getUniqueId()));
             }
-            WarlordsEvents.joinInteraction(p);
+            WarlordsEvents.joinInteraction(player.getPlayer(), true);
         }
+
     }
 
     public HashMap<BukkitTask, Long> getGameTasks() {

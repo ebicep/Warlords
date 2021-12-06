@@ -1,7 +1,7 @@
 package com.ebicep.warlords.commands.debugcommands;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.util.Utils;
+import com.ebicep.warlords.util.NumberFormat;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
@@ -20,8 +20,8 @@ public class MyLocationCommand implements CommandExecutor {
             return true;
         }
 
-        Location location = ((Player)sender).getLocation();
-        String locationString = Utils.formatOptionalTenths(roundToHalf(location.getX())) + ", " + Utils.formatOptionalTenths(roundToHalf(location.getY())) + ", " + Utils.formatOptionalTenths(roundToHalf(location.getZ()));
+        Location location = ((Player) sender).getLocation();
+        String locationString = NumberFormat.formatOptionalTenths(roundToHalf(location.getX())) + ", " + NumberFormat.formatOptionalTenths(roundToHalf(location.getY())) + ", " + NumberFormat.formatOptionalTenths(roundToHalf(location.getZ()));
         TextComponent text = new TextComponent(ChatColor.AQUA.toString() + ChatColor.BOLD + locationString);
         text.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, locationString));
         ((Player) sender).spigot().sendMessage(text);

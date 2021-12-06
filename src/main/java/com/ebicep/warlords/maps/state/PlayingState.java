@@ -4,7 +4,9 @@ import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.debugcommands.RecordGamesCommand;
 import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.database.FieldUpdateOperators;
+import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame;
+import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
 import com.ebicep.warlords.events.WarlordsPointsChangedEvent;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Gates;
@@ -16,15 +18,12 @@ import com.ebicep.warlords.maps.flags.SpawnFlagLocation;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.powerups.PowerupManager;
 import com.ebicep.warlords.util.PacketUtils;
-import com.ebicep.warlords.util.PlayerFilter;
 import com.ebicep.warlords.util.RemoveEntities;
 import com.ebicep.warlords.util.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
@@ -41,7 +40,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
-import static com.ebicep.warlords.util.Utils.sendMessage;
+import static com.ebicep.warlords.util.ChatUtils.sendMessage;
 
 public class PlayingState implements State, TimerDebugAble {
     private static final int GATE_TIMER = 10 * 20;
@@ -169,27 +168,12 @@ public class PlayingState implements State, TimerDebugAble {
         });
 
         Warlords.newChain()
-                .async(() -> {
-                    game.forEachOfflinePlayer((player, team) -> {
-                        HashMap<String, Object> newInfo = new HashMap<>();
-                        newInfo.put("last_spec", Classes.getSelected(player).name);
-                        Warlords.getPlayerSettings(player.getUniqueId()).getWeaponSkins().forEach((classes, weapons) -> {
-                            newInfo.put(
-                                    Classes.getClassesGroup(classes).name.toLowerCase() + "." + classes.name.toLowerCase() + ".weapon",
-                                    weapons.name);
-                        });
-                        newInfo.put("mage.helm", ArmorManager.Helmets.getSelected(player.getPlayer()).get(0).name);
-                        newInfo.put("mage.armor", ArmorManager.ArmorSets.getSelected(player.getPlayer()).get(0).name);
-                        newInfo.put("warrior.helm", ArmorManager.Helmets.getSelected(player.getPlayer()).get(1).name);
-                        newInfo.put("warrior.armor", ArmorManager.ArmorSets.getSelected(player.getPlayer()).get(1).name);
-                        newInfo.put("paladin.helm", ArmorManager.Helmets.getSelected(player.getPlayer()).get(2).name);
-                        newInfo.put("paladin.armor", ArmorManager.ArmorSets.getSelected(player.getPlayer()).get(2).name);
-                        newInfo.put("shaman.helm", ArmorManager.Helmets.getSelected(player.getPlayer()).get(3).name);
-                        newInfo.put("shaman.armor", ArmorManager.ArmorSets.getSelected(player.getPlayer()).get(3).name);
-                        newInfo.put("hotkeymode", Settings.HotkeyMode.getSelected(player.getPlayer()).name());
-                        DatabaseManager.updatePlayerInformation(player, newInfo, FieldUpdateOperators.SET, false);
-                    });
-                }).execute();
+                .async(() -> game.forEachOfflinePlayer((player, team) -> {
+                    DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
+                    DatabaseManager.updatePlayerAsync(databasePlayer);
+                    DatabaseManager.loadPlayer(player.getUniqueId(), PlayersCollections.WEEKLY);
+                    DatabaseManager.loadPlayer(player.getUniqueId(), PlayersCollections.DAILY);
+                })).execute();
     }
 
     @Override
@@ -221,7 +205,7 @@ public class PlayingState implements State, TimerDebugAble {
                 }
             }
         }
-        if(timer % 10 == 0) {
+        if (timer % 10 == 0) {
             giveScoreboard();
         }
 
@@ -308,14 +292,14 @@ public class PlayingState implements State, TimerDebugAble {
             float highestDamage = players.stream().sorted(Comparator.comparing(WarlordsPlayer::getTotalDamage).reversed()).collect(Collectors.toList()).get(0).getTotalDamage();
             float highestHealing = players.stream().sorted(Comparator.comparing(WarlordsPlayer::getTotalHealing).reversed()).collect(Collectors.toList()).get(0).getTotalHealing();
             if (highestDamage <= 500000 && highestHealing <= 500000) {
-                DatabaseManager.addGame(PlayingState.this, true);
+                DatabaseGame.addGame(PlayingState.this, true);
             } else {
-                DatabaseManager.addGame(PlayingState.this, false);
+                DatabaseGame.addGame(PlayingState.this, false);
                 System.out.println(ChatColor.GREEN + "[Warlords] This game was added to the database (INVALID DAMAGE/HEALING) but player information remained the same");
             }
         } else {
-            if(game.playersCount() >= 6) {
-                DatabaseManager.addGame(PlayingState.this, false);
+            if (game.playersCount() >= 6) {
+                DatabaseGame.addGame(PlayingState.this, false);
                 System.out.println(ChatColor.GREEN + "[Warlords] This game was added to the database but player information remained the same");
             } else {
                 System.out.println(ChatColor.GREEN + "[Warlords] This game was not added to the database and player information remained the same");
@@ -391,7 +375,7 @@ public class PlayingState implements State, TimerDebugAble {
 
     private void giveScoreboard() {
         for (WarlordsPlayer value : Warlords.getPlayers().values()) {
-            if(Warlords.playerScoreboards.get(value.getUuid()) != null) {
+            if (Warlords.playerScoreboards.get(value.getUuid()) != null) {
                 updateBasedOnGameState(false, Warlords.playerScoreboards.get(value.getUuid()), value);
             }
         }
@@ -458,7 +442,7 @@ public class PlayingState implements State, TimerDebugAble {
         this.updateNames(customScoreboard);
 
         String[] entries = new String[15];
-        
+
 
         SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
         SimpleDateFormat format2 = new SimpleDateFormat("kk:mm");

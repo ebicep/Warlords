@@ -2,14 +2,9 @@ package com.ebicep.warlords.util;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.player.WarlordsPlayer;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.minecraft.server.v1_8_R3.NBTTagCompound;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Statistic;
-import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -18,7 +13,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nullable;
-import java.text.DecimalFormat;
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
@@ -27,49 +21,7 @@ import java.util.stream.Stream;
 
 public class Utils {
 
-    private static final DecimalFormat decimalFormatOptionalTenths = new DecimalFormat("#.#");
-    private static final DecimalFormat decimalFormatTenths = new DecimalFormat("0.0");
-    public static final DecimalFormat decimalFormatOptionalHundredths = new DecimalFormat("#.##");
-
-    static {
-        decimalFormatOptionalTenths.setDecimalSeparatorAlwaysShown(false);
-        decimalFormatTenths.setDecimalSeparatorAlwaysShown(false);
-        decimalFormatOptionalHundredths.setDecimalSeparatorAlwaysShown(false);
-    }
-
-    public static String formatOptionalTenths(double value) {
-        return decimalFormatOptionalTenths.format(value);
-    }
-
-    public static String formatTenths(double value) {
-        return decimalFormatTenths.format(value);
-    }
-
-    private static final NavigableMap<Long, String> suffixes = new TreeMap<>();
-
-    static {
-        suffixes.put(1_000L, "k");
-        suffixes.put(1_000_000L, "m");
-        suffixes.put(1_000_000_000L, "b");
-        suffixes.put(1_000_000_000_000L, "t");
-        suffixes.put(1_000_000_000_000_000L, "p");
-        suffixes.put(1_000_000_000_000_000_000L, "e");
-    }
-
-    public static String getSimplifiedNumber(long value) {
-        //Long.MIN_VALUE == -Long.MIN_VALUE so we need an adjustment here
-        if (value == Long.MIN_VALUE) return getSimplifiedNumber(Long.MIN_VALUE + 1);
-        if (value < 0) return "-" + getSimplifiedNumber(-value);
-        if (value < 1000) return Long.toString(value); //deal with easy case
-
-        Map.Entry<Long, String> e = suffixes.floorEntry(value);
-        Long divideBy = e.getKey();
-        String suffix = e.getValue();
-
-        long truncated = value / (divideBy / 10); //the number part of the output times 10
-        boolean hasDecimal = truncated < 100 && (truncated / 10d) != (truncated / 10);
-        return hasDecimal ? (truncated / 10d) + suffix : (truncated / 10) + suffix;
-    }
+    public static final String[] specsOrdered = {"Pyromancer", "Cryomancer", "Aquamancer", "Berserker", "Defender", "Revenant", "Avenger", "Crusader", "Protector", "Thunderlord", "Spiritguard", "Earthwarden"};
 
     public static final ItemStack[] woolSortedByColor = {
             new ItemStack(Material.WOOL, 1, (byte) 0),
@@ -350,122 +302,5 @@ public class Utils {
 //        return blocksAbove && ((right && !left) || (!right && left));
     }
 
-    private final static int CENTER_PX = 164;
 
-
-    public static void sendMessage(Player player, boolean centered, String message) {
-        if (centered) {
-            Utils.sendCenteredMessage(player, message);
-        } else {
-            player.sendMessage(message);
-        }
-    }
-
-    public static void sendCenteredMessage(Player player, String message) {
-        if (message == null || message.equals("")) {
-            player.sendMessage("");
-            return;
-        }
-        message = ChatColor.translateAlternateColorCodes('&', message);
-
-        int messagePxSize = 0;
-        boolean previousCode = false;
-        boolean isBold = false;
-
-        for (char c : message.toCharArray()) {
-            if (c == '§') {
-                previousCode = true;
-            } else if (previousCode) {
-                previousCode = false;
-                isBold = c == 'l' || c == 'L';
-            } else {
-                DefaultFontInfo dFI = DefaultFontInfo.getDefaultFontInfo(c);
-                messagePxSize += isBold ? dFI.getBoldLength() : dFI.getLength();
-                messagePxSize++;
-            }
-        }
-
-        int halvedMessageSize = messagePxSize / 2;
-        int toCompensate = CENTER_PX - halvedMessageSize;
-        int spaceLength = DefaultFontInfo.SPACE.getLength() + 1;
-        int compensated = 0;
-        StringBuilder sb = new StringBuilder();
-        while (compensated < toCompensate) {
-            sb.append(" ");
-            compensated += spaceLength;
-        }
-        player.sendMessage(sb.toString() + message);
-    }
-
-    public static void sendCenteredMessageWithEvents(Player player, List<TextComponent> textComponents) {
-        if (textComponents == null || textComponents.size() == 0) return;
-        String message = "";
-        for (TextComponent textComponent : textComponents) {
-            message += textComponent.getText();
-        }
-        message = ChatColor.translateAlternateColorCodes('&', message);
-        int messagePxSize = 0;
-        boolean previousCode = false;
-        boolean isBold = false;
-
-        for (char c : message.toCharArray()) {
-            if (c == '§') {
-                previousCode = true;
-            } else if (previousCode) {
-                previousCode = false;
-                isBold = c == 'l' || c == 'L';
-            } else {
-                DefaultFontInfo dFI = DefaultFontInfo.getDefaultFontInfo(c);
-                messagePxSize += isBold ? dFI.getBoldLength() : dFI.getLength();
-                messagePxSize++;
-            }
-        }
-        int halvedMessageSize = messagePxSize / 2;
-        int toCompensate = CENTER_PX - halvedMessageSize;
-        int spaceLength = DefaultFontInfo.SPACE.getLength() + 1;
-        int compensated = 0;
-        StringBuilder sb = new StringBuilder();
-        while (compensated < toCompensate) {
-            sb.append(" ");
-            compensated += spaceLength;
-        }
-        ComponentBuilder componentBuilder = new ComponentBuilder(sb.toString());
-        for (TextComponent textComponent : textComponents) {
-            componentBuilder.append(textComponent.getText());
-            componentBuilder.event(textComponent.getHoverEvent());
-            componentBuilder.event(textComponent.getClickEvent());
-        }
-        player.spigot().sendMessage(componentBuilder.create());
-    }
-
-    public static String addCommaAndRound(double amount) {
-        amount = Math.round(amount);
-        DecimalFormat formatter = new DecimalFormat("#,###");
-        return formatter.format(amount);
-    }
-
-    /**
-     * Converts an {@link org.bukkit.inventory.ItemStack} to a Json string
-     * for sending with {@link net.md_5.bungee.api.chat.BaseComponent}'s.
-     *
-     * @param itemStack the item to convert
-     * @return the Json string representation of the item
-     */
-    public static String convertItemStackToJsonRegular(ItemStack itemStack) {
-        // First we convert the item stack into an NMS itemstack
-        net.minecraft.server.v1_8_R3.ItemStack nmsItemStack = CraftItemStack.asNMSCopy(itemStack);
-        net.minecraft.server.v1_8_R3.NBTTagCompound compound = new NBTTagCompound();
-        nmsItemStack.save(compound);
-        return compound.toString();
-    }
-
-    public static <T, E> Set<T> getKeysByValue(Map<T, E> map, E value) {
-        Set<T> keys = new HashSet<T>();
-        for (Map.Entry<T, E> entry : map.entrySet()) {
-            if (Objects.equals(value, entry.getValue())) {
-                keys.add(entry.getKey());
-            }
-        }
-        return keys;
-    }
 }

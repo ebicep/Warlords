@@ -9,7 +9,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
 
 public class MessageCommand implements CommandExecutor {
 
@@ -27,9 +30,9 @@ public class MessageCommand implements CommandExecutor {
                     return true;
                 }
                 String targetPlayer = args[0];
-                Optional<Player> otherPlayer = (Optional<Player>) Bukkit.getOnlinePlayers().stream().filter(p -> p.getName().equalsIgnoreCase(targetPlayer)).findFirst();
-                if (otherPlayer.isPresent()) {
-                    if (otherPlayer.get().equals(player)) {
+                Player otherPlayer = Bukkit.getPlayer(targetPlayer);
+                if (otherPlayer != null) {
+                    if (otherPlayer.equals(player)) {
                         sender.sendMessage(ChatColor.RED + "You cannot message yourself");
                         return true;
                     }
@@ -38,9 +41,9 @@ public class MessageCommand implements CommandExecutor {
                         message.append(args[i]).append(" ");
 
                     }
-                    sender.sendMessage(ChatColor.DARK_PURPLE + "To " + ChatColor.AQUA + otherPlayer.get().getName() + ChatColor.WHITE + ": " + ChatColor.LIGHT_PURPLE + message);
-                    otherPlayer.get().sendMessage(ChatColor.DARK_PURPLE + "From " + ChatColor.AQUA + sender.getName() + ChatColor.WHITE + ": " + ChatColor.LIGHT_PURPLE + message);
-                    PlayerMessage newPlayerMessage = new PlayerMessage(player.getUniqueId(), otherPlayer.get().getUniqueId());
+                    sender.sendMessage(ChatColor.DARK_PURPLE + "To " + ChatColor.AQUA + otherPlayer.getName() + ChatColor.WHITE + ": " + ChatColor.LIGHT_PURPLE + message);
+                    otherPlayer.sendMessage(ChatColor.DARK_PURPLE + "From " + ChatColor.AQUA + sender.getName() + ChatColor.WHITE + ": " + ChatColor.LIGHT_PURPLE + message);
+                    PlayerMessage newPlayerMessage = new PlayerMessage(player.getUniqueId(), otherPlayer.getUniqueId());
                     lastPlayerMessages.remove(newPlayerMessage);
                     lastPlayerMessages.put(newPlayerMessage, System.currentTimeMillis());
                     return true;

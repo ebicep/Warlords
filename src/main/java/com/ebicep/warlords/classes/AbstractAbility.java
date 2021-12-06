@@ -9,7 +9,6 @@ import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nonnull;
 import java.text.DecimalFormat;
-import java.text.NumberFormat;
 
 public abstract class AbstractAbility {
 

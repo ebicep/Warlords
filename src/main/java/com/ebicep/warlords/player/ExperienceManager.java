@@ -1,19 +1,21 @@
 package com.ebicep.warlords.player;
 
 import com.ebicep.warlords.database.*;
-import com.ebicep.warlords.util.Utils;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.model.UpdateManyModel;
-import com.mongodb.client.model.WriteModel;
+import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
+import com.ebicep.warlords.util.ChatUtils;
+import com.ebicep.warlords.util.NumberFormat;
 import org.bson.Document;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.springframework.data.mongodb.core.BulkOperations;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 
 import java.text.DecimalFormat;
 import java.util.*;
-
-import static com.ebicep.warlords.database.DatabaseManager.*;
-import static com.mongodb.client.model.Filters.*;
 
 public class ExperienceManager {
 
@@ -52,7 +54,8 @@ public class ExperienceManager {
 
     public static void awardWeeklyExperience(Document weeklyDocument) {
         HashMap<String, Document> futureMessageDocuments = new HashMap<>();
-        List<WriteModel<Document>> updates = new ArrayList<>();
+        BulkOperations operations = DatabaseManager.playerService.bulkOps();
+
         awardOrder.forEach((key, rewards) -> {
             String name = weeklyDocument.getEmbedded(Arrays.asList(key, "name"), String.class);
             List<Document> top = weeklyDocument.getEmbedded(Arrays.asList(key, "top"), new ArrayList<>());
@@ -61,7 +64,7 @@ public class ExperienceManager {
                 String[] names = topDocument.getString("names").split(",");
                 String[] uuids = topDocument.getString("uuids").split(",");
                 for (int j = 0; j < uuids.length; j++) {
-                    int experienceGain = rewards[j];
+                    int experienceGain = rewards[i];
                     if (!futureMessageDocuments.containsKey(uuids[j])) {
                         futureMessageDocuments.put(uuids[j], new Document("uuid", uuids[j])
                                 .append("name", names[j])
@@ -72,26 +75,26 @@ public class ExperienceManager {
                         );
                     }
                     Document previousDocument = futureMessageDocuments.get(uuids[j]);
-                    previousDocument.getList("messages", String.class).add(ChatColor.YELLOW + "#" + (j + 2) + ". " + ChatColor.AQUA + name + ChatColor.WHITE + ": " + ChatColor.DARK_GRAY + "+" + ChatColor.DARK_AQUA + experienceGain + ChatColor.GOLD + " Universal Experience");
+                    previousDocument.getList("messages", String.class).add(ChatColor.YELLOW + "#" + (i + 2) + ". " + ChatColor.AQUA + name + ChatColor.WHITE + ": " + ChatColor.DARK_GRAY + "+" + ChatColor.DARK_AQUA + experienceGain + ChatColor.GOLD + " Universal Experience");
                     previousDocument.put("total_experience_gain", previousDocument.getLong("total_experience_gain") + experienceGain);
                 }
             }
         });
         futureMessageDocuments.forEach((s, document) -> {
             long expGain = document.getLong("total_experience_gain");
-            updates.add(new UpdateManyModel<>(
-                    new Document("uuid", document.getString("uuid")),
-                    new Document(FieldUpdateOperators.INCREMENT.operator, new Document("experience", expGain))
-            ));
+            Query query = new Query().addCriteria(Criteria.where("uuid").is(document.getString("uuid")));
+            Update update = new Update().inc("experience", expGain);
+            operations.updateOne(query, update);
             document.getList("messages", String.class).add(ChatColor.GOLD + "Total Experience Gain" + ChatColor.WHITE + ": " + ChatColor.DARK_GRAY + "+" + ChatColor.DARK_AQUA + expGain);
             document.getList("messages", String.class).addAll(Collections.singletonList(ChatColor.BLUE + "---------------------------------------------------"));
         });
+
         FutureMessageManager.addNewFutureMessageDocuments(new ArrayList<>(futureMessageDocuments.values()));
-        playersInformation.bulkWrite(updates);
+        System.out.println(operations.execute().getModifiedCount() + " players were given weekly experience bonuses");
     }
 
     public static LinkedHashMap<String, Long> getExpFromGameStats(WarlordsPlayer warlordsPlayer, boolean recalculate) {
-        if(!recalculate && cachedPlayerExpSummary.containsKey(warlordsPlayer.getUuid()) && cachedPlayerExpSummary.get(warlordsPlayer.getUuid()) != null) {
+        if (!recalculate && cachedPlayerExpSummary.containsKey(warlordsPlayer.getUuid()) && cachedPlayerExpSummary.get(warlordsPlayer.getUuid()) != null) {
             return cachedPlayerExpSummary.get(warlordsPlayer.getUuid());
         }
         boolean won = !warlordsPlayer.getGameState().isForceEnd() && warlordsPlayer.getGameState().getStats(warlordsPlayer.getTeam()).points() > warlordsPlayer.getGameState().getStats(warlordsPlayer.getTeam().enemy()).points();
@@ -122,25 +125,26 @@ public class ExperienceManager {
 
         LinkedHashMap<String, Long> expGain = new LinkedHashMap<>();
         expGain.put(won ? "Win" : "Loss", winLossExp);
-        if(kaExp != 0) {
+        if (kaExp != 0) {
             expGain.put("Kills/Assists", kaExp);
         }
-        if(dhpExp != 0) {
+        if (dhpExp != 0) {
             expGain.put("DHP", dhpExp);
         }
-        if(flagCapExp != 0) {
+        if (flagCapExp != 0) {
             expGain.put("Flags Captured", flagCapExp);
         }
-        if(flagRetExp != 0) {
+        if (flagRetExp != 0) {
             expGain.put("Flags Returned", flagRetExp);
         }
 
-        Document playerDaily = cachedPlayerInfoDaily.get(warlordsPlayer.getUuid());
-        if(playerDaily == null) {
-            expGain.put("First Game of the Day", 500L);
-        } else {
-            int plays = playerDaily.getInteger("wins") + playerDaily.getInteger("losses");
+        try {
+            DatabasePlayer databasePlayer = DatabaseManager.playerService.findOne(Criteria.where("uuid").is(warlordsPlayer.getUuid().toString()), PlayersCollections.DAILY);
+            int plays = databasePlayer.getWins() + databasePlayer.getLosses();
             switch (plays) {
+                case 0:
+                    expGain.put("First Game of the Day", 500L);
+                    break;
                 case 1:
                     expGain.put("Second Game of the Day", 250L);
                     break;
@@ -148,8 +152,9 @@ public class ExperienceManager {
                     expGain.put("Third Game of the Day", 100L);
                     break;
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
 
         cachedPlayerExpSummary.put(warlordsPlayer.getUuid(), expGain);
         return expGain;
@@ -162,160 +167,117 @@ public class ExperienceManager {
                 - expSummary.getOrDefault("Third Game of the Day", 0L);
     }
 
-    public static void giveExpFromCurrentStats(UUID uuid) {
-        MongoCollection<Document> test = warlordsPlayersDatabase.getCollection("Players_Information_Test");
-        Document playerInformation = test.find().filter(eq("uuid", uuid.toString())).first();
-        if (playerInformation != null) {
-            HashMap<String, Object> updatedInformation = new HashMap<>();
-            List<String> futureMessages = new ArrayList<>();
-            futureMessages.add(ChatColor.BLUE + "---------------------------------------------------");
-            futureMessages.add(ChatColor.GREEN + "Experience Gained from Your Current Stats\n ");
-            long totalExp = 0;
-            long classExp = 0;
-            for (int i = 0; i < DatabaseGame.specsOrdered.length; i++) {
-                String spec = DatabaseGame.specsOrdered[i];
-                String className = Classes.getClassesGroup(spec).name;
-                String classSpec = className.toLowerCase() + "." + spec.toLowerCase();
-
-                long exp = getCalculatedExp(playerInformation, classSpec);
-                totalExp += exp;
-                classExp += exp;
-
-                updatedInformation.put(classSpec + ".experience", exp);
-                futureMessages.add(ChatColor.DARK_GRAY + "+" + ChatColor.DARK_GREEN + Utils.addCommaAndRound(exp) + ChatColor.GRAY + " " + spec + " Experience");
-
-                if ((i + 1) % 3 == 0) {
-                    updatedInformation.put(className.toLowerCase() + ".experience", classExp);
-                    futureMessages.add(ChatColor.DARK_GRAY + "+" + ChatColor.YELLOW + Utils.addCommaAndRound(classExp) + ChatColor.GOLD + " " + className + " Experience" + (i == 11 ? "\n " : ""));
-                    classExp = 0;
-                }
-            }
-            updatedInformation.put("experience", totalExp);
-            futureMessages.add(ChatColor.DARK_GRAY + "+" + ChatColor.DARK_AQUA + Utils.addCommaAndRound(totalExp) + ChatColor.GOLD + " Universal Experience");
-            futureMessages.add(ChatColor.BLUE + "---------------------------------------------------");
-            DatabaseManager.updatePlayerInformationAllTime(uuid, updatedInformation, FieldUpdateOperators.SET, true);
-            FutureMessageManager.addNewFutureMessageDocument(uuid, true, futureMessages.toArray(new String[0]));
-        }
-    }
-
-    private int getTotalAverageDHP(String classSpec) {
-        long totalAverageDHP = 0;
-        int totalPlayers = 0;
-        for (Document document1 : playersInformation.find()) {
-            long averageDHP = getAverageDHP(document1, classSpec);
-            totalAverageDHP += averageDHP;
-            if (averageDHP != 0) {
-                totalPlayers++;
-            }
-        }
-        return (int) (totalAverageDHP / totalPlayers);
-    }
-
-    private int getTotalAverageDHPSelected(String classSpec, String selected) {
-        long totalAverageDHP = 0;
-        int totalPlayers = 0;
-        for (Document document1 : playersInformation.find()) {
-            long averageDHP = getAverageSelectedDHP(document1, classSpec, selected);
-            totalAverageDHP += averageDHP;
-            if (averageDHP != 0) {
-                totalPlayers++;
-            }
-        }
-        return (int) (totalAverageDHP / totalPlayers);
-    }
-
-    private long getAverageDHP(Document document, String classSpec) {
-        long dhp = (long) getDocumentInfoWithDotNotation(document, classSpec + ".damage") + (long) getDocumentInfoWithDotNotation(document, classSpec + ".healing") + (long) getDocumentInfoWithDotNotation(document, classSpec + ".absorbed");
-        int plays = (int) getDocumentInfoWithDotNotation(document, classSpec + ".wins") + (int) getDocumentInfoWithDotNotation(document, classSpec + ".losses");
-        return plays == 0 ? 0 : dhp / plays;
-    }
-
-    private long getAverageSelectedDHP(Document document, String classSpec, String selected) {
-        long selectedDHP = (long) getDocumentInfoWithDotNotation(document, classSpec + "." + selected);
-        int plays = (int) getDocumentInfoWithDotNotation(document, classSpec + ".wins") + (int) getDocumentInfoWithDotNotation(document, classSpec + ".losses");
-        return plays == 0 ? 0 : selectedDHP / plays;
-    }
-
-    public static long getCalculatedExp(Document document, String key) {
-        //500 per win
-        //250 per loss
-        //5 per kills/assist
-        //1 per 500 dhp based on multiplier
-        //150 per cap
-        //50 per ret
-
-        long exp = 0;
-
-        double damageMultiplier;
-        double healingMultiplier;
-        double absorbedMultiplier;
-
-        Classes classes = Classes.getClass(key.substring(key.indexOf(".") + 1));
-        if (classes.specType == SpecType.DAMAGE) {
-            damageMultiplier = .80;
-            healingMultiplier = .10;
-            absorbedMultiplier = .10;
-        } else if (classes.specType == SpecType.HEALER) {
-            damageMultiplier = .275;
-            healingMultiplier = .65;
-            absorbedMultiplier = .75;
-        } else { //tank
-            damageMultiplier = .575;
-            healingMultiplier = .1;
-            absorbedMultiplier = .325;
-        }
-
-        int wins = (int) getDocumentInfoWithDotNotation(document, key + ".wins");
-        int losses = (int) getDocumentInfoWithDotNotation(document, key + ".losses");
-        int kills = (int) getDocumentInfoWithDotNotation(document, key + ".kills");
-        int assists = (int) getDocumentInfoWithDotNotation(document, key + ".assists");
-        long damage = (long) getDocumentInfoWithDotNotation(document, key + ".damage");
-        long healing = (long) getDocumentInfoWithDotNotation(document, key + ".healing");
-        long absorbed = (long) getDocumentInfoWithDotNotation(document, key + ".absorbed");
-        int caps = (int) getDocumentInfoWithDotNotation(document, key + ".flags_captured");
-        int rets = (int) getDocumentInfoWithDotNotation(document, key + ".flags_returned");
-
-        double calculatedDHP = damage * damageMultiplier + healing * healingMultiplier + absorbed * absorbedMultiplier;
-
-        exp += wins * 500L;
-        exp += losses * 250L;
-        exp += (kills + assists) * 5L;
-        exp += calculatedDHP / 500;
-        exp += caps * 150L;
-        exp += rets * 50L;
-
-        return exp;
-    }
+//    private int getTotalAverageDHP(String classSpec) {
+//        long totalAverageDHP = 0;
+//        int totalPlayers = 0;
+//        for (Document document1 : playersInformation.find()) {
+//            long averageDHP = getAverageDHP(document1, classSpec);
+//            totalAverageDHP += averageDHP;
+//            if (averageDHP != 0) {
+//                totalPlayers++;
+//            }
+//        }
+//        return (int) (totalAverageDHP / totalPlayers);
+//    }
+//
+//    private int getTotalAverageDHPSelected(String classSpec, String selected) {
+//        long totalAverageDHP = 0;
+//        int totalPlayers = 0;
+//        for (Document document1 : playersInformation.find()) {
+//            long averageDHP = getAverageSelectedDHP(document1, classSpec, selected);
+//            totalAverageDHP += averageDHP;
+//            if (averageDHP != 0) {
+//                totalPlayers++;
+//            }
+//        }
+//        return (int) (totalAverageDHP / totalPlayers);
+//    }
+//
+//    private long getAverageDHP(Document document, String classSpec) {
+//        long dhp = (long) getDocumentInfoWithDotNotation(document, classSpec + ".damage") + (long) getDocumentInfoWithDotNotation(document, classSpec + ".healing") + (long) getDocumentInfoWithDotNotation(document, classSpec + ".absorbed");
+//        int plays = (int) getDocumentInfoWithDotNotation(document, classSpec + ".wins") + (int) getDocumentInfoWithDotNotation(document, classSpec + ".losses");
+//        return plays == 0 ? 0 : dhp / plays;
+//    }
+//
+//    private long getAverageSelectedDHP(Document document, String classSpec, String selected) {
+//        long selectedDHP = (long) getDocumentInfoWithDotNotation(document, classSpec + "." + selected);
+//        int plays = (int) getDocumentInfoWithDotNotation(document, classSpec + ".wins") + (int) getDocumentInfoWithDotNotation(document, classSpec + ".losses");
+//        return plays == 0 ? 0 : selectedDHP / plays;
+//    }
+//
+//    public static long getCalculatedExp(Document document, String key) {
+//        //500 per win
+//        //250 per loss
+//        //5 per kills/assist
+//        //1 per 500 dhp based on multiplier
+//        //150 per cap
+//        //50 per ret
+//
+//        long exp = 0;
+//
+//        double damageMultiplier;
+//        double healingMultiplier;
+//        double absorbedMultiplier;
+//
+//        Classes classes = Classes.getClass(key.substring(key.indexOf(".") + 1));
+//        if (classes.specType == SpecType.DAMAGE) {
+//            damageMultiplier = .80;
+//            healingMultiplier = .10;
+//            absorbedMultiplier = .10;
+//        } else if (classes.specType == SpecType.HEALER) {
+//            damageMultiplier = .275;
+//            healingMultiplier = .65;
+//            absorbedMultiplier = .75;
+//        } else { //tank
+//            damageMultiplier = .575;
+//            healingMultiplier = .1;
+//            absorbedMultiplier = .325;
+//        }
+//
+//        int wins = (int) getDocumentInfoWithDotNotation(document, key + ".wins");
+//        int losses = (int) getDocumentInfoWithDotNotation(document, key + ".losses");
+//        int kills = (int) getDocumentInfoWithDotNotation(document, key + ".kills");
+//        int assists = (int) getDocumentInfoWithDotNotation(document, key + ".assists");
+//        long damage = (long) getDocumentInfoWithDotNotation(document, key + ".damage");
+//        long healing = (long) getDocumentInfoWithDotNotation(document, key + ".healing");
+//        long absorbed = (long) getDocumentInfoWithDotNotation(document, key + ".absorbed");
+//        int caps = (int) getDocumentInfoWithDotNotation(document, key + ".flags_captured");
+//        int rets = (int) getDocumentInfoWithDotNotation(document, key + ".flags_returned");
+//
+//        double calculatedDHP = damage * damageMultiplier + healing * healingMultiplier + absorbed * absorbedMultiplier;
+//
+//        exp += wins * 500L;
+//        exp += losses * 250L;
+//        exp += (kills + assists) * 5L;
+//        exp += calculatedDHP / 500;
+//        exp += caps * 150L;
+//        exp += rets * 50L;
+//
+//        return exp;
+//    }
 
     public static long getExperienceForClass(UUID uuid, ClassesGroup classesGroup) {
-        return getExperienceFromDotNotation(uuid, classesGroup.name.toLowerCase() + ".experience");
-    }
-
-    public static long getExperienceForSpec(UUID uuid, Classes spec) {
-        String className = Classes.getClassesGroup(spec).name;
-        String specName = spec.name;
-        return getExperienceFromDotNotation(uuid, className.toLowerCase() + "." + specName.toLowerCase() + ".experience");
+        return DatabaseManager.playerService.findByUUID(uuid).getClass(classesGroup).getExperience();
     }
 
     public static int getLevelForClass(UUID uuid, ClassesGroup classesGroup) {
-        String dots = classesGroup.name.toLowerCase() + ".experience";
-        return (int) calculateLevelFromExp(getExperienceFromDotNotation(uuid, dots));
+        return (int) calculateLevelFromExp(getExperienceForClass(uuid, classesGroup));
+    }
+
+    public static long getExperienceForSpec(UUID uuid, Classes spec) {
+        return getExperienceFromSpec(uuid, spec);
     }
 
     public static int getLevelForSpec(UUID uuid, Classes spec) {
-        String className = Classes.getClassesGroup(spec).name;
-        String specName = spec.name;
-        String dots = className.toLowerCase() + "." + specName.toLowerCase() + ".experience";
-        return (int) calculateLevelFromExp(getExperienceFromDotNotation(uuid, dots));
+        return (int) calculateLevelFromExp(getExperienceFromSpec(uuid, spec));
     }
 
     public static long getUniversalLevel(UUID uuid) {
-        return getExperienceFromDotNotation(uuid, "experience");
+        return DatabaseManager.playerService.findByUUID(uuid).getExperience();
     }
 
-    private static long getExperienceFromDotNotation(UUID uuid, String dots) {
-        Object experience = getPlayerInfoWithDotNotation(uuid, dots);
-        return experience == null ? 0 : (long) experience;
+    private static long getExperienceFromSpec(UUID uuid, Classes classes) {
+        return DatabaseManager.playerService.findByUUID(uuid).getSpec(classes).getExperience();
     }
 
     public static String getLevelString(int level) {
@@ -329,7 +291,7 @@ public class ExperienceManager {
         long experienceNeeded = levelExperience.get(nextLevel) - levelExperience.get(nextLevel - 1);
         double progressPercentage = (double) experience / experienceNeeded * 100;
 
-        progress += Utils.formatOptionalTenths(progressPercentage) + "%\n" + ChatColor.GREEN;
+        progress += NumberFormat.formatOptionalTenths(progressPercentage) + "%\n" + ChatColor.GREEN;
         int greenBars = (int) Math.round(progressPercentage * 20 / 100);
         for (int i = 0; i < greenBars; i++) {
             progress += "-";
@@ -338,7 +300,7 @@ public class ExperienceManager {
         for (int i = greenBars; i < 20; i++) {
             progress += "-";
         }
-        progress += " " + ChatColor.YELLOW + currentExperienceDecimalFormat.format(experience) + ChatColor.GOLD + "/" + ChatColor.YELLOW + Utils.getSimplifiedNumber(experienceNeeded);
+        progress += " " + ChatColor.YELLOW + currentExperienceDecimalFormat.format(experience) + ChatColor.GOLD + "/" + ChatColor.YELLOW + NumberFormat.getSimplifiedNumber(experienceNeeded);
 
         return progress;
     }
@@ -362,8 +324,8 @@ public class ExperienceManager {
     public static void giveLevelUpMessage(Player player, long expBefore, long expAfter) {
         int levelBefore = (int) calculateLevelFromExp(expBefore);
         int levelAfter = (int) calculateLevelFromExp(expAfter);
-        if(levelBefore != levelAfter) {
-            Utils.sendMessage(player, true, ChatColor.GREEN.toString() + ChatColor.BOLD + ChatColor.MAGIC + "   " + ChatColor.AQUA + ChatColor.BOLD + " LEVEL UP! " + ChatColor.DARK_GRAY + ChatColor.BOLD + "[" + ChatColor.GRAY + ChatColor.BOLD + levelBefore + ChatColor.DARK_GRAY + ChatColor.BOLD + "]" + ChatColor.GREEN + ChatColor.BOLD + " > " + ChatColor.DARK_GRAY + ChatColor.BOLD + "[" + ChatColor.GRAY + ChatColor.BOLD + levelAfter + ChatColor.DARK_GRAY + ChatColor.BOLD + "] " + ChatColor.GREEN + ChatColor.MAGIC + ChatColor.BOLD + "   ");
+        if (levelBefore != levelAfter) {
+            ChatUtils.sendMessage(player, true, ChatColor.GREEN.toString() + ChatColor.BOLD + ChatColor.MAGIC + "   " + ChatColor.AQUA + ChatColor.BOLD + " LEVEL UP! " + ChatColor.DARK_GRAY + ChatColor.BOLD + "[" + ChatColor.GRAY + ChatColor.BOLD + levelBefore + ChatColor.DARK_GRAY + ChatColor.BOLD + "]" + ChatColor.GREEN + ChatColor.BOLD + " > " + ChatColor.DARK_GRAY + ChatColor.BOLD + "[" + ChatColor.GRAY + ChatColor.BOLD + levelAfter + ChatColor.DARK_GRAY + ChatColor.BOLD + "] " + ChatColor.GREEN + ChatColor.MAGIC + ChatColor.BOLD + "   ");
         }
     }
 }

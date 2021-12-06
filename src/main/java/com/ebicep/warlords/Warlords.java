@@ -16,33 +16,37 @@ import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.classes.abilties.*;
 import com.ebicep.warlords.commands.debugcommands.*;
 import com.ebicep.warlords.commands.miscellaneouscommands.*;
-import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.FutureMessageManager;
-import com.ebicep.warlords.database.LeaderboardCommand;
-import com.ebicep.warlords.database.LeaderboardManager;
+import com.ebicep.warlords.database.leaderboards.LeaderboardCommand;
+import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.configuration.ApplicationConfiguration;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.menu.MenuEventListener;
-import com.ebicep.warlords.party.*;
+import com.ebicep.warlords.party.PartyCommand;
+import com.ebicep.warlords.party.PartyListener;
+import com.ebicep.warlords.party.PartyManager;
+import com.ebicep.warlords.party.StreamCommand;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.powerups.EnergyPowerUp;
+import com.ebicep.warlords.queuesystem.QueueCommand;
 import com.ebicep.warlords.util.*;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
+import net.dv8tion.jda.api.JDA;
+import okhttp3.OkHttpClient;
 import org.bukkit.*;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Firework;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -50,8 +54,6 @@ import javax.security.auth.login.LoginException;
 import java.io.File;
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 
 public class Warlords extends JavaPlugin {
@@ -178,7 +180,7 @@ public class Warlords extends JavaPlugin {
         for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
             updateHead(onlinePlayer);
         }
-        System.out.println("[WARLORDS] Heads updated");
+        System.out.println("[Warlords] Heads updated");
     }
 
     public static void updateHead(Player player) {
@@ -192,7 +194,8 @@ public class Warlords extends JavaPlugin {
     public void readKeysConfig() {
         try {
             YamlConfiguration config = YamlConfiguration.loadConfiguration(new File(this.getDataFolder(), "keys.yml"));
-            DatabaseManager.key = config.getString("database_key");
+//            DatabaseManager.key = config.getString("database_key");
+            ApplicationConfiguration.key = config.getString("database_key");
             BotManager.botToken = config.getString("botToken");
         } catch (Exception e) {
             e.printStackTrace();
@@ -239,11 +242,19 @@ public class Warlords extends JavaPlugin {
 
     public static HashMap<UUID, CustomScoreboard> playerScoreboards = new HashMap<>();
 
+    static {
+        ((ch.qos.logback.classic.Logger) LoggerFactory.getLogger("org.mongodb.driver")).setLevel(ch.qos.logback.classic.Level.ERROR);
+        ((ch.qos.logback.classic.Logger) LoggerFactory.getLogger("org.springframework")).setLevel(ch.qos.logback.classic.Level.ERROR);
+        ((ch.qos.logback.classic.Logger) LoggerFactory.getLogger("net.dv8tion.jda")).setLevel(ch.qos.logback.classic.Level.ERROR);
+    }
+
     @Override
     public void onEnable() {
         instance = this;
         VERSION = this.getDescription().getVersion();
         taskChainFactory = BukkitTaskChainFactory.create(this);
+
+        Thread.currentThread().setContextClassLoader(getClassLoader());
 
         ConfigurationSerialization.registerClass(PlayerSettings.class);
         getServer().getPluginManager().registerEvents(new WarlordsEvents(), this);
@@ -277,6 +288,8 @@ public class Warlords extends JavaPlugin {
         new DebugModeCommand().register(this);
         new MyLocationCommand().register(this);
         new MessageCommand().register(this);
+        new ExperienceCommand().register(this);
+        new QueueCommand().register(this);
 
         updateHeads();
 
@@ -292,11 +305,11 @@ public class Warlords extends JavaPlugin {
             playerScoreboards.put(player.getUniqueId(), new CustomScoreboard(player));
         });
 
-        LeaderboardManager.init();
+
 
         //connects to the database
         Warlords.newChain()
-                .async(DatabaseManager::connect)
+                .async(DatabaseManager::init)
                 .execute();
 
         try {
@@ -348,7 +361,6 @@ public class Warlords extends JavaPlugin {
 //        }
         gameLoop();
         getServer().getScheduler().runTaskTimer(this, game, 1, 1);
-        Logger.getLogger("org.mongodb.driver").setLevel(Level.WARNING);
         getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Plugin is enabled");
     }
 
@@ -359,7 +371,11 @@ public class Warlords extends JavaPlugin {
         if (holographicDisplaysEnabled) {
             HologramsAPI.getHolograms(instance).forEach(Hologram::delete);
         }
-        BotManager.jda.shutdownNow();
+        try {
+            BotManager.jda.shutdownNow();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         getServer().getConsoleSender().sendMessage(ChatColor.RED + "[Warlords] Plugin is disabled");
         // TODO persist this.playerSettings to a database
     }
@@ -378,12 +394,17 @@ public class Warlords extends JavaPlugin {
                         }
                         if (wp.getName().equals("sumSmash")) {
                         }
-
                         // MOVEMENT
                         wp.getSpeed().updateSpeed();
 
                         CooldownManager cooldownManager = wp.getCooldownManager();
                         Player player = wp.getEntity() instanceof Player ? (Player) wp.getEntity() : null;
+
+//                        if(player != null) {
+//                            if(player.isSneaking() && player.getVehicle() instanceof Horse) {
+//                                player.teleport(player.getLocation().clone().add(0, 0, 0));
+//                            }
+//                        }
 
                         if (player != null) {
                             player.setCompassTarget(wp

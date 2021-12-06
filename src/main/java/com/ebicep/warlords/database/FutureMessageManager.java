@@ -1,13 +1,12 @@
 package com.ebicep.warlords.database;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.util.Utils;
+import com.ebicep.warlords.util.ChatUtils;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Updates;
 import org.bson.Document;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
@@ -21,10 +20,6 @@ import static com.mongodb.client.model.Filters.*;
 public class FutureMessageManager implements Listener {
 
     public static MongoCollection<Document> futureMessages;
-
-    public static void init() {
-        futureMessages = DatabaseManager.warlordsPlayersDatabase.getCollection("Future_Messages");
-    }
 
     public static void addNewFutureMessageDocument(UUID uuid, boolean centered, String... messages) {
         Document previousDocument = getPlayerDocument(uuid);
@@ -66,7 +61,7 @@ public class FutureMessageManager implements Listener {
                         List<String> messages = playerDocument.getList("messages", String.class);
                         messages.forEach(m -> {
                             if(centered) {
-                                Utils.sendCenteredMessage(player, m);
+                                ChatUtils.sendCenteredMessage(player, m);
                             } else {
                                 player.sendMessage(m);
                             }

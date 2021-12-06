@@ -5,7 +5,6 @@ import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.classes.abilties.*;
 import com.ebicep.warlords.classes.shaman.specs.spiritguard.Spiritguard;
-import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.events.WarlordsDeathEvent;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Team;
@@ -484,7 +483,7 @@ public final class WarlordsPlayer {
         this.maxEnergy = this.spec.getMaxEnergy();
         this.energy = this.maxEnergy;
         assignItemLore(Bukkit.getPlayer(uuid));
-        DatabaseManager.updatePlayerInformation(player, "last_spec", spec.getName());
+//        DatabaseManager.updatePlayerInformation(player, "last_spec", spec.getName());
         //
     }
 
@@ -1009,7 +1008,7 @@ public final class WarlordsPlayer {
                 health += healValue;
                 addHealing(healValue, gameState.flags().hasFlag(this));
 
-                if (!ability.isEmpty() && !ability.equals("Healing Rain")) {
+                if (!ability.isEmpty() && !ability.equals("Healing Rain") && !ability.equals("Blood Lust")) {
                     if (attacker.entity instanceof Player) {
                         ((Player) attacker.entity).playSound(attacker.getLocation(), Sound.ORB_PICKUP, 1, 1);
                     }
@@ -1435,17 +1434,17 @@ public final class WarlordsPlayer {
         int totalMinutes = (gameState.getGame().getMap().getGameTimerInTicks() / 20 / 60) - 1;
         for (int i = 0; i < damage.length - 1 && i < minute + 1; i++) {
             if (name.equals("Kills")) {
-                lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + Utils.addCommaAndRound(kills[totalMinutes - i]));
+                lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(kills[totalMinutes - i]));
             } else if (name.equals("Assists")) {
-                lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + Utils.addCommaAndRound(assists[totalMinutes - i]));
+                lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(assists[totalMinutes - i]));
             } else if (name.equals("Deaths")) {
-                lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + Utils.addCommaAndRound(deaths[totalMinutes - i]));
+                lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(deaths[totalMinutes - i]));
             } else if (name.equals("Damage")) {
-                lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + Utils.addCommaAndRound(damage[totalMinutes - i]));
+                lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(damage[totalMinutes - i]));
             } else if (name.equals("Healing")) {
-                lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + Utils.addCommaAndRound(healing[totalMinutes - i]));
+                lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(healing[totalMinutes - i]));
             } else if (name.equals("Absorbed")) {
-                lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + Utils.addCommaAndRound(absorbed[totalMinutes - i]));
+                lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(absorbed[totalMinutes - i]));
             }
         }
         meta.setLore(lore);

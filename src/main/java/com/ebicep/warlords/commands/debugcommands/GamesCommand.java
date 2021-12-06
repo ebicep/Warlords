@@ -1,12 +1,14 @@
 package com.ebicep.warlords.commands.debugcommands;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+
+import static com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame.previousGames;
 
 public class GamesCommand implements CommandExecutor {
 
@@ -19,8 +21,8 @@ public class GamesCommand implements CommandExecutor {
 
         if(args.length == 0) {
             StringBuilder stringBuilder = new StringBuilder(ChatColor.GREEN + "Previous Games - \n");
-            for (int i = 0; i < DatabaseManager.previousGames.size(); i++) {
-                stringBuilder.append(ChatColor.YELLOW).append(i).append(". ").append(DatabaseManager.previousGames.get(i).getGameLabel()).append("\n");
+            for (int i = 0; i < previousGames.size(); i++) {
+                stringBuilder.append(ChatColor.YELLOW).append(i).append(". ").append(previousGames.get(i).getGameLabel()).append("\n");
             }
             sender.sendMessage(stringBuilder.toString());
             return true;
@@ -36,7 +38,7 @@ public class GamesCommand implements CommandExecutor {
             }
 
             int gameNumber = Integer.parseInt(args[1]);
-            if(gameNumber >= DatabaseManager.previousGames.size() || gameNumber < 0) {
+            if(gameNumber >= previousGames.size() || gameNumber < 0) {
                 sender.sendMessage(ChatColor.RED + "Invalid game number!");
                 return true;
             }
@@ -44,11 +46,11 @@ public class GamesCommand implements CommandExecutor {
             String input = args[0];
             switch (input.toLowerCase()) {
                 case "add" :
-                    DatabaseManager.addGameToDatabase(DatabaseManager.previousGames.get(gameNumber));
+                    DatabaseGame.addGameToDatabase(previousGames.get(gameNumber));
                     sender.sendMessage(ChatColor.GREEN + "Adding game!");
                     return true;
                 case "remove" :
-                    DatabaseManager.removeGameFromDatabase(DatabaseManager.previousGames.get(gameNumber));
+                    DatabaseGame.removeGameFromDatabase(previousGames.get(gameNumber));
                     sender.sendMessage(ChatColor.RED + "Removing game!");
                     return true;
             }

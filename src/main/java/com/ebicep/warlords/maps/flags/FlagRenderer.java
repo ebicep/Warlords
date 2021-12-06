@@ -5,7 +5,10 @@ import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.player.ArmorManager;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.ItemBuilder;
-import org.bukkit.*;
+import org.bukkit.ChatColor;
+import org.bukkit.DyeColor;
+import org.bukkit.Effect;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.banner.Pattern;
@@ -22,11 +25,10 @@ import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nullable;
-
-import static org.bukkit.block.BlockFace.*;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.bukkit.block.BlockFace.*;
 
 class FlagRenderer {
 	

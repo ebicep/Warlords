@@ -3,7 +3,6 @@ package com.ebicep.warlords.commands.debugcommands;
 import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
-import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.GameMap;
 import com.ebicep.warlords.maps.Team;

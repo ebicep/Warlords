@@ -9,7 +9,7 @@ import com.ebicep.warlords.maps.flags.PlayerFlagLocation;
 import com.ebicep.warlords.maps.flags.SpawnFlagLocation;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.util.ItemBuilder;
-import com.ebicep.warlords.util.Utils;
+import com.ebicep.warlords.util.NumberFormat;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -332,9 +332,9 @@ public class DebugMenu {
                 ChatColor.GREEN + "Kills" + ChatColor.GRAY + ": " + ChatColor.GOLD + warlordsPlayers.stream().mapToInt(WarlordsPlayer::getTotalKills).sum(),
                 ChatColor.GREEN + "Assists" + ChatColor.GRAY + ": " + ChatColor.GOLD + warlordsPlayers.stream().mapToInt(WarlordsPlayer::getTotalAssists).sum(),
                 ChatColor.GREEN + "Deaths" + ChatColor.GRAY + ": " + ChatColor.GOLD + warlordsPlayers.stream().mapToInt(WarlordsPlayer::getTotalDeaths).sum(),
-                ChatColor.GREEN + "Damage" + ChatColor.GRAY + ": " + ChatColor.RED + Utils.addCommaAndRound((float) warlordsPlayers.stream().mapToDouble(WarlordsPlayer::getTotalDamage).sum()),
-                ChatColor.GREEN + "Healing" + ChatColor.GRAY + ": " + ChatColor.DARK_GREEN + Utils.addCommaAndRound((float) warlordsPlayers.stream().mapToDouble(WarlordsPlayer::getTotalHealing).sum()),
-                ChatColor.GREEN + "Absorbed" + ChatColor.GRAY + ": " + ChatColor.GOLD + Utils.addCommaAndRound((float) warlordsPlayers.stream().mapToDouble(WarlordsPlayer::getTotalAbsorbed).sum())
+                ChatColor.GREEN + "Damage" + ChatColor.GRAY + ": " + ChatColor.RED + NumberFormat.addCommaAndRound((float) warlordsPlayers.stream().mapToDouble(WarlordsPlayer::getTotalDamage).sum()),
+                ChatColor.GREEN + "Healing" + ChatColor.GRAY + ": " + ChatColor.DARK_GREEN + NumberFormat.addCommaAndRound((float) warlordsPlayers.stream().mapToDouble(WarlordsPlayer::getTotalHealing).sum()),
+                ChatColor.GREEN + "Absorbed" + ChatColor.GRAY + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound((float) warlordsPlayers.stream().mapToDouble(WarlordsPlayer::getTotalAbsorbed).sum())
         };
     }
 
@@ -346,9 +346,9 @@ public class DebugMenu {
                 ChatColor.GREEN + "Kills" + ChatColor.GRAY + ": " + ChatColor.GOLD + wp.getTotalKills(),
                 ChatColor.GREEN + "Assists" + ChatColor.GRAY + ": " + ChatColor.GOLD + wp.getTotalAssists(),
                 ChatColor.GREEN + "Deaths" + ChatColor.GRAY + ": " + ChatColor.GOLD + wp.getTotalDeaths(),
-                ChatColor.GREEN + "Damage" + ChatColor.GRAY + ": " + ChatColor.RED + Utils.addCommaAndRound(wp.getTotalDamage()),
-                ChatColor.GREEN + "Healing" + ChatColor.GRAY + ": " + ChatColor.DARK_GREEN + Utils.addCommaAndRound(wp.getTotalHealing()),
-                ChatColor.GREEN + "Absorbed" + ChatColor.GRAY + ": " + ChatColor.GOLD + Utils.addCommaAndRound(wp.getTotalAbsorbed())
+                ChatColor.GREEN + "Damage" + ChatColor.GRAY + ": " + ChatColor.RED + NumberFormat.addCommaAndRound(wp.getTotalDamage()),
+                ChatColor.GREEN + "Healing" + ChatColor.GRAY + ": " + ChatColor.DARK_GREEN + NumberFormat.addCommaAndRound(wp.getTotalHealing()),
+                ChatColor.GREEN + "Absorbed" + ChatColor.GRAY + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(wp.getTotalAbsorbed())
         };
     }
 

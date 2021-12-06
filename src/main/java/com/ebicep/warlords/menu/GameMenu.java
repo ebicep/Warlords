@@ -2,11 +2,16 @@ package com.ebicep.warlords.menu;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
+import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.util.ItemBuilder;
-import com.ebicep.warlords.util.Utils;
-import org.bukkit.*;
+import com.ebicep.warlords.util.NumberFormat;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
@@ -17,13 +22,12 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.lang.Math.round;
-
 import static com.ebicep.warlords.menu.Menu.ACTION_CLOSE_MENU;
 import static com.ebicep.warlords.menu.Menu.ACTION_DO_NOTHING;
 import static com.ebicep.warlords.player.ArmorManager.*;
 import static com.ebicep.warlords.player.Classes.*;
 import static com.ebicep.warlords.player.Settings.*;
+import static java.lang.Math.round;
 
 public class GameMenu {
     private static final ItemStack MENU_BACK_PREGAME = new ItemBuilder(Material.ARROW)
@@ -86,7 +90,7 @@ public class GameMenu {
             lore.add("");
             lore.add(ChatColor.YELLOW + "Click here to select a " + group.name + "\n" + ChatColor.YELLOW + "specialization");
             ItemStack item = new ItemBuilder(group.item)
-                    .name(ChatColor.GOLD + group.name + ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + "Lv" +  ExperienceManager.getLevelString(level) + ChatColor.DARK_GRAY + "]")
+                    .name(ChatColor.GOLD + group.name + ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + "Lv" + ExperienceManager.getLevelString(level) + ChatColor.DARK_GRAY + "]")
                     .lore(lore)
                     .get();
             menu.setItem(
@@ -141,6 +145,13 @@ public class GameMenu {
                         setSelected(player, subClass);
                         ArmorManager.resetArmor(player, subClass, Warlords.getPlayerSettings(player.getUniqueId()).getWantedTeam());
                         openClassMenu(player, selectedGroup);
+                        PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
+                        AbstractPlayerClass apc = subClass.create.get();
+                        player.getInventory().setItem(1, new ItemBuilder(apc.getWeapon().getItem(playerSettings.getWeaponSkins()
+                                .getOrDefault(subClass, Weapons.FELFLAME_BLADE).item)).name("§aWeapon Skin Preview")
+                                .lore("")
+                                .get());
+
                     }
             );
         }
@@ -227,6 +238,11 @@ public class GameMenu {
                                     .getOrDefault(selectedClass, Weapons.FELFLAME_BLADE).item)).name("§aWeapon Skin Preview")
                                     .lore("")
                                     .get());
+                            Warlords.newChain().async(() -> {
+                                DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
+                                databasePlayer.getSpec(selectedClass).setWeapon(weapon);
+                                DatabaseManager.updatePlayerAsync(databasePlayer);
+                            }).execute();
                         } else {
                             player.sendMessage(ChatColor.RED + "This weapon skin has not been unlocked yet!");
                         }
@@ -310,6 +326,15 @@ public class GameMenu {
                         } else if (helmet == Helmets.SIMPLE_SHAMAN_HELMET || helmet == Helmets.GREATER_SHAMAN_HELMET || helmet == Helmets.MASTERWORK_SHAMAN_HELMET || helmet == Helmets.LEGENDARY_SHAMAN_HELMET) {
                             Helmets.setSelectedShaman(player, helmet);
                         }
+                        List<Helmets> selectedHelmets = Helmets.getSelected(player);
+                        Warlords.newChain().async(() -> {
+                            DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
+                            databasePlayer.getMage().setHelmet(selectedHelmets.get(0));
+                            databasePlayer.getWarrior().setHelmet(selectedHelmets.get(1));
+                            databasePlayer.getPaladin().setHelmet(selectedHelmets.get(2));
+                            databasePlayer.getShaman().setHelmet(selectedHelmets.get(3));
+                            DatabaseManager.updatePlayerAsync(databasePlayer);
+                        }).execute();
                         openArmorMenu(player, pageNumber);
                     }
             );
@@ -346,6 +371,15 @@ public class GameMenu {
                         } else if (armorSet == ArmorSets.SIMPLE_CHESTPLATE_SHAMAN || armorSet == ArmorSets.GREATER_CHESTPLATE_SHAMAN || armorSet == ArmorSets.MASTERWORK_CHESTPLATE_SHAMAN) {
                             ArmorSets.setSelectedShaman(player, armorSet);
                         }
+                        List<ArmorSets> armorSetsList = ArmorSets.getSelected(player);
+                        Warlords.newChain().async(() -> {
+                            DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
+                            databasePlayer.getMage().setArmor(armorSetsList.get(0));
+                            databasePlayer.getWarrior().setArmor(armorSetsList.get(1));
+                            databasePlayer.getPaladin().setArmor(armorSetsList.get(2));
+                            databasePlayer.getShaman().setArmor(armorSetsList.get(3));
+                            DatabaseManager.updatePlayerAsync(databasePlayer);
+                        }).execute();
                         openArmorMenu(player, pageNumber);
                     }
             );
@@ -590,7 +624,7 @@ public class GameMenu {
                 meleeDamageMax = temp;
             }
 
-            String displayScore = "§7Your weapon score is §a" + Utils.formatOptionalTenths(score * 100);
+            String displayScore = "§7Your weapon score is §a" + NumberFormat.formatOptionalTenths(score * 100);
 
             PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
             Classes selectedClass = playerSettings.getSelectedClass();
@@ -624,11 +658,11 @@ public class GameMenu {
             m.getInventory().setItem(e.getRawSlot(), weapon);
 
             if (score > 0.85) {
-                Bukkit.broadcastMessage("§6" + player.getDisplayName() + " §frolled a weapon with a total score of §6" + Utils.formatOptionalTenths(score * 100) + "§f!");
+                Bukkit.broadcastMessage("§6" + player.getDisplayName() + " §frolled a weapon with a total score of §6" + NumberFormat.formatOptionalTenths(score * 100) + "§f!");
             }
 
             if (score < 0.15) {
-                Bukkit.broadcastMessage("§6" + player.getDisplayName() + " §frolled a weapon with a total score of §c" + Utils.formatOptionalTenths(score * 100) + "§f!");
+                Bukkit.broadcastMessage("§6" + player.getDisplayName() + " §frolled a weapon with a total score of §c" + NumberFormat.formatOptionalTenths(score * 100) + "§f!");
             }
         });
 

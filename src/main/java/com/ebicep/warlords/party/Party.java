@@ -2,7 +2,7 @@ package com.ebicep.warlords.party;
 
 import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.util.Utils;
+import com.ebicep.warlords.util.ChatUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -19,6 +19,7 @@ public class Party {
     private final List<UUID> moderators = new ArrayList<>(); //list of moderators
     private final HashMap<UUID, Boolean> members = new HashMap<>(); //members include leader and moderators
     private boolean isOpen;
+    private boolean allInvite = false;
     private final List<Poll> polls = new ArrayList<>(); //in the future allow for multiple polls at once?
     private final HashMap<UUID, Integer> invites = new HashMap<>();
     private final HashMap<UUID, Integer> disconnects = new HashMap<>();
@@ -198,6 +199,14 @@ public class Party {
         }
     }
 
+    public boolean isAllInvite() {
+        return allInvite;
+    }
+
+    public void setAllInvite(boolean allInvite) {
+        this.allInvite = allInvite;
+    }
+
     public void afk(UUID uuid) {
         if (members.get(uuid)) {
             //now afk
@@ -211,7 +220,7 @@ public class Party {
 
     public void promote(String name) {
         UUID uuid = Bukkit.getOfflinePlayer(name).getUniqueId();
-        if(moderators.contains(uuid)) {
+        if (moderators.contains(uuid)) {
             transfer(name);
         } else {
             moderators.add(uuid);
@@ -234,14 +243,14 @@ public class Party {
     public static void sendMessageToPlayer(Player partyMember, String message, boolean withBorder, boolean centered) {
         if (centered) {
             if (withBorder) {
-                Utils.sendCenteredMessage(partyMember, ChatColor.BLUE.toString() + ChatColor.BOLD + "------------------------------------------");
+                ChatUtils.sendCenteredMessage(partyMember, ChatColor.BLUE.toString() + ChatColor.BOLD + "------------------------------------------");
             }
             String[] messages = message.split("\n");
             for (String s : messages) {
-                Utils.sendCenteredMessage(partyMember, s);
+                ChatUtils.sendCenteredMessage(partyMember, s);
             }
             if (withBorder) {
-                Utils.sendCenteredMessage(partyMember, ChatColor.BLUE.toString() + ChatColor.BOLD + "------------------------------------------");
+                ChatUtils.sendCenteredMessage(partyMember, ChatColor.BLUE.toString() + ChatColor.BOLD + "------------------------------------------");
             }
         } else {
             if (withBorder) {
