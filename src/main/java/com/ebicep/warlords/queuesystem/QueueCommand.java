@@ -46,6 +46,7 @@ public class QueueCommand implements CommandExecutor {
                 if (sender.isOp()) {
                     QueueManager.queue.clear();
                     QueueManager.futureQueue.clear();
+                    QueueManager.sendNewQueue();
                     sender.sendMessage(ChatColor.GREEN + "Queue cleared");
                 } else {
                     sender.sendMessage(ChatColor.RED + "Insufficient Permissions");

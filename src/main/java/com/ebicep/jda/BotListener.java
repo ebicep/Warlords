@@ -193,7 +193,7 @@ public class BotListener extends ListenerAdapter implements Listener {
                 if (member != null) {
                     String playerName = member.getEffectiveName();
                     if (queueCommand.equalsIgnoreCase("-queue")) {
-                        textChannel.sendMessage(QueueManager.getQueueDiscord()).queue(QueueManager.queueMessages::add);
+                        QueueManager.sendNewQueue();
                     } else if (queueCommand.startsWith("-queue") && args.length > 0) {
                         switch (args[1]) {
                             case "join": {

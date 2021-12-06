@@ -302,6 +302,7 @@ public class PartyCommand implements CommandExecutor {
                                         Bukkit.dispatchCommand(sender, "p invite " + Bukkit.getPlayer(uuid).getName());
                                     });
                                     QueueManager.queue.removeIf(uuid -> Bukkit.getPlayer(uuid) == null);
+                                    QueueManager.sendNewQueue();
                                 }
                             }
                             return true;
