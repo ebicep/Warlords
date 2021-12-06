@@ -4,6 +4,8 @@ import com.ebicep.warlords.database.*;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.DatabaseSpecialization;
+import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsClass;
 import com.ebicep.warlords.util.ChatUtils;
 import com.ebicep.warlords.util.NumberFormat;
 import org.bson.Document;
@@ -257,7 +259,8 @@ public class ExperienceManager {
 //    }
 
     public static long getExperienceForClass(UUID uuid, ClassesGroup classesGroup) {
-        return DatabaseManager.playerService.findByUUID(uuid).getClass(classesGroup).getExperience();
+        DatabaseWarlordsClass databaseWarlordsClass = DatabaseManager.playerService.findByUUID(uuid).getClass(classesGroup);
+        return databaseWarlordsClass == null ? 0L : databaseWarlordsClass.getExperience();
     }
 
     public static int getLevelForClass(UUID uuid, ClassesGroup classesGroup) {
@@ -277,7 +280,8 @@ public class ExperienceManager {
     }
 
     private static long getExperienceFromSpec(UUID uuid, Classes classes) {
-        return DatabaseManager.playerService.findByUUID(uuid).getSpec(classes).getExperience();
+        DatabaseSpecialization databaseSpecialization = DatabaseManager.playerService.findByUUID(uuid).getSpec(classes);
+        return databaseSpecialization == null ? 0L : databaseSpecialization.getExperience();
     }
 
     public static String getLevelString(int level) {
