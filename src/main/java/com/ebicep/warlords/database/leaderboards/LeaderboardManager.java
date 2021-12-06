@@ -125,13 +125,13 @@ public class LeaderboardManager {
         leaderboards.add(new Leaderboard("Aquamancer Wins", new Location(world, -2614.5, 53, 749.5),
                 (o -> o.getMage().getAquamancer().getWins()),
                 databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getMage().getAquamancer().getWins())));
-        leaderboards.add(new Leaderboard("Thunderlord Wins", new Location(world, -2614.5, 52, 706.5),
+        leaderboards.add(new Leaderboard("Thunderlord Wins", new Location(world, -2614.5, 53, 707.5),
                 (o -> o.getShaman().getThunderlord().getWins()),
                 databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getShaman().getThunderlord().getWins())));
-        leaderboards.add(new Leaderboard("Spiritguard Wins", new Location(world, -2608.5, 52, 704.5),
+        leaderboards.add(new Leaderboard("Spiritguard Wins", new Location(world, -2608.5, 53, 704.5),
                 (o -> o.getShaman().getSpiritguard().getWins()),
                 databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getShaman().getSpiritguard().getWins())));
-        leaderboards.add(new Leaderboard("Earthwarden Wins", new Location(world, -2602.5, 52, 706.5),
+        leaderboards.add(new Leaderboard("Earthwarden Wins", new Location(world, -2602.5, 53, 707.5),
                 (o -> o.getShaman().getEarthwarden().getWins()),
                 databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getShaman().getEarthwarden().getWins())));
 
