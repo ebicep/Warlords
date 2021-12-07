@@ -18,7 +18,8 @@ public class BotCommands implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
-        if(!sender.isOp()) {
+
+        if (!sender.hasPermission("warlords.game.bot")) {
             sender.sendMessage(ChatColor.RED + "Insufficient Permissions!");
             return true;
         }

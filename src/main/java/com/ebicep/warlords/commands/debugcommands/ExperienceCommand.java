@@ -15,6 +15,7 @@ public class ExperienceCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
 
         if (!sender.hasPermission("warlords.exp.give")) {
+            sender.sendMessage("§cYou do not have permission to do that.");
             return true;
         }
 

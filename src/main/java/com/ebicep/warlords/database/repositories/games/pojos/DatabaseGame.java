@@ -346,7 +346,7 @@ public class DatabaseGame {
 
             //sending message if player information remained the same
             for (WarlordsPlayer value : PlayerFilter.playingGame(gameState.getGame())) {
-                if (value.getEntity().isOp()) {
+                if (value.getEntity().hasPermission("warlords.database.messagefeed")) {
                     if (updatePlayerStats) {
                         value.sendMessage(ChatColor.GREEN + "This game was added to the database and player information was updated");
                     } else {

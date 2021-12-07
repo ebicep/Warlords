@@ -17,6 +17,7 @@ import com.ebicep.warlords.maps.flags.PlayerFlagLocation;
 import com.ebicep.warlords.maps.flags.SpawnFlagLocation;
 import com.ebicep.warlords.maps.flags.WaitingFlagLocation;
 import com.ebicep.warlords.maps.state.EndState;
+import com.ebicep.warlords.perimissions.PermissionHandler;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.util.*;
 import net.minecraft.server.v1_8_R3.EntityLiving;
@@ -127,7 +128,7 @@ public class WarlordsEvents implements Listener {
                     .getOrDefault(selectedClass, Weapons.FELFLAME_BLADE).item)).name("§aWeapon Skin Preview")
                     .lore("")
                     .get());
-            if (player.isOp()) {
+            if (player.hasPermission("warlords.game.debug")) {
                 player.getInventory().setItem(3, new ItemBuilder(Material.EMERALD).name("§aDebug Menu").get());
             }
 
@@ -515,14 +516,42 @@ public class WarlordsEvents implements Listener {
         try {
             // We need to do this in a callSyncMethod, because we need it to happen in the main thread. or else weird bugs can happen in other threads
             Bukkit.getScheduler().callSyncMethod(Warlords.getInstance(), () -> {
+
                 if (!Warlords.playerChatChannels.containsKey(uuid)) {
                     Warlords.playerChatChannels.put(uuid, ChatChannels.ALL);
                 }
+
+                String prefix = "";
+                ChatColor prefixColor = ChatColor.WHITE;
+
+                if (PermissionHandler.isDefault(player)) {
+                    prefixColor = ChatColor.GRAY;
+                    prefix = prefixColor + "[GUEST] ";
+                } else if (PermissionHandler.isCompszn(player)) {
+                    prefixColor = ChatColor.AQUA;
+                    prefix = prefixColor + "[SZN] ";
+                } else if (PermissionHandler.isGamestarter(player)) {
+                    prefixColor = ChatColor.YELLOW;
+                    prefix = prefixColor + "[GS] ";
+                } else if (PermissionHandler.isContentCreator(player)) {
+                    prefixColor = ChatColor.LIGHT_PURPLE;
+                    prefix = prefixColor + "[CT] ";
+                } else if (PermissionHandler.isCoordinator(player)) {
+                    prefixColor = ChatColor.GOLD;
+                    prefix = prefixColor + "[C] ";
+                } else if (PermissionHandler.isAdmin(player)) {
+                    prefixColor = ChatColor.DARK_AQUA;
+                    prefix = prefixColor + "[Dev] ";
+                } else {
+                    System.out.println(ChatColor.RED + "[WARLORDS] Player has invalid rank or permissions have not been set up properly!");
+                }
+
                 switch (Warlords.playerChatChannels.getOrDefault(uuid, ChatChannels.ALL)) {
                     case ALL:
                         WarlordsPlayer wp = Warlords.getPlayer(player);
                         PlayerSettings playerSettings = Warlords.getPlayerSettings(uuid);
                         int level = ExperienceManager.getLevelForSpec(uuid, playerSettings.getSelectedClass());
+
                         if (wp == null) {
                             e.setFormat(ChatColor.DARK_GRAY + "[" +
                                     ChatColor.GOLD + Classes.getClassesGroup(playerSettings.getSelectedClass()).name.toUpperCase().substring(0, 3) +
@@ -531,8 +560,10 @@ public class WarlordsEvents implements Listener {
                                     ChatColor.DARK_GRAY + "][" +
                                     playerSettings.getSelectedClass().specType.getColoredSymbol() +
                                     ChatColor.DARK_GRAY + "] " +
-                                    (player.isOp() ? ChatColor.GOLD + "[C] " : "") +
-                                    (player.isOp() ? ChatColor.GOLD : ChatColor.AQUA) + "%1$s" +
+
+                                    (prefix) +
+                                    (prefixColor) + "%1$s" +
+
                                     ChatColor.WHITE + ": %2$s"
                             );
                             e.getRecipients().removeIf(Warlords::hasPlayer);
@@ -548,8 +579,10 @@ public class WarlordsEvents implements Listener {
                                 playerSettings.getSelectedClass().specType.getColoredSymbol() +
                                 ChatColor.DARK_GRAY + "] " +
                                 (wp.isDeath() ? ChatColor.GRAY + "[SPECTATOR] " : "") +
-                                (player.isOp() ? ChatColor.GOLD + "[C] " : "") +
-                                (player.isOp() ? ChatColor.GOLD : ChatColor.AQUA) + "%1$s" +
+
+                                (prefix) +
+                                (prefixColor) + "%1$s" +
+
                                 ChatColor.WHITE + ": %2$s"
                         );
                         if (!(wp.getGame().getState() instanceof EndState)) {
@@ -559,7 +592,7 @@ public class WarlordsEvents implements Listener {
                     case PARTY:
                         if (Warlords.partyManager.getPartyFromAny(uuid).isPresent()) {
                             e.setFormat(ChatColor.BLUE + "Party" + ChatColor.DARK_GRAY + " > " +
-                                    (player.isOp() ? ChatColor.GOLD : ChatColor.AQUA) + "%1$s" +
+                                    (prefixColor) + "%1$s" +
                                     ChatColor.WHITE + ": %2$s"
                             );
                             e.getRecipients().retainAll(Warlords.partyManager.getPartyFromAny(uuid).get().getAllPartyPeoplePlayerOnline());
