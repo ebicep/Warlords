@@ -1,7 +1,6 @@
 package com.ebicep.warlords.party;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.perimissions.PermissionHandler;
 import com.ebicep.warlords.queuesystem.QueueManager;
 import com.ebicep.warlords.util.ChatUtils;
 import net.md_5.bungee.api.chat.ClickEvent;

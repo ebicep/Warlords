@@ -1,4 +1,4 @@
-package com.ebicep.warlords.perimissions;
+package com.ebicep.warlords.permissions;
 
 import org.bukkit.entity.Player;
 
