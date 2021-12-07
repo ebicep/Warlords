@@ -49,7 +49,7 @@ public class OrderOfEviscerate extends AbstractAbility {
         player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, duration * 20, 0, true, false), true);
         wp.updateArmor();
         for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), Sound.GHAST_FIREBALL, 2, 1.2f);
+            player1.playSound(player.getLocation(), Sound.GHAST_FIREBALL, 2, 0.7f);
         }
 
         wp.getGame().getGameTasks().put(

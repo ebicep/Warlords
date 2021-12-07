@@ -25,5 +25,8 @@ public class CrossVital extends AbstractAbility {
     @Override
     public void onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
 
+        for (Player player1 : player.getWorld().getPlayers()) {
+            player1.playSound(player.getLocation(), "warrior.berserk.activation", 10, 0.1f);
+        }
     }
 }

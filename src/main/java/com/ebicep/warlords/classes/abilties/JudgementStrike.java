@@ -11,7 +11,7 @@ public class JudgementStrike extends AbstractStrikeBase {
     int attacksDone = 0;
 
     public JudgementStrike() {
-        super("Judgement Strike", 326, 441, 0, 40, 20, 200);
+        super("Judgement Strike", 326, 441, 0, 70, 20, 200);
     }
 
     @Override

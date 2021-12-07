@@ -6,7 +6,7 @@ import com.ebicep.warlords.classes.rogue.AbstractRogue;
 public class Assassin extends AbstractRogue {
 
     public Assassin() {
-        super("Assassin", 5750, 355, 0,
+        super("Assassin", 5750, 305, 0,
                 new JudgementStrike(),
                 new IncendiaryCurse(),
                 new BlindingAssault(),

@@ -52,7 +52,7 @@ public class BlindingAssault extends AbstractAbility {
 
                     @Override
                     public void run() {
-                        for (int i = 0; i < 10; i++) {
+                        for (int i = 0; i < 4; i++) {
                             ParticleEffect.REDSTONE.display(
                                     new ParticleEffect.OrdinaryColor(255, 0, 255),
                                     playerLoc.clone().add((Math.random() * 2) - 1, 1.2 + (Math.random() * 2) - 1, (Math.random() * 2) - 1),
