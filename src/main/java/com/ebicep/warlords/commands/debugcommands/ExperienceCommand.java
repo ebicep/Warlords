@@ -14,7 +14,7 @@ public class ExperienceCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
 
-        if (!sender.isOp()) {
+        if (!sender.hasPermission("warlords.exp.give")) {
             return true;
         }
 

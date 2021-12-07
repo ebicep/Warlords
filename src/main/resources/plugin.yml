@@ -62,6 +62,9 @@ commands:
   effect:
     description: Not happening.
     usage: Not happening.
+  gamemode:
+    description: Not happening.
+    usage: Not happening.
   bot:
     description: Runs bot commands
     usage: /bot

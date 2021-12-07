@@ -13,9 +13,11 @@ public class RecordAverageDamage implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
         WarlordsPlayer warlordsPlayer = BaseCommand.requireWarlordsPlayer(sender);
-        if(!sender.isOp()) {
+
+        if (!sender.hasPermission("warlords.game.recordaverage")) {
             return true;
         }
+
         if(warlordsPlayer != null) {
             warlordsPlayer.sendMessage(ChatColor.GREEN + "Average Damage Taken = " + ChatColor.RED + warlordsPlayer.getRecordDamage().stream()
                     .mapToDouble(Float::floatValue)

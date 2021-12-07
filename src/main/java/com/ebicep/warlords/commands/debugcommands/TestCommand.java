@@ -39,7 +39,7 @@ public class TestCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
 
-        if (!sender.isOp()) {
+        if (!sender.hasPermission("warlords.game.test")) {
             return true;
         }
         WarlordsPlayer warlordsPlayer = BaseCommand.requireWarlordsPlayer(sender);

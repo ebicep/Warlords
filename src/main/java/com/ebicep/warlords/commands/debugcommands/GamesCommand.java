@@ -15,7 +15,7 @@ public class GamesCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
 
-        if(!sender.isOp()) {
+        if (!sender.hasPermission("warlords.game.lookupgame")) {
             return true;
         }
 

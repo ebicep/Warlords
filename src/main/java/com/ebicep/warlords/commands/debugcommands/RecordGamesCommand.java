@@ -13,7 +13,7 @@ public class RecordGamesCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
 
-        if(!sender.isOp()) {
+        if (!sender.hasPermission("warlords.game.recordgames")) {
             return true;
         }
 

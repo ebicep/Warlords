@@ -14,7 +14,7 @@ public class EndgameCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
 
-        if (!sender.isOp()) {
+        if (!sender.hasPermission("warlords.game.end")) {
             sender.sendMessage("§cYou do not have permission to do that.");
             return true;
         }

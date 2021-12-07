@@ -16,7 +16,7 @@ public class MyLocationCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
 
-        if(!sender.isOp()) {
+        if (!sender.hasPermission("warlords.game.location")) {
             return true;
         }
 

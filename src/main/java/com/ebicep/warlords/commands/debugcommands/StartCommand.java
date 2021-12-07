@@ -29,10 +29,12 @@ public class StartCommand implements TabExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
 
-        if (!sender.isOp()) {
+
+        if (!sender.hasPermission("warlords.game.start")) {
             sender.sendMessage("§cYou do not have permission to do that.");
             return true;
         }
+
         Game game = Warlords.game; // In the future allow the user to select a game player
         GameMap map;
 

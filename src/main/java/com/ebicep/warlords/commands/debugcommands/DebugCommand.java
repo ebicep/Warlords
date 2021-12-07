@@ -27,7 +27,7 @@ public class DebugCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
 
-        if (!sender.isOp()) {
+        if (!sender.hasPermission("warlords.game.debug")) {
             sender.sendMessage("§cYou do not have permission to do that.");
             return true;
         }
