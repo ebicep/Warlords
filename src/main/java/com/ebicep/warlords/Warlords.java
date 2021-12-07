@@ -677,15 +677,15 @@ public class Warlords extends JavaPlugin {
                                 orb.remove();
                                 itr.remove();
 
-                                float minHeal = 250;
-                                float maxHeal = 375;
+                                float minHeal = 200;
+                                float maxHeal = 300;
                                 if (Warlords.getPlayerSettings(orb.getOwner().getUuid()).getClassesSkillBoosts() == ClassesSkillBoosts.ORBS_OF_LIFE) {
                                     minHeal *= 1.2;
                                     maxHeal *= 1.2;
                                 }
-                                //BASE                           = 240 - 360
-                                //BASE + WEAP BOOST              = 288 - 432 (x1.2)
-                                //BASE + TIME LIVED              = 300 - 450 (x1.25 = 6.5 seconds)
+                                //BASE                           = 200 - 300
+                                //BASE + WEAP BOOST              = 240 - 360 (x1.2)
+                                //BASE + TIME LIVED              = 250 - 375 (x1.25 = 6.5 seconds)
                                 //BASE + WEAP BOOST + TIME LIVED = 360 - 540 (x1.5 = x1.2 * x1.25)
 
                                 //increasing heal for low long orb lived for (up to +25%)
