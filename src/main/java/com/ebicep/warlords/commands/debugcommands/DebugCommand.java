@@ -6,21 +6,13 @@ import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.state.TimerDebugAble;
 import com.ebicep.warlords.menu.DebugMenu;
 import com.ebicep.warlords.player.WarlordsPlayer;
-import com.ebicep.warlords.util.PacketUtils;
-import net.minecraft.server.v1_8_R3.EntityLiving;
-import net.minecraft.server.v1_8_R3.GenericAttributes;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
-import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitRunnable;
 
 public class DebugCommand implements CommandExecutor {
 

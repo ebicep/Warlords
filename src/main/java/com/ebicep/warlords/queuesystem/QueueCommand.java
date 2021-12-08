@@ -1,7 +1,6 @@
 package com.ebicep.warlords.queuesystem;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.party.PartyManager;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

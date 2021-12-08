@@ -6,7 +6,10 @@ import org.bukkit.Location;
 
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 
 public class Leaderboard {

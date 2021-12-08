@@ -2,8 +2,8 @@ package com.ebicep.warlords.database.repositories.games.pojos;
 
 import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.database.leaderboards.LeaderboardManager;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.leaderboards.LeaderboardManager;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
 import com.ebicep.warlords.maps.Team;

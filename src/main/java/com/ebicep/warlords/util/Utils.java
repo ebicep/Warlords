@@ -1,6 +1,5 @@
 package com.ebicep.warlords.util;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -13,11 +12,11 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class Utils {
 

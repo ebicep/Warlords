@@ -16,7 +16,7 @@ public class ChainHeal extends AbstractChainBase {
     private final int bounceRange = 10;
 
     public ChainHeal() {
-        super("Chain Heal", 508, 686, 7.99f, 40, 20, 175);
+        super("Chain Heal", 521, 703, 7.99f, 40, 20, 175);
     }
 
     @Override
@@ -56,30 +56,9 @@ public class ChainHeal extends AbstractChainBase {
                         .excluding(wp, nearPlayer)
                 ) {
                     chain(nearPlayer.getLocation(), chainPlayerOne.getLocation());
-                    chainPlayerOne.healHealth(wp, name, minDamageHeal * 0.9f, maxDamageHeal * 0.9f, critChance, critMultiplier, false);
+                    chainPlayerOne.healHealth(wp, name, minDamageHeal * 0.8f, maxDamageHeal * 0.8f, critChance, critMultiplier, false);
                     hitCounter++;
 
-                    for (WarlordsPlayer chainPlayerTwo : PlayerFilter
-                            .entitiesAround(chainPlayerOne, bounceRange, bounceRange, bounceRange)
-                            .aliveTeammatesOf(wp)
-                            .excluding(wp, nearPlayer, chainPlayerOne)
-                    ) {
-                        chain(chainPlayerOne.getLocation(), chainPlayerTwo.getLocation());
-                        chainPlayerTwo.healHealth(wp, name, minDamageHeal * 0.8f, maxDamageHeal * 0.8f, critChance, critMultiplier, false);
-                        hitCounter++;
-
-                        for (WarlordsPlayer chainPlayerThree : PlayerFilter
-                                .entitiesAround(chainPlayerTwo, bounceRange, bounceRange, bounceRange)
-                                .aliveTeammatesOf(wp)
-                                .excluding(wp, nearPlayer, chainPlayerOne, chainPlayerTwo)
-                        ) {
-                            chain(chainPlayerTwo.getLocation(), chainPlayerThree.getLocation());
-                            chainPlayerThree.healHealth(wp, name, minDamageHeal * 0.7f, maxDamageHeal * 0.7f, critChance, critMultiplier, false);
-                            hitCounter++;
-                            break;
-                        }
-                        break;
-                    }
                     break;
                 }
                 break;

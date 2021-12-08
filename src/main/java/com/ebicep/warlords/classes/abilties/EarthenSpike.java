@@ -1,6 +1,5 @@
 package com.ebicep.warlords.classes.abilties;
 
-import com.ebicep.customentities.CustomFallingBlock;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.events.WarlordsEvents;

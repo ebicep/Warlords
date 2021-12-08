@@ -1,7 +1,7 @@
 package com.ebicep.warlords.player;
 
-import com.ebicep.warlords.database.*;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.FutureMessageManager;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
 import com.ebicep.warlords.util.ChatUtils;

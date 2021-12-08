@@ -19,8 +19,6 @@ import org.bukkit.entity.Player;
 
 import java.util.*;
 
-import static com.mongodb.client.model.Sorts.descending;
-
 public class LeaderboardManager {
 
     public static final World world = Bukkit.getWorld("MainLobby");
