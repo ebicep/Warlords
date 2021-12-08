@@ -58,18 +58,21 @@ public class HealingRain extends AbstractAbility {
 
             @Override
             public void run() {
-                if (wp.isAlive() && player.isSneaking() && !wasSneaking) {
-                    if (recastCooldown != 0) {
-                        player.sendMessage(ChatColor.RED + "Your recast ability is on cooldown, please wait 2 seconds!");
-                    } else {
-                        player.playSound(player.getLocation(), "mage.timewarp.teleport", 2, 1.35f);
-                        player.sendMessage("§7You moved your §aHealing Rain §7to your current location.");
-                        damageHealCircle.setLocation(player.getLocation());
-                        recastCooldown = 2;
-                    }
-                }
+                if (!wp.getGame().isGameFreeze()) {
 
-                wasSneaking = player.isSneaking();
+                    if (wp.isAlive() && player.isSneaking() && !wasSneaking) {
+                        if (recastCooldown != 0) {
+                            player.sendMessage(ChatColor.RED + "Your recast ability is on cooldown, please wait 2 seconds!");
+                        } else {
+                            player.playSound(player.getLocation(), "mage.timewarp.teleport", 2, 1.35f);
+                            player.sendMessage("§7You moved your §aHealing Rain §7to your current location.");
+                            damageHealCircle.setLocation(player.getLocation());
+                            recastCooldown = 2;
+                        }
+                    }
+
+                    wasSneaking = player.isSneaking();
+                }
             }
         }.runTaskTimer(Warlords.getInstance(), 0, 0);
         wp.getGame().getGameTasks().put(rainSneakAbility, System.currentTimeMillis());
@@ -79,28 +82,31 @@ public class HealingRain extends AbstractAbility {
 
                     @Override
                     public void run() {
-                        damageHealCircle.setDuration(damageHealCircle.getDuration() - 1);
+                        if (!wp.getGame().isGameFreeze()) {
 
-                        PlayerFilter.entitiesAround(damageHealCircle.getLocation(), damageHealCircle.getRadius(), 8, damageHealCircle.getRadius())
-                                .aliveTeammatesOf(wp)
-                                .forEach((warlordsPlayer) -> {
-                                    warlordsPlayer.healHealth(
-                                            damageHealCircle.getWarlordsPlayer(),
-                                            damageHealCircle.getName(),
-                                            damageHealCircle.getMinDamage(),
-                                            damageHealCircle.getMaxDamage(),
-                                            damageHealCircle.getCritChance(),
-                                            damageHealCircle.getCritMultiplier(),
-                                            false);
-                                });
-                        if (damageHealCircle.getDuration() < 0) {
-                            this.cancel();
-                            task.cancel();
-                            rainSneakAbility.cancel();
-                        }
+                            damageHealCircle.setDuration(damageHealCircle.getDuration() - 1);
 
-                        if (recastCooldown != 0) {
-                            recastCooldown--;
+                            PlayerFilter.entitiesAround(damageHealCircle.getLocation(), damageHealCircle.getRadius(), 8, damageHealCircle.getRadius())
+                                    .aliveTeammatesOf(wp)
+                                    .forEach((warlordsPlayer) -> {
+                                        warlordsPlayer.healHealth(
+                                                damageHealCircle.getWarlordsPlayer(),
+                                                damageHealCircle.getName(),
+                                                damageHealCircle.getMinDamage(),
+                                                damageHealCircle.getMaxDamage(),
+                                                damageHealCircle.getCritChance(),
+                                                damageHealCircle.getCritMultiplier(),
+                                                false);
+                                    });
+                            if (damageHealCircle.getDuration() < 0) {
+                                this.cancel();
+                                task.cancel();
+                                rainSneakAbility.cancel();
+                            }
+
+                            if (recastCooldown != 0) {
+                                recastCooldown--;
+                            }
                         }
 
                     }

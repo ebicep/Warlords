@@ -53,13 +53,17 @@ public class Boulder extends AbstractAbility {
 
                     @Override
                     public void run() {
-                        quarterStep(false);
-                        quarterStep(false);
-                        quarterStep(false);
-                        quarterStep(false);
-                        quarterStep(false);
-                        quarterStep(false);
-                        quarterStep(true);
+                        if (!wp.getGame().isGameFreeze()) {
+
+                            quarterStep(false);
+                            quarterStep(false);
+                            quarterStep(false);
+                            quarterStep(false);
+                            quarterStep(false);
+                            quarterStep(false);
+                            quarterStep(true);
+
+                        }
                     }
 
                     private void quarterStep(boolean last) {

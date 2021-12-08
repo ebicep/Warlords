@@ -90,33 +90,34 @@ public class SeismicWave extends AbstractAbility {
 
                     @Override
                     public void run() {
+                        if (!wp.getGame().isGameFreeze()) {
 
-                        for (List<Location> fallingBlockLocation : fallingBlockLocations) {
-                            for (Location location : fallingBlockLocation) {
-                                if (location.getWorld().getBlockAt(location.clone().add(0, 1, 0)).getType() == Material.AIR) {
-                                    FallingBlock fallingBlock = addFallingBlock(location);
-                                    customFallingBlocks.add(new CustomFallingBlock(fallingBlock, wp, SeismicWave.this));
-                                    WarlordsEvents.addEntityUUID(fallingBlock);
+                            for (List<Location> fallingBlockLocation : fallingBlockLocations) {
+                                for (Location location : fallingBlockLocation) {
+                                    if (location.getWorld().getBlockAt(location.clone().add(0, 1, 0)).getType() == Material.AIR) {
+                                        FallingBlock fallingBlock = addFallingBlock(location);
+                                        customFallingBlocks.add(new CustomFallingBlock(fallingBlock, wp, SeismicWave.this));
+                                        WarlordsEvents.addEntityUUID(fallingBlock);
+                                    }
+                                }
+                                fallingBlockLocations.remove(fallingBlockLocation);
+                                break;
+                            }
+
+                            for (int i = 0; i < customFallingBlocks.size(); i++) {
+                                CustomFallingBlock customFallingBlock = customFallingBlocks.get(i);
+                                customFallingBlock.setTicksLived(customFallingBlock.getTicksLived() + 1);
+                                if (Utils.getDistance(customFallingBlock.getFallingBlock().getLocation(), .05) <= .25 || customFallingBlock.getTicksLived() > 10) {
+                                    customFallingBlock.getFallingBlock().remove();
+                                    customFallingBlocks.remove(i);
+                                    i--;
                                 }
                             }
-                            fallingBlockLocations.remove(fallingBlockLocation);
-                            break;
-                        }
 
-                        for (int i = 0; i < customFallingBlocks.size(); i++) {
-                            CustomFallingBlock customFallingBlock = customFallingBlocks.get(i);
-                            customFallingBlock.setTicksLived(customFallingBlock.getTicksLived() + 1);
-                            if (Utils.getDistance(customFallingBlock.getFallingBlock().getLocation(), .05) <= .25 || customFallingBlock.getTicksLived() > 10) {
-                                customFallingBlock.getFallingBlock().remove();
-                                customFallingBlocks.remove(i);
-                                i--;
+                            if (fallingBlockLocations.isEmpty() && customFallingBlocks.isEmpty()) {
+                                this.cancel();
                             }
                         }
-
-                        if (fallingBlockLocations.isEmpty() && customFallingBlocks.isEmpty()) {
-                            this.cancel();
-                        }
-
                     }
 
                 }.runTaskTimer(Warlords.getInstance(), 0, 0),
