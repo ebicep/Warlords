@@ -389,6 +389,15 @@ public class Warlords extends JavaPlugin {
                 // EVERY TICK
                 {
                     for (WarlordsPlayer wp : players.values()) {
+                        Player player = wp.getEntity() instanceof Player ? (Player) wp.getEntity() : null;
+                        if (player != null) {
+                            //ACTION BAR
+                            if (player.getInventory().getHeldItemSlot() != 8) {
+                                wp.displayActionBar();
+                            } else {
+                                wp.displayFlagActionBar(player);
+                            }
+                        }
                         if (wp.getGame().isGameFreeze()) {
                             continue;
                         }
@@ -398,7 +407,6 @@ public class Warlords extends JavaPlugin {
                         wp.getSpeed().updateSpeed();
 
                         CooldownManager cooldownManager = wp.getCooldownManager();
-                        Player player = wp.getEntity() instanceof Player ? (Player) wp.getEntity() : null;
 
 //                        if(player != null) {
 //                            if(player.isSneaking() && player.getVehicle() instanceof Horse) {
@@ -462,14 +470,7 @@ public class Warlords extends JavaPlugin {
                         }
 
                         wp.getCooldownManager().reduceCooldowns();
-                        if (player != null) {
-                            //ACTION BAR
-                            if (player.getInventory().getHeldItemSlot() != 8) {
-                                wp.displayActionBar();
-                            } else {
-                                wp.displayFlagActionBar(player);
-                            }
-                        }
+
                         //respawn
                         if (wp.getRespawnTimer().doubleValue() == 0) {
                             wp.respawn();
@@ -512,9 +513,8 @@ public class Warlords extends JavaPlugin {
                                 if (!((UndyingArmy) cooldown.getCooldownObject()).isArmyDead(wp.getUuid())) {
                                     ((UndyingArmy) cooldown.getCooldownObject()).pop(wp.getUuid());
                                     //DROPPING FLAG
-                                    if (wp.getGameState().flags().hasFlag(wp)) {
-                                        wp.getGameState().flags().dropFlag(wp);
-                                    }
+                                    wp.getGameState().flags().dropFlag(wp);
+
                                     //sending message + check if getFrom is self
                                     if (cooldown.getFrom() == wp) {
                                         wp.sendMessage("§a\u00BB§7 " + ChatColor.LIGHT_PURPLE + "Your Undying Army revived you with temporary health. Fight until your death! Your health will decay by " + ChatColor.RED + (wp.getMaxHealth() / 10) + ChatColor.LIGHT_PURPLE + " every second.");

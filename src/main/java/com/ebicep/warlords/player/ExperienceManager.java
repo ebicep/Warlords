@@ -45,6 +45,7 @@ public class ExperienceManager {
         put("assists", new int[]{850, 600, 350});
         put("deaths", new int[]{200, 150, 100});
         put("dhp", new int[]{1000, 750, 500});
+        put("dhp_per_game", new int[]{1000, 750, 500});
         put("damage", new int[]{850, 600, 350});
         put("healing", new int[]{850, 600, 350});
         put("absorbed", new int[]{850, 600, 350});
@@ -75,7 +76,7 @@ public class ExperienceManager {
                         );
                     }
                     Document previousDocument = futureMessageDocuments.get(uuids[j]);
-                    previousDocument.getList("messages", String.class).add(ChatColor.YELLOW + "#" + (i + 2) + ". " + ChatColor.AQUA + name + ChatColor.WHITE + ": " + ChatColor.DARK_GRAY + "+" + ChatColor.DARK_AQUA + experienceGain + ChatColor.GOLD + " Universal Experience");
+                    previousDocument.getList("messages", String.class).add(ChatColor.YELLOW + "#" + (i + 1) + ". " + ChatColor.AQUA + name + ChatColor.WHITE + ": " + ChatColor.DARK_GRAY + "+" + ChatColor.DARK_AQUA + experienceGain + ChatColor.GOLD + " Universal Experience");
                     previousDocument.put("total_experience_gain", previousDocument.getLong("total_experience_gain") + experienceGain);
                 }
             }

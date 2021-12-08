@@ -156,19 +156,21 @@ public class HolyRadiance extends AbstractAbility {
 
         @Override
         public void run() {
-            if (this.target.isDead()) {
-                this.cancel();
-                return;
-            }
+            if (!owner.getGame().isGameFreeze()) {
 
-            if (target.getWorld() != armorStand.getWorld()) {
-                this.cancel();
-                return;
-            }
+                if (this.target.isDead()) {
+                    this.cancel();
+                    return;
+                }
 
-            Location targetLocation = target.getLocation();
-            Location armorStandLocation = armorStand.getLocation();
-            double distance = targetLocation.distanceSquared(armorStandLocation);
+                if (target.getWorld() != armorStand.getWorld()) {
+                    this.cancel();
+                    return;
+                }
+
+                Location targetLocation = target.getLocation();
+                Location armorStandLocation = armorStand.getLocation();
+                double distance = targetLocation.distanceSquared(armorStandLocation);
 
             if (distance < speed * speed) {
                 target.healHealth(owner, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
@@ -176,14 +178,15 @@ public class HolyRadiance extends AbstractAbility {
                 return;
             }
 
-            targetLocation.subtract(armorStandLocation);
-            //System.out.println(Math.max(speed * 3.25 / targetLocation.lengthSquared() / 2, speed / 10));
-            targetLocation.multiply(Math.max(speed * 3.25 / targetLocation.lengthSquared() / 2, speed / 10));
+                targetLocation.subtract(armorStandLocation);
+                //System.out.println(Math.max(speed * 3.25 / targetLocation.lengthSquared() / 2, speed / 10));
+                targetLocation.multiply(Math.max(speed * 3.25 / targetLocation.lengthSquared() / 2, speed / 10));
 
-            armorStandLocation.add(targetLocation);
-            this.armorStand.teleport(armorStandLocation);
+                armorStandLocation.add(targetLocation);
+                this.armorStand.teleport(armorStandLocation);
 
-            ParticleEffect.SPELL.display(0.01f, 0, 0.01f, 0.1f, 2, armorStandLocation.add(0, 1.75, 0), 500);
+                ParticleEffect.SPELL.display(0.01f, 0, 0.01f, 0.1f, 2, armorStandLocation.add(0, 1.75, 0), 500);
+            }
         }
     }
 }

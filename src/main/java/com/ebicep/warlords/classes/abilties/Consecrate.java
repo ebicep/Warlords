@@ -34,43 +34,44 @@ public class Consecrate extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(WarlordsPlayer wp, Player p) {
-        DamageHealCircle c = new DamageHealCircle(wp, p.getLocation(), radius, 5, minDamageHeal, maxDamageHeal, critChance, critMultiplier, name);
+    public void onActivate(WarlordsPlayer wp, Player player) {
+        DamageHealCircle damageHealCircle = new DamageHealCircle(wp, player.getLocation(), radius, 5, minDamageHeal, maxDamageHeal, critChance, critMultiplier, name);
         wp.subtractEnergy(energyCost);
 
-        for (Player player1 : p.getWorld().getPlayers()) {
-            player1.playSound(p.getLocation(), "paladin.consecrate.activation", 2, 1);
+        for (Player player1 : player.getWorld().getPlayers()) {
+            player1.playSound(player.getLocation(), "paladin.consecrate.activation", 2, 1);
         }
 
-        ArmorStand cs = p.getLocation().getWorld().spawn(p.getLocation().clone().add(0, -2, 0), ArmorStand.class);
-        cs.setMetadata("Consecrate - " + p.getName(), new FixedMetadataValue(Warlords.getInstance(), true));
-        cs.setGravity(false);
-        cs.setVisible(false);
-        cs.setMarker(true);
-
-        BukkitTask task = Bukkit.getScheduler().runTaskTimer(Warlords.getInstance(), c::spawn, 0, 1);
+        ArmorStand consecrate = player.getLocation().getWorld().spawn(player.getLocation().clone().add(0, -2, 0), ArmorStand.class);
+        consecrate.setMetadata("Consecrate - " + player.getName(), new FixedMetadataValue(Warlords.getInstance(), true));
+        consecrate.setGravity(false);
+        consecrate.setVisible(false);
+        consecrate.setMarker(true);
+        BukkitTask task = Bukkit.getScheduler().runTaskTimer(Warlords.getInstance(), damageHealCircle::spawn, 0, 1);
         wp.getGame().getGameTasks().put(
                 new BukkitRunnable() {
 
                     @Override
                     public void run() {
-                        c.setDuration(c.getDuration() - 1);
-                        PlayerFilter.entitiesAround(c.getLocation(), radius, 6, radius)
-                                .aliveEnemiesOf(wp)
-                                .forEach(warlordsPlayer -> {
-                                    warlordsPlayer.damageHealth(
-                                            c.getWarlordsPlayer(),
-                                            c.getName(),
-                                            c.getMinDamage(),
-                                            c.getMaxDamage(),
-                                            c.getCritChance(),
-                                            c.getCritMultiplier(),
-                                            false);
-                                });
-                        if (c.getDuration() == 0) {
-                            cs.remove();
-                            this.cancel();
-                            task.cancel();
+                        if (!wp.getGame().isGameFreeze()) {
+                            damageHealCircle.setDuration(damageHealCircle.getDuration() - 1);
+                            PlayerFilter.entitiesAround(damageHealCircle.getLocation(), radius, 6, radius)
+                                    .aliveEnemiesOf(wp)
+                                    .forEach(warlordsPlayer -> {
+                                        warlordsPlayer.damageHealth(
+                                                damageHealCircle.getWarlordsPlayer(),
+                                                damageHealCircle.getName(),
+                                                damageHealCircle.getMinDamage(),
+                                                damageHealCircle.getMaxDamage(),
+                                                damageHealCircle.getCritChance(),
+                                                damageHealCircle.getCritMultiplier(),
+                                                false);
+                                    });
+                            if (damageHealCircle.getDuration() == 0) {
+                                consecrate.remove();
+                                this.cancel();
+                                task.cancel();
+                            }
                         }
                     }
 
