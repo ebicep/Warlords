@@ -279,6 +279,7 @@ public class Game implements Runnable {
                                 ((EntityLiving) ((CraftEntity) p.getVehicle()).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(.318);
                             }
                             PacketUtils.sendTitle(p, "", "", 0, 0, 0);
+                            p.removePotionEffect(PotionEffectType.BLINDNESS);
                         });
                         this.cancel();
                     } else {
