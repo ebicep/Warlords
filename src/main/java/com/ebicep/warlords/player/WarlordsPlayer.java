@@ -586,6 +586,7 @@ public final class WarlordsPlayer {
                 }
                 addAbsorbed(Math.abs(damageValue * spec.getDamageResistance() / 100));
             }
+            cancelHealingPowerUp();
             return;
         }
 
@@ -739,10 +740,8 @@ public final class WarlordsPlayer {
                 if (isEnemy(attacker)) {
                     hitBy.put(attacker, 10);
 
-                    if (powerUpHeal) {
-                        powerUpHeal = false;
-                        sendMessage(ChatColor.GOLD + "Your §a§lHealing Powerup §6has worn off.");
-                    }
+                    cancelHealingPowerUp();
+
                     removeHorse();
                     regenTimer = 10;
 
@@ -1045,6 +1044,13 @@ public final class WarlordsPlayer {
                 OrbsOfLife.Orb orb = new OrbsOfLife.Orb(((CraftWorld) location.getWorld()).getHandle(), spawnLocation, attacker);
                 orbsOfLife.getSpawnedOrbs().add(orb);
             }
+        }
+    }
+
+    public void cancelHealingPowerUp() {
+        if (powerUpHeal) {
+            powerUpHeal = false;
+            sendMessage(ChatColor.GOLD + "Your §a§lHealing Powerup §6has worn off.");
         }
     }
 
