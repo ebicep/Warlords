@@ -228,47 +228,7 @@ public class DebugCommand implements CommandExecutor {
 
             case "freeze": {
                 if (player != null) {
-                    if (player.getGame().isGameFreeze()) {
-                        //unfreeze
-                        WarlordsPlayer finalPlayer = player;
-                        finalPlayer.getGame().forEachOnlinePlayer((p, team) -> {
-                            p.removePotionEffect(PotionEffectType.BLINDNESS);
-                            p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 100, 100000));
-                        });
-                        new BukkitRunnable() {
-                            int counter = 0;
-
-                            @Override
-                            public void run() {
-                                if (counter >= 5) {
-                                    finalPlayer.getGame().setGameFreeze(false);
-                                    finalPlayer.getGame().forEachOnlinePlayer((p, team) -> {
-                                        if (p.getVehicle() != null && p.getVehicle() instanceof Horse) {
-                                            ((EntityLiving) ((CraftEntity) p.getVehicle()).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(.318);
-                                        }
-                                        PacketUtils.sendTitle(p, "", "", 0, 0, 0);
-                                    });
-                                    this.cancel();
-                                } else {
-                                    finalPlayer.getGame().forEachOnlinePlayer((p, team) -> {
-                                        PacketUtils.sendTitle(p, ChatColor.RED + "Resuming in... " + ChatColor.GREEN + (5 - counter), "", 0, 40, 0);
-                                    });
-                                    counter++;
-                                }
-                            }
-                        }.runTaskTimer(Warlords.getInstance(), 0, 20);
-
-                    } else {
-                        //freeze
-                        player.getGame().setGameFreeze(true);
-                        player.getGame().forEachOnlinePlayer((p, team) -> {
-                            if (p.getVehicle() instanceof Horse) {
-                                ((EntityLiving) ((CraftEntity) p.getVehicle()).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0);
-                            }
-                            p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 9999999, 100000));
-                            PacketUtils.sendTitle(p, ChatColor.RED + "Game Paused", "", 0, 9999999, 0);
-                        });
-                    }
+                    player.getGame().freeze(false);
                 }
             }
 

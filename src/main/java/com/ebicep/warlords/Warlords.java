@@ -389,6 +389,15 @@ public class Warlords extends JavaPlugin {
                 // EVERY TICK
                 {
                     for (WarlordsPlayer warlordsPlayer : players.values()) {
+                        Player player = warlordsPlayer.getEntity() instanceof Player ? (Player) warlordsPlayer.getEntity() : null;
+                        if (player != null) {
+                            //ACTION BAR
+                            if (player.getInventory().getHeldItemSlot() != 8) {
+                                warlordsPlayer.displayActionBar();
+                            } else {
+                                warlordsPlayer.displayFlagActionBar(player);
+                            }
+                        }
                         if (warlordsPlayer.getGame().isGameFreeze()) {
                             continue;
                         }
@@ -398,7 +407,6 @@ public class Warlords extends JavaPlugin {
                         warlordsPlayer.getSpeed().updateSpeed();
 
                         CooldownManager cooldownManager = warlordsPlayer.getCooldownManager();
-                        Player player = warlordsPlayer.getEntity() instanceof Player ? (Player) warlordsPlayer.getEntity() : null;
 
 //                        if(player != null) {
 //                            if(player.isSneaking() && player.getVehicle() instanceof Horse) {
@@ -462,14 +470,7 @@ public class Warlords extends JavaPlugin {
                         }
 
                         warlordsPlayer.getCooldownManager().reduceCooldowns();
-                        if (player != null) {
-                            //ACTION BAR
-                            if (player.getInventory().getHeldItemSlot() != 8) {
-                                warlordsPlayer.displayActionBar();
-                            } else {
-                                warlordsPlayer.displayFlagActionBar(player);
-                            }
-                        }
+
                         //respawn
                         if (warlordsPlayer.getRespawnTimer().doubleValue() == 0) {
                             warlordsPlayer.respawn();
