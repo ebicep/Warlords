@@ -103,7 +103,8 @@ public class WarlordsEvents implements Listener {
                             }
                         }
                         this.cancel();
-                    } else if (secondsGone >= 5 && !froze) {
+                        // 15 for precaution
+                    } else if (secondsGone >= 15 && !froze) {
                         if (!wp.getGame().isGameFreeze()) {
                             wp.getGame().freeze(true);
                         }
