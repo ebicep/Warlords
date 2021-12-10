@@ -29,7 +29,9 @@ public class CripplingStrike extends AbstractStrikeBase {
                 "§7causing §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage\n" +
                 "§7and §ccrippling §7them for §63 §7seconds.\n" +
                 "§7A §ccrippled §7player deals §c15% §7less\n" +
-                "§7damage for the duration of the effect.";
+                "§7damage for the duration of the effect. Adds\n" +
+                "§c7.5% §7less damage dealt per additional\n" +
+                "§7strike. (max 30%)";
     }
 
     @Override

@@ -24,9 +24,9 @@ public class ChainHeal extends AbstractChainBase {
         description = "§7Discharge a beam of energizing lightning\n" +
                 "§7that heals you and a targeted friendly\n" +
                 "§7player for §a" + format(minDamageHeal) + " §7- §a" + format(maxDamageHeal) + " §7health and\n" +
-                "§7jumps to §e3 §7additional targets within\n" +
-                "§e" + bounceRange + " §7blocks. Each jump reduces the healing\n" +
-                "§7by §c10%§7." +
+                "§7jumps to §e1 §7additional target within\n" +
+                "§e" + bounceRange + " §7blocks. The last jump reduces the\n" +
+                "§7healing by §c20%§7." +
                 "\n\n" +
                 "§7Each ally healed reduces the cooldown of\n" +
                 "§7Boulder by §62 §7seconds." +
