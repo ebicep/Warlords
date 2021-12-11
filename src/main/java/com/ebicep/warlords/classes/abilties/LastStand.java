@@ -15,7 +15,7 @@ public class LastStand extends AbstractAbility {
 
     private final int selfDuration = 12;
     private final int allyDuration = 6;
-    private final int radius = 6;
+    private final int radius = 7;
 
     public LastStand() {
         super("Last Stand", 0, 0, 56.38f, 40, 0, 0
@@ -51,7 +51,8 @@ public class LastStand extends AbstractAbility {
                         lineLocation.add(lineLocation.getDirection().multiply(.5));
                     }
                     nearPlayer.getCooldownManager().addCooldown(name, LastStand.this.getClass(), tempLastStand, "LAST", allyDuration, wp, CooldownTypes.BUFF);
-                    player.sendMessage(WarlordsPlayer.RECEIVE_ARROW + "§7 Your " + ChatColor.YELLOW + "Last Stand" + ChatColor.GRAY + " is now protecting " + nearPlayer.getName() + ChatColor.GRAY + "!");
+                    player.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " Your Last Stand is now protecting " + ChatColor.YELLOW + nearPlayer.getName() + ChatColor.GRAY + "!");
+                    nearPlayer.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " " + player.getName() + "'s " + ChatColor.YELLOW + "Last Stand" + ChatColor.GRAY + " is now protecting you for §66 §7seconds!");
                 });
 
         for (Player player1 : player.getWorld().getPlayers()) {
