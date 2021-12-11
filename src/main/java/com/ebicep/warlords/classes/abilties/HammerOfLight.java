@@ -65,9 +65,9 @@ public class HammerOfLight extends AbstractAbility {
     public void onActivate(WarlordsPlayer wp, Player player) {
 
         if (player.getTargetBlock((HashSet<Byte>) null, 25).getType() == Material.AIR) return;
-        DamageHealCircle damageHealCircle = new DamageHealCircle(wp, player.getTargetBlock((HashSet<Byte>) null, 25).getLocation().add(1, 0, 1), radius, duration, minDamageHeal, maxDamageHeal, critChance, critMultiplier, name);
-        damageHealCircle.spawnHammer();
-        damageHealCircle.getLocation().add(0, 1, 0);
+        DamageHealCircle hol = new DamageHealCircle(wp, player.getTargetBlock((HashSet<Byte>) null, 25).getLocation().add(1, 0, 1), radius, duration, minDamageHeal, maxDamageHeal, critChance, critMultiplier, name);
+        hol.spawnHammer();
+        hol.getLocation().add(0, 1, 0);
         wp.subtractEnergy(energyCost);
         wp.getSpec().getOrange().setCurrentCooldown((float) (cooldown * wp.getCooldownModifier()));
         HammerOfLight tempHammerOfLight = new HammerOfLight();
@@ -77,7 +77,7 @@ public class HammerOfLight extends AbstractAbility {
             player1.playSound(player.getLocation(), "paladin.hammeroflight.impact", 2, 0.85f);
         }
 
-        BukkitTask task = Bukkit.getScheduler().runTaskTimer(Warlords.getInstance(), damageHealCircle::spawn, 0, 1);
+        BukkitTask task = Bukkit.getScheduler().runTaskTimer(Warlords.getInstance(), hol::spawn, 0, 1);
         wp.getGame().getGameTasks().put(task, System.currentTimeMillis());
         wp.getGame().getGameTasks().put(
 
@@ -89,34 +89,34 @@ public class HammerOfLight extends AbstractAbility {
                         if (!wp.getGame().isGameFreeze()) {
 
                             if (counter % 20 == 0) {
-                                damageHealCircle.setDuration(damageHealCircle.getDuration() - 1);
+                                hol.setDuration(hol.getDuration() - 1);
                                 for (WarlordsPlayer warlordsPlayer : PlayerFilter
-                                        .entitiesAround(damageHealCircle.getLocation(), radius, radius, radius)
+                                        .entitiesAround(hol.getLocation(), radius, radius, radius)
                                         .isAlive()
                                 ) {
-                                    if (damageHealCircle.getWarlordsPlayer().isTeammateAlive(warlordsPlayer)) {
+                                    if (hol.getWarlordsPlayer().isTeammateAlive(warlordsPlayer)) {
                                         warlordsPlayer.healHealth(
-                                                damageHealCircle.getWarlordsPlayer(),
-                                                damageHealCircle.getName(),
-                                                damageHealCircle.getMinDamage(),
-                                                damageHealCircle.getMaxDamage(),
-                                                damageHealCircle.getCritChance(),
-                                                damageHealCircle.getCritMultiplier(),
+                                                hol.getWarlordsPlayer(),
+                                                hol.getName(),
+                                                hol.getMinDamage(),
+                                                hol.getMaxDamage(),
+                                                hol.getCritChance(),
+                                                hol.getCritMultiplier(),
                                                 false);
                                     } else {
                                         warlordsPlayer.damageHealth(
-                                                damageHealCircle.getWarlordsPlayer(),
-                                                damageHealCircle.getName(),
-                                                damageHealCircle.getMinDamage(),
-                                                damageHealCircle.getMaxDamage(),
-                                                damageHealCircle.getCritChance(),
-                                                damageHealCircle.getCritMultiplier(),
+                                                hol.getWarlordsPlayer(),
+                                                hol.getName(),
+                                                hol.getMinDamage(),
+                                                hol.getMaxDamage(),
+                                                hol.getCritChance(),
+                                                hol.getCritMultiplier(),
                                                 false);
                                     }
                                 }
                             }
-                            if (damageHealCircle.getDuration() <= 0) {
-                                damageHealCircle.removeHammer();
+                            if (hol.getDuration() <= 0) {
+                                hol.removeHammer();
                                 this.cancel();
                                 task.cancel();
                             }
@@ -168,7 +168,7 @@ public class HammerOfLight extends AbstractAbility {
                                 wp.getGame().getGameTasks().put(particles, System.currentTimeMillis());
                                 wp.getGame().getGameTasks().put(
                                         new BukkitRunnable() {
-                                            int timeLeft = damageHealCircle.getDuration();
+                                            int timeLeft = hol.getDuration();
 
                                             @Override
                                             public void run() {
@@ -176,12 +176,12 @@ public class HammerOfLight extends AbstractAbility {
                                                         .aliveTeammatesOf(wp)
                                                         .forEach(teammate -> {
                                                             teammate.healHealth(
-                                                                    damageHealCircle.getWarlordsPlayer(),
+                                                                    hol.getWarlordsPlayer(),
                                                                     "Crown of Light",
-                                                                    damageHealCircle.getMinDamage() * 1.5f,
-                                                                    damageHealCircle.getMaxDamage() * 1.5f,
-                                                                    damageHealCircle.getCritChance(),
-                                                                    damageHealCircle.getCritMultiplier(),
+                                                                    hol.getMinDamage() * 1.5f,
+                                                                    hol.getMaxDamage() * 1.5f,
+                                                                    hol.getCritChance(),
+                                                                    hol.getCritMultiplier(),
                                                                     false);
                                                         });
                                                 timeLeft--;
@@ -195,7 +195,7 @@ public class HammerOfLight extends AbstractAbility {
                                         System.currentTimeMillis()
                                 );
                                 this.cancel();
-                                damageHealCircle.setDuration(0);
+                                hol.setDuration(0);
                             }
 
                             wasSneaking = player.isSneaking();

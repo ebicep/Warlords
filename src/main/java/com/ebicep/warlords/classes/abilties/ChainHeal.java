@@ -25,11 +25,11 @@ public class ChainHeal extends AbstractChainBase {
                 "§7that heals you and a targeted friendly\n" +
                 "§7player for §a" + format(minDamageHeal) + " §7- §a" + format(maxDamageHeal) + " §7health and\n" +
                 "§7jumps to §e1 §7additional target within\n" +
-                "§e" + bounceRange + " §7blocks. The last jump reduces the\n" +
-                "§7healing by §c20%§7." +
+                "§e" + bounceRange + " §7blocks. The last jump heals\n" +
+                "§7for §c20% §7less." +
                 "\n\n" +
                 "§7Each ally healed reduces the cooldown of\n" +
-                "§7Boulder by §62 §7seconds." +
+                "§7Boulder by §63 §7seconds." +
                 "\n\n" +
                 "§7Has an initial cast range of §e" + radius + " §7blocks.";
     }
@@ -69,10 +69,10 @@ public class ChainHeal extends AbstractChainBase {
 
     @Override
     protected void onHit(WarlordsPlayer warlordsPlayer, Player player, int hitCounter) {
-        if ((hitCounter + 1) * 2 > warlordsPlayer.getSpec().getRed().getCurrentCooldown()) {
+        if ((hitCounter + 1) * 3 > warlordsPlayer.getSpec().getRed().getCurrentCooldown()) {
             warlordsPlayer.getSpec().getRed().setCurrentCooldown(0);
         } else {
-            warlordsPlayer.getSpec().getRed().setCurrentCooldown(warlordsPlayer.getSpec().getRed().getCurrentCooldown() - (hitCounter + 1) * 2);
+            warlordsPlayer.getSpec().getRed().setCurrentCooldown(warlordsPlayer.getSpec().getRed().getCurrentCooldown() - (hitCounter + 1) * 3);
         }
         warlordsPlayer.updateRedItem(player);
         warlordsPlayer.getSpec().getBlue().setCurrentCooldown((float) (cooldown * warlordsPlayer.getCooldownModifier()));
