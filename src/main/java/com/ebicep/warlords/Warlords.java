@@ -389,6 +389,15 @@ public class Warlords extends JavaPlugin {
                 // EVERY TICK
                 {
                     for (WarlordsPlayer warlordsPlayer : players.values()) {
+                        Player player = warlordsPlayer.getEntity() instanceof Player ? (Player) warlordsPlayer.getEntity() : null;
+                        if (player != null) {
+                            //ACTION BAR
+                            if (player.getInventory().getHeldItemSlot() != 8) {
+                                warlordsPlayer.displayActionBar();
+                            } else {
+                                warlordsPlayer.displayFlagActionBar(player);
+                            }
+                        }
                         if (warlordsPlayer.getGame().isGameFreeze()) {
                             continue;
                         }
@@ -398,7 +407,6 @@ public class Warlords extends JavaPlugin {
                         warlordsPlayer.getSpeed().updateSpeed();
 
                         CooldownManager cooldownManager = warlordsPlayer.getCooldownManager();
-                        Player player = warlordsPlayer.getEntity() instanceof Player ? (Player) warlordsPlayer.getEntity() : null;
 
 //                        if(player != null) {
 //                            if(player.isSneaking() && player.getVehicle() instanceof Horse) {
@@ -462,14 +470,7 @@ public class Warlords extends JavaPlugin {
                         }
 
                         warlordsPlayer.getCooldownManager().reduceCooldowns();
-                        if (player != null) {
-                            //ACTION BAR
-                            if (player.getInventory().getHeldItemSlot() != 8) {
-                                warlordsPlayer.displayActionBar();
-                            } else {
-                                warlordsPlayer.displayFlagActionBar(player);
-                            }
-                        }
+
                         //respawn
                         if (warlordsPlayer.getRespawnTimer().doubleValue() == 0) {
                             warlordsPlayer.respawn();
@@ -500,9 +501,8 @@ public class Warlords extends JavaPlugin {
                                 if (!((UndyingArmy) cooldown.getCooldownObject()).isArmyDead(warlordsPlayer.getUuid())) {
                                     ((UndyingArmy) cooldown.getCooldownObject()).pop(warlordsPlayer.getUuid());
                                     //DROPPING FLAG
-                                    if (warlordsPlayer.getGameState().flags().hasFlag(warlordsPlayer)) {
-                                        warlordsPlayer.getGameState().flags().dropFlag(warlordsPlayer);
-                                    }
+                                    warlordsPlayer.getGameState().flags().dropFlag(warlordsPlayer);
+
                                     //sending message + check if getFrom is self
                                     if (cooldown.getFrom() == warlordsPlayer) {
                                         warlordsPlayer.sendMessage("§a\u00BB§7 " + ChatColor.LIGHT_PURPLE + "Your Undying Army revived you with temporary health. Fight until your death! Your health will decay by " + ChatColor.RED + (warlordsPlayer.getMaxHealth() / 10) + ChatColor.LIGHT_PURPLE + " every second.");

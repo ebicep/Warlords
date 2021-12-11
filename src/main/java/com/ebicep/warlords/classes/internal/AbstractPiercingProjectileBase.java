@@ -299,19 +299,22 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
 
         @Override
         public void run() {
-            updateSpeed(this);
-            MovingObjectPosition hasCollided = checkCollisionAndMove(this, currentLocation, speed, shooter);
-            if (hasCollided != null) {
-                onHit(this, hasCollided.entity == null ? null : getFromEntity(hasCollided.entity.getBukkitEntity()));
-                cancel();
-            } else if (ticksLived >= maxTicks) {
-                cancel();
-            } else {
-                playEffect(this);
-                ticksLived++;
-                //cancel after 15 seconds
-                if(ticksLived > 15 * 20) {
+            if (!shooter.getGame().isGameFreeze()) {
+
+                updateSpeed(this);
+                MovingObjectPosition hasCollided = checkCollisionAndMove(this, currentLocation, speed, shooter);
+                if (hasCollided != null) {
+                    onHit(this, hasCollided.entity == null ? null : getFromEntity(hasCollided.entity.getBukkitEntity()));
                     cancel();
+                } else if (ticksLived >= maxTicks) {
+                    cancel();
+                } else {
+                    playEffect(this);
+                    ticksLived++;
+                    //cancel after 15 seconds
+                    if (ticksLived > 15 * 20) {
+                        cancel();
+                    }
                 }
             }
         }

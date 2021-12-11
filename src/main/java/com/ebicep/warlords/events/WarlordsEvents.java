@@ -41,6 +41,7 @@ import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashSet;
 import java.util.Objects;
@@ -48,6 +49,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.menu.GameMenu.openMainMenu;
 import static com.ebicep.warlords.menu.GameMenu.openTeamMenu;
@@ -77,6 +79,37 @@ public class WarlordsEvents implements Listener {
                 wp.updatePlayerReference(null);
             }
             e.setQuitMessage(wp.getColoredNameBold() + ChatColor.GOLD + " left the game!");
+            new BukkitRunnable() {
+                int secondsGone = 0;
+                boolean froze = false;
+
+                @Override
+                public void run() {
+                    secondsGone++;
+                    if (e.getPlayer().isOnline()) {
+                        if (froze && wp.getGame().isGameFreeze()) {
+                            //to make sure no other is disconnected
+                            boolean allOnline = true;
+                            for (UUID uuid : wp.getGame().getPlayers().keySet()) {
+                                if (Bukkit.getPlayer(uuid) == null) {
+                                    allOnline = false;
+                                    break;
+                                }
+                            }
+                            if (allOnline) {
+                                wp.getGame().freeze(true);
+                            }
+                        }
+                        this.cancel();
+                        // 15 for precaution
+                    } else if (secondsGone >= 15 && !froze) {
+                        if (!wp.getGame().isGameFreeze()) {
+                            wp.getGame().freeze(true);
+                        }
+                        froze = true;
+                    }
+                }
+            }.runTaskTimer(Warlords.getInstance(), 1, 20);
         } else {
             e.setQuitMessage(ChatColor.AQUA + e.getPlayer().getName() + ChatColor.GOLD + " left the lobby!");
         }
@@ -151,6 +184,9 @@ public class WarlordsEvents implements Listener {
                 e.getPlayer().setAllowFlight(false);
             }
             e.setJoinMessage(wp.getColoredNameBold() + ChatColor.GOLD + " rejoined the game!");
+            if (wp.getGame().isGameFreeze()) {
+                wp.getGame().freezePlayer(e.getPlayer(), false);
+            }
         } else {
             e.getPlayer().setAllowFlight(true);
             e.setJoinMessage(ChatColor.AQUA + e.getPlayer().getName() + ChatColor.GOLD + " joined the lobby!");

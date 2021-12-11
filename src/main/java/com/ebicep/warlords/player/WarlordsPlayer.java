@@ -16,6 +16,7 @@ import com.ebicep.warlords.maps.state.PlayingState;
 import com.ebicep.warlords.util.*;
 import net.minecraft.server.v1_8_R3.EntityLiving;
 import net.minecraft.server.v1_8_R3.GenericAttributes;
+import net.minecraft.server.v1_8_R3.MobEffectList;
 import net.minecraft.server.v1_8_R3.NBTTagCompound;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -29,6 +30,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nonnull;
@@ -586,6 +588,7 @@ public final class WarlordsPlayer {
                 }
                 addAbsorbed(Math.abs(damageValue * spec.getDamageResistance() / 100));
             }
+            cancelHealingPowerUp();
             return;
         }
 
@@ -739,10 +742,8 @@ public final class WarlordsPlayer {
                 if (isEnemy(attacker)) {
                     hitBy.put(attacker, 10);
 
-                    if (powerUpHeal) {
-                        powerUpHeal = false;
-                        sendMessage(ChatColor.GOLD + "Your §a§lHealing Powerup §6has worn off.");
-                    }
+                    cancelHealingPowerUp();
+
                     removeHorse();
                     regenTimer = 10;
 
@@ -1048,6 +1049,13 @@ public final class WarlordsPlayer {
         }
     }
 
+    public void cancelHealingPowerUp() {
+        if (powerUpHeal) {
+            powerUpHeal = false;
+            sendMessage(ChatColor.GOLD + "Your §a§lHealing Powerup §6has worn off.");
+        }
+    }
+
     public void removeHorse() {
         if (entity.getVehicle() != null) {
             entity.getVehicle().remove();
@@ -1071,6 +1079,7 @@ public final class WarlordsPlayer {
         hitBy.put(attacker, 10);
 
         this.addDeath();
+        gameState.flags().dropFlag(this);
         Bukkit.getPluginManager().callEvent(new WarlordsDeathEvent(this));
 
         if (entity instanceof Player) {
@@ -1249,12 +1258,6 @@ public final class WarlordsPlayer {
         }
     }
 
-    public void sendMessage(String message) {
-        if (this.entity instanceof Player) { // TODO check if this if is really needed, we can send a message to any entity??
-            this.entity.sendMessage(message);
-        }
-    }
-
     public void subtractEnergy(int amount) {
         if (!infiniteEnergy) {
             amount *= energyModifier;
@@ -1263,6 +1266,12 @@ public final class WarlordsPlayer {
             } else {
                 this.energy -= amount;
             }
+        }
+    }
+
+    public void sendMessage(String message) {
+        if (this.entity instanceof Player) { // TODO check if this if is really needed, we can send a message to any entity??
+            this.entity.sendMessage(message);
         }
     }
 

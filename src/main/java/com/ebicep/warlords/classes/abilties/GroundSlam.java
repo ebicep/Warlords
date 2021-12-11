@@ -53,35 +53,38 @@ public class GroundSlam extends AbstractAbility {
 
                     @Override
                     public void run() {
-                        for (List<Location> fallingBlockLocation : fallingBlockLocations) {
-                            for (Location location : fallingBlockLocation) {
-                                if (location.getWorld().getBlockAt(location.clone().add(0, 1, 0)).getType() == Material.AIR) {
-                                    FallingBlock fallingBlock = addFallingBlock(location.clone());
-                                    customFallingBlocks.add(new CustomFallingBlock(fallingBlock, wp, GroundSlam.this));
-                                    WarlordsEvents.addEntityUUID(fallingBlock);
-                                }
+                        if (!wp.getGame().isGameFreeze()) {
+
+                            for (List<Location> fallingBlockLocation : fallingBlockLocations) {
+                                for (Location location : fallingBlockLocation) {
+                                    if (location.getWorld().getBlockAt(location.clone().add(0, 1, 0)).getType() == Material.AIR) {
+                                        FallingBlock fallingBlock = addFallingBlock(location.clone());
+                                        customFallingBlocks.add(new CustomFallingBlock(fallingBlock, wp, GroundSlam.this));
+                                        WarlordsEvents.addEntityUUID(fallingBlock);
+                                    }
 //                        ParticleEffect.VILLAGER_HAPPY.display(0 , 0 ,0, 0, 10, location.getBlock().getLocation(), 1000);
 //                        ParticleEffect.FLAME.display(0 , 0 ,0, 0, 10, location, 1000);
 
-                                //DAMAGE
-                                PlayerFilter.entitiesAroundRectangle(location.clone().add(0, -.75, 0), 0.75, 4.5, 0.75)
-                                        .enemiesOf(wp)
-                                        .forEach(enemy -> {
-                                            if (!playersHit.contains(enemy)) {
-                                                playersHit.add(enemy);
-                                                final Location loc = enemy.getLocation();
-                                                final Vector v = wp.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1.25).setY(0.25);
-                                                enemy.setVelocity(v, false);
-                                                enemy.damageHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
-                                            }
-                                        });
+                                    //DAMAGE
+                                    PlayerFilter.entitiesAroundRectangle(location.clone().add(0, -.75, 0), 0.75, 4.5, 0.75)
+                                            .enemiesOf(wp)
+                                            .forEach(enemy -> {
+                                                if (!playersHit.contains(enemy)) {
+                                                    playersHit.add(enemy);
+                                                    final Location loc = enemy.getLocation();
+                                                    final Vector v = wp.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1.25).setY(0.25);
+                                                    enemy.setVelocity(v, false);
+                                                    enemy.damageHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+                                                }
+                                            });
+                                }
+                                fallingBlockLocations.remove(fallingBlockLocation);
+                                break;
                             }
-                            fallingBlockLocations.remove(fallingBlockLocation);
-                            break;
-                        }
 
-                        if (fallingBlockLocations.isEmpty()) {
-                            this.cancel();
+                            if (fallingBlockLocations.isEmpty()) {
+                                this.cancel();
+                            }
                         }
                     }
 

@@ -216,7 +216,7 @@ public class BotListener extends ListenerAdapter implements Listener {
                                         if (hourDiff > 5) {
                                             textChannel.sendMessage("You cannot join the queue 3+ hours ahead").queue();
                                         } else if (hourDiff == 0 && minuteDiff < 20) {
-                                            textChannel.sendMessage("You cannot join the queue within 20 minutes. Join the server and type **/joinqueue** to join the queue now").queue();
+                                            textChannel.sendMessage("You cannot join the queue within 20 minutes. Join the server and type **/queue join** to join the queue now").queue();
                                         } else if (hourDiff >= 0) {
                                             long futureTimeMillis = System.currentTimeMillis();
                                             futureTimeMillis += hourDiff * 3600000L;
@@ -229,6 +229,8 @@ public class BotListener extends ListenerAdapter implements Listener {
                                                 public void run() {
                                                     QueueManager.addPlayerToQueue(playerName, false);
                                                     QueueManager.futureQueue.removeIf(futureQueuePlayer -> futureQueuePlayer.getUuid().equals(Bukkit.getOfflinePlayer(member.getEffectiveName()).getUniqueId()));
+                                                    textChannel.sendMessage("<@" + member.getId() + "> You are now in the queue, make sure you are on the server once the party is open").queue();
+                                                    QueueManager.sendNewQueue();
                                                 }
                                             }.runTaskLater(Warlords.getInstance(), TimeUnit.MILLISECONDS.toSeconds(diff) * 20));
                                         } else {
