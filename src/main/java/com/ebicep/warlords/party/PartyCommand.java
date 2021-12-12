@@ -21,11 +21,6 @@ public class PartyCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
 
-        if (!sender.hasPermission("warlords.party.interaction")) {
-            sender.sendMessage(ChatColor.RED + "Only verified comp players can join the party!");
-            return true;
-        }
-
         switch (s) {
             case "party":
             case "p":
