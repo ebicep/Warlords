@@ -198,7 +198,7 @@ public class PlayingState implements State, TimerDebugAble {
                     this.game.forEachOnlinePlayer((player, team) -> {
                         PacketUtils.sendTitle(player, ChatColor.LIGHT_PURPLE + "OVERTIME!", ChatColor.YELLOW + "First team to reach 20 points wins!", 0, 60, 0);
                         player.sendMessage("§dOvertime is now active!");
-                        player.playSound(player.getLocation(), Sound.PORTAL_TRAVEL, 500, 1);
+                        player.playSound(player.getLocation(), Sound.PORTAL_TRAVEL, 1, 1);
                     });
                 } else {
                     return next;

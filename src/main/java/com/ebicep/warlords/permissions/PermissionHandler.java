@@ -22,10 +22,6 @@ public class PermissionHandler {
         return player.hasPermission("group.gamestarter");
     }
 
-    public static boolean isCompszn(Player player) {
-        return player.hasPermission("group.compszn");
-    }
-
     public static boolean isDefault(Player player) {
         return player.hasPermission("group.default");
     }

@@ -558,9 +558,6 @@ public class WarlordsEvents implements Listener {
                 ChatColor prefixColor = ChatColor.WHITE;
 
                 if (PermissionHandler.isDefault(player)) {
-                    prefixColor = ChatColor.GRAY;
-                    prefix = prefixColor + "[GUEST] ";
-                } else if (PermissionHandler.isCompszn(player)) {
                     prefixColor = ChatColor.AQUA;
                     prefix = prefixColor + "[SZN] ";
                 } else if (PermissionHandler.isGamestarter(player)) {
@@ -571,10 +568,10 @@ public class WarlordsEvents implements Listener {
                     prefix = prefixColor + "[CT] ";
                 } else if (PermissionHandler.isCoordinator(player)) {
                     prefixColor = ChatColor.GOLD;
-                    prefix = prefixColor + "[C] ";
+                    prefix = prefixColor + "[COORD] ";
                 } else if (PermissionHandler.isAdmin(player)) {
                     prefixColor = ChatColor.DARK_AQUA;
-                    prefix = prefixColor + "[Dev] ";
+                    prefix = prefixColor + "[DEV] ";
                 } else {
                     System.out.println(ChatColor.RED + "[WARLORDS] Player has invalid rank or permissions have not been set up properly!");
                 }
