@@ -19,7 +19,7 @@ public class HealingPowerUp extends AbstractPowerUp {
     @Override
     public void onPickUp(WarlordsPlayer warlordsPlayer) {
         warlordsPlayer.setPowerUpHeal(true);
-        warlordsPlayer.sendMessage("§6You activated the §a§lHEALING §6powerup! §a+10% §6Health per second for §a10 §6seconds!");
+        warlordsPlayer.sendMessage("§6You activated the §a§lHEALING §6powerup! §a+5% §6Health per second for §a5 §6seconds!");
     }
 
     @Override

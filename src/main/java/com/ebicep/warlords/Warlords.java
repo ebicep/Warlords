@@ -734,79 +734,83 @@ public class Warlords extends JavaPlugin {
                     //EVERY SECOND
                     if (counter % 20 == 0) {
                         RemoveEntities.removeHorsesInGame();
-                        for (WarlordsPlayer warlordsPlayer : players.values()) {
-                            if (warlordsPlayer.getGame().isGameFreeze()) {
+                        for (WarlordsPlayer wps : players.values()) {
+                            if (wps.getGame().isGameFreeze()) {
                                 continue;
                             }
-                            Player player = warlordsPlayer.getEntity() instanceof Player ? (Player) warlordsPlayer.getEntity() : null;
+                            Player player = wps.getEntity() instanceof Player ? (Player) wps.getEntity() : null;
                             //REGEN
-                            if (warlordsPlayer.getRegenTimer() != 0) {
-                                warlordsPlayer.setRegenTimer(warlordsPlayer.getRegenTimer() - 1);
-                                if (warlordsPlayer.getRegenTimer() == 0) {
-                                    warlordsPlayer.getHitBy().clear();
+                            if (wps.getRegenTimer() != 0) {
+                                wps.setRegenTimer(wps.getRegenTimer() - 1);
+                                if (wps.getRegenTimer() == 0) {
+                                    wps.getHitBy().clear();
                                 }
                             } else {
-                                int healthToAdd = (int) (warlordsPlayer.getMaxHealth() / 55.3);
-                                warlordsPlayer.setHealth(Math.max(warlordsPlayer.getHealth(),
-                                                         Math.min(warlordsPlayer.getHealth() + healthToAdd,
-                                                         warlordsPlayer.getMaxHealth()
+                                int healthToAdd = (int) (wps.getMaxHealth() / 55.3);
+                                wps.setHealth(Math.max(wps.getHealth(),
+                                                         Math.min(wps.getHealth() + healthToAdd,
+                                                         wps.getMaxHealth()
                                                          )));
                             }
                             //RESPAWN DISPLAY
-                            BigDecimal respawn = warlordsPlayer.getRespawnTimer();
+                            BigDecimal respawn = wps.getRespawnTimer();
                             if (respawn.doubleValue() != -1) {
                                 if (respawn.doubleValue() <= 11) {
                                     if (player != null) {
-                                        PacketUtils.sendTitle(player, "", warlordsPlayer.getTeam().teamColor() + "Respawning in... " + ChatColor.YELLOW + Math.round(respawn.doubleValue()), 0, 40, 0);
+                                        PacketUtils.sendTitle(player, "", wps.getTeam().teamColor() + "Respawning in... " + ChatColor.YELLOW + Math.round(respawn.doubleValue()), 0, 40, 0);
                                     }
                                 }
                             }
                             //COOLDOWNS
-                            if (warlordsPlayer.getSpawnProtection() > 0) {
-                                warlordsPlayer.setSpawnProtection(warlordsPlayer.getSpawnProtection() - 1);
+                            if (wps.getSpawnProtection() > 0) {
+                                wps.setSpawnProtection(wps.getSpawnProtection() - 1);
                             }
-                            if (warlordsPlayer.getSpawnDamage() > 0) {
-                                warlordsPlayer.setSpawnDamage(warlordsPlayer.getSpawnDamage() - 1);
+                            if (wps.getSpawnDamage() > 0) {
+                                wps.setSpawnDamage(wps.getSpawnDamage() - 1);
                             }
-                            if (warlordsPlayer.getFlagCooldown() > 0) {
-                                warlordsPlayer.setFlagCooldown(warlordsPlayer.getFlagCooldown() - 1);
+                            if (wps.getFlagCooldown() > 0) {
+                                wps.setFlagCooldown(wps.getFlagCooldown() - 1);
                             }
                             //SoulBinding - decrementing time left
-                            warlordsPlayer.getCooldownManager().getCooldown(Soulbinding.class).stream()
+                            wps.getCooldownManager().getCooldown(Soulbinding.class).stream()
                                     .map(Cooldown::getCooldownObject)
                                     .map(Soulbinding.class::cast)
                                     .forEach(soulbinding -> soulbinding.getSoulBindedPlayers().forEach(Soulbinding.SoulBoundPlayer::decrementTimeLeft));
                             //SoulBinding - removing bound players
-                            warlordsPlayer.getCooldownManager().getCooldown(Soulbinding.class).stream()
+                            wps.getCooldownManager().getCooldown(Soulbinding.class).stream()
                                     .map(Cooldown::getCooldownObject)
                                     .map(Soulbinding.class::cast)
                                     .forEach(soulbinding -> soulbinding.getSoulBindedPlayers()
                                             .removeIf(boundPlayer -> boundPlayer.getTimeLeft() == 0 || (boundPlayer.isHitWithSoul() && boundPlayer.isHitWithLink())));
-                            if (warlordsPlayer.isPowerUpHeal()) {
-                                int heal = (int) (warlordsPlayer.getMaxHealth() * .1);
-                                if (warlordsPlayer.getHealth() + heal > warlordsPlayer.getMaxHealth()) {
-                                    heal = warlordsPlayer.getMaxHealth() - warlordsPlayer.getHealth();
-                                }
-                                warlordsPlayer.setHealth(warlordsPlayer.getHealth() + heal);
-                                warlordsPlayer.sendMessage("§a\u00BB §7Healed §a" + heal + " §7health.");
 
-                                if (warlordsPlayer.getHealth() == warlordsPlayer.getMaxHealth()) {
-                                    warlordsPlayer.setPowerUpHeal(false);
+                            if (wps.isPowerUpHeal()) {
+                                int heal = (int) (wps.getMaxHealth() * .05);
+                                if (wps.getHealth() + heal > wps.getMaxHealth()) {
+                                    heal = wps.getMaxHealth() - wps.getHealth();
+                                }
+                                wps.setHealth(wps.getHealth() + heal);
+                                wps.sendMessage("§a\u00BB §7Healed §a" + heal + " §7health.");
+
+                                if (wps.getHealPowerupDuration() > 0) {
+                                    wps.setHealPowerupDuration(wps.getHealPowerupDuration() - 1);
+                                } else {
+                                    wps.setHealPowerupDuration(4);
+                                    wps.setPowerUpHeal(false);
                                 }
                             }
 
                             //COMBAT TIMER - counts dmg taken within 4 seconds
-                            if (warlordsPlayer.getRegenTimer() > 6) {
-                                warlordsPlayer.addTimeInCombat();
+                            if (wps.getRegenTimer() > 6) {
+                                wps.addTimeInCombat();
                             }
 
                             //ASSISTS - 10 SECOND COOLDOWN
-                            warlordsPlayer.getHitBy().forEach(((wp, integer) -> warlordsPlayer.getHitBy().put(wp, integer - 1)));
-                            warlordsPlayer.getHealedBy().forEach(((wp, integer) -> warlordsPlayer.getHealedBy().put(wp, integer - 1)));
-                            warlordsPlayer.getHitBy().entrySet().removeIf(p -> p.getValue() <= 0);
-                            warlordsPlayer.getHealedBy().entrySet().removeIf(p -> p.getValue() <= 0);
+                            wps.getHitBy().forEach(((wp, integer) -> wp.getHitBy().put(wp, integer - 1)));
+                            wps.getHealedBy().forEach(((wp, integer) -> wp.getHealedBy().put(wp, integer - 1)));
+                            wps.getHitBy().entrySet().removeIf(p -> p.getValue() <= 0);
+                            wps.getHealedBy().entrySet().removeIf(p -> p.getValue() <= 0);
 
-                            if (warlordsPlayer.getName().equals("sumSmash")) {
+                            if (wps.getName().equals("sumSmash")) {
 
                             }
                         }

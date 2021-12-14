@@ -57,6 +57,7 @@ public final class WarlordsPlayer {
     private float energy;
     private float maxEnergy;
     private float horseCooldown;
+    private int healPowerupDuration = 4;
     private int overhealDuration;
     private float currentHealthModifier = 1;
     private int flagCooldown;
@@ -1799,5 +1800,13 @@ public final class WarlordsPlayer {
 
     public void decrementOverhealDuration() {
         this.overhealDuration--;
+    }
+
+    public int getHealPowerupDuration() {
+        return healPowerupDuration;
+    }
+
+    public void setHealPowerupDuration(int healPowerupDuration) {
+        this.healPowerupDuration = healPowerupDuration;
     }
 }
