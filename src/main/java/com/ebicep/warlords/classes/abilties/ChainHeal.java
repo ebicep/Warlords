@@ -16,7 +16,7 @@ public class ChainHeal extends AbstractChainBase {
     private final int bounceRange = 10;
 
     public ChainHeal() {
-        super("Chain Heal", 521, 703, 7.99f, 40, 20, 175);
+        super("Chain Heal", 528, 713, 7.99f, 40, 20, 175);
     }
 
     @Override
@@ -69,10 +69,10 @@ public class ChainHeal extends AbstractChainBase {
 
     @Override
     protected void onHit(WarlordsPlayer warlordsPlayer, Player player, int hitCounter) {
-        if ((hitCounter + 1) * 3 > warlordsPlayer.getSpec().getRed().getCurrentCooldown()) {
+        if ((hitCounter + 1) * 2.5f > warlordsPlayer.getSpec().getRed().getCurrentCooldown()) {
             warlordsPlayer.getSpec().getRed().setCurrentCooldown(0);
         } else {
-            warlordsPlayer.getSpec().getRed().setCurrentCooldown(warlordsPlayer.getSpec().getRed().getCurrentCooldown() - (hitCounter + 1) * 3);
+            warlordsPlayer.getSpec().getRed().setCurrentCooldown(warlordsPlayer.getSpec().getRed().getCurrentCooldown() - (hitCounter + 1) * 2.5f);
         }
         warlordsPlayer.updateRedItem(player);
         warlordsPlayer.getSpec().getBlue().setCurrentCooldown((float) (cooldown * warlordsPlayer.getCooldownModifier()));
