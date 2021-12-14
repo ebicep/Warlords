@@ -69,7 +69,6 @@ public enum Weapons {
     ENDERFIST("Enderfist", new ItemStack(Material.APPLE), LEGENDARY),
 
     // wl 2 exclusive
-    CANDY_CANE("Candy Slapper", new ItemStack(Material.SUGAR), LEGENDARY),
     NEW_LEAF_SCYTHE("Daphne's Harvest", new ItemStack(Material.GHAST_TEAR), LEGENDARY),
     NEW_LEAF_AXE("Fate of Daphne", new ItemStack(Material.LEATHER), LEGENDARY),
     NEW_LEAF_SWORD("Canopy's Jade Edge", new ItemStack(Material.INK_SACK, 1, (short) 4), LEGENDARY),
@@ -81,10 +80,11 @@ public enum Weapons {
     SILVER_PHANTASM_HAMMER("Wrath of Aether", new ItemStack(Material.QUARTZ), LEGENDARY),
     SILVER_PHANTASM_STAFF("Wit of Oblivion", new ItemStack(Material.IRON_INGOT), LEGENDARY),
     SILVER_PHANTASM_STAFF_2("Lament", new ItemStack(Material.INK_SACK), LEGENDARY),
+    CANDY_CANE("Candy Slapper", new ItemStack(Material.SUGAR), LEGENDARY),
 
     // mythic
-    SILVER_PHANTASM_TRIDENT("PLACEHOLDER", new ItemStack(Material.COOKIE), MYTHIC),
-    SILVER_PHANTASM_SCIMITAR("PLACEHOLDER", new ItemStack(Material.CARROT), MYTHIC),
+    SILVER_PHANTASM_TRIDENT("Torment", new ItemStack(Material.COOKIE), MYTHIC),
+    SILVER_PHANTASM_SCIMITAR("PLACEHOLDER", new ItemStack(Material.CARROT_ITEM), MYTHIC),
     SILVER_PHANTASM_SAWBLADE("PLACEHOLDER", new ItemStack(Material.RABBIT), MYTHIC),
 
     ;
