@@ -613,7 +613,7 @@ public final class WarlordsPlayer {
 
                 if (!attacker.getCooldownManager().getCooldown(CripplingStrike.class).isEmpty()) {
                     CripplingStrike cripplingStrike = (CripplingStrike) attacker.getCooldownManager().getCooldown(CripplingStrike.class).get(0).getCooldownObject();
-                    damageValue *= .85 - (cripplingStrike.getConsecutiveStrikeCounter() * .075);
+                    damageValue *= .85 - (cripplingStrike.getConsecutiveStrikeCounter() * .05);
                 }
             }
         }
@@ -1663,7 +1663,7 @@ public final class WarlordsPlayer {
 
     public void setVelocity(org.bukkit.util.Vector v) {
         if(cooldownManager.hasCooldownFromName("KB Resistance")) {
-            setVelocity(v.multiply(.75), true);
+            setVelocity(v.multiply(1), true);
         } else {
             setVelocity(v, true);
         }

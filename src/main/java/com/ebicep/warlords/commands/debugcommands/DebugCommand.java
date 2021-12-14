@@ -224,7 +224,6 @@ public class DebugCommand implements CommandExecutor {
                 }
             }
 
-
             default:
                 sender.sendMessage("§cInvalid option! valid args: [cooldownmode, cooldown, energy, damage, takedamage");
                 return true;
