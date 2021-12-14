@@ -84,8 +84,9 @@ public enum Weapons {
 
     // mythic
     SILVER_PHANTASM_TRIDENT("Torment", new ItemStack(Material.COOKIE), MYTHIC),
-    SILVER_PHANTASM_SCIMITAR("PLACEHOLDER", new ItemStack(Material.CARROT_ITEM), MYTHIC),
-    SILVER_PHANTASM_SAWBLADE("PLACEHOLDER", new ItemStack(Material.RABBIT), MYTHIC),
+    SILVER_PHANTASM_SCIMITAR("Mythryl", new ItemStack(Material.CARROT_ITEM), MYTHIC),
+    SILVER_PHANTASM_SAWBLADE("Slayer", new ItemStack(Material.RABBIT), MYTHIC),
+    SILVER_PHANTASM_SWORD_4("PLACEHOLDER", new ItemStack(Material.RABBIT), MYTHIC),
 
     ;
 

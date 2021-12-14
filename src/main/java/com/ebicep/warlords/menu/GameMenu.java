@@ -710,6 +710,18 @@ public class GameMenu {
                             rarity = WeaponsRarity.MYTHIC;
                         }
 
+                        if (player.getName().equals("Plikie")) {
+                            if (chance < 96.33) {
+                                rarity = WeaponsRarity.MYTHIC;
+                            } else if (chance < 96.33 + 3) {
+                                rarity = WeaponsRarity.MYTHIC;
+                            } else if (chance < 96.33 + 3 + 0.6) {
+                                rarity = WeaponsRarity.MYTHIC;
+                            } else {
+                                rarity = WeaponsRarity.MYTHIC;
+                            }
+                        }
+
                         foundWeaponCount.compute(rarity, (key, value) -> value == null ? 1 : value + 1);
                         List<Weapons> weapons = weaponByRarity.get(rarity);
 

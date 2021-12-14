@@ -69,15 +69,15 @@ public class HolyRadiance extends AbstractAbility {
                     ((CraftPlayer) player).getHandle().playerConnection.sendPacket(playOutAnimation);
 
                     // chain particles
-                    Location lineLocation = player.getLocation().add(0, 1, 0);
-                    lineLocation.setDirection(lineLocation.toVector().subtract(p.getLocation().add(0, 1, 0).toVector()).multiply(-1));
+                    Location lineLocation = player.getLocation().add(0, 1.3, 0);
+                    lineLocation.setDirection(lineLocation.toVector().subtract(p.getLocation().add(0, 1.3, 0).toVector()).multiply(-1));
                     for (int i = 0; i < Math.floor(player.getLocation().distance(p.getLocation())) * 2; i++) {
                         ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(255, 170, 0), lineLocation, 500);
                         lineLocation.add(lineLocation.getDirection().multiply(.5));
                     }
 
-                    Location from = wp.getLocation();
-                    Location to = p.getLocation();
+                    Location from = wp.getLocation().add(0, -0.6, 0);
+                    Location to = p.getLocation().add(0, -0.6, 0);
                     from.setDirection(from.toVector().subtract(to.toVector()).multiply(-1));
                     List<ArmorStand> chains = new ArrayList<>();
                     int maxDistance = (int) Math.round(to.distance(from));
@@ -106,7 +106,7 @@ public class HolyRadiance extends AbstractAbility {
 
                             for (int i = 0; i < chains.size(); i++) {
                                 ArmorStand armorStand = chains.get(i);
-                                if (armorStand.getTicksLived() > 6) {
+                                if (armorStand.getTicksLived() > 8) {
                                     armorStand.remove();
                                     chains.remove(i);
                                     i--;
