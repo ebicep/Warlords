@@ -829,6 +829,13 @@ public final class WarlordsPlayer {
                         for (WarlordsPlayer nearTeamPlayer : PlayerFilter
                                 .entitiesAround(attacker, 10, 10, 10)
                                 .aliveTeammatesOfExcludingSelf(attacker)
+                                .sorted(
+                                        Comparator.comparing(
+                                                (WarlordsPlayer p) -> p.getCooldownManager().hasCooldown(HolyRadianceProtector.class) ? 0 : 1
+                                        ).thenComparing(
+                                                Utils.sortClosestBy(WarlordsPlayer::getLocation, attacker.getLocation()
+                                                )
+                                        ))
                                 .limit(2)
                         ) {
                             if (Warlords.getPlayerSettings(attacker.uuid).getClassesSkillBoosts() == ClassesSkillBoosts.PROTECTOR_STRIKE) {

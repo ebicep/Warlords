@@ -48,8 +48,8 @@ public class CrusadersStrike extends AbstractStrikeBase {
                         ))
                 .limit(2)
                 .forEach((nearTeamPlayer) -> {
-                    if (nearTeamPlayer.getCooldownManager().hasCooldown(HolyRadiance.class)) {
-                        nearTeamPlayer.getSpeed().addSpeedModifier("MARK", 40, 20, "BASE"); // 20 ticks
+                    if (nearTeamPlayer.getCooldownManager().hasCooldown(HolyRadianceCrusader.class)) {
+                        nearTeamPlayer.getSpeed().addSpeedModifier("CRUSADER MARK", 40, 20, "BASE"); // 20 ticks
                     }
                     nearTeamPlayer.addEnergy(wp, name, energyGiven);
                 });

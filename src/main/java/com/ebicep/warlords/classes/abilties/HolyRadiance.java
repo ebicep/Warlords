@@ -30,131 +30,19 @@ public class HolyRadiance extends AbstractAbility {
     private final int markDuration = 8;
     boolean hasSneakingAbility;
 
-    public HolyRadiance(float minDamageHeal, float maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier, boolean hasSneakingAbility) {
+    public HolyRadiance(float minDamageHeal, float maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier) {
         super("Holy Radiance", minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
-        this.hasSneakingAbility = hasSneakingAbility;
     }
 
     @Override
     public void updateDescription(Player player) {
         description = "§7Radiate with holy energy, healing\n" +
                 "§7yourself and all nearby allies for\n" +
-                "§a" + format(minDamageHeal) + " §7- §a" + format(maxDamageHeal) + " §7health." +
-                "\n\n" + (hasSneakingAbility ?
-                "§7You may look at an ally to mark\n" +
-                "§7them for §6" + markDuration + " §7seconds. Increasing\n" +
-                "§7their EPS by §e5 §7and speed by §e20%\n" +
-                "§7§7for the duration. Mark has an optimal\n" +
-                "§7range of §e" + markRadius + " §7blocks." : "");
+                "§a" + format(minDamageHeal) + " §7- §a" + format(maxDamageHeal) + " §7health.";
     }
 
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
-
-        if (hasSneakingAbility) {
-            for (WarlordsPlayer p : PlayerFilter
-                    .entitiesAround(player, markRadius, markRadius, markRadius)
-                    .aliveTeammatesOfExcludingSelf(wp)
-                    .lookingAtFirst(wp)
-                    .limit(1)
-            ) {
-                if (Utils.isLookingAtMark(player, p.getEntity()) && Utils.hasLineOfSight(player, p.getEntity())) {
-                    wp.subtractEnergy(energyCost);
-
-                    for (Player player1 : player.getWorld().getPlayers()) {
-                        player1.playSound(player.getLocation(), "paladin.consecrate.activation", 2, 0.65f);
-                    }
-
-                    PacketPlayOutAnimation playOutAnimation = new PacketPlayOutAnimation(((CraftPlayer) player).getHandle(), 0);
-                    ((CraftPlayer) player).getHandle().playerConnection.sendPacket(playOutAnimation);
-
-                    // chain particles
-                    Location lineLocation = player.getLocation().add(0, 1.3, 0);
-                    lineLocation.setDirection(lineLocation.toVector().subtract(p.getLocation().add(0, 1.3, 0).toVector()).multiply(-1));
-                    for (int i = 0; i < Math.floor(player.getLocation().distance(p.getLocation())) * 2; i++) {
-                        ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(255, 170, 0), lineLocation, 500);
-                        lineLocation.add(lineLocation.getDirection().multiply(.5));
-                    }
-
-                    Location from = wp.getLocation().add(0, -0.6, 0);
-                    Location to = p.getLocation().add(0, -0.6, 0);
-                    from.setDirection(from.toVector().subtract(to.toVector()).multiply(-1));
-                    List<ArmorStand> chains = new ArrayList<>();
-                    int maxDistance = (int) Math.round(to.distance(from));
-                    for (int i = 0; i < maxDistance; i++) {
-                        ArmorStand chain = from.getWorld().spawn(from, ArmorStand.class);
-                        chain.setHeadPose(new EulerAngle(from.getDirection().getY() * -1, 0, 0));
-                        chain.setGravity(false);
-                        chain.setVisible(false);
-                        chain.setBasePlate(false);
-                        chain.setMarker(true);
-                        chain.setHelmet(new ItemStack(Material.PUMPKIN));
-                        from.add(from.getDirection().multiply(1.1));
-                        chains.add(chain);
-                        if(to.distanceSquared(from) < .3) {
-                            break;
-                        }
-                    }
-
-                    new BukkitRunnable() {
-
-                        @Override
-                        public void run() {
-                            if (chains.size() == 0) {
-                                this.cancel();
-                            }
-
-                            for (int i = 0; i < chains.size(); i++) {
-                                ArmorStand armorStand = chains.get(i);
-                                if (armorStand.getTicksLived() > 8) {
-                                    armorStand.remove();
-                                    chains.remove(i);
-                                    i--;
-                                }
-                            }
-
-                        }
-
-                    }.runTaskTimer(Warlords.getInstance(), 0, 0);
-
-                    HolyRadiance tempMark = new HolyRadiance(minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier, true);
-                    p.getCooldownManager().addCooldown(name, HolyRadiance.this.getClass(), tempMark, "MARK", markDuration, wp, CooldownTypes.BUFF);
-                    p.getSpeed().addSpeedModifier("Mark Speed", 20, 20 * markDuration, "BASE");
-
-                    player.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " You have marked " + ChatColor.YELLOW + p.getName() + ChatColor.GRAY +"!");
-                    p.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " You have been " + ChatColor.YELLOW + "marked" + ChatColor.GRAY + " by " + wp.getName() + "!");
-
-                    wp.getGame().getGameTasks().put(
-
-                            new BukkitRunnable() {
-                                @Override
-                                public void run() {
-                                    if (!p.getCooldownManager().getCooldown(HolyRadiance.class).isEmpty()) {
-                                        Location playerLoc = p.getLocation();
-                                        Location particleLoc = playerLoc.clone();
-                                        for (int i = 0; i < 4; i++) {
-                                            for (int j = 0; j < 10; j++) {
-                                                double angle = j / 8D * Math.PI * 2;
-                                                double width = 1;
-                                                particleLoc.setX(playerLoc.getX() + Math.sin(angle) * width);
-                                                particleLoc.setY(playerLoc.getY() + i / 6D);
-                                                particleLoc.setZ(playerLoc.getZ() + Math.cos(angle) * width);
-
-                                                ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(255, 170, 0), particleLoc, 500);
-                                            }
-                                        }
-                                    } else {
-                                        this.cancel();
-                                    }
-                                }
-                            }.runTaskTimer(Warlords.getInstance(), 0, 10),
-                            System.currentTimeMillis()
-                    );
-                } else {
-                    player.sendMessage("§cYour mark was out of range or you did not target a player!");
-                }
-            }
-        }
 
         wp.subtractEnergy(energyCost);
         for (WarlordsPlayer p : PlayerFilter

@@ -684,10 +684,10 @@ public class GameMenu {
                 foundWeaponCount.put(rarity, 0);
             }
 
-            if (Bukkit.getOnlinePlayers().size() >= 1) {
+            if (Bukkit.getOnlinePlayers().size() >= 16) {
 
                 if (weaponCooldown == null || weaponCooldown < System.currentTimeMillis()) {
-                    //openWeaponCooldown.put(player.getUniqueId(), System.currentTimeMillis() + 8 * 60 * 1000);
+                    openWeaponCooldown.put(player.getUniqueId(), System.currentTimeMillis() + 8 * 60 * 1000);
                     player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 2);
                     for (int i = 0; i < 10; i++) {
                         String legendaryName = legendaryNames[random.nextInt(legendaryNames.length)];
@@ -700,26 +700,14 @@ public class GameMenu {
                         PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
                         Classes selectedClass = playerSettings.getSelectedClass();
 
-                        if (chance < 96.33) {
+                        if (chance < 96.34) {
                             rarity = WeaponsRarity.RARE;
-                        } else if (chance < 96.33 + 3) {
+                        } else if (chance < 96.34 + 3) {
                             rarity = WeaponsRarity.EPIC;
-                        } else if (chance < 96.33 + 3 + 0.6) {
+                        } else if (chance < 96.34 + 3 + 0.6) {
                             rarity = WeaponsRarity.LEGENDARY;
                         } else {
                             rarity = WeaponsRarity.MYTHIC;
-                        }
-
-                        if (player.getName().equals("Plikie")) {
-                            if (chance < 96.33) {
-                                rarity = WeaponsRarity.MYTHIC;
-                            } else if (chance < 96.33 + 3) {
-                                rarity = WeaponsRarity.MYTHIC;
-                            } else if (chance < 96.33 + 3 + 0.6) {
-                                rarity = WeaponsRarity.MYTHIC;
-                            } else {
-                                rarity = WeaponsRarity.MYTHIC;
-                            }
                         }
 
                         foundWeaponCount.compute(rarity, (key, value) -> value == null ? 1 : value + 1);
@@ -777,7 +765,7 @@ public class GameMenu {
                 } else {
                     long remainingTime = (weaponCooldown - System.currentTimeMillis()) / 1000;
                     long remainingTimeinMinutes = remainingTime / 60;
-                    player.sendMessage(ChatColor.RED + "Please wait " + (remainingTime > 60 ? remainingTimeinMinutes + " minutes" : remainingTime + " seconds") + " before opening weapons again!");
+                    player.sendMessage(ChatColor.RED + "Please wait " + (remainingTime > 60 ? remainingTimeinMinutes + " minutes" : remainingTime + " seconds") + " before opening skin shards again!");
                 }
             } else {
                 player.sendMessage(ChatColor.RED + "There must be at least 16 players online to roll skin shards!");
