@@ -16,7 +16,7 @@ public class ChainHeal extends AbstractChainBase {
     private final int bounceRange = 10;
 
     public ChainHeal() {
-        super("Chain Heal", 528, 713, 7.99f, 40, 20, 175);
+        super("Chain Heal", 533, 719, 7.99f, 40, 20, 175);
     }
 
     @Override
@@ -29,7 +29,7 @@ public class ChainHeal extends AbstractChainBase {
                 "§7for §c20% §7less." +
                 "\n\n" +
                 "§7Each ally healed reduces the cooldown of\n" +
-                "§7Boulder by §63 §7seconds." +
+                "§7Boulder by §62.5 §7seconds." +
                 "\n\n" +
                 "§7Has an initial cast range of §e" + radius + " §7blocks.";
     }

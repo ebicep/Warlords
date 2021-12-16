@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
+import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.util.ItemBuilder;
@@ -684,10 +685,10 @@ public class GameMenu {
                 foundWeaponCount.put(rarity, 0);
             }
 
-            if (Bukkit.getOnlinePlayers().size() >= 1) {
+            if (Bukkit.getOnlinePlayers().size() >= 16) {
 
                 if (weaponCooldown == null || weaponCooldown < System.currentTimeMillis()) {
-                    //openWeaponCooldown.put(player.getUniqueId(), System.currentTimeMillis() + 8 * 60 * 1000);
+                    openWeaponCooldown.put(player.getUniqueId(), System.currentTimeMillis() + 8 * 60 * 1000);
                     player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 2);
                     for (int i = 0; i < 10; i++) {
                         String legendaryName = legendaryNames[random.nextInt(legendaryNames.length)];
