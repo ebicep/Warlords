@@ -59,18 +59,20 @@ public class HealingRain extends AbstractAbility {
 
             @Override
             public void run() {
-                if (wp.isAlive() && player.isSneaking() && !wasSneaking) {
-                    if (recastCooldown != 0) {
-                        player.sendMessage(ChatColor.RED + "Your recast ability is on cooldown, please wait 2 seconds!");
-                    } else {
-                        player.playSound(player.getLocation(), "mage.timewarp.teleport", 2, 1.35f);
-                        player.sendMessage("§7You moved your §aHealing Rain §7to your current location.");
-                        healingRain.setLocation(player.getLocation());
-                        recastCooldown = 2;
+                if (!wp.getGame().isGameFreeze()) {
+                    if (wp.isAlive() && player.isSneaking() && !wasSneaking) {
+                        if (recastCooldown != 0) {
+                            player.sendMessage(ChatColor.RED + "Your recast ability is on cooldown, please wait 2 seconds!");
+                        } else {
+                            player.playSound(player.getLocation(), "mage.timewarp.teleport", 2, 1.35f);
+                            player.sendMessage("§7You moved your §aHealing Rain §7to your current location.");
+                            healingRain.setLocation(player.getLocation());
+                            recastCooldown = 2;
+                        }
                     }
-                }
 
-                wasSneaking = player.isSneaking();
+                    wasSneaking = player.isSneaking();
+                }
             }
         }.runTaskTimer(Warlords.getInstance(), 0, 0);
         wp.getGame().getGameTasks().put(rainSneakAbility, System.currentTimeMillis());
@@ -80,29 +82,31 @@ public class HealingRain extends AbstractAbility {
 
                     @Override
                     public void run() {
-                        PlayerFilter.entitiesAround(healingRain.getLocation(), healingRain.getRadius(), healingRain.getRadius(), healingRain.getRadius())
-                            .aliveTeammatesOf(wp)
-                            .forEach((teammateInRain) -> {
-                                teammateInRain.healHealth(
-                                        healingRain.getWarlordsPlayer(),
-                                        healingRain.getName(),
-                                        healingRain.getMinDamage(),
-                                        healingRain.getMaxDamage(),
-                                        healingRain.getCritChance(),
-                                        healingRain.getCritMultiplier(),
-                                        false);
+                        if (!wp.getGame().isGameFreeze()) {
+                            PlayerFilter.entitiesAround(healingRain.getLocation(), healingRain.getRadius(), healingRain.getRadius(), healingRain.getRadius())
+                                .aliveTeammatesOf(wp)
+                                .forEach((teammateInRain) -> {
+                                    teammateInRain.healHealth(
+                                            healingRain.getWarlordsPlayer(),
+                                            healingRain.getName(),
+                                            healingRain.getMinDamage(),
+                                            healingRain.getMaxDamage(),
+                                            healingRain.getCritChance(),
+                                            healingRain.getCritMultiplier(),
+                                            false);
 
-                                if (teammateInRain != wp) {
-                                    teammateInRain.getCooldownManager().removeCooldown(Utils.OVERHEAL_MARKER);
-                                    teammateInRain.getCooldownManager().addCooldown("Overheal",
-                                            null, Utils.OVERHEAL_MARKER, "OVERHEAL", Utils.OVERHEAL_DURATION, wp, CooldownTypes.BUFF);
-                                }
-                        });
+                                    if (teammateInRain != wp) {
+                                        teammateInRain.getCooldownManager().removeCooldown(Utils.OVERHEAL_MARKER);
+                                        teammateInRain.getCooldownManager().addCooldown("Overheal",
+                                                null, Utils.OVERHEAL_MARKER, "OVERHEAL", Utils.OVERHEAL_DURATION, wp, CooldownTypes.BUFF);
+                                    }
+                                });
 
-                        if (healingRain.getDuration() < 0) {
-                            this.cancel();
-                            task.cancel();
-                            rainSneakAbility.cancel();
+                            if (healingRain.getDuration() < 0) {
+                                this.cancel();
+                                task.cancel();
+                                rainSneakAbility.cancel();
+                            }
                         }
                     }
 
@@ -116,10 +120,12 @@ public class HealingRain extends AbstractAbility {
 
                     @Override
                     public void run() {
-                        healingRain.setDuration(healingRain.getDuration() - 1);
+                        if (!wp.getGame().isGameFreeze()) {
+                            healingRain.setDuration(healingRain.getDuration() - 1);
 
-                        if (recastCooldown != 0) {
-                            recastCooldown--;
+                            if (recastCooldown != 0) {
+                                recastCooldown--;
+                            }
                         }
                     }
 
