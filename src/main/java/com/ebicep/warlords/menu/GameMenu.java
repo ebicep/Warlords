@@ -684,10 +684,10 @@ public class GameMenu {
                 foundWeaponCount.put(rarity, 0);
             }
 
-            if (Bukkit.getOnlinePlayers().size() >= 16) {
+            if (Bukkit.getOnlinePlayers().size() >= 1) {
 
                 if (weaponCooldown == null || weaponCooldown < System.currentTimeMillis()) {
-                    openWeaponCooldown.put(player.getUniqueId(), System.currentTimeMillis() + 8 * 60 * 1000);
+                    //openWeaponCooldown.put(player.getUniqueId(), System.currentTimeMillis() + 8 * 60 * 1000);
                     player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 2);
                     for (int i = 0; i < 10; i++) {
                         String legendaryName = legendaryNames[random.nextInt(legendaryNames.length)];
@@ -700,11 +700,11 @@ public class GameMenu {
                         PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
                         Classes selectedClass = playerSettings.getSelectedClass();
 
-                        if (chance < 96.34) {
+                        if (chance < 96.36) {
                             rarity = WeaponsRarity.RARE;
-                        } else if (chance < 96.34 + 3) {
+                        } else if (chance < 96.36 + 3) {
                             rarity = WeaponsRarity.EPIC;
-                        } else if (chance < 96.34 + 3 + 0.6) {
+                        } else if (chance < 96.36 + 3 + 0.6) {
                             rarity = WeaponsRarity.LEGENDARY;
                         } else {
                             rarity = WeaponsRarity.MYTHIC;

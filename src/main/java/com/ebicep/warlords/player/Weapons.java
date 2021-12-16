@@ -80,13 +80,13 @@ public enum Weapons {
     SILVER_PHANTASM_HAMMER("Wrath of Aether", new ItemStack(Material.QUARTZ), LEGENDARY),
     SILVER_PHANTASM_STAFF("Wit of Oblivion", new ItemStack(Material.IRON_INGOT), LEGENDARY),
     SILVER_PHANTASM_STAFF_2("Lament", new ItemStack(Material.INK_SACK), LEGENDARY),
-    SILVER_PHANTASM_SCIMITAR("Mythryl", new ItemStack(Material.CARROT_ITEM), LEGENDARY),
+    SILVER_PHANTASM_SCIMITAR("Bloodquench", new ItemStack(Material.CARROT_ITEM), LEGENDARY),
     CANDY_CANE("Candy Slapper", new ItemStack(Material.SUGAR), LEGENDARY),
 
     // mythic
     SILVER_PHANTASM_TRIDENT("Torment", new ItemStack(Material.COOKIE), MYTHIC),
     SILVER_PHANTASM_SAWBLADE("Slayer", new ItemStack(Material.RABBIT), MYTHIC),
-    SILVER_PHANTASM_SWORD_4("Lilium", new ItemStack(Material.SUGAR_CANE), MYTHIC),
+    SILVER_PHANTASM_SWORD_4("Lilium", new ItemStack(Material.STICK), MYTHIC),
 
     ;
 

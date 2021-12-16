@@ -40,7 +40,8 @@ public class HolyRadianceProtector extends AbstractAbility {
                 "§a" + format(minDamageHeal) + " §7- §a" + format(maxDamageHeal) + " §7health." +
                 "\n\n" +
                 "§7You may look at an ally to mark\n" +
-                "§7them for §6" + markDuration + " §7seconds.";
+                "§7them for §6" + markDuration + " §7seconds. Mark has an\n" +
+                "§7optimal range of §e" + markRadius + " §7blocks.";
     }
 
     @Override

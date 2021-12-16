@@ -7,12 +7,10 @@ import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
 import com.ebicep.warlords.util.Utils;
-import net.minecraft.server.v1_8_R3.PacketPlayOutAnimation;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -26,9 +24,6 @@ import java.util.List;
 public class HolyRadiance extends AbstractAbility {
 
     private final int radius = 6;
-    private final int markRadius = 15;
-    private final int markDuration = 8;
-    boolean hasSneakingAbility;
 
     public HolyRadiance(float minDamageHeal, float maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier) {
         super("Holy Radiance", minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
@@ -49,7 +44,6 @@ public class HolyRadiance extends AbstractAbility {
                 .entitiesAround(player, radius, radius, radius)
                 .aliveTeammatesOfExcludingSelf(wp)
         ) {
-            //p.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
             wp.getGame().getGameTasks().put(
                     new FlyingArmorStand(wp.getLocation(), p, wp, 1.1).runTaskTimer(Warlords.getInstance(), 1, 1),
                     System.currentTimeMillis()
