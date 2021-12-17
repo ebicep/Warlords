@@ -1,5 +1,5 @@
 name: Warlords
-version: dev_20211205
+version: Silver Phantasm
 author: ebic
 main: com.ebicep.warlords.Warlords
 depend: [ MultiWorld, HolographicDisplays, ProtocolLib ]

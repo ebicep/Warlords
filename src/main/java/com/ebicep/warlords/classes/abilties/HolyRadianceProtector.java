@@ -64,8 +64,8 @@ public class HolyRadianceProtector extends AbstractAbility {
                 ((CraftPlayer) player).getHandle().playerConnection.sendPacket(playOutAnimation);
 
                 // chain particles
-                Location lineLocation = player.getLocation().add(0, 1.3, 0);
-                lineLocation.setDirection(lineLocation.toVector().subtract(p.getLocation().add(0, 1.3, 0).toVector()).multiply(-1));
+                Location lineLocation = player.getLocation().add(0, 1, 0);
+                lineLocation.setDirection(lineLocation.toVector().subtract(p.getLocation().add(0, 1, 0).toVector()).multiply(-1));
                 for (int i = 0; i < Math.floor(player.getLocation().distance(p.getLocation())) * 2; i++) {
                     ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(0, 255, 70), lineLocation, 500);
                     lineLocation.add(lineLocation.getDirection().multiply(.5));
@@ -83,7 +83,7 @@ public class HolyRadianceProtector extends AbstractAbility {
                     chain.setVisible(false);
                     chain.setBasePlate(false);
                     chain.setMarker(true);
-                    chain.setHelmet(new ItemStack(Material.PUMPKIN));
+                    chain.setHelmet(new ItemStack(Material.RED_ROSE));
                     from.add(from.getDirection().multiply(1.1));
                     chains.add(chain);
                     if(to.distanceSquared(from) < .3) {
