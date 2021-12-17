@@ -3,6 +3,7 @@ package com.ebicep.warlords.database.repositories.player;
 public enum PlayersCollections {
 
     ALL_TIME("Players_Information", "playersAllTime"),
+    SEASON("Players_Information_Season", "playersSeason"),
     WEEKLY("Players_Information_Weekly", "playersWeekly"),
     DAILY("Players_Information_Daily", "playersDaily"),
 
