@@ -116,7 +116,7 @@ public class HolyRadianceProtector extends AbstractAbility {
                 p.getCooldownManager().addCooldown(name, HolyRadianceProtector.this.getClass(), tempMark, "PROT MARK", markDuration, wp, CooldownTypes.BUFF);
 
                 player.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " You have marked " + ChatColor.GREEN + p.getName() + ChatColor.GRAY +"!");
-                p.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " You have been " + ChatColor.GREEN + "marked" + ChatColor.GRAY + " by " + wp.getName() + "!");
+                p.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " You have been granted " + ChatColor.GREEN + "Protector's Mark" + ChatColor.GRAY + " by " + wp.getName() + "!");
 
                 wp.getGame().getGameTasks().put(
 
@@ -128,7 +128,7 @@ public class HolyRadianceProtector extends AbstractAbility {
                                     Location particleLoc = playerLoc.clone();
                                     for (int i = 0; i < 4; i++) {
                                         for (int j = 0; j < 10; j++) {
-                                            double angle = j / 8D * Math.PI * 2;
+                                            double angle = j / 9D * Math.PI * 2;
                                             double width = 1;
                                             particleLoc.setX(playerLoc.getX() + Math.sin(angle) * width);
                                             particleLoc.setY(playerLoc.getY() + i / 6D);
