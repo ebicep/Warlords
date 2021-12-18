@@ -56,6 +56,10 @@ public class BotCommands implements CommandExecutor {
                 return true;
             case "inputgame":
             case "inputexperimental":
+                if (!sender.hasPermission("warlords.game.bot.inputgames")) {
+                    sender.sendMessage(ChatColor.RED + "Insufficient Permissions!");
+                    return true;
+                }
                 if(args.length == 1) {
                     BotManager.getTextChannelByName("games-backlog").ifPresent(textChannel -> textChannel.sendMessage("-" + input + " " + DatabaseManager.lastWarlordsPlusString).queue());
                     sender.sendMessage(ChatColor.GREEN + "Inputted game!");

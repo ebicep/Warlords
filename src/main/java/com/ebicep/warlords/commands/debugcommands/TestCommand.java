@@ -26,6 +26,7 @@ public class TestCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
 
         if (!sender.hasPermission("warlords.game.test")) {
+            sender.sendMessage("§cYou do not have permission to do that.");
             return true;
         }
         WarlordsPlayer warlordsPlayer = BaseCommand.requireWarlordsPlayer(sender);

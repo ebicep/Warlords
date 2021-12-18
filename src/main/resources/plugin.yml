@@ -1,6 +1,6 @@
 name: Warlords
 version: Silver Phantasm
-author: ebic
+authors: [ebic, Plikie]
 main: com.ebicep.warlords.Warlords
 depend: [ MultiWorld, HolographicDisplays, ProtocolLib ]
 load: POSTWORLD
@@ -83,3 +83,15 @@ commands:
   queue:
     description: Queue system
     aliases: [ queue ]
+
+permissions:
+  group.default:
+    default: false
+  group.gamestarter:
+    default: false
+  group.contentcreator:
+    default: false
+  group.coordinator:
+    default: false
+  group.administrator:
+    default: false

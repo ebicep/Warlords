@@ -38,7 +38,8 @@ public class DebugCommand implements CommandExecutor {
                 input.equalsIgnoreCase("takedamage") ||
                 input.equalsIgnoreCase("heal") ||
                 input.equalsIgnoreCase("crits") ||
-                input.equalsIgnoreCase("freeze")
+                input.equalsIgnoreCase("freeze") ||
+                input.equalsIgnoreCase("timer")
         ) {
             if (args.length == 3 && args[2] != null) {
                 player = Warlords.getPlayer(Bukkit.getPlayer(args[2]).getUniqueId());
@@ -78,7 +79,7 @@ public class DebugCommand implements CommandExecutor {
                         sender.sendMessage(ChatColor.RED + "DEV: §aTimer has been skipped!");
                         return true;
                     default:
-                        sender.sendMessage("§cInvalid option!");
+                        sender.sendMessage("§cInvalid option! [reset, skip]");
                         return true;
                 }
             case "energy": {
@@ -226,7 +227,7 @@ public class DebugCommand implements CommandExecutor {
             }
 
             default:
-                sender.sendMessage("§cInvalid option! valid args: [cooldownmode, cooldown, energy, damage, takedamage");
+                sender.sendMessage("§cInvalid option! valid args: [cooldownmode, cooldown, energy, damage, takedamage, freeze, timer");
                 return true;
         }
     }

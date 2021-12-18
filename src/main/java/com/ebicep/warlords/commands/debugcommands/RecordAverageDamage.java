@@ -15,6 +15,7 @@ public class RecordAverageDamage implements CommandExecutor {
         WarlordsPlayer warlordsPlayer = BaseCommand.requireWarlordsPlayer(sender);
 
         if (!sender.hasPermission("warlords.game.recordaverage")) {
+            sender.sendMessage("§cYou do not have permission to do that.");
             return true;
         }
 
