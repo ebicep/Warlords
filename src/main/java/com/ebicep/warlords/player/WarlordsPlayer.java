@@ -1024,7 +1024,6 @@ public final class WarlordsPlayer {
         } else {
             //TEAMMATE HEALING
             if (isTeammate(attacker)) {
-                healedBy.put(attacker, 10);
 
                 int maxHealth = this.maxHealth;
                 if (ability.equals("Water Bolt") || ability.equals("Water Breath") || ability.equals("Healing Rain")) {
@@ -1045,6 +1044,8 @@ public final class WarlordsPlayer {
                         sendMessage(ChatColor.GREEN + "\u00AB" + ChatColor.GRAY + " " + attacker.getName() + "'s " + ability + " healed for " + ChatColor.GREEN + "" + Math.round(healValue) + " " + ChatColor.GRAY + "health.");
                         attacker.sendMessage(RECEIVE_ARROW + ChatColor.GRAY + " " + "Your " + ability + " healed " + name + " for " + ChatColor.GREEN + "" + Math.round(healValue) + " " + ChatColor.GRAY + "health.");
                     }
+
+                    healedBy.put(attacker, 10);
                 }
                 health += healValue;
                 attacker.addHealing(healValue, gameState.flags().hasFlag(this));
