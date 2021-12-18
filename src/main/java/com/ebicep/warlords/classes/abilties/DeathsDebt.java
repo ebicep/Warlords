@@ -180,10 +180,11 @@ public class DeathsDebt extends AbstractTotemBase {
         }
         // 100% of damage over 6 seconds
         float damage = (tempDeathsDebt.getDelayedDamage() * .1667f);
+        float debtTrueDamage = (float) (damage * Math.pow(.8, wp.getCooldownManager().getCooldown(SpiritLink.class).size()));
         // Player damage
         wp.damageHealth(wp, "",
-                (float) (damage * Math.pow(.8, wp.getCooldownManager().getCooldown(SpiritLink.class).size())),
-                (float) (damage * Math.pow(.8, wp.getCooldownManager().getCooldown(SpiritLink.class).size())),
+                debtTrueDamage,
+                debtTrueDamage,
                 critChance,
                 critMultiplier,
                 false);
@@ -196,6 +197,10 @@ public class DeathsDebt extends AbstractTotemBase {
                             damage * .15f,
                             critChance, critMultiplier, false);
                 });
+        //adding to rep pool
+        if (wp.getSpec().getBlue() instanceof Repentance) {
+            ((Repentance) wp.getSpec().getBlue()).addToPool(debtTrueDamage);
+        }
     }
 
     public float getDelayedDamage() {
