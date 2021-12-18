@@ -35,9 +35,11 @@ public class LeaderboardManager {
     public static final HashMap<UUID, Integer> playerLeaderboardHolograms = new HashMap<>();
 
     public static final List<Hologram> lifeTimeHolograms = new ArrayList<>();
-    public static final List<Hologram> seasonHolograms = new ArrayList<>();
+    public static final List<Hologram> season5Holograms = new ArrayList<>();
+    public static final List<Hologram> season4Holograms = new ArrayList<>();
     public static final List<Hologram> weeklyHolograms = new ArrayList<>();
     public static final List<Hologram> dailyHolograms = new ArrayList<>();
+    public static final String[] hologramOrder = new String[]{"LifeTime", "Season 5", "Season 4", "Weekly", "Daily"};
     private static final String[] weeklyIncludedLeaderboardsTitles = new String[]{"Plays", "Wins", "Kills", "DHP Per Game", "Flags Captured"};
     private static final String[] weeklyExperienceLeaderboards = new String[]{
             "Wins",
@@ -180,7 +182,8 @@ public class LeaderboardManager {
                 }
             });
             lifeTimeHolograms.clear();
-            seasonHolograms.clear();
+            season5Holograms.clear();
+            season4Holograms.clear();
             weeklyHolograms.clear();
             dailyHolograms.clear();
 
@@ -206,20 +209,36 @@ public class LeaderboardManager {
                                         .filter(h -> h.getLocation().equals(leaderboard.getLocation()))
                                         .forEach(lifeTimeHolograms::add);
                             }).execute();
-                    //SEASON
+                    //SEASON 5
                     Warlords.newSharedChain(sharedChainName)
                             .asyncFirst(() -> {
-                                List<DatabasePlayer> databasePlayers = DatabaseManager.playerService.findAll(PlayersCollections.SEASON);
+                                List<DatabasePlayer> databasePlayers = DatabaseManager.playerService.findAll(PlayersCollections.SEASON_5);
                                 databasePlayers.sort((o1, o2) -> Leaderboard.compare(leaderboard.getValueFunction().apply(o2), leaderboard.getValueFunction().apply(o1)));
                                 return databasePlayers;
                             })
                             .syncLast((sortedInformation) -> {
-                                leaderboard.resetSortedPlayers(sortedInformation, PlayersCollections.SEASON);
-                                //creating leaderboard for season
-                                addLeaderboard(leaderboard, PlayersCollections.SEASON, ChatColor.AQUA + ChatColor.BOLD.toString() + "Season 4 " + leaderboard.getTitle());
+                                leaderboard.resetSortedPlayers(sortedInformation, PlayersCollections.SEASON_5);
+                                //creating leaderboard for season 5
+                                addLeaderboard(leaderboard, PlayersCollections.SEASON_5, ChatColor.AQUA + ChatColor.BOLD.toString() + "Season 5 " + leaderboard.getTitle());
                                 HologramsAPI.getHolograms(Warlords.getInstance()).stream()
                                         .filter(h -> !lifeTimeHolograms.contains(h) && h.getLocation().equals(leaderboard.getLocation()))
-                                        .forEach(seasonHolograms::add);
+                                        .forEach(season5Holograms::add);
+                            }).execute();
+                    //SEASON 4
+                    Warlords.newSharedChain(sharedChainName)
+                            .asyncFirst(() -> {
+                                List<DatabasePlayer> databasePlayers = DatabaseManager.playerService.findAll(PlayersCollections.SEASON_4);
+                                databasePlayers.sort((o1, o2) -> Leaderboard.compare(leaderboard.getValueFunction().apply(o2), leaderboard.getValueFunction().apply(o1)));
+                                return databasePlayers;
+                            })
+                            .syncLast((sortedInformation) -> {
+                                leaderboard.resetSortedPlayers(sortedInformation, PlayersCollections.SEASON_4);
+                                //creating leaderboard for season 4
+                                System.out.println(leaderboard.getTitle());
+                                addLeaderboard(leaderboard, PlayersCollections.SEASON_4, ChatColor.AQUA + ChatColor.BOLD.toString() + "Season 4 " + leaderboard.getTitle());
+                                HologramsAPI.getHolograms(Warlords.getInstance()).stream()
+                                        .filter(h -> !lifeTimeHolograms.contains(h) && !season5Holograms.contains(h) && h.getLocation().equals(leaderboard.getLocation()))
+                                        .forEach(season4Holograms::add);
                             }).execute();
                     //WEEKLY
                     Warlords.newSharedChain(sharedChainName)
@@ -235,7 +254,7 @@ public class LeaderboardManager {
                                 if (Arrays.stream(weeklyIncludedLeaderboardsTitles).anyMatch(title -> title.equalsIgnoreCase(leaderboard.getTitle()))) {
                                     addLeaderboard(leaderboard, PlayersCollections.WEEKLY, ChatColor.AQUA + ChatColor.BOLD.toString() + "Weekly " + leaderboard.getTitle());
                                     HologramsAPI.getHolograms(Warlords.getInstance()).stream()
-                                            .filter(h -> !lifeTimeHolograms.contains(h) && !seasonHolograms.contains(h) && h.getLocation().equals(leaderboard.getLocation()))
+                                            .filter(h -> !lifeTimeHolograms.contains(h) && !season5Holograms.contains(h) && !season4Holograms.contains(h) && h.getLocation().equals(leaderboard.getLocation()))
                                             .forEach(weeklyHolograms::add);
                                 }
                             }).execute();
@@ -253,7 +272,7 @@ public class LeaderboardManager {
                                 if (Arrays.stream(weeklyIncludedLeaderboardsTitles).anyMatch(title -> title.equalsIgnoreCase(leaderboard.getTitle()))) {
                                     addLeaderboard(leaderboard, PlayersCollections.DAILY, ChatColor.AQUA + ChatColor.BOLD.toString() + "Daily " + leaderboard.getTitle());
                                     HologramsAPI.getHolograms(Warlords.getInstance()).stream()
-                                            .filter(h -> !lifeTimeHolograms.contains(h) && !seasonHolograms.contains(h) && !weeklyHolograms.contains(h) && h.getLocation().equals(leaderboard.getLocation()))
+                                            .filter(h -> !lifeTimeHolograms.contains(h) && !season5Holograms.contains(h) && !weeklyHolograms.contains(h) && h.getLocation().equals(leaderboard.getLocation()))
                                             .forEach(dailyHolograms::add);
                                 }
                             }).execute();
@@ -281,22 +300,32 @@ public class LeaderboardManager {
         int selectedLeaderboard = playerLeaderboardHolograms.get(player.getUniqueId());
         if (selectedLeaderboard == 0) { //LIFETIME
             lifeTimeHolograms.forEach(hologram -> hologram.getVisibilityManager().showTo(player));
-            seasonHolograms.forEach(hologram -> hologram.getVisibilityManager().hideTo(player));
+            season5Holograms.forEach(hologram -> hologram.getVisibilityManager().hideTo(player));
+            season4Holograms.forEach(hologram -> hologram.getVisibilityManager().hideTo(player));
             weeklyHolograms.forEach(hologram -> hologram.getVisibilityManager().hideTo(player));
             dailyHolograms.forEach(hologram -> hologram.getVisibilityManager().hideTo(player));
-        } else if (selectedLeaderboard == 1) { //SEASON
+        } else if (selectedLeaderboard == 1) { //SEASON 5
             lifeTimeHolograms.forEach(hologram -> hologram.getVisibilityManager().hideTo(player));
-            seasonHolograms.forEach(hologram -> hologram.getVisibilityManager().showTo(player));
+            season5Holograms.forEach(hologram -> hologram.getVisibilityManager().showTo(player));
+            season4Holograms.forEach(hologram -> hologram.getVisibilityManager().hideTo(player));
             weeklyHolograms.forEach(hologram -> hologram.getVisibilityManager().hideTo(player));
             dailyHolograms.forEach(hologram -> hologram.getVisibilityManager().hideTo(player));
-        } else if (selectedLeaderboard == 2) { //WEEKLY
+        } else if (selectedLeaderboard == 2) { //SEASON 4
             lifeTimeHolograms.forEach(hologram -> hologram.getVisibilityManager().hideTo(player));
-            seasonHolograms.forEach(hologram -> hologram.getVisibilityManager().hideTo(player));
+            season5Holograms.forEach(hologram -> hologram.getVisibilityManager().hideTo(player));
+            season4Holograms.forEach(hologram -> hologram.getVisibilityManager().showTo(player));
+            weeklyHolograms.forEach(hologram -> hologram.getVisibilityManager().hideTo(player));
+            dailyHolograms.forEach(hologram -> hologram.getVisibilityManager().hideTo(player));
+        } else if (selectedLeaderboard == 3) { //WEEKLY
+            lifeTimeHolograms.forEach(hologram -> hologram.getVisibilityManager().hideTo(player));
+            season5Holograms.forEach(hologram -> hologram.getVisibilityManager().hideTo(player));
+            season4Holograms.forEach(hologram -> hologram.getVisibilityManager().hideTo(player));
             weeklyHolograms.forEach(hologram -> hologram.getVisibilityManager().showTo(player));
             dailyHolograms.forEach(hologram -> hologram.getVisibilityManager().hideTo(player));
         } else { //DAILY
             lifeTimeHolograms.forEach(hologram -> hologram.getVisibilityManager().hideTo(player));
-            seasonHolograms.forEach(hologram -> hologram.getVisibilityManager().hideTo(player));
+            season5Holograms.forEach(hologram -> hologram.getVisibilityManager().hideTo(player));
+            season4Holograms.forEach(hologram -> hologram.getVisibilityManager().hideTo(player));
             weeklyHolograms.forEach(hologram -> hologram.getVisibilityManager().hideTo(player));
             dailyHolograms.forEach(hologram -> hologram.getVisibilityManager().showTo(player));
         }
@@ -314,81 +343,20 @@ public class LeaderboardManager {
         leaderboardSwitcher.appendTextLine("");
 
         int selectedLeaderboard = playerLeaderboardHolograms.get(player.getUniqueId());
-        int lbAfter = getLBAfter(selectedLeaderboard);
         int lbBefore = getLBBefore(selectedLeaderboard);
-        if (selectedLeaderboard == 0) { //LIFETIME
-            TextLine lifetimeLine = leaderboardSwitcher.appendTextLine(ChatColor.GREEN + "LifeTime");
-            TextLine seasonLine = leaderboardSwitcher.appendTextLine(ChatColor.GRAY + "Season");
-            TextLine weeklyLine = leaderboardSwitcher.appendTextLine(ChatColor.GRAY + "Weekly");
-            TextLine dailyLine = leaderboardSwitcher.appendTextLine(ChatColor.GRAY + "Daily");
+        int lbAfter = getLBAfter(selectedLeaderboard);
+        TextLine beforeLine = leaderboardSwitcher.appendTextLine(ChatColor.GRAY + hologramOrder[lbBefore]);
+        TextLine selectedLine = leaderboardSwitcher.appendTextLine(ChatColor.GREEN + hologramOrder[selectedLeaderboard]);
+        TextLine afterLine = leaderboardSwitcher.appendTextLine(ChatColor.GRAY + hologramOrder[lbAfter]);
+        beforeLine.setTouchHandler(p -> {
+            playerLeaderboardHolograms.put(player.getUniqueId(), lbBefore);
+            setLeaderboardHologramVisibility(p);
+        });
+        afterLine.setTouchHandler(p -> {
+            playerLeaderboardHolograms.put(player.getUniqueId(), lbAfter);
+            setLeaderboardHologramVisibility(p);
+        });
 
-            seasonLine.setTouchHandler(p -> {
-                playerLeaderboardHolograms.put(player.getUniqueId(), 1);
-                setLeaderboardHologramVisibility(p);
-            });
-            weeklyLine.setTouchHandler(p -> {
-                playerLeaderboardHolograms.put(player.getUniqueId(), 2);
-                setLeaderboardHologramVisibility(p);
-            });
-            dailyLine.setTouchHandler(p -> {
-                playerLeaderboardHolograms.put(player.getUniqueId(), 3);
-                setLeaderboardHologramVisibility(p);
-            });
-        } else if (selectedLeaderboard == 1) { //SEASON
-            TextLine lifetimeLine = leaderboardSwitcher.appendTextLine(ChatColor.GRAY + "LifeTime");
-            TextLine seasonLine = leaderboardSwitcher.appendTextLine(ChatColor.GREEN + "Season");
-            TextLine weeklyLine = leaderboardSwitcher.appendTextLine(ChatColor.GRAY + "Weekly");
-            TextLine dailyLine = leaderboardSwitcher.appendTextLine(ChatColor.GRAY + "Daily");
-
-            lifetimeLine.setTouchHandler(p -> {
-                playerLeaderboardHolograms.put(player.getUniqueId(), 0);
-                setLeaderboardHologramVisibility(p);
-            });
-            weeklyLine.setTouchHandler(p -> {
-                playerLeaderboardHolograms.put(player.getUniqueId(), 2);
-                setLeaderboardHologramVisibility(p);
-            });
-            dailyLine.setTouchHandler(p -> {
-                playerLeaderboardHolograms.put(player.getUniqueId(), 3);
-                setLeaderboardHologramVisibility(p);
-            });
-        } else if (selectedLeaderboard == 2) { //WEEKLY
-            TextLine lifetimeLine = leaderboardSwitcher.appendTextLine(ChatColor.GRAY + "LifeTime");
-            TextLine seasonLine = leaderboardSwitcher.appendTextLine(ChatColor.GRAY + "Season");
-            TextLine weeklyLine = leaderboardSwitcher.appendTextLine(ChatColor.GREEN + "Weekly");
-            TextLine dailyLine = leaderboardSwitcher.appendTextLine(ChatColor.GRAY + "Daily");
-
-            lifetimeLine.setTouchHandler(p -> {
-                playerLeaderboardHolograms.put(player.getUniqueId(), 0);
-                setLeaderboardHologramVisibility(p);
-            });
-            seasonLine.setTouchHandler(p -> {
-                playerLeaderboardHolograms.put(player.getUniqueId(), 1);
-                setLeaderboardHologramVisibility(p);
-            });
-            dailyLine.setTouchHandler(p -> {
-                playerLeaderboardHolograms.put(player.getUniqueId(), 3);
-                setLeaderboardHologramVisibility(p);
-            });
-        } else { //DAILY
-            TextLine lifetimeLine = leaderboardSwitcher.appendTextLine(ChatColor.GRAY + "LifeTime");
-            TextLine seasonLine = leaderboardSwitcher.appendTextLine(ChatColor.GRAY + "Season");
-            TextLine weeklyLine = leaderboardSwitcher.appendTextLine(ChatColor.GRAY + "Weekly");
-            TextLine dailyLine = leaderboardSwitcher.appendTextLine(ChatColor.GREEN + "Daily");
-
-            lifetimeLine.setTouchHandler(p -> {
-                playerLeaderboardHolograms.put(player.getUniqueId(), 0);
-                setLeaderboardHologramVisibility(p);
-            });
-            seasonLine.setTouchHandler(p -> {
-                playerLeaderboardHolograms.put(player.getUniqueId(), 1);
-                setLeaderboardHologramVisibility(p);
-            });
-            weeklyLine.setTouchHandler(p -> {
-                playerLeaderboardHolograms.put(player.getUniqueId(), 2);
-                setLeaderboardHologramVisibility(p);
-            });
-        }
 
         leaderboardSwitcher.getVisibilityManager().setVisibleByDefault(false);
         leaderboardSwitcher.getVisibilityManager().showTo(player);
@@ -408,13 +376,15 @@ public class LeaderboardManager {
                 if (playerLeaderboardHolograms.get(player.getUniqueId()) == 0) {
                     databasePlayers = leaderboard.getSortedAllTime();
                 } else if (playerLeaderboardHolograms.get(player.getUniqueId()) == 1) {
-                    databasePlayers = leaderboard.getSortedSeason();
+                    databasePlayers = leaderboard.getSortedSeason5();
                 } else if (playerLeaderboardHolograms.get(player.getUniqueId()) == 2) {
+                    databasePlayers = leaderboard.getSortedSeason4();
+                } else if (playerLeaderboardHolograms.get(player.getUniqueId()) == 3) {
                     if (Arrays.stream(weeklyIncludedLeaderboardsTitles).noneMatch(l -> l.equals(leaderboard.getTitle()))) {
                         continue;
                     }
                     databasePlayers = leaderboard.getSortedWeekly();
-                } else if (playerLeaderboardHolograms.get(player.getUniqueId()) == 3) {
+                } else if (playerLeaderboardHolograms.get(player.getUniqueId()) == 4) {
                     if (Arrays.stream(weeklyIncludedLeaderboardsTitles).noneMatch(l -> l.equals(leaderboard.getTitle()))) {
                         continue;
                     }
@@ -494,13 +464,13 @@ public class LeaderboardManager {
 
     public static int getLBBefore(int currentLB) {
         if (currentLB <= 0) {
-            return 3;
+            return 4;
         }
         return currentLB - 1;
     }
 
     private static int getLBAfter(int currentLB) {
-        if (currentLB >= 3) {
+        if (currentLB >= 4) {
             return 0;
         }
         return currentLB + 1;

@@ -174,7 +174,7 @@ public class PlayingState implements State, TimerDebugAble {
                 .async(() -> game.forEachOfflinePlayer((player, team) -> {
                     DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
                     DatabaseManager.updatePlayerAsync(databasePlayer);
-                    DatabaseManager.loadPlayer(player.getUniqueId(), PlayersCollections.SEASON);
+                    DatabaseManager.loadPlayer(player.getUniqueId(), PlayersCollections.SEASON_5);
                     DatabaseManager.loadPlayer(player.getUniqueId(), PlayersCollections.WEEKLY);
                     DatabaseManager.loadPlayer(player.getUniqueId(), PlayersCollections.DAILY);
                 })).execute();

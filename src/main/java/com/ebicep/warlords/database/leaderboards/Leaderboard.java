@@ -17,7 +17,8 @@ public class Leaderboard {
     private final String title;
     private final Location location;
     private final List<DatabasePlayer> sortedAllTime = new ArrayList<>();
-    private final List<DatabasePlayer> sortedSeason = new ArrayList<>();
+    private final List<DatabasePlayer> sortedSeason5 = new ArrayList<>();
+    private final List<DatabasePlayer> sortedSeason4 = new ArrayList<>();
     private final List<DatabasePlayer> sortedWeekly = new ArrayList<>();
     private final List<DatabasePlayer> sortedDaily = new ArrayList<>();
     private final Function<DatabasePlayer, Number> valueFunction;
@@ -48,8 +49,8 @@ public class Leaderboard {
         switch (collections) {
             case ALL_TIME:
                 return sortedAllTime;
-            case SEASON:
-                return sortedSeason;
+            case SEASON_5:
+                return sortedSeason5;
             case WEEKLY:
                 return sortedWeekly;
             case DAILY:
@@ -68,9 +69,9 @@ public class Leaderboard {
                 this.sortedWeekly.clear();
                 this.sortedWeekly.addAll(newSortedPlayers);
                 return;
-            case SEASON:
-                this.sortedSeason.clear();
-                this.sortedSeason.addAll(newSortedPlayers);
+            case SEASON_5:
+                this.sortedSeason5.clear();
+                this.sortedSeason5.addAll(newSortedPlayers);
                 return;
             case DAILY:
                 this.sortedDaily.clear();
@@ -151,8 +152,12 @@ public class Leaderboard {
         return sortedAllTime;
     }
 
-    public List<DatabasePlayer> getSortedSeason() {
-        return sortedSeason;
+    public List<DatabasePlayer> getSortedSeason5() {
+        return sortedSeason5;
+    }
+
+    public List<DatabasePlayer> getSortedSeason4() {
+        return sortedSeason4;
     }
 
     public List<DatabasePlayer> getSortedWeekly() {
