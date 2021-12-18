@@ -678,11 +678,9 @@ public class Warlords extends JavaPlugin {
                                 orb.remove();
                                 itr.remove();
 
-                                float minHeal = 225;
-                                float maxHeal = 225;
+                                float orbHeal = 225;
                                 if (Warlords.getPlayerSettings(orb.getOwner().getUuid()).getClassesSkillBoosts() == ClassesSkillBoosts.ORBS_OF_LIFE) {
-                                    minHeal *= 1.2;
-                                    maxHeal *= 1.2;
+                                    orbHeal *= 1.2;
                                 }
                                 //BASE                           = 200 - 300
                                 //BASE + WEAP BOOST              = 240 - 360 (x1.2)
@@ -695,11 +693,10 @@ public class Warlords extends JavaPlugin {
                                 //432 *= 1.25 = 540
                                 //288 *= 1.25 = 360
                                 if (orb.getPlayerToMoveTowards() == null) {
-                                    minHeal *= 1 + orb.getTicksLived() / 520f;
-                                    maxHeal *= 1 + orb.getTicksLived() / 520f;
+                                    orbHeal *= 1 + orb.getTicksLived() / 520f;
                                 }
 
-                                wp.healHealth(orb.getOwner(), "Orbs of Life", maxHeal, maxHeal, -1, 100, false);
+                                wp.healHealth(orb.getOwner(), "Orbs of Life", orbHeal, orbHeal, -1, 100, false);
                                 if (player != null) {
                                     for (Player player1 : player.getWorld().getPlayers()) {
                                         player1.playSound(player.getLocation(), Sound.ORB_PICKUP, 0.5f, 1);
@@ -711,7 +708,7 @@ public class Warlords extends JavaPlugin {
                                         .aliveTeammatesOfExcludingSelf(wp)
                                         .limit(2)
                                 ) {
-                                    nearPlayer.healHealth(orb.getOwner(), "Orbs of Life", minHeal, minHeal, -1, 100, false);
+                                    nearPlayer.healHealth(orb.getOwner(), "Orbs of Life", orbHeal, orbHeal, -1, 100, false);
                                     if (player != null) {
                                         for (Player player1 : player.getWorld().getPlayers()) {
                                             player1.playSound(player.getLocation(), Sound.ORB_PICKUP, 0.5f, 1);
