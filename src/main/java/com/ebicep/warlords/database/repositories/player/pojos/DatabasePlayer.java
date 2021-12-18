@@ -5,7 +5,6 @@ import com.ebicep.warlords.player.Classes;
 import com.ebicep.warlords.player.ClassesGroup;
 import com.ebicep.warlords.player.Settings;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.IndexDirection;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;

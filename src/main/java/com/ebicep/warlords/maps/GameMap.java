@@ -284,10 +284,10 @@ public enum GameMap {
     public int getMinPlayers() {
         return minPlayers;
     }
+
     public Location getSpeedPowerup(@Nonnull Team team) {
         return team == Team.RED  ? speedPowerupRed : speedPowerupBlue;
     }
-
 
     public Location getHealingPowerup(@Nonnull Team team) {
         return team == Team.RED  ? healingPowerupRed : healingPowerupBlue;

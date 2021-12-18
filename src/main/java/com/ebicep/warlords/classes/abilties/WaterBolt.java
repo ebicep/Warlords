@@ -1,9 +1,11 @@
 package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.classes.internal.AbstractProjectileBase;
+import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
+import com.ebicep.warlords.util.Utils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -16,7 +18,7 @@ public class WaterBolt extends AbstractProjectileBase {
     private static final float HITBOX = 4;
 
     public WaterBolt() {
-        super("Water Bolt", 328, 452, 0, 85, 20, 175, 2, 300, true);
+        super("Water Bolt", 315, 434, 0, 80, 20, 175, 2, 300, true);
     }
 
     @Override
@@ -60,6 +62,9 @@ public class WaterBolt extends AbstractProjectileBase {
                         critChance,
                         critMultiplier,
                         false);
+                victim.getCooldownManager().removeCooldown(Utils.OVERHEAL_MARKER);
+                victim.getCooldownManager().addCooldown("Overheal",
+                        null, Utils.OVERHEAL_MARKER, "OVERHEAL", Utils.OVERHEAL_DURATION, shooter, CooldownTypes.BUFF);
             } else {
                 victim.damageHealth(shooter,
                         name,
@@ -84,6 +89,11 @@ public class WaterBolt extends AbstractProjectileBase {
                         critChance,
                         critMultiplier,
                         false);
+                if (nearEntity != shooter) {
+                    nearEntity.getCooldownManager().removeCooldown(Utils.OVERHEAL_MARKER);
+                    nearEntity.getCooldownManager().addCooldown("Overheal",
+                            null, Utils.OVERHEAL_MARKER, "OVERHEAL", Utils.OVERHEAL_DURATION, shooter, CooldownTypes.BUFF);
+                }
             } else {
                 nearEntity.damageHealth(
                         shooter,

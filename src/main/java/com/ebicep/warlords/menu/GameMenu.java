@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
+import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.util.ItemBuilder;
@@ -700,11 +701,11 @@ public class GameMenu {
                         PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
                         Classes selectedClass = playerSettings.getSelectedClass();
 
-                        if (chance < 96.32) {
+                        if (chance < 96.37) {
                             rarity = WeaponsRarity.RARE;
-                        } else if (chance < 96.32 + 3) {
+                        } else if (chance < 96.37 + 3) {
                             rarity = WeaponsRarity.EPIC;
-                        } else if (chance < 96.32 + 3 + 0.6) {
+                        } else if (chance < 96.37 + 3 + 0.6) {
                             rarity = WeaponsRarity.LEGENDARY;
                         } else {
                             rarity = WeaponsRarity.MYTHIC;
@@ -744,15 +745,14 @@ public class GameMenu {
                         if (!weapon.isUnlocked) {
                             weapon.isUnlocked = true;
                             Warlords.getInstance().saveWeaponConfig();
-                            // TODO: uncomment w/ new weapon patch
-                            //Bukkit.broadcastMessage("");
-                            //Bukkit.broadcastMessage("§l" + rarity.getWeaponChatColor() + weapon.getName() + " §l§fis now unlocked for everyone!");
-                            //Bukkit.broadcastMessage("");
+                            Bukkit.broadcastMessage("");
+                            Bukkit.broadcastMessage("§l" + rarity.getWeaponChatColor() + weapon.getName() + " §l§fis now unlocked for everyone!");
+                            Bukkit.broadcastMessage("");
                         } else {
                             if (rarity == WeaponsRarity.MYTHIC) {
-                                //Bukkit.broadcastMessage("");
-                                //Bukkit.broadcastMessage("§l" + rarity.getWeaponChatColor() + weapon.getName() + " §fwas already found! Unlucky!");
-                                //Bukkit.broadcastMessage("");
+                                Bukkit.broadcastMessage("");
+                                Bukkit.broadcastMessage("§l" + rarity.getWeaponChatColor() + weapon.getName() + " §fwas already found! Unlucky!");
+                                Bukkit.broadcastMessage("");
                             }
                         }
                     }
@@ -766,7 +766,7 @@ public class GameMenu {
                 } else {
                     long remainingTime = (weaponCooldown - System.currentTimeMillis()) / 1000;
                     long remainingTimeinMinutes = remainingTime / 60;
-                    player.sendMessage(ChatColor.RED + "Please wait " + (remainingTime > 60 ? remainingTimeinMinutes + " minutes" : remainingTime + " seconds") + " before opening weapons again!");
+                    player.sendMessage(ChatColor.RED + "Please wait " + (remainingTime > 60 ? remainingTimeinMinutes + " minutes" : remainingTime + " seconds") + " before opening skin shards again!");
                 }
             } else {
                 player.sendMessage(ChatColor.RED + "There must be at least 16 players online to roll skin shards!");

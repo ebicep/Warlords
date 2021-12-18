@@ -2,8 +2,8 @@ package com.ebicep.warlords.database.repositories.games.pojos;
 
 import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.database.leaderboards.LeaderboardManager;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.leaderboards.LeaderboardManager;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
 import com.ebicep.warlords.maps.Team;
@@ -399,14 +399,17 @@ public class DatabaseGame {
 
     private static void updatePlayerStatsFromTeam(DatabaseGame databaseGame, boolean add, DatabaseGamePlayers.GamePlayer gamePlayer, boolean blue) {
         DatabasePlayer databasePlayerAllTime = DatabaseManager.playerService.findByUUID(UUID.fromString(gamePlayer.getUuid()));
+        DatabasePlayer databasePlayerSeason = DatabaseManager.playerService.findOne(Criteria.where("uuid").is(gamePlayer.getUuid()), PlayersCollections.SEASON);
         DatabasePlayer databasePlayerWeekly = DatabaseManager.playerService.findOne(Criteria.where("uuid").is(gamePlayer.getUuid()), PlayersCollections.WEEKLY);
         DatabasePlayer databasePlayerDaily = DatabaseManager.playerService.findOne(Criteria.where("uuid").is(gamePlayer.getUuid()), PlayersCollections.DAILY);
 
         updatePlayerStats(databaseGame, add, gamePlayer, databasePlayerAllTime, blue);
+        updatePlayerStats(databaseGame, add, gamePlayer, databasePlayerSeason, blue);
         updatePlayerStats(databaseGame, add, gamePlayer, databasePlayerWeekly, blue);
         updatePlayerStats(databaseGame, add, gamePlayer, databasePlayerDaily, blue);
 
         DatabaseManager.updatePlayerAsync(databasePlayerAllTime);
+        DatabaseManager.updatePlayerAsync(databasePlayerSeason, PlayersCollections.SEASON);
         DatabaseManager.updatePlayerAsync(databasePlayerWeekly, PlayersCollections.WEEKLY);
         DatabaseManager.updatePlayerAsync(databasePlayerDaily, PlayersCollections.DAILY);
     }

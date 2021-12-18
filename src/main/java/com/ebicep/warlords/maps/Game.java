@@ -302,7 +302,7 @@ public class Game implements Runnable {
             ((EntityLiving) ((CraftEntity) p.getVehicle()).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0);
         }
         p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 9999999, 100000));
-        PacketUtils.sendTitle(p, ChatColor.RED + "Game Paused", dueToDisconnect ? ChatColor.YELLOW + "Disconnected detected" : "", 0, 9999999, 0);
+        PacketUtils.sendTitle(p, ChatColor.RED + "Game Paused", dueToDisconnect ? ChatColor.YELLOW + "Missing player detected!" : "", 0, 9999999, 0);
     }
 
     public List<UUID> getSpectators() {

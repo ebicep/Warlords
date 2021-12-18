@@ -16,7 +16,6 @@ import com.ebicep.warlords.maps.state.PlayingState;
 import com.ebicep.warlords.util.*;
 import net.minecraft.server.v1_8_R3.EntityLiving;
 import net.minecraft.server.v1_8_R3.GenericAttributes;
-import net.minecraft.server.v1_8_R3.MobEffectList;
 import net.minecraft.server.v1_8_R3.NBTTagCompound;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -30,7 +29,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nonnull;
@@ -59,6 +57,9 @@ public final class WarlordsPlayer {
     private float energy;
     private float maxEnergy;
     private float horseCooldown;
+    private int healPowerupDuration = 4;
+    private int overhealDuration;
+    private float currentHealthModifier = 1;
     private int flagCooldown;
     private int hitCooldown;
     private int spawnProtection;
@@ -612,7 +613,8 @@ public final class WarlordsPlayer {
                 }
 
                 if (!attacker.getCooldownManager().getCooldown(CripplingStrike.class).isEmpty()) {
-                    damageValue *= .85;
+                    CripplingStrike cripplingStrike = (CripplingStrike) attacker.getCooldownManager().getCooldown(CripplingStrike.class).get(0).getCooldownObject();
+                    damageValue *= .85 - (cripplingStrike.getConsecutiveStrikeCounter() * .05);
                 }
             }
         }
@@ -803,6 +805,9 @@ public final class WarlordsPlayer {
 
                     //ORBS
                     spawnOrbs(ability, attacker);
+                    if (ability.equals("Crippling Strike")) {
+                        spawnOrbs(ability, attacker);
+                    }
 
                     //prot strike
                     if (ability.equals("Protector's Strike")) {
@@ -824,6 +829,13 @@ public final class WarlordsPlayer {
                         for (WarlordsPlayer nearTeamPlayer : PlayerFilter
                                 .entitiesAround(attacker, 10, 10, 10)
                                 .aliveTeammatesOfExcludingSelf(attacker)
+                                .sorted(
+                                        Comparator.comparing(
+                                                (WarlordsPlayer p) -> p.getCooldownManager().hasCooldown(HolyRadianceProtector.class) ? 0 : 1
+                                        ).thenComparing(
+                                                Utils.sortClosestBy(WarlordsPlayer::getLocation, attacker.getLocation()
+                                                )
+                                        ))
                                 .limit(2)
                         ) {
                             if (Warlords.getPlayerSettings(attacker.uuid).getClassesSkillBoosts() == ClassesSkillBoosts.PROTECTOR_STRIKE) {
@@ -856,6 +868,7 @@ public final class WarlordsPlayer {
 
                 if (this.health <= 0 && !cooldownManager.checkUndyingArmy(false)) {
                     if (attacker.entity instanceof Player) {
+                        ((Player) attacker.entity).playSound(attacker.getLocation(), Sound.ORB_PICKUP, 500f, 1);
                         ((Player) attacker.entity).playSound(attacker.getLocation(), Sound.ORB_PICKUP, 500f, 0.5f);
                     }
 
@@ -876,7 +889,6 @@ public final class WarlordsPlayer {
                         }
                     });
                     gameState.addKill(team, false);
-
 
                     //title YOU DIED
                     if (this.entity instanceof Player) {
@@ -991,6 +1003,9 @@ public final class WarlordsPlayer {
             if (this.health + healValue > this.maxHealth) {
                 healValue = this.maxHealth - this.health;
             }
+
+            if (healValue < 0) return;
+
             if (healValue != 0) {
                 if (isCrit) {
                     sendMessage(RECEIVE_ARROW + ChatColor.GRAY + " Your " + ability + " critically healed you for " + ChatColor.GREEN + "§l" + Math.round(healValue) + "! " + ChatColor.GRAY + "health.");
@@ -1000,7 +1015,7 @@ public final class WarlordsPlayer {
                 health += healValue;
                 addHealing(healValue, gameState.flags().hasFlag(this));
 
-                if (!ability.isEmpty() && !ability.equals("Blood Lust")) {
+                if (!ability.isEmpty() && !ability.equals("Healing Rain") && !ability.equals("Blood Lust")) {
                     if (attacker.entity instanceof Player) {
                         ((Player) attacker.entity).playSound(attacker.getLocation(), Sound.ORB_PICKUP, 1, 1);
                     }
@@ -1011,9 +1026,17 @@ public final class WarlordsPlayer {
             if (isTeammate(attacker)) {
                 healedBy.put(attacker, 10);
 
+                int maxHealth = this.maxHealth;
+                if (ability.equals("Water Bolt") || ability.equals("Water Breath") || ability.equals("Healing Rain")) {
+                    maxHealth *= 1.1;
+                }
+
                 if (this.health + healValue > maxHealth) {
                     healValue = maxHealth - this.health;
                 }
+
+                if (healValue < 0) return;
+
                 if (healValue != 0) {
                     if (isCrit) {
                         sendMessage(ChatColor.GREEN + "\u00AB" + ChatColor.GRAY + " " + attacker.getName() + "'s " + ability + " critically healed you for " + ChatColor.GREEN + "§l" + Math.round(healValue) + "! " + ChatColor.GRAY + "health.");
@@ -1026,7 +1049,7 @@ public final class WarlordsPlayer {
                 health += healValue;
                 attacker.addHealing(healValue, gameState.flags().hasFlag(this));
 
-                if (!ability.isEmpty()) {
+                if (!ability.isEmpty() && !ability.equals("Healing Rain")) {
                     if (attacker.entity instanceof Player) {
                         ((Player) attacker.entity).playSound(attacker.getLocation(), Sound.ORB_PICKUP, 1, 1);
                     }
@@ -1648,7 +1671,7 @@ public final class WarlordsPlayer {
 
     public void setVelocity(org.bukkit.util.Vector v) {
         if(cooldownManager.hasCooldownFromName("KB Resistance")) {
-            setVelocity(v.multiply(.75), true);
+            setVelocity(v.multiply(1), true);
         } else {
             setVelocity(v, true);
         }
@@ -1764,5 +1787,33 @@ public final class WarlordsPlayer {
 
     public List<Float> getRecordDamage() {
         return recordDamage;
+    }
+
+    public float getCurrentHealthModifier() {
+        return currentHealthModifier;
+    }
+
+    public void setCurrentHealthModifier(float currentHealthModifier) {
+        this.currentHealthModifier = currentHealthModifier;
+    }
+
+    public int getOverhealDuration() {
+        return overhealDuration;
+    }
+
+    public void setOverhealDuration(int overhealDuration) {
+        this.overhealDuration = overhealDuration;
+    }
+
+    public void decrementOverhealDuration() {
+        this.overhealDuration--;
+    }
+
+    public int getHealPowerupDuration() {
+        return healPowerupDuration;
+    }
+
+    public void setHealPowerupDuration(int healPowerupDuration) {
+        this.healPowerupDuration = healPowerupDuration;
     }
 }

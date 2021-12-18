@@ -15,7 +15,10 @@ import com.ebicep.warlords.maps.flags.FlagManager;
 import com.ebicep.warlords.maps.flags.GroundFlagLocation;
 import com.ebicep.warlords.maps.flags.PlayerFlagLocation;
 import com.ebicep.warlords.maps.flags.SpawnFlagLocation;
-import com.ebicep.warlords.player.*;
+import com.ebicep.warlords.player.CustomScoreboard;
+import com.ebicep.warlords.player.ExperienceManager;
+import com.ebicep.warlords.player.PlayerSettings;
+import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.powerups.PowerupManager;
 import com.ebicep.warlords.util.PacketUtils;
 import com.ebicep.warlords.util.RemoveEntities;
@@ -171,6 +174,7 @@ public class PlayingState implements State, TimerDebugAble {
                 .async(() -> game.forEachOfflinePlayer((player, team) -> {
                     DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
                     DatabaseManager.updatePlayerAsync(databasePlayer);
+                    DatabaseManager.loadPlayer(player.getUniqueId(), PlayersCollections.SEASON);
                     DatabaseManager.loadPlayer(player.getUniqueId(), PlayersCollections.WEEKLY);
                     DatabaseManager.loadPlayer(player.getUniqueId(), PlayersCollections.DAILY);
                 })).execute();

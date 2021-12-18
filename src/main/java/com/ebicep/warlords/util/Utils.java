@@ -1,6 +1,5 @@
 package com.ebicep.warlords.util;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -13,11 +12,11 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class Utils {
 
@@ -41,6 +40,9 @@ public class Utils {
             new ItemStack(Material.WOOL, 1, (byte) 2),
             new ItemStack(Material.WOOL, 1, (byte) 6),
     };
+
+    public static final Object OVERHEAL_MARKER = new Object();
+    public static final int OVERHEAL_DURATION = 15;
 
     public static double getDotToPlayer(LivingEntity player1, LivingEntity player2, double yIncrease) {
         return getDotToLocation(new LocationBuilder(player1.getEyeLocation()).addY(yIncrease).get(), player2.getEyeLocation());
@@ -133,119 +135,12 @@ public class Utils {
 
     private static final Location LOCATION_CONTAINER = new Location(null, 0, 0, 0);
 
-    @Deprecated
-    public static Stream<WarlordsPlayer> filterOnlyEnemiesSorted(WarlordsPlayer entity, double x, double y, double z, Entity player) {
-        return filterOnlyEnemiesSorted(entity.getLocation(LOCATION_CONTAINER), x, y, z, player);
-    }
-
-    @Deprecated
-    public static Stream<WarlordsPlayer> filterOnlyEnemiesSorted(Entity entity, double x, double y, double z, Entity player) {
-        return filterOnlyEnemiesSorted(entity.getLocation(LOCATION_CONTAINER), x, y, z, player);
-    }
-
-    @Deprecated
-    public static Stream<WarlordsPlayer> filterOnlyEnemiesSorted(Location loc, double x, double y, double z, Entity player) {
-        return filterOnlyEnemies(loc.getWorld().getNearbyEntities(loc, x, y, z), player)
-                .sorted(sortClosestBy(WarlordsPlayer::getLocation, loc));
-    }
-
-    @Deprecated
-    public static Stream<WarlordsPlayer> filterOnlyEnemies(Entity entity, double x, double y, double z, Entity player) {
-        return filterOnlyEnemies(entity.getLocation(LOCATION_CONTAINER), x, y, z, player);
-    }
-
-    @Deprecated
-    public static Stream<WarlordsPlayer> filterOnlyEnemies(Location loc, double x, double y, double z, Entity player) {
-        return filterOnlyEnemies(loc.getWorld().getNearbyEntities(loc, x, y, z), player)
-                .filter(radiusAround(WarlordsPlayer::getLocation, loc, x, y, z));
-    }
-
-    /**
-     * Map the list of entities to valid WarlordPlayer who are part off the enemy of the team of the player
-     *
-     * @param entities
-     * @param player
-     * @return
-     */
-    @Deprecated
-    public static Stream<WarlordsPlayer> filterOnlyEnemies(Collection<Entity> entities, Entity player) {
-        WarlordsPlayer wp = Warlords.getPlayer(player);
-        return wp == null ? Stream.empty() : entities.stream()
-                .map(Warlords::getPlayer)
-                .filter(filterOnlyEnemies(wp));
-    }
-
     public static Predicate<WarlordsPlayer> filterOnlyEnemies(@Nullable WarlordsPlayer wp) {
         return wp == null ? (player) -> false : wp::isEnemyAlive;
     }
 
-
-    @Deprecated
-    public static Stream<WarlordsPlayer> filterOnlyTeammatesSorted(WarlordsPlayer entity, double x, double y, double z, Entity player) {
-        return filterOnlyTeammatesSorted(entity.getLocation(LOCATION_CONTAINER), x, y, z, player);
-    }
-
-    @Deprecated
-    public static Stream<WarlordsPlayer> filterOnlyTeammatesSorted(Entity entity, double x, double y, double z, Entity player) {
-        return filterOnlyTeammatesSorted(entity.getLocation(LOCATION_CONTAINER), x, y, z, player);
-    }
-
-    @Deprecated
-    public static Stream<WarlordsPlayer> filterOnlyTeammatesSorted(Location loc, double x, double y, double z, Entity player) {
-        return filterOnlyTeammates(loc.getWorld().getNearbyEntities(loc, x, y, z), player)
-                .sorted(sortClosestBy(WarlordsPlayer::getLocation, loc));
-    }
-
-    @Deprecated
-    public static Stream<WarlordsPlayer> filterOnlyTeammates(Entity entity, double x, double y, double z, Entity player) {
-        return filterOnlyTeammates(entity.getLocation(LOCATION_CONTAINER), x, y, z, player);
-    }
-
-    @Deprecated
-    public static Stream<WarlordsPlayer> filterOnlyTeammates(WarlordsPlayer entity, double x, double y, double z, Entity player) {
-        return filterOnlyTeammates(entity.getLocation(LOCATION_CONTAINER), x, y, z, player);
-    }
-
-    @Deprecated
-    public static Stream<WarlordsPlayer> filterOnlyTeammates(Location loc, double x, double y, double z, Entity player) {
-        return filterOnlyTeammates(loc.getWorld().getNearbyEntities(loc, x, y, z), player)
-                .filter(radiusAround(WarlordsPlayer::getLocation, loc, x, y, z));
-    }
-
-    /**
-     * Map the list of entities to valid WarlordPlayer who are part on the team of the player
-     *
-     * @param entities
-     * @param player
-     * @return
-     */
-    @Deprecated
-    public static Stream<WarlordsPlayer> filterOnlyTeammates(Collection<Entity> entities, Entity player) {
-        WarlordsPlayer wp = Warlords.getPlayer(player);
-        return wp == null ? Stream.empty() : entities.stream()
-                .map(e -> Warlords.getPlayer(e))
-                .filter(filterOnlyTeammates(wp));
-    }
-
     public static Predicate<WarlordsPlayer> filterOnlyTeammates(@Nullable WarlordsPlayer wp) {
         return wp == null ? (player) -> false : wp::isTeammateAlive;
-    }
-
-    // Old methods:
-    @Deprecated
-    public static List<Entity> filterOutTeammates(Collection<Entity> entities, Player player) {
-        WarlordsPlayer wp = Warlords.getPlayer(player);
-        return wp == null ? Collections.emptyList() : entities.stream()
-                .filter(e -> wp.isEnemyAlive(e))
-                .collect(Collectors.toList());
-    }
-
-    @Deprecated
-    public static List<Entity> filterTeammates(Collection<Entity> entities, Player player) {
-        WarlordsPlayer wp = Warlords.getPlayer(player);
-        return wp == null ? Collections.emptyList() : entities.stream()
-                .filter(e -> wp.isTeammateAlive(e))
-                .collect(Collectors.toList());
     }
 
     private static final Location LOCATION_CACHE_SORT = new Location(null, 0, 0, 0);

@@ -37,7 +37,7 @@ public enum Classes {
             FROST_BOLT, FREEZING_BREATH),
     AQUAMANCER("Aquamancer",
             Aquamancer::new,
-            WordWrap.wrapWithNewline("§7A healing-oriented Mage specialization that uses Water spells to heal allies and to deal minor damage to enemies.", 200),
+            WordWrap.wrapWithNewline("§7A healing-oriented Mage specialization that uses Water spells to heal allies and to deal minor damage to enemies. This specialization has access to the 'Overheal' ability.", 200),
             SpecType.HEALER,
             WATER_BOLT, WATER_BREATH),
     BERSERKER("Berserker",
