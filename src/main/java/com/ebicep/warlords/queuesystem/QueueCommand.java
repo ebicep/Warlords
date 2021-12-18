@@ -12,6 +12,11 @@ public class QueueCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
 
+        if (!sender.hasPermission("warlords.queue.interaction")) {
+            sender.sendMessage(ChatColor.RED + "Only verified comp players can join the queue!");
+            return true;
+        }
+
         if (args.length == 0) {
             sender.sendMessage(QueueManager.getQueue());
             return true;
@@ -42,7 +47,7 @@ public class QueueCommand implements CommandExecutor {
                 return true;
             }
             case "clear": {
-                if (sender.isOp()) {
+                if (sender.hasPermission("warlords.queue.clear")) {
                     QueueManager.queue.clear();
                     QueueManager.futureQueue.clear();
                     QueueManager.sendNewQueue();

@@ -20,6 +20,7 @@ public class PartyCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
+
         switch (s) {
             case "party":
             case "p":
@@ -242,15 +243,17 @@ public class PartyCommand implements CommandExecutor {
                         }
                         case "leader": {
                             currentParty.ifPresent(party -> {
-                                if (sender.isOp()) {
+                                if (sender.hasPermission("warlords.party.forceleader")) {
                                     party.transfer(sender.getName());
+                                } else {
+                                    sender.sendMessage(ChatColor.RED + "You do not have permission to do that.");
                                 }
                             });
                             return true;
                         }
                         case "forcejoin": {
                             currentParty.ifPresent(party -> {
-                                if (sender.isOp()) {
+                                if (sender.hasPermission("warlords.party.forcejoin")) {
                                     String name = args[0];
                                     if (name.equalsIgnoreCase("@a")) {
                                         Bukkit.getOnlinePlayers().stream()
@@ -261,6 +264,8 @@ public class PartyCommand implements CommandExecutor {
                                                 .filter(p -> p.getName().equalsIgnoreCase(name))
                                                 .forEach(p -> Bukkit.getServer().dispatchCommand(p, "p join " + party.getLeaderName()));
                                     }
+                                } else {
+                                    sender.sendMessage(ChatColor.RED + "You do not have permission to do that.");
                                 }
                             });
                             return true;
