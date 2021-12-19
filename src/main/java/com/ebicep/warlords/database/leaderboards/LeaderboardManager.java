@@ -234,7 +234,6 @@ public class LeaderboardManager {
                             .syncLast((sortedInformation) -> {
                                 leaderboard.resetSortedPlayers(sortedInformation, PlayersCollections.SEASON_4);
                                 //creating leaderboard for season 4
-                                System.out.println(leaderboard.getTitle());
                                 addLeaderboard(leaderboard, PlayersCollections.SEASON_4, ChatColor.AQUA + ChatColor.BOLD.toString() + "Season 4 " + leaderboard.getTitle());
                                 HologramsAPI.getHolograms(Warlords.getInstance()).stream()
                                         .filter(h -> !lifeTimeHolograms.contains(h) && !season5Holograms.contains(h) && h.getLocation().equals(leaderboard.getLocation()))
