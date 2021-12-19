@@ -650,7 +650,6 @@ public class Warlords extends JavaPlugin {
                             }
                         }
 
-
                         // Energy
 
                         if (wp.getEnergy() < wp.getMaxEnergy()) {

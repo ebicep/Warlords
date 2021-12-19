@@ -147,6 +147,7 @@ public class WarlordsEvents implements Listener {
             ChatUtils.sendCenteredMessage(player, ChatColor.GOLD + "Developed by " + ChatColor.RED + "sumSmash " + ChatColor.GOLD + "&" + ChatColor.RED + " Plikie");
             ChatUtils.sendCenteredMessage(player, ChatColor.GREEN + "/hotkeymode " + ChatColor.GOLD + "to change your hotkey mode.");
             ChatUtils.sendCenteredMessage(player, ChatColor.GOLD + "Click the Nether Star or do " + ChatColor.GREEN + "/menu" + ChatColor.GOLD + " to open the selection menu.");
+            ChatUtils.sendCenteredMessage(player, ChatColor.GOLD + "Make sure to join the queue using " + ChatColor.GREEN + "/queue join" + ChatColor.GOLD + " if you'd like to play!");
             ChatUtils.sendCenteredMessage(player, ChatColor.BLUE + "-----------------------------------------------------");
 
             PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
@@ -340,7 +341,7 @@ public class WarlordsEvents implements Listener {
                         wp.setFlagCooldown(5);
                     }
                 } else if (itemHeld.getType() == Material.COMPASS) {
-                    player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 1.5f);
+                    player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 2);
                     wp.toggleTeamFlagCompass();
                 } else if (player.getInventory().getHeldItemSlot() == 0 || !Warlords.getPlayerSettings(wp.getUuid()).getHotKeyMode()) {
                     wp.getSpec().onRightClick(wp, player);
