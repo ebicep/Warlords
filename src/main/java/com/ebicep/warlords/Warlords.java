@@ -839,7 +839,7 @@ public class Warlords extends JavaPlugin {
 
                             // Checks whether the player has the healing powerup active.
                             if (wps.isPowerUpHeal()) {
-                                int heal = (int) (wps.getMaxHealth() * .05);
+                                int heal = (int) (wps.getMaxHealth() * .08);
                                 if (wps.getHealth() + heal > wps.getMaxHealth()) {
                                     heal = wps.getMaxHealth() - wps.getHealth();
                                 }
@@ -849,7 +849,7 @@ public class Warlords extends JavaPlugin {
                                 if (wps.getHealPowerupDuration() > 0) {
                                     wps.setHealPowerupDuration(wps.getHealPowerupDuration() - 1);
                                 } else {
-                                    wps.setHealPowerupDuration(5);
+                                    wps.setHealPowerupDuration(4);
                                     wps.setPowerUpHeal(false);
                                 }
                             }

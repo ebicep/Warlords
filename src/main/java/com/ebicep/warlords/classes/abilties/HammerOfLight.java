@@ -176,13 +176,13 @@ public class HammerOfLight extends AbstractAbility {
                                                         .aliveTeammatesOf(wp)
                                                         .forEach(teammate -> {
                                                             teammate.healHealth(
-                                                                    hol.getWarlordsPlayer(),
-                                                                    "Crown of Light",
-                                                                    hol.getMinDamage() * 1.5f,
-                                                                    hol.getMaxDamage() * 1.5f,
-                                                                    hol.getCritChance(),
-                                                                    hol.getCritMultiplier(),
-                                                                    false);
+                                                                hol.getWarlordsPlayer(),
+                                                                "Crown of Light",
+                                                                hol.getMinDamage() * 1.5f,
+                                                                hol.getMaxDamage() * 1.5f,
+                                                                hol.getCritChance(),
+                                                                hol.getCritMultiplier(),
+                                                                false);
                                                         });
                                                 timeLeft--;
 

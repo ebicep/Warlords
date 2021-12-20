@@ -1050,6 +1050,8 @@ public final class WarlordsPlayer {
                         System.out.println("ability = " + ability);
                         System.out.println("this = " + spec.getName());
                         System.out.println("attacker = " + attacker.getSpec().getName());
+                        System.out.println("healed by = " + attacker.getHealedBy());
+                        System.out.println("hit by = " + attacker.getHitBy());
                     }
                     //healedBy.put(attacker, 10);
                 }

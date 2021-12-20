@@ -95,9 +95,11 @@ public class HealingRain extends AbstractAbility {
                                             healingRain.getCritMultiplier(),
                                             false);
 
-                                    teammateInRain.getCooldownManager().removeCooldown(Utils.OVERHEAL_MARKER);
-                                    teammateInRain.getCooldownManager().addCooldown("Overheal",
-                                            null, Utils.OVERHEAL_MARKER, "OVERHEAL", Utils.OVERHEAL_DURATION, wp, CooldownTypes.BUFF);
+                                    if (teammateInRain != wp) {
+                                        teammateInRain.getCooldownManager().removeCooldown(Utils.OVERHEAL_MARKER);
+                                        teammateInRain.getCooldownManager().addCooldown("Overheal",
+                                                null, Utils.OVERHEAL_MARKER, "OVERHEAL", Utils.OVERHEAL_DURATION, wp, CooldownTypes.BUFF);
+                                    }
                                 });
 
                             if (healingRain.getDuration() < 0) {
