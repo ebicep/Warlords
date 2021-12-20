@@ -57,7 +57,7 @@ public final class WarlordsPlayer {
     private float energy;
     private float maxEnergy;
     private float horseCooldown;
-    private int healPowerupDuration = 4;
+    private int healPowerupDuration = 5;
     private int overhealDuration;
     private float currentHealthModifier = 1;
     private int flagCooldown;

@@ -36,6 +36,9 @@ public class WaterBreath extends AbstractAbility {
         wp.getCooldownManager().removeDebuffCooldowns();
         wp.getSpeed().removeNegTimeModifier();
         wp.healHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+        wp.getCooldownManager().removeCooldown(Utils.OVERHEAL_MARKER);
+        wp.getCooldownManager().addCooldown("Overheal",
+                null, Utils.OVERHEAL_MARKER, "OVERHEAL", Utils.OVERHEAL_DURATION, wp, CooldownTypes.BUFF);
         player.playSound(player.getLocation(), Sound.ORB_PICKUP, 1, 1);
 
         Location playerLoc = player.getLocation();
