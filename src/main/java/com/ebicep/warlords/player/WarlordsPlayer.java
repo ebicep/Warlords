@@ -1045,6 +1045,12 @@ public final class WarlordsPlayer {
                         attacker.sendMessage(RECEIVE_ARROW + ChatColor.GRAY + " " + "Your " + ability + " healed " + name + " for " + ChatColor.GREEN + "" + Math.round(healValue) + " " + ChatColor.GRAY + "health.");
                     }
 
+                    if (attacker.isEnemy(this)) {
+                        System.out.println("WARNING BUG THING");
+                        System.out.println("ability = " + ability);
+                        System.out.println("this = " + spec.getName());
+                        System.out.println("attacker = " + attacker.getSpec().getName());
+                    }
                     //healedBy.put(attacker, 10);
                 }
                 health += healValue;
