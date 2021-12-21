@@ -57,7 +57,7 @@ public class DatabasePlayer {
         this.kills += gamePlayer.getTotalKills() * operation;
         this.assists += gamePlayer.getTotalAssists() * operation;
         this.deaths += gamePlayer.getTotalDeaths() * operation;
-        if(won) {
+        if (won) {
             this.wins += operation;
         } else {
             this.losses += operation;
@@ -242,6 +242,19 @@ public class DatabasePlayer {
                 return shaman;
         }
         return null;
+    }
+
+    public DatabaseWarlordsClass getClass(DatabaseWarlordsClass databaseWarlordsClass) {
+        for (DatabaseWarlordsClass aClass : getClasses()) {
+            if (databaseWarlordsClass.getClass().equals(aClass.getClass())) {
+                return aClass;
+            }
+        }
+        return null;
+    }
+
+    public DatabaseWarlordsClass[] getClasses() {
+        return new DatabaseWarlordsClass[]{mage, warrior, paladin, shaman};
     }
 
     public DatabaseMage getMage() {

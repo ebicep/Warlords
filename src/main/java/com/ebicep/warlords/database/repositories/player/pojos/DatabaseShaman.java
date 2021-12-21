@@ -14,6 +14,7 @@ public class DatabaseShaman extends DatabaseWarlordsClass {
         super();
     }
 
+    @Override
     public DatabaseSpecialization[] getSpecs() {
         return new DatabaseSpecialization[]{thunderlord, spiritguard, earthwarden};
     }

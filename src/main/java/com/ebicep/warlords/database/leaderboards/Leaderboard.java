@@ -51,6 +51,8 @@ public class Leaderboard {
                 return sortedAllTime;
             case SEASON_5:
                 return sortedSeason5;
+            case SEASON_4:
+                return sortedSeason4;
             case WEEKLY:
                 return sortedWeekly;
             case DAILY:
@@ -72,6 +74,10 @@ public class Leaderboard {
             case SEASON_5:
                 this.sortedSeason5.clear();
                 this.sortedSeason5.addAll(newSortedPlayers);
+                return;
+            case SEASON_4:
+                this.sortedSeason4.clear();
+                this.sortedSeason4.addAll(newSortedPlayers);
                 return;
             case DAILY:
                 this.sortedDaily.clear();

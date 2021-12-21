@@ -10,13 +10,14 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
-public class PartyCommand implements CommandExecutor {
+public class PartyCommand implements TabExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
@@ -254,7 +255,7 @@ public class PartyCommand implements CommandExecutor {
                         case "forcejoin": {
                             currentParty.ifPresent(party -> {
                                 if (sender.hasPermission("warlords.party.forcejoin")) {
-                                    String name = args[0];
+                                    String name = args[1];
                                     if (name.equalsIgnoreCase("@a")) {
                                         Bukkit.getOnlinePlayers().stream()
                                                 .filter(p -> !p.getName().equalsIgnoreCase(party.getLeaderName()))
@@ -342,8 +343,25 @@ public class PartyCommand implements CommandExecutor {
         return true;
     }
 
+    private static final String[] partyOptions = {
+            "invite", "join", "leave", "disband", "list", "promote", "demote",
+            "kick", "remove", "transfer", "poll", "afk", "close", "open",
+            "outside", "leader", "forcejoin", "allinvite", "invitequeue",
+    };
+
+    @Override
+    public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] args) {
+        return Arrays
+                .stream(partyOptions)
+                .filter(e -> e.startsWith(args[args.length - 1].toLowerCase(Locale.ROOT)))
+                .map(e -> e.charAt(0) + e.substring(1).toLowerCase(Locale.ROOT))
+                .collect(Collectors.toList());
+
+    }
+
     public void register(Warlords instance) {
         instance.getCommand("party").setExecutor(this);
+        instance.getCommand("party").setTabCompleter(this);
     }
 
 }

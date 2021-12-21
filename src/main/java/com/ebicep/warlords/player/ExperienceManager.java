@@ -140,7 +140,7 @@ public class ExperienceManager {
         }
 
         try {
-            DatabasePlayer databasePlayer = DatabaseManager.playerService.findOne(Criteria.where("uuid").is(warlordsPlayer.getUuid().toString()), PlayersCollections.DAILY);
+            DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(warlordsPlayer.getUuid(), PlayersCollections.DAILY);
             int plays = databasePlayer.getWins() + databasePlayer.getLosses();
             switch (plays) {
                 case 0:

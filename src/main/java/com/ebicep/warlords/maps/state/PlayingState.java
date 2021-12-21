@@ -302,7 +302,7 @@ public class PlayingState implements State, TimerDebugAble {
                 System.out.println(ChatColor.GREEN + "[Warlords] This game was added to the database (INVALID DAMAGE/HEALING) but player information remained the same");
             }
         } else {
-            if (game.playersCount() >= 6) {
+            if (game.playersCount() >= 6 && timer <= 12000) {
                 DatabaseGame.addGame(PlayingState.this, false);
                 System.out.println(ChatColor.GREEN + "[Warlords] This game was added to the database but player information remained the same");
             } else {

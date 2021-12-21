@@ -123,7 +123,7 @@ public class DatabaseManager {
     }
 
     public static void loadPlayer(UUID uuid, PlayersCollections collections) {
-        if (playerService.findOne(Criteria.where("uuid").is(uuid.toString()), collections) == null) {
+        if (playerService.findByUUID(uuid, collections) == null) {
             Warlords.newChain()
                     .syncFirst(() -> {
                         String name = Bukkit.getOfflinePlayer(uuid).getName();
