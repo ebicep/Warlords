@@ -600,6 +600,7 @@ public class Warlords extends JavaPlugin {
                             if (player != null) {
                                 player.setGameMode(GameMode.SPECTATOR);
                             }
+
                             //giving out assists
                             int lastElementIndex = wp.getHitBy().size() - 1;
                             WarlordsPlayer killedBy = wp.getHitBy().entrySet().stream().skip(lastElementIndex).iterator().next().getKey();
@@ -621,6 +622,7 @@ public class Warlords extends JavaPlugin {
                                                         wp.getColoredName()
                                         );
                                     }
+
                                     assisted.addAssist();
                                 }
                                 counter[0]++;
@@ -860,8 +862,8 @@ public class Warlords extends JavaPlugin {
                             }
 
                             // Assists - 10 seconds timer.
-                            wps.getHitBy().forEach(((wp, integer) -> wp.getHitBy().put(wp, integer - 1)));
-                            wps.getHealedBy().forEach(((wp, integer) -> wp.getHealedBy().put(wp, integer - 1)));
+                            wps.getHitBy().forEach(((wp, integer) -> wps.getHitBy().put(wp, integer - 1)));
+                            wps.getHealedBy().forEach(((wp, integer) -> wps.getHealedBy().put(wp, integer - 1)));
                             wps.getHitBy().entrySet().removeIf(p -> p.getValue() <= 0);
                             wps.getHealedBy().entrySet().removeIf(p -> p.getValue() <= 0);
                         }

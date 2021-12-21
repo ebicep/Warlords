@@ -58,7 +58,6 @@ public final class WarlordsPlayer {
     private float maxEnergy;
     private float horseCooldown;
     private int healPowerupDuration = 5;
-    private int overhealDuration;
     private float currentHealthModifier = 1;
     private int flagCooldown;
     private int hitCooldown;
@@ -1000,6 +999,7 @@ public final class WarlordsPlayer {
 
         //SELF HEALING
         if (this == attacker) {
+
             if (this.health + healValue > this.maxHealth) {
                 healValue = this.maxHealth - this.health;
             }
@@ -1045,15 +1045,7 @@ public final class WarlordsPlayer {
                         attacker.sendMessage(RECEIVE_ARROW + ChatColor.GRAY + " " + "Your " + ability + " healed " + name + " for " + ChatColor.GREEN + "" + Math.round(healValue) + " " + ChatColor.GRAY + "health.");
                     }
 
-                    if (attacker.isEnemy(this)) {
-                        System.out.println("WARNING BUG THING");
-                        System.out.println("ability = " + ability);
-                        System.out.println("this = " + spec.getName());
-                        System.out.println("attacker = " + attacker.getSpec().getName());
-                        System.out.println("healed by = " + attacker.getHealedBy());
-                        System.out.println("hit by = " + attacker.getHitBy());
-                    }
-                    //healedBy.put(attacker, 10);
+                    healedBy.put(attacker, 10);
                 }
                 health += healValue;
                 attacker.addHealing(healValue, gameState.flags().hasFlag(this));
@@ -1104,7 +1096,7 @@ public final class WarlordsPlayer {
         showDeathAnimation();
 
         if (attacker != this) {
-            //hitBy.putAll(attacker.getHealedBy());
+            hitBy.putAll(attacker.getHealedBy());
         }
 
         hitBy.remove(attacker);
@@ -1804,18 +1796,6 @@ public final class WarlordsPlayer {
 
     public void setCurrentHealthModifier(float currentHealthModifier) {
         this.currentHealthModifier = currentHealthModifier;
-    }
-
-    public int getOverhealDuration() {
-        return overhealDuration;
-    }
-
-    public void setOverhealDuration(int overhealDuration) {
-        this.overhealDuration = overhealDuration;
-    }
-
-    public void decrementOverhealDuration() {
-        this.overhealDuration--;
     }
 
     public int getHealPowerupDuration() {
