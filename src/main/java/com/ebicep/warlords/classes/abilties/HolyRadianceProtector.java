@@ -40,8 +40,8 @@ public class HolyRadianceProtector extends AbstractAbility {
                 "\n\n" +
                 "§7You may look at an ally to mark\n" +
                 "§7them for §6" + markDuration + " §7seconds. Mark has an\n" +
-                "§7optimal range of §e" + markRadius + " §7blocks.\n" +
-                "§7However, marking players from far away\n" +
+                "§7optimal range of §e" + markRadius + " §7blocks. However,\n" +
+                "§7marking players from far away\n" +
                 "§7will not give them healing.";
     }
 

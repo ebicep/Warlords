@@ -42,8 +42,8 @@ public class HolyRadianceCrusader extends AbstractAbility {
                 "§7them for §6" + markDuration + " §7seconds. Increasing\n" +
                 "§7their EPS by §e5 §7and speed by §e20%\n" +
                 "§7§7for the duration. Mark has an optimal\n" +
-                "§7range of §e" + markRadius + " §7blocks.\n" +
-                "§7However, Marking players from far away\n" +
+                "§7range of §e" + markRadius + " §7blocks. However,\n" +
+                "§7marking players from far away\n" +
                 "§7will not give them healing.";
 
     }
