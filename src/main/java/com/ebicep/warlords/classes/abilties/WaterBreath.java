@@ -27,7 +27,11 @@ public class WaterBreath extends AbstractAbility {
         description = "§7Breathe water in a cone in front of you,\n" +
                 "§7knocking back enemies, cleansing all §ede-buffs\n" +
                 "§7and restoring §a" + format(minDamageHeal) + " §7- §a" + format(maxDamageHeal) + " §7health to\n" +
-                "§7yourself and all allies hit.";
+                "§7yourself and all allies hit." +
+                "\n\n" +
+                "§7Water Breath can overheal allies for up to\n" +
+                "§a10% §7of their max health as bonus health\n" +
+                "§7for §6" + Utils.OVERHEAL_DURATION + " §7seconds.";
     }
 
     @Override

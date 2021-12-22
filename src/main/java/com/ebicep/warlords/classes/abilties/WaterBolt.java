@@ -117,7 +117,11 @@ public class WaterBolt extends AbstractProjectileBase {
                 "§7direct hit will cause §a15% §7increased\n" +
                 "§7damage or healing for the target hit." +
                 "\n\n" +
-                "§7Has an optimal range of §e" + MAX_FULL_DAMAGE_DISTANCE + " §7blocks.";
+                "§7Has an optimal range of §e" + MAX_FULL_DAMAGE_DISTANCE + " §7blocks." +
+                "\n\n" +
+                "§7Water Bolt can overheal allies for up to\n" +
+                "§a10% §7of their max health as bonus health\n" +
+                "§7for §6" + Utils.OVERHEAL_DURATION + " §7seconds.";
     }
 	
 }

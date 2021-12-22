@@ -56,7 +56,7 @@ public class HammerOfLight extends AbstractAbility {
                 "§7You may SNEAK to turn your hammer into Crown of Light.\n" +
                 "§7Removing the damage and piercing BUT increasing\n" +
                 "§7the healing §7by §a50% §7and reducing the\n" +
-                "§7energy cost of your Protector Strike by\n" +
+                "§7energy cost of your Protector's Strike by\n" +
                 "§e10 §7energy. You cannot put the Hammer of Light\n" +
                 "§7back down after you converted it.";
     }
