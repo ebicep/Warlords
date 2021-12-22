@@ -200,7 +200,7 @@ public class HammerOfLight extends AbstractAbility {
 
                             wasSneaking = player.isSneaking();
 
-                            if (wp.isDead()) {
+                            if (wp.isDead() || hol.getDuration() <= 0) {
                                 this.cancel();
                             }
                         }
