@@ -700,11 +700,11 @@ public class GameMenu {
                         PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
                         Classes selectedClass = playerSettings.getSelectedClass();
 
-                        if (chance < 96.37) {
+                        if (chance < 96.36) {
                             rarity = WeaponsRarity.RARE;
-                        } else if (chance < 96.37 + 3) {
+                        } else if (chance < 96.36 + 3) {
                             rarity = WeaponsRarity.EPIC;
-                        } else if (chance < 96.37 + 3 + 0.6) {
+                        } else if (chance < 96.36 + 3 + 0.6) {
                             rarity = WeaponsRarity.LEGENDARY;
                         } else {
                             rarity = WeaponsRarity.MYTHIC;
