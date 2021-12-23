@@ -57,7 +57,7 @@ public final class WarlordsPlayer {
     private float energy;
     private float maxEnergy;
     private float horseCooldown;
-    private int healPowerupDuration = 5;
+    private int healPowerupDuration = 4;
     private float currentHealthModifier = 1;
     private int flagCooldown;
     private int hitCooldown;
@@ -1045,7 +1045,7 @@ public final class WarlordsPlayer {
                         attacker.sendMessage(RECEIVE_ARROW + ChatColor.GRAY + " " + "Your " + ability + " healed " + name + " for " + ChatColor.GREEN + "" + Math.round(healValue) + " " + ChatColor.GRAY + "health.");
                     }
 
-                    healedBy.put(attacker, 10);
+                    //healedBy.put(attacker, 10);
                 }
                 health += healValue;
                 attacker.addHealing(healValue, gameState.flags().hasFlag(this));
@@ -1077,6 +1077,7 @@ public final class WarlordsPlayer {
         if (powerUpHeal) {
             powerUpHeal = false;
             sendMessage(ChatColor.GOLD + "Your §a§lHealing Powerup §6has worn off.");
+            setHealPowerupDuration(4);
         }
     }
 

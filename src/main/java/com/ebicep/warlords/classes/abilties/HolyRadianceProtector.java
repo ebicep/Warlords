@@ -26,7 +26,7 @@ public class HolyRadianceProtector extends AbstractAbility {
 
     private final int radius = 6;
     private final int markRadius = 15;
-    private final int markDuration = 6;
+    private final int markDuration = 8;
 
     public HolyRadianceProtector(float minDamageHeal, float maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier) {
         super("Holy Radiance", minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
@@ -40,7 +40,9 @@ public class HolyRadianceProtector extends AbstractAbility {
                 "\n\n" +
                 "§7You may look at an ally to mark\n" +
                 "§7them for §6" + markDuration + " §7seconds. Mark has an\n" +
-                "§7optimal range of §e" + markRadius + " §7blocks.";
+                "§7optimal range of §e" + markRadius + " §7blocks. However,\n" +
+                "§7marking players from far away\n" +
+                "§7will not give them healing.";
     }
 
     @Override
