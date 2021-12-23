@@ -114,18 +114,8 @@ public enum Weapons {
     }
 
     @Deprecated
-    public static HashMap<Classes, Weapons> getSelected(OfflinePlayer player) {
-        return Warlords.getPlayerSettings(player.getUniqueId()).getWeaponSkins();
-    }
-
-    @Deprecated
     public static Weapons getSelected(OfflinePlayer player, Classes classes) {
         return Warlords.getPlayerSettings(player.getUniqueId()).getWeaponSkins().getOrDefault(classes, FELFLAME_BLADE);
-    }
-
-    @Deprecated
-    public static void setSelected(OfflinePlayer player, HashMap<Classes, Weapons> weaponSkins) {
-        Warlords.getPlayerSettings(player.getUniqueId()).setWeaponSkins(weaponSkins);
     }
 
     @Deprecated
