@@ -23,7 +23,6 @@ import org.json.simple.JSONValue;
 import org.json.simple.parser.ParseException;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
-import org.springframework.data.mongodb.core.query.Criteria;
 
 import java.io.IOException;
 import java.net.URL;

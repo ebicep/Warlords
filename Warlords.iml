@@ -53,7 +53,7 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: net.md-5:bungeecord-chat:1.8-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.spigotmc:spigot:1.8.8-R0.1-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.bukkit:bukkit:1.8.8-R0.1-SNAPSHOT" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.gmail.filoghost.holographicdisplays:holographicdisplays-api:2.4.9" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: me.filoghost.holographicdisplays:holographicdisplays-api:3.0.0-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: net.citizensnpcs:citizensapi:2.0.16-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: co.aikar:taskchain-bukkit:3.7.2" level="project" />
     <orderEntry type="library" name="Maven: co.aikar:taskchain-core:3.7.2" level="project" />

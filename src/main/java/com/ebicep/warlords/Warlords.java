@@ -31,8 +31,8 @@ import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.powerups.EnergyPowerUp;
 import com.ebicep.warlords.queuesystem.QueueCommand;
 import com.ebicep.warlords.util.*;
-import com.gmail.filoghost.holographicdisplays.api.Hologram;
-import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
+import me.filoghost.holographicdisplays.api.beta.hologram.Hologram;
+import me.filoghost.holographicdisplays.api.beta.HolographicDisplaysAPI;
 import org.bukkit.*;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
@@ -370,7 +370,7 @@ public class Warlords extends JavaPlugin {
     public void onDisable() {
         game.clearAllPlayers();
         if (holographicDisplaysEnabled) {
-            HologramsAPI.getHolograms(instance).forEach(Hologram::delete);
+            HolographicDisplaysAPI.get(instance).getHolograms().forEach(Hologram::delete);
         }
         try {
             BotManager.jda.shutdownNow();
