@@ -15,7 +15,10 @@ import com.ebicep.warlords.maps.flags.FlagManager;
 import com.ebicep.warlords.maps.flags.GroundFlagLocation;
 import com.ebicep.warlords.maps.flags.PlayerFlagLocation;
 import com.ebicep.warlords.maps.flags.SpawnFlagLocation;
-import com.ebicep.warlords.player.*;
+import com.ebicep.warlords.player.CustomScoreboard;
+import com.ebicep.warlords.player.ExperienceManager;
+import com.ebicep.warlords.player.PlayerSettings;
+import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.powerups.PowerupManager;
 import com.ebicep.warlords.util.PacketUtils;
 import com.ebicep.warlords.util.RemoveEntities;
@@ -171,6 +174,7 @@ public class PlayingState implements State, TimerDebugAble {
                 .async(() -> game.forEachOfflinePlayer((player, team) -> {
                     DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
                     DatabaseManager.updatePlayerAsync(databasePlayer);
+                    DatabaseManager.loadPlayer(player.getUniqueId(), PlayersCollections.SEASON_5);
                     DatabaseManager.loadPlayer(player.getUniqueId(), PlayersCollections.WEEKLY);
                     DatabaseManager.loadPlayer(player.getUniqueId(), PlayersCollections.DAILY);
                 })).execute();
@@ -198,7 +202,7 @@ public class PlayingState implements State, TimerDebugAble {
                     this.game.forEachOnlinePlayer((player, team) -> {
                         PacketUtils.sendTitle(player, ChatColor.LIGHT_PURPLE + "OVERTIME!", ChatColor.YELLOW + "First team to reach 20 points wins!", 0, 60, 0);
                         player.sendMessage("§dOvertime is now active!");
-                        player.playSound(player.getLocation(), Sound.PORTAL_TRAVEL, 500, 1);
+                        player.playSound(player.getLocation(), Sound.PORTAL_TRAVEL, 1, 1);
                     });
                 } else {
                     return next;
@@ -298,7 +302,7 @@ public class PlayingState implements State, TimerDebugAble {
                 System.out.println(ChatColor.GREEN + "[Warlords] This game was added to the database (INVALID DAMAGE/HEALING) but player information remained the same");
             }
         } else {
-            if (game.playersCount() >= 6) {
+            if (game.playersCount() >= 6 && timer <= 12000) {
                 DatabaseGame.addGame(PlayingState.this, false);
                 System.out.println(ChatColor.GREEN + "[Warlords] This game was added to the database but player information remained the same");
             } else {

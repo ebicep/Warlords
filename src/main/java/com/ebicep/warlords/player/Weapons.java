@@ -68,18 +68,25 @@ public enum Weapons {
     RUBY_THORN("Ruby Thorn", new ItemStack(Material.POISONOUS_POTATO), LEGENDARY),
     ENDERFIST("Enderfist", new ItemStack(Material.APPLE), LEGENDARY),
 
-    // mythic,
-    NEW_LEAF_SCYTHE("Daphne's Harvest", new ItemStack(Material.GHAST_TEAR), MYTHIC),
-    NEW_LEAF_AXE("Fate of Daphne", new ItemStack(Material.LEATHER), MYTHIC),
-    NEW_LEAF_SWORD("Canopy's Jade Edge", new ItemStack(Material.INK_SACK, 1, (short) 4), MYTHIC),
-    NEW_LEAF_SPEAR("Daphne's Viper", new ItemStack(Material.INK_SACK, 1, (short) 3), MYTHIC),
-    SILVER_PHANTASM_SCYTHE("Tenth Plague", new ItemStack(Material.PRISMARINE_CRYSTALS), MYTHIC),
-    SILVER_PHANTASM_SWORD("Hyperion's Awakening", new ItemStack(Material.PRISMARINE_SHARD), MYTHIC),
-    SILVER_PHANTASM_SWORD_2("Blazeguard", new ItemStack(Material.FLINT), MYTHIC),
-    SILVER_PHANTASM_SWORD_3("Venom", new ItemStack(Material.COAL), MYTHIC),
-    SILVER_PHANTASM_HAMMER("Wrath of Aether", new ItemStack(Material.QUARTZ), MYTHIC),
-    SILVER_PHANTASM_STAFF("Wit of Oblivion", new ItemStack(Material.IRON_INGOT), MYTHIC),
-    SILVER_PHANTASM_STAFF_2("Lament", new ItemStack(Material.INK_SACK), MYTHIC),
+    // wl 2 exclusive
+    NEW_LEAF_SCYTHE("Daphne's Harvest", new ItemStack(Material.GHAST_TEAR), LEGENDARY),
+    NEW_LEAF_AXE("Fate of Daphne", new ItemStack(Material.LEATHER), LEGENDARY),
+    NEW_LEAF_SWORD("Canopy's Jade Edge", new ItemStack(Material.INK_SACK, 1, (short) 4), LEGENDARY),
+    NEW_LEAF_SPEAR("Daphne's Viper", new ItemStack(Material.INK_SACK, 1, (short) 3), LEGENDARY),
+    SILVER_PHANTASM_SCYTHE("Tenth Plague", new ItemStack(Material.PRISMARINE_CRYSTALS), LEGENDARY),
+    SILVER_PHANTASM_SWORD("Hyperion's Awakening", new ItemStack(Material.PRISMARINE_SHARD), LEGENDARY),
+    SILVER_PHANTASM_SWORD_2("Blazeguard", new ItemStack(Material.FLINT), LEGENDARY),
+    SILVER_PHANTASM_SWORD_3("Venom", new ItemStack(Material.COAL), LEGENDARY),
+    SILVER_PHANTASM_HAMMER("Wrath of Aether", new ItemStack(Material.QUARTZ), LEGENDARY),
+    SILVER_PHANTASM_STAFF("Wit of Oblivion", new ItemStack(Material.IRON_INGOT), LEGENDARY),
+    SILVER_PHANTASM_STAFF_2("Lament", new ItemStack(Material.INK_SACK), LEGENDARY),
+    CANDY_CANE("Candy Slapper", new ItemStack(Material.SUGAR), LEGENDARY),
+
+    // mythic
+    SILVER_PHANTASM_SCIMITAR("Bloodquench", new ItemStack(Material.CARROT_ITEM), LEGENDARY),
+    SILVER_PHANTASM_TRIDENT("Torment", new ItemStack(Material.COOKIE), MYTHIC),
+    SILVER_PHANTASM_SAWBLADE("Slayer", new ItemStack(Material.RABBIT), LEGENDARY),
+    SILVER_PHANTASM_SWORD_4("Lilium", new ItemStack(Material.STICK), LEGENDARY),
 
     ;
 
@@ -107,18 +114,8 @@ public enum Weapons {
     }
 
     @Deprecated
-    public static HashMap<Classes, Weapons> getSelected(OfflinePlayer player) {
-        return Warlords.getPlayerSettings(player.getUniqueId()).getWeaponSkins();
-    }
-
-    @Deprecated
     public static Weapons getSelected(OfflinePlayer player, Classes classes) {
         return Warlords.getPlayerSettings(player.getUniqueId()).getWeaponSkins().getOrDefault(classes, FELFLAME_BLADE);
-    }
-
-    @Deprecated
-    public static void setSelected(OfflinePlayer player, HashMap<Classes, Weapons> weaponSkins) {
-        Warlords.getPlayerSettings(player.getUniqueId()).setWeaponSkins(weaponSkins);
     }
 
     @Deprecated

@@ -2,8 +2,8 @@ package com.ebicep.warlords.database.repositories.games.pojos;
 
 import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.database.leaderboards.LeaderboardManager;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.leaderboards.LeaderboardManager;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
 import com.ebicep.warlords.maps.Team;
@@ -346,7 +346,7 @@ public class DatabaseGame {
 
             //sending message if player information remained the same
             for (WarlordsPlayer value : PlayerFilter.playingGame(gameState.getGame())) {
-                if (value.getEntity().isOp()) {
+                if (value.getEntity().hasPermission("warlords.database.messagefeed")) {
                     if (updatePlayerStats) {
                         value.sendMessage(ChatColor.GREEN + "This game was added to the database and player information was updated");
                     } else {
@@ -399,14 +399,18 @@ public class DatabaseGame {
 
     private static void updatePlayerStatsFromTeam(DatabaseGame databaseGame, boolean add, DatabaseGamePlayers.GamePlayer gamePlayer, boolean blue) {
         DatabasePlayer databasePlayerAllTime = DatabaseManager.playerService.findByUUID(UUID.fromString(gamePlayer.getUuid()));
-        DatabasePlayer databasePlayerWeekly = DatabaseManager.playerService.findOne(Criteria.where("uuid").is(gamePlayer.getUuid()), PlayersCollections.WEEKLY);
-        DatabasePlayer databasePlayerDaily = DatabaseManager.playerService.findOne(Criteria.where("uuid").is(gamePlayer.getUuid()), PlayersCollections.DAILY);
+        DatabasePlayer databasePlayerSeason = DatabaseManager.playerService.findByUUID(UUID.fromString(gamePlayer.getUuid()), PlayersCollections.SEASON_5);
+        DatabasePlayer databasePlayerWeekly = DatabaseManager.playerService.findByUUID(UUID.fromString(gamePlayer.getUuid()), PlayersCollections.WEEKLY);
+        DatabasePlayer databasePlayerDaily = DatabaseManager.playerService.findByUUID(UUID.fromString(gamePlayer.getUuid()), PlayersCollections.DAILY);
 
-        updatePlayerStats(databaseGame, add, gamePlayer, databasePlayerAllTime, blue);
-        updatePlayerStats(databaseGame, add, gamePlayer, databasePlayerWeekly, blue);
-        updatePlayerStats(databaseGame, add, gamePlayer, databasePlayerDaily, blue);
+        if (databasePlayerAllTime != null)
+            updatePlayerStats(databaseGame, add, gamePlayer, databasePlayerAllTime, blue);
+        if (databasePlayerSeason != null) updatePlayerStats(databaseGame, add, gamePlayer, databasePlayerSeason, blue);
+        if (databasePlayerWeekly != null) updatePlayerStats(databaseGame, add, gamePlayer, databasePlayerWeekly, blue);
+        if (databasePlayerDaily != null) updatePlayerStats(databaseGame, add, gamePlayer, databasePlayerDaily, blue);
 
         DatabaseManager.updatePlayerAsync(databasePlayerAllTime);
+        DatabaseManager.updatePlayerAsync(databasePlayerSeason, PlayersCollections.SEASON_5);
         DatabaseManager.updatePlayerAsync(databasePlayerWeekly, PlayersCollections.WEEKLY);
         DatabaseManager.updatePlayerAsync(databasePlayerDaily, PlayersCollections.DAILY);
     }

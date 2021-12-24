@@ -6,28 +6,20 @@ import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.state.TimerDebugAble;
 import com.ebicep.warlords.menu.DebugMenu;
 import com.ebicep.warlords.player.WarlordsPlayer;
-import com.ebicep.warlords.util.PacketUtils;
-import net.minecraft.server.v1_8_R3.EntityLiving;
-import net.minecraft.server.v1_8_R3.GenericAttributes;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
-import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitRunnable;
 
 public class DebugCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
 
-        if (!sender.isOp()) {
+        if (!sender.hasPermission("warlords.game.debug")) {
             sender.sendMessage("§cYou do not have permission to do that.");
             return true;
         }
@@ -45,7 +37,9 @@ public class DebugCommand implements CommandExecutor {
                 input.equalsIgnoreCase("damage") ||
                 input.equalsIgnoreCase("takedamage") ||
                 input.equalsIgnoreCase("heal") ||
-                input.equalsIgnoreCase("crits")
+                input.equalsIgnoreCase("crits") ||
+                input.equalsIgnoreCase("freeze") ||
+                input.equalsIgnoreCase("timer")
         ) {
             if (args.length == 3 && args[2] != null) {
                 player = Warlords.getPlayer(Bukkit.getPlayer(args[2]).getUniqueId());
@@ -85,7 +79,7 @@ public class DebugCommand implements CommandExecutor {
                         sender.sendMessage(ChatColor.RED + "DEV: §aTimer has been skipped!");
                         return true;
                     default:
-                        sender.sendMessage("§cInvalid option!");
+                        sender.sendMessage("§cInvalid option! [reset, skip]");
                         return true;
                 }
             case "energy": {
@@ -228,53 +222,12 @@ public class DebugCommand implements CommandExecutor {
 
             case "freeze": {
                 if (player != null) {
-                    if (player.getGame().isGameFreeze()) {
-                        //unfreeze
-                        WarlordsPlayer finalPlayer = player;
-                        finalPlayer.getGame().forEachOnlinePlayer((p, team) -> {
-                            p.removePotionEffect(PotionEffectType.BLINDNESS);
-                            p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 100, 100000));
-                        });
-                        new BukkitRunnable() {
-                            int counter = 0;
-
-                            @Override
-                            public void run() {
-                                if (counter >= 5) {
-                                    finalPlayer.getGame().setGameFreeze(false);
-                                    finalPlayer.getGame().forEachOnlinePlayer((p, team) -> {
-                                        if (p.getVehicle() != null && p.getVehicle() instanceof Horse) {
-                                            ((EntityLiving) ((CraftEntity) p.getVehicle()).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(.318);
-                                        }
-                                        PacketUtils.sendTitle(p, "", "", 0, 0, 0);
-                                    });
-                                    this.cancel();
-                                } else {
-                                    finalPlayer.getGame().forEachOnlinePlayer((p, team) -> {
-                                        PacketUtils.sendTitle(p, ChatColor.RED + "Resuming in... " + ChatColor.GREEN + (5 - counter), "", 0, 40, 0);
-                                    });
-                                    counter++;
-                                }
-                            }
-                        }.runTaskTimer(Warlords.getInstance(), 0, 20);
-
-                    } else {
-                        //freeze
-                        player.getGame().setGameFreeze(true);
-                        player.getGame().forEachOnlinePlayer((p, team) -> {
-                            if (p.getVehicle() instanceof Horse) {
-                                ((EntityLiving) ((CraftEntity) p.getVehicle()).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0);
-                            }
-                            p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 9999999, 100000));
-                            PacketUtils.sendTitle(p, ChatColor.RED + "Game Paused", "", 0, 9999999, 0);
-                        });
-                    }
+                    player.getGame().freeze(false);
                 }
             }
 
-
             default:
-                sender.sendMessage("§cInvalid option! valid args: [cooldownmode, cooldown, energy, damage, takedamage");
+                sender.sendMessage("§cInvalid option! valid args: [cooldownmode, cooldown, energy, damage, takedamage, freeze, timer");
                 return true;
         }
     }

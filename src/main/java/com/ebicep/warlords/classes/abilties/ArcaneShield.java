@@ -31,14 +31,14 @@ public class ArcaneShield extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(WarlordsPlayer wp, Player player) {
+    public void onActivate(WarlordsPlayer wp, Player p) {
         wp.subtractEnergy(energyCost);
         wp.getCooldownManager().addCooldown(name, ArcaneShield.this.getClass(), new ArcaneShield(), "ARCA", duration, wp, CooldownTypes.ABILITY);
-        ((EntityLiving) ((CraftPlayer) player).getHandle()).setAbsorptionHearts(20);
+        ((EntityLiving) ((CraftPlayer) p).getHandle()).setAbsorptionHearts(20);
         shieldHealth = maxShieldHealth;
 
-        for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "mage.arcaneshield.activation", 2, 1);
+        for (Player player1 : p.getWorld().getPlayers()) {
+            player1.playSound(p.getLocation(), "mage.arcaneshield.activation", 2, 1);
         }
 
         wp.getGame().getGameTasks().put(
@@ -46,7 +46,7 @@ public class ArcaneShield extends AbstractAbility {
                     @Override
                     public void run() {
                         if (!wp.getCooldownManager().getCooldown(ArcaneShield.class).isEmpty()) {
-                            Location location = player.getLocation();
+                            Location location = p.getLocation();
                             location.add(0, 1.5, 0);
                             ParticleEffect.CLOUD.display(0.15F, 0.3F, 0.15F, 0.01F, 2, location, 500);
                             ParticleEffect.FIREWORKS_SPARK.display(0.3F, 0.3F, 0.3F, 0.0001F, 1, location, 500);
@@ -67,5 +67,4 @@ public class ArcaneShield extends AbstractAbility {
     public void addShieldHealth(float amount) {
         this.shieldHealth += amount;
     }
-
 }

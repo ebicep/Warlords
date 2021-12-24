@@ -10,16 +10,18 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
-public class PartyCommand implements CommandExecutor {
+public class PartyCommand implements TabExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
+
         switch (s) {
             case "party":
             case "p":
@@ -242,16 +244,18 @@ public class PartyCommand implements CommandExecutor {
                         }
                         case "leader": {
                             currentParty.ifPresent(party -> {
-                                if (sender.isOp()) {
+                                if (sender.hasPermission("warlords.party.forceleader")) {
                                     party.transfer(sender.getName());
+                                } else {
+                                    sender.sendMessage(ChatColor.RED + "You do not have permission to do that.");
                                 }
                             });
                             return true;
                         }
                         case "forcejoin": {
                             currentParty.ifPresent(party -> {
-                                if (sender.isOp()) {
-                                    String name = args[0];
+                                if (sender.hasPermission("warlords.party.forcejoin")) {
+                                    String name = args[1];
                                     if (name.equalsIgnoreCase("@a")) {
                                         Bukkit.getOnlinePlayers().stream()
                                                 .filter(p -> !p.getName().equalsIgnoreCase(party.getLeaderName()))
@@ -261,6 +265,8 @@ public class PartyCommand implements CommandExecutor {
                                                 .filter(p -> p.getName().equalsIgnoreCase(name))
                                                 .forEach(p -> Bukkit.getServer().dispatchCommand(p, "p join " + party.getLeaderName()));
                                     }
+                                } else {
+                                    sender.sendMessage(ChatColor.RED + "You do not have permission to do that.");
                                 }
                             });
                             return true;
@@ -302,6 +308,7 @@ public class PartyCommand implements CommandExecutor {
                                         Bukkit.dispatchCommand(sender, "p invite " + Bukkit.getPlayer(uuid).getName());
                                     });
                                     QueueManager.queue.removeIf(uuid -> Bukkit.getPlayer(uuid) == null);
+                                    QueueManager.sendNewQueue();
                                 }
                             }
                             return true;
@@ -336,8 +343,25 @@ public class PartyCommand implements CommandExecutor {
         return true;
     }
 
+    private static final String[] partyOptions = {
+            "invite", "join", "leave", "disband", "list", "promote", "demote",
+            "kick", "remove", "transfer", "poll", "afk", "close", "open",
+            "outside", "leader", "forcejoin", "allinvite", "invitequeue",
+    };
+
+    @Override
+    public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] args) {
+        return Arrays
+                .stream(partyOptions)
+                .filter(e -> e.startsWith(args[args.length - 1].toLowerCase(Locale.ROOT)))
+                .map(e -> e.charAt(0) + e.substring(1).toLowerCase(Locale.ROOT))
+                .collect(Collectors.toList());
+
+    }
+
     public void register(Warlords instance) {
         instance.getCommand("party").setExecutor(this);
+        instance.getCommand("party").setTabCompleter(this);
     }
 
 }

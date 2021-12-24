@@ -5,7 +5,6 @@ import com.ebicep.warlords.player.ExperienceManager;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.checkerframework.checker.units.qual.C;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.Arrays;

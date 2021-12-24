@@ -12,7 +12,8 @@ public class LeaderboardCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
-        if(!sender.isOp()) {
+
+        if (!sender.hasPermission("warlords.leaderboard.interaction")) {
             return true;
         }
 

@@ -18,12 +18,14 @@ public class BotCommands implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
-        if(!sender.isOp()) {
+
+        if (!sender.hasPermission("warlords.game.bot")) {
             sender.sendMessage(ChatColor.RED + "Insufficient Permissions!");
             return true;
         }
 
         Optional<TextChannel> botTeams = BotManager.getTextChannelByName("bot-teams");
+        Optional<TextChannel> gsTeams = BotManager.getTextChannelByName("gs-teams");
         if (!botTeams.isPresent()) {
             sender.sendMessage(ChatColor.RED + "Could not find bot-teams!");
             return true;
@@ -50,13 +52,17 @@ public class BotCommands implements CommandExecutor {
                     players.append(Bukkit.getOfflinePlayer(allPartyPerson).getName()).append(",");
                 }
                 players.setLength(players.length() - 1);
-                botTeams.get().sendMessage("-" + input + " " + players).queue();
+                botTeams.get().sendMessage("/" + input + " " + players).queue();
                 sender.sendMessage(ChatColor.GREEN + "Balanced party in bot-teams!");
                 return true;
             case "inputgame":
             case "inputexperimental":
+                if (!sender.hasPermission("warlords.game.bot.inputgames")) {
+                    sender.sendMessage(ChatColor.RED + "Insufficient Permissions!");
+                    return true;
+                }
                 if(args.length == 1) {
-                    BotManager.getTextChannelByName("games-backlog").ifPresent(textChannel -> textChannel.sendMessage("-" + input + " " + DatabaseManager.lastWarlordsPlusString).queue());
+                    BotManager.getTextChannelByName("games-backlog").ifPresent(textChannel -> textChannel.sendMessage("/" + input + " " + DatabaseManager.lastWarlordsPlusString).queue());
                     sender.sendMessage(ChatColor.GREEN + "Inputted game!");
                     return true;
                 }
@@ -64,7 +70,7 @@ public class BotCommands implements CommandExecutor {
                     sender.sendMessage(ChatColor.RED + "Invalid Image!");
                     return true;
                 }
-                BotManager.getTextChannelByName("games-backlog").ifPresent(textChannel -> textChannel.sendMessage("-" + input + " " + DatabaseManager.lastWarlordsPlusString + " " + args[1]).queue());
+                BotManager.getTextChannelByName("games-backlog").ifPresent(textChannel -> textChannel.sendMessage("/" + input + " " + DatabaseManager.lastWarlordsPlusString + " " + args[1]).queue());
                 return true;
         }
         return true;

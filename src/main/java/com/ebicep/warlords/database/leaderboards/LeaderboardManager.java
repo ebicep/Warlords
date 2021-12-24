@@ -16,10 +16,10 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.*;
-
-import static com.mongodb.client.model.Sorts.descending;
 
 public class LeaderboardManager {
 
@@ -27,7 +27,7 @@ public class LeaderboardManager {
 
     public static final Location spawnPoint = Bukkit.getWorlds().get(0).getSpawnLocation().clone();
 
-    public static final Location leaderboardSwitchLocation = new Location(world, -2571.5, 54, 720.5);
+    public static final Location leaderboardSwitchLocation = new Location(world, -2571.5, 54.5, 720.5);
 
     public static final Location center = new LocationBuilder(spawnPoint.clone()).forward(.5f).left(21).addY(2).get();
 
@@ -37,7 +37,11 @@ public class LeaderboardManager {
     public static final HashMap<UUID, Integer> playerLeaderboardHolograms = new HashMap<>();
 
     public static final List<Hologram> lifeTimeHolograms = new ArrayList<>();
+    public static final List<Hologram> season5Holograms = new ArrayList<>();
+    public static final List<Hologram> season4Holograms = new ArrayList<>();
     public static final List<Hologram> weeklyHolograms = new ArrayList<>();
+    public static final List<Hologram> dailyHolograms = new ArrayList<>();
+    public static final String[] hologramOrder = new String[]{"LifeTime", "Season 5", "Season 4", "Weekly", "Daily"};
     private static final String[] weeklyIncludedLeaderboardsTitles = new String[]{"Plays", "Wins", "Kills", "DHP Per Game", "Flags Captured"};
     private static final String[] weeklyExperienceLeaderboards = new String[]{
             "Wins",
@@ -54,10 +58,6 @@ public class LeaderboardManager {
             "Flags Returned",
     };
     public static boolean enabled = true;
-
-    public static void init() {
-        putLeaderboards();
-    }
 
     public static void putLeaderboards() {
         leaderboards.clear();
@@ -125,13 +125,13 @@ public class LeaderboardManager {
         leaderboards.add(new Leaderboard("Aquamancer Wins", new Location(world, -2614.5, 53, 749.5),
                 (o -> o.getMage().getAquamancer().getWins()),
                 databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getMage().getAquamancer().getWins())));
-        leaderboards.add(new Leaderboard("Thunderlord Wins", new Location(world, -2614.5, 52, 706.5),
+        leaderboards.add(new Leaderboard("Thunderlord Wins", new Location(world, -2614.5, 53, 707.5),
                 (o -> o.getShaman().getThunderlord().getWins()),
                 databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getShaman().getThunderlord().getWins())));
-        leaderboards.add(new Leaderboard("Spiritguard Wins", new Location(world, -2608.5, 52, 704.5),
+        leaderboards.add(new Leaderboard("Spiritguard Wins", new Location(world, -2608.5, 53, 704.5),
                 (o -> o.getShaman().getSpiritguard().getWins()),
                 databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getShaman().getSpiritguard().getWins())));
-        leaderboards.add(new Leaderboard("Earthwarden Wins", new Location(world, -2602.5, 52, 706.5),
+        leaderboards.add(new Leaderboard("Earthwarden Wins", new Location(world, -2602.5, 53, 707.5),
                 (o -> o.getShaman().getEarthwarden().getWins()),
                 databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getShaman().getEarthwarden().getWins())));
 
@@ -184,7 +184,10 @@ public class LeaderboardManager {
                 }
             });
             lifeTimeHolograms.clear();
+            season5Holograms.clear();
+            season4Holograms.clear();
             weeklyHolograms.clear();
+            dailyHolograms.clear();
 
             putLeaderboards();
             if (enabled) {
@@ -193,39 +196,27 @@ public class LeaderboardManager {
                 //caching all sorted players for each lifetime and weekly
                 long startTime = System.nanoTime();
                 leaderboards.forEach(leaderboard -> {
-                    //LIFETIME
-                    Warlords.newSharedChain(sharedChainName)
-                            .asyncFirst(() -> {
-                                List<DatabasePlayer> databasePlayers = DatabaseManager.playerService.findAll(PlayersCollections.ALL_TIME);
-                                databasePlayers.sort((o1, o2) -> Leaderboard.compare(leaderboard.getValueFunction().apply(o2), leaderboard.getValueFunction().apply(o1)));
-                                return databasePlayers;
-                            })
-                            .syncLast((sortedInformation) -> {
-                                leaderboard.resetSortedPlayers(sortedInformation, PlayersCollections.ALL_TIME);
-                                //creating leaderboard for lifetime
-                                addLeaderboard(leaderboard, PlayersCollections.ALL_TIME, ChatColor.AQUA + ChatColor.BOLD.toString() + "Lifetime " + leaderboard.getTitle());
-                                HologramsAPI.getHolograms(Warlords.getInstance()).stream()
-                                        .filter(h -> h.getLocation().equals(leaderboard.getLocation()))
-                                        .forEach(lifeTimeHolograms::add);
-                            }).execute();
-                    //WEEKLY
-                    Warlords.newSharedChain(sharedChainName)
-                            .asyncFirst(() -> {
-                                List<DatabasePlayer> databasePlayers = DatabaseManager.playerService.findAll(PlayersCollections.WEEKLY);
-                                databasePlayers.sort((o1, o2) -> Leaderboard.compare(leaderboard.getValueFunction().apply(o2), leaderboard.getValueFunction().apply(o1)));
-                                return databasePlayers;
-                            })
-                            .abortIfNull()
-                            .syncLast((sortedInformation) -> {
-                                leaderboard.resetSortedPlayers(sortedInformation, PlayersCollections.WEEKLY);
-                                //creating leaderboard for lifetime
-                                if (Arrays.stream(weeklyIncludedLeaderboardsTitles).anyMatch(title -> title.equalsIgnoreCase(leaderboard.getTitle()))) {
-                                    addLeaderboard(leaderboard, PlayersCollections.WEEKLY, ChatColor.AQUA + ChatColor.BOLD.toString() + "Weekly " + leaderboard.getTitle());
+                    List<Hologram> previousHolograms = new ArrayList<>();
+                    for (PlayersCollections value : PlayersCollections.values()) {
+                        Warlords.newSharedChain(sharedChainName)
+                                .asyncFirst(() -> {
+                                    List<DatabasePlayer> databasePlayers = DatabaseManager.playerService.findAll(value);
+                                    databasePlayers.sort((o1, o2) -> Leaderboard.compare(leaderboard.getValueFunction().apply(o2), leaderboard.getValueFunction().apply(o1)));
+                                    return databasePlayers;
+                                })
+                                .syncLast((sortedInformation) -> {
+                                    leaderboard.resetSortedPlayers(sortedInformation, value);
+                                    //creating leaderboard
+                                    //if (Arrays.stream(weeklyIncludedLeaderboardsTitles).anyMatch(title -> title.equalsIgnoreCase(leaderboard.getTitle()))) {
+                                    addLeaderboard(leaderboard, value, ChatColor.AQUA + ChatColor.BOLD.toString() + value.name + " " + leaderboard.getTitle());
+                                    //adding holograms to respective lists
                                     HologramsAPI.getHolograms(Warlords.getInstance()).stream()
-                                            .filter(h -> !lifeTimeHolograms.contains(h) && h.getLocation().equals(leaderboard.getLocation()))
-                                            .forEach(weeklyHolograms::add);
-                                }
-                            }).execute();
+                                            .filter(h -> !previousHolograms.contains(h) && h.getLocation().equals(leaderboard.getLocation()))
+                                            .forEach(value.leaderboardHolograms::add);
+                                    //adding all holograms to previous so it doesnt add other holograms to respective list
+                                    previousHolograms.addAll(value.leaderboardHolograms);
+                                }).execute();
+                    }
                 });
 
                 //depending on what player has selected, set visibility
@@ -248,12 +239,23 @@ public class LeaderboardManager {
             playerLeaderboardHolograms.put(player.getUniqueId(), 0);
         }
         int selectedLeaderboard = playerLeaderboardHolograms.get(player.getUniqueId());
-        if (selectedLeaderboard == 0) {
+
+        lifeTimeHolograms.forEach(hologram -> hologram.getVisibilityManager().hideTo(player));
+        season5Holograms.forEach(hologram -> hologram.getVisibilityManager().hideTo(player));
+        season4Holograms.forEach(hologram -> hologram.getVisibilityManager().hideTo(player));
+        weeklyHolograms.forEach(hologram -> hologram.getVisibilityManager().hideTo(player));
+        dailyHolograms.forEach(hologram -> hologram.getVisibilityManager().hideTo(player));
+
+        if (selectedLeaderboard == 0) { //LIFETIME
             lifeTimeHolograms.forEach(hologram -> hologram.getVisibilityManager().showTo(player));
-            weeklyHolograms.forEach(hologram -> hologram.getVisibilityManager().hideTo(player));
-        } else {
-            lifeTimeHolograms.forEach(hologram -> hologram.getVisibilityManager().hideTo(player));
+        } else if (selectedLeaderboard == 1) { //SEASON 5
+            season5Holograms.forEach(hologram -> hologram.getVisibilityManager().showTo(player));
+        } else if (selectedLeaderboard == 2) { //SEASON 4
+            season4Holograms.forEach(hologram -> hologram.getVisibilityManager().showTo(player));
+        } else if (selectedLeaderboard == 3) { //WEEKLY
             weeklyHolograms.forEach(hologram -> hologram.getVisibilityManager().showTo(player));
+        } else { //DAILY
+            dailyHolograms.forEach(hologram -> hologram.getVisibilityManager().showTo(player));
         }
 
         createLeaderboardSwitcherHologram(player);
@@ -269,23 +271,20 @@ public class LeaderboardManager {
         leaderboardSwitcher.appendTextLine("");
 
         int selectedLeaderboard = playerLeaderboardHolograms.get(player.getUniqueId());
-        if (selectedLeaderboard == 0) {
-            leaderboardSwitcher.appendTextLine(ChatColor.GREEN + "LifeTime");
-            TextLine weeklyLine = leaderboardSwitcher.appendTextLine(ChatColor.GRAY + "Weekly");
+        int lbBefore = getLBBefore(selectedLeaderboard);
+        int lbAfter = getLBAfter(selectedLeaderboard);
+        TextLine beforeLine = leaderboardSwitcher.appendTextLine(ChatColor.GRAY + hologramOrder[lbBefore]);
+        TextLine selectedLine = leaderboardSwitcher.appendTextLine(ChatColor.GREEN + hologramOrder[selectedLeaderboard]);
+        TextLine afterLine = leaderboardSwitcher.appendTextLine(ChatColor.GRAY + hologramOrder[lbAfter]);
+        beforeLine.setTouchHandler(p -> {
+            playerLeaderboardHolograms.put(player.getUniqueId(), lbBefore);
+            setLeaderboardHologramVisibility(p);
+        });
+        afterLine.setTouchHandler(p -> {
+            playerLeaderboardHolograms.put(player.getUniqueId(), lbAfter);
+            setLeaderboardHologramVisibility(p);
+        });
 
-            weeklyLine.setTouchHandler(p -> {
-                playerLeaderboardHolograms.put(player.getUniqueId(), 1);
-                setLeaderboardHologramVisibility(p);
-            });
-        } else {
-            TextLine lifeTimeLine = leaderboardSwitcher.appendTextLine(ChatColor.GRAY + "LifeTime");
-            leaderboardSwitcher.appendTextLine(ChatColor.GREEN + "Weekly");
-
-            lifeTimeLine.setTouchHandler(p -> {
-                playerLeaderboardHolograms.put(player.getUniqueId(), 0);
-                setLeaderboardHologramVisibility(p);
-            });
-        }
 
         leaderboardSwitcher.getVisibilityManager().setVisibleByDefault(false);
         leaderboardSwitcher.getVisibilityManager().showTo(player);
@@ -301,14 +300,24 @@ public class LeaderboardManager {
                         .forEach(Hologram::delete);
 
                 Hologram hologram = HologramsAPI.createHologram(Warlords.getInstance(), location);
+                int selectedLeaderboard = playerLeaderboardHolograms.get(player.getUniqueId());
                 List<DatabasePlayer> databasePlayers;
-                if (playerLeaderboardHolograms.get(player.getUniqueId()) == 0) {
+                if (selectedLeaderboard == 0) {
                     databasePlayers = leaderboard.getSortedAllTime();
-                } else if (playerLeaderboardHolograms.get(player.getUniqueId()) == 1) {
+                } else if (selectedLeaderboard == 1) {
+                    databasePlayers = leaderboard.getSortedSeason5();
+                } else if (selectedLeaderboard == 2) {
+                    databasePlayers = leaderboard.getSortedSeason4();
+                } else if (selectedLeaderboard == 3) {
                     if (Arrays.stream(weeklyIncludedLeaderboardsTitles).noneMatch(l -> l.equals(leaderboard.getTitle()))) {
                         continue;
                     }
                     databasePlayers = leaderboard.getSortedWeekly();
+                } else if (selectedLeaderboard == 4) {
+                    if (Arrays.stream(weeklyIncludedLeaderboardsTitles).noneMatch(l -> l.equals(leaderboard.getTitle()))) {
+                        continue;
+                    }
+                    databasePlayers = leaderboard.getSortedDaily();
                 } else {
                     return;
                 }
@@ -380,5 +389,19 @@ public class LeaderboardManager {
             });
         }
         return document;
+    }
+
+    public static int getLBBefore(int currentLB) {
+        if (currentLB <= 0) {
+            return 4;
+        }
+        return currentLB - 1;
+    }
+
+    private static int getLBAfter(int currentLB) {
+        if (currentLB >= 4) {
+            return 0;
+        }
+        return currentLB + 1;
     }
 }

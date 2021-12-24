@@ -24,7 +24,8 @@ public class SpawnTestDummyCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
         WarlordsPlayer player = BaseCommand.requireWarlordsPlayer(sender);
 
-        if(!sender.isOp()) {
+        if (!sender.hasPermission("warlords.game.spawndummy")) {
+            sender.sendMessage("§cYou do not have permission to do that.");
             return true;
         }
 

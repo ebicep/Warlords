@@ -41,6 +41,7 @@ public enum ClassesGroup {
             ASSASSIN
     )
     ;
+
     public final String name;
     public final ItemStack item;
     public final String description;

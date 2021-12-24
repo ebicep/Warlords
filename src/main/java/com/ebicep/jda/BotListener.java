@@ -6,7 +6,10 @@ import com.ebicep.warlords.player.Classes;
 import com.ebicep.warlords.queuesystem.QueueManager;
 import com.ebicep.warlords.util.PacketUtils;
 import com.ebicep.warlords.util.Utils;
-import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.bukkit.Bukkit;
@@ -41,6 +44,7 @@ public class BotListener extends ListenerAdapter implements Listener {
         Message message = event.getMessage();
         TextChannel textChannel = event.getTextChannel();
         switch (textChannel.getName().toLowerCase()) {
+            case "gs-teams":
             case "bot-teams": {
                 if (message.getContentRaw().contains(", Balance Cancelled")) {
                     cancelOnGoingBalance();
@@ -193,7 +197,7 @@ public class BotListener extends ListenerAdapter implements Listener {
                 if (member != null) {
                     String playerName = member.getEffectiveName();
                     if (queueCommand.equalsIgnoreCase("-queue")) {
-                        textChannel.sendMessage(QueueManager.getQueueDiscord()).queue(QueueManager.queueMessages::add);
+                        QueueManager.sendNewQueue();
                     } else if (queueCommand.startsWith("-queue") && args.length > 0) {
                         switch (args[1]) {
                             case "join": {
@@ -202,35 +206,41 @@ public class BotListener extends ListenerAdapter implements Listener {
                                     break;
                                 }
                                 if (args.length == 3) { //adding to queue for future time
-                                    String futureTime = args[2];
-                                    SimpleDateFormat hourFormat = new SimpleDateFormat("hh");
-                                    SimpleDateFormat minuteFormat = new SimpleDateFormat("mm");
-                                    hourFormat.setTimeZone(TimeZone.getTimeZone("EST"));
-                                    minuteFormat.setTimeZone(TimeZone.getTimeZone("EST"));
-                                    Date date = new Date();
-                                    int currentHour = Integer.parseInt(hourFormat.format(date));
-                                    int currentMinute = Integer.parseInt(minuteFormat.format(date));
-                                    int hourDiff = Integer.parseInt(args[1].substring(0, args[1].indexOf(":"))) - currentHour;
-                                    int minuteDiff = Integer.parseInt(args[1].substring(args[1].indexOf(":") + 1)) - currentMinute;
-                                    if (hourDiff > 5) {
-                                        textChannel.sendMessage("You cannot join the queue 3+ hours ahead").queue();
-                                    } else if (hourDiff == 0 && minuteDiff < 20) {
-                                        textChannel.sendMessage("You cannot join the queue within 20 minutes. Join the server and type **/joinqueue** to join the queue now").queue();
-                                    } else if (hourDiff >= 0) {
-                                        long futureTimeMillis = System.currentTimeMillis();
-                                        futureTimeMillis += hourDiff * 3600000L;
-                                        futureTimeMillis += minuteDiff * 60000L;
-                                        long diff = futureTimeMillis - System.currentTimeMillis();
-                                        message.reply("You will join the queue in **" + TimeUnit.MILLISECONDS.toMinutes(diff) + "** minutes. Make sure you are online at that time or you will be automatically removed if there is an open party spot!").queue();
-                                        QueueManager.addPlayerToFutureQueue(playerName, futureTime, new BukkitRunnable() {
+                                    try {
+                                        String futureTime = args[2];
+                                        SimpleDateFormat hourFormat = new SimpleDateFormat("hh");
+                                        SimpleDateFormat minuteFormat = new SimpleDateFormat("mm");
+                                        hourFormat.setTimeZone(TimeZone.getTimeZone("EST"));
+                                        minuteFormat.setTimeZone(TimeZone.getTimeZone("EST"));
+                                        Date date = new Date();
+                                        int currentHour = Integer.parseInt(hourFormat.format(date));
+                                        int currentMinute = Integer.parseInt(minuteFormat.format(date));
+                                        int hourDiff = Integer.parseInt(futureTime.substring(0, futureTime.indexOf(":"))) - currentHour;
+                                        int minuteDiff = Integer.parseInt(futureTime.substring(futureTime.indexOf(":") + 1)) - currentMinute;
+                                        if (hourDiff > 5) {
+                                            textChannel.sendMessage("You cannot join the queue 3+ hours ahead").queue();
+                                        } else if (hourDiff == 0 && minuteDiff < 20) {
+                                            textChannel.sendMessage("You cannot join the queue within 20 minutes. Join the server and type **/queue join** to join the queue now").queue();
+                                        } else if (hourDiff >= 0) {
+                                            long futureTimeMillis = System.currentTimeMillis();
+                                            futureTimeMillis += hourDiff * 3600000L;
+                                            futureTimeMillis += minuteDiff * 60000L;
+                                            long diff = futureTimeMillis - System.currentTimeMillis();
+                                            message.reply("You will join the queue in **" + TimeUnit.MILLISECONDS.toMinutes(diff) + "** minutes. Make sure you are online at that time or you will be automatically removed if there is an open party spot!").queue();
+                                            QueueManager.addPlayerToFutureQueue(playerName, futureTime, new BukkitRunnable() {
 
-                                            @Override
-                                            public void run() {
-                                                QueueManager.addPlayerToQueue(playerName, false);
-                                                QueueManager.futureQueue.removeIf(futureQueuePlayer -> futureQueuePlayer.getUuid().equals(Bukkit.getOfflinePlayer(member.getEffectiveName()).getUniqueId()));
-                                            }
-                                        }.runTaskLater(Warlords.getInstance(), TimeUnit.MILLISECONDS.toSeconds(diff) * 20));
-                                    } else {
+                                                @Override
+                                                public void run() {
+                                                    QueueManager.addPlayerToQueue(playerName, false);
+                                                    QueueManager.futureQueue.removeIf(futureQueuePlayer -> futureQueuePlayer.getUuid().equals(Bukkit.getOfflinePlayer(member.getEffectiveName()).getUniqueId()));
+                                                    textChannel.sendMessage("<@" + member.getId() + "> You are now in the queue, make sure you are on the server once the party is open").queue();
+                                                    QueueManager.sendNewQueue();
+                                                }
+                                            }.runTaskLater(Warlords.getInstance(), TimeUnit.MILLISECONDS.toSeconds(diff) * 20));
+                                        } else {
+                                            message.reply("Invalid Time - HOUR:MINUTE").queue();
+                                        }
+                                    } catch (Exception e) {
                                         message.reply("Invalid Time - HOUR:MINUTE").queue();
                                     }
                                 } else { //adding to queue normally

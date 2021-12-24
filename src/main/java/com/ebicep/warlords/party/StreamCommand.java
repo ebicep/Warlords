@@ -19,7 +19,7 @@ public class StreamCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
 
-        if (!sender.isOp()) {
+        if (!sender.hasPermission("warlords.party.stream")) {
             sender.sendMessage("§cYou do not have permission to do that.");
             return true;
         }

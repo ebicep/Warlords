@@ -6,7 +6,10 @@ import org.bukkit.Location;
 
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 
 public class Leaderboard {
@@ -14,7 +17,10 @@ public class Leaderboard {
     private final String title;
     private final Location location;
     private final List<DatabasePlayer> sortedAllTime = new ArrayList<>();
+    private final List<DatabasePlayer> sortedSeason5 = new ArrayList<>();
+    private final List<DatabasePlayer> sortedSeason4 = new ArrayList<>();
     private final List<DatabasePlayer> sortedWeekly = new ArrayList<>();
+    private final List<DatabasePlayer> sortedDaily = new ArrayList<>();
     private final Function<DatabasePlayer, Number> valueFunction;
     private final Function<DatabasePlayer, String> stringFunction;
 
@@ -43,8 +49,14 @@ public class Leaderboard {
         switch (collections) {
             case ALL_TIME:
                 return sortedAllTime;
+            case SEASON_5:
+                return sortedSeason5;
+            case SEASON_4:
+                return sortedSeason4;
             case WEEKLY:
                 return sortedWeekly;
+            case DAILY:
+                return sortedDaily;
         }
         return new ArrayList<>();
     }
@@ -58,6 +70,18 @@ public class Leaderboard {
             case WEEKLY:
                 this.sortedWeekly.clear();
                 this.sortedWeekly.addAll(newSortedPlayers);
+                return;
+            case SEASON_5:
+                this.sortedSeason5.clear();
+                this.sortedSeason5.addAll(newSortedPlayers);
+                return;
+            case SEASON_4:
+                this.sortedSeason4.clear();
+                this.sortedSeason4.addAll(newSortedPlayers);
+                return;
+            case DAILY:
+                this.sortedDaily.clear();
+                this.sortedDaily.addAll(newSortedPlayers);
                 return;
         }
     }
@@ -134,8 +158,20 @@ public class Leaderboard {
         return sortedAllTime;
     }
 
+    public List<DatabasePlayer> getSortedSeason5() {
+        return sortedSeason5;
+    }
+
+    public List<DatabasePlayer> getSortedSeason4() {
+        return sortedSeason4;
+    }
+
     public List<DatabasePlayer> getSortedWeekly() {
         return sortedWeekly;
+    }
+
+    public List<DatabasePlayer> getSortedDaily() {
+        return sortedDaily;
     }
 
     public Function<DatabasePlayer, Number> getValueFunction() {

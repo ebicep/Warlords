@@ -1,13 +1,13 @@
 package com.ebicep.warlords.database;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.database.leaderboards.LeaderboardManager;
 import com.ebicep.warlords.database.configuration.ApplicationConfiguration;
+import com.ebicep.warlords.database.leaderboards.LeaderboardManager;
 import com.ebicep.warlords.database.repositories.games.GameService;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame;
 import com.ebicep.warlords.database.repositories.player.PlayerService;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.*;
+import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
 import com.ebicep.warlords.player.*;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
@@ -27,7 +27,9 @@ import org.springframework.data.mongodb.core.query.Criteria;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame.previousGames;
@@ -121,7 +123,7 @@ public class DatabaseManager {
     }
 
     public static void loadPlayer(UUID uuid, PlayersCollections collections) {
-        if (playerService.findOne(Criteria.where("uuid").is(uuid.toString()), collections) == null) {
+        if (playerService.findByUUID(uuid, collections) == null) {
             Warlords.newChain()
                     .syncFirst(() -> {
                         String name = Bukkit.getOfflinePlayer(uuid).getName();

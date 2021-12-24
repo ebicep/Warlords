@@ -15,11 +15,12 @@ public class GamesCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
 
-        if(!sender.isOp()) {
+        if (!sender.hasPermission("warlords.game.lookupgame")) {
+            sender.sendMessage("§cYou do not have permission to do that.");
             return true;
         }
 
-        if(args.length == 0) {
+        if (args.length == 0) {
             StringBuilder stringBuilder = new StringBuilder(ChatColor.GREEN + "Previous Games - \n");
             for (int i = 0; i < previousGames.size(); i++) {
                 stringBuilder.append(ChatColor.YELLOW).append(i).append(". ").append(previousGames.get(i).getGameLabel()).append("\n");
@@ -27,18 +28,18 @@ public class GamesCommand implements CommandExecutor {
             sender.sendMessage(stringBuilder.toString());
             return true;
         } else {
-            if(args.length < 2) {
+            if (args.length < 2) {
                 sender.sendMessage(ChatColor.RED + "Invalid Arguments! [add/remove gameNumber]");
                 return true;
             }
 
-            if(!NumberUtils.isNumber(args[1])) {
+            if (!NumberUtils.isNumber(args[1])) {
                 sender.sendMessage(ChatColor.RED + "Invalid game number!");
                 return true;
             }
 
             int gameNumber = Integer.parseInt(args[1]);
-            if(gameNumber >= previousGames.size() || gameNumber < 0) {
+            if (gameNumber >= previousGames.size() || gameNumber < 0) {
                 sender.sendMessage(ChatColor.RED + "Invalid game number!");
                 return true;
             }

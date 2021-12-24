@@ -1,7 +1,7 @@
 package com.ebicep.warlords.database.configuration;
 
-import com.ebicep.warlords.database.FutureMessageManager;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.FutureMessageManager;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import org.springframework.context.annotation.Bean;

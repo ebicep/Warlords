@@ -3,7 +3,7 @@ package com.ebicep.warlords.database.repositories.player.pojos;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayers;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-public class DatabaseWarlordsClass {
+public abstract class DatabaseWarlordsClass {
 
     @Field
     protected int kills = 0;
@@ -24,12 +24,14 @@ public class DatabaseWarlordsClass {
     public DatabaseWarlordsClass() {
     }
 
+    public abstract DatabaseSpecialization[] getSpecs();
+
     public void updateStats(DatabaseGamePlayers.GamePlayer gamePlayer, boolean won, boolean add) {
         int operation = add ? 1 : -1;
         this.kills += gamePlayer.getTotalKills() * operation;
         this.assists += gamePlayer.getTotalAssists() * operation;
         this.deaths += gamePlayer.getTotalDeaths() * operation;
-        if(won) {
+        if (won) {
             this.wins += operation;
         } else {
             this.losses += operation;

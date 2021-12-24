@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.UUID;
 
 @Repository
 public interface CustomPlayerRepository {
@@ -19,6 +20,8 @@ public interface CustomPlayerRepository {
     void deleteAll(PlayersCollections collection);
 
     DatabasePlayer findOne(Query query, PlayersCollections collection);
+
+    DatabasePlayer findByUUID(UUID uuid, PlayersCollections collection);
 
     List<DatabasePlayer> findAll(PlayersCollections collection);
 

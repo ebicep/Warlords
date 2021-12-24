@@ -1,7 +1,6 @@
 package com.ebicep.warlords.queuesystem;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.party.PartyManager;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -43,9 +42,10 @@ public class QueueCommand implements CommandExecutor {
                 return true;
             }
             case "clear": {
-                if (sender.isOp()) {
+                if (sender.hasPermission("warlords.queue.clear")) {
                     QueueManager.queue.clear();
                     QueueManager.futureQueue.clear();
+                    QueueManager.sendNewQueue();
                     sender.sendMessage(ChatColor.GREEN + "Queue cleared");
                 } else {
                     sender.sendMessage(ChatColor.RED + "Insufficient Permissions");

@@ -2,22 +2,15 @@ package com.ebicep.warlords.commands.debugcommands;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.BaseCommand;
-import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.database.leaderboards.Leaderboard;
-import com.ebicep.warlords.database.leaderboards.LeaderboardManager;
 import com.ebicep.warlords.database.cache.MultipleCacheResolver;
-import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame;
-import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayers;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.DatabaseSpecialization;
+import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsClass;
 import com.ebicep.warlords.player.WarlordsPlayer;
-import com.ebicep.warlords.queuesystem.QueueManager;
 import com.github.benmanes.caffeine.cache.Cache;
-import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.WriteModel;
 import org.bson.Document;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -27,11 +20,7 @@ import org.springframework.cache.caffeine.CaffeineCache;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
-
-import static com.mongodb.client.model.Filters.eq;
 
 
 public class TestCommand implements CommandExecutor {
@@ -39,7 +28,8 @@ public class TestCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
 
-        if (!sender.isOp()) {
+        if (!sender.hasPermission("warlords.game.test")) {
+            sender.sendMessage("§cYou do not have permission to do that.");
             return true;
         }
         WarlordsPlayer warlordsPlayer = BaseCommand.requireWarlordsPlayer(sender);
@@ -48,6 +38,32 @@ public class TestCommand implements CommandExecutor {
 //            System.out.println(ExperienceManager.getExpFromGameStats(warlordsPlayer, true));
         }
         Player player = (Player) sender;
+        //{name:"sumSmash"}
+
+//        for (DatabasePlayer lifeTime : DatabaseManager.playerService.findAll(PlayersCollections.ALL_TIME)) {
+//            DatabasePlayer season4 = DatabaseManager.playerService.findByUUID(UUID.fromString(lifeTime.getUuid()), PlayersCollections.SEASON_4);
+//            if(season4 == null || lifeTime.getPlays() == season4.getPlays()) {
+//                continue;
+//            }
+//            DatabasePlayer newPlayer = new DatabasePlayer(UUID.fromString(lifeTime.getUuid()), lifeTime.getName());
+//            newPlayer.setKills(lifeTime.getKills() - season4.getKills());
+//            newPlayer.setAssists(lifeTime.getAssists() - season4.getAssists());
+//            newPlayer.setDeaths(lifeTime.getDeaths() - season4.getDeaths());
+//            newPlayer.setWins(lifeTime.getWins() - season4.getWins());
+//            newPlayer.setLosses(lifeTime.getLosses() - season4.getLosses());
+//            newPlayer.setPlays(lifeTime.getPlays() - season4.getPlays());
+//            newPlayer.setFlagsCaptured(lifeTime.getFlagsCaptured() - season4.getFlagsCaptured());
+//            newPlayer.setFlagsReturned(lifeTime.getFlagsReturned() - season4.getFlagsReturned());
+//            newPlayer.setDamage(lifeTime.getDamage() - season4.getDamage());
+//            newPlayer.setHealing(lifeTime.getHealing() - season4.getHealing());
+//            newPlayer.setAbsorbed(lifeTime.getAbsorbed() - season4.getAbsorbed());
+//            subtractSpecs(newPlayer, lifeTime, season4);
+//            newPlayer.setLastSpec(lifeTime.getLastSpec());
+//            newPlayer.setHotkeyMode(lifeTime.getHotkeyMode());
+//            newPlayer.setParticleQuality(lifeTime.getParticleQuality());
+//            newPlayer.setExperience(lifeTime.getExperience());
+//            DatabaseManager.playerService.create(newPlayer, PlayersCollections.SEASON_5);
+//        }
 
 //        QueueManager.queue.clear();
 //
@@ -218,6 +234,43 @@ public class TestCommand implements CommandExecutor {
 
         sender.sendMessage(ChatColor.GREEN + "DID THE THING");
         return true;
+    }
+
+    private void subtractSpecs(DatabasePlayer databasePlayer, DatabasePlayer lifeTime, DatabasePlayer season4) {
+        for (DatabaseWarlordsClass aClass : databasePlayer.getClasses()) {
+            DatabaseWarlordsClass lifeTimeClass = lifeTime.getClass(aClass);
+            DatabaseWarlordsClass season4Class = season4.getClass(aClass);
+            for (int i = 0; i < aClass.getSpecs().length; i++) {
+                DatabaseSpecialization spec = aClass.getSpecs()[i];
+                DatabaseSpecialization lifeTimeSpec = lifeTimeClass.getSpecs()[i];
+                DatabaseSpecialization season4Spec = season4Class.getSpecs()[i];
+                spec.setKills(lifeTimeSpec.getKills() - season4Spec.getKills());
+                spec.setAssists(lifeTimeSpec.getAssists() - season4Spec.getAssists());
+                spec.setDeaths(lifeTimeSpec.getDeaths() - season4Spec.getDeaths());
+                spec.setWins(lifeTimeSpec.getWins() - season4Spec.getWins());
+                spec.setLosses(lifeTimeSpec.getLosses() - season4Spec.getLosses());
+                spec.setPlays(lifeTimeSpec.getPlays() - season4Spec.getPlays());
+                spec.setFlagsCaptured(lifeTimeSpec.getFlagsCaptured() - season4Spec.getFlagsCaptured());
+                spec.setFlagsReturned(lifeTimeSpec.getFlagsReturned() - season4Spec.getFlagsReturned());
+                spec.setDamage(lifeTimeSpec.getDamage() - season4Spec.getDamage());
+                spec.setHealing(lifeTimeSpec.getHealing() - season4Spec.getHealing());
+                spec.setAbsorbed(lifeTimeSpec.getAbsorbed() - season4Spec.getAbsorbed());
+                spec.setWeapon(lifeTimeSpec.getWeapon());
+                spec.setExperience(lifeTimeSpec.getExperience() - season4Spec.getExperience());
+            }
+            aClass.setKills(lifeTimeClass.getKills() - season4Class.getKills());
+            aClass.setAssists(lifeTimeClass.getAssists() - season4Class.getAssists());
+            aClass.setDeaths(lifeTimeClass.getDeaths() - season4Class.getDeaths());
+            aClass.setWins(lifeTimeClass.getWins() - season4Class.getWins());
+            aClass.setLosses(lifeTimeClass.getLosses() - season4Class.getLosses());
+            aClass.setPlays(lifeTimeClass.getPlays() - season4Class.getPlays());
+            aClass.setFlagsCaptured(lifeTimeClass.getFlagsCaptured() - season4Class.getFlagsCaptured());
+            aClass.setFlagsReturned(lifeTimeClass.getFlagsReturned() - season4Class.getFlagsReturned());
+            aClass.setDamage(lifeTimeClass.getDamage() - season4Class.getDamage());
+            aClass.setHealing(lifeTimeClass.getHealing() - season4Class.getHealing());
+            aClass.setAbsorbed(lifeTimeClass.getAbsorbed() - season4Class.getAbsorbed());
+            aClass.setExperience(lifeTimeClass.getExperience() - season4Class.getExperience());
+        }
     }
 
     public void register(Warlords instance) {

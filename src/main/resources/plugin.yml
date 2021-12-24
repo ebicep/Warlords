@@ -1,6 +1,6 @@
 name: Warlords
 version: Fabled Flames
-author: ebic
+authors: [ebic, Plikie]
 main: com.ebicep.warlords.Warlords
 depend: [ MultiWorld, HolographicDisplays, ProtocolLib ]
 load: POSTWORLD
@@ -53,12 +53,6 @@ commands:
   me:
     description: Not happening.
     usage: Not happening.
-  summon:
-    description: Not happening.
-    usage: Not happening.
-  give:
-    description: Not happening.
-    usage: Not happening.
   bot:
     description: Runs bot commands
     usage: /bot
@@ -89,3 +83,15 @@ commands:
   queue:
     description: Queue system
     aliases: [ queue ]
+
+permissions:
+  group.default:
+    default: false
+  group.gamestarter:
+    default: false
+  group.contentcreator:
+    default: false
+  group.coordinator:
+    default: false
+  group.administrator:
+    default: false

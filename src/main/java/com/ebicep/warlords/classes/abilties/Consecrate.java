@@ -35,7 +35,7 @@ public class Consecrate extends AbstractAbility {
 
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
-        DamageHealCircle damageHealCircle = new DamageHealCircle(wp, player.getLocation(), radius, 5, minDamageHeal, maxDamageHeal, critChance, critMultiplier, name);
+        DamageHealCircle cons = new DamageHealCircle(wp, player.getLocation(), radius, 5, minDamageHeal, maxDamageHeal, critChance, critMultiplier, name);
         wp.subtractEnergy(energyCost);
 
         for (Player player1 : player.getWorld().getPlayers()) {
@@ -47,29 +47,31 @@ public class Consecrate extends AbstractAbility {
         consecrate.setGravity(false);
         consecrate.setVisible(false);
         consecrate.setMarker(true);
-        BukkitTask task = Bukkit.getScheduler().runTaskTimer(Warlords.getInstance(), damageHealCircle::spawn, 0, 1);
+        BukkitTask task = Bukkit.getScheduler().runTaskTimer(Warlords.getInstance(), cons::spawn, 0, 1);
         wp.getGame().getGameTasks().put(
                 new BukkitRunnable() {
 
                     @Override
                     public void run() {
-                        damageHealCircle.setDuration(damageHealCircle.getDuration() - 1);
-                        PlayerFilter.entitiesAround(damageHealCircle.getLocation(), radius, 6, radius)
-                                .aliveEnemiesOf(wp)
-                                .forEach(warlordsPlayer -> {
-                                    warlordsPlayer.damageHealth(
-                                            damageHealCircle.getWarlordsPlayer(),
-                                            damageHealCircle.getName(),
-                                            damageHealCircle.getMinDamage(),
-                                            damageHealCircle.getMaxDamage(),
-                                            damageHealCircle.getCritChance(),
-                                            damageHealCircle.getCritMultiplier(),
-                                            false);
-                                });
-                        if (damageHealCircle.getDuration() == 0) {
-                            consecrate.remove();
-                            this.cancel();
-                            task.cancel();
+                        if (!wp.getGame().isGameFreeze()) {
+                            cons.setDuration(cons.getDuration() - 1);
+                            PlayerFilter.entitiesAround(cons.getLocation(), radius, 6, radius)
+                                    .aliveEnemiesOf(wp)
+                                    .forEach(warlordsPlayer -> {
+                                        warlordsPlayer.damageHealth(
+                                                cons.getWarlordsPlayer(),
+                                                cons.getName(),
+                                                cons.getMinDamage(),
+                                                cons.getMaxDamage(),
+                                                cons.getCritChance(),
+                                                cons.getCritMultiplier(),
+                                                false);
+                                    });
+                            if (cons.getDuration() == 0) {
+                                consecrate.remove();
+                                this.cancel();
+                                task.cancel();
+                            }
                         }
                     }
 
