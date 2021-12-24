@@ -44,7 +44,7 @@ public enum Classes {
             Berserker::new,
             WordWrap.wrapWithNewline("§7A damage-oriented Warrior specialization with a lust for blood and anger issues.", 200),
             SpecType.DAMAGE,
-            WOUNDING_STRIKE_BERSERKER, SEISMIC_WAVE, GROUND_SLAM),
+            WOUNDING_STRIKE_BERSERKER, SEISMIC_WAVE, GROUND_SLAM, BERSERK),
     DEFENDER("Defender",
             Defender::new,
             WordWrap.wrapWithNewline("§7A defense-oriented Warrior specialization that can protect teammates by mitigating damage and intercepting enemy hits.", 200),
@@ -148,11 +148,8 @@ public enum Classes {
 
     /**
      *
-     * @param player
-     * @return
-     * @deprecated Trivial method, call {@code Warlords.getPlayerSettings(player.getUniqueId()).classesSkillBoosts()} instead
+     * Trivial method, call {@code Warlords.getPlayerSettings(player.getUniqueId()).classesSkillBoosts()} instead
      */
-    @Deprecated
     public static ClassesSkillBoosts getSelectedBoost(OfflinePlayer player) {
         return Warlords.getPlayerSettings(player.getUniqueId()).getClassesSkillBoosts();
     }

@@ -2,6 +2,8 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.player.Classes;
+import com.ebicep.warlords.player.ClassesSkillBoosts;
 import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.ParticleEffect;
@@ -14,8 +16,7 @@ public class Inferno extends AbstractAbility {
     private final int duration = 18;
 
     public Inferno() {
-        super("Inferno", 0, 0, 46.98f, 0, 30, 30
-        );
+        super("Inferno", 0, 0, 46.98f, 0, 30, 30);
     }
 
     @Override
@@ -28,6 +29,9 @@ public class Inferno extends AbstractAbility {
 
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
+        double cooldown = Classes.getSelectedBoost(player) == ClassesSkillBoosts.INFERNO ? 37.5 : 46.98;
+        setCooldown((float) cooldown);
+
         wp.getCooldownManager().addCooldown(name, Inferno.this.getClass(), new Inferno(), "INFR", duration, wp, CooldownTypes.BUFF);
 
         for (Player player1 : player.getWorld().getPlayers()) {

@@ -548,7 +548,7 @@ public class GameMenu {
         } else if (apc.getBlue().getClass() == selectedBoost.ability) {
             apc.getBlue().boostSkill();
         } else if (apc.getOrange().getClass() == selectedBoost.ability) {
-            apc.getOrange().boostOrange();
+            apc.getOrange().boostSkill();
         }
 
         apc.getWeapon().updateDescription(player);

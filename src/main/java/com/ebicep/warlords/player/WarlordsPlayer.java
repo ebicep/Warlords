@@ -274,7 +274,7 @@ public final class WarlordsPlayer {
             spec.getBlue().boostSkill();
             spec.getBlue().updateDescription(player);
         } else if (spec.getOrange().getClass() == selectedBoost.ability) {
-            spec.getOrange().boostOrange();
+            spec.getOrange().boostSkill();
             spec.getOrange().updateDescription(player);
         }
     }
