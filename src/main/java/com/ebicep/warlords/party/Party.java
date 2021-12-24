@@ -79,7 +79,7 @@ public class Party {
         invites.remove(uuid);
         members.put(uuid, true);
         sendMessageToAllPartyPlayers(ChatColor.AQUA + Bukkit.getOfflinePlayer(uuid).getName() + ChatColor.GREEN + " joined the party", true, true);
-        if (Bukkit.getOfflinePlayer(uuid).isOp()) {
+        if (Bukkit.getOfflinePlayer(uuid).getPlayer().hasPermission("warlords.party.automoderator")) {
             promote(Bukkit.getOfflinePlayer(uuid).getName());
         }
         Bukkit.getPlayer(uuid).sendMessage(getList());
