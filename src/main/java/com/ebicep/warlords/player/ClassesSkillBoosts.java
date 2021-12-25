@@ -25,7 +25,7 @@ public enum ClassesSkillBoosts {
             }
     ),
     TIME_WARP_PYROMANCER("Time Warp",
-            "§7Increase the amount of health you\n§7restore with Time Warp by §75% §7and reduce\n§7the cooldown by 10%.",
+            "§7Increase the amount of health you\n§7restore with Time Warp by §75% §7and reduce\n§7the cooldown by 15%.",
             "§aIncrease the amount of health\n§ayou restore with Time Warp by §c5% §aand reduce\n§athe cooldown by §c15%.",
             TimeWarp.class,
             abstractAbility -> {
