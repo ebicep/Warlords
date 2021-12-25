@@ -107,7 +107,12 @@ public enum ClassesSkillBoosts {
             "§aIncrease the amount damage you\n§areduce with Ice Barrier by\n§c10% §aand reduce the cooldown by §c10%",
             IceBarrier.class,
             abstractAbility -> {
-                abstractAbility.setCooldown(abstractAbility.getCooldown() * .9f);
+                if (abstractAbility instanceof IceBarrier) {
+                    ((IceBarrier) abstractAbility).setDamageReductionPercent(60);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .9f);
+                } else {
+                    System.out.println("ERROR APPLY SKILL BOOST NOT BARRIER");
+                }
             }
     ),
     WATER_BOLT("Waterbolt",
@@ -251,7 +256,13 @@ public enum ClassesSkillBoosts {
             "§aIncrease the amount damage you\n§areduce with Last Stand by\n§c10% §aand reduce the cooldown by §c10%",
             LastStand.class,
             abstractAbility -> {
-                abstractAbility.setCooldown(abstractAbility.getCooldown() * .9f);
+                if (abstractAbility instanceof LastStand) {
+                    ((LastStand) abstractAbility).setSelfDamageReductionPercent(60);
+                    ((LastStand) abstractAbility).setTeammateDamageReductionPercent(50);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .9f);
+                } else {
+                    System.out.println("ERROR APPLY SKILL BOOST NOT LAST STAND");
+                }
             }
     ),
     CRIPPLING_STRIKE("Crippling Strike",
@@ -314,7 +325,7 @@ public enum ClassesSkillBoosts {
     ),
     CONSECRATE_AVENGER("Consecrate",
             "§7Increases the range of\n§7Consecrate by 2 blocks and\n§7reduce the energy cost\n§7by 30",
-            "§aIncreases the range of\n§a7Consecrate by §c2 §ablocks and\n§areduce the energy cost\n§aby §c30",
+            "§aIncreases the range of\n§7Consecrate by §c2 §ablocks and\n§areduce the energy cost\n§aby §c30",
             Consecrate.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Consecrate) {

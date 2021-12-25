@@ -2,6 +2,8 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.player.Classes;
+import com.ebicep.warlords.player.ClassesSkillBoosts;
 import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.ParticleEffect;
@@ -21,10 +23,12 @@ public class Earthliving extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
+        int healthRestore = Classes.getSelectedBoost(player) == ClassesSkillBoosts.EARTHLIVING_WEAPON ? 250 : 240;
+
         description = "§7Imbue your weapon with the power of the\n" +
                 "§7Earth, causing each of your melee attacks\n" +
                 "§7to have a §e" + procChance + "% §7chance to heal you and §e2\n" +
-                "§7nearby allies for §a240% §7weapon damage.\n" +
+                "§7nearby allies for §a" + healthRestore + "% §7weapon damage.\n" +
                 "§7Lasts §6" + duration + " §7seconds." +
                 "\n\n" +
                 "§7The first hit is guaranteed to activate Earthliving.";

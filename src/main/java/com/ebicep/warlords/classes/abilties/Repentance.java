@@ -36,7 +36,7 @@ public class Repentance extends AbstractAbility {
     public void updateDescription(Player player) {
         description = "§7Taking damage empowers your damaging\n" +
                 "§7abilities and melee hits, restoring health\n" +
-                "§7and energy based on §c" + damageConvertPercent + " §7+ §c10% §7of the\n" +
+                "§7and energy based on §c10 §7+ §c" + damageConvertPercent + "% §7of the\n" +
                 "§7damage you've recently took. Lasts §6" + duration + " §7seconds.";
     }
 

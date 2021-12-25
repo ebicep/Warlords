@@ -271,6 +271,11 @@ public final class WarlordsPlayer {
         } else if (spec.getBlue().getClass() == selectedBoost.ability) {
             spec.getBlue().boostSkill(selectedBoost);
             spec.getBlue().updateDescription(player);
+            if (spec.getBlue() instanceof ArcaneShield) {
+                ArcaneShield arcaneShield = ((ArcaneShield) spec.getBlue());
+                arcaneShield.setMaxShieldHealth((int) (maxHealth * (arcaneShield.getShieldPercentage() / 100f)));
+                spec.getBlue().updateDescription(player);
+            }
         } else if (spec.getOrange().getClass() == selectedBoost.ability) {
             spec.getOrange().boostSkill(selectedBoost);
             spec.getOrange().updateDescription(player);
@@ -660,11 +665,8 @@ public final class WarlordsPlayer {
                 if (!HammerOfLight.standingInHammer(attacker, entity)) {
                     //reduce damage
                     for (Cooldown cooldown : cooldownManager.getCooldown(IceBarrier.class)) {
-                        if (Warlords.getPlayerSettings(uuid).getClassesSkillBoosts() == ClassesSkillBoosts.ICE_BARRIER) {
-                            addAbsorbed(Math.abs(damageValue - (damageValue *= .4)));
-                        } else {
-                            addAbsorbed(Math.abs(damageValue - (damageValue *= .5)));
-                        }
+                        IceBarrier iceBarrier = (IceBarrier) cooldown.getCooldownObject();
+                        addAbsorbed(Math.abs(damageValue - (damageValue *= iceBarrier.getDamageReduction())));
                     }
 
                     if (!cooldownManager.getCooldown(ChainLightning.class).isEmpty()) {
@@ -678,11 +680,11 @@ public final class WarlordsPlayer {
 
                     for (Cooldown cooldown : cooldownManager.getCooldown(LastStand.class)) {
                         WarlordsPlayer lastStandedBy = cooldown.getFrom();
-                        boolean lastStandSkillBoost = Warlords.getPlayerSettings(lastStandedBy.getUuid()).getClassesSkillBoosts() == ClassesSkillBoosts.LAST_STAND;
+                        LastStand lastStand = (LastStand) cooldown.getCooldownObject();
                         if (lastStandedBy == this) {
-                            damageValue *= lastStandSkillBoost ? .6 : .5;
+                            damageValue *= lastStand.getSelfDamageReduction();
                         } else {
-                            damageValue *= lastStandSkillBoost ? .5 : .4;
+                            damageValue *= lastStand.getTeammateDamageReduction();
                         }
                     }
 

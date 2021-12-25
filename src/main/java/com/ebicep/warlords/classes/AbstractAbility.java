@@ -3,6 +3,7 @@ package com.ebicep.warlords.classes;
 import com.ebicep.warlords.player.ClassesSkillBoosts;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.ItemBuilder;
+import com.ebicep.warlords.util.NumberFormat;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
@@ -135,7 +136,7 @@ public abstract class AbstractAbility {
                 .name(ChatColor.GOLD + getName())
                 .lore(
                         getCooldown() == 0 ? null :
-                                ChatColor.GRAY + "Cooldown: " + ChatColor.AQUA + getCooldown() + " seconds",
+                                ChatColor.GRAY + "Cooldown: " + ChatColor.AQUA + NumberFormat.formatOptionalHundredths(getCooldown()) + " seconds",
                         getEnergyCost() == 0 || getEnergyCost() == -120 ? null :
                                 ChatColor.GRAY + "Energy Cost: " + ChatColor.YELLOW + getEnergyCost(),
                         getCritChance() == 0 || getCritChance() == -1 || getCritMultiplier() == 100 ? null :

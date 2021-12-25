@@ -29,7 +29,6 @@ public class Inferno extends AbstractAbility {
 
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
-
         wp.getCooldownManager().addCooldown(name, Inferno.this.getClass(), new Inferno(), "INFR", duration, wp, CooldownTypes.BUFF);
 
         for (Player player1 : player.getWorld().getPlayers()) {
