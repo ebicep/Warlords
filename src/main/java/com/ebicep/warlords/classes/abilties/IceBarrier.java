@@ -2,6 +2,8 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.player.Classes;
+import com.ebicep.warlords.player.ClassesSkillBoosts;
 import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.ParticleEffect;
@@ -20,9 +22,10 @@ public class IceBarrier extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
+        int selfReduction = Classes.getSelectedBoost(player) == ClassesSkillBoosts.ICE_BARRIER ? 60 : 50;
         description = "§7Surround yourself with a layer of\n" +
                 "§7of cold air, reducing damage taken by\n" +
-                "§c50%§7, While active, taking melee\n" +
+                "§c" + selfReduction + "%§7, While active, taking melee\n" +
                 "§7damage reduces the attacker's movement\n" +
                 "§7speed by §e20% §7for §62 §7seconds. Lasts\n" +
                 "§6" + duration + " §7seconds.";

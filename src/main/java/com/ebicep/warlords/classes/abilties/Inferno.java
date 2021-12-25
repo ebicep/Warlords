@@ -29,8 +29,6 @@ public class Inferno extends AbstractAbility {
 
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
-        double cooldown = Classes.getSelectedBoost(player) == ClassesSkillBoosts.INFERNO ? 37.5 : 46.98;
-        setCooldown((float) cooldown);
 
         wp.getCooldownManager().addCooldown(name, Inferno.this.getClass(), new Inferno(), "INFR", duration, wp, CooldownTypes.BUFF);
 

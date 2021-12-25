@@ -30,8 +30,6 @@ public class Berserk extends AbstractAbility {
 
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
-        double cooldown = Classes.getSelectedBoost(player) == ClassesSkillBoosts.BERSERK ? 37.5 : 46.98;
-        setCooldown((float) cooldown);
 
         wp.subtractEnergy(energyCost);
         wp.getSpeed().addSpeedModifier("Berserk", speedBuff, duration * 20, "BASE");

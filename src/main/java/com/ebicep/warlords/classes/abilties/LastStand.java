@@ -1,6 +1,8 @@
 package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.player.Classes;
+import com.ebicep.warlords.player.ClassesSkillBoosts;
 import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.Matrix4d;
@@ -24,11 +26,13 @@ public class LastStand extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
+        int selfReduction = Classes.getSelectedBoost(player) == ClassesSkillBoosts.LAST_STAND ? 60 : 50;
+        int allyReduction = Classes.getSelectedBoost(player) == ClassesSkillBoosts.LAST_STAND ? 50 : 40;
         description = "§7Enter a defensive stance,\n" +
                 "§7reducing all damage you take by\n" +
-                "§c50% §7for §6" + selfDuration + " §7seconds and also\n" +
+                "§c" + selfReduction + "% §7for §6" + selfDuration + " §7seconds and also\n" +
                 "§7reduces all damage nearby allies take\n" +
-                "§7by §c40% §7for §6" + allyDuration + " §7seconds. You are\n" +
+                "§7by §c" + allyReduction + "% §7for §6" + allyDuration + " §7seconds. You are\n" +
                 "§7healed §7for the amount of damage\n" +
                 "§7prevented on allies." +
                 "\n\n" +

@@ -16,12 +16,12 @@ public enum ClassesSkillBoosts {
             }
     ),
     FLAME_BURST("Flame Burst",
-            "§7Increases the damage you\n§7deal with Flame Burst by\n§720%",
-            "§aIncreases the damage you\n§adeal with Flame Burst by\n§c20%",
+            "§7Increases the damage you\n§7deal with Flame Burst by\n§725%",
+            "§aIncreases the damage you\n§adeal with Flame Burst by\n§c25%",
             FlameBurst.class,
             abstractAbility -> {
-                abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.2f);
-                abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.2f);
+                abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.25f);
+                abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.25f);
             }
     ),
     TIME_WARP_PYROMANCER("Time Warp",
@@ -72,8 +72,8 @@ public enum ClassesSkillBoosts {
             "§aIncrease the damage you\n§adeal with Freezing Breath\n§aby §c25%",
             FreezingBreath.class,
             abstractAbility -> {
-                abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.2f);
-                abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.2f);
+                abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.25f);
+                abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.25f);
             }
     ),
     TIME_WARP_CRYOMANCER("Time Warp",
@@ -107,7 +107,7 @@ public enum ClassesSkillBoosts {
             "§aIncrease the amount damage you\n§areduce with Ice Barrier by\n§c10% §aand reduce the cooldown by §c10%",
             IceBarrier.class,
             abstractAbility -> {
-                abstractAbility.setCooldown(abstractAbility.getCooldown() * .95f);
+                abstractAbility.setCooldown(abstractAbility.getCooldown() * .9f);
             }
     ),
     WATER_BOLT("Waterbolt",
@@ -124,8 +124,8 @@ public enum ClassesSkillBoosts {
             "§aIncreases the amount of\n§ahealth you restore with\n§aWater Breath by §c25%",
             WaterBreath.class,
             abstractAbility -> {
-                abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.2f);
-                abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.2f);
+                abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.25f);
+                abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.25f);
             }
     ),
     TIME_WARP_AQUAMANCER("Time Warp",
@@ -177,12 +177,12 @@ public enum ClassesSkillBoosts {
             }
     ),
     SEISMIC_WAVE_BERSERKER("Seismic Wave",
-            "§7Increase the damage you\n§7deal with Seismic Wave by\n§720%",
-            "§aIncrease the damage you\n§adeal with Seismic Wave by\n§c20%",
+            "§7Increase the damage you\n§7deal with Seismic Wave by\n§730%",
+            "§aIncrease the damage you\n§adeal with Seismic Wave by\n§c30%",
             SeismicWave.class,
             abstractAbility -> {
-                abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.2f);
-                abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.2f);
+                abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.3f);
+                abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.3f);
             }
     ),
     GROUND_SLAM_BERSERKER("Ground Slam",
@@ -207,7 +207,7 @@ public enum ClassesSkillBoosts {
             "§aReduce the cooldown of Berserk\n§aby §c25%",
             Berserk.class,
             abstractAbility -> {
-                abstractAbility.setCooldown(abstractAbility.getCooldown() * .8f);
+                abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
             }
     ),
     WOUNDING_STRIKE_DEFENDER("Wounding Strike",
@@ -220,22 +220,22 @@ public enum ClassesSkillBoosts {
             }
     ),
     SEISMIC_WAVE_DEFENDER("Seismic Wave",
-            "§7Increase the damage you\n§7deal with Seismic Wave by\n§720%",
-            "§aIncrease the damage you\n§adeal with Seismic Wave by\n§c20%",
+            "§7Increase the damage you\n§7deal with Seismic Wave by\n§730%",
+            "§aIncrease the damage you\n§adeal with Seismic Wave by\n§c30%",
             SeismicWave.class,
             abstractAbility -> {
-                abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.2f);
-                abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.2f);
+                abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.3f);
+                abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.3f);
             }
     ),
     GROUND_SLAM_DEFENDER("Ground Slam",
-            "§7Increase the damage you\n§7deal with Ground Slam by\n§710% §7and reduce the cooldown by §a10%",
-            "§7Increase the damage you\n§7deal with Ground Slam by\n§c10% §aand reduce the cooldown by §a10%",
+            "§7Increase the damage you\n§7deal with Ground Slam by\n§710% §7and reduce the cooldown by §a15%",
+            "§7Increase the damage you\n§7deal with Ground Slam by\n§c10% §aand reduce the cooldown by §a15%",
             GroundSlam.class,
             abstractAbility -> {
-                abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.05f);
-                abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.05f);
-                abstractAbility.setCooldown(abstractAbility.getCooldown() * .9f);
+                abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.1f);
+                abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.1f);
+                abstractAbility.setCooldown(abstractAbility.getCooldown() * .85f);
             }
     ),
     INTERVENE("Intervene",
@@ -251,7 +251,7 @@ public enum ClassesSkillBoosts {
             "§aIncrease the amount damage you\n§areduce with Last Stand by\n§c10% §aand reduce the cooldown by §c10%",
             LastStand.class,
             abstractAbility -> {
-                abstractAbility.setCooldown(abstractAbility.getCooldown() * .95f);
+                abstractAbility.setCooldown(abstractAbility.getCooldown() * .9f);
             }
     ),
     CRIPPLING_STRIKE("Crippling Strike",
@@ -264,8 +264,8 @@ public enum ClassesSkillBoosts {
             }
     ),
     RECKLESS_CHARGE("Reckless Charge",
-            "§7Increase the damage you\n§7deal with Reckless Charge by\n§710% and reduce the cooldown\n§7by 10%",
-            "§aIncrease the damage you\n§adeal with Reckless Charge by\n§c10% §aand reduce the cooldown\n§aby §c10%",
+            "§7Increase the damage you\n§7deal with Reckless Charge by\n§710% and reduce the cooldown\n§7by 20%",
+            "§aIncrease the damage you\n§adeal with Reckless Charge by\n§c10% §aand reduce the cooldown\n§aby §c20%",
             RecklessCharge.class,
             abstractAbility -> {
                 abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.1f);
@@ -291,8 +291,8 @@ public enum ClassesSkillBoosts {
             }
     ),
     UNDYING_ARMY("Undying Army",
-            "§7Increase the amount of allies\naffected by 2 §7and reduce the cooldown\n§7by 10%",
-            "§7Increase the amount of allies\n§7affected by 2 §aand reduce the cooldown\n§aby §c10%",
+            "§7Increase the amount of allies\naffected by 2 §7and reduce the cooldown\n§7by 15%",
+            "§aIncrease the amount of allies\n§aaffected by §c2 §aand reduce the cooldown\n§aby §c15%",
             UndyingArmy.class,
             abstractAbility -> {
                 if (abstractAbility instanceof UndyingArmy) {
@@ -313,13 +313,13 @@ public enum ClassesSkillBoosts {
             }
     ),
     CONSECRATE_AVENGER("Consecrate",
-            "§7Increases the range of\n§7Consecrate by 2 blocks and\n§7reduce the energy cost\n§7by 20",
-            "§aIncreases the range of\n§a7Consecrate by §c2 §ablocks and\n§areduce the energy cost\n§aby §c20",
+            "§7Increases the range of\n§7Consecrate by 2 blocks and\n§7reduce the energy cost\n§7by 30",
+            "§aIncreases the range of\n§a7Consecrate by §c2 §ablocks and\n§areduce the energy cost\n§aby §c30",
             Consecrate.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Consecrate) {
                     ((Consecrate) abstractAbility).setRadius(7);
-                    abstractAbility.setEnergyCost(abstractAbility.getEnergyCost() - 20);
+                    abstractAbility.setEnergyCost(abstractAbility.getEnergyCost() - 30);
                 } else {
                     System.out.println("ERROR APPLY SKILL BOOST NOT CONSECRATE AVE");
                 }
@@ -351,7 +351,7 @@ public enum ClassesSkillBoosts {
             "§aReduce the cooldown of Avenger's Wrath\n§aby §c25%",
             AvengersWrath.class,
             abstractAbility -> {
-                abstractAbility.setCooldown(abstractAbility.getCooldown() * .8f);
+                abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
             }
     ),
     CRUSADER_STRIKE("Crusader's Strike",
@@ -364,13 +364,13 @@ public enum ClassesSkillBoosts {
             }
     ),
     CONSECRATE_CRUSADER("Consecrate",
-            "§7Increases the range of\n§7Consecrate by 2 blocks and\n§7reduce the energy cost\n§7by 20",
-            "§aIncreases the range of\n§a7Consecrate by §c2 §ablocks and\n§areduce the energy cost\n§aby §c20",
+            "§7Increases the range of\n§7Consecrate by 2 blocks and\n§7reduce the energy cost\n§7by 30",
+            "§aIncreases the range of\n§a7Consecrate by §c2 §ablocks and\n§areduce the energy cost\n§aby §c30",
             Consecrate.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Consecrate) {
                     ((Consecrate) abstractAbility).setRadius(6);
-                    abstractAbility.setEnergyCost(abstractAbility.getEnergyCost() - 20);
+                    abstractAbility.setEnergyCost(abstractAbility.getEnergyCost() - 30);
                 } else {
                     System.out.println("ERROR APPLY SKILL BOOST NOT CONSECRATE CRUS");
                 }
@@ -431,8 +431,8 @@ public enum ClassesSkillBoosts {
             }
     ),
     LIGHT_INFUSION_PROTECTOR("Light Infusion",
-            "§7Reduce the cooldown of Light Infusion\n§7by 10% and increase the speed\n§7duration by 1 second",
-            "§aReduce the cooldown of Light Infusion\n§aby §c10% §aand increase the speed\n§aduration by §c1 §asecond",
+            "§7Reduce the cooldown of Light Infusion\n§7by 20% and increase the speed\n§7duration by 1 second",
+            "§aReduce the cooldown of Light Infusion\n§aby §c20% §aand increase the speed\n§aduration by §c1 §asecond",
             LightInfusion.class,
             abstractAbility -> {
                 if (abstractAbility instanceof LightInfusion) {
@@ -457,8 +457,8 @@ public enum ClassesSkillBoosts {
             "§aIncreases the amount of\n§ahealth you restore with\n§aHammer of Light by §c20% §aand\nreduce the cooldown by §c15%",
             HammerOfLight.class,
             abstractAbility -> {
-                abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.15f);
-                abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.15f);
+                abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.2f);
+                abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.2f);
                 abstractAbility.setCooldown(abstractAbility.getCooldown() * .85f);
             }
     ),
@@ -476,8 +476,8 @@ public enum ClassesSkillBoosts {
             "§aIncrease the damage you\n§adeal with Chain Lightning\n§aby §c25%",
             ChainLightning.class,
             abstractAbility -> {
-                abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.2f);
-                abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.2f);
+                abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.25f);
+                abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.25f);
             }
     ),
     WINDFURY_WEAPON("Windfury Weapon",
@@ -497,7 +497,7 @@ public enum ClassesSkillBoosts {
             "§aReduce the cooldown of Lightning Rod\n§aby §c25%",
             LightningRod.class,
             abstractAbility -> {
-                abstractAbility.setCooldown(abstractAbility.getCooldown() * .8f);
+                abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
             }
     ),
     CAPACITOR_TOTEM("Capacitor Totem",
@@ -524,8 +524,8 @@ public enum ClassesSkillBoosts {
             "§aIncrease the damage you\n§adeal with Spirit Link by\n§c25%",
             SpiritLink.class,
             abstractAbility -> {
-                abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.2f);
-                abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.2f);
+                abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.25f);
+                abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.25f);
             }
     ),
     SOULBINDING_WEAPON("Soulbinding Weapon",
@@ -561,7 +561,7 @@ public enum ClassesSkillBoosts {
                 if (abstractAbility instanceof DeathsDebt) {
                     ((DeathsDebt) abstractAbility).setRespiteRadius(12);
                     ((DeathsDebt) abstractAbility).setDebtRadius(10);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .85f);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .8f);
                 } else {
                     System.out.println("ERROR APPLY SKILL BOOST NOT DEBT");
                 }
@@ -607,8 +607,8 @@ public enum ClassesSkillBoosts {
             }
     ),
     HEALING_TOTEM("Healing Totem",
-            "§7Increase the amount of health you\n§7restore with Healing Totem\n§7by 10% and reduce the\n§7cooldown by 10%",
-            "§aIncrease the amount of health you\n§arestore with Healing Totem\n§aby §c10% §aand reduce the\n§acooldown by §c10%",
+            "§7Increase the amount of health you\n§7restore with Healing Totem\n§7by 15% and reduce the\n§7cooldown by 15%",
+            "§aIncrease the amount of health you\n§arestore with Healing Totem\n§aby §c15% §aand reduce the\n§acooldown by §c15%",
             HealingTotem.class,
             abstractAbility -> {
                 abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.15f);
