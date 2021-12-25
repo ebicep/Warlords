@@ -48,7 +48,7 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
         description = "§7Discharge a bolt of lightning at the\n" +
                 "§7targeted enemy player that deals\n" +
                 "§c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage and jumps to\n" +
-                "§e4 §7additional targets within §e" + bounceRange + "\n" +
+                "§e3 §7additional targets within §e" + bounceRange + "\n" +
                 "§7blocks. Each time the lightning jumps\n" +
                 "§7the damage is decreased by §c15%§7.\n" +
                 "§7You gain §e10% §7damage resistance for\n" +

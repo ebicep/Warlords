@@ -2,6 +2,8 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.player.Classes;
+import com.ebicep.warlords.player.ClassesSkillBoosts;
 import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.ParticleEffect;
@@ -12,17 +14,27 @@ import org.bukkit.scheduler.BukkitRunnable;
 public class IceBarrier extends AbstractAbility {
 
     private final int duration = 6;
+    private int damageReductionPercent = 50;
+
+    public float getDamageReduction() {
+        return (100 - damageReductionPercent) / 100f;
+    }
 
     public IceBarrier() {
-        super("Ice Barrier", 0, 0, 46.98f, 0, 0, 0
-        );
+        super("Ice Barrier", 0, 0, 46.98f, 0, 0, 0);
+    }
+
+    public IceBarrier(int damageReductionPercent) {
+        super("Ice Barrier", 0, 0, 46.98f, 0, 0, 0);
+        this.damageReductionPercent = damageReductionPercent;
     }
 
     @Override
     public void updateDescription(Player player) {
+        int selfReduction = Classes.getSelectedBoost(player) == ClassesSkillBoosts.ICE_BARRIER ? 60 : 50;
         description = "§7Surround yourself with a layer of\n" +
                 "§7of cold air, reducing damage taken by\n" +
-                "§c50%§7, While active, taking melee\n" +
+                "§c" + selfReduction + "%§7, While active, taking melee\n" +
                 "§7damage reduces the attacker's movement\n" +
                 "§7speed by §e20% §7for §62 §7seconds. Lasts\n" +
                 "§6" + duration + " §7seconds.";
@@ -30,7 +42,7 @@ public class IceBarrier extends AbstractAbility {
 
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
-        wp.getCooldownManager().addCooldown(name, IceBarrier.this.getClass(), new IceBarrier(), "ICE", duration, wp, CooldownTypes.ABILITY);
+        wp.getCooldownManager().addCooldown(name, IceBarrier.this.getClass(), new IceBarrier(damageReductionPercent), "ICE", duration, wp, CooldownTypes.ABILITY);
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "mage.icebarrier.activation", 2, 1);
@@ -52,5 +64,13 @@ public class IceBarrier extends AbstractAbility {
                 }.runTaskTimer(Warlords.getInstance(), 0, 5),
                 System.currentTimeMillis()
         );
+    }
+
+    public int getDamageReductionPercent() {
+        return damageReductionPercent;
+    }
+
+    public void setDamageReductionPercent(int damageReductionPercent) {
+        this.damageReductionPercent = damageReductionPercent;
     }
 }

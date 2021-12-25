@@ -79,4 +79,8 @@ public class Consecrate extends AbstractAbility {
                 System.currentTimeMillis()
         );
     }
+
+    public void setRadius(float radius) {
+        this.radius = radius;
+    }
 }

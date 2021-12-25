@@ -26,7 +26,7 @@ public class HolyRadianceCrusader extends AbstractAbility {
 
     private final int radius = 6;
     private final int markRadius = 15;
-    private final int markDuration = 8;
+    private int markDuration = 8;
 
     public HolyRadianceCrusader(float minDamageHeal, float maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier) {
         super("Holy Radiance", minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
@@ -233,5 +233,9 @@ public class HolyRadianceCrusader extends AbstractAbility {
                 ParticleEffect.SPELL.display(0.01f, 0, 0.01f, 0.1f, 2, armorStandLocation.add(0, 1.75, 0), 500);
             }
         }
+    }
+
+    public void setMarkDuration(int markDuration) {
+        this.markDuration = markDuration;
     }
 }
