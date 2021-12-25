@@ -15,23 +15,18 @@ public class ArcaneShield extends AbstractAbility {
 
     private final int duration = 6;
     public int maxShieldHealth;
-    public int shieldPercentage;
+    public int shieldPercentage = 50;
     private float shieldHealth = 0;
 
     public ArcaneShield() {
         super("Arcane Shield", 0, 0, 31.32f, 40, 0, 0);
     }
-
-    public ArcaneShield(int shieldPercentage) {
-        super("Arcane Shield", 0, 0, 31.32f, 40, 0, 0);
-        this.shieldPercentage = shieldPercentage;
-    }
-
+    
     @Override
     public void updateDescription(Player player) {
         description = "§7Surround yourself with arcane\n" +
                 "§7energy, creating a shield that will\n" +
-                "§7absorb up to §e" + maxShieldHealth + " §7(§e50% §7of your maximum\n" +
+                "§7absorb up to §e" + maxShieldHealth + " §7(§e" + shieldPercentage + "% §7of your maximum\n" +
                 "§7health) incoming damage. Lasts §6" + duration + " §7seconds.";
     }
 

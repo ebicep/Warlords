@@ -626,25 +626,26 @@ public final class WarlordsPlayer {
             intervenedBy.addAbsorbed(damageValue);
             intervenedBy.setRegenTimer(10);
             intervene.addDamagePrevented(damageValue);
-            intervenedBy.damageHealth(attacker, "Intervene", damageValue, damageValue, isCrit ? 100 : -1, 100, false);    Location loc = getLocation();
+            intervenedBy.damageHealth(attacker, "Intervene", damageValue, damageValue, isCrit ? 100 : -1, 100, false);
+            Location loc = getLocation();
             //EFFECTS + SOUNDS
             gameState.getGame().forEachOnlinePlayer((p, t) -> p.playSound(loc, "warrior.intervene.block", 2, 1));
-                if (attacker.entity instanceof Player) {
-                    ((Player) attacker.entity).playSound(attacker.getLocation(), Sound.ORB_PICKUP, 1, 1);
+            if (attacker.entity instanceof Player) {
+                ((Player) attacker.entity).playSound(attacker.getLocation(), Sound.ORB_PICKUP, 1, 1);
 
             }
-                entity.playEffect(EntityEffect.HURT);
-                intervenedBy.getEntity().playEffect(EntityEffect.HURT);
+            entity.playEffect(EntityEffect.HURT);
+            intervenedBy.getEntity().playEffect(EntityEffect.HURT);
 
 
-                //red line thingy
-                Location lineLocation = getLocation().add(0, 1, 0);
-                lineLocation.setDirection(lineLocation.toVector().subtract(intervenedBy.getLocation().add(0, 1, 0).toVector()).multiply(-1));
-                for (int i = 0; i < Math.floor(getLocation().distance(intervenedBy.getLocation())) * 2; i++) {
-                    ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(255, 0, 0), lineLocation, 500);
-                    ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(255, 0, 0), lineLocation, 500);
-                    lineLocation.add(lineLocation.getDirection().multiply(.5));
-                }
+            //red line thingy
+            Location lineLocation = getLocation().add(0, 1, 0);
+            lineLocation.setDirection(lineLocation.toVector().subtract(intervenedBy.getLocation().add(0, 1, 0).toVector()).multiply(-1));
+            for (int i = 0; i < Math.floor(getLocation().distance(intervenedBy.getLocation())) * 2; i++) {
+                ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(255, 0, 0), lineLocation, 500);
+                ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(255, 0, 0), lineLocation, 500);
+                lineLocation.add(lineLocation.getDirection().multiply(.5));
+            }
 
             //HORSE
             removeHorse();
@@ -770,7 +771,7 @@ public final class WarlordsPlayer {
 
 
                     List<Cooldown> debtsCooldown = cooldownManager.getCooldownFromName("Spirits Respite");
-                    if(!debtsCooldown.isEmpty()) {
+                    if (!debtsCooldown.isEmpty()) {
                         ((DeathsDebt) debtsCooldown.get(0).getCooldownObject()).addDelayedDamage(damageValue);
                         debt = true;
                     }
@@ -799,7 +800,7 @@ public final class WarlordsPlayer {
                     if (attacker.getSpec() instanceof Spiritguard) {
                         if (!attacker.getCooldownManager().getCooldown(Repentance.class).isEmpty()) {
                             Repentance repentance = (Repentance) attacker.getSpec().getBlue();
-                            int healthToAdd = (int) (repentance.getPool() * (repentance.getDamageConvertPercent() / 100)) + 10;
+                            int healthToAdd = (int) (repentance.getPool() * (repentance.getDamageConvertPercent() / 100f)) + 10;
                             attacker.healHealth(attacker, "Repentance", healthToAdd, healthToAdd, -1, 100, false);
                             repentance.setPool(repentance.getPool() * .5f);
                             attacker.addEnergy(attacker, "Repentance", (float) (healthToAdd * .035));
@@ -1061,14 +1062,16 @@ public final class WarlordsPlayer {
     public void spawnOrbs(String ability, WarlordsPlayer attacker) {
         //ORBS
         if (!attacker.getCooldownManager().getCooldown(OrbsOfLife.class).isEmpty() && !ability.isEmpty() && !ability.equals("Intervene")) {
-            for (Cooldown cooldown : attacker.getCooldownManager().getCooldown(OrbsOfLife.class)) {
-                OrbsOfLife orbsOfLife = (OrbsOfLife) cooldown.getCooldownObject();
-                Location location = getLocation();
-                Location spawnLocation = orbsOfLife.generateSpawnLocation(location);
+            attacker.getCooldownManager().getCooldown(OrbsOfLife.class).stream()
+                    .filter(cooldown -> !cooldown.isHidden())
+                    .forEach(cooldown -> {
+                        OrbsOfLife orbsOfLife = (OrbsOfLife) cooldown.getCooldownObject();
+                        Location location = getLocation();
+                        Location spawnLocation = orbsOfLife.generateSpawnLocation(location);
 
-                OrbsOfLife.Orb orb = new OrbsOfLife.Orb(((CraftWorld) location.getWorld()).getHandle(), spawnLocation, attacker);
-                orbsOfLife.getSpawnedOrbs().add(orb);
-            }
+                        OrbsOfLife.Orb orb = new OrbsOfLife.Orb(((CraftWorld) location.getWorld()).getHandle(), spawnLocation, attacker);
+                        orbsOfLife.getSpawnedOrbs().add(orb);
+                    });
         }
     }
 
@@ -1671,7 +1674,7 @@ public final class WarlordsPlayer {
     }
 
     public void setVelocity(org.bukkit.util.Vector v) {
-        if(cooldownManager.hasCooldownFromName("KB Resistance")) {
+        if (cooldownManager.hasCooldownFromName("KB Resistance")) {
             setVelocity(v.multiply(1), true);
         } else {
             setVelocity(v, true);
@@ -1680,7 +1683,7 @@ public final class WarlordsPlayer {
 
     public void setVelocity(org.bukkit.util.Vector v, boolean kbAfterHorse) {
         if ((kbAfterHorse || this.entity.getVehicle() == null)) {
-            if(cooldownManager.hasCooldownFromName("KB Resistance")) {
+            if (cooldownManager.hasCooldownFromName("KB Resistance")) {
                 this.entity.setVelocity(v.multiply(.75));
             } else {
                 this.entity.setVelocity(v);
@@ -1694,7 +1697,7 @@ public final class WarlordsPlayer {
 
     public void setVelocity(Location from, Location to, double multipliedBy, double y, boolean kbAfterHorse) {
         if (((kbAfterHorse && this.entity.getVehicle() != null) || (!kbAfterHorse && this.entity.getVehicle() == null))) {
-            if(cooldownManager.hasCooldownFromName("KB Resistance")) {
+            if (cooldownManager.hasCooldownFromName("KB Resistance")) {
                 this.entity.setVelocity((to.toVector().subtract(from.toVector()).normalize().multiply(multipliedBy).setY(y)).multiply(.75));
             } else {
                 this.entity.setVelocity(to.toVector().subtract(from.toVector()).normalize().multiply(multipliedBy).setY(y));

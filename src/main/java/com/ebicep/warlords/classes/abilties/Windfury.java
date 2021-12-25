@@ -26,7 +26,7 @@ public class Windfury extends AbstractAbility {
         int weaponDamage = Classes.getSelectedBoost(player) == ClassesSkillBoosts.WINDFURY_WEAPON ? 162 : 135;
         description = "§7Imbue your weapon with the power\n" +
                 "§7of the wind, causing each of your\n" +
-                "§7melee attacks to have a §e35% §7chance\n" +
+                "§7melee attacks to have a §e" + procChance + "% §7chance\n" +
                 "§7to hit §e2 §7additional times for §c" + weaponDamage + "%\n" +
                 "§7weapon damage. The first melee hit is\n" +
                 "§7guaranteed to activate Windfury. Lasts §6" + duration + "\n" +

@@ -44,7 +44,7 @@ public enum ClassesSkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof ArcaneShield) {
                     ArcaneShield arcaneShield = (ArcaneShield) abstractAbility;
-                    arcaneShield.setShieldPercentage(arcaneShield.getShieldPercentage() + 20);
+                    arcaneShield.setShieldPercentage(70);
                 } else {
                     System.out.println("ERROR APPLY SKILL BOOST NOT ARCANE");
                 }
@@ -96,7 +96,7 @@ public enum ClassesSkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof ArcaneShield) {
                     ArcaneShield arcaneShield = (ArcaneShield) abstractAbility;
-                    arcaneShield.setShieldPercentage(arcaneShield.getShieldPercentage() + 20);
+                    arcaneShield.setShieldPercentage(70);
                 } else {
                     System.out.println("ERROR APPLY SKILL BOOST NOT ARCANE");
                 }
@@ -148,7 +148,7 @@ public enum ClassesSkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof ArcaneShield) {
                     ArcaneShield arcaneShield = (ArcaneShield) abstractAbility;
-                    arcaneShield.setShieldPercentage(arcaneShield.getShieldPercentage() + 20);
+                    arcaneShield.setShieldPercentage(70);
                 } else {
                     System.out.println("ERROR APPLY SKILL BOOST NOT ARCANE");
                 }
@@ -177,8 +177,8 @@ public enum ClassesSkillBoosts {
             }
     ),
     SEISMIC_WAVE_BERSERKER("Seismic Wave",
-            "§7Increase the damage you\n§7deal with Seismic Wave by\n§730%",
-            "§aIncrease the damage you\n§adeal with Seismic Wave by\n§c30%",
+            "§7Increase the damage you\n§7deal with Seismic Wave by\n§720%",
+            "§aIncrease the damage you\n§adeal with Seismic Wave by\n§c20%",
             SeismicWave.class,
             abstractAbility -> {
                 abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.2f);
@@ -220,8 +220,8 @@ public enum ClassesSkillBoosts {
             }
     ),
     SEISMIC_WAVE_DEFENDER("Seismic Wave",
-            "§7Increase the damage you\n§7deal with Seismic Wave by\n§730%",
-            "§aIncrease the damage you\n§adeal with Seismic Wave by\n§c30%",
+            "§7Increase the damage you\n§7deal with Seismic Wave by\n§720%",
+            "§aIncrease the damage you\n§adeal with Seismic Wave by\n§c20%",
             SeismicWave.class,
             abstractAbility -> {
                 abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.2f);
@@ -590,8 +590,11 @@ public enum ClassesSkillBoosts {
             "§aIncrease the amount of health you\n§arestore with Earthliving Weapon\n§aby §c10% §aand increase the proc\n§achance by §c10%",
             Earthliving.class,
             abstractAbility -> {
-                abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.1f);
-                abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.1f);
+                if (abstractAbility instanceof Earthliving) {
+                    ((Earthliving) abstractAbility).setProcChance(50);
+                } else {
+                    System.out.println("ERROR APPLY SKILL BOOST NOT EARTHLIVING");
+                }
             }
     ),
     CHAIN_HEAL("Chain Heal",

@@ -23,7 +23,7 @@ public class Earthliving extends AbstractAbility {
     public void updateDescription(Player player) {
         description = "§7Imbue your weapon with the power of the\n" +
                 "§7Earth, causing each of your melee attacks\n" +
-                "§7to have a §e40% §7chance to heal you and §e2\n" +
+                "§7to have a §e" + procChance + "% §7chance to heal you and §e2\n" +
                 "§7nearby allies for §a240% §7weapon damage.\n" +
                 "§7Lasts §6" + duration + " §7seconds." +
                 "\n\n" +

@@ -9,7 +9,7 @@ public class Pyromancer extends AbstractMage {
                 new Fireball(),
                 new FlameBurst(),
                 new TimeWarp(),
-                new ArcaneShield(50),
+                new ArcaneShield(),
                 new Inferno());
     }
 }

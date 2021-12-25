@@ -9,7 +9,7 @@ public class Aquamancer extends AbstractMage {
                 new WaterBolt(),
                 new WaterBreath(),
                 new TimeWarp(),
-                new ArcaneShield(50),
+                new ArcaneShield(),
                 new HealingRain());
     }
 }

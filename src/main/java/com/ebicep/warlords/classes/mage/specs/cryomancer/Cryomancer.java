@@ -9,7 +9,7 @@ public class Cryomancer extends AbstractMage {
                 new FrostBolt(),
                 new FreezingBreath(),
                 new TimeWarp(),
-                new ArcaneShield(50),
+                new ArcaneShield(),
                 new IceBarrier());
     }
 }
