@@ -1062,14 +1062,16 @@ public final class WarlordsPlayer {
     public void spawnOrbs(String ability, WarlordsPlayer attacker) {
         //ORBS
         if (!attacker.getCooldownManager().getCooldown(OrbsOfLife.class).isEmpty() && !ability.isEmpty() && !ability.equals("Intervene")) {
-            for (Cooldown cooldown : attacker.getCooldownManager().getCooldown(OrbsOfLife.class)) {
-                OrbsOfLife orbsOfLife = (OrbsOfLife) cooldown.getCooldownObject();
-                Location location = getLocation();
-                Location spawnLocation = orbsOfLife.generateSpawnLocation(location);
+            attacker.getCooldownManager().getCooldown(OrbsOfLife.class).stream()
+                    .filter(cooldown -> !cooldown.isHidden())
+                    .forEach(cooldown -> {
+                        OrbsOfLife orbsOfLife = (OrbsOfLife) cooldown.getCooldownObject();
+                        Location location = getLocation();
+                        Location spawnLocation = orbsOfLife.generateSpawnLocation(location);
 
-                OrbsOfLife.Orb orb = new OrbsOfLife.Orb(((CraftWorld) location.getWorld()).getHandle(), spawnLocation, attacker);
-                orbsOfLife.getSpawnedOrbs().add(orb);
-            }
+                        OrbsOfLife.Orb orb = new OrbsOfLife.Orb(((CraftWorld) location.getWorld()).getHandle(), spawnLocation, attacker);
+                        orbsOfLife.getSpawnedOrbs().add(orb);
+                    });
         }
     }
 
