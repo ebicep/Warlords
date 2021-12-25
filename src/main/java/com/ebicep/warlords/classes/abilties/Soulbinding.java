@@ -17,7 +17,7 @@ import java.util.List;
 public class Soulbinding extends AbstractAbility {
 
     private List<SoulBoundPlayer> soulBindedPlayers = new ArrayList<>();
-    private int bindDuration = 3;
+    private int bindDuration = 2;
     private final int duration = 12;
 
     public Soulbinding() {
