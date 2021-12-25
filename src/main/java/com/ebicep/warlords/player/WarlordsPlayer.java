@@ -956,7 +956,7 @@ public final class WarlordsPlayer {
                     earthlivingActivate = 0;
                 }
                 if (earthlivingActivate < earthliving.getProcChance()) {
-                    boolean earthlivingBoost = Warlords.getPlayerSettings(attacker.uuid).getClassesSkillBoosts() == ClassesSkillBoosts.EARTHLIVING_WEAPON;
+                    boolean earthlivingBoost = Warlords.getPlayerSettings(attacker.uuid).getSkillBoostForClass() == ClassesSkillBoosts.EARTHLIVING_WEAPON;
                     float multiplyBy = earthlivingBoost ? 2.5f : 2.4f;
 
                     attacker.healHealth(attacker, "Earthliving Weapon", 132 * multiplyBy, 179 * multiplyBy, 25, 200, false);
