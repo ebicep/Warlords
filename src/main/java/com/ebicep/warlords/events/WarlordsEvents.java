@@ -256,6 +256,7 @@ public class WarlordsEvents implements Listener {
 
                     if (warlordsPlayerAttacker.getSpec() instanceof Spiritguard && !warlordsPlayerAttacker.getCooldownManager().getCooldown(Soulbinding.class).isEmpty()) {
                         warlordsPlayerAttacker.getCooldownManager().getCooldown(Soulbinding.class).stream()
+                                .filter(cooldown -> !cooldown.isHidden())
                                 .map(Cooldown::getCooldownObject)
                                 .map(Soulbinding.class::cast)
                                 .forEach(soulbinding -> {

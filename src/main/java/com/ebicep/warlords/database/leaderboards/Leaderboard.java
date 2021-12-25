@@ -100,6 +100,9 @@ public class Leaderboard {
         int counter = 0;
         //looping to get the next top two numbers
         for (DatabasePlayer databasePlayer : sortedWeekly) {
+            //must have more than 3 plays to get awarded
+            if (databasePlayer.getPlays() <= 3) continue;
+
             Number currentTopValue = valueFunction.apply(databasePlayer);
             if (counter < 2) {
                 if (compare(topValue, currentTopValue) > 0) {
