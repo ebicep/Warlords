@@ -166,14 +166,14 @@ public class GameMenu {
         Menu menu = new Menu("Skill Boost", 9 * 4);
         List<ClassesSkillBoosts> values = selectedGroup.skillBoosts;
         for (int i = 0; i < values.size(); i++) {
-            ClassesSkillBoosts subClass = values.get(i);
+            ClassesSkillBoosts skillBoost = values.get(i);
             ItemBuilder builder = new ItemBuilder(getSelected(player).specType.itemStack)
-                    .name(subClass == selectedBoost ? ChatColor.GREEN + subClass.name + " (" + selectedClass.name + ")" : ChatColor.RED + subClass.name + " (" + selectedClass.name + ")")
+                    .name(skillBoost == selectedBoost ? ChatColor.GREEN + skillBoost.name + " (" + selectedClass.name + ")" : ChatColor.RED + skillBoost.name + " (" + selectedClass.name + ")")
                     .flags(ItemFlag.HIDE_ENCHANTS);
             List<String> lore = new ArrayList<>();
-            lore.add(subClass == selectedBoost ? subClass.selectedDescription : subClass.description);
+            lore.add(skillBoost == selectedBoost ? skillBoost.selectedDescription : skillBoost.description);
             lore.add("");
-            if (subClass == selectedBoost) {
+            if (skillBoost == selectedBoost) {
                 lore.add(ChatColor.GREEN + "Currently selected!");
                 builder.enchant(Enchantment.OXYGEN, 1);
             } else {
@@ -181,13 +181,18 @@ public class GameMenu {
             }
             builder.lore(lore);
             menu.setItem(
-                    6 - values.size() + i * 2 - 1,
+                    i + 2,
                     1,
                     builder.get(),
                     (n, e) -> {
-                        player.sendMessage(ChatColor.GREEN + "You have changed your weapon boost to: §b" + subClass.name + "!");
-                        setSelectedBoost(player, subClass);
+                        player.sendMessage(ChatColor.GREEN + "You have changed your weapon boost to: §b" + skillBoost.name + "!");
+                        setSelectedBoost(player, skillBoost);
                         openSkillBoostMenu(player, selectedGroup);
+
+                        //sync bc player should be cached
+                        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
+                        databasePlayer.getSpec(selectedClass).setSkillBoost(skillBoost);
+                        DatabaseManager.updatePlayerAsync(databasePlayer);
                     }
             );
         }
@@ -238,11 +243,10 @@ public class GameMenu {
                                     .getOrDefault(selectedClass, Weapons.FELFLAME_BLADE).item)).name("§aWeapon Skin Preview")
                                     .lore("")
                                     .get());
-                            Warlords.newChain().async(() -> {
-                                DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
-                                databasePlayer.getSpec(selectedClass).setWeapon(weapon);
-                                DatabaseManager.updatePlayerAsync(databasePlayer);
-                            }).execute();
+                            //sync bc player should be cached
+                            DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
+                            databasePlayer.getSpec(selectedClass).setWeapon(weapon);
+                            DatabaseManager.updatePlayerAsync(databasePlayer);
                         } else {
                             player.sendMessage(ChatColor.RED + "This weapon skin has not been unlocked yet!");
                         }
@@ -536,19 +540,17 @@ public class GameMenu {
                 "§7Damage Reduction: §e" + apc.getDamageResistance() + "%"
         );
 
-        ClassesSkillBoosts selectedBoost = playerSettings.getClassesSkillBoosts();
+        ClassesSkillBoosts selectedBoost = playerSettings.getSkillBoostForClass();
         if (apc.getWeapon().getClass() == selectedBoost.ability) {
-            if (selectedBoost != ClassesSkillBoosts.PROTECTOR_STRIKE) {
-                apc.getWeapon().boostSkill();
-            }
+            apc.getWeapon().boostSkill(selectedBoost);
         } else if (apc.getRed().getClass() == selectedBoost.ability) {
-            apc.getRed().boostSkill();
+            apc.getRed().boostSkill(selectedBoost);
         } else if (apc.getPurple().getClass() == selectedBoost.ability) {
-            apc.getPurple().boostSkill();
+            apc.getPurple().boostSkill(selectedBoost);
         } else if (apc.getBlue().getClass() == selectedBoost.ability) {
-            apc.getBlue().boostSkill();
+            apc.getBlue().boostSkill(selectedBoost);
         } else if (apc.getOrange().getClass() == selectedBoost.ability) {
-            apc.getOrange().boostOrange();
+            apc.getOrange().boostSkill(selectedBoost);
         }
 
         apc.getWeapon().updateDescription(player);
@@ -700,11 +702,11 @@ public class GameMenu {
                         PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
                         Classes selectedClass = playerSettings.getSelectedClass();
 
-                        if (chance < 96.37) {
+                        if (chance < 96.35) {
                             rarity = WeaponsRarity.RARE;
-                        } else if (chance < 96.37 + 3) {
+                        } else if (chance < 96.35 + 3) {
                             rarity = WeaponsRarity.EPIC;
-                        } else if (chance < 96.37 + 3 + 0.6) {
+                        } else if (chance < 96.35 + 3 + 0.6) {
                             rarity = WeaponsRarity.LEGENDARY;
                         } else {
                             rarity = WeaponsRarity.MYTHIC;

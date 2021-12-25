@@ -25,6 +25,10 @@ public class NumberFormat {
         suffixes.put(1_000_000_000_000_000_000L, "e");
     }
 
+    public static String formatOptionalHundredths(double value) {
+        return decimalFormatOptionalHundredths.format(value);
+    }
+
     public static String formatOptionalTenths(double value) {
         return decimalFormatOptionalTenths.format(value);
     }

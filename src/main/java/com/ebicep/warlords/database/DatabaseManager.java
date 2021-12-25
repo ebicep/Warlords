@@ -26,6 +26,7 @@ import org.springframework.context.support.AbstractApplicationContext;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.UUID;
@@ -172,6 +173,22 @@ public class DatabaseManager {
         weaponSkins.put(Classes.SPIRITGUARD, databasePlayer.getShaman().getSpiritguard().getWeapon());
         weaponSkins.put(Classes.EARTHWARDEN, databasePlayer.getShaman().getEarthwarden().getWeapon());
         Warlords.getPlayerSettings(player.getUniqueId()).setWeaponSkins(weaponSkins);
+
+        HashMap<Classes, ClassesSkillBoosts> classesSkillBoosts = new HashMap<>();
+        classesSkillBoosts.put(Classes.PYROMANCER, databasePlayer.getMage().getPyromancer().getSkillBoost());
+        classesSkillBoosts.put(Classes.CRYOMANCER, databasePlayer.getMage().getCryomancer().getSkillBoost());
+        classesSkillBoosts.put(Classes.AQUAMANCER, databasePlayer.getMage().getAquamancer().getSkillBoost());
+        classesSkillBoosts.put(Classes.BERSERKER, databasePlayer.getWarrior().getBerserker().getSkillBoost());
+        classesSkillBoosts.put(Classes.DEFENDER, databasePlayer.getWarrior().getDefender().getSkillBoost());
+        classesSkillBoosts.put(Classes.REVENANT, databasePlayer.getWarrior().getRevenant().getSkillBoost());
+        classesSkillBoosts.put(Classes.AVENGER, databasePlayer.getPaladin().getAvenger().getSkillBoost());
+        classesSkillBoosts.put(Classes.CRUSADER, databasePlayer.getPaladin().getCrusader().getSkillBoost());
+        classesSkillBoosts.put(Classes.PROTECTOR, databasePlayer.getPaladin().getProtector().getSkillBoost());
+        classesSkillBoosts.put(Classes.THUNDERLORD, databasePlayer.getShaman().getThunderlord().getSkillBoost());
+        classesSkillBoosts.put(Classes.SPIRITGUARD, databasePlayer.getShaman().getSpiritguard().getSkillBoost());
+        classesSkillBoosts.put(Classes.EARTHWARDEN, databasePlayer.getShaman().getEarthwarden().getSkillBoost());
+        classesSkillBoosts.values().removeAll(Collections.singleton(null));
+        Warlords.getPlayerSettings(player.getUniqueId()).setClassesSkillBoosts(classesSkillBoosts);
 
         Settings.HotkeyMode.setSelected(player, databasePlayer.getHotkeyMode());
         Settings.ParticleQuality.setSelected(player, databasePlayer.getParticleQuality());

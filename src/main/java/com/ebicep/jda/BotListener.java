@@ -44,6 +44,7 @@ public class BotListener extends ListenerAdapter implements Listener {
         Message message = event.getMessage();
         TextChannel textChannel = event.getTextChannel();
         switch (textChannel.getName().toLowerCase()) {
+            case "gs-teams":
             case "bot-teams": {
                 if (message.getContentRaw().contains(", Balance Cancelled")) {
                     cancelOnGoingBalance();

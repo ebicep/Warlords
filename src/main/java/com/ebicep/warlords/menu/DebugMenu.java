@@ -775,7 +775,7 @@ public class DebugMenu {
         for (int i = 0; i < values.size(); i++) {
             ClassesSkillBoosts skillBoost = values.get(i);
             menu.setItem(
-                    6 - values.size() + i * 2 - 1,
+                    i + 2,
                     1,
                     new ItemBuilder(selectedClass.specType.itemStack)
                             .name(ChatColor.RED + skillBoost.name + " (" + selectedClass.name + ")")

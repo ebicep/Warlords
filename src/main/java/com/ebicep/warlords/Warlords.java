@@ -724,7 +724,7 @@ public class Warlords extends JavaPlugin {
                                 itr.remove();
 
                                 float orbHeal = 225;
-                                if (Warlords.getPlayerSettings(orb.getOwner().getUuid()).getClassesSkillBoosts() == ClassesSkillBoosts.ORBS_OF_LIFE) {
+                                if (Warlords.getPlayerSettings(orb.getOwner().getUuid()).getSkillBoostForClass() == ClassesSkillBoosts.ORBS_OF_LIFE) {
                                     orbHeal *= 1.2;
                                 }
 
@@ -767,6 +767,24 @@ public class Warlords extends JavaPlugin {
                         // Saves the amount of blocks travelled per player.
                         if (player != null) {
                             wp.setBlocksTravelledCM(Utils.getPlayerMovementStatistics(player));
+                        }
+                    }
+
+                    // Loops every 10 ticks - .5 second.
+                    if (counter % 10 == 0) {
+                        for (WarlordsPlayer wps : players.values()) {
+                            // Soulbinding Weapon - decrementing time left on the ability.
+                            wps.getCooldownManager().getCooldown(Soulbinding.class).stream()
+                                    .map(Cooldown::getCooldownObject)
+                                    .map(Soulbinding.class::cast)
+                                    .forEach(soulbinding -> soulbinding.getSoulBindedPlayers().forEach(Soulbinding.SoulBoundPlayer::decrementTimeLeft));
+
+                            // Soulbinding Weapon - Removing bound players.
+                            wps.getCooldownManager().getCooldown(Soulbinding.class).stream()
+                                    .map(Cooldown::getCooldownObject)
+                                    .map(Soulbinding.class::cast)
+                                    .forEach(soulbinding -> soulbinding.getSoulBindedPlayers()
+                                            .removeIf(boundPlayer -> boundPlayer.getTimeLeft() == 0 || (boundPlayer.isHitWithSoul() && boundPlayer.isHitWithLink())));
                         }
                     }
 
@@ -826,19 +844,6 @@ public class Warlords extends JavaPlugin {
                                 wps.setFlagCooldown(wps.getFlagCooldown() - 1);
                             }
 
-                            // Soulbinding Weapon - decrementing time left on the ability.
-                            wps.getCooldownManager().getCooldown(Soulbinding.class).stream()
-                                    .map(Cooldown::getCooldownObject)
-                                    .map(Soulbinding.class::cast)
-                                    .forEach(soulbinding -> soulbinding.getSoulBindedPlayers().forEach(Soulbinding.SoulBoundPlayer::decrementTimeLeft));
-
-                            // Soulbinding Weapon - Removing bound players.
-                            wps.getCooldownManager().getCooldown(Soulbinding.class).stream()
-                                    .map(Cooldown::getCooldownObject)
-                                    .map(Soulbinding.class::cast)
-                                    .forEach(soulbinding -> soulbinding.getSoulBindedPlayers()
-                                            .removeIf(boundPlayer -> boundPlayer.getTimeLeft() == 0 || (boundPlayer.isHitWithSoul() && boundPlayer.isHitWithLink())));
-
                             // Checks whether the player has the healing powerup active.
                             if (wps.isPowerUpHeal()) {
                                 int heal = (int) (wps.getMaxHealth() * .08);
@@ -869,7 +874,6 @@ public class Warlords extends JavaPlugin {
                         }
 
                         WarlordsEvents.entityList.removeIf(e -> !e.isValid());
-
                     }
 
                     // Loops every 50 ticks - 2.5 seconds.

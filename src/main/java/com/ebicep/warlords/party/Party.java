@@ -79,7 +79,7 @@ public class Party {
         invites.remove(uuid);
         members.put(uuid, true);
         sendMessageToAllPartyPlayers(ChatColor.AQUA + Bukkit.getOfflinePlayer(uuid).getName() + ChatColor.GREEN + " joined the party", true, true);
-        if (Bukkit.getOfflinePlayer(uuid).isOp()) {
+        if (Bukkit.getOfflinePlayer(uuid).getPlayer().hasPermission("warlords.party.automoderator")) {
             promote(Bukkit.getOfflinePlayer(uuid).getName());
         }
         Bukkit.getPlayer(uuid).sendMessage(getList());
@@ -98,7 +98,8 @@ public class Party {
                     leader = moderators.get(0);
                     moderators.remove(leader);
                 } else {
-                    leader = members.keySet().stream().max(Comparator.comparing(uuid1 -> Bukkit.getOfflinePlayer(uuid1).isOp())).get();
+                    leader = members.keySet().stream().max(Comparator.comparing(uuid1 ->
+                            Bukkit.getOfflinePlayer(uuid1).getPlayer().hasPermission("warlords.party.automoderator"))).get();
                 }
                 sendMessageToAllPartyPlayers(ChatColor.AQUA + player.getName() + ChatColor.RED + " left the party", true, true);
                 sendMessageToAllPartyPlayers(ChatColor.AQUA + Bukkit.getOfflinePlayer(leader).getName() + ChatColor.GREEN + " is now the new party leader", true, true);
@@ -121,7 +122,11 @@ public class Party {
                 moderators.remove(uuidBooleanEntry.getKey());
                 moderators.add(leader);
                 leader = uuidBooleanEntry.getKey();
-                sendMessageToAllPartyPlayers(ChatColor.GREEN + "The party was transferred to " + ChatColor.AQUA + partyMemberName, true, true);
+                if (partyMemberName.equals("Plikie") || partyMemberName.equals("sumSmash")) { // we're very funny
+                    sendMessageToAllPartyPlayers(ChatColor.AQUA + partyMemberName + ChatColor.GREEN + " has hijacked the party!", true, true);
+                } else {
+                    sendMessageToAllPartyPlayers(ChatColor.GREEN + "The party was transferred to " + ChatColor.AQUA + partyMemberName, true, true);
+                }
                 break;
             }
         }

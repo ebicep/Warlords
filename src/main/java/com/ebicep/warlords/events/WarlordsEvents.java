@@ -255,7 +255,9 @@ public class WarlordsEvents implements Listener {
                     warlordsPlayerAttacker.subtractEnergy(warlordsPlayerAttacker.getSpec().getEnergyOnHit() * -1);
 
                     if (warlordsPlayerAttacker.getSpec() instanceof Spiritguard && !warlordsPlayerAttacker.getCooldownManager().getCooldown(Soulbinding.class).isEmpty()) {
+                        Soulbinding baseSoulbinding = (Soulbinding) warlordsPlayerAttacker.getSpec().getPurple();
                         warlordsPlayerAttacker.getCooldownManager().getCooldown(Soulbinding.class).stream()
+                                .filter(cooldown -> !cooldown.isHidden())
                                 .map(Cooldown::getCooldownObject)
                                 .map(Soulbinding.class::cast)
                                 .forEach(soulbinding -> {
@@ -265,12 +267,12 @@ public class WarlordsEvents implements Listener {
                                                 .forEach(boundPlayer -> {
                                                     boundPlayer.setHitWithSoul(false);
                                                     boundPlayer.setHitWithLink(false);
-                                                    boundPlayer.setTimeLeft(3);
+                                                    boundPlayer.setTimeLeft(baseSoulbinding.getBindDuration());
                                                 });
                                     } else {
                                         warlordsPlayerVictim.sendMessage(ChatColor.RED + "\u00AB " + ChatColor.GRAY + "You have been bound by " + warlordsPlayerAttacker.getName() + "'s " + ChatColor.LIGHT_PURPLE + "Soulbinding Weapon" + ChatColor.GRAY + "!");
                                         warlordsPlayerAttacker.sendMessage(ChatColor.GREEN + "\u00BB " + ChatColor.GRAY + "Your " + ChatColor.LIGHT_PURPLE + "Soulbinding Weapon " + ChatColor.GRAY + "has bound " + warlordsPlayerVictim.getName() + "!");
-                                        soulbinding.getSoulBindedPlayers().add(new Soulbinding.SoulBoundPlayer(warlordsPlayerVictim, 3));
+                                        soulbinding.getSoulBindedPlayers().add(new Soulbinding.SoulBoundPlayer(warlordsPlayerVictim, baseSoulbinding.getBindDuration()));
                                         for (Player player1 : warlordsPlayerVictim.getWorld().getPlayers()) {
                                             player1.playSound(warlordsPlayerVictim.getLocation(), "shaman.earthlivingweapon.activation", 2, 1);
                                         }

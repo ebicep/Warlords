@@ -83,7 +83,7 @@ public enum Weapons {
     CANDY_CANE("Candy Slapper", new ItemStack(Material.SUGAR), LEGENDARY),
 
     // mythic
-    SILVER_PHANTASM_SCIMITAR("Bloodquench", new ItemStack(Material.CARROT_ITEM), MYTHIC),
+    SILVER_PHANTASM_SCIMITAR("Bloodquench", new ItemStack(Material.CARROT_ITEM), LEGENDARY),
     SILVER_PHANTASM_TRIDENT("Torment", new ItemStack(Material.COOKIE), MYTHIC),
     SILVER_PHANTASM_SAWBLADE("Slayer", new ItemStack(Material.RABBIT), LEGENDARY),
     SILVER_PHANTASM_SWORD_4("Lilium", new ItemStack(Material.STICK), LEGENDARY),
@@ -114,18 +114,8 @@ public enum Weapons {
     }
 
     @Deprecated
-    public static HashMap<Classes, Weapons> getSelected(OfflinePlayer player) {
-        return Warlords.getPlayerSettings(player.getUniqueId()).getWeaponSkins();
-    }
-
-    @Deprecated
     public static Weapons getSelected(OfflinePlayer player, Classes classes) {
         return Warlords.getPlayerSettings(player.getUniqueId()).getWeaponSkins().getOrDefault(classes, FELFLAME_BLADE);
-    }
-
-    @Deprecated
-    public static void setSelected(OfflinePlayer player, HashMap<Classes, Weapons> weaponSkins) {
-        Warlords.getPlayerSettings(player.getUniqueId()).setWeaponSkins(weaponSkins);
     }
 
     @Deprecated

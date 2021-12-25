@@ -1,12 +1,13 @@
 package com.ebicep.warlords.database.repositories.player.pojos;
 
 import com.ebicep.warlords.player.ArmorManager;
+import com.ebicep.warlords.player.ClassesSkillBoosts;
 
 public class DatabaseShaman extends DatabaseWarlordsClass {
 
-    private DatabaseSpecialization thunderlord = new DatabaseSpecialization();
-    private DatabaseSpecialization spiritguard = new DatabaseSpecialization();
-    private DatabaseSpecialization earthwarden = new DatabaseSpecialization();
+    private DatabaseSpecialization thunderlord = new DatabaseSpecialization(ClassesSkillBoosts.LIGHTNING_BOLT);
+    private DatabaseSpecialization spiritguard = new DatabaseSpecialization(ClassesSkillBoosts.FALLEN_SOULS);
+    private DatabaseSpecialization earthwarden = new DatabaseSpecialization(ClassesSkillBoosts.EARTHEN_SPIKE);
     protected ArmorManager.Helmets helmet = ArmorManager.Helmets.SIMPLE_SHAMAN_HELMET;
     protected ArmorManager.ArmorSets armor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE_SHAMAN;
 

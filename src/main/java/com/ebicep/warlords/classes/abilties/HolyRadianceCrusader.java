@@ -26,7 +26,7 @@ public class HolyRadianceCrusader extends AbstractAbility {
 
     private final int radius = 6;
     private final int markRadius = 15;
-    private final int markDuration = 8;
+    private int markDuration = 8;
 
     public HolyRadianceCrusader(float minDamageHeal, float maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier) {
         super("Holy Radiance", minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
@@ -42,7 +42,10 @@ public class HolyRadianceCrusader extends AbstractAbility {
                 "§7them for §6" + markDuration + " §7seconds. Increasing\n" +
                 "§7their EPS by §e5 §7and speed by §e20%\n" +
                 "§7§7for the duration. Mark has an optimal\n" +
-                "§7range of §e" + markRadius + " §7blocks.";
+                "§7range of §e" + markRadius + " §7blocks. However,\n" +
+                "§7marking players from far away\n" +
+                "§7will not give them healing.";
+
     }
 
     @Override
@@ -230,5 +233,9 @@ public class HolyRadianceCrusader extends AbstractAbility {
                 ParticleEffect.SPELL.display(0.01f, 0, 0.01f, 0.1f, 2, armorStandLocation.add(0, 1.75, 0), 500);
             }
         }
+    }
+
+    public void setMarkDuration(int markDuration) {
+        this.markDuration = markDuration;
     }
 }
