@@ -724,7 +724,7 @@ public class Warlords extends JavaPlugin {
                                 itr.remove();
 
                                 float orbHeal = 225;
-                                if (Warlords.getPlayerSettings(orb.getOwner().getUuid()).getClassesSkillBoosts() == ClassesSkillBoosts.ORBS_OF_LIFE) {
+                                if (Warlords.getPlayerSettings(orb.getOwner().getUuid()).getSkillBoostForClass() == ClassesSkillBoosts.ORBS_OF_LIFE) {
                                     orbHeal *= 1.2;
                                 }
 

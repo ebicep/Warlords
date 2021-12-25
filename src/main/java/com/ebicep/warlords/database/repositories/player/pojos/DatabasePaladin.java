@@ -1,12 +1,13 @@
 package com.ebicep.warlords.database.repositories.player.pojos;
 
 import com.ebicep.warlords.player.ArmorManager;
+import com.ebicep.warlords.player.ClassesSkillBoosts;
 
 public class DatabasePaladin extends DatabaseWarlordsClass {
 
-    private DatabaseSpecialization avenger = new DatabaseSpecialization();
-    private DatabaseSpecialization crusader = new DatabaseSpecialization();
-    private DatabaseSpecialization protector = new DatabaseSpecialization();
+    private DatabaseSpecialization avenger = new DatabaseSpecialization(ClassesSkillBoosts.AVENGER_STRIKE);
+    private DatabaseSpecialization crusader = new DatabaseSpecialization(ClassesSkillBoosts.CRUSADER_STRIKE);
+    private DatabaseSpecialization protector = new DatabaseSpecialization(ClassesSkillBoosts.PROTECTOR_STRIKE);
     protected ArmorManager.Helmets helmet = ArmorManager.Helmets.SIMPLE_PALADIN_HELMET;
     protected ArmorManager.ArmorSets armor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE_PALADIN;
 

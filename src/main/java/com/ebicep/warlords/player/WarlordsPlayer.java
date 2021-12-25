@@ -5,6 +5,8 @@ import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.classes.abilties.*;
 import com.ebicep.warlords.classes.shaman.specs.spiritguard.Spiritguard;
+import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
 import com.ebicep.warlords.events.WarlordsDeathEvent;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Team;
@@ -464,9 +466,9 @@ public final class WarlordsPlayer {
         return spec;
     }
 
-    public void setSpec(AbstractPlayerClass spec, ClassesSkillBoosts skillBoosts) {
+    public void setSpec(AbstractPlayerClass spec, ClassesSkillBoosts skillBoost) {
         Warlords.getPlayerSettings(uuid).setSelectedClass(Classes.getClass(spec.getName()));
-        Warlords.getPlayerSettings(uuid).setClassesSkillBoosts(skillBoosts);
+        Warlords.getPlayerSettings(uuid).setSkillBoostForSelectedClass(skillBoost);
         Player player = Bukkit.getPlayer(uuid);
         this.spec = spec;
         this.specClass = Warlords.getPlayerSettings(uuid).getSelectedClass();
@@ -483,8 +485,10 @@ public final class WarlordsPlayer {
         this.maxEnergy = this.spec.getMaxEnergy();
         this.energy = this.maxEnergy;
         assignItemLore(Bukkit.getPlayer(uuid));
-//        DatabaseManager.updatePlayerInformation(player, "last_spec", spec.getName());
-        //
+        //sync bc player should be cached
+        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
+        databasePlayer.getSpec(specClass).setSkillBoost(skillBoost);
+        DatabaseManager.updatePlayerAsync(databasePlayer);
     }
 
     public int getHealth() {
@@ -818,7 +822,7 @@ public final class WarlordsPlayer {
                             tempNewCritChance = -1;
                         }
 
-                        if (Warlords.getPlayerSettings(attacker.uuid).getClassesSkillBoosts() == ClassesSkillBoosts.PROTECTOR_STRIKE) {
+                        if (Warlords.getPlayerSettings(attacker.uuid).getSkillBoostForClass() == ClassesSkillBoosts.PROTECTOR_STRIKE) {
                             attacker.healHealth(attacker, ability, damageValue / 1.67f, damageValue / 1.67f, tempNewCritChance, 100, false);
                         } else {
                             attacker.healHealth(attacker, ability, damageValue / 2, damageValue / 2, tempNewCritChance, 100, false);
@@ -837,7 +841,7 @@ public final class WarlordsPlayer {
                                         ))
                                 .limit(2)
                         ) {
-                            if (Warlords.getPlayerSettings(attacker.uuid).getClassesSkillBoosts() == ClassesSkillBoosts.PROTECTOR_STRIKE) {
+                            if (Warlords.getPlayerSettings(attacker.uuid).getSkillBoostForClass() == ClassesSkillBoosts.PROTECTOR_STRIKE) {
                                 nearTeamPlayer.healHealth(attacker, ability, damageValue * 1.2f, damageValue * 1.2f, tempNewCritChance, 100, false);
                             } else {
                                 nearTeamPlayer.healHealth(attacker, ability, damageValue, damageValue, tempNewCritChance, 100, false);
@@ -921,7 +925,7 @@ public final class WarlordsPlayer {
                                 player1.playSound(getLocation(), "shaman.windfuryweapon.impact", 2, 1);
                             });
 
-                            if (Warlords.getPlayerSettings(attacker.uuid).getClassesSkillBoosts() == ClassesSkillBoosts.WINDFURY_WEAPON) {
+                            if (Warlords.getPlayerSettings(attacker.uuid).getSkillBoostForClass() == ClassesSkillBoosts.WINDFURY_WEAPON) {
                                 damageHealth(attacker, "Windfury Weapon", min * 1.35f * 1.2f, max * 1.35f * 1.2f, 25, 200, false);
                             } else {
                                 damageHealth(attacker, "Windfury Weapon", min * 1.35f, max * 1.35f, 25, 200, false);
