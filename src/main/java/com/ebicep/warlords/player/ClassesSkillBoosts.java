@@ -195,6 +195,13 @@ public enum ClassesSkillBoosts {
             abstractAbility -> {
             }
     ),
+    GROUND_SLAM_REVENANT("Ground Slam",
+            "§7Increase the damage you\n§7deal with Ground Slam by\n§720%",
+            "§aIncrease the damage you\n§adeal with Ground Slam by\n§c20%",
+            GroundSlam.class,
+            abstractAbility -> {
+            }
+    ),
     ORBS_OF_LIFE("Orbs of Life",
             "§7Increases the amount of\n§7health you restore with\n§7Orbs of Life by 20%",
             "§aIncreases the amount of\n§ahealth you restore with\n§aOrbs of Life by §c20%",
@@ -335,6 +342,13 @@ public enum ClassesSkillBoosts {
             abstractAbility -> {
             }
     ),
+    LIGHTNING_ROD("Consecrate",
+            "§7Increase the damage you\n§7deal with Consecrate by 20%",
+            "§aIncrease the damage you\n§adeal with Consecrate by §c20%",
+            Consecrate.class,
+            abstractAbility -> {
+            }
+    ),
     CAPACITOR_TOTEM("Capacitor Totem",
             "§7Increase the damage you\n§7deal with Capacitor Totem\n§7by 30%",
             "§aIncrease the damage you\n§adeal with Capacitor Totem\n§aby §c30%",
@@ -364,6 +378,13 @@ public enum ClassesSkillBoosts {
             }
     ),
     REPETENCE("Consecrate",
+            "§7Increase the damage you\n§7deal with Consecrate by 20%",
+            "§aIncrease the damage you\n§adeal with Consecrate by §c20%",
+            Consecrate.class,
+            abstractAbility -> {
+            }
+    ),
+    DEBTS_DEBT("Consecrate",
             "§7Increase the damage you\n§7deal with Consecrate by 20%",
             "§aIncrease the damage you\n§adeal with Consecrate by §c20%",
             Consecrate.class,
