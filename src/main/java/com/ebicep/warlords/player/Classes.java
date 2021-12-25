@@ -80,7 +80,7 @@ public enum Classes {
             Spiritguard::new,
             WordWrap.wrapWithNewline("§7A defense-oriented Shaman specialization that calls upon the aid of spirits old and new to mitigate damage and avoid death.", 200),
             SpecType.TANK,
-            FALLEN_SOULS, SPIRIT_LINK, SOULBINDING_WEAPON, REPETENCE, DEBTS_DEBT),
+            FALLEN_SOULS, SPIRIT_LINK, SOULBINDING_WEAPON, REPENTANCE, DEATHS_DEBT),
     EARTHWARDEN("Earthwarden",
             Earthwarden::new,
             WordWrap.wrapWithNewline("§7A healing-oriented Shaman specialization that calls upon the power of Earth to crush enemies and to aid allies.", 200),

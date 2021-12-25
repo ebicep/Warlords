@@ -20,23 +20,23 @@ public enum ClassesSkillBoosts {
             abstractAbility -> {
             }
     ),
-    TIME_WARP_PYROMANCER("Flame Burst",
-            "§7Increases the damage you\n§7deal with Flame Burst by\n§720%",
-            "§aIncreases the damage you\n§adeal with Flame Burst by\n§c20%",
+    TIME_WARP_PYROMANCER("Time Warp",
+            "§7Increase the amount of health you\n§7restore with Time Warp by §75% §7and reduce\n§7the cooldown by 10%.",
+            "§aIncrease the amount of health\n§ayou restore with Time Warp by §c5% §aand reduce\n§athe cooldown by §c10%.",
             FlameBurst.class,
             abstractAbility -> {
             }
     ),
-    ARCANE_SHIELD_PYROMANCER("Flame Burst",
-            "§7Increases the damage you\n§7deal with Flame Burst by\n§720%",
-            "§aIncreases the damage you\n§adeal with Flame Burst by\n§c20%",
+    ARCANE_SHIELD_PYROMANCER("Arcane Shield",
+            "§7Increase the amount of health\n§7converted to shield by 20%",
+            "§aIncrease the amount of health\n§aconverted to shield by §c20%",
             FlameBurst.class,
             abstractAbility -> {
             }
     ),
     INFERNO("Inferno",
-            "§7Reduce the cooldown of Inferno\n§7by 20%",
-            "§aReduce the cooldown of Inferno\n§aby §c20%",
+            "§7Reduce the cooldown of Inferno\n§7by 25%",
+            "§aReduce the cooldown of Inferno\n§aby §c25%",
             Inferno.class,
             abstractAbility -> {
             }
@@ -49,34 +49,34 @@ public enum ClassesSkillBoosts {
             }
     ),
     FREEZING_BREATH("Freezing Breath",
-            "§7Increase the damage you\n§7deal with Freezing Breath\n§7by 20%",
-            "§aIncrease the damage you\n§adeal with Freezing Breath\n§aby §c20%",
+            "§7Increase the damage you\n§7deal with Freezing Breath\n§7by 25%",
+            "§aIncrease the damage you\n§adeal with Freezing Breath\n§aby §c25%",
             FreezingBreath.class,
             abstractAbility -> {
             }
     ),
     TIME_WARP_CRYOMANCER("Flame Burst",
-            "§7Increases the damage you\n§7deal with Flame Burst by\n§720%",
-            "§aIncreases the damage you\n§adeal with Flame Burst by\n§c20%",
+            "§7Increase the amount of health you\n§7restore with Time Warp by §75% §7and reduce\n§7the cooldown by 10%.",
+            "§aIncrease the amount of health\n§ayou restore with Time Warp by §c5% §aand reduce\n§athe cooldown by §c10%.",
             FlameBurst.class,
             abstractAbility -> {
             }
     ),
-    ARCANE_SHIELD_CRYOMANCER("Flame Burst",
-            "§7Increases the damage you\n§7deal with Flame Burst by\n§720%",
-            "§aIncreases the damage you\n§adeal with Flame Burst by\n§c20%",
+    ARCANE_SHIELD_CRYOMANCER("Arcane Shield",
+            "§7Increase the amount of health\n§7converted to shield by 20%",
+            "§aIncrease the amount of health\n§aconverted to shield by §c20%",
             FlameBurst.class,
             abstractAbility -> {
             }
     ),
-    ICE_BARRIER("Flame Burst",
-            "§7Increases the damage you\n§7deal with Flame Burst by\n§720%",
-            "§aIncreases the damage you\n§adeal with Flame Burst by\n§c20%",
+    ICE_BARRIER("Ice Barrier",
+            "§7Increase the amount damage you\n§7reduce with Ice Barrier by\n§710% §7and reduce the cooldown by 10%",
+            "§aIncrease the amount damage you\n§areduce with Ice Barrier by\n§c10% §aand reduce the cooldown by §c10%",
             FlameBurst.class,
             abstractAbility -> {
             }
     ),
-    WATER_BOLT("Water Bolt",
+    WATER_BOLT("Waterbolt",
             "§7Increases the amount of\n§7health you restore with\n§7Water Bolt by 20%",
             "§aIncreases the amount of\n§ahealth you restore with\n§aWater Bolt by §c20%",
             WaterBolt.class,
@@ -84,29 +84,29 @@ public enum ClassesSkillBoosts {
             }
     ),
     WATER_BREATH("Water Breath",
-            "§7Increases the amount of\n§7health you restore with\n§7Water Breath by 20%",
-            "§aIncreases the amount of\n§ahealth you restore with\n§aWater Breath by §c20%",
+            "§7Increases the amount of\n§7health you restore with\n§7Water Breath by 25%",
+            "§aIncreases the amount of\n§ahealth you restore with\n§aWater Breath by §c25%",
             WaterBreath.class,
             abstractAbility -> {
             }
     ),
-    TIME_WARP_AQUAMANCER("Flame Burst",
-            "§7Increases the damage you\n§7deal with Flame Burst by\n§720%",
-            "§aIncreases the damage you\n§adeal with Flame Burst by\n§c20%",
+    TIME_WARP_AQUAMANCER("Time Warp",
+            "§7Increase the amount of health you\n§7restore with Time Warp by §75% and reduce\n§7the cooldown by 10%.",
+            "§aIncrease the amount of health\n§ayou restore with Time Warp by §c5% §aand reduce\n§athe cooldown by §c10%.",
             FlameBurst.class,
             abstractAbility -> {
             }
     ),
-    ARCANE_SHIELD_AQUAMANCER("Flame Burst",
-            "§7Increases the damage you\n§7deal with Flame Burst by\n§720%",
-            "§aIncreases the damage you\n§adeal with Flame Burst by\n§c20%",
+    ARCANE_SHIELD_AQUAMANCER("Arcane Shield",
+            "§7Increase the amount of health\n§7converted to shield by 20%",
+            "§aIncrease the amount of health\n§aconverted to shield by §c20%",
             FlameBurst.class,
             abstractAbility -> {
             }
     ),
     HEALING_RAIN("Healing Rain",
-            "§7Increases the amount of\n§7health you restore with\n§7Healing Rain by 30%",
-            "§aIncreases the amount of\n§ahealth you restore with\n§aHealing Rain by §c30%",
+            "§7Increases the range of\n§7Healing Rain by 2 blocks and\n§7reduce the cooldown by 20%",
+            "§aIncreases the range of\n§aHealing Rain by §c2 §ablocks and\n§areduce the cooldown by §c20%",
             HealingRain.class,
             abstractAbility -> {
             }
@@ -119,29 +119,29 @@ public enum ClassesSkillBoosts {
             }
     ),
     SEISMIC_WAVE_BERSERKER("Seismic Wave",
-            "§7Increase the damage you\n§7deal with Seismic Wave by\n§720%",
-            "§aIncrease the damage you\n§adeal with Seismic Wave by\n§c20%",
+            "§7Increase the damage you\n§7deal with Seismic Wave by\n§730%",
+            "§aIncrease the damage you\n§adeal with Seismic Wave by\n§c30%",
             SeismicWave.class,
             abstractAbility -> {
             }
     ),
     GROUND_SLAM_BERSERKER("Ground Slam",
-            "§7Increase the damage you\n§7deal with Ground Slam by\n§720%",
-            "§aIncrease the damage you\n§adeal with Ground Slam by\n§c20%",
+            "§7Reduce the energy cost by 30\n§7and reduce the cooldown\nby §710%",
+            "§aReduce the energy cost by §c30\n§aand reduce the cooldown\nby §c10%",
             GroundSlam.class,
             abstractAbility -> {
             }
     ),
-    BLOOD_LUST("Berserk",
-            "§7Reduce the cooldown of Berserk\n§7by 20%",
-            "§aReduce the cooldown of Berserk\n§aby §c20%",
+    BLOOD_LUST("Blood Lust",
+            "§7Increase the amount of damage\n§7you convert into healing with\n§7Blood Lust by 5% and reduce the cooldown\nby 10%",
+            "§aIncrease the amount of damage\n§ayou convert into healing with\n§aBlood Lust by §c5% and reduce the cooldown\nby §c10%",
             Berserk.class,
             abstractAbility -> {
             }
     ),
     BERSERK("Berserk",
-            "§7Reduce the cooldown of Berserk\n§7by 20%",
-            "§aReduce the cooldown of Berserk\n§aby §c20%",
+            "§7Reduce the cooldown of Berserk\n§7by 25%",
+            "§aReduce the cooldown of Berserk\n§aby §c25%",
             Berserk.class,
             abstractAbility -> {
             }
@@ -154,29 +154,29 @@ public enum ClassesSkillBoosts {
             }
     ),
     SEISMIC_WAVE_DEFENDER("Seismic Wave",
-            "§7Increase the damage you\n§7deal with Seismic Wave by\n§720%",
-            "§aIncrease the damage you\n§adeal with Seismic Wave by\n§c20%",
+            "§7Increase the damage you\n§7deal with Seismic Wave by\n§730%",
+            "§aIncrease the damage you\n§adeal with Seismic Wave by\n§c30%",
             SeismicWave.class,
             abstractAbility -> {
             }
     ),
     GROUND_SLAM_DEFENDER("Ground Slam",
-            "§7Increase the damage you\n§7deal with Ground Slam by\n§720%",
-            "§aIncrease the damage you\n§adeal with Ground Slam by\n§c20%",
+            "§7Increase the damage you\n§7deal with Ground Slam by\n§710% §7and reduce the cooldown by §a10%",
+            "§7Increase the damage you\n§7deal with Ground Slam by\n§c10% §aand reduce the cooldown by §a10%",
             GroundSlam.class,
             abstractAbility -> {
             }
     ),
-    INTERVENE("Berserk",
-            "§7Reduce the cooldown of Berserk\n§7by 20%",
-            "§aReduce the cooldown of Berserk\n§aby §c20%",
+    INTERVENE("Intervene",
+            "§7Reduce the cooldown of Intervene\n§7by 10%",
+            "§aReduce the cooldown of Intervene\n§aby §c10%",
             Berserk.class,
             abstractAbility -> {
             }
     ),
-    LAST_STAND("Berserk",
-            "§7Reduce the cooldown of Berserk\n§7by 20%",
-            "§aReduce the cooldown of Berserk\n§aby §c20%",
+    LAST_STAND("Last Stand",
+            "§7Increase the amount damage you\n§7reduce with Last Stand by\n§710% §7and reduce the cooldown by 10%",
+            "§aIncrease the amount damage you\n§areduce with Last Stand by\n§c10% §aand reduce the cooldown by §c10%",
             Berserk.class,
             abstractAbility -> {
             }
@@ -189,15 +189,15 @@ public enum ClassesSkillBoosts {
             }
     ),
     RECKLESS_CHARGE("Reckless Charge",
-            "§7Increase the damage you\n§7deal with Reckless Charge by\n§720%",
-            "§aIncrease the damage you\n§adeal with Reckless Charge by\n§c20%",
+            "§7Increase the damage you\n§7deal with Reckless Charge by\n§710% and reduce the cooldown\n§7by 10%",
+            "§aIncrease the damage you\n§adeal with Reckless Charge by\n§c10% §aand reduce the cooldown\n§aby §c10%",
             RecklessCharge.class,
             abstractAbility -> {
             }
     ),
     GROUND_SLAM_REVENANT("Ground Slam",
-            "§7Increase the damage you\n§7deal with Ground Slam by\n§720%",
-            "§aIncrease the damage you\n§adeal with Ground Slam by\n§c20%",
+            "§7Reduce the cooldown of Intervene\n§7by 40%",
+            "§aReduce the cooldown of Intervene\n§aby §c40%",
             GroundSlam.class,
             abstractAbility -> {
             }
@@ -210,8 +210,8 @@ public enum ClassesSkillBoosts {
             }
     ),
     UNDYING_ARMY("Berserk",
-            "§7Reduce the cooldown of Berserk\n§7by 20%",
-            "§aReduce the cooldown of Berserk\n§aby §c20%",
+            "§7Increase the amount of allies\naffected by 2 §7and reduce the cooldown\n§7by 10%",
+            "§7Increase the amount of allies\n§7affected by 2 §aand reduce the cooldown\n§aby §c10%",
             Berserk.class,
             abstractAbility -> {
             }
@@ -224,29 +224,29 @@ public enum ClassesSkillBoosts {
             }
     ),
     CONSECRATE_AVENGER("Consecrate",
-            "§7Increase the damage you\n§7deal with Consecrate by 20%",
-            "§aIncrease the damage you\n§adeal with Consecrate by §c20%",
+            "§7Increases the range of\n§7Consecrate by 2 blocks and\n§7reduce the energy cost\n§7by 20",
+            "§aIncreases the range of\n§a7Consecrate by §c2 §ablocks and\n§areduce the energy cost\n§aby §c20",
             Consecrate.class,
             abstractAbility -> {
             }
     ),
-    LIGHT_INFUSION_AVENGER("Consecrate",
-            "§7Increase the damage you\n§7deal with Consecrate by 20%",
-            "§aIncrease the damage you\n§adeal with Consecrate by §c20%",
+    LIGHT_INFUSION_AVENGER("Light Infusion",
+            "§7Reduce the cooldown of Light Infusion\n§7by 10% and increase the speed\n§7duration by 1 second",
+            "§aReduce the cooldown of Light Infusion\n§aby §c10% §aand increase the speed\n§aduration by §c1 §asecond",
             Consecrate.class,
             abstractAbility -> {
             }
     ),
     HOLY_RADIANCE_AVENGER("Holy Radiance",
-            "§7Increases the amount of\n§7health you restore with\n§7Holy Radiance by 20%",
-            "§aIncreases the amount of\n§ahealth you restore with\n§aHoly Radiance by §c20%",
+            "§7Reduce the cooldown of Holy Radiance\n§7by 30%",
+            "§aReduce the cooldown of Holy Radiance\n§aby §c30%",
             HolyRadiance.class,
             abstractAbility -> {
             }
     ),
-    AVENGERS_WRATH("Consecrate",
-            "§7Increase the damage you\n§7deal with Consecrate by 20%",
-            "§aIncrease the damage you\n§adeal with Consecrate by §c20%",
+    AVENGERS_WRATH("Avenger's Wrath",
+            "§7Reduce the cooldown of Avenger's Wrath\n§7by 25%",
+            "§aReduce the cooldown of Avenger's Wrath\n§aby §c25%",
             Consecrate.class,
             abstractAbility -> {
             }
@@ -259,29 +259,29 @@ public enum ClassesSkillBoosts {
             }
     ),
     CONSECRATE_CRUSADER("Consecrate",
-            "§7Increase the damage you\n§7deal with Consecrate by 20%",
-            "§aIncrease the damage you\n§adeal with Consecrate by §c20%",
+            "§7Increases the range of\n§7Consecrate by 2 blocks and\n§7reduce the energy cost\n§7by 20",
+            "§aIncreases the range of\n§a7Consecrate by §c2 §ablocks and\n§areduce the energy cost\n§aby §c20",
             Consecrate.class,
             abstractAbility -> {
             }
     ),
-    LIGHT_INFUSION_CRUSADER("Consecrate",
-            "§7Increase the damage you\n§7deal with Consecrate by 20%",
-            "§aIncrease the damage you\n§adeal with Consecrate by §c20%",
+    LIGHT_INFUSION_CRUSADER("Light Infusion",
+            "§7Reduce the cooldown of Light Infusion\n§7by 10% and increase the speed\n§7duration by 1 second",
+            "§aReduce the cooldown of Light Infusion\n§aby §c10% §aand increase the speed\n§aduration by §c1 §asecond",
             Consecrate.class,
             abstractAbility -> {
             }
     ),
     HOLY_RADIANCE_CRUSADER("Holy Radiance",
-            "§7Increases the amount of\n§7health you restore with\n§7Holy Radiance by 20%",
-            "§aIncreases the amount of\n§ahealth you restore with\n§aHoly Radiance by §c20%",
+            "§7Reduce the cooldown of Holy Radiance\n§7by 10% and increase the duration\n§7of Holy Mark by 2 seconds",
+            "§aReduce the cooldown of Holy Radiance\n§aby §c10% §aand increase the duration\n§aof Holy Mark by §c2 §aseconds",
             HolyRadiance.class,
             abstractAbility -> {
             }
     ),
-    INSPIRING_PRESENCE("Consecrate",
-            "§7Increase the damage you\n§7deal with Consecrate by 20%",
-            "§aIncrease the damage you\n§adeal with Consecrate by §c20%",
+    INSPIRING_PRESENCE("Inspiring Presence",
+            "§7Reduce the cooldown of Inspiring Presence\n§7by 25%",
+            "§aReduce the cooldown of Inspiring Presence\n§aby §c25%",
             Consecrate.class,
             abstractAbility -> {
             }
@@ -294,15 +294,15 @@ public enum ClassesSkillBoosts {
             }
     ),
     CONSECRATE_PROTECTOR("Consecrate",
-            "§7Increase the damage you\n§7deal with Consecrate by 20%",
-            "§aIncrease the damage you\n§adeal with Consecrate by §c20%",
+            "§7Increases the range of\n§7Consecrate by 2 blocks and\n§7reduce the cooldown\n§7by 20%",
+            "§aIncreases the range of\n§a7Consecrate by §c2 §ablocks and\n§areduce the cooldown\n§aby §c20%",
             Consecrate.class,
             abstractAbility -> {
             }
     ),
-    LIGHT_INFUSION_PROTECTOR("Consecrate",
-            "§7Increase the damage you\n§7deal with Consecrate by 20%",
-            "§aIncrease the damage you\n§adeal with Consecrate by §c20%",
+    LIGHT_INFUSION_PROTECTOR("Light Infusion",
+            "§7Reduce the cooldown of Light Infusion\n§7by 10% and increase the speed\n§7duration by 1 second",
+            "§aReduce the cooldown of Light Infusion\n§aby §c10% §aand increase the speed\n§aduration by §c1 §asecond",
             Consecrate.class,
             abstractAbility -> {
             }
@@ -315,8 +315,8 @@ public enum ClassesSkillBoosts {
             }
     ),
     HAMMER_OF_LIGHT("Hammer of Light",
-            "§7Increases the amount of\n§7health you restore with\n§7Hammer of Light by 40%",
-            "§aIncreases the amount of\n§ahealth you restore with\n§aHammer of Light by §c40%",
+            "§7Increases the amount of\n§7health you restore with\n§7Hammer of Light by 20% and\nreduce the cooldown by 15%",
+            "§aIncreases the amount of\n§ahealth you restore with\n§aHammer of Light by §c20% §aand\nreduce the cooldown by §c15%",
             HammerOfLight.class,
             abstractAbility -> {
             }
@@ -329,29 +329,29 @@ public enum ClassesSkillBoosts {
             }
     ),
     CHAIN_LIGHTNING("Chain Lightning",
-            "§7Increase the damage you\n§7deal with Chain Lightning\n§7by 20%",
-            "§aIncrease the damage you\n§adeal with Chain Lightning\n§aby §c20%",
+            "§7Increase the damage you\n§7deal with Chain Lightning\n§7by 25%",
+            "§aIncrease the damage you\n§adeal with Chain Lightning\n§aby §c25%",
             ChainLightning.class,
             abstractAbility -> {
             }
     ),
     WINDFURY_WEAPON("Windfury Weapon",
-            "§7Increase the damage you\n§7deal with Windfury Weapon\n§7by 20%",
-            "§aIncrease the damage you\n§adeal with Windfury Weapon\n§aby §c20%",
+            "§7Increase the damage you\n§7deal with Windfury Weapon\n§7by 15% and increase the proc\n§7chance by 5%",
+            "§aIncrease the damage you\n§adeal with Windfury Weapon\n§aby §c15% and increase the proc\n§achance by §c5%",
             Windfury.class,
             abstractAbility -> {
             }
     ),
-    LIGHTNING_ROD("Consecrate",
-            "§7Increase the damage you\n§7deal with Consecrate by 20%",
-            "§aIncrease the damage you\n§adeal with Consecrate by §c20%",
+    LIGHTNING_ROD("Lightning Rod",
+            "§7Reduce the cooldown of Lightning Rod\n§7by 25%",
+            "§aReduce the cooldown of Lightning Rod\n§aby §c25%",
             Consecrate.class,
             abstractAbility -> {
             }
     ),
     CAPACITOR_TOTEM("Capacitor Totem",
-            "§7Increase the damage you\n§7deal with Capacitor Totem\n§7by 30%",
-            "§aIncrease the damage you\n§adeal with Capacitor Totem\n§aby §c30%",
+            "§7Increase the damage you\n§7deal with Capacitor Totem\n§7by 10% and reduce the cooldown\n§7by 15%",
+            "§aIncrease the damage you\n§adeal with Capacitor Totem\n§aby §c10% §aand reduce the cooldown\n§aby §c15%",
             CapacitorTotem.class,
             abstractAbility -> {
             }
@@ -364,29 +364,29 @@ public enum ClassesSkillBoosts {
             }
     ),
     SPIRIT_LINK("Spirit Link",
-            "§7Increase the damage you\n§7deal with Spirit Link by\n§720%",
-            "§aIncrease the damage you\n§adeal with Spirit Link by\n§c20%",
+            "§7Increase the damage you\n§7deal with Spirit Link by\n§725%",
+            "§aIncrease the damage you\n§adeal with Spirit Link by\n§c25%",
             SpiritLink.class,
             abstractAbility -> {
             }
     ),
-    SOULBINDING_WEAPON("Consecrate",
-            "§7Increase the damage you\n§7deal with Consecrate by 20%",
-            "§aIncrease the damage you\n§adeal with Consecrate by §c20%",
+    SOULBINDING_WEAPON("Soulbinding Weapon",
+            "§7Increase the duration of\n§7binds by 0.5 seconds and\n§7reduce the cooldown by 10%",
+            "§aIncrease the duration of\n§abinds by §c0.5 §aseconds and\n§areduce the cooldown by §c10%",
             Consecrate.class,
             abstractAbility -> {
             }
     ),
-    REPETENCE("Consecrate",
-            "§7Increase the damage you\n§7deal with Consecrate by 20%",
-            "§aIncrease the damage you\n§adeal with Consecrate by §c20%",
+    REPENTANCE("Repentance",
+            "§7Increase the damage you\n§7convert by 10%",
+            "§aIncrease the damage you\n§aconvert by §c10%",
             Consecrate.class,
             abstractAbility -> {
             }
     ),
-    DEBTS_DEBT("Consecrate",
-            "§7Increase the damage you\n§7deal with Consecrate by 20%",
-            "§aIncrease the damage you\n§adeal with Consecrate by §c20%",
+    DEATHS_DEBT("Death's Debt",
+            "§7Increase the range of Death's Debt\n§7by 2 blocks and reduce the cooldown\n§7by 20%",
+            "§aIncrease the range of Death's Debt\n§aby §c2 §ablocks and reduce the cooldown\n§aby §c20%",
             Consecrate.class,
             abstractAbility -> {
             }
@@ -405,9 +405,9 @@ public enum ClassesSkillBoosts {
             abstractAbility -> {
             }
     ),
-    EARTHLIVING_WEAPON("Consecrate",
-            "§7Increase the damage you\n§7deal with Consecrate by 20%",
-            "§aIncrease the damage you\n§adeal with Consecrate by §c20%",
+    EARTHLIVING_WEAPON("Earthliving Weapon",
+            "§7Increase the amount of health you\n§7restore with Earthliving Weapon\n§7by 10% and increase the proc\n§7chance by 10%",
+            "§aIncrease the amount of health you\n§arestore with Earthliving Weapon\n§aby §c10% §aand increase the proc\n§achance by §c10%",
             Consecrate.class,
             abstractAbility -> {
             }
@@ -420,8 +420,8 @@ public enum ClassesSkillBoosts {
             }
     ),
     HEALING_TOTEM("Healing Totem",
-            "§7Increases the amount of\n§7health you restore with\n§7Healing Totem by 40%",
-            "§aIncreases the amount of\n§ahealth you restore with\n§aHealing Totem by §c40%",
+            "§7Increase the amount of health you\n§7restore with Healing Totem\n§7by 10% and reduce the\n§7cooldown by 10%",
+            "§aIncrease the amount of health you\n§arestore with Healing Totem\n§aby §c10% §aand reduce the\n§acooldown by §c10%",
             HealingTotem.class,
             abstractAbility -> {
             }
