@@ -11,7 +11,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class LightInfusion extends AbstractAbility {
 
-    private final int duration = 3;
+    private int duration = 3;
     private final int speedBuff = 40;
 
     public LightInfusion(float cooldown, int energyCost) {
@@ -57,5 +57,9 @@ public class LightInfusion extends AbstractAbility {
                 System.currentTimeMillis()
         );
 
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
     }
 }

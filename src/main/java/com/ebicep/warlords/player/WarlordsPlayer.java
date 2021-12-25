@@ -260,21 +260,24 @@ public final class WarlordsPlayer {
     public void applySkillBoost(Player player) {
         ClassesSkillBoosts selectedBoost = Classes.getSelectedBoost(Bukkit.getOfflinePlayer(uuid));
         if (spec.getWeapon().getClass() == selectedBoost.ability) {
-            if (selectedBoost != ClassesSkillBoosts.PROTECTOR_STRIKE) {
-                spec.getWeapon().boostSkill();
-            }
+            spec.getWeapon().boostSkill(selectedBoost);
             spec.getWeapon().updateDescription(player);
         } else if (spec.getRed().getClass() == selectedBoost.ability) {
-            spec.getRed().boostSkill();
+            spec.getRed().boostSkill(selectedBoost);
             spec.getRed().updateDescription(player);
         } else if (spec.getPurple().getClass() == selectedBoost.ability) {
-            spec.getPurple().boostSkill();
+            spec.getPurple().boostSkill(selectedBoost);
             spec.getPurple().updateDescription(player);
         } else if (spec.getBlue().getClass() == selectedBoost.ability) {
-            spec.getBlue().boostSkill();
+            spec.getBlue().boostSkill(selectedBoost);
             spec.getBlue().updateDescription(player);
+            if (spec.getBlue() instanceof ArcaneShield) {
+                ArcaneShield arcaneShield = ((ArcaneShield) spec.getBlue());
+                arcaneShield.setMaxShieldHealth((int) (maxHealth * (arcaneShield.getShieldPercentage() / 100f)));
+                spec.getBlue().updateDescription(player);
+            }
         } else if (spec.getOrange().getClass() == selectedBoost.ability) {
-            spec.getOrange().boostOrange();
+            spec.getOrange().boostSkill(selectedBoost);
             spec.getOrange().updateDescription(player);
         }
     }
@@ -628,25 +631,26 @@ public final class WarlordsPlayer {
             intervenedBy.addAbsorbed(damageValue);
             intervenedBy.setRegenTimer(10);
             intervene.addDamagePrevented(damageValue);
-            intervenedBy.damageHealth(attacker, "Intervene", damageValue, damageValue, isCrit ? 100 : -1, 100, false);    Location loc = getLocation();
+            intervenedBy.damageHealth(attacker, "Intervene", damageValue, damageValue, isCrit ? 100 : -1, 100, false);
+            Location loc = getLocation();
             //EFFECTS + SOUNDS
             gameState.getGame().forEachOnlinePlayer((p, t) -> p.playSound(loc, "warrior.intervene.block", 2, 1));
-                if (attacker.entity instanceof Player) {
-                    ((Player) attacker.entity).playSound(attacker.getLocation(), Sound.ORB_PICKUP, 1, 1);
+            if (attacker.entity instanceof Player) {
+                ((Player) attacker.entity).playSound(attacker.getLocation(), Sound.ORB_PICKUP, 1, 1);
 
             }
-                entity.playEffect(EntityEffect.HURT);
-                intervenedBy.getEntity().playEffect(EntityEffect.HURT);
+            entity.playEffect(EntityEffect.HURT);
+            intervenedBy.getEntity().playEffect(EntityEffect.HURT);
 
 
-                //red line thingy
-                Location lineLocation = getLocation().add(0, 1, 0);
-                lineLocation.setDirection(lineLocation.toVector().subtract(intervenedBy.getLocation().add(0, 1, 0).toVector()).multiply(-1));
-                for (int i = 0; i < Math.floor(getLocation().distance(intervenedBy.getLocation())) * 2; i++) {
-                    ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(255, 0, 0), lineLocation, 500);
-                    ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(255, 0, 0), lineLocation, 500);
-                    lineLocation.add(lineLocation.getDirection().multiply(.5));
-                }
+            //red line thingy
+            Location lineLocation = getLocation().add(0, 1, 0);
+            lineLocation.setDirection(lineLocation.toVector().subtract(intervenedBy.getLocation().add(0, 1, 0).toVector()).multiply(-1));
+            for (int i = 0; i < Math.floor(getLocation().distance(intervenedBy.getLocation())) * 2; i++) {
+                ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(255, 0, 0), lineLocation, 500);
+                ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(255, 0, 0), lineLocation, 500);
+                lineLocation.add(lineLocation.getDirection().multiply(.5));
+            }
 
             //HORSE
             removeHorse();
@@ -661,7 +665,8 @@ public final class WarlordsPlayer {
                 if (!HammerOfLight.standingInHammer(attacker, entity)) {
                     //reduce damage
                     for (Cooldown cooldown : cooldownManager.getCooldown(IceBarrier.class)) {
-                        addAbsorbed(Math.abs(damageValue - (damageValue *= .5)));
+                        IceBarrier iceBarrier = (IceBarrier) cooldown.getCooldownObject();
+                        addAbsorbed(Math.abs(damageValue - (damageValue *= iceBarrier.getDamageReduction())));
                     }
 
                     if (!cooldownManager.getCooldown(ChainLightning.class).isEmpty()) {
@@ -675,10 +680,11 @@ public final class WarlordsPlayer {
 
                     for (Cooldown cooldown : cooldownManager.getCooldown(LastStand.class)) {
                         WarlordsPlayer lastStandedBy = cooldown.getFrom();
+                        LastStand lastStand = (LastStand) cooldown.getCooldownObject();
                         if (lastStandedBy == this) {
-                            damageValue *= .5;
+                            damageValue *= lastStand.getSelfDamageReduction();
                         } else {
-                            damageValue *= .4;
+                            damageValue *= lastStand.getTeammateDamageReduction();
                         }
                     }
 
@@ -767,7 +773,7 @@ public final class WarlordsPlayer {
 
 
                     List<Cooldown> debtsCooldown = cooldownManager.getCooldownFromName("Spirits Respite");
-                    if(!debtsCooldown.isEmpty()) {
+                    if (!debtsCooldown.isEmpty()) {
                         ((DeathsDebt) debtsCooldown.get(0).getCooldownObject()).addDelayedDamage(damageValue);
                         debt = true;
                     }
@@ -795,9 +801,10 @@ public final class WarlordsPlayer {
                     }
                     if (attacker.getSpec() instanceof Spiritguard) {
                         if (!attacker.getCooldownManager().getCooldown(Repentance.class).isEmpty()) {
-                            int healthToAdd = (int) (((Repentance) attacker.getSpec().getBlue()).getPool() * .1) + 10;
+                            Repentance repentance = (Repentance) attacker.getSpec().getBlue();
+                            int healthToAdd = (int) (repentance.getPool() * (repentance.getDamageConvertPercent() / 100f)) + 10;
                             attacker.healHealth(attacker, "Repentance", healthToAdd, healthToAdd, -1, 100, false);
-                            ((Repentance) attacker.getSpec().getBlue()).setPool(((Repentance) attacker.getSpec().getBlue()).getPool() * .5f);
+                            repentance.setPool(repentance.getPool() * .5f);
                             attacker.addEnergy(attacker, "Repentance", (float) (healthToAdd * .035));
                         }
                     }
@@ -845,8 +852,10 @@ public final class WarlordsPlayer {
                         }
                     }
                 }
+                //BLOOD LUST
                 if (!attacker.getCooldownManager().getCooldown(BloodLust.class).isEmpty()) {
-                    attacker.healHealth(attacker, "Blood Lust", damageValue * .65f, damageValue * .65f, -1, 100, false);
+                    BloodLust bloodLust = (BloodLust) attacker.getSpec().getBlue();
+                    attacker.healHealth(attacker, "Blood Lust", damageValue * (bloodLust.getDamageConvertPercent() / 100f), damageValue * (bloodLust.getDamageConvertPercent() / 100f), -1, 100, false);
                 }
 
 
@@ -911,7 +920,7 @@ public final class WarlordsPlayer {
                     ((Windfury) attacker.getSpec().getPurple()).setFirstProc(false);
                     windfuryActivate = 0;
                 }
-                if (windfuryActivate < 35) {
+                if (windfuryActivate < ((Windfury) attacker.getSpec().getPurple()).getProcChance()) {
                     new BukkitRunnable() {
                         int counter = 0;
 
@@ -922,7 +931,7 @@ public final class WarlordsPlayer {
                             });
 
                             if (Warlords.getPlayerSettings(attacker.uuid).getClassesSkillBoosts() == ClassesSkillBoosts.WINDFURY_WEAPON) {
-                                damageHealth(attacker, "Windfury Weapon", min * 1.35f * 1.2f, max * 1.35f * 1.2f, 25, 200, false);
+                                damageHealth(attacker, "Windfury Weapon", min * 1.35f * 1.15f, max * 1.35f * 1.15f, 25, 200, false);
                             } else {
                                 damageHealth(attacker, "Windfury Weapon", min * 1.35f, max * 1.35f, 25, 200, false);
                             }
@@ -937,34 +946,27 @@ public final class WarlordsPlayer {
                 }
             } else if (!attacker.getCooldownManager().getCooldown(Earthliving.class).isEmpty()) {
                 int earthlivingActivate = (int) (Math.random() * 100);
-                if (((Earthliving) attacker.getSpec().getPurple()).isFirstProc() || Utils.getTotemDownAndClose(attacker, attacker.getEntity()) != null) {
-                    //self heal
-                    attacker.healHealth(attacker, "Earthliving Weapon", 132 * 2.4f, 179 * 2.4f, 25, 200, false);
+                Earthliving earthliving = (Earthliving) attacker.getSpec().getPurple();
+                if (earthliving.isFirstProc()) {
+                    earthliving.setFirstProc(false);
+                    earthlivingActivate = 0;
+                }
+                if (earthlivingActivate < earthliving.getProcChance()) {
+                    boolean earthlivingBoost = Warlords.getPlayerSettings(attacker.uuid).getClassesSkillBoosts() == ClassesSkillBoosts.EARTHLIVING_WEAPON;
+                    float multiplyBy = earthlivingBoost ? 2.5f : 2.4f;
 
-                    gameState.getGame().forEachOnlinePlayer((player1, t) -> {
-                        player1.playSound(getLocation(), "shaman.earthlivingweapon.impact", 2, 1);
-                    });
-
-                    ((Earthliving) attacker.getSpec().getPurple()).setFirstProc(false);
-                    for (WarlordsPlayer nearPlayer : PlayerFilter
-                            .entitiesAround(attacker, 6, 6, 6)
-                            .aliveTeammatesOfExcludingSelf(attacker)
-                            .limit(2)
-                    ) {
-                        nearPlayer.healHealth(attacker, "Earthliving Weapon", 132 * 2.4f, 179 * 2.4f, 25, 200, false);
-                    }
-                } else if (earthlivingActivate < 40) {
-                    attacker.healHealth(attacker, "Earthliving Weapon", 132 * 2.4f, 179 * 2.4f, 25, 200, false);
+                    attacker.healHealth(attacker, "Earthliving Weapon", 132 * multiplyBy, 179 * multiplyBy, 25, 200, false);
 
                     gameState.getGame().forEachOnlinePlayer((p, t) -> {
                         p.playSound(getLocation(), "shaman.earthlivingweapon.impact", 2, 1);
                     });
 
-                    for (WarlordsPlayer nearPlayer : PlayerFilter.entitiesAround(attacker, 6, 6, 6)
+                    for (WarlordsPlayer nearPlayer : PlayerFilter
+                            .entitiesAround(attacker, 6, 6, 6)
                             .aliveTeammatesOfExcludingSelf(attacker)
                             .limit(2)
                     ) {
-                        nearPlayer.healHealth(attacker, "Earthliving Weapon", 132 * 2.4f, 179 * 2.4f, 25, 200, false);
+                        nearPlayer.healHealth(attacker, "Earthliving Weapon", 132 * multiplyBy, 179 * multiplyBy, 25, 200, false);
                     }
                 }
             }
@@ -1674,7 +1676,7 @@ public final class WarlordsPlayer {
     }
 
     public void setVelocity(org.bukkit.util.Vector v) {
-        if(cooldownManager.hasCooldownFromName("KB Resistance")) {
+        if (cooldownManager.hasCooldownFromName("KB Resistance")) {
             setVelocity(v.multiply(1), true);
         } else {
             setVelocity(v, true);
@@ -1683,7 +1685,7 @@ public final class WarlordsPlayer {
 
     public void setVelocity(org.bukkit.util.Vector v, boolean kbAfterHorse) {
         if ((kbAfterHorse || this.entity.getVehicle() == null)) {
-            if(cooldownManager.hasCooldownFromName("KB Resistance")) {
+            if (cooldownManager.hasCooldownFromName("KB Resistance")) {
                 this.entity.setVelocity(v.multiply(.75));
             } else {
                 this.entity.setVelocity(v);
@@ -1697,7 +1699,7 @@ public final class WarlordsPlayer {
 
     public void setVelocity(Location from, Location to, double multipliedBy, double y, boolean kbAfterHorse) {
         if (((kbAfterHorse && this.entity.getVehicle() != null) || (!kbAfterHorse && this.entity.getVehicle() == null))) {
-            if(cooldownManager.hasCooldownFromName("KB Resistance")) {
+            if (cooldownManager.hasCooldownFromName("KB Resistance")) {
                 this.entity.setVelocity((to.toVector().subtract(from.toVector()).normalize().multiply(multipliedBy).setY(y)).multiply(.75));
             } else {
                 this.entity.setVelocity(to.toVector().subtract(from.toVector()).normalize().multiply(multipliedBy).setY(y));

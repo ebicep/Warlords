@@ -12,6 +12,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 public class BloodLust extends AbstractAbility {
 
     private final int duration = 15;
+    private int damageConvertPercent = 65;
 
     public BloodLust() {
         super("Blood Lust", 0, 0, 31.32f, 20, 0, 0);
@@ -20,7 +21,7 @@ public class BloodLust extends AbstractAbility {
     @Override
     public void updateDescription(Player player) {
         description = "§7You lust for blood, healing yourself\n" +
-                "§7for §a65% §7of all the damage you deal.\n" +
+                "§7for §a" + damageConvertPercent + "% §7of all the damage you deal.\n" +
                 "§7Lasts §6" + duration + " §7seconds.";
     }
 
@@ -47,6 +48,13 @@ public class BloodLust extends AbstractAbility {
                 }.runTaskTimer(Warlords.getInstance(), 0, 4),
                 System.currentTimeMillis()
         );
+    }
 
+    public int getDamageConvertPercent() {
+        return damageConvertPercent;
+    }
+
+    public void setDamageConvertPercent(int damageConvertPercent) {
+        this.damageConvertPercent = damageConvertPercent;
     }
 }

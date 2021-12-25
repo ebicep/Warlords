@@ -181,7 +181,7 @@ public class GameMenu {
             }
             builder.lore(lore);
             menu.setItem(
-                    6 - values.size() + i * 2 - 1,
+                    i + 2,
                     1,
                     builder.get(),
                     (n, e) -> {
@@ -538,17 +538,15 @@ public class GameMenu {
 
         ClassesSkillBoosts selectedBoost = playerSettings.getClassesSkillBoosts();
         if (apc.getWeapon().getClass() == selectedBoost.ability) {
-            if (selectedBoost != ClassesSkillBoosts.PROTECTOR_STRIKE) {
-                apc.getWeapon().boostSkill();
-            }
+            apc.getWeapon().boostSkill(selectedBoost);
         } else if (apc.getRed().getClass() == selectedBoost.ability) {
-            apc.getRed().boostSkill();
+            apc.getRed().boostSkill(selectedBoost);
         } else if (apc.getPurple().getClass() == selectedBoost.ability) {
-            apc.getPurple().boostSkill();
+            apc.getPurple().boostSkill(selectedBoost);
         } else if (apc.getBlue().getClass() == selectedBoost.ability) {
-            apc.getBlue().boostSkill();
+            apc.getBlue().boostSkill(selectedBoost);
         } else if (apc.getOrange().getClass() == selectedBoost.ability) {
-            apc.getOrange().boostOrange();
+            apc.getOrange().boostSkill(selectedBoost);
         }
 
         apc.getWeapon().updateDescription(player);

@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
+import com.ebicep.warlords.player.ClassesSkillBoosts;
 import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.ItemBuilder;
@@ -31,7 +32,7 @@ public class UndyingArmy extends AbstractAbility {
 
     private final int radius = 15;
     private final int duration = 10;
-    private final int maxArmyAllies = 6;
+    private int maxArmyAllies = 6;
 
     private HashMap<UUID, Boolean> playersPopped = new HashMap<>();
 
@@ -162,5 +163,9 @@ public class UndyingArmy extends AbstractAbility {
         CircleEffect circle = new CircleEffect(wp.getGame(), wp.getTeam(), player.getLocation(), radius);
         circle.addEffect(new CircumferenceEffect(ParticleEffect.VILLAGER_HAPPY, ParticleEffect.REDSTONE).particlesPerCircumference(2));
         circle.playEffects();
+    }
+
+    public void setMaxArmyAllies(int maxArmyAllies) {
+        this.maxArmyAllies = maxArmyAllies;
     }
 }
