@@ -13,13 +13,18 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class ArcaneShield extends AbstractAbility {
 
-    public int maxShieldHealth;
-    private float shieldHealth = 0;
-
     private final int duration = 6;
+    public int maxShieldHealth;
+    public int shieldPercentage;
+    private float shieldHealth = 0;
 
     public ArcaneShield() {
         super("Arcane Shield", 0, 0, 31.32f, 40, 0, 0);
+    }
+
+    public ArcaneShield(int shieldPercentage) {
+        super("Arcane Shield", 0, 0, 31.32f, 40, 0, 0);
+        this.shieldPercentage = shieldPercentage;
     }
 
     @Override
@@ -66,5 +71,17 @@ public class ArcaneShield extends AbstractAbility {
 
     public void addShieldHealth(float amount) {
         this.shieldHealth += amount;
+    }
+
+    public void setMaxShieldHealth(int maxShieldHealth) {
+        this.maxShieldHealth = maxShieldHealth;
+    }
+
+    public int getShieldPercentage() {
+        return shieldPercentage;
+    }
+
+    public void setShieldPercentage(int shieldPercentage) {
+        this.shieldPercentage = shieldPercentage;
     }
 }

@@ -17,7 +17,7 @@ import java.util.List;
 public class Soulbinding extends AbstractAbility {
 
     private List<SoulBoundPlayer> soulBindedPlayers = new ArrayList<>();
-
+    private int bindDuration = 3;
     private final int duration = 12;
 
     public Soulbinding() {
@@ -111,9 +111,17 @@ public class Soulbinding extends AbstractAbility {
         return false;
     }
 
+    public int getBindDuration() {
+        return bindDuration;
+    }
+
+    public void setBindDuration(int bindDuration) {
+        this.bindDuration = bindDuration;
+    }
+
     public static class SoulBoundPlayer {
         private WarlordsPlayer boundPlayer;
-        private int timeLeft;
+        private float timeLeft;
         private boolean hitWithLink;
         private boolean hitWithSoul;
 
@@ -132,15 +140,15 @@ public class Soulbinding extends AbstractAbility {
             this.boundPlayer = boundPlayer;
         }
 
-        public int getTimeLeft() {
+        public float getTimeLeft() {
             return timeLeft;
         }
 
         public void decrementTimeLeft() {
-            this.timeLeft--;
+            this.timeLeft -= .5;
         }
 
-        public void setTimeLeft(int timeLeft) {
+        public void setTimeLeft(float timeLeft) {
             this.timeLeft = timeLeft;
         }
 

@@ -20,6 +20,9 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 public class DeathsDebt extends AbstractTotemBase {
+
+    private int respiteRadius = 10;
+    private int debtRadius = 8;
     private float delayedDamage = 0;
     private double timeLeftRespite = 0;
     private double timeLeftDebt = 0;
@@ -34,7 +37,7 @@ public class DeathsDebt extends AbstractTotemBase {
                 "§7delays §c100% §7of incoming damage towards\n" +
                 "§7yourself. Transforms into §dDeath’s Debt §7after\n" +
                 "§64 §7- §66 §7seconds (increases with higher health),\n" +
-                "§7or when you exit its §e10 §7block radius.\n" +
+                "§7or when you exit its §e" + respiteRadius + " §7block radius.\n" +
                 "\n" +
                 "§dDeath’s Debt§7: Take §c100% §7of the damage delayed\n" +
                 "§7by §2Spirit's Respite §7over §66 §7seconds. The totem\n" +
@@ -70,7 +73,7 @@ public class DeathsDebt extends AbstractTotemBase {
 
         wp.getCooldownManager().addCooldown("Spirits Respite", this.getClass(), tempDeathsDebt, "RESP", secondsLeft, wp, CooldownTypes.ABILITY);
 
-        CircleEffect circle = new CircleEffect(wp, totemStand.getLocation().clone().add(0, 1.25, 0), 10);
+        CircleEffect circle = new CircleEffect(wp, totemStand.getLocation().clone().add(0, 1.25, 0), respiteRadius);
         circle.addEffect(new CircumferenceEffect(ParticleEffect.SPELL));
         circle.addEffect(new DoubleLineEffect(ParticleEffect.REDSTONE));
         BukkitTask particles = Bukkit.getScheduler().runTaskTimer(Warlords.getInstance(), circle::playEffects, 0, 1);
@@ -96,7 +99,7 @@ public class DeathsDebt extends AbstractTotemBase {
                                     this.cancel();
                                     return;
                                 }
-                                boolean isPlayerInRadius = player.getLocation().distanceSquared(totemStand.getLocation()) < 10 * 10;
+                                boolean isPlayerInRadius = player.getLocation().distanceSquared(totemStand.getLocation()) < respiteRadius * respiteRadius;
                                 if (!isPlayerInRadius && tempDeathsDebt.getTimeLeftRespite() != -1) {
                                     tempDeathsDebt.setTimeLeftRespite(0);
                                 }
@@ -122,7 +125,7 @@ public class DeathsDebt extends AbstractTotemBase {
                                             player.sendMessage("§c\u00AB §2Spirit's Respite §7delayed §c" + Math.round(tempDeathsDebt.getDelayedDamage()) + " §7damage. §dYour debt must now be paid.");
                                         }
                                         circle.replaceEffects(e -> e instanceof DoubleLineEffect, new DoubleLineEffect(ParticleEffect.SPELL_WITCH));
-                                        circle.setRadius(7.5);
+                                        circle.setRadius(debtRadius);
 
                                         //blue to purple totem
                                         totemStand.setHelmet(new ItemStack(Material.DARK_OAK_FENCE_GATE));
@@ -141,7 +144,7 @@ public class DeathsDebt extends AbstractTotemBase {
                                             //final damage tick
                                             player.getWorld().spigot().strikeLightningEffect(totemStand.getLocation(), false);
                                             // Enemy damage
-                                            PlayerFilter.entitiesAround(totemStand, 8, 7, 8)
+                                            PlayerFilter.entitiesAround(totemStand, debtRadius, debtRadius - 1, debtRadius)
                                                     .aliveEnemiesOf(wp)
                                                     .forEach((nearPlayer) -> {
                                                         nearPlayer.damageHealth(wp,
@@ -189,7 +192,7 @@ public class DeathsDebt extends AbstractTotemBase {
                 critMultiplier,
                 false);
         // Teammate heal
-        PlayerFilter.entitiesAround(totemStand, 8, 7, 8)
+        PlayerFilter.entitiesAround(totemStand, debtRadius, debtRadius - 1, debtRadius)
                 .aliveTeammatesOf(wp)
                 .forEach((nearPlayer) -> {
                     nearPlayer.healHealth(wp, name,
@@ -201,6 +204,22 @@ public class DeathsDebt extends AbstractTotemBase {
         if (wp.getSpec().getBlue() instanceof Repentance) {
             ((Repentance) wp.getSpec().getBlue()).addToPool(debtTrueDamage);
         }
+    }
+
+    public int getRespiteRadius() {
+        return respiteRadius;
+    }
+
+    public void setRespiteRadius(int respiteRadius) {
+        this.respiteRadius = respiteRadius;
+    }
+
+    public int getDebtRadius() {
+        return debtRadius;
+    }
+
+    public void setDebtRadius(int debtRadius) {
+        this.debtRadius = debtRadius;
     }
 
     public float getDelayedDamage() {

@@ -2,6 +2,7 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.player.ClassesSkillBoosts;
 import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.PlayerFilter;
@@ -19,8 +20,8 @@ import java.util.HashSet;
 public class HealingRain extends AbstractAbility {
 
     private int recastCooldown = 0;
-
     private final int duration = 12;
+    private int radius = 8;
 
     public HealingRain() {
         super("Healing Rain", 100, 125, 52.85f, 50, 25, 200);
@@ -45,7 +46,7 @@ public class HealingRain extends AbstractAbility {
     public void onActivate(WarlordsPlayer wp, Player player) {
 
         if (player.getTargetBlock((HashSet<Byte>) null, 25).getType() == Material.AIR) return;
-        DamageHealCircle hr = new DamageHealCircle(wp, player.getTargetBlock((HashSet<Byte>) null, 25).getLocation(), 8, duration, minDamageHeal, maxDamageHeal, critChance, critMultiplier, name);
+        DamageHealCircle hr = new DamageHealCircle(wp, player.getTargetBlock((HashSet<Byte>) null, 25).getLocation(), radius, duration, minDamageHeal, maxDamageHeal, critChance, critMultiplier, name);
         hr.getLocation().add(0, 1, 0);
         wp.subtractEnergy(energyCost);
         wp.getCooldownManager().addCooldown(name, HealingRain.this.getClass(), new HealingRain(), "RAIN", duration, wp, CooldownTypes.ABILITY);
@@ -83,23 +84,23 @@ public class HealingRain extends AbstractAbility {
                     public void run() {
                         if (!wp.getGame().isGameFreeze()) {
                             PlayerFilter.entitiesAround(hr.getLocation(), hr.getRadius(), hr.getRadius(), hr.getRadius())
-                                .aliveTeammatesOf(wp)
-                                .forEach((teammateInRain) -> {
-                                    teammateInRain.healHealth(
-                                            hr.getWarlordsPlayer(),
-                                            hr.getName(),
-                                            hr.getMinDamage(),
-                                            hr.getMaxDamage(),
-                                            hr.getCritChance(),
-                                            hr.getCritMultiplier(),
-                                            false);
+                                    .aliveTeammatesOf(wp)
+                                    .forEach((teammateInRain) -> {
+                                        teammateInRain.healHealth(
+                                                hr.getWarlordsPlayer(),
+                                                hr.getName(),
+                                                hr.getMinDamage(),
+                                                hr.getMaxDamage(),
+                                                hr.getCritChance(),
+                                                hr.getCritMultiplier(),
+                                                false);
 
-                                    if (teammateInRain != wp) {
-                                        teammateInRain.getCooldownManager().removeCooldown(Utils.OVERHEAL_MARKER);
-                                        teammateInRain.getCooldownManager().addCooldown("Overheal",
-                                                null, Utils.OVERHEAL_MARKER, "OVERHEAL", Utils.OVERHEAL_DURATION, wp, CooldownTypes.BUFF);
-                                    }
-                                });
+                                        if (teammateInRain != wp) {
+                                            teammateInRain.getCooldownManager().removeCooldown(Utils.OVERHEAL_MARKER);
+                                            teammateInRain.getCooldownManager().addCooldown("Overheal",
+                                                    null, Utils.OVERHEAL_MARKER, "OVERHEAL", Utils.OVERHEAL_DURATION, wp, CooldownTypes.BUFF);
+                                        }
+                                    });
 
                             if (hr.getDuration() < 0) {
                                 this.cancel();
@@ -127,6 +128,9 @@ public class HealingRain extends AbstractAbility {
                 }.runTaskTimer(Warlords.getInstance(), 0, 20),
                 System.currentTimeMillis()
         );
+    }
 
+    public void setRadius(int radius) {
+        this.radius = radius;
     }
 }

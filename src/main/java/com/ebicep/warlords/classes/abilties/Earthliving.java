@@ -12,7 +12,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 public class Earthliving extends AbstractAbility {
 
     private final int duration = 8;
-
+    private int procChance = 40;
     private boolean firstProc = false;
 
     public Earthliving() {
@@ -64,6 +64,14 @@ public class Earthliving extends AbstractAbility {
 
     public void setFirstProc(boolean firstProc) {
         this.firstProc = firstProc;
+    }
+
+    public int getProcChance() {
+        return procChance;
+    }
+
+    public void setProcChance(int procChance) {
+        this.procChance = procChance;
     }
 }
 

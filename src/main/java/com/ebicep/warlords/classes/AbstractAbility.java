@@ -1,5 +1,6 @@
 package com.ebicep.warlords.classes;
 
+import com.ebicep.warlords.player.ClassesSkillBoosts;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.ItemBuilder;
 import org.bukkit.ChatColor;
@@ -11,6 +12,12 @@ import javax.annotation.Nonnull;
 import java.text.DecimalFormat;
 
 public abstract class AbstractAbility {
+
+    private static final DecimalFormat decimalFormat = new DecimalFormat("#.#");
+
+    static {
+        decimalFormat.setDecimalSeparatorAlwaysShown(false);
+    }
 
     protected String name;
     protected float minDamageHeal;
@@ -38,20 +45,10 @@ public abstract class AbstractAbility {
 
     public abstract void onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player);
 
-    public void boostSkill() {
+    public void boostSkill(ClassesSkillBoosts skillBoost) {
         if (!boosted) {
             boosted = true;
-            this.minDamageHeal *= 1.2;
-            this.maxDamageHeal *= 1.2;
-        }
-    }
-
-    // purely for fun now, perhaps may actually use this later
-    public void boostOrange() {
-        if (!boosted) {
-            boosted = true;
-            this.minDamageHeal *= 1.4;
-            this.maxDamageHeal *= 1.4;
+            skillBoost.applyBoost.accept(this);
         }
     }
 
@@ -109,12 +106,24 @@ public abstract class AbstractAbility {
         return energyCost;
     }
 
+    public void setEnergyCost(int energyCost) {
+        this.energyCost = energyCost;
+    }
+
     public int getCritChance() {
         return critChance;
     }
 
+    public void setCritChance(int critChance) {
+        this.critChance = critChance;
+    }
+
     public int getCritMultiplier() {
         return critMultiplier;
+    }
+
+    public void setCritMultiplier(int critMultiplier) {
+        this.critMultiplier = critMultiplier;
     }
 
     public String getDescription() {
@@ -131,19 +140,13 @@ public abstract class AbstractAbility {
                                 ChatColor.GRAY + "Energy Cost: " + ChatColor.YELLOW + getEnergyCost(),
                         getCritChance() == 0 || getCritChance() == -1 || getCritMultiplier() == 100 ? null :
                                 ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + getCritChance() + "%" + "\n" +
-                                ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + getCritMultiplier() + "%",
+                                        ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + getCritMultiplier() + "%",
                         "",
                         getDescription()
                 )
                 .unbreakable()
                 .flags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE)
                 .get();
-    }
-
-    private static final DecimalFormat decimalFormat = new DecimalFormat("#.#");
-
-    static {
-        decimalFormat.setDecimalSeparatorAlwaysShown(false);
     }
 
     public String format(double input) {

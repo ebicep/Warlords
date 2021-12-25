@@ -10,8 +10,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class Repentance extends AbstractAbility {
-    private float pool = 0;
 
+    private float pool = 0;
+    private int damageConvertPercent = 10;
     private final int duration = 12;
 
     public Repentance() {
@@ -35,7 +36,7 @@ public class Repentance extends AbstractAbility {
     public void updateDescription(Player player) {
         description = "§7Taking damage empowers your damaging\n" +
                 "§7abilities and melee hits, restoring health\n" +
-                "§7and energy based on §c10 §7+ §c10% §7of the\n" +
+                "§7and energy based on §c" + damageConvertPercent + " §7+ §c10% §7of the\n" +
                 "§7damage you've recently took. Lasts §6" + duration + " §7seconds.";
     }
 
@@ -68,6 +69,14 @@ public class Repentance extends AbstractAbility {
 
     public float getPool() {
         return pool;
+    }
+
+    public int getDamageConvertPercent() {
+        return damageConvertPercent;
+    }
+
+    public void setDamageConvertPercent(int damageConvertPercent) {
+        this.damageConvertPercent = damageConvertPercent;
     }
 
     public void addToPool(float amount) {

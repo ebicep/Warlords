@@ -14,7 +14,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 public class Windfury extends AbstractAbility {
 
     private boolean firstProc = false;
-
+    private int procChance = 35;
     private final int duration = 8;
 
     public Windfury() {
@@ -67,5 +67,13 @@ public class Windfury extends AbstractAbility {
 
     public void setFirstProc(boolean firstProc) {
         this.firstProc = firstProc;
+    }
+
+    public int getProcChance() {
+        return procChance;
+    }
+
+    public void setProcChance(int procChance) {
+        this.procChance = procChance;
     }
 }
