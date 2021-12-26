@@ -1,12 +1,13 @@
 package com.ebicep.warlords.database.repositories.player.pojos;
 
 import com.ebicep.warlords.player.ArmorManager;
+import com.ebicep.warlords.player.ClassesSkillBoosts;
 
 public class DatabaseMage extends DatabaseWarlordsClass {
 
-    protected DatabaseSpecialization pyromancer = new DatabaseSpecialization();
-    protected DatabaseSpecialization cryomancer = new DatabaseSpecialization();
-    protected DatabaseSpecialization aquamancer = new DatabaseSpecialization();
+    protected DatabaseSpecialization pyromancer = new DatabaseSpecialization(ClassesSkillBoosts.FIREBALL);
+    protected DatabaseSpecialization cryomancer = new DatabaseSpecialization(ClassesSkillBoosts.FROST_BOLT);
+    protected DatabaseSpecialization aquamancer = new DatabaseSpecialization(ClassesSkillBoosts.WATER_BOLT);
     protected ArmorManager.Helmets helmet = ArmorManager.Helmets.SIMPLE_MAGE_HELMET;
     protected ArmorManager.ArmorSets armor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE_MAGE;
 

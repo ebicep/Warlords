@@ -38,6 +38,8 @@ public class TestCommand implements CommandExecutor {
 //            System.out.println(ExperienceManager.getExpFromGameStats(warlordsPlayer, true));
         }
         Player player = (Player) sender;
+        System.out.println(Warlords.getPlayerSettings(player.getUniqueId()).getClassesSkillBoosts());
+        System.out.println(Warlords.getPlayerSettings(player.getUniqueId()).getSkillBoostForClass());
         //{name:"sumSmash"}
 
 //        for (DatabasePlayer lifeTime : DatabaseManager.playerService.findAll(PlayersCollections.ALL_TIME)) {
