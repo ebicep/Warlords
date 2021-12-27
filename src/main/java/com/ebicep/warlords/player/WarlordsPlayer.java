@@ -476,6 +476,10 @@ public final class WarlordsPlayer {
         this.spec = spec;
         this.specClass = Warlords.getPlayerSettings(uuid).getSelectedClass();
         this.weapon = Weapons.getSelected(player, this.specClass);
+        this.maxHealth = (int) (this.spec.getMaxHealth() * (gameState.getGame().getCooldownMode() ? 1.5 : 1));
+        this.health = this.maxHealth;
+        this.maxEnergy = this.spec.getMaxEnergy();
+        this.energy = this.maxEnergy;
         ArmorManager.resetArmor(player, specClass, team);
         applySkillBoost(player);
         this.spec.getWeapon().updateDescription(player);
@@ -483,10 +487,6 @@ public final class WarlordsPlayer {
         this.spec.getPurple().updateDescription(player);
         this.spec.getBlue().updateDescription(player);
         this.spec.getOrange().updateDescription(player);
-        this.maxHealth = (int) (this.spec.getMaxHealth() * (gameState.getGame().getCooldownMode() ? 1.5 : 1));
-        this.health = this.maxHealth;
-        this.maxEnergy = this.spec.getMaxEnergy();
-        this.energy = this.maxEnergy;
         assignItemLore(Bukkit.getPlayer(uuid));
         //sync bc player should be cached
         DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
