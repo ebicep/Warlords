@@ -1,5 +1,6 @@
 package com.ebicep.warlords.classes;
 
+import com.ebicep.warlords.classes.abilties.ArcaneShield;
 import com.ebicep.warlords.player.ClassesSkillBoosts;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.ItemBuilder;
@@ -46,10 +47,14 @@ public abstract class AbstractAbility {
 
     public abstract void onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player);
 
-    public void boostSkill(ClassesSkillBoosts skillBoost) {
+    public void boostSkill(ClassesSkillBoosts skillBoost, AbstractPlayerClass abstractPlayerClass) {
         if (!boosted) {
             boosted = true;
             skillBoost.applyBoost.accept(this);
+            if (abstractPlayerClass != null && this instanceof ArcaneShield) {
+                ArcaneShield arcaneShield = ((ArcaneShield) this);
+                arcaneShield.setMaxShieldHealth((int) (abstractPlayerClass.getMaxHealth() * (arcaneShield.getShieldPercentage() / 100f)));
+            }
         }
     }
 

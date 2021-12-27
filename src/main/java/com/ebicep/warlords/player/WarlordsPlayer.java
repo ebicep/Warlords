@@ -262,24 +262,19 @@ public final class WarlordsPlayer {
     public void applySkillBoost(Player player) {
         ClassesSkillBoosts selectedBoost = Classes.getSelectedBoost(Bukkit.getOfflinePlayer(uuid));
         if (spec.getWeapon().getClass() == selectedBoost.ability) {
-            spec.getWeapon().boostSkill(selectedBoost);
+            spec.getWeapon().boostSkill(selectedBoost, spec);
             spec.getWeapon().updateDescription(player);
         } else if (spec.getRed().getClass() == selectedBoost.ability) {
-            spec.getRed().boostSkill(selectedBoost);
+            spec.getRed().boostSkill(selectedBoost, spec);
             spec.getRed().updateDescription(player);
         } else if (spec.getPurple().getClass() == selectedBoost.ability) {
-            spec.getPurple().boostSkill(selectedBoost);
+            spec.getPurple().boostSkill(selectedBoost, spec);
             spec.getPurple().updateDescription(player);
         } else if (spec.getBlue().getClass() == selectedBoost.ability) {
-            spec.getBlue().boostSkill(selectedBoost);
+            spec.getBlue().boostSkill(selectedBoost, spec);
             spec.getBlue().updateDescription(player);
-            if (spec.getBlue() instanceof ArcaneShield) {
-                ArcaneShield arcaneShield = ((ArcaneShield) spec.getBlue());
-                arcaneShield.setMaxShieldHealth((int) (maxHealth * (arcaneShield.getShieldPercentage() / 100f)));
-                spec.getBlue().updateDescription(player);
-            }
         } else if (spec.getOrange().getClass() == selectedBoost.ability) {
-            spec.getOrange().boostSkill(selectedBoost);
+            spec.getOrange().boostSkill(selectedBoost, spec);
             spec.getOrange().updateDescription(player);
         }
     }
