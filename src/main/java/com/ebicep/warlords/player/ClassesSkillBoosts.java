@@ -17,7 +17,7 @@ public enum ClassesSkillBoosts {
     ),
     FLAME_BURST("Flame Burst",
             "§7Increases the damage you\n§7deal with Flame Burst by\n§720% and reduce the cooldown\n§7by 10%",
-            "§aIncreases the damage you\n§adeal with Flame Burst by\n§c20% and reduce the cooldown\n§aby §c10%",
+            "§aIncreases the damage you\n§adeal with Flame Burst by\n§c20% §aand reduce the cooldown\n§aby §c10%",
             FlameBurst.class,
             abstractAbility -> {
                 abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.2f);
@@ -26,8 +26,8 @@ public enum ClassesSkillBoosts {
             }
     ),
     TIME_WARP_PYROMANCER("Time Warp",
-            "§7Increase the amount of health you\n§7restore with Time Warp by §715% §7and reduce\n§7the cooldown by 15%.",
-            "§aIncrease the amount of health\n§ayou restore with Time Warp by §c15% §aand reduce\n§athe cooldown by §c15%.",
+            "§7Increase the amount of health you\n§7restore with Time Warp by §715% §7and\n§7reduce the cooldown by 15%.",
+            "§aIncrease the amount of health\n§ayou restore with Time Warp by §c15% §aand\n§areduce the cooldown by §c15%.",
             TimeWarp.class,
             abstractAbility -> {
                 if (abstractAbility instanceof TimeWarp) {
@@ -79,8 +79,8 @@ public enum ClassesSkillBoosts {
             }
     ),
     TIME_WARP_CRYOMANCER("Time Warp",
-            "§7Increase the amount of health you\n§7restore with Time Warp by §75% §7and reduce\n§7the cooldown by 25%.",
-            "§aIncrease the amount of health\n§ayou restore with Time Warp by §c5% §aand reduce\n§athe cooldown by §c25%.",
+            "§7Increase the amount of health you\n§7restore with Time Warp by §75% §7and\n§7reduce the cooldown by 25%.",
+            "§aIncrease the amount of health\n§ayou restore with Time Warp by §c5% §aand\n§areduce the cooldown by §c25%.",
             TimeWarp.class,
             abstractAbility -> {
                 if (abstractAbility instanceof TimeWarp) {
@@ -136,8 +136,8 @@ public enum ClassesSkillBoosts {
             }
     ),
     TIME_WARP_AQUAMANCER("Time Warp",
-            "§7Increase the amount of health you\n§7restore with Time Warp by §75% and reduce\n§7the cooldown by 25%.",
-            "§aIncrease the amount of health\n§ayou restore with Time Warp by §c5% §aand reduce\n§athe cooldown by §c25%.",
+            "§7Increase the amount of health you\n§7restore with Time Warp by §75% and\n§7reduce the cooldown by 25%.",
+            "§aIncrease the amount of health\n§ayou restore with Time Warp by §c5% §aand\n§areduce the cooldown by §c25%.",
             TimeWarp.class,
             abstractAbility -> {
                 if (abstractAbility instanceof TimeWarp) {
@@ -204,8 +204,8 @@ public enum ClassesSkillBoosts {
             }
     ),
     BLOOD_LUST("Blood Lust",
-            "§7Increase the amount of damage\n§7you convert into healing with\n§7Blood Lust by 5% and reduce the cooldown\nby 15%",
-            "§aIncrease the amount of damage\n§ayou convert into healing with\n§aBlood Lust by §c5% §aand reduce the cooldown\nby §c15%",
+            "§7Increase the amount of damage\n§7you convert into healing with\n§7Blood Lust by 5% and reduce the\n§7cooldown by 15%",
+            "§aIncrease the amount of damage\n§ayou convert into healing with\n§aBlood Lust by §c5% §aand reduce the\n§acooldown by §c15%",
             BloodLust.class,
             abstractAbility -> {
                 if (abstractAbility instanceof BloodLust) {
@@ -333,8 +333,8 @@ public enum ClassesSkillBoosts {
             }
     ),
     CONSECRATE_AVENGER("Consecrate",
-            "§7Increases the range of\n§7Consecrate by 2 blocks and\n§7reduce the cooldown\n§7by 40%",
-            "§aIncreases the range of\n§aConsecrate by §c2 §ablocks and\n§areduce the cooldown\n§aby §c40%",
+            "§7Removes the energy cost of\n§7Consecrate and\n§7reduce the cooldown\n§7by 40%",
+            "§aRemoves the energy cost of\n§aConsecrate and\n§areduce the cooldown\n§aby §c40%",
             Consecrate.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Consecrate) {
@@ -389,12 +389,12 @@ public enum ClassesSkillBoosts {
             }
     ),
     CONSECRATE_CRUSADER("Consecrate",
-            "§7Increases the range of\n§7Consecrate by 2 blocks and\n§7reduce the energy cost\n§7by 50",
-            "§aIncreases the range of\n§a7Consecrate by §c2 §ablocks and\n§areduce the energy cost\n§aby §c40",
+            "§7Removes the energy cost of\n§7Consecrate and\n§7reduce the cooldown\n§7by 40%",
+            "§aRemoves the energy cost of\n§aConsecrate and\n§areduce the cooldown\n§aby §c40%",
             Consecrate.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Consecrate) {
-                    ((Consecrate) abstractAbility).setRadius(6);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .6f);
                     abstractAbility.setEnergyCost(abstractAbility.getEnergyCost() - 50);
                 } else {
                     System.out.println("ERROR APPLY SKILL BOOST NOT CONSECRATE CRUS");
