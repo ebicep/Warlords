@@ -1,8 +1,10 @@
 package com.ebicep.warlords.commands.debugcommands;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame;
 import org.apache.commons.lang.math.NumberUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -28,8 +30,17 @@ public class GamesCommand implements CommandExecutor {
             sender.sendMessage(stringBuilder.toString());
             return true;
         } else {
+            if (args[0].equals("reload")) {
+                sender.sendMessage(ChatColor.GREEN + "Deleting Holograms");
+                previousGames.forEach(DatabaseGame::deleteHolograms);
+                sender.sendMessage(ChatColor.GREEN + "Creating Holograms");
+                previousGames.forEach(DatabaseGame::createHolograms);
+                sender.sendMessage(ChatColor.GREEN + "Setting Visibility");
+                Bukkit.getOnlinePlayers().forEach(DatabaseGame::setGameHologramVisibility);
+                return true;
+            }
             if (args.length < 2) {
-                sender.sendMessage(ChatColor.RED + "Invalid Arguments! [add/remove gameNumber]");
+                sender.sendMessage(ChatColor.RED + "Invalid Arguments! [add/remove] [gameNumber]");
                 return true;
             }
 
@@ -46,11 +57,11 @@ public class GamesCommand implements CommandExecutor {
 
             String input = args[0];
             switch (input.toLowerCase()) {
-                case "add" :
+                case "add":
                     DatabaseGame.addGameToDatabase(previousGames.get(gameNumber));
                     sender.sendMessage(ChatColor.GREEN + "Adding game!");
                     return true;
-                case "remove" :
+                case "remove":
                     DatabaseGame.removeGameFromDatabase(previousGames.get(gameNumber));
                     sender.sendMessage(ChatColor.RED + "Removing game!");
                     return true;

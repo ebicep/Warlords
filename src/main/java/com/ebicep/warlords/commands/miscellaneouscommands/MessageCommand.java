@@ -9,10 +9,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.LinkedHashMap;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 public class MessageCommand implements CommandExecutor {
 
@@ -44,7 +41,6 @@ public class MessageCommand implements CommandExecutor {
                     sender.sendMessage(ChatColor.DARK_PURPLE + "To " + ChatColor.AQUA + otherPlayer.getName() + ChatColor.WHITE + ": " + ChatColor.LIGHT_PURPLE + message);
                     otherPlayer.sendMessage(ChatColor.DARK_PURPLE + "From " + ChatColor.AQUA + sender.getName() + ChatColor.WHITE + ": " + ChatColor.LIGHT_PURPLE + message);
                     PlayerMessage newPlayerMessage = new PlayerMessage(player.getUniqueId(), otherPlayer.getUniqueId());
-                    lastPlayerMessages.remove(newPlayerMessage);
                     lastPlayerMessages.put(newPlayerMessage, System.currentTimeMillis());
                     return true;
                 }
@@ -56,7 +52,11 @@ public class MessageCommand implements CommandExecutor {
                     sender.sendMessage(ChatColor.RED + "Invalid Parameters! /r (message)");
                     return true;
                 }
-                Optional<PlayerMessage> playerMessage = lastPlayerMessages.keySet().stream().filter(pm -> pm.getTo().equals(player.getUniqueId())).findFirst();
+                Optional<PlayerMessage> playerMessage = lastPlayerMessages.entrySet().stream()
+                        .filter(playerMessageLongEntry -> playerMessageLongEntry.getKey().getTo().equals(player.getUniqueId()))
+                        .sorted((o1, o2) -> Long.compare(o2.getValue(), o1.getValue()))
+                        .map(Map.Entry::getKey)
+                        .findFirst();
                 if (playerMessage.isPresent()) {
                     StringBuilder message = new StringBuilder();
                     for (String arg : args) {
@@ -67,7 +67,6 @@ public class MessageCommand implements CommandExecutor {
                         sender.sendMessage(ChatColor.DARK_PURPLE + "To " + ChatColor.AQUA + otherPlayer.getName() + ChatColor.WHITE + ": " + ChatColor.LIGHT_PURPLE + message);
                         otherPlayer.sendMessage(ChatColor.DARK_PURPLE + "From " + ChatColor.AQUA + sender.getName() + ChatColor.WHITE + ": " + ChatColor.LIGHT_PURPLE + message);
                         PlayerMessage newPlayerMessage = new PlayerMessage(player.getUniqueId(), otherPlayer.getUniqueId());
-                        lastPlayerMessages.remove(newPlayerMessage);
                         lastPlayerMessages.put(newPlayerMessage, System.currentTimeMillis());
                         return true;
                     }
@@ -102,6 +101,14 @@ class PlayerMessage {
     public PlayerMessage(UUID from, UUID to) {
         this.from = from;
         this.to = to;
+    }
+
+    @Override
+    public String toString() {
+        return "PlayerMessage{" +
+                "from=" + from +
+                ", to=" + to +
+                '}';
     }
 
     public UUID getFrom() {

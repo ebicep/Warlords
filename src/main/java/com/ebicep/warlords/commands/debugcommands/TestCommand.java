@@ -2,6 +2,7 @@ package com.ebicep.warlords.commands.debugcommands;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.BaseCommand;
+import com.ebicep.warlords.commands.miscellaneouscommands.MessageCommand;
 import com.ebicep.warlords.database.cache.MultipleCacheResolver;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
@@ -41,12 +42,7 @@ public class TestCommand implements CommandExecutor {
 //            System.out.println(ExperienceManager.getExpFromGameStats(warlordsPlayer, true));
         }
         Player player = (Player) sender;
-        System.out.println(Warlords.getPlayerSettings(player.getUniqueId()).getClassesSkillBoosts());
-        System.out.println(Warlords.getPlayerSettings(player.getUniqueId()).getSkillBoostForClass());
-        //{name:"sumSmash"}
-
-        Hologram hologram = HolographicDisplaysAPI.get(Warlords.getInstance()).createHologram(player.getLocation().add(0, 5, 0));
-        hologram.getLines().appendText("TEST");
+        MessageCommand.lastPlayerMessages.clear();
 //        for (int i = 0; i < 9; i++) {
 //            hologram.getLines().appendText("test text"); //ChatColor.YELLOW.toString() + (i + 1)+ ". " + ChatColor.AQUA + "Test Name");
 //        }
