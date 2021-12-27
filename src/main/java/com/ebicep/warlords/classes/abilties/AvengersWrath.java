@@ -11,7 +11,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class AvengersWrath extends AbstractAbility {
 
-    private final int duration = 12;
+    private int duration = 12;
 
     public AvengersWrath() {
         super("Avenger's Wrath", 0, 0, 52.85f, 0, 0, 0);
@@ -52,5 +52,13 @@ public class AvengersWrath extends AbstractAbility {
                 System.currentTimeMillis()
         );
 
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
     }
 }

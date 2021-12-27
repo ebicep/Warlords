@@ -15,7 +15,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class CapacitorTotem extends AbstractTotemBase {
 
-    private final int duration = 8;
+    private int duration = 8;
 
     public CapacitorTotem() {
         super("Capacitor Totem", 404, 523, 62.64f, 20, 20, 200);
@@ -52,7 +52,7 @@ public class CapacitorTotem extends AbstractTotemBase {
         wp.getCooldownManager().addCooldown(name, this.getClass(), new CapacitorTotem(), "TOTEM", duration, wp, CooldownTypes.ABILITY);
         wp.getGame().getGameTasks().put(
                 new BukkitRunnable() {
-                    int timeLeft = 8;
+                    int timeLeft = duration;
 
                     @Override
                     public void run() {
@@ -72,4 +72,11 @@ public class CapacitorTotem extends AbstractTotemBase {
     }
 
 
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
+    }
 }
