@@ -91,8 +91,6 @@ public class StartCommand implements TabExecutor {
                         .forEach(playerInParty -> playersNotInParty.forEach(playerNotInParty -> {
                             playerInParty.hidePlayer(playerNotInParty);
                         }));
-
-
             }
         }
         //Collections.shuffle(people);

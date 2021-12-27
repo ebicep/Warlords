@@ -8,6 +8,7 @@ import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.DatabaseSpecialization;
 import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsClass;
+import com.ebicep.warlords.maps.state.PreLobbyState;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.mongodb.client.model.WriteModel;
@@ -42,7 +43,10 @@ public class TestCommand implements CommandExecutor {
 //            System.out.println(ExperienceManager.getExpFromGameStats(warlordsPlayer, true));
         }
         Player player = (Player) sender;
-        MessageCommand.lastPlayerMessages.clear();
+        System.out.println(Warlords.game.getState());
+        System.out.println(Warlords.game.getPlayers());
+        System.out.println(Warlords.getPlayers());
+
 //        for (int i = 0; i < 9; i++) {
 //            hologram.getLines().appendText("test text"); //ChatColor.YELLOW.toString() + (i + 1)+ ". " + ChatColor.AQUA + "Test Name");
 //        }
