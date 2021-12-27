@@ -92,13 +92,13 @@ public enum ClassesSkillBoosts {
             }
     ),
     ARCANE_SHIELD_CRYOMANCER("Arcane Shield",
-            "§7Increase the amount of health\n§7converted to shield by 30%",
-            "§aIncrease the amount of health\n§aconverted to shield by §c30%",
+            "§7Increase the amount of health\n§7converted to shield by 25%",
+            "§aIncrease the amount of health\n§aconverted to shield by §c25%",
             ArcaneShield.class,
             abstractAbility -> {
                 if (abstractAbility instanceof ArcaneShield) {
                     ArcaneShield arcaneShield = (ArcaneShield) abstractAbility;
-                    arcaneShield.setShieldPercentage(80);
+                    arcaneShield.setShieldPercentage(75);
                 } else {
                     System.out.println("ERROR APPLY SKILL BOOST NOT ARCANE");
                 }
@@ -368,7 +368,7 @@ public enum ClassesSkillBoosts {
     ),
     AVENGERS_WRATH("Avenger's Wrath",
             "§7Reduce the cooldown of Avenger's Wrath\n§7by 25% and increase the duration by\n§73 seconds",
-            "§areduce the cooldown of Avenger's Wrath\n§aby §c25% §aand increase the duration §aby\n§c3 §aseconds",
+            "§aReduce the cooldown of Avenger's Wrath\n§aby §c25% §aand increase the duration §aby\n§c3 §aseconds",
             AvengersWrath.class,
             abstractAbility -> {
                 if (abstractAbility instanceof AvengersWrath) {
@@ -389,13 +389,13 @@ public enum ClassesSkillBoosts {
             }
     ),
     CONSECRATE_CRUSADER("Consecrate",
-            "§7Increases the range of\n§7Consecrate by 2 blocks and\n§7reduce the energy cost\n§7by 40",
+            "§7Increases the range of\n§7Consecrate by 2 blocks and\n§7reduce the energy cost\n§7by 50",
             "§aIncreases the range of\n§a7Consecrate by §c2 §ablocks and\n§areduce the energy cost\n§aby §c40",
             Consecrate.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Consecrate) {
                     ((Consecrate) abstractAbility).setRadius(6);
-                    abstractAbility.setEnergyCost(abstractAbility.getEnergyCost() - 40);
+                    abstractAbility.setEnergyCost(abstractAbility.getEnergyCost() - 50);
                 } else {
                     System.out.println("ERROR APPLY SKILL BOOST NOT CONSECRATE CRUS");
                 }
@@ -519,11 +519,11 @@ public enum ClassesSkillBoosts {
             }
     ),
     LIGHTNING_ROD("Lightning Rod",
-            "§7Reduce the cooldown of Lightning Rod\n§7by 50%",
-            "§aReduce the cooldown of Lightning Rod\n§aby §c50%",
+            "§7Reduce the cooldown of Lightning Rod\n§7by 40%",
+            "§aReduce the cooldown of Lightning Rod\n§aby §c40%",
             LightningRod.class,
             abstractAbility -> {
-                abstractAbility.setCooldown(abstractAbility.getCooldown() * .5f);
+                abstractAbility.setCooldown(abstractAbility.getCooldown() * .6f);
             }
     ),
     CAPACITOR_TOTEM("Capacitor Totem",
