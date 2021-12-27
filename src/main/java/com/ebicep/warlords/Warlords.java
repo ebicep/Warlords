@@ -307,7 +307,6 @@ public class Warlords extends JavaPlugin {
         });
 
 
-
         //connects to the database
         Warlords.newChain()
                 .async(DatabaseManager::init)
