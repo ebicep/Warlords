@@ -20,7 +20,7 @@ import java.util.HashSet;
 public class HealingRain extends AbstractAbility {
 
     private int recastCooldown = 0;
-    private final int duration = 12;
+    private int duration = 12;
     private int radius = 8;
 
     public HealingRain() {
@@ -132,5 +132,13 @@ public class HealingRain extends AbstractAbility {
 
     public void setRadius(int radius) {
         this.radius = radius;
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
     }
 }
