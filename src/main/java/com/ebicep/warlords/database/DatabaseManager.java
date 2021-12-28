@@ -31,6 +31,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Function;
 
 import static com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame.previousGames;
 import static com.mongodb.client.model.Filters.and;
@@ -55,14 +56,15 @@ public class DatabaseManager {
 
         //Loading all online players
         Bukkit.getOnlinePlayers().forEach(player -> {
-            loadPlayer(player.getUniqueId(), PlayersCollections.ALL_TIME);
+            loadPlayer(player.getUniqueId(), PlayersCollections.ALL_TIME, () -> {
+                Warlords.playerScoreboards.get(player.getUniqueId()).giveMainLobbyScoreboard();
+            });
             updateName(player.getUniqueId());
-            Warlords.playerScoreboards.get(player.getUniqueId()).giveMainLobbyScoreboard();
         });
 
         //Loading last 5 games
         Warlords.newChain()
-                .asyncFirst(() -> gameService.getLastGames(5))
+                .asyncFirst(() -> gameService.getLastGames(10))
                 .syncLast((games) -> {
                     previousGames.addAll(games);
                     LeaderboardManager.addHologramLeaderboards(UUID.randomUUID().toString());
@@ -122,7 +124,7 @@ public class DatabaseManager {
         }
     }
 
-    public static void loadPlayer(UUID uuid, PlayersCollections collections) {
+    public static void loadPlayer(UUID uuid, PlayersCollections collections, Runnable callback) {
         if (playerService.findByUUID(uuid, collections) == null) {
             Warlords.newChain()
                     .syncFirst(() -> {
@@ -136,12 +138,14 @@ public class DatabaseManager {
                     .sync(() -> {
                         if (collections == PlayersCollections.ALL_TIME) {
                             loadPlayerInfo(Bukkit.getPlayer(uuid));
+                            callback.run();
                         }
                     }).execute();
         } else {
             if (collections == PlayersCollections.ALL_TIME) {
                 System.out.println("Loaded Player " + uuid);
                 loadPlayerInfo(Bukkit.getPlayer(uuid));
+                callback.run();
             }
         }
     }

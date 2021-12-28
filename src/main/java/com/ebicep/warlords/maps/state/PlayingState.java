@@ -174,9 +174,12 @@ public class PlayingState implements State, TimerDebugAble {
                 .async(() -> game.forEachOfflinePlayer((player, team) -> {
                     DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
                     DatabaseManager.updatePlayerAsync(databasePlayer);
-                    DatabaseManager.loadPlayer(player.getUniqueId(), PlayersCollections.SEASON_5);
-                    DatabaseManager.loadPlayer(player.getUniqueId(), PlayersCollections.WEEKLY);
-                    DatabaseManager.loadPlayer(player.getUniqueId(), PlayersCollections.DAILY);
+                    DatabaseManager.loadPlayer(player.getUniqueId(), PlayersCollections.SEASON_5, () -> {
+                    });
+                    DatabaseManager.loadPlayer(player.getUniqueId(), PlayersCollections.WEEKLY, () -> {
+                    });
+                    DatabaseManager.loadPlayer(player.getUniqueId(), PlayersCollections.DAILY, () -> {
+                    });
                 })).execute();
     }
 
@@ -295,7 +298,7 @@ public class PlayingState implements State, TimerDebugAble {
             List<WarlordsPlayer> players = new ArrayList<>(Warlords.getPlayers().values());
             float highestDamage = players.stream().sorted(Comparator.comparing(WarlordsPlayer::getTotalDamage).reversed()).collect(Collectors.toList()).get(0).getTotalDamage();
             float highestHealing = players.stream().sorted(Comparator.comparing(WarlordsPlayer::getTotalHealing).reversed()).collect(Collectors.toList()).get(0).getTotalHealing();
-            if (highestDamage <= 500000 && highestHealing <= 500000) {
+            if (highestDamage <= 600000 && highestHealing <= 600000) {
                 DatabaseGame.addGame(PlayingState.this, true);
             } else {
                 DatabaseGame.addGame(PlayingState.this, false);

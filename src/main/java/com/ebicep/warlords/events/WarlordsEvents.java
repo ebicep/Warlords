@@ -198,17 +198,17 @@ public class WarlordsEvents implements Listener {
 
         Warlords.newChain()
                 .async(() -> {
-                    DatabaseManager.loadPlayer(e.getPlayer().getUniqueId(), PlayersCollections.ALL_TIME);
-                    Warlords.updateHead(e.getPlayer());
-                }).sync(() -> {
-                    LeaderboardManager.setLeaderboardHologramVisibility(player);
-                    DatabaseGame.setGameHologramVisibility(player);
+                    DatabaseManager.loadPlayer(e.getPlayer().getUniqueId(), PlayersCollections.ALL_TIME, () -> {
+                        Warlords.updateHead(e.getPlayer());
+                        LeaderboardManager.setLeaderboardHologramVisibility(player);
+                        DatabaseGame.setGameHologramVisibility(player);
 
-                    Location rejoinPoint = Warlords.getRejoinPoint(player.getUniqueId());
-                    if (Bukkit.getWorlds().get(0).getName().equals(rejoinPoint.getWorld().getName())) {
-                        Warlords.playerScoreboards.get(player.getUniqueId()).giveMainLobbyScoreboard();
-                        ExperienceManager.giveExperienceBar(player);
-                    }
+                        Location rejoinPoint = Warlords.getRejoinPoint(player.getUniqueId());
+                        if (Bukkit.getWorlds().get(0).getName().equals(rejoinPoint.getWorld().getName())) {
+                            Warlords.playerScoreboards.get(player.getUniqueId()).giveMainLobbyScoreboard();
+                            ExperienceManager.giveExperienceBar(player);
+                        }
+                    });
                 })
                 .execute();
 

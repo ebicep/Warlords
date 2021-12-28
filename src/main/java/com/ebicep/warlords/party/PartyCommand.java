@@ -9,6 +9,7 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -133,6 +134,11 @@ public class PartyCommand implements TabExecutor {
                                     if (player.getName().equalsIgnoreCase(playerToActOn)) {
                                         Party.sendMessageToPlayer((Player) sender, ChatColor.RED + "You cannot do this on yourself!", true, true);
                                     } else {
+                                        OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(playerToActOn);
+                                        if (offlinePlayer == null || !currentParty.get().hasUUID(offlinePlayer.getUniqueId())) {
+                                            Party.sendMessageToPlayer((Player) sender, ChatColor.RED + "Cannot find player!", true, true);
+                                            return true;
+                                        }
                                         if (input.equalsIgnoreCase("promote")) {
                                             currentParty.get().promote(playerToActOn);
                                         } else if (input.equalsIgnoreCase("demote")) {
@@ -255,10 +261,14 @@ public class PartyCommand implements TabExecutor {
                         case "forcejoin": {
                             currentParty.ifPresent(party -> {
                                 if (sender.hasPermission("warlords.party.forcejoin")) {
+                                    if (args.length < 2) {
+                                        sender.sendMessage(ChatColor.RED + "Invalid Arguments! /p forcejoin [NAME or @a]");
+                                        return;
+                                    }
                                     String name = args[1];
                                     if (name.equalsIgnoreCase("@a")) {
                                         Bukkit.getOnlinePlayers().stream()
-                                                .filter(p -> !p.getName().equalsIgnoreCase(party.getLeaderName()))
+                                                .filter(p -> !p.getName().equalsIgnoreCase(party.getLeaderName()) && !party.hasUUID(p.getUniqueId()))
                                                 .forEach(p -> Bukkit.getServer().dispatchCommand(p, "p join " + party.getLeaderName()));
                                     } else {
                                         Bukkit.getOnlinePlayers().stream()
