@@ -39,14 +39,14 @@ public enum ClassesSkillBoosts {
             }
     ),
     ARCANE_SHIELD_PYROMANCER("Arcane Shield",
-            "§7Increase the amount of health\n§7converted to shield by 10% and reduce\n§7the cooldown by 20%",
-            "§aIncrease the amount of health\n§aconverted to shield by §c10% and reduce\n§athe cooldown by §c20%",
+            "§7Increase the amount of health\n§7converted to shield by 10% and reduce\n§7the cooldown by 30%",
+            "§aIncrease the amount of health\n§aconverted to shield by §c10% §aand reduce\n§athe cooldown by §c30%",
             ArcaneShield.class,
             abstractAbility -> {
                 if (abstractAbility instanceof ArcaneShield) {
                     ArcaneShield arcaneShield = (ArcaneShield) abstractAbility;
                     arcaneShield.setShieldPercentage(60);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .8f);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .7f);
                 } else {
                     System.out.println("ERROR APPLY SKILL BOOST NOT ARCANE");
                 }
@@ -57,6 +57,7 @@ public enum ClassesSkillBoosts {
             "§aReduce the cooldown of Inferno\n§aby §c25%",
             Inferno.class,
             abstractAbility -> {
+
                 abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
             }
     ),
@@ -79,8 +80,8 @@ public enum ClassesSkillBoosts {
             }
     ),
     TIME_WARP_CRYOMANCER("Time Warp",
-            "§7Increase the amount of health you\n§7restore with Time Warp by §75% §7and\n§7reduce the cooldown by 25%.",
-            "§aIncrease the amount of health\n§ayou restore with Time Warp by §c5% §aand\n§areduce the cooldown by §c25%.",
+            "§7Increase the amount of health you\n§7restore with Time Warp by §75% §7and\n§7reduce the cooldown by 30%.",
+            "§aIncrease the amount of health\n§ayou restore with Time Warp by §c5% §aand\n§areduce the cooldown by §c30%.",
             TimeWarp.class,
             abstractAbility -> {
                 if (abstractAbility instanceof TimeWarp) {
@@ -136,8 +137,8 @@ public enum ClassesSkillBoosts {
             }
     ),
     TIME_WARP_AQUAMANCER("Time Warp",
-            "§7Increase the amount of health you\n§7restore with Time Warp by §75% and\n§7reduce the cooldown by 25%.",
-            "§aIncrease the amount of health\n§ayou restore with Time Warp by §c5% §aand\n§areduce the cooldown by §c25%.",
+            "§7Increase the amount of health you\n§7restore with Time Warp by §75% and\n§7reduce the cooldown by 30%.",
+            "§aIncrease the amount of health\n§ayou restore with Time Warp by §c5% §aand\n§areduce the cooldown by §c30%.",
             TimeWarp.class,
             abstractAbility -> {
                 if (abstractAbility instanceof TimeWarp) {
@@ -149,14 +150,14 @@ public enum ClassesSkillBoosts {
             }
     ),
     ARCANE_SHIELD_AQUAMANCER("Arcane Shield",
-            "§7Increase the amount of health\n§7converted to shield by 10% and reduce\n§7the cooldown by 20%",
-            "§aIncrease the amount of health\n§aconverted to shield by §c10% and reduce\n§athe cooldown by §c20%",
+            "§7Increase the amount of health\n§7converted to shield by 10% and reduce\n§7the cooldown by 30%",
+            "§aIncrease the amount of health\n§aconverted to shield by §c10% §aand reduce\n§athe cooldown by §c30%",
             ArcaneShield.class,
             abstractAbility -> {
                 if (abstractAbility instanceof ArcaneShield) {
                     ArcaneShield arcaneShield = (ArcaneShield) abstractAbility;
                     arcaneShield.setShieldPercentage(60);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .8f);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .7f);
                 } else {
                     System.out.println("ERROR APPLY SKILL BOOST NOT ARCANE");
                 }
@@ -185,12 +186,12 @@ public enum ClassesSkillBoosts {
             }
     ),
     SEISMIC_WAVE_BERSERKER("Seismic Wave",
-            "§7Increase the damage you\n§7deal with Seismic Wave by\n§720% and reduce the cooldown\n§7by 20%",
-            "§aIncrease the damage you\n§adeal with Seismic Wave by\n§c20% §aand reduce the cooldown\n§aby §c20%",
+            "§7Increase the damage you\n§7deal with Seismic Wave by\n§725% and reduce the cooldown\n§7by 20%",
+            "§aIncrease the damage you\n§adeal with Seismic Wave by\n§c25% §aand reduce the cooldown\n§aby §c20%",
             SeismicWave.class,
             abstractAbility -> {
-                abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.2f);
-                abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.2f);
+                abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.25f);
+                abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.25f);
                 abstractAbility.setCooldown(abstractAbility.getCooldown() * .8f);
             }
     ),
@@ -346,12 +347,12 @@ public enum ClassesSkillBoosts {
             }
     ),
     LIGHT_INFUSION_AVENGER("Light Infusion",
-            "§7Reduce the cooldown of Light Infusion\n§7by 30% and increase the speed\n§7duration by 2 seconds",
-            "§aReduce the cooldown of Light Infusion\n§aby §c30% §aand increase the speed\n§aduration by §c2 §aseconds",
+            "§7Reduce the cooldown of Light Infusion\n§7by 35% and increase the speed\n§7duration by 2 seconds",
+            "§aReduce the cooldown of Light Infusion\n§aby §c35% §aand increase the speed\n§aduration by §c2 §aseconds",
             LightInfusion.class,
             abstractAbility -> {
                 if (abstractAbility instanceof LightInfusion) {
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .7f);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .65f);
                     ((LightInfusion) abstractAbility).setDuration(5);
                 } else {
                     System.out.println("ERROR APPLY SKILL BOOST NOT INFUSION AVE");
@@ -402,21 +403,21 @@ public enum ClassesSkillBoosts {
             }
     ),
     LIGHT_INFUSION_CRUSADER("Light Infusion",
-            "§7Reduce the cooldown of Light Infusion\n§7by 30% and increase the speed\n§7duration by 2 seconds",
-            "§aReduce the cooldown of Light Infusion\n§aby §c30% §aand increase the speed\n§aduration by §c2 §aseconds",
+            "§7Reduce the cooldown of Light Infusion\n§7by 30% and increase the speed\n§7duration by 3 seconds",
+            "§aReduce the cooldown of Light Infusion\n§aby §c30% §aand increase the speed\n§aduration by §c3 §aseconds",
             LightInfusion.class,
             abstractAbility -> {
                 if (abstractAbility instanceof LightInfusion) {
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .7f);
-                    ((LightInfusion) abstractAbility).setDuration(5);
+                    ((LightInfusion) abstractAbility).setDuration(6);
                 } else {
                     System.out.println("ERROR APPLY SKILL BOOST NOT INFUSION CRUS");
                 }
             }
     ),
     HOLY_RADIANCE_CRUSADER("Holy Radiance",
-            "§7Reduce the cooldown of Holy Radiance\n§7by 15% and increase the duration\n§7of Holy Mark by 4 seconds",
-            "§aReduce the cooldown of Holy Radiance\n§aby §c15% §aand increase the duration\n§aof Holy Mark by §c4 §aseconds",
+            "§7Reduce the cooldown of Holy Radiance\n§7by 20% and increase the duration\n§7of Crusader's Mark by 4 seconds",
+            "§aReduce the cooldown of Holy Radiance\n§aby §c20% §aand increase the duration\n§aof Crusader's Mark by §c4 §aseconds",
             HolyRadianceCrusader.class,
             abstractAbility -> {
                 if (abstractAbility instanceof HolyRadianceCrusader) {
@@ -428,8 +429,8 @@ public enum ClassesSkillBoosts {
             }
     ),
     INSPIRING_PRESENCE("Inspiring Presence",
-            "§7Reduce the cooldown of Inspiring Presence\n§7by 25%",
-            "§aReduce the cooldown of Inspiring Presence\n§aby §c25%",
+            "§7Reduce the cooldown of Inspiring\n§7Presence by 25%",
+            "§aReduce the cooldown of Inspiring\n§aPresence by §c25%",
             InspiringPresence.class,
             abstractAbility -> {
                 abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
@@ -456,12 +457,12 @@ public enum ClassesSkillBoosts {
             }
     ),
     LIGHT_INFUSION_PROTECTOR("Light Infusion",
-            "§7Reduce the cooldown of Light Infusion\n§7by 30% and increase the speed\n§7duration by 2 seconds",
-            "§aReduce the cooldown of Light Infusion\n§aby §c30% §aand increase the speed\n§aduration by §c2 §aseconds",
+            "§7Reduce the cooldown of Light Infusion\n§7by 35% and increase the speed\n§7duration by 2 seconds",
+            "§aReduce the cooldown of Light Infusion\n§aby §c35% §aand increase the speed\n§aduration by §c2 §aseconds",
             LightInfusion.class,
             abstractAbility -> {
                 if (abstractAbility instanceof LightInfusion) {
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .7f);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .65f);
                     ((LightInfusion) abstractAbility).setDuration(5);
                 } else {
                     System.out.println("ERROR APPLY SKILL BOOST NOT INFUSION PROT");
