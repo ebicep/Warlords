@@ -89,9 +89,7 @@ public class CooldownManager {
                     cooldowns.remove(i);
                     i--;
                     if (cooldownClass == Soulbinding.class && getCooldown(Soulbinding.class).size() == 0) {
-                        System.out.println("HERE");
                         if (warlordsPlayer.getEntity() instanceof Player) {
-                            System.out.println("TTTT");
                             ((CraftPlayer) warlordsPlayer.getEntity()).getInventory().getItem(0).removeEnchantment(Enchantment.OXYGEN);
                         }
                     }

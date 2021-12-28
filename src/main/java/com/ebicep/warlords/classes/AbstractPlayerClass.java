@@ -63,10 +63,8 @@ public abstract class AbstractPlayerClass {
             classNameShort = "SHA";
         }
         if (blue instanceof ArcaneShield) {
-            System.out.println("HJERE");
             ArcaneShield arcaneShield = ((ArcaneShield) blue);
             arcaneShield.setMaxShieldHealth((int) (maxHealth * (arcaneShield.getShieldPercentage() / 100f)));
-            System.out.println(arcaneShield.getShieldPercentage());
             blue.updateDescription(null); // Arcaneshield does not use the player in its description
         }
     }

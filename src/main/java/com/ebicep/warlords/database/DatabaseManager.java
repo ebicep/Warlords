@@ -143,9 +143,12 @@ public class DatabaseManager {
                     }).execute();
         } else {
             if (collections == PlayersCollections.ALL_TIME) {
-                System.out.println("Loaded Player " + uuid);
-                loadPlayerInfo(Bukkit.getPlayer(uuid));
-                callback.run();
+                Warlords.newChain()
+                        .sync(() -> {
+                            loadPlayerInfo(Bukkit.getPlayer(uuid));
+                            callback.run();
+                            System.out.println("Loaded Player " + uuid);
+                        }).execute();
             }
         }
     }
