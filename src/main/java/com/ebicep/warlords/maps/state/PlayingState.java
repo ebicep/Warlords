@@ -295,7 +295,7 @@ public class PlayingState implements State, TimerDebugAble {
             List<WarlordsPlayer> players = new ArrayList<>(Warlords.getPlayers().values());
             float highestDamage = players.stream().sorted(Comparator.comparing(WarlordsPlayer::getTotalDamage).reversed()).collect(Collectors.toList()).get(0).getTotalDamage();
             float highestHealing = players.stream().sorted(Comparator.comparing(WarlordsPlayer::getTotalHealing).reversed()).collect(Collectors.toList()).get(0).getTotalHealing();
-            if (highestDamage <= 500000 && highestHealing <= 500000) {
+            if (highestDamage <= 1000000 && highestHealing <= 1000000) {
                 DatabaseGame.addGame(PlayingState.this, true);
             } else {
                 DatabaseGame.addGame(PlayingState.this, false);

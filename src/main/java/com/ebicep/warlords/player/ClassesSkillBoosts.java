@@ -16,13 +16,13 @@ public enum ClassesSkillBoosts {
             }
     ),
     FLAME_BURST("Flame Burst",
-            "§7Increases the damage you\n§7deal with Flame Burst by\n§720% and reduce the cooldown\n§7by 10%",
-            "§aIncreases the damage you\n§adeal with Flame Burst by\n§c20% §aand reduce the cooldown\n§aby §c10%",
+            "§7Increases the damage you\n§7deal with Flame Burst by\n§720% and reduce the cooldown\n§7by 20%",
+            "§aIncreases the damage you\n§adeal with Flame Burst by\n§c20% §aand reduce the cooldown\n§aby §c20%",
             FlameBurst.class,
             abstractAbility -> {
                 abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.2f);
                 abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.2f);
-                abstractAbility.setCooldown(abstractAbility.getCooldown() * .9f);
+                abstractAbility.setCooldown(abstractAbility.getCooldown() * .8f);
             }
     ),
     TIME_WARP_PYROMANCER("Time Warp",
