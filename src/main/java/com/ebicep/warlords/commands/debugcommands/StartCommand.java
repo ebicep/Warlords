@@ -75,19 +75,19 @@ public class StartCommand implements TabExecutor {
         Optional<Party> party = Warlords.partyManager.getPartyFromAny(((Player) sender).getUniqueId());
         people = party.map(value -> new ArrayList<>(value.getAllPartyPeoplePlayerOnline())).orElseGet(() -> new ArrayList<>(online));
         if (party.isPresent()) {
-            if(!party.get().getLeader().equals(((Player) sender).getUniqueId())) {
+            if (!party.get().getPartyLeader().getUuid().equals(((Player) sender).getUniqueId())) {
                 sender.sendMessage(ChatColor.RED + "You are not the party leader");
                 return true;
-            } else if (!party.get().allOnline()) {
+            } else if (!party.get().allOnlineAndNoAFKs()) {
                 sender.sendMessage(ChatColor.RED + "All party members must be online or not afk");
                 return true;
             } else {
                 //hiding players not in party
                 List<Player> playersNotInParty = Bukkit.getOnlinePlayers().stream()
-                        .filter(onlinePlayer -> !party.get().getAllPartyPeople().contains(onlinePlayer.getUniqueId()))
+                        .filter(onlinePlayer -> party.get().getPartyPlayers().stream().noneMatch(partyPlayer -> partyPlayer.getUuid().equals(onlinePlayer.getUniqueId())))
                         .collect(Collectors.toList());
                 Bukkit.getOnlinePlayers().stream()
-                        .filter(onlinePlayer -> party.get().getAllPartyPeople().contains(onlinePlayer.getUniqueId()))
+                        .filter(onlinePlayer -> party.get().getPartyPlayers().stream().anyMatch(partyPlayer -> partyPlayer.getUuid().equals(onlinePlayer.getUniqueId())))
                         .forEach(playerInParty -> playersNotInParty.forEach(playerNotInParty -> {
                             playerInParty.hidePlayer(playerNotInParty);
                         }));

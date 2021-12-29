@@ -10,6 +10,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Poll {
 
@@ -28,7 +29,7 @@ public class Poll {
 
             @Override
             public void run() {
-                if (timeLeft <= 0 || party.getMembers().size() == playerAnsweredWithOption.size()) {
+                if (timeLeft <= 0 || party.getPartyPlayers().size() == playerAnsweredWithOption.size()) {
                     sendPollResults();
                     party.getPolls().remove(Poll.this);
                     this.cancel();
@@ -87,7 +88,7 @@ public class Poll {
                         ChatColor.GOLD + "[" + squareRatio[i] + ChatColor.GOLD + "]"
                         );
             }
-            Set<UUID> nonVoters = new HashSet<>(party.getMembers().keySet());
+            Set<UUID> nonVoters = party.getPartyPlayers().stream().map(PartyPlayer::getUuid).collect(Collectors.toSet());
             nonVoters.removeAll(playerAnsweredWithOption.keySet());
             StringBuilder playersThatDidntVote = new StringBuilder(ChatColor.YELLOW + "Non Voters: " + ChatColor.AQUA);
             for (UUID nonVoter : nonVoters) {
@@ -95,7 +96,7 @@ public class Poll {
                         .append(ChatColor.GRAY).append(", ");
             }
             playersThatDidntVote.setLength(playersThatDidntVote.length() - 2);
-            if(party.getMembers().size() != playerAnsweredWithOption.size() && (party.getLeader().equals(player.getUniqueId()) || party.getModerators().contains(player.getUniqueId()))) {
+            if (party.getPartyPlayers().size() != playerAnsweredWithOption.size() && (party.getPartyLeader().getUuid().equals(player.getUniqueId()) || party.getPartyModerators().stream().anyMatch(partyPlayer -> partyPlayer.getUuid().equals(player.getUniqueId())))) {
                 player.sendMessage(playersThatDidntVote.toString());
             }
             player.sendMessage(ChatColor.BLUE.toString() + ChatColor.BOLD + "------------------------------------------");
