@@ -5,7 +5,6 @@ import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
-import com.sun.org.apache.xalan.internal.xsltc.dom.ArrayNodeListIterator;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.ArmorStand;
@@ -16,35 +15,32 @@ public class HolyRadiance extends AbstractAbility {
 
     private final int radius = 6;
 
-    public HolyRadiance(float cooldown, int energyCost, int critChance, int critMultiplier) {
-        super("Holy Radiance", 582, 760, cooldown, energyCost, critChance, critMultiplier);
+    public HolyRadiance(float minDamageHeal, float maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier) {
+        super("Holy Radiance", minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
     }
 
     @Override
     public void updateDescription(Player player) {
         description = "§7Radiate with holy energy, healing\n" +
                 "§7yourself and all nearby allies for\n" +
-                "§a" + format(minDamageHeal) + " §7- §a" + format(maxDamageHeal) + " §7health." +
-                "\n\n" +
-                "§7Has a maximum range of §e" + radius + " §7blocks.";
+                "§a" + format(minDamageHeal) + " §7- §a" + format(maxDamageHeal) + " §7health.";
     }
 
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
-        wp.subtractEnergy(energyCost);
 
+        wp.subtractEnergy(energyCost);
         for (WarlordsPlayer p : PlayerFilter
                 .entitiesAround(player, radius, radius, radius)
                 .aliveTeammatesOfExcludingSelf(wp)
         ) {
-            //p.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
             wp.getGame().getGameTasks().put(
                     new FlyingArmorStand(wp.getLocation(), p, wp, 1.1).runTaskTimer(Warlords.getInstance(), 1, 1),
                     System.currentTimeMillis()
             );
         }
 
-        wp.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+        wp.healHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
 
         player.playSound(player.getLocation(), Sound.ORB_PICKUP, 1, 1);
         for (Player player1 : player.getWorld().getPlayers()) {
@@ -80,34 +76,37 @@ public class HolyRadiance extends AbstractAbility {
 
         @Override
         public void run() {
-            if (this.target.isDead()) {
-                this.cancel();
-                return;
-            }
+            if (!owner.getGame().isGameFreeze()) {
 
-            if (target.getWorld() != armorStand.getWorld()) {
-                this.cancel();
-                return;
-            }
+                if (this.target.isDead()) {
+                    this.cancel();
+                    return;
+                }
 
-            Location targetLocation = target.getLocation();
-            Location armorStandLocation = armorStand.getLocation();
-            double distance = targetLocation.distanceSquared(armorStandLocation);
+                if (target.getWorld() != armorStand.getWorld()) {
+                    this.cancel();
+                    return;
+                }
+
+                Location targetLocation = target.getLocation();
+                Location armorStandLocation = armorStand.getLocation();
+                double distance = targetLocation.distanceSquared(armorStandLocation);
 
             if (distance < speed * speed) {
-                target.addHealth(owner, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+                target.healHealth(owner, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
                 this.cancel();
                 return;
             }
 
-            targetLocation.subtract(armorStandLocation);
-            //System.out.println(Math.max(speed * 3.25 / targetLocation.lengthSquared() / 2, speed / 10));
-            targetLocation.multiply(Math.max(speed * 3.25 / targetLocation.lengthSquared() / 2, speed / 10));
+                targetLocation.subtract(armorStandLocation);
+                //System.out.println(Math.max(speed * 3.25 / targetLocation.lengthSquared() / 2, speed / 10));
+                targetLocation.multiply(Math.max(speed * 3.25 / targetLocation.lengthSquared() / 2, speed / 10));
 
-            armorStandLocation.add(targetLocation);
-            this.armorStand.teleport(armorStandLocation);
+                armorStandLocation.add(targetLocation);
+                this.armorStand.teleport(armorStandLocation);
 
-            ParticleEffect.SPELL.display(0.01f, 0, 0.01f, 0.1f, 2, armorStandLocation.add(0, 1.75, 0), 500);
+                ParticleEffect.SPELL.display(0.01f, 0, 0.01f, 0.1f, 2, armorStandLocation.add(0, 1.75, 0), 500);
+            }
         }
     }
 }

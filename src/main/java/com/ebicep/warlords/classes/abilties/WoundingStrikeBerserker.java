@@ -11,13 +11,13 @@ import javax.annotation.Nonnull;
 public class WoundingStrikeBerserker extends AbstractStrikeBase {
 
     public WoundingStrikeBerserker() {
-        super("Wounding Strike", -497, -632, 0, 100, 20, 175);
+        super("Wounding Strike", 497, 632, 0, 100, 20, 175);
     }
 
     @Override
     public void updateDescription(Player player) {
         description = "§7Strike the targeted enemy player,\n" +
-                "§7causing §c" + format(-minDamageHeal) + " §7- §c" + format(-maxDamageHeal) + " §7damage\n" +
+                "§7causing §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage\n" +
                 "§7and §cwounding §7them for §63 §7seconds.\n" +
                 "§7A wounded player receives §c40% §7less\n" +
                 "§7healing for the duration of the effect.";
@@ -25,7 +25,7 @@ public class WoundingStrikeBerserker extends AbstractStrikeBase {
 
     @Override
     protected void onHit(@Nonnull WarlordsPlayer wp, @Nonnull Player player, @Nonnull WarlordsPlayer nearPlayer) {
-        nearPlayer.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+        nearPlayer.damageHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
         if (!(nearPlayer.getCooldownManager().hasCooldown(WoundingStrikeBerserker.class) || nearPlayer.getCooldownManager().hasCooldown(WoundingStrikeDefender.class))) {
             nearPlayer.sendMessage(ChatColor.GRAY + "You are " + ChatColor.RED + "wounded" + ChatColor.GRAY + ".");
         }

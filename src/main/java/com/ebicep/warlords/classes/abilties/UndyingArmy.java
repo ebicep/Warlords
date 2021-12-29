@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
+import com.ebicep.warlords.player.ClassesSkillBoosts;
 import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.ItemBuilder;
@@ -16,11 +17,9 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.HashMap;
-
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.HashMap;
 import java.util.UUID;
 
 
@@ -33,7 +32,7 @@ public class UndyingArmy extends AbstractAbility {
 
     private final int radius = 15;
     private final int duration = 10;
-    private final int maxArmyAllies = 6;
+    private int maxArmyAllies = 6;
 
     private HashMap<UUID, Boolean> playersPopped = new HashMap<>();
 
@@ -57,7 +56,7 @@ public class UndyingArmy extends AbstractAbility {
     public void updateDescription(Player player) {
         description = "§7You may chain up to §e" + maxArmyAllies + " §7allies in a §e" + radius + "\n" +
                 "§7block radius to heal them for §a200 §7+\n" +
-                "§7§a6% §7of their missing health every 2 seconds.\n" +
+                "§7§a6% §7of their missing health every second.\n" +
                 "Lasts §6" + duration + " §7seconds." +
                 "\n\n" +
                 "§7Chained allies that take fatal damage\n" +
@@ -78,8 +77,8 @@ public class UndyingArmy extends AbstractAbility {
         ) {
             tempUndyingArmy.getPlayersPopped().put(teammate.getUuid(), false);
             if (teammate != wp) {
-                wp.sendMessage("§a\u00BB§7 " + ChatColor.GRAY + "Your Undying Army is now protecting " + teammate.getColoredName() + ChatColor.GRAY + ".");
-                teammate.sendMessage("§a\u00BB§7 " + ChatColor.GRAY + wp.getName() + "'s Undying Army protects you for " + ChatColor.GOLD + duration + ChatColor.GRAY + " seconds.");
+                wp.sendMessage("§a\u00BB§7 " + ChatColor.GRAY + "Your " + ChatColor.YELLOW + "Undying Army" + ChatColor.GRAY + " is now protecting " + teammate.getName() + ChatColor.GRAY + ".");
+                teammate.sendMessage("§a\u00BB§7 " + ChatColor.GRAY + wp.getName() + "'s " + ChatColor.YELLOW + "Undying Army" + ChatColor.GRAY + " is now protecting you for " + ChatColor.GOLD + duration + ChatColor.GRAY + " seconds.");
             }
             teammate.getCooldownManager().addCooldown(name, UndyingArmy.this.getClass(), tempUndyingArmy, "ARMY", duration, wp, CooldownTypes.ABILITY);
             wp.getGame().getGameTasks().put(
@@ -87,32 +86,34 @@ public class UndyingArmy extends AbstractAbility {
                     new BukkitRunnable() {
                         @Override
                         public void run() {
-                            if (teammate.getCooldownManager().getCooldown(tempUndyingArmy).isPresent()) {
-                                if (!((UndyingArmy) teammate.getCooldownManager().getCooldown(tempUndyingArmy).get().getCooldownObject()).isArmyDead(teammate.getUuid())) {
-                                    float healAmount = 200 + (teammate.getMaxHealth() - teammate.getHealth()) / 14.3f;
-                                    teammate.addHealth(wp, name, healAmount, healAmount, -1, 100, false);
-                                    player.playSound(teammate.getLocation(), "paladin.holyradiance.activation", 0.25f, 0.8f);
+                            if (!wp.getGame().isGameFreeze()) {
+                                if (teammate.getCooldownManager().getCooldown(tempUndyingArmy).isPresent()) {
+                                    if (!((UndyingArmy) teammate.getCooldownManager().getCooldown(tempUndyingArmy).get().getCooldownObject()).isArmyDead(teammate.getUuid())) {
+                                        float healAmount = 200 + (teammate.getMaxHealth() - teammate.getHealth()) / 14.3f;
+                                        teammate.healHealth(wp, name, healAmount, healAmount, -1, 100, false);
+                                        player.playSound(teammate.getLocation(), "paladin.holyradiance.activation", 0.15f, 0.7f);
 
-                                    // particles
-                                    Location playerLoc = teammate.getLocation();
-                                    playerLoc.add(0, 2.1, 0);
-                                    Location particleLoc = playerLoc.clone();
-                                    for (int i = 0; i < 1; i++) {
-                                        for (int j = 0; j < 10; j++) {
-                                            double angle = j / 10D * Math.PI * 2;
-                                            double width = 0.5;
-                                            particleLoc.setX(playerLoc.getX() + Math.sin(angle) * width);
-                                            particleLoc.setY(playerLoc.getY() + i / 5D);
-                                            particleLoc.setZ(playerLoc.getZ() + Math.cos(angle) * width);
+                                        // particles
+                                        Location playerLoc = teammate.getLocation();
+                                        playerLoc.add(0, 2.1, 0);
+                                        Location particleLoc = playerLoc.clone();
+                                        for (int i = 0; i < 1; i++) {
+                                            for (int j = 0; j < 10; j++) {
+                                                double angle = j / 10D * Math.PI * 2;
+                                                double width = 0.5;
+                                                particleLoc.setX(playerLoc.getX() + Math.sin(angle) * width);
+                                                particleLoc.setY(playerLoc.getY() + i / 5D);
+                                                particleLoc.setZ(playerLoc.getZ() + Math.cos(angle) * width);
 
-                                            ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(255, 255, 255), particleLoc, 500);
+                                                ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(255, 255, 255), particleLoc, 500);
+                                            }
                                         }
+                                    } else {
+                                        this.cancel();
                                     }
                                 } else {
                                     this.cancel();
                                 }
-                            } else {
-                                this.cancel();
                             }
                         }
                     }.runTaskTimer(Warlords.getInstance(), 0, 40),
@@ -127,7 +128,7 @@ public class UndyingArmy extends AbstractAbility {
         //subtracting to remove self
         numberOfPlayersWithArmy--;
         String allies = numberOfPlayersWithArmy == 1 ? "ally." : "allies.";
-        wp.sendMessage("§a\u00BB§7 " + ChatColor.GRAY + "Your Undying Army is now protecting " + ChatColor.YELLOW + numberOfPlayersWithArmy + ChatColor.GRAY + " nearby " + allies);
+        wp.sendMessage("§a\u00BB§7 " + ChatColor.GRAY + "Your " + ChatColor.YELLOW + "Undying Army" + ChatColor.GRAY + " is now protecting " + ChatColor.YELLOW + numberOfPlayersWithArmy + ChatColor.GRAY + " nearby " + allies);
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), Sound.ZOMBIE_IDLE, 2, 0.3f);
@@ -162,5 +163,9 @@ public class UndyingArmy extends AbstractAbility {
         CircleEffect circle = new CircleEffect(wp.getGame(), wp.getTeam(), player.getLocation(), radius);
         circle.addEffect(new CircumferenceEffect(ParticleEffect.VILLAGER_HAPPY, ParticleEffect.REDSTONE).particlesPerCircumference(2));
         circle.playEffects();
+    }
+
+    public void setMaxArmyAllies(int maxArmyAllies) {
+        this.maxArmyAllies = maxArmyAllies;
     }
 }

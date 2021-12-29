@@ -44,11 +44,11 @@ public class Intervene extends AbstractAbility {
                 .aliveTeammatesOfExcludingSelf(wp)
                 .requireLineOfSightIntervene(wp)
                 .lookingAtFirst(wp)
-                .first((nearWarlordsPlayer) -> {
+                .first((vt) -> {
                     //green line thingy
                     Location lineLocation = player.getLocation().add(0, 1, 0);
-                    lineLocation.setDirection(lineLocation.toVector().subtract(nearWarlordsPlayer.getLocation().add(0, 1, 0).toVector()).multiply(-1));
-                    for (int i = 0; i < Math.floor(player.getLocation().distance(nearWarlordsPlayer.getLocation())) * 2; i++) {
+                    lineLocation.setDirection(lineLocation.toVector().subtract(vt.getLocation().add(0, 1, 0).toVector()).multiply(-1));
+                    for (int i = 0; i < Math.floor(player.getLocation().distance(vt.getLocation())) * 2; i++) {
                         ParticleEffect.VILLAGER_HAPPY.display(0, 0, 0, 0, 1, lineLocation, 500);
                         lineLocation.add(lineLocation.getDirection().multiply(.5));
                     }
@@ -57,21 +57,21 @@ public class Intervene extends AbstractAbility {
                     Intervene tempIntervene = new Intervene();
 
                     //removing all other intervenes bc less work
-                    wp.getCooldownManager().getCooldowns().removeIf(cd -> cd.getCooldownClass() == Intervene.class && nearWarlordsPlayer.getCooldownManager().hasCooldown(cd.getCooldownObject()));
-                    nearWarlordsPlayer.getCooldownManager().getCooldowns().removeIf(cd -> {
+                    wp.getCooldownManager().getCooldowns().removeIf(cd -> cd.getCooldownClass() == Intervene.class && vt.getCooldownManager().hasCooldown(cd.getCooldownObject()));
+                    vt.getCooldownManager().getCooldowns().removeIf(cd -> {
                         if (cd.getCooldownClass() == Intervene.class) {
                             cd.getFrom().sendMessage("§c\u00AB§7 " + cd.getFrom().getName() + "'s " + ChatColor.YELLOW + "Intervene " + ChatColor.GRAY + "has expired!");
-                            nearWarlordsPlayer.sendMessage("§c\u00AB§7 " + cd.getFrom().getName() + "'s " + ChatColor.YELLOW + "Intervene " + ChatColor.GRAY + "has expired!");
+                            vt.sendMessage("§c\u00AB§7 " + cd.getFrom().getName() + "'s " + ChatColor.YELLOW + "Intervene " + ChatColor.GRAY + "has expired!");
                             return true;
                         } else {
                             return false;
                         }
                     });
 
-                    wp.sendMessage("§a\u00BB§7 You are now protecting " + nearWarlordsPlayer.getName() + " with your §eIntervene!");
+                    wp.sendMessage("§a\u00BB§7 You are now protecting " + vt.getName() + " with your §eIntervene!");
                     wp.getCooldownManager().addCooldown(new Cooldown(name, Intervene.this.getClass(), tempIntervene, "VENE", duration, wp, CooldownTypes.ABILITY));
-                    nearWarlordsPlayer.sendMessage("§a\u00BB§7 " + wp.getName() + " is shielding you with their " + ChatColor.YELLOW + "Intervene" + ChatColor.GRAY + "!");
-                    nearWarlordsPlayer.getCooldownManager().addCooldown(new Cooldown(name, Intervene.this.getClass(), tempIntervene, "VENE", duration, wp, CooldownTypes.ABILITY));
+                    vt.sendMessage("§a\u00BB§7 " + wp.getName() + " is shielding you with their " + ChatColor.YELLOW + "Intervene" + ChatColor.GRAY + "!");
+                    vt.getCooldownManager().addCooldown(new Cooldown(name, Intervene.this.getClass(), tempIntervene, "VENE", duration, wp, CooldownTypes.ABILITY));
 
                     wp.getSpec().getBlue().setCurrentCooldown((float) (cooldown * wp.getCooldownModifier()));
                     wp.updateBlueItem();
@@ -86,11 +86,11 @@ public class Intervene extends AbstractAbility {
                             new BukkitRunnable() {
                                 @Override
                                 public void run() {
-                                    if (nearWarlordsPlayer.getCooldownManager().hasCooldown(tempIntervene)) {
-                                        if (nearWarlordsPlayer.getCooldownManager().getCooldown(tempIntervene).get().getTimeLeft() <= 1)
-                                            nearWarlordsPlayer.sendMessage("§a\u00BB§7 " + wp.getName() + "'s §eIntervene §7will expire in §6" + (int) (nearWarlordsPlayer.getCooldownManager().getCooldown(tempIntervene).get().getTimeLeft() + .5) + "§7 second!");
+                                    if (vt.getCooldownManager().hasCooldown(tempIntervene)) {
+                                        if (vt.getCooldownManager().getCooldown(tempIntervene).get().getTimeLeft() <= 1)
+                                            vt.sendMessage("§a\u00BB§7 " + wp.getName() + "'s §eIntervene §7will expire in §6" + (int) (vt.getCooldownManager().getCooldown(tempIntervene).get().getTimeLeft() + .5) + "§7 second!");
                                         else
-                                            nearWarlordsPlayer.sendMessage("§a\u00BB§7 " + wp.getName() + "'s §eIntervene §7will expire in §6" + (int) (nearWarlordsPlayer.getCooldownManager().getCooldown(tempIntervene).get().getTimeLeft() + .5) + "§7 seconds!");
+                                            vt.sendMessage("§a\u00BB§7 " + wp.getName() + "'s §eIntervene §7will expire in §6" + (int) (vt.getCooldownManager().getCooldown(tempIntervene).get().getTimeLeft() + .5) + "§7 seconds!");
                                     } else {
                                         this.cancel();
                                     }
@@ -105,14 +105,14 @@ public class Intervene extends AbstractAbility {
                                 public void run() {
                                     if (wp.isDeath() ||
                                             tempIntervene.damagePrevented >= (3600 / 2.0) ||
-                                            !nearWarlordsPlayer.getCooldownManager().hasCooldown(tempIntervene) ||
-                                            nearWarlordsPlayer.getLocation().distanceSquared(nearWarlordsPlayer.getCooldownManager().getCooldown(tempIntervene).get().getFrom().getEntity().getLocation()) > 15 * 15
+                                            !vt.getCooldownManager().hasCooldown(tempIntervene) ||
+                                            vt.getLocation().distanceSquared(vt.getCooldownManager().getCooldown(tempIntervene).get().getFrom().getEntity().getLocation()) > 15 * 15
                                     ) {
                                         wp.sendMessage("§c\u00AB§7 " + wp.getName() + "'s " + ChatColor.YELLOW + "Intervene " + ChatColor.GRAY + "has expired!");
                                         wp.getCooldownManager().removeCooldown(tempIntervene);
 
-                                        nearWarlordsPlayer.sendMessage("§c\u00AB§7 " + wp.getName() + "'s " + ChatColor.YELLOW + "Intervene " + ChatColor.GRAY + "has expired!");
-                                        nearWarlordsPlayer.getCooldownManager().removeCooldown(tempIntervene);
+                                        vt.sendMessage("§c\u00AB§7 " + wp.getName() + "'s " + ChatColor.YELLOW + "Intervene " + ChatColor.GRAY + "has expired!");
+                                        vt.getCooldownManager().removeCooldown(tempIntervene);
 
                                         this.cancel();
                                     }

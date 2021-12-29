@@ -17,7 +17,7 @@ import java.util.List;
 public class Soulbinding extends AbstractAbility {
 
     private List<SoulBoundPlayer> soulBindedPlayers = new ArrayList<>();
-
+    private int bindDuration = 2;
     private final int duration = 12;
 
     public Soulbinding() {
@@ -27,15 +27,19 @@ public class Soulbinding extends AbstractAbility {
     @Override
     public void updateDescription(Player player) {
         description = "§7Your melee attacks §dBIND\n" +
-                "§7enemies for §62 §7seconds.\n" +
+                "§7enemies for §6" + bindDuration + " §7seconds.\n" +
                 "§7Against §dBOUND §7targets, your\n" +
-                "§7next Spirit Link will heal you and\n" +
-                "§e2 §7nearby allies for §a420 §7health.\n" +
+                "§7next Spirit Link will heal you for\n" +
+                "§a400 §7health (half for §e2 §7nearby allies.)\n" +
                 "§7Your next Fallen Souls will reduce the\n" +
                 "§7cooldown of all abilities by §61.5\n" +
-                "§7seconds. (§60.5 §7seconds for §e2 §7nearby\n" +
+                "§7seconds. (§61 §7second for §e2 §7nearby\n" +
                 "§7allies). Both buffs may be activated for\n" +
-                "§7every melee hit. Lasts §6" + duration + " §7seconds.";
+                "§7every melee hit. Lasts §6" + duration + " §7seconds." +
+                "\n\n" +
+                "§7Successful soulbind procs will grant you\n" +
+                "§7§625% §7knockback resistance for §61.2\n" +
+                "§7seconds. (max §63.6 §7seconds)";
     }
 
     @Override
@@ -107,9 +111,17 @@ public class Soulbinding extends AbstractAbility {
         return false;
     }
 
+    public int getBindDuration() {
+        return bindDuration;
+    }
+
+    public void setBindDuration(int bindDuration) {
+        this.bindDuration = bindDuration;
+    }
+
     public static class SoulBoundPlayer {
         private WarlordsPlayer boundPlayer;
-        private int timeLeft;
+        private float timeLeft;
         private boolean hitWithLink;
         private boolean hitWithSoul;
 
@@ -128,15 +140,15 @@ public class Soulbinding extends AbstractAbility {
             this.boundPlayer = boundPlayer;
         }
 
-        public int getTimeLeft() {
+        public float getTimeLeft() {
             return timeLeft;
         }
 
         public void decrementTimeLeft() {
-            this.timeLeft--;
+            this.timeLeft -= .5;
         }
 
-        public void setTimeLeft(int timeLeft) {
+        public void setTimeLeft(float timeLeft) {
             this.timeLeft = timeLeft;
         }
 

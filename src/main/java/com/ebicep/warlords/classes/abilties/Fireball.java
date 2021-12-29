@@ -16,7 +16,7 @@ public class Fireball extends AbstractProjectileBase {
     private static final float HITBOX = 4;
 
     public Fireball() {
-        super("Fireball", -334.4f, -433.4f, 0, 70, 20, 175, 2, 300, false);
+        super("Fireball", 334.4f, 433.4f, 0, 70, 20, 175, 2, 300, false);
     }
 
     @Override
@@ -52,7 +52,7 @@ public class Fireball extends AbstractProjectileBase {
             1 - (Math.sqrt(distanceSquared) - MAX_FULL_DAMAGE_DISTANCE) / 75;
         if (toReduceBy < .2) toReduceBy = .2;
         if (victim != null) {
-            victim.addHealth(
+            victim.damageHealth(
                     shooter,
                     name,
                     (float) (minDamageHeal * DIRECT_HIT_MULTIPLIER * toReduceBy),
@@ -67,7 +67,7 @@ public class Fireball extends AbstractProjectileBase {
                 .excluding(victim)
                 .aliveEnemiesOf(shooter)
         ) {
-            nearEntity.addHealth(
+            nearEntity.damageHealth(
                     shooter,
                     name,
                     (float) (minDamageHeal * toReduceBy),
@@ -81,7 +81,7 @@ public class Fireball extends AbstractProjectileBase {
     @Override
     public void updateDescription(Player player) {
         description = "§7Shoot a fireball that will explode\n" +
-                "§7for §c" + format(-minDamageHeal) + " §7- §c" + format(-maxDamageHeal) + " §7damage. A\n" +
+                "§7for §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage. A\n" +
                 "§7direct hit will cause the enemy\n" +
                 "§7to take an additional §c15% §7extra\n" +
                 "§7damage." +

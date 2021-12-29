@@ -2,7 +2,7 @@ package com.ebicep.warlords.player;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.util.Utils;
+import com.ebicep.warlords.util.NumberFormat;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -51,6 +51,29 @@ public class CustomScoreboard {
         scoreboard.getTeam("team_" + team).setSuffix(suffix);
     }
 
+    public void setSideBarTeam(int team, String entry) {
+        if(entry.length() > 16) {
+            if(entry.charAt(15) == '§') {
+                scoreboard.getTeam("team_" + team).setPrefix(entry.substring(0, 15));
+                if(entry.length() > 31) {
+                    scoreboard.getTeam("team_" + team).setSuffix(entry.substring(15, 31));
+                } else {
+                    scoreboard.getTeam("team_" + team).setSuffix(entry.substring(15));
+                }
+            } else {
+                scoreboard.getTeam("team_" + team).setPrefix(entry.substring(0, 16));
+                if(entry.length() > 32) {
+                    scoreboard.getTeam("team_" + team).setSuffix(entry.substring(16, 32));
+                } else {
+                    scoreboard.getTeam("team_" + team).setSuffix(entry.substring(16));
+                }
+            }
+        } else {
+            scoreboard.getTeam("team_" + team).setPrefix(entry);
+            scoreboard.getTeam("team_" + team).setSuffix("");
+        }
+    }
+
     public void giveNewSideBar(boolean forceClear, CustomScoreboardPair... pairs) {
         //clearing all teams if size doesnt match
         int sideBarTeams = (int) scoreboard.getTeams().stream().filter(team -> team.getName().contains("team")).count();
@@ -72,6 +95,27 @@ public class CustomScoreboard {
             setSideBarTeamPrefixAndSuffix(i, pair.getPrefix(), pair.getSuffix());
         }
     }
+    public void giveNewSideBar(boolean forceClear, String ... entries) {
+        //clearing all teams if size doesnt match
+        int sideBarTeams = (int) scoreboard.getTeams().stream().filter(team -> team.getName().contains("team")).count();
+        if(forceClear || entries.length != sideBarTeams) {
+            scoreboard.getTeams().forEach(Team::unregister);
+            clearSideBar();
+
+            //making new sidebar
+            for (int i = 0; i < entries.length; i++) {
+                Team tempTeam = scoreboard.registerNewTeam("team_" + (i + 1));
+                tempTeam.addEntry(teamEntries[i]);
+                sideBar.getScore(teamEntries[i]).setScore(i + 1);
+            }
+        }
+
+        //giving prefix/suffix from pairs
+        for (int i = entries.length; i > 0; i--) {
+            String entry = entries[entries.length - i];
+            setSideBarTeam(i, entry == null ? "" : entry);
+        }
+    }
 
     private void clearSideBar() {
         sideBar.unregister();
@@ -82,30 +126,29 @@ public class CustomScoreboard {
 
 
     public void giveMainLobbyScoreboard() {
-        if (!DatabaseManager.connected) return;
         if(scoreboard.getObjective("health") != null) {
             scoreboard.getObjective("health").unregister();
             health = null;
         }
         Warlords.newChain()
-                .async(() -> DatabaseManager.addPlayer(player.getUniqueId(), false))
-                .sync(() -> {
+                .asyncFirst(() -> DatabaseManager.playerService.findByUUID(player.getUniqueId()))
+                .syncLast((databasePlayer) -> {
                     giveNewSideBar(true,
-                            new CustomScoreboardPair("", ""),
-                            new CustomScoreboardPair("Kills: ", ChatColor.GREEN + Utils.addCommaAndRound(((Integer) DatabaseManager.getPlayerInfoWithDotNotation(player, "kills")))),
-                            new CustomScoreboardPair("Assists: ", ChatColor.GREEN + Utils.addCommaAndRound(((Integer) DatabaseManager.getPlayerInfoWithDotNotation(player, "assists")))),
-                            new CustomScoreboardPair("Deaths: ", ChatColor.GREEN + Utils.addCommaAndRound(((Integer) DatabaseManager.getPlayerInfoWithDotNotation(player, "deaths")))),
-                            new CustomScoreboardPair(" ", ""),
-                            new CustomScoreboardPair("Wins: ", ChatColor.GREEN + Utils.addCommaAndRound(((Integer) DatabaseManager.getPlayerInfoWithDotNotation(player, "wins")))),
-                            new CustomScoreboardPair("Losses: ", ChatColor.GREEN + Utils.addCommaAndRound(((Integer) DatabaseManager.getPlayerInfoWithDotNotation(player, "losses")))),
-                            new CustomScoreboardPair("  ", ""),
-                            new CustomScoreboardPair("Damage: ", ChatColor.RED + Utils.addCommaAndRound(((Number) DatabaseManager.getPlayerInfoWithDotNotation(player, "damage")).doubleValue())),
-                            new CustomScoreboardPair("Healing: ", ChatColor.DARK_GREEN + Utils.addCommaAndRound(((Number) DatabaseManager.getPlayerInfoWithDotNotation(player, "healing")).doubleValue())),
-                            new CustomScoreboardPair("Absorbed: ", ChatColor.GOLD + Utils.addCommaAndRound(((Number) DatabaseManager.getPlayerInfoWithDotNotation(player, "absorbed")).doubleValue())),
-                            new CustomScoreboardPair("    ", ""),
-                            new CustomScoreboardPair("    ", ""),
-                            new CustomScoreboardPair("          ", "§e§lUpdate"),
-                            new CustomScoreboardPair("         ", ChatColor.GREEN.toString() + ChatColor.BOLD + Warlords.VERSION)
+                            "",
+                            "Kills: " + ChatColor.GREEN + NumberFormat.addCommaAndRound(databasePlayer.getKills()),
+                            "Assists: " + ChatColor.GREEN + NumberFormat.addCommaAndRound(databasePlayer.getAssists()),
+                            "Deaths: " + ChatColor.GREEN + NumberFormat.addCommaAndRound(databasePlayer.getDeaths()),
+                            " " + "",
+                            "Wins: " + ChatColor.GREEN + NumberFormat.addCommaAndRound(databasePlayer.getWins()),
+                            "Losses: " + ChatColor.GREEN + NumberFormat.addCommaAndRound(databasePlayer.getLosses()),
+                            "  " + "",
+                            "Damage: " + ChatColor.RED + NumberFormat.addCommaAndRound(databasePlayer.getDamage()),
+                            "Healing: " + ChatColor.DARK_GREEN + NumberFormat.addCommaAndRound(databasePlayer.getHealing()),
+                            "Absorbed: " + ChatColor.GOLD + NumberFormat.addCommaAndRound(databasePlayer.getAbsorbed()),
+                            "    ",
+                            "     ",
+                            "            " + ChatColor.YELLOW + ChatColor.BOLD + "Update",
+                            "     " + ChatColor.GOLD + ChatColor.BOLD + Warlords.VERSION
                     );
                 }).execute();
     }

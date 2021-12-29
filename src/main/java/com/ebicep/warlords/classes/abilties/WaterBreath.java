@@ -2,10 +2,12 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.Matrix4d;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
+import com.ebicep.warlords.util.Utils;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -24,15 +26,20 @@ public class WaterBreath extends AbstractAbility {
     public void updateDescription(Player player) {
         description = "§7Breathe water in a cone in front of you,\n" +
                 "§7knocking back enemies, cleansing all §ede-buffs\n" +
-                "§7and restoring §a" + format(minDamageHeal) + "§7- §a" + format(maxDamageHeal) + " §7health to\n" +
-                "§7yourself and all allies hit.";
+                "§7and restoring §a" + format(minDamageHeal) + " §7- §a" + format(maxDamageHeal) + " §7health to\n" +
+                "§7yourself and all allies hit." +
+                "\n\n" +
+                "§7Water Breath can overheal allies for up to\n" +
+                "§a10% §7of their max health as bonus health\n" +
+                "§7for §6" + Utils.OVERHEAL_DURATION + " §7seconds.";
     }
 
     @Override
     public void onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
         wp.subtractEnergy(energyCost);
         wp.getCooldownManager().removeDebuffCooldowns();
-        wp.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+        wp.getSpeed().removeNegTimeModifier();
+        wp.healHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
         player.playSound(player.getLocation(), Sound.ORB_PICKUP, 1, 1);
 
         Location playerLoc = player.getLocation();
@@ -42,24 +49,29 @@ public class WaterBreath extends AbstractAbility {
         Vector viewDirection = playerLoc.getDirection();
 
         Location hitbox = player.getLocation();
+        hitbox.setPitch(0);
         hitbox.add(hitbox.getDirection().multiply(-1));
 
-        PlayerFilter.entitiesAround(player, 7.5, 10, 7.5)
-                .excluding(wp)
-                .forEach(target -> {
-                    Vector direction = target.getLocation().subtract(hitbox).toVector().normalize();
-                    if (viewDirection.dot(direction) > .65) {
-                        if (wp.isTeammateAlive(target)) {
-                            target.getCooldownManager().removeDebuffCooldowns();
-                            target.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
-                        } else {
-                            final Location loc = target.getLocation();
-                            final Vector v = player.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1.1).setY(0.2);
+        PlayerFilter.entitiesAroundRectangle(playerLoc, 7.5, 10, 7.5)
+            .excluding(wp)
+            .forEach(target -> {
+                Vector direction = target.getLocation().subtract(hitbox).toVector().normalize();
+                if (viewDirection.dot(direction) > .68) {
+                    if (wp.isTeammateAlive(target)) {
+                        target.getCooldownManager().removeDebuffCooldowns();
+                        target.getSpeed().removeNegTimeModifier();
+                        target.healHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+                        target.getCooldownManager().removeCooldown(Utils.OVERHEAL_MARKER);
+                        target.getCooldownManager().addCooldown("Overheal",
+                                null, Utils.OVERHEAL_MARKER, "OVERHEAL", Utils.OVERHEAL_DURATION, wp, CooldownTypes.BUFF);
+                    } else {
+                        final Location loc = target.getLocation();
+                        final Vector v = player.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1.1).setY(0.2);
 
-                            target.setVelocity(v);
-                        }
+                        target.setVelocity(v);
                     }
-                });
+                }
+            });
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "mage.waterbreath.activation", 2, 1);

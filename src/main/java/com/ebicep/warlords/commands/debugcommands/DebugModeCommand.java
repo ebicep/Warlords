@@ -13,7 +13,7 @@ public class DebugModeCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
 
-        if (!sender.isOp()) {
+        if (!sender.hasPermission("warlords.game.debugmode")) {
             sender.sendMessage("§cYou do not have permission to do that.");
             return true;
         }
@@ -25,8 +25,6 @@ public class DebugModeCommand implements CommandExecutor {
             warlordsPlayer.setDisableCooldowns(true);
             warlordsPlayer.setTakeDamage(false);
             warlordsPlayer.sendMessage(ChatColor.GREEN + "You now have infinite energy, no cooldowns, and take no damage!");
-        } else {
-            sender.sendMessage(ChatColor.RED + "You must be in game to use this command!");
         }
 
         return true;

@@ -18,13 +18,13 @@ public class FreezingBreath extends AbstractAbility {
     private final int slowDuration = 4;
 
     public FreezingBreath() {
-        super("Freezing Breath", -422, -585, 6.3f, 60, 20, 175);
+        super("Freezing Breath", 422, 585, 6.3f, 60, 20, 175);
     }
 
     @Override
     public void updateDescription(Player player) {
         description = "§7Breathe cold air in a cone in front\n" +
-                "§7of you, dealing §c" + format(-minDamageHeal) + " §7- §c" + format(-maxDamageHeal) + " §7damage\n" +
+                "§7of you, dealing §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage\n" +
                 "§7to all enemies hit and slowing them by\n" +
                 "§e35% §7for §6" + slowDuration + " §7seconds.";
     }
@@ -39,14 +39,15 @@ public class FreezingBreath extends AbstractAbility {
         Vector viewDirection = playerLoc.getDirection();
 
         Location hitbox = player.getLocation();
+        hitbox.setPitch(0);
         hitbox.add(hitbox.getDirection().multiply(-1));
 
-        PlayerFilter.entitiesAround(player, 7.5, 10, 7.5)
+        PlayerFilter.entitiesAroundRectangle(player, 7.5, 10, 7.5)
                 .aliveEnemiesOf(wp)
                 .forEach(target -> {
                     Vector direction = target.getLocation().subtract(hitbox).toVector().normalize();
-                    if (viewDirection.dot(direction) > .65) {
-                        target.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+                    if (viewDirection.dot(direction) > .68) {
+                        target.damageHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
                         target.getSpeed().addSpeedModifier("Freezing Breath", -35, slowDuration * 20);
                     }
                 });

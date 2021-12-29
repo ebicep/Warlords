@@ -6,6 +6,7 @@ import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.Matrix4d;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -14,20 +15,27 @@ public class LastStand extends AbstractAbility {
 
     private final int selfDuration = 12;
     private final int allyDuration = 6;
-    private final int radius = 6;
+    private final int radius = 7;
+    private int selfDamageReductionPercent = 50;
+    private int teammateDamageReductionPercent = 40;
 
     public LastStand() {
-        super("Last Stand", 0, 0, 56.38f, 40, 0, 0
-        );
+        super("Last Stand", 0, 0, 56.38f, 40, 0, 0);
+    }
+
+    public LastStand(int selfDamageReductionPercent, int teammateDamageReductionPercent) {
+        super("Last Stand", 0, 0, 56.38f, 40, 0, 0);
+        this.selfDamageReductionPercent = selfDamageReductionPercent;
+        this.teammateDamageReductionPercent = teammateDamageReductionPercent;
     }
 
     @Override
     public void updateDescription(Player player) {
         description = "§7Enter a defensive stance,\n" +
                 "§7reducing all damage you take by\n" +
-                "§c50% §7for §6" + selfDuration + " §7seconds and also\n" +
+                "§c" + selfDamageReductionPercent + "% §7for §6" + selfDuration + " §7seconds and also\n" +
                 "§7reduces all damage nearby allies take\n" +
-                "§7by §c40% §7for §6" + allyDuration + " §7seconds. You are\n" +
+                "§7by §c" + teammateDamageReductionPercent + "% §7for §6" + allyDuration + " §7seconds. You are\n" +
                 "§7healed §7for the amount of damage\n" +
                 "§7prevented on allies." +
                 "\n\n" +
@@ -37,7 +45,7 @@ public class LastStand extends AbstractAbility {
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
         wp.subtractEnergy(energyCost);
-        LastStand tempLastStand = new LastStand();
+        LastStand tempLastStand = new LastStand(selfDamageReductionPercent, teammateDamageReductionPercent);
         wp.getCooldownManager().addCooldown(name, LastStand.this.getClass(), tempLastStand, "LAST", selfDuration, wp, CooldownTypes.BUFF);
         PlayerFilter.entitiesAround(wp, radius, radius, radius)
                 .aliveTeammatesOfExcludingSelf(wp)
@@ -50,7 +58,8 @@ public class LastStand extends AbstractAbility {
                         lineLocation.add(lineLocation.getDirection().multiply(.5));
                     }
                     nearPlayer.getCooldownManager().addCooldown(name, LastStand.this.getClass(), tempLastStand, "LAST", allyDuration, wp, CooldownTypes.BUFF);
-                    player.sendMessage("§7Your Last Stand is now protecting §e" + nearPlayer.getName());
+                    player.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " Your Last Stand is now protecting " + ChatColor.YELLOW + nearPlayer.getName() + ChatColor.GRAY + "!");
+                    nearPlayer.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " " + player.getName() + "'s " + ChatColor.YELLOW + "Last Stand" + ChatColor.GRAY + " is now protecting you for §66 §7seconds!");
                 });
 
         for (Player player1 : player.getWorld().getPlayers()) {
@@ -82,5 +91,21 @@ public class LastStand extends AbstractAbility {
                         matrix.translateVector(player.getWorld(), distance, Math.sin(angle) * width, Math.cos(angle) * width), 500);
             }
         }
+    }
+
+    public float getSelfDamageReduction() {
+        return (100 - selfDamageReductionPercent) / 100f;
+    }
+
+    public void setSelfDamageReductionPercent(int selfDamageReductionPercent) {
+        this.selfDamageReductionPercent = selfDamageReductionPercent;
+    }
+
+    public float getTeammateDamageReduction() {
+        return (100 - selfDamageReductionPercent) / 100f;
+    }
+
+    public void setTeammateDamageReductionPercent(int teammateDamageReductionPercent) {
+        this.teammateDamageReductionPercent = teammateDamageReductionPercent;
     }
 }

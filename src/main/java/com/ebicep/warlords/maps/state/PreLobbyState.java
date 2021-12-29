@@ -6,8 +6,7 @@ import com.ebicep.warlords.maps.Gates;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.player.Classes;
 import com.ebicep.warlords.player.CustomScoreboard;
-import com.ebicep.warlords.player.CustomScoreboardPair;
-import com.ebicep.warlords.util.Utils;
+import com.ebicep.warlords.util.ChatUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
@@ -17,7 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.ebicep.warlords.util.Utils.sendMessage;
+import static com.ebicep.warlords.util.ChatUtils.sendMessage;
 
 public class PreLobbyState implements State, TimerDebugAble {
 
@@ -68,14 +67,14 @@ public class PreLobbyState implements State, TimerDebugAble {
                     });
                 } else if (time == 0) {
                     game.forEachOnlinePlayer((player, team) -> {
-                        Utils.sendMessage(player, false, "" + ChatColor.GREEN + ChatColor.BOLD + "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬");
-                        Utils.sendMessage(player, true, "" + ChatColor.WHITE + ChatColor.BOLD + "Warlords");
-                        Utils.sendMessage(player, true, "");
-                        Utils.sendMessage(player, true, "" + ChatColor.YELLOW + ChatColor.BOLD + "Steal and capture the enemy team's flag to");
-                        Utils.sendMessage(player, true, "" + ChatColor.YELLOW + ChatColor.BOLD + "earn " + ChatColor.AQUA + ChatColor.BOLD + "250 " + ChatColor.YELLOW + ChatColor.BOLD + "points! The first team with a");
-                        Utils.sendMessage(player, true, "" + ChatColor.YELLOW + ChatColor.BOLD + "score of " + ChatColor.AQUA + ChatColor.BOLD + "1000 " + ChatColor.YELLOW + ChatColor.BOLD + "wins!");
-                        Utils.sendMessage(player, true, "");
-                        Utils.sendMessage(player, false, "" + ChatColor.GREEN + ChatColor.BOLD + "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬");
+                        ChatUtils.sendMessage(player, false, "" + ChatColor.GREEN + ChatColor.BOLD + "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬");
+                        ChatUtils.sendMessage(player, true, "" + ChatColor.WHITE + ChatColor.BOLD + "Warlords");
+                        ChatUtils.sendMessage(player, true, "");
+                        ChatUtils.sendMessage(player, true, "" + ChatColor.YELLOW + ChatColor.BOLD + "Steal and capture the enemy team's flag to");
+                        ChatUtils.sendMessage(player, true, "" + ChatColor.YELLOW + ChatColor.BOLD + "earn " + ChatColor.AQUA + ChatColor.BOLD + "250 " + ChatColor.YELLOW + ChatColor.BOLD + "points! The first team with a");
+                        ChatUtils.sendMessage(player, true, "" + ChatColor.YELLOW + ChatColor.BOLD + "score of " + ChatColor.AQUA + ChatColor.BOLD + "1000 " + ChatColor.YELLOW + ChatColor.BOLD + "wins!");
+                        ChatUtils.sendMessage(player, true, "");
+                        ChatUtils.sendMessage(player, false, "" + ChatColor.GREEN + ChatColor.BOLD + "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬");
                         player.playSound(player.getLocation(), "gamestart", 1, 1);
                         player.setAllowFlight(false);
                     });
@@ -114,21 +113,21 @@ public class PreLobbyState implements State, TimerDebugAble {
             mapSuffix = game.getMap().getMapName();
         }
 
+        Classes classes = Warlords.getPlayerSettings(player.getUniqueId()).getSelectedClass();
         customScoreboard.giveNewSideBar(init,
-                new CustomScoreboardPair(ChatColor.GRAY + dateString, ""),
-                new CustomScoreboardPair("  ", ""),
-                new CustomScoreboardPair(mapPrefix, mapSuffix),
-                new CustomScoreboardPair(ChatColor.WHITE + "Players: ", ChatColor.GREEN.toString() + game.playersCount() + "/" + game.getMap().getMaxPlayers()),
-                new CustomScoreboardPair("   ", ""),
-                new CustomScoreboardPair(ChatColor.WHITE + "Starting in: ", ChatColor.GREEN + (time < 10 ? "00:0" : "00:") + time + ChatColor.WHITE + " to"),
-                new CustomScoreboardPair(ChatColor.WHITE + "allow time ", "for "),
-                new CustomScoreboardPair(ChatColor.WHITE + "additional ", "players"),
-                new CustomScoreboardPair("    ", ""),
-                new CustomScoreboardPair(ChatColor.GOLD + "Lv90 ", Classes.getClassesGroup(Warlords.getPlayerSettings(player.getUniqueId()).getSelectedClass()).name),
-                new CustomScoreboardPair(ChatColor.WHITE + "Spec: ", ChatColor.GREEN + Warlords.getPlayerSettings(player.getUniqueId()).getSelectedClass().name),
-                new CustomScoreboardPair("     ", ""),
-                new CustomScoreboardPair(ChatColor.YELLOW + Warlords.VERSION, "")
-        );
+                ChatColor.GRAY + dateString,
+                "  ",
+                mapPrefix + mapSuffix,
+                ChatColor.WHITE + "Players: " + ChatColor.GREEN + game.playersCount() + "/" + game.getMap().getMaxPlayers(),
+                "   ",
+                ChatColor.WHITE + "Starting in: " + ChatColor.GREEN + (time < 10 ? "00:0" : "00:") + time + ChatColor.WHITE + " to",
+                ChatColor.WHITE + "allow time for ",
+                ChatColor.WHITE + "additional players",
+                "    ",
+                //ChatColor.GOLD + "Lv" + ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(player.getUniqueId(), classes)) + " " + Classes.getClassesGroup(classes).name,
+                ChatColor.WHITE + "Spec: " + ChatColor.GREEN + classes.name,
+                "     ",
+                ChatColor.YELLOW + Warlords.VERSION);
 
 
     }

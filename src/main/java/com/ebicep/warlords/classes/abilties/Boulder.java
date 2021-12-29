@@ -8,7 +8,10 @@ import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.*;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.FallingBlock;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.EulerAngle;
@@ -16,17 +19,17 @@ import org.bukkit.util.Vector;
 
 public class Boulder extends AbstractAbility {
 
-    private static final double SPEED = 0.480;
-    private static final double GRAVITY = -0.01075;
+    private static final double SPEED = 0.290;
+    private static final double GRAVITY = -0.0059;
 
     public Boulder() {
-        super("Boulder", -451, -673, 7.05f, 80, 15, 175);
+        super("Boulder", 451, 673, 7.05f, 80, 15, 175);
     }
 
     @Override
     public void updateDescription(Player player) {
         description = "§7Launch a giant boulder that shatters\n" +
-                "§7and deals §c" + format(-minDamageHeal) + " §7- §c" + format(-maxDamageHeal) + " §7damage\n" +
+                "§7and deals §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage\n" +
                 "§7to all enemies near the impact point\n" +
                 "§7and knocks them back slightly.";
     }
@@ -50,10 +53,17 @@ public class Boulder extends AbstractAbility {
 
                     @Override
                     public void run() {
-                        quarterStep(false);
-                        quarterStep(false);
-                        quarterStep(false);
-                        quarterStep(true);
+                        if (!wp.getGame().isGameFreeze()) {
+
+                            quarterStep(false);
+                            quarterStep(false);
+                            quarterStep(false);
+                            quarterStep(false);
+                            quarterStep(false);
+                            quarterStep(false);
+                            quarterStep(true);
+
+                        }
                     }
 
                     private void quarterStep(boolean last) {
@@ -98,36 +108,43 @@ public class Boulder extends AbstractAbility {
                             for (Player player1 : player.getWorld().getPlayers()) {
                                 player1.playSound(newLoc, "shaman.boulder.impact", 2, 1);
                             }
-
-                            for (WarlordsPlayer p : PlayerFilter
-                                    .entitiesAround(newLoc, 6, 6, 6)
-                                    .aliveEnemiesOf(wp)
-                            ) {
-                                Vector v;
-                                if (p == directHit) {
-                                    v = player.getLocation().toVector().subtract(p.getLocation().toVector()).normalize().multiply(-1.1).setY(0.2);
-                                } else {
-                                    v = p.getLocation().toVector().subtract(newLoc.toVector()).normalize().multiply(1.1).setY(0.2);
-                                }
-                                p.setVelocity(v, false);
-                                p.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
-                            }
-                            newLoc.setPitch(-12);
-                            Location impactLocation = newLoc.clone().subtract(speed);
-
-                            //ParticleEffect.VILLAGER_HAPPY.display(0 , 0 ,0, 0, 10, impactLocation, 1000);
-
-                            spawnFallingBlocks(impactLocation, 3, 10);
-                            wp.getGame().getGameTasks().put(
-                                    new BukkitRunnable() {
-
-                                        @Override
-                                        public void run() {
-                                            spawnFallingBlocks(impactLocation, 3.5, 20);
+                            WarlordsPlayer directHitFinal = directHit;
+                            wp.getGame().getGameTasks().put(new BukkitRunnable() {
+                                @Override
+                                public void run() {
+                                    for (WarlordsPlayer p : PlayerFilter
+                                            .entitiesAround(newLoc, 5.5, 5.5, 5.5)
+                                            .aliveEnemiesOf(wp)
+                                    ) {
+                                        Vector v;
+                                        if (p == directHitFinal) {
+                                            v = player.getLocation().toVector().subtract(p.getLocation().toVector()).normalize().multiply(-1.15).setY(0.2);
+                                        } else {
+                                            v = p.getLocation().toVector().subtract(newLoc.toVector()).normalize().multiply(1.15).setY(0.2);
                                         }
-                                    }.runTaskLater(Warlords.getInstance(), 1),
-                                    System.currentTimeMillis()
-                            );
+                                        p.setVelocity(v, false);
+                                        p.damageHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+                                    }
+                                    newLoc.setPitch(-12);
+                                    Location impactLocation = newLoc.clone().subtract(speed);
+
+                                    //ParticleEffect.VILLAGER_HAPPY.display(0 , 0 ,0, 0, 10, impactLocation, 1000);
+
+                                    spawnFallingBlocks(impactLocation, 3, 10);
+                                    wp.getGame().getGameTasks().put(
+                                            new BukkitRunnable() {
+
+                                                @Override
+                                                public void run() {
+                                                    spawnFallingBlocks(impactLocation, 3.5, 20);
+                                                }
+                                            }.runTaskLater(Warlords.getInstance(), 1),
+                                            System.currentTimeMillis()
+                                    );
+                                }
+                            }.runTaskLater(Warlords.getInstance(), 1),
+                                System.currentTimeMillis());
+
                             this.cancel();
                         }
                     }
@@ -152,7 +169,7 @@ public class Boulder extends AbstractAbility {
             double z = initialCircleRadius * Math.sin(angle);
             angle += 360.0 / amount + (int) (Math.random() * 4 - 2);
 
-            spawnLoc.add(x, 0, z);
+            spawnLoc.add(x, 1, z);
 
             //ParticleEffect.VILLAGER_HAPPY.display(0 , 0 ,0, 0, 1, spawnLoc, 100);
 

@@ -33,7 +33,7 @@ public class LightningRod extends AbstractAbility {
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
         wp.addEnergy(wp, name, energyRestore);
-        wp.addHealth(wp, name, (wp.getMaxHealth() * .3f), (wp.getMaxHealth() * .3f), critChance, critMultiplier, false);
+        wp.healHealth(wp, name, (wp.getMaxHealth() * .3f), (wp.getMaxHealth() * .3f), critChance, critMultiplier, false);
 
         Location playerLocation = player.getLocation();
 
@@ -50,8 +50,8 @@ public class LightningRod extends AbstractAbility {
         // pulsedamage
         List<ArmorStand> totemDownAndClose = Utils.getCapacitorTotemDownAndClose(wp, wp.getEntity());
         totemDownAndClose.forEach(totem -> {
-            PlayerFilter.entitiesAround(totem.getLocation(), 6, 4, 6).aliveEnemiesOf(wp).forEach(enemy -> {
-                enemy.addHealth(
+            PlayerFilter.entitiesAround(totem.getLocation(), 6, 6, 6).aliveEnemiesOf(wp).forEach(enemy -> {
+                enemy.damageHealth(
                         wp,
                         wp.getSpec().getOrange().getName(),
                         wp.getSpec().getOrange().getMinDamageHeal(),
@@ -64,6 +64,8 @@ public class LightningRod extends AbstractAbility {
             for (Player player1 : wp.getWorld().getPlayers()) {
                 player1.playSound(totem.getLocation(), "shaman.capacitortotem.pulse", 2, 1);
             }
+
+            player.playSound(player.getLocation(), "shaman.chainlightning.impact", 2, 1);
         });
 
         new FallingBlockWaveEffect(playerLocation, knockbackRadius, 1, Material.RED_ROSE, (byte) 5).play();

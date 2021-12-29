@@ -1,6 +1,6 @@
 name: Warlords
-version: New Leaf
-author: ebic
+version: Silver Phantasm
+authors: [ebic, Plikie]
 main: com.ebicep.warlords.Warlords
 depend: [ MultiWorld, HolographicDisplays, ProtocolLib ]
 load: POSTWORLD
@@ -40,11 +40,7 @@ commands:
     usage: /spawntestdummy [TEAM] [TAKE DAMAGE (TRUE/FALSE) ]
   party:
     description: Party options
-    aliases: [ party, p,
-               partyclose, partyopen, pclose, popen,
-               partyoutside, poutside,
-               pleader
-    ]
+    aliases: [ party, p ]
   stream:
     description: Creates a new party where anyone can join
     usage: /stream
@@ -55,12 +51,6 @@ commands:
     description: Changes chat channel or sends a mesasage in a different channel
     aliases: [ chat, achat, ac, pchat, pc ]
   me:
-    description: Not happening.
-    usage: Not happening.
-  summon:
-    description: Not happening.
-    usage: Not happening.
-  give:
     description: Not happening.
     usage: Not happening.
   bot:
@@ -81,3 +71,27 @@ commands:
   debugmode:
     description: Turns on debugmode
     usage: /debugmode
+  mylocation:
+    description: Prints your location
+    usage: /mylocation
+  msg:
+    description: Message a player
+    aliases: [ msg, r, tell ]
+  experience:
+    description: Experience stuff
+    aliases: [ experience, exp ]
+  queue:
+    description: Queue system
+    aliases: [ queue ]
+
+permissions:
+  group.default:
+    default: false
+  group.gamestarter:
+    default: false
+  group.contentcreator:
+    default: false
+  group.coordinator:
+    default: false
+  group.administrator:
+    default: false

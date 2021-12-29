@@ -6,9 +6,10 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import static com.ebicep.warlords.player.WeaponsRarity.*;
 
 import java.util.HashMap;
+
+import static com.ebicep.warlords.player.WeaponsRarity.*;
 
 public enum Weapons {
 
@@ -41,7 +42,7 @@ public enum Weapons {
     KATAR("Katar", new ItemStack(Material.RAW_BEEF), EPIC),
     TENDERIZER("Tenderizer", new ItemStack(Material.COOKED_CHICKEN), EPIC),
     FLAMEWEAVER("Flameweaver", new ItemStack(Material.GOLD_PICKAXE), EPIC),
-    NETHERSTEEL_KATANA("Nethersteel Katan", new ItemStack(Material.RAW_CHICKEN), EPIC),
+    NETHERSTEEL_KATANA("Nethersteel Katana", new ItemStack(Material.RAW_CHICKEN), EPIC),
     RUNIC_AXE("Runic Axe", new ItemStack(Material.BREAD), EPIC),
     NOMEGUSTA("Nomegusta", new ItemStack(Material.WOOD_SPADE), EPIC),
     LUNAR_RELIC("Lunar Relic", new ItemStack(Material.MUSHROOM_SOUP), EPIC),
@@ -67,22 +68,38 @@ public enum Weapons {
     RUBY_THORN("Ruby Thorn", new ItemStack(Material.POISONOUS_POTATO), LEGENDARY),
     ENDERFIST("Enderfist", new ItemStack(Material.APPLE), LEGENDARY),
 
+    // wl 2 exclusive
+    NEW_LEAF_SCYTHE("Daphne's Harvest", new ItemStack(Material.GHAST_TEAR), LEGENDARY),
+    NEW_LEAF_AXE("Fate of Daphne", new ItemStack(Material.LEATHER), LEGENDARY),
+    NEW_LEAF_SWORD("Canopy's Jade Edge", new ItemStack(Material.INK_SACK, 1, (short) 4), LEGENDARY),
+    NEW_LEAF_SPEAR("Daphne's Viper", new ItemStack(Material.INK_SACK, 1, (short) 3), LEGENDARY),
+    SILVER_PHANTASM_SCYTHE("Tenth Plague", new ItemStack(Material.PRISMARINE_CRYSTALS), LEGENDARY),
+    SILVER_PHANTASM_SWORD("Hyperion's Awakening", new ItemStack(Material.PRISMARINE_SHARD), LEGENDARY),
+    SILVER_PHANTASM_SWORD_2("Blazeguard", new ItemStack(Material.FLINT), LEGENDARY),
+    SILVER_PHANTASM_SWORD_3("Venom", new ItemStack(Material.COAL), LEGENDARY),
+    SILVER_PHANTASM_HAMMER("Wrath of Aether", new ItemStack(Material.QUARTZ), LEGENDARY),
+    SILVER_PHANTASM_STAFF("Wit of Oblivion", new ItemStack(Material.IRON_INGOT), LEGENDARY),
+    SILVER_PHANTASM_STAFF_2("Lament", new ItemStack(Material.INK_SACK), LEGENDARY),
+    CANDY_CANE("Candy Slapper", new ItemStack(Material.SUGAR), LEGENDARY),
+
     // mythic
-    NEW_LEAF_SCYTHE("Daphne's Harvest", new ItemStack(Material.GHAST_TEAR), MYTHIC),
-    NEW_LEAF_AXE("Fate of Daphne", new ItemStack(Material.LEATHER), MYTHIC),
-    NEW_LEAF_SWORD("Canopy's Jade Edge", new ItemStack(Material.INK_SACK, 1, (short) 4), MYTHIC),
-    NEW_LEAF_SPEAR("Daphne's Viper", new ItemStack(Material.INK_SACK, 1, (short) 3), MYTHIC),
+    SILVER_PHANTASM_SCIMITAR("Bloodquench", new ItemStack(Material.CARROT_ITEM), LEGENDARY),
+    SILVER_PHANTASM_TRIDENT("Torment", new ItemStack(Material.COOKIE), MYTHIC),
+    SILVER_PHANTASM_SAWBLADE("Slayer", new ItemStack(Material.RABBIT), LEGENDARY),
+    SILVER_PHANTASM_SWORD_4("Lilium", new ItemStack(Material.STICK), LEGENDARY),
 
     ;
 
     public final String name;
     public final ItemStack item;
     public final WeaponsRarity rarity;
+    public boolean isUnlocked;
 
     Weapons(String name, ItemStack item, WeaponsRarity rarity) {
         this.name = name;
         this.item = item;
         this.rarity = rarity;
+        this.isUnlocked = rarity != MYTHIC;
         ItemMeta itemMeta = item.getItemMeta();
         itemMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         item.setItemMeta(itemMeta);
@@ -97,18 +114,8 @@ public enum Weapons {
     }
 
     @Deprecated
-    public static HashMap<Classes, Weapons> getSelected(OfflinePlayer player) {
-        return Warlords.getPlayerSettings(player.getUniqueId()).getWeaponSkins();
-    }
-
-    @Deprecated
     public static Weapons getSelected(OfflinePlayer player, Classes classes) {
         return Warlords.getPlayerSettings(player.getUniqueId()).getWeaponSkins().getOrDefault(classes, FELFLAME_BLADE);
-    }
-
-    @Deprecated
-    public static void setSelected(OfflinePlayer player, HashMap<Classes, Weapons> weaponSkins) {
-        Warlords.getPlayerSettings(player.getUniqueId()).setWeaponSkins(weaponSkins);
     }
 
     @Deprecated

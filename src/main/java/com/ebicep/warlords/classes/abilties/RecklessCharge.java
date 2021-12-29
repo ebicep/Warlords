@@ -3,7 +3,10 @@ package com.ebicep.warlords.classes.abilties;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.player.WarlordsPlayer;
-import com.ebicep.warlords.util.*;
+import com.ebicep.warlords.util.PacketUtils;
+import com.ebicep.warlords.util.ParticleEffect;
+import com.ebicep.warlords.util.PlayerFilter;
+import com.ebicep.warlords.util.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -22,13 +25,13 @@ public class RecklessCharge extends AbstractAbility implements Listener {
     private static List<UUID> stunnedPlayers = new ArrayList<>();
 
     public RecklessCharge() {
-        super("Reckless Charge", -457, -601, 9.32f, 60, 20, 200);
+        super("Reckless Charge", 457, 601, 9.32f, 60, 20, 200);
     }
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Charge forward, dealing §c" + format(-minDamageHeal) + "\n" +
-                "§7- §c" + format(-maxDamageHeal) + " §7damage to all enemies\n" +
+        description = "§7Charge forward, dealing §c" + format(minDamageHeal) + "\n" +
+                "§7- §c" + format(maxDamageHeal) + " §7damage to all enemies\n" +
                 "§7you pass through. Enemies hit are\n" +
                 "§5IMMOBILIZED§7, preventing movement\n" +
                 "§7for §60.5 §7seconds. Charge is reduced\n" +
@@ -103,13 +106,13 @@ public class RecklessCharge extends AbstractAbility implements Listener {
                                     player.getLocation().clone().add((Math.random() * 1.5) - .75, .5 + (Math.random() * 2) - 1, (Math.random() * 1.5) - .75),
                                     500);
                         }
-                        PlayerFilter.entitiesAround(player, 2.4, 5, 2.4)
+                        PlayerFilter.entitiesAround(player, 2.5, 5, 2.5)
                                 .excluding(playersHit)
                                 .aliveEnemiesOf(wp)
                                 .forEach(enemy -> {
                                     playersHit.add(enemy);
                                     stunnedPlayers.add(enemy.getUuid());
-                                    enemy.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+                                    enemy.damageHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
                                     wp.getGame().getGameTasks().put(
 
                                             new BukkitRunnable() {
@@ -117,9 +120,9 @@ public class RecklessCharge extends AbstractAbility implements Listener {
                                                 public void run() {
                                                     stunnedPlayers.remove(enemy.getUuid());
                                                 }
-                                            }.runTaskLater(Warlords.getInstance(), 7),
+                                            }.runTaskLater(Warlords.getInstance(), 10),
                                             System.currentTimeMillis()
-                                    ); //.35 seconds
+                                    ); //.5 seconds
                                     if (enemy.getEntity() instanceof Player) {
                                         PacketUtils.sendTitle((Player) enemy.getEntity(), "", "§dIMMOBILIZED", 0, 10, 0);
                                     }

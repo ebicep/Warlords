@@ -17,6 +17,11 @@ public class ClassCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
+
+        if (!sender.hasPermission("warlords.game.changeclass")) {
+            return true;
+        }
+
         Player player = BaseCommand.requirePlayerOutsideGame(sender);
         if (player != null) {
             PlayerSettings settings = Warlords.getPlayerSettings(player.getUniqueId());

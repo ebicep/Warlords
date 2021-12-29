@@ -29,7 +29,7 @@ public class WordWrap {
             }
 
         }
-        int pendingOffset = line.length() - 1;
+        int pendingOffset = line.length();
         if (previousOffset != pendingOffset) {
             output.append(line.substring(previousOffset, pendingOffset));
             output.append('\n');

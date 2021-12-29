@@ -9,25 +9,25 @@ import javax.annotation.Nonnull;
 
 public class AvengersStrike extends AbstractStrikeBase {
 
-    private final int energySteal = 8;
+    private final int energySteal = 10;
 
     public AvengersStrike() {
-        super("Avenger's Strike", -359, -485, 0, 90, 25, 185);
+        super("Avenger's Strike", 359, 485, 0, 90, 25, 185);
     }
 
     @Override
     public void updateDescription(Player player) {
         description = "§7Strike the targeted enemy player,\n" +
-                "§7causing §c" + format(-minDamageHeal) + " §7- §c" + format(-maxDamageHeal) + " §7damage\n" +
+                "§7causing §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage\n" +
                 "§7and removing §e" + energySteal + " §7energy.";
     }
 
     @Override
-    protected void onHit(@Nonnull WarlordsPlayer wp, @Nonnull Player player, @Nonnull WarlordsPlayer nearPlayer) {
-        if (standingOnConsecrate(player, nearPlayer.getEntity())) {
-            nearPlayer.addHealth(wp, name, (minDamageHeal * 1.2f), (maxDamageHeal * 1.2f), critChance, critMultiplier, false);
+    protected void onHit(@Nonnull WarlordsPlayer wp, @Nonnull Player p, @Nonnull WarlordsPlayer nearPlayer) {
+        if (standingOnConsecrate(p, nearPlayer.getEntity())) {
+            nearPlayer.damageHealth(wp, name, minDamageHeal * 1.2f, maxDamageHeal * 1.2f, critChance, critMultiplier, false);
         } else {
-            nearPlayer.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+            nearPlayer.damageHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
         }
         nearPlayer.subtractEnergy(energySteal);
         if (!wp.getCooldownManager().getCooldown(AvengersWrath.class).isEmpty()) {
@@ -39,10 +39,10 @@ public class AvengersStrike extends AbstractStrikeBase {
                     .limit(2)
             ) {
                 //checking if player is in consecrate
-                if (standingOnConsecrate(player, wrathTarget.getEntity())) {
-                    wrathTarget.addHealth(wp, name, minDamageHeal * 1.2f, maxDamageHeal * 1.2f, critChance, critMultiplier, false);
+                if (standingOnConsecrate(p, wrathTarget.getEntity())) {
+                    wrathTarget.damageHealth(wp, name, minDamageHeal * 1.2f, maxDamageHeal * 1.2f, critChance, critMultiplier, false);
                 } else {
-                    wrathTarget.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+                    wrathTarget.damageHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
                 }
                 wrathTarget.subtractEnergy(energySteal);
             }

@@ -15,10 +15,10 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class CapacitorTotem extends AbstractTotemBase {
 
-    private final int duration = 8;
+    private int duration = 8;
 
     public CapacitorTotem() {
-        super("Capacitor Totem", -404, -523, 62.64f, 20, 20, 200);
+        super("Capacitor Totem", 404, 523, 62.64f, 20, 20, 200);
     }
 
     @Override
@@ -26,7 +26,7 @@ public class CapacitorTotem extends AbstractTotemBase {
         description = "§7Place a highly conductive totem\n" +
                 "§7on the ground. Casting Chain Lightning\n" +
                 "§7or Lightning Rod on the totem will cause\n" +
-                "§7it to pulse, dealing §c" + format(-minDamageHeal) + " §7- §c" + format(-maxDamageHeal) + " §7damage\n" +
+                "§7it to pulse, dealing §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage\n" +
                 "§7to all enemies nearby. Lasts §6" + duration + " §7seconds.";
     }
 
@@ -52,15 +52,18 @@ public class CapacitorTotem extends AbstractTotemBase {
         wp.getCooldownManager().addCooldown(name, this.getClass(), new CapacitorTotem(), "TOTEM", duration, wp, CooldownTypes.ABILITY);
         wp.getGame().getGameTasks().put(
                 new BukkitRunnable() {
-                    int timeLeft = 8;
+                    int timeLeft = duration;
 
                     @Override
                     public void run() {
-                        if (timeLeft == 0) {
-                            totemStand.remove();
-                            this.cancel();
+                        if (!wp.getGame().isGameFreeze()) {
+
+                            if (timeLeft == 0) {
+                                totemStand.remove();
+                                this.cancel();
+                            }
+                            timeLeft--;
                         }
-                        timeLeft--;
                     }
 
                 }.runTaskTimer(Warlords.getInstance(), 0, 20),
@@ -69,4 +72,11 @@ public class CapacitorTotem extends AbstractTotemBase {
     }
 
 
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
+    }
 }

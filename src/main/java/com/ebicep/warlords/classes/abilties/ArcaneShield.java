@@ -13,32 +13,32 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class ArcaneShield extends AbstractAbility {
 
-    public int maxShieldHealth;
-    private float shieldHealth = 0;
-
     private final int duration = 6;
+    public int maxShieldHealth;
+    public int shieldPercentage = 50;
+    private float shieldHealth = 0;
 
     public ArcaneShield() {
         super("Arcane Shield", 0, 0, 31.32f, 40, 0, 0);
     }
-
+    
     @Override
     public void updateDescription(Player player) {
         description = "§7Surround yourself with arcane\n" +
                 "§7energy, creating a shield that will\n" +
-                "§7absorb up to §e" + maxShieldHealth + " §7(§e50% §7of your maximum\n" +
+                "§7absorb up to §e" + maxShieldHealth + " §7(§e" + shieldPercentage + "% §7of your maximum\n" +
                 "§7health) incoming damage. Lasts §6" + duration + " §7seconds.";
     }
 
     @Override
-    public void onActivate(WarlordsPlayer wp, Player player) {
+    public void onActivate(WarlordsPlayer wp, Player p) {
         wp.subtractEnergy(energyCost);
         wp.getCooldownManager().addCooldown(name, ArcaneShield.this.getClass(), new ArcaneShield(), "ARCA", duration, wp, CooldownTypes.ABILITY);
-        ((EntityLiving) ((CraftPlayer) player).getHandle()).setAbsorptionHearts(20);
+        ((EntityLiving) ((CraftPlayer) p).getHandle()).setAbsorptionHearts(20);
         shieldHealth = maxShieldHealth;
 
-        for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "mage.arcaneshield.activation", 2, 1);
+        for (Player player1 : p.getWorld().getPlayers()) {
+            player1.playSound(p.getLocation(), "mage.arcaneshield.activation", 2, 1);
         }
 
         wp.getGame().getGameTasks().put(
@@ -46,7 +46,7 @@ public class ArcaneShield extends AbstractAbility {
                     @Override
                     public void run() {
                         if (!wp.getCooldownManager().getCooldown(ArcaneShield.class).isEmpty()) {
-                            Location location = player.getLocation();
+                            Location location = p.getLocation();
                             location.add(0, 1.5, 0);
                             ParticleEffect.CLOUD.display(0.15F, 0.3F, 0.15F, 0.01F, 2, location, 500);
                             ParticleEffect.FIREWORKS_SPARK.display(0.3F, 0.3F, 0.3F, 0.0001F, 1, location, 500);
@@ -68,4 +68,15 @@ public class ArcaneShield extends AbstractAbility {
         this.shieldHealth += amount;
     }
 
+    public void setMaxShieldHealth(int maxShieldHealth) {
+        this.maxShieldHealth = maxShieldHealth;
+    }
+
+    public int getShieldPercentage() {
+        return shieldPercentage;
+    }
+
+    public void setShieldPercentage(int shieldPercentage) {
+        this.shieldPercentage = shieldPercentage;
+    }
 }

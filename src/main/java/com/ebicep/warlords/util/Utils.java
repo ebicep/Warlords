@@ -1,15 +1,9 @@
 package com.ebicep.warlords.util;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.player.WarlordsPlayer;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.minecraft.server.v1_8_R3.NBTTagCompound;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Statistic;
-import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -18,30 +12,15 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nullable;
-import java.text.DecimalFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class Utils {
 
-    private static final DecimalFormat decimalFormatOptionalTenths = new DecimalFormat("#.#");
-    private static final DecimalFormat decimalFormatTenths = new DecimalFormat("0.0");
-
-    static {
-        decimalFormatOptionalTenths.setDecimalSeparatorAlwaysShown(false);
-        decimalFormatTenths.setDecimalSeparatorAlwaysShown(false);
-    }
-
-    public static String formatOptionalTenths(double value) {
-        return decimalFormatOptionalTenths.format(value);
-    }
-
-    public static String formatTenths(double value) {
-        return decimalFormatTenths.format(value);
-    }
+    public static final String[] specsOrdered = {"Pyromancer", "Cryomancer", "Aquamancer", "Berserker", "Defender", "Revenant", "Avenger", "Crusader", "Protector", "Thunderlord", "Spiritguard", "Earthwarden"};
 
     public static final ItemStack[] woolSortedByColor = {
             new ItemStack(Material.WOOL, 1, (byte) 0),
@@ -61,6 +40,9 @@ public class Utils {
             new ItemStack(Material.WOOL, 1, (byte) 2),
             new ItemStack(Material.WOOL, 1, (byte) 6),
     };
+
+    public static final Object OVERHEAL_MARKER = new Object();
+    public static final int OVERHEAL_DURATION = 15;
 
     public static double getDotToPlayer(LivingEntity player1, LivingEntity player2, double yIncrease) {
         return getDotToLocation(new LocationBuilder(player1.getEyeLocation()).addY(yIncrease).get(), player2.getEyeLocation());
@@ -92,7 +74,15 @@ public class Utils {
                 .backward(4)
                 .addY(.7)
                 .get();
-        return getDotToLocation(eye, player2.getEyeLocation()) > 0.975;
+        return getDotToLocation(eye, player2.getEyeLocation()) > 0.96;
+    }
+
+    public static boolean isLookingAtMark(LivingEntity player1, LivingEntity player2) {
+        Location eye = new LocationBuilder(player1.getEyeLocation())
+                .backward(5)
+                .addY(.7)
+                .get();
+        return getDotToLocation(eye, player2.getEyeLocation()) > 0.96;
     }
 
     public static boolean isLookingAtChain(LivingEntity player1, LivingEntity player2) {
@@ -145,119 +135,12 @@ public class Utils {
 
     private static final Location LOCATION_CONTAINER = new Location(null, 0, 0, 0);
 
-    @Deprecated
-    public static Stream<WarlordsPlayer> filterOnlyEnemiesSorted(WarlordsPlayer entity, double x, double y, double z, Entity player) {
-        return filterOnlyEnemiesSorted(entity.getLocation(LOCATION_CONTAINER), x, y, z, player);
-    }
-
-    @Deprecated
-    public static Stream<WarlordsPlayer> filterOnlyEnemiesSorted(Entity entity, double x, double y, double z, Entity player) {
-        return filterOnlyEnemiesSorted(entity.getLocation(LOCATION_CONTAINER), x, y, z, player);
-    }
-
-    @Deprecated
-    public static Stream<WarlordsPlayer> filterOnlyEnemiesSorted(Location loc, double x, double y, double z, Entity player) {
-        return filterOnlyEnemies(loc.getWorld().getNearbyEntities(loc, x, y, z), player)
-                .sorted(sortClosestBy(WarlordsPlayer::getLocation, loc));
-    }
-
-    @Deprecated
-    public static Stream<WarlordsPlayer> filterOnlyEnemies(Entity entity, double x, double y, double z, Entity player) {
-        return filterOnlyEnemies(entity.getLocation(LOCATION_CONTAINER), x, y, z, player);
-    }
-
-    @Deprecated
-    public static Stream<WarlordsPlayer> filterOnlyEnemies(Location loc, double x, double y, double z, Entity player) {
-        return filterOnlyEnemies(loc.getWorld().getNearbyEntities(loc, x, y, z), player)
-                .filter(radiusAround(WarlordsPlayer::getLocation, loc, x, y, z));
-    }
-
-    /**
-     * Map the list of entities to valid WarlordPlayer who are part off the enemy of the team of the player
-     *
-     * @param entities
-     * @param player
-     * @return
-     */
-    @Deprecated
-    public static Stream<WarlordsPlayer> filterOnlyEnemies(Collection<Entity> entities, Entity player) {
-        WarlordsPlayer wp = Warlords.getPlayer(player);
-        return wp == null ? Stream.empty() : entities.stream()
-                .map(Warlords::getPlayer)
-                .filter(filterOnlyEnemies(wp));
-    }
-
     public static Predicate<WarlordsPlayer> filterOnlyEnemies(@Nullable WarlordsPlayer wp) {
         return wp == null ? (player) -> false : wp::isEnemyAlive;
     }
 
-
-    @Deprecated
-    public static Stream<WarlordsPlayer> filterOnlyTeammatesSorted(WarlordsPlayer entity, double x, double y, double z, Entity player) {
-        return filterOnlyTeammatesSorted(entity.getLocation(LOCATION_CONTAINER), x, y, z, player);
-    }
-
-    @Deprecated
-    public static Stream<WarlordsPlayer> filterOnlyTeammatesSorted(Entity entity, double x, double y, double z, Entity player) {
-        return filterOnlyTeammatesSorted(entity.getLocation(LOCATION_CONTAINER), x, y, z, player);
-    }
-
-    @Deprecated
-    public static Stream<WarlordsPlayer> filterOnlyTeammatesSorted(Location loc, double x, double y, double z, Entity player) {
-        return filterOnlyTeammates(loc.getWorld().getNearbyEntities(loc, x, y, z), player)
-                .sorted(sortClosestBy(WarlordsPlayer::getLocation, loc));
-    }
-
-    @Deprecated
-    public static Stream<WarlordsPlayer> filterOnlyTeammates(Entity entity, double x, double y, double z, Entity player) {
-        return filterOnlyTeammates(entity.getLocation(LOCATION_CONTAINER), x, y, z, player);
-    }
-
-    @Deprecated
-    public static Stream<WarlordsPlayer> filterOnlyTeammates(WarlordsPlayer entity, double x, double y, double z, Entity player) {
-        return filterOnlyTeammates(entity.getLocation(LOCATION_CONTAINER), x, y, z, player);
-    }
-
-    @Deprecated
-    public static Stream<WarlordsPlayer> filterOnlyTeammates(Location loc, double x, double y, double z, Entity player) {
-        return filterOnlyTeammates(loc.getWorld().getNearbyEntities(loc, x, y, z), player)
-                .filter(radiusAround(WarlordsPlayer::getLocation, loc, x, y, z));
-    }
-
-    /**
-     * Map the list of entities to valid WarlordPlayer who are part on the team of the player
-     *
-     * @param entities
-     * @param player
-     * @return
-     */
-    @Deprecated
-    public static Stream<WarlordsPlayer> filterOnlyTeammates(Collection<Entity> entities, Entity player) {
-        WarlordsPlayer wp = Warlords.getPlayer(player);
-        return wp == null ? Stream.empty() : entities.stream()
-                .map(e -> Warlords.getPlayer(e))
-                .filter(filterOnlyTeammates(wp));
-    }
-
     public static Predicate<WarlordsPlayer> filterOnlyTeammates(@Nullable WarlordsPlayer wp) {
         return wp == null ? (player) -> false : wp::isTeammateAlive;
-    }
-
-    // Old methods:
-    @Deprecated
-    public static List<Entity> filterOutTeammates(Collection<Entity> entities, Player player) {
-        WarlordsPlayer wp = Warlords.getPlayer(player);
-        return wp == null ? Collections.emptyList() : entities.stream()
-                .filter(e -> wp.isEnemyAlive(e))
-                .collect(Collectors.toList());
-    }
-
-    @Deprecated
-    public static List<Entity> filterTeammates(Collection<Entity> entities, Player player) {
-        WarlordsPlayer wp = Warlords.getPlayer(player);
-        return wp == null ? Collections.emptyList() : entities.stream()
-                .filter(e -> wp.isTeammateAlive(e))
-                .collect(Collectors.toList());
     }
 
     private static final Location LOCATION_CACHE_SORT = new Location(null, 0, 0, 0);
@@ -418,119 +301,5 @@ public class Utils {
 //        return blocksAbove && ((right && !left) || (!right && left));
     }
 
-    private final static int CENTER_PX = 164;
 
-
-    public static void sendMessage(Player player, boolean centered, String message) {
-        if (centered) {
-            Utils.sendCenteredMessage(player, message);
-        } else {
-            player.sendMessage(message);
-        }
-    }
-
-    public static void sendCenteredMessage(Player player, String message) {
-        if (message == null || message.equals("")) player.sendMessage("");
-        message = ChatColor.translateAlternateColorCodes('&', message);
-
-        int messagePxSize = 0;
-        boolean previousCode = false;
-        boolean isBold = false;
-
-        for (char c : message.toCharArray()) {
-            if (c == '§') {
-                previousCode = true;
-            } else if (previousCode) {
-                previousCode = false;
-                isBold = c == 'l' || c == 'L';
-            } else {
-                DefaultFontInfo dFI = DefaultFontInfo.getDefaultFontInfo(c);
-                messagePxSize += isBold ? dFI.getBoldLength() : dFI.getLength();
-                messagePxSize++;
-            }
-        }
-
-        int halvedMessageSize = messagePxSize / 2;
-        int toCompensate = CENTER_PX - halvedMessageSize;
-        int spaceLength = DefaultFontInfo.SPACE.getLength() + 1;
-        int compensated = 0;
-        StringBuilder sb = new StringBuilder();
-        while (compensated < toCompensate) {
-            sb.append(" ");
-            compensated += spaceLength;
-        }
-        player.sendMessage(sb.toString() + message);
-    }
-
-    public static void sendCenteredMessageWithEvents(Player player, List<TextComponent> textComponents) {
-        if (textComponents == null || textComponents.size() == 0) ;
-        String message = "";
-        for (TextComponent textComponent : textComponents) {
-            message += textComponent.getText();
-        }
-        message = ChatColor.translateAlternateColorCodes('&', message);
-        int messagePxSize = 0;
-        boolean previousCode = false;
-        boolean isBold = false;
-
-        for (char c : message.toCharArray()) {
-            if (c == '§') {
-                previousCode = true;
-            } else if (previousCode) {
-                previousCode = false;
-                isBold = c == 'l' || c == 'L';
-            } else {
-                DefaultFontInfo dFI = DefaultFontInfo.getDefaultFontInfo(c);
-                messagePxSize += isBold ? dFI.getBoldLength() : dFI.getLength();
-                messagePxSize++;
-            }
-        }
-        int halvedMessageSize = messagePxSize / 2;
-        int toCompensate = CENTER_PX - halvedMessageSize;
-        int spaceLength = DefaultFontInfo.SPACE.getLength() + 1;
-        int compensated = 0;
-        StringBuilder sb = new StringBuilder();
-        while (compensated < toCompensate) {
-            sb.append(" ");
-            compensated += spaceLength;
-        }
-        ComponentBuilder componentBuilder = new ComponentBuilder(sb.toString());
-        for (TextComponent textComponent : textComponents) {
-            componentBuilder.append(textComponent.getText());
-            componentBuilder.event(textComponent.getHoverEvent());
-            componentBuilder.event(textComponent.getClickEvent());
-        }
-        player.spigot().sendMessage(componentBuilder.create());
-    }
-
-    public static String addCommaAndRound(double amount) {
-        amount = Math.round(amount);
-        DecimalFormat formatter = new DecimalFormat("#,###");
-        return formatter.format(amount);
-    }
-
-    /**
-     * Converts an {@link org.bukkit.inventory.ItemStack} to a Json string
-     * for sending with {@link net.md_5.bungee.api.chat.BaseComponent}'s.
-     *
-     * @param itemStack the item to convert
-     * @return the Json string representation of the item
-     */
-    public static String convertItemStackToJsonRegular(ItemStack itemStack) {
-        // First we convert the item stack into an NMS itemstack
-        net.minecraft.server.v1_8_R3.ItemStack nmsItemStack = CraftItemStack.asNMSCopy(itemStack);
-        net.minecraft.server.v1_8_R3.NBTTagCompound compound = new NBTTagCompound();
-        nmsItemStack.save(compound);
-        return compound.toString();
-    }
-
-    public static <T, E> Set<T> getKeysByValue(Map<T, E> map, E value) {
-        Set<T> keys = new HashSet<T>();
-        for (Map.Entry<T, E> entry : map.entrySet()) {
-            if (Objects.equals(value, entry.getValue())) {
-                keys.add(entry.getKey());
-            }
-        }
-        return keys;
-    }
 }

@@ -16,11 +16,13 @@ import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 public class DeathsDebt extends AbstractTotemBase {
+
+    private int respiteRadius = 10;
+    private int debtRadius = 8;
     private float delayedDamage = 0;
     private double timeLeftRespite = 0;
     private double timeLeftDebt = 0;
@@ -34,14 +36,16 @@ public class DeathsDebt extends AbstractTotemBase {
         description = "§2Spirits’ Respite§7: Place down a totem that\n" +
                 "§7delays §c100% §7of incoming damage towards\n" +
                 "§7yourself. Transforms into §dDeath’s Debt §7after\n" +
-                "§64 §7- §68 §7seconds (increases with higher health),\n" +
-                "§7or when you exit its §e10 §7block radius.\n" +
+                "§64 §7- §66 §7seconds (increases with higher health),\n" +
+                "§7or when you exit its §e" + respiteRadius + " §7block radius.\n" +
                 "\n" +
                 "§dDeath’s Debt§7: Take §c100% §7of the damage delayed\n" +
                 "§7by §2Spirit's Respite §7over §66 §7seconds. The totem\n" +
                 "§7will heal nearby allies for §a15% §7of all damage\n" +
-                "§7that you take. If you survive, deal §c15% §7of the\n" +
-                "§7damage delayed to nearby enemies.";
+                "§7that you take. If you survive, deal §c15% §7of the" +
+                "\n\n" +
+                "§7Successful Soulbind procs on enemies add §60.5 §7seconds\n" +
+                "§7to your totem duration. (cap of §66 §7seconds)";
     }
 
     @Override
@@ -63,15 +67,13 @@ public class DeathsDebt extends AbstractTotemBase {
 
     @Override
     protected void onActivation(WarlordsPlayer wp, Player player, ArmorStand totemStand) {
-        final int secondsLeft = 4 + (4 * (int) Math.round((double) wp.getHealth() / wp.getMaxHealth()));
+        final int secondsLeft = 4 + (2 * (int) Math.round((double) wp.getHealth() / wp.getMaxHealth()));
 
         DeathsDebt tempDeathsDebt = new DeathsDebt();
 
         wp.getCooldownManager().addCooldown("Spirits Respite", this.getClass(), tempDeathsDebt, "RESP", secondsLeft, wp, CooldownTypes.ABILITY);
 
-        player.setMetadata("TOTEM", new FixedMetadataValue(Warlords.getInstance(), tempDeathsDebt));
-
-        CircleEffect circle = new CircleEffect(wp, totemStand.getLocation().clone().add(0, 1.25, 0), 10);
+        CircleEffect circle = new CircleEffect(wp, totemStand.getLocation().clone().add(0, 1.25, 0), respiteRadius);
         circle.addEffect(new CircumferenceEffect(ParticleEffect.SPELL));
         circle.addEffect(new DoubleLineEffect(ParticleEffect.REDSTONE));
         BukkitTask particles = Bukkit.getScheduler().runTaskTimer(Warlords.getInstance(), circle::playEffects, 0, 1);
@@ -79,11 +81,13 @@ public class DeathsDebt extends AbstractTotemBase {
         tempDeathsDebt.setTimeLeftRespite(secondsLeft);
 
         wp.getGame().getGameTasks().put(
-                new BukkitRunnable() {
-                    int counter = 0;
+            new BukkitRunnable() {
+                int counter = 0;
 
-                    @Override
-                    public void run() {
+                @Override
+                public void run() {
+                    if (!wp.getGame().isGameFreeze()) {
+
                         if (wp.isDeath()) {
                             totemStand.remove();
                             particles.cancel();
@@ -95,7 +99,7 @@ public class DeathsDebt extends AbstractTotemBase {
                                 this.cancel();
                                 return;
                             }
-                            boolean isPlayerInRadius = player.getLocation().distanceSquared(totemStand.getLocation()) < 10 * 10;
+                            boolean isPlayerInRadius = player.getLocation().distanceSquared(totemStand.getLocation()) < respiteRadius * respiteRadius;
                             if (!isPlayerInRadius && tempDeathsDebt.getTimeLeftRespite() != -1) {
                                 tempDeathsDebt.setTimeLeftRespite(0);
                             }
@@ -109,20 +113,19 @@ public class DeathsDebt extends AbstractTotemBase {
                                     for (Player player1 : player.getWorld().getPlayers()) {
                                         player1.playSound(totemStand.getLocation(), "shaman.earthlivingweapon.impact", 2, 1.5F);
                                     }
-                                    player.sendMessage(ChatColor.GREEN + "\u00BB §2Spirit's Respite §7delayed §c" + -Math.round(tempDeathsDebt.getDelayedDamage()) + " §7damage. §6" + roundedTimeLeftRespite + " §7seconds left.");
+                                    player.sendMessage(ChatColor.GREEN + "\u00BB §2Spirit's Respite §7delayed §c" + Math.round(tempDeathsDebt.getDelayedDamage()) + " §7damage. §6" + roundedTimeLeftRespite + " §7seconds left.");
                                 } else if (roundedTimeLeftRespite == 0) {
                                     //beginning debt
                                     wp.getCooldownManager().removeCooldown(tempDeathsDebt);
                                     wp.getCooldownManager().addCooldown(name, this.getClass(), tempDeathsDebt, "DEBT", 6, wp, CooldownTypes.ABILITY);
 
-                                    player.removeMetadata("TOTEM", Warlords.getInstance());
                                     if (!isPlayerInRadius) {
                                         player.sendMessage("§7You walked outside your §dDeath's Debt §7radius");
                                     } else {
-                                        player.sendMessage("§c\u00AB §2Spirit's Respite §7delayed §c" + -Math.round(tempDeathsDebt.getDelayedDamage()) + " §7damage. §dYour debt must now be paid.");
+                                        player.sendMessage("§c\u00AB §2Spirit's Respite §7delayed §c" + Math.round(tempDeathsDebt.getDelayedDamage()) + " §7damage. §dYour debt must now be paid.");
                                     }
                                     circle.replaceEffects(e -> e instanceof DoubleLineEffect, new DoubleLineEffect(ParticleEffect.SPELL_WITCH));
-                                    circle.setRadius(7.5);
+                                    circle.setRadius(debtRadius);
 
                                     //blue to purple totem
                                     totemStand.setHelmet(new ItemStack(Material.DARK_OAK_FENCE_GATE));
@@ -141,10 +144,10 @@ public class DeathsDebt extends AbstractTotemBase {
                                         //final damage tick
                                         player.getWorld().spigot().strikeLightningEffect(totemStand.getLocation(), false);
                                         // Enemy damage
-                                        PlayerFilter.entitiesAround(totemStand, 8, 7, 8)
+                                        PlayerFilter.entitiesAround(totemStand, debtRadius, debtRadius - 1, debtRadius)
                                                 .aliveEnemiesOf(wp)
                                                 .forEach((nearPlayer) -> {
-                                                    nearPlayer.addHealth(wp,
+                                                    nearPlayer.damageHealth(wp,
                                                             name,
                                                             tempDeathsDebt.getDelayedDamage() * .15f,
                                                             tempDeathsDebt.getDelayedDamage() * .15f,
@@ -168,8 +171,9 @@ public class DeathsDebt extends AbstractTotemBase {
                             counter++;
                         }
                     }
-                }.runTaskTimer(Warlords.getInstance(), 0, 0),
-                System.currentTimeMillis()
+                }
+            }.runTaskTimer(Warlords.getInstance(), 0, 0),
+            System.currentTimeMillis()
         );
     }
 
@@ -179,22 +183,43 @@ public class DeathsDebt extends AbstractTotemBase {
         }
         // 100% of damage over 6 seconds
         float damage = (tempDeathsDebt.getDelayedDamage() * .1667f);
+        float debtTrueDamage = (float) (damage * Math.pow(.8, wp.getCooldownManager().getCooldown(SpiritLink.class).size()));
         // Player damage
-        wp.addHealth(wp, "",
-                (float) (damage * Math.pow(.8, wp.getCooldownManager().getCooldown(SpiritLink.class).size())),
-                (float) (damage * Math.pow(.8, wp.getCooldownManager().getCooldown(SpiritLink.class).size())),
+        wp.damageHealth(wp, "",
+                debtTrueDamage,
+                debtTrueDamage,
                 critChance,
                 critMultiplier,
                 false);
         // Teammate heal
-        PlayerFilter.entitiesAround(totemStand, 8, 7, 8)
+        PlayerFilter.entitiesAround(totemStand, debtRadius, debtRadius - 1, debtRadius)
                 .aliveTeammatesOf(wp)
                 .forEach((nearPlayer) -> {
-                    nearPlayer.addHealth(wp, name,
-                            damage * -.15f,
-                            damage * -.15f,
+                    nearPlayer.healHealth(wp, name,
+                            damage * .15f,
+                            damage * .15f,
                             critChance, critMultiplier, false);
                 });
+        //adding to rep pool
+        if (wp.getSpec().getBlue() instanceof Repentance) {
+            ((Repentance) wp.getSpec().getBlue()).addToPool(debtTrueDamage);
+        }
+    }
+
+    public int getRespiteRadius() {
+        return respiteRadius;
+    }
+
+    public void setRespiteRadius(int respiteRadius) {
+        this.respiteRadius = respiteRadius;
+    }
+
+    public int getDebtRadius() {
+        return debtRadius;
+    }
+
+    public void setDebtRadius(int debtRadius) {
+        this.debtRadius = debtRadius;
     }
 
     public float getDelayedDamage() {
@@ -210,7 +235,11 @@ public class DeathsDebt extends AbstractTotemBase {
     }
 
     public void setTimeLeftRespite(double timeLeftRespite) {
-        this.timeLeftRespite = timeLeftRespite;
+        if(timeLeftRespite > 6) {
+            this.timeLeftRespite = 6;
+        } else {
+            this.timeLeftRespite = timeLeftRespite;
+        }
     }
 
     public double getTimeLeftDebt() {

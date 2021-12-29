@@ -2,10 +2,8 @@ package com.ebicep.warlords.party;
 
 import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.util.Utils;
+import com.ebicep.warlords.util.ChatUtils;
 import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -21,7 +19,7 @@ public class StreamCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
 
-        if (!sender.isOp()) {
+        if (!sender.hasPermission("warlords.party.stream")) {
             sender.sendMessage("§cYou do not have permission to do that.");
             return true;
         }
@@ -42,12 +40,12 @@ public class StreamCommand implements CommandExecutor {
             Bukkit.getOnlinePlayers().stream()
                     .filter(p -> p.getUniqueId() != player.getUniqueId())
                     .forEach(onlinePlayer -> {
-                        Utils.sendCenteredMessage(onlinePlayer, ChatColor.BLUE.toString() + ChatColor.BOLD + "------------------------------------------");
-                        Utils.sendCenteredMessage(onlinePlayer, ChatColor.AQUA + player.getName() + ChatColor.YELLOW + " created a public party!");
+                        ChatUtils.sendCenteredMessage(onlinePlayer, ChatColor.BLUE.toString() + ChatColor.BOLD + "------------------------------------------");
+                        ChatUtils.sendCenteredMessage(onlinePlayer, ChatColor.AQUA + player.getName() + ChatColor.YELLOW + " created a public party!");
                         TextComponent message = new TextComponent(ChatColor.GOLD.toString() + ChatColor.BOLD + "Click here to join!");
                         message.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/party join " + player.getName()));
-                        Utils.sendCenteredMessageWithEvents(onlinePlayer, Collections.singletonList(message));
-                        Utils.sendCenteredMessage(onlinePlayer, ChatColor.BLUE.toString() + ChatColor.BOLD + "------------------------------------------");
+                        ChatUtils.sendCenteredMessageWithEvents(onlinePlayer, Collections.singletonList(message));
+                        ChatUtils.sendCenteredMessage(onlinePlayer, ChatColor.BLUE.toString() + ChatColor.BOLD + "------------------------------------------");
                     });
             BotManager.sendMessageToNotificationChannel("[PARTY] **" + player.getName() + "** created a public party! /p join " + player.getName());
         }

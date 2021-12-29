@@ -64,16 +64,16 @@ public class Cooldown {
         return timeLeft;
     }
 
+    public void setTimeLeft(float timeLeft) {
+        this.timeLeft = timeLeft;
+    }
+
     public void subtractTime(float amount) {
         if (this.timeLeft - amount <= 0) {
             timeLeft = 0;
         } else {
             this.timeLeft -= amount;
         }
-    }
-
-    public void setTimeLeft(float timeLeft) {
-        this.timeLeft = timeLeft;
     }
 
     public WarlordsPlayer getFrom() {

@@ -8,10 +8,18 @@ import com.ebicep.warlords.maps.state.PlayingState;
 import com.ebicep.warlords.maps.state.PreLobbyState;
 import com.ebicep.warlords.maps.state.State;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.util.PacketUtils;
 import net.md_5.bungee.api.chat.TextComponent;
+import net.minecraft.server.v1_8_R3.EntityLiving;
+import net.minecraft.server.v1_8_R3.GenericAttributes;
 import org.apache.commons.lang.Validate;
 import org.bukkit.*;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
+import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import javax.annotation.Nonnull;
@@ -154,7 +162,7 @@ public class Game implements Runnable {
         Warlords.removePlayer(player);
         Player p = Bukkit.getPlayer(player);
         if (p != null) {
-            WarlordsEvents.joinInteraction(p);
+            WarlordsEvents.joinInteraction(p, true);
         }
     }
 
@@ -251,6 +259,55 @@ public class Game implements Runnable {
         this.gameFreeze = gameFreeze;
     }
 
+    public boolean freezeOnCooldown = false;
+
+    public void freeze(boolean dueToDisconnect) {
+        if (gameFreeze && !freezeOnCooldown) {
+            freezeOnCooldown = true;
+            //unfreeze
+            forEachOnlinePlayer((p, team) -> {
+                p.removePotionEffect(PotionEffectType.BLINDNESS);
+                p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 100, 100000));
+            });
+            new BukkitRunnable() {
+                int counter = 0;
+
+                @Override
+                public void run() {
+                    if (counter >= 5) {
+                        setGameFreeze(false);
+                        freezeOnCooldown = false;
+                        forEachOnlinePlayer((p, team) -> {
+                            if (p.getVehicle() != null && p.getVehicle() instanceof Horse) {
+                                ((EntityLiving) ((CraftEntity) p.getVehicle()).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(.318);
+                            }
+                            PacketUtils.sendTitle(p, "", "", 0, 0, 0);
+                            p.removePotionEffect(PotionEffectType.BLINDNESS);
+                        });
+                        this.cancel();
+                    } else {
+                        forEachOnlinePlayer((p, team) -> {
+                            PacketUtils.sendTitle(p, ChatColor.BLUE + "Resuming in... " + ChatColor.GREEN + (5 - counter), "", 0, 40, 0);
+                        });
+                        counter++;
+                    }
+                }
+            }.runTaskTimer(Warlords.getInstance(), 0, 20);
+        } else {
+            //freeze
+            setGameFreeze(true);
+            forEachOnlinePlayer((p, team) -> freezePlayer(p, dueToDisconnect));
+        }
+    }
+
+    public void freezePlayer(Player p, boolean dueToDisconnect) {
+        if (p.getVehicle() instanceof Horse) {
+            ((EntityLiving) ((CraftEntity) p.getVehicle()).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0);
+        }
+        p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 9999999, 100000));
+        PacketUtils.sendTitle(p, ChatColor.RED + "Game Paused", dueToDisconnect ? ChatColor.YELLOW + "Missing player detected!" : "", 0, 9999999, 0);
+    }
+
     public List<UUID> getSpectators() {
         return spectators;
     }
@@ -272,15 +329,15 @@ public class Game implements Runnable {
         if(fromMenu) {
             spectators.remove(uuid);
         }
-        Player player = Bukkit.getPlayer(uuid);
+        OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
         Location loc = Warlords.spawnPoints.remove(player.getUniqueId());
-        Player p = Bukkit.getPlayer(player.getUniqueId());
-        if (p != null) {
-            if(loc != null) {
-                p.teleport(Warlords.getRejoinPoint(p.getUniqueId()));
+        if (player.isOnline()) {
+            if (loc != null) {
+                player.getPlayer().teleport(Warlords.getRejoinPoint(player.getUniqueId()));
             }
-            WarlordsEvents.joinInteraction(p);
+            WarlordsEvents.joinInteraction(player.getPlayer(), true);
         }
+
     }
 
     public HashMap<BukkitTask, Long> getGameTasks() {

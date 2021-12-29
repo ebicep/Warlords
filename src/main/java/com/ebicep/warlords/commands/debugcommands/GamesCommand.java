@@ -2,53 +2,67 @@ package com.ebicep.warlords.commands.debugcommands;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame;
 import org.apache.commons.lang.math.NumberUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+
+import static com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame.previousGames;
 
 public class GamesCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
 
-        if(!sender.isOp()) {
+        if (!sender.hasPermission("warlords.game.lookupgame")) {
+            sender.sendMessage("§cYou do not have permission to do that.");
             return true;
         }
 
-        if(args.length == 0) {
+        if (args.length == 0) {
             StringBuilder stringBuilder = new StringBuilder(ChatColor.GREEN + "Previous Games - \n");
-            for (int i = 0; i < DatabaseManager.previousGames.size(); i++) {
-                stringBuilder.append(ChatColor.YELLOW).append(i).append(". ").append(DatabaseManager.previousGames.get(i).getGameLabel()).append("\n");
+            for (int i = 0; i < previousGames.size(); i++) {
+                stringBuilder.append(ChatColor.YELLOW).append(i).append(". ").append(previousGames.get(i).getGameLabel()).append("\n");
             }
             sender.sendMessage(stringBuilder.toString());
             return true;
         } else {
-            if(args.length < 2) {
-                sender.sendMessage(ChatColor.RED + "Invalid Arguments! [add/remove gameNumber]");
+            if (args[0].equals("reload")) {
+                sender.sendMessage(ChatColor.GREEN + "Deleting Holograms");
+                previousGames.forEach(DatabaseGame::deleteHolograms);
+                sender.sendMessage(ChatColor.GREEN + "Creating Holograms");
+                previousGames.forEach(DatabaseGame::createHolograms);
+                sender.sendMessage(ChatColor.GREEN + "Setting Visibility");
+                Bukkit.getOnlinePlayers().forEach(DatabaseGame::setGameHologramVisibility);
+                return true;
+            }
+            if (args.length < 2) {
+                sender.sendMessage(ChatColor.RED + "Invalid Arguments! [add/remove] [gameNumber]");
                 return true;
             }
 
-            if(!NumberUtils.isNumber(args[1])) {
+            if (!NumberUtils.isNumber(args[1])) {
                 sender.sendMessage(ChatColor.RED + "Invalid game number!");
                 return true;
             }
 
             int gameNumber = Integer.parseInt(args[1]);
-            if(gameNumber >= DatabaseManager.previousGames.size() || gameNumber < 0) {
+            if (gameNumber >= previousGames.size() || gameNumber < 0) {
                 sender.sendMessage(ChatColor.RED + "Invalid game number!");
                 return true;
             }
 
             String input = args[0];
             switch (input.toLowerCase()) {
-                case "add" :
-                    DatabaseManager.addGameToDatabase(DatabaseManager.previousGames.get(gameNumber));
+                case "add":
+                    DatabaseGame.addGameToDatabase(previousGames.get(gameNumber));
                     sender.sendMessage(ChatColor.GREEN + "Adding game!");
                     return true;
-                case "remove" :
-                    DatabaseManager.removeGameFromDatabase(DatabaseManager.previousGames.get(gameNumber));
+                case "remove":
+                    DatabaseGame.removeGameFromDatabase(previousGames.get(gameNumber));
                     sender.sendMessage(ChatColor.RED + "Removing game!");
                     return true;
             }

@@ -2,11 +2,16 @@ package com.ebicep.warlords.menu;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
+import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.util.ItemBuilder;
-import com.ebicep.warlords.util.Utils;
-import org.bukkit.*;
+import com.ebicep.warlords.util.NumberFormat;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
@@ -17,13 +22,12 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.lang.Math.round;
-
 import static com.ebicep.warlords.menu.Menu.ACTION_CLOSE_MENU;
 import static com.ebicep.warlords.menu.Menu.ACTION_DO_NOTHING;
 import static com.ebicep.warlords.player.ArmorManager.*;
 import static com.ebicep.warlords.player.Classes.*;
 import static com.ebicep.warlords.player.Settings.*;
+import static java.lang.Math.round;
 
 public class GameMenu {
     private static final ItemStack MENU_BACK_PREGAME = new ItemBuilder(Material.ARROW)
@@ -56,7 +60,7 @@ public class GameMenu {
             .get();
     private static final ItemStack MENU_ARCADE = new ItemBuilder(Material.GOLD_BLOCK)
             .name(ChatColor.GREEN + "Mini Games")
-            .lore("§7Try your luck in rerolling or\nopening weapons here!\n(has NO effect on actual games.)")
+            .lore("§7Try your luck in rerolling or\nopening skin shards here!\n")
             .get();
 
     private static final String[] legendaryNames = new String[]{"Warlord", "Vanquisher", "Champion"};
@@ -80,9 +84,13 @@ public class GameMenu {
                 lore.add((subClass == selectedClass ? ChatColor.GREEN : ChatColor.GRAY) + subClass.name);
             }
             lore.add("");
+            long experience = ExperienceManager.getExperienceForClass(player.getUniqueId(), group);
+            int level = (int) ExperienceManager.calculateLevelFromExp(experience);
+            lore.add(ExperienceManager.getProgressString(experience, level + 1));
+            lore.add("");
             lore.add(ChatColor.YELLOW + "Click here to select a " + group.name + "\n" + ChatColor.YELLOW + "specialization");
             ItemStack item = new ItemBuilder(group.item)
-                    .name(ChatColor.GOLD + group.name + ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + "Lv90" + ChatColor.DARK_GRAY + "]")
+                    .name(ChatColor.GOLD + group.name + ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + "Lv" + ExperienceManager.getLevelString(level) + ChatColor.DARK_GRAY + "]")
                     .lore(lore)
                     .get();
             menu.setItem(
@@ -111,10 +119,14 @@ public class GameMenu {
         for (int i = 0; i < values.size(); i++) {
             Classes subClass = values.get(i);
             ItemBuilder builder = new ItemBuilder(subClass.specType.itemStack)
-                    .name(ChatColor.GREEN + "Specialization: " + subClass.name)
+                    .name(ChatColor.GREEN + "Specialization: " + subClass.name + " " + ChatColor.DARK_GRAY + "[" + ChatColor.GRAY + "Lv" + ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(player.getUniqueId(), subClass)) + ChatColor.DARK_GRAY + "]")
                     .flags(ItemFlag.HIDE_ENCHANTS);
             List<String> lore = new ArrayList<>();
             lore.add(subClass.description);
+            lore.add("");
+            long experience = ExperienceManager.getExperienceForSpec(player.getUniqueId(), subClass);
+            int level = (int) ExperienceManager.calculateLevelFromExp(experience);
+            lore.add(ExperienceManager.getProgressString(experience, level + 1));
             lore.add("");
             if (subClass == selectedClass) {
                 lore.add(ChatColor.GREEN + ">>> ACTIVE <<<");
@@ -133,6 +145,13 @@ public class GameMenu {
                         setSelected(player, subClass);
                         ArmorManager.resetArmor(player, subClass, Warlords.getPlayerSettings(player.getUniqueId()).getWantedTeam());
                         openClassMenu(player, selectedGroup);
+                        PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
+                        AbstractPlayerClass apc = subClass.create.get();
+                        player.getInventory().setItem(1, new ItemBuilder(apc.getWeapon().getItem(playerSettings.getWeaponSkins()
+                                .getOrDefault(subClass, Weapons.FELFLAME_BLADE).item)).name("§aWeapon Skin Preview")
+                                .lore("")
+                                .get());
+
                     }
             );
         }
@@ -147,14 +166,14 @@ public class GameMenu {
         Menu menu = new Menu("Skill Boost", 9 * 4);
         List<ClassesSkillBoosts> values = selectedGroup.skillBoosts;
         for (int i = 0; i < values.size(); i++) {
-            ClassesSkillBoosts subClass = values.get(i);
+            ClassesSkillBoosts skillBoost = values.get(i);
             ItemBuilder builder = new ItemBuilder(getSelected(player).specType.itemStack)
-                    .name(subClass == selectedBoost ? ChatColor.GREEN + subClass.name + " (" + selectedClass.name + ")" : ChatColor.RED + subClass.name + " (" + selectedClass.name + ")")
+                    .name(skillBoost == selectedBoost ? ChatColor.GREEN + skillBoost.name + " (" + selectedClass.name + ")" : ChatColor.RED + skillBoost.name + " (" + selectedClass.name + ")")
                     .flags(ItemFlag.HIDE_ENCHANTS);
             List<String> lore = new ArrayList<>();
-            lore.add(subClass == selectedBoost ? subClass.selectedDescription : subClass.description);
+            lore.add(skillBoost == selectedBoost ? skillBoost.selectedDescription : skillBoost.description);
             lore.add("");
-            if (subClass == selectedBoost) {
+            if (skillBoost == selectedBoost) {
                 lore.add(ChatColor.GREEN + "Currently selected!");
                 builder.enchant(Enchantment.OXYGEN, 1);
             } else {
@@ -162,13 +181,18 @@ public class GameMenu {
             }
             builder.lore(lore);
             menu.setItem(
-                    6 - values.size() + i * 2 - 1,
+                    i + 2,
                     1,
                     builder.get(),
                     (n, e) -> {
-                        player.sendMessage(ChatColor.GREEN + "You have changed your weapon boost to: §b" + subClass.name + "!");
-                        setSelectedBoost(player, subClass);
+                        player.sendMessage(ChatColor.GREEN + "You have changed your weapon boost to: §b" + skillBoost.name + "!");
+                        setSelectedBoost(player, skillBoost);
                         openSkillBoostMenu(player, selectedGroup);
+
+                        //sync bc player should be cached
+                        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
+                        databasePlayer.getSpec(selectedClass).setSkillBoost(skillBoost);
+                        DatabaseManager.updatePlayerAsync(databasePlayer);
                     }
             );
         }
@@ -183,25 +207,49 @@ public class GameMenu {
         List<Weapons> values = new ArrayList<>(Arrays.asList(Weapons.values()));
         for (int i = (pageNumber - 1) * 21; i < pageNumber * 21 && i < values.size(); i++) {
             Weapons weapon = values.get(i);
-            ItemBuilder builder = new ItemBuilder(weapon.item)
-                    .name(ChatColor.GREEN + weapon.name)
-                    .flags(ItemFlag.HIDE_ENCHANTS);
-            List<String> lore = new ArrayList<>();
-            if (weapon == selectedWeapon) {
-                lore.add(ChatColor.GREEN + "Currently selected!");
-                builder.enchant(Enchantment.OXYGEN, 1);
+            ItemBuilder builder;
+
+            if (weapon.isUnlocked) {
+
+                builder = new ItemBuilder(weapon.item)
+                        .name(ChatColor.GREEN + weapon.name)
+                        .flags(ItemFlag.HIDE_ENCHANTS);
+                List<String> lore = new ArrayList<>();
+
+                if (weapon == selectedWeapon) {
+                    lore.add(ChatColor.GREEN + "Currently selected!");
+                    builder.enchant(Enchantment.OXYGEN, 1);
+                } else {
+                    lore.add(ChatColor.YELLOW + "Click to select!");
+                }
+
+                builder.lore(lore);
             } else {
-                lore.add(ChatColor.YELLOW + "Click to select!");
+                builder = new ItemBuilder(Material.BARRIER).name(ChatColor.RED + "Locked Weapon Skin");
             }
-            builder.lore(lore);
+
             menu.setItem(
                     (i - (pageNumber - 1) * 21) % 7 + 1,
                     (i - (pageNumber - 1) * 21) / 7 + 1,
                     builder.get(),
                     (n, e) -> {
-                        player.sendMessage(ChatColor.GREEN + "You have changed your " + ChatColor.AQUA + selectedClass.name + ChatColor.GREEN + "'s weapon skin to: §b" + weapon.name + "!");
-                        Weapons.setSelected(player, selectedClass, weapon);
-                        openWeaponMenu(player, pageNumber);
+                        if (weapon.isUnlocked) {
+                            player.sendMessage(ChatColor.GREEN + "You have changed your " + ChatColor.AQUA + selectedClass.name + ChatColor.GREEN + "'s weapon skin to: §b" + weapon.name + "!");
+                            Weapons.setSelected(player, selectedClass, weapon);
+                            openWeaponMenu(player, pageNumber);
+                            PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
+                            AbstractPlayerClass apc = selectedClass.create.get();
+                            player.getInventory().setItem(1, new ItemBuilder(apc.getWeapon().getItem(playerSettings.getWeaponSkins()
+                                    .getOrDefault(selectedClass, Weapons.FELFLAME_BLADE).item)).name("§aWeapon Skin Preview")
+                                    .lore("")
+                                    .get());
+                            //sync bc player should be cached
+                            DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
+                            databasePlayer.getSpec(selectedClass).setWeapon(weapon);
+                            DatabaseManager.updatePlayerAsync(databasePlayer);
+                        } else {
+                            player.sendMessage(ChatColor.RED + "This weapon skin has not been unlocked yet!");
+                        }
                     }
             );
         }
@@ -282,6 +330,15 @@ public class GameMenu {
                         } else if (helmet == Helmets.SIMPLE_SHAMAN_HELMET || helmet == Helmets.GREATER_SHAMAN_HELMET || helmet == Helmets.MASTERWORK_SHAMAN_HELMET || helmet == Helmets.LEGENDARY_SHAMAN_HELMET) {
                             Helmets.setSelectedShaman(player, helmet);
                         }
+                        List<Helmets> selectedHelmets = Helmets.getSelected(player);
+                        Warlords.newChain().async(() -> {
+                            DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
+                            databasePlayer.getMage().setHelmet(selectedHelmets.get(0));
+                            databasePlayer.getWarrior().setHelmet(selectedHelmets.get(1));
+                            databasePlayer.getPaladin().setHelmet(selectedHelmets.get(2));
+                            databasePlayer.getShaman().setHelmet(selectedHelmets.get(3));
+                            DatabaseManager.updatePlayerAsync(databasePlayer);
+                        }).execute();
                         openArmorMenu(player, pageNumber);
                     }
             );
@@ -318,6 +375,15 @@ public class GameMenu {
                         } else if (armorSet == ArmorSets.SIMPLE_CHESTPLATE_SHAMAN || armorSet == ArmorSets.GREATER_CHESTPLATE_SHAMAN || armorSet == ArmorSets.MASTERWORK_CHESTPLATE_SHAMAN) {
                             ArmorSets.setSelectedShaman(player, armorSet);
                         }
+                        List<ArmorSets> armorSetsList = ArmorSets.getSelected(player);
+                        Warlords.newChain().async(() -> {
+                            DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
+                            databasePlayer.getMage().setArmor(armorSetsList.get(0));
+                            databasePlayer.getWarrior().setArmor(armorSetsList.get(1));
+                            databasePlayer.getPaladin().setArmor(armorSetsList.get(2));
+                            databasePlayer.getShaman().setArmor(armorSetsList.get(3));
+                            DatabaseManager.updatePlayerAsync(databasePlayer);
+                        }).execute();
                         openArmorMenu(player, pageNumber);
                     }
             );
@@ -474,19 +540,18 @@ public class GameMenu {
                 "§7Damage Reduction: §e" + apc.getDamageResistance() + "%"
         );
 
-        ClassesSkillBoosts selectedBoost = playerSettings.getClassesSkillBoosts();
+        System.out.println("LCIK");
+        ClassesSkillBoosts selectedBoost = playerSettings.getSkillBoostForClass();
         if (apc.getWeapon().getClass() == selectedBoost.ability) {
-            if (selectedBoost != ClassesSkillBoosts.PROTECTOR_STRIKE) {
-                apc.getWeapon().boostSkill();
-            }
+            apc.getWeapon().boostSkill(selectedBoost, apc);
         } else if (apc.getRed().getClass() == selectedBoost.ability) {
-            apc.getRed().boostSkill();
+            apc.getRed().boostSkill(selectedBoost, apc);
         } else if (apc.getPurple().getClass() == selectedBoost.ability) {
-            apc.getPurple().boostSkill();
+            apc.getPurple().boostSkill(selectedBoost, apc);
         } else if (apc.getBlue().getClass() == selectedBoost.ability) {
-            apc.getBlue().boostSkill();
+            apc.getBlue().boostSkill(selectedBoost, apc);
         } else if (apc.getOrange().getClass() == selectedBoost.ability) {
-            apc.getOrange().boostOrange();
+            apc.getOrange().boostSkill(selectedBoost, apc);
         }
 
         apc.getWeapon().updateDescription(player);
@@ -562,7 +627,7 @@ public class GameMenu {
                 meleeDamageMax = temp;
             }
 
-            String displayScore = "§7Your weapon score is §a" + Utils.formatOptionalTenths(score * 100);
+            String displayScore = "§7Your weapon score is §a" + NumberFormat.formatOptionalTenths(score * 100);
 
             PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
             Classes selectedClass = playerSettings.getSelectedClass();
@@ -596,20 +661,20 @@ public class GameMenu {
             m.getInventory().setItem(e.getRawSlot(), weapon);
 
             if (score > 0.85) {
-                Bukkit.broadcastMessage("§6" + player.getDisplayName() + " §frolled a weapon with a total score of §6" + Utils.formatOptionalTenths(score * 100) + "§f!");
+                Bukkit.broadcastMessage("§6" + player.getDisplayName() + " §frolled a weapon with a total score of §6" + NumberFormat.formatOptionalTenths(score * 100) + "§f!");
             }
 
             if (score < 0.15) {
-                Bukkit.broadcastMessage("§6" + player.getDisplayName() + " §frolled a weapon with a total score of §c" + Utils.formatOptionalTenths(score * 100) + "§f!");
+                Bukkit.broadcastMessage("§6" + player.getDisplayName() + " §frolled a weapon with a total score of §c" + NumberFormat.formatOptionalTenths(score * 100) + "§f!");
             }
         });
 
         ItemBuilder icon2 = new ItemBuilder(Material.SULPHUR);
-        icon2.name(ChatColor.GREEN + "Repair Weapons");
+        icon2.name(ChatColor.GREEN + "Skin Shard Roller");
         icon2.lore(
-                "§7Is RNG with you today?",
+                "§7Is RNG with you to give everyone a new awesome skin?",
                 "",
-                "§7Left-click to roll 20 Enchanted weapons!"
+                "§7Left-click to roll 10 skin shards!"
         );
 
         menu.setItem(5, 1, icon2.get(), (m, e) -> {
@@ -621,10 +686,13 @@ public class GameMenu {
             for(WeaponsRarity rarity : WeaponsRarity.values()) {
                 foundWeaponCount.put(rarity, 0);
             }
+
+            if (Bukkit.getOnlinePlayers().size() >= 16) {
+
                 if (weaponCooldown == null || weaponCooldown < System.currentTimeMillis()) {
                     openWeaponCooldown.put(player.getUniqueId(), System.currentTimeMillis() + 8 * 60 * 1000);
                     player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 2);
-                    for (int i = 0; i < 20; i++) {
+                    for (int i = 0; i < 10; i++) {
                         String legendaryName = legendaryNames[random.nextInt(legendaryNames.length)];
                         String mythicName = mythicNames[random.nextInt(mythicNames.length)];
 
@@ -635,11 +703,11 @@ public class GameMenu {
                         PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
                         Classes selectedClass = playerSettings.getSelectedClass();
 
-                        if (chance < 96.35) {
+                        if (chance < 96.32) {
                             rarity = WeaponsRarity.RARE;
-                        } else if (chance < 96.35 + 3) {
+                        } else if (chance < 96.32 + 3) {
                             rarity = WeaponsRarity.EPIC;
-                        } else if (chance < 96.35 + 3 + 0.6) {
+                        } else if (chance < 96.32 + 3 + 0.6) {
                             rarity = WeaponsRarity.LEGENDARY;
                         } else {
                             rarity = WeaponsRarity.MYTHIC;
@@ -648,8 +716,9 @@ public class GameMenu {
                         foundWeaponCount.compute(rarity, (key, value) -> value == null ? 1 : value + 1);
                         List<Weapons> weapons = weaponByRarity.get(rarity);
 
-                        String message = rarity.getWeaponChatColor() + legendaryName + "'s " + weapons.get(random.nextInt(weapons.size())).getName() + " of the " + selectedClass.name;
-                        String mythicMessage = rarity.getWeaponChatColor() + "§l" + mythicName + " " + weapons.get(random.nextInt(weapons.size())).getName() + " of the " + selectedClass.name;
+                        Weapons weapon = weapons.get(random.nextInt(weapons.size()));
+                        String message = rarity.getWeaponChatColor() + legendaryName + "'s " + weapon.getName() + " of the " + selectedClass.name;
+                        String mythicMessage = rarity.getWeaponChatColor() + "§l" + mythicName + " " + weapon.getName() + " of the " + selectedClass.name;
 
                         if (rarity == WeaponsRarity.EPIC) {
                             Bukkit.broadcastMessage(ChatColor.AQUA + player.getDisplayName() + " §fgot lucky and found " + message);
@@ -674,6 +743,20 @@ public class GameMenu {
                                 player.getWorld().spigot().strikeLightningEffect(player.getLocation(), false);
                             }
                         }
+
+                        if (!weapon.isUnlocked) {
+                            weapon.isUnlocked = true;
+                            Warlords.getInstance().saveWeaponConfig();
+                            Bukkit.broadcastMessage("");
+                            Bukkit.broadcastMessage("§l" + rarity.getWeaponChatColor() + weapon.getName() + " §l§fis now unlocked for everyone!");
+                            Bukkit.broadcastMessage("");
+                        } else {
+                            if (rarity == WeaponsRarity.MYTHIC) {
+                                Bukkit.broadcastMessage("");
+                                Bukkit.broadcastMessage("§l" + rarity.getWeaponChatColor() + weapon.getName() + " §fwas already found! Unlucky!");
+                                Bukkit.broadcastMessage("");
+                            }
+                        }
                     }
 
                     player.sendMessage("");
@@ -683,8 +766,13 @@ public class GameMenu {
                     player.sendMessage("§7Legendary: §6" + foundWeaponCount.get(WeaponsRarity.LEGENDARY));
                     player.sendMessage("§7Mythic: §c" + foundWeaponCount.get(WeaponsRarity.MYTHIC));
                 } else {
-                    player.sendMessage(ChatColor.RED + "Please wait 8 minutes before opening weapons again!");
+                    long remainingTime = (weaponCooldown - System.currentTimeMillis()) / 1000;
+                    long remainingTimeinMinutes = remainingTime / 60;
+                    player.sendMessage(ChatColor.RED + "Please wait " + (remainingTime > 60 ? remainingTimeinMinutes + " minutes" : remainingTime + " seconds") + " before opening skin shards again!");
                 }
+            } else {
+                player.sendMessage(ChatColor.RED + "There must be at least 16 players online to roll skin shards!");
+            }
         });
 
         menu.setItem(4, 3, MENU_BACK_PREGAME, (n, e) -> openMainMenu(player));

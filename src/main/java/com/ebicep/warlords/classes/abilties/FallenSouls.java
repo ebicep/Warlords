@@ -26,13 +26,13 @@ public class FallenSouls extends AbstractAbility {
     private static final float fallenSoulSpeed = 1.95f;
 
     public FallenSouls() {
-        super("Fallen Souls", -164f, -212f, 0, 55, 20, 180);
+        super("Fallen Souls", 164f, 212f, 0, 55, 20, 180);
     }
 
     @Override
     public void updateDescription(Player player) {
         description = "§7Summon a wave of fallen souls, dealing\n" +
-                "§c" + format(-minDamageHeal) + " §7- §c" + format(-maxDamageHeal) + " §7damage to all enemies they\n" +
+                "§c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage to all enemies they\n" +
                 "§7pass through. Each target hit reduces the\n" +
                 "§7cooldown of Spirit Link by §62 §7seconds.";
     }
@@ -62,47 +62,49 @@ public class FallenSouls extends AbstractAbility {
 
                     @Override
                     public void run() {
+                        if (!wp.getGame().isGameFreeze()) {
 
-                        if ((fallenSoul.isLeftRemoved() && fallenSoul.isMiddleRemoved() && fallenSoul.isRightRemoved())) {
-                            this.cancel();
-                        }
+                            if ((fallenSoul.isLeftRemoved() && fallenSoul.isMiddleRemoved() && fallenSoul.isRightRemoved())) {
+                                this.cancel();
+                            }
 
-                        ArmorStand leftSoul = fallenSoul.getFallenSoulLeft();
-                        ArmorStand middleSoul = fallenSoul.getFallenSoulMiddle();
-                        ArmorStand rightSoul = fallenSoul.getFallenSoulRight();
+                            ArmorStand leftSoul = fallenSoul.getFallenSoulLeft();
+                            ArmorStand middleSoul = fallenSoul.getFallenSoulMiddle();
+                            ArmorStand rightSoul = fallenSoul.getFallenSoulRight();
 
-                        leftSoul.teleport(leftSoul.getLocation().add(fallenSoul.getDirectionLeft().clone().multiply(fallenSoulSpeed)));
-                        middleSoul.teleport(middleSoul.getLocation().add(fallenSoul.getDirectionMiddle().clone().multiply(fallenSoulSpeed)));
-                        rightSoul.teleport(rightSoul.getLocation().add(fallenSoul.getDirectionRight().clone().multiply(fallenSoulSpeed)));
+                            leftSoul.teleport(leftSoul.getLocation().add(fallenSoul.getDirectionLeft().clone().multiply(fallenSoulSpeed)));
+                            middleSoul.teleport(middleSoul.getLocation().add(fallenSoul.getDirectionMiddle().clone().multiply(fallenSoulSpeed)));
+                            rightSoul.teleport(rightSoul.getLocation().add(fallenSoul.getDirectionRight().clone().multiply(fallenSoulSpeed)));
 
-                        List<Entity> nearLeft = (List<Entity>) leftSoul.getWorld().getNearbyEntities(leftSoul.getLocation().clone().add(0, 2, 0), fallenSoulHitBox, 1, fallenSoulHitBox);
-                        List<Entity> nearMiddle = (List<Entity>) middleSoul.getWorld().getNearbyEntities(middleSoul.getLocation().clone().add(0, 2, 0), fallenSoulHitBox, 1, fallenSoulHitBox);
-                        List<Entity> nearRight = (List<Entity>) rightSoul.getWorld().getNearbyEntities(rightSoul.getLocation().clone().add(0, 2, 0), fallenSoulHitBox, 1, fallenSoulHitBox);
+                            List<Entity> nearLeft = (List<Entity>) leftSoul.getWorld().getNearbyEntities(leftSoul.getLocation().clone().add(0, 2, 0), fallenSoulHitBox, 1, fallenSoulHitBox);
+                            List<Entity> nearMiddle = (List<Entity>) middleSoul.getWorld().getNearbyEntities(middleSoul.getLocation().clone().add(0, 2, 0), fallenSoulHitBox, 1, fallenSoulHitBox);
+                            List<Entity> nearRight = (List<Entity>) rightSoul.getWorld().getNearbyEntities(rightSoul.getLocation().clone().add(0, 2, 0), fallenSoulHitBox, 1, fallenSoulHitBox);
 
-                        damageNearByPlayers(nearLeft, wp, player, fallenSoul);
-                        damageNearByPlayers(nearMiddle, wp, player, fallenSoul);
-                        damageNearByPlayers(nearRight, wp, player, fallenSoul);
+                            damageNearByPlayers(nearLeft, wp, player, fallenSoul);
+                            damageNearByPlayers(nearMiddle, wp, player, fallenSoul);
+                            damageNearByPlayers(nearRight, wp, player, fallenSoul);
 
-                        ParticleEffect.SPELL_WITCH.display(0, 0, 0, 0, 1, leftSoul.getLocation().add(0, 1.5, 0), 500);
-                        ParticleEffect.SPELL_WITCH.display(0, 0, 0, 0, 1, middleSoul.getLocation().add(0, 1.5, 0), 500);
-                        ParticleEffect.SPELL_WITCH.display(0, 0, 0, 0, 1, rightSoul.getLocation().add(0, 1.5, 0), 500);
+                            ParticleEffect.SPELL_WITCH.display(0, 0, 0, 0, 1, leftSoul.getLocation().add(0, 1.5, 0), 500);
+                            ParticleEffect.SPELL_WITCH.display(0, 0, 0, 0, 1, middleSoul.getLocation().add(0, 1.5, 0), 500);
+                            ParticleEffect.SPELL_WITCH.display(0, 0, 0, 0, 1, rightSoul.getLocation().add(0, 1.5, 0), 500);
 
-                        if (!fallenSoul.isLeftRemoved() && leftSoul.getLocation().getWorld().getBlockAt(leftSoul.getLocation().clone().add(0, 2, 0)).getType() != Material.AIR || fallenSoul.getFallenSoulLeft().getTicksLived() > 25 / fallenSoulSpeed * 1.2) {
-                            ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.7F, 1, leftSoul.getLocation().add(0, 1, 0), 500);
-                            fallenSoul.getFallenSoulLeft().remove();
-                            fallenSoul.setLeftRemoved(true);
-                        }
+                            if (!fallenSoul.isLeftRemoved() && leftSoul.getLocation().getWorld().getBlockAt(leftSoul.getLocation().clone().add(0, 2, 0)).getType() != Material.AIR || fallenSoul.getFallenSoulLeft().getTicksLived() > 25 / fallenSoulSpeed * 1.2) {
+                                ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.7F, 1, leftSoul.getLocation().add(0, 1, 0), 500);
+                                fallenSoul.getFallenSoulLeft().remove();
+                                fallenSoul.setLeftRemoved(true);
+                            }
 
-                        if (!fallenSoul.isMiddleRemoved() && middleSoul.getLocation().getWorld().getBlockAt(middleSoul.getLocation().clone().add(0, 2, 0)).getType() != Material.AIR || fallenSoul.getFallenSoulMiddle().getTicksLived() > 25 / fallenSoulSpeed * 1.2) {
-                            ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.7F, 1, middleSoul.getLocation().add(0, 1, 0), 500);
-                            fallenSoul.getFallenSoulMiddle().remove();
-                            fallenSoul.setMiddleRemoved(true);
-                        }
+                            if (!fallenSoul.isMiddleRemoved() && middleSoul.getLocation().getWorld().getBlockAt(middleSoul.getLocation().clone().add(0, 2, 0)).getType() != Material.AIR || fallenSoul.getFallenSoulMiddle().getTicksLived() > 25 / fallenSoulSpeed * 1.2) {
+                                ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.7F, 1, middleSoul.getLocation().add(0, 1, 0), 500);
+                                fallenSoul.getFallenSoulMiddle().remove();
+                                fallenSoul.setMiddleRemoved(true);
+                            }
 
-                        if (!fallenSoul.isRightRemoved() && rightSoul.getLocation().getWorld().getBlockAt(rightSoul.getLocation().clone().add(0, 2, 0)).getType() != Material.AIR || fallenSoul.getFallenSoulRight().getTicksLived() > 25 / fallenSoulSpeed * 1.2) {
-                            ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.7F, 1, rightSoul.getLocation().add(0, 1, 0), 500);
-                            fallenSoul.getFallenSoulRight().remove();
-                            fallenSoul.setRightRemoved(true);
+                            if (!fallenSoul.isRightRemoved() && rightSoul.getLocation().getWorld().getBlockAt(rightSoul.getLocation().clone().add(0, 2, 0)).getType() != Material.AIR || fallenSoul.getFallenSoulRight().getTicksLived() > 25 / fallenSoulSpeed * 1.2) {
+                                ParticleEffect.EXPLOSION_LARGE.display(0, 0, 0, 0.7F, 1, rightSoul.getLocation().add(0, 1, 0), 500);
+                                fallenSoul.getFallenSoulRight().remove();
+                                fallenSoul.setRightRemoved(true);
+                            }
                         }
 
                     }
@@ -117,7 +119,7 @@ public class FallenSouls extends AbstractAbility {
                 .filter(p -> !fallenSoul.getPlayersHit().contains(p))
                 .aliveEnemiesOf(wp)
                 .forEach((warlordsPlayer) -> {
-                    warlordsPlayer.addHealth(fallenSoul.getShooter(), fallenSoul.getFallenSouls().getName(), fallenSoul.getFallenSouls().getMinDamageHeal(), fallenSoul.getFallenSouls().getMaxDamageHeal(), fallenSoul.getFallenSouls().getCritChance(), fallenSoul.getFallenSouls().getCritMultiplier(), false);
+                    warlordsPlayer.damageHealth(fallenSoul.getShooter(), fallenSoul.getFallenSouls().getName(), fallenSoul.getFallenSouls().getMinDamageHeal(), fallenSoul.getFallenSouls().getMaxDamageHeal(), fallenSoul.getFallenSouls().getCritChance(), fallenSoul.getFallenSouls().getCritMultiplier(), false);
                     fallenSoul.getPlayersHit().add(warlordsPlayer);
                     fallenSoul.getShooter().getSpec().getRed().subtractCooldown(2);
                     fallenSoul.getShooter().updateRedItem(player);
@@ -136,16 +138,16 @@ public class FallenSouls extends AbstractAbility {
                                 fallenSoul.getShooter().updateBlueItem(player);
                                 fallenSoul.getShooter().updateOrangeItem(player);
 
-                                PlayerFilter.entitiesAround(player, 6, 6, 6)
+                                PlayerFilter.entitiesAround(player, 8, 8, 8)
                                         .aliveTeammatesOf(wp)
                                         .closestFirst(player)
                                         .limit(2)
                                         .forEach((warlordsPlayer1) -> {
 
-                                            warlordsPlayer1.getSpec().getRed().subtractCooldown(.5F);
-                                            warlordsPlayer1.getSpec().getPurple().subtractCooldown(.5F);
-                                            warlordsPlayer1.getSpec().getBlue().subtractCooldown(.5F);
-                                            warlordsPlayer1.getSpec().getOrange().subtractCooldown(.5F);
+                                            warlordsPlayer1.getSpec().getRed().subtractCooldown(1);
+                                            warlordsPlayer1.getSpec().getPurple().subtractCooldown(1);
+                                            warlordsPlayer1.getSpec().getBlue().subtractCooldown(1);
+                                            warlordsPlayer1.getSpec().getOrange().subtractCooldown(1);
 
                                             if (warlordsPlayer1.getEntity() instanceof Player) {
                                                 Player p = (Player) warlordsPlayer1.getEntity();

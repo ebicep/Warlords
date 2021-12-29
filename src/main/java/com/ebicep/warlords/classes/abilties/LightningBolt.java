@@ -17,13 +17,13 @@ import org.bukkit.util.EulerAngle;
 public class LightningBolt extends AbstractPiercingProjectileBase {
 
     public LightningBolt() {
-        super("Lightning Bolt", -207, -385, 0, 60, 20, 200, 2.5, 60, false);
+        super("Lightning Bolt", 228, 385, 0, 60, 20, 200, 2.5, 60, false);
     }
 
     @Override
     public void updateDescription(Player player) {
         description = "§7Hurl a fast, piercing bolt of lightning that\n" +
-                "§7deals §c" + format(-minDamageHeal) + " §7- §c" + format(-maxDamageHeal) + " §7damage to all enemies it\n" +
+                "§7deals §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage to all enemies it\n" +
                 "§7passes through. Each target hit reduces the\n" +
                 "§7cooldown of Chain Lightning by §62 §7seconds.\n" +
                 "\n" +
@@ -50,7 +50,7 @@ public class LightningBolt extends AbstractPiercingProjectileBase {
         WarlordsPlayer wp = projectile.getShooter();
         if (!projectile.getHit().contains(hit)) {
             projectile.getHit().add(hit);
-            hit.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+            hit.damageHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
 
             for (Player player1 : hit.getWorld().getPlayers()) {
                 player1.playSound(impactLocation, "shaman.lightningbolt.impact", 2, 1);
@@ -74,12 +74,12 @@ public class LightningBolt extends AbstractPiercingProjectileBase {
 
         WarlordsPlayer wp = projectile.getShooter();
         for (WarlordsPlayer warlordsPlayer : PlayerFilter
-                .entitiesAround(currentLocation, 2.6, 2.6, 2.6)
+                .entitiesAround(currentLocation, 3, 3, 3)
                 .aliveEnemiesOf(wp)
                 .excluding(projectile.getHit())
         ) {
             //hitting player
-            warlordsPlayer.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+            warlordsPlayer.damageHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
 
             for (Player player1 : warlordsPlayer.getWorld().getPlayers()) {
                 player1.playSound(warlordsPlayer.getLocation(), "shaman.lightningbolt.impact", 2, 1);

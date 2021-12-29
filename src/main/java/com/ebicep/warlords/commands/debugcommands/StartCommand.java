@@ -2,13 +2,16 @@ package com.ebicep.warlords.commands.debugcommands;
 
 import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.GameMap;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.state.PreLobbyState;
 import com.ebicep.warlords.party.Party;
 import com.ebicep.warlords.player.ArmorManager;
+import com.ebicep.warlords.player.Classes;
+import com.ebicep.warlords.player.PlayerSettings;
+import com.ebicep.warlords.player.Weapons;
 import com.ebicep.warlords.util.ItemBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -26,10 +29,12 @@ public class StartCommand implements TabExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
 
-        if (!sender.isOp()) {
+
+        if (!sender.hasPermission("warlords.game.start")) {
             sender.sendMessage("§cYou do not have permission to do that.");
             return true;
         }
+
         Game game = Warlords.game; // In the future allow the user to select a game player
         GameMap map;
 
@@ -86,13 +91,15 @@ public class StartCommand implements TabExecutor {
                         .forEach(playerInParty -> playersNotInParty.forEach(playerNotInParty -> {
                             playerInParty.hidePlayer(playerNotInParty);
                         }));
-
-
             }
         }
         //Collections.shuffle(people);
         for (Player player : people) {
             player.getInventory().clear();
+
+            PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
+            Classes selectedClass = playerSettings.getSelectedClass();
+            AbstractPlayerClass apc = selectedClass.create.get();
 
             player.setAllowFlight(false);
 
@@ -103,6 +110,12 @@ public class StartCommand implements TabExecutor {
             player.getInventory().setItem(6, new ItemBuilder(Material.NETHER_STAR)
                     .name(ChatColor.AQUA + "Pre-game Menu ")
                     .lore(ChatColor.GRAY + "Allows you to change your class, select a\n" + ChatColor.GRAY + "weapon, and edit your settings.")
+                    .get());
+            player.getInventory().setItem(1, new ItemBuilder(apc.getWeapon()
+                    .getItem(playerSettings.getWeaponSkins()
+                    .getOrDefault(selectedClass, Weapons.FELFLAME_BLADE).item))
+                    .name("§aWeapon Skin Preview")
+                    .lore("")
                     .get());
 
             Team team = Warlords.getPlayerSettings(player.getUniqueId()).getWantedTeam();

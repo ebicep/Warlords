@@ -2,7 +2,6 @@ package com.ebicep.warlords.player;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.util.ItemBuilder;
-import com.sun.org.apache.bcel.internal.generic.NEW;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;

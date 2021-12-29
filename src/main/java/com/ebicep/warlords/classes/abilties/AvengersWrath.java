@@ -11,7 +11,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class AvengersWrath extends AbstractAbility {
 
-    private final int duration = 12;
+    private int duration = 12;
 
     public AvengersWrath() {
         super("Avenger's Wrath", 0, 0, 52.85f, 0, 0, 0);
@@ -29,11 +29,11 @@ public class AvengersWrath extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(WarlordsPlayer wp, Player player) {
+    public void onActivate(WarlordsPlayer wp, Player p) {
         wp.getCooldownManager().addCooldown(name, AvengersWrath.this.getClass(), new AvengersWrath(), "WRATH", duration, wp, CooldownTypes.BUFF);
 
-        for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "paladin.avengerswrath.activation", 2, 1);
+        for (Player player1 : p.getWorld().getPlayers()) {
+            player1.playSound(p.getLocation(), "paladin.avengerswrath.activation", 2, 1);
         }
 
         wp.getGame().getGameTasks().put(
@@ -41,7 +41,7 @@ public class AvengersWrath extends AbstractAbility {
                     @Override
                     public void run() {
                         if (!wp.getCooldownManager().getCooldown(AvengersWrath.class).isEmpty()) {
-                            Location location = player.getLocation();
+                            Location location = p.getLocation();
                             location.add(0, 1.2, 0);
                             ParticleEffect.SPELL.display(0.3F, 0.1F, 0.3F, 0.2F, 6, location, 500);
                         } else {
@@ -52,5 +52,13 @@ public class AvengersWrath extends AbstractAbility {
                 System.currentTimeMillis()
         );
 
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
     }
 }

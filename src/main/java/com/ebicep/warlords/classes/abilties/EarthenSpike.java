@@ -33,7 +33,7 @@ public class EarthenSpike extends AbstractAbility {
     };
 
     public EarthenSpike() {
-        super("Earthen Spike", -404, -562, 0, 100, 15, 175
+        super("Earthen Spike", 404, 562, 0, 100, 15, 175
         );
     }
 
@@ -42,8 +42,8 @@ public class EarthenSpike extends AbstractAbility {
         description = "§7Send forth an underground earth spike\n" +
                 "§7that locks onto a targeted enemy player.\n" +
                 "§7When the spike reaches its target it\n" +
-                "§7emerges from the ground, dealing §c" + format(-minDamageHeal) + " §7-\n" +
-                "§c" + format(-maxDamageHeal) + " §7damage to any nearby enemies and\n" +
+                "§7emerges from the ground, dealing §c" + format(minDamageHeal) + " §7-\n" +
+                "§c" + format(maxDamageHeal) + " §7damage to any nearby enemies and\n" +
                 "§7launches them up into the air." +
                 "\n\n" +
                 "§7Has an initial cast range of §e" + radius + " §7blocks.";
@@ -67,130 +67,121 @@ public class EarthenSpike extends AbstractAbility {
 
                 wp.getGame().getGameTasks().put(
                         new BukkitRunnable() {
+                            private final float SPEED = 1;
+                            private final float SPEED_SQUARED = SPEED * SPEED;
+                            private Location spikeLoc = location;
+                            {
+                                spikeLoc.setY(spikeLoc.getBlockY());
+                            }
 
                             @Override
                             public void run() {
-                                earthenSpikeBlock.addDuration();
+                                if (!wp.getGame().isGameFreeze()) {
 
-                                List<CustomFallingBlock> customFallingBlocks = earthenSpikeBlock.getFallingBlocks();
-                                FallingBlock lastFallingBlock = customFallingBlocks.get(customFallingBlocks.size() - 1).getBlock();
-                                WarlordsPlayer target = earthenSpikeBlock.getTarget();
-                                WarlordsPlayer user = earthenSpikeBlock.getUser();
+                                    earthenSpikeBlock.addDuration();
 
-                                if (earthenSpikeBlock.getDuration() % 5 == 1) {
-                                    for (Player player1 : player.getWorld().getPlayers()) {
-                                        player1.playSound(lastFallingBlock.getLocation(), REPEATING_SOUND[(earthenSpikeBlock.getDuration() / 5) % 4], 2, 1);
-                                    }
-                                }
+                                    List<CustomFallingBlock> customFallingBlocks = earthenSpikeBlock.getFallingBlocks();
+                                    WarlordsPlayer target = earthenSpikeBlock.getTarget();
+                                    WarlordsPlayer user = earthenSpikeBlock.getUser();
 
-                                if (earthenSpikeBlock.getDuration() > 30) {
-                                    //out of time
-                                    earthenSpikeBlock.setDuration(-1);
-                                    this.cancel();
-                                } else if (Math.abs(target.getLocation().getX() - lastFallingBlock.getLocation().getX()) + Math.abs(target.getLocation().getZ() - lastFallingBlock.getLocation().getZ()) > 1) {
-                                    Location newLocation = lastFallingBlock.getLocation();
-                                    //moving diagonally
-                                    if (Math.abs(target.getLocation().getBlockX() - newLocation.getBlockX()) > 0) {
-                                        if (target.getLocation().getX() < newLocation.getX()) {
-                                            newLocation.add(-1, 0, 0);
-                                        } else {
-                                            newLocation.add(1, 0, 0);
+                                    if (earthenSpikeBlock.getDuration() % 5 == 1) {
+                                        for (Player player1 : player.getWorld().getPlayers()) {
+                                            player1.playSound(spikeLoc, REPEATING_SOUND[(earthenSpikeBlock.getDuration() / 5) % 4], 2, 1);
                                         }
-                                        if (Math.abs(target.getLocation().getBlockZ() - newLocation.getBlockZ()) > 0) {
-                                            if (target.getLocation().getZ() < newLocation.getZ()) {
-                                                FallingBlock newBlock = spawnFallingBlock(newLocation, newLocation.clone().add(0, 0, -1));
-                                                customFallingBlocks.add(new CustomFallingBlock(newBlock, newBlock.getLocation().getY() - .20));
-                                            } else {
-                                                FallingBlock newBlock = spawnFallingBlock(newLocation, newLocation.clone().add(0, 0, 1));
-                                                customFallingBlocks.add(new CustomFallingBlock(newBlock, newBlock.getLocation().getY() - .20));
+                                    }
+
+                                    if (earthenSpikeBlock.getDuration() > 30) {
+                                        //out of time
+                                        earthenSpikeBlock.setDuration(-1);
+                                        this.cancel();
+                                        return;
+                                    }
+
+                                    Vector change = target.getLocation().toVector().subtract(spikeLoc.toVector());
+                                    change.setY(0);
+                                    double length = change.lengthSquared();
+                                    if (length > SPEED_SQUARED) {
+                                        change.multiply(1 / (Math.sqrt(length) / SPEED));
+                                        spikeLoc.add(change);
+
+                                        //moving vertically
+                                        if (target.getLocation().getY() < spikeLoc.getY()) {
+                                            for (int j = 0; j < 10; j++) {
+                                                if (spikeLoc.clone().add(0, -1, 0).getBlock().getType() == Material.AIR) {
+                                                    spikeLoc.add(0, -1, 0);
+                                                } else {
+                                                    break;
+                                                }
+                                            }
+                                        } else {
+                                            for (int j = 0; j < 10; j++) {
+                                                if (spikeLoc.getBlock().getType() != Material.AIR) {
+                                                    spikeLoc.add(0, 1, 0);
+                                                } else {
+                                                    break;
+                                                }
                                             }
                                         }
-                                    }
-                                    if (Math.abs(target.getLocation().getBlockZ() - newLocation.getBlockZ()) > 0) {
-                                        if (target.getLocation().getZ() < newLocation.getZ()) {
-                                            newLocation.add(0, 0, -1);
-                                        } else {
-                                            newLocation.add(0, 0, 1);
-                                        }
-                                    }
-
-                                    //moving vertically
-                                    if (target.getLocation().getY() < newLocation.getY()) {
-                                        for (int j = 0; j < 10; j++) {
-                                            if (newLocation.clone().add(0, -1, 0).getBlock().getType() == Material.AIR) {
-                                                newLocation.add(0, -1, 0);
+                                        //temp fix for block glitch
+                                        for (int i = 0; i < 10; i++) {
+                                            if (spikeLoc.getBlock().getType() != Material.AIR) {
+                                                spikeLoc.add(0, 1, 0);
                                             } else {
                                                 break;
                                             }
                                         }
+
+                                        FallingBlock newBlock = spawnFallingBlock(spikeLoc, spikeLoc);
+                                        customFallingBlocks.add(new CustomFallingBlock(newBlock, newBlock.getLocation().getY() - .20));
                                     } else {
-                                        for (int j = 0; j < 10; j++) {
-                                            if (newLocation.getBlock().getType() != Material.AIR) {
-                                                newLocation.add(0, 1, 0);
+                                        //impact
+                                        Location targetLocation = target.getLocation();
+                                        for (WarlordsPlayer warlordsPlayer : PlayerFilter
+                                                .entitiesAround(targetLocation, 2.5, 2.5, 2.5)
+                                                .aliveEnemiesOf(wp)
+                                        ) {
+                                            warlordsPlayer.damageHealth(user, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+                                            //todo tweak distance to ground where you cant get kbed up (1.81 is max jump blocks, double spike kb might be possible with this)
+                                            if (Utils.getDistance(warlordsPlayer.getEntity(), .1) < 1.81) {
+                                                warlordsPlayer.setVelocity(new Vector(0, .625, 0));
+                                            }
+                                        }
+
+                                        for (Player player1 : wp.getWorld().getPlayers()) {
+                                            player1.playSound(wp.getLocation(), "shaman.earthenspike.impact", 2, 1);
+                                        }
+
+                                        targetLocation.setYaw(0);
+                                        for (int i = 0; i < 100; i++) {
+                                            if (targetLocation.clone().add(0, -1, 0).getBlock().getType() == Material.AIR) {
+                                                targetLocation.add(0, -1, 0);
                                             } else {
                                                 break;
                                             }
                                         }
+                                        ArmorStand stand = (ArmorStand) targetLocation.getWorld().spawnEntity(targetLocation.add(0, -.6, 0), EntityType.ARMOR_STAND);
+                                        stand.setHelmet(new ItemStack(Material.BROWN_MUSHROOM));
+                                        stand.setGravity(false);
+                                        stand.setVisible(false);
+                                        stand.setMarker(true);
+
+                                        new BukkitRunnable() {
+
+                                            @Override
+                                            public void run() {
+                                                stand.remove();
+                                                this.cancel();
+                                            }
+
+                                        }.runTaskTimer(Warlords.getInstance(), 10, 0);
+
+                                        earthenSpikeBlock.setDuration(-1);
+                                        this.cancel();
                                     }
-                                    //temp fix for block glitch
-                                    for (int i = 0; i < 10; i++) {
-                                        if (newLocation.getBlock().getType() != Material.AIR) {
-                                            newLocation.add(0, 1, 0);
-                                        } else {
-                                            break;
-                                        }
+                                    if (target.isDeath()) {
+                                        earthenSpikeBlock.setDuration(-1);
+                                        this.cancel();
                                     }
-
-                                    FallingBlock newBlock = spawnFallingBlock(newLocation, newLocation);
-                                    customFallingBlocks.add(new CustomFallingBlock(newBlock, newBlock.getLocation().getY() - .20));
-                                } else {
-                                    //impact
-                                    Location targetLocation = target.getLocation();
-                                    for (WarlordsPlayer warlordsPlayer : PlayerFilter
-                                            .entitiesAround(targetLocation, 2, 2, 2)
-                                            .aliveEnemiesOf(wp)
-                                    ) {
-                                        warlordsPlayer.addHealth(user, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
-                                        //todo tweak distance to ground where you cant get kbed up (1.4 is max jump blocks)
-                                        if (Utils.getDistance(warlordsPlayer.getEntity(), .1) < 1.4) {
-                                            warlordsPlayer.setVelocity(new Vector(0, .6, 0));
-                                        }
-                                    }
-
-                                    for (Player player1 : wp.getWorld().getPlayers()) {
-                                        player1.playSound(wp.getLocation(), "shaman.earthenspike.impact", 2, 1);
-                                    }
-
-                                    targetLocation.setYaw(0);
-                                    for (int i = 0; i < 100; i++) {
-                                        if (targetLocation.clone().add(0, -1, 0).getBlock().getType() == Material.AIR) {
-                                            targetLocation.add(0, -1, 0);
-                                        } else {
-                                            break;
-                                        }
-                                    }
-                                    ArmorStand stand = (ArmorStand) targetLocation.getWorld().spawnEntity(targetLocation.add(0, -.6, 0), EntityType.ARMOR_STAND);
-                                    stand.setHelmet(new ItemStack(Material.BROWN_MUSHROOM));
-                                    stand.setGravity(false);
-                                    stand.setVisible(false);
-                                    stand.setMarker(true);
-
-                                    new BukkitRunnable() {
-
-                                        @Override
-                                        public void run() {
-                                            stand.remove();
-                                            this.cancel();
-                                        }
-
-                                    }.runTaskTimer(Warlords.getInstance(), 10, 0);
-
-                                    earthenSpikeBlock.setDuration(-1);
-                                    this.cancel();
-                                }
-                                if (target.isDeath()) {
-                                    earthenSpikeBlock.setDuration(-1);
-                                    this.cancel();
                                 }
                             }
 

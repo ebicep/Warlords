@@ -3,13 +3,6 @@ package com.ebicep.warlords.classes.internal;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.player.WarlordsPlayer;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import com.ebicep.warlords.util.LocationBuilder;
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -22,6 +15,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
     private final List<PendingHit> PENDING_HITS = new ArrayList<>();
@@ -300,19 +299,22 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
 
         @Override
         public void run() {
-            updateSpeed(this);
-            MovingObjectPosition hasCollided = checkCollisionAndMove(this, currentLocation, speed, shooter);
-            if (hasCollided != null) {
-                onHit(this, hasCollided.entity == null ? null : getFromEntity(hasCollided.entity.getBukkitEntity()));
-                cancel();
-            } else if (ticksLived >= maxTicks) {
-                cancel();
-            } else {
-                playEffect(this);
-                ticksLived++;
-                //cancel after 15 seconds
-                if(ticksLived > 15 * 20) {
+            if (!shooter.getGame().isGameFreeze()) {
+
+                updateSpeed(this);
+                MovingObjectPosition hasCollided = checkCollisionAndMove(this, currentLocation, speed, shooter);
+                if (hasCollided != null) {
+                    onHit(this, hasCollided.entity == null ? null : getFromEntity(hasCollided.entity.getBukkitEntity()));
                     cancel();
+                } else if (ticksLived >= maxTicks) {
+                    cancel();
+                } else {
+                    playEffect(this);
+                    ticksLived++;
+                    //cancel after 15 seconds
+                    if (ticksLived > 15 * 20) {
+                        cancel();
+                    }
                 }
             }
         }

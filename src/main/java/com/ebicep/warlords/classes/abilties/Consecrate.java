@@ -26,8 +26,8 @@ public class Consecrate extends AbstractAbility {
     public void updateDescription(Player player) {
         description = "§7Consecrate the ground below your\n" +
                 "§7feet, declaring it sacred. Enemies\n" +
-                "§7standing on it will take §c" + format(-minDamageHeal) + " §7-\n" +
-                "§c" + format(-maxDamageHeal) + " §7damage per second and\n" +
+                "§7standing on it will take §c" + format(minDamageHeal) + " §7-\n" +
+                "§c" + format(maxDamageHeal) + " §7damage per second and\n" +
                 "§7take §c" + strikeDamageBoost + "% §7increased damage from\n" +
                 "§7your paladin strikes. Lasts §65\n" +
                 "§7seconds.";
@@ -35,7 +35,7 @@ public class Consecrate extends AbstractAbility {
 
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
-        DamageHealCircle damageHealCircle = new DamageHealCircle(wp, player.getLocation(), radius, 5, minDamageHeal, maxDamageHeal, critChance, critMultiplier, name);
+        DamageHealCircle cons = new DamageHealCircle(wp, player.getLocation(), radius, 5, minDamageHeal, maxDamageHeal, critChance, critMultiplier, name);
         wp.subtractEnergy(energyCost);
 
         for (Player player1 : player.getWorld().getPlayers()) {
@@ -47,34 +47,40 @@ public class Consecrate extends AbstractAbility {
         consecrate.setGravity(false);
         consecrate.setVisible(false);
         consecrate.setMarker(true);
-        BukkitTask task = Bukkit.getScheduler().runTaskTimer(Warlords.getInstance(), damageHealCircle::spawn, 0, 1);
+        BukkitTask task = Bukkit.getScheduler().runTaskTimer(Warlords.getInstance(), cons::spawn, 0, 1);
         wp.getGame().getGameTasks().put(
                 new BukkitRunnable() {
 
                     @Override
                     public void run() {
-                        damageHealCircle.setDuration(damageHealCircle.getDuration() - 1);
-                        PlayerFilter.entitiesAround(damageHealCircle.getLocation(), radius, 6, radius)
-                                .aliveEnemiesOf(wp)
-                                .forEach(warlordsPlayer -> {
-                                    warlordsPlayer.addHealth(
-                                            damageHealCircle.getWarlordsPlayer(),
-                                            damageHealCircle.getName(),
-                                            damageHealCircle.getMinDamage(),
-                                            damageHealCircle.getMaxDamage(),
-                                            damageHealCircle.getCritChance(),
-                                            damageHealCircle.getCritMultiplier(),
-                                            false);
-                                });
-                        if (damageHealCircle.getDuration() == 0) {
-                            consecrate.remove();
-                            this.cancel();
-                            task.cancel();
+                        if (!wp.getGame().isGameFreeze()) {
+                            cons.setDuration(cons.getDuration() - 1);
+                            PlayerFilter.entitiesAround(cons.getLocation(), radius, 6, radius)
+                                    .aliveEnemiesOf(wp)
+                                    .forEach(warlordsPlayer -> {
+                                        warlordsPlayer.damageHealth(
+                                                cons.getWarlordsPlayer(),
+                                                cons.getName(),
+                                                cons.getMinDamage(),
+                                                cons.getMaxDamage(),
+                                                cons.getCritChance(),
+                                                cons.getCritMultiplier(),
+                                                false);
+                                    });
+                            if (cons.getDuration() == 0) {
+                                consecrate.remove();
+                                this.cancel();
+                                task.cancel();
+                            }
                         }
                     }
 
                 }.runTaskTimer(Warlords.getInstance(), 0, 20),
                 System.currentTimeMillis()
         );
+    }
+
+    public void setRadius(float radius) {
+        this.radius = radius;
     }
 }

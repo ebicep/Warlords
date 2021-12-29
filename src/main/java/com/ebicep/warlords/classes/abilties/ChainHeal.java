@@ -16,7 +16,7 @@ public class ChainHeal extends AbstractChainBase {
     private final int bounceRange = 10;
 
     public ChainHeal() {
-        super("Chain Heal", 508, 686, 7.99f, 40, 20, 175);
+        super("Chain Heal", 533, 719, 7.99f, 40, 20, 175);
     }
 
     @Override
@@ -24,30 +24,30 @@ public class ChainHeal extends AbstractChainBase {
         description = "§7Discharge a beam of energizing lightning\n" +
                 "§7that heals you and a targeted friendly\n" +
                 "§7player for §a" + format(minDamageHeal) + " §7- §a" + format(maxDamageHeal) + " §7health and\n" +
-                "§7jumps to §e3 §7additional targets within\n" +
-                "§e" + bounceRange + " §7blocks. Each jump reduces the healing\n" +
-                "§7by §c10%§7." +
+                "§7jumps to §e1 §7additional target within\n" +
+                "§e" + bounceRange + " §7blocks. The last jump heals\n" +
+                "§7for §c20% §7less." +
                 "\n\n" +
                 "§7Each ally healed reduces the cooldown of\n" +
-                "§7Boulder by §62 §7seconds." +
+                "§7Boulder by §62.5 §7seconds." +
                 "\n\n" +
                 "§7Has an initial cast range of §e" + radius + " §7blocks.";
     }
 
     @Override
-    protected int getHitCounterAndActivate(WarlordsPlayer wp, Player player) {
+    protected int getHitCounterAndActivate(WarlordsPlayer wp, Player p) {
         int hitCounter = 0;
         for (WarlordsPlayer nearPlayer : PlayerFilter
-                .entitiesAround(player, radius, radius, radius)
+                .entitiesAround(p, radius, radius, radius)
                 .aliveTeammatesOfExcludingSelf(wp)
                 .lookingAtFirst(wp)
         ) {
-            if (Utils.isLookingAtChain(player, nearPlayer.getEntity())) {
+            if (Utils.isLookingAtChain(p, nearPlayer.getEntity())) {
                 //self heal
-                player.playSound(player.getLocation(), Sound.ORB_PICKUP, 1, 1);
-                wp.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
-                chain(player.getLocation(), nearPlayer.getLocation());
-                nearPlayer.addHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+                p.playSound(p.getLocation(), Sound.ORB_PICKUP, 1, 1);
+                wp.healHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+                chain(p.getLocation(), nearPlayer.getLocation());
+                nearPlayer.healHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
                 hitCounter++;
 
                 for (WarlordsPlayer chainPlayerOne : PlayerFilter
@@ -56,30 +56,9 @@ public class ChainHeal extends AbstractChainBase {
                         .excluding(wp, nearPlayer)
                 ) {
                     chain(nearPlayer.getLocation(), chainPlayerOne.getLocation());
-                    chainPlayerOne.addHealth(wp, name, minDamageHeal * 0.9f, maxDamageHeal * 0.9f, critChance, critMultiplier, false);
+                    chainPlayerOne.healHealth(wp, name, minDamageHeal * 0.8f, maxDamageHeal * 0.8f, critChance, critMultiplier, false);
                     hitCounter++;
 
-                    for (WarlordsPlayer chainPlayerTwo : PlayerFilter
-                            .entitiesAround(chainPlayerOne, bounceRange, bounceRange, bounceRange)
-                            .aliveTeammatesOf(wp)
-                            .excluding(wp, nearPlayer, chainPlayerOne)
-                    ) {
-                        chain(chainPlayerOne.getLocation(), chainPlayerTwo.getLocation());
-                        chainPlayerTwo.addHealth(wp, name, minDamageHeal * 0.8f, maxDamageHeal * 0.8f, critChance, critMultiplier, false);
-                        hitCounter++;
-
-                        for (WarlordsPlayer chainPlayerThree : PlayerFilter
-                                .entitiesAround(chainPlayerTwo, bounceRange, bounceRange, bounceRange)
-                                .aliveTeammatesOf(wp)
-                                .excluding(wp, nearPlayer, chainPlayerOne, chainPlayerTwo)
-                        ) {
-                            chain(chainPlayerTwo.getLocation(), chainPlayerThree.getLocation());
-                            chainPlayerThree.addHealth(wp, name, minDamageHeal * 0.7f, maxDamageHeal * 0.7f, critChance, critMultiplier, false);
-                            hitCounter++;
-                            break;
-                        }
-                        break;
-                    }
                     break;
                 }
                 break;
@@ -90,10 +69,10 @@ public class ChainHeal extends AbstractChainBase {
 
     @Override
     protected void onHit(WarlordsPlayer warlordsPlayer, Player player, int hitCounter) {
-        if ((hitCounter + 1) * 2 > warlordsPlayer.getSpec().getRed().getCurrentCooldown()) {
+        if ((hitCounter + 1) * 2.5f > warlordsPlayer.getSpec().getRed().getCurrentCooldown()) {
             warlordsPlayer.getSpec().getRed().setCurrentCooldown(0);
         } else {
-            warlordsPlayer.getSpec().getRed().setCurrentCooldown(warlordsPlayer.getSpec().getRed().getCurrentCooldown() - (hitCounter + 1) * 2);
+            warlordsPlayer.getSpec().getRed().setCurrentCooldown(warlordsPlayer.getSpec().getRed().getCurrentCooldown() - (hitCounter + 1) * 2.5f);
         }
         warlordsPlayer.updateRedItem(player);
         warlordsPlayer.getSpec().getBlue().setCurrentCooldown((float) (cooldown * warlordsPlayer.getCooldownModifier()));

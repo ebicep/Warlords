@@ -14,7 +14,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 public class Windfury extends AbstractAbility {
 
     private boolean firstProc = false;
-
+    private int procChance = 35;
     private final int duration = 8;
 
     public Windfury() {
@@ -23,10 +23,10 @@ public class Windfury extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        int weaponDamage = Classes.getSelectedBoost(player) == ClassesSkillBoosts.WINDFURY_WEAPON ? 162 : 135;
+        int weaponDamage = Classes.getSelectedBoost(player) == ClassesSkillBoosts.WINDFURY_WEAPON ? 155 : 135;
         description = "§7Imbue your weapon with the power\n" +
                 "§7of the wind, causing each of your\n" +
-                "§7melee attacks to have a §e35% §7chance\n" +
+                "§7melee attacks to have a §e" + procChance + "% §7chance\n" +
                 "§7to hit §e2 §7additional times for §c" + weaponDamage + "%\n" +
                 "§7weapon damage. The first melee hit is\n" +
                 "§7guaranteed to activate Windfury. Lasts §6" + duration + "\n" +
@@ -67,5 +67,13 @@ public class Windfury extends AbstractAbility {
 
     public void setFirstProc(boolean firstProc) {
         this.firstProc = firstProc;
+    }
+
+    public int getProcChance() {
+        return procChance;
+    }
+
+    public void setProcChance(int procChance) {
+        this.procChance = procChance;
     }
 }

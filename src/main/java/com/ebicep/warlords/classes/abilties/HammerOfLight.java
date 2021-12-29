@@ -56,7 +56,7 @@ public class HammerOfLight extends AbstractAbility {
                 "§7You may SNEAK to turn your hammer into Crown of Light.\n" +
                 "§7Removing the damage and piercing BUT increasing\n" +
                 "§7the healing §7by §a50% §7and reducing the\n" +
-                "§7energy cost of your Protector Strike by\n" +
+                "§7energy cost of your Protector's Strike by\n" +
                 "§e10 §7energy. You cannot put the Hammer of Light\n" +
                 "§7back down after you converted it.";
     }
@@ -65,9 +65,9 @@ public class HammerOfLight extends AbstractAbility {
     public void onActivate(WarlordsPlayer wp, Player player) {
 
         if (player.getTargetBlock((HashSet<Byte>) null, 25).getType() == Material.AIR) return;
-        DamageHealCircle damageHealCircle = new DamageHealCircle(wp, player.getTargetBlock((HashSet<Byte>) null, 25).getLocation().add(1, 0, 1), radius, duration, minDamageHeal, maxDamageHeal, critChance, critMultiplier, name);
-        damageHealCircle.spawnHammer();
-        damageHealCircle.getLocation().add(0, 1, 0);
+        DamageHealCircle hol = new DamageHealCircle(wp, player.getTargetBlock((HashSet<Byte>) null, 25).getLocation().add(1, 0, 1), radius, duration, minDamageHeal, maxDamageHeal, critChance, critMultiplier, name);
+        hol.spawnHammer();
+        hol.getLocation().add(0, 1, 0);
         wp.subtractEnergy(energyCost);
         wp.getSpec().getOrange().setCurrentCooldown((float) (cooldown * wp.getCooldownModifier()));
         HammerOfLight tempHammerOfLight = new HammerOfLight();
@@ -77,7 +77,7 @@ public class HammerOfLight extends AbstractAbility {
             player1.playSound(player.getLocation(), "paladin.hammeroflight.impact", 2, 0.85f);
         }
 
-        BukkitTask task = Bukkit.getScheduler().runTaskTimer(Warlords.getInstance(), damageHealCircle::spawn, 0, 1);
+        BukkitTask task = Bukkit.getScheduler().runTaskTimer(Warlords.getInstance(), hol::spawn, 0, 1);
         wp.getGame().getGameTasks().put(task, System.currentTimeMillis());
         wp.getGame().getGameTasks().put(
 
@@ -86,39 +86,42 @@ public class HammerOfLight extends AbstractAbility {
 
                     @Override
                     public void run() {
-                        if (counter % 20 == 0) {
-                            damageHealCircle.setDuration(damageHealCircle.getDuration() - 1);
-                            for (WarlordsPlayer warlordsPlayer : PlayerFilter
-                                    .entitiesAround(damageHealCircle.getLocation(), radius, radius, radius)
-                                    .isAlive()
-                            ) {
-                                if (damageHealCircle.getWarlordsPlayer().isTeammateAlive(warlordsPlayer)) {
-                                    warlordsPlayer.addHealth(
-                                            damageHealCircle.getWarlordsPlayer(),
-                                            damageHealCircle.getName(),
-                                            damageHealCircle.getMinDamage(),
-                                            damageHealCircle.getMaxDamage(),
-                                            damageHealCircle.getCritChance(),
-                                            damageHealCircle.getCritMultiplier(),
-                                            false);
-                                } else {
-                                    warlordsPlayer.addHealth(
-                                            damageHealCircle.getWarlordsPlayer(),
-                                            damageHealCircle.getName(),
-                                            -damageHealCircle.getMinDamage(),
-                                            -damageHealCircle.getMaxDamage(),
-                                            damageHealCircle.getCritChance(),
-                                            damageHealCircle.getCritMultiplier(),
-                                            false);
+                        if (!wp.getGame().isGameFreeze()) {
+
+                            if (counter % 20 == 0) {
+                                hol.setDuration(hol.getDuration() - 1);
+                                for (WarlordsPlayer warlordsPlayer : PlayerFilter
+                                        .entitiesAround(hol.getLocation(), radius, radius, radius)
+                                        .isAlive()
+                                ) {
+                                    if (hol.getWarlordsPlayer().isTeammateAlive(warlordsPlayer)) {
+                                        warlordsPlayer.healHealth(
+                                                hol.getWarlordsPlayer(),
+                                                hol.getName(),
+                                                hol.getMinDamage(),
+                                                hol.getMaxDamage(),
+                                                hol.getCritChance(),
+                                                hol.getCritMultiplier(),
+                                                false);
+                                    } else {
+                                        warlordsPlayer.damageHealth(
+                                                hol.getWarlordsPlayer(),
+                                                hol.getName(),
+                                                hol.getMinDamage(),
+                                                hol.getMaxDamage(),
+                                                hol.getCritChance(),
+                                                hol.getCritMultiplier(),
+                                                false);
+                                    }
                                 }
                             }
+                            if (hol.getDuration() <= 0) {
+                                hol.removeHammer();
+                                this.cancel();
+                                task.cancel();
+                            }
+                            counter++;
                         }
-                        if (damageHealCircle.getDuration() <= 0) {
-                            damageHealCircle.removeHammer();
-                            this.cancel();
-                            task.cancel();
-                        }
-                        counter++;
                     }
 
                 }.runTaskTimer(Warlords.getInstance(), 0, 0),
@@ -131,73 +134,75 @@ public class HammerOfLight extends AbstractAbility {
 
                     @Override
                     public void run() {
+                        if (!wp.getGame().isGameFreeze()) {
 
-                        if (wp.isAlive() && player.isSneaking() && !wasSneaking) {
-                            tempHammerOfLight.setCrownOfLight(true);
-                            wp.getCooldownManager().getCooldown(tempHammerOfLight).ifPresent(cd -> {
-                                cd.setActionBarName("CROWN");
-                            });
+                            if (wp.isAlive() && player.isSneaking() && !wasSneaking) {
+                                tempHammerOfLight.setCrownOfLight(true);
+                                wp.getCooldownManager().getCooldown(tempHammerOfLight).ifPresent(cd -> {
+                                    cd.setActionBarName("CROWN");
+                                });
 
-                            for (Player player1 : player.getWorld().getPlayers()) {
-                                player1.playSound(player.getLocation(), "warrior.revenant.orbsoflife", 2, 0.15f);
-                                player1.playSound(player.getLocation(), "mage.firebreath.activation", 2, 0.25f);
+                                for (Player player1 : player.getWorld().getPlayers()) {
+                                    player1.playSound(player.getLocation(), "warrior.revenant.orbsoflife", 2, 0.15f);
+                                    player1.playSound(player.getLocation(), "mage.firebreath.activation", 2, 0.25f);
+                                }
+
+                                BukkitTask particles = new BukkitRunnable() {
+                                    @Override
+                                    public void run() {
+                                        double angle = 0;
+                                        for (int i = 0; i < 9; i++) {
+                                            double x = .4 * Math.cos(angle);
+                                            double z = .4 * Math.sin(angle);
+                                            angle += 40;
+                                            Vector v = new Vector(x, 2, z);
+                                            Location loc = wp.getLocation().clone().add(v);
+                                            ParticleEffect.SPELL.display(0, 0, 0, 0f, 1, loc, 500);
+                                        }
+
+                                        CircleEffect circle = new CircleEffect(wp.getGame(), wp.getTeam(), player.getLocation().add(0, 0.75f, 0), radius / 2f);
+                                        circle.addEffect(new CircumferenceEffect(ParticleEffect.SPELL).particlesPerCircumference(0.5f));
+                                        circle.playEffects();
+                                    }
+                                }.runTaskTimer(Warlords.getInstance(), 0, 6);
+                                wp.getGame().getGameTasks().put(particles, System.currentTimeMillis());
+                                wp.getGame().getGameTasks().put(
+                                        new BukkitRunnable() {
+                                            int timeLeft = hol.getDuration();
+
+                                            @Override
+                                            public void run() {
+                                                PlayerFilter.entitiesAround(wp.getLocation(), radius, radius, radius)
+                                                        .aliveTeammatesOf(wp)
+                                                        .forEach(teammate -> {
+                                                            teammate.healHealth(
+                                                                hol.getWarlordsPlayer(),
+                                                                "Crown of Light",
+                                                                hol.getMinDamage() * 1.5f,
+                                                                hol.getMaxDamage() * 1.5f,
+                                                                hol.getCritChance(),
+                                                                hol.getCritMultiplier(),
+                                                                false);
+                                                        });
+                                                timeLeft--;
+
+                                                if (timeLeft <= 0 || wp.isDead()) {
+                                                    this.cancel();
+                                                    particles.cancel();
+                                                }
+                                            }
+                                        }.runTaskTimer(Warlords.getInstance(), 2, 20),
+                                        System.currentTimeMillis()
+                                );
+                                this.cancel();
+                                hol.setDuration(0);
                             }
 
-                            BukkitTask particles = new BukkitRunnable() {
-                                @Override
-                                public void run() {
-                                    double angle = 0;
-                                    for (int i = 0; i < 9; i++) {
-                                        double x = .4 * Math.cos(angle);
-                                        double z = .4 * Math.sin(angle);
-                                        angle += 40;
-                                        Vector v = new Vector(x, 2, z);
-                                        Location loc = wp.getLocation().clone().add(v);
-                                        ParticleEffect.SPELL.display(0, 0, 0, 0f, 1, loc, 500);
-                                    }
+                            wasSneaking = player.isSneaking();
 
-                                    CircleEffect circle = new CircleEffect(wp.getGame(), wp.getTeam(), player.getLocation().add(0, 0.75f, 0), radius / 2f);
-                                    circle.addEffect(new CircumferenceEffect(ParticleEffect.SPELL).particlesPerCircumference(0.5f));
-                                    circle.playEffects();
-                                }
-                            }.runTaskTimer(Warlords.getInstance(), 0, 6);
-                            wp.getGame().getGameTasks().put(particles, System.currentTimeMillis());
-                            wp.getGame().getGameTasks().put(
-                                    new BukkitRunnable() {
-                                        int timeLeft = damageHealCircle.getDuration();
-
-                                        @Override
-                                        public void run() {
-                                            PlayerFilter.entitiesAround(wp.getLocation(), radius, radius, radius)
-                                                    .aliveTeammatesOf(wp)
-                                                    .forEach(teammate -> {
-                                                        teammate.addHealth(
-                                                                damageHealCircle.getWarlordsPlayer(),
-                                                                "Crown of Light",
-                                                                damageHealCircle.getMinDamage() * 1.5f,
-                                                                damageHealCircle.getMaxDamage() * 1.5f,
-                                                                damageHealCircle.getCritChance(),
-                                                                damageHealCircle.getCritMultiplier(),
-                                                                false);
-                                                    });
-                                            timeLeft--;
-
-                                            if (timeLeft <= 0 || wp.isDead()) {
-                                                this.cancel();
-                                                particles.cancel();
-                                            }
-                                        }
-                                    }.runTaskTimer(Warlords.getInstance(), 2, 20),
-                                    System.currentTimeMillis()
-                            );
-                            this.cancel();
-                            damageHealCircle.setDuration(0);
-                        }
-
-                        wasSneaking = player.isSneaking();
-
-                        if (wp.isDead()) {
-                            this.cancel();
+                            if (wp.isDead() || hol.getDuration() <= 0) {
+                                this.cancel();
+                            }
                         }
                     }
                 }.runTaskTimer(Warlords.getInstance(), 0, 0),
