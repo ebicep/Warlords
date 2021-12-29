@@ -19,7 +19,6 @@ import java.util.HashSet;
 
 public class HealingRain extends AbstractAbility {
 
-    private int recastCooldown = 0;
     private int duration = 12;
     private int radius = 8;
 
@@ -87,13 +86,14 @@ public class HealingRain extends AbstractAbility {
                                     .aliveTeammatesOf(wp)
                                     .forEach((teammateInRain) -> {
                                         teammateInRain.healHealth(
-                                                hr.getWarlordsPlayer(),
-                                                hr.getName(),
-                                                hr.getMinDamage(),
-                                                hr.getMaxDamage(),
-                                                hr.getCritChance(),
-                                                hr.getCritMultiplier(),
-                                                false);
+                                            hr.getWarlordsPlayer(),
+                                            hr.getName(),
+                                            hr.getMinDamage(),
+                                            hr.getMaxDamage(),
+                                            hr.getCritChance(),
+                                            hr.getCritMultiplier(),
+                                            false
+                                        );
 
                                         if (teammateInRain != wp) {
                                             teammateInRain.getCooldownManager().removeCooldown(Utils.OVERHEAL_MARKER);
