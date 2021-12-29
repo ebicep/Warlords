@@ -186,13 +186,13 @@ public enum ClassesSkillBoosts {
             }
     ),
     SEISMIC_WAVE_BERSERKER("Seismic Wave",
-            "§7Increase the damage you\n§7deal with Seismic Wave by\n§725% and reduce the cooldown\n§7by 20%",
-            "§aIncrease the damage you\n§adeal with Seismic Wave by\n§c25% §aand reduce the cooldown\n§aby §c20%",
+            "§7Increase the damage you\n§7deal with Seismic Wave by\n§725% and reduce the cooldown\n§7by 25%",
+            "§aIncrease the damage you\n§adeal with Seismic Wave by\n§c25% §aand reduce the cooldown\n§aby §c25%",
             SeismicWave.class,
             abstractAbility -> {
                 abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.25f);
                 abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.25f);
-                abstractAbility.setCooldown(abstractAbility.getCooldown() * .8f);
+                abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
             }
     ),
     GROUND_SLAM_BERSERKER("Ground Slam",
