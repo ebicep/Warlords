@@ -7,6 +7,8 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
@@ -14,37 +16,61 @@ import java.util.stream.Collectors;
 
 public class Poll {
 
-    private Party party;
-    private String question;
-    private List<String> options;
+    private final Party party;
+    private final String question;
+    private final List<String> options;
     private int timeLeft = 30;
-    private HashMap<UUID, Integer> playerAnsweredWithOption = new HashMap<>();
+    private final boolean infiniteVotingTime;
+    private final HashMap<UUID, Integer> playerAnsweredWithOption = new HashMap<>();
+    private final List<UUID> excludedPlayers;
+    private Runnable runnableAfterPollEnded;
 
-    public Poll(Party party, String question, List<String> options) {
+    public Poll(Party party, String question, List<String> options, boolean infiniteVotingTime, List<UUID> excludedPlayers, Runnable runnableAfterPollEnded) {
         this.party = party;
         this.question = question;
         this.options = options;
+        this.infiniteVotingTime = infiniteVotingTime;
+        this.excludedPlayers = excludedPlayers;
+        this.runnableAfterPollEnded = runnableAfterPollEnded;
         sendPollAnnouncement();
         new BukkitRunnable() {
+            int counter = 0;
 
             @Override
             public void run() {
-                if (timeLeft <= 0 || party.getPartyPlayers().size() == playerAnsweredWithOption.size()) {
+                counter++;
+                if (timeLeft <= 0 || getNumberOfPlayersThatCanVote() == playerAnsweredWithOption.size()) {
                     sendPollResults();
                     party.getPolls().remove(Poll.this);
                     this.cancel();
                 } else {
-                    if (timeLeft == 15) {
-                        sendPollAnnouncement();
+                    if (!infiniteVotingTime) {
+                        if (timeLeft == 15) {
+                            sendPollAnnouncement();
+                        }
+                        timeLeft--;
+                    } else {
+                        if (counter % 15 == 0) {
+                            sendPollAnnouncement();
+                        }
                     }
-                    timeLeft--;
                 }
             }
         }.runTaskTimer(Warlords.getInstance(), 0, 20);
     }
 
+    private int getNumberOfPlayersThatCanVote() {
+        return party.getPartyPlayers().size() - excludedPlayers.size();
+    }
+
+    private List<Player> getPlayersAllowedToVote() {
+        return party.getAllPartyPeoplePlayerOnline().stream()
+                .filter(player -> !excludedPlayers.contains(player.getUniqueId()))
+                .collect(Collectors.toList());
+    }
+
     private void sendPollAnnouncement() {
-        party.getAllPartyPeoplePlayerOnline().forEach(player -> {
+        getPlayersAllowedToVote().forEach(player -> {
             player.sendMessage(ChatColor.BLUE.toString() + ChatColor.BOLD + "------------------------------------------");
             if (timeLeft == 30) {
                 player.sendMessage(ChatColor.AQUA + party.getLeaderName() + ChatColor.YELLOW + " created a poll! Answer it below by clicking on an option!");
@@ -56,7 +82,11 @@ public class Poll {
                 message.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/party pollanswer " + (i + 1)));
                 player.spigot().sendMessage(message);
             }
-            player.sendMessage(ChatColor.YELLOW + "The poll will end in " + timeLeft + " seconds!");
+            if (!infiniteVotingTime) {
+                player.sendMessage(ChatColor.YELLOW + "The poll will end in " + timeLeft + " seconds!");
+            } else {
+                player.sendMessage(ChatColor.YELLOW + "The poll will end in when everyone has voted!");
+            }
             player.sendMessage(ChatColor.BLUE.toString() + ChatColor.BOLD + "------------------------------------------");
         });
     }
@@ -78,7 +108,7 @@ public class Poll {
                 squareRatio[i] += "■";
             }
         }
-        party.getAllPartyPeoplePlayerOnline().forEach(player -> {
+        getPlayersAllowedToVote().forEach(player -> {
             player.sendMessage(ChatColor.BLUE.toString() + ChatColor.BOLD + "------------------------------------------");
             player.sendMessage(ChatColor.YELLOW + "Question: " + ChatColor.GREEN + question);
             for (int i = 0; i < options.size(); i++) {
@@ -86,9 +116,9 @@ public class Poll {
                         ChatColor.YELLOW + numberOfVote[i] +
                         " (" + (Math.round((double) numberOfVote[i] / playerAnsweredWithOption.size() * 100)) + "%) " +
                         ChatColor.GOLD + "[" + squareRatio[i] + ChatColor.GOLD + "]"
-                        );
+                );
             }
-            Set<UUID> nonVoters = party.getPartyPlayers().stream().map(PartyPlayer::getUuid).collect(Collectors.toSet());
+            Set<UUID> nonVoters = getPlayersAllowedToVote().stream().map(Entity::getUniqueId).collect(Collectors.toSet());
             nonVoters.removeAll(playerAnsweredWithOption.keySet());
             StringBuilder playersThatDidntVote = new StringBuilder(ChatColor.YELLOW + "Non Voters: " + ChatColor.AQUA);
             for (UUID nonVoter : nonVoters) {
@@ -96,11 +126,24 @@ public class Poll {
                         .append(ChatColor.GRAY).append(", ");
             }
             playersThatDidntVote.setLength(playersThatDidntVote.length() - 2);
-            if (party.getPartyPlayers().size() != playerAnsweredWithOption.size() && (party.getPartyLeader().getUuid().equals(player.getUniqueId()) || party.getPartyModerators().stream().anyMatch(partyPlayer -> partyPlayer.getUuid().equals(player.getUniqueId())))) {
+            if (getNumberOfPlayersThatCanVote() != playerAnsweredWithOption.size() && (party.getPartyLeader().getUuid().equals(player.getUniqueId()) || party.getPartyModerators().stream().anyMatch(partyPlayer -> partyPlayer.getUuid().equals(player.getUniqueId())))) {
                 player.sendMessage(playersThatDidntVote.toString());
             }
             player.sendMessage(ChatColor.BLUE.toString() + ChatColor.BOLD + "------------------------------------------");
         });
+        runnableAfterPollEnded.run();
+    }
+
+    public HashMap<String, Integer> getOptionsWithVotes() {
+        HashMap<String, Integer> votes = new HashMap<>();
+        options.forEach(s -> {
+            votes.put(s, 0);
+        });
+        playerAnsweredWithOption.forEach((uuid, integer) -> {
+            String option = options.get(integer - 1);
+            votes.put(option, votes.get(option) + 1);
+        });
+        return votes;
     }
 
     public List<String> getOptions() {
@@ -115,4 +158,11 @@ public class Poll {
         return playerAnsweredWithOption;
     }
 
+    public List<UUID> getExcludedPlayers() {
+        return excludedPlayers;
+    }
+
+    public void setRunnableAfterPollEnded(Runnable runnableAfterPollEnded) {
+        this.runnableAfterPollEnded = runnableAfterPollEnded;
+    }
 }

@@ -99,14 +99,14 @@ public class WarlordsEvents implements Listener {
                                 }
                             }
                             if (allOnline) {
-                                wp.getGame().freeze(true);
+                                wp.getGame().freeze(ChatColor.YELLOW + "Missing player detected!", true);
                             }
                         }
                         this.cancel();
                         // 15 for precaution
                     } else if (secondsGone >= 15 && !froze) {
                         if (!wp.getGame().isGameFreeze()) {
-                            wp.getGame().freeze(true);
+                            wp.getGame().freeze(ChatColor.YELLOW + "Missing player detected!", true);
                         }
                         froze = true;
                     }
@@ -188,7 +188,7 @@ public class WarlordsEvents implements Listener {
             }
             e.setJoinMessage(wp.getColoredNameBold() + ChatColor.GOLD + " rejoined the game!");
             if (wp.getGame().isGameFreeze()) {
-                wp.getGame().freezePlayer(e.getPlayer(), false);
+                wp.getGame().freezePlayer(e.getPlayer(), "");
             }
         } else {
             e.getPlayer().setAllowFlight(true);

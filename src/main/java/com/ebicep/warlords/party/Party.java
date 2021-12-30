@@ -10,7 +10,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.rmi.server.UID;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -40,22 +39,24 @@ public class Party {
                     }
                     return invite.getValue() <= 0;
                 });
-                partyPlayers.stream()
-                        .filter(partyPlayer -> partyPlayer != null && partyPlayer.getOfflineTimeLeft() != -1)
-                        .forEach(partyPlayer -> {
-                            int offlineTimeLeft = partyPlayer.getOfflineTimeLeft();
-                            partyPlayer.setOfflineTimeLeft(offlineTimeLeft - 1);
-                            if (offlineTimeLeft == 0) {
-                                leave(partyPlayer.getUuid());
-                            } else {
-                                if (offlineTimeLeft % 60 == 0) {
-                                    sendMessageToAllPartyPlayers(
-                                            ChatColor.AQUA + Bukkit.getOfflinePlayer(partyPlayer.getUuid()).getName() + ChatColor.YELLOW + " has " + ChatColor.RED + (offlineTimeLeft / 60) + ChatColor.YELLOW + " minutes to rejoin before getting kicked!",
-                                            true,
-                                            true);
-                                }
+                for (int i = 0; i < partyPlayers.size(); i++) {
+                    PartyPlayer partyPlayer = partyPlayers.get(i);
+                    if (partyPlayer != null && partyPlayer.getOfflineTimeLeft() != -1) {
+                        int offlineTimeLeft = partyPlayer.getOfflineTimeLeft();
+                        partyPlayer.setOfflineTimeLeft(offlineTimeLeft - 1);
+                        if (offlineTimeLeft == 0) {
+                            leave(partyPlayer.getUuid());
+                            i--;
+                        } else {
+                            if (offlineTimeLeft % 60 == 0) {
+                                sendMessageToAllPartyPlayers(
+                                        ChatColor.AQUA + Bukkit.getOfflinePlayer(partyPlayer.getUuid()).getName() + ChatColor.YELLOW + " has " + ChatColor.RED + (offlineTimeLeft / 60) + ChatColor.YELLOW + " minutes to rejoin before getting kicked!",
+                                        true,
+                                        true);
                             }
-                        });
+                        }
+                    }
+                }
             }
         }.runTaskTimer(Warlords.getInstance(), 0, 20);
     }
@@ -311,8 +312,10 @@ public class Party {
         return partyPlayers.stream().anyMatch(partyPlayer -> partyPlayer.getUuid().equals(uuid));
     }
 
-    public void addPoll(String question, List<String> options) {
-        polls.add(new Poll(this, question, options));
+    public Poll addPoll(String question, List<String> options, boolean infiniteVotingTime, List<UUID> excludedPlayers, Runnable runnable) {
+        Poll poll = new Poll(this, question, options, infiniteVotingTime, excludedPlayers, runnable);
+        polls.add(poll);
+        return poll;
     }
 
     public List<Poll> getPolls() {

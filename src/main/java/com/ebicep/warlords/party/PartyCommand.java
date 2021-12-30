@@ -212,7 +212,8 @@ public class PartyCommand implements TabExecutor {
                             List<String> pollOptions = new ArrayList<>(Arrays.asList(pollInfo.split("/")));
                             String question = pollOptions.get(0);
                             pollOptions.remove(question);
-                            currentParty.get().addPoll(question, pollOptions);
+                            currentParty.get().addPoll(question, pollOptions, false, new ArrayList<>(), () -> {
+                            });
                         }
                         return true;
                     }
@@ -222,13 +223,13 @@ public class PartyCommand implements TabExecutor {
                             return true;
                         }
                         Party party = currentParty.get();
-                        if (party.getPolls().isEmpty()) {
+                        if (party.getPolls().isEmpty() || party.getPolls().stream().allMatch(poll -> poll.getExcludedPlayers().contains(player.getUniqueId()))) {
                             Party.sendMessageToPlayer((Player) sender, ChatColor.RED + "There is no ongoing poll!", true, true);
                             return true;
                         }
                         try {
                             int answer = Integer.parseInt(args[1]);
-                            Poll poll = currentParty.get().getPolls().get(0);
+                            Poll poll = currentParty.get().getPolls().stream().filter(p -> !p.getExcludedPlayers().contains(player.getUniqueId())).findFirst().get();
                             if (poll.getPlayerAnsweredWithOption().containsKey(player.getUniqueId())) {
                                 Party.sendMessageToPlayer((Player) sender, ChatColor.RED + "You already voted for this poll!", true, true);
                             } else if (answer > 0 && answer <= poll.getOptions().size()) {

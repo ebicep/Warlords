@@ -83,6 +83,9 @@ commands:
   queue:
     description: Queue system
     aliases: [ queue ]
+  imposter:
+    description: Sus
+    aliases: [ imposter, impostor ]
 
 permissions:
   group.default:

@@ -291,6 +291,7 @@ public class Warlords extends JavaPlugin {
         new MessageCommand().register(this);
         new ExperienceCommand().register(this);
         new QueueCommand().register(this);
+        new ImposterCommand().register(this);
 
         updateHeads();
 
