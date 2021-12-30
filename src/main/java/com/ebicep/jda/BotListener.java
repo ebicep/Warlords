@@ -1,6 +1,8 @@
 package com.ebicep.jda;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.player.Classes;
 import com.ebicep.warlords.queuesystem.QueueManager;
@@ -14,6 +16,7 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -129,6 +132,8 @@ public class BotListener extends ListenerAdapter implements Listener {
                         String fieldValue = field.getValue();
                         String[] players;
                         if (fieldName != null && fieldValue != null) {
+                            boolean isBlueTeam = fieldName.contains("Blue Team");
+                            boolean isRedTeam = fieldName.contains("Red Team");
                             players = fieldValue
                                     .replace("```", "")
                                     .replace(" ", "")
@@ -138,25 +143,36 @@ public class BotListener extends ListenerAdapter implements Listener {
                                     for (String player : players) {
                                         String name = player.substring(0, player.indexOf("-"));
                                         String spec = player.substring(player.indexOf("-") + 1);
-                                        Player targetPlayer = Bukkit.getPlayer(name);
-                                        if (targetPlayer != null) {
+                                        OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(name);
+                                        UUID uuid = offlinePlayer.getUniqueId();
+                                        //includes offline players
+                                        if (isBlueTeam) {
+                                            Warlords.getPlayerSettings(uuid).setWantedTeam(Team.BLUE);
+                                        } else if (isRedTeam) {
+                                            Warlords.getPlayerSettings(uuid).setWantedTeam(Team.RED);
+                                        }
+                                        if (!spec.isEmpty()) {
+                                            Warlords.getPlayerSettings(uuid).setSelectedClass(Classes.getClass(spec));
+                                            DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid);
+                                            databasePlayer.setLastSpec(Classes.getClass(spec));
+                                            DatabaseManager.updatePlayerAsync(databasePlayer);
+                                        }
+                                        //only send messages to online
+                                        if (offlinePlayer.isOnline()) {
+                                            Player targetPlayer = offlinePlayer.getPlayer();
                                             targetPlayer.sendMessage(ChatColor.DARK_BLUE + "---------------------------------------");
-                                            if (fieldName.contains("Blue Team")) {
-                                                Warlords.getPlayerSettings(targetPlayer.getUniqueId()).setWantedTeam(Team.BLUE);
+                                            if (isBlueTeam) {
                                                 targetPlayer.sendMessage(ChatColor.GREEN + "You were automatically put into the " + ChatColor.BLUE + "BLUE" + ChatColor.GREEN + " team!");
-                                            } else if (fieldName.contains("Red Team")) {
-                                                Warlords.getPlayerSettings(targetPlayer.getUniqueId()).setWantedTeam(Team.RED);
+                                            } else if (isRedTeam) {
                                                 targetPlayer.sendMessage(ChatColor.GREEN + "You were automatically put into the " + ChatColor.RED + "RED" + ChatColor.GREEN + " team!");
                                             }
                                             if (!spec.isEmpty()) {
                                                 PacketUtils.sendTitle(targetPlayer,
                                                         ChatColor.GREEN + spec,
-                                                        fieldName.contains("Blue Team") ? ChatColor.BLUE.toString() + ChatColor.BOLD + "BLUE"
-                                                                : fieldName.contains("Red Team") ? ChatColor.RED.toString() + ChatColor.BOLD + "RED"
+                                                        isBlueTeam ? ChatColor.BLUE.toString() + ChatColor.BOLD + "BLUE"
+                                                                : isRedTeam ? ChatColor.RED.toString() + ChatColor.BOLD + "RED"
                                                                 : "",
                                                         0, 100, 40);
-
-                                                Warlords.getPlayerSettings(targetPlayer.getUniqueId()).setSelectedClass(Classes.getClass(spec));
                                                 targetPlayer.sendMessage(ChatColor.GREEN + "Your spec was automatically changed to " + ChatColor.YELLOW + spec + ChatColor.GREEN + "!");
                                             }
                                             targetPlayer.sendMessage("");

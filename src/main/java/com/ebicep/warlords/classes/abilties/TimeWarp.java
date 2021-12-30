@@ -16,6 +16,7 @@ import java.util.List;
 public class TimeWarp extends AbstractAbility {
 
     private final int duration = 5;
+    private int warpHealPercentage = 30;
 
     public TimeWarp() {
         super("Time Warp", 0, 0, 28.19f, 30, -1, 100);
@@ -26,7 +27,7 @@ public class TimeWarp extends AbstractAbility {
         description = "§7Activate to place a time rune on\n" +
                 "§7the ground. After §6" + duration + " §7seconds,\n" +
                 "§7you will warp back to that location\n" +
-                "§7and restore §a30% §7of your health";
+                "§7and restore §a" + warpHealPercentage + "% §7of your health";
     }
 
     @Override
@@ -91,7 +92,7 @@ public class TimeWarp extends AbstractAbility {
                                 if (time != 0) {
                                     time -= 1;
                                 } else {
-                                    wp.healHealth(wp, "Time Warp", wp.getMaxHealth() * .3f, wp.getMaxHealth() * .3f, -1, 100, false);
+                                    wp.healHealth(wp, "Time Warp", wp.getMaxHealth() * (warpHealPercentage / 100f), wp.getMaxHealth() * (warpHealPercentage / 100f), -1, 100, false);
                                     for (Player player1 : wp.getEntity().getWorld().getPlayers()) {
                                         player1.playSound(wp.getLocation(), "mage.timewarp.teleport", 1, 1);
                                     }
@@ -109,5 +110,9 @@ public class TimeWarp extends AbstractAbility {
                 }.runTaskTimer(Warlords.getInstance(), 0, 0),
                 System.currentTimeMillis()
         );
+    }
+
+    public void setWarpHealPercentage(int warpHealPercentage) {
+        this.warpHealPercentage = warpHealPercentage;
     }
 }

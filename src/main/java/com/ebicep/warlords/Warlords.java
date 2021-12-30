@@ -31,8 +31,8 @@ import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.powerups.EnergyPowerUp;
 import com.ebicep.warlords.queuesystem.QueueCommand;
 import com.ebicep.warlords.util.*;
-import com.gmail.filoghost.holographicdisplays.api.Hologram;
-import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
+import me.filoghost.holographicdisplays.api.beta.hologram.Hologram;
+import me.filoghost.holographicdisplays.api.beta.HolographicDisplaysAPI;
 import org.bukkit.*;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
@@ -291,6 +291,7 @@ public class Warlords extends JavaPlugin {
         new MessageCommand().register(this);
         new ExperienceCommand().register(this);
         new QueueCommand().register(this);
+        new ImposterCommand().register(this);
 
         updateHeads();
 
@@ -305,7 +306,6 @@ public class Warlords extends JavaPlugin {
         Bukkit.getOnlinePlayers().forEach(player -> {
             playerScoreboards.put(player.getUniqueId(), new CustomScoreboard(player));
         });
-
 
 
         //connects to the database
@@ -370,7 +370,7 @@ public class Warlords extends JavaPlugin {
     public void onDisable() {
         game.clearAllPlayers();
         if (holographicDisplaysEnabled) {
-            HologramsAPI.getHolograms(instance).forEach(Hologram::delete);
+            HolographicDisplaysAPI.get(instance).getHolograms().forEach(Hologram::delete);
         }
         try {
             BotManager.jda.shutdownNow();
@@ -724,7 +724,7 @@ public class Warlords extends JavaPlugin {
                                 itr.remove();
 
                                 float orbHeal = 225;
-                                if (Warlords.getPlayerSettings(orb.getOwner().getUuid()).getClassesSkillBoosts() == ClassesSkillBoosts.ORBS_OF_LIFE) {
+                                if (Warlords.getPlayerSettings(orb.getOwner().getUuid()).getSkillBoostForClass() == ClassesSkillBoosts.ORBS_OF_LIFE) {
                                     orbHeal *= 1.2;
                                 }
 
@@ -767,6 +767,24 @@ public class Warlords extends JavaPlugin {
                         // Saves the amount of blocks travelled per player.
                         if (player != null) {
                             wp.setBlocksTravelledCM(Utils.getPlayerMovementStatistics(player));
+                        }
+                    }
+
+                    // Loops every 10 ticks - .5 second.
+                    if (counter % 10 == 0) {
+                        for (WarlordsPlayer wps : players.values()) {
+                            // Soulbinding Weapon - decrementing time left on the ability.
+                            wps.getCooldownManager().getCooldown(Soulbinding.class).stream()
+                                    .map(Cooldown::getCooldownObject)
+                                    .map(Soulbinding.class::cast)
+                                    .forEach(soulbinding -> soulbinding.getSoulBindedPlayers().forEach(Soulbinding.SoulBoundPlayer::decrementTimeLeft));
+
+                            // Soulbinding Weapon - Removing bound players.
+                            wps.getCooldownManager().getCooldown(Soulbinding.class).stream()
+                                    .map(Cooldown::getCooldownObject)
+                                    .map(Soulbinding.class::cast)
+                                    .forEach(soulbinding -> soulbinding.getSoulBindedPlayers()
+                                            .removeIf(boundPlayer -> boundPlayer.getTimeLeft() == 0 || (boundPlayer.isHitWithSoul() && boundPlayer.isHitWithLink())));
                         }
                     }
 
@@ -826,19 +844,6 @@ public class Warlords extends JavaPlugin {
                                 wps.setFlagCooldown(wps.getFlagCooldown() - 1);
                             }
 
-                            // Soulbinding Weapon - decrementing time left on the ability.
-                            wps.getCooldownManager().getCooldown(Soulbinding.class).stream()
-                                    .map(Cooldown::getCooldownObject)
-                                    .map(Soulbinding.class::cast)
-                                    .forEach(soulbinding -> soulbinding.getSoulBindedPlayers().forEach(Soulbinding.SoulBoundPlayer::decrementTimeLeft));
-
-                            // Soulbinding Weapon - Removing bound players.
-                            wps.getCooldownManager().getCooldown(Soulbinding.class).stream()
-                                    .map(Cooldown::getCooldownObject)
-                                    .map(Soulbinding.class::cast)
-                                    .forEach(soulbinding -> soulbinding.getSoulBindedPlayers()
-                                            .removeIf(boundPlayer -> boundPlayer.getTimeLeft() == 0 || (boundPlayer.isHitWithSoul() && boundPlayer.isHitWithLink())));
-
                             // Checks whether the player has the healing powerup active.
                             if (wps.isPowerUpHeal()) {
                                 int heal = (int) (wps.getMaxHealth() * .08);
@@ -869,7 +874,6 @@ public class Warlords extends JavaPlugin {
                         }
 
                         WarlordsEvents.entityList.removeIf(e -> !e.isValid());
-
                     }
 
                     // Loops every 50 ticks - 2.5 seconds.

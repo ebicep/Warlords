@@ -40,7 +40,7 @@ public class FreezingBreath extends AbstractAbility {
 
         Location hitbox = player.getLocation();
         hitbox.setPitch(0);
-        hitbox.add(hitbox.getDirection().multiply(-2));
+        hitbox.add(hitbox.getDirection().multiply(-1));
 
         PlayerFilter.entitiesAroundRectangle(player, 7.5, 10, 7.5)
                 .aliveEnemiesOf(wp)

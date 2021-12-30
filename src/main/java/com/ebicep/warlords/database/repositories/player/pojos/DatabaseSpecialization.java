@@ -1,6 +1,7 @@
 package com.ebicep.warlords.database.repositories.player.pojos;
 
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayers;
+import com.ebicep.warlords.player.ClassesSkillBoosts;
 import com.ebicep.warlords.player.Weapons;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -20,10 +21,16 @@ public class DatabaseSpecialization {
     private long healing = 0;
     private long absorbed = 0;
     private Weapons weapon = Weapons.FELFLAME_BLADE;
+    @Field("skill_boost")
+    private ClassesSkillBoosts skillBoost;
     private long experience = 0;
 
     public DatabaseSpecialization() {
 
+    }
+
+    public DatabaseSpecialization(ClassesSkillBoosts skillBoost) {
+        this.skillBoost = skillBoost;
     }
 
     public void updateStats(DatabaseGamePlayers.GamePlayer gamePlayer, boolean won, boolean add) {
@@ -31,7 +38,7 @@ public class DatabaseSpecialization {
         this.kills += gamePlayer.getTotalKills() * operation;
         this.assists += gamePlayer.getTotalAssists() * operation;
         this.deaths += gamePlayer.getTotalDeaths() * operation;
-        if(won) {
+        if (won) {
             this.wins += operation;
         } else {
             this.losses += operation;
@@ -139,6 +146,14 @@ public class DatabaseSpecialization {
 
     public void setWeapon(Weapons weapon) {
         this.weapon = weapon;
+    }
+
+    public ClassesSkillBoosts getSkillBoost() {
+        return skillBoost;
+    }
+
+    public void setSkillBoost(ClassesSkillBoosts skillBoost) {
+        this.skillBoost = skillBoost;
     }
 
     public long getExperience() {

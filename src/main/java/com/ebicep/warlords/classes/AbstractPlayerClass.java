@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.abilties.*;
 import com.ebicep.warlords.classes.internal.AbstractChainBase;
 import com.ebicep.warlords.classes.internal.AbstractStrikeBase;
+import com.ebicep.warlords.player.ClassesSkillBoosts;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import net.minecraft.server.v1_8_R3.PacketPlayOutAnimation;
 import org.bukkit.ChatColor;
@@ -65,7 +66,8 @@ public abstract class AbstractPlayerClass {
             classNameShort = "SHA";
         }
         if (blue instanceof ArcaneShield) {
-            ((ArcaneShield) blue).maxShieldHealth = maxHealth / 2;
+            ArcaneShield arcaneShield = ((ArcaneShield) blue);
+            arcaneShield.setMaxShieldHealth((int) (maxHealth * (arcaneShield.getShieldPercentage() / 100f)));
             blue.updateDescription(null); // Arcaneshield does not use the player in its description
         }
     }

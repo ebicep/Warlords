@@ -222,7 +222,7 @@ public class DebugCommand implements CommandExecutor {
 
             case "freeze": {
                 if (player != null) {
-                    player.getGame().freeze(false);
+                    player.getGame().freeze("", true);
                 }
             }
 

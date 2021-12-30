@@ -70,10 +70,6 @@ public class CooldownManager {
                     if (warlordsPlayer.getEntity() instanceof Player) {
                         ((EntityLiving) ((CraftPlayer) warlordsPlayer.getEntity()).getHandle()).setAbsorptionHearts(0);
                     }
-                } else if (cooldownClass == Soulbinding.class && getCooldown(Soulbinding.class).size() == 1) {
-                    if (warlordsPlayer.getEntity() instanceof Player) {
-                        ((CraftPlayer) warlordsPlayer.getEntity()).getInventory().getItem(0).removeEnchantment(Enchantment.OXYGEN);
-                    }
                 }
 
                 if (name.equals("WND")) {
@@ -82,18 +78,20 @@ public class CooldownManager {
                     warlordsPlayer.sendMessage(ChatColor.GRAY + "You are no longer " + ChatColor.RED + "crippled" + ChatColor.GRAY + ".");
                 }
 
-                if (cooldownClass == OrbsOfLife.class) {
-                    if (((OrbsOfLife) cooldownObject).getSpawnedOrbs().isEmpty()) {
-                        cooldowns.remove(i);
-                        i--;
-                    } else {
-                        if (!cooldown.isHidden()) {
-                            cooldown.setHidden(true);
-                        }
+                //temporarily keeping these cooldowns bc there still be orbs/binded players or else they get deleted/removed
+                if ((cooldownClass == OrbsOfLife.class && !((OrbsOfLife) cooldownObject).getSpawnedOrbs().isEmpty()) ||
+                        (cooldownClass == Soulbinding.class && !((Soulbinding) cooldownObject).getSoulBindedPlayers().isEmpty())) {
+                    if (!cooldown.isHidden()) {
+                        cooldown.setHidden(true);
                     }
                 } else {
                     cooldowns.remove(i);
                     i--;
+                    if (cooldownClass == Soulbinding.class && getCooldown(Soulbinding.class).size() == 0) {
+                        if (warlordsPlayer.getEntity() instanceof Player) {
+                            ((CraftPlayer) warlordsPlayer.getEntity()).getInventory().getItem(0).removeEnchantment(Enchantment.OXYGEN);
+                        }
+                    }
                 }
 
 
@@ -144,9 +142,9 @@ public class CooldownManager {
     }
 
     public void incrementCooldown(Cooldown cooldown, float amount, float maxTime) {
-        if(hasCooldownFromName(cooldown.getName())) {
+        if (hasCooldownFromName(cooldown.getName())) {
             Cooldown cd = getCooldownFromName(cooldown.getName()).get(0);
-            if(cd.getTimeLeft() + amount >= maxTime) {
+            if (cd.getTimeLeft() + amount >= maxTime) {
                 cd.setTimeLeft(maxTime);
             } else {
                 cd.subtractTime(-amount);

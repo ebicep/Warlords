@@ -2,14 +2,19 @@ package com.ebicep.warlords.commands.debugcommands;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.BaseCommand;
+import com.ebicep.warlords.commands.miscellaneouscommands.MessageCommand;
 import com.ebicep.warlords.database.cache.MultipleCacheResolver;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.DatabaseSpecialization;
 import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsClass;
+import com.ebicep.warlords.maps.state.PreLobbyState;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.mongodb.client.model.WriteModel;
+import me.filoghost.holographicdisplays.api.beta.HolographicDisplaysAPI;
+import me.filoghost.holographicdisplays.api.beta.hologram.Hologram;
+import me.filoghost.holographicdisplays.api.beta.hologram.VisibilitySettings;
 import org.bson.Document;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -38,7 +43,16 @@ public class TestCommand implements CommandExecutor {
 //            System.out.println(ExperienceManager.getExpFromGameStats(warlordsPlayer, true));
         }
         Player player = (Player) sender;
-        //{name:"sumSmash"}
+        System.out.println(Warlords.game.getState());
+        System.out.println(Warlords.game.getPlayers());
+        System.out.println(Warlords.getPlayers());
+
+//        for (int i = 0; i < 9; i++) {
+//            hologram.getLines().appendText("test text"); //ChatColor.YELLOW.toString() + (i + 1)+ ". " + ChatColor.AQUA + "Test Name");
+//        }
+
+//        hologram.getVisibilitySettings().setGlobalVisibility(VisibilitySettings.Visibility.HIDDEN);
+//        hologram.getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.VISIBLE);
 
 //        for (DatabasePlayer lifeTime : DatabaseManager.playerService.findAll(PlayersCollections.ALL_TIME)) {
 //            DatabasePlayer season4 = DatabaseManager.playerService.findByUUID(UUID.fromString(lifeTime.getUuid()), PlayersCollections.SEASON_4);

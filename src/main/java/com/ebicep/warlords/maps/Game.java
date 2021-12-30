@@ -258,7 +258,7 @@ public class Game implements Runnable {
 
     public boolean freezeOnCooldown = false;
 
-    public void freeze(boolean dueToDisconnect) {
+    public void freeze(String subtitleMessage, boolean countdown) {
         if (gameFreeze && !freezeOnCooldown) {
             freezeOnCooldown = true;
             //unfreeze
@@ -266,43 +266,55 @@ public class Game implements Runnable {
                 p.removePotionEffect(PotionEffectType.BLINDNESS);
                 p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 100, 100000));
             });
-            new BukkitRunnable() {
-                int counter = 0;
+            if (countdown) {
+                new BukkitRunnable() {
+                    int counter = 0;
 
-                @Override
-                public void run() {
-                    if (counter >= 5) {
-                        setGameFreeze(false);
-                        freezeOnCooldown = false;
-                        forEachOnlinePlayer((p, team) -> {
-                            if (p.getVehicle() != null && p.getVehicle() instanceof Horse) {
-                                ((EntityLiving) ((CraftEntity) p.getVehicle()).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(.318);
-                            }
-                            PacketUtils.sendTitle(p, "", "", 0, 0, 0);
-                            p.removePotionEffect(PotionEffectType.BLINDNESS);
-                        });
-                        this.cancel();
-                    } else {
-                        forEachOnlinePlayer((p, team) -> {
-                            PacketUtils.sendTitle(p, ChatColor.BLUE + "Resuming in... " + ChatColor.GREEN + (5 - counter), "", 0, 40, 0);
-                        });
-                        counter++;
+                    @Override
+                    public void run() {
+                        if (counter >= 5) {
+                            setGameFreeze(false);
+                            freezeOnCooldown = false;
+                            forEachOnlinePlayer((p, team) -> {
+                                if (p.getVehicle() != null && p.getVehicle() instanceof Horse) {
+                                    ((EntityLiving) ((CraftEntity) p.getVehicle()).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(.318);
+                                }
+                                PacketUtils.sendTitle(p, "", "", 0, 0, 0);
+                                p.removePotionEffect(PotionEffectType.BLINDNESS);
+                            });
+                            this.cancel();
+                        } else {
+                            forEachOnlinePlayer((p, team) -> {
+                                PacketUtils.sendTitle(p, ChatColor.BLUE + "Resuming in... " + ChatColor.GREEN + (5 - counter), "", 0, 40, 0);
+                            });
+                            counter++;
+                        }
                     }
-                }
-            }.runTaskTimer(Warlords.getInstance(), 0, 20);
+                }.runTaskTimer(Warlords.getInstance(), 0, 20);
+            } else {
+                setGameFreeze(false);
+                freezeOnCooldown = false;
+                forEachOnlinePlayer((p, team) -> {
+                    if (p.getVehicle() != null && p.getVehicle() instanceof Horse) {
+                        ((EntityLiving) ((CraftEntity) p.getVehicle()).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(.318);
+                    }
+                    PacketUtils.sendTitle(p, "", "", 0, 0, 0);
+                    p.removePotionEffect(PotionEffectType.BLINDNESS);
+                });
+            }
         } else {
             //freeze
             setGameFreeze(true);
-            forEachOnlinePlayer((p, team) -> freezePlayer(p, dueToDisconnect));
+            forEachOnlinePlayer((p, team) -> freezePlayer(p, subtitleMessage));
         }
     }
 
-    public void freezePlayer(Player p, boolean dueToDisconnect) {
+    public void freezePlayer(Player p, String subtitleMessage) {
         if (p.getVehicle() instanceof Horse) {
             ((EntityLiving) ((CraftEntity) p.getVehicle()).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0);
         }
         p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 9999999, 100000));
-        PacketUtils.sendTitle(p, ChatColor.RED + "Game Paused", dueToDisconnect ? ChatColor.YELLOW + "Missing player detected!" : "", 0, 9999999, 0);
+        PacketUtils.sendTitle(p, ChatColor.RED + "Game Paused", subtitleMessage, 0, 9999999, 0);
     }
 
     public List<UUID> getSpectators() {

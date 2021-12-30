@@ -1,5 +1,6 @@
 package com.ebicep.warlords.database.leaderboards;
 
+import co.aikar.taskchain.TaskChain;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame;
@@ -7,19 +8,19 @@ import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
 import com.ebicep.warlords.util.LocationBuilder;
 import com.ebicep.warlords.util.NumberFormat;
-import com.gmail.filoghost.holographicdisplays.api.Hologram;
-import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
-import com.gmail.filoghost.holographicdisplays.api.line.TextLine;
+import me.filoghost.holographicdisplays.api.beta.hologram.Hologram;
+import me.filoghost.holographicdisplays.api.beta.HolographicDisplaysAPI;
+import me.filoghost.holographicdisplays.api.beta.hologram.VisibilitySettings;
+import me.filoghost.holographicdisplays.api.beta.hologram.line.ClickableHologramLine;
 import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class LeaderboardManager {
 
@@ -169,93 +170,97 @@ public class LeaderboardManager {
     }
 
     public static void addHologramLeaderboards(String sharedChainName) {
-        if (Warlords.holographicDisplaysEnabled) {
-            HologramsAPI.getHolograms(Warlords.getInstance()).forEach(hologram -> {
-                Location hologramLocation = hologram.getLocation();
-                if (!DatabaseGame.lastGameStatsLocation.equals(hologramLocation) &&
-                        !DatabaseGame.topDamageLocation.equals(hologramLocation) &&
-                        !DatabaseGame.topHealingLocation.equals(hologramLocation) &&
-                        !DatabaseGame.topAbsorbedLocation.equals(hologramLocation) &&
-                        !DatabaseGame.topDHPPerMinuteLocation.equals(hologramLocation) &&
-                        !DatabaseGame.topDamageOnCarrierLocation.equals(hologramLocation) &&
-                        !DatabaseGame.topHealingOnCarrierLocation.equals(hologramLocation)
-                ) {
-                    hologram.delete();
-                }
-            });
-            lifeTimeHolograms.clear();
-            season5Holograms.clear();
-            season4Holograms.clear();
-            weeklyHolograms.clear();
-            dailyHolograms.clear();
-
-            putLeaderboards();
-            if (enabled) {
-                Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Adding Holograms");
-
-                //caching all sorted players for each lifetime and weekly
-                long startTime = System.nanoTime();
-                leaderboards.forEach(leaderboard -> {
-                    List<Hologram> previousHolograms = new ArrayList<>();
-                    for (PlayersCollections value : PlayersCollections.values()) {
-                        Warlords.newSharedChain(sharedChainName)
-                                .asyncFirst(() -> {
-                                    List<DatabasePlayer> databasePlayers = DatabaseManager.playerService.findAll(value);
-                                    databasePlayers.sort((o1, o2) -> Leaderboard.compare(leaderboard.getValueFunction().apply(o2), leaderboard.getValueFunction().apply(o1)));
-                                    return databasePlayers;
-                                })
-                                .syncLast((sortedInformation) -> {
-                                    leaderboard.resetSortedPlayers(sortedInformation, value);
-                                    //creating leaderboard
-                                    //if (Arrays.stream(weeklyIncludedLeaderboardsTitles).anyMatch(title -> title.equalsIgnoreCase(leaderboard.getTitle()))) {
-                                    addLeaderboard(leaderboard, value, ChatColor.AQUA + ChatColor.BOLD.toString() + value.name + " " + leaderboard.getTitle());
-                                    //adding holograms to respective lists
-                                    HologramsAPI.getHolograms(Warlords.getInstance()).stream()
-                                            .filter(h -> !previousHolograms.contains(h) && h.getLocation().equals(leaderboard.getLocation()))
-                                            .forEach(value.leaderboardHolograms::add);
-                                    //adding all holograms to previous so it doesnt add other holograms to respective list
-                                    previousHolograms.addAll(value.leaderboardHolograms);
-                                }).execute();
-                    }
-                });
-
-                //depending on what player has selected, set visibility
-                Warlords.newSharedChain(sharedChainName).sync(() -> {
-                    long endTime = System.nanoTime();
-                    System.out.println((endTime - startTime) / 1000000);
-                    System.out.println("Setting Hologram Visibility");
-                    Bukkit.getOnlinePlayers().forEach(player -> {
-                        setLeaderboardHologramVisibility(player);
-                        DatabaseGame.setGameHologramVisibility(player);
-                    });
-                }).execute();
-
+        if (!Warlords.holographicDisplaysEnabled) return;
+        HolographicDisplaysAPI.get(Warlords.getInstance()).getHolograms().forEach(hologram -> {
+            Location hologramLocation = hologram.getPosition().toLocation();
+            if (!DatabaseGame.lastGameStatsLocation.equals(hologramLocation) &&
+                    !DatabaseGame.topDamageLocation.equals(hologramLocation) &&
+                    !DatabaseGame.topHealingLocation.equals(hologramLocation) &&
+                    !DatabaseGame.topAbsorbedLocation.equals(hologramLocation) &&
+                    !DatabaseGame.topDHPPerMinuteLocation.equals(hologramLocation) &&
+                    !DatabaseGame.topDamageOnCarrierLocation.equals(hologramLocation) &&
+                    !DatabaseGame.topHealingOnCarrierLocation.equals(hologramLocation)
+            ) {
+                hologram.delete();
             }
+        });
+        lifeTimeHolograms.clear();
+        season5Holograms.clear();
+        season4Holograms.clear();
+        weeklyHolograms.clear();
+        dailyHolograms.clear();
+
+        putLeaderboards();
+        if (enabled) {
+            Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Adding Holograms");
+
+            //caching all sorted players for each lifetime and weekly
+            long startTime = System.nanoTime();
+            for (PlayersCollections value : PlayersCollections.values()) {
+                Warlords.newChain()//newSharedChain(sharedChainName)
+                        .asyncFirst(() -> DatabaseManager.playerService.findAll(value))
+                        .syncLast((collection) -> {
+                            leaderboards.forEach(leaderboard -> {
+                                //sorting values
+                                collection.sort((o1, o2) -> Leaderboard.compare(leaderboard.getValueFunction().apply(o2), leaderboard.getValueFunction().apply(o1)));
+                                //removing all players with 3 or less games from leaderboards if the top player has 10 or more (no one game olivers)
+                                if (!collection.isEmpty() && collection.get(0).getPlays() >= 10) {
+                                    collection.removeIf(databasePlayer -> databasePlayer.getPlays() <= 3);
+                                }
+                                //resetting sort then adding new sorted values
+                                leaderboard.resetSortedPlayers(collection, value);
+                                //creating leaderboard
+                                value.leaderboardHolograms.add(addLeaderboard(leaderboard, value, ChatColor.AQUA + ChatColor.BOLD.toString() + value.name + " " + leaderboard.getTitle()));
+                            });
+                            System.out.println("Loaded " + value.name + " leaderboards");
+                        }).execute();
+            }
+
+            //depending on what player has selected, set visibility
+            Warlords.newChain()//newSharedChain(sharedChainName)
+                    .delay(10, TimeUnit.SECONDS)
+                    .sync(() -> {
+                        long endTime = System.nanoTime();
+                        long timeToLoad = (endTime - startTime) / 1000000;
+//                        System.out.println("Time it took for LB to load (ms): " + timeToLoad);
+//                        if (timeToLoad > 25000) {
+//                            System.out.println("FART FART FART");
+//                            System.out.println("HOLOGRAMS TOOK LONG ASS TIME TO LOAD!?!");
+//                            System.out.println("FART FART FART");
+//                        }
+                        System.out.println("Setting Hologram Visibility");
+                        Bukkit.getOnlinePlayers().forEach(player -> {
+                            setLeaderboardHologramVisibility(player);
+                            DatabaseGame.setGameHologramVisibility(player);
+                        });
+                    }).execute();
+
         }
     }
 
     public static void setLeaderboardHologramVisibility(Player player) {
+        if (!Warlords.holographicDisplaysEnabled) return;
         if (!playerLeaderboardHolograms.containsKey(player.getUniqueId()) || playerLeaderboardHolograms.get(player.getUniqueId()) == null) {
             playerLeaderboardHolograms.put(player.getUniqueId(), 0);
         }
         int selectedLeaderboard = playerLeaderboardHolograms.get(player.getUniqueId());
 
-        lifeTimeHolograms.forEach(hologram -> hologram.getVisibilityManager().hideTo(player));
-        season5Holograms.forEach(hologram -> hologram.getVisibilityManager().hideTo(player));
-        season4Holograms.forEach(hologram -> hologram.getVisibilityManager().hideTo(player));
-        weeklyHolograms.forEach(hologram -> hologram.getVisibilityManager().hideTo(player));
-        dailyHolograms.forEach(hologram -> hologram.getVisibilityManager().hideTo(player));
+        lifeTimeHolograms.forEach(hologram -> hologram.getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.HIDDEN));
+        season5Holograms.forEach(hologram -> hologram.getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.HIDDEN));
+        season4Holograms.forEach(hologram -> hologram.getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.HIDDEN));
+        weeklyHolograms.forEach(hologram -> hologram.getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.HIDDEN));
+        dailyHolograms.forEach(hologram -> hologram.getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.HIDDEN));
 
         if (selectedLeaderboard == 0) { //LIFETIME
-            lifeTimeHolograms.forEach(hologram -> hologram.getVisibilityManager().showTo(player));
+            lifeTimeHolograms.forEach(hologram -> hologram.getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.VISIBLE));
         } else if (selectedLeaderboard == 1) { //SEASON 5
-            season5Holograms.forEach(hologram -> hologram.getVisibilityManager().showTo(player));
+            season5Holograms.forEach(hologram -> hologram.getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.VISIBLE));
         } else if (selectedLeaderboard == 2) { //SEASON 4
-            season4Holograms.forEach(hologram -> hologram.getVisibilityManager().showTo(player));
+            season4Holograms.forEach(hologram -> hologram.getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.VISIBLE));
         } else if (selectedLeaderboard == 3) { //WEEKLY
-            weeklyHolograms.forEach(hologram -> hologram.getVisibilityManager().showTo(player));
+            weeklyHolograms.forEach(hologram -> hologram.getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.VISIBLE));
         } else { //DAILY
-            dailyHolograms.forEach(hologram -> hologram.getVisibilityManager().showTo(player));
+            dailyHolograms.forEach(hologram -> hologram.getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.VISIBLE));
         }
 
         createLeaderboardSwitcherHologram(player);
@@ -263,43 +268,45 @@ public class LeaderboardManager {
     }
 
     private static void createLeaderboardSwitcherHologram(Player player) {
-        HologramsAPI.getHolograms(Warlords.getInstance()).stream()
-                .filter(h -> h.getVisibilityManager().isVisibleTo(player) && h.getLocation().equals(leaderboardSwitchLocation))
+        if (!Warlords.holographicDisplaysEnabled) return;
+        HolographicDisplaysAPI.get(Warlords.getInstance()).getHolograms().stream()
+                .filter(h -> h.getVisibilitySettings().isVisibleTo(player) && h.getPosition().toLocation().equals(leaderboardSwitchLocation))
                 .forEach(Hologram::delete);
-        Hologram leaderboardSwitcher = HologramsAPI.createHologram(Warlords.getInstance(), leaderboardSwitchLocation);
-        leaderboardSwitcher.appendTextLine(ChatColor.AQUA.toString() + ChatColor.UNDERLINE + "Click to Toggle");
-        leaderboardSwitcher.appendTextLine("");
+        Hologram leaderboardSwitcher = HolographicDisplaysAPI.get(Warlords.getInstance()).createHologram(leaderboardSwitchLocation);
+        leaderboardSwitcher.getLines().appendText(ChatColor.AQUA.toString() + ChatColor.UNDERLINE + "Click to Toggle");
+        leaderboardSwitcher.getLines().appendText("");
 
         int selectedLeaderboard = playerLeaderboardHolograms.get(player.getUniqueId());
         int lbBefore = getLBBefore(selectedLeaderboard);
         int lbAfter = getLBAfter(selectedLeaderboard);
-        TextLine beforeLine = leaderboardSwitcher.appendTextLine(ChatColor.GRAY + hologramOrder[lbBefore]);
-        TextLine selectedLine = leaderboardSwitcher.appendTextLine(ChatColor.GREEN + hologramOrder[selectedLeaderboard]);
-        TextLine afterLine = leaderboardSwitcher.appendTextLine(ChatColor.GRAY + hologramOrder[lbAfter]);
-        beforeLine.setTouchHandler(p -> {
+        ClickableHologramLine beforeLine = leaderboardSwitcher.getLines().appendText(ChatColor.GRAY + hologramOrder[lbBefore]);
+        ClickableHologramLine selectedLine = leaderboardSwitcher.getLines().appendText(ChatColor.GREEN + hologramOrder[selectedLeaderboard]);
+        ClickableHologramLine afterLine = leaderboardSwitcher.getLines().appendText(ChatColor.GRAY + hologramOrder[lbAfter]);
+        beforeLine.setClickListener(p -> {
             playerLeaderboardHolograms.put(player.getUniqueId(), lbBefore);
-            setLeaderboardHologramVisibility(p);
+            setLeaderboardHologramVisibility(p.getPlayer());
         });
-        afterLine.setTouchHandler(p -> {
+        afterLine.setClickListener(p -> {
             playerLeaderboardHolograms.put(player.getUniqueId(), lbAfter);
-            setLeaderboardHologramVisibility(p);
+            setLeaderboardHologramVisibility(p.getPlayer());
         });
 
 
-        leaderboardSwitcher.getVisibilityManager().setVisibleByDefault(false);
-        leaderboardSwitcher.getVisibilityManager().showTo(player);
+        leaderboardSwitcher.getVisibilitySettings().setGlobalVisibility(VisibilitySettings.Visibility.HIDDEN);
+        leaderboardSwitcher.getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.VISIBLE);
     }
 
     public static void addPlayerPositionLeaderboards(Player player) {
+        if (!Warlords.holographicDisplaysEnabled) return;
         if (enabled) {
             //leaderboards
             for (Leaderboard leaderboard : leaderboards) {
                 Location location = leaderboard.getLocation().clone().add(0, -3.5, 0);
-                HologramsAPI.getHolograms(Warlords.getInstance()).stream()
-                        .filter(hologram -> hologram.getLocation().equals(location) && hologram.getVisibilityManager().isVisibleTo(player))
+                HolographicDisplaysAPI.get(Warlords.getInstance()).getHolograms().stream()
+                        .filter(hologram -> hologram.getPosition().toLocation().equals(location) && hologram.getVisibilitySettings().isVisibleTo(player))
                         .forEach(Hologram::delete);
 
-                Hologram hologram = HologramsAPI.createHologram(Warlords.getInstance(), location);
+                Hologram hologram = HolographicDisplaysAPI.get(Warlords.getInstance()).createHologram(location);
                 int selectedLeaderboard = playerLeaderboardHolograms.get(player.getUniqueId());
                 List<DatabasePlayer> databasePlayers;
                 if (selectedLeaderboard == 0) {
@@ -324,47 +331,48 @@ public class LeaderboardManager {
                 for (int i = 0; i < databasePlayers.size(); i++) {
                     DatabasePlayer databasePlayer = databasePlayers.get(i);
                     if (databasePlayer.getUuid().equals(player.getUniqueId().toString())) {
-                        hologram.appendTextLine(ChatColor.YELLOW.toString() + ChatColor.BOLD + (i + 1) + ". " + ChatColor.AQUA + ChatColor.BOLD + databasePlayer.getName() + ChatColor.GRAY + ChatColor.BOLD + " - " + ChatColor.YELLOW + ChatColor.BOLD + leaderboard.getStringFunction().apply(databasePlayer));
+                        hologram.getLines().appendText(ChatColor.YELLOW.toString() + ChatColor.BOLD + (i + 1) + ". " + ChatColor.AQUA + ChatColor.BOLD + databasePlayer.getName() + ChatColor.GRAY + ChatColor.BOLD + " - " + ChatColor.YELLOW + ChatColor.BOLD + leaderboard.getStringFunction().apply(databasePlayer));
                         break;
                     }
                 }
-                hologram.getVisibilityManager().setVisibleByDefault(false);
-                hologram.getVisibilityManager().showTo(player);
+                hologram.getVisibilitySettings().setGlobalVisibility(VisibilitySettings.Visibility.HIDDEN);
+                hologram.getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.VISIBLE);
             }
         }
     }
 
     public static void removePlayerSpecificHolograms(Player player) {
+        if (!Warlords.holographicDisplaysEnabled) return;
         leaderboards.forEach(leaderboard -> {
             Location location = leaderboard.getLocation().clone().add(0, -3.5, 0);
-            HologramsAPI.getHolograms(Warlords.getInstance()).stream()
-                    .filter(hologram -> hologram.getLocation().equals(location) && hologram.getVisibilityManager().isVisibleTo(player))
+            HolographicDisplaysAPI.get(Warlords.getInstance()).getHolograms().stream()
+                    .filter(hologram -> hologram.getPosition().toLocation().equals(location) && hologram.getVisibilitySettings().isVisibleTo(player))
                     .forEach(Hologram::delete);
         });
-        HologramsAPI.getHolograms(Warlords.getInstance()).stream()
-                .filter(h -> h.getVisibilityManager().isVisibleTo(player) && (h.getLocation().equals(DatabaseGame.gameSwitchLocation) || h.getLocation().equals(leaderboardSwitchLocation)))
+        HolographicDisplaysAPI.get(Warlords.getInstance()).getHolograms().stream()
+                .filter(h -> h.getVisibilitySettings().isVisibleTo(player) && (h.getPosition().toLocation().equals(DatabaseGame.gameSwitchLocation) || h.getPosition().toLocation().equals(leaderboardSwitchLocation)))
                 .forEach(Hologram::delete);
     }
 
-    private static void addLeaderboard(Leaderboard leaderboard, PlayersCollections collections, String title) {
+    private static Hologram addLeaderboard(Leaderboard leaderboard, PlayersCollections collections, String title) {
         List<DatabasePlayer> databasePlayers = leaderboard.getSortedPlayers(collections);
         List<String> hologramLines = new ArrayList<>();
         for (int i = 0; i < 10 && i < databasePlayers.size(); i++) {
             DatabasePlayer databasePlayer = databasePlayers.get(i);
             hologramLines.add(ChatColor.YELLOW.toString() + (i + 1) + ". " + ChatColor.AQUA + databasePlayer.getName() + ChatColor.GRAY + " - " + ChatColor.YELLOW + leaderboard.getStringFunction().apply(databasePlayer));
         }
-        createLeaderboard(leaderboard, title, hologramLines);
+        return createLeaderboard(leaderboard, title, hologramLines);
     }
 
     private static Hologram createLeaderboard(Leaderboard leaderboard, String title, List<String> hologramLines) {
-        Hologram hologram = HologramsAPI.createHologram(Warlords.getInstance(), leaderboard.getLocation());
-        hologram.appendTextLine(title);
-        hologram.appendTextLine("");
+        Hologram hologram = HolographicDisplaysAPI.get(Warlords.getInstance()).createHologram(leaderboard.getLocation());
+        hologram.getLines().appendText(title);
+        hologram.getLines().appendText("");
         for (String line : hologramLines) {
-            hologram.appendTextLine(line);
+            hologram.getLines().appendText(line);
         }
 
-        hologram.getVisibilityManager().setVisibleByDefault(false);
+        hologram.getVisibilitySettings().setGlobalVisibility(VisibilitySettings.Visibility.HIDDEN);
         return hologram;
     }
 

@@ -2,6 +2,8 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.player.Classes;
+import com.ebicep.warlords.player.ClassesSkillBoosts;
 import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.ParticleEffect;
@@ -27,20 +29,21 @@ public class Berserk extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(WarlordsPlayer wp, Player p) {
+    public void onActivate(WarlordsPlayer wp, Player player) {
+
         wp.subtractEnergy(energyCost);
         wp.getSpeed().addSpeedModifier("Berserk", speedBuff, duration * 20, "BASE");
         wp.getCooldownManager().addCooldown(name, Berserk.this.getClass(), new Berserk(), "BERS", duration, wp, CooldownTypes.BUFF);
 
-        for (Player player1 : p.getWorld().getPlayers()) {
-            player1.playSound(p.getLocation(), "warrior.berserk.activation", 2, 1);
+        for (Player player1 : player.getWorld().getPlayers()) {
+            player1.playSound(player.getLocation(), "warrior.berserk.activation", 2, 1);
         }
         wp.getGame().getGameTasks().put(
                 new BukkitRunnable() {
                     @Override
                     public void run() {
                         if (!wp.getCooldownManager().getCooldown(Berserk.class).isEmpty()) {
-                            Location location = p.getLocation();
+                            Location location = player.getLocation();
                             location.add(0, 2.1, 0);
                             ParticleEffect.VILLAGER_ANGRY.display(0, 0, 0, 0.1F, 1, location, 500);
                         } else {

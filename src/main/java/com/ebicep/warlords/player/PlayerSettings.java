@@ -1,5 +1,7 @@
 package com.ebicep.warlords.player;
 
+import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
 import com.ebicep.warlords.maps.Team;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
@@ -11,7 +13,20 @@ import java.util.Map;
 
 public class PlayerSettings implements ConfigurationSerializable {
     private Classes selectedClass = Classes.PYROMANCER;
-    private ClassesSkillBoosts classesSkillBoosts = selectedClass.skillBoosts.get(0);
+    private HashMap<Classes, ClassesSkillBoosts> classesSkillBoosts = new HashMap<Classes, ClassesSkillBoosts>() {{
+        put(Classes.PYROMANCER, ClassesSkillBoosts.FIREBALL);
+        put(Classes.CRYOMANCER, ClassesSkillBoosts.FROST_BOLT);
+        put(Classes.AQUAMANCER, ClassesSkillBoosts.WATER_BOLT);
+        put(Classes.BERSERKER, ClassesSkillBoosts.WOUNDING_STRIKE_BERSERKER);
+        put(Classes.DEFENDER, ClassesSkillBoosts.WOUNDING_STRIKE_DEFENDER);
+        put(Classes.REVENANT, ClassesSkillBoosts.ORBS_OF_LIFE);
+        put(Classes.AVENGER, ClassesSkillBoosts.AVENGER_STRIKE);
+        put(Classes.CRUSADER, ClassesSkillBoosts.CRUSADER_STRIKE);
+        put(Classes.PROTECTOR, ClassesSkillBoosts.PROTECTOR_STRIKE);
+        put(Classes.THUNDERLORD, ClassesSkillBoosts.LIGHTNING_BOLT);
+        put(Classes.SPIRITGUARD, ClassesSkillBoosts.FALLEN_SOULS);
+        put(Classes.EARTHWARDEN, ClassesSkillBoosts.EARTHEN_SPIKE);
+    }};
     private boolean hotKeyMode = true;
     private HashMap<Classes, Weapons> weaponSkins = new HashMap<Classes, Weapons>() {{
         put(Classes.PYROMANCER, Weapons.FELFLAME_BLADE);
@@ -26,7 +41,8 @@ public class PlayerSettings implements ConfigurationSerializable {
         put(Classes.THUNDERLORD, Weapons.FELFLAME_BLADE);
         put(Classes.SPIRITGUARD, Weapons.FELFLAME_BLADE);
         put(Classes.EARTHWARDEN, Weapons.FELFLAME_BLADE);
-    }};    private Settings.ParticleQuality particleQuality = Settings.ParticleQuality.HIGH;
+    }};
+    private Settings.ParticleQuality particleQuality = Settings.ParticleQuality.HIGH;
     /**
      * Preferred team in the upcoming warlords game
      */
@@ -39,23 +55,27 @@ public class PlayerSettings implements ConfigurationSerializable {
 
     public void setSelectedClass(@Nonnull Classes selectedClass) {
         this.selectedClass = selectedClass;
-        if (!selectedClass.skillBoosts.contains(classesSkillBoosts)) {
-            classesSkillBoosts = selectedClass.skillBoosts.get(0);
-        }
     }
 
-    @Nonnull
-    public ClassesSkillBoosts getClassesSkillBoosts() {
+    public ClassesSkillBoosts getSkillBoostForClass() {
+        return classesSkillBoosts.get(selectedClass);
+    }
+
+    public HashMap<Classes, ClassesSkillBoosts> getClassesSkillBoosts() {
         return classesSkillBoosts;
     }
 
-    public void setClassesSkillBoosts(@Nonnull ClassesSkillBoosts classesSkillBoosts) {
-        this.classesSkillBoosts = classesSkillBoosts;
+    public void setSkillBoostForSelectedClass(ClassesSkillBoosts classesSkillBoost) {
+        classesSkillBoosts.put(selectedClass, classesSkillBoost);
+    }
+
+    public void setClassesSkillBoosts(HashMap<Classes, ClassesSkillBoosts> classesSkillBoosts) {
+        this.classesSkillBoosts.putAll(classesSkillBoosts);
     }
 
     @Nullable
     public Team getWantedTeam() {
-        if(wantedTeam == null) {
+        if (wantedTeam == null) {
             Team newTeam = Math.random() <= .5 ? Team.BLUE : Team.RED;
             setWantedTeam(newTeam);
             return newTeam;
@@ -71,7 +91,7 @@ public class PlayerSettings implements ConfigurationSerializable {
     public Map<String, Object> serialize() {
         Map<String, Object> config = new LinkedHashMap<>();
         config.put("class", selectedClass.name());
-        config.put("classessSkillBoost", classesSkillBoosts.name());
+        //config.put("classessSkillBoost", classesSkillBoosts.name());
         config.put("hotKeyMode", Boolean.toString(hotKeyMode));
         config.put("particleQuality", particleQuality.name());
         return config;
@@ -85,7 +105,7 @@ public class PlayerSettings implements ConfigurationSerializable {
         } catch (IllegalArgumentException ignored) {
         }
         try {
-            settings.setClassesSkillBoosts(ClassesSkillBoosts.valueOf(config.get("classessSkillBoost").toString()));
+            //settings.setClassesSkillBoosts(ClassesSkillBoosts.valueOf(config.get("classessSkillBoost").toString()));
         } catch (IllegalArgumentException ignored) {
         }
         settings.hotKeyMode = !"false".equals(config.get("hotKeyMode"));

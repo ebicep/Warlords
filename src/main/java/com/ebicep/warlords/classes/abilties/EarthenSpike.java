@@ -24,7 +24,6 @@ import java.util.List;
 public class EarthenSpike extends AbstractAbility {
 
     private final int radius = 10;
-    private boolean kbCooldown = true;
 
     private static final String[] REPEATING_SOUND = new String[]{
             "shaman.earthenspike.animation.a",

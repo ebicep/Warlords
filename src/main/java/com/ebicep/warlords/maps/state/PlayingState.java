@@ -2,6 +2,7 @@ package com.ebicep.warlords.maps.state;
 
 import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.commands.debugcommands.ImposterCommand;
 import com.ebicep.warlords.commands.debugcommands.RecordGamesCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame;
@@ -174,9 +175,12 @@ public class PlayingState implements State, TimerDebugAble {
                 .async(() -> game.forEachOfflinePlayer((player, team) -> {
                     DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
                     DatabaseManager.updatePlayerAsync(databasePlayer);
-                    DatabaseManager.loadPlayer(player.getUniqueId(), PlayersCollections.SEASON_5);
-                    DatabaseManager.loadPlayer(player.getUniqueId(), PlayersCollections.WEEKLY);
-                    DatabaseManager.loadPlayer(player.getUniqueId(), PlayersCollections.DAILY);
+                    DatabaseManager.loadPlayer(player.getUniqueId(), PlayersCollections.SEASON_5, () -> {
+                    });
+                    DatabaseManager.loadPlayer(player.getUniqueId(), PlayersCollections.WEEKLY, () -> {
+                    });
+                    DatabaseManager.loadPlayer(player.getUniqueId(), PlayersCollections.DAILY, () -> {
+                    });
                 })).execute();
     }
 
@@ -284,7 +288,7 @@ public class PlayingState implements State, TimerDebugAble {
         }
 
         Warlords.getPlayers().forEach(((uuid, warlordsPlayer) -> warlordsPlayer.removeGrave()));
-        if (RecordGamesCommand.recordGames && !forceEnd && game.playersCount() >= 16 && timer <= 12000) {
+        if (RecordGamesCommand.recordGames && !ImposterCommand.enabled && !forceEnd && game.playersCount() >= 16 && timer <= 12000) {
             if (getBluePoints() > getRedPoints()) {
                 BotManager.sendMessageToNotificationChannel("[GAME] A game ended with **BLUE** winning " + getBluePoints() + " to " + getRedPoints());
             } else if (getBluePoints() < getRedPoints()) {
@@ -295,7 +299,7 @@ public class PlayingState implements State, TimerDebugAble {
             List<WarlordsPlayer> players = new ArrayList<>(Warlords.getPlayers().values());
             float highestDamage = players.stream().sorted(Comparator.comparing(WarlordsPlayer::getTotalDamage).reversed()).collect(Collectors.toList()).get(0).getTotalDamage();
             float highestHealing = players.stream().sorted(Comparator.comparing(WarlordsPlayer::getTotalHealing).reversed()).collect(Collectors.toList()).get(0).getTotalHealing();
-            if (highestDamage <= 500000 && highestHealing <= 500000) {
+            if (highestDamage <= 750000 && highestHealing <= 750000) {
                 DatabaseGame.addGame(PlayingState.this, true);
             } else {
                 DatabaseGame.addGame(PlayingState.this, false);

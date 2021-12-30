@@ -100,14 +100,14 @@ public class WarlordsEvents implements Listener {
                                 }
                             }
                             if (allOnline) {
-                                wp.getGame().freeze(true);
+                                wp.getGame().freeze(ChatColor.YELLOW + "Missing player detected!", true);
                             }
                         }
                         this.cancel();
                         // 15 for precaution
                     } else if (secondsGone >= 15 && !froze) {
                         if (!wp.getGame().isGameFreeze()) {
-                            wp.getGame().freeze(true);
+                            wp.getGame().freeze(ChatColor.YELLOW + "Missing player detected!", true);
                         }
                         froze = true;
                     }
@@ -189,7 +189,7 @@ public class WarlordsEvents implements Listener {
             }
             e.setJoinMessage(wp.getColoredNameBold() + ChatColor.GOLD + " rejoined the game!");
             if (wp.getGame().isGameFreeze()) {
-                wp.getGame().freezePlayer(e.getPlayer(), false);
+                wp.getGame().freezePlayer(e.getPlayer(), "");
             }
         } else {
             e.getPlayer().setAllowFlight(true);
@@ -199,17 +199,17 @@ public class WarlordsEvents implements Listener {
 
         Warlords.newChain()
                 .async(() -> {
-                    DatabaseManager.loadPlayer(e.getPlayer().getUniqueId(), PlayersCollections.ALL_TIME);
-                    Warlords.updateHead(e.getPlayer());
-                }).sync(() -> {
-                    LeaderboardManager.setLeaderboardHologramVisibility(player);
-                    DatabaseGame.setGameHologramVisibility(player);
+                    DatabaseManager.loadPlayer(e.getPlayer().getUniqueId(), PlayersCollections.ALL_TIME, () -> {
+                        Warlords.updateHead(e.getPlayer());
+                        LeaderboardManager.setLeaderboardHologramVisibility(player);
+                        DatabaseGame.setGameHologramVisibility(player);
 
-                    Location rejoinPoint = Warlords.getRejoinPoint(player.getUniqueId());
-                    if (Bukkit.getWorlds().get(0).getName().equals(rejoinPoint.getWorld().getName())) {
-                        Warlords.playerScoreboards.get(player.getUniqueId()).giveMainLobbyScoreboard();
-                        ExperienceManager.giveExperienceBar(player);
-                    }
+                        Location rejoinPoint = Warlords.getRejoinPoint(player.getUniqueId());
+                        if (Bukkit.getWorlds().get(0).getName().equals(rejoinPoint.getWorld().getName())) {
+                            Warlords.playerScoreboards.get(player.getUniqueId()).giveMainLobbyScoreboard();
+                            ExperienceManager.giveExperienceBar(player);
+                        }
+                    });
                 })
                 .execute();
 
@@ -256,7 +256,9 @@ public class WarlordsEvents implements Listener {
                     wpAttacker.subtractEnergy(wpAttacker.getSpec().getEnergyOnHit() * -1);
 
                     if (wpAttacker.getSpec() instanceof Spiritguard && !wpAttacker.getCooldownManager().getCooldown(Soulbinding.class).isEmpty()) {
+                        Soulbinding baseSoulbinding = (Soulbinding) wpAttacker.getSpec().getPurple();
                         wpAttacker.getCooldownManager().getCooldown(Soulbinding.class).stream()
+                                .filter(cooldown -> !cooldown.isHidden())
                                 .map(Cooldown::getCooldownObject)
                                 .map(Soulbinding.class::cast)
                                 .forEach(soulbinding -> {
@@ -266,12 +268,12 @@ public class WarlordsEvents implements Listener {
                                                 .forEach(boundPlayer -> {
                                                     boundPlayer.setHitWithSoul(false);
                                                     boundPlayer.setHitWithLink(false);
-                                                    boundPlayer.setTimeLeft(3);
+                                                    boundPlayer.setTimeLeft(baseSoulbinding.getBindDuration());
                                                 });
                                     } else {
                                         wpVictim.sendMessage(ChatColor.RED + "\u00AB " + ChatColor.GRAY + "You have been bound by " + wpAttacker.getName() + "'s " + ChatColor.LIGHT_PURPLE + "Soulbinding Weapon" + ChatColor.GRAY + "!");
-                                        wpAttacker.sendMessage(ChatColor.GREEN + "\u00BB " + ChatColor.GRAY + "Your " + ChatColor.LIGHT_PURPLE + "Soulbinding Weapon " + ChatColor.GRAY + "has bound " + wpVictim.getName() + "!");
-                                        soulbinding.getSoulBindedPlayers().add(new Soulbinding.SoulBoundPlayer(wpVictim, 3));
+                                        wpAttacker.sendMessage(ChatColor.GREEN + "\u00BB " + ChatColor.GRAY + "Your " + ChatColor.LIGHT_PURPLE + "Soulbinding Weapon " + ChatColor.GRAY + "has bound " + warlordsPlayerVictim.getName() + "!");
+                                        soulbinding.getSoulBindedPlayers().add(new Soulbinding.SoulBoundPlayer(wpVictim, baseSoulbinding.getBindDuration()));
                                         for (Player player1 : wpVictim.getWorld().getPlayers()) {
                                             player1.playSound(wpVictim.getLocation(), "shaman.earthlivingweapon.activation", 2, 1);
                                         }
