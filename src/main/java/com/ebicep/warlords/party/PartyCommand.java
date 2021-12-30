@@ -305,6 +305,12 @@ public class PartyCommand implements TabExecutor {
                                     return;
                                 }
                                 String name = args[1];
+                                if (name.equalsIgnoreCase("@a")) {
+                                    Bukkit.getOnlinePlayers().stream()
+                                            .filter(p -> !p.getName().equalsIgnoreCase(party.getLeaderName()) && !party.hasUUID(p.getUniqueId()))
+                                            .forEach(p -> Bukkit.getServer().dispatchCommand(p, "p join " + party.getLeaderName()));
+                                    return;
+                                }
                                 Player playerToForceInvite = Bukkit.getPlayer(name);
                                 if (playerToForceInvite == null) {
                                     Party.sendMessageToPlayer((Player) sender, ChatColor.RED + "Cannot find a player with that name!", true, true);
@@ -314,13 +320,8 @@ public class PartyCommand implements TabExecutor {
                                     Party.sendMessageToPlayer((Player) sender, ChatColor.RED + "That player is already in the party!", true, true);
                                     return;
                                 }
-                                if (name.equalsIgnoreCase("@a")) {
-                                    Bukkit.getOnlinePlayers().stream()
-                                            .filter(p -> !p.getName().equalsIgnoreCase(party.getLeaderName()) && !party.hasUUID(p.getUniqueId()))
-                                            .forEach(p -> Bukkit.getServer().dispatchCommand(p, "p join " + party.getLeaderName()));
-                                } else {
-                                    Bukkit.getServer().dispatchCommand(playerToForceInvite, "p join " + party.getLeaderName());
-                                }
+                                Bukkit.getServer().dispatchCommand(playerToForceInvite, "p join " + party.getLeaderName());
+
                             } else {
                                 sender.sendMessage(ChatColor.RED + "You do not have permission to do that.");
                             }

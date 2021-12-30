@@ -41,7 +41,7 @@ public class Party {
                     return invite.getValue() <= 0;
                 });
                 partyPlayers.stream()
-                        .filter(partyPlayer -> partyPlayer.getOfflineTimeLeft() != -1)
+                        .filter(partyPlayer -> partyPlayer != null && partyPlayer.getOfflineTimeLeft() != -1)
                         .forEach(partyPlayer -> {
                             int offlineTimeLeft = partyPlayer.getOfflineTimeLeft();
                             partyPlayer.setOfflineTimeLeft(offlineTimeLeft - 1);
