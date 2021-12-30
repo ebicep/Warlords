@@ -9,6 +9,8 @@ import com.ebicep.warlords.classes.paladin.specs.avenger.Avenger;
 import com.ebicep.warlords.classes.paladin.specs.crusader.Crusader;
 import com.ebicep.warlords.classes.paladin.specs.protector.Protector;
 import com.ebicep.warlords.classes.rogue.specs.assassin.Assassin;
+import com.ebicep.warlords.classes.rogue.specs.untitleddef.Untitled1;
+import com.ebicep.warlords.classes.rogue.specs.untitledsupport.Untitled2;
 import com.ebicep.warlords.classes.shaman.specs.earthwarden.Earthwarden;
 import com.ebicep.warlords.classes.shaman.specs.spiritguard.Spiritguard;
 import com.ebicep.warlords.classes.shaman.specs.thunderlord.Thunderlord;
@@ -88,8 +90,18 @@ public enum Classes {
             EARTHEN_SPIKE, BOULDER, CHAIN_HEAL),
     ASSASSIN("Assassin",
             Assassin::new,
-            WordWrap.wrapWithNewline("Strike enemies with deadly attacks.", 200),
+            WordWrap.wrapWithNewline("§7Strike enemies with deadly attacks.", 200),
             SpecType.DAMAGE,
+            JUDGEMENT_STRIKE),
+    UNTITLED1("Untitled Defense",
+            Untitled1::new,
+            WordWrap.wrapWithNewline("Strike enemies with deadly attacks.", 200),
+            SpecType.TANK,
+            JUDGEMENT_STRIKE),
+    UNTITLED2("Untitled Support",
+            Untitled2::new,
+            WordWrap.wrapWithNewline("Strike enemies with deadly attacks.", 200),
+            SpecType.HEALER,
             JUDGEMENT_STRIKE),
 
     ;
