@@ -94,7 +94,7 @@ public class GameMenu {
                     .lore(lore)
                     .get();
             menu.setItem(
-                    9 / 2 - values.length / 2 + i * 2 - 1,
+                    9 / 2 - values.length / 2 + i * 2 - 2,
                     1,
                     item,
                     (n, e) -> {

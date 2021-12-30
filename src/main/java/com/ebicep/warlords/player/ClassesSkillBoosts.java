@@ -645,7 +645,18 @@ public enum ClassesSkillBoosts {
                 abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.2f);
                 abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
             }
-    );
+    ),
+    JUDGEMENT_STRIKE("Judgement Strike",
+            "§7Increase the amount of damage you\n§7deal with Judgement Strike\n§7by 20%",
+            "§aIncrease the amount of damage you\n§adeal with Judgement Strike\n§aby §c20%",
+            JudgementStrike.class,
+            abstractAbility -> {
+                abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.2f);
+                abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.2f);
+            }
+    ),
+
+    ;
 
     public final String name;
     public final String description;
