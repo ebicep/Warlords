@@ -104,10 +104,10 @@ public class ImposterCommand implements CommandExecutor {
                                 case 4:
                                     if (player.getName().equalsIgnoreCase(blueImposterName) || player.getName().equalsIgnoreCase(redImposterName)) {
                                         title = ChatColor.RED + "The IMPOSTER";
-                                        player.sendMessage(ChatColor.RED + "You are the IMPOSTER");
+                                        Party.sendMessageToPlayer(player, ChatColor.RED + "You are the IMPOSTER", true, true);
                                     } else {
                                         title = ChatColor.GREEN + "INNOCENT";
-                                        player.sendMessage(ChatColor.GREEN + "You are INNOCENT");
+                                        Party.sendMessageToPlayer(player, ChatColor.GREEN + "You are INNOCENT", true, true);
                                     }
                                     break;
                             }
@@ -238,7 +238,7 @@ public class ImposterCommand implements CommandExecutor {
                     } else {
                         warlordsPlayer.getGame().forEachOnlinePlayer((player, team) -> {
                             if (team == Team.BLUE) {
-                                player.sendMessage(ChatColor.GREEN + "A player wants to vote out someone! (" + blueVoters + "/" + playersNeeded + ")");
+                                Party.sendMessageToPlayer(player, ChatColor.GREEN + "A player wants to vote out someone! (" + blueVoters + "/" + playersNeeded + ")", true, true);
                             }
                         });
                     }
