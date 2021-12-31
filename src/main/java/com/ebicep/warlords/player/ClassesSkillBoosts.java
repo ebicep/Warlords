@@ -246,20 +246,20 @@ public enum ClassesSkillBoosts {
             }
     ),
     GROUND_SLAM_DEFENDER("Ground Slam",
-            "§7Reduce the cooldown of Ground Slam\n§7by 30%",
-            "§aReduce the cooldown of Ground Slam\n§aby §c30%",
+            "§7Reduce the cooldown of Ground Slam\n§7by 25%",
+            "§aReduce the cooldown of Ground Slam\n§aby §c25%",
             GroundSlam.class,
             abstractAbility -> {
 
-                abstractAbility.setCooldown(abstractAbility.getCooldown() * .7f);
+                abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
             }
     ),
     INTERVENE("Intervene",
-            "§7Reduce the cooldown of Intervene\n§7by 15%",
-            "§aReduce the cooldown of Intervene\n§aby §c15%",
+            "§7Reduce the cooldown of Intervene\n§7by 12%",
+            "§aReduce the cooldown of Intervene\n§aby §c12%",
             Intervene.class,
             abstractAbility -> {
-                abstractAbility.setCooldown(abstractAbility.getCooldown() * .85f);
+                abstractAbility.setCooldown(abstractAbility.getCooldown() * .88f);
             }
     ),
     LAST_STAND("Last Stand",
@@ -451,7 +451,7 @@ public enum ClassesSkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof Consecrate) {
                     ((Consecrate) abstractAbility).setRadius(6);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .7f);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .6f);
                 } else {
                     System.out.println("ERROR APPLY SKILL BOOST NOT CONSECRATE PROT");
                 }
