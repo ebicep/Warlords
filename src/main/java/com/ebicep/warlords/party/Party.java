@@ -312,10 +312,9 @@ public class Party {
         return partyPlayers.stream().anyMatch(partyPlayer -> partyPlayer.getUuid().equals(uuid));
     }
 
-    public Poll addPoll(String question, List<String> options, boolean infiniteVotingTime, List<UUID> excludedPlayers, Runnable runnable) {
-        Poll poll = new Poll(this, question, options, infiniteVotingTime, excludedPlayers, runnable);
-        polls.add(poll);
-        return poll;
+    public void addPoll(PollBuilder pollBuilder) {
+        pollBuilder.setParty(this);
+        polls.add(pollBuilder.get());
     }
 
     public List<Poll> getPolls() {

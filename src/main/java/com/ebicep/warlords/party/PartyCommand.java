@@ -212,8 +212,11 @@ public class PartyCommand implements TabExecutor {
                             List<String> pollOptions = new ArrayList<>(Arrays.asList(pollInfo.split("/")));
                             String question = pollOptions.get(0);
                             pollOptions.remove(question);
-                            currentParty.get().addPoll(question, pollOptions, false, new ArrayList<>(), () -> {
-                            });
+                            currentParty.get().addPoll(
+                                    new PollBuilder()
+                                            .setQuestion(question)
+                                            .setOptions(pollOptions)
+                            );
                         }
                         return true;
                     }
@@ -230,11 +233,17 @@ public class PartyCommand implements TabExecutor {
                         try {
                             int answer = Integer.parseInt(args[1]);
                             Poll poll = currentParty.get().getPolls().stream().filter(p -> !p.getExcludedPlayers().contains(player.getUniqueId())).findFirst().get();
-                            if (poll.getPlayerAnsweredWithOption().containsKey(player.getUniqueId())) {
-                                Party.sendMessageToPlayer((Player) sender, ChatColor.RED + "You already voted for this poll!", true, true);
+                            HashMap<UUID, Integer> playerAnsweredWithOption = poll.getPlayerAnsweredWithOption();
+                            if (playerAnsweredWithOption.containsKey(player.getUniqueId())) {
+                                if (playerAnsweredWithOption.get(player.getUniqueId()) == answer) {
+                                    Party.sendMessageToPlayer((Player) sender, ChatColor.RED + "You already voted for " + ChatColor.GOLD + poll.getOptions().get(answer - 1) + ChatColor.RED + "!", true, true);
+                                } else {
+                                    playerAnsweredWithOption.put(player.getUniqueId(), answer);
+                                    Party.sendMessageToPlayer((Player) sender, ChatColor.GREEN + "You changed your vote to " + ChatColor.GOLD + poll.getOptions().get(answer - 1) + ChatColor.GREEN + "!", true, true);
+                                }
                             } else if (answer > 0 && answer <= poll.getOptions().size()) {
-                                poll.getPlayerAnsweredWithOption().put(player.getUniqueId(), answer);
-                                Party.sendMessageToPlayer((Player) sender, ChatColor.GREEN + "You voted for " + poll.getOptions().get(answer - 1) + "!", true, true);
+                                playerAnsweredWithOption.put(player.getUniqueId(), answer);
+                                Party.sendMessageToPlayer((Player) sender, ChatColor.GREEN + "You voted for " + ChatColor.GOLD + poll.getOptions().get(answer - 1) + ChatColor.GREEN + "!", true, true);
                             } else {
                                 Party.sendMessageToPlayer((Player) sender, ChatColor.RED + "Invalid Arguments!", true, true);
                             }
