@@ -10,6 +10,7 @@ import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
 import com.ebicep.customentities.npc.NPCManager;
+import com.ebicep.customentities.npc.traits.GameStartTrait;
 import com.ebicep.jda.BotCommands;
 import com.ebicep.jda.BotListener;
 import com.ebicep.jda.BotManager;
@@ -20,6 +21,7 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.FutureMessageManager;
 import com.ebicep.warlords.database.configuration.ApplicationConfiguration;
 import com.ebicep.warlords.database.leaderboards.LeaderboardCommand;
+import com.ebicep.warlords.database.leaderboards.LeaderboardManager;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.menu.MenuEventListener;
@@ -33,14 +35,17 @@ import com.ebicep.warlords.queuesystem.QueueCommand;
 import com.ebicep.warlords.util.*;
 import me.filoghost.holographicdisplays.api.beta.hologram.Hologram;
 import me.filoghost.holographicdisplays.api.beta.HolographicDisplaysAPI;
+import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.event.DespawnReason;
+import net.citizensnpcs.api.npc.NPC;
+import net.citizensnpcs.api.npc.NPCRegistry;
+import net.citizensnpcs.api.trait.TraitInfo;
+import net.citizensnpcs.trait.SkinTrait;
 import org.bukkit.*;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Firework;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -232,7 +237,6 @@ public class Warlords extends JavaPlugin {
     public static boolean holographicDisplaysEnabled;
 
     public static boolean citizensEnabled;
-    public static NPCManager npcManager = new NPCManager();
     public Location npcCTFLocation;
 
     public static final int SPAWN_PROTECTION_RADIUS = 5;
@@ -264,7 +268,6 @@ public class Warlords extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new BotListener(), this);
         getServer().getPluginManager().registerEvents(new RecklessCharge(), this);
         getServer().getPluginManager().registerEvents(new FutureMessageManager(), this);
-        //getServer().getPluginManager().registerEvents(new NPCEvents(), this);
 
         new StartCommand().register(this);
         new EndgameCommand().register(this);
@@ -340,26 +343,10 @@ public class Warlords extends JavaPlugin {
                         }
                     }
                 });
-//        citizensEnabled = Bukkit.getPluginManager().isPluginEnabled("Citizens");
-//        npcCTFLocation = new LocationBuilder(Bukkit.getWorlds().get(0).getSpawnLocation())
-//                .add(Bukkit.getWorlds().get(0).getSpawnLocation().getDirection().multiply(12))
-//                .yaw(180)
-//                .get();
-//        if (citizensEnabled) {
-//            CitizensAPI.getNPCRegistries().forEach(NPCRegistry::deregisterAll);
-//            List<String> ctfInfo = new ArrayList<>();
-//            ctfInfo.add(ChatColor.YELLOW + ChatColor.BOLD.toString() + "CLICK TO PLAY");
-//            ctfInfo.add(ChatColor.AQUA + "Capture The Flag");
-//            ctfInfo.add("");
-//            ctfInfo.add(ChatColor.GRAY.toString() + game.playersCount() + " in Queue");
-//            ctfInfo.add(ChatColor.YELLOW.toString() + game.playersCount() + " Players");
-//            npcManager.createNPC(npcCTFLocation,
-//                    UUID.fromString("28470830-94bf-20ce-a843-cb95a6235a2b"),
-//                    "capture-the-flag",
-//                    false,
-//                    ctfInfo
-//            );
-//        }
+        citizensEnabled = Bukkit.getPluginManager().isPluginEnabled("Citizens");
+        if (citizensEnabled) {
+            NPCManager.createGameNPC();
+        }
         gameLoop();
         getServer().getScheduler().runTaskTimer(this, game, 1, 1);
         getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Plugin is enabled");
@@ -368,6 +355,7 @@ public class Warlords extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        RemoveEntities.removeArmorStands(0);
         game.clearAllPlayers();
         if (holographicDisplaysEnabled) {
             HolographicDisplaysAPI.get(instance).getHolograms().forEach(Hologram::delete);
@@ -377,6 +365,9 @@ public class Warlords extends JavaPlugin {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        CitizensAPI.getNPCRegistry().despawnNPCs(DespawnReason.RELOAD);
+
         getServer().getConsoleSender().sendMessage(ChatColor.RED + "[Warlords] Plugin is disabled");
         // TODO persist this.playerSettings to a database
     }

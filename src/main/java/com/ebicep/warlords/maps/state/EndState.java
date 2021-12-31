@@ -178,7 +178,7 @@ public class EndState implements State, TimerDebugAble {
             }
         }
         sendMessageToAllGamePlayer(game, "" + ChatColor.GREEN + ChatColor.BOLD + "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬", false);
-        RemoveEntities.removeArmorStands();
+        RemoveEntities.removeArmorStands(1);
     }
 
     @Override

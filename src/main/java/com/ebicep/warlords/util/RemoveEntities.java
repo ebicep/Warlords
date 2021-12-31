@@ -21,8 +21,8 @@ public class RemoveEntities {
         });
     }
 
-    public static void removeArmorStands() {
-        Bukkit.getWorlds().forEach(world -> world.getEntities().stream().filter(entity -> (entity instanceof ArmorStand)).forEach(Entity::remove));
+    public static void removeArmorStands(int worldSkips) {
+        Bukkit.getWorlds().stream().skip(worldSkips).forEach(world -> world.getEntities().stream().filter(entity -> (entity instanceof ArmorStand)).forEach(Entity::remove));
     }
 }
 
