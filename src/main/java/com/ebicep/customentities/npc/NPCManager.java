@@ -24,6 +24,6 @@ public class NPCManager {
         npc.addTrait(GameStartTrait.class);
         npc.getOrAddTrait(SkinTrait.class).setSkinName("sumSmash");
         npc.data().set("nameplate-visible", false);
-        npc.spawn(new Location(LeaderboardManager.spawnPoint.getWorld(), -2543.5, 50, 744.5, 90, 0));
+        npc.spawn(new Location(LeaderboardManager.spawnPoint.getWorld(), -2535.5, 51, 744.5, 90, 0));
     }
 }
