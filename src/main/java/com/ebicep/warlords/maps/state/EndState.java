@@ -196,6 +196,7 @@ public class EndState implements State, TimerDebugAble {
         game.getSpectators().forEach(uuid -> game.removeSpectator(uuid, false));
         game.getSpectators().clear();
         game.getGameTasks().forEach((task, timeCreated) -> task.cancel());
+        game.setPrivate(false);
     }
 
     @Override

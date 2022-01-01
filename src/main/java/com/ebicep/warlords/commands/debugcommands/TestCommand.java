@@ -46,11 +46,8 @@ public class TestCommand implements CommandExecutor {
 //            System.out.println(ExperienceManager.getExpFromGameStats(warlordsPlayer, true));
         }
         Player player = (Player) sender;
-        System.out.println(Warlords.game.getState());
+        System.out.println(Warlords.game.playersCount());
         System.out.println(Warlords.game.getPlayers());
-        System.out.println(Warlords.getPlayers());
-
-        System.out.println(CitizensAPI.getTraitFactory().getTrait("GameStartTrait"));
 
 //        for (int i = 0; i < 9; i++) {
 //            hologram.getLines().appendText("test text"); //ChatColor.YELLOW.toString() + (i + 1)+ ". " + ChatColor.AQUA + "Test Name");

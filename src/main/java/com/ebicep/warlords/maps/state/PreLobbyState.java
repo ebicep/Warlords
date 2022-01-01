@@ -1,11 +1,14 @@
 package com.ebicep.warlords.maps.state;
 
+import com.ebicep.customentities.npc.traits.GameStartTrait;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Gates;
 import com.ebicep.warlords.maps.Team;
+import com.ebicep.warlords.player.ArmorManager;
 import com.ebicep.warlords.player.Classes;
 import com.ebicep.warlords.player.CustomScoreboard;
+import com.ebicep.warlords.player.ExperienceManager;
 import com.ebicep.warlords.util.ChatUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -14,6 +17,7 @@ import org.bukkit.entity.Player;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.util.ChatUtils.sendMessage;
@@ -37,7 +41,7 @@ public class PreLobbyState implements State, TimerDebugAble {
     @Override
     public State run() {
         int players = game.playersCount();
-        if (players >= game.getMap().getMinPlayers()) {
+        if (players >= game.getMap().getMinPlayers() || game.isPrivate()) {
             if (timer % 20 == 0) {
                 int time = timer / 20;
                 game.forEachOnlinePlayer((player, team) -> {
@@ -82,11 +86,30 @@ public class PreLobbyState implements State, TimerDebugAble {
             }
 
             if (timer <= 0) {
+                if (!game.isPrivate()) {
+                    //separating players into even teams because it might be even bc players couldve left
+                    //distributePeopleOverTeams();
+                    AtomicBoolean blue = new AtomicBoolean(true);
+                    game.forEachOnlinePlayer((player, team) -> {
+                        if (blue.get()) {
+                            Warlords.game.setPlayerTeam(player, Team.BLUE);
+                            ArmorManager.resetArmor(player, Warlords.getPlayerSettings(player.getUniqueId()).getSelectedClass(), Team.BLUE);
+                        } else {
+                            Warlords.game.setPlayerTeam(player, Team.RED);
+                            ArmorManager.resetArmor(player, Warlords.getPlayerSettings(player.getUniqueId()).getSelectedClass(), Team.RED);
+                        }
+                        blue.set(!blue.get());
+                    });
+                    GameStartTrait.ctfQueue.clear();
+                }
                 return new PlayingState(game);
             }
             timer--;
         } else {
             timer = game.getMap().getCountdownTimerInTicks();
+            game.forEachOnlinePlayer((player, team) -> {
+                giveLobbyScoreboard(false, player);
+            });
         }
         return null;
     }
@@ -106,7 +129,7 @@ public class PreLobbyState implements State, TimerDebugAble {
 
         String mapPrefix = ChatColor.WHITE + "Map: " + ChatColor.GREEN;
         String mapSuffix;
-        if(game.getMap().getMapName().length() >= 16) {
+        if (game.getMap().getMapName().length() >= 16) {
             mapPrefix += game.getMap().getMapName().substring(0, 7);
             mapSuffix = game.getMap().getMapName().substring(7);
         } else {
@@ -114,22 +137,34 @@ public class PreLobbyState implements State, TimerDebugAble {
         }
 
         Classes classes = Warlords.getPlayerSettings(player.getUniqueId()).getSelectedClass();
-        customScoreboard.giveNewSideBar(init,
-                ChatColor.GRAY + dateString,
-                "  ",
-                mapPrefix + mapSuffix,
-                ChatColor.WHITE + "Players: " + ChatColor.GREEN + game.playersCount() + "/" + game.getMap().getMaxPlayers(),
-                "   ",
-                ChatColor.WHITE + "Starting in: " + ChatColor.GREEN + (time < 10 ? "00:0" : "00:") + time + ChatColor.WHITE + " to",
-                ChatColor.WHITE + "allow time for ",
-                ChatColor.WHITE + "additional players",
-                "    ",
-                //ChatColor.GOLD + "Lv" + ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(player.getUniqueId(), classes)) + " " + Classes.getClassesGroup(classes).name,
-                ChatColor.WHITE + "Spec: " + ChatColor.GREEN + classes.name,
-                "     ",
-                ChatColor.YELLOW + Warlords.VERSION);
-
-
+        if (game.playersCount() >= game.getMap().getMinPlayers() || game.isPrivate()) {
+            customScoreboard.giveNewSideBar(init,
+                    ChatColor.GRAY + dateString,
+                    "  ",
+                    mapPrefix + mapSuffix,
+                    ChatColor.WHITE + "Players: " + ChatColor.GREEN + game.playersCount() + "/" + game.getMap().getMaxPlayers(),
+                    "   ",
+                    ChatColor.WHITE + "Starting in: " + ChatColor.GREEN + (time < 10 ? "00:0" : "00:") + time + ChatColor.WHITE,
+                    "    ",
+                    ChatColor.GOLD + "Lv" + ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(player.getUniqueId(), classes)) + " " + Classes.getClassesGroup(classes).name,
+                    ChatColor.WHITE + "Spec: " + ChatColor.GREEN + classes.name,
+                    "     ",
+                    ChatColor.YELLOW + Warlords.VERSION);
+        } else {
+            customScoreboard.giveNewSideBar(init,
+                    ChatColor.GRAY + dateString,
+                    "  ",
+                    mapPrefix + mapSuffix,
+                    ChatColor.WHITE + "Players: " + ChatColor.GREEN + game.playersCount() + "/" + game.getMap().getMaxPlayers(),
+                    "   ",
+                    ChatColor.WHITE + "Starting if " + ChatColor.GREEN + (game.getMap().getMinPlayers() - game.playersCount()) + ChatColor.WHITE + " more",
+                    ChatColor.WHITE + "players join ",
+                    "    ",
+                    ChatColor.GOLD + "Lv" + ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(player.getUniqueId(), classes)) + " " + Classes.getClassesGroup(classes).name,
+                    ChatColor.WHITE + "Spec: " + ChatColor.GREEN + classes.name,
+                    "     ",
+                    ChatColor.YELLOW + Warlords.VERSION);
+        }
     }
 
     private void updateTeamPreferences() {

@@ -31,14 +31,14 @@ import java.util.stream.Stream;
 public class Game implements Runnable {
 
     public static TextComponent spacer = new TextComponent(ChatColor.GRAY + " - ");
-    private State state = null;
     private final Map<UUID, Team> players = new HashMap<>();
+    public boolean freezeOnCooldown = false;
+    private State state = null;
     private GameMap map = GameMap.RIFT;
     private boolean cooldownMode;
     private boolean gameFreeze = false;
-
+    private boolean isPrivate = false;
     private List<UUID> spectators = new ArrayList<>();
-
     private HashMap<BukkitTask, Long> gameTasks = new HashMap<>();
 
     public boolean isState(Class<? extends State> clazz) {
@@ -130,6 +130,7 @@ public class Game implements Runnable {
         if (team == oldTeam) {
             return;
         }
+        Warlords.getPlayerSettings(player.getUniqueId()).setWantedTeam(team);
         this.players.put(player.getUniqueId(), team);
         Location loc = this.map.getLobbySpawnPoint(team);
         Warlords.setRejoinPoint(player.getUniqueId(), loc);
@@ -256,8 +257,6 @@ public class Game implements Runnable {
         this.gameFreeze = gameFreeze;
     }
 
-    public boolean freezeOnCooldown = false;
-
     public void freeze(String subtitleMessage, boolean countdown) {
         if (gameFreeze && !freezeOnCooldown) {
             freezeOnCooldown = true;
@@ -327,15 +326,15 @@ public class Game implements Runnable {
         player.setGameMode(GameMode.SPECTATOR);
         player.teleport(this.getMap().blueRespawn);
         Warlords.setRejoinPoint(player.getUniqueId(), this.getMap().blueRespawn);
-        if(state instanceof PreLobbyState) {
+        if (state instanceof PreLobbyState) {
             ((PreLobbyState) state).giveLobbyScoreboard(true, player);
-        } else if(state instanceof PlayingState) {
+        } else if (state instanceof PlayingState) {
             ((PlayingState) state).updateBasedOnGameState(true, Warlords.playerScoreboards.get(player.getUniqueId()), null);
         }
     }
 
     public void removeSpectator(UUID uuid, boolean fromMenu) {
-        if(fromMenu) {
+        if (fromMenu) {
             spectators.remove(uuid);
         }
         OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
@@ -351,6 +350,14 @@ public class Game implements Runnable {
 
     public HashMap<BukkitTask, Long> getGameTasks() {
         return gameTasks;
+    }
+
+    public boolean isPrivate() {
+        return isPrivate;
+    }
+
+    public void setPrivate(boolean aPrivate) {
+        isPrivate = aPrivate;
     }
 
     @Override
