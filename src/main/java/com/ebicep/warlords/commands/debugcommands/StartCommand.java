@@ -131,7 +131,7 @@ public class StartCommand implements TabExecutor {
             GameStartTrait.ctfQueue.remove(player.getUniqueId());
         }
 
-        if(people.size() >= 16) {
+        if (people.size() >= 16) {
             BotManager.sendMessageToNotificationChannel("[GAME] A **" + game.getMap().getMapName() + "** started with **" + people.size() + (people.size() == 1 ? "** player!" : "** players!"));
         }
         return true;

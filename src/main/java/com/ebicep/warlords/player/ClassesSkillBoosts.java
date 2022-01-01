@@ -39,14 +39,14 @@ public enum ClassesSkillBoosts {
             }
     ),
     ARCANE_SHIELD_PYROMANCER("Arcane Shield",
-            "§7Increase the amount of health\n§7converted to shield by 10% and reduce\n§7the cooldown by 30%",
-            "§aIncrease the amount of health\n§aconverted to shield by §c10% §aand reduce\n§athe cooldown by §c30%",
+            "§7Increase the amount of health\n§7converted to shield by 10% and reduce\n§7the cooldown by 40%",
+            "§aIncrease the amount of health\n§aconverted to shield by §c10% §aand reduce\n§athe cooldown by §c40%",
             ArcaneShield.class,
             abstractAbility -> {
                 if (abstractAbility instanceof ArcaneShield) {
                     ArcaneShield arcaneShield = (ArcaneShield) abstractAbility;
                     arcaneShield.setShieldPercentage(60);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .7f);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .6f);
                 } else {
                     System.out.println("ERROR APPLY SKILL BOOST NOT ARCANE");
                 }
@@ -150,13 +150,13 @@ public enum ClassesSkillBoosts {
             }
     ),
     ARCANE_SHIELD_AQUAMANCER("Arcane Shield",
-            "§7Increase the amount of health\n§7converted to shield by 10% and reduce\n§7the cooldown by 30%",
-            "§aIncrease the amount of health\n§aconverted to shield by §c10% §aand reduce\n§athe cooldown by §c30%",
+            "§7Increase the amount of health\n§7converted to shield by 15% and reduce\n§7the cooldown by 30%",
+            "§aIncrease the amount of health\n§aconverted to shield by §c15% §aand reduce\n§athe cooldown by §c30%",
             ArcaneShield.class,
             abstractAbility -> {
                 if (abstractAbility instanceof ArcaneShield) {
                     ArcaneShield arcaneShield = (ArcaneShield) abstractAbility;
-                    arcaneShield.setShieldPercentage(60);
+                    arcaneShield.setShieldPercentage(65);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .7f);
                 } else {
                     System.out.println("ERROR APPLY SKILL BOOST NOT ARCANE");
@@ -196,12 +196,13 @@ public enum ClassesSkillBoosts {
             }
     ),
     GROUND_SLAM_BERSERKER("Ground Slam",
-            "§7Reduce the energy cost of Ground Slam\n§7by 30 §7and reduce the cooldown\nby §730%",
-            "§aReduce the energy cost of Ground Slam\n§aby §c30 §aand reduce the cooldown\nby §c30%",
+            "§7Increase the damage you\n§7deal with Ground Slam by\n§720% §7and reduce the cooldown\nby §740%",
+            "§aIncrease the damage you\n§adeal with Ground Slam by\n§c20% §aand reduce the cooldown\nby §c40%",
             GroundSlam.class,
             abstractAbility -> {
-                abstractAbility.setEnergyCost(abstractAbility.getEnergyCost() - 30);
-                abstractAbility.setCooldown(abstractAbility.getCooldown() * .7f);
+                abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.2f);
+                abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.2f);
+                abstractAbility.setCooldown(abstractAbility.getCooldown() * .6f);
             }
     ),
     BLOOD_LUST("Blood Lust",
@@ -245,20 +246,20 @@ public enum ClassesSkillBoosts {
             }
     ),
     GROUND_SLAM_DEFENDER("Ground Slam",
-            "§7Reduce the cooldown of Ground Slam\n§7by 30%",
-            "§aReduce the cooldown of Ground Slam\n§aby §c30%",
+            "§7Reduce the cooldown of Ground Slam\n§7by 25%",
+            "§aReduce the cooldown of Ground Slam\n§aby §c25%",
             GroundSlam.class,
             abstractAbility -> {
 
-                abstractAbility.setCooldown(abstractAbility.getCooldown() * .7f);
+                abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
             }
     ),
     INTERVENE("Intervene",
-            "§7Reduce the cooldown of Intervene\n§7by 15%",
-            "§aReduce the cooldown of Intervene\n§aby §c15%",
+            "§7Reduce the cooldown of Intervene\n§7by 12%",
+            "§aReduce the cooldown of Intervene\n§aby §c12%",
             Intervene.class,
             abstractAbility -> {
-                abstractAbility.setCooldown(abstractAbility.getCooldown() * .85f);
+                abstractAbility.setCooldown(abstractAbility.getCooldown() * .88f);
             }
     ),
     LAST_STAND("Last Stand",
@@ -450,7 +451,7 @@ public enum ClassesSkillBoosts {
             abstractAbility -> {
                 if (abstractAbility instanceof Consecrate) {
                     ((Consecrate) abstractAbility).setRadius(6);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .7f);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .6f);
                 } else {
                     System.out.println("ERROR APPLY SKILL BOOST NOT CONSECRATE PROT");
                 }
@@ -616,8 +617,8 @@ public enum ClassesSkillBoosts {
             }
     ),
     EARTHLIVING_WEAPON("Earthliving Weapon",
-            "§7Increase the amount of health you\n§7restore with Earthliving Weapon\n§7by 20% and increase the proc\n§7chance by 20%",
-            "§aIncrease the amount of health you\n§arestore with Earthliving Weapon\n§aby §c20% §aand increase the proc\n§achance by §c20%",
+            "§7Increase the amount of health you\n§7restore with Earthliving Weapon\n§7by 10% and increase the proc\n§7chance by 20%",
+            "§aIncrease the amount of health you\n§arestore with Earthliving Weapon\n§aby §c10% §aand increase the proc\n§achance by §c20%",
             Earthliving.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Earthliving) {
