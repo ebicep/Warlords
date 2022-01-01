@@ -101,6 +101,16 @@ public class PreLobbyState implements State, TimerDebugAble {
                         blue.set(!blue.get());
                     });
                     GameStartTrait.ctfQueue.clear();
+
+                    //hiding players not in game
+                    List<Player> playersNotInGame = Bukkit.getOnlinePlayers().stream()
+                            .filter(onlinePlayer -> !game.getPlayers().containsKey(onlinePlayer.getUniqueId()))
+                            .collect(Collectors.toList());
+                    Bukkit.getOnlinePlayers().stream()
+                            .filter(onlinePlayer -> game.getPlayers().containsKey(onlinePlayer.getUniqueId()))
+                            .forEach(playerInParty -> playersNotInGame.forEach(playerNotInParty -> {
+                                playerInParty.hidePlayer(playerNotInParty);
+                            }));
                 }
                 return new PlayingState(game);
             }
