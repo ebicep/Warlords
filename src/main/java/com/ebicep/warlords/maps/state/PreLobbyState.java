@@ -146,7 +146,7 @@ public class PreLobbyState implements State, TimerDebugAble {
                     "   ",
                     ChatColor.WHITE + "Starting in: " + ChatColor.GREEN + (time < 10 ? "00:0" : "00:") + time + ChatColor.WHITE,
                     "    ",
-                    ChatColor.GOLD + "Lv" + ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(player.getUniqueId(), classes)) + " " + Classes.getClassesGroup(classes).name,
+                    ChatColor.GRAY + "Lv" + ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(player.getUniqueId(), classes)) + " " + ChatColor.GOLD + Classes.getClassesGroup(classes).name,
                     ChatColor.WHITE + "Spec: " + ChatColor.GREEN + classes.name,
                     "     ",
                     ChatColor.YELLOW + Warlords.VERSION);
@@ -160,7 +160,7 @@ public class PreLobbyState implements State, TimerDebugAble {
                     ChatColor.WHITE + "Starting if " + ChatColor.GREEN + (game.getMap().getMinPlayers() - game.playersCount()) + ChatColor.WHITE + " more",
                     ChatColor.WHITE + "players join ",
                     "    ",
-                    ChatColor.GOLD + "Lv" + ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(player.getUniqueId(), classes)) + " " + Classes.getClassesGroup(classes).name,
+                    ChatColor.GRAY + "Lv" + ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(player.getUniqueId(), classes)) + " " + ChatColor.GOLD + Classes.getClassesGroup(classes).name,
                     ChatColor.WHITE + "Spec: " + ChatColor.GREEN + classes.name,
                     "     ",
                     ChatColor.YELLOW + Warlords.VERSION);
