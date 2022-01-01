@@ -540,7 +540,6 @@ public class GameMenu {
                 "§7Damage Reduction: §e" + apc.getDamageResistance() + "%"
         );
 
-        System.out.println("LCIK");
         ClassesSkillBoosts selectedBoost = playerSettings.getSkillBoostForClass();
         if (apc.getWeapon().getClass() == selectedBoost.ability) {
             apc.getWeapon().boostSkill(selectedBoost, apc);
