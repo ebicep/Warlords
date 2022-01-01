@@ -99,14 +99,14 @@ public class WarlordsEvents implements Listener {
                                 }
                             }
                             if (allOnline) {
-                                wp.getGame().freeze(true);
+                                wp.getGame().freeze(ChatColor.YELLOW + "Missing player detected!", true);
                             }
                         }
                         this.cancel();
                         // 15 for precaution
                     } else if (secondsGone >= 15 && !froze) {
                         if (!wp.getGame().isGameFreeze()) {
-                            wp.getGame().freeze(true);
+                            wp.getGame().freeze(ChatColor.YELLOW + "Missing player detected!", true);
                         }
                         froze = true;
                     }
@@ -169,6 +169,8 @@ public class WarlordsEvents implements Listener {
                 Warlords.playerScoreboards.get(player.getUniqueId()).giveMainLobbyScoreboard();
                 ExperienceManager.giveExperienceBar(player);
             }
+
+            player.getActivePotionEffects().clear();
         }
         WarlordsPlayer p = Warlords.getPlayer(player);
         if (p != null) {
@@ -188,11 +190,14 @@ public class WarlordsEvents implements Listener {
             }
             e.setJoinMessage(wp.getColoredNameBold() + ChatColor.GOLD + " rejoined the game!");
             if (wp.getGame().isGameFreeze()) {
-                wp.getGame().freezePlayer(e.getPlayer(), false);
+                wp.getGame().freezePlayer(e.getPlayer(), "");
             }
         } else {
-            e.getPlayer().setAllowFlight(true);
-            e.setJoinMessage(ChatColor.AQUA + e.getPlayer().getName() + ChatColor.GOLD + " joined the lobby!");
+            //checking if in game lobby
+            if (Warlords.game.players().noneMatch(uuidTeamEntry -> uuidTeamEntry.getKey().equals(e.getPlayer().getUniqueId()))) {
+                e.getPlayer().setAllowFlight(true);
+                e.setJoinMessage(ChatColor.AQUA + e.getPlayer().getName() + ChatColor.GOLD + " joined the lobby!");
+            }
         }
         Player player = e.getPlayer();
 

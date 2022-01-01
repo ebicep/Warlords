@@ -3,6 +3,7 @@ package com.ebicep.jda;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.party.Party;
+import com.ebicep.warlords.party.PartyPlayer;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -48,9 +49,9 @@ public class BotCommands implements CommandExecutor {
                     return true;
                 }
                 StringBuilder players = new StringBuilder();
-                for (UUID allPartyPerson : currentParty.get().getAllPartyPeople()) {
-                    players.append(Bukkit.getOfflinePlayer(allPartyPerson).getName()).append(",");
-                }
+                currentParty.get().getPartyPlayers().forEach(partyPlayer -> {
+                    players.append(Bukkit.getOfflinePlayer(partyPlayer.getUuid()).getName()).append(",");
+                });
                 players.setLength(players.length() - 1);
                 botTeams.get().sendMessage("/" + input + " " + players).queue();
                 sender.sendMessage(ChatColor.GREEN + "Balanced party in bot-teams!");

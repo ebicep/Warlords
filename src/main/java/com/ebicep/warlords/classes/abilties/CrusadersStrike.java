@@ -40,12 +40,10 @@ public class CrusadersStrike extends AbstractStrikeBase {
         PlayerFilter.entitiesAround(wp, energyRadius, energyRadius, energyRadius)
                 .aliveTeammatesOfExcludingSelf(wp)
                 .sorted(
-                        Comparator.comparing(
-                                (WarlordsPlayer p) -> p.getCooldownManager().hasCooldown(HolyRadiance.class) ? 0 : 1
-                        ).thenComparing(
-                                Utils.sortClosestBy(WarlordsPlayer::getLocation, wp.getLocation()
-                                )
-                        ))
+                    Comparator.comparing(
+                        (WarlordsPlayer p) -> p.getCooldownManager().hasCooldown(HolyRadiance.class) ? 0 : 1)
+                        .thenComparing(Utils.sortClosestBy(WarlordsPlayer::getLocation, wp.getLocation())
+                    ))
                 .limit(2)
                 .forEach((nearTeamPlayer) -> {
                     if (nearTeamPlayer.getCooldownManager().hasCooldown(HolyRadianceCrusader.class)) {

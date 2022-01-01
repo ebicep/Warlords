@@ -1,6 +1,7 @@
 package com.ebicep.warlords.maps.state;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.commands.debugcommands.ImposterCommand;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.state.PlayingState.Stats;
@@ -48,7 +49,11 @@ public class EndState implements State, TimerDebugAble {
         } else if (teamRedWins) {
             sendMessageToAllGamePlayer(game, ChatColor.YELLOW + "Winner" + ChatColor.GRAY + " - " + ChatColor.RED + "RED", true);
         } else {
-            sendMessageToAllGamePlayer(game, ChatColor.YELLOW + "Winner" + ChatColor.GRAY + " - " + ChatColor.LIGHT_PURPLE + "DRAW", true);
+            if (ImposterCommand.enabled) {
+                sendMessageToAllGamePlayer(game, ChatColor.YELLOW + "Winner" + ChatColor.GRAY + " - " + ChatColor.LIGHT_PURPLE + "GAME END", true);
+            } else {
+                sendMessageToAllGamePlayer(game, ChatColor.YELLOW + "Winner" + ChatColor.GRAY + " - " + ChatColor.LIGHT_PURPLE + "DRAW", true);
+            }
         }
         sendMessageToAllGamePlayer(game, "", false);
         TextComponent mvp = new TextComponent("" + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + "✚ MVP ✚");
@@ -121,17 +126,22 @@ public class EndState implements State, TimerDebugAble {
             player.setGameMode(GameMode.ADVENTURE);
             player.setAllowFlight(true);
 
-            if (winner == null) {
-                PacketUtils.sendTitle(player, "§d§lDRAW", "", 0, 100, 0);
-                player.playSound(player.getLocation(), "defeat", 500, 1);
-            } else if (wp.getTeam() == winner) {
-                player.playSound(player.getLocation(), "victory", 500, 1);
-                PacketUtils.sendTitle(player, "§6§lVICTORY!", "", 0, 100, 0);
-            } else {
-                player.playSound(player.getLocation(), "defeat", 500, 1);
-                PacketUtils.sendTitle(player, "§c§lDEFEAT", "", 0, 100, 0);
+            if (!ImposterCommand.enabled) {
+                if (winner == null) {
+                    player.playSound(player.getLocation(), "defeat", 500, 1);
+                    if (ImposterCommand.enabled) {
+                        PacketUtils.sendTitle(player, ChatColor.LIGHT_PURPLE.toString() + ChatColor.BOLD + "GAME END", "", 0, 100, 0);
+                    } else {
+                        PacketUtils.sendTitle(player, "§d§lDRAW", "", 0, 100, 0);
+                    }
+                } else if (wp.getTeam() == winner) {
+                    player.playSound(player.getLocation(), "victory", 500, 1);
+                    PacketUtils.sendTitle(player, "§6§lVICTORY!", "", 0, 100, 0);
+                } else {
+                    player.playSound(player.getLocation(), "defeat", 500, 1);
+                    PacketUtils.sendTitle(player, "§c§lDEFEAT", "", 0, 100, 0);
+                }
             }
-
         }
         if(game.playersCount() >= 16 && previousGames.get(previousGames.size() - 1).isCounted()) {
             sendMessageToAllGamePlayer(game, "", false);
@@ -168,7 +178,7 @@ public class EndState implements State, TimerDebugAble {
             }
         }
         sendMessageToAllGamePlayer(game, "" + ChatColor.GREEN + ChatColor.BOLD + "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬", false);
-        RemoveEntities.removeArmorStands();
+        RemoveEntities.removeArmorStands(1);
     }
 
     @Override
@@ -186,6 +196,7 @@ public class EndState implements State, TimerDebugAble {
         game.getSpectators().forEach(uuid -> game.removeSpectator(uuid, false));
         game.getSpectators().clear();
         game.getGameTasks().forEach((task, timeCreated) -> task.cancel());
+        game.setPrivate(false);
     }
 
     @Override

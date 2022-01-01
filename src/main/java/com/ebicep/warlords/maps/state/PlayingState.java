@@ -2,6 +2,7 @@ package com.ebicep.warlords.maps.state;
 
 import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.commands.debugcommands.ImposterCommand;
 import com.ebicep.warlords.commands.debugcommands.RecordGamesCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame;
@@ -287,7 +288,7 @@ public class PlayingState implements State, TimerDebugAble {
         }
 
         Warlords.getPlayers().forEach(((uuid, warlordsPlayer) -> warlordsPlayer.removeGrave()));
-        if (RecordGamesCommand.recordGames && !forceEnd && game.playersCount() >= 16 && timer <= 12000) {
+        if (RecordGamesCommand.recordGames && !ImposterCommand.enabled && !forceEnd && game.playersCount() >= 16 && timer <= 12000) {
             if (getBluePoints() > getRedPoints()) {
                 BotManager.sendMessageToNotificationChannel("[GAME] A game ended with **BLUE** winning " + getBluePoints() + " to " + getRedPoints());
             } else if (getBluePoints() < getRedPoints()) {
@@ -518,7 +519,17 @@ public class PlayingState implements State, TimerDebugAble {
 
         if (warlordsPlayer != null) {
             entries[4] = ChatColor.WHITE + "Spec: " + ChatColor.GREEN + warlordsPlayer.getSpec().getClass().getSimpleName();
-
+            if (ImposterCommand.enabled) {
+                if ((ImposterCommand.blueImposterName != null && ImposterCommand.blueImposterName.equalsIgnoreCase(warlordsPlayer.getName())) ||
+                        (ImposterCommand.redImposterName != null && ImposterCommand.redImposterName.equals(warlordsPlayer.getName()))
+                ) {
+                    entries[3] = ChatColor.WHITE + "Role: " + ChatColor.RED + "IMPOSTER";
+                } else {
+                    if (ImposterCommand.blueImposterName != null && ImposterCommand.redImposterName != null) {
+                        entries[3] = ChatColor.WHITE + "Role: " + ChatColor.GREEN + "INNOCENT";
+                    }
+                }
+            }
             entries[2] = ChatColor.GREEN.toString() + warlordsPlayer.getTotalKills() + ChatColor.RESET + " Kills " +
                     ChatColor.GREEN + warlordsPlayer.getTotalAssists() + ChatColor.RESET + " Assists";
         }

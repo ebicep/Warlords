@@ -18,11 +18,11 @@ public class PartyManager {
     }
 
     public Optional<Party> getPartyFromLeader(UUID uuid) {
-        return parties.stream().filter(party -> party.getLeader().equals(uuid)).findFirst();
+        return parties.stream().filter(party -> party.getPartyLeader().getUuid().equals(uuid)).findFirst();
     }
 
     public Optional<Party> getPartyFromAny(UUID uuid) {
-        return parties.stream().filter(party -> party.getAllPartyPeople().contains(uuid)).findFirst();
+        return parties.stream().filter(party -> party.getPartyPlayers().stream().anyMatch(partyPlayer -> partyPlayer.getUuid().equals(uuid))).findFirst();
     }
 
     public boolean inAParty(UUID uuid) {

@@ -32,14 +32,14 @@ import java.util.stream.Stream;
 public class Game implements Runnable {
 
     public static TextComponent spacer = new TextComponent(ChatColor.GRAY + " - ");
-    private State state = null;
     private final Map<UUID, Team> players = new HashMap<>();
+    public boolean freezeOnCooldown = false;
+    private State state = null;
     private GameMap map = GameMap.RIFT;
     private boolean cooldownMode;
     private boolean gameFreeze = false;
-
+    private boolean isPrivate = false;
     private List<UUID> spectators = new ArrayList<>();
-
     private HashMap<BukkitTask, Long> gameTasks = new HashMap<>();
     
     private final List<ScoreboardHandler> list = new ArrayList<>();
@@ -133,6 +133,7 @@ public class Game implements Runnable {
         if (team == oldTeam) {
             return;
         }
+        Warlords.getPlayerSettings(player.getUniqueId()).setWantedTeam(team);
         this.players.put(player.getUniqueId(), team);
         Location loc = this.map.getLobbySpawnPoint(team);
         Warlords.setRejoinPoint(player.getUniqueId(), loc);
@@ -259,9 +260,7 @@ public class Game implements Runnable {
         this.gameFreeze = gameFreeze;
     }
 
-    public boolean freezeOnCooldown = false;
-
-    public void freeze(boolean dueToDisconnect) {
+    public void freeze(String subtitleMessage, boolean countdown) {
         if (gameFreeze && !freezeOnCooldown) {
             freezeOnCooldown = true;
             //unfreeze
@@ -269,43 +268,55 @@ public class Game implements Runnable {
                 p.removePotionEffect(PotionEffectType.BLINDNESS);
                 p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 100, 100000));
             });
-            new BukkitRunnable() {
-                int counter = 0;
+            if (countdown) {
+                new BukkitRunnable() {
+                    int counter = 0;
 
-                @Override
-                public void run() {
-                    if (counter >= 5) {
-                        setGameFreeze(false);
-                        freezeOnCooldown = false;
-                        forEachOnlinePlayer((p, team) -> {
-                            if (p.getVehicle() != null && p.getVehicle() instanceof Horse) {
-                                ((EntityLiving) ((CraftEntity) p.getVehicle()).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(.318);
-                            }
-                            PacketUtils.sendTitle(p, "", "", 0, 0, 0);
-                            p.removePotionEffect(PotionEffectType.BLINDNESS);
-                        });
-                        this.cancel();
-                    } else {
-                        forEachOnlinePlayer((p, team) -> {
-                            PacketUtils.sendTitle(p, ChatColor.BLUE + "Resuming in... " + ChatColor.GREEN + (5 - counter), "", 0, 40, 0);
-                        });
-                        counter++;
+                    @Override
+                    public void run() {
+                        if (counter >= 5) {
+                            setGameFreeze(false);
+                            freezeOnCooldown = false;
+                            forEachOnlinePlayer((p, team) -> {
+                                if (p.getVehicle() != null && p.getVehicle() instanceof Horse) {
+                                    ((EntityLiving) ((CraftEntity) p.getVehicle()).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(.318);
+                                }
+                                PacketUtils.sendTitle(p, "", "", 0, 0, 0);
+                                p.removePotionEffect(PotionEffectType.BLINDNESS);
+                            });
+                            this.cancel();
+                        } else {
+                            forEachOnlinePlayer((p, team) -> {
+                                PacketUtils.sendTitle(p, ChatColor.BLUE + "Resuming in... " + ChatColor.GREEN + (5 - counter), "", 0, 40, 0);
+                            });
+                            counter++;
+                        }
                     }
-                }
-            }.runTaskTimer(Warlords.getInstance(), 0, 20);
+                }.runTaskTimer(Warlords.getInstance(), 0, 20);
+            } else {
+                setGameFreeze(false);
+                freezeOnCooldown = false;
+                forEachOnlinePlayer((p, team) -> {
+                    if (p.getVehicle() != null && p.getVehicle() instanceof Horse) {
+                        ((EntityLiving) ((CraftEntity) p.getVehicle()).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(.318);
+                    }
+                    PacketUtils.sendTitle(p, "", "", 0, 0, 0);
+                    p.removePotionEffect(PotionEffectType.BLINDNESS);
+                });
+            }
         } else {
             //freeze
             setGameFreeze(true);
-            forEachOnlinePlayer((p, team) -> freezePlayer(p, dueToDisconnect));
+            forEachOnlinePlayer((p, team) -> freezePlayer(p, subtitleMessage));
         }
     }
 
-    public void freezePlayer(Player p, boolean dueToDisconnect) {
+    public void freezePlayer(Player p, String subtitleMessage) {
         if (p.getVehicle() instanceof Horse) {
             ((EntityLiving) ((CraftEntity) p.getVehicle()).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0);
         }
         p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 9999999, 100000));
-        PacketUtils.sendTitle(p, ChatColor.RED + "Game Paused", dueToDisconnect ? ChatColor.YELLOW + "Missing player detected!" : "", 0, 9999999, 0);
+        PacketUtils.sendTitle(p, ChatColor.RED + "Game Paused", subtitleMessage, 0, 9999999, 0);
     }
 
     public List<UUID> getSpectators() {
@@ -318,15 +329,15 @@ public class Game implements Runnable {
         player.setGameMode(GameMode.SPECTATOR);
         player.teleport(this.getMap().blueRespawn);
         Warlords.setRejoinPoint(player.getUniqueId(), this.getMap().blueRespawn);
-        if(state instanceof PreLobbyState) {
+        if (state instanceof PreLobbyState) {
             ((PreLobbyState) state).giveLobbyScoreboard(true, player);
-        } else if(state instanceof PlayingState) {
+        } else if (state instanceof PlayingState) {
             ((PlayingState) state).updateBasedOnGameState(true, Warlords.playerScoreboards.get(player.getUniqueId()), null);
         }
     }
 
     public void removeSpectator(UUID uuid, boolean fromMenu) {
-        if(fromMenu) {
+        if (fromMenu) {
             spectators.remove(uuid);
         }
         OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
@@ -342,6 +353,14 @@ public class Game implements Runnable {
 
     public HashMap<BukkitTask, Long> getGameTasks() {
         return gameTasks;
+    }
+
+    public boolean isPrivate() {
+        return isPrivate;
+    }
+
+    public void setPrivate(boolean aPrivate) {
+        isPrivate = aPrivate;
     }
 
     @Override

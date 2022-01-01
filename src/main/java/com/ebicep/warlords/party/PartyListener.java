@@ -18,9 +18,11 @@ public class PartyListener implements Listener {
     public static void onPlayerJoin(PlayerJoinEvent e) {
         Player player = e.getPlayer();
         Optional<Party> party = Warlords.partyManager.getPartyFromAny(player.getUniqueId());
-        party.ifPresent(p -> {
-            p.getMembers().put(player.getUniqueId(), true);
-            p.getDisconnects().remove(player.getUniqueId());
+        party.flatMap(p -> p.getPartyPlayers().stream()
+                .filter(partyPlayer -> partyPlayer.getUuid().equals(player.getUniqueId()))
+                .findFirst()).ifPresent(partyPlayer -> {
+            partyPlayer.setOnline(true);
+            partyPlayer.setOfflineTimeLeft(-1);
         });
         if (!party.isPresent() && !Warlords.partyManager.getParties().isEmpty()) {
             StringBuilder parties = new StringBuilder(ChatColor.YELLOW + "Current parties: ");
@@ -38,20 +40,17 @@ public class PartyListener implements Listener {
     public static void onPlayerQuit(PlayerQuitEvent e) {
         Player player = e.getPlayer();
         Optional<Party> party = Warlords.partyManager.getPartyFromAny(player.getUniqueId());
-        party.ifPresent(p -> {
-            p.getMembers().put(player.getUniqueId(), false);
-            p.getDisconnects().put(player.getUniqueId(), 5 * 60);
-            p.sendMessageToAllPartyPlayers(
-                    ChatColor.AQUA + player.getName() + ChatColor.YELLOW + " has" + ChatColor.RED + " 5 " + ChatColor.YELLOW + "minutes to rejoin before getting kicked!",
-                    true,
-                    true
-            );
+        party.flatMap(p -> p.getPartyPlayers().stream()
+                .filter(partyPlayer -> partyPlayer.getUuid().equals(player.getUniqueId()))
+                .findFirst()).ifPresent(partyPlayer -> {
+            partyPlayer.setOnline(false);
+            partyPlayer.setOfflineTimeLeft(5 * 60);
         });
     }
 
     @EventHandler
-    public void onCommand(PlayerCommandPreprocessEvent e){
-        if(e.getMessage().equalsIgnoreCase("/pl")) {
+    public void onCommand(PlayerCommandPreprocessEvent e) {
+        if (e.getMessage().equalsIgnoreCase("/pl")) {
             Bukkit.getServer().dispatchCommand(e.getPlayer(), "party list");
             e.setCancelled(true);
         }

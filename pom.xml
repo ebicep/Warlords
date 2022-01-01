@@ -175,8 +175,8 @@
         <!-- Citizens -->
         <dependency>
             <groupId>net.citizensnpcs</groupId>
-            <artifactId>citizensapi</artifactId>
-            <version>2.0.16-SNAPSHOT</version>
+            <artifactId>citizens-main</artifactId>
+            <version>2.0.29-SNAPSHOT</version>
             <type>jar</type>
             <scope>provided</scope>
         </dependency>

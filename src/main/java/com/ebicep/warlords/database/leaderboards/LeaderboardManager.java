@@ -233,6 +233,7 @@ public class LeaderboardManager {
                             setLeaderboardHologramVisibility(player);
                             DatabaseGame.setGameHologramVisibility(player);
                         });
+                        System.out.println("Set Hologram Visibility");
                     }).execute();
 
         }
