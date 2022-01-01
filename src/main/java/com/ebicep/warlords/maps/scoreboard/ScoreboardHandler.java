@@ -10,18 +10,17 @@ import javax.annotation.Nonnull;
  *
  */
 public interface ScoreboardHandler {
-    public int getRedPriority();
-    public int getBluePriority();
-    public default int getPriority(@Nonnull Team team) {
-        switch(team) {
-            case RED:
-                return getRedPriority();
-            case BLUE:
-                return getBluePriority();
-            default:
-                throw new AssertionError("Only team RED/BLUE supported");
-        }
-    }
+    /**
+     * Gets the priority for the score listing. Scoreboard handlers with a lower score are shown on top
+     * @param player The player to compute it for
+     * @return The priority for this player
+     */
+    public int getPriority(@Nonnull WarlordsPlayer player);
+    /**
+     * Computes the list of lines for the scoreboard
+     * @param player The player to compute it for
+     * @return 
+     */
     public @Nonnull List<String> computeLines(@Nonnull WarlordsPlayer player);
     public @Nonnull Runnable registerChangeHandler(@Nonnull Consumer<ScoreboardHandler> onChange);
 }

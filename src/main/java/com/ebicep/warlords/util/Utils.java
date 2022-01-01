@@ -302,4 +302,20 @@ public class Utils {
     }
 
 
+    public static boolean isInCircleRadiusFast(Location locA, Location locB, double radius) {
+        double radiusMin = -radius;
+        double diffX = locA.getX() - locB.getX();
+        if(diffX < radiusMin || diffX > radius) {
+            return false;
+        }
+        double diffY = locA.getY() - locB.getY();
+        if(diffY < radiusMin || diffY > radius) {
+            return false;
+        }
+        double diffZ = locA.getZ() - locB.getZ();
+        if(diffZ < radiusMin || diffZ > radius) {
+            return false;
+        }
+        return diffX * diffX + diffY * diffY + diffZ * diffZ < radius * radius;
+    }
 }

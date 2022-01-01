@@ -30,7 +30,7 @@ import java.util.List;
 
 import static org.bukkit.block.BlockFace.*;
 
-class FlagRenderer {
+public class FlagRenderer {
 	
     private final FlagInfo info;
     private int timer = 0;

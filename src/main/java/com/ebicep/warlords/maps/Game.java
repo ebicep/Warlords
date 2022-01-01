@@ -2,6 +2,7 @@ package com.ebicep.warlords.maps;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.events.WarlordsEvents;
+import com.ebicep.warlords.maps.option.marker.GameMarker;
 import com.ebicep.warlords.maps.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.maps.state.InitState;
 import com.ebicep.warlords.maps.state.PlayingState;
@@ -25,6 +26,7 @@ import org.bukkit.scheduler.BukkitTask;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -378,5 +380,40 @@ public class Game implements Runnable {
             }
         }
 
+    }
+    
+    private final List<ScoreboardHandler> scoreboardHandlers = new CopyOnWriteArrayList<>();
+
+    @Nonnull
+    public List<ScoreboardHandler> getScoreboardHandlers() {
+        return scoreboardHandlers;
+    }
+    
+    public void registerScoreboardHandler(@Nonnull ScoreboardHandler handler) {
+        scoreboardHandlers.add(handler);
+    }
+    private final Map<Class<? extends GameMarker>, List<GameMarker>> gameMarkers = new HashMap<>();
+    /**
+     * Registers a gamemarker.
+     * @param <T> The type of gamemarker to register
+     * @param clazz The clazz of the type
+     * @param object The actual object to register
+     */
+    public <T extends GameMarker> void registerGameMarker(@Nonnull Class<T> clazz, @Nonnull T object) {
+        if(!clazz.isAssignableFrom(object.getClass())) {
+            throw new IllegalArgumentException("Attempted to register a marker for interface " + clazz.getName() + " while passing class " + object.getClass().getName() + " does not implement this");
+        }
+        gameMarkers.computeIfAbsent(clazz, e -> new ArrayList<>()).add(object);
+    }
+    
+    /**
+     * Gets the list of all registered game markers for a specified 
+     * @param <T> The type to return
+     * @param clazz A class instance of the requested marker
+     * @return The requested list, or Collections.EMPTY_LIST if none is found
+     */
+    @Nonnull
+    public <T extends GameMarker> List<T> getMarkers(@Nonnull Class<T> clazz) {
+        return (List<T>) gameMarkers.getOrDefault(clazz, Collections.emptyList());
     }
 }

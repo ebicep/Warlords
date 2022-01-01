@@ -48,21 +48,37 @@ public enum Team {
         return armorColor;
     }
 
+    /**
+     * Returns the prefix as "XXX" (typically 3 chars, all uppercase
+     * @return "XXX"
+     */
     @Nonnull
     public String prefix() {
         return chatTag;
     }
 
+    /**
+     * Returns the prefix as ChatColor.XXX + "XXX"
+     * @return ChatColor.XXX + "XXX"
+     */
     @Nonnull
     public String coloredPrefix() {
         return chatTagColored;
     }
 
+    /**
+     * Returns the prefix as ChatColor.XXX + ChatColor.BOLD + "XXX"
+     * @return ChatColor.XXX + ChatColor.BOLD + "XXX"
+     */
     @Nonnull
     public String boldColoredPrefix() {
         return chatTagBoldColored;
     }
 
+    /**
+     * The team this team considers an enemy. 
+     * @return 
+     */
     @Nonnull
     public Team enemy() {
         return inverseMapping[ordinal()];

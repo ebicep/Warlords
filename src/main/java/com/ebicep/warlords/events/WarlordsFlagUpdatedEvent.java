@@ -14,15 +14,13 @@ public class WarlordsFlagUpdatedEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
     private final Game game;
     private final PlayingState gameState;
-    private final FlagManager flags;
     private final FlagInfo info;
     private final Team team;
     private final FlagLocation old;
 
-    public WarlordsFlagUpdatedEvent(Game game, PlayingState gameState, FlagManager flags, FlagInfo info, Team team, FlagLocation old) {
+    public WarlordsFlagUpdatedEvent(Game game, PlayingState gameState, FlagInfo info, Team team, FlagLocation old) {
         this.game = game;
         this.gameState = gameState;
-        this.flags = flags;
         this.info = info;
         this.team = team;
         this.old = old;
@@ -34,10 +32,6 @@ public class WarlordsFlagUpdatedEvent extends Event {
 
     public PlayingState getGameState() {
         return gameState;
-    }
-
-    public FlagManager getFlags() {
-        return flags;
     }
 
     public FlagInfo getInfo() {
@@ -67,6 +61,6 @@ public class WarlordsFlagUpdatedEvent extends Event {
 
     @Override
     public String toString() {
-        return "WarlordsFlagUpdatedEvent{" + "game=" + game + ", gameState=" + gameState + ", flags=" + flags + ", info=" + info + ", team=" + team + ", old=" + old + '}';
+        return "WarlordsFlagUpdatedEvent{" + "game=" + game + ", gameState=" + gameState + ", info=" + info + ", team=" + team + ", old=" + old + '}';
     }
 }
