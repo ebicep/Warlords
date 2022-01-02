@@ -26,8 +26,8 @@ public enum ClassesSkillBoosts {
             }
     ),
     TIME_WARP_PYROMANCER("Time Warp",
-            "§7Increase the amount of health you\n§7restore with Time Warp by §715% §7and\n§7reduce the cooldown by 15%.",
-            "§aIncrease the amount of health\n§ayou restore with Time Warp by §c15% §aand\n§areduce the cooldown by §c15%.",
+            "§7Increase the amount of health you\n§7restore with Time Warp by §715% §7and\n§7reduce the cooldown by 30%.",
+            "§aIncrease the amount of health\n§ayou restore with Time Warp by §c15% §aand\n§areduce the cooldown by §c30%.",
             TimeWarp.class,
             abstractAbility -> {
                 if (abstractAbility instanceof TimeWarp) {
@@ -80,13 +80,13 @@ public enum ClassesSkillBoosts {
             }
     ),
     TIME_WARP_CRYOMANCER("Time Warp",
-            "§7Increase the amount of health you\n§7restore with Time Warp by §75% §7and\n§7reduce the cooldown by 30%.",
-            "§aIncrease the amount of health\n§ayou restore with Time Warp by §c5% §aand\n§areduce the cooldown by §c30%.",
+            "§7Increase the amount of health you\n§7restore with Time Warp by §75% §7and\n§7reduce the cooldown by 60%.",
+            "§aIncrease the amount of health\n§ayou restore with Time Warp by §c5% §aand\n§areduce the cooldown by §c60%.",
             TimeWarp.class,
             abstractAbility -> {
                 if (abstractAbility instanceof TimeWarp) {
                     ((TimeWarp) abstractAbility).setWarpHealPercentage(35);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .4f);
                 } else {
                     System.out.println("ERROR APPLY SKILL BOOST NOT TIME WARP PYRO");
                 }
@@ -137,13 +137,13 @@ public enum ClassesSkillBoosts {
             }
     ),
     TIME_WARP_AQUAMANCER("Time Warp",
-            "§7Increase the amount of health you\n§7restore with Time Warp by §75% and\n§7reduce the cooldown by 30%.",
-            "§aIncrease the amount of health\n§ayou restore with Time Warp by §c5% §aand\n§areduce the cooldown by §c30%.",
+            "§7Increase the amount of health you\n§7restore with Time Warp by §75% and\n§7reduce the cooldown by 60%.",
+            "§aIncrease the amount of health\n§ayou restore with Time Warp by §c5% §aand\n§areduce the cooldown by §c60%.",
             TimeWarp.class,
             abstractAbility -> {
                 if (abstractAbility instanceof TimeWarp) {
                     ((TimeWarp) abstractAbility).setWarpHealPercentage(35);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .4f);
                 } else {
                     System.out.println("ERROR APPLY SKILL BOOST NOT TIME WARP PYRO");
                 }
@@ -574,7 +574,7 @@ public enum ClassesSkillBoosts {
     ),
     REPENTANCE("Repentance",
             "§7Increase the damage you\n§7convert by 5% and reduce the\ncooldown by 10%",
-            "§aIncrease the damage you\n§aconvert by §c5% and reduce the\ncooldown by 10%",
+            "§aIncrease the damage you\n§aconvert by §c5% §aand reduce the\ncooldown by 10%",
             Repentance.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Repentance) {
