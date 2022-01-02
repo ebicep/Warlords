@@ -343,10 +343,12 @@ public class Warlords extends JavaPlugin {
                         }
                     }
                 });
+
         citizensEnabled = Bukkit.getPluginManager().isPluginEnabled("Citizens");
         if (citizensEnabled) {
-            NPCManager.createGameNPC();
+            //NPCManager.createGameNPC();
         }
+
         gameLoop();
         getServer().getScheduler().runTaskTimer(this, game, 1, 1);
         getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Plugin is enabled");
