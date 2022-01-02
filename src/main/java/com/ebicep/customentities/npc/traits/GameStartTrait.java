@@ -98,6 +98,7 @@ public class GameStartTrait extends Trait {
                 .get());
 
         Warlords.game.addPlayer(player, team);
+        Warlords.getPlayerSettings(player.getUniqueId()).setWantedTeam(team);
         ArmorManager.resetArmor(player, Warlords.getPlayerSettings(player.getUniqueId()).getSelectedClass(), team);
     }
 

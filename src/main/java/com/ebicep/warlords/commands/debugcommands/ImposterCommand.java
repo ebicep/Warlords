@@ -83,6 +83,12 @@ public class ImposterCommand implements CommandExecutor {
 
                     @Override
                     public void run() {
+                        if (counter == 4) {
+                            blueImposterName = bluePlayers.get(new Random().nextInt(bluePlayers.size())).getName();
+                            redImposterName = redPlayers.get(new Random().nextInt(redPlayers.size())).getName();
+                            System.out.println("BLUE IMPOSTER - " + blueImposterName);
+                            System.out.println("RED IMPOSTER - " + redImposterName);
+                        }
                         players.forEach(player -> {
                             String title = "";
                             switch (counter) {
@@ -99,10 +105,6 @@ public class ImposterCommand implements CommandExecutor {
                                     title = ChatColor.YELLOW + "You are...";
                                     break;
                                 case 4:
-                                    blueImposterName = bluePlayers.get(new Random().nextInt(bluePlayers.size())).getName();
-                                    redImposterName = redPlayers.get(new Random().nextInt(redPlayers.size())).getName();
-                                    System.out.println("BLUE IMPOSTER - " + blueImposterName);
-                                    System.out.println("RED IMPOSTER - " + redImposterName);
                                     if (player.getName().equalsIgnoreCase(blueImposterName) || player.getName().equalsIgnoreCase(redImposterName)) {
                                         title = ChatColor.RED + "The IMPOSTER";
                                         Party.sendMessageToPlayer(player, ChatColor.RED + "You are the IMPOSTER", true, true);
