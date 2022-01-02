@@ -80,13 +80,13 @@ public enum ClassesSkillBoosts {
             }
     ),
     TIME_WARP_CRYOMANCER("Time Warp",
-            "§7Increase the amount of health you\n§7restore with Time Warp by §75% §7and\n§7reduce the cooldown by 60%.",
-            "§aIncrease the amount of health\n§ayou restore with Time Warp by §c5% §aand\n§areduce the cooldown by §c60%.",
+            "§7Increase the amount of health you\n§7restore with Time Warp by §75% §7and\n§7reduce the cooldown by 40%.",
+            "§aIncrease the amount of health\n§ayou restore with Time Warp by §c5% §aand\n§areduce the cooldown by §c40%.",
             TimeWarp.class,
             abstractAbility -> {
                 if (abstractAbility instanceof TimeWarp) {
                     ((TimeWarp) abstractAbility).setWarpHealPercentage(35);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .4f);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .6f);
                 } else {
                     System.out.println("ERROR APPLY SKILL BOOST NOT TIME WARP PYRO");
                 }
@@ -137,13 +137,13 @@ public enum ClassesSkillBoosts {
             }
     ),
     TIME_WARP_AQUAMANCER("Time Warp",
-            "§7Increase the amount of health you\n§7restore with Time Warp by §75% and\n§7reduce the cooldown by 60%.",
-            "§aIncrease the amount of health\n§ayou restore with Time Warp by §c5% §aand\n§areduce the cooldown by §c60%.",
+            "§7Increase the amount of health you\n§7restore with Time Warp by §75% and\n§7reduce the cooldown by 40%.",
+            "§aIncrease the amount of health\n§ayou restore with Time Warp by §c5% §aand\n§areduce the cooldown by §c40%.",
             TimeWarp.class,
             abstractAbility -> {
                 if (abstractAbility instanceof TimeWarp) {
                     ((TimeWarp) abstractAbility).setWarpHealPercentage(35);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .4f);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .6f);
                 } else {
                     System.out.println("ERROR APPLY SKILL BOOST NOT TIME WARP PYRO");
                 }
