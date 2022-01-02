@@ -42,8 +42,8 @@ public class GameStartTrait extends Trait {
         HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
         hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + game.playersCount() + " Players");
         hologramTrait.setLine(1, ChatColor.GRAY.toString() + ctfQueue.size() + " in Queue");
-        hologramTrait.setLine(2, ChatColor.AQUA + "Capture The Flag");
-        hologramTrait.setLine(3, ChatColor.YELLOW + ChatColor.BOLD.toString() + "CLICK TO PLAY");
+        hologramTrait.setLine(2, ChatColor.AQUA + "WL 2 PUBS");
+        hologramTrait.setLine(3, ChatColor.YELLOW + ChatColor.BOLD.toString() + "COMING SOON");
     }
 
     @EventHandler

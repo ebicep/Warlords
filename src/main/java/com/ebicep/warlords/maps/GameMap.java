@@ -20,7 +20,7 @@ public enum GameMap {
     RIFT(
             "Rift",
             32,
-            16,
+            12,
             900 * 20, // seconds * ticks
             30 * 20, // seconds * ticks
             "",
@@ -55,7 +55,7 @@ public enum GameMap {
     CROSSFIRE(
             "Crossfire",
             32,
-            16,
+            12,
             900 * 20, // seconds * ticks
             30 * 20, // seconds * ticks
             "",
@@ -162,7 +162,7 @@ public enum GameMap {
     VALLEY(
             "Valley",
             32,
-            16,
+            14,
             900 * 20,
             30 * 20,
             "",

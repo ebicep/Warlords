@@ -255,11 +255,11 @@ public enum ClassesSkillBoosts {
             }
     ),
     INTERVENE("Intervene",
-            "§7Reduce the cooldown of Intervene\n§7by 12%",
-            "§aReduce the cooldown of Intervene\n§aby §c12%",
+            "§7Reduce the cooldown of Intervene\n§7by 10%",
+            "§aReduce the cooldown of Intervene\n§aby §c10%",
             Intervene.class,
             abstractAbility -> {
-                abstractAbility.setCooldown(abstractAbility.getCooldown() * .88f);
+                abstractAbility.setCooldown(abstractAbility.getCooldown() * .9f);
             }
     ),
     LAST_STAND("Last Stand",
@@ -573,12 +573,13 @@ public enum ClassesSkillBoosts {
             }
     ),
     REPENTANCE("Repentance",
-            "§7Increase the damage you\n§7convert by 10%",
-            "§aIncrease the damage you\n§aconvert by §c10%",
+            "§7Increase the damage you\n§7convert by 5% and reduce the\ncooldown by 10%",
+            "§aIncrease the damage you\n§aconvert by §c5% and reduce the\ncooldown by 10%",
             Repentance.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Repentance) {
-                    ((Repentance) abstractAbility).setDamageConvertPercent(20);
+                    ((Repentance) abstractAbility).setDamageConvertPercent(15);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .9f);
                 } else {
                     System.out.println("ERROR APPLY SKILL BOOST NOT REPENTENCE");
                 }
