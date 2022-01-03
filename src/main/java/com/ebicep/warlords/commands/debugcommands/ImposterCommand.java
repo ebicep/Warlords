@@ -35,17 +35,21 @@ public class ImposterCommand implements CommandExecutor {
         if (args.length < 1) {
             return true;
         }
+
         String input = args[0];
+
         if (input.equalsIgnoreCase("toggle") || input.equalsIgnoreCase("assign")) {
-            if (!sender.isOp()) {
+            if (!sender.hasPermission("warlords.game.impostertoggle")) {
                 sender.sendMessage("§cYou do not have permission to do that.");
                 return true;
             }
         }
+
         if (!input.equalsIgnoreCase("toggle") && !enabled) {
             sender.sendMessage(ChatColor.RED + "The imposter gamemode is currently disabled");
             return true;
         }
+
         switch (input.toLowerCase()) {
             case "toggle": {
                 enabled = !enabled;

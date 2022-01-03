@@ -139,7 +139,7 @@ public class FallenSouls extends AbstractAbility {
                                 fallenSoul.getShooter().updateOrangeItem(player);
 
                                 PlayerFilter.entitiesAround(player, 8, 8, 8)
-                                        .aliveTeammatesOf(wp)
+                                        .aliveTeammatesOfExcludingSelf(wp)
                                         .closestFirst(player)
                                         .limit(2)
                                         .forEach((warlordsPlayer1) -> {
