@@ -11,7 +11,7 @@ public class InitState implements State {
     }
 
     @Override
-    public void begin( ) {
+    public void begin() {
         game.setCooldownMode(false);
     }
 
@@ -21,7 +21,7 @@ public class InitState implements State {
     }
 
     @Override
-    public void end( ) {
+    public void end() {
     }
 
 }
