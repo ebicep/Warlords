@@ -65,7 +65,13 @@ public class PartyCommand implements TabExecutor {
                             Party.sendMessageToPlayer((Player) sender, ChatColor.RED + "Invalid Arguments!", true, true);
                             return true;
                         }
+                        String playerToInvite = args[1];
+                        Player invitedPlayer = Bukkit.getPlayer(playerToInvite);
                         if (!currentParty.isPresent()) {
+                            if (invitedPlayer == sender) {
+                                Party.sendMessageToPlayer((Player) sender, ChatColor.RED + "You can't invite yourself to a party!", true, true);
+                                return true;
+                            }
                             Party party = new Party(((Player) sender).getUniqueId(), false);
                             Warlords.partyManager.getParties().add(party);
                             currentParty = Optional.of(party);
@@ -75,8 +81,6 @@ public class PartyCommand implements TabExecutor {
                             return true;
                         }
                         Player partyLeader = Bukkit.getPlayer(currentParty.get().getPartyLeader().getUuid());
-                        String playerToInvite = args[1];
-                        Player invitedPlayer = Bukkit.getPlayer(playerToInvite);
                         if (invitedPlayer == null) {
                             Party.sendMessageToPlayer((Player) sender, ChatColor.RED + "Unable to invite that player!", true, true);
                             return true;
