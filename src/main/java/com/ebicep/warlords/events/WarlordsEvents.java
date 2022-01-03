@@ -81,37 +81,40 @@ public class WarlordsEvents implements Listener {
                 wp.updatePlayerReference(null);
             }
             e.setQuitMessage(wp.getColoredNameBold() + ChatColor.GOLD + " left the game!");
-            new BukkitRunnable() {
-                int secondsGone = 0;
-                boolean froze = false;
+            //only pause for comp games
+            if (Warlords.game.isPrivate()) {
+                new BukkitRunnable() {
+                    int secondsGone = 0;
+                    boolean froze = false;
 
-                @Override
-                public void run() {
-                    secondsGone++;
-                    if (e.getPlayer().isOnline()) {
-                        if (froze && wp.getGame().isGameFreeze()) {
-                            //to make sure no other is disconnected
-                            boolean allOnline = true;
-                            for (UUID uuid : wp.getGame().getPlayers().keySet()) {
-                                if (Bukkit.getPlayer(uuid) == null) {
-                                    allOnline = false;
-                                    break;
+                    @Override
+                    public void run() {
+                        secondsGone++;
+                        if (e.getPlayer().isOnline()) {
+                            if (froze && wp.getGame().isGameFreeze()) {
+                                //to make sure no other is disconnected
+                                boolean allOnline = true;
+                                for (UUID uuid : wp.getGame().getPlayers().keySet()) {
+                                    if (Bukkit.getPlayer(uuid) == null) {
+                                        allOnline = false;
+                                        break;
+                                    }
+                                }
+                                if (allOnline) {
+                                    wp.getGame().freeze(ChatColor.YELLOW + "Missing player detected!", true);
                                 }
                             }
-                            if (allOnline) {
+                            this.cancel();
+                            // 15 for precaution
+                        } else if (secondsGone >= 15 && !froze) {
+                            if (!wp.getGame().isGameFreeze()) {
                                 wp.getGame().freeze(ChatColor.YELLOW + "Missing player detected!", true);
                             }
+                            froze = true;
                         }
-                        this.cancel();
-                        // 15 for precaution
-                    } else if (secondsGone >= 15 && !froze) {
-                        if (!wp.getGame().isGameFreeze()) {
-                            wp.getGame().freeze(ChatColor.YELLOW + "Missing player detected!", true);
-                        }
-                        froze = true;
                     }
-                }
-            }.runTaskTimer(Warlords.getInstance(), 1, 20);
+                }.runTaskTimer(Warlords.getInstance(), 1, 20);
+            }
         } else {
             e.setQuitMessage(ChatColor.AQUA + e.getPlayer().getName() + ChatColor.GOLD + " left the lobby!");
         }
