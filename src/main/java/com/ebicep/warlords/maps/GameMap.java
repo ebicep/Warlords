@@ -88,7 +88,7 @@ public enum GameMap {
     ),
 
     WARSONG(
-            "Warsong Remastered",
+            "Warsong Remastered [NOT PLAYABLE]",
             32,
             16,
             900 * 20,
@@ -123,7 +123,7 @@ public enum GameMap {
     ),
 
     GORGE(
-            "Gorge Reforged",
+            "Gorge Reforged [NOT PLAYABLE]",
             32,
             16,
             900 * 20,
