@@ -30,11 +30,11 @@ public class LeaderboardCommand implements CommandExecutor {
                     sender.sendMessage(ChatColor.GREEN + "Leaderboards enabled");
                 }
                 LeaderboardManager.enabled = !LeaderboardManager.enabled;
-                LeaderboardManager.addHologramLeaderboards(UUID.randomUUID().toString());
+//                LeaderboardManager.addHologramLeaderboards(UUID.randomUUID().toString());
                 return true;
             case "reload":
                 sender.sendMessage(ChatColor.GREEN + "Leaderboards reloaded");
-                LeaderboardManager.addHologramLeaderboards(UUID.randomUUID().toString());
+//                LeaderboardManager.addHologramLeaderboards(UUID.randomUUID().toString());
                 return true;
         }
 

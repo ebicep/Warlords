@@ -122,7 +122,7 @@ public class WarlordsEvents implements Listener {
             e.getPlayer().getVehicle().remove();
         }
         //removing player position boards
-        LeaderboardManager.removePlayerSpecificHolograms(e.getPlayer());
+        //LeaderboardManager.removePlayerSpecificHolograms(e.getPlayer());
 
         Bukkit.getOnlinePlayers().forEach(p -> {
             PacketUtils.sendTabHF(p, ChatColor.AQUA + "     Welcome to " + ChatColor.YELLOW + ChatColor.BOLD + "Warlords 2.0     ", ChatColor.GREEN + "Players Online: " + ChatColor.GRAY + (Bukkit.getOnlinePlayers().size() - 1));
@@ -208,7 +208,7 @@ public class WarlordsEvents implements Listener {
                 .async(() -> {
                     DatabaseManager.loadPlayer(e.getPlayer().getUniqueId(), PlayersCollections.ALL_TIME, () -> {
                         Warlords.updateHead(e.getPlayer());
-                        LeaderboardManager.setLeaderboardHologramVisibility(player);
+                        //LeaderboardManager.setLeaderboardHologramVisibility(player);
                         DatabaseGame.setGameHologramVisibility(player);
 
                         Location rejoinPoint = Warlords.getRejoinPoint(player.getUniqueId());

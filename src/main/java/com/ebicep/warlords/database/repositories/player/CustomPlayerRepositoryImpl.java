@@ -1,6 +1,6 @@
 package com.ebicep.warlords.database.repositories.player;
 
-import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -58,7 +58,7 @@ public class CustomPlayerRepositoryImpl implements CustomPlayerRepository {
     public List<DatabasePlayer> getPlayersSorted(Aggregation aggregation, PlayersCollections collections) {
         return mongoTemplate.aggregate(aggregation,
                         collections.collectionName,
-                DatabasePlayer.class)
+                        DatabasePlayer.class)
                 .getMappedResults();
     }
 

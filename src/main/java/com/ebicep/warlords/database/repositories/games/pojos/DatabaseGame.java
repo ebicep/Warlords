@@ -4,8 +4,9 @@ import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.LeaderboardManager;
+import com.ebicep.warlords.database.repositories.games.GameMode;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.state.PlayingState;
 import com.ebicep.warlords.player.Classes;
@@ -47,6 +48,8 @@ public class DatabaseGame {
     protected int redPoints;
     protected DatabaseGamePlayers players;
     protected String statInfo;
+    @Field("gamemode")
+    protected GameMode gameMode;
     protected boolean counted;
 
     public DatabaseGame() {
@@ -342,7 +345,7 @@ public class DatabaseGame {
             LeaderboardManager.playerGameHolograms.forEach((uuid, integer) -> {
                 LeaderboardManager.playerGameHolograms.put(uuid, previousGames.size() - 1);
             });
-            LeaderboardManager.addHologramLeaderboards(UUID.randomUUID().toString());
+//            LeaderboardManager.addHologramLeaderboards(UUID.randomUUID().toString());
 
             //sending message if player information remained the same
             for (WarlordsPlayer value : PlayerFilter.playingGame(gameState.getGame())) {
@@ -417,9 +420,9 @@ public class DatabaseGame {
 
     private static void updatePlayerStats(DatabaseGame databaseGame, boolean add, DatabaseGamePlayers.GamePlayer gamePlayer, DatabasePlayer databasePlayer, boolean checkBlueWin) {
         boolean won = checkBlueWin ? databaseGame.bluePoints > databaseGame.redPoints : databaseGame.redPoints > databaseGame.bluePoints;
-        databasePlayer.updateStats(gamePlayer, won, add);
-        databasePlayer.getClass(Classes.getClassesGroup(gamePlayer.getSpec())).updateStats(gamePlayer, won, add);
-        databasePlayer.getSpec(gamePlayer.getSpec()).updateStats(gamePlayer, won, add);
+//        databasePlayer.updateStats(gamePlayer, won, add);
+//        databasePlayer.getClass(Classes.getClassesGroup(gamePlayer.getSpec())).updateStats(gamePlayer, won, add);
+//        databasePlayer.getSpec(gamePlayer.getSpec()).updateStats(gamePlayer, won, add);
     }
 
     @Transient

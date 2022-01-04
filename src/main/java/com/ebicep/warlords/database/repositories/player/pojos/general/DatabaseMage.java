@@ -1,9 +1,11 @@
-package com.ebicep.warlords.database.repositories.player.pojos;
+package com.ebicep.warlords.database.repositories.player.pojos.general;
 
+import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
+import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsClass;
 import com.ebicep.warlords.player.ArmorManager;
 import com.ebicep.warlords.player.ClassesSkillBoosts;
 
-public class DatabaseMage extends DatabaseWarlordsClass {
+public class DatabaseMage extends AbstractDatabaseStatInformation implements DatabaseWarlordsClass {
 
     protected DatabaseSpecialization pyromancer = new DatabaseSpecialization(ClassesSkillBoosts.FIREBALL);
     protected DatabaseSpecialization cryomancer = new DatabaseSpecialization(ClassesSkillBoosts.FROST_BOLT);

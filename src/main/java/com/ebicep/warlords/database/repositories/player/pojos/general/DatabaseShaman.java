@@ -1,9 +1,11 @@
-package com.ebicep.warlords.database.repositories.player.pojos;
+package com.ebicep.warlords.database.repositories.player.pojos.general;
 
+import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
+import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsClass;
 import com.ebicep.warlords.player.ArmorManager;
 import com.ebicep.warlords.player.ClassesSkillBoosts;
 
-public class DatabaseShaman extends DatabaseWarlordsClass {
+public class DatabaseShaman extends AbstractDatabaseStatInformation implements DatabaseWarlordsClass {
 
     private DatabaseSpecialization thunderlord = new DatabaseSpecialization(ClassesSkillBoosts.LIGHTNING_BOLT);
     private DatabaseSpecialization spiritguard = new DatabaseSpecialization(ClassesSkillBoosts.FALLEN_SOULS);

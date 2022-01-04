@@ -1,10 +1,11 @@
-package com.ebicep.warlords.database.repositories.player.pojos;
+package com.ebicep.warlords.database.repositories.player.pojos.general;
 
-
+import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
+import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsClass;
 import com.ebicep.warlords.player.ArmorManager;
 import com.ebicep.warlords.player.ClassesSkillBoosts;
 
-public class DatabaseWarrior extends DatabaseWarlordsClass {
+public class DatabaseWarrior extends AbstractDatabaseStatInformation implements DatabaseWarlordsClass {
 
     private DatabaseSpecialization berserker = new DatabaseSpecialization(ClassesSkillBoosts.WOUNDING_STRIKE_BERSERKER);
     private DatabaseSpecialization defender = new DatabaseSpecialization(ClassesSkillBoosts.WOUNDING_STRIKE_DEFENDER);

@@ -1,7 +1,7 @@
 package com.ebicep.warlords.database.leaderboards;
 
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import org.bukkit.Location;
 
 import java.lang.reflect.Array;

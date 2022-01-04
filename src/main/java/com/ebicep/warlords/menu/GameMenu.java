@@ -3,7 +3,6 @@ package com.ebicep.warlords.menu;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.util.ItemBuilder;
@@ -190,9 +189,9 @@ public class GameMenu {
                         openSkillBoostMenu(player, selectedGroup);
 
                         //sync bc player should be cached
-                        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
-                        databasePlayer.getSpec(selectedClass).setSkillBoost(skillBoost);
-                        DatabaseManager.updatePlayerAsync(databasePlayer);
+//                        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
+                        //databasePlayer.getSpec(selectedClass).setSkillBoost(skillBoost);
+//                        DatabaseManager.updatePlayerAsync(databasePlayer);
                     }
             );
         }
@@ -244,9 +243,9 @@ public class GameMenu {
                                     .lore("")
                                     .get());
                             //sync bc player should be cached
-                            DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
-                            databasePlayer.getSpec(selectedClass).setWeapon(weapon);
-                            DatabaseManager.updatePlayerAsync(databasePlayer);
+//                            DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
+//                            //databasePlayer.getSpec(selectedClass).setWeapon(weapon);
+//                            DatabaseManager.updatePlayerAsync(databasePlayer);
                         } else {
                             player.sendMessage(ChatColor.RED + "This weapon skin has not been unlocked yet!");
                         }
@@ -332,12 +331,12 @@ public class GameMenu {
                         }
                         List<Helmets> selectedHelmets = Helmets.getSelected(player);
                         Warlords.newChain().async(() -> {
-                            DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
-                            databasePlayer.getMage().setHelmet(selectedHelmets.get(0));
-                            databasePlayer.getWarrior().setHelmet(selectedHelmets.get(1));
-                            databasePlayer.getPaladin().setHelmet(selectedHelmets.get(2));
-                            databasePlayer.getShaman().setHelmet(selectedHelmets.get(3));
-                            DatabaseManager.updatePlayerAsync(databasePlayer);
+//                            DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
+//                            databasePlayer.getMage().setHelmet(selectedHelmets.get(0));
+//                            databasePlayer.getWarrior().setHelmet(selectedHelmets.get(1));
+//                            databasePlayer.getPaladin().setHelmet(selectedHelmets.get(2));
+//                            databasePlayer.getShaman().setHelmet(selectedHelmets.get(3));
+//                            DatabaseManager.updatePlayerAsync(databasePlayer);
                         }).execute();
                         openArmorMenu(player, pageNumber);
                     }
@@ -377,12 +376,12 @@ public class GameMenu {
                         }
                         List<ArmorSets> armorSetsList = ArmorSets.getSelected(player);
                         Warlords.newChain().async(() -> {
-                            DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
-                            databasePlayer.getMage().setArmor(armorSetsList.get(0));
-                            databasePlayer.getWarrior().setArmor(armorSetsList.get(1));
-                            databasePlayer.getPaladin().setArmor(armorSetsList.get(2));
-                            databasePlayer.getShaman().setArmor(armorSetsList.get(3));
-                            DatabaseManager.updatePlayerAsync(databasePlayer);
+//                            DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
+//                            databasePlayer.getMage().setArmor(armorSetsList.get(0));
+//                            databasePlayer.getWarrior().setArmor(armorSetsList.get(1));
+//                            databasePlayer.getPaladin().setArmor(armorSetsList.get(2));
+//                            databasePlayer.getShaman().setArmor(armorSetsList.get(3));
+//                            DatabaseManager.updatePlayerAsync(databasePlayer);
                         }).execute();
                         openArmorMenu(player, pageNumber);
                     }
