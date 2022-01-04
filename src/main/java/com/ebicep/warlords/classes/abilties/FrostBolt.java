@@ -50,7 +50,7 @@ public class FrostBolt extends AbstractProjectileBase {
         if (toReduceBy < .2) toReduceBy = .2;
         if (victim != null && victim.isEnemy(shooter)) {
             victim.getSpeed().addSpeedModifier("Frostbolt", -25, 2 * 20);
-            victim.damageHealth(
+            victim.addDamageInstance(
                     shooter,
                     name,
                     (float) (minDamageHeal * DIRECT_HIT_MULTIPLIER * toReduceBy),
@@ -66,7 +66,7 @@ public class FrostBolt extends AbstractProjectileBase {
                 .aliveEnemiesOf(shooter)
         ) {
             nearEntity.getSpeed().addSpeedModifier("Frostbolt", -25, 2 * 20);
-            nearEntity.damageHealth(
+            nearEntity.addDamageInstance(
                     shooter,
                     name,
                     (float) (minDamageHeal * toReduceBy),

@@ -123,7 +123,7 @@ public class Boulder extends AbstractAbility {
                                             v = p.getLocation().toVector().subtract(newLoc.toVector()).normalize().multiply(1.15).setY(0.2);
                                         }
                                         p.setVelocity(v, false);
-                                        p.damageHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+                                        p.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
                                     }
                                     newLoc.setPitch(-12);
                                     Location impactLocation = newLoc.clone().subtract(speed);

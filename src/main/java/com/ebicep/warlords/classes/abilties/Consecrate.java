@@ -58,7 +58,7 @@ public class Consecrate extends AbstractAbility {
                             PlayerFilter.entitiesAround(cons.getLocation(), radius, 6, radius)
                                     .aliveEnemiesOf(wp)
                                     .forEach(warlordsPlayer -> {
-                                        warlordsPlayer.damageHealth(
+                                        warlordsPlayer.addDamageInstance(
                                                 cons.getWarlordsPlayer(),
                                                 cons.getName(),
                                                 cons.getMinDamage(),
