@@ -9,8 +9,8 @@ import com.ebicep.warlords.classes.paladin.specs.avenger.Avenger;
 import com.ebicep.warlords.classes.paladin.specs.crusader.Crusader;
 import com.ebicep.warlords.classes.paladin.specs.protector.Protector;
 import com.ebicep.warlords.classes.rogue.specs.assassin.Assassin;
-import com.ebicep.warlords.classes.rogue.specs.untitleddef.Untitled1;
-import com.ebicep.warlords.classes.rogue.specs.untitledsupport.Untitled2;
+import com.ebicep.warlords.classes.rogue.specs.vindicator.Vindicator;
+import com.ebicep.warlords.classes.rogue.specs.apothecary.Apothecary;
 import com.ebicep.warlords.classes.shaman.specs.earthwarden.Earthwarden;
 import com.ebicep.warlords.classes.shaman.specs.spiritguard.Spiritguard;
 import com.ebicep.warlords.classes.shaman.specs.thunderlord.Thunderlord;
@@ -20,7 +20,6 @@ import com.ebicep.warlords.classes.warrior.specs.revenant.Revenant;
 import com.ebicep.warlords.util.WordWrap;
 import org.bukkit.OfflinePlayer;
 
-import java.io.Reader;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
@@ -94,13 +93,13 @@ public enum Classes {
             WordWrap.wrapWithNewline("§7Strike enemies with deadly attacks.", 200),
             SpecType.DAMAGE,
             JUDGEMENT_STRIKE),
-    UNTITLED1("Untitled Defense",
-            Untitled1::new,
+    VINDICATOR("Vindicator",
+            Vindicator::new,
             WordWrap.wrapWithNewline("§7PLACE HOLDER", 200),
             SpecType.TANK,
             JUDGEMENT_STRIKE),
-    UNTITLED2("Untitled Support",
-            Untitled2::new,
+    APOTHECARY("Apothecary",
+            Apothecary::new,
             WordWrap.wrapWithNewline("§7PLACE HOLDER", 200),
             SpecType.HEALER,
             JUDGEMENT_STRIKE),
