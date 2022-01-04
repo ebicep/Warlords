@@ -12,27 +12,25 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class Poll {
 
-    private final Party party;
-    private final String question;
-    private final List<String> options;
+    private Party party;
+    private String question;
+    private List<String> options;
     private int timeLeft = 30;
-    private final boolean infiniteVotingTime;
+    private boolean infiniteVotingTime = false;
+    private List<UUID> excludedPlayers = new ArrayList<>();
+    private Consumer<Poll> onPollEnd;
     private final HashMap<UUID, Integer> playerAnsweredWithOption = new HashMap<>();
-    private final List<UUID> excludedPlayers;
-    private Runnable runnableAfterPollEnded;
 
-    public Poll(Party party, String question, List<String> options, boolean infiniteVotingTime, List<UUID> excludedPlayers, Runnable runnableAfterPollEnded) {
-        this.party = party;
-        this.question = question;
-        this.options = options;
-        this.infiniteVotingTime = infiniteVotingTime;
-        this.excludedPlayers = excludedPlayers;
-        this.runnableAfterPollEnded = runnableAfterPollEnded;
-        sendPollAnnouncement();
+    public Poll() {
+    }
+
+    public void init() {
+        sendPollAnnouncement(true);
         new BukkitRunnable() {
             int counter = 0;
 
@@ -46,12 +44,12 @@ public class Poll {
                 } else {
                     if (!infiniteVotingTime) {
                         if (timeLeft == 15) {
-                            sendPollAnnouncement();
+                            sendPollAnnouncement(false);
                         }
                         timeLeft--;
                     } else {
                         if (counter % 15 == 0) {
-                            sendPollAnnouncement();
+                            sendPollAnnouncement(false);
                         }
                     }
                 }
@@ -64,16 +62,22 @@ public class Poll {
     }
 
     private List<Player> getPlayersAllowedToVote() {
-        return party.getAllPartyPeoplePlayerOnline().stream()
-                .filter(player -> !excludedPlayers.contains(player.getUniqueId()))
-                .collect(Collectors.toList());
+        if (this.party == null) {
+            return Bukkit.getOnlinePlayers().stream()
+                    .filter(player -> !excludedPlayers.contains(player.getUniqueId()))
+                    .collect(Collectors.toList());
+        } else {
+            return party.getAllPartyPeoplePlayerOnline().stream()
+                    .filter(player -> !excludedPlayers.contains(player.getUniqueId()))
+                    .collect(Collectors.toList());
+        }
     }
 
-    private void sendPollAnnouncement() {
+    private void sendPollAnnouncement(boolean first) {
         getPlayersAllowedToVote().forEach(player -> {
             player.sendMessage(ChatColor.BLUE.toString() + ChatColor.BOLD + "------------------------------------------");
-            if (timeLeft == 30) {
-                player.sendMessage(ChatColor.AQUA + party.getLeaderName() + ChatColor.YELLOW + " created a poll! Answer it below by clicking on an option!");
+            if (first) {
+                player.sendMessage(ChatColor.YELLOW + "There is a new poll! Answer it below by clicking on an option!");
             }
             player.sendMessage(ChatColor.YELLOW + "Question: " + ChatColor.GREEN + question);
             for (int i = 0; i < options.size(); i++) {
@@ -131,7 +135,9 @@ public class Poll {
             }
             player.sendMessage(ChatColor.BLUE.toString() + ChatColor.BOLD + "------------------------------------------");
         });
-        runnableAfterPollEnded.run();
+        if (onPollEnd != null) {
+            onPollEnd.accept(this);
+        }
     }
 
     public HashMap<String, Integer> getOptionsWithVotes() {
@@ -146,23 +152,44 @@ public class Poll {
         return votes;
     }
 
+    public void setParty(Party party) {
+        this.party = party;
+    }
+
+    public void setQuestion(String question) {
+        this.question = question;
+    }
+
+    public void setInfiniteVotingTime(boolean infiniteVotingTime) {
+        this.infiniteVotingTime = infiniteVotingTime;
+    }
+
     public List<String> getOptions() {
         return options;
+    }
+
+    public void setOptions(List<String> options) {
+        this.options = options;
     }
 
     public void setTimeLeft(int timeLeft) {
         this.timeLeft = timeLeft;
     }
 
-    public HashMap<UUID, Integer> getPlayerAnsweredWithOption() {
-        return playerAnsweredWithOption;
-    }
-
     public List<UUID> getExcludedPlayers() {
         return excludedPlayers;
     }
 
-    public void setRunnableAfterPollEnded(Runnable runnableAfterPollEnded) {
-        this.runnableAfterPollEnded = runnableAfterPollEnded;
+    public void setExcludedPlayers(List<UUID> excludedPlayers) {
+        this.excludedPlayers = excludedPlayers;
     }
+
+    public void setOnPollEnd(Consumer<Poll> onPollEnd) {
+        this.onPollEnd = onPollEnd;
+    }
+
+    public HashMap<UUID, Integer> getPlayerAnsweredWithOption() {
+        return playerAnsweredWithOption;
+    }
+
 }

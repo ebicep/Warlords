@@ -288,7 +288,7 @@ public class PlayingState implements State, TimerDebugAble {
         }
 
         Warlords.getPlayers().forEach(((uuid, warlordsPlayer) -> warlordsPlayer.removeGrave()));
-        if (RecordGamesCommand.recordGames && !ImposterCommand.enabled && !forceEnd && game.playersCount() >= 16 && timer <= 12000) {
+        if (RecordGamesCommand.recordGames && !ImposterCommand.enabled && game.isPrivate() && !forceEnd && game.playersCount() >= 16 && timer <= 12000) {
             if (getBluePoints() > getRedPoints()) {
                 BotManager.sendMessageToNotificationChannel("[GAME] A game ended with **BLUE** winning " + getBluePoints() + " to " + getRedPoints());
             } else if (getBluePoints() < getRedPoints()) {
@@ -306,7 +306,7 @@ public class PlayingState implements State, TimerDebugAble {
                 System.out.println(ChatColor.GREEN + "[Warlords] This game was added to the database (INVALID DAMAGE/HEALING) but player information remained the same");
             }
         } else {
-            if (game.playersCount() >= 6 && timer <= 12000) {
+            if (game.isPrivate() && game.playersCount() >= 6 && timer <= 12000) {
                 DatabaseGame.addGame(PlayingState.this, false);
                 System.out.println(ChatColor.GREEN + "[Warlords] This game was added to the database but player information remained the same");
             } else {
@@ -519,7 +519,17 @@ public class PlayingState implements State, TimerDebugAble {
 
         if (warlordsPlayer != null) {
             entries[4] = ChatColor.WHITE + "Spec: " + ChatColor.GREEN + warlordsPlayer.getSpec().getClass().getSimpleName();
-
+            if (ImposterCommand.enabled) {
+                if ((ImposterCommand.blueImposterName != null && ImposterCommand.blueImposterName.equalsIgnoreCase(warlordsPlayer.getName())) ||
+                        (ImposterCommand.redImposterName != null && ImposterCommand.redImposterName.equals(warlordsPlayer.getName()))
+                ) {
+                    entries[3] = ChatColor.WHITE + "Role: " + ChatColor.RED + "IMPOSTER";
+                } else {
+                    if (ImposterCommand.blueImposterName != null && ImposterCommand.redImposterName != null) {
+                        entries[3] = ChatColor.WHITE + "Role: " + ChatColor.GREEN + "INNOCENT";
+                    }
+                }
+            }
             entries[2] = ChatColor.GREEN.toString() + warlordsPlayer.getTotalKills() + ChatColor.RESET + " Kills " +
                     ChatColor.GREEN + warlordsPlayer.getTotalAssists() + ChatColor.RESET + " Assists";
         }

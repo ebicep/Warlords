@@ -148,7 +148,7 @@ public class WarlordsEvents implements Listener {
             ChatUtils.sendCenteredMessage(player, ChatColor.GOLD + "Developed by " + ChatColor.RED + "sumSmash " + ChatColor.GOLD + "&" + ChatColor.RED + " Plikie");
             ChatUtils.sendCenteredMessage(player, ChatColor.GREEN + "/hotkeymode " + ChatColor.GOLD + "to change your hotkey mode.");
             ChatUtils.sendCenteredMessage(player, ChatColor.GOLD + "Click the Nether Star or do " + ChatColor.GREEN + "/menu" + ChatColor.GOLD + " to open the selection menu.");
-            ChatUtils.sendCenteredMessage(player, ChatColor.GOLD + "Make sure to join the queue using " + ChatColor.GREEN + "/queue join" + ChatColor.GOLD + " if you'd like to play!");
+            //ChatUtils.sendCenteredMessage(player, ChatColor.GOLD + "Make sure to join the queue using " + ChatColor.GREEN + "/queue join" + ChatColor.GOLD + " if you'd like to play!");
             ChatUtils.sendCenteredMessage(player, ChatColor.BLUE + "-----------------------------------------------------");
 
             PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
@@ -170,6 +170,8 @@ public class WarlordsEvents implements Listener {
                 Warlords.playerScoreboards.get(player.getUniqueId()).giveMainLobbyScoreboard();
                 ExperienceManager.giveExperienceBar(player);
             }
+
+            player.getActivePotionEffects().clear();
         }
         WarlordsPlayer p = Warlords.getPlayer(player);
         if (p != null) {
@@ -192,8 +194,11 @@ public class WarlordsEvents implements Listener {
                 wp.getGame().freezePlayer(e.getPlayer(), "");
             }
         } else {
-            e.getPlayer().setAllowFlight(true);
-            e.setJoinMessage(ChatColor.AQUA + e.getPlayer().getName() + ChatColor.GOLD + " joined the lobby!");
+            //checking if in game lobby
+            if (Warlords.game.players().noneMatch(uuidTeamEntry -> uuidTeamEntry.getKey().equals(e.getPlayer().getUniqueId()))) {
+                e.getPlayer().setAllowFlight(true);
+                e.setJoinMessage(ChatColor.AQUA + e.getPlayer().getName() + ChatColor.GOLD + " joined the lobby!");
+            }
         }
         Player player = e.getPlayer();
 

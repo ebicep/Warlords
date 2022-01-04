@@ -38,8 +38,7 @@ public class DebugCommand implements CommandExecutor {
                 input.equalsIgnoreCase("takedamage") ||
                 input.equalsIgnoreCase("heal") ||
                 input.equalsIgnoreCase("crits") ||
-                input.equalsIgnoreCase("freeze") ||
-                input.equalsIgnoreCase("timer")
+                input.equalsIgnoreCase("freeze")
         ) {
             if (args.length == 3 && args[2] != null) {
                 player = Warlords.getPlayer(Bukkit.getPlayer(args[2]).getUniqueId());

@@ -1,5 +1,6 @@
 package com.ebicep.warlords.commands.debugcommands;
 
+import com.ebicep.customentities.npc.traits.GameStartTrait;
 import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
@@ -67,10 +68,10 @@ public class StartCommand implements TabExecutor {
             //Bukkit.broadcastMessage(ChatColor.GRAY + "§lThe map has been changed to §6§l" + map.getMapName() + " §7§lby §c§l" + sender.getName());
         }
         Collection<? extends Player> online = Bukkit.getOnlinePlayers();
-        if (online.size() < game.getMap().getMinPlayers()) {
-            sender.sendMessage(ChatColor.RED + "The map '" + game.getMap().getMapName() + "' requires " + game.getMap().getMinPlayers() + " players to start");
-            return true;
-        }
+//        if (online.size() < game.getMap().getMinPlayers()) {
+//            sender.sendMessage(ChatColor.RED + "The map '" + game.getMap().getMapName() + "' requires " + game.getMap().getMinPlayers() + " players to start");
+//            return true;
+//        }
         List<Player> people;
         Optional<Party> party = Warlords.partyManager.getPartyFromAny(((Player) sender).getUniqueId());
         people = party.map(value -> new ArrayList<>(value.getAllPartyPeoplePlayerOnline())).orElseGet(() -> new ArrayList<>(online));
@@ -93,7 +94,11 @@ public class StartCommand implements TabExecutor {
                         }));
             }
         }
-        //Collections.shuffle(people);
+        //private game if started using /start
+        game.setPrivate(true);
+        Warlords.game.clearAllPlayers();
+        GameStartTrait.ctfQueue.clear();
+
         for (Player player : people) {
             player.getInventory().clear();
 
@@ -113,7 +118,7 @@ public class StartCommand implements TabExecutor {
                     .get());
             player.getInventory().setItem(1, new ItemBuilder(apc.getWeapon()
                     .getItem(playerSettings.getWeaponSkins()
-                    .getOrDefault(selectedClass, Weapons.FELFLAME_BLADE).item))
+                            .getOrDefault(selectedClass, Weapons.FELFLAME_BLADE).item))
                     .name("§aWeapon Skin Preview")
                     .lore("")
                     .get());
@@ -122,11 +127,10 @@ public class StartCommand implements TabExecutor {
             Warlords.game.addPlayer(player, team == null ? Team.BLUE : team);
             Warlords.game.setPlayerTeam(player, team == null ? Team.BLUE : team);
             ArmorManager.resetArmor(player, Warlords.getPlayerSettings(player.getUniqueId()).getSelectedClass(), team);
+
+            GameStartTrait.ctfQueue.remove(player.getUniqueId());
         }
 
-        if(people.size() >= 16) {
-            BotManager.sendMessageToNotificationChannel("[GAME] A **" + game.getMap().getMapName() + "** started with **" + people.size() + (people.size() == 1 ? "** player!" : "** players!"));
-        }
         return true;
     }
 

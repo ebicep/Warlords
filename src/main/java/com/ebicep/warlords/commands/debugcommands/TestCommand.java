@@ -1,5 +1,6 @@
 package com.ebicep.warlords.commands.debugcommands;
 
+import com.ebicep.customentities.npc.traits.GameStartTrait;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.BaseCommand;
 import com.ebicep.warlords.commands.miscellaneouscommands.MessageCommand;
@@ -8,13 +9,13 @@ import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.DatabaseSpecialization;
 import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsClass;
+import com.ebicep.warlords.maps.GameMap;
 import com.ebicep.warlords.maps.state.PreLobbyState;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.mongodb.client.model.WriteModel;
-import me.filoghost.holographicdisplays.api.beta.HolographicDisplaysAPI;
-import me.filoghost.holographicdisplays.api.beta.hologram.Hologram;
-import me.filoghost.holographicdisplays.api.beta.hologram.VisibilitySettings;
+import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.trait.TraitInfo;
 import org.bson.Document;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -42,10 +43,8 @@ public class TestCommand implements CommandExecutor {
             System.out.println(!warlordsPlayer.getGameState().isForceEnd() && warlordsPlayer.getGameState().getStats(warlordsPlayer.getTeam()).points() > warlordsPlayer.getGameState().getStats(warlordsPlayer.getTeam().enemy()).points());
 //            System.out.println(ExperienceManager.getExpFromGameStats(warlordsPlayer, true));
         }
-        Player player = (Player) sender;
+
         System.out.println(Warlords.game.getState());
-        System.out.println(Warlords.game.getPlayers());
-        System.out.println(Warlords.getPlayers());
 
 //        for (int i = 0; i < 9; i++) {
 //            hologram.getLines().appendText("test text"); //ChatColor.YELLOW.toString() + (i + 1)+ ". " + ChatColor.AQUA + "Test Name");
