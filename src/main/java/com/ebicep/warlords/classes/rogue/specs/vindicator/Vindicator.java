@@ -6,12 +6,12 @@ import com.ebicep.warlords.classes.rogue.AbstractRogue;
 public class Vindicator extends AbstractRogue {
 
     public Vindicator() {
-        super("Vindicator", 6300, 305, 10,
-                new temp(),
-                new temp(),
-                new temp(),
-                new temp(),
-                new temp()
+        super("Vindicator", 6000, 305, 10,
+                new RighteousStrike(),
+                new SoulShackle(),
+                new HeartToHeart(),
+                new WideGuard(),
+                new Vindicate()
         );
     }
 }

@@ -35,7 +35,7 @@ public class IncendiaryCurse extends AbstractAbility {
         PlayerFilter.entitiesAround(curse.getLocation(), curse.getRadius(), curse.getRadius(), curse.getRadius())
                 .aliveEnemiesOf(wp)
                 .forEach((warlordsPlayer) -> {
-                    warlordsPlayer.damageHealth(
+                    warlordsPlayer.addDamageInstance(
                             curse.getWarlordsPlayer(),
                             curse.getName(),
                             curse.getMinDamage(),

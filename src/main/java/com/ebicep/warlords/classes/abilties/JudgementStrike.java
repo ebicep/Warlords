@@ -31,6 +31,6 @@ public class JudgementStrike extends AbstractStrikeBase {
             attacksDone = 0;
             critChance = 100;
         }
-        nearPlayer.damageHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+        nearPlayer.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
     }
 }

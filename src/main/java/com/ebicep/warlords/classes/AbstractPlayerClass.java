@@ -34,6 +34,7 @@ public abstract class AbstractPlayerClass {
     protected String name;
     protected String className;
     protected String classNameShort;
+    public boolean isSilenced = false;
 
     private final int cooldownDelay = 1;
 
@@ -83,24 +84,30 @@ public abstract class AbstractPlayerClass {
             return;
         }
 
+        isSilenced = wp.getCooldownManager().hasCooldown(SoulShackle.class);
+
         boolean dismountHorse = false;
         int slot = player.getInventory().getHeldItemSlot();
         if (slot == 0) {
-            if (player.getLevel() >= weapon.getEnergyCost() * wp.getEnergyModifier() && weaponCD) {
-                weapon.onActivate(wp, player);
-                if (!(weapon instanceof AbstractStrikeBase) && !(weapon instanceof EarthenSpike)) {
-                    sendRightClickPacket(player);
-                }
-                weaponCD = false;
-                new BukkitRunnable() {
-
-                    @Override
-                    public void run() {
-                        weaponCD = true;
+            if (!isSilenced) {
+                if (player.getLevel() >= weapon.getEnergyCost() * wp.getEnergyModifier() && weaponCD) {
+                    weapon.onActivate(wp, player);
+                    if (!(weapon instanceof AbstractStrikeBase) && !(weapon instanceof EarthenSpike)) {
+                        sendRightClickPacket(player);
                     }
-                }.runTaskLater(Warlords.getInstance(), cooldownDelay);
+                    weaponCD = false;
+                    new BukkitRunnable() {
+
+                        @Override
+                        public void run() {
+                            weaponCD = true;
+                        }
+                    }.runTaskLater(Warlords.getInstance(), cooldownDelay);
+                } else {
+                    player.playSound(player.getLocation(), "notreadyalert", 1, 1);
+                }
             } else {
-                player.playSound(player.getLocation(), "notreadyalert", 1, 1);
+                player.sendMessage("You have been silenced!");
             }
         } else if (slot == 1) {
             if (red.getCurrentCooldown() == 0) {

@@ -65,7 +65,7 @@ public class BlindingAssault extends AbstractAbility {
                                 .aliveEnemiesOf(wp)
                                 .forEach(enemy -> {
                                     playersHit.add(enemy);
-                                    enemy.damageHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+                                    enemy.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
                                     for (Player player1 : player.getWorld().getPlayers()) {
                                         player1.playSound(playerLoc, "warrior.revenant.orbsoflife", 2, 1.9f);
                                     }
