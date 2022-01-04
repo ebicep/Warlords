@@ -38,7 +38,7 @@ public enum ClassesGroup {
             "Rogue",
             new ItemStack(Material.INK_SACK, 1, (short) 2),
             "Strike enemies with deadly attacks.",
-            ASSASSIN, UNTITLED1, UNTITLED2
+            ASSASSIN, VINDICATOR, APOTHECARY
     )
     ;
 
