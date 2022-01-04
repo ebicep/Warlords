@@ -29,10 +29,10 @@ public class SoulShackle extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "Shackle up to 1 enemy and deal" + format(minDamageHeal) + "" + format(maxDamageHeal) + "damage." +
-                "Shackled enemies are silenced for 2 seconds," +
-                "making them unable to use their main attack for" +
-                "the duration.";
+        description = "§7Shackle up to §e1 §7enemy and deal §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage.\n" +
+                "§7Shackled enemies are silenced for §62 §7seconds,\n" +
+                "§7making them unable to use their main attack for\n" +
+                "§7the duration.";
     }
 
     @Override
@@ -49,7 +49,7 @@ public class SoulShackle extends AbstractAbility {
             shackleTarget.getCooldownManager().addCooldown("Shackle Silence", this.getClass(), SoulShackle.class, "SILENCE", 2, wp, CooldownTypes.DEBUFF);
 
             for (Player player1 : player.getWorld().getPlayers()) {
-                player1.playSound(player.getLocation(), "warrior.intervene.impact", 2, 0.2f);
+                player1.playSound(player.getLocation(), "warrior.intervene.impact", 2, 0.45f);
                 player1.playSound(player.getLocation(), Sound.AMBIENCE_THUNDER, 2, 2);
             }
 

@@ -107,7 +107,7 @@ public abstract class AbstractPlayerClass {
                     player.playSound(player.getLocation(), "notreadyalert", 1, 1);
                 }
             } else {
-                player.sendMessage("You have been silenced!");
+                player.sendMessage(ChatColor.RED + "You have been silenced!");
             }
         } else if (slot == 1) {
             if (red.getCurrentCooldown() == 0) {
