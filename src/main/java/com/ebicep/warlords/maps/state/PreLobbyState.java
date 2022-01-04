@@ -110,29 +110,24 @@ public class PreLobbyState implements State, TimerDebugAble {
                             return;
                         }
                         Warlords.partyManager.getPartyFromAny(player.getUniqueId()).ifPresent(party -> {
+                            List<Player> partyPlayersInGame = party.getAllPartyPeoplePlayerOnline().stream().filter(p -> game.getPlayers().containsKey(p.getUniqueId())).collect(Collectors.toList());
+                            //check if party has more than limit to get on one team, if so then skip party, they get normally balanced
+                            if (partyPlayersInGame.size() > sameTeamPartyLimit) {
+                                return;
+                            }
                             List<Player> bluePlayers = partyMembers.get(Team.BLUE);
                             List<Player> redPlayers = partyMembers.get(Team.RED);
-                            List<Player> partyPlayersInGame = party.getAllPartyPeoplePlayerOnline().stream().filter(p -> game.getPlayers().containsKey(p.getUniqueId())).collect(Collectors.toList());
-                            //check if party has more than limit to get on one team
-                            if (partyPlayersInGame.size() > sameTeamPartyLimit) {
-                                List<Player> partyPlayers = new ArrayList<>(partyPlayersInGame);
-                                Collections.shuffle(partyPlayers);
-                                int teamSizeDiff = Math.abs(bluePlayers.size() - redPlayers.size());
-                                //check if whole party can go on the same team to get an even amount of players on each team
-                                if (teamSizeDiff > partyPlayers.size()) {
-                                    if (bluePlayers.size() > redPlayers.size())
-                                        bluePlayers.addAll(partyPlayers);
-                                    else
-                                        redPlayers.addAll(partyPlayers);
-                                } else {
-                                    bluePlayers.addAll(partyPlayers);
-                                }
-                            } else {
-                                //within limit then put party on team with least amount of party players
+                            List<Player> partyPlayers = new ArrayList<>(partyPlayersInGame);
+                            Collections.shuffle(partyPlayers);
+                            int teamSizeDiff = Math.abs(bluePlayers.size() - redPlayers.size());
+                            //check if whole party can go on the same team to get an even amount of players on each team
+                            if (teamSizeDiff > partyPlayers.size()) {
                                 if (bluePlayers.size() > redPlayers.size())
-                                    redPlayers.addAll(partyPlayersInGame);
+                                    bluePlayers.addAll(partyPlayers);
                                 else
-                                    bluePlayers.addAll(partyPlayersInGame);
+                                    redPlayers.addAll(partyPlayers);
+                            } else {
+                                bluePlayers.addAll(partyPlayers);
                             }
                         });
                     });
