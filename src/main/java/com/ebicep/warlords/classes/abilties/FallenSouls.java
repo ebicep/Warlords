@@ -119,7 +119,7 @@ public class FallenSouls extends AbstractAbility {
                 .filter(p -> !fallenSoul.getPlayersHit().contains(p))
                 .aliveEnemiesOf(wp)
                 .forEach((warlordsPlayer) -> {
-                    warlordsPlayer.damageHealth(fallenSoul.getShooter(), fallenSoul.getFallenSouls().getName(), fallenSoul.getFallenSouls().getMinDamageHeal(), fallenSoul.getFallenSouls().getMaxDamageHeal(), fallenSoul.getFallenSouls().getCritChance(), fallenSoul.getFallenSouls().getCritMultiplier(), false);
+                    warlordsPlayer.addDamageInstance(fallenSoul.getShooter(), fallenSoul.getFallenSouls().getName(), fallenSoul.getFallenSouls().getMinDamageHeal(), fallenSoul.getFallenSouls().getMaxDamageHeal(), fallenSoul.getFallenSouls().getCritChance(), fallenSoul.getFallenSouls().getCritMultiplier(), false);
                     fallenSoul.getPlayersHit().add(warlordsPlayer);
                     fallenSoul.getShooter().getSpec().getRed().subtractCooldown(2);
                     fallenSoul.getShooter().updateRedItem(player);

@@ -95,7 +95,7 @@ public class HammerOfLight extends AbstractAbility {
                                         .isAlive()
                                 ) {
                                     if (hol.getWarlordsPlayer().isTeammateAlive(warlordsPlayer)) {
-                                        warlordsPlayer.healHealth(
+                                        warlordsPlayer.addHealingInstance(
                                                 hol.getWarlordsPlayer(),
                                                 hol.getName(),
                                                 hol.getMinDamage(),
@@ -104,7 +104,7 @@ public class HammerOfLight extends AbstractAbility {
                                                 hol.getCritMultiplier(),
                                                 false);
                                     } else {
-                                        warlordsPlayer.damageHealth(
+                                        warlordsPlayer.addDamageInstance(
                                                 hol.getWarlordsPlayer(),
                                                 hol.getName(),
                                                 hol.getMinDamage(),
@@ -175,7 +175,7 @@ public class HammerOfLight extends AbstractAbility {
                                                 PlayerFilter.entitiesAround(wp.getLocation(), radius, radius, radius)
                                                         .aliveTeammatesOf(wp)
                                                         .forEach(teammate -> {
-                                                            teammate.healHealth(
+                                                            teammate.addHealingInstance(
                                                                 hol.getWarlordsPlayer(),
                                                                 "Crown of Light",
                                                                 hol.getMinDamage() * 1.5f,

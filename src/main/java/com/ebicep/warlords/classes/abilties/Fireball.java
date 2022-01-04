@@ -52,7 +52,7 @@ public class Fireball extends AbstractProjectileBase {
             1 - (Math.sqrt(distanceSquared) - MAX_FULL_DAMAGE_DISTANCE) / 75;
         if (toReduceBy < .2) toReduceBy = .2;
         if (victim != null) {
-            victim.damageHealth(
+            victim.addDamageInstance(
                     shooter,
                     name,
                     (float) (minDamageHeal * DIRECT_HIT_MULTIPLIER * toReduceBy),
@@ -67,7 +67,7 @@ public class Fireball extends AbstractProjectileBase {
                 .excluding(victim)
                 .aliveEnemiesOf(shooter)
         ) {
-            nearEntity.damageHealth(
+            nearEntity.addDamageInstance(
                     shooter,
                     name,
                     (float) (minDamageHeal * toReduceBy),

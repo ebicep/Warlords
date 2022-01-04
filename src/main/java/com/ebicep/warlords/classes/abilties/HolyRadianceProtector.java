@@ -161,7 +161,7 @@ public class HolyRadianceProtector extends AbstractAbility {
             );
         }
 
-        wp.healHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+        wp.addHealingInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
 
         player.playSound(player.getLocation(), Sound.ORB_PICKUP, 1, 1);
         for (Player player1 : player.getWorld().getPlayers()) {
@@ -214,7 +214,7 @@ public class HolyRadianceProtector extends AbstractAbility {
                 double distance = targetLocation.distanceSquared(armorStandLocation);
 
                 if (distance < speed * speed) {
-                    target.healHealth(owner, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+                    target.addHealingInstance(owner, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
                     this.cancel();
                     return;
                 }

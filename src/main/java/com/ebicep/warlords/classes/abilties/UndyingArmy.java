@@ -4,7 +4,6 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
-import com.ebicep.warlords.player.ClassesSkillBoosts;
 import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.ItemBuilder;
@@ -90,7 +89,7 @@ public class UndyingArmy extends AbstractAbility {
                                 if (teammate.getCooldownManager().getCooldown(tempUndyingArmy).isPresent()) {
                                     if (!((UndyingArmy) teammate.getCooldownManager().getCooldown(tempUndyingArmy).get().getCooldownObject()).isArmyDead(teammate.getUuid())) {
                                         float healAmount = 200 + (teammate.getMaxHealth() - teammate.getHealth()) / 14.3f;
-                                        teammate.healHealth(wp, name, healAmount, healAmount, -1, 100, false);
+                                        teammate.addHealingInstance(wp, name, healAmount, healAmount, -1, 100, false);
                                         player.playSound(teammate.getLocation(), "paladin.holyradiance.activation", 0.15f, 0.7f);
 
                                         // particles

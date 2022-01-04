@@ -273,12 +273,12 @@ public class DebugMenu {
             menu.setItem(0, 0, blueInfo, (n, e) -> {
             });
             menu.setItem(3, 0, killTeam, (n, e) -> {
-                bluePlayers.forEach(wp -> wp.damageHealth(wp, "", 69000, 69000, -1, 100, false));
+                bluePlayers.forEach(wp -> wp.addDamageInstance(wp, "", 69000, 69000, -1, 100, false));
             });
             menu.setItem(5, 0, redInfo, (n, e) -> {
             });
             menu.setItem(8, 0, killTeam, (n, e) -> {
-                redPlayers.forEach(wp -> wp.damageHealth(wp, "", 69000, 69000, -1, 100, false));
+                redPlayers.forEach(wp -> wp.addDamageInstance(wp, "", 69000, 69000, -1, 100, false));
             });
 
             //players

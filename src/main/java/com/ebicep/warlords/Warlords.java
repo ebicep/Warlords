@@ -10,7 +10,6 @@ import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
 import com.ebicep.customentities.npc.NPCManager;
-import com.ebicep.customentities.npc.traits.GameStartTrait;
 import com.ebicep.jda.BotCommands;
 import com.ebicep.jda.BotListener;
 import com.ebicep.jda.BotManager;
@@ -21,7 +20,6 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.FutureMessageManager;
 import com.ebicep.warlords.database.configuration.ApplicationConfiguration;
 import com.ebicep.warlords.database.leaderboards.LeaderboardCommand;
-import com.ebicep.warlords.database.leaderboards.LeaderboardManager;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.menu.MenuEventListener;
@@ -37,10 +35,6 @@ import me.filoghost.holographicdisplays.api.beta.hologram.Hologram;
 import me.filoghost.holographicdisplays.api.beta.HolographicDisplaysAPI;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.DespawnReason;
-import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.npc.NPCRegistry;
-import net.citizensnpcs.api.trait.TraitInfo;
-import net.citizensnpcs.trait.SkinTrait;
 import org.bukkit.*;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
@@ -569,7 +563,7 @@ public class Warlords extends JavaPlugin {
                                                 this.cancel();
                                             } else {
                                                 //UNDYING ARMY - dmg 10% of max health each popped army
-                                                wp.damageHealth(wp, "", wp.getMaxHealth() / 10f, wp.getMaxHealth() / 10f, -1, 100, false);
+                                                wp.addDamageInstance(wp, "", wp.getMaxHealth() / 10f, wp.getMaxHealth() / 10f, -1, 100, false);
                                             }
                                         }
                                     }.runTaskTimer(Warlords.this, 0, 20);
@@ -730,7 +724,7 @@ public class Warlords extends JavaPlugin {
                                     orbHeal *= 1 + orb.getTicksLived() / 520f;
                                 }
 
-                                wp.healHealth(orb.getOwner(), "Orbs of Life", orbHeal, orbHeal, -1, 100, false);
+                                wp.addHealingInstance(orb.getOwner(), "Orbs of Life", orbHeal, orbHeal, -1, 100, false);
                                 if (player != null) {
                                     for (Player player1 : player.getWorld().getPlayers()) {
                                         player1.playSound(player.getLocation(), Sound.ORB_PICKUP, 0.5f, 1);
@@ -742,7 +736,7 @@ public class Warlords extends JavaPlugin {
                                         .aliveTeammatesOfExcludingSelf(wp)
                                         .limit(2)
                                 ) {
-                                    nearPlayer.healHealth(orb.getOwner(), "Orbs of Life", orbHeal, orbHeal, -1, 100, false);
+                                    nearPlayer.addHealingInstance(orb.getOwner(), "Orbs of Life", orbHeal, orbHeal, -1, 100, false);
                                     if (player != null) {
                                         for (Player player1 : player.getWorld().getPlayers()) {
                                             player1.playSound(player.getLocation(), Sound.ORB_PICKUP, 0.5f, 1);

@@ -137,7 +137,7 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
                     break;
             }
             playersHit.add(hit);
-            hit.damageHealth(wp, name, minDamageHeal * damageMultiplier, maxDamageHeal * damageMultiplier, critChance, critMultiplier, false);
+            hit.addDamageInstance(wp, name, minDamageHeal * damageMultiplier, maxDamageHeal * damageMultiplier, critChance, critMultiplier, false);
             return partOfChainLightning(wp, playersHit, hit.getEntity(), hasHitTotem);
         } else {
             return playersSize + (hasHitTotem ? 1 : 0);
@@ -159,7 +159,7 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
 
     private void pulseDamage(WarlordsPlayer warlordsPlayer, Stream<WarlordsPlayer> near) {
         near.forEach((player) -> {
-            player.damageHealth(
+            player.addDamageInstance(
                     warlordsPlayer,
                     warlordsPlayer.getSpec().getOrange().getName(),
                     warlordsPlayer.getSpec().getOrange().getMinDamageHeal(),
