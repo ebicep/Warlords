@@ -2,13 +2,11 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
-import com.ebicep.warlords.player.ClassesSkillBoosts;
 import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.PlayerFilter;
 import com.ebicep.warlords.util.Utils;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -85,7 +83,7 @@ public class HealingRain extends AbstractAbility {
                             PlayerFilter.entitiesAround(hr.getLocation(), hr.getRadius(), hr.getRadius(), hr.getRadius())
                                     .aliveTeammatesOf(wp)
                                     .forEach((teammateInRain) -> {
-                                        teammateInRain.healHealth(
+                                        teammateInRain.addHealingInstance(
                                             hr.getWarlordsPlayer(),
                                             hr.getName(),
                                             hr.getMinDamage(),

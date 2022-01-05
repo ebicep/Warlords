@@ -159,9 +159,9 @@ public class DebugCommand implements CommandExecutor {
                     sender.sendMessage(ChatColor.RED + "§cDEV: " + player.getColoredName() + " §a" + endMessage);
 
                     if (input.equals("takedamage")) {
-                        player.damageHealth(player, "debug", amount, amount, -1, 100, false);
+                        player.addDamageInstance(player, "debug", amount, amount, -1, 100, false);
                     } else {
-                        player.healHealth(player, "debug", amount, amount, -1, 100, false);
+                        player.addHealingInstance(player, "debug", amount, amount, -1, 100, false);
                     }
 
                     return true;

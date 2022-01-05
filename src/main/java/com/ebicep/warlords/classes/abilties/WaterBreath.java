@@ -39,7 +39,7 @@ public class WaterBreath extends AbstractAbility {
         wp.subtractEnergy(energyCost);
         wp.getCooldownManager().removeDebuffCooldowns();
         wp.getSpeed().removeNegTimeModifier();
-        wp.healHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+        wp.addHealingInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
         player.playSound(player.getLocation(), Sound.ORB_PICKUP, 1, 1);
 
         Location playerLoc = player.getLocation();
@@ -60,7 +60,7 @@ public class WaterBreath extends AbstractAbility {
                     if (wp.isTeammateAlive(target)) {
                         target.getCooldownManager().removeDebuffCooldowns();
                         target.getSpeed().removeNegTimeModifier();
-                        target.healHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+                        target.addHealingInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
                         target.getCooldownManager().removeCooldown(Utils.OVERHEAL_MARKER);
                         target.getCooldownManager().addCooldown("Overheal",
                                 null, Utils.OVERHEAL_MARKER, "OVERHEAL", Utils.OVERHEAL_DURATION, wp, CooldownTypes.BUFF);

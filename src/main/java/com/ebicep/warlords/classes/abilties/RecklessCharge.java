@@ -112,7 +112,7 @@ public class RecklessCharge extends AbstractAbility implements Listener {
                                 .forEach(enemy -> {
                                     playersHit.add(enemy);
                                     stunnedPlayers.add(enemy.getUuid());
-                                    enemy.damageHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+                                    enemy.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
                                     wp.getGame().getGameTasks().put(
 
                                             new BukkitRunnable() {

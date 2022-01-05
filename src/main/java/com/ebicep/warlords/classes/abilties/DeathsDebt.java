@@ -147,7 +147,7 @@ public class DeathsDebt extends AbstractTotemBase {
                                         PlayerFilter.entitiesAround(totemStand, debtRadius, debtRadius - 1, debtRadius)
                                                 .aliveEnemiesOf(wp)
                                                 .forEach((nearPlayer) -> {
-                                                    nearPlayer.damageHealth(wp,
+                                                    nearPlayer.addDamageInstance(wp,
                                                             name,
                                                             tempDeathsDebt.getDelayedDamage() * .15f,
                                                             tempDeathsDebt.getDelayedDamage() * .15f,
@@ -185,7 +185,7 @@ public class DeathsDebt extends AbstractTotemBase {
         float damage = (tempDeathsDebt.getDelayedDamage() * .1667f);
         float debtTrueDamage = (float) (damage * Math.pow(.8, wp.getCooldownManager().getCooldown(SpiritLink.class).size()));
         // Player damage
-        wp.damageHealth(wp, "",
+        wp.addDamageInstance(wp, "",
                 debtTrueDamage,
                 debtTrueDamage,
                 critChance,
@@ -195,7 +195,7 @@ public class DeathsDebt extends AbstractTotemBase {
         PlayerFilter.entitiesAround(totemStand, debtRadius, debtRadius - 1, debtRadius)
                 .aliveTeammatesOf(wp)
                 .forEach((nearPlayer) -> {
-                    nearPlayer.healHealth(wp, name,
+                    nearPlayer.addHealingInstance(wp, name,
                             damage * .15f,
                             damage * .15f,
                             critChance, critMultiplier, false);

@@ -55,7 +55,7 @@ public class WaterBolt extends AbstractProjectileBase {
         if (toReduceBy < .2) toReduceBy = .2;
         if (victim != null) {
             if (victim.isTeammate(shooter)) {
-                victim.healHealth(shooter,
+                victim.addHealingInstance(shooter,
                         name,
                         (float) (minDamageHeal * DIRECT_HIT_MULTIPLIER * toReduceBy),
                         (float) (maxDamageHeal * DIRECT_HIT_MULTIPLIER * toReduceBy),
@@ -68,7 +68,7 @@ public class WaterBolt extends AbstractProjectileBase {
                             null, Utils.OVERHEAL_MARKER, "OVERHEAL", Utils.OVERHEAL_DURATION, shooter, CooldownTypes.BUFF);
                 }
             } else {
-                victim.damageHealth(shooter,
+                victim.addDamageInstance(shooter,
                         name,
                         (float) (231 * DIRECT_HIT_MULTIPLIER * toReduceBy),
                         (float) (299 * DIRECT_HIT_MULTIPLIER * toReduceBy),
@@ -83,7 +83,7 @@ public class WaterBolt extends AbstractProjectileBase {
                 .isAlive()
         ) {
             if (nearEntity.isTeammate(shooter)) {
-                nearEntity.healHealth(
+                nearEntity.addHealingInstance(
                         shooter,
                         name,
                         (float) (minDamageHeal * toReduceBy),
@@ -97,7 +97,7 @@ public class WaterBolt extends AbstractProjectileBase {
                             null, Utils.OVERHEAL_MARKER, "OVERHEAL", Utils.OVERHEAL_DURATION, shooter, CooldownTypes.BUFF);
                 }
             } else {
-                nearEntity.damageHealth(
+                nearEntity.addDamageInstance(
                         shooter,
                         name,
                         (float) (231 * toReduceBy),
