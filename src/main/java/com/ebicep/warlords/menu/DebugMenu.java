@@ -741,7 +741,7 @@ public class DebugMenu {
     }
 
     public static void openSpecMenu(Player player, WarlordsPlayer target) {
-        Menu menu = new Menu("Spec Menu: " + target.getName(), 9 * 5);
+        Menu menu = new Menu("Spec Menu: " + target.getName(), 9 * 6);
         ClassesGroup[] values = ClassesGroup.values();
         for (int i = 0; i < values.length; i++) {
             ClassesGroup group = values[i];
@@ -764,8 +764,8 @@ public class DebugMenu {
                 );
             }
         }
-        menu.setItem(3, 4, MENU_BACK, (n, e) -> openPlayerMenu(player, target));
-        menu.setItem(4, 4, MENU_CLOSE, ACTION_CLOSE_MENU);
+        menu.setItem(3, 5, MENU_BACK, (n, e) -> openPlayerMenu(player, target));
+        menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
     }
 

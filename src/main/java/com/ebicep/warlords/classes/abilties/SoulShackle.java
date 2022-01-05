@@ -6,6 +6,7 @@ import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
+import com.ebicep.warlords.util.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -37,7 +38,6 @@ public class SoulShackle extends AbstractAbility {
 
     @Override
     public void onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
-        wp.subtractEnergy(energyCost);
 
         for (WarlordsPlayer shackleTarget : PlayerFilter
                 .entitiesAround(player, shackleRange, shackleRange, shackleRange)
@@ -45,54 +45,58 @@ public class SoulShackle extends AbstractAbility {
                 .lookingAtFirst(wp)
                 .limit(1)
         ) {
-            shackleTarget.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
-            shackleTarget.getCooldownManager().addCooldown("Shackle Silence", this.getClass(), SoulShackle.class, "SILENCE", 2, wp, CooldownTypes.DEBUFF);
+            if (Utils.isLookingAtMark(player, shackleTarget.getEntity()) && Utils.hasLineOfSight(player, shackleTarget.getEntity())) {
+                wp.subtractEnergy(energyCost);
 
-            for (Player player1 : player.getWorld().getPlayers()) {
-                player1.playSound(player.getLocation(), "warrior.intervene.impact", 2, 0.45f);
-                player1.playSound(player.getLocation(), Sound.AMBIENCE_THUNDER, 2, 2);
-            }
+                shackleTarget.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+                shackleTarget.getCooldownManager().addCooldown("Shackle Silence", this.getClass(), SoulShackle.class, "SILENCE", 2, wp, CooldownTypes.DEBUFF);
 
-            Location from = wp.getLocation().add(0, -0.6, 0);
-            Location to = shackleTarget.getLocation().add(0, -0.6, 0);
-            from.setDirection(from.toVector().subtract(to.toVector()).multiply(-1));
-            List<ArmorStand> chains = new ArrayList<>();
-            int maxDistance = (int) Math.round(to.distance(from));
-            for (int i = 0; i < maxDistance; i++) {
-                ArmorStand chain = from.getWorld().spawn(from, ArmorStand.class);
-                chain.setHeadPose(new EulerAngle(from.getDirection().getY() * -1, 0, 0));
-                chain.setGravity(false);
-                chain.setVisible(false);
-                chain.setBasePlate(false);
-                chain.setMarker(true);
-                chain.setHelmet(new ItemStack(Material.PUMPKIN));
-                from.add(from.getDirection().multiply(1.1));
-                chains.add(chain);
-                if(to.distanceSquared(from) < .3) {
-                    break;
+                for (Player player1 : player.getWorld().getPlayers()) {
+                    player1.playSound(player.getLocation(), "warrior.intervene.impact", 2, 0.45f);
+                    player1.playSound(player.getLocation(), "mage.fireball.activation", 2, 0.3f);
                 }
-            }
 
-            new BukkitRunnable() {
-
-                @Override
-                public void run() {
-                    if (chains.size() == 0) {
-                        this.cancel();
+                Location from = wp.getLocation().add(0, -0.6, 0);
+                Location to = shackleTarget.getLocation().add(0, -0.6, 0);
+                from.setDirection(from.toVector().subtract(to.toVector()).multiply(-1));
+                List<ArmorStand> chains = new ArrayList<>();
+                int maxDistance = (int) Math.round(to.distance(from));
+                for (int i = 0; i < maxDistance; i++) {
+                    ArmorStand chain = from.getWorld().spawn(from, ArmorStand.class);
+                    chain.setHeadPose(new EulerAngle(from.getDirection().getY() * -1, 0, 0));
+                    chain.setGravity(false);
+                    chain.setVisible(false);
+                    chain.setBasePlate(false);
+                    chain.setMarker(true);
+                    chain.setHelmet(new ItemStack(Material.PUMPKIN));
+                    from.add(from.getDirection().multiply(1.1));
+                    chains.add(chain);
+                    if(to.distanceSquared(from) < .3) {
+                        break;
                     }
+                }
 
-                    for (int i = 0; i < chains.size(); i++) {
-                        ArmorStand armorStand = chains.get(i);
-                        if (armorStand.getTicksLived() > 20) {
-                            armorStand.remove();
-                            chains.remove(i);
-                            i--;
+                new BukkitRunnable() {
+
+                    @Override
+                    public void run() {
+                        if (chains.size() == 0) {
+                            this.cancel();
                         }
+
+                        for (int i = 0; i < chains.size(); i++) {
+                            ArmorStand armorStand = chains.get(i);
+                            if (armorStand.getTicksLived() > 20) {
+                                armorStand.remove();
+                                chains.remove(i);
+                                i--;
+                            }
+                        }
+
                     }
 
-                }
-
-            }.runTaskTimer(Warlords.getInstance(), 0, 0);
+                }.runTaskTimer(Warlords.getInstance(), 0, 0);
+            }
 
             wp.getGame().getGameTasks().put(
 

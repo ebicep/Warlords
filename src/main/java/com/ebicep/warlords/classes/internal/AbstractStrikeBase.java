@@ -74,7 +74,20 @@ public abstract class AbstractStrikeBase extends AbstractAbility {
                             }
                         } else if (this instanceof JudgementStrike) {
                             for (Player player1 : Bukkit.getOnlinePlayers()) {
-                                player1.playSound(nearPlayer.getLocation(), "rogue.assassinstrike.activation", 2, 1.5f);
+                                player1.playSound(nearPlayer.getLocation(), "warrior.revenant.orbsoflife", 2, 2);
+                                player1.playSound(nearPlayer.getLocation(), "mage.frostbolt.activation", 2, 2);
+                            }
+                            for (int i = 0; i < 7; i++) {
+                                ParticleEffect.REDSTONE.display(
+                                        new ParticleEffect.OrdinaryColor(255, 255, 255),
+                                        nearPlayer.getLocation().clone().add((Math.random() * 2) - 1, 1.2 + (Math.random() * 2) - 1, (Math.random() * 2) - 1),
+                                        500);
+
+                            }
+                        } else if (this instanceof RighteousStrike) {
+                            for (Player player1 : Bukkit.getOnlinePlayers()) {
+                                player1.playSound(nearPlayer.getLocation(), "rogue.vindicatorstrike.activation", 2, 0.7f);
+                                player1.playSound(nearPlayer.getLocation(), "shaman.earthenspike.impact", 2, 1.75f);
                             }
                             for (int i = 0; i < 7; i++) {
                                 ParticleEffect.REDSTONE.display(

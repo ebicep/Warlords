@@ -37,20 +37,7 @@ public class WideGuard extends AbstractAbility {
         }
 
         // First Particle Sphere
-        Location particleLoc = wp.getLocation();
-        particleLoc.add(0, 1, 0);
-        for (double i = 0; i <= Math.PI; i += Math.PI / 10) {
-            double radius = Math.sin(i) * 5.5;
-            double y = Math.cos(i) * 5.5;
-            for (double a = 0; a < Math.PI * 2; a+= Math.PI / 10) {
-                double x = Math.cos(a) * radius;
-                double z = Math.sin(a) * radius;
-
-                particleLoc.add(x, y, z);
-                ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(76, 168, 168), particleLoc, 500);
-                particleLoc.subtract(x, y, z);
-            }
-        }
+        playSphereAnimation(player, 5.5, 68, 176, 176);
 
         // Second Particle Sphere
         wp.getGame().getGameTasks().put(
@@ -58,18 +45,7 @@ public class WideGuard extends AbstractAbility {
             new BukkitRunnable() {
                 @Override
                 public void run() {
-                    for (double i = 0; i <= Math.PI; i += Math.PI / 10) {
-                        double radius = Math.sin(i) * 4;
-                        double y = Math.cos(i) * 4;
-                        for (double a = 0; a < Math.PI * 2; a+= Math.PI / 10) {
-                            double x = Math.cos(a) * radius;
-                            double z = Math.sin(a) * radius;
-
-                            particleLoc.add(x, y, z);
-                            ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(65, 185, 185), particleLoc, 500);
-                            particleLoc.subtract(x, y, z);
-                        }
-                    }
+                    playSphereAnimation(player, 4, 65, 185, 185);
 
                     for (Player player1 : player.getWorld().getPlayers()) {
                         player1.playSound(player.getLocation(), "warrior.intervene.impact", 2, 0.2f);
@@ -91,27 +67,16 @@ public class WideGuard extends AbstractAbility {
 
                             ParticleEffect.ENCHANTMENT_TABLE.display(0.2F, 0F, 0.2F, 0.1F, 1, particleLoc, 500);
 
-                            for (double i = 0; i <= Math.PI; i += Math.PI / 10) {
-                                double radius = Math.sin(i) * 3.5;
-                                double y = Math.cos(i) * 3;
-                                for (double a = 0; a < Math.PI * 2; a+= Math.PI / 10) {
-                                    double x = Math.cos(a) * radius;
-                                    double z = Math.sin(a) * radius;
-
-                                    particleLoc.add(x, y, z);
-                                    ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(184, 190, 190), particleLoc, 500);
-                                    particleLoc.subtract(x, y, z);
-                                }
-                            }
+                            playSphereAnimation(player, 3, 190, 190, 190);
 
                             for (Player player1 : player.getWorld().getPlayers()) {
-                                player1.playSound(particleLoc, Sound.GLASS, 2, 2);
+                                player1.playSound(player.getLocation(), Sound.CREEPER_DEATH, 2, 2);
                             }
                         } else {
                             this.cancel();
 
                             for (Player player1 : player.getWorld().getPlayers()) {
-                                player1.playSound(particleLoc, Sound.AMBIENCE_THUNDER, 2, 1.5f);
+                                player1.playSound(player.getLocation(), Sound.AMBIENCE_THUNDER, 2, 1.5f);
                             }
 
                             CircleEffect circle = new CircleEffect(wp.getGame(), wp.getTeam(), player.getLocation(), 4);
@@ -122,5 +87,29 @@ public class WideGuard extends AbstractAbility {
                 }.runTaskTimer(Warlords.getInstance(), 10, 8),
                 System.currentTimeMillis()
         );
+    }
+
+    /**
+     * @param player what player should the sphere be around.
+     * @param sphereRadius is how big the sphere should be.
+     * @param red is the RGB assigned color for the particles.
+     * @param green is the RGB assigned color for the particles.
+     * @param blue is the RGB assigned color for the particles.
+     */
+    public void playSphereAnimation(Player player, double sphereRadius, int red, int green, int blue) {
+        Location particleLoc = player.getLocation();
+        particleLoc.add(0, 1, 0);
+        for (double i = 0; i <= Math.PI; i += Math.PI / 10) {
+            double radius = Math.sin(i) * sphereRadius + 0.5;
+            double y = Math.cos(i) * sphereRadius;
+            for (double a = 0; a < Math.PI * 2; a+= Math.PI / 10) {
+                double x = Math.cos(a) * radius;
+                double z = Math.sin(a) * radius;
+
+                particleLoc.add(x, y, z);
+                ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(red, green, blue), particleLoc, 500);
+                particleLoc.subtract(x, y, z);
+            }
+        }
     }
 }

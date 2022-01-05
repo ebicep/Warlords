@@ -9,7 +9,7 @@ import javax.annotation.Nonnull;
 public class RighteousStrike extends AbstractStrikeBase {
 
     public RighteousStrike() {
-        super("Judgement Strike", 359, 460, 0, 90, 25, 150);
+        super("Righteous Strike", 359, 460, 0, 90, 25, 150);
     }
 
     @Override
