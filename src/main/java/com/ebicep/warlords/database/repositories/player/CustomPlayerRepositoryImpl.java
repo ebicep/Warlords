@@ -1,6 +1,8 @@
 package com.ebicep.warlords.database.repositories.player;
 
+import com.ebicep.warlords.database.repositories.player.pojos.ctf.DatabasePlayerCTF;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -60,6 +62,11 @@ public class CustomPlayerRepositoryImpl implements CustomPlayerRepository {
                         collections.collectionName,
                         DatabasePlayer.class)
                 .getMappedResults();
+    }
+
+    @Override
+    public DatabasePlayerCTF convertDocumentToPlayer(Document document) {
+        return mongoTemplate.getConverter().read(DatabasePlayerCTF.class, document);
     }
 
 }

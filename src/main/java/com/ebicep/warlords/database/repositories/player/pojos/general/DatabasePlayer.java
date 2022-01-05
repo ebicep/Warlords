@@ -1,6 +1,10 @@
 package com.ebicep.warlords.database.repositories.player.pojos.general;
 
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
+import com.ebicep.warlords.database.repositories.player.pojos.general.classes.DatabaseMage;
+import com.ebicep.warlords.database.repositories.player.pojos.general.classes.DatabasePaladin;
+import com.ebicep.warlords.database.repositories.player.pojos.general.classes.DatabaseShaman;
+import com.ebicep.warlords.database.repositories.player.pojos.general.classes.DatabaseWarrior;
 import com.ebicep.warlords.player.Classes;
 import com.ebicep.warlords.player.ClassesGroup;
 import com.ebicep.warlords.player.Settings;

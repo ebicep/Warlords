@@ -16,6 +16,7 @@ public enum PlayersCollections {
     NEW_SEASON_5("Test", "NEW_SEASON_5", "test1", null),
     NEW_SEASON_4("Test", "NEW_SEASON_4", "test2", null),
     NEW_SEASON_WEEKLY("Test", "NEW_SEASON_WEEKLY", "test3", null),
+    NEW("New", "NEW", "test4", null),
     ;
 
     public String name;

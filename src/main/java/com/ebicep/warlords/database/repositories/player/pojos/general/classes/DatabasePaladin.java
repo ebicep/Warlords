@@ -1,7 +1,8 @@
-package com.ebicep.warlords.database.repositories.player.pojos.general;
+package com.ebicep.warlords.database.repositories.player.pojos.general.classes;
 
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
 import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsClass;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabaseSpecialization;
 import com.ebicep.warlords.player.ArmorManager;
 import com.ebicep.warlords.player.ClassesSkillBoosts;
 

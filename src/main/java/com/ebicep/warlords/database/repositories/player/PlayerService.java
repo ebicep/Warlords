@@ -1,6 +1,8 @@
 package com.ebicep.warlords.database.repositories.player;
 
+import com.ebicep.warlords.database.repositories.player.pojos.ctf.DatabasePlayerCTF;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import org.bson.Document;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -39,4 +41,7 @@ public interface PlayerService {
     BulkOperations bulkOps();
 
     List<DatabasePlayer> getPlayersSorted(Aggregation aggregation, PlayersCollections collections);
+
+    DatabasePlayerCTF convertDocumentToPlayer(Document document);
+
 }

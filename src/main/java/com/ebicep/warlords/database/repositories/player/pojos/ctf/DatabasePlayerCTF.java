@@ -1,6 +1,10 @@
 package com.ebicep.warlords.database.repositories.player.pojos.ctf;
 
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
+import com.ebicep.warlords.database.repositories.player.pojos.ctf.classses.DatabaseMageCTF;
+import com.ebicep.warlords.database.repositories.player.pojos.ctf.classses.DatabasePaladinCTF;
+import com.ebicep.warlords.database.repositories.player.pojos.ctf.classses.DatabaseShamanCTF;
+import com.ebicep.warlords.database.repositories.player.pojos.ctf.classses.DatabaseWarriorCTF;
 import com.ebicep.warlords.player.Classes;
 import com.ebicep.warlords.player.ClassesGroup;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -19,10 +23,11 @@ public class DatabasePlayerCTF extends AbstractDatabaseStatInformation implement
     private DatabaseShamanCTF shaman = new DatabaseShamanCTF();
 
     public DatabasePlayerCTF() {
+
     }
 
     @Override
-    public DatabaseSpecializationCTF getSpec(Classes classes) {
+    public DatabaseBaseCTF getSpec(Classes classes) {
         switch (classes) {
             case PYROMANCER:
                 return mage.getPyromancer();
@@ -68,8 +73,8 @@ public class DatabasePlayerCTF extends AbstractDatabaseStatInformation implement
     }
 
     @Override
-    public AbstractDatabaseWarlordsClassCTF[] getClasses() {
-        return new AbstractDatabaseWarlordsClassCTF[]{mage, warrior, paladin, shaman};
+    public DatabaseBaseCTF[] getClasses() {
+        return new DatabaseBaseCTF[]{mage, warrior, paladin, shaman};
     }
 
 //    public void updateStats(DatabaseGamePlayers.GamePlayer gamePlayer, boolean won, boolean add) {

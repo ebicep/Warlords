@@ -1,7 +1,9 @@
 package com.ebicep.warlords.database.repositories.player;
 
 
+import com.ebicep.warlords.database.repositories.player.pojos.ctf.DatabasePlayerCTF;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -101,6 +103,11 @@ public class PlayerServiceImpl implements PlayerService {
     @Override
     public List<DatabasePlayer> getPlayersSorted(Aggregation aggregation, PlayersCollections collections) {
         return playerRepository.getPlayersSorted(aggregation, collections);
+    }
+
+    @Override
+    public DatabasePlayerCTF convertDocumentToPlayer(Document document) {
+        return playerRepository.convertDocumentToPlayer(document);
     }
 
 

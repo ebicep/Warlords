@@ -5,10 +5,13 @@ import com.ebicep.warlords.commands.BaseCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.cache.MultipleCacheResolver;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.database.repositories.player.pojos.ctf.DatabasePlayerCTF;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabaseSpecialization;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.github.benmanes.caffeine.cache.Cache;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.WriteModel;
 import org.bson.Document;
 import org.bukkit.ChatColor;
@@ -39,9 +42,15 @@ public class TestCommand implements CommandExecutor {
         }
 
         Player player = (Player) sender;
-        for (DatabasePlayer databasePlayer : DatabaseManager.playerService.findAll(PlayersCollections.TEST)) {
-            DatabaseManager.playerService.update(databasePlayer, PlayersCollections.TEST);
-        }
+
+//        MongoCollection<Document> mongoCollection = DatabaseManager.warlordsDatabase.getCollection(PlayersCollections.NEW_SEASON_WEEKLY.collectionName);
+//        for (DatabasePlayer databasePlayer : DatabaseManager.playerService.findAll(PlayersCollections.NEW_SEASON_WEEKLY)) {
+//            Document document = mongoCollection.find().filter(Filters.eq("uuid", databasePlayer.getUuid())).first();
+//            assert document != null;
+//            DatabasePlayerCTF databasePlayerCTF = DatabaseManager.playerService.convertDocumentToPlayer(document.get("comp_stats", Document.class));
+//            databasePlayer.getCompStats().setCtfStats(databasePlayerCTF);
+//            DatabaseManager.playerService.create(databasePlayer, PlayersCollections.NEW);
+//        }
 
 
 //        for (int i = 0; i < 9; i++) {
@@ -134,9 +143,9 @@ public class TestCommand implements CommandExecutor {
 
 //        System.out.println(LeaderboardManager.leaderboards.get(0).getSortedAllTime().get(0));
 //        System.out.println(LeaderboardManager.leaderboards.get(0).getSortedWeekly().get(0));
-        DecimalFormat decimalFormat = new DecimalFormat("#.##");
+//        DecimalFormat decimalFormat = new DecimalFormat("#.##");
 //        weeklyLeaderboards.insertOne(document);
-        List<WriteModel<Document>> updates = new ArrayList<>();
+//        List<WriteModel<Document>> updates = new ArrayList<>();
 
 //        playersInformation.find().forEach((Consumer<? super Document>) document -> {
 //            ExperienceManager.giveExpFromCurrentStats(UUID.fromString(document.getString("uuid")));
