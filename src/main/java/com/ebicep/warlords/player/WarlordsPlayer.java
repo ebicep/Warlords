@@ -657,11 +657,6 @@ public final class WarlordsPlayer {
             return;
         }
 
-        if (!attacker.getCooldownManager().getCooldown(Inferno.class).isEmpty() && (!isMeleeHit && !ability.equals("Time Warp"))) {
-            critChance += attacker.getSpec().getOrange().getCritChance();
-            critMultiplier += attacker.getSpec().getOrange().getCritMultiplier();
-        }
-
         // Critical Hits
         float healValue = (int) ((Math.random() * (max - min)) + min);
         int crit = (int) ((Math.random() * (100)));
