@@ -179,6 +179,7 @@ public final class WarlordsPlayer {
         boolean isMeleeHit = ability.isEmpty();
         boolean isFallDamage = ability.equals("Fall");
 
+        // Spawn Protection / Undying Army / Game State
         if (spawnProtection != 0 || (dead && !cooldownManager.checkUndyingArmy(false)) || getGameState() != getGame().getState()) {
             if (spawnProtection != 0) {
                 removeHorse();
@@ -186,6 +187,7 @@ public final class WarlordsPlayer {
             return;
         }
 
+        // Inferno
         if (!attacker.getCooldownManager().getCooldown(Inferno.class).isEmpty() && (!isMeleeHit && !ability.equals("Time Warp"))) {
             critChance += attacker.getSpec().getOrange().getCritChance();
             critMultiplier += attacker.getSpec().getOrange().getCritMultiplier();
@@ -203,8 +205,9 @@ public final class WarlordsPlayer {
         addAbsorbed(Math.abs(damageValue - (damageValue *= 1 - spec.getDamageResistance() / 100f)));
 
         if (attacker == this && (isFallDamage || isMeleeHit)) {
+
             if (isMeleeHit) {
-                //TRUE DAMAGE
+                // True damage
                 sendMessage(GIVE_ARROW + ChatColor.GRAY + " You took " + ChatColor.RED + Math.round(min) + ChatColor.GRAY + " melee damage.");
                 regenTimer = 10;
                 if (health - min <= 0 && !cooldownManager.checkUndyingArmy(false)) {
@@ -222,13 +225,14 @@ public final class WarlordsPlayer {
                 playHurtAnimation(this.entity, attacker);
 
             } else {
-                //FALL
+
+                // Fall Damage
                 sendMessage(GIVE_ARROW + ChatColor.GRAY + " You took " + ChatColor.RED + Math.round(damageValue) + ChatColor.GRAY + " fall damage.");
                 regenTimer = 10;
                 if (health - damageValue < 0 && !cooldownManager.checkUndyingArmy(false)) {
                     die(attacker);
                     gameState.addKill(team, false); // TODO, fall damage is only a suicide if it happens more than 5 seconds after the last damage
-                    //title YOU DIED
+                    // Title card "YOU DIED!"
                     if (entity instanceof Player) {
                         PacketUtils.sendTitle((Player) entity, ChatColor.RED + "YOU DIED!", ChatColor.GRAY + "You took " + ChatColor.RED + Math.round(damageValue) + ChatColor.GRAY + " fall damage and died.", 0, 40, 0);
                     }
@@ -248,23 +252,32 @@ public final class WarlordsPlayer {
 
         // Reduction before Intervene.
         if (!ignoreReduction) {
-            // Flag carriers take more damage
+
+            // Flag carrier multiplier.
             damageValue *= flagDamageMultiplier == 0 ? 1 : flagDamageMultiplier;
+
+            // Checks whether the player is standing in a Hammer of Light.
             if (!HammerOfLight.standingInHammer(attacker, entity)) {
-                //add damage
+
+                // Damage Increase
+                // Example: 1.1 = 10% increase.
+
+                // Checks whether the player has Berserk active.
                 for (Cooldown cooldown : attacker.getCooldownManager().getCooldown(Berserk.class)) {
                     damageValue *= 1.3;
                 }
 
+                // Checks whether the player has Berserk active for self damage.
                 for (Cooldown cooldown : cooldownManager.getCooldown(Berserk.class)) {
                     damageValue *= 1.1;
                 }
 
-                //TODO maybe change to hypixel warlords where crippling effects hammer
+                // Checks whether the player has been crippled by Healing Totem.
                 if (!attacker.getCooldownManager().getCooldownFromName("Totem Crippling").isEmpty()) {
                     damageValue *= .75;
                 }
 
+                // Checks whether the player has been crippled by Crippling Strike.
                 if (!attacker.getCooldownManager().getCooldown(CripplingStrike.class).isEmpty()) {
                     CripplingStrike cripplingStrike = (CripplingStrike) attacker.getCooldownManager().getCooldown(CripplingStrike.class).get(0).getCooldownObject();
                     damageValue *= .85 - (cripplingStrike.getConsecutiveStrikeCounter() * .05);
@@ -286,14 +299,11 @@ public final class WarlordsPlayer {
             Location loc = getLocation();
             //EFFECTS + SOUNDS
             gameState.getGame().forEachOnlinePlayer((p, t) -> p.playSound(loc, "warrior.intervene.block", 2, 1));
-            if (attacker.entity instanceof Player) {
-                ((Player) attacker.entity).playSound(attacker.getLocation(), Sound.ORB_PICKUP, 1, 1);
-
-            }
+            playHitSound(attacker);
             entity.playEffect(EntityEffect.HURT);
             intervenedBy.getEntity().playEffect(EntityEffect.HURT);
 
-            //red line thingy
+            // Red line particle if the player gets hit
             Location lineLoc = getLocation().add(0, 1, 0);
             lineLoc.setDirection(lineLoc.toVector().subtract(intervenedBy.getLocation().add(0, 1, 0).toVector()).multiply(-1));
             for (int i = 0; i < Math.floor(getLocation().distance(intervenedBy.getLocation())) * 2; i++) {
@@ -302,33 +312,41 @@ public final class WarlordsPlayer {
                 lineLoc.add(lineLoc.getDirection().multiply(.5));
             }
 
-            //HORSE
+            // Remove horses.
             removeHorse();
             intervenedBy.removeHorse();
 
-            //ORBS
+            // Orbs of Life
             spawnOrbs(ability, attacker);
+
         } else {
 
-            //REDUCTION AFTER VENE
+            // Damage reduction after Intervene
             if (!ignoreReduction) {
                 if (!HammerOfLight.standingInHammer(attacker, entity)) {
-                    //reduce damage
+
+                    // Damage Reduction
+                    // Example: .8 = 20% reduction.
+
+                    // Checks whether the player has Ice Barrier Active.
                     for (Cooldown cooldown : cooldownManager.getCooldown(IceBarrier.class)) {
                         IceBarrier iceBarrier = (IceBarrier) cooldown.getCooldownObject();
                         addAbsorbed(Math.abs(damageValue - (damageValue *= iceBarrier.getDamageReduction())));
                     }
 
+                    // Checks whether the player has Chain Lightning Active.
                     if (!cooldownManager.getCooldown(ChainLightning.class).isEmpty()) {
                         addAbsorbed(Math.abs(damageValue - (damageValue *= 1 - (Collections.max(cooldownManager.getCooldown(ChainLightning.class).stream()
                                 .map(cd -> ((ChainLightning) cd.getCooldownObject()).getDamageReduction())
                                 .collect(Collectors.toList())) * .1))));
                     }
 
+                    // Checks whether the player has Spirit Link Active.
                     for (Cooldown cooldown : cooldownManager.getCooldown(SpiritLink.class)) {
                         addAbsorbed(Math.abs(damageValue - (damageValue *= .8)));
                     }
 
+                    // Checks whether the player has Ice Barrier Active.
                     for (Cooldown cooldown : cooldownManager.getCooldown(LastStand.class)) {
                         WarlordsPlayer lastStandedBy = cooldown.getFrom();
                         LastStand lastStand = (LastStand) cooldown.getCooldownObject();
@@ -339,14 +357,14 @@ public final class WarlordsPlayer {
                         }
                     }
 
-                    //flag dmg resistance
+                    // Checks whether the player has a Flag.
                     if (!cooldownManager.getCooldownFromName("Flag Damage Reduction").isEmpty()) {
                         damageValue *= .9;
                     }
                 }
             }
 
-            //ARCANE
+            // Arcane Shield
             if (!cooldownManager.getCooldown(ArcaneShield.class).isEmpty() && isEnemy(attacker) && !HammerOfLight.standingInHammer(attacker, entity)) {
                 ArcaneShield arcaneShield = (ArcaneShield) spec.getBlue();
                 //adding dmg to shield
@@ -385,15 +403,14 @@ public final class WarlordsPlayer {
                 playHurtAnimation(this.entity, attacker);
 
                 if (!isMeleeHit) {
-                    if (attacker.entity instanceof Player) {
-                        ((Player) attacker.entity).playSound(attacker.getLocation(), Sound.ORB_PICKUP, 1, 1);
-                    }
+                    playHitSound(attacker);
                 }
                 removeHorse();
+
             } else {
+
                 boolean debt = false;
 
-                //DAMAGE
                 if (isEnemy(attacker)) {
                     hitBy.put(attacker, 10);
 
@@ -419,7 +436,7 @@ public final class WarlordsPlayer {
                         }
                     }
 
-
+                    // Death's Debt
                     List<Cooldown> debtsCooldown = cooldownManager.getCooldownFromName("Spirits Respite");
                     if (!debtsCooldown.isEmpty()) {
                         ((DeathsDebt) debtsCooldown.get(0).getCooldownObject()).addDelayedDamage(damageValue);
@@ -443,7 +460,8 @@ public final class WarlordsPlayer {
                             attacker.sendMessage(RECEIVE_ARROW + ChatColor.GRAY + " " + "Your " + ability + " hit " + name + " for " + ChatColor.RED + Math.round(damageValue) + " " + ChatColor.GRAY + "damage.");
                         }
                     }
-                    //REPENTANCE
+
+                    // Repentance
                     if (spec instanceof Spiritguard) {
                         ((Repentance) spec.getBlue()).addToPool(damageValue);
                     }
@@ -457,29 +475,23 @@ public final class WarlordsPlayer {
                         }
                     }
 
-                    //ORBS
+                    // Orbs of Life + Spawns additional orb if the ability is Crippling Strike
                     spawnOrbs(ability, attacker);
                     if (ability.equals("Crippling Strike")) {
                         spawnOrbs(ability, attacker);
                     }
 
-                    //prot strike
+                    // Protector's Strike
                     if (ability.equals("Protector's Strike")) {
-                        //SELF HEAL
-                        int tempNewCritChance;
-                        if (isCrit) {
-                            tempNewCritChance = 100;
-                        } else {
-                            tempNewCritChance = -1;
-                        }
 
+                        // Self Heal
                         if (Warlords.getPlayerSettings(attacker.uuid).getSkillBoostForClass() == ClassesSkillBoosts.PROTECTOR_STRIKE) {
-                            attacker.addHealingInstance(attacker, ability, damageValue / 1.67f, damageValue / 1.67f, tempNewCritChance, 100, false);
+                            attacker.addHealingInstance(attacker, ability, damageValue / 1.67f, damageValue / 1.67f, isCrit ? 100 : -1, 100, false);
                         } else {
-                            attacker.addHealingInstance(attacker, ability, damageValue / 2, damageValue / 2, tempNewCritChance, 100, false);
+                            attacker.addHealingInstance(attacker, ability, damageValue / 2, damageValue / 2, isCrit ? 100 : -1, 100, false);
                         }
 
-                        //reloops near players to give health to
+                        // Ally Heal
                         for (WarlordsPlayer nearTeamPlayer : PlayerFilter
                                 .entitiesAround(attacker, 10, 10, 10)
                                 .aliveTeammatesOfExcludingSelf(attacker)
@@ -488,14 +500,15 @@ public final class WarlordsPlayer {
                                 .limit(2)
                         ) {
                             if (Warlords.getPlayerSettings(attacker.uuid).getSkillBoostForClass() == ClassesSkillBoosts.PROTECTOR_STRIKE) {
-                                nearTeamPlayer.addHealingInstance(attacker, ability, damageValue * 1.2f, damageValue * 1.2f, tempNewCritChance, 100, false);
+                                nearTeamPlayer.addHealingInstance(attacker, ability, damageValue * 1.2f, damageValue * 1.2f, isCrit ? 100 : -1, 100, false);
                             } else {
-                                nearTeamPlayer.addHealingInstance(attacker, ability, damageValue, damageValue, tempNewCritChance, 100, false);
+                                nearTeamPlayer.addHealingInstance(attacker, ability, damageValue, damageValue, isCrit ? 100 : -1, 100, false);
                             }
                         }
                     }
                 }
-                //BLOOD LUST
+
+                // Blood Lust
                 if (!attacker.getCooldownManager().getCooldown(BloodLust.class).isEmpty()) {
                     BloodLust bloodLust = (BloodLust) attacker.getSpec().getBlue();
                     attacker.addHealingInstance(attacker, "Blood Lust", damageValue * (bloodLust.getDamageConvertPercent() / 100f), damageValue * (bloodLust.getDamageConvertPercent() / 100f), -1, 100, false);
@@ -514,6 +527,7 @@ public final class WarlordsPlayer {
                 playHurtAnimation(this.entity, attacker);
                 recordDamage.add(damageValue);
 
+                // The player died.
                 if (this.health <= 0 && !cooldownManager.checkUndyingArmy(false)) {
                     if (attacker.entity instanceof Player) {
                         ((Player) attacker.entity).playSound(attacker.getLocation(), Sound.ORB_PICKUP, 500f, 1);
@@ -538,21 +552,19 @@ public final class WarlordsPlayer {
                     });
                     gameState.addKill(team, false);
 
-                    //title YOU DIED
+                    // Title card "YOU DIED!"
                     if (this.entity instanceof Player) {
                         PacketUtils.sendTitle((Player) entity, ChatColor.RED + "YOU DIED!", ChatColor.GRAY + attacker.getName() + " killed you.", 0, 40, 0);
                     }
                 } else {
                     if (!isMeleeHit && this != attacker && damageValue != 0) {
-                        if (attacker.entity instanceof Player) {
-                            ((Player) attacker.entity).playSound(attacker.getLocation(), Sound.ORB_PICKUP, 1, 1);
-                        }
+                        playHitSound(attacker);
                     }
                 }
             }
         }
 
-        //MELEE PROCS
+        // Windfury Weapon
         if (isMeleeHit) {
             if (!attacker.getCooldownManager().getCooldown(Windfury.class).isEmpty()) {
                 int windfuryActivate = (int) (Math.random() * 100);
@@ -584,6 +596,8 @@ public final class WarlordsPlayer {
                         }
                     }.runTaskTimer(Warlords.getInstance(), 3, 3);
                 }
+
+            // Earthliving Weapon.
             } else if (!attacker.getCooldownManager().getCooldown(Earthliving.class).isEmpty()) {
                 int earthlivingActivate = (int) (Math.random() * 100);
                 Earthliving earthliving = (Earthliving) attacker.getSpec().getPurple();
@@ -633,6 +647,9 @@ public final class WarlordsPlayer {
             int critMultiplier,
             boolean ignoreReduction
     ) {
+        boolean isMeleeHit = ability.isEmpty();
+
+        // Spawn Protection / Undying Army / Game State
         if (spawnProtection != 0 || (dead && !cooldownManager.checkUndyingArmy(false)) || getGameState() != getGame().getState()) {
             if (spawnProtection != 0) {
                 removeHorse();
@@ -640,27 +657,29 @@ public final class WarlordsPlayer {
             return;
         }
 
-        boolean isMeleeHit = ability.isEmpty();
-
         if (!attacker.getCooldownManager().getCooldown(Inferno.class).isEmpty() && (!isMeleeHit && !ability.equals("Time Warp"))) {
             critChance += attacker.getSpec().getOrange().getCritChance();
             critMultiplier += attacker.getSpec().getOrange().getCritMultiplier();
         }
-        //crit
+
+        // Critical Hits
         float healValue = (int) ((Math.random() * (max - min)) + min);
         int crit = (int) ((Math.random() * (100)));
         boolean isCrit = false;
+
         if (crit <= critChance && attacker.canCrit) {
             isCrit = true;
             healValue *= critMultiplier / 100f;
         }
+
+        // Checks whether the player has been wounded.
         if (!cooldownManager.getCooldown(WoundingStrikeBerserker.class).isEmpty()) {
             healValue *= .6;
         } else if (!cooldownManager.getCooldown(WoundingStrikeDefender.class).isEmpty()) {
             healValue *= .75;
         }
 
-        //SELF HEALING
+        // Self Healing
         if (this == attacker) {
 
             if (this.health + healValue > this.maxHealth) {
@@ -679,13 +698,13 @@ public final class WarlordsPlayer {
                 addHealing(healValue, gameState.flags().hasFlag(this));
 
                 if (!isMeleeHit && !ability.equals("Healing Rain") && !ability.equals("Blood Lust")) {
-                    if (attacker.entity instanceof Player) {
-                        ((Player) attacker.entity).playSound(attacker.getLocation(), Sound.ORB_PICKUP, 1, 1);
-                    }
+                    playHitSound(attacker);
                 }
             }
+
         } else {
-            //TEAMMATE HEALING
+
+            // Teammate Healing
             if (isTeammate(attacker)) {
 
                 int maxHealth = this.maxHealth;
@@ -707,18 +726,24 @@ public final class WarlordsPlayer {
                         sendMessage(ChatColor.GREEN + "\u00AB" + ChatColor.GRAY + " " + attacker.getName() + "'s " + ability + " healed for " + ChatColor.GREEN + "" + Math.round(healValue) + " " + ChatColor.GRAY + "health.");
                         attacker.sendMessage(RECEIVE_ARROW + ChatColor.GRAY + " " + "Your " + ability + " healed " + name + " for " + ChatColor.GREEN + "" + Math.round(healValue) + " " + ChatColor.GRAY + "health.");
                     }
-
-                    //healedBy.put(attacker, 10);
                 }
+
                 health += healValue;
                 attacker.addHealing(healValue, gameState.flags().hasFlag(this));
 
                 if (!isMeleeHit && !ability.equals("Healing Rain")) {
-                    if (attacker.entity instanceof Player) {
-                        ((Player) attacker.entity).playSound(attacker.getLocation(), Sound.ORB_PICKUP, 1, 1);
-                    }
+                    playHitSound(attacker);
                 }
             }
+        }
+    }
+
+    /**
+     * @param attacker which player should hear the hitsound?
+     */
+    private void playHitSound(WarlordsPlayer attacker) {
+        if (attacker.entity instanceof Player) {
+            ((Player) attacker.entity).playSound(attacker.getLocation(), Sound.ORB_PICKUP, 1, 1);
         }
     }
 
@@ -733,8 +758,11 @@ public final class WarlordsPlayer {
         }
     }
 
+    /**
+     * @param ability which ability should drop Orbs of Life.
+     * @param attacker is the caster of the ability.
+     */
     public void spawnOrbs(String ability, WarlordsPlayer attacker) {
-        //ORBS
         if (!attacker.getCooldownManager().getCooldown(OrbsOfLife.class).isEmpty() && !ability.isEmpty() && !ability.equals("Intervene")) {
             attacker.getCooldownManager().getCooldown(OrbsOfLife.class).stream()
                     .filter(cooldown -> !cooldown.isHidden())
@@ -798,9 +826,7 @@ public final class WarlordsPlayer {
         Block bestGraveCandidate = null;
         boolean isFlagCarrier = this.getFlagDamageMultiplier() > 0;
         for (int x = -1; x <= 1; x++) {
-            //Bukkit.broadcastMessage("For 1:" + x);
             for (int z = -1; z <= 1; z++) {
-                //Bukkit.broadcastMessage("For 2:" + z);
                 if (isFlagCarrier && x == 0 && z == 0) {
                     // This player is a flag carrier, prevent placing the grave at the direct location of the player
                     continue;
@@ -812,7 +838,6 @@ public final class WarlordsPlayer {
                 if (lastBlock.getType() == Material.AIR) {
                     toTest.subtract(0, 1, 0);
                     for (; toTest.getY() > 0; toTest.subtract(0, 1, 0)) {
-                        //Bukkit.broadcastMessage("For 3:" + toTest.getY());
                         Block underTest = toTest.getBlock();
                         if (underTest.getType() != Material.AIR) {
                             if (underTest.getType().isTransparent()) {
@@ -1033,26 +1058,27 @@ public final class WarlordsPlayer {
                 0,
                 new ItemBuilder(weapon.item)
                         .name(ChatColor.GOLD + "Warlord's " + weapon.name + " of the " + spec.getClass().getSimpleName())
-                        .lore(ChatColor.GRAY + "Damage: " + ChatColor.RED + "132 " + ChatColor.GRAY + "- " + ChatColor.RED + "179",
-                                ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + "25%",
-                                ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + "200%",
-                                "",
-                                ChatColor.GREEN + spec.getClassName() + " (" + spec.getClass().getSimpleName() + "):",
-                                Classes.getSelectedBoost(player).selectedDescription,
-                                "",
-                                ChatColor.GRAY + "Health: " + ChatColor.GREEN + "+800",
-                                ChatColor.GRAY + "Max Energy: " + ChatColor.GREEN + "+35",
-                                ChatColor.GRAY + "Cooldown Reduction: " + ChatColor.GREEN + "+13%",
-                                ChatColor.GRAY + "Speed: " + ChatColor.GREEN + "+13%",
-                                "",
-                                ChatColor.GOLD + "Skill Boost Unlocked",
-                                ChatColor.DARK_AQUA + "Crafted",
-                                ChatColor.LIGHT_PURPLE + "Void Forged [4/4]",
-                                ChatColor.GREEN + "EQUIPPED",
-                                ChatColor.AQUA + "BOUND",
-                                "",
-                                ChatColor.YELLOW + ChatColor.BOLD.toString() + "RIGHT-CLICK " + ChatColor.GREEN + "to view " + ChatColor.YELLOW + spec.getWeapon().getName(),
-                                ChatColor.GREEN + "stats!")
+                        .lore(
+                            ChatColor.GRAY + "Damage: " + ChatColor.RED + "132 " + ChatColor.GRAY + "- " + ChatColor.RED + "179",
+                            ChatColor.GRAY + "Crit Chance: " + ChatColor.RED + "25%",
+                            ChatColor.GRAY + "Crit Multiplier: " + ChatColor.RED + "200%",
+                            "",
+                            ChatColor.GREEN + spec.getClassName() + " (" + spec.getClass().getSimpleName() + "):",
+                            Classes.getSelectedBoost(player).selectedDescription,
+                            "",
+                            ChatColor.GRAY + "Health: " + ChatColor.GREEN + "+800",
+                            ChatColor.GRAY + "Max Energy: " + ChatColor.GREEN + "+35",
+                            ChatColor.GRAY + "Cooldown Reduction: " + ChatColor.GREEN + "+13%",
+                            ChatColor.GRAY + "Speed: " + ChatColor.GREEN + "+13%",
+                            "",
+                            ChatColor.GOLD + "Skill Boost Unlocked",
+                            ChatColor.DARK_AQUA + "Crafted",
+                            ChatColor.LIGHT_PURPLE + "Void Forged [4/4]",
+                            ChatColor.GREEN + "EQUIPPED",
+                            ChatColor.AQUA + "BOUND",
+                            "",
+                            ChatColor.YELLOW + ChatColor.BOLD.toString() + "RIGHT-CLICK " + ChatColor.GREEN + "to view " + ChatColor.YELLOW + spec.getWeapon().getName(),
+                            ChatColor.GREEN + "stats!")
                         .unbreakable()
                         .flags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE)
                         .get());
