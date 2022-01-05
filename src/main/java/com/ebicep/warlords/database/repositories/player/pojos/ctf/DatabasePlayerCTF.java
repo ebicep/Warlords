@@ -1,5 +1,7 @@
 package com.ebicep.warlords.database.repositories.player.pojos.ctf;
 
+import com.ebicep.warlords.database.repositories.games.GameMode;
+import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayers;
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
 import com.ebicep.warlords.database.repositories.player.pojos.ctf.classses.DatabaseMageCTF;
 import com.ebicep.warlords.database.repositories.player.pojos.ctf.classses.DatabasePaladinCTF;
@@ -24,6 +26,18 @@ public class DatabasePlayerCTF extends AbstractDatabaseStatInformation implement
 
     public DatabasePlayerCTF() {
 
+    }
+
+    @Override
+    public void updateCustomStats(GameMode gameMode, boolean isCompGame, DatabaseGamePlayers.GamePlayer gamePlayer, boolean won, boolean add) {
+        //UPDATE UNIVERSAL EXPERIENCE
+        this.experience += add ? gamePlayer.getExperienceEarnedUniversal() : -gamePlayer.getExperienceEarnedUniversal();
+
+        this.flagsCaptured += gamePlayer.getFlagCaptures();
+        this.flagsReturned += gamePlayer.getFlagReturns();
+        //UPDATE CLASS, SPEC
+        this.getClass(Classes.getClassesGroup(gamePlayer.getSpec())).updateStats(gameMode, isCompGame, gamePlayer, won, add);
+        this.getSpec(gamePlayer.getSpec()).updateStats(gameMode, isCompGame, gamePlayer, won, add);
     }
 
     @Override
@@ -76,26 +90,6 @@ public class DatabasePlayerCTF extends AbstractDatabaseStatInformation implement
     public DatabaseBaseCTF[] getClasses() {
         return new DatabaseBaseCTF[]{mage, warrior, paladin, shaman};
     }
-
-//    public void updateStats(DatabaseGamePlayers.GamePlayer gamePlayer, boolean won, boolean add) {
-//        int operation = add ? 1 : -1;
-//        this.kills += gamePlayer.getTotalKills() * operation;
-//        this.assists += gamePlayer.getTotalAssists() * operation;
-//        this.deaths += gamePlayer.getTotalDeaths() * operation;
-//        if (won) {
-//            this.wins += operation;
-//        } else {
-//            this.losses += operation;
-//        }
-//        this.plays += operation;
-//        this.flagsCaptured += gamePlayer.getFlagCaptures() * operation;
-//        this.flagsReturned += gamePlayer.getFlagReturns() * operation;
-//        this.damage += gamePlayer.getTotalDamage() * operation;
-//        this.healing += gamePlayer.getTotalHealing() * operation;
-//        this.absorbed += gamePlayer.getTotalAbsorbed() * operation;
-//        this.experience += gamePlayer.getExperienceEarnedUniversal() * operation;
-//
-//    }
 
     //    public DatabaseWarlordsClassCTF getClass(DatabaseWarlordsClassCTF databaseWarlordsClassCTF) {
 //        for (DatabaseWarlordsClassCTF aClass : getClasses()) {

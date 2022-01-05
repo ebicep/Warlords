@@ -7,6 +7,7 @@ import com.ebicep.warlords.database.cache.MultipleCacheResolver;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.ctf.DatabasePlayerCTF;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayerCompStats;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabaseSpecialization;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.github.benmanes.caffeine.cache.Cache;
@@ -43,13 +44,23 @@ public class TestCommand implements CommandExecutor {
 
         Player player = (Player) sender;
 
+        System.out.println(Warlords.game.getPlayers());
 //        MongoCollection<Document> mongoCollection = DatabaseManager.warlordsDatabase.getCollection(PlayersCollections.NEW_SEASON_WEEKLY.collectionName);
-//        for (DatabasePlayer databasePlayer : DatabaseManager.playerService.findAll(PlayersCollections.NEW_SEASON_WEEKLY)) {
-//            Document document = mongoCollection.find().filter(Filters.eq("uuid", databasePlayer.getUuid())).first();
-//            assert document != null;
-//            DatabasePlayerCTF databasePlayerCTF = DatabaseManager.playerService.convertDocumentToPlayer(document.get("comp_stats", Document.class));
-//            databasePlayer.getCompStats().setCtfStats(databasePlayerCTF);
-//            DatabaseManager.playerService.create(databasePlayer, PlayersCollections.NEW);
+//        for (DatabasePlayer databasePlayer : DatabaseManager.playerService.findAll(PlayersCollections.TEST)) {
+//            DatabasePlayerCTF databasePlayerCTF = databasePlayer.getCompStats().getCtfStats();
+//            DatabasePlayerCompStats compStats = databasePlayer.getCompStats();
+//            compStats.setKills(databasePlayerCTF.getKills());
+//            compStats.setAssists(databasePlayerCTF.getAssists());
+//            compStats.setDeaths(databasePlayerCTF.getDeaths());
+//            compStats.setWins(databasePlayerCTF.getWins());
+//            compStats.setLosses(databasePlayerCTF.getLosses());
+//            compStats.setPlays(databasePlayerCTF.getPlays());
+//            compStats.setDamage(databasePlayerCTF.getDamage());
+//            compStats.setHealing(databasePlayerCTF.getHealing());
+//            compStats.setAbsorbed(databasePlayerCTF.getAbsorbed());
+//            compStats.setExperience(databasePlayerCTF.getExperience());
+//
+//            DatabaseManager.playerService.update(databasePlayer, PlayersCollections.TEST);
 //        }
 
 

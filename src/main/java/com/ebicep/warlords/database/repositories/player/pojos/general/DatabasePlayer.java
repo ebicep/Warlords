@@ -1,5 +1,7 @@
 package com.ebicep.warlords.database.repositories.player.pojos.general;
 
+import com.ebicep.warlords.database.repositories.games.GameMode;
+import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayers;
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
 import com.ebicep.warlords.database.repositories.player.pojos.general.classes.DatabaseMage;
 import com.ebicep.warlords.database.repositories.player.pojos.general.classes.DatabasePaladin;
@@ -13,7 +15,9 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-@Document(collection = "Test")
+import java.util.UUID;
+
+@Document(collection = "Players_Information")
 public class DatabasePlayer extends AbstractDatabaseStatInformation implements com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer {
 
     @Id
@@ -43,6 +47,26 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
     public DatabasePlayer(String uuid, String name) {
         this.uuid = uuid;
         this.name = name;
+    }
+
+    public DatabasePlayer(UUID uuid, String name) {
+        this.uuid = uuid.toString();
+        this.name = name;
+    }
+
+    @Override
+    public void updateCustomStats(GameMode gameMode, boolean isCompGame, DatabaseGamePlayers.GamePlayer gamePlayer, boolean won, boolean add) {
+        //UPDATE UNIVERSAL EXPERIENCE
+        this.experience += add ? gamePlayer.getExperienceEarnedUniversal() : -gamePlayer.getExperienceEarnedUniversal();
+        //UPDATE CLASS, SPEC
+        this.getClass(Classes.getClassesGroup(gamePlayer.getSpec())).updateStats(gameMode, isCompGame, gamePlayer, won, add);
+        this.getSpec(gamePlayer.getSpec()).updateStats(gameMode, isCompGame, gamePlayer, won, add);
+        //UPDATE COMP/PUB GENERAL, GAMEMODE, GAMEMODE CLASS, GAMEMODE SPEC
+        if (isCompGame) {
+            this.compStats.updateStats(gameMode, true, gamePlayer, won, add);
+        } else {
+            this.pubStats.updateStats(gameMode, false, gamePlayer, won, add);
+        }
     }
 
     @Override
@@ -112,32 +136,6 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
                 ", name='" + name + '\'' +
                 '}';
     }
-
-//    public void updateStats(GameMode gameMode, boolean isCompGame, DatabaseGamePlayers.GamePlayer gamePlayer, boolean won, boolean add) {
-//        int operation = add ? 1 : -1;
-//        this.kills += gamePlayer.getTotalKills() * operation;
-//        this.assists += gamePlayer.getTotalAssists() * operation;
-//        this.deaths += gamePlayer.getTotalDeaths() * operation;
-//        if (won) {
-//            this.wins += operation;
-//        } else {
-//            this.losses += operation;
-//        }
-//        this.plays += operation;
-//        this.damage += gamePlayer.getTotalDamage() * operation;
-//        this.healing += gamePlayer.getTotalHealing() * operation;
-//        this.absorbed += gamePlayer.getTotalAbsorbed() * operation;
-//        this.experience += gamePlayer.getExperienceEarnedUniversal() * operation;
-//        if(isCompGame) {
-//            switch (gameMode) {
-//                case CAPTURE_THE_FLAG:
-//                    compStats.updateStats(gamePlayer, won, add);
-//                    break;
-//            }
-//        } else {
-//
-//        }
-//    }
 
     public String getName() {
         return name;

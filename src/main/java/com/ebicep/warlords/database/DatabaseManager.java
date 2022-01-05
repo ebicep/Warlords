@@ -2,11 +2,13 @@ package com.ebicep.warlords.database;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.configuration.ApplicationConfiguration;
+import com.ebicep.warlords.database.leaderboards.LeaderboardManager;
 import com.ebicep.warlords.database.repositories.games.GameService;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame;
 import com.ebicep.warlords.database.repositories.player.PlayerService;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.player.*;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -23,8 +25,13 @@ import org.springframework.context.support.AbstractApplicationContext;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 
+import static com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame.previousGames;
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 
@@ -52,17 +59,17 @@ public class DatabaseManager {
             });
             updateName(player.getUniqueId());
         });
-        /*
+
 
         //Loading last 5 games
         Warlords.newChain()
                 .asyncFirst(() -> gameService.getLastGames(10))
                 .syncLast((games) -> {
                     previousGames.addAll(games);
-                    LeaderboardManager.addHologramLeaderboards(UUID.randomUUID().toString());
+                    //LeaderboardManager.addHologramLeaderboards(UUID.randomUUID().toString());
                 })
                 .execute();
-
+/*
         MongoCollection<Document> resetTimings = warlordsDatabase.getCollection("Reset_Timings");
         //checking weekly date, if over 10,000 minutes (10080 == 1 week) reset weekly
         Document weeklyDocumentInfo = resetTimings.find().filter(eq("time", "weekly")).first();
@@ -119,99 +126,99 @@ public class DatabaseManager {
     }
 
     public static void loadPlayer(UUID uuid, PlayersCollections collections, Runnable callback) {
-//        if (playerService.findByUUID(uuid, collections) == null) {
-//            Warlords.newChain()
-//                    .syncFirst(() -> {
-//                        String name = Bukkit.getOfflinePlayer(uuid).getName();
-//                        if (name == null) {
-//                            System.out.println("NULL NAME ERROR !!!!! " + uuid);
-//                        }
-//                        return name;
-//                    })
-//                    .asyncLast((name) -> playerService.create(new DatabasePlayer(uuid, name), collections))
-//                    .sync(() -> {
-//                        if (collections == PlayersCollections.ALL_TIME) {
-//                            loadPlayerInfo(Bukkit.getPlayer(uuid));
-//                            callback.run();
-//                        }
-//                    }).execute();
-//        } else {
-//            if (collections == PlayersCollections.ALL_TIME) {
-//                Warlords.newChain()
-//                        .sync(() -> {
-//                            loadPlayerInfo(Bukkit.getPlayer(uuid));
-//                            callback.run();
-//                            System.out.println("Loaded Player " + uuid);
-//                        }).execute();
-//            }
-//        }
+        if (playerService.findByUUID(uuid, collections) == null) {
+            Warlords.newChain()
+                    .syncFirst(() -> {
+                        String name = Bukkit.getOfflinePlayer(uuid).getName();
+                        if (name == null) {
+                            System.out.println("NULL NAME ERROR !!!!! " + uuid);
+                        }
+                        return name;
+                    })
+                    .asyncLast((name) -> playerService.create(new DatabasePlayer(uuid, name), collections))
+                    .sync(() -> {
+                        if (collections == PlayersCollections.ALL_TIME) {
+                            loadPlayerInfo(Bukkit.getPlayer(uuid));
+                            callback.run();
+                        }
+                    }).execute();
+        } else {
+            if (collections == PlayersCollections.ALL_TIME) {
+                Warlords.newChain()
+                        .sync(() -> {
+                            loadPlayerInfo(Bukkit.getPlayer(uuid));
+                            callback.run();
+                            System.out.println("Loaded Player " + uuid);
+                        }).execute();
+            }
+        }
     }
 
     private static void loadPlayerInfo(Player player) {
-        // DatabasePlayer databasePlayer = playerService.findByUUID(player.getUniqueId());
-        //Warlords.getPlayerSettings(player.getUniqueId()).setSelectedClass(databasePlayer.getLastSpec());
+        DatabasePlayer databasePlayer = playerService.findByUUID(player.getUniqueId());
+        Warlords.getPlayerSettings(player.getUniqueId()).setSelectedClass(databasePlayer.getLastSpec());
 
-//        ArmorManager.Helmets.setSelectedMage(player, databasePlayer.getMage().getHelmet());
-//        ArmorManager.ArmorSets.setSelectedMage(player, databasePlayer.getMage().getArmor());
-//        ArmorManager.Helmets.setSelectedWarrior(player, databasePlayer.getWarrior().getHelmet());
-//        ArmorManager.ArmorSets.setSelectedWarrior(player, databasePlayer.getWarrior().getArmor());
-//        ArmorManager.Helmets.setSelectedPaladin(player, databasePlayer.getPaladin().getHelmet());
-//        ArmorManager.ArmorSets.setSelectedPaladin(player, databasePlayer.getPaladin().getArmor());
-//        ArmorManager.Helmets.setSelectedShaman(player, databasePlayer.getShaman().getHelmet());
-//        ArmorManager.ArmorSets.setSelectedShaman(player, databasePlayer.getShaman().getArmor());
-//
-//        HashMap<Classes, Weapons> weaponSkins = new HashMap<>();
-//        weaponSkins.put(Classes.PYROMANCER, databasePlayer.getMage().getPyromancer().getWeapon());
-//        weaponSkins.put(Classes.CRYOMANCER, databasePlayer.getMage().getCryomancer().getWeapon());
-//        weaponSkins.put(Classes.AQUAMANCER, databasePlayer.getMage().getAquamancer().getWeapon());
-//        weaponSkins.put(Classes.BERSERKER, databasePlayer.getWarrior().getBerserker().getWeapon());
-//        weaponSkins.put(Classes.DEFENDER, databasePlayer.getWarrior().getDefender().getWeapon());
-//        weaponSkins.put(Classes.REVENANT, databasePlayer.getWarrior().getRevenant().getWeapon());
-//        weaponSkins.put(Classes.AVENGER, databasePlayer.getPaladin().getAvenger().getWeapon());
-//        weaponSkins.put(Classes.CRUSADER, databasePlayer.getPaladin().getCrusader().getWeapon());
-//        weaponSkins.put(Classes.PROTECTOR, databasePlayer.getPaladin().getProtector().getWeapon());
-//        weaponSkins.put(Classes.THUNDERLORD, databasePlayer.getShaman().getThunderlord().getWeapon());
-//        weaponSkins.put(Classes.SPIRITGUARD, databasePlayer.getShaman().getSpiritguard().getWeapon());
-//        weaponSkins.put(Classes.EARTHWARDEN, databasePlayer.getShaman().getEarthwarden().getWeapon());
-//        Warlords.getPlayerSettings(player.getUniqueId()).setWeaponSkins(weaponSkins);
-//
-//        HashMap<Classes, ClassesSkillBoosts> classesSkillBoosts = new HashMap<>();
-//        classesSkillBoosts.put(Classes.PYROMANCER, databasePlayer.getMage().getPyromancer().getSkillBoost());
-//        classesSkillBoosts.put(Classes.CRYOMANCER, databasePlayer.getMage().getCryomancer().getSkillBoost());
-//        classesSkillBoosts.put(Classes.AQUAMANCER, databasePlayer.getMage().getAquamancer().getSkillBoost());
-//        classesSkillBoosts.put(Classes.BERSERKER, databasePlayer.getWarrior().getBerserker().getSkillBoost());
-//        classesSkillBoosts.put(Classes.DEFENDER, databasePlayer.getWarrior().getDefender().getSkillBoost());
-//        classesSkillBoosts.put(Classes.REVENANT, databasePlayer.getWarrior().getRevenant().getSkillBoost());
-//        classesSkillBoosts.put(Classes.AVENGER, databasePlayer.getPaladin().getAvenger().getSkillBoost());
-//        classesSkillBoosts.put(Classes.CRUSADER, databasePlayer.getPaladin().getCrusader().getSkillBoost());
-//        classesSkillBoosts.put(Classes.PROTECTOR, databasePlayer.getPaladin().getProtector().getSkillBoost());
-//        classesSkillBoosts.put(Classes.THUNDERLORD, databasePlayer.getShaman().getThunderlord().getSkillBoost());
-//        classesSkillBoosts.put(Classes.SPIRITGUARD, databasePlayer.getShaman().getSpiritguard().getSkillBoost());
-//        classesSkillBoosts.put(Classes.EARTHWARDEN, databasePlayer.getShaman().getEarthwarden().getSkillBoost());
-//        classesSkillBoosts.values().removeAll(Collections.singleton(null));
-//        Warlords.getPlayerSettings(player.getUniqueId()).setClassesSkillBoosts(classesSkillBoosts);
+        ArmorManager.Helmets.setSelectedMage(player, databasePlayer.getMage().getHelmet());
+        ArmorManager.ArmorSets.setSelectedMage(player, databasePlayer.getMage().getArmor());
+        ArmorManager.Helmets.setSelectedWarrior(player, databasePlayer.getWarrior().getHelmet());
+        ArmorManager.ArmorSets.setSelectedWarrior(player, databasePlayer.getWarrior().getArmor());
+        ArmorManager.Helmets.setSelectedPaladin(player, databasePlayer.getPaladin().getHelmet());
+        ArmorManager.ArmorSets.setSelectedPaladin(player, databasePlayer.getPaladin().getArmor());
+        ArmorManager.Helmets.setSelectedShaman(player, databasePlayer.getShaman().getHelmet());
+        ArmorManager.ArmorSets.setSelectedShaman(player, databasePlayer.getShaman().getArmor());
 
-//        Settings.HotkeyMode.setSelected(player, databasePlayer.getHotkeyMode());
-//        Settings.ParticleQuality.setSelected(player, databasePlayer.getParticleQuality());
+        HashMap<Classes, Weapons> weaponSkins = new HashMap<>();
+        weaponSkins.put(Classes.PYROMANCER, databasePlayer.getMage().getPyromancer().getWeapon());
+        weaponSkins.put(Classes.CRYOMANCER, databasePlayer.getMage().getCryomancer().getWeapon());
+        weaponSkins.put(Classes.AQUAMANCER, databasePlayer.getMage().getAquamancer().getWeapon());
+        weaponSkins.put(Classes.BERSERKER, databasePlayer.getWarrior().getBerserker().getWeapon());
+        weaponSkins.put(Classes.DEFENDER, databasePlayer.getWarrior().getDefender().getWeapon());
+        weaponSkins.put(Classes.REVENANT, databasePlayer.getWarrior().getRevenant().getWeapon());
+        weaponSkins.put(Classes.AVENGER, databasePlayer.getPaladin().getAvenger().getWeapon());
+        weaponSkins.put(Classes.CRUSADER, databasePlayer.getPaladin().getCrusader().getWeapon());
+        weaponSkins.put(Classes.PROTECTOR, databasePlayer.getPaladin().getProtector().getWeapon());
+        weaponSkins.put(Classes.THUNDERLORD, databasePlayer.getShaman().getThunderlord().getWeapon());
+        weaponSkins.put(Classes.SPIRITGUARD, databasePlayer.getShaman().getSpiritguard().getWeapon());
+        weaponSkins.put(Classes.EARTHWARDEN, databasePlayer.getShaman().getEarthwarden().getWeapon());
+        Warlords.getPlayerSettings(player.getUniqueId()).setWeaponSkins(weaponSkins);
+
+        HashMap<Classes, ClassesSkillBoosts> classesSkillBoosts = new HashMap<>();
+        classesSkillBoosts.put(Classes.PYROMANCER, databasePlayer.getMage().getPyromancer().getSkillBoost());
+        classesSkillBoosts.put(Classes.CRYOMANCER, databasePlayer.getMage().getCryomancer().getSkillBoost());
+        classesSkillBoosts.put(Classes.AQUAMANCER, databasePlayer.getMage().getAquamancer().getSkillBoost());
+        classesSkillBoosts.put(Classes.BERSERKER, databasePlayer.getWarrior().getBerserker().getSkillBoost());
+        classesSkillBoosts.put(Classes.DEFENDER, databasePlayer.getWarrior().getDefender().getSkillBoost());
+        classesSkillBoosts.put(Classes.REVENANT, databasePlayer.getWarrior().getRevenant().getSkillBoost());
+        classesSkillBoosts.put(Classes.AVENGER, databasePlayer.getPaladin().getAvenger().getSkillBoost());
+        classesSkillBoosts.put(Classes.CRUSADER, databasePlayer.getPaladin().getCrusader().getSkillBoost());
+        classesSkillBoosts.put(Classes.PROTECTOR, databasePlayer.getPaladin().getProtector().getSkillBoost());
+        classesSkillBoosts.put(Classes.THUNDERLORD, databasePlayer.getShaman().getThunderlord().getSkillBoost());
+        classesSkillBoosts.put(Classes.SPIRITGUARD, databasePlayer.getShaman().getSpiritguard().getSkillBoost());
+        classesSkillBoosts.put(Classes.EARTHWARDEN, databasePlayer.getShaman().getEarthwarden().getSkillBoost());
+        classesSkillBoosts.values().removeAll(Collections.singleton(null));
+        Warlords.getPlayerSettings(player.getUniqueId()).setClassesSkillBoosts(classesSkillBoosts);
+
+        Settings.HotkeyMode.setSelected(player, databasePlayer.getHotkeyMode());
+        Settings.ParticleQuality.setSelected(player, databasePlayer.getParticleQuality());
     }
 
     public static void updateName(UUID uuid) {
-//        AtomicReference<String> currentName = new AtomicReference<>(Bukkit.getOfflinePlayer(uuid).getName());
-//        Warlords.newChain().asyncFirst(() -> playerService.findByUUID(uuid))
-//                .sync((player) -> {
-//                    if (currentName.get() == null) {
-//                        currentName.set(getName(uuid.toString()));
-//                    } else if (player.getName().equals(currentName.get())) {
-//                        return null;
-//                    }
-//                    return player;
-//                })
-//                .abortIfNull()
-//                .asyncLast((player) -> {
-//                    System.out.println("Changing " + player.getName() + "'s name to " + currentName);
-//                    player.setName(currentName.get());
-//                    playerService.update(player);
-//                }).execute();
+        AtomicReference<String> currentName = new AtomicReference<>(Bukkit.getOfflinePlayer(uuid).getName());
+        Warlords.newChain().asyncFirst(() -> playerService.findByUUID(uuid))
+                .sync((player) -> {
+                    if (currentName.get() == null) {
+                        currentName.set(getName(uuid.toString()));
+                    } else if (player.getName().equals(currentName.get())) {
+                        return null;
+                    }
+                    return player;
+                })
+                .abortIfNull()
+                .asyncLast((player) -> {
+                    System.out.println("Changing " + player.getName() + "'s name to " + currentName);
+                    player.setName(currentName.get());
+                    playerService.update(player);
+                }).execute();
 
     }
 

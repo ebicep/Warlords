@@ -1,5 +1,7 @@
 package com.ebicep.warlords.database.repositories.player.pojos.general;
 
+import com.ebicep.warlords.database.repositories.games.GameMode;
+import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayers;
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
 import com.ebicep.warlords.player.ClassesSkillBoosts;
 import com.ebicep.warlords.player.Weapons;
@@ -13,6 +15,12 @@ public class DatabaseSpecialization extends AbstractDatabaseStatInformation {
 
     public DatabaseSpecialization() {
 
+    }
+
+    @Override
+    public void updateCustomStats(GameMode gameMode, boolean isCompGame, DatabaseGamePlayers.GamePlayer gamePlayer, boolean won, boolean add) {
+        //UPDATE SPEC EXPERIENCE
+        this.experience += add ? gamePlayer.getExperienceEarnedSpec() : -gamePlayer.getExperienceEarnedSpec();
     }
 
     public DatabaseSpecialization(ClassesSkillBoosts skillBoost) {
