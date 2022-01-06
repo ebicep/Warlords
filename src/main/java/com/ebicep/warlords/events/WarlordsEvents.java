@@ -572,7 +572,7 @@ public class WarlordsEvents implements Listener {
 
                 if (PermissionHandler.isDefault(player)) {
                     prefixColor = ChatColor.AQUA;
-                    prefix = prefixColor + "[SZN] ";
+                    prefix = prefixColor + "";
                 } else if (PermissionHandler.isGamestarter(player)) {
                     prefixColor = ChatColor.YELLOW;
                     prefix = prefixColor + "[GS] ";
