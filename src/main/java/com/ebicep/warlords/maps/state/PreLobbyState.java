@@ -26,6 +26,7 @@ public class PreLobbyState implements State, TimerDebugAble {
 
     private int timer = 0;
     private final Game game;
+    private GameMap map;
     private final Map<UUID, TeamPreference> teamPreferences = new HashMap<>();
 
     public PreLobbyState(Game game) {

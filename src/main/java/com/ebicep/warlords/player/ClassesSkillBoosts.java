@@ -236,13 +236,16 @@ public enum ClassesSkillBoosts {
             }
     ),
     SEISMIC_WAVE_DEFENDER("Seismic Wave",
-            "§7Increase the damage you\n§7deal with Seismic Wave by\n§710% and reduce the cooldown\n§7by 30%",
-            "§aIncrease the damage you\n§adeal with Seismic Wave by\n§c10% §aand reduce the cooldown\n§aby §c30%",
+            "§7Increase the amount knockback you\n§7deal with Seismic Wave by\n§735% and reduce the cooldown\n§7by 25%",
+            "§aIncrease the amount knockback you\n§adeal with Seismic Wave by\n§c35% §aand reduce the cooldown\n§aby §c25%",
             SeismicWave.class,
             abstractAbility -> {
-                abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.1f);
-                abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.1f);
-                abstractAbility.setCooldown(abstractAbility.getCooldown() * .7f);
+                if (abstractAbility instanceof SeismicWave) {
+                    ((SeismicWave) abstractAbility).setVelocity(1.8f);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
+                } else {
+                    System.out.println("ERROR APPLY SKILL BOOST NOT LAST STAND");
+                }
             }
     ),
     GROUND_SLAM_DEFENDER("Ground Slam",
@@ -250,7 +253,6 @@ public enum ClassesSkillBoosts {
             "§aReduce the cooldown of Ground Slam\n§aby §c25%",
             GroundSlam.class,
             abstractAbility -> {
-
                 abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
             }
     ),
@@ -286,13 +288,16 @@ public enum ClassesSkillBoosts {
             }
     ),
     RECKLESS_CHARGE("Reckless Charge",
-            "§7Increase the damage you\n§7deal with Reckless Charge by\n§710% and reduce the cooldown\n§7by 25%",
-            "§aIncrease the damage you\n§adeal with Reckless Charge by\n§c10% §aand reduce the cooldown\n§aby §c25%",
+            "§7Increase the immobilize duration\n§7of your Reckless Charge by\n§70.15 seconds and reduce the\n§7cooldown by 25%",
+            "§aIncrease the immobilize duration\n§aof your Reckless Charge by\n§c0.15 §aseconds and reduce the\n§acooldown by §c25%",
             RecklessCharge.class,
             abstractAbility -> {
-                abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.1f);
-                abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.1f);
-                abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
+                if (abstractAbility instanceof RecklessCharge) {
+                    ((RecklessCharge) abstractAbility).setStunTimeInTicks(13);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
+                } else {
+                    System.out.println("ERROR APPLY SKILL BOOST NOT LAST STAND");
+                }
             }
     ),
     GROUND_SLAM_REVENANT("Ground Slam",
@@ -422,7 +427,7 @@ public enum ClassesSkillBoosts {
             HolyRadianceCrusader.class,
             abstractAbility -> {
                 if (abstractAbility instanceof HolyRadianceCrusader) {
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .85f);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .8f);
                     ((HolyRadianceCrusader) abstractAbility).setMarkDuration(12);
                 } else {
                     System.out.println("ERROR APPLY SKILL BOOST NOT HOLY CRUS");
@@ -574,7 +579,7 @@ public enum ClassesSkillBoosts {
     ),
     REPENTANCE("Repentance",
             "§7Increase the damage you\n§7convert by 5% and reduce the\ncooldown by 10%",
-            "§aIncrease the damage you\n§aconvert by §c5% §aand reduce the\ncooldown by 10%",
+            "§aIncrease the damage you\n§aconvert by §c5% §aand reduce the\n§acooldown by §c10%",
             Repentance.class,
             abstractAbility -> {
                 if (abstractAbility instanceof Repentance) {
@@ -586,14 +591,14 @@ public enum ClassesSkillBoosts {
             }
     ),
     DEATHS_DEBT("Death's Debt",
-            "§7Increase the range of Death's Debt\n§7by 4 blocks and reduce the cooldown\n§7by 20%",
-            "§aIncrease the range of Death's Debt\n§aby §c4 §ablocks and reduce the cooldown\n§aby §c20%",
+            "§7Increase the range of Death's Debt\n§7by 4 blocks and reduce the\n§7amount of delayed damage you take\n§7by 20%",
+            "§aIncrease the range of Death's Debt\n§aby §c4 §ablocks and reduce the\n§aamount of delayed damage you take\n§aby §c20%",
             DeathsDebt.class,
             abstractAbility -> {
                 if (abstractAbility instanceof DeathsDebt) {
                     ((DeathsDebt) abstractAbility).setRespiteRadius(14);
                     ((DeathsDebt) abstractAbility).setDebtRadius(12);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .8f);
+                    ((DeathsDebt) abstractAbility).setSelfDamageInPercentPerSecond(.1333f);
                 } else {
                     System.out.println("ERROR APPLY SKILL BOOST NOT DEBT");
                 }
