@@ -47,7 +47,7 @@ public class Leaderboard {
 
     public List<DatabasePlayer> getSortedPlayers(PlayersCollections collections) {
         switch (collections) {
-            case ALL_TIME:
+            case LIFETIME:
                 return sortedAllTime;
             case SEASON_5:
                 return sortedSeason5;
@@ -63,7 +63,7 @@ public class Leaderboard {
 
     public void resetSortedPlayers(List<DatabasePlayer> newSortedPlayers, PlayersCollections collections) {
         switch (collections) {
-            case ALL_TIME:
+            case LIFETIME:
                 this.sortedAllTime.clear();
                 this.sortedAllTime.addAll(newSortedPlayers);
                 return;

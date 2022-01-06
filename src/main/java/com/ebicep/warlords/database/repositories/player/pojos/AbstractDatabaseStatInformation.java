@@ -38,6 +38,10 @@ public abstract class AbstractDatabaseStatInformation {
 
     public abstract void updateCustomStats(GameMode gameMode, boolean isCompGame, DatabaseGamePlayers.GamePlayer gamePlayer, boolean won, boolean add);
 
+    public double getKillsPerGame() {
+        return plays == 0 ? 0 : (double) kills / plays;
+    }
+
     public int getKills() {
         return kills;
     }
@@ -46,12 +50,20 @@ public abstract class AbstractDatabaseStatInformation {
         this.kills = kills;
     }
 
+    public double getKillsAssistsPerGame() {
+        return plays == 0 ? 0 : (double) (kills + assists) / plays;
+    }
+
     public int getAssists() {
         return assists;
     }
 
     public void setAssists(int assists) {
         this.assists = assists;
+    }
+
+    public double getDeathsPerGame() {
+        return plays == 0 ? 0 : (double) deaths / plays;
     }
 
     public int getDeaths() {
@@ -84,6 +96,14 @@ public abstract class AbstractDatabaseStatInformation {
 
     public void setPlays(int plays) {
         this.plays = plays;
+    }
+
+    public long getDHP() {
+        return damage + healing + absorbed;
+    }
+
+    public long getDHPPerGame() {
+        return plays == 0 ? 0 : (damage + healing + absorbed) / (wins + losses);
     }
 
     public long getDamage() {

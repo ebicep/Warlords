@@ -364,8 +364,6 @@ public class Warlords extends JavaPlugin {
         }
 
         CitizensAPI.getNPCRegistry().despawnNPCs(DespawnReason.RELOAD);
-        CitizensAPI.getNPCRegistry().deregisterAll();
-        CitizensAPI.getNPCRegistries().forEach(NPCRegistry::deregisterAll);
 
         getServer().getConsoleSender().sendMessage(ChatColor.RED + "[Warlords] Plugin is disabled");
         // TODO persist this.playerSettings to a database

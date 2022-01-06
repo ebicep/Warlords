@@ -3,6 +3,7 @@ package com.ebicep.warlords.database.repositories.player.pojos.general;
 import com.ebicep.warlords.database.repositories.games.GameMode;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayers;
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
+import com.ebicep.warlords.database.repositories.player.pojos.ctf.DatabasePlayerCTF;
 import com.ebicep.warlords.database.repositories.player.pojos.general.classes.DatabaseMage;
 import com.ebicep.warlords.database.repositories.player.pojos.general.classes.DatabasePaladin;
 import com.ebicep.warlords.database.repositories.player.pojos.general.classes.DatabaseShaman;
@@ -30,6 +31,8 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
     private DatabaseWarrior warrior = new DatabaseWarrior();
     private DatabasePaladin paladin = new DatabasePaladin();
     private DatabaseShaman shaman = new DatabaseShaman();
+    @Field("ctf_stats")
+    private DatabasePlayerCTF ctfStats = new DatabasePlayerCTF();
     @Field("comp_stats")
     private DatabasePlayerCompStats compStats = new DatabasePlayerCompStats();
     @Field("public_queue_stats")
@@ -61,6 +64,8 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
         //UPDATE CLASS, SPEC
         this.getClass(Classes.getClassesGroup(gamePlayer.getSpec())).updateStats(gameMode, isCompGame, gamePlayer, won, add);
         this.getSpec(gamePlayer.getSpec()).updateStats(gameMode, isCompGame, gamePlayer, won, add);
+        //UPDATE GAMEMODES
+        this.ctfStats.updateStats(gameMode, isCompGame, gamePlayer, won, add);
         //UPDATE COMP/PUB GENERAL, GAMEMODE, GAMEMODE CLASS, GAMEMODE SPEC
         if (isCompGame) {
             this.compStats.updateStats(gameMode, true, gamePlayer, won, add);
@@ -179,6 +184,14 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
 
     public void setShaman(DatabaseShaman shaman) {
         this.shaman = shaman;
+    }
+
+    public DatabasePlayerCTF getCtfStats() {
+        return ctfStats;
+    }
+
+    public void setCtfStats(DatabasePlayerCTF ctfStats) {
+        this.ctfStats = ctfStats;
     }
 
     public DatabasePlayerCompStats getCompStats() {

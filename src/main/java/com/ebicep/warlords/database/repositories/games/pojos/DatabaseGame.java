@@ -348,7 +348,7 @@ public class DatabaseGame {
             LeaderboardManager.playerGameHolograms.forEach((uuid, integer) -> {
                 LeaderboardManager.playerGameHolograms.put(uuid, previousGames.size() - 1);
             });
-//            LeaderboardManager.addHologramLeaderboards(UUID.randomUUID().toString());
+            LeaderboardManager.addHologramLeaderboards(UUID.randomUUID().toString());
 
             //sending message if player information remained the same
             for (WarlordsPlayer value : PlayerFilter.playingGame(gameState.getGame())) {
@@ -381,7 +381,7 @@ public class DatabaseGame {
             if (databaseGame.isCounted()) {
                 updatePlayerStatsFromGame(databaseGame,true);
             }
-            //Warlords.newChain().async(() -> DatabaseManager.gameService.create(databaseGame)).execute();
+            Warlords.newChain().async(() -> DatabaseManager.gameService.create(databaseGame)).execute();
         }
     }
 

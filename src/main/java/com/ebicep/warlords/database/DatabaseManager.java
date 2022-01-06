@@ -26,7 +26,6 @@ import org.springframework.context.support.AbstractApplicationContext;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
@@ -54,7 +53,7 @@ public class DatabaseManager {
 
         //Loading all online players
         Bukkit.getOnlinePlayers().forEach(player -> {
-            loadPlayer(player.getUniqueId(), PlayersCollections.ALL_TIME, () -> {
+            loadPlayer(player.getUniqueId(), PlayersCollections.LIFETIME, () -> {
                 Warlords.playerScoreboards.get(player.getUniqueId()).giveMainLobbyScoreboard();
             });
             updateName(player.getUniqueId());
@@ -66,7 +65,7 @@ public class DatabaseManager {
                 .asyncFirst(() -> gameService.getLastGames(10))
                 .syncLast((games) -> {
                     previousGames.addAll(games);
-                    //LeaderboardManager.addHologramLeaderboards(UUID.randomUUID().toString());
+                    LeaderboardManager.addHologramLeaderboards(UUID.randomUUID().toString());
                 })
                 .execute();
 /*
@@ -137,13 +136,13 @@ public class DatabaseManager {
                     })
                     .asyncLast((name) -> playerService.create(new DatabasePlayer(uuid, name), collections))
                     .sync(() -> {
-                        if (collections == PlayersCollections.ALL_TIME) {
+                        if (collections == PlayersCollections.LIFETIME) {
                             loadPlayerInfo(Bukkit.getPlayer(uuid));
                             callback.run();
                         }
                     }).execute();
         } else {
-            if (collections == PlayersCollections.ALL_TIME) {
+            if (collections == PlayersCollections.LIFETIME) {
                 Warlords.newChain()
                         .sync(() -> {
                             loadPlayerInfo(Bukkit.getPlayer(uuid));
