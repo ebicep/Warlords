@@ -1,9 +1,14 @@
-package com.ebicep.warlords.database.repositories.player.pojos;
+package com.ebicep.warlords.database.repositories.player.pojos.general.classes;
 
+import com.ebicep.warlords.database.repositories.games.GameMode;
+import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayers;
+import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
+import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsClass;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabaseSpecialization;
 import com.ebicep.warlords.player.ArmorManager;
 import com.ebicep.warlords.player.ClassesSkillBoosts;
 
-public class DatabasePaladin extends DatabaseWarlordsClass {
+public class DatabasePaladin extends AbstractDatabaseStatInformation implements DatabaseWarlordsClass {
 
     private DatabaseSpecialization avenger = new DatabaseSpecialization(ClassesSkillBoosts.AVENGER_STRIKE);
     private DatabaseSpecialization crusader = new DatabaseSpecialization(ClassesSkillBoosts.CRUSADER_STRIKE);
@@ -13,6 +18,12 @@ public class DatabasePaladin extends DatabaseWarlordsClass {
 
     public DatabasePaladin() {
         super();
+    }
+
+    @Override
+    public void updateCustomStats(GameMode gameMode, boolean isCompGame, DatabaseGamePlayers.GamePlayer gamePlayer, boolean won, boolean add) {
+        //UPDATE SPEC EXPERIENCE
+        this.experience += add ? gamePlayer.getExperienceEarnedSpec() : -gamePlayer.getExperienceEarnedSpec();
     }
 
     @Override

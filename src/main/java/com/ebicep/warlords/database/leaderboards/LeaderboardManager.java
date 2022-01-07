@@ -1,26 +1,30 @@
 package com.ebicep.warlords.database.leaderboards;
 
-import co.aikar.taskchain.TaskChain;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.leaderboards.sections.LeaderboardCategory;
+import com.ebicep.warlords.database.leaderboards.sections.subsections.LeaderboardCTF;
+import com.ebicep.warlords.database.leaderboards.sections.subsections.LeaderboardGeneral;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.util.LocationBuilder;
-import com.ebicep.warlords.util.NumberFormat;
 import me.filoghost.holographicdisplays.api.beta.hologram.Hologram;
 import me.filoghost.holographicdisplays.api.beta.HolographicDisplaysAPI;
 import me.filoghost.holographicdisplays.api.beta.hologram.VisibilitySettings;
-import me.filoghost.holographicdisplays.api.beta.hologram.line.ClickableHologramLine;
 import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class LeaderboardManager {
 
@@ -28,21 +32,22 @@ public class LeaderboardManager {
 
     public static final Location spawnPoint = Bukkit.getWorlds().get(0).getSpawnLocation().clone();
 
-    public static final Location leaderboardSwitchLocation = new Location(world, -2571.5, 54.5, 720.5);
+    public static final Location leaderboardGameTypeSwitchLocation = new Location(world, -2558.5, 52.5, 719.5);
+    public static final Location leaderboardCategorySwitchLocation = new Location(world, -2552.5, 52.5, 719.5);
+    public static final Location leaderboardTimeSwitchLocation = new Location(world, -2546.5, 52.5, 719.5);
 
     public static final Location center = new LocationBuilder(spawnPoint.clone()).forward(.5f).left(21).addY(2).get();
 
-    public static final List<Leaderboard> leaderboards = new ArrayList<>();
-
     public static final HashMap<UUID, Integer> playerGameHolograms = new HashMap<>();
-    public static final HashMap<UUID, Integer> playerLeaderboardHolograms = new HashMap<>();
+    public static final HashMap<UUID, GameType> playerLeaderboardGameType = new HashMap<>();
+    public static final HashMap<UUID, Category> playerLeaderboardCategory = new HashMap<>();
+    public static final HashMap<UUID, PlayersCollections> playerLeaderboardTime = new HashMap<>();
 
-    public static final List<Hologram> lifeTimeHolograms = new ArrayList<>();
-    public static final List<Hologram> season5Holograms = new ArrayList<>();
-    public static final List<Hologram> season4Holograms = new ArrayList<>();
-    public static final List<Hologram> weeklyHolograms = new ArrayList<>();
-    public static final List<Hologram> dailyHolograms = new ArrayList<>();
-    public static final String[] hologramOrder = new String[]{"LifeTime", "Season 5", "Season 4", "Weekly", "Daily"};
+    public static final LeaderboardGeneral leaderboardGeneral = new LeaderboardGeneral();
+    public static final LeaderboardCTF leaderboardCTF = new LeaderboardCTF();
+
+    public static final HashMap<UUID, List<Hologram>> playerSpecificHolograms = new HashMap<>();
+
     private static final String[] weeklyIncludedLeaderboardsTitles = new String[]{"Plays", "Wins", "Kills", "DHP Per Game", "Flags Captured"};
     private static final String[] weeklyExperienceLeaderboards = new String[]{
             "Wins",
@@ -61,112 +66,8 @@ public class LeaderboardManager {
     public static boolean enabled = true;
 
     public static void putLeaderboards() {
-        leaderboards.clear();
-
-        leaderboards.add(new Leaderboard("Wins",
-                new Location(world, -2558.5, 56, 712.5),
-                (DatabasePlayer::getWins),
-                databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getWins())));
-        leaderboards.add(new Leaderboard("Losses", new Location(world, -2608.5, 52, 728.5),
-                (DatabasePlayer::getLosses),
-                databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getLosses())));
-        leaderboards.add(new Leaderboard("Plays", new Location(world, -2564.5, 56, 712.5),
-                (DatabasePlayer::getPlays),
-                databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getPlays())));
-        leaderboards.add(new Leaderboard("Kills", new Location(world, -2552.5, 56, 712.5),
-                (DatabasePlayer::getKills),
-                databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getKills())));
-        leaderboards.add(new Leaderboard("Assists", new Location(world, -2616.5, 52, 733.5),
-                (DatabasePlayer::getAssists),
-                databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getAssists())));
-        leaderboards.add(new Leaderboard("Deaths", new Location(world, -2616.5, 52, 723.5),
-                (DatabasePlayer::getDeaths),
-                databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getDeaths())));
-        leaderboards.add(new Leaderboard("Damage", new Location(world, -2600.5, 52, 723.5),
-                (DatabasePlayer::getDamage),
-                databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getDamage())));
-        leaderboards.add(new Leaderboard("Healing", new Location(world, -2608.5, 52, 719.5),
-                (DatabasePlayer::getHealing),
-                databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getHealing())));
-        leaderboards.add(new Leaderboard("Absorbed", new Location(world, -2600.5, 52, 733.5),
-                (DatabasePlayer::getAbsorbed),
-                databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getAbsorbed())));
-
-        leaderboards.add(new Leaderboard("Flags Captured", new Location(world, -2540.5, 56, 712.5),
-                (DatabasePlayer::getFlagsCaptured),
-                databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getFlagsCaptured())));
-        leaderboards.add(new Leaderboard("Flags Returned", new Location(world, -2608.5, 52, 737.5),
-                (DatabasePlayer::getFlagsReturned),
-                databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getFlagsReturned())));
-
-        leaderboards.add(new Leaderboard("Avenger Wins", new Location(world, -2631.5, 52, 719.5),
-                (o -> o.getPaladin().getAvenger().getWins()),
-                databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getPaladin().getAvenger().getWins())));
-        leaderboards.add(new Leaderboard("Crusader Wins", new Location(world, -2628.5, 52, 714.5),
-                (o -> o.getPaladin().getCrusader().getWins()),
-                databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getPaladin().getCrusader().getWins())));
-        leaderboards.add(new Leaderboard("Protector Wins", new Location(world, -2623.5, 52, 711.5),
-                (o -> o.getPaladin().getProtector().getWins()),
-                databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getPaladin().getProtector().getWins())));
-        leaderboards.add(new Leaderboard("Berserker Wins", new Location(world, -2623.5, 52, 745.5),
-                (o -> o.getWarrior().getBerserker().getWins()),
-                databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getWarrior().getBerserker().getWins())));
-        leaderboards.add(new Leaderboard("Defender Wins", new Location(world, -2628.5, 52, 742.5),
-                (o -> o.getWarrior().getDefender().getWins()),
-                databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getWarrior().getDefender().getWins())));
-        leaderboards.add(new Leaderboard("Revenant Wins", new Location(world, -2631.5, 52, 737.5),
-                (o -> o.getWarrior().getRevenant().getWins()),
-                databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getWarrior().getRevenant().getWins())));
-        leaderboards.add(new Leaderboard("Pyromancer Wins", new Location(world, -2602.5, 53, 749.5),
-                (o -> o.getMage().getPyromancer().getWins()),
-                databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getMage().getPyromancer().getWins())));
-        leaderboards.add(new Leaderboard("Cryomancer Wins", new Location(world, -2608.5, 53, 752.5),
-                (o -> o.getMage().getCryomancer().getWins()),
-                databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getMage().getCryomancer().getWins())));
-        leaderboards.add(new Leaderboard("Aquamancer Wins", new Location(world, -2614.5, 53, 749.5),
-                (o -> o.getMage().getAquamancer().getWins()),
-                databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getMage().getAquamancer().getWins())));
-        leaderboards.add(new Leaderboard("Thunderlord Wins", new Location(world, -2614.5, 53, 707.5),
-                (o -> o.getShaman().getThunderlord().getWins()),
-                databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getShaman().getThunderlord().getWins())));
-        leaderboards.add(new Leaderboard("Spiritguard Wins", new Location(world, -2608.5, 53, 704.5),
-                (o -> o.getShaman().getSpiritguard().getWins()),
-                databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getShaman().getSpiritguard().getWins())));
-        leaderboards.add(new Leaderboard("Earthwarden Wins", new Location(world, -2602.5, 53, 707.5),
-                (o -> o.getShaman().getEarthwarden().getWins()),
-                databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getShaman().getEarthwarden().getWins())));
-
-        leaderboards.add(new Leaderboard("Experience", new Location(world, -2526.5, 57, 744.5),
-                (DatabasePlayer::getExperience),
-                databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getExperience())));
-        leaderboards.add(new Leaderboard("Mage Experience", new Location(world, -2520.5, 58, 735.5),
-                (o -> o.getMage().getExperience()),
-                databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getMage().getExperience())));
-        leaderboards.add(new Leaderboard("Warrior Experience", new Location(world, -2519.5, 58, 741.5),
-                (o -> o.getWarrior().getExperience()),
-                databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getWarrior().getExperience())));
-        leaderboards.add(new Leaderboard("Paladin Experience", new Location(world, -2519.5, 58, 747.5),
-                (o -> o.getPaladin().getExperience()),
-                databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getPaladin().getExperience())));
-        leaderboards.add(new Leaderboard("Shaman Experience", new Location(world, -2520.5, 58, 753.5),
-                (o -> o.getShaman().getExperience()),
-                databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getShaman().getExperience())));
-
-        leaderboards.add(new Leaderboard("DHP", new Location(world, -2619.5, 66.5, 721.5),
-                (DatabasePlayer::getDHP),
-                databasePlayer -> NumberFormat.addCommaAndRound(databasePlayer.getDHP())));
-        leaderboards.add(new Leaderboard("DHP Per Game", new Location(world, -2546.5, 56, 712.5),
-                (DatabasePlayer::getDHPPerGame),
-                databasePlayer -> NumberFormat.addCommaAndRound(Math.round((double) (databasePlayer.getDHPPerGame()) * 10) / 10d)));
-        leaderboards.add(new Leaderboard("Kills Per Game", new Location(world, -2619.5, 66.5, 735.5),
-                (DatabasePlayer::getKillsPerGame),
-                databasePlayer -> String.valueOf(Math.round(databasePlayer.getKillsPerGame() * 10) / 10d)));
-        leaderboards.add(new Leaderboard("Deaths Per Game", new Location(world, -2608.5, 67, 738.5),
-                (DatabasePlayer::getDeathsPerGame),
-                databasePlayer -> String.valueOf(Math.round(databasePlayer.getDeathsPerGame() * 10) / 10d)));
-        leaderboards.add(new Leaderboard("Kills/Assists Per Game", new Location(world, -2608.5, 67, 719.5),
-                (DatabasePlayer::getKillsAssistsPerGame),
-                databasePlayer -> String.valueOf(Math.round(databasePlayer.getKillsAssistsPerGame() * 10) / 10d)));
+        leaderboardGeneral.addLeaderboards();
+        leaderboardCTF.addLeaderboards();
     }
 
     public static void addHologramLeaderboards(String sharedChainName) {
@@ -184,84 +85,150 @@ public class LeaderboardManager {
                 hologram.delete();
             }
         });
-        lifeTimeHolograms.clear();
-        season5Holograms.clear();
-        season4Holograms.clear();
-        weeklyHolograms.clear();
-        dailyHolograms.clear();
 
         putLeaderboards();
         if (enabled) {
             Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Adding Holograms");
 
             //caching all sorted players for each lifetime and weekly
+            AtomicInteger loadedBoards = new AtomicInteger();
             long startTime = System.nanoTime();
             for (PlayersCollections value : PlayersCollections.values()) {
                 Warlords.newChain()//newSharedChain(sharedChainName)
                         .asyncFirst(() -> DatabaseManager.playerService.findAll(value))
                         .syncLast((collection) -> {
-                            leaderboards.forEach(leaderboard -> {
-                                //sorting values
-                                collection.sort((o1, o2) -> Leaderboard.compare(leaderboard.getValueFunction().apply(o2), leaderboard.getValueFunction().apply(o1)));
-                                //removing all players with 3 or less games from leaderboards if the top player has 10 or more (no one game olivers)
-                                if (!collection.isEmpty() && collection.get(0).getPlays() >= 10) {
-                                    collection.removeIf(databasePlayer -> databasePlayer.getPlays() <= 3);
-                                }
-                                //resetting sort then adding new sorted values
-                                leaderboard.resetSortedPlayers(collection, value);
-                                //creating leaderboard
-                                value.leaderboardHolograms.add(addLeaderboard(leaderboard, value, ChatColor.AQUA + ChatColor.BOLD.toString() + value.name + " " + leaderboard.getTitle()));
-                            });
+                            addHologramsToGameType(value, collection, leaderboardGeneral.getGeneral(), "All Modes - " + value.name);
+                            addHologramsToGameType(value, collection, leaderboardGeneral.getComps(), "All Modes - Comps - " + value.name);
+                            addHologramsToGameType(value, collection, leaderboardGeneral.getPubs(), "All Modes - Pubs - " + value.name);
+                            addHologramsToGameType(value, collection, leaderboardCTF.getGeneral(), "CTF - All Queues - " + value.name);
+                            addHologramsToGameType(value, collection, leaderboardCTF.getComps(), "CTF - Comps - " + value.name);
+                            addHologramsToGameType(value, collection, leaderboardCTF.getPubs(), "CTF - Pubs - " + value.name);
                             System.out.println("Loaded " + value.name + " leaderboards");
+                            loadedBoards.getAndIncrement();
                         }).execute();
             }
 
             //depending on what player has selected, set visibility
-            Warlords.newChain()//newSharedChain(sharedChainName)
-                    .delay(10, TimeUnit.SECONDS)
-                    .sync(() -> {
+            new BukkitRunnable() {
+
+                int counter = 0;
+
+                @Override
+                public void run() {
+                    if (loadedBoards.get() == 5) {
                         long endTime = System.nanoTime();
                         long timeToLoad = (endTime - startTime) / 1000000;
-//                        System.out.println("Time it took for LB to load (ms): " + timeToLoad);
+                        System.out.println("Time it took for LB to load (ms): " + timeToLoad);
 //                        if (timeToLoad > 25000) {
 //                            System.out.println("FART FART FART");
 //                            System.out.println("HOLOGRAMS TOOK LONG ASS TIME TO LOAD!?!");
 //                            System.out.println("FART FART FART");
 //                        }
-                        System.out.println("Setting Hologram Visibility");
                         Bukkit.getOnlinePlayers().forEach(player -> {
                             setLeaderboardHologramVisibility(player);
                             DatabaseGame.setGameHologramVisibility(player);
                         });
                         System.out.println("Set Hologram Visibility");
-                    }).execute();
+                        this.cancel();
+                    } else if (counter++ > 10) {
+                        this.cancel();
+                    }
+                }
+            }.runTaskTimer(Warlords.getInstance(), 20, 10);
+//            Warlords.newChain()//newSharedChain(sharedChainName)
+//                    .delay(10, TimeUnit.SECONDS)
+//                    .sync(() -> {
+//                        long endTime = System.nanoTime();
+//                        long timeToLoad = (endTime - startTime) / 1000000;
+////                        System.out.println("Time it took for LB to load (ms): " + timeToLoad);
+////                        if (timeToLoad > 25000) {
+////                            System.out.println("FART FART FART");
+////                            System.out.println("HOLOGRAMS TOOK LONG ASS TIME TO LOAD!?!");
+////                            System.out.println("FART FART FART");
+////                        }
+//                        System.out.println("Setting Hologram Visibility");
+//                        Bukkit.getOnlinePlayers().forEach(player -> {
+//                            setLeaderboardHologramVisibility(player);
+//                            DatabaseGame.setGameHologramVisibility(player);
+//                        });
+//                        System.out.println("Set Hologram Visibility");
+//                    }).execute();
 
+        }
+
+
+    }
+
+    private static void addHologramsToGameType(PlayersCollections value, List<DatabasePlayer> collection, LeaderboardCategory<?> leaderboardCategory, String subTitle) {
+        leaderboardCategory.getLeaderboards().forEach(leaderboard -> {
+            //sorting values
+            collection.sort((o1, o2) -> Leaderboard.compare(leaderboard.getValueFunction().apply(o2), leaderboard.getValueFunction().apply(o1)));
+            //removing all players with 3 or less games from leaderboards if the top player has 10 or more (no one game olivers)
+            if (!collection.isEmpty() && collection.get(0).getPlays() >= 10) {
+                collection.removeIf(databasePlayer -> databasePlayer.getPlays() <= 3);
+            }
+            //resetting sort then adding new sorted values
+            leaderboard.resetSortedPlayers(collection, value);
+            //creating leaderboard
+            value.function.apply(leaderboardCategory).add(addLeaderboard(leaderboard, value, ChatColor.AQUA + ChatColor.BOLD.toString() + value.name + " " + leaderboard.getTitle(), subTitle));
+        });
+    }
+
+    public static LeaderboardCategory<?> getLeaderboardCategoryFromPlayer(Player player) {
+        if (!Warlords.holographicDisplaysEnabled) return null;
+        if (!playerLeaderboardGameType.containsKey(player.getUniqueId()) || playerLeaderboardGameType.get(player.getUniqueId()) == null) {
+            playerLeaderboardGameType.put(player.getUniqueId(), GameType.ALL);
+        }
+        if (!playerLeaderboardCategory.containsKey(player.getUniqueId()) || playerLeaderboardCategory.get(player.getUniqueId()) == null) {
+            playerLeaderboardCategory.put(player.getUniqueId(), Category.ALL);
+        }
+
+        GameType selectedGameType = playerLeaderboardGameType.get(player.getUniqueId());
+        Category selectedCategory = playerLeaderboardCategory.get(player.getUniqueId());
+
+        if (selectedGameType == GameType.ALL) {
+            if (selectedCategory == Category.ALL) {
+                return leaderboardGeneral.getGeneral();
+            } else if (selectedCategory == Category.COMPS) {
+                return leaderboardGeneral.getComps();
+            } else {
+                return leaderboardGeneral.getPubs();
+            }
+        } else {
+            if (selectedCategory == Category.ALL) {
+                return leaderboardCTF.getGeneral();
+            } else if (selectedCategory == Category.COMPS) {
+                return leaderboardCTF.getComps();
+            } else {
+                return leaderboardCTF.getPubs();
+            }
         }
     }
 
     public static void setLeaderboardHologramVisibility(Player player) {
         if (!Warlords.holographicDisplaysEnabled) return;
-        if (!playerLeaderboardHolograms.containsKey(player.getUniqueId()) || playerLeaderboardHolograms.get(player.getUniqueId()) == null) {
-            playerLeaderboardHolograms.put(player.getUniqueId(), 0);
+        if (!playerLeaderboardTime.containsKey(player.getUniqueId()) || playerLeaderboardTime.get(player.getUniqueId()) == null) {
+            playerLeaderboardTime.put(player.getUniqueId(), PlayersCollections.LIFETIME);
         }
-        int selectedLeaderboard = playerLeaderboardHolograms.get(player.getUniqueId());
+        PlayersCollections selectedTime = playerLeaderboardTime.get(player.getUniqueId());
+        LeaderboardCategory<?> leaderboardCategory = getLeaderboardCategoryFromPlayer(player);
 
-        lifeTimeHolograms.forEach(hologram -> hologram.getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.HIDDEN));
-        season5Holograms.forEach(hologram -> hologram.getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.HIDDEN));
-        season4Holograms.forEach(hologram -> hologram.getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.HIDDEN));
-        weeklyHolograms.forEach(hologram -> hologram.getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.HIDDEN));
-        dailyHolograms.forEach(hologram -> hologram.getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.HIDDEN));
+        getAllLeaderboardCategories().forEach(category -> {
+            category.getAllHolograms().forEach(hologram -> hologram.getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.HIDDEN));
+        });
 
-        if (selectedLeaderboard == 0) { //LIFETIME
-            lifeTimeHolograms.forEach(hologram -> hologram.getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.VISIBLE));
-        } else if (selectedLeaderboard == 1) { //SEASON 5
-            season5Holograms.forEach(hologram -> hologram.getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.VISIBLE));
-        } else if (selectedLeaderboard == 2) { //SEASON 4
-            season4Holograms.forEach(hologram -> hologram.getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.VISIBLE));
-        } else if (selectedLeaderboard == 3) { //WEEKLY
-            weeklyHolograms.forEach(hologram -> hologram.getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.VISIBLE));
-        } else { //DAILY
-            dailyHolograms.forEach(hologram -> hologram.getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.VISIBLE));
+        assert leaderboardCategory != null;
+
+        if (selectedTime == PlayersCollections.LIFETIME) {
+            leaderboardCategory.getLifeTimeHolograms().forEach(hologram -> hologram.getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.VISIBLE));
+        } else if (selectedTime == PlayersCollections.SEASON_5) {
+            leaderboardCategory.getSeason5Holograms().forEach(hologram -> hologram.getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.VISIBLE));
+        } else if (selectedTime == PlayersCollections.SEASON_4) {
+            leaderboardCategory.getSeason4Holograms().forEach(hologram -> hologram.getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.VISIBLE));
+        } else if (selectedTime == PlayersCollections.WEEKLY) {
+            leaderboardCategory.getWeeklyHolograms().forEach(hologram -> hologram.getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.VISIBLE));
+        } else {
+            leaderboardCategory.getDailyHolograms().forEach(hologram -> hologram.getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.VISIBLE));
         }
 
         createLeaderboardSwitcherHologram(player);
@@ -271,93 +238,165 @@ public class LeaderboardManager {
     private static void createLeaderboardSwitcherHologram(Player player) {
         if (!Warlords.holographicDisplaysEnabled) return;
         HolographicDisplaysAPI.get(Warlords.getInstance()).getHolograms().stream()
-                .filter(h -> h.getVisibilitySettings().isVisibleTo(player) && h.getPosition().toLocation().equals(leaderboardSwitchLocation))
-                .forEach(Hologram::delete);
-        Hologram leaderboardSwitcher = HolographicDisplaysAPI.get(Warlords.getInstance()).createHologram(leaderboardSwitchLocation);
-        leaderboardSwitcher.getLines().appendText(ChatColor.AQUA.toString() + ChatColor.UNDERLINE + "Click to Toggle");
-        leaderboardSwitcher.getLines().appendText("");
+                .filter(h -> h.getVisibilitySettings().isVisibleTo(player) &&
+                        (h.getPosition().toLocation().equals(leaderboardGameTypeSwitchLocation) ||
+                                h.getPosition().toLocation().equals(leaderboardCategorySwitchLocation) ||
+                                h.getPosition().toLocation().equals(leaderboardTimeSwitchLocation))
+                ).forEach(Hologram::delete);
 
-        int selectedLeaderboard = playerLeaderboardHolograms.get(player.getUniqueId());
-        int lbBefore = getLBBefore(selectedLeaderboard);
-        int lbAfter = getLBAfter(selectedLeaderboard);
-        ClickableHologramLine beforeLine = leaderboardSwitcher.getLines().appendText(ChatColor.GRAY + hologramOrder[lbBefore]);
-        ClickableHologramLine selectedLine = leaderboardSwitcher.getLines().appendText(ChatColor.GREEN + hologramOrder[selectedLeaderboard]);
-        ClickableHologramLine afterLine = leaderboardSwitcher.getLines().appendText(ChatColor.GRAY + hologramOrder[lbAfter]);
-        beforeLine.setClickListener(p -> {
-            playerLeaderboardHolograms.put(player.getUniqueId(), lbBefore);
+        UUID uuid = player.getUniqueId();
+
+        //GAME TYPE
+        Hologram gameTypeSwitch = createSwitchHologram(player, leaderboardGameTypeSwitchLocation);
+        //GameType beforeType = GameType.getBefore(playerLeaderboardGameType.get(uuid));
+        GameType selectedType = playerLeaderboardGameType.get(uuid);
+//        GameType afterType = GameType.getAfter(playerLeaderboardGameType.get(uuid));
+//        gameTypeSwitch.getLines().appendText((selectedType == beforeType ? ChatColor.GREEN : ChatColor.GRAY) + beforeType.name).setClickListener(p -> {
+//            playerLeaderboardGameType.put(uuid, beforeType);
+//            setLeaderboardHologramVisibility(p.getPlayer());
+//        });
+        if (selectedType == GameType.ALL) {
+            gameTypeSwitch.getLines().appendText(ChatColor.GREEN + GameType.ALL.name);
+            gameTypeSwitch.getLines().appendText(ChatColor.GRAY + GameType.CTF.name).setClickListener(p -> {
+                playerLeaderboardGameType.put(uuid, GameType.CTF);
+                setLeaderboardHologramVisibility(p.getPlayer());
+            });
+        } else {
+            gameTypeSwitch.getLines().appendText(ChatColor.GRAY + GameType.ALL.name).setClickListener(p -> {
+                playerLeaderboardGameType.put(uuid, GameType.ALL);
+                setLeaderboardHologramVisibility(p.getPlayer());
+            });
+            gameTypeSwitch.getLines().appendText(ChatColor.GREEN + GameType.CTF.name);
+        }
+        gameTypeSwitch.getVisibilitySettings().setGlobalVisibility(VisibilitySettings.Visibility.HIDDEN);
+        gameTypeSwitch.getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.VISIBLE);
+
+        //CATEGORY
+        Hologram categorySwitch = createSwitchHologram(player, leaderboardCategorySwitchLocation);
+        Category beforeCategory = Category.getBefore(playerLeaderboardCategory.get(uuid));
+        Category selectedCategory = playerLeaderboardCategory.get(uuid);
+        Category afterCategory = Category.getAfter(playerLeaderboardCategory.get(uuid));
+        if (selectedCategory != beforeCategory) {
+            categorySwitch.getLines().appendText(ChatColor.GRAY + beforeCategory.name).setClickListener(p -> {
+                playerLeaderboardCategory.put(uuid, beforeCategory);
+                setLeaderboardHologramVisibility(p.getPlayer());
+            });
+        }
+        categorySwitch.getLines().appendText(ChatColor.GREEN + selectedCategory.name);
+        if (selectedCategory != afterCategory) {
+            categorySwitch.getLines().appendText(ChatColor.GRAY + afterCategory.name).setClickListener(p -> {
+                playerLeaderboardCategory.put(uuid, afterCategory);
+                setLeaderboardHologramVisibility(p.getPlayer());
+            });
+        }
+        categorySwitch.getVisibilitySettings().setGlobalVisibility(VisibilitySettings.Visibility.HIDDEN);
+        categorySwitch.getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.VISIBLE);
+
+        //TIME
+        Hologram timeSwitch = createSwitchHologram(player, leaderboardTimeSwitchLocation);
+        PlayersCollections beforeCollection = PlayersCollections.getBeforeCollection(playerLeaderboardTime.get(uuid));
+        PlayersCollections selectedCollection = playerLeaderboardTime.get(uuid);
+        PlayersCollections afterCollection = PlayersCollections.getAfterCollection(playerLeaderboardTime.get(uuid));
+        timeSwitch.getLines().appendText(ChatColor.GRAY + beforeCollection.name).setClickListener(p -> {
+            playerLeaderboardTime.put(uuid, beforeCollection);
             setLeaderboardHologramVisibility(p.getPlayer());
         });
-        afterLine.setClickListener(p -> {
-            playerLeaderboardHolograms.put(player.getUniqueId(), lbAfter);
+
+        timeSwitch.getLines().appendText(ChatColor.GREEN + selectedCollection.name);
+        timeSwitch.getLines().appendText(ChatColor.GRAY + afterCollection.name).setClickListener(p -> {
+            playerLeaderboardTime.put(uuid, afterCollection);
             setLeaderboardHologramVisibility(p.getPlayer());
         });
+        timeSwitch.getVisibilitySettings().setGlobalVisibility(VisibilitySettings.Visibility.HIDDEN);
+        timeSwitch.getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.VISIBLE);
+    }
 
+    private static Hologram createSwitchHologram(Player player, Location location) {
+        Hologram switchHologram = HolographicDisplaysAPI.get(Warlords.getInstance()).createHologram(location);
+        switchHologram.getLines().appendText(ChatColor.AQUA.toString() + ChatColor.UNDERLINE + "Click to Toggle");
+        switchHologram.getLines().appendText("");
 
-        leaderboardSwitcher.getVisibilitySettings().setGlobalVisibility(VisibilitySettings.Visibility.HIDDEN);
-        leaderboardSwitcher.getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.VISIBLE);
+        return switchHologram;
     }
 
     public static void addPlayerPositionLeaderboards(Player player) {
         if (!Warlords.holographicDisplaysEnabled) return;
         if (enabled) {
             //leaderboards
-            for (Leaderboard leaderboard : leaderboards) {
+            removeLeaderboardPlayerSpecificHolograms(player);
+
+            PlayersCollections selectedTime = playerLeaderboardTime.get(player.getUniqueId());
+            LeaderboardCategory<?> leaderboardCategory = getLeaderboardCategoryFromPlayer(player);
+            if (leaderboardCategory == null) return;
+            List<Hologram> playerHolograms = new ArrayList<>();
+            for (Leaderboard leaderboard : leaderboardCategory.leaderboards) {
                 Location location = leaderboard.getLocation().clone().add(0, -3.5, 0);
-                HolographicDisplaysAPI.get(Warlords.getInstance()).getHolograms().stream()
-                        .filter(hologram -> hologram.getPosition().toLocation().equals(location) && hologram.getVisibilitySettings().isVisibleTo(player))
-                        .forEach(Hologram::delete);
 
                 Hologram hologram = HolographicDisplaysAPI.get(Warlords.getInstance()).createHologram(location);
-                int selectedLeaderboard = playerLeaderboardHolograms.get(player.getUniqueId());
+
                 List<DatabasePlayer> databasePlayers;
-                if (selectedLeaderboard == 0) {
-                    databasePlayers = leaderboard.getSortedAllTime();
-                } else if (selectedLeaderboard == 1) {
-                    databasePlayers = leaderboard.getSortedSeason5();
-                } else if (selectedLeaderboard == 2) {
-                    databasePlayers = leaderboard.getSortedSeason4();
-                } else if (selectedLeaderboard == 3) {
-                    if (Arrays.stream(weeklyIncludedLeaderboardsTitles).noneMatch(l -> l.equals(leaderboard.getTitle()))) {
-                        continue;
-                    }
-                    databasePlayers = leaderboard.getSortedWeekly();
-                } else if (selectedLeaderboard == 4) {
-                    if (Arrays.stream(weeklyIncludedLeaderboardsTitles).noneMatch(l -> l.equals(leaderboard.getTitle()))) {
-                        continue;
-                    }
-                    databasePlayers = leaderboard.getSortedDaily();
-                } else {
-                    return;
+                switch (selectedTime) {
+                    case LIFETIME:
+                        databasePlayers = leaderboard.getSortedAllTime();
+                        break;
+                    case SEASON_5:
+                        databasePlayers = leaderboard.getSortedSeason5();
+                        break;
+                    case SEASON_4:
+                        databasePlayers = leaderboard.getSortedSeason4();
+                        break;
+                    case WEEKLY:
+                        databasePlayers = leaderboard.getSortedWeekly();
+                        break;
+                    case DAILY:
+                        databasePlayers = leaderboard.getSortedDaily();
+                        break;
+                    default:
+                        return;
                 }
+
+//                    if (Arrays.stream(weeklyIncludedLeaderboardsTitles).noneMatch(l -> l.equals(leaderboard.getTitle()))) {
+//                        continue;
+//                    }
+
                 for (int i = 0; i < databasePlayers.size(); i++) {
                     DatabasePlayer databasePlayer = databasePlayers.get(i);
                     if (databasePlayer.getUuid().equals(player.getUniqueId().toString())) {
-                        hologram.getLines().appendText(ChatColor.YELLOW.toString() + ChatColor.BOLD + (i + 1) + ". " + ChatColor.AQUA + ChatColor.BOLD + databasePlayer.getName() + ChatColor.GRAY + ChatColor.BOLD + " - " + ChatColor.YELLOW + ChatColor.BOLD + leaderboard.getStringFunction().apply(databasePlayer));
+                        hologram.getLines().appendText(ChatColor.YELLOW.toString() + ChatColor.BOLD + (i + 1) + ". " + ChatColor.DARK_AQUA + ChatColor.BOLD + databasePlayer.getName() + ChatColor.GRAY + ChatColor.BOLD + " - " + ChatColor.YELLOW + ChatColor.BOLD + leaderboard.getStringFunction().apply(databasePlayer));
                         break;
                     }
                 }
+
                 hologram.getVisibilitySettings().setGlobalVisibility(VisibilitySettings.Visibility.HIDDEN);
                 hologram.getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.VISIBLE);
+
+                playerHolograms.add(hologram);
             }
+
+            playerSpecificHolograms.put(player.getUniqueId(), playerHolograms);
         }
     }
 
     public static void removePlayerSpecificHolograms(Player player) {
         if (!Warlords.holographicDisplaysEnabled) return;
-        leaderboards.forEach(leaderboard -> {
-            Location location = leaderboard.getLocation().clone().add(0, -3.5, 0);
-            HolographicDisplaysAPI.get(Warlords.getInstance()).getHolograms().stream()
-                    .filter(hologram -> hologram.getPosition().toLocation().equals(location) && hologram.getVisibilitySettings().isVisibleTo(player))
-                    .forEach(Hologram::delete);
-        });
+        removeLeaderboardPlayerSpecificHolograms(player);
         HolographicDisplaysAPI.get(Warlords.getInstance()).getHolograms().stream()
-                .filter(h -> h.getVisibilitySettings().isVisibleTo(player) && (h.getPosition().toLocation().equals(DatabaseGame.gameSwitchLocation) || h.getPosition().toLocation().equals(leaderboardSwitchLocation)))
+                .filter(h -> h.getVisibilitySettings().isVisibleTo(player) &&
+                        (h.getPosition().toLocation().equals(DatabaseGame.gameSwitchLocation) ||
+                                h.getPosition().toLocation().equals(leaderboardGameTypeSwitchLocation) ||
+                                h.getPosition().toLocation().equals(leaderboardCategorySwitchLocation) ||
+                                h.getPosition().toLocation().equals(leaderboardTimeSwitchLocation)))
                 .forEach(Hologram::delete);
     }
 
-    private static Hologram addLeaderboard(Leaderboard leaderboard, PlayersCollections collections, String title) {
+    private static void removeLeaderboardPlayerSpecificHolograms(Player player) {
+        playerSpecificHolograms.getOrDefault(player.getUniqueId(), new ArrayList<>()).forEach(Hologram::delete);
+    }
+
+    private static Hologram addLeaderboard(Leaderboard leaderboard, PlayersCollections collections, String title, String subTitle) {
         List<DatabasePlayer> databasePlayers = leaderboard.getSortedPlayers(collections);
         List<String> hologramLines = new ArrayList<>();
+        hologramLines.add(ChatColor.GRAY + subTitle);
         for (int i = 0; i < 10 && i < databasePlayers.size(); i++) {
             DatabasePlayer databasePlayer = databasePlayers.get(i);
             hologramLines.add(ChatColor.YELLOW.toString() + (i + 1) + ". " + ChatColor.AQUA + databasePlayer.getName() + ChatColor.GRAY + " - " + ChatColor.YELLOW + leaderboard.getStringFunction().apply(databasePlayer));
@@ -368,7 +407,7 @@ public class LeaderboardManager {
     private static Hologram createLeaderboard(Leaderboard leaderboard, String title, List<String> hologramLines) {
         Hologram hologram = HolographicDisplaysAPI.get(Warlords.getInstance()).createHologram(leaderboard.getLocation());
         hologram.getLines().appendText(title);
-        hologram.getLines().appendText("");
+        //hologram.getLines().appendText("");
         for (String line : hologramLines) {
             hologram.getLines().appendText(line);
         }
@@ -378,6 +417,7 @@ public class LeaderboardManager {
     }
 
     public static Document getTopPlayersOnLeaderboard() {
+        List<Leaderboard> leaderboards = leaderboardCTF.getComps().getLeaderboards();
         Document document = new Document("date", new Date()).append("total_players", leaderboards.get(0).getSortedWeekly().size());
         for (String title : weeklyExperienceLeaderboards) {
             leaderboards.stream().filter(leaderboard -> leaderboard.getTitle().equals(title)).findFirst().ifPresent(leaderboard -> {
@@ -397,20 +437,86 @@ public class LeaderboardManager {
                 document.append(title.toLowerCase().replace(" ", "_"), totalDocument.append("name", title).append("top", topList));
             });
         }
-        return document;
+        return new Document();
     }
 
-    public static int getLBBefore(int currentLB) {
-        if (currentLB <= 0) {
-            return 4;
-        }
-        return currentLB - 1;
+    public static List<LeaderboardCategory<?>> getAllLeaderboardCategories() {
+        return Stream.of(
+                leaderboardGeneral.getGeneral(),
+                leaderboardGeneral.getComps(),
+                leaderboardGeneral.getPubs(),
+                leaderboardCTF.getGeneral(),
+                leaderboardCTF.getComps(),
+                leaderboardCTF.getPubs()
+        ).collect(Collectors.toList());
     }
 
-    private static int getLBAfter(int currentLB) {
-        if (currentLB >= 4) {
-            return 0;
+    enum GameType {
+        ALL("All Modes"),
+        CTF("Capture The Flag");
+
+        public String name;
+
+        GameType(String name) {
+            this.name = name;
         }
-        return currentLB + 1;
+
+        public static GameType getAfter(GameType gameType) {
+            switch (gameType) {
+                case ALL:
+                    return CTF;
+                case CTF:
+                    return ALL;
+            }
+            return ALL;
+        }
+
+        public static GameType getBefore(GameType gameType) {
+            switch (gameType) {
+                case ALL:
+                    return CTF;
+                case CTF:
+                    return ALL;
+            }
+            return ALL;
+        }
     }
+
+    enum Category {
+        ALL("All Queues"),
+        COMPS("Competitive Queue"),
+        PUBS("Public Queue");
+
+        public String name;
+
+        Category(String name) {
+            this.name = name;
+        }
+
+        public static Category getAfter(Category category) {
+            switch (category) {
+                case ALL:
+                    return COMPS;
+                case COMPS:
+                    return PUBS;
+                case PUBS:
+                    return ALL;
+            }
+            return ALL;
+        }
+
+        public static Category getBefore(Category category) {
+            switch (category) {
+                case ALL:
+                    return PUBS;
+                case COMPS:
+                    return ALL;
+                case PUBS:
+                    return COMPS;
+            }
+            return ALL;
+        }
+    }
+
+
 }

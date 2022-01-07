@@ -1,7 +1,13 @@
 package com.ebicep.warlords.database.repositories.player;
 
 
-import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.ctf.DatabasePlayerCTF;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.general.classescomppub.DatabaseMage;
+import com.ebicep.warlords.database.repositories.player.pojos.general.classescomppub.DatabasePaladin;
+import com.ebicep.warlords.database.repositories.player.pojos.general.classescomppub.DatabaseShaman;
+import com.ebicep.warlords.database.repositories.player.pojos.general.classescomppub.DatabaseWarrior;
+import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -97,14 +103,35 @@ public class PlayerServiceImpl implements PlayerService {
         return playerRepository.bulkOps();
     }
 
-    @Override
-    public List<DatabasePlayer> getPlayersSortedByPlays() {
-        return playerRepository.getPlayersSortedByPlays();
-    }
 
     @Override
     public List<DatabasePlayer> getPlayersSorted(Aggregation aggregation, PlayersCollections collections) {
         return playerRepository.getPlayersSorted(aggregation, collections);
+    }
+
+    @Override
+    public DatabasePlayerCTF convertDocumentToPlayer(Document document) {
+        return playerRepository.convertDocumentToPlayer(document);
+    }
+
+    @Override
+    public DatabaseMage convertDocumentToMage(Document document) {
+        return playerRepository.convertDocumentToMage(document);
+    }
+
+    @Override
+    public DatabaseWarrior convertDocumentToWarrior(Document document) {
+        return playerRepository.convertDocumentToWarrior(document);
+    }
+
+    @Override
+    public DatabasePaladin convertDocumentToPaladin(Document document) {
+        return playerRepository.convertDocumentToPaladin(document);
+    }
+
+    @Override
+    public DatabaseShaman convertDocumentToShaman(Document document) {
+        return playerRepository.convertDocumentToShaman(document);
     }
 
 

@@ -206,7 +206,7 @@ public class WarlordsEvents implements Listener {
 
         Warlords.newChain()
                 .async(() -> {
-                    DatabaseManager.loadPlayer(e.getPlayer().getUniqueId(), PlayersCollections.ALL_TIME, () -> {
+                    DatabaseManager.loadPlayer(e.getPlayer().getUniqueId(), PlayersCollections.LIFETIME, () -> {
                         Warlords.updateHead(e.getPlayer());
                         LeaderboardManager.setLeaderboardHologramVisibility(player);
                         DatabaseGame.setGameHologramVisibility(player);
@@ -572,7 +572,7 @@ public class WarlordsEvents implements Listener {
 
                 if (PermissionHandler.isDefault(player)) {
                     prefixColor = ChatColor.AQUA;
-                    prefix = prefixColor + "[SZN] ";
+                    prefix = prefixColor + "";
                 } else if (PermissionHandler.isGamestarter(player)) {
                     prefixColor = ChatColor.YELLOW;
                     prefix = prefixColor + "[GS] ";

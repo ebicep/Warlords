@@ -5,6 +5,8 @@ import com.ebicep.warlords.classes.internal.AbstractTotemBase;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.effects.circle.DoubleLineEffect;
+import com.ebicep.warlords.player.Classes;
+import com.ebicep.warlords.player.ClassesSkillBoosts;
 import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.ParticleEffect;
@@ -26,6 +28,7 @@ public class DeathsDebt extends AbstractTotemBase {
     private float delayedDamage = 0;
     private double timeLeftRespite = 0;
     private double timeLeftDebt = 0;
+    private float selfDamageInPercentPerSecond = .1667f;
 
     public DeathsDebt() {
         super("Death's Debt", 0, 0, 60f + 10.49f, 20, -1, 100);
@@ -33,13 +36,14 @@ public class DeathsDebt extends AbstractTotemBase {
 
     @Override
     public void updateDescription(Player player) {
+        int selfDamagePercent = Classes.getSelectedBoost(player) == ClassesSkillBoosts.DEATHS_DEBT ? 80 : 100;
         description = "§2Spirits’ Respite§7: Place down a totem that\n" +
                 "§7delays §c100% §7of incoming damage towards\n" +
                 "§7yourself. Transforms into §dDeath’s Debt §7after\n" +
                 "§64 §7- §66 §7seconds (increases with higher health),\n" +
                 "§7or when you exit its §e" + respiteRadius + " §7block radius.\n" +
                 "\n" +
-                "§dDeath’s Debt§7: Take §c100% §7of the damage delayed\n" +
+                "§dDeath’s Debt§7: Take §c" + selfDamagePercent + "% §7of the damage delayed\n" +
                 "§7by §2Spirit's Respite §7over §66 §7seconds. The totem\n" +
                 "§7will heal nearby allies for §a15% §7of all damage\n" +
                 "§7that you take. If you survive, deal §c15% §7of the" +
@@ -182,7 +186,7 @@ public class DeathsDebt extends AbstractTotemBase {
             player1.playSound(totemStand.getLocation(), "shaman.lightningbolt.impact", 2, 1.5F);
         }
         // 100% of damage over 6 seconds
-        float damage = (tempDeathsDebt.getDelayedDamage() * .1667f);
+        float damage = (tempDeathsDebt.getDelayedDamage() * getSelfDamageInPercentPerSecond());
         float debtTrueDamage = (float) (damage * Math.pow(.8, wp.getCooldownManager().getCooldown(SpiritLink.class).size()));
         // Player damage
         wp.addDamageInstance(wp, "",
@@ -248,5 +252,13 @@ public class DeathsDebt extends AbstractTotemBase {
 
     public void setTimeLeftDebt(double timeLeftDebt) {
         this.timeLeftDebt = timeLeftDebt;
+    }
+
+    public float getSelfDamageInPercentPerSecond() {
+        return selfDamageInPercentPerSecond;
+    }
+
+    public void setSelfDamageInPercentPerSecond(float selfDamageInPercentPerSecond) {
+        this.selfDamageInPercentPerSecond = selfDamageInPercentPerSecond;
     }
 }

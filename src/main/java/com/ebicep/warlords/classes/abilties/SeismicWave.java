@@ -19,6 +19,8 @@ import java.util.List;
 
 public class SeismicWave extends AbstractAbility {
 
+    private float velocity = 1.25f;
+
     public SeismicWave(String name, float minDamageHeal, float maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier) {
         super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
     }
@@ -57,7 +59,7 @@ public class SeismicWave extends AbstractAbility {
                         .closestFirst(wp)
                 ) {
                     playersHit.add(p);
-                    final Vector v = player.getLocation().toVector().subtract(p.getLocation().toVector()).normalize().multiply(-1.25).setY(0.25);
+                    final Vector v = player.getLocation().toVector().subtract(p.getLocation().toVector()).normalize().multiply(-velocity).setY(0.25);
                     p.setVelocity(v, false);
                     p.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
                 }
@@ -142,5 +144,13 @@ public class SeismicWave extends AbstractAbility {
         fallingBlock.setVelocity(new Vector(0, .14, 0));
         fallingBlock.setDropItem(false);
         return fallingBlock;
+    }
+
+    public float getVelocity() {
+        return velocity;
+    }
+
+    public void setVelocity(float velocity) {
+        this.velocity = velocity;
     }
 }

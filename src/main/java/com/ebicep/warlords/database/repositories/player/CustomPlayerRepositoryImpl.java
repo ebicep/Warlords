@@ -1,6 +1,12 @@
 package com.ebicep.warlords.database.repositories.player;
 
-import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.ctf.DatabasePlayerCTF;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.general.classescomppub.DatabaseMage;
+import com.ebicep.warlords.database.repositories.player.pojos.general.classescomppub.DatabasePaladin;
+import com.ebicep.warlords.database.repositories.player.pojos.general.classescomppub.DatabaseShaman;
+import com.ebicep.warlords.database.repositories.player.pojos.general.classescomppub.DatabaseWarrior;
+import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -58,8 +64,33 @@ public class CustomPlayerRepositoryImpl implements CustomPlayerRepository {
     public List<DatabasePlayer> getPlayersSorted(Aggregation aggregation, PlayersCollections collections) {
         return mongoTemplate.aggregate(aggregation,
                         collections.collectionName,
-                DatabasePlayer.class)
+                        DatabasePlayer.class)
                 .getMappedResults();
+    }
+
+    @Override
+    public DatabasePlayerCTF convertDocumentToPlayer(Document document) {
+        return mongoTemplate.getConverter().read(DatabasePlayerCTF.class, document);
+    }
+
+    @Override
+    public DatabaseMage convertDocumentToMage(Document document) {
+        return mongoTemplate.getConverter().read(DatabaseMage.class, document);
+    }
+
+    @Override
+    public DatabaseWarrior convertDocumentToWarrior(Document document) {
+        return mongoTemplate.getConverter().read(DatabaseWarrior.class, document);
+    }
+
+    @Override
+    public DatabasePaladin convertDocumentToPaladin(Document document) {
+        return mongoTemplate.getConverter().read(DatabasePaladin.class, document);
+    }
+
+    @Override
+    public DatabaseShaman convertDocumentToShaman(Document document) {
+        return mongoTemplate.getConverter().read(DatabaseShaman.class, document);
     }
 
 }

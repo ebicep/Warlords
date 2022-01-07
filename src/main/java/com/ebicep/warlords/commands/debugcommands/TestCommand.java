@@ -1,21 +1,19 @@
 package com.ebicep.warlords.commands.debugcommands;
 
-import com.ebicep.customentities.npc.traits.GameStartTrait;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.BaseCommand;
-import com.ebicep.warlords.commands.miscellaneouscommands.MessageCommand;
+import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.cache.MultipleCacheResolver;
+import com.ebicep.warlords.database.leaderboards.Leaderboard;
+import com.ebicep.warlords.database.leaderboards.LeaderboardManager;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
-import com.ebicep.warlords.database.repositories.player.pojos.DatabaseSpecialization;
-import com.ebicep.warlords.database.repositories.player.pojos.DatabaseWarlordsClass;
-import com.ebicep.warlords.maps.GameMap;
-import com.ebicep.warlords.maps.state.PreLobbyState;
+import com.ebicep.warlords.database.repositories.player.pojos.ctf.DatabasePlayerCTF;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayerCompStats;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.github.benmanes.caffeine.cache.Cache;
-import com.mongodb.client.model.WriteModel;
-import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.trait.TraitInfo;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.Filters;
 import org.bson.Document;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -24,12 +22,50 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.springframework.cache.caffeine.CaffeineCache;
 
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
-
 
 public class TestCommand implements CommandExecutor {
+
+    private static void printCache() {
+        Cache<Object, Object> cache = ((CaffeineCache) MultipleCacheResolver.playersCacheManager.getCache(PlayersCollections.LIFETIME.cacheName)).getNativeCache();
+        System.out.println("CACHE - " + cache.asMap());
+    }
+
+//    private void subtractSpecs(DatabasePlayer databasePlayer, DatabasePlayer lifeTime, DatabasePlayer season4) {
+//        for (DatabaseWarlordsClass aClass : databasePlayer.getClasses()) {
+//            DatabaseWarlordsClass lifeTimeClass = lifeTime.getClass(aClass);
+//            DatabaseWarlordsClass season4Class = season4.getClass(aClass);
+//            for (int i = 0; i < aClass.getSpecs().length; i++) {
+//                DatabaseSpecialization spec = aClass.getSpecs()[i];
+//                DatabaseSpecialization lifeTimeSpec = lifeTimeClass.getSpecs()[i];
+//                DatabaseSpecialization season4Spec = season4Class.getSpecs()[i];
+//                spec.setKills(lifeTimeSpec.getKills() - season4Spec.getKills());
+//                spec.setAssists(lifeTimeSpec.getAssists() - season4Spec.getAssists());
+//                spec.setDeaths(lifeTimeSpec.getDeaths() - season4Spec.getDeaths());
+//                spec.setWins(lifeTimeSpec.getWins() - season4Spec.getWins());
+//                spec.setLosses(lifeTimeSpec.getLosses() - season4Spec.getLosses());
+//                spec.setPlays(lifeTimeSpec.getPlays() - season4Spec.getPlays());
+//                spec.setFlagsCaptured(lifeTimeSpec.getFlagsCaptured() - season4Spec.getFlagsCaptured());
+//                spec.setFlagsReturned(lifeTimeSpec.getFlagsReturned() - season4Spec.getFlagsReturned());
+//                spec.setDamage(lifeTimeSpec.getDamage() - season4Spec.getDamage());
+//                spec.setHealing(lifeTimeSpec.getHealing() - season4Spec.getHealing());
+//                spec.setAbsorbed(lifeTimeSpec.getAbsorbed() - season4Spec.getAbsorbed());
+////                spec.setWeapon(lifeTimeSpec.getWeapon());
+//                spec.setExperience(lifeTimeSpec.getExperience() - season4Spec.getExperience());
+//            }
+//            aClass.setKills(lifeTimeClass.getKills() - season4Class.getKills());
+//            aClass.setAssists(lifeTimeClass.getAssists() - season4Class.getAssists());
+//            aClass.setDeaths(lifeTimeClass.getDeaths() - season4Class.getDeaths());
+//            aClass.setWins(lifeTimeClass.getWins() - season4Class.getWins());
+//            aClass.setLosses(lifeTimeClass.getLosses() - season4Class.getLosses());
+//            aClass.setPlays(lifeTimeClass.getPlays() - season4Class.getPlays());
+//            aClass.setFlagsCaptured(lifeTimeClass.getFlagsCaptured() - season4Class.getFlagsCaptured());
+//            aClass.setFlagsReturned(lifeTimeClass.getFlagsReturned() - season4Class.getFlagsReturned());
+//            aClass.setDamage(lifeTimeClass.getDamage() - season4Class.getDamage());
+//            aClass.setHealing(lifeTimeClass.getHealing() - season4Class.getHealing());
+//            aClass.setAbsorbed(lifeTimeClass.getAbsorbed() - season4Class.getAbsorbed());
+//            aClass.setExperience(lifeTimeClass.getExperience() - season4Class.getExperience());
+//        }
+//    }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
@@ -44,7 +80,42 @@ public class TestCommand implements CommandExecutor {
 //            System.out.println(ExperienceManager.getExpFromGameStats(warlordsPlayer, true));
         }
 
-        System.out.println(Warlords.game.getState());
+        Player player = (Player) sender;
+
+//        for (DatabasePlayer databasePlayer : DatabaseManager.playerService.findAll(PlayersCollections.TEST)) {
+//            DatabaseManager.playerService.update(databasePlayer, PlayersCollections.TEST);
+//            break;
+//        }
+
+//        MongoCollection<Document> mongoCollection = DatabaseManager.warlordsDatabase.getCollection(PlayersCollections.WEEKLY.collectionName);
+//        for (DatabasePlayer databasePlayer : DatabaseManager.playerService.findAll(PlayersCollections.WEEKLY)) {
+//            Document document = mongoCollection.find().filter(Filters.eq("uuid", databasePlayer.getUuid())).first();
+//            assert document != null;
+//            databasePlayer.getCompStats().setMage(DatabaseManager.playerService.convertDocumentToMage(document.get("mage", Document.class)));
+//            databasePlayer.getCompStats().setWarrior(DatabaseManager.playerService.convertDocumentToWarrior(document.get("warrior", Document.class)));
+//            databasePlayer.getCompStats().setPaladin(DatabaseManager.playerService.convertDocumentToPaladin(document.get("paladin", Document.class)));
+//            databasePlayer.getCompStats().setShaman(DatabaseManager.playerService.convertDocumentToShaman(document.get("shaman", Document.class)));
+//            DatabaseManager.playerService.update(databasePlayer, PlayersCollections.WEEKLY);
+//        }
+
+//        MongoCollection<Document> mongoCollection = DatabaseManager.warlordsDatabase.getCollection(PlayersCollections.NEW_SEASON_WEEKLY.collectionName);
+//        for (DatabasePlayer databasePlayer : DatabaseManager.playerService.findAll(PlayersCollections.TEST)) {
+//            DatabasePlayerCTF databasePlayerCTF = databasePlayer.getCompStats().getCtfStats();
+//            DatabasePlayerCompStats compStats = databasePlayer.getCompStats();
+//            compStats.setKills(databasePlayerCTF.getKills());
+//            compStats.setAssists(databasePlayerCTF.getAssists());
+//            compStats.setDeaths(databasePlayerCTF.getDeaths());
+//            compStats.setWins(databasePlayerCTF.getWins());
+//            compStats.setLosses(databasePlayerCTF.getLosses());
+//            compStats.setPlays(databasePlayerCTF.getPlays());
+//            compStats.setDamage(databasePlayerCTF.getDamage());
+//            compStats.setHealing(databasePlayerCTF.getHealing());
+//            compStats.setAbsorbed(databasePlayerCTF.getAbsorbed());
+//            compStats.setExperience(databasePlayerCTF.getExperience());
+//
+//            DatabaseManager.playerService.update(databasePlayer, PlayersCollections.TEST);
+//        }
+
 
 //        for (int i = 0; i < 9; i++) {
 //            hologram.getLines().appendText("test text"); //ChatColor.YELLOW.toString() + (i + 1)+ ". " + ChatColor.AQUA + "Test Name");
@@ -136,9 +207,9 @@ public class TestCommand implements CommandExecutor {
 
 //        System.out.println(LeaderboardManager.leaderboards.get(0).getSortedAllTime().get(0));
 //        System.out.println(LeaderboardManager.leaderboards.get(0).getSortedWeekly().get(0));
-        DecimalFormat decimalFormat = new DecimalFormat("#.##");
+//        DecimalFormat decimalFormat = new DecimalFormat("#.##");
 //        weeklyLeaderboards.insertOne(document);
-        List<WriteModel<Document>> updates = new ArrayList<>();
+//        List<WriteModel<Document>> updates = new ArrayList<>();
 
 //        playersInformation.find().forEach((Consumer<? super Document>) document -> {
 //            ExperienceManager.giveExpFromCurrentStats(UUID.fromString(document.getString("uuid")));
@@ -249,50 +320,8 @@ public class TestCommand implements CommandExecutor {
         return true;
     }
 
-    private void subtractSpecs(DatabasePlayer databasePlayer, DatabasePlayer lifeTime, DatabasePlayer season4) {
-        for (DatabaseWarlordsClass aClass : databasePlayer.getClasses()) {
-            DatabaseWarlordsClass lifeTimeClass = lifeTime.getClass(aClass);
-            DatabaseWarlordsClass season4Class = season4.getClass(aClass);
-            for (int i = 0; i < aClass.getSpecs().length; i++) {
-                DatabaseSpecialization spec = aClass.getSpecs()[i];
-                DatabaseSpecialization lifeTimeSpec = lifeTimeClass.getSpecs()[i];
-                DatabaseSpecialization season4Spec = season4Class.getSpecs()[i];
-                spec.setKills(lifeTimeSpec.getKills() - season4Spec.getKills());
-                spec.setAssists(lifeTimeSpec.getAssists() - season4Spec.getAssists());
-                spec.setDeaths(lifeTimeSpec.getDeaths() - season4Spec.getDeaths());
-                spec.setWins(lifeTimeSpec.getWins() - season4Spec.getWins());
-                spec.setLosses(lifeTimeSpec.getLosses() - season4Spec.getLosses());
-                spec.setPlays(lifeTimeSpec.getPlays() - season4Spec.getPlays());
-                spec.setFlagsCaptured(lifeTimeSpec.getFlagsCaptured() - season4Spec.getFlagsCaptured());
-                spec.setFlagsReturned(lifeTimeSpec.getFlagsReturned() - season4Spec.getFlagsReturned());
-                spec.setDamage(lifeTimeSpec.getDamage() - season4Spec.getDamage());
-                spec.setHealing(lifeTimeSpec.getHealing() - season4Spec.getHealing());
-                spec.setAbsorbed(lifeTimeSpec.getAbsorbed() - season4Spec.getAbsorbed());
-                spec.setWeapon(lifeTimeSpec.getWeapon());
-                spec.setExperience(lifeTimeSpec.getExperience() - season4Spec.getExperience());
-            }
-            aClass.setKills(lifeTimeClass.getKills() - season4Class.getKills());
-            aClass.setAssists(lifeTimeClass.getAssists() - season4Class.getAssists());
-            aClass.setDeaths(lifeTimeClass.getDeaths() - season4Class.getDeaths());
-            aClass.setWins(lifeTimeClass.getWins() - season4Class.getWins());
-            aClass.setLosses(lifeTimeClass.getLosses() - season4Class.getLosses());
-            aClass.setPlays(lifeTimeClass.getPlays() - season4Class.getPlays());
-            aClass.setFlagsCaptured(lifeTimeClass.getFlagsCaptured() - season4Class.getFlagsCaptured());
-            aClass.setFlagsReturned(lifeTimeClass.getFlagsReturned() - season4Class.getFlagsReturned());
-            aClass.setDamage(lifeTimeClass.getDamage() - season4Class.getDamage());
-            aClass.setHealing(lifeTimeClass.getHealing() - season4Class.getHealing());
-            aClass.setAbsorbed(lifeTimeClass.getAbsorbed() - season4Class.getAbsorbed());
-            aClass.setExperience(lifeTimeClass.getExperience() - season4Class.getExperience());
-        }
-    }
-
     public void register(Warlords instance) {
         instance.getCommand("test").setExecutor(this);
         //instance.getCommand("class").setTabCompleter(this);
-    }
-
-    private static void printCache() {
-        Cache<Object, Object> cache = ((CaffeineCache) MultipleCacheResolver.playersCacheManager.getCache(PlayersCollections.ALL_TIME.cacheName)).getNativeCache();
-        System.out.println("CACHE - " + cache.asMap());
     }
 }

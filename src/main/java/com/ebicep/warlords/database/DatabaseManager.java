@@ -7,7 +7,7 @@ import com.ebicep.warlords.database.repositories.games.GameService;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame;
 import com.ebicep.warlords.database.repositories.player.PlayerService;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.player.*;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
@@ -31,7 +31,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Function;
 
 import static com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame.previousGames;
 import static com.mongodb.client.model.Filters.and;
@@ -56,11 +55,12 @@ public class DatabaseManager {
 
         //Loading all online players
         Bukkit.getOnlinePlayers().forEach(player -> {
-            loadPlayer(player.getUniqueId(), PlayersCollections.ALL_TIME, () -> {
+            loadPlayer(player.getUniqueId(), PlayersCollections.LIFETIME, () -> {
                 Warlords.playerScoreboards.get(player.getUniqueId()).giveMainLobbyScoreboard();
             });
             updateName(player.getUniqueId());
         });
+
 
         //Loading last 5 games
         Warlords.newChain()
@@ -122,6 +122,8 @@ public class DatabaseManager {
                         .execute();
             }
         }
+
+
     }
 
     public static void loadPlayer(UUID uuid, PlayersCollections collections, Runnable callback) {
@@ -136,13 +138,13 @@ public class DatabaseManager {
                     })
                     .asyncLast((name) -> playerService.create(new DatabasePlayer(uuid, name), collections))
                     .sync(() -> {
-                        if (collections == PlayersCollections.ALL_TIME) {
+                        if (collections == PlayersCollections.LIFETIME) {
                             loadPlayerInfo(Bukkit.getPlayer(uuid));
                             callback.run();
                         }
                     }).execute();
         } else {
-            if (collections == PlayersCollections.ALL_TIME) {
+            if (collections == PlayersCollections.LIFETIME) {
                 Warlords.newChain()
                         .sync(() -> {
                             loadPlayerInfo(Bukkit.getPlayer(uuid));

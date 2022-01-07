@@ -1,7 +1,5 @@
 package com.ebicep.warlords.player;
 
-import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
 import com.ebicep.warlords.maps.Team;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
