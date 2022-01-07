@@ -417,25 +417,26 @@ public class LeaderboardManager {
     }
 
     public static Document getTopPlayersOnLeaderboard() {
-//        Document document = new Document("date", new Date()).append("total_players", leaderboards.get(0).getSortedWeekly().size());
-//        for (String title : weeklyExperienceLeaderboards) {
-//            leaderboards.stream().filter(leaderboard -> leaderboard.getTitle().equals(title)).findFirst().ifPresent(leaderboard -> {
-//                Number[] numbers = leaderboard.getTopThreeValues();
-//                String[] names = leaderboard.getTopThreePlayerNames(numbers, DatabasePlayer::getName);
-//                String[] uuids = leaderboard.getTopThreePlayerNames(numbers, DatabasePlayer::getUuid);
-//                List<Document> topList = new ArrayList<>();
-//                for (int i = 0; i < numbers.length; i++) {
-//                    topList.add(new Document("names", names[i]).append("uuids", uuids[i]).append("amount", numbers[i]));
-//                }
-//                Document totalDocument = new Document();
-//                if (numbers[0] instanceof Integer) {
-//                    totalDocument = new Document("total", Arrays.stream(numbers).mapToInt(Number::intValue).sum());
-//                } else if (numbers[0] instanceof Long) {
-//                    totalDocument = new Document("total", Arrays.stream(numbers).mapToLong(Number::longValue).sum());
-//                }
-//                document.append(title.toLowerCase().replace(" ", "_"), totalDocument.append("name", title).append("top", topList));
-//            });
-//        }
+        List<Leaderboard> leaderboards = leaderboardCTF.getComps().getLeaderboards();
+        Document document = new Document("date", new Date()).append("total_players", leaderboards.get(0).getSortedWeekly().size());
+        for (String title : weeklyExperienceLeaderboards) {
+            leaderboards.stream().filter(leaderboard -> leaderboard.getTitle().equals(title)).findFirst().ifPresent(leaderboard -> {
+                Number[] numbers = leaderboard.getTopThreeValues();
+                String[] names = leaderboard.getTopThreePlayerNames(numbers, DatabasePlayer::getName);
+                String[] uuids = leaderboard.getTopThreePlayerNames(numbers, DatabasePlayer::getUuid);
+                List<Document> topList = new ArrayList<>();
+                for (int i = 0; i < numbers.length; i++) {
+                    topList.add(new Document("names", names[i]).append("uuids", uuids[i]).append("amount", numbers[i]));
+                }
+                Document totalDocument = new Document();
+                if (numbers[0] instanceof Integer) {
+                    totalDocument = new Document("total", Arrays.stream(numbers).mapToInt(Number::intValue).sum());
+                } else if (numbers[0] instanceof Long) {
+                    totalDocument = new Document("total", Arrays.stream(numbers).mapToLong(Number::longValue).sum());
+                }
+                document.append(title.toLowerCase().replace(" ", "_"), totalDocument.append("name", title).append("top", topList));
+            });
+        }
         return new Document();
     }
 

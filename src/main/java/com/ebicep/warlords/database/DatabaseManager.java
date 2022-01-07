@@ -15,6 +15,7 @@ import com.mongodb.client.MongoDatabase;
 import org.apache.commons.io.IOUtils;
 import org.bson.Document;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -26,6 +27,7 @@ import org.springframework.context.support.AbstractApplicationContext;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
@@ -68,7 +70,7 @@ public class DatabaseManager {
                     LeaderboardManager.addHologramLeaderboards(UUID.randomUUID().toString());
                 })
                 .execute();
-/*
+
         MongoCollection<Document> resetTimings = warlordsDatabase.getCollection("Reset_Timings");
         //checking weekly date, if over 10,000 minutes (10080 == 1 week) reset weekly
         Document weeklyDocumentInfo = resetTimings.find().filter(eq("time", "weekly")).first();
@@ -121,7 +123,7 @@ public class DatabaseManager {
             }
         }
 
-         */
+
     }
 
     public static void loadPlayer(UUID uuid, PlayersCollections collections, Runnable callback) {
