@@ -61,7 +61,7 @@ public abstract class LeaderboardGameType<T extends AbstractDatabaseStatInformat
 
         leaderboards.add(new Leaderboard("DHP", new Location(world, -2619.5, 66.5, 721.5),
                 databasePlayer -> leaderboardCategory.statFunction.apply(databasePlayer).getDHP(),
-                databasePlayer -> NumberFormat.addCommaAndRound(leaderboardCategory.statFunction.apply(databasePlayer).getWins())));
+                databasePlayer -> NumberFormat.addCommaAndRound(leaderboardCategory.statFunction.apply(databasePlayer).getDHP())));
         leaderboards.add(new Leaderboard("DHP Per Game", new Location(world, -2546.5, 56, 712.5),
                 databasePlayer -> leaderboardCategory.statFunction.apply(databasePlayer).getDHPPerGame(),
                 databasePlayer -> NumberFormat.addCommaAndRound(Math.round((double) (leaderboardCategory.statFunction.apply(databasePlayer).getDHPPerGame()) * 10) / 10d)));

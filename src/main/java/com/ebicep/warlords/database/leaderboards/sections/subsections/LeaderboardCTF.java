@@ -40,13 +40,13 @@ public class LeaderboardCTF extends LeaderboardGameType<DatabasePlayerCTF> {
                 databasePlayer -> leaderboardCategory.statFunction.apply(databasePlayer).getMage().getExperience(),
                 databasePlayer -> NumberFormat.addCommaAndRound(leaderboardCategory.statFunction.apply(databasePlayer).getMage().getExperience())));
         leaderboards.add(new Leaderboard("Warrior Experience", new Location(world, -2519.5, 58, 741.5),
-                databasePlayer -> leaderboardCategory.statFunction.apply(databasePlayer).getMage().getExperience(),
+                databasePlayer -> leaderboardCategory.statFunction.apply(databasePlayer).getWarrior().getExperience(),
                 databasePlayer -> NumberFormat.addCommaAndRound(leaderboardCategory.statFunction.apply(databasePlayer).getWarrior().getExperience())));
         leaderboards.add(new Leaderboard("Paladin Experience", new Location(world, -2519.5, 58, 747.5),
-                databasePlayer -> leaderboardCategory.statFunction.apply(databasePlayer).getMage().getExperience(),
+                databasePlayer -> leaderboardCategory.statFunction.apply(databasePlayer).getPaladin().getExperience(),
                 databasePlayer -> NumberFormat.addCommaAndRound(leaderboardCategory.statFunction.apply(databasePlayer).getPaladin().getExperience())));
         leaderboards.add(new Leaderboard("Shaman Experience", new Location(world, -2520.5, 58, 753.5),
-                databasePlayer -> leaderboardCategory.statFunction.apply(databasePlayer).getMage().getExperience(),
+                databasePlayer -> leaderboardCategory.statFunction.apply(databasePlayer).getShaman().getExperience(),
                 databasePlayer -> NumberFormat.addCommaAndRound(leaderboardCategory.statFunction.apply(databasePlayer).getShaman().getExperience())));
     }
 }
