@@ -114,7 +114,7 @@ public class SoulShackle extends AbstractAbility {
                                         particleLoc.setY(playerLoc.getY() + i / 5D);
                                         particleLoc.setZ(playerLoc.getZ() + Math.cos(angle) * width);
 
-                                        ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(0, 0, 0), particleLoc, 500);
+                                        ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(25, 25, 25), particleLoc, 500);
                                     }
                                 }
                                 for (Player player1 : player.getWorld().getPlayers()) {
@@ -124,7 +124,7 @@ public class SoulShackle extends AbstractAbility {
                                 this.cancel();
                             }
                         }
-                    }.runTaskTimer(Warlords.getInstance(), 0, 4),
+                    }.runTaskTimer(Warlords.getInstance(), 0, 10),
                     System.currentTimeMillis()
             );
         }

@@ -87,7 +87,7 @@ public abstract class AbstractStrikeBase extends AbstractAbility {
                         } else if (this instanceof RighteousStrike) {
                             for (Player player1 : Bukkit.getOnlinePlayers()) {
                                 player1.playSound(nearPlayer.getLocation(), "rogue.vindicatorstrike.activation", 2, 0.7f);
-                                player1.playSound(nearPlayer.getLocation(), "shaman.earthenspike.impact", 2, 1.75f);
+                                player1.playSound(nearPlayer.getLocation(), "shaman.earthenspike.impact", 2, 2);
                             }
                             for (int i = 0; i < 7; i++) {
                                 ParticleEffect.REDSTONE.display(

@@ -384,6 +384,11 @@ public final class WarlordsPlayer {
                     if (!cooldownManager.getCooldownFromName("Flag Damage Reduction").isEmpty()) {
                         damageValue *= .9;
                     }
+
+                    // Checks whether the player has Vindicate active.
+                    if (!cooldownManager.getCooldownFromName("Vindicate Resistance").isEmpty()) {
+                        damageValue *= .75;
+                    }
                 }
             }
 

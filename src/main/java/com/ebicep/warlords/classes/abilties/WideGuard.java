@@ -22,7 +22,16 @@ public class WideGuard extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "PLACEHOLDER";
+        description = "§7Create a bubble shield around you that\n" +
+                "§7lasts §64 §7seconds. All projectiles that pass through\n" +
+                "§7the barrier have their damage reduced by §c70%§7.\n" +
+                "§7(scales down with the amount of allies inside\n" +
+                "§7the bubble. Minimum §c20%§7.) " +
+                "\n\n" +
+                "§7After §64 §7seconds, the bubble will\n" +
+                "§7burst, healing all allies for up to\n" +
+                "a600 §7+ §a12% §7missing health based on how\n" +
+                "§7long they've been in the bubble.";
     }
 
     @Override
@@ -51,7 +60,7 @@ public class WideGuard extends AbstractAbility {
                         player1.playSound(player.getLocation(), "warrior.intervene.impact", 2, 0.2f);
                     }
                 }
-            }.runTaskLater(Warlords.getInstance(), 5),
+            }.runTaskLater(Warlords.getInstance(), 3),
             System.currentTimeMillis()
         );
 
@@ -76,6 +85,7 @@ public class WideGuard extends AbstractAbility {
                             this.cancel();
 
                             for (Player player1 : player.getWorld().getPlayers()) {
+                                player1.playSound(player.getLocation(), "paladin.holyradiance.activation", 2, 1.3f);
                                 player1.playSound(player.getLocation(), Sound.AMBIENCE_THUNDER, 2, 1.5f);
                             }
 
@@ -84,7 +94,7 @@ public class WideGuard extends AbstractAbility {
                             circle.playEffects();
                         }
                     }
-                }.runTaskTimer(Warlords.getInstance(), 10, 8),
+                }.runTaskTimer(Warlords.getInstance(), 6, 4),
                 System.currentTimeMillis()
         );
     }
