@@ -110,28 +110,8 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
     @Override
-    public DatabasePlayerCTF convertDocumentToPlayer(Document document) {
-        return playerRepository.convertDocumentToPlayer(document);
-    }
-
-    @Override
-    public DatabaseMage convertDocumentToMage(Document document) {
-        return playerRepository.convertDocumentToMage(document);
-    }
-
-    @Override
-    public DatabaseWarrior convertDocumentToWarrior(Document document) {
-        return playerRepository.convertDocumentToWarrior(document);
-    }
-
-    @Override
-    public DatabasePaladin convertDocumentToPaladin(Document document) {
-        return playerRepository.convertDocumentToPaladin(document);
-    }
-
-    @Override
-    public DatabaseShaman convertDocumentToShaman(Document document) {
-        return playerRepository.convertDocumentToShaman(document);
+    public <T> T convertDocumentToClass(Document document, Class<T> clazz) {
+        return playerRepository.convertDocumentToClass(document, clazz);
     }
 
 

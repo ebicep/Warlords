@@ -13,7 +13,7 @@ public enum PlayersCollections {
     SEASON_4("Season 4", "Players_Information_Season_4", "playersSeason4", LeaderboardCategory::getSeason4Holograms),
     WEEKLY("Weekly", "Players_Information_Weekly", "playersWeekly", LeaderboardCategory::getWeeklyHolograms),
     DAILY("Daily", "Players_Information_Daily", "playersDaily", LeaderboardCategory::getDailyHolograms),
-    //TEMP("Temp", "Temp", "Temp", null),
+    //TEMP2("TEMP2", "TEMP2", "TEMP2", null),
 
     ;
 
