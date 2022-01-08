@@ -47,10 +47,6 @@ public class PreLobbyState implements State, TimerDebugAble {
     public State run() {
         int players = game.playersCount();
         if (players >= game.getMap().getMinPlayers() || game.isPrivate()) {
-            // Debug
-            System.out.println("Game State =" + game.getState());
-            System.out.println("Game Players =" + game.getPlayers());
-            System.out.println("isPrivate =" + game.isPrivate());
             if (timer % 20 == 0) {
                 int time = timer / 20;
                 game.forEachOnlinePlayer((player, team) -> {

@@ -20,7 +20,7 @@ public enum GameMap {
     RIFT(
             "Rift",
             32,
-            1,
+            12,
             900 * 20, // seconds * ticks
             30 * 20, // seconds * ticks
             "",
@@ -56,7 +56,7 @@ public enum GameMap {
     CROSSFIRE(
             "Crossfire",
             32,
-            1,
+            12,
             900 * 20, // seconds * ticks
             30 * 20, // seconds * ticks
             "",
@@ -92,7 +92,7 @@ public enum GameMap {
     WARSONG(
             "Warsong Remastered",
             32,
-            1,
+            12,
             900 * 20,
             30 * 20,
             "",
@@ -128,7 +128,7 @@ public enum GameMap {
     GORGE(
             "Gorge Reforged [NOT PLAYABLE]",
             32,
-            1,
+            12,
             900 * 20,
             30 * 20,
             "",
@@ -166,7 +166,7 @@ public enum GameMap {
     VALLEY(
             "Valley",
             32,
-            1,
+            12,
             900 * 20,
             30 * 20,
             "",
