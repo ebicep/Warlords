@@ -37,13 +37,7 @@ public class PreLobbyState implements State, TimerDebugAble {
     public void begin() {
         timer = game.getMap().getCountdownTimerInTicks();
         Gates.changeGates(game.getMap(), false);
-//        if(!game.isPrivate()) {
-//            //map rotation for pubs
-//            if(game.getMap() == GameMap.RIFT) game.changeMap(GameMap.CROSSFIRE);
-//            else if(game.getMap() == GameMap.CROSSFIRE) game.changeMap(GameMap.VALLEY);
-//            else if(game.getMap() == GameMap.VALLEY) game.changeMap(GameMap.RIFT);
-//        }
-//        game.setPrivate(false);
+        game.setPrivate(false);
     }
 
     @Override

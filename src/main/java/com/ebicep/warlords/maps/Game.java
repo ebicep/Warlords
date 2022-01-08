@@ -2,10 +2,7 @@ package com.ebicep.warlords.maps;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.events.WarlordsEvents;
-import com.ebicep.warlords.maps.state.InitState;
-import com.ebicep.warlords.maps.state.PlayingState;
-import com.ebicep.warlords.maps.state.PreLobbyState;
-import com.ebicep.warlords.maps.state.State;
+import com.ebicep.warlords.maps.state.*;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.PacketUtils;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -91,7 +88,7 @@ public class Game implements Runnable {
     }
 
     public boolean canChangeMap() {
-        return players.isEmpty() && (state instanceof PreLobbyState || state instanceof InitState);
+        return players.isEmpty() && (state instanceof PreLobbyState || state instanceof InitState || state instanceof EndState);
     }
 
     public void changeMap(@Nonnull GameMap map) {
@@ -324,8 +321,8 @@ public class Game implements Runnable {
         spectators.add(uuid);
         Player player = Bukkit.getPlayer(uuid);
         player.setGameMode(GameMode.SPECTATOR);
-        player.teleport(this.getMap().blueRespawn);
-        Warlords.setRejoinPoint(player.getUniqueId(), this.getMap().blueRespawn);
+        player.teleport(this.getMap().getBlueRespawn());
+        Warlords.setRejoinPoint(player.getUniqueId(), this.getMap().getBlueRespawn());
         if (state instanceof PreLobbyState) {
             ((PreLobbyState) state).giveLobbyScoreboard(true, player);
         } else if (state instanceof PlayingState) {

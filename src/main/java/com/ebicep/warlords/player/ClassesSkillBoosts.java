@@ -119,7 +119,7 @@ public enum ClassesSkillBoosts {
                 }
             }
     ),
-    WATER_BOLT("Waterbolt",
+    WATER_BOLT("Water Bolt",
             "§7Increases the amount of\n§7health you restore with\n§7Water Bolt by 20%",
             "§aIncreases the amount of\n§ahealth you restore with\n§aWater Bolt by §c20%",
             WaterBolt.class,
