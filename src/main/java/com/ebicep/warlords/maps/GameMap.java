@@ -20,10 +20,11 @@ public enum GameMap {
     RIFT(
             "Rift",
             32,
-            12,
+            1,
             900 * 20, // seconds * ticks
             30 * 20, // seconds * ticks
             "",
+            MapCategory.CAPTURE_THE_FLAG,
 
             new Location(Bukkit.getWorld("Rift"), -32.5, 25.5, 49.5), // BLUE DAMAGE
             new Location(Bukkit.getWorld("Rift"), 33.5, 25.5, -48.5), // RED DAMAGE
@@ -55,10 +56,11 @@ public enum GameMap {
     CROSSFIRE(
             "Crossfire",
             32,
-            12,
+            1,
             900 * 20, // seconds * ticks
             30 * 20, // seconds * ticks
             "",
+            MapCategory.CAPTURE_THE_FLAG,
 
             new Location(Bukkit.getWorld("Crossfire"), 158.5, 6.5, 28.5), // BLUE DAMAGE
             new Location(Bukkit.getWorld("Crossfire"), 65.5, 6.5, 98.5), // RED DAMAGE
@@ -88,12 +90,13 @@ public enum GameMap {
     ),
 
     WARSONG(
-            "Warsong Remastered [NOT PLAYABLE]",
+            "Warsong Remastered",
             32,
-            16,
+            1,
             900 * 20,
             30 * 20,
             "",
+            MapCategory.DEBUG,
 
             new Location(Bukkit.getWorld("Warsong"), 102.5, 21.5, 51.5), // BLUE DAMAGE
             new Location(Bukkit.getWorld("Warsong"), 42.5, 21.5, 92.5), // RED DAMAGE
@@ -125,10 +128,11 @@ public enum GameMap {
     GORGE(
             "Gorge Reforged [NOT PLAYABLE]",
             32,
-            16,
+            1,
             900 * 20,
             30 * 20,
             "",
+            MapCategory.DEBUG,
 
             new Location(Bukkit.getWorld("Gorge"), -2.5, 61.5, -236.5), // BLUE DAMAGE
             new Location(Bukkit.getWorld("Gorge"), -88.5, 61.5, -196.5), // RED DAMAGE
@@ -162,10 +166,11 @@ public enum GameMap {
     VALLEY(
             "Valley",
             32,
-            14,
+            1,
             900 * 20,
             30 * 20,
             "",
+            MapCategory.CAPTURE_THE_FLAG,
 
             new Location(Bukkit.getWorld("Atherrough_Valley"), 5.5, 15.5, -33.5), // BLUE DAMAGE
             new Location(Bukkit.getWorld("Atherrough_Valley"), -4.5, 15.5, 34.5), // RED DAMAGE
@@ -201,6 +206,7 @@ public enum GameMap {
             1800 * 20,
             30 * 20,
             "",
+            MapCategory.DEBUG,
 
             new Location(Bukkit.getWorld("WLDebug"), 699.5, 8.5, 184.5), // BLUE DAMAGE
             new Location(Bukkit.getWorld("WLDebug"), 699.5, 8.5, 188.5), // RED DAMAGE
@@ -225,27 +231,28 @@ public enum GameMap {
             )
     );
 
-    protected final String mapName;
-    protected final int maxPlayers;
-    protected final int minPlayers;
-    protected final int gameTimerInTicks;
-    protected final int countdownTimerInTicks;
-    protected final Location damagePowerupBlue;
-    protected final Location damagePowerupRed;
-    protected final Location speedPowerupBlue;
-    protected final Location speedPowerupRed;
-    protected final Location healingPowerupBlue;
-    protected final Location healingPowerupRed;
-    protected final Location blueLobbySpawnPoint;
-    protected final Location redLobbySpawnPoint;
-    protected final Location blueRespawn;
-    protected final Location redRespawn;
-    protected final Location blueFlag;
-    protected final Location redFlag;
-    protected final String mapDirPath;
-    protected final List<Cuboid> fenceGates;
+    private final String mapName;
+    private final int maxPlayers;
+    private final int minPlayers;
+    private final int gameTimerInTicks;
+    private final int countdownTimerInTicks;
+    private final Location damagePowerupBlue;
+    private final Location damagePowerupRed;
+    private final Location speedPowerupBlue;
+    private final Location speedPowerupRed;
+    private final Location healingPowerupBlue;
+    private final Location healingPowerupRed;
+    private final Location blueLobbySpawnPoint;
+    private final Location redLobbySpawnPoint;
+    private final Location blueRespawn;
+    private final Location redRespawn;
+    private final Location blueFlag;
+    private final Location redFlag;
+    private final String mapDirPath;
+    private final List<Cuboid> fenceGates;
+    private final MapCategory mapCategory;
 
-    GameMap(String mapName, int maxPlayers, int minPlayers, int gameTime, int countdown, String mapPath, Location damagePowerupBlue, Location damagePowerupRed,
+    GameMap(String mapName, int maxPlayers, int minPlayers, int gameTime, int countdown, String mapPath, MapCategory mapCategory, Location damagePowerupBlue, Location damagePowerupRed,
             Location speedPowerupBlue, Location speedPowerupRed, Location healingPowerupBlue, Location healingPowerupRed, Location blueSpawnPoint, Location redSpawnPoint, Location blueRespawn, Location redRespawn, Location blueFlag, Location redFlag, List<Cuboid> fenceGates) {
 
         this.mapName = mapName;
@@ -267,6 +274,7 @@ public enum GameMap {
         this.blueFlag = blueFlag;
         this.redFlag = redFlag;
         this.fenceGates = fenceGates;
+        this.mapCategory = mapCategory;
     }
 
     public String getMapName() {
@@ -367,5 +375,9 @@ public enum GameMap {
 
     public List<Cuboid> getFenceGates() {
         return fenceGates;
+    }
+
+    public MapCategory getCategory() {
+        return mapCategory;
     }
 }

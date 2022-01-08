@@ -69,28 +69,8 @@ public class CustomPlayerRepositoryImpl implements CustomPlayerRepository {
     }
 
     @Override
-    public DatabasePlayerCTF convertDocumentToPlayer(Document document) {
-        return mongoTemplate.getConverter().read(DatabasePlayerCTF.class, document);
-    }
-
-    @Override
-    public DatabaseMage convertDocumentToMage(Document document) {
-        return mongoTemplate.getConverter().read(DatabaseMage.class, document);
-    }
-
-    @Override
-    public DatabaseWarrior convertDocumentToWarrior(Document document) {
-        return mongoTemplate.getConverter().read(DatabaseWarrior.class, document);
-    }
-
-    @Override
-    public DatabasePaladin convertDocumentToPaladin(Document document) {
-        return mongoTemplate.getConverter().read(DatabasePaladin.class, document);
-    }
-
-    @Override
-    public DatabaseShaman convertDocumentToShaman(Document document) {
-        return mongoTemplate.getConverter().read(DatabaseShaman.class, document);
+    public <T> T convertDocumentToClass(Document document, Class<T> clazz) {
+        return mongoTemplate.getConverter().read(clazz, document);
     }
 
 }

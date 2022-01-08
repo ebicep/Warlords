@@ -32,9 +32,9 @@ public class LeaderboardManager {
 
     public static final Location spawnPoint = Bukkit.getWorlds().get(0).getSpawnLocation().clone();
 
-    public static final Location leaderboardGameTypeSwitchLocation = new Location(world, -2558.5, 52.5, 719.5);
-    public static final Location leaderboardCategorySwitchLocation = new Location(world, -2552.5, 52.5, 719.5);
-    public static final Location leaderboardTimeSwitchLocation = new Location(world, -2546.5, 52.5, 719.5);
+    public static final Location leaderboardGameTypeSwitchLocation = new Location(world, -2558.5, 53, 719.5);
+    public static final Location leaderboardCategorySwitchLocation = new Location(world, -2552.5, 53, 719.5);
+    public static final Location leaderboardTimeSwitchLocation = new Location(world, -2546.5, 53, 719.5);
 
     public static final Location center = new LocationBuilder(spawnPoint.clone()).forward(.5f).left(21).addY(2).get();
 
@@ -391,6 +391,7 @@ public class LeaderboardManager {
 
     private static void removeLeaderboardPlayerSpecificHolograms(Player player) {
         playerSpecificHolograms.getOrDefault(player.getUniqueId(), new ArrayList<>()).forEach(Hologram::delete);
+        playerSpecificHolograms.getOrDefault(player.getUniqueId(), new ArrayList<>()).clear();
     }
 
     private static Hologram addLeaderboard(Leaderboard leaderboard, PlayersCollections collections, String title, String subTitle) {
@@ -437,7 +438,7 @@ public class LeaderboardManager {
                 document.append(title.toLowerCase().replace(" ", "_"), totalDocument.append("name", title).append("top", topList));
             });
         }
-        return new Document();
+        return document;
     }
 
     public static List<LeaderboardCategory<?>> getAllLeaderboardCategories() {

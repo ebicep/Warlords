@@ -82,7 +82,7 @@ public class Utils {
                 .backward(5)
                 .addY(.7)
                 .get();
-        return getDotToLocation(eye, player2.getEyeLocation()) > 0.96;
+        return getDotToLocation(eye, player2.getEyeLocation()) > 0.95;
     }
 
     public static boolean isLineOfSightAssassin(LivingEntity player1, LivingEntity player2) {

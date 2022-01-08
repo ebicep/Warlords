@@ -26,7 +26,6 @@ public class PreLobbyState implements State, TimerDebugAble {
 
     private int timer = 0;
     private final Game game;
-    private GameMap map;
     private final Map<UUID, TeamPreference> teamPreferences = new HashMap<>();
 
     public PreLobbyState(Game game) {
@@ -37,19 +36,21 @@ public class PreLobbyState implements State, TimerDebugAble {
     public void begin() {
         timer = game.getMap().getCountdownTimerInTicks();
         Gates.changeGates(game.getMap(), false);
-//        if(!game.isPrivate()) {
-//            //map rotation for pubs
-//            if(game.getMap() == GameMap.RIFT) game.changeMap(GameMap.CROSSFIRE);
-//            else if(game.getMap() == GameMap.CROSSFIRE) game.changeMap(GameMap.VALLEY);
-//            else if(game.getMap() == GameMap.VALLEY) game.changeMap(GameMap.RIFT);
-//        }
-//        game.setPrivate(false);
+        game.setPrivate(false);
+        // Debug
+        System.out.println("Game State =" + game.getState());
+        System.out.println("Game Players =" + game.getPlayers());
+        System.out.println("isPrivate =" + game.isPrivate());
     }
 
     @Override
     public State run() {
         int players = game.playersCount();
         if (players >= game.getMap().getMinPlayers() || game.isPrivate()) {
+            // Debug
+            System.out.println("Game State =" + game.getState());
+            System.out.println("Game Players =" + game.getPlayers());
+            System.out.println("isPrivate =" + game.isPrivate());
             if (timer % 20 == 0) {
                 int time = timer / 20;
                 game.forEachOnlinePlayer((player, team) -> {

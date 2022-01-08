@@ -1,6 +1,7 @@
 package com.ebicep.warlords.commands.debugcommands;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.classes.abilties.temp;
 import com.ebicep.warlords.commands.BaseCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.cache.MultipleCacheResolver;
@@ -87,15 +88,12 @@ public class TestCommand implements CommandExecutor {
 //            break;
 //        }
 
-//        MongoCollection<Document> mongoCollection = DatabaseManager.warlordsDatabase.getCollection(PlayersCollections.WEEKLY.collectionName);
-//        for (DatabasePlayer databasePlayer : DatabaseManager.playerService.findAll(PlayersCollections.WEEKLY)) {
-//            Document document = mongoCollection.find().filter(Filters.eq("uuid", databasePlayer.getUuid())).first();
-//            assert document != null;
-//            databasePlayer.getCompStats().setMage(DatabaseManager.playerService.convertDocumentToMage(document.get("mage", Document.class)));
-//            databasePlayer.getCompStats().setWarrior(DatabaseManager.playerService.convertDocumentToWarrior(document.get("warrior", Document.class)));
-//            databasePlayer.getCompStats().setPaladin(DatabaseManager.playerService.convertDocumentToPaladin(document.get("paladin", Document.class)));
-//            databasePlayer.getCompStats().setShaman(DatabaseManager.playerService.convertDocumentToShaman(document.get("shaman", Document.class)));
-//            DatabaseManager.playerService.update(databasePlayer, PlayersCollections.WEEKLY);
+//        MongoCollection<Document> temp2 = DatabaseManager.warlordsDatabase.getCollection("TEMP");
+//        for (Document document : temp2.find()) {
+//            DatabasePlayer databasePlayer = DatabaseManager.playerService.convertDocumentToClass(document, DatabasePlayer.class);
+//            databasePlayer.setCompStats(DatabaseManager.playerService.convertDocumentToClass(document, DatabasePlayerCompStats.class));
+//            databasePlayer.getCompStats().setCtfStats(DatabaseManager.playerService.convertDocumentToClass(document, DatabasePlayerCTF.class));
+//            DatabaseManager.playerService.create(databasePlayer, PlayersCollections.TEMP2);
 //        }
 
 //        MongoCollection<Document> mongoCollection = DatabaseManager.warlordsDatabase.getCollection(PlayersCollections.NEW_SEASON_WEEKLY.collectionName);
