@@ -46,14 +46,6 @@ public interface PlayerService {
 
     List<DatabasePlayer> getPlayersSorted(Aggregation aggregation, PlayersCollections collections);
 
-    DatabasePlayerCTF convertDocumentToPlayer(Document document);
-
-    DatabaseMage convertDocumentToMage(Document document);
-
-    DatabaseWarrior convertDocumentToWarrior(Document document);
-
-    DatabasePaladin convertDocumentToPaladin(Document document);
-
-    DatabaseShaman convertDocumentToShaman(Document document);
+    <T> T convertDocumentToClass(Document document, Class<T> clazz);
 
 }
