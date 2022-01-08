@@ -437,7 +437,7 @@ public class LeaderboardManager {
                 document.append(title.toLowerCase().replace(" ", "_"), totalDocument.append("name", title).append("top", topList));
             });
         }
-        return new Document();
+        return document;
     }
 
     public static List<LeaderboardCategory<?>> getAllLeaderboardCategories() {
