@@ -389,6 +389,18 @@ public final class WarlordsPlayer {
                     if (!cooldownManager.getCooldownFromName("Vindicate Resistance").isEmpty()) {
                         damageValue *= .75;
                     }
+
+                    if (!cooldownManager.getCooldownFromName("Wide Guard").isEmpty()) {
+                        if (
+                                ability.equals("Fireball") ||
+                                ability.equals("Frostbolt") ||
+                                ability.equals("Water Bolt") ||
+                                ability.equals("Lightning Bolt") ||
+                                ability.equals("Flame Burst")
+                        ) {
+                            damageValue *= .2;
+                        }
+                    }
                 }
             }
 

@@ -7,12 +7,15 @@ import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.ParticleEffect;
+import com.ebicep.warlords.util.PlayerFilter;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nonnull;
+import java.util.HashMap;
+import java.util.Map;
 
 public class WideGuard extends AbstractAbility {
 
@@ -30,7 +33,7 @@ public class WideGuard extends AbstractAbility {
                 "\n\n" +
                 "§7After §64 §7seconds, the bubble will\n" +
                 "§7burst, healing all allies for up to\n" +
-                "a600 §7+ §a12% §7missing health based on how\n" +
+                "§a600 §7+ §a12% §7missing health based on how\n" +
                 "§7long they've been in the bubble.";
     }
 
@@ -64,6 +67,8 @@ public class WideGuard extends AbstractAbility {
             System.currentTimeMillis()
         );
 
+        HashMap<WarlordsPlayer, Integer> timeInBubble = new HashMap<>();
+
         // Third Particle Sphere
         wp.getGame().getGameTasks().put(
 
@@ -81,6 +86,14 @@ public class WideGuard extends AbstractAbility {
                             for (Player player1 : player.getWorld().getPlayers()) {
                                 player1.playSound(player.getLocation(), Sound.CREEPER_DEATH, 2, 2);
                             }
+
+                            PlayerFilter.entitiesAround(particleLoc, 3, 3, 3)
+                                    .aliveTeammatesOfExcludingSelf(wp)
+                                    .forEach(playerInsideBubble -> {
+                                        playerInsideBubble.getCooldownManager().removeCooldown(WideGuard.class);
+                                        playerInsideBubble.getCooldownManager().addCooldown("Wide Guard", WideGuard.this.getClass(), WideGuard.class, "GUARD", 1, wp, CooldownTypes.ABILITY);
+                                        timeInBubble.compute(playerInsideBubble, (k, v) -> v == null ? 1 : v + 1);
+                            });
                         } else {
                             this.cancel();
 
@@ -89,12 +102,19 @@ public class WideGuard extends AbstractAbility {
                                 player1.playSound(player.getLocation(), Sound.AMBIENCE_THUNDER, 2, 1.5f);
                             }
 
+                            for (Map.Entry<WarlordsPlayer, Integer> entry : timeInBubble.entrySet()) {
+                                float healingValue = 150 + (entry.getKey().getMaxHealth() - entry.getKey().getHealth()) / 28.3f;
+                                int timeInSeconds = entry.getValue() * 4 / 20;
+                                float totalHealing = (timeInSeconds * healingValue);
+                                entry.getKey().addHealingInstance(wp, "Wide Guard", totalHealing, totalHealing, -1, 100, false);
+                            }
+
                             CircleEffect circle = new CircleEffect(wp.getGame(), wp.getTeam(), player.getLocation(), 4);
                             circle.addEffect(new CircumferenceEffect(ParticleEffect.SPELL).particlesPerCircumference(2));
                             circle.playEffects();
                         }
                     }
-                }.runTaskTimer(Warlords.getInstance(), 6, 4),
+                }.runTaskTimer(Warlords.getInstance(), 5, 4),
                 System.currentTimeMillis()
         );
     }

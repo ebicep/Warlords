@@ -131,6 +131,16 @@ public class CooldownManager {
         cooldowns.removeIf(cd -> cd.getCooldownType() == CooldownTypes.ABILITY);
     }
 
+    /**
+     *
+     * @param name is the name of the cooldown.
+     * @param cooldownClass java class of the ability.
+     * @param cooldownObject object of the ability or cooldown.
+     * @param actionBarName what name should be displayed in the action bar.
+     * @param timeLeft how long should the cooldown last.
+     * @param from what player did they get the cooldown from.
+     * @param cooldownType what type of cooldown is it, eg. DEBUFF, BUFF, ABILITY.
+     */
     public void addCooldown(String name, Class cooldownClass, Object cooldownObject, String actionBarName, float timeLeft, WarlordsPlayer from, CooldownTypes cooldownType) {
         this.totalCooldowns++;
         cooldowns.add(new Cooldown(name, cooldownClass, cooldownObject, actionBarName, timeLeft, from, cooldownType));
