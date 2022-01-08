@@ -800,11 +800,14 @@ public class DebugMenu {
 
     public static void openMapsMenu(Player player) {
         Menu menu = new Menu("Map Picker", 9 * 4);
-        for (int i = 0; i < GameMap.values().length; i++) {
-            String mapName = GameMap.values()[i].getMapName();
+        GameMap[] values = GameMap.values();
+        for (int i = 0; i < values.length; i++) {
+            GameMap map = values[i];
+            String mapName = map.getMapName();
             menu.setItem(i + 1, 1,
                     new ItemBuilder(woolSortedByColor[i + 5])
                             .name(ChatColor.GREEN + mapName)
+                            .lore(ChatColor.GRAY + "Map Category: " + ChatColor.GOLD + map.getMapCategory().getName())
                             .get(),
                     (n, e) -> Bukkit.getServer().dispatchCommand(player, "start " + mapName)
             );
