@@ -377,7 +377,7 @@ public enum GameMap {
         return fenceGates;
     }
 
-    public MapCategory getMapCategory() {
+    public MapCategory getCategory() {
         return mapCategory;
     }
 }

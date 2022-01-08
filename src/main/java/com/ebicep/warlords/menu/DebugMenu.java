@@ -807,7 +807,7 @@ public class DebugMenu {
             menu.setItem(i + 1, 1,
                     new ItemBuilder(woolSortedByColor[i + 5])
                             .name(ChatColor.GREEN + mapName)
-                            .lore(ChatColor.GRAY + "Map Category: " + ChatColor.GOLD + map.getMapCategory().getName())
+                            .lore(ChatColor.GRAY + "Map Category: " + ChatColor.GOLD + map.getCategory().getName())
                             .get(),
                     (n, e) -> Bukkit.getServer().dispatchCommand(player, "start " + mapName)
             );

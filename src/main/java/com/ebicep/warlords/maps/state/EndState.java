@@ -192,7 +192,7 @@ public class EndState implements State, TimerDebugAble {
             GameMap map;
             Random random = new Random();
             List<GameMap> gameMap = Stream.of(GameMap.values())
-                    .filter(m -> m.getMapCategory() == MapCategory.CAPTURE_THE_FLAG)
+                    .filter(m -> m.getCategory() == MapCategory.CAPTURE_THE_FLAG)
                     .collect(Collectors.toList());
             map = gameMap.get(random.nextInt(gameMap.size()));
             return new InitState(game, map);
