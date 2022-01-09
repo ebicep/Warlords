@@ -83,12 +83,6 @@ public class Warlords extends JavaPlugin {
         players.put(warlordsPlayer.getUuid(), warlordsPlayer);
     }
 
-    @Deprecated // This method is useless, but handles the parts of the code that are slow with updating
-    @Nullable
-    public static WarlordsPlayer getPlayer(@Nullable WarlordsPlayer player) {
-        return player;
-    }
-
     @Nullable
     public static WarlordsPlayer getPlayer(@Nullable Entity entity) {
         if (entity != null) {

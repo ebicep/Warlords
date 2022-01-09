@@ -71,13 +71,13 @@ public enum ClassesSkillBoosts {
             }
     ),
     FREEZING_BREATH("Freezing Breath",
-            "§7Increase the damage you\n§7deal with Freezing Breath\n§7by 25% and reduce the cooldown\n§7by 10%",
-            "§aIncrease the damage you\n§adeal with Freezing Breath\n§aby §c25% §aand reduce the cooldown\n§aby §c10%",
+            "§7Increase the damage you\n§7deal with Freezing Breath\n§7by 25% and reduce the cooldown\n§7by 15%",
+            "§aIncrease the damage you\n§adeal with Freezing Breath\n§aby §c25% §aand reduce the cooldown\n§aby §c15%",
             FreezingBreath.class,
             abstractAbility -> {
                 abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.25f);
                 abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.25f);
-                abstractAbility.setCooldown(abstractAbility.getCooldown() * .9f);
+                abstractAbility.setCooldown(abstractAbility.getCooldown() * .85f);
             }
     ),
     TIME_WARP_CRYOMANCER("Time Warp",

@@ -36,11 +36,11 @@ public class PreLobbyState implements State, TimerDebugAble {
     public void begin() {
         timer = game.getMap().getCountdownTimerInTicks();
         Gates.changeGates(game.getMap(), false);
-        game.setPrivate(false);
+        //game.setPrivate(false);
         // Debug
-        System.out.println("Game State =" + game.getState());
-        System.out.println("Game Players =" + game.getPlayers());
-        System.out.println("isPrivate =" + game.isPrivate());
+        System.out.println("Game State = " + game.getState());
+        System.out.println("Game Players = " + game.getPlayers());
+        System.out.println("isPrivate = " + game.isPrivate());
     }
 
     @Override
@@ -221,9 +221,7 @@ public class PreLobbyState implements State, TimerDebugAble {
             timer--;
         } else {
             timer = game.getMap().getCountdownTimerInTicks();
-            game.forEachOnlinePlayer((player, team) -> {
-                giveLobbyScoreboard(false, player);
-            });
+            game.forEachOnlinePlayer((player, team) -> giveLobbyScoreboard(false, player));
         }
         return null;
     }

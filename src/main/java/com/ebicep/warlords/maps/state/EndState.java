@@ -196,6 +196,7 @@ public class EndState implements State, TimerDebugAble {
                     .collect(Collectors.toList());
             map = gameMap.get(random.nextInt(gameMap.size()));
             return new InitState(game, map);
+            //return new InitState(game);
         }
         return null;
     }

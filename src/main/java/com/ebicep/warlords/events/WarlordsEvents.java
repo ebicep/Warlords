@@ -146,11 +146,16 @@ public class WarlordsEvents implements Listener {
             player.setGameMode(GameMode.ADVENTURE);
 
             ChatUtils.sendCenteredMessage(player, ChatColor.BLUE + "-----------------------------------------------------");
-            ChatUtils.sendCenteredMessage(player, ChatColor.GOLD + "You are now on Warlords 2.0 " + ChatColor.GRAY + "(" + ChatColor.RED + Warlords.VERSION + ChatColor.GRAY + ")");
+            ChatUtils.sendCenteredMessage(player, ChatColor.GOLD + "Welcome to Warlords 2.0 " + ChatColor.GRAY + "(" + ChatColor.RED + Warlords.VERSION + ChatColor.GRAY + ")");
             ChatUtils.sendCenteredMessage(player, ChatColor.GOLD + "Developed by " + ChatColor.RED + "sumSmash " + ChatColor.GOLD + "&" + ChatColor.RED + " Plikie");
             ChatUtils.sendCenteredMessage(player, ChatColor.GREEN + "/hotkeymode " + ChatColor.GOLD + "to change your hotkey mode.");
             ChatUtils.sendCenteredMessage(player, ChatColor.GOLD + "Click the Nether Star or do " + ChatColor.GREEN + "/menu" + ChatColor.GOLD + " to open the selection menu.");
-            //ChatUtils.sendCenteredMessage(player, ChatColor.GOLD + "Make sure to join the queue using " + ChatColor.GREEN + "/queue join" + ChatColor.GOLD + " if you'd like to play!");
+            ChatUtils.sendCenteredMessage(player, "");
+            ChatUtils.sendCenteredMessage(player, ChatColor.GOLD + "Make sure to join our discord if you wish to stay up-to-date with our most recent patches, interact with our community and make bug reports or game suggestions at:");
+            ChatUtils.sendCenteredMessage(player, "");
+            ChatUtils.sendCenteredMessage(player, ChatColor.RED + "§ldiscord.gg/UJBedGtMSQ");
+            ChatUtils.sendCenteredMessage(player, "");
+            ChatUtils.sendCenteredMessage(player, ChatColor.RED + "DISCLAIMER: " + ChatColor.GRAY + "Non-competitive players should take notice that we are currently in BETA for our public queue. This means that the server will regularly be unavailable when we host our private games during weekends!");
             ChatUtils.sendCenteredMessage(player, ChatColor.BLUE + "-----------------------------------------------------");
 
             PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
@@ -255,44 +260,44 @@ public class WarlordsEvents implements Listener {
     public void onEntityDamage(EntityDamageByEntityEvent e) {
         if ((e.getEntity() instanceof Player || e.getEntity() instanceof Zombie) && e.getDamager() instanceof Player) {
             Player attacker = (Player) e.getDamager();
-            WarlordsPlayer warlordsPlayerAttacker = Warlords.getPlayer(attacker);
-            WarlordsPlayer warlordsPlayerVictim = Warlords.getPlayer(e.getEntity());
-            if (warlordsPlayerAttacker != null && warlordsPlayerAttacker.isEnemyAlive(warlordsPlayerVictim) && !warlordsPlayerAttacker.getGame().isGameFreeze()) {
-                if (attacker.getInventory().getHeldItemSlot() == 0 && warlordsPlayerAttacker.getHitCooldown() == 0) {
-                    warlordsPlayerAttacker.setHitCooldown(12);
-                    warlordsPlayerAttacker.subtractEnergy(warlordsPlayerAttacker.getSpec().getEnergyOnHit() * -1);
+            WarlordsPlayer wpAttacker = Warlords.getPlayer(attacker);
+            WarlordsPlayer wpVictim = Warlords.getPlayer(e.getEntity());
+            if (wpAttacker != null && wpAttacker.isEnemyAlive(wpVictim) && !wpAttacker.getGame().isGameFreeze()) {
+                if (attacker.getInventory().getHeldItemSlot() == 0 && wpAttacker.getHitCooldown() == 0) {
+                    wpAttacker.setHitCooldown(12);
+                    wpAttacker.subtractEnergy(wpAttacker.getSpec().getEnergyOnHit() * -1);
 
-                    if (warlordsPlayerAttacker.getSpec() instanceof Spiritguard && !warlordsPlayerAttacker.getCooldownManager().getCooldown(Soulbinding.class).isEmpty()) {
-                        Soulbinding baseSoulbinding = (Soulbinding) warlordsPlayerAttacker.getSpec().getPurple();
-                        warlordsPlayerAttacker.getCooldownManager().getCooldown(Soulbinding.class).stream()
+                    if (wpAttacker.getSpec() instanceof Spiritguard && !wpAttacker.getCooldownManager().getCooldown(Soulbinding.class).isEmpty()) {
+                        Soulbinding baseSoulbinding = (Soulbinding) wpAttacker.getSpec().getPurple();
+                        wpAttacker.getCooldownManager().getCooldown(Soulbinding.class).stream()
                                 .filter(cooldown -> !cooldown.isHidden())
                                 .map(Cooldown::getCooldownObject)
                                 .map(Soulbinding.class::cast)
                                 .forEach(soulbinding -> {
-                                    if (soulbinding.hasBoundPlayer(warlordsPlayerVictim)) {
+                                    if (soulbinding.hasBoundPlayer(wpVictim)) {
                                         soulbinding.getSoulBindedPlayers().stream()
-                                                .filter(p -> p.getBoundPlayer() == warlordsPlayerVictim)
+                                                .filter(p -> p.getBoundPlayer() == wpVictim)
                                                 .forEach(boundPlayer -> {
                                                     boundPlayer.setHitWithSoul(false);
                                                     boundPlayer.setHitWithLink(false);
                                                     boundPlayer.setTimeLeft(baseSoulbinding.getBindDuration());
                                                 });
                                     } else {
-                                        warlordsPlayerVictim.sendMessage(ChatColor.RED + "\u00AB " + ChatColor.GRAY + "You have been bound by " + warlordsPlayerAttacker.getName() + "'s " + ChatColor.LIGHT_PURPLE + "Soulbinding Weapon" + ChatColor.GRAY + "!");
-                                        warlordsPlayerAttacker.sendMessage(ChatColor.GREEN + "\u00BB " + ChatColor.GRAY + "Your " + ChatColor.LIGHT_PURPLE + "Soulbinding Weapon " + ChatColor.GRAY + "has bound " + warlordsPlayerVictim.getName() + "!");
-                                        soulbinding.getSoulBindedPlayers().add(new Soulbinding.SoulBoundPlayer(warlordsPlayerVictim, baseSoulbinding.getBindDuration()));
-                                        for (Player player1 : warlordsPlayerVictim.getWorld().getPlayers()) {
-                                            player1.playSound(warlordsPlayerVictim.getLocation(), "shaman.earthlivingweapon.activation", 2, 1);
+                                        wpVictim.sendMessage(ChatColor.RED + "\u00AB " + ChatColor.GRAY + "You have been bound by " + wpAttacker.getName() + "'s " + ChatColor.LIGHT_PURPLE + "Soulbinding Weapon" + ChatColor.GRAY + "!");
+                                        wpAttacker.sendMessage(ChatColor.GREEN + "\u00BB " + ChatColor.GRAY + "Your " + ChatColor.LIGHT_PURPLE + "Soulbinding Weapon " + ChatColor.GRAY + "has bound " + wpVictim.getName() + "!");
+                                        soulbinding.getSoulBindedPlayers().add(new Soulbinding.SoulBoundPlayer(wpVictim, baseSoulbinding.getBindDuration()));
+                                        for (Player player1 : wpVictim.getWorld().getPlayers()) {
+                                            player1.playSound(wpVictim.getLocation(), "shaman.earthlivingweapon.activation", 2, 1);
                                         }
                                     }
                                 });
                     }
-                    warlordsPlayerVictim.addDamageInstance(warlordsPlayerAttacker, "", 132, 179, 25, 200, false);
-                    warlordsPlayerVictim.updateJimmyHealth();
+                    wpVictim.addDamageInstance(wpAttacker, "", 132, 179, 25, 200, false);
+                    wpVictim.updateJimmyHealth();
                 }
 
-                if (!warlordsPlayerVictim.getCooldownManager().getCooldown(IceBarrier.class).isEmpty()) {
-                    warlordsPlayerAttacker.getSpeed().addSpeedModifier("Ice Barrier", -20, 2 * 20);
+                if (!wpVictim.getCooldownManager().getCooldown(IceBarrier.class).isEmpty()) {
+                    wpAttacker.getSpeed().addSpeedModifier("Ice Barrier", -20, 2 * 20);
                 }
             }
         /*} else if (e.getEntity() instanceof Horse && e.getDamager() instanceof Player) {
