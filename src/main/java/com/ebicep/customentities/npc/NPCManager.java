@@ -14,6 +14,7 @@ import org.bukkit.entity.EntityType;
 public class NPCManager {
 
     public static final NPCRegistry npcRegistry = CitizensAPI.createAnonymousNPCRegistry(new MemoryNPCDataStore());
+    public static NPC npc;
 
     public static void createGameNPC() {
         //for reloading
@@ -22,7 +23,7 @@ public class NPCManager {
         }
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(GameStartTrait.class).withName("GameStartTrait"));
 
-        NPC npc = npcRegistry.createNPC(EntityType.PLAYER, "capture-the-flag");
+        npc = npcRegistry.createNPC(EntityType.PLAYER, "capture-the-flag");
         npc.addTrait(GameStartTrait.class);
         npc.getOrAddTrait(SkinTrait.class).setSkinName("sumSmash");
         npc.data().set("nameplate-visible", false);
