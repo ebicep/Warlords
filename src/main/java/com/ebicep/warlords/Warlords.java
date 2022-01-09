@@ -35,7 +35,6 @@ import me.filoghost.holographicdisplays.api.beta.hologram.Hologram;
 import me.filoghost.holographicdisplays.api.beta.HolographicDisplaysAPI;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.DespawnReason;
-import net.citizensnpcs.api.npc.NPCRegistry;
 import org.bukkit.*;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
@@ -718,7 +717,7 @@ public class Warlords extends JavaPlugin {
                                     orbHeal *= 1 + orb.getTicksLived() / 520f;
                                 }
 
-                                wp.addHealingInstance(orb.getOwner(), "Orbs of Life", orbHeal, orbHeal, -1, 100, false);
+                                wp.addHealingInstance(orb.getOwner(), "Orbs of Life", orbHeal, orbHeal, -1, 100, false, false);
                                 if (player != null) {
                                     for (Player player1 : player.getWorld().getPlayers()) {
                                         player1.playSound(player.getLocation(), Sound.ORB_PICKUP, 0.5f, 1);
@@ -730,7 +729,7 @@ public class Warlords extends JavaPlugin {
                                         .aliveTeammatesOfExcludingSelf(wp)
                                         .limit(2)
                                 ) {
-                                    nearPlayer.addHealingInstance(orb.getOwner(), "Orbs of Life", orbHeal, orbHeal, -1, 100, false);
+                                    nearPlayer.addHealingInstance(orb.getOwner(), "Orbs of Life", orbHeal, orbHeal, -1, 100, false, false);
                                     if (player != null) {
                                         for (Player player1 : player.getWorld().getPlayers()) {
                                             player1.playSound(player.getLocation(), Sound.ORB_PICKUP, 0.5f, 1);

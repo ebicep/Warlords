@@ -202,7 +202,7 @@ public class DeathsDebt extends AbstractTotemBase {
                     nearPlayer.addHealingInstance(wp, name,
                             damage * .15f,
                             damage * .15f,
-                            critChance, critMultiplier, false);
+                            critChance, critMultiplier, false, false);
                 });
         //adding to rep pool
         if (wp.getSpec().getBlue() instanceof Repentance) {

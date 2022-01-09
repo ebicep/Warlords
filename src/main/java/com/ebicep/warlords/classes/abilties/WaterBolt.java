@@ -61,7 +61,7 @@ public class WaterBolt extends AbstractProjectileBase {
                         (float) (maxDamageHeal * DIRECT_HIT_MULTIPLIER * toReduceBy),
                         critChance,
                         critMultiplier,
-                        false);
+                        false, false);
                 if (victim != shooter) {
                     victim.getCooldownManager().removeCooldown(Utils.OVERHEAL_MARKER);
                     victim.getCooldownManager().addCooldown("Overheal",
@@ -90,7 +90,7 @@ public class WaterBolt extends AbstractProjectileBase {
                         (float) (maxDamageHeal * toReduceBy),
                         critChance,
                         critMultiplier,
-                        false);
+                        false, false);
                 if (nearEntity != shooter) {
                     nearEntity.getCooldownManager().removeCooldown(Utils.OVERHEAL_MARKER);
                     nearEntity.getCooldownManager().addCooldown("Overheal",

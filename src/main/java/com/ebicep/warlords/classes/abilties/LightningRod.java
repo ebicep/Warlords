@@ -33,7 +33,7 @@ public class LightningRod extends AbstractAbility {
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
         wp.addEnergy(wp, name, energyRestore);
-        wp.addHealingInstance(wp, name, (wp.getMaxHealth() * .3f), (wp.getMaxHealth() * .3f), critChance, critMultiplier, false);
+        wp.addHealingInstance(wp, name, (wp.getMaxHealth() * .3f), (wp.getMaxHealth() * .3f), critChance, critMultiplier, false, false);
 
         Location playerLocation = player.getLocation();
 
