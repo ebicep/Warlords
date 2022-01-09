@@ -28,8 +28,13 @@ public class HeartToHeart extends AbstractAbility {
     public void onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
         wp.subtractEnergy(energyCost);
 
+        for (Player player1 : player.getWorld().getPlayers()) {
+            player1.playSound(player.getLocation(), "rogue.hearttoheart.activation", 2, 1);
+            player1.playSound(player.getLocation(), "rogue.hearttoheart.activation.alt", 2, 1.2f);
+        }
+
         for (WarlordsPlayer heartTarget : PlayerFilter
-                .entitiesAround(wp, 12, 12, 12)
+                .entitiesAround(wp, 20, 20, 20)
                 .aliveTeammatesOfExcludingSelf(wp)
                 .lookingAtFirst(wp)
                 .limit(1)
@@ -65,9 +70,9 @@ public class HeartToHeart extends AbstractAbility {
                         newLocation.add(0, 1, 0);
                         Matrix4d center = new Matrix4d(newLocation);
                         for (float i = 0; i < 6; i++) {
-                            double angle = Math.toRadians(i * 90) + timer * 0.45;
+                            double angle = Math.toRadians(i * 90) + timer * 0.6;
                             double width = 1.5D;
-                            ParticleEffect.CRIT_MAGIC.display(0, 0, 0, 0, 2,
+                            ParticleEffect.SPELL_WITCH.display(0, 0, 0, 0, 2,
                                     center.translateVector(playerLoc.getWorld(), 0, Math.sin(angle) * width, Math.cos(angle) * width), 500);
                         }
                     }
