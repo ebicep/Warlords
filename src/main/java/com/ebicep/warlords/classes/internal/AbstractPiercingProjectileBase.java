@@ -2,7 +2,9 @@ package com.ebicep.warlords.classes.internal;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.classes.abilties.WideGuard;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.util.PlayerFilter;
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -22,6 +24,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static com.ebicep.warlords.classes.abilties.WideGuard.BUBBLE_RADIUS;
+
 public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
     private final List<PendingHit> PENDING_HITS = new ArrayList<>();
 
@@ -29,6 +33,7 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
     protected final int maxTicks;
     protected final double maxDistance;
     protected final boolean hitTeammates;
+    //protected final boolean canBeReflected;
     protected final float playerHitbox = 0.75f;
 
     public AbstractPiercingProjectileBase(String name, float minDamageHeal, float maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier, double projectileSpeed, double maxDistance, boolean hitTeammates) {
@@ -37,6 +42,7 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
         this.maxDistance = maxDistance;
         this.maxTicks = (int) (maxDistance / projectileSpeed) + 1;
         this.hitTeammates = hitTeammates;
+        //this.canBeReflected = canBeReflected;
     }
 
     /**
@@ -136,6 +142,8 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
         Vec3D before = new Vec3D(currentLocation.getX(), currentLocation.getY(), currentLocation.getZ());
         currentLocation.add(speed);
         Vec3D after = new Vec3D(currentLocation.getX(), currentLocation.getY(), currentLocation.getZ());
+        //PlayerFilter.entitiesAround(currentLocation, BUBBLE_RADIUS, BUBBLE_RADIUS, BUBBLE_RADIUS)
+        //       .aliveEnemiesOf(shooter);
         @Nullable
         MovingObjectPosition hit = null;
         double hitDistance = 0;

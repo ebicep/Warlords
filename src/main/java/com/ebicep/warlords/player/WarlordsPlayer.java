@@ -1845,6 +1845,17 @@ public final class WarlordsPlayer {
         this.entity.teleport(location);
     }
 
+    public void teleportLocationOnly(Location location) {
+        if (this.entity instanceof Player) {
+            TeleportUtils.teleport((Player) this.entity, location);
+        } else {
+            Location location1 = this.getLocation();
+            location1.setX(location.getX());
+            location1.setY(location.getY());
+            location1.setZ(location.getZ());
+        }
+    }
+
     public PlayingState getGameState() {
         return this.gameState;
     }

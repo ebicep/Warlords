@@ -109,6 +109,12 @@ public class Utils {
         return getDotToLocation(eye, player2.getEyeLocation()) > 0.91;
     }
 
+    // Linear Interpolation
+    // https://en.wikipedia.org/wiki/Linear_interpolation
+    public static double lerp(double a, double b, double target) {
+        return a + target * (b - a);
+    }
+
     public static boolean hasLineOfSight(LivingEntity player, LivingEntity player2) {
         return player.hasLineOfSight(player2);
     }
@@ -254,59 +260,6 @@ public class Utils {
             aboveLocation.add(0, 1, 0);
         }
         return false;
-
-//        location.setPitch(0);
-//        LocationBuilder aboveLocation = new LocationBuilder(location.clone());
-//        LocationBuilder leftLocation = new LocationBuilder(location.clone());
-//        LocationBuilder leftFrontLocation = new LocationBuilder(location.clone());
-//        LocationBuilder leftBackLocation = new LocationBuilder(location.clone());
-//        LocationBuilder rightLocation = new LocationBuilder(location.clone());
-//        LocationBuilder rightFrontLocation = new LocationBuilder(location.clone());
-//        LocationBuilder rightBackLocation = new LocationBuilder(location.clone());
-//        boolean blocksAbove = false;
-//        boolean blocksToLeft = false;
-//        boolean blocksToLeftFront = false;
-//        boolean blocksToLeftBack = false;
-//        boolean blocksToRight = false;
-//        boolean blocksToRightFront = false;
-//        boolean blocksToRightBack = false;
-//        for (int i = 0; i < 10; i++) {
-//            if (!blocksAbove && aboveLocation.addY(1).get().getBlock().getType() != Material.AIR) {
-//                blocksAbove = true;
-//            }
-//        }
-//        for (int i = 0; i < 5; i++) {
-//            if (!blocksToLeft && leftLocation.left(1).get().getBlock().getType() != Material.AIR) {
-//                blocksToLeft = true;
-//            }
-//            if (!blocksToLeftFront && leftFrontLocation.left(1).forward(1).get().getBlock().getType() != Material.AIR) {
-//                blocksToLeftFront = true;
-//            }
-//            if (!blocksToLeftBack && leftBackLocation.left(1).backward(1).get().getBlock().getType() != Material.AIR) {
-//                blocksToLeftBack = true;
-//            }
-//            if (!blocksToRight && rightLocation.right(1).get().getBlock().getType() != Material.AIR) {
-//                blocksToRight = true;
-//            }
-//            if (!blocksToRightFront && rightFrontLocation.right(1).forward(1).get().getBlock().getType() != Material.AIR) {
-//                blocksToRightFront = true;
-//            }
-//            if (!blocksToRightBack && rightBackLocation.right(1).backward(1).get().getBlock().getType() != Material.AIR) {
-//                blocksToRightBack = true;
-//            }
-//        }
-        //0000x
-        //xxxxx
-        //0000x
-//        boolean right = blocksToRight && blocksToRightFront && blocksToRightBack;
-        //x0000
-        //xxxxx
-        //x0000
-//        boolean left = blocksToLeft && blocksToLeftFront && blocksToLeftBack;
-//        System.out.println(right);
-//        System.out.println(left);
-//        System.out.println("------");
-//        return blocksAbove && ((right && !left) || (!right && left));
     }
 
 

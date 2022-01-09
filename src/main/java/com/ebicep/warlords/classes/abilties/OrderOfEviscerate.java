@@ -32,7 +32,7 @@ public class OrderOfEviscerate extends AbstractAbility {
                 "§7end your invisibility." +
                 "\n\n" +
                 "§7All your attacks against an enemy will mark them vulnerable,\n" +
-                "§7increasing the damage they take by §c25% §7for §65 §7seconds.\n" +
+                "§7increasing the damage they take by §c25% §7for §6" + duration + " §7seconds.\n" +
                 "§7All attacks that hit your marked target from behind\n" +
                 "§7gain a §c100% §7crit chance. (Limited to marking 1 enemy\n" +
                 "§7at the same time.)";
@@ -45,7 +45,7 @@ public class OrderOfEviscerate extends AbstractAbility {
         wp.getCooldownManager().addCooldown("Order of Eviscerate", OrderOfEviscerate.class, new OrderOfEviscerate(), "ORDER", duration, wp, CooldownTypes.ABILITY);
         wp.getCooldownManager().removeCooldownByName("Cloaked");
         wp.getCooldownManager().addCooldown("Cloaked", OrderOfEviscerate.class, new OrderOfEviscerate(), "INVIS", duration, wp, CooldownTypes.BUFF);
-        Runnable cancelSpeed = wp.getSpeed().addSpeedModifier("Order of Eviscerate", 25, duration * 20, "BASE");
+        Runnable cancelSpeed = wp.getSpeed().addSpeedModifier("Order of Eviscerate", 40, duration * 20, "BASE");
         player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, duration * 20, 0, true, false), true);
         wp.updateArmor();
         for (Player player1 : player.getWorld().getPlayers()) {

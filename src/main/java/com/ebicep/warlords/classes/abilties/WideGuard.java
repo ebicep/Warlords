@@ -19,6 +19,8 @@ import java.util.Map;
 
 public class WideGuard extends AbstractAbility {
 
+    public static final int BUBBLE_RADIUS = 3;
+
     public WideGuard() {
         super("Wide Guard", 0, 0, 27, 40, -1, 100);
     }
@@ -42,6 +44,7 @@ public class WideGuard extends AbstractAbility {
         wp.subtractEnergy(energyCost);
 
         wp.getCooldownManager().addCooldown("Wide Guard", this.getClass(), WideGuard.class, "GUARD", 4, wp, CooldownTypes.ABILITY);
+        wp.getCooldownManager().addCooldown("Reflection Shield", this.getClass(), WideGuard.class, "", 4, wp, CooldownTypes.ABILITY);
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(wp.getLocation(), "mage.timewarp.teleport", 2, 2);
@@ -49,7 +52,7 @@ public class WideGuard extends AbstractAbility {
         }
 
         // First Particle Sphere
-        playSphereAnimation(player, 5.5, 68, 176, 176);
+        playSphereAnimation(player, BUBBLE_RADIUS + 2.5, 68, 176, 176);
 
         // Second Particle Sphere
         wp.getGame().getGameTasks().put(
@@ -57,7 +60,7 @@ public class WideGuard extends AbstractAbility {
             new BukkitRunnable() {
                 @Override
                 public void run() {
-                    playSphereAnimation(player, 4, 65, 185, 185);
+                    playSphereAnimation(player, BUBBLE_RADIUS + 1, 65, 185, 185);
 
                     for (Player player1 : player.getWorld().getPlayers()) {
                         player1.playSound(player.getLocation(), "warrior.intervene.impact", 2, 0.2f);
@@ -81,13 +84,13 @@ public class WideGuard extends AbstractAbility {
 
                             ParticleEffect.ENCHANTMENT_TABLE.display(0.2F, 0F, 0.2F, 0.1F, 1, particleLoc, 500);
 
-                            playSphereAnimation(player, 3, 190, 190, 190);
+                            playSphereAnimation(player, BUBBLE_RADIUS, 190, 190, 190);
 
                             for (Player player1 : player.getWorld().getPlayers()) {
                                 player1.playSound(player.getLocation(), Sound.CREEPER_DEATH, 2, 2);
                             }
 
-                            PlayerFilter.entitiesAround(particleLoc, 3, 3, 3)
+                            PlayerFilter.entitiesAround(particleLoc, BUBBLE_RADIUS, BUBBLE_RADIUS, BUBBLE_RADIUS)
                                     .aliveTeammatesOfExcludingSelf(wp)
                                     .forEach(playerInsideBubble -> {
                                         playerInsideBubble.getCooldownManager().removeCooldown(WideGuard.class);
@@ -106,7 +109,7 @@ public class WideGuard extends AbstractAbility {
                                 float healingValue = 150 + (entry.getKey().getMaxHealth() - entry.getKey().getHealth()) / 28.3f;
                                 int timeInSeconds = entry.getValue() * 4 / 20;
                                 float totalHealing = (timeInSeconds * healingValue);
-                                entry.getKey().addHealingInstance(wp, "Wide Guard", totalHealing, totalHealing, -1, 100, false);
+                                entry.getKey().addHealingInstance(wp, "Wide Guard", totalHealing, totalHealing, -1, 100, false, false);
                             }
 
                             CircleEffect circle = new CircleEffect(wp.getGame(), wp.getTeam(), player.getLocation(), 4);
