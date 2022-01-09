@@ -23,7 +23,7 @@ public class Earthliving extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        int healthRestore = Classes.getSelectedBoost(player) == ClassesSkillBoosts.EARTHLIVING_WEAPON ? 250 : 240;
+        int healthRestore = procChance == 40 ? 240 : 250;
         description = "§7Imbue your weapon with the power of the\n" +
                 "§7Earth, causing each of your melee attacks\n" +
                 "§7to have a §e" + procChance + "% §7chance to heal you and §e2\n" +

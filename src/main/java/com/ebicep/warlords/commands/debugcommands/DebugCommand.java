@@ -161,7 +161,7 @@ public class DebugCommand implements CommandExecutor {
                     if (input.equals("takedamage")) {
                         player.addDamageInstance(player, "debug", amount, amount, -1, 100, false);
                     } else {
-                        player.addHealingInstance(player, "debug", amount, amount, -1, 100, false);
+                        player.addHealingInstance(player, "debug", amount, amount, -1, 100, false, false);
                     }
 
                     return true;

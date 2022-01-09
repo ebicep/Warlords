@@ -36,7 +36,7 @@ public class DeathsDebt extends AbstractTotemBase {
 
     @Override
     public void updateDescription(Player player) {
-        int selfDamagePercent = Classes.getSelectedBoost(player) == ClassesSkillBoosts.DEATHS_DEBT ? 75 : 100;
+        int selfDamagePercent = selfDamageInPercentPerSecond == .1667f ? 100 : 75;
         description = "§2Spirits’ Respite§7: Place down a totem that\n" +
                 "§7delays §c100% §7of incoming damage towards\n" +
                 "§7yourself. Transforms into §dDeath’s Debt §7after\n" +
@@ -202,7 +202,7 @@ public class DeathsDebt extends AbstractTotemBase {
                     nearPlayer.addHealingInstance(wp, name,
                             damage * .15f,
                             damage * .15f,
-                            critChance, critMultiplier, false);
+                            critChance, critMultiplier, false, false);
                 });
         //adding to rep pool
         if (wp.getSpec().getBlue() instanceof Repentance) {

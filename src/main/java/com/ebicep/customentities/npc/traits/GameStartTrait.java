@@ -65,6 +65,7 @@ public class GameStartTrait extends Trait {
             player.sendMessage(ChatColor.RED + "Unable to join because there is an ongoing game. Use " + ChatColor.GRAY + "/spectate" + ChatColor.RED + " if you feel like spectating!");
             return;
         }
+        int playersInGame = game.playersCount();
         //check if player is in a party, they must be leader to join
         Optional<Party> optionalParty = Warlords.partyManager.getPartyFromAny(player.getUniqueId());
         if (optionalParty.isPresent()) {
@@ -74,7 +75,7 @@ public class GameStartTrait extends Trait {
                 return;
             }
             //check if there is enough room for party
-            if (party.getPartyPlayers().size() > game.getMap().getMaxPlayers()) {
+            if (party.getPartyPlayers().size() + playersInGame > game.getMap().getMaxPlayers()) {
                 player.sendMessage(ChatColor.RED + "There is not enough room in the game for your party!");
                 return;
             }
@@ -86,6 +87,10 @@ public class GameStartTrait extends Trait {
             //add all party members to queue
             party.getAllPartyPeoplePlayerOnline().stream().filter(p -> !ctfQueue.contains(p.getUniqueId())).forEach(this::joinQueue);
         } else {
+            if (playersInGame >= game.getMap().getMaxPlayers()) {
+                player.sendMessage(ChatColor.RED + "The game is full!");
+                return;
+            }
             joinQueue(player);
         }
     }

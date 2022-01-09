@@ -36,21 +36,18 @@ public class PreLobbyState implements State, TimerDebugAble {
     public void begin() {
         timer = game.getMap().getCountdownTimerInTicks();
         Gates.changeGates(game.getMap(), false);
-        game.setPrivate(false);
+        //game.setPrivate(false);
         // Debug
-        System.out.println("Game State =" + game.getState());
-        System.out.println("Game Players =" + game.getPlayers());
-        System.out.println("isPrivate =" + game.isPrivate());
+        System.out.println("DEBUG IS GAME PRIVATE");
+        System.out.println("Game State = " + game.getState());
+        System.out.println("Game Players = " + game.getPlayers());
+        System.out.println("isPrivate = " + game.isPrivate());
     }
 
     @Override
     public State run() {
         int players = game.playersCount();
         if (players >= game.getMap().getMinPlayers() || game.isPrivate()) {
-            // Debug
-            System.out.println("Game State =" + game.getState());
-            System.out.println("Game Players =" + game.getPlayers());
-            System.out.println("isPrivate =" + game.isPrivate());
             if (timer % 20 == 0) {
                 int time = timer / 20;
                 game.forEachOnlinePlayer((player, team) -> {
@@ -218,16 +215,14 @@ public class PreLobbyState implements State, TimerDebugAble {
                             }));
                 }
                 if (game.getPlayers().size() >= 14) {
-                    BotManager.sendMessageToNotificationChannel("[GAME] A " + (game.isPrivate() ? "" : "Public") + "**" + game.getMap().getMapName() + "** started with **" + game.getPlayers().size() + (game.getPlayers().size() == 1 ? "** player!" : "** players!"));
+                    BotManager.sendMessageToNotificationChannel("[GAME] A " + (game.isPrivate() ? "" : "Public") + " **" + game.getMap().getMapName() + "** started with **" + game.getPlayers().size() + (game.getPlayers().size() == 1 ? "** player!" : "** players!"));
                 }
                 return new PlayingState(game);
             }
             timer--;
         } else {
             timer = game.getMap().getCountdownTimerInTicks();
-            game.forEachOnlinePlayer((player, team) -> {
-                giveLobbyScoreboard(false, player);
-            });
+            game.forEachOnlinePlayer((player, team) -> giveLobbyScoreboard(false, player));
         }
         return null;
     }

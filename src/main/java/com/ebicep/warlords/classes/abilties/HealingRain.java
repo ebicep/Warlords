@@ -84,14 +84,14 @@ public class HealingRain extends AbstractAbility {
                                     .aliveTeammatesOf(wp)
                                     .forEach((teammateInRain) -> {
                                         teammateInRain.addHealingInstance(
-                                            hr.getWarlordsPlayer(),
-                                            hr.getName(),
-                                            hr.getMinDamage(),
-                                            hr.getMaxDamage(),
-                                            hr.getCritChance(),
-                                            hr.getCritMultiplier(),
-                                            false
-                                        );
+                                                hr.getWarlordsPlayer(),
+                                                hr.getName(),
+                                                hr.getMinDamage(),
+                                                hr.getMaxDamage(),
+                                                hr.getCritChance(),
+                                                hr.getCritMultiplier(),
+                                                false,
+                                                false);
 
                                         if (teammateInRain != wp) {
                                             teammateInRain.getCooldownManager().removeCooldown(Utils.OVERHEAL_MARKER);

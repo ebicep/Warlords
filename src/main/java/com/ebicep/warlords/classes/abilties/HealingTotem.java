@@ -117,7 +117,7 @@ public class HealingTotem extends AbstractTotemBase {
                                                     maxDamageHeal * healMultiplier,
                                                     critChance,
                                                     critMultiplier,
-                                                    false);
+                                                    false, false);
                                         });
                             } else {
                                 PlayerFilter.entitiesAround(totemStand, radius, radius, radius)
@@ -130,7 +130,7 @@ public class HealingTotem extends AbstractTotemBase {
                                                     maxDamageHeal * 3.1f,
                                                     critChance,
                                                     critMultiplier,
-                                                    false);
+                                                    false, false);
                                         });
                                 for (Player player1 : player.getWorld().getPlayers()) {
                                     player1.playSound(totemStand.getLocation(), Sound.BLAZE_DEATH, 1.2f, 0.7f);

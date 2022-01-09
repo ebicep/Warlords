@@ -298,7 +298,7 @@ public final class WarlordsPlayer {
                 // Checks whether the player has been crippled by Crippling Strike.
                 if (!attacker.getCooldownManager().getCooldown(CripplingStrike.class).isEmpty()) {
                     CripplingStrike cripplingStrike = (CripplingStrike) attacker.getCooldownManager().getCooldown(CripplingStrike.class).get(0).getCooldownObject();
-                    damageValue *= .85 - (cripplingStrike.getConsecutiveStrikeCounter() * .05);
+                    damageValue *= .9 - (cripplingStrike.getConsecutiveStrikeCounter() * .05);
                 }
 
                 if (attacker.getMarkedTarget() == uuid) {
@@ -437,6 +437,23 @@ public final class WarlordsPlayer {
                     addAbsorbed(Math.abs(damageHealValueBeforeReduction));
                 }
 
+                //LAST STAND HEALING
+                if (!cooldownManager.getCooldown(LastStand.class).isEmpty()) {
+                    for (Cooldown cooldown : cooldownManager.getCooldown(LastStand.class)) {
+                        WarlordsPlayer lastStandedBy = cooldown.getFrom();
+                        lastStandedBy.addAbsorbed(damageValue);
+                        //HEALING FROM LASTSTAND
+                        if (lastStandedBy != this) {
+                            float finalDamageHealValue = damageValue;
+                            boolean finalIsCrit = isCrit;
+                            //healing if multiple last stands
+                            lastStandedBy.getCooldownManager().getCooldown(LastStand.class).stream()
+                                    .filter(cd -> cd.getCooldownObject() == cooldown.getCooldownObject() && cd.getTimeLeft() > 0)
+                                    .forEach(ls -> lastStandedBy.addHealingInstance(lastStandedBy, "Last Stand", finalDamageHealValue, finalDamageHealValue, finalIsCrit ? 100 : -1, 100, false, true));
+                        }
+                    }
+                }
+
                 //ORBS
                 spawnOrbs(ability, attacker);
 
@@ -471,7 +488,7 @@ public final class WarlordsPlayer {
                                 //healing if multiple last stands
                                 lastStandedBy.getCooldownManager().getCooldown(LastStand.class).stream()
                                         .filter(cd -> cd.getCooldownObject() == cooldown.getCooldownObject() && cd.getTimeLeft() > 0)
-                                        .forEach(ls -> lastStandedBy.addHealingInstance(lastStandedBy, "Last Stand", finalDamageHealValue, finalDamageHealValue, finalIsCrit ? 100 : -1, 100, false));
+                                        .forEach(ls -> lastStandedBy.addHealingInstance(lastStandedBy, "Last Stand", finalDamageHealValue, finalDamageHealValue, finalIsCrit ? 100 : -1, 100, false, false));
                             }
                         }
                     }
@@ -509,7 +526,7 @@ public final class WarlordsPlayer {
                         if (!attacker.getCooldownManager().getCooldown(Repentance.class).isEmpty()) {
                             Repentance repentance = (Repentance) attacker.getSpec().getBlue();
                             int healthToAdd = (int) (repentance.getPool() * (repentance.getDamageConvertPercent() / 100f)) + 10;
-                            attacker.addHealingInstance(attacker, "Repentance", healthToAdd, healthToAdd, -1, 100, false);
+                            attacker.addHealingInstance(attacker, "Repentance", healthToAdd, healthToAdd, -1, 100, false, false);
                             repentance.setPool(repentance.getPool() * .5f);
                             attacker.addEnergy(attacker, "Repentance", (float) (healthToAdd * .035));
                         }
@@ -526,9 +543,9 @@ public final class WarlordsPlayer {
 
                         // Self Heal
                         if (Warlords.getPlayerSettings(attacker.uuid).getSkillBoostForClass() == ClassesSkillBoosts.PROTECTOR_STRIKE) {
-                            attacker.addHealingInstance(attacker, ability, damageValue / 1.67f, damageValue / 1.67f, isCrit ? 100 : -1, 100, false);
+                            attacker.addHealingInstance(attacker, ability, damageValue / 1.67f, damageValue / 1.67f, isCrit ? 100 : -1, 100, false, false);
                         } else {
-                            attacker.addHealingInstance(attacker, ability, damageValue / 2, damageValue / 2, isCrit ? 100 : -1, 100, false);
+                            attacker.addHealingInstance(attacker, ability, damageValue / 2, damageValue / 2, isCrit ? 100 : -1, 100, false, false);
                         }
 
                         // Ally Heal
@@ -540,9 +557,9 @@ public final class WarlordsPlayer {
                                 .limit(2)
                         ) {
                             if (Warlords.getPlayerSettings(attacker.uuid).getSkillBoostForClass() == ClassesSkillBoosts.PROTECTOR_STRIKE) {
-                                nearTeamPlayer.addHealingInstance(attacker, ability, damageValue * 1.2f, damageValue * 1.2f, isCrit ? 100 : -1, 100, false);
+                                nearTeamPlayer.addHealingInstance(attacker, ability, damageValue * 1.2f, damageValue * 1.2f, isCrit ? 100 : -1, 100, false, false);
                             } else {
-                                nearTeamPlayer.addHealingInstance(attacker, ability, damageValue, damageValue, isCrit ? 100 : -1, 100, false);
+                                nearTeamPlayer.addHealingInstance(attacker, ability, damageValue, damageValue, isCrit ? 100 : -1, 100, false, false);
                             }
                         }
                     }
@@ -551,7 +568,7 @@ public final class WarlordsPlayer {
                 // Blood Lust
                 if (!attacker.getCooldownManager().getCooldown(BloodLust.class).isEmpty()) {
                     BloodLust bloodLust = (BloodLust) attacker.getSpec().getBlue();
-                    attacker.addHealingInstance(attacker, "Blood Lust", damageValue * (bloodLust.getDamageConvertPercent() / 100f), damageValue * (bloodLust.getDamageConvertPercent() / 100f), -1, 100, false);
+                    attacker.addHealingInstance(attacker, "Blood Lust", damageValue * (bloodLust.getDamageConvertPercent() / 100f), damageValue * (bloodLust.getDamageConvertPercent() / 100f), -1, 100, false, false);
                 }
 
                 if (ability.equals("Judgement Strike")) {
@@ -686,7 +703,7 @@ public final class WarlordsPlayer {
                     boolean earthlivingBoost = Warlords.getPlayerSettings(attacker.uuid).getSkillBoostForClass() == ClassesSkillBoosts.EARTHLIVING_WEAPON;
                     float multiplyBy = earthlivingBoost ? 2.5f : 2.4f;
 
-                    attacker.addHealingInstance(attacker, "Earthliving Weapon", 132 * multiplyBy, 179 * multiplyBy, 25, 200, false);
+                    attacker.addHealingInstance(attacker, "Earthliving Weapon", 132 * multiplyBy, 179 * multiplyBy, 25, 200, false, false);
 
                     gameState.getGame().forEachOnlinePlayer((p, t) -> {
                         p.playSound(getLocation(), "shaman.earthlivingweapon.impact", 2, 1);
@@ -697,7 +714,7 @@ public final class WarlordsPlayer {
                             .aliveTeammatesOfExcludingSelf(attacker)
                             .limit(2)
                     ) {
-                        nearPlayer.addHealingInstance(attacker, "Earthliving Weapon", 132 * multiplyBy, 179 * multiplyBy, 25, 200, false);
+                        nearPlayer.addHealingInstance(attacker, "Earthliving Weapon", 132 * multiplyBy, 179 * multiplyBy, 25, 200, false, false);
                     }
                 }
             }
@@ -707,13 +724,14 @@ public final class WarlordsPlayer {
     /**
      * Adds a healing instance to an ability or a player.
      *
-     * @param attacker Assigns the damage value to the original caster.
-     * @param ability Name of the ability.
-     * @param min The minimum healing amount.
-     * @param max The maximum healing amount.
-     * @param critChance The critical chance of the damage instance.
-     * @param critMultiplier The critical multiplier of the damage instance.
-     * @param ignoreReduction Whether the instance has to ignore damage reductions.
+     * @param attacker              Assigns the damage value to the original caster.
+     * @param ability               Name of the ability.
+     * @param min                   The minimum healing amount.
+     * @param max                   The maximum healing amount.
+     * @param critChance            The critical chance of the damage instance.
+     * @param critMultiplier        The critical multiplier of the damage instance.
+     * @param ignoreReduction       Whether the instance has to ignore damage reductions.
+     * @param isLastStandFromShield Whether the instance if from last stand and absorbed healing
      */
     public void addHealingInstance(
             WarlordsPlayer attacker,
@@ -722,7 +740,8 @@ public final class WarlordsPlayer {
             float max,
             int critChance,
             int critMultiplier,
-            boolean ignoreReduction
+            boolean ignoreReduction,
+            boolean isLastStandFromShield
     ) {
         boolean isMeleeHit = ability.isEmpty();
 
@@ -762,9 +781,17 @@ public final class WarlordsPlayer {
 
             if (healValue != 0) {
                 if (isCrit) {
-                    sendMessage(RECEIVE_ARROW + ChatColor.GRAY + " Your " + ability + " critically healed you for " + ChatColor.GREEN + "§l" + Math.round(healValue) + "! " + ChatColor.GRAY + "health.");
+                    if (isLastStandFromShield) {
+                        sendMessage(RECEIVE_ARROW + ChatColor.GRAY + " Your " + ability + " critically healed you for " + ChatColor.GREEN + "§l" + Math.round(healValue) + " Absorbed! " + ChatColor.GRAY + "health.");
+                    } else {
+                        sendMessage(RECEIVE_ARROW + ChatColor.GRAY + " Your " + ability + " critically healed you for " + ChatColor.GREEN + "§l" + Math.round(healValue) + "! " + ChatColor.GRAY + "health.");
+                    }
                 } else {
-                    sendMessage(RECEIVE_ARROW + ChatColor.GRAY + " Your " + ability + " healed you for " + ChatColor.GREEN + "" + Math.round(healValue) + " " + ChatColor.GRAY + "health.");
+                    if (isLastStandFromShield) {
+                        sendMessage(RECEIVE_ARROW + ChatColor.GRAY + " Your " + ability + " healed you for " + ChatColor.GREEN + "" + Math.round(healValue) + " Absorbed " + ChatColor.GRAY + "health.");
+                    } else {
+                        sendMessage(RECEIVE_ARROW + ChatColor.GRAY + " Your " + ability + " healed you for " + ChatColor.GREEN + "" + Math.round(healValue) + " " + ChatColor.GRAY + "health.");
+                    }
                 }
                 health += healValue;
                 addHealing(healValue, gameState.flags().hasFlag(this));

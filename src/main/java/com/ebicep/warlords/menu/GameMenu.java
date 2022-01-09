@@ -163,7 +163,7 @@ public class GameMenu {
     public static void openSkillBoostMenu(Player player, Classes selectedGroup) {
         Classes selectedClass = getSelected(player);
         ClassesSkillBoosts selectedBoost = getSelectedBoost(player);
-        Menu menu = new Menu("Skill Boost", 9 * 4);
+        Menu menu = new Menu("Skill Boost", 9 * 6);
         List<ClassesSkillBoosts> values = selectedGroup.skillBoosts;
         for (int i = 0; i < values.size(); i++) {
             ClassesSkillBoosts skillBoost = values.get(i);
@@ -182,7 +182,7 @@ public class GameMenu {
             builder.lore(lore);
             menu.setItem(
                     i + 2,
-                    1,
+                    3,
                     builder.get(),
                     (n, e) -> {
                         player.sendMessage(ChatColor.GREEN + "You have changed your weapon boost to: §b" + skillBoost.name + "!");
@@ -196,7 +196,43 @@ public class GameMenu {
                     }
             );
         }
-        menu.setItem(4, 3, MENU_BACK_PREGAME, (n, e) -> openMainMenu(player));
+
+        //showing change of ability
+        PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
+        AbstractPlayerClass apc = selectedClass.create.get();
+        AbstractPlayerClass apc2 = selectedClass.create.get();
+        if (apc2.getWeapon().getClass() == selectedBoost.ability) {
+            apc2.getWeapon().boostSkill(selectedBoost, apc2);
+            apc.getWeapon().updateDescription(player);
+            apc2.getWeapon().updateDescription(player);
+            menu.setItem(3, 1, apc.getWeapon().getItem(playerSettings.getWeaponSkins().getOrDefault(selectedClass, Weapons.FELFLAME_BLADE).item), ACTION_DO_NOTHING);
+            menu.setItem(5, 1, apc2.getWeapon().getItem(playerSettings.getWeaponSkins().getOrDefault(selectedClass, Weapons.FELFLAME_BLADE).item), ACTION_DO_NOTHING);
+        } else if (apc2.getRed().getClass() == selectedBoost.ability) {
+            apc2.getRed().boostSkill(selectedBoost, apc2);
+            apc.getRed().updateDescription(player);
+            apc2.getRed().updateDescription(player);
+            menu.setItem(3, 1, apc.getRed().getItem(new ItemStack(Material.INK_SACK, 1, (byte) 1)), ACTION_DO_NOTHING);
+            menu.setItem(5, 1, apc2.getRed().getItem(new ItemStack(Material.INK_SACK, 1, (byte) 1)), ACTION_DO_NOTHING);
+        } else if (apc2.getPurple().getClass() == selectedBoost.ability) {
+            apc2.getPurple().boostSkill(selectedBoost, apc2);
+            apc.getPurple().updateDescription(player);
+            apc2.getPurple().updateDescription(player);
+            menu.setItem(3, 1, apc.getPurple().getItem(new ItemStack(Material.GLOWSTONE_DUST)), ACTION_DO_NOTHING);
+            menu.setItem(5, 1, apc2.getPurple().getItem(new ItemStack(Material.GLOWSTONE_DUST)), ACTION_DO_NOTHING);
+        } else if (apc2.getBlue().getClass() == selectedBoost.ability) {
+            apc2.getBlue().boostSkill(selectedBoost, apc2);
+            apc.getBlue().updateDescription(player);
+            apc2.getBlue().updateDescription(player);
+            menu.setItem(3, 1, apc.getBlue().getItem(new ItemStack(Material.INK_SACK, 1, (byte) 10)), ACTION_DO_NOTHING);
+            menu.setItem(5, 1, apc2.getBlue().getItem(new ItemStack(Material.INK_SACK, 1, (byte) 10)), ACTION_DO_NOTHING);
+        } else if (apc2.getOrange().getClass() == selectedBoost.ability) {
+            apc2.getOrange().boostSkill(selectedBoost, apc2);
+            apc.getOrange().updateDescription(player);
+            apc2.getOrange().updateDescription(player);
+            menu.setItem(3, 1, apc.getOrange().getItem(new ItemStack(Material.INK_SACK, 1, (byte) 14)), ACTION_DO_NOTHING);
+            menu.setItem(5, 1, apc2.getOrange().getItem(new ItemStack(Material.INK_SACK, 1, (byte) 14)), ACTION_DO_NOTHING);
+        }
+        menu.setItem(4, 5, MENU_BACK_PREGAME, (n, e) -> openMainMenu(player));
         menu.openForPlayer(player);
     }
 

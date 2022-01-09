@@ -92,6 +92,10 @@ public class StartCommand implements TabExecutor {
         }
         //private game if started using /start
         game.setPrivate(true);
+        // Debug
+        System.out.println("Game State = " + game.getState());
+        System.out.println("Game Players = " + game.getPlayers());
+        System.out.println("isPrivate = " + game.isPrivate());
         Warlords.game.clearAllPlayers();
         GameStartTrait.ctfQueue.clear();
 
