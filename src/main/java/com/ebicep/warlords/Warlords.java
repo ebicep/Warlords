@@ -45,6 +45,7 @@ import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.slf4j.LoggerFactory;
 
@@ -85,7 +86,7 @@ public class Warlords extends JavaPlugin {
     @Nullable
     public static WarlordsPlayer getPlayer(@Nullable Entity entity) {
         if (entity != null) {
-            Optional<MetadataValue> metadata = entity.getMetadata("WARLORDS_PLAYER").stream().findAny();
+            Optional<MetadataValue> metadata = entity.getMetadata("WARLORDS_PLAYER").stream().filter(e -> e.value() instanceof WarlordsPlayer).findAny();
             if (metadata.isPresent()) {
                 return (WarlordsPlayer) metadata.get().value();
             }
@@ -345,11 +346,21 @@ public class Warlords extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        // Pre-caution
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            player.removePotionEffect(PotionEffectType.BLINDNESS);
+            player.getActivePotionEffects().clear();
+            player.removeMetadata("WARLORDS_PLAYER", this);
+            PacketUtils.sendTitle(player, "", "", 0, 0, 0);
+        }
+
         RemoveEntities.removeArmorStands(0);
         game.clearAllPlayers();
+
         if (holographicDisplaysEnabled) {
             HolographicDisplaysAPI.get(instance).getHolograms().forEach(Hologram::delete);
         }
+
         try {
             BotManager.jda.shutdownNow();
         } catch (Exception e) {

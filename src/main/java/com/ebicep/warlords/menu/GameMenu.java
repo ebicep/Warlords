@@ -589,6 +589,7 @@ public class GameMenu {
             apc.getOrange().boostSkill(selectedBoost, apc);
         }
 
+        apc.getWeapon().updateDescription(player);
         apc.getRed().updateDescription(player);
         apc.getPurple().updateDescription(player);
         apc.getBlue().updateDescription(player);

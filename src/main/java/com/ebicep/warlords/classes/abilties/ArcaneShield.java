@@ -33,7 +33,7 @@ public class ArcaneShield extends AbstractAbility {
     @Override
     public void onActivate(WarlordsPlayer wp, Player p) {
         wp.subtractEnergy(energyCost);
-        wp.getCooldownManager().addCooldown(name, ArcaneShield.this.getClass(), new ArcaneShield(), "ARCA", 100, wp, CooldownTypes.ABILITY);
+        wp.getCooldownManager().addCooldown(name, ArcaneShield.this.getClass(), new ArcaneShield(), "ARCA", 6, wp, CooldownTypes.ABILITY);
         ((EntityLiving) ((CraftPlayer) p).getHandle()).setAbsorptionHearts(20);
         shieldHealth = maxShieldHealth;
 

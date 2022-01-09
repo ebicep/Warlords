@@ -280,7 +280,7 @@ public final class WarlordsPlayer {
                 // Checks whether the player has been crippled by Crippling Strike.
                 if (!attacker.getCooldownManager().getCooldown(CripplingStrike.class).isEmpty()) {
                     CripplingStrike cripplingStrike = (CripplingStrike) attacker.getCooldownManager().getCooldown(CripplingStrike.class).get(0).getCooldownObject();
-                    damageValue *= .85 - (cripplingStrike.getConsecutiveStrikeCounter() * .05);
+                    damageValue *= .9 - (cripplingStrike.getConsecutiveStrikeCounter() * .05);
                 }
             }
         }
@@ -361,11 +361,6 @@ public final class WarlordsPlayer {
                     if (!cooldownManager.getCooldownFromName("Flag Damage Reduction").isEmpty()) {
                         damageValue *= .9;
                     }
-
-                    // Checks whether the damage reduction is over 80%
-//                    if(damageValue < damageHealValueBeforeReduction * .2) {
-//                        damageValue = damageHealValueBeforeReduction * .2f;
-//                    }
                 }
             }
 
@@ -669,7 +664,8 @@ public final class WarlordsPlayer {
             int critChance,
             int critMultiplier,
             boolean ignoreReduction,
-            boolean isLastStandFromShield) {
+            boolean isLastStandFromShield
+    ) {
         boolean isMeleeHit = ability.isEmpty();
 
         // Spawn Protection / Undying Army / Game State
