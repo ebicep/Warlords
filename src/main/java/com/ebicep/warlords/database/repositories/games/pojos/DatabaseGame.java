@@ -9,7 +9,6 @@ import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.state.PlayingState;
-import com.ebicep.warlords.player.Classes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.NumberFormat;
 import com.ebicep.warlords.util.PlayerFilter;
@@ -427,7 +426,7 @@ public class DatabaseGame {
 
     private static void updatePlayerStats(DatabaseGame databaseGame, boolean add, DatabaseGamePlayers.GamePlayer gamePlayer, DatabasePlayer databasePlayer, boolean checkBlueWin) {
         boolean won = checkBlueWin ? databaseGame.bluePoints > databaseGame.redPoints : databaseGame.redPoints > databaseGame.bluePoints;
-        databasePlayer.updateStats(GameMode.CAPTURE_THE_FLAG, databaseGame.isPrivate, gamePlayer, won, add);
+        databasePlayer.updateStats(GameMode.CAPTURE_THE_FLAG, databaseGame.isPrivate, databaseGame, gamePlayer, won, add);
     }
 
     @Transient

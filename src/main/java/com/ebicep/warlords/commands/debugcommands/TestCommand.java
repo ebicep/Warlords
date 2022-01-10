@@ -1,27 +1,28 @@
 package com.ebicep.warlords.commands.debugcommands;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.classes.abilties.temp;
 import com.ebicep.warlords.commands.BaseCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.cache.MultipleCacheResolver;
-import com.ebicep.warlords.database.leaderboards.Leaderboard;
-import com.ebicep.warlords.database.leaderboards.LeaderboardManager;
+import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame;
+import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayers;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.ctf.DatabasePlayerCTF;
+import com.ebicep.warlords.database.repositories.player.pojos.ctf.DatabaseBaseCTF;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
-import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayerCompStats;
+import com.ebicep.warlords.player.Classes;
+import com.ebicep.warlords.player.ClassesGroup;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.github.benmanes.caffeine.cache.Cache;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.model.Filters;
-import org.bson.Document;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.springframework.cache.caffeine.CaffeineCache;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 public class TestCommand implements CommandExecutor {
@@ -83,237 +84,84 @@ public class TestCommand implements CommandExecutor {
 
         Player player = (Player) sender;
 
-//        for (DatabasePlayer databasePlayer : DatabaseManager.playerService.findAll(PlayersCollections.TEST)) {
-//            DatabaseManager.playerService.update(databasePlayer, PlayersCollections.TEST);
-//            break;
-//        }
-
-//        MongoCollection<Document> temp2 = DatabaseManager.warlordsDatabase.getCollection("TEMP");
-//        for (Document document : temp2.find()) {
-//            DatabasePlayer databasePlayer = DatabaseManager.playerService.convertDocumentToClass(document, DatabasePlayer.class);
-//            databasePlayer.setCompStats(DatabaseManager.playerService.convertDocumentToClass(document, DatabasePlayerCompStats.class));
-//            databasePlayer.getCompStats().setCtfStats(DatabaseManager.playerService.convertDocumentToClass(document, DatabasePlayerCTF.class));
-//            DatabaseManager.playerService.create(databasePlayer, PlayersCollections.TEMP2);
-//        }
-
-//        MongoCollection<Document> mongoCollection = DatabaseManager.warlordsDatabase.getCollection(PlayersCollections.NEW_SEASON_WEEKLY.collectionName);
-//        for (DatabasePlayer databasePlayer : DatabaseManager.playerService.findAll(PlayersCollections.TEST)) {
-//            DatabasePlayerCTF databasePlayerCTF = databasePlayer.getCompStats().getCtfStats();
-//            DatabasePlayerCompStats compStats = databasePlayer.getCompStats();
-//            compStats.setKills(databasePlayerCTF.getKills());
-//            compStats.setAssists(databasePlayerCTF.getAssists());
-//            compStats.setDeaths(databasePlayerCTF.getDeaths());
-//            compStats.setWins(databasePlayerCTF.getWins());
-//            compStats.setLosses(databasePlayerCTF.getLosses());
-//            compStats.setPlays(databasePlayerCTF.getPlays());
-//            compStats.setDamage(databasePlayerCTF.getDamage());
-//            compStats.setHealing(databasePlayerCTF.getHealing());
-//            compStats.setAbsorbed(databasePlayerCTF.getAbsorbed());
-//            compStats.setExperience(databasePlayerCTF.getExperience());
-//
-//            DatabaseManager.playerService.update(databasePlayer, PlayersCollections.TEST);
-//        }
-
-
-//        for (int i = 0; i < 9; i++) {
-//            hologram.getLines().appendText("test text"); //ChatColor.YELLOW.toString() + (i + 1)+ ". " + ChatColor.AQUA + "Test Name");
-//        }
-
-//        hologram.getVisibilitySettings().setGlobalVisibility(VisibilitySettings.Visibility.HIDDEN);
-//        hologram.getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.VISIBLE);
-
-//        for (DatabasePlayer lifeTime : DatabaseManager.playerService.findAll(PlayersCollections.ALL_TIME)) {
-//            DatabasePlayer season4 = DatabaseManager.playerService.findByUUID(UUID.fromString(lifeTime.getUuid()), PlayersCollections.SEASON_4);
-//            if(season4 == null || lifeTime.getPlays() == season4.getPlays()) {
+//        boolean s5 = false;
+//        List<DatabaseGame> gameList = DatabaseManager.gameService.findAll().stream()
+//                .filter(databaseGame -> databaseGame.isCounted() && databaseGame.isPrivate())
+//                .collect(Collectors.toList());
+//        List<DatabasePlayer> databasePlayers = DatabaseManager.playerService.findAll(PlayersCollections.TEMP2);
+//        for (DatabaseGame databaseGame : gameList) {
+//            if(databaseGame.getDate().startsWith("12/17") && !s5) {
+//                s5 = true;
+//                System.out.println("S5 DETECTED");
+//            }
+//            if(!s5) {
 //                continue;
 //            }
-//            DatabasePlayer newPlayer = new DatabasePlayer(UUID.fromString(lifeTime.getUuid()), lifeTime.getName());
-//            newPlayer.setKills(lifeTime.getKills() - season4.getKills());
-//            newPlayer.setAssists(lifeTime.getAssists() - season4.getAssists());
-//            newPlayer.setDeaths(lifeTime.getDeaths() - season4.getDeaths());
-//            newPlayer.setWins(lifeTime.getWins() - season4.getWins());
-//            newPlayer.setLosses(lifeTime.getLosses() - season4.getLosses());
-//            newPlayer.setPlays(lifeTime.getPlays() - season4.getPlays());
-//            newPlayer.setFlagsCaptured(lifeTime.getFlagsCaptured() - season4.getFlagsCaptured());
-//            newPlayer.setFlagsReturned(lifeTime.getFlagsReturned() - season4.getFlagsReturned());
-//            newPlayer.setDamage(lifeTime.getDamage() - season4.getDamage());
-//            newPlayer.setHealing(lifeTime.getHealing() - season4.getHealing());
-//            newPlayer.setAbsorbed(lifeTime.getAbsorbed() - season4.getAbsorbed());
-//            subtractSpecs(newPlayer, lifeTime, season4);
-//            newPlayer.setLastSpec(lifeTime.getLastSpec());
-//            newPlayer.setHotkeyMode(lifeTime.getHotkeyMode());
-//            newPlayer.setParticleQuality(lifeTime.getParticleQuality());
-//            newPlayer.setExperience(lifeTime.getExperience());
-//            DatabaseManager.playerService.create(newPlayer, PlayersCollections.SEASON_5);
-//        }
-
-//        QueueManager.queue.clear();
+//            List<DatabaseGamePlayers.GamePlayer> gamePlayers = new ArrayList<>();
+//            gamePlayers.addAll(databaseGame.getPlayers().getBlue());
+//            gamePlayers.addAll(databaseGame.getPlayers().getRed());
 //
-////        DatabaseManager.warlordsDatabase.getCollection("Weekly_Leaderboards").insertOne(LeaderboardManager.getTopPlayersOnLeaderboard());
-//
-//        int counter = 0;
-//        List<DatabasePlayer> databasePlayers = DatabaseManager.playerService.findAll(PlayersCollections.WEEKLY);
-////        MongoCollection<Document> collection = DatabaseManager.warlordsDatabase.getCollection("Temp");
-////        System.out.println(databasePlayers.size());
-//        for (int i = 0; i < 200 && i < databasePlayers.size(); i++) {
-//            DatabasePlayer databasePlayer = databasePlayers.get(i);
-//            System.out.println(i + " - " + databasePlayer.getName());
-//
-//            databasePlayer.setPlays(databasePlayer.getWins() + databasePlayer.getLosses());
-//            databasePlayer.getMage().setPlays(databasePlayer.getMage().getWins() + databasePlayer.getMage().getLosses());
-//            databasePlayer.getWarrior().setPlays(databasePlayer.getWarrior().getPlays() + databasePlayer.getWarrior().getLosses());
-//            databasePlayer.getPaladin().setPlays(databasePlayer.getPaladin().getPlays() + databasePlayer.getPaladin().getLosses());
-//            databasePlayer.getShaman().setPlays(databasePlayer.getShaman().getPlays() + databasePlayer.getShaman().getLosses());
-//
-//            for (DatabaseSpecialization spec : databasePlayer.getMage().getSpecs()) {
-//                spec.setPlays(spec.getWins() + spec.getLosses());
-//            }
-//            for (DatabaseSpecialization spec : databasePlayer.getWarrior().getSpecs()) {
-//                spec.setPlays(spec.getWins() + spec.getLosses());
-//            }
-//            for (DatabaseSpecialization spec : databasePlayer.getPaladin().getSpecs()) {
-//                spec.setPlays(spec.getWins() + spec.getLosses());
-//            }
-//            for (DatabaseSpecialization spec : databasePlayer.getShaman().getSpecs()) {
-//                spec.setPlays(spec.getWins() + spec.getLosses());
-//            }
-//
-//            DatabaseManager.updatePlayerAsync(databasePlayer, PlayersCollections.WEEKLY);
-//
-//        }
-//        for (DatabaseGame databaseGame : databaseGames) {
-//            System.out.println(counter++);
-//            System.out.println(databaseGame.getDate());
-//            System.out.println(databaseGame.getPlayers());
-//            for (DatabaseGamePlayers.GamePlayer gamePlayer : databaseGame.getPlayers().getBlue()) {
-//                gamePlayer.setSpec(gamePlayer.getSpec().toUpperCase());
-//            }
-//            for (DatabaseGamePlayers.GamePlayer gamePlayer : databaseGame.getPlayers().getRed()) {
-//                gamePlayer.setSpec(gamePlayer.getSpec().toUpperCase());
-//            }
-//            DatabaseManager.updateGameAsync(databaseGame);
-//        }
-
-
-//        for (DatabasePlayer databasePlayer : DatabaseManager.playerService.getPlayersSorted("", PlayersCollections.ALL_TIME)) {
-//            System.out.println(databasePlayer.getName() + " - " + (databasePlayer.getWins() + databasePlayer.getLosses()));
-//        }
-
-//        printCache();
-//        System.out.println(databasePlayer);
-//        Utils.sendMessage(player, true, ChatColor.GREEN.toString() + ChatColor.BOLD + ChatColor.MAGIC + "   " + ChatColor.AQUA + ChatColor.BOLD + " LEVEL UP! " + ChatColor.DARK_GRAY + ChatColor.BOLD + "[" + ChatColor.GRAY + ChatColor.BOLD + "23" + ChatColor.DARK_GRAY + ChatColor.BOLD + "]" + ChatColor.GREEN + ChatColor.BOLD + " > " + ChatColor.DARK_GRAY + ChatColor.BOLD + "[" + ChatColor.GRAY + ChatColor.BOLD + "24" + ChatColor.DARK_GRAY + ChatColor.BOLD + "] " + ChatColor.GREEN + ChatColor.MAGIC + ChatColor.BOLD + "   ");
-
-//        System.out.println(LeaderboardManager.leaderboards.get(0).getSortedAllTime().get(0));
-//        System.out.println(LeaderboardManager.leaderboards.get(0).getSortedWeekly().get(0));
-//        DecimalFormat decimalFormat = new DecimalFormat("#.##");
-//        weeklyLeaderboards.insertOne(document);
-//        List<WriteModel<Document>> updates = new ArrayList<>();
-
-//        playersInformation.find().forEach((Consumer<? super Document>) document -> {
-//            ExperienceManager.giveExpFromCurrentStats(UUID.fromString(document.getString("uuid")));
-//        });
-//        DatabaseManager.warlordsGamesDatabase.createCollection("Games_Information_Test");
-//        MongoCollection<Document> temp = warlordsGamesDatabase.getCollection("Temp");
-//        for (Document document : gamesInformation.find().skip(640)) {
-//            temp.insertOne(document);
-//        }
-//        Bukkit.getOnlinePlayers().forEach(p -> {
-//            ExperienceManager.giveExpFromCurrentStats(p.getUniqueId());
-//        });
-//        MongoCollection<Document> test = warlordsPlayersDatabase.getCollection("Players_Information_Test");
-//        long temp = (long) getPlayerInfoWithDotNotation(((Player) sender), "dots");
-//        sender.sendMessage(ChatColor.BLUE + "---------------------------------------------------");
-//        Utils.sendCenteredMessage((Player) sender, ChatColor.WHITE + "Experience Summary");
-//        sender.sendMessage(ChatColor.BLUE + "---------------------------------------------------");
-//
-//        sender.sendMessage(ChatColor.BLUE + "---------------------------------------------------");
-//        List<Document> documents = Lists.newArrayList(DatabaseManager.playersInformation.aggregate(Collections.singletonList(sort(descending("paladin.avenger.wins")))));
-//        System.out.println(documents.get(0));
-//        System.out.println(documents.get(1));
-//        int counter = 0;
-//        for (Document document : Leaderboards.cachedSortedPlayersLifeTime.get("wins")) {
-//            System.out.println(document.get("name") + " - Games Played: " + (document.getInteger("wins") + document.getInteger("losses")));
-//            for (String spec : DatabaseGame.specsOrdered) {
-//                long exp = getCalculatedExp(document, Classes.getClassesGroup(spec).name.toLowerCase() + "." + spec.toLowerCase());
-//                System.out.println(spec + " EXP: " + exp + " - Level: " +
-//                        decimalFormat.format(calculateLevelFromExp(exp)) +
-//                        " - Games Played: " + ((int) getDocumentInfoWithDotNotation(document, Classes.getClassesGroup(spec).name.toLowerCase() + "." + spec.toLowerCase() + ".wins") +
-//                        (int) getDocumentInfoWithDotNotation(document,Classes.getClassesGroup(spec).name.toLowerCase() + "." + spec.toLowerCase() + ".losses")));
-//            }
-//            counter++;
-//            if(counter == 10) {
-//                break;
+//            int timePlayed = 900 - databaseGame.getTimeLeft();
+//            for (DatabaseGamePlayers.GamePlayer gamePlayer : gamePlayers) {
+//                databasePlayers.stream()
+//                        .filter(databasePlayer -> databasePlayer.getUuid().equalsIgnoreCase(gamePlayer.getUuid()))
+//                        .findFirst()
+//                        .ifPresent(databasePlayer -> {
+//                            int blocksTravelled = gamePlayer.getBlocksTravelled();
+//                            int secondsInRespawn = gamePlayer.getSecondsInRespawn();
+//                            //ctf_stats
+//                            databasePlayer.getCtfStats().addTotalBlocksTravelled(blocksTravelled);
+//                            if (databasePlayer.getCtfStats().getMostBlocksTravelled() < blocksTravelled) {
+//                                databasePlayer.getCtfStats().setMostBlocksTravelled(blocksTravelled);
+//                            }
+//                            databasePlayer.getCtfStats().addTotalTimeInRespawn(secondsInRespawn);
+//                            databasePlayer.getCtfStats().addTotalTimePlayed(timePlayed);
+//                            //ctf_stats class
+//                            DatabaseBaseCTF databaseBaseCTFClass = databasePlayer.getCtfStats().getClass(Classes.getClassesGroup(gamePlayer.getSpec()));
+//                            databaseBaseCTFClass.addTotalBlocksTravelled(blocksTravelled);
+//                            if (databaseBaseCTFClass.getMostBlocksTravelled() < blocksTravelled) {
+//                                databaseBaseCTFClass.setMostBlocksTravelled(blocksTravelled);
+//                            }
+//                            databaseBaseCTFClass.addTotalTimeInRespawn(secondsInRespawn);
+//                            databaseBaseCTFClass.addTotalTimePlayed(timePlayed);
+//                            //ctf_stats class spec
+//                            DatabaseBaseCTF databaseBaseCTFClassSpec = databasePlayer.getCtfStats().getSpec(gamePlayer.getSpec());
+//                            databaseBaseCTFClassSpec.addTotalBlocksTravelled(blocksTravelled);
+//                            if (databaseBaseCTFClassSpec.getMostBlocksTravelled() < blocksTravelled) {
+//                                databaseBaseCTFClassSpec.setMostBlocksTravelled(blocksTravelled);
+//                            }
+//                            databaseBaseCTFClassSpec.addTotalTimeInRespawn(secondsInRespawn);
+//                            databaseBaseCTFClassSpec.addTotalTimePlayed(timePlayed);
+//                            //comp_stats ctf_stats
+//                            databasePlayer.getCompStats().getCtfStats().addTotalBlocksTravelled(blocksTravelled);
+//                            if (databasePlayer.getCompStats().getCtfStats().getMostBlocksTravelled() < blocksTravelled) {
+//                                databasePlayer.getCompStats().getCtfStats().setMostBlocksTravelled(blocksTravelled);
+//                            }
+//                            databasePlayer.getCompStats().getCtfStats().addTotalTimeInRespawn(secondsInRespawn);
+//                            databasePlayer.getCompStats().getCtfStats().addTotalTimePlayed(timePlayed);
+//                            //comp_stats ctf_stats class
+//                            DatabaseBaseCTF databaseBaseCTF2Class = databasePlayer.getCompStats().getCtfStats().getClass(Classes.getClassesGroup(gamePlayer.getSpec()));
+//                            databaseBaseCTF2Class.addTotalBlocksTravelled(blocksTravelled);
+//                            if (databaseBaseCTF2Class.getMostBlocksTravelled() < blocksTravelled) {
+//                                databaseBaseCTF2Class.setMostBlocksTravelled(blocksTravelled);
+//                            }
+//                            databaseBaseCTF2Class.addTotalTimeInRespawn(secondsInRespawn);
+//                            databaseBaseCTF2Class.addTotalTimePlayed(timePlayed);
+//                            //comp_stats ctf_stats class spec
+//                            DatabaseBaseCTF databaseBaseCTF2ClassSpec = databasePlayer.getCompStats().getCtfStats().getSpec(gamePlayer.getSpec());
+//                            databaseBaseCTF2ClassSpec.addTotalBlocksTravelled(blocksTravelled);
+//                            if (databaseBaseCTF2ClassSpec.getMostBlocksTravelled() < blocksTravelled) {
+//                                databaseBaseCTF2ClassSpec.setMostBlocksTravelled(blocksTravelled);
+//                            }
+//                            databaseBaseCTF2ClassSpec.addTotalTimeInRespawn(secondsInRespawn);
+//                            databaseBaseCTF2ClassSpec.addTotalTimePlayed(timePlayed);
+//                        });
 //            }
 //        }
-
-//        if(document.get("total_class_exp") == null) {
-//            long calculated
-//            Document expDocument = new Document("total_class_exp", 0);
-//            test.updateOne(Filters.eq("uuid", document.get("uuid")), new Document("$set", document));
+//        for (DatabasePlayer databasePlayer : databasePlayers) {
+//            DatabaseManager.updatePlayerAsync(databasePlayer, PlayersCollections.TEMP2);
 //        }
 //
-//        int totalDHP = 0;
-//        int totalDamage = 0;
-//        int totalHealing = 0;
-//        int totalAbsorbed = 0;
-//        for (String s1 : DatabaseGame.specsOrdered) {
-//            Classes specName = Classes.getClass(s1);
-//            String className = Classes.getClassesGroup(s1).name.toLowerCase();
-//            if(specName.specType == SpecType.HEALER) {
-//                int dhp = getTotalAverageDHP(className + "." + s1.toLowerCase());
-//                int damage = getTotalAverageDHPSelected(className + "." + s1.toLowerCase(), "damage");
-//                int healing = getTotalAverageDHPSelected(className + "." + s1.toLowerCase(), "healing");
-//                int absorbed = getTotalAverageDHPSelected(className + "." + s1.toLowerCase(), "absorbed");
-//                totalDHP += dhp;
-//                totalDamage += damage;
-//                totalHealing += healing;
-//                totalAbsorbed += absorbed;
-//                System.out.println(s1);
-//                System.out.println("Average DHP: " + dhp);
-//                System.out.println("Average Damage: " + damage);
-//                System.out.println("Average Healing: " + healing);
-//                System.out.println("Average Absorbed: " + absorbed);
-//            }
-//        }
-//        System.out.println("DPS");
-//        System.out.println("Average DHP: " + totalDHP / 4);
-//        System.out.println("Average Damage: " + totalDamage / 4);
-//        System.out.println("Average Healing: " + totalHealing / 4);
-//        System.out.println("Average Absorbed: " + totalAbsorbed / 4);
-//        System.out.println("Damage Ratio: " + (double) totalDamage / totalDHP);
-//        System.out.println("Healing Ratio: " + (double) totalHealing / totalDHP);
-//        System.out.println("Absorbed Ratio: " + (double) totalAbsorbed / totalDHP);
-
-//        for (Document document : DatabaseManager.playersInformation.find().filter(eq("name", "sumSmash"))) {
-//            test.insertOne(document);
-//        }
-//        for (Document document2 : DatabaseManager.gamesInformation.find()) {
-//            if(document2.get("counted") == null) {
-//                Document document = new Document();
-//                document.put("counted", true);
-//                DatabaseManager.gamesInformation.updateOne(Filters.eq("_id", document2.get("_id")), new Document("$set", document));
-//            }
-//        }
-//        Warlords.newChain().async(() -> {
-//            for (Document document : DatabaseManager.gamesInformation.find()) {
-//                ArrayList<Document> playersRed = new ArrayList<>((ArrayList<Document>) getDocumentInfoWithDotNotation(document, "players.red"));
-//                int counter = 0;
-//                for (Document document1 : playersRed) {
-//                    if(document1.get("seconds_in_respawn") instanceof Double) {
-//                        Document doc = new Document();
-//                        doc.put("players.red." + counter + ".seconds_in_respawn", (int)Math.round((Double) document1.get("seconds_in_respawn")));
-//                        Warlords.newChain().async(()-> {
-//                            DatabaseManager.gamesInformation.updateOne(eq("date", document.get("date")), new Document("$set", doc));
-//                        }).execute();
-//                        System.out.println(document1.get("name"));
-//                        System.out.println("players.blue." + counter + ".seconds_in_respawn");
-//                    }
-//                    counter++;
-//                }
-//            }
-//        }).execute();
-
-
         sender.sendMessage(ChatColor.GREEN + "DID THE THING");
         return true;
     }

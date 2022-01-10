@@ -1,6 +1,7 @@
 package com.ebicep.warlords.database.repositories.player.pojos;
 
 import com.ebicep.warlords.database.repositories.games.GameMode;
+import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayers;
 
 public abstract class AbstractDatabaseStatInformation {
@@ -19,7 +20,7 @@ public abstract class AbstractDatabaseStatInformation {
     public AbstractDatabaseStatInformation() {
     }
 
-    public void updateStats(GameMode gameMode, boolean isCompGame, DatabaseGamePlayers.GamePlayer gamePlayer, boolean won, boolean add) {
+    public void updateStats(GameMode gameMode, boolean isCompGame, DatabaseGame databaseGame, DatabaseGamePlayers.GamePlayer gamePlayer, boolean won, boolean add) {
         int operation = add ? 1 : -1;
         this.kills += gamePlayer.getTotalKills() * operation;
         this.assists += gamePlayer.getTotalAssists() * operation;
@@ -33,10 +34,10 @@ public abstract class AbstractDatabaseStatInformation {
         this.damage += gamePlayer.getTotalDamage() * operation;
         this.healing += gamePlayer.getTotalHealing() * operation;
         this.absorbed += gamePlayer.getTotalAbsorbed() * operation;
-        this.updateCustomStats(gameMode, isCompGame, gamePlayer, won, add);
+        this.updateCustomStats(gameMode, isCompGame, databaseGame, gamePlayer, won, add);
     }
 
-    public abstract void updateCustomStats(GameMode gameMode, boolean isCompGame, DatabaseGamePlayers.GamePlayer gamePlayer, boolean won, boolean add);
+    public abstract void updateCustomStats(GameMode gameMode, boolean isCompGame, DatabaseGame databaseGame, DatabaseGamePlayers.GamePlayer gamePlayer, boolean won, boolean add);
 
     public double getKillsPerGame() {
         return plays == 0 ? 0 : (double) kills / plays;
