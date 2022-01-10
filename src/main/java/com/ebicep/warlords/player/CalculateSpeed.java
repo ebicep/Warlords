@@ -153,9 +153,8 @@ public class CalculateSpeed {
     }
 
     // Removes negative speed effects.
-    public void removeNegTimeModifier() {
+    public void removeSlownessModifiers() {
         boolean isChanged = this.modifiers.removeIf(modifier -> modifier.duration > 0 && modifier.calculatedModifier < 1);
-
         this.changed = changed || isChanged;
     }
 
