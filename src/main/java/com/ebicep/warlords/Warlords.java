@@ -38,6 +38,7 @@ import net.citizensnpcs.api.event.DespawnReason;
 import org.bukkit.*;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
+import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
@@ -354,6 +355,11 @@ public class Warlords extends JavaPlugin {
             PacketUtils.sendTitle(player, "", "", 0, 0, 0);
         }
 
+        CraftServer server = (CraftServer) Bukkit.getServer();
+        server.getEntityMetadata().invalidateAll(this);
+        server.getWorldMetadata().invalidateAll(this);
+        server.getPlayerMetadata().invalidateAll(this);
+
         RemoveEntities.removeArmorStands(0);
         game.clearAllPlayers();
 
@@ -367,7 +373,8 @@ public class Warlords extends JavaPlugin {
             e.printStackTrace();
         }
 
-        CitizensAPI.getNPCRegistry().despawnNPCs(DespawnReason.RELOAD);
+        //CitizensAPI.getNPCRegistry().despawnNPCs(DespawnReason.RELOAD);
+        NPCManager.npc.despawn();
 
         getServer().getConsoleSender().sendMessage(ChatColor.RED + "[Warlords] Plugin is disabled");
         // TODO persist this.playerSettings to a database

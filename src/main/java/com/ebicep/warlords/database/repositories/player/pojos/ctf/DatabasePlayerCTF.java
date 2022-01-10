@@ -1,6 +1,7 @@
 package com.ebicep.warlords.database.repositories.player.pojos.ctf;
 
 import com.ebicep.warlords.database.repositories.games.GameMode;
+import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayers;
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
 import com.ebicep.warlords.database.repositories.player.pojos.ctf.classses.DatabaseMageCTF;
@@ -19,6 +20,14 @@ public class DatabasePlayerCTF extends AbstractDatabaseStatInformation implement
     private int flagsCaptured = 0;
     @Field("flags_returned")
     private int flagsReturned = 0;
+    @Field("total_blocks_travelled")
+    private long totalBlocksTravelled = 0;
+    @Field("most_blocks_travelled")
+    private long mostBlocksTravelled = 0;
+    @Field("total_time_in_respawn")
+    private long totalTimeInRespawn = 0;
+    @Field("total_time_played")
+    private long totalTimePlayed = 0;
     private DatabaseMageCTF mage = new DatabaseMageCTF();
     private DatabaseWarriorCTF warrior = new DatabaseWarriorCTF();
     private DatabasePaladinCTF paladin = new DatabasePaladinCTF();
@@ -29,15 +38,21 @@ public class DatabasePlayerCTF extends AbstractDatabaseStatInformation implement
     }
 
     @Override
-    public void updateCustomStats(GameMode gameMode, boolean isCompGame, DatabaseGamePlayers.GamePlayer gamePlayer, boolean won, boolean add) {
+    public void updateCustomStats(GameMode gameMode, boolean isCompGame, DatabaseGame databaseGame, DatabaseGamePlayers.GamePlayer gamePlayer, boolean won, boolean add) {
         //UPDATE UNIVERSAL EXPERIENCE
         this.experience += add ? gamePlayer.getExperienceEarnedUniversal() : -gamePlayer.getExperienceEarnedUniversal();
 
         this.flagsCaptured += gamePlayer.getFlagCaptures();
         this.flagsReturned += gamePlayer.getFlagReturns();
+        this.totalBlocksTravelled += gamePlayer.getBlocksTravelled();
+        if (this.mostBlocksTravelled < gamePlayer.getBlocksTravelled()) {
+            this.mostBlocksTravelled = gamePlayer.getBlocksTravelled();
+        }
+        this.totalTimeInRespawn += gamePlayer.getSecondsInRespawn();
+        this.totalTimePlayed += 900 - databaseGame.getTimeLeft();
         //UPDATE CLASS, SPEC
-        this.getClass(Classes.getClassesGroup(gamePlayer.getSpec())).updateStats(gameMode, isCompGame, gamePlayer, won, add);
-        this.getSpec(gamePlayer.getSpec()).updateStats(gameMode, isCompGame, gamePlayer, won, add);
+        this.getClass(Classes.getClassesGroup(gamePlayer.getSpec())).updateStats(gameMode, isCompGame, databaseGame, gamePlayer, won, add);
+        this.getSpec(gamePlayer.getSpec()).updateStats(gameMode, isCompGame, databaseGame, gamePlayer, won, add);
     }
 
     @Override
@@ -72,7 +87,7 @@ public class DatabasePlayerCTF extends AbstractDatabaseStatInformation implement
     }
 
     @Override
-    public AbstractDatabaseStatInformation getClass(ClassesGroup classesGroup) {
+    public DatabaseBaseCTF getClass(ClassesGroup classesGroup) {
         switch (classesGroup) {
             case MAGE:
                 return mage;
@@ -114,6 +129,38 @@ public class DatabasePlayerCTF extends AbstractDatabaseStatInformation implement
 
     public void setFlagsReturned(int flagsReturned) {
         this.flagsReturned = flagsReturned;
+    }
+
+    public long getTotalBlocksTravelled() {
+        return totalBlocksTravelled;
+    }
+
+    public void addTotalBlocksTravelled(long totalBlocksTravelled) {
+        this.totalBlocksTravelled += totalBlocksTravelled;
+    }
+
+    public long getMostBlocksTravelled() {
+        return mostBlocksTravelled;
+    }
+
+    public void setMostBlocksTravelled(long mostBlocksTravelled) {
+        this.mostBlocksTravelled = mostBlocksTravelled;
+    }
+
+    public long getTotalTimeInRespawn() {
+        return totalTimeInRespawn;
+    }
+
+    public void addTotalTimeInRespawn(long totalTimeInRespawn) {
+        this.totalTimeInRespawn += totalTimeInRespawn;
+    }
+
+    public long getTotalTimePlayed() {
+        return totalTimePlayed;
+    }
+
+    public void addTotalTimePlayed(long totalTimePlayed) {
+        this.totalTimePlayed += totalTimePlayed;
     }
 
     public DatabaseMageCTF getMage() {
