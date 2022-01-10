@@ -85,14 +85,18 @@ public abstract class AbstractPlayerClass {
         boolean dismountHorse = false;
         int slot = player.getInventory().getHeldItemSlot();
         if (slot == 0) {
-            if (player.getLevel() >= weapon.getEnergyCost() * wp.getEnergyModifier() && abilityCD) {
-                weapon.onActivate(wp, player);
-                if (!(weapon instanceof AbstractStrikeBase) && !(weapon instanceof EarthenSpike)) {
-                    sendRightClickPacket(player);
+            if (!isSilenced) {
+                if (player.getLevel() >= weapon.getEnergyCost() * wp.getEnergyModifier() && abilityCD) {
+                    weapon.onActivate(wp, player);
+                    if (!(weapon instanceof AbstractStrikeBase) && !(weapon instanceof EarthenSpike)) {
+                        sendRightClickPacket(player);
+                    }
+                    resetAbilityCD();
+                } else {
+                    player.playSound(player.getLocation(), "notreadyalert", 1, 1);
                 }
-                resetAbilityCD();
             } else {
-                player.playSound(player.getLocation(), "notreadyalert", 1, 1);
+                player.sendMessage("You have been silenced!");
             }
         } else if (slot == 1) {
             if (red.getCurrentCooldown() == 0) {
