@@ -288,24 +288,54 @@ public class PlayingState implements State, TimerDebugAble {
         }
 
         Warlords.getPlayers().forEach(((uuid, warlordsPlayer) -> warlordsPlayer.removeGrave()));
-        if (RecordGamesCommand.recordGames && !ImposterCommand.enabled && game.isPrivate() && !forceEnd && game.playersCount() >= 16 && timer <= 12000) {
+
+        System.out.println(" ----- GAME END ----- ");
+        System.out.println("RecordGames = " + RecordGamesCommand.recordGames);
+        System.out.println("Imposter = " + ImposterCommand.enabled);
+        System.out.println("Private = " + game.isPrivate());
+        System.out.println("Force End = " + forceEnd);
+        System.out.println("Player Count = " + game.playersCount());
+        System.out.println("Timer = " + timer);
+
+        List<WarlordsPlayer> players = new ArrayList<>(Warlords.getPlayers().values());
+        float highestDamage = players.stream().sorted(Comparator.comparing(WarlordsPlayer::getTotalDamage).reversed()).collect(Collectors.toList()).get(0).getTotalDamage();
+        float highestHealing = players.stream().sorted(Comparator.comparing(WarlordsPlayer::getTotalHealing).reversed()).collect(Collectors.toList()).get(0).getTotalHealing();
+        //PUBS
+        if (!game.isPrivate() && !ImposterCommand.enabled && !forceEnd && game.playersCount() >= 12) {
+            String gameEnd = "[GAME] A Public game ended with ";
             if (getBluePoints() > getRedPoints()) {
-                BotManager.sendMessageToNotificationChannel("[GAME] A game ended with **BLUE** winning " + getBluePoints() + " to " + getRedPoints());
+                BotManager.sendMessageToNotificationChannel(gameEnd + "**BLUE** winning " + getBluePoints() + " to " + getRedPoints());
             } else if (getBluePoints() < getRedPoints()) {
-                BotManager.sendMessageToNotificationChannel("[GAME] A game ended with **RED** winning " + getRedPoints() + " to " + getBluePoints());
+                BotManager.sendMessageToNotificationChannel(gameEnd + "**RED** winning " + getRedPoints() + " to " + getBluePoints());
             } else {
-                BotManager.sendMessageToNotificationChannel("[GAME] A game ended with a **DRAW**");
+                BotManager.sendMessageToNotificationChannel(gameEnd + "a **DRAW**");
             }
-            List<WarlordsPlayer> players = new ArrayList<>(Warlords.getPlayers().values());
-            float highestDamage = players.stream().sorted(Comparator.comparing(WarlordsPlayer::getTotalDamage).reversed()).collect(Collectors.toList()).get(0).getTotalDamage();
-            float highestHealing = players.stream().sorted(Comparator.comparing(WarlordsPlayer::getTotalHealing).reversed()).collect(Collectors.toList()).get(0).getTotalHealing();
+            if (highestDamage <= 750000 && highestHealing <= 750000) {
+                DatabaseGame.addGame(PlayingState.this, true);
+            } else {
+                DatabaseGame.addGame(PlayingState.this, false);
+                System.out.println(ChatColor.GREEN + "[Warlords] This PUBG game was added to the database (INVALID DAMAGE/HEALING) but player information remained the same");
+            }
+        }
+        //COMPS
+        else if (RecordGamesCommand.recordGames && !ImposterCommand.enabled && !forceEnd && game.playersCount() >= 16 && timer <= 12000) {
+            String gameEnd = "[GAME] A game ended with ";
+            if (getBluePoints() > getRedPoints()) {
+                BotManager.sendMessageToNotificationChannel(gameEnd + "**BLUE** winning " + getBluePoints() + " to " + getRedPoints());
+            } else if (getBluePoints() < getRedPoints()) {
+                BotManager.sendMessageToNotificationChannel(gameEnd + "**RED** winning " + getRedPoints() + " to " + getBluePoints());
+            } else {
+                BotManager.sendMessageToNotificationChannel(gameEnd + "a **DRAW**");
+            }
             if (highestDamage <= 750000 && highestHealing <= 750000) {
                 DatabaseGame.addGame(PlayingState.this, true);
             } else {
                 DatabaseGame.addGame(PlayingState.this, false);
                 System.out.println(ChatColor.GREEN + "[Warlords] This game was added to the database (INVALID DAMAGE/HEALING) but player information remained the same");
             }
-        } else {
+        }
+        //END GAME
+        else {
             if (game.isPrivate() && game.playersCount() >= 6 && timer <= 12000) {
                 DatabaseGame.addGame(PlayingState.this, false);
                 System.out.println(ChatColor.GREEN + "[Warlords] This game was added to the database but player information remained the same");
