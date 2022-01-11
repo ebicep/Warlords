@@ -342,20 +342,22 @@ public class DatabaseGame {
             previousGames.add(databaseGame);
             databaseGame.createHolograms();
 
-            addGameToDatabase(databaseGame);
+            if (databaseGame.isPrivate) {
+                addGameToDatabase(databaseGame);
 
-            LeaderboardManager.playerGameHolograms.forEach((uuid, integer) -> {
-                LeaderboardManager.playerGameHolograms.put(uuid, previousGames.size() - 1);
-            });
-            LeaderboardManager.addHologramLeaderboards(UUID.randomUUID().toString());
+                LeaderboardManager.playerGameHolograms.forEach((uuid, integer) -> {
+                    LeaderboardManager.playerGameHolograms.put(uuid, previousGames.size() - 1);
+                });
+                LeaderboardManager.addHologramLeaderboards(UUID.randomUUID().toString());
 
-            //sending message if player information remained the same
-            for (WarlordsPlayer value : PlayerFilter.playingGame(gameState.getGame())) {
-                if (value.getEntity().hasPermission("warlords.database.messagefeed")) {
-                    if (updatePlayerStats) {
-                        value.sendMessage(ChatColor.GREEN + "This game was added to the database and player information was updated");
-                    } else {
-                        value.sendMessage(ChatColor.GREEN + "This game was added to the database but player information remained the same");
+                //sending message if player information remained the same
+                for (WarlordsPlayer value : PlayerFilter.playingGame(gameState.getGame())) {
+                    if (value.getEntity().hasPermission("warlords.database.messagefeed")) {
+                        if (updatePlayerStats) {
+                            value.sendMessage(ChatColor.GREEN + "This game was added to the database and player information was updated");
+                        } else {
+                            value.sendMessage(ChatColor.GREEN + "This game was added to the database but player information remained the same");
+                        }
                     }
                 }
             }
