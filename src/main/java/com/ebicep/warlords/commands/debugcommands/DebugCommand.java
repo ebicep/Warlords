@@ -31,7 +31,7 @@ public class DebugCommand implements CommandExecutor {
             return true;
         }
         String input = args[0];
-        WarlordsPlayer player = BaseCommand.requireWarlordsPlayer(sender);
+        WarlordsPlayer wp = BaseCommand.requireWarlordsPlayer(sender);
         if (input.equalsIgnoreCase("energy") ||
                 input.equalsIgnoreCase("cooldown") ||
                 input.equalsIgnoreCase("damage") ||
@@ -41,18 +41,18 @@ public class DebugCommand implements CommandExecutor {
                 input.equalsIgnoreCase("freeze")
         ) {
             if (args.length == 3 && args[2] != null) {
-                player = Warlords.getPlayer(Bukkit.getPlayer(args[2]).getUniqueId());
+                wp = Warlords.getPlayer(Bukkit.getPlayer(args[2]).getUniqueId());
             }
-            if (player == null) { // We only have a warlords player if the game is running
+            if (wp == null) { // We only have a warlords player if the game is running
                 return true;
             }
         }
 
         if(input.equalsIgnoreCase("respawn")) {
             if (args.length == 2 && args[1] != null) {
-                player = Warlords.getPlayer(Bukkit.getPlayer(args[1]).getUniqueId());
+                wp = Warlords.getPlayer(Bukkit.getPlayer(args[1]).getUniqueId());
             }
-            if (player == null) { // We only have a warlords player if the game is running
+            if (wp == null) { // We only have a warlords player if the game is running
                 return true;
             }
         }
@@ -88,12 +88,12 @@ public class DebugCommand implements CommandExecutor {
                 }
                 switch (args[1]) {
                     case "disable":
-                        player.setInfiniteEnergy(true);
-                        sender.sendMessage(ChatColor.RED + "DEV: " + player.getColoredName() + "'s §aEnergy consumption has been disabled!");
+                        wp.setInfiniteEnergy(true);
+                        sender.sendMessage(ChatColor.RED + "DEV: " + wp.getColoredName() + "'s §aEnergy consumption has been disabled!");
                         return true;
                     case "enable":
-                        player.setInfiniteEnergy(false);
-                        sender.sendMessage(ChatColor.RED + "DEV: " + player.getColoredName() + "'s §aEnergy consumption has been enabled!");
+                        wp.setInfiniteEnergy(false);
+                        sender.sendMessage(ChatColor.RED + "DEV: " + wp.getColoredName() + "'s §aEnergy consumption has been enabled!");
                         return true;
                     default:
                         sender.sendMessage("§cInvalid option!");
@@ -108,12 +108,12 @@ public class DebugCommand implements CommandExecutor {
                 }
                 switch (args[1]) {
                     case "disable":
-                        player.setDisableCooldowns(true);
-                        sender.sendMessage(ChatColor.RED + "DEV: " + player.getColoredName() + "'s §aCooldown timers have been disabled!");
+                        wp.setDisableCooldowns(true);
+                        sender.sendMessage(ChatColor.RED + "DEV: " + wp.getColoredName() + "'s §aCooldown timers have been disabled!");
                         return true;
                     case "enable":
-                        player.setDisableCooldowns(false);
-                        sender.sendMessage(ChatColor.RED + "DEV: " + player.getColoredName() + "'s §aCooldown timers have been enabled!");
+                        wp.setDisableCooldowns(false);
+                        sender.sendMessage(ChatColor.RED + "DEV: " + wp.getColoredName() + "'s §aCooldown timers have been enabled!");
                         return true;
                     default:
                         sender.sendMessage("§cInvalid option!");
@@ -128,12 +128,12 @@ public class DebugCommand implements CommandExecutor {
                 }
                 switch (args[1]) {
                     case "disable":
-                        player.setTakeDamage(false);
-                        sender.sendMessage(ChatColor.RED + "§cDEV: " + player.getColoredName() + "'s §aTaking damage has been disabled!");
+                        wp.setTakeDamage(false);
+                        sender.sendMessage(ChatColor.RED + "§cDEV: " + wp.getColoredName() + "'s §aTaking damage has been disabled!");
                         return true;
                     case "enable":
-                        player.setTakeDamage(true);
-                        sender.sendMessage(ChatColor.RED + "§cDEV: " + player.getColoredName() + "'s §aTaking damage has been enabled!");
+                        wp.setTakeDamage(true);
+                        sender.sendMessage(ChatColor.RED + "§cDEV: " + wp.getColoredName() + "'s §aTaking damage has been enabled!");
                         return true;
                     default:
                         sender.sendMessage("§cInvalid option!");
@@ -156,12 +156,14 @@ public class DebugCommand implements CommandExecutor {
                     }
 
                     String endMessage = input.equals("takedamage") ? "took " + amount + " damage!" : "got " + amount + " heath!";
-                    sender.sendMessage(ChatColor.RED + "§cDEV: " + player.getColoredName() + " §a" + endMessage);
+                    sender.sendMessage(ChatColor.RED + "§cDEV: " + wp.getColoredName() + " §a" + endMessage);
 
                     if (input.equals("takedamage")) {
-                        player.addDamageInstance(player, "debug", amount, amount, -1, 100, false);
+                        wp.addDamageInstance(wp, "debug", amount, amount, -1, 100, false);
+                        wp.setRegenTimer(10);
                     } else {
-                        player.addHealingInstance(player, "debug", amount, amount, -1, 100, false, false);
+                        wp.addHealingInstance(wp, "debug", amount, amount, -1, 100, false, false);
+                        wp.setRegenTimer(10);
                     }
 
                     return true;
@@ -203,12 +205,12 @@ public class DebugCommand implements CommandExecutor {
 
                 switch (args[1]) {
                     case "disable":
-                        player.setCanCrit(false);
-                        sender.sendMessage(ChatColor.RED + "§cDEV: " + player.getColoredName() + "'s §aCrits has been disabled!");
+                        wp.setCanCrit(false);
+                        sender.sendMessage(ChatColor.RED + "§cDEV: " + wp.getColoredName() + "'s §aCrits has been disabled!");
                         return true;
                     case "enable":
-                        player.setCanCrit(true);
-                        sender.sendMessage(ChatColor.RED + "§cDEV: " + player.getColoredName() + "'s §aCrits has been enabled!");
+                        wp.setCanCrit(true);
+                        sender.sendMessage(ChatColor.RED + "§cDEV: " + wp.getColoredName() + "'s §aCrits has been enabled!");
                         return true;
                     default:
                         sender.sendMessage("§cInvalid option!");
@@ -216,12 +218,12 @@ public class DebugCommand implements CommandExecutor {
                 }
 
             case "respawn":
-                player.respawn();
+                wp.respawn();
                 return true;
 
             case "freeze": {
-                if (player != null) {
-                    player.getGame().freeze("", true);
+                if (wp != null) {
+                    wp.getGame().freeze("", true);
                 }
             }
 
