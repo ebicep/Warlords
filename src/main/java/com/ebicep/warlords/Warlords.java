@@ -508,7 +508,7 @@ public class Warlords extends JavaPlugin {
 
                         // Checks whether the player has Vindicate active.
                         if (!wp.getCooldownManager().getCooldown(Vindicate.class).isEmpty()) {
-                            wp.getSpeed().removeNegTimeModifier();
+                            wp.getSpeed().removeSlownessModifiers();
                             wp.getCooldownManager().removeDebuffCooldowns();
                         }
 

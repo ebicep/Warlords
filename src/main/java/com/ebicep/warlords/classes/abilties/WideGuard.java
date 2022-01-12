@@ -17,6 +17,8 @@ import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.ebicep.warlords.util.EffectUtils.playSphereAnimation;
+
 public class WideGuard extends AbstractAbility {
 
     public static final int BUBBLE_RADIUS = 3;
@@ -44,7 +46,7 @@ public class WideGuard extends AbstractAbility {
         wp.subtractEnergy(energyCost);
 
         wp.getCooldownManager().addCooldown("Wide Guard", this.getClass(), WideGuard.class, "GUARD", 4, wp, CooldownTypes.ABILITY);
-        wp.getCooldownManager().addCooldown("Reflection Shield", this.getClass(), WideGuard.class, "", 4, wp, CooldownTypes.ABILITY);
+        wp.getCooldownManager().addCooldown("Reflection Shield", this.getClass(), WideGuard.class, null, 4, wp, CooldownTypes.ABILITY);
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(wp.getLocation(), "mage.timewarp.teleport", 2, 2);
@@ -120,29 +122,5 @@ public class WideGuard extends AbstractAbility {
                 }.runTaskTimer(Warlords.getInstance(), 5, 4),
                 System.currentTimeMillis()
         );
-    }
-
-    /**
-     * @param player what player should the sphere be around.
-     * @param sphereRadius is how big the sphere should be.
-     * @param red is the RGB assigned color for the particles.
-     * @param green is the RGB assigned color for the particles.
-     * @param blue is the RGB assigned color for the particles.
-     */
-    public void playSphereAnimation(Player player, double sphereRadius, int red, int green, int blue) {
-        Location particleLoc = player.getLocation();
-        particleLoc.add(0, 1, 0);
-        for (double i = 0; i <= Math.PI; i += Math.PI / 10) {
-            double radius = Math.sin(i) * sphereRadius + 0.5;
-            double y = Math.cos(i) * sphereRadius;
-            for (double a = 0; a < Math.PI * 2; a+= Math.PI / 10) {
-                double x = Math.cos(a) * radius;
-                double z = Math.sin(a) * radius;
-
-                particleLoc.add(x, y, z);
-                ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(red, green, blue), particleLoc, 500);
-                particleLoc.subtract(x, y, z);
-            }
-        }
     }
 }

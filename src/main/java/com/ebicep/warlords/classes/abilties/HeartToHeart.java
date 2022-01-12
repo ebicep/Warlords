@@ -2,18 +2,28 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.Matrix4d;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
 import com.ebicep.warlords.util.Utils;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.EulerAngle;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 
 public class HeartToHeart extends AbstractAbility {
+
+    private final int radius = 20;
+    private final int vindDuration = 6;
 
     public HeartToHeart() {
         super("Heart To Heart", 0, 0, 13, 40, -1, 100);
@@ -21,12 +31,15 @@ public class HeartToHeart extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "PLACEHOLDER";
+        description = "§7Throw a chain towards an ally in a §e" + radius + " §7block radius." +
+                "§7Grappling the Vindicator towards the ally. The grappled ally is" +
+                "§7granted §6" + vindDuration + " §7seconds of the VIND status effect, making them" +
+                "§7immune to de-buffs and they gain §625% §7knockback" +
+                "resistance the duration.";
     }
 
     @Override
     public void onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
-        wp.subtractEnergy(energyCost);
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "rogue.hearttoheart.activation", 2, 1);
@@ -34,12 +47,17 @@ public class HeartToHeart extends AbstractAbility {
         }
 
         for (WarlordsPlayer heartTarget : PlayerFilter
-                .entitiesAround(wp, 20, 20, 20)
+                .entitiesAround(wp, radius, radius, radius)
                 .aliveTeammatesOfExcludingSelf(wp)
                 .lookingAtFirst(wp)
                 .limit(1)
         ) {
             if (Utils.isLookingAtMark(player, heartTarget.getEntity()) && Utils.hasLineOfSight(player, heartTarget.getEntity())) {
+
+                wp.subtractEnergy(energyCost);
+                heartTarget.getCooldownManager().addCooldown("Vindicate Debuff Immunity", this.getClass(), HeartToHeart.class, "VIND", vindDuration, wp, CooldownTypes.BUFF);
+                heartTarget.getCooldownManager().addCooldown("KB Resistance", this.getClass(), Vindicate.class, "KB", vindDuration, wp, CooldownTypes.BUFF);
+
                 new BukkitRunnable() {
 
                     final Location playerLoc = wp.getLocation();
@@ -66,6 +84,48 @@ public class HeartToHeart extends AbstractAbility {
                                 targetLoc.getYaw(),
                                 targetLoc.getPitch()
                         );
+
+                        Location from = wp.getLocation().add(0, -0.6, 0);
+                        Location to = heartTarget.getLocation().add(0, -0.6, 0);
+                        from.setDirection(from.toVector().subtract(to.toVector()).multiply(-1));
+                        List<ArmorStand> chains = new ArrayList<>();
+                        int maxDistance = (int) Math.round(to.distance(from));
+                        for (int i = 0; i < maxDistance; i++) {
+                            ArmorStand chain = from.getWorld().spawn(from, ArmorStand.class);
+                            chain.setHeadPose(new EulerAngle(from.getDirection().getY() * -1, 0, 0));
+                            chain.setGravity(false);
+                            chain.setVisible(false);
+                            chain.setBasePlate(false);
+                            chain.setMarker(true);
+                            chain.setHelmet(new ItemStack(Material.CLAY));
+                            from.add(from.getDirection().multiply(1.1));
+                            chains.add(chain);
+                            if(to.distanceSquared(from) < .3) {
+                                break;
+                            }
+                        }
+
+                        new BukkitRunnable() {
+
+                            @Override
+                            public void run() {
+                                if (chains.size() == 0) {
+                                    this.cancel();
+                                }
+
+                                for (int i = 0; i < chains.size(); i++) {
+                                    ArmorStand armorStand = chains.get(i);
+                                    if (armorStand.getTicksLived() > timer) {
+                                        armorStand.remove();
+                                        chains.remove(i);
+                                        i--;
+                                    }
+                                }
+
+                            }
+
+                        }.runTaskTimer(Warlords.getInstance(), 0, 0);
+
                         wp.teleportLocationOnly(newLocation);
                         newLocation.add(0, 1, 0);
                         Matrix4d center = new Matrix4d(newLocation);
