@@ -1,7 +1,11 @@
 package com.ebicep.warlords.util;
 
+import org.apache.commons.lang3.RandomUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
+
+import java.util.Random;
 
 public class EffectUtils {
 
@@ -144,5 +148,55 @@ public class EffectUtils {
                 effect.display(0, 0, 0, 0, particleCount, particleLoc, 500);
             }
         }
+    }
+
+    public static void playStarAnimation(Player player, float starRadius, ParticleEffect effect1) {
+        Location location = player.getLocation();
+        int spikesHalf = 3;
+        float spikeHeight = 3.5f;
+        int particles = 50;
+        float radius = 3 * starRadius / 1.73205f;
+        for (int i = 0; i < spikesHalf * 2; i++) {
+            double xRotation = i * Math.PI / spikesHalf;
+            for (int x = 0; x < particles; x++) {
+                double angle = 2 * Math.PI * x / particles;
+                final Random random = new Random(System.nanoTime());
+                float height = random.nextFloat() * spikeHeight;
+                Vector v = new Vector(Math.cos(angle), 0, Math.sin(angle));
+                v.multiply((spikeHeight - height) * radius / spikeHeight);
+                v.setY(starRadius + height);
+                EffectUtils.rotateAroundAxisX(v, xRotation);
+                location.add(v);
+                effect1.display(0, 0, 0, 0, 1, location, 500);
+                location.subtract(v);
+            }
+        }
+    }
+
+    public static final Vector rotateAroundAxisX(Vector v, double angle) {
+        double y, z, cos, sin;
+        cos = Math.cos(angle);
+        sin = Math.sin(angle);
+        y = v.getY() * cos - v.getZ() * sin;
+        z = v.getY() * sin + v.getZ() * cos;
+        return v.setY(y).setZ(z);
+    }
+
+    public static final Vector rotateAroundAxisY(Vector v, double angle) {
+        double x, z, cos, sin;
+        cos = Math.cos(angle);
+        sin = Math.sin(angle);
+        x = v.getX() * cos + v.getZ() * sin;
+        z = v.getX() * -sin + v.getZ() * cos;
+        return v.setX(x).setZ(z);
+    }
+
+    public static final Vector rotateAroundAxisZ(Vector v, double angle) {
+        double x, y, cos, sin;
+        cos = Math.cos(angle);
+        sin = Math.sin(angle);
+        x = v.getX() * cos - v.getY() * sin;
+        y = v.getX() * sin + v.getY() * cos;
+        return v.setX(x).setY(y);
     }
 }

@@ -2,6 +2,8 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.util.EffectUtils;
+import com.ebicep.warlords.util.ParticleEffect;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -28,5 +30,7 @@ public class CrossVital extends AbstractAbility {
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "rogue.assassinstrike.activation", 2, 1.5f);
         }
+
+        EffectUtils.playStarAnimation(player, 0.5f, ParticleEffect.FLAME);
     }
 }
