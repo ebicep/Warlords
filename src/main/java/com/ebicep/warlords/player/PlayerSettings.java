@@ -25,6 +25,7 @@ public class PlayerSettings implements ConfigurationSerializable {
         put(Classes.SPIRITGUARD, ClassesSkillBoosts.FALLEN_SOULS);
         put(Classes.EARTHWARDEN, ClassesSkillBoosts.EARTHEN_SPIKE);
         put(Classes.VINDICATOR, ClassesSkillBoosts.JUDGEMENT_STRIKE);
+        put(Classes.APOTHECARY, ClassesSkillBoosts.JUDGEMENT_STRIKE);
         put(Classes.ASSASSIN, ClassesSkillBoosts.JUDGEMENT_STRIKE);
     }};
     private boolean hotKeyMode = true;

@@ -50,10 +50,11 @@ public class DamageHealCircle {
         } else if (name.equals("Incendiary Curse")) {
             this.circle.addEffect(new AreaEffect(0, ParticleEffect.FLAME).particlesPerSurface(0.5));
             this.circle.addEffect(new AreaEffect(0, ParticleEffect.CRIT).particlesPerSurface(0.3));
+        } else if (name.equals("Med Circle")) {
+            this.circle.addEffect(new DoubleLineEffect(ParticleEffect.VILLAGER_HAPPY));
         } else {
             Bukkit.broadcastMessage("§cNotice, no particle effect definition for " + this.name + ", no effect is played!");
         }
-
     }
 
     public void spawnHammer() {

@@ -571,6 +571,12 @@ public final class WarlordsPlayer {
                     attacker.addHealingInstance(attacker, "Blood Lust", damageValue * (bloodLust.getDamageConvertPercent() / 100f), damageValue * (bloodLust.getDamageConvertPercent() / 100f), -1, 100, false, false);
                 }
 
+                if (!getCooldownManager().getCooldown(Shotty.class).isEmpty()) {
+                    attacker.addHealingInstance(attacker, "Leech", 5, 5, -1, 100, false, false);
+                }
+
+
+
                 if (ability.equals("Judgement Strike")) {
                     if (isCrit) {
                         attacker.getSpeed().addSpeedModifier("Judgement Speed", 20, 2 * 20, "BASE");
