@@ -31,6 +31,6 @@ public class CrossVital extends AbstractAbility {
             player1.playSound(player.getLocation(), "rogue.assassinstrike.activation", 2, 1.5f);
         }
 
-        EffectUtils.playStarAnimation(player, 0.5f, ParticleEffect.FLAME);
+        EffectUtils.playStarAnimation(player.getLocation(), 0.5f, ParticleEffect.FLAME);
     }
 }

@@ -10,11 +10,11 @@ import java.util.Random;
 public class EffectUtils {
 
     /**
-     * @param player what player should the sphere be around.
+     * @param player       what player should the sphere be around.
      * @param sphereRadius is how big the sphere should be.
-     * @param red is the RGB assigned color for the particles.
-     * @param green is the RGB assigned color for the particles.
-     * @param blue is the RGB assigned color for the particles.
+     * @param red          is the RGB assigned color for the particles.
+     * @param green        is the RGB assigned color for the particles.
+     * @param blue         is the RGB assigned color for the particles.
      */
     public static void playSphereAnimation(Player player, double sphereRadius, int red, int green, int blue) {
         Location particleLoc = player.getLocation();
@@ -22,7 +22,7 @@ public class EffectUtils {
         for (double i = 0; i <= Math.PI; i += Math.PI / 10) {
             double radius = Math.sin(i) * sphereRadius + 0.5;
             double y = Math.cos(i) * sphereRadius;
-            for (double a = 0; a < Math.PI * 2; a+= Math.PI / 10) {
+            for (double a = 0; a < Math.PI * 2; a += Math.PI / 10) {
                 double x = Math.cos(a) * radius;
                 double z = Math.sin(a) * radius;
 
@@ -34,9 +34,9 @@ public class EffectUtils {
     }
 
     /**
-     * @param player what player should the sphere be around.
-     * @param sphereRadius is how big the sphere should be.
-     * @param effect which particle effect should be displayed.
+     * @param player        what player should the sphere be around.
+     * @param sphereRadius  is how big the sphere should be.
+     * @param effect        which particle effect should be displayed.
      * @param particleCount the amount of particles that should be displayed.
      */
     public static void playSphereAnimation(Player player, double sphereRadius, ParticleEffect effect, int particleCount) {
@@ -45,7 +45,7 @@ public class EffectUtils {
         for (double i = 0; i <= Math.PI; i += Math.PI / 10) {
             double radius = Math.sin(i) * sphereRadius + 0.5;
             double y = Math.cos(i) * sphereRadius;
-            for (double a = 0; a < Math.PI * 2; a+= Math.PI / 10) {
+            for (double a = 0; a < Math.PI * 2; a += Math.PI / 10) {
                 double x = Math.cos(a) * radius;
                 double z = Math.sin(a) * radius;
 
@@ -57,11 +57,11 @@ public class EffectUtils {
     }
 
     /**
-     * @param player what player should the sphere be around.
+     * @param player      what player should the sphere be around.
      * @param helixRadius is how big the helix should be.
-     * @param red is the RGB assigned color for the particles.
-     * @param green is the RGB assigned color for the particles.
-     * @param blue is the RGB assigned color for the particles.
+     * @param red         is the RGB assigned color for the particles.
+     * @param green       is the RGB assigned color for the particles.
+     * @param blue        is the RGB assigned color for the particles.
      */
     public static void playHelixAnimation(Player player, double helixRadius, int red, int green, int blue) {
         double rotation = Math.PI / 4;
@@ -83,9 +83,9 @@ public class EffectUtils {
     }
 
     /**
-     * @param player what player should the sphere be around.
-     * @param helixRadius is how big the helix should be.
-     * @param effect which particle effect should be displayed.
+     * @param player        what player should the sphere be around.
+     * @param helixRadius   is how big the helix should be.
+     * @param effect        which particle effect should be displayed.
      * @param particleCount the amount of particles that should be displayed.
      */
     public static void playHelixAnimation(Player player, double helixRadius, ParticleEffect effect, int particleCount) {
@@ -108,11 +108,11 @@ public class EffectUtils {
     }
 
     /**
-     * @param player what player should the sphere be around.
+     * @param player         what player should the sphere be around.
      * @param cylinderRadius is how big the helix should be.
-     * @param red which particle effect should be displayed.
-     * @param green the amount of particles that should be displayed.
-     * @param blue the amount of particles that should be displayed.
+     * @param red            which particle effect should be displayed.
+     * @param green          the amount of particles that should be displayed.
+     * @param blue           the amount of particles that should be displayed.
      */
     public static void playCylinderAnimation(Player player, double cylinderRadius, int red, int green, int blue) {
         Location playerLoc = player.getLocation();
@@ -130,10 +130,10 @@ public class EffectUtils {
     }
 
     /**
-     * @param player what player should the sphere be around.
+     * @param player         what player should the helix be around.
      * @param cylinderRadius is how big the helix should be.
-     * @param effect which particle effect should be displayed.
-     * @param particleCount the amount of particles that should be displayed.
+     * @param effect         which particle effect should be displayed.
+     * @param particleCount  the amount of particles that should be displayed.
      */
     public static void playCylinderAnimation(Player player, double cylinderRadius, ParticleEffect effect, int particleCount) {
         Location playerLoc = player.getLocation();
@@ -150,11 +150,16 @@ public class EffectUtils {
         }
     }
 
-    public static void playStarAnimation(Player player, float starRadius, ParticleEffect effect1) {
+    /**
+     * @param player     what player should the sphere be around.
+     * @param starRadius is how big the star should be.
+     * @param effect     which particle effect should be displayed.
+     */
+    public static void playStarAnimation(Player player, float starRadius, ParticleEffect effect) {
         Location location = player.getLocation();
         int spikesHalf = 3;
         float spikeHeight = 3.5f;
-        int particles = 50;
+        int particles = 30;
         float radius = 3 * starRadius / 1.73205f;
         for (int i = 0; i < spikesHalf * 2; i++) {
             double xRotation = i * Math.PI / spikesHalf;
@@ -167,13 +172,40 @@ public class EffectUtils {
                 v.setY(starRadius + height);
                 EffectUtils.rotateAroundAxisX(v, xRotation);
                 location.add(v);
-                effect1.display(0, 0, 0, 0, 1, location, 500);
+                effect.display(0, 0, 0, 0, 1, location, 500);
                 location.subtract(v);
             }
         }
     }
 
-    public static final Vector rotateAroundAxisX(Vector v, double angle) {
+    /**
+     * @param location   what location should the star be around.
+     * @param starRadius is how big the star should be.
+     * @param effect     which particle effect should be displayed.
+     */
+    public static void playStarAnimation(Location location, float starRadius, ParticleEffect effect) {
+        int spikesHalf = 3;
+        float spikeHeight = 3.5f;
+        int particles = 30;
+        float radius = 3 * starRadius / 1.73205f;
+        for (int i = 0; i < spikesHalf * 2; i++) {
+            double xRotation = i * Math.PI / spikesHalf;
+            for (int x = 0; x < particles; x++) {
+                double angle = 2 * Math.PI * x / particles;
+                final Random random = new Random(System.nanoTime());
+                float height = random.nextFloat() * spikeHeight;
+                Vector v = new Vector(Math.cos(angle), 0, Math.sin(angle));
+                v.multiply((spikeHeight - height) * radius / spikeHeight);
+                v.setY(starRadius + height);
+                EffectUtils.rotateAroundAxisY(v, xRotation);
+                location.add(v);
+                effect.display(0, 0, 0, 0, 1, location, 500);
+                location.subtract(v);
+            }
+        }
+    }
+
+    public static Vector rotateAroundAxisX(Vector v, double angle) {
         double y, z, cos, sin;
         cos = Math.cos(angle);
         sin = Math.sin(angle);
@@ -182,7 +214,7 @@ public class EffectUtils {
         return v.setY(y).setZ(z);
     }
 
-    public static final Vector rotateAroundAxisY(Vector v, double angle) {
+    public static Vector rotateAroundAxisY(Vector v, double angle) {
         double x, z, cos, sin;
         cos = Math.cos(angle);
         sin = Math.sin(angle);
@@ -191,7 +223,7 @@ public class EffectUtils {
         return v.setX(x).setZ(z);
     }
 
-    public static final Vector rotateAroundAxisZ(Vector v, double angle) {
+    public static Vector rotateAroundAxisZ(Vector v, double angle) {
         double x, y, cos, sin;
         cos = Math.cos(angle);
         sin = Math.sin(angle);
