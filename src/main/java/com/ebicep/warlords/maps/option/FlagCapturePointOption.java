@@ -1,6 +1,7 @@
 package com.ebicep.warlords.maps.option;
 
 import com.ebicep.warlords.maps.Team;
+import com.ebicep.warlords.maps.option.MarkerOption;
 import com.ebicep.warlords.maps.option.marker.FlagCaptureMarker;
 import static com.ebicep.warlords.maps.option.marker.FlagCaptureMarker.DEFAULT_CAPTURE_RADIUS;
 import javax.annotation.Nonnegative;

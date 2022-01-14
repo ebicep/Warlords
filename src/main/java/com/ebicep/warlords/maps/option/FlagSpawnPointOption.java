@@ -1,8 +1,20 @@
 package com.ebicep.warlords.maps.option;
 
+import com.ebicep.warlords.maps.option.flags.PlayerFlagLocation;
+import com.ebicep.warlords.maps.option.flags.SpawnFlagLocation;
+import com.ebicep.warlords.maps.option.flags.FlagRenderer;
+import com.ebicep.warlords.maps.option.flags.FlagLocation;
+import com.ebicep.warlords.maps.option.flags.FlagInfo;
+import com.ebicep.warlords.maps.option.flags.GroundFlagLocation;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Team;
-import com.ebicep.warlords.maps.flags.*;
+import com.ebicep.warlords.maps.option.Option;
+import com.ebicep.warlords.maps.option.flags.FlagInfo;
+import com.ebicep.warlords.maps.option.flags.FlagLocation;
+import com.ebicep.warlords.maps.option.flags.FlagRenderer;
+import com.ebicep.warlords.maps.option.flags.GroundFlagLocation;
+import com.ebicep.warlords.maps.option.flags.PlayerFlagLocation;
+import com.ebicep.warlords.maps.option.flags.SpawnFlagLocation;
 import com.ebicep.warlords.maps.option.marker.FlagCaptureInhibitMarker;
 import com.ebicep.warlords.maps.option.marker.FlagCaptureMarker;
 import com.ebicep.warlords.maps.scoreboard.SimpleScoreboardHandler;

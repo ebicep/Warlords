@@ -2,9 +2,9 @@ package com.ebicep.warlords.events;
 
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Team;
-import com.ebicep.warlords.maps.flags.FlagInfo;
-import com.ebicep.warlords.maps.flags.FlagLocation;
-import com.ebicep.warlords.maps.flags.FlagManager;
+import com.ebicep.warlords.maps.option.flags.FlagInfo;
+import com.ebicep.warlords.maps.option.flags.FlagLocation;
+import com.ebicep.warlords.maps.option.flags.FlagManager;
 import com.ebicep.warlords.maps.state.PlayingState;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;

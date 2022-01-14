@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.ebicep.warlords.maps.flags;
+package com.ebicep.warlords.maps.option.flags;
 
 import org.bukkit.Location;
 

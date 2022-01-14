@@ -1,4 +1,4 @@
-package com.ebicep.warlords.maps.flags;
+package com.ebicep.warlords.maps.option.flags;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.events.WarlordsDeathEvent;

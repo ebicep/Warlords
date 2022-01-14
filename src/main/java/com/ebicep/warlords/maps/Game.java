@@ -43,6 +43,7 @@ public class Game implements Runnable {
     private boolean isPrivate = false;
     private List<UUID> spectators = new ArrayList<>();
     private HashMap<BukkitTask, Long> gameTasks = new HashMap<>();
+    private final Set<GameAddon> activatedGameFeatures = new HashSet<>();
     
     private final List<ScoreboardHandler> list = new ArrayList<>();
 

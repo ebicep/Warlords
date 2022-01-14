@@ -18,6 +18,7 @@ import java.util.stream.StreamSupport;
 
 import static com.ebicep.warlords.util.Utils.radiusAround;
 import static com.ebicep.warlords.util.Utils.sortClosestBy;
+import org.bukkit.World;
 
 // TODO run regex
 // Search: (\n +)Utils\.filterOnlyEnemies\(([a-z]+), ([0-9.DF]+), ([0-9.DF]+), ([0-9.DF]+), ([a-z]+)\)
@@ -264,6 +265,29 @@ public class PlayerFilter implements Iterable<WarlordsPlayer> {
             .stream()
         );
 
+    }
+
+    @Nonnull
+    public static PlayerFilter entitiesInRectangle(@Nonnull World world, double x1, double y1, double z1, double x2, double y2, double z2) {
+        double minX = Math.min(x1, x2);
+        double minY = Math.min(y1, y2);
+        double minZ = Math.min(z1, z2);
+        double maxX = Math.max(x1, x2);
+        double maxY = Math.max(y1, y2);
+        double maxZ = Math.max(z1, z2);
+        
+        return new PlayerFilter(world.getEntities().stream()
+            .filter(e -> {
+                e.getLocation(LOCATION_CACHE_ENTITIES_AROUND);
+                double x = LOCATION_CACHE_ENTITIES_AROUND.getX();
+                double y = LOCATION_CACHE_ENTITIES_AROUND.getY();
+                double z = LOCATION_CACHE_ENTITIES_AROUND.getZ();
+                
+                return x > minX && x < maxX && y > minY && y < maxY && z > minZ && z < maxZ;
+            })
+            .map(e -> Warlords.getPlayer(e))
+            .filter(Objects::nonNull)
+        );
     }
 
     @Nonnull

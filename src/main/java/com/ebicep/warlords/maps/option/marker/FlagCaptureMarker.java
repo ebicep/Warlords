@@ -1,7 +1,7 @@
 package com.ebicep.warlords.maps.option.marker;
 
 import com.ebicep.warlords.maps.Team;
-import com.ebicep.warlords.maps.flags.PlayerFlagLocation;
+import com.ebicep.warlords.maps.option.flags.PlayerFlagLocation;
 import static com.ebicep.warlords.util.Utils.isInCircleRadiusFast;
 import java.util.EnumSet;
 import javax.annotation.Nonnegative;
