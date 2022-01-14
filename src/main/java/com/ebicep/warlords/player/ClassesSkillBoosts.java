@@ -151,14 +151,14 @@ public enum ClassesSkillBoosts {
             }
     ),
     ARCANE_SHIELD_AQUAMANCER("Arcane Shield",
-            "§7Increase the amount of health\n§7converted to shield by 15% and reduce\n§7the cooldown by 30%",
-            "§aIncrease the amount of health\n§aconverted to shield by §c15% §aand reduce\n§athe cooldown by §c30%",
+            "§7Increase the amount of health\n§7converted to shield by 15% and reduce\n§7the cooldown by 40%",
+            "§aIncrease the amount of health\n§aconverted to shield by §c15% §aand reduce\n§athe cooldown by §c40%",
             ArcaneShield.class,
             abstractAbility -> {
                 if (abstractAbility instanceof ArcaneShield) {
                     ArcaneShield arcaneShield = (ArcaneShield) abstractAbility;
                     arcaneShield.setShieldPercentage(65);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .7f);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .6f);
                 } else {
                     System.out.println("ERROR APPLY SKILL BOOST NOT ARCANE");
                 }
@@ -187,12 +187,12 @@ public enum ClassesSkillBoosts {
             }
     ),
     SEISMIC_WAVE_BERSERKER("Seismic Wave",
-            "§7Increase the damage you\n§7deal with Seismic Wave by\n§725% and reduce the cooldown\n§7by 25%",
-            "§aIncrease the damage you\n§adeal with Seismic Wave by\n§c25% §aand reduce the cooldown\n§aby §c25%",
+            "§7Increase the damage you\n§7deal with Seismic Wave by\n§720% and reduce the cooldown\n§7by 25%",
+            "§aIncrease the damage you\n§adeal with Seismic Wave by\n§c20% §aand reduce the cooldown\n§aby §c25%",
             SeismicWave.class,
             abstractAbility -> {
-                abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.25f);
-                abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.25f);
+                abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.2f);
+                abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.2f);
                 abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
             }
     ),
@@ -289,12 +289,12 @@ public enum ClassesSkillBoosts {
             }
     ),
     RECKLESS_CHARGE("Reckless Charge",
-            "§7Increase the immobilize duration\n§7of your Reckless Charge by\n§70.15 seconds and reduce the\n§7cooldown by 25%",
-            "§aIncrease the immobilize duration\n§aof your Reckless Charge by\n§c0.15 §aseconds and reduce the\n§acooldown by §c25%",
+            "§7Increase the immobilize duration\n§7of your Reckless Charge by\n§70.25 seconds and reduce the\n§7cooldown by 25%",
+            "§aIncrease the immobilize duration\n§aof your Reckless Charge by\n§c0.25 §aseconds and reduce the\n§acooldown by §c25%",
             RecklessCharge.class,
             abstractAbility -> {
                 if (abstractAbility instanceof RecklessCharge) {
-                    ((RecklessCharge) abstractAbility).setStunTimeInTicks(13);
+                    ((RecklessCharge) abstractAbility).setStunTimeInTicks(15);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .75f);
                 } else {
                     System.out.println("ERROR APPLY SKILL BOOST NOT LAST STAND");
