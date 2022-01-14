@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.state.PreLobbyState;
+import com.ebicep.warlords.party.Party;
 import com.ebicep.warlords.player.ArmorManager;
 import com.ebicep.warlords.player.Classes;
 import com.ebicep.warlords.player.PlayerSettings;
@@ -20,12 +21,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.ebicep.warlords.Warlords.game;
 
@@ -42,30 +41,61 @@ public class GameStartTrait extends Trait {
         HologramTrait hologramTrait = npc.getOrAddTrait(HologramTrait.class);
         hologramTrait.setLine(0, ChatColor.YELLOW.toString() + ChatColor.BOLD + game.playersCount() + " Players");
         hologramTrait.setLine(1, ChatColor.GRAY.toString() + ctfQueue.size() + " in Queue");
-        hologramTrait.setLine(2, ChatColor.AQUA + "Capture The Flag");
+        hologramTrait.setLine(2, ChatColor.AQUA + "WARLORDS 2 PUBLIC QUEUE" + ChatColor.RED + " [BETA]");
         hologramTrait.setLine(3, ChatColor.YELLOW + ChatColor.BOLD.toString() + "CLICK TO PLAY");
     }
 
     @EventHandler
     public void onRightClick(NPCRightClickEvent event) {
         if (this.getNPC() == event.getNPC()) {
-            joinQueue(event.getClicker());
+            tryToJoinQueue(event.getClicker());
         }
     }
 
     @EventHandler
     public void onLeftClick(NPCLeftClickEvent event) {
         if (this.getNPC() == event.getNPC()) {
-            joinQueue(event.getClicker());
+            tryToJoinQueue(event.getClicker());
         }
     }
 
-    private void joinQueue(Player player) {
+    private void tryToJoinQueue(Player player) {
         if (ctfQueue.contains(player.getUniqueId())) return;
         if (!(game.getState() instanceof PreLobbyState) || game.isPrivate()) {
             player.sendMessage(ChatColor.RED + "Unable to join because there is an ongoing game. Use " + ChatColor.GRAY + "/spectate" + ChatColor.RED + " if you feel like spectating!");
             return;
         }
+        int playersInGame = game.playersCount();
+        //check if player is in a party, they must be leader to join
+        Optional<Party> optionalParty = Warlords.partyManager.getPartyFromAny(player.getUniqueId());
+        if (optionalParty.isPresent()) {
+            Party party = optionalParty.get();
+            if (!party.getPartyLeader().getUuid().equals(player.getUniqueId())) {
+                player.sendMessage(ChatColor.RED + "Only the party leader can warp you into a game!");
+                return;
+            }
+            //check if there is enough room for party
+            if (party.getPartyPlayers().size() + playersInGame > game.getMap().getMaxPlayers()) {
+                player.sendMessage(ChatColor.RED + "There is not enough room in the game for your party!");
+                return;
+            }
+            //check if all party members are online
+            if (!party.allOnlineAndNoAFKs()) {
+                player.sendMessage(ChatColor.RED + "All party members must be online or not afk");
+                return;
+            }
+            //add all party members to queue
+            party.getAllPartyPeoplePlayerOnline().stream().filter(p -> !ctfQueue.contains(p.getUniqueId())).forEach(this::joinQueue);
+        } else {
+            if (playersInGame >= game.getMap().getMaxPlayers()) {
+                player.sendMessage(ChatColor.RED + "The game is full!");
+                return;
+            }
+            joinQueue(player);
+        }
+    }
+
+    private void joinQueue(Player player) {
         ctfQueue.add(player.getUniqueId());
         sendMessageToQueue(ChatColor.AQUA + player.getName() + ChatColor.YELLOW + " has joined (" + ChatColor.AQUA + ctfQueue.size() + ChatColor.YELLOW + "/" + ChatColor.AQUA + game.getMap().getMaxPlayers() + ChatColor.YELLOW + ")!");
 
@@ -98,6 +128,7 @@ public class GameStartTrait extends Trait {
                 .get());
 
         Warlords.game.addPlayer(player, team);
+        Warlords.getPlayerSettings(player.getUniqueId()).setWantedTeam(team);
         ArmorManager.resetArmor(player, Warlords.getPlayerSettings(player.getUniqueId()).getSelectedClass(), team);
     }
 

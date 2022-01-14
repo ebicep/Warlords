@@ -3,7 +3,7 @@ package com.ebicep.warlords.player;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.FutureMessageManager;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.util.ChatUtils;
 import com.ebicep.warlords.util.NumberFormat;
 import org.bson.Document;
@@ -98,6 +98,7 @@ public class ExperienceManager {
         if (!recalculate && cachedPlayerExpSummary.containsKey(warlordsPlayer.getUuid()) && cachedPlayerExpSummary.get(warlordsPlayer.getUuid()) != null) {
             return cachedPlayerExpSummary.get(warlordsPlayer.getUuid());
         }
+        boolean isCompGame = warlordsPlayer.getGame().isPrivate();
         boolean won = !warlordsPlayer.getGameState().isForceEnd() && warlordsPlayer.getGameState().getStats(warlordsPlayer.getTeam()).points() > warlordsPlayer.getGameState().getStats(warlordsPlayer.getTeam().enemy()).points();
         long winLossExp = won ? 500 : 250;
         long kaExp = 5L * (warlordsPlayer.getTotalKills() + warlordsPlayer.getTotalAssists());
@@ -125,33 +126,46 @@ public class ExperienceManager {
         long flagRetExp = warlordsPlayer.getFlagsReturned() * 50L;
 
         LinkedHashMap<String, Long> expGain = new LinkedHashMap<>();
-        expGain.put(won ? "Win" : "Loss", winLossExp);
+        expGain.put(won ? "Win" : "Loss", winLossExp * (long) (isCompGame ? 1 : .1));
         if (kaExp != 0) {
-            expGain.put("Kills/Assists", kaExp);
+            expGain.put("Kills/Assists", kaExp * (long) (isCompGame ? 1 : .1));
         }
         if (dhpExp != 0) {
-            expGain.put("DHP", dhpExp);
+            expGain.put("DHP", dhpExp * (long) (isCompGame ? 1 : .1));
         }
         if (flagCapExp != 0) {
-            expGain.put("Flags Captured", flagCapExp);
+            expGain.put("Flags Captured", flagCapExp * (long) (isCompGame ? 1 : .1));
         }
         if (flagRetExp != 0) {
-            expGain.put("Flags Returned", flagRetExp);
+            expGain.put("Flags Returned", flagRetExp * (long) (isCompGame ? 1 : .1));
         }
 
         try {
             DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(warlordsPlayer.getUuid(), PlayersCollections.DAILY);
-            int plays = databasePlayer.getWins() + databasePlayer.getLosses();
-            switch (plays) {
-                case 0:
-                    expGain.put("First Game of the Day", 500L);
-                    break;
-                case 1:
-                    expGain.put("Second Game of the Day", 250L);
-                    break;
-                case 2:
-                    expGain.put("Third Game of the Day", 100L);
-                    break;
+            if (isCompGame) {
+                switch (databasePlayer.getCompStats().getPlays()) {
+                    case 0:
+                        expGain.put("First Game of the Day", 500L);
+                        break;
+                    case 1:
+                        expGain.put("Second Game of the Day", 250L);
+                        break;
+                    case 2:
+                        expGain.put("Third Game of the Day", 100L);
+                        break;
+                }
+            } else {
+                switch (databasePlayer.getPubStats().getPlays()) {
+                    case 0:
+                        expGain.put("First Game of the Day", 50L);
+                        break;
+                    case 1:
+                        expGain.put("Second Game of the Day", 25L);
+                        break;
+                    case 2:
+                        expGain.put("Third Game of the Day", 10L);
+                        break;
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();

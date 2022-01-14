@@ -10,7 +10,6 @@ import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
 import com.ebicep.customentities.npc.NPCManager;
-import com.ebicep.customentities.npc.traits.GameStartTrait;
 import com.ebicep.jda.BotCommands;
 import com.ebicep.jda.BotListener;
 import com.ebicep.jda.BotManager;
@@ -21,7 +20,6 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.FutureMessageManager;
 import com.ebicep.warlords.database.configuration.ApplicationConfiguration;
 import com.ebicep.warlords.database.leaderboards.LeaderboardCommand;
-import com.ebicep.warlords.database.leaderboards.LeaderboardManager;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.menu.MenuEventListener;
@@ -37,13 +35,10 @@ import me.filoghost.holographicdisplays.api.beta.hologram.Hologram;
 import me.filoghost.holographicdisplays.api.beta.HolographicDisplaysAPI;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.DespawnReason;
-import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.npc.NPCRegistry;
-import net.citizensnpcs.api.trait.TraitInfo;
-import net.citizensnpcs.trait.SkinTrait;
 import org.bukkit.*;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
+import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
@@ -51,6 +46,7 @@ import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.slf4j.LoggerFactory;
 
@@ -88,16 +84,10 @@ public class Warlords extends JavaPlugin {
         players.put(warlordsPlayer.getUuid(), warlordsPlayer);
     }
 
-    @Deprecated // This method is useless, but handles the parts of the code that are slow with updating
-    @Nullable
-    public static WarlordsPlayer getPlayer(@Nullable WarlordsPlayer player) {
-        return player;
-    }
-
     @Nullable
     public static WarlordsPlayer getPlayer(@Nullable Entity entity) {
         if (entity != null) {
-            Optional<MetadataValue> metadata = entity.getMetadata("WARLORDS_PLAYER").stream().findAny();
+            Optional<MetadataValue> metadata = entity.getMetadata("WARLORDS_PLAYER").stream().filter(e -> e.value() instanceof WarlordsPlayer).findAny();
             if (metadata.isPresent()) {
                 return (WarlordsPlayer) metadata.get().value();
             }
@@ -343,10 +333,12 @@ public class Warlords extends JavaPlugin {
                         }
                     }
                 });
+
         citizensEnabled = Bukkit.getPluginManager().isPluginEnabled("Citizens");
         if (citizensEnabled) {
-            //NPCManager.createGameNPC();
+            NPCManager.createGameNPC();
         }
+
         gameLoop();
         getServer().getScheduler().runTaskTimer(this, game, 1, 1);
         getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Plugin is enabled");
@@ -355,18 +347,34 @@ public class Warlords extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        // Pre-caution
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            player.removePotionEffect(PotionEffectType.BLINDNESS);
+            player.getActivePotionEffects().clear();
+            player.removeMetadata("WARLORDS_PLAYER", this);
+            PacketUtils.sendTitle(player, "", "", 0, 0, 0);
+        }
+
+        CraftServer server = (CraftServer) Bukkit.getServer();
+        server.getEntityMetadata().invalidateAll(this);
+        server.getWorldMetadata().invalidateAll(this);
+        server.getPlayerMetadata().invalidateAll(this);
+
         RemoveEntities.removeArmorStands(0);
         game.clearAllPlayers();
+
         if (holographicDisplaysEnabled) {
             HolographicDisplaysAPI.get(instance).getHolograms().forEach(Hologram::delete);
         }
+
         try {
             BotManager.jda.shutdownNow();
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        CitizensAPI.getNPCRegistry().despawnNPCs(DespawnReason.RELOAD);
+        //CitizensAPI.getNPCRegistry().despawnNPCs(DespawnReason.RELOAD);
+        NPCManager.npc.despawn();
 
         getServer().getConsoleSender().sendMessage(ChatColor.RED + "[Warlords] Plugin is disabled");
         // TODO persist this.playerSettings to a database
@@ -566,7 +574,7 @@ public class Warlords extends JavaPlugin {
                                                 this.cancel();
                                             } else {
                                                 //UNDYING ARMY - dmg 10% of max health each popped army
-                                                wp.damageHealth(wp, "", wp.getMaxHealth() / 10f, wp.getMaxHealth() / 10f, -1, 100, false);
+                                                wp.addDamageInstance(wp, "", wp.getMaxHealth() / 10f, wp.getMaxHealth() / 10f, -1, 100, false);
                                             }
                                         }
                                     }.runTaskTimer(Warlords.this, 0, 20);
@@ -727,7 +735,7 @@ public class Warlords extends JavaPlugin {
                                     orbHeal *= 1 + orb.getTicksLived() / 520f;
                                 }
 
-                                wp.healHealth(orb.getOwner(), "Orbs of Life", orbHeal, orbHeal, -1, 100, false);
+                                wp.addHealingInstance(orb.getOwner(), "Orbs of Life", orbHeal, orbHeal, -1, 100, false, false);
                                 if (player != null) {
                                     for (Player player1 : player.getWorld().getPlayers()) {
                                         player1.playSound(player.getLocation(), Sound.ORB_PICKUP, 0.5f, 1);
@@ -739,7 +747,7 @@ public class Warlords extends JavaPlugin {
                                         .aliveTeammatesOfExcludingSelf(wp)
                                         .limit(2)
                                 ) {
-                                    nearPlayer.healHealth(orb.getOwner(), "Orbs of Life", orbHeal, orbHeal, -1, 100, false);
+                                    nearPlayer.addHealingInstance(orb.getOwner(), "Orbs of Life", orbHeal, orbHeal, -1, 100, false, false);
                                     if (player != null) {
                                         for (Player player1 : player.getWorld().getPlayers()) {
                                             player1.playSound(player.getLocation(), Sound.ORB_PICKUP, 0.5f, 1);

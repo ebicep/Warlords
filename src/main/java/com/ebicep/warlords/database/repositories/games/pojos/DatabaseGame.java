@@ -4,11 +4,11 @@ import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.LeaderboardManager;
+import com.ebicep.warlords.database.repositories.games.GameMode;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.state.PlayingState;
-import com.ebicep.warlords.player.Classes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.NumberFormat;
 import com.ebicep.warlords.util.PlayerFilter;
@@ -47,6 +47,10 @@ public class DatabaseGame {
     protected int redPoints;
     protected DatabaseGamePlayers players;
     protected String statInfo;
+    @Field("gamemode")
+    protected GameMode gameMode;
+    @Field("private")
+    protected boolean isPrivate = true;
     protected boolean counted;
 
     public DatabaseGame() {
@@ -74,6 +78,7 @@ public class DatabaseGame {
         this.redPoints = gameState.getStats(Team.RED).points();
         this.players = new DatabaseGamePlayers(blue, red);
         this.statInfo = getWarlordsPlusEndGameStats(gameState);
+        this.isPrivate = gameState.getGame().isPrivate();
         this.counted = counted;
     }
 
@@ -337,20 +342,22 @@ public class DatabaseGame {
             previousGames.add(databaseGame);
             databaseGame.createHolograms();
 
-            addGameToDatabase(databaseGame);
+            if (databaseGame.isPrivate) {
+                addGameToDatabase(databaseGame);
 
-            LeaderboardManager.playerGameHolograms.forEach((uuid, integer) -> {
-                LeaderboardManager.playerGameHolograms.put(uuid, previousGames.size() - 1);
-            });
-            LeaderboardManager.addHologramLeaderboards(UUID.randomUUID().toString());
+                LeaderboardManager.playerGameHolograms.forEach((uuid, integer) -> {
+                    LeaderboardManager.playerGameHolograms.put(uuid, previousGames.size() - 1);
+                });
+                LeaderboardManager.addHologramLeaderboards(UUID.randomUUID().toString());
 
-            //sending message if player information remained the same
-            for (WarlordsPlayer value : PlayerFilter.playingGame(gameState.getGame())) {
-                if (value.getEntity().hasPermission("warlords.database.messagefeed")) {
-                    if (updatePlayerStats) {
-                        value.sendMessage(ChatColor.GREEN + "This game was added to the database and player information was updated");
-                    } else {
-                        value.sendMessage(ChatColor.GREEN + "This game was added to the database but player information remained the same");
+                //sending message if player information remained the same
+                for (WarlordsPlayer value : PlayerFilter.playingGame(gameState.getGame())) {
+                    if (value.getEntity().hasPermission("warlords.database.messagefeed")) {
+                        if (updatePlayerStats) {
+                            value.sendMessage(ChatColor.GREEN + "This game was added to the database and player information was updated");
+                        } else {
+                            value.sendMessage(ChatColor.GREEN + "This game was added to the database but player information remained the same");
+                        }
                     }
                 }
             }
@@ -405,9 +412,13 @@ public class DatabaseGame {
 
         if (databasePlayerAllTime != null)
             updatePlayerStats(databaseGame, add, gamePlayer, databasePlayerAllTime, blue);
+        else throw new NullPointerException(gamePlayer.getName() + " was not found in ALL_TIME");
         if (databasePlayerSeason != null) updatePlayerStats(databaseGame, add, gamePlayer, databasePlayerSeason, blue);
+        else throw new NullPointerException(gamePlayer.getName() + " was not found in SEASON");
         if (databasePlayerWeekly != null) updatePlayerStats(databaseGame, add, gamePlayer, databasePlayerWeekly, blue);
+        else throw new NullPointerException(gamePlayer.getName() + " was not found in WEEKLY");
         if (databasePlayerDaily != null) updatePlayerStats(databaseGame, add, gamePlayer, databasePlayerDaily, blue);
+        else throw new NullPointerException(gamePlayer.getName() + " was not found in DAILY");
 
         DatabaseManager.updatePlayerAsync(databasePlayerAllTime);
         DatabaseManager.updatePlayerAsync(databasePlayerSeason, PlayersCollections.SEASON_5);
@@ -417,9 +428,7 @@ public class DatabaseGame {
 
     private static void updatePlayerStats(DatabaseGame databaseGame, boolean add, DatabaseGamePlayers.GamePlayer gamePlayer, DatabasePlayer databasePlayer, boolean checkBlueWin) {
         boolean won = checkBlueWin ? databaseGame.bluePoints > databaseGame.redPoints : databaseGame.redPoints > databaseGame.bluePoints;
-        databasePlayer.updateStats(gamePlayer, won, add);
-        databasePlayer.getClass(Classes.getClassesGroup(gamePlayer.getSpec())).updateStats(gamePlayer, won, add);
-        databasePlayer.getSpec(gamePlayer.getSpec()).updateStats(gamePlayer, won, add);
+        databasePlayer.updateStats(GameMode.CAPTURE_THE_FLAG, databaseGame.isPrivate, databaseGame, gamePlayer, won, add);
     }
 
     @Transient
@@ -530,6 +539,14 @@ public class DatabaseGame {
 
     public void setStatInfo(String statInfo) {
         this.statInfo = statInfo;
+    }
+
+    public boolean isPrivate() {
+        return isPrivate;
+    }
+
+    public void setPrivate(boolean aPrivate) {
+        isPrivate = aPrivate;
     }
 
     public boolean isCounted() {

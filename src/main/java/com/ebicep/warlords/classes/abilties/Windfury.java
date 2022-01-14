@@ -23,7 +23,7 @@ public class Windfury extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        int weaponDamage = Classes.getSelectedBoost(player) == ClassesSkillBoosts.WINDFURY_WEAPON ? 155 : 135;
+        int weaponDamage = procChance == 35 ? 135 : 155;
         description = "§7Imbue your weapon with the power\n" +
                 "§7of the wind, causing each of your\n" +
                 "§7melee attacks to have a §e" + procChance + "% §7chance\n" +

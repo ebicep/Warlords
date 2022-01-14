@@ -53,7 +53,7 @@ public class FlameBurst extends AbstractProjectileBase {
                 .entitiesAround(currentLocation, HITBOX, HITBOX, HITBOX)
                 .aliveEnemiesOf(shooter)
         ) {
-            nearEntity.damageHealth(
+            nearEntity.addDamageInstance(
                     shooter,
                     name,
                     minDamageHeal,

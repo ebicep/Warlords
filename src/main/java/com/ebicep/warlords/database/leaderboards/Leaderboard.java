@@ -1,7 +1,7 @@
 package com.ebicep.warlords.database.leaderboards;
 
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import org.bukkit.Location;
 
 import java.lang.reflect.Array;
@@ -47,7 +47,7 @@ public class Leaderboard {
 
     public List<DatabasePlayer> getSortedPlayers(PlayersCollections collections) {
         switch (collections) {
-            case ALL_TIME:
+            case LIFETIME:
                 return sortedAllTime;
             case SEASON_5:
                 return sortedSeason5;
@@ -63,7 +63,7 @@ public class Leaderboard {
 
     public void resetSortedPlayers(List<DatabasePlayer> newSortedPlayers, PlayersCollections collections) {
         switch (collections) {
-            case ALL_TIME:
+            case LIFETIME:
                 this.sortedAllTime.clear();
                 this.sortedAllTime.addAll(newSortedPlayers);
                 return;

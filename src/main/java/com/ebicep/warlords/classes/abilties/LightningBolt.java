@@ -50,7 +50,7 @@ public class LightningBolt extends AbstractPiercingProjectileBase {
         WarlordsPlayer wp = projectile.getShooter();
         if (!projectile.getHit().contains(hit)) {
             projectile.getHit().add(hit);
-            hit.damageHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+            hit.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
 
             for (Player player1 : hit.getWorld().getPlayers()) {
                 player1.playSound(impactLocation, "shaman.lightningbolt.impact", 2, 1);
@@ -79,7 +79,7 @@ public class LightningBolt extends AbstractPiercingProjectileBase {
                 .excluding(projectile.getHit())
         ) {
             //hitting player
-            warlordsPlayer.damageHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+            warlordsPlayer.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
 
             for (Player player1 : warlordsPlayer.getWorld().getPlayers()) {
                 player1.playSound(warlordsPlayer.getLocation(), "shaman.lightningbolt.impact", 2, 1);

@@ -95,16 +95,16 @@ public class HammerOfLight extends AbstractAbility {
                                         .isAlive()
                                 ) {
                                     if (hol.getWarlordsPlayer().isTeammateAlive(warlordsPlayer)) {
-                                        warlordsPlayer.healHealth(
+                                        warlordsPlayer.addHealingInstance(
                                                 hol.getWarlordsPlayer(),
                                                 hol.getName(),
                                                 hol.getMinDamage(),
                                                 hol.getMaxDamage(),
                                                 hol.getCritChance(),
                                                 hol.getCritMultiplier(),
-                                                false);
+                                                false, false);
                                     } else {
-                                        warlordsPlayer.damageHealth(
+                                        warlordsPlayer.addDamageInstance(
                                                 hol.getWarlordsPlayer(),
                                                 hol.getName(),
                                                 hol.getMinDamage(),
@@ -175,14 +175,14 @@ public class HammerOfLight extends AbstractAbility {
                                                 PlayerFilter.entitiesAround(wp.getLocation(), radius, radius, radius)
                                                         .aliveTeammatesOf(wp)
                                                         .forEach(teammate -> {
-                                                            teammate.healHealth(
-                                                                hol.getWarlordsPlayer(),
-                                                                "Crown of Light",
-                                                                hol.getMinDamage() * 1.5f,
-                                                                hol.getMaxDamage() * 1.5f,
-                                                                hol.getCritChance(),
-                                                                hol.getCritMultiplier(),
-                                                                false);
+                                                            teammate.addHealingInstance(
+                                                                    hol.getWarlordsPlayer(),
+                                                                    "Crown of Light",
+                                                                    hol.getMinDamage() * 1.5f,
+                                                                    hol.getMaxDamage() * 1.5f,
+                                                                    hol.getCritChance(),
+                                                                    hol.getCritMultiplier(),
+                                                                    false, false);
                                                         });
                                                 timeLeft--;
 

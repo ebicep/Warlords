@@ -2,6 +2,8 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.player.Classes;
+import com.ebicep.warlords.player.ClassesSkillBoosts;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.PacketUtils;
 import com.ebicep.warlords.util.ParticleEffect;
@@ -23,6 +25,7 @@ import java.util.UUID;
 public class RecklessCharge extends AbstractAbility implements Listener {
 
     private static List<UUID> stunnedPlayers = new ArrayList<>();
+    private int stunTimeInTicks = 10;
 
     public RecklessCharge() {
         super("Reckless Charge", 457, 601, 9.32f, 60, 20, 200);
@@ -30,11 +33,12 @@ public class RecklessCharge extends AbstractAbility implements Listener {
 
     @Override
     public void updateDescription(Player player) {
+        double stunDuration = Classes.getSelectedBoost(player) == ClassesSkillBoosts.RECKLESS_CHARGE ? 0.65 : 0.5;
         description = "§7Charge forward, dealing §c" + format(minDamageHeal) + "\n" +
                 "§7- §c" + format(maxDamageHeal) + " §7damage to all enemies\n" +
                 "§7you pass through. Enemies hit are\n" +
                 "§5IMMOBILIZED§7, preventing movement\n" +
-                "§7for §60.5 §7seconds. Charge is reduced\n" +
+                "§7for §6" + stunDuration + " §7seconds. Charge is reduced\n" +
                 "§7when carrying a flag.";
     }
 
@@ -112,7 +116,7 @@ public class RecklessCharge extends AbstractAbility implements Listener {
                                 .forEach(enemy -> {
                                     playersHit.add(enemy);
                                     stunnedPlayers.add(enemy.getUuid());
-                                    enemy.damageHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+                                    enemy.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
                                     wp.getGame().getGameTasks().put(
 
                                             new BukkitRunnable() {
@@ -120,7 +124,7 @@ public class RecklessCharge extends AbstractAbility implements Listener {
                                                 public void run() {
                                                     stunnedPlayers.remove(enemy.getUuid());
                                                 }
-                                            }.runTaskLater(Warlords.getInstance(), 10),
+                                            }.runTaskLater(Warlords.getInstance(), getStunTimeInTicks()),
                                             System.currentTimeMillis()
                                     ); //.5 seconds
                                     if (enemy.getEntity() instanceof Player) {
@@ -141,5 +145,13 @@ public class RecklessCharge extends AbstractAbility implements Listener {
         if (stunnedPlayers.contains(e.getPlayer().getUniqueId())) {
             e.setTo(e.getFrom());
         }
+    }
+
+    public int getStunTimeInTicks() {
+        return stunTimeInTicks;
+    }
+
+    public void setStunTimeInTicks(int stunTimeInTicks) {
+        this.stunTimeInTicks = stunTimeInTicks;
     }
 }

@@ -40,7 +40,7 @@ public class SpiritLink extends AbstractChainBase {
         ) {
             if (Utils.isLookingAtChain(player, nearPlayer.getEntity()) && Utils.hasLineOfSight(player, nearPlayer.getEntity())) {
                 chain(player.getLocation(), nearPlayer.getLocation());
-                nearPlayer.damageHealth(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+                nearPlayer.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
                 hitCounter++;
 
                 int numberOfHeals = wp.getCooldownManager().getNumberOfBoundPlayersLink(nearPlayer);
@@ -55,7 +55,7 @@ public class SpiritLink extends AbstractChainBase {
                         .soulBindedFirst(wp)
                 ) {
                     chain(nearPlayer.getLocation(), chainPlayerOne.getLocation());
-                    chainPlayerOne.damageHealth(wp, name, minDamageHeal * .8f, maxDamageHeal * .8f, critChance, critMultiplier, false);
+                    chainPlayerOne.addDamageInstance(wp, name, minDamageHeal * .8f, maxDamageHeal * .8f, critChance, critMultiplier, false);
                     hitCounter++;
 
                     numberOfHeals = wp.getCooldownManager().getNumberOfBoundPlayersLink(chainPlayerOne);
@@ -70,7 +70,7 @@ public class SpiritLink extends AbstractChainBase {
                             .soulBindedFirst(wp)
                     ) {
                         chain(chainPlayerOne.getLocation(), chainPlayerTwo.getLocation());
-                        chainPlayerTwo.damageHealth(wp, name, minDamageHeal * .6f, maxDamageHeal * .6f, critChance, critMultiplier, false);
+                        chainPlayerTwo.addDamageInstance(wp, name, minDamageHeal * .6f, maxDamageHeal * .6f, critChance, critMultiplier, false);
                         hitCounter++;
 
                         numberOfHeals = wp.getCooldownManager().getNumberOfBoundPlayersLink(chainPlayerTwo);
@@ -112,13 +112,13 @@ public class SpiritLink extends AbstractChainBase {
             deathsDebt.setTimeLeftRespite(deathsDebt.getTimeLeftRespite() + .5);
             cooldown.setTimeLeft((float) deathsDebt.getTimeLeftRespite());
         }
-        warlordsPlayer.healHealth(warlordsPlayer, "Soulbinding Weapon", 400, 400, -1, 100, false);
+        warlordsPlayer.addHealingInstance(warlordsPlayer, "Soulbinding Weapon", 400, 400, -1, 100, false, false);
         for (WarlordsPlayer nearPlayer : PlayerFilter
                 .entitiesAround(warlordsPlayer, 8, 8, 8)
                 .aliveTeammatesOfExcludingSelf(warlordsPlayer)
                 .limit(2)
         ) {
-            nearPlayer.healHealth(warlordsPlayer, "Soulbinding Weapon", 200, 200, -1, 100, false);
+            nearPlayer.addHealingInstance(warlordsPlayer, "Soulbinding Weapon", 200, 200, -1, 100, false, false);
         }
     }
 }

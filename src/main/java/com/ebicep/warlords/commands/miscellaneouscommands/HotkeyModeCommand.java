@@ -3,7 +3,7 @@ package com.ebicep.warlords.commands.miscellaneouscommands;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.BaseCommand;
 import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.player.PlayerSettings;
 import com.ebicep.warlords.player.Settings;
 import org.bukkit.ChatColor;

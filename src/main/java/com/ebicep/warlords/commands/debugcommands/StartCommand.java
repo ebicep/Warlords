@@ -65,13 +65,9 @@ public class StartCommand implements TabExecutor {
                 game.changeMap(map);
             }
             sender.sendMessage("§cDEV: §aChanging map to " + map.getMapName());
-            //Bukkit.broadcastMessage(ChatColor.GRAY + "§lThe map has been changed to §6§l" + map.getMapName() + " §7§lby §c§l" + sender.getName());
         }
+
         Collection<? extends Player> online = Bukkit.getOnlinePlayers();
-//        if (online.size() < game.getMap().getMinPlayers()) {
-//            sender.sendMessage(ChatColor.RED + "The map '" + game.getMap().getMapName() + "' requires " + game.getMap().getMinPlayers() + " players to start");
-//            return true;
-//        }
         List<Player> people;
         Optional<Party> party = Warlords.partyManager.getPartyFromAny(((Player) sender).getUniqueId());
         people = party.map(value -> new ArrayList<>(value.getAllPartyPeoplePlayerOnline())).orElseGet(() -> new ArrayList<>(online));
@@ -96,6 +92,10 @@ public class StartCommand implements TabExecutor {
         }
         //private game if started using /start
         game.setPrivate(true);
+        // Debug
+        System.out.println("Game State = " + game.getState());
+        System.out.println("Game Players = " + game.getPlayers());
+        System.out.println("isPrivate = " + game.isPrivate());
         Warlords.game.clearAllPlayers();
         GameStartTrait.ctfQueue.clear();
 
@@ -131,9 +131,6 @@ public class StartCommand implements TabExecutor {
             GameStartTrait.ctfQueue.remove(player.getUniqueId());
         }
 
-        if (people.size() >= 16) {
-            BotManager.sendMessageToNotificationChannel("[GAME] A **" + game.getMap().getMapName() + "** started with **" + people.size() + (people.size() == 1 ? "** player!" : "** players!"));
-        }
         return true;
     }
 

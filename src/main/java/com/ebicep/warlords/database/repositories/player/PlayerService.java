@@ -1,6 +1,12 @@
 package com.ebicep.warlords.database.repositories.player;
 
-import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.ctf.DatabasePlayerCTF;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.general.classescomppub.DatabaseMage;
+import com.ebicep.warlords.database.repositories.player.pojos.general.classescomppub.DatabasePaladin;
+import com.ebicep.warlords.database.repositories.player.pojos.general.classescomppub.DatabaseShaman;
+import com.ebicep.warlords.database.repositories.player.pojos.general.classescomppub.DatabaseWarrior;
+import org.bson.Document;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -38,7 +44,8 @@ public interface PlayerService {
 
     BulkOperations bulkOps();
 
-    List<DatabasePlayer> getPlayersSortedByPlays();
-
     List<DatabasePlayer> getPlayersSorted(Aggregation aggregation, PlayersCollections collections);
+
+    <T> T convertDocumentToClass(Document document, Class<T> clazz);
+
 }

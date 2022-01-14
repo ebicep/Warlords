@@ -18,8 +18,12 @@ public class PermissionHandler {
         return player.hasPermission("group.contentcreator");
     }
 
-    public static boolean isGamestarter(Player player) {
+    public static boolean isGameStarter(Player player) {
         return player.hasPermission("group.gamestarter");
+    }
+
+    public static boolean isGameTester(Player player) {
+        return player.hasPermission("group.gametester");
     }
 
     public static boolean isDefault(Player player) {

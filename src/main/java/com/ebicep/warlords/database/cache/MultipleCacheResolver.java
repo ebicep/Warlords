@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import static com.ebicep.warlords.database.repositories.player.PlayersCollections.ALL_TIME;
+import static com.ebicep.warlords.database.repositories.player.PlayersCollections.LIFETIME;
 import static com.ebicep.warlords.database.repositories.player.PlayersCollections.values;
 
 
@@ -38,7 +38,7 @@ public class MultipleCacheResolver implements CacheResolver {
             }
         }
         if (caches.isEmpty()) {
-            caches.add(playersCacheManager.getCache(ALL_TIME.cacheName));
+            caches.add(playersCacheManager.getCache(LIFETIME.cacheName));
         }
         return caches;
     }

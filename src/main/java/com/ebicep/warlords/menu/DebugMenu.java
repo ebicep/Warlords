@@ -273,12 +273,12 @@ public class DebugMenu {
             menu.setItem(0, 0, blueInfo, (n, e) -> {
             });
             menu.setItem(3, 0, killTeam, (n, e) -> {
-                bluePlayers.forEach(wp -> wp.damageHealth(wp, "", 69000, 69000, -1, 100, false));
+                bluePlayers.forEach(wp -> wp.addDamageInstance(wp, "", 69000, 69000, -1, 100, false));
             });
             menu.setItem(5, 0, redInfo, (n, e) -> {
             });
             menu.setItem(8, 0, killTeam, (n, e) -> {
-                redPlayers.forEach(wp -> wp.damageHealth(wp, "", 69000, 69000, -1, 100, false));
+                redPlayers.forEach(wp -> wp.addDamageInstance(wp, "", 69000, 69000, -1, 100, false));
             });
 
             //players
@@ -800,11 +800,14 @@ public class DebugMenu {
 
     public static void openMapsMenu(Player player) {
         Menu menu = new Menu("Map Picker", 9 * 4);
-        for (int i = 0; i < GameMap.values().length; i++) {
-            String mapName = GameMap.values()[i].getMapName();
+        GameMap[] values = GameMap.values();
+        for (int i = 0; i < values.length; i++) {
+            GameMap map = values[i];
+            String mapName = map.getMapName();
             menu.setItem(i + 1, 1,
                     new ItemBuilder(woolSortedByColor[i + 5])
                             .name(ChatColor.GREEN + mapName)
+                            .lore(ChatColor.GRAY + "Map Category: " + ChatColor.GOLD + map.getCategory().getName())
                             .get(),
                     (n, e) -> Bukkit.getServer().dispatchCommand(player, "start " + mapName)
             );

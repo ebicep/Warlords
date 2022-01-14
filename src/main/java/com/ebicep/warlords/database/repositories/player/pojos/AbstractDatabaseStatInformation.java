@@ -1,39 +1,26 @@
 package com.ebicep.warlords.database.repositories.player.pojos;
 
+import com.ebicep.warlords.database.repositories.games.GameMode;
+import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayers;
-import com.ebicep.warlords.player.ClassesSkillBoosts;
-import com.ebicep.warlords.player.Weapons;
-import org.springframework.data.mongodb.core.mapping.Field;
 
-public class DatabaseSpecialization {
+public abstract class AbstractDatabaseStatInformation {
 
-    private int kills = 0;
-    private int assists = 0;
-    private int deaths = 0;
-    private int wins = 0;
-    private int losses = 0;
-    private int plays = 0;
-    @Field("flags_captured")
-    private int flagsCaptured = 0;
-    @Field("flags_returned")
-    private int flagsReturned = 0;
-    private long damage = 0;
-    private long healing = 0;
-    private long absorbed = 0;
-    private Weapons weapon = Weapons.FELFLAME_BLADE;
-    @Field("skill_boost")
-    private ClassesSkillBoosts skillBoost;
-    private long experience = 0;
+    protected int kills = 0;
+    protected int assists = 0;
+    protected int deaths = 0;
+    protected int wins = 0;
+    protected int losses = 0;
+    protected int plays = 0;
+    protected long damage = 0;
+    protected long healing = 0;
+    protected long absorbed = 0;
+    protected long experience = 0;
 
-    public DatabaseSpecialization() {
-
+    public AbstractDatabaseStatInformation() {
     }
 
-    public DatabaseSpecialization(ClassesSkillBoosts skillBoost) {
-        this.skillBoost = skillBoost;
-    }
-
-    public void updateStats(DatabaseGamePlayers.GamePlayer gamePlayer, boolean won, boolean add) {
+    public void updateStats(GameMode gameMode, boolean isCompGame, DatabaseGame databaseGame, DatabaseGamePlayers.GamePlayer gamePlayer, boolean won, boolean add) {
         int operation = add ? 1 : -1;
         this.kills += gamePlayer.getTotalKills() * operation;
         this.assists += gamePlayer.getTotalAssists() * operation;
@@ -44,12 +31,16 @@ public class DatabaseSpecialization {
             this.losses += operation;
         }
         this.plays += operation;
-        this.flagsCaptured += gamePlayer.getFlagCaptures() * operation;
-        this.flagsReturned += gamePlayer.getFlagReturns() * operation;
         this.damage += gamePlayer.getTotalDamage() * operation;
         this.healing += gamePlayer.getTotalHealing() * operation;
         this.absorbed += gamePlayer.getTotalAbsorbed() * operation;
-        this.experience += gamePlayer.getExperienceEarnedSpec() * operation;
+        this.updateCustomStats(gameMode, isCompGame, databaseGame, gamePlayer, won, add);
+    }
+
+    public abstract void updateCustomStats(GameMode gameMode, boolean isCompGame, DatabaseGame databaseGame, DatabaseGamePlayers.GamePlayer gamePlayer, boolean won, boolean add);
+
+    public double getKillsPerGame() {
+        return plays == 0 ? 0 : (double) kills / plays;
     }
 
     public int getKills() {
@@ -60,12 +51,20 @@ public class DatabaseSpecialization {
         this.kills = kills;
     }
 
+    public double getKillsAssistsPerGame() {
+        return plays == 0 ? 0 : (double) (kills + assists) / plays;
+    }
+
     public int getAssists() {
         return assists;
     }
 
     public void setAssists(int assists) {
         this.assists = assists;
+    }
+
+    public double getDeathsPerGame() {
+        return plays == 0 ? 0 : (double) deaths / plays;
     }
 
     public int getDeaths() {
@@ -100,20 +99,12 @@ public class DatabaseSpecialization {
         this.plays = plays;
     }
 
-    public int getFlagsCaptured() {
-        return flagsCaptured;
+    public long getDHP() {
+        return damage + healing + absorbed;
     }
 
-    public void setFlagsCaptured(int flagsCaptured) {
-        this.flagsCaptured = flagsCaptured;
-    }
-
-    public int getFlagsReturned() {
-        return flagsReturned;
-    }
-
-    public void setFlagsReturned(int flagsReturned) {
-        this.flagsReturned = flagsReturned;
+    public long getDHPPerGame() {
+        return plays == 0 ? 0 : (damage + healing + absorbed) / (wins + losses);
     }
 
     public long getDamage() {
@@ -138,22 +129,6 @@ public class DatabaseSpecialization {
 
     public void setAbsorbed(long absorbed) {
         this.absorbed = absorbed;
-    }
-
-    public Weapons getWeapon() {
-        return weapon;
-    }
-
-    public void setWeapon(Weapons weapon) {
-        this.weapon = weapon;
-    }
-
-    public ClassesSkillBoosts getSkillBoost() {
-        return skillBoost;
-    }
-
-    public void setSkillBoost(ClassesSkillBoosts skillBoost) {
-        this.skillBoost = skillBoost;
     }
 
     public long getExperience() {

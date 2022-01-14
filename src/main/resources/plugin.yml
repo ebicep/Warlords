@@ -90,6 +90,8 @@ commands:
 permissions:
   group.default:
     default: false
+  group.gametester:
+    default: false
   group.gamestarter:
     default: false
   group.contentcreator:

@@ -12,6 +12,21 @@ public class LocationBuilder {
         this.location = location;
     }
 
+    public LocationBuilder setX(double x) {
+        location.setX(x);
+        return this;
+    }
+
+    public LocationBuilder setY(double y) {
+        location.setY(y);
+        return this;
+    }
+
+    public LocationBuilder setZ(double z) {
+        location.setZ(z);
+        return this;
+    }
+
     public LocationBuilder addXYZ(double x, double y, double z) {
         location.add(x, y, z);
         return this;

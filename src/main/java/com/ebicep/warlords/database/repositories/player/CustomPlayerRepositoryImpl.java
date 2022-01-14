@@ -1,6 +1,12 @@
 package com.ebicep.warlords.database.repositories.player;
 
-import com.ebicep.warlords.database.repositories.player.pojos.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.ctf.DatabasePlayerCTF;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.database.repositories.player.pojos.general.classescomppub.DatabaseMage;
+import com.ebicep.warlords.database.repositories.player.pojos.general.classescomppub.DatabasePaladin;
+import com.ebicep.warlords.database.repositories.player.pojos.general.classescomppub.DatabaseShaman;
+import com.ebicep.warlords.database.repositories.player.pojos.general.classescomppub.DatabaseWarrior;
+import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -58,8 +64,13 @@ public class CustomPlayerRepositoryImpl implements CustomPlayerRepository {
     public List<DatabasePlayer> getPlayersSorted(Aggregation aggregation, PlayersCollections collections) {
         return mongoTemplate.aggregate(aggregation,
                         collections.collectionName,
-                DatabasePlayer.class)
+                        DatabasePlayer.class)
                 .getMappedResults();
+    }
+
+    @Override
+    public <T> T convertDocumentToClass(Document document, Class<T> clazz) {
+        return mongoTemplate.getConverter().read(clazz, document);
     }
 
 }

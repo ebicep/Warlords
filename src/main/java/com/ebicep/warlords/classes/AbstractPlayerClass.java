@@ -22,15 +22,11 @@ public abstract class AbstractPlayerClass {
     protected int energyOnHit;
     protected int damageResistance;
     protected AbstractAbility weapon;
-    protected boolean weaponCD = true;
     protected AbstractAbility red;
-    protected boolean redCD = true;
     protected AbstractAbility purple;
-    protected boolean purpleCD = true;
     protected AbstractAbility blue;
-    protected boolean blueCD = true;
     protected AbstractAbility orange;
-    protected boolean orangeCD = true;
+    protected boolean abilityCD = true;
     protected String name;
     protected String className;
     protected String classNameShort;
@@ -83,89 +79,54 @@ public abstract class AbstractPlayerClass {
         boolean dismountHorse = false;
         int slot = player.getInventory().getHeldItemSlot();
         if (slot == 0) {
-            if (player.getLevel() >= weapon.getEnergyCost() * wp.getEnergyModifier() && weaponCD) {
+            if (player.getLevel() >= weapon.getEnergyCost() * wp.getEnergyModifier() && abilityCD) {
                 weapon.onActivate(wp, player);
                 if (!(weapon instanceof AbstractStrikeBase) && !(weapon instanceof EarthenSpike)) {
                     sendRightClickPacket(player);
                 }
-                weaponCD = false;
-                new BukkitRunnable() {
-
-                    @Override
-                    public void run() {
-                        weaponCD = true;
-                    }
-                }.runTaskLater(Warlords.getInstance(), cooldownDelay);
+                resetAbilityCD();
             } else {
                 player.playSound(player.getLocation(), "notreadyalert", 1, 1);
             }
         } else if (slot == 1) {
             if (red.getCurrentCooldown() == 0) {
-                if (player.getLevel() >= red.getEnergyCost() * wp.getEnergyModifier() && redCD) {
+                if (player.getLevel() >= red.getEnergyCost() * wp.getEnergyModifier() && abilityCD) {
                     red.onActivate(wp, player);
                     if (!(red instanceof AbstractChainBase)) {
                         red.setCurrentCooldown((float) (red.cooldown * wp.getCooldownModifier()));
                         sendRightClickPacket(player);
                     }
-                    redCD = false;
-                    new BukkitRunnable() {
-
-                        @Override
-                        public void run() {
-                            redCD = true;
-                        }
-                    }.runTaskLater(Warlords.getInstance(), cooldownDelay);
+                    resetAbilityCD();
                 }
             }
         } else if (slot == 2) {
             if (purple.getCurrentCooldown() == 0) {
-                if (player.getLevel() >= purple.getEnergyCost() * wp.getEnergyModifier() && purpleCD) {
+                if (player.getLevel() >= purple.getEnergyCost() * wp.getEnergyModifier() && abilityCD) {
                     purple.onActivate(wp, player);
                     purple.setCurrentCooldown((float) (purple.cooldown * wp.getCooldownModifier()));
                     sendRightClickPacket(player);
-                    purpleCD = false;
-                    new BukkitRunnable() {
-
-                        @Override
-                        public void run() {
-                            purpleCD = true;
-                        }
-                    }.runTaskLater(Warlords.getInstance(), cooldownDelay);
+                    resetAbilityCD();
                 }
             }
         } else if (slot == 3) {
             if (blue.getCurrentCooldown() == 0) {
-                if (player.getLevel() >= blue.getEnergyCost() * wp.getEnergyModifier() && blueCD) {
+                if (player.getLevel() >= blue.getEnergyCost() * wp.getEnergyModifier() && abilityCD) {
                     blue.onActivate(wp, player);
                     if (!(blue instanceof AbstractChainBase) && !(blue instanceof Intervene)) {
                         blue.setCurrentCooldown((float) (blue.cooldown * wp.getCooldownModifier()));
                         sendRightClickPacket(player);
                     }
-                    blueCD = false;
-                    new BukkitRunnable() {
-
-                        @Override
-                        public void run() {
-                            blueCD = true;
-                        }
-                    }.runTaskLater(Warlords.getInstance(), cooldownDelay);
+                    resetAbilityCD();
                 }
             }
         } else if (slot == 4) {
-            if (orange.getCurrentCooldown() == 0 && player.getLevel() >= orange.getEnergyCost() * wp.getEnergyModifier() && orangeCD) {
+            if (orange.getCurrentCooldown() == 0 && player.getLevel() >= orange.getEnergyCost() * wp.getEnergyModifier() && abilityCD) {
                 orange.onActivate(wp, player);
                 if (!(orange instanceof HammerOfLight) && !(orange instanceof HealingRain)) {
                     orange.setCurrentCooldown((float) (orange.cooldown * wp.getCooldownModifier()));
                     sendRightClickPacket(player);
                 }
-                orangeCD = false;
-                new BukkitRunnable() {
-
-                    @Override
-                    public void run() {
-                        orangeCD = true;
-                    }
-                }.runTaskLater(Warlords.getInstance(), cooldownDelay);
+                resetAbilityCD();
             }
         }
 
@@ -188,89 +149,54 @@ public abstract class AbstractPlayerClass {
         }
 
         if (slot == 0) {
-            if (player.getLevel() >= weapon.getEnergyCost() * wp.getEnergyModifier() && weaponCD) {
+            if (player.getLevel() >= weapon.getEnergyCost() * wp.getEnergyModifier() && abilityCD) {
                 weapon.onActivate(wp, player);
                 if (!(weapon instanceof AbstractStrikeBase) && !(weapon instanceof EarthenSpike))
                     sendRightClickPacket(player);
-                weaponCD = false;
-                new BukkitRunnable() {
-
-                    @Override
-                    public void run() {
-                        weaponCD = true;
-                    }
-                }.runTaskLater(Warlords.getInstance(), cooldownDelay);
+                resetAbilityCD();
             } else {
                 player.playSound(player.getLocation(), "notreadyalert", 1, 1);
             }
         } else if (slot == 1) {
             if (red.getCurrentCooldown() == 0) {
-                if (player.getLevel() >= red.getEnergyCost() * wp.getEnergyModifier() && redCD) {
+                if (player.getLevel() >= red.getEnergyCost() * wp.getEnergyModifier() && abilityCD) {
                     red.onActivate(wp, player);
                     if (!(red instanceof AbstractChainBase)) {
                         red.setCurrentCooldown((float) (red.cooldown * wp.getCooldownModifier()));
                         sendRightClickPacket(player);
                     }
-                    redCD = false;
-                    new BukkitRunnable() {
-
-                        @Override
-                        public void run() {
-                            redCD = true;
-                        }
-                    }.runTaskLater(Warlords.getInstance(), cooldownDelay);
+                    resetAbilityCD();
                 }
             }
         } else if (slot == 2) {
             if (purple.getCurrentCooldown() == 0) {
-                if (player.getLevel() >= purple.getEnergyCost() * wp.getEnergyModifier() && purpleCD) {
+                if (player.getLevel() >= purple.getEnergyCost() * wp.getEnergyModifier() && abilityCD) {
                     purple.onActivate(wp, player);
                     purple.setCurrentCooldown((float) (purple.cooldown * wp.getCooldownModifier()));
                     sendRightClickPacket(player);
-                    purpleCD = false;
-                    new BukkitRunnable() {
-
-                        @Override
-                        public void run() {
-                            purpleCD = true;
-                        }
-                    }.runTaskLater(Warlords.getInstance(), cooldownDelay);
+                    resetAbilityCD();
                 }
             }
         } else if (slot == 3) {
             if (blue.getCurrentCooldown() == 0) {
-                if (player.getLevel() >= blue.getEnergyCost() * wp.getEnergyModifier() && blueCD) {
+                if (player.getLevel() >= blue.getEnergyCost() * wp.getEnergyModifier() && abilityCD) {
                     blue.onActivate(wp, player);
                     if (!(blue instanceof AbstractChainBase) && !(blue instanceof Intervene)) {
                         blue.setCurrentCooldown((float) (blue.cooldown * wp.getCooldownModifier()));
                         sendRightClickPacket(player);
                     }
-                    blueCD = false;
-                    new BukkitRunnable() {
-
-                        @Override
-                        public void run() {
-                            blueCD = true;
-                        }
-                    }.runTaskLater(Warlords.getInstance(), cooldownDelay);
+                    resetAbilityCD();
                 }
             }
         } else if (slot == 4) {
             if (orange.getCurrentCooldown() == 0) {
-                if (player.getLevel() >= orange.getEnergyCost() * wp.getEnergyModifier() && orangeCD) {
+                if (player.getLevel() >= orange.getEnergyCost() * wp.getEnergyModifier() && abilityCD) {
                     orange.onActivate(wp, player);
                     if (!(orange instanceof HammerOfLight) && !(orange instanceof HealingRain)) {
                         orange.setCurrentCooldown((float) (orange.cooldown * wp.getCooldownModifier()));
                         sendRightClickPacket(player);
                     }
-                    orangeCD = false;
-                    new BukkitRunnable() {
-
-                        @Override
-                        public void run() {
-                            orangeCD = true;
-                        }
-                    }.runTaskLater(Warlords.getInstance(), cooldownDelay);
+                    resetAbilityCD();
                 }
             }
         }
@@ -279,6 +205,17 @@ public abstract class AbstractPlayerClass {
         if (player.getVehicle() != null) {
             player.getVehicle().remove();
         }
+    }
+
+    private void resetAbilityCD() {
+        abilityCD = false;
+        new BukkitRunnable() {
+
+            @Override
+            public void run() {
+                abilityCD = true;
+            }
+        }.runTaskLater(Warlords.getInstance(), cooldownDelay);
     }
 
     private void sendRightClickPacket(Player player) {

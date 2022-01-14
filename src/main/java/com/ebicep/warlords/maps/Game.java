@@ -4,10 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.maps.option.marker.GameMarker;
 import com.ebicep.warlords.maps.scoreboard.ScoreboardHandler;
-import com.ebicep.warlords.maps.state.InitState;
-import com.ebicep.warlords.maps.state.PlayingState;
-import com.ebicep.warlords.maps.state.PreLobbyState;
-import com.ebicep.warlords.maps.state.State;
+import com.ebicep.warlords.maps.state.*;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.PacketUtils;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -15,6 +12,7 @@ import net.minecraft.server.v1_8_R3.EntityLiving;
 import net.minecraft.server.v1_8_R3.GenericAttributes;
 import org.apache.commons.lang.Validate;
 import org.bukkit.*;
+import org.bukkit.command.Command;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
@@ -97,7 +95,7 @@ public class Game implements Runnable {
     }
 
     public boolean canChangeMap() {
-        return players.isEmpty() && (state instanceof PreLobbyState || state instanceof InitState);
+        return players.isEmpty() && (state instanceof PreLobbyState || state instanceof InitState || state instanceof EndState);
     }
 
     public void changeMap(@Nonnull GameMap map) {
@@ -142,22 +140,6 @@ public class Game implements Runnable {
         Warlords.setRejoinPoint(player.getUniqueId(), loc);
         if (online != null) {
             online.teleport(loc);
-        }
-    }
-
-    /**
-     * Adds a player to the game
-     *
-     * @param player
-     * @param teamBlue
-     * @deprecated use {@link #addPlayer(Player, Team) addPlayer(Player, Team)} instead
-     */
-    @Deprecated
-    public void addPlayer(Player player, boolean teamBlue) {
-        if (teamBlue) {
-            this.addPlayer(player, Team.BLUE);
-        } else {
-            this.addPlayer(player, Team.RED);
         }
     }
 
@@ -330,8 +312,8 @@ public class Game implements Runnable {
         spectators.add(uuid);
         Player player = Bukkit.getPlayer(uuid);
         player.setGameMode(GameMode.SPECTATOR);
-        player.teleport(this.getMap().blueRespawn);
-        Warlords.setRejoinPoint(player.getUniqueId(), this.getMap().blueRespawn);
+        player.teleport(this.getMap().getBlueRespawn());
+        Warlords.setRejoinPoint(player.getUniqueId(), this.getMap().getBlueRespawn());
         if (state instanceof PreLobbyState) {
             ((PreLobbyState) state).giveLobbyScoreboard(true, player);
         } else if (state instanceof PlayingState) {
@@ -370,12 +352,16 @@ public class Game implements Runnable {
     public void run() {
         if (this.state == null) {
             this.state = new InitState(this);
+            System.out.println("DEBUG NEW STATE");
+            System.out.println("New state is " + this.state);
             this.state.begin();
         }
         if (!gameFreeze) {
             State newState = state.run();
             if (newState != null) {
                 this.state.end();
+                System.out.println("DEBUG OLD TO NEW STATE");
+                Command.broadcastCommandMessage(Bukkit.getConsoleSender(), "New State = " + newState + " / Old State = " + this.state);
                 this.state = newState;
                 newState.begin();
             }

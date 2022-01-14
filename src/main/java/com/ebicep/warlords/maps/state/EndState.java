@@ -3,6 +3,8 @@ package com.ebicep.warlords.maps.state;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.debugcommands.ImposterCommand;
 import com.ebicep.warlords.maps.Game;
+import com.ebicep.warlords.maps.GameMap;
+import com.ebicep.warlords.maps.MapCategory;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.state.PlayingState.Stats;
 import com.ebicep.warlords.player.ExperienceManager;
@@ -20,6 +22,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame.previousGames;
 
@@ -143,7 +146,7 @@ public class EndState implements State, TimerDebugAble {
                 }
             }
         }
-        if(game.playersCount() >= 16 && previousGames.get(previousGames.size() - 1).isCounted()) {
+        if (game.playersCount() >= 12 && previousGames.get(previousGames.size() - 1).isCounted()) {
             sendMessageToAllGamePlayer(game, "", false);
             sendMessageToAllGamePlayer(game, ChatColor.YELLOW.toString() + ChatColor.BOLD + "✚ EXPERIENCE SUMMARY ✚", true);
             for (WarlordsPlayer wp : PlayerFilter.playingGame(game)) {
@@ -184,8 +187,16 @@ public class EndState implements State, TimerDebugAble {
     @Override
     public State run() {
         timer--;
-        if(timer <= 0) {
-            return new InitState(game);
+        if (timer <= 0) {
+            // Give random map if the game is a public game.
+            GameMap map;
+            Random random = new Random();
+            List<GameMap> gameMap = Stream.of(GameMap.values())
+                    .filter(m -> m.getCategory() == MapCategory.CAPTURE_THE_FLAG)
+                    .collect(Collectors.toList());
+            map = gameMap.get(random.nextInt(gameMap.size()));
+            return new InitState(game, map);
+            //return new InitState(game);
         }
         return null;
     }
