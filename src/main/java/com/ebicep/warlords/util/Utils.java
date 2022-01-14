@@ -245,8 +245,8 @@ public class Utils {
     }
 
     public static boolean isMountableZone(Location location) {
-        if (location.getWorld().getBlockAt((int) location.getX(), 2, (int) location.getZ()).getType() == Material.NETHERRACK) {
-            return location.getWorld().getBlockAt((int) location.getX(), 4, (int) location.getZ()).getType() == Material.SOUL_SAND && !insideTunnel(location);
+        if (location.getWorld().getBlockAt(new LocationBuilder(location.clone()).setY(2).get()).getType() == Material.NETHERRACK) {
+            return location.getWorld().getBlockAt(new LocationBuilder(location.clone()).setY(4).get()).getType() == Material.SOUL_SAND && !insideTunnel(location);
         }
         return true;
     }
