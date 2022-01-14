@@ -46,7 +46,7 @@ public class WideGuard extends AbstractAbility {
         wp.subtractEnergy(energyCost);
 
         wp.getCooldownManager().addCooldown("Wide Guard", this.getClass(), WideGuard.class, "GUARD", 4, wp, CooldownTypes.ABILITY);
-        wp.getCooldownManager().addCooldown("Reflection Shield", this.getClass(), WideGuard.class, null, 4, wp, CooldownTypes.ABILITY);
+        //wp.getCooldownManager().addCooldown("Reflection Shield", this.getClass(), WideGuard.class, "", 4, wp, CooldownTypes.ABILITY);
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(wp.getLocation(), "mage.timewarp.teleport", 2, 2);
@@ -92,11 +92,13 @@ public class WideGuard extends AbstractAbility {
                                 player1.playSound(player.getLocation(), Sound.CREEPER_DEATH, 2, 2);
                             }
 
+                            timeInBubble.compute(wp, (k, v) -> v == null ? 1 : v + 1);
+
                             PlayerFilter.entitiesAround(particleLoc, BUBBLE_RADIUS, BUBBLE_RADIUS, BUBBLE_RADIUS)
                                     .aliveTeammatesOfExcludingSelf(wp)
                                     .forEach(playerInsideBubble -> {
                                         playerInsideBubble.getCooldownManager().removeCooldown(WideGuard.class);
-                                        playerInsideBubble.getCooldownManager().addCooldown("Wide Guard", WideGuard.this.getClass(), WideGuard.class, "GUARD", 1, wp, CooldownTypes.ABILITY);
+                                        playerInsideBubble.getCooldownManager().addCooldown("Wide Guard Healing", WideGuard.this.getClass(), WideGuard.class, "GUARD", 1, wp, CooldownTypes.ABILITY);
                                         timeInBubble.compute(playerInsideBubble, (k, v) -> v == null ? 1 : v + 1);
                             });
                         } else {

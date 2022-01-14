@@ -663,6 +663,25 @@ public enum ClassesSkillBoosts {
                 abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.2f);
             }
     ),
+    RIGHTEOUS_STRIKE("Righteous Strike",
+            "§7Increase the amount of damage you\n§7deal with Righteous Strike\n§7by 20%",
+            "§aIncrease the amount of damage you\n§adeal with Righteous Strike\n§aby §c20%",
+            RighteousStrike.class,
+            abstractAbility -> {
+                abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.2f);
+                abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.2f);
+            }
+    ),
+    IMPALING_STRIKE("Impaling Strike",
+            "§7Increase the amount of damage you\n§7deal with Impaling Strike\n§7by 20%",
+            "§aIncrease the amount of damage you\n§adeal with Impaling Strike\n§aby §c20%",
+            ImpalingStrike.class,
+            abstractAbility -> {
+                abstractAbility.setMinDamageHeal(abstractAbility.getMinDamageHeal() * 1.2f);
+                abstractAbility.setMaxDamageHeal(abstractAbility.getMaxDamageHeal() * 1.2f);
+            }
+    )
+
 
     ;
 

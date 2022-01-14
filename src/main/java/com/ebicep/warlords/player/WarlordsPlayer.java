@@ -571,7 +571,7 @@ public final class WarlordsPlayer {
                     attacker.addHealingInstance(attacker, "Blood Lust", damageValue * (bloodLust.getDamageConvertPercent() / 100f), damageValue * (bloodLust.getDamageConvertPercent() / 100f), -1, 100, false, false);
                 }
 
-                if (!getCooldownManager().getCooldown(Shotty.class).isEmpty()) {
+                if (!getCooldownManager().getCooldown(ImpalingStrike.class).isEmpty()) {
                     attacker.addHealingInstance(attacker, "Leech", 5, 5, -1, 100, false, false);
                 }
 
@@ -631,7 +631,7 @@ public final class WarlordsPlayer {
                           }
                           p.getSpec().getPurple().setCurrentCooldown(0);
                           p.getSpec().getOrange().setCurrentCooldown(0);
-                          p.subtractEnergy(-100);
+                          p.subtractEnergy(-p.getSpec().getOrange().getEnergyCost());
                           p.updatePurpleItem();
                           p.updateOrangeItem();
                         }
@@ -730,13 +730,13 @@ public final class WarlordsPlayer {
     /**
      * Adds a healing instance to an ability or a player.
      *
-     * @param attacker              Assigns the damage value to the original caster.
-     * @param ability               Name of the ability.
-     * @param min                   The minimum healing amount.
-     * @param max                   The maximum healing amount.
-     * @param critChance            The critical chance of the damage instance.
-     * @param critMultiplier        The critical multiplier of the damage instance.
-     * @param ignoreReduction       Whether the instance has to ignore damage reductions.
+     * @param attacker Assigns the damage value to the original caster.
+     * @param ability Name of the ability.
+     * @param min The minimum healing amount.
+     * @param max The maximum healing amount.
+     * @param critChance The critical chance of the damage instance.
+     * @param critMultiplier The critical multiplier of the damage instance.
+     * @param ignoreReduction Whether the instance has to ignore damage reductions.
      * @param isLastStandFromShield Whether the instance if from last stand and absorbed healing
      */
     public void addHealingInstance(
@@ -1123,7 +1123,7 @@ public final class WarlordsPlayer {
         ArmorManager.resetArmor(player, getSpecClass(), getTeam());
 
         if (cooldownManager.hasCooldownFromName("Cloaked")) {
-            player.getInventory().setArmorContents(new ItemStack[]{player.getInventory().getBoots(), null, null, null});
+            player.getInventory().setArmorContents(new ItemStack[]{null, null, null, null});
         }
 
         if (this.flagDamageMultiplier > 0) {

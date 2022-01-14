@@ -24,7 +24,7 @@ public class PlayerSettings implements ConfigurationSerializable {
         put(Classes.THUNDERLORD, ClassesSkillBoosts.LIGHTNING_BOLT);
         put(Classes.SPIRITGUARD, ClassesSkillBoosts.FALLEN_SOULS);
         put(Classes.EARTHWARDEN, ClassesSkillBoosts.EARTHEN_SPIKE);
-        put(Classes.VINDICATOR, ClassesSkillBoosts.JUDGEMENT_STRIKE);
+        put(Classes.VINDICATOR, ClassesSkillBoosts.RIGHTEOUS_STRIKE);
         put(Classes.APOTHECARY, ClassesSkillBoosts.JUDGEMENT_STRIKE);
         put(Classes.ASSASSIN, ClassesSkillBoosts.JUDGEMENT_STRIKE);
     }};

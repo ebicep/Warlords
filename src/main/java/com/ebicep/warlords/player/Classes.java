@@ -97,12 +97,12 @@ public enum Classes {
             Vindicator::new,
             WordWrap.wrapWithNewline("§7PLACE HOLDER", 200),
             SpecType.TANK,
-            JUDGEMENT_STRIKE),
+            RIGHTEOUS_STRIKE),
     APOTHECARY("Apothecary",
             Apothecary::new,
             WordWrap.wrapWithNewline("§7PLACE HOLDER", 200),
             SpecType.HEALER,
-            JUDGEMENT_STRIKE),
+            IMPALING_STRIKE),
 
     ;
 

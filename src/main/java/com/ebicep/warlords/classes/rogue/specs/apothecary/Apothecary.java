@@ -7,8 +7,8 @@ public class Apothecary extends AbstractRogue {
 
     public Apothecary() {
         super("Apothecary", 5750, 305, 0,
-                new Shotty(), //medy =( rip
-                new Med(), //shotty
+                new ImpalingStrike(), //medy =( rip
+                new HealingRemedy(), //shotty
                 new temp(), //deathy
                 new temp(), //curey
                 new temp() //pharmy

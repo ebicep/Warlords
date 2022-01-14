@@ -3,7 +3,6 @@ package com.ebicep.warlords.classes.abilties;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.internal.AbstractProjectileBase;
 import com.ebicep.warlords.player.WarlordsPlayer;
-import com.ebicep.warlords.util.EffectUtils;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
 import org.bukkit.Bukkit;
@@ -14,10 +13,10 @@ import org.bukkit.scheduler.BukkitTask;
 
 import javax.annotation.Nonnull;
 
-public class Med extends AbstractProjectileBase {
+public class HealingRemedy extends AbstractProjectileBase {
 
-    public Med() {
-        super("Med Circle", 111, 222, 0, 70, 20, 175, 2, 15, true);
+    public HealingRemedy() {
+        super("Healing Remedy", 536, 644, 12, 80, 25, 175, 2, 20, true);
     }
 
     @Override
@@ -44,12 +43,28 @@ public class Med extends AbstractProjectileBase {
 
     @Override
     protected void onHit(WarlordsPlayer shooter, Location currentLocation, Location startingLocation, WarlordsPlayer victim) {
-        DamageHealCircle med = new DamageHealCircle(shooter, currentLocation, 5, 5, minDamageHeal, maxDamageHeal, critChance, critMultiplier, name);
+        DamageHealCircle med = new DamageHealCircle(shooter, currentLocation, 3, 3, minDamageHeal, maxDamageHeal, critChance, critMultiplier, name);
         med.getLocation().add(0, 1, 0);
         med.spawn();
 
         for (Player player1 : shooter.getWorld().getPlayers()) {
-            player1.playSound(currentLocation, "mage.waterbolt.impact", 2, 1);
+            player1.playSound(currentLocation, "mage.waterbolt.impact", 2, 0.4f);
+        }
+
+        for (WarlordsPlayer nearEntity : PlayerFilter
+                .entitiesAround(currentLocation, 3, 3, 3)
+                .excluding(shooter)
+                .aliveTeammatesOf(shooter)
+        ) {
+            nearEntity.addHealingInstance(
+                    shooter,
+                    name,
+                    minDamageHeal,
+                    maxDamageHeal,
+                    critChance,
+                    critMultiplier,
+                    false,
+                    false);
         }
 
         BukkitTask task = Bukkit.getScheduler().runTaskTimer(Warlords.getInstance(), med::spawn, 0, 1);
@@ -63,29 +78,16 @@ public class Med extends AbstractProjectileBase {
                     public void run() {
                         if (!shooter.getGame().isGameFreeze()) {
                             PlayerFilter.entitiesAround(med.getLocation(), med.getRadius(), med.getRadius(), med.getRadius())
-                                    .forEach((victim) -> {
-                                        if (victim.isTeammateAlive(shooter)) {
-                                            victim.addHealingInstance(
-                                                    med.getWarlordsPlayer(),
-                                                    med.getName(),
-                                                    med.getMinDamage(),
-                                                    med.getMaxDamage(),
-                                                    med.getCritChance(),
-                                                    med.getCritMultiplier(),
-                                                    false,
-                                                    false);
-                                        } else {
-                                            victim.addDamageInstance(
-                                                    med.getWarlordsPlayer(),
-                                                    med.getName(),
-                                                    med.getMinDamage(),
-                                                    med.getMaxDamage(),
-                                                    med.getCritChance(),
-                                                    med.getCritMultiplier(),
-                                                    false);
-                                        }
-
-                                    });
+                                    .aliveTeammatesOf(shooter)
+                                    .forEach((ally) -> ally.addHealingInstance(
+                                            med.getWarlordsPlayer(),
+                                            med.getName(),
+                                            med.getMinDamage(),
+                                            med.getMaxDamage(),
+                                            med.getCritChance(),
+                                            med.getCritMultiplier(),
+                                            false,
+                                            false));
 
                             if (med.getDuration() < 0) {
                                 this.cancel();

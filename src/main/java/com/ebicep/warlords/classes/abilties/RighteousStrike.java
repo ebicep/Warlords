@@ -9,12 +9,12 @@ import javax.annotation.Nonnull;
 public class RighteousStrike extends AbstractStrikeBase {
 
     public RighteousStrike() {
-        super("Righteous Strike", 359, 460, 0, 90, 25, 150);
+        super("Righteous Strike", 359, 460, 0, 90, 25, 175);
     }
 
     @Override
     public void updateDescription(Player player) {
-        description = "PLACEHOLDER";
+        description = "Deal " + format(minDamageHeal) + " - " + format(maxDamageHeal);
     }
 
     @Override
