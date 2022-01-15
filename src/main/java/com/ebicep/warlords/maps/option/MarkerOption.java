@@ -15,21 +15,23 @@ public class MarkerOption implements Option {
      * The marker that will be registered when register is called
      */
     @Nonnull
-    protected GameMarker marker;
+    protected GameMarker[] markers;
 
     /**
      * Creates a new instance of {@code MarkerOption} which register the
      * specified {@code GameMarker}
      *
-     * @param marker The gameMarker to register on the optionRegister phase
+     * @param markers The game marker's to register on the register phase
      */
-    public MarkerOption(@Nonnull GameMarker marker) {
-        this.marker = marker;
+    public MarkerOption(@Nonnull GameMarker ... markers) {
+        this.markers = markers;
     }
 
     @Override
     public void register(@Nonnull Game game) {
-        this.marker.register(game);
+        for(GameMarker marker : markers) {
+            marker.register(game);
+        }
     }
 
 }

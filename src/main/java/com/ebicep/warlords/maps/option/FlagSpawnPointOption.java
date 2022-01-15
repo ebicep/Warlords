@@ -1,11 +1,5 @@
 package com.ebicep.warlords.maps.option;
 
-import com.ebicep.warlords.maps.option.flags.PlayerFlagLocation;
-import com.ebicep.warlords.maps.option.flags.SpawnFlagLocation;
-import com.ebicep.warlords.maps.option.flags.FlagRenderer;
-import com.ebicep.warlords.maps.option.flags.FlagLocation;
-import com.ebicep.warlords.maps.option.flags.FlagInfo;
-import com.ebicep.warlords.maps.option.flags.GroundFlagLocation;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.option.Option;
@@ -15,8 +9,10 @@ import com.ebicep.warlords.maps.option.flags.FlagRenderer;
 import com.ebicep.warlords.maps.option.flags.GroundFlagLocation;
 import com.ebicep.warlords.maps.option.flags.PlayerFlagLocation;
 import com.ebicep.warlords.maps.option.flags.SpawnFlagLocation;
+import com.ebicep.warlords.maps.option.marker.DebugLocationMarker;
 import com.ebicep.warlords.maps.option.marker.FlagCaptureInhibitMarker;
 import com.ebicep.warlords.maps.option.marker.FlagCaptureMarker;
+import com.ebicep.warlords.maps.option.marker.SimpleDebugLocationMarker;
 import com.ebicep.warlords.maps.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import static java.util.Collections.singletonList;
@@ -55,6 +51,7 @@ public class FlagSpawnPointOption implements Option {
         game.registerGameMarker(FlagCaptureInhibitMarker.class, pFlag -> {
             return !(info.getFlag() instanceof SpawnFlagLocation) && team == pFlag.getPlayer().getTeam();
         });
+        game.registerGameMarker(DebugLocationMarker.class, new SimpleDebugLocationMarker(this.getClass(), "Stealable flag: " + team, this.info.getSpawnLocation()));
         game.registerScoreboardHandler(scoreboard = new SimpleScoreboardHandler(team == Team.RED ? 20 : 21) {
             @Override
             public List<String> computeLines(WarlordsPlayer player) {

@@ -6,7 +6,13 @@ public enum GameAddon {
         @Override
         public void modifyGame(Game game) {
         }  
-    };
-
+    },
+    IMPOSTER_MODE() {
+        
+        @Override
+        public void modifyGame(Game game) {
+        }  
+    },
+    ;
     public abstract void modifyGame(Game game);
 }

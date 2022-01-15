@@ -41,9 +41,13 @@ public class Game implements Runnable {
     private boolean isPrivate = false;
     private List<UUID> spectators = new ArrayList<>();
     private HashMap<BukkitTask, Long> gameTasks = new HashMap<>();
-    private final Set<GameAddon> activatedGameFeatures = new HashSet<>();
-    
+    private final EnumSet<GameAddon> gameAddons;
     private final List<ScoreboardHandler> list = new ArrayList<>();
+    private final long createdAt = System.currentTimeMillis();
+    
+    public Game(EnumSet<GameAddon> gameAddons) {
+        this.gameAddons = gameAddons;
+    }
 
     public boolean isState(Class<? extends State> clazz) {
         return clazz.isAssignableFrom(this.state.getClass());
@@ -402,5 +406,17 @@ public class Game implements Runnable {
     @Nonnull
     public <T extends GameMarker> List<T> getMarkers(@Nonnull Class<T> clazz) {
         return (List<T>) gameMarkers.getOrDefault(clazz, Collections.emptyList());
+    }
+
+    public Set<GameAddon> getAddons() {
+        return this.gameAddons;
+    }
+
+    /**
+     * Returns the creation time of this game instance
+     * @return the creation time
+     */
+    public long createdAt() {
+        return createdAt;
     }
 }
