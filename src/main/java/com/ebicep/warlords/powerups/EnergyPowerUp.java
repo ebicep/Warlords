@@ -1,6 +1,6 @@
 package com.ebicep.warlords.powerups;
 
-import com.ebicep.warlords.player.CooldownTypes;
+import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import org.bukkit.Location;
 import org.bukkit.Material;

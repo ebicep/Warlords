@@ -19,6 +19,7 @@ import com.ebicep.warlords.maps.flags.WaitingFlagLocation;
 import com.ebicep.warlords.maps.state.EndState;
 import com.ebicep.warlords.permissions.PermissionHandler;
 import com.ebicep.warlords.player.*;
+import com.ebicep.warlords.player.cooldowns.Cooldown;
 import com.ebicep.warlords.util.ChatUtils;
 import com.ebicep.warlords.util.ItemBuilder;
 import com.ebicep.warlords.util.PacketUtils;

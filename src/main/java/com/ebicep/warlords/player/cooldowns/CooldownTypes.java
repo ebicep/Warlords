@@ -1,4 +1,4 @@
-package com.ebicep.warlords.player;
+package com.ebicep.warlords.player.cooldowns;
 
 public enum CooldownTypes {
 

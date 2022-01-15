@@ -1,9 +1,11 @@
-package com.ebicep.warlords.player;
+package com.ebicep.warlords.player.cooldowns;
+
+import com.ebicep.warlords.player.WarlordsPlayer;
 
 public class Cooldown {
 
     private String name;
-    private Class cooldownClass;
+    private Class<?> cooldownClass;
     private Object cooldownObject;
     private String actionBarName;
     private float timeLeft;
@@ -11,7 +13,7 @@ public class Cooldown {
     private CooldownTypes cooldownType;
     private boolean hidden;
 
-    public Cooldown(String name, Class ability, Object cooldownObject, String actionBarName, float timeLeft, WarlordsPlayer from, CooldownTypes cooldownType) {
+    public Cooldown(String name, Class<?> ability, Object cooldownObject, String actionBarName, float timeLeft, WarlordsPlayer from, CooldownTypes cooldownType) {
         this.name = name;
         this.cooldownClass = ability;
         this.cooldownObject = cooldownObject;
@@ -44,7 +46,7 @@ public class Cooldown {
         this.name = name;
     }
 
-    public Class getCooldownClass() {
+    public Class<?> getCooldownClass() {
         return cooldownClass;
     }
 

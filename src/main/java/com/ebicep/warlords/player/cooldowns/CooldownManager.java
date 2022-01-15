@@ -1,6 +1,7 @@
-package com.ebicep.warlords.player;
+package com.ebicep.warlords.player.cooldowns;
 
 import com.ebicep.warlords.classes.abilties.*;
+import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.PlayerFilter;
 import net.minecraft.server.v1_8_R3.EntityLiving;
 import org.bukkit.ChatColor;
@@ -15,8 +16,8 @@ import java.util.stream.Collectors;
 
 public class CooldownManager {
 
-    private WarlordsPlayer warlordsPlayer;
-    private List<Cooldown> cooldowns;
+    private final WarlordsPlayer warlordsPlayer;
+    private final List<Cooldown> cooldowns;
     private int totalCooldowns = 0;
 
     public CooldownManager(WarlordsPlayer warlordsPlayer) {
@@ -28,7 +29,7 @@ public class CooldownManager {
         return cooldowns.stream().anyMatch(cooldown -> cooldown.getName().equalsIgnoreCase(name));
     }
 
-    public boolean hasCooldown(Class cooldownClass) {
+    public boolean hasCooldown(Class<?> cooldownClass) {
         return cooldowns.stream().anyMatch(cooldown -> cooldown.getCooldownClass() == cooldownClass);
     }
 
@@ -40,7 +41,7 @@ public class CooldownManager {
         return cooldowns.stream().filter(cooldown -> cooldown.getName().equalsIgnoreCase(name)).collect(Collectors.toList());
     }
 
-    public List<Cooldown> getCooldown(Class cooldownClass) {
+    public List<Cooldown> getCooldown(Class<?> cooldownClass) {
         return cooldowns.stream().filter(cooldown -> cooldown.getCooldownClass() == cooldownClass).collect(Collectors.toList());
     }
 
@@ -52,7 +53,7 @@ public class CooldownManager {
         return cooldowns.stream().filter(cooldown -> cooldown.getActionBarName().contains(name)).collect(Collectors.toList());
     }
 
-    public List<Cooldown> getCooldown(Class cooldownClass, String name) {
+    public List<Cooldown> getCooldown(Class<?> cooldownClass, String name) {
         return cooldowns.stream().filter(cooldown -> cooldown.getCooldownClass() == cooldownClass && cooldown.getActionBarName().contains(name)).collect(Collectors.toList());
     }
 
@@ -60,7 +61,7 @@ public class CooldownManager {
         for (int i = 0; i < cooldowns.size(); i++) {
             Cooldown cooldown = cooldowns.get(i);
             String name = cooldown.getActionBarName();
-            Class cooldownClass = cooldown.getCooldownClass();
+            Class<?> cooldownClass = cooldown.getCooldownClass();
             Object cooldownObject = cooldown.getCooldownObject();
 
             cooldown.subtractTime(.05f);
@@ -130,16 +131,15 @@ public class CooldownManager {
     }
 
     /**
-     *
-     * @param name is the name of the cooldown.
-     * @param cooldownClass java class of the ability.
+     * @param name           is the name of the cooldown.
+     * @param cooldownClass  java class of the ability.
      * @param cooldownObject object of the ability or cooldown.
-     * @param actionBarName what name should be displayed in the action bar.
-     * @param timeLeft how long should the cooldown last.
-     * @param from what player did they get the cooldown from.
-     * @param cooldownType what type of cooldown is it, eg. DEBUFF, BUFF, ABILITY.
+     * @param actionBarName  what name should be displayed in the action bar.
+     * @param timeLeft       how long should the cooldown last.
+     * @param from           what player did they get the cooldown from.
+     * @param cooldownType   what type of cooldown is it, eg. DEBUFF, BUFF, ABILITY.
      */
-    public void addCooldown(String name, Class cooldownClass, Object cooldownObject, String actionBarName, float timeLeft, WarlordsPlayer from, CooldownTypes cooldownType) {
+    public void addCooldown(String name, Class<?> cooldownClass, Object cooldownObject, String actionBarName, float timeLeft, WarlordsPlayer from, CooldownTypes cooldownType) {
         this.totalCooldowns++;
         cooldowns.add(new Cooldown(name, cooldownClass, cooldownObject, actionBarName, timeLeft, from, cooldownType));
     }
@@ -162,7 +162,7 @@ public class CooldownManager {
         }
     }
 
-    public void removeCooldown(Class cooldownClass) {
+    public void removeCooldown(Class<?> cooldownClass) {
         cooldowns.removeIf(cd -> cd.getCooldownClass() == cooldownClass);
     }
 

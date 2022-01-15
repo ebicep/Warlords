@@ -4,7 +4,7 @@ package com.ebicep.warlords.menu;
 import com.ebicep.warlords.classes.abilties.CripplingStrike;
 import com.ebicep.warlords.classes.abilties.WoundingStrikeBerserker;
 import com.ebicep.warlords.classes.abilties.WoundingStrikeDefender;
-import com.ebicep.warlords.player.CooldownTypes;
+import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.powerups.DamagePowerUp;
 import com.ebicep.warlords.powerups.EnergyPowerUp;
 import com.ebicep.warlords.powerups.SpeedPowerUp;
@@ -12,8 +12,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-import static com.ebicep.warlords.player.CooldownTypes.BUFF;
-import static com.ebicep.warlords.player.CooldownTypes.DEBUFF;
+import static com.ebicep.warlords.player.cooldowns.CooldownTypes.BUFF;
+import static com.ebicep.warlords.player.cooldowns.CooldownTypes.DEBUFF;
 
 public enum StatusEffectCooldowns {
 
