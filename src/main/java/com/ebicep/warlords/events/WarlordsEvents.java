@@ -90,7 +90,7 @@ public class WarlordsEvents implements Listener {
                     @Override
                     public void run() {
                         secondsGone++;
-                        if (e.getPlayer().isOnline()) {
+                        if (e.getPlayer().isOnline() || Warlords.game.getState() != wp.getGameState()) {
                             if (froze && wp.getGame().isGameFreeze()) {
                                 //to make sure no other is disconnected
                                 boolean allOnline = true;
