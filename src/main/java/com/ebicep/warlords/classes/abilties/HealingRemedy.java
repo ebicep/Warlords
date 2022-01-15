@@ -16,7 +16,7 @@ import javax.annotation.Nonnull;
 public class HealingRemedy extends AbstractProjectileBase {
 
     public HealingRemedy() {
-        super("Healing Remedy", 536, 644, 12, 80, 25, 175, 2, 20, true);
+        super("Healing Remedy", 536, 644, 12, 80, 25, 175, 2.5, 25, true);
     }
 
     @Override
@@ -27,6 +27,16 @@ public class HealingRemedy extends AbstractProjectileBase {
     @Override
     protected String getActivationSound() {
         return "mage.waterbolt.activation";
+    }
+
+    @Override
+    protected float getSoundPitch() {
+        return 0.4f;
+    }
+
+    @Override
+    protected float getSoundVolume() {
+        return 2;
     }
 
     @Override
@@ -43,9 +53,8 @@ public class HealingRemedy extends AbstractProjectileBase {
 
     @Override
     protected void onHit(WarlordsPlayer shooter, Location currentLocation, Location startingLocation, WarlordsPlayer victim) {
-        DamageHealCircle med = new DamageHealCircle(shooter, currentLocation, 3, 3, minDamageHeal, maxDamageHeal, critChance, critMultiplier, name);
+        DamageHealCircle med = new DamageHealCircle(shooter, currentLocation, 3, 3, 189, 244, critChance, critMultiplier, name);
         med.getLocation().add(0, 1, 0);
-        med.spawn();
 
         for (Player player1 : shooter.getWorld().getPlayers()) {
             player1.playSound(currentLocation, "mage.waterbolt.impact", 2, 0.4f);
@@ -53,7 +62,6 @@ public class HealingRemedy extends AbstractProjectileBase {
 
         for (WarlordsPlayer nearEntity : PlayerFilter
                 .entitiesAround(currentLocation, 3, 3, 3)
-                .excluding(shooter)
                 .aliveTeammatesOf(shooter)
         ) {
             nearEntity.addHealingInstance(
@@ -69,7 +77,6 @@ public class HealingRemedy extends AbstractProjectileBase {
 
         BukkitTask task = Bukkit.getScheduler().runTaskTimer(Warlords.getInstance(), med::spawn, 0, 1);
         shooter.getGame().getGameTasks().put(task, System.currentTimeMillis());
-
         shooter.getGame().getGameTasks().put(
 
                 new BukkitRunnable() {
@@ -93,20 +100,7 @@ public class HealingRemedy extends AbstractProjectileBase {
                                 this.cancel();
                                 task.cancel();
                             }
-                        }
-                    }
 
-                }.runTaskTimer(Warlords.getInstance(), 0, 20),
-                System.currentTimeMillis()
-        );
-
-        shooter.getGame().getGameTasks().put(
-
-                new BukkitRunnable() {
-
-                    @Override
-                    public void run() {
-                        if (!shooter.getGame().isGameFreeze()) {
                             med.setDuration(med.getDuration() - 1);
                         }
                     }

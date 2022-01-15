@@ -28,6 +28,16 @@ public class FlameBurst extends AbstractProjectileBase {
     }
 
     @Override
+    protected float getSoundPitch() {
+        return 1;
+    }
+
+    @Override
+    protected float getSoundVolume() {
+        return 2;
+    }
+
+    @Override
     protected void playEffect(Location currentLocation, int ticksLived) {
         Matrix4d center = new Matrix4d(currentLocation);
 

@@ -3,6 +3,7 @@ package com.ebicep.warlords.events;
 import com.ebicep.warlords.ChatChannels;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
+import com.ebicep.warlords.classes.abilties.Acupressure;
 import com.ebicep.warlords.classes.abilties.IceBarrier;
 import com.ebicep.warlords.classes.abilties.Soulbinding;
 import com.ebicep.warlords.classes.abilties.UndyingArmy;
@@ -266,7 +267,13 @@ public class WarlordsEvents implements Listener {
             if (wpAttacker != null && wpAttacker.isEnemyAlive(wpVictim) && !wpAttacker.getGame().isGameFreeze()) {
                 if (attacker.getInventory().getHeldItemSlot() == 0 && wpAttacker.getHitCooldown() == 0) {
                     wpAttacker.setHitCooldown(12);
-                    wpAttacker.subtractEnergy(wpAttacker.getSpec().getEnergyOnHit() * -1);
+
+                    // Checks whether the player has Acupressure active.
+                    if (!wpAttacker.getCooldownManager().getCooldown(Acupressure.class).isEmpty()) {
+                        wpAttacker.subtractEnergy((int) (wpAttacker.getSpec().getEnergyOnHit() * -1.5));
+                    } else {
+                        wpAttacker.subtractEnergy(wpAttacker.getSpec().getEnergyOnHit() * -1);
+                    }
 
                     if (wpAttacker.getSpec() instanceof Spiritguard && !wpAttacker.getCooldownManager().getCooldown(Soulbinding.class).isEmpty()) {
                         Soulbinding baseSoulbinding = (Soulbinding) wpAttacker.getSpec().getPurple();
