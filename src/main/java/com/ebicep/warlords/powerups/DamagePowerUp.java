@@ -19,7 +19,8 @@ public class DamagePowerUp extends AbstractPowerUp {
 
     @Override
     public void onPickUp(WarlordsPlayer warlordsPlayer) {
-        warlordsPlayer.getCooldownManager().addCooldown("Damage", DamagePowerUp.class, this, "DMG", duration, warlordsPlayer, CooldownTypes.BUFF);
+        warlordsPlayer.getCooldownManager().addRegularCooldown("Damage", "DMG", DamagePowerUp.class, this, warlordsPlayer, CooldownTypes.BUFF, cooldownManager -> {
+        }, duration * 20);
         warlordsPlayer.sendMessage("§6You activated the §c§lDAMAGE §6powerup! §a+20% §6Damage for §a30 §6seconds!");
     }
 

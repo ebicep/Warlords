@@ -30,7 +30,9 @@ public class AvengersWrath extends AbstractAbility {
 
     @Override
     public void onActivate(WarlordsPlayer wp, Player p) {
-        wp.getCooldownManager().addCooldown(name, AvengersWrath.this.getClass(), new AvengersWrath(), "WRATH", duration, wp, CooldownTypes.BUFF);
+        AvengersWrath tempAvengersWrath = new AvengersWrath();
+        wp.getCooldownManager().addRegularCooldown(name, "WRATH", AvengersWrath.class, tempAvengersWrath, wp, CooldownTypes.BUFF, cooldownManager -> {
+        }, duration * 20);
 
         for (Player player1 : p.getWorld().getPlayers()) {
             player1.playSound(p.getLocation(), "paladin.avengerswrath.activation", 2, 1);
@@ -40,7 +42,7 @@ public class AvengersWrath extends AbstractAbility {
                 new BukkitRunnable() {
                     @Override
                     public void run() {
-                        if (!wp.getCooldownManager().getCooldown(AvengersWrath.class).isEmpty()) {
+                        if (wp.getCooldownManager().hasCooldown(tempAvengersWrath)) {
                             Location location = p.getLocation();
                             location.add(0, 1.2, 0);
                             ParticleEffect.SPELL.display(0.3F, 0.1F, 0.3F, 0.2F, 6, location, 500);

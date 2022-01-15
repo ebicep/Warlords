@@ -6,6 +6,8 @@ import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.cooldowns.cooldowns.CooldownFilter;
+import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.ItemBuilder;
 import com.ebicep.warlords.util.Matrix4d;
 import com.ebicep.warlords.util.ParticleEffect;
@@ -19,6 +21,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.UUID;
 
 
@@ -79,15 +82,17 @@ public class UndyingArmy extends AbstractAbility {
                 wp.sendMessage("§a\u00BB§7 " + ChatColor.GRAY + "Your " + ChatColor.YELLOW + "Undying Army" + ChatColor.GRAY + " is now protecting " + teammate.getName() + ChatColor.GRAY + ".");
                 teammate.sendMessage("§a\u00BB§7 " + ChatColor.GRAY + wp.getName() + "'s " + ChatColor.YELLOW + "Undying Army" + ChatColor.GRAY + " is now protecting you for " + ChatColor.GOLD + duration + ChatColor.GRAY + " seconds.");
             }
-            teammate.getCooldownManager().addCooldown(name, UndyingArmy.this.getClass(), tempUndyingArmy, "ARMY", duration, wp, CooldownTypes.ABILITY);
+            teammate.getCooldownManager().addRegularCooldown(name, "ARMY", UndyingArmy.class, tempUndyingArmy, wp, CooldownTypes.ABILITY, cooldownManager -> {
+            }, duration * 20);
             wp.getGame().getGameTasks().put(
 
                     new BukkitRunnable() {
                         @Override
                         public void run() {
                             if (!wp.getGame().isGameFreeze()) {
-                                if (teammate.getCooldownManager().getCooldown(tempUndyingArmy).isPresent()) {
-                                    if (!((UndyingArmy) teammate.getCooldownManager().getCooldown(tempUndyingArmy).get().getCooldownObject()).isArmyDead(teammate.getUuid())) {
+                                Optional<UndyingArmy> optionalUndyingArmy = new CooldownFilter<>(teammate, RegularCooldown.class).findFirstObject(tempUndyingArmy, UndyingArmy.class);
+                                if (optionalUndyingArmy.isPresent()) {
+                                    if (!(optionalUndyingArmy.get()).isArmyDead(teammate.getUuid())) {
                                         float healAmount = 200 + (teammate.getMaxHealth() - teammate.getHealth()) / 14.3f;
                                         teammate.addHealingInstance(wp, name, healAmount, healAmount, -1, 100, false, false);
                                         player.playSound(teammate.getLocation(), "paladin.holyradiance.activation", 0.15f, 0.7f);

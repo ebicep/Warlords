@@ -45,7 +45,8 @@ public class Repentance extends AbstractAbility {
         WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
         pool += 2000;
         assert warlordsPlayer != null;
-        warlordsPlayer.getCooldownManager().addCooldown(name, Repentance.this.getClass(), new Repentance(), "REPE", duration, warlordsPlayer, CooldownTypes.ABILITY);
+        warlordsPlayer.getCooldownManager().addRegularCooldown(name, "REPE", Repentance.class, new Repentance(), warlordsPlayer, CooldownTypes.ABILITY, cooldownManager -> {
+        }, duration * 20);
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "paladin.barrieroflight.impact", 2, 1.35f);

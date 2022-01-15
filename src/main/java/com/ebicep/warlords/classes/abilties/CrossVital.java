@@ -2,11 +2,12 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
-import com.ebicep.warlords.player.CooldownTypes;
+import com.ebicep.warlords.player.cooldowns.CooldownTypes;
+
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.EffectUtils;
 import com.ebicep.warlords.util.ParticleEffect;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -30,19 +31,20 @@ public class CrossVital extends AbstractAbility {
 
     @Override
     public void onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
-
+        CrossVital tempCrossVital = new CrossVital();
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "rogue.assassinstrike.activation", 2, 1.5f);
         }
 
-        wp.getCooldownManager().addCooldown(name, CrossVital.this.getClass(), CrossVital.class, "EARTH", 12, wp, CooldownTypes.ABILITY);
+        wp.getCooldownManager().addRegularCooldown(name, "EARTH", CrossVital.class, tempCrossVital, wp, CooldownTypes.ABILITY, cooldownManager -> {
+        }, 12 * 20);
 
         wp.getGame().getGameTasks().put(
 
                 new BukkitRunnable() {
                     @Override
                     public void run() {
-                        if (!wp.getCooldownManager().getCooldown(InspiringPresence.class).isEmpty()) {
+                        if (wp.getCooldownManager().hasCooldown(tempCrossVital)) {
                             wp.getSpec().getPurple().setCritMultiplier(wp.getSpec().getWeapon().getCritMultiplier() + 50);
                             wp.getSpec().getPurple().setCritMultiplier(wp.getSpec().getRed().getCritMultiplier() + 50);
                             wp.getSpec().getPurple().setCritMultiplier(wp.getSpec().getPurple().getCritMultiplier() + 50);

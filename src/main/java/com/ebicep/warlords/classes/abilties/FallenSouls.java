@@ -2,8 +2,9 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
-import com.ebicep.warlords.player.cooldowns.Cooldown;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.cooldowns.cooldowns.CooldownFilter;
+import com.ebicep.warlords.player.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
 import com.ebicep.warlords.util.Utils;
@@ -123,11 +124,9 @@ public class FallenSouls extends AbstractAbility {
                     fallenSoul.getPlayersHit().add(warlordsPlayer);
                     fallenSoul.getShooter().getSpec().getRed().subtractCooldown(2);
                     fallenSoul.getShooter().updateRedItem(player);
-                    fallenSoul.getShooter().getCooldownManager().getCooldown(Soulbinding.class).stream()
-                            .map(Cooldown::getCooldownObject)
-                            .map(Soulbinding.class::cast)
-                            .filter(soulbinding -> soulbinding.hasBoundPlayerSoul(warlordsPlayer))
-                            .forEach(sb -> {
+                    new CooldownFilter<>(fallenSoul.getShooter(), PersistentCooldown.class)
+                            .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.class)
+                            .forEachOrdered(soulbinding -> {
                                 fallenSoul.getShooter().getSpec().getRed().subtractCooldown(1.5F);
                                 fallenSoul.getShooter().getSpec().getPurple().subtractCooldown(1.5F);
                                 fallenSoul.getShooter().getSpec().getBlue().subtractCooldown(1.5F);
@@ -298,6 +297,10 @@ public class FallenSouls extends AbstractAbility {
             return fallenSouls;
         }
 
+        public void setFallenSouls(FallenSouls fallenSouls) {
+            this.fallenSouls = fallenSouls;
+        }
+
         public boolean isLeftRemoved() {
             return leftRemoved;
         }
@@ -320,10 +323,6 @@ public class FallenSouls extends AbstractAbility {
 
         public void setRightRemoved(boolean rightRemoved) {
             this.rightRemoved = rightRemoved;
-        }
-
-        public void setFallenSouls(FallenSouls fallenSouls) {
-            this.fallenSouls = fallenSouls;
         }
 
         public List<WarlordsPlayer> getPlayersHit() {

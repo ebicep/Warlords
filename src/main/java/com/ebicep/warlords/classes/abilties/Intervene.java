@@ -2,15 +2,18 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
-import com.ebicep.warlords.player.cooldowns.Cooldown;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.cooldowns.cooldowns.CooldownFilter;
+import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import java.util.Optional;
 
 
 public class Intervene extends AbstractAbility {
@@ -69,9 +72,11 @@ public class Intervene extends AbstractAbility {
                     });
 
                     wp.sendMessage("§a\u00BB§7 You are now protecting " + vt.getName() + " with your §eIntervene!");
-                    wp.getCooldownManager().addCooldown(new Cooldown(name, Intervene.this.getClass(), tempIntervene, "VENE", duration, wp, CooldownTypes.ABILITY));
+                    wp.getCooldownManager().addRegularCooldown(name, "VENE", Intervene.class, tempIntervene, wp, CooldownTypes.ABILITY, cooldownManager -> {
+                    }, duration * 20);
                     vt.sendMessage("§a\u00BB§7 " + wp.getName() + " is shielding you with their " + ChatColor.YELLOW + "Intervene" + ChatColor.GRAY + "!");
-                    vt.getCooldownManager().addCooldown(new Cooldown(name, Intervene.this.getClass(), tempIntervene, "VENE", duration, wp, CooldownTypes.ABILITY));
+                    vt.getCooldownManager().addRegularCooldown(name, "VENE", Intervene.class, tempIntervene, wp, CooldownTypes.ABILITY, cooldownManager -> {
+                    }, duration * 20);
 
                     wp.getSpec().getBlue().setCurrentCooldown((float) (cooldown * wp.getCooldownModifier()));
                     wp.updateBlueItem();
@@ -86,11 +91,13 @@ public class Intervene extends AbstractAbility {
                             new BukkitRunnable() {
                                 @Override
                                 public void run() {
-                                    if (vt.getCooldownManager().hasCooldown(tempIntervene)) {
-                                        if (vt.getCooldownManager().getCooldown(tempIntervene).get().getTimeLeft() <= 1)
-                                            vt.sendMessage("§a\u00BB§7 " + wp.getName() + "'s §eIntervene §7will expire in §6" + (int) (vt.getCooldownManager().getCooldown(tempIntervene).get().getTimeLeft() + .5) + "§7 second!");
+                                    Optional<RegularCooldown> optionalRegularCooldown = new CooldownFilter<>(vt, RegularCooldown.class).filterCooldownObject(tempIntervene).findFirst();
+                                    if (optionalRegularCooldown.isPresent()) {
+                                        RegularCooldown interveneRegularCooldown = optionalRegularCooldown.get();
+                                        if (interveneRegularCooldown.getTicksLeft() <= 20)
+                                            vt.sendMessage("§a\u00BB§7 " + wp.getName() + "'s §eIntervene §7will expire in §6" + (int) (interveneRegularCooldown.getTicksLeft() / 20 + .5) + "§7 second!");
                                         else
-                                            vt.sendMessage("§a\u00BB§7 " + wp.getName() + "'s §eIntervene §7will expire in §6" + (int) (vt.getCooldownManager().getCooldown(tempIntervene).get().getTimeLeft() + .5) + "§7 seconds!");
+                                            vt.sendMessage("§a\u00BB§7 " + wp.getName() + "'s §eIntervene §7will expire in §6" + (int) (interveneRegularCooldown.getTicksLeft() / 20 + .5) + "§7 seconds!");
                                     } else {
                                         this.cancel();
                                     }
@@ -103,10 +110,11 @@ public class Intervene extends AbstractAbility {
                             new BukkitRunnable() {
                                 @Override
                                 public void run() {
+                                    Optional<RegularCooldown> optionalRegularCooldown = new CooldownFilter<>(vt, RegularCooldown.class).filterCooldownObject(tempIntervene).findFirst();
                                     if (wp.isDeath() ||
                                             tempIntervene.damagePrevented >= (3600 / 2.0) ||
-                                            !vt.getCooldownManager().hasCooldown(tempIntervene) ||
-                                            vt.getLocation().distanceSquared(vt.getCooldownManager().getCooldown(tempIntervene).get().getFrom().getEntity().getLocation()) > 15 * 15
+                                            !optionalRegularCooldown.isPresent() ||
+                                            vt.getLocation().distanceSquared(optionalRegularCooldown.get().getFrom().getEntity().getLocation()) > 15 * 15
                                     ) {
                                         wp.sendMessage("§c\u00AB§7 " + wp.getName() + "'s " + ChatColor.YELLOW + "Intervene " + ChatColor.GRAY + "has expired!");
                                         wp.getCooldownManager().removeCooldown(tempIntervene);

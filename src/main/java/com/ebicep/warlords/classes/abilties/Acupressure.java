@@ -2,8 +2,8 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
-import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
 import com.ebicep.warlords.util.Utils;
@@ -32,8 +32,9 @@ public class Acupressure extends AbstractAbility {
 
     @Override
     public void onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
-
-        wp.getCooldownManager().addCooldown("Acupressure", this.getClass(), Acupressure.class, "ACU", duration, wp, CooldownTypes.BUFF);
+        Acupressure tempAcupressure = new Acupressure();
+        wp.getCooldownManager().addRegularCooldown("Acupressure", "ACU", Acupressure.class, tempAcupressure, wp, CooldownTypes.BUFF, cooldownManager -> {
+        }, duration * 20);
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "shaman.chainlightning.impact", 2, 0.1f);
@@ -47,14 +48,15 @@ public class Acupressure extends AbstractAbility {
                 .limit(1)
         ) {
             if (Utils.isLookingAtChain(player, acuTarget.getEntity())) {
-                acuTarget.getCooldownManager().addCooldown("Acupressure", this.getClass(), Acupressure.class, "ACU", duration, wp, CooldownTypes.BUFF);
+                acuTarget.getCooldownManager().addRegularCooldown("Acupressure", "ACU", Acupressure.class, tempAcupressure, wp, CooldownTypes.BUFF, cooldownManager -> {
+                }, duration * 20);
 
                 wp.getGame().getGameTasks().put(
 
                         new BukkitRunnable() {
                             @Override
                             public void run() {
-                                if (!wp.getCooldownManager().getCooldown(Acupressure.class).isEmpty()) {
+                                if (wp.getCooldownManager().hasCooldown(tempAcupressure)) {
                                     Location lineLocation = player.getLocation().add(0, 1, 0);
                                     lineLocation.setDirection(lineLocation.toVector().subtract(acuTarget.getLocation().add(0, 1, 0).toVector()).multiply(-1));
                                     for (int i = 0; i < Math.floor(player.getLocation().distance(acuTarget.getLocation())) * 2; i++) {

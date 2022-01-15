@@ -1,14 +1,17 @@
 package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.classes.internal.AbstractStrikeBase;
-import com.ebicep.warlords.player.cooldowns.Cooldown;
+import com.ebicep.warlords.player.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.cooldowns.cooldowns.CooldownFilter;
+import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.Optional;
 
 public class CripplingStrike extends AbstractStrikeBase {
 
@@ -37,14 +40,20 @@ public class CripplingStrike extends AbstractStrikeBase {
     @Override
     protected void onHit(@Nonnull WarlordsPlayer wp, @Nonnull Player player, @Nonnull WarlordsPlayer nearPlayer) {
         nearPlayer.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
-        List<Cooldown> cripplingStrikes = nearPlayer.getCooldownManager().getCooldown(CripplingStrike.class);
-        if (cripplingStrikes.isEmpty()) {
-            nearPlayer.sendMessage(ChatColor.GRAY + "You are " + ChatColor.RED + "crippled" + ChatColor.GRAY + ".");
-            nearPlayer.getCooldownManager().addCooldown(name, this.getClass(), new CripplingStrike(), "CRIP", 3, wp, CooldownTypes.DEBUFF);
-        } else {
-            CripplingStrike cripplingStrike = (CripplingStrike) cripplingStrikes.get(0).getCooldownObject();
+        Optional<CripplingStrike> optionalCripplingStrike = new CooldownFilter<>(nearPlayer, RegularCooldown.class).filterCooldownClassAndMapToObjectsOfClass(CripplingStrike.class).findAny();
+        if (optionalCripplingStrike.isPresent()) {
+            CripplingStrike cripplingStrike = optionalCripplingStrike.get();
             nearPlayer.getCooldownManager().removeCooldown(CripplingStrike.class);
-            nearPlayer.getCooldownManager().addCooldown(name, this.getClass(), new CripplingStrike(Math.min(cripplingStrike.getConsecutiveStrikeCounter() + 1, 2)), "CRIP", 3, wp, CooldownTypes.DEBUFF);
+            nearPlayer.getCooldownManager().addRegularCooldown(name, "CRIP", CripplingStrike.class, new CripplingStrike(Math.min(cripplingStrike.getConsecutiveStrikeCounter() + 1, 2)), wp, CooldownTypes.DEBUFF, cooldownManager -> {
+            }, 3 * 20);
+        } else {
+            nearPlayer.sendMessage(ChatColor.GRAY + "You are " + ChatColor.RED + "crippled" + ChatColor.GRAY + ".");
+            nearPlayer.getCooldownManager().addRegularCooldown(name, "CRIP", CripplingStrike.class, new CripplingStrike(), wp, CooldownTypes.DEBUFF,
+                    cooldownManager -> {
+                        if (new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterNameActionBar("CRIP").getStream().count() == 1) {
+                            wp.sendMessage(ChatColor.GRAY + "You are no longer " + ChatColor.RED + "crippled" + ChatColor.GRAY + ".");
+                        }
+                    }, 3 * 20);
         }
     }
 

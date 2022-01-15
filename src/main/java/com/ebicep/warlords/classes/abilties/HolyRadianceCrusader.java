@@ -117,10 +117,11 @@ public class HolyRadianceCrusader extends AbstractAbility {
                 }.runTaskTimer(Warlords.getInstance(), 0, 0);
 
                 HolyRadianceCrusader tempMark = new HolyRadianceCrusader(minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
-                p.getCooldownManager().addCooldown(name, HolyRadianceCrusader.this.getClass(), tempMark, "CRUS MARK", markDuration, wp, CooldownTypes.BUFF);
+                p.getCooldownManager().addRegularCooldown(name, "CRUS MARK", HolyRadianceCrusader.class, tempMark, wp, CooldownTypes.BUFF, cooldownManager -> {
+                }, markDuration * 20);
                 p.getSpeed().addSpeedModifier("Crusader Mark Speed", 20, 20 * markDuration, "BASE");
 
-                player.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " You have marked " + ChatColor.YELLOW + p.getName() + ChatColor.GRAY +"!");
+                player.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " You have marked " + ChatColor.YELLOW + p.getName() + ChatColor.GRAY + "!");
                 p.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " You have been granted " + ChatColor.YELLOW + "Crusader's Mark" + ChatColor.GRAY + " by " + wp.getName() + "!");
 
                 wp.getGame().getGameTasks().put(
@@ -128,7 +129,7 @@ public class HolyRadianceCrusader extends AbstractAbility {
                         new BukkitRunnable() {
                             @Override
                             public void run() {
-                                if (!p.getCooldownManager().getCooldown(HolyRadianceCrusader.class).isEmpty()) {
+                                if (p.getCooldownManager().hasCooldown(tempMark)) {
                                     Location playerLoc = p.getLocation();
                                     Location particleLoc = playerLoc.clone();
                                     for (int i = 0; i < 4; i++) {

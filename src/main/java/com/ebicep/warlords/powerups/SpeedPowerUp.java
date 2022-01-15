@@ -20,7 +20,8 @@ public class SpeedPowerUp extends AbstractPowerUp {
 
     @Override
     public void onPickUp(WarlordsPlayer warlordsPlayer) {
-        warlordsPlayer.getCooldownManager().addCooldown("Speed", SpeedPowerUp.class, this, "SPEED", duration, warlordsPlayer, CooldownTypes.BUFF);
+        warlordsPlayer.getCooldownManager().addRegularCooldown("Speed", "SPEED", SpeedPowerUp.class, this, warlordsPlayer, CooldownTypes.BUFF, cooldownManager -> {
+        }, duration * 20);
         warlordsPlayer.sendMessage("§6You activated the §e§lSPEED §6powerup! §a+40% §6Speed for §a10 §6seconds!");
         warlordsPlayer.getSpeed().addSpeedModifier("Speed Powerup", 40, 10 * 20, "BASE");
 

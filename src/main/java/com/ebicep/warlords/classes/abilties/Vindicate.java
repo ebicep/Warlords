@@ -36,17 +36,20 @@ public class Vindicate extends AbstractAbility {
             player1.playSound(player.getLocation(), "shaman.capacitortotem.pulse", 2, 0.7f);
         }
 
-        wp.getCooldownManager().addCooldown("Vindicate Resistance", this.getClass(), Vindicate.class, "VIND RES", vindicateDuration, wp, CooldownTypes.BUFF);
+        Vindicate tempVindicate = new Vindicate();
+        wp.getCooldownManager().addRegularCooldown("Vindicate Resistance", "VIND RES", Vindicate.class, tempVindicate, wp, CooldownTypes.BUFF, cooldownManager -> {
+        }, vindicateDuration * 20);
 
-        Vindicate allyVindicate = new Vindicate();
         PlayerFilter.entitiesAround(wp, radius, radius, radius)
                 .aliveTeammatesOfExcludingSelf(wp)
                 .forEach((nearPlayer) -> {
-                        nearPlayer.getSpeed().removeSlownessModifiers();
-                        nearPlayer.getCooldownManager().removeDebuffCooldowns();
-                        nearPlayer.getCooldownManager().addCooldown("Vindicate Debuff Immunity", this.getClass(), allyVindicate, "VIND", vindicateDuration, wp, CooldownTypes.BUFF);
-                        nearPlayer.getCooldownManager().addCooldown("KB Resistance", this.getClass(), Vindicate.class, "KB", vindicateDuration, wp, CooldownTypes.BUFF);
-                    }
+                            nearPlayer.getSpeed().removeSlownessModifiers();
+                            nearPlayer.getCooldownManager().removeDebuffCooldowns();
+                            nearPlayer.getCooldownManager().addRegularCooldown("Vindicate Debuff Immunity", "VIND", Vindicate.class, tempVindicate, wp, CooldownTypes.BUFF, cooldownManager -> {
+                            }, vindicateDuration * 20);
+                            nearPlayer.getCooldownManager().addRegularCooldown("KB Resistance", "KB", Vindicate.class, tempVindicate, wp, CooldownTypes.BUFF, cooldownManager -> {
+                            }, vindicateDuration * 20);
+                        }
                 );
 
         CircleEffect circle = new CircleEffect(wp.getGame(), wp.getTeam(), player.getLocation(), radius);

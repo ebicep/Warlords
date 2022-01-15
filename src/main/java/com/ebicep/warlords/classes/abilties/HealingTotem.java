@@ -62,7 +62,8 @@ public class HealingTotem extends AbstractTotemBase {
 
     @Override
     protected void onActivation(WarlordsPlayer wp, Player player, ArmorStand totemStand) {
-        wp.getCooldownManager().addCooldown(name, this.getClass(), new HealingTotem(), "TOTEM", duration, wp, CooldownTypes.ABILITY);
+        wp.getCooldownManager().addRegularCooldown(name, "TOTEM", HealingTotem.class, new HealingTotem(), wp, CooldownTypes.ABILITY, cooldownManager -> {
+        }, duration * 20);
 
         wp.getGame().getGameTasks().put(
 
@@ -161,7 +162,8 @@ public class HealingTotem extends AbstractTotemBase {
                             PlayerFilter.entitiesAround(totemStand.getLocation(), radius, radius, radius)
                                     .aliveEnemiesOf(wp)
                                     .forEach((p) -> {
-                                        p.getCooldownManager().addCooldown("Totem Crippling", HealingTotem.class, new HealingTotem(), "CRIP", crippleDuration, wp, CooldownTypes.DEBUFF);
+                                        p.getCooldownManager().addRegularCooldown("Totem Crippling", "CRIP", HealingTotem.class, new HealingTotem(), wp, CooldownTypes.DEBUFF, cooldownManager -> {
+                                        }, crippleDuration * 20);
                                     });
                             for (Player player1 : player.getWorld().getPlayers()) {
                                 player1.playSound(totemStand.getLocation(), "paladin.hammeroflight.impact", 1.5f, 0.2f);

@@ -53,10 +53,12 @@ public class HeartToHeart extends AbstractAbility {
                 .limit(1)
         ) {
             if (Utils.isLookingAtMark(player, heartTarget.getEntity()) && Utils.hasLineOfSight(player, heartTarget.getEntity())) {
-
+                HeartToHeart tempHeartToHeart = new HeartToHeart();
                 wp.subtractEnergy(energyCost);
-                heartTarget.getCooldownManager().addCooldown("Vindicate Debuff Immunity", this.getClass(), HeartToHeart.class, "VIND", vindDuration, wp, CooldownTypes.BUFF);
-                heartTarget.getCooldownManager().addCooldown("KB Resistance", this.getClass(), Vindicate.class, "KB", vindDuration, wp, CooldownTypes.BUFF);
+                heartTarget.getCooldownManager().addRegularCooldown("Vindicate Debuff Immunity", "VIND", HeartToHeart.class, tempHeartToHeart, wp, CooldownTypes.BUFF, cooldownManager -> {
+                }, vindDuration * 20);
+                heartTarget.getCooldownManager().addRegularCooldown("KB Resistance", "KB", HeartToHeart.class, tempHeartToHeart, wp, CooldownTypes.BUFF, cooldownManager -> {
+                }, vindDuration * 20);
 
                 new BukkitRunnable() {
 

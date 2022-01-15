@@ -46,7 +46,8 @@ public class HealingRain extends AbstractAbility {
         DamageHealCircle hr = new DamageHealCircle(wp, player.getTargetBlock((HashSet<Byte>) null, 25).getLocation(), radius, duration, minDamageHeal, maxDamageHeal, critChance, critMultiplier, name);
         hr.getLocation().add(0, 1, 0);
         wp.subtractEnergy(energyCost);
-        wp.getCooldownManager().addCooldown(name, HealingRain.this.getClass(), new HealingRain(), "RAIN", duration, wp, CooldownTypes.ABILITY);
+        wp.getCooldownManager().addRegularCooldown(name, "RAIN", HealingRain.class, new HealingRain(), wp, CooldownTypes.ABILITY, cooldownManager -> {
+        }, duration * 20);
         wp.getSpec().getOrange().setCurrentCooldown((float) (cooldown * wp.getCooldownModifier()));
 
         for (Player player1 : player.getWorld().getPlayers()) {
@@ -95,8 +96,10 @@ public class HealingRain extends AbstractAbility {
 
                                         if (teammateInRain != wp) {
                                             teammateInRain.getCooldownManager().removeCooldown(Utils.OVERHEAL_MARKER);
-                                            teammateInRain.getCooldownManager().addCooldown("Overheal",
-                                                    null, Utils.OVERHEAL_MARKER, "OVERHEAL", Utils.OVERHEAL_DURATION, wp, CooldownTypes.BUFF);
+                                            teammateInRain.getCooldownManager().addRegularCooldown("Overheal",
+                                                    "OVERHEAL", null, Utils.OVERHEAL_MARKER, wp, CooldownTypes.BUFF, cooldownManager -> {
+                                                    }, Utils.OVERHEAL_DURATION * 20);
+                                            ;
                                         }
                                     });
 

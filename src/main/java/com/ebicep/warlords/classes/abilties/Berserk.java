@@ -28,10 +28,11 @@ public class Berserk extends AbstractAbility {
 
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
-
+        Berserk tempBerserk = new Berserk();
         wp.subtractEnergy(energyCost);
         wp.getSpeed().addSpeedModifier("Berserk", speedBuff, duration * 20, "BASE");
-        wp.getCooldownManager().addCooldown(name, Berserk.this.getClass(), new Berserk(), "BERS", duration, wp, CooldownTypes.BUFF);
+        wp.getCooldownManager().addRegularCooldown(name, "BERS", Berserk.class, tempBerserk, wp, CooldownTypes.BUFF, cooldownManager -> {
+        }, duration * 20);
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "warrior.berserk.activation", 2, 1);
@@ -40,7 +41,7 @@ public class Berserk extends AbstractAbility {
                 new BukkitRunnable() {
                     @Override
                     public void run() {
-                        if (!wp.getCooldownManager().getCooldown(Berserk.class).isEmpty()) {
+                        if (wp.getCooldownManager().hasCooldown(tempBerserk)) {
                             Location location = player.getLocation();
                             location.add(0, 2.1, 0);
                             ParticleEffect.VILLAGER_ANGRY.display(0, 0, 0, 0.1F, 1, location, 500);

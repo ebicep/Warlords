@@ -46,7 +46,8 @@ public class LastStand extends AbstractAbility {
     public void onActivate(WarlordsPlayer wp, Player player) {
         wp.subtractEnergy(energyCost);
         LastStand tempLastStand = new LastStand(selfDamageReductionPercent, teammateDamageReductionPercent);
-        wp.getCooldownManager().addCooldown(name, LastStand.this.getClass(), tempLastStand, "LAST", selfDuration, wp, CooldownTypes.BUFF);
+        wp.getCooldownManager().addRegularCooldown(name, "LAST", LastStand.class, tempLastStand, wp, CooldownTypes.BUFF, cooldownManager -> {
+        }, selfDuration * 20);
         PlayerFilter.entitiesAround(wp, radius, radius, radius)
                 .aliveTeammatesOfExcludingSelf(wp)
                 .forEach((nearPlayer) -> {
@@ -57,7 +58,8 @@ public class LastStand extends AbstractAbility {
                         ParticleEffect.VILLAGER_HAPPY.display(0, 0, 0, 0.35F, 1, lineLocation, 500);
                         lineLocation.add(lineLocation.getDirection().multiply(.5));
                     }
-                    nearPlayer.getCooldownManager().addCooldown(name, LastStand.this.getClass(), tempLastStand, "LAST", allyDuration, wp, CooldownTypes.BUFF);
+                    nearPlayer.getCooldownManager().addRegularCooldown(name, "LAST", LastStand.class, tempLastStand, wp, CooldownTypes.BUFF, cooldownManager -> {
+                    }, allyDuration * 20);
                     player.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " Your Last Stand is now protecting " + ChatColor.YELLOW + nearPlayer.getName() + ChatColor.GRAY + "!");
                     nearPlayer.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " " + player.getName() + "'s " + ChatColor.YELLOW + "Last Stand" + ChatColor.GRAY + " is now protecting you for §66 §7seconds!");
                 });

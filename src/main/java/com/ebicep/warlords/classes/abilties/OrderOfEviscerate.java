@@ -38,9 +38,11 @@ public class OrderOfEviscerate extends AbstractAbility {
     public void onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
         wp.subtractEnergy(energyCost);
         wp.getCooldownManager().removeCooldown(OrderOfEviscerate.class);
-        wp.getCooldownManager().addCooldown("Order of Eviscerate", OrderOfEviscerate.class, new OrderOfEviscerate(), "ORDER", duration, wp, CooldownTypes.ABILITY);
+        wp.getCooldownManager().addRegularCooldown("Order of Eviscerate", "ORDER", OrderOfEviscerate.class, new OrderOfEviscerate(), wp, CooldownTypes.ABILITY, cooldownManager -> {
+        }, duration * 20);
         wp.getCooldownManager().removeCooldownByName("Cloaked");
-        wp.getCooldownManager().addCooldown("Cloaked", OrderOfEviscerate.class, new OrderOfEviscerate(), "INVIS", duration, wp, CooldownTypes.BUFF);
+        wp.getCooldownManager().addRegularCooldown("Cloaked", "INVIS", OrderOfEviscerate.class, new OrderOfEviscerate(), wp, CooldownTypes.BUFF, cooldownManager -> {
+        }, duration * 20);
         Runnable cancelSpeed = wp.getSpeed().addSpeedModifier("Order of Eviscerate", 40, duration * 20, "BASE");
         player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, duration * 20, 0, true, false), true);
         wp.updateArmor();
@@ -52,7 +54,7 @@ public class OrderOfEviscerate extends AbstractAbility {
                 new BukkitRunnable() {
                     @Override
                     public void run() {
-                        if (wp.getCooldownManager().getCooldown(OrderOfEviscerate.class).isEmpty()) {
+                        if (wp.getCooldownManager().hasCooldown(OrderOfEviscerate.class)) {
                             this.cancel();
                             wp.updateArmor();
                             wp.setMarkedTarget(null);

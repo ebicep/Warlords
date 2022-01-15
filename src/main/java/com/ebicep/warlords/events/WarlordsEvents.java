@@ -20,7 +20,9 @@ import com.ebicep.warlords.maps.flags.WaitingFlagLocation;
 import com.ebicep.warlords.maps.state.EndState;
 import com.ebicep.warlords.permissions.PermissionHandler;
 import com.ebicep.warlords.player.*;
-import com.ebicep.warlords.player.cooldowns.Cooldown;
+import com.ebicep.warlords.player.cooldowns.AbstractCooldown;
+import com.ebicep.warlords.player.cooldowns.cooldowns.CooldownFilter;
+import com.ebicep.warlords.player.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.util.ChatUtils;
 import com.ebicep.warlords.util.ItemBuilder;
 import com.ebicep.warlords.util.PacketUtils;
@@ -269,19 +271,18 @@ public class WarlordsEvents implements Listener {
                     wpAttacker.setHitCooldown(12);
 
                     // Checks whether the player has Acupressure active.
-                    if (!wpAttacker.getCooldownManager().getCooldown(Acupressure.class).isEmpty()) {
+                    if (wpAttacker.getCooldownManager().hasCooldown(Acupressure.class)) {
                         wpAttacker.subtractEnergy((int) (wpAttacker.getSpec().getEnergyOnHit() * -1.5));
                     } else {
                         wpAttacker.subtractEnergy(wpAttacker.getSpec().getEnergyOnHit() * -1);
                     }
 
-                    if (wpAttacker.getSpec() instanceof Spiritguard && !wpAttacker.getCooldownManager().getCooldown(Soulbinding.class).isEmpty()) {
+                    if (wpAttacker.getSpec() instanceof Spiritguard && wpAttacker.getCooldownManager().hasCooldown(Soulbinding.class)) {
                         Soulbinding baseSoulbinding = (Soulbinding) wpAttacker.getSpec().getPurple();
-                        wpAttacker.getCooldownManager().getCooldown(Soulbinding.class).stream()
-                                .filter(cooldown -> !cooldown.isHidden())
-                                .map(Cooldown::getCooldownObject)
-                                .map(Soulbinding.class::cast)
-                                .forEach(soulbinding -> {
+                        new CooldownFilter<>(wpAttacker, PersistentCooldown.class)
+                                .filter(PersistentCooldown::isShown)
+                                .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.class)
+                                .forEachOrdered(soulbinding -> {
                                     if (soulbinding.hasBoundPlayer(wpVictim)) {
                                         soulbinding.getSoulBindedPlayers().stream()
                                                 .filter(p -> p.getBoundPlayer() == wpVictim)
@@ -304,7 +305,7 @@ public class WarlordsEvents implements Listener {
                     wpVictim.updateJimmyHealth();
                 }
 
-                if (!wpVictim.getCooldownManager().getCooldown(IceBarrier.class).isEmpty()) {
+                if (wpVictim.getCooldownManager().hasCooldown(IceBarrier.class)) {
                     wpAttacker.getSpeed().addSpeedModifier("Ice Barrier", -20, 2 * 20);
                 }
             }

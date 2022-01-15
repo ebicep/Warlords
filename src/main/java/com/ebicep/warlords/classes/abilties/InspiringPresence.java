@@ -35,13 +35,15 @@ public class InspiringPresence extends AbstractAbility {
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
         InspiringPresence tempPresence = new InspiringPresence();
-        wp.getCooldownManager().addCooldown(name, InspiringPresence.this.getClass(), tempPresence, "PRES", duration, wp, CooldownTypes.BUFF);
+        wp.getCooldownManager().addRegularCooldown(name, "PRES", InspiringPresence.class, tempPresence, wp, CooldownTypes.BUFF, cooldownManager -> {
+        }, duration * 20);
         wp.getSpeed().addSpeedModifier("Inspiring Presence", speedBuff, duration * 20, "BASE");
         PlayerFilter.entitiesAround(wp, radius, radius, radius)
                 .aliveTeammatesOfExcludingSelf(wp)
                 .forEach((nearPlayer) -> {
                     nearPlayer.getSpeed().addSpeedModifier("Inspiring Presence", speedBuff, duration * 20, "BASE");
-                    nearPlayer.getCooldownManager().addCooldown(name, InspiringPresence.this.getClass(), tempPresence, "PRES", duration, wp, CooldownTypes.BUFF);
+                    nearPlayer.getCooldownManager().addRegularCooldown(name, "PRES", InspiringPresence.class, tempPresence, wp, CooldownTypes.BUFF, cooldownManager -> {
+                    }, duration * 20);
                 });
 
         for (Player player1 : player.getWorld().getPlayers()) {
@@ -52,7 +54,7 @@ public class InspiringPresence extends AbstractAbility {
                 new BukkitRunnable() {
                     @Override
                     public void run() {
-                        if (!wp.getCooldownManager().getCooldown(InspiringPresence.class).isEmpty()) {
+                        if (wp.getCooldownManager().hasCooldown(tempPresence)) {
                             Location location = player.getLocation();
                             location.add(0, 1.5, 0);
                             ParticleEffect.SMOKE_NORMAL.display(0.3F, 0.3F, 0.3F, 0.02F, 1, location, 500);

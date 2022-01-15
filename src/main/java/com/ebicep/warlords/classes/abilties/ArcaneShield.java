@@ -4,6 +4,8 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.cooldowns.cooldowns.CooldownFilter;
+import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.ParticleEffect;
 import net.minecraft.server.v1_8_R3.EntityLiving;
 import org.bukkit.Location;
@@ -33,7 +35,13 @@ public class ArcaneShield extends AbstractAbility {
     @Override
     public void onActivate(WarlordsPlayer wp, Player p) {
         wp.subtractEnergy(energyCost);
-        wp.getCooldownManager().addCooldown(name, ArcaneShield.this.getClass(), new ArcaneShield(), "ARCA", 6, wp, CooldownTypes.ABILITY);
+        ArcaneShield tempArcaneShield = new ArcaneShield();
+        wp.getCooldownManager().addRegularCooldown(name, "ARCA", ArcaneShield.class, tempArcaneShield, wp, CooldownTypes.ABILITY,
+                cooldownManager -> {
+                    if (new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterCooldownClass(ArcaneShield.class).getStream().count() == 1) {
+                        ((EntityLiving) ((CraftPlayer) wp.getEntity()).getHandle()).setAbsorptionHearts(0);
+                    }
+                }, 6 * 20);
         ((EntityLiving) ((CraftPlayer) p).getHandle()).setAbsorptionHearts(20);
         shieldHealth = maxShieldHealth;
 
@@ -45,7 +53,7 @@ public class ArcaneShield extends AbstractAbility {
                 new BukkitRunnable() {
                     @Override
                     public void run() {
-                        if (!wp.getCooldownManager().getCooldown(ArcaneShield.class).isEmpty()) {
+                        if (wp.getCooldownManager().hasCooldown(tempArcaneShield)) {
                             Location location = p.getLocation();
                             location.add(0, 1.5, 0);
                             ParticleEffect.CLOUD.display(0.15F, 0.3F, 0.15F, 0.01F, 2, location, 500);

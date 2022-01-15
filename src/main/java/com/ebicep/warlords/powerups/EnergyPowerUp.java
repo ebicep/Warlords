@@ -19,7 +19,8 @@ public class EnergyPowerUp extends AbstractPowerUp {
 
     @Override
     public void onPickUp(WarlordsPlayer warlordsPlayer) {
-        warlordsPlayer.getCooldownManager().addCooldown("Energy", EnergyPowerUp.class, this, "ENERGY", duration, warlordsPlayer, CooldownTypes.BUFF);
+        warlordsPlayer.getCooldownManager().addRegularCooldown("Energy", "ENERGY", EnergyPowerUp.class, this, warlordsPlayer, CooldownTypes.BUFF, cooldownManager -> {
+        }, duration * 20);
         warlordsPlayer.sendMessage("§6You activated the §lENERGY §6powerup! §a+40% §6Energy gain for §a30 §6seconds!");
     }
 

@@ -1,185 +1,151 @@
 package com.ebicep.warlords.player.cooldowns;
 
-import com.ebicep.warlords.classes.abilties.*;
+import com.ebicep.warlords.classes.abilties.Intervene;
+import com.ebicep.warlords.classes.abilties.OrbsOfLife;
+import com.ebicep.warlords.classes.abilties.Soulbinding;
+import com.ebicep.warlords.classes.abilties.UndyingArmy;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.cooldowns.cooldowns.CooldownFilter;
+import com.ebicep.warlords.player.cooldowns.cooldowns.PersistentCooldown;
+import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.PlayerFilter;
-import net.minecraft.server.v1_8_R3.EntityLiving;
-import org.bukkit.ChatColor;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class CooldownManager {
 
     private final WarlordsPlayer warlordsPlayer;
-    private final List<Cooldown> cooldowns;
+    private final List<AbstractCooldown<?>> abstractCooldowns;
     private int totalCooldowns = 0;
 
     public CooldownManager(WarlordsPlayer warlordsPlayer) {
         this.warlordsPlayer = warlordsPlayer;
-        cooldowns = new ArrayList<>();
+        abstractCooldowns = new ArrayList<>();
     }
 
     public boolean hasCooldownFromName(String name) {
-        return cooldowns.stream().anyMatch(cooldown -> cooldown.getName().equalsIgnoreCase(name));
+        return abstractCooldowns.stream().anyMatch(cooldown -> cooldown.getName().equalsIgnoreCase(name));
     }
 
     public boolean hasCooldown(Class<?> cooldownClass) {
-        return cooldowns.stream().anyMatch(cooldown -> cooldown.getCooldownClass() == cooldownClass);
+        return abstractCooldowns.stream().anyMatch(cooldown -> cooldown.getCooldownClass().equals(cooldownClass));
     }
 
     public boolean hasCooldown(Object cooldownObject) {
-        return cooldowns.stream().anyMatch(cooldown -> cooldown.getCooldownObject() == cooldownObject);
-    }
-
-    public List<Cooldown> getCooldownFromName(String name) {
-        return cooldowns.stream().filter(cooldown -> cooldown.getName().equalsIgnoreCase(name)).collect(Collectors.toList());
-    }
-
-    public List<Cooldown> getCooldown(Class<?> cooldownClass) {
-        return cooldowns.stream().filter(cooldown -> cooldown.getCooldownClass() == cooldownClass).collect(Collectors.toList());
-    }
-
-    public Optional<Cooldown> getCooldown(Object cooldownObject) {
-        return cooldowns.stream().filter(cooldown -> cooldown.getCooldownObject() == cooldownObject).findAny();
-    }
-
-    public List<Cooldown> getCooldownFromActionbarName(String name) {
-        return cooldowns.stream().filter(cooldown -> cooldown.getActionBarName().contains(name)).collect(Collectors.toList());
-    }
-
-    public List<Cooldown> getCooldown(Class<?> cooldownClass, String name) {
-        return cooldowns.stream().filter(cooldown -> cooldown.getCooldownClass() == cooldownClass && cooldown.getActionBarName().contains(name)).collect(Collectors.toList());
+        return abstractCooldowns.stream().anyMatch(cooldown -> cooldown.getCooldownObject() == cooldownObject);
     }
 
     public void reduceCooldowns() {
-        for (int i = 0; i < cooldowns.size(); i++) {
-            Cooldown cooldown = cooldowns.get(i);
-            String name = cooldown.getActionBarName();
-            Class<?> cooldownClass = cooldown.getCooldownClass();
-            Object cooldownObject = cooldown.getCooldownObject();
+        for (int i = 0; i < abstractCooldowns.size(); i++) {
+            AbstractCooldown<?> abstractCooldown = abstractCooldowns.get(i);
+            abstractCooldown.onTick();
 
-            cooldown.subtractTime(.05f);
-
-            if (cooldown.getTimeLeft() <= 0) {
-                if (cooldownClass == ArcaneShield.class && getCooldown(ArcaneShield.class).size() == 1) {
-                    if (warlordsPlayer.getEntity() instanceof Player) {
-                        ((EntityLiving) ((CraftPlayer) warlordsPlayer.getEntity()).getHandle()).setAbsorptionHearts(0);
-                    }
-                }
-
-                if (name.equals("WND")) {
-                    warlordsPlayer.sendMessage(ChatColor.GRAY + "You are no longer " + ChatColor.RED + "wounded" + ChatColor.GRAY + ".");
-                } else if (name.equals("CRIP")) {
-                    warlordsPlayer.sendMessage(ChatColor.GRAY + "You are no longer " + ChatColor.RED + "crippled" + ChatColor.GRAY + ".");
-                }
-
-                //temporarily keeping these cooldowns bc there still be orbs/binded players or else they get deleted/removed
-                if ((cooldownClass == OrbsOfLife.class && !((OrbsOfLife) cooldownObject).getSpawnedOrbs().isEmpty()) ||
-                        (cooldownClass == Soulbinding.class && !((Soulbinding) cooldownObject).getSoulBindedPlayers().isEmpty())) {
-                    if (!cooldown.isHidden()) {
-                        cooldown.setHidden(true);
-                    }
-                } else {
-                    cooldowns.remove(i);
-                    i--;
-                    if (cooldownClass == Soulbinding.class && getCooldown(Soulbinding.class).size() == 0) {
-                        if (warlordsPlayer.getEntity() instanceof Player) {
-                            ((CraftPlayer) warlordsPlayer.getEntity()).getInventory().getItem(0).removeEnchantment(Enchantment.OXYGEN);
-                        }
-                    }
-                }
+            if (abstractCooldown.removeCheck()) {
+                abstractCooldown.getOnRemove().accept(this);
+                abstractCooldowns.remove(i);
+                i--;
             }
         }
     }
 
-    public List<Cooldown> getCooldowns() {
-        return cooldowns;
+    public List<AbstractCooldown<?>> getCooldowns() {
+        return abstractCooldowns;
     }
 
     public int getTotalCooldowns() {
         return totalCooldowns;
     }
 
-    public List<Cooldown> getBuffCooldowns() {
-        return cooldowns.stream().filter(cooldown -> cooldown.getCooldownType() == CooldownTypes.BUFF).collect(Collectors.toList());
+    public List<AbstractCooldown<?>> getBuffCooldowns() {
+        return abstractCooldowns.stream().filter(cooldown -> cooldown.getCooldownType() == CooldownTypes.BUFF).collect(Collectors.toList());
     }
 
     public void removeBuffCooldowns() {
-        cooldowns.removeIf(cd -> cd.getCooldownType() == CooldownTypes.BUFF);
+        abstractCooldowns.removeIf(cd -> cd.getCooldownType() == CooldownTypes.BUFF);
     }
 
-    public List<Cooldown> getDebuffCooldowns() {
-        return cooldowns.stream().filter(cooldown -> cooldown.getCooldownType() == CooldownTypes.DEBUFF).collect(Collectors.toList());
+    public List<AbstractCooldown<?>> getDebuffCooldowns() {
+        return abstractCooldowns.stream().filter(cooldown -> cooldown.getCooldownType() == CooldownTypes.DEBUFF).collect(Collectors.toList());
     }
 
     public void removeDebuffCooldowns() {
-        cooldowns.removeIf(cd -> cd.getCooldownType() == CooldownTypes.DEBUFF);
+        abstractCooldowns.removeIf(cd -> cd.getCooldownType() == CooldownTypes.DEBUFF);
     }
 
-    public List<Cooldown> getAbilityCooldowns() {
-        return cooldowns.stream().filter(cooldown -> cooldown.getCooldownType() == CooldownTypes.ABILITY).collect(Collectors.toList());
+    public List<AbstractCooldown<?>> getAbilityCooldowns() {
+        return abstractCooldowns.stream().filter(cooldown -> cooldown.getCooldownType() == CooldownTypes.ABILITY).collect(Collectors.toList());
     }
 
     public void removeAbilityCooldowns() {
-        cooldowns.removeIf(cd -> cd.getCooldownType() == CooldownTypes.ABILITY);
+        abstractCooldowns.removeIf(cd -> cd.getCooldownType() == CooldownTypes.ABILITY);
     }
 
     /**
      * @param name           is the name of the cooldown.
+     * @param actionBarName  what name should be displayed in the action bar.
      * @param cooldownClass  java class of the ability.
      * @param cooldownObject object of the ability or cooldown.
-     * @param actionBarName  what name should be displayed in the action bar.
-     * @param timeLeft       how long should the cooldown last.
      * @param from           what player did they get the cooldown from.
      * @param cooldownType   what type of cooldown is it, eg. DEBUFF, BUFF, ABILITY.
+     * @param onRemove       runs when the cooldown is over
+     * @param timeLeft       how long should the cooldown last.
      */
-    public void addCooldown(String name, Class<?> cooldownClass, Object cooldownObject, String actionBarName, float timeLeft, WarlordsPlayer from, CooldownTypes cooldownType) {
+    public <T> void addRegularCooldown(String name, String actionBarName, Class<T> cooldownClass, T cooldownObject, WarlordsPlayer from, CooldownTypes cooldownType, Consumer<CooldownManager> onRemove, int timeLeft) {
         this.totalCooldowns++;
-        cooldowns.add(new Cooldown(name, cooldownClass, cooldownObject, actionBarName, timeLeft, from, cooldownType));
+        abstractCooldowns.add(new RegularCooldown<>(name, actionBarName, cooldownClass, cooldownObject, from, cooldownType, onRemove, timeLeft));
     }
 
-    public void addCooldown(Cooldown cooldown) {
+    public <T> void addPersistentCooldown(String name, String actionBarName, Class<T> cooldownClass, T cooldownObject, WarlordsPlayer from, CooldownTypes cooldownType, Consumer<CooldownManager> onRemove, int timeLeft, Predicate<T> objectCheck) {
         this.totalCooldowns++;
-        cooldowns.add(cooldown);
+        abstractCooldowns.add(new PersistentCooldown<>(name, actionBarName, cooldownClass, cooldownObject, from, cooldownType, onRemove, timeLeft, objectCheck));
     }
 
-    public void incrementCooldown(Cooldown cooldown, float amount, float maxTime) {
-        if (hasCooldownFromName(cooldown.getName())) {
-            Cooldown cd = getCooldownFromName(cooldown.getName()).get(0);
-            if (cd.getTimeLeft() + amount >= maxTime) {
-                cd.setTimeLeft(maxTime);
+    public void addCooldown(AbstractCooldown<?> abstractCooldown) {
+        this.totalCooldowns++;
+        abstractCooldowns.add(abstractCooldown);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> void incrementCooldown(RegularCooldown<T> regularCooldown, int ticksToAdd, int tickCap) {
+        Optional<RegularCooldown> optionalRegularCooldown = new CooldownFilter<>(this, RegularCooldown.class)
+                .filterCooldownClass(regularCooldown.cooldownClass)
+                .filterName(regularCooldown.name)
+                .findAny();
+        if (optionalRegularCooldown.isPresent()) {
+            RegularCooldown<T> cd = (RegularCooldown<T>) optionalRegularCooldown.get();
+            if (cd.getTicksLeft() + ticksToAdd >= tickCap) {
+                cd.setTicksLeft(tickCap);
             } else {
-                cd.subtractTime(-amount);
+                cd.subtractTime(-ticksToAdd);
             }
         } else {
-            addCooldown(cooldown);
+            addCooldown(regularCooldown);
         }
     }
 
     public void removeCooldown(Class<?> cooldownClass) {
-        cooldowns.removeIf(cd -> cd.getCooldownClass() == cooldownClass);
+        abstractCooldowns.removeIf(cd -> cd.getCooldownClass() == cooldownClass);
     }
 
     public void removeCooldown(Object cooldownObject) {
-        cooldowns.removeIf(cd -> cd.getCooldownObject() == cooldownObject);
+        abstractCooldowns.removeIf(cd -> cd.getCooldownObject() == cooldownObject);
     }
 
     public void removeCooldownByName(String cooldownName) {
-        cooldowns.removeIf(cd -> cd.getName().equals(cooldownName));
+        abstractCooldowns.removeIf(cd -> cd.getName().equals(cooldownName));
     }
 
     public void clearAllCooldowns() {
-        cooldowns.clear();
+        abstractCooldowns.clear();
     }
 
     public void clearCooldowns() {
-        cooldowns.removeIf(cd ->
+        abstractCooldowns.removeIf(cd ->
                 cd.getCooldownClass() != OrbsOfLife.class
         );
         PlayerFilter.playingGame(warlordsPlayer.getGame()).teammatesOf(warlordsPlayer).forEach(wp -> {
@@ -188,8 +154,11 @@ public class CooldownManager {
     }
 
     public boolean hasBoundPlayer(WarlordsPlayer warlordsPlayer) {
-        for (Cooldown cooldown : getCooldown(Soulbinding.class)) {
-            if (((Soulbinding) cooldown.getCooldownObject()).hasBoundPlayer(warlordsPlayer)) {
+        for (Soulbinding soulbinding : new CooldownFilter<>(this, RegularCooldown.class)
+                .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.class)
+                .collect(Collectors.toList())
+        ) {
+            if (soulbinding.hasBoundPlayer(warlordsPlayer)) {
                 return true;
             }
         }
@@ -198,29 +167,39 @@ public class CooldownManager {
 
     public int getNumberOfBoundPlayersLink(WarlordsPlayer warlordsPlayer) {
         int counter = 0;
-        for (Cooldown cooldown : getCooldown(Soulbinding.class)) {
-            if (((Soulbinding) cooldown.getCooldownObject()).hasBoundPlayerLink(warlordsPlayer)) {
+        for (Soulbinding soulbinding : new CooldownFilter<>(this, RegularCooldown.class)
+                .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.class)
+                .collect(Collectors.toList())
+        ) {
+            if (soulbinding.hasBoundPlayerLink(warlordsPlayer)) {
                 counter++;
             }
         }
-        incrementCooldown(new Cooldown("KB Resistance", null, null, "KB", counter, this.warlordsPlayer, CooldownTypes.BUFF), counter * 1.2f, 3.6f);
+        incrementCooldown(
+                new RegularCooldown<Void>("KB Resistance", "KB", null, null, this.warlordsPlayer, CooldownTypes.BUFF, cooldownManager -> {
+                }, counter * 20),
+                (int) (counter * 1.2 * 20),
+                (int) (3.6 * 20)
+        );
         return counter;
     }
 
     public boolean checkUndyingArmy(boolean popped) {
-        for (Cooldown cooldown : getCooldown(UndyingArmy.class)) {
+        for (UndyingArmy undyingArmy : new CooldownFilter<>(this, RegularCooldown.class)
+                .filterCooldownClassAndMapToObjectsOfClass(UndyingArmy.class)
+                .collect(Collectors.toList())
+        ) {
             if (popped) {
                 //returns true if any undying is popped
-                if (((UndyingArmy) cooldown.getCooldownObject()).isArmyDead(warlordsPlayer.getUuid())) {
+                if (undyingArmy.isArmyDead(warlordsPlayer.getUuid())) {
                     return true;
                 }
             } else {
                 //return true if theres any unpopped armies
-                if (!((UndyingArmy) cooldown.getCooldownObject()).isArmyDead(warlordsPlayer.getUuid())) {
+                if (!undyingArmy.isArmyDead(warlordsPlayer.getUuid())) {
                     return true;
                 }
             }
-
         }
         //if popped returns false - all undying armies are not popped (there is no popped armies)
         //if !popped return false - all undying armies are popped (there is no unpopped armies)

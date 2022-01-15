@@ -2,10 +2,13 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
-import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.cooldowns.cooldowns.CooldownFilter;
+import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.ParticleEffect;
 import org.bukkit.Location;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -16,9 +19,9 @@ import java.util.List;
 
 public class Soulbinding extends AbstractAbility {
 
+    private final int duration = 12;
     private List<SoulBoundPlayer> soulBindedPlayers = new ArrayList<>();
     private int bindDuration = 2;
-    private final int duration = 12;
 
     public Soulbinding() {
         super("Soulbinding Weapon", 0, 0, 21.92f, 30, -1, 100);
@@ -45,7 +48,15 @@ public class Soulbinding extends AbstractAbility {
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
         wp.subtractEnergy(energyCost);
-        wp.getCooldownManager().addCooldown(name, Soulbinding.this.getClass(), new Soulbinding(), "SOUL", duration, wp, CooldownTypes.ABILITY);
+        Soulbinding tempSoulBinding = new Soulbinding();
+        wp.getCooldownManager().addPersistentCooldown(name, "SOUL", Soulbinding.class, tempSoulBinding, wp, CooldownTypes.ABILITY,
+                cooldownManager -> {
+                    if (new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterCooldownClass(Soulbinding.class).getStream().count() == 1) {
+                        if (wp.getEntity() instanceof Player) {
+                            ((CraftPlayer) wp.getEntity()).getInventory().getItem(0).removeEnchantment(Enchantment.OXYGEN);
+                        }
+                    }
+                }, duration * 20, soulbinding -> soulbinding.getSoulBindedPlayers().isEmpty());
 
         ItemMeta newItemMeta = player.getInventory().getItem(0).getItemMeta();
         newItemMeta.addEnchant(Enchantment.OXYGEN, 1, true);
@@ -59,7 +70,7 @@ public class Soulbinding extends AbstractAbility {
                 new BukkitRunnable() {
                     @Override
                     public void run() {
-                        if (!wp.getCooldownManager().getCooldown(Soulbinding.class).isEmpty()) {
+                        if (wp.getCooldownManager().hasCooldown(tempSoulBinding)) {
                             Location location = player.getLocation();
                             location.add(0, 1.2, 0);
                             ParticleEffect.SPELL_WITCH.display(0.2F, 0F, 0.2F, 0.1F, 1, location, 500);
@@ -144,12 +155,12 @@ public class Soulbinding extends AbstractAbility {
             return timeLeft;
         }
 
-        public void decrementTimeLeft() {
-            this.timeLeft -= .5;
-        }
-
         public void setTimeLeft(float timeLeft) {
             this.timeLeft = timeLeft;
+        }
+
+        public void decrementTimeLeft() {
+            this.timeLeft -= .5;
         }
 
         public boolean isHitWithLink() {

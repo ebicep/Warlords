@@ -7,6 +7,8 @@ import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.effects.circle.DoubleLineEffect;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.cooldowns.cooldowns.CooldownFilter;
+import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
 import org.bukkit.Bukkit;
@@ -18,6 +20,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
+
+import java.util.stream.Collectors;
 
 public class DeathsDebt extends AbstractTotemBase {
 
@@ -73,7 +77,8 @@ public class DeathsDebt extends AbstractTotemBase {
 
         DeathsDebt tempDeathsDebt = new DeathsDebt();
 
-        wp.getCooldownManager().addCooldown("Spirits Respite", this.getClass(), tempDeathsDebt, "RESP", secondsLeft, wp, CooldownTypes.ABILITY);
+        wp.getCooldownManager().addRegularCooldown("Spirits Respite", "RESP", DeathsDebt.class, tempDeathsDebt, wp, CooldownTypes.ABILITY, cooldownManager -> {
+        }, secondsLeft * 20);
 
         CircleEffect circle = new CircleEffect(wp, totemStand.getLocation().clone().add(0, 1.25, 0), respiteRadius);
         circle.addEffect(new CircumferenceEffect(ParticleEffect.SPELL));
@@ -83,7 +88,7 @@ public class DeathsDebt extends AbstractTotemBase {
         tempDeathsDebt.setTimeLeftRespite(secondsLeft);
 
         wp.getGame().getGameTasks().put(
-            new BukkitRunnable() {
+                new BukkitRunnable() {
                 int counter = 0;
 
                 @Override
@@ -119,7 +124,8 @@ public class DeathsDebt extends AbstractTotemBase {
                                 } else if (roundedTimeLeftRespite == 0) {
                                     //beginning debt
                                     wp.getCooldownManager().removeCooldown(tempDeathsDebt);
-                                    wp.getCooldownManager().addCooldown(name, this.getClass(), tempDeathsDebt, "DEBT", 6, wp, CooldownTypes.ABILITY);
+                                    wp.getCooldownManager().addRegularCooldown(name, "DEBT", DeathsDebt.class, tempDeathsDebt, wp, CooldownTypes.ABILITY, cooldownManager -> {
+                                    }, 6 * 20);
 
                                     if (!isPlayerInRadius) {
                                         player.sendMessage("§7You walked outside your §dDeath's Debt §7radius");
@@ -185,7 +191,7 @@ public class DeathsDebt extends AbstractTotemBase {
         }
         // 100% of damage over 6 seconds
         float damage = (tempDeathsDebt.getDelayedDamage() * getSelfDamageInPercentPerSecond());
-        float debtTrueDamage = (float) (damage * Math.pow(.8, wp.getCooldownManager().getCooldown(SpiritLink.class).size()));
+        float debtTrueDamage = (float) (damage * Math.pow(.8, (int) new CooldownFilter<>(wp, RegularCooldown.class).filterCooldownClass(SpiritLink.class).getStream().count()));
         // Player damage
         wp.addDamageInstance(wp, "",
                 debtTrueDamage,

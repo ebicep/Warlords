@@ -65,7 +65,8 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
 
     @Override
     protected void onHit(WarlordsPlayer warlordsPlayer, Player player, int hitCounter) {
-        warlordsPlayer.getCooldownManager().addCooldown(name, this.getClass(), new ChainLightning(hitCounter), "CHAIN", 4, warlordsPlayer, CooldownTypes.BUFF);
+        warlordsPlayer.getCooldownManager().addRegularCooldown(name, "CHAIN", ChainLightning.class, new ChainLightning(hitCounter), warlordsPlayer, CooldownTypes.BUFF, cooldownManager -> {
+        }, 4 * 20);
         warlordsPlayer.getSpec().getRed().setCurrentCooldown((float) (cooldown * warlordsPlayer.getCooldownModifier()));
 
         player.playSound(player.getLocation(), "shaman.chainlightning.impact", 2, 1);

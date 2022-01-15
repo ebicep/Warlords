@@ -7,6 +7,8 @@ import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.cooldowns.cooldowns.CooldownFilter;
+import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
 import org.bukkit.Bukkit;
@@ -71,7 +73,8 @@ public class HammerOfLight extends AbstractAbility {
         wp.subtractEnergy(energyCost);
         wp.getSpec().getOrange().setCurrentCooldown((float) (cooldown * wp.getCooldownModifier()));
         HammerOfLight tempHammerOfLight = new HammerOfLight();
-        wp.getCooldownManager().addCooldown(name, this.getClass(), tempHammerOfLight, "HAMMER", duration, wp, CooldownTypes.ABILITY);
+        wp.getCooldownManager().addRegularCooldown(name, "HAMMER", HammerOfLight.class, tempHammerOfLight, wp, CooldownTypes.ABILITY, cooldownManager -> {
+        }, duration * 20);
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "paladin.hammeroflight.impact", 2, 0.85f);
@@ -138,9 +141,12 @@ public class HammerOfLight extends AbstractAbility {
 
                             if (wp.isAlive() && player.isSneaking() && !wasSneaking) {
                                 tempHammerOfLight.setCrownOfLight(true);
-                                wp.getCooldownManager().getCooldown(tempHammerOfLight).ifPresent(cd -> {
-                                    cd.setActionBarName("CROWN");
-                                });
+                                new CooldownFilter<>(wp, RegularCooldown.class)
+                                        .filterCooldownObject(tempHammerOfLight)
+                                        .findAny()
+                                        .ifPresent(regularCooldown -> {
+                                            regularCooldown.setNameAbbreviation("CROWN");
+                                        });
 
                                 for (Player player1 : player.getWorld().getPlayers()) {
                                     player1.playSound(player.getLocation(), "warrior.revenant.orbsoflife", 2, 0.15f);

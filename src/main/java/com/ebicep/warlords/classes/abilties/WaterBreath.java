@@ -62,8 +62,10 @@ public class WaterBreath extends AbstractAbility {
                         target.getSpeed().removeSlownessModifiers();
                         target.addHealingInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false, false);
                         target.getCooldownManager().removeCooldown(Utils.OVERHEAL_MARKER);
-                        target.getCooldownManager().addCooldown("Overheal",
-                                null, Utils.OVERHEAL_MARKER, "OVERHEAL", Utils.OVERHEAL_DURATION, wp, CooldownTypes.BUFF);
+                        target.getCooldownManager().addRegularCooldown("Overheal",
+                                "OVERHEAL", null, Utils.OVERHEAL_MARKER, wp, CooldownTypes.BUFF, cooldownManager -> {
+                                }, Utils.OVERHEAL_DURATION * 20);
+                        ;
                     } else {
                         final Location loc = target.getLocation();
                         final Vector v = player.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1.1).setY(0.2);

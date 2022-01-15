@@ -44,8 +44,9 @@ public class WideGuard extends AbstractAbility {
     @Override
     public void onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
         wp.subtractEnergy(energyCost);
-
-        wp.getCooldownManager().addCooldown("Wide Guard", this.getClass(), WideGuard.class, "GUARD", 4, wp, CooldownTypes.ABILITY);
+        WideGuard tempWideGuard = new WideGuard();
+        wp.getCooldownManager().addRegularCooldown("Wide Guard", "GUARD", WideGuard.class, tempWideGuard, wp, CooldownTypes.ABILITY, cooldownManager -> {
+        }, 4 * 20);
         //wp.getCooldownManager().addCooldown("Reflection Shield", this.getClass(), WideGuard.class, "", 4, wp, CooldownTypes.ABILITY);
 
         for (Player player1 : player.getWorld().getPlayers()) {
@@ -80,7 +81,7 @@ public class WideGuard extends AbstractAbility {
                 new BukkitRunnable() {
                     @Override
                     public void run() {
-                        if (!wp.getCooldownManager().getCooldown(WideGuard.class).isEmpty()) {
+                        if (wp.getCooldownManager().hasCooldown(tempWideGuard)) {
                             Location particleLoc = wp.getLocation();
                             particleLoc.add(0, 1, 0);
 
@@ -98,9 +99,10 @@ public class WideGuard extends AbstractAbility {
                                     .aliveTeammatesOfExcludingSelf(wp)
                                     .forEach(playerInsideBubble -> {
                                         playerInsideBubble.getCooldownManager().removeCooldown(WideGuard.class);
-                                        playerInsideBubble.getCooldownManager().addCooldown("Wide Guard Healing", WideGuard.this.getClass(), WideGuard.class, "GUARD", 1, wp, CooldownTypes.ABILITY);
+                                        playerInsideBubble.getCooldownManager().addRegularCooldown("Wide Guard Healing", "GUARD", WideGuard.class, tempWideGuard, wp, CooldownTypes.ABILITY, cooldownManager -> {
+                                        }, 1 * 20);
                                         timeInBubble.compute(playerInsideBubble, (k, v) -> v == null ? 1 : v + 1);
-                            });
+                                    });
                         } else {
                             this.cancel();
 

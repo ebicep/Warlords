@@ -8,7 +8,8 @@ import com.ebicep.warlords.maps.flags.GroundFlagLocation;
 import com.ebicep.warlords.maps.flags.PlayerFlagLocation;
 import com.ebicep.warlords.maps.flags.SpawnFlagLocation;
 import com.ebicep.warlords.player.*;
-import com.ebicep.warlords.player.cooldowns.Cooldown;
+import com.ebicep.warlords.player.cooldowns.AbstractCooldown;
+import com.ebicep.warlords.player.cooldowns.cooldowns.CooldownFilter;
 import com.ebicep.warlords.util.ItemBuilder;
 import com.ebicep.warlords.util.NumberFormat;
 import org.bukkit.Bukkit;
@@ -465,31 +466,31 @@ public class DebugMenu {
         );
         //cooldowns
         int yLevel = 0;
-        List<Cooldown> cooldowns = new ArrayList<>(target.getCooldownManager().getCooldowns());
-        cooldowns.sort(Comparator.comparing(Cooldown::getTimeLeft));
-        for (int i = 0; i < cooldowns.size(); i++) {
-            if (i % 7 == 0) {
-                yLevel++;
-                if (yLevel > 4) break;
-            }
-            Cooldown cooldown = cooldowns.get(i);
-            menu.setItem((i % 7) + 1, yLevel,
-                    new ItemBuilder(woolSortedByColor[i % woolSortedByColor.length])
-                            .name(ChatColor.GOLD + cooldown.getName())
-                            .lore(ChatColor.GREEN + "Time Left: " + ChatColor.GOLD + (Math.round(cooldown.getTimeLeft() * 10) / 10.0) + "s",
-                                    ChatColor.GREEN + "From: " + cooldown.getFrom().getColoredName()
-                            )
-                            .get(),
-                    (n, e) -> openCooldownMenu(player, target, cooldown)
-            );
-        }
+//        List<AbstractCooldown> abstractCooldowns = new ArrayList<>(target.getCooldownManager().getCooldowns());
+//        abstractCooldowns.sort(Comparator.comparing(AbstractCooldown::getTimeLeft));
+//        for (int i = 0; i < abstractCooldowns.size(); i++) {
+//            if (i % 7 == 0) {
+//                yLevel++;
+//                if (yLevel > 4) break;
+//            }
+//            AbstractCooldown abstractCooldown = abstractCooldowns.get(i);
+//            menu.setItem((i % 7) + 1, yLevel,
+//                    new ItemBuilder(woolSortedByColor[i % woolSortedByColor.length])
+//                            .name(ChatColor.GOLD + abstractCooldown.getName())
+//                            .lore(ChatColor.GREEN + "Time Left: " + ChatColor.GOLD + (Math.round(abstractCooldown.getTimeLeft() * 10) / 10.0) + "s",
+//                                    ChatColor.GREEN + "From: " + abstractCooldown.getFrom().getColoredName()
+//                            )
+//                            .get(),
+//                    (n, e) -> openCooldownMenu(player, target, abstractCooldown)
+//            );
+//        }
         menu.setItem(3, 5, MENU_BACK, (n, e) -> openCooldownsMenu(player, target));
         menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
     }
 
-    public static void openCooldownMenu(Player player, WarlordsPlayer target, Cooldown cooldown) {
-        Menu menu = new Menu(cooldown.getName() + ": " + target.getName(), 9 * 4);
+    public static void openCooldownMenu(Player player, WarlordsPlayer target, AbstractCooldown abstractCooldown) {
+        Menu menu = new Menu(abstractCooldown.getName() + ": " + target.getName(), 9 * 4);
         ItemStack[] cooldownOptions = {
                 new ItemBuilder(Material.MILK_BUCKET)
                         .name(ChatColor.AQUA + "Remove")
@@ -502,11 +503,11 @@ public class DebugMenu {
             int finalI = i;
             menu.setItem(i + 1, 1, cooldownOptions[i],
                     (n, e) -> {
-                        if (target.getCooldownManager().getCooldowns().contains(cooldown)) {
+                        if (target.getCooldownManager().getCooldowns().contains(abstractCooldown)) {
                             switch (finalI + 1) {
                                 case 1:
-                                    target.getCooldownManager().getCooldowns().remove(cooldown);
-                                    player.sendMessage(ChatColor.RED + "DEV: " + target.getColoredName() + "'s §a" + cooldown.getName() + " was removed");
+                                    target.getCooldownManager().getCooldowns().remove(abstractCooldown);
+                                    player.sendMessage(ChatColor.RED + "DEV: " + target.getColoredName() + "'s §a" + abstractCooldown.getName() + " was removed");
                                     openCooldownManagerMenu(player, target);
                                     new BukkitRunnable() {
                                         @Override
@@ -520,7 +521,7 @@ public class DebugMenu {
                                     }.runTaskTimer(Warlords.getInstance(), 20, 20);
                                     break;
                                 case 2:
-                                    openCooldownTimerMenu(player, target, cooldown);
+                                    openCooldownTimerMenu(player, target, abstractCooldown);
                                     break;
                             }
                         } else {
@@ -535,8 +536,8 @@ public class DebugMenu {
         menu.openForPlayer(player);
     }
 
-    public static void openCooldownTimerMenu(Player player, WarlordsPlayer target, Cooldown cooldown) {
-        Menu menu = new Menu(cooldown.getName() + "Duration: " + target.getName(), 9 * 4);
+    public static void openCooldownTimerMenu(Player player, WarlordsPlayer target, AbstractCooldown abstractCooldown) {
+        Menu menu = new Menu(abstractCooldown.getName() + "Duration: " + target.getName(), 9 * 4);
         int[] durations = {5, 15, 30, 60, 120, 300, 600};
         for (int i = 0; i < durations.length; i++) {
             int finalI = i;
@@ -545,9 +546,9 @@ public class DebugMenu {
                             .name(ChatColor.GREEN.toString() + durations[i] + "s")
                             .get(),
                     (n, e) -> {
-                        if (target.getCooldownManager().getCooldowns().contains(cooldown)) {
-                            cooldown.subtractTime(-durations[finalI]);
-                            player.sendMessage(ChatColor.RED + "DEV: " + target.getColoredName() + "'s §a" + cooldown.getName() + "'s duration was increased by " + durations[finalI] + " seconds");
+                        if (target.getCooldownManager().getCooldowns().contains(abstractCooldown)) {
+//                            abstractCooldown.subtractTime(-durations[finalI]);
+                            player.sendMessage(ChatColor.RED + "DEV: " + target.getColoredName() + "'s §a" + abstractCooldown.getName() + "'s duration was increased by " + durations[finalI] + " seconds");
                         } else {
                             openCooldownsMenu(player, target);
                             player.sendMessage(ChatColor.RED + "DEV: §aThat cooldown no longer exists");
@@ -555,7 +556,7 @@ public class DebugMenu {
                     }
             );
         }
-        menu.setItem(3, 3, MENU_BACK, (n, e) -> openCooldownMenu(player, target, cooldown));
+        menu.setItem(3, 3, MENU_BACK, (n, e) -> openCooldownMenu(player, target, abstractCooldown));
         menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
     }
@@ -570,8 +571,9 @@ public class DebugMenu {
                             .name(ChatColor.GREEN.toString() + durations[i] + "s")
                             .get(),
                     (n, e) -> {
-                        target.getCooldownManager().addCooldown(cooldown.name, cooldown.cooldownClass, cooldown.cooldownObject, cooldown.actionBarName, durations[finalI], target, cooldown.cooldownType);
-                        if(cooldown == StatusEffectCooldowns.SPEED) {
+                        target.getCooldownManager().addRegularCooldown(cooldown.name, cooldown.actionBarName, cooldown.cooldownClass, cooldown.cooldownObject, target, cooldown.cooldownType, cooldownManager -> {
+                        }, durations[finalI] * 20);
+                        if (cooldown == StatusEffectCooldowns.SPEED) {
                             target.getSpeed().addSpeedModifier("Speed Powerup", 40, durations[finalI] * 20, "BASE");
                         }
                         player.sendMessage(ChatColor.RED + "DEV: " + target.getColoredName() + "'s §aRecieved " + durations[finalI] + " seconds of " + cooldown.name);

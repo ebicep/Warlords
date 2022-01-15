@@ -30,7 +30,9 @@ public class LightInfusion extends AbstractAbility {
     public void onActivate(WarlordsPlayer wp, Player player) {
         wp.subtractEnergy(energyCost);
         wp.getSpeed().addSpeedModifier("Infusion", speedBuff, duration * 20, "BASE");
-        wp.getCooldownManager().addCooldown(name, LightInfusion.this.getClass(), new LightInfusion(cooldown, energyCost), "INF", duration, wp, CooldownTypes.BUFF);
+        LightInfusion tempLightInfusion = new LightInfusion(cooldown, energyCost);
+        wp.getCooldownManager().addRegularCooldown(name, "INF", LightInfusion.class, tempLightInfusion, wp, CooldownTypes.BUFF, cooldownManager -> {
+        }, duration * 20);
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "paladin.infusionoflight.activation", 2, 1);
@@ -45,7 +47,7 @@ public class LightInfusion extends AbstractAbility {
                 new BukkitRunnable() {
                     @Override
                     public void run() {
-                        if (!wp.getCooldownManager().getCooldown(LightInfusion.class).isEmpty()) {
+                        if (wp.getCooldownManager().hasCooldown(tempLightInfusion)) {
                             Location location = player.getLocation();
                             location.add(0, 1.2, 0);
                             ParticleEffect.SPELL.display(0.3F, 0.1F, 0.3F, 0.2F, 2, location, 500);

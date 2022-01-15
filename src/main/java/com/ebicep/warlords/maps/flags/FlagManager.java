@@ -217,7 +217,8 @@ public class FlagManager implements Listener {
             } else {
                 // Steal flag
                 info.setFlag(new PlayerFlagLocation(wp, 0));
-                wp.getCooldownManager().addCooldown("Flag Damage Reduction", SpawnFlagLocation.class, null, "RES", 15, wp, CooldownTypes.BUFF);
+                wp.getCooldownManager().addRegularCooldown("Flag Damage Reduction", "RES", SpawnFlagLocation.class, null, wp, CooldownTypes.BUFF, cooldownManager -> {
+                }, 15 * 20);
             }
         }
     }

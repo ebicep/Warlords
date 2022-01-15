@@ -1,9 +1,11 @@
 package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.classes.internal.AbstractChainBase;
-import com.ebicep.warlords.player.cooldowns.Cooldown;
+import com.ebicep.warlords.player.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.cooldowns.cooldowns.CooldownFilter;
+import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.PlayerFilter;
 import com.ebicep.warlords.util.Utils;
 import org.bukkit.Material;
@@ -92,7 +94,8 @@ public class SpiritLink extends AbstractChainBase {
     protected void onHit(WarlordsPlayer warlordsPlayer, Player player, int hitCounter) {
         // speed buff
         warlordsPlayer.getSpeed().addSpeedModifier("Spirit Link", 40, 30); // 30 is ticks
-        warlordsPlayer.getCooldownManager().addCooldown(name, this.getClass(), new SpiritLink(), "LINK", 4.5f, warlordsPlayer, CooldownTypes.BUFF);
+        warlordsPlayer.getCooldownManager().addRegularCooldown(name, "LINK", SpiritLink.class, new SpiritLink(), warlordsPlayer, CooldownTypes.BUFF, cooldownManager -> {
+        }, (int) (4.5 * 20));
 
         warlordsPlayer.getSpec().getRed().setCurrentCooldown((float) (cooldown * warlordsPlayer.getCooldownModifier()));
 
@@ -106,12 +109,14 @@ public class SpiritLink extends AbstractChainBase {
 
     private void healNearPlayers(WarlordsPlayer warlordsPlayer) {
         //adding .25 to totem, cap 6 sec
-        if(warlordsPlayer.getCooldownManager().hasCooldownFromName("Spirits Respite")) {
-            Cooldown cooldown = warlordsPlayer.getCooldownManager().getCooldownFromName("Spirits Respite").get(0);
-            DeathsDebt deathsDebt = ((DeathsDebt) cooldown.getCooldownObject());
-            deathsDebt.setTimeLeftRespite(deathsDebt.getTimeLeftRespite() + .5);
-            cooldown.setTimeLeft((float) deathsDebt.getTimeLeftRespite());
-        }
+        new CooldownFilter<>(warlordsPlayer, RegularCooldown.class)
+                .filterName("Spirits Respite")
+                .findFirst()
+                .ifPresent(regularCooldown -> {
+                    DeathsDebt deathsDebt = ((DeathsDebt) regularCooldown.getCooldownObject());
+                    deathsDebt.setTimeLeftRespite(deathsDebt.getTimeLeftRespite() + .5);
+                    regularCooldown.setTicksLeft((int) (deathsDebt.getTimeLeftRespite() * 20));
+                });
         warlordsPlayer.addHealingInstance(warlordsPlayer, "Soulbinding Weapon", 400, 400, -1, 100, false, false);
         for (WarlordsPlayer nearPlayer : PlayerFilter
                 .entitiesAround(warlordsPlayer, 8, 8, 8)

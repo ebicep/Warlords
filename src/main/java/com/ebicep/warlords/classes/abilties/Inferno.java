@@ -27,7 +27,9 @@ public class Inferno extends AbstractAbility {
 
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
-        wp.getCooldownManager().addCooldown(name, Inferno.this.getClass(), new Inferno(), "INFR", duration, wp, CooldownTypes.BUFF);
+        Inferno tempInferno = new Inferno();
+        wp.getCooldownManager().addRegularCooldown(name, "INFR", Inferno.class, tempInferno, wp, CooldownTypes.BUFF, cooldownManager -> {
+        }, duration * 20);
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "mage.inferno.activation", 2, 1);
@@ -37,7 +39,7 @@ public class Inferno extends AbstractAbility {
                 new BukkitRunnable() {
                     @Override
                     public void run() {
-                        if (!wp.getCooldownManager().getCooldown(Inferno.class).isEmpty()) {
+                        if (wp.getCooldownManager().hasCooldown(tempInferno)) {
                             Location location = player.getLocation();
                             location.add(0, 1.2, 0);
                             ParticleEffect.DRIP_LAVA.display(0.5F, 0.3F, 0.5F, 0.4F, 1, location, 500);

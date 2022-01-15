@@ -4,6 +4,8 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.cooldowns.cooldowns.CooldownFilter;
+import com.ebicep.warlords.player.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.util.LocationBuilder;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
@@ -60,7 +62,8 @@ public class OrbsOfLife extends AbstractAbility {
     public void onActivate(WarlordsPlayer wp, Player player) {
         wp.subtractEnergy(energyCost);
         OrbsOfLife tempOrbsOfLight = new OrbsOfLife();
-        wp.getCooldownManager().addCooldown(name, OrbsOfLife.this.getClass(), tempOrbsOfLight, "ORBS", duration, wp, CooldownTypes.ABILITY);
+        wp.getCooldownManager().addPersistentCooldown(name, "ORBS", OrbsOfLife.class, tempOrbsOfLight, wp, CooldownTypes.ABILITY, cooldownManager -> {
+        }, duration * 20, orbsOfLife -> orbsOfLife.getSpawnedOrbs().isEmpty());
 
         tempOrbsOfLight.getSpawnedOrbs().add(new Orb(((CraftWorld) player.getLocation().getWorld()).getHandle(), generateSpawnLocation(player.getLocation()), wp));
         tempOrbsOfLight.getSpawnedOrbs().add(new Orb(((CraftWorld) player.getLocation().getWorld()).getHandle(), generateSpawnLocation(player.getLocation()), wp));
@@ -246,9 +249,9 @@ public class OrbsOfLife extends AbstractAbility {
         public void remove() {
             armorStand.remove();
             getBukkitEntity().remove();
-            owner.getCooldownManager().getCooldown(OrbsOfLife.class).forEach(cd -> {
-                ((OrbsOfLife) cd.getCooldownObject()).getSpawnedOrbs().remove(this);
-            });
+            new CooldownFilter<>(owner, PersistentCooldown.class)
+                    .filterCooldownClassAndMapToObjectsOfClass(OrbsOfLife.class)
+                    .forEachOrdered(orbsOfLife -> orbsOfLife.getSpawnedOrbs().remove(this));
         }
 
         public ArmorStand getArmorStand() {

@@ -38,6 +38,7 @@ public class SoulShackle extends AbstractAbility {
 
     @Override
     public void onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
+        SoulShackle tempSoulShackle = new SoulShackle();
 
         for (WarlordsPlayer shackleTarget : PlayerFilter
                 .entitiesAround(player, shackleRange, shackleRange, shackleRange)
@@ -49,7 +50,8 @@ public class SoulShackle extends AbstractAbility {
                 wp.subtractEnergy(energyCost);
 
                 shackleTarget.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
-                shackleTarget.getCooldownManager().addCooldown("Shackle Silence", this.getClass(), SoulShackle.class, "SILENCE", 2, wp, CooldownTypes.DEBUFF);
+                shackleTarget.getCooldownManager().addRegularCooldown("Shackle Silence", "SILENCE", SoulShackle.class, tempSoulShackle, wp, CooldownTypes.DEBUFF, cooldownManager -> {
+                }, 2 * 20);
 
                 for (Player player1 : player.getWorld().getPlayers()) {
                     player1.playSound(player.getLocation(), "warrior.intervene.impact", 2, 0.45f);
@@ -103,7 +105,7 @@ public class SoulShackle extends AbstractAbility {
                     new BukkitRunnable() {
                         @Override
                         public void run() {
-                            if (!shackleTarget.getCooldownManager().getCooldown(SoulShackle.class).isEmpty()) {
+                            if (shackleTarget.getCooldownManager().hasCooldown(tempSoulShackle)) {
                                 Location playerLoc = shackleTarget.getLocation();
                                 Location particleLoc = playerLoc.clone();
                                 for (int i = 0; i < 10; i++) {

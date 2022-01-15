@@ -34,7 +34,9 @@ public class Earthliving extends AbstractAbility {
     @Override
     public void onActivate(WarlordsPlayer wp, Player player) {
         wp.subtractEnergy(energyCost);
-        wp.getCooldownManager().addCooldown(name, Earthliving.this.getClass(), new Earthliving(), "EARTH", duration, wp, CooldownTypes.ABILITY);
+        Earthliving tempEarthliving = new Earthliving();
+        wp.getCooldownManager().addRegularCooldown(name, "EARTH", Earthliving.class, tempEarthliving, wp, CooldownTypes.ABILITY, cooldownManager -> {
+        }, duration * 20);
 
         firstProc = true;
 
@@ -46,7 +48,7 @@ public class Earthliving extends AbstractAbility {
                 new BukkitRunnable() {
                     @Override
                     public void run() {
-                        if (!wp.getCooldownManager().getCooldown(Earthliving.class).isEmpty()) {
+                        if (wp.getCooldownManager().hasCooldown(tempEarthliving)) {
                             Location location = player.getLocation();
                             location.add(0, 1.2, 0);
                             ParticleEffect.VILLAGER_HAPPY.display(0.3F, 0.3F, 0.3F, 0.1F, 2, location, 500);

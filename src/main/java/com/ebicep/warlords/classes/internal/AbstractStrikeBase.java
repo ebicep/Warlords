@@ -3,6 +3,8 @@ package com.ebicep.warlords.classes.internal;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.classes.abilties.*;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.cooldowns.cooldowns.CooldownFilter;
+import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
 import com.ebicep.warlords.util.Utils;
@@ -15,6 +17,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
+import java.util.Optional;
 
 public abstract class AbstractStrikeBase extends AbstractAbility {
 
@@ -36,8 +39,9 @@ public abstract class AbstractStrikeBase extends AbstractAbility {
                         PacketPlayOutAnimation playOutAnimation = new PacketPlayOutAnimation(((CraftPlayer) player).getHandle(), 0);
                         ((CraftPlayer) player).getHandle().playerConnection.sendPacket(playOutAnimation);
 
-                        if(wp.getCooldownManager().hasCooldown(HammerOfLight.class)) {
-                            wp.subtractEnergy(energyCost - (((HammerOfLight) wp.getCooldownManager().getCooldown(HammerOfLight.class).get(0).getCooldownObject()).isCrownOfLight() ? 10 : 0));
+                        Optional<HammerOfLight> optionalHammer = new CooldownFilter<>(wp, RegularCooldown.class).filterCooldownClassAndMapToObjectsOfClass(HammerOfLight.class).findAny();
+                        if (optionalHammer.isPresent()) {
+                            wp.subtractEnergy(energyCost - (optionalHammer.get().isCrownOfLight() ? 10 : 0));
                         } else {
                             wp.subtractEnergy(energyCost);
                         }

@@ -114,9 +114,10 @@ public class HolyRadianceProtector extends AbstractAbility {
                 }.runTaskTimer(Warlords.getInstance(), 0, 0);
 
                 HolyRadianceProtector tempMark = new HolyRadianceProtector(minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
-                p.getCooldownManager().addCooldown(name, HolyRadianceProtector.this.getClass(), tempMark, "PROT MARK", markDuration, wp, CooldownTypes.BUFF);
+                p.getCooldownManager().addRegularCooldown(name, "PROT MARK", HolyRadianceProtector.class, tempMark, wp, CooldownTypes.BUFF, cooldownManager -> {
+                }, markDuration * 20);
 
-                player.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " You have marked " + ChatColor.GREEN + p.getName() + ChatColor.GRAY +"!");
+                player.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " You have marked " + ChatColor.GREEN + p.getName() + ChatColor.GRAY + "!");
                 p.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " You have been granted " + ChatColor.GREEN + "Protector's Mark" + ChatColor.GRAY + " by " + wp.getName() + "!");
 
                 wp.getGame().getGameTasks().put(
@@ -124,7 +125,7 @@ public class HolyRadianceProtector extends AbstractAbility {
                         new BukkitRunnable() {
                             @Override
                             public void run() {
-                                if (!p.getCooldownManager().getCooldown(HolyRadianceProtector.class).isEmpty()) {
+                                if (p.getCooldownManager().hasCooldown(tempMark)) {
                                     Location playerLoc = p.getLocation();
                                     Location particleLoc = playerLoc.clone();
                                     for (int i = 0; i < 4; i++) {

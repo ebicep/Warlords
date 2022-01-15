@@ -1,8 +1,10 @@
 package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.classes.internal.AbstractStrikeBase;
-import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.cooldowns.cooldowns.CooldownFilter;
+import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -31,6 +33,11 @@ public class WoundingStrikeBerserker extends AbstractStrikeBase {
         }
         nearPlayer.getCooldownManager().removeCooldown(WoundingStrikeBerserker.class);
         nearPlayer.getCooldownManager().removeCooldown(WoundingStrikeDefender.class);
-        nearPlayer.getCooldownManager().addCooldown(name, this.getClass(), new WoundingStrikeBerserker(), "WND", 3, wp, CooldownTypes.DEBUFF);
+        nearPlayer.getCooldownManager().addRegularCooldown(name, "WND", WoundingStrikeBerserker.class, new WoundingStrikeBerserker(), wp, CooldownTypes.DEBUFF,
+                cooldownManager -> {
+                    if (new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterNameActionBar("WND").getStream().count() == 1) {
+                        wp.sendMessage(ChatColor.GRAY + "You are no longer " + ChatColor.RED + "wounded" + ChatColor.GRAY + ".");
+                    }
+                }, 3 * 20);
     }
 }

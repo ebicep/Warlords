@@ -28,8 +28,11 @@ import com.ebicep.warlords.party.PartyListener;
 import com.ebicep.warlords.party.PartyManager;
 import com.ebicep.warlords.party.StreamCommand;
 import com.ebicep.warlords.player.*;
-import com.ebicep.warlords.player.cooldowns.Cooldown;
+import com.ebicep.warlords.player.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.cooldowns.CooldownManager;
+import com.ebicep.warlords.player.cooldowns.cooldowns.CooldownFilter;
+import com.ebicep.warlords.player.cooldowns.cooldowns.PersistentCooldown;
+import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.powerups.EnergyPowerUp;
 import com.ebicep.warlords.queuesystem.QueueCommand;
 import com.ebicep.warlords.util.*;
@@ -56,6 +59,7 @@ import javax.security.auth.login.LoginException;
 import java.io.File;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 public class Warlords extends JavaPlugin {
@@ -507,7 +511,7 @@ public class Warlords extends JavaPlugin {
                         }
 
                         // Checks whether the player has Vindicate active.
-                        if (!wp.getCooldownManager().getCooldown(Vindicate.class).isEmpty()) {
+                        if (wp.getCooldownManager().hasCooldown(Vindicate.class)) {
                             wp.getSpeed().removeSlownessModifiers();
                             wp.getCooldownManager().removeDebuffCooldowns();
                         }
@@ -524,15 +528,20 @@ public class Warlords extends JavaPlugin {
                         // Checks whether the player has any remaining active Undying Army instances active.
                         if (wp.getCooldownManager().checkUndyingArmy(false) && newHealth <= 0) {
 
-                            for (Cooldown cooldown : wp.getCooldownManager().getCooldown(UndyingArmy.class)) {
-                                if (!((UndyingArmy) cooldown.getCooldownObject()).isArmyDead(wp.getUuid())) {
-                                    ((UndyingArmy) cooldown.getCooldownObject()).pop(wp.getUuid());
+                            for (RegularCooldown undyingArmyCooldown : new CooldownFilter<>(wp, RegularCooldown.class)
+                                    .filterCooldownClass(UndyingArmy.class)
+                                    .getStream()
+                                    .collect(Collectors.toList())
+                            ) {
+                                UndyingArmy undyingArmy = (UndyingArmy) undyingArmyCooldown.getCooldownObject();
+                                if (!undyingArmy.isArmyDead(wp.getUuid())) {
+                                    undyingArmy.pop(wp.getUuid());
 
                                     // Drops the flag when popped.
                                     wp.getGameState().flags().dropFlag(wp);
 
                                     // Sending the message + check if getFrom is self
-                                    if (cooldown.getFrom() == wp) {
+                                    if (undyingArmyCooldown.getFrom() == wp) {
                                         wp.sendMessage("§a\u00BB§7 " +
                                                 ChatColor.LIGHT_PURPLE +
                                                 "Your Undying Army revived you with temporary health. Fight until your death! Your health will decay by " +
@@ -540,16 +549,15 @@ public class Warlords extends JavaPlugin {
                                                 (wp.getMaxHealth() / 10) +
                                                 ChatColor.LIGHT_PURPLE +
                                                 " every second."
-                                                );
+                                        );
                                     } else {
                                         wp.sendMessage("§a\u00BB§7 " +
-                                                ChatColor.LIGHT_PURPLE +
-                                                cooldown.getFrom().getName() +
-                                                "'s Undying Army revived you with temporary health. Fight until your death! Your health will decay by " +
-                                                ChatColor.RED +
-                                                (wp.getMaxHealth() / 10) +
-                                                ChatColor.LIGHT_PURPLE +
-                                                " every second."
+                                                        ChatColor.LIGHT_PURPLE + undyingArmyCooldown.getFrom().getName() +
+                                                        "'s Undying Army revived you with temporary health. Fight until your death! Your health will decay by " +
+                                                        ChatColor.RED +
+                                                        (wp.getMaxHealth() / 10) +
+                                                        ChatColor.LIGHT_PURPLE +
+                                                        " every second."
                                                 );
                                     }
                                     Firework firework = wp.getWorld().spawn(wp.getLocation(), Firework.class);
@@ -665,22 +673,22 @@ public class Warlords extends JavaPlugin {
                             float energyGainPerTick = wp.getSpec().getEnergyPerSec() / 20f;
 
                             // Checks whether the player has Avenger's Wrath active.
-                            if (!cooldownManager.getCooldown(AvengersWrath.class).isEmpty()) {
+                            if (cooldownManager.hasCooldown(AvengersWrath.class)) {
                                 energyGainPerTick += 1;
                             }
 
                             // Checks whether the player has Inspiring Presence active.
-                            if (!cooldownManager.getCooldown(InspiringPresence.class).isEmpty()) {
+                            if (cooldownManager.hasCooldown(InspiringPresence.class)) {
                                 energyGainPerTick += .5;
                             }
 
                             // Checks whether the player has been marked by a Crusader.
-                            if (!cooldownManager.getCooldown(HolyRadianceCrusader.class).isEmpty()) {
+                            if (cooldownManager.hasCooldown(HolyRadianceCrusader.class)) {
                                 energyGainPerTick += .25;
                             }
 
                             // Checks whether the player has the Energy Powerup active.
-                            if (!cooldownManager.getCooldown(EnergyPowerUp.class).isEmpty()) {
+                            if (cooldownManager.hasCooldown(EnergyPowerUp.class)) {
                                 energyGainPerTick *= 1.4;
                             }
 
@@ -712,9 +720,9 @@ public class Warlords extends JavaPlugin {
                         Location playerPosition = wp.getLocation();
                         List<OrbsOfLife.Orb> orbs = new ArrayList<>();
                         PlayerFilter.playingGame(wp.getGame()).teammatesOf(wp).forEach(p -> {
-                            p.getCooldownManager().getCooldown(OrbsOfLife.class).forEach(cd -> {
-                                orbs.addAll(((OrbsOfLife) cd.getCooldownObject()).getSpawnedOrbs());
-                            });
+                            new CooldownFilter<>(p, PersistentCooldown.class)
+                                    .filterCooldownClassAndMapToObjectsOfClass(OrbsOfLife.class)
+                                    .forEachOrdered(orbsOfLife -> orbs.addAll(orbsOfLife.getSpawnedOrbs()));
                         });
 
                         Iterator<OrbsOfLife.Orb> itr = orbs.iterator();
@@ -779,16 +787,13 @@ public class Warlords extends JavaPlugin {
                     if (counter % 10 == 0) {
                         for (WarlordsPlayer wps : players.values()) {
                             // Soulbinding Weapon - decrementing time left on the ability.
-                            wps.getCooldownManager().getCooldown(Soulbinding.class).stream()
-                                    .map(Cooldown::getCooldownObject)
-                                    .map(Soulbinding.class::cast)
-                                    .forEach(soulbinding -> soulbinding.getSoulBindedPlayers().forEach(Soulbinding.SoulBoundPlayer::decrementTimeLeft));
-
+                            new CooldownFilter<>(wps, PersistentCooldown.class)
+                                    .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.class)
+                                    .forEachOrdered(soulbinding -> soulbinding.getSoulBindedPlayers().forEach(Soulbinding.SoulBoundPlayer::decrementTimeLeft));
                             // Soulbinding Weapon - Removing bound players.
-                            wps.getCooldownManager().getCooldown(Soulbinding.class).stream()
-                                    .map(Cooldown::getCooldownObject)
-                                    .map(Soulbinding.class::cast)
-                                    .forEach(soulbinding -> soulbinding.getSoulBindedPlayers()
+                            new CooldownFilter<>(wps, PersistentCooldown.class)
+                                    .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.class)
+                                    .forEachOrdered(soulbinding -> soulbinding.getSoulBindedPlayers()
                                             .removeIf(boundPlayer -> boundPlayer.getTimeLeft() == 0 || (boundPlayer.isHitWithSoul() && boundPlayer.isHitWithLink())));
                         }
                     }
