@@ -21,6 +21,12 @@ import java.util.stream.Collectors;
 
 public class PartyCommand implements TabExecutor {
 
+    private static final String[] partyOptions = {
+            "invite", "join", "leave", "disband", "list", "promote", "demote",
+            "kick", "remove", "transfer", "poll", "afk", "close", "open",
+            "outside", "leader", "forcejoin", "allinvite", "invitequeue",
+    };
+
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
 
@@ -407,22 +413,22 @@ public class PartyCommand implements TabExecutor {
         return true;
     }
 
-    private static final String[] partyOptions = {
-            "invite", "join", "leave", "disband", "list", "promote", "demote",
-            "kick", "remove", "transfer", "poll", "afk", "close", "open",
-            "outside", "leader", "forcejoin", "allinvite", "invitequeue",
-    };
-
     @Override
     public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] args) {
         String lastArg = args[args.length - 1];
+        List<String> output;
         if (args.length > 1) {
-            return Bukkit.getOnlinePlayers().stream()
-                    .filter(e -> e.getName().startsWith(lastArg.toLowerCase()) || e.getName().startsWith(lastArg.toUpperCase()))
+            output = Bukkit.getOnlinePlayers().stream()
+                    .filter(e -> e.getName().toLowerCase().startsWith(lastArg.toLowerCase()))
                     .map(e -> e.getName().charAt(0) + e.getName().substring(1))
                     .collect(Collectors.toList());
+            Warlords.partyManager.getPartyFromAny(((Player) commandSender).getUniqueId()).ifPresent(party -> party.getPartyPlayers().stream()
+                    .filter(PartyPlayer::isOffline)
+                    .map(partyPlayer -> Bukkit.getOfflinePlayer(partyPlayer.getUuid()).getName())
+                    .forEach(output::add));
+            return output;
         }
-        List<String> output = Bukkit.getOnlinePlayers().stream()
+        output = Bukkit.getOnlinePlayers().stream()
                 .map(HumanEntity::getName)
                 .filter(e -> e.toLowerCase().startsWith(lastArg.toLowerCase(Locale.ROOT)))
                 .collect(Collectors.toList());
@@ -430,6 +436,10 @@ public class PartyCommand implements TabExecutor {
                 .filter(e -> e.startsWith(lastArg.toLowerCase(Locale.ROOT)))
                 .map(e -> e.charAt(0) + e.substring(1).toLowerCase(Locale.ROOT))
                 .forEach(output::add);
+        Warlords.partyManager.getPartyFromAny(((Player) commandSender).getUniqueId()).ifPresent(party -> party.getPartyPlayers().stream()
+                .filter(PartyPlayer::isOffline)
+                .map(partyPlayer -> Bukkit.getOfflinePlayer(partyPlayer.getUuid()).getName())
+                .forEach(output::add));
         return output;
 
     }
