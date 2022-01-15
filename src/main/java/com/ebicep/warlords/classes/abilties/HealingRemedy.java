@@ -21,7 +21,13 @@ public class HealingRemedy extends AbstractProjectileBase {
 
     @Override
     public void updateDescription(Player player) {
-
+        description = "§7Throw a short range projectile, healing\n" +
+                "§7healing allies for §a" + format(minDamageHeal) + " §7- §a" + format(maxDamageHeal) + " §7upon impact.\n" +
+                "§7The projectile will form a small puddle that\n" +
+                "§7heals allies for §a189 §7- §a244 §7health per second.\n" +
+                "§7Lasts §63 §7seconds." +
+                "\n\n" +
+                "§7Has an optimal range of §e25 §7blocks.";
     }
 
     @Override
