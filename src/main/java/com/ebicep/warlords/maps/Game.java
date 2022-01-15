@@ -346,16 +346,16 @@ public class Game implements Runnable {
     public void run() {
         if (this.state == null) {
             this.state = new InitState(this);
-            System.out.println("DEBUG NEW STATE");
-            System.out.println("New state is " + this.state);
+            //System.out.println("DEBUG NEW STATE");
+            //System.out.println("New state is " + this.state);
             this.state.begin();
         }
         if (!gameFreeze) {
             State newState = state.run();
             if (newState != null) {
                 this.state.end();
-                System.out.println("DEBUG OLD TO NEW STATE");
-                Command.broadcastCommandMessage(Bukkit.getConsoleSender(), "New State = " + newState + " / Old State = " + this.state);
+                //System.out.println("DEBUG OLD TO NEW STATE");
+                //Command.broadcastCommandMessage(Bukkit.getConsoleSender(), "New State = " + newState + " / Old State = " + this.state);
                 this.state = newState;
                 newState.begin();
             }

@@ -37,11 +37,6 @@ public class PreLobbyState implements State, TimerDebugAble {
         timer = game.getMap().getCountdownTimerInTicks();
         Gates.changeGates(game.getMap(), false);
         //game.setPrivate(false);
-        // Debug
-        System.out.println("DEBUG IS GAME PRIVATE");
-        System.out.println("Game State = " + game.getState());
-        System.out.println("Game Players = " + game.getPlayers());
-        System.out.println("isPrivate = " + game.isPrivate());
     }
 
     @Override
