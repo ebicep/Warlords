@@ -25,6 +25,16 @@ public class FrostBolt extends AbstractProjectileBase {
     }
 
     @Override
+    protected float getSoundPitch() {
+        return 1;
+    }
+
+    @Override
+    protected float getSoundVolume() {
+        return 2;
+    }
+
+    @Override
     protected void playEffect(Location currentLocation, int animationTimer) {
         ParticleEffect.CLOUD.display(0, 0, 0, 0F, 1, currentLocation, 500);
     }

@@ -1,10 +1,14 @@
 package com.ebicep.warlords.classes.abilties;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.EffectUtils;
 import com.ebicep.warlords.util.ParticleEffect;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nonnull;
 
@@ -30,6 +34,25 @@ public class CrossVital extends AbstractAbility {
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "rogue.assassinstrike.activation", 2, 1.5f);
         }
+
+        wp.getCooldownManager().addCooldown(name, CrossVital.this.getClass(), CrossVital.class, "EARTH", 12, wp, CooldownTypes.ABILITY);
+
+        wp.getGame().getGameTasks().put(
+
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        if (!wp.getCooldownManager().getCooldown(InspiringPresence.class).isEmpty()) {
+                            wp.getSpec().getPurple().setCritMultiplier(wp.getSpec().getWeapon().getCritMultiplier() + 50);
+                            wp.getSpec().getPurple().setCritMultiplier(wp.getSpec().getRed().getCritMultiplier() + 50);
+                            wp.getSpec().getPurple().setCritMultiplier(wp.getSpec().getPurple().getCritMultiplier() + 50);
+                        } else {
+                            this.cancel();
+                        }
+                    }
+                }.runTaskTimer(Warlords.getInstance(), 0, 20),
+                System.currentTimeMillis()
+        );
 
         EffectUtils.playStarAnimation(player.getLocation(), 0.5f, ParticleEffect.FLAME);
     }

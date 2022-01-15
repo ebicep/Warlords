@@ -52,6 +52,10 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
     @Nullable
     protected abstract String getActivationSound();
 
+    protected abstract float getSoundPitch();
+
+    protected abstract float getSoundVolume();
+
     @Deprecated
     protected abstract void playEffect(@Nonnull Location currentLocation, int ticksLived);
 
@@ -252,9 +256,11 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
 
     protected void onSpawn(@Nonnull InternalProjectile projectile) {
         final String activationSound = getActivationSound();
+        final float soundVolume = getSoundVolume();
+        final float soundPitch = getSoundPitch();
         if (activationSound != null) {
             for (Player player1 : projectile.getStartingLocation().getWorld().getPlayers()) {
-                player1.playSound(projectile.getStartingLocation(), activationSound, 2.3f, 1);
+                player1.playSound(projectile.getStartingLocation(), activationSound, soundVolume, soundPitch);
             }
         }
     }

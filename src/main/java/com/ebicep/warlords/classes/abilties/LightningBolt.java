@@ -36,6 +36,16 @@ public class LightningBolt extends AbstractPiercingProjectileBase {
     }
 
     @Override
+    protected float getSoundPitch() {
+        return 1;
+    }
+
+    @Override
+    protected float getSoundVolume() {
+        return 2;
+    }
+
+    @Override
     protected boolean shouldEndProjectileOnHit(InternalProjectile projectile, Block block) {
         return true;
     }

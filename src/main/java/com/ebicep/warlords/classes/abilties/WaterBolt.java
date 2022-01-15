@@ -27,6 +27,16 @@ public class WaterBolt extends AbstractProjectileBase {
     }
 
     @Override
+    protected float getSoundPitch() {
+        return 1;
+    }
+
+    @Override
+    protected float getSoundVolume() {
+        return 2;
+    }
+
+    @Override
     protected void playEffect(Location currentLocation, int animationTimer) {
         ParticleEffect.DRIP_WATER.display(0.3f, 0.3f, 0.3f, 0.1F, 2, currentLocation, 500);
         ParticleEffect.ENCHANTMENT_TABLE.display(0, 0, 0, 0.1F, 1, currentLocation, 500);

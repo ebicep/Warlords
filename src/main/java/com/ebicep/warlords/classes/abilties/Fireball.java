@@ -25,6 +25,16 @@ public class Fireball extends AbstractProjectileBase {
     }
 
     @Override
+    protected float getSoundPitch() {
+        return 1;
+    }
+
+    @Override
+    protected float getSoundVolume() {
+        return 2;
+    }
+
+    @Override
     protected void playEffect(@Nonnull Location currentLocation, int animationTimer) {
         ParticleEffect.DRIP_LAVA.display(0, 0, 0, 0.35F, 5, currentLocation, 500);
         ParticleEffect.SMOKE_NORMAL.display(0, 0, 0, 0.001F, 7, currentLocation, 500);
