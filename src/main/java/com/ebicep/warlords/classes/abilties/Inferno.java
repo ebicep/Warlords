@@ -26,7 +26,7 @@ public class Inferno extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(WarlordsPlayer wp, Player player) {
+    public boolean onActivate(WarlordsPlayer wp, Player player) {
         Inferno tempInferno = new Inferno();
         wp.getCooldownManager().addRegularCooldown(name, "INFR", Inferno.class, tempInferno, wp, CooldownTypes.BUFF, cooldownManager -> {
         }, duration * 20);
@@ -52,5 +52,7 @@ public class Inferno extends AbstractAbility {
                 }.runTaskTimer(Warlords.getInstance(), 0, 3),
                 System.currentTimeMillis()
         );
+
+        return true;
     }
 }

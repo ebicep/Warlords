@@ -28,11 +28,11 @@ public class Vindicate extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
+    public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
         wp.subtractEnergy(energyCost);
 
         for (Player player1 : Bukkit.getOnlinePlayers()) {
-            player1.playSound(player.getLocation(), "rogue.vindicate.activation", 2, 0.8f);
+            player1.playSound(player.getLocation(), "rogue.vindicate.activation", 2, 0.7f);
             player1.playSound(player.getLocation(), "shaman.capacitortotem.pulse", 2, 0.7f);
         }
 
@@ -58,5 +58,7 @@ public class Vindicate extends AbstractAbility {
 
         EffectUtils.playHelixAnimation(player, radius, 230, 130, 5);
         EffectUtils.playCylinderAnimation(player, radius, 40, 40, 40);
+
+        return true;
     }
 }

@@ -27,7 +27,7 @@ public class LightInfusion extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(WarlordsPlayer wp, Player player) {
+    public boolean onActivate(WarlordsPlayer wp, Player player) {
         wp.subtractEnergy(energyCost);
         wp.getSpeed().addSpeedModifier("Infusion", speedBuff, duration * 20, "BASE");
         LightInfusion tempLightInfusion = new LightInfusion(cooldown, energyCost);
@@ -59,6 +59,7 @@ public class LightInfusion extends AbstractAbility {
                 System.currentTimeMillis()
         );
 
+        return true;
     }
 
     public void setDuration(int duration) {

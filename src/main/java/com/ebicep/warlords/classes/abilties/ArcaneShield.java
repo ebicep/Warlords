@@ -33,7 +33,7 @@ public class ArcaneShield extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(WarlordsPlayer wp, Player p) {
+    public boolean onActivate(WarlordsPlayer wp, Player p) {
         wp.subtractEnergy(energyCost);
         ArcaneShield tempArcaneShield = new ArcaneShield();
         wp.getCooldownManager().addRegularCooldown(name, "ARCA", ArcaneShield.class, tempArcaneShield, wp, CooldownTypes.ABILITY,
@@ -41,7 +41,7 @@ public class ArcaneShield extends AbstractAbility {
                     if (new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterCooldownClass(ArcaneShield.class).getStream().count() == 1) {
                         ((EntityLiving) ((CraftPlayer) wp.getEntity()).getHandle()).setAbsorptionHearts(0);
                     }
-                }, 6 * 20);
+                }, duration * 20);
         ((EntityLiving) ((CraftPlayer) p).getHandle()).setAbsorptionHearts(20);
         shieldHealth = maxShieldHealth;
 
@@ -66,6 +66,8 @@ public class ArcaneShield extends AbstractAbility {
                 }.runTaskTimer(Warlords.getInstance(), 0, 3),
                 System.currentTimeMillis()
         );
+
+        return true;
     }
 
     public float getShieldHealth() {

@@ -29,7 +29,7 @@ public abstract class AbstractChainBase extends AbstractAbility {
     protected abstract ItemStack getChainItem();
 
     @Override
-    public void onActivate(@Nonnull WarlordsPlayer warlordsPlayer, @Nonnull Player player) {
+    public boolean onActivate(@Nonnull WarlordsPlayer warlordsPlayer, @Nonnull Player player) {
         int hitCounter = getHitCounterAndActivate(warlordsPlayer, player);
         if (hitCounter != 0) {
             PacketPlayOutAnimation playOutAnimation = new PacketPlayOutAnimation(((CraftPlayer) player).getHandle(), 0);
@@ -37,7 +37,11 @@ public abstract class AbstractChainBase extends AbstractAbility {
             warlordsPlayer.subtractEnergy(energyCost);
 
             onHit(warlordsPlayer, player, hitCounter);
+
+            return true;
         }
+
+        return false;
     }
 
     protected void chain(Location from, Location to) {

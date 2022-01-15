@@ -46,7 +46,7 @@ public class Soulbinding extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(WarlordsPlayer wp, Player player) {
+    public boolean onActivate(WarlordsPlayer wp, Player player) {
         wp.subtractEnergy(energyCost);
         Soulbinding tempSoulBinding = new Soulbinding();
         wp.getCooldownManager().addPersistentCooldown(name, "SOUL", Soulbinding.class, tempSoulBinding, wp, CooldownTypes.ABILITY,
@@ -81,6 +81,8 @@ public class Soulbinding extends AbstractAbility {
                 }.runTaskTimer(Warlords.getInstance(), 0, 4),
                 System.currentTimeMillis()
         );
+
+        return true;
     }
 
     public List<SoulBoundPlayer> getSoulBindedPlayers() {

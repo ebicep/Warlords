@@ -37,7 +37,7 @@ public class SoulShackle extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
+    public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
         SoulShackle tempSoulShackle = new SoulShackle();
 
         for (WarlordsPlayer shackleTarget : PlayerFilter
@@ -98,39 +98,42 @@ public class SoulShackle extends AbstractAbility {
                     }
 
                 }.runTaskTimer(Warlords.getInstance(), 0, 0);
-            }
 
-            wp.getGame().getGameTasks().put(
+                wp.getGame().getGameTasks().put(
 
-                    new BukkitRunnable() {
-                        @Override
-                        public void run() {
-                            if (shackleTarget.getCooldownManager().hasCooldown(tempSoulShackle)) {
-                                Location playerLoc = shackleTarget.getLocation();
-                                Location particleLoc = playerLoc.clone();
-                                for (int i = 0; i < 10; i++) {
-                                    for (int j = 0; j < 10; j++) {
-                                        double angle = j / 10D * Math.PI * 2;
-                                        double width = 1.075;
-                                        particleLoc.setX(playerLoc.getX() + Math.sin(angle) * width);
-                                        particleLoc.setY(playerLoc.getY() + i / 5D);
-                                        particleLoc.setZ(playerLoc.getZ() + Math.cos(angle) * width);
+                        new BukkitRunnable() {
+                            @Override
+                            public void run() {
+                                if (shackleTarget.getCooldownManager().hasCooldown(tempSoulShackle)) {
+                                    Location playerLoc = shackleTarget.getLocation();
+                                    Location particleLoc = playerLoc.clone();
+                                    for (int i = 0; i < 10; i++) {
+                                        for (int j = 0; j < 10; j++) {
+                                            double angle = j / 10D * Math.PI * 2;
+                                            double width = 1.075;
+                                            particleLoc.setX(playerLoc.getX() + Math.sin(angle) * width);
+                                            particleLoc.setY(playerLoc.getY() + i / 5D);
+                                            particleLoc.setZ(playerLoc.getZ() + Math.cos(angle) * width);
 
-                                        ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(25, 25, 25), particleLoc, 500);
+                                            ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(25, 25, 25), particleLoc, 500);
+                                        }
                                     }
+                                    for (Player player1 : player.getWorld().getPlayers()) {
+                                        player1.playSound(playerLoc, Sound.DIG_SAND, 2, 2);
+                                    }
+                                } else {
+                                    this.cancel();
                                 }
-                                for (Player player1 : player.getWorld().getPlayers()) {
-                                    player1.playSound(playerLoc, Sound.DIG_SAND, 2, 2);
-                                }
-                            } else {
-                                this.cancel();
                             }
-                        }
-                    }.runTaskTimer(Warlords.getInstance(), 0, 10),
-                    System.currentTimeMillis()
-            );
+                        }.runTaskTimer(Warlords.getInstance(), 0, 10),
+                        System.currentTimeMillis()
+                );
+
+                return true;
+            }
         }
 
+        return false;
     }
 
 }

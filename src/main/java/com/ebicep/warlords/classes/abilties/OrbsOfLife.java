@@ -59,7 +59,7 @@ public class OrbsOfLife extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(WarlordsPlayer wp, Player player) {
+    public boolean onActivate(WarlordsPlayer wp, Player player) {
         wp.subtractEnergy(energyCost);
         OrbsOfLife tempOrbsOfLight = new OrbsOfLife();
         wp.getCooldownManager().addPersistentCooldown(name, "ORBS", OrbsOfLife.class, tempOrbsOfLight, wp, CooldownTypes.ABILITY, cooldownManager -> {
@@ -134,6 +134,8 @@ public class OrbsOfLife extends AbstractAbility {
                 }.runTaskTimer(Warlords.getInstance(), 0, 0),
                 System.currentTimeMillis()
         );
+
+        return true;
     }
 
     public Location generateSpawnLocation(Location location) {

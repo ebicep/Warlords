@@ -31,7 +31,7 @@ public class TimeWarp extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(WarlordsPlayer wp, Player player) {
+    public boolean onActivate(WarlordsPlayer wp, Player player) {
         wp.subtractEnergy(energyCost);
         wp.getCooldownManager().addRegularCooldown(name, "TIME", TimeWarp.class, new TimeWarp(), wp, CooldownTypes.ABILITY, cooldownManager -> {
         }, duration * 20);
@@ -111,6 +111,8 @@ public class TimeWarp extends AbstractAbility {
                 }.runTaskTimer(Warlords.getInstance(), 0, 0),
                 System.currentTimeMillis()
         );
+
+        return true;
     }
 
     public void setWarpHealPercentage(int warpHealPercentage) {

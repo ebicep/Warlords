@@ -10,6 +10,7 @@ import com.ebicep.warlords.util.PlayerFilter;
 import com.ebicep.warlords.util.Utils;
 import net.minecraft.server.v1_8_R3.PacketPlayOutAnimation;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -28,7 +29,7 @@ public abstract class AbstractStrikeBase extends AbstractAbility {
     protected abstract void onHit(@Nonnull WarlordsPlayer wp, @Nonnull Player player, @Nonnull WarlordsPlayer nearPlayer);
 
     @Override
-    public void onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
+    public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
         PlayerFilter.entitiesAround(wp, 4.8, 4.8, 4.8)
                 .aliveEnemiesOf(wp)
                 .closestFirst(wp)
@@ -46,6 +47,8 @@ public abstract class AbstractStrikeBase extends AbstractAbility {
                             wp.subtractEnergy(energyCost);
                         }
 
+                        Location particleLoc = nearPlayer.getLocation().clone().add((Math.random() * 2) - 1, 1.2 + (Math.random() * 2) - 1, (Math.random() * 2) - 1);
+
                         if (this instanceof AvengersStrike || this instanceof CrusadersStrike || this instanceof ProtectorsStrike) {
                             for (Player player1 : player.getWorld().getPlayers()) {
                                 player1.playSound(nearPlayer.getLocation(), "paladin.paladinstrike.activation", 2, 1);
@@ -53,7 +56,7 @@ public abstract class AbstractStrikeBase extends AbstractAbility {
                             for (int i = 0; i < 5; i++) {
                                 ParticleEffect.REDSTONE.display(
                                         new ParticleEffect.OrdinaryColor(255, 0, 0),
-                                        nearPlayer.getLocation().clone().add((Math.random() * 2) - 1, 1.2 + (Math.random() * 2) - 1, (Math.random() * 2) - 1),
+                                        particleLoc,
                                         500);
 
                             }
@@ -72,19 +75,19 @@ public abstract class AbstractStrikeBase extends AbstractAbility {
                             for (int i = 0; i < 7; i++) {
                                 ParticleEffect.REDSTONE.display(
                                         new ParticleEffect.OrdinaryColor(255, 0, 0),
-                                        nearPlayer.getLocation().clone().add((Math.random() * 2) - 1, 1.2 + (Math.random() * 2) - 1, (Math.random() * 2) - 1),
+                                        particleLoc,
                                         500);
 
                             }
                         } else if (this instanceof JudgementStrike) {
                             for (Player player1 : Bukkit.getOnlinePlayers()) {
-                                player1.playSound(nearPlayer.getLocation(), "warrior.revenant.orbsoflife", 2, 2);
+                                player1.playSound(nearPlayer.getLocation(), "warrior.revenant.orbsoflife", 2, 1.7f);
                                 player1.playSound(nearPlayer.getLocation(), "mage.frostbolt.activation", 2, 2);
                             }
                             for (int i = 0; i < 7; i++) {
                                 ParticleEffect.REDSTONE.display(
                                         new ParticleEffect.OrdinaryColor(255, 255, 255),
-                                        nearPlayer.getLocation().clone().add((Math.random() * 2) - 1, 1.2 + (Math.random() * 2) - 1, (Math.random() * 2) - 1),
+                                        particleLoc,
                                         500);
 
                             }
@@ -96,16 +99,17 @@ public abstract class AbstractStrikeBase extends AbstractAbility {
                             for (int i = 0; i < 7; i++) {
                                 ParticleEffect.REDSTONE.display(
                                         new ParticleEffect.OrdinaryColor(255, 255, 255),
-                                        nearPlayer.getLocation().clone().add((Math.random() * 2) - 1, 1.2 + (Math.random() * 2) - 1, (Math.random() * 2) - 1),
+                                        particleLoc,
                                         500);
 
                             }
                         }
 
                         onHit(wp, player, nearPlayer);
-
                     }
                 });
+
+        return true;
     }
 
     protected boolean standingOnConsecrate(Player owner, WarlordsPlayer standing) {

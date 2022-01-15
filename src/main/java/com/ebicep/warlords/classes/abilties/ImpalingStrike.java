@@ -20,7 +20,7 @@ public class ImpalingStrike extends AbstractStrikeBase {
     @Override
     protected void onHit(@Nonnull WarlordsPlayer wp, @Nonnull Player player, @Nonnull WarlordsPlayer nearPlayer) {
         nearPlayer.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
-        nearPlayer.getCooldownManager().addRegularCooldown("LEECH DEBUFF", "LEECH", ImpalingStrike.class, new ImpalingStrike(), wp, CooldownTypes.DEBUFF, cooldownManager -> {
+        nearPlayer.getCooldownManager().addRegularCooldown("Leech Debuff", "LEECH", ImpalingStrike.class, new ImpalingStrike(), wp, CooldownTypes.DEBUFF, cooldownManager -> {
         }, 10 * 20);
     }
 }

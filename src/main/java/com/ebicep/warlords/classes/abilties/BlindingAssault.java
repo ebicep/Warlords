@@ -3,15 +3,12 @@ package com.ebicep.warlords.classes.abilties;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.player.WarlordsPlayer;
-import com.ebicep.warlords.util.Matrix4d;
-import com.ebicep.warlords.util.PacketUtils;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -34,7 +31,7 @@ public class BlindingAssault extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
+    public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
         Location playerLoc = player.getLocation();
 
         player.setVelocity(playerLoc.getDirection().multiply(2).setY(.1));
@@ -82,5 +79,7 @@ public class BlindingAssault extends AbstractAbility {
                 }.runTaskTimer(Warlords.getInstance(), 1, 0),
                 System.currentTimeMillis()
         );
+
+        return true;
     }
 }

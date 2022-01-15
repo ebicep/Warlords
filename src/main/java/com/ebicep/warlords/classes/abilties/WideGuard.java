@@ -42,7 +42,7 @@ public class WideGuard extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
+    public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
         wp.subtractEnergy(energyCost);
         WideGuard tempWideGuard = new WideGuard();
         wp.getCooldownManager().addRegularCooldown("Wide Guard", "GUARD", WideGuard.class, tempWideGuard, wp, CooldownTypes.ABILITY, cooldownManager -> {
@@ -126,5 +126,7 @@ public class WideGuard extends AbstractAbility {
                 }.runTaskTimer(Warlords.getInstance(), 5, 4),
                 System.currentTimeMillis()
         );
+
+        return true;
     }
 }

@@ -46,7 +46,7 @@ public class HolyRadianceProtector extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(WarlordsPlayer wp, Player player) {
+    public boolean onActivate(WarlordsPlayer wp, Player player) {
 
         for (WarlordsPlayer p : PlayerFilter
                 .entitiesAround(player, markRadius, markRadius, markRadius)
@@ -172,6 +172,8 @@ public class HolyRadianceProtector extends AbstractAbility {
         Location particleLoc = player.getLocation().add(0, 1.2, 0);
         ParticleEffect.VILLAGER_HAPPY.display(1, 1, 1, 0.1F, 2, particleLoc, 500);
         ParticleEffect.SPELL.display(1, 1, 1, 0.06F, 12, particleLoc, 500);
+
+        return true;
     }
 
     private class FlyingArmorStand extends BukkitRunnable {

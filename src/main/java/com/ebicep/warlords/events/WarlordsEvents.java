@@ -18,15 +18,13 @@ import com.ebicep.warlords.maps.flags.PlayerFlagLocation;
 import com.ebicep.warlords.maps.flags.SpawnFlagLocation;
 import com.ebicep.warlords.maps.flags.WaitingFlagLocation;
 import com.ebicep.warlords.maps.state.EndState;
+import com.ebicep.warlords.maps.state.PlayingState;
 import com.ebicep.warlords.permissions.PermissionHandler;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.player.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.cooldowns.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.cooldowns.cooldowns.PersistentCooldown;
-import com.ebicep.warlords.util.ChatUtils;
-import com.ebicep.warlords.util.ItemBuilder;
-import com.ebicep.warlords.util.PacketUtils;
-import com.ebicep.warlords.util.Utils;
+import com.ebicep.warlords.util.*;
 import net.minecraft.server.v1_8_R3.EntityLiving;
 import net.minecraft.server.v1_8_R3.GenericAttributes;
 import org.bukkit.*;
@@ -94,7 +92,7 @@ public class WarlordsEvents implements Listener {
                     @Override
                     public void run() {
                         secondsGone++;
-                        if (e.getPlayer().isOnline()) {
+                        if (e.getPlayer().isOnline() || Warlords.game.getState() != wp.getGameState()) {
                             if (froze && wp.getGame().isGameFreeze()) {
                                 //to make sure no other is disconnected
                                 boolean allOnline = true;
@@ -122,6 +120,7 @@ public class WarlordsEvents implements Listener {
         } else {
             e.setQuitMessage(ChatColor.AQUA + e.getPlayer().getName() + ChatColor.GOLD + " left the lobby!");
         }
+
         if (e.getPlayer().getVehicle() != null) {
             e.getPlayer().getVehicle().remove();
         }

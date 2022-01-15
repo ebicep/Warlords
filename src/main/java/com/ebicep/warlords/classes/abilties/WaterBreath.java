@@ -35,7 +35,7 @@ public class WaterBreath extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
+    public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
         wp.subtractEnergy(energyCost);
         wp.getCooldownManager().removeDebuffCooldowns();
         wp.getSpeed().removeSlownessModifiers();
@@ -115,5 +115,7 @@ public class WaterBreath extends AbstractAbility {
                 }.runTaskTimer(Warlords.getInstance(), 0, 1),
                 System.currentTimeMillis()
         );
+
+        return true;
     }
 }

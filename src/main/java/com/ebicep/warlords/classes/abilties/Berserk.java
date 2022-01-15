@@ -27,7 +27,7 @@ public class Berserk extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(WarlordsPlayer wp, Player player) {
+    public boolean onActivate(WarlordsPlayer wp, Player player) {
         Berserk tempBerserk = new Berserk();
         wp.subtractEnergy(energyCost);
         wp.getSpeed().addSpeedModifier("Berserk", speedBuff, duration * 20, "BASE");
@@ -52,5 +52,7 @@ public class Berserk extends AbstractAbility {
                 }.runTaskTimer(Warlords.getInstance(), 0, 3),
                 System.currentTimeMillis()
         );
+
+        return true;
     }
 }

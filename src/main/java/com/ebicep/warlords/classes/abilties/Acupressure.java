@@ -31,15 +31,8 @@ public class Acupressure extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
+    public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
         Acupressure tempAcupressure = new Acupressure();
-        wp.getCooldownManager().addRegularCooldown("Acupressure", "ACU", Acupressure.class, tempAcupressure, wp, CooldownTypes.BUFF, cooldownManager -> {
-        }, duration * 20);
-
-        for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "shaman.chainlightning.impact", 2, 0.1f);
-            player1.playSound(player.getLocation(), Sound.BLAZE_DEATH, 2, 0.1f);
-        }
 
         for (WarlordsPlayer acuTarget : PlayerFilter
                 .entitiesAround(player, acuRange, acuRange, acuRange)
@@ -48,8 +41,17 @@ public class Acupressure extends AbstractAbility {
                 .limit(1)
         ) {
             if (Utils.isLookingAtChain(player, acuTarget.getEntity())) {
+
                 acuTarget.getCooldownManager().addRegularCooldown("Acupressure", "ACU", Acupressure.class, tempAcupressure, wp, CooldownTypes.BUFF, cooldownManager -> {
                 }, duration * 20);
+
+                wp.getCooldownManager().addRegularCooldown("Acupressure", "ACU", Acupressure.class, tempAcupressure, wp, CooldownTypes.BUFF, cooldownManager -> {
+                }, duration * 20);
+
+                for (Player player1 : player.getWorld().getPlayers()) {
+                    player1.playSound(player.getLocation(), "shaman.chainlightning.impact", 2, 0.1f);
+                    player1.playSound(player.getLocation(), Sound.BLAZE_DEATH, 2, 0.4f);
+                }
 
                 wp.getGame().getGameTasks().put(
 
@@ -71,8 +73,11 @@ public class Acupressure extends AbstractAbility {
                         System.currentTimeMillis()
                 );
             }
+
+            return true;
         }
 
+        return false;
     }
 
 }

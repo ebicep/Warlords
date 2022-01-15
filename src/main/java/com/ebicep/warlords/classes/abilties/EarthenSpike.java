@@ -50,7 +50,7 @@ public class EarthenSpike extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(WarlordsPlayer wp, Player player) {
+    public boolean onActivate(WarlordsPlayer wp, Player player) {
         Location location = player.getLocation();
         for (WarlordsPlayer p : PlayerFilter
                 .entitiesAround(player, radius, radius, radius)
@@ -214,6 +214,7 @@ public class EarthenSpike extends AbstractAbility {
                 break;
             }
         }
+        return true;
     }
 
 

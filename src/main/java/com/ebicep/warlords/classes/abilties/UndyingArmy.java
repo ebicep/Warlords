@@ -69,7 +69,7 @@ public class UndyingArmy extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(WarlordsPlayer wp, Player player) {
+    public boolean onActivate(WarlordsPlayer wp, Player player) {
         wp.subtractEnergy(energyCost);
         UndyingArmy tempUndyingArmy = new UndyingArmy();
         int numberOfPlayersWithArmy = 0;
@@ -167,6 +167,8 @@ public class UndyingArmy extends AbstractAbility {
         CircleEffect circle = new CircleEffect(wp.getGame(), wp.getTeam(), player.getLocation(), radius);
         circle.addEffect(new CircumferenceEffect(ParticleEffect.VILLAGER_HAPPY, ParticleEffect.REDSTONE).particlesPerCircumference(2));
         circle.playEffects();
+
+        return true;
     }
 
     public void setMaxArmyAllies(int maxArmyAllies) {

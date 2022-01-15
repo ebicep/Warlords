@@ -32,7 +32,7 @@ public class Windfury extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(WarlordsPlayer wp, Player player) {
+    public boolean onActivate(WarlordsPlayer wp, Player player) {
         wp.subtractEnergy(energyCost);
         Windfury tempWindfury = new Windfury();
         wp.getCooldownManager().addRegularCooldown(name, "FURY", Windfury.class, tempWindfury, wp, CooldownTypes.ABILITY, cooldownManager -> {
@@ -59,6 +59,8 @@ public class Windfury extends AbstractAbility {
                 }.runTaskTimer(Warlords.getInstance(), 0, 4),
                 System.currentTimeMillis()
         );
+
+        return true;
     }
 
     public boolean isFirstProc() {

@@ -31,20 +31,15 @@ public class HeartToHeart extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Throw a chain towards an ally in a §e" + radius + " §7block radius." +
-                "§7Grappling the Vindicator towards the ally. The grappled ally is" +
-                "§7granted §6" + vindDuration + " §7seconds of the VIND status effect, making them" +
-                "§7immune to de-buffs and they gain §625% §7knockback" +
+        description = "§7Throw a chain towards an ally in a §e" + radius + " §7block radius.\n" +
+                "§7Grappling the Vindicator towards the ally. The grappled ally is\n" +
+                "§7granted §6" + vindDuration + " §7seconds of the VIND status effect, making them\n" +
+                "§7immune to de-buffs and they gain §625% §7knockback\n" +
                 "resistance the duration.";
     }
 
     @Override
-    public void onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
-
-        for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "rogue.hearttoheart.activation", 2, 1);
-            player1.playSound(player.getLocation(), "rogue.hearttoheart.activation.alt", 2, 1.2f);
-        }
+    public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
 
         for (WarlordsPlayer heartTarget : PlayerFilter
                 .entitiesAround(wp, radius, radius, radius)
@@ -53,8 +48,15 @@ public class HeartToHeart extends AbstractAbility {
                 .limit(1)
         ) {
             if (Utils.isLookingAtMark(player, heartTarget.getEntity()) && Utils.hasLineOfSight(player, heartTarget.getEntity())) {
+
+                for (Player player1 : player.getWorld().getPlayers()) {
+                    player1.playSound(player.getLocation(), "rogue.hearttoheart.activation", 2, 1);
+                    player1.playSound(player.getLocation(), "rogue.hearttoheart.activation.alt", 2, 1.2f);
+                }
+
                 HeartToHeart tempHeartToHeart = new HeartToHeart();
                 wp.subtractEnergy(energyCost);
+
                 heartTarget.getCooldownManager().addRegularCooldown("Vindicate Debuff Immunity", "VIND", HeartToHeart.class, tempHeartToHeart, wp, CooldownTypes.BUFF, cooldownManager -> {
                 }, vindDuration * 20);
                 heartTarget.getCooldownManager().addRegularCooldown("KB Resistance", "KB", HeartToHeart.class, tempHeartToHeart, wp, CooldownTypes.BUFF, cooldownManager -> {
@@ -139,7 +141,11 @@ public class HeartToHeart extends AbstractAbility {
                         }
                     }
                 }.runTaskTimer(Warlords.getInstance(), 0, 1);
+
+                return true;
             }
         }
+
+        return false;
     }
 }

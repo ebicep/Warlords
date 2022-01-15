@@ -45,7 +45,7 @@ public abstract class AbstractAbility {
 
     public abstract void updateDescription(Player player);
 
-    public abstract void onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player);
+    public abstract boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player);
 
     public void boostSkill(ClassesSkillBoosts skillBoost, AbstractPlayerClass abstractPlayerClass) {
         if (!boosted) {

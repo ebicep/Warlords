@@ -29,7 +29,7 @@ public class AvengersWrath extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(WarlordsPlayer wp, Player p) {
+    public boolean onActivate(WarlordsPlayer wp, Player p) {
         AvengersWrath tempAvengersWrath = new AvengersWrath();
         wp.getCooldownManager().addRegularCooldown(name, "WRATH", AvengersWrath.class, tempAvengersWrath, wp, CooldownTypes.BUFF, cooldownManager -> {
         }, duration * 20);
@@ -54,6 +54,7 @@ public class AvengersWrath extends AbstractAbility {
                 System.currentTimeMillis()
         );
 
+        return true;
     }
 
     public int getDuration() {

@@ -2,9 +2,7 @@ package com.ebicep.warlords.classes.internal;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
-import com.ebicep.warlords.classes.abilties.WideGuard;
 import com.ebicep.warlords.player.WarlordsPlayer;
-import com.ebicep.warlords.util.PlayerFilter;
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -23,8 +21,6 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import static com.ebicep.warlords.classes.abilties.WideGuard.BUBBLE_RADIUS;
 
 public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
     private final List<PendingHit> PENDING_HITS = new ArrayList<>();
@@ -266,12 +262,14 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(WarlordsPlayer shooter, Player player) {
+    public boolean onActivate(WarlordsPlayer shooter, Player player) {
         shooter.subtractEnergy(energyCost);
         Location startingLocation = player.getEyeLocation();
         InternalProjectile projectile = new InternalProjectile(shooter, startingLocation);
         onSpawn(projectile);
         projectile.runTaskTimer(Warlords.getInstance(), 0, 1);
+
+        return true;
     }
 
     public class InternalProjectile extends BukkitRunnable {

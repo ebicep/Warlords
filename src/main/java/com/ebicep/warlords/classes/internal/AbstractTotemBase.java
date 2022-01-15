@@ -25,7 +25,7 @@ public abstract class AbstractTotemBase extends AbstractAbility {
     protected abstract void onActivation(WarlordsPlayer wp, Player player, ArmorStand totemStand);
 
     @Override
-    public void onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
+    public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
         wp.subtractEnergy(energyCost);
 
         Location standLocation = player.getLocation();
@@ -39,6 +39,8 @@ public abstract class AbstractTotemBase extends AbstractAbility {
         playSound(player, standLocation);
 
         onActivation(wp, player, totemStand);
+
+        return true;
     }
 
     private double getLocationUnderPlayer(Player player) {

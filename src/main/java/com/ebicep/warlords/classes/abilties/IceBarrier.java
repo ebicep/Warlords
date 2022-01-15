@@ -38,7 +38,7 @@ public class IceBarrier extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(WarlordsPlayer wp, Player player) {
+    public boolean onActivate(WarlordsPlayer wp, Player player) {
         IceBarrier tempIceBarrier = new IceBarrier(damageReductionPercent);
         wp.getCooldownManager().addRegularCooldown(name, "ICE", IceBarrier.class, tempIceBarrier, wp, CooldownTypes.ABILITY, cooldownManager -> {
         }, duration * 20);
@@ -63,6 +63,8 @@ public class IceBarrier extends AbstractAbility {
                 }.runTaskTimer(Warlords.getInstance(), 0, 5),
                 System.currentTimeMillis()
         );
+
+        return true;
     }
 
     public int getDamageReductionPercent() {

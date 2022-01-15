@@ -64,9 +64,9 @@ public class HammerOfLight extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(WarlordsPlayer wp, Player player) {
+    public boolean onActivate(WarlordsPlayer wp, Player player) {
 
-        if (player.getTargetBlock((HashSet<Byte>) null, 25).getType() == Material.AIR) return;
+        if (player.getTargetBlock((HashSet<Byte>) null, 25).getType() == Material.AIR) return false;
         DamageHealCircle hol = new DamageHealCircle(wp, player.getTargetBlock((HashSet<Byte>) null, 25).getLocation().add(1, 0, 1), radius, duration, minDamageHeal, maxDamageHeal, critChance, critMultiplier, name);
         hol.spawnHammer();
         hol.getLocation().add(0, 1, 0);
@@ -214,6 +214,8 @@ public class HammerOfLight extends AbstractAbility {
                 }.runTaskTimer(Warlords.getInstance(), 0, 0),
                 System.currentTimeMillis()
         );
+
+        return true;
     }
 
     public static boolean standingInHammer(WarlordsPlayer owner, Entity standing) {

@@ -19,6 +19,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.EulerAngle;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,7 +50,7 @@ public class HolyRadianceCrusader extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(WarlordsPlayer wp, Player player) {
+    public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
 
         for (WarlordsPlayer p : PlayerFilter
                 .entitiesAround(player, markRadius, markRadius, markRadius)
@@ -176,6 +177,8 @@ public class HolyRadianceCrusader extends AbstractAbility {
         Location particleLoc = player.getLocation().add(0, 1.2, 0);
         ParticleEffect.VILLAGER_HAPPY.display(1, 1, 1, 0.1F, 2, particleLoc, 500);
         ParticleEffect.SPELL.display(1, 1, 1, 0.06F, 12, particleLoc, 500);
+
+        return true;
     }
 
     private class FlyingArmorStand extends BukkitRunnable {

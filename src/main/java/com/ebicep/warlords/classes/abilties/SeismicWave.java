@@ -34,7 +34,7 @@ public class SeismicWave extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(WarlordsPlayer wp, Player player) {
+    public boolean onActivate(WarlordsPlayer wp, Player player) {
         wp.subtractEnergy(energyCost);
 
         List<List<Location>> fallingBlockLocations = new ArrayList<>();
@@ -104,6 +104,8 @@ public class SeismicWave extends AbstractAbility {
                 }.runTaskTimer(Warlords.getInstance(), 0, 0),
                 System.currentTimeMillis()
         );
+
+        return true;
     }
 
     private List<Location> getWave(Location center, int distance) {

@@ -5,7 +5,6 @@ import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 
 import com.ebicep.warlords.player.WarlordsPlayer;
-import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.EffectUtils;
 import com.ebicep.warlords.util.ParticleEffect;
 import org.bukkit.entity.Player;
@@ -30,7 +29,7 @@ public class CrossVital extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
+    public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
         CrossVital tempCrossVital = new CrossVital();
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "rogue.assassinstrike.activation", 2, 1.5f);
@@ -57,5 +56,7 @@ public class CrossVital extends AbstractAbility {
         );
 
         EffectUtils.playStarAnimation(player.getLocation(), 0.5f, ParticleEffect.FLAME);
+
+        return true;
     }
 }

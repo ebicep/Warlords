@@ -43,7 +43,7 @@ public class RecklessCharge extends AbstractAbility implements Listener {
     }
 
     @Override
-    public void onActivate(WarlordsPlayer wp, Player player) {
+    public boolean onActivate(WarlordsPlayer wp, Player player) {
         wp.subtractEnergy(energyCost);
         Location location = player.getLocation();
         location.setPitch(0);
@@ -138,6 +138,8 @@ public class RecklessCharge extends AbstractAbility implements Listener {
                 }.runTaskTimer(Warlords.getInstance(), 1, 0),
                 System.currentTimeMillis()
         );
+
+        return true;
     }
 
     @EventHandler

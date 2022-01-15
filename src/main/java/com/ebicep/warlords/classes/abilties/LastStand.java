@@ -43,7 +43,7 @@ public class LastStand extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(WarlordsPlayer wp, Player player) {
+    public boolean onActivate(WarlordsPlayer wp, Player player) {
         wp.subtractEnergy(energyCost);
         LastStand tempLastStand = new LastStand(selfDamageReductionPercent, teammateDamageReductionPercent);
         wp.getCooldownManager().addRegularCooldown(name, "LAST", LastStand.class, tempLastStand, wp, CooldownTypes.BUFF, cooldownManager -> {
@@ -93,6 +93,8 @@ public class LastStand extends AbstractAbility {
                         matrix.translateVector(player.getWorld(), distance, Math.sin(angle) * width, Math.cos(angle) * width), 500);
             }
         }
+
+        return true;
     }
 
     public float getSelfDamageReduction() {

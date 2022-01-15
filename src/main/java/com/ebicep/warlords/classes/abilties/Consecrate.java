@@ -34,7 +34,7 @@ public class Consecrate extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(WarlordsPlayer wp, Player player) {
+    public boolean onActivate(WarlordsPlayer wp, Player player) {
         DamageHealCircle cons = new DamageHealCircle(wp, player.getLocation(), radius, 5, minDamageHeal, maxDamageHeal, critChance, critMultiplier, name);
         wp.subtractEnergy(energyCost);
 
@@ -78,6 +78,8 @@ public class Consecrate extends AbstractAbility {
                 }.runTaskTimer(Warlords.getInstance(), 0, 20),
                 System.currentTimeMillis()
         );
+
+        return true;
     }
 
     public void setRadius(float radius) {

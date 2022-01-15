@@ -40,7 +40,7 @@ public class Repentance extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(WarlordsPlayer wp, Player player) {
+    public boolean onActivate(WarlordsPlayer wp, Player player) {
         wp.subtractEnergy(energyCost);
         WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
         pool += 2000;
@@ -53,6 +53,8 @@ public class Repentance extends AbstractAbility {
         }
 
         EffectUtils.playCylinderAnimation(player, 1, 255, 255, 255);
+
+        return true;
     }
 
     public float getPool() {

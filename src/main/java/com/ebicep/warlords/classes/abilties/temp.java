@@ -16,8 +16,9 @@ public class temp extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(WarlordsPlayer wp, Player player) {
+    public boolean onActivate(WarlordsPlayer wp, Player player) {
 
+        return true;
     }
 
 }

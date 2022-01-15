@@ -30,7 +30,7 @@ public class FreezingBreath extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
+    public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
         wp.subtractEnergy(energyCost);
         Location playerLoc = player.getLocation();
         playerLoc.setPitch(0);
@@ -88,5 +88,7 @@ public class FreezingBreath extends AbstractAbility {
                 }.runTaskTimer(Warlords.getInstance(), 0, 1),
                 System.currentTimeMillis()
         );
+
+        return true;
     }
 }

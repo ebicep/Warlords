@@ -7,6 +7,7 @@ import com.ebicep.warlords.classes.internal.AbstractStrikeBase;
 import com.ebicep.warlords.player.ClassesSkillBoosts;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import net.minecraft.server.v1_8_R3.PacketPlayOutAnimation;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
@@ -62,6 +63,7 @@ public abstract class AbstractPlayerClass {
             className = "Shaman";
             classNameShort = "SHA";
         }
+
         if (blue instanceof ArcaneShield) {
             ArcaneShield arcaneShield = ((ArcaneShield) blue);
             arcaneShield.setMaxShieldHealth((int) (maxHealth * (arcaneShield.getShieldPercentage() / 100f)));
@@ -101,8 +103,8 @@ public abstract class AbstractPlayerClass {
         } else if (slot == 1) {
             if (red.getCurrentCooldown() == 0) {
                 if (player.getLevel() >= red.getEnergyCost() * wp.getEnergyModifier() && abilityCD) {
-                    red.onActivate(wp, player);
-                    if (!(red instanceof AbstractChainBase)) {
+                    boolean shouldApplyCooldown = red.onActivate(wp, player);
+                    if (shouldApplyCooldown) {
                         red.setCurrentCooldown((float) (red.cooldown * wp.getCooldownModifier()));
                         sendRightClickPacket(player);
                     }
@@ -112,17 +114,19 @@ public abstract class AbstractPlayerClass {
         } else if (slot == 2) {
             if (purple.getCurrentCooldown() == 0) {
                 if (player.getLevel() >= purple.getEnergyCost() * wp.getEnergyModifier() && abilityCD) {
-                    purple.onActivate(wp, player);
-                    purple.setCurrentCooldown((float) (purple.cooldown * wp.getCooldownModifier()));
-                    sendRightClickPacket(player);
+                    boolean shouldApplyCooldown = purple.onActivate(wp, player);
+                    if (shouldApplyCooldown) {
+                        purple.setCurrentCooldown((float) (purple.cooldown * wp.getCooldownModifier()));
+                        sendRightClickPacket(player);
+                    }
                     resetAbilityCD();
                 }
             }
         } else if (slot == 3) {
             if (blue.getCurrentCooldown() == 0) {
                 if (player.getLevel() >= blue.getEnergyCost() * wp.getEnergyModifier() && abilityCD) {
-                    blue.onActivate(wp, player);
-                    if (!(blue instanceof AbstractChainBase) && !(blue instanceof Intervene)) {
+                    boolean shouldApplyCooldown = blue.onActivate(wp, player);
+                    if (shouldApplyCooldown) {
                         blue.setCurrentCooldown((float) (blue.cooldown * wp.getCooldownModifier()));
                         sendRightClickPacket(player);
                     }
@@ -131,8 +135,8 @@ public abstract class AbstractPlayerClass {
             }
         } else if (slot == 4) {
             if (orange.getCurrentCooldown() == 0 && player.getLevel() >= orange.getEnergyCost() * wp.getEnergyModifier() && abilityCD) {
-                orange.onActivate(wp, player);
-                if (!(orange instanceof HammerOfLight) && !(orange instanceof HealingRain)) {
+                boolean shouldApplyCooldown = orange.onActivate(wp, player);
+                if (shouldApplyCooldown) {
                     orange.setCurrentCooldown((float) (orange.cooldown * wp.getCooldownModifier()));
                     sendRightClickPacket(player);
                 }
@@ -170,8 +174,8 @@ public abstract class AbstractPlayerClass {
         } else if (slot == 1) {
             if (red.getCurrentCooldown() == 0) {
                 if (player.getLevel() >= red.getEnergyCost() * wp.getEnergyModifier() && abilityCD) {
-                    red.onActivate(wp, player);
-                    if (!(red instanceof AbstractChainBase)) {
+                    boolean shouldApplyCooldown = red.onActivate(wp, player);
+                    if (shouldApplyCooldown) {
                         red.setCurrentCooldown((float) (red.cooldown * wp.getCooldownModifier()));
                         sendRightClickPacket(player);
                     }
@@ -181,17 +185,19 @@ public abstract class AbstractPlayerClass {
         } else if (slot == 2) {
             if (purple.getCurrentCooldown() == 0) {
                 if (player.getLevel() >= purple.getEnergyCost() * wp.getEnergyModifier() && abilityCD) {
-                    purple.onActivate(wp, player);
-                    purple.setCurrentCooldown((float) (purple.cooldown * wp.getCooldownModifier()));
-                    sendRightClickPacket(player);
+                    boolean shouldApplyCooldown = purple.onActivate(wp, player);
+                    if (shouldApplyCooldown) {
+                        purple.setCurrentCooldown((float) (purple.cooldown * wp.getCooldownModifier()));
+                        sendRightClickPacket(player);
+                    }
                     resetAbilityCD();
                 }
             }
         } else if (slot == 3) {
             if (blue.getCurrentCooldown() == 0) {
                 if (player.getLevel() >= blue.getEnergyCost() * wp.getEnergyModifier() && abilityCD) {
-                    blue.onActivate(wp, player);
-                    if (!(blue instanceof AbstractChainBase) && !(blue instanceof Intervene)) {
+                    boolean shouldApplyCooldown = blue.onActivate(wp, player);
+                    if (shouldApplyCooldown) {
                         blue.setCurrentCooldown((float) (blue.cooldown * wp.getCooldownModifier()));
                         sendRightClickPacket(player);
                     }
@@ -201,8 +207,8 @@ public abstract class AbstractPlayerClass {
         } else if (slot == 4) {
             if (orange.getCurrentCooldown() == 0) {
                 if (player.getLevel() >= orange.getEnergyCost() * wp.getEnergyModifier() && abilityCD) {
-                    orange.onActivate(wp, player);
-                    if (!(orange instanceof HammerOfLight) && !(orange instanceof HealingRain)) {
+                    boolean shouldApplyCooldown = orange.onActivate(wp, player);
+                    if (shouldApplyCooldown) {
                         orange.setCurrentCooldown((float) (orange.cooldown * wp.getCooldownModifier()));
                         sendRightClickPacket(player);
                     }

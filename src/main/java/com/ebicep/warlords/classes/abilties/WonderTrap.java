@@ -1,7 +1,6 @@
 package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.classes.AbstractAbility;
-import com.ebicep.warlords.events.WarlordsDeathEvent;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
@@ -11,6 +10,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import javax.annotation.Nonnull;
 
 public class WonderTrap extends AbstractAbility {
+
     public WonderTrap() {
         super("Wonder Trap", 375, 454, 10, 40, 25, 175);
     }
@@ -21,8 +21,10 @@ public class WonderTrap extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
+    public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
         // WIP
+
+        return true;
     }
 
     private class Trap extends BukkitRunnable {

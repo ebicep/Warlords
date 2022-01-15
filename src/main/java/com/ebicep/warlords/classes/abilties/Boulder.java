@@ -35,7 +35,7 @@ public class Boulder extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(WarlordsPlayer wp, Player player) {
+    public boolean onActivate(WarlordsPlayer wp, Player player) {
         wp.subtractEnergy(energyCost);
 
         Location location = player.getLocation();
@@ -156,6 +156,8 @@ public class Boulder extends AbstractAbility {
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "shaman.boulder.activation", 2, 1);
         }
+
+        return true;
     }
 
     private void spawnFallingBlocks(Location impactLocation, double initialCircleRadius, int amount) {

@@ -32,7 +32,7 @@ public class Earthliving extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(WarlordsPlayer wp, Player player) {
+    public boolean onActivate(WarlordsPlayer wp, Player player) {
         wp.subtractEnergy(energyCost);
         Earthliving tempEarthliving = new Earthliving();
         wp.getCooldownManager().addRegularCooldown(name, "EARTH", Earthliving.class, tempEarthliving, wp, CooldownTypes.ABILITY, cooldownManager -> {
@@ -59,6 +59,8 @@ public class Earthliving extends AbstractAbility {
                 }.runTaskTimer(Warlords.getInstance(), 0, 4),
                 System.currentTimeMillis()
         );
+
+        return true;
     }
 
     public boolean isFirstProc() {

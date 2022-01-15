@@ -35,7 +35,7 @@ public class OrderOfEviscerate extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
+    public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
         wp.subtractEnergy(energyCost);
         wp.getCooldownManager().removeCooldown(OrderOfEviscerate.class);
         wp.getCooldownManager().addRegularCooldown("Order of Eviscerate", "ORDER", OrderOfEviscerate.class, new OrderOfEviscerate(), wp, CooldownTypes.ABILITY, cooldownManager -> {
@@ -65,5 +65,7 @@ public class OrderOfEviscerate extends AbstractAbility {
                 }.runTaskTimer(Warlords.getInstance(), 0, 1),
                 System.currentTimeMillis()
         );
+
+        return true;
     }
 }

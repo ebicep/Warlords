@@ -12,7 +12,7 @@ import java.util.HashSet;
 public class IncendiaryCurse extends AbstractAbility {
 
     public IncendiaryCurse() {
-        super("Incendiary Curse", 408, 575, 10f, 60, 25, 175);
+        super("Incendiary Curse", 408, 575, 10f, 30, 25, 175);
     }
 
     @Override
@@ -24,9 +24,9 @@ public class IncendiaryCurse extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
+    public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
 
-        if (player.getTargetBlock((HashSet<Byte>) null, 25).getType() == Material.AIR) return;
+        if (player.getTargetBlock((HashSet<Byte>) null, 25).getType() == Material.AIR) return false;
         DamageHealCircle curse = new DamageHealCircle(wp, player.getTargetBlock((HashSet<Byte>) null, 25).getLocation(), 4, 1, minDamageHeal, maxDamageHeal, critChance, critMultiplier, name);
         curse.getLocation().add(0, 1, 0);
 
@@ -51,5 +51,7 @@ public class IncendiaryCurse extends AbstractAbility {
         }
 
         wp.subtractEnergy(energyCost);
+
+        return true;
     }
 }

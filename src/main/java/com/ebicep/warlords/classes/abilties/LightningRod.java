@@ -31,7 +31,7 @@ public class LightningRod extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(WarlordsPlayer wp, Player player) {
+    public boolean onActivate(WarlordsPlayer wp, Player player) {
         wp.addEnergy(wp, name, energyRestore);
         wp.addHealingInstance(wp, name, (wp.getMaxHealth() * .3f), (wp.getMaxHealth() * .3f), critChance, critMultiplier, false, false);
 
@@ -73,5 +73,7 @@ public class LightningRod extends AbstractAbility {
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "shaman.lightningrod.activation", 2, 1);
         }
+
+        return true;
     }
 }

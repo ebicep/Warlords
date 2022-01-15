@@ -26,7 +26,7 @@ public class BloodLust extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(WarlordsPlayer wp, Player p) {
+    public boolean onActivate(WarlordsPlayer wp, Player p) {
         wp.subtractEnergy(energyCost);
         BloodLust tempBloodLust = new BloodLust();
         wp.getCooldownManager().addRegularCooldown(name, "LUST", BloodLust.class, tempBloodLust, wp, CooldownTypes.ABILITY, cooldownManager -> {
@@ -50,6 +50,8 @@ public class BloodLust extends AbstractAbility {
                 }.runTaskTimer(Warlords.getInstance(), 0, 4),
                 System.currentTimeMillis()
         );
+
+        return true;
     }
 
     public int getDamageConvertPercent() {

@@ -33,7 +33,7 @@ public class InspiringPresence extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(WarlordsPlayer wp, Player player) {
+    public boolean onActivate(WarlordsPlayer wp, Player player) {
         InspiringPresence tempPresence = new InspiringPresence();
         wp.getCooldownManager().addRegularCooldown(name, "PRES", InspiringPresence.class, tempPresence, wp, CooldownTypes.BUFF, cooldownManager -> {
         }, duration * 20);
@@ -66,6 +66,8 @@ public class InspiringPresence extends AbstractAbility {
                 }.runTaskTimer(Warlords.getInstance(), 0, 4),
                 System.currentTimeMillis()
         );
+
+        return true;
     }
 
     public float getDuration() {

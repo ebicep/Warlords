@@ -41,7 +41,7 @@ public class Intervene extends AbstractAbility {
     }
 
     @Override
-    public void onActivate(WarlordsPlayer wp, Player player) {
+    public boolean onActivate(WarlordsPlayer wp, Player player) {
         setDamagePrevented(0);
         PlayerFilter.entitiesAround(wp, radius, radius, radius)
                 .aliveTeammatesOfExcludingSelf(wp)
@@ -129,6 +129,8 @@ public class Intervene extends AbstractAbility {
                             System.currentTimeMillis()
                     );
                 });
+
+        return true;
     }
 
     public void setDamagePrevented(float damagePrevented) {
