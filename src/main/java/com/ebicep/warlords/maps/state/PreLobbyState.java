@@ -215,7 +215,7 @@ public class PreLobbyState implements State, TimerDebugAble {
                             }));
                 }
                 if (game.getPlayers().size() >= 14) {
-                    BotManager.sendMessageToNotificationChannel("[GAME] A " + (game.isPrivate() ? "" : "Public") + " **" + game.getMap().getMapName() + "** started with **" + game.getPlayers().size() + (game.getPlayers().size() == 1 ? "** player!" : "** players!"));
+                    BotManager.sendMessageToNotificationChannel("[GAME] A " + (game.isPrivate() ? "" : "Public ") + " **" + game.getMap().getMapName() + "** started with **" + game.getPlayers().size() + (game.getPlayers().size() == 1 ? "** player!" : "** players!"));
                 }
                 return new PlayingState(game);
             }
