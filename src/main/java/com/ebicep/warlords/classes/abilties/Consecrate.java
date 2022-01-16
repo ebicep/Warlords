@@ -53,7 +53,7 @@ public class Consecrate extends AbstractAbility {
 
                     @Override
                     public void run() {
-                        if (!wp.getGame().isGameFreeze()) {
+                        if (!wp.getGame().isFrozen()) {
                             cons.setDuration(cons.getDuration() - 1);
                             PlayerFilter.entitiesAround(cons.getLocation(), radius, 6, radius)
                                     .aliveEnemiesOf(wp)

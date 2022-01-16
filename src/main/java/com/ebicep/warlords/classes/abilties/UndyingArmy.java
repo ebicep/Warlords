@@ -85,7 +85,7 @@ public class UndyingArmy extends AbstractAbility {
                     new BukkitRunnable() {
                         @Override
                         public void run() {
-                            if (!wp.getGame().isGameFreeze()) {
+                            if (!wp.getGame().isFrozen()) {
                                 if (teammate.getCooldownManager().getCooldown(tempUndyingArmy).isPresent()) {
                                     if (!((UndyingArmy) teammate.getCooldownManager().getCooldown(tempUndyingArmy).get().getCooldownObject()).isArmyDead(teammate.getUuid())) {
                                         float healAmount = 200 + (teammate.getMaxHealth() - teammate.getHealth()) / 14.3f;

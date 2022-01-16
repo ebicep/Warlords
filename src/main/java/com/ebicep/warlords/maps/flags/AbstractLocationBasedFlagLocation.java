@@ -1,4 +1,4 @@
-package com.ebicep.warlords.maps.option.flags;
+package com.ebicep.warlords.maps.flags;
 
 import org.bukkit.Location;
 

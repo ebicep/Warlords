@@ -22,6 +22,8 @@ import com.ebicep.warlords.database.configuration.ApplicationConfiguration;
 import com.ebicep.warlords.database.leaderboards.LeaderboardCommand;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.maps.Game;
+import com.ebicep.warlords.maps.GameManager;
+import com.ebicep.warlords.maps.option.PowerupOption;
 import com.ebicep.warlords.menu.MenuEventListener;
 import com.ebicep.warlords.party.PartyCommand;
 import com.ebicep.warlords.party.PartyListener;
@@ -223,7 +225,7 @@ public class Warlords extends JavaPlugin {
     }
 
 
-    public static Game game;
+    public GameManager gameManager;
     public static boolean holographicDisplaysEnabled;
 
     public static boolean citizensEnabled;
@@ -292,7 +294,7 @@ public class Warlords extends JavaPlugin {
         readWeaponConfig();
         saveWeaponConfig();
 
-        game = new Game();
+        gameManager = new GameManager();
 
         holographicDisplaysEnabled = Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays");
 
@@ -340,8 +342,14 @@ public class Warlords extends JavaPlugin {
         }
 
         gameLoop();
-        getServer().getScheduler().runTaskTimer(this, game, 1, 1);
         getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Plugin is enabled");
+        
+        
+        for (String command : this.getDescription().getCommands().keySet()) {
+            if (getCommand(command).getExecutor() == this) {
+                getServer().getConsoleSender().sendMessage(ChatColor.GOLD + "[Warlords] Warning, command " + command + " is specified in plugin.yml, but not defined in the plugins");
+            }
+        }
     }
 
 
@@ -361,7 +369,7 @@ public class Warlords extends JavaPlugin {
         server.getPlayerMetadata().invalidateAll(this);
 
         RemoveEntities.removeArmorStands(0);
-        game.clearAllPlayers();
+        gameManager.close();
 
         if (holographicDisplaysEnabled) {
             HolographicDisplaysAPI.get(instance).getHolograms().forEach(Hologram::delete);
@@ -401,7 +409,7 @@ public class Warlords extends JavaPlugin {
                         }
 
                         // Checks whether the game is paused.
-                        if (wp.getGame().isGameFreeze()) {
+                        if (wp.getGame().isFrozen()) {
                             continue;
                         }
 
@@ -674,7 +682,7 @@ public class Warlords extends JavaPlugin {
                             }
 
                             // Checks whether the player has the Energy Powerup active.
-                            if (!cooldownManager.getCooldown(EnergyPowerUp.class).isEmpty()) {
+                            if (!cooldownManager.getCooldown(PowerupOption.PowerupType.ENERGY.class).isEmpty()) {
                                 energyGainPerTick *= 1.4;
                             }
 
@@ -796,7 +804,7 @@ public class Warlords extends JavaPlugin {
                         for (WarlordsPlayer wps : players.values()) {
 
                             // Checks whether the game is paused.
-                            if (wps.getGame().isGameFreeze()) {
+                            if (wps.getGame().isFrozen()) {
                                 continue;
                             }
 
@@ -879,7 +887,7 @@ public class Warlords extends JavaPlugin {
                     if (counter % 50 == 0) {
                         for (WarlordsPlayer warlordsPlayer : players.values()) {
 
-                            if (warlordsPlayer.getGame().isGameFreeze()) {
+                            if (warlordsPlayer.getGame().isFrozen()) {
                                 continue;
                             }
 

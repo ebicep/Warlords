@@ -1,4 +1,4 @@
-package com.ebicep.warlords.maps.option.flags;
+package com.ebicep.warlords.maps.flags;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.events.WarlordsDeathEvent;
@@ -81,7 +81,7 @@ public class FlagManager implements Listener {
     }
 
     public void tick() {
-        if(!gameState.getGame().isGameFreeze()) {
+        if(!gameState.getGame().isFrozen()) {
             if (++scoreTick >= 4) {
                 checkScore(Team.RED);
                 checkScore(Team.BLUE);

@@ -49,7 +49,7 @@ public class TimeWarp extends AbstractAbility {
 
                     @Override
                     public void run() {
-                        if (!wp.getGame().isGameFreeze()) {
+                        if (!wp.getGame().isFrozen()) {
 
                             if (wp.isDeath() || wp.getGame().getState() instanceof EndState) {
                                 counter = 0;

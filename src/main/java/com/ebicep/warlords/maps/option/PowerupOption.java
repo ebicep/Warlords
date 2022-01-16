@@ -6,6 +6,9 @@ import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.powerups.DamagePowerUp;
 import com.ebicep.warlords.powerups.EnergyPowerUp;
 import com.ebicep.warlords.powerups.SpeedPowerUp;
+import com.ebicep.warlords.util.GameRunnable;
+import com.ebicep.warlords.util.PlayerFilter;
+import javax.annotation.Nonnull;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
@@ -14,6 +17,9 @@ import org.bukkit.inventory.ItemStack;
 
 public class PowerupOption implements Option {
 
+    public static int DEFAULT_TIME_TO_SPAWN = 60;
+    public static int DEFAULT_MAX_COOLDOWN = 45 * 20;
+
     private Location location;
     private PowerupType type;
     private ArmorStand entity;
@@ -21,16 +27,66 @@ public class PowerupOption implements Option {
     private int cooldown;
     private int maxCooldown;
     private int timeToSpawn;
-    private boolean hasRegistered = false;
+    private boolean hasStarted = false;
+    @Nonnull
+    private Game game;
+    public PowerupOption(Location location, PowerupType type) {
+        this(location, type, type.getDuration(), DEFAULT_MAX_COOLDOWN, DEFAULT_TIME_TO_SPAWN);
+    }
 
-    @Override
-    public void register(Game game) {
-        hasRegistered = true;
+    public PowerupOption(Location location, PowerupType type, int duration, int maxCooldown, int timeToSpawn) {
+        this.location = location;
+        this.type = type;
+        this.duration = duration;
+        this.maxCooldown = maxCooldown;
+        this.timeToSpawn = timeToSpawn;
     }
 
     @Override
-    public void tick(Game game) {
-        Option.super.tick(game); //To change body of generated methods, choose Tools | Templates.
+    public void register(Game game) {
+        this.game = game;
+    }
+
+    @Override
+    public void start(Game game) {
+        hasStarted = true;
+        new GameRunnable(game) {
+            @Override
+            public void run() {
+                if (cooldown == 0) {
+                    PlayerFilter.entitiesAround(location, 1.4, 1.4, 1.4)
+                            .isAlive()
+                            .first((nearPlayer) -> {
+                                type.onPickUp(PowerupOption.this, nearPlayer);
+                                entity.remove();
+                                entity = null;
+                                cooldown = maxCooldown;
+                            });
+                } else {
+                    cooldown -= 1;
+                    if (cooldown == 0) {
+                        spawn();
+                    }
+                }
+            }
+
+        }.runTaskTimer(0, 20);
+    }
+    
+    
+    public void spawn() {
+        entity = location.getWorld().spawn(location.clone().add(0, -1.5, 0), ArmorStand.class);
+
+        type.setNameAndItem(this, entity);
+
+        entity.setGravity(false);
+        entity.setVisible(false);
+        entity.setCustomNameVisible(true);
+
+        game.forEachOnlinePlayer((player, team) -> {
+            entry.playSound(location, "ctf.powerup.spawn", 2, 1);
+        });
+
     }
 
     public Location getLocation() {
@@ -38,8 +94,8 @@ public class PowerupOption implements Option {
     }
 
     public void setLocation(Location location) {
-        if (hasRegistered) {
-            throw new IllegalStateException("Cannot change location after registering");
+        if (hasStarted) {
+            throw new IllegalStateException("Cannot change location after starting");
         }
         this.location = location;
     }
@@ -49,8 +105,8 @@ public class PowerupOption implements Option {
     }
 
     public void setType(PowerupType type) {
-        if (hasRegistered) {
-            throw new IllegalStateException("Cannot change type after registering");
+        if (hasStarted) {
+            throw new IllegalStateException("Cannot change type after starting");
         }
         this.type = type;
     }
@@ -92,10 +148,10 @@ public class PowerupOption implements Option {
     }
 
     public enum PowerupType {
-        SPEED() {
+        SPEED(10) {
             @Override
             public void onPickUp(PowerupOption option, WarlordsPlayer warlordsPlayer) {
-                warlordsPlayer.getCooldownManager().addCooldown("Speed", SpeedPowerUp.class, this, "SPEED", option.getDuration(), warlordsPlayer, CooldownTypes.BUFF);
+                warlordsPlayer.getCooldownManager().addCooldown("Speed", this.getClass(), this, "SPEED", option.getDuration(), warlordsPlayer, CooldownTypes.BUFF);
                 warlordsPlayer.sendMessage("§6You activated the §e§lSPEED §6powerup! §a+40% §6Speed for §a10 §6seconds!");
                 warlordsPlayer.getSpeed().addSpeedModifier("Speed Powerup", 40, 10 * 20, "BASE");
 
@@ -110,12 +166,15 @@ public class PowerupOption implements Option {
                 armorStand.setHelmet(new ItemStack(Material.WOOL, 1, (short) 4));
             }
         },
-        HEALING() {
+        HEALING(0) {
 
             @Override
             public void onPickUp(PowerupOption option, WarlordsPlayer warlordsPlayer) {
                 warlordsPlayer.setPowerUpHeal(true);
-                warlordsPlayer.sendMessage("§6You activated the §a§lHEALING §6powerup! §a+8% §6Health per second for §a5 §6seconds!");
+                warlordsPlayer.sendMessage(String.format(
+                        "§6You activated the §a§lHEALING §6powerup! §a+8%% §6Health per second for §a%d §6seconds!",
+                        option.getDuration()
+                ));
             }
 
             @Override
@@ -124,12 +183,15 @@ public class PowerupOption implements Option {
                 armorStand.setHelmet(new ItemStack(Material.WOOL, 1, (short) 13));
             }
         },
-        ENERGY() {
+        ENERGY(30) {
 
             @Override
             public void onPickUp(PowerupOption option, WarlordsPlayer warlordsPlayer) {
-                warlordsPlayer.getCooldownManager().addCooldown("Energy", EnergyPowerUp.class, this, "ENERGY", option.getDuration(), warlordsPlayer, CooldownTypes.BUFF);
-                warlordsPlayer.sendMessage("§6You activated the §lENERGY §6powerup! §a+40% §6Energy gain for §a30 §6seconds!");
+                warlordsPlayer.getCooldownManager().addCooldown("Energy", this.getClass(), this, "ENERGY", option.getDuration(), warlordsPlayer, CooldownTypes.BUFF);
+                warlordsPlayer.sendMessage(String.format(
+                        "§6You activated the §lENERGY §6powerup! §a+40%% §6Energy gain for §a%d §6seconds!",
+                        option.getDuration()
+                ));
             }
 
             @Override
@@ -138,12 +200,15 @@ public class PowerupOption implements Option {
                 armorStand.setHelmet(new ItemStack(Material.WOOL, 1, (short) 1));
             }
         },
-        DAMAGE() {
+        DAMAGE(30) {
 
             @Override
             public void onPickUp(PowerupOption option, WarlordsPlayer warlordsPlayer) {
-                warlordsPlayer.getCooldownManager().addCooldown("Damage", DamagePowerUp.class, this, "DMG", option.getDuration(), warlordsPlayer, CooldownTypes.BUFF);
-                warlordsPlayer.sendMessage("§6You activated the §c§lDAMAGE §6powerup! §a+20% §6Damage for §a30 §6seconds!");
+                warlordsPlayer.getCooldownManager().addCooldown("Damage", this.getClass(), this, "DMG", option.getDuration(), warlordsPlayer, CooldownTypes.BUFF);
+                warlordsPlayer.sendMessage(String.format(
+                        "§6You activated the §c§lDAMAGE §6powerup! §a+20%% §6Damage for §a%d §6seconds!",
+                        option.getDuration()
+                ));
             }
 
             @Override
@@ -152,6 +217,15 @@ public class PowerupOption implements Option {
                 armorStand.setHelmet(new ItemStack(Material.WOOL, 1, (short) 14));
             }
         },;
+        private final int duration;
+
+        PowerupType(int duration) {
+            this.duration = duration;
+        }
+
+        public int getDuration() {
+            return duration;
+        }
 
         public abstract void onPickUp(PowerupOption option, WarlordsPlayer warlordsPlayer);
 

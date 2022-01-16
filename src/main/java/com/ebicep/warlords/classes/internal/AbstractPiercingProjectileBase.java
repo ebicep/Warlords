@@ -309,7 +309,7 @@ double lerp(double a, double b, double target) {
 
         @Override
         public void run() {
-            if (!shooter.getGame().isGameFreeze()) {
+            if (!shooter.getGame().isFrozen()) {
 
                 updateSpeed(this);
                 MovingObjectPosition hasCollided = checkCollisionAndMove(this, currentLocation, speed, shooter);

@@ -61,7 +61,7 @@ public class HealingRain extends AbstractAbility {
 
             @Override
             public void run() {
-                if (!wp.getGame().isGameFreeze()) {
+                if (!wp.getGame().isFrozen()) {
                     if (wp.isAlive() && player.isSneaking() && !wasSneaking) {
                         player.playSound(player.getLocation(), "mage.timewarp.teleport", 2, 1.35f);
                         player.sendMessage("§7You moved your §aHealing Rain §7to your current location.");
@@ -79,7 +79,7 @@ public class HealingRain extends AbstractAbility {
 
                     @Override
                     public void run() {
-                        if (!wp.getGame().isGameFreeze()) {
+                        if (!wp.getGame().isFrozen()) {
                             PlayerFilter.entitiesAround(hr.getLocation(), hr.getRadius(), hr.getRadius(), hr.getRadius())
                                     .aliveTeammatesOf(wp)
                                     .forEach((teammateInRain) -> {
@@ -118,7 +118,7 @@ public class HealingRain extends AbstractAbility {
 
                     @Override
                     public void run() {
-                        if (!wp.getGame().isGameFreeze()) {
+                        if (!wp.getGame().isFrozen()) {
                             hr.setDuration(hr.getDuration() - 1);
                         }
                     }

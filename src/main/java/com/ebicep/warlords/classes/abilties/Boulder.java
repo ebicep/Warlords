@@ -53,7 +53,7 @@ public class Boulder extends AbstractAbility {
 
                     @Override
                     public void run() {
-                        if (!wp.getGame().isGameFreeze()) {
+                        if (!wp.getGame().isFrozen()) {
 
                             quarterStep(false);
                             quarterStep(false);

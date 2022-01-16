@@ -4,10 +4,8 @@ import com.ebicep.customentities.npc.traits.GameStartTrait;
 import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.maps.Game;
-import com.ebicep.warlords.maps.GameMap;
 import com.ebicep.warlords.maps.Gates;
 import com.ebicep.warlords.maps.Team;
-import com.ebicep.warlords.party.Party;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.util.ChatUtils;
 import org.bukkit.Bukkit;
@@ -17,7 +15,6 @@ import org.bukkit.entity.Player;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.util.ChatUtils.sendMessage;
@@ -47,7 +44,7 @@ public class PreLobbyState implements State, TimerDebugAble {
     @Override
     public State run() {
         int players = game.playersCount();
-        if (players >= game.getMap().getMinPlayers() || game.isPrivate()) {
+        if (players >= game.getMap().getMinPlayers()) {
             if (timer % 20 == 0) {
                 int time = timer / 20;
                 game.forEachOnlinePlayer((player, team) -> {
@@ -250,7 +247,7 @@ public class PreLobbyState implements State, TimerDebugAble {
         }
 
         Classes classes = Warlords.getPlayerSettings(player.getUniqueId()).getSelectedClass();
-        if (game.playersCount() >= game.getMap().getMinPlayers() || game.isPrivate()) {
+        if (game.playersCount() >= game.getMinPlayers()) {
             customScoreboard.giveNewSideBar(init,
                     ChatColor.GRAY + dateString,
                     "  ",

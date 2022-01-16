@@ -1,15 +1,15 @@
 package com.ebicep.warlords.maps;
 
-import com.ebicep.warlords.maps.state.PreLobbyState;
+import com.ebicep.warlords.util.LocationFactory;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.bukkit.OfflinePlayer;
 
-public class GameManager {
+public class GameManager implements AutoCloseable {
 
     private final List<GameHolder> games = new ArrayList<>();
     private final LinkedList<QueueEntry> queue = new LinkedList<>();
@@ -18,19 +18,24 @@ public class GameManager {
     private GameHolder findSuitableGame(@Nonnull QueueEntry entry) {
         GameHolder selected = null;
         int newGamesSeen = 0;
-        for(GameHolder next : games) {
+        for (GameHolder next : games) {
             if (entry.getMap() != null && entry.getMap() != next.getMap()) {
                 continue; // Skip if the user wants to join a game with a different map
             }
-            if (entry.getCategory()!= null && entry.getCategory() != next.getMap().getCategory()) {
+            if (entry.getCategory() != null && next.getMap().getCategories().contains(entry.getCategory())) {
                 continue; // Skip if the user wants to join a game with a different category
             }
             if (next.getGame() != null && next.getGame().playersCount() == 0) {
+                // If a game has 0 players assigned, force end it
                 next.forceEndGame();
             }
             if (next.getGame() == null) {
+                int computedMaxPlayers = next.getMap().getMaxPlayers();
+                for(GameAddon addon : entry.getRequestedGameAddons()) {
+                    computedMaxPlayers = addon.getMaxPlayers(next.getMap(), computedMaxPlayers);
+                }
                 // The game has not started yet
-                if (next.getMap().getMaxPlayers() < entry.getPlayers().size()) {
+                if (computedMaxPlayers < entry.getPlayers().size()) {
                     continue; // The party would not fit into this map
                 }
                 newGamesSeen++;
@@ -44,14 +49,17 @@ public class GameManager {
                 }
                 // No else statement for above if, we already found a better candidate map
             } else {
-                if (!(next.getGame().getState() instanceof PreLobbyState)) {
+                if (!next.getGame().acceptsPeople()) {
                     continue;
                 }
-                if (!entry.getRequestedGameAddons().equals(next.getGame().getAddons()) || entry.getRequestedGameAddons().contains(GameAddon.PRIVATE_GAME)) {
+                if (!entry.getRequestedGameAddons().equals(next.getGame().getAddons())) {
                     continue;
                 }
-                if (next.getMap().getMaxPlayers() - next.getGame().playersCount() < entry.getPlayers().size()) {
+                if (next.getGame().getMaxPlayers() - next.getGame().playersCount() < entry.getPlayers().size()) {
                     continue; // The party would not fit into this map
+                }
+                if (entry.getCategory() != null && next.getGame().getCategory() != entry.getCategory()) {
+                    continue; // Skip if the user wants to join a game with a different category
                 }
                 if (selected == null) {
                     selected = next;
@@ -89,9 +97,9 @@ public class GameManager {
             }
             // We found a game, mark the entry as removed
             itr.remove();
-            Game game = selected.optionallyStartNewGame(entry.requestedGameAddons);
+            Game game = selected.optionallyStartNewGame(entry.getRequestedGameAddons(), entry.getCategory());
             for (OfflinePlayer player : entry.getPlayers()) {
-                game.addPlayer(player, Team.RED);
+                game.addPlayer(player);
             }
         };
     }
@@ -104,10 +112,39 @@ public class GameManager {
     }
     private void queue(QueueEntry entry) {
         queue.add(entry);
+        runQueue();
+    }
+    private QueueResult queueNow(QueueEntry entry) {
+        Consumer<QueueResult> onResult = entry.getOnResult();
+        AtomicReference<QueueResult> res = new AtomicReference<>(null);
+        entry.setOnResult(result -> res.set(result));
+        queue.add(entry);
+        runQueue();
+        QueueResult val = res.get();
+        if (val == null) {
+            queue.remove(entry);
+            val = QueueResult.EXPIRED;
+        }
+        if(onResult != null) {
+            onResult.accept(val);
+        }
+        return val;
     }
 
-    public void queuePeople(List<OfflinePlayer> players, long expire, Runnable onFailure, Runnable onSuccess, boolean privateGame) {
+    public QueueEntryBuilder newEntry(List<OfflinePlayer> players) {
+        return new QueueEntryBuilder(players);
+    }
 
+    public AsyncQueueEntryBuilder newEntry(List<OfflinePlayer> players, @Nonnull Consumer<QueueResult> onResult) {
+        return new AsyncQueueEntryBuilder(players, onResult);
+    }
+    
+
+    @Override
+    public void close() {
+        for(QueueEntry entry : queue) {
+            
+        }
     }
 
     private static class GameHolder {
@@ -119,10 +156,14 @@ public class GameManager {
         private final GameMap map;
         
         @Nonnull
+        private final LocationFactory locations;
+        
+        @Nonnull
         private final String name;
 
-        public GameHolder(GameMap map, String name) {
+        public GameHolder(GameMap map, LocationFactory locations, String name) {
             this.map = map;
+            this.locations = locations;
             this.name = name;
         }
 
@@ -136,16 +177,25 @@ public class GameManager {
         }
 
         private void forceEndGame() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            game.close();
         }
 
         @Nonnull
-        private Game optionallyStartNewGame(EnumSet<GameAddon> requestedGameAddons) {
+        private Game optionallyStartNewGame(@Nonnull EnumSet<GameAddon> requestedGameAddons, @Nullable MapCategory category) {
             if (game == null) {
-                game = new Game(requestedGameAddons);
+                MapCategory newCategory = category != null ? category :
+                        map.getCategories().get((int) (Math.random() * map.getCategories().size()));
+                game = new Game(requestedGameAddons, map, newCategory, locations);
             }
             if (!game.getAddons().equals(requestedGameAddons)) {
-                throw new IllegalArgumentException('[' + name + "] The requested game addons do not match the actaul game addons: " + requestedGameAddons + " vs " + game.getAddons());
+                throw new IllegalArgumentException(
+                        '[' + name + "] The requested game addons do not match the actaul game addons: " + requestedGameAddons + " vs " + game.getAddons()
+                );
+            }
+            if (!game.getCategory().equals(category)) {
+                throw new IllegalArgumentException(
+                        '[' + name + "] The requested game category do not match the actaul game category: " + category + " vs " + game.getCategory()
+                );
             }
             return game;
         }
@@ -165,7 +215,7 @@ public class GameManager {
         @Nullable
         private final GameMap map;
         @Nullable
-        private final Consumer<QueueResult> onResult;
+        private Consumer<QueueResult> onResult;
         private final int priority;
         private final int insertionId;
 
@@ -178,9 +228,9 @@ public class GameManager {
                 @Nullable Consumer<QueueResult> onResult,
                 int priority
         ) {
-            this.players = players;
+            this.players = Objects.requireNonNull(players, "players");
             this.expireTime = expiresTime;
-            this.requestedGameAddons = requestedGameAddons;
+            this.requestedGameAddons = Objects.requireNonNull(requestedGameAddons, "requestedGameAddons");
             this.category = category;
             this.map = map;
             this.onResult = onResult;
@@ -216,6 +266,10 @@ public class GameManager {
             return onResult;
         }
 
+        public void setOnResult(Consumer<QueueResult> onResult) {
+            this.onResult = onResult;
+        }
+
         @Override
         public int compareTo(QueueEntry o) {
             int c = Integer.compare(this.priority, o.priority);
@@ -228,9 +282,128 @@ public class GameManager {
     }
 
     public enum QueueResult {
-        READY,
-        EXPIRED,
-        CANCELLED,
-        REPLACED,
+        READY(true),
+        EXPIRED(false),
+        CANCELLED(false),
+        REPLACED(false),
+        TOO_BIG(false),
+        ;
+        private final boolean success;
+
+        private QueueResult(boolean success) {
+            this.success = success;
+        }
+
+        public boolean isSuccess() {
+            return success;
+        }
+    }
+    
+    public class QueueEntryBuilder {
+
+        @Nonnull
+        protected List<OfflinePlayer> players;
+        @Nonnull
+        protected EnumSet<GameAddon> requestedGameAddons = EnumSet.noneOf(GameAddon.class);
+        @Nullable
+        protected MapCategory category = null;
+        @Nullable
+        protected GameMap map = null;
+        protected int priority = 0;
+
+        public QueueEntryBuilder(@Nonnull List<OfflinePlayer> players) {
+            this.players = players;
+        }
+
+        public QueueEntryBuilder setPlayers(@Nonnull List<OfflinePlayer> players) {
+            this.players = players;
+            return this;
+        }
+
+        public QueueEntryBuilder setRequestedGameAddons(@Nonnull EnumSet<GameAddon> requestedGameAddons) {
+            this.requestedGameAddons = requestedGameAddons;
+            return this;
+        }
+
+        public QueueEntryBuilder setCategory(@Nullable MapCategory category) {
+            this.category = category;
+            return this;
+        }
+
+        public QueueEntryBuilder setMap(@Nullable GameMap map) {
+            this.map = map;
+            return this;
+        }
+
+        public QueueEntryBuilder setPriority(int priority) {
+            this.priority = priority;
+            return this;
+        }
+
+        @Nonnull
+        public List<OfflinePlayer> getPlayers() {
+            return players;
+        }
+
+        @Nonnull
+        public EnumSet<GameAddon> getRequestedGameAddons() {
+            return requestedGameAddons;
+        }
+
+        @Nullable
+        public MapCategory getCategory() {
+            return category;
+        }
+
+        @Nullable
+        public GameMap getMap() {
+            return map;
+        }
+
+        public int getPriority() {
+            return priority;
+        }
+
+        @Nonnull
+        public QueueResult queueNow() {
+            return GameManager.this.queueNow(new GameManager.QueueEntry(players, Long.MIN_VALUE, requestedGameAddons, category, map, null, priority));
+        }
+
+    }
+    
+    public class AsyncQueueEntryBuilder extends QueueEntryBuilder {
+        @Nonnull
+        private Consumer<GameManager.QueueResult> onResult;
+        private long expiresTime = Long.MAX_VALUE;
+
+        public AsyncQueueEntryBuilder(List<OfflinePlayer> players, @Nonnull Consumer<QueueResult> onResult) {
+            super(players);
+            this.onResult = onResult;
+        }
+
+        public QueueEntryBuilder setExpiresTime(long expiresTime) {
+            this.expiresTime = expiresTime;
+            return this;
+        }
+
+        public QueueEntryBuilder setOnResult(@Nonnull Consumer<GameManager.QueueResult> onResult) {
+            this.onResult = onResult;
+            return this;
+        }
+
+        @Nonnull
+        public Consumer<QueueResult> getOnResult() {
+            return onResult;
+        }
+
+        public long getExpiresTime() {
+            return expiresTime;
+        }
+
+        public void queue() {
+            GameManager.this.queue(new GameManager.QueueEntry(players, expiresTime, requestedGameAddons, category, map, onResult, priority));
+        }
     }
 }
+
+

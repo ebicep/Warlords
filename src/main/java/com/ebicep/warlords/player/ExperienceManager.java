@@ -4,6 +4,7 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.FutureMessageManager;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.maps.GameAddon;
 import com.ebicep.warlords.util.ChatUtils;
 import com.ebicep.warlords.util.NumberFormat;
 import org.bson.Document;
@@ -98,7 +99,7 @@ public class ExperienceManager {
         if (!recalculate && cachedPlayerExpSummary.containsKey(warlordsPlayer.getUuid()) && cachedPlayerExpSummary.get(warlordsPlayer.getUuid()) != null) {
             return cachedPlayerExpSummary.get(warlordsPlayer.getUuid());
         }
-        boolean isCompGame = warlordsPlayer.getGame().isPrivate();
+        boolean isCompGame = warlordsPlayer.getGame().getAddons().contains(GameAddon.PRIVATE_GAME);
         boolean won = !warlordsPlayer.getGameState().isForceEnd() && warlordsPlayer.getGameState().getStats(warlordsPlayer.getTeam()).points() > warlordsPlayer.getGameState().getStats(warlordsPlayer.getTeam().enemy()).points();
         long winLossExp = won ? 500 : 250;
         long kaExp = 5L * (warlordsPlayer.getTotalKills() + warlordsPlayer.getTotalAssists());

@@ -90,7 +90,7 @@ public class DeathsDebt extends AbstractTotemBase {
 
                 @Override
                 public void run() {
-                    if (!wp.getGame().isGameFreeze()) {
+                    if (!wp.getGame().isFrozen()) {
 
                         if (wp.isDeath()) {
                             totemStand.remove();

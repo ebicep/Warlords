@@ -1,6 +1,7 @@
 package com.ebicep.warlords.maps.state;
 
 import javax.annotation.Nullable;
+import org.bukkit.OfflinePlayer;
 
 public interface State {
 
@@ -20,4 +21,9 @@ public interface State {
      * Called when this state is ending
      */
     public void end();
+    
+    public default void onPlayerJoinGame(OfflinePlayer player) {
+    }
+    public default void onPlayerQuitGame(OfflinePlayer player) {
+    }
 }

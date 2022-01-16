@@ -86,7 +86,7 @@ public class HammerOfLight extends AbstractAbility {
 
                     @Override
                     public void run() {
-                        if (!wp.getGame().isGameFreeze()) {
+                        if (!wp.getGame().isFrozen()) {
 
                             if (counter % 20 == 0) {
                                 hol.setDuration(hol.getDuration() - 1);
@@ -134,7 +134,7 @@ public class HammerOfLight extends AbstractAbility {
 
                     @Override
                     public void run() {
-                        if (!wp.getGame().isGameFreeze()) {
+                        if (!wp.getGame().isFrozen()) {
 
                             if (wp.isAlive() && player.isSneaking() && !wasSneaking) {
                                 tempHammerOfLight.setCrownOfLight(true);

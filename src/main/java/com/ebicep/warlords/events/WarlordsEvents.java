@@ -12,10 +12,10 @@ import com.ebicep.warlords.database.leaderboards.LeaderboardManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.maps.Team;
-import com.ebicep.warlords.maps.option.flags.GroundFlagLocation;
-import com.ebicep.warlords.maps.option.flags.PlayerFlagLocation;
-import com.ebicep.warlords.maps.option.flags.SpawnFlagLocation;
-import com.ebicep.warlords.maps.option.flags.WaitingFlagLocation;
+import com.ebicep.warlords.maps.flags.GroundFlagLocation;
+import com.ebicep.warlords.maps.flags.PlayerFlagLocation;
+import com.ebicep.warlords.maps.flags.SpawnFlagLocation;
+import com.ebicep.warlords.maps.flags.WaitingFlagLocation;
 import com.ebicep.warlords.maps.state.EndState;
 import com.ebicep.warlords.permissions.PermissionHandler;
 import com.ebicep.warlords.player.*;
@@ -81,40 +81,6 @@ public class WarlordsEvents implements Listener {
                 wp.updatePlayerReference(null);
             }
             e.setQuitMessage(wp.getColoredNameBold() + ChatColor.GOLD + " left the game!");
-            //only pause for comp games
-            if (Warlords.game.isPrivate()) {
-                new BukkitRunnable() {
-                    int secondsGone = 0;
-                    boolean froze = false;
-
-                    @Override
-                    public void run() {
-                        secondsGone++;
-                        if (e.getPlayer().isOnline()) {
-                            if (froze && wp.getGame().isGameFreeze()) {
-                                //to make sure no other is disconnected
-                                boolean allOnline = true;
-                                for (UUID uuid : wp.getGame().getPlayers().keySet()) {
-                                    if (Bukkit.getPlayer(uuid) == null) {
-                                        allOnline = false;
-                                        break;
-                                    }
-                                }
-                                if (allOnline) {
-                                    wp.getGame().freeze(ChatColor.YELLOW + "Missing player detected!", true);
-                                }
-                            }
-                            this.cancel();
-                            // 15 for precaution
-                        } else if (secondsGone >= 15 && !froze) {
-                            if (!wp.getGame().isGameFreeze()) {
-                                wp.getGame().freeze(ChatColor.YELLOW + "Missing player detected!", true);
-                            }
-                            froze = true;
-                        }
-                    }
-                }.runTaskTimer(Warlords.getInstance(), 1, 20);
-            }
         } else {
             e.setQuitMessage(ChatColor.AQUA + e.getPlayer().getName() + ChatColor.GOLD + " left the lobby!");
         }
@@ -197,9 +163,6 @@ public class WarlordsEvents implements Listener {
                 e.getPlayer().setAllowFlight(false);
             }
             e.setJoinMessage(wp.getColoredNameBold() + ChatColor.GOLD + " rejoined the game!");
-            if (wp.getGame().isGameFreeze()) {
-                wp.getGame().freezePlayer(e.getPlayer(), "");
-            }
         } else {
             //checking if in game lobby
             if (Warlords.game.players().noneMatch(uuidTeamEntry -> uuidTeamEntry.getKey().equals(e.getPlayer().getUniqueId()))) {
@@ -262,7 +225,7 @@ public class WarlordsEvents implements Listener {
             Player attacker = (Player) e.getDamager();
             WarlordsPlayer wpAttacker = Warlords.getPlayer(attacker);
             WarlordsPlayer wpVictim = Warlords.getPlayer(e.getEntity());
-            if (wpAttacker != null && wpAttacker.isEnemyAlive(wpVictim) && !wpAttacker.getGame().isGameFreeze()) {
+            if (wpAttacker != null && wpAttacker.isEnemyAlive(wpVictim) && !wpAttacker.getGame().isFrozen()) {
                 if (attacker.getInventory().getHeldItemSlot() == 0 && wpAttacker.getHitCooldown() == 0) {
                     wpAttacker.setHitCooldown(12);
                     wpAttacker.subtractEnergy(wpAttacker.getSpec().getEnergyOnHit() * -1);
@@ -318,7 +281,7 @@ public class WarlordsEvents implements Listener {
 
         if (action == Action.RIGHT_CLICK_BLOCK || action == Action.RIGHT_CLICK_AIR) {
             ItemStack itemHeld = player.getItemInHand();
-            if (wp != null && wp.isAlive() && !wp.getGame().isGameFreeze()) {
+            if (wp != null && wp.isAlive() && !wp.getGame().isFrozen()) {
                 if (player.getInventory().getHeldItemSlot() == 7 && itemHeld.getType() == Material.GOLD_BARDING && player.getVehicle() == null && wp.getHorseCooldown() <= 0) {
                     if (!Utils.isMountableZone(location) || Utils.blocksInFrontOfLocation(location)) {
                         player.sendMessage(ChatColor.RED + "You can't mount here!");
@@ -422,7 +385,7 @@ public class WarlordsEvents implements Listener {
         int slot = e.getNewSlot();
         WarlordsPlayer wp = Warlords.getPlayer(e.getPlayer());
         if (wp != null) {
-            if (!wp.getGame().isGameFreeze()) {
+            if (!wp.getGame().isFrozen()) {
                 if (Warlords.getPlayerSettings(wp.getUuid()).getHotKeyMode() && (slot == 1 || slot == 2 || slot == 3 || slot == 4)) {
                     wp.getSpec().onRightClickHotKey(wp, e.getPlayer(), slot);
                     e.setCancelled(true);
@@ -478,7 +441,7 @@ public class WarlordsEvents implements Listener {
     @EventHandler
     public void onHorseJump(HorseJumpEvent e) {
         if (Warlords.hasPlayer((OfflinePlayer) e.getEntity().getPassenger())) {
-            if (Objects.requireNonNull(Warlords.getPlayer(e.getEntity().getPassenger())).getGame().isGameFreeze()) {
+            if (Objects.requireNonNull(Warlords.getPlayer(e.getEntity().getPassenger())).getGame().isFrozen()) {
                 e.setCancelled(true);
             }
         }
@@ -486,7 +449,7 @@ public class WarlordsEvents implements Listener {
 
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent e) {
-        if (Warlords.hasPlayer(e.getPlayer()) && Objects.requireNonNull(Warlords.getPlayer(e.getPlayer())).getGame().isGameFreeze()) {
+        if (Warlords.hasPlayer(e.getPlayer()) && Objects.requireNonNull(Warlords.getPlayer(e.getPlayer())).getGame().isFrozen()) {
             if (e.getPlayer().getVehicle() == null) {
                 e.setTo(e.getFrom());
             } else {

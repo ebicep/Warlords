@@ -76,7 +76,7 @@ public class EarthenSpike extends AbstractAbility {
 
                             @Override
                             public void run() {
-                                if (!wp.getGame().isGameFreeze()) {
+                                if (!wp.getGame().isFrozen()) {
 
                                     earthenSpikeBlock.addDuration();
 

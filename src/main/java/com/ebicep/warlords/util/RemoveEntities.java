@@ -1,5 +1,6 @@
 package com.ebicep.warlords.util;
 
+import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.GameMap;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.ArmorStand;
@@ -9,7 +10,7 @@ import org.bukkit.entity.Player;
 
 public class RemoveEntities {
 
-    public static void doRemove(GameMap map) {
+    public static void doRemove(Game game) {
         map.getBlueFlag().getWorld().getEntities().stream().filter(entity -> !(entity instanceof Player)).forEach(Entity::remove);
         map.getRedFlag().getWorld().getEntities().stream().filter(entity -> !(entity instanceof Player)).forEach(Entity::remove);
         // add more later

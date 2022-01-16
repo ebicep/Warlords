@@ -10,10 +10,10 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.events.WarlordsDeathEvent;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Team;
-import com.ebicep.warlords.maps.option.flags.FlagLocation;
-import com.ebicep.warlords.maps.option.flags.FlagManager;
-import com.ebicep.warlords.maps.option.flags.GroundFlagLocation;
-import com.ebicep.warlords.maps.option.flags.PlayerFlagLocation;
+import com.ebicep.warlords.maps.flags.FlagLocation;
+import com.ebicep.warlords.maps.flags.FlagManager;
+import com.ebicep.warlords.maps.flags.GroundFlagLocation;
+import com.ebicep.warlords.maps.flags.PlayerFlagLocation;
 import com.ebicep.warlords.maps.state.PlayingState;
 import com.ebicep.warlords.util.*;
 import net.minecraft.server.v1_8_R3.EntityLiving;

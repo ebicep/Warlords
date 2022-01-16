@@ -10,12 +10,13 @@ import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.events.WarlordsPointsChangedEvent;
 import com.ebicep.warlords.maps.Game;
+import com.ebicep.warlords.maps.GameAddon;
 import com.ebicep.warlords.maps.Gates;
 import com.ebicep.warlords.maps.Team;
-import com.ebicep.warlords.maps.option.flags.FlagManager;
-import com.ebicep.warlords.maps.option.flags.GroundFlagLocation;
-import com.ebicep.warlords.maps.option.flags.PlayerFlagLocation;
-import com.ebicep.warlords.maps.option.flags.SpawnFlagLocation;
+import com.ebicep.warlords.maps.flags.FlagManager;
+import com.ebicep.warlords.maps.flags.GroundFlagLocation;
+import com.ebicep.warlords.maps.flags.PlayerFlagLocation;
+import com.ebicep.warlords.maps.flags.SpawnFlagLocation;
 import com.ebicep.warlords.player.CustomScoreboard;
 import com.ebicep.warlords.player.ExperienceManager;
 import com.ebicep.warlords.player.PlayerSettings;
@@ -71,11 +72,6 @@ public class PlayingState implements State, TimerDebugAble {
         resetStats();
     }
 
-    @Nullable
-    private FlagManager flags = null;
-    @Nullable
-    private BukkitTask powerUps = null;
-
     public PlayingState(@Nonnull Game game) {
         this.game = game;
     }
@@ -130,15 +126,6 @@ public class PlayingState implements State, TimerDebugAble {
     }
 
     @Nonnull
-    @SuppressWarnings("null")
-    public FlagManager flags() {
-        if (this.flags == null) {
-            throw new IllegalStateException("Cannot access flag sub component, state not enabled");
-        }
-        return this.flags;
-    }
-
-    @Nonnull
     public Game getGame() {
         return game;
     }
@@ -147,11 +134,9 @@ public class PlayingState implements State, TimerDebugAble {
     @SuppressWarnings("null")
     public void begin() {
         this.resetTimer();
-        this.forceEnd = false;
         this.gateTimer = GATE_TIMER;
         this.powerupTimer = POWERUP_TIMER;
         RemoveEntities.doRemove(this.game.getMap());
-        this.flags = new FlagManager(this, game.getMap().getRedFlag(), game.getMap().getBlueFlag());
 
         this.game.forEachOfflinePlayer((player, team) -> {
             PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
@@ -226,42 +211,6 @@ public class PlayingState implements State, TimerDebugAble {
         if (gateTimer >= 0) {
             gateTimer--;
             if (gateTimer % 20 == 0) {
-                int remaining = gateTimer / 20;
-                game.forEachOnlinePlayer((player, team) -> {
-                    player.playSound(player.getLocation(), remaining == 0 ? Sound.WITHER_SPAWN : Sound.NOTE_STICKS, 1, 1);
-                    String number;
-                    if (remaining >= 8) {
-                        number = ChatColor.GREEN.toString();
-                    } else if (remaining >= 4) {
-                        number = ChatColor.YELLOW.toString();
-                    } else {
-                        number = ChatColor.RED.toString();
-                    }
-                    number += remaining;
-                    PacketUtils.sendTitle(player, number, "", 0, 40, 0);
-                });
-                switch (remaining) {
-                    case 0:
-                        Gates.changeGates(game.getMap(), true);
-                        game.forEachOnlinePlayer((player, team) -> {
-                            sendMessage(player, false, ChatColor.YELLOW + "Gates opened! " + ChatColor.RED + "FIGHT!");
-                            PacketUtils.sendTitle(player, ChatColor.GREEN + "GO!", ChatColor.YELLOW + "Steal and capture the enemy flag!", 0, 40, 20);
-
-                            Utils.resetPlayerMovementStatistics(player);
-                        });
-                        break;
-                    case 1:
-                    case 2:
-                    case 3:
-                    case 4:
-                    case 5:
-                    case 10:
-                        game.forEachOnlinePlayer((player, team) -> {
-                            String s = remaining == 1 ? "" : "s";
-                            sendMessage(player, false, ChatColor.YELLOW + "The gates will fall in " + ChatColor.RED + remaining + ChatColor.YELLOW + " second" + s + "!");
-                        });
-                        break;
-                }
             }
         }
         if (powerupTimer >= 0) {
@@ -279,20 +228,13 @@ public class PlayingState implements State, TimerDebugAble {
     @Override
     @SuppressWarnings("null")
     public void end() {
-        if (this.flags != null) {
-            this.flags.stop();
-        }
-        if (this.powerUps != null) {
-            this.powerUps.cancel();
-            this.powerUps = null;
-        }
 
         Warlords.getPlayers().forEach(((uuid, warlordsPlayer) -> warlordsPlayer.removeGrave()));
 
         System.out.println(" ----- GAME END ----- ");
         System.out.println("RecordGames = " + RecordGamesCommand.recordGames);
         System.out.println("Imposter = " + ImposterCommand.enabled);
-        System.out.println("Private = " + game.isPrivate());
+        System.out.println("Private = " + game.getAddons().contains(GameAddon.PRIVATE_GAME));
         System.out.println("Force End = " + forceEnd);
         System.out.println("Player Count = " + game.playersCount());
         System.out.println("Timer = " + timer);
@@ -301,7 +243,7 @@ public class PlayingState implements State, TimerDebugAble {
         float highestDamage = players.stream().sorted(Comparator.comparing(WarlordsPlayer::getTotalDamage).reversed()).collect(Collectors.toList()).get(0).getTotalDamage();
         float highestHealing = players.stream().sorted(Comparator.comparing(WarlordsPlayer::getTotalHealing).reversed()).collect(Collectors.toList()).get(0).getTotalHealing();
         //PUBS
-        if (!game.isPrivate() && !ImposterCommand.enabled && !forceEnd && game.playersCount() >= 12) {
+        if (!game.getAddons().contains(GameAddon.PRIVATE_GAME) && !ImposterCommand.enabled && !forceEnd && game.playersCount() >= 12) {
             String gameEnd = "[GAME] A Public game ended with ";
             if (getBluePoints() > getRedPoints()) {
                 BotManager.sendMessageToNotificationChannel(gameEnd + "**BLUE** winning " + getBluePoints() + " to " + getRedPoints());
@@ -336,7 +278,7 @@ public class PlayingState implements State, TimerDebugAble {
         }
         //END GAME
         else {
-            if (game.isPrivate() && game.playersCount() >= 6 && timer <= 12000) {
+            if (game.getAddons().contains(GameAddon.PRIVATE_GAME)&& game.playersCount() >= 6 && timer <= 12000) {
                 DatabaseGame.addGame(PlayingState.this, false);
                 System.out.println(ChatColor.GREEN + "[Warlords] This game was added to the database but player information remained the same");
             } else {
@@ -360,6 +302,7 @@ public class PlayingState implements State, TimerDebugAble {
         this.timer = game.getMap().getGameTimerInTicks();
         this.pointLimit = ENDING_SCORE_LIMIT;
         this.overTimeActive = false;
+        this.forceEnd = false;
     }
 
     private EndState getEndState(@Nullable Team winner) {

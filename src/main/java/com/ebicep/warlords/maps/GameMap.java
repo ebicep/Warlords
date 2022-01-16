@@ -1,12 +1,20 @@
 package com.ebicep.warlords.maps;
 
+import com.ebicep.warlords.maps.option.Option;
+import com.ebicep.warlords.maps.option.PowerupOption;
+import com.ebicep.warlords.maps.state.PreLobbyState;
+import com.ebicep.warlords.maps.state.State;
 import com.ebicep.warlords.util.LocationBuilder;
+import com.ebicep.warlords.util.LocationFactory;
+import java.util.ArrayList;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.function.BiConsumer;
 
 // MAPS:
 // "Crossfire"
@@ -203,78 +211,70 @@ public enum GameMap {
             "Debug",
             96,
             1,
-            1800 * 20,
-            30 * 20,
-            "",
-            MapCategory.DEBUG,
+            "WLDebug",
+            MapCategory.DEBUG
+    ) {
+        @Override
+        public List<Option> initMap(MapCategory category, LocationFactory loc, List<GameAddon> addons) {
+            List<Option> options = new ArrayList<>();
+            options.add(new PowerupOption())
+        }
+        
+    }
+    ;
 
-            new Location(Bukkit.getWorld("WLDebug"), 699.5, 8.5, 184.5), // BLUE DAMAGE
-            new Location(Bukkit.getWorld("WLDebug"), 699.5, 8.5, 188.5), // RED DAMAGE
-
-            new Location(Bukkit.getWorld("WLDebug"), 699.5, 8.5, 192.5), // BLUE SPEED
-            new Location(Bukkit.getWorld("WLDebug"), 699.5, 8.5, 196.5), // RED SPEED
-
-            new Location(Bukkit.getWorld("WLDebug"), 699.5, 8.5, 200.5), // BLUE HEALING
-            new Location(Bukkit.getWorld("WLDebug"), 699.5, 8.5, 204.5), // RED HEALING
-
-            new Location(Bukkit.getWorld("WLDebug"), 727.5, 8.5, 200.5), // BLUE LOBBY SPAWN
-            new Location(Bukkit.getWorld("WLDebug"), 727.5, 8.5, 196.5), // RED LOBBY SPAWN
-
-            new Location(Bukkit.getWorld("WLDebug"), 727.5, 8.5, 196.5), // BLUE RESPAWN
-            new Location(Bukkit.getWorld("WLDebug"), 727.5, 8.5, 196.5), // RED RESPAWN
-
-            new Location(Bukkit.getWorld("WLDebug"), 703.5, 8.5, 212.5), // BLUE FLAG
-            new Location(Bukkit.getWorld("WLDebug"), 720.5, 8.5, 212.5), // RED FLAG
-
-            Arrays.asList(
-                    new Cuboid(Bukkit.getWorld("WLDebug"), 713, 7, 195, 713, 10, 198) // BLUE GATE
-            )
-    );
+//            new Location(Bukkit.getWorld("WLDebug"), 699.5, 8.5, 184.5), // BLUE DAMAGE
+//            new Location(Bukkit.getWorld("WLDebug"), 699.5, 8.5, 188.5), // RED DAMAGE
+//
+//            new Location(Bukkit.getWorld("WLDebug"), 699.5, 8.5, 192.5), // BLUE SPEED
+//            new Location(Bukkit.getWorld("WLDebug"), 699.5, 8.5, 196.5), // RED SPEED
+//
+//            new Location(Bukkit.getWorld("WLDebug"), 699.5, 8.5, 200.5), // BLUE HEALING
+//            new Location(Bukkit.getWorld("WLDebug"), 699.5, 8.5, 204.5), // RED HEALING
+//
+//            new Location(Bukkit.getWorld("WLDebug"), 727.5, 8.5, 200.5), // BLUE LOBBY SPAWN
+//            new Location(Bukkit.getWorld("WLDebug"), 727.5, 8.5, 196.5), // RED LOBBY SPAWN
+//
+//            new Location(Bukkit.getWorld("WLDebug"), 727.5, 8.5, 196.5), // BLUE RESPAWN
+//            new Location(Bukkit.getWorld("WLDebug"), 727.5, 8.5, 196.5), // RED RESPAWN
+//
+//            new Location(Bukkit.getWorld("WLDebug"), 703.5, 8.5, 212.5), // BLUE FLAG
+//            new Location(Bukkit.getWorld("WLDebug"), 720.5, 8.5, 212.5), // RED FLAG
+//
+//            Arrays.asList(
+//                    new Cuboid(Bukkit.getWorld("WLDebug"), 713, 7, 195, 713, 10, 198) // BLUE GATE
+//            )
+//    );
 
     private final String mapName;
     private final int maxPlayers;
     private final int minPlayers;
     private final int gameTimerInTicks;
     private final int countdownTimerInTicks;
-    private final Location damagePowerupBlue;
-    private final Location damagePowerupRed;
-    private final Location speedPowerupBlue;
-    private final Location speedPowerupRed;
-    private final Location healingPowerupBlue;
-    private final Location healingPowerupRed;
-    private final Location blueLobbySpawnPoint;
-    private final Location redLobbySpawnPoint;
-    private final Location blueRespawn;
-    private final Location redRespawn;
-    private final Location blueFlag;
-    private final Location redFlag;
     private final String mapDirPath;
-    private final List<Cuboid> fenceGates;
-    private final MapCategory mapCategory;
+    private final List<MapCategory> mapCategory;
 
-    GameMap(String mapName, int maxPlayers, int minPlayers, int gameTime, int countdown, String mapPath, MapCategory mapCategory, Location damagePowerupBlue, Location damagePowerupRed,
-            Location speedPowerupBlue, Location speedPowerupRed, Location healingPowerupBlue, Location healingPowerupRed, Location blueSpawnPoint, Location redSpawnPoint, Location blueRespawn, Location redRespawn, Location blueFlag, Location redFlag, List<Cuboid> fenceGates) {
-
+    GameMap(String mapName, int maxPlayers, int minPlayers, int gameTime, int countdown, String mapDirPath, MapCategory ... mapCategory) {
         this.mapName = mapName;
         this.maxPlayers = maxPlayers;
         this.minPlayers = minPlayers;
         this.gameTimerInTicks = gameTime;
         this.countdownTimerInTicks = countdown;
-        this.mapDirPath = mapPath;
-        this.damagePowerupBlue = damagePowerupBlue;
-        this.damagePowerupRed = damagePowerupRed;
-        this.speedPowerupBlue = speedPowerupBlue;
-        this.speedPowerupRed = speedPowerupRed;
-        this.healingPowerupBlue = healingPowerupBlue;
-        this.healingPowerupRed = healingPowerupRed;
-        this.blueLobbySpawnPoint = blueSpawnPoint;
-        this.redLobbySpawnPoint = redSpawnPoint;
-        this.blueRespawn = blueRespawn;
-        this.redRespawn = redRespawn;
-        this.blueFlag = blueFlag;
-        this.redFlag = redFlag;
-        this.fenceGates = fenceGates;
-        this.mapCategory = mapCategory;
+        this.mapDirPath = mapDirPath;
+        this.mapCategory = Collections.unmodifiableList(Arrays.asList(mapCategory));
+    }
+    
+    /**
+     * Constructs the game instance
+     * @param category The map category to construct (for maps with multiple configurations)
+     * @param loc The base location to construct the map
+     * @param addons The used addons
+     * @return The initial list of options
+     */
+    public abstract List<Option> initMap(MapCategory category, LocationFactory loc, List<GameAddon> addons);
+    
+    public State initialState(Game game) {
+        return new PreLobbyState(game);
     }
 
     public String getMapName() {
@@ -285,99 +285,22 @@ public enum GameMap {
         return maxPlayers;
     }
 
-    public Location getDamagePowerup(@Nonnull Team team) {
-        return team == Team.RED  ? damagePowerupRed : damagePowerupBlue;
-    }
-
     public int getMinPlayers() {
         return minPlayers;
-    }
-
-    public Location getSpeedPowerup(@Nonnull Team team) {
-        return team == Team.RED  ? speedPowerupRed : speedPowerupBlue;
-    }
-
-    public Location getHealingPowerup(@Nonnull Team team) {
-        return team == Team.RED  ? healingPowerupRed : healingPowerupBlue;
     }
 
     public int getGameTimerInTicks() {
         return gameTimerInTicks;
     }
-
-    public Location getLobbySpawnPoint(@Nonnull Team team) {
-        return team == Team.RED  ? redLobbySpawnPoint : blueLobbySpawnPoint;
-    }
-
     public int getCountdownTimerInTicks() {
         return countdownTimerInTicks;
-    }
-
-    public Location getRespawn(@Nonnull Team team) {
-        return team == Team.RED  ? redRespawn : blueRespawn;
     }
 
     public String getMapDirPath() {
         return mapDirPath;
     }
 
-    public Location getFlag(@Nonnull Team team) {
-        return team == Team.RED  ? redFlag : blueFlag;
-    }
-
-    public Location getDamagePowerupBlue() {
-        return damagePowerupBlue;
-    }
-
-    public Location getDamagePowerupRed() {
-        return damagePowerupRed;
-    }
-
-    public Location getSpeedPowerupBlue() {
-        return speedPowerupBlue;
-    }
-
-    public Location getSpeedPowerupRed() {
-        return speedPowerupRed;
-    }
-
-    public Location getHealingPowerupBlue() {
-        return healingPowerupBlue;
-    }
-
-    public Location getHealingPowerupRed() {
-        return healingPowerupRed;
-    }
-
-    public Location getBlueLobbySpawnPoint() {
-        return blueLobbySpawnPoint;
-    }
-
-    public Location getRedLobbySpawnPoint() {
-        return redLobbySpawnPoint;
-    }
-
-    public Location getBlueRespawn() {
-        return blueRespawn;
-    }
-
-    public Location getRedRespawn() {
-        return redRespawn;
-    }
-
-    public Location getBlueFlag() {
-        return blueFlag;
-    }
-
-    public Location getRedFlag() {
-        return redFlag;
-    }
-
-    public List<Cuboid> getFenceGates() {
-        return fenceGates;
-    }
-
-    public MapCategory getCategory() {
+    public List<MapCategory> getCategories() {
         return mapCategory;
     }
 }

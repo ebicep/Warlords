@@ -76,7 +76,7 @@ public class HolyRadiance extends AbstractAbility {
 
         @Override
         public void run() {
-            if (!owner.getGame().isGameFreeze()) {
+            if (!owner.getGame().isFrozen()) {
 
                 if (this.target.isDead()) {
                     this.cancel();

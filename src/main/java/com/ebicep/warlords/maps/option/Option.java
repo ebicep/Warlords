@@ -13,7 +13,8 @@ public interface Option {
      * yield undefined behavior.
      * @param game The game 
      */
-    public void register(@Nonnull Game game);
+    public default void register(@Nonnull Game game) {
+    }
     /**
      * Runs after the register phase, used to "bake" the internal variables,
      * getting faster speeds. Options should not attempt to register any
@@ -25,25 +26,16 @@ public interface Option {
     public default void bake(@Nonnull Game game) {
     }
     /**
+     * Called when the game is started (For a typical game, a transition to the <code>PlayingState</code>). Use this method to start your long running tasks
+     * @param game The game instance
+     */
+    public default void start(@Nonnull Game game) {
+    }
+    /**
      * Unregisters this option fro, a game. Note that even though an Option is
      * unregistered, registering it again may give undefined behavior
      * @param game The game 
      */
     public default void unregister(@Nonnull Game game) {
-    }
-    /**
-     * Checks if this option is allowed to run in pause mode.
-     * @implNote Returns false by default
-     * @return true if allowed to run in false mode
-     */
-    public default boolean runInPauseMode() {
-        return false;
-    }
-    /**
-     * Execute a single tick of this option
-     * @implNote Does nothing by default
-     * @param game The game
-     */
-    public default void tick(@Nonnull Game game) {
     }
 }

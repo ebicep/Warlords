@@ -71,7 +71,7 @@ public class HealingTotem extends AbstractTotemBase {
 
                     @Override
                     public void run() {
-                        if (!wp.getGame().isGameFreeze()) {
+                        if (!wp.getGame().isFrozen()) {
 
                             if (timeLeft != 0) {
                                 Location initParticleLoc = totemStand.getLocation().clone().add(0, 1.6, 0);
