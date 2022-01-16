@@ -6,6 +6,8 @@ import com.ebicep.warlords.commands.debugcommands.TestCommand;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.cooldowns.TextCooldown;
+import com.ebicep.warlords.util.EffectUtils;
+import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -31,15 +33,16 @@ public class WonderTrap extends AbstractAbility {
 
     @Override
     public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
+        WonderTrap tempTrap = new WonderTrap();
 
         for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "rogue.wondertrap.explosion", 2, 1.75f);
+            player1.playSound(player.getLocation(), "rogue.hearttoheart.activation", 2, 0.6f);
         }
 
         Trap trap = new Trap(wp.getLocation(), wp, 200, 40, 3);
         trap.runTaskTimer(Warlords.getInstance(), 0, 0);
 
-        TextCooldown textCooldown = new TextCooldown("Wonder Trap", "TRAP", WonderTrap.class, null, wp, CooldownTypes.ABILITY, cooldownManager -> {
+        TextCooldown textCooldown = new TextCooldown("Wonder Trap", "TRAP", WonderTrap.class, tempTrap, wp, CooldownTypes.ABILITY, cooldownManager -> {
         }, "2");
         wp.getCooldownManager().addCooldown(textCooldown);
 
@@ -63,7 +66,7 @@ public class WonderTrap extends AbstractAbility {
                         break;
                 }
 
-                if (counter >= 2 && player.isSneaking()) {
+                if (counter > 2 && player.isSneaking() && trap.isCanEndEarly()) {
                     trap.cancel();
                     this.cancel();
                     textCooldown.setRemove(true);
@@ -113,6 +116,8 @@ public class WonderTrap extends AbstractAbility {
                         player1.playSound(trapStand.getLocation(), "rogue.wondertrap.explosion", 2, 1.75f);
                     }
 
+                    EffectUtils.playStarAnimation(trapStand.getLocation().add(0, -2, 0), 3, ParticleEffect.FIREWORKS_SPARK);
+
                     PlayerFilter.entitiesAround(trapStand, trapRadius, trapRadius, trapRadius)
                             .aliveEnemiesOf(trapOwner)
                             .forEach((trapTarget) -> {
@@ -128,6 +133,11 @@ public class WonderTrap extends AbstractAbility {
                                 final Location loc = trapStand.getLocation();
                                 final Vector v = loc.toVector().subtract(loc.toVector()).normalize().multiply(-1.1).setY(0.15);
                                 trapTarget.setVelocity(v);
+
+                                WonderTrap tempTrap = new WonderTrap();
+
+                                trapTarget.getCooldownManager().addRegularCooldown("KB Increase", "KB", WonderTrap.class, tempTrap, trapOwner, CooldownTypes.DEBUFF, cooldownManager -> {
+                                }, 10 * 20);
                             });
                     this.cancel();
                 }

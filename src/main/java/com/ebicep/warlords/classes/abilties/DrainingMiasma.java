@@ -5,8 +5,10 @@ import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.util.EffectUtils;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
+import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
@@ -38,12 +40,27 @@ public class DrainingMiasma extends AbstractAbility {
     public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
         wp.subtractEnergy(energyCost);
 
+        for (Player player1 : player.getWorld().getPlayers()) {
+            player1.playSound(player.getLocation(), "rogue.drainingmiasma.activation", 2, 1.8f);
+            player1.playSound(player.getLocation(), "shaman.earthlivingweapon.activation", 2, 0.65f);
+        }
+
+        EffectUtils.playCylinderAnimation(player, 6, 30, 200, 30);
+        EffectUtils.playSphereAnimation(player, 6, ParticleEffect.SLIME, 1);
+
         DrainingMiasma tempDrainingMiasma = new DrainingMiasma();
         PlayerFilter.entitiesAround(wp, 6, 6, 6)
                 .aliveEnemiesOf(wp)
                 .forEach((miasmaTarget) -> {
                     miasmaTarget.getCooldownManager().addRegularCooldown("Draining Miasma", "MIASMA", DrainingMiasma.class, tempDrainingMiasma, wp, CooldownTypes.DEBUFF, cooldownManager -> {
                     }, duration * 20);
+
+                    Location lineLocation = player.getLocation().clone().add(0, 1, 0);
+                    lineLocation.setDirection(lineLocation.toVector().subtract(miasmaTarget.getLocation().add(0, 1, 0).toVector()).multiply(-1));
+                    for (int i = 0; i < Math.floor(player.getLocation().distance(miasmaTarget.getLocation())) * 2; i++) {
+                        ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(30, 200, 30), lineLocation, 500);
+                        lineLocation.add(lineLocation.getDirection().multiply(.5));
+                    }
 
                     wp.getGame().getGameTasks().put(
 
@@ -58,8 +75,8 @@ public class DrainingMiasma extends AbstractAbility {
                                         miasmaTarget.addDamageInstance(wp, "Draining Miasma", healthDamage, healthDamage, -1, 100, false);
                                         totalDamage += healthDamage;
 
-                                        for (Player player1 : player.getWorld().getPlayers()) {
-                                            player1.playSound(player.getLocation(), Sound.FIRE_IGNITE, 2, 0.4f);
+                                        for (Player player1 : miasmaTarget.getWorld().getPlayers()) {
+                                            player1.playSound(miasmaTarget.getLocation(), Sound.FIRE_IGNITE, 2, 0.4f);
                                         }
 
                                         for (int i = 0; i < 3; i++) {
