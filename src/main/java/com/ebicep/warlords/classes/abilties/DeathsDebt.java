@@ -7,7 +7,7 @@ import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.effects.circle.DoubleLineEffect;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
-import com.ebicep.warlords.player.cooldowns.cooldowns.CooldownFilter;
+import com.ebicep.warlords.player.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
@@ -21,15 +21,13 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.util.stream.Collectors;
-
 public class DeathsDebt extends AbstractTotemBase {
 
     private int respiteRadius = 10;
     private int debtRadius = 8;
     private float delayedDamage = 0;
-    private double timeLeftRespite = 0;
-    private double timeLeftDebt = 0;
+    private int timeLeftRespite = 0;
+    private int timeLeftDebt = 0;
     private float selfDamageInPercentPerSecond = .1667f;
 
     public DeathsDebt() {
@@ -73,19 +71,19 @@ public class DeathsDebt extends AbstractTotemBase {
 
     @Override
     protected void onActivation(WarlordsPlayer wp, Player player, ArmorStand totemStand) {
-        final int secondsLeft = 4 + (2 * (int) Math.round((double) wp.getHealth() / wp.getMaxHealth()));
+        final int ticksLeft = (4 + (2 * (int) Math.round((double) wp.getHealth() / wp.getMaxHealth()))) * 20;
+        System.out.println(" _ " + ticksLeft);
 
         DeathsDebt tempDeathsDebt = new DeathsDebt();
+        tempDeathsDebt.setTimeLeftRespite(ticksLeft);
 
         wp.getCooldownManager().addRegularCooldown("Spirits Respite", "RESP", DeathsDebt.class, tempDeathsDebt, wp, CooldownTypes.ABILITY, cooldownManager -> {
-        }, secondsLeft * 20);
+        }, ticksLeft);
 
         CircleEffect circle = new CircleEffect(wp, totemStand.getLocation().clone().add(0, 1.25, 0), respiteRadius);
         circle.addEffect(new CircumferenceEffect(ParticleEffect.SPELL));
         circle.addEffect(new DoubleLineEffect(ParticleEffect.REDSTONE));
         BukkitTask particles = Bukkit.getScheduler().runTaskTimer(Warlords.getInstance(), circle::playEffects, 0, 1);
-
-        tempDeathsDebt.setTimeLeftRespite(secondsLeft);
 
         wp.getGame().getGameTasks().put(
                 new BukkitRunnable() {
@@ -111,17 +109,17 @@ public class DeathsDebt extends AbstractTotemBase {
                                 tempDeathsDebt.setTimeLeftRespite(0);
                             }
 
-                            int roundedTimeLeftRespite = (int) Math.round(tempDeathsDebt.getTimeLeftRespite());
-                            int roundedTimeLeftDebt = (int) Math.round(tempDeathsDebt.getTimeLeftDebt());
+                            int ticksLeftRespite = tempDeathsDebt.getTimeLeftRespite();
+                            int ticksLeftDebt = tempDeathsDebt.getTimeLeftDebt();
                             //every second
                             if (counter % 20 == 0) {
-                                if (roundedTimeLeftRespite > 0) {
+                                if (ticksLeftRespite > 0) {
                                     //respite
                                     for (Player player1 : player.getWorld().getPlayers()) {
                                         player1.playSound(totemStand.getLocation(), "shaman.earthlivingweapon.impact", 2, 1.5F);
                                     }
-                                    player.sendMessage(ChatColor.GREEN + "\u00BB §2Spirit's Respite §7delayed §c" + Math.round(tempDeathsDebt.getDelayedDamage()) + " §7damage. §6" + roundedTimeLeftRespite + " §7seconds left.");
-                                } else if (roundedTimeLeftRespite == 0) {
+                                    player.sendMessage(ChatColor.GREEN + "\u00BB §2Spirit's Respite §7delayed §c" + Math.round(tempDeathsDebt.getDelayedDamage()) + " §7damage. §6" + (ticksLeftRespite / 20) + " §7seconds left.");
+                                } else if (ticksLeftRespite == 0) {
                                     //beginning debt
                                     wp.getCooldownManager().removeCooldown(tempDeathsDebt);
                                     wp.getCooldownManager().addRegularCooldown(name, "DEBT", DeathsDebt.class, tempDeathsDebt, wp, CooldownTypes.ABILITY, cooldownManager -> {
@@ -142,10 +140,10 @@ public class DeathsDebt extends AbstractTotemBase {
                                     onDebtTick(wp, player, totemStand, tempDeathsDebt);
                                     //cancel respite and initiate debt
                                     tempDeathsDebt.setTimeLeftRespite(-1);
-                                    tempDeathsDebt.setTimeLeftDebt(6);
+                                    tempDeathsDebt.setTimeLeftDebt(6 * 20);
                                 } else {
                                     //during debt
-                                    if (roundedTimeLeftDebt > 0) {
+                                    if (ticksLeftDebt > 0) {
                                         //5 dmg procs
                                         onDebtTick(wp, player, totemStand, tempDeathsDebt);
                                     } else {
@@ -169,12 +167,14 @@ public class DeathsDebt extends AbstractTotemBase {
                                     }
                                 }
                             }
+                            System.out.println(ticksLeftRespite);
                             //counters
-                            if (tempDeathsDebt.getTimeLeftRespite() > 0) {
-                                tempDeathsDebt.setTimeLeftRespite(tempDeathsDebt.getTimeLeftRespite() - .05);
+                            if (ticksLeftRespite > 0) {
+                                tempDeathsDebt.setTimeLeftRespite(ticksLeftRespite - 1);
                             }
-                            if (tempDeathsDebt.getTimeLeftDebt() > 0) {
-                                tempDeathsDebt.setTimeLeftDebt(tempDeathsDebt.getTimeLeftDebt() - .05);
+                            if (ticksLeftDebt > 0) {
+                                tempDeathsDebt.setTimeLeftDebt(ticksLeftDebt - 1);
+                                //System.out.println(ticksLeftDebt);
                             }
                             counter++;
                         }
@@ -238,23 +238,19 @@ public class DeathsDebt extends AbstractTotemBase {
         this.delayedDamage += delayedDamage;
     }
 
-    public double getTimeLeftRespite() {
+    public int getTimeLeftRespite() {
         return timeLeftRespite;
     }
 
-    public void setTimeLeftRespite(double timeLeftRespite) {
-        if(timeLeftRespite > 6) {
-            this.timeLeftRespite = 6;
-        } else {
-            this.timeLeftRespite = timeLeftRespite;
-        }
+    public void setTimeLeftRespite(int timeLeftRespite) {
+        this.timeLeftRespite = Math.min(timeLeftRespite, 6 * 20);
     }
 
-    public double getTimeLeftDebt() {
+    public int getTimeLeftDebt() {
         return timeLeftDebt;
     }
 
-    public void setTimeLeftDebt(double timeLeftDebt) {
+    public void setTimeLeftDebt(int timeLeftDebt) {
         this.timeLeftDebt = timeLeftDebt;
     }
 
