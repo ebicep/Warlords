@@ -18,13 +18,13 @@ public class ImpalingStrike extends AbstractStrikeBase {
                 "§7and afflict them with the leech curse for §65 §7seconds.\n" +
                 "When an ally or you deals melee damage to an\n" +
                 "§7enemy afflicted with the leeching effect, heal\n" +
-                "§7for §a50% §7of the melee damage dealt. Lasts\n" +
-                "§65 §7seconds.";
+                "§7for §a50% §7of the melee damage dealt.";
     }
 
     @Override
     protected void onHit(@Nonnull WarlordsPlayer wp, @Nonnull Player player, @Nonnull WarlordsPlayer nearPlayer) {
         nearPlayer.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+        nearPlayer.getCooldownManager().removeCooldown(ImpalingStrike.class);
         nearPlayer.getCooldownManager().addRegularCooldown("Leech Debuff", "LEECH", ImpalingStrike.class, new ImpalingStrike(), wp, CooldownTypes.DEBUFF, cooldownManager -> {
         }, 5 * 20);
     }

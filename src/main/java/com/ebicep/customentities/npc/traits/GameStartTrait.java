@@ -88,7 +88,7 @@ public class GameStartTrait extends Trait {
             party.getAllPartyPeoplePlayerOnline().stream().filter(p -> !ctfQueue.contains(p.getUniqueId())).forEach(this::joinQueue);
         } else {
             if (playersInGame >= game.getMap().getMaxPlayers()) {
-                player.sendMessage(ChatColor.RED + "The game is full!");
+                player.sendMessage(ChatColor.RED + "The game is full! You may join at a later time or use " + ChatColor.GRAY + "/spectate" + ChatColor.RED + " if you wish to spectate the game!");
                 return;
             }
             joinQueue(player);

@@ -592,8 +592,9 @@ public final class WarlordsPlayer {
                     attacker.addHealingInstance(attacker, "Blood Lust", damageValue * (bloodLust.getDamageConvertPercent() / 100f), damageValue * (bloodLust.getDamageConvertPercent() / 100f), -1, 100, false, false);
                 }
 
+                // Impaling Strike
                 if (cooldownManager.hasCooldown(ImpalingStrike.class) && isMeleeHit) {
-                    attacker.addHealingInstance(attacker, "Leech", min * 0.4f, max * 0.4f, -1, 100, false, false);
+                    attacker.addHealingInstance(attacker, "Leech", min * 0.5f, max * 0.5f, isCrit ? 100 : -1, 200, false, false);
                 }
 
 

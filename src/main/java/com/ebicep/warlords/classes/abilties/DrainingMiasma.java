@@ -28,7 +28,7 @@ public class DrainingMiasma extends AbstractAbility {
     public void updateDescription(Player player) {
         description = "§7Summon a toxic-filled cloud around you,\n" +
                 "§7poisoning all enemies inside the area. Poisoned\n" +
-                "§7enemies take §c6% §7of their current health as\n" +
+                "§7enemies take §c4% §7of their current health as\n" +
                 "§7damage per second, for §6" + duration + " §7seconds. The\n" +
                 "§7caster receives healing equal to §a25% §7of the\n" +
                 "§7damage dealt.";
@@ -49,27 +49,28 @@ public class DrainingMiasma extends AbstractAbility {
 
 
                             new BukkitRunnable() {
+                                float totalDamage = 0;
                                 @Override
                                 public void run() {
-                                    float healthDamage = miasmaTarget.getHealth() * 0.06f;
-                                    ArrayList<Float> selfHealing = new ArrayList<>();
+                                    float healthDamage = miasmaTarget.getHealth() * 0.04f;
                                     if (miasmaTarget.getCooldownManager().hasCooldown(tempDrainingMiasma)) {
                                         // 6% current health damage.
                                         miasmaTarget.addDamageInstance(wp, "Draining Miasma", healthDamage, healthDamage, -1, 100, false);
-                                        selfHealing.add(healthDamage);
-                                        float selfHealingDivided = selfHealing.size() * 0.25f;
-
-                                        wp.addHealingInstance(wp, "Draining Miasma", selfHealingDivided, selfHealingDivided, -1, 100, false, false);
+                                        totalDamage += healthDamage;
 
                                         for (Player player1 : player.getWorld().getPlayers()) {
                                             player1.playSound(player.getLocation(), Sound.FIRE_IGNITE, 2, 0.4f);
                                         }
 
-                                        ParticleEffect.REDSTONE.display(
-                                                new ParticleEffect.OrdinaryColor(30, 200, 30),
-                                                miasmaTarget.getLocation().clone().add((Math.random() * 3) - 1, 1.2 + (Math.random() * 3) - 1, (Math.random() * 3) - 1),
-                                                500);
+                                        for (int i = 0; i < 3; i++) {
+                                            ParticleEffect.REDSTONE.display(
+                                                    new ParticleEffect.OrdinaryColor(30, 200, 30),
+                                                    miasmaTarget.getLocation().clone().add((Math.random() * 2) - 1, 1.2 + (Math.random() * 2) - 1, (Math.random() * 2) - 1),
+                                                    500);
+                                        }
+
                                     } else {
+                                        wp.addHealingInstance(wp, "Draining Miasma", totalDamage * 0.25f, totalDamage * 0.25f, -1, 100, false, false);
                                         miasmaTarget.getEntity().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 2 * 25, 0, true, false), true);
                                         this.cancel();
                                     }

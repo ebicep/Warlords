@@ -54,6 +54,7 @@ public class SpectateCommand implements CommandExecutor {
                         player.sendMessage(ChatColor.RED + "You are already spectating this game");
                     } else {
                         Warlords.game.addSpectator(player.getUniqueId());
+                        player.sendMessage(ChatColor.RED + "You may leave spectator mode by typing /spectate and clicking the barrier in the menu.");
                     }
                 }
         );
