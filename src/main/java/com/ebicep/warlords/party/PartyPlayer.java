@@ -19,7 +19,7 @@ public class PartyPlayer {
 
     public String getPartyListDot() {
         if (!isOnline) return ChatColor.RED + " ● ";
-        if (isAFK) return ChatColor.YELLOW + " ● ";
+        if (isAFK) return ChatColor.GOLD + " ● ";
         return ChatColor.GREEN + " ● ";
     }
 
