@@ -2,6 +2,7 @@ package com.ebicep.warlords.player;
 
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.classes.abilties.*;
+import com.ebicep.warlords.classes.paladin.specs.protector.Protector;
 
 import java.util.function.Consumer;
 
@@ -107,13 +108,13 @@ public enum ClassesSkillBoosts {
             }
     ),
     ICE_BARRIER("Ice Barrier",
-            "§7Increase the amount damage you\n§7reduce with Ice Barrier by\n§710% §7and reduce the cooldown by 15%",
-            "§aIncrease the amount damage you\n§areduce with Ice Barrier by\n§c10% §aand reduce the cooldown by §c15%",
+            "§7Increase the amount damage you\n§7reduce with Ice Barrier by\n§710% §7and reduce the cooldown by 20%",
+            "§aIncrease the amount damage you\n§areduce with Ice Barrier by\n§c10% §aand reduce the cooldown by §c20%",
             IceBarrier.class,
             abstractAbility -> {
                 if (abstractAbility instanceof IceBarrier) {
                     ((IceBarrier) abstractAbility).setDamageReductionPercent(60);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .85f);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .8f);
                 } else {
                     System.out.println("ERROR APPLY SKILL BOOST NOT BARRIER");
                 }
@@ -207,13 +208,13 @@ public enum ClassesSkillBoosts {
             }
     ),
     BLOOD_LUST("Blood Lust",
-            "§7Increase the amount of damage\n§7you convert into healing with\n§7Blood Lust by 5% and reduce the\n§7cooldown by 15%",
-            "§aIncrease the amount of damage\n§ayou convert into healing with\n§aBlood Lust by §c5% §aand reduce the\n§acooldown by §c15%",
+            "§7Increase the amount of damage\n§7you convert into healing with\n§7Blood Lust by 5% and reduce the\n§7cooldown by 20%",
+            "§aIncrease the amount of damage\n§ayou convert into healing with\n§aBlood Lust by §c5% §aand reduce the\n§acooldown by §c20%",
             BloodLust.class,
             abstractAbility -> {
                 if (abstractAbility instanceof BloodLust) {
                     ((BloodLust) abstractAbility).setDamageConvertPercent(70);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .85f);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .8f);
                 } else {
                     System.out.println("ERROR APPLY SKILL BOOST NOT BLOODLUST");
                 }
@@ -266,14 +267,14 @@ public enum ClassesSkillBoosts {
             }
     ),
     LAST_STAND("Last Stand",
-            "§7Increase the amount damage you\n§7reduce with Last Stand by\n§710% §7and reduce the cooldown by 15%",
-            "§aIncrease the amount damage you\n§areduce with Last Stand by\n§c10% §aand reduce the cooldown by §c15%",
+            "§7Increase the amount damage you\n§7reduce with Last Stand by\n§710% §7and reduce the cooldown by 20%",
+            "§aIncrease the amount damage you\n§areduce with Last Stand by\n§c10% §aand reduce the cooldown by §c20%",
             LastStand.class,
             abstractAbility -> {
                 if (abstractAbility instanceof LastStand) {
                     ((LastStand) abstractAbility).setSelfDamageReductionPercent(60);
                     ((LastStand) abstractAbility).setTeammateDamageReductionPercent(50);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .85f);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .8f);
                 } else {
                     System.out.println("ERROR APPLY SKILL BOOST NOT LAST STAND");
                 }
@@ -448,6 +449,10 @@ public enum ClassesSkillBoosts {
             "§aIncrease the amount of damage\n§ayou convert into healing with\n§aProtector's Strike by §c20%",
             ProtectorsStrike.class,
             abstractAbility -> {
+                if (abstractAbility instanceof ProtectorsStrike) {
+                    ((ProtectorsStrike) abstractAbility).setConvertPercent(120);
+                    ((ProtectorsStrike) abstractAbility).setSelfConvertPercent(60);
+                }
             }
     ),
     CONSECRATE_PROTECTOR("Consecrate",
