@@ -100,7 +100,7 @@ public class WideGuard extends AbstractAbility {
                                     .forEach(playerInsideBubble -> {
                                         playerInsideBubble.getCooldownManager().removeCooldown(WideGuard.class);
                                         playerInsideBubble.getCooldownManager().addRegularCooldown("Wide Guard Healing", "GUARD", WideGuard.class, tempWideGuard, wp, CooldownTypes.ABILITY, cooldownManager -> {
-                                        }, 1 * 20);
+                                        }, 20);
                                         timeInBubble.compute(playerInsideBubble, (k, v) -> v == null ? 1 : v + 1);
                                     });
                         } else {

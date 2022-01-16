@@ -54,7 +54,7 @@ public class OrderOfEviscerate extends AbstractAbility {
                 new BukkitRunnable() {
                     @Override
                     public void run() {
-                        if (wp.getCooldownManager().hasCooldown(OrderOfEviscerate.class)) {
+                        if (!wp.getCooldownManager().hasCooldown(OrderOfEviscerate.class)) {
                             this.cancel();
                             wp.updateArmor();
                             wp.setMarkedTarget(null);

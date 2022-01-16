@@ -146,6 +146,22 @@ public class HolyRadianceProtector extends AbstractAbility {
                         }.runTaskTimer(Warlords.getInstance(), 0, 10),
                         System.currentTimeMillis()
                 );
+
+                wp.getGame().getGameTasks().put(
+
+                        new BukkitRunnable() {
+                            @Override
+                            public void run() {
+                                float missingHealthHealing = p.getHealth() * 0.02f;
+                                if (p.getCooldownManager().hasCooldown(tempMark)) {
+                                    p.addHealingInstance(wp, "Protector's Mark", missingHealthHealing, missingHealthHealing, -1, 100, false, false);
+                                } else {
+                                    this.cancel();
+                                }
+                            }
+                        }.runTaskTimer(Warlords.getInstance(), 0, 20),
+                        System.currentTimeMillis()
+                );
             } else {
                 player.sendMessage("§cYour mark was out of range or you did not target a player!");
             }
