@@ -126,7 +126,7 @@ public enum GameMap {
     ),
 
     GORGE(
-            "Gorge Reforged [NOT PLAYABLE]",
+            "Gorge Reforged",
             32,
             12,
             900 * 20,
