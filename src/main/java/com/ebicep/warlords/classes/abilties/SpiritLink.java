@@ -1,10 +1,9 @@
 package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.classes.internal.AbstractChainBase;
-import com.ebicep.warlords.player.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
-import com.ebicep.warlords.player.cooldowns.cooldowns.CooldownFilter;
+import com.ebicep.warlords.player.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.PlayerFilter;
 import com.ebicep.warlords.util.Utils;
@@ -114,8 +113,8 @@ public class SpiritLink extends AbstractChainBase {
                 .findFirst()
                 .ifPresent(regularCooldown -> {
                     DeathsDebt deathsDebt = ((DeathsDebt) regularCooldown.getCooldownObject());
-                    deathsDebt.setTimeLeftRespite(deathsDebt.getTimeLeftRespite() + .5);
-                    regularCooldown.setTicksLeft((int) (deathsDebt.getTimeLeftRespite() * 20));
+                    deathsDebt.setTimeLeftRespite(deathsDebt.getTimeLeftRespite() + 10);
+                    regularCooldown.setTicksLeft(deathsDebt.getTimeLeftRespite());
                 });
         warlordsPlayer.addHealingInstance(warlordsPlayer, "Soulbinding Weapon", 400, 400, -1, 100, false, false);
         for (WarlordsPlayer nearPlayer : PlayerFilter

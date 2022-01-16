@@ -1,9 +1,6 @@
-package com.ebicep.warlords.player.cooldowns.cooldowns;
+package com.ebicep.warlords.player.cooldowns;
 
 import com.ebicep.warlords.player.WarlordsPlayer;
-import com.ebicep.warlords.player.cooldowns.AbstractCooldown;
-import com.ebicep.warlords.player.cooldowns.CooldownManager;
-import org.checkerframework.checker.units.qual.C;
 
 import javax.annotation.Nonnull;
 import java.util.Iterator;

@@ -5,7 +5,6 @@ import com.ebicep.warlords.classes.abilties.OrbsOfLife;
 import com.ebicep.warlords.classes.abilties.Soulbinding;
 import com.ebicep.warlords.classes.abilties.UndyingArmy;
 import com.ebicep.warlords.player.WarlordsPlayer;
-import com.ebicep.warlords.player.cooldowns.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.PlayerFilter;
@@ -59,6 +58,20 @@ public class CooldownManager {
 
     public int getTotalCooldowns() {
         return totalCooldowns;
+    }
+
+    public void addTicksToRegularCooldowns(CooldownTypes cooldownTypes, int ticks) {
+        abstractCooldowns.stream().filter(abstractCooldown -> abstractCooldown.getCooldownType() == cooldownTypes)
+                .filter(RegularCooldown.class::isInstance)
+                .map(RegularCooldown.class::cast)
+                .forEachOrdered(regularCooldown -> regularCooldown.setTicksLeft(regularCooldown.getTicksLeft() + ticks));
+    }
+
+    public void subtractTicksToRegularCooldowns(CooldownTypes cooldownTypes, int ticks) {
+        abstractCooldowns.stream().filter(abstractCooldown -> abstractCooldown.getCooldownType() == cooldownTypes)
+                .filter(RegularCooldown.class::isInstance)
+                .map(RegularCooldown.class::cast)
+                .forEachOrdered(regularCooldown -> regularCooldown.setTicksLeft(regularCooldown.getTicksLeft() - ticks));
     }
 
     public List<AbstractCooldown<?>> getBuffCooldowns() {
