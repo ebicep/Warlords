@@ -37,11 +37,6 @@ public class PreLobbyState implements State, TimerDebugAble {
         timer = game.getMap().getCountdownTimerInTicks();
         Gates.changeGates(game.getMap(), false);
         //game.setPrivate(false);
-        // Debug
-        System.out.println("DEBUG IS GAME PRIVATE");
-        System.out.println("Game State = " + game.getState());
-        System.out.println("Game Players = " + game.getPlayers());
-        System.out.println("isPrivate = " + game.isPrivate());
     }
 
     @Override
@@ -215,7 +210,7 @@ public class PreLobbyState implements State, TimerDebugAble {
                             }));
                 }
                 if (game.getPlayers().size() >= 14) {
-                    BotManager.sendMessageToNotificationChannel("[GAME] A " + (game.isPrivate() ? "" : "Public") + " **" + game.getMap().getMapName() + "** started with **" + game.getPlayers().size() + (game.getPlayers().size() == 1 ? "** player!" : "** players!"));
+                    BotManager.sendMessageToNotificationChannel("[GAME] A " + (game.isPrivate() ? "" : "Public ") + " **" + game.getMap().getMapName() + "** started with **" + game.getPlayers().size() + (game.getPlayers().size() == 1 ? "** player!" : "** players!"));
                 }
                 return new PlayingState(game);
             }

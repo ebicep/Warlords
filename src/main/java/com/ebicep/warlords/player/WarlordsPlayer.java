@@ -592,8 +592,9 @@ public final class WarlordsPlayer {
                     attacker.addHealingInstance(attacker, "Blood Lust", damageValue * (bloodLust.getDamageConvertPercent() / 100f), damageValue * (bloodLust.getDamageConvertPercent() / 100f), -1, 100, false, false);
                 }
 
+                // Impaling Strike
                 if (cooldownManager.hasCooldown(ImpalingStrike.class) && isMeleeHit) {
-                    attacker.addHealingInstance(attacker, "Leech", min * 0.4f, max * 0.4f, -1, 100, false, false);
+                    attacker.addHealingInstance(attacker, "Leech", min * 0.5f, max * 0.5f, isCrit ? 100 : -1, 200, false, false);
                 }
 
 
@@ -1910,7 +1911,9 @@ public final class WarlordsPlayer {
     public void setVelocity(org.bukkit.util.Vector v, boolean kbAfterHorse) {
         if ((kbAfterHorse || this.entity.getVehicle() == null)) {
             if (cooldownManager.hasCooldownFromName("KB Resistance")) {
-                this.entity.setVelocity(v.multiply(.75));
+                this.entity.setVelocity(v.multiply(0.75));
+            } else if (cooldownManager.hasCooldownFromName("KB Increase")) {
+                this.entity.setVelocity(v.multiply(1.5));
             } else {
                 this.entity.setVelocity(v);
             }

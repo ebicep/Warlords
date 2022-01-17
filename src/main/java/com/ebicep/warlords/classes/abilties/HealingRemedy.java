@@ -15,6 +15,8 @@ import javax.annotation.Nonnull;
 
 public class HealingRemedy extends AbstractProjectileBase {
 
+    private static final float HITBOX = 3;
+
     public HealingRemedy() {
         super("Healing Remedy", 536, 644, 12, 80, 25, 175, 2.5, 25, true);
     }
@@ -25,7 +27,7 @@ public class HealingRemedy extends AbstractProjectileBase {
                 "§7healing allies for §a" + format(minDamageHeal) + " §7- §a" + format(maxDamageHeal) + " §7upon impact.\n" +
                 "§7The projectile will form a small puddle that\n" +
                 "§7heals allies for §a189 §7- §a244 §7health per second.\n" +
-                "§7Lasts §63 §7seconds." +
+                "§7Lasts §64 §7seconds." +
                 "\n\n" +
                 "§7Has an optimal range of §e25 §7blocks.";
     }
@@ -59,7 +61,7 @@ public class HealingRemedy extends AbstractProjectileBase {
 
     @Override
     protected void onHit(WarlordsPlayer shooter, Location currentLocation, Location startingLocation, WarlordsPlayer victim) {
-        DamageHealCircle med = new DamageHealCircle(shooter, currentLocation, 3, 3, 189, 244, critChance, critMultiplier, name);
+        DamageHealCircle med = new DamageHealCircle(shooter, currentLocation, 3, 2, 189, 244, critChance, critMultiplier, name);
         med.getLocation().add(0, 1, 0);
 
         for (Player player1 : shooter.getWorld().getPlayers()) {
@@ -67,8 +69,8 @@ public class HealingRemedy extends AbstractProjectileBase {
         }
 
         for (WarlordsPlayer nearEntity : PlayerFilter
-                .entitiesAround(currentLocation, 3, 3, 3)
-                .aliveTeammatesOf(shooter)
+                .entitiesAround(currentLocation, HITBOX, HITBOX, HITBOX)
+                .aliveTeammatesOfExcludingSelf(shooter)
         ) {
             nearEntity.addHealingInstance(
                     shooter,

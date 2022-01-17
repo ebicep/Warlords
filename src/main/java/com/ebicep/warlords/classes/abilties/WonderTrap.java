@@ -2,13 +2,21 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.commands.debugcommands.TestCommand;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.cooldowns.cooldowns.TextCooldown;
+import com.ebicep.warlords.util.EffectUtils;
+import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
 
@@ -25,29 +33,70 @@ public class WonderTrap extends AbstractAbility {
 
     @Override
     public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
-        // WIP
-        new Trap(wp.getLocation(), wp, 4, 2, 1.5).runTaskTimer(Warlords.getInstance(), 40, 20);
+        WonderTrap tempTrap = new WonderTrap();
+
+        for (Player player1 : player.getWorld().getPlayers()) {
+            player1.playSound(player.getLocation(), "rogue.hearttoheart.activation", 2, 0.6f);
+        }
+
+        Trap trap = new Trap(wp.getLocation(), wp, 200, 40, 3);
+        trap.runTaskTimer(Warlords.getInstance(), 0, 0);
+
+        TextCooldown textCooldown = new TextCooldown("Wonder Trap", "TRAP", WonderTrap.class, tempTrap, wp, CooldownTypes.ABILITY, cooldownManager -> {
+        }, "2");
+        wp.getCooldownManager().addCooldown(textCooldown);
+
+        new BukkitRunnable() {
+            int counter = 0;
+
+            @Override
+            public void run() {
+                switch (counter++) {
+                    case 1:
+                        textCooldown.setText("1");
+                        break;
+                    case 2:
+                        textCooldown.setText("READY");
+                        trap.setCanEndEarly(true);
+                        break;
+                    case 10:
+                        textCooldown.setRemove(true);
+                        trap.cancel();
+                        this.cancel();
+                        break;
+                }
+
+                if (counter > 2 && player.isSneaking() && trap.isCanEndEarly()) {
+                    trap.cancel();
+                    this.cancel();
+                    textCooldown.setRemove(true);
+                }
+            }
+        }.runTaskTimer(Warlords.getInstance(), 0, 20);
+
         return true;
     }
 
     private class Trap extends BukkitRunnable {
 
-        private WarlordsPlayer trapOwner;
-        private float trapDuration;
-        private float trapDelayDuration;
-        private double trapRadius;
-        private ArmorStand trapStand;
+        private final WarlordsPlayer trapOwner;
+        private int timeToLive;
+        private int trapArmTime;
+        private final double trapRadius;
+        private final ArmorStand trapStand;
+        private boolean canEndEarly = false;
 
-        public Trap(Location location, WarlordsPlayer trapOwner, float trapDuration, float trapDelayDuration, double trapRadius) {
+        public Trap(Location location, WarlordsPlayer trapOwner, int timeToLive, int trapArmTime, double trapRadius) {
             this.trapOwner = trapOwner;
-            this.trapDuration = trapDuration;
-            this.trapDelayDuration = trapDelayDuration;
+            this.timeToLive = timeToLive;
+            this.trapArmTime = trapArmTime;
             this.trapRadius = trapRadius;
             this.trapStand = location.getWorld().spawn(location, ArmorStand.class);
 
+            trapStand.setHelmet(new ItemStack(Material.STONE));
             trapStand.setGravity(false);
-            trapStand.setVisible(true);
-            trapStand.getLocation().add(0, 0, 0);
+            trapStand.setVisible(false);
+            trapStand.getLocation().add(0, -2, 0);
         }
 
         @Override
@@ -56,31 +105,72 @@ public class WonderTrap extends AbstractAbility {
             trapStand.remove();
         }
 
-        WonderTrap tempTrap = new WonderTrap();
-
-        int counter = (int) trapDelayDuration * 20;
         @Override
         public void run() {
-            if (counter == 40) {
-                PlayerFilter.entitiesAround(trapStand, trapRadius, trapRadius, trapRadius)
-                        .aliveEnemiesOf(trapOwner)
-                        .forEach((trapTarget) -> {
-                            trapTarget.addDamageInstance(
-                                    trapOwner,
-                                    name,
-                                    minDamageHeal,
-                                    maxDamageHeal,
-                                    critChance,
-                                    critMultiplier,
-                                    false);
-                            trapTarget.getCooldownManager().addRegularCooldown(name, "TRAP", WonderTrap.class, tempTrap, trapOwner, CooldownTypes.ABILITY, cooldownManager -> {
-                            }, 4 * 20);
-                        });
-            }
+                timeToLive--;
+                trapArmTime--;
 
-            if (counter == 160) {
-                this.cancel();
-            }
+                if (trapOwner.getEntity() instanceof Player && ((Player) trapOwner.getEntity()).isSneaking() && canEndEarly) {
+
+                    for (Player player1 : trapStand.getWorld().getPlayers()) {
+                        player1.playSound(trapStand.getLocation(), "rogue.wondertrap.explosion", 2, 1.75f);
+                    }
+
+                    EffectUtils.playStarAnimation(trapStand.getLocation().add(0, -2, 0), 3, ParticleEffect.FIREWORKS_SPARK);
+
+                    PlayerFilter.entitiesAround(trapStand, trapRadius, trapRadius, trapRadius)
+                            .aliveEnemiesOf(trapOwner)
+                            .forEach((trapTarget) -> {
+                                trapTarget.addDamageInstance(
+                                        trapOwner,
+                                        name,
+                                        minDamageHeal,
+                                        maxDamageHeal,
+                                        critChance,
+                                        critMultiplier,
+                                        false);
+
+                                final Location loc = trapStand.getLocation();
+                                final Vector v = loc.toVector().subtract(loc.toVector()).normalize().multiply(-1.1).setY(0.15);
+                                trapTarget.setVelocity(v);
+
+                                WonderTrap tempTrap = new WonderTrap();
+
+                                trapTarget.getCooldownManager().addRegularCooldown("KB Increase", "KB", WonderTrap.class, tempTrap, trapOwner, CooldownTypes.DEBUFF, cooldownManager -> {
+                                }, 10 * 20);
+                            });
+                    this.cancel();
+                }
+
+                /*if (trapArmTime < 0) {
+                    setCanEndEarly(true);
+
+                    PlayerFilter.entitiesAround(trapStand, trapRadius, trapRadius, trapRadius)
+                            .aliveEnemiesOf(trapOwner)
+                            .forEach((trapTarget) -> {
+                                trapTarget.addDamageInstance(
+                                        trapOwner,
+                                        name,
+                                        minDamageHeal,
+                                        maxDamageHeal,
+                                        critChance,
+                                        critMultiplier,
+                                        false);
+                                this.cancel();
+                            });
+                }*/
+
+                if (timeToLive <= 0) {
+                    this.cancel();
+                }
+        }
+
+        public boolean isCanEndEarly() {
+            return canEndEarly;
+        }
+
+        public void setCanEndEarly(boolean canEndEarly) {
+            this.canEndEarly = canEndEarly;
         }
     }
 }
