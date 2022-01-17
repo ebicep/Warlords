@@ -5,6 +5,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.classes.abilties.IceBarrier;
 import com.ebicep.warlords.classes.abilties.Soulbinding;
+import com.ebicep.warlords.classes.abilties.TimeWarp;
 import com.ebicep.warlords.classes.abilties.UndyingArmy;
 import com.ebicep.warlords.classes.shaman.specs.spiritguard.Spiritguard;
 import com.ebicep.warlords.database.DatabaseManager;
@@ -44,6 +45,7 @@ import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashSet;
@@ -143,6 +145,9 @@ public class WarlordsEvents implements Listener {
             player.sendMessage(ChatColor.RED + "The game started without you, but we still love you enough and you were warped into the game");
         }
         if (isSpawnWorld) {
+            player.removePotionEffect(PotionEffectType.BLINDNESS);
+            player.removePotionEffect(PotionEffectType.SLOW);
+            player.removePotionEffect(PotionEffectType.ABSORPTION);
             player.setGameMode(GameMode.ADVENTURE);
 
             ChatUtils.sendCenteredMessage(player, ChatColor.BLUE + "-----------------------------------------------------");
@@ -353,6 +358,8 @@ public class WarlordsEvents implements Listener {
                 } else if (itemHeld.getType() == Material.BANNER) {
                     if (wp.getFlagCooldown() > 0) {
                         player.sendMessage("§cYou cannot drop the flag yet, please wait 5 seconds!");
+                    } else if (wp.getCooldownManager().hasCooldown(TimeWarp.class)) {
+                        player.sendMessage(ChatColor.RED + "You cannot drop the flag with a Time Warp active!");
                     } else {
                         wp.getGameState().flags().dropFlag(player);
                         wp.setFlagCooldown(5);

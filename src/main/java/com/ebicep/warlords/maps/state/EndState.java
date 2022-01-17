@@ -2,6 +2,8 @@ package com.ebicep.warlords.maps.state;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.debugcommands.ImposterCommand;
+import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.GameMap;
 import com.ebicep.warlords.maps.MapCategory;
@@ -75,7 +77,7 @@ public class EndState implements State, TimerDebugAble {
         for (int i = 0; i < players.size() && i < 3; i++) {
             WarlordsPlayer warlordsPlayer = players.get(i);
             TextComponent player = new TextComponent(ChatColor.AQUA + warlordsPlayer.getName() + ChatColor.GRAY + ": " + ChatColor.GOLD + NumberFormat.getSimplifiedNumber(warlordsPlayer.getTotalDamage()));
-            player.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.DARK_GRAY + "Lv" + ChatColor.GRAY + "90 " + ChatColor.GOLD + warlordsPlayer.getSpec().getClassName() + ChatColor.GREEN + " (" + warlordsPlayer.getSpec().getClass().getSimpleName() + ")").create()));
+            player.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.DARK_GRAY + "Lv" + ChatColor.GRAY + ExperienceManager.getLevelForSpec(warlordsPlayer.getUuid(), warlordsPlayer.getSpecClass()) + " " + ChatColor.GOLD + warlordsPlayer.getSpec().getClassName() + ChatColor.GREEN + " (" + warlordsPlayer.getSpec().getClass().getSimpleName() + ")").create()));
             leaderboardPlayersDamage.add(player);
             if (i != players.size() - 1 && i != 2) {
                 leaderboardPlayersDamage.add(Game.spacer);
@@ -91,7 +93,7 @@ public class EndState implements State, TimerDebugAble {
         for (int i = 0; i < players.size() && i < 3; i++) {
             WarlordsPlayer warlordsPlayer = players.get(i);
             TextComponent player = new TextComponent(ChatColor.AQUA + warlordsPlayer.getName() + ChatColor.GRAY + ": " + ChatColor.GOLD + NumberFormat.getSimplifiedNumber(warlordsPlayer.getTotalHealing()));
-            player.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.DARK_GRAY + "Lv" + ChatColor.GRAY + "90 " + ChatColor.GOLD + warlordsPlayer.getSpec().getClassName() + ChatColor.GREEN + " (" + warlordsPlayer.getSpec().getClass().getSimpleName() + ")").create()));
+            player.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.DARK_GRAY + "Lv" + ChatColor.GRAY + ExperienceManager.getLevelForSpec(warlordsPlayer.getUuid(), warlordsPlayer.getSpecClass()) + " " + ChatColor.GOLD + warlordsPlayer.getSpec().getClassName() + ChatColor.GREEN + " (" + warlordsPlayer.getSpec().getClass().getSimpleName() + ")").create()));
             leaderboardPlayersHealing.add(player);
             if (i != players.size() - 1 && i != 2) {
                 leaderboardPlayersHealing.add(Game.spacer);
