@@ -118,7 +118,7 @@ public class DatabaseGame {
         //readding game holograms
         Hologram lastGameStats = HolographicDisplaysAPI.get(Warlords.getInstance()).createHologram(DatabaseGame.lastGameStatsLocation);
         holograms.add(lastGameStats);
-        lastGameStats.getLines().appendText(ChatColor.AQUA + ChatColor.BOLD.toString() + "Last Game Stats");
+        lastGameStats.getLines().appendText(ChatColor.AQUA + ChatColor.BOLD.toString() + "Last " + (isPrivate ? "Comp" : "Pub") + " Game Stats");
 
         Hologram topDamage = HolographicDisplaysAPI.get(Warlords.getInstance()).createHologram(DatabaseGame.topDamageLocation);
         holograms.add(topDamage);
@@ -383,9 +383,9 @@ public class DatabaseGame {
                 updatePlayerStatsFromGame(databaseGame, true);
             }
             //only add game if comps
-            if (databaseGame.isPrivate) {
+            //if (databaseGame.isPrivate) {
                 Warlords.newChain().async(() -> DatabaseManager.gameService.create(databaseGame)).execute();
-            }
+            //}
         }
     }
 
