@@ -39,6 +39,13 @@ public abstract class AbstractDatabaseStatInformation {
 
     public abstract void updateCustomStats(GameMode gameMode, boolean isCompGame, DatabaseGame databaseGame, DatabaseGamePlayers.GamePlayer gamePlayer, boolean won, boolean add);
 
+    public double getKDA() {
+        if (deaths == 0) {
+            return 0;
+        }
+        return (kills + assists) / (double) deaths;
+    }
+
     public double getKillsPerGame() {
         return plays == 0 ? 0 : (double) kills / plays;
     }
@@ -73,6 +80,13 @@ public abstract class AbstractDatabaseStatInformation {
 
     public void setDeaths(int deaths) {
         this.deaths = deaths;
+    }
+
+    public double getWL() {
+        if (losses == 0) {
+            return 0;
+        }
+        return (double) wins / losses;
     }
 
     public int getWins() {

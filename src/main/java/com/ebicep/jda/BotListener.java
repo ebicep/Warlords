@@ -41,6 +41,44 @@ public class BotListener extends ListenerAdapter implements Listener {
         }
     }
 
+    @EventHandler
+    public static void onPlayerJoin(PlayerJoinEvent event) {
+        Player player = event.getPlayer();
+        int size = Bukkit.getOnlinePlayers().size();
+        if (size % 5 == 0 && size != lastPlayerCount) {
+            BotManager.sendMessageToNotificationChannel("[SERVER] **" + size + "** players are now on the server!");
+            lastPlayerCount = size;
+        }
+
+        Warlords.newChain()
+                .asyncFirst(() -> BotManager.getCompGamesServer().findMembers(m -> m.getEffectiveName().equalsIgnoreCase(player.getName())).get())
+                .asyncLast(members -> {
+                    if (!members.isEmpty()) {
+                        Member member = members.get(0);
+                        BotManager.getCompGamesServer().addRoleToMember(member, Objects.requireNonNull(BotManager.jda.getRoleById("912620490877706260"))).queue();
+                    }
+                }).execute();
+    }
+
+    @EventHandler
+    public static void onPlayerQuit(PlayerQuitEvent event) {
+        Player player = event.getPlayer();
+        int size = Bukkit.getOnlinePlayers().size();
+        if ((size - 1) % 5 == 0 && size != lastPlayerCount && size > 4) {
+            BotManager.sendMessageToNotificationChannel("[SERVER] **" + (size - 1) + "** players are now on the server!");
+            lastPlayerCount = size;
+        }
+
+        Warlords.newChain()
+                .asyncFirst(() -> BotManager.getCompGamesServer().findMembers(m -> m.getEffectiveName().equalsIgnoreCase(player.getName())).get())
+                .asyncLast(members -> {
+                    if (!members.isEmpty()) {
+                        Member member = members.get(0);
+                        BotManager.getCompGamesServer().removeRoleFromMember(member, Objects.requireNonNull(BotManager.jda.getRoleById("912620490877706260"))).queue();
+                    }
+                }).execute();
+    }
+
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
         Member member = event.getMember();
@@ -207,6 +245,10 @@ public class BotListener extends ListenerAdapter implements Listener {
                 if (member != null && member.getUser().isBot()) {
                     return;
                 }
+                //disable queue on test servers
+                if (!Warlords.serverIP.equals("51.81.49.127")) {
+                    return;
+                }
                 String queueCommand = message.getContentRaw();
                 String[] args = queueCommand.substring(1).split(" ");
                 //System.out.println(Arrays.toString(args));
@@ -283,38 +325,6 @@ public class BotListener extends ListenerAdapter implements Listener {
                     }
                 }
             }
-        }
-    }
-
-    @EventHandler
-    public static void onPlayerJoin(PlayerJoinEvent event) {
-        Player player = event.getPlayer();
-        int size = Bukkit.getOnlinePlayers().size();
-        if (size % 5 == 0 && size != lastPlayerCount) {
-            BotManager.sendMessageToNotificationChannel("[SERVER] **" + size + "** players are now on the server!");
-            lastPlayerCount = size;
-        }
-
-        List<Member> members = BotManager.getCompGamesServer().findMembers(m -> m.getEffectiveName().equalsIgnoreCase(player.getName())).get();
-        if (!members.isEmpty()) {
-            Member member = members.get(0);
-            BotManager.getCompGamesServer().addRoleToMember(member, Objects.requireNonNull(BotManager.jda.getRoleById("912620490877706260"))).queue();
-        }
-    }
-
-    @EventHandler
-    public static void onPlayerQuit(PlayerQuitEvent event) {
-        Player player = event.getPlayer();
-        int size = Bukkit.getOnlinePlayers().size();
-        if ((size - 1) % 5 == 0 && size != lastPlayerCount && size > 4) {
-            BotManager.sendMessageToNotificationChannel("[SERVER] **" + (size - 1) + "** players are now on the server!");
-            lastPlayerCount = size;
-        }
-
-        List<Member> members = BotManager.getCompGamesServer().findMembers(m -> m.getEffectiveName().equalsIgnoreCase(player.getName())).get();
-        if (!members.isEmpty()) {
-            Member member = members.get(0);
-            BotManager.getCompGamesServer().removeRoleFromMember(member, Objects.requireNonNull(BotManager.jda.getRoleById("912620490877706260"))).queue();
         }
     }
 

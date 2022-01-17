@@ -71,6 +71,8 @@ public class Warlords extends JavaPlugin {
         return instance;
     }
 
+    public static String serverIP;
+
     private static TaskChainFactory taskChainFactory;
 
     public static <T> TaskChain<T> newChain() {
@@ -250,6 +252,7 @@ public class Warlords extends JavaPlugin {
     public void onEnable() {
         instance = this;
         VERSION = this.getDescription().getVersion();
+        serverIP = this.getServer().getIp();
         taskChainFactory = BukkitTaskChainFactory.create(this);
 
         Thread.currentThread().setContextClassLoader(getClassLoader());

@@ -296,6 +296,7 @@ public class PlayingState implements State, TimerDebugAble {
         System.out.println("Force End = " + forceEnd);
         System.out.println("Player Count = " + game.playersCount());
         System.out.println("Timer = " + timer);
+        System.out.println(" ----- GAME END ----- ");
 
         List<WarlordsPlayer> players = new ArrayList<>(Warlords.getPlayers().values());
         float highestDamage = players.stream().sorted(Comparator.comparing(WarlordsPlayer::getTotalDamage).reversed()).collect(Collectors.toList()).get(0).getTotalDamage();
@@ -312,9 +313,10 @@ public class PlayingState implements State, TimerDebugAble {
             }
             if (highestDamage <= 750000 && highestHealing <= 750000) {
                 DatabaseGame.addGame(PlayingState.this, true);
+                System.out.println(ChatColor.GREEN + "[Warlords] This PUB game was added to the database but player information remained the same");
             } else {
                 DatabaseGame.addGame(PlayingState.this, false);
-                System.out.println(ChatColor.GREEN + "[Warlords] This PUBG game was added to the database (INVALID DAMAGE/HEALING) but player information remained the same");
+                System.out.println(ChatColor.GREEN + "[Warlords] This PUB game was added to the database (INVALID DAMAGE/HEALING) but player information remained the same");
             }
         }
         //COMPS
@@ -329,18 +331,19 @@ public class PlayingState implements State, TimerDebugAble {
             }
             if (highestDamage <= 750000 && highestHealing <= 750000) {
                 DatabaseGame.addGame(PlayingState.this, true);
+                System.out.println(ChatColor.GREEN + "[Warlords] This COMP game was added to the database but player information remained the same");
             } else {
                 DatabaseGame.addGame(PlayingState.this, false);
-                System.out.println(ChatColor.GREEN + "[Warlords] This game was added to the database (INVALID DAMAGE/HEALING) but player information remained the same");
+                System.out.println(ChatColor.GREEN + "[Warlords] This COMP game was added to the database (INVALID DAMAGE/HEALING) but player information remained the same");
             }
         }
         //END GAME
         else {
             if (game.isPrivate() && game.playersCount() >= 6 && timer <= 12000) {
                 DatabaseGame.addGame(PlayingState.this, false);
-                System.out.println(ChatColor.GREEN + "[Warlords] This game was added to the database but player information remained the same");
+                System.out.println(ChatColor.GREEN + "[Warlords] This COMP game was added to the database but player information remained the same");
             } else {
-                System.out.println(ChatColor.GREEN + "[Warlords] This game was not added to the database and player information remained the same");
+                System.out.println(ChatColor.GREEN + "[Warlords] This PUB/COMP game was not added to the database and player information remained the same");
             }
         }
     }
