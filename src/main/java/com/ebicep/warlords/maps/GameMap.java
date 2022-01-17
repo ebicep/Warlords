@@ -20,7 +20,7 @@ public enum GameMap {
     RIFT(
             "Rift",
             32,
-            12,
+            1,
             900 * 20, // seconds * ticks
             30 * 20, // seconds * ticks
             "",

@@ -130,14 +130,14 @@ public class WonderTrap extends AbstractAbility {
                                         critMultiplier,
                                         false);
 
-                                final Location loc = trapStand.getLocation();
-                                final Vector v = loc.toVector().subtract(loc.toVector()).normalize().multiply(-1.1).setY(0.15);
-                                trapTarget.setVelocity(v);
+                                //final Location loc = trapStand.getLocation();
+                                //final Vector v = loc.toVector().subtract(loc.toVector()).normalize().multiply(-1.1).setY(0.15);
+                                //trapTarget.setVelocity(v);
 
                                 WonderTrap tempTrap = new WonderTrap();
 
                                 trapTarget.getCooldownManager().addRegularCooldown("KB Increase", "KB", WonderTrap.class, tempTrap, trapOwner, CooldownTypes.DEBUFF, cooldownManager -> {
-                                }, 10 * 20);
+                                }, 30 * 20);
                             });
                     this.cancel();
                 }
