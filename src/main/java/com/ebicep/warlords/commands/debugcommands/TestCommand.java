@@ -4,16 +4,11 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.BaseCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.cache.MultipleCacheResolver;
-import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame;
-import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGamePlayers;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.database.repositories.player.pojos.ctf.DatabaseBaseCTF;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
-import com.ebicep.warlords.player.Classes;
-import com.ebicep.warlords.player.ClassesGroup;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.sr.SRCalculator;
 import com.github.benmanes.caffeine.cache.Cache;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -21,8 +16,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.springframework.cache.caffeine.CaffeineCache;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -85,8 +79,20 @@ public class TestCommand implements CommandExecutor {
 
         Player player = (Player) sender;
 
-        System.out.println(Warlords.getInstance().getServer().getIp());
-        System.out.println("?");
+        SRCalculator.totalValues.clear();
+        List<DatabasePlayer> databasePlayers = DatabaseManager.playerService.findAll(PlayersCollections.LIFETIME);
+        HashMap<DatabasePlayer, Integer> playerSR = new HashMap<>();
+        for (DatabasePlayer databasePlayer : databasePlayers) {
+            if (databasePlayer.getPlays() > 50) {
+                playerSR.put(databasePlayer, SRCalculator.getSR(databasePlayer));
+            }
+        }
+        playerSR.entrySet().stream()
+                .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
+                .forEachOrdered(databasePlayerIntegerEntry -> System.out.println(databasePlayerIntegerEntry.getKey().getName() + " - " + databasePlayerIntegerEntry.getValue()));
+
+        System.out.println(playerSR.size());
+
 
 //        boolean s5 = false;
 //        List<DatabaseGame> gameList = DatabaseManager.gameService.findAll().stream()
