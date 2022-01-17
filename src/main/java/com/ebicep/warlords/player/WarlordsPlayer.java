@@ -425,7 +425,7 @@ public final class WarlordsPlayer {
                         ((EntityLiving) ((CraftPlayer) entity).getHandle()).setAbsorptionHearts(0);
                     }
 
-                    cooldownManager.removeCooldown(ArcaneShield.class);
+                    cooldownManager.removeCooldown(arcaneShield);
                     addDamageInstance(attacker, ability, -arcaneShield.getShieldHealth(), -arcaneShield.getShieldHealth(), isCrit ? 100 : -1, 100, true);
 
                     addAbsorbed(-(arcaneShield.getShieldHealth()));

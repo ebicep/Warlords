@@ -23,7 +23,12 @@ public class ArcaneShield extends AbstractAbility {
     public ArcaneShield() {
         super("Arcane Shield", 0, 0, 31.32f, 40, 0, 0);
     }
-    
+
+    public ArcaneShield(int shieldHealth) {
+        super("Arcane Shield", 0, 0, 31.32f, 40, 0, 0);
+        this.shieldHealth = shieldHealth;
+    }
+
     @Override
     public void updateDescription(Player player) {
         description = "§7Surround yourself with arcane\n" +
@@ -35,7 +40,7 @@ public class ArcaneShield extends AbstractAbility {
     @Override
     public boolean onActivate(WarlordsPlayer wp, Player p) {
         wp.subtractEnergy(energyCost);
-        ArcaneShield tempArcaneShield = new ArcaneShield();
+        ArcaneShield tempArcaneShield = new ArcaneShield(maxShieldHealth);
         wp.getCooldownManager().addRegularCooldown(name, "ARCA", ArcaneShield.class, tempArcaneShield, wp, CooldownTypes.ABILITY,
                 cooldownManager -> {
                     if (new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterCooldownClass(ArcaneShield.class).getStream().count() == 1) {
@@ -43,7 +48,6 @@ public class ArcaneShield extends AbstractAbility {
                     }
                 }, duration * 20);
         ((EntityLiving) ((CraftPlayer) p).getHandle()).setAbsorptionHearts(20);
-        shieldHealth = maxShieldHealth;
 
         for (Player player1 : p.getWorld().getPlayers()) {
             player1.playSound(p.getLocation(), "mage.arcaneshield.activation", 2, 1);

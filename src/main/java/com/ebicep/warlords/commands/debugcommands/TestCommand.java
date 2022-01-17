@@ -1,11 +1,14 @@
 package com.ebicep.warlords.commands.debugcommands;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.classes.abilties.ArcaneShield;
 import com.ebicep.warlords.commands.BaseCommand;
 import com.ebicep.warlords.database.cache.MultipleCacheResolver;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.player.cooldowns.cooldowns.TextCooldown;
 import com.github.benmanes.caffeine.cache.Cache;
 import org.bukkit.ChatColor;
@@ -15,6 +18,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.springframework.cache.caffeine.CaffeineCache;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 public class TestCommand implements CommandExecutor {
@@ -76,36 +82,41 @@ public class TestCommand implements CommandExecutor {
 
         Player player = (Player) sender;
 
-        TextCooldown textCooldown = new TextCooldown("TEST", "TRAP", TestCommand.class, null, warlordsPlayer, CooldownTypes.ABILITY, cooldownManager -> {
-        }, "5");
-        warlordsPlayer.getCooldownManager().addCooldown(textCooldown);
-        new BukkitRunnable() {
-            int counter = 0;
+        List<ArcaneShield> arcaneShields = new CooldownFilter<>(warlordsPlayer, RegularCooldown.class)
+                .filterCooldownClassAndMapToObjectsOfClass(ArcaneShield.class)
+                .collect(Collectors.toList());
+        System.out.println(arcaneShields);
 
-            @Override
-            public void run() {
-                switch (counter++) {
-                    case 1:
-                        textCooldown.setText("4");
-                        break;
-                    case 2:
-                        textCooldown.setText("3");
-                        break;
-                    case 3:
-                        textCooldown.setText("2");
-                        break;
-                    case 4:
-                        textCooldown.setText("1");
-                        break;
-                    case 5:
-                        textCooldown.setText("READY");
-                        break;
-                    case 10:
-                        textCooldown.setRemove(true);
-                        break;
-                }
-            }
-        }.runTaskTimer(Warlords.getInstance(), 0, 20);
+//        TextCooldown textCooldown = new TextCooldown("TEST", "TRAP", TestCommand.class, null, warlordsPlayer, CooldownTypes.ABILITY, cooldownManager -> {
+//        }, "5");
+//        warlordsPlayer.getCooldownManager().addCooldown(textCooldown);
+//        new BukkitRunnable() {
+//            int counter = 0;
+//
+//            @Override
+//            public void run() {
+//                switch (counter++) {
+//                    case 1:
+//                        textCooldown.setText("4");
+//                        break;
+//                    case 2:
+//                        textCooldown.setText("3");
+//                        break;
+//                    case 3:
+//                        textCooldown.setText("2");
+//                        break;
+//                    case 4:
+//                        textCooldown.setText("1");
+//                        break;
+//                    case 5:
+//                        textCooldown.setText("READY");
+//                        break;
+//                    case 10:
+//                        textCooldown.setRemove(true);
+//                        break;
+//                }
+//            }
+//        }.runTaskTimer(Warlords.getInstance(), 0, 20);
 
         //new CooldownFilter<>(warlordsPlayer.getCooldownManager().getAbilityCooldowns(), RegularCooldown.class).findFirst().get().get
 
