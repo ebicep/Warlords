@@ -24,6 +24,11 @@ public class DebugCommand implements CommandExecutor {
             return true;
         }
 
+        if (!Warlords.game.isPrivate()) {
+            sender.sendMessage("§cDebug commands are disabled in public games!");
+            return true;
+        }
+
         Game game = Warlords.game; // In the future allow the user to select a game player
         if (args.length < 1) {
             DebugMenu.openDebugMenu((Player) sender);
