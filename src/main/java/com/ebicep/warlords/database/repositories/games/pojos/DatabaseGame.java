@@ -342,7 +342,7 @@ public class DatabaseGame {
             previousGames.add(databaseGame);
             databaseGame.createHolograms();
 
-            if (databaseGame.isPrivate) {
+            //if (databaseGame.isPrivate) {
                 addGameToDatabase(databaseGame);
 
                 LeaderboardManager.playerGameHolograms.forEach((uuid, integer) -> {
@@ -360,7 +360,7 @@ public class DatabaseGame {
                         }
                     }
                 }
-            }
+            //}
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("ERROR TRYING TO ADD GAME");
@@ -380,9 +380,12 @@ public class DatabaseGame {
         } else {
             //game not in database then add game and update player stats if counted
             if (databaseGame.isCounted()) {
-                updatePlayerStatsFromGame(databaseGame,true);
+                updatePlayerStatsFromGame(databaseGame, true);
             }
-            Warlords.newChain().async(() -> DatabaseManager.gameService.create(databaseGame)).execute();
+            //only add game if comps
+            if (databaseGame.isPrivate) {
+                Warlords.newChain().async(() -> DatabaseManager.gameService.create(databaseGame)).execute();
+            }
         }
     }
 
