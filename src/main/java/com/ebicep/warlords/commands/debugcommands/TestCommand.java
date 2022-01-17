@@ -13,6 +13,7 @@ import com.ebicep.warlords.player.Classes;
 import com.ebicep.warlords.player.ClassesGroup;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.github.benmanes.caffeine.cache.Cache;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -83,6 +84,9 @@ public class TestCommand implements CommandExecutor {
         }
 
         Player player = (Player) sender;
+
+        System.out.println(Warlords.getInstance().getServer().getIp());
+        System.out.println("?");
 
 //        boolean s5 = false;
 //        List<DatabaseGame> gameList = DatabaseManager.gameService.findAll().stream()
