@@ -80,10 +80,10 @@ public class TestCommand implements CommandExecutor {
         Player player = (Player) sender;
 
         SRCalculator.totalValues.clear();
-        List<DatabasePlayer> databasePlayers = DatabaseManager.playerService.findAll(PlayersCollections.LIFETIME);
+        List<DatabasePlayer> databasePlayers = DatabaseManager.playerService.findAll(PlayersCollections.SEASON_5);
         HashMap<DatabasePlayer, Integer> playerSR = new HashMap<>();
         for (DatabasePlayer databasePlayer : databasePlayers) {
-            if (databasePlayer.getPlays() > 50) {
+            if (databasePlayer.getPlays() > 15) {
                 playerSR.put(databasePlayer, SRCalculator.getSR(databasePlayer));
             }
         }

@@ -383,9 +383,9 @@ public class DatabaseGame {
                 updatePlayerStatsFromGame(databaseGame, true);
             }
             //only add game if comps
-            if (databaseGame.isPrivate) {
+            //if (databaseGame.isPrivate) {
                 Warlords.newChain().async(() -> DatabaseManager.gameService.create(databaseGame)).execute();
-            }
+            //}
         }
     }
 

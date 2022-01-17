@@ -23,7 +23,7 @@ public class SRCalculator {
     }
 
     private static double averageAdjusted(double playerAverage, double total) {
-        double average = playerAverage / ((total / 52d));
+        double average = playerAverage / ((total / 48d));
         if (average >= 5) return 1;
         if (average <= 0) return 0;
         return average;//1.00699 + (-1.02107 / (1.01398 + Math.pow(average, 3.09248)));
@@ -31,7 +31,7 @@ public class SRCalculator {
 
     private static double getPlayerTotal(Function<DatabasePlayer, Double> function) {
         if (totalValues.containsKey(function)) return totalValues.get(function);
-        List<DatabasePlayer> databasePlayers = DatabaseManager.playerService.findAll(PlayersCollections.LIFETIME);
+        List<DatabasePlayer> databasePlayers = DatabaseManager.playerService.findAll(PlayersCollections.SEASON_5);
         double total = databasePlayers.stream().mapToDouble(function::apply).sum();
         totalValues.put(function, total);
         return total;
