@@ -57,8 +57,8 @@ public class DatabaseManager {
         Bukkit.getOnlinePlayers().forEach(player -> {
             loadPlayer(player.getUniqueId(), PlayersCollections.LIFETIME, () -> {
                 Warlords.playerScoreboards.get(player.getUniqueId()).giveMainLobbyScoreboard();
+                updateName(player.getUniqueId());
             });
-            updateName(player.getUniqueId());
         });
 
 

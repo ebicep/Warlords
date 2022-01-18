@@ -21,7 +21,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -229,6 +228,10 @@ public class LeaderboardManager {
             leaderboardCategory.getWeeklyHolograms().forEach(hologram -> hologram.getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.VISIBLE));
         } else {
             leaderboardCategory.getDailyHolograms().forEach(hologram -> hologram.getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.VISIBLE));
+        }
+
+        if (Warlords.playerScoreboards.containsKey(player.getUniqueId())) {
+            Warlords.playerScoreboards.get(player.getUniqueId()).giveMainLobbyScoreboard();
         }
 
         createLeaderboardSwitcherHologram(player);
@@ -452,14 +455,16 @@ public class LeaderboardManager {
         ).collect(Collectors.toList());
     }
 
-    enum GameType {
-        ALL("All Modes"),
-        CTF("Capture The Flag");
+    public enum GameType {
+        ALL("All Modes", ""),
+        CTF("Capture The Flag", "CTF");
 
         public String name;
+        public String shortName;
 
-        GameType(String name) {
+        GameType(String name, String shortName) {
             this.name = name;
+            this.shortName = shortName;
         }
 
         public static GameType getAfter(GameType gameType) {
@@ -483,15 +488,17 @@ public class LeaderboardManager {
         }
     }
 
-    enum Category {
-        ALL("All Queues"),
-        COMPS("Competitive Queue"),
-        PUBS("Public Queue");
+    public enum Category {
+        ALL("All Queues", ""),
+        COMPS("Competitive Queue", "Comps"),
+        PUBS("Public Queue", "Pubs");
 
         public String name;
+        public String shortName;
 
-        Category(String name) {
+        Category(String name, String shortName) {
             this.name = name;
+            this.shortName = shortName;
         }
 
         public static Category getAfter(Category category) {
