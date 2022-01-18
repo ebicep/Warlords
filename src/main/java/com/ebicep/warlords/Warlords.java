@@ -662,17 +662,17 @@ public class Warlords extends JavaPlugin {
                             float energyGainPerTick = wp.getSpec().getEnergyPerSec() / 20f;
 
                             // Checks whether the player has Avenger's Wrath active.
-                            if (!cooldownManager.getCooldown(AvengersWrath.class).isEmpty()) {
+                            for (Cooldown cooldown : cooldownManager.getCooldown(AvengersWrath.class)) {
                                 energyGainPerTick += 1;
                             }
 
                             // Checks whether the player has Inspiring Presence active.
-                            if (!cooldownManager.getCooldown(InspiringPresence.class).isEmpty()) {
+                            for (Cooldown cooldown : cooldownManager.getCooldown(InspiringPresence.class)) {
                                 energyGainPerTick += .5;
                             }
 
                             // Checks whether the player has been marked by a Crusader.
-                            if (!cooldownManager.getCooldown(HolyRadianceCrusader.class).isEmpty()) {
+                            for (Cooldown cooldown : cooldownManager.getCooldown(HolyRadianceCrusader.class)) {
                                 energyGainPerTick += .25;
                             }
 

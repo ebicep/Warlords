@@ -126,18 +126,18 @@ public class ExperienceManager {
         long flagRetExp = warlordsPlayer.getFlagsReturned() * 50L;
 
         LinkedHashMap<String, Long> expGain = new LinkedHashMap<>();
-        expGain.put(won ? "Win" : "Loss", winLossExp * (long) (isCompGame ? 1 : .1));
+        expGain.put(won ? "Win" : "Loss", (long) (winLossExp * (isCompGame ? 1 : .1)));
         if (kaExp != 0) {
-            expGain.put("Kills/Assists", kaExp * (long) (isCompGame ? 1 : .1));
+            expGain.put("Kills/Assists", (long) (kaExp * (isCompGame ? 1 : .1)));
         }
         if (dhpExp != 0) {
-            expGain.put("DHP", dhpExp * (long) (isCompGame ? 1 : .1));
+            expGain.put("DHP", (long) (dhpExp * (isCompGame ? 1 : .1)));
         }
         if (flagCapExp != 0) {
-            expGain.put("Flags Captured", flagCapExp * (long) (isCompGame ? 1 : .1));
+            expGain.put("Flags Captured", (long) (flagCapExp * (isCompGame ? 1 : .1)));
         }
         if (flagRetExp != 0) {
-            expGain.put("Flags Returned", flagRetExp * (long) (isCompGame ? 1 : .1));
+            expGain.put("Flags Returned", (long) (flagRetExp * (isCompGame ? 1 : .1)));
         }
 
         try {
@@ -272,7 +272,8 @@ public class ExperienceManager {
 //    }
 
     public static long getExperienceForClass(UUID uuid, ClassesGroup classesGroup) {
-        return DatabaseManager.playerService.findByUUID(uuid).getClass(classesGroup).getExperience();
+        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid);
+        return databasePlayer == null ? 0L : databasePlayer.getClass(classesGroup).getExperience();
     }
 
     public static int getLevelForClass(UUID uuid, ClassesGroup classesGroup) {
@@ -288,11 +289,13 @@ public class ExperienceManager {
     }
 
     public static long getUniversalLevel(UUID uuid) {
-        return DatabaseManager.playerService.findByUUID(uuid).getExperience();
+        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid);
+        return databasePlayer == null ? 0L : databasePlayer.getExperience();
     }
 
     private static long getExperienceFromSpec(UUID uuid, Classes classes) {
-        return DatabaseManager.playerService.findByUUID(uuid).getSpec(classes).getExperience();
+        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid);
+        return databasePlayer == null ? 0L : databasePlayer.getSpec(classes).getExperience();
     }
 
     public static String getLevelString(int level) {
