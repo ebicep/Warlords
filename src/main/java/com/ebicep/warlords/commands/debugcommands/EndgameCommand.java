@@ -18,6 +18,7 @@ public class EndgameCommand implements CommandExecutor {
             sender.sendMessage("§cYou do not have permission to do that.");
             return true;
         }
+
         Game game = Warlords.game; // In the future allow the user to select a game player
         if (game.getState() instanceof PreLobbyState) {
             sender.sendMessage(ChatColor.RED + "There are no games currently running!");

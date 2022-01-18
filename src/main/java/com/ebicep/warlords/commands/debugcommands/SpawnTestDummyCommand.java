@@ -29,6 +29,11 @@ public class SpawnTestDummyCommand implements CommandExecutor {
             return true;
         }
 
+        if (!Warlords.game.isPrivate()) {
+            sender.sendMessage("§cDebug commands are disabled in public games!");
+            return true;
+        }
+
         if (player != null) {
             if (args.length >= 1) {
                 String teamString = args[0];
