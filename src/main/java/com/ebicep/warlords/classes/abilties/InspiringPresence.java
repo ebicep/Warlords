@@ -6,6 +6,7 @@ import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -41,6 +42,7 @@ public class InspiringPresence extends AbstractAbility {
         PlayerFilter.entitiesAround(wp, radius, radius, radius)
                 .aliveTeammatesOfExcludingSelf(wp)
                 .forEach((nearPlayer) -> {
+                    wp.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " Your Inspiring Presence inspired " + ChatColor.YELLOW + nearPlayer.getName() + ChatColor.GRAY + "!");
                     nearPlayer.getSpeed().addSpeedModifier("Inspiring Presence", speedBuff, duration * 20, "BASE");
                     nearPlayer.getCooldownManager().addRegularCooldown(name, "PRES", InspiringPresence.class, tempPresence, wp, CooldownTypes.BUFF, cooldownManager -> {
                     }, duration * 20);

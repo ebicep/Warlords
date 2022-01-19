@@ -9,6 +9,7 @@ import com.ebicep.warlords.util.EffectUtils;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -45,6 +46,7 @@ public class Vindicate extends AbstractAbility {
                 .forEach((nearPlayer) -> {
                             nearPlayer.getSpeed().removeSlownessModifiers();
                             nearPlayer.getCooldownManager().removeDebuffCooldowns();
+                            wp.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " Your Vindicate is now protecting " + ChatColor.YELLOW + nearPlayer.getName() + ChatColor.GRAY + "!");
                             nearPlayer.getCooldownManager().addRegularCooldown("Vindicate Debuff Immunity", "VIND", Vindicate.class, tempVindicate, wp, CooldownTypes.BUFF, cooldownManager -> {
                             }, vindicateDuration * 20);
                             nearPlayer.getCooldownManager().addRegularCooldown("KB Resistance", "KB", Vindicate.class, tempVindicate, wp, CooldownTypes.BUFF, cooldownManager -> {
