@@ -1,19 +1,15 @@
 package com.ebicep.warlords.maps;
 
-import com.ebicep.warlords.maps.option.Option;
-import com.ebicep.warlords.maps.option.PowerupOption;
+import com.ebicep.warlords.maps.option.*;
 import com.ebicep.warlords.maps.state.PreLobbyState;
 import com.ebicep.warlords.maps.state.State;
 import com.ebicep.warlords.util.LocationBuilder;
 import com.ebicep.warlords.util.LocationFactory;
-import java.util.ArrayList;
+import java.util.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 import javax.annotation.Nonnull;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import java.util.function.BiConsumer;
 
 // MAPS:
@@ -215,9 +211,29 @@ public enum GameMap {
             MapCategory.DEBUG
     ) {
         @Override
-        public List<Option> initMap(MapCategory category, LocationFactory loc, List<GameAddon> addons) {
+        public List<Option> initMap(MapCategory category, LocationFactory loc, EnumSet<GameAddon> addons) {
             List<Option> options = new ArrayList<>();
-            options.add(new PowerupOption())
+            options.add(new PowerupOption(loc.addXYZ(699.5, 8.5, 184.5), PowerupOption.PowerupType.DAMAGE));
+            options.add(new PowerupOption(loc.addXYZ(699.5, 8.5, 188.5), PowerupOption.PowerupType.DAMAGE));
+            
+            options.add(new PowerupOption(loc.addXYZ(699.5, 8.5, 192.5), PowerupOption.PowerupType.SPEED));
+            options.add(new PowerupOption(loc.addXYZ(699.5, 8.5, 196.5), PowerupOption.PowerupType.SPEED));
+            
+            options.add(new PowerupOption(loc.addXYZ(699.5, 8.5, 200.5), PowerupOption.PowerupType.HEALING));
+            options.add(new PowerupOption(loc.addXYZ(699.5, 8.5, 204.5), PowerupOption.PowerupType.HEALING));
+            
+            // TODO lobby
+            
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(727.5, 8.5, 196.5), Team.BLUE));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(727.5, 8.5, 196.5), Team.RED));
+            
+            options.add(new FlagCapturePointOption(loc.addXYZ(703.5, 8.5, 212.5), Team.BLUE));
+            options.add(new FlagSpawnPointOption(loc.addXYZ(703.5, 8.5, 212.5), Team.BLUE));
+            
+            options.add(new FlagCapturePointOption(loc.addXYZ(720.5, 8.5, 212.5), Team.RED));
+            options.add(new FlagSpawnPointOption(loc.addXYZ(720.5, 8.5, 212.5), Team.RED));
+            
+            options.add(new GateOption(loc.addXYZ(713, 7, 195), loc.addXYZ(713, 10, 198)));
         }
         
     }
@@ -271,7 +287,7 @@ public enum GameMap {
      * @param addons The used addons
      * @return The initial list of options
      */
-    public abstract List<Option> initMap(MapCategory category, LocationFactory loc, List<GameAddon> addons);
+    public abstract List<Option> initMap(MapCategory category, LocationFactory loc, EnumSet<GameAddon> addons);
     
     public State initialState(Game game) {
         return new PreLobbyState(game);

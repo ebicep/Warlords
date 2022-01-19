@@ -5,6 +5,7 @@
  */
 package com.ebicep.warlords.maps.flags;
 
+import java.util.List;
 import org.bukkit.Location;
 
 import javax.annotation.Nonnull;
@@ -17,5 +18,8 @@ public interface FlagLocation {
 
     @Nullable
     FlagLocation update(@Nonnull FlagInfo info);
+    
+    @Nonnull
+    List<String> getDebugInformation();
 	
 }

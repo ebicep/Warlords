@@ -22,7 +22,7 @@ public interface State {
      */
     public void end();
     
-    public default void onPlayerJoinGame(OfflinePlayer player) {
+    public default void onPlayerJoinGame(OfflinePlayer player, boolean asSpectator) {
     }
     public default void onPlayerQuitGame(OfflinePlayer player) {
     }

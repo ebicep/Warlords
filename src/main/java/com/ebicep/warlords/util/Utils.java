@@ -318,4 +318,13 @@ public class Utils {
         }
         return diffX * diffX + diffY * diffY + diffZ * diffZ < radius * radius;
     }
+    
+    public static <T> boolean collectionHasItem(Iterable<? extends T> col, Predicate<T> matcher) {
+        for (T item : col) {
+            if (matcher.test(item)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

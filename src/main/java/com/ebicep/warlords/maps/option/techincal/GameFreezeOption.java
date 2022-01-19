@@ -16,16 +16,17 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 /**
- * Supports actually freezing the players in the game 
+ * Supports actually freezing the players in the game
  */
 public class GameFreezeOption implements Option, Listener {
+
     private Game game;
     private boolean isFrozen = false;
 
     @Override
     public void register(Game game) {
         this.game = game;
-        
+
         game.registerEvents(this);
     }
 
@@ -54,7 +55,7 @@ public class GameFreezeOption implements Option, Listener {
             p.removePotionEffect(PotionEffectType.BLINDNESS);
         });
     }
-    
+
     @EventHandler
     public void onGameUpdated(WarlordsGameUpdatedEvent evt) {
         if (evt.getGame() != game) {
@@ -78,5 +79,5 @@ public class GameFreezeOption implements Option, Listener {
             freeze();
         }
     }
-    
+
 }

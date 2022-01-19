@@ -4,8 +4,6 @@ import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.flags.FlagInfo;
 import com.ebicep.warlords.maps.flags.FlagLocation;
-import com.ebicep.warlords.maps.flags.FlagManager;
-import com.ebicep.warlords.maps.state.PlayingState;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
@@ -13,14 +11,12 @@ public class WarlordsFlagUpdatedEvent extends Event {
 
     private static final HandlerList handlers = new HandlerList();
     private final Game game;
-    private final PlayingState gameState;
     private final FlagInfo info;
     private final Team team;
     private final FlagLocation old;
 
-    public WarlordsFlagUpdatedEvent(Game game, PlayingState gameState, FlagInfo info, Team team, FlagLocation old) {
+    public WarlordsFlagUpdatedEvent(Game game, FlagInfo info, Team team, FlagLocation old) {
         this.game = game;
-        this.gameState = gameState;
         this.info = info;
         this.team = team;
         this.old = old;
@@ -28,10 +24,6 @@ public class WarlordsFlagUpdatedEvent extends Event {
 
     public Game getGame() {
         return game;
-    }
-
-    public PlayingState getGameState() {
-        return gameState;
     }
 
     public FlagInfo getInfo() {
@@ -61,6 +53,6 @@ public class WarlordsFlagUpdatedEvent extends Event {
 
     @Override
     public String toString() {
-        return "WarlordsFlagUpdatedEvent{" + "game=" + game + ", gameState=" + gameState + ", info=" + info + ", team=" + team + ", old=" + old + '}';
+        return "WarlordsFlagUpdatedEvent{" + "game=" + game + ", info=" + info + ", team=" + team + ", old=" + old + '}';
     }
 }

@@ -2,8 +2,8 @@ package com.ebicep.warlords.maps.option;
 
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.option.marker.FlagCaptureMarker;
+import com.ebicep.warlords.maps.option.marker.DebugLocationMarker;
 import static com.ebicep.warlords.maps.option.marker.FlagCaptureMarker.DEFAULT_CAPTURE_RADIUS;
-import com.ebicep.warlords.maps.option.marker.SimpleDebugLocationMarker;
 import java.util.Arrays;
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
@@ -17,16 +17,37 @@ public class FlagCapturePointOption extends MarkerOption {
 
     public FlagCapturePointOption(@Nonnull Location loc, @Nonnegative double radius, @Nonnull Team... toIgnore) {
         super(
-            FlagCaptureMarker.aroundLocation(loc, radius, toIgnore),
-            new SimpleDebugLocationMarker(FlagCapturePointOption.class, "Capture zone (middle): " + Arrays.toString(toIgnore), loc)
+                FlagCaptureMarker.aroundLocation(loc, radius, toIgnore),
+                DebugLocationMarker.create(null, 0, FlagCapturePointOption.class,
+                        "Capture zone",
+                        loc,
+                        () -> Arrays.asList(
+                                "Ignoring teams: " + Arrays.toString(toIgnore),
+                                "Shape: POINT",
+                                "Radius: " + radius
+                        )
+                )
         );
     }
 
     public FlagCapturePointOption(@Nonnull Location a, @Nonnull Location b, @Nonnull Team... toIgnore) {
         super(
-            FlagCaptureMarker.zonedCapture(a, b, toIgnore),
-            new SimpleDebugLocationMarker(FlagCapturePointOption.class, "Capture zone (rectangle P1): " + Arrays.toString(toIgnore), a),
-            new SimpleDebugLocationMarker(FlagCapturePointOption.class, "Capture zone (rectangle P2): " + Arrays.toString(toIgnore), b)
+                FlagCaptureMarker.zonedCapture(a, b, toIgnore),
+                DebugLocationMarker.create(null, 0, FlagCapturePointOption.class,
+                        "Capture zone",
+                        new Location(
+                                a.getWorld(),
+                                (a.getX() + b.getX()) / 2,
+                                (a.getY() + b.getY()) / 2,
+                                (a.getZ() + b.getZ()) / 2
+                        ),
+                        () -> Arrays.asList(
+                                "Ignoring teams: " + Arrays.toString(toIgnore),
+                                "Shape: RECTANGLE",
+                                "A: " + a.getX() + ", " + a.getY() + ", " + a.getZ(),
+                                "B: " + b.getX() + ", " + b.getY() + ", " + b.getZ()
+                        )
+                )
         );
     }
 }

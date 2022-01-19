@@ -7,13 +7,14 @@ import com.ebicep.warlords.util.PacketUtils;
 import org.bukkit.ChatColor;
 
 public class GameFreezeWhenOfflineOption implements Option {
+
     private static final String FROZEN_MESSAGE = ChatColor.YELLOW + "Missing player detected!";
     private static final int UNFREEZE_TIME = 5;
     private static final int FREEZE_TIME = 15;
 
     private int timer = 0;
     private boolean isFrozen = false;
-    
+
     @Override
     public void start(Game game) {
         new GameRunnable(game) {
@@ -45,7 +46,7 @@ public class GameFreezeWhenOfflineOption implements Option {
                     }
                 }
             }
-            
+
         }.runTaskTimer(0, 20);
     }
 }

@@ -1,7 +1,7 @@
 package com.ebicep.warlords.maps.option.marker;
 
 import com.ebicep.warlords.maps.Team;
-import com.ebicep.warlords.maps.option.flags.PlayerFlagLocation;
+import com.ebicep.warlords.maps.flags.PlayerFlagLocation;
 import static com.ebicep.warlords.util.Utils.isInCircleRadiusFast;
 import java.util.EnumSet;
 import javax.annotation.Nonnegative;
@@ -90,16 +90,15 @@ public interface FlagCaptureMarker extends GameMarker {
         double zMin = Math.min(a.getZ(), b.getZ());
         double zMax = Math.max(a.getZ(), b.getZ());
         return flag -> {
-            if (toIgnore.contains(flag.getPlayer().getTeam())) {
-                return false;
-            }
             Location loc = flag.getLocation();
             double x = loc.getX();
             double y = loc.getY();
             double z = loc.getZ();
-            return x >= xMin && x <= xMax &&
-                    y >= yMin && y <= yMax &&
-                    z >= zMin && z <= zMax;
+            return !toIgnore.contains(flag.getPlayer().getTeam())
+                    && loc.getWorld() == a.getWorld()
+                    && x >= xMin && x <= xMax
+                    && y >= yMin && y <= yMax
+                    && z >= zMin && z <= zMax;
         };
     }
 }

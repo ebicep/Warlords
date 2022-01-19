@@ -11,9 +11,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.events.WarlordsPointsChangedEvent;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.GameAddon;
-import com.ebicep.warlords.maps.Gates;
 import com.ebicep.warlords.maps.Team;
-import com.ebicep.warlords.maps.flags.FlagManager;
 import com.ebicep.warlords.maps.flags.GroundFlagLocation;
 import com.ebicep.warlords.maps.flags.PlayerFlagLocation;
 import com.ebicep.warlords.maps.flags.SpawnFlagLocation;
@@ -24,12 +22,10 @@ import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.powerups.PowerupManager;
 import com.ebicep.warlords.util.PacketUtils;
 import com.ebicep.warlords.util.RemoveEntities;
-import com.ebicep.warlords.util.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
@@ -45,11 +41,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
-import static com.ebicep.warlords.util.ChatUtils.sendMessage;
-
 public class PlayingState implements State, TimerDebugAble {
-    private static final int GATE_TIMER = 10 * 20;
-    private static final int POWERUP_TIMER = 60 * 20;
     private static final int OVERTIME_TIME = 60 * 20;
 
     private static final int SCORE_KILL_POINTS = 5;
@@ -59,8 +51,6 @@ public class PlayingState implements State, TimerDebugAble {
     private static final int MERCY_LIMIT = 550;
 
     private int timer = 0;
-    private int gateTimer = 0;
-    private int powerupTimer = 0;
     private boolean overTimeActive = false;
     private int pointLimit = 0;
     private final Game game;
@@ -134,9 +124,7 @@ public class PlayingState implements State, TimerDebugAble {
     @SuppressWarnings("null")
     public void begin() {
         this.resetTimer();
-        this.gateTimer = GATE_TIMER;
-        this.powerupTimer = POWERUP_TIMER;
-        RemoveEntities.doRemove(this.game.getMap());
+        RemoveEntities.doRemove(this.game);
 
         this.game.forEachOfflinePlayer((player, team) -> {
             PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
@@ -167,6 +155,8 @@ public class PlayingState implements State, TimerDebugAble {
                     DatabaseManager.loadPlayer(player.getUniqueId(), PlayersCollections.DAILY, () -> {
                     });
                 })).execute();
+        game.setAcceptsPlayers(true);
+        game.setAcceptsSpectators(false);
     }
 
     @Override
@@ -207,20 +197,6 @@ public class PlayingState implements State, TimerDebugAble {
         if (redPoints >= this.pointLimit || bluePoints >= this.pointLimit || (Math.abs(redPoints - bluePoints) >= MERCY_LIMIT && this.timer < game.getMap().getGameTimerInTicks() - 20 * 60 * 5)) {
             giveScoreboard();
             return nextStateByPoints();
-        }
-        if (gateTimer >= 0) {
-            gateTimer--;
-            if (gateTimer % 20 == 0) {
-            }
-        }
-        if (powerupTimer >= 0) {
-            powerupTimer--;
-            if (powerupTimer == 0) {
-                if (this.powerUps != null) {
-                    this.powerUps.cancel();
-                }
-                this.powerUps = new PowerupManager(game).runTaskTimer(Warlords.getInstance(), 0, 0);
-            }
         }
         return null;
     }

@@ -1,5 +1,7 @@
 package com.ebicep.warlords.maps.flags;
 
+import java.util.Arrays;
+import java.util.List;
 import org.bukkit.Location;
 
 public class WaitingFlagLocation extends AbstractLocationBasedFlagLocation {
@@ -17,7 +19,7 @@ public class WaitingFlagLocation extends AbstractLocationBasedFlagLocation {
         return despawnTimer;
     }
 
-    public boolean isWasWinner() {
+    public boolean wasWinner() {
         return wasWinner;
     }
 
@@ -27,8 +29,12 @@ public class WaitingFlagLocation extends AbstractLocationBasedFlagLocation {
         return this.despawnTimer <= 0 ? new SpawnFlagLocation(info.getSpawnLocation(), null) : null;
     }
 
-    public boolean wasWinner() {
-        return wasWinner;
+    @Override
+    public List<String> getDebugInformation() {
+        return Arrays.asList("Type: " + this.getClass().getSimpleName(),
+                "wasWinner: " + wasWinner(),
+                "despawnTimer: " + getDespawnTimer()
+        );
     }
 	
 }

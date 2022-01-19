@@ -7,6 +7,7 @@ import com.ebicep.warlords.database.leaderboards.LeaderboardManager;
 import com.ebicep.warlords.database.repositories.games.GameMode;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.maps.GameAddon;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.state.PlayingState;
 import com.ebicep.warlords.player.WarlordsPlayer;
@@ -78,7 +79,7 @@ public class DatabaseGame {
         this.redPoints = gameState.getStats(Team.RED).points();
         this.players = new DatabaseGamePlayers(blue, red);
         this.statInfo = getWarlordsPlusEndGameStats(gameState);
-        this.isPrivate = gameState.getGame().isPrivate();
+        this.isPrivate = gameState.getGame().getAddons().contains(GameAddon.PRIVATE_GAME);
         this.counted = counted;
     }
 

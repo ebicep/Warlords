@@ -1,14 +1,16 @@
 package com.ebicep.warlords.maps.option;
 
 import com.ebicep.warlords.maps.Game;
+import com.ebicep.warlords.maps.option.marker.DebugLocationMarker;
 import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
-import com.ebicep.warlords.powerups.DamagePowerUp;
-import com.ebicep.warlords.powerups.EnergyPowerUp;
-import com.ebicep.warlords.powerups.SpeedPowerUp;
 import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.PlayerFilter;
+import java.util.Arrays;
+import java.util.Objects;
+import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
@@ -17,39 +19,59 @@ import org.bukkit.inventory.ItemStack;
 
 public class PowerupOption implements Option {
 
-    public static int DEFAULT_TIME_TO_SPAWN = 60;
+    public static int DEFAULT_TIME_TO_SPAWN = 60 * 20;
     public static int DEFAULT_MAX_COOLDOWN = 45 * 20;
 
+    @Nonnull
     private Location location;
+    @Nonnull
     private PowerupType type;
+    @Nullable
     private ArmorStand entity;
+    @Nonnegative
     private int duration;
+    @Nonnegative
     private int cooldown;
+    @Nonnegative
     private int maxCooldown;
-    private int timeToSpawn;
     private boolean hasStarted = false;
     @Nonnull
     private Game game;
-    public PowerupOption(Location location, PowerupType type) {
+
+    public PowerupOption(@Nonnull Location location, @Nonnull PowerupType type) {
         this(location, type, type.getDuration(), DEFAULT_MAX_COOLDOWN, DEFAULT_TIME_TO_SPAWN);
     }
 
-    public PowerupOption(Location location, PowerupType type, int duration, int maxCooldown, int timeToSpawn) {
-        this.location = location;
-        this.type = type;
+    public PowerupOption(@Nonnull Location location, @Nonnull PowerupType type, @Nonnegative int duration, @Nonnegative int maxCooldown, @Nonnegative int timeToSpawn) {
+        this.location = Objects.requireNonNull(location, "location");
+        this.type = Objects.requireNonNull(type, "type");
         this.duration = duration;
         this.maxCooldown = maxCooldown;
-        this.timeToSpawn = timeToSpawn;
+        this.cooldown = timeToSpawn;
     }
 
     @Override
     public void register(Game game) {
         this.game = game;
+        game.registerGameMarker(DebugLocationMarker.class, DebugLocationMarker.create(null, 0, this.getClass(),
+                () -> this.getClass().getSimpleName() + ": " + this.type.name(),
+                this::getLocation,
+                () -> Arrays.asList(
+                        "Type: " + this.getType(),
+                        "Cooldown: " + this.getCooldown(),
+                        "Duration: " + this.getDuration(),
+                        "Max cooldown: " + this.getMaxCooldown(),
+                        "Entity: " + this.getEntity()
+                )
+        ));
     }
 
     @Override
     public void start(Game game) {
         hasStarted = true;
+        if (cooldown == 0) {
+            spawn();
+        }
         new GameRunnable(game) {
             @Override
             public void run() {
@@ -58,12 +80,11 @@ public class PowerupOption implements Option {
                             .isAlive()
                             .first((nearPlayer) -> {
                                 type.onPickUp(PowerupOption.this, nearPlayer);
-                                entity.remove();
-                                entity = null;
+                                remove();
                                 cooldown = maxCooldown;
                             });
                 } else {
-                    cooldown -= 1;
+                    cooldown--;
                     if (cooldown == 0) {
                         spawn();
                     }
@@ -72,9 +93,19 @@ public class PowerupOption implements Option {
 
         }.runTaskTimer(0, 20);
     }
-    
-    
-    public void spawn() {
+
+    private void remove() {
+        if (entity == null) {
+            return;
+        }
+        entity.remove();
+        entity = null;
+    }
+
+    private void spawn() {
+        if (entity != null) {
+            remove();
+        }
         entity = location.getWorld().spawn(location.clone().add(0, -1.5, 0), ArmorStand.class);
 
         type.setNameAndItem(this, entity);
@@ -84,7 +115,7 @@ public class PowerupOption implements Option {
         entity.setCustomNameVisible(true);
 
         game.forEachOnlinePlayer((player, team) -> {
-            entry.playSound(location, "ctf.powerup.spawn", 2, 1);
+            player.playSound(location, "ctf.powerup.spawn", 2, 1);
         });
 
     }
@@ -111,6 +142,11 @@ public class PowerupOption implements Option {
         this.type = type;
     }
 
+    public void setTypeAndDuration(PowerupType type) {
+        setType(type);
+        this.duration = type.getDuration();
+    }
+
     public ArmorStand getEntity() {
         return entity;
     }
@@ -127,24 +163,23 @@ public class PowerupOption implements Option {
         return maxCooldown;
     }
 
-    public int getTimeToSpawn() {
-        return timeToSpawn;
-    }
-
-    public void setDuration(int duration) {
+    public void setDuration(@Nonnegative int duration) {
         this.duration = duration;
     }
 
-    public void setCooldown(int cooldown) {
+    public void setCooldown(@Nonnegative int cooldown) {
+        int oldCooldown = cooldown;
         this.cooldown = cooldown;
+        if (oldCooldown == 0 && cooldown != 0) {
+            remove();
+        }
+        if (oldCooldown != 0 && cooldown == 0 && hasStarted) {
+            spawn();
+        }
     }
 
-    public void setMaxCooldown(int maxCooldown) {
+    public void setMaxCooldown(@Nonnegative int maxCooldown) {
         this.maxCooldown = maxCooldown;
-    }
-
-    public void setTimeToSpawn(int timeToSpawn) {
-        this.timeToSpawn = timeToSpawn;
     }
 
     public enum PowerupType {
@@ -152,7 +187,10 @@ public class PowerupOption implements Option {
             @Override
             public void onPickUp(PowerupOption option, WarlordsPlayer warlordsPlayer) {
                 warlordsPlayer.getCooldownManager().addCooldown("Speed", this.getClass(), this, "SPEED", option.getDuration(), warlordsPlayer, CooldownTypes.BUFF);
-                warlordsPlayer.sendMessage("§6You activated the §e§lSPEED §6powerup! §a+40% §6Speed for §a10 §6seconds!");
+                warlordsPlayer.sendMessage(String.format(
+                        "§6You activated the §e§lSPEED §6powerup! §a+40%% §6Speed for §a%d §6seconds!",
+                        option.getDuration()
+                ));
                 warlordsPlayer.getSpeed().addSpeedModifier("Speed Powerup", 40, 10 * 20, "BASE");
 
                 for (Player player1 : option.getLocation().getWorld().getPlayers()) {
@@ -166,7 +204,7 @@ public class PowerupOption implements Option {
                 armorStand.setHelmet(new ItemStack(Material.WOOL, 1, (short) 4));
             }
         },
-        HEALING(0) {
+        HEALING(5) {
 
             @Override
             public void onPickUp(PowerupOption option, WarlordsPlayer warlordsPlayer) {

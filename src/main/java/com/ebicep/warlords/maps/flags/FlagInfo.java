@@ -18,10 +18,6 @@ public class FlagInfo {
     private final Team team;
     private final BiConsumer<FlagInfo, FlagLocation> onUpdate;
 
-    public FlagInfo(Team team, Location spawnLocation, final FlagManager flags) {
-        this(team, spawnLocation, (info, old) -> Bukkit.getPluginManager().callEvent(new WarlordsFlagUpdatedEvent(flags.gameState.getGame(), flags.gameState, info, team, old)));
-    }
-
     public FlagInfo(Team team, Location spawnLocation, BiConsumer<FlagInfo, FlagLocation> onUpdate) {
         this.team = team;
         this.spawnLocation = spawnLocation;

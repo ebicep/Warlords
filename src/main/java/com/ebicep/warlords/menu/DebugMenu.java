@@ -1,12 +1,13 @@
 package com.ebicep.warlords.menu;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.GameMap;
 import com.ebicep.warlords.maps.Team;
-import com.ebicep.warlords.maps.flags.FlagManager;
 import com.ebicep.warlords.maps.flags.GroundFlagLocation;
 import com.ebicep.warlords.maps.flags.PlayerFlagLocation;
 import com.ebicep.warlords.maps.flags.SpawnFlagLocation;
+import com.ebicep.warlords.maps.option.marker.DebugLocationMarker;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.util.ItemBuilder;
 import com.ebicep.warlords.util.NumberFormat;
@@ -584,32 +585,28 @@ public class DebugMenu {
 
     public static void openTeleportLocations(Player player, WarlordsPlayer target) {
         Menu menu = new Menu("Teleport To: " + target.getName(), 9 * 5);
-        GameMap gameMap = target.getGame().getMap();
-        LinkedHashMap<ItemStack, Location> teleportLocationsBlue = new LinkedHashMap<>();
-        teleportLocationsBlue.put(new ItemBuilder(Material.BEACON).name(ChatColor.BLUE + "Lobby Spawn Point").get(), gameMap.getBlueLobbySpawnPoint());
-        teleportLocationsBlue.put(new ItemBuilder(Material.BED).name(ChatColor.BLUE + "Respawn Point").get(), gameMap.getBlueRespawn());
-        teleportLocationsBlue.put(new ItemBuilder(Material.BANNER).name(ChatColor.BLUE + "Flag").get(), gameMap.getBlueFlag());
-        teleportLocationsBlue.put(new ItemBuilder(Material.WOOL, 1, (short) 1).name(ChatColor.BLUE + "Energy Powerup").get(), gameMap.getDamagePowerupBlue());
-        teleportLocationsBlue.put(new ItemBuilder(Material.WOOL, 1, (short) 5).name(ChatColor.BLUE + "Healing Powerup").get(), gameMap.getHealingPowerupBlue());
-        teleportLocationsBlue.put(new ItemBuilder(Material.WOOL, 1, (short) 4).name(ChatColor.BLUE + "Speed Powerup").get(), gameMap.getSpeedPowerupBlue());
-        LinkedHashMap<ItemStack, Location> teleportLocationsRed = new LinkedHashMap<>();
-        teleportLocationsRed.put(new ItemBuilder(Material.BEACON).name(ChatColor.RED + "Lobby Spawn Point").get(), gameMap.getRedLobbySpawnPoint());
-        teleportLocationsRed.put(new ItemBuilder(Material.BED).name(ChatColor.RED + "Respawn Point").get(), gameMap.getRedRespawn());
-        teleportLocationsRed.put(new ItemBuilder(Material.BANNER).name(ChatColor.RED + "Flag").get(), gameMap.getRedFlag());
-        teleportLocationsRed.put(new ItemBuilder(Material.WOOL, 1, (short) 1).name(ChatColor.RED + "Energy Powerup").get(), gameMap.getDamagePowerupRed());
-        teleportLocationsRed.put(new ItemBuilder(Material.WOOL, 1, (short) 5).name(ChatColor.RED + "Healing Powerup").get(), gameMap.getHealingPowerupRed());
-        teleportLocationsRed.put(new ItemBuilder(Material.WOOL, 1, (short) 4).name(ChatColor.RED + "Speed Powerup").get(), gameMap.getSpeedPowerupRed());
-        for (int i = 0; i < teleportLocationsBlue.entrySet().size(); i++) {
-            int finalI = i;
-            menu.setItem(i + 1, 1, (ItemStack) teleportLocationsBlue.keySet().toArray()[i], (n, e) -> {
-                target.teleport(teleportLocationsBlue.get((ItemStack) teleportLocationsBlue.keySet().toArray()[finalI]));
-                player.sendMessage(ChatColor.RED + "DEV: " + target.getColoredName() + "§a was teleported to the " + ChatColor.BLUE + "Blue " + ((ItemStack) teleportLocationsBlue.keySet().toArray()[finalI]).getItemMeta().getDisplayName());
+        
+        Game game = target.getGame();
+        int x = 0;
+        int y = 0;
+        for (DebugLocationMarker marker : game.getMarkers(DebugLocationMarker.class)) {
+            menu.setItem(x, y, marker.getAsItem(), (n, e) -> {
+                target.teleport(marker.getLocation());
+                player.sendMessage(ChatColor.RED + "DEV: " + target.getColoredName() + "§a was teleported to " + marker.getName());
+        
             });
-            menu.setItem(i + 1, 2, (ItemStack) teleportLocationsRed.keySet().toArray()[i], (n, e) -> {
-                target.teleport(teleportLocationsRed.get((ItemStack) teleportLocationsRed.keySet().toArray()[finalI]));
-                player.sendMessage(ChatColor.RED + "DEV: " + target.getColoredName() + "§a was teleported to the " + ChatColor.RED + "Red " + ((ItemStack) teleportLocationsRed.keySet().toArray()[finalI]).getItemMeta().getDisplayName());
-            });
+            x++;
+            if(x > 8) {
+                x = 0;
+                y++;
+            }
         }
+//        teleportLocationsBlue.put(new ItemBuilder(Material.BEACON).name(ChatColor.BLUE + "Lobby Spawn Point").get(), gameMap.getBlueLobbySpawnPoint());
+//        teleportLocationsBlue.put(new ItemBuilder(Material.BED).name(ChatColor.BLUE + "Respawn Point").get(), gameMap.getBlueRespawn());
+//        teleportLocationsBlue.put(new ItemBuilder(Material.BANNER).name(ChatColor.BLUE + "Flag").get(), gameMap.getBlueFlag());
+//        teleportLocationsBlue.put(new ItemBuilder(Material.WOOL, 1, (short) 1).name(ChatColor.BLUE + "Energy Powerup").get(), gameMap.getDamagePowerupBlue());
+//        teleportLocationsBlue.put(new ItemBuilder(Material.WOOL, 1, (short) 5).name(ChatColor.BLUE + "Healing Powerup").get(), gameMap.getHealingPowerupBlue());
+//        teleportLocationsBlue.put(new ItemBuilder(Material.WOOL, 1, (short) 4).name(ChatColor.BLUE + "Speed Powerup").get(), gameMap.getSpeedPowerupBlue());
         menu.setItem(3, 4, MENU_BACK, (n, e) -> openPlayerMenu(player, target));
         menu.setItem(4, 4, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.openForPlayer(player);

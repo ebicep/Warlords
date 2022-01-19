@@ -23,13 +23,13 @@ public class MarkerOption implements Option {
      *
      * @param markers The game marker's to register on the register phase
      */
-    public MarkerOption(@Nonnull GameMarker ... markers) {
+    public MarkerOption(@Nonnull GameMarker... markers) {
         this.markers = markers;
     }
 
     @Override
     public void register(@Nonnull Game game) {
-        for(GameMarker marker : markers) {
+        for (GameMarker marker : markers) {
             marker.register(game);
         }
     }

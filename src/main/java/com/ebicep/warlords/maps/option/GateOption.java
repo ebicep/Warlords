@@ -1,13 +1,13 @@
 package com.ebicep.warlords.maps.option;
 
-import com.ebicep.warlords.maps.Cuboid;
 import com.ebicep.warlords.maps.Game;
-import com.ebicep.warlords.maps.GameMap;
+import com.ebicep.warlords.maps.option.marker.DebugLocationMarker;
 import com.ebicep.warlords.maps.option.marker.TimerSkipAbleMarker;
 import static com.ebicep.warlords.util.ChatUtils.sendMessage;
 import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.PacketUtils;
 import com.ebicep.warlords.util.Utils;
+import java.util.Arrays;
 import javax.annotation.Nonnull;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -16,16 +16,27 @@ import org.bukkit.Sound;
 import org.bukkit.block.Block;
 
 public class GateOption implements Option, TimerSkipAbleMarker {
+
     public static final int DEFAULT_GATE_DELAY = 10;
+    public static final Material DEFAULT_OPEN_MATERIAL = Material.AIR;
+    public static final Material DEFAULT_CLOSED_MATERIAL = Material.FENCE;
 
     private final Location min;
     private final Location max;
     private final Material closed;
     private final Material open;
-    
+
     private int delay;
     @Nonnull
     private Game game;
+
+    public GateOption(Location a, Location b) {
+        this(a, b, DEFAULT_CLOSED_MATERIAL, DEFAULT_OPEN_MATERIAL, DEFAULT_GATE_DELAY);
+    }
+
+    public GateOption(Location a, Location b, Material closed) {
+        this(a, b, closed, DEFAULT_OPEN_MATERIAL, DEFAULT_GATE_DELAY);
+    }
 
     public GateOption(Location a, Location b, Material closed, Material open) {
         this(a, b, closed, open, DEFAULT_GATE_DELAY);
@@ -35,14 +46,16 @@ public class GateOption implements Option, TimerSkipAbleMarker {
         if (a.getWorld() != b.getWorld()) {
             throw new IllegalArgumentException("The worlds provided have different worlds");
         }
+        if (closed == open) {
+            throw new IllegalArgumentException("Cannot have the closed and open material of a gate be the same material");
+        }
         this.min = new Location(a.getWorld(), Math.min(a.getX(), b.getX()), Math.min(a.getY(), b.getY()), Math.min(a.getZ(), b.getZ()), a.getYaw(), a.getPitch());
         this.max = new Location(a.getWorld(), Math.max(a.getX(), b.getX()), Math.max(a.getY(), b.getY()), Math.max(a.getZ(), b.getZ()), b.getYaw(), b.getPitch());
         this.closed = closed;
         this.open = open;
         this.delay = delay;
     }
-    
-    
+
     private int changeGate(Material search, Material replace) {
         int changed = 0;
         for (int x = min.getBlockX(); x <= max.getBlockX(); x++) {
@@ -58,14 +71,27 @@ public class GateOption implements Option, TimerSkipAbleMarker {
         }
         return changed;
     }
-    
+
     @Override
     public void register(Game game) {
         changeGate(open, closed);
         this.game = game;
         game.registerGameMarker(TimerSkipAbleMarker.class, this);
+        game.registerGameMarker(DebugLocationMarker.class, DebugLocationMarker.create(null, 0, this.getClass(),
+                "Gates",
+                new Location(
+                        min.getWorld(),
+                        (min.getX() + max.getX()) / 2,
+                        (min.getY() + max.getY()) / 2,
+                        (min.getZ() + max.getZ()) / 2
+                ),
+                () -> Arrays.asList(
+                        "MIN: " + min.getX() + ", " + min.getY() + ", " + min.getZ(),
+                        "MAX: " + max.getX() + ", " + max.getY() + ", " + max.getZ()
+                )
+        ));
     }
-    
+
     public void openGates() {
         delay = -1;
         changeGate(closed, open);
@@ -86,6 +112,9 @@ public class GateOption implements Option, TimerSkipAbleMarker {
     public void skipTimer(int delay) {
         if (this.delay > 0) {
             this.delay -= delay;
+            if (delay <= 0) {
+                openGates();
+            }
         }
     }
 
@@ -94,17 +123,15 @@ public class GateOption implements Option, TimerSkipAbleMarker {
         new GameRunnable(game) {
             @Override
             public void run() {
-                if(delay < 0) {
+                if (delay < 0) {
                     cancel();
                     return;
                 }
                 game.forEachOnlinePlayer((player, team) -> {
                     player.playSound(player.getLocation(), delay == 0 ? Sound.WITHER_SPAWN : Sound.NOTE_STICKS, 1, 1);
-                    String number = (
-                            delay >= 8 ? ChatColor.GREEN :
-                            delay >= 4 ? ChatColor.YELLOW :
-                            ChatColor.RED
-                    ).toString() + delay;
+                    String number = (delay >= 8 ? ChatColor.GREEN
+                            : delay >= 4 ? ChatColor.YELLOW
+                                    : ChatColor.RED).toString() + delay;
                     PacketUtils.sendTitle(player, number, "", 0, 40, 0);
                 });
                 switch (delay) {
@@ -126,7 +153,7 @@ public class GateOption implements Option, TimerSkipAbleMarker {
                 }
                 delay--;
             }
-            
+
         }.runTaskTimer(0, 20);
     }
 

@@ -9,18 +9,12 @@ import com.ebicep.warlords.maps.option.techincal.GameFreezeOption;
 import com.ebicep.warlords.maps.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.maps.state.*;
 import com.ebicep.warlords.player.WarlordsPlayer;
-import com.ebicep.warlords.util.PacketUtils;
-import net.minecraft.server.v1_8_R3.EntityLiving;
-import net.minecraft.server.v1_8_R3.GenericAttributes;
+import com.ebicep.warlords.util.LocationFactory;
+import static com.ebicep.warlords.util.Utils.collectionHasItem;
 import org.apache.commons.lang.Validate;
 import org.bukkit.*;
 import org.bukkit.command.Command;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
-import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import javax.annotation.Nonnull;
@@ -56,29 +50,28 @@ public final class Game implements Runnable, AutoCloseable {
 
     @Nullable
     private State state = null;
+    @Nullable
+    private State nextState = null;
     private boolean closed = false;
-    private List<String> frozenCauses = new CopyOnWriteArrayList<>();
+    private final List<String> frozenCauses = new CopyOnWriteArrayList<>();
     private volatile boolean frozenCached = false;
     private int maxPlayers;
     private int minPlayers;
-    private boolean acceptsPeople;
+    private boolean acceptsPlayers;
+    private boolean acceptsSpectators;
 
-    private static void addBasicOptions(List<Option> options) {
-        options.add(new GameFreezeOption());
-    }
-
-    @SuppressWarnings("LeakingThisInConstructor")
     public Game(EnumSet<GameAddon> gameAddons, GameMap map, MapCategory category, LocationFactory locations) {
         this.addons = gameAddons;
         this.map = map;
         this.category = category;
-        List<Option> options = new ArrayList<>(map.initMap(MapCategory.OTHER, locations, gameAddons));
-        addBasicOptions(options);// This modifies options;
-        this.options = options;
+        this.options = new ArrayList<>(map.initMap(MapCategory.OTHER, locations, gameAddons));
+        if (!collectionHasItem(options, e -> e instanceof GameFreezeOption)) {
+            options.add(new GameFreezeOption());
+        }
         this.minPlayers = map.getMinPlayers();
         this.maxPlayers = map.getMaxPlayers();
         for (GameAddon addon : gameAddons) {
-            this.maxPlayers = addon.getMaxPlayers(this.maxPlayers);
+            this.maxPlayers = addon.getMaxPlayers(map, this.maxPlayers);
         }
     }
 
@@ -90,6 +83,7 @@ public final class Game implements Runnable, AutoCloseable {
             addon.modifyGame(this);
         }
         state = this.map.initialState(this);
+        state.begin();
     }
 
     public boolean isState(Class<? extends State> clazz) {
@@ -221,11 +215,23 @@ public final class Game implements Runnable, AutoCloseable {
     }
 
     public boolean acceptsPeople() {
-        return acceptsPeople;
+        return acceptsPlayers;
     }
 
-    public void setAcceptsPeople(boolean acceptsPeople) {
-        this.acceptsPeople = acceptsPeople;
+    public void setAcceptsPlayers(boolean acceptsPlayers) {
+        this.acceptsPlayers = acceptsPlayers;
+    }
+
+    public boolean acceptsSpectators() {
+        return acceptsSpectators;
+    }
+
+    public void setAcceptsSpectators(boolean acceptsSpectators) {
+        this.acceptsSpectators = acceptsSpectators;
+    }
+
+    public void setNextState(@Nullable State nextState) {
+        this.nextState = nextState;
     }
 
     /**
@@ -275,14 +281,14 @@ public final class Game implements Runnable, AutoCloseable {
         return players;
     }
 
-    public void addPlayer(@Nonnull OfflinePlayer player) {
+    public void addPlayer(@Nonnull OfflinePlayer player, boolean asSpectator) {
         Validate.notNull(player, "player");
         Player online = player.getPlayer();
         if (online != null) {
             online.setGameMode(GameMode.ADVENTURE);
             online.setAllowFlight(false);
         }
-        this.players.put(player.getUniqueId(), team);
+        this.players.put(player.getUniqueId(), null);
         Location loc = this.map.getLobbySpawnPoint(team);
         Warlords.setRejoinPoint(player.getUniqueId(), loc);
     }
@@ -290,6 +296,9 @@ public final class Game implements Runnable, AutoCloseable {
     public void setPlayerTeam(@Nonnull OfflinePlayer player, @Nonnull Team team) {
         Validate.notNull(player, "player");
         Validate.notNull(team, "team");
+        if (!this.players.containsKey(player)) {
+            throw new IllegalArgumentException("The specified player is not part of this game");
+        }
         Player online = player.getPlayer();
         Team oldTeam = this.players.get(player.getUniqueId());
         if (team == oldTeam) {
@@ -433,15 +442,19 @@ public final class Game implements Runnable, AutoCloseable {
 
     @Override
     public void run() {
-        State newState = state.run();
-        if (newState != null) {
-            this.state.end();
-            System.out.println("DEBUG OLD TO NEW STATE");
-            Command.broadcastCommandMessage(Bukkit.getConsoleSender(), "New State = " + newState + " / Old State = " + this.state);
-            this.state = newState;
-            newState.begin();
+        if (this.nextState == null && this.state != null) {
+            this.nextState = this.state.run();
         }
-
+        while (this.nextState != null) {
+            if (this.state != null) {
+                this.state.end();
+            }
+            State newState = nextState == null ? new ClosedState(this) : nextState;
+            System.out.println("DEBUG OLD TO NEW STATE");
+            Command.broadcastCommandMessage(Bukkit.getConsoleSender(), "old: " + this.state + " --> new: " + newState);
+            this.state = newState;
+            this.state.begin();
+        }
     }
 
     @Nonnull
@@ -525,6 +538,10 @@ public final class Game implements Runnable, AutoCloseable {
             HandlerList.unregisterAll(listener);
         }
         eventHandlers.clear();
+    }
+
+    public void printDebuggingInformation() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }
