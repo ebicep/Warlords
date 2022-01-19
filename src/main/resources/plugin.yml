@@ -86,6 +86,9 @@ commands:
   imposter:
     description: Sus
     aliases: [ imposter, impostor ]
+  lobby:
+    description: Warps you back into the lobby if you are in a game lobby
+    aliases: [ lobby, l, hub ]
 
 permissions:
   group.default:

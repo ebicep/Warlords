@@ -21,6 +21,7 @@ import com.ebicep.warlords.player.ExperienceManager;
 import com.ebicep.warlords.player.PlayerSettings;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.powerups.PowerupManager;
+import com.ebicep.warlords.sr.SRCalculator;
 import com.ebicep.warlords.util.PacketUtils;
 import com.ebicep.warlords.util.RemoveEntities;
 import com.ebicep.warlords.util.Utils;
@@ -217,6 +218,11 @@ public class PlayingState implements State, TimerDebugAble {
             giveScoreboard();
         }
 
+        //update every 5 seconds
+        if (timer % 100 == 0) {
+            BotManager.sendStatusMessage(false);
+        }
+
         int redPoints = getStats(Team.RED).points;
         int bluePoints = getStats(Team.BLUE).points;
         if (redPoints >= this.pointLimit || bluePoints >= this.pointLimit || (Math.abs(redPoints - bluePoints) >= MERCY_LIMIT && this.timer < game.getMap().getGameTimerInTicks() - 20 * 60 * 5)) {
@@ -305,11 +311,11 @@ public class PlayingState implements State, TimerDebugAble {
         if (!game.isPrivate() && !ImposterCommand.enabled && !forceEnd && game.playersCount() >= 12) {
             String gameEnd = "[GAME] A Public game ended with ";
             if (getBluePoints() > getRedPoints()) {
-                BotManager.sendMessageToNotificationChannel(gameEnd + "**BLUE** winning " + getBluePoints() + " to " + getRedPoints());
+                BotManager.sendMessageToNotificationChannel(gameEnd + "**BLUE** winning " + getBluePoints() + " to " + getRedPoints(), true);
             } else if (getBluePoints() < getRedPoints()) {
-                BotManager.sendMessageToNotificationChannel(gameEnd + "**RED** winning " + getRedPoints() + " to " + getBluePoints());
+                BotManager.sendMessageToNotificationChannel(gameEnd + "**RED** winning " + getRedPoints() + " to " + getBluePoints(), true);
             } else {
-                BotManager.sendMessageToNotificationChannel(gameEnd + "a **DRAW**");
+                BotManager.sendMessageToNotificationChannel(gameEnd + "a **DRAW**", true);
             }
             if (highestDamage <= 750000 && highestHealing <= 750000) {
                 DatabaseGame.addGame(PlayingState.this, true);
@@ -318,16 +324,18 @@ public class PlayingState implements State, TimerDebugAble {
                 DatabaseGame.addGame(PlayingState.this, false);
                 System.out.println(ChatColor.GREEN + "[Warlords] This PUB game was added to the database (INVALID DAMAGE/HEALING) but player information remained the same");
             }
+
+            SRCalculator.recalculateSR();
         }
         //COMPS
         else if (RecordGamesCommand.recordGames && !ImposterCommand.enabled && !forceEnd && game.playersCount() >= 16 && timer <= 12000) {
             String gameEnd = "[GAME] A game ended with ";
             if (getBluePoints() > getRedPoints()) {
-                BotManager.sendMessageToNotificationChannel(gameEnd + "**BLUE** winning " + getBluePoints() + " to " + getRedPoints());
+                BotManager.sendMessageToNotificationChannel(gameEnd + "**BLUE** winning " + getBluePoints() + " to " + getRedPoints(), true);
             } else if (getBluePoints() < getRedPoints()) {
-                BotManager.sendMessageToNotificationChannel(gameEnd + "**RED** winning " + getRedPoints() + " to " + getBluePoints());
+                BotManager.sendMessageToNotificationChannel(gameEnd + "**RED** winning " + getRedPoints() + " to " + getBluePoints(), true);
             } else {
-                BotManager.sendMessageToNotificationChannel(gameEnd + "a **DRAW**");
+                BotManager.sendMessageToNotificationChannel(gameEnd + "a **DRAW**", true);
             }
             if (highestDamage <= 750000 && highestHealing <= 750000) {
                 DatabaseGame.addGame(PlayingState.this, true);
@@ -497,24 +505,11 @@ public class PlayingState implements State, TimerDebugAble {
         entries[11] = ChatColor.RED + "RED: " + ChatColor.AQUA + this.getRedPoints() + ChatColor.GOLD + "/" + this.getPointLimit();
 
         // Timer
-        int secondsRemaining = this.getTimer() / 20;
-        int minute = secondsRemaining / 60;
-        int second = secondsRemaining % 60;
-        String timeLeft = "";
-        if (minute < 10) {
-            timeLeft += "0";
-        }
-        timeLeft += minute + ":";
-        if (second < 10) {
-            timeLeft += "0";
-        }
-        timeLeft += second;
-
         com.ebicep.warlords.maps.Team team = this.calculateWinnerByPoints();
         if (team != null) {
-            entries[9] = team.coloredPrefix() + ChatColor.GOLD + " Wins in: " + ChatColor.GREEN + timeLeft;
+            entries[9] = team.coloredPrefix() + ChatColor.GOLD + " Wins in: " + ChatColor.GREEN + getTimeLeftString();
         } else {
-            entries[9] = ChatColor.WHITE + "Time Left: " + ChatColor.GREEN + timeLeft;
+            entries[9] = ChatColor.WHITE + "Time Left: " + ChatColor.GREEN + getTimeLeftString();
         }
 
         // Flags
@@ -572,6 +567,22 @@ public class PlayingState implements State, TimerDebugAble {
         Collections.reverse(Arrays.asList(entries));
 
         customScoreboard.giveNewSideBar(init, entries);
+    }
+
+    public String getTimeLeftString() {
+        int secondsRemaining = this.getTimer() / 20;
+        int minute = secondsRemaining / 60;
+        int second = secondsRemaining % 60;
+        String timeLeft = "";
+        if (minute < 10) {
+            timeLeft += "0";
+        }
+        timeLeft += minute + ":";
+        if (second < 10) {
+            timeLeft += "0";
+        }
+        timeLeft += second;
+        return timeLeft;
     }
 
     private static <K, V, M extends Map<K, V>> BinaryOperator<M> mapMerger(BinaryOperator<V> mergeFunction) {

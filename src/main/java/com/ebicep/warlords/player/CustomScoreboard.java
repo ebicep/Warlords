@@ -147,7 +147,7 @@ public class CustomScoreboard {
 
         Leaderboard leaderboard = leaderboardCategory.leaderboards.get(0);
         List<DatabasePlayer> databasePlayerList;
-        switch (playerLeaderboardTime.get(player.getUniqueId())) {
+        switch (playerLeaderboardTime.getOrDefault(player.getUniqueId(), PlayersCollections.LIFETIME)) {
             case LIFETIME:
                 databasePlayerList = leaderboard.getSortedAllTime();
                 break;

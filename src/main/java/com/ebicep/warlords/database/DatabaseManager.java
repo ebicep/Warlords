@@ -9,6 +9,7 @@ import com.ebicep.warlords.database.repositories.player.PlayerService;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.player.*;
+import com.ebicep.warlords.sr.SRCalculator;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -56,7 +57,6 @@ public class DatabaseManager {
         //Loading all online players
         Bukkit.getOnlinePlayers().forEach(player -> {
             loadPlayer(player.getUniqueId(), PlayersCollections.LIFETIME, () -> {
-                Warlords.playerScoreboards.get(player.getUniqueId()).giveMainLobbyScoreboard();
                 updateName(player.getUniqueId());
             });
         });
@@ -122,8 +122,6 @@ public class DatabaseManager {
                         .execute();
             }
         }
-
-
     }
 
     public static void loadPlayer(UUID uuid, PlayersCollections collections, Runnable callback) {

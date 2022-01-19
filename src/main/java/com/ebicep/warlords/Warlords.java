@@ -291,6 +291,7 @@ public class Warlords extends JavaPlugin {
         new ExperienceCommand().register(this);
         new QueueCommand().register(this);
         new ImposterCommand().register(this);
+        new LobbyCommand().register(this);
 
         updateHeads();
 
@@ -374,13 +375,14 @@ public class Warlords extends JavaPlugin {
         }
 
         try {
+            BotManager.deleteStatusMessage();
             BotManager.jda.shutdownNow();
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         //CitizensAPI.getNPCRegistry().despawnNPCs(DespawnReason.RELOAD);
-        NPCManager.npc.despawn();
+        NPCManager.gameStartNPC.despawn();
 
         getServer().getConsoleSender().sendMessage(ChatColor.RED + "[Warlords] Plugin is disabled");
         // TODO persist this.playerSettings to a database

@@ -1,6 +1,7 @@
 package com.ebicep.warlords.commands.miscellaneouscommands;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.commands.BaseCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -17,7 +18,11 @@ public class MessageCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
-        Player player = (Player) sender;
+        Player player = BaseCommand.requirePlayer(sender);
+
+        if (player == null) {
+            return true;
+        }
 
         switch (s) {
             case "tell":

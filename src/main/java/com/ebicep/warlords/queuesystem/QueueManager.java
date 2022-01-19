@@ -23,7 +23,7 @@ public class QueueManager {
             }
         });
         queueMessages.clear();
-        BotManager.getTextChannelByName("waiting").ifPresent(textChannel -> {
+        BotManager.getTextChannelCompsByName("waiting").ifPresent(textChannel -> {
             textChannel.sendMessage(QueueManager.getQueueDiscord()).queue(QueueManager.queueMessages::add);
         });
     }

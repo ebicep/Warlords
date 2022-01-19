@@ -197,7 +197,8 @@ public class WarlordsEvents implements Listener {
 
     @EventHandler
     public static void onPlayerJoin(PlayerJoinEvent e) {
-        WarlordsPlayer wp = Warlords.getPlayer(e.getPlayer());
+        Player player = e.getPlayer();
+        WarlordsPlayer wp = Warlords.getPlayer(player);
         if (wp != null) {
             if (wp.isAlive()) {
                 e.getPlayer().setAllowFlight(false);
@@ -211,25 +212,24 @@ public class WarlordsEvents implements Listener {
             if (Warlords.game.players().noneMatch(uuidTeamEntry -> uuidTeamEntry.getKey().equals(e.getPlayer().getUniqueId()))) {
                 e.getPlayer().setAllowFlight(true);
                 e.setJoinMessage(ChatColor.AQUA + e.getPlayer().getName() + ChatColor.GOLD + " joined the lobby!");
+
+                Warlords.newChain()
+                        .async(() -> {
+                            DatabaseManager.loadPlayer(e.getPlayer().getUniqueId(), PlayersCollections.LIFETIME, () -> {
+                                Warlords.updateHead(e.getPlayer());
+                                LeaderboardManager.setLeaderboardHologramVisibility(player);
+                                DatabaseGame.setGameHologramVisibility(player);
+
+                                Location rejoinPoint = Warlords.getRejoinPoint(player.getUniqueId());
+                                if (Bukkit.getWorlds().get(0).getName().equals(rejoinPoint.getWorld().getName())) {
+                                    Warlords.playerScoreboards.get(player.getUniqueId()).giveMainLobbyScoreboard();
+                                    ExperienceManager.giveExperienceBar(player);
+                                }
+                            });
+                        })
+                        .execute();
             }
         }
-        Player player = e.getPlayer();
-
-        Warlords.newChain()
-                .async(() -> {
-                    DatabaseManager.loadPlayer(e.getPlayer().getUniqueId(), PlayersCollections.LIFETIME, () -> {
-                        Warlords.updateHead(e.getPlayer());
-                        LeaderboardManager.setLeaderboardHologramVisibility(player);
-                        DatabaseGame.setGameHologramVisibility(player);
-
-                        Location rejoinPoint = Warlords.getRejoinPoint(player.getUniqueId());
-                        if (Bukkit.getWorlds().get(0).getName().equals(rejoinPoint.getWorld().getName())) {
-                            Warlords.playerScoreboards.get(player.getUniqueId()).giveMainLobbyScoreboard();
-                            ExperienceManager.giveExperienceBar(player);
-                        }
-                    });
-                })
-                .execute();
 
         //scoreboard
         if (!Warlords.playerScoreboards.containsKey(player.getUniqueId()) || Warlords.playerScoreboards.get(player.getUniqueId()) == null) {
