@@ -471,10 +471,10 @@ public class DatabaseGame {
         output.setLength(output.length() - 1);
         if (BotManager.numberOfMessagesSentLast30Sec > 15) {
             if (BotManager.numberOfMessagesSentLast30Sec < 20) {
-                BotManager.getTextChannelByName("games-backlog").ifPresent(textChannel -> textChannel.sendMessage("SOMETHING BROKEN DETECTED <@239929120035700737> <@253971614998331393>").queue());
+                BotManager.getTextChannelCompsByName("games-backlog").ifPresent(textChannel -> textChannel.sendMessage("SOMETHING BROKEN DETECTED <@239929120035700737> <@253971614998331393>").queue());
             }
         } else {
-            BotManager.getTextChannelByName("games-backlog").ifPresent(textChannel -> textChannel.sendMessage(output.toString()).queue());
+            BotManager.getTextChannelCompsByName("games-backlog").ifPresent(textChannel -> textChannel.sendMessage(output.toString()).queue());
         }
         lastWarlordsPlusString = output.toString();
         return output.toString();

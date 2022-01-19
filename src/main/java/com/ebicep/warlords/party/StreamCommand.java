@@ -47,7 +47,7 @@ public class StreamCommand implements CommandExecutor {
                         ChatUtils.sendCenteredMessageWithEvents(onlinePlayer, Collections.singletonList(message));
                         ChatUtils.sendCenteredMessage(onlinePlayer, ChatColor.BLUE.toString() + ChatColor.BOLD + "------------------------------------------");
                     });
-            BotManager.sendMessageToNotificationChannel("[PARTY] **" + player.getName() + "** created a public party! /p join " + player.getName());
+            BotManager.sendMessageToNotificationChannel("[PARTY] **" + player.getName() + "** created a public party! /p join " + player.getName(), false);
         }
 
         return true;

@@ -82,6 +82,8 @@ public class PreLobbyState implements State, TimerDebugAble {
                         player.setAllowFlight(false);
                     });
                 }
+
+                BotManager.sendStatusMessage(false);
             }
 
             if (timer <= 0) {
@@ -266,7 +268,7 @@ public class PreLobbyState implements State, TimerDebugAble {
                             }));
                 }
                 if (game.getPlayers().size() >= 14) {
-                    BotManager.sendMessageToNotificationChannel("[GAME] A " + (game.isPrivate() ? "" : "Public ") + "**" + game.getMap().getMapName() + "** started with **" + game.getPlayers().size() + (game.getPlayers().size() == 1 ? "** player!" : "** players!"));
+                    BotManager.sendMessageToNotificationChannel("[GAME] A " + (game.isPrivate() ? "" : "Public ") + "**" + game.getMap().getMapName() + "** started with **" + game.getPlayers().size() + (game.getPlayers().size() == 1 ? "** player!" : "** players!"), true);
                 }
                 return new PlayingState(game);
             }
@@ -284,12 +286,20 @@ public class PreLobbyState implements State, TimerDebugAble {
         distributePeopleOverTeams();
     }
 
+    public int getTimer() {
+        return timer;
+    }
+
+    public String getTimeLeftString() {
+        int time = timer / 20;
+        return (time < 10 ? "00:0" : "00:") + time;
+    }
+
     public void giveLobbyScoreboard(boolean init, Player player) {
         CustomScoreboard customScoreboard = Warlords.playerScoreboards.get(player.getUniqueId());
 
         SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
         String dateString = format.format(new Date());
-        int time = timer / 20;
 
         String mapPrefix = ChatColor.WHITE + "Map: " + ChatColor.GREEN;
         String mapSuffix;
@@ -308,7 +318,7 @@ public class PreLobbyState implements State, TimerDebugAble {
                     mapPrefix + mapSuffix,
                     ChatColor.WHITE + "Players: " + ChatColor.GREEN + game.playersCount() + "/" + game.getMap().getMaxPlayers(),
                     "   ",
-                    ChatColor.WHITE + "Starting in: " + ChatColor.GREEN + (time < 10 ? "00:0" : "00:") + time + ChatColor.WHITE,
+                    ChatColor.WHITE + "Starting in: " + ChatColor.GREEN + getTimeLeftString() + ChatColor.WHITE,
                     "    ",
                     ChatColor.GRAY + "Lv" + ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(player.getUniqueId(), classes)) + " " + ChatColor.GOLD + Classes.getClassesGroup(classes).name,
                     ChatColor.WHITE + "Spec: " + ChatColor.GREEN + classes.name,

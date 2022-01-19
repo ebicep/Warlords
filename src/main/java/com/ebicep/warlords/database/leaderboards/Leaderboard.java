@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class Leaderboard {
 
@@ -99,7 +100,17 @@ public class Leaderboard {
         List<Number> topThree = new ArrayList<>();
         int counter = 0;
         //looping to get the next top two numbers
-        for (DatabasePlayer databasePlayer : sortedWeekly) {
+        //filtering out all players with 3 or less games from leaderboards if the top player has 10 or more (no one game olivers)
+        boolean filter = sortedWeekly.get(0).getPlays() >= 10;
+        List<DatabasePlayer> databasePlayers;
+        if (filter) {
+            databasePlayers = sortedWeekly.stream()
+                    .filter(databasePlayer -> databasePlayer.getPlays() > 3)
+                    .collect(Collectors.toList());
+        } else {
+            databasePlayers = sortedWeekly;
+        }
+        for (DatabasePlayer databasePlayer : databasePlayers) {
             //must have more than 3 plays to get awarded
             if (databasePlayer.getPlays() <= 3) continue;
 

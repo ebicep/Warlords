@@ -169,10 +169,6 @@ public class LeaderboardManager {
         leaderboardCategory.getLeaderboards().forEach(leaderboard -> {
             //sorting values
             collection.sort((o1, o2) -> Leaderboard.compare(leaderboard.getValueFunction().apply(o2), leaderboard.getValueFunction().apply(o1)));
-            //removing all players with 3 or less games from leaderboards if the top player has 10 or more (no one game olivers)
-            if (!collection.isEmpty() && collection.get(0).getPlays() >= 10) {
-                collection.removeIf(databasePlayer -> databasePlayer.getPlays() <= 3);
-            }
             //resetting sort then adding new sorted values
             leaderboard.resetSortedPlayers(collection, value);
             //creating leaderboard

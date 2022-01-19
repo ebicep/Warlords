@@ -30,12 +30,9 @@ import com.ebicep.warlords.party.StreamCommand;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.powerups.EnergyPowerUp;
 import com.ebicep.warlords.queuesystem.QueueCommand;
-import com.ebicep.warlords.sr.SRCalculator;
 import com.ebicep.warlords.util.*;
 import me.filoghost.holographicdisplays.api.beta.hologram.Hologram;
 import me.filoghost.holographicdisplays.api.beta.HolographicDisplaysAPI;
-import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.event.DespawnReason;
 import org.bukkit.*;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
@@ -289,6 +286,7 @@ public class Warlords extends JavaPlugin {
         new ExperienceCommand().register(this);
         new QueueCommand().register(this);
         new ImposterCommand().register(this);
+        new LobbyCommand().register(this);
 
         updateHeads();
 
@@ -372,13 +370,14 @@ public class Warlords extends JavaPlugin {
         }
 
         try {
+            BotManager.deleteStatusMessage();
             BotManager.jda.shutdownNow();
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         //CitizensAPI.getNPCRegistry().despawnNPCs(DespawnReason.RELOAD);
-        NPCManager.npc.despawn();
+        NPCManager.gameStartNPC.despawn();
 
         getServer().getConsoleSender().sendMessage(ChatColor.RED + "[Warlords] Plugin is disabled");
         // TODO persist this.playerSettings to a database

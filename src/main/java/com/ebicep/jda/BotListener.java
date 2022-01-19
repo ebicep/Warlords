@@ -44,11 +44,7 @@ public class BotListener extends ListenerAdapter implements Listener {
     @EventHandler
     public static void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        int size = Bukkit.getOnlinePlayers().size();
-        if (size % 5 == 0 && size != lastPlayerCount) {
-            BotManager.sendMessageToNotificationChannel("[SERVER] **" + size + "** players are now on the server!");
-            lastPlayerCount = size;
-        }
+        BotManager.sendStatusMessage(false);
 
         Warlords.newChain()
                 .asyncFirst(() -> BotManager.getCompGamesServer().findMembers(m -> m.getEffectiveName().equalsIgnoreCase(player.getName())).get())
@@ -63,11 +59,7 @@ public class BotListener extends ListenerAdapter implements Listener {
     @EventHandler
     public static void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
-        int size = Bukkit.getOnlinePlayers().size();
-        if ((size - 1) % 5 == 0 && size != lastPlayerCount && size > 4) {
-            BotManager.sendMessageToNotificationChannel("[SERVER] **" + (size - 1) + "** players are now on the server!");
-            lastPlayerCount = size;
-        }
+        BotManager.sendStatusMessage(true);
 
         Warlords.newChain()
                 .asyncFirst(() -> BotManager.getCompGamesServer().findMembers(m -> m.getEffectiveName().equalsIgnoreCase(player.getName())).get())

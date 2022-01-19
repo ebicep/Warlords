@@ -1,5 +1,6 @@
 package com.ebicep.customentities.npc.traits;
 
+import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.maps.Team;
@@ -130,6 +131,8 @@ public class GameStartTrait extends Trait {
         Warlords.game.addPlayer(player, team);
         Warlords.getPlayerSettings(player.getUniqueId()).setWantedTeam(team);
         ArmorManager.resetArmor(player, Warlords.getPlayerSettings(player.getUniqueId()).getSelectedClass(), team);
+
+        BotManager.sendStatusMessage(false);
     }
 
     private void sendMessageToQueue(String message) {
@@ -139,13 +142,18 @@ public class GameStartTrait extends Trait {
                 .forEach(player -> player.sendMessage(message));
     }
 
+    public void removePlayer(Player player) {
+        ctfQueue.remove(player.getUniqueId());
+        game.removePlayer(player.getUniqueId());
+        sendMessageToQueue(ChatColor.AQUA + player.getName() + ChatColor.YELLOW + " has quit!");
+        BotManager.sendStatusMessage(false);
+    }
+
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         if (ctfQueue.contains(player.getUniqueId())) {
-            ctfQueue.remove(player.getUniqueId());
-            game.removePlayer(player.getUniqueId());
-            sendMessageToQueue(ChatColor.AQUA + player.getName() + ChatColor.YELLOW + " has quit!");
+            removePlayer(player);
         }
     }
 
@@ -157,9 +165,7 @@ public class GameStartTrait extends Trait {
             ItemStack itemStack = event.getItem();
             //if a player leaves the server, they get removed from the queue and game
             if (ctfQueue.contains(player.getUniqueId()) && itemStack.getType() == Material.BARRIER && (action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK)) {
-                ctfQueue.remove(player.getUniqueId());
-                game.removePlayer(player.getUniqueId());
-                sendMessageToQueue(ChatColor.AQUA + player.getName() + ChatColor.YELLOW + " has quit!");
+                removePlayer(player);
             }
         }
     }
