@@ -267,6 +267,7 @@ public class PreLobbyState implements State, TimerDebugAble {
                                 playerInParty.hidePlayer(playerNotInParty);
                             }));
                 }
+
                 if (game.getPlayers().size() >= 14) {
                     BotManager.sendMessageToNotificationChannel("[GAME] A " + (game.isPrivate() ? "" : "Public ") + "**" + game.getMap().getMapName() + "** started with **" + game.getPlayers().size() + (game.getPlayers().size() == 1 ? "** player!" : "** players!"), true);
                 }
@@ -274,7 +275,7 @@ public class PreLobbyState implements State, TimerDebugAble {
             }
             timer--;
         } else {
-            timer = game.isPrivate() ? game.getMap().getCountdownTimerInTicks() : 45 * 20;
+            timer = game.isPrivate() ? game.getMap().getCountdownTimerInTicks() : 60 * 20;
             game.forEachOnlinePlayer((player, team) -> giveLobbyScoreboard(false, player));
         }
         return null;
