@@ -29,8 +29,10 @@ public class BotManager {
     public static JDA jda;
     public static String botToken;
     public static String compGamesServerID = "776590423501045760";
+    public static String compGamesServerStatusChannel = "instant-updates";
     public static HashMap<String, TextChannel> compGamesServerChannelCache = new HashMap<>();
     public static String wl2ServerID = "931564871462572062";
+    public static String wl2ServerStatusChannel = "server-status";
     public static HashMap<String, TextChannel> wl2ServerChannelCache = new HashMap<>();
     public static Message compStatusMessage;
     public static Message wl2StatusMessage;
@@ -85,9 +87,9 @@ public class BotManager {
         if (!Warlords.serverIP.equals("51.81.49.127")) {
             return;
         }
-        getTextChannelCompsByName("instant-updates").ifPresent(textChannel -> textChannel.sendMessage(message).queue());
+        getTextChannelCompsByName(compGamesServerStatusChannel).ifPresent(textChannel -> textChannel.sendMessage(message).queue());
         if (sendToWL2Server) {
-            getTextChannelWL2ByName("instant-updates").ifPresent(textChannel -> textChannel.sendMessage(message).queue());
+            getTextChannelWL2ByName(wl2ServerStatusChannel).ifPresent(textChannel -> textChannel.sendMessage(message).queue());
         }
     }
 
@@ -123,14 +125,14 @@ public class BotManager {
         eb.appendDescription(stringBuilder);
 
         MessageEmbed messageEmbed = eb.build();
-        getTextChannelCompsByName("instant-updates").ifPresent(textChannel -> {
+        getTextChannelCompsByName(compGamesServerStatusChannel).ifPresent(textChannel -> {
             if (compStatusMessage == null) {
                 textChannel.sendMessageEmbeds(messageEmbed).queue(m -> compStatusMessage = m);
             } else {
                 compStatusMessage.editMessageEmbeds(messageEmbed).queue(m -> compStatusMessage = m);
             }
         });
-        getTextChannelWL2ByName("instant-updates").ifPresent(textChannel -> {
+        getTextChannelWL2ByName(wl2ServerStatusChannel).ifPresent(textChannel -> {
             if (wl2StatusMessage == null) {
                 textChannel.sendMessageEmbeds(messageEmbed).queue(m -> wl2StatusMessage = m);
             } else {
