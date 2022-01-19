@@ -13,6 +13,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.database.repositories.player.pojos.general.classescomppub.DatabaseBaseSpec;
 import com.ebicep.warlords.player.SpecType;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.sr.SRCalculator;
 import com.github.benmanes.caffeine.cache.Cache;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -21,7 +22,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.springframework.cache.caffeine.CaffeineCache;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class TestCommand implements CommandExecutor {
@@ -87,7 +91,7 @@ public class TestCommand implements CommandExecutor {
 //        List<DatabasePlayer> databasePlayers = DatabaseManager.playerService.findAll(PlayersCollections.SEASON_5);
 //        HashMap<DatabasePlayer, Integer> playerSR = new HashMap<>();
 //        for (DatabasePlayer databasePlayer : databasePlayers) {
-//            if (databasePlayer.getPlays() > 15) {
+//            if (databasePlayer.getPlays() > 5) {
 //                playerSR.put(databasePlayer, SRCalculator.getSR(databasePlayer));
 //            }
 //        }

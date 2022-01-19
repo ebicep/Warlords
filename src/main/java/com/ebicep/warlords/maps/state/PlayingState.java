@@ -21,6 +21,7 @@ import com.ebicep.warlords.player.ExperienceManager;
 import com.ebicep.warlords.player.PlayerSettings;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.powerups.PowerupManager;
+import com.ebicep.warlords.sr.SRCalculator;
 import com.ebicep.warlords.util.PacketUtils;
 import com.ebicep.warlords.util.RemoveEntities;
 import com.ebicep.warlords.util.Utils;
@@ -318,6 +319,8 @@ public class PlayingState implements State, TimerDebugAble {
                 DatabaseGame.addGame(PlayingState.this, false);
                 System.out.println(ChatColor.GREEN + "[Warlords] This PUB game was added to the database (INVALID DAMAGE/HEALING) but player information remained the same");
             }
+
+            SRCalculator.recalculateSR();
         }
         //COMPS
         else if (RecordGamesCommand.recordGames && !ImposterCommand.enabled && !forceEnd && game.playersCount() >= 16 && timer <= 12000) {

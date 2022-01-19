@@ -8,6 +8,7 @@ import com.ebicep.warlords.database.leaderboards.sections.subsections.Leaderboar
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.sr.SRCalculator;
 import com.ebicep.warlords.util.LocationBuilder;
 import me.filoghost.holographicdisplays.api.beta.hologram.Hologram;
 import me.filoghost.holographicdisplays.api.beta.HolographicDisplaysAPI;
@@ -104,6 +105,11 @@ public class LeaderboardManager {
                             addHologramsToGameType(value, collection, leaderboardCTF.getPubs(), "CTF - Pubs - " + value.name);
                             System.out.println("Loaded " + value.name + " leaderboards");
                             loadedBoards.getAndIncrement();
+
+                            if (value == PlayersCollections.SEASON_5) {
+                                SRCalculator.databasePlayerCache = collection;
+                                SRCalculator.recalculateSR();
+                            }
                         }).execute();
             }
 
@@ -126,10 +132,11 @@ public class LeaderboardManager {
                         Bukkit.getOnlinePlayers().forEach(player -> {
                             setLeaderboardHologramVisibility(player);
                             DatabaseGame.setGameHologramVisibility(player);
+                            Warlords.playerScoreboards.get(player.getUniqueId()).giveMainLobbyScoreboard();
                         });
                         System.out.println("Set Hologram Visibility");
                         this.cancel();
-                    } else if (counter++ > 10) {
+                    } else if (counter++ > 60) {
                         this.cancel();
                     }
                 }
