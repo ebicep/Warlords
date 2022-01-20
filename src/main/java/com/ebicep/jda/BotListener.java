@@ -32,7 +32,6 @@ import java.util.concurrent.TimeUnit;
 
 public class BotListener extends ListenerAdapter implements Listener {
 
-    private static int lastPlayerCount = 0;
     private static BukkitTask onGoingBalance;
 
     private static void cancelOnGoingBalance() {
@@ -46,6 +45,7 @@ public class BotListener extends ListenerAdapter implements Listener {
         Player player = event.getPlayer();
         BotManager.sendStatusMessage(false);
 
+        if (BotManager.getCompGamesServer() == null) return;
         Warlords.newChain()
                 .asyncFirst(() -> BotManager.getCompGamesServer().findMembers(m -> m.getEffectiveName().equalsIgnoreCase(player.getName())).get())
                 .asyncLast(members -> {
@@ -61,6 +61,7 @@ public class BotListener extends ListenerAdapter implements Listener {
         Player player = event.getPlayer();
         BotManager.sendStatusMessage(true);
 
+        if (BotManager.getCompGamesServer() == null) return;
         Warlords.newChain()
                 .asyncFirst(() -> BotManager.getCompGamesServer().findMembers(m -> m.getEffectiveName().equalsIgnoreCase(player.getName())).get())
                 .asyncLast(members -> {

@@ -37,6 +37,7 @@ import com.ebicep.warlords.queuesystem.QueueCommand;
 import com.ebicep.warlords.util.*;
 import me.filoghost.holographicdisplays.api.beta.hologram.Hologram;
 import me.filoghost.holographicdisplays.api.beta.HolographicDisplaysAPI;
+import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.*;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
@@ -342,9 +343,6 @@ public class Warlords extends JavaPlugin {
                 });
 
         citizensEnabled = Bukkit.getPluginManager().isPluginEnabled("Citizens");
-        if (citizensEnabled) {
-            NPCManager.createGameNPC();
-        }
 
         gameLoop();
         getServer().getScheduler().runTaskTimer(this, game, 1, 1);
@@ -354,12 +352,16 @@ public class Warlords extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        // Pre-caution
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            player.removePotionEffect(PotionEffectType.BLINDNESS);
-            player.getActivePotionEffects().clear();
-            player.removeMetadata("WARLORDS_PLAYER", this);
-            PacketUtils.sendTitle(player, "", "", 0, 0, 0);
+        try {
+            // Pre-caution
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                player.removePotionEffect(PotionEffectType.BLINDNESS);
+                player.getActivePotionEffects().clear();
+                player.removeMetadata("WARLORDS_PLAYER", this);
+                PacketUtils.sendTitle(player, "", "", 0, 0, 0);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         CraftServer server = (CraftServer) Bukkit.getServer();
@@ -374,15 +376,17 @@ public class Warlords extends JavaPlugin {
             HolographicDisplaysAPI.get(instance).getHolograms().forEach(Hologram::delete);
         }
 
+        NPCManager.gameStartNPC.destroy();
+        Bukkit.getWorld("MainLobby").getEntities().stream()
+                .filter(entity -> entity.getName().equals("capture-the-flag"))
+                .forEach(Entity::remove);
+
         try {
             BotManager.deleteStatusMessage();
             BotManager.jda.shutdownNow();
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        //CitizensAPI.getNPCRegistry().despawnNPCs(DespawnReason.RELOAD);
-        NPCManager.gameStartNPC.despawn();
 
         getServer().getConsoleSender().sendMessage(ChatColor.RED + "[Warlords] Plugin is disabled");
         // TODO persist this.playerSettings to a database

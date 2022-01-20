@@ -76,60 +76,83 @@ public class WarlordsEvents implements Listener {
     }
 
     @EventHandler
-    public static void onPlayerQuit(PlayerQuitEvent e) {
-        WarlordsPlayer wp = Warlords.getPlayer(e.getPlayer());
-        if (wp != null) {
-            if (!wp.isDeath()) {
-                wp.updatePlayerReference(null);
-            }
-            e.setQuitMessage(wp.getColoredNameBold() + ChatColor.GOLD + " left the game!");
-            //only pause for comp games
-            if (Warlords.game.isPrivate()) {
-                new BukkitRunnable() {
-                    int secondsGone = 0;
-                    boolean froze = false;
+    public static void onPlayerPreLogin(AsyncPlayerPreLoginEvent event) {
+        if (DatabaseManager.playerService == null) {
+            event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, "Please wait!");
+        }
+    }
 
-                    @Override
-                    public void run() {
-                        secondsGone++;
-                        if (e.getPlayer().isOnline() || Warlords.game.getState() != wp.getGameState()) {
-                            if (froze && wp.getGame().isGameFreeze()) {
-                                //to make sure no other is disconnected
-                                boolean allOnline = true;
-                                for (UUID uuid : wp.getGame().getPlayers().keySet()) {
-                                    if (Bukkit.getPlayer(uuid) == null) {
-                                        allOnline = false;
-                                        break;
-                                    }
-                                }
-                                if (allOnline) {
-                                    wp.getGame().freeze(ChatColor.YELLOW + "Missing player detected!", true);
-                                }
-                            }
-                            this.cancel();
-                            // 15 for precaution
-                        } else if (secondsGone >= 15 && !froze) {
-                            if (!wp.getGame().isGameFreeze()) {
-                                wp.getGame().freeze(ChatColor.YELLOW + "Missing player detected!", true);
-                            }
-                            froze = true;
-                        }
-                    }
-                }.runTaskTimer(Warlords.getInstance(), 1, 20);
+    @EventHandler
+    public static void onPlayerLogin(PlayerLoginEvent event) {
+        if (DatabaseManager.playerService == null) {
+            event.disallow(PlayerLoginEvent.Result.KICK_OTHER, "Please wait!");
+        }
+    }
+
+    @EventHandler
+    public static void onPlayerJoin(PlayerJoinEvent e) {
+        Player player = e.getPlayer();
+        WarlordsPlayer wp = Warlords.getPlayer(player);
+        if (wp != null) {
+            if (wp.isAlive()) {
+                e.getPlayer().setAllowFlight(false);
+            }
+            e.setJoinMessage(wp.getColoredNameBold() + ChatColor.GOLD + " rejoined the game!");
+            if (wp.getGame().isGameFreeze()) {
+                wp.getGame().freezePlayer(e.getPlayer(), "");
             }
         } else {
-            e.setQuitMessage(ChatColor.AQUA + e.getPlayer().getName() + ChatColor.GOLD + " left the lobby!");
+            //checking if in game lobby
+            if (Warlords.game.players().noneMatch(uuidTeamEntry -> uuidTeamEntry.getKey().equals(e.getPlayer().getUniqueId()))) {
+                e.getPlayer().setAllowFlight(true);
+                e.setJoinMessage(ChatColor.AQUA + e.getPlayer().getName() + ChatColor.GOLD + " joined the lobby!");
+
+                Warlords.newChain()
+                        .async(() -> {
+                            DatabaseManager.loadPlayer(e.getPlayer().getUniqueId(), PlayersCollections.LIFETIME, () -> {
+                                Warlords.updateHead(e.getPlayer());
+
+                                Location rejoinPoint = Warlords.getRejoinPoint(player.getUniqueId());
+                                if (LeaderboardManager.loaded && Bukkit.getWorlds().get(0).equals(rejoinPoint.getWorld())) {
+                                    LeaderboardManager.setLeaderboardHologramVisibility(player);
+                                    DatabaseGame.setGameHologramVisibility(player);
+                                    Warlords.playerScoreboards.get(player.getUniqueId()).giveMainLobbyScoreboard();
+                                    ExperienceManager.giveExperienceBar(player);
+                                }
+                            });
+                        })
+                        .execute();
+            }
         }
 
-        if (e.getPlayer().getVehicle() != null) {
-            e.getPlayer().getVehicle().remove();
+        //scoreboard
+        if (!Warlords.playerScoreboards.containsKey(player.getUniqueId()) || Warlords.playerScoreboards.get(player.getUniqueId()) == null) {
+            Warlords.playerScoreboards.put(player.getUniqueId(), new CustomScoreboard(player));
         }
-        //removing player position boards
-        LeaderboardManager.removePlayerSpecificHolograms(e.getPlayer());
+        player.setScoreboard(Warlords.playerScoreboards.get(player.getUniqueId()).getScoreboard());
+
+        joinInteraction(player, false);
 
         Bukkit.getOnlinePlayers().forEach(p -> {
-            PacketUtils.sendTabHF(p, ChatColor.AQUA + "     Welcome to " + ChatColor.YELLOW + ChatColor.BOLD + "Warlords 2.0     ", ChatColor.GREEN + "Players Online: " + ChatColor.GRAY + (Bukkit.getOnlinePlayers().size() - 1));
+            PacketUtils.sendTabHF(p,
+                    ChatColor.AQUA + "     Welcome to " + ChatColor.YELLOW + ChatColor.BOLD + "Warlords 2.0     ",
+                    ChatColor.GREEN + "Players Online: " + ChatColor.GRAY + Bukkit.getOnlinePlayers().size());
         });
+
+        //hiding players that arent in the game
+        if (!Warlords.hasPlayer(player)) {
+            Warlords.getPlayers().forEach(((uuid, warlordsPlayer) -> {
+                if (warlordsPlayer.getEntity() instanceof Player) {
+                    ((Player) warlordsPlayer.getEntity()).hidePlayer(player);
+                }
+            }));
+        } else {
+            Bukkit.getOnlinePlayers().forEach(p -> {
+                if (!Warlords.hasPlayer(p)) {
+                    player.hidePlayer(p);
+                }
+            });
+        }
     }
 
     public static void joinInteraction(Player player, boolean fromGame) {
@@ -196,70 +219,59 @@ public class WarlordsEvents implements Listener {
     }
 
     @EventHandler
-    public static void onPlayerJoin(PlayerJoinEvent e) {
-        Player player = e.getPlayer();
-        WarlordsPlayer wp = Warlords.getPlayer(player);
+    public static void onPlayerQuit(PlayerQuitEvent e) {
+        WarlordsPlayer wp = Warlords.getPlayer(e.getPlayer());
         if (wp != null) {
-            if (wp.isAlive()) {
-                e.getPlayer().setAllowFlight(false);
+            if (!wp.isDeath()) {
+                wp.updatePlayerReference(null);
             }
-            e.setJoinMessage(wp.getColoredNameBold() + ChatColor.GOLD + " rejoined the game!");
-            if (wp.getGame().isGameFreeze()) {
-                wp.getGame().freezePlayer(e.getPlayer(), "");
+            e.setQuitMessage(wp.getColoredNameBold() + ChatColor.GOLD + " left the game!");
+            //only pause for comp games
+            if (Warlords.game.isPrivate()) {
+                new BukkitRunnable() {
+                    int secondsGone = 0;
+                    boolean froze = false;
+
+                    @Override
+                    public void run() {
+                        secondsGone++;
+                        if (e.getPlayer().isOnline() || Warlords.game.getState() != wp.getGameState()) {
+                            if (froze && wp.getGame().isGameFreeze()) {
+                                //to make sure no other is disconnected
+                                boolean allOnline = true;
+                                for (UUID uuid : wp.getGame().getPlayers().keySet()) {
+                                    if (Bukkit.getPlayer(uuid) == null) {
+                                        allOnline = false;
+                                        break;
+                                    }
+                                }
+                                if (allOnline) {
+                                    wp.getGame().freeze(ChatColor.YELLOW + "Missing player detected!", true);
+                                }
+                            }
+                            this.cancel();
+                            // 15 for precaution
+                        } else if (secondsGone >= 15 && !froze) {
+                            if (!wp.getGame().isGameFreeze()) {
+                                wp.getGame().freeze(ChatColor.YELLOW + "Missing player detected!", true);
+                            }
+                            froze = true;
+                        }
+                    }
+                }.runTaskTimer(Warlords.getInstance(), 1, 20);
             }
         } else {
-            //checking if in game lobby
-            if (Warlords.game.players().noneMatch(uuidTeamEntry -> uuidTeamEntry.getKey().equals(e.getPlayer().getUniqueId()))) {
-                e.getPlayer().setAllowFlight(true);
-                e.setJoinMessage(ChatColor.AQUA + e.getPlayer().getName() + ChatColor.GOLD + " joined the lobby!");
-
-                Warlords.newChain()
-                        .async(() -> {
-                            DatabaseManager.loadPlayer(e.getPlayer().getUniqueId(), PlayersCollections.LIFETIME, () -> {
-                                Warlords.updateHead(e.getPlayer());
-                                LeaderboardManager.setLeaderboardHologramVisibility(player);
-                                DatabaseGame.setGameHologramVisibility(player);
-
-                                Location rejoinPoint = Warlords.getRejoinPoint(player.getUniqueId());
-                                if (Bukkit.getWorlds().get(0).getName().equals(rejoinPoint.getWorld().getName())) {
-                                    Warlords.playerScoreboards.get(player.getUniqueId()).giveMainLobbyScoreboard();
-                                    ExperienceManager.giveExperienceBar(player);
-                                }
-                            });
-                        })
-                        .execute();
-            }
+            e.setQuitMessage(ChatColor.AQUA + e.getPlayer().getName() + ChatColor.GOLD + " left the lobby!");
         }
-
-        //scoreboard
-        if (!Warlords.playerScoreboards.containsKey(player.getUniqueId()) || Warlords.playerScoreboards.get(player.getUniqueId()) == null) {
-            Warlords.playerScoreboards.put(player.getUniqueId(), new CustomScoreboard(player));
+        if (e.getPlayer().getVehicle() != null) {
+            e.getPlayer().getVehicle().remove();
         }
-        player.setScoreboard(Warlords.playerScoreboards.get(player.getUniqueId()).getScoreboard());
-
-        joinInteraction(player, false);
+        //removing player position boards
+        LeaderboardManager.removePlayerSpecificHolograms(e.getPlayer());
 
         Bukkit.getOnlinePlayers().forEach(p -> {
-            PacketUtils.sendTabHF(p,
-                    ChatColor.AQUA + "     Welcome to " + ChatColor.YELLOW + ChatColor.BOLD + "Warlords 2.0     ",
-                    ChatColor.GREEN + "Players Online: " + ChatColor.GRAY + Bukkit.getOnlinePlayers().size());
+            PacketUtils.sendTabHF(p, ChatColor.AQUA + "     Welcome to " + ChatColor.YELLOW + ChatColor.BOLD + "Warlords 2.0     ", ChatColor.GREEN + "Players Online: " + ChatColor.GRAY + (Bukkit.getOnlinePlayers().size() - 1));
         });
-
-        //hiding players that arent in the game
-        if (!Warlords.hasPlayer(player)) {
-            Warlords.getPlayers().forEach(((uuid, warlordsPlayer) -> {
-                if (warlordsPlayer.getEntity() instanceof Player) {
-                    ((Player) warlordsPlayer.getEntity()).hidePlayer(player);
-                }
-            }));
-        } else {
-            Bukkit.getOnlinePlayers().forEach(p -> {
-                if (!Warlords.hasPlayer(p)) {
-                    player.hidePlayer(p);
-                }
-            });
-        }
-
     }
 
     @EventHandler

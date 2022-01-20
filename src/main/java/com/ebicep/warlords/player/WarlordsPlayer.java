@@ -564,13 +564,13 @@ public final class WarlordsPlayer {
 
                         // Self Heal
                         if (Warlords.getPlayerSettings(attacker.uuid).getSkillBoostForClass() == ClassesSkillBoosts.PROTECTOR_STRIKE) {
-                            attacker.addHealingInstance(attacker, ability, damageValue / 1.67f, damageValue / 1.67f, isCrit ? 100 : -1, 100, false, false);
+                            attacker.addHealingInstance(attacker, ability, damageValue * 0.6f, damageValue * 0.6f, isCrit ? 100 : -1, 100, false, false);
                         } else {
-                            attacker.addHealingInstance(attacker, ability, damageValue / 2, damageValue / 2, isCrit ? 100 : -1, 100, false, false);
+                            attacker.addHealingInstance(attacker, ability, damageValue * 0.5f, damageValue * 0.5f, isCrit ? 100 : -1, 100, false, false);
                         }
 
                         // Ally Heal
-                        for (WarlordsPlayer nearTeamPlayer : PlayerFilter
+                        for (WarlordsPlayer ally : PlayerFilter
                                 .entitiesAround(attacker, 10, 10, 10)
                                 .aliveTeammatesOfExcludingSelf(attacker)
                                 .sorted(Comparator.comparing((WarlordsPlayer p) -> p.getCooldownManager().hasCooldown(HolyRadianceProtector.class) ? 0 : 1)
@@ -578,9 +578,9 @@ public final class WarlordsPlayer {
                                 .limit(2)
                         ) {
                             if (Warlords.getPlayerSettings(attacker.uuid).getSkillBoostForClass() == ClassesSkillBoosts.PROTECTOR_STRIKE) {
-                                nearTeamPlayer.addHealingInstance(attacker, ability, damageValue * 1.2f, damageValue * 1.2f, isCrit ? 100 : -1, 100, false, false);
+                                ally.addHealingInstance(attacker, ability, damageValue * 1.2f, damageValue * 1.2f, isCrit ? 100 : -1, 100, false, false);
                             } else {
-                                nearTeamPlayer.addHealingInstance(attacker, ability, damageValue, damageValue, isCrit ? 100 : -1, 100, false, false);
+                                ally.addHealingInstance(attacker, ability, damageValue, damageValue, isCrit ? 100 : -1, 100, false, false);
                             }
                         }
                     }
@@ -613,8 +613,9 @@ public final class WarlordsPlayer {
 
                 updateJimmyHealth();
 
-                // adding/subtracing health
-                //debt and healing
+                // Adding/subtracting health
+
+                // debt and healing
                 if (!debt && takeDamage) {
                     this.health -= Math.round(damageValue);
                 }

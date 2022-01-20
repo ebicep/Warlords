@@ -28,14 +28,17 @@ public class BotManager {
 
     public static JDA jda;
     public static String botToken;
+
     public static String compGamesServerID = "776590423501045760";
     public static String compGamesServerStatusChannel = "instant-updates";
     public static HashMap<String, TextChannel> compGamesServerChannelCache = new HashMap<>();
+    public static Message compStatusMessage;
+
     public static String wl2ServerID = "931564871462572062";
     public static String wl2ServerStatusChannel = "server-status";
     public static HashMap<String, TextChannel> wl2ServerChannelCache = new HashMap<>();
-    public static Message compStatusMessage;
     public static Message wl2StatusMessage;
+
     public static int numberOfMessagesSentLast30Sec = 0;
 
     public static void connect() throws LoginException {

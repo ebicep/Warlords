@@ -90,7 +90,7 @@ public class PreLobbyState implements State, TimerDebugAble {
                 if (!game.isPrivate()) {
 
                     HashMap<String, Integer> playersSR = new HashMap<>();
-                    SRCalculator.playersSR.forEach((key, value1) -> playersSR.put(key.getUuid(), value1));
+                    SRCalculator.playersSR.forEach((key, value1) -> playersSR.put(key.getUuid(), value1 == null ? 500 : value1));
 
                     HashMap<Player, Team> bestTeam = new HashMap<>();
                     int bestBlueSR = 0;
@@ -98,7 +98,7 @@ public class PreLobbyState implements State, TimerDebugAble {
                     int bestTeamSRDifference = Integer.MAX_VALUE;
 
                     int maxSRDiff = 200;
-                    for (int i = 0; i < 2000; i++) {
+                    for (int i = 0; i < 5000; i++) {
                         HashMap<Player, Team> teams = new HashMap<>();
                         HashMap<Classes, List<Player>> playerSpecs = new HashMap<>();
                         game.forEachOnlinePlayer((player, team) -> {
@@ -167,6 +167,7 @@ public class PreLobbyState implements State, TimerDebugAble {
                         }
 
                         if (Math.abs(bluePlayers - redPlayers) > 1) {
+                            maxSRDiff++;
                             continue;
                         }
 
@@ -226,6 +227,15 @@ public class PreLobbyState implements State, TimerDebugAble {
                                 });
 
                         bestTeam = teams;
+                        bestBlueSR = teams.entrySet().stream()
+                                .filter(playerTeamEntry -> playerTeamEntry.getValue() == Team.BLUE)
+                                .mapToInt(value -> playersSR.getOrDefault(value.getKey().getUniqueId().toString(), 500))
+                                .sum();
+                        bestRedSR = teams.entrySet().stream()
+                                .filter(playerTeamEntry -> playerTeamEntry.getValue() == Team.RED)
+                                .mapToInt(value -> playersSR.getOrDefault(value.getKey().getUniqueId().toString(), 500))
+                                .sum();
+                        bestTeamSRDifference = Math.abs(bestBlueSR - bestRedSR);
                     }
 
                     bestTeam.forEach((player, team) -> {
@@ -267,6 +277,7 @@ public class PreLobbyState implements State, TimerDebugAble {
                                 playerInParty.hidePlayer(playerNotInParty);
                             }));
                 }
+
                 if (game.getPlayers().size() >= 14) {
                     BotManager.sendMessageToNotificationChannel("[GAME] A " + (game.isPrivate() ? "" : "Public ") + "**" + game.getMap().getMapName() + "** started with **" + game.getPlayers().size() + (game.getPlayers().size() == 1 ? "** player!" : "** players!"), true);
                 }
@@ -274,7 +285,7 @@ public class PreLobbyState implements State, TimerDebugAble {
             }
             timer--;
         } else {
-            timer = game.isPrivate() ? game.getMap().getCountdownTimerInTicks() : 45 * 20;
+            timer = game.isPrivate() ? game.getMap().getCountdownTimerInTicks() : 60 * 20;
             game.forEachOnlinePlayer((player, team) -> giveLobbyScoreboard(false, player));
         }
         return null;
