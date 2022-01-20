@@ -3,6 +3,7 @@ package com.ebicep.warlords.maps.state;
 import com.ebicep.customentities.npc.traits.GameStartTrait;
 import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Gates;
 import com.ebicep.warlords.maps.Team;
@@ -18,6 +19,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.util.ChatUtils.sendMessage;
+import com.ebicep.warlords.util.ItemBuilder;
+import org.bukkit.*;
 
 public class PreLobbyState implements State, TimerDebugAble {
 
@@ -89,7 +92,7 @@ public class PreLobbyState implements State, TimerDebugAble {
 
             if (timer <= 0) {
                 if (!game.isPrivate()) {
-                    //separating players into even teams because it might be uneven bc players couldve left
+                    //separating internalPlayers into even teams because it might be uneven bc internalPlayers couldve left
 
                     //balancing based on specs
 
@@ -115,7 +118,7 @@ public class PreLobbyState implements State, TimerDebugAble {
                             List<Player> partyPlayers = new ArrayList<>(partyPlayersInGame);
                             Collections.shuffle(partyPlayers);
                             int teamSizeDiff = Math.abs(bluePlayers.size() - redPlayers.size());
-                            //check if whole party can go on the same team to get an even amount of players on each team
+                            //check if whole party can go on the same team to get an even amount of internalPlayers on each team
                             if (teamSizeDiff > partyPlayers.size()) {
                                 if (bluePlayers.size() > redPlayers.size())
                                     bluePlayers.addAll(partyPlayers);
@@ -133,16 +136,16 @@ public class PreLobbyState implements State, TimerDebugAble {
                     partyMembers.forEach((team, playerList) -> playerList.forEach(player -> teams.put(player, team)));
 
                     HashMap<Classes, List<Player>> playerSpecs = new HashMap<>();
-                    //all players are online or else they wouldve been removed from queue
+                    //all internalPlayers are online or else they wouldve been removed from queue
                     game.forEachOnlinePlayer((player, team) -> {
-                        //filter out party players that are already assigned teams
+                        //filter out party internalPlayers that are already assigned teams
                         if (!teams.containsKey(player)) {
                             PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
                             playerSpecs.computeIfAbsent(playerSettings.getSelectedClass(), v -> new ArrayList<>()).add(player);
                         }
                     });
 
-                    //specs that dont have an even amount of players to redistribute later
+                    //specs that dont have an even amount of internalPlayers to redistribute later
                     List<Player> playersLeft = new ArrayList<>();
                     //distributing specs evenly
                     playerSpecs.forEach((classes, playerList) -> {
@@ -166,7 +169,7 @@ public class PreLobbyState implements State, TimerDebugAble {
                         }
                     });
 
-                    //start on team with least amount of players
+                    //start on team with least amount of internalPlayers
                     int amountOnBlue = (int) teams.entrySet().stream().filter(playerTeamEntry -> playerTeamEntry.getValue() == Team.BLUE).count();
                     int amountOnRed = (int) teams.entrySet().stream().filter(playerTeamEntry -> playerTeamEntry.getValue() == Team.RED).count();
                     final boolean[] toBlueTeam = {amountOnBlue <= amountOnRed};
@@ -200,7 +203,7 @@ public class PreLobbyState implements State, TimerDebugAble {
 //                    });
                     GameStartTrait.ctfQueue.clear();
 
-                    //hiding players not in game
+                    //hiding internalPlayers not in game
                     List<Player> playersNotInGame = Bukkit.getOnlinePlayers().stream()
                             .filter(onlinePlayer -> !game.getPlayers().containsKey(onlinePlayer.getUniqueId()))
                             .collect(Collectors.toList());
@@ -362,6 +365,41 @@ public class PreLobbyState implements State, TimerDebugAble {
     @Override
     public void resetTimer() throws IllegalStateException {
         this.timer = game.getMap().getCountdownTimerInTicks();
+    }
+
+    @Override
+    public void onPlayerJoinGame(OfflinePlayer op, boolean asSpectator) {
+        Player player = op.getPlayer();
+        if (player != null) {
+            player.getInventory().clear();
+            player.setAllowFlight(false);
+
+            player.getInventory().setItem(5, new ItemBuilder(Material.NOTE_BLOCK)
+                    .name(ChatColor.GREEN + "Team Selector " + ChatColor.GRAY + "(Right-Click)")
+                    .lore(ChatColor.YELLOW + "Click to select your team!")
+                    .get());
+            player.getInventory().setItem(6, new ItemBuilder(Material.NETHER_STAR)
+                    .name(ChatColor.AQUA + "Pre-game Menu ")
+                    .lore(ChatColor.GRAY + "Allows you to change your class, select a\n" + ChatColor.GRAY + "weapon, and edit your settings.")
+                    .get());
+            player.getInventory().setItem(1, new ItemBuilder(apc.getWeapon()
+                    .getItem(playerSettings.getWeaponSkins()
+                            .getOrDefault(selectedClass, Weapons.FELFLAME_BLADE).item))
+                    .name("§aWeapon Skin Preview")
+                    .lore("")
+                    .get());
+        }
+
+        PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
+        Classes selectedClass = playerSettings.getSelectedClass();
+        AbstractPlayerClass apc = selectedClass.create.get();
+
+       
+
+        Team team = Warlords.getPlayerSettings(player.getUniqueId()).getWantedTeam();
+        Warlords.game.addPlayer(player, team == null ? Team.BLUE : team);
+        Warlords.game.setPlayerTeam(player, team == null ? Team.BLUE : team);
+        ArmorManager.resetArmor(player, Warlords.getPlayerSettings(player.getUniqueId()).getSelectedClass(), team);
     }
 
     private final class TeamPreference implements Comparable<TeamPreference> {

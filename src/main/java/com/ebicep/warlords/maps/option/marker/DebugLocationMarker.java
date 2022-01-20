@@ -78,7 +78,7 @@ public interface DebugLocationMarker extends LocationMarker {
         item.name(getName());
         Location loc = getLocation();
         List<String> lore = new ArrayList<>();
-        lore.add("X: " + loc.getX() + " Y: " + loc.getY() + " Z: " + loc.getZ() + " Yaw" + loc.getYaw() + " Pitch " + loc.getPitch());
+        lore.add("XYZ: " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + " Yaw/pitch: " + loc.getYaw() + "/" + loc.getPitch());
         lore.add("Source: " + getCreator().getName());
         lore.addAll(getExtra());
         item.lore(lore);

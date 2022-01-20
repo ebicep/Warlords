@@ -5,6 +5,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.bukkit.OfflinePlayer;
@@ -13,6 +14,14 @@ public class GameManager implements AutoCloseable {
 
     private final List<GameHolder> games = new ArrayList<>();
     private final LinkedList<QueueEntry> queue = new LinkedList<>();
+
+    /**
+     * Gets the list of game holders
+     * @return the games holders
+     */
+    public List<GameHolder> getGames() {
+        return games;
+    }
 
     @Nullable
     private GameHolder findSuitableGame(@Nonnull QueueEntry entry) {
@@ -26,8 +35,8 @@ public class GameManager implements AutoCloseable {
                 continue; // Skip if the user wants to join a game with a different category
             }
             if (next.getGame() != null && next.getGame().playersCount() == 0) {
-                // If a game has 0 players assigned, force end it
-                next.forceEndGame();
+                // If a game has 0 internalPlayers assigned, force end it
+                next.forceEndGame(); // This mutated holder.game
             }
             if (next.getGame() == null) {
                 int computedMaxPlayers = next.getMap().getMaxPlayers();
@@ -102,11 +111,11 @@ public class GameManager implements AutoCloseable {
         };
     }
 
-    public void dropPlayerFromQueue(OfflinePlayer player) {
-        dropPlayerFromQueue(player, false);
+    public void dropPlayerFromQueueOrGames(OfflinePlayer player) {
+        this.dropPlayerFromQueueOrGames(player, false);
     }
 
-    private void dropPlayerFromQueue(OfflinePlayer player, boolean wouldBeReplaced) {
+    private void dropPlayerFromQueueOrGames(OfflinePlayer player, boolean wouldBeReplaced) {
         for (Iterator<QueueEntry> itr = queue.iterator(); itr.hasNext();) {
             QueueEntry entry = itr.next();
             if (entry.players.contains(player)) {
@@ -114,9 +123,36 @@ public class GameManager implements AutoCloseable {
                 entry.onResult(wouldBeReplaced ? QueueResult.REPLACED : QueueResult.CANCELLED);
             }
         }
+        for (GameHolder holder : games) {
+            if (holder.getGame() != null && (holder.getGame().acceptsPeople() || wouldBeReplaced)) {
+                holder.getGame().removePlayer(player.getUniqueId());
+            }
+        }
+    }
+    
+    public long getPlayerCount() {
+        return this.games.stream().map(e -> e.getGame() == null ? 0 : e.getGame().getPlayers().size()).collect(Collectors.counting());
+    }
+    
+    public long getPlayerCountInLobby() {
+        return this.games.stream().map(e -> e.getGame() == null && e.getGame().acceptsPeople() ? 0 : e.getGame().getPlayers().size()).collect(Collectors.counting());
+    }
+    
+    public long getQueueSize() {
+        return this.queue.size();
+    }
+    
+    public long getQueuePlayerCount() {
+        return this.queue.stream().map(e -> e.getPlayers().size()).collect(Collectors.counting());
     }
 
     private boolean queue(QueueEntry entry) {
+        if (entry.getPlayers().isEmpty()) {
+            throw new IllegalArgumentException("Cannot queue an entry with 0 players");
+        }
+        if (queue.contains(entry)) {
+            throw new IllegalArgumentException("Queue entry already exists");
+        }
         boolean valid = false;
         for (GameHolder next : games) {
             if (entry.getMap() != null && entry.getMap() != next.getMap()) {
@@ -131,6 +167,9 @@ public class GameManager implements AutoCloseable {
         if (!valid) {
             entry.onResult(QueueResult.INVALID);
             return false;
+        }
+        for (OfflinePlayer p : entry.getPlayers()) {
+            GameManager.this.dropPlayerFromQueueOrGames(p, true);
         }
         queue.add(entry);
         runQueue();
@@ -159,13 +198,11 @@ public class GameManager implements AutoCloseable {
             entry.setOnResult(onResult);
         }
     }
-
-    public QueueEntryBuilder newEntry(List<OfflinePlayer> players) {
-        return new QueueEntryBuilder(players);
+    public QueueEntryBuilder newEntry(Collection<? extends OfflinePlayer> players) {
+        return new QueueEntryBuilder(players, null);
     }
-
-    public AsyncQueueEntryBuilder newEntry(List<OfflinePlayer> players, @Nonnull Consumer<QueueResult> onResult) {
-        return new AsyncQueueEntryBuilder(players, onResult);
+    public QueueEntryBuilder newEntry(Collection<? extends OfflinePlayer> players, @Nullable Consumer<QueueResult> onResult) {
+        return new QueueEntryBuilder(players, onResult);
     }
 
     @Override
@@ -174,12 +211,13 @@ public class GameManager implements AutoCloseable {
             entry.onResult(QueueResult.CLOSE);
         }
         queue.clear();
-        for(GameHolder next : games) {
+        for (GameHolder next : games) {
             next.forceEndGame();
         }
+        games.clear();
     }
 
-    private static class GameHolder {
+    public static class GameHolder {
 
         @Nullable
         private Game game;
@@ -208,8 +246,9 @@ public class GameManager implements AutoCloseable {
             return game;
         }
 
-        private void forceEndGame() {
+        public void forceEndGame() {
             game.close();
+            game = null;
         }
 
         @Nonnull
@@ -230,6 +269,10 @@ public class GameManager implements AutoCloseable {
                 );
             }
             return game;
+        }
+
+        public String getName() {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
 
     }
@@ -321,20 +364,27 @@ public class GameManager implements AutoCloseable {
     }
 
     public enum QueueResult {
-        READY(true),
-        EXPIRED(false),
-        CANCELLED(false),
-        REPLACED(false),
-        INVALID(false),
-        CLOSE(false),;
+        READY(true, "Your game is ready"),
+        EXPIRED(false, "No game found in time"),
+        CANCELLED(false, "Cancelled queueing"),
+        REPLACED(false, "Replaced with another queue entry"),
+        INVALID(false, "Your request to queue was invalid"),
+        CLOSE(false, "The queue has been closed"),;
         private final boolean success;
+        private final String message;
 
-        private QueueResult(boolean success) {
+        private QueueResult(boolean success, String message) {
             this.success = success;
+            this.message = message;
         }
 
         public boolean isSuccess() {
             return success;
+        }
+        
+        @Override
+        public String toString() {
+            return message;
         }
     }
 
@@ -349,18 +399,22 @@ public class GameManager implements AutoCloseable {
         @Nullable
         protected GameMap map = null;
         protected int priority = 0;
+        @Nullable
+        private Consumer<GameManager.QueueResult> onResult;
+        private long expiresTime = Long.MAX_VALUE;
 
-        public QueueEntryBuilder(@Nonnull List<OfflinePlayer> players) {
-            this.players = players;
+        public QueueEntryBuilder(Collection<? extends OfflinePlayer> players, @Nullable Consumer<QueueResult> onResult) {
+            this.players = new ArrayList<>(players);
+            this.onResult = onResult;
         }
 
-        public QueueEntryBuilder setPlayers(@Nonnull List<OfflinePlayer> players) {
-            this.players = players;
+        public QueueEntryBuilder setPlayers(@Nonnull Collection<? extends OfflinePlayer> players) {
+            this.players = new ArrayList<>(players);
             return this;
         }
 
         public QueueEntryBuilder setRequestedGameAddons(@Nonnull EnumSet<GameAddon> requestedGameAddons) {
-            this.requestedGameAddons = requestedGameAddons;
+            this.requestedGameAddons = requestedGameAddons.clone();
             return this;
         }
 
@@ -403,24 +457,6 @@ public class GameManager implements AutoCloseable {
             return priority;
         }
 
-        @Nonnull
-        public QueueResult queueNow() {
-            return GameManager.this.queueNow(new GameManager.QueueEntry(players, Long.MIN_VALUE, requestedGameAddons, category, map, null, priority));
-        }
-
-    }
-
-    public class AsyncQueueEntryBuilder extends QueueEntryBuilder {
-
-        @Nonnull
-        private Consumer<GameManager.QueueResult> onResult;
-        private long expiresTime = Long.MAX_VALUE;
-
-        public AsyncQueueEntryBuilder(List<OfflinePlayer> players, @Nonnull Consumer<QueueResult> onResult) {
-            super(players);
-            this.onResult = onResult;
-        }
-
         public QueueEntryBuilder setExpiresTime(long expiresTime) {
             this.expiresTime = expiresTime;
             return this;
@@ -443,5 +479,11 @@ public class GameManager implements AutoCloseable {
         public void queue() {
             GameManager.this.queue(new GameManager.QueueEntry(players, expiresTime, requestedGameAddons, category, map, onResult, priority));
         }
+        
+        @Nonnull
+        public QueueResult queueNow() {
+            return GameManager.this.queueNow(new GameManager.QueueEntry(players, Long.MIN_VALUE, requestedGameAddons, category, map, null, priority));
+        }
+
     }
 }

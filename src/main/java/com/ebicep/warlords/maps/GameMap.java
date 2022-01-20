@@ -3,14 +3,12 @@ package com.ebicep.warlords.maps;
 import com.ebicep.warlords.maps.option.*;
 import com.ebicep.warlords.maps.state.PreLobbyState;
 import com.ebicep.warlords.maps.state.State;
-import com.ebicep.warlords.util.LocationBuilder;
 import com.ebicep.warlords.util.LocationFactory;
 import java.util.*;
+import javax.annotation.Nonnull;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
-import javax.annotation.Nonnull;
-import java.util.function.BiConsumer;
 
 // MAPS:
 // "Crossfire"
@@ -207,6 +205,8 @@ public enum GameMap {
             "Debug",
             96,
             1,
+            900 * 20,
+            30 * 20,
             "WLDebug",
             MapCategory.DEBUG
     ) {
@@ -270,7 +270,7 @@ public enum GameMap {
     private final String mapDirPath;
     private final List<MapCategory> mapCategory;
 
-    GameMap(String mapName, int maxPlayers, int minPlayers, int gameTime, int countdown, String mapDirPath, MapCategory ... mapCategory) {
+    GameMap(@Nonnull String mapName, int maxPlayers, int minPlayers, int gameTime, int countdown, @Nonnull String mapDirPath, @Nonnull MapCategory ... mapCategory) {
         this.mapName = mapName;
         this.maxPlayers = maxPlayers;
         this.minPlayers = minPlayers;
@@ -308,6 +308,7 @@ public enum GameMap {
     public int getGameTimerInTicks() {
         return gameTimerInTicks;
     }
+
     public int getCountdownTimerInTicks() {
         return countdownTimerInTicks;
     }

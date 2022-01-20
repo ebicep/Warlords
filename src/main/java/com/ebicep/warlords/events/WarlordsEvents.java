@@ -92,6 +92,7 @@ public class WarlordsEvents implements Listener {
         Bukkit.getOnlinePlayers().forEach(p -> {
             PacketUtils.sendTabHF(p, ChatColor.AQUA + "     Welcome to " + ChatColor.YELLOW + ChatColor.BOLD + "Warlords 2.0     ", ChatColor.GREEN + "Players Online: " + ChatColor.GRAY + (Bukkit.getOnlinePlayers().size() - 1));
         });
+        Warlords.getGameManager().dropPlayerFromQueueOrGames(e.getPlayer());
     }
 
     public static void joinInteraction(Player player, boolean fromGame) {
@@ -201,7 +202,7 @@ public class WarlordsEvents implements Listener {
                     ChatColor.GREEN + "Players Online: " + ChatColor.GRAY + Bukkit.getOnlinePlayers().size());
         });
 
-        //hiding players that arent in the game
+        //hiding internalPlayers that arent in the game
         if (!Warlords.hasPlayer(player)) {
             Warlords.getPlayers().forEach(((uuid, warlordsPlayer) -> {
                 if (warlordsPlayer.getEntity() instanceof Player) {

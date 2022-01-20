@@ -16,7 +16,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 /**
- * Supports actually freezing the players in the game
+ * Supports actually freezing the internalPlayers in the game
  */
 public class GameFreezeOption implements Option, Listener {
 

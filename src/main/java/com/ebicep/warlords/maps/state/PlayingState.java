@@ -19,7 +19,6 @@ import com.ebicep.warlords.player.CustomScoreboard;
 import com.ebicep.warlords.player.ExperienceManager;
 import com.ebicep.warlords.player.PlayerSettings;
 import com.ebicep.warlords.player.WarlordsPlayer;
-import com.ebicep.warlords.powerups.PowerupManager;
 import com.ebicep.warlords.util.PacketUtils;
 import com.ebicep.warlords.util.RemoveEntities;
 import org.bukkit.Bukkit;

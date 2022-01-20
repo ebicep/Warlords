@@ -9,8 +9,14 @@ commands:
     description: Starts a new game.
     usage: /start [MAP | RANDOM]
   endgame:
-    description: Force stops the game.
+    description: Terminated the game.
     usage: /endgame
+  killgame:
+    description: Kills the game
+    usage: /killgame
+  listgames:
+    description: Shows the list of games
+    usage: /listgames
   menu:
     description: Opens the game menu.
     usage: /menu

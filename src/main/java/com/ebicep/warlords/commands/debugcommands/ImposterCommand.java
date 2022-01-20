@@ -4,7 +4,6 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.BaseCommand;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.party.Party;
-import com.ebicep.warlords.party.Poll;
 import com.ebicep.warlords.party.PollBuilder;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.PacketUtils;
@@ -64,13 +63,13 @@ public class ImposterCommand implements CommandExecutor {
                 WarlordsPlayer warlordsPlayer = BaseCommand.requireWarlordsPlayer(sender);
                 if (warlordsPlayer == null) return true;
 
-                List<Player> bluePlayers = warlordsPlayer.getGame().players()
+                List<Player> bluePlayers = warlordsPlayer.getGame().internalPlayers()
                         .filter(uuidTeamEntry -> uuidTeamEntry.getValue() == Team.BLUE)
                         .map(Map.Entry::getKey)
                         .map(Bukkit::getPlayer)
                         .filter(Objects::nonNull)
                         .collect(Collectors.toList());
-                List<Player> redPlayers = warlordsPlayer.getGame().players()
+                List<Player> redPlayers = warlordsPlayer.getGame().internalPlayers()
                         .filter(uuidTeamEntry -> uuidTeamEntry.getValue() == Team.RED)
                         .map(Map.Entry::getKey)
                         .map(Bukkit::getPlayer)

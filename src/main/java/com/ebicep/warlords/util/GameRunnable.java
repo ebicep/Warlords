@@ -5,7 +5,6 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.maps.Game;
 import java.util.Objects;
 import org.bukkit.Bukkit;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
 
 /**
@@ -106,7 +105,7 @@ public abstract class GameRunnable implements Runnable {
     }
     
     private Runnable getRunnable() {
-        if(this.runInPauseMode) {
+        if (this.runInPauseMode) {
             return this;
         } else {
             return () -> {

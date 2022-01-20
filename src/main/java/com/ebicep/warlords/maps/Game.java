@@ -28,9 +28,10 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 
 /**
- * An instance of an Warlords game. It depends on a 
+ * An instance of an Warlords game. It depends on a
  */
 public final class Game implements Runnable, AutoCloseable {
+
     public static final String KEY_UPDATED_FROZEN = "frozen";
 
     private final Map<UUID, Team> players = new HashMap<>();
@@ -59,8 +60,10 @@ public final class Game implements Runnable, AutoCloseable {
     private int minPlayers;
     private boolean acceptsPlayers;
     private boolean acceptsSpectators;
+    private final LocationFactory locations;
 
     public Game(EnumSet<GameAddon> gameAddons, GameMap map, MapCategory category, LocationFactory locations) {
+        this.locations = locations;
         this.addons = gameAddons;
         this.map = map;
         this.category = category;
@@ -113,6 +116,7 @@ public final class Game implements Runnable, AutoCloseable {
 
     /**
      * Gets the game map used to construct this game
+     *
      * @return the game map
      */
     @Nonnull
@@ -133,8 +137,13 @@ public final class Game implements Runnable, AutoCloseable {
         return category;
     }
 
+    public LocationFactory getLocations() {
+        return locations;
+    }
+
     /**
      * Check if the game is frozen
+     *
      * @return true if the game is frozen
      */
     public boolean isFrozen() {
@@ -145,23 +154,32 @@ public final class Game implements Runnable, AutoCloseable {
     public List<String> getFrozenCauses() {
         return Collections.unmodifiableList(frozenCauses);
     }
-    
+
     public void addFrozenCause(String cause) {
         frozenCauses.add(cause);
+        boolean oldFrozenCached = frozenCached;
         frozenCached = true;
-        Bukkit.getPluginManager().callEvent(new WarlordsGameUpdatedEvent(this, KEY_UPDATED_FROZEN));
+        if (oldFrozenCached != frozenCached) {
+            Bukkit.getPluginManager().callEvent(new WarlordsGameUpdatedEvent(this, KEY_UPDATED_FROZEN));
+        }
     }
-    
+
     public void removeFrozenCause(String cause) {
         frozenCauses.remove(cause);
+        boolean oldFrozenCached = frozenCached;
         frozenCached = !frozenCauses.isEmpty();
-        Bukkit.getPluginManager().callEvent(new WarlordsGameUpdatedEvent(this, KEY_UPDATED_FROZEN));
+        if (oldFrozenCached != frozenCached) {
+            Bukkit.getPluginManager().callEvent(new WarlordsGameUpdatedEvent(this, KEY_UPDATED_FROZEN));
+        }
     }
-    
+
     public void clearFrozenCause() {
         frozenCauses.clear();
+        boolean oldFrozenCached = frozenCached;
         frozenCached = false;
-        Bukkit.getPluginManager().callEvent(new WarlordsGameUpdatedEvent(this, KEY_UPDATED_FROZEN));
+        if (oldFrozenCached != frozenCached) {
+            Bukkit.getPluginManager().callEvent(new WarlordsGameUpdatedEvent(this, KEY_UPDATED_FROZEN));
+        }
     }
 
     @Nonnull
@@ -192,10 +210,10 @@ public final class Game implements Runnable, AutoCloseable {
     public boolean isClosed() {
         return closed;
     }
-    
+
     /**
-     * Get the maximum amount of players supported by this game
-     * 
+     * Get the maximum amount of internalPlayers supported by this game
+     *
      * @return The maximum
      */
     public int getMaxPlayers() {
@@ -281,50 +299,74 @@ public final class Game implements Runnable, AutoCloseable {
         return players;
     }
 
+    /**
+     * Adds a player into the game
+     *
+     * @param player The player to add
+     * @param asSpectator If the player should be added as an spectator
+     * @see #acceptsPeople()
+     * @see #acceptsSpectators()
+     */
     public void addPlayer(@Nonnull OfflinePlayer player, boolean asSpectator) {
         Validate.notNull(player, "player");
-        Player online = player.getPlayer();
-        if (online != null) {
-            online.setGameMode(GameMode.ADVENTURE);
-            online.setAllowFlight(false);
+        if (this.state == null) {
+            throw new IllegalStateException("The game is not started yet");
+        }
+        if (this.closed) {
+            throw new IllegalStateException("Game has been closed");
+        }
+        if (!asSpectator && !this.acceptsPlayers) {
+            throw new IllegalStateException("This game does not accepts player at the moment");
+        }
+        if (asSpectator && !this.acceptsSpectators) {
+            throw new IllegalStateException("This game does not accepts spectators at the moment");
         }
         this.players.put(player.getUniqueId(), null);
-        Location loc = this.map.getLobbySpawnPoint(team);
-        Warlords.setRejoinPoint(player.getUniqueId(), loc);
+        this.state.onPlayerJoinGame(player, asSpectator);
     }
 
     public void setPlayerTeam(@Nonnull OfflinePlayer player, @Nonnull Team team) {
         Validate.notNull(player, "player");
         Validate.notNull(team, "team");
-        if (!this.players.containsKey(player)) {
+        if (!this.players.containsKey(player.getUniqueId())) {
             throw new IllegalArgumentException("The specified player is not part of this game");
         }
-        Player online = player.getPlayer();
         Team oldTeam = this.players.get(player.getUniqueId());
         if (team == oldTeam) {
             return;
         }
-        Warlords.getPlayerSettings(player.getUniqueId()).setWantedTeam(team);
         this.players.put(player.getUniqueId(), team);
-        Location loc = this.map.getLobbySpawnPoint(team);
-        Warlords.setRejoinPoint(player.getUniqueId(), loc);
-        if (online != null) {
-            online.teleport(loc);
-        }
     }
 
-    public void removePlayer(UUID player) {
-        this.players.remove(player);
-        Warlords.removePlayer(player);
-        Player p = Bukkit.getPlayer(player);
-        if (p != null) {
-            WarlordsEvents.joinInteraction(p, true);
+    private boolean removePlayer0(UUID player) {
+        if (this.players.containsKey(player)) {
+            assert this.state != null;
+            OfflinePlayer op = Bukkit.getOfflinePlayer(player);
+            this.state.onPlayerQuitGame(op);
+            this.players.remove(player);
+            Warlords.removePlayer(player);
+            Player p = op.getPlayer();
+            if (p != null) {
+                WarlordsEvents.joinInteraction(p, true);
+            }
+            return true;
         }
+        return false;
+    }
+    public boolean removePlayer(UUID player) {
+        if (removePlayer0(player)) {
+            Player p = Bukkit.getPlayer(player);
+            if (p != null) {
+                Warlords.getInstance().hideAndUnhidePeople(p);
+            }
+            return true;
+        }
+        return false;
     }
 
     public List<UUID> clearAllPlayers() {
         try {
-            //making hidden players visible again
+            //making hidden internalPlayers visible again
             Warlords.getPlayers().forEach(((uuid, warlordsPlayer) -> {
                 if (warlordsPlayer.getEntity() instanceof Player) {
                     Bukkit.getOnlinePlayers().forEach(onlinePlayer -> {
@@ -337,8 +379,9 @@ public final class Game implements Runnable, AutoCloseable {
         }
         List<UUID> toRemove = new ArrayList<>(this.players.keySet());
         for (UUID p : toRemove) {
-            this.removePlayer(p);
+            this.removePlayer0(p);
         }
+        Warlords.getInstance().hideAndUnhidePeople();
         assert this.players.isEmpty();
         return toRemove;
     }
@@ -347,8 +390,12 @@ public final class Game implements Runnable, AutoCloseable {
         return this.players.size();
     }
 
-    public Stream<Map.Entry<UUID, Team>> players() {
+    private Stream<Map.Entry<UUID, Team>> internalPlayers() {
         return this.players.entrySet().stream();
+    }
+
+    public Stream<WarlordsPlayer> warlordsPlayers() {
+        return this.players.entrySet().stream().map(e -> Warlords.getPlayer(e.getKey())).filter(Objects::nonNull);
     }
 
     public Stream<Map.Entry<OfflinePlayer, Team>> offlinePlayers() {
@@ -386,58 +433,8 @@ public final class Game implements Runnable, AutoCloseable {
         onlinePlayers().map(w -> Warlords.getPlayer(w.getKey())).filter(Objects::nonNull).forEach(consumer);
     }
 
-    public boolean onSameTeam(UUID player1, UUID player2) {
-        return players.get(player1) == players.get(player2);
-    }
-
-    public boolean onSameTeam(Player player1, Player player2) {
-        return onSameTeam(player1.getUniqueId(), player2.getUniqueId());
-    }
-
-    /**
-     * See if players are on the same team
-     *
-     * @param player1 First player
-     * @param player2 Second player
-     * @return true is they are on the same team (eg BLUE && BLUE, RED && RED or
-     * &lt;not player> && &lt;not playing>
-     * @deprecated Use WarLordsPlayer.isTeammate instead
-     */
-    @Deprecated
-    public boolean onSameTeam(@Nonnull WarlordsPlayer player1, @Nonnull WarlordsPlayer player2) {
-        return onSameTeam(player1.getUuid(), player2.getUuid());
-    }
-
     public Stream<UUID> getSpectators() {
-        return players().filter(e -> e.getValue() == null).map(e -> e.getKey());
-    }
-
-    public void addSpectator(UUID uuid) {
-        spectators.add(uuid);
-        Player player = Bukkit.getPlayer(uuid);
-        player.setGameMode(GameMode.SPECTATOR);
-        player.teleport(this.getMap().getBlueRespawn());
-        Warlords.setRejoinPoint(player.getUniqueId(), this.getMap().getBlueRespawn());
-        if (state instanceof PreLobbyState) {
-            ((PreLobbyState) state).giveLobbyScoreboard(true, player);
-        } else if (state instanceof PlayingState) {
-            ((PlayingState) state).updateBasedOnGameState(true, Warlords.playerScoreboards.get(player.getUniqueId()), null);
-        }
-    }
-
-    public void removeSpectator(UUID uuid, boolean fromMenu) {
-        if (fromMenu) {
-            spectators.remove(uuid);
-        }
-        OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
-        Location loc = Warlords.spawnPoints.remove(player.getUniqueId());
-        if (player.isOnline()) {
-            if (loc != null) {
-                player.getPlayer().teleport(Warlords.getRejoinPoint(player.getUniqueId()));
-            }
-            WarlordsEvents.joinInteraction(player.getPlayer(), true);
-        }
-
+        return internalPlayers().filter(e -> e.getValue() == null).map(e -> e.getKey());
     }
 
     @Override
@@ -446,14 +443,24 @@ public final class Game implements Runnable, AutoCloseable {
             this.nextState = this.state.run();
         }
         while (this.nextState != null) {
+            for (GameAddon addon : this.addons) {
+                nextState = addon.stateWillChange(this, this.state, nextState);
+                if (nextState == null) {
+                    return;
+                }
+            }
             if (this.state != null) {
                 this.state.end();
             }
             State newState = nextState == null ? new ClosedState(this) : nextState;
             System.out.println("DEBUG OLD TO NEW STATE");
             Command.broadcastCommandMessage(Bukkit.getConsoleSender(), "old: " + this.state + " --> new: " + newState);
+            State oldState = this.state;
             this.state = newState;
             this.state.begin();
+            for(GameAddon addon : this.addons) {
+                addon.stateHasChanged(this, oldState, newState);
+            }
         }
     }
 
@@ -463,6 +470,9 @@ public final class Game implements Runnable, AutoCloseable {
     }
 
     public void registerScoreboardHandler(@Nonnull ScoreboardHandler handler) {
+        if (this.state == null) {
+            throw new IllegalStateException("The game is not started yet");
+        }
         if (this.closed) {
             throw new IllegalStateException("Game has been closed");
         }
@@ -476,8 +486,12 @@ public final class Game implements Runnable, AutoCloseable {
      * @param <T> The type of gamemarker to register
      * @param clazz The clazz of the type
      * @param object The actual object to register
+     * @throws IllegalStateException when the game has been closed
      */
     public <T extends GameMarker> void registerGameMarker(@Nonnull Class<T> clazz, @Nonnull T object) {
+        if (this.closed) {
+            throw new IllegalStateException("Game has been closed");
+        }
         if (!clazz.isAssignableFrom(object.getClass())) {
             throw new IllegalArgumentException("Attempted to register a marker for interface " + clazz.getName() + " while passed class " + object.getClass().getName() + " does not implement this");
         }
@@ -495,12 +509,29 @@ public final class Game implements Runnable, AutoCloseable {
     public <T extends GameMarker> List<T> getMarkers(@Nonnull Class<T> clazz) {
         return (List<T>) gameMarkers.getOrDefault(clazz, Collections.emptyList());
     }
-
-    public void registerGameTask(BukkitTask task) {
+    
+    public void unregisterGameTask(@Nonnull BukkitTask task) {
         if (this.closed) {
+            return;
+        }
+        this.gameTasks.remove(Objects.requireNonNull(task, "task"));
+    }
+
+    /**
+     * Registers a Bukkit task to be cancelled once the game ends. Cancelling is important for proper cleanup
+     * @param task The task to register
+     * @throws IllegalStateException when the game has been closed (this also directly calls the cancel function)
+     */
+    public void registerGameTask(@Nonnull BukkitTask task) {
+        if (this.closed) {
+            task.cancel();
             throw new IllegalStateException("Game has been closed");
         }
-        this.gameTasks.add(task);
+        this.gameTasks.add(Objects.requireNonNull(task, "task"));
+    }
+
+    public void registerGameTask(Runnable task) {
+        this.registerGameTask(Bukkit.getScheduler().runTask(Warlords.getInstance(), task));
     }
 
     public void registerGameTask(Runnable task, int delay) {
@@ -517,6 +548,9 @@ public final class Game implements Runnable, AutoCloseable {
      * @param events The event listener to register
      */
     public void registerEvents(Listener events) {
+        if (this.state == null) {
+            throw new IllegalStateException("The game is not started yet");
+        }
         if (this.closed) {
             throw new IllegalStateException("Game has been closed");
         }
@@ -534,14 +568,41 @@ public final class Game implements Runnable, AutoCloseable {
             task.cancel();
         }
         gameTasks.clear();
-        for(Listener listener : eventHandlers) {
+        for (Listener listener : eventHandlers) {
             HandlerList.unregisterAll(listener);
         }
         eventHandlers.clear();
+        clearAllPlayers();
+    }
+
+    @Override
+    public String toString() {
+        return "Game{"
+                + "\nplayers=" + players
+                + ",\ncreatedAt=" + createdAt
+                + ",\nscoreboardHandlers=" + scoreboardHandlers
+                + ",\ngameTasks=" + gameTasks
+                + ",\neventHandlers=" + eventHandlers
+                + ",\nmap=" + map
+                + ",\ncategory=" + category
+                + ",\naddons=" + addons
+                + ",\noptions=" + options
+                + ",\nstate=" + state
+                + ",\nnextState=" + nextState
+                + ",\nclosed=" + closed
+                + ",\nfrozenCauses=" + frozenCauses
+                + ",\nfrozenCached=" + frozenCached
+                + ",\nmaxPlayers=" + maxPlayers
+                + ",\nminPlayers=" + minPlayers
+                + ",\nacceptsPlayers=" + acceptsPlayers
+                + ",\nacceptsSpectators=" + acceptsSpectators
+                + ",\ngameMarkers=" + gameMarkers
+                + ",\nlocations=" + locations
+                + "\n}";
     }
 
     public void printDebuggingInformation() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        System.out.println(this);
     }
 
 }

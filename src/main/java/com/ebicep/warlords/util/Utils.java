@@ -17,6 +17,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 public class Utils {
 
@@ -225,8 +226,8 @@ public class Utils {
     public static boolean blocksInFrontOfLocation(Location location) {
         location = location.clone();
         location.setPitch(0);
-        Location headLocationForward = location.clone().add(location.clone().getDirection().multiply(1)).add(0, 1, 0);
-        Location footLocationForward = location.clone().add(location.clone().getDirection().multiply(1));
+        Location headLocationForward = location.clone().add(location.getDirection().multiply(1)).add(0, 1, 0);
+        Location footLocationForward = location.clone().add(location.getDirection().multiply(1));
         return location.getWorld().getBlockAt(headLocationForward).getType() != Material.AIR && location.getWorld().getBlockAt(footLocationForward).getType() != Material.AIR;
     }
 
@@ -301,30 +302,48 @@ public class Utils {
 //        return blocksAbove && ((right && !left) || (!right && left));
     }
 
-
     public static boolean isInCircleRadiusFast(Location locA, Location locB, double radius) {
         double radiusMin = -radius;
         double diffX = locA.getX() - locB.getX();
-        if(diffX < radiusMin || diffX > radius) {
+        if (diffX < radiusMin || diffX > radius) {
             return false;
         }
         double diffY = locA.getY() - locB.getY();
-        if(diffY < radiusMin || diffY > radius) {
+        if (diffY < radiusMin || diffY > radius) {
             return false;
         }
         double diffZ = locA.getZ() - locB.getZ();
-        if(diffZ < radiusMin || diffZ > radius) {
+        if (diffZ < radiusMin || diffZ > radius) {
             return false;
         }
         return diffX * diffX + diffY * diffY + diffZ * diffZ < radius * radius;
     }
-    
-    public static <T> boolean collectionHasItem(Iterable<? extends T> col, Predicate<T> matcher) {
-        for (T item : col) {
+
+    /**
+     * Checks if an <code>Iterable</code> contains an item matched by the given
+     * predicate.
+     *
+     * @param <T> The type of the items
+     * @param iterable The list of items
+     * @param matcher The matcher
+     * @return return true if any item matches, false otherwise. Empty iterables return false.
+     */
+    public static <T> boolean collectionHasItem(Iterable<T> iterable, Predicate<? super T> matcher) {
+        for (T item : iterable) {
             if (matcher.test(item)) {
                 return true;
             }
         }
         return false;
+    }
+    
+    /**
+     * Allows an Stream to be used in a for-each loop, as they do not come out of the box with support for this.
+     * @param <T> The type
+     * @param stream The stream
+     * @return An one-time use <code>Iterable</code> for iterating over the stream 
+     */
+    public static <T> Iterable<T> iterable(Stream<T> stream) {
+        return stream::iterator;
     }
 }

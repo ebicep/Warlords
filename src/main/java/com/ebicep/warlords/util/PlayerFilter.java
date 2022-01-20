@@ -40,7 +40,7 @@ public class PlayerFilter implements Iterable<WarlordsPlayer> {
     }
 
     /**
-     * Adds new players to the list
+     * Adds new internalPlayers to the list
      * @param player
      * @return The new {@code PlayerFilter}
      */
@@ -50,7 +50,7 @@ public class PlayerFilter implements Iterable<WarlordsPlayer> {
     }
 
     /**
-     * Limits the amount of players iterated over.
+     * Limits the amount of internalPlayers iterated over.
      * @see #closestFirst
      * @see #sorted
      * @param maxSize limit
@@ -62,7 +62,7 @@ public class PlayerFilter implements Iterable<WarlordsPlayer> {
     }
 
     /**
-     * Filters the list of players based on a condition
+     * Filters the list of internalPlayers based on a condition
      * @param filter
      * @return
      */
@@ -292,7 +292,7 @@ public class PlayerFilter implements Iterable<WarlordsPlayer> {
 
     @Nonnull
     public static PlayerFilter playingGame(@Nonnull Game game) {
-        return new PlayerFilter(game.players().map(e -> Warlords.getPlayer(e.getKey())).filter(Objects::nonNull));
+        return new PlayerFilter(game.warlordsPlayers());
     }
 
     @Nonnull

@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame.previousGames;
+import com.ebicep.warlords.maps.*;
 
 public class EndState implements State, TimerDebugAble {
     @Nonnull
@@ -43,7 +44,7 @@ public class EndState implements State, TimerDebugAble {
         this.resetTimer();
         boolean teamBlueWins = winner == Team.BLUE;
         boolean teamRedWins = winner == Team.RED;
-        List<WarlordsPlayer> players = new ArrayList<>(Warlords.getPlayers().values());
+        List<WarlordsPlayer> players = game.warlordsPlayers().collect(Collectors.toList());
         sendMessageToAllGamePlayer(game, "" + ChatColor.GREEN + ChatColor.BOLD + "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬", false);
         sendMessageToAllGamePlayer(game, "" + ChatColor.WHITE + ChatColor.BOLD + "  Warlords", true);
         sendMessageToAllGamePlayer(game, "", false);
@@ -78,7 +79,7 @@ public class EndState implements State, TimerDebugAble {
             player.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.DARK_GRAY + "Lv" + ChatColor.GRAY + "90 " + ChatColor.GOLD + warlordsPlayer.getSpec().getClassName() + ChatColor.GREEN + " (" + warlordsPlayer.getSpec().getClass().getSimpleName() + ")").create()));
             leaderboardPlayersDamage.add(player);
             if (i != players.size() - 1 && i != 2) {
-                leaderboardPlayersDamage.add(Game.spacer);
+                leaderboardPlayersDamage.add(ChatUtils.SPACER);
             }
         }
         sendCenteredHoverableMessageToAllGamePlayer(game, leaderboardPlayersDamage);
@@ -94,7 +95,7 @@ public class EndState implements State, TimerDebugAble {
             player.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.DARK_GRAY + "Lv" + ChatColor.GRAY + "90 " + ChatColor.GOLD + warlordsPlayer.getSpec().getClassName() + ChatColor.GREEN + " (" + warlordsPlayer.getSpec().getClass().getSimpleName() + ")").create()));
             leaderboardPlayersHealing.add(player);
             if (i != players.size() - 1 && i != 2) {
-                leaderboardPlayersHealing.add(Game.spacer);
+                leaderboardPlayersHealing.add(ChatUtils.SPACER);
             }
         }
         sendCenteredHoverableMessageToAllGamePlayer(game, leaderboardPlayersHealing);
@@ -115,7 +116,7 @@ public class EndState implements State, TimerDebugAble {
             kills.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new ComponentBuilder(killsJson).create()));
             assists.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new ComponentBuilder(assistsJson).create()));
             deaths.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new ComponentBuilder(deathsJson).create()));
-            ChatUtils.sendCenteredMessageWithEvents(player, Arrays.asList(kills, Game.spacer, assists, Game.spacer, deaths));
+            ChatUtils.sendCenteredMessageWithEvents(player, Arrays.asList(kills, ChatUtils.SPACER, assists, ChatUtils.SPACER, deaths));
             TextComponent damage = new TextComponent(ChatColor.WHITE + "Damage: " + ChatColor.GOLD + NumberFormat.addCommaAndRound(wp.getTotalDamage()));
             TextComponent heal = new TextComponent(ChatColor.WHITE + "Healing: " + ChatColor.GOLD + NumberFormat.addCommaAndRound(wp.getTotalHealing()));
             TextComponent absorb = new TextComponent(ChatColor.WHITE + "Absorbed: " + ChatColor.GOLD + NumberFormat.addCommaAndRound(wp.getTotalAbsorbed()));
@@ -125,18 +126,14 @@ public class EndState implements State, TimerDebugAble {
             damage.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new ComponentBuilder(damageJson).create()));
             heal.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new ComponentBuilder(healingJson).create()));
             absorb.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new ComponentBuilder(absorbedJson).create()));
-            ChatUtils.sendCenteredMessageWithEvents(player, Arrays.asList(damage, Game.spacer, heal, Game.spacer, absorb));
+            ChatUtils.sendCenteredMessageWithEvents(player, Arrays.asList(damage, ChatUtils.SPACER, heal, ChatUtils.SPACER, absorb));
             player.setGameMode(GameMode.ADVENTURE);
             player.setAllowFlight(true);
 
-            if (!ImposterCommand.enabled) {
+            if (!game.getAddons().contains(GameAddon.IMPOSTER_MODE)) {
                 if (winner == null) {
                     player.playSound(player.getLocation(), "defeat", 500, 1);
-                    if (ImposterCommand.enabled) {
-                        PacketUtils.sendTitle(player, ChatColor.LIGHT_PURPLE.toString() + ChatColor.BOLD + "GAME END", "", 0, 100, 0);
-                    } else {
-                        PacketUtils.sendTitle(player, "§d§lDRAW", "", 0, 100, 0);
-                    }
+                    PacketUtils.sendTitle(player, "§d§lDRAW", "", 0, 100, 0);
                 } else if (wp.getTeam() == winner) {
                     player.playSound(player.getLocation(), "victory", 500, 1);
                     PacketUtils.sendTitle(player, "§6§lVICTORY!", "", 0, 100, 0);
@@ -181,22 +178,13 @@ public class EndState implements State, TimerDebugAble {
             }
         }
         sendMessageToAllGamePlayer(game, "" + ChatColor.GREEN + ChatColor.BOLD + "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬", false);
-        RemoveEntities.removeArmorStands(1);
     }
 
     @Override
     public State run() {
         timer--;
         if (timer <= 0) {
-            // Give random map if the game is a public game.
-            GameMap map;
-            Random random = new Random();
-            List<GameMap> gameMap = Stream.of(GameMap.values())
-                    .filter(m -> m.getCategory() == MapCategory.CAPTURE_THE_FLAG)
-                    .collect(Collectors.toList());
-            map = gameMap.get(random.nextInt(gameMap.size()));
-            return new InitState(game, map);
-            //return new InitState(game);
+            return new ClosedState(game);
         }
         return null;
     }
@@ -204,9 +192,6 @@ public class EndState implements State, TimerDebugAble {
     @Override
     public void end() {
         game.clearAllPlayers();
-        game.getSpectators().forEach(uuid -> game.removeSpectator(uuid, false));
-        game.getSpectators().clear();
-        game.setPrivate(false);
     }
 
     @Override

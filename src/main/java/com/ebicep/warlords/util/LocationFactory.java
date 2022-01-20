@@ -1,5 +1,6 @@
 package com.ebicep.warlords.util;
 
+import java.util.Objects;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.util.Vector;
@@ -102,6 +103,34 @@ public class LocationFactory {
 
     public float getPitch() {
         return location.getPitch();
+    }
+
+    @Override
+    public String toString() {
+        return "LocationFactory{" + location + '}';
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(this.location);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final LocationFactory other = (LocationFactory) obj;
+        if (!Objects.equals(this.location, other.location)) {
+            return false;
+        }
+        return true;
     }
 
 }

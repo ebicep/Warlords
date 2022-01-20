@@ -22,6 +22,7 @@ import com.ebicep.warlords.database.configuration.ApplicationConfiguration;
 import com.ebicep.warlords.database.leaderboards.LeaderboardCommand;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.maps.Game;
+import com.ebicep.warlords.maps.GameAddon;
 import com.ebicep.warlords.maps.GameManager;
 import com.ebicep.warlords.maps.option.PowerupOption;
 import com.ebicep.warlords.menu.MenuEventListener;
@@ -83,7 +84,13 @@ public class Warlords extends JavaPlugin {
     private static final HashMap<UUID, WarlordsPlayer> players = new HashMap<>();
 
     public static void addPlayer(@Nonnull WarlordsPlayer warlordsPlayer) {
-        players.put(warlordsPlayer.getUuid(), warlordsPlayer);
+        WarlordsPlayer old = players.put(warlordsPlayer.getUuid(), warlordsPlayer);
+        if (old != warlordsPlayer) {
+            for(GameAddon addon : warlordsPlayer.getGame().getAddons()) {
+                addon.warlordsPlayerCreated(warlordsPlayer.getGame(), warlordsPlayer);
+            }
+            old.getGame().removePlayer(old.getUuid());
+        }
     }
 
     @Nullable
@@ -225,7 +232,7 @@ public class Warlords extends JavaPlugin {
     }
 
 
-    public GameManager gameManager;
+    private GameManager gameManager;
     public static boolean holographicDisplaysEnabled;
 
     public static boolean citizensEnabled;
@@ -261,8 +268,10 @@ public class Warlords extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new RecklessCharge(), this);
         getServer().getPluginManager().registerEvents(new FutureMessageManager(), this);
 
-        new StartCommand().register(this);
-        new EndgameCommand().register(this);
+        new GameStartCommand().register(this);
+        new GameTerminateCommand().register(this);
+        new GameKillCommand().register(this);
+        new GameListCommand().register(this);
         new MenuCommand().register(this);
         new ShoutCommand().register(this);
         new HotkeyModeCommand().register(this);
@@ -906,5 +915,48 @@ public class Warlords extends JavaPlugin {
             }
 
         }.runTaskTimer(this, 0, 0);
+    }
+
+    public static GameManager getGameManager() {
+        return getInstance().gameManager;
+    }
+    
+    public void hideAndUnhidePeople(@Nonnull Player player) {
+        WarlordsPlayer wp = getPlayer(player);
+        Game game = wp == null ? null : wp.getGame();
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            WarlordsPlayer wp1 = getPlayer(p);
+            Game game1 = wp1 == null ? null : wp1.getGame();
+            if(p != player) {
+                if(game1 == game) {
+                    p.showPlayer(player);
+                    player.showPlayer(p);
+                } else {
+                    p.hidePlayer(player);
+                    player.hidePlayer(p);
+                }
+            }
+        }
+    }
+    public void hideAndUnhidePeople() {
+        Player[] peeps = Bukkit.getOnlinePlayers();
+    
+        for (int i = 0; i < peeps.length - 1; i++) {
+            Player player = peeps[i];
+            WarlordsPlayer wp = getPlayer(player);
+            Game game = wp == null ? null : wp.getGame();
+            for (int j = i + 1; j < peeps.length; j++) {
+                Player p = peeps[j];
+                WarlordsPlayer wp1 = getPlayer(p);
+                Game game1 = wp1 == null ? null : wp1.getGame();
+                if(game1 == game) {
+                    p.showPlayer(player);
+                    player.showPlayer(p);
+                } else {
+                    p.hidePlayer(player);
+                    player.hidePlayer(p);
+                }
+            }
+        }
     }
 }
