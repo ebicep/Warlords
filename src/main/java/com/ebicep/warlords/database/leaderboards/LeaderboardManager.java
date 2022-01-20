@@ -1,5 +1,6 @@
 package com.ebicep.warlords.database.leaderboards;
 
+import com.ebicep.customentities.npc.NPCManager;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.sections.LeaderboardCategory;
@@ -64,13 +65,14 @@ public class LeaderboardManager {
             "Flags Returned",
     };
     public static boolean enabled = true;
+    public static boolean loaded = false;
 
     public static void putLeaderboards() {
         leaderboardGeneral.addLeaderboards();
         leaderboardCTF.addLeaderboards();
     }
 
-    public static void addHologramLeaderboards(String sharedChainName) {
+    public static void addHologramLeaderboards(String sharedChainName, boolean init) {
         if (!Warlords.holographicDisplaysEnabled) return;
         HolographicDisplaysAPI.get(Warlords.getInstance()).getHolograms().forEach(hologram -> {
             Location hologramLocation = hologram.getPosition().toLocation();
@@ -88,6 +90,7 @@ public class LeaderboardManager {
 
         putLeaderboards();
         if (enabled) {
+            loaded = false;
             Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Adding Holograms");
 
             //caching all sorted players for each lifetime and weekly
@@ -121,6 +124,8 @@ public class LeaderboardManager {
                 @Override
                 public void run() {
                     if (loadedBoards.get() == 5) {
+                        loaded = true;
+
                         long endTime = System.nanoTime();
                         long timeToLoad = (endTime - startTime) / 1000000;
                         System.out.println("Time it took for LB to load (ms): " + timeToLoad);
@@ -135,8 +140,14 @@ public class LeaderboardManager {
                             Warlords.playerScoreboards.get(player.getUniqueId()).giveMainLobbyScoreboard();
                         });
                         System.out.println("Set Hologram Visibility");
+
+                        if (init) {
+                            if (Warlords.citizensEnabled) {
+                                NPCManager.createGameNPC();
+                            }
+                        }
                         this.cancel();
-                    } else if (counter++ > 60) {
+                    } else if (counter++ > 2 * 300) { //holograms should all load within 5 minutes or ???
                         this.cancel();
                     }
                 }

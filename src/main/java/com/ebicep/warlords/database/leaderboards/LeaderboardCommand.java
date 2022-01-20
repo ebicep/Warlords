@@ -1,6 +1,7 @@
 package com.ebicep.warlords.database.leaderboards;
 
 import com.ebicep.warlords.Warlords;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -24,17 +25,21 @@ public class LeaderboardCommand implements CommandExecutor {
         String input = args[0];
         switch (input) {
             case "toggle":
-                if(LeaderboardManager.enabled) {
-                    sender.sendMessage(ChatColor.RED + "Leaderboards disabled");
-                } else {
-                    sender.sendMessage(ChatColor.GREEN + "Leaderboards enabled");
-                }
                 LeaderboardManager.enabled = !LeaderboardManager.enabled;
-                LeaderboardManager.addHologramLeaderboards(UUID.randomUUID().toString());
+                LeaderboardManager.addHologramLeaderboards(UUID.randomUUID().toString(), false);
+                if (LeaderboardManager.enabled) {
+                    sender.sendMessage(ChatColor.GREEN + "Leaderboards enabled");
+                } else {
+                    sender.sendMessage(ChatColor.RED + "Leaderboards disabled");
+                }
                 return true;
             case "reload":
+                LeaderboardManager.addHologramLeaderboards(UUID.randomUUID().toString(), false);
                 sender.sendMessage(ChatColor.GREEN + "Leaderboards reloaded");
-                LeaderboardManager.addHologramLeaderboards(UUID.randomUUID().toString());
+                return true;
+            case "refresh":
+                Bukkit.getOnlinePlayers().forEach(LeaderboardManager::setLeaderboardHologramVisibility);
+                sender.sendMessage(ChatColor.GREEN + "Refreshed visibility for all players");
                 return true;
         }
 

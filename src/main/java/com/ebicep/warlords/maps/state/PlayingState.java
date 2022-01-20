@@ -325,7 +325,13 @@ public class PlayingState implements State, TimerDebugAble {
                 System.out.println(ChatColor.GREEN + "[Warlords] This PUB game was added to the database (INVALID DAMAGE/HEALING) but player information remained the same");
             }
 
-            SRCalculator.recalculateSR();
+            Warlords.newChain()
+                    .asyncFirst(() -> DatabaseManager.playerService.findAll(PlayersCollections.SEASON_5))
+                    .syncLast(databasePlayers -> {
+                        SRCalculator.databasePlayerCache = databasePlayers;
+                        SRCalculator.recalculateSR();
+                    })
+                    .execute();
         }
         //COMPS
         else if (RecordGamesCommand.recordGames && !ImposterCommand.enabled && !forceEnd && game.playersCount() >= 16 && timer <= 12000) {

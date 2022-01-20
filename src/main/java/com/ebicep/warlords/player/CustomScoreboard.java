@@ -1,6 +1,7 @@
 package com.ebicep.warlords.player;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.Leaderboard;
 import com.ebicep.warlords.database.leaderboards.LeaderboardManager;
 import com.ebicep.warlords.database.leaderboards.sections.LeaderboardCategory;
@@ -142,84 +143,91 @@ public class CustomScoreboard {
             health = null;
         }
 
-        LeaderboardCategory<?> leaderboardCategory = getLeaderboardCategoryFromPlayer(player);
-        if (leaderboardCategory == null) return;
+        if (loaded) {
+            LeaderboardCategory<?> leaderboardCategory = getLeaderboardCategoryFromPlayer(player);
+            if (leaderboardCategory == null) return;
 
-        Leaderboard leaderboard = leaderboardCategory.leaderboards.get(0);
-        List<DatabasePlayer> databasePlayerList;
-        switch (playerLeaderboardTime.getOrDefault(player.getUniqueId(), PlayersCollections.LIFETIME)) {
-            case LIFETIME:
-                databasePlayerList = leaderboard.getSortedAllTime();
-                break;
-            case SEASON_5:
-                databasePlayerList = leaderboard.getSortedSeason5();
-                break;
-            case SEASON_4:
-                databasePlayerList = leaderboard.getSortedSeason4();
-                break;
-            case WEEKLY:
-                databasePlayerList = leaderboard.getSortedWeekly();
-                break;
-            case DAILY:
-                databasePlayerList = leaderboard.getSortedDaily();
-                break;
-            default:
-                databasePlayerList = leaderboard.getSortedAllTime();
-                break;
-        }
-        LeaderboardManager.GameType selectedType = playerLeaderboardGameType.get(player.getUniqueId());
-        LeaderboardManager.Category selectedCategory = playerLeaderboardCategory.get(player.getUniqueId());
-        PlayersCollections selectedCollection = playerLeaderboardTime.get(player.getUniqueId());
-        String scoreboardSelection = "";
-        if (!selectedType.shortName.isEmpty()) {
-            scoreboardSelection += selectedType.shortName + "/";
-        }
-        if (!selectedCategory.shortName.isEmpty()) {
-            scoreboardSelection += selectedCategory.shortName + "/";
-        }
-        scoreboardSelection += selectedCollection.name;
+            Leaderboard leaderboard = leaderboardCategory.leaderboards.get(0);
+            List<DatabasePlayer> databasePlayerList;
+            switch (playerLeaderboardTime.getOrDefault(player.getUniqueId(), PlayersCollections.LIFETIME)) {
+                case LIFETIME:
+                    databasePlayerList = leaderboard.getSortedAllTime();
+                    break;
+                case SEASON_5:
+                    databasePlayerList = leaderboard.getSortedSeason5();
+                    break;
+                case SEASON_4:
+                    databasePlayerList = leaderboard.getSortedSeason4();
+                    break;
+                case WEEKLY:
+                    databasePlayerList = leaderboard.getSortedWeekly();
+                    break;
+                case DAILY:
+                    databasePlayerList = leaderboard.getSortedDaily();
+                    break;
+                default:
+                    databasePlayerList = leaderboard.getSortedAllTime();
+                    break;
+            }
+            LeaderboardManager.GameType selectedType = playerLeaderboardGameType.get(player.getUniqueId());
+            LeaderboardManager.Category selectedCategory = playerLeaderboardCategory.get(player.getUniqueId());
+            PlayersCollections selectedCollection = playerLeaderboardTime.get(player.getUniqueId());
+            if (selectedType == null) selectedType = GameType.ALL;
+            if (selectedCollection == null) selectedCategory = Category.ALL;
+            if (selectedCollection == null) selectedCollection = PlayersCollections.LIFETIME;
 
-        Optional<DatabasePlayer> optionalDatabasePlayer = databasePlayerList.stream()
-                .filter(databasePlayer -> databasePlayer.getUuid().equalsIgnoreCase(player.getUniqueId().toString()))
-                .findAny();
-        if (optionalDatabasePlayer.isPresent()) {
-            DatabasePlayer databasePlayer = optionalDatabasePlayer.get();
-            AbstractDatabaseStatInformation playerInformation = leaderboardCategory.statFunction.apply(databasePlayer);
-            giveNewSideBar(true,
-                    ChatColor.GRAY + scoreboardSelection,
-                    "",
-                    "Kills: " + ChatColor.GREEN + NumberFormat.addCommaAndRound(playerInformation.getKills()),
-                    "Assists: " + ChatColor.GREEN + NumberFormat.addCommaAndRound(playerInformation.getAssists()),
-                    "Deaths: " + ChatColor.GREEN + NumberFormat.addCommaAndRound(playerInformation.getDeaths()),
-                    " " + "",
-                    "Wins: " + ChatColor.GREEN + NumberFormat.addCommaAndRound(playerInformation.getWins()),
-                    "Losses: " + ChatColor.GREEN + NumberFormat.addCommaAndRound(playerInformation.getLosses()),
-                    "  " + "",
-                    "Damage: " + ChatColor.RED + NumberFormat.addCommaAndRound(playerInformation.getDamage()),
-                    "Healing: " + ChatColor.DARK_GREEN + NumberFormat.addCommaAndRound(playerInformation.getHealing()),
-                    "Absorbed: " + ChatColor.GOLD + NumberFormat.addCommaAndRound(playerInformation.getAbsorbed()),
-                    "    ",
-                    "            " + ChatColor.YELLOW + ChatColor.BOLD + "Update",
-                    "     " + ChatColor.GOLD + ChatColor.BOLD + Warlords.VERSION
-            );
-        } else {
-            giveNewSideBar(true,
-                    ChatColor.GRAY + scoreboardSelection,
-                    " ",
-                    "Kills: " + ChatColor.GREEN + 0,
-                    "Assists: " + ChatColor.GREEN + 0,
-                    "Deaths: " + ChatColor.GREEN + 0,
-                    " " + "",
-                    "Wins: " + ChatColor.GREEN + 0,
-                    "Losses: " + ChatColor.GREEN + 0,
-                    "  " + "",
-                    "Damage: " + ChatColor.RED + 0,
-                    "Healing: " + ChatColor.DARK_GREEN + 0,
-                    "Absorbed: " + ChatColor.GOLD + 0,
-                    "    ",
-                    "            " + ChatColor.YELLOW + ChatColor.BOLD + "Update",
-                    "     " + ChatColor.GOLD + ChatColor.BOLD + Warlords.VERSION
-            );
+            String scoreboardSelection = "";
+            if (!selectedType.shortName.isEmpty()) {
+                scoreboardSelection += selectedType.shortName + "/";
+            }
+            if (!selectedCategory.shortName.isEmpty()) {
+                scoreboardSelection += selectedCategory.shortName + "/";
+            }
+            scoreboardSelection += selectedCollection.name;
+
+            Optional<DatabasePlayer> optionalDatabasePlayer = databasePlayerList.stream()
+                    .filter(databasePlayer -> databasePlayer.getUuid().equalsIgnoreCase(player.getUniqueId().toString()))
+                    .findAny();
+            if (optionalDatabasePlayer.isPresent()) {
+                DatabasePlayer databasePlayer = optionalDatabasePlayer.get();
+                AbstractDatabaseStatInformation playerInformation = leaderboardCategory.statFunction.apply(databasePlayer);
+                giveNewSideBar(true,
+                        ChatColor.GRAY + scoreboardSelection,
+                        "",
+                        "Kills: " + ChatColor.GREEN + NumberFormat.addCommaAndRound(playerInformation.getKills()),
+                        "Assists: " + ChatColor.GREEN + NumberFormat.addCommaAndRound(playerInformation.getAssists()),
+                        "Deaths: " + ChatColor.GREEN + NumberFormat.addCommaAndRound(playerInformation.getDeaths()),
+                        " " + "",
+                        "Wins: " + ChatColor.GREEN + NumberFormat.addCommaAndRound(playerInformation.getWins()),
+                        "Losses: " + ChatColor.GREEN + NumberFormat.addCommaAndRound(playerInformation.getLosses()),
+                        "  " + "",
+                        "Damage: " + ChatColor.RED + NumberFormat.addCommaAndRound(playerInformation.getDamage()),
+                        "Healing: " + ChatColor.DARK_GREEN + NumberFormat.addCommaAndRound(playerInformation.getHealing()),
+                        "Absorbed: " + ChatColor.GOLD + NumberFormat.addCommaAndRound(playerInformation.getAbsorbed()),
+                        "    ",
+                        "            " + ChatColor.YELLOW + ChatColor.BOLD + "Update",
+                        "     " + ChatColor.GOLD + ChatColor.BOLD + Warlords.VERSION
+                );
+            }
+            return;
         }
+        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
+        giveNewSideBar(true,
+                ChatColor.GRAY + "Lifetime",
+                " ",
+                "Kills: " + ChatColor.GREEN + NumberFormat.addCommaAndRound(databasePlayer.getKills()),
+                "Assists: " + ChatColor.GREEN + NumberFormat.addCommaAndRound(databasePlayer.getAssists()),
+                "Deaths: " + ChatColor.GREEN + NumberFormat.addCommaAndRound(databasePlayer.getDeaths()),
+                " " + "",
+                "Wins: " + ChatColor.GREEN + NumberFormat.addCommaAndRound(databasePlayer.getWins()),
+                "Losses: " + ChatColor.GREEN + NumberFormat.addCommaAndRound(databasePlayer.getLosses()),
+                "  " + "",
+                "Damage: " + ChatColor.RED + NumberFormat.addCommaAndRound(databasePlayer.getDamage()),
+                "Healing: " + ChatColor.DARK_GREEN + NumberFormat.addCommaAndRound(databasePlayer.getHealing()),
+                "Absorbed: " + ChatColor.GOLD + NumberFormat.addCommaAndRound(databasePlayer.getAbsorbed()),
+                "    ",
+                "            " + ChatColor.YELLOW + ChatColor.BOLD + "Update",
+                "     " + ChatColor.GOLD + ChatColor.BOLD + Warlords.VERSION
+        );
     }
 }

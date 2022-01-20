@@ -7,7 +7,10 @@ import net.citizensnpcs.api.npc.MemoryNPCDataStore;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.trait.TraitInfo;
+import net.citizensnpcs.trait.LookClose;
+import net.citizensnpcs.trait.ScoreboardTrait;
 import net.citizensnpcs.trait.SkinTrait;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 
@@ -26,6 +29,11 @@ public class NPCManager {
         gameStartNPC = npcRegistry.createNPC(EntityType.PLAYER, "capture-the-flag");
         gameStartNPC.addTrait(GameStartTrait.class);
         gameStartNPC.getOrAddTrait(SkinTrait.class).setSkinName("sumSmash");
+//        gameStartNPC.getOrAddTrait(LookClose.class).lookClose(true);
+//        gameStartNPC.getOrAddTrait(LookClose.class).setRandomLook(true);
+//        gameStartNPC.getOrAddTrait(LookClose.class).setRandomLookDelay(1);
+//        gameStartNPC.getOrAddTrait(LookClose.class).setRange(50);
+
         gameStartNPC.data().set("nameplate-visible", false);
         gameStartNPC.spawn(new Location(LeaderboardManager.spawnPoint.getWorld(), -2535.5, 51, 744.5, 90, 0));
     }
