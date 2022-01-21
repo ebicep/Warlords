@@ -20,6 +20,10 @@ public class GroundFlagLocation extends AbstractLocationBasedFlagLocation implem
         this.despawnTimer = 15 * 20;
     }
 
+    public GroundFlagLocation(PlayerFlagLocation playerFlagLocation) {
+        this(playerFlagLocation.getLocation(), playerFlagLocation.getPickUpTicks());
+    }
+
     @Override
     public Location getLocation() {
         return location;

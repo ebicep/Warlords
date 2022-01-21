@@ -36,8 +36,7 @@ import com.ebicep.warlords.queuesystem.QueueCommand;
 import com.ebicep.warlords.util.*;
 import me.filoghost.holographicdisplays.api.beta.hologram.Hologram;
 import me.filoghost.holographicdisplays.api.beta.HolographicDisplaysAPI;
-import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.event.DespawnReason;
+import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.*;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
@@ -70,6 +69,8 @@ public class Warlords extends JavaPlugin {
     public static Warlords getInstance() {
         return instance;
     }
+
+    public static String serverIP;
 
     private static TaskChainFactory taskChainFactory;
 
@@ -256,6 +257,7 @@ public class Warlords extends JavaPlugin {
     public void onEnable() {
         instance = this;
         VERSION = this.getDescription().getVersion();
+        serverIP = this.getServer().getIp();
         taskChainFactory = BukkitTaskChainFactory.create(this);
 
         Thread.currentThread().setContextClassLoader(getClassLoader());
@@ -296,6 +298,7 @@ public class Warlords extends JavaPlugin {
         new ExperienceCommand().register(this);
         new QueueCommand().register(this);
         new ImposterCommand().register(this);
+        new LobbyCommand().register(this);
 
         updateHeads();
 
@@ -346,9 +349,6 @@ public class Warlords extends JavaPlugin {
                 });
 
         citizensEnabled = Bukkit.getPluginManager().isPluginEnabled("Citizens");
-        if (citizensEnabled) {
-            NPCManager.createGameNPC();
-        }
 
         gameLoop();
         getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Plugin is enabled");
@@ -364,12 +364,16 @@ public class Warlords extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        // Pre-caution
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            player.removePotionEffect(PotionEffectType.BLINDNESS);
-            player.getActivePotionEffects().clear();
-            player.removeMetadata("WARLORDS_PLAYER", this);
-            PacketUtils.sendTitle(player, "", "", 0, 0, 0);
+        try {
+            // Pre-caution
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                player.removePotionEffect(PotionEffectType.BLINDNESS);
+                player.getActivePotionEffects().clear();
+                player.removeMetadata("WARLORDS_PLAYER", this);
+                PacketUtils.sendTitle(player, "", "", 0, 0, 0);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         CraftServer server = (CraftServer) Bukkit.getServer();
@@ -384,14 +388,17 @@ public class Warlords extends JavaPlugin {
             HolographicDisplaysAPI.get(instance).getHolograms().forEach(Hologram::delete);
         }
 
+        NPCManager.gameStartNPC.destroy();
+        Bukkit.getWorld("MainLobby").getEntities().stream()
+                .filter(entity -> entity.getName().equals("capture-the-flag"))
+                .forEach(Entity::remove);
+
         try {
+            BotManager.deleteStatusMessage();
             BotManager.jda.shutdownNow();
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        //CitizensAPI.getNPCRegistry().despawnNPCs(DespawnReason.RELOAD);
-        NPCManager.npc.despawn();
 
         getServer().getConsoleSender().sendMessage(ChatColor.RED + "[Warlords] Plugin is disabled");
         // TODO persist this.playerSettings to a database
@@ -676,17 +683,17 @@ public class Warlords extends JavaPlugin {
                             float energyGainPerTick = wp.getSpec().getEnergyPerSec() / 20f;
 
                             // Checks whether the player has Avenger's Wrath active.
-                            if (!cooldownManager.getCooldown(AvengersWrath.class).isEmpty()) {
+                            for (Cooldown cooldown : cooldownManager.getCooldown(AvengersWrath.class)) {
                                 energyGainPerTick += 1;
                             }
 
                             // Checks whether the player has Inspiring Presence active.
-                            if (!cooldownManager.getCooldown(InspiringPresence.class).isEmpty()) {
+                            for (Cooldown cooldown : cooldownManager.getCooldown(InspiringPresence.class)) {
                                 energyGainPerTick += .5;
                             }
 
                             // Checks whether the player has been marked by a Crusader.
-                            if (!cooldownManager.getCooldown(HolyRadianceCrusader.class).isEmpty()) {
+                            for (Cooldown cooldown : cooldownManager.getCooldown(HolyRadianceCrusader.class)) {
                                 energyGainPerTick += .25;
                             }
 

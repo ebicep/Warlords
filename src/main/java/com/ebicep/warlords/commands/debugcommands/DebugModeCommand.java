@@ -18,6 +18,11 @@ public class DebugModeCommand implements CommandExecutor {
             return true;
         }
 
+        if (!Warlords.game.isPrivate()) {
+            sender.sendMessage("§cDebug commands are disabled in public games!");
+            return true;
+        }
+
         WarlordsPlayer warlordsPlayer = BaseCommand.requireWarlordsPlayer(sender);
 
         if(warlordsPlayer != null) {

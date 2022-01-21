@@ -33,7 +33,7 @@ public class RecklessCharge extends AbstractAbility implements Listener {
 
     @Override
     public void updateDescription(Player player) {
-        double stunDuration = Classes.getSelectedBoost(player) == ClassesSkillBoosts.RECKLESS_CHARGE ? 0.65 : 0.5;
+        double stunDuration = stunTimeInTicks == 10 ? 0.5 : 0.75;
         description = "§7Charge forward, dealing §c" + format(minDamageHeal) + "\n" +
                 "§7- §c" + format(maxDamageHeal) + " §7damage to all enemies\n" +
                 "§7you pass through. Enemies hit are\n" +

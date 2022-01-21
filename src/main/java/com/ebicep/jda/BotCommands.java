@@ -3,7 +3,6 @@ package com.ebicep.jda;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.party.Party;
-import com.ebicep.warlords.party.PartyPlayer;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -13,7 +12,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.Optional;
-import java.util.UUID;
 
 public class BotCommands implements CommandExecutor {
 
@@ -25,8 +23,8 @@ public class BotCommands implements CommandExecutor {
             return true;
         }
 
-        Optional<TextChannel> botTeams = BotManager.getTextChannelByName("bot-teams");
-        Optional<TextChannel> gsTeams = BotManager.getTextChannelByName("gs-teams");
+        Optional<TextChannel> botTeams = BotManager.getTextChannelCompsByName("bot-teams");
+        Optional<TextChannel> gsTeams = BotManager.getTextChannelCompsByName("gs-teams");
         if (!botTeams.isPresent()) {
             sender.sendMessage(ChatColor.RED + "Could not find bot-teams!");
             return true;
@@ -63,7 +61,7 @@ public class BotCommands implements CommandExecutor {
                     return true;
                 }
                 if(args.length == 1) {
-                    BotManager.getTextChannelByName("games-backlog").ifPresent(textChannel -> textChannel.sendMessage("/" + input + " " + DatabaseManager.lastWarlordsPlusString).queue());
+                    BotManager.getTextChannelCompsByName("games-backlog").ifPresent(textChannel -> textChannel.sendMessage("/" + input + " " + DatabaseManager.lastWarlordsPlusString).queue());
                     sender.sendMessage(ChatColor.GREEN + "Inputted game!");
                     return true;
                 }
@@ -71,7 +69,7 @@ public class BotCommands implements CommandExecutor {
                     sender.sendMessage(ChatColor.RED + "Invalid Image!");
                     return true;
                 }
-                BotManager.getTextChannelByName("games-backlog").ifPresent(textChannel -> textChannel.sendMessage("/" + input + " " + DatabaseManager.lastWarlordsPlusString + " " + args[1]).queue());
+                BotManager.getTextChannelCompsByName("games-backlog").ifPresent(textChannel -> textChannel.sendMessage("/" + input + " " + DatabaseManager.lastWarlordsPlusString + " " + args[1]).queue());
                 return true;
         }
         return true;

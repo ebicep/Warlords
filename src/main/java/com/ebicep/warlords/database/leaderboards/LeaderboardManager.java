@@ -1,5 +1,6 @@
 package com.ebicep.warlords.database.leaderboards;
 
+import com.ebicep.customentities.npc.NPCManager;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.sections.LeaderboardCategory;
@@ -8,6 +9,7 @@ import com.ebicep.warlords.database.leaderboards.sections.subsections.Leaderboar
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.sr.SRCalculator;
 import com.ebicep.warlords.util.LocationBuilder;
 import me.filoghost.holographicdisplays.api.beta.hologram.Hologram;
 import me.filoghost.holographicdisplays.api.beta.HolographicDisplaysAPI;
@@ -21,7 +23,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -64,13 +65,14 @@ public class LeaderboardManager {
             "Flags Returned",
     };
     public static boolean enabled = true;
+    public static boolean loaded = false;
 
     public static void putLeaderboards() {
         leaderboardGeneral.addLeaderboards();
         leaderboardCTF.addLeaderboards();
     }
 
-    public static void addHologramLeaderboards(String sharedChainName) {
+    public static void addHologramLeaderboards(String sharedChainName, boolean init) {
         if (!Warlords.holographicDisplaysEnabled) return;
         HolographicDisplaysAPI.get(Warlords.getInstance()).getHolograms().forEach(hologram -> {
             Location hologramLocation = hologram.getPosition().toLocation();
@@ -88,6 +90,7 @@ public class LeaderboardManager {
 
         putLeaderboards();
         if (enabled) {
+            loaded = false;
             Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Adding Holograms");
 
             //caching all sorted players for each lifetime and weekly
@@ -105,6 +108,11 @@ public class LeaderboardManager {
                             addHologramsToGameType(value, collection, leaderboardCTF.getPubs(), "CTF - Pubs - " + value.name);
                             System.out.println("Loaded " + value.name + " leaderboards");
                             loadedBoards.getAndIncrement();
+
+                            if (value == PlayersCollections.SEASON_5) {
+                                SRCalculator.databasePlayerCache = collection;
+                                SRCalculator.recalculateSR();
+                            }
                         }).execute();
             }
 
@@ -116,6 +124,8 @@ public class LeaderboardManager {
                 @Override
                 public void run() {
                     if (loadedBoards.get() == 5) {
+                        loaded = true;
+
                         long endTime = System.nanoTime();
                         long timeToLoad = (endTime - startTime) / 1000000;
                         System.out.println("Time it took for LB to load (ms): " + timeToLoad);
@@ -127,10 +137,17 @@ public class LeaderboardManager {
                         Bukkit.getOnlinePlayers().forEach(player -> {
                             setLeaderboardHologramVisibility(player);
                             DatabaseGame.setGameHologramVisibility(player);
+                            Warlords.playerScoreboards.get(player.getUniqueId()).giveMainLobbyScoreboard();
                         });
                         System.out.println("Set Hologram Visibility");
+
+                        if (init) {
+                            if (Warlords.citizensEnabled) {
+                                NPCManager.createGameNPC();
+                            }
+                        }
                         this.cancel();
-                    } else if (counter++ > 10) {
+                    } else if (counter++ > 2 * 300) { //holograms should all load within 5 minutes or ???
                         this.cancel();
                     }
                 }
@@ -163,10 +180,6 @@ public class LeaderboardManager {
         leaderboardCategory.getLeaderboards().forEach(leaderboard -> {
             //sorting values
             collection.sort((o1, o2) -> Leaderboard.compare(leaderboard.getValueFunction().apply(o2), leaderboard.getValueFunction().apply(o1)));
-            //removing all players with 3 or less games from leaderboards if the top player has 10 or more (no one game olivers)
-            if (!collection.isEmpty() && collection.get(0).getPlays() >= 10) {
-                collection.removeIf(databasePlayer -> databasePlayer.getPlays() <= 3);
-            }
             //resetting sort then adding new sorted values
             leaderboard.resetSortedPlayers(collection, value);
             //creating leaderboard
@@ -229,6 +242,10 @@ public class LeaderboardManager {
             leaderboardCategory.getWeeklyHolograms().forEach(hologram -> hologram.getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.VISIBLE));
         } else {
             leaderboardCategory.getDailyHolograms().forEach(hologram -> hologram.getVisibilitySettings().setIndividualVisibility(player, VisibilitySettings.Visibility.VISIBLE));
+        }
+
+        if (Warlords.playerScoreboards.containsKey(player.getUniqueId())) {
+            Warlords.playerScoreboards.get(player.getUniqueId()).giveMainLobbyScoreboard();
         }
 
         createLeaderboardSwitcherHologram(player);
@@ -452,14 +469,16 @@ public class LeaderboardManager {
         ).collect(Collectors.toList());
     }
 
-    enum GameType {
-        ALL("All Modes"),
-        CTF("Capture The Flag");
+    public enum GameType {
+        ALL("All Modes", ""),
+        CTF("Capture The Flag", "CTF");
 
         public String name;
+        public String shortName;
 
-        GameType(String name) {
+        GameType(String name, String shortName) {
             this.name = name;
+            this.shortName = shortName;
         }
 
         public static GameType getAfter(GameType gameType) {
@@ -483,15 +502,17 @@ public class LeaderboardManager {
         }
     }
 
-    enum Category {
-        ALL("All Queues"),
-        COMPS("Competitive Queue"),
-        PUBS("Public Queue");
+    public enum Category {
+        ALL("All Queues", ""),
+        COMPS("Competitive Queue", "Comps"),
+        PUBS("Public Queue", "Pubs");
 
         public String name;
+        public String shortName;
 
-        Category(String name) {
+        Category(String name, String shortName) {
             this.name = name;
+            this.shortName = shortName;
         }
 
         public static Category getAfter(Category category) {

@@ -1,8 +1,11 @@
 package com.ebicep.warlords.maps;
 
 import com.ebicep.warlords.maps.option.techincal.GameFreezeWhenOfflineOption;
+import com.ebicep.warlords.maps.state.PreLobbyState;
 import com.ebicep.warlords.maps.state.State;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public enum GameAddon {
 
@@ -17,6 +20,10 @@ public enum GameAddon {
         @Override
         public void stateHasChanged(Game game, State oldState, State newState) {
             game.setAcceptsPlayers(false);
+            if(newState instanceof PreLobbyState) {
+                PreLobbyState preLobbyState = (PreLobbyState) newState;
+                preLobbyState.setTimer(30 * 20);
+            }
         }
     },
     IMPOSTER_MODE() {
@@ -38,29 +45,29 @@ public enum GameAddon {
     },
     RECORD_MODE(),;
 
-    public void modifyGame(Game game) {
+    public void modifyGame(@Nonnull Game game) {
     }
 
     /**
-     * Gets the maximum amount of internalPlayers allowed in a map.Map modifiers such
- as mega games could override the map provided map maximum.
+     * Gets the maximum amount of internalPlayers allowed in a map.Map modifiers
+     * such as mega games could override the map provided map maximum.
      *
      * @param map The map to check
-     * @param maxPlayers The max internalPlayers from the previous step, or the map
- maximum internalPlayers if it is the first check
+     * @param maxPlayers The max internalPlayers from the previous step, or the
+     * map maximum internalPlayers if it is the first check
      * @return The maximum amount of internalPlayers supported by the map
      */
-    public int getMaxPlayers(GameMap map, int maxPlayers) {
+    public int getMaxPlayers(@Nonnull GameMap map, int maxPlayers) {
         return maxPlayers;
     }
     
-    public State stateWillChange(Game game, State oldState, State newState) {
+    public State stateWillChange(@Nonnull Game game, @Nullable State oldState, @Nonnull State newState) {
         return newState;
     }
     
-    public void stateHasChanged(Game game, State oldState, State newState) {
+    public void stateHasChanged(@Nonnull Game game, @Nullable State oldState, @Nonnull State newState) {
     }
     
-    public void warlordsPlayerCreated(Game game, WarlordsPlayer player) {
+    public void warlordsPlayerCreated(@Nonnull Game game, @Nonnull WarlordsPlayer player) {
     }
 }

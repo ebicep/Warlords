@@ -376,6 +376,7 @@ public class GameMenu {
                             DatabaseManager.updatePlayerAsync(databasePlayer);
                         }).execute();
                         openArmorMenu(player, pageNumber);
+                        ArmorManager.resetArmor(player, Warlords.getPlayerSettings(player.getUniqueId()).getSelectedClass(), Warlords.getPlayerSettings(player.getUniqueId()).getWantedTeam());
                     }
             );
         }

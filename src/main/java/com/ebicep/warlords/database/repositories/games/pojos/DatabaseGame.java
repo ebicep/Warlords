@@ -119,7 +119,7 @@ public class DatabaseGame {
         //readding game holograms
         Hologram lastGameStats = HolographicDisplaysAPI.get(Warlords.getInstance()).createHologram(DatabaseGame.lastGameStatsLocation);
         holograms.add(lastGameStats);
-        lastGameStats.getLines().appendText(ChatColor.AQUA + ChatColor.BOLD.toString() + "Last Game Stats");
+        lastGameStats.getLines().appendText(ChatColor.AQUA + ChatColor.BOLD.toString() + "Last " + (isPrivate ? "Comp" : "Pub") + " Game Stats");
 
         Hologram topDamage = HolographicDisplaysAPI.get(Warlords.getInstance()).createHologram(DatabaseGame.topDamageLocation);
         holograms.add(topDamage);
@@ -343,13 +343,13 @@ public class DatabaseGame {
             previousGames.add(databaseGame);
             databaseGame.createHolograms();
 
-            if (databaseGame.isPrivate) {
+            //if (databaseGame.isPrivate) {
                 addGameToDatabase(databaseGame);
 
                 LeaderboardManager.playerGameHolograms.forEach((uuid, integer) -> {
                     LeaderboardManager.playerGameHolograms.put(uuid, previousGames.size() - 1);
                 });
-                LeaderboardManager.addHologramLeaderboards(UUID.randomUUID().toString());
+            LeaderboardManager.addHologramLeaderboards(UUID.randomUUID().toString(), false);
 
                 //sending message if player information remained the same
                 for (WarlordsPlayer value : PlayerFilter.playingGame(gameState.getGame())) {
@@ -361,7 +361,7 @@ public class DatabaseGame {
                         }
                     }
                 }
-            }
+            //}
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("ERROR TRYING TO ADD GAME");
@@ -381,9 +381,12 @@ public class DatabaseGame {
         } else {
             //game not in database then add game and update player stats if counted
             if (databaseGame.isCounted()) {
-                updatePlayerStatsFromGame(databaseGame,true);
+                updatePlayerStatsFromGame(databaseGame, true);
             }
-            Warlords.newChain().async(() -> DatabaseManager.gameService.create(databaseGame)).execute();
+            //only add game if comps
+            //if (databaseGame.isPrivate) {
+                Warlords.newChain().async(() -> DatabaseManager.gameService.create(databaseGame)).execute();
+            //}
         }
     }
 
@@ -469,10 +472,10 @@ public class DatabaseGame {
         output.setLength(output.length() - 1);
         if (BotManager.numberOfMessagesSentLast30Sec > 15) {
             if (BotManager.numberOfMessagesSentLast30Sec < 20) {
-                BotManager.getTextChannelByName("games-backlog").ifPresent(textChannel -> textChannel.sendMessage("SOMETHING BROKEN DETECTED <@239929120035700737> <@253971614998331393>").queue());
+                BotManager.getTextChannelCompsByName("games-backlog").ifPresent(textChannel -> textChannel.sendMessage("SOMETHING BROKEN DETECTED <@239929120035700737> <@253971614998331393>").queue());
             }
         } else {
-            BotManager.getTextChannelByName("games-backlog").ifPresent(textChannel -> textChannel.sendMessage(output.toString()).queue());
+            BotManager.getTextChannelCompsByName("games-backlog").ifPresent(textChannel -> textChannel.sendMessage(output.toString()).queue());
         }
         lastWarlordsPlusString = output.toString();
         return output.toString();

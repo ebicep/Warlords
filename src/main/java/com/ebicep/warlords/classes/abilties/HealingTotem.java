@@ -9,6 +9,7 @@ import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -161,12 +162,12 @@ public class HealingTotem extends AbstractTotemBase {
                             PlayerFilter.entitiesAround(totemStand.getLocation(), radius, radius, radius)
                                     .aliveEnemiesOf(wp)
                                     .forEach((p) -> {
+                                        wp.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " Your Healing Totem has crippled " + ChatColor.YELLOW + p.getName() + ChatColor.GRAY + "!");
                                         p.getCooldownManager().addCooldown("Totem Crippling", HealingTotem.class, new HealingTotem(), "CRIP", crippleDuration, wp, CooldownTypes.DEBUFF);
                                     });
                             for (Player player1 : player.getWorld().getPlayers()) {
                                 player1.playSound(totemStand.getLocation(), "paladin.hammeroflight.impact", 1.5f, 0.2f);
                             }
-                            player.sendMessage("§aAll enemies in your totem are now §ccrippled §afor §c" + crippleDuration + " §aseconds!");
                             new FallingBlockWaveEffect(totemStand.getLocation().add(0, 1, 0), 7, 2, Material.SAPLING, (byte) 1).play();
                             this.cancel();
                         }

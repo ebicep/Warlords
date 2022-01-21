@@ -64,6 +64,7 @@ public class FlagSpawnPointOption implements Option {
             if (newFlag != null && newFlag != this.info.getFlag()) {
                 this.info.setFlag(newFlag);
             }
+            return newFlag;
         });
         game.registerScoreboardHandler(scoreboard = new SimpleScoreboardHandler(team == Team.RED ? 20 : 21) {
             @Override
