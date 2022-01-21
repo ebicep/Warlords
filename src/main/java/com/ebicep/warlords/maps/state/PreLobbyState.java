@@ -198,7 +198,9 @@ public class PreLobbyState implements State, TimerDebugAble {
                         int redPlayers = (int) teams.entrySet().stream().filter(playerTeamEntry -> playerTeamEntry.getValue() == Team.RED).count();
                         //uneven teams
                         if ((bluePlayers + redPlayers) % 2 != 0) {
-                            if ((bluePlayers > redPlayers && Math.abs(redSR - 500 - blueSR) > maxSRDiff) || (redPlayers > bluePlayers && Math.abs(blueSR - 500 - redSR) > maxSRDiff)) {
+                            int srDiffRed = Math.abs(redSR - 3500 - blueSR);
+                            int srDiffBlue = Math.abs(blueSR - 3500 - redSR);
+                            if ((bluePlayers > redPlayers && srDiffRed > maxSRDiff && srDiffRed > 0) || (redPlayers > bluePlayers && srDiffBlue > maxSRDiff && srDiffBlue > 0)) {
                                 maxSRDiff++;
                                 continue;
                             }
@@ -220,9 +222,12 @@ public class PreLobbyState implements State, TimerDebugAble {
                             bestTeamSRDifference = Math.abs(redSR - blueSR);
                         }
                     }
+                    boolean failSafeActive = false;
+                    boolean secondFailSafeActive = false;
 
                     //INCASE COULDNT BALANCE
                     if (bestTeam.size() == 0) {
+                        failSafeActive = true;
                         HashMap<Player, Team> teams = new HashMap<>();
                         HashMap<Classes, List<Player>> playerSpecs = new HashMap<>();
                         //all players are online or else they wouldve been removed from queue
@@ -280,6 +285,33 @@ public class PreLobbyState implements State, TimerDebugAble {
                         bestTeamSRDifference = Math.abs(bestBlueSR - bestRedSR);
                     }
 
+                    if (bestTeamSRDifference > 5000) {
+                        secondFailSafeActive = true;
+                        HashMap<Player, Team> teams = new HashMap<>();
+                        HashMap<Classes, List<Player>> playerSpecs = new HashMap<>();
+                        game.forEachOnlinePlayer((player, team) -> {
+                            PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
+                            playerSpecs.computeIfAbsent(playerSettings.getSelectedClass(), v -> new ArrayList<>()).add(player);
+                        });
+                        int blueSR = 0;
+                        int redSR = 0;
+                        for (List<Player> value : playerSpecs.values()) {
+                            for (Player player : value) {
+                                if (blueSR > redSR) {
+                                    teams.put(player, Team.RED);
+                                    redSR += playersSR.getOrDefault(player.getUniqueId().toString(), 500);
+                                } else {
+                                    teams.put(player, Team.BLUE);
+                                    blueSR += playersSR.getOrDefault(player.getUniqueId().toString(), 500);
+                                }
+                            }
+                        }
+                        bestTeam = teams;
+                        bestBlueSR = blueSR;
+                        bestRedSR = redSR;
+                        bestTeamSRDifference = Math.abs(bestBlueSR - bestRedSR);
+                    }
+
                     bestTeam.forEach((player, team) -> {
                         game.setPlayerTeam(player, team);
                         ArmorManager.resetArmor(player, Warlords.getPlayerSettings(player.getUniqueId()).getSelectedClass(), team);
@@ -296,6 +328,8 @@ public class PreLobbyState implements State, TimerDebugAble {
                             value.sendMessage(ChatColor.GREEN + "SR Diff: " + bestTeamSRDifference);
                             value.sendMessage(ChatColor.BLUE + "Blue Players: " + ChatColor.GOLD + bluePlayers + ChatColor.GRAY + " - " + ChatColor.BLUE + "SR: " + ChatColor.GOLD + bestBlueSR);
                             value.sendMessage(ChatColor.RED + "Red Players: " + ChatColor.GOLD + redPlayers + ChatColor.GRAY + " - " + ChatColor.RED + "SR: " + ChatColor.GOLD + bestRedSR);
+                            value.sendMessage(ChatColor.GREEN + "Fail Safe: " + ChatColor.GOLD + failSafeActive);
+                            value.sendMessage(ChatColor.GREEN + "Second Fail Safe: " + ChatColor.GOLD + secondFailSafeActive);
                             value.sendMessage(ChatColor.DARK_AQUA + "-------------------------------");
                             bestTeam.entrySet().stream().sorted(Map.Entry.comparingByValue()).forEach(playerTeamEntry -> {
                                 Classes classes = Warlords.getPlayerSettings(playerTeamEntry.getKey().getUniqueId()).getSelectedClass();

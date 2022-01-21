@@ -13,6 +13,7 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayerPubStats;
 import com.ebicep.warlords.player.SpecType;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.sr.SRCalculator;
 import com.github.benmanes.caffeine.cache.Cache;
 import net.citizensnpcs.trait.LookClose;
 import org.bukkit.Bukkit;
@@ -24,6 +25,9 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.springframework.cache.caffeine.CaffeineCache;
+
+import java.util.Collections;
+import java.util.Map;
 
 import static com.ebicep.jda.BotManager.sendStatusMessage;
 
@@ -100,6 +104,12 @@ public class TestCommand implements CommandExecutor {
 //                .forEachOrdered(databasePlayerIntegerEntry -> System.out.println(databasePlayerIntegerEntry.getKey().getName() + " - " + databasePlayerIntegerEntry.getValue()));
 //
 //        System.out.println(playerSR.size());
+
+        SRCalculator.playersSR.entrySet().stream()
+                .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
+                .forEachOrdered(databasePlayerIntegerEntry -> {
+                    System.out.println(databasePlayerIntegerEntry.getKey().getName() + " - " + databasePlayerIntegerEntry.getValue());
+                });
 
 //        List<DatabasePlayer> databasePlayersLifeTime = DatabaseManager.playerService.findAll(PlayersCollections.SEASON_4);
 //        for (DatabasePlayer databasePlayer : databasePlayersLifeTime) {
