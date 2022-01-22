@@ -61,6 +61,7 @@ public enum GameAddon {
         return maxPlayers;
     }
     
+    @Nullable
     public State stateWillChange(@Nonnull Game game, @Nullable State oldState, @Nonnull State newState) {
         return newState;
     }

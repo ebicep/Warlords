@@ -349,7 +349,7 @@ public class PlayingState implements State, TimerDebugAble {
                 updateBasedOnGameState(false, Warlords.playerScoreboards.get(value.getUuid()), value);
             }
         }
-        for (UUID spectator : game.getSpectators()) {
+        for (UUID spectator : game.spectators()) {
             updateBasedOnGameState(false, Warlords.playerScoreboards.get(spectator), null);
         }
     }

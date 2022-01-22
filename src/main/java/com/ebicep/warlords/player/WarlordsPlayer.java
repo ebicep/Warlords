@@ -11,7 +11,6 @@ import com.ebicep.warlords.events.WarlordsDeathEvent;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.flags.FlagLocation;
-import com.ebicep.warlords.maps.flags.FlagManager;
 import com.ebicep.warlords.maps.flags.GroundFlagLocation;
 import com.ebicep.warlords.maps.flags.PlayerFlagLocation;
 import com.ebicep.warlords.maps.state.PlayingState;
@@ -563,7 +562,7 @@ public final class WarlordsPlayer {
                             p.sendMessage(getColoredName() + ChatColor.GRAY + " was killed by " + attacker.getColoredName());
                         }
                     });
-                    gameState.getGame().getSpectators().forEach(uuid -> {
+                    gameState.getGame().spectators().forEach(uuid -> {
                         if (Bukkit.getPlayer(uuid) != null) {
                             Bukkit.getPlayer(uuid).sendMessage(getColoredName() + ChatColor.GRAY + " was killed by " + attacker.getColoredName());
                         }
