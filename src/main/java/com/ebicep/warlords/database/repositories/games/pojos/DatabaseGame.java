@@ -18,6 +18,7 @@ import me.filoghost.holographicdisplays.api.beta.HolographicDisplaysAPI;
 import me.filoghost.holographicdisplays.api.beta.hologram.Hologram;
 import me.filoghost.holographicdisplays.api.beta.hologram.VisibilitySettings;
 import me.filoghost.holographicdisplays.api.beta.hologram.line.ClickableHologramLine;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -346,9 +347,6 @@ public class DatabaseGame {
             //if (databaseGame.isPrivate) {
                 addGameToDatabase(databaseGame);
 
-                LeaderboardManager.playerGameHolograms.forEach((uuid, integer) -> {
-                    LeaderboardManager.playerGameHolograms.put(uuid, previousGames.size() - 1);
-                });
             LeaderboardManager.addHologramLeaderboards(UUID.randomUUID().toString(), false);
 
                 //sending message if player information remained the same
@@ -385,7 +383,17 @@ public class DatabaseGame {
             }
             //only add game if comps
             //if (databaseGame.isPrivate) {
-                Warlords.newChain().async(() -> DatabaseManager.gameService.create(databaseGame)).execute();
+            Warlords.newChain()
+                    .async(() -> DatabaseManager.gameService.create(databaseGame))
+                    .sync(() -> {
+                        LeaderboardManager.playerGameHolograms.forEach((uuid, integer) -> {
+                            LeaderboardManager.playerGameHolograms.put(uuid, previousGames.size() - 1);
+                            if (Bukkit.getPlayer(uuid) != null) {
+                                setGameHologramVisibility(Bukkit.getPlayer(uuid));
+                            }
+                        });
+                    })
+                    .execute();
             //}
         }
     }

@@ -236,7 +236,7 @@ public class PlayingState implements State, TimerDebugAble {
             }
             if (highestDamage <= 750000 && highestHealing <= 750000) {
                 DatabaseGame.addGame(PlayingState.this, true);
-                System.out.println(ChatColor.GREEN + "[Warlords] This PUB game was added to the database but player information remained the same");
+                System.out.println(ChatColor.GREEN + "[Warlords] This PUB game was added to the database and player information was changed");
             } else {
                 DatabaseGame.addGame(PlayingState.this, false);
                 System.out.println(ChatColor.GREEN + "[Warlords] This PUB game was added to the database (INVALID DAMAGE/HEALING) but player information remained the same");
@@ -262,7 +262,7 @@ public class PlayingState implements State, TimerDebugAble {
             }
             if (highestDamage <= 750000 && highestHealing <= 750000) {
                 DatabaseGame.addGame(PlayingState.this, true);
-                System.out.println(ChatColor.GREEN + "[Warlords] This COMP game was added to the database but player information remained the same");
+                System.out.println(ChatColor.GREEN + "[Warlords] This COMP game was added to the database and player information was changed");
             } else {
                 DatabaseGame.addGame(PlayingState.this, false);
                 System.out.println(ChatColor.GREEN + "[Warlords] This COMP game was added to the database (INVALID DAMAGE/HEALING) but player information remained the same");
