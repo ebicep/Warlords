@@ -5,6 +5,7 @@ import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.player.Cooldown;
 import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
 import org.bukkit.ChatColor;
@@ -81,45 +82,37 @@ public class Intervene extends AbstractAbility {
                     for (Player player1 : player.getWorld().getPlayers()) {
                         player1.playSound(player.getLocation(), "warrior.intervene.impact", 1, 1);
                     }
-                    wp.getGame().getGameTasks().put(
+                    new GameRunnable(wp.getGame()) {
+                        @Override
+                        public void run() {
+                            if (vt.getCooldownManager().hasCooldown(tempIntervene)) {
+                                if (vt.getCooldownManager().getCooldown(tempIntervene).get().getTimeLeft() <= 1)
+                                    vt.sendMessage("§a\u00BB§7 " + wp.getName() + "'s §eIntervene §7will expire in §6" + (int) (vt.getCooldownManager().getCooldown(tempIntervene).get().getTimeLeft() + .5) + "§7 second!");
+                                else
+                                    vt.sendMessage("§a\u00BB§7 " + wp.getName() + "'s §eIntervene §7will expire in §6" + (int) (vt.getCooldownManager().getCooldown(tempIntervene).get().getTimeLeft() + .5) + "§7 seconds!");
+                            } else {
+                                this.cancel();
+                            }
+                        }
+                    }.runTaskTimer(0, 20);
+                    new GameRunnable(wp.getGame()) {
+                        @Override
+                        public void run() {
+                            if (wp.isDeath() ||
+                                    tempIntervene.damagePrevented >= (3600 / 2.0) ||
+                                    !vt.getCooldownManager().hasCooldown(tempIntervene) ||
+                                    vt.getLocation().distanceSquared(vt.getCooldownManager().getCooldown(tempIntervene).get().getFrom().getEntity().getLocation()) > 15 * 15
+                            ) {
+                                wp.sendMessage("§c\u00AB§7 " + wp.getName() + "'s " + ChatColor.YELLOW + "Intervene " + ChatColor.GRAY + "has expired!");
+                                wp.getCooldownManager().removeCooldown(tempIntervene);
 
-                            new BukkitRunnable() {
-                                @Override
-                                public void run() {
-                                    if (vt.getCooldownManager().hasCooldown(tempIntervene)) {
-                                        if (vt.getCooldownManager().getCooldown(tempIntervene).get().getTimeLeft() <= 1)
-                                            vt.sendMessage("§a\u00BB§7 " + wp.getName() + "'s §eIntervene §7will expire in §6" + (int) (vt.getCooldownManager().getCooldown(tempIntervene).get().getTimeLeft() + .5) + "§7 second!");
-                                        else
-                                            vt.sendMessage("§a\u00BB§7 " + wp.getName() + "'s §eIntervene §7will expire in §6" + (int) (vt.getCooldownManager().getCooldown(tempIntervene).get().getTimeLeft() + .5) + "§7 seconds!");
-                                    } else {
-                                        this.cancel();
-                                    }
-                                }
-                            }.runTaskTimer(Warlords.getInstance(), 0, 20),
-                            System.currentTimeMillis()
-                    );
-                    wp.getGame().getGameTasks().put(
+                                vt.sendMessage("§c\u00AB§7 " + wp.getName() + "'s " + ChatColor.YELLOW + "Intervene " + ChatColor.GRAY + "has expired!");
+                                vt.getCooldownManager().removeCooldown(tempIntervene);
 
-                            new BukkitRunnable() {
-                                @Override
-                                public void run() {
-                                    if (wp.isDeath() ||
-                                            tempIntervene.damagePrevented >= (3600 / 2.0) ||
-                                            !vt.getCooldownManager().hasCooldown(tempIntervene) ||
-                                            vt.getLocation().distanceSquared(vt.getCooldownManager().getCooldown(tempIntervene).get().getFrom().getEntity().getLocation()) > 15 * 15
-                                    ) {
-                                        wp.sendMessage("§c\u00AB§7 " + wp.getName() + "'s " + ChatColor.YELLOW + "Intervene " + ChatColor.GRAY + "has expired!");
-                                        wp.getCooldownManager().removeCooldown(tempIntervene);
-
-                                        vt.sendMessage("§c\u00AB§7 " + wp.getName() + "'s " + ChatColor.YELLOW + "Intervene " + ChatColor.GRAY + "has expired!");
-                                        vt.getCooldownManager().removeCooldown(tempIntervene);
-
-                                        this.cancel();
-                                    }
-                                }
-                            }.runTaskTimer(Warlords.getInstance(), 0, 0),
-                            System.currentTimeMillis()
-                    );
+                                this.cancel();
+                            }
+                        }
+                    }.runTaskTimer(0, 0);
                 });
     }
 

@@ -6,6 +6,7 @@ import com.ebicep.warlords.player.Classes;
 import com.ebicep.warlords.player.ClassesSkillBoosts;
 import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.ParticleEffect;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -43,22 +44,18 @@ public class Windfury extends AbstractAbility {
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "shaman.windfuryweapon.activation", 2, 1);
         }
-        wp.getGame().getGameTasks().put(
-
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        if (!wp.getCooldownManager().getCooldown(Windfury.class).isEmpty()) {
-                            Location location = player.getLocation();
-                            location.add(0, 1.2, 0);
-                            ParticleEffect.CRIT.display(0.2F, 0F, 0.2F, 0.1F, 3, location, 500);
-                        } else {
-                            this.cancel();
-                        }
-                    }
-                }.runTaskTimer(Warlords.getInstance(), 0, 4),
-                System.currentTimeMillis()
-        );
+        new GameRunnable(wp.getGame()) {
+            @Override
+            public void run() {
+                if (!wp.getCooldownManager().getCooldown(Windfury.class).isEmpty()) {
+                    Location location = player.getLocation();
+                    location.add(0, 1.2, 0);
+                    ParticleEffect.CRIT.display(0.2F, 0F, 0.2F, 0.1F, 3, location, 500);
+                } else {
+                    this.cancel();
+                }
+            }
+        }.runTaskTimer(0, 4);
     }
 
     public boolean isFirstProc() {

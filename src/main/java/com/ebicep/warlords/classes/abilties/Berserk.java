@@ -6,6 +6,7 @@ import com.ebicep.warlords.player.Classes;
 import com.ebicep.warlords.player.ClassesSkillBoosts;
 import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.ParticleEffect;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -38,20 +39,18 @@ public class Berserk extends AbstractAbility {
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "warrior.berserk.activation", 2, 1);
         }
-        wp.getGame().getGameTasks().put(
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        if (!wp.getCooldownManager().getCooldown(Berserk.class).isEmpty()) {
-                            Location location = player.getLocation();
-                            location.add(0, 2.1, 0);
-                            ParticleEffect.VILLAGER_ANGRY.display(0, 0, 0, 0.1F, 1, location, 500);
-                        } else {
-                            this.cancel();
-                        }
-                    }
-                }.runTaskTimer(Warlords.getInstance(), 0, 3),
-                System.currentTimeMillis()
-        );
+
+        new GameRunnable(wp.getGame()) {
+            @Override
+            public void run() {
+                if (!wp.getCooldownManager().getCooldown(Berserk.class).isEmpty()) {
+                    Location location = player.getLocation();
+                    location.add(0, 2.1, 0);
+                    ParticleEffect.VILLAGER_ANGRY.display(0, 0, 0, 0.1F, 1, location, 500);
+                } else {
+                    this.cancel();
+                }
+            }
+        }.runTaskTimer(0, 3);
     }
 }

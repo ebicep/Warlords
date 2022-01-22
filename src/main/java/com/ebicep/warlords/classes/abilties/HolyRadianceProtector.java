@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
 import com.ebicep.warlords.util.Utils;
@@ -92,11 +93,11 @@ public class HolyRadianceProtector extends AbstractAbility {
                     }
                 }
 
-                new BukkitRunnable() {
+                new GameRunnable(wp.getGame()) {
 
                     @Override
                     public void run() {
-                        if (chains.size() == 0) {
+                        if (chains.isEmpty()) {
                             this.cancel();
                         }
 
@@ -111,7 +112,7 @@ public class HolyRadianceProtector extends AbstractAbility {
 
                     }
 
-                }.runTaskTimer(Warlords.getInstance(), 0, 0);
+                }.runTaskTimer(0, 0);
 
                 HolyRadianceProtector tempMark = new HolyRadianceProtector(minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
                 p.getCooldownManager().addCooldown(name, HolyRadianceProtector.this.getClass(), tempMark, "PROT MARK", markDuration, wp, CooldownTypes.BUFF);
@@ -119,32 +120,28 @@ public class HolyRadianceProtector extends AbstractAbility {
                 player.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " You have marked " + ChatColor.GREEN + p.getName() + ChatColor.GRAY +"!");
                 p.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " You have been granted " + ChatColor.GREEN + "Protector's Mark" + ChatColor.GRAY + " by " + wp.getName() + "!");
 
-                wp.getGame().getGameTasks().put(
+                new GameRunnable(wp.getGame()) {
+                    @Override
+                    public void run() {
+                        if (!p.getCooldownManager().getCooldown(HolyRadianceProtector.class).isEmpty()) {
+                            Location playerLoc = p.getLocation();
+                            Location particleLoc = playerLoc.clone();
+                            for (int i = 0; i < 4; i++) {
+                                for (int j = 0; j < 10; j++) {
+                                    double angle = j / 9D * Math.PI * 2;
+                                    double width = 1;
+                                    particleLoc.setX(playerLoc.getX() + Math.sin(angle) * width);
+                                    particleLoc.setY(playerLoc.getY() + i / 6D);
+                                    particleLoc.setZ(playerLoc.getZ() + Math.cos(angle) * width);
 
-                        new BukkitRunnable() {
-                            @Override
-                            public void run() {
-                                if (!p.getCooldownManager().getCooldown(HolyRadianceProtector.class).isEmpty()) {
-                                    Location playerLoc = p.getLocation();
-                                    Location particleLoc = playerLoc.clone();
-                                    for (int i = 0; i < 4; i++) {
-                                        for (int j = 0; j < 10; j++) {
-                                            double angle = j / 9D * Math.PI * 2;
-                                            double width = 1;
-                                            particleLoc.setX(playerLoc.getX() + Math.sin(angle) * width);
-                                            particleLoc.setY(playerLoc.getY() + i / 6D);
-                                            particleLoc.setZ(playerLoc.getZ() + Math.cos(angle) * width);
-
-                                            ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(0, 255, 70), particleLoc, 500);
-                                        }
-                                    }
-                                } else {
-                                    this.cancel();
+                                    ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(0, 255, 70), particleLoc, 500);
                                 }
                             }
-                        }.runTaskTimer(Warlords.getInstance(), 0, 10),
-                        System.currentTimeMillis()
-                );
+                        } else {
+                            this.cancel();
+                        }
+                    }
+                }.runTaskTimer(0, 10);
             } else {
                 player.sendMessage("§cYour mark was out of range or you did not target a player!");
             }
@@ -155,9 +152,8 @@ public class HolyRadianceProtector extends AbstractAbility {
                 .entitiesAround(player, radius, radius, radius)
                 .aliveTeammatesOfExcludingSelf(wp)
         ) {
-            wp.getGame().getGameTasks().put(
-                    new FlyingArmorStand(wp.getLocation(), p, wp, 1.1).runTaskTimer(Warlords.getInstance(), 1, 1),
-                    System.currentTimeMillis()
+            wp.getGame().registerGameTask(
+                    new FlyingArmorStand(wp.getLocation(), p, wp, 1.1).runTaskTimer(Warlords.getInstance(), 1, 1)
             );
         }
 

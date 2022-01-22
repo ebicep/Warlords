@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.ParticleEffect;
 import org.bukkit.Location;
 import org.bukkit.enchantments.Enchantment;
@@ -54,22 +55,18 @@ public class Soulbinding extends AbstractAbility {
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "paladin.consecrate.activation", 2, 2);
         }
-        wp.getGame().getGameTasks().put(
-
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        if (!wp.getCooldownManager().getCooldown(Soulbinding.class).isEmpty()) {
-                            Location location = player.getLocation();
-                            location.add(0, 1.2, 0);
-                            ParticleEffect.SPELL_WITCH.display(0.2F, 0F, 0.2F, 0.1F, 1, location, 500);
-                        } else {
-                            this.cancel();
-                        }
-                    }
-                }.runTaskTimer(Warlords.getInstance(), 0, 4),
-                System.currentTimeMillis()
-        );
+        new GameRunnable(wp.getGame()) {
+            @Override
+            public void run() {
+                if (!wp.getCooldownManager().getCooldown(Soulbinding.class).isEmpty()) {
+                    Location location = player.getLocation();
+                    location.add(0, 1.2, 0);
+                    ParticleEffect.SPELL_WITCH.display(0.2F, 0F, 0.2F, 0.1F, 1, location, 500);
+                } else {
+                    this.cancel();
+                }
+            }
+        }.runTaskTimer(0, 4);
     }
 
     public List<SoulBoundPlayer> getSoulBindedPlayers() {

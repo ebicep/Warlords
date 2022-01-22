@@ -34,9 +34,8 @@ public class HolyRadiance extends AbstractAbility {
                 .entitiesAround(player, radius, radius, radius)
                 .aliveTeammatesOfExcludingSelf(wp)
         ) {
-            wp.getGame().getGameTasks().put(
-                    new FlyingArmorStand(wp.getLocation(), p, wp, 1.1).runTaskTimer(Warlords.getInstance(), 1, 1),
-                    System.currentTimeMillis()
+            wp.getGame().registerGameTask(
+                    new FlyingArmorStand(wp.getLocation(), p, wp, 1.1).runTaskTimer(Warlords.getInstance(), 1, 1)
             );
         }
 

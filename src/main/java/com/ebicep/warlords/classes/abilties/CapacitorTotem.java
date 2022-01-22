@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.internal.AbstractTotemBase;
 import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.util.GameRunnable;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
@@ -50,25 +51,23 @@ public class CapacitorTotem extends AbstractTotemBase {
     @Override
     protected void onActivation(WarlordsPlayer wp, Player player, ArmorStand totemStand) {
         wp.getCooldownManager().addCooldown(name, this.getClass(), new CapacitorTotem(), "TOTEM", duration, wp, CooldownTypes.ABILITY);
-        wp.getGame().getGameTasks().put(
-                new BukkitRunnable() {
-                    int timeLeft = duration;
 
-                    @Override
-                    public void run() {
-                        if (!wp.getGame().isFrozen()) {
+        new GameRunnable(wp.getGame()) {
+            int timeLeft = duration;
 
-                            if (timeLeft == 0) {
-                                totemStand.remove();
-                                this.cancel();
-                            }
-                            timeLeft--;
-                        }
+            @Override
+            public void run() {
+                if (!wp.getGame().isFrozen()) {
+
+                    if (timeLeft == 0) {
+                        totemStand.remove();
+                        this.cancel();
                     }
+                    timeLeft--;
+                }
+            }
 
-                }.runTaskTimer(Warlords.getInstance(), 0, 20),
-                System.currentTimeMillis()
-        );
+        }.runTaskTimer(0, 20);
     }
 
 

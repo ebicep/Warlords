@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.ParticleEffect;
 import net.minecraft.server.v1_8_R3.EntityLiving;
 import org.bukkit.Location;
@@ -41,23 +42,20 @@ public class ArcaneShield extends AbstractAbility {
             player1.playSound(p.getLocation(), "mage.arcaneshield.activation", 2, 1);
         }
 
-        wp.getGame().getGameTasks().put(
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        if (!wp.getCooldownManager().getCooldown(ArcaneShield.class).isEmpty()) {
-                            Location location = p.getLocation();
-                            location.add(0, 1.5, 0);
-                            ParticleEffect.CLOUD.display(0.15F, 0.3F, 0.15F, 0.01F, 2, location, 500);
-                            ParticleEffect.FIREWORKS_SPARK.display(0.3F, 0.3F, 0.3F, 0.0001F, 1, location, 500);
-                            ParticleEffect.SPELL_WITCH.display(0.3F, 0.3F, 0.3F, 0, 1, location, 500);
-                        } else {
-                            this.cancel();
-                        }
-                    }
-                }.runTaskTimer(Warlords.getInstance(), 0, 3),
-                System.currentTimeMillis()
-        );
+        new GameRunnable(wp.getGame()) {
+            @Override
+            public void run() {
+                if (!wp.getCooldownManager().getCooldown(ArcaneShield.class).isEmpty()) {
+                    Location location = p.getLocation();
+                    location.add(0, 1.5, 0);
+                    ParticleEffect.CLOUD.display(0.15F, 0.3F, 0.15F, 0.01F, 2, location, 500);
+                    ParticleEffect.FIREWORKS_SPARK.display(0.3F, 0.3F, 0.3F, 0.0001F, 1, location, 500);
+                    ParticleEffect.SPELL_WITCH.display(0.3F, 0.3F, 0.3F, 0, 1, location, 500);
+                } else {
+                    this.cancel();
+                }
+            }
+        }.runTaskTimer(0, 3);
     }
 
     public float getShieldHealth() {

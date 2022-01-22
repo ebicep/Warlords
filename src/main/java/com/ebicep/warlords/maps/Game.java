@@ -512,28 +512,31 @@ public final class Game implements Runnable, AutoCloseable {
     }
 
     /**
-     * Registers a Bukkit task to be cancelled once the game ends. Cancelling is important for proper cleanup
+     * Registers a Bukkit task to be cancelled once the game ends.Cancelling is important for proper cleanup
      * @param task The task to register
+     * @return The task itself
      * @throws IllegalStateException when the game has been closed (this also directly calls the cancel function)
      */
-    public void registerGameTask(@Nonnull BukkitTask task) {
+    @Nonnull
+    public BukkitTask registerGameTask(@Nonnull BukkitTask task) {
         if (this.closed) {
             task.cancel();
             throw new IllegalStateException("Game has been closed");
         }
         this.gameTasks.add(Objects.requireNonNull(task, "task"));
+        return task;
     }
 
-    public void registerGameTask(Runnable task) {
-        this.registerGameTask(Bukkit.getScheduler().runTask(Warlords.getInstance(), task));
+    public BukkitTask registerGameTask(Runnable task) {
+        return this.registerGameTask(Bukkit.getScheduler().runTask(Warlords.getInstance(), task));
     }
 
-    public void registerGameTask(Runnable task, int delay) {
-        this.registerGameTask(Bukkit.getScheduler().runTaskLater(Warlords.getInstance(), task, delay));
+    public BukkitTask registerGameTask(Runnable task, int delay) {
+        return this.registerGameTask(Bukkit.getScheduler().runTaskLater(Warlords.getInstance(), task, delay));
     }
 
-    public void registerGameTask(Runnable task, int delay, int period) {
-        this.registerGameTask(Bukkit.getScheduler().runTaskTimer(Warlords.getInstance(), task, delay, period));
+    public BukkitTask registerGameTask(Runnable task, int delay, int period) {
+        return this.registerGameTask(Bukkit.getScheduler().runTaskTimer(Warlords.getInstance(), task, delay, period));
     }
 
     /**

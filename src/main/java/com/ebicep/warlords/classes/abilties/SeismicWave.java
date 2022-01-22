@@ -5,6 +5,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.PlayerFilter;
 import com.ebicep.warlords.util.Utils;
 import org.bukkit.Location;
@@ -65,45 +66,41 @@ public class SeismicWave extends AbstractAbility {
                 }
             }
         }
-        wp.getGame().getGameTasks().put(
+        new GameRunnable(wp.getGame()) {
 
-                new BukkitRunnable() {
+            @Override
+            public void run() {
+                if (!wp.getGame().isFrozen()) {
 
-                    @Override
-                    public void run() {
-                        if (!wp.getGame().isFrozen()) {
-
-                            for (List<Location> fallingBlockLocation : fallingBlockLocations) {
-                                for (Location location : fallingBlockLocation) {
-                                    if (location.getWorld().getBlockAt(location.clone().add(0, 1, 0)).getType() == Material.AIR) {
-                                        FallingBlock fallingBlock = addFallingBlock(location);
-                                        customFallingBlocks.add(new CustomFallingBlock(fallingBlock, wp, SeismicWave.this));
-                                        WarlordsEvents.addEntityUUID(fallingBlock);
-                                    }
-                                }
-                                fallingBlockLocations.remove(fallingBlockLocation);
-                                break;
+                    for (List<Location> fallingBlockLocation : fallingBlockLocations) {
+                        for (Location location : fallingBlockLocation) {
+                            if (location.getWorld().getBlockAt(location.clone().add(0, 1, 0)).getType() == Material.AIR) {
+                                FallingBlock fallingBlock = addFallingBlock(location);
+                                customFallingBlocks.add(new CustomFallingBlock(fallingBlock, wp, SeismicWave.this));
+                                WarlordsEvents.addEntityUUID(fallingBlock);
                             }
+                        }
+                        fallingBlockLocations.remove(fallingBlockLocation);
+                        break;
+                    }
 
-                            for (int i = 0; i < customFallingBlocks.size(); i++) {
-                                CustomFallingBlock customFallingBlock = customFallingBlocks.get(i);
-                                customFallingBlock.setTicksLived(customFallingBlock.getTicksLived() + 1);
-                                if (Utils.getDistance(customFallingBlock.getFallingBlock().getLocation(), .05) <= .25 || customFallingBlock.getTicksLived() > 10) {
-                                    customFallingBlock.getFallingBlock().remove();
-                                    customFallingBlocks.remove(i);
-                                    i--;
-                                }
-                            }
-
-                            if (fallingBlockLocations.isEmpty() && customFallingBlocks.isEmpty()) {
-                                this.cancel();
-                            }
+                    for (int i = 0; i < customFallingBlocks.size(); i++) {
+                        CustomFallingBlock customFallingBlock = customFallingBlocks.get(i);
+                        customFallingBlock.setTicksLived(customFallingBlock.getTicksLived() + 1);
+                        if (Utils.getDistance(customFallingBlock.getFallingBlock().getLocation(), .05) <= .25 || customFallingBlock.getTicksLived() > 10) {
+                            customFallingBlock.getFallingBlock().remove();
+                            customFallingBlocks.remove(i);
+                            i--;
                         }
                     }
 
-                }.runTaskTimer(Warlords.getInstance(), 0, 0),
-                System.currentTimeMillis()
-        );
+                    if (fallingBlockLocations.isEmpty() && customFallingBlocks.isEmpty()) {
+                        this.cancel();
+                    }
+                }
+            }
+
+        }.runTaskTimer(0, 0);
     }
 
     private List<Location> getWave(Location center, int distance) {

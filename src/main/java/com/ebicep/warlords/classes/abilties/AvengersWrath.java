@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.ParticleEffect;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -36,21 +37,18 @@ public class AvengersWrath extends AbstractAbility {
             player1.playSound(p.getLocation(), "paladin.avengerswrath.activation", 2, 1);
         }
 
-        wp.getGame().getGameTasks().put(
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        if (!wp.getCooldownManager().getCooldown(AvengersWrath.class).isEmpty()) {
-                            Location location = p.getLocation();
-                            location.add(0, 1.2, 0);
-                            ParticleEffect.SPELL.display(0.3F, 0.1F, 0.3F, 0.2F, 6, location, 500);
-                        } else {
-                            this.cancel();
-                        }
-                    }
-                }.runTaskTimer(Warlords.getInstance(), 0, 4),
-                System.currentTimeMillis()
-        );
+        new GameRunnable(wp.getGame()) {
+            @Override
+            public void run() {
+                if (!wp.getCooldownManager().getCooldown(AvengersWrath.class).isEmpty()) {
+                    Location location = p.getLocation();
+                    location.add(0, 1.2, 0);
+                    ParticleEffect.SPELL.display(0.3F, 0.1F, 0.3F, 0.2F, 6, location, 500);
+                } else {
+                    this.cancel();
+                }
+            }
+        }.runTaskTimer(0, 4);
 
     }
 
