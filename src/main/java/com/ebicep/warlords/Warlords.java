@@ -874,8 +874,7 @@ public class Warlords extends JavaPlugin {
                                 if (wps.getHealPowerupDuration() > 0) {
                                     wps.setHealPowerupDuration(wps.getHealPowerupDuration() - 1);
                                 } else {
-                                    wps.setHealPowerupDuration(4);
-                                    wps.setPowerUpHeal(false);
+                                    wps.cancelHealingPowerUp();
                                 }
                             }
 

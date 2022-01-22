@@ -25,7 +25,14 @@ public class Vindicate extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "PLACEHOLDER";
+        description = "§7Allies within an §e" + radius + " §7block radius gain" +
+                "§7the status §6VIND §7which clears all ally debuffs. In" +
+                "§7addition, the status §6VIND §7prevents allies from being" +
+                "§7affected by debuffs and grants §625% §7knockback resistance" +
+                "§7for §6" + vindicateDuration + " §7seconds. You gain" +
+                "§e25% §7damage reduction for " + vindicateDuration + " seconds instead." +
+                "§7Each ally within your Vindicate radius increases" +
+                "§7the duration by §61 §7second. (up to §610 §7seconds)";
     }
 
     @Override

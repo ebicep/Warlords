@@ -6,11 +6,16 @@ import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.EffectUtils;
+import com.ebicep.warlords.util.FireWorkEffectPlayer;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
+import org.bukkit.Color;
+import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
 import org.bukkit.Sound;
+import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -31,9 +36,10 @@ public class DrainingMiasma extends AbstractAbility {
         description = "§7Summon a toxic-filled cloud around you,\n" +
                 "§7poisoning all enemies inside the area. Poisoned\n" +
                 "§7enemies take §c4% §7of their current health as\n" +
-                "§7damage per second, for §6" + duration + " §7seconds. The\n" +
-                "§7caster receives healing equal to §a25% §7of the\n" +
-                "§7damage dealt.";
+                "§7damage per second, for §6" + duration + " §7seconds. Enemies" +
+                "§7poisoned by your Draining Miasma are blinded for §62" +
+                "§7seconds after the poison ends. The caster receives\n" +
+                "§7healing equal to §a25% §7of the damage dealt.\n";
     }
 
     @Override
@@ -48,19 +54,17 @@ public class DrainingMiasma extends AbstractAbility {
         EffectUtils.playCylinderAnimation(player, 6, 30, 200, 30);
         EffectUtils.playSphereAnimation(player, 6, ParticleEffect.SLIME, 1);
 
+        FireWorkEffectPlayer.playFirework(wp.getLocation(), FireworkEffect.builder()
+                .withColor(Color.LIME)
+                .with(FireworkEffect.Type.BALL_LARGE)
+                .build());
+
         DrainingMiasma tempDrainingMiasma = new DrainingMiasma();
         PlayerFilter.entitiesAround(wp, 6, 6, 6)
                 .aliveEnemiesOf(wp)
                 .forEach((miasmaTarget) -> {
                     miasmaTarget.getCooldownManager().addRegularCooldown("Draining Miasma", "MIASMA", DrainingMiasma.class, tempDrainingMiasma, wp, CooldownTypes.DEBUFF, cooldownManager -> {
                     }, duration * 20);
-
-                    Location lineLocation = player.getLocation().clone().add(0, 1, 0);
-                    lineLocation.setDirection(lineLocation.toVector().subtract(miasmaTarget.getLocation().add(0, 1, 0).toVector()).multiply(-1));
-                    for (int i = 0; i < Math.floor(player.getLocation().distance(miasmaTarget.getLocation())) * 2; i++) {
-                        ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(30, 200, 30), lineLocation, 500);
-                        lineLocation.add(lineLocation.getDirection().multiply(.5));
-                    }
 
                     wp.getGame().getGameTasks().put(
 

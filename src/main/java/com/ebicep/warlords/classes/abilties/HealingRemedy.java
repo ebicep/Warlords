@@ -3,9 +3,12 @@ package com.ebicep.warlords.classes.abilties;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.internal.AbstractProjectileBase;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.util.FireWorkEffectPlayer;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
 import org.bukkit.Bukkit;
+import org.bukkit.Color;
+import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -65,8 +68,13 @@ public class HealingRemedy extends AbstractProjectileBase {
         med.getLocation().add(0, 1, 0);
 
         for (Player player1 : shooter.getWorld().getPlayers()) {
-            player1.playSound(currentLocation, "mage.waterbolt.impact", 2, 0.4f);
+            player1.playSound(currentLocation, "mage.arcaneshield.activation", 2, 0.4f);
         }
+
+        FireWorkEffectPlayer.playFirework(currentLocation, FireworkEffect.builder()
+                .withColor(Color.WHITE)
+                .with(FireworkEffect.Type.BURST)
+                .build());
 
         for (WarlordsPlayer nearEntity : PlayerFilter
                 .entitiesAround(currentLocation, HITBOX, HITBOX, HITBOX)

@@ -35,10 +35,10 @@ public class WideGuard extends AbstractAbility {
                 "§7(scales down with the amount of allies inside\n" +
                 "§7the bubble. Minimum §c20%§7.) " +
                 "\n\n" +
-                "§7After §64 §7seconds, the bubble will\n" +
-                "§7burst, healing all allies for up to\n" +
-                "§a600 §7+ §a12% §7missing health based on how\n" +
-                "§7long they've been in the bubble.";
+                "§7After §64 §7seconds, the bubble will burst\n" +
+                "§7healing all allies for up to §a600 §7+\n" +
+                "§a12% §7missing health based on how long\n" +
+                "§7they've been in the bubble.";
     }
 
     @Override
@@ -112,7 +112,7 @@ public class WideGuard extends AbstractAbility {
                             }
 
                             for (Map.Entry<WarlordsPlayer, Integer> entry : timeInBubble.entrySet()) {
-                                float healingValue = 150 + (entry.getKey().getMaxHealth() - entry.getKey().getHealth()) / 28.3f;
+                                float healingValue = 150 + (entry.getKey().getMaxHealth() - entry.getKey().getHealth()) * 0.03f;
                                 int timeInSeconds = entry.getValue() * 4 / 20;
                                 float totalHealing = (timeInSeconds * healingValue);
                                 entry.getKey().addHealingInstance(wp, "Wide Guard", totalHealing, totalHealing, -1, 100, false, false);

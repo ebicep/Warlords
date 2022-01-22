@@ -22,7 +22,7 @@ import java.util.List;
 
 public class HeartToHeart extends AbstractAbility {
 
-    private final int radius = 20;
+    private final int radius = 12;
     private final int vindDuration = 6;
 
     public HeartToHeart() {
@@ -31,11 +31,11 @@ public class HeartToHeart extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Throw a chain towards an ally in a §e" + radius + " §7block radius.\n" +
-                "§7Grappling the Vindicator towards the ally. The grappled ally is\n" +
-                "§7granted §6" + vindDuration + " §7seconds of the VIND status effect, making them\n" +
-                "§7immune to de-buffs and they gain §625% §7knockback\n" +
-                "resistance the duration.";
+        description = "§7Throw a chain towards an ally in a §e" + radius + " §7block\n" +
+                "§7radius, grappling the Vindicator towards the ally. The grappled\n" +
+                "§7ally is granted §6" + vindDuration + " §7seconds of the VIND status\n" +
+                "§7effect, making them immune to de-buffs and they gain §625%\n" +
+                "§7knockback resistance the duration.";
     }
 
     @Override

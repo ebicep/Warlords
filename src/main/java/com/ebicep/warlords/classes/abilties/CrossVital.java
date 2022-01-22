@@ -44,9 +44,7 @@ public class CrossVital extends AbstractAbility {
                     @Override
                     public void run() {
                         if (wp.getCooldownManager().hasCooldown(tempCrossVital)) {
-                            wp.getSpec().getPurple().setCritMultiplier(wp.getSpec().getWeapon().getCritMultiplier() + 50);
-                            wp.getSpec().getPurple().setCritMultiplier(wp.getSpec().getRed().getCritMultiplier() + 50);
-                            wp.getSpec().getPurple().setCritMultiplier(wp.getSpec().getPurple().getCritMultiplier() + 50);
+
                         } else {
                             this.cancel();
                         }
