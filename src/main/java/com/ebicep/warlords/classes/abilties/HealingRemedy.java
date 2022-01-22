@@ -37,12 +37,12 @@ public class HealingRemedy extends AbstractProjectileBase {
 
     @Override
     protected String getActivationSound() {
-        return "mage.waterbolt.activation";
+        return "mage.frostbolt.activation";
     }
 
     @Override
     protected float getSoundPitch() {
-        return 0.4f;
+        return 0.65f;
     }
 
     @Override
@@ -64,11 +64,11 @@ public class HealingRemedy extends AbstractProjectileBase {
 
     @Override
     protected void onHit(WarlordsPlayer shooter, Location currentLocation, Location startingLocation, WarlordsPlayer victim) {
-        DamageHealCircle med = new DamageHealCircle(shooter, currentLocation, 3, 2, 189, 244, critChance, critMultiplier, name);
+        DamageHealCircle med = new DamageHealCircle(shooter, currentLocation, 4, 2, 189, 244, critChance, critMultiplier, name);
         med.getLocation().add(0, 1, 0);
 
         for (Player player1 : shooter.getWorld().getPlayers()) {
-            player1.playSound(currentLocation, "mage.arcaneshield.activation", 2, 0.4f);
+            player1.playSound(currentLocation, "mage.arcaneshield.activation", 2, 0.7f);
         }
 
         FireWorkEffectPlayer.playFirework(currentLocation, FireworkEffect.builder()

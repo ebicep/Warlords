@@ -2,26 +2,21 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
-import com.ebicep.warlords.player.cooldowns.CooldownTypes;
-
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.EffectUtils;
 import com.ebicep.warlords.util.FireWorkEffectPlayer;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
-import org.bukkit.Location;
 import org.bukkit.Sound;
-import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
 
 public class DrainingMiasma extends AbstractAbility {
 
@@ -36,8 +31,8 @@ public class DrainingMiasma extends AbstractAbility {
         description = "§7Summon a toxic-filled cloud around you,\n" +
                 "§7poisoning all enemies inside the area. Poisoned\n" +
                 "§7enemies take §c4% §7of their current health as\n" +
-                "§7damage per second, for §6" + duration + " §7seconds. Enemies" +
-                "§7poisoned by your Draining Miasma are blinded for §62" +
+                "§7damage per second, for §6" + duration + " §7seconds. Enemies\n" +
+                "§7poisoned by your Draining Miasma are blinded for §62\n" +
                 "§7seconds after the poison ends. The caster receives\n" +
                 "§7healing equal to §a25% §7of the damage dealt.\n";
     }
@@ -47,7 +42,7 @@ public class DrainingMiasma extends AbstractAbility {
         wp.subtractEnergy(energyCost);
 
         for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "rogue.drainingmiasma.activation", 2, 1.8f);
+            player1.playSound(player.getLocation(), "rogue.drainingmiasma.activation", 2, 1.7f);
             player1.playSound(player.getLocation(), "shaman.earthlivingweapon.activation", 2, 0.65f);
         }
 
@@ -67,7 +62,6 @@ public class DrainingMiasma extends AbstractAbility {
                     }, duration * 20);
 
                     wp.getGame().getGameTasks().put(
-
 
                             new BukkitRunnable() {
                                 float totalDamage = 0;

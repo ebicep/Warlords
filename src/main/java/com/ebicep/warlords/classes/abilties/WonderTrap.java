@@ -2,7 +2,6 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
-import com.ebicep.warlords.commands.debugcommands.TestCommand;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.cooldowns.TextCooldown;
@@ -11,16 +10,16 @@ import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
 
 public class WonderTrap extends AbstractAbility {
+
+    // CURRENTLY UNUSED CONTENT
 
     public WonderTrap() {
         super("Wonder Trap", 375, 454, 10, 40, 25, 175);

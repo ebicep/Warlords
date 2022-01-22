@@ -2,9 +2,9 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
-import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownFilter;
+import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.util.LocationBuilder;
 import com.ebicep.warlords.util.ParticleEffect;
@@ -118,7 +118,7 @@ public class OrbsOfLife extends AbstractAbility {
                                         System.currentTimeMillis()
                                 );
 
-                                player.sendMessage(ChatColor.GREEN + "Your current orbs will now levitate towards you or a teammate!");
+                                player.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GREEN + "Your current orbs will now levitate towards you or a teammate!");
                                 for (Player player1 : player.getWorld().getPlayers()) {
                                     player1.playSound(player.getLocation(), Sound.LEVEL_UP, 0.85f, 0.7f);
                                 }
