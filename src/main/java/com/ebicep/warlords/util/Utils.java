@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
+import javax.annotation.Nonnull;
 
 public class Utils {
 
@@ -328,13 +329,22 @@ public class Utils {
      * @param matcher The matcher
      * @return return true if any item matches, false otherwise. Empty iterables return false.
      */
-    public static <T> boolean collectionHasItem(Iterable<T> iterable, Predicate<? super T> matcher) {
+    public static <T> boolean collectionHasItem(@Nonnull Iterable<T> iterable, @Nonnull Predicate<? super T> matcher) {
         for (T item : iterable) {
             if (matcher.test(item)) {
                 return true;
             }
         }
         return false;
+    }
+    @Nullable
+    public static <T> T arrayGetItem(@Nonnull T[] iterable, @Nonnull Predicate<? super T> matcher) {
+        for (T item : iterable) {
+            if (matcher.test(item)) {
+                return item;
+            }
+        }
+        return null;
     }
     
     /**
@@ -343,7 +353,8 @@ public class Utils {
      * @param stream The stream
      * @return An one-time use <code>Iterable</code> for iterating over the stream 
      */
-    public static <T> Iterable<T> iterable(Stream<T> stream) {
+    @Nonnull
+    public static <T> Iterable<T> iterable(@Nonnull Stream<T> stream) {
         return stream::iterator;
     }
 }

@@ -1,4 +1,4 @@
-package com.ebicep.warlords.maps.option.techincal;
+package com.ebicep.warlords.maps.option;
 
 import com.ebicep.warlords.events.WarlordsGameUpdatedEvent;
 import com.ebicep.warlords.maps.Game;
@@ -75,7 +75,7 @@ public class GameFreezeOption implements Option, Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent evt) {
-        if (game.getPlayerTeamOrNull(evt.getPlayer().getUniqueId()) != null && isFrozen) {
+        if (game.getPlayerTeam(evt.getPlayer().getUniqueId()) != null && isFrozen) {
             freeze();
         }
     }

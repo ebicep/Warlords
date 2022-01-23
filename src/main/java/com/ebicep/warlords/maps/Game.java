@@ -5,7 +5,7 @@ import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.events.WarlordsGameUpdatedEvent;
 import com.ebicep.warlords.maps.option.Option;
 import com.ebicep.warlords.maps.option.marker.GameMarker;
-import com.ebicep.warlords.maps.option.techincal.GameFreezeOption;
+import com.ebicep.warlords.maps.option.GameFreezeOption;
 import com.ebicep.warlords.maps.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.maps.state.*;
 import com.ebicep.warlords.player.WarlordsPlayer;
@@ -47,7 +47,7 @@ public final class Game implements Runnable, AutoCloseable {
     @Nonnull
     private final EnumSet<GameAddon> addons;
     @Nonnull
-    private final List<Option> options;
+    private List<Option> options;
 
     @Nullable
     private State state = null;
@@ -55,12 +55,13 @@ public final class Game implements Runnable, AutoCloseable {
     private State nextState = null;
     private boolean closed = false;
     private final List<String> frozenCauses = new CopyOnWriteArrayList<>();
-    private volatile boolean frozenCached = false;
+    private transient boolean frozenCached = false;
     private int maxPlayers;
     private int minPlayers;
     private boolean acceptsPlayers;
     private boolean acceptsSpectators;
     private final LocationFactory locations;
+    private final EnumMap<Team, Long> points = new EnumMap<>(Team.class);
 
     public Game(EnumSet<GameAddon> gameAddons, GameMap map, MapCategory category, LocationFactory locations) {
         this.locations = locations;
@@ -84,6 +85,10 @@ public final class Game implements Runnable, AutoCloseable {
         }
         for (GameAddon addon : addons) {
             addon.modifyGame(this);
+        }
+        this.options = Collections.unmodifiableList(options);
+        for (Option option : options) {
+            option.register(this);
         }
         state = this.map.initialState(this);
         state.begin();
@@ -205,7 +210,7 @@ public final class Game implements Runnable, AutoCloseable {
      * Checks if this game has been marked closed. A closed game does not accept
      * any gametasks or players, and can no longer be used
      *
-     * @return
+     * @return true if it has closed
      */
     public boolean isClosed() {
         return closed;
@@ -291,7 +296,7 @@ public final class Game implements Runnable, AutoCloseable {
     }
 
     @Nullable
-    public Team getPlayerTeamOrNull(@Nonnull UUID player) {
+    public Team getPlayerTeam(@Nonnull UUID player) {
         return this.players.get(player);
     }
 
@@ -323,6 +328,10 @@ public final class Game implements Runnable, AutoCloseable {
         }
         this.players.put(player.getUniqueId(), null);
         this.state.onPlayerJoinGame(player, asSpectator);
+        Player p = player.getPlayer();
+        if(p != null) {
+            this.state.onPlayerReJoinGame(p);
+        }
     }
 
     public void setPlayerTeam(@Nonnull OfflinePlayer player, @Nonnull Team team) {
@@ -411,22 +420,18 @@ public final class Game implements Runnable, AutoCloseable {
         return this.players.entrySet().stream().filter(e -> e.getValue() == null).map(e -> e.getKey());
     }
 
-    @Deprecated
     public void forEachOfflinePlayer(BiConsumer<OfflinePlayer, Team> consumer) {
         offlinePlayers().forEach(entry -> consumer.accept(entry.getKey(), entry.getValue()));
     }
 
-    @Deprecated
     public void forEachOfflineWarlordsPlayer(Consumer<WarlordsPlayer> consumer) {
         offlinePlayers().map(w -> Warlords.getPlayer(w.getKey())).filter(Objects::nonNull).forEach(consumer);
     }
 
-    @Deprecated
     public void forEachOnlinePlayer(BiConsumer<Player, Team> consumer) {
         onlinePlayers().forEach(entry -> consumer.accept(entry.getKey(), entry.getValue()));
     }
 
-    @Deprecated
     public void forEachOnlineWarlordsPlayer(Consumer<WarlordsPlayer> consumer) {
         onlinePlayers().map(w -> Warlords.getPlayer(w.getKey())).filter(Objects::nonNull).forEach(consumer);
     }

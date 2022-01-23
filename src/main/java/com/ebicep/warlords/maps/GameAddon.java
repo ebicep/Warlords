@@ -1,6 +1,6 @@
 package com.ebicep.warlords.maps;
 
-import com.ebicep.warlords.maps.option.techincal.GameFreezeWhenOfflineOption;
+import com.ebicep.warlords.maps.option.GameFreezeWhenOfflineOption;
 import com.ebicep.warlords.maps.state.PreLobbyState;
 import com.ebicep.warlords.maps.state.State;
 import com.ebicep.warlords.player.WarlordsPlayer;
@@ -20,9 +20,10 @@ public enum GameAddon {
         @Override
         public void stateHasChanged(Game game, State oldState, State newState) {
             game.setAcceptsPlayers(false);
-            if(newState instanceof PreLobbyState) {
+            if (newState instanceof PreLobbyState) {
                 PreLobbyState preLobbyState = (PreLobbyState) newState;
-                preLobbyState.setTimer(30 * 20);
+                preLobbyState.setMaxTimer(30 * 20);
+                preLobbyState.resetTimer();
             }
         }
     },
@@ -43,7 +44,14 @@ public enum GameAddon {
         }
         
     },
-    RECORD_MODE(),;
+    RECORD_MODE(),
+    MEGA_GAME() {
+        @Override
+        public int getMaxPlayers(GameMap map, int maxPlayers) {
+            return Integer.MAX_VALUE;
+        }
+        
+    };
 
     public void modifyGame(@Nonnull Game game) {
     }

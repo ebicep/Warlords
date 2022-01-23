@@ -148,9 +148,9 @@ public class Warlords extends JavaPlugin {
         }
     }
 
-    public static HashMap<UUID, WarlordsPlayer> getPlayers() {
-        return players;
-    }
+//    public static HashMap<UUID, WarlordsPlayer> getPlayers() {
+//        return players;
+//    }
 
     public final static HashMap<UUID, Location> spawnPoints = new HashMap<>();
 
@@ -339,7 +339,7 @@ public class Warlords extends JavaPlugin {
                         // Item packets (id: 0x29)
                         if (event.getPacketType() == PacketType.Play.Server.WORLD_PARTICLES) {
                             Player player = event.getPlayer();
-                            if (Warlords.game.getPlayers().containsKey(player.getUniqueId())) {
+                            if (Warlords.hasPlayer(player)) {
                                 if (counter++ % playerSettings.get(player.getUniqueId()).getParticleQuality().particleReduction == 0) {
                                     event.setCancelled(true);
                                 }
@@ -350,7 +350,7 @@ public class Warlords extends JavaPlugin {
 
         citizensEnabled = Bukkit.getPluginManager().isPluginEnabled("Citizens");
 
-        gameLoop();
+        startMainLoop();
         getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Plugin is enabled");
         
         
@@ -404,7 +404,7 @@ public class Warlords extends JavaPlugin {
         // TODO persist this.playerSettings to a database
     }
 
-    public void gameLoop() {
+    private void startMainLoop() {
         new BukkitRunnable() {
             int counter = 0;
 

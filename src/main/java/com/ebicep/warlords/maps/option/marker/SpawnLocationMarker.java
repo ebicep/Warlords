@@ -1,7 +1,15 @@
 package com.ebicep.warlords.maps.option.marker;
 
-import com.ebicep.warlords.maps.Team;
+import com.ebicep.warlords.player.WarlordsPlayer;
 
 public interface SpawnLocationMarker extends LocationMarker {
-    public double getPriority(Team team);
+
+    /**
+     * Get the priority of this spawnpoint
+     *
+     * @param player the player to check
+     * @return the priority, higher priorities should be preferred above lower
+     * ones
+     */
+    public double getPriority(WarlordsPlayer player);
 }

@@ -4,6 +4,7 @@ package com.ebicep.warlords.util;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.maps.Game;
 import java.util.Objects;
+import javax.annotation.Nonnull;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -11,19 +12,23 @@ import org.bukkit.scheduler.BukkitTask;
  * Copy of a BukkitRunable designed for quick registration of tasks related to a game
  */
 public abstract class GameRunnable implements Runnable {
+    public static final boolean DEFAULT_RUN_IN_PAUSE_MODE = false;
+    
     private int taskId = -1;
+    @Nonnull
     private final Game game;
     private final boolean runInPauseMode;
     
-    public GameRunnable(Game game) {
-        this(game, false);
+    public GameRunnable(@Nonnull Game game) {
+        this(game, DEFAULT_RUN_IN_PAUSE_MODE);
     }
 
-    public GameRunnable(Game game, boolean runInPauseMode) {
+    public GameRunnable(@Nonnull Game game, boolean runInPauseMode) {
         this.game = Objects.requireNonNull(game, "game");
         this.runInPauseMode = runInPauseMode;
     }
 
+    @Nonnull
     public Game getGame() {
         return game;
     }

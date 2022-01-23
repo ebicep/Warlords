@@ -604,7 +604,7 @@ public class WarlordsEvents implements Listener {
                                 ChatColor.WHITE + ": %2$s"
                         );
                         if (!(wp.getGame().getState() instanceof EndState)) {
-                            e.getRecipients().removeIf(p -> wp.getGame().getPlayerTeamOrNull(p.getUniqueId()) != wp.getTeam());
+                            e.getRecipients().removeIf(p -> wp.getGame().getPlayerTeam(p.getUniqueId()) != wp.getTeam());
                         }
                         break;
                     case PARTY:
@@ -766,7 +766,7 @@ public class WarlordsEvents implements Listener {
             if (event.getOld() instanceof PlayerFlagLocation) {
                 PlayerFlagLocation pfl = (PlayerFlagLocation) event.getOld();
                 Team loser = event.getTeam();
-                event.getGameState().addCapture(pfl.getPlayer());
+                event.getGame().addCapture(pfl.getPlayer());
                 pfl.getPlayer().addFlagCap();
                 event.getGame().forEachOnlinePlayer((p, t) -> {
                     String message = pfl.getPlayer().getColoredName() + " §ecaptured the " + loser.coloredPrefix() + " §eflag!";

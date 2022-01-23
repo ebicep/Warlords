@@ -36,7 +36,7 @@ public class GameManager implements AutoCloseable {
             }
             if (next.getGame() != null && next.getGame().playersCount() == 0) {
                 // If a game has 0 internalPlayers assigned, force end it
-                next.forceEndGame(); // This mutated holder.game
+                next.forceEndGame(); // This mutates holder.game
             }
             if (next.getGame() == null) {
                 int computedMaxPlayers = next.getMap().getMaxPlayers();
@@ -171,7 +171,19 @@ public class GameManager implements AutoCloseable {
         for (OfflinePlayer p : entry.getPlayers()) {
             GameManager.this.dropPlayerFromQueueOrGames(p, true);
         }
-        queue.add(entry);
+        boolean inserted = false;
+        ListIterator<QueueEntry> listIterator = queue.listIterator(queue.size());
+        while(listIterator.hasPrevious()) {
+            QueueEntry previous = listIterator.previous();
+            if(previous.compareTo(entry) > 0) { // TOD verify if > the correct operator here
+                listIterator.add(entry);
+                inserted = true;
+                break;
+            }
+        }
+        if (!inserted) {
+            listIterator.add(entry);
+        }
         runQueue();
         return true;
     }
@@ -416,6 +428,10 @@ public class GameManager implements AutoCloseable {
         public QueueEntryBuilder setRequestedGameAddons(@Nonnull EnumSet<GameAddon> requestedGameAddons) {
             this.requestedGameAddons = requestedGameAddons.clone();
             return this;
+        }
+
+        public QueueEntryBuilder setRequestedGameAddons(@Nonnull GameAddon ... rga) {
+            return setRequestedGameAddons(rga.length == 0 ? EnumSet.noneOf(GameAddon.class) : EnumSet.copyOf(Arrays.asList(rga)));
         }
 
         public QueueEntryBuilder setCategory(@Nullable MapCategory category) {

@@ -1,4 +1,4 @@
-package com.ebicep.warlords.maps.option.techincal;
+package com.ebicep.warlords.maps.option;
 
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.option.Option;

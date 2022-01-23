@@ -20,18 +20,6 @@ public interface Option {
     }
 
     /**
-     * Runs after the register phase, used to "bake" the internal variables,
-     * getting faster speeds. Options should not attempt to register any
-     * gamemarkers or scoreboard handlers here, as they might be missed by other
-     * options.
-     *
-     * @implNote Does nothing by default
-     * @param game The game
-     */
-    public default void bake(@Nonnull Game game) {
-    }
-
-    /**
      * Called when the game is started (For a typical game, a transition to the
      * <code>PlayingState</code>). Use this method to start your long running
      * tasks
@@ -39,14 +27,5 @@ public interface Option {
      * @param game The game instance
      */
     public default void start(@Nonnull Game game) {
-    }
-
-    /**
-     * Unregisters this option fro, a game. Note that even though an Option is
-     * unregistered, registering it again may give undefined behavior
-     *
-     * @param game The game
-     */
-    public default void unregister(@Nonnull Game game) {
     }
 }

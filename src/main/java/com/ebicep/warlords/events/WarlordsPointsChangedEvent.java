@@ -7,6 +7,9 @@ import org.bukkit.event.HandlerList;
 
 import javax.annotation.Nonnull;
 
+/**
+ * Thrown when the 
+ */
 public class WarlordsPointsChangedEvent extends Event {
 
     private static final HandlerList handlers = new HandlerList();

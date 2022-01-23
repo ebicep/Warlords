@@ -11,7 +11,6 @@ import com.ebicep.warlords.maps.option.marker.FlagHolder;
 import com.ebicep.warlords.maps.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.GameRunnable;
-import java.util.Arrays;
 import static java.util.Collections.singletonList;
 import java.util.List;
 import java.util.function.BiFunction;
@@ -27,8 +26,6 @@ import org.bukkit.Material;
 public class FlagSpawnPointOption implements Option {
 
     @Nonnull
-    private final Team team;
-    @Nonnull
     private final FlagInfo info;
     @Nonnull
     private final FlagRenderer renderer;
@@ -38,7 +35,6 @@ public class FlagSpawnPointOption implements Option {
     private Game game;
 
     public FlagSpawnPointOption(@Nonnull Location loc, @Nonnull Team team) {
-        this.team = team;
         this.info = new FlagInfo(team, loc, this::onFlagUpdate);
         this.renderer = new FlagRenderer(info);
     }
@@ -48,28 +44,22 @@ public class FlagSpawnPointOption implements Option {
         this.game = game;
         // We register a gamemarker to prevent any captures for our own team if we lost our flag
         game.registerGameMarker(FlagCaptureInhibitMarker.class, pFlag -> {
-            return !(info.getFlag() instanceof SpawnFlagLocation) && team == pFlag.getPlayer().getTeam();
+            return !(info.getFlag() instanceof SpawnFlagLocation) && info.getTeam() == pFlag.getPlayer().getTeam();
         });
         game.registerGameMarker(DebugLocationMarker.class, DebugLocationMarker.create(Material.BANNER, 0, this.getClass(),
-                "Flag spawn: " + team,
+                "Flag spawn: " + info.getTeam(),
                 this.info.getSpawnLocation()
         ));
         game.registerGameMarker(DebugLocationMarker.class, DebugLocationMarker.create(Material.BANNER, 15, this.getClass(),
-                "Flag: " + team,
+                "Flag: " + info.getTeam(),
                 () -> info.getFlag().getLocation(),
                 () -> info.getFlag().getDebugInformation()
         ));
-        game.registerGameMarker(FlagHolder.class, updateFunction -> {
-            FlagLocation newFlag = updateFunction.apply(this.info, this.team);
-            if (newFlag != null && newFlag != this.info.getFlag()) {
-                this.info.setFlag(newFlag);
-            }
-            return newFlag;
-        });
-        game.registerScoreboardHandler(scoreboard = new SimpleScoreboardHandler(team == Team.RED ? 20 : 21) {
+        game.registerGameMarker(FlagHolder.class, () -> info);
+        game.registerScoreboardHandler(scoreboard = new SimpleScoreboardHandler(info.getTeam() == Team.RED ? 20 : 21) {
             @Override
             public List<String> computeLines(WarlordsPlayer player) {
-                String flagName = team.coloredPrefix();
+                String flagName = info.getTeam().coloredPrefix();
                 FlagLocation flag = info.getFlag();
                 if (flag instanceof SpawnFlagLocation) {
                     return singletonList(flagName + " Flag: " + ChatColor.GREEN + "Safe");
@@ -110,25 +100,28 @@ public class FlagSpawnPointOption implements Option {
         new GameRunnable(game) {
             @Override
             public void run() {
-
                 if (!(info.getFlag() instanceof PlayerFlagLocation)) {
                     return;
                 }
                 PlayerFlagLocation playerFlagLocation = (PlayerFlagLocation) info.getFlag();
                 if (flagIsInCaptureZone(playerFlagLocation) && !flagCaptureIsNotBlocked(playerFlagLocation)) {
-
-                    for (FlagHolder flag : game.getMarkers(FlagHolder.class)) {
-                        flag.update((info, team) -> new WaitingFlagLocation(info.getSpawnLocation(), info.getFlag() != playerFlagLocation));
-                    }
+                    FlagHolder.update(game, info -> new WaitingFlagLocation(info.getSpawnLocation(), info.getFlag() != playerFlagLocation));
                 }
             }
-
         }.runTaskTimer(0, 4);
+    }
+
+    public FlagInfo getInfo() {
+        return info;
+    }
+
+    public FlagRenderer getRenderer() {
+        return renderer;
     }
 
     private void onFlagUpdate(FlagInfo info, FlagLocation old) {
         scoreboard.markChanged();
-        Bukkit.getPluginManager().callEvent(new WarlordsFlagUpdatedEvent(game, info, team, old));
+        Bukkit.getPluginManager().callEvent(new WarlordsFlagUpdatedEvent(game, info, old));
         renderer.checkRender();
     }
 

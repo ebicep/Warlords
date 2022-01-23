@@ -433,39 +433,6 @@ public class PlayingState implements State, TimerDebugAble {
             entries[9] = ChatColor.WHITE + "Time Left: " + ChatColor.GREEN + getTimeLeftString();
         }
 
-        // Flags
-        if (this.flags().getRed().getFlag() instanceof SpawnFlagLocation) {
-            entries[7] = ChatColor.RED + "RED Flag: " + ChatColor.GREEN + "Safe";
-        } else if (this.flags().getRed().getFlag() instanceof PlayerFlagLocation) {
-            PlayerFlagLocation flag = (PlayerFlagLocation) this.flags().getRed().getFlag();
-            if (flag.getPickUpTicks() == 0) {
-                entries[7] = ChatColor.RED + "RED Flag: " + ChatColor.RED + "Stolen!";
-            } else {
-                entries[7] = ChatColor.RED + "RED Flag: " + ChatColor.RED + "Stolen!" + ChatColor.YELLOW + " +" + flag.getComputedHumanMultiplier() + "§e%";
-            }
-        } else if (this.flags().getRed().getFlag() instanceof GroundFlagLocation) {
-            GroundFlagLocation flag = (GroundFlagLocation) this.flags().getRed().getFlag();
-            entries[7] = ChatColor.RED + "RED Flag: " + ChatColor.YELLOW + "Dropped! " + ChatColor.GRAY + flag.getDespawnTimerSeconds();
-        } else {
-            entries[7] = ChatColor.RED + "RED Flag: " + ChatColor.GRAY + "Respawning...";
-        }
-
-        if (this.flags().getBlue().getFlag() instanceof SpawnFlagLocation) {
-            entries[6] = ChatColor.BLUE + "BLU Flag: " + ChatColor.GREEN + "Safe";
-        } else if (this.flags().getBlue().getFlag() instanceof PlayerFlagLocation) {
-            PlayerFlagLocation flag = (PlayerFlagLocation) this.flags().getBlue().getFlag();
-            if (flag.getPickUpTicks() == 0) {
-                entries[6] = ChatColor.BLUE + "BLU Flag: " + ChatColor.RED + "Stolen!";
-            } else {
-                entries[6] = ChatColor.BLUE + "BLU Flag: " + ChatColor.RED + "Stolen!" + ChatColor.YELLOW + " +" + flag.getComputedHumanMultiplier() + "§e%";
-            }
-        } else if (this.flags().getBlue().getFlag() instanceof GroundFlagLocation) {
-            GroundFlagLocation flag = (GroundFlagLocation) this.flags().getBlue().getFlag();
-            entries[6] = ChatColor.BLUE + "BLU Flag: " + ChatColor.YELLOW + "Dropped! " + ChatColor.GRAY + flag.getDespawnTimerSeconds();
-        } else {
-            entries[6] = ChatColor.BLUE + "BLU Flag: " + ChatColor.GRAY + "Respawning...";
-        }
-
         if (warlordsPlayer != null) {
             entries[4] = ChatColor.WHITE + "Spec: " + ChatColor.GREEN + warlordsPlayer.getSpec().getClass().getSimpleName();
             if (ImposterCommand.enabled) {

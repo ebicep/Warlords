@@ -57,7 +57,13 @@ public class GameStartTrait extends Trait {
             }
         }
         
-        Warlords.getGameManager().newEntry(people).setCategory(MapCategory.CAPTURE_THE_FLAG).setMap(null).setPriority(0).setExpiresTime(System.currentTimeMillis() + 60 * 1000).setOnResult(result -> {
+        Warlords.getGameManager()
+                .newEntry(people)
+                .setCategory(MapCategory.CAPTURE_THE_FLAG)
+                .setMap(null)
+                .setPriority(0)
+                .setExpiresTime(System.currentTimeMillis() + 60 * 1000)
+                .setOnResult(result -> {
             if (!result.isSuccess()) {
                 player.sendMessage(ChatColor.RED + "Failed to join game: " + result.toString());
             }

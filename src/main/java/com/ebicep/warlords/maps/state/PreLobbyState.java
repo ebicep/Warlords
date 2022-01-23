@@ -27,6 +27,7 @@ public class PreLobbyState implements State, TimerDebugAble {
     private final Game game;
     private final Map<UUID, TeamPreference> teamPreferences = new HashMap<>();
     private int timer = 0;
+    private int maxTimer = 0;
 
     public PreLobbyState(Game game) {
         this.game = game;
@@ -34,9 +35,8 @@ public class PreLobbyState implements State, TimerDebugAble {
 
     @Override
     public void begin() {
-        timer = game.getMap().getCountdownTimerInTicks();
-        Gates.changeGates(game.getMap(), false);
-        //game.setPrivate(false);
+        this.maxTimer = game.getMap().getCountdownTimerInTicks();
+        this.resetTimer();
         // Debug
         game.printDebuggingInformation();
         game.setAcceptsPlayers(true);
@@ -226,7 +226,7 @@ public class PreLobbyState implements State, TimerDebugAble {
                     boolean secondFailSafeActive = false;
 
                     //INCASE COULDNT BALANCE
-                    if (bestTeam.size() == 0) {
+                    if (bestTeam.isEmpty()) {
                         failSafeActive = true;
                         HashMap<Player, Team> teams = new HashMap<>();
                         HashMap<Classes, List<Player>> playerSpecs = new HashMap<>();
@@ -341,26 +341,16 @@ public class PreLobbyState implements State, TimerDebugAble {
                             value.sendMessage(ChatColor.DARK_AQUA + "-------------------------------");
                         }
                     }
-
-                    //hiding internalPlayers not in game
-                    List<Player> playersNotInGame = Bukkit.getOnlinePlayers().stream()
-                            .filter(onlinePlayer -> !game.getPlayers().containsKey(onlinePlayer.getUniqueId()))
-                            .collect(Collectors.toList());
-                    Bukkit.getOnlinePlayers().stream()
-                            .filter(onlinePlayer -> game.getPlayers().containsKey(onlinePlayer.getUniqueId()))
-                            .forEach(playerInParty -> playersNotInGame.forEach(playerNotInParty -> {
-                                playerInParty.hidePlayer(playerNotInParty);
-                            }));
                 }
 
                 if (game.getPlayers().size() >= 14) {
-                    BotManager.sendMessageToNotificationChannel("[GAME] A " + (game.g ? "" : "Public ") + "**" + game.getMap().getMapName() + "** started with **" + game.getPlayers().size() + (game.getPlayers().size() == 1 ? "** player!" : "** players!"), true);
+                    BotManager.sendMessageToNotificationChannel("[GAME] A " + (game.getAddons().contains(GameAddon.PRIVATE_GAME) ? "" : "Public ") + "**" + game.getMap().getMapName() + "** started with **" + game.getPlayers().size() + (game.getPlayers().size() == 1 ? "** player!" : "** players!"), true);
                 }
                 return new PlayingState(game);
             }
             timer--;
         } else {
-            timer = game.getMap().getCountdownTimerInTicks();
+            resetTimer();
             game.forEachOnlinePlayer((player, team) -> giveLobbyScoreboard(false, player));
         }
         return null;
@@ -370,10 +360,6 @@ public class PreLobbyState implements State, TimerDebugAble {
     public void end() {
         updateTeamPreferences();
         distributePeopleOverTeams();
-    }
-
-    public int getTimer() {
-        return timer;
     }
 
     public String getTimeLeftString() {
@@ -512,15 +498,35 @@ public class PreLobbyState implements State, TimerDebugAble {
 
     @Override
     public void resetTimer() throws IllegalStateException {
-        this.timer = game.getMap().getCountdownTimerInTicks();
+        this.timer = this.maxTimer;
     }
 
     @Override
     public void onPlayerJoinGame(OfflinePlayer op, boolean asSpectator) {
-        Player player = op.getPlayer();
-        if (player != null) {
+        if(asSpectator) {
+            
+        } else {
+            Team team = Warlords.getPlayerSettings(op.getUniqueId()).getWantedTeam();
+            game.setPlayerTeam(op, team == null ? Team.BLUE : team);
+        }
+    }
+
+    @Override
+    public void onPlayerReJoinGame(Player player) {
+        State.super.onPlayerReJoinGame(player);
+        Team team = game.getPlayerTeam(player.getUniqueId());
+        
+        if(team == null) {
+            
+            player.getInventory().clear();
+            player.setAllowFlight(true);
+            player.setGameMode(GameMode.SPECTATOR);
+        } else {
             player.getInventory().clear();
             player.setAllowFlight(false);
+            player.setGameMode(GameMode.ADVENTURE);
+            
+            PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
 
             player.getInventory().setItem(5, new ItemBuilder(Material.NOTE_BLOCK)
                     .name(ChatColor.GREEN + "Team Selector " + ChatColor.GRAY + "(Right-Click)")
@@ -536,22 +542,32 @@ public class PreLobbyState implements State, TimerDebugAble {
                     .name("§aWeapon Skin Preview")
                     .lore("")
                     .get());
+
+            PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
+            Classes selectedClass = playerSettings.getSelectedClass();
+            AbstractPlayerClass apc = selectedClass.create.get();
+
+
+
+            // teleport player
+            ArmorManager.resetArmor(player, Warlords.getPlayerSettings(player.getUniqueId()).getSelectedClass(), team);
         }
-
-        PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
-        Classes selectedClass = playerSettings.getSelectedClass();
-        AbstractPlayerClass apc = selectedClass.create.get();
-
-       
-
-        Team team = Warlords.getPlayerSettings(player.getUniqueId()).getWantedTeam();
-        game.setPlayerTeam(player, team == null ? Team.BLUE : team);
-        // teleport player
-        ArmorManager.resetArmor(player, Warlords.getPlayerSettings(player.getUniqueId()).getSelectedClass(), team);
     }
 
-    public void setTimer(int i) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public int getTimer() {
+        return timer;
+    }
+
+    public void setTimer(int timer) {
+        this.timer = timer;
+    }
+
+    public int getMaxTimer() {
+        return maxTimer;
+    }
+
+    public void setMaxTimer(int maxTimer) {
+        this.maxTimer = maxTimer;
     }
 
     private enum TeamPriority {

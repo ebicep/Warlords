@@ -234,6 +234,8 @@ public enum GameMap {
             options.add(new FlagSpawnPointOption(loc.addXYZ(720.5, 8.5, 212.5), Team.RED));
             
             options.add(new GateOption(loc.addXYZ(713, 7, 195), loc.addXYZ(713, 10, 198)));
+            
+            return options;
         }
         
     }

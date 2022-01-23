@@ -10,9 +10,12 @@ import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePl
 import com.ebicep.warlords.events.WarlordsDeathEvent;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Team;
+import com.ebicep.warlords.maps.flags.FlagInfo;
 import com.ebicep.warlords.maps.flags.FlagLocation;
 import com.ebicep.warlords.maps.flags.GroundFlagLocation;
 import com.ebicep.warlords.maps.flags.PlayerFlagLocation;
+import com.ebicep.warlords.maps.option.marker.FlagHolder;
+import com.ebicep.warlords.maps.option.marker.SpawnLocationMarker;
 import com.ebicep.warlords.maps.state.PlayingState;
 import com.ebicep.warlords.util.*;
 import net.minecraft.server.v1_8_R3.EntityLiving;
@@ -64,8 +67,6 @@ public final class WarlordsPlayer {
     private int hitCooldown;
     private int spawnProtection;
     private int spawnDamage = 0;
-    private int flagsCaptured = 0;
-    private int flagsReturned = 0;
     // We have to store these in here as the new player might logout midgame
     private float walkspeed = 1;
     private int blocksTravelledCM = 0;
@@ -78,18 +79,12 @@ public final class WarlordsPlayer {
 
     private final List<Float> recordDamage = new ArrayList<>();
 
-    private final int[] kills = new int[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
-    private final int[] assists = new int[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
+    private final PlayerStatistics stats;
     //assists = player - timeLeft(10 seconds)
     private final LinkedHashMap<WarlordsPlayer, Integer> hitBy = new LinkedHashMap<>();
     private final LinkedHashMap<WarlordsPlayer, Integer> healedBy = new LinkedHashMap<>();
-    private final int[] deaths = new int[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
-    private final long[] damage = new long[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
-    private final long[] healing = new long[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
-    private final long[] absorbed = new long[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
-
-    private final long[] damageOnCarrier = new long[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
-    private final long[] healingOnCarrier = new long[Warlords.game.getMap().getGameTimerInTicks() / 20 / 60];
+    @Nullable
+    private FlagInfo carriedFlag = null;
 
     private final List<Location> locations = new ArrayList<>();
     public List<Location> getLocations() {
@@ -123,6 +118,7 @@ public final class WarlordsPlayer {
         this.name = player.getName();
         this.uuid = player.getUniqueId();
         this.gameState = gameState;
+        this.stats = new PlayerStatistics(gameState.getTimer() / 20 / 60 + 1);
         this.team = team;
         this.specClass = settings.getSelectedClass();
         this.spec = specClass.create.get();
@@ -1279,28 +1275,42 @@ public final class WarlordsPlayer {
     public void respawn() {
         if (entity instanceof Player && ((Player) entity).isOnline()) {
             PacketUtils.sendTitle((Player) entity, "", "", 0, 0, 0);
+            List<Location> candidates = new ArrayList<>();
+            double priority = 0;
+            for (SpawnLocationMarker marker : getGame().getMarkers(SpawnLocationMarker.class)) {
+                if (candidates.isEmpty()) {
+                    candidates.add(marker.getLocation());
+                    priority = marker.getPriority(this);
+                } else {
+                    double newPriority = marker.getPriority(this);
+                    if (newPriority > priority) {
+                        candidates.clear();
+                        priority = newPriority;
+                    }
+                    candidates.add(marker.getLocation());
+                }
+            }
             setRespawnTimer(BigDecimal.valueOf(-1));
             setSpawnProtection(3);
             setEnergy(getMaxEnergy() / 2);
             setDead(false);
-            Location respawnPoint = getGame().getMap().getRespawn(getTeam());
+            Location respawnPoint
+                    = candidates.isEmpty() ? getDeathLocation()
+                    : candidates.get((int) (Math.random() * candidates.size()));
             teleport(respawnPoint);
-            new BukkitRunnable() {
+            new GameRunnable(getGame()) {
                 @Override
                 public void run() {
                     Location location = getLocation();
-                    Location respawn = getGame().getMap().getRespawn(getTeam());
-                    if (
-                            location.getWorld() != respawn.getWorld() ||
-                                    location.distanceSquared(respawn) > Warlords.SPAWN_PROTECTION_RADIUS * Warlords.SPAWN_PROTECTION_RADIUS
-                    ) {
+                    if (location.getWorld() != respawnPoint.getWorld()
+                            || location.distanceSquared(respawnPoint) > Warlords.SPAWN_PROTECTION_RADIUS * Warlords.SPAWN_PROTECTION_RADIUS) {
                         setSpawnProtection(0);
                     }
                     if (getSpawnProtection() == 0) {
                         this.cancel();
                     }
                 }
-            }.runTaskTimer(Warlords.getInstance(), 0, 5);
+            }.runTaskTimer(0, 5);
 
             this.health = this.maxHealth;
             if (deathStand != null) {
@@ -1433,28 +1443,12 @@ public final class WarlordsPlayer {
         this.powerUpHeal = powerUpHeal;
     }
 
-    public int[] getKills() {
-        return kills;
-    }
-
     public void addKill() {
-        this.kills[this.gameState.getTimer() / (20 * 60)]++;
-    }
-
-    public int getTotalKills() {
-        return IntStream.of(kills).sum();
-    }
-
-    public int[] getAssists() {
-        return assists;
+        this.stats.addKill();
     }
 
     public void addAssist() {
-        this.assists[this.gameState.getTimer() / (20 * 60)]++;
-    }
-
-    public int getTotalAssists() {
-        return IntStream.of(assists).sum();
+        this.stats.addAssist();
     }
 
     public LinkedHashMap<WarlordsPlayer, Integer> getHitBy() {
@@ -1465,74 +1459,26 @@ public final class WarlordsPlayer {
         return healedBy;
     }
 
-    public int[] getDeaths() {
-        return deaths;
-    }
-
-    public int getTotalDeaths() {
-        return IntStream.of(deaths).sum();
-    }
-
     public void addDeath() {
-        this.deaths[this.gameState.getTimer() / (20 * 60)]++;
-    }
-
-    public long[] getDamage() {
-        return damage;
+        this.stats.addDeath();
     }
 
     public void addDamage(float amount, boolean onCarrier) {
-        this.damage[this.gameState.getTimer() / (20 * 60)] += amount;
+        this.stats.addDamage((long) amount);
         if (onCarrier) {
-            this.damageOnCarrier[this.gameState.getTimer() / (20 * 60)] += amount;
+            this.stats.addDamageOnCarrier((long) amount);
         }
-    }
-
-    public long getTotalDamage() {
-        return Arrays.stream(damage).sum();
-    }
-
-    public long[] getHealing() {
-        return healing;
     }
 
     public void addHealing(float amount, boolean onCarrier) {
-        this.healing[this.gameState.getTimer() / (20 * 60)] += amount;
+        this.stats.addHealing((long) amount);
         if (onCarrier) {
-            this.healingOnCarrier[this.gameState.getTimer() / (20 * 60)] += amount;
+            this.stats.addDamageOnCarrier((long) amount);
         }
     }
 
-    public long getTotalHealing() {
-        return Arrays.stream(healing).sum();
-    }
-
-    public long[] getAbsorbed() {
-        return absorbed;
-    }
-
     public void addAbsorbed(float amount) {
-        this.absorbed[this.gameState.getTimer() / (20 * 60)] += amount;
-    }
-
-    public long getTotalAbsorbed() {
-        return Arrays.stream(absorbed).sum();
-    }
-
-    public long[] getDamageOnCarrier() {
-        return damageOnCarrier;
-    }
-
-    public long getTotalDamageOnCarrier() {
-        return Arrays.stream(damageOnCarrier).sum();
-    }
-
-    public long[] getHealingOnCarrier() {
-        return healingOnCarrier;
-    }
-
-    public long getTotalHealingOnCarrier() {
-        return Arrays.stream(healingOnCarrier).sum();
+        this.stats.addAbsorbed((long) amount);
     }
 
     public ItemStack getStatItemStack(String name) {
@@ -1540,21 +1486,22 @@ public final class WarlordsPlayer {
         ItemMeta meta = itemStack.getItemMeta();
         List<String> lore = new ArrayList<>();
         meta.setDisplayName(ChatColor.AQUA + "Stat Breakdown (" + name + "):");
-        int minute = (this.gameState.getGame().getMap().getGameTimerInTicks() - this.gameState.getTimer()) / (20 * 60);
-        int totalMinutes = (gameState.getGame().getMap().getGameTimerInTicks() / 20 / 60) - 1;
-        for (int i = 0; i < damage.length - 1 && i < minute + 1; i++) {
+        List<PlayerStatistics.Entry> entries = this.stats.getEntries();
+        int length = entries.size() - 1;
+        for (int i = 0; i < length; i++) {
+            PlayerStatistics.Entry entry = entries.get(length - i - 1);
             if (name.equals("Kills")) {
-                lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(kills[totalMinutes - i]));
+                lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(entry.kills));
             } else if (name.equals("Assists")) {
-                lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(assists[totalMinutes - i]));
+                lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(entry.assists));
             } else if (name.equals("Deaths")) {
-                lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(deaths[totalMinutes - i]));
+                lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(entry.deaths));
             } else if (name.equals("Damage")) {
-                lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(damage[totalMinutes - i]));
+                lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(entry.damage));
             } else if (name.equals("Healing")) {
-                lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(healing[totalMinutes - i]));
+                lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(entry.healing));
             } else if (name.equals("Absorbed")) {
-                lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(absorbed[totalMinutes - i]));
+                lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(entry.absorbed));
             }
         }
         meta.setLore(lore);
@@ -1591,23 +1538,25 @@ public final class WarlordsPlayer {
     }
 
     public int getFlagsCaptured() {
-        return flagsCaptured;
+        return this.stats.total().getFlagsCaptured();
     }
 
     public void addFlagCap() {
-        this.flagsCaptured++;
+        this.stats.addFlagCapture();
     }
 
+    @Deprecated
     public int getFlagsReturned() {
-        return flagsReturned;
+        return this.stats.total().getFlagsReturned();
     }
 
     public void addFlagReturn() {
-        this.flagsReturned++;
+        this.stats.addFlagReturned();
     }
 
     public int getTotalCapsAndReturnsWeighted() {
-        return (this.flagsCaptured * 5) + this.flagsReturned;
+        PlayerStatistics.Entry total = this.stats.total();
+        return (total.flagsCaptured * 5) + total.flagsReturned;
     }
 
     public int getSpawnProtection() {
@@ -1898,5 +1847,17 @@ public final class WarlordsPlayer {
 
     public void setHealPowerupDuration(int healPowerupDuration) {
         this.healPowerupDuration = healPowerupDuration;
+    }
+
+    public FlagInfo getCarriedFlag() {
+        return carriedFlag;
+    }
+
+    public void setCarriedFlag(FlagInfo carriedFlag) {
+        this.carriedFlag = carriedFlag;
+    }
+    
+    public PlayerStatistics getStats() {
+        return this.stats;
     }
 }

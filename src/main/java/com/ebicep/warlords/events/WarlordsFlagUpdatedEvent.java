@@ -15,10 +15,10 @@ public class WarlordsFlagUpdatedEvent extends Event {
     private final Team team;
     private final FlagLocation old;
 
-    public WarlordsFlagUpdatedEvent(Game game, FlagInfo info, Team team, FlagLocation old) {
+    public WarlordsFlagUpdatedEvent(Game game, FlagInfo info, FlagLocation old) {
         this.game = game;
         this.info = info;
-        this.team = team;
+        this.team = info.getTeam();
         this.old = old;
     }
 
