@@ -20,29 +20,36 @@ public class GateOption implements Option, TimerSkipAbleMarker {
     public static final int DEFAULT_GATE_DELAY = 10;
     public static final Material DEFAULT_OPEN_MATERIAL = Material.AIR;
     public static final Material DEFAULT_CLOSED_MATERIAL = Material.FENCE;
+    public static final Boolean DEFAULT_SHOULD_BROADCAST = null;
 
     private final Location min;
     private final Location max;
     private final Material closed;
     private final Material open;
+    private boolean autoDetectShouldBroadcast = true;
+    private boolean shouldBroadcast;
 
     private int delay;
     @Nonnull
     private Game game;
 
     public GateOption(Location a, Location b) {
-        this(a, b, DEFAULT_CLOSED_MATERIAL, DEFAULT_OPEN_MATERIAL, DEFAULT_GATE_DELAY);
+        this(a, b, DEFAULT_CLOSED_MATERIAL, DEFAULT_OPEN_MATERIAL, DEFAULT_GATE_DELAY, DEFAULT_SHOULD_BROADCAST);
     }
 
     public GateOption(Location a, Location b, Material closed) {
-        this(a, b, closed, DEFAULT_OPEN_MATERIAL, DEFAULT_GATE_DELAY);
+        this(a, b, closed, DEFAULT_OPEN_MATERIAL, DEFAULT_GATE_DELAY, DEFAULT_SHOULD_BROADCAST);
     }
 
     public GateOption(Location a, Location b, Material closed, Material open) {
-        this(a, b, closed, open, DEFAULT_GATE_DELAY);
+        this(a, b, closed, open, DEFAULT_GATE_DELAY, DEFAULT_SHOULD_BROADCAST);
     }
 
     public GateOption(Location a, Location b, Material closed, Material open, int delay) {
+        this(a, b, closed, open, delay, DEFAULT_SHOULD_BROADCAST);
+    }
+
+    public GateOption(Location a, Location b, Material closed, Material open, int delay, Boolean shouldBroadcast) {
         if (a.getWorld() != b.getWorld()) {
             throw new IllegalArgumentException("The worlds provided have different worlds");
         }
@@ -90,17 +97,28 @@ public class GateOption implements Option, TimerSkipAbleMarker {
                         "MAX: " + max.getX() + ", " + max.getY() + ", " + max.getZ()
                 )
         ));
+        for (Option option : game.getOptions()) {
+            if (option instanceof GateOption) {
+                GateOption gateOption = (GateOption) option;
+                if (gateOption.getDelay() == this.getDelay()) {
+                    this.shouldBroadcast = option == this;
+                    break;
+                }
+            }
+        }
     }
 
     public void openGates() {
         delay = -1;
         changeGate(closed, open);
-        game.forEachOnlinePlayer((player, team) -> {
-            sendMessage(player, false, ChatColor.YELLOW + "Gates opened! " + ChatColor.RED + "FIGHT!");
-            PacketUtils.sendTitle(player, ChatColor.GREEN + "GO!", ChatColor.YELLOW + "Steal and capture the enemy flag!", 0, 40, 20);
+        if (this.shouldBroadcast) {
+            game.forEachOnlinePlayer((player, team) -> {
+                sendMessage(player, false, ChatColor.YELLOW + "Gates opened! " + ChatColor.RED + "FIGHT!");
+                PacketUtils.sendTitle(player, ChatColor.GREEN + "GO!", ChatColor.YELLOW + "Steal and capture the enemy flag!", 0, 40, 20);
 
-            Utils.resetPlayerMovementStatistics(player);
-        });
+                Utils.resetPlayerMovementStatistics(player);
+            });
+        }
     }
 
     @Override
@@ -127,29 +145,31 @@ public class GateOption implements Option, TimerSkipAbleMarker {
                     cancel();
                     return;
                 }
-                game.forEachOnlinePlayer((player, team) -> {
-                    player.playSound(player.getLocation(), delay == 0 ? Sound.WITHER_SPAWN : Sound.NOTE_STICKS, 1, 1);
-                    String number = (delay >= 8 ? ChatColor.GREEN
-                            : delay >= 4 ? ChatColor.YELLOW
-                                    : ChatColor.RED).toString() + delay;
-                    PacketUtils.sendTitle(player, number, "", 0, 40, 0);
-                });
-                switch (delay) {
-                    case 0:
-                        openGates();
-                        cancel();
-                        break;
-                    case 1:
-                    case 2:
-                    case 3:
-                    case 4:
-                    case 5:
-                    case 10:
-                        game.forEachOnlinePlayer((player, team) -> {
-                            String s = delay == 1 ? "" : "s";
-                            sendMessage(player, false, ChatColor.YELLOW + "The gates will fall in " + ChatColor.RED + delay + ChatColor.YELLOW + " second" + s + "!");
-                        });
-                        break;
+                if (shouldBroadcast) {
+                    game.forEachOnlinePlayer((player, team) -> {
+                        player.playSound(player.getLocation(), delay == 0 ? Sound.WITHER_SPAWN : Sound.NOTE_STICKS, 1, 1);
+                        String number = (delay >= 8 ? ChatColor.GREEN
+                                : delay >= 4 ? ChatColor.YELLOW
+                                        : ChatColor.RED).toString() + delay;
+                        PacketUtils.sendTitle(player, number, "", 0, 40, 0);
+                    });
+                    switch (delay) {
+                        case 0:
+                            openGates();
+                            cancel();
+                            break;
+                        case 1:
+                        case 2:
+                        case 3:
+                        case 4:
+                        case 5:
+                        case 10:
+                            game.forEachOnlinePlayer((player, team) -> {
+                                String s = delay == 1 ? "" : "s";
+                                sendMessage(player, false, ChatColor.YELLOW + "The gates will fall in " + ChatColor.RED + delay + ChatColor.YELLOW + " second" + s + "!");
+                            });
+                            break;
+                    }
                 }
                 delay--;
             }
