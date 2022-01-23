@@ -37,7 +37,7 @@ public class SniperShot extends AbstractProjectileBase {
 
     @Override
     protected float getSoundVolume() {
-        return 3;
+        return 10;
     }
 
     @Override

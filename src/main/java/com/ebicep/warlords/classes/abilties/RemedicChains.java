@@ -23,11 +23,11 @@ public class RemedicChains extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Bind yourself to §e2 §7allies near you, PLACEHOLDER" +
-                "§7When the link expires or when you run too far away from" +
-                "§7each other the link breaks. Healing you and the allies" +
-                "§7for §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " health." +
-                "§7Breaking the link early will only heal the allies for §a10% of" +
+        description = "§7Bind yourself to §e2 §7allies near you, PLACEHOLDER\n" +
+                "§7When the link expires or when you run too far away from\n" +
+                "§7each other the link breaks. Healing you and the allies\n" +
+                "§7for §a" + format(minDamageHeal) + " §7- §a" + format(maxDamageHeal) + " §7health. Breaking the link\n" +
+                "§7early will only heal the allies for §a10% §7of\n" +
                 "§7the original amount." +
                 "\n\n" +
                 "§7The link will break if you are §e" + linkBreakRadius + " §7blocks apart.";
@@ -39,8 +39,8 @@ public class RemedicChains extends AbstractAbility {
         RemedicChains tempRemedicChain = new RemedicChains();
 
         for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "rogue.remedicchains.activation", 2, 0.4f);
-            player1.playSound(player.getLocation(), "mage.firebreath.activation", 1, 0.75f);
+            player1.playSound(player.getLocation(), "rogue.remedicchains.activation", 2, 0.5f);
+            player1.playSound(player.getLocation(), "mage.firebreath.activation", 1, 0.65f);
         }
 
         wp.getCooldownManager().addRegularCooldown(
@@ -81,7 +81,7 @@ public class RemedicChains extends AbstractAbility {
                             Location lineLocation = player.getLocation().add(0, 1, 0);
                             lineLocation.setDirection(lineLocation.toVector().subtract(chainTarget.getLocation().add(0, 1, 0).toVector()).multiply(-1));
                             for (int i = 0; i < Math.floor(player.getLocation().distance(chainTarget.getLocation())) * 2; i++) {
-                                ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(200, 200, 200), lineLocation, 500);
+                                ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(250, 200, 250), lineLocation, 500);
                                 lineLocation.add(lineLocation.getDirection().multiply(0.5));
                             }
 
@@ -96,7 +96,7 @@ public class RemedicChains extends AbstractAbility {
                                 chainTarget.addHealingInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false, false);
                             }
                             wp.addHealingInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false, false);
-                            player.playSound(wp.getLocation(), "paladin.holyradiance.activation", 0.5f, 0.6f);
+                            player.playSound(chainTarget.getLocation(), "paladin.holyradiance.activation", 0.5f, 0.7f);
                             this.cancel();
                         }
                     }
@@ -108,6 +108,5 @@ public class RemedicChains extends AbstractAbility {
         }
 
         return false;
-
     }
 }
