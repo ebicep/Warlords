@@ -319,7 +319,7 @@ public class PreLobbyState implements State, TimerDebugAble {
             }
             timer--;
         } else {
-            timer = game.isPrivate() ? game.getMap().getCountdownTimerInTicks() : 60 * 20;
+            timer = game.getMap().getCountdownTimerInTicks();
             game.forEachOnlinePlayer((player, team) -> giveLobbyScoreboard(false, player));
         }
         return null;
