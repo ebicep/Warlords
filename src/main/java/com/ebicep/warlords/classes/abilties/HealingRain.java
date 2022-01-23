@@ -2,8 +2,8 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
-import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.PlayerFilter;
 import com.ebicep.warlords.util.Utils;
 import org.bukkit.Bukkit;
@@ -65,7 +65,7 @@ public class HealingRain extends AbstractAbility {
                 if (!wp.getGame().isGameFreeze()) {
                     if (wp.isAlive() && player.isSneaking() && !wasSneaking) {
                         player.playSound(player.getLocation(), "mage.timewarp.teleport", 2, 1.35f);
-                        player.sendMessage("§7You moved your §aHealing Rain §7to your current location.");
+                        player.sendMessage(WarlordsPlayer.RECEIVE_ARROW + "§7You moved your §aHealing Rain §7to your current location.");
                         hr.setLocation(player.getLocation());
                     }
 
