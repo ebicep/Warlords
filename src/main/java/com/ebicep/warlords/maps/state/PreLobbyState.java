@@ -527,6 +527,8 @@ public class PreLobbyState implements State, TimerDebugAble {
             player.setGameMode(GameMode.ADVENTURE);
             
             PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
+            Classes selectedClass = playerSettings.getSelectedClass();
+            AbstractPlayerClass apc = selectedClass.create.get();
 
             player.getInventory().setItem(5, new ItemBuilder(Material.NOTE_BLOCK)
                     .name(ChatColor.GREEN + "Team Selector " + ChatColor.GRAY + "(Right-Click)")
@@ -542,12 +544,6 @@ public class PreLobbyState implements State, TimerDebugAble {
                     .name("§aWeapon Skin Preview")
                     .lore("")
                     .get());
-
-            PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
-            Classes selectedClass = playerSettings.getSelectedClass();
-            AbstractPlayerClass apc = selectedClass.create.get();
-
-
 
             // teleport player
             ArmorManager.resetArmor(player, Warlords.getPlayerSettings(player.getUniqueId()).getSelectedClass(), team);

@@ -622,6 +622,8 @@ public class Warlords extends JavaPlugin {
                             // warlordsPlayer.respawn();
                             if (player != null) {
                                 player.setGameMode(GameMode.SPECTATOR);
+                                //precaution
+                                wp.getGameState().flags().dropFlag(wp);
                             }
 
                             //giving out assists
