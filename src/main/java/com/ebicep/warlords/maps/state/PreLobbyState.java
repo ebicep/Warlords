@@ -6,21 +6,23 @@ import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.GameAddon;
 import com.ebicep.warlords.maps.Team;
+import com.ebicep.warlords.maps.option.marker.LobbyLocationMarker;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.sr.SRCalculator;
 import com.ebicep.warlords.util.ChatUtils;
+import com.ebicep.warlords.util.ItemBuilder;
+import com.ebicep.warlords.util.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.*;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.util.ChatUtils.sendMessage;
-import com.ebicep.warlords.util.ItemBuilder;
-import org.bukkit.*;
 
 public class PreLobbyState implements State, TimerDebugAble {
 
@@ -503,11 +505,18 @@ public class PreLobbyState implements State, TimerDebugAble {
 
     @Override
     public void onPlayerJoinGame(OfflinePlayer op, boolean asSpectator) {
-        if(asSpectator) {
-            
-        } else {
+        if (!asSpectator) {
             Team team = Warlords.getPlayerSettings(op.getUniqueId()).getWantedTeam();
-            game.setPlayerTeam(op, team == null ? Team.BLUE : team);
+            Team finalTeam = team == null ? Team.BLUE : team;
+            game.setPlayerTeam(op, finalTeam );
+            List<LobbyLocationMarker> lobbies = game.getMarkers(LobbyLocationMarker.class);
+            LobbyLocationMarker location = lobbies.stream().filter(e -> e.matchesTeam(finalTeam)).collect(Utils.randomElement());
+            if (location == null) {
+                location = lobbies.stream().collect(Utils.randomElement()); 
+            }
+            if (location != null) {
+                Warlords.setRejoinPoint(op.getUniqueId(), location.getLocation());
+            }
         }
     }
 
@@ -515,9 +524,9 @@ public class PreLobbyState implements State, TimerDebugAble {
     public void onPlayerReJoinGame(Player player) {
         State.super.onPlayerReJoinGame(player);
         Team team = game.getPlayerTeam(player.getUniqueId());
+        player.getActivePotionEffects().clear();
         
-        if(team == null) {
-            
+        if (team == null) {
             player.getInventory().clear();
             player.setAllowFlight(true);
             player.setGameMode(GameMode.SPECTATOR);
@@ -545,8 +554,19 @@ public class PreLobbyState implements State, TimerDebugAble {
                     .lore("")
                     .get());
 
-            // teleport player
             ArmorManager.resetArmor(player, Warlords.getPlayerSettings(player.getUniqueId()).getSelectedClass(), team);
+        }
+        
+        List<LobbyLocationMarker> lobbies = game.getMarkers(LobbyLocationMarker.class);
+        LobbyLocationMarker location = lobbies.stream().filter(e -> e.matchesTeam(team)).collect(Utils.randomElement());
+        if (location == null) {
+            location = lobbies.stream().collect(Utils.randomElement()); 
+        }
+        if (location != null) {
+            player.teleport(location.getLocation());
+            Warlords.setRejoinPoint(player.getUniqueId(), location.getLocation());
+        } else {
+            System.out.println("Unable to warp player to lobby!, no lobby marker found");
         }
     }
 

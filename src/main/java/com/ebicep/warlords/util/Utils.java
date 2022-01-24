@@ -15,8 +15,11 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 
@@ -357,4 +360,42 @@ public class Utils {
     public static <T> Iterable<T> iterable(@Nonnull Stream<T> stream) {
         return stream::iterator;
     }
+    
+    /**
+     * Collector to pick a random element from a <code>Stream</code>
+     * @param <T> The type of the element
+     * @return A collector for picking a random element, or null if the stream is empty
+     * @see Stream#collect(java.util.stream.Collector) 
+     */
+    public static <T> Collector<T, Pair<Integer, T>, T> randomElement() {
+        return Collector.of(
+                () -> new Pair<>(0, null),
+                (i, a) -> {
+                    int count = i.getA();
+                    if(count == 0) {
+                        i.setA(1);
+                        i.setB(a);
+                    } else {
+                        i.setA(count + 1);
+                        if (Math.random() < 1d / count) {
+                            i.setB(a);
+                        }
+                    }
+                },
+                (a, b) -> {
+                    int count = a.getA() + b.getA();
+                    if (Math.random() * count >= a.getA()) {
+                        a.setB(b.getB());
+                    }
+                    a.setA(count);
+                    return a;
+                },
+                (i) -> {
+                    return i.getB();
+                },
+                Collector.Characteristics.CONCURRENT,
+                Collector.Characteristics.UNORDERED
+        );
+    }
+    
 }
