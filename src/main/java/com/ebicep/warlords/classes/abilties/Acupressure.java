@@ -16,7 +16,7 @@ import javax.annotation.Nonnull;
 
 public class Acupressure extends AbstractAbility {
 
-    private final int acuRange = 6;
+    private final int acuRange = 10;
     private final int duration = 6;
 
     public Acupressure() {

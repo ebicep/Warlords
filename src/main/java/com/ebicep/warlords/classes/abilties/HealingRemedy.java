@@ -68,7 +68,7 @@ public class HealingRemedy extends AbstractProjectileBase {
         med.getLocation().add(0, 1, 0);
 
         for (Player player1 : shooter.getWorld().getPlayers()) {
-            player1.playSound(currentLocation, "mage.arcaneshield.activation", 2, 0.7f);
+            player1.playSound(currentLocation, "rogue.healingremedy.impact", 2, 0.6f);
         }
 
         FireWorkEffectPlayer.playFirework(currentLocation, FireworkEffect.builder()

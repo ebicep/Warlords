@@ -111,9 +111,7 @@ public class HealingRain extends AbstractAbility {
                         }
                     }
 
-                }.runTaskTimer(Warlords.getInstance(), 0, 10),
-                System.currentTimeMillis()
-        );
+                }.runTaskTimer(Warlords.getInstance(), 0, 10), System.currentTimeMillis());
 
         wp.getGame().getGameTasks().put(
 
@@ -126,9 +124,7 @@ public class HealingRain extends AbstractAbility {
                         }
                     }
 
-                }.runTaskTimer(Warlords.getInstance(), 0, 20),
-                System.currentTimeMillis()
-        );
+                }.runTaskTimer(Warlords.getInstance(), 0, 20), System.currentTimeMillis());
 
         return true;
     }

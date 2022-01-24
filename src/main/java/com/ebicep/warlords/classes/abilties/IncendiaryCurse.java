@@ -12,7 +12,7 @@ import java.util.HashSet;
 public class IncendiaryCurse extends AbstractAbility {
 
     public IncendiaryCurse() {
-        super("Incendiary Curse", 408, 575, 10f, 30, 25, 175);
+        super("Incendiary Curse", 408, 575, 10, 30, 15, 175);
     }
 
     @Override

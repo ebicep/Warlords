@@ -35,9 +35,9 @@ public enum ClassesGroup {
             THUNDERLORD, SPIRITGUARD, EARTHWARDEN
     ),
     ROGUE(
-            "Rogueeee",
+            "Rogue",
             new ItemStack(Material.INK_SACK, 1, (short) 2),
-            "§7The Rogueeee is a master of deception.\n§7Always looking to gain the upper hand\n§7in the shadows.",
+            "§7The Rogue is a master of deception.\n§7Always looking to gain the upper hand\n§7in the shadows.",
             ASSASSIN, VINDICATOR, APOTHECARY
     )
     ;

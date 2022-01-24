@@ -2,8 +2,8 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
-import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.Matrix4d;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
@@ -32,10 +32,9 @@ public class HeartToHeart extends AbstractAbility {
     @Override
     public void updateDescription(Player player) {
         description = "§7Throw a chain towards an ally in a §e" + radius + " §7block\n" +
-                "§7radius, grappling the Vindicator towards the ally. The grappled\n" +
-                "§7ally is granted §6" + vindDuration + " §7seconds of the VIND status\n" +
-                "§7effect, making them immune to de-buffs and they gain §625%\n" +
-                "§7knockback resistance the duration.";
+                "§7radius, grappling the Vindicator towards the ally.\n" +
+                "§7The grappled ally is granted §6" + vindDuration + " §7seconds\n" +
+                "§7effect, making them immune to de-buffs.";
     }
 
     @Override
@@ -58,8 +57,6 @@ public class HeartToHeart extends AbstractAbility {
                 wp.subtractEnergy(energyCost);
 
                 heartTarget.getCooldownManager().addRegularCooldown("Vindicate Debuff Immunity", "VIND", HeartToHeart.class, tempHeartToHeart, wp, CooldownTypes.BUFF, cooldownManager -> {
-                }, vindDuration * 20);
-                heartTarget.getCooldownManager().addRegularCooldown("KB Resistance", "KB", HeartToHeart.class, tempHeartToHeart, wp, CooldownTypes.BUFF, cooldownManager -> {
                 }, vindDuration * 20);
 
                 new BukkitRunnable() {

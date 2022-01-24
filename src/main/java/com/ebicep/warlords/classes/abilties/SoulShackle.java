@@ -2,8 +2,8 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
-import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
 import com.ebicep.warlords.util.Utils;
@@ -44,6 +44,7 @@ public class SoulShackle extends AbstractAbility {
                 .entitiesAround(player, shackleRange, shackleRange, shackleRange)
                 .aliveEnemiesOf(wp)
                 .lookingAtFirst(wp)
+                .requireLineOfSight(wp)
                 .limit(1)
         ) {
             if (Utils.isLookingAtMark(player, shackleTarget.getEntity()) && Utils.hasLineOfSight(player, shackleTarget.getEntity())) {

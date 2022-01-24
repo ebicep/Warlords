@@ -69,7 +69,7 @@ public class DrainingMiasma extends AbstractAbility {
                                 public void run() {
                                     float healthDamage = miasmaTarget.getHealth() * 0.04f;
                                     if (miasmaTarget.getCooldownManager().hasCooldown(tempDrainingMiasma)) {
-                                        // 6% current health damage.
+                                        // 4% current health damage.
                                         miasmaTarget.addDamageInstance(wp, "Draining Miasma", healthDamage, healthDamage, -1, 100, false);
                                         totalDamage += healthDamage;
 

@@ -118,7 +118,7 @@ public class OrbsOfLife extends AbstractAbility {
                                         System.currentTimeMillis()
                                 );
 
-                                player.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GREEN + "Your current orbs will now levitate towards you or a teammate!");
+                                player.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + "Your current " + ChatColor.GREEN + name + ChatColor.GRAY + " will now levitate towards you or a teammate!");
                                 for (Player player1 : player.getWorld().getPlayers()) {
                                     player1.playSound(player.getLocation(), Sound.LEVEL_UP, 0.85f, 0.7f);
                                 }

@@ -3,8 +3,8 @@ package com.ebicep.warlords.classes.abilties;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
-import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.EffectUtils;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
@@ -25,14 +25,15 @@ public class Vindicate extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Allies within an §e" + radius + " §7block radius gain" +
-                "§7the status §6VIND §7which clears all ally debuffs. In" +
-                "§7addition, the status §6VIND §7prevents allies from being" +
-                "§7affected by debuffs and grants §625% §7knockback resistance" +
-                "§7for §6" + vindicateDuration + " §7seconds. You gain" +
-                "§e25% §7damage reduction for " + vindicateDuration + " seconds instead." +
-                "§7Each ally within your Vindicate radius increases" +
-                "§7the duration by §61 §7second. (up to §610 §7seconds)";
+        description = "§7Allies within an §e" + radius + " §7block radius gain\n" +
+                "§7the status §6VIND §7which clears all de-buffs. In\n" +
+                "§7addition, the status §6VIND §7prevents allies from being\n" +
+                "§7affected by de-buffs and grants §625% §7knockback resistance\n" +
+                "§7for §6" + vindicateDuration + " §7seconds." +
+                "\n\n" +
+                "§7You gain §e25% §7damage reduction for " + vindicateDuration + " seconds instead.\n" +
+                "§7Each ally within your Vindicate radius increases\n" +
+                "§7the duration by §61 §7second. (up to §610 §7seconds.)";
     }
 
     @Override

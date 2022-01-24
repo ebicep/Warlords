@@ -578,16 +578,18 @@ public class GameMenu {
         );
 
         ClassesSkillBoosts selectedBoost = playerSettings.getSkillBoostForClass();
-        if (apc.getWeapon().getClass() == selectedBoost.ability) {
-            apc.getWeapon().boostSkill(selectedBoost, apc);
-        } else if (apc.getRed().getClass() == selectedBoost.ability) {
-            apc.getRed().boostSkill(selectedBoost, apc);
-        } else if (apc.getPurple().getClass() == selectedBoost.ability) {
-            apc.getPurple().boostSkill(selectedBoost, apc);
-        } else if (apc.getBlue().getClass() == selectedBoost.ability) {
-            apc.getBlue().boostSkill(selectedBoost, apc);
-        } else if (apc.getOrange().getClass() == selectedBoost.ability) {
-            apc.getOrange().boostSkill(selectedBoost, apc);
+        if (selectedBoost != null) {
+            if (apc.getWeapon().getClass() == selectedBoost.ability) {
+                apc.getWeapon().boostSkill(selectedBoost, apc);
+            } else if (apc.getRed().getClass() == selectedBoost.ability) {
+                apc.getRed().boostSkill(selectedBoost, apc);
+            } else if (apc.getPurple().getClass() == selectedBoost.ability) {
+                apc.getPurple().boostSkill(selectedBoost, apc);
+            } else if (apc.getBlue().getClass() == selectedBoost.ability) {
+                apc.getBlue().boostSkill(selectedBoost, apc);
+            } else if (apc.getOrange().getClass() == selectedBoost.ability) {
+                apc.getOrange().boostSkill(selectedBoost, apc);
+            }
         }
 
         apc.getWeapon().updateDescription(player);

@@ -16,8 +16,8 @@ import com.ebicep.warlords.maps.flags.GroundFlagLocation;
 import com.ebicep.warlords.maps.flags.PlayerFlagLocation;
 import com.ebicep.warlords.maps.state.PlayingState;
 import com.ebicep.warlords.player.cooldowns.AbstractCooldown;
-import com.ebicep.warlords.player.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.cooldowns.CooldownFilter;
+import com.ebicep.warlords.player.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.*;
@@ -195,6 +195,10 @@ public final class WarlordsPlayer {
             critMultiplier += attacker.getSpec().getOrange().getCritMultiplier();
         }
 
+        if (attacker.getCooldownManager().hasCooldown(CrossVital.class) && !isMeleeHit) {
+            critMultiplier += attacker.getSpec().getBlue().getCritMultiplier();
+        }
+
         // Assassin Mark crit chance increase
         if (attacker.getCooldownManager().hasCooldown(OrderOfEviscerate.class)) {
             if (!Utils.isLineOfSightAssassin(getEntity(), attacker.getEntity())) {
@@ -202,7 +206,7 @@ public final class WarlordsPlayer {
             }
         }
 
-        // Assasin takes damage, remove ability.
+        // Assassin takes damage, remove ability.
         if (getCooldownManager().hasCooldownFromName("Cloaked")) {
             getCooldownManager().removeCooldownByName("Cloaked");
             this.getEntity().removePotionEffect(PotionEffectType.INVISIBILITY);
@@ -597,13 +601,14 @@ public final class WarlordsPlayer {
                     attacker.addHealingInstance(attacker, "Leech", min * 0.5f, max * 0.5f, isCrit ? 100 : -1, 200, false, false);
                 }
 
-
+                // Judgement Strike
                 if (ability.equals("Judgement Strike")) {
                     if (isCrit) {
                         attacker.getSpeed().addSpeedModifier("Judgement Speed", 20, 2 * 20, "BASE");
                     }
                 }
 
+                // Assassin Mark
                 if (attacker.getCooldownManager().hasCooldown(OrderOfEviscerate.class)) {
                     if (attacker.getMarkedTarget() != uuid) {
                         attacker.sendMessage("You have marked " + getName());
@@ -658,6 +663,11 @@ public final class WarlordsPlayer {
                             p.updateOrangeItem();
                         }
                     });
+
+                    // Cross Vital speed on death.
+                    if (attacker.getCooldownManager().hasCooldown(CrossVital.class)) {
+                        attacker.getSpeed().addSpeedModifier("Cross Vital Speed", 40, 4 * 20, "BASE");
+                    }
 
                     // Regular Kill Feed
                     gameState.getGame().forEachOnlinePlayer((p, t) -> {
@@ -1110,21 +1120,23 @@ public final class WarlordsPlayer {
 
     public void applySkillBoost(Player player) {
         ClassesSkillBoosts selectedBoost = Classes.getSelectedBoost(Bukkit.getOfflinePlayer(uuid));
-        if (spec.getWeapon().getClass() == selectedBoost.ability) {
-            spec.getWeapon().boostSkill(selectedBoost, spec);
-            spec.getWeapon().updateDescription(player);
-        } else if (spec.getRed().getClass() == selectedBoost.ability) {
-            spec.getRed().boostSkill(selectedBoost, spec);
-            spec.getRed().updateDescription(player);
-        } else if (spec.getPurple().getClass() == selectedBoost.ability) {
-            spec.getPurple().boostSkill(selectedBoost, spec);
-            spec.getPurple().updateDescription(player);
-        } else if (spec.getBlue().getClass() == selectedBoost.ability) {
-            spec.getBlue().boostSkill(selectedBoost, spec);
-            spec.getBlue().updateDescription(player);
-        } else if (spec.getOrange().getClass() == selectedBoost.ability) {
-            spec.getOrange().boostSkill(selectedBoost, spec);
-            spec.getOrange().updateDescription(player);
+        if (selectedBoost != null) {
+            if (spec.getWeapon().getClass() == selectedBoost.ability) {
+                spec.getWeapon().boostSkill(selectedBoost, spec);
+                spec.getWeapon().updateDescription(player);
+            } else if (spec.getRed().getClass() == selectedBoost.ability) {
+                spec.getRed().boostSkill(selectedBoost, spec);
+                spec.getRed().updateDescription(player);
+            } else if (spec.getPurple().getClass() == selectedBoost.ability) {
+                spec.getPurple().boostSkill(selectedBoost, spec);
+                spec.getPurple().updateDescription(player);
+            } else if (spec.getBlue().getClass() == selectedBoost.ability) {
+                spec.getBlue().boostSkill(selectedBoost, spec);
+                spec.getBlue().updateDescription(player);
+            } else if (spec.getOrange().getClass() == selectedBoost.ability) {
+                spec.getOrange().boostSkill(selectedBoost, spec);
+                spec.getOrange().updateDescription(player);
+            }
         }
     }
 
