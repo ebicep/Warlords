@@ -182,7 +182,7 @@ public class WarlordsEvents implements Listener {
             ChatUtils.sendCenteredMessage(player, "");
             ChatUtils.sendCenteredMessage(player, ChatColor.GOLD + "Make sure to join our discord if you wish to stay up-to-date with our most recent patches, interact with our community and make bug reports or game suggestions at: " + ChatColor.RED + "§ldiscord.gg/566K5PQz");
             ChatUtils.sendCenteredMessage(player, "");
-            ChatUtils.sendCenteredMessage(player, ChatColor.GOLD + "You may download our resource pack at: " + ChatColor.RED + "§lhttps://bit.ly/3285WkL");
+            ChatUtils.sendCenteredMessage(player, ChatColor.GOLD + "You may download our resource pack at: " + ChatColor.RED + "§lhttps://discord.gg/GWPAx9sEG7");
             ChatUtils.sendCenteredMessage(player, "");
             ChatUtils.sendCenteredMessage(player, ChatColor.RED + "DISCLAIMER: " + ChatColor.GRAY + "Non-competitive players should take notice that we are currently in BETA for our public queue. This means that the server will regularly be unavailable when we host our private games during weekends!");
             ChatUtils.sendCenteredMessage(player, ChatColor.BLUE + "-----------------------------------------------------");
@@ -198,6 +198,7 @@ public class WarlordsEvents implements Listener {
                     .getOrDefault(selectedClass, Weapons.FELFLAME_BLADE).item)).name("§aWeapon Skin Preview")
                     .lore("")
                     .get());
+
             if (player.hasPermission("warlords.game.debug")) {
                 player.getInventory().setItem(3, new ItemBuilder(Material.EMERALD).name("§aDebug Menu").get());
             }
