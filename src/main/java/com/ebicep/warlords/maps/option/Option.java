@@ -14,7 +14,7 @@ public interface Option {
      * game, attempting to register an option to multiple game instances may
      * yield undefined behavior.
      *
-     * @param game The game
+     * @param game The game instance
      */
     public default void register(@Nonnull Game game) {
     }
@@ -27,5 +27,14 @@ public interface Option {
      * @param game The game instance
      */
     public default void start(@Nonnull Game game) {
+    }
+    
+    /**
+     * Called when the game transitions to a closed state. Generally, the game
+     * no longer accepts players, and players can leave the game without
+     * affecting their standings.
+     * @param game The game instance
+     */
+    public default void onGameEnding(@Nonnull Game game) {
     }
 }

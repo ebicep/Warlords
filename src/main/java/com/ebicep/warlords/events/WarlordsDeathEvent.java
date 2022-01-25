@@ -1,15 +1,16 @@
 package com.ebicep.warlords.events;
 
 import com.ebicep.warlords.player.WarlordsPlayer;
-import org.bukkit.event.Event;
+import javax.annotation.Nonnull;
 import org.bukkit.event.HandlerList;
 
-public class WarlordsDeathEvent extends Event {
+public class WarlordsDeathEvent extends WarlordsGameEvent {
 
     private static final HandlerList handlers = new HandlerList();
     private final WarlordsPlayer player;
 
-    public WarlordsDeathEvent(WarlordsPlayer player) {
+    public WarlordsDeathEvent(@Nonnull WarlordsPlayer player) {
+        super(player.getGame());
         this.player = player;
     }
 

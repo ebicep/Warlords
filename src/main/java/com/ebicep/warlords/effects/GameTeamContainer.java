@@ -25,7 +25,7 @@ public class GameTeamContainer {
     }
 
     public static Stream<Player> getAllyPlayers(Game game, Team team) {
-        return game.onlinePlayers().filter(e -> e.getValue() == team).map(e -> e.getKey());
+        return game.onlinePlayersWithoutSpectators().filter(e -> e.getValue() == team).map(e -> e.getKey());
     }
 
     public Stream<Player> getEnemyPlayers() {
@@ -33,7 +33,7 @@ public class GameTeamContainer {
     }
 
     public static Stream<Player> getEnemyPlayers(Game game, Team team) {
-        return game.onlinePlayers().filter(e -> e.getValue() != team).map(e -> e.getKey());
+        return game.onlinePlayersWithoutSpectators().filter(e -> e.getValue() != team).map(e -> e.getKey());
     }
 
 }

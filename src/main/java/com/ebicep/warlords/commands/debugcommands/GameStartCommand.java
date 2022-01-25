@@ -157,7 +157,13 @@ public class GameStartCommand implements TabExecutor {
             isValid = false;
         }
         if (category == null && map == null && !seenMapOrCategory) {
-            sender.sendMessage(ChatColor.RED + "Creating a game with no category and map is unusual, pass category:null if you really mean this");
+            sender.sendMessage(ChatColor.RED + "Creating a game with no category and map is unusual, pass category:null or map:null if you really mean this");
+        }
+        for (GameAddon a : addon) {
+            if (!a.hasPermission(sender)) {
+                sender.sendMessage("You do not have the permission to use addon:" + a);
+                isValid = false;
+            }
         }
         if (!isValid) {
             return null;

@@ -7,23 +7,18 @@ import com.ebicep.warlords.maps.flags.FlagLocation;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-public class WarlordsFlagUpdatedEvent extends Event {
+public class WarlordsFlagUpdatedEvent extends WarlordsGameEvent {
 
     private static final HandlerList handlers = new HandlerList();
-    private final Game game;
     private final FlagInfo info;
     private final Team team;
     private final FlagLocation old;
 
     public WarlordsFlagUpdatedEvent(Game game, FlagInfo info, FlagLocation old) {
-        this.game = game;
+        super(game);
         this.info = info;
         this.team = info.getTeam();
         this.old = old;
-    }
-
-    public Game getGame() {
-        return game;
     }
 
     public FlagInfo getInfo() {

@@ -58,7 +58,7 @@ public class SpawnpointOption extends MarkerOption {
                     Location cache = new Location(null, 0, 0, 0);
                     Map<Boolean, Double> distances = p
                             .getGame()
-                            .offlinePlayers()
+                            .offlinePlayersWithoutSpectators()
                             .map(w -> Warlords.getPlayer(w.getKey()))
                             .filter(o -> o != null && o.isAlive())
                             .collect(Collectors.groupingBy(

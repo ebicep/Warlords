@@ -2,7 +2,9 @@ package com.ebicep.warlords.commands.debugcommands;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.BaseCommand;
+import com.ebicep.warlords.maps.GameAddon;
 import com.ebicep.warlords.maps.Team;
+import com.ebicep.warlords.maps.option.marker.TeamMarker;
 import com.ebicep.warlords.player.PlayerSettings;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import org.bukkit.Bukkit;
@@ -29,40 +31,41 @@ public class SpawnTestDummyCommand implements CommandExecutor {
             return true;
         }
 
-        if (!Warlords.game.isPrivate()) {
+        if (player == null) {
+            return true;
+        }
+        if (!player.getGame().getAddons().contains(GameAddon.PRIVATE_GAME)) {
             sender.sendMessage("§cDebug commands are disabled in public games!");
             return true;
         }
-
-        if (player != null) {
-            if (args.length >= 1) {
-                String teamString = args[0];
-                if (teamString.equalsIgnoreCase("blue") || teamString.equalsIgnoreCase("red")) {
-                    Team team = teamString.equalsIgnoreCase("blue") ? Team.BLUE : Team.RED;
-                    OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer("testdummy");
-                    Warlords.addPlayer(new WarlordsPlayer(offlinePlayer, player.getGameState(), team, new PlayerSettings()));
-                    WarlordsPlayer testDummy = Warlords.getPlayer(offlinePlayer);
-                    if (args.length >= 2) {
-                        if (args[1].equalsIgnoreCase("false")) {
-                            assert testDummy != null;
-                            testDummy.setTakeDamage(false);
-                        } else {
-                            sender.sendMessage("§cInvalid arguments! Valid arguments: [true, false]");
-                        }
+        if (args.length >= 1) {
+            String teamString = args[0];
+            player.getGame().getMarkers(TeamMarker)
+            if (teamString.equalsIgnoreCase("blue") || teamString.equalsIgnoreCase("red")) {
+                Team team = teamString.equalsIgnoreCase("blue") ? Team.BLUE : Team.RED;
+                OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer("testdummy");
+                Warlords.addPlayer(new WarlordsPlayer(offlinePlayer, player.getGameState(), team, new PlayerSettings()));
+                WarlordsPlayer testDummy = Warlords.getPlayer(offlinePlayer);
+                if (args.length >= 2) {
+                    if (args[1].equalsIgnoreCase("false")) {
+                        assert testDummy != null;
+                        testDummy.setTakeDamage(false);
+                    } else {
+                        sender.sendMessage("§cInvalid arguments! Valid arguments: [true, false]");
                     }
-                    Objects.requireNonNull(testDummy).teleport(player.getLocation());
-                    //SKULL
-                    ItemStack playerSkull = new ItemStack(Material.SKULL_ITEM, 1, (short) SkullType.PLAYER.ordinal());
-                    SkullMeta skullMeta = (SkullMeta) playerSkull.getItemMeta();
-                    skullMeta.setOwner(offlinePlayer.getName());
-                    playerSkull.setItemMeta(skullMeta);
-                    Warlords.getPlayerHeads().put(offlinePlayer.getUniqueId(), CraftItemStack.asNMSCopy(playerSkull));
-
-
-
-                } else {
-
                 }
+                Objects.requireNonNull(testDummy).teleport(player.getLocation());
+                //SKULL
+                ItemStack playerSkull = new ItemStack(Material.SKULL_ITEM, 1, (short) SkullType.PLAYER.ordinal());
+                SkullMeta skullMeta = (SkullMeta) playerSkull.getItemMeta();
+                skullMeta.setOwner(offlinePlayer.getName());
+                playerSkull.setItemMeta(skullMeta);
+                Warlords.getPlayerHeads().put(offlinePlayer.getUniqueId(), CraftItemStack.asNMSCopy(playerSkull));
+
+
+
+            } else {
+
             }
         }
         return true;

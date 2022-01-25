@@ -20,7 +20,7 @@ public class GameFreezeWhenOfflineOption implements Option {
         new GameRunnable(game) {
             @Override
             public void run() {
-                boolean anyOffline = game.offlinePlayers().anyMatch(e -> !e.getKey().isOnline());
+                boolean anyOffline = game.offlinePlayersWithoutSpectators().anyMatch(e -> !e.getKey().isOnline());
                 if (isFrozen) {
                     if (anyOffline) {
                         timer = 0;

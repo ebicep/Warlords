@@ -2,7 +2,9 @@ package com.ebicep.warlords.maps;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.events.WarlordsEvents;
+import com.ebicep.warlords.events.WarlordsGameEvent;
 import com.ebicep.warlords.events.WarlordsGameUpdatedEvent;
+import com.ebicep.warlords.events.WarlordsPointsChangedEvent;
 import com.ebicep.warlords.maps.option.Option;
 import com.ebicep.warlords.maps.option.marker.GameMarker;
 import com.ebicep.warlords.maps.option.GameFreezeOption;
@@ -11,6 +13,7 @@ import com.ebicep.warlords.maps.state.*;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.LocationFactory;
 import static com.ebicep.warlords.util.Utils.collectionHasItem;
+import java.lang.reflect.Method;
 import org.apache.commons.lang.Validate;
 import org.bukkit.*;
 import org.bukkit.command.Command;
@@ -23,15 +26,30 @@ import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.bukkit.event.Event;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.plugin.IllegalPluginAccessException;
+import org.bukkit.plugin.RegisteredListener;
 
 /**
- * An instance of an Warlords game. It depends on a
+ * An instance of an Warlords game. It depends on a state for its behavior. You
+ * can also attach GameAddons to modify its global behavior, and attach options
+ * to add specific small things.
+ * 
+ * @see State
+ * @see GameAddon
+ * @see Option
  */
 public final class Game implements Runnable, AutoCloseable {
 
+    private static final int SCORE_KILL_POINTS = 5;
+    private static final int SCORE_CAPTURE_POINTS = 250;
+
+    private final UUID gameId = UUID.randomUUID();
     public static final String KEY_UPDATED_FROZEN = "frozen";
 
     private final Map<UUID, Team> players = new HashMap<>();
@@ -39,6 +57,7 @@ public final class Game implements Runnable, AutoCloseable {
     private final List<ScoreboardHandler> scoreboardHandlers = new CopyOnWriteArrayList<>();
     private final List<BukkitTask> gameTasks = new ArrayList<>();
     private final List<Listener> eventHandlers = new ArrayList<>();
+    private final EnumMap<Team, Stats> stats = new EnumMap(Team.class);
 
     @Nonnull
     private final GameMap map;
@@ -55,13 +74,11 @@ public final class Game implements Runnable, AutoCloseable {
     private State nextState = null;
     private boolean closed = false;
     private final List<String> frozenCauses = new CopyOnWriteArrayList<>();
-    private transient boolean frozenCached = false;
     private int maxPlayers;
     private int minPlayers;
     private boolean acceptsPlayers;
     private boolean acceptsSpectators;
     private final LocationFactory locations;
-    private final EnumMap<Team, Long> points = new EnumMap<>(Team.class);
 
     public Game(EnumSet<GameAddon> gameAddons, GameMap map, MapCategory category, LocationFactory locations) {
         this.locations = locations;
@@ -152,7 +169,7 @@ public final class Game implements Runnable, AutoCloseable {
      * @return true if the game is frozen
      */
     public boolean isFrozen() {
-        return frozenCached;
+        return !frozenCauses.isEmpty();
     }
 
     @Nonnull
@@ -162,29 +179,25 @@ public final class Game implements Runnable, AutoCloseable {
 
     public void addFrozenCause(String cause) {
         frozenCauses.add(cause);
-        boolean oldFrozenCached = frozenCached;
-        frozenCached = true;
-        if (oldFrozenCached != frozenCached) {
-            Bukkit.getPluginManager().callEvent(new WarlordsGameUpdatedEvent(this, KEY_UPDATED_FROZEN));
-        }
+        Bukkit.getPluginManager().callEvent(new WarlordsGameUpdatedEvent(this, KEY_UPDATED_FROZEN));
     }
 
     public void removeFrozenCause(String cause) {
         frozenCauses.remove(cause);
-        boolean oldFrozenCached = frozenCached;
-        frozenCached = !frozenCauses.isEmpty();
-        if (oldFrozenCached != frozenCached) {
-            Bukkit.getPluginManager().callEvent(new WarlordsGameUpdatedEvent(this, KEY_UPDATED_FROZEN));
-        }
+        Bukkit.getPluginManager().callEvent(new WarlordsGameUpdatedEvent(this, KEY_UPDATED_FROZEN));
     }
 
     public void clearFrozenCause() {
         frozenCauses.clear();
-        boolean oldFrozenCached = frozenCached;
-        frozenCached = false;
-        if (oldFrozenCached != frozenCached) {
-            Bukkit.getPluginManager().callEvent(new WarlordsGameUpdatedEvent(this, KEY_UPDATED_FROZEN));
-        }
+        Bukkit.getPluginManager().callEvent(new WarlordsGameUpdatedEvent(this, KEY_UPDATED_FROZEN));
+    }
+
+    /**
+     * An unique id assigned to this game.
+     * @return The UUID belonging to this game
+     */
+    public UUID getGameId() {
+        return gameId;
     }
 
     @Nonnull
@@ -398,18 +411,24 @@ public final class Game implements Runnable, AutoCloseable {
         return this.players.entrySet().stream().map(e -> Warlords.getPlayer(e.getKey())).filter(Objects::nonNull);
     }
 
-    public Stream<Map.Entry<OfflinePlayer, Team>> offlinePlayers() {
-        return this.players.entrySet()
-                .stream()
-                .map(e -> new AbstractMap.SimpleImmutableEntry<>(
-                Bukkit.getOfflinePlayer(e.getKey()),
-                e.getValue()
-        ));
+    public Stream<Map.Entry<UUID, Team>> players() {
+        return this.players.entrySet().stream();
     }
 
-    public Stream<Map.Entry<Player, Team>> onlinePlayers() {
-        return this.players.entrySet()
-                .stream()
+    public Stream<Map.Entry<UUID, Team>> playersWithoutSpectators() {
+        return this.players.entrySet().stream().filter(e -> e.getValue() != null);
+    }
+
+    public Stream<Map.Entry<OfflinePlayer, Team>> offlinePlayersWithoutSpectators() {
+        return playersWithoutSpectators()
+                .map(e -> new AbstractMap.SimpleImmutableEntry<>(
+                    Bukkit.getOfflinePlayer(e.getKey()),
+                    e.getValue()
+                ));
+    }
+
+    public Stream<Map.Entry<Player, Team>> onlinePlayersWithoutSpectators() {
+        return playersWithoutSpectators()
                 .<Map.Entry<Player, Team>>map(e -> new AbstractMap.SimpleImmutableEntry<>(
                 Bukkit.getPlayer(e.getKey()),
                 e.getValue()
@@ -421,19 +440,19 @@ public final class Game implements Runnable, AutoCloseable {
     }
 
     public void forEachOfflinePlayer(BiConsumer<OfflinePlayer, Team> consumer) {
-        offlinePlayers().forEach(entry -> consumer.accept(entry.getKey(), entry.getValue()));
+        offlinePlayersWithoutSpectators().forEach(entry -> consumer.accept(entry.getKey(), entry.getValue()));
     }
 
     public void forEachOfflineWarlordsPlayer(Consumer<WarlordsPlayer> consumer) {
-        offlinePlayers().map(w -> Warlords.getPlayer(w.getKey())).filter(Objects::nonNull).forEach(consumer);
+        offlinePlayersWithoutSpectators().map(w -> Warlords.getPlayer(w.getKey())).filter(Objects::nonNull).forEach(consumer);
     }
 
     public void forEachOnlinePlayer(BiConsumer<Player, Team> consumer) {
-        onlinePlayers().forEach(entry -> consumer.accept(entry.getKey(), entry.getValue()));
+        onlinePlayersWithoutSpectators().forEach(entry -> consumer.accept(entry.getKey(), entry.getValue()));
     }
 
     public void forEachOnlineWarlordsPlayer(Consumer<WarlordsPlayer> consumer) {
-        onlinePlayers().map(w -> Warlords.getPlayer(w.getKey())).filter(Objects::nonNull).forEach(consumer);
+        onlinePlayersWithoutSpectators().map(w -> Warlords.getPlayer(w.getKey())).filter(Objects::nonNull).forEach(consumer);
     }
 
     @Override
@@ -544,20 +563,65 @@ public final class Game implements Runnable, AutoCloseable {
         return this.registerGameTask(Bukkit.getScheduler().runTaskTimer(Warlords.getInstance(), task, delay, period));
     }
 
+    private HandlerList getEventListeners(Class<? extends Event> type) {
+        try {
+            Method method = getRegistrationClass(type).getDeclaredMethod("getHandlerList", new Class[0]);
+            method.setAccessible(true);
+            return (HandlerList) method.invoke(null, new Object[0]);
+        } catch (Exception e) {
+            throw new IllegalPluginAccessException(e.toString());
+        }
+    }
+
+    // Copy of 
+    private Class<? extends Event> getRegistrationClass(Class<? extends Event> clazz) {
+        try {
+            clazz.getDeclaredMethod("getHandlerList", new Class[0]);
+            return clazz;
+        } catch (NoSuchMethodException localNoSuchMethodException) {
+            if ((clazz.getSuperclass() != null)
+                    && (!clazz.getSuperclass().equals(Event.class))
+                    && (Event.class.isAssignableFrom(clazz.getSuperclass()))) {
+                return getRegistrationClass(clazz.getSuperclass().asSubclass(Event.class));
+            }
+        }
+        throw new IllegalPluginAccessException("Unable to find handler list for event " + clazz.getName() + ". Static getHandlerList method required!");
+    }
+
     /**
      * Registers a event listener
      *
-     * @param events The event listener to register
+     * @param listener The event listener to register
      */
-    public void registerEvents(Listener events) {
+    public void registerEvents(Listener listener) {
         if (this.state == null) {
             throw new IllegalStateException("The game is not started yet");
         }
         if (this.closed) {
             throw new IllegalStateException("Game has been closed");
         }
-        this.eventHandlers.add(events);
-        Bukkit.getPluginManager().registerEvents(events, Warlords.getInstance());
+        this.eventHandlers.add(listener);
+        // Manually register events here, this way we can add support for
+        // filtering the WarlordsGameEvent to be from this game instance only.
+        // This makes the implementing of other code comsuming these events
+        // overall simpler.
+        // See the source code of {@link org.bukkit.plugin.SimplePluginManager#registerEvents}
+        if (!Warlords.getInstance().isEnabled()) {
+            throw new IllegalPluginAccessException("Plugin attempted to register " + listener + " while not enabled");
+        }
+        for (Map.Entry<Class<? extends Event>, Set<RegisteredListener>> entry : Warlords.getInstance().getPluginLoader().createRegisteredListeners(listener, Warlords.getInstance()).entrySet()) {
+            if (WarlordsGameEvent.class.isAssignableFrom(entry.getKey())) {
+                entry.setValue(entry.getValue().stream().map(rl -> {
+                    return new RegisteredListener(rl.getListener(), (l, e) -> {
+                        WarlordsGameEvent wge = (WarlordsGameEvent)e;
+                        if(wge.getGame() == Game.this) {
+                            rl.callEvent(e);
+                        }
+                    }, rl.getPriority(), rl.getPlugin(), false);
+                }).collect(Collectors.toSet()));
+            }
+            getEventListeners(getRegistrationClass(entry.getKey())).registerAll(entry.getValue());
+        }
     }
 
     @Override
@@ -603,8 +667,83 @@ public final class Game implements Runnable, AutoCloseable {
                 + "\n}";
     }
 
+    @Deprecated
     public void printDebuggingInformation() {
         System.out.println(this);
     }
 
+    public void addKill(@Nonnull Team victim, @Nullable Team attacker) {
+        Stats myStats = getStats(victim);
+        myStats.deaths++;
+        if(attacker != null) {
+            Stats enemyStats = getStats(attacker);
+            enemyStats.kills++;
+            //addPoints(victim.enemy(), SCORE_KILL_POINTS);
+        }
+    }
+
+    @Nonnull
+    public Stats getStats(@Nonnull Team team) {
+        return stats.get(team);
+    }
+    
+    public void addPoints(@Nonnull Team team, int i) {
+        getStats(team).addPoints(i);
+    }
+
+    public class Stats {
+        private final Team team;
+        private int points;
+        private int kills;
+        private int captures;
+        private int deaths;
+
+        public Stats(Team team) {
+            this.team = team;
+        }
+
+        public int points() {
+            return points;
+        }
+
+        public void setPoints(int points) {
+            int oldPoints = this.points;
+            this.points = points;
+            Bukkit.getPluginManager().callEvent(new WarlordsPointsChangedEvent(Game.this, team, oldPoints, this.points));
+        }
+
+        private void addPoints(int i) {
+            setPoints(points() + i);
+        }
+
+        public int kills() {
+            return kills;
+        }
+
+        public void setKills(int kills) {
+            this.kills = kills;
+        }
+
+        public int captures() {
+            return captures;
+        }
+
+        public void setCaptures(int captures) {
+            this.captures = captures;
+        }
+
+        public int deaths() {
+            return deaths;
+        }
+
+        public void setDeaths(int deaths) {
+            this.deaths = deaths;
+        }
+
+        @Override
+        public String toString() {
+            return "Stats{" + "team=" + team + "points=" + points + ", kills=" + kills + ", captures=" + captures + ", deaths=" + deaths + '}';
+        }
+
+    }
 }

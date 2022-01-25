@@ -77,8 +77,10 @@ public enum Team {
 
     /**
      * The team this team considers an enemy. 
-     * @return 
+     * @deprecated Because this method makes it hard to support more than 2 teams
+     * @return the other team
      */
+    @Deprecated
     @Nonnull
     public Team enemy() {
         return inverseMapping[ordinal()];

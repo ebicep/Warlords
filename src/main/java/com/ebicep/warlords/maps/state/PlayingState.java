@@ -8,13 +8,12 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
-import com.ebicep.warlords.events.WarlordsPointsChangedEvent;
+import com.ebicep.warlords.events.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.maps.Game;
+import com.ebicep.warlords.maps.Game.Stats;
 import com.ebicep.warlords.maps.GameAddon;
 import com.ebicep.warlords.maps.Team;
-import com.ebicep.warlords.maps.flags.GroundFlagLocation;
-import com.ebicep.warlords.maps.flags.PlayerFlagLocation;
-import com.ebicep.warlords.maps.flags.SpawnFlagLocation;
+import com.ebicep.warlords.maps.option.Option;
 import com.ebicep.warlords.player.CustomScoreboard;
 import com.ebicep.warlords.player.ExperienceManager;
 import com.ebicep.warlords.player.PlayerSettings;
@@ -22,9 +21,7 @@ import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.sr.SRCalculator;
 import com.ebicep.warlords.util.PacketUtils;
 import com.ebicep.warlords.util.RemoveEntities;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
@@ -40,52 +37,42 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 
 public class PlayingState implements State, TimerDebugAble {
     private static final int OVERTIME_TIME = 60 * 20;
 
-    private static final int SCORE_KILL_POINTS = 5;
-    private static final int SCORE_CAPTURE_POINTS = 250;
-
     private static final int ENDING_SCORE_LIMIT = 1000;
-    private static final int MERCY_LIMIT = 550;
 
-    private int timer = 0;
     private boolean overTimeActive = false;
     private int pointLimit = 0;
     private final Game game;
-    private boolean forceEnd;
-
-    private final EnumMap<Team, Stats> stats = new EnumMap(Team.class);
-
-    {
-        resetStats();
-    }
 
     public PlayingState(@Nonnull Game game) {
         this.game = game;
     }
 
+    @Deprecated
     public void addKill(@Nonnull Team victim, boolean isSuicide) {
-        Stats myStats = getStats(victim);
-        myStats.deaths++;
-        Stats enemyStats = getStats(victim.enemy());
-        enemyStats.kills++;
-        addPoints(victim.enemy(), SCORE_KILL_POINTS);
+        game.addKill(victim, victim.enemy());
     }
 
     @Nonnull
+    @Deprecated
     public Stats getStats(@Nonnull Team team) {
-        return stats.get(team);
+        return game.getStats(team);
     }
 
+    @Deprecated
     public void addPoints(@Nonnull Team team, int i) {
-        getStats(team).addPoints(i);
+        game.addPoints(team, i);
     }
 
     @Deprecated
     public int getBluePoints() {
-        return stats.get(Team.BLUE).points();
+        return game.getStats(Team.BLUE).points();
     }
 
     @Deprecated
@@ -95,20 +82,12 @@ public class PlayingState implements State, TimerDebugAble {
 
     @Deprecated
     public int getRedPoints() {
-        return stats.get(Team.RED).points();
+        return game.getStats(Team.RED).points();
     }
 
     @Deprecated
     public void addRedPoints(int i) {
         this.addPoints(Team.RED, i);
-    }
-
-    public int getTimer() {
-        return timer;
-    }
-
-    public int getTimerInSeconds() {
-        return getTimer() / 20;
     }
 
     public boolean isOvertime() {
@@ -123,6 +102,9 @@ public class PlayingState implements State, TimerDebugAble {
     @Override
     @SuppressWarnings("null")
     public void begin() {
+        for (Option option : game.getOptions()) {
+            option.start(game);
+        }
         this.resetTimer();
         RemoveEntities.doRemove(this.game);
 
@@ -157,6 +139,12 @@ public class PlayingState implements State, TimerDebugAble {
                 })).execute();
         game.setAcceptsPlayers(true);
         game.setAcceptsSpectators(false);
+        game.registerEvents(new Listener() {
+            @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+            public void onWin(WarlordsGameTriggerWinEvent event) {
+                game.setNextState(new EndState(game, event));
+            }
+        });
     }
 
     @Override
@@ -175,14 +163,6 @@ public class PlayingState implements State, TimerDebugAble {
                     this.timer = OVERTIME_TIME;
                     this.overTimeActive = true;
                     assert getStats(Team.BLUE).points == getStats(Team.RED).points;
-                    this.pointLimit = 20;
-                    getStats(Team.BLUE).points = 0;
-                    getStats(Team.RED).points = 0;
-                    this.game.forEachOnlinePlayer((player, team) -> {
-                        PacketUtils.sendTitle(player, ChatColor.LIGHT_PURPLE + "OVERTIME!", ChatColor.YELLOW + "First team to reach 20 points wins!", 0, 60, 0);
-                        player.sendMessage("§dOvertime is now active!");
-                        player.playSound(player.getLocation(), Sound.PORTAL_TRAVEL, 1, 1);
-                    });
                 } else {
                     return next;
                 }
@@ -290,7 +270,6 @@ public class PlayingState implements State, TimerDebugAble {
         this.timer = game.getMap().getGameTimerInTicks();
         this.pointLimit = ENDING_SCORE_LIMIT;
         this.overTimeActive = false;
-        this.forceEnd = false;
     }
 
     private EndState getEndState(@Nullable Team winner) {
@@ -414,12 +393,11 @@ public class PlayingState implements State, TimerDebugAble {
         String[] entries = new String[15];
 
 
-        SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
-        SimpleDateFormat format2 = new SimpleDateFormat("kk:mm");
-        format2.setTimeZone(TimeZone.getTimeZone("EST"));
+        SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy - kk:mm");
+        format.setTimeZone(TimeZone.getTimeZone("EST"));
 
         //date
-        entries[14] = ChatColor.GRAY + format.format(new Date()) + " - " + format2.format(new Date());
+        entries[14] = ChatColor.GRAY + format.format(new Date());
 
         // Points
         entries[12] = ChatColor.BLUE + "BLU: " + ChatColor.AQUA + this.getBluePoints() + ChatColor.GOLD + "/" + this.getPointLimit();
@@ -435,7 +413,7 @@ public class PlayingState implements State, TimerDebugAble {
 
         if (warlordsPlayer != null) {
             entries[4] = ChatColor.WHITE + "Spec: " + ChatColor.GREEN + warlordsPlayer.getSpec().getClass().getSimpleName();
-            if (ImposterCommand.enabled) {
+            if (game.getAddons().contains(GameAddon.IMPOSTER_MODE)) {
                 if ((ImposterCommand.blueImposterName != null && ImposterCommand.blueImposterName.equalsIgnoreCase(warlordsPlayer.getName())) ||
                         (ImposterCommand.redImposterName != null && ImposterCommand.redImposterName.equals(warlordsPlayer.getName()))
                 ) {
@@ -455,22 +433,6 @@ public class PlayingState implements State, TimerDebugAble {
         Collections.reverse(Arrays.asList(entries));
 
         customScoreboard.giveNewSideBar(init, entries);
-    }
-
-    public String getTimeLeftString() {
-        int secondsRemaining = this.getTimer() / 20;
-        int minute = secondsRemaining / 60;
-        int second = secondsRemaining % 60;
-        String timeLeft = "";
-        if (minute < 10) {
-            timeLeft += "0";
-        }
-        timeLeft += minute + ":";
-        if (second < 10) {
-            timeLeft += "0";
-        }
-        timeLeft += second;
-        return timeLeft;
     }
 
     private static <K, V, M extends Map<K, V>> BinaryOperator<M> mapMerger(BinaryOperator<V> mergeFunction) {
@@ -510,61 +472,5 @@ public class PlayingState implements State, TimerDebugAble {
         } else {
             return Collector.of(mangledFactory, accumulator, merger, finisher);
         }
-    }
-
-    public class Stats {
-        private final Team team;
-        int points;
-        int kills;
-        int captures;
-        int deaths;
-
-        public Stats(Team team) {
-            this.team = team;
-        }
-
-        public int points() {
-            return points;
-        }
-
-        public void setPoints(int points) {
-            int oldPoints = this.points;
-            this.points = points;
-            Bukkit.getPluginManager().callEvent(new WarlordsPointsChangedEvent(game, team, oldPoints, this.points));
-        }
-
-        private void addPoints(int i) {
-            setPoints(points() + i);
-        }
-
-        public int kills() {
-            return kills;
-        }
-
-        public void setKills(int kills) {
-            this.kills = kills;
-        }
-
-        public int captures() {
-            return captures;
-        }
-
-        public void setCaptures(int captures) {
-            this.captures = captures;
-        }
-
-        public int deaths() {
-            return deaths;
-        }
-
-        public void setDeaths(int deaths) {
-            this.deaths = deaths;
-        }
-
-        @Override
-        public String toString() {
-            return "Stats{" + "points=" + points + ", kills=" + kills + ", captures=" + captures + ", deaths=" + deaths + '}';
-        }
-
     }
 }

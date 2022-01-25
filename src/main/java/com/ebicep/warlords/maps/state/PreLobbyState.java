@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 import static com.ebicep.warlords.util.ChatUtils.sendMessage;
 
 public class PreLobbyState implements State, TimerDebugAble {
+    public static final String WARLORDS_DATABASE_MESSAGEFEED = "warlords.database.messagefeed";
 
     private final Game game;
     private final Map<UUID, TeamPreference> teamPreferences = new HashMap<>();
@@ -37,18 +38,22 @@ public class PreLobbyState implements State, TimerDebugAble {
 
     @Override
     public void begin() {
-        this.maxTimer = game.getMap().getCountdownTimerInTicks();
+        this.maxTimer = game.getMap().getLobbyCountdown();
         this.resetTimer();
         // Debug
         game.printDebuggingInformation();
         game.setAcceptsPlayers(true);
         game.setAcceptsSpectators(false);
     }
+    
+    public boolean shouldLobbyTimerRun() {
+        int players = game.playersCount();
+        return players >= game.getMap().getMinPlayers();
+    }
 
     @Override
     public State run() {
-        int players = game.playersCount();
-        if (players >= game.getMap().getMinPlayers()) {
+        if (shouldLobbyTimerRun()) {
             if (timer % 20 == 0) {
                 int time = timer / 20;
                 game.forEachOnlinePlayer((player, team) -> {
@@ -95,6 +100,8 @@ public class PreLobbyState implements State, TimerDebugAble {
             }
 
             if (timer <= 0) {
+                // TODO update balancing system to read a games Team Markers,
+                // this is needed for when we support more teams in the future
                 if (!game.getAddons().contains(GameAddon.PRIVATE_GAME)) {
                     //separating internalPlayers into even teams because it might be uneven bc internalPlayers couldve left
 
@@ -106,9 +113,12 @@ public class PreLobbyState implements State, TimerDebugAble {
                         put(Team.BLUE, new ArrayList<>());
                         put(Team.RED, new ArrayList<>());
                     }};
-                    game.forEachOnlinePlayer((player, team) -> {
+                    game.onlinePlayersWithoutSpectators().filter(e -> e.getValue() != null).forEach(e -> {
+                        Player player = e.getKey();
+                        Team team = e.getValue();
                         //check if player already is recorded
-                        if (partyMembers.values().stream().anyMatch(list -> list.contains(player))) {
+                        // TODO Test this logic if player are not online if this happens (we do not have player objects in this case)
+                        if (partyMembers.values().stream().anyMatch(list -> list.contains(player))) { 
                             return;
                         }
                         Warlords.partyManager.getPartyFromAny(player.getUniqueId()).ifPresent(party -> {
@@ -146,7 +156,9 @@ public class PreLobbyState implements State, TimerDebugAble {
                     for (int i = 0; i < 5000; i++) {
                         HashMap<Player, Team> teams = new HashMap<>();
                         HashMap<Classes, List<Player>> playerSpecs = new HashMap<>();
-                        game.forEachOnlinePlayer((player, team) -> {
+                        game.onlinePlayersWithoutSpectators().filter(e -> e.getValue() != null).forEach(e -> {
+                            Player player = e.getKey();
+                            Team team = e.getValue();
                             PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
                             playerSpecs.computeIfAbsent(playerSettings.getSelectedClass(), v -> new ArrayList<>()).add(player);
                         });
@@ -233,7 +245,9 @@ public class PreLobbyState implements State, TimerDebugAble {
                         HashMap<Player, Team> teams = new HashMap<>();
                         HashMap<Classes, List<Player>> playerSpecs = new HashMap<>();
                         //all players are online or else they wouldve been removed from queue
-                        game.forEachOnlinePlayer((player, team) -> {
+                        game.onlinePlayersWithoutSpectators().filter(e -> e.getValue() != null).forEach(e -> {
+                            Player player = e.getKey();
+                            Team team = e.getValue();
                             PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
                             playerSpecs.computeIfAbsent(playerSettings.getSelectedClass(), v -> new ArrayList<>()).add(player);
                         });
@@ -291,7 +305,9 @@ public class PreLobbyState implements State, TimerDebugAble {
                         secondFailSafeActive = true;
                         HashMap<Player, Team> teams = new HashMap<>();
                         HashMap<Classes, List<Player>> playerSpecs = new HashMap<>();
-                        game.forEachOnlinePlayer((player, team) -> {
+                        game.onlinePlayersWithoutSpectators().filter(e -> e.getValue() != null).forEach(e -> {
+                            Player player = e.getKey();
+                            Team team = e.getValue();
                             PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
                             playerSpecs.computeIfAbsent(playerSettings.getSelectedClass(), v -> new ArrayList<>()).add(player);
                         });
@@ -324,7 +340,7 @@ public class PreLobbyState implements State, TimerDebugAble {
 
                     for (Map.Entry<UUID, Team> uuidTeamEntry : game.getPlayers().entrySet()) {
                         Player value = Bukkit.getPlayer(uuidTeamEntry.getKey());
-                        if (value.hasPermission("warlords.database.messagefeed")) {
+                        if (value.hasPermission(WARLORDS_DATABASE_MESSAGEFEED)) {
                             value.sendMessage(ChatColor.DARK_AQUA + "----- BALANCE INFORMATION -----");
                             value.sendMessage(ChatColor.GREEN + "Max SR Diff: " + maxSRDiff);
                             value.sendMessage(ChatColor.GREEN + "SR Diff: " + bestTeamSRDifference);
@@ -416,7 +432,10 @@ public class PreLobbyState implements State, TimerDebugAble {
     }
 
     private void updateTeamPreferences() {
-        this.game.offlinePlayers().forEach((e) -> {
+        this.game.offlinePlayersWithoutSpectators().forEach((e) -> {
+            if (e.getValue() == null) {
+                return; // skip spectators
+            }
             Team selectedTeam = Warlords.getPlayerSettings(e.getKey().getUniqueId()).getWantedTeam();
             if (selectedTeam == null) {
                 Bukkit.broadcastMessage(ChatColor.GOLD + e.getKey().getName() + " §7did not choose a team!");

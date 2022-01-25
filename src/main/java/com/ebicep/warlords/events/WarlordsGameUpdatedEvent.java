@@ -4,19 +4,14 @@ import com.ebicep.warlords.maps.Game;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-public class WarlordsGameUpdatedEvent extends Event {
+public class WarlordsGameUpdatedEvent extends WarlordsGameEvent {
 
     private static final HandlerList handlers = new HandlerList();
-    private final Game game;
     private final String key;
 
     public WarlordsGameUpdatedEvent(Game game, String key) {
-        this.game = game;
+        super(game);
         this.key = key;
-    }
-
-    public Game getGame() {
-        return game;
     }
 
     public String getKey() {

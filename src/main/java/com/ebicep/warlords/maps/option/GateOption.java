@@ -108,7 +108,7 @@ public class GateOption implements Option, TimerSkipAbleMarker {
         delay = -1;
         changeGate(closed, open);
         if (this.shouldBroadcast) {
-            for (Map.Entry<Player, Team> entry : iterable(game.onlinePlayers())) {
+            for (Map.Entry<Player, Team> entry : iterable(game.onlinePlayersWithoutSpectators())) {
                 Player player = entry.getKey();
                 sendMessage(player, false, ChatColor.YELLOW + "Gates opened! " + ChatColor.RED + "FIGHT!");
                 PacketUtils.sendTitle(player, ChatColor.GREEN + "GO!", ChatColor.YELLOW + "Steal and capture the enemy flag!", 0, 40, 20);
@@ -154,7 +154,7 @@ public class GateOption implements Option, TimerSkipAbleMarker {
                     return;
                 }
                 if (shouldBroadcast) {
-                    for (Map.Entry<Player, Team> entry : iterable(game.onlinePlayers())) {
+                    for (Map.Entry<Player, Team> entry : iterable(game.onlinePlayersWithoutSpectators())) {
                         Player player = entry.getKey();
                         player.playSound(player.getLocation(), delay == 0 ? Sound.WITHER_SPAWN : Sound.NOTE_STICKS, 1, 1);
                         String number = (delay >= 8 ? ChatColor.GREEN
@@ -173,7 +173,7 @@ public class GateOption implements Option, TimerSkipAbleMarker {
                         case 4:
                         case 5:
                         case 10:
-                            for (Map.Entry<Player, Team> entry : iterable(game.onlinePlayers())) {
+                            for (Map.Entry<Player, Team> entry : iterable(game.onlinePlayersWithoutSpectators())) {
                                 Player player = entry.getKey();
                                 String s = delay == 1 ? "" : "s";
                                 sendMessage(player, false, ChatColor.YELLOW + "The gates will fall in " + ChatColor.RED + delay + ChatColor.YELLOW + " second" + s + "!");

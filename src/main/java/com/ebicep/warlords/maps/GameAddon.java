@@ -1,15 +1,21 @@
 package com.ebicep.warlords.maps;
 
+import com.ebicep.warlords.commands.debugcommands.ImposterCommand;
 import com.ebicep.warlords.maps.option.GameFreezeWhenOfflineOption;
+import com.ebicep.warlords.maps.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.maps.state.PreLobbyState;
 import com.ebicep.warlords.maps.state.State;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import java.util.Collections;
+import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 
 public enum GameAddon {
 
-    PRIVATE_GAME() {
+    PRIVATE_GAME(null) {
         @Override
         public void modifyGame(Game game) {
             game.getOptions().add(new GameFreezeWhenOfflineOption());
@@ -27,14 +33,30 @@ public enum GameAddon {
             }
         }
     },
-    IMPOSTER_MODE() {
+    IMPOSTER_MODE("warlords.game.impostertoggle") {
 
         @Override
         public void modifyGame(Game game) {
             //options.add(new GameImposterModeOption());
+            // TODO move this to an GameImposterModeOption handler for cleaner files
+            game.registerScoreboardHandler(new SimpleScoreboardHandler(0) {
+                @Override
+                public List<String> computeLines(WarlordsPlayer player) {
+                    if ((ImposterCommand.blueImposterName != null && ImposterCommand.blueImposterName.equalsIgnoreCase(player.getName()))
+                            || (ImposterCommand.redImposterName != null && ImposterCommand.redImposterName.equals(player.getName()))) {
+                        return Collections.singletonList(ChatColor.WHITE + "Role: " + ChatColor.RED + "IMPOSTER");
+                    } else {
+                        if (ImposterCommand.blueImposterName != null && ImposterCommand.redImposterName != null) {
+                            return Collections.singletonList(ChatColor.WHITE + "Role: " + ChatColor.GREEN + "INNOCENT");
+                        } else {
+                            return Collections.emptyList();
+                        }
+                    }
+                }
+            });
         }
     },
-    COOLDOWN_MODE() {
+    COOLDOWN_MODE("warlords.game.cooldowngame") {
         @Override
         public void warlordsPlayerCreated(Game game, WarlordsPlayer player) {
             player.setMaxHealth((int) (player.getMaxHealth() * 1.5));
@@ -44,8 +66,8 @@ public enum GameAddon {
         }
         
     },
-    RECORD_MODE(),
-    MEGA_GAME() {
+    //RECORD_MODE(),
+    MEGA_GAME("warlords.game.megagame") {
         @Override
         public int getMaxPlayers(GameMap map, int maxPlayers) {
             return Integer.MAX_VALUE;
@@ -53,6 +75,17 @@ public enum GameAddon {
         
     };
 
+    @Nullable
+    private final String permission;
+
+    private GameAddon(String permission) {
+        this.permission = permission;
+    }
+    
+    public boolean hasPermission(CommandSender sender) {
+        return this.permission == null || sender.hasPermission(permission);
+    }
+    
     public void modifyGame(@Nonnull Game game) {
     }
 

@@ -27,25 +27,29 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame.previousGames;
+import com.ebicep.warlords.events.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.maps.*;
+import com.ebicep.warlords.maps.option.Option;
 
 public class EndState implements State, TimerDebugAble {
     @Nonnull
     private final Game game;
-    @Nullable
-    private final Team winner;
     private int timer;
+    private final WarlordsGameTriggerWinEvent winEvent;
 
-    public EndState(@Nonnull Game game, @Nullable Team winner, @Nonnull Stats redStats, @Nonnull Stats blueStats) {
+    public EndState(@Nonnull Game game, @Nullable WarlordsGameTriggerWinEvent event) {
         this.game = game;
-        this.winner = winner;
+        this.winEvent = event;
     }
 
     @Override
-    public void begin( ) {
+    public void begin() {
+        for (Option option : game.getOptions()) {
+            option.onGameEnding(game);
+        }
         this.resetTimer();
-        boolean teamBlueWins = winner == Team.BLUE;
-        boolean teamRedWins = winner == Team.RED;
+        boolean teamBlueWins = winEvent != null && winEvent.getDeclaredWinner() == Team.BLUE;
+        boolean teamRedWins = winEvent != null && winEvent.getDeclaredWinner() == Team.RED;
         List<WarlordsPlayer> players = game.warlordsPlayers().collect(Collectors.toList());
         sendMessageToAllGamePlayer(game, "" + ChatColor.GREEN + ChatColor.BOLD + "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬", false);
         sendMessageToAllGamePlayer(game, "" + ChatColor.WHITE + ChatColor.BOLD + "  Warlords", true);
@@ -55,7 +59,7 @@ public class EndState implements State, TimerDebugAble {
         } else if (teamRedWins) {
             sendMessageToAllGamePlayer(game, ChatColor.YELLOW + "Winner" + ChatColor.GRAY + " - " + ChatColor.RED + "RED", true);
         } else {
-            if (ImposterCommand.enabled) {
+            if (game.getAddons().contains(GameAddon.IMPOSTER_MODE)) {
                 sendMessageToAllGamePlayer(game, ChatColor.YELLOW + "Winner" + ChatColor.GRAY + " - " + ChatColor.LIGHT_PURPLE + "GAME END", true);
             } else {
                 sendMessageToAllGamePlayer(game, ChatColor.YELLOW + "Winner" + ChatColor.GRAY + " - " + ChatColor.LIGHT_PURPLE + "DRAW", true);

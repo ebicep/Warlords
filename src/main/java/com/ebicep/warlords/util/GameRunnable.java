@@ -13,6 +13,10 @@ import org.bukkit.scheduler.BukkitTask;
  */
 public abstract class GameRunnable implements Runnable {
     public static final boolean DEFAULT_RUN_IN_PAUSE_MODE = false;
+    /**
+     * The amount of ticks in a second. Multiply this constant with the amount of seconds you want an runnable to repeat for
+     */
+    public static final int SECOND = 20;
     
     private int taskId = -1;
     @Nonnull

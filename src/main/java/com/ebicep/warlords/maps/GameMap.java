@@ -1,8 +1,11 @@
 package com.ebicep.warlords.maps;
 
 import com.ebicep.warlords.maps.option.*;
+import com.ebicep.warlords.maps.option.marker.LobbyLocationMarker;
+import com.ebicep.warlords.maps.option.marker.TeamMarker;
 import com.ebicep.warlords.maps.state.PreLobbyState;
 import com.ebicep.warlords.maps.state.State;
+import static com.ebicep.warlords.util.GameRunnable.SECOND;
 import com.ebicep.warlords.util.LocationFactory;
 import java.util.*;
 import javax.annotation.Nonnull;
@@ -23,7 +26,6 @@ public enum GameMap {
             "Rift",
             32,
             12,
-            900 * 20, // seconds * ticks
             30 * 20, // seconds * ticks
             "",
             MapCategory.CAPTURE_THE_FLAG,
@@ -205,14 +207,18 @@ public enum GameMap {
             "Debug",
             96,
             1,
-            900 * 20,
-            60 * 20,
+            60 * SECOND,
             "WLDebug",
             MapCategory.DEBUG
     ) {
         @Override
         public List<Option> initMap(MapCategory category, LocationFactory loc, EnumSet<GameAddon> addons) {
             List<Option> options = new ArrayList<>();
+            options.add(new MarkerOption(
+                    TeamMarker.create(Team.BLUE, Team.RED),
+                    LobbyLocationMarker.create(loc.addXYZ(727.5, 8.5, 200.5), Team.BLUE),
+                    LobbyLocationMarker.create(loc.addXYZ(727.5, 8.5, 196.5), Team.RED)
+            ));
             options.add(new PowerupOption(loc.addXYZ(699.5, 8.5, 184.5), PowerupOption.PowerupType.DAMAGE));
             options.add(new PowerupOption(loc.addXYZ(699.5, 8.5, 188.5), PowerupOption.PowerupType.DAMAGE));
             
@@ -221,8 +227,6 @@ public enum GameMap {
             
             options.add(new PowerupOption(loc.addXYZ(699.5, 8.5, 200.5), PowerupOption.PowerupType.HEALING));
             options.add(new PowerupOption(loc.addXYZ(699.5, 8.5, 204.5), PowerupOption.PowerupType.HEALING));
-            
-            // TODO lobby
             
             options.add(SpawnpointOption.forTeam(loc.addXYZ(727.5, 8.5, 196.5), Team.BLUE));
             options.add(SpawnpointOption.forTeam(loc.addXYZ(727.5, 8.5, 196.5), Team.RED));
@@ -234,6 +238,11 @@ public enum GameMap {
             options.add(new FlagSpawnPointOption(loc.addXYZ(720.5, 8.5, 212.5), Team.RED));
             
             options.add(new GateOption(loc.addXYZ(713, 7, 195), loc.addXYZ(713, 10, 198)));
+            
+            options.add(new WinByPointsOption());
+            options.add(new MercyWinOption());
+            options.add(new DrawAfterTimeoutOption());
+            options.add(new GameOvertimeOption());
             
             return options;
         }
@@ -267,17 +276,15 @@ public enum GameMap {
     private final String mapName;
     private final int maxPlayers;
     private final int minPlayers;
-    private final int gameTimerInTicks;
-    private final int countdownTimerInTicks;
+    private final int lobbyCountdown;
     private final String mapDirPath;
     private final List<MapCategory> mapCategory;
 
-    GameMap(@Nonnull String mapName, int maxPlayers, int minPlayers, int gameTime, int countdown, @Nonnull String mapDirPath, @Nonnull MapCategory ... mapCategory) {
+    GameMap(@Nonnull String mapName, int maxPlayers, int minPlayers, int lobbyCountdown, @Nonnull String mapDirPath, @Nonnull MapCategory ... mapCategory) {
         this.mapName = mapName;
         this.maxPlayers = maxPlayers;
         this.minPlayers = minPlayers;
-        this.gameTimerInTicks = gameTime;
-        this.countdownTimerInTicks = countdown;
+        this.lobbyCountdown = lobbyCountdown;
         this.mapDirPath = mapDirPath;
         this.mapCategory = Collections.unmodifiableList(Arrays.asList(mapCategory));
     }
@@ -307,12 +314,8 @@ public enum GameMap {
         return minPlayers;
     }
 
-    public int getGameTimerInTicks() {
-        return gameTimerInTicks;
-    }
-
-    public int getCountdownTimerInTicks() {
-        return countdownTimerInTicks;
+    public int getLobbyCountdown() {
+        return lobbyCountdown;
     }
 
     public String getMapDirPath() {
