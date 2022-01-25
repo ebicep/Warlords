@@ -38,7 +38,7 @@ public class CrossVital extends AbstractAbility {
             player1.playSound(player.getLocation(), "mage.arcaneshield.activation", 2, 2);
         }
 
-        EffectUtils.playStarAnimation(player, 3, ParticleEffect.CRIT);
+        EffectUtils.playStarAnimation(player, 1, ParticleEffect.CRIT);
 
         wp.getCooldownManager().addRegularCooldown(name, "VITAL", CrossVital.class, tempCrossVital, wp, CooldownTypes.ABILITY, cooldownManager -> {
         }, duration * 20);
@@ -49,7 +49,7 @@ public class CrossVital extends AbstractAbility {
                     @Override
                     public void run() {
                         if (wp.getCooldownManager().hasCooldown(tempCrossVital)) {
-                            ParticleEffect.ENCHANTMENT_TABLE.display(0.5f, 0.5f, 0.5f, 0, 4, wp.getLocation().add(0 , 1, 0), 500);
+                            ParticleEffect.ENCHANTMENT_TABLE.display(0.4f, 0.4f, 0.4f, 0, 4, wp.getLocation().add(0 , 1, 0), 500);
                         } else {
                             this.cancel();
                         }

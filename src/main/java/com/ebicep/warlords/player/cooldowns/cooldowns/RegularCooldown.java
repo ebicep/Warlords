@@ -19,7 +19,7 @@ public class RegularCooldown<T> extends AbstractCooldown<T> {
 
     @Override
     public String getNameAbbreviation() {
-        return (nameAbbreviation.equals("WND") || nameAbbreviation.equals("CRIP") ? ChatColor.RED : ChatColor.GREEN)
+        return (nameAbbreviation.equals("WND") || nameAbbreviation.equals("CRIP") || nameAbbreviation.equals("LEECH") || nameAbbreviation.equals("MIASMA") ? ChatColor.RED : ChatColor.GREEN)
                 + nameAbbreviation + ChatColor.GRAY + ":" + ChatColor.GOLD + (ticksLeft / 20 + 1) + " ";
     }
 

@@ -58,7 +58,6 @@ public class WideGuard extends AbstractAbility {
 
         // Second Particle Sphere
         wp.getGame().getGameTasks().put(
-
             new BukkitRunnable() {
                 @Override
                 public void run() {
@@ -68,15 +67,13 @@ public class WideGuard extends AbstractAbility {
                         player1.playSound(player.getLocation(), "warrior.intervene.impact", 2, 0.2f);
                     }
                 }
-            }.runTaskLater(Warlords.getInstance(), 3),
-            System.currentTimeMillis()
+            }.runTaskLater(Warlords.getInstance(), 3), System.currentTimeMillis()
         );
 
         HashMap<WarlordsPlayer, Integer> timeInBubble = new HashMap<>();
 
         // Third Particle Sphere
         wp.getGame().getGameTasks().put(
-
                 new BukkitRunnable() {
                     @Override
                     public void run() {
@@ -122,8 +119,7 @@ public class WideGuard extends AbstractAbility {
                             circle.playEffects();
                         }
                     }
-                }.runTaskTimer(Warlords.getInstance(), 5, 4),
-                System.currentTimeMillis()
+                }.runTaskTimer(Warlords.getInstance(), 5, 4), System.currentTimeMillis()
         );
 
         return true;

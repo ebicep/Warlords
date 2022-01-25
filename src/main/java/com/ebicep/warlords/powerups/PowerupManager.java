@@ -16,8 +16,8 @@ public class PowerupManager extends BukkitRunnable {
         this.game = game;
         powerUps.add(new EnergyPowerUp(game.getMap().getDamagePowerupBlue(), 30, 45 * 20, 60));
         powerUps.add(new EnergyPowerUp(game.getMap().getDamagePowerupRed(), 30, 45 * 20, 60));
-        powerUps.add(new HealingPowerUp(game.getMap().getHealingPowerupBlue(), 0, 45 * 20, 60));
-        powerUps.add(new HealingPowerUp(game.getMap().getHealingPowerupRed(), 0, 45 * 20, 60));
+        powerUps.add(new HealingPowerUp(game.getMap().getHealingPowerupBlue(), 5, 45 * 20, 60));
+        powerUps.add(new HealingPowerUp(game.getMap().getHealingPowerupRed(), 5, 45 * 20, 60));
         powerUps.add(new SpeedPowerUp(game.getMap().getSpeedPowerupBlue(), 10, 45 * 20, 60));
         powerUps.add(new SpeedPowerUp(game.getMap().getSpeedPowerupRed(), 10, 45 * 20, 60));
         for (AbstractPowerUp powerUp : powerUps) {

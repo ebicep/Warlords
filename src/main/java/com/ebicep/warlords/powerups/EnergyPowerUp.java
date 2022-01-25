@@ -1,7 +1,7 @@
 package com.ebicep.warlords.powerups;
 
-import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
@@ -20,6 +20,7 @@ public class EnergyPowerUp extends AbstractPowerUp {
     @Override
     public void onPickUp(WarlordsPlayer warlordsPlayer) {
         warlordsPlayer.getCooldownManager().addRegularCooldown("Energy", "ENERGY", EnergyPowerUp.class, this, warlordsPlayer, CooldownTypes.BUFF, cooldownManager -> {
+            warlordsPlayer.sendMessage("§6Your §lENERGY §6powerup has worn off!");
         }, duration * 20);
         warlordsPlayer.sendMessage("§6You activated the §lENERGY §6powerup! §a+40% §6Energy gain for §a30 §6seconds!");
     }

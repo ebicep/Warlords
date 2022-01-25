@@ -84,7 +84,6 @@ public final class WarlordsPlayer {
     private float energy;
     private float maxEnergy;
     private float horseCooldown;
-    private int healPowerupDuration = 4;
     private float currentHealthModifier = 1;
     private int flagCooldown;
     private int hitCooldown;
@@ -404,12 +403,12 @@ public final class WarlordsPlayer {
                     if (cooldownManager.hasCooldownFromName("Wide Guard")) {
                         if (
                                 ability.equals("Fireball") ||
-                                        ability.equals("Frostbolt") ||
-                                        ability.equals("Water Bolt") ||
-                                        ability.equals("Lightning Bolt") ||
-                                        ability.equals("Flame Burst")
+                                ability.equals("Frostbolt") ||
+                                ability.equals("Water Bolt") ||
+                                ability.equals("Lightning Bolt") ||
+                                ability.equals("Flame Burst")
                         ) {
-                            damageValue *= .2;
+                            damageValue *= .3;
                         }
                     }
                 }
@@ -602,10 +601,8 @@ public final class WarlordsPlayer {
                 }
 
                 // Judgement Strike
-                if (ability.equals("Judgement Strike")) {
-                    if (isCrit) {
-                        attacker.getSpeed().addSpeedModifier("Judgement Speed", 20, 2 * 20, "BASE");
-                    }
+                if (ability.equals("Judgement Strike") && isCrit) {
+                    attacker.getSpeed().addSpeedModifier("Judgement Speed", 20, 2 * 20, "BASE");
                 }
 
                 // Assassin Mark
@@ -917,8 +914,7 @@ public final class WarlordsPlayer {
     public void cancelHealingPowerUp() {
         if (powerUpHeal) {
             powerUpHeal = false;
-            sendMessage(ChatColor.GOLD + "Your §a§lHealing Powerup §6has worn off.");
-            setHealPowerupDuration(4);
+            sendMessage(ChatColor.GOLD + "Your §a§lHealing §6powerup has worn off.");
         }
     }
 
@@ -2049,13 +2045,5 @@ public final class WarlordsPlayer {
 
     public void setCurrentHealthModifier(float currentHealthModifier) {
         this.currentHealthModifier = currentHealthModifier;
-    }
-
-    public int getHealPowerupDuration() {
-        return healPowerupDuration;
-    }
-
-    public void setHealPowerupDuration(int healPowerupDuration) {
-        this.healPowerupDuration = healPowerupDuration;
     }
 }

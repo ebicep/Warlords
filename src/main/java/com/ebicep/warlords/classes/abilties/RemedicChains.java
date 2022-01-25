@@ -103,7 +103,7 @@ public class RemedicChains extends AbstractAbility {
                             }
                             wp.addHealingInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false, false);
                             for (Player player1 : player.getWorld().getPlayers()) {
-                                player1.playSound(chainTarget.getLocation(), "rogue.remedicchains.impact", 0.1f, 1.4f);
+                                player1.playSound(chainTarget.getLocation(), "rogue.remedicchains.impact", 0.05f, 1.4f);
                             }
                             this.cancel();
                         }
