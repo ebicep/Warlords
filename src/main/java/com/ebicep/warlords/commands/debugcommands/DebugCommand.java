@@ -3,6 +3,7 @@ package com.ebicep.warlords.commands.debugcommands;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.BaseCommand;
 import com.ebicep.warlords.maps.Game;
+import com.ebicep.warlords.maps.state.PlayingState;
 import com.ebicep.warlords.maps.state.TimerDebugAble;
 import com.ebicep.warlords.menu.DebugMenu;
 import com.ebicep.warlords.player.WarlordsPlayer;
@@ -24,7 +25,7 @@ public class DebugCommand implements CommandExecutor {
             return true;
         }
 
-        if (!Warlords.game.isPrivate()) {
+        if (!Warlords.game.isPrivate() && Warlords.game.getState() instanceof PlayingState) {
             sender.sendMessage("§cDebug commands are disabled in public games!");
             return true;
         }
