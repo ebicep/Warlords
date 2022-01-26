@@ -78,7 +78,8 @@ public abstract class AbstractStrikeBase extends AbstractAbility {
                             randomHitEffect(nearPlayer, 7, 255, 255, 255);
                         } else if (this instanceof ImpalingStrike) {
                             for (Player player1 : Bukkit.getOnlinePlayers()) {
-                                player1.playSound(nearPlayer.getLocation(), "rogue.apothecarystrike.activation", 2, 0.7f);
+                                player1.playSound(nearPlayer.getLocation(), "rogue.apothecarystrike.activation", 2, 0.5f);
+                                player1.playSound(nearPlayer.getLocation(), "mage.fireball.activation", 2, 1.8f);
                             }
                             randomHitEffect(nearPlayer, 7, 100, 255, 100);
                         }

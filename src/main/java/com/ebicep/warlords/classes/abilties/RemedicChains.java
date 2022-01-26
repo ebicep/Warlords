@@ -56,6 +56,7 @@ public class RemedicChains extends AbstractAbility {
                 duration * 20
         );
 
+        int targethit = 0;
         for (WarlordsPlayer chainTarget : PlayerFilter
                 .entitiesAround(player, 10, 10, 10)
                 .aliveTeammatesOfExcludingSelf(wp)
@@ -75,6 +76,7 @@ public class RemedicChains extends AbstractAbility {
 
             player.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " Your Remedic Chains is now protecting " + ChatColor.YELLOW + chainTarget.getName() + ChatColor.GRAY + "!");
 
+            targethit++;
             wp.getGame().getGameTasks().put(
                 new BukkitRunnable() {
 
@@ -82,7 +84,9 @@ public class RemedicChains extends AbstractAbility {
                     public void run() {
                         Runnable cancelSpeed = chainTarget.getSpeed().addSpeedModifier("Remedic Chains", 20, duration * 20, "BASE");
                         boolean outOfRange = wp.getLocation().distanceSquared(chainTarget.getLocation()) > linkBreakRadius * linkBreakRadius;
+
                         if (wp.getCooldownManager().hasCooldown(tempRemedicChain)) {
+
                             Location lineLocation = player.getLocation().add(0, 1, 0);
                             lineLocation.setDirection(lineLocation.toVector().subtract(chainTarget.getLocation().add(0, 1, 0).toVector()).multiply(-1));
                             for (int i = 0; i < Math.floor(player.getLocation().distance(chainTarget.getLocation())) * 2; i++) {
@@ -99,7 +103,7 @@ public class RemedicChains extends AbstractAbility {
                                 chainTarget.setRegenTimer(0);
                             }
 
-                            if (wp.isDead() || chainTarget.isDead()) {
+                            if (chainTarget.isDead()) {
                                 cancelSpeed.run();
                                 this.cancel();
                             }
@@ -116,11 +120,9 @@ public class RemedicChains extends AbstractAbility {
                         }
                     }
                 }.runTaskTimer(Warlords.getInstance(), 0, 5), System.currentTimeMillis());
-
-            return true;
         }
 
-        return false;
+        return targethit >= 1;
     }
 
 }

@@ -36,8 +36,8 @@ public class WideGuard extends AbstractAbility {
                 "§7the bubble. Minimum §c20%§7.) " +
                 "\n\n" +
                 "§7After §64 §7seconds, the bubble will burst healing\n" +
-                "§7all allies for up to §a600 §7+ §a12% §7missing\n" +
-                "health based on how long they've been in the bubble.\n";
+                "§7all allies for up to §a600 §7+ §a12% §7missing health\n" +
+                "§7based on how long they've been in the bubble.\n";
     }
 
     @Override

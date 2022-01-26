@@ -914,7 +914,7 @@ public final class WarlordsPlayer {
     public void cancelHealingPowerUp() {
         if (powerUpHeal) {
             powerUpHeal = false;
-            sendMessage(ChatColor.GOLD + "Your §a§lHealing §6powerup has worn off.");
+            sendMessage(ChatColor.GOLD + "Your §a§lHEALING §6powerup has worn off.");
         }
     }
 

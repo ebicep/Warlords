@@ -18,7 +18,7 @@ public class RighteousStrike extends AbstractStrikeBase {
     public void updateDescription(Player player) {
         description = "§7Strike the targeted enemy for §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + "§7.\n" +
                 "§7Each strike reduces the duration of your striked\n" +
-                "§7target's active ability cooldowns by §60.5 §7seconds.";
+                "§7target's active ability timers by §60.5 §7seconds.";
     }
 
     @Override

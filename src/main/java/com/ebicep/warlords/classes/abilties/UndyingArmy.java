@@ -4,9 +4,9 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
-import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownFilter;
+import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.ItemBuilder;
 import com.ebicep.warlords.util.Matrix4d;
@@ -57,8 +57,8 @@ public class UndyingArmy extends AbstractAbility {
     @Override
     public void updateDescription(Player player) {
         description = "§7You may chain up to §e" + maxArmyAllies + " §7allies in a §e" + radius + "\n" +
-                "§7block radius to heal them for §a200 §7+\n" +
-                "§7§a6% §7of their missing health every second.\n" +
+                "§7block radius to heal them for §a100 §7+\n" +
+                "§7§a3.5% §7of their missing health every second.\n" +
                 "Lasts §6" + duration + " §7seconds." +
                 "\n\n" +
                 "§7Chained allies that take fatal damage\n" +
@@ -85,7 +85,6 @@ public class UndyingArmy extends AbstractAbility {
             teammate.getCooldownManager().addRegularCooldown(name, "ARMY", UndyingArmy.class, tempUndyingArmy, wp, CooldownTypes.ABILITY, cooldownManager -> {
             }, duration * 20);
             wp.getGame().getGameTasks().put(
-
                     new BukkitRunnable() {
                         @Override
                         public void run() {
@@ -93,7 +92,7 @@ public class UndyingArmy extends AbstractAbility {
                                 Optional<UndyingArmy> optionalUndyingArmy = new CooldownFilter<>(teammate, RegularCooldown.class).findFirstObject(tempUndyingArmy, UndyingArmy.class);
                                 if (optionalUndyingArmy.isPresent()) {
                                     if (!(optionalUndyingArmy.get()).isArmyDead(teammate.getUuid())) {
-                                        float healAmount = 200 + (teammate.getMaxHealth() - teammate.getHealth()) / 14.3f;
+                                        float healAmount = 100 + (teammate.getMaxHealth() - teammate.getHealth()) * 0.035f;
                                         teammate.addHealingInstance(wp, name, healAmount, healAmount, -1, 100, false, false);
                                         player.playSound(teammate.getLocation(), "paladin.holyradiance.activation", 0.15f, 0.7f);
 
@@ -120,8 +119,7 @@ public class UndyingArmy extends AbstractAbility {
                                 }
                             }
                         }
-                    }.runTaskTimer(Warlords.getInstance(), 0, 40),
-                    System.currentTimeMillis()
+                    }.runTaskTimer(Warlords.getInstance(), 0, 20), System.currentTimeMillis()
             );
             numberOfPlayersWithArmy++;
 
@@ -129,10 +127,6 @@ public class UndyingArmy extends AbstractAbility {
                 break;
             }
         }
-        //subtracting to remove self
-        numberOfPlayersWithArmy--;
-        String allies = numberOfPlayersWithArmy == 1 ? "ally." : "allies.";
-        wp.sendMessage("§a\u00BB§7 " + ChatColor.GRAY + "Your " + ChatColor.YELLOW + "Undying Army" + ChatColor.GRAY + " is now protecting " + ChatColor.YELLOW + numberOfPlayersWithArmy + ChatColor.GRAY + " nearby " + allies);
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), Sound.ZOMBIE_IDLE, 2, 0.3f);
