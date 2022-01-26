@@ -1,13 +1,12 @@
 package com.ebicep.warlords.classes;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.classes.abilties.*;
-import com.ebicep.warlords.classes.internal.AbstractChainBase;
+import com.ebicep.warlords.classes.abilties.ArcaneShield;
+import com.ebicep.warlords.classes.abilties.EarthenSpike;
+import com.ebicep.warlords.classes.abilties.SoulShackle;
 import com.ebicep.warlords.classes.internal.AbstractStrikeBase;
-import com.ebicep.warlords.player.ClassesSkillBoosts;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import net.minecraft.server.v1_8_R3.PacketPlayOutAnimation;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
@@ -56,7 +55,7 @@ public abstract class AbstractPlayerClass {
         } else if (purple.getName().contains("Ground")) {
             className = "Warrior";
             classNameShort = "WAR";
-        } else if (red.getName().contains("Curse") || red.getName().contains("Shackle") || blue.getName().contains("Remedy")) {
+        } else if (red.getName().contains("Curse") || red.getName().contains("Shackle") || red.getName().contains("Remedy")) {
             className = "Rogue";
             classNameShort = "ROG";
         } else {

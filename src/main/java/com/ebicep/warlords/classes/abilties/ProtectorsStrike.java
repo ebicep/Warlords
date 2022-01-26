@@ -17,13 +17,11 @@ public class ProtectorsStrike extends AbstractStrikeBase {
 
     @Override
     public void updateDescription(Player player) {
-        int boost = convertPercent == 100 ? 100 : 120;
-        int selfBoost = selfConvertPercent == 50 ? 50 : 60;
         description = "§7Strike the targeted enemy player,\n" +
                 "§7causing §c261 §7- §c352 §7damage\n" +
                 "§7and healing two nearby allies for\n" +
-                "§a" + boost + "% §7of the damage done. Also\n" +
-                "§7heals yourself by §a" + selfBoost + "% §7of the\n" +
+                "§a" + convertPercent + "% §7of the damage done. Also\n" +
+                "§7heals yourself by §a" + selfConvertPercent + "% §7of the\n" +
                 "§7damage done.";
     }
 

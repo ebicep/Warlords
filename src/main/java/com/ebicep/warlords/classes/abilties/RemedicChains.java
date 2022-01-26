@@ -28,10 +28,10 @@ public class RemedicChains extends AbstractAbility {
         description = "§7Bind yourself to §e" + alliesAffected + " §7allies near you, forcing them\n" +
                 "§7them to naturally regenerate health as long as\n" +
                 "§7the link is active. When the link expires or when you\n" +
-                "§7are too far away from each other the link breaks. Healing\n" +
-                "§7you and the allies for §a" + format(minDamageHeal) + " §7- §a" + format(maxDamageHeal) + " §7health. Breaking\n" +
-                "§7the link early will only heal the allies for §a10% §7of\n" +
-                "§7the original amount." +
+                "§7are too far away from each other the link breaks.\n" +
+                "§7Healing you and the allies for §a" + format(minDamageHeal) + " §7- §a" + format(maxDamageHeal) + " §7health.\n" +
+                "§7Breaking the link early will only heal the allies for\n" +
+                "§a10% §7of the original amount." +
                 "\n\n" +
                 "§7The link will break if you are §e" + linkBreakRadius + " §7blocks apart.";
     }
@@ -73,6 +73,8 @@ public class RemedicChains extends AbstractAbility {
                     duration * 20
             );
 
+            player.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " Your Remedic Chains is now protecting " + ChatColor.YELLOW + chainTarget.getName() + ChatColor.GRAY + "!");
+
             wp.getGame().getGameTasks().put(
                 new BukkitRunnable() {
 
@@ -88,13 +90,18 @@ public class RemedicChains extends AbstractAbility {
                                 lineLocation.add(lineLocation.getDirection().multiply(0.5));
                             }
 
-                            if (outOfRange || wp.isDead()) {
+                            if (outOfRange) {
                                 chainTarget.getCooldownManager().removeCooldown(tempRemedicChain);
                                 chainTarget.addHealingInstance(wp, name, minDamageHeal * 0.1f, maxDamageHeal * 0.1f, critChance, critMultiplier, false, false);
                                 chainTarget.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.RED + "You left the link range early!");
                                 this.cancel();
                             } else {
                                 chainTarget.setRegenTimer(0);
+                            }
+
+                            if (wp.isDead() || chainTarget.isDead()) {
+                                cancelSpeed.run();
+                                this.cancel();
                             }
                         } else {
                             cancelSpeed.run();
@@ -115,4 +122,5 @@ public class RemedicChains extends AbstractAbility {
 
         return false;
     }
+
 }

@@ -10,7 +10,6 @@ import com.ebicep.warlords.util.PlayerFilter;
 import com.ebicep.warlords.util.Utils;
 import net.minecraft.server.v1_8_R3.PacketPlayOutAnimation;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -47,19 +46,11 @@ public abstract class AbstractStrikeBase extends AbstractAbility {
                             wp.subtractEnergy(energyCost);
                         }
 
-                        Location particleLoc = nearPlayer.getLocation().clone().add((Math.random() * 2) - 1, 1.2 + (Math.random() * 2) - 1, (Math.random() * 2) - 1);
-
                         if (this instanceof AvengersStrike || this instanceof CrusadersStrike || this instanceof ProtectorsStrike) {
                             for (Player player1 : player.getWorld().getPlayers()) {
                                 player1.playSound(nearPlayer.getLocation(), "paladin.paladinstrike.activation", 2, 1);
                             }
-                            for (int i = 0; i < 5; i++) {
-                                ParticleEffect.REDSTONE.display(
-                                        new ParticleEffect.OrdinaryColor(255, 0, 0),
-                                        particleLoc,
-                                        500);
-
-                            }
+                            randomHitEffect(nearPlayer, 5, 255, 0, 0);
                             ParticleEffect.SPELL.display(
                                     (float) ((Math.random() * 2) - 1),
                                     (float) ((Math.random() * 2) - 1),
@@ -72,37 +63,24 @@ public abstract class AbstractStrikeBase extends AbstractAbility {
                             for (Player player1 : Bukkit.getOnlinePlayers()) {
                                 player1.playSound(nearPlayer.getLocation(), "warrior.mortalstrike.impact", 2, 1);
                             }
-                            for (int i = 0; i < 7; i++) {
-                                ParticleEffect.REDSTONE.display(
-                                        new ParticleEffect.OrdinaryColor(255, 0, 0),
-                                        particleLoc,
-                                        500);
-
-                            }
+                            randomHitEffect(nearPlayer, 7, 255, 0, 0);
                         } else if (this instanceof JudgementStrike) {
                             for (Player player1 : Bukkit.getOnlinePlayers()) {
                                 player1.playSound(nearPlayer.getLocation(), "warrior.revenant.orbsoflife", 2, 1.7f);
                                 player1.playSound(nearPlayer.getLocation(), "mage.frostbolt.activation", 2, 2);
                             }
-                            for (int i = 0; i < 7; i++) {
-                                ParticleEffect.REDSTONE.display(
-                                        new ParticleEffect.OrdinaryColor(255, 255, 255),
-                                        particleLoc,
-                                        500);
-
-                            }
+                            randomHitEffect(nearPlayer, 7, 255, 255, 255);
                         } else if (this instanceof RighteousStrike) {
                             for (Player player1 : Bukkit.getOnlinePlayers()) {
                                 player1.playSound(nearPlayer.getLocation(), "rogue.vindicatorstrike.activation", 2, 0.7f);
                                 player1.playSound(nearPlayer.getLocation(), "shaman.earthenspike.impact", 2, 2);
                             }
-                            for (int i = 0; i < 7; i++) {
-                                ParticleEffect.REDSTONE.display(
-                                        new ParticleEffect.OrdinaryColor(255, 255, 255),
-                                        particleLoc,
-                                        500);
-
+                            randomHitEffect(nearPlayer, 7, 255, 255, 255);
+                        } else if (this instanceof ImpalingStrike) {
+                            for (Player player1 : Bukkit.getOnlinePlayers()) {
+                                player1.playSound(nearPlayer.getLocation(), "rogue.apothecarystrike.activation", 2, 0.7f);
                             }
+                            randomHitEffect(nearPlayer, 7, 100, 255, 100);
                         }
 
                         onHit(wp, player, nearPlayer);
@@ -110,6 +88,16 @@ public abstract class AbstractStrikeBase extends AbstractAbility {
                 });
 
         return true;
+    }
+
+    private void randomHitEffect(WarlordsPlayer player, int particleAmount, int red, int green, int blue) {
+        for (int i = 0; i < particleAmount; i++) {
+            ParticleEffect.REDSTONE.display(
+                    new ParticleEffect.OrdinaryColor(red, green, blue),
+                    player.getLocation().clone().add((Math.random() * 2) - 1, 1.2 + (Math.random() * 2) - 1, (Math.random() * 2) - 1),
+                    500);
+
+        }
     }
 
     protected boolean standingOnConsecrate(Player owner, WarlordsPlayer standing) {
