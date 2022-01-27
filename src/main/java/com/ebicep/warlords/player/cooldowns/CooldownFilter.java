@@ -25,12 +25,12 @@ public class CooldownFilter<T extends AbstractCooldown<?>> implements Iterable<T
     }
 
     public CooldownFilter(CooldownManager cooldownManager, Class<T> clazz) {
-        this.stream = cooldownManager.getAbilityCooldowns().stream().filter(clazz::isInstance).map(clazz::cast);
+        this.stream = cooldownManager.getCooldowns().stream().filter(clazz::isInstance).map(clazz::cast);
         this.clazz = clazz;
     }
 
     public CooldownFilter(WarlordsPlayer warlordsPlayer, Class<T> clazz) {
-        this.stream = warlordsPlayer.getCooldownManager().getAbilityCooldowns().stream().filter(clazz::isInstance).map(clazz::cast);
+        this.stream = warlordsPlayer.getCooldownManager().getCooldowns().stream().filter(clazz::isInstance).map(clazz::cast);
         this.clazz = clazz;
     }
 
@@ -43,11 +43,11 @@ public class CooldownFilter<T extends AbstractCooldown<?>> implements Iterable<T
     }
 
     public <R> CooldownFilter<T> filterCooldownClass(Class<R> clazz) {
-        return new CooldownFilter<>(stream.filter(cd -> cd.getCooldownClass().equals(clazz)));
+        return new CooldownFilter<>(stream.filter(cd -> cd.getCooldownClass() != null && cd.getCooldownClass().equals(clazz)));
     }
 
     public CooldownFilter<T> filterCooldownObject(Object object) {
-        return new CooldownFilter<>(stream.filter(cd -> cd.getCooldownObject().equals(object)));
+        return new CooldownFilter<>(stream.filter(cd -> cd.getCooldownObject() != null && cd.getCooldownObject().equals(object)));
     }
 
     public CooldownFilter<T> filter(Predicate<T> predicate) {
