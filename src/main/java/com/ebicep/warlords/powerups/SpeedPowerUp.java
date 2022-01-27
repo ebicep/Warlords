@@ -1,7 +1,7 @@
 package com.ebicep.warlords.powerups;
 
-import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
@@ -21,6 +21,7 @@ public class SpeedPowerUp extends AbstractPowerUp {
     @Override
     public void onPickUp(WarlordsPlayer warlordsPlayer) {
         warlordsPlayer.getCooldownManager().addRegularCooldown("Speed", "SPEED", SpeedPowerUp.class, this, warlordsPlayer, CooldownTypes.BUFF, cooldownManager -> {
+            warlordsPlayer.sendMessage("§6Your §e§lSPEED §6powerup has worn off!");
         }, duration * 20);
         warlordsPlayer.sendMessage("§6You activated the §e§lSPEED §6powerup! §a+40% §6Speed for §a10 §6seconds!");
         warlordsPlayer.getSpeed().addSpeedModifier("Speed Powerup", 40, 10 * 20, "BASE");

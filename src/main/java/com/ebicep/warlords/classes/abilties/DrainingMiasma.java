@@ -30,7 +30,7 @@ public class DrainingMiasma extends AbstractAbility {
     public void updateDescription(Player player) {
         description = "§7Summon a toxic-filled cloud around you,\n" +
                 "§7poisoning all enemies inside the area. Poisoned\n" +
-                "§7enemies take §c20 §7+ §c4% §7of their current health as\n" +
+                "§7enemies take §c20 §7+ §c4% §7of their max health as\n" +
                 "§7damage per second, for §6" + duration + " §7seconds. Enemies\n" +
                 "§7poisoned by your Draining Miasma are blinded for §62\n" +
                 "§7seconds after the poison ends. The caster receives\n" +
@@ -67,7 +67,7 @@ public class DrainingMiasma extends AbstractAbility {
                                 float totalDamage = 0;
                                 @Override
                                 public void run() {
-                                    float healthDamage = miasmaTarget.getHealth() * 0.04f;
+                                    float healthDamage = miasmaTarget.getMaxHealth() * 0.04f;
                                     if (miasmaTarget.getCooldownManager().hasCooldown(tempDrainingMiasma)) {
                                         // 4% current health damage.
                                         miasmaTarget.addDamageInstance(wp, "Draining Miasma", 20 + healthDamage, 20 + healthDamage, -1, 100, false);
