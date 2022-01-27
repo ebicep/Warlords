@@ -30,11 +30,11 @@ public class CooldownManager {
 
 
     public boolean hasCooldown(Class cooldownClass) {
-        return cooldowns.stream().anyMatch(cooldown -> cooldown.getCooldownClass() == cooldownClass);
+        return cooldowns.stream().anyMatch(cooldown -> cooldown.getCooldownClass() != null && cooldown.getCooldownClass() == cooldownClass);
     }
 
     public boolean hasCooldown(Object cooldownObject) {
-        return cooldowns.stream().anyMatch(cooldown -> cooldown.getCooldownObject() == cooldownObject);
+        return cooldowns.stream().anyMatch(cooldown -> cooldown.getCooldownObject() != null && cooldown.getCooldownObject() == cooldownObject);
     }
 
     public List<Cooldown> getCooldownFromName(String name) {
