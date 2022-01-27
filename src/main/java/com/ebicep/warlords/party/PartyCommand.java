@@ -180,17 +180,21 @@ public class PartyCommand implements TabExecutor {
                             Party.sendMessageToPlayer(player, ChatColor.RED + "Invalid Arguments!", true, true);
                             return true;
                         }
+                        String targetPlayer = args[1];
                         Party party = currentParty.get();
-                        //player is not leader
-                        //player is moderator and player to act on is not the leader
+                        //player to act on cannot be leader
                         //player is moderator and commands are not promote, demote, or transfer
-                        if (!party.getPartyLeader().getUuid().equals(player.getUniqueId()) &&
-                                (party.getPartyModerators().stream().anyMatch(partyPlayer -> partyPlayer.getUuid().equals(player.getUniqueId())) && Bukkit.getOfflinePlayer(party.getPartyLeader().getUuid()).getName().equalsIgnoreCase(input)) &&
-                                (party.getPartyModerators().stream().anyMatch(partyPlayer -> partyPlayer.getUuid().equals(player.getUniqueId())) && (input.equalsIgnoreCase("promote") || input.equalsIgnoreCase("demote") || input.equalsIgnoreCase("transfer")))) {
+                        //player cannot be a member
+                        boolean isModerator = party.getPartyModerators().stream().anyMatch(partyPlayer -> partyPlayer.getUuid().equals(player.getUniqueId()));
+                        boolean isMember = party.getPartyMembers().stream().anyMatch(partyPlayer -> partyPlayer.getUuid().equals(player.getUniqueId()));
+                        if (
+                                (party.getLeaderName().equalsIgnoreCase(targetPlayer)) ||
+                                        (isModerator && (input.equalsIgnoreCase("promote") || input.equalsIgnoreCase("demote") || input.equalsIgnoreCase("transfer"))) ||
+                                        (isMember)
+                        ) {
                             Party.sendMessageToPlayer(player, ChatColor.RED + "Insufficient Permissions!", true, true);
                             return true;
                         }
-                        String targetPlayer = args[1];
                         if (player.getName().equalsIgnoreCase(targetPlayer)) {
                             Party.sendMessageToPlayer(player, ChatColor.RED + "You cannot do this on yourself!", true, true);
                             return true;

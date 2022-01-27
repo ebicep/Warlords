@@ -2,13 +2,14 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
-import com.ebicep.warlords.player.cooldowns.CooldownTypes;
-
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.EffectUtils;
+import com.ebicep.warlords.util.FireWorkEffectPlayer;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
-import org.bukkit.Location;
+import org.bukkit.Color;
+import org.bukkit.FireworkEffect;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
@@ -16,7 +17,6 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
 
 public class DrainingMiasma extends AbstractAbility {
 
@@ -30,10 +30,11 @@ public class DrainingMiasma extends AbstractAbility {
     public void updateDescription(Player player) {
         description = "§7Summon a toxic-filled cloud around you,\n" +
                 "§7poisoning all enemies inside the area. Poisoned\n" +
-                "§7enemies take §c4% §7of their current health as\n" +
-                "§7damage per second, for §6" + duration + " §7seconds. The\n" +
-                "§7caster receives healing equal to §a25% §7of the\n" +
-                "§7damage dealt.";
+                "§7enemies take §c20 §7+ §c4% §7of their current health as\n" +
+                "§7damage per second, for §6" + duration + " §7seconds. Enemies\n" +
+                "§7poisoned by your Draining Miasma are blinded for §62\n" +
+                "§7seconds after the poison ends. The caster receives\n" +
+                "§7healing equal to §a25% §7of the damage dealt.\n";
     }
 
     @Override
@@ -41,12 +42,17 @@ public class DrainingMiasma extends AbstractAbility {
         wp.subtractEnergy(energyCost);
 
         for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "rogue.drainingmiasma.activation", 2, 1.8f);
+            player1.playSound(player.getLocation(), "rogue.drainingmiasma.activation", 2, 1.7f);
             player1.playSound(player.getLocation(), "shaman.earthlivingweapon.activation", 2, 0.65f);
         }
 
         EffectUtils.playCylinderAnimation(player, 6, 30, 200, 30);
         EffectUtils.playSphereAnimation(player, 6, ParticleEffect.SLIME, 1);
+
+        FireWorkEffectPlayer.playFirework(wp.getLocation(), FireworkEffect.builder()
+                .withColor(Color.LIME)
+                .with(FireworkEffect.Type.BALL_LARGE)
+                .build());
 
         DrainingMiasma tempDrainingMiasma = new DrainingMiasma();
         PlayerFilter.entitiesAround(wp, 6, 6, 6)
@@ -55,15 +61,7 @@ public class DrainingMiasma extends AbstractAbility {
                     miasmaTarget.getCooldownManager().addRegularCooldown("Draining Miasma", "MIASMA", DrainingMiasma.class, tempDrainingMiasma, wp, CooldownTypes.DEBUFF, cooldownManager -> {
                     }, duration * 20);
 
-                    Location lineLocation = player.getLocation().clone().add(0, 1, 0);
-                    lineLocation.setDirection(lineLocation.toVector().subtract(miasmaTarget.getLocation().add(0, 1, 0).toVector()).multiply(-1));
-                    for (int i = 0; i < Math.floor(player.getLocation().distance(miasmaTarget.getLocation())) * 2; i++) {
-                        ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(30, 200, 30), lineLocation, 500);
-                        lineLocation.add(lineLocation.getDirection().multiply(.5));
-                    }
-
                     wp.getGame().getGameTasks().put(
-
 
                             new BukkitRunnable() {
                                 float totalDamage = 0;
@@ -71,8 +69,8 @@ public class DrainingMiasma extends AbstractAbility {
                                 public void run() {
                                     float healthDamage = miasmaTarget.getHealth() * 0.04f;
                                     if (miasmaTarget.getCooldownManager().hasCooldown(tempDrainingMiasma)) {
-                                        // 6% current health damage.
-                                        miasmaTarget.addDamageInstance(wp, "Draining Miasma", healthDamage, healthDamage, -1, 100, false);
+                                        // 4% current health damage.
+                                        miasmaTarget.addDamageInstance(wp, "Draining Miasma", 20 + healthDamage, 20 + healthDamage, -1, 100, false);
                                         totalDamage += healthDamage;
 
                                         for (Player player1 : miasmaTarget.getWorld().getPlayers()) {

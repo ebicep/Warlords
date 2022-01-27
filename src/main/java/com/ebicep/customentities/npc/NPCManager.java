@@ -7,14 +7,17 @@ import net.citizensnpcs.api.npc.MemoryNPCDataStore;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.trait.TraitInfo;
+import net.citizensnpcs.trait.LookClose;
+import net.citizensnpcs.trait.ScoreboardTrait;
 import net.citizensnpcs.trait.SkinTrait;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 
 public class NPCManager {
 
     public static final NPCRegistry npcRegistry = CitizensAPI.createAnonymousNPCRegistry(new MemoryNPCDataStore());
-    public static NPC npc;
+    public static NPC gameStartNPC;
 
     public static void createGameNPC() {
         //for reloading
@@ -23,10 +26,15 @@ public class NPCManager {
         }
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(GameStartTrait.class).withName("GameStartTrait"));
 
-        npc = npcRegistry.createNPC(EntityType.PLAYER, "capture-the-flag");
-        npc.addTrait(GameStartTrait.class);
-        npc.getOrAddTrait(SkinTrait.class).setSkinName("sumSmash");
-        npc.data().set("nameplate-visible", false);
-        npc.spawn(new Location(LeaderboardManager.spawnPoint.getWorld(), -2535.5, 51, 744.5, 90, 0));
+        gameStartNPC = npcRegistry.createNPC(EntityType.PLAYER, "capture-the-flag");
+        gameStartNPC.addTrait(GameStartTrait.class);
+        gameStartNPC.getOrAddTrait(SkinTrait.class).setSkinName("sumSmash");
+//        gameStartNPC.getOrAddTrait(LookClose.class).lookClose(true);
+//        gameStartNPC.getOrAddTrait(LookClose.class).setRandomLook(true);
+//        gameStartNPC.getOrAddTrait(LookClose.class).setRandomLookDelay(1);
+//        gameStartNPC.getOrAddTrait(LookClose.class).setRange(50);
+
+        gameStartNPC.data().set("nameplate-visible", false);
+        gameStartNPC.spawn(new Location(LeaderboardManager.spawnPoint.getWorld(), -2535.5, 51, 744.5, 90, 0));
     }
 }

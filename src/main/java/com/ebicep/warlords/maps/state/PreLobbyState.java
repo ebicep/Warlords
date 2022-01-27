@@ -4,11 +4,10 @@ import com.ebicep.customentities.npc.traits.GameStartTrait;
 import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.maps.Game;
-import com.ebicep.warlords.maps.GameMap;
 import com.ebicep.warlords.maps.Gates;
 import com.ebicep.warlords.maps.Team;
-import com.ebicep.warlords.party.Party;
 import com.ebicep.warlords.player.*;
+import com.ebicep.warlords.sr.SRCalculator;
 import com.ebicep.warlords.util.ChatUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -17,16 +16,15 @@ import org.bukkit.entity.Player;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.util.ChatUtils.sendMessage;
 
 public class PreLobbyState implements State, TimerDebugAble {
 
-    private int timer = 0;
     private final Game game;
     private final Map<UUID, TeamPreference> teamPreferences = new HashMap<>();
+    private int timer = 0;
 
     public PreLobbyState(Game game) {
         this.game = game;
@@ -84,119 +82,223 @@ public class PreLobbyState implements State, TimerDebugAble {
                         player.setAllowFlight(false);
                     });
                 }
+
+                BotManager.sendStatusMessage(false);
             }
 
             if (timer <= 0) {
                 if (!game.isPrivate()) {
-                    //separating players into even teams because it might be uneven bc players couldve left
 
-                    //balancing based on specs
+                    HashMap<String, Integer> playersSR = new HashMap<>();
+                    SRCalculator.playersSR.forEach((key, value1) -> playersSR.put(key.getUuid(), value1 == null ? 500 : value1));
 
-                    //parties first
-                    int sameTeamPartyLimit = 2;
-                    HashMap<Team, List<Player>> partyMembers = new HashMap<Team, List<Player>>() {{
-                        put(Team.BLUE, new ArrayList<>());
-                        put(Team.RED, new ArrayList<>());
-                    }};
-                    game.forEachOnlinePlayer((player, team) -> {
-                        //check if player already is recorded
-                        if (partyMembers.values().stream().anyMatch(list -> list.contains(player))) {
-                            return;
-                        }
-                        Warlords.partyManager.getPartyFromAny(player.getUniqueId()).ifPresent(party -> {
-                            List<Player> partyPlayersInGame = party.getAllPartyPeoplePlayerOnline().stream().filter(p -> game.getPlayers().containsKey(p.getUniqueId())).collect(Collectors.toList());
-                            //check if party has more than limit to get on one team, if so then skip party, they get normally balanced
-                            if (partyPlayersInGame.size() > sameTeamPartyLimit) {
-                                return;
-                            }
-                            List<Player> bluePlayers = partyMembers.get(Team.BLUE);
-                            List<Player> redPlayers = partyMembers.get(Team.RED);
-                            List<Player> partyPlayers = new ArrayList<>(partyPlayersInGame);
-                            Collections.shuffle(partyPlayers);
-                            int teamSizeDiff = Math.abs(bluePlayers.size() - redPlayers.size());
-                            //check if whole party can go on the same team to get an even amount of players on each team
-                            if (teamSizeDiff > partyPlayers.size()) {
-                                if (bluePlayers.size() > redPlayers.size())
-                                    bluePlayers.addAll(partyPlayers);
-                                else
-                                    redPlayers.addAll(partyPlayers);
-                            } else {
-                                bluePlayers.addAll(partyPlayers);
-                            }
-                        });
-                    });
+                    HashMap<Player, Team> bestTeam = new HashMap<>();
+                    int bestBlueSR = 0;
+                    int bestRedSR = 0;
+                    int bestTeamSRDifference = Integer.MAX_VALUE;
 
-                    HashMap<Player, Team> teams = new HashMap<>();
-
-                    //adding partyPlayers to teams
-                    partyMembers.forEach((team, playerList) -> playerList.forEach(player -> teams.put(player, team)));
-
-                    HashMap<Classes, List<Player>> playerSpecs = new HashMap<>();
-                    //all players are online or else they wouldve been removed from queue
-                    game.forEachOnlinePlayer((player, team) -> {
-                        //filter out party players that are already assigned teams
-                        if (!teams.containsKey(player)) {
+                    int maxSRDiff = 200;
+                    for (int i = 0; i < 5000; i++) {
+                        HashMap<Player, Team> teams = new HashMap<>();
+                        HashMap<Classes, List<Player>> playerSpecs = new HashMap<>();
+                        game.forEachOnlinePlayer((player, team) -> {
                             PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
                             playerSpecs.computeIfAbsent(playerSettings.getSelectedClass(), v -> new ArrayList<>()).add(player);
-                        }
-                    });
-
-                    //specs that dont have an even amount of players to redistribute later
-                    List<Player> playersLeft = new ArrayList<>();
-                    //distributing specs evenly
-                    playerSpecs.forEach((classes, playerList) -> {
-                        int amountOfTargetSpecsOnBlue = (int) teams.entrySet().stream().filter(playerTeamEntry -> playerTeamEntry.getValue() == Team.BLUE && Warlords.getPlayerSettings(playerTeamEntry.getKey().getUniqueId()).getSelectedClass() == classes).count();
-                        int amountOfTargetSpecsOnRed = (int) teams.entrySet().stream().filter(playerTeamEntry -> playerTeamEntry.getValue() == Team.RED && Warlords.getPlayerSettings(playerTeamEntry.getKey().getUniqueId()).getSelectedClass() == classes).count();
-                        for (Player player : playerList) {
-                            //add to red team
-                            if (amountOfTargetSpecsOnBlue > amountOfTargetSpecsOnRed) {
-                                teams.put(player, Team.RED);
-                                amountOfTargetSpecsOnRed++;
-                            }
-                            //add to blue team
-                            else if (amountOfTargetSpecsOnRed > amountOfTargetSpecsOnBlue) {
-                                teams.put(player, Team.BLUE);
-                                amountOfTargetSpecsOnBlue++;
-                            }
-                            //same amount on each team - add to playersleft to redistribute
-                            else {
-                                playersLeft.add(player);
-                            }
-                        }
-                    });
-
-                    //start on team with least amount of players
-                    int amountOnBlue = (int) teams.entrySet().stream().filter(playerTeamEntry -> playerTeamEntry.getValue() == Team.BLUE).count();
-                    int amountOnRed = (int) teams.entrySet().stream().filter(playerTeamEntry -> playerTeamEntry.getValue() == Team.RED).count();
-                    final boolean[] toBlueTeam = {amountOnBlue <= amountOnRed};
-                    playersLeft.stream()
-                            .sorted(Comparator.comparing(o -> Warlords.getPlayerSettings(o.getUniqueId()).getSelectedClass().specType))
-                            .forEachOrdered(player -> {
-                                if (toBlueTeam[0]) {
-                                    teams.put(player, Team.BLUE);
-                                } else {
+                        });
+                        //specs that dont have an even amount of players to redistribute later
+                        List<Player> playersLeft = new ArrayList<>();
+                        //distributing specs evenly
+                        playerSpecs.forEach((classes, playerList) -> {
+                            int amountOfTargetSpecsOnBlue = (int) teams.entrySet().stream().filter(playerTeamEntry -> playerTeamEntry.getValue() == Team.BLUE && Warlords.getPlayerSettings(playerTeamEntry.getKey().getUniqueId()).getSelectedClass() == classes).count();
+                            int amountOfTargetSpecsOnRed = (int) teams.entrySet().stream().filter(playerTeamEntry -> playerTeamEntry.getValue() == Team.RED && Warlords.getPlayerSettings(playerTeamEntry.getKey().getUniqueId()).getSelectedClass() == classes).count();
+                            for (Player player : playerList) {
+                                //add to red team
+                                if (amountOfTargetSpecsOnBlue > amountOfTargetSpecsOnRed) {
                                     teams.put(player, Team.RED);
+                                    amountOfTargetSpecsOnRed++;
                                 }
-                                toBlueTeam[0] = !toBlueTeam[0];
-                            });
+                                //add to blue team
+                                else if (amountOfTargetSpecsOnRed > amountOfTargetSpecsOnBlue) {
+                                    teams.put(player, Team.BLUE);
+                                    amountOfTargetSpecsOnBlue++;
+                                }
+                                //same amount on each team - add to playersleft to redistribute
+                                else {
+                                    playersLeft.add(player);
+                                }
+                            }
+                        });
+                        //start on team with least amount of players
+                        int blueSR = teams.entrySet().stream()
+                                .filter(playerTeamEntry -> playerTeamEntry.getValue() == Team.BLUE)
+                                .mapToInt(value -> playersSR.getOrDefault(value.getKey().getUniqueId().toString(), 500))
+                                .sum();
+                        int redSR = teams.entrySet().stream()
+                                .filter(playerTeamEntry -> playerTeamEntry.getValue() == Team.RED)
+                                .mapToInt(value -> playersSR.getOrDefault(value.getKey().getUniqueId().toString(), 500))
+                                .sum();
 
-                    teams.forEach((player, team) -> {
+//                        playersLeft = playersLeft.stream()
+//                                .sorted(Comparator.comparing(o -> Warlords.getPlayerSettings(o.getUniqueId()).getSelectedClass().specType))
+//                                .collect(Collectors.toList());
+                        for (Player player : playersLeft) {
+                            if (redSR > blueSR) {
+                                teams.put(player, Team.BLUE);
+                                blueSR += playersSR.getOrDefault(player.getUniqueId().toString(), 500);
+                            } else {
+                                teams.put(player, Team.RED);
+                                redSR += playersSR.getOrDefault(player.getUniqueId().toString(), 500);
+                            }
+                        }
+
+                        int bluePlayers = (int) teams.entrySet().stream().filter(playerTeamEntry -> playerTeamEntry.getValue() == Team.BLUE).count();
+                        int redPlayers = (int) teams.entrySet().stream().filter(playerTeamEntry -> playerTeamEntry.getValue() == Team.RED).count();
+                        //uneven teams
+                        if ((bluePlayers + redPlayers) % 2 != 0) {
+                            int srDiffRed = Math.abs(redSR - 3500 - blueSR);
+                            int srDiffBlue = Math.abs(blueSR - 3500 - redSR);
+                            if ((bluePlayers > redPlayers && srDiffRed > maxSRDiff && srDiffRed > 0) || (redPlayers > bluePlayers && srDiffBlue > maxSRDiff && srDiffBlue > 0)) {
+                                maxSRDiff++;
+                                continue;
+                            }
+                        } else {
+                            if (Math.abs(redSR - blueSR) > maxSRDiff) {
+                                maxSRDiff++;
+                                continue;
+                            }
+                        }
+
+                        if (Math.abs(bluePlayers - redPlayers) > 1) {
+                            maxSRDiff++;
+                            continue;
+                        }
+
+                        if (Math.abs(redSR - blueSR) < bestTeamSRDifference) {
+                            bestTeam = teams;
+                            bestBlueSR = blueSR;
+                            bestRedSR = redSR;
+                            bestTeamSRDifference = Math.abs(redSR - blueSR);
+                        }
+                    }
+                    boolean failSafeActive = false;
+                    boolean secondFailSafeActive = false;
+
+                    //INCASE COULDNT BALANCE
+                    if (bestTeam.size() == 0) {
+                        failSafeActive = true;
+                        HashMap<Player, Team> teams = new HashMap<>();
+                        HashMap<Classes, List<Player>> playerSpecs = new HashMap<>();
+                        //all players are online or else they wouldve been removed from queue
+                        game.forEachOnlinePlayer((player, team) -> {
+                            PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
+                            playerSpecs.computeIfAbsent(playerSettings.getSelectedClass(), v -> new ArrayList<>()).add(player);
+                        });
+                        List<Player> playersLeft = new ArrayList<>();
+                        //distributing specs evenly
+                        playerSpecs.forEach((classes, playerList) -> {
+                            int amountOfTargetSpecsOnBlue = (int) teams.entrySet().stream().filter(playerTeamEntry -> playerTeamEntry.getValue() == Team.BLUE && Warlords.getPlayerSettings(playerTeamEntry.getKey().getUniqueId()).getSelectedClass() == classes).count();
+                            int amountOfTargetSpecsOnRed = (int) teams.entrySet().stream().filter(playerTeamEntry -> playerTeamEntry.getValue() == Team.RED && Warlords.getPlayerSettings(playerTeamEntry.getKey().getUniqueId()).getSelectedClass() == classes).count();
+                            for (Player player : playerList) {
+                                //add to red team
+                                if (amountOfTargetSpecsOnBlue > amountOfTargetSpecsOnRed) {
+                                    teams.put(player, Team.RED);
+                                    amountOfTargetSpecsOnRed++;
+                                }
+                                //add to blue team
+                                else if (amountOfTargetSpecsOnRed > amountOfTargetSpecsOnBlue) {
+                                    teams.put(player, Team.BLUE);
+                                    amountOfTargetSpecsOnBlue++;
+                                }
+                                //same amount on each team - add to playersleft to redistribute
+                                else {
+                                    playersLeft.add(player);
+                                }
+                            }
+                        });
+
+                        //start on team with least amount of players
+                        int amountOnBlue = (int) teams.entrySet().stream().filter(playerTeamEntry -> playerTeamEntry.getValue() == Team.BLUE).count();
+                        int amountOnRed = (int) teams.entrySet().stream().filter(playerTeamEntry -> playerTeamEntry.getValue() == Team.RED).count();
+                        final boolean[] toBlueTeam = {amountOnBlue <= amountOnRed};
+                        playersLeft.stream()
+                                .sorted(Comparator.comparing(o -> Warlords.getPlayerSettings(o.getUniqueId()).getSelectedClass().specType))
+                                .forEachOrdered(player -> {
+                                    if (toBlueTeam[0]) {
+                                        teams.put(player, Team.BLUE);
+                                    } else {
+                                        teams.put(player, Team.RED);
+                                    }
+                                    toBlueTeam[0] = !toBlueTeam[0];
+                                });
+
+                        bestTeam = teams;
+                        bestBlueSR = teams.entrySet().stream()
+                                .filter(playerTeamEntry -> playerTeamEntry.getValue() == Team.BLUE)
+                                .mapToInt(value -> playersSR.getOrDefault(value.getKey().getUniqueId().toString(), 500))
+                                .sum();
+                        bestRedSR = teams.entrySet().stream()
+                                .filter(playerTeamEntry -> playerTeamEntry.getValue() == Team.RED)
+                                .mapToInt(value -> playersSR.getOrDefault(value.getKey().getUniqueId().toString(), 500))
+                                .sum();
+                        bestTeamSRDifference = Math.abs(bestBlueSR - bestRedSR);
+                    }
+
+                    if (bestTeamSRDifference > 5000) {
+                        secondFailSafeActive = true;
+                        HashMap<Player, Team> teams = new HashMap<>();
+                        HashMap<Classes, List<Player>> playerSpecs = new HashMap<>();
+                        game.forEachOnlinePlayer((player, team) -> {
+                            PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
+                            playerSpecs.computeIfAbsent(playerSettings.getSelectedClass(), v -> new ArrayList<>()).add(player);
+                        });
+                        int blueSR = 0;
+                        int redSR = 0;
+                        for (List<Player> value : playerSpecs.values()) {
+                            for (Player player : value) {
+                                if (blueSR > redSR) {
+                                    teams.put(player, Team.RED);
+                                    redSR += playersSR.getOrDefault(player.getUniqueId().toString(), 500);
+                                } else {
+                                    teams.put(player, Team.BLUE);
+                                    blueSR += playersSR.getOrDefault(player.getUniqueId().toString(), 500);
+                                }
+                            }
+                        }
+                        bestTeam = teams;
+                        bestBlueSR = blueSR;
+                        bestRedSR = redSR;
+                        bestTeamSRDifference = Math.abs(bestBlueSR - bestRedSR);
+                    }
+
+                    bestTeam.forEach((player, team) -> {
                         Warlords.game.setPlayerTeam(player, team);
                         ArmorManager.resetArmor(player, Warlords.getPlayerSettings(player.getUniqueId()).getSelectedClass(), team);
                     });
 
-                    //OLD
-//                    AtomicBoolean blue = new AtomicBoolean(true);
-//                    game.forEachOnlinePlayer((player, team) -> {
-//                        if (blue.get()) {
-//                            Warlords.game.setPlayerTeam(player, Team.BLUE);
-//                            ArmorManager.resetArmor(player, Warlords.getPlayerSettings(player.getUniqueId()).getSelectedClass(), Team.BLUE);
-//                        } else {
-//                            Warlords.game.setPlayerTeam(player, Team.RED);
-//                            ArmorManager.resetArmor(player, Warlords.getPlayerSettings(player.getUniqueId()).getSelectedClass(), Team.RED);
-//                        }
-//                        blue.set(!blue.get());
-//                    });
+                    int bluePlayers = (int) bestTeam.entrySet().stream().filter(playerTeamEntry -> playerTeamEntry.getValue() == Team.BLUE).count();
+                    int redPlayers = (int) bestTeam.entrySet().stream().filter(playerTeamEntry -> playerTeamEntry.getValue() == Team.RED).count();
+
+                    for (Map.Entry<UUID, Team> uuidTeamEntry : game.players().collect(Collectors.toList())) {
+                        Player value = Bukkit.getPlayer(uuidTeamEntry.getKey());
+                        if (value.hasPermission("warlords.database.messagefeed")) {
+                            value.sendMessage(ChatColor.DARK_AQUA + "----- BALANCE INFORMATION -----");
+                            value.sendMessage(ChatColor.GREEN + "Max SR Diff: " + maxSRDiff);
+                            value.sendMessage(ChatColor.GREEN + "SR Diff: " + bestTeamSRDifference);
+                            value.sendMessage(ChatColor.BLUE + "Blue Players: " + ChatColor.GOLD + bluePlayers + ChatColor.GRAY + " - " + ChatColor.BLUE + "SR: " + ChatColor.GOLD + bestBlueSR);
+                            value.sendMessage(ChatColor.RED + "Red Players: " + ChatColor.GOLD + redPlayers + ChatColor.GRAY + " - " + ChatColor.RED + "SR: " + ChatColor.GOLD + bestRedSR);
+                            value.sendMessage(ChatColor.GREEN + "Fail Safe: " + ChatColor.GOLD + failSafeActive);
+                            value.sendMessage(ChatColor.GREEN + "Second Fail Safe: " + ChatColor.GOLD + secondFailSafeActive);
+                            value.sendMessage(ChatColor.DARK_AQUA + "-------------------------------");
+                            bestTeam.entrySet().stream().sorted(Map.Entry.comparingByValue()).forEach(playerTeamEntry -> {
+                                Classes classes = Warlords.getPlayerSettings(playerTeamEntry.getKey().getUniqueId()).getSelectedClass();
+                                value.sendMessage(playerTeamEntry.getValue().teamColor() + playerTeamEntry.getKey().getName() + ChatColor.GRAY + " - " +
+                                        classes.specType.chatColor + classes.name + ChatColor.GRAY + " - " +
+                                        ChatColor.GOLD + playersSR.get(playerTeamEntry.getKey().getUniqueId().toString()));
+                            });
+
+                            value.sendMessage(ChatColor.DARK_AQUA + "-------------------------------");
+                        }
+                    }
                     GameStartTrait.ctfQueue.clear();
 
                     //hiding players not in game
@@ -209,8 +311,9 @@ public class PreLobbyState implements State, TimerDebugAble {
                                 playerInParty.hidePlayer(playerNotInParty);
                             }));
                 }
+
                 if (game.getPlayers().size() >= 14) {
-                    BotManager.sendMessageToNotificationChannel("[GAME] A " + (game.isPrivate() ? "" : "Public ") + " **" + game.getMap().getMapName() + "** started with **" + game.getPlayers().size() + (game.getPlayers().size() == 1 ? "** player!" : "** players!"));
+                    BotManager.sendMessageToNotificationChannel("[GAME] A " + (game.isPrivate() ? "" : "Public ") + "**" + game.getMap().getMapName() + "** started with **" + game.getPlayers().size() + (game.getPlayers().size() == 1 ? "** player!" : "** players!"), true);
                 }
                 return new PlayingState(game);
             }
@@ -228,12 +331,20 @@ public class PreLobbyState implements State, TimerDebugAble {
         distributePeopleOverTeams();
     }
 
+    public int getTimer() {
+        return timer;
+    }
+
+    public String getTimeLeftString() {
+        int time = timer / 20;
+        return (time < 10 ? "00:0" : "00:") + time;
+    }
+
     public void giveLobbyScoreboard(boolean init, Player player) {
         CustomScoreboard customScoreboard = Warlords.playerScoreboards.get(player.getUniqueId());
 
         SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
         String dateString = format.format(new Date());
-        int time = timer / 20;
 
         String mapPrefix = ChatColor.WHITE + "Map: " + ChatColor.GREEN;
         String mapSuffix;
@@ -252,7 +363,7 @@ public class PreLobbyState implements State, TimerDebugAble {
                     mapPrefix + mapSuffix,
                     ChatColor.WHITE + "Players: " + ChatColor.GREEN + game.playersCount() + "/" + game.getMap().getMaxPlayers(),
                     "   ",
-                    ChatColor.WHITE + "Starting in: " + ChatColor.GREEN + (time < 10 ? "00:0" : "00:") + time + ChatColor.WHITE,
+                    ChatColor.WHITE + "Starting in: " + ChatColor.GREEN + getTimeLeftString() + ChatColor.WHITE,
                     "    ",
                     ChatColor.GRAY + "Lv" + ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(player.getUniqueId(), classes)) + " " + ChatColor.GOLD + Classes.getClassesGroup(classes).name,
                     ChatColor.WHITE + "Spec: " + ChatColor.GREEN + classes.name,
@@ -363,6 +474,12 @@ public class PreLobbyState implements State, TimerDebugAble {
         this.timer = game.getMap().getCountdownTimerInTicks();
     }
 
+    private enum TeamPriority {
+        FORCED_PREFERENCE,
+        PLAYER_PREFERENCE,
+        NO_PREFERENCE,
+    }
+
     private final class TeamPreference implements Comparable<TeamPreference> {
         final Team wantedTeam;
         final TeamPriority priority;
@@ -388,11 +505,5 @@ public class PreLobbyState implements State, TimerDebugAble {
             return Integer.compare(toInt(), o.toInt());
         }
 
-    }
-
-    private enum TeamPriority {
-        FORCED_PREFERENCE,
-        PLAYER_PREFERENCE,
-        NO_PREFERENCE,
     }
 }

@@ -37,7 +37,7 @@ public enum ClassesGroup {
     ROGUE(
             "Rogue",
             new ItemStack(Material.INK_SACK, 1, (short) 2),
-            "§7The Rogue is a master of mischief.\n§7Granting them powers to deceive, buff and\n§7debuff in all sorts of ways.",
+            "§7The Rogue is a master of deception.\n§7Always looking to gain the upper hand\n§7in the shadows.",
             ASSASSIN, VINDICATOR, APOTHECARY
     )
     ;

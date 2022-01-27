@@ -16,8 +16,8 @@ import com.ebicep.warlords.maps.flags.GroundFlagLocation;
 import com.ebicep.warlords.maps.flags.PlayerFlagLocation;
 import com.ebicep.warlords.maps.state.PlayingState;
 import com.ebicep.warlords.player.cooldowns.AbstractCooldown;
-import com.ebicep.warlords.player.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.cooldowns.CooldownFilter;
+import com.ebicep.warlords.player.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.*;
@@ -84,7 +84,6 @@ public final class WarlordsPlayer {
     private float energy;
     private float maxEnergy;
     private float horseCooldown;
-    private int healPowerupDuration = 4;
     private float currentHealthModifier = 1;
     private int flagCooldown;
     private int hitCooldown;
@@ -195,6 +194,10 @@ public final class WarlordsPlayer {
             critMultiplier += attacker.getSpec().getOrange().getCritMultiplier();
         }
 
+        if (attacker.getCooldownManager().hasCooldown(CrossVital.class) && !isMeleeHit) {
+            critMultiplier += attacker.getSpec().getBlue().getCritMultiplier();
+        }
+
         // Assassin Mark crit chance increase
         if (attacker.getCooldownManager().hasCooldown(OrderOfEviscerate.class)) {
             if (!Utils.isLineOfSightAssassin(getEntity(), attacker.getEntity())) {
@@ -202,7 +205,7 @@ public final class WarlordsPlayer {
             }
         }
 
-        // Assasin takes damage, remove ability.
+        // Assassin takes damage, remove ability.
         if (getCooldownManager().hasCooldownFromName("Cloaked")) {
             getCooldownManager().removeCooldownByName("Cloaked");
             this.getEntity().removePotionEffect(PotionEffectType.INVISIBILITY);
@@ -400,12 +403,12 @@ public final class WarlordsPlayer {
                     if (cooldownManager.hasCooldownFromName("Wide Guard")) {
                         if (
                                 ability.equals("Fireball") ||
-                                        ability.equals("Frostbolt") ||
-                                        ability.equals("Water Bolt") ||
-                                        ability.equals("Lightning Bolt") ||
-                                        ability.equals("Flame Burst")
+                                ability.equals("Frostbolt") ||
+                                ability.equals("Water Bolt") ||
+                                ability.equals("Lightning Bolt") ||
+                                ability.equals("Flame Burst")
                         ) {
-                            damageValue *= .2;
+                            damageValue *= .3;
                         }
                     }
                 }
@@ -564,13 +567,13 @@ public final class WarlordsPlayer {
 
                         // Self Heal
                         if (Warlords.getPlayerSettings(attacker.uuid).getSkillBoostForClass() == ClassesSkillBoosts.PROTECTOR_STRIKE) {
-                            attacker.addHealingInstance(attacker, ability, damageValue / 1.67f, damageValue / 1.67f, isCrit ? 100 : -1, 100, false, false);
+                            attacker.addHealingInstance(attacker, ability, damageValue * 0.6f, damageValue * 0.6f, isCrit ? 100 : -1, 100, false, false);
                         } else {
-                            attacker.addHealingInstance(attacker, ability, damageValue / 2, damageValue / 2, isCrit ? 100 : -1, 100, false, false);
+                            attacker.addHealingInstance(attacker, ability, damageValue * 0.5f, damageValue * 0.5f, isCrit ? 100 : -1, 100, false, false);
                         }
 
                         // Ally Heal
-                        for (WarlordsPlayer nearTeamPlayer : PlayerFilter
+                        for (WarlordsPlayer ally : PlayerFilter
                                 .entitiesAround(attacker, 10, 10, 10)
                                 .aliveTeammatesOfExcludingSelf(attacker)
                                 .sorted(Comparator.comparing((WarlordsPlayer p) -> p.getCooldownManager().hasCooldown(HolyRadianceProtector.class) ? 0 : 1)
@@ -578,9 +581,9 @@ public final class WarlordsPlayer {
                                 .limit(2)
                         ) {
                             if (Warlords.getPlayerSettings(attacker.uuid).getSkillBoostForClass() == ClassesSkillBoosts.PROTECTOR_STRIKE) {
-                                nearTeamPlayer.addHealingInstance(attacker, ability, damageValue * 1.2f, damageValue * 1.2f, isCrit ? 100 : -1, 100, false, false);
+                                ally.addHealingInstance(attacker, ability, damageValue * 1.2f, damageValue * 1.2f, isCrit ? 100 : -1, 100, false, false);
                             } else {
-                                nearTeamPlayer.addHealingInstance(attacker, ability, damageValue, damageValue, isCrit ? 100 : -1, 100, false, false);
+                                ally.addHealingInstance(attacker, ability, damageValue, damageValue, isCrit ? 100 : -1, 100, false, false);
                             }
                         }
                     }
@@ -597,13 +600,12 @@ public final class WarlordsPlayer {
                     attacker.addHealingInstance(attacker, "Leech", min * 0.5f, max * 0.5f, isCrit ? 100 : -1, 200, false, false);
                 }
 
-
-                if (ability.equals("Judgement Strike")) {
-                    if (isCrit) {
-                        attacker.getSpeed().addSpeedModifier("Judgement Speed", 20, 2 * 20, "BASE");
-                    }
+                // Judgement Strike
+                if (ability.equals("Judgement Strike") && isCrit) {
+                    attacker.getSpeed().addSpeedModifier("Judgement Speed", 20, 2 * 20, "BASE");
                 }
 
+                // Assassin Mark
                 if (attacker.getCooldownManager().hasCooldown(OrderOfEviscerate.class)) {
                     if (attacker.getMarkedTarget() != uuid) {
                         attacker.sendMessage("You have marked " + getName());
@@ -613,8 +615,9 @@ public final class WarlordsPlayer {
 
                 updateJimmyHealth();
 
-                // adding/subtracing health
-                //debt and healing
+                // Adding/subtracting health
+
+                // debt and healing
                 if (!debt && takeDamage) {
                     this.health -= Math.round(damageValue);
                 }
@@ -657,6 +660,11 @@ public final class WarlordsPlayer {
                             p.updateOrangeItem();
                         }
                     });
+
+                    // Cross Vital speed on death.
+                    if (attacker.getCooldownManager().hasCooldown(CrossVital.class)) {
+                        attacker.getSpeed().addSpeedModifier("Cross Vital Speed", 40, 4 * 20, "BASE");
+                    }
 
                     // Regular Kill Feed
                     gameState.getGame().forEachOnlinePlayer((p, t) -> {
@@ -906,8 +914,7 @@ public final class WarlordsPlayer {
     public void cancelHealingPowerUp() {
         if (powerUpHeal) {
             powerUpHeal = false;
-            sendMessage(ChatColor.GOLD + "Your §a§lHealing Powerup §6has worn off.");
-            setHealPowerupDuration(4);
+            sendMessage(ChatColor.GOLD + "Your §a§lHEALING §6powerup has worn off.");
         }
     }
 
@@ -1109,21 +1116,23 @@ public final class WarlordsPlayer {
 
     public void applySkillBoost(Player player) {
         ClassesSkillBoosts selectedBoost = Classes.getSelectedBoost(Bukkit.getOfflinePlayer(uuid));
-        if (spec.getWeapon().getClass() == selectedBoost.ability) {
-            spec.getWeapon().boostSkill(selectedBoost, spec);
-            spec.getWeapon().updateDescription(player);
-        } else if (spec.getRed().getClass() == selectedBoost.ability) {
-            spec.getRed().boostSkill(selectedBoost, spec);
-            spec.getRed().updateDescription(player);
-        } else if (spec.getPurple().getClass() == selectedBoost.ability) {
-            spec.getPurple().boostSkill(selectedBoost, spec);
-            spec.getPurple().updateDescription(player);
-        } else if (spec.getBlue().getClass() == selectedBoost.ability) {
-            spec.getBlue().boostSkill(selectedBoost, spec);
-            spec.getBlue().updateDescription(player);
-        } else if (spec.getOrange().getClass() == selectedBoost.ability) {
-            spec.getOrange().boostSkill(selectedBoost, spec);
-            spec.getOrange().updateDescription(player);
+        if (selectedBoost != null) {
+            if (spec.getWeapon().getClass() == selectedBoost.ability) {
+                spec.getWeapon().boostSkill(selectedBoost, spec);
+                spec.getWeapon().updateDescription(player);
+            } else if (spec.getRed().getClass() == selectedBoost.ability) {
+                spec.getRed().boostSkill(selectedBoost, spec);
+                spec.getRed().updateDescription(player);
+            } else if (spec.getPurple().getClass() == selectedBoost.ability) {
+                spec.getPurple().boostSkill(selectedBoost, spec);
+                spec.getPurple().updateDescription(player);
+            } else if (spec.getBlue().getClass() == selectedBoost.ability) {
+                spec.getBlue().boostSkill(selectedBoost, spec);
+                spec.getBlue().updateDescription(player);
+            } else if (spec.getOrange().getClass() == selectedBoost.ability) {
+                spec.getOrange().boostSkill(selectedBoost, spec);
+                spec.getOrange().updateDescription(player);
+            }
         }
     }
 
@@ -1903,6 +1912,8 @@ public final class WarlordsPlayer {
     public void setVelocity(org.bukkit.util.Vector v) {
         if (cooldownManager.hasCooldownFromName("KB Resistance")) {
             setVelocity(v.multiply(1), true);
+        } else if (cooldownManager.hasCooldownFromName("KB Increase")) {
+            setVelocity(v.multiply(1.5), true);
         } else {
             setVelocity(v, true);
         }
@@ -1928,6 +1939,8 @@ public final class WarlordsPlayer {
         if (((kbAfterHorse && this.entity.getVehicle() != null) || (!kbAfterHorse && this.entity.getVehicle() == null))) {
             if (cooldownManager.hasCooldownFromName("KB Resistance")) {
                 this.entity.setVelocity((to.toVector().subtract(from.toVector()).normalize().multiply(multipliedBy).setY(y)).multiply(.75));
+            } else if (cooldownManager.hasCooldownFromName("KB Increase")) {
+                this.entity.setVelocity((to.toVector().subtract(from.toVector()).normalize().multiply(multipliedBy).setY(y)).multiply(1.5));
             } else {
                 this.entity.setVelocity(to.toVector().subtract(from.toVector()).normalize().multiply(multipliedBy).setY(y));
             }
@@ -2032,13 +2045,5 @@ public final class WarlordsPlayer {
 
     public void setCurrentHealthModifier(float currentHealthModifier) {
         this.currentHealthModifier = currentHealthModifier;
-    }
-
-    public int getHealPowerupDuration() {
-        return healPowerupDuration;
-    }
-
-    public void setHealPowerupDuration(int healPowerupDuration) {
-        this.healPowerupDuration = healPowerupDuration;
     }
 }

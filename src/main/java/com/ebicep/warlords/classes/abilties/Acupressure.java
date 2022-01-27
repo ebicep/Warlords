@@ -16,7 +16,7 @@ import javax.annotation.Nonnull;
 
 public class Acupressure extends AbstractAbility {
 
-    private final int acuRange = 6;
+    private final int acuRange = 10;
     private final int duration = 6;
 
     public Acupressure() {
@@ -26,7 +26,7 @@ public class Acupressure extends AbstractAbility {
     @Override
     public void updateDescription(Player player) {
         description = "§7Mark an ally within §6" + acuRange + " §7blocks of you. You and\n" +
-                "§7the marked ally gain become energized, increasing\n" +
+                "§7the marked ally become energized, increasing\n" +
                 "§7energy per hit by §e50% §7for §6" + duration + " §7seconds.";
     }
 
@@ -50,7 +50,7 @@ public class Acupressure extends AbstractAbility {
 
                 for (Player player1 : player.getWorld().getPlayers()) {
                     player1.playSound(player.getLocation(), "shaman.chainlightning.impact", 2, 0.1f);
-                    player1.playSound(player.getLocation(), Sound.BLAZE_DEATH, 2, 0.4f);
+                    player1.playSound(player.getLocation(), Sound.BLAZE_DEATH, 2, 0.6f);
                 }
 
                 wp.getGame().getGameTasks().put(

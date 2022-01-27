@@ -2,8 +2,8 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
-import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.Matrix4d;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
@@ -22,7 +22,7 @@ import java.util.List;
 
 public class HeartToHeart extends AbstractAbility {
 
-    private final int radius = 20;
+    private final int radius = 12;
     private final int vindDuration = 6;
 
     public HeartToHeart() {
@@ -31,11 +31,10 @@ public class HeartToHeart extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Throw a chain towards an ally in a §e" + radius + " §7block radius.\n" +
-                "§7Grappling the Vindicator towards the ally. The grappled ally is\n" +
-                "§7granted §6" + vindDuration + " §7seconds of the VIND status effect, making them\n" +
-                "§7immune to de-buffs and they gain §625% §7knockback\n" +
-                "resistance the duration.";
+        description = "§7Throw a chain towards an ally in a §e" + radius + " §7block\n" +
+                "§7radius, grappling the Vindicator towards the ally.\n" +
+                "§7The grappled ally is granted §6" + vindDuration + " §7seconds of\n" +
+                "§7the §6VIND §7status, making them immune to de-buffs.";
     }
 
     @Override
@@ -58,8 +57,6 @@ public class HeartToHeart extends AbstractAbility {
                 wp.subtractEnergy(energyCost);
 
                 heartTarget.getCooldownManager().addRegularCooldown("Vindicate Debuff Immunity", "VIND", HeartToHeart.class, tempHeartToHeart, wp, CooldownTypes.BUFF, cooldownManager -> {
-                }, vindDuration * 20);
-                heartTarget.getCooldownManager().addRegularCooldown("KB Resistance", "KB", HeartToHeart.class, tempHeartToHeart, wp, CooldownTypes.BUFF, cooldownManager -> {
                 }, vindDuration * 20);
 
                 new BukkitRunnable() {

@@ -1,84 +1,59 @@
 package com.ebicep.warlords.classes.abilties;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.player.WarlordsPlayer;
-import com.ebicep.warlords.util.ParticleEffect;
+import com.ebicep.warlords.util.FireWorkEffectPlayer;
 import com.ebicep.warlords.util.PlayerFilter;
+import org.bukkit.Color;
+import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
 
 public class BlindingAssault extends AbstractAbility {
 
-    int maxAssaultDuration = 40;
-
     public BlindingAssault() {
-        super("Blinding Assault", 466, 612, 16f, 40, 25, 200);
+        super("Blinding Assault", 466, 612, 16, 40, 15, 175);
     }
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Dash forward, dealing §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage to\n" +
-                    "§7all enemies you pass through. Hitting subsequent\n" +
-                    "§7enemies reduces the amage by §c10% §7(down to §c50%§7.)\n" +
-                    "§7Blinding Assault has no verticality.";
+        description = "§7Leap forward, dealing §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage to\n" +
+                "§7all enemies close to you. Enemies hit are blinded\n" +
+                "§7for §62 §7seconds. Blinding Assault has reduced\n" +
+                "§7range when holding a Flag.";
     }
 
     @Override
     public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
         Location playerLoc = player.getLocation();
 
-        player.setVelocity(playerLoc.getDirection().multiply(2).setY(.1));
+        player.setVelocity(playerLoc.getDirection().multiply(1.5).setY(0.7));
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(playerLoc, "shaman.chainlightning.impact", 2, 2);
             player1.playSound(playerLoc, Sound.AMBIENCE_THUNDER, 2, 2);
         }
 
-        List<WarlordsPlayer> playersHit = new ArrayList<>();
+        FireWorkEffectPlayer.playFirework(wp.getLocation(), FireworkEffect.builder()
+                .withColor(Color.BLACK)
+                .with(FireworkEffect.Type.BALL)
+                .build());
 
-        wp.getGame().getGameTasks().put(
-
-                new BukkitRunnable() {
-
-                    @Override
-                    public void run() {
-                        for (int i = 0; i < 4; i++) {
-                            ParticleEffect.REDSTONE.display(
-                                    new ParticleEffect.OrdinaryColor(255, 0, 255),
-                                    playerLoc.clone().add((Math.random() * 2) - 1, 1.2 + (Math.random() * 2) - 1, (Math.random() * 2) - 1),
-                                    500);
-
-                        }
-
-                        PlayerFilter.entitiesAround(player, 2.5, 5, 2.5)
-                                .excluding(playersHit)
-                                .aliveEnemiesOf(wp)
-                                .forEach(enemy -> {
-                                    playersHit.add(enemy);
-                                    enemy.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
-                                    for (Player player1 : player.getWorld().getPlayers()) {
-                                        player1.playSound(playerLoc, "warrior.revenant.orbsoflife", 2, 1.9f);
-                                    }
-                                });
-
-                        maxAssaultDuration--;
-
-                        if (maxAssaultDuration <= 0 || wp.isDead()) {
-                            maxAssaultDuration = 40;
-                            this.cancel();
-                        }
-                    }
-
-                }.runTaskTimer(Warlords.getInstance(), 1, 0),
-                System.currentTimeMillis()
-        );
+        for (WarlordsPlayer assaultTarget : PlayerFilter
+                .entitiesAround(player, 3, 3, 3)
+                .aliveEnemiesOf(wp)
+        ) {
+            assaultTarget.getEntity().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 2 * 25, 0, true, false), true);
+            assaultTarget.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
+            for (Player player1 : player.getWorld().getPlayers()) {
+                player1.playSound(playerLoc, "warrior.revenant.orbsoflife", 2, 1.9f);
+            }
+        }
 
         return true;
     }

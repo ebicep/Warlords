@@ -2,19 +2,30 @@ package com.ebicep.warlords.player;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
+import com.ebicep.warlords.database.leaderboards.Leaderboard;
+import com.ebicep.warlords.database.leaderboards.LeaderboardManager;
+import com.ebicep.warlords.database.leaderboards.sections.LeaderboardCategory;
+import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
+import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.util.NumberFormat;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.*;
 
+import java.util.List;
+import java.util.Optional;
+
+import static com.ebicep.warlords.database.leaderboards.LeaderboardManager.*;
+
 public class CustomScoreboard {
 
+    private static final String[] teamEntries = new String[]{"🎂", "🎉", "🎁", "👹", "🏀", "⚽", "🍭", "🌠", "👾", "🐍", "🔮", "👽", "💣", "🍫", "🔫"};
     private final Player player;
     private final Scoreboard scoreboard;
     private Objective sideBar;
     private Objective health;
-    private static final String[] teamEntries = new String[]{"🎂", "🎉", "🎁", "👹", "🏀", "⚽", "🍭", "🌠", "👾", "🐍", "🔮", "👽", "💣", "🍫", "🔫"};
 
     public CustomScoreboard(Player player) {
         ScoreboardManager manager = Bukkit.getScoreboardManager();
@@ -41,10 +52,10 @@ public class CustomScoreboard {
     }
 
     public void setSideBarTeamPrefixAndSuffix(int team, String prefix, String suffix) {
-        if(prefix.length() > 16) {
+        if (prefix.length() > 16) {
             prefix = "Error";
         }
-        if(suffix.length() > 16) {
+        if (suffix.length() > 16) {
             suffix = "Error";
         }
         scoreboard.getTeam("team_" + team).setPrefix(prefix);
@@ -52,17 +63,17 @@ public class CustomScoreboard {
     }
 
     public void setSideBarTeam(int team, String entry) {
-        if(entry.length() > 16) {
-            if(entry.charAt(15) == '§') {
+        if (entry.length() > 16) {
+            if (entry.charAt(15) == '§') {
                 scoreboard.getTeam("team_" + team).setPrefix(entry.substring(0, 15));
-                if(entry.length() > 31) {
+                if (entry.length() > 31) {
                     scoreboard.getTeam("team_" + team).setSuffix(entry.substring(15, 31));
                 } else {
                     scoreboard.getTeam("team_" + team).setSuffix(entry.substring(15));
                 }
             } else {
                 scoreboard.getTeam("team_" + team).setPrefix(entry.substring(0, 16));
-                if(entry.length() > 32) {
+                if (entry.length() > 32) {
                     scoreboard.getTeam("team_" + team).setSuffix(entry.substring(16, 32));
                 } else {
                     scoreboard.getTeam("team_" + team).setSuffix(entry.substring(16));
@@ -77,7 +88,7 @@ public class CustomScoreboard {
     public void giveNewSideBar(boolean forceClear, CustomScoreboardPair... pairs) {
         //clearing all teams if size doesnt match
         int sideBarTeams = (int) scoreboard.getTeams().stream().filter(team -> team.getName().contains("team")).count();
-        if(forceClear || pairs.length != sideBarTeams) {
+        if (forceClear || pairs.length != sideBarTeams) {
             scoreboard.getTeams().forEach(Team::unregister);
             clearSideBar();
 
@@ -95,10 +106,11 @@ public class CustomScoreboard {
             setSideBarTeamPrefixAndSuffix(i, pair.getPrefix(), pair.getSuffix());
         }
     }
-    public void giveNewSideBar(boolean forceClear, String ... entries) {
+
+    public void giveNewSideBar(boolean forceClear, String... entries) {
         //clearing all teams if size doesnt match
         int sideBarTeams = (int) scoreboard.getTeams().stream().filter(team -> team.getName().contains("team")).count();
-        if(forceClear || entries.length != sideBarTeams) {
+        if (forceClear || entries.length != sideBarTeams) {
             scoreboard.getTeams().forEach(Team::unregister);
             clearSideBar();
 
@@ -126,30 +138,96 @@ public class CustomScoreboard {
 
 
     public void giveMainLobbyScoreboard() {
-        if(scoreboard.getObjective("health") != null) {
+        if (scoreboard.getObjective("health") != null) {
             scoreboard.getObjective("health").unregister();
             health = null;
         }
-        Warlords.newChain()
-                .asyncFirst(() -> DatabaseManager.playerService.findByUUID(player.getUniqueId()))
-                .syncLast((databasePlayer) -> {
-                    giveNewSideBar(true,
-                            "",
-                            "Kills: " + ChatColor.GREEN + NumberFormat.addCommaAndRound(databasePlayer.getKills()),
-                            "Assists: " + ChatColor.GREEN + NumberFormat.addCommaAndRound(databasePlayer.getAssists()),
-                            "Deaths: " + ChatColor.GREEN + NumberFormat.addCommaAndRound(databasePlayer.getDeaths()),
-                            " " + "",
-                            "Wins: " + ChatColor.GREEN + NumberFormat.addCommaAndRound(databasePlayer.getWins()),
-                            "Losses: " + ChatColor.GREEN + NumberFormat.addCommaAndRound(databasePlayer.getLosses()),
-                            "  " + "",
-                            "Damage: " + ChatColor.RED + NumberFormat.addCommaAndRound(databasePlayer.getDamage()),
-                            "Healing: " + ChatColor.DARK_GREEN + NumberFormat.addCommaAndRound(databasePlayer.getHealing()),
-                            "Absorbed: " + ChatColor.GOLD + NumberFormat.addCommaAndRound(databasePlayer.getAbsorbed()),
-                            "    ",
-                            "     ",
-                            "            " + ChatColor.YELLOW + ChatColor.BOLD + "Update",
-                            "     " + ChatColor.RED + ChatColor.BOLD + Warlords.VERSION
-                    );
-                }).execute();
+
+        if (loaded) {
+            LeaderboardCategory<?> leaderboardCategory = getLeaderboardCategoryFromPlayer(player);
+            if (leaderboardCategory == null) return;
+
+            Leaderboard leaderboard = leaderboardCategory.leaderboards.get(0);
+            List<DatabasePlayer> databasePlayerList;
+            switch (playerLeaderboardTime.getOrDefault(player.getUniqueId(), PlayersCollections.LIFETIME)) {
+                case LIFETIME:
+                    databasePlayerList = leaderboard.getSortedAllTime();
+                    break;
+                case SEASON_5:
+                    databasePlayerList = leaderboard.getSortedSeason5();
+                    break;
+                case SEASON_4:
+                    databasePlayerList = leaderboard.getSortedSeason4();
+                    break;
+                case WEEKLY:
+                    databasePlayerList = leaderboard.getSortedWeekly();
+                    break;
+                case DAILY:
+                    databasePlayerList = leaderboard.getSortedDaily();
+                    break;
+                default:
+                    databasePlayerList = leaderboard.getSortedAllTime();
+                    break;
+            }
+            LeaderboardManager.GameType selectedType = playerLeaderboardGameType.get(player.getUniqueId());
+            LeaderboardManager.Category selectedCategory = playerLeaderboardCategory.get(player.getUniqueId());
+            PlayersCollections selectedCollection = playerLeaderboardTime.get(player.getUniqueId());
+            if (selectedType == null) selectedType = GameType.ALL;
+            if (selectedCollection == null) selectedCategory = Category.ALL;
+            if (selectedCollection == null) selectedCollection = PlayersCollections.LIFETIME;
+
+            String scoreboardSelection = "";
+            if (!selectedType.shortName.isEmpty()) {
+                scoreboardSelection += selectedType.shortName + "/";
+            }
+            if (!selectedCategory.shortName.isEmpty()) {
+                scoreboardSelection += selectedCategory.shortName + "/";
+            }
+            scoreboardSelection += selectedCollection.name;
+
+            Optional<DatabasePlayer> optionalDatabasePlayer = databasePlayerList.stream()
+                    .filter(databasePlayer -> databasePlayer.getUuid().equalsIgnoreCase(player.getUniqueId().toString()))
+                    .findAny();
+            if (optionalDatabasePlayer.isPresent()) {
+                DatabasePlayer databasePlayer = optionalDatabasePlayer.get();
+                AbstractDatabaseStatInformation playerInformation = leaderboardCategory.statFunction.apply(databasePlayer);
+                giveNewSideBar(true,
+                        ChatColor.GRAY + scoreboardSelection,
+                        "",
+                        "Kills: " + ChatColor.GREEN + NumberFormat.addCommaAndRound(playerInformation.getKills()),
+                        "Assists: " + ChatColor.GREEN + NumberFormat.addCommaAndRound(playerInformation.getAssists()),
+                        "Deaths: " + ChatColor.GREEN + NumberFormat.addCommaAndRound(playerInformation.getDeaths()),
+                        " " + "",
+                        "Wins: " + ChatColor.GREEN + NumberFormat.addCommaAndRound(playerInformation.getWins()),
+                        "Losses: " + ChatColor.GREEN + NumberFormat.addCommaAndRound(playerInformation.getLosses()),
+                        "  " + "",
+                        "Damage: " + ChatColor.RED + NumberFormat.addCommaAndRound(playerInformation.getDamage()),
+                        "Healing: " + ChatColor.DARK_GREEN + NumberFormat.addCommaAndRound(playerInformation.getHealing()),
+                        "Absorbed: " + ChatColor.GOLD + NumberFormat.addCommaAndRound(playerInformation.getAbsorbed()),
+                        "    ",
+                        "            " + ChatColor.YELLOW + ChatColor.BOLD + "Update",
+                        "     " + ChatColor.GOLD + ChatColor.BOLD + Warlords.VERSION
+                );
+            }
+            return;
+        }
+        DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
+        giveNewSideBar(true,
+                ChatColor.GRAY + "Lifetime",
+                " ",
+                "Kills: " + ChatColor.GREEN + NumberFormat.addCommaAndRound(databasePlayer.getKills()),
+                "Assists: " + ChatColor.GREEN + NumberFormat.addCommaAndRound(databasePlayer.getAssists()),
+                "Deaths: " + ChatColor.GREEN + NumberFormat.addCommaAndRound(databasePlayer.getDeaths()),
+                " " + "",
+                "Wins: " + ChatColor.GREEN + NumberFormat.addCommaAndRound(databasePlayer.getWins()),
+                "Losses: " + ChatColor.GREEN + NumberFormat.addCommaAndRound(databasePlayer.getLosses()),
+                "  " + "",
+                "Damage: " + ChatColor.RED + NumberFormat.addCommaAndRound(databasePlayer.getDamage()),
+                "Healing: " + ChatColor.DARK_GREEN + NumberFormat.addCommaAndRound(databasePlayer.getHealing()),
+                "Absorbed: " + ChatColor.GOLD + NumberFormat.addCommaAndRound(databasePlayer.getAbsorbed()),
+                "    ",
+                "            " + ChatColor.YELLOW + ChatColor.BOLD + "Update",
+                "     " + ChatColor.GOLD + ChatColor.BOLD + Warlords.VERSION
+        );
     }
 }

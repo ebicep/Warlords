@@ -1,6 +1,7 @@
 package com.ebicep.warlords.powerups;
 
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
@@ -18,8 +19,12 @@ public class HealingPowerUp extends AbstractPowerUp {
 
     @Override
     public void onPickUp(WarlordsPlayer warlordsPlayer) {
-        warlordsPlayer.setPowerUpHeal(true);
+        //warlordsPlayer.setPowerUpHeal(true);
+        warlordsPlayer.getCooldownManager().addRegularCooldown("Healing", "HEAL", HealingPowerUp.class, this, warlordsPlayer, CooldownTypes.BUFF, cooldownManager -> {
+            warlordsPlayer.cancelHealingPowerUp();
+        }, duration * 20);
         warlordsPlayer.sendMessage("§6You activated the §a§lHEALING §6powerup! §a+8% §6Health per second for §a5 §6seconds!");
+        warlordsPlayer.setPowerUpHeal(true);
     }
 
     @Override

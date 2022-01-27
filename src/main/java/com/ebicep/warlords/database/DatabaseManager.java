@@ -1,5 +1,6 @@
 package com.ebicep.warlords.database;
 
+import com.ebicep.customentities.npc.NPCManager;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.configuration.ApplicationConfiguration;
 import com.ebicep.warlords.database.leaderboards.LeaderboardManager;
@@ -56,9 +57,8 @@ public class DatabaseManager {
         //Loading all online players
         Bukkit.getOnlinePlayers().forEach(player -> {
             loadPlayer(player.getUniqueId(), PlayersCollections.LIFETIME, () -> {
-                Warlords.playerScoreboards.get(player.getUniqueId()).giveMainLobbyScoreboard();
+                updateName(player.getUniqueId());
             });
-            updateName(player.getUniqueId());
         });
 
 
@@ -67,7 +67,7 @@ public class DatabaseManager {
                 .asyncFirst(() -> gameService.getLastGames(10))
                 .syncLast((games) -> {
                     previousGames.addAll(games);
-                    LeaderboardManager.addHologramLeaderboards(UUID.randomUUID().toString());
+                    LeaderboardManager.addHologramLeaderboards(UUID.randomUUID().toString(), true);
                 })
                 .execute();
 
@@ -94,7 +94,7 @@ public class DatabaseManager {
                             //clearing weekly
                             playerService.deleteAll(PlayersCollections.WEEKLY);
                             //reloading boards
-                            LeaderboardManager.addHologramLeaderboards(UUID.randomUUID().toString());
+                            LeaderboardManager.addHologramLeaderboards(UUID.randomUUID().toString(), false);
                             //updating date to current
                             resetTimings.updateOne(and(eq("time", "weekly"), eq("last_reset", lastReset)),
                                     new Document("$set", new Document("time", "weekly").append("last_reset", current))
@@ -122,8 +122,6 @@ public class DatabaseManager {
                         .execute();
             }
         }
-
-
     }
 
     public static void loadPlayer(UUID uuid, PlayersCollections collections, Runnable callback) {

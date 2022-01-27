@@ -82,16 +82,11 @@ public enum ClassesSkillBoosts {
             }
     ),
     TIME_WARP_CRYOMANCER("Time Warp",
-            "§7Increase the amount of health you\n§7restore with Time Warp by §75% §7and\n§7reduce the cooldown by 40%.",
-            "§aIncrease the amount of health\n§ayou restore with Time Warp by §c5% §aand\n§areduce the cooldown by §c40%.",
+            "§7Reduce the cooldown of Time Warp\n§7by 40%",
+            "§aReduce the cooldown of Time Warp\n§aby §c40%",
             TimeWarp.class,
             abstractAbility -> {
-                if (abstractAbility instanceof TimeWarp) {
-                    ((TimeWarp) abstractAbility).setWarpHealPercentage(35);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .6f);
-                } else {
-                    System.out.println("ERROR APPLY SKILL BOOST NOT TIME WARP PYRO");
-                }
             }
     ),
     ARCANE_SHIELD_CRYOMANCER("Arcane Shield",
@@ -139,16 +134,12 @@ public enum ClassesSkillBoosts {
             }
     ),
     TIME_WARP_AQUAMANCER("Time Warp",
-            "§7Increase the amount of health you\n§7restore with Time Warp by §75% and\n§7reduce the cooldown by 40%.",
-            "§aIncrease the amount of health\n§ayou restore with Time Warp by §c5% §aand\n§areduce the cooldown by §c40%.",
+            "§7Reduce the cooldown of Time Warp\n§7by 40%",
+            "§aReduce the cooldown of Time Warp\n§aby §c40%",
             TimeWarp.class,
             abstractAbility -> {
-                if (abstractAbility instanceof TimeWarp) {
-                    ((TimeWarp) abstractAbility).setWarpHealPercentage(35);
                     abstractAbility.setCooldown(abstractAbility.getCooldown() * .6f);
-                } else {
-                    System.out.println("ERROR APPLY SKILL BOOST NOT TIME WARP PYRO");
-                }
+
             }
     ),
     ARCANE_SHIELD_AQUAMANCER("Arcane Shield",
@@ -267,14 +258,14 @@ public enum ClassesSkillBoosts {
             }
     ),
     LAST_STAND("Last Stand",
-            "§7Increase the amount damage you\n§7reduce with Last Stand by\n§710% §7and reduce the cooldown by 20%",
-            "§aIncrease the amount damage you\n§areduce with Last Stand by\n§c10% §aand reduce the cooldown by §c20%",
+            "§7Increase the amount damage you\n§7reduce with Last Stand by\n§710% §7and reduce the cooldown by 15%",
+            "§aIncrease the amount damage you\n§areduce with Last Stand by\n§c10% §aand reduce the cooldown by §c15%",
             LastStand.class,
             abstractAbility -> {
                 if (abstractAbility instanceof LastStand) {
                     ((LastStand) abstractAbility).setSelfDamageReductionPercent(60);
                     ((LastStand) abstractAbility).setTeammateDamageReductionPercent(50);
-                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .8f);
+                    abstractAbility.setCooldown(abstractAbility.getCooldown() * .85f);
                 } else {
                     System.out.println("ERROR APPLY SKILL BOOST NOT LAST STAND");
                 }

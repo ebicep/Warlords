@@ -101,6 +101,9 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
             case SPIRITGUARD:
                 return shaman.getSpiritguard();
             case EARTHWARDEN:
+            case VINDICATOR:
+            case ASSASSIN:
+            case APOTHECARY:
                 return shaman.getEarthwarden();
         }
         return null;
@@ -116,6 +119,7 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
             case PALADIN:
                 return paladin;
             case SHAMAN:
+            case ROGUE:
                 return shaman;
         }
         return null;

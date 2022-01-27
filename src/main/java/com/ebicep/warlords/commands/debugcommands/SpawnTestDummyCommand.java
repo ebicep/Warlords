@@ -29,6 +29,11 @@ public class SpawnTestDummyCommand implements CommandExecutor {
             return true;
         }
 
+        if (!Warlords.game.isPrivate()) {
+            sender.sendMessage("§cDebug commands are disabled in public games!");
+            return true;
+        }
+
         if (player != null) {
             if (args.length >= 1) {
                 String teamString = args[0];
@@ -37,14 +42,19 @@ public class SpawnTestDummyCommand implements CommandExecutor {
                     OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer("testdummy");
                     Warlords.addPlayer(new WarlordsPlayer(offlinePlayer, player.getGameState(), team, new PlayerSettings()));
                     WarlordsPlayer testDummy = Warlords.getPlayer(offlinePlayer);
+
                     if (args.length >= 2) {
                         if (args[1].equalsIgnoreCase("false")) {
                             assert testDummy != null;
                             testDummy.setTakeDamage(false);
+                        } else if (args[1].equalsIgnoreCase("true")) {
+                            assert testDummy != null;
+                            testDummy.setTakeDamage(true);
                         } else {
                             sender.sendMessage("§cInvalid arguments! Valid arguments: [true, false]");
                         }
                     }
+
                     Objects.requireNonNull(testDummy).teleport(player.getLocation());
                     //SKULL
                     ItemStack playerSkull = new ItemStack(Material.SKULL_ITEM, 1, (short) SkullType.PLAYER.ordinal());
@@ -52,11 +62,8 @@ public class SpawnTestDummyCommand implements CommandExecutor {
                     skullMeta.setOwner(offlinePlayer.getName());
                     playerSkull.setItemMeta(skullMeta);
                     Warlords.getPlayerHeads().put(offlinePlayer.getUniqueId(), CraftItemStack.asNMSCopy(playerSkull));
-
-
-
                 } else {
-
+                    sender.sendMessage("§cInvalid arguments! Valid arguments: [red, blue]");
                 }
             }
         }

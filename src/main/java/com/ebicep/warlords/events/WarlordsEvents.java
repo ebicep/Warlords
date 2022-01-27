@@ -6,6 +6,7 @@ import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.classes.abilties.Acupressure;
 import com.ebicep.warlords.classes.abilties.IceBarrier;
 import com.ebicep.warlords.classes.abilties.Soulbinding;
+import com.ebicep.warlords.classes.abilties.TimeWarp;
 import com.ebicep.warlords.classes.abilties.UndyingArmy;
 import com.ebicep.warlords.classes.shaman.specs.spiritguard.Spiritguard;
 import com.ebicep.warlords.database.DatabaseManager;
@@ -44,6 +45,7 @@ import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashSet;
@@ -71,6 +73,150 @@ public class WarlordsEvents implements Listener {
 
     public static void addEntityUUID(Entity entity) {
         entityList.add(entity);
+    }
+
+    @EventHandler
+    public static void onPlayerPreLogin(AsyncPlayerPreLoginEvent event) {
+        if (DatabaseManager.playerService == null) {
+            event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, "Please wait!");
+        }
+    }
+
+    @EventHandler
+    public static void onPlayerLogin(PlayerLoginEvent event) {
+        if (DatabaseManager.playerService == null) {
+            event.disallow(PlayerLoginEvent.Result.KICK_OTHER, "Please wait!");
+        }
+    }
+
+    @EventHandler
+    public static void onPlayerJoin(PlayerJoinEvent e) {
+        Player player = e.getPlayer();
+        WarlordsPlayer wp = Warlords.getPlayer(player);
+        if (wp != null) {
+            if (wp.isAlive()) {
+                e.getPlayer().setAllowFlight(false);
+            }
+            e.setJoinMessage(wp.getColoredNameBold() + ChatColor.GOLD + " rejoined the game!");
+            if (wp.getGame().isGameFreeze()) {
+                wp.getGame().freezePlayer(e.getPlayer(), "");
+            }
+        } else {
+            //checking if in game lobby
+            if (Warlords.game.players().noneMatch(uuidTeamEntry -> uuidTeamEntry.getKey().equals(e.getPlayer().getUniqueId()))) {
+                e.getPlayer().setAllowFlight(true);
+                e.setJoinMessage(ChatColor.AQUA + e.getPlayer().getName() + ChatColor.GOLD + " joined the lobby!");
+
+                Warlords.newChain()
+                        .async(() -> {
+                            DatabaseManager.loadPlayer(e.getPlayer().getUniqueId(), PlayersCollections.LIFETIME, () -> {
+                                Warlords.updateHead(e.getPlayer());
+
+                                Location rejoinPoint = Warlords.getRejoinPoint(player.getUniqueId());
+                                if (LeaderboardManager.loaded && Bukkit.getWorlds().get(0).equals(rejoinPoint.getWorld())) {
+                                    LeaderboardManager.setLeaderboardHologramVisibility(player);
+                                    DatabaseGame.setGameHologramVisibility(player);
+                                    Warlords.playerScoreboards.get(player.getUniqueId()).giveMainLobbyScoreboard();
+                                    ExperienceManager.giveExperienceBar(player);
+                                }
+                            });
+                        })
+                        .execute();
+            }
+        }
+
+        //scoreboard
+        if (!Warlords.playerScoreboards.containsKey(player.getUniqueId()) || Warlords.playerScoreboards.get(player.getUniqueId()) == null) {
+            Warlords.playerScoreboards.put(player.getUniqueId(), new CustomScoreboard(player));
+        }
+        player.setScoreboard(Warlords.playerScoreboards.get(player.getUniqueId()).getScoreboard());
+
+        joinInteraction(player, false);
+
+        Bukkit.getOnlinePlayers().forEach(p -> {
+            PacketUtils.sendTabHF(p,
+                    ChatColor.AQUA + "     Welcome to " + ChatColor.YELLOW + ChatColor.BOLD + "Warlords 2.0     ",
+                    ChatColor.GREEN + "Players Online: " + ChatColor.GRAY + Bukkit.getOnlinePlayers().size());
+        });
+
+        //hiding players that arent in the game
+        if (!Warlords.hasPlayer(player)) {
+            Warlords.getPlayers().forEach(((uuid, warlordsPlayer) -> {
+                if (warlordsPlayer.getEntity() instanceof Player) {
+                    ((Player) warlordsPlayer.getEntity()).hidePlayer(player);
+                }
+            }));
+        } else {
+            Bukkit.getOnlinePlayers().forEach(p -> {
+                if (!Warlords.hasPlayer(p)) {
+                    player.hidePlayer(p);
+                }
+            });
+        }
+    }
+
+    public static void joinInteraction(Player player, boolean fromGame) {
+        Location rejoinPoint = Warlords.getRejoinPoint(player.getUniqueId());
+        boolean isSpawnWorld = Bukkit.getWorlds().get(0).getName().equals(rejoinPoint.getWorld().getName());
+        boolean playerIsInWrongWorld = !player.getWorld().getName().equals(rejoinPoint.getWorld().getName());
+        if (isSpawnWorld || playerIsInWrongWorld) {
+            player.teleport(rejoinPoint);
+        }
+        if (playerIsInWrongWorld && isSpawnWorld) {
+            player.sendMessage(ChatColor.RED + "The game you were previously playing is no longer running!");
+        }
+        if (playerIsInWrongWorld && !isSpawnWorld) {
+            player.sendMessage(ChatColor.RED + "The game started without you, but we still love you enough and you were warped into the game");
+        }
+        if (isSpawnWorld) {
+            player.removePotionEffect(PotionEffectType.BLINDNESS);
+            player.removePotionEffect(PotionEffectType.SLOW);
+            player.removePotionEffect(PotionEffectType.ABSORPTION);
+            player.setGameMode(GameMode.ADVENTURE);
+
+            ChatUtils.sendCenteredMessage(player, ChatColor.BLUE + "-----------------------------------------------------");
+            ChatUtils.sendCenteredMessage(player, ChatColor.GOLD + "Welcome to Warlords 2.0 " + ChatColor.GRAY + "(" + ChatColor.RED + Warlords.VERSION + ChatColor.GRAY + ")");
+            ChatUtils.sendCenteredMessage(player, ChatColor.GOLD + "Developed by " + ChatColor.RED + "sumSmash " + ChatColor.GOLD + "&" + ChatColor.RED + " Plikie");
+            ChatUtils.sendCenteredMessage(player, ChatColor.GREEN + "/hotkeymode " + ChatColor.GOLD + "to change your hotkey mode.");
+            ChatUtils.sendCenteredMessage(player, ChatColor.GOLD + "Click the Nether Star or do " + ChatColor.GREEN + "/menu" + ChatColor.GOLD + " to open the selection menu.");
+            ChatUtils.sendCenteredMessage(player, "");
+            ChatUtils.sendCenteredMessage(player, ChatColor.GOLD + "Make sure to join our discord if you wish to stay up-to-date with our most recent patches, interact with our community and make bug reports or game suggestions at: " + ChatColor.RED + "§ldiscord.gg/566K5PQz");
+            ChatUtils.sendCenteredMessage(player, "");
+            ChatUtils.sendCenteredMessage(player, ChatColor.GOLD + "You may download our resource pack at: " + ChatColor.RED + "§lhttps://discord.gg/GWPAx9sEG7");
+            ChatUtils.sendCenteredMessage(player, "");
+            ChatUtils.sendCenteredMessage(player, ChatColor.RED + "DISCLAIMER: " + ChatColor.GRAY + "Non-competitive players should take notice that we are currently in BETA for our public queue. This means that the server will regularly be unavailable when we host our private games during weekends!");
+            ChatUtils.sendCenteredMessage(player, ChatColor.BLUE + "-----------------------------------------------------");
+
+            PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
+            Classes selectedClass = playerSettings.getSelectedClass();
+            AbstractPlayerClass apc = selectedClass.create.get();
+
+            player.getInventory().clear();
+            player.getInventory().setArmorContents(new ItemStack[]{null, null, null, null});
+            player.getInventory().setItem(4, new ItemBuilder(Material.NETHER_STAR).name("§aSelection Menu").get());
+            player.getInventory().setItem(1, new ItemBuilder(apc.getWeapon().getItem(playerSettings.getWeaponSkins()
+                    .getOrDefault(selectedClass, Weapons.FELFLAME_BLADE).item)).name("§aWeapon Skin Preview")
+                    .lore("")
+                    .get());
+
+            if (player.hasPermission("warlords.game.debug")) {
+                player.getInventory().setItem(3, new ItemBuilder(Material.EMERALD).name("§aDebug Menu").get());
+            }
+
+            if (fromGame) {
+                Warlords.playerScoreboards.get(player.getUniqueId()).giveMainLobbyScoreboard();
+                ExperienceManager.giveExperienceBar(player);
+            }
+
+            player.getActivePotionEffects().clear();
+        }
+        WarlordsPlayer p = Warlords.getPlayer(player);
+        if (p != null) {
+            player.teleport(p.getLocation());
+            p.updatePlayerReference(player);
+        } else {
+            player.setAllowFlight(true);
+        }
     }
 
     @EventHandler
@@ -118,7 +264,6 @@ public class WarlordsEvents implements Listener {
         } else {
             e.setQuitMessage(ChatColor.AQUA + e.getPlayer().getName() + ChatColor.GOLD + " left the lobby!");
         }
-
         if (e.getPlayer().getVehicle() != null) {
             e.getPlayer().getVehicle().remove();
         }
@@ -128,133 +273,6 @@ public class WarlordsEvents implements Listener {
         Bukkit.getOnlinePlayers().forEach(p -> {
             PacketUtils.sendTabHF(p, ChatColor.AQUA + "     Welcome to " + ChatColor.YELLOW + ChatColor.BOLD + "Warlords 2.0     ", ChatColor.GREEN + "Players Online: " + ChatColor.GRAY + (Bukkit.getOnlinePlayers().size() - 1));
         });
-    }
-
-    public static void joinInteraction(Player player, boolean fromGame) {
-        Location rejoinPoint = Warlords.getRejoinPoint(player.getUniqueId());
-        boolean isSpawnWorld = Bukkit.getWorlds().get(0).getName().equals(rejoinPoint.getWorld().getName());
-        boolean playerIsInWrongWorld = !player.getWorld().getName().equals(rejoinPoint.getWorld().getName());
-        if (isSpawnWorld || playerIsInWrongWorld) {
-            player.teleport(rejoinPoint);
-        }
-        if (playerIsInWrongWorld && isSpawnWorld) {
-            player.sendMessage(ChatColor.RED + "The game you were previously playing is no longer running!");
-        }
-        if (playerIsInWrongWorld && !isSpawnWorld) {
-            player.sendMessage(ChatColor.RED + "The game started without you, but we still love you enough and you were warped into the game");
-        }
-        if (isSpawnWorld) {
-            player.setGameMode(GameMode.ADVENTURE);
-
-            ChatUtils.sendCenteredMessage(player, ChatColor.BLUE + "-----------------------------------------------------");
-            ChatUtils.sendCenteredMessage(player, ChatColor.GOLD + "Welcome to Warlords 2.0 " + ChatColor.GRAY + "(" + ChatColor.RED + Warlords.VERSION + ChatColor.GRAY + ")");
-            ChatUtils.sendCenteredMessage(player, ChatColor.GOLD + "Developed by " + ChatColor.RED + "sumSmash " + ChatColor.GOLD + "&" + ChatColor.RED + " Plikie");
-            ChatUtils.sendCenteredMessage(player, ChatColor.GREEN + "/hotkeymode " + ChatColor.GOLD + "to change your hotkey mode.");
-            ChatUtils.sendCenteredMessage(player, ChatColor.GOLD + "Click the Nether Star or do " + ChatColor.GREEN + "/menu" + ChatColor.GOLD + " to open the selection menu.");
-            ChatUtils.sendCenteredMessage(player, "");
-            ChatUtils.sendCenteredMessage(player, ChatColor.GOLD + "Make sure to join our discord if you wish to stay up-to-date with our most recent patches, interact with our community and make bug reports or game suggestions at:");
-            ChatUtils.sendCenteredMessage(player, "");
-            ChatUtils.sendCenteredMessage(player, ChatColor.RED + "§ldiscord.gg/UJBedGtMSQ");
-            ChatUtils.sendCenteredMessage(player, "");
-            ChatUtils.sendCenteredMessage(player, ChatColor.RED + "DISCLAIMER: " + ChatColor.GRAY + "Non-competitive players should take notice that we are currently in BETA for our public queue. This means that the server will regularly be unavailable when we host our private games during weekends!");
-            ChatUtils.sendCenteredMessage(player, ChatColor.BLUE + "-----------------------------------------------------");
-
-            PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
-            Classes selectedClass = playerSettings.getSelectedClass();
-            AbstractPlayerClass apc = selectedClass.create.get();
-
-            player.getInventory().clear();
-            player.getInventory().setArmorContents(new ItemStack[]{null, null, null, null});
-            player.getInventory().setItem(4, new ItemBuilder(Material.NETHER_STAR).name("§aSelection Menu").get());
-            player.getInventory().setItem(1, new ItemBuilder(apc.getWeapon().getItem(playerSettings.getWeaponSkins()
-                    .getOrDefault(selectedClass, Weapons.FELFLAME_BLADE).item)).name("§aWeapon Skin Preview")
-                    .lore("")
-                    .get());
-            if (player.hasPermission("warlords.game.debug")) {
-                player.getInventory().setItem(3, new ItemBuilder(Material.EMERALD).name("§aDebug Menu").get());
-            }
-
-            if (fromGame) {
-                Warlords.playerScoreboards.get(player.getUniqueId()).giveMainLobbyScoreboard();
-                ExperienceManager.giveExperienceBar(player);
-            }
-
-            player.getActivePotionEffects().clear();
-        }
-        WarlordsPlayer p = Warlords.getPlayer(player);
-        if (p != null) {
-            player.teleport(p.getLocation());
-            p.updatePlayerReference(player);
-        } else {
-            player.setAllowFlight(true);
-        }
-    }
-
-    @EventHandler
-    public static void onPlayerJoin(PlayerJoinEvent e) {
-        WarlordsPlayer wp = Warlords.getPlayer(e.getPlayer());
-        if (wp != null) {
-            if (wp.isAlive()) {
-                e.getPlayer().setAllowFlight(false);
-            }
-            e.setJoinMessage(wp.getColoredNameBold() + ChatColor.GOLD + " rejoined the game!");
-            if (wp.getGame().isGameFreeze()) {
-                wp.getGame().freezePlayer(e.getPlayer(), "");
-            }
-        } else {
-            //checking if in game lobby
-            if (Warlords.game.players().noneMatch(uuidTeamEntry -> uuidTeamEntry.getKey().equals(e.getPlayer().getUniqueId()))) {
-                e.getPlayer().setAllowFlight(true);
-                e.setJoinMessage(ChatColor.AQUA + e.getPlayer().getName() + ChatColor.GOLD + " joined the lobby!");
-            }
-        }
-        Player player = e.getPlayer();
-
-        Warlords.newChain()
-                .async(() -> {
-                    DatabaseManager.loadPlayer(e.getPlayer().getUniqueId(), PlayersCollections.LIFETIME, () -> {
-                        Warlords.updateHead(e.getPlayer());
-                        LeaderboardManager.setLeaderboardHologramVisibility(player);
-                        DatabaseGame.setGameHologramVisibility(player);
-
-                        Location rejoinPoint = Warlords.getRejoinPoint(player.getUniqueId());
-                        if (Bukkit.getWorlds().get(0).getName().equals(rejoinPoint.getWorld().getName())) {
-                            Warlords.playerScoreboards.get(player.getUniqueId()).giveMainLobbyScoreboard();
-                            ExperienceManager.giveExperienceBar(player);
-                        }
-                    });
-                })
-                .execute();
-
-        //scoreboard
-        if (!Warlords.playerScoreboards.containsKey(player.getUniqueId()) || Warlords.playerScoreboards.get(player.getUniqueId()) == null) {
-            Warlords.playerScoreboards.put(player.getUniqueId(), new CustomScoreboard(player));
-        }
-        player.setScoreboard(Warlords.playerScoreboards.get(player.getUniqueId()).getScoreboard());
-
-        joinInteraction(player, false);
-
-        Bukkit.getOnlinePlayers().forEach(p -> {
-            PacketUtils.sendTabHF(p,
-                    ChatColor.AQUA + "     Welcome to " + ChatColor.YELLOW + ChatColor.BOLD + "Warlords 2.0     ",
-                    ChatColor.GREEN + "Players Online: " + ChatColor.GRAY + Bukkit.getOnlinePlayers().size());
-        });
-
-        //hiding players that arent in the game
-        if (!Warlords.hasPlayer(player)) {
-            Warlords.getPlayers().forEach(((uuid, warlordsPlayer) -> {
-                if (warlordsPlayer.getEntity() instanceof Player) {
-                    ((Player) warlordsPlayer.getEntity()).hidePlayer(player);
-                }
-            }));
-        } else {
-            Bukkit.getOnlinePlayers().forEach(p -> {
-                if (!Warlords.hasPlayer(p)) {
-                    player.hidePlayer(p);
-                }
-            });
-        }
-
     }
 
     @EventHandler
@@ -357,6 +375,8 @@ public class WarlordsEvents implements Listener {
                 } else if (itemHeld.getType() == Material.BANNER) {
                     if (wp.getFlagCooldown() > 0) {
                         player.sendMessage("§cYou cannot drop the flag yet, please wait 5 seconds!");
+                    } else if (wp.getCooldownManager().hasCooldown(TimeWarp.class)) {
+                        player.sendMessage(ChatColor.RED + "You cannot drop the flag with a Time Warp active!");
                     } else {
                         wp.getGameState().flags().dropFlag(player);
                         wp.setFlagCooldown(5);

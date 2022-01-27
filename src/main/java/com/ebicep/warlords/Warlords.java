@@ -28,21 +28,25 @@ import com.ebicep.warlords.party.PartyListener;
 import com.ebicep.warlords.party.PartyManager;
 import com.ebicep.warlords.party.StreamCommand;
 import com.ebicep.warlords.player.*;
-import com.ebicep.warlords.player.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.cooldowns.CooldownFilter;
+import com.ebicep.warlords.player.cooldowns.CooldownManager;
 import com.ebicep.warlords.player.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.powerups.EnergyPowerUp;
+import com.ebicep.warlords.powerups.HealingPowerUp;
 import com.ebicep.warlords.queuesystem.QueueCommand;
 import com.ebicep.warlords.util.*;
-import me.filoghost.holographicdisplays.api.beta.hologram.Hologram;
 import me.filoghost.holographicdisplays.api.beta.HolographicDisplaysAPI;
+import me.filoghost.holographicdisplays.api.beta.hologram.Hologram;
 import org.bukkit.*;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Firework;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -70,6 +74,8 @@ public class Warlords extends JavaPlugin {
     public static Warlords getInstance() {
         return instance;
     }
+
+    public static String serverIP;
 
     private static TaskChainFactory taskChainFactory;
 
@@ -250,6 +256,7 @@ public class Warlords extends JavaPlugin {
     public void onEnable() {
         instance = this;
         VERSION = this.getDescription().getVersion();
+        serverIP = this.getServer().getIp();
         taskChainFactory = BukkitTaskChainFactory.create(this);
 
         Thread.currentThread().setContextClassLoader(getClassLoader());
@@ -288,6 +295,7 @@ public class Warlords extends JavaPlugin {
         new ExperienceCommand().register(this);
         new QueueCommand().register(this);
         new ImposterCommand().register(this);
+        new LobbyCommand().register(this);
 
         updateHeads();
 
@@ -338,9 +346,6 @@ public class Warlords extends JavaPlugin {
                 });
 
         citizensEnabled = Bukkit.getPluginManager().isPluginEnabled("Citizens");
-        if (citizensEnabled) {
-            NPCManager.createGameNPC();
-        }
 
         gameLoop();
         getServer().getScheduler().runTaskTimer(this, game, 1, 1);
@@ -350,12 +355,16 @@ public class Warlords extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        // Pre-caution
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            player.removePotionEffect(PotionEffectType.BLINDNESS);
-            player.getActivePotionEffects().clear();
-            player.removeMetadata("WARLORDS_PLAYER", this);
-            PacketUtils.sendTitle(player, "", "", 0, 0, 0);
+        try {
+            // Pre-caution
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                player.removePotionEffect(PotionEffectType.BLINDNESS);
+                player.getActivePotionEffects().clear();
+                player.removeMetadata("WARLORDS_PLAYER", this);
+                PacketUtils.sendTitle(player, "", "", 0, 0, 0);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         CraftServer server = (CraftServer) Bukkit.getServer();
@@ -370,14 +379,17 @@ public class Warlords extends JavaPlugin {
             HolographicDisplaysAPI.get(instance).getHolograms().forEach(Hologram::delete);
         }
 
+        NPCManager.gameStartNPC.destroy();
+        Bukkit.getWorld("MainLobby").getEntities().stream()
+                .filter(entity -> entity.getName().equals("capture-the-flag"))
+                .forEach(Entity::remove);
+
         try {
+            BotManager.deleteStatusMessage();
             BotManager.jda.shutdownNow();
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        //CitizensAPI.getNPCRegistry().despawnNPCs(DespawnReason.RELOAD);
-        NPCManager.npc.despawn();
 
         getServer().getConsoleSender().sendMessage(ChatColor.RED + "[Warlords] Plugin is disabled");
         // TODO persist this.playerSettings to a database
@@ -611,6 +623,8 @@ public class Warlords extends JavaPlugin {
                             // warlordsPlayer.respawn();
                             if (player != null) {
                                 player.setGameMode(GameMode.SPECTATOR);
+                                //precaution
+                                wp.getGameState().flags().dropFlag(wp);
                             }
 
                             //giving out assists
@@ -854,20 +868,13 @@ public class Warlords extends JavaPlugin {
                             }
 
                             // Checks whether the player has the healing powerup active.
-                            if (wps.isPowerUpHeal()) {
+                            if (wps.getCooldownManager().hasCooldown(HealingPowerUp.class)) {
                                 int heal = (int) (wps.getMaxHealth() * .08);
                                 if (wps.getHealth() + heal > wps.getMaxHealth()) {
                                     heal = wps.getMaxHealth() - wps.getHealth();
                                 }
                                 wps.setHealth(wps.getHealth() + heal);
                                 wps.sendMessage("§a\u00BB §7Healed §a" + heal + " §7health.");
-
-                                if (wps.getHealPowerupDuration() > 0) {
-                                    wps.setHealPowerupDuration(wps.getHealPowerupDuration() - 1);
-                                } else {
-                                    wps.setHealPowerupDuration(4);
-                                    wps.setPowerUpHeal(false);
-                                }
                             }
 
                             // Combat Timer - Logs combat time after 4 seconds.

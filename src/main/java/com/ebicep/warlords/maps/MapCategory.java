@@ -1,9 +1,9 @@
 package com.ebicep.warlords.maps;
 
 public enum MapCategory {
-    CAPTURE_THE_FLAG("Capture The Flag"),
-    DEBUG("Debug Map"),
-    OTHER("PLACEHOLDER")
+    CAPTURE_THE_FLAG("CTF"),
+    DEBUG("DEBUG"),
+    OTHER("OTHER")
 
     ;
 

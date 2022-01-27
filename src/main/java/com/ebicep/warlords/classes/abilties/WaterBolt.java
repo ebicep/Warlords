@@ -37,7 +37,7 @@ public class WaterBolt extends AbstractProjectileBase {
     }
 
     @Override
-    protected void playEffect(Location currentLocation, int animationTimer) {
+    protected void playEffect(@Nonnull Location currentLocation, int animationTimer) {
         ParticleEffect.DRIP_WATER.display(0.3f, 0.3f, 0.3f, 0.1F, 2, currentLocation, 500);
         ParticleEffect.ENCHANTMENT_TABLE.display(0, 0, 0, 0.1F, 1, currentLocation, 500);
         ParticleEffect.VILLAGER_HAPPY.display(0, 0, 0, 0.1F, 1, currentLocation, 500);
@@ -51,7 +51,7 @@ public class WaterBolt extends AbstractProjectileBase {
     }
 
     @Override
-    protected void onHit(WarlordsPlayer shooter, Location currentLocation, Location startingLocation, WarlordsPlayer victim) {
+    protected void onHit(WarlordsPlayer shooter, @Nonnull Location currentLocation, @Nonnull Location startingLocation, WarlordsPlayer victim) {
         ParticleEffect.HEART.display(1, 1, 1, 0.2F, 3, currentLocation, 500);
         ParticleEffect.VILLAGER_HAPPY.display(1, 1, 1, 0.2F, 5, currentLocation, 500);
 
@@ -89,6 +89,7 @@ public class WaterBolt extends AbstractProjectileBase {
                         false);
             }
         }
+
         for (WarlordsPlayer nearEntity : PlayerFilter
                 .entitiesAround(currentLocation, HITBOX, HITBOX, HITBOX)
                 .excluding(victim)

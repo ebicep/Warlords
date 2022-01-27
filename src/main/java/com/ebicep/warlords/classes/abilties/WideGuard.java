@@ -4,8 +4,8 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
-import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
 import org.bukkit.Location;
@@ -35,10 +35,9 @@ public class WideGuard extends AbstractAbility {
                 "§7(scales down with the amount of allies inside\n" +
                 "§7the bubble. Minimum §c20%§7.) " +
                 "\n\n" +
-                "§7After §64 §7seconds, the bubble will\n" +
-                "§7burst, healing all allies for up to\n" +
-                "§a600 §7+ §a12% §7missing health based on how\n" +
-                "§7long they've been in the bubble.";
+                "§7After §64 §7seconds, the bubble will burst healing\n" +
+                "§7all allies for up to §a600 §7+ §a12% §7missing health\n" +
+                "§7based on how long they've been in the bubble.\n";
     }
 
     @Override
@@ -59,7 +58,6 @@ public class WideGuard extends AbstractAbility {
 
         // Second Particle Sphere
         wp.getGame().getGameTasks().put(
-
             new BukkitRunnable() {
                 @Override
                 public void run() {
@@ -69,15 +67,13 @@ public class WideGuard extends AbstractAbility {
                         player1.playSound(player.getLocation(), "warrior.intervene.impact", 2, 0.2f);
                     }
                 }
-            }.runTaskLater(Warlords.getInstance(), 3),
-            System.currentTimeMillis()
+            }.runTaskLater(Warlords.getInstance(), 3), System.currentTimeMillis()
         );
 
         HashMap<WarlordsPlayer, Integer> timeInBubble = new HashMap<>();
 
         // Third Particle Sphere
         wp.getGame().getGameTasks().put(
-
                 new BukkitRunnable() {
                     @Override
                     public void run() {
@@ -112,7 +108,7 @@ public class WideGuard extends AbstractAbility {
                             }
 
                             for (Map.Entry<WarlordsPlayer, Integer> entry : timeInBubble.entrySet()) {
-                                float healingValue = 150 + (entry.getKey().getMaxHealth() - entry.getKey().getHealth()) / 28.3f;
+                                float healingValue = 150 + (entry.getKey().getMaxHealth() - entry.getKey().getHealth()) * 0.03f;
                                 int timeInSeconds = entry.getValue() * 4 / 20;
                                 float totalHealing = (timeInSeconds * healingValue);
                                 entry.getKey().addHealingInstance(wp, "Wide Guard", totalHealing, totalHealing, -1, 100, false, false);
@@ -123,8 +119,7 @@ public class WideGuard extends AbstractAbility {
                             circle.playEffects();
                         }
                     }
-                }.runTaskTimer(Warlords.getInstance(), 5, 4),
-                System.currentTimeMillis()
+                }.runTaskTimer(Warlords.getInstance(), 5, 4), System.currentTimeMillis()
         );
 
         return true;

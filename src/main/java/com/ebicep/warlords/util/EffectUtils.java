@@ -1,6 +1,5 @@
 package com.ebicep.warlords.util;
 
-import org.apache.commons.lang3.RandomUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
@@ -57,7 +56,7 @@ public class EffectUtils {
     }
 
     /**
-     * @param player      what player should the sphere be around.
+     * @param player      what player should the helix be around.
      * @param helixRadius is how big the helix should be.
      * @param red         is the RGB assigned color for the particles.
      * @param green       is the RGB assigned color for the particles.
@@ -83,7 +82,7 @@ public class EffectUtils {
     }
 
     /**
-     * @param player        what player should the sphere be around.
+     * @param player        what player should the helix be around.
      * @param helixRadius   is how big the helix should be.
      * @param effect        which particle effect should be displayed.
      * @param particleCount the amount of particles that should be displayed.
@@ -108,7 +107,7 @@ public class EffectUtils {
     }
 
     /**
-     * @param player         what player should the sphere be around.
+     * @param player         what player should the cylinder be around.
      * @param cylinderRadius is how big the helix should be.
      * @param red            which particle effect should be displayed.
      * @param green          the amount of particles that should be displayed.
@@ -130,7 +129,7 @@ public class EffectUtils {
     }
 
     /**
-     * @param player         what player should the helix be around.
+     * @param player         what player should the cylinder be around.
      * @param cylinderRadius is how big the helix should be.
      * @param effect         which particle effect should be displayed.
      * @param particleCount  the amount of particles that should be displayed.
@@ -151,7 +150,7 @@ public class EffectUtils {
     }
 
     /**
-     * @param player     what player should the sphere be around.
+     * @param player     what player should the star be around.
      * @param starRadius is how big the star should be.
      * @param effect     which particle effect should be displayed.
      */

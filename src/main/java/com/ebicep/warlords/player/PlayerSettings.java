@@ -24,9 +24,9 @@ public class PlayerSettings implements ConfigurationSerializable {
         put(Classes.THUNDERLORD, ClassesSkillBoosts.LIGHTNING_BOLT);
         put(Classes.SPIRITGUARD, ClassesSkillBoosts.FALLEN_SOULS);
         put(Classes.EARTHWARDEN, ClassesSkillBoosts.EARTHEN_SPIKE);
-        put(Classes.ASSASSIN, ClassesSkillBoosts.JUDGEMENT_STRIKE);
-        put(Classes.VINDICATOR, ClassesSkillBoosts.RIGHTEOUS_STRIKE);
-        put(Classes.APOTHECARY, ClassesSkillBoosts.IMPALING_STRIKE);
+        put(Classes.ASSASSIN, ClassesSkillBoosts.EARTHEN_SPIKE);
+        put(Classes.VINDICATOR, ClassesSkillBoosts.EARTHEN_SPIKE);
+        put(Classes.APOTHECARY, ClassesSkillBoosts.EARTHEN_SPIKE);
     }};
     private boolean hotKeyMode = true;
     private HashMap<Classes, Weapons> weaponSkins = new HashMap<Classes, Weapons>() {{
