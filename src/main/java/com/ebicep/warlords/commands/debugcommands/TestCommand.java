@@ -27,6 +27,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.springframework.cache.caffeine.CaffeineCache;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import static com.ebicep.jda.BotManager.sendStatusMessage;
@@ -105,11 +106,22 @@ public class TestCommand implements CommandExecutor {
 //
 //        System.out.println(playerSR.size());
 
-        SRCalculator.playersSR.entrySet().stream()
-                .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
-                .forEachOrdered(databasePlayerIntegerEntry -> {
-                    System.out.println(databasePlayerIntegerEntry.getKey().getName() + " - " + databasePlayerIntegerEntry.getValue());
-                });
+//        SRCalculator.playersSR.entrySet().stream()
+//                .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
+//                .forEachOrdered(databasePlayerIntegerEntry -> {
+//                    System.out.println(databasePlayerIntegerEntry.getKey().getName() + " - " + databasePlayerIntegerEntry.getValue());
+//                });
+
+//        Warlords.newChain()
+//                .asyncFirst(() -> DatabaseManager.playerService.findAll(PlayersCollections.SEASON_5))
+//                .asyncLast(databasePlayerList -> {
+//                    databasePlayerList.stream().filter(databasePlayer -> databasePlayer.getPlays() == 0).forEach(databasePlayer -> {
+//                        //System.out.println(databasePlayer.getName());
+//                        DatabaseManager.playerService.delete(databasePlayer, PlayersCollections.SEASON_5);
+//                    });
+//                })
+//                .execute();
+
 
 //        List<DatabasePlayer> databasePlayersLifeTime = DatabaseManager.playerService.findAll(PlayersCollections.SEASON_4);
 //        for (DatabasePlayer databasePlayer : databasePlayersLifeTime) {

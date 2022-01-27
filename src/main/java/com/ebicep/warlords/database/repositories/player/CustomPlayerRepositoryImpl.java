@@ -35,6 +35,11 @@ public class CustomPlayerRepositoryImpl implements CustomPlayerRepository {
     }
 
     @Override
+    public void delete(DatabasePlayer player, PlayersCollections collection) {
+        mongoTemplate.remove(player, collection.collectionName);
+    }
+
+    @Override
     public void deleteAll(PlayersCollections collection) {
         mongoTemplate.dropCollection(collection.collectionName);
         mongoTemplate.createCollection(collection.collectionName);
