@@ -2,8 +2,8 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
-import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
@@ -23,15 +23,18 @@ public class OrderOfEviscerate extends AbstractAbility {
     @Override
     public void updateDescription(Player player) {
         description = "§7Cloak yourself for §6" + duration + " §7seconds, making you invisible\n" +
-                "§7to the enemy for the duration. However, taking fall damage,\n" +
-                "§7§7dealing damage, or taking any type of ability damage will\n" +
-                "§7end your invisibility." +
+                "§7to the enemy for the duration. However, taking fall damage\n" +
+                "§7or taking any type of ability damage will end your\n" +
+                "§7invisibility." +
                 "\n\n" +
                 "§7All your attacks against an enemy will mark them vulnerable,\n" +
                 "§7increasing the damage they take by §c25% §7for §6" + duration + " §7seconds.\n" +
                 "§7All attacks that hit your marked target from behind\n" +
-                "§7gain a §c100% §7crit chance. (Limited to marking 1 enemy\n" +
-                "§7at the same time.)";
+                "§7gain a §c100% §7crit chance." +
+                "\n\n" +
+                "§7Successfully killing your mark will §ereset §7both your" +
+                "§7Blinding Assault and Order of Eviscerate's cooldown" +
+                "§7and refund the energy cost.";
     }
 
     @Override

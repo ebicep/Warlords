@@ -22,12 +22,10 @@ public class CrossVital extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Increase the critical damage of all\n" +
-                "§7your abilities by §c" + critMultiplier + "%§7. When dealing a critical\n" +
-                "§7hit with Judgement Strike, gain an absorption shield\n" +
-                "§7equal to §e25% §7of the strike's damage. Gain §e40% §7speed\n" +
-                "§7for §6" + speedDuration + " §7seconds upon defeating an enemy while Cross\n" +
-                "§7Vital is active. Lasts §6" + duration + " §7seconds.";
+        description = "§7Increase the critical damage of all your\n" +
+                "§7abilities by §c" + critMultiplier + "%§7. Gain §e40% §7speed\n" +
+                "§7for §6" + speedDuration + " §7seconds upon defeating an enemy while\n" +
+                "§7Cross Vital is active. Lasts §6" + duration + " §7seconds.";
     }
 
     @Override
@@ -54,7 +52,7 @@ public class CrossVital extends AbstractAbility {
                             this.cancel();
                         }
                     }
-                }.runTaskTimer(Warlords.getInstance(), 0, 4),
+                }.runTaskTimer(Warlords.getInstance(), 0, 8),
                 System.currentTimeMillis()
         );
 

@@ -52,7 +52,7 @@ public class RemedicChains extends AbstractAbility {
                 tempRemedicChain,
                 wp,
                 CooldownTypes.ABILITY,
-                cooldownManager -> {},
+                cooldownManager -> wp.addHealingInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false, false),
                 duration * 20
         );
 
@@ -97,7 +97,7 @@ public class RemedicChains extends AbstractAbility {
                             if (outOfRange) {
                                 chainTarget.getCooldownManager().removeCooldown(tempRemedicChain);
                                 chainTarget.addHealingInstance(wp, name, minDamageHeal * 0.1f, maxDamageHeal * 0.1f, critChance, critMultiplier, false, false);
-                                chainTarget.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.RED + "You left the link range early!");
+                                chainTarget.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.RED + " You left the link range early!");
                                 this.cancel();
                             } else {
                                 chainTarget.setRegenTimer(0);
@@ -112,7 +112,7 @@ public class RemedicChains extends AbstractAbility {
                             if (!outOfRange && chainTarget.isAlive()) {
                                 chainTarget.addHealingInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false, false);
                             }
-                            wp.addHealingInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false, false);
+
                             for (Player player1 : player.getWorld().getPlayers()) {
                                 player1.playSound(chainTarget.getLocation(), "rogue.remedicchains.impact", 0.05f, 1.4f);
                             }

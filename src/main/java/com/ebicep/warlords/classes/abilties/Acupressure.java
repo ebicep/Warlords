@@ -20,7 +20,7 @@ public class Acupressure extends AbstractAbility {
     private final int duration = 6;
 
     public Acupressure() {
-        super("Acupressure", 0, 0, 22, 40, -1, 100);
+        super("Acupressure", 0, 0, 18, 40, -1, 100);
     }
 
     @Override
@@ -54,7 +54,6 @@ public class Acupressure extends AbstractAbility {
                 }
 
                 wp.getGame().getGameTasks().put(
-
                         new BukkitRunnable() {
                             @Override
                             public void run() {
