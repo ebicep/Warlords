@@ -64,7 +64,7 @@ public class CooldownFilter<T extends AbstractCooldown<?>> implements Iterable<T
 
     public <R> Optional<R> findFirstObject(Object object, Class<R> clazz) {
         assert object.getClass() == clazz;
-        return stream.filter(cd -> cd.getCooldownObject().equals(object)).findFirst().map(clazz::cast);
+        return stream.filter(cd -> cd.getCooldownObject().equals(object)).map(cd -> cd.getCooldownObject()).findFirst().map(clazz::cast);
     }
 
     public Optional<T> findFirst() {
