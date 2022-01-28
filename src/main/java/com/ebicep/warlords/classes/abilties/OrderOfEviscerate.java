@@ -32,8 +32,8 @@ public class OrderOfEviscerate extends AbstractAbility {
                 "§7All attacks that hit your marked target from behind\n" +
                 "§7gain a §c100% §7crit chance." +
                 "\n\n" +
-                "§7Successfully killing your mark will §ereset §7both your" +
-                "§7Blinding Assault and Order of Eviscerate's cooldown" +
+                "§7Successfully killing your mark will §ereset §7both your\n" +
+                "§7Blinding Assault and Order of Eviscerate's cooldown\n" +
                 "§7and refund the energy cost.";
     }
 

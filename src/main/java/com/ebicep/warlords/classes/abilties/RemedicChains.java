@@ -119,7 +119,7 @@ public class RemedicChains extends AbstractAbility {
                             this.cancel();
                         }
                     }
-                }.runTaskTimer(Warlords.getInstance(), 0, 5), System.currentTimeMillis());
+                }.runTaskTimer(Warlords.getInstance(), 0, 8), System.currentTimeMillis());
         }
 
         return targethit >= 1;

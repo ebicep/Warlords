@@ -18,7 +18,7 @@ import javax.annotation.Nonnull;
 
 public class HealingRemedy extends AbstractProjectileBase {
 
-    private static final float HITBOX = 4;
+    private static final float HITBOX = 5;
     private final int puddleMinHealing = 183;
     private final int puddleMaxHealing = 236;
 
@@ -70,7 +70,8 @@ public class HealingRemedy extends AbstractProjectileBase {
         med.getLocation().add(0, 1, 0);
 
         for (Player player1 : shooter.getWorld().getPlayers()) {
-            player1.playSound(currentLocation, "rogue.healingremedy.impact", 2, 0.6f);
+            player1.playSound(currentLocation, "rogue.healingremedy.impact", 1.2f, 0.6f);
+            player1.playSound(currentLocation, "mage.waterbolt.impact", 1f, 0.5f);
         }
 
         FireWorkEffectPlayer.playFirework(currentLocation, FireworkEffect.builder()
@@ -80,7 +81,7 @@ public class HealingRemedy extends AbstractProjectileBase {
 
         for (WarlordsPlayer nearEntity : PlayerFilter
                 .entitiesAround(currentLocation, HITBOX, HITBOX, HITBOX)
-                .aliveTeammatesOfExcludingSelf(shooter)
+                .aliveEnemiesOf(shooter)
         ) {
             nearEntity.addHealingInstance(
                     shooter,

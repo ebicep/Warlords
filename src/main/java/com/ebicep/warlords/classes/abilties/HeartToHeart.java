@@ -26,7 +26,7 @@ public class HeartToHeart extends AbstractAbility {
     private final int vindDuration = 6;
 
     public HeartToHeart() {
-        super("Heart To Heart", 0, 0, 13, 40, -1, 100);
+        super("§kHeart To Heart", 0, 0, 13, 40, -1, 100);
     }
 
     @Override
@@ -68,14 +68,14 @@ public class HeartToHeart extends AbstractAbility {
                     public void run() {
                         timer++;
 
-                        if (timer >= 8 || (heartTarget.isDead() || wp.isDead())) {
+                        if (timer >= 12 || (heartTarget.isDead() || wp.isDead())) {
                             this.cancel();
                             if (!wp.getLocation().getBlock().getType().isSolid() && !wp.getLocation().add(0, 1, 0).getBlock().getType().isSolid()) {
                                 return;
                             }
                         }
 
-                        double target = timer / 8D;
+                        double target = timer / 12D;
                         Location targetLoc = heartTarget.getLocation();
                         Location newLocation = new Location(
                                 playerLoc.getWorld(),

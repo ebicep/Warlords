@@ -23,8 +23,8 @@ public class CrossVital extends AbstractAbility {
     @Override
     public void updateDescription(Player player) {
         description = "§7Increase the critical damage of all your\n" +
-                "§7abilities by §c" + critMultiplier + "%§7. Gain §e40% §7speed\n" +
-                "§7for §6" + speedDuration + " §7seconds upon defeating an enemy while\n" +
+                "§7abilities by §c" + critMultiplier + "%§7. Gain §e40% §7speed for\n" +
+                "§6" + speedDuration + " §7seconds upon defeating an enemy while\n" +
                 "§7Cross Vital is active. Lasts §6" + duration + " §7seconds.";
     }
 

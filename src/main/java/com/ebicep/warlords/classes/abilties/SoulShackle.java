@@ -7,6 +7,7 @@ import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
 import com.ebicep.warlords.util.Utils;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -25,7 +26,7 @@ public class SoulShackle extends AbstractAbility {
     private final int shackleRange = 12;
 
     public SoulShackle() {
-        super("Soul Shackle", 327, 443, 8, 40, 20, 140);
+        super("Soul Shackle", 327, 443, 8, 40, 20, 175);
     }
 
     @Override
@@ -49,14 +50,15 @@ public class SoulShackle extends AbstractAbility {
         ) {
             if (Utils.isLookingAtMark(player, shackleTarget.getEntity()) && Utils.hasLineOfSight(player, shackleTarget.getEntity())) {
                 wp.subtractEnergy(energyCost);
+                wp.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " You shackled " + ChatColor.YELLOW + shackleTarget.getName() + ChatColor.GRAY + "!");
 
                 shackleTarget.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
                 shackleTarget.getCooldownManager().addRegularCooldown("Shackle Silence", "SILENCE", SoulShackle.class, tempSoulShackle, wp, CooldownTypes.DEBUFF, cooldownManager -> {
                 }, 2 * 20);
 
                 for (Player player1 : player.getWorld().getPlayers()) {
-                    player1.playSound(player.getLocation(), "warrior.intervene.impact", 2, 0.45f);
-                    player1.playSound(player.getLocation(), "mage.fireball.activation", 2, 0.3f);
+                    player1.playSound(player.getLocation(), "warrior.intervene.impact", 1.5f, 0.45f);
+                    player1.playSound(player.getLocation(), "mage.fireball.activation", 1.5f, 0.3f);
                 }
 
                 Location from = wp.getLocation().add(0, -0.6, 0);
