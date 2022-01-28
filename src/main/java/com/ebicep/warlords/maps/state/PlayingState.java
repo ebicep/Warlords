@@ -311,11 +311,11 @@ public class PlayingState implements State, TimerDebugAble {
         if (!game.isPrivate() && !ImposterCommand.enabled && !forceEnd && game.playersCount() >= 12) {
             String gameEnd = "[GAME] A Public game ended with ";
             if (getBluePoints() > getRedPoints()) {
-                BotManager.sendMessageToNotificationChannel(gameEnd + "**BLUE** winning " + getBluePoints() + " to " + getRedPoints(), true);
+                BotManager.sendMessageToNotificationChannel(gameEnd + "**BLUE** winning " + getBluePoints() + " to " + getRedPoints(), false, true);
             } else if (getBluePoints() < getRedPoints()) {
-                BotManager.sendMessageToNotificationChannel(gameEnd + "**RED** winning " + getRedPoints() + " to " + getBluePoints(), true);
+                BotManager.sendMessageToNotificationChannel(gameEnd + "**RED** winning " + getRedPoints() + " to " + getBluePoints(), false, true);
             } else {
-                BotManager.sendMessageToNotificationChannel(gameEnd + "a **DRAW**", true);
+                BotManager.sendMessageToNotificationChannel(gameEnd + "a **DRAW**", false, true);
             }
             if (highestDamage <= 750000 && highestHealing <= 750000) {
                 DatabaseGame.addGame(PlayingState.this, true);
@@ -337,11 +337,11 @@ public class PlayingState implements State, TimerDebugAble {
         else if (RecordGamesCommand.recordGames && !ImposterCommand.enabled && !forceEnd && game.playersCount() >= 16 && timer <= 12000) {
             String gameEnd = "[GAME] A game ended with ";
             if (getBluePoints() > getRedPoints()) {
-                BotManager.sendMessageToNotificationChannel(gameEnd + "**BLUE** winning " + getBluePoints() + " to " + getRedPoints(), true);
+                BotManager.sendMessageToNotificationChannel(gameEnd + "**BLUE** winning " + getBluePoints() + " to " + getRedPoints(), true, false);
             } else if (getBluePoints() < getRedPoints()) {
-                BotManager.sendMessageToNotificationChannel(gameEnd + "**RED** winning " + getRedPoints() + " to " + getBluePoints(), true);
+                BotManager.sendMessageToNotificationChannel(gameEnd + "**RED** winning " + getRedPoints() + " to " + getBluePoints(), true, false);
             } else {
-                BotManager.sendMessageToNotificationChannel(gameEnd + "a **DRAW**", true);
+                BotManager.sendMessageToNotificationChannel(gameEnd + "a **DRAW**", true, false);
             }
             if (highestDamage <= 750000 && highestHealing <= 750000) {
                 DatabaseGame.addGame(PlayingState.this, true);
