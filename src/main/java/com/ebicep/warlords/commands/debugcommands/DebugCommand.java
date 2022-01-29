@@ -231,6 +231,8 @@ public class DebugCommand implements CommandExecutor {
                 if (wp != null) {
                     wp.getGame().freeze("", true);
                 }
+                sender.sendMessage(ChatColor.RED + "§cDEV: §aThe game has been frozen!");
+                return true;
             }
 
             default:

@@ -9,7 +9,6 @@ import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
 import com.ebicep.warlords.util.Utils;
 import org.bukkit.Location;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
@@ -40,14 +39,12 @@ public class WaterBreath extends AbstractAbility {
         wp.getCooldownManager().removeDebuffCooldowns();
         wp.getSpeed().removeSlownessModifiers();
         wp.addHealingInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false, false);
-        player.playSound(player.getLocation(), Sound.ORB_PICKUP, 1, 1);
 
         Location playerLoc = player.getLocation();
         playerLoc.setPitch(0);
         playerLoc.add(0, 1.7, 0);
 
         Vector viewDirection = playerLoc.getDirection();
-
         Location hitbox = player.getLocation();
         hitbox.setPitch(0);
         hitbox.add(hitbox.getDirection().multiply(-1));
@@ -63,7 +60,7 @@ public class WaterBreath extends AbstractAbility {
                         target.addHealingInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false, false);
                         target.getCooldownManager().removeCooldown(Utils.OVERHEAL_MARKER);
                         target.getCooldownManager().addRegularCooldown("Overheal",
-                                "OVERHEAL", null, Utils.OVERHEAL_MARKER, wp, CooldownTypes.BUFF, cooldownManager -> {
+                                "OVERHEAL",null, Utils.OVERHEAL_MARKER, wp, CooldownTypes.BUFF, cooldownManager -> {
                                 }, Utils.OVERHEAL_DURATION * 20);
                     } else {
                         final Location loc = target.getLocation();

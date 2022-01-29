@@ -815,19 +815,8 @@ public final class WarlordsPlayer {
             if (healValue < 0) return;
 
             if (healValue != 0) {
-                if (isCrit) {
-                    if (isLastStandFromShield) {
-                        sendMessage(RECEIVE_ARROW + ChatColor.GRAY + " Your " + ability + " critically healed you for " + ChatColor.GREEN + "§l" + Math.round(healValue) + " Absorbed! " + ChatColor.GRAY + "health.");
-                    } else {
-                        sendMessage(RECEIVE_ARROW + ChatColor.GRAY + " Your " + ability + " critically healed you for " + ChatColor.GREEN + "§l" + Math.round(healValue) + "! " + ChatColor.GRAY + "health.");
-                    }
-                } else {
-                    if (isLastStandFromShield) {
-                        sendMessage(RECEIVE_ARROW + ChatColor.GRAY + " Your " + ability + " healed you for " + ChatColor.GREEN + "" + Math.round(healValue) + " Absorbed " + ChatColor.GRAY + "health.");
-                    } else {
-                        sendMessage(RECEIVE_ARROW + ChatColor.GRAY + " Your " + ability + " healed you for " + ChatColor.GREEN + "" + Math.round(healValue) + " " + ChatColor.GRAY + "health.");
-                    }
-                }
+                // Displays the healing message.
+                sendHealingMessage(this, healValue, ability, isCrit, isLastStandFromShield);
                 health += healValue;
                 addHealing(healValue, gameState.flags().hasFlag(this));
 
@@ -870,6 +859,33 @@ public final class WarlordsPlayer {
                 }
             }
         }
+    }
+
+    /**
+     * @param player which player should receive the message.
+     * @param healValue heal value of the message.
+     * @param ability which ability should the message display.
+     * @param isCrit whether if it's a critical hit message.
+     * @param isLastStandFromShield whether the message is last stand healing.
+     */
+    private void sendHealingMessage(@Nonnull WarlordsPlayer player, float healValue, String ability, boolean isCrit, boolean isLastStandFromShield) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(RECEIVE_ARROW).append(ChatColor.GRAY).append(" Your ").append(ability);
+        if (isCrit) {
+            builder.append(" critically");
+        }
+        builder.append(" healed you for ").append(ChatColor.GREEN);
+        if (isCrit) {
+            builder.append("§l");
+        }
+        builder.append(Math.round(healValue));
+        if (isLastStandFromShield) {
+            builder.append(" Absorbed!");
+        }
+        builder.append(ChatColor.GRAY).append(" health");
+        builder.append(isCrit ? "!" : ".");
+
+        player.sendMessage(builder.toString());
     }
 
     /**
@@ -1669,18 +1685,25 @@ public final class WarlordsPlayer {
         int minute = (this.gameState.getGame().getMap().getGameTimerInTicks() - this.gameState.getTimer()) / (20 * 60);
         int totalMinutes = (gameState.getGame().getMap().getGameTimerInTicks() / 20 / 60) - 1;
         for (int i = 0; i < damage.length - 1 && i < minute + 1; i++) {
-            if (name.equals("Kills")) {
-                lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(kills[totalMinutes - i]));
-            } else if (name.equals("Assists")) {
-                lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(assists[totalMinutes - i]));
-            } else if (name.equals("Deaths")) {
-                lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(deaths[totalMinutes - i]));
-            } else if (name.equals("Damage")) {
-                lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(damage[totalMinutes - i]));
-            } else if (name.equals("Healing")) {
-                lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(healing[totalMinutes - i]));
-            } else if (name.equals("Absorbed")) {
-                lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(absorbed[totalMinutes - i]));
+            switch (name) {
+                case "Kills":
+                    lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(kills[totalMinutes - i]));
+                    break;
+                case "Assists":
+                    lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(assists[totalMinutes - i]));
+                    break;
+                case "Deaths":
+                    lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(deaths[totalMinutes - i]));
+                    break;
+                case "Damage":
+                    lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(damage[totalMinutes - i]));
+                    break;
+                case "Healing":
+                    lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(healing[totalMinutes - i]));
+                    break;
+                case "Absorbed":
+                    lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(absorbed[totalMinutes - i]));
+                    break;
             }
         }
         meta.setLore(lore);

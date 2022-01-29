@@ -65,7 +65,7 @@ public class HealingRain extends AbstractAbility {
                 if (!wp.getGame().isGameFreeze()) {
                     if (wp.isAlive() && player.isSneaking() && !wasSneaking) {
                         player.playSound(player.getLocation(), "mage.timewarp.teleport", 2, 1.35f);
-                        player.sendMessage(WarlordsPlayer.RECEIVE_ARROW + "§7You moved your §aHealing Rain §7to your current location.");
+                        player.sendMessage(WarlordsPlayer.RECEIVE_ARROW + " §7You moved your §aHealing Rain §7to your current location.");
                         hr.setLocation(player.getLocation());
                     }
 
