@@ -4,7 +4,10 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Team;
+import com.ebicep.warlords.maps.option.marker.LobbyLocationMarker;
+import com.ebicep.warlords.maps.option.marker.MapSymmetryMarker;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.util.ItemBuilder;
 import com.ebicep.warlords.util.NumberFormat;
@@ -28,6 +31,7 @@ import static com.ebicep.warlords.player.ArmorManager.*;
 import static com.ebicep.warlords.player.Classes.*;
 import static com.ebicep.warlords.player.Settings.*;
 import static java.lang.Math.round;
+import org.bukkit.*;
 
 public class GameMenu {
     private static final ItemStack MENU_BACK_PREGAME = new ItemBuilder(Material.ARROW)
@@ -331,7 +335,7 @@ public class GameMenu {
     }
 
     public static void openArmorMenu(Player player, int pageNumber) {
-        boolean onBlueTeam = Warlords.game.getPlayerTeamOrNull(player.getUniqueId()) == Team.BLUE;
+        boolean onBlueTeam = Warlords.getGameManager().getPlayerGame(player.getUniqueId()).map(g -> g.getPlayerTeam(player.getUniqueId())).orElse(Team.BLUE) == Team.BLUE;
         List<Helmets> selectedHelmet = Helmets.getSelected(player);
         List<ArmorSets> selectedArmorSet = ArmorSets.getSelected(player);
         Menu menu = new Menu("Armor Sets & Helmets", 9 * 6);
@@ -545,7 +549,19 @@ public class GameMenu {
                     (n, e) -> {
                         if (selectedTeam != team) {
                             player.sendMessage(ChatColor.GREEN + "You have joined the " + team.teamColor() + team.name + ChatColor.GREEN + " team!");
-                            Warlords.game.setPlayerTeam(player, team);
+                            Optional<Game> playerGame = Warlords.getGameManager().getPlayerGame(player.getUniqueId());
+                            if (playerGame.isPresent()) {
+                                Game game = playerGame.get();
+                                Team oldTeam = game.getPlayerTeam(player.getUniqueId());
+                                game.setPlayerTeam(player, team);
+                                LobbyLocationMarker randomLobbyLocation = LobbyLocationMarker.getRandomLobbyLocation(game, team);
+                                if (randomLobbyLocation != null) {
+                                    Location teleportDestination = MapSymmetryMarker.getSymmetry(game)
+                                            .getOppositeLocation(game, oldTeam, team, player.getLocation(), randomLobbyLocation.getLocation());;
+                                    player.teleport(teleportDestination);
+                                    Warlords.setRejoinPoint(player.getUniqueId(), teleportDestination);
+                                }
+                            }
                             ArmorManager.resetArmor(player, Warlords.getPlayerSettings(player.getUniqueId()).getSelectedClass(), team);
                             Warlords.getPlayerSettings(player.getUniqueId()).setWantedTeam(team);
                         }

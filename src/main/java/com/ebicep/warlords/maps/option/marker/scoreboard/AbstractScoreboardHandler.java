@@ -1,4 +1,4 @@
-package com.ebicep.warlords.maps.scoreboard;
+package com.ebicep.warlords.maps.option.marker.scoreboard;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;

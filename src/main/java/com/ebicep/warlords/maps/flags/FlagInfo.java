@@ -5,10 +5,8 @@
  */
 package com.ebicep.warlords.maps.flags;
 
-import com.ebicep.warlords.events.WarlordsFlagUpdatedEvent;
 import com.ebicep.warlords.maps.Team;
 import java.util.function.BiConsumer;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 public class FlagInfo {

@@ -17,6 +17,10 @@ public class SpawnFlagLocation extends AbstractLocationBasedFlagLocation {
         this.lastToucher = lastToucher;
     }
 
+    /**
+     * Get the name of the player who returned the flag
+     * @return the name of the returned, or null is the flag automatically moved back
+     */
     @Nullable
     public String getLastToucher() {
         return lastToucher;

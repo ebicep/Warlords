@@ -4,9 +4,11 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.GameAddon;
 import com.ebicep.warlords.maps.GameManager.GameHolder;
-import com.ebicep.warlords.maps.state.PlayingState;
-import com.ebicep.warlords.maps.state.PreLobbyState;
+import com.ebicep.warlords.maps.option.DrawAfterTimeoutOption;
+import com.ebicep.warlords.util.Utils;
+import static com.ebicep.warlords.util.Utils.toTitleHumanCase;
 import java.util.EnumSet;
+import java.util.OptionalInt;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -28,36 +30,41 @@ public class GameListCommand implements CommandExecutor {
                     .append(ChatColor.GRAY).append("[")
                     .append(ChatColor.AQUA).append(holder.getName())
                     .append(ChatColor.GRAY).append("|")
-                    .append(ChatColor.AQUA).append(holder.getMap().name());
+                    .append(ChatColor.AQUA).append(toTitleHumanCase(holder.getMap().name()));
             Game game = holder.getGame();
             if (game == null) {
-                message.append(ChatColor.GOLD).append(" <inactive>");
+                message.append(']').append(ChatColor.GOLD).append(" <inactive>");
             } else {
                 if (holder.getMap().getCategories().size() > 1) {
-                    message.append(ChatColor.GRAY).append("/").append(ChatColor.AQUA).append(game.getCategory());
+                    message.append(ChatColor.GRAY).append("/").append(ChatColor.AQUA).append(toTitleHumanCase(game.getCategory()));
                 }
                 message.append(ChatColor.GRAY).append("] ");
+                //message.append('(').append(ChatColor.GOLD).append(game.getGameId()).append(ChatColor.GRAY).append(") ");
                 EnumSet<GameAddon> addons = game.getAddons();
                 if (!addons.isEmpty()) {
                     message.append(ChatColor.GRAY).append('(');
                     for(GameAddon addon : addons) {
-                        message
-                                .append(ChatColor.GREEN).append(addon.name())
-                                .append(ChatColor.GRAY).append(',');
+                        message.append(ChatColor.GREEN).append(addon.name());
+                        message.append(ChatColor.GRAY).append(',');
                     }
                     message.setLength(message.length() - 1);
                     message.append("] ");
                 }
                 message
                         .append(ChatColor.GOLD).append(game.getState().getClass().getSimpleName())
-                        .append(ChatColor.GRAY).append(" [")
+                        .append(ChatColor.GRAY).append(" [ ")
                         .append(ChatColor.GREEN).append(game.getPlayers().size())
                         .append(ChatColor.GRAY).append("/")
                         .append(ChatColor.GREEN).append(game.getMinPlayers())
-                        .append(ChatColor.GRAY).append("/")
+                        .append(ChatColor.GRAY).append("..")
                         .append(ChatColor.GREEN).append(game.getMaxPlayers())
-                        .append(ChatColor.GRAY).append("]");
-                }
+                        .append(ChatColor.GRAY).append("] ");
+                OptionalInt timeLeft = DrawAfterTimeoutOption.getTimeLeft(game);
+                String time = Utils.formatTimeLeft(timeLeft.isPresent() ? timeLeft.getAsInt() : (System.currentTimeMillis() - game.createdAt()) / 1000);
+                String word = timeLeft.isPresent() ? " Left" : " Elapsed";
+                message.append(time).append(word);
+            }
+                    
             sender.sendMessage(message.toString());
         }
 

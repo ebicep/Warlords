@@ -7,6 +7,7 @@ package com.ebicep.warlords.maps.flags;
 
 import java.util.Arrays;
 import java.util.List;
+import javax.annotation.Nonnull;
 import org.bukkit.Location;
 
 public class GroundFlagLocation extends AbstractLocationBasedFlagLocation implements FlagLocation {
@@ -56,5 +57,10 @@ public class GroundFlagLocation extends AbstractLocationBasedFlagLocation implem
                 "Despawn seconds: " + getDespawnTimerSeconds(),
                 "damageTimer: " + getDamageTimer()
         );
+    }
+
+    public static GroundFlagLocation of(@Nonnull FlagLocation flag) {
+        return flag instanceof PlayerFlagLocation ? new GroundFlagLocation((PlayerFlagLocation) flag)
+                : new GroundFlagLocation(flag.getLocation(), 0);
     }
 }

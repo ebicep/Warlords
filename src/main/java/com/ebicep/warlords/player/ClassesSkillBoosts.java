@@ -2,7 +2,6 @@ package com.ebicep.warlords.player;
 
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.classes.abilties.*;
-import com.ebicep.warlords.classes.paladin.specs.protector.Protector;
 
 import java.util.function.Consumer;
 

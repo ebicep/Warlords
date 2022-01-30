@@ -4,7 +4,6 @@ import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.flags.FlagInfo;
 import com.ebicep.warlords.maps.flags.FlagLocation;
-import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 public class WarlordsFlagUpdatedEvent extends WarlordsGameEvent {

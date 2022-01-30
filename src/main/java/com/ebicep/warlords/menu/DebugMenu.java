@@ -8,6 +8,9 @@ import com.ebicep.warlords.maps.flags.GroundFlagLocation;
 import com.ebicep.warlords.maps.flags.PlayerFlagLocation;
 import com.ebicep.warlords.maps.flags.SpawnFlagLocation;
 import com.ebicep.warlords.maps.option.marker.DebugLocationMarker;
+import com.ebicep.warlords.maps.option.marker.FlagHolder;
+import com.ebicep.warlords.maps.option.marker.LobbyLocationMarker;
+import com.ebicep.warlords.maps.option.marker.MapSymmetryMarker;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.util.ItemBuilder;
 import com.ebicep.warlords.util.NumberFormat;
@@ -30,6 +33,7 @@ import java.util.function.BiConsumer;
 
 import static com.ebicep.warlords.menu.Menu.*;
 import static com.ebicep.warlords.player.Classes.setSelectedBoost;
+import com.ebicep.warlords.util.PlayerFilter;
 import static com.ebicep.warlords.util.Utils.woolSortedByColor;
 
 public class DebugMenu {
@@ -178,19 +182,25 @@ public class DebugMenu {
                                     Bukkit.getServer().dispatchCommand(player, "kill " + targetName);
                                     break;
                                 case 7:
+                                    Game game = target.getGame();
                                     Team currentTeam = target.getTeam();
-                                    Team otherTeam = target.getTeam() == Team.BLUE ? Team.RED : Team.BLUE;
-                                    target.getGame().getPlayers().remove(target.getUuid());
-                                    target.getGame().getPlayers().put(target.getUuid(), otherTeam);
-                                    //todo something with rejoin point?
+                                    Team otherTeam = target.getTeam().enemy();
+                                    game.setPlayerTeam(player, otherTeam);
                                     target.setTeam(otherTeam);
+                                    
                                     target.getGameState().updatePlayerName(Warlords.playerScoreboards.get(target.getUuid()), target);
                                     Warlords.getPlayerSettings(target.getUuid()).setWantedTeam(otherTeam);
-                                    target.teleport(otherTeam == Team.RED ? target.getGame().getMap().getRedLobbySpawnPoint() : target.getGame().getMap().getBlueLobbySpawnPoint());
+                                    LobbyLocationMarker randomLobbyLocation = LobbyLocationMarker.getRandomLobbyLocation(game, otherTeam);
+                                    if (randomLobbyLocation != null) {
+                                        Location teleportDestination = MapSymmetryMarker.getSymmetry(game)
+                                                .getOppositeLocation(game, currentTeam, otherTeam, target.getLocation(), randomLobbyLocation.getLocation());;
+                                        target.teleport(teleportDestination);
+                                    }
                                     ArmorManager.resetArmor(Bukkit.getPlayer(target.getUuid()), Warlords.getPlayerSettings(target.getUuid()).getSelectedClass(), otherTeam);
                                     player.sendMessage(ChatColor.RED + "DEV: " + currentTeam.teamColor() + target.getName() + "§a was swapped to the " + otherTeam.coloredPrefix() + " §ateam");
                                     openPlayerMenu(player, target);
                                     break;
+
                             }
                         }
                     }
@@ -251,11 +261,11 @@ public class DebugMenu {
             //team info = color - other shit
             List<WarlordsPlayer> bluePlayers = new ArrayList<>();
             List<WarlordsPlayer> redPlayers = new ArrayList<>();
-            Warlords.getPlayers().forEach((key, value) -> {
-                if (value.getGame().isBlueTeam(key)) {
-                    bluePlayers.add(value);
-                } else {
-                    redPlayers.add(value);
+            PlayerFilter.playingGame(warlordsPlayer.getGame()).forEach((wp) -> {
+                if (wp.getTeam() == Team.BLUE) {
+                    bluePlayers.add(wp);
+                } else if (wp.getTeam() == Team.RED) {
+                    redPlayers.add(wp);
                 }
             });
             ItemStack blueInfo = new ItemBuilder(Material.WOOL, 1, (byte) 11)
@@ -294,8 +304,8 @@ public class DebugMenu {
     private static void addPlayersToMenu(Menu menu, Player player, List<WarlordsPlayer> warlordsPlayers, boolean blueTeam) {
         //flag player first
         warlordsPlayers.sort((wp1, wp2) -> {
-            int wp1Flag = wp1.getGameState().flags().hasFlag(wp1) ? 1 : 0;
-            int wp2Flag = wp2.getGameState().flags().hasFlag(wp2) ? 1 : 0;
+            int wp1Flag = wp1.getCarriedFlag() != null ? 1 : 0;
+            int wp2Flag = wp2.getCarriedFlag() != null ? 1 : 0;
             return wp2Flag - wp1Flag;
         });
         int y = 0;
@@ -314,7 +324,7 @@ public class DebugMenu {
             }
             menu.setItem(i % 4 + (blueTeam ? 0 : 5), y,
                     new ItemBuilder(CraftItemStack.asBukkitCopy(Warlords.getPlayerHeads().get(wp.getUuid())))
-                            .name((blueTeam ? ChatColor.BLUE : ChatColor.RED) + wp.getName() + (wp.getGameState().flags().hasFlag(wp) ? ChatColor.WHITE + " ⚑" : ""))
+                            .name((blueTeam ? ChatColor.BLUE : ChatColor.RED) + wp.getName() + (wp.getCarriedFlag() != null ? ChatColor.WHITE + " ⚑" : ""))
                             .lore(lore)
                             .get(),
                     (n, e) -> {
@@ -330,12 +340,12 @@ public class DebugMenu {
 
     private static String[] getTeamStatLore(List<WarlordsPlayer> warlordsPlayers) {
         return new String[]{
-                ChatColor.GREEN + "Kills" + ChatColor.GRAY + ": " + ChatColor.GOLD + warlordsPlayers.stream().mapToInt(WarlordsPlayer::getTotalKills).sum(),
-                ChatColor.GREEN + "Assists" + ChatColor.GRAY + ": " + ChatColor.GOLD + warlordsPlayers.stream().mapToInt(WarlordsPlayer::getTotalAssists).sum(),
-                ChatColor.GREEN + "Deaths" + ChatColor.GRAY + ": " + ChatColor.GOLD + warlordsPlayers.stream().mapToInt(WarlordsPlayer::getTotalDeaths).sum(),
-                ChatColor.GREEN + "Damage" + ChatColor.GRAY + ": " + ChatColor.RED + NumberFormat.addCommaAndRound((float) warlordsPlayers.stream().mapToDouble(WarlordsPlayer::getTotalDamage).sum()),
-                ChatColor.GREEN + "Healing" + ChatColor.GRAY + ": " + ChatColor.DARK_GREEN + NumberFormat.addCommaAndRound((float) warlordsPlayers.stream().mapToDouble(WarlordsPlayer::getTotalHealing).sum()),
-                ChatColor.GREEN + "Absorbed" + ChatColor.GRAY + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound((float) warlordsPlayers.stream().mapToDouble(WarlordsPlayer::getTotalAbsorbed).sum())
+                ChatColor.GREEN + "Kills" + ChatColor.GRAY + ": " + ChatColor.GOLD + warlordsPlayers.stream().mapToInt(e -> e.getStats().total().getKills()).sum(),
+                ChatColor.GREEN + "Assists" + ChatColor.GRAY + ": " + ChatColor.GOLD + warlordsPlayers.stream().mapToInt(e -> e.getStats().total().getAssists()).sum(),
+                ChatColor.GREEN + "Deaths" + ChatColor.GRAY + ": " + ChatColor.GOLD + warlordsPlayers.stream().mapToInt(e -> e.getStats().total().getDeaths()).sum(),
+                ChatColor.GREEN + "Damage" + ChatColor.GRAY + ": " + ChatColor.RED + NumberFormat.addCommaAndRound((float) warlordsPlayers.stream().mapToDouble(e -> e.getStats().total().getDamage()).sum()),
+                ChatColor.GREEN + "Healing" + ChatColor.GRAY + ": " + ChatColor.DARK_GREEN + NumberFormat.addCommaAndRound((float) warlordsPlayers.stream().mapToDouble(e -> e.getStats().total().getHealing()).sum()),
+                ChatColor.GREEN + "Absorbed" + ChatColor.GRAY + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound((float) warlordsPlayers.stream().mapToDouble(e -> e.getStats().total().getAbsorbed()).sum())
         };
     }
 
@@ -344,12 +354,12 @@ public class DebugMenu {
                 ChatColor.GREEN + "Spec" + ChatColor.GRAY + ": " + ChatColor.GOLD + wp.getSpec().getClass().getSimpleName(),
                 ChatColor.GREEN + "Health" + ChatColor.GRAY + ": " + ChatColor.RED + wp.getHealth(),
                 ChatColor.GREEN + "Energy" + ChatColor.GRAY + ": " + ChatColor.YELLOW + (int) wp.getEnergy(),
-                ChatColor.GREEN + "Kills" + ChatColor.GRAY + ": " + ChatColor.GOLD + wp.getTotalKills(),
-                ChatColor.GREEN + "Assists" + ChatColor.GRAY + ": " + ChatColor.GOLD + wp.getTotalAssists(),
-                ChatColor.GREEN + "Deaths" + ChatColor.GRAY + ": " + ChatColor.GOLD + wp.getTotalDeaths(),
-                ChatColor.GREEN + "Damage" + ChatColor.GRAY + ": " + ChatColor.RED + NumberFormat.addCommaAndRound(wp.getTotalDamage()),
-                ChatColor.GREEN + "Healing" + ChatColor.GRAY + ": " + ChatColor.DARK_GREEN + NumberFormat.addCommaAndRound(wp.getTotalHealing()),
-                ChatColor.GREEN + "Absorbed" + ChatColor.GRAY + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(wp.getTotalAbsorbed())
+                ChatColor.GREEN + "Kills" + ChatColor.GRAY + ": " + ChatColor.GOLD + wp.getStats().total().getKills(),
+                ChatColor.GREEN + "Assists" + ChatColor.GRAY + ": " + ChatColor.GOLD + wp.getStats().total().getAssists(),
+                ChatColor.GREEN + "Deaths" + ChatColor.GRAY + ": " + ChatColor.GOLD + wp.getStats().total().getDeaths(),
+                ChatColor.GREEN + "Damage" + ChatColor.GRAY + ": " + ChatColor.RED + NumberFormat.addCommaAndRound(wp.getStats().total().getDamage()),
+                ChatColor.GREEN + "Healing" + ChatColor.GRAY + ": " + ChatColor.DARK_GREEN + NumberFormat.addCommaAndRound(wp.getStats().total().getHealing()),
+                ChatColor.GREEN + "Absorbed" + ChatColor.GRAY + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(wp.getStats().total().getAbsorbed())
         };
     }
 
@@ -628,70 +638,56 @@ public class DebugMenu {
                         .name(ChatColor.GREEN + "Set Multiplier")
                         .get(),
         };
-        for (int i = 0; i < flagOptions.length; i++) {
-            int finalI = i;
-            menu.setItem(i + 1, 1, flagOptions[i],
-                    (n, e) -> {
-                        FlagManager flagManager = target.getGameState().flags();
-                        WarlordsPlayer blueFlagPlayer = flagManager.getPlayerWithBlueFlag();
-                        WarlordsPlayer redFlagPlayer = flagManager.getPlayerWithRedFlag();
-                        switch (finalI) {
-                            case 0:
-                                if ((target.getTeam() == Team.RED && blueFlagPlayer == target) || (target.getTeam() == Team.BLUE && redFlagPlayer == target)) {
-                                    player.sendMessage(ChatColor.RED + "DEV: §aThat player already has the flag");
-                                } else {
-                                    if (target.getTeam() == Team.BLUE) {
-                                        if (redFlagPlayer != null) {
-                                            //dropping flag from teammate
-                                            flagManager.dropFlag(redFlagPlayer);
-                                            //repicking it
-                                            flagManager.getRed().setFlag(new PlayerFlagLocation(target, ((GroundFlagLocation) flagManager.getRed().getFlag()).getDamageTimer()));
-                                        } else {
-                                            //picking up flag
-                                            flagManager.getRed().setFlag(new PlayerFlagLocation(target, 0));
-                                        }
-                                    } else if (target.getTeam() == Team.RED) {
-                                        if (blueFlagPlayer != null) {
-                                            //dropping flag from teammate
-                                            flagManager.dropFlag(blueFlagPlayer);
-                                            //repicking it
-                                            flagManager.getBlue().setFlag(new PlayerFlagLocation(target, ((GroundFlagLocation) flagManager.getBlue().getFlag()).getDamageTimer()));
-                                        } else {
-                                            //picking up flag
-                                            flagManager.getBlue().setFlag(new PlayerFlagLocation(target, 0));
-                                        }
-                                    }
-                                }
-                                break;
-                            case 1:
-                                if (flagManager.hasFlag(target)) {
-                                    flagManager.dropFlag(target);
-                                    if (target.getTeam() == Team.BLUE) {
-                                        flagManager.getRed().setFlag(new SpawnFlagLocation(flagManager.getRed().getSpawnLocation(), player.getName()));
+        int row = 0;
+        for(FlagHolder holder : target.getGame().getMarkers(FlagHolder.class)) {
+            if (holder.getTeam() == target.getTeam()) {
+                continue;
+            }
+            row++;
+            for (int i = 0; i < flagOptions.length; i++) {
+                int finalI = i;
+                menu.setItem(i + 1, row, flagOptions[i],
+                        (n, e) -> {
+                            switch (finalI) {
+                                case 0:
+                                    if (target.getCarriedFlag() == holder.getInfo()) {
+                                        player.sendMessage(ChatColor.RED + "DEV: §aThat player already has the flag");
                                     } else {
-                                        flagManager.getBlue().setFlag(new SpawnFlagLocation(flagManager.getBlue().getSpawnLocation(), player.getName()));
+                                        FlagHolder.update(
+                                                target.getGame(),
+                                                info -> info.getFlag() instanceof PlayerFlagLocation && ((PlayerFlagLocation) info.getFlag()).getPlayer() == target ?
+                                                    GroundFlagLocation.of(info.getFlag()) :
+                                                info == holder ?
+                                                    PlayerFlagLocation.of(info.getFlag(), target) :
+                                                null
+                                        );
                                     }
-                                } else {
-                                    player.sendMessage(ChatColor.RED + "DEV: §aThat player does not have the flag");
-                                }
-                                break;
-                            case 2:
-                                if (flagManager.hasFlag(target)) {
-                                    flagManager.dropFlag(target);
-                                } else {
-                                    player.sendMessage(ChatColor.RED + "DEV: §aThat player does not have the flag");
-                                }
-                                break;
-                            case 3:
-                                if (flagManager.hasFlag(target)) {
-                                    openFlagMultiplierMenu(player, target);
-                                } else {
-                                    player.sendMessage(ChatColor.RED + "DEV: §aThat player does not have the flag");
-                                }
-                                break;
+                                    break;
+                                case 1:
+                                    if (target.getCarriedFlag() == holder.getInfo()) {
+                                        holder.getInfo().setFlag(new SpawnFlagLocation(holder.getInfo().getSpawnLocation(), null));
+                                    } else {
+                                        player.sendMessage(ChatColor.RED + "DEV: §aThat player does not have the flag");
+                                    }
+                                    break;
+                                case 2:
+                                    if (target.getCarriedFlag() == holder.getInfo()) {
+                                        holder.getInfo().setFlag(GroundFlagLocation.of(holder.getFlag()));
+                                    } else {
+                                        player.sendMessage(ChatColor.RED + "DEV: §aThat player does not have the flag");
+                                    }
+                                    break;
+                                case 3:
+                                    if (target.getCarriedFlag() == holder.getInfo()) {
+                                        openFlagMultiplierMenu(player, target);
+                                    } else {
+                                        player.sendMessage(ChatColor.RED + "DEV: §aThat player does not have the flag");
+                                    }
+                                    break;
+                            }
                         }
-                    }
-            );
+                );
+            }
         }
         menu.setItem(3, 3, MENU_BACK, (n, e) -> openPlayerMenu(player, target));
         menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
@@ -708,26 +704,14 @@ public class DebugMenu {
                             .name(ChatColor.GREEN.toString() + multipliers[i])
                             .get(),
                     (n, e) -> {
-                        FlagManager flagManager = target.getGameState().flags();
                         int amount = e.isLeftClick() ? multipliers[finalI] : -multipliers[finalI];
-                        if (target.getTeam() == Team.BLUE) {
-                            if (flagManager.getPlayerWithRedFlag() != null) {
-                                PlayerFlagLocation redFlag = ((PlayerFlagLocation) flagManager.getRed().getFlag());
-                                if (redFlag.getPickUpTicks() + (60 * amount) < 0) {
-                                    amount = -redFlag.getPickUpTicks() / 60;
-                                }
-                                redFlag.addPickUpTicks(60 * amount);
-                                player.sendMessage(ChatColor.RED + "DEV: §aThe blue flag carrier gained " + amount + "%");
+                        if (target.getCarriedFlag() != null) {
+                            PlayerFlagLocation redFlag = ((PlayerFlagLocation) target.getCarriedFlag().getFlag());
+                            if (redFlag.getPickUpTicks() + (60 * amount) < 0) {
+                                amount = -redFlag.getPickUpTicks() / 60;
                             }
-                        } else if (target.getTeam() == Team.RED) {
-                            if (flagManager.getPlayerWithBlueFlag() != null) {
-                                PlayerFlagLocation blueFlag = ((PlayerFlagLocation) flagManager.getBlue().getFlag());
-                                if (blueFlag.getPickUpTicks() + (60 * amount) < 0) {
-                                    amount = -blueFlag.getPickUpTicks() / 60;
-                                }
-                                blueFlag.addPickUpTicks(60 * amount);
-                                player.sendMessage(ChatColor.RED + "DEV: §aThe red flag carrier gained " + amount + "%");
-                            }
+                            redFlag.addPickUpTicks(60 * amount);
+                            player.sendMessage(ChatColor.RED + "DEV: §aThe blue flag carrier gained " + amount + "%");
                         }
                     }
             );
@@ -804,9 +788,9 @@ public class DebugMenu {
             menu.setItem(i + 1, 1,
                     new ItemBuilder(woolSortedByColor[i + 5])
                             .name(ChatColor.GREEN + mapName)
-                            .lore(ChatColor.GRAY + "Map Category: " + ChatColor.GOLD + map.getCategory().getName())
+                            .lore(ChatColor.GRAY + "Map Category: " + ChatColor.GOLD + map.getCategories())
                             .get(),
-                    (n, e) -> Bukkit.getServer().dispatchCommand(player, "start " + mapName)
+                    (n, e) -> Bukkit.getServer().dispatchCommand(player, "start map:" + mapName)
             );
         }
         menu.setItem(3, 3, MENU_BACK, (n, e) -> openGameMenu(player));

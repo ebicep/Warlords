@@ -1,6 +1,7 @@
 package com.ebicep.warlords.util;
 
 import com.ebicep.warlords.player.WarlordsPlayer;
+import java.util.*;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Statistic;
@@ -12,14 +13,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 import java.util.stream.Collector;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 
@@ -48,6 +44,9 @@ public class Utils {
 
     public static final Object OVERHEAL_MARKER = new Object();
     public static final int OVERHEAL_DURATION = 15;
+    
+    private Utils() {
+    }
 
     public static double getDotToPlayer(LivingEntity player1, LivingEntity player2, double yIncrease) {
         return getDotToLocation(new LocationBuilder(player1.getEyeLocation()).addY(yIncrease).get(), player2.getEyeLocation());
@@ -398,4 +397,34 @@ public class Utils {
         );
     }
     
+    public static void formatTimeLeft(StringBuilder message, long seconds) {
+        long minute = seconds / 60;
+        long second = seconds % 60;
+        if (minute < 10) {
+            message.append('0');
+        }
+        message.append(minute);
+        message.append(':');
+        if (second < 10) {
+            message.append('0');
+        }
+        message.append(second);
+    }
+    public static String formatTimeLeft(long seconds) {
+        StringBuilder message = new StringBuilder();
+        formatTimeLeft(message, seconds);
+        return message.toString();
+    }
+    public static String toTitleCase(Object input) {
+        return toTitleCase(String.valueOf(input));
+    }
+    public static String toTitleCase(String input) {
+        return input.substring(0, 1).toUpperCase(Locale.ROOT) + input.substring(1).toLowerCase(Locale.ROOT);
+    }
+    public static String toTitleHumanCase(Object input) {
+        return toTitleHumanCase(String.valueOf(input));
+    }
+    public static String toTitleHumanCase(String input) {
+        return input.substring(0, 1).toUpperCase(Locale.ROOT) + input.replace('_', ' ').substring(1).toLowerCase(Locale.ROOT);
+    }
 }

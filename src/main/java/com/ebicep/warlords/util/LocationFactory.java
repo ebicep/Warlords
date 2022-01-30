@@ -1,16 +1,21 @@
 package com.ebicep.warlords.util;
 
 import java.util.Objects;
+import javax.annotation.Nonnull;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.util.Vector;
 
 public class LocationFactory {
-
+    @Nonnull
     private final Location location;
 
-    public LocationFactory(Location location) {
-        this.location = location;
+    public LocationFactory(@Nonnull Location location) {
+        this.location = Objects.requireNonNull(location, "location");
+    }
+
+    public LocationFactory(@Nonnull World world) {
+        this(new Location(Objects.requireNonNull(world, "world"), 0, 0, 0));
     }
 
     public LocationBuilder x(double x) {
@@ -27,6 +32,10 @@ public class LocationFactory {
 
     public LocationBuilder addXYZ(double x, double y, double z) {
         return new LocationBuilder(location.clone()).addXYZ(x, y, z);
+    }
+
+    public LocationBuilder addXYZ(double x, double y, double z, float yaw, float pitch) {
+        return new LocationBuilder(location.clone()).addXYZ(x, y, z).yaw(yaw).pitch(pitch);
     }
 
     public LocationBuilder addX(double amount) {

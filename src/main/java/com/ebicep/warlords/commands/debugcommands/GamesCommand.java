@@ -1,7 +1,6 @@
 package com.ebicep.warlords.commands.debugcommands;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;

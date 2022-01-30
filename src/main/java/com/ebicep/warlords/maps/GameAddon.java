@@ -1,16 +1,14 @@
 package com.ebicep.warlords.maps;
 
-import com.ebicep.warlords.commands.debugcommands.ImposterCommand;
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.maps.option.GameFreezeWhenOfflineOption;
-import com.ebicep.warlords.maps.scoreboard.SimpleScoreboardHandler;
+import com.ebicep.warlords.maps.option.ImposterModeOption;
+import com.ebicep.warlords.maps.state.ClosedState;
 import com.ebicep.warlords.maps.state.PreLobbyState;
 import com.ebicep.warlords.maps.state.State;
 import com.ebicep.warlords.player.WarlordsPlayer;
-import java.util.Collections;
-import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 public enum GameAddon {
@@ -25,6 +23,9 @@ public enum GameAddon {
 
         @Override
         public void stateHasChanged(Game game, State oldState, State newState) {
+            if (newState instanceof ClosedState) {
+                return;
+            }
             game.setAcceptsPlayers(false);
             if (newState instanceof PreLobbyState) {
                 PreLobbyState preLobbyState = (PreLobbyState) newState;
@@ -37,23 +38,13 @@ public enum GameAddon {
 
         @Override
         public void modifyGame(Game game) {
-            //options.add(new GameImposterModeOption());
-            // TODO move this to an GameImposterModeOption handler for cleaner files
-            game.registerScoreboardHandler(new SimpleScoreboardHandler(0) {
-                @Override
-                public List<String> computeLines(WarlordsPlayer player) {
-                    if ((ImposterCommand.blueImposterName != null && ImposterCommand.blueImposterName.equalsIgnoreCase(player.getName()))
-                            || (ImposterCommand.redImposterName != null && ImposterCommand.redImposterName.equals(player.getName()))) {
-                        return Collections.singletonList(ChatColor.WHITE + "Role: " + ChatColor.RED + "IMPOSTER");
-                    } else {
-                        if (ImposterCommand.blueImposterName != null && ImposterCommand.redImposterName != null) {
-                            return Collections.singletonList(ChatColor.WHITE + "Role: " + ChatColor.GREEN + "INNOCENT");
-                        } else {
-                            return Collections.emptyList();
-                        }
-                    }
-                }
-            });
+            game.getOptions().add(new ImposterModeOption());
+        }
+
+        @Override
+        public boolean canCreateGame(GameManager.GameHolder holder) {
+            // At the moment, only 1 game can be an imposter game at the same time
+            return !Warlords.getGameManager().getGames().stream().anyMatch(e -> e.getGame() != null && e.getGame().getAddons().contains(this));
         }
     },
     COOLDOWN_MODE("warlords.game.cooldowngame") {
@@ -64,7 +55,7 @@ public enum GameAddon {
             player.setEnergyModifier(player.getEnergyModifier() * 0.5);
             player.setCooldownModifier(player.getCooldownModifier() * 0.5);
         }
-        
+
     },
     //RECORD_MODE(),
     MEGA_GAME("warlords.game.megagame") {
@@ -72,7 +63,7 @@ public enum GameAddon {
         public int getMaxPlayers(GameMap map, int maxPlayers) {
             return Integer.MAX_VALUE;
         }
-        
+
     };
 
     @Nullable
@@ -81,11 +72,11 @@ public enum GameAddon {
     private GameAddon(String permission) {
         this.permission = permission;
     }
-    
+
     public boolean hasPermission(CommandSender sender) {
         return this.permission == null || sender.hasPermission(permission);
     }
-    
+
     public void modifyGame(@Nonnull Game game) {
     }
 
@@ -101,15 +92,19 @@ public enum GameAddon {
     public int getMaxPlayers(@Nonnull GameMap map, int maxPlayers) {
         return maxPlayers;
     }
-    
+
     @Nullable
     public State stateWillChange(@Nonnull Game game, @Nullable State oldState, @Nonnull State newState) {
         return newState;
     }
-    
+
     public void stateHasChanged(@Nonnull Game game, @Nullable State oldState, @Nonnull State newState) {
     }
-    
+
     public void warlordsPlayerCreated(@Nonnull Game game, @Nonnull WarlordsPlayer player) {
+    }
+
+    public boolean canCreateGame(@Nonnull GameManager.GameHolder holder) {
+        return true;
     }
 }

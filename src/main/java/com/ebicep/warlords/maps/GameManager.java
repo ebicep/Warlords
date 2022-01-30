@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
 
 public class GameManager implements AutoCloseable {
 
@@ -17,6 +18,7 @@ public class GameManager implements AutoCloseable {
 
     /**
      * Gets the list of game holders
+     *
      * @return the games holders
      */
     public List<GameHolder> getGames() {
@@ -41,8 +43,12 @@ public class GameManager implements AutoCloseable {
             if (next.getGame() == null) {
                 int computedMaxPlayers = next.getMap().getMaxPlayers();
                 for (GameAddon addon : entry.getRequestedGameAddons()) {
+                    if (!addon.canCreateGame(next)) {
+                        continue;
+                    }
                     computedMaxPlayers = addon.getMaxPlayers(next.getMap(), computedMaxPlayers);
                 }
+
                 // The game has not started yet
                 if (computedMaxPlayers < entry.getPlayers().size()) {
                     continue; // The party would not fit into this map
@@ -104,6 +110,7 @@ public class GameManager implements AutoCloseable {
             }
             // We found a game, mark the entry as removed
             itr.remove();
+            entry.onResult(selected.getGame() == null ? QueueResult.READY_NEW : QueueResult.READY_JOIN);
             Game game = selected.optionallyStartNewGame(entry.getRequestedGameAddons(), entry.getCategory());
             for (OfflinePlayer player : entry.getPlayers()) {
                 game.addPlayer(player, false);
@@ -129,19 +136,28 @@ public class GameManager implements AutoCloseable {
             }
         }
     }
-    
+
     public long getPlayerCount() {
-        return this.games.stream().map(e -> e.getGame() == null ? 0 : e.getGame().getPlayers().size()).collect(Collectors.counting());
+        return this.games.stream().mapToInt(e -> e.getGame() == null ? 0 : e.getGame().getPlayers().size()).sum();
     }
-    
+
     public long getPlayerCountInLobby() {
-        return this.games.stream().map(e -> e.getGame() == null && e.getGame().acceptsPeople() ? 0 : e.getGame().getPlayers().size()).collect(Collectors.counting());
+        return this.games.stream().mapToInt(e -> {
+            Game game = e.getGame();
+            if (game == null) {
+                return 0;
+            }
+            if (!game.acceptsPeople()) {
+                return 0;
+            }
+            return game.getPlayers().size();
+        }).sum();
     }
-    
+
     public long getQueueSize() {
         return this.queue.size();
     }
-    
+
     public long getQueuePlayerCount() {
         return this.queue.stream().map(e -> e.getPlayers().size()).collect(Collectors.counting());
     }
@@ -173,9 +189,9 @@ public class GameManager implements AutoCloseable {
         }
         boolean inserted = false;
         ListIterator<QueueEntry> listIterator = queue.listIterator(queue.size());
-        while(listIterator.hasPrevious()) {
+        while (listIterator.hasPrevious()) {
             QueueEntry previous = listIterator.previous();
-            if(previous.compareTo(entry) > 0) { // TOD verify if > the correct operator here
+            if (previous.compareTo(entry) > 0) { // TOD verify if > the correct operator here
                 listIterator.add(entry);
                 inserted = true;
                 break;
@@ -210,11 +226,18 @@ public class GameManager implements AutoCloseable {
             entry.setOnResult(onResult);
         }
     }
+
     public QueueEntryBuilder newEntry(Collection<? extends OfflinePlayer> players) {
         return new QueueEntryBuilder(players, null);
     }
+
     public QueueEntryBuilder newEntry(Collection<? extends OfflinePlayer> players, @Nullable Consumer<QueueResult> onResult) {
         return new QueueEntryBuilder(players, onResult);
+    }
+
+    @Nonnull
+    public Optional<Game> getPlayerGame(UUID player) {
+        return this.games.stream().filter(e -> e.getGame() != null && e.getGame().hasPlayer(player)).map(e -> e.getGame()).findAny();
     }
 
     @Override
@@ -227,6 +250,14 @@ public class GameManager implements AutoCloseable {
             next.forceEndGame();
         }
         games.clear();
+    }
+
+    public void addGameHolder(String name, GameMap map, World world) {
+        addGameHolder(name, map, new LocationFactory(world));
+    }
+
+    public void addGameHolder(String name, GameMap map, LocationFactory locations) {
+        this.games.add(new GameHolder(map, locations, name));
     }
 
     public static class GameHolder {
@@ -259,8 +290,10 @@ public class GameManager implements AutoCloseable {
         }
 
         public void forceEndGame() {
-            game.close();
-            game = null;
+            if (game != null) {
+                game.close();
+                game = null;
+            }
         }
 
         @Nonnull
@@ -269,22 +302,23 @@ public class GameManager implements AutoCloseable {
                 MapCategory newCategory = category != null ? category
                         : map.getCategories().get((int) (Math.random() * map.getCategories().size()));
                 game = new Game(requestedGameAddons, map, newCategory, locations);
+                game.start();
             }
             if (!game.getAddons().equals(requestedGameAddons)) {
                 throw new IllegalArgumentException(
-                        '[' + name + "] The requested game addons do not match the actaul game addons: " + requestedGameAddons + " vs " + game.getAddons()
+                        '[' + name + "] The requested game addons do not match the actual game addons: " + requestedGameAddons + " vs " + game.getAddons()
                 );
             }
-            if (!game.getCategory().equals(category)) {
+            if (category != null && !game.getCategory().equals(category)) {
                 throw new IllegalArgumentException(
-                        '[' + name + "] The requested game category do not match the actaul game category: " + category + " vs " + game.getCategory()
+                        '[' + name + "] The requested game category do not match the actual game category: " + category + " vs " + game.getCategory()
                 );
             }
             return game;
         }
 
         public String getName() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            return name;
         }
 
     }
@@ -376,7 +410,8 @@ public class GameManager implements AutoCloseable {
     }
 
     public enum QueueResult {
-        READY(true, "Your game is ready"),
+        READY_JOIN(true, "You have joined an existing game"),
+        READY_NEW(true, "A new game has been made for you"),
         EXPIRED(false, "No game found in time"),
         CANCELLED(false, "Cancelled queueing"),
         REPLACED(false, "Replaced with another queue entry"),
@@ -393,7 +428,7 @@ public class GameManager implements AutoCloseable {
         public boolean isSuccess() {
             return success;
         }
-        
+
         @Override
         public String toString() {
             return message;
@@ -430,7 +465,7 @@ public class GameManager implements AutoCloseable {
             return this;
         }
 
-        public QueueEntryBuilder setRequestedGameAddons(@Nonnull GameAddon ... rga) {
+        public QueueEntryBuilder setRequestedGameAddons(@Nonnull GameAddon... rga) {
             return setRequestedGameAddons(rga.length == 0 ? EnumSet.noneOf(GameAddon.class) : EnumSet.copyOf(Arrays.asList(rga)));
         }
 
@@ -495,7 +530,7 @@ public class GameManager implements AutoCloseable {
         public void queue() {
             GameManager.this.queue(new GameManager.QueueEntry(players, expiresTime, requestedGameAddons, category, map, onResult, priority));
         }
-        
+
         @Nonnull
         public QueueResult queueNow() {
             return GameManager.this.queueNow(new GameManager.QueueEntry(players, Long.MIN_VALUE, requestedGameAddons, category, map, null, priority));

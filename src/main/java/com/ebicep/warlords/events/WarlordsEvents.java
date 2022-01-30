@@ -291,7 +291,7 @@ public class WarlordsEvents implements Listener {
                         double distance = player.getLocation().getY() - player.getWorld().getHighestBlockYAt(player.getLocation());
                         if (distance > 2) {
                             player.sendMessage(ChatColor.RED + "You can't mount in the air!");
-                        } else if (wp.getFlagDamageMultiplier() > 0) {
+                        } else if (wp.getCarriedFlag() != null) {
                             player.sendMessage(ChatColor.RED + "You can't mount while holding the flag!");
                         } else {
                             player.playSound(player.getLocation(), "mountup", 1, 1);
@@ -671,13 +671,13 @@ public class WarlordsEvents implements Listener {
     public void onFlagChange(WarlordsFlagUpdatedEvent event) {
         //Bukkit.broadcastMessage(event.getTeam() + " " + event.getOld().getClass().getSimpleName() + " => " + event.getNew().getClass().getSimpleName());
         if (event.getOld() instanceof PlayerFlagLocation) {
-            ((PlayerFlagLocation) event.getOld()).getPlayer().setFlagDamageMultiplier(0);
+            ((PlayerFlagLocation) event.getOld()).getPlayer().setCarriedFlag(null);
         }
 
         if (event.getNew() instanceof PlayerFlagLocation) {
             PlayerFlagLocation pfl = (PlayerFlagLocation) event.getNew();
             WarlordsPlayer player = pfl.getPlayer();
-            player.setFlagDamageMultiplier(pfl.getComputedMultiplier());
+            ((PlayerFlagLocation) event.getOld()).getPlayer().setCarriedFlag(event.getInfo());
             if (!(event.getOld() instanceof PlayerFlagLocation)) {
                 // eg GROUND -> PLAYER
                 // or SPAWN -> PLAYER
@@ -766,7 +766,6 @@ public class WarlordsEvents implements Listener {
             if (event.getOld() instanceof PlayerFlagLocation) {
                 PlayerFlagLocation pfl = (PlayerFlagLocation) event.getOld();
                 Team loser = event.getTeam();
-                event.getGame().addCapture(pfl.getPlayer());
                 pfl.getPlayer().addFlagCap();
                 event.getGame().forEachOnlinePlayer((p, t) -> {
                     String message = pfl.getPlayer().getColoredName() + " §ecaptured the " + loser.coloredPrefix() + " §eflag!";

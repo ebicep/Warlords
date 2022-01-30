@@ -46,14 +46,14 @@ public class PreLobbyState implements State, TimerDebugAble {
         game.setAcceptsSpectators(false);
     }
     
-    public boolean shouldLobbyTimerRun() {
+    public boolean hasEnoughPlayers() {
         int players = game.playersCount();
-        return players >= game.getMap().getMinPlayers();
+        return players >= game.getMinPlayers();
     }
 
     @Override
     public State run() {
-        if (shouldLobbyTimerRun()) {
+        if (hasEnoughPlayers()) {
             if (timer % 20 == 0) {
                 int time = timer / 20;
                 game.forEachOnlinePlayer((player, team) -> {
@@ -401,7 +401,7 @@ public class PreLobbyState implements State, TimerDebugAble {
         }
 
         Classes classes = Warlords.getPlayerSettings(player.getUniqueId()).getSelectedClass();
-        if (game.playersCount() >= game.getMinPlayers()) {
+        if (hasEnoughPlayers()) {
             customScoreboard.giveNewSideBar(init,
                     ChatColor.GRAY + dateString,
                     "  ",
@@ -576,11 +576,7 @@ public class PreLobbyState implements State, TimerDebugAble {
             ArmorManager.resetArmor(player, Warlords.getPlayerSettings(player.getUniqueId()).getSelectedClass(), team);
         }
         
-        List<LobbyLocationMarker> lobbies = game.getMarkers(LobbyLocationMarker.class);
-        LobbyLocationMarker location = lobbies.stream().filter(e -> e.matchesTeam(team)).collect(Utils.randomElement());
-        if (location == null) {
-            location = lobbies.stream().collect(Utils.randomElement()); 
-        }
+        LobbyLocationMarker location = LobbyLocationMarker.getRandomLobbyLocation(game, team);
         if (location != null) {
             player.teleport(location.getLocation());
             Warlords.setRejoinPoint(player.getUniqueId(), location.getLocation());

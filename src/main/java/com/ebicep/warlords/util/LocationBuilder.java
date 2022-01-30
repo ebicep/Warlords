@@ -45,13 +45,15 @@ public class LocationBuilder extends Location {
         return this;
     }
 
+    @Override
     public LocationBuilder add(Vector vector) {
-        this.add(vector);
+        super.add(vector);
         return this;
     }
 
+    @Override
     public LocationBuilder subtract(Vector vector) {
-        this.subtract(vector);
+        super.subtract(vector);
         return this;
     }
 
@@ -98,6 +100,11 @@ public class LocationBuilder extends Location {
     @Deprecated
     public Location get() {
         return this;
+    }
+
+    @Override
+    public LocationBuilder clone() {
+        return (LocationBuilder) super.clone();
     }
 
 }

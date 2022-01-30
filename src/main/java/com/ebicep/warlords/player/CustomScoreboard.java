@@ -107,6 +107,10 @@ public class CustomScoreboard {
         }
     }
 
+    public void giveNewSideBar(boolean forceClear, List<String> entries) {
+        // 0 is faster here than .size(), see https://stackoverflow.com/a/29444594/1542723
+        giveNewSideBar(forceClear, entries.toArray(new String[0]));
+    }
     public void giveNewSideBar(boolean forceClear, String... entries) {
         //clearing all teams if size doesnt match
         int sideBarTeams = (int) scoreboard.getTeams().stream().filter(team -> team.getName().contains("team")).count();

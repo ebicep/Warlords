@@ -17,9 +17,6 @@ commands:
     description: Kills the game
     permissions: warlords.game.end
     usage: /killgame
-  listgames:
-    description: Shows the list of games
-    usage: /listgames
   menu:
     description: Opens the game menu.
     usage: /menu
@@ -98,6 +95,9 @@ commands:
   lobby:
     description: Warps you back into the lobby if you are in a game lobby
     aliases: [ lobby, l, hub ]
+  gamelist:
+    description: Shows the list of games
+    permission: warlords.game.list
 
 permissions:
   group.default:

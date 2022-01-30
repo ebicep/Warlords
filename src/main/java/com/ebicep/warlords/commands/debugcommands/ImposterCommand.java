@@ -131,7 +131,7 @@ public class ImposterCommand implements CommandExecutor {
                 }
                 if (!Warlords.partyManager.inAParty(warlordsPlayer.getUuid())) return true;
 
-                if (warlordsPlayer.getGameState().getTimerInSeconds() > 900 - 60 * 5) {
+                if (warlordsPlayer.getGameState().getTicksElapsed() > 900 - 60 * 5) {
                     sender.sendMessage(ChatColor.RED + "You cannot request to vote before 5 minutes have past!");
                     return true;
                 }

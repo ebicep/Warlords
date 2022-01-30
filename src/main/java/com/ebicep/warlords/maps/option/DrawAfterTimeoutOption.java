@@ -4,13 +4,18 @@ import com.ebicep.warlords.events.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.option.marker.TeamMarker;
-import com.ebicep.warlords.maps.scoreboard.SimpleScoreboardHandler;
+import com.ebicep.warlords.maps.option.marker.TimerSkipAbleMarker;
+import com.ebicep.warlords.maps.option.marker.scoreboard.ScoreboardHandler;
+import com.ebicep.warlords.maps.option.marker.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.GameRunnable;
 import static com.ebicep.warlords.util.GameRunnable.SECOND;
+import com.ebicep.warlords.util.Utils;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.OptionalInt;
+import javax.annotation.Nonnull;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.scheduler.BukkitTask;
@@ -20,7 +25,7 @@ import org.bukkit.scheduler.BukkitTask;
  */
 public class DrawAfterTimeoutOption implements Option {
 
-    public static final int DEFAULT_TIMER = 900;
+    public static final int DEFAULT_TIME_REMAINING = 900;
     private static final int SCOREBOARD_PRIORITY = 10;
 
     private int timeRemaining;
@@ -29,7 +34,7 @@ public class DrawAfterTimeoutOption implements Option {
     private BukkitTask runTaskTimer; 
 
     public DrawAfterTimeoutOption() {
-        this(DEFAULT_TIMER);
+        this(DEFAULT_TIME_REMAINING);
     }
 
     public DrawAfterTimeoutOption(int timeRemaining) {
@@ -66,7 +71,19 @@ public class DrawAfterTimeoutOption implements Option {
 
     @Override
     public void register(Game game) {
-        game.registerScoreboardHandler(scoreboard = new SimpleScoreboardHandler(SCOREBOARD_PRIORITY) {
+        new TimerSkipAbleMarker() {
+            @Override
+            public int getDelay() {
+                return timeRemaining * 20;
+            }
+
+            @Override
+            public void skipTimer(int delay) {
+                timeRemaining -= delay / 20;
+            }
+            
+        }.register(game);
+        game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(SCOREBOARD_PRIORITY, "timeout") {
             @Override
             public List<String> computeLines(WarlordsPlayer player) {
                 final EnumSet<Team> teams = TeamMarker.getTeams(game);
@@ -84,8 +101,6 @@ public class DrawAfterTimeoutOption implements Option {
                     }
                 }
 
-                int minute = timeRemaining / 60;
-                int second = timeRemaining % 60;
                 StringBuilder message = new StringBuilder(64);
                 if (winner != null) {
                     message.append(winner.coloredPrefix()).append(ChatColor.GOLD).append(" Wins in: ");
@@ -93,15 +108,7 @@ public class DrawAfterTimeoutOption implements Option {
                     message.append(ChatColor.WHITE).append("Time Left: ");
                 }
                 message.append(ChatColor.GREEN);
-                if (minute < 10) {
-                    message.append('0');
-                }
-                message.append(minute);
-                message.append(':');
-                if (second < 10) {
-                    message.append('0');
-                }
-                message.append(second);
+                Utils.formatTimeLeft(message, timeRemaining);
                 return Collections.singletonList(message.toString());
             }
         });
@@ -131,5 +138,15 @@ public class DrawAfterTimeoutOption implements Option {
             runTaskTimer.cancel();
             runTaskTimer = null;
         }
+    }
+    
+    public static OptionalInt getTimeLeft(@Nonnull Game game) {
+        for (Option option : game.getOptions()) {
+            if(option instanceof DrawAfterTimeoutOption) {
+                DrawAfterTimeoutOption drawAfterTimeoutOption = (DrawAfterTimeoutOption) option;
+                return OptionalInt.of(drawAfterTimeoutOption.getTimeRemaining());
+            }
+        }
+        return OptionalInt.empty();
     }
 }

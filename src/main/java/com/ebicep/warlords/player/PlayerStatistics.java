@@ -1,12 +1,20 @@
 package com.ebicep.warlords.player;
 
+import com.ebicep.warlords.maps.option.DrawAfterTimeoutOption;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Spliterator;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 
-public class PlayerStatistics {
+/**
+ * Stores player statistics grouped by every minute
+ */
+public class PlayerStatistics implements Iterable<PlayerStatistics.Entry> {
 
     /**
      * A list of every entry we have
@@ -19,10 +27,14 @@ public class PlayerStatistics {
     @Nonnull
     private Entry current = new Entry();
     /**
-     * Cache variable to prevent repeated total computations. 
+     * Cache variable to prevent repeated total computations.
      */
     @CheckForNull
     private transient Entry total = null;
+
+    public PlayerStatistics() {
+        this(DrawAfterTimeoutOption.DEFAULT_TIME_REMAINING / 60);
+    }
 
     public PlayerStatistics(int expectedGameDurationInMinutes) {
         entries = new ArrayList<>(expectedGameDurationInMinutes);
@@ -36,58 +48,95 @@ public class PlayerStatistics {
 
     public void addKill() {
         current.kills++;
-        this.total = null;
+        if (this.total != null) {
+            this.total.kills++;
+        }
     }
 
     public void addAssist() {
         current.assists++;
-        this.total = null;
+        if (this.total != null) {
+            this.total.assists++;
+        }
     }
 
     public void addDeath() {
         current.deaths++;
-        this.total = null;
+        if (this.total != null) {
+            this.total.deaths++;
+        }
     }
 
     public void addDamage(long damage) {
         current.damage += damage;
-        this.total = null;
+        if (this.total != null) {
+            this.total.damage += damage;
+        }
     }
 
     public void addHealing(long healing) {
         current.healing += healing;
-        this.total = null;
+        if (this.total != null) {
+            this.total.healing += healing;
+        }
     }
 
     public void addAbsorbed(long absorbed) {
         current.absorbed += absorbed;
-        this.total = null;
+        if (this.total != null) {
+            this.total.absorbed += absorbed;
+        }
     }
 
     public void addDamageOnCarrier(long damageOnCarrier) {
         current.damageOnCarrier += damageOnCarrier;
-        this.total = null;
+        if (this.total != null) {
+            this.total.damageOnCarrier += damageOnCarrier;
+        }
     }
 
     public void addHealingOnCarrier(long healingOnCarrier) {
         current.healingOnCarrier += healingOnCarrier;
-        this.total = null;
+        if (this.total != null) {
+            this.total.healingOnCarrier += healingOnCarrier;
+        }
     }
 
     public void addFlagCapture() {
         current.flagsCaptured++;
-        this.total = null;
+        if (this.total != null) {
+            this.total.flagsCaptured++;
+        }
     }
 
     public void addFlagReturned() {
         current.flagsReturned++;
-        this.total = null;
+        if (this.total != null) {
+            this.total.flagsReturned++;
+        }
+    }
+
+    public void addTimeInCombat() {
+        current.timeInCombat++;
+        if (this.total != null) {
+            this.total.timeInCombat++;
+        }
+    }
+
+    public void addTotalRespawnTime() {
+        current.respawnTimeSpent++;
+        if (this.total != null) {
+            this.total.respawnTimeSpent++;
+        }
+    }
+    public Entry recomputeTotal() {
+        return entries.stream().reduce(new Entry(), Entry::merge);
     }
 
     @Nonnull
     public Entry total() {
-        if (total != null) {
-            total = entries.stream().reduce(new Entry(), Entry::sum);
+        if (total == null) {
+            total = recomputeTotal();
         }
         return total;
     }
@@ -97,33 +146,56 @@ public class PlayerStatistics {
         return entries;
     }
 
+    @Override
+    public Iterator<Entry> iterator() {
+        return entries.iterator();
+    }
+
+    @Override
+    public void forEach(Consumer<? super Entry> action) {
+        entries.forEach(action);
+    }
+
+    @Override
+    public Spliterator<Entry> spliterator() {
+        return entries.spliterator();
+    }
+
+    public Stream<Entry> stream() {
+        return entries.stream();
+    }
+
     public static class Entry {
 
         @Nonnegative
-        public int kills;
+        private int kills;
         @Nonnegative
-        public int assists;
+        private int assists;
 
         @Nonnegative
-        public int deaths;
+        private int deaths;
         @Nonnegative
-        public long damage;
+        private long damage;
         @Nonnegative
-        public long healing;
+        private long healing;
         @Nonnegative
-        public long absorbed;
+        private long absorbed;
 
         @Nonnegative
-        public long damageOnCarrier;
+        private long damageOnCarrier;
         @Nonnegative
-        public long healingOnCarrier;
+        private long healingOnCarrier;
 
         @Nonnegative
-        public int flagsCaptured;
+        private int flagsCaptured;
         @Nonnegative
-        public int flagsReturned;
+        private int flagsReturned;
+        @Nonnegative
+        private int timeInCombat;
+        @Nonnegative
+        private int respawnTimeSpent;
 
-        public Entry sum(Entry other) {
+        public Entry merge(Entry other) {
             kills += other.kills;
             assists += other.assists;
             deaths += other.deaths;
@@ -134,87 +206,131 @@ public class PlayerStatistics {
             healingOnCarrier += other.healingOnCarrier;
             flagsCaptured += other.flagsCaptured;
             flagsReturned += other.flagsReturned;
+            timeInCombat += other.timeInCombat;
+            respawnTimeSpent += other.respawnTimeSpent;
             return this;
         }
 
+        @Nonnegative
         public int getKills() {
             return kills;
         }
 
-        public void setKills(int kills) {
-            this.kills = kills;
-        }
-
+        @Nonnegative
         public int getAssists() {
             return assists;
         }
 
-        public void setAssists(int assists) {
-            this.assists = assists;
-        }
-
+        @Nonnegative
         public int getDeaths() {
             return deaths;
         }
 
-        public void setDeaths(int deaths) {
-            this.deaths = deaths;
-        }
-
+        @Nonnegative
         public long getDamage() {
             return damage;
         }
 
-        public void setDamage(long damage) {
-            this.damage = damage;
-        }
-
+        @Nonnegative
         public long getHealing() {
             return healing;
         }
 
-        public void setHealing(long healing) {
-            this.healing = healing;
-        }
-
+        @Nonnegative
         public long getAbsorbed() {
             return absorbed;
         }
 
-        public void setAbsorbed(long absorbed) {
-            this.absorbed = absorbed;
-        }
-
+        @Nonnegative
         public long getDamageOnCarrier() {
             return damageOnCarrier;
         }
 
-        public void setDamageOnCarrier(long damageOnCarrier) {
-            this.damageOnCarrier = damageOnCarrier;
-        }
-
+        @Nonnegative
         public long getHealingOnCarrier() {
             return healingOnCarrier;
         }
 
-        public void setHealingOnCarrier(long healingOnCarrier) {
-            this.healingOnCarrier = healingOnCarrier;
-        }
-
+        @Nonnegative
         public int getFlagsCaptured() {
             return flagsCaptured;
         }
 
-        public void setFlagsCaptured(int flagsCaptured) {
-            this.flagsCaptured = flagsCaptured;
-        }
-
+        @Nonnegative
         public int getFlagsReturned() {
             return flagsReturned;
         }
 
-        public void setFlagsReturned(int flagsReturned) {
-            this.flagsReturned = flagsReturned;
+        @Nonnegative
+        public int getTimeInCombat() {
+            return timeInCombat;
+        }
+
+        @Nonnegative
+        public float getRespawnTimeSpent() {
+            return respawnTimeSpent;
+        }
+
+        @Override
+        public String toString() {
+            return "{"
+                    + "kills=" + kills
+                    + ", assists=" + assists
+                    + ", deaths=" + deaths
+                    + ", damage=" + damage
+                    + ", healing=" + healing
+                    + ", absorbed=" + absorbed
+                    + ", damageOnCarrier=" + damageOnCarrier
+                    + ", healingOnCarrier=" + healingOnCarrier
+                    + ", flagsCaptured=" + flagsCaptured
+                    + ", flagsReturned=" + flagsReturned
+                    + ", timeInCombat=" + timeInCombat
+                    + ", respawnTimeSpent=" + respawnTimeSpent
+                    + '}';
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 7;
+            hash = 13 * hash + this.kills;
+            hash = 13 * hash + this.assists;
+            hash = 13 * hash + this.deaths;
+            hash = 13 * hash + (int) (this.damage ^ (this.damage >>> 32));
+            hash = 13 * hash + (int) (this.healing ^ (this.healing >>> 32));
+            hash = 13 * hash + (int) (this.absorbed ^ (this.absorbed >>> 32));
+            hash = 13 * hash + (int) (this.damageOnCarrier ^ (this.damageOnCarrier >>> 32));
+            hash = 13 * hash + (int) (this.healingOnCarrier ^ (this.healingOnCarrier >>> 32));
+            hash = 13 * hash + this.flagsCaptured;
+            hash = 13 * hash + this.flagsReturned;
+            hash = 13 * hash + this.timeInCombat;
+            hash = 13 * hash + this.respawnTimeSpent;
+            return hash;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            final Entry other = (Entry) obj;
+            return this.kills == other.kills
+                    && this.assists == other.assists
+                    && this.deaths == other.deaths
+                    && this.damage == other.damage
+                    && this.healing == other.healing
+                    && this.absorbed == other.absorbed
+                    && this.damageOnCarrier == other.damageOnCarrier
+                    && this.healingOnCarrier == other.healingOnCarrier
+                    && this.flagsCaptured == other.flagsCaptured
+                    && this.flagsReturned == other.flagsReturned
+                    && this.timeInCombat == other.timeInCombat
+                    && this.respawnTimeSpent == other.respawnTimeSpent;
         }
     }
 }

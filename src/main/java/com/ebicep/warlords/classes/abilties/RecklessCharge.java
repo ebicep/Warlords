@@ -1,9 +1,6 @@
 package com.ebicep.warlords.classes.abilties;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
-import com.ebicep.warlords.player.Classes;
-import com.ebicep.warlords.player.ClassesSkillBoosts;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.*;
 import org.bukkit.Location;
@@ -12,7 +9,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
@@ -58,7 +54,7 @@ public class RecklessCharge extends AbstractAbility implements Listener {
             //travels 7 at peak jump
             chargeDistance = Math.max(Math.min(Utils.getDistance(player, .1) * 5, 6.9), 6);
         }
-        if (wp.getGameState().flags().hasFlag(wp)) {
+        if (wp.getCarriedFlag() != null) {
             chargeDistance /= 4;
         }
 

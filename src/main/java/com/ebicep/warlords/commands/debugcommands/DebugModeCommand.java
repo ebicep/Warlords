@@ -2,6 +2,7 @@ package com.ebicep.warlords.commands.debugcommands;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.BaseCommand;
+import com.ebicep.warlords.maps.GameAddon;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -18,19 +19,19 @@ public class DebugModeCommand implements CommandExecutor {
             return true;
         }
 
-        if (!Warlords.game.isPrivate()) {
+        WarlordsPlayer warlordsPlayer = BaseCommand.requireWarlordsPlayer(sender);
+        if (warlordsPlayer == null) {
+            sender.sendMessage("§cYou are not in a game");
+        }
+        if (!warlordsPlayer.getGame().getAddons().contains(GameAddon.PRIVATE_GAME)) {
             sender.sendMessage("§cDebug commands are disabled in public games!");
             return true;
         }
 
-        WarlordsPlayer warlordsPlayer = BaseCommand.requireWarlordsPlayer(sender);
-
-        if(warlordsPlayer != null) {
-            warlordsPlayer.setInfiniteEnergy(true);
-            warlordsPlayer.setDisableCooldowns(true);
-            warlordsPlayer.setTakeDamage(false);
-            warlordsPlayer.sendMessage(ChatColor.GREEN + "You now have infinite energy, no cooldowns, and take no damage!");
-        }
+        warlordsPlayer.setInfiniteEnergy(true);
+        warlordsPlayer.setDisableCooldowns(true);
+        warlordsPlayer.setTakeDamage(false);
+        warlordsPlayer.sendMessage(ChatColor.GREEN + "You now have infinite energy, no cooldowns, and take no damage!");
 
         return true;
     }

@@ -1,26 +1,34 @@
 package com.ebicep.warlords.maps.flags;
 
+import com.ebicep.warlords.player.WarlordsPlayer;
 import java.util.Arrays;
 import java.util.List;
+import javax.annotation.Nullable;
 import org.bukkit.Location;
 
 public class WaitingFlagLocation extends AbstractLocationBasedFlagLocation {
 	
-    int despawnTimer;
-    final boolean wasWinner;
+    private int despawnTimer;
+    private final WarlordsPlayer scorer;
 
-    public WaitingFlagLocation(Location location, boolean wasWinner) {
+    public WaitingFlagLocation(Location location, WarlordsPlayer scorer) {
         super(location);
         this.despawnTimer = 15 * 20;
-        this.wasWinner = wasWinner;
+        this.scorer = scorer;
     }
 
     public int getDespawnTimer() {
         return despawnTimer;
     }
 
+    @Deprecated
     public boolean wasWinner() {
-        return wasWinner;
+        return scorer != null;
+    }
+    
+    @Nullable
+    public WarlordsPlayer getScorer() {
+        return scorer;
     }
 
     @Override
@@ -32,7 +40,7 @@ public class WaitingFlagLocation extends AbstractLocationBasedFlagLocation {
     @Override
     public List<String> getDebugInformation() {
         return Arrays.asList("Type: " + this.getClass().getSimpleName(),
-                "wasWinner: " + wasWinner(),
+                "scorer: " + getScorer(),
                 "despawnTimer: " + getDespawnTimer()
         );
     }

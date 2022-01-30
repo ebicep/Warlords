@@ -4,16 +4,13 @@ import com.ebicep.warlords.events.WarlordsFlagUpdatedEvent;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.flags.*;
-import com.ebicep.warlords.maps.option.marker.DebugLocationMarker;
-import com.ebicep.warlords.maps.option.marker.FlagCaptureInhibitMarker;
-import com.ebicep.warlords.maps.option.marker.FlagCaptureMarker;
-import com.ebicep.warlords.maps.option.marker.FlagHolder;
-import com.ebicep.warlords.maps.scoreboard.SimpleScoreboardHandler;
+import com.ebicep.warlords.maps.option.marker.*;
+import com.ebicep.warlords.maps.option.marker.scoreboard.ScoreboardHandler;
+import com.ebicep.warlords.maps.option.marker.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.GameRunnable;
 import static java.util.Collections.singletonList;
 import java.util.List;
-import java.util.function.BiFunction;
 import javax.annotation.Nonnull;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -24,6 +21,8 @@ import org.bukkit.Material;
  * Module for spawning a flag
  */
 public class FlagSpawnPointOption implements Option {
+    
+    public static final boolean DEFAULT_REGISTER_COMPASS_MARKER = true;
 
     @Nonnull
     private final FlagInfo info;
@@ -33,10 +32,16 @@ public class FlagSpawnPointOption implements Option {
     private SimpleScoreboardHandler scoreboard;
     @Nonnull
     private Game game;
+    private final boolean registerCompassMarker;
 
     public FlagSpawnPointOption(@Nonnull Location loc, @Nonnull Team team) {
+        this(loc, team, DEFAULT_REGISTER_COMPASS_MARKER);
+    }
+
+    public FlagSpawnPointOption(@Nonnull Location loc, @Nonnull Team team, boolean registerCompassMarker) {
         this.info = new FlagInfo(team, loc, this::onFlagUpdate);
         this.renderer = new FlagRenderer(info);
+        this.registerCompassMarker = registerCompassMarker;
     }
 
     @Override
@@ -55,8 +60,12 @@ public class FlagSpawnPointOption implements Option {
                 () -> info.getFlag().getLocation(),
                 () -> info.getFlag().getDebugInformation()
         ));
-        game.registerGameMarker(FlagHolder.class, () -> info);
-        game.registerScoreboardHandler(scoreboard = new SimpleScoreboardHandler(info.getTeam() == Team.RED ? 20 : 21) {
+        FlagHolder holder = FlagHolder.create(() -> info);
+        game.registerGameMarker(FlagHolder.class, holder);
+        if (this.registerCompassMarker) {
+            game.registerGameMarker(CompassTargetMarker.class, holder);
+        }
+        game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(info.getTeam() == Team.RED ? 20 : 21, "flag") {
             @Override
             public List<String> computeLines(WarlordsPlayer player) {
                 String flagName = info.getTeam().coloredPrefix();
@@ -105,8 +114,17 @@ public class FlagSpawnPointOption implements Option {
                 }
                 PlayerFlagLocation playerFlagLocation = (PlayerFlagLocation) info.getFlag();
                 if (flagIsInCaptureZone(playerFlagLocation) && !flagCaptureIsNotBlocked(playerFlagLocation)) {
-                    FlagHolder.update(game, info -> new WaitingFlagLocation(info.getSpawnLocation(), info.getFlag() != playerFlagLocation));
+                    FlagHolder.update(game, info -> new WaitingFlagLocation(
+                            info.getSpawnLocation(),
+                            info.getFlag() == playerFlagLocation ? playerFlagLocation.getPlayer() : null
+                    ));
                 }
+            }
+        }.runTaskTimer(0, 4);
+        new GameRunnable(game) {
+            @Override
+            public void run() {
+                renderer.checkRender();
             }
         }.runTaskTimer(0, 4);
     }

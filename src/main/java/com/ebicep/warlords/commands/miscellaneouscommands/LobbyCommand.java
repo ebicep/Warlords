@@ -1,10 +1,11 @@
 package com.ebicep.warlords.commands.miscellaneouscommands;
 
-import com.ebicep.customentities.npc.NPCManager;
-import com.ebicep.customentities.npc.traits.GameStartTrait;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.BaseCommand;
+import com.ebicep.warlords.maps.Game;
+import com.ebicep.warlords.maps.GameAddon;
 import com.ebicep.warlords.maps.state.PreLobbyState;
+import java.util.Optional;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -22,13 +23,12 @@ public class LobbyCommand implements CommandExecutor {
             return true;
         }
 
-        if (Warlords.game.getPlayers().containsKey(player.getUniqueId()) && Warlords.game.getState() instanceof PreLobbyState) {
-            if (Warlords.game.isPrivate()) {
+        Optional<Game> currentGame = Warlords.getGameManager().getPlayerGame(player.getUniqueId());
+        if (currentGame.isPresent() && !currentGame.get().isState(PreLobbyState.class)) {
+            if (currentGame.get().getAddons().contains(GameAddon.PRIVATE_GAME)) {
                 player.sendMessage(ChatColor.RED + "You cannot leave private games!");
             } else {
-                if (NPCManager.gameStartNPC.hasTrait(GameStartTrait.class)) {
-                    NPCManager.gameStartNPC.getTraitNullable(GameStartTrait.class).removePlayer(player);
-                }
+                currentGame.get().removePlayer(player.getUniqueId());
             }
         } else {
             player.sendMessage(ChatColor.RED + "This command can only be used in a game lobby!");

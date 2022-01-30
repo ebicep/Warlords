@@ -9,11 +9,11 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.events.WarlordsDeathEvent;
 import com.ebicep.warlords.maps.Game;
+import com.ebicep.warlords.maps.GameAddon;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.flags.FlagInfo;
-import com.ebicep.warlords.maps.flags.FlagLocation;
-import com.ebicep.warlords.maps.flags.GroundFlagLocation;
 import com.ebicep.warlords.maps.flags.PlayerFlagLocation;
+import com.ebicep.warlords.maps.option.marker.CompassTargetMarker;
 import com.ebicep.warlords.maps.option.marker.FlagHolder;
 import com.ebicep.warlords.maps.option.marker.SpawnLocationMarker;
 import com.ebicep.warlords.maps.state.PlayingState;
@@ -37,10 +37,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 public final class WarlordsPlayer {
 
@@ -54,9 +52,7 @@ public final class WarlordsPlayer {
     private int health;
     private int maxHealth;
     private int regenTimer;
-    private int timeInCombat = 0;
-    private BigDecimal respawnTimer;
-    private float respawnTimeSpent = 0;
+    private int respawnTimer = -1;
     private boolean dead = false;
     private float energy;
     private float maxEnergy;
@@ -83,25 +79,21 @@ public final class WarlordsPlayer {
     //assists = player - timeLeft(10 seconds)
     private final LinkedHashMap<WarlordsPlayer, Integer> hitBy = new LinkedHashMap<>();
     private final LinkedHashMap<WarlordsPlayer, Integer> healedBy = new LinkedHashMap<>();
-    @Nullable
-    private FlagInfo carriedFlag = null;
 
     private final List<Location> locations = new ArrayList<>();
-    public List<Location> getLocations() {
-        return locations;
-    }
 
     private final CalculateSpeed speed;
-    private boolean teamFlagCompass = true;
     private boolean powerUpHeal = false;
 
     private Location deathLocation = null;
     private ArmorStand deathStand = null;
     private LivingEntity entity = null;
 
-    private double flagDamageMultiplier = 0;
-
-    private CooldownManager cooldownManager = new CooldownManager(this);
+    private final CooldownManager cooldownManager = new CooldownManager(this);
+    @Nullable
+    private FlagInfo carriedFlag = null;
+    @Nullable
+    private CompassTargetMarker compassTarget = null;
 
     /**
      * @param player is the assigned player as WarlordsPlayer.
@@ -118,13 +110,12 @@ public final class WarlordsPlayer {
         this.name = player.getName();
         this.uuid = player.getUniqueId();
         this.gameState = gameState;
-        this.stats = new PlayerStatistics(gameState.getTimer() / 20 / 60 + 1);
+        this.stats = new PlayerStatistics();
         this.team = team;
         this.specClass = settings.getSelectedClass();
         this.spec = specClass.create.get();
         this.maxHealth = (int) (this.spec.getMaxHealth() * 1);
         this.health = this.maxHealth;
-        this.respawnTimer = BigDecimal.valueOf(-1);
         this.energy = 0;
         this.energyModifier = 1;
         this.maxEnergy = this.spec.getMaxEnergy();
@@ -138,6 +129,10 @@ public final class WarlordsPlayer {
         this.entity = spawnJimmy(p == null ? Warlords.getRejoinPoint(uuid) : p.getLocation(), null);
         this.weapon = Weapons.getSelected(player, settings.getSelectedClass());
         updatePlayerReference(p);
+    }
+
+    public List<Location> getLocations() {
+        return locations;
     }
 
     @Override
@@ -249,7 +244,8 @@ public final class WarlordsPlayer {
         if (!ignoreReduction) {
 
             // Flag carrier multiplier.
-            damageValue *= flagDamageMultiplier == 0 ? 1 : flagDamageMultiplier;
+            
+            damageValue *= getFlagDamageMultiplier();
 
             // Checks whether the player is standing in a Hammer of Light.
             if (!HammerOfLight.standingInHammer(attacker, entity)) {
@@ -535,7 +531,7 @@ public final class WarlordsPlayer {
                     this.health -= Math.round(damageValue);
                 }
 
-                attacker.addDamage(damageValue, gameState.flags().hasFlag(this));
+                attacker.addDamage(damageValue);
                 playHurtAnimation(this.entity, attacker);
                 recordDamage.add(damageValue);
 
@@ -713,7 +709,7 @@ public final class WarlordsPlayer {
                     }
                 }
                 health += healValue;
-                addHealing(healValue, gameState.flags().hasFlag(this));
+                addHealing(healValue);
 
                 if (!isMeleeHit && !ability.equals("Healing Rain") && !ability.equals("Blood Lust")) {
                     playHitSound(attacker);
@@ -747,7 +743,7 @@ public final class WarlordsPlayer {
                 }
 
                 health += healValue;
-                attacker.addHealing(healValue, gameState.flags().hasFlag(this));
+                attacker.addHealing(healValue);
 
                 if (!isMeleeHit && !ability.equals("Healing Rain")) {
                     playHitSound(attacker);
@@ -809,7 +805,7 @@ public final class WarlordsPlayer {
         }
     }
 
-    public void die(WarlordsPlayer attacker) {
+    public void die(@Nullable WarlordsPlayer attacker) {
         dead = true;
 
         removeHorse();
@@ -818,23 +814,27 @@ public final class WarlordsPlayer {
 
         showDeathAnimation();
 
-        if (attacker != this) {
-            hitBy.putAll(attacker.getHealedBy());
+        if (attacker != null) {
+            if (attacker != this) {
+                hitBy.putAll(attacker.getHealedBy());
+            }
+
+            hitBy.remove(attacker);
+            hitBy.put(attacker, 10);
         }
 
-        hitBy.remove(attacker);
-        hitBy.put(attacker, 10);
-
         this.addDeath();
-        gameState.flags().dropFlag(this);
-        Bukkit.getPluginManager().callEvent(new WarlordsDeathEvent(this));
+        FlagHolder.dropFlagForPlayer(this);
 
         if (entity instanceof Player) {
+            Player player = (Player) entity;
+            player.setGameMode(GameMode.SPECTATOR);
             //removing yellow hearts
             ((EntityLiving) ((CraftPlayer) entity).getHandle()).setAbsorptionHearts(0);
             //removing sg shiny weapon
             ((CraftPlayer) entity).getInventory().getItem(0).removeEnchantment(Enchantment.OXYGEN);
         }
+        Bukkit.getPluginManager().callEvent(new WarlordsDeathEvent(this, attacker));
     }
 
     public void addGrave() {
@@ -979,30 +979,10 @@ public final class WarlordsPlayer {
 
 
     public void displayFlagActionBar(@Nonnull Player player) {
-        FlagManager flags = this.gameState.flags();
-
-        if (teamFlagCompass) {
-            FlagLocation flag = flags.get(team).getFlag();
-            double flagDistance = Math.round(flag.getLocation().distance(player.getLocation()) * 10) / 10.0;
-            String start = team.teamColor().toString() + ChatColor.BOLD + "YOUR ";
-            if (flag instanceof PlayerFlagLocation) {
-                PacketUtils.sendActionBar(player, start + "Flag " + ChatColor.WHITE + "is stolen " + ChatColor.RED + flagDistance + "m " + ChatColor.WHITE + "away!");
-            } else if (flag instanceof GroundFlagLocation) {
-                PacketUtils.sendActionBar(player, start + "Flag " + ChatColor.GOLD + "is dropped " + ChatColor.RED + flagDistance + "m " + ChatColor.WHITE + "away!");
-            } else {
-                PacketUtils.sendActionBar(player, start + ChatColor.GREEN + "Flag is safe");
-            }
+        if (this.compassTarget != null) {
+            PacketUtils.sendActionBar(player, this.compassTarget.getToolbarName(this));
         } else {
-            FlagLocation flag = flags.get(team.enemy()).getFlag();
-            double flagDistance = Math.round(flag.getLocation().distance(player.getLocation()) * 10) / 10.0;
-            String start = team.enemy().teamColor().toString() + ChatColor.BOLD + "ENEMY ";
-            if (flag instanceof PlayerFlagLocation) {
-                PacketUtils.sendActionBar(player, start + "Flag " + ChatColor.WHITE + "is stolen " + ChatColor.RED + flagDistance + "m " + ChatColor.WHITE + "away!");
-            } else if (flag instanceof GroundFlagLocation) {
-                PacketUtils.sendActionBar(player, start + "ENEMY Flag " + ChatColor.GOLD + "is dropped " + ChatColor.RED + flagDistance + "m " + ChatColor.WHITE + "away!");
-            } else {
-                PacketUtils.sendActionBar(player, start + ChatColor.GREEN + "Flag is safe");
-            }
+            PacketUtils.sendActionBar(player, "");
         }
     }
 
@@ -1219,7 +1199,7 @@ public final class WarlordsPlayer {
         this.spec = spec;
         this.specClass = Warlords.getPlayerSettings(uuid).getSelectedClass();
         this.weapon = Weapons.getSelected(player, this.specClass);
-        this.maxHealth = (int) (this.spec.getMaxHealth() * (gameState.getGame().getCooldownMode() ? 1.5 : 1));
+        this.maxHealth = (int) (this.spec.getMaxHealth() * (gameState.getGame().getAddons().contains(GameAddon.COOLDOWN_MODE) ? 1.5 : 1));
         this.health = this.maxHealth;
         this.maxEnergy = this.spec.getMaxEnergy();
         this.energy = this.maxEnergy;
@@ -1272,6 +1252,20 @@ public final class WarlordsPlayer {
         this.health = this.maxHealth;
     }
 
+    public void decrementRespawnTimer() {
+        // Respawn
+        if (respawnTimer == 0) {
+            respawn();
+        } else if (respawnTimer > 0) {
+            this.respawnTimer--;
+            // System.out.println("-----------");
+            // System.out.println(warlordsPlayer.getGameState().getTimer() / 20.0);
+            // System.out.println(warlordsPlayer.getGameState().getTimer() / 20.0 % 12);
+            // System.out.println(warlordsPlayer.getRespawnTimer());
+            // System.out.println(warlordsPlayer.getRespawnTimer());
+        }
+    }
+
     public void respawn() {
         if (entity instanceof Player && ((Player) entity).isOnline()) {
             PacketUtils.sendTitle((Player) entity, "", "", 0, 0, 0);
@@ -1290,7 +1284,7 @@ public final class WarlordsPlayer {
                     candidates.add(marker.getLocation());
                 }
             }
-            setRespawnTimer(BigDecimal.valueOf(-1));
+            setRespawnTimer(-1);
             setSpawnProtection(3);
             setEnergy(getMaxEnergy() / 2);
             setDead(false);
@@ -1322,7 +1316,7 @@ public final class WarlordsPlayer {
                 ((Player) entity).setGameMode(GameMode.ADVENTURE);
             }
         } else {
-            giveRespawnTimer();
+            setRespawnTimer(-1);
         }
     }
 
@@ -1344,20 +1338,12 @@ public final class WarlordsPlayer {
         this.regenTimer = regenTimer;
     }
 
-    public BigDecimal getRespawnTimer() {
+    public int getRespawnTimer() {
         return respawnTimer;
     }
 
-    public void setRespawnTimer(BigDecimal respawnTimer) {
+    public void setRespawnTimer(int respawnTimer) {
         this.respawnTimer = respawnTimer;
-    }
-
-    public void giveRespawnTimer() {
-        BigDecimal respawn = BigDecimal.valueOf(gameState.getTimer() / 20.0).remainder(BigDecimal.valueOf(12));
-        if (respawn.doubleValue() <= 4) {
-            respawn = respawn.add(BigDecimal.valueOf(12));
-        }
-        setRespawnTimer(respawn);
     }
 
     public float getEnergy() {
@@ -1462,15 +1448,16 @@ public final class WarlordsPlayer {
     public void addDeath() {
         this.stats.addDeath();
     }
-
-    public void addDamage(float amount, boolean onCarrier) {
+    public void addDamage(float amount) {
+        boolean onCarrier = FlagHolder.isPlayerHolderFlag(this);
         this.stats.addDamage((long) amount);
         if (onCarrier) {
             this.stats.addDamageOnCarrier((long) amount);
         }
     }
 
-    public void addHealing(float amount, boolean onCarrier) {
+    public void addHealing(float amount) {
+        boolean onCarrier = FlagHolder.isPlayerHolderFlag(this);
         this.stats.addHealing((long) amount);
         if (onCarrier) {
             this.stats.addDamageOnCarrier((long) amount);
@@ -1491,17 +1478,17 @@ public final class WarlordsPlayer {
         for (int i = 0; i < length; i++) {
             PlayerStatistics.Entry entry = entries.get(length - i - 1);
             if (name.equals("Kills")) {
-                lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(entry.kills));
+                lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(entry.getKills()));
             } else if (name.equals("Assists")) {
-                lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(entry.assists));
+                lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(entry.getAssists()));
             } else if (name.equals("Deaths")) {
-                lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(entry.deaths));
+                lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(entry.getDeaths()));
             } else if (name.equals("Damage")) {
-                lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(entry.damage));
+                lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(entry.getDamage()));
             } else if (name.equals("Healing")) {
-                lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(entry.healing));
+                lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(entry.getHealing()));
             } else if (name.equals("Absorbed")) {
-                lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(entry.absorbed));
+                lore.add(ChatColor.WHITE + "Minute " + (i + 1) + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(entry.getAbsorbed()));
             }
         }
         meta.setLore(lore);
@@ -1509,12 +1496,26 @@ public final class WarlordsPlayer {
         return itemStack;
     }
 
-    public boolean isTeamFlagCompass() {
-        return teamFlagCompass;
-    }
-
     public void toggleTeamFlagCompass() {
-        teamFlagCompass = !teamFlagCompass;
+        List<CompassTargetMarker> targets = getGame().getMarkers(CompassTargetMarker.class);
+        boolean shouldPick = false;
+        CompassTargetMarker first = null;
+        for(CompassTargetMarker ctm : targets) {
+            if (!ctm.isEnabled()) {
+                continue;
+            }
+            if (first == null) {
+                first = this.compassTarget;
+            }
+            if (shouldPick) {
+                this.compassTarget = ctm;
+                return;
+            }
+            if (ctm == this.compassTarget) {
+                shouldPick = true;
+            }
+        }
+        this.compassTarget = first;
     }
 
     public CalculateSpeed getSpeed() {
@@ -1545,7 +1546,6 @@ public final class WarlordsPlayer {
         this.stats.addFlagCapture();
     }
 
-    @Deprecated
     public int getFlagsReturned() {
         return this.stats.total().getFlagsReturned();
     }
@@ -1556,7 +1556,7 @@ public final class WarlordsPlayer {
 
     public int getTotalCapsAndReturnsWeighted() {
         PlayerStatistics.Entry total = this.stats.total();
-        return (total.flagsCaptured * 5) + total.flagsReturned;
+        return (total.getFlagsCaptured() * 5) + total.getFlagsReturned();
     }
 
     public int getSpawnProtection() {
@@ -1574,9 +1574,19 @@ public final class WarlordsPlayer {
     public int getSpawnDamage() {
         return spawnDamage;
     }
+    
+    // TODO figure out why there are 2 methods with names that look alike
 
     public boolean isDead() {
         return dead;
+    }
+
+    public boolean isDeath() {
+        return this.health <= 0 || this.dead || (entity instanceof Player && ((Player) entity).getGameMode() == GameMode.SPECTATOR);
+    }
+
+    public boolean isAlive() {
+        return !isDeath();
     }
 
     public void updatePlayerReference(@Nullable Player player) {
@@ -1614,7 +1624,6 @@ public final class WarlordsPlayer {
 
             if (isDeath()) {
                 player.setGameMode(GameMode.SPECTATOR);
-                giveRespawnTimer();
             }
             // TODO Update the inventory based on the status of isUndyingArmyDead here
         }
@@ -1630,14 +1639,6 @@ public final class WarlordsPlayer {
 
     public Game getGame() {
         return this.gameState.getGame();
-    }
-
-    public boolean isDeath() {
-        return this.health <= 0 || this.dead || (entity instanceof Player && ((Player) entity).getGameMode() == GameMode.SPECTATOR);
-    }
-
-    public boolean isAlive() {
-        return !isDeath();
     }
 
     @Nonnull
@@ -1697,12 +1698,16 @@ public final class WarlordsPlayer {
         return this.gameState;
     }
 
+    /**
+     * Gets the damage multiplier caused by any carried flag
+     * @return The flag damage multiplier, or 1 for easy calculations
+     */
     public double getFlagDamageMultiplier() {
-        return flagDamageMultiplier;
-    }
-
-    public void setFlagDamageMultiplier(double flagDamageMultiplier) {
-        this.flagDamageMultiplier = flagDamageMultiplier;
+        return this.carriedFlag != null
+                && this.carriedFlag.getFlag() instanceof PlayerFlagLocation
+                && ((PlayerFlagLocation) this.carriedFlag.getFlag()).getPlayer() == this
+                ? ((PlayerFlagLocation) this.carriedFlag.getFlag()).getComputedMultiplier()
+                : 1;
     }
 
     public String getColoredName() {
@@ -1751,22 +1756,6 @@ public final class WarlordsPlayer {
 
     public void setDead(boolean dead) {
         this.dead = dead;
-    }
-
-    public void addTimeInCombat() {
-        timeInCombat++;
-    }
-
-    public int getTimeInCombat() {
-        return timeInCombat;
-    }
-
-    public void addTotalRespawnTime() {
-        respawnTimeSpent += respawnTimer.floatValue();
-    }
-
-    public float getRespawnTimeSpent() {
-        return respawnTimeSpent;
     }
 
     public boolean isInfiniteEnergy() {
@@ -1849,15 +1838,30 @@ public final class WarlordsPlayer {
         this.healPowerupDuration = healPowerupDuration;
     }
 
+    @Nullable
     public FlagInfo getCarriedFlag() {
         return carriedFlag;
     }
 
-    public void setCarriedFlag(FlagInfo carriedFlag) {
+    public void setCarriedFlag(@Nullable FlagInfo carriedFlag) {
         this.carriedFlag = carriedFlag;
     }
     
+    @Nonnull
     public PlayerStatistics getStats() {
         return this.stats;
+    }
+
+    public boolean isOnline() {
+        return this.entity instanceof Player;
+    }
+
+    @Nullable
+    public CompassTargetMarker getCompassTarget() {
+        return this.compassTarget;
+    }
+
+    public void runEverySecond() {
+        this.spec.runEverySecond();
     }
 }

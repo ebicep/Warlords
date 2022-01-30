@@ -18,6 +18,7 @@ import java.util.stream.StreamSupport;
 
 import static com.ebicep.warlords.util.Utils.radiusAround;
 import static com.ebicep.warlords.util.Utils.sortClosestBy;
+import java.util.stream.Collectors;
 import org.bukkit.World;
 
 // TODO run regex
@@ -373,6 +374,10 @@ public class PlayerFilter implements Iterable<WarlordsPlayer> {
     @Nonnull
     public PlayerFilter lookingAtWave(@Nonnull LivingEntity entity) {
         return filter(wp -> Utils.isLookingAtWave(entity, wp.getEntity()));
+    }
+
+    public List<WarlordsPlayer> toList() {
+        return this.stream.collect(Collectors.toCollection(ArrayList::new));
     }
 
 }

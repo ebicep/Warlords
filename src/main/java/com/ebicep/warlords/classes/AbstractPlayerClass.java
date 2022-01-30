@@ -4,7 +4,6 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.abilties.*;
 import com.ebicep.warlords.classes.internal.AbstractChainBase;
 import com.ebicep.warlords.classes.internal.AbstractStrikeBase;
-import com.ebicep.warlords.player.ClassesSkillBoosts;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import net.minecraft.server.v1_8_R3.PacketPlayOutAnimation;
 import org.bukkit.ChatColor;
@@ -317,5 +316,13 @@ public abstract class AbstractPlayerClass {
 
     public String getClassNameShortWithBrackets() {
         return ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + this.classNameShort + ChatColor.DARK_GRAY + "]";
+    }
+    
+    public void runEverySecond() {
+        this.red.runEverySecond();
+        this.blue.runEverySecond();
+        this.orange.runEverySecond();
+        this.purple.runEverySecond();
+        this.weapon.runEverySecond();
     }
 }

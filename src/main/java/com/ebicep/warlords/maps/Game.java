@@ -8,9 +8,11 @@ import com.ebicep.warlords.events.WarlordsPointsChangedEvent;
 import com.ebicep.warlords.maps.option.Option;
 import com.ebicep.warlords.maps.option.marker.GameMarker;
 import com.ebicep.warlords.maps.option.GameFreezeOption;
-import com.ebicep.warlords.maps.scoreboard.ScoreboardHandler;
+import com.ebicep.warlords.maps.option.marker.TeamMarker;
+import com.ebicep.warlords.maps.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.maps.state.*;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.LocationFactory;
 import static com.ebicep.warlords.util.Utils.collectionHasItem;
 import java.lang.reflect.Method;
@@ -29,7 +31,6 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.bukkit.event.Event;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.IllegalPluginAccessException;
@@ -39,22 +40,19 @@ import org.bukkit.plugin.RegisteredListener;
  * An instance of an Warlords game. It depends on a state for its behavior. You
  * can also attach GameAddons to modify its global behavior, and attach options
  * to add specific small things.
- * 
+ *
  * @see State
  * @see GameAddon
  * @see Option
  */
 public final class Game implements Runnable, AutoCloseable {
 
-    private static final int SCORE_KILL_POINTS = 5;
-    private static final int SCORE_CAPTURE_POINTS = 250;
+    public static final String KEY_UPDATED_FROZEN = "frozen";
 
     private final UUID gameId = UUID.randomUUID();
-    public static final String KEY_UPDATED_FROZEN = "frozen";
 
     private final Map<UUID, Team> players = new HashMap<>();
     private final long createdAt = System.currentTimeMillis();
-    private final List<ScoreboardHandler> scoreboardHandlers = new CopyOnWriteArrayList<>();
     private final List<BukkitTask> gameTasks = new ArrayList<>();
     private final List<Listener> eventHandlers = new ArrayList<>();
     private final EnumMap<Team, Stats> stats = new EnumMap(Team.class);
@@ -104,11 +102,23 @@ public final class Game implements Runnable, AutoCloseable {
             addon.modifyGame(this);
         }
         this.options = Collections.unmodifiableList(options);
+        state = this.map.initialState(this);
         for (Option option : options) {
             option.register(this);
         }
-        state = this.map.initialState(this);
+        for (Team team : TeamMarker.getTeams(this)) {
+            this.stats.put(team, new Stats(team));
+        }
         state.begin();
+        for (GameAddon addon : addons) {
+            addon.stateHasChanged(this, null, state);
+        }
+        new GameRunnable(this) {
+            @Override
+            public void run() {
+                Game.this.run();
+            }
+        }.runTaskTimer(0, 1);
     }
 
     public boolean isState(Class<? extends State> clazz) {
@@ -194,6 +204,7 @@ public final class Game implements Runnable, AutoCloseable {
 
     /**
      * An unique id assigned to this game.
+     *
      * @return The UUID belonging to this game
      */
     public UUID getGameId() {
@@ -255,6 +266,9 @@ public final class Game implements Runnable, AutoCloseable {
     }
 
     public void setAcceptsPlayers(boolean acceptsPlayers) {
+        if (this.closed) {
+            throw new IllegalStateException("Game has been closed");
+        }
         this.acceptsPlayers = acceptsPlayers;
     }
 
@@ -263,10 +277,16 @@ public final class Game implements Runnable, AutoCloseable {
     }
 
     public void setAcceptsSpectators(boolean acceptsSpectators) {
+        if (this.closed) {
+            throw new IllegalStateException("Game has been closed");
+        }
         this.acceptsSpectators = acceptsSpectators;
     }
 
     public void setNextState(@Nullable State nextState) {
+        if (this.closed) {
+            throw new IllegalStateException("Game has been closed");
+        }
         this.nextState = nextState;
     }
 
@@ -313,6 +333,7 @@ public final class Game implements Runnable, AutoCloseable {
         return this.players.get(player);
     }
 
+    @Nonnull
     public Map<UUID, Team> getPlayers() {
         return players;
     }
@@ -333,16 +354,18 @@ public final class Game implements Runnable, AutoCloseable {
         if (this.closed) {
             throw new IllegalStateException("Game has been closed");
         }
+        /*
         if (!asSpectator && !this.acceptsPlayers) {
             throw new IllegalStateException("This game does not accepts player at the moment");
         }
         if (asSpectator && !this.acceptsSpectators) {
             throw new IllegalStateException("This game does not accepts spectators at the moment");
         }
+         */
         this.players.put(player.getUniqueId(), null);
         this.state.onPlayerJoinGame(player, asSpectator);
         Player p = player.getPlayer();
-        if(p != null) {
+        if (p != null) {
             this.state.onPlayerReJoinGame(p);
         }
     }
@@ -375,8 +398,10 @@ public final class Game implements Runnable, AutoCloseable {
         }
         return false;
     }
+
     /**
      * Removes a player by UUID from the game
+     *
      * @param player The player to remove
      * @return true if the player was part of the game before removing started
      */
@@ -396,15 +421,23 @@ public final class Game implements Runnable, AutoCloseable {
         for (UUID p : toRemove) {
             this.removePlayer0(p);
         }
-        if(!toRemove.isEmpty()) {
+        if (!toRemove.isEmpty()) {
             Warlords.getInstance().hideAndUnhidePeople();
         }
         assert this.players.isEmpty();
         return toRemove;
     }
 
+    public boolean hasPlayer(UUID player) {
+        return this.players.containsKey(player);
+    }
+
     public int playersCount() {
-        return this.players.size();
+        return (int) this.players.values().stream().filter(Objects::nonNull).count();
+    }
+
+    public int spectatorsCount() {
+        return (int) this.players.values().stream().filter(Objects::isNull).count();
     }
 
     public Stream<WarlordsPlayer> warlordsPlayers() {
@@ -422,9 +455,9 @@ public final class Game implements Runnable, AutoCloseable {
     public Stream<Map.Entry<OfflinePlayer, Team>> offlinePlayersWithoutSpectators() {
         return playersWithoutSpectators()
                 .map(e -> new AbstractMap.SimpleImmutableEntry<>(
-                    Bukkit.getOfflinePlayer(e.getKey()),
-                    e.getValue()
-                ));
+                Bukkit.getOfflinePlayer(e.getKey()),
+                e.getValue()
+        ));
     }
 
     public Stream<Map.Entry<Player, Team>> onlinePlayersWithoutSpectators() {
@@ -432,7 +465,7 @@ public final class Game implements Runnable, AutoCloseable {
                 .<Map.Entry<Player, Team>>map(e -> new AbstractMap.SimpleImmutableEntry<>(
                 Bukkit.getPlayer(e.getKey()),
                 e.getValue()
-        )) .filter(e -> e.getKey() != null);
+        )).filter(e -> e.getKey() != null);
     }
 
     public Stream<UUID> spectators() {
@@ -444,7 +477,7 @@ public final class Game implements Runnable, AutoCloseable {
     }
 
     public void forEachOfflineWarlordsPlayer(Consumer<WarlordsPlayer> consumer) {
-        offlinePlayersWithoutSpectators().map(w -> Warlords.getPlayer(w.getKey())).filter(Objects::nonNull).forEach(consumer);
+        warlordsPlayers().forEach(consumer);
     }
 
     public void forEachOnlinePlayer(BiConsumer<Player, Team> consumer) {
@@ -452,7 +485,7 @@ public final class Game implements Runnable, AutoCloseable {
     }
 
     public void forEachOnlineWarlordsPlayer(Consumer<WarlordsPlayer> consumer) {
-        onlinePlayersWithoutSpectators().map(w -> Warlords.getPlayer(w.getKey())).filter(Objects::nonNull).forEach(consumer);
+        warlordsPlayers().filter(WarlordsPlayer::isOnline).forEach(consumer);
     }
 
     @Override
@@ -471,30 +504,27 @@ public final class Game implements Runnable, AutoCloseable {
                 this.state.end();
             }
             State newState = nextState == null ? new ClosedState(this) : nextState;
+            nextState = null;
             System.out.println("DEBUG OLD TO NEW STATE");
             Command.broadcastCommandMessage(Bukkit.getConsoleSender(), "old: " + this.state + " --> new: " + newState);
             State oldState = this.state;
             this.state = newState;
-            this.state.begin();
-            for(GameAddon addon : this.addons) {
+            newState.begin();
+            for (GameAddon addon : this.addons) {
                 addon.stateHasChanged(this, oldState, newState);
             }
         }
     }
 
     @Nonnull
+    @Deprecated
     public List<ScoreboardHandler> getScoreboardHandlers() {
-        return scoreboardHandlers;
+        return this.getMarkers(ScoreboardHandler.class);
     }
 
+    @Deprecated
     public void registerScoreboardHandler(@Nonnull ScoreboardHandler handler) {
-        if (this.state == null) {
-            throw new IllegalStateException("The game is not started yet");
-        }
-        if (this.closed) {
-            throw new IllegalStateException("Game has been closed");
-        }
-        scoreboardHandlers.add(handler);
+        this.registerGameMarker(ScoreboardHandler.class, handler);
     }
     private final Map<Class<? extends GameMarker>, List<GameMarker>> gameMarkers = new HashMap<>();
 
@@ -511,7 +541,7 @@ public final class Game implements Runnable, AutoCloseable {
             throw new IllegalStateException("Game has been closed");
         }
         if (!clazz.isAssignableFrom(object.getClass())) {
-            throw new IllegalArgumentException("Attempted to register a marker for interface " + clazz.getName() + " while passed class " + object.getClass().getName() + " does not implement this");
+            throw new IllegalArgumentException("Attempted to register a marker for interface " + clazz.getName() + " while passing class " + object.getClass().getName() + " does not implement this");
         }
         gameMarkers.computeIfAbsent(clazz, e -> new ArrayList<>()).add(object);
     }
@@ -527,7 +557,7 @@ public final class Game implements Runnable, AutoCloseable {
     public <T extends GameMarker> List<T> getMarkers(@Nonnull Class<T> clazz) {
         return (List<T>) gameMarkers.getOrDefault(clazz, Collections.emptyList());
     }
-    
+
     public void unregisterGameTask(@Nonnull BukkitTask task) {
         if (this.closed) {
             return;
@@ -536,10 +566,13 @@ public final class Game implements Runnable, AutoCloseable {
     }
 
     /**
-     * Registers a Bukkit task to be cancelled once the game ends.Cancelling is important for proper cleanup
+     * Registers a Bukkit task to be cancelled once the game ends.Cancelling is
+     * important for proper cleanup
+     *
      * @param task The task to register
      * @return The task itself
-     * @throws IllegalStateException when the game has been closed (this also directly calls the cancel function)
+     * @throws IllegalStateException when the game has been closed (this also
+     * directly calls the cancel function)
      */
     @Nonnull
     public BukkitTask registerGameTask(@Nonnull BukkitTask task) {
@@ -563,6 +596,7 @@ public final class Game implements Runnable, AutoCloseable {
         return this.registerGameTask(Bukkit.getScheduler().runTaskTimer(Warlords.getInstance(), task, delay, period));
     }
 
+    // Modified version of {@link org.bukkit.plugin.SimplePluginManager#getEventListeners}
     private HandlerList getEventListeners(Class<? extends Event> type) {
         try {
             Method method = getRegistrationClass(type).getDeclaredMethod("getHandlerList", new Class[0]);
@@ -573,7 +607,7 @@ public final class Game implements Runnable, AutoCloseable {
         }
     }
 
-    // Copy of 
+    // Modified version of {@link org.bukkit.plugin.SimplePluginManager#getRegistrationClass}
     private Class<? extends Event> getRegistrationClass(Class<? extends Event> clazz) {
         try {
             clazz.getDeclaredMethod("getHandlerList", new Class[0]);
@@ -613,8 +647,8 @@ public final class Game implements Runnable, AutoCloseable {
             if (WarlordsGameEvent.class.isAssignableFrom(entry.getKey())) {
                 entry.setValue(entry.getValue().stream().map(rl -> {
                     return new RegisteredListener(rl.getListener(), (l, e) -> {
-                        WarlordsGameEvent wge = (WarlordsGameEvent)e;
-                        if(wge.getGame() == Game.this) {
+                        WarlordsGameEvent wge = (WarlordsGameEvent) e;
+                        if (wge.getGame() == Game.this) {
                             rl.callEvent(e);
                         }
                     }, rl.getPriority(), rl.getPlugin(), false);
@@ -639,14 +673,20 @@ public final class Game implements Runnable, AutoCloseable {
         }
         eventHandlers.clear();
         removeAllPlayers();
+        this.acceptsPlayers = false;
+        this.acceptsSpectators = false;
+        this.nextState = null;
+        if (this.state != null && !(this.state instanceof ClosedState)) {
+            this.state.end();
+            this.state = new ClosedState(this);
+        }
     }
 
     @Override
     public String toString() {
         return "Game{"
-                + "\nplayers=" + players
+                + "\nplayers=" + players.entrySet().stream().map(Object::toString).collect(Collectors.joining("\n\t", "\n\t", ""))
                 + ",\ncreatedAt=" + createdAt
-                + ",\nscoreboardHandlers=" + scoreboardHandlers
                 + ",\ngameTasks=" + gameTasks
                 + ",\neventHandlers=" + eventHandlers
                 + ",\nmap=" + map
@@ -657,12 +697,11 @@ public final class Game implements Runnable, AutoCloseable {
                 + ",\nnextState=" + nextState
                 + ",\nclosed=" + closed
                 + ",\nfrozenCauses=" + frozenCauses
-                + ",\nfrozenCached=" + frozenCached
                 + ",\nmaxPlayers=" + maxPlayers
                 + ",\nminPlayers=" + minPlayers
                 + ",\nacceptsPlayers=" + acceptsPlayers
                 + ",\nacceptsSpectators=" + acceptsSpectators
-                + ",\ngameMarkers=" + gameMarkers
+                + ",\ngameMarkers=" + gameMarkers.entrySet().stream().map(Object::toString).collect(Collectors.joining("\n\t", "\n\t", ""))
                 + ",\nlocations=" + locations
                 + "\n}";
     }
@@ -675,7 +714,7 @@ public final class Game implements Runnable, AutoCloseable {
     public void addKill(@Nonnull Team victim, @Nullable Team attacker) {
         Stats myStats = getStats(victim);
         myStats.deaths++;
-        if(attacker != null) {
+        if (attacker != null) {
             Stats enemyStats = getStats(attacker);
             enemyStats.kills++;
             //addPoints(victim.enemy(), SCORE_KILL_POINTS);
@@ -686,12 +725,13 @@ public final class Game implements Runnable, AutoCloseable {
     public Stats getStats(@Nonnull Team team) {
         return stats.get(team);
     }
-    
+
     public void addPoints(@Nonnull Team team, int i) {
         getStats(team).addPoints(i);
     }
 
     public class Stats {
+
         private final Team team;
         private int points;
         private int kills;

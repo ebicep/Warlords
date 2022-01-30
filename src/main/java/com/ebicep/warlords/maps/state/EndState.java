@@ -1,14 +1,7 @@
 package com.ebicep.warlords.maps.state;
 
-import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.commands.debugcommands.ImposterCommand;
-import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.maps.Game;
-import com.ebicep.warlords.maps.GameMap;
-import com.ebicep.warlords.maps.MapCategory;
 import com.ebicep.warlords.maps.Team;
-import com.ebicep.warlords.maps.state.PlayingState.Stats;
 import com.ebicep.warlords.player.ExperienceManager;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.*;
@@ -24,7 +17,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame.previousGames;
 import com.ebicep.warlords.events.WarlordsGameTriggerWinEvent;
@@ -75,13 +67,13 @@ public class EndState implements State, TimerDebugAble {
         sendCenteredHoverableMessageToAllGamePlayer(game, Collections.singletonList(playerMvp));
         sendMessageToAllGamePlayer(game, "", false);
         TextComponent totalDamage = new TextComponent("" + ChatColor.RED + ChatColor.BOLD + "✚ TOP DAMAGE ✚");
-        totalDamage.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.RED + "Total Damage (everyone)" + ChatColor.GRAY + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(players.stream().mapToLong(WarlordsPlayer::getTotalDamage).sum())).create()));
+        totalDamage.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.RED + "Total Damage (everyone)" + ChatColor.GRAY + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(players.stream().mapToLong(wp -> wp.getStats().total().getDamage()).sum())).create()));
         sendCenteredHoverableMessageToAllGamePlayer(game, Collections.singletonList(totalDamage));
-        players = players.stream().sorted(Comparator.comparing(WarlordsPlayer::getTotalDamage).reversed()).collect(Collectors.toList());
+        players = players.stream().sorted(Comparator.comparing((WarlordsPlayer wp) -> wp.getStats().total().getDamage()).reversed()).collect(Collectors.toList());
         List<TextComponent> leaderboardPlayersDamage = new ArrayList<>();
         for (int i = 0; i < players.size() && i < 3; i++) {
             WarlordsPlayer warlordsPlayer = players.get(i);
-            TextComponent player = new TextComponent(ChatColor.AQUA + warlordsPlayer.getName() + ChatColor.GRAY + ": " + ChatColor.GOLD + NumberFormat.getSimplifiedNumber(warlordsPlayer.getTotalDamage()));
+            TextComponent player = new TextComponent(ChatColor.AQUA + warlordsPlayer.getName() + ChatColor.GRAY + ": " + ChatColor.GOLD + NumberFormat.getSimplifiedNumber(warlordsPlayer.getStats().total().getDamage()));
             player.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.DARK_GRAY + "Lv" + ChatColor.GRAY + ExperienceManager.getLevelForSpec(warlordsPlayer.getUuid(), warlordsPlayer.getSpecClass()) + " " + ChatColor.GOLD + warlordsPlayer.getSpec().getClassName() + ChatColor.GREEN + " (" + warlordsPlayer.getSpec().getClass().getSimpleName() + ")").create()));
             leaderboardPlayersDamage.add(player);
             if (i != players.size() - 1 && i != 2) {
@@ -91,13 +83,13 @@ public class EndState implements State, TimerDebugAble {
         sendCenteredHoverableMessageToAllGamePlayer(game, leaderboardPlayersDamage);
         sendMessageToAllGamePlayer(game, "", false);
         TextComponent totalHealing = new TextComponent("" + ChatColor.GREEN + ChatColor.BOLD + "✚ TOP HEALING ✚");
-        totalHealing.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.GREEN + "Total Healing (everyone)" + ChatColor.GRAY + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(players.stream().mapToLong(WarlordsPlayer::getTotalHealing).sum())).create()));
+        totalHealing.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.GREEN + "Total Healing (everyone)" + ChatColor.GRAY + ": " + ChatColor.GOLD + NumberFormat.addCommaAndRound(players.stream().mapToLong(wp -> wp.getStats().total().getHealing()).sum())).create()));
         sendCenteredHoverableMessageToAllGamePlayer(game, Collections.singletonList(totalHealing));
-        players = players.stream().sorted(Comparator.comparing(WarlordsPlayer::getTotalHealing).reversed()).collect(Collectors.toList());
+        players = players.stream().sorted(Comparator.comparing((WarlordsPlayer wp) -> wp.getStats().total().getHealing()).reversed()).collect(Collectors.toList());
         List<TextComponent> leaderboardPlayersHealing = new ArrayList<>();
         for (int i = 0; i < players.size() && i < 3; i++) {
             WarlordsPlayer warlordsPlayer = players.get(i);
-            TextComponent player = new TextComponent(ChatColor.AQUA + warlordsPlayer.getName() + ChatColor.GRAY + ": " + ChatColor.GOLD + NumberFormat.getSimplifiedNumber(warlordsPlayer.getTotalHealing()));
+            TextComponent player = new TextComponent(ChatColor.AQUA + warlordsPlayer.getName() + ChatColor.GRAY + ": " + ChatColor.GOLD + NumberFormat.getSimplifiedNumber(warlordsPlayer.getStats().total().getHealing()));
             player.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.DARK_GRAY + "Lv" + ChatColor.GRAY + ExperienceManager.getLevelForSpec(warlordsPlayer.getUuid(), warlordsPlayer.getSpecClass()) + " " + ChatColor.GOLD + warlordsPlayer.getSpec().getClassName() + ChatColor.GREEN + " (" + warlordsPlayer.getSpec().getClass().getSimpleName() + ")").create()));
             leaderboardPlayersHealing.add(player);
             if (i != players.size() - 1 && i != 2) {
@@ -107,15 +99,15 @@ public class EndState implements State, TimerDebugAble {
         sendCenteredHoverableMessageToAllGamePlayer(game, leaderboardPlayersHealing);
         sendMessageToAllGamePlayer(game, "", false);
         TextComponent yourStatistics = new TextComponent("" + ChatColor.GOLD + ChatColor.BOLD + "✚ YOUR STATISTICS ✚");
-        yourStatistics.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.WHITE + "Total Kills (everyone): " + ChatColor.GREEN + NumberFormat.addCommaAndRound(players.stream().mapToInt(WarlordsPlayer::getTotalKills).sum()) + "\n" + ChatColor.WHITE + "Total Assists (everyone): " + ChatColor.GREEN + NumberFormat.addCommaAndRound(players.stream().mapToInt(WarlordsPlayer::getTotalAssists).sum()) + "\n" + ChatColor.WHITE + "Total Deaths (everyone): " + ChatColor.GREEN + NumberFormat.addCommaAndRound(players.stream().mapToInt(WarlordsPlayer::getTotalDeaths).sum())).create()));
+        yourStatistics.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.WHITE + "Total Kills (everyone): " + ChatColor.GREEN + NumberFormat.addCommaAndRound(players.stream().mapToInt(wp -> wp.getStats().total().getKills()).sum()) + "\n" + ChatColor.WHITE + "Total Assists (everyone): " + ChatColor.GREEN + NumberFormat.addCommaAndRound(players.stream().mapToInt(wp -> wp.getStats().total().getAssists()).sum()) + "\n" + ChatColor.WHITE + "Total Deaths (everyone): " + ChatColor.GREEN + NumberFormat.addCommaAndRound(players.stream().mapToInt(wp -> wp.getStats().total().getDeaths()).sum())).create()));
         sendCenteredHoverableMessageToAllGamePlayer(game, Collections.singletonList(yourStatistics));
         for (WarlordsPlayer wp : PlayerFilter.playingGame(game)) {
             Player player = Bukkit.getPlayer(wp.getUuid());
             if (player == null) continue;
 
-            TextComponent kills = new TextComponent(ChatColor.WHITE + "Kills: " + ChatColor.GOLD + NumberFormat.addCommaAndRound(wp.getTotalKills()));
-            TextComponent assists = new TextComponent(ChatColor.WHITE + "Assists: " + ChatColor.GOLD + NumberFormat.addCommaAndRound(wp.getTotalAssists()));
-            TextComponent deaths = new TextComponent(ChatColor.WHITE + "Deaths: " + ChatColor.GOLD + NumberFormat.addCommaAndRound(wp.getTotalDeaths()));
+            TextComponent kills = new TextComponent(ChatColor.WHITE + "Kills: " + ChatColor.GOLD + NumberFormat.addCommaAndRound(wp.getStats().total().getKills()));
+            TextComponent assists = new TextComponent(ChatColor.WHITE + "Assists: " + ChatColor.GOLD + NumberFormat.addCommaAndRound(wp.getStats().total().getAssists()));
+            TextComponent deaths = new TextComponent(ChatColor.WHITE + "Deaths: " + ChatColor.GOLD + NumberFormat.addCommaAndRound(wp.getStats().total().getDeaths()));
             String killsJson = ChatUtils.convertItemStackToJsonRegular(wp.getStatItemStack("Kills"));
             String assistsJson = ChatUtils.convertItemStackToJsonRegular(wp.getStatItemStack("Assists"));
             String deathsJson = ChatUtils.convertItemStackToJsonRegular(wp.getStatItemStack("Deaths"));
@@ -123,9 +115,9 @@ public class EndState implements State, TimerDebugAble {
             assists.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new ComponentBuilder(assistsJson).create()));
             deaths.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new ComponentBuilder(deathsJson).create()));
             ChatUtils.sendCenteredMessageWithEvents(player, Arrays.asList(kills, ChatUtils.SPACER, assists, ChatUtils.SPACER, deaths));
-            TextComponent damage = new TextComponent(ChatColor.WHITE + "Damage: " + ChatColor.GOLD + NumberFormat.addCommaAndRound(wp.getTotalDamage()));
-            TextComponent heal = new TextComponent(ChatColor.WHITE + "Healing: " + ChatColor.GOLD + NumberFormat.addCommaAndRound(wp.getTotalHealing()));
-            TextComponent absorb = new TextComponent(ChatColor.WHITE + "Absorbed: " + ChatColor.GOLD + NumberFormat.addCommaAndRound(wp.getTotalAbsorbed()));
+            TextComponent damage = new TextComponent(ChatColor.WHITE + "Damage: " + ChatColor.GOLD + NumberFormat.addCommaAndRound(wp.getStats().total().getDamage()));
+            TextComponent heal = new TextComponent(ChatColor.WHITE + "Healing: " + ChatColor.GOLD + NumberFormat.addCommaAndRound(wp.getStats().total().getHealing()));
+            TextComponent absorb = new TextComponent(ChatColor.WHITE + "Absorbed: " + ChatColor.GOLD + NumberFormat.addCommaAndRound(wp.getStats().total().getAbsorbed()));
             String damageJson = ChatUtils.convertItemStackToJsonRegular(wp.getStatItemStack("Damage"));
             String healingJson = ChatUtils.convertItemStackToJsonRegular(wp.getStatItemStack("Healing"));
             String absorbedJson = ChatUtils.convertItemStackToJsonRegular(wp.getStatItemStack("Absorbed"));
@@ -137,10 +129,10 @@ public class EndState implements State, TimerDebugAble {
             player.setAllowFlight(true);
 
             if (!game.getAddons().contains(GameAddon.IMPOSTER_MODE)) {
-                if (winner == null) {
+                if (winEvent == null || winEvent.getDeclaredWinner() == null) {
                     player.playSound(player.getLocation(), "defeat", 500, 1);
                     PacketUtils.sendTitle(player, "§d§lDRAW", "", 0, 100, 0);
-                } else if (wp.getTeam() == winner) {
+                } else if (wp.getTeam() == winEvent.getDeclaredWinner()) {
                     player.playSound(player.getLocation(), "victory", 500, 1);
                     PacketUtils.sendTitle(player, "§6§lVICTORY!", "", 0, 100, 0);
                 } else {

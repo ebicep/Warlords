@@ -3,7 +3,10 @@ package com.ebicep.warlords.commands.debugcommands;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.maps.*;
 import com.ebicep.warlords.party.Party;
+import com.ebicep.warlords.util.Utils;
 import static com.ebicep.warlords.util.Utils.arrayGetItem;
+import static com.ebicep.warlords.util.Utils.toTitleCase;
+import static com.ebicep.warlords.util.Utils.toTitleHumanCase;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -72,7 +75,7 @@ public class GameStartCommand implements TabExecutor {
             } else {
                 String argType = arg.substring(0, indexOf);
                 String argData = arg.substring(indexOf + 1);
-                switch (argType) {
+                switch (argType.toLowerCase(Locale.ROOT)) {
                     case "map":
                         GameMap foundMap = arrayGetItem(maps, e -> e.name().equalsIgnoreCase(argData));
                         if (foundMap != null) {
@@ -153,26 +156,27 @@ public class GameStartCommand implements TabExecutor {
             }
         }
         if (category != null && map != null && !map.getCategories().contains(category)) {
-            sender.sendMessage(ChatColor.RED + "map:" + map + " is not part of category:" + category + ", valid maps: " + Arrays.toString(GameMap.values()));
+            sender.sendMessage(ChatColor.RED + "map:" + toTitleCase(map) + " is not part of category:" + toTitleCase(category) + ", valid maps: " + Arrays.toString(GameMap.values()));
             isValid = false;
         }
         if (category == null && map == null && !seenMapOrCategory) {
             sender.sendMessage(ChatColor.RED + "Creating a game with no category and map is unusual, pass category:null or map:null if you really mean this");
+            isValid = false;
         }
         for (GameAddon a : addon) {
             if (!a.hasPermission(sender)) {
-                sender.sendMessage("You do not have the permission to use addon:" + a);
+                sender.sendMessage("You do not have the permission to use addon: " + Utils.toTitleCase(a.name()));
                 isValid = false;
             }
         }
         if (!isValid) {
             return null;
         }
-        sender.sendMessage("Asking the system for a game with the following parameters");
-        sender.sendMessage("Map category: " + category);
-        sender.sendMessage("Map: " + map);
-        sender.sendMessage("Requested game addons: " + addon);
-        sender.sendMessage("People: " + (selectedPeople == null ? people : selectedPeople));
+        sender.sendMessage(ChatColor.BLUE + "Asking the system for a game with the following parameters");
+        sender.sendMessage(ChatColor.BLUE + "Category: " + ChatColor.GOLD + (category != null ? toTitleHumanCase(category.name()) : null));
+        sender.sendMessage(ChatColor.BLUE + "Map: " + ChatColor.GOLD + (map != null ? toTitleHumanCase(map.name()) : null));
+        sender.sendMessage(ChatColor.BLUE + "Requested game addons: " + ChatColor.GOLD + addon.stream().map(e -> toTitleHumanCase(e.name())).collect(Collectors.joining(", ")));
+        sender.sendMessage(ChatColor.BLUE + "People: " + (selectedPeople == null ? people : selectedPeople).stream().map(OfflinePlayer::getName).collect(Collectors.joining(", ")));
         return Warlords.getGameManager()
                 .newEntry(selectedPeople == null ? people : selectedPeople)
                 .setCategory(category)
@@ -216,8 +220,8 @@ public class GameStartCommand implements TabExecutor {
         return Stream.concat(
                 Stream.of(prefix + ":null"),
                 Stream.concat(
-                        Stream.of(GameMap.values()).map(e -> e.name().toLowerCase(Locale.ROOT)),
-                        Stream.of(GameMap.values()).map(e -> prefix + ":" + e.name().toLowerCase(Locale.ROOT))
+                        Stream.of(GameMap.values()).map(e -> toTitleCase(e.name())),
+                        Stream.of(GameMap.values()).map(e -> prefix + ":" + toTitleCase(e.name()))
                 )
         );
     }

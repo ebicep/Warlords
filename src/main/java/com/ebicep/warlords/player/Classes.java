@@ -17,7 +17,6 @@ import com.ebicep.warlords.classes.warrior.specs.revenant.Revenant;
 import com.ebicep.warlords.util.WordWrap;
 import org.bukkit.OfflinePlayer;
 
-import java.io.Reader;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;

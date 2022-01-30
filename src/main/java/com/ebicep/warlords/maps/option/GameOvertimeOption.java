@@ -2,6 +2,8 @@ package com.ebicep.warlords.maps.option;
 
 import com.ebicep.warlords.events.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.maps.Game;
+import com.ebicep.warlords.maps.Team;
+import com.ebicep.warlords.maps.option.marker.TeamMarker;
 import com.ebicep.warlords.util.PacketUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
@@ -62,6 +64,10 @@ public class GameOvertimeOption implements Option, Listener {
     @EventHandler(ignoreCancelled = true)
     public void onEvent(WarlordsGameTriggerWinEvent event) {
         if (!wasActivated && event.getCause() instanceof DrawAfterTimeoutOption) {
+            event.setCancelled(true);
+            for(Team team : TeamMarker.getTeams(event.getGame())) {
+                event.getGame().getStats(team).setPoints(0);
+            }
             for (Option option : event.getGame().getOptions()) {
                 if (option instanceof WinByPointsOption) {
                     WinByPointsOption winByPointsOption = (WinByPointsOption) option;

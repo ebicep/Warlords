@@ -1,6 +1,5 @@
 package com.ebicep.warlords.database;
 
-import com.ebicep.customentities.npc.NPCManager;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.configuration.ApplicationConfiguration;
 import com.ebicep.warlords.database.leaderboards.LeaderboardManager;

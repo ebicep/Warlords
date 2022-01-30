@@ -26,6 +26,13 @@ public interface GameMarker {
                 game.registerGameMarker((Class) clazz, this); // Unchecked by design
             }
         }
+        Class<?> parent = this.getClass();
+        while(parent != null && GameMarker.class.isAssignableFrom(parent)) {
+            if (!parent.isAnonymousClass()) {
+                game.registerGameMarker((Class) parent, this); // Unchecked by design
+            }
+            parent = parent.getSuperclass();
+        }
 
     }
 }

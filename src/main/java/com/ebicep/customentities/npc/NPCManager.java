@@ -7,10 +7,7 @@ import net.citizensnpcs.api.npc.MemoryNPCDataStore;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.api.trait.TraitInfo;
-import net.citizensnpcs.trait.LookClose;
-import net.citizensnpcs.trait.ScoreboardTrait;
 import net.citizensnpcs.trait.SkinTrait;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 

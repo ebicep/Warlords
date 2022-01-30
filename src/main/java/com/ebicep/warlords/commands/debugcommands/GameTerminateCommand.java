@@ -2,7 +2,9 @@ package com.ebicep.warlords.commands.debugcommands;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.BaseCommand;
+import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.GameManager.GameHolder;
+import com.ebicep.warlords.maps.state.EndState;
 import com.ebicep.warlords.maps.state.PlayingState;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import java.util.Arrays;
@@ -40,15 +42,16 @@ public class GameTerminateCommand implements CommandExecutor {
         }
         
         for(GameHolder holder : gameInstances) {
-            if (holder.getGame() == null) {
+            Game game = holder.getGame();
+            if (game == null) {
                 sender.sendMessage(ChatColor.RED + "[" + holder.getName() + "] The game is not active now");
                 continue;
             }
-            Optional<PlayingState> state = holder.getGame().getState(PlayingState.class);
+            Optional<PlayingState> state = game.getState(PlayingState.class);
             if (state.isEmpty()) {
-                sender.sendMessage(ChatColor.RED + "[" + holder.getName() + "] The game is not in playing state, instead it is in " + holder.getGame().getState().getClass().getSimpleName());
+                sender.sendMessage(ChatColor.RED + "[" + holder.getName() + "] The game is not in playing state, instead it is in " + game.getState().getClass().getSimpleName());
             } else {
-                state.get().endGame();
+                game.setNextState(new EndState(game, null));
             }
         }
 

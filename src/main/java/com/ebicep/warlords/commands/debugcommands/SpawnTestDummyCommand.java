@@ -18,7 +18,7 @@ import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 
-import java.util.Objects;
+import java.util.Optional;
 
 public class SpawnTestDummyCommand implements CommandExecutor {
 
@@ -40,12 +40,12 @@ public class SpawnTestDummyCommand implements CommandExecutor {
         }
         if (args.length >= 1) {
             String teamString = args[0];
-            player.getGame().getMarkers(TeamMarker)
-            if (teamString.equalsIgnoreCase("blue") || teamString.equalsIgnoreCase("red")) {
-                Team team = teamString.equalsIgnoreCase("blue") ? Team.BLUE : Team.RED;
+            Optional<Team> teamOpt = TeamMarker.getTeams(player.getGame()).stream().filter(e -> e.name().equalsIgnoreCase(teamString)).findAny();
+            if (teamOpt.isPresent()) {
+                Team team = teamOpt.get();
                 OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer("testdummy");
-                Warlords.addPlayer(new WarlordsPlayer(offlinePlayer, player.getGameState(), team, new PlayerSettings()));
-                WarlordsPlayer testDummy = Warlords.getPlayer(offlinePlayer);
+                WarlordsPlayer testDummy = new WarlordsPlayer(offlinePlayer, player.getGameState(), team, new PlayerSettings());
+                Warlords.addPlayer(testDummy);
                 if (args.length >= 2) {
                     if (args[1].equalsIgnoreCase("false")) {
                         assert testDummy != null;
@@ -54,18 +54,16 @@ public class SpawnTestDummyCommand implements CommandExecutor {
                         sender.sendMessage("§cInvalid arguments! Valid arguments: [true, false]");
                     }
                 }
-                Objects.requireNonNull(testDummy).teleport(player.getLocation());
+                testDummy.teleport(player.getLocation());
                 //SKULL
                 ItemStack playerSkull = new ItemStack(Material.SKULL_ITEM, 1, (short) SkullType.PLAYER.ordinal());
                 SkullMeta skullMeta = (SkullMeta) playerSkull.getItemMeta();
                 skullMeta.setOwner(offlinePlayer.getName());
                 playerSkull.setItemMeta(skullMeta);
                 Warlords.getPlayerHeads().put(offlinePlayer.getUniqueId(), CraftItemStack.asNMSCopy(playerSkull));
-
-
-
             } else {
-
+                sender.sendMessage("§cUnable to find team named " + teamString);
+                return true;
             }
         }
         return true;

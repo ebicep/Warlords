@@ -6,6 +6,7 @@ import com.ebicep.warlords.maps.option.marker.DebugLocationMarker;
 import com.ebicep.warlords.maps.option.marker.TimerSkipAbleMarker;
 import static com.ebicep.warlords.util.ChatUtils.sendMessage;
 import com.ebicep.warlords.util.GameRunnable;
+import com.ebicep.warlords.util.LocationFactory;
 import com.ebicep.warlords.util.PacketUtils;
 import com.ebicep.warlords.util.Utils;
 import static com.ebicep.warlords.util.Utils.iterable;
@@ -20,15 +21,13 @@ import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
-public class GateOption implements Option, TimerSkipAbleMarker {
+public class GateOption extends AbstractCuboidOption implements  TimerSkipAbleMarker {
 
     public static final int DEFAULT_GATE_DELAY = 10;
     public static final Material DEFAULT_OPEN_MATERIAL = Material.AIR;
     public static final Material DEFAULT_CLOSED_MATERIAL = Material.FENCE;
     public static final Boolean DEFAULT_SHOULD_BROADCAST = null;
 
-    private final Location min;
-    private final Location max;
     private final Material closed;
     private final Material open;
     private boolean autoDetectShouldBroadcast = true;
@@ -55,14 +54,36 @@ public class GateOption implements Option, TimerSkipAbleMarker {
     }
 
     public GateOption(Location a, Location b, Material closed, Material open, int delay, Boolean shouldBroadcast) {
-        if (a.getWorld() != b.getWorld()) {
-            throw new IllegalArgumentException("The worlds provided have different worlds");
-        }
+        super(a, b);
         if (closed == open) {
             throw new IllegalArgumentException("Cannot have the closed and open material of a gate be the same material");
         }
-        this.min = new Location(a.getWorld(), Math.min(a.getX(), b.getX()), Math.min(a.getY(), b.getY()), Math.min(a.getZ(), b.getZ()), a.getYaw(), a.getPitch());
-        this.max = new Location(a.getWorld(), Math.max(a.getX(), b.getX()), Math.max(a.getY(), b.getY()), Math.max(a.getZ(), b.getZ()), b.getYaw(), b.getPitch());
+        this.closed = closed;
+        this.open = open;
+        this.delay = delay;
+    }
+
+    public GateOption(LocationFactory loc, double x1, double y1, double z1, double x2, double y2, double z2) {
+        this(loc, x1, y1, z1, x2, y2, z2, DEFAULT_CLOSED_MATERIAL, DEFAULT_OPEN_MATERIAL, DEFAULT_GATE_DELAY, DEFAULT_SHOULD_BROADCAST);
+    }
+
+    public GateOption(LocationFactory loc, double x1, double y1, double z1, double x2, double y2, double z2, Material closed) {
+        this(loc, x1, y1, z1, x2, y2, z2, closed, DEFAULT_OPEN_MATERIAL, DEFAULT_GATE_DELAY, DEFAULT_SHOULD_BROADCAST);
+    }
+
+    public GateOption(LocationFactory loc, double x1, double y1, double z1, double x2, double y2, double z2, Material closed, Material open) {
+        this(loc, x1, y1, z1, x2, y2, z2, closed, open, DEFAULT_GATE_DELAY, DEFAULT_SHOULD_BROADCAST);
+    }
+
+    public GateOption(LocationFactory loc, double x1, double y1, double z1, double x2, double y2, double z2, Material closed, Material open, int delay) {
+        this(loc, x1, y1, z1, x2, y2, z2, closed, open, delay, DEFAULT_SHOULD_BROADCAST);
+    }
+
+    public GateOption(LocationFactory loc, double x1, double y1, double z1, double x2, double y2, double z2, Material closed, Material open, int delay, Boolean shouldBroadcast) {
+        super(loc, x1, y1, z1, x2, y2, z2);
+        if (closed == open) {
+            throw new IllegalArgumentException("Cannot have the closed and open material of a gate be the same material");
+        }
         this.closed = closed;
         this.open = open;
         this.delay = delay;
@@ -120,13 +141,13 @@ public class GateOption implements Option, TimerSkipAbleMarker {
 
     @Override
     public int getDelay() {
-        return delay;
+        return delay * 20;
     }
 
     @Override
     public void skipTimer(int delay) {
         if (this.delay > 0) {
-            this.delay -= delay;
+            this.delay -= delay / 20;
             if (delay <= 0) {
                 openGates();
             }
@@ -153,6 +174,10 @@ public class GateOption implements Option, TimerSkipAbleMarker {
                     cancel();
                     return;
                 }
+                if(delay == 0) {
+                    openGates();
+                    cancel();
+                }
                 if (shouldBroadcast) {
                     for (Map.Entry<Player, Team> entry : iterable(game.onlinePlayersWithoutSpectators())) {
                         Player player = entry.getKey();
@@ -160,12 +185,12 @@ public class GateOption implements Option, TimerSkipAbleMarker {
                         String number = (delay >= 8 ? ChatColor.GREEN
                                 : delay >= 4 ? ChatColor.YELLOW
                                         : ChatColor.RED).toString() + delay;
-                        PacketUtils.sendTitle(player, number, "", 0, 40, 0);
+                        if(delay > 0) {
+                            PacketUtils.sendTitle(player, number, "", 0, 40, 0);
+                        }
                     }
                     switch (delay) {
                         case 0:
-                            openGates();
-                            cancel();
                             break;
                         case 1:
                         case 2:

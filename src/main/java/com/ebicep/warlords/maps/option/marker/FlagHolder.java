@@ -9,14 +9,15 @@ import com.ebicep.warlords.maps.flags.PlayerFlagLocation;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.Supplier;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 
 /**
  * Marks a flag spawner, which can get updates remotely
  */
-public interface FlagHolder extends GameMarker {
+public interface FlagHolder extends CompassTargetMarker, GameMarker {
     
     public default FlagLocation getFlag() {
         return getInfo().getFlag();
@@ -46,6 +47,36 @@ public interface FlagHolder extends GameMarker {
         return newFlag;
     }
     
+    @Override
+    public default String getToolbarName(WarlordsPlayer player) {
+        FlagLocation flag = getFlag();
+        Team team = getTeam();
+        Team playerTeam = player.getTeam();
+        StringBuilder builder = new StringBuilder();
+        double flagDistance = Math.round(flag.getLocation().distance(player.getLocation()) * 10) / 10.0;
+        builder.append(team.teamColor().toString()).append(ChatColor.BOLD);
+        if (playerTeam != team) {
+            builder.append("ENEMY ");
+        } else {
+            builder.append("YOUR ");
+        }
+        if (flag instanceof PlayerFlagLocation || flag instanceof GroundFlagLocation) {
+            if (flag instanceof GroundFlagLocation && playerTeam != team) {
+                builder.append("ENEMY "); // This is directly copied from the older code, but seems wrong...
+            }
+            builder.append("Flag ");
+            if (flag instanceof PlayerFlagLocation) {
+                builder.append(ChatColor.WHITE).append("is stolen ");
+            } else if (flag instanceof GroundFlagLocation) {
+                builder.append(ChatColor.GOLD).append("is dropped ");
+            }
+            builder.append(ChatColor.RED).append(flagDistance).append("m ").append(ChatColor.WHITE).append("away!");
+        } else {
+            builder.append(ChatColor.GREEN).append("Flag is safe");
+        }
+        return builder.toString();
+    }
+    
     public static List<FlagLocation> update(Game game, Function<FlagInfo, FlagLocation> updater) {
         final List<FlagHolder> markers = game.getMarkers(FlagHolder.class);
         List<FlagLocation> newLocations = new ArrayList<>(markers.size());
@@ -64,5 +95,37 @@ public interface FlagHolder extends GameMarker {
             }
         }
         return false;
+    }
+
+    public static boolean isPlayerHolderFlag(WarlordsPlayer player) {
+        for (FlagHolder holder : player.getGame().getMarkers(FlagHolder.class)) {
+            FlagLocation flag = holder.getFlag();
+            if (flag instanceof PlayerFlagLocation && ((PlayerFlagLocation)flag).getPlayer().equals(player)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public static FlagHolder create(FlagInfo info) {
+        return create(() -> info);
+    }
+    public static FlagHolder create(Supplier<FlagInfo> info) {
+        return new FlagHolder() {
+            @Override
+            public FlagInfo getInfo() {
+                return info.get();
+            }
+
+            @Override
+            public String toString() {
+                StringBuilder sb = new StringBuilder();
+                sb.append("FlagHolder.create{");
+                sb.append(info.get());
+                sb.append('}');
+                return sb.toString();
+            }
+            
+        };
     }
 }
