@@ -11,10 +11,7 @@ import com.ebicep.warlords.maps.option.marker.MapSymmetryMarker;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.util.ItemBuilder;
 import com.ebicep.warlords.util.NumberFormat;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
@@ -31,7 +28,6 @@ import static com.ebicep.warlords.player.ArmorManager.*;
 import static com.ebicep.warlords.player.Classes.*;
 import static com.ebicep.warlords.player.Settings.*;
 import static java.lang.Math.round;
-import org.bukkit.*;
 
 public class GameMenu {
     private static final ItemStack MENU_BACK_PREGAME = new ItemBuilder(Material.ARROW)
@@ -557,7 +553,7 @@ public class GameMenu {
                                 LobbyLocationMarker randomLobbyLocation = LobbyLocationMarker.getRandomLobbyLocation(game, team);
                                 if (randomLobbyLocation != null) {
                                     Location teleportDestination = MapSymmetryMarker.getSymmetry(game)
-                                            .getOppositeLocation(game, oldTeam, team, player.getLocation(), randomLobbyLocation.getLocation());;
+                                            .getOppositeLocation(game, oldTeam, team, player.getLocation(), randomLobbyLocation.getLocation());
                                     player.teleport(teleportDestination);
                                     Warlords.setRejoinPoint(player.getUniqueId(), teleportDestination);
                                 }

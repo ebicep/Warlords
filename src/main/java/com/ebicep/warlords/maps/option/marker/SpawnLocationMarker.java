@@ -11,5 +11,5 @@ public interface SpawnLocationMarker extends LocationMarker {
      * @return the priority, higher priorities should be preferred above lower
      * ones
      */
-    public double getPriority(WarlordsPlayer player);
+    double getPriority(WarlordsPlayer player);
 }

@@ -1,15 +1,16 @@
 package com.ebicep.warlords.maps.option.marker;
 
 import com.ebicep.warlords.util.ItemBuilder;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
 
 /**
  * Marks a location for the debug screen/command
@@ -22,7 +23,7 @@ public interface DebugLocationMarker extends LocationMarker {
      * @return the name
      */
     @Nonnull
-    public String getName();
+    String getName();
 
     /**
      * Get the extra debug information for this marker. Different calls to this
@@ -31,7 +32,7 @@ public interface DebugLocationMarker extends LocationMarker {
      * @return The list of extra debug info
      */
     @Nonnull
-    public List<String> getExtra();
+    List<String> getExtra();
 
     /**
      * Gets the creator of this debug marker.
@@ -39,7 +40,7 @@ public interface DebugLocationMarker extends LocationMarker {
      * @return the creator
      */
     @Nonnull
-    public Class<?> getCreator();
+    Class<?> getCreator();
 
     /**
      * Gets the current location of the marker. Returned locations objects may
@@ -50,7 +51,7 @@ public interface DebugLocationMarker extends LocationMarker {
      */
     @Nonnull
     @Override
-    public Location getLocation();
+    Location getLocation();
 
     /**
      * Gets the material shown in the debug screen
@@ -58,14 +59,14 @@ public interface DebugLocationMarker extends LocationMarker {
      * @return
      */
     @Nonnull
-    public Material getMaterial();
+    Material getMaterial();
 
     /**
      * Gets the data value belonging to the
      *
      * @return
      */
-    public short getMaterialData();
+    short getMaterialData();
 
     /**
      * Converts this debug marker into an item for the debug screen
@@ -73,7 +74,7 @@ public interface DebugLocationMarker extends LocationMarker {
      * @return
      */
     @Nonnull
-    public default ItemStack getAsItem() {
+    default ItemStack getAsItem() {
         ItemBuilder item = new ItemBuilder(getMaterial(), getMaterialData());
         item.name(getName());
         Location loc = getLocation();
@@ -85,31 +86,31 @@ public interface DebugLocationMarker extends LocationMarker {
         return item.get();
     }
 
-    public static DebugLocationMarker create(@Nullable Material material, int data, Class<?> creator, String name, Location location) {
+    static DebugLocationMarker create(@Nullable Material material, int data, Class<?> creator, String name, Location location) {
         return create(material, data, () -> creator, () -> name, () -> location, Collections::emptyList);
     }
 
-    public static DebugLocationMarker create(@Nullable Material material, int data, Class<?> creator, String name, Location location, Supplier<List<String>> extra) {
+    static DebugLocationMarker create(@Nullable Material material, int data, Class<?> creator, String name, Location location, Supplier<List<String>> extra) {
         return create(material, data, () -> creator, () -> name, () -> location, extra);
     }
 
-    public static DebugLocationMarker create(@Nullable Material material, int data, Class<?> creator, String name, Supplier<Location> location, Supplier<List<String>> extra) {
+    static DebugLocationMarker create(@Nullable Material material, int data, Class<?> creator, String name, Supplier<Location> location, Supplier<List<String>> extra) {
         return create(material, data, () -> creator, () -> name, location, extra);
     }
 
-    public static DebugLocationMarker create(@Nullable Material material, int data, Class<?> creator, Supplier<String> name, Supplier<Location> location) {
+    static DebugLocationMarker create(@Nullable Material material, int data, Class<?> creator, Supplier<String> name, Supplier<Location> location) {
         return create(material, data, () -> creator, name, location, Collections::emptyList);
     }
 
-    public static DebugLocationMarker create(@Nullable Material material, int data, Class<?> creator, Supplier<String> name, Supplier<Location> location, Supplier<List<String>> extra) {
+    static DebugLocationMarker create(@Nullable Material material, int data, Class<?> creator, Supplier<String> name, Supplier<Location> location, Supplier<List<String>> extra) {
         return create(material, data, () -> creator, name, location, extra);
     }
 
-    public static DebugLocationMarker create(@Nullable Material material, int data, Supplier<Class<?>> creator, Supplier<String> name, Supplier<Location> location) {
+    static DebugLocationMarker create(@Nullable Material material, int data, Supplier<Class<?>> creator, Supplier<String> name, Supplier<Location> location) {
         return create(material, data, creator, name, location, Collections::emptyList);
     }
 
-    public static DebugLocationMarker create(@Nullable Material material, int data, Supplier<Class<?>> creator, Supplier<String> name, Supplier<Location> location, Supplier<List<String>> extra) {
+    static DebugLocationMarker create(@Nullable Material material, int data, Supplier<Class<?>> creator, Supplier<String> name, Supplier<Location> location, Supplier<List<String>> extra) {
         Material newMaterial = material == null ? Material.BARRIER : material;
         short newData = (short) data;
         return new DebugLocationMarker() {

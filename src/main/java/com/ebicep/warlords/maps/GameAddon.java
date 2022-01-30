@@ -7,9 +7,10 @@ import com.ebicep.warlords.maps.state.ClosedState;
 import com.ebicep.warlords.maps.state.PreLobbyState;
 import com.ebicep.warlords.maps.state.State;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import org.bukkit.command.CommandSender;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import org.bukkit.command.CommandSender;
 
 public enum GameAddon {
 
@@ -69,7 +70,7 @@ public enum GameAddon {
     @Nullable
     private final String permission;
 
-    private GameAddon(String permission) {
+    GameAddon(String permission) {
         this.permission = permission;
     }
 

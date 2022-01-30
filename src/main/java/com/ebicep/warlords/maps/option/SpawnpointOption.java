@@ -5,13 +5,14 @@ import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.option.marker.DebugLocationMarker;
 import com.ebicep.warlords.maps.option.marker.SpawnLocationMarker;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import org.bukkit.Location;
+import org.bukkit.Material;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.function.ToDoubleFunction;
 import java.util.stream.Collectors;
-import org.bukkit.Location;
-import org.bukkit.Material;
 
 public class SpawnpointOption extends MarkerOption {
 
@@ -62,7 +63,7 @@ public class SpawnpointOption extends MarkerOption {
                             .map(w -> Warlords.getPlayer(w.getKey()))
                             .filter(o -> o != null && o.isAlive())
                             .collect(Collectors.groupingBy(
-                                    w -> p.getTeam() == null ? true : w.getTeam() == p.getTeam(),
+                                    w -> p.getTeam() == null || w.getTeam() == p.getTeam(),
                                     Collectors.averagingDouble(
                                             w -> Math.pow(w.getLocation(cache).distanceSquared(location), 0.25)
                                     )

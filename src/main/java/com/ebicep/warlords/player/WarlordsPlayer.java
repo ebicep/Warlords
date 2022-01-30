@@ -114,7 +114,7 @@ public final class WarlordsPlayer {
         this.team = team;
         this.specClass = settings.getSelectedClass();
         this.spec = specClass.create.get();
-        this.maxHealth = (int) (this.spec.getMaxHealth() * 1);
+        this.maxHealth = this.spec.getMaxHealth() * 1;
         this.health = this.maxHealth;
         this.energy = 0;
         this.energyModifier = 1;

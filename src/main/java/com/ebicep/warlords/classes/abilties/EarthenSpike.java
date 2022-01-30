@@ -70,7 +70,7 @@ public class EarthenSpike extends AbstractAbility {
                 new GameRunnable(wp.getGame()) {
                     private final float SPEED = 1;
                     private final float SPEED_SQUARED = SPEED * SPEED;
-                    private Location spikeLoc = location;
+                    private final Location spikeLoc = location;
                     {
                         spikeLoc.setY(spikeLoc.getBlockY());
                     }

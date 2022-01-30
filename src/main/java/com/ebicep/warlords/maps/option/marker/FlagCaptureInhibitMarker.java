@@ -4,5 +4,5 @@ import com.ebicep.warlords.maps.flags.PlayerFlagLocation;
 
 public interface FlagCaptureInhibitMarker extends GameMarker {
 
-    public boolean isInhibitingFlagCapture(PlayerFlagLocation flag);
+    boolean isInhibitingFlagCapture(PlayerFlagLocation flag);
 }

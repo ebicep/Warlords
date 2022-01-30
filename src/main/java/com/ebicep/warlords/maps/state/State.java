@@ -1,9 +1,10 @@
 package com.ebicep.warlords.maps.state;
 
 import com.ebicep.warlords.maps.Game;
-import javax.annotation.Nullable;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+
+import javax.annotation.Nullable;
 
 public interface State {
 
@@ -11,18 +12,18 @@ public interface State {
      * Called when the game transitions to this state
      * Teleport players to the correct locations here
      */
-    public void begin();
+    void begin();
     /**
      * Run a tick in this gamestate
      * @return A new state to transition to or null
      */
     @Nullable
-    public State run();
+    State run();
 
     /**
      * Called when this state is ending
      */
-    public void end();
+    void end();
     
     /**
      * Called when a player is added to the game
@@ -31,7 +32,7 @@ public interface State {
      * @see Game#acceptsPeople()
      * @see Game#acceptsSpectators() 
      */
-    public default void onPlayerJoinGame(OfflinePlayer player, boolean asSpectator) {
+    default void onPlayerJoinGame(OfflinePlayer player, boolean asSpectator) {
     }
     
     /**
@@ -40,8 +41,8 @@ public interface State {
      * online at that moment
      * @param player 
      */
-    public default void onPlayerReJoinGame(Player player) {
+    default void onPlayerReJoinGame(Player player) {
     }
-    public default void onPlayerQuitGame(OfflinePlayer player) {
+    default void onPlayerQuitGame(OfflinePlayer player) {
     }
 }

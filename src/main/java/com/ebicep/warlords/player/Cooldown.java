@@ -3,12 +3,12 @@ package com.ebicep.warlords.player;
 public class Cooldown {
 
     private String name;
-    private Class cooldownClass;
-    private Object cooldownObject;
+    private final Class cooldownClass;
+    private final Object cooldownObject;
     private String actionBarName;
     private float timeLeft;
-    private WarlordsPlayer from;
-    private CooldownTypes cooldownType;
+    private final WarlordsPlayer from;
+    private final CooldownTypes cooldownType;
     private boolean hidden;
 
     public Cooldown(String name, Class ability, Object cooldownObject, String actionBarName, float timeLeft, WarlordsPlayer from, CooldownTypes cooldownType) {

@@ -28,7 +28,7 @@ public class UndyingArmy extends AbstractAbility {
     private final int duration = 10;
     private int maxArmyAllies = 6;
 
-    private HashMap<UUID, Boolean> playersPopped = new HashMap<>();
+    private final HashMap<UUID, Boolean> playersPopped = new HashMap<>();
 
     public HashMap<UUID, Boolean> getPlayersPopped() {
         return playersPopped;

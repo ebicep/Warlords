@@ -1,10 +1,11 @@
 package com.ebicep.warlords.util;
 
-import java.util.Objects;
-import javax.annotation.Nonnull;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.util.Vector;
+
+import javax.annotation.Nonnull;
+import java.util.Objects;
 
 public class LocationFactory {
     @Nonnull
@@ -136,10 +137,7 @@ public class LocationFactory {
             return false;
         }
         final LocationFactory other = (LocationFactory) obj;
-        if (!Objects.equals(this.location, other.location)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(this.location, other.location);
     }
 
 }

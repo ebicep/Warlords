@@ -6,9 +6,9 @@ import com.ebicep.warlords.database.repositories.player.pojos.ctf.DatabaseBaseCT
 
 public class DatabasePaladinCTF extends DatabaseBaseCTF implements DatabaseWarlordsClass {
 
-    private DatabaseBaseCTF avenger = new DatabaseBaseCTF();
-    private DatabaseBaseCTF crusader = new DatabaseBaseCTF();
-    private DatabaseBaseCTF protector = new DatabaseBaseCTF();
+    private final DatabaseBaseCTF avenger = new DatabaseBaseCTF();
+    private final DatabaseBaseCTF crusader = new DatabaseBaseCTF();
+    private final DatabaseBaseCTF protector = new DatabaseBaseCTF();
 
     public DatabasePaladinCTF() {
         super();

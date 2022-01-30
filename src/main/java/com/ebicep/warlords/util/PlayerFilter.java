@@ -5,6 +5,7 @@ import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 
@@ -13,13 +14,12 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static com.ebicep.warlords.util.Utils.radiusAround;
 import static com.ebicep.warlords.util.Utils.sortClosestBy;
-import java.util.stream.Collectors;
-import org.bukkit.World;
 
 // TODO run regex
 // Search: (\n +)Utils\.filterOnlyEnemies\(([a-z]+), ([0-9.DF]+), ([0-9.DF]+), ([0-9.DF]+), ([a-z]+)\)
@@ -101,7 +101,7 @@ public class PlayerFilter implements Iterable<WarlordsPlayer> {
 
     @Nonnull
     public PlayerFilter leastAliveFirst() {
-        return sorted(Comparator.<WarlordsPlayer, Double>comparing(wp -> wp.getHealth() / (double)wp.getMaxHealth()));
+        return sorted(Comparator.comparing(wp -> wp.getHealth() / (double)wp.getMaxHealth()));
     }
 
     @Nonnull
@@ -111,7 +111,7 @@ public class PlayerFilter implements Iterable<WarlordsPlayer> {
 
     @Nonnull
     public PlayerFilter leastEnergeticFirst() {
-        return sorted(Comparator.<WarlordsPlayer, Double>comparing(wp -> wp.getEnergy() / (double) wp.getMaxEnergy()));
+        return sorted(Comparator.comparing(wp -> wp.getEnergy() / (double) wp.getMaxEnergy()));
     }
 
     @Nonnull

@@ -11,7 +11,7 @@ import java.util.Map;
 
 public class PlayerSettings implements ConfigurationSerializable {
     private Classes selectedClass = Classes.PYROMANCER;
-    private HashMap<Classes, ClassesSkillBoosts> classesSkillBoosts = new HashMap<Classes, ClassesSkillBoosts>() {{
+    private final HashMap<Classes, ClassesSkillBoosts> classesSkillBoosts = new HashMap<Classes, ClassesSkillBoosts>() {{
         put(Classes.PYROMANCER, ClassesSkillBoosts.FIREBALL);
         put(Classes.CRYOMANCER, ClassesSkillBoosts.FROST_BOLT);
         put(Classes.AQUAMANCER, ClassesSkillBoosts.WATER_BOLT);

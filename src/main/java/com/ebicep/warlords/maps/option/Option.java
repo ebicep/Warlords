@@ -1,6 +1,7 @@
 package com.ebicep.warlords.maps.option;
 
 import com.ebicep.warlords.maps.Game;
+
 import javax.annotation.Nonnull;
 
 /**
@@ -16,7 +17,7 @@ public interface Option {
      *
      * @param game The game instance
      */
-    public default void register(@Nonnull Game game) {
+    default void register(@Nonnull Game game) {
     }
 
     /**
@@ -26,7 +27,7 @@ public interface Option {
      *
      * @param game The game instance
      */
-    public default void start(@Nonnull Game game) {
+    default void start(@Nonnull Game game) {
     }
     
     /**
@@ -35,6 +36,6 @@ public interface Option {
      * affecting their standings.
      * @param game The game instance
      */
-    public default void onGameEnding(@Nonnull Game game) {
+    default void onGameEnding(@Nonnull Game game) {
     }
 }

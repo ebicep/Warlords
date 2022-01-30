@@ -108,9 +108,9 @@ public class QueueManager {
 
 
     static public class FutureQueuePlayer {
-        private UUID uuid;
-        private String timeString;
-        private BukkitTask task;
+        private final UUID uuid;
+        private final String timeString;
+        private final BukkitTask task;
 
         public FutureQueuePlayer(UUID uuid, String timeString, BukkitTask task) {
             this.uuid = uuid;

@@ -14,6 +14,7 @@ import com.ebicep.warlords.maps.option.marker.MapSymmetryMarker;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.util.ItemBuilder;
 import com.ebicep.warlords.util.NumberFormat;
+import com.ebicep.warlords.util.PlayerFilter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -33,7 +34,6 @@ import java.util.function.BiConsumer;
 
 import static com.ebicep.warlords.menu.Menu.*;
 import static com.ebicep.warlords.player.Classes.setSelectedBoost;
-import com.ebicep.warlords.util.PlayerFilter;
 import static com.ebicep.warlords.util.Utils.woolSortedByColor;
 
 public class DebugMenu {
@@ -193,7 +193,7 @@ public class DebugMenu {
                                     LobbyLocationMarker randomLobbyLocation = LobbyLocationMarker.getRandomLobbyLocation(game, otherTeam);
                                     if (randomLobbyLocation != null) {
                                         Location teleportDestination = MapSymmetryMarker.getSymmetry(game)
-                                                .getOppositeLocation(game, currentTeam, otherTeam, target.getLocation(), randomLobbyLocation.getLocation());;
+                                                .getOppositeLocation(game, currentTeam, otherTeam, target.getLocation(), randomLobbyLocation.getLocation());
                                         target.teleport(teleportDestination);
                                     }
                                     ArmorManager.resetArmor(Bukkit.getPlayer(target.getUuid()), Warlords.getPlayerSettings(target.getUuid()).getSelectedClass(), otherTeam);

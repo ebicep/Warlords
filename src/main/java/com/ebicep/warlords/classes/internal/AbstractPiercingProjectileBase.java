@@ -372,9 +372,9 @@ double lerp(double a, double b, double target) {
     }
 
     public interface InternalProjectileTask {
-        public void run(InternalProjectile projectile);
+        void run(InternalProjectile projectile);
 
-        public default void onDestroy(InternalProjectile projectile) {
+        default void onDestroy(InternalProjectile projectile) {
         }
     }
 

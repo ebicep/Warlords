@@ -17,7 +17,7 @@ import java.util.UUID;
 
 public class RecklessCharge extends AbstractAbility implements Listener {
 
-    private static List<UUID> stunnedPlayers = new ArrayList<>();
+    private static final List<UUID> stunnedPlayers = new ArrayList<>();
     private int stunTimeInTicks = 10;
 
     public RecklessCharge() {

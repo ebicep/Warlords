@@ -3,20 +3,21 @@ package com.ebicep.warlords.maps.option.marker;
 
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Team;
+
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 
 @FunctionalInterface
 public interface TeamMarker extends GameMarker {
-    public EnumSet<Team> getTeams();
+    EnumSet<Team> getTeams();
     
-    public static TeamMarker create(Team ... teams) {
+    static TeamMarker create(Team... teams) {
         EnumSet<Team> asList = teams.length == 0 ? EnumSet.noneOf(Team.class) : EnumSet.copyOf(Arrays.asList(teams));
         return () -> asList;
     }
     
-    public static EnumSet<Team> getTeams(Game game) {
+    static EnumSet<Team> getTeams(Game game) {
         EnumSet<Team> teams;
         boolean mayModify;
         

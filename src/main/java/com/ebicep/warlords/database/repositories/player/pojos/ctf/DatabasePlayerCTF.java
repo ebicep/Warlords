@@ -28,10 +28,10 @@ public class DatabasePlayerCTF extends AbstractDatabaseStatInformation implement
     private long totalTimeInRespawn = 0;
     @Field("total_time_played")
     private long totalTimePlayed = 0;
-    private DatabaseMageCTF mage = new DatabaseMageCTF();
-    private DatabaseWarriorCTF warrior = new DatabaseWarriorCTF();
-    private DatabasePaladinCTF paladin = new DatabasePaladinCTF();
-    private DatabaseShamanCTF shaman = new DatabaseShamanCTF();
+    private final DatabaseMageCTF mage = new DatabaseMageCTF();
+    private final DatabaseWarriorCTF warrior = new DatabaseWarriorCTF();
+    private final DatabasePaladinCTF paladin = new DatabasePaladinCTF();
+    private final DatabaseShamanCTF shaman = new DatabaseShamanCTF();
 
     public DatabasePlayerCTF() {
 

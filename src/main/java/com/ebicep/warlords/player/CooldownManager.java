@@ -15,8 +15,8 @@ import java.util.stream.Collectors;
 
 public class CooldownManager {
 
-    private WarlordsPlayer warlordsPlayer;
-    private List<Cooldown> cooldowns;
+    private final WarlordsPlayer warlordsPlayer;
+    private final List<Cooldown> cooldowns;
     private int totalCooldowns = 0;
 
     public CooldownManager(WarlordsPlayer warlordsPlayer) {

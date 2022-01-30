@@ -57,7 +57,7 @@ public class ChatUtils {
             sb.append(" ");
             compensated += spaceLength;
         }
-        player.sendMessage(sb.toString() + message);
+        player.sendMessage(sb + message);
     }
 
     public static void sendCenteredMessageWithEvents(Player player, List<TextComponent> textComponents) {

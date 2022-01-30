@@ -175,10 +175,10 @@ public class HolyRadianceCrusader extends AbstractAbility {
 
     private class FlyingArmorStand extends BukkitRunnable {
 
-        private WarlordsPlayer target;
-        private WarlordsPlayer owner;
-        private double speed;
-        private ArmorStand armorStand;
+        private final WarlordsPlayer target;
+        private final WarlordsPlayer owner;
+        private final double speed;
+        private final ArmorStand armorStand;
 
         public FlyingArmorStand(Location location, WarlordsPlayer target, WarlordsPlayer owner, double speed) {
             this.armorStand = location.getWorld().spawn(location, ArmorStand.class);

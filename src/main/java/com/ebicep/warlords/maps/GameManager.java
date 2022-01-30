@@ -1,15 +1,16 @@
 package com.ebicep.warlords.maps;
 
 import com.ebicep.warlords.util.LocationFactory;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
 
 public class GameManager implements AutoCloseable {
 
@@ -115,7 +116,7 @@ public class GameManager implements AutoCloseable {
             for (OfflinePlayer player : entry.getPlayers()) {
                 game.addPlayer(player, false);
             }
-        };
+        }
     }
 
     public void dropPlayerFromQueueOrGames(OfflinePlayer player) {
@@ -420,7 +421,7 @@ public class GameManager implements AutoCloseable {
         private final boolean success;
         private final String message;
 
-        private QueueResult(boolean success, String message) {
+        QueueResult(boolean success, String message) {
             this.success = success;
             this.message = message;
         }

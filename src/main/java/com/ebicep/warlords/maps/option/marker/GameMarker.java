@@ -19,7 +19,7 @@ public interface GameMarker {
      *
      * @param game The game to register to
      */
-    public default void register(Game game) {
+    default void register(Game game) {
         Class<?>[] interfaces = this.getClass().getInterfaces();
         for (Class<?> clazz : interfaces) {
             if (clazz != GameMarker.class && GameMarker.class.isAssignableFrom(clazz)) {

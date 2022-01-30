@@ -4,6 +4,6 @@ import org.bukkit.Location;
 
 public interface LocationMarker extends GameMarker {
 
-    public Location getLocation();
+    Location getLocation();
 
 }

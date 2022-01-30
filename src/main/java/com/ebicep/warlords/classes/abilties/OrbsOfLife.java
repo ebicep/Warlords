@@ -180,7 +180,7 @@ public class OrbsOfLife extends AbstractAbility {
 
     public static class Orb extends EntityExperienceOrb {
 
-        private ArmorStand armorStand;
+        private final ArmorStand armorStand;
         private final WarlordsPlayer owner;
         private int ticksLived = 0;
         private WarlordsPlayer playerToMoveTowards = null;

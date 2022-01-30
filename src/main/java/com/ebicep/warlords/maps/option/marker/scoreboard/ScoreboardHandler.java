@@ -2,10 +2,11 @@ package com.ebicep.warlords.maps.option.marker.scoreboard;
 
 import com.ebicep.warlords.maps.option.marker.GameMarker;
 import com.ebicep.warlords.player.WarlordsPlayer;
-import java.util.List;
-import java.util.function.Consumer;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.List;
+import java.util.function.Consumer;
 
 public interface ScoreboardHandler extends GameMarker {
 
@@ -16,7 +17,7 @@ public interface ScoreboardHandler extends GameMarker {
      * @param player The player to compute it for
      * @return The priority for this player
      */
-    public int getPriority(@Nonnull WarlordsPlayer player);
+    int getPriority(@Nonnull WarlordsPlayer player);
 
     /**
      * Computes the list of lines for the scoreboard
@@ -25,7 +26,7 @@ public interface ScoreboardHandler extends GameMarker {
      * @return The new scoreboard lines
      */
     @Nonnull
-    public List<String> computeLines(@Nonnull WarlordsPlayer player);
+    List<String> computeLines(@Nonnull WarlordsPlayer player);
 
     /**
      * Registers an onchange handler for the scoreboard, scoreboard should call
@@ -36,7 +37,7 @@ public interface ScoreboardHandler extends GameMarker {
      * @return An function to unregister this registration
      */
     @Nonnull
-    public Runnable registerChangeHandler(@Nonnull Consumer<ScoreboardHandler> onChange);
+    Runnable registerChangeHandler(@Nonnull Consumer<ScoreboardHandler> onChange);
 
     /**
      * Gets the group. Scoreboard are typically grouped per owner in the
@@ -46,5 +47,5 @@ public interface ScoreboardHandler extends GameMarker {
      * @implNote Classes processing this should see every null as an unique group
      */
     @Nullable
-    public String getGroup();
+    String getGroup();
 }

@@ -23,15 +23,17 @@ import com.ebicep.warlords.sr.SRCalculator;
 import com.ebicep.warlords.util.*;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 
 import javax.annotation.Nonnull;
-import java.util.*;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 public class PlayingState implements State, TimerDebugAble {
 
@@ -175,7 +177,7 @@ public class PlayingState implements State, TimerDebugAble {
         System.out.println("Private = " + game.getAddons().contains(GameAddon.PRIVATE_GAME));
         System.out.println("Force End = " + (winEvent == null));
         System.out.println("Player Count = " + game.playersCount());
-        System.out.println("Players = " + game.getPlayers().keySet().toString());
+        System.out.println("Players = " + game.getPlayers().keySet());
         System.out.println("Timer = " + timer);
         System.out.println(" ----- GAME END ----- ");
 

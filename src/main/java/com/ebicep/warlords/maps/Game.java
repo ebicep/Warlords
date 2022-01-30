@@ -5,36 +5,39 @@ import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.events.WarlordsGameEvent;
 import com.ebicep.warlords.events.WarlordsGameUpdatedEvent;
 import com.ebicep.warlords.events.WarlordsPointsChangedEvent;
+import com.ebicep.warlords.maps.option.GameFreezeOption;
 import com.ebicep.warlords.maps.option.Option;
 import com.ebicep.warlords.maps.option.marker.GameMarker;
-import com.ebicep.warlords.maps.option.GameFreezeOption;
 import com.ebicep.warlords.maps.option.marker.TeamMarker;
 import com.ebicep.warlords.maps.option.marker.scoreboard.ScoreboardHandler;
-import com.ebicep.warlords.maps.state.*;
+import com.ebicep.warlords.maps.state.ClosedState;
+import com.ebicep.warlords.maps.state.State;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.LocationFactory;
-import static com.ebicep.warlords.util.Utils.collectionHasItem;
-import java.lang.reflect.Method;
 import org.apache.commons.lang.Validate;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
+import org.bukkit.plugin.IllegalPluginAccessException;
+import org.bukkit.plugin.RegisteredListener;
 import org.bukkit.scheduler.BukkitTask;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.bukkit.event.Event;
-import org.bukkit.event.HandlerList;
-import org.bukkit.event.Listener;
-import org.bukkit.plugin.IllegalPluginAccessException;
-import org.bukkit.plugin.RegisteredListener;
+
+import static com.ebicep.warlords.util.Utils.collectionHasItem;
 
 /**
  * An instance of an Warlords game. It depends on a state for its behavior. You
@@ -599,7 +602,7 @@ public final class Game implements Runnable, AutoCloseable {
     // Modified version of {@link org.bukkit.plugin.SimplePluginManager#getEventListeners}
     private HandlerList getEventListeners(Class<? extends Event> type) {
         try {
-            Method method = getRegistrationClass(type).getDeclaredMethod("getHandlerList", new Class[0]);
+            Method method = getRegistrationClass(type).getDeclaredMethod("getHandlerList");
             method.setAccessible(true);
             return (HandlerList) method.invoke(null, new Object[0]);
         } catch (Exception e) {
@@ -610,7 +613,7 @@ public final class Game implements Runnable, AutoCloseable {
     // Modified version of {@link org.bukkit.plugin.SimplePluginManager#getRegistrationClass}
     private Class<? extends Event> getRegistrationClass(Class<? extends Event> clazz) {
         try {
-            clazz.getDeclaredMethod("getHandlerList", new Class[0]);
+            clazz.getDeclaredMethod("getHandlerList");
             return clazz;
         } catch (NoSuchMethodException localNoSuchMethodException) {
             if ((clazz.getSuperclass() != null)

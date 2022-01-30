@@ -8,7 +8,7 @@ public enum CooldownTypes {
 
     ;
 
-    private String name;
+    private final String name;
 
     CooldownTypes(String name) {
         this.name = name;

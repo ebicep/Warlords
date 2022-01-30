@@ -12,7 +12,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 public class GameStartTrait extends Trait {
     public GameStartTrait() {
@@ -65,7 +67,7 @@ public class GameStartTrait extends Trait {
                 .setExpiresTime(System.currentTimeMillis() + 60 * 1000)
                 .setOnResult(result -> {
             if (!result.isSuccess()) {
-                player.sendMessage(ChatColor.RED + "Failed to join game: " + result.toString());
+                player.sendMessage(ChatColor.RED + "Failed to join game: " + result);
             }
         }).queue();
     }

@@ -1,26 +1,28 @@
 package com.ebicep.warlords.commands.debugcommands;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.maps.*;
+import com.ebicep.warlords.maps.GameAddon;
+import com.ebicep.warlords.maps.GameManager;
+import com.ebicep.warlords.maps.GameMap;
+import com.ebicep.warlords.maps.MapCategory;
 import com.ebicep.warlords.party.Party;
 import com.ebicep.warlords.util.Utils;
-import static com.ebicep.warlords.util.Utils.arrayGetItem;
-import static com.ebicep.warlords.util.Utils.toTitleCase;
-import static com.ebicep.warlords.util.Utils.toTitleHumanCase;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import org.bukkit.OfflinePlayer;
+
+import static com.ebicep.warlords.util.Utils.*;
 
 public class GameStartCommand implements TabExecutor {
 
@@ -211,7 +213,7 @@ public class GameStartCommand implements TabExecutor {
                 .setPriority(-10)
                 .queueNow();
         if (!result.isSuccess()) {
-            sender.sendMessage(ChatColor.RED + "Failed to join game: " + result.toString());
+            sender.sendMessage(ChatColor.RED + "Failed to join game: " + result);
         }
         return true;
     }
