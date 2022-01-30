@@ -131,16 +131,24 @@ public class BotManager {
 
         MessageEmbed messageEmbed = eb.build();
         getTextChannelCompsByName(compGamesServerStatusChannel).ifPresent(textChannel -> {
-            if (compStatusMessage != null) {
-                compStatusMessage.delete().queue();
+            if (textChannel.getLatestMessageId().equals(compStatusMessage.getId())) {
+                compStatusMessage.editMessageEmbeds(messageEmbed).queue(m -> compStatusMessage = m);
+            } else {
+                if (compStatusMessage != null) {
+                    compStatusMessage.delete().queue();
+                }
+                textChannel.sendMessageEmbeds(messageEmbed).queue(m -> compStatusMessage = m);
             }
-            textChannel.sendMessageEmbeds(messageEmbed).queue(m -> compStatusMessage = m);
         });
         getTextChannelWL2ByName(wl2ServerStatusChannel).ifPresent(textChannel -> {
-            if (wl2StatusMessage != null) {
-                wl2StatusMessage.delete().queue();
+            if (textChannel.getLatestMessageId().equals(wl2StatusMessage.getId())) {
+                wl2StatusMessage.editMessageEmbeds(messageEmbed).queue(m -> wl2StatusMessage = m);
+            } else {
+                if (wl2StatusMessage != null) {
+                    wl2StatusMessage.delete().queue();
+                }
+                textChannel.sendMessageEmbeds(messageEmbed).queue(m -> wl2StatusMessage = m);
             }
-            textChannel.sendMessageEmbeds(messageEmbed).queue(m -> wl2StatusMessage = m);
         });
 
     }
