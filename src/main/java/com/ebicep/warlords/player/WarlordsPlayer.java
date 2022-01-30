@@ -872,7 +872,7 @@ public final class WarlordsPlayer {
 
     /**
      * @param sender which player sends the message.
-     * @param receiver which player sends the message.
+     * @param receiver which player receives the message.
      * @param healValue heal value of the message.
      * @param ability which ability should the message display.
      * @param isCrit whether if it's a critical hit message.

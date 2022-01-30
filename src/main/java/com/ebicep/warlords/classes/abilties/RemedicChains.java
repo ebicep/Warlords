@@ -25,13 +25,14 @@ public class RemedicChains extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Bind yourself to §e" + alliesAffected + " §7allies near you, forcing them\n" +
-                "§7them to naturally regenerate health as long as\n" +
-                "§7the link is active. When the link expires or when you\n" +
-                "§7are too far away from each other the link breaks.\n" +
-                "§7Healing you and the allies for §a" + format(minDamageHeal) + " §7- §a" + format(maxDamageHeal) + " §7health.\n" +
-                "§7Breaking the link early will only heal the allies for\n" +
-                "§a10% §7of the original amount." +
+        description = "§7Bind yourself to §e" + alliesAffected + " §7allies near you, causing them\n" +
+                "§7them to naturally regenerate health (even when taking\n" +
+                "§7damage) as long as the link is active. Lasts §6" + duration + " §7seconds" +
+                "\n\n" +
+                "§7When the link expires you and the allies\n" +
+                "§7are healed for §a" + format(minDamageHeal) + " §7- §a" + format(maxDamageHeal) + " §7health.\n" +
+                "§7Breaking the link early will only heal the allies\n" +
+                "§7for §a10% §7of the original amount." +
                 "\n\n" +
                 "§7The link will break if you are §e" + linkBreakRadius + " §7blocks apart.";
     }
