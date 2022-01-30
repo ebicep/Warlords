@@ -10,7 +10,7 @@ import com.ebicep.warlords.maps.Game;
  * @implSpec Implementations of gamemarkers *should* design their gamemarkers in
  * a functional way, <strong>if possible</strong>, as this makes it quickly to
  * register in a low line count.
- * @See FunctionalInterface
+ * @see FunctionalInterface
  */
 public interface GameMarker {
 

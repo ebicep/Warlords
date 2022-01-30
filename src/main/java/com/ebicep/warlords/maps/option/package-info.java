@@ -3,6 +3,6 @@
  * that provides the game with more behavior. Some options are really simple,
  * while others provide more functionality.
  *
- * @see Option
+ * @see com.ebicep.warlords.maps.option.Option
  */
 package com.ebicep.warlords.maps.option;

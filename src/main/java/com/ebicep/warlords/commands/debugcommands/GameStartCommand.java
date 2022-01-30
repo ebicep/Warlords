@@ -65,7 +65,7 @@ public class GameStartCommand implements TabExecutor {
                     category = foundCategory;
                     seenMapOrCategory = true;
                 } else if (foundAddon != null) {
-                    if (addon == null) {
+                    if (addon.isEmpty()) {
                         addon = EnumSet.of(foundAddon);
                     } else {
                         addon.add(foundAddon);
@@ -105,7 +105,7 @@ public class GameStartCommand implements TabExecutor {
                     case "addon":
                         GameAddon foundAddon = arrayGetItem(addons, e -> e.name().equalsIgnoreCase(argData));
                         if (foundAddon != null) {
-                            if (addon == null) {
+                            if (addon.isEmpty()) {
                                 addon = EnumSet.of(foundAddon);
                             } else {
                                 addon.add(foundAddon);
@@ -194,7 +194,7 @@ public class GameStartCommand implements TabExecutor {
         }
 
         Optional<Party> party = Warlords.partyManager.getPartyFromAny(((Player) sender).getUniqueId());
-        List<Player> people = party.map(value -> value.getAllPartyPeoplePlayerOnline()).orElseGet(() -> new ArrayList<>(Bukkit.getOnlinePlayers()));
+        List<Player> people = party.map(Party::getAllPartyPeoplePlayerOnline).orElseGet(() -> new ArrayList<>(Bukkit.getOnlinePlayers()));
         if (party.isPresent()) {
             if (!party.get().getPartyLeader().getUuid().equals(((Player) sender).getUniqueId())) {
                 sender.sendMessage(ChatColor.RED + "You are not the party leader");

@@ -4,22 +4,24 @@ import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.option.marker.DebugLocationMarker;
 import com.ebicep.warlords.maps.option.marker.TimerSkipAbleMarker;
-import static com.ebicep.warlords.util.ChatUtils.sendMessage;
 import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.LocationFactory;
 import com.ebicep.warlords.util.PacketUtils;
 import com.ebicep.warlords.util.Utils;
-import static com.ebicep.warlords.util.Utils.iterable;
-import java.util.Arrays;
-import java.util.Map;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Arrays;
+import java.util.Map;
+
+import static com.ebicep.warlords.util.ChatUtils.sendMessage;
+import static com.ebicep.warlords.util.Utils.iterable;
 
 public class GateOption extends AbstractCuboidOption implements  TimerSkipAbleMarker {
 
@@ -155,7 +157,7 @@ public class GateOption extends AbstractCuboidOption implements  TimerSkipAbleMa
     }
 
     @Override
-    public void start(Game game) {
+    public void start(@Nonnull Game game) {
         if (autoDetectShouldBroadcast) {
             for (Option option : game.getOptions()) {
                 if (option instanceof GateOption) {
@@ -214,7 +216,7 @@ public class GateOption extends AbstractCuboidOption implements  TimerSkipAbleMa
 
     @Nullable
     public Boolean shouldBroadcast() {
-        return autoDetectShouldBroadcast == false ? null : shouldBroadcast;
+        return !autoDetectShouldBroadcast ? null : shouldBroadcast;
     }
 
     public void setShouldBroadcast(@Nullable Boolean shouldBroadcast) {

@@ -6,12 +6,14 @@ import com.ebicep.warlords.maps.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.maps.option.marker.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.GameRunnable;
+import org.bukkit.ChatColor;
+
+import javax.annotation.Nonnull;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
-import org.bukkit.ChatColor;
 
 public class BasicScoreboardOption implements Option{
 
@@ -27,8 +29,9 @@ public class BasicScoreboardOption implements Option{
         SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy - kk:mm");
         format.setTimeZone(TimeZone.getTimeZone("EST"));
         SimpleScoreboardHandler simpleScoreboardHandler = new SimpleScoreboardHandler(0, "date") {
+            @Nonnull
             @Override
-            public List<String> computeLines(WarlordsPlayer player) {
+            public List<String> computeLines(@Nonnull WarlordsPlayer player) {
                 return Arrays.asList(
                         format.format(new Date())
                 );
@@ -45,8 +48,9 @@ public class BasicScoreboardOption implements Option{
     
     private static SimpleScoreboardHandler getVersionScoreboard(Game game) {
         return new SimpleScoreboardHandler(Integer.MAX_VALUE, "version") {
+            @Nonnull
             @Override
-            public List<String> computeLines(WarlordsPlayer player) {
+            public List<String> computeLines(@Nonnull WarlordsPlayer player) {
                 return Arrays.asList(ChatColor.YELLOW + Warlords.VERSION);
             }
         };
@@ -55,8 +59,9 @@ public class BasicScoreboardOption implements Option{
     private static SimpleScoreboardHandler getStatsScoreboard(Game game) {
         // TODO trigger scoreboard update when the kills/assists changes
         return new SimpleScoreboardHandler(Integer.MAX_VALUE - 1, "player-stats") {
+            @Nonnull
             @Override
-            public List<String> computeLines(WarlordsPlayer player) {
+            public List<String> computeLines(@Nonnull WarlordsPlayer player) {
                 return Arrays.asList(ChatColor.GREEN.toString() + player.getStats().total().getKills() + ChatColor.RESET + " Kills " +
                     ChatColor.GREEN + player.getStats().total().getAssists() + ChatColor.RESET + " Assists");
             }
@@ -65,8 +70,9 @@ public class BasicScoreboardOption implements Option{
     
     private static SimpleScoreboardHandler getSpecScoreboard(Game game) {
         return new SimpleScoreboardHandler(Integer.MAX_VALUE - 2, "spec") {
+            @Nonnull
             @Override
-            public List<String> computeLines(WarlordsPlayer player) {
+            public List<String> computeLines(@Nonnull WarlordsPlayer player) {
                 return Arrays.asList(ChatColor.WHITE + "Spec: " + ChatColor.GREEN + player.getSpec().getClass().getSimpleName());
             }
         };
