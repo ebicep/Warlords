@@ -41,7 +41,7 @@ public class CrusadersStrike extends AbstractStrikeBase {
                 .aliveTeammatesOfExcludingSelf(wp)
                 .sorted(
                     Comparator.comparing(
-                        (WarlordsPlayer p) -> p.getCooldownManager().hasCooldown(HolyRadiance.class) ? 0 : 1)
+                        (WarlordsPlayer p) -> p.getCooldownManager().hasCooldown(HolyRadianceCrusader.class) ? 0 : 1)
                         .thenComparing(Utils.sortClosestBy(WarlordsPlayer::getLocation, wp.getLocation())
                     ))
                 .limit(2)

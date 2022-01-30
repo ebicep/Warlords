@@ -56,6 +56,9 @@ public class HeartToHeart extends AbstractAbility {
                 HeartToHeart tempHeartToHeart = new HeartToHeart();
                 wp.subtractEnergy(energyCost);
 
+                // remove other instances of vindicate buff to override
+                heartTarget.getCooldownManager().removeCooldown(Vindicate.class);
+                heartTarget.getCooldownManager().removeCooldown(HeartToHeart.class);
                 heartTarget.getCooldownManager().addRegularCooldown("Vindicate Debuff Immunity", "VIND", HeartToHeart.class, tempHeartToHeart, wp, CooldownTypes.BUFF, cooldownManager -> {
                 }, vindDuration * 20);
 
@@ -68,14 +71,14 @@ public class HeartToHeart extends AbstractAbility {
                     public void run() {
                         timer++;
 
-                        if (timer >= 12 || (heartTarget.isDead() || wp.isDead())) {
+                        if (timer >= 8 || (heartTarget.isDead() || wp.isDead())) {
                             this.cancel();
-                            if (!wp.getLocation().getBlock().getType().isSolid() && !wp.getLocation().add(0, 1, 0).getBlock().getType().isSolid()) {
+                            /*if (!wp.getLocation().getBlock().getType().isSolid() && !wp.getLocation().add(0, 1, 0).getBlock().getType().isSolid()) {
                                 return;
-                            }
+                            }*/
                         }
 
-                        double target = timer / 12D;
+                        double target = timer / 8D;
                         Location targetLoc = heartTarget.getLocation();
                         Location newLocation = new Location(
                                 playerLoc.getWorld(),

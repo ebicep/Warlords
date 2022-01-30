@@ -6,7 +6,6 @@ import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
-import com.ebicep.warlords.util.Utils;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -37,41 +36,39 @@ public class Acupressure extends AbstractAbility {
         for (WarlordsPlayer acuTarget : PlayerFilter
                 .entitiesAround(player, acuRange, acuRange, acuRange)
                 .aliveTeammatesOfExcludingSelf(wp)
+                .requireLineOfSight(wp)
                 .lookingAtFirst(wp)
                 .limit(1)
         ) {
-            if (Utils.isLookingAtChain(player, acuTarget.getEntity())) {
+            acuTarget.getCooldownManager().addRegularCooldown("Acupressure", "ACU", Acupressure.class, tempAcupressure, wp, CooldownTypes.BUFF, cooldownManager -> {
+            }, duration * 20);
 
-                acuTarget.getCooldownManager().addRegularCooldown("Acupressure", "ACU", Acupressure.class, tempAcupressure, wp, CooldownTypes.BUFF, cooldownManager -> {
-                }, duration * 20);
+            wp.getCooldownManager().addRegularCooldown("Acupressure", "ACU", Acupressure.class, tempAcupressure, wp, CooldownTypes.BUFF, cooldownManager -> {
+            }, duration * 20);
 
-                wp.getCooldownManager().addRegularCooldown("Acupressure", "ACU", Acupressure.class, tempAcupressure, wp, CooldownTypes.BUFF, cooldownManager -> {
-                }, duration * 20);
-
-                for (Player player1 : player.getWorld().getPlayers()) {
-                    player1.playSound(player.getLocation(), "shaman.chainlightning.impact", 2, 0.1f);
-                    player1.playSound(player.getLocation(), Sound.BLAZE_DEATH, 2, 0.6f);
-                }
-
-                wp.getGame().getGameTasks().put(
-                        new BukkitRunnable() {
-                            @Override
-                            public void run() {
-                                if (wp.getCooldownManager().hasCooldown(tempAcupressure)) {
-                                    Location lineLocation = player.getLocation().add(0, 1, 0);
-                                    lineLocation.setDirection(lineLocation.toVector().subtract(acuTarget.getLocation().add(0, 1, 0).toVector()).multiply(-1));
-                                    for (int i = 0; i < Math.floor(player.getLocation().distance(acuTarget.getLocation())) * 2; i++) {
-                                        ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(255, 170, 0), lineLocation, 500);
-                                        lineLocation.add(lineLocation.getDirection().multiply(.5));
-                                    }
-                                } else {
-                                    this.cancel();
-                                }
-                            }
-                        }.runTaskTimer(Warlords.getInstance(), 0, 5),
-                        System.currentTimeMillis()
-                );
+            for (Player player1 : player.getWorld().getPlayers()) {
+                player1.playSound(player.getLocation(), "shaman.chainlightning.impact", 2, 0.1f);
+                player1.playSound(player.getLocation(), Sound.BLAZE_DEATH, 2, 0.6f);
             }
+
+            wp.getGame().getGameTasks().put(
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            if (wp.getCooldownManager().hasCooldown(tempAcupressure)) {
+                                Location lineLocation = player.getLocation().add(0, 1, 0);
+                                lineLocation.setDirection(lineLocation.toVector().subtract(acuTarget.getLocation().add(0, 1, 0).toVector()).multiply(-1));
+                                for (int i = 0; i < Math.floor(player.getLocation().distance(acuTarget.getLocation())) * 2; i++) {
+                                    ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(255, 170, 0), lineLocation, 500);
+                                    lineLocation.add(lineLocation.getDirection().multiply(.5));
+                                }
+                            } else {
+                                this.cancel();
+                            }
+                        }
+                    }.runTaskTimer(Warlords.getInstance(), 0, 5),
+                    System.currentTimeMillis()
+            );
 
             return true;
         }

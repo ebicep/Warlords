@@ -38,30 +38,15 @@ public class RemedicChains extends AbstractAbility {
 
     @Override
     public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
-        wp.subtractEnergy(energyCost);
         RemedicChains tempRemedicChain = new RemedicChains();
 
-        for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "rogue.remedicchains.activation", 2, 0.5f);
-        }
-
-        wp.getCooldownManager().addRegularCooldown(
-                "Remedic Chains",
-                "REMEDIC",
-                RemedicChains.class,
-                tempRemedicChain,
-                wp,
-                CooldownTypes.ABILITY,
-                cooldownManager -> wp.addHealingInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false, false),
-                duration * 20
-        );
-
         int targethit = 0;
+
         for (WarlordsPlayer chainTarget : PlayerFilter
                 .entitiesAround(player, 10, 10, 10)
                 .aliveTeammatesOfExcludingSelf(wp)
                 .closestFirst(wp)
-                .limit(2)
+                .limit(alliesAffected)
         ) {
             chainTarget.getCooldownManager().addRegularCooldown(
                     "Remedic Chains",
@@ -82,7 +67,6 @@ public class RemedicChains extends AbstractAbility {
 
                     @Override
                     public void run() {
-                        Runnable cancelSpeed = chainTarget.getSpeed().addSpeedModifier("Remedic Chains", 20, duration * 20, "BASE");
                         boolean outOfRange = wp.getLocation().distanceSquared(chainTarget.getLocation()) > linkBreakRadius * linkBreakRadius;
 
                         if (wp.getCooldownManager().hasCooldown(tempRemedicChain)) {
@@ -97,18 +81,16 @@ public class RemedicChains extends AbstractAbility {
                             if (outOfRange) {
                                 chainTarget.getCooldownManager().removeCooldown(tempRemedicChain);
                                 chainTarget.addHealingInstance(wp, name, minDamageHeal * 0.1f, maxDamageHeal * 0.1f, critChance, critMultiplier, false, false);
-                                chainTarget.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.RED + " You left the link range early!");
+                                chainTarget.sendMessage(WarlordsPlayer.GIVE_ARROW + ChatColor.RED + " You left the link range early!");
                                 this.cancel();
                             } else {
                                 chainTarget.setRegenTimer(0);
                             }
 
                             if (chainTarget.isDead()) {
-                                cancelSpeed.run();
                                 this.cancel();
                             }
                         } else {
-                            cancelSpeed.run();
                             if (!outOfRange && chainTarget.isAlive()) {
                                 chainTarget.addHealingInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false, false);
                             }
@@ -120,6 +102,24 @@ public class RemedicChains extends AbstractAbility {
                         }
                     }
                 }.runTaskTimer(Warlords.getInstance(), 0, 8), System.currentTimeMillis());
+        }
+
+        if (targethit >= 1) {
+            for (Player player1 : player.getWorld().getPlayers()) {
+                player1.playSound(player.getLocation(), "rogue.remedicchains.activation", 2, 0.5f);
+            }
+
+            wp.subtractEnergy(energyCost);
+            wp.getCooldownManager().addRegularCooldown(
+                    "Remedic Chains",
+                    "REMEDIC",
+                    RemedicChains.class,
+                    tempRemedicChain,
+                    wp,
+                    CooldownTypes.ABILITY,
+                    cooldownManager -> wp.addHealingInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false, false),
+                    duration * 20
+            );
         }
 
         return targethit >= 1;

@@ -50,10 +50,9 @@ public class DamageHealCircle {
         } else if (name.equals("Incendiary Curse")) {
             this.circle.addEffect(new AreaEffect(0, ParticleEffect.FLAME).particlesPerSurface(0.5));
             this.circle.addEffect(new AreaEffect(0, ParticleEffect.CRIT).particlesPerSurface(0.3));
-        } else if (name.equals("Healing Remedy")) {
+        } else if (name.equals("Healing Cure")) {
             this.circle.addEffect(new CircumferenceEffect(ParticleEffect.VILLAGER_HAPPY, ParticleEffect.REDSTONE));
-            this.circle.addEffect(new LineEffect(this.location.clone().add(0, 1, 0), ParticleEffect.FIREWORKS_SPARK));
-            this.circle.addEffect(new DoubleLineEffect(ParticleEffect.FIREWORKS_SPARK, ParticleEffect.REDSTONE));
+            this.circle.addEffect(new AreaEffect(1, ParticleEffect.DRIP_WATER).particlesPerSurface(0.025));
         } else {
             Bukkit.broadcastMessage("§cNotice, no particle effect definition for " + this.name + ", no effect is played!");
         }

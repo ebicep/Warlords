@@ -2030,23 +2030,25 @@ public final class WarlordsPlayer {
 
     public void setVelocity(org.bukkit.util.Vector v) {
         if (cooldownManager.hasCooldownFromName("KB Resistance")) {
-            setVelocity(v.multiply(1), true);
-        } else if (cooldownManager.hasCooldownFromName("KB Increase")) {
-            setVelocity(v.multiply(1.5), true);
-        } else {
-            setVelocity(v, true);
+            v.multiply(0.75);
         }
+        if (cooldownManager.hasCooldownFromName("KB Increase")) {
+            v.multiply(1.5);
+        }
+
+        setVelocity(v, true);
     }
 
     public void setVelocity(org.bukkit.util.Vector v, boolean kbAfterHorse) {
         if ((kbAfterHorse || this.entity.getVehicle() == null)) {
             if (cooldownManager.hasCooldownFromName("KB Resistance")) {
-                this.entity.setVelocity(v.multiply(0.75));
-            } else if (cooldownManager.hasCooldownFromName("KB Increase")) {
-                this.entity.setVelocity(v.multiply(1.5));
-            } else {
-                this.entity.setVelocity(v);
+                v.multiply(0.75);
             }
+            if (cooldownManager.hasCooldownFromName("KB Increase")) {
+                v.multiply(1.5);
+            }
+
+            this.entity.setVelocity(v);
         }
     }
 
