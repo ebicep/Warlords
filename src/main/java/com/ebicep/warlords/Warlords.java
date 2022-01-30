@@ -19,8 +19,10 @@ import com.ebicep.warlords.commands.debugcommands.*;
 import com.ebicep.warlords.commands.miscellaneouscommands.*;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.FutureMessageManager;
+import com.ebicep.warlords.database.cache.MultipleCacheResolver;
 import com.ebicep.warlords.database.configuration.ApplicationConfiguration;
 import com.ebicep.warlords.database.leaderboards.LeaderboardCommand;
+import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.menu.MenuEventListener;
@@ -356,6 +358,14 @@ public class Warlords extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        try {
+            for (String cacheName : MultipleCacheResolver.playersCacheManager.getCacheNames()) {
+                Objects.requireNonNull(MultipleCacheResolver.playersCacheManager.getCache(cacheName)).clear();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         try {
             // Pre-caution
             for (Player player : Bukkit.getOnlinePlayers()) {
