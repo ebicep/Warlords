@@ -56,6 +56,12 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
     @Override
+    public void delete(DatabasePlayer player, PlayersCollections collection) {
+        playerRepository.delete(player, collection);
+        System.out.println("Deleted: - " + player + " in " + collection);
+    }
+
+    @Override
     public void deleteAll() {
         playerRepository.deleteAll();
     }

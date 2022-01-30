@@ -23,6 +23,8 @@ public interface PlayerService {
 
     void delete(DatabasePlayer player);
 
+    void delete(DatabasePlayer player, PlayersCollections collection);
+
     void deleteAll();
 
     void deleteAll(PlayersCollections collection);

@@ -3,13 +3,11 @@ package com.ebicep.warlords.commands.debugcommands;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.BaseCommand;
 import com.ebicep.warlords.maps.Game;
-import com.ebicep.warlords.maps.GameAddon;
 import com.ebicep.warlords.maps.state.TimerDebugAble;
 import com.ebicep.warlords.menu.DebugMenu;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import java.util.Locale;
 import org.apache.commons.lang.math.NumberUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -19,8 +17,6 @@ import static com.ebicep.warlords.commands.BaseCommand.requireWarlordsPlayerInPr
 import static com.ebicep.warlords.commands.BaseCommand.requireGame;
 
 public class DebugCommand implements CommandExecutor {
-    
-    
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {

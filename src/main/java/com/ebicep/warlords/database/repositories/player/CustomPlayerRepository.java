@@ -18,6 +18,8 @@ public interface CustomPlayerRepository {
 
     void save(DatabasePlayer player, PlayersCollections collection);
 
+    void delete(DatabasePlayer player, PlayersCollections collection);
+
     void deleteAll(PlayersCollections collection);
 
     DatabasePlayer findOne(Query query, PlayersCollections collection);

@@ -46,13 +46,12 @@ public class SpawnTestDummyCommand implements CommandExecutor {
                 OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer("testdummy");
                 WarlordsPlayer testDummy = new WarlordsPlayer(offlinePlayer, player.getGameState(), team, new PlayerSettings());
                 Warlords.addPlayer(testDummy);
-                if (args.length >= 2) {
-                    if (args[1].equalsIgnoreCase("false")) {
-                        assert testDummy != null;
-                        testDummy.setTakeDamage(false);
-                    } else {
-                        sender.sendMessage("§cInvalid arguments! Valid arguments: [true, false]");
-                    }
+                if (args.length >= 2 && args[1].equalsIgnoreCase("false")) {
+                    testDummy.setTakeDamage(false);
+                } else if (args.length >= 2 && args[1].equalsIgnoreCase("true")) {
+                    testDummy.setTakeDamage(true);
+                } else {
+                    sender.sendMessage("§cInvalid arguments! Valid arguments: [true, false]");
                 }
                 testDummy.teleport(player.getLocation());
                 //SKULL
@@ -62,7 +61,7 @@ public class SpawnTestDummyCommand implements CommandExecutor {
                 playerSkull.setItemMeta(skullMeta);
                 Warlords.getPlayerHeads().put(offlinePlayer.getUniqueId(), CraftItemStack.asNMSCopy(playerSkull));
             } else {
-                sender.sendMessage("§cUnable to find team named " + teamString);
+                sender.sendMessage("§cUnable to find team named " + teamString + ", valid options: " + TeamMarker.getTeams(player.getGame()));
                 return true;
             }
         }

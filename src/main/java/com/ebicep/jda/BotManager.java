@@ -83,14 +83,16 @@ public class BotManager {
         return optionalTextChannel;
     }
 
-    public static void sendMessageToNotificationChannel(String message, boolean sendToWL2Server) {
+    public static void sendMessageToNotificationChannel(String message, boolean sendToCompServer, boolean sendToWL2Server) {
         if (numberOfMessagesSentLast30Sec > 15) {
             return;
         }
         if (!Warlords.serverIP.equals("51.81.49.127")) {
             return;
         }
-        getTextChannelCompsByName(compGamesServerStatusChannel).ifPresent(textChannel -> textChannel.sendMessage(message).queue());
+        if (sendToCompServer) {
+            getTextChannelCompsByName(compGamesServerStatusChannel).ifPresent(textChannel -> textChannel.sendMessage(message).queue());
+        }
         if (sendToWL2Server) {
             getTextChannelWL2ByName(wl2ServerStatusChannel).ifPresent(textChannel -> textChannel.sendMessage(message).queue());
         }
@@ -141,15 +143,21 @@ public class BotManager {
         getTextChannelCompsByName(compGamesServerStatusChannel).ifPresent(textChannel -> {
             if (compStatusMessage == null) {
                 textChannel.sendMessageEmbeds(messageEmbed).queue(m -> compStatusMessage = m);
-            } else {
+            } else if (textChannel.getLatestMessageId().equals(compStatusMessage.getId())) {
                 compStatusMessage.editMessageEmbeds(messageEmbed).queue(m -> compStatusMessage = m);
+            } else {
+                compStatusMessage.delete().queue();
+                textChannel.sendMessageEmbeds(messageEmbed).queue(m -> compStatusMessage = m);
             }
         });
         getTextChannelWL2ByName(wl2ServerStatusChannel).ifPresent(textChannel -> {
             if (wl2StatusMessage == null) {
                 textChannel.sendMessageEmbeds(messageEmbed).queue(m -> wl2StatusMessage = m);
-            } else {
+            } else if (textChannel.getLatestMessageId().equals(wl2StatusMessage.getId())) {
                 wl2StatusMessage.editMessageEmbeds(messageEmbed).queue(m -> wl2StatusMessage = m);
+            } else {
+                wl2StatusMessage.delete().queue();
+                textChannel.sendMessageEmbeds(messageEmbed).queue(m -> wl2StatusMessage = m);
             }
         });
 

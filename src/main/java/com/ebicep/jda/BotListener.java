@@ -46,14 +46,14 @@ public class BotListener extends ListenerAdapter implements Listener {
         BotManager.sendStatusMessage(false);
 
         if (BotManager.getCompGamesServer() == null) return;
-        Warlords.newChain()
-                .asyncFirst(() -> BotManager.getCompGamesServer().findMembers(m -> m.getEffectiveName().equalsIgnoreCase(player.getName())).get())
-                .asyncLast(members -> {
-                    if (!members.isEmpty()) {
-                        Member member = members.get(0);
-                        BotManager.getCompGamesServer().addRoleToMember(member, Objects.requireNonNull(BotManager.jda.getRoleById("912620490877706260"))).queue();
-                    }
-                }).execute();
+//        Warlords.newChain()
+//                .asyncFirst(() -> BotManager.getCompGamesServer().findMembers(m -> m.getEffectiveName().equalsIgnoreCase(player.getName())).get())
+//                .asyncLast(members -> {
+//                    if (!members.isEmpty()) {
+//                        Member member = members.get(0);
+//                        BotManager.getCompGamesServer().addRoleToMember(member, Objects.requireNonNull(BotManager.jda.getRoleById("912620490877706260"))).queue();
+//                    }
+//                }).execute();
     }
 
     @EventHandler
@@ -62,14 +62,14 @@ public class BotListener extends ListenerAdapter implements Listener {
         BotManager.sendStatusMessage(true);
 
         if (BotManager.getCompGamesServer() == null) return;
-        Warlords.newChain()
-                .asyncFirst(() -> BotManager.getCompGamesServer().findMembers(m -> m.getEffectiveName().equalsIgnoreCase(player.getName())).get())
-                .asyncLast(members -> {
-                    if (!members.isEmpty()) {
-                        Member member = members.get(0);
-                        BotManager.getCompGamesServer().removeRoleFromMember(member, Objects.requireNonNull(BotManager.jda.getRoleById("912620490877706260"))).queue();
-                    }
-                }).execute();
+//        Warlords.newChain()
+//                .asyncFirst(() -> BotManager.getCompGamesServer().findMembers(m -> m.getEffectiveName().equalsIgnoreCase(player.getName())).get())
+//                .asyncLast(members -> {
+//                    if (!members.isEmpty()) {
+//                        Member member = members.get(0);
+//                        BotManager.getCompGamesServer().removeRoleFromMember(member, Objects.requireNonNull(BotManager.jda.getRoleById("912620490877706260"))).queue();
+//                    }
+//                }).execute();
     }
 
     @Override

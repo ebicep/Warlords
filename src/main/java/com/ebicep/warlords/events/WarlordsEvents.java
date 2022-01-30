@@ -161,7 +161,7 @@ public class WarlordsEvents implements Listener {
             ChatUtils.sendCenteredMessage(player, ChatColor.GREEN + "/hotkeymode " + ChatColor.GOLD + "to change your hotkey mode.");
             ChatUtils.sendCenteredMessage(player, ChatColor.GOLD + "Click the Nether Star or do " + ChatColor.GREEN + "/menu" + ChatColor.GOLD + " to open the selection menu.");
             ChatUtils.sendCenteredMessage(player, "");
-            ChatUtils.sendCenteredMessage(player, ChatColor.GOLD + "Make sure to join our discord if you wish to stay up-to-date with our most recent patches, interact with our community and make bug reports or game suggestions at: " + ChatColor.RED + "§ldiscord.gg/566K5PQz");
+            ChatUtils.sendCenteredMessage(player, ChatColor.GOLD + "Make sure to join our discord if you wish to stay up-to-date with our most recent patches, interact with our community and make bug reports or game suggestions at: " + ChatColor.RED + "§ldiscord.gg/GWPAx9sEG7");
             ChatUtils.sendCenteredMessage(player, "");
             ChatUtils.sendCenteredMessage(player, ChatColor.GOLD + "You may download our resource pack at: " + ChatColor.RED + "§lhttps://bit.ly/3285WkL");
             ChatUtils.sendCenteredMessage(player, "");
@@ -179,6 +179,7 @@ public class WarlordsEvents implements Listener {
                     .getOrDefault(selectedClass, Weapons.FELFLAME_BLADE).item)).name("§aWeapon Skin Preview")
                     .lore("")
                     .get());
+
             if (player.hasPermission("warlords.game.debug")) {
                 player.getInventory().setItem(3, new ItemBuilder(Material.EMERALD).name("§aDebug Menu").get());
             }
