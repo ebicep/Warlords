@@ -211,6 +211,7 @@ public final class WarlordsPlayer {
             this.getEntity().removePotionEffect(PotionEffectType.INVISIBILITY);
             updateArmor();
         }
+
         //crit
         float damageValue = (int) ((Math.random() * (max - min)) + min);
         int crit = (int) ((Math.random() * (100)));
@@ -418,6 +419,7 @@ public final class WarlordsPlayer {
             List<ArcaneShield> arcaneShields = new CooldownFilter<>(this, RegularCooldown.class)
                     .filterCooldownClassAndMapToObjectsOfClass(ArcaneShield.class)
                     .collect(Collectors.toList());
+
             if (!arcaneShields.isEmpty() && isEnemy(attacker) && !HammerOfLight.standingInHammer(attacker, entity)) {
                 ArcaneShield arcaneShield = arcaneShields.get(0);
                 //adding dmg to shield
@@ -524,23 +526,7 @@ public final class WarlordsPlayer {
                         debt = true;
                     }
 
-                    if (isCrit) {
-                        if (isMeleeHit) {
-                            sendMessage(GIVE_ARROW + ChatColor.GRAY + " " + attacker.getName() + " hit you for " + ChatColor.RED + "§l" + Math.round(damageValue) + "! " + ChatColor.GRAY + "critical melee damage.");
-                            attacker.sendMessage(RECEIVE_ARROW + ChatColor.GRAY + " " + "You hit " + name + " for " + ChatColor.RED + "§l" + Math.round(damageValue) + "! " + ChatColor.GRAY + "critical melee damage.");
-                        } else {
-                            sendMessage(GIVE_ARROW + ChatColor.GRAY + " " + attacker.getName() + "'s " + ability + " hit you for " + ChatColor.RED + "§l" + Math.round(damageValue) + "! " + ChatColor.GRAY + "critical damage.");
-                            attacker.sendMessage(RECEIVE_ARROW + ChatColor.GRAY + " " + "Your " + ability + " hit " + name + " for " + ChatColor.RED + "§l" + Math.round(damageValue) + "! " + ChatColor.GRAY + "critical damage.");
-                        }
-                    } else {
-                        if (isMeleeHit) {
-                            sendMessage(GIVE_ARROW + ChatColor.GRAY + " " + attacker.getName() + " hit you for " + ChatColor.RED + Math.round(damageValue) + " " + ChatColor.GRAY + "melee damage.");
-                            attacker.sendMessage(RECEIVE_ARROW + ChatColor.GRAY + " " + "You hit " + name + " for " + ChatColor.RED + Math.round(damageValue) + " " + ChatColor.GRAY + "melee damage.");
-                        } else {
-                            sendMessage(GIVE_ARROW + ChatColor.GRAY + " " + attacker.getName() + "'s " + ability + " hit you for " + ChatColor.RED + Math.round(damageValue) + " " + ChatColor.GRAY + "damage.");
-                            attacker.sendMessage(RECEIVE_ARROW + ChatColor.GRAY + " " + "Your " + ability + " hit " + name + " for " + ChatColor.RED + Math.round(damageValue) + " " + ChatColor.GRAY + "damage.");
-                        }
-                    }
+                    sendDamageMessage(attacker, this, ability, damageValue, isCrit, isMeleeHit);
 
                     // Repentance
                     if (spec instanceof Spiritguard) {
@@ -816,7 +802,7 @@ public final class WarlordsPlayer {
 
             if (healValue != 0) {
                 // Displays the healing message.
-                sendHealingMessage(this, healValue, ability, isCrit, isLastStandFromShield);
+                sendHealingMessage(this, healValue, ability, isCrit, isLastStandFromShield, false);
                 health += healValue;
                 addHealing(healValue, gameState.flags().hasFlag(this));
 
@@ -841,14 +827,9 @@ public final class WarlordsPlayer {
 
                 if (healValue < 0) return;
 
+                boolean isOverheal = maxHealth > this.maxHealth && healValue + this.health > this.maxHealth;
                 if (healValue != 0) {
-                    if (isCrit) {
-                        sendMessage(ChatColor.GREEN + "\u00AB" + ChatColor.GRAY + " " + attacker.getName() + "'s " + ability + " critically healed you for " + ChatColor.GREEN + "§l" + Math.round(healValue) + "! " + ChatColor.GRAY + "health.");
-                        attacker.sendMessage(RECEIVE_ARROW + ChatColor.GRAY + " " + "Your " + ability + " critically healed " + name + " for " + ChatColor.GREEN + "§l" + Math.round(healValue) + "! " + ChatColor.GRAY + "health.");
-                    } else {
-                        sendMessage(ChatColor.GREEN + "\u00AB" + ChatColor.GRAY + " " + attacker.getName() + "'s " + ability + " healed for " + ChatColor.GREEN + "" + Math.round(healValue) + " " + ChatColor.GRAY + "health.");
-                        attacker.sendMessage(RECEIVE_ARROW + ChatColor.GRAY + " " + "Your " + ability + " healed " + name + " for " + ChatColor.GREEN + "" + Math.round(healValue) + " " + ChatColor.GRAY + "health.");
-                    }
+                    sendHealingMessage(attacker, this, healValue, ability, isCrit, isLastStandFromShield, isOverheal);
                 }
 
                 health += healValue;
@@ -868,24 +849,139 @@ public final class WarlordsPlayer {
      * @param isCrit whether if it's a critical hit message.
      * @param isLastStandFromShield whether the message is last stand healing.
      */
-    private void sendHealingMessage(@Nonnull WarlordsPlayer player, float healValue, String ability, boolean isCrit, boolean isLastStandFromShield) {
-        StringBuilder builder = new StringBuilder();
-        builder.append(RECEIVE_ARROW).append(ChatColor.GRAY).append(" Your ").append(ability);
+    private void sendHealingMessage(@Nonnull WarlordsPlayer player, float healValue, String ability, boolean isCrit, boolean isLastStandFromShield, boolean isOverHeal) {
+        StringBuilder ownFeed = new StringBuilder();
+        ownFeed.append(RECEIVE_ARROW).append(ChatColor.GRAY)
+                .append(" Your ").append(ability);
         if (isCrit) {
-            builder.append(" critically");
+            ownFeed.append(" critically");
         }
-        builder.append(" healed you for ").append(ChatColor.GREEN);
+        ownFeed.append(" healed you for ").append(ChatColor.GREEN);
         if (isCrit) {
-            builder.append("§l");
+            ownFeed.append("§l");
         }
-        builder.append(Math.round(healValue));
+        ownFeed.append(Math.round(healValue));
         if (isLastStandFromShield) {
-            builder.append(" Absorbed!");
+            ownFeed.append(" Absorbed!");
         }
-        builder.append(ChatColor.GRAY).append(" health");
-        builder.append(isCrit ? "!" : ".");
+        ownFeed.append(ChatColor.GRAY).append(" health");
+        ownFeed.append(isCrit ? "!" : ".");
 
-        player.sendMessage(builder.toString());
+        player.sendMessage(ownFeed.toString());
+    }
+
+    /**
+     * @param sender which player sends the message.
+     * @param receiver which player sends the message.
+     * @param healValue heal value of the message.
+     * @param ability which ability should the message display.
+     * @param isCrit whether if it's a critical hit message.
+     * @param isLastStandFromShield whether the message is last stand healing.
+     * @param isOverHeal whether the message is overhealing.
+     */
+    private void sendHealingMessage(@Nonnull WarlordsPlayer sender, @Nonnull WarlordsPlayer receiver, float healValue, String ability, boolean isCrit, boolean isLastStandFromShield, boolean isOverHeal) {
+        // Own Message
+        StringBuilder ownFeed = new StringBuilder();
+        ownFeed.append(RECEIVE_ARROW).append(ChatColor.GRAY)
+                .append(" Your ").append(ability);
+        if (isCrit) {
+            ownFeed.append(" critically");
+        }
+        if (isOverHeal) {
+            ownFeed.append(" overhealed " ).append(name).append(" for ").append(ChatColor.GREEN);
+        } else {
+            ownFeed.append(" healed " ).append(name).append(" for ").append(ChatColor.GREEN);
+        }
+        if (isCrit) {
+            ownFeed.append("§l");
+        }
+        ownFeed.append(Math.round(healValue));
+        if (isLastStandFromShield) {
+            ownFeed.append(" Absorbed!");
+        }
+        ownFeed.append(ChatColor.GRAY).append(" health");
+        ownFeed.append(isCrit ? "!" : ".");
+
+        sender.sendMessage(ownFeed.toString());
+
+        // Ally Message
+        StringBuilder allyFeed = new StringBuilder();
+        allyFeed.append(RECEIVE_ARROW).append(ChatColor.GRAY).append(" ").append(sender.getName())
+                .append("'s ").append(ability);
+        if (isCrit) {
+            allyFeed.append(" critically");
+        }
+        if (isOverHeal) {
+            allyFeed.append(" overhealed you for ").append(ChatColor.GREEN);
+        } else {
+            allyFeed.append(" healed you for ").append(ChatColor.GREEN);
+        }
+        if (isCrit) {
+            allyFeed.append("§l");
+        }
+        allyFeed.append(Math.round(healValue));
+        if (isLastStandFromShield) {
+            allyFeed.append(" Absorbed!");
+        }
+        allyFeed.append(ChatColor.GRAY).append(" health");
+        allyFeed.append(isCrit ? "!" : ".");
+
+        receiver.sendMessage(allyFeed.toString());
+    }
+
+    /**
+     * @param sender which player sends the message.
+     * @param receiver which player should receive the message.
+     * @param ability what is the damage ability.
+     * @param damageValue what is the damage value.
+     * @param isCrit whether if it's a critical hit message.
+     * @param isMeleeHit whether if it's a melee hit.
+     */
+    private void sendDamageMessage(@Nonnull WarlordsPlayer sender, @Nonnull WarlordsPlayer receiver, String ability, float damageValue, boolean isCrit, boolean isMeleeHit) {
+        // Receiver feed
+        StringBuilder enemyFeed = new StringBuilder();
+        enemyFeed.append(GIVE_ARROW).append(ChatColor.GRAY).append(" ").append(sender.getName());
+        if (!isMeleeHit) {
+            enemyFeed.append("'s ").append(ability);
+        }
+        enemyFeed.append(" hit you for ").append(ChatColor.RED);
+        if (isCrit) {
+            enemyFeed.append("§l");
+        }
+        enemyFeed.append(Math.round(damageValue));
+        if (isCrit) {
+            enemyFeed.append("! ").append(ChatColor.GRAY).append("critical");
+        }
+        if (isMeleeHit) {
+            enemyFeed.append(ChatColor.GRAY).append(" melee");
+        }
+        enemyFeed.append(ChatColor.GRAY).append(" damage.");
+
+        receiver.sendMessage(enemyFeed.toString());
+
+        // Sender feed
+        StringBuilder ownFeed = new StringBuilder();
+        ownFeed.append(RECEIVE_ARROW).append(ChatColor.GRAY).append(" ");
+        if (isMeleeHit) {
+            ownFeed.append("You hit ");
+        } else {
+            ownFeed.append("Your ").append(ability).append(" hit ");
+        }
+        ownFeed.append(name);
+        ownFeed.append(" for ").append(ChatColor.RED);
+        if (isCrit) {
+            ownFeed.append("§l");
+        }
+        ownFeed.append(Math.round(damageValue));
+        if (isCrit) {
+            ownFeed.append("! ").append(ChatColor.GRAY).append("critical");
+        }
+        if (isMeleeHit) {
+            ownFeed.append(ChatColor.GRAY).append(" melee");
+        }
+        ownFeed.append(ChatColor.GRAY).append(" damage.");
+
+        sender.sendMessage(ownFeed.toString());
     }
 
     /**

@@ -2,12 +2,12 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.classes.internal.Overheal;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.Matrix4d;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
-import com.ebicep.warlords.util.Utils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -30,7 +30,7 @@ public class WaterBreath extends AbstractAbility {
                 "\n\n" +
                 "§7Water Breath can overheal allies for up to\n" +
                 "§a10% §7of their max health as bonus health\n" +
-                "§7for §6" + Utils.OVERHEAL_DURATION + " §7seconds.";
+                "§7for §6" + Overheal.OVERHEAL_DURATION + " §7seconds.";
     }
 
     @Override
@@ -58,10 +58,10 @@ public class WaterBreath extends AbstractAbility {
                         target.getCooldownManager().removeDebuffCooldowns();
                         target.getSpeed().removeSlownessModifiers();
                         target.addHealingInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false, false);
-                        target.getCooldownManager().removeCooldown(Utils.OVERHEAL_MARKER);
+                        target.getCooldownManager().removeCooldown(Overheal.OVERHEAL_MARKER);
                         target.getCooldownManager().addRegularCooldown("Overheal",
-                                "OVERHEAL",null, Utils.OVERHEAL_MARKER, wp, CooldownTypes.BUFF, cooldownManager -> {
-                                }, Utils.OVERHEAL_DURATION * 20);
+                                "OVERHEAL", Overheal.class, Overheal.OVERHEAL_MARKER, wp, CooldownTypes.BUFF, cooldownManager -> {
+                                }, Overheal.OVERHEAL_DURATION * 20);
                     } else {
                         final Location loc = target.getLocation();
                         final Vector v = player.getLocation().toVector().subtract(loc.toVector()).normalize().multiply(-1.1).setY(0.2);

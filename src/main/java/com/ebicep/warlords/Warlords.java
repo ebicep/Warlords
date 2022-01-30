@@ -14,6 +14,7 @@ import com.ebicep.jda.BotCommands;
 import com.ebicep.jda.BotListener;
 import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.classes.abilties.*;
+import com.ebicep.warlords.classes.internal.Overheal;
 import com.ebicep.warlords.commands.debugcommands.*;
 import com.ebicep.warlords.commands.miscellaneouscommands.*;
 import com.ebicep.warlords.database.DatabaseManager;
@@ -510,11 +511,11 @@ public class Warlords extends JavaPlugin {
                         }
 
                         // Checks whether the player has overheal active and is full health or not.
-                        boolean hasOverhealCooldown = wp.getCooldownManager().hasCooldown(Utils.OVERHEAL_MARKER);
+                        boolean hasOverhealCooldown = wp.getCooldownManager().hasCooldown(Overheal.OVERHEAL_MARKER);
                         boolean hasTooMuchHealth = wp.getHealth() > wp.getMaxHealth();
 
                         if (hasOverhealCooldown && !hasTooMuchHealth) {
-                            wp.getCooldownManager().removeCooldown(Utils.OVERHEAL_MARKER);
+                            wp.getCooldownManager().removeCooldown(Overheal.OVERHEAL_MARKER);
                         }
 
                         if (!hasOverhealCooldown && hasTooMuchHealth) {

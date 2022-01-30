@@ -2,10 +2,10 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.classes.internal.Overheal;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.PlayerFilter;
-import com.ebicep.warlords.util.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -36,7 +36,7 @@ public class HealingRain extends AbstractAbility {
                 "\n\n" +
                 "§7Healing Rain can overheal allies for up to\n" +
                 "§a10% §7of their max health as bonus health\n" +
-                "§7for §6" + Utils.OVERHEAL_DURATION + " §7seconds.";
+                "§7for §6" + Overheal.OVERHEAL_DURATION + " §7seconds.";
     }
 
     @Override
@@ -95,10 +95,10 @@ public class HealingRain extends AbstractAbility {
                                                 false);
 
                                         if (teammateInRain != wp) {
-                                            teammateInRain.getCooldownManager().removeCooldown(Utils.OVERHEAL_MARKER);
+                                            teammateInRain.getCooldownManager().removeCooldown(Overheal.OVERHEAL_MARKER);
                                             teammateInRain.getCooldownManager().addRegularCooldown("Overheal",
-                                                    "OVERHEAL", null, Utils.OVERHEAL_MARKER, wp, CooldownTypes.BUFF, cooldownManager -> {
-                                                    }, Utils.OVERHEAL_DURATION * 20);
+                                                    "OVERHEAL", Overheal.class, Overheal.OVERHEAL_MARKER, wp, CooldownTypes.BUFF, cooldownManager -> {
+                                                    }, Overheal.OVERHEAL_DURATION * 20);
                                             ;
                                         }
                                     });

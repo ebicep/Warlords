@@ -41,9 +41,6 @@ public class Utils {
             new ItemStack(Material.WOOL, 1, (byte) 6),
     };
 
-    public static final Object OVERHEAL_MARKER = new Object();
-    public static final int OVERHEAL_DURATION = 15;
-
     public static double getDotToPlayer(LivingEntity player1, LivingEntity player2, double yIncrease) {
         return getDotToLocation(new LocationBuilder(player1.getEyeLocation()).addY(yIncrease).get(), player2.getEyeLocation());
     }

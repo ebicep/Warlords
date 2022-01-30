@@ -1,11 +1,11 @@
 package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.classes.internal.AbstractProjectileBase;
-import com.ebicep.warlords.player.cooldowns.CooldownTypes;
+import com.ebicep.warlords.classes.internal.Overheal;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
-import com.ebicep.warlords.util.Utils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -73,10 +73,10 @@ public class WaterBolt extends AbstractProjectileBase {
                         critMultiplier,
                         false, false);
                 if (victim != shooter) {
-                    victim.getCooldownManager().removeCooldown(Utils.OVERHEAL_MARKER);
+                    victim.getCooldownManager().removeCooldown(Overheal.OVERHEAL_MARKER);
                     victim.getCooldownManager().addRegularCooldown("Overheal",
-                            "OVERHEAL", null, Utils.OVERHEAL_MARKER, shooter, CooldownTypes.BUFF, cooldownManager -> {
-                            }, Utils.OVERHEAL_DURATION * 20);
+                            "OVERHEAL", Overheal.class, Overheal.OVERHEAL_MARKER, shooter, CooldownTypes.BUFF, cooldownManager -> {
+                            }, Overheal.OVERHEAL_DURATION * 20);
                     ;
                 }
             } else {
@@ -105,10 +105,10 @@ public class WaterBolt extends AbstractProjectileBase {
                         critMultiplier,
                         false, false);
                 if (nearEntity != shooter) {
-                    nearEntity.getCooldownManager().removeCooldown(Utils.OVERHEAL_MARKER);
+                    nearEntity.getCooldownManager().removeCooldown(Overheal.OVERHEAL_MARKER);
                     nearEntity.getCooldownManager().addRegularCooldown("Overheal",
-                            "OVERHEAL", null, Utils.OVERHEAL_MARKER, shooter, CooldownTypes.BUFF, cooldownManager -> {
-                            }, Utils.OVERHEAL_DURATION * 20);
+                            "OVERHEAL", Overheal.class, Overheal.OVERHEAL_MARKER, shooter, CooldownTypes.BUFF, cooldownManager -> {
+                            }, Overheal.OVERHEAL_DURATION * 20);
                     ;
                 }
             } else {
@@ -136,7 +136,7 @@ public class WaterBolt extends AbstractProjectileBase {
                 "\n\n" +
                 "§7Water Bolt can overheal allies for up to\n" +
                 "§a10% §7of their max health as bonus health\n" +
-                "§7for §6" + Utils.OVERHEAL_DURATION + " §7seconds.";
+                "§7for §6" + Overheal.OVERHEAL_DURATION + " §7seconds.";
     }
 	
 }
