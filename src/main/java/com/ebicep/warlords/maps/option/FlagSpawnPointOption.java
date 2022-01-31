@@ -126,7 +126,7 @@ public class FlagSpawnPointOption implements Option {
             public void run() {
                 renderer.checkRender();
             }
-        }.runTaskTimer(0, 4);
+        }.runTaskTimer(0, 1);
     }
 
     public FlagInfo getInfo() {
