@@ -1,11 +1,12 @@
 package com.ebicep.warlords.maps.option;
 
 import com.ebicep.warlords.maps.Game;
+import java.util.List;
 
 import javax.annotation.Nonnull;
 
 /**
- * A game exists out of multiple options, who all change the behaviour of the
+ * A game exists out of multiple options, who all change the behavior of the
  * game.
  */
 public interface Option {
@@ -29,13 +30,27 @@ public interface Option {
      */
     default void start(@Nonnull Game game) {
     }
-    
+
     /**
      * Called when the game transitions to a closed state. Generally, the game
      * no longer accepts players, and players can leave the game without
      * affecting their standings.
+     *
      * @param game The game instance
      */
     default void onGameEnding(@Nonnull Game game) {
+    }
+
+    /**
+     * Checks if the given list of options is a valid game configuration. This
+     * is used for checking if the current set of options for a valid game. Note
+     * that even if this method returns normally, the game may still be in an
+     * valid state
+     *
+     * @param options The list of options to check
+     * @throws IllegalArgumentException If the list of options contains a
+     * mistake, to be further defined by the option itself
+     */
+    default void checkConflicts(List<Option> options) {
     }
 }
