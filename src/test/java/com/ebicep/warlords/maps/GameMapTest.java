@@ -31,7 +31,7 @@ public class GameMapTest {
     }
 
     @Parameterized.Parameters(name = "{index} [{0}:{1}]")
-    public static Collection<Object[]> primeNumbers() {
+    public static Collection<Object[]> allMaps() {
         return Arrays.stream(GameMap.values()).flatMap(m -> m.getCategories().stream().map(c -> new Object[]{m, c})).collect(Collectors.toList());
     }
 

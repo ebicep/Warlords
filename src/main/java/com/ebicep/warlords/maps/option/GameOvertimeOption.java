@@ -5,6 +5,8 @@ import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.option.marker.TeamMarker;
 import com.ebicep.warlords.util.PacketUtils;
+import com.ebicep.warlords.util.Utils;
+import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.event.EventHandler;
@@ -88,5 +90,14 @@ public class GameOvertimeOption implements Option, Listener {
     @Override
     public String toString() {
         return "GameOvertimeOption{" + "wasActivated=" + wasActivated + ", overTimePoints=" + overTimePoints + ", overTimeTime=" + overTimeTime + '}';
+    }
+
+    @Override
+    public void checkConflicts(List<Option> options) {
+        boolean hasDrawAfterTimeoutOption = Utils.collectionHasItem(options, e -> e instanceof DrawAfterTimeoutOption);
+        boolean hasWinByPointsOption = Utils.collectionHasItem(options, e -> e instanceof WinByPointsOption);
+        if (!hasDrawAfterTimeoutOption || !hasWinByPointsOption) {
+            throw new IllegalArgumentException("Game requires a DrawAfterTimeoutOption and a WinByPointsOption for the GameOvertimeOption to work properly");
+        }
     }
 }
