@@ -169,8 +169,6 @@ public class PlayingState implements State, TimerDebugAble {
     @SuppressWarnings("null")
     public void end() {
 
-        PlayerFilter.playingGame(game).forEach(WarlordsPlayer::removeGrave);
-
         System.out.println(" ----- GAME END ----- ");
         System.out.println("RecordGames = " + RecordGamesCommand.recordGames);
         System.out.println("Imposter = " + game.getAddons().contains(GameAddon.IMPOSTER_MODE));

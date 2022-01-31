@@ -86,8 +86,7 @@ public final class WarlordsPlayer {
     private final CalculateSpeed speed;
     private boolean powerUpHeal = false;
 
-    private Location deathLocation = null;
-    private ArmorStand deathStand = null;
+    private final Location deathLocation;
     private LivingEntity entity = null;
 
     private final CooldownManager cooldownManager = new CooldownManager(this);
@@ -129,6 +128,7 @@ public final class WarlordsPlayer {
         Player p = player.getPlayer();
         this.entity = spawnJimmy(p == null ? Warlords.getRejoinPoint(uuid) : p.getLocation(), null);
         this.weapon = Weapons.getSelected(player, settings.getSelectedClass());
+        this.deathLocation = this.entity.getLocation();
         updatePlayerReference(p);
         this.compassTarget = gameState.getGame()
                 .getMarkers(CompassTargetMarker.class)
@@ -817,7 +817,7 @@ public final class WarlordsPlayer {
 
         removeHorse();
 
-        addGrave();
+        getLocation(this.deathLocation);
 
         showDeathAnimation();
 
@@ -845,67 +845,6 @@ public final class WarlordsPlayer {
             }
         }
         Bukkit.getPluginManager().callEvent(new WarlordsDeathEvent(this, attacker));
-    }
-
-    public void addGrave() {
-        LivingEntity player = this.entity;
-
-        Location deathLocation = player.getLocation();
-        Block bestGraveCandidate = null;
-        boolean isFlagCarrier = this.getFlagDamageMultiplier() > 0;
-        for (int x = -1; x <= 1; x++) {
-            for (int z = -1; z <= 1; z++) {
-                if (isFlagCarrier && x == 0 && z == 0) {
-                    // This player is a flag carrier, prevent placing the grave at the direct location of the player
-                    continue;
-                }
-
-                Location toTest = deathLocation.clone().add(x, 2, z);
-                Block lastBlock = toTest.getBlock();
-
-                if (lastBlock.getType() == Material.AIR) {
-                    toTest.subtract(0, 1, 0);
-                    for (; toTest.getY() > 0; toTest.subtract(0, 1, 0)) {
-                        Block underTest = toTest.getBlock();
-                        if (underTest.getType() != Material.AIR) {
-                            if (underTest.getType().isTransparent()) {
-                                // We have hit a sappling, fence, torch or other non-solid
-                                break;
-                            }
-                            // We have hit a solid block. Go back 1 tile
-                            toTest.add(0, 1, 0);
-                            // Check if we found a better tile for the grave
-                            if (bestGraveCandidate != null) {
-                                double newDistance = toTest.distanceSquared(deathLocation);
-                                double existingDistance = bestGraveCandidate.getLocation(toTest).distanceSquared(deathLocation);
-                                if (newDistance >= existingDistance) {
-                                    // Our new candidate is not closer, skip
-                                    break;
-                                }
-                            }
-                            bestGraveCandidate = lastBlock;
-                            //
-                            break;
-                        }
-                        lastBlock = underTest;
-                    }
-                }
-            }
-        }
-
-        if (bestGraveCandidate != null) {
-            //spawn grave
-            bestGraveCandidate.setType(Material.SAPLING);
-            bestGraveCandidate.setData((byte) 5);
-
-            this.deathLocation = bestGraveCandidate.getLocation();
-
-            this.deathStand = (ArmorStand) player.getWorld().spawnEntity(bestGraveCandidate.getLocation().add(.5, -1.5, .5), EntityType.ARMOR_STAND);
-            this.deathStand.setCustomName(team.teamColor() + name + ChatColor.GRAY + " - " + ChatColor.YELLOW + "DEAD");
-            this.deathStand.setCustomNameVisible(true);
-            this.deathStand.setGravity(false);
-            this.deathStand.setVisible(false);
-        }
     }
 
     public Zombie spawnJimmy(@Nonnull Location loc, @Nullable PlayerInventory inv) {
@@ -1332,23 +1271,8 @@ public final class WarlordsPlayer {
         }.runTaskTimer(0, 5);
 
         this.health = this.maxHealth;
-        if (deathStand != null) {
-            deathStand.remove();
-            deathStand = null;
-        }
-        removeGrave();
         if (entity instanceof Player) {
             updatePlayer((Player) entity);
-        }
-    }
-
-    public void removeGrave() {
-        if (deathLocation != null) {
-            Block deathBlock = deathLocation.getBlock();
-            if (deathBlock.getType() == Material.SAPLING) {
-                deathBlock.setType(Material.AIR);
-            }
-            deathLocation = null;
         }
     }
 
@@ -1550,18 +1474,6 @@ public final class WarlordsPlayer {
 
     public Location getDeathLocation() {
         return deathLocation;
-    }
-
-    public void setDeathLocation(Location deathLocation) {
-        this.deathLocation = deathLocation;
-    }
-
-    public ArmorStand getDeathStand() {
-        return deathStand;
-    }
-
-    public void setDeathStand(ArmorStand deathStand) {
-        this.deathStand = deathStand;
     }
 
     public int getFlagsCaptured() {

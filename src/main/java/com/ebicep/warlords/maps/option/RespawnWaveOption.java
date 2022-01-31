@@ -115,7 +115,6 @@ public class RespawnWaveOption implements Option, Listener {
         while (respawn < minRespawnTimer) {
             respawn = respawn += this.taskPeriod;
         }
-        player.sendMessage("Set respawn timer to " + respawn);
         player.setRespawnTimer(respawn);
     }
     

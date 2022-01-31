@@ -66,6 +66,7 @@ public enum GameMap {
             options.add(new ScoreOnEventOption.FlagCapture());
             options.add(new ScoreOnEventOption.OnKill());
             options.add(new RespawnWaveOption());
+            options.add(new GraveOption());
 
             options.add(new BasicScoreboardOption());
             options.add(new BoundingBoxOption(loc.getWorld()));
@@ -121,6 +122,7 @@ public enum GameMap {
             options.add(new ScoreOnEventOption.FlagCapture());
             options.add(new ScoreOnEventOption.OnKill());
             options.add(new RespawnWaveOption());
+            options.add(new GraveOption());
 
             options.add(new BasicScoreboardOption());
             options.add(new BoundingBoxOption(loc.getWorld()));
@@ -176,6 +178,7 @@ public enum GameMap {
             options.add(new ScoreOnEventOption.FlagCapture());
             options.add(new ScoreOnEventOption.OnKill());
             options.add(new RespawnWaveOption());
+            options.add(new GraveOption());
 
             options.add(new BasicScoreboardOption());
             options.add(new BoundingBoxOption(loc.getWorld()));
@@ -233,6 +236,7 @@ public enum GameMap {
             options.add(new ScoreOnEventOption.FlagCapture());
             options.add(new ScoreOnEventOption.OnKill());
             options.add(new RespawnWaveOption());
+            options.add(new GraveOption());
 
             options.add(new BasicScoreboardOption());
             options.add(new BoundingBoxOption(loc.getWorld()));
@@ -287,6 +291,7 @@ public enum GameMap {
             options.add(new ScoreOnEventOption.FlagCapture());
             options.add(new ScoreOnEventOption.OnKill());
             options.add(new RespawnWaveOption());
+            options.add(new GraveOption());
 
             options.add(new BasicScoreboardOption());
             options.add(new BoundingBoxOption(loc.getWorld()));
@@ -338,6 +343,7 @@ public enum GameMap {
             options.add(new ScoreOnEventOption.FlagCapture());
             options.add(new ScoreOnEventOption.OnKill());
             options.add(new RespawnWaveOption());
+            options.add(new GraveOption());
 
             options.add(new BasicScoreboardOption());
             options.add(new BoundingBoxOption(loc.getWorld()));
