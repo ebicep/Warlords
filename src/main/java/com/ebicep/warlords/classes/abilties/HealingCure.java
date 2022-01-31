@@ -26,7 +26,7 @@ public class HealingCure extends AbstractAbility {
     private final int puddleMaxHealing = 236;
 
     public HealingCure() {
-        super("Healing Cure", 536, 644, 10, 80, 25, 175);
+        super("Soothing Puddle", 536, 644, 10, 80, 25, 175);
     }
 
     @Override
@@ -47,12 +47,8 @@ public class HealingCure extends AbstractAbility {
         Location location = player.getLocation();
         Vector speed = player.getLocation().getDirection().multiply(SPEED);
         ArmorStand stand = (ArmorStand) location.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
-        stand.setHelmet(new ItemStack(Material.LEAVES));
-        stand.setCustomName("Healing Cure");
-        stand.setCustomNameVisible(false);
+        stand.setHelmet(new ItemStack(Material.STAINED_GLASS, 1, (short) 6));
         stand.setGravity(false);
-        stand.setBasePlate(false);
-        stand.setArms(false);
         stand.setVisible(false);
         wp.getGame().getGameTasks().put(
                 new BukkitRunnable() {
@@ -113,8 +109,9 @@ public class HealingCure extends AbstractAbility {
                         if (shouldExplode) {
                             stand.remove();
                             for (Player player1 : wp.getWorld().getPlayers()) {
-                                player1.playSound(newLoc, "rogue.healingremedy.impact", 1.2f, 0.6f);
-                                player1.playSound(newLoc, "mage.waterbolt.impact", 0.5f, 0.3f);
+                                player1.playSound(newLoc, "rogue.healingremedy.impact", 1.5f, 0.5f);
+                                player1.playSound(newLoc, Sound.GLASS, 1.5f, 0.7f);
+                                player1.playSound(newLoc, "mage.waterbolt.impact", 1, 0.3f);
                             }
 
                             FireWorkEffectPlayer.playFirework(newLoc, FireworkEffect.builder()
@@ -181,7 +178,7 @@ public class HealingCure extends AbstractAbility {
         );
 
         for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "mage.frostbolt.activation", 2, 0.5f);
+            player1.playSound(player.getLocation(), "mage.frostbolt.activation", 2, 0.7f);
         }
 
         return true;
