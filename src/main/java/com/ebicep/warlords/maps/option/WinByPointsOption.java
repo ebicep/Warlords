@@ -48,8 +48,8 @@ public class WinByPointsOption implements Option, Listener {
     
     @EventHandler
     public void onEvent(WarlordsPointsChangedEvent event) {
-        if(!hasActivated && event.getNewPoints() >= pointLimit) {
-            WarlordsGameTriggerWinEvent e = new WarlordsGameTriggerWinEvent(event.getGame(), this, null);
+        if (!hasActivated && event.getNewPoints() >= pointLimit) {
+            WarlordsGameTriggerWinEvent e = new WarlordsGameTriggerWinEvent(event.getGame(), this, event.getTeam());
             Bukkit.getPluginManager().callEvent(e);
             if (!e.isCancelled()) {
                 hasActivated = true;
