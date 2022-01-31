@@ -12,45 +12,52 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class ItemBuilder {
+    @Nonnull
     private final ItemStack item;
+    @Nullable
     private ItemMeta meta = null;
 
-    public ItemBuilder(Material type) {
+    public ItemBuilder(@Nonnull Material type) {
         item = new ItemStack(type);
     }
 
-    public ItemBuilder(Material type, int amount) {
+    public ItemBuilder(@Nonnull Material type, int amount) {
         item = new ItemStack(type, amount);
     }
 
-    public ItemBuilder(Material type, int amount, short damage) {
+    public ItemBuilder(@Nonnull Material type, int amount, short damage) {
         item = new ItemStack(type, amount, damage);
     }
 
-    public ItemBuilder(ItemStack stack) throws IllegalArgumentException {
+    public ItemBuilder(@Nonnull ItemStack stack) throws IllegalArgumentException {
         item = new ItemStack(stack);
     }
 
-    public ItemBuilder(Potion potion, int amount, boolean splash) {
+    public ItemBuilder(@Nonnull Potion potion, int amount, boolean splash) {
         potion.setSplash(splash);
         item = potion.toItemStack(amount);
     }
 
     protected ItemMeta meta() {
-        if (meta != null) {
-            return meta;
+        if (meta == null) {
+            meta = item.getItemMeta();
+            if (meta == null) {
+                throw new IllegalStateException("Unable to get item meta for " + item);
+            }
         }
-        return meta = item.getItemMeta();
+        return meta;
     }
 
-    public ItemBuilder name(String name) {
+    public ItemBuilder name(@Nonnull String name) {
         meta().setDisplayName(name);
         return this;
     }
 
-    public ItemBuilder enchant(Enchantment enchant, int level) {
+    public ItemBuilder enchant(@Nonnull Enchantment enchant, int level) {
         meta().addEnchant(enchant, level, true);
         return this;
     }
