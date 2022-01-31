@@ -6,9 +6,9 @@ import com.ebicep.warlords.database.repositories.player.pojos.ctf.DatabaseBaseCT
 
 public class DatabaseShamanCTF extends DatabaseBaseCTF implements DatabaseWarlordsClass {
 
-    private final DatabaseBaseCTF thunderlord = new DatabaseBaseCTF();
-    private final DatabaseBaseCTF spiritguard = new DatabaseBaseCTF();
-    private final DatabaseBaseCTF earthwarden = new DatabaseBaseCTF();
+    private DatabaseBaseCTF thunderlord = new DatabaseBaseCTF();
+    private DatabaseBaseCTF spiritguard = new DatabaseBaseCTF();
+    private DatabaseBaseCTF earthwarden = new DatabaseBaseCTF();
 
     public DatabaseShamanCTF() {
         super();

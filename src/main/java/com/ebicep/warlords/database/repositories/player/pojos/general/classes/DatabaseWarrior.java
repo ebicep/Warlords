@@ -11,9 +11,9 @@ import com.ebicep.warlords.player.ClassesSkillBoosts;
 
 public class DatabaseWarrior extends AbstractDatabaseStatInformation implements DatabaseWarlordsClass {
 
-    private final DatabaseSpecialization berserker = new DatabaseSpecialization(ClassesSkillBoosts.WOUNDING_STRIKE_BERSERKER);
-    private final DatabaseSpecialization defender = new DatabaseSpecialization(ClassesSkillBoosts.WOUNDING_STRIKE_DEFENDER);
-    private final DatabaseSpecialization revenant = new DatabaseSpecialization(ClassesSkillBoosts.ORBS_OF_LIFE);
+    private DatabaseSpecialization berserker = new DatabaseSpecialization(ClassesSkillBoosts.WOUNDING_STRIKE_BERSERKER);
+    private DatabaseSpecialization defender = new DatabaseSpecialization(ClassesSkillBoosts.WOUNDING_STRIKE_DEFENDER);
+    private DatabaseSpecialization revenant = new DatabaseSpecialization(ClassesSkillBoosts.ORBS_OF_LIFE);
     protected ArmorManager.Helmets helmet = ArmorManager.Helmets.SIMPLE_WARRIOR_HELMET;
     protected ArmorManager.ArmorSets armor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE_WARRIOR;
 

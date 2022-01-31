@@ -48,7 +48,7 @@ public class GameTerminateCommand implements CommandExecutor {
                 continue;
             }
             Optional<PlayingState> state = game.getState(PlayingState.class);
-            if (state.isEmpty()) {
+            if (!state.isPresent()) {
                 sender.sendMessage(ChatColor.RED + "[" + holder.getName() + "] The game is not in playing state, instead it is in " + game.getState().getClass().getSimpleName());
             } else {
                 game.setNextState(new EndState(game, null));
