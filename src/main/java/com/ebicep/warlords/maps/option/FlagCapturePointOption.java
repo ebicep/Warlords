@@ -8,6 +8,7 @@ import java.util.Arrays;
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import org.bukkit.Location;
+import org.bukkit.Material;
 
 public class FlagCapturePointOption extends MarkerOption {
 
@@ -33,7 +34,7 @@ public class FlagCapturePointOption extends MarkerOption {
     public FlagCapturePointOption(@Nonnull Location a, @Nonnull Location b, @Nonnull Team... toIgnore) {
         super(
                 FlagCaptureMarker.zonedCapture(a, b, toIgnore),
-                DebugLocationMarker.create(null, 0, FlagCapturePointOption.class,
+                DebugLocationMarker.create(Material.CARPET, 0, FlagCapturePointOption.class,
                         "Capture zone",
                         new Location(
                                 a.getWorld(),

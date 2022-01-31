@@ -112,7 +112,7 @@ public class GateOption extends AbstractCuboidOption implements  TimerSkipAbleMa
         changeGate(open, closed);
         this.game = game;
         game.registerGameMarker(TimerSkipAbleMarker.class, this);
-        game.registerGameMarker(DebugLocationMarker.class, DebugLocationMarker.create(null, 0, this.getClass(),
+        game.registerGameMarker(DebugLocationMarker.class, DebugLocationMarker.create(open, 0, this.getClass(),
                 "Gates",
                 new Location(
                         min.getWorld(),
