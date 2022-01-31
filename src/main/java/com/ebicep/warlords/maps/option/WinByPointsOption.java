@@ -7,7 +7,6 @@ import com.ebicep.warlords.maps.option.marker.TeamMarker;
 import com.ebicep.warlords.maps.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.maps.option.marker.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.player.WarlordsPlayer;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.bukkit.Bukkit;

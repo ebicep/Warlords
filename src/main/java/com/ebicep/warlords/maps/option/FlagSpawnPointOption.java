@@ -13,7 +13,6 @@ import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.GameRunnable;
 import static java.util.Collections.singletonList;
 import java.util.List;
-import java.util.Optional;
 import javax.annotation.Nonnull;
 import net.minecraft.server.v1_8_R3.AxisAlignedBB;
 import net.minecraft.server.v1_8_R3.MovingObjectPosition;
@@ -29,7 +28,6 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.metadata.MetadataValue;
 import org.bukkit.util.Vector;
 
 /**

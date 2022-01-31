@@ -2,7 +2,6 @@ package com.ebicep.warlords.maps.option;
 
 import com.ebicep.warlords.events.WarlordsGameUpdatedEvent;
 import com.ebicep.warlords.maps.Game;
-import com.ebicep.warlords.maps.option.Option;
 import com.ebicep.warlords.util.PacketUtils;
 import net.minecraft.server.v1_8_R3.EntityLiving;
 import net.minecraft.server.v1_8_R3.GenericAttributes;

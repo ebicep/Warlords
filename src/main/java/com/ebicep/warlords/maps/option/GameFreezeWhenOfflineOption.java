@@ -1,7 +1,6 @@
 package com.ebicep.warlords.maps.option;
 
 import com.ebicep.warlords.maps.Game;
-import com.ebicep.warlords.maps.option.Option;
 import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.PacketUtils;
 import org.bukkit.ChatColor;
