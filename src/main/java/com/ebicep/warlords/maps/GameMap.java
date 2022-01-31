@@ -34,8 +34,7 @@ public enum GameMap {
             options.add(new MarkerOption(
                     TeamMarker.create(Team.BLUE, Team.RED),
                     LobbyLocationMarker.create(loc.addXYZ(-86.5, 46, -33.5), Team.BLUE),
-                    LobbyLocationMarker.create(loc.addXYZ(87.5, 46, 35.5, 180, 0), Team.RED),
-                    MapSymmetry.SPIN.asMarker()
+                    LobbyLocationMarker.create(loc.addXYZ(87.5, 46, 35.5, 180, 0), Team.RED)
             ));
             options.add(new PowerupOption(loc.addXYZ(-32.5, 25.5, 49.5), PowerupType.DAMAGE));
             options.add(new PowerupOption(loc.addXYZ(33.5, 25.5, -48.5), PowerupType.DAMAGE));
