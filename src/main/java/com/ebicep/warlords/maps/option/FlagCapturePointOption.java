@@ -19,7 +19,7 @@ public class FlagCapturePointOption extends MarkerOption {
     public FlagCapturePointOption(@Nonnull Location loc, @Nonnegative double radius, @Nonnull Team... forTeams) {
         super(
                 FlagCaptureMarker.aroundLocation(loc, radius, forTeams),
-                DebugLocationMarker.create(null, 0, FlagCapturePointOption.class,
+                DebugLocationMarker.create(Material.CARPET, 0, FlagCapturePointOption.class,
                         "Capture zone",
                         loc,
                         () -> Arrays.asList(
