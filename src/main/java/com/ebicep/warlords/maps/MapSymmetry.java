@@ -11,7 +11,7 @@ public enum MapSymmetry {
     NONE() {
         @Override
         public Location getOppositeLocation(Game game, Team sourceTeam, Team targetTeam, Location original, Location target) {
-            return original;
+            return target;
         }
 
     }, SPIN {
