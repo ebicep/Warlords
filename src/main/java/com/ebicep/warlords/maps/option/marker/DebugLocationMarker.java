@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.IntSupplier;
 import java.util.function.Supplier;
+import org.bukkit.ChatColor;
 
 /**
  * Marks a location for the debug screen/command
@@ -77,12 +78,37 @@ public interface DebugLocationMarker extends LocationMarker {
     @Nonnull
     default ItemStack getAsItem() {
         ItemBuilder item = new ItemBuilder(getMaterial(), 1, getMaterialData());
-        item.name(getName());
+        String name = getName();
+        String newName;
+        if (name.indexOf(ChatColor.COLOR_CHAR) >= 0) {
+            newName = name;
+        } else {
+            int index = name.indexOf(": ");
+            if (index > 0) {
+                newName = ChatColor.GOLD + name.substring(0, index + 1) + ChatColor.WHITE + name.substring(index + 1);
+            } else {
+                newName = ChatColor.GOLD + name;
+            }
+        }
+        item.name(newName);
         Location loc = getLocation();
         List<String> lore = new ArrayList<>();
-        lore.add("XYZ: " + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + " Yaw/pitch: " + loc.getYaw() + "/" + loc.getPitch());
-        lore.add("Source: " + getCreator().getName());
-        lore.addAll(getExtra());
+        lore.add(ChatColor.GRAY + "XYZ: " + ChatColor.WHITE + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + " Yaw/pitch: " + loc.getYaw() + "/" + loc.getPitch());
+        lore.add(ChatColor.GRAY + "Source: " + ChatColor.WHITE + getCreator().getName());
+        for(String extra : getExtra()) {
+            String newString;
+            if (extra.indexOf(ChatColor.COLOR_CHAR) >= 0) {
+                newString = extra;
+            } else {
+                int index = extra.indexOf(": ");
+                if (index > 0) {
+                    newString = ChatColor.GRAY + extra.substring(0, index + 1) + ChatColor.WHITE + extra.substring(index + 1);
+                } else {
+                    newString = ChatColor.WHITE + extra;
+                }
+            }
+            lore.add(newString);
+        }
         item.lore(lore);
         return item.get();
     }
@@ -149,7 +175,7 @@ public interface DebugLocationMarker extends LocationMarker {
             
             @Override
             public String toString() {
-                return getCreator().getName() + ": " + getName() + ": " + getLocation() + " - " + getExtra();
+                return ChatColor.stripColor(getCreator().getName() + ": " + getName() + ": " + getLocation() + " - " + getExtra());
             }
         };
     }
