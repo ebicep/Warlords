@@ -220,7 +220,7 @@ public class GameStartCommand implements TabExecutor {
 
     public Stream<String> prefixedEnum(Enum<?>[] list, String prefix) {
         return Stream.concat(
-                Stream.of(prefix + ":null"),
+                Stream.of(prefix + ":NULL"),
                 Stream.concat(
                         Stream.of(GameMap.values()).map(e -> toTitleCase(e.name())),
                         Stream.of(GameMap.values()).map(e -> prefix + ":" + toTitleCase(e.name()))
@@ -238,8 +238,7 @@ public class GameStartCommand implements TabExecutor {
                 Bukkit.getOnlinePlayers().stream().map((Player e) -> "player:" + e.getUniqueId()),
                 Bukkit.getOnlinePlayers().stream().map((Player e) -> "offline-player:" + e.getUniqueId())
         ).flatMap(Function.identity())
-                .filter(e -> e.startsWith(args[args.length - 1].toUpperCase(Locale.ROOT)))
-                .map(e -> e.charAt(0) + e.substring(1).toLowerCase(Locale.ROOT))
+                .filter(e -> startsWithIgnoreCase(e, args[args.length - 1]))
                 .collect(Collectors.toList());
     }
 
