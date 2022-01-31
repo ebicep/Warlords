@@ -31,6 +31,7 @@ public class PreLobbyState implements State, TimerDebugAble {
     private final Map<UUID, TeamPreference> teamPreferences = new HashMap<>();
     private int timer = 0;
     private int maxTimer = 0;
+    private boolean timerHasBeenSkipped = false;
 
     public PreLobbyState(Game game) {
         this.game = game;
@@ -53,7 +54,8 @@ public class PreLobbyState implements State, TimerDebugAble {
 
     @Override
     public State run() {
-        if (hasEnoughPlayers()) {
+        if (hasEnoughPlayers() || timerHasBeenSkipped) {
+            timerHasBeenSkipped = false;
             if (timer % 20 == 0) {
                 int time = timer / 20;
                 game.forEachOnlinePlayer((player, team) -> {
@@ -520,6 +522,7 @@ public class PreLobbyState implements State, TimerDebugAble {
     @Override
     public void skipTimer() {
         this.timer = 0;
+        this.timerHasBeenSkipped = true;
     }
 
     @Override
