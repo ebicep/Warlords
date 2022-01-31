@@ -72,6 +72,9 @@ public class PowerupOption implements Option {
             @Override
             public void skipTimer(int delayInTicks) {
                 cooldown = Math.max(cooldown - delayInTicks / 20, 0);
+                if (cooldown == 0) {
+                    spawn();
+                }
             }
 
             @Override
@@ -156,11 +159,13 @@ public class PowerupOption implements Option {
             throw new IllegalStateException("Cannot change type after starting");
         }
         this.type = type;
+        this.remove();
     }
 
     public void setTypeAndDuration(PowerupType type) {
         setType(type);
         this.duration = type.getDuration();
+        this.remove();
     }
 
     public ArmorStand getEntity() {
