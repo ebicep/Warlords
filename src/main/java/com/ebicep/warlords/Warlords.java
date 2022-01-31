@@ -507,7 +507,6 @@ public class Warlords extends JavaPlugin {
                         }
 
                         wp.getCooldownManager().reduceCooldowns();
-                        wp.decrementRespawnTimer();
 
                         // Checks whether the player has overheal active and is full health or not.
                         boolean hasOverhealCooldown = wp.getCooldownManager().hasCooldown(Utils.OVERHEAL_MARKER);
@@ -825,17 +824,6 @@ public class Warlords extends JavaPlugin {
                                                          Math.min(wps.getHealth() + healthToAdd,
                                                          wps.getMaxHealth()
                                                          )));
-                            }
-
-                            // Gives the player their respawn timer as display.
-                            int respawn = wps.getRespawnTimer();
-                            if (respawn > -1) {
-                                wps.getStats().addTotalRespawnTime();
-                                if (respawn <= 11) {
-                                    if (player != null) {
-                                        PacketUtils.sendTitle(player, "", wps.getTeam().teamColor() + "Respawning in... " + ChatColor.YELLOW + respawn, 0, 40, 0);
-                                    }
-                                }
                             }
 
                             // Cooldowns

@@ -42,7 +42,6 @@ public class PreLobbyState implements State, TimerDebugAble {
         this.maxTimer = game.getMap().getLobbyCountdown();
         this.resetTimer();
         // Debug
-        game.printDebuggingInformation();
         game.setAcceptsPlayers(true);
         game.setAcceptsSpectators(false);
     }

@@ -8,6 +8,7 @@ import com.ebicep.warlords.classes.shaman.specs.spiritguard.Spiritguard;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.events.WarlordsDeathEvent;
+import com.ebicep.warlords.events.WarlordsRespawnEvent;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.GameAddon;
 import com.ebicep.warlords.maps.Team;
@@ -931,6 +932,9 @@ public final class WarlordsPlayer {
         } else {
             jimmy.getEquipment().setHelmet(new ItemStack(Material.DIAMOND_HELMET));
         }
+        if (dead) {
+            jimmy.remove();
+        }
         return jimmy;
     }
 
@@ -1261,71 +1265,80 @@ public final class WarlordsPlayer {
         this.health = this.maxHealth;
     }
 
-    public void decrementRespawnTimer() {
+    private void decrementRespawnTimer() {
         // Respawn
         if (respawnTimer == 0) {
             respawn();
         } else if (respawnTimer > 0) {
-            this.respawnTimer--;
-            // System.out.println("-----------");
-            // System.out.println(warlordsPlayer.getGameState().getTimer() / 20.0);
-            // System.out.println(warlordsPlayer.getGameState().getTimer() / 20.0 % 12);
-            // System.out.println(warlordsPlayer.getRespawnTimer());
-            // System.out.println(warlordsPlayer.getRespawnTimer());
+            stats.addTotalRespawnTime();
+            respawnTimer--;
+            if (respawnTimer <= 11) {
+                if (entity instanceof Player) {
+                    PacketUtils.sendTitle((Player) entity, "", team.teamColor() + "Respawning in... " + ChatColor.YELLOW + respawnTimer, 0, 40, 0);
+                }
+            }
         }
     }
 
     public void respawn() {
-        if (entity instanceof Player && ((Player) entity).isOnline()) {
-            PacketUtils.sendTitle((Player) entity, "", "", 0, 0, 0);
-            List<Location> candidates = new ArrayList<>();
-            double priority = 0;
-            for (SpawnLocationMarker marker : getGame().getMarkers(SpawnLocationMarker.class)) {
-                if (candidates.isEmpty()) {
-                    candidates.add(marker.getLocation());
-                    priority = marker.getPriority(this);
-                } else {
-                    double newPriority = marker.getPriority(this);
-                    if (newPriority > priority) {
-                        candidates.clear();
-                        priority = newPriority;
-                    }
-                    candidates.add(marker.getLocation());
+        List<Location> candidates = new ArrayList<>();
+        double priority = 0;
+        for (SpawnLocationMarker marker : getGame().getMarkers(SpawnLocationMarker.class)) {
+            if (candidates.isEmpty()) {
+                candidates.add(marker.getLocation());
+                priority = marker.getPriority(this);
+            } else {
+                double newPriority = marker.getPriority(this);
+                if (newPriority > priority) {
+                    candidates.clear();
+                    priority = newPriority;
                 }
+                candidates.add(marker.getLocation());
             }
-            setRespawnTimer(-1);
-            setSpawnProtection(3);
-            setEnergy(getMaxEnergy() / 2);
-            setDead(false);
-            Location respawnPoint
-                    = candidates.isEmpty() ? getDeathLocation()
-                    : candidates.get((int) (Math.random() * candidates.size()));
-            teleport(respawnPoint);
-            new GameRunnable(getGame()) {
-                @Override
-                public void run() {
-                    Location location = getLocation();
-                    if (location.getWorld() != respawnPoint.getWorld()
-                            || location.distanceSquared(respawnPoint) > Warlords.SPAWN_PROTECTION_RADIUS * Warlords.SPAWN_PROTECTION_RADIUS) {
-                        setSpawnProtection(0);
-                    }
-                    if (getSpawnProtection() == 0) {
-                        this.cancel();
-                    }
-                }
-            }.runTaskTimer(0, 5);
+        }
+        Location respawnPoint =
+                !candidates.isEmpty() ? candidates.get((int) (Math.random() * candidates.size())) :
+                deathLocation != null ? deathLocation :
+                getLocation();
+        WarlordsRespawnEvent event = new WarlordsRespawnEvent(this, respawnPoint);
+        event.setCancelled(!(entity instanceof Player && ((Player) entity).isOnline()));
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) {
+            return;
+        }
 
-            this.health = this.maxHealth;
-            if (deathStand != null) {
-                deathStand.remove();
-                deathStand = null;
+        if (entity instanceof Player) {
+            PacketUtils.sendTitle((Player) entity, "", "", 0, 0, 0);
+        }
+        setRespawnTimer(-1);
+        setSpawnProtection(3);
+        setEnergy(getMaxEnergy() / 2);
+        dead = false;
+        teleport(respawnPoint);
+        new GameRunnable(getGame()) {
+            private final Location location = getLocation();
+            
+            @Override
+            public void run() {
+                getLocation(location);
+                if (location.getWorld() != respawnPoint.getWorld()
+                        || location.distanceSquared(respawnPoint) > Warlords.SPAWN_PROTECTION_RADIUS * Warlords.SPAWN_PROTECTION_RADIUS) {
+                    setSpawnProtection(0);
+                }
+                if (getSpawnProtection() == 0) {
+                    this.cancel();
+                }
             }
-            removeGrave();
-            if (entity instanceof Player) {
-                updatePlayer((Player) entity);
-            }
-        } else {
-            setRespawnTimer(-1);
+        }.runTaskTimer(0, 5);
+
+        this.health = this.maxHealth;
+        if (deathStand != null) {
+            deathStand.remove();
+            deathStand = null;
+        }
+        removeGrave();
+        if (entity instanceof Player) {
+            updatePlayer((Player) entity);
         }
     }
 
@@ -1588,14 +1601,13 @@ public final class WarlordsPlayer {
         return spawnDamage;
     }
     
-    // TODO figure out why there are 2 methods with names that look alike
-
     public boolean isDead() {
         return dead;
     }
 
+    @Deprecated
     public boolean isDeath() {
-        return this.health <= 0 || this.dead || (entity instanceof Player && ((Player) entity).getGameMode() == GameMode.SPECTATOR);
+        return isDead();
     }
 
     public boolean isAlive() {
@@ -1882,5 +1894,8 @@ public final class WarlordsPlayer {
 
     public void runEverySecond() {
         this.spec.runEverySecond();
+
+        // Gives the player their respawn timer as display.
+        this.decrementRespawnTimer();
     }
 }

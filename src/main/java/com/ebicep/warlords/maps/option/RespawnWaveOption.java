@@ -1,12 +1,14 @@
 package com.ebicep.warlords.maps.option;
 
 import com.ebicep.warlords.events.WarlordsDeathEvent;
+import com.ebicep.warlords.events.WarlordsRespawnEvent;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.option.marker.TimerSkipAbleMarker;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.PlayerFilter;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
 public class RespawnWaveOption implements Option, Listener {
@@ -91,8 +93,21 @@ public class RespawnWaveOption implements Option, Listener {
     }
     
     @EventHandler
-    public void playerDeathEvent(WarlordsDeathEvent event) {
+    public void onEvent(WarlordsDeathEvent event) {
         giveRespawnTimer(event.getPlayer());
+    }
+    
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onEvent(WarlordsRespawnEvent event) {
+        if (event.isCancelled()) {
+            if (event.getPlayer().getRespawnTimer() == 0) {
+                int respawn = currentTimer % this.taskPeriod;
+                while (respawn < 1) {
+                    respawn = respawn += this.taskPeriod;
+                }
+                event.getPlayer().setRespawnTimer(respawn);
+            }
+        }
     }
     
     public void giveRespawnTimer(WarlordsPlayer player) {

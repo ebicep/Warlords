@@ -122,6 +122,7 @@ public final class Game implements Runnable, AutoCloseable {
                 Game.this.run();
             }
         }.runTaskTimer(0, 1);
+        this.printDebuggingInformation();
     }
 
     public boolean isState(Class<? extends State> clazz) {
@@ -521,7 +522,7 @@ public final class Game implements Runnable, AutoCloseable {
             State newState = nextState == null ? new ClosedState(this) : nextState;
             nextState = null;
             System.out.println("DEBUG OLD TO NEW STATE");
-            Command.broadcastCommandMessage(Bukkit.getConsoleSender(), "old: " + this.state + " --> new: " + newState);
+            this.printDebuggingInformation();
             State oldState = this.state;
             this.state = newState;
             newState.begin();
