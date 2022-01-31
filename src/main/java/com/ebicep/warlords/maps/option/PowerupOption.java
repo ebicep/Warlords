@@ -76,7 +76,7 @@ public class PowerupOption implements Option {
 
             @Override
             public int getDelay() {
-                return cooldown;
+                return cooldown * 20;
             }
             
         });
