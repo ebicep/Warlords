@@ -44,7 +44,7 @@ public class Utils {
 
     public static final Object OVERHEAL_MARKER = new Object();
     public static final int OVERHEAL_DURATION = 15;
-    
+
     private Utils() {
     }
 
@@ -339,6 +339,7 @@ public class Utils {
         }
         return false;
     }
+
     @Nullable
     public static <T> T arrayGetItem(@Nonnull T[] iterable, @Nonnull Predicate<? super T> matcher) {
         for (T item : iterable) {
@@ -348,23 +349,23 @@ public class Utils {
         }
         return null;
     }
-    
+
     /**
      * Allows an Stream to be used in a for-each loop, as they do not come out of the box with support for this.
      * @param <T> The type
      * @param stream The stream
-     * @return An one-time use <code>Iterable</code> for iterating over the stream 
+     * @return An one-time use <code>Iterable</code> for iterating over the stream
      */
     @Nonnull
     public static <T> Iterable<T> iterable(@Nonnull Stream<T> stream) {
         return stream::iterator;
     }
-    
+
     /**
      * Collector to pick a random element from a <code>Stream</code>
      * @param <T> The type of the element
      * @return A collector for picking a random element, or null if the stream is empty
-     * @see Stream#collect(java.util.stream.Collector) 
+     * @see Stream#collect(java.util.stream.Collector)
      */
     public static <T> Collector<T, Pair<Integer, T>, T> randomElement() {
         return Collector.of(
@@ -396,7 +397,7 @@ public class Utils {
                 Collector.Characteristics.UNORDERED
         );
     }
-    
+
     public static void formatTimeLeft(StringBuilder message, long seconds) {
         long minute = seconds / 60;
         long second = seconds % 60;
@@ -410,21 +411,30 @@ public class Utils {
         }
         message.append(second);
     }
+
     public static String formatTimeLeft(long seconds) {
         StringBuilder message = new StringBuilder();
         formatTimeLeft(message, seconds);
         return message.toString();
     }
+
     public static String toTitleCase(Object input) {
         return toTitleCase(String.valueOf(input));
     }
+
     public static String toTitleCase(String input) {
         return input.substring(0, 1).toUpperCase(Locale.ROOT) + input.substring(1).toLowerCase(Locale.ROOT);
     }
+
     public static String toTitleHumanCase(Object input) {
         return toTitleHumanCase(String.valueOf(input));
     }
+
     public static String toTitleHumanCase(String input) {
         return input.substring(0, 1).toUpperCase(Locale.ROOT) + input.replace('_', ' ').substring(1).toLowerCase(Locale.ROOT);
+    }
+
+    public static boolean startsWithIgnoreCase(String str, String prefix) {
+        return str.regionMatches(true, 0, prefix, 0, prefix.length());
     }
 }
