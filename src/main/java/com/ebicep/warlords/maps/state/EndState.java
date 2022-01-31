@@ -203,7 +203,7 @@ public class EndState implements State, TimerDebugAble {
     }
 
     private void sendMessageToAllGamePlayer(Game game, String message, boolean centered) {
-        game.forEachOnlinePlayer((p, team) -> {
+        game.forEachOnlinePlayerWithoutSpectators((p, team) -> {
             if (centered) {
                 ChatUtils.sendCenteredMessage(p, message);
             } else {
@@ -213,7 +213,7 @@ public class EndState implements State, TimerDebugAble {
     }
 
     public void sendCenteredHoverableMessageToAllGamePlayer(Game game, List<TextComponent> message) {
-        game.forEachOnlinePlayer((p, team) -> {
+        game.forEachOnlinePlayerWithoutSpectators((p, team) -> {
             ChatUtils.sendCenteredMessageWithEvents(p, message);
         });
     }

@@ -36,7 +36,7 @@ public class GameFreezeOption implements Option, Listener {
         }
         isFrozen = true;
         String message = game.getFrozenCauses().get(0);
-        game.forEachOnlinePlayer((p, team) -> {
+        game.forEachOnlinePlayerWithoutSpectators((p, team) -> {
             if (p.getVehicle() instanceof Horse) {
                 ((EntityLiving) ((CraftEntity) p.getVehicle()).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0);
             }
@@ -47,7 +47,7 @@ public class GameFreezeOption implements Option, Listener {
 
     private void unfreeze() {
         isFrozen = false;
-        game.forEachOnlinePlayer((p, team) -> {
+        game.forEachOnlinePlayerWithoutSpectators((p, team) -> {
             if (p.getVehicle() instanceof Horse) {
                 ((EntityLiving) ((CraftEntity) p.getVehicle()).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(.318);
             }

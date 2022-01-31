@@ -289,7 +289,7 @@ public final class WarlordsPlayer {
             intervenedBy.addDamageInstance(attacker, "Intervene", damageValue, damageValue, isCrit ? 100 : -1, 100, false);
             Location loc = getLocation();
             //EFFECTS + SOUNDS
-            gameState.getGame().forEachOnlinePlayer((p, t) -> p.playSound(loc, "warrior.intervene.block", 2, 1));
+            gameState.getGame().forEachOnlinePlayerWithoutSpectators((p, t) -> p.playSound(loc, "warrior.intervene.block", 2, 1));
             playHitSound(attacker);
             entity.playEffect(EntityEffect.HURT);
             intervenedBy.getEntity().playEffect(EntityEffect.HURT);
@@ -549,7 +549,7 @@ public final class WarlordsPlayer {
                     sendMessage(ChatColor.GRAY + "You were killed by " + attacker.getColoredName());
                     attacker.sendMessage(ChatColor.GRAY + "You killed " + getColoredName());
 
-                    gameState.getGame().forEachOnlinePlayer((p, t) -> {
+                    gameState.getGame().forEachOnlinePlayerWithoutSpectators((p, t) -> {
                         if (p != this.entity && p != attacker.entity) {
                             p.sendMessage(getColoredName() + ChatColor.GRAY + " was killed by " + attacker.getColoredName());
                         }
@@ -587,7 +587,7 @@ public final class WarlordsPlayer {
 
                         @Override
                         public void run() {
-                            gameState.getGame().forEachOnlinePlayer((player1, t) -> {
+                            gameState.getGame().forEachOnlinePlayerWithoutSpectators((player1, t) -> {
                                 player1.playSound(getLocation(), "shaman.windfuryweapon.impact", 2, 1);
                             });
 
@@ -620,7 +620,7 @@ public final class WarlordsPlayer {
 
                     attacker.addHealingInstance(attacker, "Earthliving Weapon", 132 * multiplyBy, 179 * multiplyBy, 25, 200, false, false);
 
-                    gameState.getGame().forEachOnlinePlayer((p, t) -> {
+                    gameState.getGame().forEachOnlinePlayerWithoutSpectators((p, t) -> {
                         p.playSound(getLocation(), "shaman.earthlivingweapon.impact", 2, 1);
                     });
 
@@ -831,8 +831,11 @@ public final class WarlordsPlayer {
             player.setGameMode(GameMode.SPECTATOR);
             //removing yellow hearts
             ((EntityLiving) ((CraftPlayer) entity).getHandle()).setAbsorptionHearts(0);
+            ItemStack item = ((CraftPlayer) entity).getInventory().getItem(0);
             //removing sg shiny weapon
-            ((CraftPlayer) entity).getInventory().getItem(0).removeEnchantment(Enchantment.OXYGEN);
+            if (item != null) {
+                item.removeEnchantment(Enchantment.OXYGEN);
+            }
         }
         Bukkit.getPluginManager().callEvent(new WarlordsDeathEvent(this, attacker));
     }
@@ -1313,7 +1316,7 @@ public final class WarlordsPlayer {
             }
             removeGrave();
             if (entity instanceof Player) {
-                ((Player) entity).setGameMode(GameMode.ADVENTURE);
+                updatePlayer((Player) entity);
             }
         } else {
             setRespawnTimer(-1);
@@ -1498,23 +1501,30 @@ public final class WarlordsPlayer {
 
     public void toggleTeamFlagCompass() {
         List<CompassTargetMarker> targets = getGame().getMarkers(CompassTargetMarker.class);
+        sendMessage("Valid targets: " + targets);
+        sendMessage("Current target: " + this.compassTarget);
         boolean shouldPick = false;
         CompassTargetMarker first = null;
-        for(CompassTargetMarker ctm : targets) {
+        for (CompassTargetMarker ctm : targets) {
+            if (ctm == this.compassTarget) {
+                shouldPick = true;
+                if (first == null) {
+                    first = ctm;
+                }
+                continue;
+            }
             if (!ctm.isEnabled()) {
                 continue;
             }
             if (first == null) {
-                first = this.compassTarget;
+                first = ctm;
             }
             if (shouldPick) {
                 this.compassTarget = ctm;
                 return;
             }
-            if (ctm == this.compassTarget) {
-                shouldPick = true;
-            }
         }
+        sendMessage("New target: " + first);
         this.compassTarget = first;
     }
 
@@ -1605,28 +1615,34 @@ public final class WarlordsPlayer {
             }
             player.teleport(loc);
             this.entity = player;
-            player.removeMetadata("WARLORDS_PLAYER", Warlords.getInstance());
-            player.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));
-            player.setWalkSpeed(walkspeed);
-            player.setMaxHealth(40);
-            player.setLevel((int) this.getMaxEnergy());
-            player.getInventory().clear();
-            this.spec.getWeapon().updateDescription(player);
-            this.spec.getRed().updateDescription(player);
-            this.spec.getPurple().updateDescription(player);
-            this.spec.getBlue().updateDescription(player);
-            this.spec.getOrange().updateDescription(player);
-            applySkillBoost(player);
-            player.closeInventory();
-            ((EntityLiving) ((CraftPlayer) player).getHandle()).setAbsorptionHearts(0);
-            this.assignItemLore(player);
-            ArmorManager.resetArmor(player, getSpecClass(), getTeam());
-
-            if (isDeath()) {
-                player.setGameMode(GameMode.SPECTATOR);
-            }
-            // TODO Update the inventory based on the status of isUndyingArmyDead here
+            updatePlayer(player);
         }
+    }
+    
+    public void updatePlayer(@Nonnull Player player) {
+        player.removeMetadata("WARLORDS_PLAYER", Warlords.getInstance());
+        player.setMetadata("WARLORDS_PLAYER", new FixedMetadataValue(Warlords.getInstance(), this));
+        player.setWalkSpeed(walkspeed);
+        player.setMaxHealth(40);
+        player.setLevel((int) this.getMaxEnergy());
+        player.getInventory().clear();
+        this.spec.getWeapon().updateDescription(player);
+        this.spec.getRed().updateDescription(player);
+        this.spec.getPurple().updateDescription(player);
+        this.spec.getBlue().updateDescription(player);
+        this.spec.getOrange().updateDescription(player);
+        applySkillBoost(player);
+        player.closeInventory();
+        ((EntityLiving) ((CraftPlayer) player).getHandle()).setAbsorptionHearts(0);
+        this.assignItemLore(player);
+        ArmorManager.resetArmor(player, getSpecClass(), getTeam());
+
+        if (isDeath()) {
+            player.setGameMode(GameMode.SPECTATOR);
+        } else {
+            player.setGameMode(GameMode.ADVENTURE);
+        }
+        // TODO Update the inventory based on the status of isUndyingArmyDead here
     }
 
     public Classes getSpecClass() {

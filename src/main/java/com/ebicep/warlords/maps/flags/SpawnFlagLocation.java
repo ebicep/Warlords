@@ -1,5 +1,6 @@
 package com.ebicep.warlords.maps.flags;
 
+import com.ebicep.warlords.player.WarlordsPlayer;
 import org.bukkit.Location;
 
 import javax.annotation.Nullable;
@@ -10,20 +11,20 @@ import javax.annotation.Nonnull;
 public class SpawnFlagLocation extends AbstractLocationBasedFlagLocation {
 
     @Nullable
-    private final String lastToucher;
+    private final WarlordsPlayer flagReturner;
 
-    public SpawnFlagLocation(@Nonnull Location location, @Nullable String lastToucher) {
+    public SpawnFlagLocation(@Nonnull Location location, @Nullable WarlordsPlayer flagReturner) {
         super(location);
-        this.lastToucher = lastToucher;
+        this.flagReturner = flagReturner;
     }
 
     /**
-     * Get the name of the player who returned the flag
-     * @return the name of the returned, or null is the flag automatically moved back
+     * Get the player who returned the flag
+     * @return the flag returner, or null is the flag automatically moved back
      */
     @Nullable
-    public String getLastToucher() {
-        return lastToucher;
+    public WarlordsPlayer getFlagReturner() {
+        return flagReturner;
     }
 
     @Override
@@ -35,7 +36,7 @@ public class SpawnFlagLocation extends AbstractLocationBasedFlagLocation {
     public List<String> getDebugInformation() {
         return Arrays.asList(
                 "Type: " + this.getClass().getSimpleName(),
-                "lastToucher: " + lastToucher
+                "lastToucher: " + flagReturner
         );
     }
 

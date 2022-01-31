@@ -29,7 +29,7 @@ public class GameFreezeWhenOfflineOption implements Option {
                         isFrozen = false;
                         timer = 0;
                     } else {
-                        game.forEachOnlinePlayer((p, team) -> {
+                        game.forEachOnlinePlayerWithoutSpectators((p, team) -> {
                             PacketUtils.sendTitle(p, ChatColor.BLUE + "Resuming in... " + ChatColor.GREEN + (UNFREEZE_TIME - timer), "", 0, 40, 0);
                         });
                         timer++;

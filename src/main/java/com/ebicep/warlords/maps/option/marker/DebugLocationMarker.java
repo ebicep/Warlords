@@ -10,6 +10,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.IntSupplier;
 import java.util.function.Supplier;
 
 /**
@@ -112,7 +113,9 @@ public interface DebugLocationMarker extends LocationMarker {
 
     static DebugLocationMarker create(@Nullable Material material, int data, Supplier<Class<?>> creator, Supplier<String> name, Supplier<Location> location, Supplier<List<String>> extra) {
         Material newMaterial = material == null ? Material.BARRIER : material;
-        short newData = (short) data;
+        return create(() -> newMaterial, () -> data, creator, name, location, Collections::emptyList);
+    }
+    static DebugLocationMarker create(Supplier<Material> material, IntSupplier data, Supplier<Class<?>> creator, Supplier<String> name, Supplier<Location> location, Supplier<List<String>> extra) {
         return new DebugLocationMarker() {
             @Override
             public String getName() {
@@ -136,12 +139,17 @@ public interface DebugLocationMarker extends LocationMarker {
 
             @Override
             public Material getMaterial() {
-                return newMaterial;
+                return material.get();
             }
 
             @Override
             public short getMaterialData() {
-                return newData;
+                return (short) data.getAsInt();
+            }
+            
+            @Override
+            public String toString() {
+                return getCreator().getName() + ": " + getName() + ": " + getLocation() + " - " + getExtra();
             }
         };
     }

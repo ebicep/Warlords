@@ -259,7 +259,7 @@ public class PlayingState implements State, TimerDebugAble {
     }
 
     private void giveScoreboard() {
-        game.forEachOnlinePlayer((player, team) -> {
+        game.forEachOnlinePlayerWithoutSpectators((player, team) -> {
             this.onPlayerReJoinGame(player);
         });
     }

@@ -58,33 +58,33 @@ public class PreLobbyState implements State, TimerDebugAble {
             timerHasBeenSkipped = false;
             if (timer % 20 == 0) {
                 int time = timer / 20;
-                game.forEachOnlinePlayer((player, team) -> {
+                game.forEachOnlinePlayerWithoutSpectators((player, team) -> {
                     giveLobbyScoreboard(false, player);
                     player.setAllowFlight(false);
                 });
                 if (time == 30) {
-                    game.forEachOnlinePlayer((player, team) -> {
+                    game.forEachOnlinePlayerWithoutSpectators((player, team) -> {
                         sendMessage(player, false, ChatColor.YELLOW + "The game starts in " + ChatColor.GREEN + "30 " + ChatColor.YELLOW + "seconds!");
                         player.playSound(player.getLocation(), Sound.NOTE_STICKS, 1, 1);
                     });
                 } else if (time == 20) {
-                    game.forEachOnlinePlayer((player, team) -> {
+                    game.forEachOnlinePlayerWithoutSpectators((player, team) -> {
                         sendMessage(player, false, ChatColor.YELLOW + "The game starts in 20 seconds!");
                         player.playSound(player.getLocation(), Sound.NOTE_STICKS, 1, 1);
                     });
                 } else if (time == 10) {
-                    game.forEachOnlinePlayer((player, team) -> {
+                    game.forEachOnlinePlayerWithoutSpectators((player, team) -> {
                         sendMessage(player, false, ChatColor.YELLOW + "The game starts in " + ChatColor.GOLD + "10 " + ChatColor.YELLOW + "seconds!");
                         player.playSound(player.getLocation(), Sound.NOTE_STICKS, 1, 1);
                     });
                 } else if (time <= 5 && time != 0) {
-                    game.forEachOnlinePlayer((player, team) -> {
+                    game.forEachOnlinePlayerWithoutSpectators((player, team) -> {
                         String s = time == 1 ? "!" : "s!";
                         sendMessage(player, false, ChatColor.YELLOW + "The game starts in " + ChatColor.RED + time + ChatColor.YELLOW + " second" + s);
                         player.playSound(player.getLocation(), Sound.NOTE_STICKS, 1, 1);
                     });
                 } else if (time == 0) {
-                    game.forEachOnlinePlayer((player, team) -> {
+                    game.forEachOnlinePlayerWithoutSpectators((player, team) -> {
                         ChatUtils.sendMessage(player, false, "" + ChatColor.GREEN + ChatColor.BOLD + "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬");
                         ChatUtils.sendMessage(player, true, "" + ChatColor.WHITE + ChatColor.BOLD + "Warlords");
                         ChatUtils.sendMessage(player, true, "");
@@ -376,7 +376,7 @@ public class PreLobbyState implements State, TimerDebugAble {
             timer--;
         } else {
             resetTimer();
-            game.forEachOnlinePlayer((player, team) -> giveLobbyScoreboard(false, player));
+            game.forEachOnlinePlayerWithoutSpectators((player, team) -> giveLobbyScoreboard(false, player));
         }
         return null;
     }

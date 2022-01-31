@@ -54,7 +54,10 @@ public class PowerupOption implements Option {
     @Override
     public void register(Game game) {
         this.game = game;
-        game.registerGameMarker(DebugLocationMarker.class, DebugLocationMarker.create(null, 0, this.getClass(),
+        game.registerGameMarker(DebugLocationMarker.class, DebugLocationMarker.create(
+                () -> type.getDebugMaterial(),
+                () -> type.getDebugData(),
+                this::getClass,
                 () -> this.getClass().getSimpleName() + ": " + this.type.name(),
                 this::getLocation,
                 () -> Arrays.asList(
@@ -68,7 +71,7 @@ public class PowerupOption implements Option {
         game.registerGameMarker(TimerSkipAbleMarker.class, new TimerSkipAbleMarker() {
             @Override
             public void skipTimer(int delayInTicks) {
-                cooldown = Math.max(cooldown, delayInTicks / 20);
+                cooldown = Math.max(cooldown - delayInTicks / 20, 0);
             }
 
             @Override
@@ -117,7 +120,7 @@ public class PowerupOption implements Option {
 
     private void spawn() {
         if (entity != null) {
-            remove();
+            return;
         }
         entity = location.getWorld().spawn(location.clone().add(0, -1.5, 0), ArmorStand.class);
 
@@ -127,7 +130,7 @@ public class PowerupOption implements Option {
         entity.setVisible(false);
         entity.setCustomNameVisible(true);
 
-        game.forEachOnlinePlayer((player, team) -> {
+        game.forEachOnlinePlayerWithoutSpectators((player, team) -> {
             player.playSound(location, "ctf.powerup.spawn", 2, 1);
         });
 
@@ -196,7 +199,7 @@ public class PowerupOption implements Option {
     }
 
     public enum PowerupType {
-        SPEED(10) {
+        SPEED(10, Material.WOOL, (short) 4) {
             @Override
             public void onPickUp(PowerupOption option, WarlordsPlayer warlordsPlayer) {
                 warlordsPlayer.getCooldownManager().addCooldown("Speed", this.getClass(), this, "SPEED", option.getDuration(), warlordsPlayer, CooldownTypes.BUFF);
@@ -212,7 +215,7 @@ public class PowerupOption implements Option {
                 armorStand.setCustomName("§b§lSPEED");
                 armorStand.setHelmet(new ItemStack(Material.WOOL, 1, (short) 4));
             }
-        }, HEALING(5) {
+        }, HEALING(5, Material.WOOL, (short) 5) {
             @Override
             public void onPickUp(PowerupOption option, WarlordsPlayer warlordsPlayer) {
                 warlordsPlayer.setPowerUpHeal(true);
@@ -224,7 +227,7 @@ public class PowerupOption implements Option {
                 armorStand.setCustomName("§a§lHEALING");
                 armorStand.setHelmet(new ItemStack(Material.WOOL, 1, (short) 13));
             }
-        }, ENERGY(30) {
+        }, ENERGY(30, Material.WOOL, (short) 3) {
             @Override
             public void onPickUp(PowerupOption option, WarlordsPlayer warlordsPlayer) {
                 warlordsPlayer.getCooldownManager().addCooldown("Energy", this.getClass(), this, "ENERGY", option.getDuration(), warlordsPlayer, CooldownTypes.BUFF);
@@ -236,7 +239,7 @@ public class PowerupOption implements Option {
                 armorStand.setCustomName("§6§lENERGY");
                 armorStand.setHelmet(new ItemStack(Material.WOOL, 1, (short) 1));
             }
-        }, DAMAGE(30) {
+        }, DAMAGE(30, Material.WOOL, (short) 4) {
             @Override
             public void onPickUp(PowerupOption option, WarlordsPlayer warlordsPlayer) {
                 warlordsPlayer.getCooldownManager().addCooldown("Damage", this.getClass(), this, "DMG", option.getDuration(), warlordsPlayer, CooldownTypes.BUFF);
@@ -250,13 +253,24 @@ public class PowerupOption implements Option {
             }
         };
         private final int duration;
+        private final Material debugMaterial;
+        private final int debugData;
 
-        PowerupType(int duration) {
+        private PowerupType(int duration, Material debugMaterial, int debugData) {
             this.duration = duration;
+            this.debugData = debugData;
+            this.debugMaterial = debugMaterial;
         }
-
         public int getDuration() {
             return duration;
+        }
+        
+        public Material getDebugMaterial() {
+            return debugMaterial;
+        }
+        
+        public int getDebugData() {
+            return debugData;
         }
 
         public abstract void onPickUp(PowerupOption option, WarlordsPlayer warlordsPlayer);

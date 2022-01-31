@@ -76,7 +76,7 @@ public class GameOvertimeOption implements Option, Listener {
             }
             DrawAfterTimeoutOption drawAfterTimeoutOption = (DrawAfterTimeoutOption) event.getCause();
             drawAfterTimeoutOption.setTimeRemaining(overTimeTime);
-            event.getGame().forEachOnlinePlayer((player, team) -> {
+            event.getGame().forEachOnlinePlayerWithoutSpectators((player, team) -> {
                 PacketUtils.sendTitle(player, ChatColor.LIGHT_PURPLE + "OVERTIME!", ChatColor.YELLOW + "First team to reach " + overTimePoints + " points wins!", 0, 60, 0);
                 player.sendMessage("§dOvertime is now active!");
                 player.playSound(player.getLocation(), Sound.PORTAL_TRAVEL, 1, 1);

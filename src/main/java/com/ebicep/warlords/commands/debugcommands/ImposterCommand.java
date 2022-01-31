@@ -232,7 +232,7 @@ public class ImposterCommand implements CommandExecutor {
                         );
                         warlordsPlayer.getGame().addFrozenCause(ChatColor.BLUE + "BLUE" + ChatColor.GREEN + " is voting!");
                     } else {
-                        warlordsPlayer.getGame().forEachOnlinePlayer((player, team) -> {
+                        warlordsPlayer.getGame().forEachOnlinePlayerWithoutSpectators((player, team) -> {
                             if (team == Team.BLUE) {
                                 Party.sendMessageToPlayer(player, ChatColor.GREEN + "A player wants to vote out someone! (" + blueVoters + "/" + playersNeeded + ")", true, true);
                             }
@@ -318,7 +318,7 @@ public class ImposterCommand implements CommandExecutor {
                         );
                         warlordsPlayer.getGame().addFrozenCause(ChatColor.RED + "RED" + ChatColor.GREEN + " is voting!");
                     } else {
-                        warlordsPlayer.getGame().forEachOnlinePlayer((player, team) -> {
+                        warlordsPlayer.getGame().forEachOnlinePlayerWithoutSpectators((player, team) -> {
                             if (team == Team.RED) {
                                 player.sendMessage(ChatColor.GREEN + "A player wants to vote out someone! (" + redVoters + "/" + playersNeeded + ")");
                             }

@@ -46,7 +46,7 @@ public enum MapSymmetry {
                     difference.getY(),
                     difference.getZ() * Math.cos(rotationAngle) + difference.getX() * -Math.sin(rotationAngle)
             );
-            mapCenter.add(rotated);
+            mapCenter.subtract(rotated);
             mapCenter.setPitch(original.getPitch());
             mapCenter.setYaw((float) (original.getYaw() + rotationAngle / Math.PI * 180));
             return mapCenter;

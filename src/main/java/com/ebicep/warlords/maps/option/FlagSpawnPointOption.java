@@ -1,5 +1,6 @@
 package com.ebicep.warlords.maps.option;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.events.WarlordsFlagUpdatedEvent;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Team;
@@ -7,15 +8,29 @@ import com.ebicep.warlords.maps.flags.*;
 import com.ebicep.warlords.maps.option.marker.*;
 import com.ebicep.warlords.maps.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.maps.option.marker.scoreboard.SimpleScoreboardHandler;
+import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.GameRunnable;
 import static java.util.Collections.singletonList;
 import java.util.List;
+import java.util.Optional;
 import javax.annotation.Nonnull;
+import net.minecraft.server.v1_8_R3.AxisAlignedBB;
+import net.minecraft.server.v1_8_R3.MovingObjectPosition;
+import net.minecraft.server.v1_8_R3.Vec3D;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Entity;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.player.PlayerEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.metadata.MetadataValue;
+import org.bukkit.util.Vector;
 
 /**
  * Module for spawning a flag
@@ -81,6 +96,105 @@ public class FlagSpawnPointOption implements Option {
                     return singletonList(flagName + " Flag: " + ChatColor.YELLOW + "Dropped! " + ChatColor.GRAY + gFlag.getDespawnTimerSeconds());
                 } else {
                     return singletonList(flagName + " Flag: " + ChatColor.GRAY + "Respawning...");
+                }
+            }
+        });
+        game.registerEvents(new Listener() {
+            @EventHandler
+            public void onArmorStandBreak(EntityDamageByEntityEvent event) {
+                boolean isOurArmorStand = renderer.getRenderedArmorStands().contains(event.getEntity());
+                WarlordsPlayer wp = Warlords.getPlayer(event.getDamager());
+                if (wp != null && wp.getGame() == game && isOurArmorStand) {
+                    onFlagInteract(wp);
+                    event.setCancelled(true);
+                }
+            }
+
+            @EventHandler
+            public void onPotentialFlagInteract(PlayerInteractEntityEvent event) {
+                onPotentialFlagInteract((PlayerEvent)event);
+            }
+
+            @EventHandler
+            public void onPotentialFlagInteract(PlayerInteractEvent event) {
+                onPotentialFlagInteract((PlayerEvent)event);
+            }
+
+            private void onPotentialFlagInteract(PlayerEvent event) {
+                WarlordsPlayer wp = Warlords.getPlayer(event.getPlayer());
+                if (wp != null && wp.getGame() == game) {
+                    Location playerLocation = wp.getEntity().getEyeLocation();
+                    Vector direction = wp.getEntity().getLocation().getDirection().multiply(3);
+                    Vec3D from = new Vec3D(
+                            playerLocation.getX(),
+                            playerLocation.getY(),
+                            playerLocation.getZ()
+                    );
+                    Vec3D to = new Vec3D(
+                            playerLocation.getX() + direction.getX(),
+                            playerLocation.getY() + direction.getY(),
+                            playerLocation.getZ() + direction.getZ()
+                    );
+                    checkFlagInteract(playerLocation, wp, from, to, renderer);
+                }
+            }
+
+            private void checkFlagInteract(Location playerLocation, WarlordsPlayer wp, Vec3D from, Vec3D to, FlagRenderer render) {
+                Location entityLoc = new Location(playerLocation.getWorld(), 0, 0, 0);
+                for(Entity stand : render.getRenderedArmorStands()) {
+                    stand.getLocation(entityLoc);
+                    if (entityLoc.getWorld() == playerLocation.getWorld() && entityLoc.distanceSquared(playerLocation) < 5 * 5) {
+                        AxisAlignedBB aabb = new AxisAlignedBB(
+                                entityLoc.getX() - 0.5,
+                                entityLoc.getY(),
+                                entityLoc.getZ() - 0.5,
+                                entityLoc.getX() + 0.5,
+                                entityLoc.getY() + 2,
+                                entityLoc.getZ() + 0.5
+                        );
+                        MovingObjectPosition mop = aabb.a(from, to);
+                        if(mop != null) {
+                            onFlagInteract(wp);
+                            break;
+                        }
+                    }
+                }
+            }
+
+            private void onFlagInteract(WarlordsPlayer wp) {
+                Team team = wp.getTeam();
+                if (wp.isDeath()) {
+                    return;
+                }
+
+                if (renderer.getLastFlagState() != info.getFlag()) {
+                    // Prevent the player from interacting when the render state is outdated
+                    return;
+                }
+
+                wp.setFlagCooldown(2);
+
+                if (info.getFlag() instanceof GroundFlagLocation) {
+                    GroundFlagLocation groundFlagLocation = (GroundFlagLocation) info.getFlag();
+                    if (team == info.getTeam()) {
+                        // Return flag
+                        info.setFlag(new SpawnFlagLocation(info.getSpawnLocation(), wp));
+                    } else {
+                        // Steal flag
+                        info.setFlag(new PlayerFlagLocation(wp, groundFlagLocation.getDamageTimer()));
+                        if (wp.getEntity().getVehicle() != null) {
+                            wp.getEntity().getVehicle().remove();
+                        }
+                    }
+                } else if (info.getFlag() instanceof SpawnFlagLocation) {
+                    if (team == info.getTeam()) {
+                        // Nothing
+                        wp.sendMessage("§cYou can't steal your own team's flag!");
+                    } else {
+                        // Steal flag
+                        info.setFlag(new PlayerFlagLocation(wp, 0));
+                        wp.getCooldownManager().addCooldown("Flag Damage Reduction", SpawnFlagLocation.class, null, "RES", 15, wp, CooldownTypes.BUFF);
+                    }
                 }
             }
         });

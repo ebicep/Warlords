@@ -471,6 +471,14 @@ public final class Game implements Runnable, AutoCloseable {
         )).filter(e -> e.getKey() != null);
     }
 
+    public Stream<Map.Entry<Player, Team>> onlinePlayers() {
+        return players()
+                .<Map.Entry<Player, Team>>map(e -> new AbstractMap.SimpleImmutableEntry<>(
+                Bukkit.getPlayer(e.getKey()),
+                e.getValue()
+        )).filter(e -> e.getKey() != null);
+    }
+
     public Stream<UUID> spectators() {
         return this.players.entrySet().stream().filter(e -> e.getValue() == null).map(e -> e.getKey());
     }
@@ -484,6 +492,10 @@ public final class Game implements Runnable, AutoCloseable {
     }
 
     public void forEachOnlinePlayer(BiConsumer<Player, Team> consumer) {
+        onlinePlayers().forEach(entry -> consumer.accept(entry.getKey(), entry.getValue()));
+    }
+
+    public void forEachOnlinePlayerWithoutSpectators(BiConsumer<Player, Team> consumer) {
         onlinePlayersWithoutSpectators().forEach(entry -> consumer.accept(entry.getKey(), entry.getValue()));
     }
 

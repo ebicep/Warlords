@@ -22,7 +22,7 @@ public class BoundingBoxOption extends AbstractCuboidOption implements Option {
         new GameRunnable(game) {
             @Override
             public void run() {
-                game.forEachOnlinePlayer((p, t) -> {
+                game.forEachOnlinePlayerWithoutSpectators((p, t) -> {
                     Location loc = p.getLocation(REUSEABLE_LOCATION_OBJECT);
                     if (
                             loc.getWorld() != min.getWorld() || 
