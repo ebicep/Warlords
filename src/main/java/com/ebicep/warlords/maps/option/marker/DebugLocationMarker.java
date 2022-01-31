@@ -76,7 +76,7 @@ public interface DebugLocationMarker extends LocationMarker {
      */
     @Nonnull
     default ItemStack getAsItem() {
-        ItemBuilder item = new ItemBuilder(getMaterial(), getMaterialData());
+        ItemBuilder item = new ItemBuilder(getMaterial(), 1, getMaterialData());
         item.name(getName());
         Location loc = getLocation();
         List<String> lore = new ArrayList<>();
