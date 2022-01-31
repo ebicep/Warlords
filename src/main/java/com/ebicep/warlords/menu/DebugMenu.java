@@ -611,12 +611,6 @@ public class DebugMenu {
                 y++;
             }
         }
-//        teleportLocationsBlue.put(new ItemBuilder(Material.BEACON).name(ChatColor.BLUE + "Lobby Spawn Point").get(), gameMap.getBlueLobbySpawnPoint());
-//        teleportLocationsBlue.put(new ItemBuilder(Material.BED).name(ChatColor.BLUE + "Respawn Point").get(), gameMap.getBlueRespawn());
-//        teleportLocationsBlue.put(new ItemBuilder(Material.BANNER).name(ChatColor.BLUE + "Flag").get(), gameMap.getBlueFlag());
-//        teleportLocationsBlue.put(new ItemBuilder(Material.WOOL, 1, (short) 1).name(ChatColor.BLUE + "Energy Powerup").get(), gameMap.getDamagePowerupBlue());
-//        teleportLocationsBlue.put(new ItemBuilder(Material.WOOL, 1, (short) 5).name(ChatColor.BLUE + "Healing Powerup").get(), gameMap.getHealingPowerupBlue());
-//        teleportLocationsBlue.put(new ItemBuilder(Material.WOOL, 1, (short) 4).name(ChatColor.BLUE + "Speed Powerup").get(), gameMap.getSpeedPowerupBlue());
         menu.setItem(3, 4, MENU_BACK, (n, e) -> openPlayerMenu(player, target));
         menu.setItem(4, 4, MENU_CLOSE, ACTION_CLOSE_MENU);
         menu.openForPlayer(player);
