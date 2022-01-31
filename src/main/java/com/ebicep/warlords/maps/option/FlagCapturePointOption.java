@@ -16,14 +16,14 @@ public class FlagCapturePointOption extends MarkerOption {
         this(loc, DEFAULT_CAPTURE_RADIUS, toIgnore);
     }
 
-    public FlagCapturePointOption(@Nonnull Location loc, @Nonnegative double radius, @Nonnull Team... toIgnore) {
+    public FlagCapturePointOption(@Nonnull Location loc, @Nonnegative double radius, @Nonnull Team... forTeams) {
         super(
-                FlagCaptureMarker.aroundLocation(loc, radius, toIgnore),
+                FlagCaptureMarker.aroundLocation(loc, radius, forTeams),
                 DebugLocationMarker.create(null, 0, FlagCapturePointOption.class,
                         "Capture zone",
                         loc,
                         () -> Arrays.asList(
-                                "Ignoring teams: " + Arrays.toString(toIgnore),
+                                "Ignoring teams: " + Arrays.toString(forTeams),
                                 "Shape: POINT",
                                 "Radius: " + radius
                         )
@@ -31,9 +31,9 @@ public class FlagCapturePointOption extends MarkerOption {
         );
     }
 
-    public FlagCapturePointOption(@Nonnull Location a, @Nonnull Location b, @Nonnull Team... toIgnore) {
+    public FlagCapturePointOption(@Nonnull Location a, @Nonnull Location b, @Nonnull Team... forTeams) {
         super(
-                FlagCaptureMarker.zonedCapture(a, b, toIgnore),
+                FlagCaptureMarker.zonedCapture(a, b, forTeams),
                 DebugLocationMarker.create(Material.CARPET, 0, FlagCapturePointOption.class,
                         "Capture zone",
                         new Location(
@@ -43,7 +43,7 @@ public class FlagCapturePointOption extends MarkerOption {
                                 (a.getZ() + b.getZ()) / 2
                         ),
                         () -> Arrays.asList(
-                                "Ignoring teams: " + Arrays.toString(toIgnore),
+                                "Ignoring teams: " + Arrays.toString(forTeams),
                                 "Shape: RECTANGLE",
                                 "A: " + a.getX() + ", " + a.getY() + ", " + a.getZ(),
                                 "B: " + b.getX() + ", " + b.getY() + ", " + b.getZ()

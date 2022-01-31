@@ -236,6 +236,10 @@ public class FlagSpawnPointOption implements Option {
         new GameRunnable(game) {
             @Override
             public void run() {
+                FlagLocation newFlag = info.getFlag().update(info);
+                if (newFlag != null) {
+                    info.setFlag(newFlag);
+                }
                 renderer.checkRender();
             }
         }.runTaskTimer(0, 1);

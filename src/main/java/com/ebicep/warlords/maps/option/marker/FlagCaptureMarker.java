@@ -29,62 +29,54 @@ public interface FlagCaptureMarker extends GameMarker {
      */
     boolean shouldCountAsCapture(PlayerFlagLocation flag);
 
-    static FlagCaptureMarker aroundLocation(@Nonnull Location loc, @Nonnull Team... toIgnore) {
-        return aroundLocation(loc, DEFAULT_CAPTURE_RADIUS, toIgnore);
+    static FlagCaptureMarker aroundLocation(@Nonnull Location loc, @Nonnull Team... forTeams) {
+        return aroundLocation(loc, DEFAULT_CAPTURE_RADIUS, forTeams);
     }
 
-    static FlagCaptureMarker aroundLocation(@Nonnull Location loc, @Nonnull Iterable<Team> toIgnore) {
-        return aroundLocation(loc, DEFAULT_CAPTURE_RADIUS, toIgnore);
+    static FlagCaptureMarker aroundLocation(@Nonnull Location loc, @Nonnull Iterable<Team> forTeams) {
+        return aroundLocation(loc, DEFAULT_CAPTURE_RADIUS, forTeams);
     }
 
-    static FlagCaptureMarker aroundLocation(@Nonnull Location loc, @Nonnull EnumSet<Team> toIgnore) {
-        return aroundLocation(loc, DEFAULT_CAPTURE_RADIUS, toIgnore);
+    static FlagCaptureMarker aroundLocation(@Nonnull Location loc, @Nonnull EnumSet<Team> forTeams) {
+        return aroundLocation(loc, DEFAULT_CAPTURE_RADIUS, forTeams);
     }
 
-    static FlagCaptureMarker aroundLocation(@Nonnull Location loc, @Nonnegative double radius, @Nonnull Team... toIgnore) {
+    static FlagCaptureMarker aroundLocation(@Nonnull Location loc, @Nonnegative double radius, @Nonnull Team... forTeams) {
         EnumSet<Team> asSet = EnumSet.noneOf(Team.class);
-        for (Team ignore : toIgnore) {
-            asSet.add(ignore);
-        }
+        for (Team team : forTeams) asSet.add(team);
         return aroundLocation(loc, radius, asSet);
     }
 
-    static FlagCaptureMarker aroundLocation(@Nonnull Location loc, @Nonnegative double radius, @Nonnull Iterable<Team> toIgnore) {
-        if (toIgnore instanceof EnumSet<?>) {
-            return aroundLocation(loc, radius, (EnumSet<Team>) toIgnore);
+    static FlagCaptureMarker aroundLocation(@Nonnull Location loc, @Nonnegative double radius, @Nonnull Iterable<Team> forTeams) {
+        if (forTeams instanceof EnumSet<?>) {
+            return aroundLocation(loc, radius, (EnumSet<Team>) forTeams);
         }
         EnumSet<Team> asSet = EnumSet.noneOf(Team.class);
-        for (Team ignore : toIgnore) {
-            asSet.add(ignore);
-        }
+        for (Team team : forTeams) asSet.add(team);
         return aroundLocation(loc, radius, asSet);
     }
 
-    static FlagCaptureMarker aroundLocation(@Nonnull Location loc, @Nonnegative double radius, @Nonnull EnumSet<Team> toIgnore) {
-        return flag -> !toIgnore.contains(flag.getPlayer().getTeam())
+    static FlagCaptureMarker aroundLocation(@Nonnull Location loc, @Nonnegative double radius, @Nonnull EnumSet<Team> forTeams) {
+        return flag -> forTeams.contains(flag.getPlayer().getTeam())
                 && isInCircleRadiusFast(loc, flag.getLocation(), radius);
     }
 
-    static FlagCaptureMarker zonedCapture(@Nonnull Location a, @Nonnull Location b, @Nonnull Team... toIgnore) {
+    static FlagCaptureMarker zonedCapture(@Nonnull Location a, @Nonnull Location b, @Nonnull Team... forTeams) {
         EnumSet<Team> asSet = EnumSet.noneOf(Team.class);
-        for (Team ignore : toIgnore) {
-            asSet.add(ignore);
-        }
+        for (Team team : forTeams) asSet.add(team);
         return zonedCapture(a, b, asSet);
     }
 
-    static FlagCaptureMarker zonedCapture(@Nonnull Location a, @Nonnull Location b, @Nonnull Iterable<Team> toIgnore) {
-        if (toIgnore instanceof EnumSet<?>) {
-            return zonedCapture(a, b, (EnumSet<Team>) toIgnore);
+    static FlagCaptureMarker zonedCapture(@Nonnull Location a, @Nonnull Location b, @Nonnull Iterable<Team> forTeams) {
+        if (forTeams instanceof EnumSet<?>) {
+            return zonedCapture(a, b, (EnumSet<Team>) forTeams);
         }
         EnumSet<Team> asSet = EnumSet.noneOf(Team.class);
-        for (Team ignore : toIgnore) {
-            asSet.add(ignore);
-        }
+        for (Team team : forTeams) asSet.add(team);
         return zonedCapture(a, b, asSet);
     }
 
-    static FlagCaptureMarker zonedCapture(@Nonnull Location a, @Nonnull Location b, @Nonnull EnumSet<Team> toIgnore) {
+    static FlagCaptureMarker zonedCapture(@Nonnull Location a, @Nonnull Location b, @Nonnull EnumSet<Team> forTeams) {
         double xMin = Math.min(a.getX(), b.getX());
         double xMax = Math.max(a.getX(), b.getX());
         double yMin = Math.min(a.getY(), b.getY());
@@ -96,7 +88,7 @@ public interface FlagCaptureMarker extends GameMarker {
             double x = loc.getX();
             double y = loc.getY();
             double z = loc.getZ();
-            return !toIgnore.contains(flag.getPlayer().getTeam())
+            return forTeams.contains(flag.getPlayer().getTeam())
                     && loc.getWorld() == a.getWorld()
                     && x >= xMin && x <= xMax
                     && y >= yMin && y <= yMax
