@@ -1,16 +1,20 @@
 package com.ebicep.warlords.maps.option;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.events.WarlordsGameUpdatedEvent;
 import com.ebicep.warlords.maps.Game;
+import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.PacketUtils;
 import net.minecraft.server.v1_8_R3.EntityLiving;
 import net.minecraft.server.v1_8_R3.GenericAttributes;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
 import org.bukkit.entity.Horse;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -18,6 +22,20 @@ import org.bukkit.potion.PotionEffectType;
  * Supports actually freezing the internalPlayers in the game
  */
 public class GameFreezeOption implements Option, Listener {
+    
+    private static Listener GLOBAL_LISTENER = new Listener() {
+        @EventHandler
+        public void onEvent(PlayerMoveEvent e) {
+            WarlordsPlayer wp = Warlords.getPlayer(e.getPlayer());
+            if (wp != null && wp.getGame().isFrozen()) {
+                if (e.getPlayer().getVehicle() == null) {
+                    e.setTo(e.getFrom());
+                } else {
+                    e.setCancelled(true);
+                }
+            }
+        }
+    };
 
     private Game game;
     private boolean isFrozen = false;
@@ -27,6 +45,10 @@ public class GameFreezeOption implements Option, Listener {
         this.game = game;
 
         game.registerEvents(this);
+        if (GLOBAL_LISTENER != null) {
+            Bukkit.getPluginManager().registerEvents(GLOBAL_LISTENER, Warlords.getInstance());
+            GLOBAL_LISTENER = null;
+        }
     }
 
     private void freeze() {

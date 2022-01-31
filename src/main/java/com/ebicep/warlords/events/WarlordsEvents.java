@@ -202,9 +202,7 @@ public class WarlordsEvents implements Listener {
     public static void onPlayerQuit(PlayerQuitEvent e) {
         WarlordsPlayer wp = Warlords.getPlayer(e.getPlayer());
         if (wp != null) {
-            if (!wp.isDeath()) {
-                wp.updatePlayerReference(null);
-            }
+            wp.updatePlayerReference(null);
             e.setQuitMessage(wp.getColoredNameBold() + ChatColor.GOLD + " left the game!");
         } else {
             e.setQuitMessage(ChatColor.AQUA + e.getPlayer().getName() + ChatColor.GOLD + " left the lobby!");
@@ -452,13 +450,6 @@ public class WarlordsEvents implements Listener {
 
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent e) {
-        if (Warlords.hasPlayer(e.getPlayer()) && Objects.requireNonNull(Warlords.getPlayer(e.getPlayer())).getGame().isFrozen()) {
-            if (e.getPlayer().getVehicle() == null) {
-                e.setTo(e.getFrom());
-            } else {
-                e.setCancelled(true);
-            }
-        }
         if (e.getPlayer().getVehicle() instanceof Horse) {
             Location location = e.getPlayer().getLocation();
             if (!Utils.isMountableZone(location)) {
@@ -676,8 +667,21 @@ public class WarlordsEvents implements Listener {
         if (event.getNew() instanceof PlayerFlagLocation) {
             PlayerFlagLocation pfl = (PlayerFlagLocation) event.getNew();
             WarlordsPlayer player = pfl.getPlayer();
-            ((PlayerFlagLocation) event.getOld()).getPlayer().setCarriedFlag(event.getInfo());
-            if (!(event.getOld() instanceof PlayerFlagLocation)) {
+            player.setCarriedFlag(event.getInfo());
+            if (event.getOld() instanceof PlayerFlagLocation) {
+                // PLAYER -> PLAYER only happens if the multiplier gets to a new scale
+                if (pfl.getComputedHumanMultiplier() % 10 == 0) {
+                    event.getGame().forEachOnlinePlayerWithoutSpectators((p, t) -> {
+                        p.sendMessage("§eThe " + event.getTeam().coloredPrefix() + " §eflag carrier now takes §c" + pfl.getComputedHumanMultiplier() + "% §eincreased damage!");
+                    });
+                    event.getGame().spectators().forEach(uuid -> {
+                        if (Bukkit.getPlayer(uuid) != null) {
+                            Player p = Bukkit.getPlayer(uuid);
+                            p.sendMessage("§eThe " + event.getTeam().coloredPrefix() + " §eflag carrier now takes §c" + pfl.getComputedHumanMultiplier() + "% §eincreased damage!");
+                        }
+                    });
+                }
+            } else {
                 // eg GROUND -> PLAYER
                 // or SPAWN -> PLAYER
                 ChatColor enemyColor = event.getTeam().enemy().teamColor();
@@ -697,19 +701,6 @@ public class WarlordsEvents implements Listener {
                         PacketUtils.sendTitle(p, "", enemyColor + player.getName() + " §epicked up the " + event.getTeam().coloredPrefix() + " §eflag!", 0, 60, 0);
                     }
                 });
-            } else {
-                // PLAYER -> PLAYER only happens if the multiplier gets to a new scale
-                if (pfl.getComputedHumanMultiplier() % 10 == 0) {
-                    event.getGame().forEachOnlinePlayerWithoutSpectators((p, t) -> {
-                        p.sendMessage("§eThe " + event.getTeam().coloredPrefix() + " §eflag carrier now takes §c" + pfl.getComputedHumanMultiplier() + "% §eincreased damage!");
-                    });
-                    event.getGame().spectators().forEach(uuid -> {
-                        if (Bukkit.getPlayer(uuid) != null) {
-                            Player p = Bukkit.getPlayer(uuid);
-                            p.sendMessage("§eThe " + event.getTeam().coloredPrefix() + " §eflag carrier now takes §c" + pfl.getComputedHumanMultiplier() + "% §eincreased damage!");
-                        }
-                    });
-                }
             }
         } else if (event.getNew() instanceof SpawnFlagLocation) {
             WarlordsPlayer toucher = ((SpawnFlagLocation) event.getNew()).getFlagReturner();
@@ -740,25 +731,22 @@ public class WarlordsEvents implements Listener {
                     p.sendMessage(playerColor + pfl.getPlayer().getName() + " §ehas dropped the " + flag + " §eflag!");
                 });
             }
-        } else if (event.getNew() instanceof WaitingFlagLocation && ((WaitingFlagLocation) event.getNew()).wasWinner()) {
-            if (event.getOld() instanceof PlayerFlagLocation) {
-                PlayerFlagLocation pfl = (PlayerFlagLocation) event.getOld();
-                Team loser = event.getTeam();
-                pfl.getPlayer().addFlagCap();
-                event.getGame().forEachOnlinePlayer((p, t) -> {
-                    String message = pfl.getPlayer().getColoredName() + " §ecaptured the " + loser.coloredPrefix() + " §eflag!";
-                    p.sendMessage(message);
-                    PacketUtils.sendTitle(p, "", message, 0, 60, 0);
+        } else if (event.getNew() instanceof WaitingFlagLocation && ((WaitingFlagLocation) event.getNew()).getScorer() != null) {
+            WarlordsPlayer player = ((WaitingFlagLocation) event.getNew()).getScorer();
+            player.addFlagCap();
+            event.getGame().forEachOnlinePlayer((p, t) -> {
+                String message = player.getColoredName() + " §ecaptured the " + event.getInfo().getTeam().coloredPrefix() + " §eflag!";
+                p.sendMessage(message);
+                PacketUtils.sendTitle(p, "", message, 0, 60, 0);
 
-                    if(t != null) {
-                        if (event.getTeam() == t) {
-                            p.playSound(pfl.getLocation(), "ctf.enemycapturedtheflag", 500, 1);
-                        } else {
-                            p.playSound(pfl.getLocation(), "ctf.enemyflagcaptured", 500, 1);
-                        }
+                if (t != null) {
+                    if (event.getTeam() == t) {
+                        p.playSound(player.getLocation(), "ctf.enemycapturedtheflag", 500, 1);
+                    } else {
+                        p.playSound(player.getLocation(), "ctf.enemyflagcaptured", 500, 1);
                     }
-                });
-            }
+                }
+            });
         }
     }
 

@@ -5,6 +5,9 @@ import java.util.Objects;
 import javax.annotation.Nonnull;
 import org.bukkit.event.Event;
 
+/**
+ * Base event for all warlord game based events
+ */
 public abstract class WarlordsGameEvent extends Event {
 
     @Nonnull
