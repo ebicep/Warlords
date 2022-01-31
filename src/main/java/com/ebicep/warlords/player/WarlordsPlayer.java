@@ -129,6 +129,12 @@ public final class WarlordsPlayer {
         this.entity = spawnJimmy(p == null ? Warlords.getRejoinPoint(uuid) : p.getLocation(), null);
         this.weapon = Weapons.getSelected(player, settings.getSelectedClass());
         updatePlayerReference(p);
+        this.compassTarget = gameState.getGame()
+                .getMarkers(CompassTargetMarker.class)
+                .stream().filter(c -> c.isEnabled())
+                .sorted(Comparator.comparing((CompassTargetMarker c) -> c.getCompassTargetPriority(this)).reversed())
+                .findFirst()
+                .orElse(null);
     }
 
     public List<Location> getLocations() {
@@ -1501,8 +1507,6 @@ public final class WarlordsPlayer {
 
     public void toggleTeamFlagCompass() {
         List<CompassTargetMarker> targets = getGame().getMarkers(CompassTargetMarker.class);
-        sendMessage("Valid targets: " + targets);
-        sendMessage("Current target: " + this.compassTarget);
         boolean shouldPick = false;
         CompassTargetMarker first = null;
         for (CompassTargetMarker ctm : targets) {
@@ -1524,7 +1528,6 @@ public final class WarlordsPlayer {
                 return;
             }
         }
-        sendMessage("New target: " + first);
         this.compassTarget = first;
     }
 

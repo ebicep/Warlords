@@ -26,6 +26,7 @@ public interface FlagHolder extends CompassTargetMarker, GameMarker {
     
     FlagInfo getInfo();
     
+    @Override
     default Location getLocation() {
         return getFlag().getLocation();
     }
@@ -46,6 +47,11 @@ public interface FlagHolder extends CompassTargetMarker, GameMarker {
             info.setFlag(newFlag);
         }
         return newFlag;
+    }
+
+    @Override
+    public default int getCompassTargetPriority(WarlordsPlayer player) {
+        return player.getTeam() == getTeam() ? 20 : 0;
     }
     
     @Override
