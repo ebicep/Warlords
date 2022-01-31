@@ -7,12 +7,11 @@ import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.trait.HologramTrait;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,6 +34,11 @@ public class GameStartTrait extends Trait {
     @EventHandler
     public void onRightClick(NPCRightClickEvent event) {
         if (this.getNPC() == event.getNPC()) {
+            if (!Warlords.getInstance().isEnabled()) {
+                // Fix old NPC standing around on Windows + plugin reload after new deployment
+                this.getNPC().destroy();
+                return;
+            }
             tryToJoinQueue(event.getClicker());
         }
     }
@@ -42,6 +46,11 @@ public class GameStartTrait extends Trait {
     @EventHandler
     public void onLeftClick(NPCLeftClickEvent event) {
         if (this.getNPC() == event.getNPC()) {
+            if (!Warlords.getInstance().isEnabled()) {
+                // Fix old NPC standing around on Windows + plugin reload after new deployment
+                this.getNPC().destroy();
+                return;
+            }
             tryToJoinQueue(event.getClicker());
         }
     }
@@ -50,7 +59,7 @@ public class GameStartTrait extends Trait {
         
         //check if player is in a party, they must be leader to join
         Optional<Party> party = Warlords.partyManager.getPartyFromAny(player.getUniqueId());
-        List<Player> people = party.map(value -> value.getAllPartyPeoplePlayerOnline()).orElseGet(() -> new ArrayList<>(Bukkit.getOnlinePlayers()));
+        List<Player> people = party.map(value -> value.getAllPartyPeoplePlayerOnline()).orElseGet(() -> Collections.singletonList(player));
         if (party.isPresent()) {
             if (!party.get().getPartyLeader().getUuid().equals(player.getUniqueId())) {
                 player.sendMessage(ChatColor.RED + "You are not the party leader");
