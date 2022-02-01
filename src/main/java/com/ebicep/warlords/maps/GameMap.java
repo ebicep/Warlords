@@ -61,7 +61,7 @@ public enum GameMap {
 
             options.add(new WinByPointsOption());
             options.add(new MercyWinOption());
-            options.add(new DrawAfterTimeoutOption());
+            options.add(new WinAfterTimeoutOption());
             options.add(new GameOvertimeOption());
             options.add(new ScoreOnEventOption.FlagCapture());
             options.add(new ScoreOnEventOption.OnKill());
@@ -117,7 +117,7 @@ public enum GameMap {
 
             options.add(new WinByPointsOption());
             options.add(new MercyWinOption());
-            options.add(new DrawAfterTimeoutOption());
+            options.add(new WinAfterTimeoutOption());
             options.add(new GameOvertimeOption());
             options.add(new ScoreOnEventOption.FlagCapture());
             options.add(new ScoreOnEventOption.OnKill());
@@ -173,7 +173,7 @@ public enum GameMap {
 
             options.add(new WinByPointsOption());
             options.add(new MercyWinOption());
-            options.add(new DrawAfterTimeoutOption());
+            options.add(new WinAfterTimeoutOption());
             options.add(new GameOvertimeOption());
             options.add(new ScoreOnEventOption.FlagCapture());
             options.add(new ScoreOnEventOption.OnKill());
@@ -231,7 +231,7 @@ public enum GameMap {
 
             options.add(new WinByPointsOption());
             options.add(new MercyWinOption());
-            options.add(new DrawAfterTimeoutOption());
+            options.add(new WinAfterTimeoutOption());
             options.add(new GameOvertimeOption());
             options.add(new ScoreOnEventOption.FlagCapture());
             options.add(new ScoreOnEventOption.OnKill());
@@ -286,7 +286,7 @@ public enum GameMap {
 
             options.add(new WinByPointsOption());
             options.add(new MercyWinOption());
-            options.add(new DrawAfterTimeoutOption());
+            options.add(new WinAfterTimeoutOption());
             options.add(new GameOvertimeOption());
             options.add(new ScoreOnEventOption.FlagCapture());
             options.add(new ScoreOnEventOption.OnKill());
@@ -338,7 +338,7 @@ public enum GameMap {
 
             options.add(new WinByPointsOption());
             options.add(new MercyWinOption());
-            options.add(new DrawAfterTimeoutOption());
+            options.add(new WinAfterTimeoutOption());
             options.add(new GameOvertimeOption());
             options.add(new ScoreOnEventOption.FlagCapture());
             options.add(new ScoreOnEventOption.OnKill());

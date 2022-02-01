@@ -15,7 +15,7 @@ import org.bukkit.event.Listener;
 /**
  * Causes the game to go into an overtime mode when an
  * {@link WarlordsGameTriggerWinEvent trigger win event} is fired by an
- * {@link DrawAfterTimeoutOption draw after timeout option}
+ * {@link WinAfterTimeoutOption draw after timeout option}
  */
 public class GameOvertimeOption implements Option, Listener {
 
@@ -65,7 +65,7 @@ public class GameOvertimeOption implements Option, Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onEvent(WarlordsGameTriggerWinEvent event) {
-        if (!wasActivated && event.getCause() instanceof DrawAfterTimeoutOption) {
+        if (!wasActivated && event.getCause() instanceof WinAfterTimeoutOption) {
             event.setCancelled(true);
             for(Team team : TeamMarker.getTeams(event.getGame())) {
                 event.getGame().getStats(team).setPoints(0);
@@ -76,7 +76,7 @@ public class GameOvertimeOption implements Option, Listener {
                     winByPointsOption.setLimit(overTimePoints);
                 }
             }
-            DrawAfterTimeoutOption drawAfterTimeoutOption = (DrawAfterTimeoutOption) event.getCause();
+            WinAfterTimeoutOption drawAfterTimeoutOption = (WinAfterTimeoutOption) event.getCause();
             drawAfterTimeoutOption.setTimeRemaining(overTimeTime);
             event.getGame().forEachOnlinePlayerWithoutSpectators((player, team) -> {
                 PacketUtils.sendTitle(player, ChatColor.LIGHT_PURPLE + "OVERTIME!", ChatColor.YELLOW + "First team to reach " + overTimePoints + " points wins!", 0, 60, 0);
@@ -94,10 +94,10 @@ public class GameOvertimeOption implements Option, Listener {
 
     @Override
     public void checkConflicts(List<Option> options) {
-        boolean hasDrawAfterTimeoutOption = Utils.collectionHasItem(options, e -> e instanceof DrawAfterTimeoutOption);
+        boolean hasDrawAfterTimeoutOption = Utils.collectionHasItem(options, e -> e instanceof WinAfterTimeoutOption);
         boolean hasWinByPointsOption = Utils.collectionHasItem(options, e -> e instanceof WinByPointsOption);
         if (!hasDrawAfterTimeoutOption || !hasWinByPointsOption) {
-            throw new IllegalArgumentException("Game requires a DrawAfterTimeoutOption and a WinByPointsOption for the GameOvertimeOption to work properly");
+            throw new IllegalArgumentException("Game requires a WinAfterTimeoutOption and a WinByPointsOption for the GameOvertimeOption to work properly");
         }
     }
 }

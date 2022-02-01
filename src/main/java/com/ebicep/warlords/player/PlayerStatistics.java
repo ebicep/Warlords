@@ -1,6 +1,6 @@
 package com.ebicep.warlords.player;
 
-import com.ebicep.warlords.maps.option.DrawAfterTimeoutOption;
+import com.ebicep.warlords.maps.option.WinAfterTimeoutOption;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -33,7 +33,7 @@ public class PlayerStatistics implements Iterable<PlayerStatistics.Entry> {
     private transient Entry total = null;
 
     public PlayerStatistics() {
-        this(DrawAfterTimeoutOption.DEFAULT_TIME_REMAINING / 60);
+        this(16);
     }
 
     public PlayerStatistics(int expectedGameDurationInMinutes) {

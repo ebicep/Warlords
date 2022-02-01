@@ -11,7 +11,7 @@ import com.ebicep.warlords.events.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.GameAddon;
 import com.ebicep.warlords.maps.Team;
-import com.ebicep.warlords.maps.option.DrawAfterTimeoutOption;
+import com.ebicep.warlords.maps.option.WinAfterTimeoutOption;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.NumberFormat;
 import com.ebicep.warlords.util.PlayerFilter;
@@ -78,7 +78,7 @@ public class DatabaseGame {
         }
         this.date = dateFormat.format(new Date());
         this.map = game.getMap().getMapName();
-        this.timeLeft = DrawAfterTimeoutOption.getTimeLeft(game).orElse(-1);
+        this.timeLeft = WinAfterTimeoutOption.getTimeLeft(game).orElse(-1);
         this.winner = winner == null ? "DRAW" : winner.name.toUpperCase(Locale.ROOT);
         this.bluePoints = game.getStats(Team.BLUE).points();
         this.redPoints = game.getStats(Team.RED).points();

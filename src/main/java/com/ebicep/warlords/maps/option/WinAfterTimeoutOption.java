@@ -23,21 +23,31 @@ import org.bukkit.scheduler.BukkitTask;
 /**
  * Causes the game to end in a draw after a timeout
  */
-public class DrawAfterTimeoutOption implements Option {
+public class WinAfterTimeoutOption implements Option {
 
     public static final int DEFAULT_TIME_REMAINING = 900;
+    public static final Team DEFAULT_WINNER = null;
     private static final int SCOREBOARD_PRIORITY = 10;
 
     private int timeRemaining;
     private int timeInitial;
     private SimpleScoreboardHandler scoreboard;
     private BukkitTask runTaskTimer; 
+    private Team winner;
 
-    public DrawAfterTimeoutOption() {
-        this(DEFAULT_TIME_REMAINING);
+    public WinAfterTimeoutOption() {
+        this(DEFAULT_TIME_REMAINING, DEFAULT_WINNER);
     }
 
-    public DrawAfterTimeoutOption(int timeRemaining) {
+    public WinAfterTimeoutOption(int timeRemaining) {
+        this(timeRemaining, DEFAULT_WINNER);
+    }
+
+    public WinAfterTimeoutOption(Team winner) {
+        this(DEFAULT_TIME_REMAINING, winner);
+    }
+
+    public WinAfterTimeoutOption(int timeRemaining, Team winner) {
         this.timeRemaining = timeRemaining;
         this.timeInitial = timeRemaining;
     }
@@ -67,6 +77,14 @@ public class DrawAfterTimeoutOption implements Option {
      */
     public int getTimeRemaining() {
         return timeRemaining;
+    }
+
+    public Team getWinner() {
+        return winner;
+    }
+
+    public void setWinner(Team winner) {
+        this.winner = winner;
     }
 
     @Override
@@ -121,7 +139,7 @@ public class DrawAfterTimeoutOption implements Option {
             public void run() {
                 timeRemaining--;
                 if (timeRemaining <= 0) {
-                    WarlordsGameTriggerWinEvent event = new WarlordsGameTriggerWinEvent(game, DrawAfterTimeoutOption.this, null);
+                    WarlordsGameTriggerWinEvent event = new WarlordsGameTriggerWinEvent(game, WinAfterTimeoutOption.this, winner);
                     Bukkit.getPluginManager().callEvent(event);
                     if (!event.isCancelled()) {
                         cancel();
@@ -142,8 +160,8 @@ public class DrawAfterTimeoutOption implements Option {
     
     public static OptionalInt getTimeLeft(@Nonnull Game game) {
         for (Option option : game.getOptions()) {
-            if(option instanceof DrawAfterTimeoutOption) {
-                DrawAfterTimeoutOption drawAfterTimeoutOption = (DrawAfterTimeoutOption) option;
+            if(option instanceof WinAfterTimeoutOption) {
+                WinAfterTimeoutOption drawAfterTimeoutOption = (WinAfterTimeoutOption) option;
                 return OptionalInt.of(drawAfterTimeoutOption.getTimeRemaining());
             }
         }

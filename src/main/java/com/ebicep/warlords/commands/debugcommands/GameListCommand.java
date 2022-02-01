@@ -4,7 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.GameAddon;
 import com.ebicep.warlords.maps.GameManager.GameHolder;
-import com.ebicep.warlords.maps.option.DrawAfterTimeoutOption;
+import com.ebicep.warlords.maps.option.WinAfterTimeoutOption;
 import com.ebicep.warlords.util.Utils;
 import static com.ebicep.warlords.util.Utils.toTitleHumanCase;
 import java.util.EnumSet;
@@ -59,7 +59,7 @@ public class GameListCommand implements CommandExecutor {
                         .append(ChatColor.GRAY).append("..")
                         .append(ChatColor.GREEN).append(game.getMaxPlayers())
                         .append(ChatColor.GRAY).append("] ");
-                OptionalInt timeLeft = DrawAfterTimeoutOption.getTimeLeft(game);
+                OptionalInt timeLeft = WinAfterTimeoutOption.getTimeLeft(game);
                 String time = Utils.formatTimeLeft(timeLeft.isPresent() ? timeLeft.getAsInt() : (System.currentTimeMillis() - game.createdAt()) / 1000);
                 String word = timeLeft.isPresent() ? " Left" : " Elapsed";
                 message.append(time).append(word);

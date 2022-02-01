@@ -3,7 +3,7 @@ package com.ebicep.jda;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.GameManager.GameHolder;
-import com.ebicep.warlords.maps.option.DrawAfterTimeoutOption;
+import com.ebicep.warlords.maps.option.WinAfterTimeoutOption;
 import com.ebicep.warlords.maps.state.PlayingState;
 import com.ebicep.warlords.maps.state.PreLobbyState;
 import com.ebicep.warlords.util.Utils;
@@ -125,7 +125,7 @@ public class BotManager {
                     }
                 } else if (game.getState() instanceof PlayingState) {
                     PlayingState state = (PlayingState) game.getState();
-                    OptionalInt timeLeft = DrawAfterTimeoutOption.getTimeLeft(game);
+                    OptionalInt timeLeft = WinAfterTimeoutOption.getTimeLeft(game);
                     String time = Utils.formatTimeLeft(timeLeft.isPresent() ? timeLeft.getAsInt() : (System.currentTimeMillis() - game.createdAt()) / 1000);
                     String word = timeLeft.isPresent() ? " Left" : " Elapsed";
                     eb.appendDescription("**Game**: " + game.getMap().getMapName() + " - " + time + word + " - " + state.getBluePoints() + ":" + state.getRedPoints() + "\n");
