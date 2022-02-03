@@ -89,6 +89,9 @@ commands:
   lobby:
     description: Warps you back into the lobby if you are in a game lobby
     aliases: [ lobby, l, hub ]
+  discord:
+    description: Link and unlink discord account with minecraft account
+    aliases: [ discord ]
 
 permissions:
   group.default:
