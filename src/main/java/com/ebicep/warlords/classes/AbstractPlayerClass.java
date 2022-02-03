@@ -55,7 +55,7 @@ public abstract class AbstractPlayerClass {
         } else if (purple.getName().contains("Ground")) {
             className = "Warrior";
             classNameShort = "WAR";
-        } else if (red.getName().contains("Curse") || red.getName().contains("Shackle") || red.getName().contains("Remedy")) {
+        } else if (red.getName().contains("Curse") || red.getName().contains("Shackle") || red.getName().contains("Puddle")) {
             className = "Rogue";
             classNameShort = "ROG";
         } else {

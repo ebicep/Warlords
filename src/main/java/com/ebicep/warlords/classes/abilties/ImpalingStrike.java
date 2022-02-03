@@ -9,7 +9,7 @@ import javax.annotation.Nonnull;
 
 public class ImpalingStrike extends AbstractStrikeBase {
 
-    private final int leechDuration = 4;
+    private final int leechDuration = 5;
 
     public ImpalingStrike() {
         super("Impaling Strike", 323, 412, 0, 100, 20, 200);
@@ -21,7 +21,7 @@ public class ImpalingStrike extends AbstractStrikeBase {
                 "§7and afflict them with the leech curse for §6" + leechDuration + " §7seconds.\n" +
                 "When an ally or you deals damage to an\n" +
                 "§7enemy afflicted with the leeching effect, heal\n" +
-                "§7for §a10% §7of all damage dealt.";
+                "§7for §a30% §7of all damage dealt.";
     }
 
     @Override
