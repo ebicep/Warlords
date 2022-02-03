@@ -19,10 +19,8 @@ import com.ebicep.warlords.commands.debugcommands.*;
 import com.ebicep.warlords.commands.miscellaneouscommands.*;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.FutureMessageManager;
-import com.ebicep.warlords.database.cache.MultipleCacheResolver;
 import com.ebicep.warlords.database.configuration.ApplicationConfiguration;
 import com.ebicep.warlords.database.leaderboards.LeaderboardCommand;
-import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.menu.MenuEventListener;
@@ -760,16 +758,16 @@ public class Warlords extends JavaPlugin {
 
                                 // Increasing heal for low long orb lived for (up to +25%)
                                 // 6.5 seconds = 130 ticks
-                                // 6.5 seconds = 1 + (130/520) = 1.25
-                                // 225 *= 1.25 = 281
+                                // 6.5 seconds = 1 + (130/325) = 1.4
+                                // 225 *= 1.4 = 315
                                 if (orb.getPlayerToMoveTowards() == null) {
-                                    orbHeal *= 1 + orb.getTicksLived() / 520f;
+                                    orbHeal *= 1 + orb.getTicksLived() / 325f;
                                 }
 
                                 wp.addHealingInstance(orb.getOwner(), "Orbs of Life", orbHeal, orbHeal, -1, 100, false, false);
                                 if (player != null) {
                                     for (Player player1 : player.getWorld().getPlayers()) {
-                                        player1.playSound(player.getLocation(), Sound.ORB_PICKUP, 0.5f, 1);
+                                        player1.playSound(player.getLocation(), Sound.ORB_PICKUP, 0.2f, 1);
                                     }
                                 }
 
@@ -781,7 +779,7 @@ public class Warlords extends JavaPlugin {
                                     nearPlayer.addHealingInstance(orb.getOwner(), "Orbs of Life", orbHeal, orbHeal, -1, 100, false, false);
                                     if (player != null) {
                                         for (Player player1 : player.getWorld().getPlayers()) {
-                                            player1.playSound(player.getLocation(), Sound.ORB_PICKUP, 0.5f, 1);
+                                            player1.playSound(player.getLocation(), Sound.ORB_PICKUP, 0.2f, 1);
                                         }
                                     }
                                 }

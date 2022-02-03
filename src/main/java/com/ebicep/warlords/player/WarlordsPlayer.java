@@ -49,6 +49,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static com.ebicep.warlords.util.Utils.lerp;
+
 public final class WarlordsPlayer {
 
     public static final String GIVE_ARROW = ChatColor.RED + "\u00AB";
@@ -551,11 +553,29 @@ public final class WarlordsPlayer {
                     // Protector's Strike
                     if (ability.equals("Protector's Strike")) {
 
+                        float healthFraction = lerp(0, 1, (float) attacker.getHealth() / attacker.getMaxHealth());
+
+                        if (healthFraction > 1) {
+                            healthFraction = 1; // in the case of overheal
+                        }
+
+                        if (healthFraction < 0) {
+                            healthFraction = 0;
+                        }
+
+                        float allyHealing = 0.5f + healthFraction * 0.5f;
+                        float ownHealing = 0.5f + (1 - healthFraction) * 0.5f;
+
+                        Bukkit.broadcastMessage("healthfraction = " + healthFraction);
+                        Bukkit.broadcastMessage("health: " + attacker.getHealth());
+                        Bukkit.broadcastMessage("maxHealth: " + attacker.getMaxHealth());
+                        Bukkit.broadcastMessage("own: " + ownHealing * 100 + "%");
+                        Bukkit.broadcastMessage("ally: " + allyHealing * 100 + "%");
                         // Self Heal
                         if (Warlords.getPlayerSettings(attacker.uuid).getSkillBoostForClass() == ClassesSkillBoosts.PROTECTOR_STRIKE) {
-                            attacker.addHealingInstance(attacker, ability, damageValue * 0.6f, damageValue * 0.6f, isCrit ? 100 : -1, 100, false, false);
+                            attacker.addHealingInstance(attacker, ability, damageValue * ownHealing * 1.2f, damageValue * ownHealing * 1.2f, isCrit ? 100 : -1, 100, false, false);
                         } else {
-                            attacker.addHealingInstance(attacker, ability, damageValue * 0.5f, damageValue * 0.5f, isCrit ? 100 : -1, 100, false, false);
+                            attacker.addHealingInstance(attacker, ability, damageValue * ownHealing, damageValue * ownHealing, isCrit ? 100 : -1, 100, false, false);
                         }
 
                         // Ally Heal
@@ -567,9 +587,9 @@ public final class WarlordsPlayer {
                                 .limit(2)
                         ) {
                             if (Warlords.getPlayerSettings(attacker.uuid).getSkillBoostForClass() == ClassesSkillBoosts.PROTECTOR_STRIKE) {
-                                ally.addHealingInstance(attacker, ability, damageValue * 1.2f, damageValue * 1.2f, isCrit ? 100 : -1, 100, false, false);
+                                ally.addHealingInstance(attacker, ability, damageValue * allyHealing * 1.2f, damageValue * allyHealing * 1.2f, isCrit ? 100 : -1, 100, false, false);
                             } else {
-                                ally.addHealingInstance(attacker, ability, damageValue, damageValue, isCrit ? 100 : -1, 100, false, false);
+                                ally.addHealingInstance(attacker, ability, damageValue * allyHealing, damageValue * allyHealing, isCrit ? 100 : -1, 100, false, false);
                             }
                         }
                     }
@@ -583,7 +603,7 @@ public final class WarlordsPlayer {
 
                 // Impaling Strike
                 if (cooldownManager.hasCooldown(ImpalingStrike.class)) {
-                    attacker.addHealingInstance(attacker, "Leech", damageValue * 0.08f, damageValue * 0.08f, isCrit ? 100 : -1, critMultiplier, false, false);
+                    attacker.addHealingInstance(attacker, "Leech", damageValue * 0.1f, damageValue * 0.1f, isCrit ? 100 : -1, critMultiplier, false, false);
                 }
 
                 // Judgement Strike

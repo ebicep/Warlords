@@ -112,6 +112,10 @@ public class Utils {
         return a + target * (b - a);
     }
 
+    public static float lerp(float point1, float point2, float alpha) {
+        return point1 + alpha * (point2 - point1);
+    }
+
     public static boolean hasLineOfSight(LivingEntity player, LivingEntity player2) {
         return player.hasLineOfSight(player2);
     }

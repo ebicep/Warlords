@@ -51,7 +51,7 @@ public class OrbsOfLife extends AbstractAbility {
                 "§7§7seconds, restoring §a" + format(maxDamageHeal) + " §7health to the ally that\n" +
                 "§7picks it up. Other nearby allies recover §a" + format(minDamageHeal) + "\n" +
                 "§7health. After 1.5 seconds the healing will increase\n" +
-                "§7by §a25% §7over 6.5 seconds. Lasts §6" + duration + " §7seconds." +
+                "§7by §a40% §7over 6.5 seconds. Lasts §6" + duration + " §7seconds." +
                 "\n\n" +
                 "§7You may SNEAK once per Orbs of Life cast to make\n" +
                 "§7the orbs levitate towards you or the nearest ally in\n" +
@@ -107,18 +107,20 @@ public class OrbsOfLife extends AbstractAbility {
                                                                     .add(target.getLocation().toVector().subtract(orbLocation.toVector()).normalize().multiply(1))
                                                                     .get()
                                                     );
+
                                                     orbArmorStand.setPassenger(orb);
-                                                    ParticleEffect.VILLAGER_HAPPY.display(0, 0, 0, 0, 1, orbArmorStand.getLocation().add(0, 1.65, 0), 500);
+                                                    ParticleEffect.VILLAGER_HAPPY.display(0, 0, 0, 0, 1,
+                                                            orbArmorStand.getLocation().add(0, 1.65, 0), 500);
                                                 });
+
                                                 if (tempOrbsOfLight.getSpawnedOrbs().stream().noneMatch(orb -> orb.getPlayerToMoveTowards() != null)) {
                                                     this.cancel();
                                                 }
                                             }
-                                        }.runTaskTimer(Warlords.getInstance(), 0, 1),
-                                        System.currentTimeMillis()
+                                        }.runTaskTimer(Warlords.getInstance(), 0, 1), System.currentTimeMillis()
                                 );
 
-                                player.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + "Your current " + ChatColor.GREEN + name + ChatColor.GRAY + " will now levitate towards you or a teammate!");
+                                player.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " Your current " + ChatColor.GREEN + name + ChatColor.GRAY + " will now levitate towards you or a teammate!");
                                 for (Player player1 : player.getWorld().getPlayers()) {
                                     player1.playSound(player.getLocation(), Sound.LEVEL_UP, 0.85f, 0.7f);
                                 }

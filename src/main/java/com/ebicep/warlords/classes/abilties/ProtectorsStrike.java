@@ -8,8 +8,9 @@ import javax.annotation.Nonnull;
 
 public class ProtectorsStrike extends AbstractStrikeBase {
 
-    private int convertPercent = 100;
-    private int selfConvertPercent = 50;
+    // Percentage
+    private int minConvert = 50;
+    private int maxConvert = 100;
 
     public ProtectorsStrike() {
         super("Protector's Strike", 261, 352, 0, 90, 20, 175);
@@ -20,9 +21,10 @@ public class ProtectorsStrike extends AbstractStrikeBase {
         description = "§7Strike the targeted enemy player,\n" +
                 "§7causing §c261 §7- §c352 §7damage\n" +
                 "§7and healing two nearby allies for\n" +
-                "§a" + convertPercent + "% §7of the damage done. Also\n" +
-                "§7heals yourself by §a" + selfConvertPercent + "% §7of the\n" +
-                "§7damage done.";
+                "§a" + maxConvert + "-" + minConvert + "% §7of the damage done. Also\n" +
+                "§7heals yourself by §a" + minConvert + "-" + maxConvert + "% §7of the\n" +
+                "§7damage done. Based on your current\n" +
+                "health.";
     }
 
     @Override
@@ -34,11 +36,11 @@ public class ProtectorsStrike extends AbstractStrikeBase {
         }
     }
 
-    public void setConvertPercent(int convertPercent) {
-        this.convertPercent = convertPercent;
+    public void setMinConvert(int convertPercent) {
+        this.minConvert = convertPercent;
     }
 
-    public void setSelfConvertPercent(int selfConvertPercent) {
-        this.selfConvertPercent = selfConvertPercent;
+    public void setMaxConvert(int selfConvertPercent) {
+        this.maxConvert = selfConvertPercent;
     }
 }

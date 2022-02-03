@@ -2,7 +2,6 @@ package com.ebicep.warlords.player;
 
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.classes.abilties.*;
-import com.ebicep.warlords.classes.paladin.specs.protector.Protector;
 
 import java.util.function.Consumer;
 
@@ -441,8 +440,8 @@ public enum ClassesSkillBoosts {
             ProtectorsStrike.class,
             abstractAbility -> {
                 if (abstractAbility instanceof ProtectorsStrike) {
-                    ((ProtectorsStrike) abstractAbility).setConvertPercent(120);
-                    ((ProtectorsStrike) abstractAbility).setSelfConvertPercent(60);
+                    ((ProtectorsStrike) abstractAbility).setMinConvert(60);
+                    ((ProtectorsStrike) abstractAbility).setMaxConvert(120);
                 }
             }
     ),
