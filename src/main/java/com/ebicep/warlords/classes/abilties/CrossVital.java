@@ -13,8 +13,9 @@ import javax.annotation.Nonnull;
 
 public class CrossVital extends AbstractAbility {
 
+    public static final int SPEED_DURATION = 4;
+
     private final int duration = 12;
-    private final int speedDuration = 4;
 
     public CrossVital() {
         super("Cross Vital", 0, 0, 30, 40, -1, 50);
@@ -24,12 +25,13 @@ public class CrossVital extends AbstractAbility {
     public void updateDescription(Player player) {
         description = "§7Increase the critical damage of all your\n" +
                 "§7abilities by §c" + critMultiplier + "%§7. Gain §e40% §7speed for\n" +
-                "§6" + speedDuration + " §7seconds upon defeating an enemy while\n" +
+                "§6" + SPEED_DURATION + " §7seconds upon defeating an enemy while\n" +
                 "§7Cross Vital is active. Lasts §6" + duration + " §7seconds.";
     }
 
     @Override
     public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
+        wp.subtractEnergy(energyCost);
         CrossVital tempCrossVital = new CrossVital();
 
         for (Player player1 : player.getWorld().getPlayers()) {
@@ -42,18 +44,16 @@ public class CrossVital extends AbstractAbility {
         }, duration * 20);
 
         wp.getGame().getGameTasks().put(
-
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        if (wp.getCooldownManager().hasCooldown(tempCrossVital)) {
-                            ParticleEffect.ENCHANTMENT_TABLE.display(0.4f, 0.4f, 0.4f, 0, 4, wp.getLocation().add(0 , 1, 0), 500);
-                        } else {
-                            this.cancel();
-                        }
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    if (wp.getCooldownManager().hasCooldown(tempCrossVital)) {
+                        ParticleEffect.ENCHANTMENT_TABLE.display(0.4f, 0.4f, 0.4f, 0, 4, wp.getLocation().add(0 , 1, 0), 500);
+                    } else {
+                        this.cancel();
                     }
-                }.runTaskTimer(Warlords.getInstance(), 0, 8),
-                System.currentTimeMillis()
+                }
+            }.runTaskTimer(Warlords.getInstance(), 0, 8), System.currentTimeMillis()
         );
 
         return true;

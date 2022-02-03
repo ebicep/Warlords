@@ -74,7 +74,8 @@ public class FreezingBreath extends AbstractAbility {
                             //Bukkit.broadcastMessage(String.valueOf(center));
                         }
 
-                        ParticleEffect.CLOUD.display(0F, 0F, 0F, 0.6F, 5, center.translateVector(player.getWorld(), animationTimer / 2D, 0, 0), 500);
+                        ParticleEffect.CLOUD.display(0F, 0F, 0F, 0.6F, 5,
+                                center.translateVector(player.getWorld(), animationTimer / 2D, 0, 0), 500);
 
                         for (int i = 0; i < 4; i++) {
                             double angle = Math.toRadians(i * 90) + animationTimer * 0.15;

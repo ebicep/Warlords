@@ -649,7 +649,7 @@ public final class WarlordsPlayer {
 
                     // Cross Vital speed on death.
                     if (attacker.getCooldownManager().hasCooldown(CrossVital.class)) {
-                        attacker.getSpeed().addSpeedModifier("Cross Vital Speed", 40, 4 * 20, "BASE");
+                        attacker.getSpeed().addSpeedModifier("Cross Vital Speed", 40, CrossVital.SPEED_DURATION * 20, "BASE");
                     }
 
                     // Regular Kill Feed

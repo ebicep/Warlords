@@ -73,7 +73,7 @@ public abstract class AbstractStrikeBase extends AbstractAbility {
                         } else if (this instanceof RighteousStrike) {
                             for (Player player1 : Bukkit.getOnlinePlayers()) {
                                 player1.playSound(nearPlayer.getLocation(), "rogue.vindicatorstrike.activation", 2, 0.7f);
-                                player1.playSound(nearPlayer.getLocation(), "shaman.earthenspike.impact", 1, 2);
+                                player1.playSound(nearPlayer.getLocation(), "shaman.earthenspike.impact", 2, 2);
                             }
                             randomHitEffect(nearPlayer, 7, 255, 255, 255);
                         } else if (this instanceof ImpalingStrike) {

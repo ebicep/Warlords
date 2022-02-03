@@ -95,8 +95,15 @@ public class WideGuard extends AbstractAbility {
                                     .aliveTeammatesOfExcludingSelf(wp)
                                     .forEach(playerInsideBubble -> {
                                         playerInsideBubble.getCooldownManager().removeCooldown(WideGuard.class);
-                                        playerInsideBubble.getCooldownManager().addRegularCooldown("Wide Guard Healing", "GUARD", WideGuard.class, tempWideGuard, wp, CooldownTypes.ABILITY, cooldownManager -> {
-                                        }, 20);
+                                        playerInsideBubble.getCooldownManager().addRegularCooldown(
+                                                "Wide Guard Healing",
+                                                "GUARD",
+                                                WideGuard.class,
+                                                tempWideGuard,
+                                                wp,
+                                                CooldownTypes.ABILITY,
+                                                cooldownManager -> {},
+                                                20);
                                         timeInBubble.compute(playerInsideBubble, (k, v) -> v == null ? 1 : v + 1);
                                     });
                         } else {
@@ -108,6 +115,7 @@ public class WideGuard extends AbstractAbility {
                             }
 
                             for (Map.Entry<WarlordsPlayer, Integer> entry : timeInBubble.entrySet()) {
+                                // 5% missing health * 4
                                 float healingValue = 150 + (entry.getKey().getMaxHealth() - entry.getKey().getHealth()) * 0.05f;
                                 int timeInSeconds = entry.getValue() * 4 / 20;
                                 float totalHealing = (timeInSeconds * healingValue);

@@ -55,45 +55,53 @@ public class DrainingMiasma extends AbstractAbility {
                 .build());
 
         DrainingMiasma tempDrainingMiasma = new DrainingMiasma();
-        PlayerFilter.entitiesAround(wp, 6, 6, 6)
+        for (WarlordsPlayer miasmaTarget : PlayerFilter
+                .entitiesAround(wp, 6, 6, 6)
                 .aliveEnemiesOf(wp)
-                .forEach((miasmaTarget) -> {
-                    miasmaTarget.getCooldownManager().addRegularCooldown("Draining Miasma", "MIASMA", DrainingMiasma.class, tempDrainingMiasma, wp, CooldownTypes.DEBUFF, cooldownManager -> {
-                    }, duration * 20);
+        ) {
+            miasmaTarget.getCooldownManager().addRegularCooldown(
+                    "Draining Miasma",
+                    "MIASMA",
+                    DrainingMiasma.class,
+                    tempDrainingMiasma,
+                    wp,
+                    CooldownTypes.DEBUFF,
+                    cooldownManager -> {},
+                    duration * 20);
 
-                    wp.getGame().getGameTasks().put(
+            wp.getGame().getGameTasks().put(
+                    new BukkitRunnable() {
 
-                            new BukkitRunnable() {
-                                float totalDamage = 0;
-                                @Override
-                                public void run() {
-                                    float healthDamage = miasmaTarget.getMaxHealth() * 0.04f;
-                                    if (miasmaTarget.getCooldownManager().hasCooldown(tempDrainingMiasma)) {
-                                        // 4% current health damage.
-                                        miasmaTarget.addDamageInstance(wp, "Draining Miasma", 20 + healthDamage, 20 + healthDamage, -1, 100, false);
-                                        totalDamage += healthDamage;
+                        float totalDamage = 0;
 
-                                        for (Player player1 : miasmaTarget.getWorld().getPlayers()) {
-                                            player1.playSound(miasmaTarget.getLocation(), Sound.FIRE_IGNITE, 2, 0.4f);
-                                        }
+                        @Override
+                        public void run() {
+                            float healthDamage = miasmaTarget.getMaxHealth() * 0.04f;
+                            if (miasmaTarget.getCooldownManager().hasCooldown(tempDrainingMiasma)) {
+                                // 4% current health damage.
+                                miasmaTarget.addDamageInstance(wp, "Draining Miasma", 20 + healthDamage, 20 + healthDamage, -1, 100, false);
+                                totalDamage += healthDamage;
 
-                                        for (int i = 0; i < 3; i++) {
-                                            ParticleEffect.REDSTONE.display(
-                                                    new ParticleEffect.OrdinaryColor(30, 200, 30),
-                                                    miasmaTarget.getLocation().clone().add((Math.random() * 2) - 1, 1.2 + (Math.random() * 2) - 1, (Math.random() * 2) - 1),
-                                                    500);
-                                        }
-
-                                    } else {
-                                        wp.addHealingInstance(wp, "Draining Miasma", totalDamage * 0.25f, totalDamage * 0.25f, -1, 100, false, false);
-                                        miasmaTarget.getEntity().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 2 * 25, 0, true, false), true);
-                                        this.cancel();
-                                    }
+                                for (Player player1 : miasmaTarget.getWorld().getPlayers()) {
+                                    player1.playSound(miasmaTarget.getLocation(), Sound.FIRE_IGNITE, 2, 0.4f);
                                 }
-                            }.runTaskTimer(Warlords.getInstance(), 0, 20),
-                            System.currentTimeMillis()
-                    );
-                });
+
+                                for (int i = 0; i < 3; i++) {
+                                    ParticleEffect.REDSTONE.display(
+                                            new ParticleEffect.OrdinaryColor(30, 200, 30),
+                                            miasmaTarget.getLocation().clone().add((Math.random() * 2) - 1, 1.2 + (Math.random() * 2) - 1, (Math.random() * 2) - 1),
+                                            500);
+                                }
+
+                            } else {
+                                wp.addHealingInstance(wp, "Draining Miasma", totalDamage * 0.25f, totalDamage * 0.25f, -1, 100, false, false);
+                                miasmaTarget.getEntity().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 2 * 25, 0, true, false), true);
+                                this.cancel();
+                            }
+                        }
+                    }.runTaskTimer(Warlords.getInstance(), 0, 20), System.currentTimeMillis()
+            );
+        }
 
         return true;
     }

@@ -17,7 +17,7 @@ import javax.annotation.Nonnull;
 public class BlindingAssault extends AbstractAbility {
 
     public BlindingAssault() {
-        super("Blinding Assault", 466, 612, 16, 40, 15, 175);
+        super("Blinding Assault", 466, 612, 16, 0, 15, 175);
     }
 
     @Override
@@ -45,7 +45,7 @@ public class BlindingAssault extends AbstractAbility {
                 .build());
 
         for (WarlordsPlayer assaultTarget : PlayerFilter
-                .entitiesAround(player, 4, 4, 4)
+                .entitiesAround(player, 5, 5, 5)
                 .aliveEnemiesOf(wp)
         ) {
             assaultTarget.getEntity().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 2 * 25, 0, true, false), true);

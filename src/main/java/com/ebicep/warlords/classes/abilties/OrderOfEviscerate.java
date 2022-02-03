@@ -40,15 +40,36 @@ public class OrderOfEviscerate extends AbstractAbility {
     @Override
     public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
         wp.subtractEnergy(energyCost);
+
         wp.getCooldownManager().removeCooldown(OrderOfEviscerate.class);
-        wp.getCooldownManager().addRegularCooldown("Order of Eviscerate", "ORDER", OrderOfEviscerate.class, new OrderOfEviscerate(), wp, CooldownTypes.ABILITY, cooldownManager -> {
-        }, duration * 20);
+        wp.getCooldownManager().addRegularCooldown(
+                "Order of Eviscerate",
+                "ORDER",
+                OrderOfEviscerate.class,
+                new OrderOfEviscerate(),
+                wp,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {},
+                duration * 20
+        );
+
         wp.getCooldownManager().removeCooldownByName("Cloaked");
-        wp.getCooldownManager().addRegularCooldown("Cloaked", "INVIS", OrderOfEviscerate.class, new OrderOfEviscerate(), wp, CooldownTypes.BUFF, cooldownManager -> {
-        }, duration * 20);
+        wp.getCooldownManager().addRegularCooldown(
+                "Cloaked",
+                "INVIS",
+                OrderOfEviscerate.class,
+                new OrderOfEviscerate(),
+                wp,
+                CooldownTypes.BUFF,
+                cooldownManager -> {},
+                duration * 20
+        );
+
         Runnable cancelSpeed = wp.getSpeed().addSpeedModifier("Order of Eviscerate", 40, duration * 20, "BASE");
         player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, duration * 20, 0, true, false), true);
+
         wp.updateArmor();
+
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), Sound.GHAST_FIREBALL, 2, 0.7f);
         }

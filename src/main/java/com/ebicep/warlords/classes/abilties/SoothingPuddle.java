@@ -16,7 +16,7 @@ import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
-public class HealingCure extends AbstractAbility {
+public class SoothingPuddle extends AbstractAbility {
 
     private static final double SPEED = 0.220;
     private static final double GRAVITY = -0.008;
@@ -25,8 +25,8 @@ public class HealingCure extends AbstractAbility {
     private final int puddleMinHealing = 183;
     private final int puddleMaxHealing = 236;
 
-    public HealingCure() {
-        super("Soothing Puddle", 536, 644, 10, 80, 25, 175);
+    public SoothingPuddle() {
+        super("Soothing Puddle", 545, 664, 9, 60, 25, 175);
     }
 
     @Override
@@ -134,7 +134,6 @@ public class HealingCure extends AbstractAbility {
                                         false);
                             }
 
-                            WarlordsPlayer directHitFinal = directHit;
                             BukkitTask task = Bukkit.getScheduler().runTaskTimer(Warlords.getInstance(), med::spawn, 0, 1);
                             wp.getGame().getGameTasks().put(task, System.currentTimeMillis());
                             wp.getGame().getGameTasks().put(
@@ -173,8 +172,7 @@ public class HealingCure extends AbstractAbility {
                         }
                     }
 
-                }.runTaskTimer(Warlords.getInstance(), 0, 1),
-                System.currentTimeMillis()
+                }.runTaskTimer(Warlords.getInstance(), 0, 1), System.currentTimeMillis()
         );
 
         for (Player player1 : player.getWorld().getPlayers()) {

@@ -3,11 +3,7 @@ package com.ebicep.warlords.events;
 import com.ebicep.warlords.ChatChannels;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
-import com.ebicep.warlords.classes.abilties.Acupressure;
-import com.ebicep.warlords.classes.abilties.IceBarrier;
-import com.ebicep.warlords.classes.abilties.Soulbinding;
-import com.ebicep.warlords.classes.abilties.TimeWarp;
-import com.ebicep.warlords.classes.abilties.UndyingArmy;
+import com.ebicep.warlords.classes.abilties.*;
 import com.ebicep.warlords.classes.shaman.specs.spiritguard.Spiritguard;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.LeaderboardManager;
@@ -23,7 +19,10 @@ import com.ebicep.warlords.permissions.PermissionHandler;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.player.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.cooldowns.cooldowns.PersistentCooldown;
-import com.ebicep.warlords.util.*;
+import com.ebicep.warlords.util.ChatUtils;
+import com.ebicep.warlords.util.ItemBuilder;
+import com.ebicep.warlords.util.PacketUtils;
+import com.ebicep.warlords.util.Utils;
 import net.minecraft.server.v1_8_R3.EntityLiving;
 import net.minecraft.server.v1_8_R3.GenericAttributes;
 import org.bukkit.*;
@@ -287,7 +286,7 @@ public class WarlordsEvents implements Listener {
 
                     // Checks whether the player has Acupressure active.
                     if (wpAttacker.getCooldownManager().hasCooldown(Acupressure.class)) {
-                        wpAttacker.subtractEnergy((int) (wpAttacker.getSpec().getEnergyOnHit() * -1.5));
+                        wpAttacker.subtractEnergy((int) (wpAttacker.getSpec().getEnergyOnHit() * -1.8));
                     } else {
                         wpAttacker.subtractEnergy(wpAttacker.getSpec().getEnergyOnHit() * -1);
                     }

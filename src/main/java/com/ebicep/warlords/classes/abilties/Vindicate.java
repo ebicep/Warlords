@@ -53,14 +53,34 @@ public class Vindicate extends AbstractAbility {
                 .aliveTeammatesOfExcludingSelf(wp)
                 .closestFirst(wp)
         ) {
+            wp.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " Your Vindicate is now protecting " + ChatColor.YELLOW + vindicateTarget.getName() + ChatColor.GRAY + "!");
+
+            // Vindicate Immunity
             vindicateTarget.getSpeed().removeSlownessModifiers();
             vindicateTarget.getCooldownManager().removeDebuffCooldowns();
-            wp.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " Your Vindicate is now protecting " + ChatColor.YELLOW + vindicateTarget.getName() + ChatColor.GRAY + "!");
             vindicateTarget.getCooldownManager().removeCooldown(Vindicate.class);
-            vindicateTarget.getCooldownManager().addRegularCooldown("Vindicate Debuff Immunity", "VIND", Vindicate.class, tempVindicate, wp, CooldownTypes.BUFF, cooldownManager -> {
-            }, vindicateDuration * 20);
-            vindicateTarget.getCooldownManager().addRegularCooldown("KB Resistance", "KB", Vindicate.class, tempVindicate, wp, CooldownTypes.BUFF, cooldownManager -> {
-            }, vindicateDuration * 20);
+            vindicateTarget.getCooldownManager().addRegularCooldown(
+                    "Vindicate Debuff Immunity",
+                    "VIND",
+                    Vindicate.class,
+                    tempVindicate,
+                    wp,
+                    CooldownTypes.BUFF,
+                    cooldownManager -> {},
+                    vindicateDuration * 20
+            );
+
+            // KB Resistance
+            vindicateTarget.getCooldownManager().addRegularCooldown(
+                    "KB Resistance",
+                    "KB",
+                    Vindicate.class,
+                    tempVindicate,
+                    wp,
+                    CooldownTypes.BUFF,
+                    cooldownManager -> {},
+                    vindicateDuration * 20
+            );
 
             vindicateSelfDuration++;
         }
@@ -69,8 +89,15 @@ public class Vindicate extends AbstractAbility {
             vindicateSelfDuration = 10;
         }
 
-        wp.getCooldownManager().addRegularCooldown("Vindicate Resistance", "VIND RES", Vindicate.class, tempVindicate, wp, CooldownTypes.BUFF, cooldownManager -> {
-        }, vindicateSelfDuration * 20);
+        wp.getCooldownManager().addRegularCooldown(
+                "Vindicate Resistance",
+                "VIND RES",
+                Vindicate.class,
+                tempVindicate,
+                wp,
+                CooldownTypes.BUFF,
+                cooldownManager -> {},
+                vindicateSelfDuration * 20);
 
         vindicateSelfDuration = 6;
 

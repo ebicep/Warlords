@@ -45,8 +45,6 @@ public class Boulder extends AbstractAbility {
         stand.setCustomName("Boulder");
         stand.setCustomNameVisible(false);
         stand.setGravity(false);
-        stand.setBasePlate(false);
-        stand.setArms(false);
         stand.setVisible(false);
         wp.getGame().getGameTasks().put(
                 new BukkitRunnable() {

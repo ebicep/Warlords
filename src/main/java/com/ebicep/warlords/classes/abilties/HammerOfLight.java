@@ -5,9 +5,9 @@ import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.classes.paladin.specs.protector.Protector;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
-import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownFilter;
+import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
@@ -40,8 +40,7 @@ public class HammerOfLight extends AbstractAbility {
     }
 
     public HammerOfLight() {
-        super("Hammer of Light", 178, 244, 62.64f, 50, 20, 175
-        );
+        super("Hammer of Light", 178, 244, 62.64f, 50, 20, 175);
     }
 
     @Override
@@ -180,16 +179,14 @@ public class HammerOfLight extends AbstractAbility {
                                             public void run() {
                                                 PlayerFilter.entitiesAround(wp.getLocation(), radius, radius, radius)
                                                         .aliveTeammatesOf(wp)
-                                                        .forEach(teammate -> {
-                                                            teammate.addHealingInstance(
-                                                                    hol.getWarlordsPlayer(),
-                                                                    "Crown of Light",
-                                                                    hol.getMinDamage() * 1.5f,
-                                                                    hol.getMaxDamage() * 1.5f,
-                                                                    hol.getCritChance(),
-                                                                    hol.getCritMultiplier(),
-                                                                    false, false);
-                                                        });
+                                                        .forEach(teammate -> teammate.addHealingInstance(
+                                                                hol.getWarlordsPlayer(),
+                                                                "Crown of Light",
+                                                                hol.getMinDamage() * 1.5f,
+                                                                hol.getMaxDamage() * 1.5f,
+                                                                hol.getCritChance(),
+                                                                hol.getCritMultiplier(),
+                                                                false, false));
                                                 timeLeft--;
 
                                                 if (timeLeft <= 0 || wp.isDead()) {

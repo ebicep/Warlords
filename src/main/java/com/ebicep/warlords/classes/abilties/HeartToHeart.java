@@ -26,7 +26,7 @@ public class HeartToHeart extends AbstractAbility {
     private final int vindDuration = 6;
 
     public HeartToHeart() {
-        super("§kHeart To Heart", 0, 0, 13, 40, -1, 100);
+        super("Heart To Heart", 0, 0, 13, 20, -1, 100);
     }
 
     @Override
@@ -59,8 +59,16 @@ public class HeartToHeart extends AbstractAbility {
                 // remove other instances of vindicate buff to override
                 heartTarget.getCooldownManager().removeCooldown(Vindicate.class);
                 heartTarget.getCooldownManager().removeCooldown(HeartToHeart.class);
-                heartTarget.getCooldownManager().addRegularCooldown("Vindicate Debuff Immunity", "VIND", HeartToHeart.class, tempHeartToHeart, wp, CooldownTypes.BUFF, cooldownManager -> {
-                }, vindDuration * 20);
+                heartTarget.getCooldownManager().addRegularCooldown(
+                        "Vindicate Debuff Immunity",
+                        "VIND",
+                        HeartToHeart.class,
+                        tempHeartToHeart,
+                        wp,
+                        CooldownTypes.BUFF,
+                        cooldownManager -> {},
+                        vindDuration * 20
+                );
 
                 new BukkitRunnable() {
 
@@ -73,9 +81,6 @@ public class HeartToHeart extends AbstractAbility {
 
                         if (timer >= 8 || (heartTarget.isDead() || wp.isDead())) {
                             this.cancel();
-                            /*if (!wp.getLocation().getBlock().getType().isSolid() && !wp.getLocation().add(0, 1, 0).getBlock().getType().isSolid()) {
-                                return;
-                            }*/
                         }
 
                         double target = timer / 8D;

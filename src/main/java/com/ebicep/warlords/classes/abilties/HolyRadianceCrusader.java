@@ -2,8 +2,8 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
-import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
 import com.ebicep.warlords.util.Utils;
@@ -118,6 +118,7 @@ public class HolyRadianceCrusader extends AbstractAbility {
                 }.runTaskTimer(Warlords.getInstance(), 0, 0);
 
                 HolyRadianceCrusader tempMark = new HolyRadianceCrusader(minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
+                p.addHealingInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false, false);
                 p.getCooldownManager().addRegularCooldown(name, "CRUS MARK", HolyRadianceCrusader.class, tempMark, wp, CooldownTypes.BUFF, cooldownManager -> {
                 }, markDuration * 20);
                 p.getSpeed().addSpeedModifier("Crusader Mark Speed", 20, 20 * markDuration, "BASE");

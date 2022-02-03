@@ -9,7 +9,7 @@ import javax.annotation.Nonnull;
 
 public class ImpalingStrike extends AbstractStrikeBase {
 
-    private final int leechDuration = 3;
+    private final int leechDuration = 4;
 
     public ImpalingStrike() {
         super("Impaling Strike", 323, 412, 0, 100, 20, 200);
@@ -19,9 +19,9 @@ public class ImpalingStrike extends AbstractStrikeBase {
     public void updateDescription(Player player) {
         description = "§7Impale an enemy, dealing §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage\n" +
                 "§7and afflict them with the leech curse for §6" + leechDuration + " §7seconds.\n" +
-                "When an ally or you deals melee damage to an\n" +
+                "When an ally or you deals damage to an\n" +
                 "§7enemy afflicted with the leeching effect, heal\n" +
-                "§7for §a8% §7of all damage dealt.";
+                "§7for §a10% §7of all damage dealt.";
     }
 
     @Override

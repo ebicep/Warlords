@@ -86,10 +86,10 @@ public class SeismicWave extends AbstractAbility {
                             }
 
                             for (int i = 0; i < customFallingBlocks.size(); i++) {
-                                CustomFallingBlock customFallingBlock = customFallingBlocks.get(i);
-                                customFallingBlock.setTicksLived(customFallingBlock.getTicksLived() + 1);
-                                if (Utils.getDistance(customFallingBlock.getFallingBlock().getLocation(), .05) <= .25 || customFallingBlock.getTicksLived() > 10) {
-                                    customFallingBlock.getFallingBlock().remove();
+                                CustomFallingBlock cfb = customFallingBlocks.get(i);
+                                cfb.setTicksLived(cfb.getTicksLived() + 1);
+                                if (Utils.getDistance(cfb.getFallingBlock().getLocation(), .05) <= .25 || cfb.getTicksLived() > 10) {
+                                    cfb.getFallingBlock().remove();
                                     customFallingBlocks.remove(i);
                                     i--;
                                 }

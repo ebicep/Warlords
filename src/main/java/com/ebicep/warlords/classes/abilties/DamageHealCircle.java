@@ -50,7 +50,7 @@ public class DamageHealCircle {
         } else if (name.equals("Incendiary Curse")) {
             this.circle.addEffect(new AreaEffect(0, ParticleEffect.FLAME).particlesPerSurface(0.5));
             this.circle.addEffect(new AreaEffect(0, ParticleEffect.CRIT).particlesPerSurface(0.3));
-        } else if (name.equals("Healing Cure")) {
+        } else if (name.equals("Soothing Puddle")) {
             this.circle.addEffect(new CircumferenceEffect(ParticleEffect.VILLAGER_HAPPY, ParticleEffect.REDSTONE));
             this.circle.addEffect(new AreaEffect(1, ParticleEffect.DRIP_WATER).particlesPerSurface(0.025));
         } else {

@@ -16,22 +16,23 @@ import javax.annotation.Nonnull;
 public class RemedicChains extends AbstractAbility {
 
     private final int linkBreakRadius = 15;
-    private final int duration = 10;
+    private final int duration = 8;
     private final int alliesAffected = 2;
 
     public RemedicChains() {
-        super("Remedic Chains", 506, 685, 22, 40, 20, 200);
+        super("Remedic Chains", 579, 693, 20, 40, 20, 200);
     }
 
     @Override
     public void updateDescription(Player player) {
         description = "§7Bind yourself to §e" + alliesAffected + " §7allies near you, causing them\n" +
-                "§7them to naturally regenerate health (even when taking\n" +
-                "§7damage) as long as the link is active. Lasts §6" + duration + " §7seconds" +
+                "§7them to naturally regenerate health (even when\n" +
+                "§7taking damage) as long as the link is active.\n" +
+                "Lasts §6" + duration + " §7seconds" +
                 "\n\n" +
                 "§7When the link expires you and the allies\n" +
-                "§7are healed for §a" + format(minDamageHeal) + " §7- §a" + format(maxDamageHeal) + " §7health.\n" +
-                "§7Breaking the link early will only heal the allies\n" +
+                "§7are healed for §a" + format(minDamageHeal) + " §7- §a" + format(maxDamageHeal) + " §7health. Breaking\n" +
+                "§7the link early will only heal the allies\n" +
                 "§7for §a10% §7of the original amount." +
                 "\n\n" +
                 "§7The link will break if you are §e" + linkBreakRadius + " §7blocks apart.";
@@ -42,7 +43,6 @@ public class RemedicChains extends AbstractAbility {
         RemedicChains tempRemedicChain = new RemedicChains();
 
         int targethit = 0;
-
         for (WarlordsPlayer chainTarget : PlayerFilter
                 .entitiesAround(player, 10, 10, 10)
                 .aliveTeammatesOfExcludingSelf(wp)
@@ -96,6 +96,8 @@ public class RemedicChains extends AbstractAbility {
                                 chainTarget.addHealingInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false, false);
                             }
 
+                            ParticleEffect.VILLAGER_HAPPY.display(0.2f, 0, 0.2f, 0.5f, 2, chainTarget.getLocation(), 500);
+
                             for (Player player1 : player.getWorld().getPlayers()) {
                                 player1.playSound(chainTarget.getLocation(), "rogue.remedicchains.impact", 0.05f, 1.4f);
                             }
@@ -108,6 +110,7 @@ public class RemedicChains extends AbstractAbility {
         if (targethit >= 1) {
             for (Player player1 : player.getWorld().getPlayers()) {
                 player1.playSound(player.getLocation(), "rogue.remedicchains.activation", 2, 0.5f);
+                player1.playSound(player.getLocation(), "shaman.lightningbolt.impact", 2, 2);
             }
 
             wp.subtractEnergy(energyCost);

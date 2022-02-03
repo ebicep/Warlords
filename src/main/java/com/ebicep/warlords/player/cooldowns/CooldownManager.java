@@ -67,7 +67,7 @@ public class CooldownManager {
                 .forEachOrdered(regularCooldown -> regularCooldown.setTicksLeft(regularCooldown.getTicksLeft() + ticks));
     }
 
-    public void subtractTicksToRegularCooldowns(CooldownTypes cooldownTypes, int ticks) {
+    public void subtractTicksOnRegularCooldowns(CooldownTypes cooldownTypes, int ticks) {
         abstractCooldowns.stream().filter(abstractCooldown -> abstractCooldown.getCooldownType() == cooldownTypes)
                 .filter(RegularCooldown.class::isInstance)
                 .map(RegularCooldown.class::cast)
