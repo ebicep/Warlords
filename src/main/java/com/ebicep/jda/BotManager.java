@@ -60,6 +60,20 @@ public class BotManager {
         }.runTaskTimer(Warlords.getInstance(), 20, 70);
     }
 
+    public static void sendDebugMessage(String message) {
+        getWL2Server().getTextChannels().stream()
+                .filter(textChannel -> textChannel.getName().equalsIgnoreCase("admin-log"))
+                .findFirst()
+                .ifPresent(textChannel -> textChannel.sendMessage(message).queue());
+    }
+
+    public static void sendDebugMessage(MessageEmbed embed) {
+        getWL2Server().getTextChannels().stream()
+                .filter(textChannel -> textChannel.getName().equalsIgnoreCase("admin-log"))
+                .findFirst()
+                .ifPresent(textChannel -> textChannel.sendMessageEmbeds(embed).queue());
+    }
+
     public static Guild getCompGamesServer() {
         return jda.getGuildById(compGamesServerID);
     }
