@@ -7,16 +7,17 @@ import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.PlayerFilter;
-import java.util.Arrays;
-import java.util.Objects;
-import javax.annotation.Nonnegative;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
+import javax.annotation.Nonnegative;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Arrays;
+import java.util.Objects;
 
 public class PowerupOption implements Option {
 
@@ -145,7 +146,7 @@ public class PowerupOption implements Option {
 
     public void setLocation(Location location) {
         if (hasStarted) {
-            throw new IllegalStateException("Cannot change location after starting");
+            throw new IllegalStateException("Cannot change location after starting.");
         }
         this.location = location;
     }
@@ -156,7 +157,7 @@ public class PowerupOption implements Option {
 
     public void setType(PowerupType type) {
         if (hasStarted) {
-            throw new IllegalStateException("Cannot change type after starting");
+            throw new IllegalStateException("Cannot change type after starting.");
         }
         this.type = type;
         this.remove();
@@ -220,7 +221,9 @@ public class PowerupOption implements Option {
                 armorStand.setCustomName("§b§lSPEED");
                 armorStand.setHelmet(new ItemStack(Material.WOOL, 1, (short) 4));
             }
-        }, HEALING(5, Material.WOOL, (short) 5) {
+        },
+
+        HEALING(5, Material.WOOL, (short) 5) {
             @Override
             public void onPickUp(PowerupOption option, WarlordsPlayer warlordsPlayer) {
                 warlordsPlayer.setPowerUpHeal(true);
@@ -232,7 +235,9 @@ public class PowerupOption implements Option {
                 armorStand.setCustomName("§a§lHEALING");
                 armorStand.setHelmet(new ItemStack(Material.WOOL, 1, (short) 13));
             }
-        }, ENERGY(30, Material.WOOL, (short) 3) {
+        },
+
+        ENERGY(30, Material.WOOL, (short) 3) {
             @Override
             public void onPickUp(PowerupOption option, WarlordsPlayer warlordsPlayer) {
                 warlordsPlayer.getCooldownManager().addCooldown("Energy", this.getClass(), this, "ENERGY", option.getDuration(), warlordsPlayer, CooldownTypes.BUFF);
@@ -244,7 +249,9 @@ public class PowerupOption implements Option {
                 armorStand.setCustomName("§6§lENERGY");
                 armorStand.setHelmet(new ItemStack(Material.WOOL, 1, (short) 1));
             }
-        }, DAMAGE(30, Material.WOOL, (short) 4) {
+        },
+
+        DAMAGE(30, Material.WOOL, (short) 4) {
             @Override
             public void onPickUp(PowerupOption option, WarlordsPlayer warlordsPlayer) {
                 warlordsPlayer.getCooldownManager().addCooldown("Damage", this.getClass(), this, "DMG", option.getDuration(), warlordsPlayer, CooldownTypes.BUFF);
@@ -257,11 +264,12 @@ public class PowerupOption implements Option {
                 armorStand.setHelmet(new ItemStack(Material.WOOL, 1, (short) 14));
             }
         };
+
         private final int duration;
         private final Material debugMaterial;
         private final int debugData;
 
-        private PowerupType(int duration, Material debugMaterial, int debugData) {
+        PowerupType(int duration, Material debugMaterial, int debugData) {
             this.duration = duration;
             this.debugData = debugData;
             this.debugMaterial = debugMaterial;

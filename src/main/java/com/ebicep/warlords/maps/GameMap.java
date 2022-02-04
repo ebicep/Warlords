@@ -6,11 +6,13 @@ import com.ebicep.warlords.maps.option.marker.LobbyLocationMarker;
 import com.ebicep.warlords.maps.option.marker.TeamMarker;
 import com.ebicep.warlords.maps.state.PreLobbyState;
 import com.ebicep.warlords.maps.state.State;
-import static com.ebicep.warlords.util.GameRunnable.SECOND;
 import com.ebicep.warlords.util.LocationFactory;
-import java.util.*;
-import javax.annotation.Nonnull;
 import org.bukkit.Material;
+
+import javax.annotation.Nonnull;
+import java.util.*;
+
+import static com.ebicep.warlords.util.GameRunnable.SECOND;
 
 // MAPS:
 // "Crossfire"
@@ -92,8 +94,8 @@ public enum GameMap {
                     LobbyLocationMarker.create(loc.addXYZ(7.5, 37, 19.5, 180, 0), Team.RED),
                     MapSymmetry.SPIN.asMarker()
             ));
-            options.add(new PowerupOption(loc.addXYZ(158.5, 6.5, 28.5), PowerupType.DAMAGE));
-            options.add(new PowerupOption(loc.addXYZ(65.5, 6.5, 98.5), PowerupType.DAMAGE));
+            options.add(new PowerupOption(loc.addXYZ(158.5, 6.5, 28.5), PowerupType.ENERGY));
+            options.add(new PowerupOption(loc.addXYZ(65.5, 6.5, 98.5), PowerupType.ENERGY));
 
             options.add(new PowerupOption(loc.addXYZ(217.5, 36.5, 89.5), PowerupType.SPEED));
             options.add(new PowerupOption(loc.addXYZ(6.5, 36.5, 39.5), PowerupType.SPEED));
@@ -148,8 +150,8 @@ public enum GameMap {
                     LobbyLocationMarker.create(loc.addXYZ(73.5, 41, 213.5, -90, 0), Team.RED),
                     MapSymmetry.SPIN.asMarker()
             ));
-            options.add(new PowerupOption(loc.addXYZ(102.5, 21.5, 51.5), PowerupType.DAMAGE));
-            options.add(new PowerupOption(loc.addXYZ(42.5, 21.5, 92.5), PowerupType.DAMAGE));
+            options.add(new PowerupOption(loc.addXYZ(102.5, 21.5, 51.5), PowerupType.ENERGY));
+            options.add(new PowerupOption(loc.addXYZ(42.5, 21.5, 92.5), PowerupType.ENERGY));
 
             options.add(new PowerupOption(loc.addXYZ(63.5, 33.5, -31.5), PowerupType.SPEED));
             options.add(new PowerupOption(loc.addXYZ(79.5, 32.5, 167.5), PowerupType.SPEED));
@@ -204,8 +206,8 @@ public enum GameMap {
                     LobbyLocationMarker.create(loc.addXYZ(-134.5, 77, -216.5), Team.RED),
                     MapSymmetry.SPIN.asMarker()
             ));
-            options.add(new PowerupOption(loc.addXYZ(-2.5, 61.5, -236.5), PowerupType.DAMAGE));
-            options.add(new PowerupOption(loc.addXYZ(-88.5, 61.5, -196.5), PowerupType.DAMAGE));
+            options.add(new PowerupOption(loc.addXYZ(-2.5, 61.5, -236.5), PowerupType.ENERGY));
+            options.add(new PowerupOption(loc.addXYZ(-88.5, 61.5, -196.5), PowerupType.ENERGY));
 
             options.add(new PowerupOption(loc.addXYZ(60.5, 75.5, -224.5), PowerupType.SPEED));
             options.add(new PowerupOption(loc.addXYZ(-151.5, 75.5, -208.5), PowerupType.SPEED));
@@ -261,8 +263,8 @@ public enum GameMap {
                     LobbyLocationMarker.create(loc.addXYZ(-22.5, 39, -83.5).yaw(180), Team.BLUE),
                     LobbyLocationMarker.create(loc.addXYZ(23.5, 39, 83.5), Team.RED)
             ));
-            options.add(new PowerupOption(loc.addXYZ(5.5, 15.5, -33.5), PowerupType.DAMAGE));
-            options.add(new PowerupOption(loc.addXYZ(-4.5, 15.5, 34.5), PowerupType.DAMAGE));
+            options.add(new PowerupOption(loc.addXYZ(5.5, 15.5, -33.5), PowerupType.ENERGY));
+            options.add(new PowerupOption(loc.addXYZ(-4.5, 15.5, 34.5), PowerupType.ENERGY));
 
             options.add(new PowerupOption(loc.addXYZ(4.5, 25.5, -86.5), PowerupType.SPEED));
             options.add(new PowerupOption(loc.addXYZ(-3.5, 25.5, 87.5), PowerupType.SPEED));
@@ -316,8 +318,8 @@ public enum GameMap {
                     LobbyLocationMarker.create(loc.addXYZ(727.5, 8.5, 200.5), Team.BLUE),
                     LobbyLocationMarker.create(loc.addXYZ(727.5, 8.5, 196.5), Team.RED)
             ));
-            options.add(new PowerupOption(loc.addXYZ(699.5, 8.5, 184.5), PowerupType.DAMAGE));
-            options.add(new PowerupOption(loc.addXYZ(699.5, 8.5, 188.5), PowerupType.DAMAGE));
+            options.add(new PowerupOption(loc.addXYZ(699.5, 8.5, 184.5), PowerupType.ENERGY));
+            options.add(new PowerupOption(loc.addXYZ(699.5, 8.5, 188.5), PowerupType.ENERGY));
 
             options.add(new PowerupOption(loc.addXYZ(699.5, 8.5, 192.5), PowerupType.SPEED));
             options.add(new PowerupOption(loc.addXYZ(699.5, 8.5, 196.5), PowerupType.SPEED));
