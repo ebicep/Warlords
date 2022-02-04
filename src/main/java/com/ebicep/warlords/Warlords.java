@@ -302,6 +302,7 @@ public class Warlords extends JavaPlugin {
         new QueueCommand().register(this);
         new ImposterCommand().register(this);
         new LobbyCommand().register(this);
+        new DiscordCommand().register(this);
 
         updateHeads();
 
@@ -365,14 +366,6 @@ public class Warlords extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        try {
-            for (String cacheName : MultipleCacheResolver.playersCacheManager.getCacheNames()) {
-                Objects.requireNonNull(MultipleCacheResolver.playersCacheManager.getCache(cacheName)).clear();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
         try {
             // Pre-caution
             for (Player player : Bukkit.getOnlinePlayers()) {

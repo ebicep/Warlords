@@ -98,6 +98,9 @@ commands:
   gamelist:
     description: Shows the list of games
     permission: warlords.game.list
+  discord:
+    description: Link and unlink discord account with minecraft account
+    aliases: [ discord ]
 
 permissions:
   group.default:
