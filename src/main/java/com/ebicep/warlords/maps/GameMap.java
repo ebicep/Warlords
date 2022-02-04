@@ -66,6 +66,7 @@ public enum GameMap {
             options.add(new ScoreOnEventOption.FlagCapture());
             options.add(new ScoreOnEventOption.OnKill());
             options.add(new RespawnWaveOption());
+            options.add(new RespawnProtectionOption());
             options.add(new GraveOption());
 
             options.add(new BasicScoreboardOption());
@@ -122,6 +123,7 @@ public enum GameMap {
             options.add(new ScoreOnEventOption.FlagCapture());
             options.add(new ScoreOnEventOption.OnKill());
             options.add(new RespawnWaveOption());
+            options.add(new RespawnProtectionOption());
             options.add(new GraveOption());
 
             options.add(new BasicScoreboardOption());
@@ -178,6 +180,7 @@ public enum GameMap {
             options.add(new ScoreOnEventOption.FlagCapture());
             options.add(new ScoreOnEventOption.OnKill());
             options.add(new RespawnWaveOption());
+            options.add(new RespawnProtectionOption());
             options.add(new GraveOption());
 
             options.add(new BasicScoreboardOption());
@@ -236,6 +239,7 @@ public enum GameMap {
             options.add(new ScoreOnEventOption.FlagCapture());
             options.add(new ScoreOnEventOption.OnKill());
             options.add(new RespawnWaveOption());
+            options.add(new RespawnProtectionOption());
             options.add(new GraveOption());
 
             options.add(new BasicScoreboardOption());
@@ -291,6 +295,7 @@ public enum GameMap {
             options.add(new ScoreOnEventOption.FlagCapture());
             options.add(new ScoreOnEventOption.OnKill());
             options.add(new RespawnWaveOption());
+            options.add(new RespawnProtectionOption());
             options.add(new GraveOption());
 
             options.add(new BasicScoreboardOption());
@@ -343,6 +348,7 @@ public enum GameMap {
             options.add(new ScoreOnEventOption.FlagCapture());
             options.add(new ScoreOnEventOption.OnKill());
             options.add(new RespawnWaveOption());
+            options.add(new RespawnProtectionOption());
             options.add(new GraveOption());
 
             options.add(new BasicScoreboardOption());

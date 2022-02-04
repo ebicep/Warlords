@@ -7,6 +7,7 @@ import com.ebicep.warlords.classes.abilties.*;
 import com.ebicep.warlords.classes.shaman.specs.spiritguard.Spiritguard;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.WarlordsDeathEvent;
 import com.ebicep.warlords.events.WarlordsRespawnEvent;
 import com.ebicep.warlords.maps.Game;
@@ -62,8 +63,6 @@ public final class WarlordsPlayer {
     private float currentHealthModifier = 1;
     private int flagCooldown;
     private int hitCooldown;
-    private int spawnProtection;
-    private int spawnDamage = 0;
     // We have to store these in here as the new player might logout midgame
     private float walkspeed = 1;
     private int blocksTravelledCM = 0;
@@ -123,7 +122,6 @@ public final class WarlordsPlayer {
         this.flagCooldown = 0;
         this.cooldownModifier = 1;
         this.hitCooldown = 20;
-        this.spawnProtection = 0;
         this.speed = new CalculateSpeed(this::setWalkSpeed, 13);
         Player p = player.getPlayer();
         this.entity = spawnJimmy(p == null ? Warlords.getRejoinPoint(uuid) : p.getLocation(), null);
@@ -153,6 +151,17 @@ public final class WarlordsPlayer {
     public static final String GIVE_ARROW = ChatColor.RED + "\u00AB";
     public static final String RECEIVE_ARROW = ChatColor.GREEN + "\u00BB";
 
+    private void addHealingDamageInstance(WarlordsDamageHealingEvent event) {
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) {
+            return;
+        }
+        if (event.isHealingInstance()) {
+            addHealingInstance(event);
+        } else {
+            addDamageInstance(event);
+        }
+    }
     /**
      * Adds a damage instance to an ability or a player.
      *
@@ -173,14 +182,22 @@ public final class WarlordsPlayer {
             int critMultiplier,
             boolean ignoreReduction
     ) {
+        this.addHealingDamageInstance(new WarlordsDamageHealingEvent(this, attacker, ability, min, max, critChance, critMultiplier, ignoreReduction, false, true));
+    }
+    private void addDamageInstance(WarlordsDamageHealingEvent event) {
+        WarlordsPlayer attacker = event.getAttacker();
+        String ability = event.getAbility();
+        float min = event.getMin();
+        float max = event.getMax();
+        int critChance = event.getCritChance();
+        int critMultiplier = event.getCritMultiplier();
+        boolean ignoreReduction = event.isIgnoreReduction();
+        boolean isLastStandFromShield = event.isIsLastStandFromShield();
         boolean isMeleeHit = ability.isEmpty();
         boolean isFallDamage = ability.equals("Fall");
 
         // Spawn Protection / Undying Army / Game State
-        if (spawnProtection != 0 || (dead && !cooldownManager.checkUndyingArmy(false)) || getGameState() != getGame().getState()) {
-            if (spawnProtection != 0) {
-                removeHorse();
-            }
+        if ((dead && !cooldownManager.checkUndyingArmy(false)) || getGameState() != getGame().getState()) {
             return;
         }
 
@@ -665,13 +682,22 @@ public final class WarlordsPlayer {
             boolean ignoreReduction,
             boolean isLastStandFromShield
     ) {
+        addHealingDamageInstance(new WarlordsDamageHealingEvent(this, attacker, ability, min, max, critChance, critMultiplier, ignoreReduction, isLastStandFromShield, false));
+    }
+
+    private void addHealingInstance(WarlordsDamageHealingEvent event) {
+        WarlordsPlayer attacker = event.getAttacker();
+        String ability = event.getAbility();
+        float min = event.getMin();
+        float max = event.getMax();
+        int critChance = event.getCritChance();
+        int critMultiplier = event.getCritMultiplier();
+        boolean ignoreReduction = event.isIgnoreReduction();
+        boolean isLastStandFromShield = event.isIsLastStandFromShield();
         boolean isMeleeHit = ability.isEmpty();
 
         // Spawn Protection / Undying Army / Game State
-        if (spawnProtection != 0 || (dead && !cooldownManager.checkUndyingArmy(false)) || getGameState() != getGame().getState()) {
-            if (spawnProtection != 0) {
-                removeHorse();
-            }
+        if ((dead && !cooldownManager.checkUndyingArmy(false)) || getGameState() != getGame().getState()) {
             return;
         }
 
@@ -1250,25 +1276,9 @@ public final class WarlordsPlayer {
             PacketUtils.sendTitle((Player) entity, "", "", 0, 0, 0);
         }
         setRespawnTimer(-1);
-        setSpawnProtection(3);
         setEnergy(getMaxEnergy() / 2);
         dead = false;
         teleport(respawnPoint);
-        new GameRunnable(getGame()) {
-            private final Location location = getLocation();
-            
-            @Override
-            public void run() {
-                getLocation(location);
-                if (location.getWorld() != respawnPoint.getWorld()
-                        || location.distanceSquared(respawnPoint) > Warlords.SPAWN_PROTECTION_RADIUS * Warlords.SPAWN_PROTECTION_RADIUS) {
-                    setSpawnProtection(0);
-                }
-                if (getSpawnProtection() == 0) {
-                    this.cancel();
-                }
-            }
-        }.runTaskTimer(0, 5);
 
         this.health = this.maxHealth;
         if (entity instanceof Player) {
@@ -1495,22 +1505,6 @@ public final class WarlordsPlayer {
     public int getTotalCapsAndReturnsWeighted() {
         PlayerStatistics.Entry total = this.stats.total();
         return (total.getFlagsCaptured() * 5) + total.getFlagsReturned();
-    }
-
-    public int getSpawnProtection() {
-        return spawnProtection;
-    }
-
-    public void setSpawnProtection(int spawnProtection) {
-        this.spawnProtection = spawnProtection;
-    }
-
-    public void setSpawnDamage(int spawnDamage) {
-        this.spawnDamage = spawnDamage;
-    }
-
-    public int getSpawnDamage() {
-        return spawnDamage;
     }
     
     public boolean isDead() {
@@ -1809,5 +1803,25 @@ public final class WarlordsPlayer {
 
         // Gives the player their respawn timer as display.
         this.decrementRespawnTimer();
+    }
+    
+    @Override
+    public int hashCode() {
+        return this.uuid.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final WarlordsPlayer other = (WarlordsPlayer) obj;
+        return Objects.equals(this.uuid, other.uuid);
     }
 }
