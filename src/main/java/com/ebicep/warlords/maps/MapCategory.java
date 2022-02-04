@@ -2,7 +2,7 @@ package com.ebicep.warlords.maps;
 
 public enum MapCategory {
     CAPTURE_THE_FLAG("Capture The Flag"),
-	INTERSECTION("Intersection"),
+	INTERCEPTION("Interception"),
     DEBUG("Debug Map"),
     OTHER("PLACEHOLDER"),
     ;

@@ -90,11 +90,11 @@ public class PlayingState implements State, TimerDebugAble {
     @Override
     @SuppressWarnings("null")
     public void begin() {
+        this.resetTimer();
+        RemoveEntities.doRemove(this.game);
         for (Option option : game.getOptions()) {
             option.start(game);
         }
-        this.resetTimer();
-        RemoveEntities.doRemove(this.game);
 
         this.game.forEachOfflinePlayer((player, team) -> {
             if (team != null) {

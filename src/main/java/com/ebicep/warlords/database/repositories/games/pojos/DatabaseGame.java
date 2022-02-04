@@ -79,7 +79,7 @@ public class DatabaseGame {
         this.date = dateFormat.format(new Date());
         this.map = game.getMap().getMapName();
         this.timeLeft = WinAfterTimeoutOption.getTimeLeft(game).orElse(-1);
-        this.winner = winner == null ? "DRAW" : winner.name.toUpperCase(Locale.ROOT);
+        this.winner = winner == null ? "DRAW" : winner.getName().toUpperCase(Locale.ROOT);
         this.bluePoints = game.getStats(Team.BLUE).points();
         this.redPoints = game.getStats(Team.RED).points();
         this.players = new DatabaseGamePlayers(blue, red);

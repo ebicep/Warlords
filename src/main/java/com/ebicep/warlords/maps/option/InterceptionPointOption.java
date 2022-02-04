@@ -1,36 +1,39 @@
 package com.ebicep.warlords.maps.option;
 
+import com.ebicep.warlords.effects.circle.CircleEffect;
+import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.events.WarlordsIntersectionCaptureEvent;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.option.marker.CompassTargetMarker;
 import com.ebicep.warlords.maps.option.marker.DebugLocationMarker;
+import com.ebicep.warlords.maps.option.marker.scoreboard.ScoreboardHandler;
+import com.ebicep.warlords.maps.option.marker.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.player.WarlordsPlayer;
-import com.ebicep.warlords.util.GameRunnable;
-import com.ebicep.warlords.util.PlayerFilter;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import com.ebicep.warlords.util.*;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.inventory.ItemStack;
 
-public class IntersectionPointOption implements Option {
+public class InterceptionPointOption implements Option {
 
+    private static final ItemStack NEUTRAL_ITEM_STACK = new ItemStack(Material.WOOL);
 	public static final double DEFAULT_MIN_CAPTURE_RADIUS = 3;
 	public static final double DEFAULT_MAX_CAPTURE_RADIUS = 6;
 	public static final double DEFAULT_CAPTURE_SPEED = 0.01;
 	private Game game;
 	@Nonnull
 	private String name;
-	private Location location;
+	private final Location location;
 	@Nonnegative
 	private double minCaptureRadius;
 	@Nonnegative
@@ -42,16 +45,20 @@ public class IntersectionPointOption implements Option {
 	private double captureProgress = 0;
 	private boolean inConflict = false;
 	private double captureSpeed;
+    private SimpleScoreboardHandler scoreboard;
+    private ArmorStand[] middle = new ArmorStand[4];
+    @Nullable
+    private CircleEffect effectPlayer;
 
-	public IntersectionPointOption(String name, Location location) {
+	public InterceptionPointOption(String name, Location location) {
 		this(name, location, DEFAULT_MIN_CAPTURE_RADIUS, DEFAULT_MAX_CAPTURE_RADIUS, DEFAULT_CAPTURE_SPEED);
 	}
 
-	public IntersectionPointOption(String name, Location location, @Nonnegative double minCaptureRadius) {
+	public InterceptionPointOption(String name, Location location, @Nonnegative double minCaptureRadius) {
 		this(name, location, minCaptureRadius, minCaptureRadius * 2, DEFAULT_CAPTURE_SPEED);
 	}
 
-	public IntersectionPointOption(String name, Location location, @Nonnegative double minCaptureRadius, @Nonnegative double maxCaptureRadius, @Nonnegative double captureSpeed) {
+	public InterceptionPointOption(String name, Location location, @Nonnegative double minCaptureRadius, @Nonnegative double maxCaptureRadius, @Nonnegative double captureSpeed) {
 		this.name = name;
 		this.location = location;
 		this.maxCaptureRadius = maxCaptureRadius;
@@ -65,14 +72,14 @@ public class IntersectionPointOption implements Option {
 		game.registerGameMarker(CompassTargetMarker.class, new CompassTargetMarker() {
 			@Override
 			public int getCompassTargetPriority(WarlordsPlayer player) {
-				return (int) player.getDeathLocation().distanceSquared(location) / 100;
+				return (int) player.getDeathLocation().distanceSquared(location) / -100;
 			}
 
 			@Override
 			public String getToolbarName(WarlordsPlayer player) {
 				StringBuilder status = new StringBuilder();
 				if (teamAttacking == null) {
-					status.append(ChatColor.WHITE);
+					status.append(ChatColor.GRAY);
 				} else {
 					status.append(teamAttacking.teamColor());
 				}
@@ -80,12 +87,12 @@ public class IntersectionPointOption implements Option {
 				status.append(" ");
 
 				if (teamInCircle == null) {
-					status.append(ChatColor.WHITE);
+					status.append(ChatColor.GRAY);
 				} else {
 					status.append(teamInCircle.teamColor());
 				}
-				status.append(Math.floor(captureProgress * 100));
-				status.append(ChatColor.WHITE).append(": ");
+				status.append((int)Math.floor(captureProgress * 100)).append("%");
+				status.append(ChatColor.WHITE).append(" - ");
 
 				if (inConflict) {
 					status.append(ChatColor.GOLD).append("In conflict");
@@ -119,18 +126,80 @@ public class IntersectionPointOption implements Option {
 				"maxCaptureRadius: " + maxCaptureRadius,
 				"radius: " + computeCurrentRadius()
 		)));
+        game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(19, "interception") {
+            @Override
+            public List<String> computeLines(WarlordsPlayer player) {
+				StringBuilder status = new StringBuilder();
+                if (teamAttacking == null) {
+					status.append(ChatColor.GRAY);
+				} else {
+					status.append(teamAttacking.teamColor());
+				}
+				status.append(name);
+				status.append(ChatColor.WHITE);
+				status.append(": ");
+
+				if (teamInCircle == null) {
+					status.append(ChatColor.GRAY);
+				} else {
+					status.append(teamInCircle.teamColor());
+				}
+				status.append((int)Math.floor(captureProgress * 100)).append("%");
+                return Collections.singletonList(status.toString());
+            }
+        });
 	}
+    
+    private ItemStack getItem(Team team) {
+        return team == null ? NEUTRAL_ITEM_STACK : team.getItem();
+    }
+    
+    private void updateArmorstandsAndEffect(ScoreboardHandler handler) {
+        Location clone = this.location.clone();
+        clone.add(0, -1.7, 0);
+        for (int i = middle.length - 1; i >= 0; i--) {
+            clone.add(0, this.captureProgress * 1 + 0.25, 0);
+            middle[i].teleport(clone);
+            ItemStack item = getItem(i == 0 ? this.inConflict ? null : this.teamAttacking : this.teamOwning);
+            if (!item.equals(middle[i].getHelmet())) {
+                middle[i].setHelmet(item);
+            }
+        }
+        double computedCurrentRadius = this.computeCurrentRadius();
+        if (this.effectPlayer == null || this.effectPlayer.getTeam() != teamOwning) {
+            this.effectPlayer = new CircleEffect(game, teamOwning, location, computedCurrentRadius);
+            this.effectPlayer.addEffect(new CircumferenceEffect(ParticleEffect.CRIT).particles(20));
+        }
+        if (this.effectPlayer.getRadius() != computedCurrentRadius) {
+            this.effectPlayer.setRadius(computedCurrentRadius);
+        }
+    }
 
 	@Override
 	public void start(Game game) {
+        Location clone = this.location.clone();
+        clone.add(0, -1.7, 0);
+        for (int i = middle.length - 1; i >= 0; i++) {
+            clone.add(0, this.captureProgress * 1 + 0.25, 0);
+            middle[i] = location.getWorld().spawn(clone, ArmorStand.class);
+            middle[i].setGravity(false);
+            middle[i].setBasePlate(false);
+            middle[i].setArms(false);
+            middle[i].setVisible(false);
+        }
+        updateArmorstandsAndEffect(null);
+        scoreboard.registerChangeHandler(this::updateArmorstandsAndEffect);
 		new GameRunnable(game) {
 			@Override
 			public void run() {
 				Stream<WarlordsPlayer> computePlayers = computePlayers();
 				double speed = updateTeamInCircle(computePlayers);
 				updateTeamHackProcess(speed);
+                if (effectPlayer != null) {
+                    effectPlayer.playEffects();
+                }
 			}
-		}.runTaskTimer(4, 5);
+		}.runTaskTimer(1, 1);
 	}
 
 	public String getName() {
@@ -143,10 +212,6 @@ public class IntersectionPointOption implements Option {
 
 	public Location getLocation() {
 		return location;
-	}
-
-	public void setLocation(Location location) {
-		this.location = location;
 	}
 
 	public double getMinCaptureRadius() {
@@ -207,7 +272,7 @@ public class IntersectionPointOption implements Option {
 		if (perTeam.isEmpty()) {
 			teamInCircle = teamOwning;
 			inConflict = false;
-			return captureSpeed * 0.05;
+			return captureSpeed * 0.2;
 		}
 		Map.Entry<Team, List<WarlordsPlayer>> highest = perTeam.entrySet().stream().sorted(Comparator.comparing((Map.Entry<Team, List<WarlordsPlayer>> e) -> e.getValue().size()).reversed()).findFirst().get();
 		int highestValue = highest.getValue().size();
@@ -222,7 +287,7 @@ public class IntersectionPointOption implements Option {
 			teamInCircle = null;
 			inConflict = true;
 		}
-		return (currentTeamPresence - 1) * captureSpeed;
+		return Math.max((currentTeamPresence - 1) * captureSpeed, captureSpeed);
 	}
 
 	protected void updateTeamHackProcess(double hackSpeed) {
@@ -234,12 +299,29 @@ public class IntersectionPointOption implements Option {
 			captureProgress -= hackSpeed;
 			if (captureProgress < 0) {
 				captureProgress = 0;
+                Team previeusOwning = teamOwning;
 				teamOwning = null;
 				teamAttacking = teamInCircle;
 				Bukkit.getPluginManager().callEvent(new WarlordsIntersectionCaptureEvent(this));
+                if (previeusOwning != null) {
+                    WarlordsPlayer capturer = computePlayers().filter(wp -> wp.getTeam() == teamOwning).collect(Utils.randomElement());
+                    String message = teamAttacking.teamColor() + (capturer == null ? "???" : capturer.getName()) + " §eis capturing the " + ChatColor.GRAY + name + ChatColor.WHITE + "!";
+
+                    game.forEachOnlinePlayer((p, t) -> {
+                        p.sendMessage(message);
+                        PacketUtils.sendTitle(p, "", message, 0, 60, 0);
+                        if (t != null) {
+                            if (t != teamOwning) {
+                                p.playSound(location, "ctf.friendlyflagtaken", 500, 1);
+                            } else {
+                                p.playSound(location, "ctf.enemyflagtaken", 500, 1);
+                            }
+                        }
+                    });
+                }
 			}
+            scoreboard.markChanged();
 		} else if (teamInCircle != null) {
-			teamAttacking = teamInCircle;
 			if (captureProgress < 1) {
 				captureProgress += hackSpeed;
 				if (captureProgress > 1) {
@@ -247,9 +329,24 @@ public class IntersectionPointOption implements Option {
 					if (teamAttacking != teamOwning) {
 						teamOwning = teamAttacking;
 						Bukkit.getPluginManager().callEvent(new WarlordsIntersectionCaptureEvent(this));
-					}
+                        WarlordsPlayer capturer = computePlayers().filter(wp -> wp.getTeam() == teamOwning).collect(Utils.randomElement());
+                        String message = teamOwning.teamColor() + (capturer == null ? "???" : capturer.getName()) + " §ehas captured the " + teamOwning.teamColor() + name + ChatColor.WHITE + "!";
+                        
+                        game.forEachOnlinePlayer((p, t) -> {
+                            p.sendMessage(message);
+                            PacketUtils.sendTitle(p, "", message, 0, 60, 0);
+                            if(t != null) {
+                                if (t != teamOwning) {
+                                    p.playSound(location, "ctf.enemycapturedtheflag", 500, 1);
+                                } else {
+                                    p.playSound(location, "ctf.enemyflagcaptured", 500, 1);
+                                }
+                            }
+                        });
+                    }
 				}
 			}
+            scoreboard.markChanged();
 		}
 	}
 

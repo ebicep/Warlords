@@ -20,13 +20,13 @@ public enum Team {
         Collections.reverse(Arrays.asList(inverseMapping));
     }
 
-    public final String name;
+    private final String name;
     private final ChatColor teamColor;
     private final String chatTag;
     private final String chatTagColored;
     private final String chatTagBoldColored;
     private final Color armorColor;
-    public ItemStack item;
+    private final ItemStack item;
 
     Team(String name, String chatTag, ChatColor teamColor, Color armorColor, ItemStack item) {
         this.name = name;
@@ -84,6 +84,20 @@ public enum Team {
     @Nonnull
     public Team enemy() {
         return inverseMapping[ordinal()];
+    }
+
+    @Nonnull
+    public ItemStack getItem() {
+        return item;
+    }
+
+    /**
+     * Returns the full team name. Examples: "Blue", "Red"
+     * @return the full team name
+     */
+    @Nonnull
+    public String getName() {
+        return name;
     }
 
 }

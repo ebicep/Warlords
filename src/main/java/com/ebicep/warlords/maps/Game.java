@@ -86,7 +86,7 @@ public final class Game implements Runnable, AutoCloseable {
         this.addons = gameAddons;
         this.map = map;
         this.category = category;
-        this.options = new ArrayList<>(map.initMap(MapCategory.OTHER, locations, gameAddons));
+        this.options = new ArrayList<>(map.initMap(category, locations, gameAddons));
         if (!collectionHasItem(options, e -> e instanceof GameFreezeOption)) {
             options.add(new GameFreezeOption());
         }

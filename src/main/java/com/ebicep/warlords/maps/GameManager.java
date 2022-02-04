@@ -34,7 +34,7 @@ public class GameManager implements AutoCloseable {
             if (entry.getMap() != null && entry.getMap() != next.getMap()) {
                 continue; // Skip if the user wants to join a game with a different map
             }
-            if (entry.getCategory() != null && next.getMap().getCategories().contains(entry.getCategory())) {
+            if (entry.getCategory() != null && !next.getMap().getCategories().contains(entry.getCategory())) {
                 continue; // Skip if the user wants to join a game with a different category
             }
             if (next.getGame() != null && next.getGame().playersCount() == 0) {
@@ -182,7 +182,7 @@ public class GameManager implements AutoCloseable {
             if (entry.getMap() != null && entry.getMap() != next.getMap()) {
                 continue; // Skip if the user wants to join a game with a different map
             }
-            if (entry.getCategory() != null && next.getMap().getCategories().contains(entry.getCategory())) {
+            if (entry.getCategory() != null && !next.getMap().getCategories().contains(entry.getCategory())) {
                 continue; // Skip if the user wants to join a game with a different category
             }
             valid = true;

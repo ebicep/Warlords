@@ -26,7 +26,8 @@ public enum GameMap {
             12,
             60 * SECOND,
             "",
-            MapCategory.CAPTURE_THE_FLAG
+            MapCategory.CAPTURE_THE_FLAG,
+            MapCategory.INTERCEPTION
     ) {
         @Override
         public List<Option> initMap(MapCategory category, LocationFactory loc, EnumSet<GameAddon> addons) {
@@ -48,11 +49,29 @@ public enum GameMap {
             options.add(SpawnpointOption.forTeam(loc.addXYZ(-32.5, 34.5, -43.5, -90, 0), Team.BLUE));
             options.add(SpawnpointOption.forTeam(loc.addXYZ(33, 34.5, 45, 0, 0), Team.RED));
 
-            options.add(new FlagCapturePointOption(loc.addXYZ(-98.5, 45.5, -17.5, -90, 0), Team.BLUE));
-            options.add(new FlagSpawnPointOption(loc.addXYZ(-98.5, 45.5, -17.5, -90, 0), Team.BLUE));
 
-            options.add(new FlagCapturePointOption(loc.addXYZ(99.5, 45.5, 17.5, 90, 0), Team.RED));
-            options.add(new FlagSpawnPointOption(loc.addXYZ(99.5, 45.5, 17.5, 90, 0), Team.RED));
+            switch(category) {
+                case CAPTURE_THE_FLAG:
+                    options.add(new FlagCapturePointOption(loc.addXYZ(-98.5, 45.5, -17.5, -90, 0), Team.BLUE));
+                    options.add(new FlagSpawnPointOption(loc.addXYZ(-98.5, 45.5, -17.5, -90, 0), Team.BLUE));
+
+                    options.add(new FlagCapturePointOption(loc.addXYZ(99.5, 45.5, 17.5, 90, 0), Team.RED));
+                    options.add(new FlagSpawnPointOption(loc.addXYZ(99.5, 45.5, 17.5, 90, 0), Team.RED));
+                    
+                    options.add(new ScoreOnEventOption.FlagCapture(250));
+                    break;
+                case INTERCEPTION:
+                    options.add(new InterceptionPointOption("Middle #1", loc.addXYZ(13.5, 23, -26.5)));
+                    options.add(new InterceptionPointOption("Middle #2", loc.addXYZ(-13.5, 23, 26.5)));
+                    options.add(new InterceptionPointOption("Stairs #1", loc.addXYZ(-44.5, 34, 22.5)));
+                    options.add(new InterceptionPointOption("Stairs #2", loc.addXYZ(44.5, 34, -20.5)));
+                    
+                    options.add(new ScoreOnEventOption.OnInterceptionCapture(25));
+                    options.add(new ScoreOnEventOption.OnInterceptionTimer(1));
+                    break;
+                default:
+                    throw new IllegalStateException("Not prepared to handle category " + category);
+            }
 
             options.add(new GateOption(loc, -79, 45, -29, -79, 49, -24));
             options.add(new GateOption(loc, -91, 45, -6, -86, 49, -6));
@@ -63,8 +82,7 @@ public enum GameMap {
             options.add(new MercyWinOption());
             options.add(new WinAfterTimeoutOption());
             options.add(new GameOvertimeOption());
-            options.add(new ScoreOnEventOption.FlagCapture());
-            options.add(new ScoreOnEventOption.OnKill());
+            options.add(new ScoreOnEventOption.OnKill(5));
             options.add(new RespawnWaveOption());
             options.add(new RespawnProtectionOption());
             options.add(new GraveOption());

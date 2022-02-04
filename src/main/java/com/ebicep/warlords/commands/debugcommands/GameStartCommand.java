@@ -222,8 +222,8 @@ public class GameStartCommand implements TabExecutor {
         return Stream.concat(
                 Stream.of(prefix + ":NULL"),
                 Stream.concat(
-                        Stream.of(GameMap.values()).map(e -> toTitleCase(e.name())),
-                        Stream.of(GameMap.values()).map(e -> prefix + ":" + toTitleCase(e.name()))
+                        Stream.of(list).map(e -> toTitleCase(e.name())),
+                        Stream.of(list).map(e -> prefix + ":" + toTitleCase(e.name()))
                 )
         );
     }

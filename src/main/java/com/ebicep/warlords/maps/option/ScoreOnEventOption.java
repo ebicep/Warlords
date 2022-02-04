@@ -119,14 +119,14 @@ public abstract class ScoreOnEventOption<T> implements Option {
         }
 
     }
-    public static class OnIntersectionCapture extends ScoreOnEventOption<WarlordsIntersectionCaptureEvent> {
+    public static class OnInterceptionCapture extends ScoreOnEventOption<WarlordsIntersectionCaptureEvent> {
         public static int DEFAULT_SCORE = 5;
 
-        public OnIntersectionCapture() {
+        public OnInterceptionCapture() {
             this(DEFAULT_SCORE);
         }
 
-        public OnIntersectionCapture(int scoreIncrease) {
+        public OnInterceptionCapture(int scoreIncrease) {
             super(scoreIncrease);
         }
 
@@ -144,14 +144,14 @@ public abstract class ScoreOnEventOption<T> implements Option {
         }
 
     }
-    public static class OnIntersectionTimer extends ScoreOnEventOption<IntersectionPointOption> {
+    public static class OnInterceptionTimer extends ScoreOnEventOption<InterceptionPointOption> {
         public static int DEFAULT_SCORE = 1;
 
-        public OnIntersectionTimer() {
+        public OnInterceptionTimer() {
             this(DEFAULT_SCORE);
         }
 
-        public OnIntersectionTimer(int scoreIncrease) {
+        public OnInterceptionTimer(int scoreIncrease) {
             super(scoreIncrease);
         }
 
@@ -162,8 +162,8 @@ public abstract class ScoreOnEventOption<T> implements Option {
 				@Override
 				public void run() {
 					for (Option option : game.getOptions()) {
-						if (option instanceof IntersectionPointOption) {
-							IntersectionPointOption intersectionPointOption = (IntersectionPointOption) option;
+						if (option instanceof InterceptionPointOption) {
+							InterceptionPointOption intersectionPointOption = (InterceptionPointOption) option;
 							if (intersectionPointOption.getTeamOwning() != null) {
 								giveScore(intersectionPointOption, intersectionPointOption.getTeamOwning(), scoreIncrease);
 							}
