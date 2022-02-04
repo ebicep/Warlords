@@ -603,7 +603,7 @@ public final class WarlordsPlayer {
 
                 // Impaling Strike
                 if (cooldownManager.hasCooldown(ImpalingStrike.class)) {
-                    attacker.addHealingInstance(attacker, "Leech", damageValue * 0.1f, damageValue * 0.1f, isCrit ? 100 : -1, critMultiplier, false, false);
+                    attacker.addHealingInstance(attacker, "Leech", damageValue * 0.3f, damageValue * 0.3f, -1, 100, false, false);
                 }
 
                 // Judgement Strike

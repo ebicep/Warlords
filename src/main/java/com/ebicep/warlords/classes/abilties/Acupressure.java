@@ -26,7 +26,7 @@ public class Acupressure extends AbstractAbility {
     public void updateDescription(Player player) {
         description = "§7Mark an ally within §6" + acuRange + " §7blocks of you. You and\n" +
                 "§7the marked ally become energized, increasing\n" +
-                "§7energy per hit by §e80% §7for §6" + duration + " §7seconds.";
+                "§7energy per hit/second by §e80% §7for §6" + duration + " §7seconds.";
     }
 
     @Override

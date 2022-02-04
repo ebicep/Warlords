@@ -26,7 +26,7 @@ public class SoothingPuddle extends AbstractAbility {
     private final int puddleMaxHealing = 236;
 
     public SoothingPuddle() {
-        super("Soothing Puddle", 545, 664, 9, 60, 25, 175);
+        super("Soothing Puddle", 559, 665, 8, 60, 25, 175);
     }
 
     @Override
@@ -88,7 +88,7 @@ public class SoothingPuddle extends AbstractAbility {
                             ParticleEffect.VILLAGER_HAPPY.display(0.1f, 0.1f, 0.1f, 0.1f, 4, newLoc.clone().add(0, -1, 0), 500);
                         }
 
-                        WarlordsPlayer directHit = null;
+                        WarlordsPlayer directHit;
                         if (!newLoc.getBlock().isEmpty()
                                 && newLoc.getBlock().getType() != Material.GRASS
                                 && newLoc.getBlock().getType() != Material.BARRIER
@@ -109,9 +109,9 @@ public class SoothingPuddle extends AbstractAbility {
                         if (shouldExplode) {
                             stand.remove();
                             for (Player player1 : wp.getWorld().getPlayers()) {
-                                player1.playSound(newLoc, "rogue.healingremedy.impact", 1.5f, 0.5f);
+                                player1.playSound(newLoc, "rogue.healingremedy.impact", 1.5f, 0.3f);
                                 player1.playSound(newLoc, Sound.GLASS, 1.5f, 0.7f);
-                                player1.playSound(newLoc, "mage.waterbolt.impact", 1, 0.3f);
+                                player1.playSound(newLoc, "mage.waterbolt.impact", 1.5f, 0.3f);
                             }
 
                             FireWorkEffectPlayer.playFirework(newLoc, FireworkEffect.builder()

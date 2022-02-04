@@ -20,7 +20,7 @@ public class RemedicChains extends AbstractAbility {
     private final int alliesAffected = 2;
 
     public RemedicChains() {
-        super("Remedic Chains", 579, 693, 20, 40, 20, 200);
+        super("Remedic Chains", 623, 770, 16, 40, 20, 200);
     }
 
     @Override
@@ -96,7 +96,7 @@ public class RemedicChains extends AbstractAbility {
                                 chainTarget.addHealingInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false, false);
                             }
 
-                            ParticleEffect.VILLAGER_HAPPY.display(0.2f, 0, 0.2f, 0.5f, 2, chainTarget.getLocation(), 500);
+                            ParticleEffect.VILLAGER_HAPPY.display(0.2f, 0, 0.2f, 0.5f, 5, chainTarget.getLocation().add(0, 1, 0), 500);
 
                             for (Player player1 : player.getWorld().getPlayers()) {
                                 player1.playSound(chainTarget.getLocation(), "rogue.remedicchains.impact", 0.05f, 1.4f);
@@ -109,7 +109,7 @@ public class RemedicChains extends AbstractAbility {
 
         if (targethit >= 1) {
             for (Player player1 : player.getWorld().getPlayers()) {
-                player1.playSound(player.getLocation(), "rogue.remedicchains.activation", 2, 0.5f);
+                player1.playSound(player.getLocation(), "rogue.remedicchains.activation", 2, 0.3f);
                 player1.playSound(player.getLocation(), "shaman.lightningbolt.impact", 2, 2);
             }
 
