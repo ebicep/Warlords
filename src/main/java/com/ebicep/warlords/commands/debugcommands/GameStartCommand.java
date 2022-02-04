@@ -162,7 +162,7 @@ public class GameStartCommand implements TabExecutor {
             isValid = false;
         }
         if (category == null && map == null && !seenMapOrCategory) {
-            sender.sendMessage(ChatColor.RED + "Creating a game with no category and map is unusual, pass category:null or map:null if you really mean this");
+            sender.sendMessage(ChatColor.RED + "Creating a game with no category and map is unusual, pass category:null or map:null if you really mean this.");
             isValid = false;
         }
 
@@ -177,7 +177,7 @@ public class GameStartCommand implements TabExecutor {
             return null;
         }
 
-        sender.sendMessage(ChatColor.RED + "DEV:" + ChatColor.GRAY + " Engine initiated game with the following parameters:");
+        sender.sendMessage(ChatColor.RED + "DEV:" + ChatColor.GRAY + " Engine initiated a game with the following parameters:");
         sender.sendMessage(ChatColor.GRAY + "- Category: " + ChatColor.RED + (category != null ? toTitleHumanCase(category.name()) : null));
         sender.sendMessage(ChatColor.GRAY + "- Map: " + ChatColor.RED + (map != null ? toTitleHumanCase(map.name()) : null));
         sender.sendMessage(ChatColor.GRAY + "- Game Addons: " + ChatColor.GOLD + addon.stream().map(e -> toTitleHumanCase(e.name())).collect(Collectors.joining(", ")));
