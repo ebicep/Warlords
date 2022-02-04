@@ -179,7 +179,7 @@ public class InterceptionPointOption implements Option {
 	public void start(Game game) {
         Location clone = this.location.clone();
         clone.add(0, -1.7, 0);
-        for (int i = middle.length - 1; i >= 0; i++) {
+        for (int i = middle.length - 1; i >= 0; i--) {
             clone.add(0, this.captureProgress * 1 + 0.25, 0);
             middle[i] = location.getWorld().spawn(clone, ArmorStand.class);
             middle[i].setGravity(false);
