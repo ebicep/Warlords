@@ -2,11 +2,13 @@ package com.ebicep.warlords.maps.option;
 
 import com.ebicep.warlords.events.WarlordsDeathEvent;
 import com.ebicep.warlords.events.WarlordsFlagUpdatedEvent;
+import com.ebicep.warlords.events.WarlordsIntersectionCaptureEvent;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.flags.WaitingFlagLocation;
 import com.ebicep.warlords.maps.option.marker.TeamMarker;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.Pair;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -80,10 +82,10 @@ public abstract class ScoreOnEventOption<T> implements Option {
         }
         
     }
-    
+
     public static class OnKill extends ScoreOnEventOption<WarlordsDeathEvent> {
         public static int DEFAULT_SCORE = 5;
-        
+
         public OnKill() {
             this(DEFAULT_SCORE);
         }
@@ -115,6 +117,61 @@ public abstract class ScoreOnEventOption<T> implements Option {
                 }
             });
         }
-        
+
+    }
+    public static class OnIntersectionCapture extends ScoreOnEventOption<WarlordsIntersectionCaptureEvent> {
+        public static int DEFAULT_SCORE = 5;
+
+        public OnIntersectionCapture() {
+            this(DEFAULT_SCORE);
+        }
+
+        public OnIntersectionCapture(int scoreIncrease) {
+            super(scoreIncrease);
+        }
+
+        @Override
+        public void register(Game game) {
+            super.register(game);
+            game.registerEvents(new Listener() {
+                @EventHandler
+                public void onEvent(WarlordsIntersectionCaptureEvent event) {
+                    if (event.getOption().getTeamOwning() != null) {
+                        giveScore(event, event.getOption().getTeamOwning(), scoreIncrease);
+					}
+                }
+            });
+        }
+
+    }
+    public static class OnIntersectionTimer extends ScoreOnEventOption<IntersectionPointOption> {
+        public static int DEFAULT_SCORE = 1;
+
+        public OnIntersectionTimer() {
+            this(DEFAULT_SCORE);
+        }
+
+        public OnIntersectionTimer(int scoreIncrease) {
+            super(scoreIncrease);
+        }
+
+        @Override
+        public void start(Game game) {
+            super.register(game);
+            new GameRunnable(game) {
+				@Override
+				public void run() {
+					for (Option option : game.getOptions()) {
+						if (option instanceof IntersectionPointOption) {
+							IntersectionPointOption intersectionPointOption = (IntersectionPointOption) option;
+							if (intersectionPointOption.getTeamOwning() != null) {
+								giveScore(intersectionPointOption, intersectionPointOption.getTeamOwning(), scoreIncrease);
+							}
+						}
+					}
+				}
+			}.runTaskTimer(20, 20);
+        }
+
     }
 }
