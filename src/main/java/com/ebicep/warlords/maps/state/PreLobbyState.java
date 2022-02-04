@@ -84,14 +84,6 @@ public class PreLobbyState implements State, TimerDebugAble {
                     });
                 } else if (time == 0) {
                     game.forEachOnlinePlayerWithoutSpectators((player, team) -> {
-                        ChatUtils.sendMessage(player, false, "" + ChatColor.GREEN + ChatColor.BOLD + "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬");
-                        ChatUtils.sendMessage(player, true, "" + ChatColor.WHITE + ChatColor.BOLD + "Warlords");
-                        ChatUtils.sendMessage(player, true, "");
-                        ChatUtils.sendMessage(player, true, "" + ChatColor.YELLOW + ChatColor.BOLD + "Steal and capture the enemy team's flag to");
-                        ChatUtils.sendMessage(player, true, "" + ChatColor.YELLOW + ChatColor.BOLD + "earn " + ChatColor.AQUA + ChatColor.BOLD + "250 " + ChatColor.YELLOW + ChatColor.BOLD + "points! The first team with a");
-                        ChatUtils.sendMessage(player, true, "" + ChatColor.YELLOW + ChatColor.BOLD + "score of " + ChatColor.AQUA + ChatColor.BOLD + "1000 " + ChatColor.YELLOW + ChatColor.BOLD + "wins!");
-                        ChatUtils.sendMessage(player, true, "");
-                        ChatUtils.sendMessage(player, false, "" + ChatColor.GREEN + ChatColor.BOLD + "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬");
                         player.playSound(player.getLocation(), "gamestart", 1, 1);
                         player.setAllowFlight(false);
                     });

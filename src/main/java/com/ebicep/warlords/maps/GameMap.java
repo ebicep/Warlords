@@ -31,7 +31,7 @@ public enum GameMap {
     ) {
         @Override
         public List<Option> initMap(MapCategory category, LocationFactory loc, EnumSet<GameAddon> addons) {
-            List<Option> options = new ArrayList<>();
+            List<Option> options = category.initMap(this, loc, addons);
             options.add(new MarkerOption(
                     TeamMarker.create(Team.BLUE, Team.RED),
                     LobbyLocationMarker.create(loc.addXYZ(-86.5, 46, -33.5), Team.BLUE),
@@ -104,7 +104,7 @@ public enum GameMap {
     ) {
         @Override
         public List<Option> initMap(MapCategory category, LocationFactory loc, EnumSet<GameAddon> addons) {
-            List<Option> options = new ArrayList<>();
+            List<Option> options = category.initMap(this, loc, addons);
             options.add(new MarkerOption(
                     TeamMarker.create(Team.BLUE, Team.RED),
                     LobbyLocationMarker.create(loc.addXYZ(215.5, 37, 109.5), Team.BLUE),
@@ -161,7 +161,7 @@ public enum GameMap {
     ) {
         @Override
         public List<Option> initMap(MapCategory category, LocationFactory loc, EnumSet<GameAddon> addons) {
-            List<Option> options = new ArrayList<>();
+            List<Option> options = category.initMap(this, loc, addons);
             options.add(new MarkerOption(
                     TeamMarker.create(Team.BLUE, Team.RED),
                     LobbyLocationMarker.create(loc.addXYZ(71.5, 40, -71.5, 90, 0), Team.BLUE),
@@ -218,7 +218,7 @@ public enum GameMap {
     ) {
         @Override
         public List<Option> initMap(MapCategory category, LocationFactory loc, EnumSet<GameAddon> addons) {
-            List<Option> options = new ArrayList<>();
+            List<Option> options = category.initMap(this, loc, addons);
             options.add(new MarkerOption(
                     TeamMarker.create(Team.BLUE, Team.RED),
                     LobbyLocationMarker.create(loc.addXYZ(43.5, 77, -216.5).yaw(180), Team.BLUE),
@@ -277,7 +277,7 @@ public enum GameMap {
     ) {
         @Override
         public List<Option> initMap(MapCategory category, LocationFactory loc, EnumSet<GameAddon> addons) {
-            List<Option> options = new ArrayList<>();
+            List<Option> options = category.initMap(this, loc, addons);
             options.add(new MarkerOption(
                     TeamMarker.create(Team.BLUE, Team.RED),
                     LobbyLocationMarker.create(loc.addXYZ(-22.5, 39, -83.5).yaw(180), Team.BLUE),
@@ -333,7 +333,7 @@ public enum GameMap {
     ) {
         @Override
         public List<Option> initMap(MapCategory category, LocationFactory loc, EnumSet<GameAddon> addons) {
-            List<Option> options = new ArrayList<>();
+            List<Option> options = category.initMap(this, loc, addons);
             options.add(new MarkerOption(
                     TeamMarker.create(Team.BLUE, Team.RED),
                     LobbyLocationMarker.create(loc.addXYZ(727.5, 8.5, 200.5), Team.BLUE),

@@ -112,12 +112,10 @@ public class PlayingState implements State, TimerDebugAble {
             updateBasedOnGameState(true, customScoreboard, wp);
             if (wp.getEntity() instanceof Player) {
                 wp.applySkillBoost((Player) wp.getEntity());
-                PacketUtils.sendTitle((Player) wp.getEntity(), ChatColor.GREEN + "GO!", ChatColor.YELLOW + "Steal and capture the enemy flag!", 0, 40, 20);
             }
         });
 
-        Warlords.newChain()
-                .async(() -> game.forEachOfflinePlayer((player, team) -> {
+        Warlords.newChain().async(() -> game.forEachOfflinePlayer((player, team) -> {
             DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
             DatabaseManager.updatePlayerAsync(databasePlayer);
             DatabaseManager.loadPlayer(player.getUniqueId(), PlayersCollections.SEASON_5, () -> {
