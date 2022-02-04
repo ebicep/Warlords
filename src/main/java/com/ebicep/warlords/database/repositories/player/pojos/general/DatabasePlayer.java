@@ -28,6 +28,8 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
     @Indexed(unique = true)
     private String uuid = "";
     private String name = "";
+    @Field("discord_id")
+    private Long discordID = null;
     private DatabaseMage mage = new DatabaseMage();
     private DatabaseWarrior warrior = new DatabaseWarrior();
     private DatabasePaladin paladin = new DatabasePaladin();
@@ -153,6 +155,14 @@ public class DatabasePlayer extends AbstractDatabaseStatInformation implements c
 
     public String getUuid() {
         return uuid;
+    }
+
+    public Long getDiscordID() {
+        return discordID;
+    }
+
+    public void setDiscordID(Long discordID) {
+        this.discordID = discordID;
     }
 
     public DatabaseMage getMage() {

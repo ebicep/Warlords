@@ -1,6 +1,7 @@
 package com.ebicep.warlords.database;
 
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.database.cache.MultipleCacheResolver;
 import com.ebicep.warlords.database.configuration.ApplicationConfiguration;
 import com.ebicep.warlords.database.leaderboards.LeaderboardManager;
 import com.ebicep.warlords.database.repositories.games.GameService;
@@ -21,15 +22,13 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.json.simple.parser.ParseException;
+import org.springframework.cache.caffeine.CaffeineCache;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame.previousGames;
@@ -52,6 +51,16 @@ public class DatabaseManager {
 
         playerService = context.getBean("playerService", PlayerService.class);
         gameService = context.getBean("gameService", GameService.class);
+
+        try {
+            System.out.println("CACHES");
+            for (String cacheName : MultipleCacheResolver.playersCacheManager.getCacheNames()) {
+                System.out.println(Objects.requireNonNull(((CaffeineCache) MultipleCacheResolver.playersCacheManager.getCache(cacheName)).getNativeCache()).asMap());
+                Objects.requireNonNull(MultipleCacheResolver.playersCacheManager.getCache(cacheName)).clear();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         //Loading all online players
         Bukkit.getOnlinePlayers().forEach(player -> {
