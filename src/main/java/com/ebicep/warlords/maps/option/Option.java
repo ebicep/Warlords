@@ -32,13 +32,21 @@ public interface Option {
     }
 
     /**
-     * Called when the game transitions to a closed state. Generally, the game
+     * Called when the game transitions to a end state. Generally, the game
      * no longer accepts players, and players can leave the game without
      * affecting their standings.
      *
      * @param game The game instance
      */
     default void onGameEnding(@Nonnull Game game) {
+    }
+
+    /**
+     * Called when the game transitions to a closed state. This is also when any listeners and gametasks are stopped.
+     *
+     * @param game The game instance
+     */
+    default void onGameCleanup(@Nonnull Game game) {
     }
 
     /**

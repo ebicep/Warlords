@@ -245,6 +245,11 @@ public class FlagSpawnPointOption implements Option {
         }.runTaskTimer(0, 1);
     }
 
+	@Override
+	public void onGameCleanup(Game game) {
+		this.renderer.reset();
+	}
+
     public FlagInfo getInfo() {
         return info;
     }
