@@ -20,7 +20,10 @@ import com.ebicep.warlords.player.ExperienceManager;
 import com.ebicep.warlords.player.PlayerSettings;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.sr.SRCalculator;
-import com.ebicep.warlords.util.*;
+import com.ebicep.warlords.util.GameRunnable;
+import com.ebicep.warlords.util.PlayerFilter;
+import com.ebicep.warlords.util.RemoveEntities;
+import com.ebicep.warlords.util.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -90,6 +93,7 @@ public class PlayingState implements State, TimerDebugAble {
     @Override
     @SuppressWarnings("null")
     public void begin() {
+        this.game.setAcceptsSpectators(true);
         this.resetTimer();
         RemoveEntities.doRemove(this.game);
         for (Option option : game.getOptions()) {

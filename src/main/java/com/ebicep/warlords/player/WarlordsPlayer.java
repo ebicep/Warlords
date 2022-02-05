@@ -1249,18 +1249,20 @@ public final class WarlordsPlayer {
 
     public void respawn() {
         List<Location> candidates = new ArrayList<>();
-        double priority = 0;
+        double priority = Double.NEGATIVE_INFINITY;
         for (SpawnLocationMarker marker : getGame().getMarkers(SpawnLocationMarker.class)) {
             if (candidates.isEmpty()) {
                 candidates.add(marker.getLocation());
                 priority = marker.getPriority(this);
             } else {
                 double newPriority = marker.getPriority(this);
-                if (newPriority > priority) {
-                    candidates.clear();
-                    priority = newPriority;
+                if (newPriority >= priority) {
+                    if (newPriority > priority) {
+                        candidates.clear();
+                        priority = newPriority;
+                    }
+                    candidates.add(marker.getLocation());
                 }
-                candidates.add(marker.getLocation());
             }
         }
         Location respawnPoint =

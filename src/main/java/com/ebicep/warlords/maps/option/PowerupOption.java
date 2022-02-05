@@ -49,7 +49,7 @@ public class PowerupOption implements Option {
         this.type = Objects.requireNonNull(type, "type");
         this.duration = duration;
         this.maxCooldown = maxCooldown;
-        this.cooldown = timeToSpawn;
+        this.cooldown = timeToSpawn * 4;
     }
 
     @Override
@@ -101,7 +101,7 @@ public class PowerupOption implements Option {
                             .first((nearPlayer) -> {
                                 type.onPickUp(PowerupOption.this, nearPlayer);
                                 remove();
-                                cooldown = maxCooldown;
+                                cooldown = maxCooldown * 4;
                             });
                 } else {
                     cooldown--;
@@ -111,7 +111,7 @@ public class PowerupOption implements Option {
                 }
             }
 
-        }.runTaskTimer(0, 20);
+        }.runTaskTimer(0, 5);
     }
 
     private void remove() {
