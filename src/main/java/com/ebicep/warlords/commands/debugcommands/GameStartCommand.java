@@ -31,7 +31,7 @@ public class GameStartCommand implements TabExecutor {
         GameMap map = null;
         MapCategory category = null;
         EnumSet<GameAddon> addon = EnumSet.of(GameAddon.PRIVATE_GAME);
-        List<OfflinePlayer> selectedPeople = null;
+        ArrayList<OfflinePlayer> selectedPeople = null;
 
         GameMap[] maps = GameMap.values();
         MapCategory[] categories = MapCategory.values();
@@ -119,10 +119,21 @@ public class GameStartCommand implements TabExecutor {
                         break;
                     case "player":
                     case "offline-player":
+                        if (!sender.hasPermission("warlords.game.start.players")) {
+                            sender.sendMessage("You do not have permissions to invite players outside your party: " + arg);
+                            isValid = false;
+                            continue;
+                        }
                         boolean allowOfflinePlayer = argType.equals("offline-player");
                         OfflinePlayer p;
                         int length = argData.length();
-                        if (length <= 16) {
+                        if (argData.equals("*")) {
+                            if (selectedPeople == null) {
+                                selectedPeople = new ArrayList<>();
+                            }
+                            selectedPeople.addAll(Bukkit.getOnlinePlayers());
+                            break;
+                        } else if (length <= 16) {
                             p = Bukkit.getPlayer(argData);
                             if (p == null) {
                                 sender.sendMessage(ChatColor.RED + "Player not online: " + argData + " specify offline-player:<uuid> to target offline players");
@@ -176,10 +187,12 @@ public class GameStartCommand implements TabExecutor {
         if (!isValid) {
             return null;
         }
+        
+        String notSpecified = ChatColor.GRAY + "<Not specified>";
 
         sender.sendMessage(ChatColor.RED + "DEV:" + ChatColor.GRAY + " Engine initiated a game with the following parameters:");
-        sender.sendMessage(ChatColor.GRAY + "- Category: " + ChatColor.RED + (category != null ? toTitleHumanCase(category.name()) : null));
-        sender.sendMessage(ChatColor.GRAY + "- Map: " + ChatColor.RED + (map != null ? toTitleHumanCase(map.name()) : null));
+        sender.sendMessage(ChatColor.GRAY + "- Category: " + ChatColor.RED + (category != null ? toTitleHumanCase(category.name()) : notSpecified));
+        sender.sendMessage(ChatColor.GRAY + "- Map: " + ChatColor.RED + (map != null ? toTitleHumanCase(map.name()) : notSpecified));
         sender.sendMessage(ChatColor.GRAY + "- Game Addons: " + ChatColor.GOLD + addon.stream().map(e -> toTitleHumanCase(e.name())).collect(Collectors.joining(", ")));
         sender.sendMessage(ChatColor.GRAY + "- Players: " + ChatColor.RED + (selectedPeople == null ? people : selectedPeople).stream().map(OfflinePlayer::getName).collect(Collectors.joining(", ")));
         return Warlords.getGameManager()
@@ -197,7 +210,10 @@ public class GameStartCommand implements TabExecutor {
         }
 
         Optional<Party> party = Warlords.partyManager.getPartyFromAny(((Player) sender).getUniqueId());
-        List<Player> people = party.map(Party::getAllPartyPeoplePlayerOnline).orElseGet(() -> new ArrayList<>(Bukkit.getOnlinePlayers()));
+        
+        List<Player> people = party
+                .map(Party::getAllPartyPeoplePlayerOnline)
+                .orElseGet(() -> sender instanceof Player ? Collections.singletonList((Player)sender) : new ArrayList<>(Bukkit.getOnlinePlayers()));
         if (party.isPresent()) {
             if (!party.get().getPartyLeader().getUuid().equals(((Player) sender).getUniqueId())) {
                 sender.sendMessage(ChatColor.RED + "You are not the party leader");
@@ -239,7 +255,8 @@ public class GameStartCommand implements TabExecutor {
                 prefixedEnum(MapCategory.values(), "category"),
                 Bukkit.getOnlinePlayers().stream().map((Player e) -> "player:" + e.getName()),
                 Bukkit.getOnlinePlayers().stream().map((Player e) -> "player:" + e.getUniqueId()),
-                Bukkit.getOnlinePlayers().stream().map((Player e) -> "offline-player:" + e.getUniqueId())
+                Bukkit.getOnlinePlayers().stream().map((Player e) -> "offline-player:" + e.getUniqueId()),
+                Stream.of("player:*")
         ).flatMap(Function.identity())
                 .filter(e -> startsWithIgnoreCase(e, args[args.length - 1]))
                 .collect(Collectors.toList());
