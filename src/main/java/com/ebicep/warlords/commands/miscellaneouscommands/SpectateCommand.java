@@ -58,8 +58,15 @@ public class SpectateCommand implements CommandExecutor {
                                 .name(ChatColor.GREEN + "Game 1")
                                 .get(),
                         (n, e) -> {
+                            if (game.isClosed()) {
+                                player.sendMessage(ChatColor.RED + "This game is no longer running");
+                                openSpectateMenu(player);
+                                return;
+                            }
                             if (!game.acceptsSpectators()) {
                                 player.sendMessage(ChatColor.RED + "This game does not accepts spectators");
+                                openSpectateMenu(player);
+                                return;
                             }
                             Optional<Game> currentGame = Warlords.getGameManager().getPlayerGame(player.getUniqueId());
                             if(currentGame.isPresent() && currentGame.get().equals(game)) {
