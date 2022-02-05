@@ -10,6 +10,7 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -106,13 +107,13 @@ public class GameManager implements AutoCloseable {
             try {
                 selected = findSuitableGame(entry);
             } catch(Throwable e) {
-				entry.onResult(QueueResult.ERROR_FIND_GAME);
+				entry.onResult(QueueResult.ERROR_FIND_GAME, null);
                 throw e;
 			}
             if (selected == null) {
                 if (now > entry.getExpireTime()) {
                     itr.remove();
-                    entry.onResult(QueueResult.EXPIRED);
+                    entry.onResult(QueueResult.EXPIRED, null);
                 }
                 // We were unable to find a suiteable game for this player
                 continue;
@@ -124,10 +125,10 @@ public class GameManager implements AutoCloseable {
 			try {
 				game = selected.optionallyStartNewGame(entry.getRequestedGameAddons(), entry.getCategory());
 			} catch(Throwable e) {
-				entry.onResult(QueueResult.ERROR_NEW_GAME);
+				entry.onResult(QueueResult.ERROR_NEW_GAME, null);
 				throw e;
 			}
-            entry.onResult(isNewGame ? QueueResult.READY_NEW : QueueResult.READY_JOIN);
+            entry.onResult(isNewGame ? QueueResult.READY_NEW : QueueResult.READY_JOIN, game);
             for (OfflinePlayer player : entry.getPlayers()) {
                 game.addPlayer(player, false);
             }
@@ -143,7 +144,7 @@ public class GameManager implements AutoCloseable {
             QueueEntry entry = itr.next();
             if (entry.players.contains(player)) {
                 itr.remove();
-                entry.onResult(wouldBeReplaced ? QueueResult.REPLACED : QueueResult.CANCELLED);
+                entry.onResult(wouldBeReplaced ? QueueResult.REPLACED : QueueResult.CANCELLED, null);
             }
         }
         for (GameHolder holder : games) {
@@ -216,7 +217,8 @@ public class GameManager implements AutoCloseable {
             entry.onResult(
                     invalidOversize ? QueueResult.INVALID_OVERSIZE :
                     invalidMapCategory ? QueueResult.INVALID_MAP_CATEGORY :
-                    QueueResult.INVALID_GENERIC
+                    QueueResult.INVALID_GENERIC,
+                    null
             );
             return false;
         }
@@ -240,25 +242,30 @@ public class GameManager implements AutoCloseable {
         return true;
     }
 
-    private QueueResult queueNow(QueueEntry entry) {
-        Consumer<QueueResult> onResult = entry.getOnResult();
+    private Pair<QueueResult, Game> queueNow(QueueEntry entry) {
+        BiConsumer<QueueResult, Game> onResult = entry.getOnResult();
         try {
             AtomicReference<QueueResult> res = new AtomicReference<>(null);
-            entry.setOnResult(result -> res.set(result));
+            AtomicReference<Game> game = new AtomicReference<>(null);
+            entry.setOnResult((result, g) -> {
+                    res.set(result);
+                    game.set(g);
+            });
             if (!queue(entry)) {
-                return QueueResult.INVALID_GENERIC;
-            }
+                return new Pair<>(QueueResult.INVALID_GENERIC, null);
+            }// BiConsumer<QueueResult, Game>
             runQueue();
             QueueResult val = res.get();
+            Game g = game.get();
             if (val == null) {
-                queue.remove(entry);
                 val = QueueResult.EXPIRED;
             }
             if (onResult != null) {
-                onResult.accept(val);
+                onResult.accept(val, g);
             }
-            return val;
+            return new Pair<>(val, g);
         } finally {
+            queue.remove(entry);
             entry.setOnResult(onResult);
         }
     }
@@ -267,7 +274,7 @@ public class GameManager implements AutoCloseable {
         return new QueueEntryBuilder(players, null);
     }
 
-    public QueueEntryBuilder newEntry(Collection<? extends OfflinePlayer> players, @Nullable Consumer<QueueResult> onResult) {
+    public QueueEntryBuilder newEntry(Collection<? extends OfflinePlayer> players, @Nullable BiConsumer<QueueResult, Game> onResult) {
         return new QueueEntryBuilder(players, onResult);
     }
 
@@ -279,7 +286,7 @@ public class GameManager implements AutoCloseable {
     @Override
     public void close() {
         for (QueueEntry entry : queue) {
-            entry.onResult(QueueResult.CLOSE);
+            entry.onResult(QueueResult.CLOSE, null);
         }
         queue.clear();
         for (GameHolder next : games) {
@@ -373,7 +380,7 @@ public class GameManager implements AutoCloseable {
         @Nullable
         private final GameMap map;
         @Nullable
-        private Consumer<QueueResult> onResult;
+        private BiConsumer<QueueResult, Game> onResult;
         private final int priority;
         private final int insertionId;
 
@@ -383,7 +390,7 @@ public class GameManager implements AutoCloseable {
                 @Nonnull EnumSet<GameAddon> requestedGameAddons,
                 @Nullable MapCategory category,
                 @Nullable GameMap map,
-                @Nullable Consumer<QueueResult> onResult,
+                @Nullable BiConsumer<QueueResult, Game> onResult,
                 int priority
         ) {
             this.players = Objects.requireNonNull(players, "players");
@@ -420,17 +427,17 @@ public class GameManager implements AutoCloseable {
         }
 
         @Nullable
-        public Consumer<QueueResult> getOnResult() {
+        public BiConsumer<QueueResult, Game> getOnResult() {
             return onResult;
         }
 
-        public void onResult(@Nonnull QueueResult res) {
+        public void onResult(@Nonnull QueueResult res, @Nullable Game game) {
             if (onResult != null) {
-                onResult.accept(res);
+                onResult.accept(res, game);
             }
         }
 
-        public void setOnResult(Consumer<QueueResult> onResult) {
+        public void setOnResult(BiConsumer<QueueResult, Game> onResult) {
             this.onResult = onResult;
         }
 
@@ -446,27 +453,21 @@ public class GameManager implements AutoCloseable {
     }
 
     public enum QueueResult {
-        READY_JOIN(true, "You have joined an existing game"),
-        READY_NEW(true, "A new game has been made for you"),
-        ERROR_FIND_GAME(false, "We were unable to create a new game for you because of an internal error"),
-        ERROR_NEW_GAME(false, "We were unable to find a new for you because of an internal error"),
-        EXPIRED(false, "No game found in time"),
-        CANCELLED(false, "Cancelled queueing"),
-        REPLACED(false, "Replaced with another queue entry"),
-        INVALID_GENERIC(false, "Your request to queue was invalid because of an unknown reason"),
-        INVALID_OVERSIZE(false, "Your request to queue was invalid because your party was too big for the specified map/game"),
-        INVALID_MAP_CATEGORY(false, "Your request to queue was invalid because the combination of map/category was not found"),
-        CLOSE(false, "The queue has been closed"),;
-        private final boolean success;
+        READY_JOIN("You have joined an existing game"),
+        READY_NEW("A new game has been made for you"),
+        ERROR_FIND_GAME("We were unable to create a new game for you because of an internal error"),
+        ERROR_NEW_GAME("We were unable to find a new for you because of an internal error"),
+        EXPIRED("No game found in time"),
+        CANCELLED("Cancelled queueing"),
+        REPLACED("Replaced with another queue entry"),
+        INVALID_GENERIC("Your request to queue was invalid because of an unknown reason"),
+        INVALID_OVERSIZE("Your request to queue was invalid because your party was too big for the specified map/game"),
+        INVALID_MAP_CATEGORY("Your request to queue was invalid because the combination of map/category was not found"),
+        CLOSE("The queue has been closed"),;
         private final String message;
 
-        QueueResult(boolean success, String message) {
-            this.success = success;
+        QueueResult(String message) {
             this.message = message;
-        }
-
-        public boolean isSuccess() {
-            return success;
         }
 
         @Override
@@ -487,10 +488,10 @@ public class GameManager implements AutoCloseable {
         protected GameMap map = null;
         protected int priority = 0;
         @Nullable
-        private Consumer<GameManager.QueueResult> onResult;
+        private BiConsumer<QueueResult, Game> onResult;
         private long expiresTime = Long.MAX_VALUE;
 
-        public QueueEntryBuilder(Collection<? extends OfflinePlayer> players, @Nullable Consumer<QueueResult> onResult) {
+        public QueueEntryBuilder(Collection<? extends OfflinePlayer> players, @Nullable BiConsumer<QueueResult, Game> onResult) {
             this.players = new ArrayList<>(players);
             this.onResult = onResult;
         }
@@ -553,13 +554,13 @@ public class GameManager implements AutoCloseable {
             return this;
         }
 
-        public QueueEntryBuilder setOnResult(@Nonnull Consumer<GameManager.QueueResult> onResult) {
+        public QueueEntryBuilder setOnResult(@Nonnull BiConsumer<QueueResult, Game> onResult) {
             this.onResult = onResult;
             return this;
         }
 
         @Nonnull
-        public Consumer<QueueResult> getOnResult() {
+        public BiConsumer<QueueResult, Game> getOnResult() {
             return onResult;
         }
 
@@ -572,7 +573,7 @@ public class GameManager implements AutoCloseable {
         }
 
         @Nonnull
-        public QueueResult queueNow() {
+        public Pair<QueueResult, Game> queueNow() {
             return GameManager.this.queueNow(new GameManager.QueueEntry(players, Long.MIN_VALUE, requestedGameAddons, category, map, null, priority));
         }
 

@@ -39,6 +39,7 @@ public enum GameAddon {
                 PreLobbyState preLobbyState = (PreLobbyState) newState;
                 preLobbyState.setMaxTimer(30 * 20);
                 preLobbyState.resetTimer();
+                game.setAcceptsPlayers(false);
             }
         }
     },
