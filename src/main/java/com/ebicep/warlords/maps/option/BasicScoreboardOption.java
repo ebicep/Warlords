@@ -10,10 +10,8 @@ import org.bukkit.ChatColor;
 
 import javax.annotation.Nonnull;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.TimeZone;
+import java.util.*;
+import javax.annotation.Nullable;
 
 public class BasicScoreboardOption implements Option{
 
@@ -31,7 +29,7 @@ public class BasicScoreboardOption implements Option{
         SimpleScoreboardHandler simpleScoreboardHandler = new SimpleScoreboardHandler(0, "date") {
             @Nonnull
             @Override
-            public List<String> computeLines(@Nonnull WarlordsPlayer player) {
+            public List<String> computeLines(@Nullable WarlordsPlayer player) {
                 return Arrays.asList(
                         format.format(new Date())
                 );
@@ -50,7 +48,7 @@ public class BasicScoreboardOption implements Option{
         return new SimpleScoreboardHandler(Integer.MAX_VALUE, "version") {
             @Nonnull
             @Override
-            public List<String> computeLines(@Nonnull WarlordsPlayer player) {
+            public List<String> computeLines(@Nullable WarlordsPlayer player) {
                 return Arrays.asList(ChatColor.YELLOW + Warlords.VERSION);
             }
         };
@@ -61,9 +59,10 @@ public class BasicScoreboardOption implements Option{
         return new SimpleScoreboardHandler(Integer.MAX_VALUE - 1, "player-stats") {
             @Nonnull
             @Override
-            public List<String> computeLines(@Nonnull WarlordsPlayer player) {
-                return Arrays.asList(ChatColor.GREEN.toString() + player.getStats().total().getKills() + ChatColor.RESET + " Kills " +
-                    ChatColor.GREEN + player.getStats().total().getAssists() + ChatColor.RESET + " Assists");
+            public List<String> computeLines(@Nullable WarlordsPlayer player) {
+                return player == null ? Collections.emptyList()
+                        : Arrays.asList(ChatColor.GREEN.toString() + player.getStats().total().getKills() + ChatColor.RESET + " Kills "
+                                + ChatColor.GREEN + player.getStats().total().getAssists() + ChatColor.RESET + " Assists");
             }
         };
     }
@@ -72,8 +71,9 @@ public class BasicScoreboardOption implements Option{
         return new SimpleScoreboardHandler(Integer.MAX_VALUE - 2, "spec") {
             @Nonnull
             @Override
-            public List<String> computeLines(@Nonnull WarlordsPlayer player) {
-                return Arrays.asList(ChatColor.WHITE + "Spec: " + ChatColor.GREEN + player.getSpec().getClass().getSimpleName());
+            public List<String> computeLines(@Nullable WarlordsPlayer player) {
+                return player == null ? Collections.emptyList()
+                        : Arrays.asList(ChatColor.WHITE + "Spec: " + ChatColor.GREEN + player.getSpec().getClass().getSimpleName());
             }
         };
     }

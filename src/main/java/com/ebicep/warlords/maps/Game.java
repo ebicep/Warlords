@@ -81,14 +81,14 @@ public final class Game implements Runnable, AutoCloseable {
     private final LocationFactory locations;
 
     public Game(EnumSet<GameAddon> gameAddons, GameMap map, MapCategory category, LocationFactory locations) {
+        this(gameAddons, map, category, locations, map.initMap(category, locations, gameAddons));
+    }
+    Game(EnumSet<GameAddon> gameAddons, GameMap map, MapCategory category, LocationFactory locations, List<Option> options) {
         this.locations = locations;
         this.addons = gameAddons;
         this.map = map;
         this.category = category;
-        this.options = new ArrayList<>(map.initMap(category, locations, gameAddons));
-        if (!collectionHasItem(options, e -> e instanceof GameFreezeOption)) {
-            options.add(new GameFreezeOption());
-        }
+        this.options = new ArrayList<>(options);
         this.minPlayers = map.getMinPlayers();
         this.maxPlayers = map.getMaxPlayers();
         for (GameAddon addon : gameAddons) {
@@ -751,7 +751,7 @@ public final class Game implements Runnable, AutoCloseable {
 
     @Deprecated
     public void printDebuggingInformation() {
-        System.out.println(this);
+        Warlords.getInstance().getLogger().info(String.valueOf(this));
     }
 
     public int getPoints(@Nonnull Team team) {

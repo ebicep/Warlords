@@ -3,14 +3,18 @@ package com.ebicep.warlords.maps;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.maps.option.GameFreezeWhenOfflineOption;
 import com.ebicep.warlords.maps.option.ImposterModeOption;
+import com.ebicep.warlords.maps.option.PreGameItemOption;
 import com.ebicep.warlords.maps.state.ClosedState;
 import com.ebicep.warlords.maps.state.PreLobbyState;
 import com.ebicep.warlords.maps.state.State;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.util.ItemBuilder;
 import org.bukkit.command.CommandSender;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
 
 public enum GameAddon {
 
@@ -18,7 +22,12 @@ public enum GameAddon {
         @Override
         public void modifyGame(@Nonnull Game game) {
             game.getOptions().add(new GameFreezeWhenOfflineOption());
+            game.getOptions().add(new PreGameItemOption(5, new ItemBuilder(Material.NOTE_BLOCK)
+                    .name(ChatColor.GREEN + "Team Selector " + ChatColor.GRAY + "(Right-Click)")
+                    .lore(ChatColor.YELLOW + "Click to select your team!")
+                    .get()));
             game.setMinPlayers(1);
+            game.setAcceptsPlayers(false);
         }
 
         @Override

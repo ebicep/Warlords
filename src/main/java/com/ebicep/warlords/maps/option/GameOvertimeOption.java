@@ -73,7 +73,7 @@ public class GameOvertimeOption implements Option, Listener {
             for (Option option : event.getGame().getOptions()) {
                 if (option instanceof WinByPointsOption) {
                     WinByPointsOption winByPointsOption = (WinByPointsOption) option;
-                    winByPointsOption.setLimit(overTimePoints);
+                    winByPointsOption.setPointLimit(overTimePoints);
                 }
             }
             WinAfterTimeoutOption drawAfterTimeoutOption = (WinAfterTimeoutOption) event.getCause();

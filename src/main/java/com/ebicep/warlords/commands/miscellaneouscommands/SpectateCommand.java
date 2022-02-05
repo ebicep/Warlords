@@ -27,7 +27,7 @@ public class SpectateCommand implements CommandExecutor {
             }
 
             Optional<Game> currentGame = Warlords.getGameManager().getPlayerGame(player.getUniqueId());
-            if(currentGame.isPresent() && currentGame.get().getPlayerTeam(player.getUniqueId()) != null) {
+            if (currentGame.isPresent() && currentGame.get().getPlayerTeam(player.getUniqueId()) != null) {
                 sender.sendMessage(ChatColor.RED + "You cannot use this command inside a game!");
                 return true;
             }
@@ -55,7 +55,13 @@ public class SpectateCommand implements CommandExecutor {
                 menu.setItem(column,
                         row,
                         new ItemBuilder(Material.BOOK)
-                                .name(ChatColor.GREEN + "Game 1")
+                                .name(ChatColor.GREEN + "Game " + game.getGameId())
+                                .lore(
+                                        ChatColor.DARK_GRAY + "Map - " + ChatColor.RED + game.getMap().getMapName(),
+                                        ChatColor.DARK_GRAY + "Category - " + ChatColor.RED + game.getCategory(),
+                                        ChatColor.DARK_GRAY + "Addons - " + ChatColor.RED + game.getAddons(),
+                                        ChatColor.DARK_GRAY + "Players - " + ChatColor.RED + game.playersCount()
+                                )
                                 .get(),
                         (n, e) -> {
                             if (game.isClosed()) {
@@ -69,13 +75,15 @@ public class SpectateCommand implements CommandExecutor {
                                 return;
                             }
                             Optional<Game> currentGame = Warlords.getGameManager().getPlayerGame(player.getUniqueId());
-                            if(currentGame.isPresent() && currentGame.get().equals(game)) {
+                            if (currentGame.isPresent() && currentGame.get().getPlayerTeam(player.getUniqueId()) != null) {
+                                player.sendMessage(ChatColor.RED + "You cannot use this command inside a game!");
+                            } else if (currentGame.isPresent() && currentGame.get().equals(game)) {
                                 player.sendMessage(ChatColor.RED + "You are already spectating this game");
                             } else {
-                                if(currentGame.isPresent()) {
+                                if (currentGame.isPresent()) {
                                     currentGame.get().removePlayer(player.getUniqueId());
-                                    game.addPlayer(player, true);
                                 }
+                                game.addPlayer(player, true);
                             }
                         }
                 );
@@ -97,7 +105,14 @@ public class SpectateCommand implements CommandExecutor {
                     new ItemBuilder(Material.BARRIER)
                             .name(ChatColor.GREEN + "Return to the lobby")
                             .get(),
-                    (n, e) -> currentGame.get().removePlayer(player.getUniqueId())
+                    (n, e) -> {
+                        Optional<Game> currentGame1 = Warlords.getGameManager().getPlayerGame(player.getUniqueId());
+                        if (currentGame1.isPresent() && currentGame1.get().getPlayerTeam(player.getUniqueId()) != null) {
+                            player.sendMessage(ChatColor.RED + "You cannot use this command inside a game!");
+                        } else {
+                            currentGame1.get().removePlayer(player.getUniqueId());
+                        }
+                    }
             );
         }
 

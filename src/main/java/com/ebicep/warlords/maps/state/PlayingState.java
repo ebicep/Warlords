@@ -12,6 +12,9 @@ import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.GameAddon;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.option.Option;
+import com.ebicep.warlords.maps.option.marker.LobbyLocationMarker;
+import com.ebicep.warlords.maps.option.marker.LocationMarker;
+import com.ebicep.warlords.maps.option.marker.SpawnLocationMarker;
 import com.ebicep.warlords.maps.option.marker.TimerSkipAbleMarker;
 import com.ebicep.warlords.maps.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.player.CustomScoreboard;
@@ -36,6 +39,10 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Stream;
+import javax.annotation.Nullable;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
 
 public class PlayingState implements State, TimerDebugAble {
 
@@ -77,7 +84,7 @@ public class PlayingState implements State, TimerDebugAble {
         });
         this.game.forEachOfflineWarlordsPlayer(wp -> {
             CustomScoreboard customScoreboard = Warlords.playerScoreboards.get(wp.getUuid());
-            updateBasedOnGameState(true, customScoreboard, wp);
+            updateBasedOnGameState(customScoreboard, wp);
             if (wp.getEntity() instanceof Player) {
                 wp.applySkillBoost((Player) wp.getEntity());
             }
@@ -93,8 +100,6 @@ public class PlayingState implements State, TimerDebugAble {
             DatabaseManager.loadPlayer(player.getUniqueId(), PlayersCollections.DAILY, () -> {
             });
         })).execute();
-        game.setAcceptsPlayers(true);
-        game.setAcceptsSpectators(false);
         game.registerEvents(new Listener() {
             @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
             public void onWin(WarlordsGameTriggerWinEvent event) {
@@ -102,13 +107,7 @@ public class PlayingState implements State, TimerDebugAble {
                 winEvent = event;
             }
         });
-        new GameRunnable(game) {
-            @Override
-            public void run() {
-                giveScoreboard();
-            }
-
-        }.runTaskTimer(0, 10);
+        GameRunnable.create(game, this::updateScoreboard).runTaskTimer(0, 10);
         new GameRunnable(game) {
             @Override
             public void run() {
@@ -223,13 +222,13 @@ public class PlayingState implements State, TimerDebugAble {
     public void resetTimer() throws IllegalStateException {
     }
 
-    private void giveScoreboard() {
-        game.forEachOnlinePlayerWithoutSpectators((player, team) -> {
-            this.onPlayerReJoinGame(player);
+    private void updateScoreboard() {
+        game.forEachOnlinePlayer((player, team) -> {
+            updateBasedOnGameState(Warlords.playerScoreboards.get(player.getUniqueId()), Warlords.getPlayer(player));
         });
     }
 
-    public void updateHealth(CustomScoreboard customScoreboard) {
+    private void updateHealth(@Nonnull CustomScoreboard customScoreboard) {
         Scoreboard scoreboard = customScoreboard.getScoreboard();
         Objective health = customScoreboard.getHealth();
         if (health == null || scoreboard.getObjective("health") == null) {
@@ -247,7 +246,7 @@ public class PlayingState implements State, TimerDebugAble {
         });
     }
 
-    public void updateNames(CustomScoreboard customScoreboard) {
+    private void updateNames(@Nonnull CustomScoreboard customScoreboard) {
         Scoreboard scoreboard = customScoreboard.getScoreboard();
         this.getGame().forEachOfflinePlayer((player, team) -> {
             WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
@@ -269,7 +268,12 @@ public class PlayingState implements State, TimerDebugAble {
         });
     }
 
-    public void updatePlayerName(CustomScoreboard customScoreboard, WarlordsPlayer warlordsPlayer) {
+    /**
+     * Updates the names of the player on the scoreboard. To be used when the spec of a warlord player changes
+     * @param customScoreboard the scoreboard to update
+     * @param warlordsPlayer the player changing
+     */
+    public void updatePlayerName(@Nonnull CustomScoreboard customScoreboard, @Nonnull WarlordsPlayer warlordsPlayer) {
         Scoreboard scoreboard = customScoreboard.getScoreboard();
 
         this.getGame().forEachOfflinePlayer((player, team) -> {
@@ -281,11 +285,7 @@ public class PlayingState implements State, TimerDebugAble {
             }
         });
     }
-
-    public void updateBasedOnGameState(boolean init, CustomScoreboard customScoreboard, WarlordsPlayer warlordsPlayer) {
-        this.updateHealth(customScoreboard);
-        this.updateNames(customScoreboard);
-
+    private void updateBasedOnGameScoreboards(@Nonnull CustomScoreboard customScoreboard, @Nullable WarlordsPlayer warlordsPlayer) {
         List<String> scoreboard = new ArrayList<>();
 
         String lastGroup = null;
@@ -307,14 +307,29 @@ public class PlayingState implements State, TimerDebugAble {
                 scoreboard.addAll(handlerContents);
             }
         }
+        customScoreboard.giveNewSideBar(false, scoreboard);
+    }
 
-        customScoreboard.giveNewSideBar(init, scoreboard);
+    private void updateBasedOnGameState(@Nonnull CustomScoreboard customScoreboard, @Nullable WarlordsPlayer warlordsPlayer) {
+        this.updateHealth(customScoreboard);
+        this.updateNames(customScoreboard);
+        this.updateBasedOnGameScoreboards(customScoreboard, warlordsPlayer);
     }
 
     @Override
-    public void onPlayerReJoinGame(Player player) {
+    public void onPlayerReJoinGame(@Nonnull Player player) {
         WarlordsPlayer wp = Warlords.getPlayer(player);
-        updateBasedOnGameState(false, Warlords.playerScoreboards.get(player.getUniqueId()), wp);
+        if (wp == null) {
+            // Spectator
+            player.setGameMode(GameMode.SPECTATOR);
+            Location spawn = Stream.concat(
+                    getGame().getMarkers(SpawnLocationMarker.class).stream(),
+                    getGame().getMarkers(LobbyLocationMarker.class).stream()
+            ).map(LocationMarker::getLocation).collect(Utils.randomElement());
+            player.teleport(spawn);
+        }
+        CustomScoreboard sb = Warlords.playerScoreboards.get(player.getUniqueId());
+        updateBasedOnGameState(sb, wp);
     }
 
     public int getTicksElapsed() {

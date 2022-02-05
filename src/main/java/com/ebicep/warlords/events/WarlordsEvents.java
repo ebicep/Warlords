@@ -12,9 +12,11 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.LeaderboardManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
+import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.flags.*;
 import com.ebicep.warlords.maps.option.marker.FlagHolder;
 import com.ebicep.warlords.maps.state.EndState;
+import com.ebicep.warlords.maps.state.PreLobbyState;
 import com.ebicep.warlords.permissions.PermissionHandler;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.util.ChatUtils;
@@ -53,6 +55,7 @@ import java.util.logging.Level;
 
 import static com.ebicep.warlords.menu.GameMenu.openMainMenu;
 import static com.ebicep.warlords.menu.GameMenu.openTeamMenu;
+import java.util.*;
 import javax.annotation.Nullable;
 
 public class WarlordsEvents implements Listener {
@@ -334,6 +337,11 @@ public class WarlordsEvents implements Listener {
                 } else if (itemHeld.getType() == Material.EMERALD) {
                     //wl command
                     Bukkit.getServer().dispatchCommand(player, "wl");
+                } else {
+                    PreLobbyState state = Warlords.getGameManager().getPlayerGame(player.getUniqueId()).flatMap(g -> g.getState(PreLobbyState.class)).orElse(null);
+                    if (state != null) {
+                        state.interactEvent(player, player.getInventory().getHeldItemSlot());
+                    }
                 }
             }
         } else if (action == Action.LEFT_CLICK_BLOCK || action == Action.LEFT_CLICK_AIR) {

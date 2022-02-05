@@ -128,7 +128,7 @@ public class InterceptionPointOption implements Option {
 		)));
         game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(19, "interception") {
             @Override
-            public List<String> computeLines(WarlordsPlayer player) {
+            public List<String> computeLines(@Nullable WarlordsPlayer player) {
 				StringBuilder status = new StringBuilder();
                 if (teamAttacking == null) {
 					status.append(ChatColor.GRAY);

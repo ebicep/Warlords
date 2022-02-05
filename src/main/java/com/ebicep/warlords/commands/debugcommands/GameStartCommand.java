@@ -188,7 +188,7 @@ public class GameStartCommand implements TabExecutor {
             return null;
         }
         
-        String notSpecified = ChatColor.GRAY + "<Not specified>";
+        String notSpecified = ChatColor.DARK_GRAY + "<Not specified>";
 
         sender.sendMessage(ChatColor.RED + "DEV:" + ChatColor.GRAY + " Engine initiated a game with the following parameters:");
         sender.sendMessage(ChatColor.GRAY + "- Category: " + ChatColor.RED + (category != null ? toTitleHumanCase(category.name()) : notSpecified));

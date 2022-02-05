@@ -17,7 +17,7 @@ public interface ScoreboardHandler extends GameMarker {
      * @param player The player to compute it for
      * @return The priority for this player
      */
-    int getPriority(@Nonnull WarlordsPlayer player);
+    int getPriority(@Nullable WarlordsPlayer player);
 
     /**
      * Computes the list of lines for the scoreboard
@@ -26,7 +26,7 @@ public interface ScoreboardHandler extends GameMarker {
      * @return The new scoreboard lines
      */
     @Nonnull
-    List<String> computeLines(@Nonnull WarlordsPlayer player);
+    List<String> computeLines(@Nullable WarlordsPlayer player);
 
     /**
      * Registers an onchange handler for the scoreboard, scoreboard should call

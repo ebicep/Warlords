@@ -6,6 +6,8 @@ import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.GameAddon;
 import com.ebicep.warlords.maps.Team;
+import com.ebicep.warlords.maps.option.Option;
+import com.ebicep.warlords.maps.option.PreGameItemOption;
 import com.ebicep.warlords.maps.option.marker.LobbyLocationMarker;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.sr.SRCalculator;
@@ -31,6 +33,7 @@ public class PreLobbyState implements State, TimerDebugAble {
     private int timer = 0;
     private int maxTimer = 0;
     private boolean timerHasBeenSkipped = false;
+    private final PreGameItemOption[] items = new PreGameItemOption[9];
 
     public PreLobbyState(Game game) {
         this.game = game;
@@ -40,9 +43,14 @@ public class PreLobbyState implements State, TimerDebugAble {
     public void begin() {
         this.maxTimer = game.getMap().getLobbyCountdown();
         this.resetTimer();
-        // Debug
         game.setAcceptsPlayers(true);
         game.setAcceptsSpectators(false);
+        for (Option option : game.getOptions()) {
+            if (option instanceof PreGameItemOption) {
+                PreGameItemOption preGameItemOption = (PreGameItemOption) option;
+                items[preGameItemOption.getSlot()] = preGameItemOption;
+            }
+        }
     }
     
     public boolean hasEnoughPlayers() {
@@ -552,24 +560,11 @@ public class PreLobbyState implements State, TimerDebugAble {
             player.setAllowFlight(false);
             player.setGameMode(GameMode.ADVENTURE);
             
-            PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
-            Classes selectedClass = playerSettings.getSelectedClass();
-            AbstractPlayerClass apc = selectedClass.create.get();
-
-            player.getInventory().setItem(5, new ItemBuilder(Material.NOTE_BLOCK)
-                    .name(ChatColor.GREEN + "Team Selector " + ChatColor.GRAY + "(Right-Click)")
-                    .lore(ChatColor.YELLOW + "Click to select your team!")
-                    .get());
-            player.getInventory().setItem(6, new ItemBuilder(Material.NETHER_STAR)
-                    .name(ChatColor.AQUA + "Pre-game Menu ")
-                    .lore(ChatColor.GRAY + "Allows you to change your class, select a\n" + ChatColor.GRAY + "weapon, and edit your settings.")
-                    .get());
-            player.getInventory().setItem(1, new ItemBuilder(apc.getWeapon()
-                    .getItem(playerSettings.getWeaponSkins()
-                            .getOrDefault(selectedClass, Weapons.FELFLAME_BLADE).item))
-                    .name("§aWeapon Skin Preview")
-                    .lore("")
-                    .get());
+            for (PreGameItemOption item : items) {
+                if (item != null) {
+                    player.getInventory().setItem(item.getSlot(), item.getItem(game, player));
+                }
+            }
 
             ArmorManager.resetArmor(player, Warlords.getPlayerSettings(player.getUniqueId()).getSelectedClass(), team);
         }
@@ -597,6 +592,12 @@ public class PreLobbyState implements State, TimerDebugAble {
 
     public void setMaxTimer(int maxTimer) {
         this.maxTimer = maxTimer;
+    }
+
+    public void interactEvent(Player player, int heldItemSlot) {
+        if (heldItemSlot >= 0 && heldItemSlot < 9 && this.items[heldItemSlot] != null) {
+            this.items[heldItemSlot].runOnClick(this.game, player);
+        }
     }
 
     private enum TeamPriority {

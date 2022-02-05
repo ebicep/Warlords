@@ -130,4 +130,22 @@ public abstract class GameRunnable implements Runnable {
         this.game.registerGameTask(task);
         return task;
     }
+
+    public static GameRunnable create(Game game, Runnable runner) {
+        return create(game, runner, DEFAULT_RUN_IN_PAUSE_MODE);
+    }
+    
+    public static GameRunnable create(Game game, Runnable runner, boolean runInPauseMode) {
+        return new GameRunnable(game, runInPauseMode) {
+            @Override
+            public void run() {
+                runner.run();
+            }
+
+            @Override
+            public String toString() {
+                return "GameRunnable{" + runner.toString() + '}';
+            }
+        };
+    }
 }

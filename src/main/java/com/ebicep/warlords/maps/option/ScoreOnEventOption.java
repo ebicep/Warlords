@@ -6,6 +6,7 @@ import com.ebicep.warlords.events.WarlordsIntersectionCaptureEvent;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.flags.WaitingFlagLocation;
+import com.ebicep.warlords.maps.option.marker.PointPredicterMarker;
 import com.ebicep.warlords.maps.option.marker.TeamMarker;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.GameRunnable;
@@ -152,6 +153,23 @@ public abstract class ScoreOnEventOption<T> implements Option {
 
         public OnInterceptionTimer(int scoreIncrease) {
             super(scoreIncrease);
+        }
+
+        @Override
+        public void register(Game game) {
+            super.register(game);
+            game.registerGameMarker(PointPredicterMarker.class, team -> {
+                double predictedScoreIncrease = 0;
+                for (Option option : game.getOptions()) {
+                    if (option instanceof InterceptionPointOption) {
+                        InterceptionPointOption intersectionPointOption = (InterceptionPointOption) option;
+                        if (intersectionPointOption.getTeamOwning() == team) {
+                            predictedScoreIncrease += scoreIncrease * 60;
+                        }
+                    }
+                }
+                return predictedScoreIncrease;
+            });
         }
 
         @Override
