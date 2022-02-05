@@ -1,6 +1,7 @@
 package com.ebicep.warlords.maps;
 
 import com.ebicep.warlords.util.LocationFactory;
+import com.ebicep.warlords.util.Pair;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 
@@ -37,11 +38,12 @@ public class GameManager implements AutoCloseable {
             if (entry.getCategory() != null && !next.getMap().getCategories().contains(entry.getCategory())) {
                 continue; // Skip if the user wants to join a game with a different category
             }
-            if (next.getGame() != null && next.getGame().playersCount() == 0) {
+            if (next.getGame() != null && (next.getGame().playersCount() == 0 || next.getGame().isClosed())) {
                 // If a game has 0 internalPlayers assigned, force end it
                 next.forceEndGame(); // This mutates holder.game
             }
-            if (next.getGame() == null) {
+            Game game = next.getGame();
+            if (game == null) {
                 int computedMaxPlayers = next.getMap().getMaxPlayers();
                 for (GameAddon addon : entry.getRequestedGameAddons()) {
                     if (!addon.canCreateGame(next)) {
@@ -65,16 +67,16 @@ public class GameManager implements AutoCloseable {
                 }
                 // No else statement for above if, we already found a map that is running which is willing to accept us
             } else {
-                if (!next.getGame().acceptsPeople()) {
+                if (!game.acceptsPeople()) {
                     continue;
                 }
-                if (!entry.getRequestedGameAddons().equals(next.getGame().getAddons())) {
+                if (!entry.getRequestedGameAddons().equals(game.getAddons())) {
                     continue;
                 }
-                if (next.getGame().getMaxPlayers() - next.getGame().playersCount() < entry.getPlayers().size()) {
+                if (game.getMaxPlayers() - game.playersCount() < entry.getPlayers().size()) {
                     continue; // The party would not fit into this map
                 }
-                if (entry.getCategory() != null && next.getGame().getCategory() != entry.getCategory()) {
+                if (entry.getCategory() != null && game.getCategory() != entry.getCategory()) {
                     continue; // Skip if the user wants to join a game with a different category
                 }
                 if (selected == null) {
@@ -82,7 +84,7 @@ public class GameManager implements AutoCloseable {
                 } else if (selected.getGame() == null) {
                     selected = next;
                 } else {
-                    if (selected.getGame().createdAt() < next.getGame().createdAt()) {
+                    if (selected.getGame().createdAt() < game.createdAt()) {
                         continue;
                     }
                     selected = next;
@@ -100,7 +102,13 @@ public class GameManager implements AutoCloseable {
             if (entry == null) {
                 return;
             }
-            GameHolder selected = findSuitableGame(entry);
+            GameHolder selected;
+            try {
+                selected = findSuitableGame(entry);
+            } catch(Throwable e) {
+				entry.onResult(QueueResult.ERROR_FIND_GAME);
+                throw e;
+			}
             if (selected == null) {
                 if (now > entry.getExpireTime()) {
                     itr.remove();
@@ -178,18 +186,38 @@ public class GameManager implements AutoCloseable {
             throw new IllegalArgumentException("Queue entry already exists");
         }
         boolean valid = false;
+        boolean invalidOversize = false;
+        boolean invalidMapCategory = false;
         for (GameHolder next : games) {
             if (entry.getMap() != null && entry.getMap() != next.getMap()) {
                 continue; // Skip if the user wants to join a game with a different map
             }
             if (entry.getCategory() != null && !next.getMap().getCategories().contains(entry.getCategory())) {
+                invalidMapCategory = true;
                 continue; // Skip if the user wants to join a game with a different category
+            }
+            int computedMaxPlayers = next.getMap().getMaxPlayers();
+            for (GameAddon addon : entry.getRequestedGameAddons()) {
+                if (!addon.canCreateGame(next)) {
+                    continue;
+                }
+                computedMaxPlayers = addon.getMaxPlayers(next.getMap(), computedMaxPlayers);
+            }
+
+            // The game has not started yet
+            if (computedMaxPlayers < entry.getPlayers().size()) {
+                invalidOversize = true;
+                continue; // The party would not fit into this map
             }
             valid = true;
             break;
         }
         if (!valid) {
-            entry.onResult(QueueResult.INVALID);
+            entry.onResult(
+                    invalidOversize ? QueueResult.INVALID_OVERSIZE :
+                    invalidMapCategory ? QueueResult.INVALID_MAP_CATEGORY :
+                    QueueResult.INVALID_GENERIC
+            );
             return false;
         }
         for (OfflinePlayer p : entry.getPlayers()) {
@@ -218,7 +246,7 @@ public class GameManager implements AutoCloseable {
             AtomicReference<QueueResult> res = new AtomicReference<>(null);
             entry.setOnResult(result -> res.set(result));
             if (!queue(entry)) {
-                return QueueResult.INVALID;
+                return QueueResult.INVALID_GENERIC;
             }
             runQueue();
             QueueResult val = res.get();
@@ -420,11 +448,14 @@ public class GameManager implements AutoCloseable {
     public enum QueueResult {
         READY_JOIN(true, "You have joined an existing game"),
         READY_NEW(true, "A new game has been made for you"),
-        ERROR_NEW_GAME(false, "We were unable to create a new game fore you because of an internal error"),
+        ERROR_FIND_GAME(false, "We were unable to create a new game for you because of an internal error"),
+        ERROR_NEW_GAME(false, "We were unable to find a new for you because of an internal error"),
         EXPIRED(false, "No game found in time"),
         CANCELLED(false, "Cancelled queueing"),
         REPLACED(false, "Replaced with another queue entry"),
-        INVALID(false, "Your request to queue was invalid"),
+        INVALID_GENERIC(false, "Your request to queue was invalid because of an unknown reason"),
+        INVALID_OVERSIZE(false, "Your request to queue was invalid because your party was too big for the specified map/game"),
+        INVALID_MAP_CATEGORY(false, "Your request to queue was invalid because the combination of map/category was not found"),
         CLOSE(false, "The queue has been closed"),;
         private final boolean success;
         private final String message;
