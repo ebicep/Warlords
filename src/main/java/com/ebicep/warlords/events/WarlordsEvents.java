@@ -18,6 +18,7 @@ import com.ebicep.warlords.maps.flags.PlayerFlagLocation;
 import com.ebicep.warlords.maps.flags.SpawnFlagLocation;
 import com.ebicep.warlords.maps.flags.WaitingFlagLocation;
 import com.ebicep.warlords.maps.state.EndState;
+import com.ebicep.warlords.party.RegularGamesMenu;
 import com.ebicep.warlords.permissions.PermissionHandler;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.util.ChatUtils;
@@ -48,10 +49,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 
@@ -193,11 +191,27 @@ public class WarlordsEvents implements Listener {
 
             player.getInventory().clear();
             player.getInventory().setArmorContents(new ItemStack[]{null, null, null, null});
-            player.getInventory().setItem(4, new ItemBuilder(Material.NETHER_STAR).name("§aSelection Menu").get());
             player.getInventory().setItem(1, new ItemBuilder(apc.getWeapon().getItem(playerSettings.getWeaponSkins()
                     .getOrDefault(selectedClass, Weapons.FELFLAME_BLADE).item)).name("§aWeapon Skin Preview")
                     .lore("")
                     .get());
+            player.getInventory().setItem(4, new ItemBuilder(Material.NETHER_STAR).name("§aSelection Menu").get());
+
+            if (!fromGame) {
+                Warlords.partyManager.getPartyFromAny(player.getUniqueId()).ifPresent(party -> {
+                    List<RegularGamesMenu.RegularGamePlayer> playerList = party.getRegularGamesMenu().getRegularGamePlayers();
+                    if (!playerList.isEmpty()) {
+                        playerList.stream()
+                                .filter(regularGamePlayer -> regularGamePlayer.getUuid().equals(player.getUniqueId()))
+                                .findFirst()
+                                .ifPresent(regularGamePlayer -> player.getInventory().setItem(7,
+                                                new ItemBuilder(regularGamePlayer.getTeam().item).name("§aTeam Builder")
+                                                        .get()
+                                        )
+                                );
+                    }
+                });
+            }
 
             if (player.hasPermission("warlords.game.debug")) {
                 player.getInventory().setItem(3, new ItemBuilder(Material.EMERALD).name("§aDebug Menu").get());
@@ -392,6 +406,25 @@ public class WarlordsEvents implements Listener {
                 } else if (itemHeld.getType() == Material.EMERALD) {
                     //wl command
                     Bukkit.getServer().dispatchCommand(player, "wl");
+                } else if (itemHeld.getType() == Material.WOOL) {
+                    if (itemHeld.getItemMeta().getDisplayName().equals(ChatColor.GREEN + "Team Builder")) {
+                        Warlords.partyManager.getPartyFromAny(player.getUniqueId()).ifPresent(party -> {
+                            List<RegularGamesMenu.RegularGamePlayer> playerList = party.getRegularGamesMenu().getRegularGamePlayers();
+                            if (!playerList.isEmpty()) {
+                                party.getRegularGamesMenu().openMenuForPlayer(player);
+                                new BukkitRunnable() {
+                                    @Override
+                                    public void run() {
+                                        if (player.getOpenInventory().getTopInventory().getName().equals("Team Builder")) {
+                                            party.getRegularGamesMenu().openMenuForPlayer(player);
+                                        } else {
+                                            this.cancel();
+                                        }
+                                    }
+                                }.runTaskTimer(Warlords.getInstance(), 20, 10);
+                            }
+                        });
+                    }
                 }
             }
         } else if (action == Action.LEFT_CLICK_BLOCK || action == Action.LEFT_CLICK_AIR) {
