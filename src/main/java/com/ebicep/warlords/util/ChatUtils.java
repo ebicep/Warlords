@@ -25,7 +25,7 @@ public class ChatUtils {
     }
 
     public static void sendCenteredMessage(Player player, String message) {
-        if (message == null || message.equals("")) {
+        if (message == null || message.isEmpty()) {
             player.sendMessage("");
             return;
         }
@@ -61,7 +61,7 @@ public class ChatUtils {
     }
 
     public static void sendCenteredMessageWithEvents(Player player, List<TextComponent> textComponents) {
-        if (textComponents == null || textComponents.size() == 0) return;
+        if (textComponents == null || textComponents.isEmpty()) return;
         String message = "";
         for (TextComponent textComponent : textComponents) {
             message += textComponent.getText();

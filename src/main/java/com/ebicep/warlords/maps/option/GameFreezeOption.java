@@ -5,6 +5,7 @@ import com.ebicep.warlords.events.WarlordsGameUpdatedEvent;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.PacketUtils;
+import com.ebicep.warlords.util.Utils;
 import net.minecraft.server.v1_8_R3.EntityLiving;
 import net.minecraft.server.v1_8_R3.GenericAttributes;
 import org.bukkit.Bukkit;
@@ -27,7 +28,7 @@ public class GameFreezeOption implements Option, Listener {
         @EventHandler
         public void onEvent(PlayerMoveEvent e) {
             WarlordsPlayer wp = Warlords.getPlayer(e.getPlayer());
-            if (wp != null && wp.getGame().isFrozen()) {
+            if (wp != null && wp.getGame().isFrozen() && Utils.collectionHasItem(wp.getGame().getOptions(), o -> o instanceof GameFreezeOption)) {
                 if (e.getPlayer().getVehicle() == null) {
                     e.setTo(e.getFrom());
                 } else {

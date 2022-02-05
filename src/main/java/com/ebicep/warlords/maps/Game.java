@@ -18,7 +18,6 @@ import com.ebicep.warlords.util.LocationFactory;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -86,7 +85,7 @@ public final class Game implements Runnable, AutoCloseable {
         this.addons = gameAddons;
         this.map = map;
         this.category = category;
-        this.options = new ArrayList<>(map.initMap(MapCategory.OTHER, locations, gameAddons));
+        this.options = new ArrayList<>(map.initMap(category, locations, gameAddons));
         if (!collectionHasItem(options, e -> e instanceof GameFreezeOption)) {
             options.add(new GameFreezeOption());
         }
@@ -672,33 +671,57 @@ public final class Game implements Runnable, AutoCloseable {
             }
             getEventListeners(getRegistrationClass(entry.getKey())).registerAll(entry.getValue());
         }
-    }
+	}
 
-    @Override
-    public void close() {
-        if (this.closed) {
-            return;
-        }
-        this.closed = true;
-        for (BukkitTask task : gameTasks) {
-            task.cancel();
-        }
-        gameTasks.clear();
-        for (Listener listener : eventHandlers) {
-            HandlerList.unregisterAll(listener);
-        }
-        eventHandlers.clear();
-        removeAllPlayers();
-        this.acceptsPlayers = false;
-        this.acceptsSpectators = false;
-        this.nextState = null;
-        if (this.state != null && !(this.state instanceof ClosedState)) {
-            this.state.end();
-            this.state = new ClosedState(this);
-        }
-    }
+	@Override
+	public void close() {
+		if (this.closed) {
+			return;
+		}
+		this.closed = true;
+		List<Throwable> exceptions = new ArrayList<>();
+		for (BukkitTask task : gameTasks) {
+			task.cancel();
+		}
+		gameTasks.clear();
+		for (Listener listener : eventHandlers) {
+			HandlerList.unregisterAll(listener);
+		}
+		eventHandlers.clear();
+		try {
+			removeAllPlayers();
+		} catch (Throwable e) {
+			exceptions.add(e);
+		}
+		for (Option option : options) {
+			try {
+				option.onGameCleanup(this);
+			} catch (Throwable e) {
+				exceptions.add(e);
+			}
+		}
+		this.acceptsPlayers = false;
+		this.acceptsSpectators = false;
+		this.nextState = null;
+		if (this.state != null && !(this.state instanceof ClosedState)) {
+			try {
+				this.state.end();
+			} catch (Throwable e) {
+				exceptions.add(e);
+			}
+			this.state = new ClosedState(this);
+		}
+		if (!exceptions.isEmpty()) {
+			RuntimeException e = new RuntimeException("Problems closing the game");
+			e.initCause(exceptions.get(0));
+			for (int i = 1; i < exceptions.size(); i++) {
+				e.addSuppressed(exceptions.get(i));
+			}
+			throw e;
+		}
+	}
 
-    @Override
+	@Override
     public String toString() {
         return "Game{"
                 + "\nplayers=" + players.entrySet().stream().map(Object::toString).collect(Collectors.joining("\n\t", "\n\t", ""))

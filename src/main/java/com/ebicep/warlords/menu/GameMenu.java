@@ -527,8 +527,8 @@ public class GameMenu {
         List<Team> values = new ArrayList<>(Arrays.asList(Team.values()));
         for (int i = 0; i < values.size(); i++) {
             Team team = values.get(i);
-            ItemBuilder builder = new ItemBuilder(team.item)
-                    .name(team.teamColor() + team.name)
+            ItemBuilder builder = new ItemBuilder(team.getItem())
+                    .name(team.teamColor() + team.getName())
                     .flags(ItemFlag.HIDE_ENCHANTS);
             List<String> lore = new ArrayList<>();
             if (team == selectedTeam) {
@@ -544,7 +544,7 @@ public class GameMenu {
                     builder.get(),
                     (n, e) -> {
                         if (selectedTeam != team) {
-                            player.sendMessage(ChatColor.GREEN + "You have joined the " + team.teamColor() + team.name + ChatColor.GREEN + " team!");
+                            player.sendMessage(ChatColor.GREEN + "You have joined the " + team.teamColor() + team.getName() + ChatColor.GREEN + " team!");
                             Optional<Game> playerGame = Warlords.getGameManager().getPlayerGame(player.getUniqueId());
                             if (playerGame.isPresent()) {
                                 Game game = playerGame.get();

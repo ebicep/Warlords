@@ -12,7 +12,6 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.LeaderboardManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.flags.*;
 import com.ebicep.warlords.maps.option.marker.FlagHolder;
 import com.ebicep.warlords.maps.state.EndState;

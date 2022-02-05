@@ -73,6 +73,7 @@ public class Repentance extends AbstractAbility {
         this.pool = pool;
     }
     
+    @Override
     public void runEverySecond() {
         if (pool > 0) {
             float newPool = pool * .8f - 60;

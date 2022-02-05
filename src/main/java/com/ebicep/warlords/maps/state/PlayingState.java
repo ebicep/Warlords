@@ -90,11 +90,11 @@ public class PlayingState implements State, TimerDebugAble {
     @Override
     @SuppressWarnings("null")
     public void begin() {
+        this.resetTimer();
+        RemoveEntities.doRemove(this.game);
         for (Option option : game.getOptions()) {
             option.start(game);
         }
-        this.resetTimer();
-        RemoveEntities.doRemove(this.game);
 
         this.game.forEachOfflinePlayer((player, team) -> {
             if (team != null) {
@@ -112,12 +112,10 @@ public class PlayingState implements State, TimerDebugAble {
             updateBasedOnGameState(true, customScoreboard, wp);
             if (wp.getEntity() instanceof Player) {
                 wp.applySkillBoost((Player) wp.getEntity());
-                PacketUtils.sendTitle((Player) wp.getEntity(), ChatColor.GREEN + "GO!", ChatColor.YELLOW + "Steal and capture the enemy flag!", 0, 40, 20);
             }
         });
 
-        Warlords.newChain()
-                .async(() -> game.forEachOfflinePlayer((player, team) -> {
+        Warlords.newChain().async(() -> game.forEachOfflinePlayer((player, team) -> {
             DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
             DatabaseManager.updatePlayerAsync(databasePlayer);
             DatabaseManager.loadPlayer(player.getUniqueId(), PlayersCollections.SEASON_5, () -> {

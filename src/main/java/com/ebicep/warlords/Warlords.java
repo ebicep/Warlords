@@ -18,7 +18,6 @@ import com.ebicep.warlords.commands.debugcommands.*;
 import com.ebicep.warlords.commands.miscellaneouscommands.*;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.FutureMessageManager;
-import com.ebicep.warlords.database.cache.MultipleCacheResolver;
 import com.ebicep.warlords.database.configuration.ApplicationConfiguration;
 import com.ebicep.warlords.database.leaderboards.LeaderboardCommand;
 import com.ebicep.warlords.events.WarlordsEvents;
@@ -235,8 +234,6 @@ public class Warlords extends JavaPlugin {
 
     public static boolean citizensEnabled;
     public Location npcCTFLocation;
-
-    public static final int SPAWN_PROTECTION_RADIUS = 5;
 
     public static final PartyManager partyManager = new PartyManager();
 
@@ -820,16 +817,6 @@ public class Warlords extends JavaPlugin {
                             }
 
                             // Cooldowns
-
-                            // Checks whether the player has spawn protection.
-                            if (wps.getSpawnProtection() > 0) {
-                                wps.setSpawnProtection(wps.getSpawnProtection() - 1);
-                            }
-
-                            // Checks whether the player has spawn damage.
-                            if (wps.getSpawnDamage() > 0) {
-                                wps.setSpawnDamage(wps.getSpawnDamage() - 1);
-                            }
 
                             // Checks whether the player has a flag cooldown.
                             if (wps.getFlagCooldown() > 0) {

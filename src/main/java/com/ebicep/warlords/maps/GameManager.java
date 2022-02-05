@@ -34,7 +34,7 @@ public class GameManager implements AutoCloseable {
             if (entry.getMap() != null && entry.getMap() != next.getMap()) {
                 continue; // Skip if the user wants to join a game with a different map
             }
-            if (entry.getCategory() != null && next.getMap().getCategories().contains(entry.getCategory())) {
+            if (entry.getCategory() != null && !next.getMap().getCategories().contains(entry.getCategory())) {
                 continue; // Skip if the user wants to join a game with a different category
             }
             if (next.getGame() != null && next.getGame().playersCount() == 0) {
@@ -111,8 +111,15 @@ public class GameManager implements AutoCloseable {
             }
             // We found a game, mark the entry as removed
             itr.remove();
-            entry.onResult(selected.getGame() == null ? QueueResult.READY_NEW : QueueResult.READY_JOIN);
-            Game game = selected.optionallyStartNewGame(entry.getRequestedGameAddons(), entry.getCategory());
+			boolean isNewGame = selected.getGame() == null;
+			Game game;
+			try {
+				game = selected.optionallyStartNewGame(entry.getRequestedGameAddons(), entry.getCategory());
+			} catch(Throwable e) {
+				entry.onResult(QueueResult.ERROR_NEW_GAME);
+				throw e;
+			}
+            entry.onResult(isNewGame ? QueueResult.READY_NEW : QueueResult.READY_JOIN);
             for (OfflinePlayer player : entry.getPlayers()) {
                 game.addPlayer(player, false);
             }
@@ -175,7 +182,7 @@ public class GameManager implements AutoCloseable {
             if (entry.getMap() != null && entry.getMap() != next.getMap()) {
                 continue; // Skip if the user wants to join a game with a different map
             }
-            if (entry.getCategory() != null && next.getMap().getCategories().contains(entry.getCategory())) {
+            if (entry.getCategory() != null && !next.getMap().getCategories().contains(entry.getCategory())) {
                 continue; // Skip if the user wants to join a game with a different category
             }
             valid = true;
@@ -192,7 +199,7 @@ public class GameManager implements AutoCloseable {
         ListIterator<QueueEntry> listIterator = queue.listIterator(queue.size());
         while (listIterator.hasPrevious()) {
             QueueEntry previous = listIterator.previous();
-            if (previous.compareTo(entry) > 0) { // TOD verify if > the correct operator here
+            if (previous.compareTo(entry) > 0) { // TODO verify if > is the correct operator here
                 listIterator.add(entry);
                 inserted = true;
                 break;
@@ -413,6 +420,7 @@ public class GameManager implements AutoCloseable {
     public enum QueueResult {
         READY_JOIN(true, "You have joined an existing game"),
         READY_NEW(true, "A new game has been made for you"),
+        ERROR_NEW_GAME(false, "We were unable to create a new game fore you because of an internal error"),
         EXPIRED(false, "No game found in time"),
         CANCELLED(false, "Cancelled queueing"),
         REPLACED(false, "Replaced with another queue entry"),

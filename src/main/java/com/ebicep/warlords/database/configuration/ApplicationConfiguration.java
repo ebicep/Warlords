@@ -22,6 +22,7 @@ public class ApplicationConfiguration extends AbstractMongoClientConfiguration {
 
     @Nonnull
     @Bean
+    @Override
     public MongoClient mongoClient() {
         System.out.println("Getting mongoClient");
         MongoClient mongoClient = MongoClients.create(key);

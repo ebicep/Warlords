@@ -5,6 +5,7 @@ import com.ebicep.warlords.maps.Team;
 import org.bukkit.entity.Player;
 
 import java.util.stream.Stream;
+import javax.annotation.Nullable;
 
 
 
@@ -15,9 +16,13 @@ public class GameTeamContainer {
     private final Game game;
     private final Team team;
 
-    public GameTeamContainer(Game game, Team team) {
+    public GameTeamContainer(Game game, @Nullable Team team) {
         this.game = game;
         this.team = team;
+    }
+
+    public Team getTeam() {
+        return team;
     }
 
     public Stream<Player> getAllyPlayers() {

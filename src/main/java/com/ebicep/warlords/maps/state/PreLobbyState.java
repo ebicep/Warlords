@@ -9,7 +9,6 @@ import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.option.marker.LobbyLocationMarker;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.sr.SRCalculator;
-import com.ebicep.warlords.util.ChatUtils;
 import com.ebicep.warlords.util.ItemBuilder;
 import com.ebicep.warlords.util.Utils;
 import org.bukkit.Bukkit;
@@ -84,14 +83,6 @@ public class PreLobbyState implements State, TimerDebugAble {
                     });
                 } else if (time == 0) {
                     game.forEachOnlinePlayerWithoutSpectators((player, team) -> {
-                        ChatUtils.sendMessage(player, false, "" + ChatColor.GREEN + ChatColor.BOLD + "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬");
-                        ChatUtils.sendMessage(player, true, "" + ChatColor.WHITE + ChatColor.BOLD + "Warlords");
-                        ChatUtils.sendMessage(player, true, "");
-                        ChatUtils.sendMessage(player, true, "" + ChatColor.YELLOW + ChatColor.BOLD + "Steal and capture the enemy team's flag to");
-                        ChatUtils.sendMessage(player, true, "" + ChatColor.YELLOW + ChatColor.BOLD + "earn " + ChatColor.AQUA + ChatColor.BOLD + "250 " + ChatColor.YELLOW + ChatColor.BOLD + "points! The first team with a");
-                        ChatUtils.sendMessage(player, true, "" + ChatColor.YELLOW + ChatColor.BOLD + "score of " + ChatColor.AQUA + ChatColor.BOLD + "1000 " + ChatColor.YELLOW + ChatColor.BOLD + "wins!");
-                        ChatUtils.sendMessage(player, true, "");
-                        ChatUtils.sendMessage(player, false, "" + ChatColor.GREEN + ChatColor.BOLD + "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬");
                         player.playSound(player.getLocation(), "gamestart", 1, 1);
                         player.setAllowFlight(false);
                     });
@@ -412,7 +403,7 @@ public class PreLobbyState implements State, TimerDebugAble {
                     ChatColor.GRAY + dateString,
                     "  ",
                     mapPrefix + mapSuffix,
-                    ChatColor.WHITE + "Players: " + ChatColor.GREEN + game.playersCount() + "/" + game.getMap().getMaxPlayers(),
+                    ChatColor.WHITE + "Players: " + ChatColor.GREEN + game.playersCount() + "/" + game.getMaxPlayers(),
                     "   ",
                     ChatColor.WHITE + "Starting in: " + ChatColor.GREEN + getTimeLeftString() + ChatColor.WHITE,
                     "    ",
@@ -425,7 +416,7 @@ public class PreLobbyState implements State, TimerDebugAble {
                     ChatColor.GRAY + dateString,
                     "  ",
                     mapPrefix + mapSuffix,
-                    ChatColor.WHITE + "Players: " + ChatColor.GREEN + game.playersCount() + "/" + game.getMap().getMaxPlayers(),
+                    ChatColor.WHITE + "Players: " + ChatColor.GREEN + game.playersCount() + "/" + game.getMaxPlayers(),
                     "   ",
                     ChatColor.WHITE + "Starting if " + ChatColor.GREEN + (game.getMap().getMinPlayers() - game.playersCount()) + ChatColor.WHITE + " more",
                     ChatColor.WHITE + "players join ",

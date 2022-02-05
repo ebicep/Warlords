@@ -24,6 +24,7 @@ public class MultipleCacheManagerConfig extends CachingConfigurerSupport {
 
     @Bean
     @Primary
+    @Override
     public CacheManager cacheManager() {
         CaffeineCacheManager cacheManager = new CaffeineCacheManager();
         cacheManager.setCacheNames(Arrays.stream(values()).map(collections -> collections.cacheName).collect(Collectors.toList()));
@@ -37,6 +38,7 @@ public class MultipleCacheManagerConfig extends CachingConfigurerSupport {
     }
 
     @Bean
+    @Override
     public CacheResolver cacheResolver() {
         return new MultipleCacheResolver(cacheManager(), alternateCacheManager());
     }

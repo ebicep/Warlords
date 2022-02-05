@@ -95,7 +95,7 @@ public class GraveOption implements Option, Listener {
     }
 
     @Override
-    public void onGameEnding(Game game) {
+    public void onGameCleanup(Game game) {
         this.activated = false;
         for (Grave grave : graves) {
             grave.remove();

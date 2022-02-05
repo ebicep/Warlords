@@ -21,7 +21,7 @@ import static com.ebicep.warlords.database.leaderboards.LeaderboardManager.*;
 
 public class CustomScoreboard {
 
-    private static final String[] teamEntries = new String[]{"🎂", "🎉", "🎁", "👹", "🏀", "⚽", "🍭", "🌠", "👾", "🐍", "🔮", "👽", "💣", "🍫", "🔫"};
+    private static final String[] teamEntries = new String[]{"🎂", "🎉", "🎁", "👹", "🏀", "⚽", "🍭", "🌠", "👾", "🐍", "🔮", "👽", "💣", "🍫", "🔫", "🧭", "🧱", "💈", "🦽", "🦼"};
     private final Player player;
     private final Scoreboard scoreboard;
     private Objective sideBar;

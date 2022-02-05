@@ -139,7 +139,7 @@ public interface DebugLocationMarker extends LocationMarker {
 
     static DebugLocationMarker create(@Nullable Material material, int data, Supplier<Class<?>> creator, Supplier<String> name, Supplier<Location> location, Supplier<List<String>> extra) {
         Material newMaterial = material == null ? Material.BARRIER : material;
-        return create(() -> newMaterial, () -> data, creator, name, location, Collections::emptyList);
+        return create(() -> newMaterial, () -> data, creator, name, location, extra);
     }
     static DebugLocationMarker create(Supplier<Material> material, IntSupplier data, Supplier<Class<?>> creator, Supplier<String> name, Supplier<Location> location, Supplier<List<String>> extra) {
         return new DebugLocationMarker() {
