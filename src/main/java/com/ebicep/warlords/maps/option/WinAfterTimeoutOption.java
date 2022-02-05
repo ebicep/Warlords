@@ -9,16 +9,18 @@ import com.ebicep.warlords.maps.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.maps.option.marker.scoreboard.SimpleScoreboardHandler;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.GameRunnable;
-import static com.ebicep.warlords.util.GameRunnable.SECOND;
 import com.ebicep.warlords.util.Utils;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.scheduler.BukkitTask;
+
+import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.OptionalInt;
-import javax.annotation.Nonnull;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.scheduler.BukkitTask;
+
+import static com.ebicep.warlords.util.GameRunnable.SECOND;
 
 /**
  * Causes the game to end in a draw after a timeout
@@ -134,7 +136,7 @@ public class WinAfterTimeoutOption implements Option {
 
     @Override
     public void start(Game game) {
-        new GameRunnable(game) {
+        this.runTaskTimer = new GameRunnable(game) {
             @Override
             public void run() {
                 timeRemaining--;
@@ -151,7 +153,7 @@ public class WinAfterTimeoutOption implements Option {
     }
 
     @Override
-    public void onGameEnding(Game game) {
+    public void onGameEnding(@Nonnull Game game) {
         if (runTaskTimer != null) {
             runTaskTimer.cancel();
             runTaskTimer = null;

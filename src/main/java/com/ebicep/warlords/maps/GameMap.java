@@ -6,11 +6,16 @@ import com.ebicep.warlords.maps.option.marker.LobbyLocationMarker;
 import com.ebicep.warlords.maps.option.marker.TeamMarker;
 import com.ebicep.warlords.maps.state.PreLobbyState;
 import com.ebicep.warlords.maps.state.State;
-import static com.ebicep.warlords.util.GameRunnable.SECOND;
 import com.ebicep.warlords.util.LocationFactory;
-import java.util.*;
-import javax.annotation.Nonnull;
 import org.bukkit.Material;
+
+import javax.annotation.Nonnull;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.List;
+
+import static com.ebicep.warlords.util.GameRunnable.SECOND;
 
 // MAPS:
 // "Crossfire"
@@ -37,8 +42,8 @@ public enum GameMap {
                     LobbyLocationMarker.create(loc.addXYZ(-86.5, 46, -33.5), Team.BLUE),
                     LobbyLocationMarker.create(loc.addXYZ(87.5, 46, 35.5, 180, 0), Team.RED)
             ));
-            options.add(new PowerupOption(loc.addXYZ(-32.5, 25.5, 49.5), PowerupType.DAMAGE));
-            options.add(new PowerupOption(loc.addXYZ(33.5, 25.5, -48.5), PowerupType.DAMAGE));
+            options.add(new PowerupOption(loc.addXYZ(-32.5, 25.5, 49.5), PowerupType.ENERGY));
+            options.add(new PowerupOption(loc.addXYZ(33.5, 25.5, -48.5), PowerupType.ENERGY));
 
             options.add(new PowerupOption(loc.addXYZ(-54.5, 36.5, 24.5), PowerupType.SPEED));
             options.add(new PowerupOption(loc.addXYZ(55.5, 36.5, -23.5), PowerupType.SPEED));
@@ -48,7 +53,6 @@ public enum GameMap {
 
             options.add(SpawnpointOption.forTeam(loc.addXYZ(-32.5, 34.5, -43.5, -90, 0), Team.BLUE));
             options.add(SpawnpointOption.forTeam(loc.addXYZ(33, 34.5, 45, 0, 0), Team.RED));
-
 
             switch(category) {
                 case CAPTURE_THE_FLAG:
@@ -111,8 +115,8 @@ public enum GameMap {
                     LobbyLocationMarker.create(loc.addXYZ(7.5, 37, 19.5, 180, 0), Team.RED),
                     MapSymmetry.SPIN.asMarker()
             ));
-            options.add(new PowerupOption(loc.addXYZ(158.5, 6.5, 28.5), PowerupType.DAMAGE));
-            options.add(new PowerupOption(loc.addXYZ(65.5, 6.5, 98.5), PowerupType.DAMAGE));
+            options.add(new PowerupOption(loc.addXYZ(158.5, 6.5, 28.5), PowerupType.ENERGY));
+            options.add(new PowerupOption(loc.addXYZ(65.5, 6.5, 98.5), PowerupType.ENERGY));
 
             options.add(new PowerupOption(loc.addXYZ(217.5, 36.5, 89.5), PowerupType.SPEED));
             options.add(new PowerupOption(loc.addXYZ(6.5, 36.5, 39.5), PowerupType.SPEED));
@@ -168,8 +172,8 @@ public enum GameMap {
                     LobbyLocationMarker.create(loc.addXYZ(73.5, 41, 213.5, -90, 0), Team.RED),
                     MapSymmetry.SPIN.asMarker()
             ));
-            options.add(new PowerupOption(loc.addXYZ(102.5, 21.5, 51.5), PowerupType.DAMAGE));
-            options.add(new PowerupOption(loc.addXYZ(42.5, 21.5, 92.5), PowerupType.DAMAGE));
+            options.add(new PowerupOption(loc.addXYZ(102.5, 21.5, 51.5), PowerupType.ENERGY));
+            options.add(new PowerupOption(loc.addXYZ(42.5, 21.5, 92.5), PowerupType.ENERGY));
 
             options.add(new PowerupOption(loc.addXYZ(63.5, 33.5, -31.5), PowerupType.SPEED));
             options.add(new PowerupOption(loc.addXYZ(79.5, 32.5, 167.5), PowerupType.SPEED));
@@ -225,8 +229,8 @@ public enum GameMap {
                     LobbyLocationMarker.create(loc.addXYZ(-134.5, 77, -216.5), Team.RED),
                     MapSymmetry.SPIN.asMarker()
             ));
-            options.add(new PowerupOption(loc.addXYZ(-2.5, 61.5, -236.5), PowerupType.DAMAGE));
-            options.add(new PowerupOption(loc.addXYZ(-88.5, 61.5, -196.5), PowerupType.DAMAGE));
+            options.add(new PowerupOption(loc.addXYZ(-2.5, 61.5, -236.5), PowerupType.ENERGY));
+            options.add(new PowerupOption(loc.addXYZ(-88.5, 61.5, -196.5), PowerupType.ENERGY));
 
             options.add(new PowerupOption(loc.addXYZ(60.5, 75.5, -224.5), PowerupType.SPEED));
             options.add(new PowerupOption(loc.addXYZ(-151.5, 75.5, -208.5), PowerupType.SPEED));
@@ -283,8 +287,8 @@ public enum GameMap {
                     LobbyLocationMarker.create(loc.addXYZ(-22.5, 39, -83.5).yaw(180), Team.BLUE),
                     LobbyLocationMarker.create(loc.addXYZ(23.5, 39, 83.5), Team.RED)
             ));
-            options.add(new PowerupOption(loc.addXYZ(5.5, 15.5, -33.5), PowerupType.DAMAGE));
-            options.add(new PowerupOption(loc.addXYZ(-4.5, 15.5, 34.5), PowerupType.DAMAGE));
+            options.add(new PowerupOption(loc.addXYZ(5.5, 15.5, -33.5), PowerupType.ENERGY));
+            options.add(new PowerupOption(loc.addXYZ(-4.5, 15.5, 34.5), PowerupType.ENERGY));
 
             options.add(new PowerupOption(loc.addXYZ(4.5, 25.5, -86.5), PowerupType.SPEED));
             options.add(new PowerupOption(loc.addXYZ(-3.5, 25.5, 87.5), PowerupType.SPEED));
@@ -339,8 +343,8 @@ public enum GameMap {
                     LobbyLocationMarker.create(loc.addXYZ(727.5, 8.5, 200.5), Team.BLUE),
                     LobbyLocationMarker.create(loc.addXYZ(727.5, 8.5, 196.5), Team.RED)
             ));
-            options.add(new PowerupOption(loc.addXYZ(699.5, 8.5, 184.5), PowerupType.DAMAGE));
-            options.add(new PowerupOption(loc.addXYZ(699.5, 8.5, 188.5), PowerupType.DAMAGE));
+            options.add(new PowerupOption(loc.addXYZ(699.5, 8.5, 184.5), PowerupType.ENERGY));
+            options.add(new PowerupOption(loc.addXYZ(699.5, 8.5, 188.5), PowerupType.ENERGY));
 
             options.add(new PowerupOption(loc.addXYZ(699.5, 8.5, 192.5), PowerupType.SPEED));
             options.add(new PowerupOption(loc.addXYZ(699.5, 8.5, 196.5), PowerupType.SPEED));
@@ -368,6 +372,45 @@ public enum GameMap {
             options.add(new RespawnWaveOption());
             options.add(new RespawnProtectionOption());
             options.add(new GraveOption());
+
+            options.add(new BasicScoreboardOption());
+            options.add(new BoundingBoxOption(loc.getWorld()));
+
+            return options;
+        }
+
+    },
+    HEAVEN_WILL(
+            "Heaven's Will",
+                    2,
+                    2,
+                    60 * SECOND,
+            "",
+            MapCategory.DUEL
+            ) {
+        @Override
+        public List<Option> initMap(MapCategory category, LocationFactory loc, EnumSet<GameAddon> addons) {
+            List<Option> options = category.initMap(this, loc, addons);
+            options.add(new MarkerOption(
+                    TeamMarker.create(Team.BLUE, Team.RED),
+                    LobbyLocationMarker.create(loc.addXYZ(726.5, 8, 176.5).yaw(-140), Team.BLUE),
+                    LobbyLocationMarker.create(loc.addXYZ(756.5, 7, 143.5).yaw(40), Team.RED)
+            ));
+            options.add(new PowerupOption(loc.addXYZ(758.5, 12.5, 169.5), PowerupType.ENERGY));
+            options.add(new PowerupOption(loc.addXYZ(717.5, 10.5, 147.5), PowerupType.ENERGY));
+
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(726.5, 8, 176.5).yaw(-140), Team.BLUE));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(756.5, 7, 143.5).yaw(40), Team.RED));
+
+            options.add(new GateOption(loc.addXYZ(-26, 33, -96), loc.addXYZ(-19, 40, -96)));
+            options.add(new GateOption(loc.addXYZ(20, 33, 96), loc.addXYZ(26, 42, 96)));
+
+            options.add(new WinByPointsOption(5));
+            options.add(new WinAfterTimeoutOption());
+            options.add(new ScoreOnEventOption.OnKill(1));
+            options.add(new RespawnWaveOption());
+            options.add(new GraveOption());
+            options.add(new DuelsRespawnOption());
 
             options.add(new BasicScoreboardOption());
             options.add(new BoundingBoxOption(loc.getWorld()));

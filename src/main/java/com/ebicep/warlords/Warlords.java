@@ -35,14 +35,17 @@ import com.ebicep.warlords.party.StreamCommand;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.queuesystem.QueueCommand;
 import com.ebicep.warlords.util.*;
-import me.filoghost.holographicdisplays.api.beta.hologram.Hologram;
 import me.filoghost.holographicdisplays.api.beta.HolographicDisplaysAPI;
+import me.filoghost.holographicdisplays.api.beta.hologram.Hologram;
 import org.bukkit.*;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Firework;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -261,6 +264,7 @@ public class Warlords extends JavaPlugin {
         gameManager.addGameHolder("Valley-0", GameMap.VALLEY, new LocationFactory(Bukkit.getWorld("Atherrough_Valley")));
         gameManager.addGameHolder("Warsong-0", GameMap.WARSONG, new LocationFactory(Bukkit.getWorld("Warsong")));
         gameManager.addGameHolder("Debug-0", GameMap.DEBUG, new LocationFactory(Bukkit.getWorld("TestWorld")));
+        gameManager.addGameHolder("Heaven-0", GameMap.HEAVEN_WILL, new LocationFactory(Bukkit.getWorld("Heaven")));
 
         Thread.currentThread().setContextClassLoader(getClassLoader());
 
@@ -638,7 +642,7 @@ public class Warlords extends JavaPlugin {
                         } else {
                             if (player != null) {
                                 //precaution
-                                if (newHealth >= 0 && newHealth <= 40) {
+                                if (newHealth > 0 && newHealth <= 40) {
                                     player.setHealth(newHealth);
                                 }
                             }

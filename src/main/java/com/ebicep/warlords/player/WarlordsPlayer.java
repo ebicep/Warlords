@@ -28,7 +28,10 @@ import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Zombie;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -112,7 +115,7 @@ public final class WarlordsPlayer {
         this.team = team;
         this.specClass = settings.getSelectedClass();
         this.spec = specClass.create.get();
-        this.maxHealth = this.spec.getMaxHealth() * 1;
+        this.maxHealth = this.spec.getMaxHealth();
         this.health = this.maxHealth;
         this.energy = 0;
         this.energyModifier = 1;
@@ -1246,18 +1249,20 @@ public final class WarlordsPlayer {
 
     public void respawn() {
         List<Location> candidates = new ArrayList<>();
-        double priority = 0;
+        double priority = Double.NEGATIVE_INFINITY;
         for (SpawnLocationMarker marker : getGame().getMarkers(SpawnLocationMarker.class)) {
             if (candidates.isEmpty()) {
                 candidates.add(marker.getLocation());
                 priority = marker.getPriority(this);
             } else {
                 double newPriority = marker.getPriority(this);
-                if (newPriority > priority) {
-                    candidates.clear();
-                    priority = newPriority;
+                if (newPriority >= priority) {
+                    if (newPriority > priority) {
+                        candidates.clear();
+                        priority = newPriority;
+                    }
+                    candidates.add(marker.getLocation());
                 }
-                candidates.add(marker.getLocation());
             }
         }
         Location respawnPoint =

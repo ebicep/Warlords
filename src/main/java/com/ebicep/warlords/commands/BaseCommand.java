@@ -4,14 +4,14 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.GameAddon;
 import com.ebicep.warlords.player.WarlordsPlayer;
-import java.util.Optional;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import org.bukkit.Bukkit;
+import java.util.Optional;
 
 public class BaseCommand {
 
@@ -78,7 +78,7 @@ public class BaseCommand {
             return null;
         }
         if(!player.getGame().getAddons().contains(GameAddon.PRIVATE_GAME)) {
-            sender.sendMessage(ChatColor.RED + "This command can only be used in an private game!");
+            sender.sendMessage(ChatColor.RED + "This command can only be used in a private game!");
             return null;
         }
         return player;

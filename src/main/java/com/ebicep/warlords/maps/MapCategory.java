@@ -3,10 +3,11 @@ package com.ebicep.warlords.maps;
 import com.ebicep.warlords.maps.option.Option;
 import com.ebicep.warlords.maps.option.TextOption;
 import com.ebicep.warlords.util.LocationFactory;
+import org.bukkit.ChatColor;
+
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
-import org.bukkit.ChatColor;
 
 public enum MapCategory {
     CAPTURE_THE_FLAG("Capture The Flag") {
@@ -70,7 +71,27 @@ public enum MapCategory {
             ));
             return options;
         }
-    },;
+    },
+    DUEL("Duel") {
+        @Override
+        public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
+            List<Option> options = new ArrayList<>();
+            String color = "" + ChatColor.YELLOW + ChatColor.BOLD;
+            options.add(TextOption.Type.CHAT_CENTERED.create(
+                    "" + ChatColor.WHITE + ChatColor.BOLD + "Warlords",
+                    "",
+                    color + "First player to kill their opponent",
+                    color + "5 times wins the duel!",
+                    ""
+            ));
+            options.add(TextOption.Type.TITLE.create(
+                    ChatColor.GREEN + "GO!"
+            ));
+            return options;
+        }
+    },
+
+    ;
 
     private final String name;
 

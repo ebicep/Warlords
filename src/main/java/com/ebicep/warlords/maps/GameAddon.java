@@ -16,14 +16,14 @@ public enum GameAddon {
 
     PRIVATE_GAME(null) {
         @Override
-        public void modifyGame(Game game) {
+        public void modifyGame(@Nonnull Game game) {
             game.getOptions().add(new GameFreezeWhenOfflineOption());
             game.setMinPlayers(1);
             game.setAcceptsPlayers(false);
         }
 
         @Override
-        public void stateHasChanged(Game game, State oldState, State newState) {
+        public void stateHasChanged(@Nonnull Game game, State oldState, @Nonnull State newState) {
             if (newState instanceof ClosedState) {
                 return;
             }
@@ -38,30 +38,29 @@ public enum GameAddon {
     IMPOSTER_MODE("warlords.game.impostertoggle") {
 
         @Override
-        public void modifyGame(Game game) {
+        public void modifyGame(@Nonnull Game game) {
             game.getOptions().add(new ImposterModeOption());
         }
 
         @Override
-        public boolean canCreateGame(GameManager.GameHolder holder) {
+        public boolean canCreateGame(@Nonnull GameManager.GameHolder holder) {
             // At the moment, only 1 game can be an imposter game at the same time
             return !Warlords.getGameManager().getGames().stream().anyMatch(e -> e.getGame() != null && e.getGame().getAddons().contains(this));
         }
     },
     COOLDOWN_MODE("warlords.game.cooldowngame") {
         @Override
-        public void warlordsPlayerCreated(Game game, WarlordsPlayer player) {
+        public void warlordsPlayerCreated(@Nonnull Game game, @Nonnull WarlordsPlayer player) {
             player.setMaxHealth((int) (player.getMaxHealth() * 1.5));
             player.setHealth((int) (player.getHealth() * 1.5));
             player.setEnergyModifier(player.getEnergyModifier() * 0.5);
             player.setCooldownModifier(player.getCooldownModifier() * 0.5);
         }
-
     },
     //RECORD_MODE(),
     MEGA_GAME("warlords.game.megagame") {
         @Override
-        public int getMaxPlayers(GameMap map, int maxPlayers) {
+        public int getMaxPlayers(@Nonnull GameMap map, int maxPlayers) {
             return Integer.MAX_VALUE;
         }
 
@@ -70,7 +69,7 @@ public enum GameAddon {
     @Nullable
     private final String permission;
 
-    GameAddon(String permission) {
+    GameAddon(@Nullable String permission) {
         this.permission = permission;
     }
 

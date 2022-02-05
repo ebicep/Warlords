@@ -71,7 +71,7 @@ public class GameStartCommand implements TabExecutor {
                         addon.add(foundAddon);
                     }
                 } else {
-                    sender.sendMessage(ChatColor.RED + "Not sure what your mean by " + arg);
+                    sender.sendMessage(ChatColor.RED + "Invalid addon! " + arg);
                     isValid = false;
                 }
             } else {
@@ -162,23 +162,26 @@ public class GameStartCommand implements TabExecutor {
             isValid = false;
         }
         if (category == null && map == null && !seenMapOrCategory) {
-            sender.sendMessage(ChatColor.RED + "Creating a game with no category and map is unusual, pass category:null or map:null if you really mean this");
+            sender.sendMessage(ChatColor.RED + "Creating a game with no category and map is unusual, pass category:null or map:null if you really mean this.");
             isValid = false;
         }
+
         for (GameAddon a : addon) {
             if (!a.hasPermission(sender)) {
                 sender.sendMessage("You do not have the permission to use addon: " + Utils.toTitleCase(a.name()));
                 isValid = false;
             }
         }
+
         if (!isValid) {
             return null;
         }
-        sender.sendMessage(ChatColor.BLUE + "Asking the system for a game with the following parameters");
-        sender.sendMessage(ChatColor.BLUE + "Category: " + ChatColor.GOLD + (category != null ? toTitleHumanCase(category.name()) : null));
-        sender.sendMessage(ChatColor.BLUE + "Map: " + ChatColor.GOLD + (map != null ? toTitleHumanCase(map.name()) : null));
-        sender.sendMessage(ChatColor.BLUE + "Requested game addons: " + ChatColor.GOLD + addon.stream().map(e -> toTitleHumanCase(e.name())).collect(Collectors.joining(", ")));
-        sender.sendMessage(ChatColor.BLUE + "People: " + (selectedPeople == null ? people : selectedPeople).stream().map(OfflinePlayer::getName).collect(Collectors.joining(", ")));
+
+        sender.sendMessage(ChatColor.RED + "DEV:" + ChatColor.GRAY + " Engine initiated a game with the following parameters:");
+        sender.sendMessage(ChatColor.GRAY + "- Category: " + ChatColor.RED + (category != null ? toTitleHumanCase(category.name()) : null));
+        sender.sendMessage(ChatColor.GRAY + "- Map: " + ChatColor.RED + (map != null ? toTitleHumanCase(map.name()) : null));
+        sender.sendMessage(ChatColor.GRAY + "- Game Addons: " + ChatColor.GOLD + addon.stream().map(e -> toTitleHumanCase(e.name())).collect(Collectors.joining(", ")));
+        sender.sendMessage(ChatColor.GRAY + "- Players: " + ChatColor.RED + (selectedPeople == null ? people : selectedPeople).stream().map(OfflinePlayer::getName).collect(Collectors.joining(", ")));
         return Warlords.getGameManager()
                 .newEntry(selectedPeople == null ? people : selectedPeople)
                 .setCategory(category)
