@@ -80,8 +80,9 @@ public class DatabaseGame {
         this.map = game.getMap().getMapName();
         this.timeLeft = WinAfterTimeoutOption.getTimeLeft(game).orElse(-1);
         this.winner = winner == null ? "DRAW" : winner.getName().toUpperCase(Locale.ROOT);
-        this.bluePoints = game.getStats(Team.BLUE).points();
-        this.redPoints = game.getStats(Team.RED).points();
+        // TODO add suport here for multiple teams and rememeber that not every game has a red and blue team
+        this.bluePoints = game.getPoints(Team.BLUE);
+        this.redPoints = game.getPoints(Team.RED);
         this.players = new DatabaseGamePlayers(blue, red);
         this.statInfo = getWarlordsPlusEndGameStats(game);
         this.isPrivate = game.getAddons().contains(GameAddon.PRIVATE_GAME);
@@ -452,8 +453,8 @@ public class DatabaseGame {
 
     public static String getWarlordsPlusEndGameStats(Game game) {
         StringBuilder output = new StringBuilder("Winners:");
-        int bluePoints = game.getStats(Team.BLUE).points();
-        int redPoints = game.getStats(Team.RED).points();
+        int bluePoints = game.getPoints(Team.BLUE);
+        int redPoints = game.getPoints(Team.RED);
         if (bluePoints > redPoints) {
             for (WarlordsPlayer player : PlayerFilter.playingGame(game).matchingTeam(Team.BLUE)) {
                 output.append(player.getUuid().toString().replace("-", "")).append("[").append(player.getStats().total().getKills()).append(":").append(player.getStats().total().getDeaths()).append("],");

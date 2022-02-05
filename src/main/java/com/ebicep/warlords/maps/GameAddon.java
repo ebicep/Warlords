@@ -19,7 +19,6 @@ public enum GameAddon {
         public void modifyGame(@Nonnull Game game) {
             game.getOptions().add(new GameFreezeWhenOfflineOption());
             game.setMinPlayers(1);
-            game.setAcceptsPlayers(false);
         }
 
         @Override
@@ -27,7 +26,6 @@ public enum GameAddon {
             if (newState instanceof ClosedState) {
                 return;
             }
-            game.setAcceptsPlayers(false);
             if (newState instanceof PreLobbyState) {
                 PreLobbyState preLobbyState = (PreLobbyState) newState;
                 preLobbyState.setMaxTimer(30 * 20);

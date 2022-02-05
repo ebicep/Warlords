@@ -49,8 +49,7 @@ public abstract class ScoreOnEventOption<T> implements Option {
     
     protected void giveScore(T event, Team team, int score) {
         Pair<Team, Integer> res = scoreModifier.apply(event, new Pair<>(team, score));
-        Game.Stats stats = game.getStats(res.getA());
-        stats.setPoints(stats.points() + res.getB());
+        game.addPoints(res.getA(), res.getB());
     }
     
     public static class FlagCapture extends ScoreOnEventOption<WarlordsFlagUpdatedEvent> {

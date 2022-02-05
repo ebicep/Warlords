@@ -2,6 +2,8 @@ package com.ebicep.warlords.maps.option.marker;
 
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Team;
+import com.ebicep.warlords.maps.option.MarkerOption;
+import com.ebicep.warlords.maps.option.Option;
 import com.ebicep.warlords.util.Pair;
 import com.ebicep.warlords.util.Utils;
 import org.bukkit.Location;
@@ -69,5 +71,9 @@ public interface LobbyLocationMarker extends LocationMarker {
             location = lobbies.stream().collect(collector); 
         }
         return location;
+    }
+    
+    public default Option asOption() {
+        return new MarkerOption(this);
     }
 }

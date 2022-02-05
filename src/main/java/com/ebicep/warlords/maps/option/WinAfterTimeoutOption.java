@@ -111,7 +111,7 @@ public class WinAfterTimeoutOption implements Option {
                 if (teams.size() > 1) {
                     int highestScore = Integer.MIN_VALUE;
                     for (Team team : teams) {
-                        int points = game.getStats(team).points();
+                        int points = game.getPoints(team);
                         if (points > highestScore) {
                             highestScore = points;
                             winner = team;

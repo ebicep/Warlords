@@ -36,7 +36,7 @@ public class WinByPointsOption implements Option, Listener {
             @Override
             public List<String> computeLines(WarlordsPlayer player) {
                 return TeamMarker.getTeams(game).stream()
-                        .map(t -> t.coloredPrefix() + ": " + ChatColor.AQUA + game.getStats(t).points() + ChatColor.GOLD + "/" + pointLimit)
+                        .map(t -> t.coloredPrefix() + ": " + ChatColor.AQUA + game.getPoints(t) + ChatColor.GOLD + "/" + pointLimit)
                         .collect(Collectors.toList());
             }
         });

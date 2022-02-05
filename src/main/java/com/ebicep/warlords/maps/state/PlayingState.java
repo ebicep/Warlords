@@ -9,7 +9,6 @@ import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.events.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.maps.Game;
-import com.ebicep.warlords.maps.Game.Stats;
 import com.ebicep.warlords.maps.GameAddon;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.option.Option;
@@ -49,42 +48,6 @@ public class PlayingState implements State, TimerDebugAble {
         this.game = game;
     }
 
-    @Deprecated
-    public void addKill(@Nonnull Team victim, boolean isSuicide) {
-        game.addKill(victim, victim.enemy());
-    }
-
-    @Nonnull
-    @Deprecated
-    public Stats getStats(@Nonnull Team team) {
-        return game.getStats(team);
-    }
-
-    @Deprecated
-    public void addPoints(@Nonnull Team team, int i) {
-        game.addPoints(team, i);
-    }
-
-    @Deprecated
-    public int getBluePoints() {
-        return game.getStats(Team.BLUE).points();
-    }
-
-    @Deprecated
-    public void addBluePoints(int i) {
-        this.addPoints(Team.BLUE, i);
-    }
-
-    @Deprecated
-    public int getRedPoints() {
-        return game.getStats(Team.RED).points();
-    }
-
-    @Deprecated
-    public void addRedPoints(int i) {
-        this.addPoints(Team.RED, i);
-    }
-
     @Nonnull
     public Game getGame() {
         return game;
@@ -94,6 +57,7 @@ public class PlayingState implements State, TimerDebugAble {
     @SuppressWarnings("null")
     public void begin() {
         this.game.setAcceptsSpectators(true);
+        this.game.setAcceptsPlayers(false);
         this.resetTimer();
         RemoveEntities.doRemove(this.game);
         for (Option option : game.getOptions()) {
@@ -190,10 +154,11 @@ public class PlayingState implements State, TimerDebugAble {
         //PUBS
         if (!game.getAddons().contains(GameAddon.PRIVATE_GAME) && !game.getAddons().contains(GameAddon.IMPOSTER_MODE) && winEvent != null && game.playersCount() >= 12) {
             String gameEnd = "[GAME] A Public game ended with ";
-            if (getBluePoints() > getRedPoints()) {
-                BotManager.sendMessageToNotificationChannel(gameEnd + "**BLUE** winning " + getBluePoints() + " to " + getRedPoints(), false, true);
-            } else if (getBluePoints() < getRedPoints()) {
-                BotManager.sendMessageToNotificationChannel(gameEnd + "**RED** winning " + getRedPoints() + " to " + getBluePoints(), false, true);
+            // TODO parse winEvent better here
+            if (winEvent != null && winEvent.getDeclaredWinner() == Team.BLUE) {
+                BotManager.sendMessageToNotificationChannel(gameEnd + "**BLUE** winning " + game.getPoints(Team.BLUE) + " to " + game.getPoints(Team.RED), false, true);
+            } else if (winEvent != null && winEvent.getDeclaredWinner() == Team.RED) {
+                BotManager.sendMessageToNotificationChannel(gameEnd + "**RED** winning " + game.getPoints(Team.RED) + " to " + game.getPoints(Team.BLUE), false, true);
             } else {
                 BotManager.sendMessageToNotificationChannel(gameEnd + "a **DRAW**", false, true);
             }
@@ -215,10 +180,10 @@ public class PlayingState implements State, TimerDebugAble {
         } //COMPS
         else if (RecordGamesCommand.recordGames && !game.getAddons().contains(GameAddon.IMPOSTER_MODE) && winEvent != null && game.playersCount() >= 16 && timer <= 12000) {
             String gameEnd = "[GAME] A game ended with ";
-            if (getBluePoints() > getRedPoints()) {
-                BotManager.sendMessageToNotificationChannel(gameEnd + "**BLUE** winning " + getBluePoints() + " to " + getRedPoints(), true, false);
-            } else if (getBluePoints() < getRedPoints()) {
-                BotManager.sendMessageToNotificationChannel(gameEnd + "**RED** winning " + getRedPoints() + " to " + getBluePoints(), true, false);
+            if (winEvent != null && winEvent.getDeclaredWinner() == Team.BLUE) {
+                BotManager.sendMessageToNotificationChannel(gameEnd + "**BLUE** winning " + game.getPoints(Team.BLUE) + " to " + game.getPoints(Team.RED), true, false);
+            } else if (winEvent != null && winEvent.getDeclaredWinner() == Team.RED) {
+                BotManager.sendMessageToNotificationChannel(gameEnd + "**RED** winning " + game.getPoints(Team.RED) + " to " + game.getPoints(Team.BLUE), true, false);
             } else {
                 BotManager.sendMessageToNotificationChannel(gameEnd + "a **DRAW**", true, false);
             }

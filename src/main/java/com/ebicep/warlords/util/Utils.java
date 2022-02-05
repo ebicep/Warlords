@@ -137,8 +137,6 @@ public class Utils {
         }
     }
 
-    private static final Location LOCATION_CONTAINER = new Location(null, 0, 0, 0);
-
     public static Predicate<WarlordsPlayer> filterOnlyEnemies(@Nullable WarlordsPlayer wp) {
         return wp == null ? (player) -> false : wp::isEnemyAlive;
     }
