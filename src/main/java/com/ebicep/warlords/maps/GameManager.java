@@ -61,7 +61,7 @@ public class GameManager implements AutoCloseable {
                     selected = next;
                 } else if (selected.getGame() == null) {
                     // Randomly assing the player a new game instance (within the above bounds checks)
-                    if (Math.random() < 1 / newGamesSeen) {
+                    if (Math.random() < 1f / newGamesSeen) {
                         selected = next;
                     }
                 }
