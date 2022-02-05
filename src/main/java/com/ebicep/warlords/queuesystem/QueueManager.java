@@ -36,7 +36,7 @@ public class QueueManager {
         }
         if (!futureQueue.isEmpty()) {
             stringBuilder.append("\n");
-            stringBuilder.append(ChatColor.GREEN + "Future Queue -\n");
+            stringBuilder.append(ChatColor.GREEN).append("Future Queue -\n");
             futureQueue.forEach(futureQueuePlayer -> {
                 stringBuilder.append("    ").append(ChatColor.YELLOW).append("- ").append(ChatColor.AQUA).append(Bukkit.getOfflinePlayer(futureQueuePlayer.getUuid()).getName()).append(ChatColor.GRAY).append(" (").append(futureQueuePlayer.getTimeString()).append(")").append("\n");
             });

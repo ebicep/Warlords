@@ -2,10 +2,8 @@ package com.ebicep.warlords.maps;
 
 import com.ebicep.warlords.maps.option.Option;
 import com.ebicep.warlords.maps.option.TextOption;
-import com.ebicep.warlords.util.ChatUtils;
 import com.ebicep.warlords.util.LocationFactory;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 import org.bukkit.ChatColor;
@@ -52,6 +50,7 @@ public enum MapCategory {
         }
     },
     DEBUG("Debug Map") {
+        @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
             List<Option> options = new ArrayList<>();
             options.add(TextOption.Type.TITLE.create(
@@ -62,6 +61,7 @@ public enum MapCategory {
         }
     },
     OTHER("PLACEHOLDER") {
+        @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
             List<Option> options = new ArrayList<>();
             options.add(TextOption.Type.TITLE.create(

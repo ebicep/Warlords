@@ -9,7 +9,6 @@ import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.option.marker.LobbyLocationMarker;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.sr.SRCalculator;
-import com.ebicep.warlords.util.ChatUtils;
 import com.ebicep.warlords.util.ItemBuilder;
 import com.ebicep.warlords.util.Utils;
 import org.bukkit.Bukkit;

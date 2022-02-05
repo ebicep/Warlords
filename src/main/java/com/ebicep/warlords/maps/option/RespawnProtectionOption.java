@@ -1,7 +1,6 @@
 
 package com.ebicep.warlords.maps.option;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.events.WarlordsRespawnEvent;
 import com.ebicep.warlords.maps.Game;

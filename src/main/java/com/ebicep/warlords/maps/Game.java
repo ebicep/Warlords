@@ -18,7 +18,6 @@ import com.ebicep.warlords.util.LocationFactory;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -712,7 +711,7 @@ public final class Game implements Runnable, AutoCloseable {
 			}
 			this.state = new ClosedState(this);
 		}
-		if (exceptions.size() > 0) {
+		if (!exceptions.isEmpty()) {
 			RuntimeException e = new RuntimeException("Problems closing the game");
 			e.initCause(exceptions.get(0));
 			for (int i = 1; i < exceptions.size(); i++) {

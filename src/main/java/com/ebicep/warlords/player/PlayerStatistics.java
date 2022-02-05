@@ -1,6 +1,5 @@
 package com.ebicep.warlords.player;
 
-import com.ebicep.warlords.maps.option.WinAfterTimeoutOption;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;

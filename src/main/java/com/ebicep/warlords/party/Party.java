@@ -146,13 +146,13 @@ public class Party {
 
     public String getPartyList() {
         PartyPlayer leader = getPartyLeader();
-        StringBuilder stringBuilder = new StringBuilder(ChatColor.BLUE + "-----------------------------\n")
-                .append(ChatColor.GOLD + "Party Members (").append(partyPlayers.size()).append(")\n \n")
-                .append(ChatColor.YELLOW + "Party Leader: " + ChatColor.AQUA).append(Bukkit.getOfflinePlayer(leader.getUuid()).getName()).append(leader.getPartyListDot()).append("\n");
+        StringBuilder stringBuilder = new StringBuilder(ChatColor.BLUE + "-----------------------------\n").append(ChatColor.GOLD).append("Party Members (").append(partyPlayers.size())
+                .append(")\n \n").append(ChatColor.YELLOW).append("Party Leader: ")
+                .append(ChatColor.AQUA).append(Bukkit.getOfflinePlayer(leader.getUuid()).getName()).append(leader.getPartyListDot()).append("\n");
 
         List<PartyPlayer> moderators = getPartyModerators();
         if (!moderators.isEmpty()) {
-            stringBuilder.append(ChatColor.YELLOW + "Party Moderators: " + ChatColor.AQUA);
+            stringBuilder.append(ChatColor.YELLOW).append("Party Moderators: ").append(ChatColor.AQUA);
             moderators.forEach(partyPlayer -> stringBuilder
                     .append(ChatColor.AQUA)
                     .append(Bukkit.getOfflinePlayer(partyPlayer.getUuid()).getName())
@@ -163,14 +163,14 @@ public class Party {
 
         List<PartyPlayer> members = getPartyMembers();
         if (!members.isEmpty()) {
-            stringBuilder.append(ChatColor.YELLOW + "Party Members: " + ChatColor.AQUA);
+            stringBuilder.append(ChatColor.YELLOW).append("Party Members: ").append(ChatColor.AQUA);
             members.forEach(partyPlayer -> stringBuilder
                     .append(ChatColor.AQUA)
                     .append(Bukkit.getOfflinePlayer(partyPlayer.getUuid()).getName())
                     .append(partyPlayer.getPartyListDot())
             );
         }
-        stringBuilder.append(ChatColor.BLUE + "\n-----------------------------");
+        stringBuilder.append(ChatColor.BLUE).append("\n-----------------------------");
         return stringBuilder.toString();
     }
 

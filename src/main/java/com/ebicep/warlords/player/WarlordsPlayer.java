@@ -24,7 +24,6 @@ import net.minecraft.server.v1_8_R3.EntityLiving;
 import net.minecraft.server.v1_8_R3.GenericAttributes;
 import net.minecraft.server.v1_8_R3.NBTTagCompound;
 import org.bukkit.*;
-import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
@@ -909,7 +908,7 @@ public final class WarlordsPlayer {
                 getEntity().setCustomName("");
             } else {
                 String oldName = getEntity().getCustomName();
-                String newName = oldName.substring(0, oldName.lastIndexOf(" ") + 1) + ChatColor.RED + getHealth() + "❤";
+                String newName = oldName.substring(0, oldName.lastIndexOf(' ') + 1) + ChatColor.RED + getHealth() + "❤";
                 getEntity().setCustomName(newName);
             }
         }
