@@ -304,7 +304,7 @@ public class InterceptionPointOption implements Option {
 				teamAttacking = teamInCircle;
 				Bukkit.getPluginManager().callEvent(new WarlordsIntersectionCaptureEvent(this));
                 if (previeusOwning != null) {
-                    WarlordsPlayer capturer = computePlayers().filter(wp -> wp.getTeam() == teamOwning).collect(Utils.randomElement());
+                    WarlordsPlayer capturer = computePlayers().filter(wp -> wp.getTeam() == teamInCircle).collect(Utils.randomElement());
                     String message = teamAttacking.teamColor() + (capturer == null ? "???" : capturer.getName()) + " §eis capturing the " + ChatColor.GRAY + name + ChatColor.WHITE + "!";
 
                     game.forEachOnlinePlayer((p, t) -> {
