@@ -31,6 +31,7 @@ public enum MapCategory {
                     ""
             ));
             options.add(TextOption.Type.TITLE.create(
+                    10,
                     ChatColor.GREEN + "GO!",
                     ChatColor.YELLOW + "Steal and capture the enemy flag!"
             ));
@@ -53,6 +54,7 @@ public enum MapCategory {
                     ""
             ));
             options.add(TextOption.Type.TITLE.create(
+                    10,
                     ChatColor.GREEN + "GO!",
                     ChatColor.YELLOW + "Capture the marked points!"
             ));
@@ -66,6 +68,7 @@ public enum MapCategory {
             List<Option> options = super.initMap(map, loc, addons);
 
             options.add(TextOption.Type.TITLE.create(
+                    10,
                     ChatColor.GREEN + "GO!",
                     ChatColor.YELLOW + "Debug some issues!"
             ));
@@ -78,6 +81,7 @@ public enum MapCategory {
             List<Option> options = super.initMap(map, loc, addons);
 
             options.add(TextOption.Type.TITLE.create(
+                    10,
                     ChatColor.GREEN + "GO!",
                     ChatColor.YELLOW + "PLACEHOLDER!"
             ));
@@ -98,6 +102,7 @@ public enum MapCategory {
                     ""
             ));
             options.add(TextOption.Type.TITLE.create(
+                    10,
                     ChatColor.GREEN + "GO!"
             ));
             return options;
