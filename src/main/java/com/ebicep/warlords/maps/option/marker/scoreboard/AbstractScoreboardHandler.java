@@ -23,4 +23,9 @@ public abstract class AbstractScoreboardHandler implements ScoreboardHandler {
         }
     }
 
+    @Override
+    public String toString() {
+        return this.getClass().getName() + "{" + "priority=" + getPriority(null) + ", group=" + getGroup() + ", contents=" + computeLines(null) + '}';
+    }
+
 }
