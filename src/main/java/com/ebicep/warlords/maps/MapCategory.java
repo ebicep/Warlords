@@ -112,19 +112,6 @@ public enum MapCategory {
             return options;
         }
     },
-    OTHER("PLACEHOLDER") {
-        @Override
-        public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
-            List<Option> options = super.initMap(map, loc, addons);
-
-            options.add(TextOption.Type.TITLE.create(
-                    10,
-                    ChatColor.GREEN + "GO!",
-                    ChatColor.YELLOW + "PLACEHOLDER!"
-            ));
-            return options;
-        }
-    },
 
     ;
 

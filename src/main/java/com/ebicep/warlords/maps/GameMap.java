@@ -217,7 +217,7 @@ public enum GameMap {
             12,
             60 * SECOND,
             "",
-            MapCategory.DEBUG
+            new MapCategory[0]
     ) {
         @Override
         public List<Option> initMap(MapCategory category, LocationFactory loc, EnumSet<GameAddon> addons) {
