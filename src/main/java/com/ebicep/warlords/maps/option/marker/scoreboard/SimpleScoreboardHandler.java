@@ -1,6 +1,7 @@
 package com.ebicep.warlords.maps.option.marker.scoreboard;
 
 import com.ebicep.warlords.player.WarlordsPlayer;
+import javax.annotation.Nullable;
 
 
 public abstract class SimpleScoreboardHandler extends AbstractScoreboardHandler {
@@ -14,7 +15,7 @@ public abstract class SimpleScoreboardHandler extends AbstractScoreboardHandler 
     }
 
     @Override
-    public int getPriority(WarlordsPlayer player) {
+    public int getPriority(@Nullable WarlordsPlayer player) {
         return priority;
     }
 

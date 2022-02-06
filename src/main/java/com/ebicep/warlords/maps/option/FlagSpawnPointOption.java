@@ -14,6 +14,7 @@ import com.ebicep.warlords.util.GameRunnable;
 import static java.util.Collections.singletonList;
 import java.util.List;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import net.minecraft.server.v1_8_R3.AxisAlignedBB;
 import net.minecraft.server.v1_8_R3.MovingObjectPosition;
 import net.minecraft.server.v1_8_R3.Vec3D;
@@ -80,7 +81,7 @@ public class FlagSpawnPointOption implements Option {
         }
         game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(info.getTeam() == Team.RED ? 20 : 21, "flag") {
             @Override
-            public List<String> computeLines(WarlordsPlayer player) {
+            public List<String> computeLines(@Nullable WarlordsPlayer player) {
                 String flagName = info.getTeam().coloredPrefix();
                 FlagLocation flag = info.getFlag();
                 if (flag instanceof SpawnFlagLocation) {

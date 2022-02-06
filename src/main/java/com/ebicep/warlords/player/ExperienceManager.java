@@ -103,7 +103,7 @@ public class ExperienceManager {
         }
         boolean isCompGame = warlordsPlayer.getGame().getAddons().contains(GameAddon.PRIVATE_GAME);
         // TODO add check here for game ending in a draw
-        boolean won = warlordsPlayer.getGameState().getStats(warlordsPlayer.getTeam()).points() > warlordsPlayer.getGameState().getStats(warlordsPlayer.getTeam().enemy()).points();
+        boolean won = warlordsPlayer.getGame().getPoints(warlordsPlayer.getTeam()) > warlordsPlayer.getGame().getPoints(warlordsPlayer.getTeam().enemy());
         long winLossExp = won ? 500 : 250;
         long kaExp = 5L * (warlordsPlayer.getStats().total().getKills() + warlordsPlayer.getStats().total().getAssists());
 

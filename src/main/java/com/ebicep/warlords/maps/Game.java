@@ -57,7 +57,7 @@ public final class Game implements Runnable, AutoCloseable {
     private final long createdAt = System.currentTimeMillis();
     private final List<BukkitTask> gameTasks = new ArrayList<>();
     private final List<Listener> eventHandlers = new ArrayList<>();
-    private final EnumMap<Team, Stats> stats = new EnumMap(Team.class);
+    private final EnumMap<Team, Integer> points = new EnumMap(Team.class);
 
     @Nonnull
     private final GameMap map;
@@ -81,14 +81,14 @@ public final class Game implements Runnable, AutoCloseable {
     private final LocationFactory locations;
 
     public Game(EnumSet<GameAddon> gameAddons, GameMap map, MapCategory category, LocationFactory locations) {
+        this(gameAddons, map, category, locations, map.initMap(category, locations, gameAddons));
+    }
+    Game(EnumSet<GameAddon> gameAddons, GameMap map, MapCategory category, LocationFactory locations, List<Option> options) {
         this.locations = locations;
         this.addons = gameAddons;
         this.map = map;
         this.category = category;
-        this.options = new ArrayList<>(map.initMap(category, locations, gameAddons));
-        if (!collectionHasItem(options, e -> e instanceof GameFreezeOption)) {
-            options.add(new GameFreezeOption());
-        }
+        this.options = new ArrayList<>(options);
         this.minPlayers = map.getMinPlayers();
         this.maxPlayers = map.getMaxPlayers();
         for (GameAddon addon : gameAddons) {
@@ -109,7 +109,7 @@ public final class Game implements Runnable, AutoCloseable {
             option.register(this);
         }
         for (Team team : TeamMarker.getTeams(this)) {
-            this.stats.put(team, new Stats(team));
+            this.points.put(team, 0);
         }
         state.begin();
         for (GameAddon addon : addons) {
@@ -740,89 +740,46 @@ public final class Game implements Runnable, AutoCloseable {
                 + ",\nminPlayers=" + minPlayers
                 + ",\nacceptsPlayers=" + acceptsPlayers
                 + ",\nacceptsSpectators=" + acceptsSpectators
-                + ",\ngameMarkers=" + gameMarkers.entrySet().stream().map(Object::toString).collect(Collectors.joining("\n\t", "\n\t", ""))
+                + ",\ngameMarkers=" + gameMarkers
+                        .entrySet()
+                        .stream()
+                        .map(e -> e.getKey().getSimpleName()+ ": " + e.getValue().stream().map(Object::toString).collect(Collectors.joining("\n\t\t", "\n\t\t", "")))
+                        .collect(Collectors.joining("\n\t", "\n\t", ""))
                 + ",\nlocations=" + locations
                 + "\n}";
     }
 
     @Deprecated
     public void printDebuggingInformation() {
-        System.out.println(this);
+        Warlords.getInstance().getLogger().info(String.valueOf(this));
     }
 
-    public void addKill(@Nonnull Team victim, @Nullable Team attacker) {
-        Stats myStats = getStats(victim);
-        myStats.deaths++;
-        if (attacker != null) {
-            Stats enemyStats = getStats(attacker);
-            enemyStats.kills++;
-            //addPoints(victim.enemy(), SCORE_KILL_POINTS);
+    public int getPoints(@Nonnull Team team) {
+        Integer oldPointsObj = this.points.get(team);
+        if (oldPointsObj == null) {
+            throw new IllegalArgumentException("Team " + team + " is not part of this game");
         }
+        return oldPointsObj;
     }
 
-    @Nonnull
-    public Stats getStats(@Nonnull Team team) {
-        return stats.get(team);
+    public void addPoints(@Nonnull Team team, int addPoints) {
+        Integer oldPointsObj = this.points.get(team);
+        if (oldPointsObj == null) {
+            throw new IllegalArgumentException("Team " + team + " is not part of this game");
+        }
+        int oldPoints = oldPointsObj;
+        int points = oldPoints + addPoints;
+        this.points.put(team, points);
+        Bukkit.getPluginManager().callEvent(new WarlordsPointsChangedEvent(Game.this, team, oldPoints, points));
     }
 
-    public void addPoints(@Nonnull Team team, int i) {
-        getStats(team).addPoints(i);
-    }
-
-    public class Stats {
-
-        private final Team team;
-        private int points;
-        private int kills;
-        private int captures;
-        private int deaths;
-
-        public Stats(Team team) {
-            this.team = team;
+    public void setPoints(@Nonnull Team team, int points) {
+        Integer oldPointsObj = this.points.get(team);
+        if (oldPointsObj == null) {
+            throw new IllegalArgumentException("Team " + team + " is not part of this game");
         }
-
-        public int points() {
-            return points;
-        }
-
-        public void setPoints(int points) {
-            int oldPoints = this.points;
-            this.points = points;
-            Bukkit.getPluginManager().callEvent(new WarlordsPointsChangedEvent(Game.this, team, oldPoints, this.points));
-        }
-
-        private void addPoints(int i) {
-            setPoints(points() + i);
-        }
-
-        public int kills() {
-            return kills;
-        }
-
-        public void setKills(int kills) {
-            this.kills = kills;
-        }
-
-        public int captures() {
-            return captures;
-        }
-
-        public void setCaptures(int captures) {
-            this.captures = captures;
-        }
-
-        public int deaths() {
-            return deaths;
-        }
-
-        public void setDeaths(int deaths) {
-            this.deaths = deaths;
-        }
-
-        @Override
-        public String toString() {
-            return "Stats{" + "team=" + team + "points=" + points + ", kills=" + kills + ", captures=" + captures + ", deaths=" + deaths + '}';
-        }
-
+        int oldPoints = oldPointsObj;
+        this.points.put(team, points);
+        Bukkit.getPluginManager().callEvent(new WarlordsPointsChangedEvent(Game.this, team, oldPoints, points));
     }
 }

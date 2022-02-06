@@ -1,5 +1,7 @@
 package com.ebicep.warlords.maps;
 
+import com.ebicep.warlords.maps.option.MarkerOption;
+import com.ebicep.warlords.maps.option.Option;
 import com.ebicep.warlords.maps.option.marker.LobbyLocationMarker;
 import com.ebicep.warlords.maps.option.marker.MapSymmetryMarker;
 import com.ebicep.warlords.maps.option.marker.TeamMarker;
@@ -72,6 +74,10 @@ public enum MapSymmetry {
                 return MapSymmetry.this.toString();
             }
         };
+    }
+    
+    public Option asOption() {
+        return asMarker().asOption();
     }
 
     public abstract Location getOppositeLocation(Game game, Team sourceTeam, Team targetTeam, Location original, Location target);

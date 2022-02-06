@@ -41,7 +41,7 @@ public class MercyWinOption implements Option {
                 int secondHighest = Integer.MIN_VALUE;
                 Team winner = null;
                 for (Team team : teams) {
-                    int points = game.getStats(team).points();
+                    int points = game.getPoints(team);
                     if (points > higest) {
                         winner = team;
                         secondHighest = higest;

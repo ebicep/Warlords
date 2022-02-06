@@ -74,9 +74,9 @@ public class GameStartTrait extends Trait {
                 .setMap(null)
                 .setPriority(0)
                 .setExpiresTime(System.currentTimeMillis() + 60 * 1000)
-                .setOnResult(result -> {
-            if (!result.isSuccess()) {
-                player.sendMessage(ChatColor.RED + "Failed to join game: " + result);
+                .setOnResult((result, game) -> {
+            if (game == null) {
+                player.sendMessage(ChatColor.RED + "Failed to join/create a game: " + result);
             }
         }).queue();
     }
