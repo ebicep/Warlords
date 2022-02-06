@@ -126,6 +126,12 @@ public class RegularGamesMenu {
                             offlinePlayer.getPlayer().sendMessage(ChatColor.DARK_BLUE + "---------------------------------------");
                         }
                     }
+                    regularGamePlayers.forEach(p -> {
+                        OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(p.getUuid());
+                        if (offlinePlayer.getPlayer() != null) {
+                            offlinePlayer.getPlayer().sendMessage(ChatColor.GREEN + "The " + team.coloredPrefix() + ChatColor.GREEN + " team is ready!");
+                        }
+                    });
                 }
         );
         menu.setItem(4, 5, Menu.MENU_CLOSE, Menu.ACTION_CLOSE_MENU);
