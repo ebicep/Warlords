@@ -2,10 +2,7 @@ package com.ebicep.warlords.maps;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
-import com.ebicep.warlords.maps.option.GameFreezeOption;
-import com.ebicep.warlords.maps.option.Option;
-import com.ebicep.warlords.maps.option.PreGameItemOption;
-import com.ebicep.warlords.maps.option.TextOption;
+import com.ebicep.warlords.maps.option.*;
 import com.ebicep.warlords.player.Classes;
 import com.ebicep.warlords.player.PlayerSettings;
 import com.ebicep.warlords.player.Weapons;
@@ -37,6 +34,7 @@ public enum MapCategory {
                     ChatColor.GREEN + "GO!",
                     ChatColor.YELLOW + "Steal and capture the enemy flag!"
             ));
+            options.add(new NoRespawnIfOfflineOption());
             return options;
         }
     },
@@ -58,6 +56,7 @@ public enum MapCategory {
                     ChatColor.GREEN + "GO!",
                     ChatColor.YELLOW + "Capture the marked points!"
             ));
+            options.add(new NoRespawnIfOfflineOption());
             return options;
         }
     },
@@ -68,7 +67,7 @@ public enum MapCategory {
 
             options.add(TextOption.Type.TITLE.create(
                     ChatColor.GREEN + "GO!",
-                    ChatColor.YELLOW + "Debug some issued!"
+                    ChatColor.YELLOW + "Debug some issues!"
             ));
             return options;
         }
@@ -126,7 +125,11 @@ public enum MapCategory {
         options.add(new PreGameItemOption(7, (g, p) -> !g.acceptsPeople() ? null : new ItemBuilder(Material.BARRIER)
                 .name(ChatColor.RED + "Leave")
                 .lore(ChatColor.GRAY + "Right-Click to leave the game.")
-                .get(), (g, p) -> g.removePlayer(p.getUniqueId())));
+                .get(), (g, p) -> {
+                        if (g.acceptsPeople()) {
+                            g.removePlayer(p.getUniqueId());
+                        }
+                }));
         options.add(new PreGameItemOption(1, (g, p) -> {
             PlayerSettings playerSettings = Warlords.getPlayerSettings(p.getUniqueId());
             Classes selectedClass = playerSettings.getSelectedClass();

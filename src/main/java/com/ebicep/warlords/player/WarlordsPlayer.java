@@ -43,12 +43,15 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
+import org.bukkit.inventory.EntityEquipment;
 
 public final class WarlordsPlayer {
 
     private final String name;
     private final UUID uuid;
+    @Deprecated
     private final PlayingState gameState;
+    private final Game game;
     private Team team;
     private AbstractPlayerClass spec;
     private Classes specClass;
@@ -111,6 +114,7 @@ public final class WarlordsPlayer {
         this.name = player.getName();
         this.uuid = player.getUniqueId();
         this.gameState = gameState;
+        this.game = gameState.getGame();
         this.stats = new PlayerStatistics();
         this.team = team;
         this.specClass = settings.getSelectedClass();
@@ -865,7 +869,7 @@ public final class WarlordsPlayer {
         Bukkit.getPluginManager().callEvent(new WarlordsDeathEvent(this, attacker));
     }
 
-    public Zombie spawnJimmy(@Nonnull Location loc, @Nullable PlayerInventory inv) {
+    public Zombie spawnJimmy(@Nonnull Location loc, @Nullable EntityEquipment inv) {
         Zombie jimmy = loc.getWorld().spawn(loc, Zombie.class);
         jimmy.setBaby(false);
         jimmy.setCustomNameVisible(true);
@@ -1260,7 +1264,6 @@ public final class WarlordsPlayer {
                 deathLocation != null ? deathLocation :
                 getLocation();
         WarlordsRespawnEvent event = new WarlordsRespawnEvent(this, respawnPoint);
-        event.setCancelled(!(entity instanceof Player && ((Player) entity).isOnline()));
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             return;
@@ -1277,6 +1280,8 @@ public final class WarlordsPlayer {
         this.health = this.maxHealth;
         if (entity instanceof Player) {
             updatePlayer((Player) entity);
+        } else {
+            this.entity = spawnJimmy(respawnPoint, this.entity.getEquipment());
         }
     }
 
@@ -1511,7 +1516,7 @@ public final class WarlordsPlayer {
     }
 
     public boolean isAlive() {
-        return !isDeath();
+        return !isDead();
     }
 
     public void updatePlayerReference(@Nullable Player player) {
@@ -1522,7 +1527,8 @@ public final class WarlordsPlayer {
 
         if (player == null) {
             if (this.entity instanceof Player) {
-                this.entity = spawnJimmy(loc, ((Player) this.entity).getInventory());
+                ((Player) this.entity).getInventory().setHeldItemSlot(0);
+                this.entity = spawnJimmy(loc, ((Player) this.entity).getEquipment());
             }
         } else {
             if (this.entity instanceof Zombie) { // This could happen if there was a problem during the quit event
@@ -1569,7 +1575,7 @@ public final class WarlordsPlayer {
     }
 
     public Game getGame() {
-        return this.gameState.getGame();
+        return this.game;
     }
 
     @Nonnull
