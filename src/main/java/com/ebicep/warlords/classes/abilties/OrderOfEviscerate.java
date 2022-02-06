@@ -1,14 +1,13 @@
 package com.ebicep.warlords.classes.abilties;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
+import com.ebicep.warlords.util.GameRunnable;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nonnull;
 
@@ -74,21 +73,18 @@ public class OrderOfEviscerate extends AbstractAbility {
             player1.playSound(player.getLocation(), Sound.GHAST_FIREBALL, 2, 0.7f);
         }
 
-        wp.getGame().getGameTasks().put(
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        if (!wp.getCooldownManager().hasCooldown(OrderOfEviscerate.class)) {
-                            this.cancel();
-                            wp.updateArmor();
-                            wp.setMarkedTarget(null);
-                            player.removePotionEffect(PotionEffectType.INVISIBILITY);
-                            cancelSpeed.run();
-                        }
-                    }
-                }.runTaskTimer(Warlords.getInstance(), 0, 1),
-                System.currentTimeMillis()
-        );
+        new GameRunnable(wp.getGame()) {
+            @Override
+            public void run() {
+                if (!wp.getCooldownManager().hasCooldown(OrderOfEviscerate.class)) {
+                    this.cancel();
+                    wp.updateArmor();
+                    wp.setMarkedTarget(null);
+                    player.removePotionEffect(PotionEffectType.INVISIBILITY);
+                    cancelSpeed.run();
+                }
+            }
+        }.runTaskTimer(0, 1);
 
         return true;
     }

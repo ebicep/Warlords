@@ -141,7 +141,6 @@ public class GateOption extends AbstractCuboidOption implements  TimerSkipAbleMa
                 Player player = entry.getKey();
                 player.playSound(player.getLocation(), Sound.WITHER_SPAWN, 5, 1);
                 sendMessage(player, false, ChatColor.YELLOW + "Gates opened! " + ChatColor.RED + "FIGHT!");
-                PacketUtils.sendTitle(player, ChatColor.GREEN + "GO!", ChatColor.YELLOW + "Steal and capture the enemy flag!", 0, 40, 20);
 
                 Utils.resetPlayerMovementStatistics(player);
             }

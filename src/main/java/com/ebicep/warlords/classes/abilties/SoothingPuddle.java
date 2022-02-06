@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.FireWorkEffectPlayer;
+import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
 import org.bukkit.*;
@@ -11,7 +12,6 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
@@ -50,130 +50,117 @@ public class SoothingPuddle extends AbstractAbility {
         stand.setHelmet(new ItemStack(Material.STAINED_GLASS, 1, (short) 6));
         stand.setGravity(false);
         stand.setVisible(false);
-        wp.getGame().getGameTasks().put(
-                new BukkitRunnable() {
+        new GameRunnable(wp.getGame()) {
+            @Override
+            public void run() {
+                    quarterStep(false);
+                    quarterStep(false);
+                    quarterStep(false);
+                    quarterStep(false);
+                    quarterStep(false);
+                    quarterStep(false);
+                    quarterStep(true);
+            }
 
-                    @Override
-                    public void run() {
-                        if (!wp.getGame().isGameFreeze()) {
+            private void quarterStep(boolean last) {
 
-                            quarterStep(false);
-                            quarterStep(false);
-                            quarterStep(false);
-                            quarterStep(false);
-                            quarterStep(false);
-                            quarterStep(false);
-                            quarterStep(true);
-                        }
+                if (!stand.isValid()) {
+                    this.cancel();
+                    return;
+                }
+
+                speed.add(new Vector(0, GRAVITY * SPEED, 0));
+                Location newLoc = stand.getLocation();
+                newLoc.add(speed);
+                stand.teleport(newLoc);
+                newLoc.add(0, 1.75, 0);
+
+                stand.setHeadPose(new EulerAngle(-speed.getY() * 3, 0, 0));
+
+                boolean shouldExplode;
+
+                if (last) {
+                    ParticleEffect.VILLAGER_HAPPY.display(0.1f, 0.1f, 0.1f, 0.1f, 4, newLoc.clone().add(0, -1, 0), 500);
+                }
+
+                WarlordsPlayer directHit;
+                if (!newLoc.getBlock().isEmpty()
+                        && newLoc.getBlock().getType() != Material.GRASS
+                        && newLoc.getBlock().getType() != Material.BARRIER
+                        && newLoc.getBlock().getType() != Material.VINE
+                ) {
+                    // Explode based on collision
+                    shouldExplode = true;
+                } else {
+                    directHit = PlayerFilter
+                            .entitiesAroundRectangle(newLoc, 1, 2, 1)
+                            .aliveTeammatesOfExcludingSelf(wp).findFirstOrNull();
+                    shouldExplode = directHit != null;
+                    newLoc.add(0, -1, 0);
+                }
+
+                DamageHealCircle med = new DamageHealCircle(wp, newLoc.add(0, 1, 0), HITBOX, 3, puddleMinHealing, puddleMaxHealing, critChance, critMultiplier, name);
+
+                if (shouldExplode) {
+                    stand.remove();
+                    for (Player player1 : wp.getWorld().getPlayers()) {
+                        player1.playSound(newLoc, "rogue.healingremedy.impact", 1.5f, 0.3f);
+                        player1.playSound(newLoc, Sound.GLASS, 1.5f, 0.7f);
+                        player1.playSound(newLoc, "mage.waterbolt.impact", 1.5f, 0.3f);
                     }
 
-                    private void quarterStep(boolean last) {
+                    FireWorkEffectPlayer.playFirework(newLoc, FireworkEffect.builder()
+                            .withColor(Color.WHITE)
+                            .with(FireworkEffect.Type.BURST)
+                            .build());
 
-                        if (!stand.isValid()) {
-                            this.cancel();
-                            return;
-                        }
+                    for (WarlordsPlayer nearEntity : PlayerFilter
+                            .entitiesAround(newLoc, HITBOX, HITBOX, HITBOX)
+                            .aliveTeammatesOf(wp)
+                    ) {
+                        nearEntity.addHealingInstance(
+                                wp,
+                                name,
+                                minDamageHeal,
+                                maxDamageHeal,
+                                critChance,
+                                critMultiplier,
+                                false,
+                                false);
+                    }
 
-                        speed.add(new Vector(0, GRAVITY * SPEED, 0));
-                        Location newLoc = stand.getLocation();
-                        newLoc.add(speed);
-                        stand.teleport(newLoc);
-                        newLoc.add(0, 1.75, 0);
-
-                        stand.setHeadPose(new EulerAngle(-speed.getY() * 3, 0, 0));
-
-                        boolean shouldExplode;
-
-                        if (last) {
-                            ParticleEffect.VILLAGER_HAPPY.display(0.1f, 0.1f, 0.1f, 0.1f, 4, newLoc.clone().add(0, -1, 0), 500);
-                        }
-
-                        WarlordsPlayer directHit;
-                        if (!newLoc.getBlock().isEmpty()
-                                && newLoc.getBlock().getType() != Material.GRASS
-                                && newLoc.getBlock().getType() != Material.BARRIER
-                                && newLoc.getBlock().getType() != Material.VINE
-                        ) {
-                            // Explode based on collision
-                            shouldExplode = true;
-                        } else {
-                            directHit = PlayerFilter
-                                    .entitiesAroundRectangle(newLoc, 1, 2, 1)
-                                    .aliveTeammatesOfExcludingSelf(wp).findFirstOrNull();
-                            shouldExplode = directHit != null;
-                            newLoc.add(0, -1, 0);
-                        }
-
-                        DamageHealCircle med = new DamageHealCircle(wp, newLoc.add(0, 1, 0), HITBOX, 3, puddleMinHealing, puddleMaxHealing, critChance, critMultiplier, name);
-
-                        if (shouldExplode) {
-                            stand.remove();
-                            for (Player player1 : wp.getWorld().getPlayers()) {
-                                player1.playSound(newLoc, "rogue.healingremedy.impact", 1.5f, 0.3f);
-                                player1.playSound(newLoc, Sound.GLASS, 1.5f, 0.7f);
-                                player1.playSound(newLoc, "mage.waterbolt.impact", 1.5f, 0.3f);
-                            }
-
-                            FireWorkEffectPlayer.playFirework(newLoc, FireworkEffect.builder()
-                                    .withColor(Color.WHITE)
-                                    .with(FireworkEffect.Type.BURST)
-                                    .build());
-
-                            for (WarlordsPlayer nearEntity : PlayerFilter
-                                    .entitiesAround(newLoc, HITBOX, HITBOX, HITBOX)
+                    BukkitTask task = Bukkit.getScheduler().runTaskTimer(Warlords.getInstance(), med::spawn, 0, 1);
+                    wp.getGame().registerGameTask(task);
+                    new GameRunnable(wp.getGame()) {
+                        @Override
+                        public void run() {
+                            PlayerFilter.entitiesAround(med.getLocation(), med.getRadius(), med.getRadius(), med.getRadius())
                                     .aliveTeammatesOf(wp)
-                            ) {
-                                nearEntity.addHealingInstance(
-                                        wp,
-                                        name,
-                                        minDamageHeal,
-                                        maxDamageHeal,
-                                        critChance,
-                                        critMultiplier,
-                                        false,
-                                        false);
+                                    .forEach((ally) -> ally.addHealingInstance(
+                                            med.getWarlordsPlayer(),
+                                            med.getName(),
+                                            med.getMinDamage(),
+                                            med.getMaxDamage(),
+                                            med.getCritChance(),
+                                            med.getCritMultiplier(),
+                                            false,
+                                            false));
+
+                            med.setDuration(med.getDuration() - 1);
+
+                            if (med.getDuration() < 0) {
+                                this.cancel();
+                                task.cancel();
                             }
-
-                            BukkitTask task = Bukkit.getScheduler().runTaskTimer(Warlords.getInstance(), med::spawn, 0, 1);
-                            wp.getGame().getGameTasks().put(task, System.currentTimeMillis());
-                            wp.getGame().getGameTasks().put(
-
-                                    new BukkitRunnable() {
-
-                                        @Override
-                                        public void run() {
-                                            if (!wp.getGame().isGameFreeze()) {
-                                                PlayerFilter.entitiesAround(med.getLocation(), med.getRadius(), med.getRadius(), med.getRadius())
-                                                        .aliveTeammatesOf(wp)
-                                                        .forEach((ally) -> ally.addHealingInstance(
-                                                                med.getWarlordsPlayer(),
-                                                                med.getName(),
-                                                                med.getMinDamage(),
-                                                                med.getMaxDamage(),
-                                                                med.getCritChance(),
-                                                                med.getCritMultiplier(),
-                                                                false,
-                                                                false));
-
-                                                med.setDuration(med.getDuration() - 1);
-
-                                                if (med.getDuration() < 0) {
-                                                    this.cancel();
-                                                    task.cancel();
-                                                }
-                                            }
-                                        }
-
-                                    }.runTaskTimer(Warlords.getInstance(), 0, 20),
-                                    System.currentTimeMillis()
-                            );
-
-                            this.cancel();
                         }
-                    }
 
-                }.runTaskTimer(Warlords.getInstance(), 0, 1), System.currentTimeMillis()
-        );
+                    }.runTaskTimer(0, 20);
+
+                    this.cancel();
+                }
+            }
+
+        }.runTaskTimer(0, 1);
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "mage.frostbolt.activation", 2, 0.7f);

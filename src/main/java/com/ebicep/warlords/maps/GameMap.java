@@ -525,9 +525,9 @@ public enum GameMap {
     },
     HEAVEN_WILL(
             "Heaven's Will",
-                    2,
-                    2,
-                    60 * SECOND,
+            2,
+            2,
+            60 * SECOND,
             "",
             MapCategory.DUEL
             ) {
@@ -554,7 +554,7 @@ public enum GameMap {
             options.add(new WinByPointsOption(5));
             options.add(new WinAfterTimeoutOption());
             options.add(new ScoreOnEventOption.OnKill(1));
-            options.add(new RespawnWaveOption());
+            options.add(new RespawnWaveOption(0, 1, 0));
             options.add(new GraveOption());
             options.add(new DuelsRespawnOption());
 

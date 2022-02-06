@@ -29,7 +29,6 @@ import net.minecraft.server.v1_8_R3.EntityLiving;
 import net.minecraft.server.v1_8_R3.GenericAttributes;
 import net.minecraft.server.v1_8_R3.NBTTagCompound;
 import org.bukkit.*;
-import org.bukkit.block.Block;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
@@ -103,15 +102,14 @@ public final class WarlordsPlayer {
     private final CalculateSpeed speed;
     private boolean powerUpHeal = false;
 
-    private Location deathLocation = null;
-    private ArmorStand deathStand = null;
-    private LivingEntity entity = null;
+    private final Location deathLocation;
+    private LivingEntity entity;
 
     private final CooldownManager cooldownManager = new CooldownManager(this);
     @Nullable
     private FlagInfo carriedFlag = null;
     @Nullable
-    private CompassTargetMarker compassTarget = null;
+    private CompassTargetMarker compassTarget;
 
     /**
      * @param player    is the assigned player as WarlordsPlayer.
@@ -159,10 +157,6 @@ public final class WarlordsPlayer {
         return locations;
     }
 
-    public List<Location> getLocations() {
-        return locations;
-    }
-
     @Override
     public String toString() {
         return "WarlordsPlayer{" +
@@ -204,6 +198,7 @@ public final class WarlordsPlayer {
     ) {
         this.addHealingDamageInstance(new WarlordsDamageHealingEvent(this, attacker, ability, min, max, critChance, critMultiplier, ignoreReduction, false, true));
     }
+
     private void addDamageInstance(WarlordsDamageHealingEvent event) {
         WarlordsPlayer attacker = event.getAttacker();
         String ability = event.getAbility();
@@ -709,8 +704,6 @@ public final class WarlordsPlayer {
                     if (attacker.getCooldownManager().hasCooldown(CrossVital.class)) {
                         attacker.getSpeed().addSpeedModifier("Cross Vital Speed", 40, CrossVital.SPEED_DURATION * 20, "BASE");
                     }
-
-                    gameState.addKill(team, false);
 
                     // Title card "YOU DIED!"
                     if (this.entity instanceof Player) {
@@ -1995,22 +1988,6 @@ public final class WarlordsPlayer {
         this.dead = dead;
     }
 
-    public void addTimeInCombat() {
-        timeInCombat++;
-    }
-
-    public int getTimeInCombat() {
-        return timeInCombat;
-    }
-
-    public void addTotalRespawnTime() {
-        respawnTimeSpent += respawnTimer.floatValue();
-    }
-
-    public float getRespawnTimeSpent() {
-        return respawnTimeSpent;
-    }
-
     public boolean isInfiniteEnergy() {
         return infiniteEnergy;
     }
@@ -2089,14 +2066,6 @@ public final class WarlordsPlayer {
 
     public void setCurrentHealthModifier(float currentHealthModifier) {
         this.currentHealthModifier = currentHealthModifier;
-    }
-
-    public int getHealPowerupDuration() {
-        return healPowerupDuration;
-    }
-
-    public void setHealPowerupDuration(int healPowerupDuration) {
-        this.healPowerupDuration = healPowerupDuration;
     }
 
     @Nullable

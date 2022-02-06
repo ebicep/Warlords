@@ -1,13 +1,12 @@
 package com.ebicep.warlords.classes.abilties;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.EffectUtils;
+import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.ParticleEffect;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nonnull;
 
@@ -43,18 +42,16 @@ public class CrossVital extends AbstractAbility {
         wp.getCooldownManager().addRegularCooldown(name, "VITAL", CrossVital.class, tempCrossVital, wp, CooldownTypes.ABILITY, cooldownManager -> {
         }, duration * 20);
 
-        wp.getGame().getGameTasks().put(
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    if (wp.getCooldownManager().hasCooldown(tempCrossVital)) {
-                        ParticleEffect.ENCHANTMENT_TABLE.display(0.4f, 0.4f, 0.4f, 0, 4, wp.getLocation().add(0 , 1, 0), 500);
-                    } else {
-                        this.cancel();
-                    }
+        new GameRunnable(wp.getGame()) {
+            @Override
+            public void run() {
+                if (wp.getCooldownManager().hasCooldown(tempCrossVital)) {
+                    ParticleEffect.ENCHANTMENT_TABLE.display(0.4f, 0.4f, 0.4f, 0, 4, wp.getLocation().add(0 , 1, 0), 500);
+                } else {
+                    this.cancel();
                 }
-            }.runTaskTimer(Warlords.getInstance(), 0, 8), System.currentTimeMillis()
-        );
+            }
+        }.runTaskTimer(0, 8);
 
         return true;
     }

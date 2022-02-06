@@ -6,15 +6,17 @@ import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.state.TimerDebugAble;
 import com.ebicep.warlords.menu.DebugMenu;
 import com.ebicep.warlords.player.WarlordsPlayer;
-import java.util.Locale;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import static com.ebicep.warlords.commands.BaseCommand.requireWarlordsPlayerInPrivateGame;
+
+import java.util.Locale;
+
 import static com.ebicep.warlords.commands.BaseCommand.requireGame;
+import static com.ebicep.warlords.commands.BaseCommand.requireWarlordsPlayerInPrivateGame;
 
 public class DebugCommand implements CommandExecutor {
 
@@ -162,6 +164,7 @@ public class DebugCommand implements CommandExecutor {
                 } else {
                     game.addFrozenCause("Manually frozen");
                 }
+                sender.sendMessage(ChatColor.RED + "§cDEV: §aThe game has been frozen!");
                 return true;
             }
             case "timer": {
@@ -191,8 +194,6 @@ public class DebugCommand implements CommandExecutor {
                         sender.sendMessage("§cInvalid option! [reset, skip]");
                         return true;
                 }
-                sender.sendMessage(ChatColor.RED + "§cDEV: §aThe game has been frozen!");
-                return true;
             }
             default:
                 sender.sendMessage("§cInvalid option! valid args: [cooldownmode, cooldown, energy, damage, takedamage, freeze, timer");

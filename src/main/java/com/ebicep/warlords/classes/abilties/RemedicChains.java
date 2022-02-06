@@ -1,15 +1,14 @@
 package com.ebicep.warlords.classes.abilties;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
+import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nonnull;
 
@@ -63,48 +62,46 @@ public class RemedicChains extends AbstractAbility {
             player.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " Your Remedic Chains is now protecting " + ChatColor.YELLOW + chainTarget.getName() + ChatColor.GRAY + "!");
 
             targethit++;
-            wp.getGame().getGameTasks().put(
-                new BukkitRunnable() {
+            new GameRunnable(wp.getGame()) {
+                @Override
+                public void run() {
+                    boolean outOfRange = wp.getLocation().distanceSquared(chainTarget.getLocation()) > linkBreakRadius * linkBreakRadius;
 
-                    @Override
-                    public void run() {
-                        boolean outOfRange = wp.getLocation().distanceSquared(chainTarget.getLocation()) > linkBreakRadius * linkBreakRadius;
+                    if (wp.getCooldownManager().hasCooldown(tempRemedicChain)) {
 
-                        if (wp.getCooldownManager().hasCooldown(tempRemedicChain)) {
+                        Location lineLocation = player.getLocation().add(0, 1, 0);
+                        lineLocation.setDirection(lineLocation.toVector().subtract(chainTarget.getLocation().add(0, 1, 0).toVector()).multiply(-1));
+                        for (int i = 0; i < Math.floor(player.getLocation().distance(chainTarget.getLocation())) * 2; i++) {
+                            ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(250, 200, 250), lineLocation, 500);
+                            lineLocation.add(lineLocation.getDirection().multiply(0.5));
+                        }
 
-                            Location lineLocation = player.getLocation().add(0, 1, 0);
-                            lineLocation.setDirection(lineLocation.toVector().subtract(chainTarget.getLocation().add(0, 1, 0).toVector()).multiply(-1));
-                            for (int i = 0; i < Math.floor(player.getLocation().distance(chainTarget.getLocation())) * 2; i++) {
-                                ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(250, 200, 250), lineLocation, 500);
-                                lineLocation.add(lineLocation.getDirection().multiply(0.5));
-                            }
-
-                            if (outOfRange) {
-                                chainTarget.getCooldownManager().removeCooldown(tempRemedicChain);
-                                chainTarget.addHealingInstance(wp, name, minDamageHeal * 0.1f, maxDamageHeal * 0.1f, critChance, critMultiplier, false, false);
-                                chainTarget.sendMessage(WarlordsPlayer.GIVE_ARROW + ChatColor.RED + " You left the link range early!");
-                                this.cancel();
-                            } else {
-                                chainTarget.setRegenTimer(0);
-                            }
-
-                            if (chainTarget.isDead()) {
-                                this.cancel();
-                            }
+                        if (outOfRange) {
+                            chainTarget.getCooldownManager().removeCooldown(tempRemedicChain);
+                            chainTarget.addHealingInstance(wp, name, minDamageHeal * 0.1f, maxDamageHeal * 0.1f, critChance, critMultiplier, false, false);
+                            chainTarget.sendMessage(WarlordsPlayer.GIVE_ARROW + ChatColor.RED + " You left the link range early!");
+                            this.cancel();
                         } else {
-                            if (!outOfRange && chainTarget.isAlive()) {
-                                chainTarget.addHealingInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false, false);
-                            }
+                            chainTarget.setRegenTimer(0);
+                        }
 
-                            ParticleEffect.VILLAGER_HAPPY.display(0.2f, 0, 0.2f, 0.5f, 5, chainTarget.getLocation().add(0, 1, 0), 500);
-
-                            for (Player player1 : player.getWorld().getPlayers()) {
-                                player1.playSound(chainTarget.getLocation(), "rogue.remedicchains.impact", 0.05f, 1.4f);
-                            }
+                        if (chainTarget.isDead()) {
                             this.cancel();
                         }
+                    } else {
+                        if (!outOfRange && chainTarget.isAlive()) {
+                            chainTarget.addHealingInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false, false);
+                        }
+
+                        ParticleEffect.VILLAGER_HAPPY.display(0.2f, 0, 0.2f, 0.5f, 5, chainTarget.getLocation().add(0, 1, 0), 500);
+
+                        for (Player player1 : player.getWorld().getPlayers()) {
+                            player1.playSound(chainTarget.getLocation(), "rogue.remedicchains.impact", 0.05f, 1.4f);
+                        }
+                        this.cancel();
                     }
-                }.runTaskTimer(Warlords.getInstance(), 0, 8), System.currentTimeMillis());
+                }
+            }.runTaskTimer(0, 8);
         }
 
         if (targethit >= 1) {

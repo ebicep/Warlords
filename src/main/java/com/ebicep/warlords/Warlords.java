@@ -14,6 +14,8 @@ import com.ebicep.jda.BotCommands;
 import com.ebicep.jda.BotListener;
 import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.classes.abilties.*;
+import com.ebicep.warlords.classes.internal.EnergyPowerup;
+import com.ebicep.warlords.classes.internal.HealingPowerup;
 import com.ebicep.warlords.classes.internal.Overheal;
 import com.ebicep.warlords.commands.debugcommands.*;
 import com.ebicep.warlords.commands.miscellaneouscommands.*;
@@ -26,7 +28,6 @@ import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.GameAddon;
 import com.ebicep.warlords.maps.GameManager;
 import com.ebicep.warlords.maps.GameMap;
-import com.ebicep.warlords.maps.option.PowerupOption.PowerupType;
 import com.ebicep.warlords.maps.option.marker.FlagHolder;
 import com.ebicep.warlords.menu.MenuEventListener;
 import com.ebicep.warlords.party.PartyCommand;
@@ -271,9 +272,6 @@ public class Warlords extends JavaPlugin {
         gameManager.addGameHolder("Warsong-0", GameMap.WARSONG, new LocationFactory(Bukkit.getWorld("Warsong")));
         gameManager.addGameHolder("Debug-0", GameMap.DEBUG, new LocationFactory(Bukkit.getWorld("TestWorld")));
         gameManager.addGameHolder("Heaven-0", GameMap.HEAVEN_WILL, new LocationFactory(Bukkit.getWorld("Heaven")));
-        gameManager.addGameHolder("Siege-0", GameMap.HEAVEN_WILL, new LocationFactory(Bukkit.getWorld("Siege")));
-        gameManager.addGameHolder("FalstadGate-0", GameMap.HEAVEN_WILL, new LocationFactory(Bukkit.getWorld("Falstad_Gate")));
-        gameManager.addGameHolder("BlackTemple-0", GameMap.HEAVEN_WILL, new LocationFactory(Bukkit.getWorld("Black_Temple")));
 
         Thread.currentThread().setContextClassLoader(getClassLoader());
 
@@ -697,7 +695,7 @@ public class Warlords extends JavaPlugin {
                             }
 
                             // Checks whether the player has the Energy Powerup active.
-                            if (cooldownManager.hasCooldown(EnergyPowerUp.class)) {
+                            if (cooldownManager.hasCooldown(EnergyPowerup.class)) {
                                 energyGainPerTick *= 1.4;
                             }
 
@@ -849,7 +847,7 @@ public class Warlords extends JavaPlugin {
                             }
 
                             // Checks whether the player has the healing powerup active.
-                            if (wps.getCooldownManager().hasCooldown(HealingPowerUp.class)) {
+                            if (wps.getCooldownManager().hasCooldown(HealingPowerup.class)) {
                                 int heal = (int) (wps.getMaxHealth() * .08);
                                 if (wps.getHealth() + heal > wps.getMaxHealth()) {
                                     heal = wps.getMaxHealth() - wps.getHealth();

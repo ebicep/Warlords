@@ -8,13 +8,9 @@ import com.ebicep.warlords.maps.flags.*;
 import com.ebicep.warlords.maps.option.marker.*;
 import com.ebicep.warlords.maps.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.maps.option.marker.scoreboard.SimpleScoreboardHandler;
-import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.GameRunnable;
-import static java.util.Collections.singletonList;
-import java.util.List;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import net.minecraft.server.v1_8_R3.AxisAlignedBB;
 import net.minecraft.server.v1_8_R3.MovingObjectPosition;
 import net.minecraft.server.v1_8_R3.Vec3D;
@@ -24,12 +20,19 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.util.Vector;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.List;
+
+import static java.util.Collections.singletonList;
 
 /**
  * Module for spawning a flag
@@ -99,7 +102,7 @@ public class FlagSpawnPointOption implements Option {
             }
         });
         game.registerEvents(new Listener() {
-            @EventHandler
+            @EventHandler(priority = EventPriority.LOW)
             public void onArmorStandBreak(EntityDamageByEntityEvent event) {
                 boolean isOurArmorStand = renderer.getRenderedArmorStands().contains(event.getEntity());
                 WarlordsPlayer wp = Warlords.getPlayer(event.getDamager());
@@ -109,12 +112,12 @@ public class FlagSpawnPointOption implements Option {
                 }
             }
 
-            @EventHandler
+            @EventHandler(priority = EventPriority.LOW)
             public void onPotentialFlagInteract(PlayerInteractEntityEvent event) {
                 onPotentialFlagInteract((PlayerEvent)event);
             }
 
-            @EventHandler
+            @EventHandler(priority = EventPriority.LOW)
             public void onPotentialFlagInteract(PlayerInteractEvent event) {
                 onPotentialFlagInteract((PlayerEvent)event);
             }
@@ -192,7 +195,16 @@ public class FlagSpawnPointOption implements Option {
                     } else {
                         // Steal flag
                         info.setFlag(new PlayerFlagLocation(wp, 0));
-                        wp.getCooldownManager().addCooldown("Flag Damage Reduction", SpawnFlagLocation.class, null, "RES", 15, wp, CooldownTypes.BUFF);
+                        wp.getCooldownManager().addRegularCooldown(
+                                "Flag Damage Resistance",
+                                "RES",
+                                FlagSpawnPointOption.class,
+                                null,
+                                wp,
+                                CooldownTypes.BUFF,
+                                cooldownManager -> {},
+                                15 * 20
+                        );
                     }
                 }
             }

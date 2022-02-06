@@ -1,8 +1,8 @@
 package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.classes.AbstractAbility;
-import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.ParticleEffect;
 import org.bukkit.Location;
@@ -49,5 +49,7 @@ public class Berserk extends AbstractAbility {
                 }
             }
         }.runTaskTimer(0, 3);
+
+        return true;
     }
 }

@@ -18,7 +18,7 @@ public class Vindicate extends AbstractAbility {
 
     private final int radius = 8;
     private final int vindicateDuration = 6;
-    private static int vindicateSelfDuration = 6;
+    private int vindicateSelfDuration = 6;
 
     public Vindicate() {
         super("Vindicate", 0, 0, 55, 25, -1, 100);
