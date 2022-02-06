@@ -73,7 +73,7 @@ public abstract class AbstractChainBase extends AbstractAbility {
 
             @Override
             public void run() {
-                if (chains.size() == 0) {
+                if (chains.isEmpty()) {
                     this.cancel();
                 }
 

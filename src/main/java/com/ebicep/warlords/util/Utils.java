@@ -1,6 +1,7 @@
 package com.ebicep.warlords.util;
 
 import com.ebicep.warlords.player.WarlordsPlayer;
+import java.util.*;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Statistic;
@@ -12,11 +13,11 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
+import java.util.stream.Collector;
+import java.util.stream.Stream;
+import javax.annotation.Nonnull;
 
 public class Utils {
 
@@ -40,6 +41,9 @@ public class Utils {
             new ItemStack(Material.WOOL, 1, (byte) 2),
             new ItemStack(Material.WOOL, 1, (byte) 6),
     };
+
+    private Utils() {
+    }
 
     public static double getDotToPlayer(LivingEntity player1, LivingEntity player2, double yIncrease) {
         return getDotToLocation(new LocationBuilder(player1.getEyeLocation()).addY(yIncrease).get(), player2.getEyeLocation());
@@ -240,14 +244,14 @@ public class Utils {
     public static boolean blocksInFrontOfLocation(Location location) {
         location = location.clone();
         location.setPitch(0);
-        Location headLocationForward = location.clone().add(location.clone().getDirection().multiply(1)).add(0, 1, 0);
-        Location footLocationForward = location.clone().add(location.clone().getDirection().multiply(1));
+        Location headLocationForward = location.clone().add(location.getDirection().multiply(1)).add(0, 1, 0);
+        Location footLocationForward = location.clone().add(location.getDirection().multiply(1));
         return location.getWorld().getBlockAt(headLocationForward).getType() != Material.AIR && location.getWorld().getBlockAt(footLocationForward).getType() != Material.AIR;
     }
 
     public static boolean isMountableZone(Location location) {
-        if (location.getWorld().getBlockAt(new LocationBuilder(location.clone()).setY(2).get()).getType() == Material.NETHERRACK) {
-            return location.getWorld().getBlockAt(new LocationBuilder(location.clone()).setY(4).get()).getType() == Material.SOUL_SAND && !insideTunnel(location);
+        if (location.getWorld().getBlockAt(new LocationBuilder(location.clone()).y(2).get()).getType() == Material.NETHERRACK) {
+            return location.getWorld().getBlockAt(new LocationBuilder(location.clone()).y(4).get()).getType() == Material.SOUL_SAND && !insideTunnel(location);
         }
         return true;
     }
@@ -263,5 +267,136 @@ public class Utils {
         return false;
     }
 
+    public static boolean isInCircleRadiusFast(Location locA, Location locB, double radius) {
+        double radiusMin = -radius;
+        double diffX = locA.getX() - locB.getX();
+        if (diffX < radiusMin || diffX > radius) {
+            return false;
+        }
+        double diffY = locA.getY() - locB.getY();
+        if (diffY < radiusMin || diffY > radius) {
+            return false;
+        }
+        double diffZ = locA.getZ() - locB.getZ();
+        if (diffZ < radiusMin || diffZ > radius) {
+            return false;
+        }
+        return diffX * diffX + diffY * diffY + diffZ * diffZ < radius * radius;
+    }
 
+    /**
+     * Checks if an <code>Iterable</code> contains an item matched by the given
+     * predicate.
+     *
+     * @param <T> The type of the items
+     * @param iterable The list of items
+     * @param matcher The matcher
+     * @return return true if any item matches, false otherwise. Empty iterables return false.
+     */
+    public static <T> boolean collectionHasItem(@Nonnull Iterable<T> iterable, @Nonnull Predicate<? super T> matcher) {
+        for (T item : iterable) {
+            if (matcher.test(item)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Nullable
+    public static <T> T arrayGetItem(@Nonnull T[] iterable, @Nonnull Predicate<? super T> matcher) {
+        for (T item : iterable) {
+            if (matcher.test(item)) {
+                return item;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Allows an Stream to be used in a for-each loop, as they do not come out of the box with support for this.
+     * @param <T> The type
+     * @param stream The stream
+     * @return An one-time use <code>Iterable</code> for iterating over the stream
+     */
+    @Nonnull
+    public static <T> Iterable<T> iterable(@Nonnull Stream<T> stream) {
+        return stream::iterator;
+    }
+
+    /**
+     * Collector to pick a random element from a <code>Stream</code>
+     * @param <T> The type of the element
+     * @return A collector for picking a random element, or null if the stream is empty
+     * @see Stream#collect(java.util.stream.Collector)
+     */
+    public static <T> Collector<T, Pair<Integer, T>, T> randomElement() {
+        return Collector.of(
+                () -> new Pair<>(0, null),
+                (i, a) -> {
+                    int count = i.getA();
+                    if(count == 0) {
+                        i.setA(1);
+                        i.setB(a);
+                    } else {
+                        i.setA(count + 1);
+                        if (Math.random() < 1d / count) {
+                            i.setB(a);
+                        }
+                    }
+                },
+                (a, b) -> {
+                    int count = a.getA() + b.getA();
+                    if (Math.random() * count >= a.getA()) {
+                        a.setB(b.getB());
+                    }
+                    a.setA(count);
+                    return a;
+                },
+                (i) -> {
+                    return i.getB();
+                },
+                Collector.Characteristics.CONCURRENT,
+                Collector.Characteristics.UNORDERED
+        );
+    }
+
+    public static void formatTimeLeft(StringBuilder message, long seconds) {
+        long minute = seconds / 60;
+        long second = seconds % 60;
+        if (minute < 10) {
+            message.append('0');
+        }
+        message.append(minute);
+        message.append(':');
+        if (second < 10) {
+            message.append('0');
+        }
+        message.append(second);
+    }
+
+    public static String formatTimeLeft(long seconds) {
+        StringBuilder message = new StringBuilder();
+        formatTimeLeft(message, seconds);
+        return message.toString();
+    }
+
+    public static String toTitleCase(Object input) {
+        return toTitleCase(String.valueOf(input));
+    }
+
+    public static String toTitleCase(String input) {
+        return input.substring(0, 1).toUpperCase(Locale.ROOT) + input.substring(1).toLowerCase(Locale.ROOT);
+    }
+
+    public static String toTitleHumanCase(Object input) {
+        return toTitleHumanCase(String.valueOf(input));
+    }
+
+    public static String toTitleHumanCase(String input) {
+        return input.substring(0, 1).toUpperCase(Locale.ROOT) + input.replace('_', ' ').substring(1).toLowerCase(Locale.ROOT);
+    }
+
+    public static boolean startsWithIgnoreCase(String str, String prefix) {
+        return str.regionMatches(true, 0, prefix, 0, prefix.length());
+    }
 }

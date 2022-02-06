@@ -20,13 +20,13 @@ public enum Team {
         Collections.reverse(Arrays.asList(inverseMapping));
     }
 
-    public final String name;
+    private final String name;
     private final ChatColor teamColor;
     private final String chatTag;
     private final String chatTagColored;
     private final String chatTagBoldColored;
     private final Color armorColor;
-    public ItemStack item;
+    private final ItemStack item;
 
     Team(String name, String chatTag, ChatColor teamColor, Color armorColor, ItemStack item) {
         this.name = name;
@@ -48,24 +48,56 @@ public enum Team {
         return armorColor;
     }
 
+    /**
+     * Returns the prefix as "XXX" (typically 3 chars, all uppercase
+     * @return "XXX"
+     */
     @Nonnull
     public String prefix() {
         return chatTag;
     }
 
+    /**
+     * Returns the prefix as ChatColor.XXX + "XXX"
+     * @return ChatColor.XXX + "XXX"
+     */
     @Nonnull
     public String coloredPrefix() {
         return chatTagColored;
     }
 
+    /**
+     * Returns the prefix as ChatColor.XXX + ChatColor.BOLD + "XXX"
+     * @return ChatColor.XXX + ChatColor.BOLD + "XXX"
+     */
     @Nonnull
     public String boldColoredPrefix() {
         return chatTagBoldColored;
     }
 
+    /**
+     * The team this team considers an enemy. 
+     * @deprecated Because this method makes it hard to support more than 2 teams
+     * @return the other team
+     */
+    @Deprecated
     @Nonnull
     public Team enemy() {
         return inverseMapping[ordinal()];
+    }
+
+    @Nonnull
+    public ItemStack getItem() {
+        return item;
+    }
+
+    /**
+     * Returns the full team name. Examples: "Blue", "Red"
+     * @return the full team name
+     */
+    @Nonnull
+    public String getName() {
+        return name;
     }
 
 }

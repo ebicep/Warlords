@@ -2,105 +2,72 @@ package com.ebicep.warlords.maps.state;
 
 import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.commands.debugcommands.ImposterCommand;
 import com.ebicep.warlords.commands.debugcommands.RecordGamesCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
-import com.ebicep.warlords.events.WarlordsPointsChangedEvent;
+import com.ebicep.warlords.events.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.maps.Game;
-import com.ebicep.warlords.maps.Gates;
+import com.ebicep.warlords.maps.Game.Stats;
+import com.ebicep.warlords.maps.GameAddon;
 import com.ebicep.warlords.maps.Team;
-import com.ebicep.warlords.maps.flags.FlagManager;
-import com.ebicep.warlords.maps.flags.GroundFlagLocation;
-import com.ebicep.warlords.maps.flags.PlayerFlagLocation;
-import com.ebicep.warlords.maps.flags.SpawnFlagLocation;
+import com.ebicep.warlords.maps.option.Option;
+import com.ebicep.warlords.maps.option.marker.TimerSkipAbleMarker;
+import com.ebicep.warlords.maps.option.marker.scoreboard.ScoreboardHandler;
 import com.ebicep.warlords.player.CustomScoreboard;
 import com.ebicep.warlords.player.ExperienceManager;
 import com.ebicep.warlords.player.PlayerSettings;
 import com.ebicep.warlords.player.WarlordsPlayer;
-import com.ebicep.warlords.powerups.PowerupManager;
 import com.ebicep.warlords.sr.SRCalculator;
-import com.ebicep.warlords.util.PacketUtils;
+import com.ebicep.warlords.util.GameRunnable;
+import com.ebicep.warlords.util.PlayerFilter;
 import com.ebicep.warlords.util.RemoveEntities;
 import com.ebicep.warlords.util.Utils;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitTask;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.function.BiConsumer;
-import java.util.function.BinaryOperator;
-import java.util.function.Function;
-import java.util.function.Supplier;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
-
-import static com.ebicep.warlords.util.ChatUtils.sendMessage;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 public class PlayingState implements State, TimerDebugAble {
-    private static final int GATE_TIMER = 10 * 20;
-    private static final int POWERUP_TIMER = 60 * 20;
-    private static final int OVERTIME_TIME = 60 * 20;
 
-    private static final int SCORE_KILL_POINTS = 5;
-    private static final int SCORE_CAPTURE_POINTS = 250;
-
-    private static final int ENDING_SCORE_LIMIT = 1000;
-    private static final int MERCY_LIMIT = 550;
-
-    private int timer = 0;
-    private int gateTimer = 0;
-    private int powerupTimer = 0;
-    private boolean overTimeActive = false;
-    private int pointLimit = 0;
     private final Game game;
-    private boolean forceEnd;
-
-    private final EnumMap<Team, Stats> stats = new EnumMap(Team.class);
-
-    {
-        resetStats();
-    }
-
-    @Nullable
-    private FlagManager flags = null;
-    @Nullable
-    private BukkitTask powerUps = null;
+    private WarlordsGameTriggerWinEvent winEvent;
+    private int counter = 0;
+    private int timer = 0;
 
     public PlayingState(@Nonnull Game game) {
         this.game = game;
     }
 
+    @Deprecated
     public void addKill(@Nonnull Team victim, boolean isSuicide) {
-        Stats myStats = getStats(victim);
-        myStats.deaths++;
-        Stats enemyStats = getStats(victim.enemy());
-        enemyStats.kills++;
-        addPoints(victim.enemy(), SCORE_KILL_POINTS);
+        game.addKill(victim, victim.enemy());
     }
 
     @Nonnull
+    @Deprecated
     public Stats getStats(@Nonnull Team team) {
-        return stats.get(team);
+        return game.getStats(team);
     }
 
+    @Deprecated
     public void addPoints(@Nonnull Team team, int i) {
-        getStats(team).addPoints(i);
+        game.addPoints(team, i);
     }
 
     @Deprecated
     public int getBluePoints() {
-        return stats.get(Team.BLUE).points();
+        return game.getStats(Team.BLUE).points();
     }
 
     @Deprecated
@@ -110,33 +77,12 @@ public class PlayingState implements State, TimerDebugAble {
 
     @Deprecated
     public int getRedPoints() {
-        return stats.get(Team.RED).points();
+        return game.getStats(Team.RED).points();
     }
 
     @Deprecated
     public void addRedPoints(int i) {
         this.addPoints(Team.RED, i);
-    }
-
-    public int getTimer() {
-        return timer;
-    }
-
-    public int getTimerInSeconds() {
-        return getTimer() / 20;
-    }
-
-    public boolean isOvertime() {
-        return this.overTimeActive;
-    }
-
-    @Nonnull
-    @SuppressWarnings("null")
-    public FlagManager flags() {
-        if (this.flags == null) {
-            throw new IllegalStateException("Cannot access flag sub component, state not enabled");
-        }
-        return this.flags;
     }
 
     @Nonnull
@@ -147,168 +93,102 @@ public class PlayingState implements State, TimerDebugAble {
     @Override
     @SuppressWarnings("null")
     public void begin() {
+        this.game.setAcceptsSpectators(true);
         this.resetTimer();
-        this.forceEnd = false;
-        this.gateTimer = GATE_TIMER;
-        this.powerupTimer = POWERUP_TIMER;
-        RemoveEntities.doRemove(this.game.getMap());
-        this.flags = new FlagManager(this, game.getMap().getRedFlag(), game.getMap().getBlueFlag());
+        RemoveEntities.doRemove(this.game);
+        for (Option option : game.getOptions()) {
+            option.start(game);
+        }
 
         this.game.forEachOfflinePlayer((player, team) -> {
-            PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
-            Warlords.addPlayer(new WarlordsPlayer(
-                    player,
-                    this,
-                    team,
-                    playerSettings
-            ));
+            if (team != null) {
+                PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
+                Warlords.addPlayer(new WarlordsPlayer(
+                        player,
+                        this,
+                        team,
+                        playerSettings
+                ));
+            }
         });
         this.game.forEachOfflineWarlordsPlayer(wp -> {
             CustomScoreboard customScoreboard = Warlords.playerScoreboards.get(wp.getUuid());
             updateBasedOnGameState(true, customScoreboard, wp);
             if (wp.getEntity() instanceof Player) {
                 wp.applySkillBoost((Player) wp.getEntity());
-                PacketUtils.sendTitle((Player) wp.getEntity(), ChatColor.GREEN + "GO!", ChatColor.YELLOW + "Steal and capture the enemy flag!", 0, 40, 20);
             }
         });
 
-        Warlords.newChain()
-                .async(() -> game.forEachOfflinePlayer((player, team) -> {
-                    DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
-                    DatabaseManager.updatePlayerAsync(databasePlayer);
-                    DatabaseManager.loadPlayer(player.getUniqueId(), PlayersCollections.SEASON_5, () -> {
-                    });
-                    DatabaseManager.loadPlayer(player.getUniqueId(), PlayersCollections.WEEKLY, () -> {
-                    });
-                    DatabaseManager.loadPlayer(player.getUniqueId(), PlayersCollections.DAILY, () -> {
-                    });
-                })).execute();
+        Warlords.newChain().async(() -> game.forEachOfflinePlayer((player, team) -> {
+            DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
+            DatabaseManager.updatePlayerAsync(databasePlayer);
+            DatabaseManager.loadPlayer(player.getUniqueId(), PlayersCollections.SEASON_5, () -> {
+            });
+            DatabaseManager.loadPlayer(player.getUniqueId(), PlayersCollections.WEEKLY, () -> {
+            });
+            DatabaseManager.loadPlayer(player.getUniqueId(), PlayersCollections.DAILY, () -> {
+            });
+        })).execute();
+        game.setAcceptsPlayers(true);
+        game.setAcceptsSpectators(false);
+        game.registerEvents(new Listener() {
+            @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+            public void onWin(WarlordsGameTriggerWinEvent event) {
+                game.setNextState(new EndState(game, event));
+                winEvent = event;
+            }
+        });
+        new GameRunnable(game) {
+            @Override
+            public void run() {
+                giveScoreboard();
+            }
+
+        }.runTaskTimer(0, 10);
+        new GameRunnable(game) {
+            @Override
+            public void run() {
+                counter++;
+                timer += GameRunnable.SECOND;
+                if (counter >= 60) {
+                    counter -= 60;
+                    PlayerFilter.playingGame(game).forEach(wp -> wp.getStats().advanceMinute());
+                }
+            }
+        }.runTaskTimer(0, GameRunnable.SECOND);
+        game.registerGameMarker(TimerSkipAbleMarker.class, (delay) -> {
+            counter += delay / GameRunnable.SECOND;
+            timer += delay;
+        });
     }
 
     @Override
     public State run() {
-        this.timer--;
-        if (forceEnd) {
-            return getEndState(null);
-        }
-        if (this.timer <= 0) {
-            if (this.overTimeActive) {
-                State next = nextStateByPoints();
-                return next == null ? getEndState(null) : next;
-            } else {
-                State next = nextStateByPoints();
-                if (next == null) {
-                    this.timer = OVERTIME_TIME;
-                    this.overTimeActive = true;
-                    assert getStats(Team.BLUE).points == getStats(Team.RED).points;
-                    this.pointLimit = 20;
-                    getStats(Team.BLUE).points = 0;
-                    getStats(Team.RED).points = 0;
-                    this.game.forEachOnlinePlayer((player, team) -> {
-                        PacketUtils.sendTitle(player, ChatColor.LIGHT_PURPLE + "OVERTIME!", ChatColor.YELLOW + "First team to reach 20 points wins!", 0, 60, 0);
-                        player.sendMessage("§dOvertime is now active!");
-                        player.playSound(player.getLocation(), Sound.PORTAL_TRAVEL, 1, 1);
-                    });
-                } else {
-                    return next;
-                }
-            }
-        }
-        if (timer % 10 == 0) {
-            giveScoreboard();
-        }
-
-        //update every 5 seconds
-        if (timer % 100 == 0) {
-            BotManager.sendStatusMessage(false);
-        }
-
-        int redPoints = getStats(Team.RED).points;
-        int bluePoints = getStats(Team.BLUE).points;
-        if (redPoints >= this.pointLimit || bluePoints >= this.pointLimit || (Math.abs(redPoints - bluePoints) >= MERCY_LIMIT && this.timer < game.getMap().getGameTimerInTicks() - 20 * 60 * 5)) {
-            giveScoreboard();
-            return nextStateByPoints();
-        }
-        if (gateTimer >= 0) {
-            gateTimer--;
-            if (gateTimer % 20 == 0) {
-                int remaining = gateTimer / 20;
-                game.forEachOnlinePlayer((player, team) -> {
-                    player.playSound(player.getLocation(), remaining == 0 ? Sound.WITHER_SPAWN : Sound.NOTE_STICKS, 1, 1);
-                    String number;
-                    if (remaining >= 8) {
-                        number = ChatColor.GREEN.toString();
-                    } else if (remaining >= 4) {
-                        number = ChatColor.YELLOW.toString();
-                    } else {
-                        number = ChatColor.RED.toString();
-                    }
-                    number += remaining;
-                    PacketUtils.sendTitle(player, number, "", 0, 40, 0);
-                });
-                switch (remaining) {
-                    case 0:
-                        Gates.changeGates(game.getMap(), true);
-                        game.forEachOnlinePlayer((player, team) -> {
-                            sendMessage(player, false, ChatColor.YELLOW + "Gates opened! " + ChatColor.RED + "FIGHT!");
-                            PacketUtils.sendTitle(player, ChatColor.GREEN + "GO!", ChatColor.YELLOW + "Steal and capture the enemy flag!", 0, 40, 20);
-
-                            Utils.resetPlayerMovementStatistics(player);
-                        });
-                        break;
-                    case 1:
-                    case 2:
-                    case 3:
-                    case 4:
-                    case 5:
-                    case 10:
-                        game.forEachOnlinePlayer((player, team) -> {
-                            String s = remaining == 1 ? "" : "s";
-                            sendMessage(player, false, ChatColor.YELLOW + "The gates will fall in " + ChatColor.RED + remaining + ChatColor.YELLOW + " second" + s + "!");
-                        });
-                        break;
-                }
-            }
-        }
-        if (powerupTimer >= 0) {
-            powerupTimer--;
-            if (powerupTimer == 0) {
-                if (this.powerUps != null) {
-                    this.powerUps.cancel();
-                }
-                this.powerUps = new PowerupManager(game).runTaskTimer(Warlords.getInstance(), 0, 0);
-            }
-        }
         return null;
     }
 
     @Override
     @SuppressWarnings("null")
     public void end() {
-        if (this.flags != null) {
-            this.flags.stop();
-        }
-        if (this.powerUps != null) {
-            this.powerUps.cancel();
-            this.powerUps = null;
-        }
-
-        Warlords.getPlayers().forEach(((uuid, warlordsPlayer) -> warlordsPlayer.removeGrave()));
 
         System.out.println(" ----- GAME END ----- ");
         System.out.println("RecordGames = " + RecordGamesCommand.recordGames);
-        System.out.println("Imposter = " + ImposterCommand.enabled);
-        System.out.println("Private = " + game.isPrivate());
-        System.out.println("Force End = " + forceEnd);
+        System.out.println("Imposter = " + game.getAddons().contains(GameAddon.IMPOSTER_MODE));
+        System.out.println("Private = " + game.getAddons().contains(GameAddon.PRIVATE_GAME));
+        System.out.println("Force End = " + (winEvent == null));
         System.out.println("Player Count = " + game.playersCount());
+        System.out.println("Players = " + game.getPlayers().keySet());
         System.out.println("Timer = " + timer);
         System.out.println(" ----- GAME END ----- ");
 
-        List<WarlordsPlayer> players = new ArrayList<>(Warlords.getPlayers().values());
-        float highestDamage = players.stream().sorted(Comparator.comparing(WarlordsPlayer::getTotalDamage).reversed()).collect(Collectors.toList()).get(0).getTotalDamage();
-        float highestHealing = players.stream().sorted(Comparator.comparing(WarlordsPlayer::getTotalHealing).reversed()).collect(Collectors.toList()).get(0).getTotalHealing();
+        List<WarlordsPlayer> players = PlayerFilter.playingGame(game).toList();
+        if (players.isEmpty()) {
+            return;
+        }
+        float highestDamage = players.stream().sorted(Comparator.comparing((WarlordsPlayer wp) -> wp.getStats().total().getDamage()).reversed()).findFirst().get().getStats().total().getDamage();
+        float highestHealing = players.stream().sorted(Comparator.comparing((WarlordsPlayer wp) -> wp.getStats().total().getHealing()).reversed()).findFirst().get().getStats().total().getHealing();
         //PUBS
-        if (!game.isPrivate() && !ImposterCommand.enabled && !forceEnd && game.playersCount() >= 12) {
+        if (!game.getAddons().contains(GameAddon.PRIVATE_GAME) && !game.getAddons().contains(GameAddon.IMPOSTER_MODE) && winEvent != null && game.playersCount() >= 12) {
             String gameEnd = "[GAME] A Public game ended with ";
             if (getBluePoints() > getRedPoints()) {
                 BotManager.sendMessageToNotificationChannel(gameEnd + "**BLUE** winning " + getBluePoints() + " to " + getRedPoints(), false, true);
@@ -318,10 +198,10 @@ public class PlayingState implements State, TimerDebugAble {
                 BotManager.sendMessageToNotificationChannel(gameEnd + "a **DRAW**", false, true);
             }
             if (highestDamage <= 750000 && highestHealing <= 750000) {
-                DatabaseGame.addGame(PlayingState.this, true);
+                DatabaseGame.addGame(game, winEvent, true);
                 System.out.println(ChatColor.GREEN + "[Warlords] This PUB game was added to the database and player information was changed");
             } else {
-                DatabaseGame.addGame(PlayingState.this, false);
+                DatabaseGame.addGame(game, winEvent, false);
                 System.out.println(ChatColor.GREEN + "[Warlords] This PUB game was added to the database (INVALID DAMAGE/HEALING) but player information remained the same");
             }
 
@@ -332,9 +212,8 @@ public class PlayingState implements State, TimerDebugAble {
                         SRCalculator.recalculateSR();
                     })
                     .execute();
-        }
-        //COMPS
-        else if (RecordGamesCommand.recordGames && !ImposterCommand.enabled && !forceEnd && game.playersCount() >= 16 && timer <= 12000) {
+        } //COMPS
+        else if (RecordGamesCommand.recordGames && !game.getAddons().contains(GameAddon.IMPOSTER_MODE) && winEvent != null && game.playersCount() >= 16 && timer <= 12000) {
             String gameEnd = "[GAME] A game ended with ";
             if (getBluePoints() > getRedPoints()) {
                 BotManager.sendMessageToNotificationChannel(gameEnd + "**BLUE** winning " + getBluePoints() + " to " + getRedPoints(), true, false);
@@ -344,17 +223,16 @@ public class PlayingState implements State, TimerDebugAble {
                 BotManager.sendMessageToNotificationChannel(gameEnd + "a **DRAW**", true, false);
             }
             if (highestDamage <= 750000 && highestHealing <= 750000) {
-                DatabaseGame.addGame(PlayingState.this, true);
+                DatabaseGame.addGame(game, winEvent, true);
                 System.out.println(ChatColor.GREEN + "[Warlords] This COMP game was added to the database and player information was changed");
             } else {
-                DatabaseGame.addGame(PlayingState.this, false);
+                DatabaseGame.addGame(game, winEvent, false);
                 System.out.println(ChatColor.GREEN + "[Warlords] This COMP game was added to the database (INVALID DAMAGE/HEALING) but player information remained the same");
             }
-        }
-        //END GAME
+        } //END GAME
         else {
-            if (game.isPrivate() && game.playersCount() >= 6 && timer <= 12000) {
-                DatabaseGame.addGame(PlayingState.this, false);
+            if (game.getAddons().contains(GameAddon.PRIVATE_GAME) && game.playersCount() >= 6 && timer <= 12000) {
+                DatabaseGame.addGame(game, winEvent, false);
                 System.out.println(ChatColor.GREEN + "[Warlords] This COMP game was added to the database but player information remained the same");
             } else {
                 System.out.println(ChatColor.GREEN + "[Warlords] This PUB/COMP game was not added to the database and player information remained the same");
@@ -364,79 +242,26 @@ public class PlayingState implements State, TimerDebugAble {
 
     @Override
     public void skipTimer() {
-        if (this.gateTimer > 0) {
-            this.timer -= this.gateTimer - 1;
-            this.gateTimer = 1;
-        } else {
-            this.timer = 0;
+        // TODO loop over options and decrement them is needed
+        int maxSkip = Integer.MAX_VALUE;
+        for (TimerSkipAbleMarker marker : game.getMarkers(TimerSkipAbleMarker.class)) {
+            if (marker.getDelay() > 0) {
+                maxSkip = Math.min(marker.getDelay(), maxSkip);
+            }
+        }
+        for (TimerSkipAbleMarker marker : game.getMarkers(TimerSkipAbleMarker.class)) {
+            marker.skipTimer(maxSkip);
         }
     }
 
     @Override
     public void resetTimer() throws IllegalStateException {
-        this.timer = game.getMap().getGameTimerInTicks();
-        this.pointLimit = ENDING_SCORE_LIMIT;
-        this.overTimeActive = false;
-    }
-
-    private EndState getEndState(@Nullable Team winner) {
-        return new EndState(this.game, winner, this.getStats(Team.RED), this.getStats(Team.BLUE));
-    }
-
-    @Nullable
-    public Team calculateWinnerByPoints() {
-        int redPoints = getStats(Team.RED).points();
-        int bluePoints = getStats(Team.BLUE).points();
-        if (redPoints > bluePoints) {
-            return Team.RED;
-        }
-        if (bluePoints > redPoints) {
-            return Team.BLUE;
-        }
-        return null;
-    }
-
-    @Nullable
-    private State nextStateByPoints() {
-        Team winner = calculateWinnerByPoints();
-        if (winner != null) {
-            return getEndState(winner);
-        }
-        return null;
-    }
-
-    public void resetStats() {
-        for (Team team : Team.values()) {
-            stats.put(team, new Stats(team));
-        }
-    }
-
-    public void addCapture(WarlordsPlayer capper) {
-        getStats(capper.getTeam()).captures++;
-        addPoints(capper.getTeam(), SCORE_CAPTURE_POINTS);
-    }
-
-    public void endGame() {
-        this.forceEnd = true;
-    }
-
-    public boolean isForceEnd() {
-        return forceEnd;
-    }
-
-    public int getPointLimit() {
-        return pointLimit;
     }
 
     private void giveScoreboard() {
-        for (WarlordsPlayer value : Warlords.getPlayers().values()) {
-            if (Warlords.playerScoreboards.get(value.getUuid()) != null) {
-                updateBasedOnGameState(false, Warlords.playerScoreboards.get(value.getUuid()), value);
-            }
-        }
-        for (UUID spectator : game.getSpectators()) {
-            updateBasedOnGameState(false, Warlords.playerScoreboards.get(spectator), null);
-        }
+        game.forEachOnlinePlayerWithoutSpectators((player, team) -> {
+            this.onPlayerReJoinGame(player);
+        });
     }
 
     public void updateHealth(CustomScoreboard customScoreboard) {
@@ -469,7 +294,7 @@ public class PlayingState implements State, TimerDebugAble {
                     temp.setSuffix(ChatColor.DARK_GRAY + " [" + ChatColor.GOLD + "Lv" + ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(warlordsPlayer.getUuid(), warlordsPlayer.getSpecClass())) + ChatColor.DARK_GRAY + "]");
                 } else {
                     scoreboard.getTeam(warlordsPlayer.getName()).setPrefix(ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + warlordsPlayer.getSpec().getClassNameShort() + ChatColor.DARK_GRAY + "] " + team.teamColor());
-                    if (warlordsPlayer.getGameState().flags().hasFlag(warlordsPlayer)) {
+                    if (warlordsPlayer.getCarriedFlag() != null) {
                         scoreboard.getTeam(warlordsPlayer.getName()).setSuffix(ChatColor.DARK_GRAY + "[" + ChatColor.GRAY + "Lv" + ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(warlordsPlayer.getUuid(), warlordsPlayer.getSpecClass())) + ChatColor.DARK_GRAY + "]" + ChatColor.WHITE + "⚑");
                     } else {
                         scoreboard.getTeam(warlordsPlayer.getName()).setSuffix(ChatColor.DARK_GRAY + " [" + ChatColor.GRAY + "Lv" + ExperienceManager.getLevelString(ExperienceManager.getLevelForSpec(warlordsPlayer.getUuid(), warlordsPlayer.getSpecClass())) + ChatColor.DARK_GRAY + "]");
@@ -496,193 +321,39 @@ public class PlayingState implements State, TimerDebugAble {
         this.updateHealth(customScoreboard);
         this.updateNames(customScoreboard);
 
-        String[] entries = new String[15];
+        List<String> scoreboard = new ArrayList<>();
 
-
-        SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
-        SimpleDateFormat format2 = new SimpleDateFormat("kk:mm");
-        format2.setTimeZone(TimeZone.getTimeZone("EST"));
-
-        //date
-        entries[14] = ChatColor.GRAY + format.format(new Date()) + " - " + format2.format(new Date());
-
-        // Points
-        entries[12] = ChatColor.BLUE + "BLU: " + ChatColor.AQUA + this.getBluePoints() + ChatColor.GOLD + "/" + this.getPointLimit();
-        entries[11] = ChatColor.RED + "RED: " + ChatColor.AQUA + this.getRedPoints() + ChatColor.GOLD + "/" + this.getPointLimit();
-
-        // Timer
-        com.ebicep.warlords.maps.Team team = this.calculateWinnerByPoints();
-        if (team != null) {
-            entries[9] = team.coloredPrefix() + ChatColor.GOLD + " Wins in: " + ChatColor.GREEN + getTimeLeftString();
-        } else {
-            entries[9] = ChatColor.WHITE + "Time Left: " + ChatColor.GREEN + getTimeLeftString();
-        }
-
-        // Flags
-        if (this.flags().getRed().getFlag() instanceof SpawnFlagLocation) {
-            entries[7] = ChatColor.RED + "RED Flag: " + ChatColor.GREEN + "Safe";
-        } else if (this.flags().getRed().getFlag() instanceof PlayerFlagLocation) {
-            PlayerFlagLocation flag = (PlayerFlagLocation) this.flags().getRed().getFlag();
-            if (flag.getPickUpTicks() == 0) {
-                entries[7] = ChatColor.RED + "RED Flag: " + ChatColor.RED + "Stolen!";
-            } else {
-                entries[7] = ChatColor.RED + "RED Flag: " + ChatColor.RED + "Stolen!" + ChatColor.YELLOW + " +" + flag.getComputedHumanMultiplier() + "§e%";
+        String lastGroup = null;
+        boolean lastWasEmpty = true;
+        for (ScoreboardHandler handler : Utils.iterable(game
+                .getScoreboardHandlers()
+                .stream()
+                .sorted(Comparator.comparing((ScoreboardHandler sh) -> sh.getPriority(warlordsPlayer)))
+        )) {
+            String group = handler.getGroup();
+            if ((lastGroup == null || !lastGroup.equals(group)) && !lastWasEmpty) {
+                scoreboard.add("");
+                lastWasEmpty = true;
             }
-        } else if (this.flags().getRed().getFlag() instanceof GroundFlagLocation) {
-            GroundFlagLocation flag = (GroundFlagLocation) this.flags().getRed().getFlag();
-            entries[7] = ChatColor.RED + "RED Flag: " + ChatColor.YELLOW + "Dropped! " + ChatColor.GRAY + flag.getDespawnTimerSeconds();
-        } else {
-            entries[7] = ChatColor.RED + "RED Flag: " + ChatColor.GRAY + "Respawning...";
-        }
-
-        if (this.flags().getBlue().getFlag() instanceof SpawnFlagLocation) {
-            entries[6] = ChatColor.BLUE + "BLU Flag: " + ChatColor.GREEN + "Safe";
-        } else if (this.flags().getBlue().getFlag() instanceof PlayerFlagLocation) {
-            PlayerFlagLocation flag = (PlayerFlagLocation) this.flags().getBlue().getFlag();
-            if (flag.getPickUpTicks() == 0) {
-                entries[6] = ChatColor.BLUE + "BLU Flag: " + ChatColor.RED + "Stolen!";
-            } else {
-                entries[6] = ChatColor.BLUE + "BLU Flag: " + ChatColor.RED + "Stolen!" + ChatColor.YELLOW + " +" + flag.getComputedHumanMultiplier() + "§e%";
+            lastGroup = group;
+            List<String> handlerContents = handler.computeLines(warlordsPlayer);
+            if (!handlerContents.isEmpty()) {
+                lastWasEmpty = false;
+                scoreboard.addAll(handlerContents);
             }
-        } else if (this.flags().getBlue().getFlag() instanceof GroundFlagLocation) {
-            GroundFlagLocation flag = (GroundFlagLocation) this.flags().getBlue().getFlag();
-            entries[6] = ChatColor.BLUE + "BLU Flag: " + ChatColor.YELLOW + "Dropped! " + ChatColor.GRAY + flag.getDespawnTimerSeconds();
-        } else {
-            entries[6] = ChatColor.BLUE + "BLU Flag: " + ChatColor.GRAY + "Respawning...";
         }
 
-        if (warlordsPlayer != null) {
-            entries[4] = ChatColor.WHITE + "Spec: " + ChatColor.GREEN + warlordsPlayer.getSpec().getClass().getSimpleName();
-            if (ImposterCommand.enabled) {
-                if ((ImposterCommand.blueImposterName != null && ImposterCommand.blueImposterName.equalsIgnoreCase(warlordsPlayer.getName())) ||
-                        (ImposterCommand.redImposterName != null && ImposterCommand.redImposterName.equals(warlordsPlayer.getName()))
-                ) {
-                    entries[3] = ChatColor.WHITE + "Role: " + ChatColor.RED + "IMPOSTER";
-                } else {
-                    if (ImposterCommand.blueImposterName != null && ImposterCommand.redImposterName != null) {
-                        entries[3] = ChatColor.WHITE + "Role: " + ChatColor.GREEN + "INNOCENT";
-                    }
-                }
-            }
-            entries[2] = ChatColor.GREEN.toString() + warlordsPlayer.getTotalKills() + ChatColor.RESET + " Kills " +
-                    ChatColor.GREEN + warlordsPlayer.getTotalAssists() + ChatColor.RESET + " Assists";
-        }
-
-        entries[0] = ChatColor.YELLOW + Warlords.VERSION;
-
-        Collections.reverse(Arrays.asList(entries));
-
-        customScoreboard.giveNewSideBar(init, entries);
+        customScoreboard.giveNewSideBar(init, scoreboard);
     }
 
-    public String getTimeLeftString() {
-        int secondsRemaining = this.getTimer() / 20;
-        int minute = secondsRemaining / 60;
-        int second = secondsRemaining % 60;
-        String timeLeft = "";
-        if (minute < 10) {
-            timeLeft += "0";
-        }
-        timeLeft += minute + ":";
-        if (second < 10) {
-            timeLeft += "0";
-        }
-        timeLeft += second;
-        return timeLeft;
+    @Override
+    public void onPlayerReJoinGame(Player player) {
+        WarlordsPlayer wp = Warlords.getPlayer(player);
+        updateBasedOnGameState(false, Warlords.playerScoreboards.get(player.getUniqueId()), wp);
     }
 
-    private static <K, V, M extends Map<K, V>> BinaryOperator<M> mapMerger(BinaryOperator<V> mergeFunction) {
-        return (m1, m2) -> {
-            for (Map.Entry<K, V> e : m2.entrySet())
-                m1.merge(e.getKey(), e.getValue(), mergeFunction);
-            return m1;
-        };
+    public int getTicksElapsed() {
+        return this.timer;
     }
 
-    // We have to copy this to allow null keys
-    public static <T, K, D, A, M extends Map<K, D>> Collector<T, ?, M> groupingBy(
-            Function<? super T, ? extends K> classifier,
-            Supplier<M> mapFactory,
-            Collector<? super T, A, D> downstream
-    ) {
-        Supplier<A> downstreamSupplier = downstream.supplier();
-        BiConsumer<A, ? super T> downstreamAccumulator = downstream.accumulator();
-        BiConsumer<Map<K, A>, T> accumulator = (m, t) -> {
-            K key = classifier.apply(t);
-            A container = m.computeIfAbsent(key, k -> downstreamSupplier.get());
-            downstreamAccumulator.accept(container, t);
-        };
-        BinaryOperator<Map<K, A>> merger = PlayingState.<K, A, Map<K, A>>mapMerger(downstream.combiner());
-        @SuppressWarnings("unchecked")
-        Supplier<Map<K, A>> mangledFactory = (Supplier<Map<K, A>>) mapFactory;
-        @SuppressWarnings("unchecked")
-        Function<A, A> downstreamFinisher = (Function<A, A>) downstream.finisher();
-        Function<Map<K, A>, M> finisher = intermediate -> {
-            intermediate.replaceAll((k, v) -> downstreamFinisher.apply(v));
-            @SuppressWarnings("unchecked")
-            M castResult = (M) intermediate;
-            return castResult;
-        };
-        if (downstream.characteristics().contains(Collector.Characteristics.IDENTITY_FINISH)) {
-            return Collector.of(mangledFactory, accumulator, merger, finisher, Collector.Characteristics.IDENTITY_FINISH);
-        } else {
-            return Collector.of(mangledFactory, accumulator, merger, finisher);
-        }
-    }
-
-    public class Stats {
-        private final Team team;
-        int points;
-        int kills;
-        int captures;
-        int deaths;
-
-        public Stats(Team team) {
-            this.team = team;
-        }
-
-        public int points() {
-            return points;
-        }
-
-        public void setPoints(int points) {
-            int oldPoints = this.points;
-            this.points = points;
-            Bukkit.getPluginManager().callEvent(new WarlordsPointsChangedEvent(game, team, oldPoints, this.points));
-        }
-
-        private void addPoints(int i) {
-            setPoints(points() + i);
-        }
-
-        public int kills() {
-            return kills;
-        }
-
-        public void setKills(int kills) {
-            this.kills = kills;
-        }
-
-        public int captures() {
-            return captures;
-        }
-
-        public void setCaptures(int captures) {
-            this.captures = captures;
-        }
-
-        public int deaths() {
-            return deaths;
-        }
-
-        public void setDeaths(int deaths) {
-            this.deaths = deaths;
-        }
-
-        @Override
-        public String toString() {
-            return "Stats{" + "points=" + points + ", kills=" + kills + ", captures=" + captures + ", deaths=" + deaths + '}';
-        }
-
-    }
 }

@@ -1,18 +1,21 @@
 package com.ebicep.warlords.maps.state;
 
-import com.ebicep.customentities.npc.traits.GameStartTrait;
 import com.ebicep.jda.BotManager;
 import com.ebicep.warlords.Warlords;
+import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.maps.Game;
-import com.ebicep.warlords.maps.Gates;
+import com.ebicep.warlords.maps.GameAddon;
 import com.ebicep.warlords.maps.Team;
+import com.ebicep.warlords.maps.option.marker.LobbyLocationMarker;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.sr.SRCalculator;
-import com.ebicep.warlords.util.ChatUtils;
+import com.ebicep.warlords.util.ItemBuilder;
+import com.ebicep.warlords.util.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.*;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -21,10 +24,13 @@ import java.util.stream.Collectors;
 import static com.ebicep.warlords.util.ChatUtils.sendMessage;
 
 public class PreLobbyState implements State, TimerDebugAble {
+    public static final String WARLORDS_DATABASE_MESSAGEFEED = "warlords.database.messagefeed";
 
     private final Game game;
     private final Map<UUID, TeamPreference> teamPreferences = new HashMap<>();
     private int timer = 0;
+    private int maxTimer = 0;
+    private boolean timerHasBeenSkipped = false;
 
     public PreLobbyState(Game game) {
         this.game = game;
@@ -32,52 +38,51 @@ public class PreLobbyState implements State, TimerDebugAble {
 
     @Override
     public void begin() {
-        timer = game.getMap().getCountdownTimerInTicks();
-        Gates.changeGates(game.getMap(), false);
-        //game.setPrivate(false);
+        this.maxTimer = game.getMap().getLobbyCountdown();
+        this.resetTimer();
+        // Debug
+        game.setAcceptsPlayers(true);
+        game.setAcceptsSpectators(false);
+    }
+    
+    public boolean hasEnoughPlayers() {
+        int players = game.playersCount();
+        return players >= game.getMinPlayers();
     }
 
     @Override
     public State run() {
-        int players = game.playersCount();
-        if (players >= game.getMap().getMinPlayers() || game.isPrivate()) {
+        if (hasEnoughPlayers() || timerHasBeenSkipped) {
+            timerHasBeenSkipped = false;
             if (timer % 20 == 0) {
                 int time = timer / 20;
-                game.forEachOnlinePlayer((player, team) -> {
+                game.forEachOnlinePlayerWithoutSpectators((player, team) -> {
                     giveLobbyScoreboard(false, player);
                     player.setAllowFlight(false);
                 });
                 if (time == 30) {
-                    game.forEachOnlinePlayer((player, team) -> {
+                    game.forEachOnlinePlayerWithoutSpectators((player, team) -> {
                         sendMessage(player, false, ChatColor.YELLOW + "The game starts in " + ChatColor.GREEN + "30 " + ChatColor.YELLOW + "seconds!");
                         player.playSound(player.getLocation(), Sound.NOTE_STICKS, 1, 1);
                     });
                 } else if (time == 20) {
-                    game.forEachOnlinePlayer((player, team) -> {
+                    game.forEachOnlinePlayerWithoutSpectators((player, team) -> {
                         sendMessage(player, false, ChatColor.YELLOW + "The game starts in 20 seconds!");
                         player.playSound(player.getLocation(), Sound.NOTE_STICKS, 1, 1);
                     });
                 } else if (time == 10) {
-                    game.forEachOnlinePlayer((player, team) -> {
+                    game.forEachOnlinePlayerWithoutSpectators((player, team) -> {
                         sendMessage(player, false, ChatColor.YELLOW + "The game starts in " + ChatColor.GOLD + "10 " + ChatColor.YELLOW + "seconds!");
                         player.playSound(player.getLocation(), Sound.NOTE_STICKS, 1, 1);
                     });
                 } else if (time <= 5 && time != 0) {
-                    game.forEachOnlinePlayer((player, team) -> {
+                    game.forEachOnlinePlayerWithoutSpectators((player, team) -> {
                         String s = time == 1 ? "!" : "s!";
                         sendMessage(player, false, ChatColor.YELLOW + "The game starts in " + ChatColor.RED + time + ChatColor.YELLOW + " second" + s);
                         player.playSound(player.getLocation(), Sound.NOTE_STICKS, 1, 1);
                     });
                 } else if (time == 0) {
-                    game.forEachOnlinePlayer((player, team) -> {
-                        ChatUtils.sendMessage(player, false, "" + ChatColor.GREEN + ChatColor.BOLD + "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬");
-                        ChatUtils.sendMessage(player, true, "" + ChatColor.WHITE + ChatColor.BOLD + "Warlords");
-                        ChatUtils.sendMessage(player, true, "");
-                        ChatUtils.sendMessage(player, true, "" + ChatColor.YELLOW + ChatColor.BOLD + "Steal and capture the enemy team's flag to");
-                        ChatUtils.sendMessage(player, true, "" + ChatColor.YELLOW + ChatColor.BOLD + "earn " + ChatColor.AQUA + ChatColor.BOLD + "250 " + ChatColor.YELLOW + ChatColor.BOLD + "points! The first team with a");
-                        ChatUtils.sendMessage(player, true, "" + ChatColor.YELLOW + ChatColor.BOLD + "score of " + ChatColor.AQUA + ChatColor.BOLD + "1000 " + ChatColor.YELLOW + ChatColor.BOLD + "wins!");
-                        ChatUtils.sendMessage(player, true, "");
-                        ChatUtils.sendMessage(player, false, "" + ChatColor.GREEN + ChatColor.BOLD + "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬");
+                    game.forEachOnlinePlayerWithoutSpectators((player, team) -> {
                         player.playSound(player.getLocation(), "gamestart", 1, 1);
                         player.setAllowFlight(false);
                     });
@@ -87,7 +92,49 @@ public class PreLobbyState implements State, TimerDebugAble {
             }
 
             if (timer <= 0) {
-                if (!game.isPrivate()) {
+                // TODO update balancing system to read a games Team Markers,
+                // this is needed for when we support more teams in the future
+                if (!game.getAddons().contains(GameAddon.PRIVATE_GAME)) {
+                    //separating internalPlayers into even teams because it might be uneven bc internalPlayers couldve left
+
+                    //balancing based on specs
+
+                    //parties first
+                    int sameTeamPartyLimit = 2;
+                    HashMap<Team, List<Player>> partyMembers = new HashMap<Team, List<Player>>() {{
+                        put(Team.BLUE, new ArrayList<>());
+                        put(Team.RED, new ArrayList<>());
+                    }};
+                    game.onlinePlayersWithoutSpectators().filter(e -> e.getValue() != null).forEach(e -> {
+                        Player player = e.getKey();
+                        Team team = e.getValue();
+                        //check if player already is recorded
+                        // TODO Test this logic if player are not online if this happens (we do not have player objects in this case)
+                        if (partyMembers.values().stream().anyMatch(list -> list.contains(player))) { 
+                            return;
+                        }
+                        Warlords.partyManager.getPartyFromAny(player.getUniqueId()).ifPresent(party -> {
+                            List<Player> partyPlayersInGame = party.getAllPartyPeoplePlayerOnline().stream().filter(p -> game.getPlayers().containsKey(p.getUniqueId())).collect(Collectors.toList());
+                            //check if party has more than limit to get on one team, if so then skip party, they get normally balanced
+                            if (partyPlayersInGame.size() > sameTeamPartyLimit) {
+                                return;
+                            }
+                            List<Player> bluePlayers = partyMembers.get(Team.BLUE);
+                            List<Player> redPlayers = partyMembers.get(Team.RED);
+                            List<Player> partyPlayers = new ArrayList<>(partyPlayersInGame);
+                            Collections.shuffle(partyPlayers);
+                            int teamSizeDiff = Math.abs(bluePlayers.size() - redPlayers.size());
+                            //check if whole party can go on the same team to get an even amount of internalPlayers on each team
+                            if (teamSizeDiff > partyPlayers.size()) {
+                                if (bluePlayers.size() > redPlayers.size())
+                                    bluePlayers.addAll(partyPlayers);
+                                else
+                                    redPlayers.addAll(partyPlayers);
+                            } else {
+                                bluePlayers.addAll(partyPlayers);
+                            }
+                        });
+                    });
 
                     HashMap<String, Integer> playersSR = new HashMap<>();
                     SRCalculator.playersSR.forEach((key, value1) -> playersSR.put(key.getUuid(), value1 == null ? 500 : value1));
@@ -101,7 +148,9 @@ public class PreLobbyState implements State, TimerDebugAble {
                     for (int i = 0; i < 5000; i++) {
                         HashMap<Player, Team> teams = new HashMap<>();
                         HashMap<Classes, List<Player>> playerSpecs = new HashMap<>();
-                        game.forEachOnlinePlayer((player, team) -> {
+                        game.onlinePlayersWithoutSpectators().filter(e -> e.getValue() != null).forEach(e -> {
+                            Player player = e.getKey();
+                            Team team = e.getValue();
                             PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
                             playerSpecs.computeIfAbsent(playerSettings.getSelectedClass(), v -> new ArrayList<>()).add(player);
                         });
@@ -167,7 +216,6 @@ public class PreLobbyState implements State, TimerDebugAble {
                                 continue;
                             }
                         }
-
                         if (Math.abs(bluePlayers - redPlayers) > 1) {
                             maxSRDiff++;
                             continue;
@@ -184,12 +232,14 @@ public class PreLobbyState implements State, TimerDebugAble {
                     boolean secondFailSafeActive = false;
 
                     //INCASE COULDNT BALANCE
-                    if (bestTeam.size() == 0) {
+                    if (bestTeam.isEmpty()) {
                         failSafeActive = true;
                         HashMap<Player, Team> teams = new HashMap<>();
                         HashMap<Classes, List<Player>> playerSpecs = new HashMap<>();
                         //all players are online or else they wouldve been removed from queue
-                        game.forEachOnlinePlayer((player, team) -> {
+                        game.onlinePlayersWithoutSpectators().filter(e -> e.getValue() != null).forEach(e -> {
+                            Player player = e.getKey();
+                            Team team = e.getValue();
                             PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
                             playerSpecs.computeIfAbsent(playerSettings.getSelectedClass(), v -> new ArrayList<>()).add(player);
                         });
@@ -247,7 +297,9 @@ public class PreLobbyState implements State, TimerDebugAble {
                         secondFailSafeActive = true;
                         HashMap<Player, Team> teams = new HashMap<>();
                         HashMap<Classes, List<Player>> playerSpecs = new HashMap<>();
-                        game.forEachOnlinePlayer((player, team) -> {
+                        game.onlinePlayersWithoutSpectators().filter(e -> e.getValue() != null).forEach(e -> {
+                            Player player = e.getKey();
+                            Team team = e.getValue();
                             PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
                             playerSpecs.computeIfAbsent(playerSettings.getSelectedClass(), v -> new ArrayList<>()).add(player);
                         });
@@ -271,16 +323,16 @@ public class PreLobbyState implements State, TimerDebugAble {
                     }
 
                     bestTeam.forEach((player, team) -> {
-                        Warlords.game.setPlayerTeam(player, team);
+                        game.setPlayerTeam(player, team);
                         ArmorManager.resetArmor(player, Warlords.getPlayerSettings(player.getUniqueId()).getSelectedClass(), team);
                     });
 
                     int bluePlayers = (int) bestTeam.entrySet().stream().filter(playerTeamEntry -> playerTeamEntry.getValue() == Team.BLUE).count();
                     int redPlayers = (int) bestTeam.entrySet().stream().filter(playerTeamEntry -> playerTeamEntry.getValue() == Team.RED).count();
 
-                    for (Map.Entry<UUID, Team> uuidTeamEntry : game.players().collect(Collectors.toList())) {
+                    for (Map.Entry<UUID, Team> uuidTeamEntry : game.getPlayers().entrySet()) {
                         Player value = Bukkit.getPlayer(uuidTeamEntry.getKey());
-                        if (value.hasPermission("warlords.database.messagefeed")) {
+                        if (value.hasPermission(WARLORDS_DATABASE_MESSAGEFEED)) {
                             value.sendMessage(ChatColor.DARK_AQUA + "----- BALANCE INFORMATION -----");
                             value.sendMessage(ChatColor.GREEN + "Max SR Diff: " + maxSRDiff);
                             value.sendMessage(ChatColor.GREEN + "SR Diff: " + bestTeamSRDifference);
@@ -299,28 +351,22 @@ public class PreLobbyState implements State, TimerDebugAble {
                             value.sendMessage(ChatColor.DARK_AQUA + "-------------------------------");
                         }
                     }
-                    GameStartTrait.ctfQueue.clear();
-
-                    //hiding players not in game
-                    List<Player> playersNotInGame = Bukkit.getOnlinePlayers().stream()
-                            .filter(onlinePlayer -> !game.getPlayers().containsKey(onlinePlayer.getUniqueId()))
-                            .collect(Collectors.toList());
-                    Bukkit.getOnlinePlayers().stream()
-                            .filter(onlinePlayer -> game.getPlayers().containsKey(onlinePlayer.getUniqueId()))
-                            .forEach(playerInParty -> playersNotInGame.forEach(playerNotInParty -> {
-                                playerInParty.hidePlayer(playerNotInParty);
-                            }));
                 }
 
                 if (game.getPlayers().size() >= 14) {
-                    BotManager.sendMessageToNotificationChannel("[GAME] A " + (game.isPrivate() ? "" : "Public ") + "**" + game.getMap().getMapName() + "** started with **" + game.getPlayers().size() + (game.getPlayers().size() == 1 ? "** player!" : "** players!"), game.isPrivate(), !game.isPrivate());
+                    boolean isPrivate = game.getAddons().contains(GameAddon.PRIVATE_GAME);
+                    BotManager.sendMessageToNotificationChannel(
+                            "[GAME] A " + (isPrivate ? "" : "Public ") + "**" + game.getMap().getMapName() + "** started with **" + game.getPlayers().size() + (game.getPlayers().size() == 1 ? "** player!" : "** players!"),
+                            isPrivate,
+                            !isPrivate
+                    );
                 }
                 return new PlayingState(game);
             }
             timer--;
         } else {
-            timer = game.getMap().getCountdownTimerInTicks();
-            game.forEachOnlinePlayer((player, team) -> giveLobbyScoreboard(false, player));
+            resetTimer();
+            game.forEachOnlinePlayerWithoutSpectators((player, team) -> giveLobbyScoreboard(false, player));
         }
         return null;
     }
@@ -329,10 +375,6 @@ public class PreLobbyState implements State, TimerDebugAble {
     public void end() {
         updateTeamPreferences();
         distributePeopleOverTeams();
-    }
-
-    public int getTimer() {
-        return timer;
     }
 
     public String getTimeLeftString() {
@@ -356,12 +398,12 @@ public class PreLobbyState implements State, TimerDebugAble {
         }
 
         Classes classes = Warlords.getPlayerSettings(player.getUniqueId()).getSelectedClass();
-        if (game.playersCount() >= game.getMap().getMinPlayers() || game.isPrivate()) {
+        if (hasEnoughPlayers()) {
             customScoreboard.giveNewSideBar(init,
                     ChatColor.GRAY + dateString,
                     "  ",
                     mapPrefix + mapSuffix,
-                    ChatColor.WHITE + "Players: " + ChatColor.GREEN + game.playersCount() + "/" + game.getMap().getMaxPlayers(),
+                    ChatColor.WHITE + "Players: " + ChatColor.GREEN + game.playersCount() + "/" + game.getMaxPlayers(),
                     "   ",
                     ChatColor.WHITE + "Starting in: " + ChatColor.GREEN + getTimeLeftString() + ChatColor.WHITE,
                     "    ",
@@ -374,7 +416,7 @@ public class PreLobbyState implements State, TimerDebugAble {
                     ChatColor.GRAY + dateString,
                     "  ",
                     mapPrefix + mapSuffix,
-                    ChatColor.WHITE + "Players: " + ChatColor.GREEN + game.playersCount() + "/" + game.getMap().getMaxPlayers(),
+                    ChatColor.WHITE + "Players: " + ChatColor.GREEN + game.playersCount() + "/" + game.getMaxPlayers(),
                     "   ",
                     ChatColor.WHITE + "Starting if " + ChatColor.GREEN + (game.getMap().getMinPlayers() - game.playersCount()) + ChatColor.WHITE + " more",
                     ChatColor.WHITE + "players join ",
@@ -387,7 +429,10 @@ public class PreLobbyState implements State, TimerDebugAble {
     }
 
     private void updateTeamPreferences() {
-        this.game.offlinePlayers().forEach((e) -> {
+        this.game.offlinePlayersWithoutSpectators().forEach((e) -> {
+            if (e.getValue() == null) {
+                return; // skip spectators
+            }
             Team selectedTeam = Warlords.getPlayerSettings(e.getKey().getUniqueId()).getWantedTeam();
             if (selectedTeam == null) {
                 Bukkit.broadcastMessage(ChatColor.GOLD + e.getKey().getName() + " §7did not choose a team!");
@@ -467,11 +512,91 @@ public class PreLobbyState implements State, TimerDebugAble {
     @Override
     public void skipTimer() {
         this.timer = 0;
+        this.timerHasBeenSkipped = true;
     }
 
     @Override
     public void resetTimer() throws IllegalStateException {
-        this.timer = game.getMap().getCountdownTimerInTicks();
+        this.timer = this.maxTimer;
+    }
+
+    @Override
+    public void onPlayerJoinGame(OfflinePlayer op, boolean asSpectator) {
+        if (!asSpectator) {
+            Team team = Warlords.getPlayerSettings(op.getUniqueId()).getWantedTeam();
+            Team finalTeam = team == null ? Team.BLUE : team;
+            game.setPlayerTeam(op, finalTeam );
+            List<LobbyLocationMarker> lobbies = game.getMarkers(LobbyLocationMarker.class);
+            LobbyLocationMarker location = lobbies.stream().filter(e -> e.matchesTeam(finalTeam)).collect(Utils.randomElement());
+            if (location == null) {
+                location = lobbies.stream().collect(Utils.randomElement()); 
+            }
+            if (location != null) {
+                Warlords.setRejoinPoint(op.getUniqueId(), location.getLocation());
+            }
+        }
+    }
+
+    @Override
+    public void onPlayerReJoinGame(Player player) {
+        State.super.onPlayerReJoinGame(player);
+        Team team = game.getPlayerTeam(player.getUniqueId());
+        player.getActivePotionEffects().clear();
+        
+        if (team == null) {
+            player.getInventory().clear();
+            player.setAllowFlight(true);
+            player.setGameMode(GameMode.SPECTATOR);
+        } else {
+            player.getInventory().clear();
+            player.setAllowFlight(false);
+            player.setGameMode(GameMode.ADVENTURE);
+            
+            PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
+            Classes selectedClass = playerSettings.getSelectedClass();
+            AbstractPlayerClass apc = selectedClass.create.get();
+
+            player.getInventory().setItem(5, new ItemBuilder(Material.NOTE_BLOCK)
+                    .name(ChatColor.GREEN + "Team Selector " + ChatColor.GRAY + "(Right-Click)")
+                    .lore(ChatColor.YELLOW + "Click to select your team!")
+                    .get());
+            player.getInventory().setItem(6, new ItemBuilder(Material.NETHER_STAR)
+                    .name(ChatColor.AQUA + "Pre-game Menu ")
+                    .lore(ChatColor.GRAY + "Allows you to change your class, select a\n" + ChatColor.GRAY + "weapon, and edit your settings.")
+                    .get());
+            player.getInventory().setItem(1, new ItemBuilder(apc.getWeapon()
+                    .getItem(playerSettings.getWeaponSkins()
+                            .getOrDefault(selectedClass, Weapons.FELFLAME_BLADE).item))
+                    .name("§aWeapon Skin Preview")
+                    .lore("")
+                    .get());
+
+            ArmorManager.resetArmor(player, Warlords.getPlayerSettings(player.getUniqueId()).getSelectedClass(), team);
+        }
+        
+        LobbyLocationMarker location = LobbyLocationMarker.getRandomLobbyLocation(game, team);
+        if (location != null) {
+            player.teleport(location.getLocation());
+            Warlords.setRejoinPoint(player.getUniqueId(), location.getLocation());
+        } else {
+            System.out.println("Unable to warp player to lobby!, no lobby marker found");
+        }
+    }
+
+    public int getTimer() {
+        return timer;
+    }
+
+    public void setTimer(int timer) {
+        this.timer = timer;
+    }
+
+    public int getMaxTimer() {
+        return maxTimer;
+    }
+
+    public void setMaxTimer(int maxTimer) {
+        this.maxTimer = maxTimer;
     }
 
     private enum TeamPriority {

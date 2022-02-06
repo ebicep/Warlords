@@ -6,7 +6,6 @@ import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.EffectUtils;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 public class Repentance extends AbstractAbility {
 
@@ -16,19 +15,6 @@ public class Repentance extends AbstractAbility {
 
     public Repentance() {
         super("Repentance", 0, 0, 31.32f, 20, 0, 0);
-        Warlords.game.getGameTasks().put(
-
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        if (pool > 0) {
-                            float newPool = pool * .8f - 60;
-                            pool = Math.max(newPool, 0);
-                        }
-                    }
-                }.runTaskTimer(Warlords.getInstance(), 0, 20),
-                System.currentTimeMillis()
-        );
     }
 
     @Override
@@ -75,5 +61,13 @@ public class Repentance extends AbstractAbility {
 
     public void setPool(float pool) {
         this.pool = pool;
+    }
+    
+    @Override
+    public void runEverySecond() {
+        if (pool > 0) {
+            float newPool = pool * .8f - 60;
+            pool = Math.max(newPool, 0);
+        }
     }
 }

@@ -4,6 +4,7 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.FutureMessageManager;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.maps.GameAddon;
 import com.ebicep.warlords.util.ChatUtils;
 import com.ebicep.warlords.util.NumberFormat;
 import org.bson.Document;
@@ -19,21 +20,23 @@ import java.util.*;
 
 public class ExperienceManager {
 
-    public static Map<Integer, Long> levelExperience = new HashMap<>();
-    public static Map<Long, Integer> experienceLevel = new HashMap<>();
-    public static DecimalFormat currentExperienceDecimalFormat = new DecimalFormat("#,###.#");
-    public static HashMap<UUID, LinkedHashMap<String, Long>> cachedPlayerExpSummary = new HashMap<>();
+    public static final Map<Integer, Long> levelExperience;
+    public static final Map<Long, Integer> experienceLevel;
+    public static final DecimalFormat currentExperienceDecimalFormat = new DecimalFormat("#,###.#");
+    public static final HashMap<UUID, LinkedHashMap<String, Long>> cachedPlayerExpSummary = new HashMap<>();
 
     static {
         //caching all levels/experience
+        Map<Integer, Long> levelExperienceNew = new HashMap<>();
+        Map<Long, Integer> experienceLevelNew = new HashMap<>();
         for (int i = 0; i < 201; i++) {
             long exp = (long) calculateExpFromLevel(i);
-            levelExperience.put(i, exp);
-            experienceLevel.put(exp, i);
+            levelExperienceNew.put(i, exp);
+            experienceLevelNew.put(exp, i);
         }
 
-        levelExperience = Collections.unmodifiableMap(levelExperience);
-        experienceLevel = Collections.unmodifiableMap(experienceLevel);
+        levelExperience = Collections.unmodifiableMap(levelExperienceNew);
+        experienceLevel = Collections.unmodifiableMap(experienceLevelNew);
 
         currentExperienceDecimalFormat.setDecimalSeparatorAlwaysShown(false);
     }
@@ -98,10 +101,11 @@ public class ExperienceManager {
         if (!recalculate && cachedPlayerExpSummary.containsKey(warlordsPlayer.getUuid()) && cachedPlayerExpSummary.get(warlordsPlayer.getUuid()) != null) {
             return cachedPlayerExpSummary.get(warlordsPlayer.getUuid());
         }
-        boolean isCompGame = warlordsPlayer.getGame().isPrivate();
-        boolean won = !warlordsPlayer.getGameState().isForceEnd() && warlordsPlayer.getGameState().getStats(warlordsPlayer.getTeam()).points() > warlordsPlayer.getGameState().getStats(warlordsPlayer.getTeam().enemy()).points();
+        boolean isCompGame = warlordsPlayer.getGame().getAddons().contains(GameAddon.PRIVATE_GAME);
+        // TODO add check here for game ending in a draw
+        boolean won = warlordsPlayer.getGameState().getStats(warlordsPlayer.getTeam()).points() > warlordsPlayer.getGameState().getStats(warlordsPlayer.getTeam().enemy()).points();
         long winLossExp = won ? 500 : 250;
-        long kaExp = 5L * (warlordsPlayer.getTotalKills() + warlordsPlayer.getTotalAssists());
+        long kaExp = 5L * (warlordsPlayer.getStats().total().getKills() + warlordsPlayer.getStats().total().getAssists());
 
         double damageMultiplier;
         double healingMultiplier;
@@ -120,7 +124,7 @@ public class ExperienceManager {
             healingMultiplier = .1;
             absorbedMultiplier = .325;
         }
-        double calculatedDHP = warlordsPlayer.getTotalDamage() * damageMultiplier + warlordsPlayer.getTotalHealing() * healingMultiplier + warlordsPlayer.getTotalAbsorbed() * absorbedMultiplier;
+        double calculatedDHP = warlordsPlayer.getStats().total().getDamage() * damageMultiplier + warlordsPlayer.getStats().total().getHealing() * healingMultiplier + warlordsPlayer.getStats().total().getAbsorbed() * absorbedMultiplier;
         long dhpExp = (long) (calculatedDHP / 500L);
         long flagCapExp = warlordsPlayer.getFlagsCaptured() * 150L;
         long flagRetExp = warlordsPlayer.getFlagsReturned() * 50L;

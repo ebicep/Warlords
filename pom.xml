@@ -85,6 +85,11 @@
                     </execution>
                 </executions>
             </plugin>
+			<!-- Run tests to make sure everything is working before we manually test everything -->
+			<plugin>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.22.0</version>
+			</plugin>
 <!--            <plugin>-->
 <!--                <groupId>org.springframework.boot</groupId>-->
 <!--                <artifactId>spring-boot-maven-plugin</artifactId>-->
@@ -213,5 +218,5 @@
             <version>2.9.3</version>
             <scope>compile</scope>
         </dependency>
-    </dependencies>
+	</dependencies>
 </project>

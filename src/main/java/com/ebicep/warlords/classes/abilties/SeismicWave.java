@@ -1,17 +1,16 @@
 package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.customentities.CustomFallingBlock;
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.PlayerFilter;
 import com.ebicep.warlords.util.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
@@ -65,25 +64,23 @@ public class SeismicWave extends AbstractAbility {
                 }
             }
         }
-        wp.getGame().getGameTasks().put(
+        new GameRunnable(wp.getGame()) {
 
-                new BukkitRunnable() {
+            @Override
+            public void run() {
+                if (!wp.getGame().isFrozen()) {
 
-                    @Override
-                    public void run() {
-                        if (!wp.getGame().isGameFreeze()) {
-
-                            for (List<Location> fallingBlockLocation : fallingBlockLocations) {
-                                for (Location location : fallingBlockLocation) {
-                                    if (location.getWorld().getBlockAt(location.clone().add(0, 1, 0)).getType() == Material.AIR) {
-                                        FallingBlock fallingBlock = addFallingBlock(location);
-                                        customFallingBlocks.add(new CustomFallingBlock(fallingBlock, wp, SeismicWave.this));
-                                        WarlordsEvents.addEntityUUID(fallingBlock);
-                                    }
-                                }
-                                fallingBlockLocations.remove(fallingBlockLocation);
-                                break;
+                    for (List<Location> fallingBlockLocation : fallingBlockLocations) {
+                        for (Location location : fallingBlockLocation) {
+                            if (location.getWorld().getBlockAt(location.clone().add(0, 1, 0)).getType() == Material.AIR) {
+                                FallingBlock fallingBlock = addFallingBlock(location);
+                                customFallingBlocks.add(new CustomFallingBlock(fallingBlock, wp, SeismicWave.this));
+                                WarlordsEvents.addEntityUUID(fallingBlock);
                             }
+                        }
+                        fallingBlockLocations.remove(fallingBlockLocation);
+                        break;
+                    }
 
                             for (int i = 0; i < customFallingBlocks.size(); i++) {
                                 CustomFallingBlock cfb = customFallingBlocks.get(i);
@@ -95,15 +92,13 @@ public class SeismicWave extends AbstractAbility {
                                 }
                             }
 
-                            if (fallingBlockLocations.isEmpty() && customFallingBlocks.isEmpty()) {
-                                this.cancel();
-                            }
-                        }
+                    if (fallingBlockLocations.isEmpty() && customFallingBlocks.isEmpty()) {
+                        this.cancel();
                     }
+                }
+            }
 
-                }.runTaskTimer(Warlords.getInstance(), 0, 0),
-                System.currentTimeMillis()
-        );
+        }.runTaskTimer(0, 0);
 
         return true;
     }

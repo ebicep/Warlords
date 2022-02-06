@@ -36,7 +36,7 @@ public class QueueManager {
         }
         if (!futureQueue.isEmpty()) {
             stringBuilder.append("\n");
-            stringBuilder.append(ChatColor.GREEN + "Future Queue -\n");
+            stringBuilder.append(ChatColor.GREEN).append("Future Queue -\n");
             futureQueue.forEach(futureQueuePlayer -> {
                 stringBuilder.append("    ").append(ChatColor.YELLOW).append("- ").append(ChatColor.AQUA).append(Bukkit.getOfflinePlayer(futureQueuePlayer.getUuid()).getName()).append(ChatColor.GRAY).append(" (").append(futureQueuePlayer.getTimeString()).append(")").append("\n");
             });
@@ -108,9 +108,9 @@ public class QueueManager {
 
 
     static public class FutureQueuePlayer {
-        private UUID uuid;
-        private String timeString;
-        private BukkitTask task;
+        private final UUID uuid;
+        private final String timeString;
+        private final BukkitTask task;
 
         public FutureQueuePlayer(UUID uuid, String timeString, BukkitTask task) {
             this.uuid = uuid;

@@ -4,13 +4,13 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.internal.AbstractTotemBase;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.util.GameRunnable;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.scheduler.BukkitRunnable;
 
 
 public class CapacitorTotem extends AbstractTotemBase {
@@ -51,25 +51,22 @@ public class CapacitorTotem extends AbstractTotemBase {
     protected void onActivation(WarlordsPlayer wp, Player player, ArmorStand totemStand) {
         wp.getCooldownManager().addRegularCooldown(name, "TOTEM", CapacitorTotem.class, new CapacitorTotem(), wp, CooldownTypes.ABILITY, cooldownManager -> {
         }, duration * 20);
-        wp.getGame().getGameTasks().put(
-                new BukkitRunnable() {
-                    int timeLeft = duration;
+        new GameRunnable(wp.getGame()) {
+            int timeLeft = duration;
 
-                    @Override
-                    public void run() {
-                        if (!wp.getGame().isGameFreeze()) {
+            @Override
+            public void run() {
+                if (!wp.getGame().isFrozen()) {
 
-                            if (timeLeft == 0) {
-                                totemStand.remove();
-                                this.cancel();
-                            }
-                            timeLeft--;
-                        }
+                    if (timeLeft == 0) {
+                        totemStand.remove();
+                        this.cancel();
                     }
+                    timeLeft--;
+                }
+            }
 
-                }.runTaskTimer(Warlords.getInstance(), 0, 20),
-                System.currentTimeMillis()
-        );
+        }.runTaskTimer(0, 20);
     }
 
 

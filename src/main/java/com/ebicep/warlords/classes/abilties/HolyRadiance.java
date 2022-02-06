@@ -34,9 +34,8 @@ public class HolyRadiance extends AbstractAbility {
                 .entitiesAround(player, radius, radius, radius)
                 .aliveTeammatesOfExcludingSelf(wp)
         ) {
-            wp.getGame().getGameTasks().put(
-                    new FlyingArmorStand(wp.getLocation(), p, wp, 1.1).runTaskTimer(Warlords.getInstance(), 1, 1),
-                    System.currentTimeMillis()
+            wp.getGame().registerGameTask(
+                    new FlyingArmorStand(wp.getLocation(), p, wp, 1.1).runTaskTimer(Warlords.getInstance(), 1, 1)
             );
         }
 
@@ -56,10 +55,10 @@ public class HolyRadiance extends AbstractAbility {
 
     private class FlyingArmorStand extends BukkitRunnable {
 
-        private WarlordsPlayer target;
-        private WarlordsPlayer owner;
-        private double speed;
-        private ArmorStand armorStand;
+        private final WarlordsPlayer target;
+        private final WarlordsPlayer owner;
+        private final double speed;
+        private final ArmorStand armorStand;
 
         public FlyingArmorStand(Location location, WarlordsPlayer target, WarlordsPlayer owner, double speed) {
             this.armorStand = location.getWorld().spawn(location, ArmorStand.class);
@@ -78,7 +77,7 @@ public class HolyRadiance extends AbstractAbility {
 
         @Override
         public void run() {
-            if (!owner.getGame().isGameFreeze()) {
+            if (!owner.getGame().isFrozen()) {
 
                 if (this.target.isDead()) {
                     this.cancel();

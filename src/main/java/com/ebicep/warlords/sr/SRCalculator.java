@@ -1,8 +1,6 @@
 package com.ebicep.warlords.sr;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.database.DatabaseManager;
-import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseStatInformation;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import org.bukkit.Bukkit;
@@ -11,8 +9,6 @@ import org.bukkit.ChatColor;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class SRCalculator {

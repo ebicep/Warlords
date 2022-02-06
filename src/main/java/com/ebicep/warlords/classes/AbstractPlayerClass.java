@@ -332,4 +332,12 @@ public abstract class AbstractPlayerClass {
     public String getClassNameShortWithBrackets() {
         return ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + this.classNameShort + ChatColor.DARK_GRAY + "]";
     }
+    
+    public void runEverySecond() {
+        this.red.runEverySecond();
+        this.blue.runEverySecond();
+        this.orange.runEverySecond();
+        this.purple.runEverySecond();
+        this.weapon.runEverySecond();
+    }
 }

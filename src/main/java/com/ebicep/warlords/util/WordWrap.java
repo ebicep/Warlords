@@ -14,13 +14,13 @@ public class WordWrap {
                 lastOffset = pendingOffset + 1;
             } else if (currentLength > width) {
                 if (lastOffset != previousOffset) {
-                    output.append(line.substring(previousOffset, lastOffset));
+                    output.append(line, previousOffset, lastOffset);
                     output.append('\n');
                     previousOffset = lastOffset;
                     pendingOffset = lastOffset;
                     currentLength = 0;
                 } else {
-                    output.append(line.substring(previousOffset, pendingOffset));
+                    output.append(line, previousOffset, pendingOffset);
                     output.append('\n');
                     previousOffset = pendingOffset;
                     lastOffset = pendingOffset;
@@ -31,7 +31,7 @@ public class WordWrap {
         }
         int pendingOffset = line.length();
         if (previousOffset != pendingOffset) {
-            output.append(line.substring(previousOffset, pendingOffset));
+            output.append(line, previousOffset, pendingOffset);
             output.append('\n');
         }
         if (output.length() > 0) {

@@ -2,363 +2,826 @@ package com.ebicep.warlords.maps;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.events.WarlordsEvents;
-import com.ebicep.warlords.maps.state.*;
+import com.ebicep.warlords.events.WarlordsGameEvent;
+import com.ebicep.warlords.events.WarlordsGameUpdatedEvent;
+import com.ebicep.warlords.events.WarlordsPointsChangedEvent;
+import com.ebicep.warlords.maps.option.GameFreezeOption;
+import com.ebicep.warlords.maps.option.Option;
+import com.ebicep.warlords.maps.option.marker.GameMarker;
+import com.ebicep.warlords.maps.option.marker.TeamMarker;
+import com.ebicep.warlords.maps.option.marker.scoreboard.ScoreboardHandler;
+import com.ebicep.warlords.maps.state.ClosedState;
+import com.ebicep.warlords.maps.state.State;
 import com.ebicep.warlords.player.WarlordsPlayer;
-import com.ebicep.warlords.util.PacketUtils;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.minecraft.server.v1_8_R3.EntityLiving;
-import net.minecraft.server.v1_8_R3.GenericAttributes;
+import com.ebicep.warlords.util.GameRunnable;
+import com.ebicep.warlords.util.LocationFactory;
 import org.apache.commons.lang.Validate;
-import org.bukkit.*;
-import org.bukkit.command.Command;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
-import org.bukkit.entity.Horse;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.event.Event;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
+import org.bukkit.plugin.IllegalPluginAccessException;
+import org.bukkit.plugin.RegisteredListener;
 import org.bukkit.scheduler.BukkitTask;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.lang.reflect.Method;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class Game implements Runnable {
+import static com.ebicep.warlords.util.Utils.collectionHasItem;
 
-    public static TextComponent spacer = new TextComponent(ChatColor.GRAY + " - ");
+/**
+ * An instance of an Warlords game. It depends on a state for its behavior. You
+ * can also attach GameAddons to modify its global behavior, and attach options
+ * to add specific small things.
+ *
+ * @see State
+ * @see GameAddon
+ * @see Option
+ */
+public final class Game implements Runnable, AutoCloseable {
+
+    public static final String KEY_UPDATED_FROZEN = "frozen";
+
+    private final UUID gameId = UUID.randomUUID();
+
     private final Map<UUID, Team> players = new HashMap<>();
-    public boolean freezeOnCooldown = false;
+    private final long createdAt = System.currentTimeMillis();
+    private final List<BukkitTask> gameTasks = new ArrayList<>();
+    private final List<Listener> eventHandlers = new ArrayList<>();
+    private final EnumMap<Team, Stats> stats = new EnumMap(Team.class);
+
+    @Nonnull
+    private final GameMap map;
+    @Nonnull
+    private final MapCategory category;
+    @Nonnull
+    private final EnumSet<GameAddon> addons;
+    @Nonnull
+    private List<Option> options;
+
+    @Nullable
     private State state = null;
-    private GameMap map = GameMap.RIFT;
-    private boolean cooldownMode;
-    private boolean gameFreeze = false;
-    private boolean isPrivate = false;
-    private List<UUID> spectators = new ArrayList<>();
-    private HashMap<BukkitTask, Long> gameTasks = new HashMap<>();
+    @Nullable
+    private State nextState = null;
+    private boolean closed = false;
+    private final List<String> frozenCauses = new CopyOnWriteArrayList<>();
+    private int maxPlayers;
+    private int minPlayers;
+    private boolean acceptsPlayers;
+    private boolean acceptsSpectators;
+    private final LocationFactory locations;
+
+    public Game(EnumSet<GameAddon> gameAddons, GameMap map, MapCategory category, LocationFactory locations) {
+        this.locations = locations;
+        this.addons = gameAddons;
+        this.map = map;
+        this.category = category;
+        this.options = new ArrayList<>(map.initMap(category, locations, gameAddons));
+        if (!collectionHasItem(options, e -> e instanceof GameFreezeOption)) {
+            options.add(new GameFreezeOption());
+        }
+        this.minPlayers = map.getMinPlayers();
+        this.maxPlayers = map.getMaxPlayers();
+        for (GameAddon addon : gameAddons) {
+            this.maxPlayers = addon.getMaxPlayers(map, this.maxPlayers);
+        }
+    }
+
+    public void start() {
+        if (state != null) {
+            throw new IllegalStateException("Game already started");
+        }
+        for (GameAddon addon : addons) {
+            addon.modifyGame(this);
+        }
+        this.options = Collections.unmodifiableList(options);
+        state = this.map.initialState(this);
+        for (Option option : options) {
+            option.register(this);
+        }
+        for (Team team : TeamMarker.getTeams(this)) {
+            this.stats.put(team, new Stats(team));
+        }
+        state.begin();
+        for (GameAddon addon : addons) {
+            addon.stateHasChanged(this, null, state);
+        }
+        new GameRunnable(this) {
+            @Override
+            public void run() {
+                Game.this.run();
+            }
+        }.runTaskTimer(0, 1);
+        this.printDebuggingInformation();
+    }
 
     public boolean isState(Class<? extends State> clazz) {
+        if (this.state == null) {
+            throw new IllegalStateException("The game is not started yet");
+        }
         return clazz.isAssignableFrom(this.state.getClass());
     }
 
     public <T extends State> Optional<T> getState(Class<T> clazz) {
+        if (this.state == null) {
+            throw new IllegalStateException("The game is not started yet");
+        }
         if (clazz.isAssignableFrom(this.state.getClass())) {
             return Optional.of((T) this.state);
         }
         return Optional.empty();
     }
 
+    @Nonnull
     public State getState() {
+        if (this.state == null) {
+            throw new IllegalStateException("The game is not started yet");
+        }
         return state;
     }
 
+    /**
+     * Gets the game map used to construct this game
+     *
+     * @return the game map
+     */
+    @Nonnull
     public GameMap getMap() {
         return map;
     }
 
-    public boolean isRedTeam(@Nonnull UUID player) {
-        return players.get(player) == Team.RED;
+    /**
+     * Gets the used map category for construction. This is any of the
+     * categories returned by
+     * {@link com.ebicep.warlords.maps.GameMap#getCategory() getCategory} method
+     * on the {@link #getMap() getMap method}
+     *
+     * @return the map category
+     */
+    @Nonnull
+    public MapCategory getCategory() {
+        return category;
     }
 
-    public boolean isBlueTeam(@Nonnull UUID player) {
-        return players.get(player) == Team.BLUE;
+    public LocationFactory getLocations() {
+        return locations;
     }
 
-    @Nullable
-    public Team getPlayerTeamOrNull(@Nonnull UUID player) {
-        return this.players.get(player);
-    }
-
-    public boolean getCooldownMode() {
-        return this.cooldownMode;
-    }
-
-    public void setCooldownMode(boolean cooldownMode) {
-        this.cooldownMode = cooldownMode;
+    /**
+     * Check if the game is frozen
+     *
+     * @return true if the game is frozen
+     */
+    public boolean isFrozen() {
+        return !frozenCauses.isEmpty();
     }
 
     @Nonnull
+    public List<String> getFrozenCauses() {
+        return Collections.unmodifiableList(frozenCauses);
+    }
+
+    public void addFrozenCause(String cause) {
+        frozenCauses.add(cause);
+        Bukkit.getPluginManager().callEvent(new WarlordsGameUpdatedEvent(this, KEY_UPDATED_FROZEN));
+    }
+
+    public void removeFrozenCause(String cause) {
+        frozenCauses.remove(cause);
+        Bukkit.getPluginManager().callEvent(new WarlordsGameUpdatedEvent(this, KEY_UPDATED_FROZEN));
+    }
+
+    public void clearFrozenCause() {
+        frozenCauses.clear();
+        Bukkit.getPluginManager().callEvent(new WarlordsGameUpdatedEvent(this, KEY_UPDATED_FROZEN));
+    }
+
+    /**
+     * An unique id assigned to this game.
+     *
+     * @return The UUID belonging to this game
+     */
+    public UUID getGameId() {
+        return gameId;
+    }
+
+    @Nonnull
+    public EnumSet<GameAddon> getAddons() {
+        return addons;
+    }
+
+    @Nonnull
+    public List<Option> getOptions() {
+        return options;
+    }
+
+    /**
+     * Returns the creation time of this game instance
+     *
+     * @return the creation time
+     */
+    public long createdAt() {
+        return createdAt;
+    }
+
+    /**
+     * Checks if this game has been marked closed. A closed game does not accept
+     * any gametasks or players, and can no longer be used
+     *
+     * @return true if it has closed
+     */
+    public boolean isClosed() {
+        return closed;
+    }
+
+    /**
+     * Get the maximum amount of internalPlayers supported by this game
+     *
+     * @return The maximum
+     */
+    public int getMaxPlayers() {
+        return maxPlayers;
+    }
+
+    public void setMaxPlayers(int maxPlayers) {
+        this.maxPlayers = maxPlayers;
+    }
+
+    public int getMinPlayers() {
+        return minPlayers;
+    }
+
+    public void setMinPlayers(int minPlayers) {
+        this.minPlayers = minPlayers;
+    }
+
+    public boolean acceptsPeople() {
+        return acceptsPlayers;
+    }
+
+    public void setAcceptsPlayers(boolean acceptsPlayers) {
+        if (this.closed) {
+            throw new IllegalStateException("Game has been closed");
+        }
+        this.acceptsPlayers = acceptsPlayers;
+    }
+
+    public boolean acceptsSpectators() {
+        return acceptsSpectators;
+    }
+
+    public void setAcceptsSpectators(boolean acceptsSpectators) {
+        if (this.closed) {
+            throw new IllegalStateException("Game has been closed");
+        }
+        this.acceptsSpectators = acceptsSpectators;
+    }
+
+    public void setNextState(@Nullable State nextState) {
+        if (this.closed) {
+            throw new IllegalStateException("Game has been closed");
+        }
+        this.nextState = nextState;
+    }
+
+    /**
+     * Checks if a player is on a team, spectators are said to be on team
+     * <code>null</code>
+     *
+     * @param player The player to check
+     * @param team The team to check, of null for spectators
+     * @return True if the player is in the specified team
+     */
+    public boolean isOnTeam(@Nonnull UUID player, @Nullable Team team) {
+        return players.containsKey(player) && players.get(player) == team;
+    }
+
+    /**
+     * @param player
+     * @return
+     * @see #isOnTeam(java.util.UUID, com.ebicep.warlords.maps.Team)
+     * @deprecated Use
+     * <code>isOnTeam(java.util.UUID, com.ebicep.warlords.maps.Team)</code>
+     * instead
+     */
+    @Deprecated
+    public boolean isRedTeam(@Nonnull UUID player) {
+        return isOnTeam(player, Team.RED);
+    }
+
+    /**
+     * @param player
+     * @return
+     * @see #isOnTeam(java.util.UUID, com.ebicep.warlords.maps.Team)
+     * @deprecated Use
+     * <code>isOnTeam(java.util.UUID, com.ebicep.warlords.maps.Team)</code>
+     * instead
+     */
+    @Deprecated
+    public boolean isBlueTeam(@Nonnull UUID player) {
+        return isOnTeam(player, Team.BLUE);
+    }
+
+    @Nullable
     public Team getPlayerTeam(@Nonnull UUID player) {
-        Team team = getPlayerTeamOrNull(player);
-        if (team == null) {
-            throw new IllegalArgumentException("Player provided is not playing a game at the moment");
-        }
-        return team;
+        return this.players.get(player);
     }
 
-    public boolean canChangeMap() {
-        return players.isEmpty() && (state instanceof PreLobbyState || state instanceof InitState || state instanceof EndState);
-    }
-
-    public void changeMap(@Nonnull GameMap map) {
-        if (!canChangeMap()) {
-            throw new IllegalStateException("Cannot change map!");
-        }
-        this.map = map;
-        if (state != null) {
-            state.end();
-            state = null;
-        }
-    }
-
+    @Nonnull
     public Map<UUID, Team> getPlayers() {
         return players;
     }
 
-    public void addPlayer(@Nonnull OfflinePlayer player, @Nonnull Team team) {
+    /**
+     * Adds a player into the game
+     *
+     * @param player The player to add
+     * @param asSpectator If the player should be added as an spectator
+     * @see #acceptsPeople()
+     * @see #acceptsSpectators()
+     */
+    public void addPlayer(@Nonnull OfflinePlayer player, boolean asSpectator) {
         Validate.notNull(player, "player");
-        Validate.notNull(team, "team");
-        Player online = player.getPlayer();
-        if (online != null) {
-            online.setGameMode(GameMode.ADVENTURE);
-            online.setAllowFlight(false);
+        if (this.state == null) {
+            throw new IllegalStateException("The game is not started yet");
         }
-        this.players.put(player.getUniqueId(), team);
-        Location loc = this.map.getLobbySpawnPoint(team);
-        Warlords.setRejoinPoint(player.getUniqueId(), loc);
+        if (this.closed) {
+            throw new IllegalStateException("Game has been closed");
+        }
+        /*
+        if (!asSpectator && !this.acceptsPlayers) {
+            throw new IllegalStateException("This game does not accepts player at the moment");
+        }
+        if (asSpectator && !this.acceptsSpectators) {
+            throw new IllegalStateException("This game does not accepts spectators at the moment");
+        }
+         */
+        this.players.put(player.getUniqueId(), null);
+        this.state.onPlayerJoinGame(player, asSpectator);
+        Player p = player.getPlayer();
+        if (p != null) {
+            this.state.onPlayerReJoinGame(p);
+        }
     }
 
     public void setPlayerTeam(@Nonnull OfflinePlayer player, @Nonnull Team team) {
         Validate.notNull(player, "player");
         Validate.notNull(team, "team");
-        Player online = player.getPlayer();
+        if (!this.players.containsKey(player.getUniqueId())) {
+            throw new IllegalArgumentException("The specified player is not part of this game");
+        }
         Team oldTeam = this.players.get(player.getUniqueId());
         if (team == oldTeam) {
             return;
         }
-        Warlords.getPlayerSettings(player.getUniqueId()).setWantedTeam(team);
         this.players.put(player.getUniqueId(), team);
-        Location loc = this.map.getLobbySpawnPoint(team);
-        Warlords.setRejoinPoint(player.getUniqueId(), loc);
-        if (online != null) {
-            online.teleport(loc);
-        }
     }
 
-    public void removePlayer(UUID player) {
-        this.players.remove(player);
-        Warlords.removePlayer(player);
-        Player p = Bukkit.getPlayer(player);
-        if (p != null) {
-            WarlordsEvents.joinInteraction(p, true);
+    private boolean removePlayer0(UUID player) {
+        if (this.players.containsKey(player)) {
+            assert this.state != null : "A player was added and removed from the game while it was not started??";
+            OfflinePlayer op = Bukkit.getOfflinePlayer(player);
+            this.state.onPlayerQuitGame(op);
+            this.players.remove(player);
+            Warlords.removePlayer(player);
+            Player p = op.getPlayer();
+            if (p != null) {
+                WarlordsEvents.joinInteraction(p, true);
+            }
+            return true;
         }
+        return false;
     }
 
-    public List<UUID> clearAllPlayers() {
-        try {
-            //making hidden players visible again
-            Warlords.getPlayers().forEach(((uuid, warlordsPlayer) -> {
-                if (warlordsPlayer.getEntity() instanceof Player) {
-                    Bukkit.getOnlinePlayers().forEach(onlinePlayer -> {
-                        ((Player) warlordsPlayer.getEntity()).showPlayer(onlinePlayer);
-                    });
-                }
-            }));
-        } catch (Exception e) {
-            e.printStackTrace();
+    /**
+     * Removes a player by UUID from the game
+     *
+     * @param player The player to remove
+     * @return true if the player was part of the game before removing started
+     */
+    public boolean removePlayer(UUID player) {
+        if (removePlayer0(player)) {
+            Player p = Bukkit.getPlayer(player);
+            if (p != null) {
+                Warlords.getInstance().hideAndUnhidePeople(p);
+            }
+            return true;
         }
+        return false;
+    }
+
+    public List<UUID> removeAllPlayers() {
         List<UUID> toRemove = new ArrayList<>(this.players.keySet());
         for (UUID p : toRemove) {
-            this.removePlayer(p);
+            this.removePlayer0(p);
+        }
+        if (!toRemove.isEmpty()) {
+            Warlords.getInstance().hideAndUnhidePeople();
         }
         assert this.players.isEmpty();
         return toRemove;
     }
 
+    public boolean hasPlayer(UUID player) {
+        return this.players.containsKey(player);
+    }
+
     public int playersCount() {
-        return this.players.size();
+        return (int) this.players.values().stream().filter(Objects::nonNull).count();
+    }
+
+    public int spectatorsCount() {
+        return (int) this.players.values().stream().filter(Objects::isNull).count();
+    }
+
+    public Stream<WarlordsPlayer> warlordsPlayers() {
+        return this.players.entrySet().stream().map(e -> Warlords.getPlayer(e.getKey())).filter(Objects::nonNull);
     }
 
     public Stream<Map.Entry<UUID, Team>> players() {
         return this.players.entrySet().stream();
     }
 
-    public Stream<Map.Entry<OfflinePlayer, Team>> offlinePlayers() {
-        return this.players.entrySet()
-                .stream()
+    public Stream<Map.Entry<UUID, Team>> playersWithoutSpectators() {
+        return this.players.entrySet().stream().filter(e -> e.getValue() != null);
+    }
+
+    public Stream<Map.Entry<OfflinePlayer, Team>> offlinePlayersWithoutSpectators() {
+        return playersWithoutSpectators()
                 .map(e -> new AbstractMap.SimpleImmutableEntry<>(
-                        Bukkit.getOfflinePlayer(e.getKey()),
-                        e.getValue()
-                ));
+                Bukkit.getOfflinePlayer(e.getKey()),
+                e.getValue()
+        ));
+    }
+
+    public Stream<Map.Entry<Player, Team>> onlinePlayersWithoutSpectators() {
+        return playersWithoutSpectators()
+                .<Map.Entry<Player, Team>>map(e -> new AbstractMap.SimpleImmutableEntry<>(
+                Bukkit.getPlayer(e.getKey()),
+                e.getValue()
+        )).filter(e -> e.getKey() != null);
     }
 
     public Stream<Map.Entry<Player, Team>> onlinePlayers() {
-        return this.players.entrySet()
-                .stream()
+        return players()
                 .<Map.Entry<Player, Team>>map(e -> new AbstractMap.SimpleImmutableEntry<>(
-                        Bukkit.getPlayer(e.getKey()),
-                        e.getValue()
-                ))
-                .filter(e -> e.getKey() != null);
+                Bukkit.getPlayer(e.getKey()),
+                e.getValue()
+        )).filter(e -> e.getKey() != null);
+    }
+
+    public Stream<UUID> spectators() {
+        return this.players.entrySet().stream().filter(e -> e.getValue() == null).map(e -> e.getKey());
     }
 
     public void forEachOfflinePlayer(BiConsumer<OfflinePlayer, Team> consumer) {
-        offlinePlayers().forEach(entry -> consumer.accept(entry.getKey(), entry.getValue()));
+        offlinePlayersWithoutSpectators().forEach(entry -> consumer.accept(entry.getKey(), entry.getValue()));
     }
 
     public void forEachOfflineWarlordsPlayer(Consumer<WarlordsPlayer> consumer) {
-        offlinePlayers().map(w -> Warlords.getPlayer(w.getKey())).filter(Objects::nonNull).forEach(consumer);
+        warlordsPlayers().forEach(consumer);
     }
 
     public void forEachOnlinePlayer(BiConsumer<Player, Team> consumer) {
         onlinePlayers().forEach(entry -> consumer.accept(entry.getKey(), entry.getValue()));
     }
 
+    public void forEachOnlinePlayerWithoutSpectators(BiConsumer<Player, Team> consumer) {
+        onlinePlayersWithoutSpectators().forEach(entry -> consumer.accept(entry.getKey(), entry.getValue()));
+    }
+
     public void forEachOnlineWarlordsPlayer(Consumer<WarlordsPlayer> consumer) {
-        onlinePlayers().map(w -> Warlords.getPlayer(w.getKey())).filter(Objects::nonNull).forEach(consumer);
-    }
-
-    public boolean onSameTeam(UUID player1, UUID player2) {
-        return players.get(player1) == players.get(player2);
-    }
-
-    public boolean onSameTeam(Player player1, Player player2) {
-        return onSameTeam(player1.getUniqueId(), player2.getUniqueId());
-    }
-
-    /**
-     * See if players are on the same team
-     *
-     * @param player1 First player
-     * @param player2 Second player
-     * @return true is they are on the same team (eg BLUE && BLUE, RED && RED or &lt;not player> && &lt;not playing>
-     * @deprecated Use WarLordsPlayer.isTeammate instead
-     */
-    @Deprecated
-    public boolean onSameTeam(@Nonnull WarlordsPlayer player1, @Nonnull WarlordsPlayer player2) {
-        return onSameTeam(player1.getUuid(), player2.getUuid());
-    }
-
-    public boolean isGameFreeze() {
-        return gameFreeze;
-    }
-
-    public void setGameFreeze(boolean gameFreeze) {
-        this.gameFreeze = gameFreeze;
-    }
-
-    public void freeze(String subtitleMessage, boolean countdown) {
-        if (gameFreeze && !freezeOnCooldown) {
-            freezeOnCooldown = true;
-            //unfreeze
-            forEachOnlinePlayer((p, team) -> {
-                p.removePotionEffect(PotionEffectType.BLINDNESS);
-                p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 100, 100000));
-            });
-            if (countdown) {
-                new BukkitRunnable() {
-                    int counter = 0;
-
-                    @Override
-                    public void run() {
-                        if (counter >= 5) {
-                            setGameFreeze(false);
-                            freezeOnCooldown = false;
-                            forEachOnlinePlayer((p, team) -> {
-                                if (p.getVehicle() != null && p.getVehicle() instanceof Horse) {
-                                    ((EntityLiving) ((CraftEntity) p.getVehicle()).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(.318);
-                                }
-                                PacketUtils.sendTitle(p, "", "", 0, 0, 0);
-                                p.removePotionEffect(PotionEffectType.BLINDNESS);
-                            });
-                            this.cancel();
-                        } else {
-                            forEachOnlinePlayer((p, team) -> {
-                                PacketUtils.sendTitle(p, ChatColor.BLUE + "Resuming in... " + ChatColor.GREEN + (5 - counter), "", 0, 40, 0);
-                            });
-                            counter++;
-                        }
-                    }
-                }.runTaskTimer(Warlords.getInstance(), 0, 20);
-            } else {
-                setGameFreeze(false);
-                freezeOnCooldown = false;
-                forEachOnlinePlayer((p, team) -> {
-                    if (p.getVehicle() != null && p.getVehicle() instanceof Horse) {
-                        ((EntityLiving) ((CraftEntity) p.getVehicle()).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(.318);
-                    }
-                    PacketUtils.sendTitle(p, "", "", 0, 0, 0);
-                    p.removePotionEffect(PotionEffectType.BLINDNESS);
-                });
-            }
-        } else {
-            //freeze
-            setGameFreeze(true);
-            forEachOnlinePlayer((p, team) -> freezePlayer(p, subtitleMessage));
-        }
-    }
-
-    public void freezePlayer(Player p, String subtitleMessage) {
-        if (p.getVehicle() instanceof Horse) {
-            ((EntityLiving) ((CraftEntity) p.getVehicle()).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0);
-        }
-        p.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 9999999, 100000));
-        PacketUtils.sendTitle(p, ChatColor.RED + "Game Paused", subtitleMessage, 0, 9999999, 0);
-    }
-
-    public List<UUID> getSpectators() {
-        return spectators;
-    }
-
-    public void addSpectator(UUID uuid) {
-        spectators.add(uuid);
-        Player player = Bukkit.getPlayer(uuid);
-        player.setGameMode(GameMode.SPECTATOR);
-        player.teleport(this.getMap().getBlueRespawn());
-        Warlords.setRejoinPoint(player.getUniqueId(), this.getMap().getBlueRespawn());
-        if (state instanceof PreLobbyState) {
-            ((PreLobbyState) state).giveLobbyScoreboard(true, player);
-        } else if (state instanceof PlayingState) {
-            ((PlayingState) state).updateBasedOnGameState(true, Warlords.playerScoreboards.get(player.getUniqueId()), null);
-        }
-    }
-
-    public void removeSpectator(UUID uuid, boolean fromMenu) {
-        if (fromMenu) {
-            spectators.remove(uuid);
-        }
-        OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
-        Location loc = Warlords.spawnPoints.remove(player.getUniqueId());
-        if (player.isOnline()) {
-            if (loc != null) {
-                player.getPlayer().teleport(Warlords.getRejoinPoint(player.getUniqueId()));
-            }
-            WarlordsEvents.joinInteraction(player.getPlayer(), true);
-        }
-
-    }
-
-    public HashMap<BukkitTask, Long> getGameTasks() {
-        return gameTasks;
-    }
-
-    public boolean isPrivate() {
-        return isPrivate;
-    }
-
-    public void setPrivate(boolean aPrivate) {
-        isPrivate = aPrivate;
+        warlordsPlayers().filter(WarlordsPlayer::isOnline).forEach(consumer);
     }
 
     @Override
     public void run() {
-        if (this.state == null) {
-            this.state = new InitState(this);
-            //System.out.println("DEBUG NEW STATE");
-            //System.out.println("New state is " + this.state);
-            this.state.begin();
+        if (this.nextState == null && this.state != null) {
+            this.nextState = this.state.run();
         }
-        if (!gameFreeze) {
-            State newState = state.run();
-            if (newState != null) {
-                this.state.end();
-                //System.out.println("DEBUG OLD TO NEW STATE");
-                //Command.broadcastCommandMessage(Bukkit.getConsoleSender(), "New State = " + newState + " / Old State = " + this.state);
-                this.state = newState;
-                newState.begin();
+        while (this.nextState != null) {
+            for (GameAddon addon : this.addons) {
+                nextState = addon.stateWillChange(this, this.state, nextState);
+                if (nextState == null) {
+                    return;
+                }
             }
+            if (this.state != null) {
+                this.state.end();
+            }
+            State newState = nextState == null ? new ClosedState(this) : nextState;
+            nextState = null;
+            System.out.println("DEBUG OLD TO NEW STATE");
+            this.printDebuggingInformation();
+            State oldState = this.state;
+            this.state = newState;
+            newState.begin();
+            for (GameAddon addon : this.addons) {
+                addon.stateHasChanged(this, oldState, newState);
+            }
+        }
+    }
+
+    @Nonnull
+    @Deprecated
+    public List<ScoreboardHandler> getScoreboardHandlers() {
+        return this.getMarkers(ScoreboardHandler.class);
+    }
+
+    @Deprecated
+    public void registerScoreboardHandler(@Nonnull ScoreboardHandler handler) {
+        this.registerGameMarker(ScoreboardHandler.class, handler);
+    }
+    private final Map<Class<? extends GameMarker>, List<GameMarker>> gameMarkers = new HashMap<>();
+
+    /**
+     * Registers a gamemarker.
+     *
+     * @param <T> The type of gamemarker to register
+     * @param clazz The clazz of the type
+     * @param object The actual object to register
+     * @throws IllegalStateException when the game has been closed
+     */
+    public <T extends GameMarker> void registerGameMarker(@Nonnull Class<T> clazz, @Nonnull T object) {
+        if (this.closed) {
+            throw new IllegalStateException("Game has been closed");
+        }
+        if (!clazz.isAssignableFrom(object.getClass())) {
+            throw new IllegalArgumentException("Attempted to register a marker for interface " + clazz.getName() + " while passing class " + object.getClass().getName() + " does not implement this");
+        }
+        gameMarkers.computeIfAbsent(clazz, e -> new ArrayList<>()).add(object);
+    }
+
+    /**
+     * Gets the list of all registered game markers for a specified
+     *
+     * @param <T> The type to return
+     * @param clazz A class instance of the requested marker
+     * @return The requested list, or Collections.EMPTY_LIST if none is found
+     */
+    @Nonnull
+    public <T extends GameMarker> List<T> getMarkers(@Nonnull Class<T> clazz) {
+        return (List<T>) gameMarkers.getOrDefault(clazz, Collections.emptyList());
+    }
+
+    public void unregisterGameTask(@Nonnull BukkitTask task) {
+        if (this.closed) {
+            return;
+        }
+        this.gameTasks.remove(Objects.requireNonNull(task, "task"));
+    }
+
+    /**
+     * Registers a Bukkit task to be cancelled once the game ends.Cancelling is
+     * important for proper cleanup
+     *
+     * @param task The task to register
+     * @return The task itself
+     * @throws IllegalStateException when the game has been closed (this also
+     * directly calls the cancel function)
+     */
+    @Nonnull
+    public BukkitTask registerGameTask(@Nonnull BukkitTask task) {
+        if (this.closed) {
+            task.cancel();
+            throw new IllegalStateException("Game has been closed");
+        }
+        this.gameTasks.add(Objects.requireNonNull(task, "task"));
+        return task;
+    }
+
+    public BukkitTask registerGameTask(Runnable task) {
+        return this.registerGameTask(Bukkit.getScheduler().runTask(Warlords.getInstance(), task));
+    }
+
+    public BukkitTask registerGameTask(Runnable task, int delay) {
+        return this.registerGameTask(Bukkit.getScheduler().runTaskLater(Warlords.getInstance(), task, delay));
+    }
+
+    public BukkitTask registerGameTask(Runnable task, int delay, int period) {
+        return this.registerGameTask(Bukkit.getScheduler().runTaskTimer(Warlords.getInstance(), task, delay, period));
+    }
+
+    // Modified version of {@link org.bukkit.plugin.SimplePluginManager#getEventListeners}
+    private HandlerList getEventListeners(Class<? extends Event> type) {
+        try {
+            Method method = getRegistrationClass(type).getDeclaredMethod("getHandlerList");
+            method.setAccessible(true);
+            return (HandlerList) method.invoke(null, new Object[0]);
+        } catch (Exception e) {
+            throw new IllegalPluginAccessException(e.toString());
+        }
+    }
+
+    // Modified version of {@link org.bukkit.plugin.SimplePluginManager#getRegistrationClass}
+    private Class<? extends Event> getRegistrationClass(Class<? extends Event> clazz) {
+        try {
+            clazz.getDeclaredMethod("getHandlerList");
+            return clazz;
+        } catch (NoSuchMethodException localNoSuchMethodException) {
+            if ((clazz.getSuperclass() != null)
+                    && (!clazz.getSuperclass().equals(Event.class))
+                    && (Event.class.isAssignableFrom(clazz.getSuperclass()))) {
+                return getRegistrationClass(clazz.getSuperclass().asSubclass(Event.class));
+            }
+        }
+        throw new IllegalPluginAccessException("Unable to find handler list for event " + clazz.getName() + ". Static getHandlerList method required!");
+    }
+
+    /**
+     * Registers a event listener
+     *
+     * @param listener The event listener to register
+     */
+    public void registerEvents(Listener listener) {
+        if (this.state == null) {
+            throw new IllegalStateException("The game is not started yet");
+        }
+        if (this.closed) {
+            throw new IllegalStateException("Game has been closed");
+        }
+        this.eventHandlers.add(listener);
+        // Manually register events here, this way we can add support for
+        // filtering the WarlordsGameEvent to be from this game instance only.
+        // This makes the implementing of other code comsuming these events
+        // overall simpler.
+        // See the source code of {@link org.bukkit.plugin.SimplePluginManager#registerEvents}
+        if (!Warlords.getInstance().isEnabled()) {
+            throw new IllegalPluginAccessException("Plugin attempted to register " + listener + " while not enabled");
+        }
+        for (Map.Entry<Class<? extends Event>, Set<RegisteredListener>> entry : Warlords.getInstance().getPluginLoader().createRegisteredListeners(listener, Warlords.getInstance()).entrySet()) {
+            if (WarlordsGameEvent.class.isAssignableFrom(entry.getKey())) {
+                entry.setValue(entry.getValue().stream().map(rl -> {
+                    return new RegisteredListener(rl.getListener(), (l, e) -> {
+                        WarlordsGameEvent wge = (WarlordsGameEvent) e;
+                        if (wge.getGame() == Game.this) {
+                            rl.callEvent(e);
+                        }
+                    }, rl.getPriority(), rl.getPlugin(), false);
+                }).collect(Collectors.toSet()));
+            }
+            getEventListeners(getRegistrationClass(entry.getKey())).registerAll(entry.getValue());
+        }
+	}
+
+	@Override
+	public void close() {
+		if (this.closed) {
+			return;
+		}
+		this.closed = true;
+		List<Throwable> exceptions = new ArrayList<>();
+		for (BukkitTask task : gameTasks) {
+			task.cancel();
+		}
+		gameTasks.clear();
+		for (Listener listener : eventHandlers) {
+			HandlerList.unregisterAll(listener);
+		}
+		eventHandlers.clear();
+		try {
+			removeAllPlayers();
+		} catch (Throwable e) {
+			exceptions.add(e);
+		}
+		for (Option option : options) {
+			try {
+				option.onGameCleanup(this);
+			} catch (Throwable e) {
+				exceptions.add(e);
+			}
+		}
+		this.acceptsPlayers = false;
+		this.acceptsSpectators = false;
+		this.nextState = null;
+		if (this.state != null && !(this.state instanceof ClosedState)) {
+			try {
+				this.state.end();
+			} catch (Throwable e) {
+				exceptions.add(e);
+			}
+			this.state = new ClosedState(this);
+		}
+		if (!exceptions.isEmpty()) {
+			RuntimeException e = new RuntimeException("Problems closing the game");
+			e.initCause(exceptions.get(0));
+			for (int i = 1; i < exceptions.size(); i++) {
+				e.addSuppressed(exceptions.get(i));
+			}
+			throw e;
+		}
+	}
+
+	@Override
+    public String toString() {
+        return "Game{"
+                + "\nplayers=" + players.entrySet().stream().map(Object::toString).collect(Collectors.joining("\n\t", "\n\t", ""))
+                + ",\ncreatedAt=" + createdAt
+                + ",\ngameTasks=" + gameTasks
+                + ",\neventHandlers=" + eventHandlers
+                + ",\nmap=" + map
+                + ",\ncategory=" + category
+                + ",\naddons=" + addons
+                + ",\noptions=" + options
+                + ",\nstate=" + state
+                + ",\nnextState=" + nextState
+                + ",\nclosed=" + closed
+                + ",\nfrozenCauses=" + frozenCauses
+                + ",\nmaxPlayers=" + maxPlayers
+                + ",\nminPlayers=" + minPlayers
+                + ",\nacceptsPlayers=" + acceptsPlayers
+                + ",\nacceptsSpectators=" + acceptsSpectators
+                + ",\ngameMarkers=" + gameMarkers.entrySet().stream().map(Object::toString).collect(Collectors.joining("\n\t", "\n\t", ""))
+                + ",\nlocations=" + locations
+                + "\n}";
+    }
+
+    @Deprecated
+    public void printDebuggingInformation() {
+        System.out.println(this);
+    }
+
+    public void addKill(@Nonnull Team victim, @Nullable Team attacker) {
+        Stats myStats = getStats(victim);
+        myStats.deaths++;
+        if (attacker != null) {
+            Stats enemyStats = getStats(attacker);
+            enemyStats.kills++;
+            //addPoints(victim.enemy(), SCORE_KILL_POINTS);
+        }
+    }
+
+    @Nonnull
+    public Stats getStats(@Nonnull Team team) {
+        return stats.get(team);
+    }
+
+    public void addPoints(@Nonnull Team team, int i) {
+        getStats(team).addPoints(i);
+    }
+
+    public class Stats {
+
+        private final Team team;
+        private int points;
+        private int kills;
+        private int captures;
+        private int deaths;
+
+        public Stats(Team team) {
+            this.team = team;
+        }
+
+        public int points() {
+            return points;
+        }
+
+        public void setPoints(int points) {
+            int oldPoints = this.points;
+            this.points = points;
+            Bukkit.getPluginManager().callEvent(new WarlordsPointsChangedEvent(Game.this, team, oldPoints, this.points));
+        }
+
+        private void addPoints(int i) {
+            setPoints(points() + i);
+        }
+
+        public int kills() {
+            return kills;
+        }
+
+        public void setKills(int kills) {
+            this.kills = kills;
+        }
+
+        public int captures() {
+            return captures;
+        }
+
+        public void setCaptures(int captures) {
+            this.captures = captures;
+        }
+
+        public int deaths() {
+            return deaths;
+        }
+
+        public void setDeaths(int deaths) {
+            this.deaths = deaths;
+        }
+
+        @Override
+        public String toString() {
+            return "Stats{" + "team=" + team + "points=" + points + ", kills=" + kills + ", captures=" + captures + ", deaths=" + deaths + '}';
         }
 
     }

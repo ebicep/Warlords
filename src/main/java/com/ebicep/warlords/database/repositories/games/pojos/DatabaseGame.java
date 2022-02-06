@@ -7,8 +7,11 @@ import com.ebicep.warlords.database.leaderboards.LeaderboardManager;
 import com.ebicep.warlords.database.repositories.games.GameMode;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
+import com.ebicep.warlords.events.WarlordsGameTriggerWinEvent;
+import com.ebicep.warlords.maps.Game;
+import com.ebicep.warlords.maps.GameAddon;
 import com.ebicep.warlords.maps.Team;
-import com.ebicep.warlords.maps.state.PlayingState;
+import com.ebicep.warlords.maps.option.WinAfterTimeoutOption;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.NumberFormat;
 import com.ebicep.warlords.util.PlayerFilter;
@@ -29,6 +32,8 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 
 @Document(collection = "Games_Information")
@@ -58,13 +63,13 @@ public class DatabaseGame {
 
     }
 
-    public DatabaseGame(PlayingState gameState, boolean counted) {
+    public DatabaseGame(@Nonnull Game game, @Nullable WarlordsGameTriggerWinEvent gameWinEvent, boolean counted) {
         DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm");
         dateFormat.setTimeZone(TimeZone.getTimeZone("EST"));
-        Team winner = gameState.calculateWinnerByPoints();
+        Team winner = gameWinEvent == null || gameWinEvent.isCancelled() ? null : gameWinEvent.getDeclaredWinner();
         List<DatabaseGamePlayers.GamePlayer> blue = new ArrayList<>();
         List<DatabaseGamePlayers.GamePlayer> red = new ArrayList<>();
-        for (WarlordsPlayer warlordsPlayer : PlayerFilter.playingGame(gameState.getGame())) {
+        for (WarlordsPlayer warlordsPlayer : PlayerFilter.playingGame(game)) {
             if (warlordsPlayer.getTeam() == Team.BLUE) {
                 blue.add(new DatabaseGamePlayers.GamePlayer(warlordsPlayer));
             } else if (warlordsPlayer.getTeam() == Team.RED) {
@@ -72,14 +77,14 @@ public class DatabaseGame {
             }
         }
         this.date = dateFormat.format(new Date());
-        this.map = gameState.getGame().getMap().getMapName();
-        this.timeLeft = gameState.getTimerInSeconds();
-        this.winner = gameState.isForceEnd() || winner == null ? "DRAW" : winner.name.toUpperCase(Locale.ROOT);
-        this.bluePoints = gameState.getStats(Team.BLUE).points();
-        this.redPoints = gameState.getStats(Team.RED).points();
+        this.map = game.getMap().getMapName();
+        this.timeLeft = WinAfterTimeoutOption.getTimeLeft(game).orElse(-1);
+        this.winner = winner == null ? "DRAW" : winner.getName().toUpperCase(Locale.ROOT);
+        this.bluePoints = game.getStats(Team.BLUE).points();
+        this.redPoints = game.getStats(Team.RED).points();
         this.players = new DatabaseGamePlayers(blue, red);
-        this.statInfo = getWarlordsPlusEndGameStats(gameState);
-        this.isPrivate = gameState.getGame().isPrivate();
+        this.statInfo = getWarlordsPlusEndGameStats(game);
+        this.isPrivate = game.getAddons().contains(GameAddon.PRIVATE_GAME);
         this.counted = counted;
     }
 
@@ -335,11 +340,11 @@ public class DatabaseGame {
         holograms.forEach(Hologram::delete);
     }
 
-    public static void addGame(PlayingState gameState, boolean updatePlayerStats) {
+    public static void addGame(@Nonnull Game game, @Nullable WarlordsGameTriggerWinEvent gameWinEvent, boolean updatePlayerStats) {
         try {
             previousGames.get(0).deleteHolograms();
             previousGames.remove(0);
-            DatabaseGame databaseGame = new DatabaseGame(gameState, updatePlayerStats);
+            DatabaseGame databaseGame = new DatabaseGame(game, gameWinEvent, updatePlayerStats);
             previousGames.add(databaseGame);
             databaseGame.createHolograms();
 
@@ -349,7 +354,7 @@ public class DatabaseGame {
             LeaderboardManager.addHologramLeaderboards(UUID.randomUUID().toString(), false);
 
                 //sending message if player information remained the same
-                for (WarlordsPlayer value : PlayerFilter.playingGame(gameState.getGame())) {
+                for (WarlordsPlayer value : PlayerFilter.playingGame(game)) {
                     if (value.getEntity().hasPermission("warlords.database.messagefeed")) {
                         if (updatePlayerStats) {
                             value.sendMessage(ChatColor.GREEN + "This game was added to the database and player information was updated");
@@ -445,35 +450,35 @@ public class DatabaseGame {
     @Transient
     public static String lastWarlordsPlusString = "";
 
-    public static String getWarlordsPlusEndGameStats(PlayingState gameState) {
+    public static String getWarlordsPlusEndGameStats(Game game) {
         StringBuilder output = new StringBuilder("Winners:");
-        int bluePoints = gameState.getStats(Team.BLUE).points();
-        int redPoints = gameState.getStats(Team.RED).points();
+        int bluePoints = game.getStats(Team.BLUE).points();
+        int redPoints = game.getStats(Team.RED).points();
         if (bluePoints > redPoints) {
-            for (WarlordsPlayer player : PlayerFilter.playingGame(gameState.getGame()).matchingTeam(Team.BLUE)) {
-                output.append(player.getUuid().toString().replace("-", "")).append("[").append(player.getTotalKills()).append(":").append(player.getTotalDeaths()).append("],");
+            for (WarlordsPlayer player : PlayerFilter.playingGame(game).matchingTeam(Team.BLUE)) {
+                output.append(player.getUuid().toString().replace("-", "")).append("[").append(player.getStats().total().getKills()).append(":").append(player.getStats().total().getDeaths()).append("],");
             }
             output.setLength(output.length() - 1);
             output.append("Losers:");
-            for (WarlordsPlayer player : PlayerFilter.playingGame(gameState.getGame()).matchingTeam(Team.RED)) {
-                output.append(player.getUuid().toString().replace("-", "")).append("[").append(player.getTotalKills()).append(":").append(player.getTotalDeaths()).append("],");
+            for (WarlordsPlayer player : PlayerFilter.playingGame(game).matchingTeam(Team.RED)) {
+                output.append(player.getUuid().toString().replace("-", "")).append("[").append(player.getStats().total().getKills()).append(":").append(player.getStats().total().getDeaths()).append("],");
             }
         } else if (redPoints > bluePoints) {
-            for (WarlordsPlayer player : PlayerFilter.playingGame(gameState.getGame()).matchingTeam(Team.RED)) {
-                output.append(player.getUuid().toString().replace("-", "")).append("[").append(player.getTotalKills()).append(":").append(player.getTotalDeaths()).append("],");
+            for (WarlordsPlayer player : PlayerFilter.playingGame(game).matchingTeam(Team.RED)) {
+                output.append(player.getUuid().toString().replace("-", "")).append("[").append(player.getStats().total().getKills()).append(":").append(player.getStats().total().getDeaths()).append("],");
             }
             output.setLength(output.length() - 1);
             output.append("Losers:");
-            for (WarlordsPlayer player : PlayerFilter.playingGame(gameState.getGame()).matchingTeam(Team.BLUE)) {
-                output.append(player.getUuid().toString().replace("-", "")).append("[").append(player.getTotalKills()).append(":").append(player.getTotalDeaths()).append("],");
+            for (WarlordsPlayer player : PlayerFilter.playingGame(game).matchingTeam(Team.BLUE)) {
+                output.append(player.getUuid().toString().replace("-", "")).append("[").append(player.getStats().total().getKills()).append(":").append(player.getStats().total().getDeaths()).append("],");
             }
         } else {
             output.setLength(0);
-            for (WarlordsPlayer player : PlayerFilter.playingGame(gameState.getGame()).matchingTeam(Team.BLUE)) {
-                output.append(player.getUuid().toString().replace("-", "")).append("[").append(player.getTotalKills()).append(":").append(player.getTotalDeaths()).append("],");
+            for (WarlordsPlayer player : PlayerFilter.playingGame(game).matchingTeam(Team.BLUE)) {
+                output.append(player.getUuid().toString().replace("-", "")).append("[").append(player.getStats().total().getKills()).append(":").append(player.getStats().total().getDeaths()).append("],");
             }
-            for (WarlordsPlayer player : PlayerFilter.playingGame(gameState.getGame()).matchingTeam(Team.RED)) {
-                output.append(player.getUuid().toString().replace("-", "")).append("[").append(player.getTotalKills()).append(":").append(player.getTotalDeaths()).append("],");
+            for (WarlordsPlayer player : PlayerFilter.playingGame(game).matchingTeam(Team.RED)) {
+                output.append(player.getUuid().toString().replace("-", "")).append("[").append(player.getStats().total().getKills()).append(":").append(player.getStats().total().getDeaths()).append("],");
             }
         }
         output.setLength(output.length() - 1);

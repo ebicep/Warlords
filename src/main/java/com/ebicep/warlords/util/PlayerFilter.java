@@ -5,6 +5,7 @@ import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 
@@ -13,6 +14,7 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -39,7 +41,7 @@ public class PlayerFilter implements Iterable<WarlordsPlayer> {
     }
 
     /**
-     * Adds new players to the list
+     * Adds new internalPlayers to the list
      * @param player
      * @return The new {@code PlayerFilter}
      */
@@ -49,7 +51,7 @@ public class PlayerFilter implements Iterable<WarlordsPlayer> {
     }
 
     /**
-     * Limits the amount of players iterated over.
+     * Limits the amount of internalPlayers iterated over.
      * @see #closestFirst
      * @see #sorted
      * @param maxSize limit
@@ -61,7 +63,7 @@ public class PlayerFilter implements Iterable<WarlordsPlayer> {
     }
 
     /**
-     * Filters the list of players based on a condition
+     * Filters the list of internalPlayers based on a condition
      * @param filter
      * @return
      */
@@ -99,7 +101,7 @@ public class PlayerFilter implements Iterable<WarlordsPlayer> {
 
     @Nonnull
     public PlayerFilter leastAliveFirst() {
-        return sorted(Comparator.<WarlordsPlayer, Double>comparing(wp -> wp.getHealth() / (double)wp.getMaxHealth()));
+        return sorted(Comparator.comparing(wp -> wp.getHealth() / (double)wp.getMaxHealth()));
     }
 
     @Nonnull
@@ -109,7 +111,7 @@ public class PlayerFilter implements Iterable<WarlordsPlayer> {
 
     @Nonnull
     public PlayerFilter leastEnergeticFirst() {
-        return sorted(Comparator.<WarlordsPlayer, Double>comparing(wp -> wp.getEnergy() / (double) wp.getMaxEnergy()));
+        return sorted(Comparator.comparing(wp -> wp.getEnergy() / (double) wp.getMaxEnergy()));
     }
 
     @Nonnull
@@ -267,8 +269,31 @@ public class PlayerFilter implements Iterable<WarlordsPlayer> {
     }
 
     @Nonnull
+    public static PlayerFilter entitiesInRectangle(@Nonnull World world, double x1, double y1, double z1, double x2, double y2, double z2) {
+        double minX = Math.min(x1, x2);
+        double minY = Math.min(y1, y2);
+        double minZ = Math.min(z1, z2);
+        double maxX = Math.max(x1, x2);
+        double maxY = Math.max(y1, y2);
+        double maxZ = Math.max(z1, z2);
+        
+        return new PlayerFilter(world.getEntities().stream()
+            .filter(e -> {
+                e.getLocation(LOCATION_CACHE_ENTITIES_AROUND);
+                double x = LOCATION_CACHE_ENTITIES_AROUND.getX();
+                double y = LOCATION_CACHE_ENTITIES_AROUND.getY();
+                double z = LOCATION_CACHE_ENTITIES_AROUND.getZ();
+                
+                return x > minX && x < maxX && y > minY && y < maxY && z > minZ && z < maxZ;
+            })
+            .map(e -> Warlords.getPlayer(e))
+            .filter(Objects::nonNull)
+        );
+    }
+
+    @Nonnull
     public static PlayerFilter playingGame(@Nonnull Game game) {
-        return new PlayerFilter(game.players().map(e -> Warlords.getPlayer(e.getKey())).filter(Objects::nonNull));
+        return new PlayerFilter(game.warlordsPlayers());
     }
 
     @Nonnull
@@ -349,6 +374,10 @@ public class PlayerFilter implements Iterable<WarlordsPlayer> {
     @Nonnull
     public PlayerFilter lookingAtWave(@Nonnull LivingEntity entity) {
         return filter(wp -> Utils.isLookingAtWave(entity, wp.getEntity()));
+    }
+
+    public List<WarlordsPlayer> toList() {
+        return this.stream.collect(Collectors.toCollection(ArrayList::new));
     }
 
 }

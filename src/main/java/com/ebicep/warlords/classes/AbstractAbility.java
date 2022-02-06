@@ -158,6 +158,9 @@ public abstract class AbstractAbility {
     public String format(double input) {
         return decimalFormat.format(input);
     }
+    
+    public void runEverySecond() {
+    }
 
     /*
 flameburst/chain: 9.4

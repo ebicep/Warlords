@@ -4,6 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
 import com.ebicep.warlords.util.Utils;
@@ -92,11 +93,11 @@ public class HolyRadianceProtector extends AbstractAbility {
                     }
                 }
 
-                new BukkitRunnable() {
+                new GameRunnable(wp.getGame()) {
 
                     @Override
                     public void run() {
-                        if (chains.size() == 0) {
+                        if (chains.isEmpty()) {
                             this.cancel();
                         }
 
@@ -111,7 +112,7 @@ public class HolyRadianceProtector extends AbstractAbility {
 
                     }
 
-                }.runTaskTimer(Warlords.getInstance(), 0, 0);
+                }.runTaskTimer(0, 0);
 
                 HolyRadianceProtector tempMark = new HolyRadianceProtector(minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
                 p.getCooldownManager().addRegularCooldown(name, "PROT MARK", HolyRadianceProtector.class, tempMark, wp, CooldownTypes.BUFF, cooldownManager -> {
@@ -120,48 +121,28 @@ public class HolyRadianceProtector extends AbstractAbility {
                 player.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " You have marked " + ChatColor.GREEN + p.getName() + ChatColor.GRAY + "!");
                 p.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " You have been granted " + ChatColor.GREEN + "Protector's Mark" + ChatColor.GRAY + " by " + wp.getName() + "!");
 
-                wp.getGame().getGameTasks().put(
+                new GameRunnable(wp.getGame()) {
+                    @Override
+                    public void run() {
+                        if (p.getCooldownManager().hasCooldown(tempMark)) {
+                            Location playerLoc = p.getLocation();
+                            Location particleLoc = playerLoc.clone();
+                            for (int i = 0; i < 4; i++) {
+                                for (int j = 0; j < 10; j++) {
+                                    double angle = j / 9D * Math.PI * 2;
+                                    double width = 1;
+                                    particleLoc.setX(playerLoc.getX() + Math.sin(angle) * width);
+                                    particleLoc.setY(playerLoc.getY() + i / 6D);
+                                    particleLoc.setZ(playerLoc.getZ() + Math.cos(angle) * width);
 
-                        new BukkitRunnable() {
-                            @Override
-                            public void run() {
-                                if (p.getCooldownManager().hasCooldown(tempMark)) {
-                                    Location playerLoc = p.getLocation();
-                                    Location particleLoc = playerLoc.clone();
-                                    for (int i = 0; i < 4; i++) {
-                                        for (int j = 0; j < 10; j++) {
-                                            double angle = j / 9D * Math.PI * 2;
-                                            double width = 1;
-                                            particleLoc.setX(playerLoc.getX() + Math.sin(angle) * width);
-                                            particleLoc.setY(playerLoc.getY() + i / 6D);
-                                            particleLoc.setZ(playerLoc.getZ() + Math.cos(angle) * width);
-
-                                            ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(0, 255, 70), particleLoc, 500);
-                                        }
-                                    }
-                                } else {
-                                    this.cancel();
+                                    ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(0, 255, 70), particleLoc, 500);
                                 }
                             }
-                        }.runTaskTimer(Warlords.getInstance(), 0, 10),
-                        System.currentTimeMillis()
-                );
-
-                wp.getGame().getGameTasks().put(
-
-                        new BukkitRunnable() {
-                            @Override
-                            public void run() {
-                                float missingHealthHealing = p.getHealth() * 0.02f;
-                                if (p.getCooldownManager().hasCooldown(tempMark)) {
-                                    p.addHealingInstance(wp, "Protector's Mark", missingHealthHealing, missingHealthHealing, -1, 100, false, false);
-                                } else {
-                                    this.cancel();
-                                }
-                            }
-                        }.runTaskTimer(Warlords.getInstance(), 0, 20),
-                        System.currentTimeMillis()
-                );
+                        } else {
+                            this.cancel();
+                        }
+                    }
+                }.runTaskTimer(0, 10);
             } else {
                 player.sendMessage("§cYour mark was out of range or you did not target a player!");
             }
@@ -172,9 +153,8 @@ public class HolyRadianceProtector extends AbstractAbility {
                 .entitiesAround(player, radius, radius, radius)
                 .aliveTeammatesOfExcludingSelf(wp)
         ) {
-            wp.getGame().getGameTasks().put(
-                    new FlyingArmorStand(wp.getLocation(), p, wp, 1.1).runTaskTimer(Warlords.getInstance(), 1, 1),
-                    System.currentTimeMillis()
+            wp.getGame().registerGameTask(
+                    new FlyingArmorStand(wp.getLocation(), p, wp, 1.1).runTaskTimer(Warlords.getInstance(), 1, 1)
             );
         }
 
@@ -194,10 +174,10 @@ public class HolyRadianceProtector extends AbstractAbility {
 
     private class FlyingArmorStand extends BukkitRunnable {
 
-        private WarlordsPlayer target;
-        private WarlordsPlayer owner;
-        private double speed;
-        private ArmorStand armorStand;
+        private final WarlordsPlayer target;
+        private final WarlordsPlayer owner;
+        private final double speed;
+        private final ArmorStand armorStand;
 
         public FlyingArmorStand(Location location, WarlordsPlayer target, WarlordsPlayer owner, double speed) {
             this.armorStand = location.getWorld().spawn(location, ArmorStand.class);
@@ -216,7 +196,7 @@ public class HolyRadianceProtector extends AbstractAbility {
 
         @Override
         public void run() {
-            if (!owner.getGame().isGameFreeze()) {
+            if (!owner.getGame().isFrozen()) {
 
                 if (this.target.isDead()) {
                     this.cancel();

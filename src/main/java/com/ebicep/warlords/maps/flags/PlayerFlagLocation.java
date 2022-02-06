@@ -1,6 +1,9 @@
 package com.ebicep.warlords.maps.flags;
 
 import com.ebicep.warlords.player.WarlordsPlayer;
+import java.util.Arrays;
+import java.util.List;
+import javax.annotation.Nonnull;
 import org.bukkit.Location;
 
 public class PlayerFlagLocation implements FlagLocation {
@@ -46,6 +49,22 @@ public class PlayerFlagLocation implements FlagLocation {
     public FlagLocation update(FlagInfo info) {
         this.pickUpTicks++;
         return this.pickUpTicks % (20 * 3) == 0 ? new PlayerFlagLocation(player, pickUpTicks) : null;
+    }
+
+    @Override
+    public List<String> getDebugInformation() {
+        return Arrays.asList(
+                "Type: " + this.getClass().getSimpleName(),
+                "Player: " + this.getPlayer().getName(),
+                "pickUpTicks: " + getPickUpTicks(),
+                "pickUpTicks / 20: " + getPickUpTicks() / 20,
+                "Multiplier: +" + getComputedHumanMultiplier() + "%"
+        );
+    }
+
+    public static PlayerFlagLocation of(@Nonnull FlagLocation flag, WarlordsPlayer player) {
+        return flag instanceof GroundFlagLocation ? new PlayerFlagLocation(player, ((GroundFlagLocation) flag).getDamageTimer())
+                : new PlayerFlagLocation(player, 0);
     }
 	
 }

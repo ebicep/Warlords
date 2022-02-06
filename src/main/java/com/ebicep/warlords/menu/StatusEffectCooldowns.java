@@ -5,9 +5,8 @@ import com.ebicep.warlords.classes.abilties.CripplingStrike;
 import com.ebicep.warlords.classes.abilties.WoundingStrikeBerserker;
 import com.ebicep.warlords.classes.abilties.WoundingStrikeDefender;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
-import com.ebicep.warlords.powerups.DamagePowerUp;
-import com.ebicep.warlords.powerups.EnergyPowerUp;
-import com.ebicep.warlords.powerups.SpeedPowerUp;
+import com.ebicep.warlords.maps.option.PowerupOption.PowerupType;
+import com.ebicep.warlords.player.CooldownTypes;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -17,9 +16,9 @@ import static com.ebicep.warlords.player.cooldowns.CooldownTypes.DEBUFF;
 
 public enum StatusEffectCooldowns {
 
-    DAMAGE("Damage", new ItemStack(Material.WOOL, 1, (byte) 14), ChatColor.RED, DamagePowerUp.class, new DamagePowerUp(), "DMG", BUFF),
-    ENERGY("Energy", new ItemStack(Material.WOOL, 1, (byte) 1), ChatColor.GOLD, EnergyPowerUp.class, new EnergyPowerUp(), "ENERGY", BUFF),
-    SPEED("Speed", new ItemStack(Material.WOOL, 1, (byte) 4), ChatColor.YELLOW, SpeedPowerUp.class, new SpeedPowerUp(), "SPEED", BUFF),
+    DAMAGE("Damage", new ItemStack(Material.WOOL, 1, (byte) 14), ChatColor.RED, PowerupType.DAMAGE.getClass(), PowerupType.DAMAGE, "DMG", BUFF),
+    ENERGY("Energy", new ItemStack(Material.WOOL, 1, (byte) 1), ChatColor.GOLD, PowerupType.ENERGY.getClass(), PowerupType.ENERGY, "ENERGY", BUFF),
+    SPEED("Speed", new ItemStack(Material.WOOL, 1, (byte) 4), ChatColor.YELLOW, PowerupType.SPEED.getClass(), PowerupType.SPEED, "SPEED", BUFF),
     RESISTANCE("Resistance", new ItemStack(Material.WOOL, 1, (byte) 8), ChatColor.GRAY, null, null, "RES", BUFF),
     CRIPPLING("Crippling", new ItemStack(Material.WOOD_SWORD), ChatColor.DARK_RED, CripplingStrike.class, new CripplingStrike(), "CRIP", DEBUFF),
     WOUNDING_BERS("Wounding Bers", new ItemStack(Material.IRON_SWORD), ChatColor.DARK_RED, WoundingStrikeBerserker.class, new WoundingStrikeBerserker(), "WND", DEBUFF),

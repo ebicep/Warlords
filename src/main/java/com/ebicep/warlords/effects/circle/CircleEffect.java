@@ -11,6 +11,7 @@ import org.bukkit.Location;
 
 import javax.annotation.Nonnull;
 import java.util.Random;
+import javax.annotation.Nullable;
 
 public class CircleEffect extends AbstractBaseAreaEffect<EffectPlayer<? super CircleEffect>> {
 
@@ -24,14 +25,17 @@ public class CircleEffect extends AbstractBaseAreaEffect<EffectPlayer<? super Ci
         this(wp.getGame(), wp.getTeam(), center, radius);
     }
 
-    public CircleEffect(@Nonnull Game game, @Nonnull Team team, @Nonnull Location center, double radius) {
+    public CircleEffect(@Nonnull Game game, @Nullable Team team, @Nonnull Location center, double radius) {
         Validate.notNull(game, "game");
-        Validate.notNull(team, "team");
         Validate.notNull(center, "center");
         center.setY(center.getBlockY() + 0.01);
         this.center = center;
         this.radius = radius;
         this.players = new GameTeamContainer(game, team);
+    }
+
+    public Team getTeam() {
+        return players.getTeam();
     }
 
     public double getRadius() {

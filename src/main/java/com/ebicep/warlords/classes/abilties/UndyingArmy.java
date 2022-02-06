@@ -1,6 +1,5 @@
 package com.ebicep.warlords.classes.abilties;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
@@ -12,13 +11,13 @@ import com.ebicep.warlords.util.ItemBuilder;
 import com.ebicep.warlords.util.Matrix4d;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
+import com.ebicep.warlords.util.*;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashMap;
 import java.util.Optional;
@@ -36,7 +35,7 @@ public class UndyingArmy extends AbstractAbility {
     private final int duration = 10;
     private int maxArmyAllies = 6;
 
-    private HashMap<UUID, Boolean> playersPopped = new HashMap<>();
+    private final HashMap<UUID, Boolean> playersPopped = new HashMap<>();
 
     public HashMap<UUID, Boolean> getPlayersPopped() {
         return playersPopped;
@@ -84,43 +83,41 @@ public class UndyingArmy extends AbstractAbility {
             }
             teammate.getCooldownManager().addRegularCooldown(name, "ARMY", UndyingArmy.class, tempUndyingArmy, wp, CooldownTypes.ABILITY, cooldownManager -> {
             }, duration * 20);
-            wp.getGame().getGameTasks().put(
-                    new BukkitRunnable() {
-                        @Override
-                        public void run() {
-                            if (!wp.getGame().isGameFreeze()) {
-                                Optional<UndyingArmy> optionalUndyingArmy = new CooldownFilter<>(teammate, RegularCooldown.class).findFirstObject(tempUndyingArmy, UndyingArmy.class);
+            new GameRunnable(wp.getGame()) {
+                @Override
+                public void run() {
+                    if (!wp.getGame().isFrozen()) {
+                        Optional<UndyingArmy> optionalUndyingArmy = new CooldownFilter<>(teammate, RegularCooldown.class).findFirstObject(tempUndyingArmy, UndyingArmy.class);
                                 if (optionalUndyingArmy.isPresent()) {
-                                    if (!(optionalUndyingArmy.get()).isArmyDead(teammate.getUuid())) {
-                                        float healAmount = 100 + (teammate.getMaxHealth() - teammate.getHealth()) * 0.035f;
-                                        teammate.addHealingInstance(wp, name, healAmount, healAmount, -1, 100, false, false);
-                                        player.playSound(teammate.getLocation(), "paladin.holyradiance.activation", 0.15f, 0.7f);
+                            if (!(optionalUndyingArmy.get()).isArmyDead(teammate.getUuid())) {
+                                float healAmount = 100 + (teammate.getMaxHealth() - teammate.getHealth()) * 0.035f;
+                                teammate.addHealingInstance(wp, name, healAmount, healAmount, -1, 100, false, false);
+                                player.playSound(teammate.getLocation(), "paladin.holyradiance.activation", 0.15f, 0.7f);
 
-                                        // particles
-                                        Location playerLoc = teammate.getLocation();
-                                        playerLoc.add(0, 2.1, 0);
-                                        Location particleLoc = playerLoc.clone();
-                                        for (int i = 0; i < 1; i++) {
-                                            for (int j = 0; j < 10; j++) {
-                                                double angle = j / 10D * Math.PI * 2;
-                                                double width = 0.5;
-                                                particleLoc.setX(playerLoc.getX() + Math.sin(angle) * width);
-                                                particleLoc.setY(playerLoc.getY() + i / 5D);
-                                                particleLoc.setZ(playerLoc.getZ() + Math.cos(angle) * width);
+                                // particles
+                                Location playerLoc = teammate.getLocation();
+                                playerLoc.add(0, 2.1, 0);
+                                Location particleLoc = playerLoc.clone();
+                                for (int i = 0; i < 1; i++) {
+                                    for (int j = 0; j < 10; j++) {
+                                        double angle = j / 10D * Math.PI * 2;
+                                        double width = 0.5;
+                                        particleLoc.setX(playerLoc.getX() + Math.sin(angle) * width);
+                                        particleLoc.setY(playerLoc.getY() + i / 5D);
+                                        particleLoc.setZ(playerLoc.getZ() + Math.cos(angle) * width);
 
-                                                ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(255, 255, 255), particleLoc, 500);
-                                            }
-                                        }
-                                    } else {
-                                        this.cancel();
+                                        ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(255, 255, 255), particleLoc, 500);
                                     }
-                                } else {
-                                    this.cancel();
                                 }
+                            } else {
+                                this.cancel();
                             }
+                        } else {
+                            this.cancel();
                         }
-                    }.runTaskTimer(Warlords.getInstance(), 0, 20), System.currentTimeMillis()
-            );
+                    }
+                }
+            }.runTaskTimer(0, 20);
             numberOfPlayersWithArmy++;
 
             if (numberOfPlayersWithArmy >= maxArmyAllies) {

@@ -1,25 +1,43 @@
 package com.ebicep.warlords.maps.flags;
 
+import com.ebicep.warlords.player.WarlordsPlayer;
 import org.bukkit.Location;
 
 import javax.annotation.Nullable;
+import java.util.Arrays;
+import java.util.List;
+import javax.annotation.Nonnull;
 
 public class SpawnFlagLocation extends AbstractLocationBasedFlagLocation {
 
-    private final String lastToucher;
-	
-    public SpawnFlagLocation(Location location, @Nullable String lastToucher) {
+    @Nullable
+    private final WarlordsPlayer flagReturner;
+
+    public SpawnFlagLocation(@Nonnull Location location, @Nullable WarlordsPlayer flagReturner) {
         super(location);
-        this.lastToucher = lastToucher;
+        this.flagReturner = flagReturner;
     }
 
-    public String getLastToucher() {
-        return lastToucher;
+    /**
+     * Get the player who returned the flag
+     * @return the flag returner, or null is the flag automatically moved back
+     */
+    @Nullable
+    public WarlordsPlayer getFlagReturner() {
+        return flagReturner;
     }
 
     @Override
     public FlagLocation update(FlagInfo info) {
         return null;
     }
-	
+
+    @Override
+    public List<String> getDebugInformation() {
+        return Arrays.asList(
+                "Type: " + this.getClass().getSimpleName(),
+                "lastToucher: " + flagReturner
+        );
+    }
+
 }

@@ -1,12 +1,21 @@
 package com.ebicep.warlords.maps;
 
-import com.ebicep.warlords.util.LocationBuilder;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
+import com.ebicep.warlords.maps.option.*;
+import com.ebicep.warlords.maps.option.PowerupOption.PowerupType;
+import com.ebicep.warlords.maps.option.marker.LobbyLocationMarker;
+import com.ebicep.warlords.maps.option.marker.TeamMarker;
+import com.ebicep.warlords.maps.state.PreLobbyState;
+import com.ebicep.warlords.maps.state.State;
+import com.ebicep.warlords.util.LocationFactory;
+import org.bukkit.Material;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
+
+import static com.ebicep.warlords.util.GameRunnable.SECOND;
 
 // MAPS:
 // "Crossfire"
@@ -15,266 +24,430 @@ import java.util.List;
 // "Warsong"
 // "Gorge"
 // "Debug"
-
 public enum GameMap {
     RIFT(
             "Rift",
             32,
-            1,
-            900 * 20, // seconds * ticks
-            30 * 20, // seconds * ticks
+            12,
+            60 * SECOND,
             "",
             MapCategory.CAPTURE_THE_FLAG,
+            MapCategory.INTERCEPTION
+    ) {
+        @Override
+        public List<Option> initMap(MapCategory category, LocationFactory loc, EnumSet<GameAddon> addons) {
+            List<Option> options = category.initMap(this, loc, addons);
+            options.add(new MarkerOption(
+                    TeamMarker.create(Team.BLUE, Team.RED),
+                    LobbyLocationMarker.create(loc.addXYZ(-86.5, 46, -33.5), Team.BLUE),
+                    LobbyLocationMarker.create(loc.addXYZ(87.5, 46, 35.5, 180, 0), Team.RED)
+            ));
+            options.add(new PowerupOption(loc.addXYZ(-32.5, 25.5, 49.5), PowerupType.ENERGY));
+            options.add(new PowerupOption(loc.addXYZ(33.5, 25.5, -48.5), PowerupType.ENERGY));
 
-            new Location(Bukkit.getWorld("Rift"), -32.5, 25.5, 49.5), // BLUE DAMAGE
-            new Location(Bukkit.getWorld("Rift"), 33.5, 25.5, -48.5), // RED DAMAGE
+            options.add(new PowerupOption(loc.addXYZ(-54.5, 36.5, 24.5), PowerupType.SPEED));
+            options.add(new PowerupOption(loc.addXYZ(55.5, 36.5, -23.5), PowerupType.SPEED));
 
-            new Location(Bukkit.getWorld("Rift"), -54.5, 36.5, 24.5), // BLUE SPEED
-            new Location(Bukkit.getWorld("Rift"), 55.5, 36.5, -23.5), // RED SPEED
+            options.add(new PowerupOption(loc.addXYZ(-0.5, 24.5, 64.5), PowerupType.HEALING));
+            options.add(new PowerupOption(loc.addXYZ(1.5, 24.5, -62.5), PowerupType.HEALING));
 
-            new Location(Bukkit.getWorld("Rift"), -0.5, 24.5, 64.5), // BLUE HEALING
-            new Location(Bukkit.getWorld("Rift"), 1.5, 24.5, -62.5), // RED HEALING
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(-32.5, 34.5, -43.5, -90, 0), Team.BLUE));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(33, 34.5, 45, 0, 0), Team.RED));
 
-            new Location(Bukkit.getWorld("Rift"), -86.5, 46, -33.5), // BLUE LOBBY SPAWN
-            new Location(Bukkit.getWorld("Rift"), 87, 46, 35.5, 180, 0), // RED LOBBY SPAWN
+            switch(category) {
+                case CAPTURE_THE_FLAG:
+                    options.add(new FlagCapturePointOption(loc.addXYZ(-98.5, 45.5, -17.5, -90, 0), Team.BLUE));
+                    options.add(new FlagSpawnPointOption(loc.addXYZ(-98.5, 45.5, -17.5, -90, 0), Team.BLUE));
 
-            new LocationBuilder(new Location(Bukkit.getWorld("Rift"), -32.5, 34.5, -43.5)).yaw(-90).get(), // BLUE RESPAWN
-            new LocationBuilder(new Location(Bukkit.getWorld("Rift"), 33, 34.5, 45)).yaw(90).get(), // RED RESPAWN
+                    options.add(new FlagCapturePointOption(loc.addXYZ(99.5, 45.5, 17.5, 90, 0), Team.RED));
+                    options.add(new FlagSpawnPointOption(loc.addXYZ(99.5, 45.5, 17.5, 90, 0), Team.RED));
+                    
+                    options.add(new ScoreOnEventOption.FlagCapture(250));
+                    break;
+                case INTERCEPTION:
+                    options.add(new InterceptionPointOption("Middle #1", loc.addXYZ(13.5, 23, -26.5)));
+                    options.add(new InterceptionPointOption("Middle #2", loc.addXYZ(-13.5, 23, 26.5)));
+                    options.add(new InterceptionPointOption("Stairs #1", loc.addXYZ(-44.5, 34, 22.5)));
+                    options.add(new InterceptionPointOption("Stairs #2", loc.addXYZ(44.5, 34, -20.5)));
+                    
+                    options.add(new ScoreOnEventOption.OnInterceptionCapture(25));
+                    options.add(new ScoreOnEventOption.OnInterceptionTimer(1));
+                    break;
+                default:
+                    throw new IllegalStateException("Not prepared to handle category " + category);
+            }
 
-            new Location(Bukkit.getWorld("Rift"), -98.5, 45.5, -17.5, -90, 0), // BLUE FLAG
-            new Location(Bukkit.getWorld("Rift"), 99.5, 45.5, 17.5, 90, 0), // RED FLAG
+            options.add(new GateOption(loc, -79, 45, -29, -79, 49, -24));
+            options.add(new GateOption(loc, -91, 45, -6, -86, 49, -6));
+            options.add(new GateOption(loc, 79, 45, 25, 79, 49, 29));
+            options.add(new GateOption(loc, 87, 45, 6, 91, 49, 6));
 
-            Arrays.asList(
-                    new Cuboid(Bukkit.getWorld("Rift"), -79, 45, -29, -79, 49, -24), // BLUE GATES 1
-                    new Cuboid(Bukkit.getWorld("Rift"), -91, 45, -6, -86, 49, -6), // BLUE GATES 2
+            options.add(new WinByPointsOption());
+            options.add(new MercyWinOption());
+            options.add(new WinAfterTimeoutOption());
+            options.add(new GameOvertimeOption());
+            options.add(new ScoreOnEventOption.OnKill(5));
+            options.add(new RespawnWaveOption());
+            options.add(new RespawnProtectionOption());
+            options.add(new GraveOption());
 
-                    new Cuboid(Bukkit.getWorld("Rift"), 79, 45, 25, 79, 49, 29), // RED GATES 1
-                    new Cuboid(Bukkit.getWorld("Rift"), 87, 45, 6, 91, 49, 6) // RED GATES 2
-            )
-    ),
+            options.add(new BasicScoreboardOption());
+            options.add(new BoundingBoxOption(loc.getWorld()));
 
+            return options;
+        }
+
+    },
     CROSSFIRE(
             "Crossfire",
             32,
             12,
-            900 * 20, // seconds * ticks
-            30 * 20, // seconds * ticks
+            60 * SECOND,
             "",
-            MapCategory.CAPTURE_THE_FLAG,
+            MapCategory.CAPTURE_THE_FLAG
+    ) {
+        @Override
+        public List<Option> initMap(MapCategory category, LocationFactory loc, EnumSet<GameAddon> addons) {
+            List<Option> options = category.initMap(this, loc, addons);
+            options.add(new MarkerOption(
+                    TeamMarker.create(Team.BLUE, Team.RED),
+                    LobbyLocationMarker.create(loc.addXYZ(215.5, 37, 109.5), Team.BLUE),
+                    LobbyLocationMarker.create(loc.addXYZ(7.5, 37, 19.5, 180, 0), Team.RED),
+                    MapSymmetry.SPIN.asMarker()
+            ));
+            options.add(new PowerupOption(loc.addXYZ(158.5, 6.5, 28.5), PowerupType.ENERGY));
+            options.add(new PowerupOption(loc.addXYZ(65.5, 6.5, 98.5), PowerupType.ENERGY));
 
-            new Location(Bukkit.getWorld("Crossfire"), 158.5, 6.5, 28.5), // BLUE DAMAGE
-            new Location(Bukkit.getWorld("Crossfire"), 65.5, 6.5, 98.5), // RED DAMAGE
+            options.add(new PowerupOption(loc.addXYZ(217.5, 36.5, 89.5), PowerupType.SPEED));
+            options.add(new PowerupOption(loc.addXYZ(6.5, 36.5, 39.5), PowerupType.SPEED));
 
-            new Location(Bukkit.getWorld("Crossfire"), 217.5, 36.5, 89.5), // BLUE SPEED
-            new Location(Bukkit.getWorld("Crossfire"), 6.5, 36.5, 39.5), // RED SPEED
+            options.add(new PowerupOption(loc.addXYZ(96.5, 6.5, 108.5), PowerupType.HEALING));
+            options.add(new PowerupOption(loc.addXYZ(127.5, 6.5, 19.5), PowerupType.HEALING));
 
-            new Location(Bukkit.getWorld("Crossfire"), 96.5, 6.5, 108.5), // BLUE HEALING
-            new Location(Bukkit.getWorld("Crossfire"), 127.5, 6.5, 19.5), // RED HEALING
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(133, 11.5, 130.5, 125, 0), Team.BLUE));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(90.5, 11.5, 0.5, -45, 0), Team.RED));
 
-            new Location(Bukkit.getWorld("Crossfire"), 215.5, 37, 109.5), // BLUE LOBBY SPAWN
-            new Location(Bukkit.getWorld("Crossfire"), 7.5, 37, 19.5, 180, 0), // RED LOBBY SPAWN
+            options.add(new FlagCapturePointOption(loc.addXYZ(217.5, 36.5, 126.5, 150, 0), Team.BLUE));
+            options.add(new FlagSpawnPointOption(loc.addXYZ(217.5, 36.5, 126.5, 150, 0), Team.BLUE));
 
-            new Location(Bukkit.getWorld("Crossfire"), 133, 11.5, 130.5, 125, 0), // BLUE RESPAWN
-            new Location(Bukkit.getWorld("Crossfire"), 90.5, 11.5, 0.5, -45, 0), // RED RESPAWN
+            options.add(new FlagCapturePointOption(loc.addXYZ(5.5, 36.5, 1.5, -25, 0), Team.RED));
+            options.add(new FlagSpawnPointOption(loc.addXYZ(5.5, 36.5, 1.5, -25, 0), Team.RED));
 
-            new Location(Bukkit.getWorld("Crossfire"), 217.5, 36.5, 126.5, 150, 0), // BLUE FLAG
-            new Location(Bukkit.getWorld("Crossfire"), 5.5, 36.5, 1.5, -25, 0), // RED FLAG
+            options.add(new GateOption(loc.addXYZ(203, 36, 119), loc.addXYZ(203, 42, 124)));
+            options.add(new GateOption(loc.addXYZ(227, 36, 109), loc.addXYZ(227, 40, 115)));
+            options.add(new GateOption(loc.addXYZ(19, 36, 4), loc.addXYZ(19, 40, 9)));
+            options.add(new GateOption(loc.addXYZ(-3, 36, 14), loc.addXYZ(-3, 40, 18)));
 
-            Arrays.asList(
-                    new Cuboid(Bukkit.getWorld("Crossfire"), 203, 36, 119, 203, 42, 124), // BLUE GATES 1
-                    new Cuboid(Bukkit.getWorld("Crossfire"), 227, 36, 109, 227, 40, 115), // BLUE GATES 2
+            options.add(new WinByPointsOption());
+            options.add(new MercyWinOption());
+            options.add(new WinAfterTimeoutOption());
+            options.add(new GameOvertimeOption());
+            options.add(new ScoreOnEventOption.FlagCapture());
+            options.add(new ScoreOnEventOption.OnKill());
+            options.add(new RespawnWaveOption());
+            options.add(new RespawnProtectionOption());
+            options.add(new GraveOption());
 
-                    new Cuboid(Bukkit.getWorld("Crossfire"), 19, 36, 4, 19, 40, 9), // RED GATES 1
-                    new Cuboid(Bukkit.getWorld("Crossfire"), -3, 36, 14, -3, 40, 18) // RED GATES 2
-            )
-    ),
+            options.add(new BasicScoreboardOption());
+            options.add(new BoundingBoxOption(loc.getWorld()));
 
+            return options;
+        }
+
+    },
     WARSONG(
             "Warsong Remastered",
             32,
             12,
-            900 * 20,
-            30 * 20,
+            60 * SECOND,
             "",
-            MapCategory.CAPTURE_THE_FLAG,
+            MapCategory.CAPTURE_THE_FLAG
+    ) {
+        @Override
+        public List<Option> initMap(MapCategory category, LocationFactory loc, EnumSet<GameAddon> addons) {
+            List<Option> options = category.initMap(this, loc, addons);
+            options.add(new MarkerOption(
+                    TeamMarker.create(Team.BLUE, Team.RED),
+                    LobbyLocationMarker.create(loc.addXYZ(71.5, 40, -71.5, 90, 0), Team.BLUE),
+                    LobbyLocationMarker.create(loc.addXYZ(73.5, 41, 213.5, -90, 0), Team.RED),
+                    MapSymmetry.SPIN.asMarker()
+            ));
+            options.add(new PowerupOption(loc.addXYZ(102.5, 21.5, 51.5), PowerupType.ENERGY));
+            options.add(new PowerupOption(loc.addXYZ(42.5, 21.5, 92.5), PowerupType.ENERGY));
 
-            new Location(Bukkit.getWorld("Warsong"), 102.5, 21.5, 51.5), // BLUE DAMAGE
-            new Location(Bukkit.getWorld("Warsong"), 42.5, 21.5, 92.5), // RED DAMAGE
+            options.add(new PowerupOption(loc.addXYZ(63.5, 33.5, -31.5), PowerupType.SPEED));
+            options.add(new PowerupOption(loc.addXYZ(79.5, 32.5, 167.5), PowerupType.SPEED));
 
-            new Location(Bukkit.getWorld("Warsong"), 63.5, 33.5, -31.5), // BLUE SPEED
-            new Location(Bukkit.getWorld("Warsong"), 79.5, 32.5, 167.5), // RED SPEED
+            options.add(new PowerupOption(loc.addXYZ(44.5, 20.5, 42.5), PowerupType.HEALING));
+            options.add(new PowerupOption(loc.addXYZ(100.5, 20.5, 101.5), PowerupType.HEALING));
 
-            new Location(Bukkit.getWorld("Warsong"), 44.5, 20.5, 42.5), // BLUE HEALING
-            new Location(Bukkit.getWorld("Warsong"), 100.5, 20.5, 101.5), // RED HEALING
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(45.5, 29.5, 15.5, -30, 0), Team.BLUE));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(99.5, 29.5, 128.5, 145, 0), Team.RED));
 
-            new Location(Bukkit.getWorld("Warsong"), 71.5, 40, -71.5, 90, 0), // BLUE LOBBY SPAWN
-            new Location(Bukkit.getWorld("Warsong"), 73.5, 41, 213.5, -90, 0), // RED LOBBY SPAWN
+            options.add(new FlagCapturePointOption(loc.addXYZ(56.5, 39.5, -76.5), Team.BLUE));
+            options.add(new FlagSpawnPointOption(loc.addXYZ(56.5, 39.5, -76.5), Team.BLUE));
 
-            new Location(Bukkit.getWorld("Warsong"), 45.5, 29.5, 15.5, -30, 0), // BLUE RESPAWN
-            new Location(Bukkit.getWorld("Warsong"), 99.5, 29.5, 128.5, 145, 0), // RED RESPAWN
+            options.add(new FlagCapturePointOption(loc.addXYZ(88.5, 39.5, 218.5, 180, 0), Team.RED));
+            options.add(new FlagSpawnPointOption(loc.addXYZ(88.5, 39.5, 218.5, 180, 0), Team.RED));
 
-            new Location(Bukkit.getWorld("Warsong"), 56.5, 39.5, -76.5), // BLUE FLAG
-            new Location(Bukkit.getWorld("Warsong"), 88.5, 39.5, 218.5, 180, 0), // RED FLAG
+            options.add(new GateOption(loc.addXYZ(42, 39, -52), loc.addXYZ(47, 45, -52)));
+            options.add(new GateOption(loc.addXYZ(69, 35, -52), loc.addXYZ(75, 43, -52)));
+            options.add(new GateOption(loc.addXYZ(70, 36, 195), loc.addXYZ(75, 43, 195)));
+            options.add(new GateOption(loc.addXYZ(97, 39, 195), loc.addXYZ(104, 45, 195)));
 
-            Arrays.asList(
-                    new Cuboid(Bukkit.getWorld("Warsong"), 42, 39, -52, 47, 45, -52), // BLUE GATES 1
-                    new Cuboid(Bukkit.getWorld("Warsong"), 69, 35, -52, 75, 43, -52), // BLUE GATES 2
+            options.add(new WinByPointsOption());
+            options.add(new MercyWinOption());
+            options.add(new WinAfterTimeoutOption());
+            options.add(new GameOvertimeOption());
+            options.add(new ScoreOnEventOption.FlagCapture());
+            options.add(new ScoreOnEventOption.OnKill());
+            options.add(new RespawnWaveOption());
+            options.add(new RespawnProtectionOption());
+            options.add(new GraveOption());
 
-                    new Cuboid(Bukkit.getWorld("Warsong"), 70, 36, 195, 75, 43, 195), // RED GATES 1
-                    new Cuboid(Bukkit.getWorld("Warsong"), 97, 39, 195, 104, 45, 195) // RED GATES 2
-            )
-    ),
+            options.add(new BasicScoreboardOption());
+            options.add(new BoundingBoxOption(loc.getWorld()));
 
+            return options;
+        }
+
+    },
     GORGE(
             "Gorge Reforged",
             32,
             12,
-            900 * 20,
-            30 * 20,
+            60 * SECOND,
             "",
-            MapCategory.DEBUG,
+            MapCategory.DEBUG
+    ) {
+        @Override
+        public List<Option> initMap(MapCategory category, LocationFactory loc, EnumSet<GameAddon> addons) {
+            List<Option> options = category.initMap(this, loc, addons);
+            options.add(new MarkerOption(
+                    TeamMarker.create(Team.BLUE, Team.RED),
+                    LobbyLocationMarker.create(loc.addXYZ(43.5, 77, -216.5).yaw(180), Team.BLUE),
+                    LobbyLocationMarker.create(loc.addXYZ(-134.5, 77, -216.5), Team.RED),
+                    MapSymmetry.SPIN.asMarker()
+            ));
+            options.add(new PowerupOption(loc.addXYZ(-2.5, 61.5, -236.5), PowerupType.ENERGY));
+            options.add(new PowerupOption(loc.addXYZ(-88.5, 61.5, -196.5), PowerupType.ENERGY));
 
-            new Location(Bukkit.getWorld("Gorge"), -2.5, 61.5, -236.5), // BLUE DAMAGE
-            new Location(Bukkit.getWorld("Gorge"), -88.5, 61.5, -196.5), // RED DAMAGE
+            options.add(new PowerupOption(loc.addXYZ(60.5, 75.5, -224.5), PowerupType.SPEED));
+            options.add(new PowerupOption(loc.addXYZ(-151.5, 75.5, -208.5), PowerupType.SPEED));
 
-            new Location(Bukkit.getWorld("Gorge"), 60.5, 75.5, -224.5), // BLUE SPEED
-            new Location(Bukkit.getWorld("Gorge"), -151.5, 75.5, -208.5), // RED SPEED
+            options.add(new PowerupOption(loc.addXYZ(-12.5, 45.5, -194.5), PowerupType.HEALING));
+            options.add(new PowerupOption(loc.addXYZ(-78.5, 45.5, -238.5), PowerupType.HEALING));
 
-            new Location(Bukkit.getWorld("Gorge"), -12.5, 45.5, -194.5), // BLUE HEALING
-            new Location(Bukkit.getWorld("Gorge"), -78.5, 45.5, -238.5), // RED HEALING
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(5.5, 71.5, -159.5), Team.BLUE));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(-96.5, 71.5, -273.5), Team.RED));
 
-            new Location(Bukkit.getWorld("Gorge"), 43.5, 77, -216.5), // BLUE LOBBY SPAWN
-            new Location(Bukkit.getWorld("Gorge"), -134.5, 77, -216.5), // RED LOBBY SPAWN
+            options.add(new FlagCapturePointOption(loc.addXYZ(56.5, 82.5, -216.5), Team.BLUE));
+            options.add(new FlagSpawnPointOption(loc.addXYZ(56.5, 82.5, -216.5), Team.BLUE));
 
-            new Location(Bukkit.getWorld("Gorge"), 5.5, 71.5, -159.5), // BLUE RESPAWN
-            new Location(Bukkit.getWorld("Gorge"), -96.5, 71.5, -273.5), // RED RESPAWN
+            options.add(new FlagCapturePointOption(loc.addXYZ(-148.5, 82.5, -216.5), Team.RED));
+            options.add(new FlagSpawnPointOption(loc.addXYZ(-148.5, 82.5, -216.5), Team.RED));
 
-            new Location(Bukkit.getWorld("Gorge"), 56.5, 82.5, -216.5), // BLUE FLAG
-            new Location(Bukkit.getWorld("Gorge"), -148.5, 82.5, -216.5), // RED FLAG
+            options.add(new GateOption(loc.addXYZ(34, 76, -220), loc.addXYZ(34, 80, -213), Material.IRON_FENCE));
+            options.add(new GateOption(loc.addXYZ(41, 76, -201), loc.addXYZ(41, 80, -198), Material.IRON_FENCE));
+            options.add(new GateOption(loc.addXYZ(52, 76, -221), loc.addXYZ(55, 78, -221), Material.IRON_FENCE));
+            options.add(new GateOption(loc.addXYZ(-125, 76, -220), loc.addXYZ(-125, 80, -213), Material.IRON_FENCE));
+            options.add(new GateOption(loc.addXYZ(-132, 76, -235), loc.addXYZ(-132, 80, -232), Material.IRON_FENCE));
+            options.add(new GateOption(loc.addXYZ(-146, 76, -213), loc.addXYZ(-143, 78, -213), Material.IRON_FENCE));
 
-            Arrays.asList(
-                    new Cuboid(Bukkit.getWorld("Gorge"), 34, 76, -220, 34, 80, -213), // BLUE GATE
-                    new Cuboid(Bukkit.getWorld("Gorge"), 41, 76, -201, 41, 80, -198), // BLUE GATE 2
-                    new Cuboid(Bukkit.getWorld("Gorge"), 52, 76, -221, 55, 78, -221), // BLUE GATE 3
+            options.add(new WinByPointsOption());
+            options.add(new MercyWinOption());
+            options.add(new WinAfterTimeoutOption());
+            options.add(new GameOvertimeOption());
+            options.add(new ScoreOnEventOption.FlagCapture());
+            options.add(new ScoreOnEventOption.OnKill());
+            options.add(new RespawnWaveOption());
+            options.add(new RespawnProtectionOption());
+            options.add(new GraveOption());
 
-                    new Cuboid(Bukkit.getWorld("Gorge"), -125, 76, -220, -125, 80, -213), // RED GATE
-                    new Cuboid(Bukkit.getWorld("Gorge"), -132, 76, -235, -132, 80, -232), // RED GATE 2
-                    new Cuboid(Bukkit.getWorld("Gorge"), -146, 76, -213, -143, 78, -213) // RED GATE 3
-            )
-    ),
+            options.add(new BasicScoreboardOption());
+            options.add(new BoundingBoxOption(loc.getWorld()));
 
+            return options;
+        }
+
+    },
     VALLEY(
             "Valley",
             32,
             12,
-            900 * 20,
-            30 * 20,
+            60 * SECOND,
             "",
-            MapCategory.CAPTURE_THE_FLAG,
+            MapCategory.CAPTURE_THE_FLAG
+    ) {
+        @Override
+        public List<Option> initMap(MapCategory category, LocationFactory loc, EnumSet<GameAddon> addons) {
+            List<Option> options = category.initMap(this, loc, addons);
+            options.add(new MarkerOption(
+                    TeamMarker.create(Team.BLUE, Team.RED),
+                    LobbyLocationMarker.create(loc.addXYZ(-22.5, 39, -83.5).yaw(180), Team.BLUE),
+                    LobbyLocationMarker.create(loc.addXYZ(23.5, 39, 83.5), Team.RED)
+            ));
+            options.add(new PowerupOption(loc.addXYZ(5.5, 15.5, -33.5), PowerupType.ENERGY));
+            options.add(new PowerupOption(loc.addXYZ(-4.5, 15.5, 34.5), PowerupType.ENERGY));
 
-            new Location(Bukkit.getWorld("Atherrough_Valley"), 5.5, 15.5, -33.5), // BLUE DAMAGE
-            new Location(Bukkit.getWorld("Atherrough_Valley"), -4.5, 15.5, 34.5), // RED DAMAGE
+            options.add(new PowerupOption(loc.addXYZ(4.5, 25.5, -86.5), PowerupType.SPEED));
+            options.add(new PowerupOption(loc.addXYZ(-3.5, 25.5, 87.5), PowerupType.SPEED));
 
-            new Location(Bukkit.getWorld("Atherrough_Valley"), 4.5, 25.5, -86.5), // BLUE SPEED
-            new Location(Bukkit.getWorld("Atherrough_Valley"), -3.5, 25.5, 87.5), // RED SPEED
+            options.add(new PowerupOption(loc.addXYZ(57.5, 15.5, 1.5), PowerupType.HEALING));
+            options.add(new PowerupOption(loc.addXYZ(-56.5, 15.5, -0.5), PowerupType.HEALING));
 
-            new Location(Bukkit.getWorld("Atherrough_Valley"), 57.5, 15.5, 1.5), // BLUE HEALING
-            new Location(Bukkit.getWorld("Atherrough_Valley"), -56.5, 15.5, -0.5), // RED HEALING
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(39.5, 28.5, -97.5), Team.BLUE));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(-38.5, 28.5, 97.5), Team.RED));
 
-            new LocationBuilder(new Location(Bukkit.getWorld("Atherrough_Valley"), -22.5, 39, -83.5)).yaw(180).get(), // BLUE LOBBY SPAWN
-            new Location(Bukkit.getWorld("Atherrough_Valley"), 23.5, 39, 83.5), // RED LOBBY SPAWN
+            options.add(new FlagCapturePointOption(loc.addXYZ(-29.5, 38.5, -88.5, -90, 0), Team.BLUE));
+            options.add(new FlagSpawnPointOption(loc.addXYZ(-29.5, 38.5, -88.5, -90, 0), Team.BLUE));
 
-            new Location(Bukkit.getWorld("Atherrough_Valley"), 39.5, 28.5, -97.5), // BLUE RESPAWN
-            new LocationBuilder(new Location(Bukkit.getWorld("Atherrough_Valley"), -38.5, 28.5, 97.5)).yaw(180).get(), // RED RESPAWN
+            options.add(new FlagCapturePointOption(loc.addXYZ(30.5, 38.5, 89.5, 90, 0), Team.RED));
+            options.add(new FlagSpawnPointOption(loc.addXYZ(30.5, 38.5, 89.5, 90, 0), Team.RED));
 
-            new Location(Bukkit.getWorld("Atherrough_Valley"), -29.5, 38.5, -88.5, -90, 0), // BLUE FLAG
-            new Location(Bukkit.getWorld("Atherrough_Valley"), 30.5, 38.5, 89.5, 90, 0), // RED FLAG
+            options.add(new GateOption(loc.addXYZ(-26, 33, -96), loc.addXYZ(-19, 40, -96)));
+            options.add(new GateOption(loc.addXYZ(-28, 31, -81), loc.addXYZ(-28, 41, -75)));
+            options.add(new GateOption(loc.addXYZ(20, 33, 96), loc.addXYZ(26, 42, 96)));
+            options.add(new GateOption(loc.addXYZ(29, 31, 76), loc.addXYZ(29, 41, 82)));
 
-            Arrays.asList(
-                    new Cuboid(Bukkit.getWorld("Atherrough_Valley"), -26, 33, -96, -19, 40, -96), // BLUE GATES 1
-                    new Cuboid(Bukkit.getWorld("Atherrough_Valley"), -28, 31, -81, -28, 41, -75), // BLUE GATES 2
+            options.add(new WinByPointsOption());
+            options.add(new MercyWinOption());
+            options.add(new WinAfterTimeoutOption());
+            options.add(new GameOvertimeOption());
+            options.add(new ScoreOnEventOption.FlagCapture());
+            options.add(new ScoreOnEventOption.OnKill());
+            options.add(new RespawnWaveOption());
+            options.add(new RespawnProtectionOption());
+            options.add(new GraveOption());
 
-                    new Cuboid(Bukkit.getWorld("Atherrough_Valley"), 20, 33, 96, 26, 42, 96), // RED GATES 1
-                    new Cuboid(Bukkit.getWorld("Atherrough_Valley"), 29, 31, 76, 29, 41, 82) // RED GATES 2
-            )
-    ),
+            options.add(new BasicScoreboardOption());
+            options.add(new BoundingBoxOption(loc.getWorld()));
 
+            return options;
+        }
+
+    },
     DEBUG(
             "Debug",
             96,
             1,
-            1800 * 20,
-            30 * 20,
+            60 * SECOND,
+            "WLDebug",
+            MapCategory.DEBUG
+    ) {
+        @Override
+        public List<Option> initMap(MapCategory category, LocationFactory loc, EnumSet<GameAddon> addons) {
+            List<Option> options = category.initMap(this, loc, addons);
+            options.add(new MarkerOption(
+                    TeamMarker.create(Team.BLUE, Team.RED),
+                    LobbyLocationMarker.create(loc.addXYZ(727.5, 8.5, 200.5), Team.BLUE),
+                    LobbyLocationMarker.create(loc.addXYZ(727.5, 8.5, 196.5), Team.RED)
+            ));
+            options.add(new PowerupOption(loc.addXYZ(699.5, 8.5, 184.5), PowerupType.ENERGY));
+            options.add(new PowerupOption(loc.addXYZ(699.5, 8.5, 188.5), PowerupType.ENERGY));
+
+            options.add(new PowerupOption(loc.addXYZ(699.5, 8.5, 192.5), PowerupType.SPEED));
+            options.add(new PowerupOption(loc.addXYZ(699.5, 8.5, 196.5), PowerupType.SPEED));
+
+            options.add(new PowerupOption(loc.addXYZ(699.5, 8.5, 200.5), PowerupType.HEALING));
+            options.add(new PowerupOption(loc.addXYZ(699.5, 8.5, 204.5), PowerupType.HEALING));
+
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(727.5, 8.5, 196.5), Team.BLUE));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(727.5, 8.5, 196.5), Team.RED));
+
+            options.add(new FlagCapturePointOption(loc.addXYZ(703.5, 8.5, 212.5), Team.BLUE));
+            options.add(new FlagSpawnPointOption(loc.addXYZ(703.5, 8.5, 212.5), Team.BLUE));
+
+            options.add(new FlagCapturePointOption(loc.addXYZ(720.5, 8.5, 212.5), Team.RED));
+            options.add(new FlagSpawnPointOption(loc.addXYZ(720.5, 8.5, 212.5), Team.RED));
+
+            options.add(new GateOption(loc.addXYZ(713, 7, 195), loc.addXYZ(713, 10, 198)));
+
+            options.add(new WinByPointsOption());
+            options.add(new MercyWinOption());
+            options.add(new WinAfterTimeoutOption());
+            options.add(new GameOvertimeOption());
+            options.add(new ScoreOnEventOption.FlagCapture());
+            options.add(new ScoreOnEventOption.OnKill());
+            options.add(new RespawnWaveOption());
+            options.add(new RespawnProtectionOption());
+            options.add(new GraveOption());
+
+            options.add(new BasicScoreboardOption());
+            options.add(new BoundingBoxOption(loc.getWorld()));
+
+            return options;
+        }
+
+    },
+    HEAVEN_WILL(
+            "Heaven's Will",
+                    2,
+                    2,
+                    60 * SECOND,
             "",
-            MapCategory.DEBUG,
+            MapCategory.DUEL
+            ) {
+        @Override
+        public List<Option> initMap(MapCategory category, LocationFactory loc, EnumSet<GameAddon> addons) {
+            List<Option> options = category.initMap(this, loc, addons);
+            options.add(new MarkerOption(
+                    TeamMarker.create(Team.BLUE, Team.RED),
+                    LobbyLocationMarker.create(loc.addXYZ(726.5, 8, 176.5).yaw(-140), Team.BLUE),
+                    LobbyLocationMarker.create(loc.addXYZ(756.5, 7, 143.5).yaw(40), Team.RED)
+            ));
+            options.add(new PowerupOption(loc.addXYZ(758.5, 12.5, 169.5), PowerupType.ENERGY));
+            options.add(new PowerupOption(loc.addXYZ(717.5, 10.5, 147.5), PowerupType.ENERGY));
 
-            new Location(Bukkit.getWorld("WLDebug"), 699.5, 8.5, 184.5), // BLUE DAMAGE
-            new Location(Bukkit.getWorld("WLDebug"), 699.5, 8.5, 188.5), // RED DAMAGE
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(726.5, 8, 176.5).yaw(-140), Team.BLUE));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(756.5, 7, 143.5).yaw(40), Team.RED));
 
-            new Location(Bukkit.getWorld("WLDebug"), 699.5, 8.5, 192.5), // BLUE SPEED
-            new Location(Bukkit.getWorld("WLDebug"), 699.5, 8.5, 196.5), // RED SPEED
+            options.add(new GateOption(loc.addXYZ(-26, 33, -96), loc.addXYZ(-19, 40, -96)));
+            options.add(new GateOption(loc.addXYZ(20, 33, 96), loc.addXYZ(26, 42, 96)));
 
-            new Location(Bukkit.getWorld("WLDebug"), 699.5, 8.5, 200.5), // BLUE HEALING
-            new Location(Bukkit.getWorld("WLDebug"), 699.5, 8.5, 204.5), // RED HEALING
+            options.add(new WinByPointsOption(5));
+            options.add(new WinAfterTimeoutOption());
+            options.add(new ScoreOnEventOption.OnKill(1));
+            options.add(new RespawnWaveOption());
+            options.add(new GraveOption());
+            options.add(new DuelsRespawnOption());
 
-            new Location(Bukkit.getWorld("WLDebug"), 727.5, 8.5, 200.5), // BLUE LOBBY SPAWN
-            new Location(Bukkit.getWorld("WLDebug"), 727.5, 8.5, 196.5), // RED LOBBY SPAWN
+            options.add(new BasicScoreboardOption());
+            options.add(new BoundingBoxOption(loc.getWorld()));
 
-            new Location(Bukkit.getWorld("WLDebug"), 727.5, 8.5, 196.5), // BLUE RESPAWN
-            new Location(Bukkit.getWorld("WLDebug"), 727.5, 8.5, 196.5), // RED RESPAWN
+            return options;
+        }
 
-            new Location(Bukkit.getWorld("WLDebug"), 703.5, 8.5, 212.5), // BLUE FLAG
-            new Location(Bukkit.getWorld("WLDebug"), 720.5, 8.5, 212.5), // RED FLAG
-
-            Arrays.asList(
-                    new Cuboid(Bukkit.getWorld("WLDebug"), 713, 7, 195, 713, 10, 198) // BLUE GATE
-            )
-    );
-
+    };
     private final String mapName;
     private final int maxPlayers;
     private final int minPlayers;
-    private final int gameTimerInTicks;
-    private final int countdownTimerInTicks;
-    private final Location damagePowerupBlue;
-    private final Location damagePowerupRed;
-    private final Location speedPowerupBlue;
-    private final Location speedPowerupRed;
-    private final Location healingPowerupBlue;
-    private final Location healingPowerupRed;
-    private final Location blueLobbySpawnPoint;
-    private final Location redLobbySpawnPoint;
-    private final Location blueRespawn;
-    private final Location redRespawn;
-    private final Location blueFlag;
-    private final Location redFlag;
+    private final int lobbyCountdown;
     private final String mapDirPath;
-    private final List<Cuboid> fenceGates;
-    private final MapCategory mapCategory;
+    private final List<MapCategory> mapCategory;
 
-    GameMap(String mapName, int maxPlayers, int minPlayers, int gameTime, int countdown, String mapPath, MapCategory mapCategory, Location damagePowerupBlue, Location damagePowerupRed,
-            Location speedPowerupBlue, Location speedPowerupRed, Location healingPowerupBlue, Location healingPowerupRed, Location blueSpawnPoint, Location redSpawnPoint, Location blueRespawn, Location redRespawn, Location blueFlag, Location redFlag, List<Cuboid> fenceGates) {
-
+    GameMap(@Nonnull String mapName, int maxPlayers, int minPlayers, int lobbyCountdown, @Nonnull String mapDirPath, @Nonnull MapCategory... mapCategory) {
         this.mapName = mapName;
         this.maxPlayers = maxPlayers;
         this.minPlayers = minPlayers;
-        this.gameTimerInTicks = gameTime;
-        this.countdownTimerInTicks = countdown;
-        this.mapDirPath = mapPath;
-        this.damagePowerupBlue = damagePowerupBlue;
-        this.damagePowerupRed = damagePowerupRed;
-        this.speedPowerupBlue = speedPowerupBlue;
-        this.speedPowerupRed = speedPowerupRed;
-        this.healingPowerupBlue = healingPowerupBlue;
-        this.healingPowerupRed = healingPowerupRed;
-        this.blueLobbySpawnPoint = blueSpawnPoint;
-        this.redLobbySpawnPoint = redSpawnPoint;
-        this.blueRespawn = blueRespawn;
-        this.redRespawn = redRespawn;
-        this.blueFlag = blueFlag;
-        this.redFlag = redFlag;
-        this.fenceGates = fenceGates;
-        this.mapCategory = mapCategory;
+        this.lobbyCountdown = lobbyCountdown;
+        this.mapDirPath = mapDirPath;
+        this.mapCategory = Collections.unmodifiableList(Arrays.asList(mapCategory));
+    }
+
+    /**
+     * Constructs the game instance
+     *
+     * @param category The map category to construct (for maps with multiple
+     * configurations)
+     * @param loc The base location to construct the map
+     * @param addons The used addons
+     * @return The initial list of options
+     */
+    public abstract List<Option> initMap(MapCategory category, LocationFactory loc, EnumSet<GameAddon> addons);
+
+    public State initialState(Game game) {
+        return new PreLobbyState(game);
     }
 
     public String getMapName() {
@@ -285,99 +458,19 @@ public enum GameMap {
         return maxPlayers;
     }
 
-    public Location getDamagePowerup(@Nonnull Team team) {
-        return team == Team.RED  ? damagePowerupRed : damagePowerupBlue;
-    }
-
     public int getMinPlayers() {
         return minPlayers;
     }
 
-    public Location getSpeedPowerup(@Nonnull Team team) {
-        return team == Team.RED  ? speedPowerupRed : speedPowerupBlue;
-    }
-
-    public Location getHealingPowerup(@Nonnull Team team) {
-        return team == Team.RED  ? healingPowerupRed : healingPowerupBlue;
-    }
-
-    public int getGameTimerInTicks() {
-        return gameTimerInTicks;
-    }
-
-    public Location getLobbySpawnPoint(@Nonnull Team team) {
-        return team == Team.RED  ? redLobbySpawnPoint : blueLobbySpawnPoint;
-    }
-
-    public int getCountdownTimerInTicks() {
-        return countdownTimerInTicks;
-    }
-
-    public Location getRespawn(@Nonnull Team team) {
-        return team == Team.RED  ? redRespawn : blueRespawn;
+    public int getLobbyCountdown() {
+        return lobbyCountdown;
     }
 
     public String getMapDirPath() {
         return mapDirPath;
     }
 
-    public Location getFlag(@Nonnull Team team) {
-        return team == Team.RED  ? redFlag : blueFlag;
-    }
-
-    public Location getDamagePowerupBlue() {
-        return damagePowerupBlue;
-    }
-
-    public Location getDamagePowerupRed() {
-        return damagePowerupRed;
-    }
-
-    public Location getSpeedPowerupBlue() {
-        return speedPowerupBlue;
-    }
-
-    public Location getSpeedPowerupRed() {
-        return speedPowerupRed;
-    }
-
-    public Location getHealingPowerupBlue() {
-        return healingPowerupBlue;
-    }
-
-    public Location getHealingPowerupRed() {
-        return healingPowerupRed;
-    }
-
-    public Location getBlueLobbySpawnPoint() {
-        return blueLobbySpawnPoint;
-    }
-
-    public Location getRedLobbySpawnPoint() {
-        return redLobbySpawnPoint;
-    }
-
-    public Location getBlueRespawn() {
-        return blueRespawn;
-    }
-
-    public Location getRedRespawn() {
-        return redRespawn;
-    }
-
-    public Location getBlueFlag() {
-        return blueFlag;
-    }
-
-    public Location getRedFlag() {
-        return redFlag;
-    }
-
-    public List<Cuboid> getFenceGates() {
-        return fenceGates;
-    }
-
-    public MapCategory getCategory() {
+    public List<MapCategory> getCategories() {
         return mapCategory;
     }
 }

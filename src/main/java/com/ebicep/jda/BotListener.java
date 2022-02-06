@@ -115,7 +115,7 @@ public class BotListener extends ListenerAdapter implements Listener {
                 case "bot-teams": {
                     if (message.getContentRaw().contains(", Balance Cancelled")) {
                         cancelOnGoingBalance();
-                    } else if (message.getEmbeds().size() != 0 && message.getEmbeds().get(0).getFields().size() == 2) {
+                    } else if (!message.getEmbeds().isEmpty() && message.getEmbeds().get(0).getFields().size() == 2) {
                         cancelOnGoingBalance();
                         MessageEmbed embed = message.getEmbeds().get(0);
                         List<String> playerNames = new ArrayList<>();
@@ -129,7 +129,7 @@ public class BotListener extends ListenerAdapter implements Listener {
                                         .split("\n");
                                 if (fieldName.contains("Blue Team") || fieldName.contains("Red Team")) {
                                     for (String player : players) {
-                                        playerNames.add(player.substring(0, player.indexOf("-")));
+                                        playerNames.add(player.substring(0, player.indexOf('-')));
                                     }
                                 }
                             }
@@ -160,7 +160,7 @@ public class BotListener extends ListenerAdapter implements Listener {
                     break;
                 }
                 case "teams": {
-                    if (message.getEmbeds().size() != 0 && message.getEmbeds().get(0).getFields().size() == 2) {
+                    if (!message.getEmbeds().isEmpty() && message.getEmbeds().get(0).getFields().size() == 2) {
                         cancelOnGoingBalance();
                         MessageEmbed embed = message.getEmbeds().get(0);
                         List<String> blueTeam = new ArrayList<>();
@@ -177,15 +177,15 @@ public class BotListener extends ListenerAdapter implements Listener {
                                 if (fieldName.contains("Blue Team")) {
                                     blueTeam.add(ChatColor.DARK_BLUE.toString() + ChatColor.BOLD + "Blue Team" + ChatColor.DARK_GRAY + " - ");
                                     for (String player : players) {
-                                        String name = player.substring(0, player.indexOf("-"));
-                                        String spec = player.substring(player.indexOf("-") + 1);
+                                        String name = player.substring(0, player.indexOf('-'));
+                                        String spec = player.substring(player.indexOf('-') + 1);
                                         blueTeam.add(ChatColor.BLUE + name + ChatColor.GRAY + " - " + ChatColor.YELLOW + spec);
                                     }
                                 } else if (fieldName.contains("Red Team")) {
                                     redTeam.add(ChatColor.DARK_RED.toString() + ChatColor.BOLD + "Red Team" + ChatColor.DARK_GRAY + " - ");
                                     for (String player : players) {
-                                        String name = player.substring(0, player.indexOf("-"));
-                                        String spec = player.substring(player.indexOf("-") + 1);
+                                        String name = player.substring(0, player.indexOf('-'));
+                                        String spec = player.substring(player.indexOf('-') + 1);
                                         redTeam.add(ChatColor.RED + name + ChatColor.GRAY + " - " + ChatColor.YELLOW + spec);
                                     }
                                 }
@@ -205,8 +205,8 @@ public class BotListener extends ListenerAdapter implements Listener {
                                 try {
                                     Bukkit.getScheduler().callSyncMethod(Warlords.getInstance(), () -> {
                                         for (String player : players) {
-                                            String name = player.substring(0, player.indexOf("-"));
-                                            String spec = player.substring(player.indexOf("-") + 1);
+                                            String name = player.substring(0, player.indexOf('-'));
+                                            String spec = player.substring(player.indexOf('-') + 1);
                                             OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(name);
                                             UUID uuid = offlinePlayer.getUniqueId();
                                             //includes offline players
@@ -242,14 +242,14 @@ public class BotListener extends ListenerAdapter implements Listener {
                                                 targetPlayer.sendMessage("");
                                                 blueTeam.forEach(s -> {
                                                     if (s.contains(name)) {
-                                                        targetPlayer.sendMessage(ChatColor.GREEN + s.substring(2, s.indexOf("-") - 2) + s.substring(s.indexOf("-") - 2));
+                                                        targetPlayer.sendMessage(ChatColor.GREEN + s.substring(2, s.indexOf('-') - 2) + s.substring(s.indexOf('-') - 2));
                                                     } else {
                                                         targetPlayer.sendMessage(s);
                                                     }
                                                 });
                                                 redTeam.forEach(s -> {
                                                     if (s.contains(name)) {
-                                                        targetPlayer.sendMessage(ChatColor.GREEN + s.substring(2, s.indexOf("-") - 2) + s.substring(s.indexOf("-") - 2));
+                                                        targetPlayer.sendMessage(ChatColor.GREEN + s.substring(2, s.indexOf('-') - 2) + s.substring(s.indexOf('-') - 2));
                                                     } else {
                                                         targetPlayer.sendMessage(s);
                                                     }
@@ -299,8 +299,8 @@ public class BotListener extends ListenerAdapter implements Listener {
                                             Date date = new Date();
                                             int currentHour = Integer.parseInt(hourFormat.format(date));
                                             int currentMinute = Integer.parseInt(minuteFormat.format(date));
-                                            int hourDiff = Integer.parseInt(futureTime.substring(0, futureTime.indexOf(":"))) - currentHour;
-                                            int minuteDiff = Integer.parseInt(futureTime.substring(futureTime.indexOf(":") + 1)) - currentMinute;
+                                            int hourDiff = Integer.parseInt(futureTime.substring(0, futureTime.indexOf(':'))) - currentHour;
+                                            int minuteDiff = Integer.parseInt(futureTime.substring(futureTime.indexOf(':') + 1)) - currentMinute;
                                             if (hourDiff > 5) {
                                                 textChannel.sendMessage("You cannot join the queue 3+ hours ahead").queue();
                                             } else if (hourDiff == 0 && minuteDiff < 20) {

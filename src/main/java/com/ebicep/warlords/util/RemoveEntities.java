@@ -1,6 +1,6 @@
 package com.ebicep.warlords.util;
 
-import com.ebicep.warlords.maps.GameMap;
+import com.ebicep.warlords.maps.Game;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -9,12 +9,14 @@ import org.bukkit.entity.Player;
 
 public class RemoveEntities {
 
-    public static void doRemove(GameMap map) {
-        map.getBlueFlag().getWorld().getEntities().stream().filter(entity -> !(entity instanceof Player)).forEach(Entity::remove);
-        map.getRedFlag().getWorld().getEntities().stream().filter(entity -> !(entity instanceof Player)).forEach(Entity::remove);
-        // add more later
+    public static void doRemove(Game game) {
+        // TODO support multiple games in the same world by adding a bounding box to every map
+        game.getLocations().getWorld().getEntities().stream().filter(entity -> !(entity instanceof Player)).forEach(Entity::remove);
     }
 
+    /**
+     * Checks any world for orphan horses, and kill them
+     */
     public static void removeHorsesInGame() {
         Bukkit.getWorlds().stream().skip(1).forEachOrdered(world -> {
             world.getEntities().stream().filter(entity -> (entity instanceof Horse && entity.getPassenger() == null)).forEach(Entity::remove);

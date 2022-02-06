@@ -2,9 +2,9 @@ package com.ebicep.warlords.commands.debugcommands;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.BaseCommand;
+import com.ebicep.warlords.maps.GameAddon;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.party.Party;
-import com.ebicep.warlords.party.Poll;
 import com.ebicep.warlords.party.PollBuilder;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.PacketUtils;
@@ -21,12 +21,16 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class ImposterCommand implements CommandExecutor {
-
-    public static boolean enabled = false;
+    // TODO Move these to a ImposterOption option on the game. At the moment, 2 imposter games cannot be played at the same time
+    @Deprecated
     public static String blueImposterName = null;
+    @Deprecated
     public static String redImposterName = null;
+    @Deprecated
     public static int blueVoters = 0;
+    @Deprecated
     public static int redVoters = 0;
+    @Deprecated
     public static List<WarlordsPlayer> voters = new ArrayList<>();
 
     @Override
@@ -38,31 +42,21 @@ public class ImposterCommand implements CommandExecutor {
 
         String input = args[0];
 
-        if (input.equalsIgnoreCase("toggle") || input.equalsIgnoreCase("assign")) {
+        if (input.equalsIgnoreCase("assign")) {
             if (!sender.hasPermission("warlords.game.impostertoggle")) {
                 sender.sendMessage("§cYou do not have permission to do that.");
                 return true;
             }
         }
 
-        if (!input.equalsIgnoreCase("toggle") && !enabled) {
-            sender.sendMessage(ChatColor.RED + "The imposter gamemode is currently disabled");
-            return true;
-        }
-
         switch (input.toLowerCase()) {
-            case "toggle": {
-                enabled = !enabled;
-                if (enabled) {
-                    sender.sendMessage(ChatColor.GREEN + "Imposter gamemode is now enabled");
-                } else {
-                    sender.sendMessage(ChatColor.RED + "Imposter gamemode is now disabled");
-                }
-                break;
-            }
             case "assign": {
                 WarlordsPlayer warlordsPlayer = BaseCommand.requireWarlordsPlayer(sender);
                 if (warlordsPlayer == null) return true;
+                if (!warlordsPlayer.getGame().getAddons().contains(GameAddon.IMPOSTER_MODE)) {
+                    sender.sendMessage(ChatColor.RED + "The imposter gamemode is currently disabled");
+                    return true;
+                }
 
                 List<Player> bluePlayers = warlordsPlayer.getGame().players()
                         .filter(uuidTeamEntry -> uuidTeamEntry.getValue() == Team.BLUE)
@@ -131,9 +125,13 @@ public class ImposterCommand implements CommandExecutor {
             case "vote": {
                 WarlordsPlayer warlordsPlayer = BaseCommand.requireWarlordsPlayer(sender);
                 if (warlordsPlayer == null) return true;
+                if (!warlordsPlayer.getGame().getAddons().contains(GameAddon.IMPOSTER_MODE)) {
+                    sender.sendMessage(ChatColor.RED + "The imposter gamemode is currently disabled");
+                    return true;
+                }
                 if (!Warlords.partyManager.inAParty(warlordsPlayer.getUuid())) return true;
 
-                if (warlordsPlayer.getGameState().getTimerInSeconds() > 900 - 60 * 5) {
+                if (warlordsPlayer.getGameState().getTicksElapsed() > 900 - 60 * 5) {
                     sender.sendMessage(ChatColor.RED + "You cannot request to vote before 5 minutes have past!");
                     return true;
                 }
@@ -153,18 +151,19 @@ public class ImposterCommand implements CommandExecutor {
                 }
                 voters.add(warlordsPlayer);
 
-                if (warlordsPlayer.getGame().isBlueTeam(warlordsPlayer.getUuid())) {
+                Team t = warlordsPlayer.getTeam();
+                if (t == Team.BLUE) {
                     int playersNeeded = (int) (warlordsPlayer.getGame().getPlayers().entrySet().stream().filter(uuidTeamEntry -> uuidTeamEntry.getValue() == Team.BLUE).count() * .75 + 1);
                     blueVoters++;
                     if (blueVoters >= playersNeeded) {
                         party.addPoll(new PollBuilder()
                                 .setQuestion("Who is the most SUS on your team?")
                                 .setTimeLeft(60)
-                                .setOptions(warlordsPlayer.getGame().offlinePlayers()
+                                .setOptions(warlordsPlayer.getGame().offlinePlayersWithoutSpectators()
                                         .filter(uuidTeamEntry -> uuidTeamEntry.getValue() == Team.BLUE)
                                         .map(offlinePlayerTeamEntry -> offlinePlayerTeamEntry.getKey().getName())
                                         .collect(Collectors.toList()))
-                                .setExcludedPlayers(warlordsPlayer.getGame().offlinePlayers()
+                                .setExcludedPlayers(warlordsPlayer.getGame().offlinePlayersWithoutSpectators()
                                         .filter(uuidTeamEntry -> uuidTeamEntry.getValue() == Team.RED)
                                         .map(offlinePlayerTeamEntry -> offlinePlayerTeamEntry.getKey().getUniqueId())
                                         .collect(Collectors.toList()))
@@ -210,7 +209,7 @@ public class ImposterCommand implements CommandExecutor {
                                                             }
                                                         });
                                             } else if (counter == 10) {
-                                                warlordsPlayer.getGame().freeze("", false);
+                                                warlordsPlayer.getGame().removeFrozenCause(ChatColor.BLUE + "BLUE" + ChatColor.GREEN + " is voting!");
                                                 if (votedCorrectly) {
                                                     warlordsPlayer.getGameState().getStats(Team.BLUE).setPoints(1000);
                                                 } else {
@@ -231,26 +230,26 @@ public class ImposterCommand implements CommandExecutor {
                                     }.runTaskTimer(Warlords.getInstance(), 5, 20);
                                 })
                         );
-                        warlordsPlayer.getGame().freeze(ChatColor.BLUE + "BLUE" + ChatColor.GREEN + " is voting!", true);
+                        warlordsPlayer.getGame().addFrozenCause(ChatColor.BLUE + "BLUE" + ChatColor.GREEN + " is voting!");
                     } else {
-                        warlordsPlayer.getGame().forEachOnlinePlayer((player, team) -> {
+                        warlordsPlayer.getGame().forEachOnlinePlayerWithoutSpectators((player, team) -> {
                             if (team == Team.BLUE) {
                                 Party.sendMessageToPlayer(player, ChatColor.GREEN + "A player wants to vote out someone! (" + blueVoters + "/" + playersNeeded + ")", true, true);
                             }
                         });
                     }
-                } else if (warlordsPlayer.getGame().isRedTeam(warlordsPlayer.getUuid())) {
+                } else if (t == Team.RED) {
                     int playersNeeded = (int) (warlordsPlayer.getGame().getPlayers().entrySet().stream().filter(uuidTeamEntry -> uuidTeamEntry.getValue() == Team.RED).count() * .75 + 1);
                     redVoters++;
                     if (redVoters >= playersNeeded) {
                         party.addPoll(new PollBuilder()
                                 .setQuestion("Who is the most SUS on your team?")
                                 .setTimeLeft(60)
-                                .setOptions(warlordsPlayer.getGame().offlinePlayers()
+                                .setOptions(warlordsPlayer.getGame().offlinePlayersWithoutSpectators()
                                         .filter(uuidTeamEntry -> uuidTeamEntry.getValue() == Team.RED)
                                         .map(offlinePlayerTeamEntry -> offlinePlayerTeamEntry.getKey().getName())
                                         .collect(Collectors.toList()))
-                                .setExcludedPlayers(warlordsPlayer.getGame().offlinePlayers()
+                                .setExcludedPlayers(warlordsPlayer.getGame().offlinePlayersWithoutSpectators()
                                         .filter(uuidTeamEntry -> uuidTeamEntry.getValue() == Team.BLUE)
                                         .map(offlinePlayerTeamEntry -> offlinePlayerTeamEntry.getKey().getUniqueId())
                                         .collect(Collectors.toList()))
@@ -296,7 +295,7 @@ public class ImposterCommand implements CommandExecutor {
                                                             }
                                                         });
                                             } else if (counter == 10) {
-                                                warlordsPlayer.getGame().freeze("", false);
+                                                warlordsPlayer.getGame().removeFrozenCause(ChatColor.RED + "RED" + ChatColor.GREEN + " is voting!");
                                                 if (votedCorrectly) {
                                                     warlordsPlayer.getGameState().getStats(Team.RED).setPoints(1000);
                                                 } else {
@@ -317,15 +316,16 @@ public class ImposterCommand implements CommandExecutor {
                                     }.runTaskTimer(Warlords.getInstance(), 5, 20);
                                 })
                         );
-                        warlordsPlayer.getGame().freeze(ChatColor.RED + "RED" + ChatColor.GREEN + " is voting!", true);
+                        warlordsPlayer.getGame().addFrozenCause(ChatColor.RED + "RED" + ChatColor.GREEN + " is voting!");
                     } else {
-                        warlordsPlayer.getGame().forEachOnlinePlayer((player, team) -> {
+                        warlordsPlayer.getGame().forEachOnlinePlayerWithoutSpectators((player, team) -> {
                             if (team == Team.RED) {
                                 player.sendMessage(ChatColor.GREEN + "A player wants to vote out someone! (" + redVoters + "/" + playersNeeded + ")");
                             }
                         });
                     }
                 }
+                // TODO Loop over the teams accepted by the team marker inside the game, instead of hardcoded blue/red
                 break;
             }
         }

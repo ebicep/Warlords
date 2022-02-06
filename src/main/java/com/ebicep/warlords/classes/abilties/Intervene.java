@@ -1,17 +1,16 @@
 package com.ebicep.warlords.classes.abilties;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nonnull;
 import java.util.Optional;
@@ -87,48 +86,40 @@ public class Intervene extends AbstractAbility {
                     for (Player player1 : player.getWorld().getPlayers()) {
                         player1.playSound(player.getLocation(), "warrior.intervene.impact", 1, 1);
                     }
-                    wp.getGame().getGameTasks().put(
-
-                            new BukkitRunnable() {
-                                @Override
-                                public void run() {
-                                    Optional<RegularCooldown> optionalRegularCooldown = new CooldownFilter<>(vt, RegularCooldown.class).filterCooldownObject(tempIntervene).findFirst();
+                    new GameRunnable(wp.getGame()) {
+                        @Override
+                        public void run() {
+                            Optional<RegularCooldown> optionalRegularCooldown = new CooldownFilter<>(vt, RegularCooldown.class).filterCooldownObject(tempIntervene).findFirst();
                                     if (optionalRegularCooldown.isPresent()) {
                                         RegularCooldown interveneRegularCooldown = optionalRegularCooldown.get();
                                         if (interveneRegularCooldown.getTicksLeft() <= 20)
-                                            vt.sendMessage("§a\u00BB§7 " + wp.getName() + "'s §eIntervene §7will expire in §6" + (int) (interveneRegularCooldown.getTicksLeft() / 20 + .5) + "§7 second!");
-                                        else
-                                            vt.sendMessage("§a\u00BB§7 " + wp.getName() + "'s §eIntervene §7will expire in §6" + (int) (interveneRegularCooldown.getTicksLeft() / 20 + .5) + "§7 seconds!");
-                                    } else {
-                                        this.cancel();
-                                    }
-                                }
-                            }.runTaskTimer(Warlords.getInstance(), 0, 20),
-                            System.currentTimeMillis()
-                    );
-                    wp.getGame().getGameTasks().put(
-
-                            new BukkitRunnable() {
+                                    vt.sendMessage("§a\u00BB§7 " + wp.getName() + "'s §eIntervene §7will expire in §6" + (int) (interveneRegularCooldown.getTicksLeft() / 20 + .5) + "§7 second!");
+                                else
+                                    vt.sendMessage("§a\u00BB§7 " + wp.getName() + "'s §eIntervene §7will expire in §6" + (int) (interveneRegularCooldown.getTicksLeft() / 20 + .5) + "§7 seconds!");
+                            } else {
+                                this.cancel();
+                            }
+                        }
+                    }.runTaskTimer(0, 20);
+                    new GameRunnable(wp.getGame()) {
                                 @Override
                                 public void run() {
                                     Optional<RegularCooldown> optionalRegularCooldown = new CooldownFilter<>(vt, RegularCooldown.class).filterCooldownObject(tempIntervene).findFirst();
-                                    if (wp.isDeath() ||
-                                            tempIntervene.damagePrevented >= (3600 / 2.0) ||
-                                            !optionalRegularCooldown.isPresent() ||
-                                            vt.getLocation().distanceSquared(optionalRegularCooldown.get().getFrom().getEntity().getLocation()) > 15 * 15
-                                    ) {
-                                        wp.sendMessage("§c\u00AB§7 " + wp.getName() + "'s " + ChatColor.YELLOW + "Intervene " + ChatColor.GRAY + "has expired!");
-                                        wp.getCooldownManager().removeCooldown(tempIntervene);
+                            if (wp.isDeath() ||
+                                    tempIntervene.damagePrevented >= (3600 / 2.0) ||
+                                    !optionalRegularCooldown.isPresent() ||
+                                    vt.getLocation().distanceSquared(optionalRegularCooldown.get().getFrom().getEntity().getLocation()) > 15 * 15
+                            ) {
+                                wp.sendMessage("§c\u00AB§7 " + wp.getName() + "'s " + ChatColor.YELLOW + "Intervene " + ChatColor.GRAY + "has expired!");
+                                wp.getCooldownManager().removeCooldown(tempIntervene);
 
-                                        vt.sendMessage("§c\u00AB§7 " + wp.getName() + "'s " + ChatColor.YELLOW + "Intervene " + ChatColor.GRAY + "has expired!");
-                                        vt.getCooldownManager().removeCooldown(tempIntervene);
+                                vt.sendMessage("§c\u00AB§7 " + wp.getName() + "'s " + ChatColor.YELLOW + "Intervene " + ChatColor.GRAY + "has expired!");
+                                vt.getCooldownManager().removeCooldown(tempIntervene);
 
-                                        this.cancel();
-                                    }
-                                }
-                            }.runTaskTimer(Warlords.getInstance(), 0, 0),
-                            System.currentTimeMillis()
-                    );
+                                this.cancel();
+                            }
+                        }
+                    }.runTaskTimer(0, 0);
                 });
 
         return true;

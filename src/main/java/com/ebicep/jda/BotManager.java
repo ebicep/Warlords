@@ -2,8 +2,11 @@ package com.ebicep.jda;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.maps.Game;
+import com.ebicep.warlords.maps.GameManager.GameHolder;
+import com.ebicep.warlords.maps.option.WinAfterTimeoutOption;
 import com.ebicep.warlords.maps.state.PlayingState;
 import com.ebicep.warlords.maps.state.PreLobbyState;
+import com.ebicep.warlords.util.Utils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -18,10 +21,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import javax.security.auth.login.LoginException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Optional;
-import java.util.TimeZone;
+import java.util.*;
 
 
 public class BotManager {
@@ -123,20 +123,30 @@ public class BotManager {
                 .setColor(3066993)
                 .setFooter(dateFormat.format(new Date()) + " EST");
         eb.setDescription("**Players Online**: " + (onQuit ? Bukkit.getOnlinePlayers().size() - 1 : Bukkit.getOnlinePlayers().size()) + "\n");
-        Game game = Warlords.game;
-        eb.appendDescription("**Players In Game**: " + game.playersCount() + "\n");
-        if (game.getState() instanceof PreLobbyState) {
-            PreLobbyState state = (PreLobbyState) game.getState();
-            if (state.getTimeLeftString().equals("00:45")) {
-                eb.appendDescription("**Game**: " + game.getMap().getMapName() + " Lobby - Waiting for players" + "\n");
+        eb.appendDescription("**Players In Game**: " + Warlords.getGameManager().getPlayerCount() + "\n");
+        eb.appendDescription("**Players Waiting in lobby**: " + Warlords.getGameManager().getPlayerCountInLobby()+ "\n");
+        for(GameHolder holder : Warlords.getGameManager().getGames()) {
+            Game game = holder.getGame();
+            if(game == null) {
+                eb.appendDescription("**Game**: " + holder.getMap().getMapName() + " Inactive\n");
             } else {
-                eb.appendDescription("**Game**: " + game.getMap().getMapName() + " Lobby - " + state.getTimeLeftString() + " Left" + "\n");
+                if (game.getState() instanceof PreLobbyState) {
+                    PreLobbyState state = (PreLobbyState) game.getState();
+                    if (!state.hasEnoughPlayers()) {
+                        eb.appendDescription("**Game**: " + game.getMap().getMapName() + " Lobby - Waiting for players" + "\n");
+                    } else {
+                        eb.appendDescription("**Game**: " + game.getMap().getMapName() + " Lobby - " + state.getTimeLeftString() + " Left" + "\n");
+                    }
+                } else if (game.getState() instanceof PlayingState) {
+                    PlayingState state = (PlayingState) game.getState();
+                    OptionalInt timeLeft = WinAfterTimeoutOption.getTimeLeft(game);
+                    String time = Utils.formatTimeLeft(timeLeft.isPresent() ? timeLeft.getAsInt() : (System.currentTimeMillis() - game.createdAt()) / 1000);
+                    String word = timeLeft.isPresent() ? " Left" : " Elapsed";
+                    eb.appendDescription("**Game**: " + game.getMap().getMapName() + " - " + time + word + " - " + state.getBluePoints() + ":" + state.getRedPoints() + "\n");
+                } else {
+                    eb.appendDescription("**Game**: Ending" + "\n");
+                }
             }
-        } else if (game.getState() instanceof PlayingState) {
-            PlayingState state = (PlayingState) game.getState();
-            eb.appendDescription("**Game**: " + game.getMap().getMapName() + " - " + state.getTimeLeftString() + " Left - " + state.getBluePoints() + ":" + state.getRedPoints() + "\n");
-        } else {
-            eb.appendDescription("**Game**: Ending" + "\n");
         }
         StringBuilder stringBuilder = new StringBuilder("**Parties**: ");
         Warlords.partyManager.getParties().forEach(party -> stringBuilder.append(party.getLeaderName()).append(" (").append(party.getPartyPlayers().size()).append("), "));

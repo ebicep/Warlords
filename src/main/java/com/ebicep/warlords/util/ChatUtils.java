@@ -12,6 +12,8 @@ import java.util.List;
 
 public class ChatUtils {
 
+    public static final TextComponent SPACER = new TextComponent(ChatColor.GRAY + " - ");
+
     private final static int CENTER_PX = 164;
 
     public static void sendMessage(Player player, boolean centered, String message) {
@@ -23,7 +25,7 @@ public class ChatUtils {
     }
 
     public static void sendCenteredMessage(Player player, String message) {
-        if (message == null || message.equals("")) {
+        if (message == null || message.isEmpty()) {
             player.sendMessage("");
             return;
         }
@@ -55,11 +57,11 @@ public class ChatUtils {
             sb.append(" ");
             compensated += spaceLength;
         }
-        player.sendMessage(sb.toString() + message);
+        player.sendMessage(sb + message);
     }
 
     public static void sendCenteredMessageWithEvents(Player player, List<TextComponent> textComponents) {
-        if (textComponents == null || textComponents.size() == 0) return;
+        if (textComponents == null || textComponents.isEmpty()) return;
         String message = "";
         for (TextComponent textComponent : textComponents) {
             message += textComponent.getText();

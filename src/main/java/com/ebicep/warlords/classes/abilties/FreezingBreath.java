@@ -1,14 +1,13 @@
 package com.ebicep.warlords.classes.abilties;
 
-import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.Matrix4d;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import javax.annotation.Nonnull;
@@ -55,40 +54,37 @@ public class FreezingBreath extends AbstractAbility {
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "mage.freezingbreath.activation", 2, 1);
         }
-        wp.getGame().getGameTasks().put(
-                new BukkitRunnable() {
+        new GameRunnable(wp.getGame()) {
 
-                    @Override
-                    public void run() {
-                        this.playEffect();
-                        this.playEffect();
-                    }
+            @Override
+            public void run() {
+                this.playEffect();
+                this.playEffect();
+            }
 
-                    int animationTimer = 0;
-                    final Matrix4d center = new Matrix4d(playerLoc);
+            int animationTimer = 0;
+            final Matrix4d center = new Matrix4d(playerLoc);
 
-                    public void playEffect() {
+            public void playEffect() {
 
-                        if (animationTimer > 12) {
-                            this.cancel();
-                            //Bukkit.broadcastMessage(String.valueOf(center));
-                        }
+                if (animationTimer > 12) {
+                    this.cancel();
+                    //Bukkit.broadcastMessage(String.valueOf(center));
+                }
 
                         ParticleEffect.CLOUD.display(0F, 0F, 0F, 0.6F, 5,
                                 center.translateVector(player.getWorld(), animationTimer / 2D, 0, 0), 500);
 
-                        for (int i = 0; i < 4; i++) {
-                            double angle = Math.toRadians(i * 90) + animationTimer * 0.15;
-                            double width = animationTimer * 0.3;
-                            ParticleEffect.FIREWORKS_SPARK.display(0, 0, 0, 0, 1,
-                                    center.translateVector(player.getWorld(), animationTimer / 2D, Math.sin(angle) * width, Math.cos(angle) * width), 500);
-                        }
+                for (int i = 0; i < 4; i++) {
+                    double angle = Math.toRadians(i * 90) + animationTimer * 0.15;
+                    double width = animationTimer * 0.3;
+                    ParticleEffect.FIREWORKS_SPARK.display(0, 0, 0, 0, 1,
+                            center.translateVector(player.getWorld(), animationTimer / 2D, Math.sin(angle) * width, Math.cos(angle) * width), 500);
+                }
 
-                        animationTimer++;
-                    }
-                }.runTaskTimer(Warlords.getInstance(), 0, 1),
-                System.currentTimeMillis()
-        );
+                animationTimer++;
+            }
+        }.runTaskTimer(0, 1);
 
         return true;
     }

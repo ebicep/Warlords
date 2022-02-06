@@ -7,7 +7,7 @@ import java.util.UUID;
 
 public class PartyManager {
 
-    private List<Party> parties = new ArrayList<>();
+    private final List<Party> parties = new ArrayList<>();
 
     public List<Party> getParties() {
         return parties;

@@ -8,9 +8,15 @@ commands:
   start:
     description: Starts a new game.
     usage: /start [MAP | RANDOM]
+    permission: warlords.game.start
   endgame:
-    description: Force stops the game.
+    description: Terminates the game.
+    permissions: warlords.game.end
     usage: /endgame
+  killgame:
+    description: Kills the game
+    permissions: warlords.game.end
+    usage: /killgame
   menu:
     description: Opens the game menu.
     usage: /menu
@@ -89,6 +95,9 @@ commands:
   lobby:
     description: Warps you back into the lobby if you are in a game lobby
     aliases: [ lobby, l, hub ]
+  gamelist:
+    description: Shows the list of games
+    permission: warlords.game.list
   discord:
     description: Link and unlink discord account with minecraft account
     aliases: [ discord ]
@@ -106,3 +115,9 @@ permissions:
     default: false
   group.administrator:
     default: false
+  warlords.game.impostertoggle:
+    description: Allows the user to start games with the imposter game mode
+  warlords.game.megagame:
+    description: Allows the user to start games with the mega game mode
+  warlords.game.cooldowngame:
+    description: Allows the user to start games with the cooldown reduced game mode

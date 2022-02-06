@@ -3,12 +3,12 @@ package com.ebicep.warlords.classes.abilties;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.PlayerFilter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 public class Consecrate extends AbstractAbility {
@@ -48,36 +48,34 @@ public class Consecrate extends AbstractAbility {
         consecrate.setVisible(false);
         consecrate.setMarker(true);
         BukkitTask task = Bukkit.getScheduler().runTaskTimer(Warlords.getInstance(), cons::spawn, 0, 1);
-        wp.getGame().getGameTasks().put(
-                new BukkitRunnable() {
 
-                    @Override
-                    public void run() {
-                        if (!wp.getGame().isGameFreeze()) {
-                            cons.setDuration(cons.getDuration() - 1);
-                            PlayerFilter.entitiesAround(cons.getLocation(), radius, 6, radius)
-                                    .aliveEnemiesOf(wp)
-                                    .forEach(warlordsPlayer -> {
-                                        warlordsPlayer.addDamageInstance(
-                                                cons.getWarlordsPlayer(),
-                                                cons.getName(),
-                                                cons.getMinDamage(),
-                                                cons.getMaxDamage(),
-                                                cons.getCritChance(),
-                                                cons.getCritMultiplier(),
-                                                false);
-                                    });
-                            if (cons.getDuration() == 0) {
-                                consecrate.remove();
-                                this.cancel();
-                                task.cancel();
-                            }
-                        }
+        new GameRunnable(wp.getGame()) {
+
+            @Override
+            public void run() {
+                if (!wp.getGame().isFrozen()) {
+                    cons.setDuration(cons.getDuration() - 1);
+                    PlayerFilter.entitiesAround(cons.getLocation(), radius, 6, radius)
+                            .aliveEnemiesOf(wp)
+                            .forEach(warlordsPlayer -> {
+                                warlordsPlayer.addDamageInstance(
+                                        cons.getWarlordsPlayer(),
+                                        cons.getName(),
+                                        cons.getMinDamage(),
+                                        cons.getMaxDamage(),
+                                        cons.getCritChance(),
+                                        cons.getCritMultiplier(),
+                                        false);
+                            });
+                    if (cons.getDuration() == 0) {
+                        consecrate.remove();
+                        this.cancel();
+                        task.cancel();
                     }
+                }
+            }
 
-                }.runTaskTimer(Warlords.getInstance(), 0, 20),
-                System.currentTimeMillis()
-        );
+        }.runTaskTimer(0, 20);
 
         return true;
     }

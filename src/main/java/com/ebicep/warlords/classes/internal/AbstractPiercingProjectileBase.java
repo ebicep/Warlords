@@ -3,6 +3,7 @@ package com.ebicep.warlords.classes.internal;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.util.PlayerFilter;
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -136,14 +137,21 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
     @Deprecated
     protected void updateSpeed(Vector speedVector, int ticksLived) {
     }
-
+double lerp(double a, double b, double target) {
+    return a + target * (b - a);
+}
     @Nullable
     protected MovingObjectPosition checkCollisionAndMove(InternalProjectile projectile, Location currentLocation, Vector speed, WarlordsPlayer shooter) {
         Vec3D before = new Vec3D(currentLocation.getX(), currentLocation.getY(), currentLocation.getZ());
         currentLocation.add(speed);
         Vec3D after = new Vec3D(currentLocation.getX(), currentLocation.getY(), currentLocation.getZ());
-        //PlayerFilter.entitiesAround(currentLocation, BUBBLE_RADIUS, BUBBLE_RADIUS, BUBBLE_RADIUS)
-        //       .aliveEnemiesOf(shooter);
+        int radius = 3;/* TODO */
+        PlayerFilter.entitiesInRectangle(
+            currentLocation.getWorld(),
+            Math.min(before.a - radius, after.a - radius), Math.min(before.b - radius, after.b - radius), Math.min(before.c - radius, after.c - radius),
+            Math.max(before.a + radius, after.a + radius), Math.max(before.b + radius, after.b + radius), Math.max(before.c + radius, after.c + radius)
+        ).enemiesOf(shooter).filter(e -> true /* TODO */);
+
         @Nullable
         MovingObjectPosition hit = null;
         double hitDistance = 0;
@@ -311,7 +319,7 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
 
         @Override
         public void run() {
-            if (!shooter.getGame().isGameFreeze()) {
+            if (!shooter.getGame().isFrozen()) {
 
                 updateSpeed(this);
                 MovingObjectPosition hasCollided = checkCollisionAndMove(this, currentLocation, speed, shooter);
@@ -374,9 +382,9 @@ public abstract class AbstractPiercingProjectileBase extends AbstractAbility {
     }
 
     public interface InternalProjectileTask {
-        public void run(InternalProjectile projectile);
+        void run(InternalProjectile projectile);
 
-        public default void onDestroy(InternalProjectile projectile) {
+        default void onDestroy(InternalProjectile projectile) {
         }
     }
 

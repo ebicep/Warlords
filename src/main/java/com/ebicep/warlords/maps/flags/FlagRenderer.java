@@ -30,7 +30,7 @@ import java.util.List;
 
 import static org.bukkit.block.BlockFace.*;
 
-class FlagRenderer {
+public class FlagRenderer {
 	
     private final FlagInfo info;
     private int timer = 0;
@@ -78,7 +78,7 @@ class FlagRenderer {
             this.reset();
         }
         this.lastLocation = info.getFlag();
-        final Warlords plugin = Warlords.getInstance();
+        Warlords plugin = Warlords.getInstance();
         if (this.lastLocation instanceof GroundFlagLocation || this.lastLocation instanceof SpawnFlagLocation) {
             Block block = this.lastLocation.getLocation().getBlock();
             for (int i = 0; !block.isEmpty() && block.getType() != Material.STANDING_BANNER && i < 4; i++) {
@@ -134,7 +134,7 @@ class FlagRenderer {
             stand.setCanPickupItems(false);
             stand.setCustomName(info.getTeam() == Team.BLUE ? ChatColor.BLUE + "" + ChatColor.BOLD + "BLU FLAG" : ChatColor.RED + "" + ChatColor.BOLD + "RED FLAG");
             stand.setCustomNameVisible(true);
-            stand.setMetadata("TEAM", new FixedMetadataValue(plugin, info.getTeam()));
+            stand.setMetadata("INFO", new FixedMetadataValue(plugin, info));
             stand.setVisible(false);
 
             ArmorStand stand1 = this.lastLocation.getLocation().getWorld().spawn(block.getLocation().add(.5, -0.3, .5), ArmorStand.class);
@@ -143,7 +143,7 @@ class FlagRenderer {
             stand1.setCanPickupItems(false);
             stand1.setCustomName(ChatColor.WHITE + "" + ChatColor.BOLD + "LEFT-CLICK TO STEAL IT");
             stand1.setCustomNameVisible(true);
-            stand1.setMetadata("TEAM", new FixedMetadataValue(plugin, info.getTeam()));
+            stand.setMetadata("INFO", new FixedMetadataValue(plugin, info));
             stand1.setVisible(false);
 
         } else if (this.lastLocation instanceof PlayerFlagLocation) {
@@ -172,6 +172,7 @@ class FlagRenderer {
         }
         renderedBlocks.clear();
         for (Entity e : renderedArmorStands) {
+            e.removeMetadata("INFO", Warlords.getInstance());
             e.remove();
         }
         renderedArmorStands.clear();

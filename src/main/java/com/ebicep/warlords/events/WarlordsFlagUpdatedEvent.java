@@ -4,40 +4,20 @@ import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.flags.FlagInfo;
 import com.ebicep.warlords.maps.flags.FlagLocation;
-import com.ebicep.warlords.maps.flags.FlagManager;
-import com.ebicep.warlords.maps.state.PlayingState;
-import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-public class WarlordsFlagUpdatedEvent extends Event {
+public class WarlordsFlagUpdatedEvent extends WarlordsGameEvent {
 
     private static final HandlerList handlers = new HandlerList();
-    private final Game game;
-    private final PlayingState gameState;
-    private final FlagManager flags;
     private final FlagInfo info;
     private final Team team;
     private final FlagLocation old;
 
-    public WarlordsFlagUpdatedEvent(Game game, PlayingState gameState, FlagManager flags, FlagInfo info, Team team, FlagLocation old) {
-        this.game = game;
-        this.gameState = gameState;
-        this.flags = flags;
+    public WarlordsFlagUpdatedEvent(Game game, FlagInfo info, FlagLocation old) {
+        super(game);
         this.info = info;
-        this.team = team;
+        this.team = info.getTeam();
         this.old = old;
-    }
-
-    public Game getGame() {
-        return game;
-    }
-
-    public PlayingState getGameState() {
-        return gameState;
-    }
-
-    public FlagManager getFlags() {
-        return flags;
     }
 
     public FlagInfo getInfo() {
@@ -67,6 +47,6 @@ public class WarlordsFlagUpdatedEvent extends Event {
 
     @Override
     public String toString() {
-        return "WarlordsFlagUpdatedEvent{" + "game=" + game + ", gameState=" + gameState + ", flags=" + flags + ", info=" + info + ", team=" + team + ", old=" + old + '}';
+        return "WarlordsFlagUpdatedEvent{" + "game=" + game + ", info=" + info + ", team=" + team + ", old=" + old + '}';
     }
 }

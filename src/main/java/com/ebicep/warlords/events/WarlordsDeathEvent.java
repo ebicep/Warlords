@@ -1,20 +1,26 @@
 package com.ebicep.warlords.events;
 
 import com.ebicep.warlords.player.WarlordsPlayer;
-import org.bukkit.event.Event;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import org.bukkit.event.HandlerList;
 
-public class WarlordsDeathEvent extends Event {
-
+public class WarlordsDeathEvent extends WarlordsPlayerEvent {
     private static final HandlerList handlers = new HandlerList();
-    private final WarlordsPlayer player;
+    @Nullable
+    private final WarlordsPlayer killer;
 
-    public WarlordsDeathEvent(WarlordsPlayer player) {
-        this.player = player;
+    public WarlordsDeathEvent(@Nonnull WarlordsPlayer player, @Nullable WarlordsPlayer killer) {
+        super(player);
+        this.killer = killer;
+        if (killer != null && player.getGame() != killer.getGame()) {
+            throw new IllegalArgumentException("Victim and killer not in the same game!");
+        }
     }
 
-    public WarlordsPlayer getPlayer() {
-        return player;
+    @Nullable
+    public WarlordsPlayer getKiller() {
+        return killer;
     }
 
     @Override
