@@ -9,7 +9,6 @@ import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
 import com.ebicep.warlords.util.Utils;
-import static com.ebicep.warlords.util.Utils.iterable;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
@@ -155,7 +154,7 @@ public class FallenSouls extends AbstractAbility {
                         warlordsPlayer1.updateOrangeItem(p);
                     }
                 }
-            }
+            });
         }
     }
 

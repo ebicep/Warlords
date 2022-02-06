@@ -3,8 +3,8 @@ package com.ebicep.warlords.maps.option;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.option.marker.DebugLocationMarker;
 import com.ebicep.warlords.maps.option.marker.TimerSkipAbleMarker;
-import com.ebicep.warlords.player.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.PlayerFilter;
 import org.bukkit.Location;
@@ -254,7 +254,7 @@ public class PowerupOption implements Option {
         DAMAGE(30, Material.WOOL, (short) 4) {
             @Override
             public void onPickUp(PowerupOption option, WarlordsPlayer warlordsPlayer) {
-                warlordsPlayer.getCooldownManager().addCooldown("Damage", this.getClass(), this, "DMG", option.getDuration(), warlordsPlayer, CooldownTypes.BUFF);
+                warlordsPlayer.getCooldownManager().addRegularCooldown("Damage", this.getClass(), this, "DMG", option.getDuration(), warlordsPlayer, CooldownTypes.BUFF);
                 warlordsPlayer.sendMessage(String.format("§6You activated the §c§lDAMAGE §6powerup! §a+20%% §6Damage for §a%d §6seconds!", option.getDuration()));
             }
 

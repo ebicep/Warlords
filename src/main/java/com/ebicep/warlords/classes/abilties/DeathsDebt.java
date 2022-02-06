@@ -5,9 +5,9 @@ import com.ebicep.warlords.classes.internal.AbstractTotemBase;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.effects.circle.DoubleLineEffect;
-import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownFilter;
+import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.ParticleEffect;
@@ -179,9 +179,7 @@ public class DeathsDebt extends AbstractTotemBase {
                         }
                     }
                 }
-            }.runTaskTimer(Warlords.getInstance(), 0, 0),
-            System.currentTimeMillis()
-        );
+            }.runTaskTimer(0, 0);
     }
 
     public void onDebtTick(WarlordsPlayer wp, Player player, ArmorStand totemStand, DeathsDebt tempDeathsDebt) {
