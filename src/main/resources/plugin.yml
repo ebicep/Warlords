@@ -7,16 +7,17 @@ load: POSTWORLD
 commands:
   start:
     description: Starts a new game.
-    usage: /start [MAP | RANDOM]
+    usage: /start [...map:MapName | category:CategoryName | addon:AddonName | players:* | player:PlayerName]
     permission: warlords.game.start
-  endgame:
+  terminategame:
     description: Terminates the game.
     permissions: warlords.game.end
-    usage: /endgame
+    aliases: [endgame]
+    usage: /<command> [...game holder name/map name/category name/game uuid]
   killgame:
     description: Kills the game
     permissions: warlords.game.end
-    usage: /killgame
+    usage: /<command> [...game holder name/map name/category name/game uuid]
   menu:
     description: Opens the game menu.
     usage: /menu
