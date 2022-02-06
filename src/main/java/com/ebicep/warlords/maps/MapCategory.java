@@ -62,6 +62,43 @@ public enum MapCategory {
             return options;
         }
     },
+    DUEL("Duel") {
+        @Override
+        public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
+            List<Option> options = super.initMap(map, loc, addons);
+            String color = "" + ChatColor.YELLOW + ChatColor.BOLD;
+            options.add(TextOption.Type.CHAT_CENTERED.create(
+                    "" + ChatColor.WHITE + ChatColor.BOLD + "Warlords",
+                    "",
+                    color + "First player to kill their opponent",
+                    color + "5 times wins the duel!",
+                    ""
+            ));
+            options.add(TextOption.Type.TITLE.create(
+                    10,
+                    ChatColor.GREEN + "GO!"
+            ));
+            return options;
+        }
+    },
+    TEAM_DEATHMATCH("Team Deathmatch") {
+        @Override
+        public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
+            List<Option> options = new ArrayList<>();
+            String color = "" + ChatColor.YELLOW + ChatColor.BOLD;
+            options.add(TextOption.Type.CHAT_CENTERED.create(
+                    "" + ChatColor.WHITE + ChatColor.BOLD + "Warlords",
+                    "",
+                    color + "First player to kill their opponent",
+                    color + "5 times wins the duel!",
+                    ""
+            ));
+            options.add(TextOption.Type.TITLE.create(
+                    ChatColor.GREEN + "GO!"
+            ));
+            return options;
+        }
+    },
     DEBUG("Debug Map") {
         @Override
         public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
@@ -70,7 +107,7 @@ public enum MapCategory {
             options.add(TextOption.Type.TITLE.create(
                     10,
                     ChatColor.GREEN + "GO!",
-                    ChatColor.YELLOW + "Debug some issues!"
+                    ChatColor.YELLOW + "Debug some issued!"
             ));
             return options;
         }
@@ -88,26 +125,7 @@ public enum MapCategory {
             return options;
         }
     },
-    DUEL("Duel") {
-        @Override
-        public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
-            List<Option> options = super.initMap(map, loc, addons);
 
-            String color = "" + ChatColor.YELLOW + ChatColor.BOLD;
-            options.add(TextOption.Type.CHAT_CENTERED.create(
-                    "" + ChatColor.WHITE + ChatColor.BOLD + "Warlords",
-                    "",
-                    color + "First player to kill their opponent",
-                    color + "5 times wins the duel!",
-                    ""
-            ));
-            options.add(TextOption.Type.TITLE.create(
-                    10,
-                    ChatColor.GREEN + "GO!"
-            ));
-            return options;
-        }
-    },
     ;
 
     private final String name;
