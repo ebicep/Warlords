@@ -211,9 +211,9 @@ public class ImposterCommand implements CommandExecutor {
                                             } else if (counter == 10) {
                                                 warlordsPlayer.getGame().removeFrozenCause(ChatColor.BLUE + "BLUE" + ChatColor.GREEN + " is voting!");
                                                 if (votedCorrectly) {
-                                                    warlordsPlayer.getGameState().getStats(Team.BLUE).setPoints(1000);
+                                                    warlordsPlayer.getGame().setPoints(Team.BLUE, 1000);
                                                 } else {
-                                                    warlordsPlayer.getGameState().getStats(Team.RED).setPoints(1000);
+                                                    warlordsPlayer.getGame().setPoints(Team.RED, 1000);
                                                 }
                                                 this.cancel();
                                                 warlordsPlayer.getGame().getPlayers()
@@ -297,9 +297,9 @@ public class ImposterCommand implements CommandExecutor {
                                             } else if (counter == 10) {
                                                 warlordsPlayer.getGame().removeFrozenCause(ChatColor.RED + "RED" + ChatColor.GREEN + " is voting!");
                                                 if (votedCorrectly) {
-                                                    warlordsPlayer.getGameState().getStats(Team.RED).setPoints(1000);
+                                                    warlordsPlayer.getGame().setPoints(Team.RED, 1000);
                                                 } else {
-                                                    warlordsPlayer.getGameState().getStats(Team.BLUE).setPoints(1000);
+                                                    warlordsPlayer.getGame().setPoints(Team.BLUE, 1000);
                                                 }
                                                 this.cancel();
                                                 warlordsPlayer.getGame().getPlayers()

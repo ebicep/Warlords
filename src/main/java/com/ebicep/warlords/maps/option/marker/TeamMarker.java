@@ -3,6 +3,8 @@ package com.ebicep.warlords.maps.option.marker;
 
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Team;
+import com.ebicep.warlords.maps.option.MarkerOption;
+import com.ebicep.warlords.maps.option.Option;
 
 import java.util.Arrays;
 import java.util.EnumSet;
@@ -45,5 +47,9 @@ public interface TeamMarker extends GameMarker {
             teams.add(Team.BLUE);
         }
         return teams;
+    }
+    
+    public default Option asOption() {
+        return new MarkerOption(this);
     }
 }

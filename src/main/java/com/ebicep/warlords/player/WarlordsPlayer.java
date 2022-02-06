@@ -263,18 +263,16 @@ public final class WarlordsPlayer {
                 sendMessage(GIVE_ARROW + ChatColor.GRAY + " You took " + ChatColor.RED + Math.round(min) + ChatColor.GRAY + " melee damage.");
                 regenTimer = 10;
                 if (health - min <= 0 && !cooldownManager.checkUndyingArmy(false)) {
-                    die(attacker);
-                    gameState.addKill(team, false);
                     if (entity instanceof Player) {
                         PacketUtils.sendTitle((Player) entity, ChatColor.RED + "YOU DIED!", ChatColor.GRAY + "You took " + ChatColor.RED + Math.round(min) + ChatColor.GRAY + " melee damage and died.", 0, 40, 0);
                     }
-
                     health = 0;
+                    die(attacker);
                 } else {
                     health -= min;
+                    playHurtAnimation(this.entity, attacker);
                 }
 
-                playHurtAnimation(this.entity, attacker);
 
             } else {
 
@@ -282,19 +280,17 @@ public final class WarlordsPlayer {
                 sendMessage(GIVE_ARROW + ChatColor.GRAY + " You took " + ChatColor.RED + Math.round(damageValue) + ChatColor.GRAY + " fall damage.");
                 regenTimer = 10;
                 if (health - damageValue < 0 && !cooldownManager.checkUndyingArmy(false)) {
-                    die(attacker);
-                    gameState.addKill(team, false); // TODO, fall damage is only a suicide if it happens more than 5 seconds after the last damage
                     // Title card "YOU DIED!"
                     if (entity instanceof Player) {
                         PacketUtils.sendTitle((Player) entity, ChatColor.RED + "YOU DIED!", ChatColor.GRAY + "You took " + ChatColor.RED + Math.round(damageValue) + ChatColor.GRAY + " fall damage and died.", 0, 40, 0);
                     }
-
                     health = 0;
+                    die(attacker);
                 } else {
                     health -= damageValue;
+                    playHurtAnimation(entity, attacker);
                 }
 
-                playHurtAnimation(entity, attacker);
 
                 addAbsorbed(Math.abs(damageValue * spec.getDamageResistance() / 100));
             }
@@ -671,14 +667,13 @@ public final class WarlordsPlayer {
                         ((Player) attacker.entity).playSound(attacker.getLocation(), Sound.ORB_PICKUP, 500f, 0.5f);
                     }
 
-                    die(attacker);
 
                     attacker.addKill();
 
                     sendMessage(ChatColor.GRAY + "You were killed by " + attacker.getColoredName());
                     attacker.sendMessage(ChatColor.GRAY + "You killed " + getColoredName());
 
-                    gameState.getGame().forEachOnlinePlayerWithoutSpectators((p, t) -> {
+                    gameState.getGame().forEachOnlinePlayer((p, t) -> {
                         if (p != this.entity && p != attacker.entity) {
                             p.sendMessage(getColoredName() + ChatColor.GRAY + " was killed by " + attacker.getColoredName());
                         }
@@ -721,6 +716,7 @@ public final class WarlordsPlayer {
                     if (this.entity instanceof Player) {
                         PacketUtils.sendTitle((Player) entity, ChatColor.RED + "YOU DIED!", ChatColor.GRAY + attacker.getName() + " killed you.", 0, 40, 0);
                     }
+                    die(attacker);
                 } else {
                     if (!isMeleeHit && this != attacker && damageValue != 0) {
                         playHitSound(attacker);
@@ -1878,7 +1874,7 @@ public final class WarlordsPlayer {
         return this.entity.getLocation(copyInto);
     }
 
-    public boolean isEnemyAlive(Entity other) {
+    public boolean isEnemyAlive(@Nullable Entity other) {
         return isEnemyAlive(Warlords.getPlayer(other));
     }
 
@@ -1895,7 +1891,7 @@ public final class WarlordsPlayer {
                 p.getTeam() != getTeam();
     }
 
-    public boolean isTeammateAlive(Entity other) {
+    public boolean isTeammateAlive(@Nullable Entity other) {
         return isEnemyAlive(Warlords.getPlayer(other));
     }
 

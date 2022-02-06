@@ -37,11 +37,10 @@ public enum GameMap {
         @Override
         public List<Option> initMap(MapCategory category, LocationFactory loc, EnumSet<GameAddon> addons) {
             List<Option> options = category.initMap(this, loc, addons);
-            options.add(new MarkerOption(
-                    TeamMarker.create(Team.BLUE, Team.RED),
-                    LobbyLocationMarker.create(loc.addXYZ(-86.5, 46, -33.5), Team.BLUE),
-                    LobbyLocationMarker.create(loc.addXYZ(87.5, 46, 35.5, 180, 0), Team.RED)
-            ));
+            options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(-86.5, 46, -33.5), Team.BLUE).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(87.5, 46, 35.5, 180, 0), Team.RED).asOption());
+
             options.add(new PowerupOption(loc.addXYZ(-32.5, 25.5, 49.5), PowerupType.ENERGY));
             options.add(new PowerupOption(loc.addXYZ(33.5, 25.5, -48.5), PowerupType.ENERGY));
 
@@ -61,7 +60,7 @@ public enum GameMap {
 
                     options.add(new FlagCapturePointOption(loc.addXYZ(99.5, 45.5, 17.5, 90, 0), Team.RED));
                     options.add(new FlagSpawnPointOption(loc.addXYZ(99.5, 45.5, 17.5, 90, 0), Team.RED));
-                    
+
                     options.add(new ScoreOnEventOption.FlagCapture(250));
                     break;
                 case INTERCEPTION:
@@ -69,7 +68,7 @@ public enum GameMap {
                     options.add(new InterceptionPointOption("Middle #2", loc.addXYZ(-13.5, 23, 26.5)));
                     options.add(new InterceptionPointOption("Stairs #1", loc.addXYZ(-44.5, 34, 22.5)));
                     options.add(new InterceptionPointOption("Stairs #2", loc.addXYZ(44.5, 34, -20.5)));
-                    
+
                     options.add(new ScoreOnEventOption.OnInterceptionCapture(25));
                     options.add(new ScoreOnEventOption.OnInterceptionTimer(1));
                     break;
@@ -109,12 +108,12 @@ public enum GameMap {
         @Override
         public List<Option> initMap(MapCategory category, LocationFactory loc, EnumSet<GameAddon> addons) {
             List<Option> options = category.initMap(this, loc, addons);
-            options.add(new MarkerOption(
-                    TeamMarker.create(Team.BLUE, Team.RED),
-                    LobbyLocationMarker.create(loc.addXYZ(215.5, 37, 109.5), Team.BLUE),
-                    LobbyLocationMarker.create(loc.addXYZ(7.5, 37, 19.5, 180, 0), Team.RED),
-                    MapSymmetry.SPIN.asMarker()
-            ));
+
+            options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(215.5, 37, 109.5), Team.BLUE).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(7.5, 37, 19.5, 180, 0), Team.RED).asOption());
+            options.add(MapSymmetry.SPIN.asOption());
+
             options.add(new PowerupOption(loc.addXYZ(158.5, 6.5, 28.5), PowerupType.ENERGY));
             options.add(new PowerupOption(loc.addXYZ(65.5, 6.5, 98.5), PowerupType.ENERGY));
 
@@ -166,12 +165,12 @@ public enum GameMap {
         @Override
         public List<Option> initMap(MapCategory category, LocationFactory loc, EnumSet<GameAddon> addons) {
             List<Option> options = category.initMap(this, loc, addons);
-            options.add(new MarkerOption(
-                    TeamMarker.create(Team.BLUE, Team.RED),
-                    LobbyLocationMarker.create(loc.addXYZ(71.5, 40, -71.5, 90, 0), Team.BLUE),
-                    LobbyLocationMarker.create(loc.addXYZ(73.5, 41, 213.5, -90, 0), Team.RED),
-                    MapSymmetry.SPIN.asMarker()
-            ));
+
+            options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(71.5, 40, -71.5, 90, 0), Team.BLUE).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(73.5, 41, 213.5, -90, 0), Team.RED).asOption());
+            options.add(MapSymmetry.SPIN.asOption());
+
             options.add(new PowerupOption(loc.addXYZ(102.5, 21.5, 51.5), PowerupType.ENERGY));
             options.add(new PowerupOption(loc.addXYZ(42.5, 21.5, 92.5), PowerupType.ENERGY));
 
@@ -223,12 +222,12 @@ public enum GameMap {
         @Override
         public List<Option> initMap(MapCategory category, LocationFactory loc, EnumSet<GameAddon> addons) {
             List<Option> options = category.initMap(this, loc, addons);
-            options.add(new MarkerOption(
-                    TeamMarker.create(Team.BLUE, Team.RED),
-                    LobbyLocationMarker.create(loc.addXYZ(43.5, 77, -216.5).yaw(180), Team.BLUE),
-                    LobbyLocationMarker.create(loc.addXYZ(-134.5, 77, -216.5), Team.RED),
-                    MapSymmetry.SPIN.asMarker()
-            ));
+
+            options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(43.5, 77, -216.5).yaw(180), Team.BLUE).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(-134.5, 77, -216.5), Team.RED).asOption());
+            options.add(MapSymmetry.SPIN.asOption());
+
             options.add(new PowerupOption(loc.addXYZ(-2.5, 61.5, -236.5), PowerupType.ENERGY));
             options.add(new PowerupOption(loc.addXYZ(-88.5, 61.5, -196.5), PowerupType.ENERGY));
 
@@ -282,11 +281,11 @@ public enum GameMap {
         @Override
         public List<Option> initMap(MapCategory category, LocationFactory loc, EnumSet<GameAddon> addons) {
             List<Option> options = category.initMap(this, loc, addons);
-            options.add(new MarkerOption(
-                    TeamMarker.create(Team.BLUE, Team.RED),
-                    LobbyLocationMarker.create(loc.addXYZ(-22.5, 39, -83.5).yaw(180), Team.BLUE),
-                    LobbyLocationMarker.create(loc.addXYZ(23.5, 39, 83.5), Team.RED)
-            ));
+
+            options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(-22.5, 39, -83.5).yaw(180), Team.BLUE).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(23.5, 39, 83.5), Team.RED).asOption());
+
             options.add(new PowerupOption(loc.addXYZ(5.5, 15.5, -33.5), PowerupType.ENERGY));
             options.add(new PowerupOption(loc.addXYZ(-4.5, 15.5, 34.5), PowerupType.ENERGY));
 
@@ -338,11 +337,11 @@ public enum GameMap {
         @Override
         public List<Option> initMap(MapCategory category, LocationFactory loc, EnumSet<GameAddon> addons) {
             List<Option> options = category.initMap(this, loc, addons);
-            options.add(new MarkerOption(
-                    TeamMarker.create(Team.BLUE, Team.RED),
-                    LobbyLocationMarker.create(loc.addXYZ(727.5, 8.5, 200.5), Team.BLUE),
-                    LobbyLocationMarker.create(loc.addXYZ(727.5, 8.5, 196.5), Team.RED)
-            ));
+
+            options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(727.5, 8.5, 200.5), Team.BLUE).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(727.5, 8.5, 196.5), Team.RED).asOption());
+
             options.add(new PowerupOption(loc.addXYZ(699.5, 8.5, 184.5), PowerupType.ENERGY));
             options.add(new PowerupOption(loc.addXYZ(699.5, 8.5, 188.5), PowerupType.ENERGY));
 
@@ -380,6 +379,150 @@ public enum GameMap {
         }
 
     },
+    SIEGE(
+            "Siege",
+            28,
+            10,
+            60 * SECOND,
+            "",
+            MapCategory.TEAM_DEATHMATCH
+    ) {
+        @Override
+        public List<Option> initMap(MapCategory category, LocationFactory loc, EnumSet<GameAddon> addons) {
+            List<Option> options = category.initMap(this, loc, addons);
+            options.add(new MarkerOption(
+                    TeamMarker.create(Team.BLUE, Team.RED),
+                    LobbyLocationMarker.create(loc.addXYZ(-22.5, 39, -83.5).yaw(180), Team.BLUE),
+                    LobbyLocationMarker.create(loc.addXYZ(23.5, 39, 83.5), Team.RED)
+            ));
+            options.add(new PowerupOption(loc.addXYZ(5.5, 15.5, -33.5), PowerupType.ENERGY));
+            options.add(new PowerupOption(loc.addXYZ(-4.5, 15.5, 34.5), PowerupType.ENERGY));
+
+            options.add(new PowerupOption(loc.addXYZ(4.5, 25.5, -86.5), PowerupType.SPEED));
+            options.add(new PowerupOption(loc.addXYZ(-3.5, 25.5, 87.5), PowerupType.SPEED));
+
+            options.add(new PowerupOption(loc.addXYZ(57.5, 15.5, 1.5), PowerupType.HEALING));
+            options.add(new PowerupOption(loc.addXYZ(-56.5, 15.5, -0.5), PowerupType.HEALING));
+
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(39.5, 28.5, -97.5), Team.BLUE));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(-38.5, 28.5, 97.5), Team.RED));
+
+            options.add(new GateOption(loc.addXYZ(-26, 33, -96), loc.addXYZ(-19, 40, -96)));
+            options.add(new GateOption(loc.addXYZ(-28, 31, -81), loc.addXYZ(-28, 41, -75)));
+            options.add(new GateOption(loc.addXYZ(20, 33, 96), loc.addXYZ(26, 42, 96)));
+            options.add(new GateOption(loc.addXYZ(29, 31, 76), loc.addXYZ(29, 41, 82)));
+
+            options.add(new WinByPointsOption());
+            options.add(new MercyWinOption());
+            options.add(new WinAfterTimeoutOption());
+            options.add(new ScoreOnEventOption.OnKill(15));
+            options.add(new RespawnWaveOption());
+            options.add(new RespawnProtectionOption());
+            options.add(new GraveOption());
+
+            options.add(new BasicScoreboardOption());
+            options.add(new BoundingBoxOption(loc.getWorld()));
+
+            return options;
+        }
+
+    },
+    FALSTAD_GATE(
+            "Falstad Gate",
+            28,
+            10,
+            60 * SECOND,
+            "",
+            MapCategory.TEAM_DEATHMATCH
+    ) {
+        @Override
+        public List<Option> initMap(MapCategory category, LocationFactory loc, EnumSet<GameAddon> addons) {
+            List<Option> options = category.initMap(this, loc, addons);
+            options.add(new MarkerOption(
+                    TeamMarker.create(Team.BLUE, Team.RED),
+                    LobbyLocationMarker.create(loc.addXYZ(-22.5, 39, -83.5).yaw(180), Team.BLUE),
+                    LobbyLocationMarker.create(loc.addXYZ(23.5, 39, 83.5), Team.RED)
+            ));
+            options.add(new PowerupOption(loc.addXYZ(5.5, 15.5, -33.5), PowerupType.ENERGY));
+            options.add(new PowerupOption(loc.addXYZ(-4.5, 15.5, 34.5), PowerupType.ENERGY));
+
+            options.add(new PowerupOption(loc.addXYZ(4.5, 25.5, -86.5), PowerupType.SPEED));
+            options.add(new PowerupOption(loc.addXYZ(-3.5, 25.5, 87.5), PowerupType.SPEED));
+
+            options.add(new PowerupOption(loc.addXYZ(57.5, 15.5, 1.5), PowerupType.HEALING));
+            options.add(new PowerupOption(loc.addXYZ(-56.5, 15.5, -0.5), PowerupType.HEALING));
+
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(39.5, 28.5, -97.5), Team.BLUE));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(-38.5, 28.5, 97.5), Team.RED));
+
+            options.add(new GateOption(loc.addXYZ(-26, 33, -96), loc.addXYZ(-19, 40, -96)));
+            options.add(new GateOption(loc.addXYZ(-28, 31, -81), loc.addXYZ(-28, 41, -75)));
+            options.add(new GateOption(loc.addXYZ(20, 33, 96), loc.addXYZ(26, 42, 96)));
+            options.add(new GateOption(loc.addXYZ(29, 31, 76), loc.addXYZ(29, 41, 82)));
+
+            options.add(new WinByPointsOption());
+            options.add(new MercyWinOption());
+            options.add(new WinAfterTimeoutOption());
+            options.add(new ScoreOnEventOption.OnKill(15));
+            options.add(new RespawnWaveOption());
+            options.add(new RespawnProtectionOption());
+            options.add(new GraveOption());
+
+            options.add(new BasicScoreboardOption());
+            options.add(new BoundingBoxOption(loc.getWorld()));
+
+            return options;
+        }
+
+    },
+    BLACK_TEMPLE(
+            "Black Temple",
+            28,
+            10,
+            60 * SECOND,
+            "",
+            MapCategory.TEAM_DEATHMATCH
+    ) {
+        @Override
+        public List<Option> initMap(MapCategory category, LocationFactory loc, EnumSet<GameAddon> addons) {
+            List<Option> options = category.initMap(this, loc, addons);
+            options.add(new MarkerOption(
+                    TeamMarker.create(Team.BLUE, Team.RED),
+                    LobbyLocationMarker.create(loc.addXYZ(-22.5, 39, -83.5).yaw(180), Team.BLUE),
+                    LobbyLocationMarker.create(loc.addXYZ(23.5, 39, 83.5), Team.RED)
+            ));
+            options.add(new PowerupOption(loc.addXYZ(5.5, 15.5, -33.5), PowerupType.ENERGY));
+            options.add(new PowerupOption(loc.addXYZ(-4.5, 15.5, 34.5), PowerupType.ENERGY));
+
+            options.add(new PowerupOption(loc.addXYZ(4.5, 25.5, -86.5), PowerupType.SPEED));
+            options.add(new PowerupOption(loc.addXYZ(-3.5, 25.5, 87.5), PowerupType.SPEED));
+
+            options.add(new PowerupOption(loc.addXYZ(57.5, 15.5, 1.5), PowerupType.HEALING));
+            options.add(new PowerupOption(loc.addXYZ(-56.5, 15.5, -0.5), PowerupType.HEALING));
+
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(39.5, 28.5, -97.5), Team.BLUE));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(-38.5, 28.5, 97.5), Team.RED));
+
+            options.add(new GateOption(loc.addXYZ(-26, 33, -96), loc.addXYZ(-19, 40, -96)));
+            options.add(new GateOption(loc.addXYZ(-28, 31, -81), loc.addXYZ(-28, 41, -75)));
+            options.add(new GateOption(loc.addXYZ(20, 33, 96), loc.addXYZ(26, 42, 96)));
+            options.add(new GateOption(loc.addXYZ(29, 31, 76), loc.addXYZ(29, 41, 82)));
+
+            options.add(new WinByPointsOption());
+            options.add(new MercyWinOption());
+            options.add(new WinAfterTimeoutOption());
+            options.add(new ScoreOnEventOption.OnKill(15));
+            options.add(new RespawnWaveOption());
+            options.add(new RespawnProtectionOption());
+            options.add(new GraveOption());
+
+            options.add(new BasicScoreboardOption());
+            options.add(new BoundingBoxOption(loc.getWorld()));
+
+            return options;
+        }
+
+    },
     HEAVEN_WILL(
             "Heaven's Will",
                     2,
@@ -391,19 +534,22 @@ public enum GameMap {
         @Override
         public List<Option> initMap(MapCategory category, LocationFactory loc, EnumSet<GameAddon> addons) {
             List<Option> options = category.initMap(this, loc, addons);
-            options.add(new MarkerOption(
-                    TeamMarker.create(Team.BLUE, Team.RED),
-                    LobbyLocationMarker.create(loc.addXYZ(726.5, 8, 176.5).yaw(-140), Team.BLUE),
-                    LobbyLocationMarker.create(loc.addXYZ(756.5, 7, 143.5).yaw(40), Team.RED)
-            ));
+
+            options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(726.5, 8, 176.5).yaw(-140), Team.BLUE).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(756.5, 7, 143.5).yaw(40), Team.RED).asOption());
+            
+            options.add(new GateOption(loc, 723, 5, 173, 729, 11, 179));
+            options.add(new GateOption(loc, 753, 4, 140, 759, 10, 146));
+
             options.add(new PowerupOption(loc.addXYZ(758.5, 12.5, 169.5), PowerupType.ENERGY));
             options.add(new PowerupOption(loc.addXYZ(717.5, 10.5, 147.5), PowerupType.ENERGY));
 
             options.add(SpawnpointOption.forTeam(loc.addXYZ(726.5, 8, 176.5).yaw(-140), Team.BLUE));
             options.add(SpawnpointOption.forTeam(loc.addXYZ(756.5, 7, 143.5).yaw(40), Team.RED));
 
-            options.add(new GateOption(loc.addXYZ(-26, 33, -96), loc.addXYZ(-19, 40, -96)));
-            options.add(new GateOption(loc.addXYZ(20, 33, 96), loc.addXYZ(26, 42, 96)));
+            //options.add(new GateOption(loc.addXYZ(-26, 33, -96), loc.addXYZ(-19, 40, -96)));
+            //options.add(new GateOption(loc.addXYZ(20, 33, 96), loc.addXYZ(26, 42, 96)));
 
             options.add(new WinByPointsOption(5));
             options.add(new WinAfterTimeoutOption());

@@ -6,6 +6,7 @@ import com.ebicep.warlords.events.WarlordsIntersectionCaptureEvent;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.flags.WaitingFlagLocation;
+import com.ebicep.warlords.maps.option.marker.PointPredicterMarker;
 import com.ebicep.warlords.maps.option.marker.TeamMarker;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.GameRunnable;
@@ -49,8 +50,7 @@ public abstract class ScoreOnEventOption<T> implements Option {
     
     protected void giveScore(T event, Team team, int score) {
         Pair<Team, Integer> res = scoreModifier.apply(event, new Pair<>(team, score));
-        Game.Stats stats = game.getStats(res.getA());
-        stats.setPoints(stats.points() + res.getB());
+        game.addPoints(res.getA(), res.getB());
     }
     
     public static class FlagCapture extends ScoreOnEventOption<WarlordsFlagUpdatedEvent> {
@@ -153,6 +153,23 @@ public abstract class ScoreOnEventOption<T> implements Option {
 
         public OnInterceptionTimer(int scoreIncrease) {
             super(scoreIncrease);
+        }
+
+        @Override
+        public void register(Game game) {
+            super.register(game);
+            game.registerGameMarker(PointPredicterMarker.class, team -> {
+                double predictedScoreIncrease = 0;
+                for (Option option : game.getOptions()) {
+                    if (option instanceof InterceptionPointOption) {
+                        InterceptionPointOption intersectionPointOption = (InterceptionPointOption) option;
+                        if (intersectionPointOption.getTeamOwning() == team) {
+                            predictedScoreIncrease += scoreIncrease * 60;
+                        }
+                    }
+                }
+                return predictedScoreIncrease;
+            });
         }
 
         @Override

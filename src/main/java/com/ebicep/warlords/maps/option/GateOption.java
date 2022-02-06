@@ -91,15 +91,21 @@ public class GateOption extends AbstractCuboidOption implements  TimerSkipAbleMa
         this.delay = delay;
     }
 
-    private int changeGate(Material search, Material replace) {
+    protected int changeGate(Material search, Material replace) {
         int changed = 0;
         for (int x = min.getBlockX(); x <= max.getBlockX(); x++) {
             for (int z = min.getBlockZ(); z <= max.getBlockZ(); z++) {
                 for (int y = min.getBlockY(); y <= max.getBlockY(); y++) {
-                    Block block = min.getWorld().getBlockAt(x, y, z);
-                    if (block.getType() == search) {
-                        block.setType(replace);
-                        changed++;
+                    if (
+                            x == min.getBlockX() || x == max.getBlockX() ||
+                            y == min.getBlockY() || y == max.getBlockY() ||
+                            z == min.getBlockZ() || z == max.getBlockZ()
+                    ) {
+                        Block block = min.getWorld().getBlockAt(x, y, z);
+                        if (block.getType() == search) {
+                            block.setType(replace);
+                            changed++;
+                        }
                     }
                 }
             }
@@ -177,7 +183,7 @@ public class GateOption extends AbstractCuboidOption implements  TimerSkipAbleMa
                     cancel();
                     return;
                 }
-                if(delay == 0) {
+                if (delay == 0) {
                     openGates();
                     cancel();
                 }

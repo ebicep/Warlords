@@ -3,6 +3,7 @@ package com.ebicep.warlords.maps.option;
 import com.ebicep.warlords.events.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Team;
+import com.ebicep.warlords.maps.option.marker.PointPredicterMarker;
 import com.ebicep.warlords.maps.option.marker.TeamMarker;
 import com.ebicep.warlords.maps.option.marker.TimerSkipAbleMarker;
 import com.ebicep.warlords.maps.option.marker.scoreboard.ScoreboardHandler;
@@ -21,6 +22,7 @@ import java.util.List;
 import java.util.OptionalInt;
 
 import static com.ebicep.warlords.util.GameRunnable.SECOND;
+import javax.annotation.Nullable;
 
 /**
  * Causes the game to end in a draw after a timeout
@@ -105,18 +107,57 @@ public class WinAfterTimeoutOption implements Option {
         }.register(game);
         game.registerGameMarker(ScoreboardHandler.class, scoreboard = new SimpleScoreboardHandler(SCOREBOARD_PRIORITY, "timeout") {
             @Override
-            public List<String> computeLines(WarlordsPlayer player) {
+            public List<String> computeLines(@Nullable WarlordsPlayer player) {
                 final EnumSet<Team> teams = TeamMarker.getTeams(game);
+                
                 Team winner = null;
                 if (teams.size() > 1) {
+                    List<PointPredicterMarker> predictionMarkers = game
+                            .getMarkers(PointPredicterMarker.class);
+                    int scoreNeededToEndGame = game.getOptions()
+                            .stream()
+                            .filter(e -> e instanceof WinByPointsOption)
+                            .mapToInt(e -> ((WinByPointsOption)e).getPointLimit())
+                            .sorted()
+                            .findFirst()
+                            .orElse(Integer.MAX_VALUE);
+                    
                     int highestScore = Integer.MIN_VALUE;
+                    int highestWinInSeconds = Integer.MAX_VALUE;
                     for (Team team : teams) {
-                        int points = game.getStats(team).points();
+                        int points = game.getPoints(team);
+                        int winInSeconds;
+                        if (predictionMarkers.isEmpty()) {
+                            winInSeconds = Integer.MAX_VALUE;
+                        } else {
+                            double pointsPerMinute = predictionMarkers
+                                    .stream()
+                                    .mapToDouble(e -> e.predictPointsNextMinute(team)).sum();
+                            int pointsRemaining = scoreNeededToEndGame - points;
+                            int winInSecondsCalculated = pointsPerMinute <= 0 ? Integer.MAX_VALUE : (int) (pointsRemaining / pointsPerMinute * 60);
+                            int pointsAfterTimeIsOver = (int) (points + timeRemaining * pointsPerMinute / 60);
+
+                            if (winInSecondsCalculated >= 0 && winInSecondsCalculated < timeRemaining) {
+                                // This teamis going to win before the timer is over
+                                winInSeconds = winInSecondsCalculated;
+                                points = scoreNeededToEndGame;
+                            } else {
+                                winInSeconds = timeRemaining;
+                                points = pointsAfterTimeIsOver;
+                            }
+                        }
+                        
                         if (points > highestScore) {
                             highestScore = points;
+                            highestWinInSeconds = winInSeconds;
                             winner = team;
                         } else if (points == highestScore) {
-                            winner = null;
+                            if (winInSeconds < highestWinInSeconds) {
+                                highestWinInSeconds = winInSeconds;
+                                winner = team;
+                            } else if (winInSeconds == highestWinInSeconds) {
+                                winner = null;
+                            }
                         }
                     }
                 }

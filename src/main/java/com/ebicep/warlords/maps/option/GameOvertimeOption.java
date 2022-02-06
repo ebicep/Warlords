@@ -68,12 +68,12 @@ public class GameOvertimeOption implements Option, Listener {
         if (!wasActivated && event.getCause() instanceof WinAfterTimeoutOption) {
             event.setCancelled(true);
             for(Team team : TeamMarker.getTeams(event.getGame())) {
-                event.getGame().getStats(team).setPoints(0);
+                event.getGame().setPoints(team, 0);
             }
             for (Option option : event.getGame().getOptions()) {
                 if (option instanceof WinByPointsOption) {
                     WinByPointsOption winByPointsOption = (WinByPointsOption) option;
-                    winByPointsOption.setLimit(overTimePoints);
+                    winByPointsOption.setPointLimit(overTimePoints);
                 }
             }
             WinAfterTimeoutOption drawAfterTimeoutOption = (WinAfterTimeoutOption) event.getCause();

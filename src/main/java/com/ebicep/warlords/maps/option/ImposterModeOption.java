@@ -7,6 +7,7 @@ import com.ebicep.warlords.player.WarlordsPlayer;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import javax.annotation.Nullable;
 import org.bukkit.ChatColor;
 
 public class ImposterModeOption implements Option {
@@ -15,8 +16,10 @@ public class ImposterModeOption implements Option {
     public void register(Game game) {
         game.registerScoreboardHandler(new SimpleScoreboardHandler(30, "imposter") {
             @Override
-            public List<String> computeLines(WarlordsPlayer warlordsPlayer) {
-                if ((ImposterCommand.blueImposterName != null && ImposterCommand.blueImposterName.equalsIgnoreCase(warlordsPlayer.getName())) ||
+            public List<String> computeLines(@Nullable WarlordsPlayer warlordsPlayer) {
+                if(warlordsPlayer == null) {
+                    return Collections.emptyList();
+                } else if ((ImposterCommand.blueImposterName != null && ImposterCommand.blueImposterName.equalsIgnoreCase(warlordsPlayer.getName())) ||
                         (ImposterCommand.redImposterName != null && ImposterCommand.redImposterName.equals(warlordsPlayer.getName()))
                 ) {
                     return Arrays.asList(ChatColor.WHITE + "Role: " + ChatColor.RED + "IMPOSTER");
