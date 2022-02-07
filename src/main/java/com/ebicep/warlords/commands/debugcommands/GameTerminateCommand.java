@@ -26,8 +26,7 @@ public class GameTerminateCommand extends GameTargetCommand implements TabExecut
                 continue;
             }
             if (holder.getGame().isFrozen()) {
-                sender.sendMessage(ChatColor.GRAY + "- " + holder.getName() + ": " + ChatColor.RED + "Cannot end game while frozen");
-                continue;
+                holder.getGame().clearFrozenCause();
             }
             Optional<PlayingState> state = game.getState(PlayingState.class);
             if (!state.isPresent()) {
