@@ -16,7 +16,7 @@ public class OrderOfEviscerate extends AbstractAbility {
     private final int duration = 8;
 
     public OrderOfEviscerate() {
-        super("Order of Eviscerate", 0, 0, 60, 30, -1, 100);
+        super("Order of Eviscerate", 0, 0, 60, 60, -1, 100);
     }
 
     @Override

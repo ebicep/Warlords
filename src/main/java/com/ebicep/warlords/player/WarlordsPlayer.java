@@ -39,9 +39,9 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
+import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -52,7 +52,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
-import org.bukkit.inventory.EntityEquipment;
 
 import static com.ebicep.warlords.util.Utils.lerp;
 
@@ -432,11 +431,11 @@ public final class WarlordsPlayer {
 
                     if (cooldownManager.hasCooldownFromName("Wide Guard")) {
                         if (
-                                ability.equals("Fireball") ||
-                                ability.equals("Frostbolt") ||
-                                ability.equals("Water Bolt") ||
-                                ability.equals("Lightning Bolt") ||
-                                ability.equals("Flame Burst")
+                            ability.equals("Fireball") ||
+                            ability.equals("Frostbolt") ||
+                            ability.equals("Water Bolt") ||
+                            ability.equals("Lightning Bolt") ||
+                            ability.equals("Flame Burst")
                         ) {
                             damageValue *= .3;
                         }

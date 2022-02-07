@@ -89,8 +89,8 @@ public class EffectUtils {
      */
     public static void playHelixAnimation(Player player, double helixRadius, ParticleEffect effect, int particleCount) {
         double rotation = Math.PI / 4;
-        int particles = 40;
-        int strands = 8;
+        int particles = 20;
+        int strands = 4;
         int curve = 10;
         Location location = player.getLocation();
         for (int i = 1; i <= strands; i++) {

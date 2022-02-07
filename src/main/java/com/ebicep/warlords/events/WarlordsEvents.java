@@ -3,14 +3,19 @@ package com.ebicep.warlords.events;
 import com.ebicep.warlords.ChatChannels;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
-import com.ebicep.warlords.classes.abilties.*;
+import com.ebicep.warlords.classes.abilties.IceBarrier;
+import com.ebicep.warlords.classes.abilties.Soulbinding;
+import com.ebicep.warlords.classes.abilties.TimeWarp;
+import com.ebicep.warlords.classes.abilties.UndyingArmy;
 import com.ebicep.warlords.classes.shaman.specs.spiritguard.Spiritguard;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.leaderboards.LeaderboardManager;
 import com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
-import com.ebicep.warlords.maps.Game;
-import com.ebicep.warlords.maps.flags.*;
+import com.ebicep.warlords.maps.flags.GroundFlagLocation;
+import com.ebicep.warlords.maps.flags.PlayerFlagLocation;
+import com.ebicep.warlords.maps.flags.SpawnFlagLocation;
+import com.ebicep.warlords.maps.flags.WaitingFlagLocation;
 import com.ebicep.warlords.maps.option.marker.FlagHolder;
 import com.ebicep.warlords.maps.state.EndState;
 import com.ebicep.warlords.maps.state.PreLobbyState;
@@ -45,6 +50,7 @@ import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 
+import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -54,8 +60,6 @@ import java.util.logging.Level;
 
 import static com.ebicep.warlords.menu.GameMenu.openMainMenu;
 import static com.ebicep.warlords.menu.GameMenu.openTeamMenu;
-import java.util.*;
-import javax.annotation.Nullable;
 
 public class WarlordsEvents implements Listener {
 
@@ -226,39 +230,36 @@ public class WarlordsEvents implements Listener {
             WarlordsPlayer wpAttacker = Warlords.getPlayer(attacker);
             WarlordsPlayer wpVictim = Warlords.getPlayer(e.getEntity());
             if (wpAttacker != null && wpAttacker.isEnemyAlive(wpVictim) && !wpAttacker.getGame().isFrozen()) {
-                if (attacker.getInventory().getHeldItemSlot() == 0 && wpAttacker.getHitCooldown() == 0) {
-                    wpAttacker.setHitCooldown(12);
 
-                    // Checks whether the player has Acupressure active.
-                    if (wpAttacker.getCooldownManager().hasCooldown(Acupressure.class)) {
-                        wpAttacker.subtractEnergy((int) (wpAttacker.getSpec().getEnergyOnHit() * -1.8));
-                    } else {
-                        wpAttacker.subtractEnergy(wpAttacker.getSpec().getEnergyOnHit() * -1);
-                    }
+                if (attacker.getInventory().getHeldItemSlot() == 0 && wpAttacker.getHitCooldown() == 0) {
+
+                    wpAttacker.setHitCooldown(12);
+                    wpAttacker.subtractEnergy(wpAttacker.getSpec().getEnergyOnHit() * -1);
 
                     if (wpAttacker.getSpec() instanceof Spiritguard && wpAttacker.getCooldownManager().hasCooldown(Soulbinding.class)) {
+
                         Soulbinding baseSoulbinding = (Soulbinding) wpAttacker.getSpec().getPurple();
                         new CooldownFilter<>(wpAttacker, PersistentCooldown.class)
-                                .filter(PersistentCooldown::isShown)
-                                .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.class)
-                                .forEachOrdered(soulbinding -> {
-                                    if (soulbinding.hasBoundPlayer(wpVictim)) {
-                                        soulbinding.getSoulBindedPlayers().stream()
-                                                .filter(p -> p.getBoundPlayer() == wpVictim)
-                                                .forEach(boundPlayer -> {
-                                                    boundPlayer.setHitWithSoul(false);
-                                                    boundPlayer.setHitWithLink(false);
-                                                    boundPlayer.setTimeLeft(baseSoulbinding.getBindDuration());
-                                                });
-                                    } else {
-                                        wpVictim.sendMessage(ChatColor.RED + "\u00AB " + ChatColor.GRAY + "You have been bound by " + wpAttacker.getName() + "'s " + ChatColor.LIGHT_PURPLE + "Soulbinding Weapon" + ChatColor.GRAY + "!");
-                                        wpAttacker.sendMessage(ChatColor.GREEN + "\u00BB " + ChatColor.GRAY + "Your " + ChatColor.LIGHT_PURPLE + "Soulbinding Weapon " + ChatColor.GRAY + "has bound " + wpVictim.getName() + "!");
-                                        soulbinding.getSoulBindedPlayers().add(new Soulbinding.SoulBoundPlayer(wpVictim, baseSoulbinding.getBindDuration()));
-                                        for (Player player1 : wpVictim.getWorld().getPlayers()) {
-                                            player1.playSound(wpVictim.getLocation(), "shaman.earthlivingweapon.activation", 2, 1);
-                                        }
+                            .filter(PersistentCooldown::isShown)
+                            .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.class)
+                            .forEachOrdered(soulbinding -> {
+                                if (soulbinding.hasBoundPlayer(wpVictim)) {
+                                    soulbinding.getSoulBindedPlayers().stream()
+                                            .filter(p -> p.getBoundPlayer() == wpVictim)
+                                            .forEach(boundPlayer -> {
+                                                boundPlayer.setHitWithSoul(false);
+                                                boundPlayer.setHitWithLink(false);
+                                                boundPlayer.setTimeLeft(baseSoulbinding.getBindDuration());
+                                            });
+                                } else {
+                                    wpVictim.sendMessage(ChatColor.RED + "\u00AB " + ChatColor.GRAY + "You have been bound by " + wpAttacker.getName() + "'s " + ChatColor.LIGHT_PURPLE + "Soulbinding Weapon" + ChatColor.GRAY + "!");
+                                    wpAttacker.sendMessage(ChatColor.GREEN + "\u00BB " + ChatColor.GRAY + "Your " + ChatColor.LIGHT_PURPLE + "Soulbinding Weapon " + ChatColor.GRAY + "has bound " + wpVictim.getName() + "!");
+                                    soulbinding.getSoulBindedPlayers().add(new Soulbinding.SoulBoundPlayer(wpVictim, baseSoulbinding.getBindDuration()));
+                                    for (Player player1 : wpVictim.getWorld().getPlayers()) {
+                                        player1.playSound(wpVictim.getLocation(), "shaman.earthlivingweapon.activation", 2, 1);
                                     }
-                                });
+                                }
+                            });
                     }
                     wpVictim.addDamageInstance(wpAttacker, "", 132, 179, 25, 200, false);
                     wpVictim.updateJimmyHealth();

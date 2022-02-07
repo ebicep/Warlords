@@ -3,10 +3,7 @@ package com.ebicep.warlords.classes.abilties;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.player.WarlordsPlayer;
-import com.ebicep.warlords.util.FireWorkEffectPlayer;
-import com.ebicep.warlords.util.GameRunnable;
-import com.ebicep.warlords.util.ParticleEffect;
-import com.ebicep.warlords.util.PlayerFilter;
+import com.ebicep.warlords.util.*;
 import org.bukkit.*;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
@@ -35,7 +32,7 @@ public class SoothingPuddle extends AbstractAbility {
                 "§7allies for §a" + format(minDamageHeal) + " §7- §a" + format(maxDamageHeal) + " §7health upon impact.\n" +
                 "§7The projectile will form a small puddle that\n" +
                 "§7heals allies for §a" + puddleMinHealing + " §7- §a " + puddleMaxHealing + " §7health per second.\n" +
-                "§7Lasts §63 §7seconds." +
+                "§7Lasts §64 §7seconds." +
                 "\n\n" +
                 "§7Has an optimal range of §e25 §7blocks.";
     }
@@ -51,6 +48,7 @@ public class SoothingPuddle extends AbstractAbility {
         stand.setGravity(false);
         stand.setVisible(false);
         new GameRunnable(wp.getGame()) {
+            int timer = 0;
             @Override
             public void run() {
                     quarterStep(false);
@@ -79,8 +77,16 @@ public class SoothingPuddle extends AbstractAbility {
 
                 boolean shouldExplode;
 
+                timer++;
+
                 if (last) {
-                    ParticleEffect.VILLAGER_HAPPY.display(0.1f, 0.1f, 0.1f, 0.1f, 4, newLoc.clone().add(0, -1, 0), 500);
+                    Matrix4d center = new Matrix4d(newLoc);
+                    for (float i = 0; i < 6; i++) {
+                        double angle = Math.toRadians(i * 90) + timer * 0.3;
+                        double width = 0.4D;
+                        ParticleEffect.VILLAGER_HAPPY.display(0, 0, 0, 0, 2,
+                                center.translateVector(newLoc.getWorld(), 0, Math.sin(angle) * width, Math.cos(angle) * width), 500);
+                    }
                 }
 
                 WarlordsPlayer directHit;
@@ -99,12 +105,12 @@ public class SoothingPuddle extends AbstractAbility {
                     newLoc.add(0, -1, 0);
                 }
 
-                DamageHealCircle med = new DamageHealCircle(wp, newLoc.add(0, 1, 0), HITBOX, 3, puddleMinHealing, puddleMaxHealing, critChance, critMultiplier, name);
+                DamageHealCircle med = new DamageHealCircle(wp, newLoc.add(0, 1, 0), HITBOX, 4, puddleMinHealing, puddleMaxHealing, critChance, critMultiplier, name);
 
                 if (shouldExplode) {
                     stand.remove();
                     for (Player player1 : wp.getWorld().getPlayers()) {
-                        player1.playSound(newLoc, "rogue.healingremedy.impact", 1.5f, 0.3f);
+                        player1.playSound(newLoc, "rogue.healingremedy.impact", 1.5f, 0.2f);
                         player1.playSound(newLoc, Sound.GLASS, 1.5f, 0.7f);
                         player1.playSound(newLoc, "mage.waterbolt.impact", 1.5f, 0.3f);
                     }

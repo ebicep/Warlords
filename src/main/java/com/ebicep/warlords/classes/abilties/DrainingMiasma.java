@@ -16,6 +16,8 @@ import javax.annotation.Nonnull;
 public class DrainingMiasma extends AbstractAbility {
 
     private final int duration = 5;
+    private final int enemyHitRadius = 6;
+    private final int allyHitRadius = 6;
 
     public DrainingMiasma() {
         super("Draining Miasma", 0, 0, 55, 40, -1, 100);
@@ -25,11 +27,15 @@ public class DrainingMiasma extends AbstractAbility {
     public void updateDescription(Player player) {
         description = "§7Summon a toxic-filled cloud around you,\n" +
                 "§7poisoning all enemies inside the area. Poisoned\n" +
-                "§7enemies take §c20 §7+ §c4% §7of their max health as\n" +
+                "§7enemies take §c50 §7+ §c4% §7of their max health as\n" +
                 "§7damage per second, for §6" + duration + " §7seconds. Enemies\n" +
                 "§7poisoned by your Draining Miasma are blinded for §62\n" +
-                "§7seconds after the poison ends. The caster receives\n" +
-                "§7healing equal to §a25% §7of the damage dealt.\n";
+                "§7seconds after the poison ends." +
+                "\n\n" +
+                "§7The caster emits healing particles that heal all\n" +
+                "§7allies within the range for §a40% §7of the damage\n" +
+                "§7dealt and increase their movement speed by §e30%\n" +
+                "§7for §62 §7seconds.\n";
     }
 
     @Override
@@ -51,7 +57,7 @@ public class DrainingMiasma extends AbstractAbility {
 
         DrainingMiasma tempDrainingMiasma = new DrainingMiasma();
         for (WarlordsPlayer miasmaTarget : PlayerFilter
-                .entitiesAround(wp, 6, 6, 6)
+                .entitiesAround(wp, enemyHitRadius, enemyHitRadius, enemyHitRadius)
                 .aliveEnemiesOf(wp)
         ) {
             miasmaTarget.getCooldownManager().addRegularCooldown(
@@ -73,23 +79,60 @@ public class DrainingMiasma extends AbstractAbility {
                     float healthDamage = miasmaTarget.getMaxHealth() * 0.04f;
                     if (miasmaTarget.getCooldownManager().hasCooldown(tempDrainingMiasma)) {
                         // 4% current health damage.
-                        miasmaTarget.addDamageInstance(wp, "Draining Miasma", 20 + healthDamage, 20 + healthDamage, -1, 100, false);
+                        miasmaTarget.addDamageInstance(
+                                wp,
+                                "Draining Miasma",
+                                50 + healthDamage,
+                                50 + healthDamage,
+                                -1,
+                                100,
+                                false
+                        );
+
                         totalDamage += healthDamage;
 
                         for (Player player1 : miasmaTarget.getWorld().getPlayers()) {
-                            player1.playSound(miasmaTarget.getLocation(), Sound.FIRE_IGNITE, 2, 0.4f);
+                            player1.playSound(miasmaTarget.getLocation(), Sound.DIG_SNOW, 2, 0.4f);
                         }
 
                         for (int i = 0; i < 3; i++) {
                             ParticleEffect.REDSTONE.display(
                                     new ParticleEffect.OrdinaryColor(30, 200, 30),
-                                    miasmaTarget.getLocation().clone().add((Math.random() * 2) - 1, 1.2 + (Math.random() * 2) - 1, (Math.random() * 2) - 1),
-                                    500);
+                                    miasmaTarget.getLocation().clone().add(
+                                            (Math.random() * 2) - 1,
+                                            1.2 + (Math.random() * 2) - 1,
+                                            (Math.random() * 2) - 1),
+                                            500);
                         }
 
+                        for (WarlordsPlayer ally : PlayerFilter
+                                .entitiesAround(wp, allyHitRadius, allyHitRadius, allyHitRadius)
+                                .aliveTeammatesOf(wp)
+                        ) {
+                            ally.addHealingInstance(wp,
+                                    "Draining Miasma",
+                                    totalDamage * 0.4f,
+                                    totalDamage * 0.4f,
+                                    -1,
+                                    100,
+                                    false,
+                                    false
+                            );
+
+                            ally.getSpeed().addSpeedModifier("Draining Miasma Speed", 30, 2 * 20, "BASE");
+                        }
+
+                        EffectUtils.playHelixAnimation(player, 6, ParticleEffect.VILLAGER_HAPPY, 1);
+
                     } else {
-                        wp.addHealingInstance(wp, "Draining Miasma", totalDamage * 0.25f, totalDamage * 0.25f, -1, 100, false, false);
-                        miasmaTarget.getEntity().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 2 * 25, 0, true, false), true);
+                        miasmaTarget.getEntity().addPotionEffect(
+                                new PotionEffect(PotionEffectType.BLINDNESS,
+                                2 * 25,
+                                0,
+                                true,
+                                false),
+                                true
+                        );
                         this.cancel();
                     }
                 }
