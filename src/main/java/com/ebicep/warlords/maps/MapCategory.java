@@ -9,11 +9,11 @@ import com.ebicep.warlords.player.Weapons;
 import com.ebicep.warlords.util.ItemBuilder;
 import com.ebicep.warlords.util.LocationFactory;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
-import org.bukkit.Material;
 
 public enum MapCategory {
     CAPTURE_THE_FLAG("Capture The Flag") {
@@ -96,6 +96,28 @@ public enum MapCategory {
             options.add(TextOption.Type.TITLE.create(
                     ChatColor.GREEN + "GO!"
             ));
+            return options;
+        }
+    },
+    SIMULATION_TRIAL("Simulation Trial") {
+        @Override
+        public List<Option> initMap(GameMap map, LocationFactory loc, EnumSet<GameAddon> addons) {
+            List<Option> options = super.initMap(map, loc, addons);
+
+            String color = "" + ChatColor.YELLOW + ChatColor.BOLD;
+            options.add(TextOption.Type.CHAT_CENTERED.create(
+                    "" + ChatColor.WHITE + ChatColor.BOLD + "Simulation Trial",
+                    "",
+                    color + "The goal is to either defend your flag holder as long",
+                    color + "as possible or return the flag as soon as possible.",
+                    ""
+            ));
+            options.add(TextOption.Type.TITLE.create(
+                    10,
+                    ChatColor.GREEN + "GO!",
+                    ChatColor.YELLOW + "Let the trials begin!"
+            ));
+            options.add(new NoRespawnIfOfflineOption());
             return options;
         }
     },

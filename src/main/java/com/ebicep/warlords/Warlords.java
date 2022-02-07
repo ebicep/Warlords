@@ -259,15 +259,13 @@ public class Warlords extends JavaPlugin {
 
         gameManager = new GameManager();
         gameManager.addGameHolder("Rift-0", GameMap.RIFT, new LocationFactory(Bukkit.getWorld("Rift")));
+        gameManager.addGameHolder("SimulationRift-0", GameMap.SIMULATION_RIFT, new LocationFactory(Bukkit.getWorld("SimulationRift")));
         gameManager.addGameHolder("Crossfire-0", GameMap.CROSSFIRE, new LocationFactory(Bukkit.getWorld("Crossfire")));
         gameManager.addGameHolder("Gorge-0", GameMap.GORGE, new LocationFactory(Bukkit.getWorld("Gorge")));
         gameManager.addGameHolder("Valley-0", GameMap.VALLEY, new LocationFactory(Bukkit.getWorld("Atherrough_Valley")));
         gameManager.addGameHolder("Warsong-0", GameMap.WARSONG, new LocationFactory(Bukkit.getWorld("Warsong")));
         gameManager.addGameHolder("Debug-0", GameMap.DEBUG, new LocationFactory(Bukkit.getWorld("TestWorld")));
         gameManager.addGameHolder("Heaven-0", GameMap.HEAVEN_WILL, new LocationFactory(Bukkit.getWorld("Heaven")));
-        gameManager.addGameHolder("Siege-0", GameMap.HEAVEN_WILL, new LocationFactory(Bukkit.getWorld("Siege")));
-        gameManager.addGameHolder("FalstadGate-0", GameMap.HEAVEN_WILL, new LocationFactory(Bukkit.getWorld("Falstad_Gate")));
-        gameManager.addGameHolder("BlackTemple-0", GameMap.HEAVEN_WILL, new LocationFactory(Bukkit.getWorld("Black_Temple")));
 
         Thread.currentThread().setContextClassLoader(getClassLoader());
 
