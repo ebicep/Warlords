@@ -337,7 +337,7 @@ public class Warlords extends JavaPlugin {
         ProtocolManager protocolManager;
 
         protocolManager = ProtocolLibrary.getProtocolManager();
-
+        protocolManager.removePacketListeners(this);
         protocolManager.addPacketListener(
                 new PacketAdapter(this, ListenerPriority.HIGHEST, PacketType.Play.Server.WORLD_PARTICLES) {
                     int counter = 0;
@@ -383,24 +383,38 @@ public class Warlords extends JavaPlugin {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        CraftServer server = (CraftServer) Bukkit.getServer();
-        server.getEntityMetadata().invalidateAll(this);
-        server.getWorldMetadata().invalidateAll(this);
-        server.getPlayerMetadata().invalidateAll(this);
-
-        RemoveEntities.removeArmorStands(0);
-        gameManager.close();
-
-        if (holographicDisplaysEnabled) {
-            HolographicDisplaysAPI.get(instance).getHolograms().forEach(Hologram::delete);
+        try {
+            CraftServer server = (CraftServer) Bukkit.getServer();
+            server.getEntityMetadata().invalidateAll(this);
+            server.getWorldMetadata().invalidateAll(this);
+            server.getPlayerMetadata().invalidateAll(this);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
-        NPCManager.gameStartNPC.destroy();
-        Bukkit.getWorld("MainLobby").getEntities().stream()
-                .filter(entity -> entity.getName().equals("capture-the-flag"))
-                .forEach(Entity::remove);
-
+        try {
+            gameManager.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            if (holographicDisplaysEnabled) {
+                HolographicDisplaysAPI.get(instance).getHolograms().forEach(Hologram::delete);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            NPCManager.gameStartNPC.destroy();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            Bukkit.getWorld("MainLobby").getEntities().stream()
+                    .filter(entity -> entity.getName().equals("capture-the-flag"))
+                    .forEach(Entity::remove);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         try {
             BotManager.deleteStatusMessage();
             BotManager.jda.shutdownNow();
