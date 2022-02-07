@@ -1,9 +1,7 @@
 package com.ebicep.warlords.menu;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.maps.Game;
-import com.ebicep.warlords.maps.GameMap;
-import com.ebicep.warlords.maps.Team;
+import com.ebicep.warlords.maps.*;
 import com.ebicep.warlords.maps.flags.GroundFlagLocation;
 import com.ebicep.warlords.maps.flags.PlayerFlagLocation;
 import com.ebicep.warlords.maps.flags.SpawnFlagLocation;
@@ -110,6 +108,7 @@ public class DebugMenu {
     }
 
     public static void openPlayerMenu(Player player, WarlordsPlayer target) {
+        if (target == null) return;
         String targetName = target != null ? target.getName() : "";
         Menu menu = new Menu("Player Options: " + (target != null ? targetName : player.getName()), 9 * 5);
         ItemStack[] firstRow = {
@@ -251,54 +250,54 @@ public class DebugMenu {
 
     public static void openTeamMenu(Player player) {
         WarlordsPlayer warlordsPlayer = Warlords.getPlayer(player);
-        if (warlordsPlayer != null) {
-            Menu menu = new Menu("Team Options", 9 * 6);
-            //divider
-            for (int i = 0; i < 5; i++) {
-                menu.setItem(4, i, new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (byte) 7).name(" ").get(), (n, e) -> {
-                });
-            }
-            //team info = color - other shit
-            List<WarlordsPlayer> bluePlayers = new ArrayList<>();
-            List<WarlordsPlayer> redPlayers = new ArrayList<>();
-            PlayerFilter.playingGame(warlordsPlayer.getGame()).forEach((wp) -> {
-                if (wp.getTeam() == Team.BLUE) {
-                    bluePlayers.add(wp);
-                } else if (wp.getTeam() == Team.RED) {
-                    redPlayers.add(wp);
-                }
-            });
-            ItemStack blueInfo = new ItemBuilder(Material.WOOL, 1, (byte) 11)
-                    .name(ChatColor.BLUE + "BLU")
-                    .lore(getTeamStatLore(bluePlayers))
-                    .get();
-            ItemStack redInfo = new ItemBuilder(Material.WOOL, 1, (byte) 14)
-                    .name(ChatColor.RED + "RED")
-                    .lore(getTeamStatLore(redPlayers))
-                    .get();
-            ItemStack killTeam = new ItemBuilder(Material.DIAMOND_SWORD)
-                    .name(ChatColor.RED + "Kill All")
-                    .lore(ChatColor.GRAY + "Kills all the players on the team")
-                    .flags(ItemFlag.HIDE_ATTRIBUTES)
-                    .get();
-            menu.setItem(0, 0, blueInfo, (n, e) -> {
-            });
-            menu.setItem(3, 0, killTeam, (n, e) -> {
-                bluePlayers.forEach(wp -> wp.addDamageInstance(wp, "", 69000, 69000, -1, 100, false));
-            });
-            menu.setItem(5, 0, redInfo, (n, e) -> {
-            });
-            menu.setItem(8, 0, killTeam, (n, e) -> {
-                redPlayers.forEach(wp -> wp.addDamageInstance(wp, "", 69000, 69000, -1, 100, false));
-            });
+        if (warlordsPlayer == null) return;
 
-            //players
-            addPlayersToMenu(menu, player, bluePlayers, true);
-            addPlayersToMenu(menu, player, redPlayers, false);
-            menu.setItem(3, 5, MENU_BACK, (n, e) -> openDebugMenu(player));
-            menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
-            menu.openForPlayer(player);
+        Menu menu = new Menu("Team Options", 9 * 6);
+        //divider
+        for (int i = 0; i < 5; i++) {
+            menu.setItem(4, i, new ItemBuilder(Material.STAINED_GLASS_PANE, 1, (byte) 7).name(" ").get(), (n, e) -> {
+            });
         }
+        //team info = color - other shit
+        List<WarlordsPlayer> bluePlayers = new ArrayList<>();
+        List<WarlordsPlayer> redPlayers = new ArrayList<>();
+        PlayerFilter.playingGame(warlordsPlayer.getGame()).forEach((wp) -> {
+            if (wp.getTeam() == Team.BLUE) {
+                bluePlayers.add(wp);
+            } else if (wp.getTeam() == Team.RED) {
+                redPlayers.add(wp);
+            }
+        });
+        ItemStack blueInfo = new ItemBuilder(Material.WOOL, 1, (byte) 11)
+                .name(ChatColor.BLUE + "BLU")
+                .lore(getTeamStatLore(bluePlayers))
+                .get();
+        ItemStack redInfo = new ItemBuilder(Material.WOOL, 1, (byte) 14)
+                .name(ChatColor.RED + "RED")
+                .lore(getTeamStatLore(redPlayers))
+                .get();
+        ItemStack killTeam = new ItemBuilder(Material.DIAMOND_SWORD)
+                .name(ChatColor.RED + "Kill All")
+                .lore(ChatColor.GRAY + "Kills all the players on the team")
+                .flags(ItemFlag.HIDE_ATTRIBUTES)
+                .get();
+        menu.setItem(0, 0, blueInfo, (n, e) -> {
+        });
+        menu.setItem(3, 0, killTeam, (n, e) -> {
+            bluePlayers.forEach(wp -> wp.addDamageInstance(wp, "", 69000, 69000, -1, 100, false));
+        });
+        menu.setItem(5, 0, redInfo, (n, e) -> {
+        });
+        menu.setItem(8, 0, killTeam, (n, e) -> {
+            redPlayers.forEach(wp -> wp.addDamageInstance(wp, "", 69000, 69000, -1, 100, false));
+        });
+
+        //players
+        addPlayersToMenu(menu, player, bluePlayers, true);
+        addPlayersToMenu(menu, player, redPlayers, false);
+        menu.setItem(3, 5, MENU_BACK, (n, e) -> openDebugMenu(player));
+        menu.setItem(4, 5, MENU_CLOSE, ACTION_CLOSE_MENU);
+        menu.openForPlayer(player);
     }
 
     private static void addPlayersToMenu(Menu menu, Player player, List<WarlordsPlayer> warlordsPlayers, boolean blueTeam) {
@@ -774,21 +773,88 @@ public class DebugMenu {
     }
 
     public static void openMapsMenu(Player player) {
-        Menu menu = new Menu("Map Picker", 9 * 4);
+        Menu menu = new Menu("Map Picker", 9 * 5);
         GameMap[] values = GameMap.values();
         for (int i = 0; i < values.length; i++) {
             GameMap map = values[i];
             String mapName = map.getMapName();
-            menu.setItem(i + 1, 1,
+            menu.setItem(i % 7 + 1, 1 + i / 7,
                     new ItemBuilder(woolSortedByColor[i + 5])
                             .name(ChatColor.GREEN + mapName)
                             .lore(ChatColor.GRAY + "Map Category: " + ChatColor.GOLD + map.getCategories())
                             .get(),
-                    (n, e) -> Bukkit.getServer().dispatchCommand(player, "start map:" + mapName)
+                    (n, e) -> openMapsCategoryMenu(player, map)
             );
         }
-        menu.setItem(3, 3, MENU_BACK, (n, e) -> openGameMenu(player));
-        menu.setItem(4, 3, MENU_CLOSE, ACTION_CLOSE_MENU);
+        menu.setItem(3, 4, MENU_BACK, (n, e) -> openGameMenu(player));
+        menu.setItem(4, 4, MENU_CLOSE, ACTION_CLOSE_MENU);
+        menu.openForPlayer(player);
+    }
+
+    public static void openMapsCategoryMenu(Player player, GameMap selectedGameMap) {
+        int menuHeight = (4 + selectedGameMap.getCategories().size() / 7);
+        Menu menu = new Menu(selectedGameMap.getMapName(), 9 * menuHeight);
+
+        for (int i = 0; i < selectedGameMap.getCategories().size(); i++) {
+            MapCategory mapCategory = selectedGameMap.getCategories().get(i);
+            menu.setItem(i % 7 + 1, 1 + i / 7,
+                    new ItemBuilder(woolSortedByColor[i + 5])
+                            .name(ChatColor.GREEN + mapCategory.getName())
+                            .get(),
+                    (n, e) -> {
+                        List<GameAddon> addons = new ArrayList<>();
+                        addons.add(GameAddon.PRIVATE_GAME);
+                        openMapsAddonsMenu(player, selectedGameMap, mapCategory, addons);
+                    }
+            );
+        }
+
+        menu.setItem(3, menuHeight - 1, MENU_BACK, (n, e) -> openMapsMenu(player));
+        menu.setItem(4, menuHeight - 1, MENU_CLOSE, ACTION_CLOSE_MENU);
+        menu.openForPlayer(player);
+    }
+
+    public static void openMapsAddonsMenu(Player player, GameMap selectedGameMap, MapCategory selectedCategory, List<GameAddon> addons) {
+        int menuHeight = (4 + GameAddon.values().length / 7);
+        Menu menu = new Menu(selectedGameMap.getMapName() + " - " + selectedCategory.getName(), 9 * menuHeight);
+
+        for (int i = 0; i < GameAddon.values().length; i++) {
+            GameAddon gameAddon = GameAddon.values()[i];
+
+            boolean isASelectedAddon = addons.contains(gameAddon);
+            ItemBuilder itemBuilder = new ItemBuilder(woolSortedByColor[i + 5])
+                    .name(ChatColor.GREEN + gameAddon.getName());
+            if (isASelectedAddon) {
+                itemBuilder.enchant(Enchantment.OXYGEN, 1);
+                itemBuilder.flags(ItemFlag.HIDE_ENCHANTS);
+            }
+
+            menu.setItem(i % 7 + 1, 1 + i / 7,
+                    itemBuilder.get(),
+                    (n, e) -> {
+                        if (isASelectedAddon) {
+                            addons.remove(gameAddon);
+                        } else {
+                            addons.add(gameAddon);
+                        }
+                        openMapsAddonsMenu(player, selectedGameMap, selectedCategory, addons);
+                    }
+            );
+        }
+
+        menu.setItem(3, menuHeight - 1, MENU_BACK, (n, e) -> openMapsCategoryMenu(player, selectedGameMap));
+        menu.setItem(4, menuHeight - 1, MENU_CLOSE, ACTION_CLOSE_MENU);
+        menu.setItem(5, menuHeight - 1, new ItemBuilder(Material.WOOL, 1, (short) 5).name(ChatColor.GREEN + "Start").get(), (n, e) -> {
+            StringBuilder stringAddons = new StringBuilder();
+            if (addons.isEmpty()) {
+                stringAddons.append("addon:NULL");
+            } else {
+                addons.forEach(gameAddon -> {
+                    stringAddons.append("addon:").append(gameAddon.name()).append(" ");
+                });
+            }
+            Bukkit.getServer().dispatchCommand(player, "start map:" + selectedGameMap.getMapName() + " category:" + selectedCategory.name() + " " + stringAddons);
+        });
         menu.openForPlayer(player);
     }
 
