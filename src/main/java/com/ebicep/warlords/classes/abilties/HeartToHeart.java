@@ -4,21 +4,13 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
-import com.ebicep.warlords.util.Matrix4d;
-import com.ebicep.warlords.util.ParticleEffect;
-import com.ebicep.warlords.util.PlayerFilter;
-import com.ebicep.warlords.util.Utils;
+import com.ebicep.warlords.util.*;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.EulerAngle;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
 
 public class HeartToHeart extends AbstractAbility {
 
@@ -94,46 +86,7 @@ public class HeartToHeart extends AbstractAbility {
                                 targetLoc.getPitch()
                         );
 
-                        Location from = wp.getLocation().add(0, -0.6, 0);
-                        Location to = heartTarget.getLocation().add(0, -0.6, 0);
-                        from.setDirection(from.toVector().subtract(to.toVector()).multiply(-1));
-                        List<ArmorStand> chains = new ArrayList<>();
-                        int maxDistance = (int) Math.round(to.distance(from));
-                        for (int i = 0; i < maxDistance; i++) {
-                            ArmorStand chain = from.getWorld().spawn(from, ArmorStand.class);
-                            chain.setHeadPose(new EulerAngle(from.getDirection().getY() * -1, 0, 0));
-                            chain.setGravity(false);
-                            chain.setVisible(false);
-                            chain.setBasePlate(false);
-                            chain.setMarker(true);
-                            chain.setHelmet(new ItemStack(Material.CLAY));
-                            from.add(from.getDirection().multiply(1.1));
-                            chains.add(chain);
-                            if(to.distanceSquared(from) < .3) {
-                                break;
-                            }
-                        }
-
-                        new BukkitRunnable() {
-
-                            @Override
-                            public void run() {
-                                if (chains.size() == 0) {
-                                    this.cancel();
-                                }
-
-                                for (int i = 0; i < chains.size(); i++) {
-                                    ArmorStand armorStand = chains.get(i);
-                                    if (armorStand.getTicksLived() > timer) {
-                                        armorStand.remove();
-                                        chains.remove(i);
-                                        i--;
-                                    }
-                                }
-
-                            }
-
-                        }.runTaskTimer(Warlords.getInstance(), 0, 0);
+                        EffectUtils.playChainAnimation(wp, heartTarget, Material.CLAY, timer);
 
                         wp.teleportLocationOnly(newLocation);
                         newLocation.add(0, 1, 0);

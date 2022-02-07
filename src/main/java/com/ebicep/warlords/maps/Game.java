@@ -5,7 +5,6 @@ import com.ebicep.warlords.events.WarlordsEvents;
 import com.ebicep.warlords.events.WarlordsGameEvent;
 import com.ebicep.warlords.events.WarlordsGameUpdatedEvent;
 import com.ebicep.warlords.events.WarlordsPointsChangedEvent;
-import com.ebicep.warlords.maps.option.GameFreezeOption;
 import com.ebicep.warlords.maps.option.Option;
 import com.ebicep.warlords.maps.option.marker.GameMarker;
 import com.ebicep.warlords.maps.option.marker.TeamMarker;
@@ -35,8 +34,6 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static com.ebicep.warlords.util.Utils.collectionHasItem;
 
 /**
  * An instance of an Warlords game. It depends on a state for its behavior. You
@@ -121,7 +118,7 @@ public final class Game implements Runnable, AutoCloseable {
                 Game.this.run();
             }
         }.runTaskTimer(0, 1);
-        this.printDebuggingInformation();
+        //this.printDebuggingInformation();
     }
 
     public boolean isState(Class<? extends State> clazz) {
@@ -520,8 +517,8 @@ public final class Game implements Runnable, AutoCloseable {
             }
             State newState = nextState == null ? new ClosedState(this) : nextState;
             nextState = null;
-            System.out.println("DEBUG OLD TO NEW STATE");
-            this.printDebuggingInformation();
+            //System.out.println("DEBUG OLD TO NEW STATE");
+            //this.printDebuggingInformation();
             State oldState = this.state;
             this.state = newState;
             newState.begin();

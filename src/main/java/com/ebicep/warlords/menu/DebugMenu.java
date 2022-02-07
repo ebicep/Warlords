@@ -30,7 +30,10 @@ import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionType;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.function.BiConsumer;
 
 import static com.ebicep.warlords.menu.Menu.*;
@@ -653,7 +656,7 @@ public class DebugMenu {
                                                 target.getGame(),
                                                 info -> info.getFlag() instanceof PlayerFlagLocation && ((PlayerFlagLocation) info.getFlag()).getPlayer() == target ?
                                                     GroundFlagLocation.of(info.getFlag()) :
-                                                info == holder ?
+                                                info == holder.getInfo() ?
                                                     PlayerFlagLocation.of(info.getFlag(), target) :
                                                 null
                                         );

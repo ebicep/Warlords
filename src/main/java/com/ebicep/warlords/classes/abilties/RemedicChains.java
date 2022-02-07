@@ -11,6 +11,8 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
+import java.util.HashMap;
+import java.util.Map;
 
 public class RemedicChains extends AbstractAbility {
 
@@ -32,7 +34,8 @@ public class RemedicChains extends AbstractAbility {
                 "§7When the link expires you and the allies\n" +
                 "§7are healed for §a" + format(minDamageHeal) + " §7- §a" + format(maxDamageHeal) + " §7health. Breaking\n" +
                 "§7the link early will only heal the allies\n" +
-                "§7for §a20% §7of the original amount." +
+                "§7for §a12.5% §7of the original amount for." +
+                "each second they have been linked." +
                 "\n\n" +
                 "§7The link will break if you are §e" + linkBreakRadius + " §7blocks apart.";
     }
@@ -66,12 +69,30 @@ public class RemedicChains extends AbstractAbility {
                     ChatColor.GRAY + "!"
             );
 
+            HashMap<WarlordsPlayer, Integer> timeLinked = new HashMap<>();
+
             targethit++;
             new GameRunnable(wp.getGame()) {
                 int counter = 0;
                 @Override
                 public void run() {
                     boolean outOfRange = wp.getLocation().distanceSquared(chainTarget.getLocation()) > linkBreakRadius * linkBreakRadius;
+
+                    if (counter % 20 == 0 && !outOfRange) {
+                        timeLinked.compute(chainTarget, (k, v) -> v == null ? 1 : v + 1);
+
+                        float maxHealing = chainTarget.getMaxHealth() * 0.03f;
+                        chainTarget.addHealingInstance(
+                                wp,
+                                name,
+                                maxHealing,
+                                maxHealing,
+                                -1,
+                                100,
+                                false,
+                                false
+                        );
+                    }
 
                     if (counter % 8 == 0) {
                         if (wp.getCooldownManager().hasCooldown(tempRemedicChain)) {
@@ -82,7 +103,25 @@ public class RemedicChains extends AbstractAbility {
                                 lineLocation.add(lineLocation.getDirection().multiply(0.5));
                             }
 
+                            // Ally is out of range, break link
                             if (outOfRange) {
+                                for (Map.Entry<WarlordsPlayer, Integer> entry : timeLinked.entrySet()) {
+                                    float healingMultiplier = 0.125f;
+                                    float totalHealingMultiplier = (healingMultiplier * entry.getValue());
+                                    System.out.println(totalHealingMultiplier);
+                                    System.out.println(entry.getValue());
+                                    entry.getKey().addHealingInstance(
+                                            wp,
+                                            name,
+                                            minDamageHeal * totalHealingMultiplier,
+                                            maxDamageHeal * totalHealingMultiplier,
+                                            -1,
+                                            100,
+                                            false,
+                                            false
+                                    );
+                                }
+
                                 chainTarget.getCooldownManager().removeCooldown(tempRemedicChain);
                                 chainTarget.addHealingInstance(
                                         wp,
@@ -103,6 +142,7 @@ public class RemedicChains extends AbstractAbility {
                                 this.cancel();
                             }
                         } else {
+                            // Ally was in range, full healing
                             if (!outOfRange && chainTarget.isAlive()) {
                                 chainTarget.addHealingInstance(
                                         wp,
@@ -123,20 +163,6 @@ public class RemedicChains extends AbstractAbility {
                             }
                             this.cancel();
                         }
-                    }
-
-                    if (counter % 20 == 0 && !outOfRange) {
-                        float maxHealing = chainTarget.getMaxHealth() * 0.03f;
-                        chainTarget.addHealingInstance(
-                                wp,
-                                name,
-                                maxHealing,
-                                maxHealing,
-                                -1,
-                                100,
-                                false,
-                                false
-                        );
                     }
 
                     counter++;

@@ -5,18 +5,21 @@ import com.ebicep.warlords.events.WarlordsFlagUpdatedEvent;
 import com.ebicep.warlords.events.WarlordsIntersectionCaptureEvent;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Team;
+import com.ebicep.warlords.maps.flags.PlayerFlagLocation;
+import com.ebicep.warlords.maps.flags.SpawnFlagLocation;
 import com.ebicep.warlords.maps.flags.WaitingFlagLocation;
 import com.ebicep.warlords.maps.option.marker.PointPredicterMarker;
 import com.ebicep.warlords.maps.option.marker.TeamMarker;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.Pair;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.BiFunction;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 
 public abstract class ScoreOnEventOption<T> implements Option {
     protected int scoreIncrease;
@@ -81,6 +84,62 @@ public abstract class ScoreOnEventOption<T> implements Option {
             });
         }
         
+    }
+
+    public static class FlagReturn extends ScoreOnEventOption<WarlordsFlagUpdatedEvent> {
+        public static int DEFAULT_SCORE = 100;
+
+        public FlagReturn() {
+            this(DEFAULT_SCORE);
+        }
+
+        public FlagReturn(int scoreIncrease) {
+            super(scoreIncrease);
+        }
+
+        @Override
+        public void register(Game game) {
+            super.register(game);
+            game.registerEvents(new Listener() {
+                @EventHandler
+                public void onEvent(WarlordsFlagUpdatedEvent event) {
+                    if (event.getNew() instanceof SpawnFlagLocation) {
+                        SpawnFlagLocation spawnFlagLocation = (SpawnFlagLocation) event.getNew();
+                        WarlordsPlayer scorer = spawnFlagLocation.getFlagReturner();
+                        if (scorer != null) {
+                            giveScore(event, scorer.getTeam(), scoreIncrease);
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    public static class FlagHolding extends ScoreOnEventOption<WarlordsFlagUpdatedEvent> {
+        public static int DEFAULT_SCORE = 1;
+
+        public FlagHolding() {
+            this(DEFAULT_SCORE);
+        }
+
+        public FlagHolding(int scoreIncrease) {
+            super(scoreIncrease);
+        }
+
+        @Override
+        public void register(Game game) {
+            super.register(game);
+            game.registerEvents(new Listener() {
+                @EventHandler
+                public void onEvent(WarlordsFlagUpdatedEvent event) {
+                    if (event.getOld() instanceof PlayerFlagLocation && event.getNew() instanceof PlayerFlagLocation) {
+                        PlayerFlagLocation playerFlagLocation = (PlayerFlagLocation) event.getNew();
+                        WarlordsPlayer scorer = playerFlagLocation.getPlayer();
+                        giveScore(event, scorer.getTeam(), scoreIncrease);
+                    }
+                }
+            });
+        }
     }
 
     public static class OnKill extends ScoreOnEventOption<WarlordsDeathEvent> {
@@ -189,6 +248,5 @@ public abstract class ScoreOnEventOption<T> implements Option {
 				}
 			}.runTaskTimer(20, 20);
         }
-
     }
 }

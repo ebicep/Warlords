@@ -19,7 +19,7 @@ public class Acupressure extends AbstractAbility {
     private final int duration = 3;
 
     public Acupressure() {
-        super("Acupressure", 368, 515, 15, 20, 25, 175);
+        super("Acupressure", 378, 525, 12, 30, 25, 175);
     }
 
     @Override
@@ -27,7 +27,7 @@ public class Acupressure extends AbstractAbility {
         description = "§7Discharge a shockwave of special potions\n" +
                 "§7around you, healing everyone in the range for\n" +
                 "§a" + format(minDamageHeal) + " §7- §a" + format(maxDamageHeal) + " §7health and increase their\n" +
-                "§7energy second by §e200% §7for §6" + duration + " §7seconds.";
+                "§7energy per second by §e150% §7for §6" + duration + " §7seconds.";
     }
 
     @Override

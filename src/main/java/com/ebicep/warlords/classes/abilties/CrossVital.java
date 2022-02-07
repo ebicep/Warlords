@@ -39,8 +39,16 @@ public class CrossVital extends AbstractAbility {
 
         EffectUtils.playStarAnimation(player, 1, ParticleEffect.CRIT);
 
-        wp.getCooldownManager().addRegularCooldown(name, "VITAL", CrossVital.class, tempCrossVital, wp, CooldownTypes.ABILITY, cooldownManager -> {
-        }, duration * 20);
+        wp.getCooldownManager().addRegularCooldown(
+                name,
+                "VITAL",
+                CrossVital.class,
+                tempCrossVital,
+                wp,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {},
+                duration * 20
+        );
 
         new GameRunnable(wp.getGame()) {
             @Override
