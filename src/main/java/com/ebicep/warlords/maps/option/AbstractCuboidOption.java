@@ -41,7 +41,7 @@ public abstract class AbstractCuboidOption implements Option {
         );
     }
     
-    public void setLocation(Location a, Location b) {
+    public AbstractCuboidOption setLocation(Location a, Location b) {
         if (a.getWorld() != b.getWorld()) {
             throw new IllegalArgumentException("The locations provided have different worlds");
         }
@@ -57,6 +57,7 @@ public abstract class AbstractCuboidOption implements Option {
         this.max.setZ(Math.min(a.getZ(), b.getZ()));
         this.max.setYaw(b.getYaw());
         this.max.setPitch(b.getPitch());
+        return this;
     }
     
 

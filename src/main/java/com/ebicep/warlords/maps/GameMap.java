@@ -97,6 +97,51 @@ public enum GameMap {
         }
 
     },
+    SIMULATION_RIFT(
+            "Simulated Rift",
+            12,
+            9,
+            60 * SECOND,
+            "",
+            MapCategory.SIMULATION_TRIAL
+    ) {
+        @Override
+        public List<Option> initMap(MapCategory category, LocationFactory loc, EnumSet<GameAddon> addons) {
+            List<Option> options = category.initMap(this, loc, addons);
+            options.add(TeamMarker.create(Team.BLUE, Team.RED).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(-14.5, 22.5, -0.5, -90, 0), Team.BLUE).asOption());
+            options.add(LobbyLocationMarker.create(loc.addXYZ(44.5, 41.5, 62.5, 160, 0), Team.RED).asOption());
+
+            options.add(new PowerupOption(loc.addXYZ(33.5, 25.5, -48.5), PowerupType.ENERGY));
+
+            options.add(new PowerupOption(loc.addXYZ(55.5, 36.5, -23.5), PowerupType.SPEED));
+
+            options.add(new PowerupOption(loc.addXYZ(1.5, 24.5, -62.5), PowerupType.HEALING));
+
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(-32.5, 34.5, -43.5, -90, 0), Team.BLUE));
+            options.add(SpawnpointOption.forTeam(loc.addXYZ(33, 34.5, 45, 0, 0), Team.RED));
+
+            options.add(new FlagSpawnPointOption(loc.addXYZ(61.5, 46.5, 56.5, 140, 0), Team.BLUE));
+
+            options.add(new GateOption(loc, -9, 19, 5, -19, 26, -5));
+            options.add(new GateOption(loc, 39, 39, 57, 49, 49, 67));
+
+            options.add(new WinByPointsOption(300));
+            options.add(new MercyWinOption());
+            options.add(new WinAfterTimeoutOption());
+            options.add(new ScoreOnEventOption.OnKill(5));
+            options.add(new ScoreOnEventOption.FlagCapture(250));
+            options.add(new RespawnWaveOption());
+            options.add(new RespawnProtectionOption());
+            options.add(new GraveOption());
+
+            options.add(new BasicScoreboardOption());
+            options.add(new BoundingBoxOption(loc.getWorld()));
+
+            return options;
+        }
+
+    },
     CROSSFIRE(
             "Crossfire",
             32,
@@ -217,7 +262,7 @@ public enum GameMap {
             12,
             60 * SECOND,
             "",
-            MapCategory.DEBUG
+            new MapCategory[0]
     ) {
         @Override
         public List<Option> initMap(MapCategory category, LocationFactory loc, EnumSet<GameAddon> addons) {

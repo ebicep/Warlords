@@ -1,29 +1,34 @@
 package com.ebicep.warlords.maps.option;
 
 import com.ebicep.warlords.maps.Game;
+import com.ebicep.warlords.maps.option.marker.TimerSkipAbleMarker;
 import com.ebicep.warlords.util.ChatUtils;
 import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.PacketUtils;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import javax.annotation.Nonnull;
 import org.bukkit.ChatColor;
 
 /**
  * Allows you to send a text to all players on start
  */
-public class TextOption implements Option {
+public class TextOption implements Option, TimerSkipAbleMarker {
+    public static final int DEFAULT_DELAY = 0;
 
     @Nonnull
     private Type type;
     @Nonnull
     private List<String> text;
+    private int delay;
+    private Game game;
 
     public TextOption(@Nonnull Type type, @Nonnull List<String> text) {
+        this(type, text, DEFAULT_DELAY);
+    }
+    public TextOption(@Nonnull Type type, @Nonnull List<String> text, int delay) {
         this.type = Objects.requireNonNull(type, "type");
         this.text = Objects.requireNonNull(text, "text");
+        this.delay = delay;
     }
 
     @Nonnull
@@ -43,12 +48,47 @@ public class TextOption implements Option {
     public void setType(@Nonnull Type type) {
         this.type = Objects.requireNonNull(type, "type");
     }
+    
+    public void sendText() {
+        this.type.sendText(game, text);
+    }
 
     @Override
     public void start(@Nonnull Game game) {
         Option.super.start(game);
-        this.type.sendText(game, text);
+        if(delay <= 0) {
+            sendText();
+        } else {
+            new GameRunnable(game) {
+                @Override
+                public void run() {
+                    if (delay <= 0) {
+                        sendText();
+                        cancel();
+                    }
+                    delay--;
+                }
+            }.runTaskTimer(0, 20);
+        }
     }
+
+    @Override
+    public int getDelay() {
+        return delay * 20;
+    }
+
+    @Override
+    public void skipTimer(int delayInTicks) {
+        delay -= delayInTicks / 20;
+    }
+
+    @Override
+    public void register(Game game) {
+        this.game = game;
+        game.registerGameMarker(TimerSkipAbleMarker.class, this);
+    }
+    
+    
 
     public enum Type {
         CHAT_CENTERED() {
@@ -106,6 +146,14 @@ public class TextOption implements Option {
 
         public TextOption create(String ... text) {
             return new TextOption(this, Arrays.asList(text));
+        }
+
+        public TextOption create(int delay, @Nonnull List<String> text) {
+            return new TextOption(this, text, delay);
+        }
+
+        public TextOption create(int delay, String ... text) {
+            return new TextOption(this, Arrays.asList(text), delay);
         }
 
     }
