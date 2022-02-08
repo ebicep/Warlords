@@ -1,11 +1,16 @@
 package com.ebicep.warlords.queuesystem;
 
 import com.ebicep.warlords.Warlords;
+import org.apache.commons.lang.math.NumberUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import static com.ebicep.warlords.database.repositories.games.pojos.DatabaseGame.previousGames;
 
 public class QueueCommand implements CommandExecutor {
 
@@ -39,6 +44,51 @@ public class QueueCommand implements CommandExecutor {
                 QueueManager.removePlayerFromQueue(sender.getName());
                 sender.sendMessage(ChatColor.RED + "You left the queue!");
                 QueueManager.sendNewQueue();
+                return true;
+            }
+            case "add": {
+                if (sender.hasPermission("warlords.queue.clear")) {
+                    if (args.length == 1) {
+                        sender.sendMessage(ChatColor.RED + "Invalid player!");
+                        return true;
+                    }
+                    String playerToAdd = args[1];
+                    OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(playerToAdd);
+                    if (offlinePlayer == null) {
+                        sender.sendMessage(ChatColor.RED + "Invalid player!");
+                        return true;
+                    }
+
+                    QueueManager.addPlayerToQueue(playerToAdd, false);
+                    sender.sendMessage(QueueManager.getQueue());
+                    QueueManager.sendNewQueue();
+                } else {
+                    sender.sendMessage(ChatColor.RED + "Insufficient Permissions");
+                }
+            }
+            case "remove": {
+                if (sender.hasPermission("warlords.queue.clear")) {
+                    if (args.length == 1) {
+                        sender.sendMessage(ChatColor.RED + "Invalid queue number!");
+                        return true;
+                    }
+                    if (!NumberUtils.isNumber(args[1])) {
+                        sender.sendMessage(ChatColor.RED + "Invalid queue number!");
+                        return true;
+                    }
+
+                    int queuePos = Integer.parseInt(args[1]);
+                    if (queuePos > QueueManager.queue.size() || queuePos < 1) {
+                        sender.sendMessage(ChatColor.RED + "Invalid queue number!");
+                        return true;
+                    }
+
+                    QueueManager.queue.remove(queuePos - 1);
+                    sender.sendMessage(QueueManager.getQueue());
+                    QueueManager.sendNewQueue();
+                } else {
+                    sender.sendMessage(ChatColor.RED + "Insufficient Permissions");
+                }
                 return true;
             }
             case "clear": {
