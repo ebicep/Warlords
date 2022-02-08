@@ -60,6 +60,7 @@ import javax.annotation.Nullable;
 import javax.security.auth.login.LoginException;
 import java.io.File;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 public class Warlords extends JavaPlugin {
@@ -85,6 +86,10 @@ public class Warlords extends JavaPlugin {
     }
 
     private static final HashMap<UUID, WarlordsPlayer> players = new HashMap<>();
+
+    public static HashMap<UUID, WarlordsPlayer> getPlayers() {
+        return players;
+    }
 
     public static void addPlayer(@Nonnull WarlordsPlayer warlordsPlayer) {
         players.put(warlordsPlayer.getUuid(), warlordsPlayer);

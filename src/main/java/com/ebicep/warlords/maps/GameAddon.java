@@ -3,6 +3,7 @@ package com.ebicep.warlords.maps;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.maps.option.GameFreezeWhenOfflineOption;
 import com.ebicep.warlords.maps.option.ImposterModeOption;
+import com.ebicep.warlords.maps.option.InterchangeModeOption;
 import com.ebicep.warlords.maps.option.PreGameItemOption;
 import com.ebicep.warlords.maps.state.ClosedState;
 import com.ebicep.warlords.maps.state.PreLobbyState;
@@ -69,6 +70,13 @@ public enum GameAddon {
         @Override
         public int getMaxPlayers(@Nonnull GameMap map, int maxPlayers) {
             return Integer.MAX_VALUE;
+        }
+
+    },
+    INTERCHANGE_MODE("Interchange Mode", null) {
+        @Override
+        public void modifyGame(@Nonnull Game game) {
+            game.getOptions().add(new InterchangeModeOption());
         }
 
     };

@@ -47,8 +47,8 @@ import org.bukkit.inventory.EntityEquipment;
 
 public final class WarlordsPlayer {
 
-    private final String name;
-    private final UUID uuid;
+    private String name;
+    private UUID uuid;
     @Deprecated
     private final PlayingState gameState;
     private final Game game;
@@ -1154,8 +1154,16 @@ public final class WarlordsPlayer {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public UUID getUuid() {
         return uuid;
+    }
+
+    public void setUuid(UUID uuid) {
+        this.uuid = uuid;
     }
 
     public void setTeam(Team team) {
@@ -1570,6 +1578,10 @@ public final class WarlordsPlayer {
         return specClass;
     }
 
+    public Weapons getWeapon() {
+        return weapon;
+    }
+
     public Team getTeam() {
         return team;
     }
@@ -1581,6 +1593,10 @@ public final class WarlordsPlayer {
     @Nonnull
     public LivingEntity getEntity() {
         return this.entity;
+    }
+
+    public void setEntity(LivingEntity entity) {
+        this.entity = entity;
     }
 
     @Nonnull
