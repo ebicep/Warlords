@@ -34,7 +34,7 @@ public class RemedicChains extends AbstractAbility {
                 "§7When the link expires you and the allies\n" +
                 "§7are healed for §a" + format(minDamageHeal) + " §7- §a" + format(maxDamageHeal) + " §7health. Breaking\n" +
                 "§7the link early will only heal the allies\n" +
-                "§7for §a12.5% §7of the original amount for." +
+                "§7for §a12.5% §7of the original amount for\n" +
                 "each second they have been linked." +
                 "\n\n" +
                 "§7The link will break if you are §e" + linkBreakRadius + " §7blocks apart.";

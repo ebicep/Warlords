@@ -971,11 +971,11 @@ public final class WarlordsPlayer {
             allyFeed.append("§l");
         }
         allyFeed.append(Math.round(healValue));
+        allyFeed.append(isCrit ? "!" : "");
         if (isLastStandFromShield) {
             allyFeed.append(" Absorbed!");
         }
-        allyFeed.append(ChatColor.GRAY).append(" health");
-        allyFeed.append(isCrit ? "!" : ".");
+        allyFeed.append(ChatColor.GRAY).append(" health.");
 
         receiver.sendMessage(allyFeed.toString());
     }
@@ -1436,10 +1436,6 @@ public final class WarlordsPlayer {
 
     public void setUuid(UUID uuid) {
         this.uuid = uuid;
-    }
-
-    public void setTeam(Team team) {
-        this.team = team;
     }
 
     public AbstractPlayerClass getSpec() {

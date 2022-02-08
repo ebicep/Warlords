@@ -14,7 +14,7 @@ import javax.annotation.Nonnull;
 
 public class HeartToHeart extends AbstractAbility {
 
-    private final int radius = 12;
+    private final int radius = 15;
     private final int vindDuration = 6;
 
     public HeartToHeart() {

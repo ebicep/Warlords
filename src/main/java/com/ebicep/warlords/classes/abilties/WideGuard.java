@@ -23,7 +23,7 @@ public class WideGuard extends AbstractAbility {
     public static final int BUBBLE_RADIUS = 3;
 
     public WideGuard() {
-        super("Wide Guard", 0, 0, 27, 40, -1, 100);
+        super("Wide Guard", 0, 0, 23, 40, -1, 100);
     }
 
     @Override

@@ -119,6 +119,8 @@ public class DrainingMiasma extends AbstractAbility {
                                     false
                             );
 
+                            totalDamage = 0;
+
                             ally.getSpeed().addSpeedModifier("Draining Miasma Speed", 30, 2 * 20, "BASE");
                         }
 
