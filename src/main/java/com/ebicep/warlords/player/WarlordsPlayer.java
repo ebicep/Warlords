@@ -59,8 +59,8 @@ public final class WarlordsPlayer {
 
     public static final String GIVE_ARROW = ChatColor.RED + "\u00AB";
     public static final String RECEIVE_ARROW = ChatColor.GREEN + "\u00BB";
-    private final String name;
-    private final UUID uuid;
+    private String name;
+    private UUID uuid;
     @Deprecated
     private final PlayingState gameState;
     private final Game game;
@@ -459,7 +459,7 @@ public final class WarlordsPlayer {
                     }
 
                     cooldownManager.removeCooldown(arcaneShield);
-                    addDamageInstance(attacker, ability, -arcaneShield.getShieldHealth(), -arcaneShield.getShieldHealth(), isCrit ? 100 : -1, 100, true);
+                    addDamageInstance(new WarlordsDamageHealingEvent(this, attacker, ability, -arcaneShield.getShieldHealth(), -arcaneShield.getShieldHealth(), isCrit ? 100 : -1, 100, false, true, true));
 
                     addAbsorbed(-(arcaneShield.getShieldHealth()));
 
@@ -1426,8 +1426,20 @@ public final class WarlordsPlayer {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public UUID getUuid() {
         return uuid;
+    }
+
+    public void setUuid(UUID uuid) {
+        this.uuid = uuid;
+    }
+
+    public void setTeam(Team team) {
+        this.team = team;
     }
 
     public AbstractPlayerClass getSpec() {
@@ -1845,6 +1857,10 @@ public final class WarlordsPlayer {
         return specClass;
     }
 
+    public Weapons getWeapon() {
+        return weapon;
+    }
+
     public Team getTeam() {
         return team;
     }
@@ -1860,6 +1876,10 @@ public final class WarlordsPlayer {
     @Nonnull
     public LivingEntity getEntity() {
         return this.entity;
+    }
+
+    public void setEntity(LivingEntity entity) {
+        this.entity = entity;
     }
 
     @Nonnull

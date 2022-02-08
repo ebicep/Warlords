@@ -93,6 +93,10 @@ public class Warlords extends JavaPlugin {
 
     private static final HashMap<UUID, WarlordsPlayer> players = new HashMap<>();
 
+    public static HashMap<UUID, WarlordsPlayer> getPlayers() {
+        return players;
+    }
+
     public static void addPlayer(@Nonnull WarlordsPlayer warlordsPlayer) {
         players.put(warlordsPlayer.getUuid(), warlordsPlayer);
         for (GameAddon addon : warlordsPlayer.getGame().getAddons()) {

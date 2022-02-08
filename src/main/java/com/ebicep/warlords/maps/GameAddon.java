@@ -3,6 +3,7 @@ package com.ebicep.warlords.maps;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.maps.option.GameFreezeWhenOfflineOption;
 import com.ebicep.warlords.maps.option.ImposterModeOption;
+import com.ebicep.warlords.maps.option.InterchangeModeOption;
 import com.ebicep.warlords.maps.option.PreGameItemOption;
 import com.ebicep.warlords.maps.state.ClosedState;
 import com.ebicep.warlords.maps.state.PreLobbyState;
@@ -18,7 +19,7 @@ import org.bukkit.Material;
 
 public enum GameAddon {
 
-    PRIVATE_GAME(null) {
+    PRIVATE_GAME("Private Game", null) {
         @Override
         public void modifyGame(@Nonnull Game game) {
             game.getOptions().add(new GameFreezeWhenOfflineOption());
@@ -43,8 +44,7 @@ public enum GameAddon {
             }
         }
     },
-    IMPOSTER_MODE("warlords.game.impostertoggle") {
-
+    IMPOSTER_MODE("Imposter Mode", "warlords.game.impostertoggle") {
         @Override
         public void modifyGame(@Nonnull Game game) {
             game.getOptions().add(new ImposterModeOption());
@@ -56,7 +56,7 @@ public enum GameAddon {
             return !Warlords.getGameManager().getGames().stream().anyMatch(e -> e.getGame() != null && e.getGame().getAddons().contains(this));
         }
     },
-    COOLDOWN_MODE("warlords.game.cooldowngame") {
+    COOLDOWN_MODE("Cooldown Mode", "warlords.game.cooldowngame") {
         @Override
         public void warlordsPlayerCreated(@Nonnull Game game, @Nonnull WarlordsPlayer player) {
             player.setMaxHealth((int) (player.getMaxHealth() * 1.5));
@@ -66,23 +66,36 @@ public enum GameAddon {
         }
     },
     //RECORD_MODE(),
-    MEGA_GAME("warlords.game.megagame") {
+    MEGA_GAME("Mega Game", "warlords.game.megagame") {
         @Override
         public int getMaxPlayers(@Nonnull GameMap map, int maxPlayers) {
             return Integer.MAX_VALUE;
         }
 
+    },
+    INTERCHANGE_MODE("Interchange Mode", null) {
+        @Override
+        public void modifyGame(@Nonnull Game game) {
+            game.getOptions().add(new InterchangeModeOption());
+        }
+
     };
 
+    private final String name;
     @Nullable
     private final String permission;
 
-    GameAddon(@Nullable String permission) {
+    GameAddon(String name, @Nullable String permission) {
+        this.name = name;
         this.permission = permission;
     }
 
     public boolean hasPermission(CommandSender sender) {
         return this.permission == null || sender.hasPermission(permission);
+    }
+
+    public String getName() {
+        return name;
     }
 
     public void modifyGame(@Nonnull Game game) {
