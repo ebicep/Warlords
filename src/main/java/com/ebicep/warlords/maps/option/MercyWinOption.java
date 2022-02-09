@@ -4,39 +4,62 @@ import com.ebicep.warlords.events.WarlordsGameTriggerWinEvent;
 import com.ebicep.warlords.maps.Game;
 import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.option.marker.TeamMarker;
+import com.ebicep.warlords.maps.option.marker.TimerSkipAbleMarker;
 import com.ebicep.warlords.util.GameRunnable;
 import static com.ebicep.warlords.util.GameRunnable.SECOND;
 import java.util.EnumSet;
 import org.bukkit.Bukkit;
 
 /**
- * Causes a win for the game to trigger if any team has X amount of points more to any other team
+ * Causes a win for the game to trigger if any team has X amount of points more
+ * to any other team
  */
 public class MercyWinOption implements Option {
-    private static final int DEFAULT_MERCY_LIMIT = 550;
-    private int mercyLimit;
+
+    private static final int DEFAULT_LIMIT = 550;
+    private static final int DEFAULT_TIMER = 5 * 60;
+    private int limit;
+    private int timer;
 
     public MercyWinOption() {
-        this(DEFAULT_MERCY_LIMIT);
+        this(DEFAULT_LIMIT, DEFAULT_TIMER);
     }
+
     public MercyWinOption(int mercyLimit) {
-        this.mercyLimit = mercyLimit;
+        this(DEFAULT_LIMIT, DEFAULT_TIMER);
     }
 
-    public int getMercyLimit() {
-        return mercyLimit;
+    public MercyWinOption(int mercyLimit, int timer) {
+        this.limit = mercyLimit;
+        this.timer = timer;
     }
 
-    public void setMercyLimit(int mercyLimit) {
-        this.mercyLimit = mercyLimit;
+    public int getLimit() {
+        return limit;
     }
-    
+
+    public MercyWinOption setLimit(int limit) {
+        this.limit = limit;
+        return this;
+    }
+
+    @Override
+    public void register(Game game) {
+        game.registerGameMarker(TimerSkipAbleMarker.class, (delayInTicks) -> {
+            this.timer -= delayInTicks / 20;
+        });
+    }
+
     @Override
     public void start(Game game) {
         EnumSet<Team> teams = TeamMarker.getTeams(game);
         new GameRunnable(game) {
             @Override
             public void run() {
+                if (timer > 0) {
+                    timer--;
+                    return;
+                }
                 int higest = Integer.MIN_VALUE;
                 int secondHighest = Integer.MIN_VALUE;
                 Team winner = null;
@@ -50,7 +73,7 @@ public class MercyWinOption implements Option {
                         secondHighest = points;
                     }
                 }
-                if (higest - mercyLimit >= secondHighest) {
+                if (higest - limit >= secondHighest) {
                     WarlordsGameTriggerWinEvent event = new WarlordsGameTriggerWinEvent(game, MercyWinOption.this, winner);
                     Bukkit.getPluginManager().callEvent(event);
                     if (!event.isCancelled()) {
