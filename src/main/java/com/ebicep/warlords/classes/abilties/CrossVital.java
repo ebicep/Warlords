@@ -2,10 +2,11 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.player.WarlordsPlayer;
-import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.EffectUtils;
-import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.ParticleEffect;
+import com.ebicep.warlords.util.PlayerFilter;
+import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -17,50 +18,43 @@ public class CrossVital extends AbstractAbility {
     private final int duration = 12;
 
     public CrossVital() {
-        super("Cross Vital", 0, 0, 30, 40, -1, 50);
+        super("Soul Switch", 0, 0, 30, 40, -1, 50);
     }
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Increase the critical damage of all your\n" +
-                "§7abilities by §c" + critMultiplier + "%§7. Gain §e40% §7speed for\n" +
-                "§6" + SPEED_DURATION + " §7seconds upon defeating an enemy while\n" +
-                "§7Cross Vital is active. Lasts §6" + duration + " §7seconds.";
+        description = "§7PLACEHOLDER";
     }
 
     @Override
     public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
-        wp.subtractEnergy(energyCost);
-        CrossVital tempCrossVital = new CrossVital();
 
-        for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "mage.arcaneshield.activation", 2, 2);
+        for (WarlordsPlayer swapTarget : PlayerFilter
+                .entitiesAround(wp.getLocation(), 15, 15, 15)
+                .aliveEnemiesOf(wp)
+                .requireLineOfSight(wp)
+                .closestFirst(wp)
+        ) {
+            Location swapLocation = swapTarget.getLocation();
+            Location ownLocation = wp.getLocation();
+
+            swapTarget.teleport(new Location(
+                    wp.getWorld(), ownLocation.getX(), ownLocation.getY(), ownLocation.getZ(), swapLocation.getYaw(), swapLocation.getPitch()));
+            wp.teleport(new Location(
+                    swapLocation.getWorld(), swapLocation.getX(), swapLocation.getY(), swapLocation.getZ(), ownLocation.getYaw(), ownLocation.getPitch()));
+
+            wp.subtractEnergy(energyCost);
+
+            EffectUtils.playCylinderAnimation(swapLocation, 1.05, ParticleEffect.CLOUD, 1);
+            EffectUtils.playCylinderAnimation(ownLocation, 1.05, ParticleEffect.CLOUD, 1);
+
+            for (Player player1 : player.getWorld().getPlayers()) {
+                player1.playSound(player.getLocation(), Sound.ENDERMAN_TELEPORT, 2, 1.5f);
+            }
+
+            return true;
         }
 
-        EffectUtils.playStarAnimation(player, 1, ParticleEffect.CRIT);
-
-        wp.getCooldownManager().addRegularCooldown(
-                name,
-                "VITAL",
-                CrossVital.class,
-                tempCrossVital,
-                wp,
-                CooldownTypes.ABILITY,
-                cooldownManager -> {},
-                duration * 20
-        );
-
-        new GameRunnable(wp.getGame()) {
-            @Override
-            public void run() {
-                if (wp.getCooldownManager().hasCooldown(tempCrossVital)) {
-                    ParticleEffect.ENCHANTMENT_TABLE.display(0.4f, 0.4f, 0.4f, 0, 4, wp.getLocation().add(0 , 1, 0), 500);
-                } else {
-                    this.cancel();
-                }
-            }
-        }.runTaskTimer(0, 8);
-
-        return true;
+        return false;
     }
 }

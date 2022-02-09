@@ -49,9 +49,20 @@ public class HeartToHeart extends AbstractAbility {
                 wp.subtractEnergy(energyCost);
 
                 // remove other instances of vindicate buff to override
-                heartTarget.getCooldownManager().removeCooldown(Vindicate.class);
                 heartTarget.getCooldownManager().removeCooldown(HeartToHeart.class);
                 heartTarget.getCooldownManager().addRegularCooldown(
+                        "Vindicate Debuff Immunity",
+                        "VIND",
+                        HeartToHeart.class,
+                        tempHeartToHeart,
+                        wp,
+                        CooldownTypes.BUFF,
+                        cooldownManager -> {},
+                        vindDuration * 20
+                );
+
+                wp.getCooldownManager().removeCooldown(HeartToHeart.class);
+                wp.getCooldownManager().addRegularCooldown(
                         "Vindicate Debuff Immunity",
                         "VIND",
                         HeartToHeart.class,
@@ -96,6 +107,10 @@ public class HeartToHeart extends AbstractAbility {
                             double width = 1.5D;
                             ParticleEffect.SPELL_WITCH.display(0, 0, 0, 0, 2,
                                     center.translateVector(playerLoc.getWorld(), 0, Math.sin(angle) * width, Math.cos(angle) * width), 500);
+                        }
+
+                        if (timer >= 8) {
+                            player.setVelocity(playerLoc.getDirection().multiply(0.4).setY(0.2));
                         }
                     }
                 }.runTaskTimer(Warlords.getInstance(), 0, 1);

@@ -101,9 +101,9 @@ public class RespawnWaveOption implements Option, Listener {
     public void onEvent(WarlordsRespawnEvent event) {
         if (event.isCancelled()) {
             if (event.getPlayer().getRespawnTimer() == 0) {
-                int respawn = currentTimer % this.taskPeriod;
+                int respawn = -currentTimer % this.taskPeriod;
                 while (respawn < 1) {
-                    respawn = respawn += this.taskPeriod;
+                    respawn += this.taskPeriod;
                 }
                 event.getPlayer().setRespawnTimer(respawn);
             }
@@ -111,9 +111,9 @@ public class RespawnWaveOption implements Option, Listener {
     }
     
     public void giveRespawnTimer(WarlordsPlayer player) {
-        int respawn = currentTimer % this.taskPeriod;
+        int respawn = -currentTimer % this.taskPeriod;
         while (respawn < minRespawnTimer) {
-            respawn = respawn += this.taskPeriod;
+            respawn += this.taskPeriod;
         }
         player.setRespawnTimer(respawn);
     }

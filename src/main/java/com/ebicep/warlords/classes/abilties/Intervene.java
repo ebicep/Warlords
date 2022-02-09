@@ -119,6 +119,7 @@ public class Intervene extends AbstractAbility {
                                 this.cancel();
                             }
                         }
+
                     }.runTaskTimer(0, 0);
                 });
 

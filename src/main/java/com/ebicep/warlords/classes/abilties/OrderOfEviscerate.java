@@ -4,6 +4,7 @@ import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.GameRunnable;
+import com.ebicep.warlords.util.ParticleEffect;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
@@ -21,7 +22,8 @@ public class OrderOfEviscerate extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Cloak yourself for §6" + duration + " §7seconds, making you invisible\n" +
+        description = "§7Cloak yourself for §6" + duration + " §7seconds, granting\n" +
+                "§7you §e40% §7movement speed and making you §einvisible\n" +
                 "§7to the enemy for the duration. However, taking fall damage\n" +
                 "§7or taking any type of ability damage will end your\n" +
                 "§7invisibility." +
@@ -71,6 +73,7 @@ public class OrderOfEviscerate extends AbstractAbility {
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), Sound.GHAST_FIREBALL, 2, 0.7f);
+            player1.hidePlayer(player);
         }
 
         new GameRunnable(wp.getGame()) {
@@ -82,6 +85,14 @@ public class OrderOfEviscerate extends AbstractAbility {
                     wp.setMarkedTarget(null);
                     player.removePotionEffect(PotionEffectType.INVISIBILITY);
                     cancelSpeed.run();
+                    for (Player player1 : player.getWorld().getPlayers()) {
+                        player1.showPlayer(player);
+                    }
+                } else {
+                    ParticleEffect.SMOKE_NORMAL.display(0, 0.2f, 0, 0.05f, 4, player.getLocation(), 500);
+                    for (Player player1 : player.getWorld().getPlayers()) {
+                        player1.playSound(player.getLocation(), Sound.AMBIENCE_CAVE, 0.05f, 2);
+                    }
                 }
             }
         }.runTaskTimer(0, 1);

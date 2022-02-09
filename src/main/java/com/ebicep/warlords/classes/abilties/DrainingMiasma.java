@@ -70,6 +70,15 @@ public class DrainingMiasma extends AbstractAbility {
                     cooldownManager -> {},
                     duration * 20);
 
+            miasmaTarget.getEntity().addPotionEffect(
+                    new PotionEffect(PotionEffectType.BLINDNESS,
+                            3 * 20,
+                            0,
+                            true,
+                            false),
+                    true
+            );
+
             new GameRunnable(wp.getGame()) {
 
                 float totalDamage = 0;
@@ -127,14 +136,6 @@ public class DrainingMiasma extends AbstractAbility {
                         EffectUtils.playHelixAnimation(player, 6, ParticleEffect.VILLAGER_HAPPY, 1);
 
                     } else {
-                        miasmaTarget.getEntity().addPotionEffect(
-                                new PotionEffect(PotionEffectType.BLINDNESS,
-                                2 * 25,
-                                0,
-                                true,
-                                false),
-                                true
-                        );
                         this.cancel();
                     }
                 }

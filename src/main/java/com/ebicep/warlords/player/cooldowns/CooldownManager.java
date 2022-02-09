@@ -167,7 +167,7 @@ public class CooldownManager {
     }
 
     public boolean hasBoundPlayer(WarlordsPlayer warlordsPlayer) {
-        for (Soulbinding soulbinding : new CooldownFilter<>(this, RegularCooldown.class)
+        for (Soulbinding soulbinding : new CooldownFilter<>(this, PersistentCooldown.class)
                 .filterCooldownClassAndMapToObjectsOfClass(Soulbinding.class)
                 .collect(Collectors.toList())
         ) {

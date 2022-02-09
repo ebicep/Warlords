@@ -20,7 +20,7 @@ import static com.ebicep.warlords.util.EffectUtils.playSphereAnimation;
 
 public class WideGuard extends AbstractAbility {
 
-    public static final int BUBBLE_RADIUS = 3;
+    public static final int BUBBLE_RADIUS = 4;
 
     public WideGuard() {
         super("Wide Guard", 0, 0, 23, 40, -1, 100);
@@ -92,7 +92,7 @@ public class WideGuard extends AbstractAbility {
                             .forEach(playerInsideBubble -> {
                                 playerInsideBubble.getCooldownManager().removeCooldown(WideGuard.class);
                                 playerInsideBubble.getCooldownManager().addRegularCooldown(
-                                        "Wide Guard Healing",
+                                        "Wide Guard",
                                         "GUARD",
                                         WideGuard.class,
                                         tempWideGuard,
@@ -115,7 +115,7 @@ public class WideGuard extends AbstractAbility {
                         float healingValue = 150 + (entry.getKey().getMaxHealth() - entry.getKey().getHealth()) * 0.05f;
                         int timeInSeconds = entry.getValue() * 4 / 20;
                         float totalHealing = (timeInSeconds * healingValue);
-                        entry.getKey().addHealingInstance(wp, "Wide Guard", totalHealing, totalHealing, -1, 100, false, false);
+                        entry.getKey().addHealingInstance(wp, name, totalHealing, totalHealing, -1, 100, false, false);
                     }
 
                     CircleEffect circle = new CircleEffect(wp.getGame(), wp.getTeam(), player.getLocation(), 4);

@@ -5,6 +5,7 @@ import com.ebicep.warlords.player.WarlordsPlayer;
 import javax.annotation.Nonnull;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -43,11 +44,11 @@ public class CooldownFilter<T extends AbstractCooldown<?>> implements Iterable<T
     }
 
     public <R> CooldownFilter<T> filterCooldownClass(Class<R> clazz) {
-        return new CooldownFilter<>(stream.filter(cd -> cd.getCooldownClass() != null && cd.getCooldownClass().equals(clazz)));
+        return new CooldownFilter<>(stream.filter(cd -> Objects.equals(clazz, cd.getCooldownClass())));
     }
 
     public CooldownFilter<T> filterCooldownObject(Object object) {
-        return new CooldownFilter<>(stream.filter(cd -> cd.getCooldownObject() != null && cd.getCooldownObject().equals(object)));
+        return new CooldownFilter<>(stream.filter(cd -> Objects.equals(object, cd.getCooldownObject())));
     }
 
     public CooldownFilter<T> filter(Predicate<T> predicate) {
@@ -55,7 +56,7 @@ public class CooldownFilter<T extends AbstractCooldown<?>> implements Iterable<T
     }
 
     public <R> Stream<R> filterCooldownClassAndMapToObjectsOfClass(Class<R> clazz) {
-        return stream.filter(cd -> cd.getCooldownClass().equals(clazz)).map(t -> t.getCooldownObject()).map(clazz::cast);
+        return stream.filter(cd -> clazz.equals(cd.getCooldownClass())).map(t -> t.getCooldownObject()).map(clazz::cast);
     }
 
     public <R> Stream<R> mapToObjectsOfClass(Class<R> clazz) {

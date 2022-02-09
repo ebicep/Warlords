@@ -592,11 +592,6 @@ public final class WarlordsPlayer {
                         float allyHealing = 0.5f + healthFraction * 0.5f;
                         float ownHealing = 0.5f + (1 - healthFraction) * 0.5f;
 
-                        Bukkit.broadcastMessage("healthfraction = " + healthFraction);
-                        Bukkit.broadcastMessage("health: " + attacker.getHealth());
-                        Bukkit.broadcastMessage("maxHealth: " + attacker.getMaxHealth());
-                        Bukkit.broadcastMessage("own: " + ownHealing * 100 + "%");
-                        Bukkit.broadcastMessage("ally: " + allyHealing * 100 + "%");
                         // Self Heal
                         if (Warlords.getPlayerSettings(attacker.uuid).getSkillBoostForClass() == ClassesSkillBoosts.PROTECTOR_STRIKE) {
                             attacker.addHealingInstance(attacker, ability, damageValue * ownHealing * 1.2f, damageValue * ownHealing * 1.2f, isCrit ? 100 : -1, 100, false, false);
@@ -640,7 +635,7 @@ public final class WarlordsPlayer {
                 // Assassin Mark
                 if (attacker.getCooldownManager().hasCooldown(OrderOfEviscerate.class)) {
                     if (attacker.getMarkedTarget() != uuid) {
-                        attacker.sendMessage("You have marked " + getName());
+                        attacker.sendMessage(RECEIVE_ARROW + ChatColor.GRAY + " You have marked §e" + getName());
                     }
                     attacker.setMarkedTarget(uuid);
                 }
@@ -688,18 +683,28 @@ public final class WarlordsPlayer {
                             p.setMarkedTarget(null);
                             if (attacker.getUuid() == p.getUuid()) {
                                 p.sendMessage("");
-                                p.sendMessage(ChatColor.GRAY + "You have killed your mark," + ChatColor.YELLOW + " your cooldowns have been reset" + ChatColor.GRAY + "!");
+                                p.sendMessage(RECEIVE_ARROW + ChatColor.GRAY + " You have killed your mark," + ChatColor.YELLOW + " your cooldowns have been reset" + ChatColor.GRAY + "!");
+                                p.getCooldownManager().removeCooldown(OrderOfEviscerate.class);
+                                p.getCooldownManager().removeCooldownByName("Cloaked");
+                                new GameRunnable(gameState.getGame()) {
+
+                                    @Override
+                                    public void run() {
+                                        p.getSpec().getPurple().setCurrentCooldown(0);
+                                        p.getSpec().getOrange().setCurrentCooldown(0);
+                                        p.updatePurpleItem();
+                                        p.updateOrangeItem();
+                                        p.subtractEnergy(-p.getSpec().getOrange().getEnergyCost());
+                                    }
+                                }.runTaskLater(2);
                             } else {
-                                p.sendMessage(ChatColor.RED + "Your marked target has died!");
+                                p.sendMessage(GIVE_ARROW + ChatColor.RED + " Your marked target has died!");
+                                p.getCooldownManager().removeCooldown(OrderOfEviscerate.class);
+                                p.getCooldownManager().removeCooldownByName("Cloaked");
                             }
                             if (p.getEntity() instanceof Player) {
                                 ((Player) p.getEntity()).playSound(p.getLocation(), Sound.AMBIENCE_THUNDER, 1, 2);
                             }
-                            p.getSpec().getPurple().setCurrentCooldown(0);
-                            p.getSpec().getOrange().setCurrentCooldown(0);
-                            p.subtractEnergy(-p.getSpec().getOrange().getEnergyCost());
-                            p.updatePurpleItem();
-                            p.updateOrangeItem();
                         }
                     });
 
@@ -912,11 +917,11 @@ public final class WarlordsPlayer {
             ownFeed.append("§l");
         }
         ownFeed.append(Math.round(healValue));
+        ownFeed.append(isCrit ? "!" : "");
         if (isLastStandFromShield) {
             ownFeed.append(" Absorbed!");
         }
-        ownFeed.append(ChatColor.GRAY).append(" health");
-        ownFeed.append(isCrit ? "!" : ".");
+        ownFeed.append(ChatColor.GRAY).append(" health.");
 
         player.sendMessage(ownFeed.toString());
     }
@@ -1096,6 +1101,8 @@ public final class WarlordsPlayer {
 
         showDeathAnimation();
 
+        cooldownManager.clearCooldowns();
+
         if (attacker != null) {
             if (attacker != this) {
                 hitBy.putAll(attacker.getHealedBy());
@@ -1239,6 +1246,10 @@ public final class WarlordsPlayer {
 
         if (cooldownManager.hasCooldownFromName("Cloaked")) {
             player.getInventory().setArmorContents(new ItemStack[]{null, null, null, null});
+        }
+
+        for (Player player1 : player.getWorld().getPlayers()) {
+            player1.showPlayer(player);
         }
 
         if (this.flagDamageMultiplier > 0) {

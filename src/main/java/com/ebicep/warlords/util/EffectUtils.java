@@ -159,6 +159,26 @@ public class EffectUtils {
     }
 
     /**
+     * @param location         what location should the cylinder be around.
+     * @param cylinderRadius is how big the helix should be.
+     * @param effect         which particle effect should be displayed.
+     * @param particleCount  the amount of particles that should be displayed.
+     */
+    public static void playCylinderAnimation(Location location, double cylinderRadius, ParticleEffect effect, int particleCount) {
+        Location particleLoc = location.clone();
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+                double angle = j / 10D * Math.PI * 2;
+                particleLoc.setX(location.getX() + Math.sin(angle) * cylinderRadius);
+                particleLoc.setY(location.getY() + i / 5D);
+                particleLoc.setZ(location.getZ() + Math.cos(angle) * cylinderRadius);
+
+                effect.display(0, 0, 0, 0, particleCount, particleLoc, 500);
+            }
+        }
+    }
+
+    /**
      * @param player     what player should the star be around.
      * @param starRadius is how big the star should be.
      * @param effect     which particle effect should be displayed.

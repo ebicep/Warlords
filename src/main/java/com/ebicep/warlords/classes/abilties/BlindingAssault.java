@@ -33,14 +33,14 @@ public class BlindingAssault extends AbstractAbility {
         Location playerLoc = player.getLocation();
 
         double hasFlag = wp.getFlagDamageMultiplier();
-        if (hasFlag > 0) {
+        if (hasFlag < 0) {
             player.setVelocity(playerLoc.getDirection().multiply(1).setY(0.3));
         } else {
             player.setVelocity(playerLoc.getDirection().multiply(1.5).setY(0.7));
         }
 
         for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(playerLoc, "shaman.chainlightning.impact", 2, 2);
+            player1.playSound(player.getLocation(), "rogue.drainingmiasma.activation", 1, 2);
             player1.playSound(playerLoc, Sound.AMBIENCE_THUNDER, 2, 2);
         }
 

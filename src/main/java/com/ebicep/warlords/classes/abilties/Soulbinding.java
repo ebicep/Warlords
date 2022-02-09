@@ -2,9 +2,9 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.player.WarlordsPlayer;
-import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.CooldownFilter;
-import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.ParticleEffect;
 import org.bukkit.Location;
@@ -50,7 +50,7 @@ public class Soulbinding extends AbstractAbility {
         Soulbinding tempSoulBinding = new Soulbinding();
         wp.getCooldownManager().addPersistentCooldown(name, "SOUL", Soulbinding.class, tempSoulBinding, wp, CooldownTypes.ABILITY,
                 cooldownManager -> {
-                    if (new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterCooldownClass(Soulbinding.class).getStream().count() == 1) {
+                    if (new CooldownFilter<>(cooldownManager, PersistentCooldown.class).filterCooldownClass(Soulbinding.class).getStream().count() == 1) {
                         if (wp.getEntity() instanceof Player) {
                             ((CraftPlayer) wp.getEntity()).getInventory().getItem(0).removeEnchantment(Enchantment.OXYGEN);
                         }

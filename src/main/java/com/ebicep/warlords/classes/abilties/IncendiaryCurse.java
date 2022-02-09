@@ -1,31 +1,29 @@
 package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.classes.AbstractAbility;
-import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.FireWorkEffectPlayer;
 import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
-import org.bukkit.Color;
-import org.bukkit.FireworkEffect;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
 public class IncendiaryCurse extends AbstractAbility {
 
-    private static final double SPEED = 0.220;
+    private static final double SPEED = 0.250;
     private static final double GRAVITY = -0.008;
     private static final float HITBOX = 5;
 
     public IncendiaryCurse() {
-        super("Incendiary Curse", 408, 575, 9, 60, 25, 175);
+        super("Incendiary Curse", 408, 575, 8, 60, 25, 175);
     }
 
     @Override
@@ -80,10 +78,11 @@ public class IncendiaryCurse extends AbstractAbility {
                 }
 
                 WarlordsPlayer directHit;
-                if (!newLoc.getBlock().isEmpty()
-                        && newLoc.getBlock().getType() != Material.GRASS
-                        && newLoc.getBlock().getType() != Material.BARRIER
-                        && newLoc.getBlock().getType() != Material.VINE
+                if (
+                    !newLoc.getBlock().isEmpty()
+                    && newLoc.getBlock().getType() != Material.GRASS
+                    && newLoc.getBlock().getType() != Material.BARRIER
+                    && newLoc.getBlock().getType() != Material.VINE
                 ) {
                     // Explode based on collision
                     shouldExplode = true;
@@ -98,7 +97,7 @@ public class IncendiaryCurse extends AbstractAbility {
                 if (shouldExplode) {
                     stand.remove();
                     for (Player player1 : wp.getWorld().getPlayers()) {
-                        player1.playSound(newLoc, "mage.flameburst.impact", 2, 0.5f);
+                        player1.playSound(newLoc, Sound.FIRE_IGNITE, 2, 0.1f);
                     }
 
                     FireWorkEffectPlayer.playFirework(newLoc, FireworkEffect.builder()
@@ -107,7 +106,7 @@ public class IncendiaryCurse extends AbstractAbility {
                             .with(FireworkEffect.Type.BURST)
                             .build());
 
-                    new FallingBlockWaveEffect(newLoc.clone().add(0, 1, 0), 5, 1, Material.FIRE, (byte) 1).play();
+                    ParticleEffect.SMOKE_NORMAL.display(0.4f, 0.05f, 0.4f, 0.2f, 100, newLoc, 500);
 
                     for (WarlordsPlayer nearEntity : PlayerFilter
                             .entitiesAround(newLoc, HITBOX, HITBOX, HITBOX)
@@ -122,6 +121,10 @@ public class IncendiaryCurse extends AbstractAbility {
                                 critMultiplier,
                                 false
                         );
+                        nearEntity.getEntity().addPotionEffect(
+                                new PotionEffect(PotionEffectType.BLINDNESS, 2 * 25, 0, true, false), true);
+                        nearEntity.getEntity().addPotionEffect(
+                                new PotionEffect(PotionEffectType.CONFUSION, 2 * 25, 0, true, false), true);
                     }
 
                     this.cancel();
