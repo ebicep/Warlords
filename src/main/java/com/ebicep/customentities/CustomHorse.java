@@ -42,8 +42,9 @@ public class CustomHorse extends EntityHorse {
     }
 
     public void spawn() {
-        System.out.println("HERE");
-        System.out.println(owner.getName());
+        if (!(owner.getEntity() instanceof Player)) {
+            return;
+        }
         Player player = (Player) owner.getEntity();
         Horse horse = (Horse) player.getWorld().spawnEntity(player.getLocation(), EntityType.HORSE);
         horse.setTamed(true);
