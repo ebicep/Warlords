@@ -1,5 +1,6 @@
 package com.ebicep.warlords.player;
 
+import com.ebicep.customentities.CustomHorse;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
@@ -59,11 +60,20 @@ public final class WarlordsPlayer {
 
     public static final String GIVE_ARROW = ChatColor.RED + "\u00AB";
     public static final String RECEIVE_ARROW = ChatColor.GREEN + "\u00BB";
-    private String name;
-    private UUID uuid;
     @Deprecated
     private final PlayingState gameState;
     private final Game game;
+    private final List<Float> recordDamage = new ArrayList<>();
+    private final PlayerStatistics stats;
+    //assists = player - timeLeft(10 seconds)
+    private final LinkedHashMap<WarlordsPlayer, Integer> hitBy = new LinkedHashMap<>();
+    private final LinkedHashMap<WarlordsPlayer, Integer> healedBy = new LinkedHashMap<>();
+    private final List<Location> locations = new ArrayList<>();
+    private final CalculateSpeed speed;
+    private final Location deathLocation;
+    private final CooldownManager cooldownManager = new CooldownManager(this);
+    private String name;
+    private UUID uuid;
     private Team team;
     private AbstractPlayerClass spec;
     private Classes specClass;
@@ -75,6 +85,7 @@ public final class WarlordsPlayer {
     private boolean dead = false;
     private float energy;
     private float maxEnergy;
+    private CustomHorse horse;
     private float horseCooldown;
     private float currentHealthModifier = 1;
     private int flagCooldown;
@@ -91,23 +102,8 @@ public final class WarlordsPlayer {
     private boolean canCrit = true;
     private double flagDamageMultiplier = 0;
     private boolean teamFlagCompass = true;
-
-    private final List<Float> recordDamage = new ArrayList<>();
-
-    private final PlayerStatistics stats;
-    //assists = player - timeLeft(10 seconds)
-    private final LinkedHashMap<WarlordsPlayer, Integer> hitBy = new LinkedHashMap<>();
-    private final LinkedHashMap<WarlordsPlayer, Integer> healedBy = new LinkedHashMap<>();
-
-    private final List<Location> locations = new ArrayList<>();
-
-    private final CalculateSpeed speed;
     private boolean powerUpHeal = false;
-
-    private final Location deathLocation;
     private LivingEntity entity;
-
-    private final CooldownManager cooldownManager = new CooldownManager(this);
     @Nullable
     private FlagInfo carriedFlag = null;
     @Nullable
@@ -154,6 +150,7 @@ public final class WarlordsPlayer {
                 .sorted(Comparator.comparing((CompassTargetMarker c) -> c.getCompassTargetPriority(this)).reversed())
                 .findFirst()
                 .orElse(null);
+        this.horse = new CustomHorse(((CraftWorld) entity.getWorld()).getHandle(), this);
     }
 
     public List<Location> getLocations() {
@@ -179,6 +176,7 @@ public final class WarlordsPlayer {
             addDamageInstance(event);
         }
     }
+
     /**
      * Adds a damage instance to an ability or a player.
      *
@@ -431,11 +429,11 @@ public final class WarlordsPlayer {
 
                     if (cooldownManager.hasCooldownFromName("Wide Guard")) {
                         if (
-                            ability.equals("Fireball") ||
-                            ability.equals("Frostbolt") ||
-                            ability.equals("Water Bolt") ||
-                            ability.equals("Lightning Bolt") ||
-                            ability.equals("Flame Burst")
+                                ability.equals("Fireball") ||
+                                        ability.equals("Frostbolt") ||
+                                        ability.equals("Water Bolt") ||
+                                        ability.equals("Lightning Bolt") ||
+                                        ability.equals("Flame Burst")
                         ) {
                             damageValue *= .3;
                         }
@@ -899,10 +897,10 @@ public final class WarlordsPlayer {
     }
 
     /**
-     * @param player which player should receive the message.
-     * @param healValue heal value of the message.
-     * @param ability which ability should the message display.
-     * @param isCrit whether if it's a critical hit message.
+     * @param player                which player should receive the message.
+     * @param healValue             heal value of the message.
+     * @param ability               which ability should the message display.
+     * @param isCrit                whether if it's a critical hit message.
      * @param isLastStandFromShield whether the message is last stand healing.
      */
     private void sendHealingMessage(@Nonnull WarlordsPlayer player, float healValue, String ability, boolean isCrit, boolean isLastStandFromShield, boolean isOverHeal) {
@@ -927,13 +925,13 @@ public final class WarlordsPlayer {
     }
 
     /**
-     * @param sender which player sends the message.
-     * @param receiver which player receives the message.
-     * @param healValue heal value of the message.
-     * @param ability which ability should the message display.
-     * @param isCrit whether if it's a critical hit message.
+     * @param sender                which player sends the message.
+     * @param receiver              which player receives the message.
+     * @param healValue             heal value of the message.
+     * @param ability               which ability should the message display.
+     * @param isCrit                whether if it's a critical hit message.
      * @param isLastStandFromShield whether the message is last stand healing.
-     * @param isOverHeal whether the message is overhealing.
+     * @param isOverHeal            whether the message is overhealing.
      */
     private void sendHealingMessage(@Nonnull WarlordsPlayer sender, @Nonnull WarlordsPlayer receiver, float healValue, String ability, boolean isCrit, boolean isLastStandFromShield, boolean isOverHeal) {
         // Own Message
@@ -944,9 +942,9 @@ public final class WarlordsPlayer {
             ownFeed.append(" critically");
         }
         if (isOverHeal) {
-            ownFeed.append(" overhealed " ).append(name).append(" for ").append(ChatColor.GREEN);
+            ownFeed.append(" overhealed ").append(name).append(" for ").append(ChatColor.GREEN);
         } else {
-            ownFeed.append(" healed " ).append(name).append(" for ").append(ChatColor.GREEN);
+            ownFeed.append(" healed ").append(name).append(" for ").append(ChatColor.GREEN);
         }
         if (isCrit) {
             ownFeed.append("§l");
@@ -986,12 +984,12 @@ public final class WarlordsPlayer {
     }
 
     /**
-     * @param sender which player sends the message.
-     * @param receiver which player should receive the message.
-     * @param ability what is the damage ability.
+     * @param sender      which player sends the message.
+     * @param receiver    which player should receive the message.
+     * @param ability     what is the damage ability.
      * @param damageValue what is the damage value.
-     * @param isCrit whether if it's a critical hit message.
-     * @param isMeleeHit whether if it's a melee hit.
+     * @param isCrit      whether if it's a critical hit message.
+     * @param isMeleeHit  whether if it's a melee hit.
      */
     private void sendDamageMessage(@Nonnull WarlordsPlayer sender, @Nonnull WarlordsPlayer receiver, String ability, float damageValue, boolean isCrit, boolean isMeleeHit) {
         // Receiver feed
@@ -1548,8 +1546,8 @@ public final class WarlordsPlayer {
         }
         Location respawnPoint =
                 !candidates.isEmpty() ? candidates.get((int) (Math.random() * candidates.size())) :
-                deathLocation != null ? deathLocation :
-                getLocation();
+                        deathLocation != null ? deathLocation :
+                                getLocation();
         WarlordsRespawnEvent event = new WarlordsRespawnEvent(this, respawnPoint);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
@@ -1639,6 +1637,14 @@ public final class WarlordsPlayer {
         this.maxEnergy = maxEnergy;
     }
 
+    public CustomHorse getHorse() {
+        return horse;
+    }
+
+    public void setHorse(CustomHorse horse) {
+        this.horse = horse;
+    }
+
     public float getHorseCooldown() {
         return horseCooldown;
     }
@@ -1690,6 +1696,7 @@ public final class WarlordsPlayer {
     public void addDeath() {
         this.stats.addDeath();
     }
+
     public void addDamage(float amount) {
         boolean onCarrier = FlagHolder.isPlayerHolderFlag(this);
         this.stats.addDamage((long) amount);
@@ -1802,6 +1809,10 @@ public final class WarlordsPlayer {
 
     public boolean isDead() {
         return dead;
+    }
+
+    public void setDead(boolean dead) {
+        this.dead = dead;
     }
 
     @Deprecated
@@ -1954,6 +1965,7 @@ public final class WarlordsPlayer {
 
     /**
      * Gets the damage multiplier caused by any carried flag
+     *
      * @return The flag damage multiplier, or 1 for easy calculations
      */
     public double getFlagDamageMultiplier() {
@@ -2014,10 +2026,6 @@ public final class WarlordsPlayer {
 
     public World getWorld() {
         return this.entity.getWorld();
-    }
-
-    public void setDead(boolean dead) {
-        this.dead = dead;
     }
 
     public boolean isInfiniteEnergy() {

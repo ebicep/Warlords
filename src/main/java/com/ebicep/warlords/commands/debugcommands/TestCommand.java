@@ -9,6 +9,8 @@ import com.ebicep.warlords.database.repositories.player.pojos.AbstractDatabaseSt
 import com.ebicep.warlords.database.repositories.player.pojos.ctf.DatabasePlayerCTF;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayerPubStats;
+import com.ebicep.warlords.player.ArmorManager;
+import com.ebicep.warlords.player.PlayerSettings;
 import com.ebicep.warlords.player.SpecType;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.github.benmanes.caffeine.cache.Cache;
@@ -82,10 +84,20 @@ public class TestCommand implements CommandExecutor {
 
         Player player = (Player) sender;
 
-        for (Map.Entry<UUID, WarlordsPlayer> uuidWarlordsPlayerEntry : Warlords.getPlayers().entrySet()) {
-            System.out.println(uuidWarlordsPlayerEntry.getValue().getName() + " - " + uuidWarlordsPlayerEntry.getValue().getEntity());
-        }
+//        for (Map.Entry<UUID, WarlordsPlayer> uuidWarlordsPlayerEntry : Warlords.getPlayers().entrySet()) {
+//            System.out.println(uuidWarlordsPlayerEntry.getValue().getName() + " - " + uuidWarlordsPlayerEntry.getValue().getEntity());
+//        }
+//
+        Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get().warlordsPlayers().forEach(warlordsPlayer1 -> {
+            System.out.println(warlordsPlayer1.getName());
+            System.out.println(warlordsPlayer1.getEntity().getVehicle() != null);
+        });
 
+        PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
+//        System.out.println(ArmorManager.ArmorSets.getSelected(player.getUniqueId()));
+//        System.out.println(ArmorManager.Helmets.getSelected(player.getUniqueId()));
+//
+//        ArmorManager.resetArmor(player, playerSettings.getSelectedClass(), playerSettings.getWantedTeam());
 
 //        SRCalculator.totalValues.clear();
 //        List<DatabasePlayer> databasePlayers = DatabaseManager.playerService.findAll(PlayersCollections.SEASON_5);

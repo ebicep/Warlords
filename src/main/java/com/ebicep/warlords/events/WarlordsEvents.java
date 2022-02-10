@@ -299,18 +299,8 @@ public class WarlordsEvents implements Listener {
                             player.sendMessage(ChatColor.RED + "You can't mount while holding the flag!");
                         } else {
                             player.playSound(player.getLocation(), "mountup", 1, 1);
-                            Horse horse = (Horse) player.getWorld().spawnEntity(player.getLocation(), EntityType.HORSE);
-                            horse.setTamed(true);
-                            horse.getInventory().setSaddle(new ItemStack(Material.SADDLE));
-                            horse.setOwner(player);
-                            horse.setJumpStrength(0);
-                            horse.setVariant(Horse.Variant.HORSE);
-                            horse.setColor(Horse.Color.BROWN);
-                            horse.setStyle(Horse.Style.NONE);
-                            horse.setAdult();
-                            ((EntityLiving) ((CraftEntity) horse).getHandle()).getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(.318);
-                            horse.setPassenger(player);
-                            wp.setHorseCooldown(15);
+                            wp.getHorse().spawn();
+                            wp.setHorseCooldown(wp.getHorse().getCooldown());
                         }
                     }
 

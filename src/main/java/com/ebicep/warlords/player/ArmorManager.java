@@ -6,15 +6,13 @@ import com.ebicep.warlords.util.ItemBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.Material;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.ebicep.warlords.player.Classes.*;
@@ -107,48 +105,33 @@ public class ArmorManager {
         }
 
         public static List<Helmets> getSelected(Player player) {
+            return getSelected(player.getUniqueId());
+        }
+
+        public static List<Helmets> getSelected(UUID uuid) {
+            PlayerSettings playerSettings = Warlords.getPlayerSettings(uuid);
             List<Helmets> armorSets = new ArrayList<>();
-            armorSets.add(player.getMetadata("selected-helmet-mage").stream()
-                    .map(v -> v.value() instanceof Helmets ? (Helmets) v.value() : null)
-                    .filter(Objects::nonNull)
-                    .findAny()
-                    .orElse(SIMPLE_MAGE_HELMET));
-            armorSets.add(player.getMetadata("selected-helmet-warrior").stream()
-                    .map(v -> v.value() instanceof Helmets ? (Helmets) v.value() : null)
-                    .filter(Objects::nonNull)
-                    .findAny()
-                    .orElse(SIMPLE_WARRIOR_HELMET));
-            armorSets.add(player.getMetadata("selected-helmet-paladin").stream()
-                    .map(v -> v.value() instanceof Helmets ? (Helmets) v.value() : null)
-                    .filter(Objects::nonNull)
-                    .findAny()
-                    .orElse(SIMPLE_PALADIN_HELMET));
-            armorSets.add(player.getMetadata("selected-helmet-shaman").stream()
-                    .map(v -> v.value() instanceof Helmets ? (Helmets) v.value() : null)
-                    .filter(Objects::nonNull)
-                    .findAny()
-                    .orElse(SIMPLE_SHAMAN_HELMET));
+            armorSets.add(playerSettings.getMageHelmet());
+            armorSets.add(playerSettings.getWarriorHelmet());
+            armorSets.add(playerSettings.getPaladinHelmet());
+            armorSets.add(playerSettings.getShamanHelmet());
             return armorSets;
         }
 
         public static void setSelectedMage(Player player, Helmets selectedHelmet) {
-            player.removeMetadata("selected-helmet-mage", Warlords.getInstance());
-            player.setMetadata("selected-helmet-mage", new FixedMetadataValue(Warlords.getInstance(), selectedHelmet == null ? SIMPLE_MAGE_HELMET : selectedHelmet));
+            Warlords.getPlayerSettings(player.getUniqueId()).setMageHelmet(selectedHelmet);
         }
 
         public static void setSelectedWarrior(Player player, Helmets selectedHelmet) {
-            player.removeMetadata("selected-helmet-warrior", Warlords.getInstance());
-            player.setMetadata("selected-helmet-warrior", new FixedMetadataValue(Warlords.getInstance(), selectedHelmet == null ? SIMPLE_WARRIOR_HELMET : selectedHelmet));
+            Warlords.getPlayerSettings(player.getUniqueId()).setWarriorHelmet(selectedHelmet);
         }
 
         public static void setSelectedPaladin(Player player, Helmets selectedHelmet) {
-            player.removeMetadata("selected-helmet-paladin", Warlords.getInstance());
-            player.setMetadata("selected-helmet-paladin", new FixedMetadataValue(Warlords.getInstance(), selectedHelmet == null ? SIMPLE_PALADIN_HELMET : selectedHelmet));
+            Warlords.getPlayerSettings(player.getUniqueId()).setPaladinHelmet(selectedHelmet);
         }
 
         public static void setSelectedShaman(Player player, Helmets selectedHelmet) {
-            player.removeMetadata("selected-helmet-shaman", Warlords.getInstance());
-            player.setMetadata("selected-helmet-shaman", new FixedMetadataValue(Warlords.getInstance(), selectedHelmet == null ? SIMPLE_SHAMAN_HELMET : selectedHelmet));
+            Warlords.getPlayerSettings(player.getUniqueId()).setShamanHelmet(selectedHelmet);
         }
     }
 
@@ -226,6 +209,22 @@ public class ArmorManager {
             return SIMPLE_CHESTPLATE_SHAMAN;
         }
 
+        public static void setSelectedMage(Player player, ArmorSets selectedArmorSet) {
+            Warlords.getPlayerSettings(player.getUniqueId()).setMageArmor(selectedArmorSet);
+        }
+
+        public static void setSelectedWarrior(Player player, ArmorSets selectedArmorSet) {
+            Warlords.getPlayerSettings(player.getUniqueId()).setWarriorArmor(selectedArmorSet);
+        }
+
+        public static void setSelectedPaladin(Player player, ArmorSets selectedArmorSet) {
+            Warlords.getPlayerSettings(player.getUniqueId()).setPaladinArmor(selectedArmorSet);
+        }
+
+        public static void setSelectedShaman(Player player, ArmorSets selectedArmorSet) {
+            Warlords.getPlayerSettings(player.getUniqueId()).setShamanArmor(selectedArmorSet);
+        }
+
         public static ItemStack applyColor(ItemStack itemStack, boolean blueColor) {
             LeatherArmorMeta leatherArmorMeta = (LeatherArmorMeta) itemStack.getItemMeta();
             if (blueColor) {
@@ -238,48 +237,17 @@ public class ArmorManager {
         }
 
         public static List<ArmorSets> getSelected(Player player) {
+            return getSelected(player.getUniqueId());
+        }
+
+        public static List<ArmorSets> getSelected(UUID uuid) {
+            PlayerSettings playerSettings = Warlords.getPlayerSettings(uuid);
             List<ArmorSets> armorSets = new ArrayList<>();
-            armorSets.add(player.getMetadata("selected-armor-mage").stream()
-                    .map(v -> v.value() instanceof ArmorSets ? (ArmorSets) v.value() : SIMPLE_CHESTPLATE_MAGE)
-                    .filter(Objects::nonNull)
-                    .findAny()
-                    .orElse(SIMPLE_CHESTPLATE_MAGE));
-            armorSets.add(player.getMetadata("selected-armor-warrior").stream()
-                    .map(v -> v.value() instanceof ArmorSets ? (ArmorSets) v.value() : SIMPLE_CHESTPLATE_WARRIOR)
-                    .filter(Objects::nonNull)
-                    .findAny()
-                    .orElse(SIMPLE_CHESTPLATE_WARRIOR));
-            armorSets.add(player.getMetadata("selected-armor-paladin").stream()
-                    .map(v -> v.value() instanceof ArmorSets ? (ArmorSets) v.value() : SIMPLE_CHESTPLATE_PALADIN)
-                    .filter(Objects::nonNull)
-                    .findAny()
-                    .orElse(SIMPLE_CHESTPLATE_PALADIN));
-            armorSets.add(player.getMetadata("selected-armor-shaman").stream()
-                    .map(v -> v.value() instanceof ArmorSets ? (ArmorSets) v.value() : SIMPLE_CHESTPLATE_SHAMAN)
-                    .filter(Objects::nonNull)
-                    .findAny()
-                    .orElse(SIMPLE_CHESTPLATE_SHAMAN));
+            armorSets.add(playerSettings.getMageArmor());
+            armorSets.add(playerSettings.getWarriorArmor());
+            armorSets.add(playerSettings.getPaladinArmor());
+            armorSets.add(playerSettings.getShamanArmor());
             return armorSets;
-        }
-
-        public static void setSelectedMage(Player player, ArmorSets selectedArmorSet) {
-            player.removeMetadata("selected-armor-mage", Warlords.getInstance());
-            player.setMetadata("selected-armor-mage", new FixedMetadataValue(Warlords.getInstance(), selectedArmorSet));
-        }
-
-        public static void setSelectedWarrior(Player player, ArmorSets selectedArmorSet) {
-            player.removeMetadata("selected-armor-warrior", Warlords.getInstance());
-            player.setMetadata("selected-armor-warrior", new FixedMetadataValue(Warlords.getInstance(), selectedArmorSet));
-        }
-
-        public static void setSelectedPaladin(Player player, ArmorSets selectedArmorSet) {
-            player.removeMetadata("selected-armor-paladin", Warlords.getInstance());
-            player.setMetadata("selected-armor-paladin", new FixedMetadataValue(Warlords.getInstance(), selectedArmorSet));
-        }
-
-        public static void setSelectedShaman(Player player, ArmorSets selectedArmorSet) {
-            player.removeMetadata("selected-armor-shaman", Warlords.getInstance());
-            player.setMetadata("selected-armor-shaman", new FixedMetadataValue(Warlords.getInstance(), selectedArmorSet));
         }
     }
 
@@ -359,4 +327,82 @@ public class ArmorManager {
         player.getInventory().setArmorContents(armor);
     }
 
+    public static void resetArmor(UUID uuid, LivingEntity livingEntity, Classes selectedClass, Team team) {
+        List<Helmets> helmets = Helmets.getSelected(uuid);
+        List<ArmorSets> armorSets = ArmorSets.getSelected(uuid);
+        boolean onBlueTeam = team == Team.BLUE;
+        ItemStack[] armor = new ItemStack[4];
+
+        if (selectedClass == PYROMANCER || selectedClass == CRYOMANCER || selectedClass == AQUAMANCER) {
+            armor[2] = new ItemBuilder(onBlueTeam ? armorSets.get(0).itemBlue : armorSets.get(0).itemRed)
+                    .name(onBlueTeam ? ChatColor.BLUE + armorSets.get(0).name : ChatColor.RED + armorSets.get(0).name)
+                    .lore(armorDescription)
+                    .get();
+            armor[3] = new ItemBuilder(onBlueTeam ? helmets.get(0).itemBlue : helmets.get(0).itemRed)
+                    .name(onBlueTeam ? ChatColor.BLUE + helmets.get(0).name : ChatColor.RED + helmets.get(0).name)
+                    .lore(helmetDescription)
+                    .get();
+        } else if (selectedClass == BERSERKER || selectedClass == DEFENDER || selectedClass == REVENANT) {
+            armor[2] = new ItemBuilder(onBlueTeam ? armorSets.get(1).itemBlue : armorSets.get(1).itemRed)
+                    .name(onBlueTeam ? ChatColor.BLUE + armorSets.get(1).name : ChatColor.RED + armorSets.get(1).name)
+                    .lore(armorDescription)
+                    .get();
+            armor[3] = new ItemBuilder(onBlueTeam ? helmets.get(1).itemBlue : helmets.get(1).itemRed)
+                    .name(onBlueTeam ? ChatColor.BLUE + helmets.get(1).name : ChatColor.RED + helmets.get(1).name)
+                    .lore(helmetDescription)
+                    .get();
+        } else if (selectedClass == AVENGER || selectedClass == CRUSADER || selectedClass == PROTECTOR || selectedClass == ASSASSIN || selectedClass == VINDICATOR || selectedClass == APOTHECARY) {
+            armor[2] = new ItemBuilder(onBlueTeam ? armorSets.get(2).itemBlue : armorSets.get(2).itemRed)
+                    .name(onBlueTeam ? ChatColor.BLUE + armorSets.get(2).name : ChatColor.RED + armorSets.get(2).name)
+                    .lore(armorDescription)
+                    .get();
+            armor[3] = new ItemBuilder(onBlueTeam ? helmets.get(2).itemBlue : helmets.get(2).itemRed)
+                    .name(onBlueTeam ? ChatColor.BLUE + helmets.get(2).name : ChatColor.RED + helmets.get(2).name)
+                    .lore(helmetDescription)
+                    .get();
+        } else if (selectedClass == THUNDERLORD || selectedClass == SPIRITGUARD || selectedClass == EARTHWARDEN) {
+            armor[2] = new ItemBuilder(onBlueTeam ? armorSets.get(3).itemBlue : armorSets.get(3).itemRed)
+                    .name(onBlueTeam ? ChatColor.BLUE + armorSets.get(3).name : ChatColor.RED + armorSets.get(3).name)
+                    .lore(armorDescription)
+                    .get();
+            armor[3] = new ItemBuilder(onBlueTeam ? helmets.get(3).itemBlue : helmets.get(3).itemRed)
+                    .name(onBlueTeam ? ChatColor.BLUE + helmets.get(3).name : ChatColor.RED + helmets.get(3).name)
+                    .lore(helmetDescription)
+                    .get();
+        }
+        String name = Arrays.stream(ArmorSets.values()).filter(o -> o.name.equals(ChatColor.stripColor(armor[2].getItemMeta().getDisplayName()))).collect(Collectors.toList()).get(0).name;
+        if (name.contains("Simple")) {
+            armor[2] = new ItemBuilder(ArmorSets.applyColor(ArmorSets.SIMPLE_CHESTPLATE.itemBlue, onBlueTeam))
+                    .name(onBlueTeam ? ChatColor.BLUE + ArmorSets.SIMPLE_CHESTPLATE.name : ChatColor.RED + ArmorSets.SIMPLE_CHESTPLATE.name)
+                    .lore(armorDescription)
+                    .get();
+            armor[1] = new ItemBuilder(ArmorSets.applyColor(ArmorSets.SIMPLE_LEGGINGS.itemBlue, onBlueTeam))
+                    .name(onBlueTeam ? ChatColor.BLUE + ArmorSets.SIMPLE_LEGGINGS.name : ChatColor.RED + ArmorSets.SIMPLE_LEGGINGS.name)
+                    .lore(armorDescription)
+                    .get();
+            armor[0] = new ItemBuilder(ArmorSets.applyColor(ArmorSets.SIMPLE_BOOTS.itemBlue, onBlueTeam))
+                    .name(onBlueTeam ? ChatColor.BLUE + ArmorSets.SIMPLE_BOOTS.name : ChatColor.RED + ArmorSets.SIMPLE_BOOTS.name)
+                    .lore(armorDescription)
+                    .get();
+        } else if (name.contains("Greater")) {
+            armor[1] = new ItemBuilder(onBlueTeam ? ArmorSets.GREATER_LEGGINGS.itemBlue : ArmorSets.GREATER_LEGGINGS.itemRed)
+                    .name(onBlueTeam ? ChatColor.BLUE + ArmorSets.GREATER_LEGGINGS.name : ChatColor.RED + ArmorSets.GREATER_LEGGINGS.name)
+                    .lore(armorDescription)
+                    .get();
+            armor[0] = new ItemBuilder(onBlueTeam ? ArmorSets.GREATER_BOOTS.itemBlue : ArmorSets.GREATER_BOOTS.itemRed)
+                    .name(onBlueTeam ? ChatColor.BLUE + ArmorSets.GREATER_BOOTS.name : ChatColor.RED + ArmorSets.GREATER_BOOTS.name)
+                    .lore(armorDescription)
+                    .get();
+        } else if (name.contains("Masterwork")) {
+            armor[1] = new ItemBuilder(onBlueTeam ? ArmorSets.MASTERWORK_LEGGINGS.itemBlue : ArmorSets.MASTERWORK_LEGGINGS.itemRed)
+                    .name(onBlueTeam ? ChatColor.BLUE + ArmorSets.MASTERWORK_LEGGINGS.name : ChatColor.RED + ArmorSets.MASTERWORK_LEGGINGS.name)
+                    .lore(armorDescription)
+                    .get();
+            armor[0] = new ItemBuilder(onBlueTeam ? ArmorSets.MASTERWORK_BOOTS.itemBlue : ArmorSets.MASTERWORK_BOOTS.itemRed)
+                    .name(onBlueTeam ? ChatColor.BLUE + ArmorSets.MASTERWORK_BOOTS.name : ChatColor.RED + ArmorSets.MASTERWORK_BOOTS.name)
+                    .lore(armorDescription)
+                    .get();
+        }
+        livingEntity.getEquipment().setArmorContents(armor);
+    }
 }

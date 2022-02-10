@@ -7,7 +7,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+
+import static com.ebicep.warlords.player.ArmorManager.Helmets.*;
 
 public class PlayerSettings implements ConfigurationSerializable {
     private Classes selectedClass = Classes.PYROMANCER;
@@ -48,6 +51,15 @@ public class PlayerSettings implements ConfigurationSerializable {
      * Preferred team in the upcoming warlords game
      */
     private transient Team wantedTeam = null;
+
+    private ArmorManager.Helmets mageHelmet = SIMPLE_MAGE_HELMET;
+    private ArmorManager.Helmets warriorHelmet = SIMPLE_MAGE_HELMET;
+    private ArmorManager.Helmets paladinHelmet = SIMPLE_MAGE_HELMET;
+    private ArmorManager.Helmets shamanHelmet = SIMPLE_MAGE_HELMET;
+    private ArmorManager.ArmorSets mageArmor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE_MAGE;
+    private ArmorManager.ArmorSets warriorArmor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE_WARRIOR;
+    private ArmorManager.ArmorSets paladinArmor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE_PALADIN;
+    private ArmorManager.ArmorSets shamanArmor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE_SHAMAN;
 
     @Nonnull
     public Classes getSelectedClass() {
@@ -139,5 +151,87 @@ public class PlayerSettings implements ConfigurationSerializable {
 
     public void setParticleQuality(Settings.ParticleQuality particleQuality) {
         this.particleQuality = particleQuality;
+    }
+
+    public boolean isHotKeyMode() {
+        return hotKeyMode;
+    }
+
+    public void setHelmets(List<ArmorManager.Helmets> helmets) {
+        this.mageHelmet = helmets.get(0);
+        this.warriorHelmet = helmets.get(1);
+        this.paladinHelmet = helmets.get(2);
+        this.shamanHelmet = helmets.get(3);
+    }
+
+    public void setArmorSets(List<ArmorManager.ArmorSets> armorSets) {
+        this.mageArmor = armorSets.get(0);
+        this.warriorArmor = armorSets.get(1);
+        this.paladinArmor = armorSets.get(2);
+        this.shamanArmor = armorSets.get(3);
+    }
+
+    public ArmorManager.Helmets getMageHelmet() {
+        return mageHelmet;
+    }
+
+    public void setMageHelmet(ArmorManager.Helmets mageHelmet) {
+        this.mageHelmet = mageHelmet;
+    }
+
+    public ArmorManager.Helmets getWarriorHelmet() {
+        return warriorHelmet;
+    }
+
+    public void setWarriorHelmet(ArmorManager.Helmets warriorHelmet) {
+        this.warriorHelmet = warriorHelmet;
+    }
+
+    public ArmorManager.Helmets getPaladinHelmet() {
+        return paladinHelmet;
+    }
+
+    public void setPaladinHelmet(ArmorManager.Helmets paladinHelmet) {
+        this.paladinHelmet = paladinHelmet;
+    }
+
+    public ArmorManager.Helmets getShamanHelmet() {
+        return shamanHelmet;
+    }
+
+    public void setShamanHelmet(ArmorManager.Helmets shamanHelmet) {
+        this.shamanHelmet = shamanHelmet;
+    }
+
+    public ArmorManager.ArmorSets getMageArmor() {
+        return mageArmor;
+    }
+
+    public void setMageArmor(ArmorManager.ArmorSets mageArmor) {
+        this.mageArmor = mageArmor;
+    }
+
+    public ArmorManager.ArmorSets getWarriorArmor() {
+        return warriorArmor;
+    }
+
+    public void setWarriorArmor(ArmorManager.ArmorSets warriorArmor) {
+        this.warriorArmor = warriorArmor;
+    }
+
+    public ArmorManager.ArmorSets getPaladinArmor() {
+        return paladinArmor;
+    }
+
+    public void setPaladinArmor(ArmorManager.ArmorSets paladinArmor) {
+        this.paladinArmor = paladinArmor;
+    }
+
+    public ArmorManager.ArmorSets getShamanArmor() {
+        return shamanArmor;
+    }
+
+    public void setShamanArmor(ArmorManager.ArmorSets shamanArmor) {
+        this.shamanArmor = shamanArmor;
     }
 }

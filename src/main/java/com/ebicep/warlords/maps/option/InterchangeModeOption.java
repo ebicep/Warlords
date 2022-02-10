@@ -6,18 +6,29 @@ import com.ebicep.warlords.maps.Team;
 import com.ebicep.warlords.maps.option.marker.TeamMarker;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.util.GameRunnable;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Random;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class InterchangeModeOption implements Option {
 
-    public static final int MAX_SWAP_TIME = 16;//80;
-    public static final int MIN_SWAP_TIME = 15;//40;
+    public static final int MAX_SWAP_TIME = 11;//80;
+    public static final int MIN_SWAP_TIME = 10;//40;
+    private final HashMap<UUID, Classes> previousSelectedClasses = new HashMap<>();
+    private final HashMap<UUID, HashMap<Classes, ClassesSkillBoosts>> previousSelectedSkillBoosts = new HashMap<>();
+    private final HashMap<UUID, HashMap<Classes, Weapons>> previousSelectedWeaponSkins = new HashMap<>();
+    private final HashMap<UUID, List<ArmorManager.Helmets>> previousSelectedHelmets = new HashMap<>();
+    private final HashMap<UUID, List<ArmorManager.ArmorSets>> previousSelectedArmorSets = new HashMap<>();
+
     private int ticksUntilNextSwap = 0;
 
     @Override
@@ -27,6 +38,16 @@ public class InterchangeModeOption implements Option {
 
     @Override
     public void start(@Nonnull Game game) {
+        //saving player info as it will be modified during the game
+        game.getPlayers().forEach((uuid, team) -> {
+            PlayerSettings playerSettings = Warlords.getPlayerSettings(uuid);
+            previousSelectedClasses.put(uuid, playerSettings.getSelectedClass());
+            previousSelectedSkillBoosts.put(uuid, playerSettings.getClassesSkillBoosts());
+            previousSelectedWeaponSkins.put(uuid, playerSettings.getWeaponSkins());
+            previousSelectedHelmets.put(uuid, ArmorManager.Helmets.getSelected(uuid));
+            previousSelectedArmorSets.put(uuid, ArmorManager.ArmorSets.getSelected(uuid));
+        });
+
         generateNextSwapTime();
 
         new GameRunnable(game) {
@@ -46,92 +67,112 @@ public class InterchangeModeOption implements Option {
         }.runTaskTimer(GameRunnable.SECOND, GameRunnable.SECOND);
     }
 
+    @Override
+    public void onGameEnding(@Nonnull Game game) {
+        //resetting player info
+        game.getPlayers().forEach((uuid, team) -> {
+            PlayerSettings playerSettings = Warlords.getPlayerSettings(uuid);
+            playerSettings.setSelectedClass(previousSelectedClasses.get(uuid));
+            playerSettings.setClassesSkillBoosts(previousSelectedSkillBoosts.get(uuid));
+            playerSettings.setWeaponSkins(previousSelectedWeaponSkins.get(uuid));
+            playerSettings.setHelmets(previousSelectedHelmets.get(uuid));
+            playerSettings.setArmorSets(previousSelectedArmorSets.get(uuid));
+        });
+    }
+
     private void swap(Game game) {
         TeamMarker.getTeams(game).forEach(team -> swapTeamMembers(game, team));
     }
 
+    //the player BEFORE becomes the player AFTER
+    //the last player BECOMES the first player
     private void swapTeamMembers(Game game, Team team) {
         List<WarlordsPlayer> teamPlayers = game.warlordsPlayers()
                 .filter(warlordsPlayer -> warlordsPlayer.getTeam() == team)
                 .collect(Collectors.toList());
-        if (teamPlayers.isEmpty()) return;
+        if (teamPlayers.size() <= 1) return;
+        System.out.println(teamPlayers);
+
         //take beginning player to swap with end
-        WarlordsPlayer initialPlayer = teamPlayers.get(0);
-        String name = initialPlayer.getName();
-        UUID uuid = initialPlayer.getUuid();
-        Location location = initialPlayer.getLocation();
-        LivingEntity livingEntity = initialPlayer.getEntity();
+        WarlordsPlayer secondPlayer = teamPlayers.get(0);
+        String secondPlayerName = secondPlayer.getName();
+        UUID secondPlayerUuid = secondPlayer.getUuid();
+        Location secondPlayerLocation = secondPlayer.getLocation();
+        LivingEntity secondPlayerEntity = secondPlayer.getEntity();
+        boolean onHorse = secondPlayerEntity.getVehicle() != null;
+
+        PlayerSettings oldSettings = Warlords.getPlayerSettings(secondPlayerUuid);
+        Classes oldClasses = oldSettings.getSelectedClass();
+        ClassesSkillBoosts oldBoost = oldSettings.getSkillBoostForClass();
+        List<ArmorManager.Helmets> oldHelmets = ArmorManager.Helmets.getSelected(secondPlayerUuid);
+        List<ArmorManager.ArmorSets> oldArmorSets = ArmorManager.ArmorSets.getSelected(secondPlayerUuid);
 
         for (int i = 0; i < teamPlayers.size() - 1; i++) {
             transferPlayerStats(teamPlayers.get(i), teamPlayers.get(i + 1));
         }
 
         //give last player first players old stats
-        WarlordsPlayer lastPlayer = teamPlayers.get(teamPlayers.size() - 1);
-        lastPlayer.setName(name);
-        lastPlayer.setUuid(uuid);
-        lastPlayer.getEntity().teleport(location);
-        lastPlayer.setEntity(livingEntity);
-        lastPlayer.updateRedItem();
-        lastPlayer.updatePurpleItem();
-        lastPlayer.updateBlueItem();
-        lastPlayer.updateOrangeItem();
+        WarlordsPlayer firstPlayer = teamPlayers.get(teamPlayers.size() - 1);
 
-        Warlords.getPlayers().put(uuid, lastPlayer);
-        ArmorManager.resetArmor((Player) lastPlayer.getEntity(), lastPlayer.getSpecClass(), lastPlayer.getTeam());
+        System.out.println("LAST SWAP - " + firstPlayer.getName() + " <<< " + secondPlayerName);
 
+        UUID firstPlayerUuid = firstPlayer.getUuid();
+        firstPlayer.setName(secondPlayerName);
+        firstPlayer.setUuid(secondPlayerUuid);
+        firstPlayer.getEntity().teleport(secondPlayerLocation);
+        if (onHorse) {
+            firstPlayer.getHorse().spawn();
+        }
+        firstPlayer.setEntity(secondPlayerEntity);
+        //copying over playersettings
+        PlayerSettings playerSettings = Warlords.getPlayerSettings(firstPlayerUuid);
+        playerSettings.setSelectedClass(oldClasses);
+        playerSettings.setSkillBoostForSelectedClass(oldBoost);
+        playerSettings.setHelmets(oldHelmets);
+        playerSettings.setArmorSets(oldArmorSets);
+        if (firstPlayer.getEntity() instanceof Player) {
+            firstPlayer.updatePlayer((Player) firstPlayer.getEntity());
+        }
+        Warlords.getPlayers().put(secondPlayerUuid, firstPlayer);
+
+
+        Warlords.newChain()
+                .delay(1, TimeUnit.MILLISECONDS)
+                .sync(() -> {
+                    ArmorManager.resetArmor(firstPlayer.getUuid(), firstPlayer.getEntity(), firstPlayer.getSpecClass(), firstPlayer.getTeam());
+                }).execute();
     }
 
     //firstplayer gets the stats of the second
     private void transferPlayerStats(WarlordsPlayer firstPlayer, WarlordsPlayer secondPlayer) {
+        System.out.println("SWAP - " + firstPlayer.getName() + " <<< " + secondPlayer.getName());
+
+        UUID uuid = firstPlayer.getUuid();
         firstPlayer.setName(secondPlayer.getName());
         firstPlayer.setUuid(secondPlayer.getUuid());
         firstPlayer.getEntity().teleport(secondPlayer.getLocation());
+        if (secondPlayer.getEntity().getVehicle() != null) {
+            firstPlayer.getHorse().spawn();
+        }
         firstPlayer.setEntity(secondPlayer.getEntity());
-        firstPlayer.updateRedItem();
-        firstPlayer.updatePurpleItem();
-        firstPlayer.updateBlueItem();
-        firstPlayer.updateOrangeItem();
-
+        //copying over playersettings
+        PlayerSettings playerSettings = Warlords.getPlayerSettings(uuid);
+        PlayerSettings otherPlayerSettings = Warlords.getPlayerSettings(secondPlayer.getUuid());
+        playerSettings.setSelectedClass(otherPlayerSettings.getSelectedClass());
+        playerSettings.setSkillBoostForSelectedClass(otherPlayerSettings.getSkillBoostForClass());
+        playerSettings.setHelmets(ArmorManager.Helmets.getSelected(secondPlayer.getUuid()));
+        playerSettings.setArmorSets(ArmorManager.ArmorSets.getSelected(secondPlayer.getUuid()));
+        if (firstPlayer.getEntity() instanceof Player) {
+            firstPlayer.updatePlayer((Player) firstPlayer.getEntity());
+        }
         Warlords.getPlayers().put(secondPlayer.getUuid(), firstPlayer);
-        ArmorManager.resetArmor((Player) firstPlayer.getEntity(), firstPlayer.getSpecClass(), firstPlayer.getTeam());
 
-//        secondPlayer.setName(name);
-//        secondPlayer.setUuid(uuid);
-//        secondPlayer.getEntity().teleport(location);
-//        secondPlayer.setEntity(livingEntity);
-//        secondPlayer.updateRedItem();
-//        secondPlayer.updatePurpleItem();
-//        secondPlayer.updateBlueItem();
-//        secondPlayer.updateOrangeItem();
-//
-//        Warlords.getPlayers().put(uuid, secondPlayer);
-//        ArmorManager.resetArmor((Player) secondPlayer.getEntity(), secondPlayer.getSpecClass(), secondPlayer.getTeam());
 
-//        AbstractPlayerClass abstractPlayerClass = firstPlayer.getSpec();
-//        Classes classes = firstPlayer.getSpecClass();
-//        Weapons weapons = firstPlayer.getWeapon();
-//        int health = firstPlayer.getHealth();
-//        int maxHealth = firstPlayer.getMaxHealth();
-//        int regenTimer = firstPlayer.getRegenTimer();
-//        int respawnTimer = firstPlayer.getRespawnTimer();
-//        boolean dead = firstPlayer.isDead();
-//        float energy = firstPlayer.getEnergy();
-//        float maxEnergy = firstPlayer.getMaxEnergy();
-//        float horseCooldown = firstPlayer.getHorseCooldown();
-//        int healPowerupDuration = firstPlayer.getHealPowerupDuration();
-//        float currentHealthModifier = firstPlayer.getCurrentHealthModifier();
-//        int flagCooldown = firstPlayer.getFlagCooldown();
-//        int hitCooldown = firstPlayer.getHitCooldown();
-//        LinkedHashMap<WarlordsPlayer, Integer> hitBy = firstPlayer.getHitBy();
-//        LinkedHashMap<WarlordsPlayer, Integer> healedBy = firstPlayer.getHealedBy();
-//        CalculateSpeed calculateSpeed = firstPlayer.getSpeed();
-//        boolean powerUpHeal = firstPlayer.isPowerUpHeal();
-//        Location deathLocation = firstPlayer.getDeathLocation();
-//        CooldownManager cooldownManager = firstPlayer.getCooldownManager();
-//        FlagInfo flagInfo = firstPlayer.getCarriedFlag();
-//        CompassTargetMarker compassTarget = firstPlayer.getCompassTarget();
-
+        Warlords.newChain()
+                .delay(1, TimeUnit.MILLISECONDS)
+                .sync(() -> {
+                    ArmorManager.resetArmor(firstPlayer.getUuid(), firstPlayer.getEntity(), firstPlayer.getSpecClass(), firstPlayer.getTeam());
+                }).execute();
     }
 
     private void generateNextSwapTime() {
