@@ -77,6 +77,7 @@ public enum GameAddon {
         @Override
         public void modifyGame(@Nonnull Game game) {
             game.getOptions().add(new InterchangeModeOption());
+            game.getOptions().add(new GameFreezeWhenOfflineOption());
         }
 
     };
