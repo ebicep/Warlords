@@ -18,7 +18,7 @@ public class HeartToHeart extends AbstractAbility {
     private final int vindDuration = 6;
 
     public HeartToHeart() {
-        super("Heart To Heart", 0, 0, 13, 20, -1, 100);
+        super("Heart To Heart", 355, 428, 13, 20, 25, 175);
     }
 
     @Override

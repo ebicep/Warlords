@@ -43,8 +43,16 @@ public class WideGuard extends AbstractAbility {
     public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
         wp.subtractEnergy(energyCost);
         WideGuard tempWideGuard = new WideGuard();
-        wp.getCooldownManager().addRegularCooldown("Wide Guard", "GUARD", WideGuard.class, tempWideGuard, wp, CooldownTypes.ABILITY, cooldownManager -> {
-        }, 4 * 20);
+        wp.getCooldownManager().addRegularCooldown(
+                "Wide Guard",
+                "GUARD",
+                WideGuard.class,
+                tempWideGuard,
+                wp,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {},
+                4 * 20
+        );
         //wp.getCooldownManager().addCooldown("Reflection Shield", this.getClass(), WideGuard.class, "", 4, wp, CooldownTypes.ABILITY);
 
         for (Player player1 : player.getWorld().getPlayers()) {

@@ -70,33 +70,8 @@ public class Vindicate extends AbstractAbility {
                     vindicateDuration * 20
             );
 
-            wp.getSpeed().removeSlownessModifiers();
-            wp.getCooldownManager().removeDebuffCooldowns();
-            wp.getCooldownManager().removeCooldown(Vindicate.class);
-            wp.getCooldownManager().addRegularCooldown(
-                    "Vindicate Debuff Immunity",
-                    "VIND",
-                    Vindicate.class,
-                    tempVindicate,
-                    wp,
-                    CooldownTypes.BUFF,
-                    cooldownManager -> {},
-                    vindicateDuration * 20
-            );
-
             // KB Resistance
             vindicateTarget.getCooldownManager().addRegularCooldown(
-                    "KB Resistance",
-                    "KB",
-                    Vindicate.class,
-                    tempVindicate,
-                    wp,
-                    CooldownTypes.BUFF,
-                    cooldownManager -> {},
-                    vindicateDuration * 20
-            );
-
-            wp.getCooldownManager().addRegularCooldown(
                     "KB Resistance",
                     "KB",
                     Vindicate.class,

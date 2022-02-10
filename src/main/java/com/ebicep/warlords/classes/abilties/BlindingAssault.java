@@ -50,7 +50,7 @@ public class BlindingAssault extends AbstractAbility {
                 .build());
 
         for (WarlordsPlayer assaultTarget : PlayerFilter
-                .entitiesAround(player, 5, 5, 5)
+                .entitiesAround(player, 4, 4, 4)
                 .aliveEnemiesOf(wp)
         ) {
             assaultTarget.getEntity().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 2 * 25, 0, true, false), true);
