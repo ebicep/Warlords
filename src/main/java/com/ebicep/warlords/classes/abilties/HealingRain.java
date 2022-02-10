@@ -6,8 +6,6 @@ import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.PlayerFilter;
-import org.bukkit.Bukkit;
-import com.ebicep.warlords.util.Utils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
@@ -97,7 +95,6 @@ public class HealingRain extends AbstractAbility {
                                             teammateInRain.getCooldownManager().addRegularCooldown("Overheal",
                                                     "OVERHEAL", Overheal.class, Overheal.OVERHEAL_MARKER, wp, CooldownTypes.BUFF, cooldownManager -> {
                                                     }, Overheal.OVERHEAL_DURATION * 20);
-                                            ;
                                         }
                                     });
 

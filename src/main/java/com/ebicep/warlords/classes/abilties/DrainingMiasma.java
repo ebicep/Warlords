@@ -29,8 +29,8 @@ public class DrainingMiasma extends AbstractAbility {
                 "§7poisoning all enemies inside the area. Poisoned\n" +
                 "§7enemies take §c50 §7+ §c4% §7of their max health as\n" +
                 "§7damage per second, for §6" + duration + " §7seconds. Enemies\n" +
-                "§7poisoned by your Draining Miasma are blinded for §62\n" +
-                "§7seconds after the poison ends." +
+                "§7poisoned by your Draining Miasma are blinded for §63\n" +
+                "§7seconds on cast." +
                 "\n\n" +
                 "§7The caster emits healing particles that heal all\n" +
                 "§7allies within the range for §a40% §7of the damage\n" +

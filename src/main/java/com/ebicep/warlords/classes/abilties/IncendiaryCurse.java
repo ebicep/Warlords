@@ -29,9 +29,8 @@ public class IncendiaryCurse extends AbstractAbility {
     @Override
     public void updateDescription(Player player) {
         description = "§7Ignite the targeted area with a cross flame,\n" +
-                    "§7dealing §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage. §7After 3 seconds,\n" +
-                    "§7enemies hit will burn for §f101 §7- §f146 §7true damage\n" +
-                    "§7every second for §63 §7seconds.";
+                    "§7dealing §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage.\n" +
+                    "§7Enemies hit are blinded for §62 §7seconds.";
     }
 
     @Override

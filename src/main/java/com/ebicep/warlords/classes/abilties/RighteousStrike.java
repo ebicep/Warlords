@@ -10,12 +10,12 @@ import javax.annotation.Nonnull;
 public class RighteousStrike extends AbstractStrikeBase {
 
     public RighteousStrike() {
-        super("Righteous Strike", 359, 460, 0, 90, 25, 175);
+        super("Righteous Strike", 355, 452, 0, 90, 25, 175);
     }
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7Strike the targeted enemy for §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + "§7.\n" +
+        description = "§7Strike the targeted enemy for §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage.\n" +
                 "§7Each strike reduces the duration of your striked\n" +
                 "§7target's active ability timers by §60.5 §7seconds.";
     }
