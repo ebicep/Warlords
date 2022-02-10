@@ -43,7 +43,9 @@ public class ArcaneShield extends AbstractAbility {
         wp.getCooldownManager().addRegularCooldown(name, "ARCA", ArcaneShield.class, tempArcaneShield, wp, CooldownTypes.ABILITY,
                 cooldownManager -> {
                     if (new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterCooldownClass(ArcaneShield.class).getStream().count() == 1) {
-                        ((EntityLiving) ((CraftPlayer) wp.getEntity()).getHandle()).setAbsorptionHearts(0);
+                        if (wp.getEntity() instanceof Player) {
+                            ((EntityLiving) ((CraftPlayer) wp.getEntity()).getHandle()).setAbsorptionHearts(0);
+                        }
                     }
                 }, duration * 20);
         ((EntityLiving) ((CraftPlayer) p).getHandle()).setAbsorptionHearts(20);
