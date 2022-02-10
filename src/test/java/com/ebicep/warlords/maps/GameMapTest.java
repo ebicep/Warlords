@@ -706,7 +706,7 @@ public class GameMapTest {
             throw new UnsupportedOperationException("Not supported yet.");
         }
 
-        @Override
+        //@Override
         public Player[] _INVALID_getOnlinePlayers() {
             throw new UnsupportedOperationException("Not supported yet.");
         }

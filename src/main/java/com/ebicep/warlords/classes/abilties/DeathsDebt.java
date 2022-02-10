@@ -72,7 +72,6 @@ public class DeathsDebt extends AbstractTotemBase {
     @Override
     protected void onActivation(WarlordsPlayer wp, Player player, ArmorStand totemStand) {
         final int ticksLeft = (4 + (2 * (int) Math.round((double) wp.getHealth() / wp.getMaxHealth()))) * 20;
-        System.out.println(" _ " + ticksLeft);
 
         DeathsDebt tempDeathsDebt = new DeathsDebt();
         tempDeathsDebt.setTimeLeftRespite(ticksLeft);
@@ -166,14 +165,12 @@ public class DeathsDebt extends AbstractTotemBase {
                                     }
                                 }
                             }
-                            System.out.println(ticksLeftRespite);
                             //counters
                             if (ticksLeftRespite > 0) {
                                 tempDeathsDebt.setTimeLeftRespite(ticksLeftRespite - 1);
                             }
                             if (ticksLeftDebt > 0) {
                                 tempDeathsDebt.setTimeLeftDebt(ticksLeftDebt - 1);
-                                //System.out.println(ticksLeftDebt);
                             }
                             counter++;
                         }

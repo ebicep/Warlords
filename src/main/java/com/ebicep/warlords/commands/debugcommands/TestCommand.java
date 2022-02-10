@@ -19,7 +19,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.springframework.cache.caffeine.CaffeineCache;
 
-
+import java.util.Map;
+import java.util.UUID;
 
 
 public class TestCommand implements CommandExecutor {
@@ -80,6 +81,11 @@ public class TestCommand implements CommandExecutor {
         }
 
         Player player = (Player) sender;
+
+        for (Map.Entry<UUID, WarlordsPlayer> uuidWarlordsPlayerEntry : Warlords.getPlayers().entrySet()) {
+            System.out.println(uuidWarlordsPlayerEntry.getValue().getName() + " - " + uuidWarlordsPlayerEntry.getValue().getEntity());
+        }
+
 
 //        SRCalculator.totalValues.clear();
 //        List<DatabasePlayer> databasePlayers = DatabaseManager.playerService.findAll(PlayersCollections.SEASON_5);
