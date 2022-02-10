@@ -429,11 +429,11 @@ public final class WarlordsPlayer {
 
                     if (cooldownManager.hasCooldownFromName("Wide Guard")) {
                         if (
-                                ability.equals("Fireball") ||
-                                        ability.equals("Frostbolt") ||
-                                        ability.equals("Water Bolt") ||
-                                        ability.equals("Lightning Bolt") ||
-                                        ability.equals("Flame Burst")
+                            ability.equals("Fireball") ||
+                            ability.equals("Frostbolt") ||
+                            ability.equals("Water Bolt") ||
+                            ability.equals("Lightning Bolt") ||
+                            ability.equals("Flame Burst")
                         ) {
                             damageValue *= .3;
                         }

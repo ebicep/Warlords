@@ -5,6 +5,7 @@ import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.EffectUtils;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -23,36 +24,42 @@ public class CrossVital extends AbstractAbility {
 
     @Override
     public void updateDescription(Player player) {
-        description = "§7PLACEHOLDER";
+        description = "§7Switch locations with an enemy, has an\n" +
+                "§7optimal range of §e10 §7blocks. Soul Switch has low\n" +
+                "§7verticality.";
     }
 
     @Override
     public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
 
         for (WarlordsPlayer swapTarget : PlayerFilter
-                .entitiesAround(wp.getLocation(), 15, 15, 15)
+                .entitiesAround(wp.getLocation(), 10, 4, 10)
                 .aliveEnemiesOf(wp)
                 .requireLineOfSight(wp)
                 .closestFirst(wp)
         ) {
-            Location swapLocation = swapTarget.getLocation();
-            Location ownLocation = wp.getLocation();
+            if (swapTarget.getCarriedFlag() != null) {
+                wp.sendMessage(ChatColor.RED + "You cannot Soul Switch with a player holding the flag!");
+            } else {
+                Location swapLocation = swapTarget.getLocation();
+                Location ownLocation = wp.getLocation();
 
-            swapTarget.teleport(new Location(
-                    wp.getWorld(), ownLocation.getX(), ownLocation.getY(), ownLocation.getZ(), swapLocation.getYaw(), swapLocation.getPitch()));
-            wp.teleport(new Location(
-                    swapLocation.getWorld(), swapLocation.getX(), swapLocation.getY(), swapLocation.getZ(), ownLocation.getYaw(), ownLocation.getPitch()));
+                swapTarget.teleport(new Location(
+                        wp.getWorld(), ownLocation.getX(), ownLocation.getY(), ownLocation.getZ(), swapLocation.getYaw(), swapLocation.getPitch()));
+                wp.teleport(new Location(
+                        swapLocation.getWorld(), swapLocation.getX(), swapLocation.getY(), swapLocation.getZ(), ownLocation.getYaw(), ownLocation.getPitch()));
 
-            wp.subtractEnergy(energyCost);
+                wp.subtractEnergy(energyCost);
 
-            EffectUtils.playCylinderAnimation(swapLocation, 1.05, ParticleEffect.CLOUD, 1);
-            EffectUtils.playCylinderAnimation(ownLocation, 1.05, ParticleEffect.CLOUD, 1);
+                EffectUtils.playCylinderAnimation(swapLocation, 1.05, ParticleEffect.CLOUD, 1);
+                EffectUtils.playCylinderAnimation(ownLocation, 1.05, ParticleEffect.CLOUD, 1);
 
-            for (Player player1 : player.getWorld().getPlayers()) {
-                player1.playSound(player.getLocation(), Sound.ENDERMAN_TELEPORT, 2, 1.5f);
+                for (Player player1 : player.getWorld().getPlayers()) {
+                    player1.playSound(player.getLocation(), Sound.ENDERMAN_TELEPORT, 2, 1.5f);
+                }
+
+                return true;
             }
-
-            return true;
         }
 
         return false;

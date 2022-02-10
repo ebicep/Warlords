@@ -84,7 +84,6 @@ public class OrderOfEviscerate extends AbstractAbility {
                     wp.updateArmor();
                     wp.setMarkedTarget(null);
                     cancelSpeed.run();
-
                     wp.getEntity().removePotionEffect(PotionEffectType.INVISIBILITY);
                     if (wp.getEntity() instanceof Player) {
                         for (Player player1 : wp.getWorld().getPlayers()) {
@@ -94,7 +93,7 @@ public class OrderOfEviscerate extends AbstractAbility {
                 } else {
                     ParticleEffect.SMOKE_NORMAL.display(0, 0.2f, 0, 0.05f, 4, wp.getLocation(), 500);
                     for (Player player1 : wp.getWorld().getPlayers()) {
-                        player1.playSound(wp.getLocation(), Sound.AMBIENCE_CAVE, 0.05f, 2);
+                        player1.playSound(wp.getLocation(), Sound.AMBIENCE_CAVE, 0.08f, 2);
                     }
                 }
             }
