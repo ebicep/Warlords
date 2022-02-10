@@ -65,7 +65,7 @@ public class WonderTrap extends AbstractAbility {
                         break;
                 }
 
-                if (counter > 2 && player.isSneaking() && trap.isCanEndEarly()) {
+                if (counter > 2 && wp.getEntity() instanceof Player && ((Player) wp.getEntity()).isSneaking() && trap.isCanEndEarly()) {
                     trap.cancel();
                     this.cancel();
                     textCooldown.setRemove(true);

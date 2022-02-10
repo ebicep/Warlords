@@ -40,8 +40,8 @@ public class Berserk extends AbstractAbility {
         new GameRunnable(wp.getGame()) {
             @Override
             public void run() {
-                if (!wp.getCooldownManager().hasCooldown(tempBerserk)) {
-                    Location location = player.getLocation();
+                if (wp.getCooldownManager().hasCooldown(tempBerserk)) {
+                    Location location = wp.getLocation();
                     location.add(0, 2.1, 0);
                     ParticleEffect.VILLAGER_ANGRY.display(0, 0, 0, 0.1F, 1, location, 500);
                 } else {

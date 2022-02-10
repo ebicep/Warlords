@@ -79,9 +79,9 @@ public class Acupressure extends AbstractAbility {
                 @Override
                 public void run() {
                     if (wp.getCooldownManager().hasCooldown(tempAcupressure)) {
-                        Location lineLocation = player.getLocation().add(0, 1, 0);
+                        Location lineLocation = wp.getLocation().add(0, 1, 0);
                         lineLocation.setDirection(lineLocation.toVector().subtract(acuTarget.getLocation().add(0, 1, 0).toVector()).multiply(-1));
-                        for (int i = 0; i < Math.floor(player.getLocation().distance(acuTarget.getLocation())) * 2; i++) {
+                        for (int i = 0; i < Math.floor(wp.getLocation().distance(acuTarget.getLocation())) * 2; i++) {
                             ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(255, 170, 0), lineLocation, 500);
                             lineLocation.add(lineLocation.getDirection().multiply(.5));
                         }

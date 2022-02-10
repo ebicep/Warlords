@@ -33,15 +33,15 @@ public class AvengersWrath extends AbstractAbility {
         wp.getCooldownManager().addRegularCooldown(name, "WRATH", AvengersWrath.class, tempAvengersWrath, wp, CooldownTypes.BUFF, cooldownManager -> {
         }, duration * 20);
 
-        for (Player player1 : p.getWorld().getPlayers()) {
-            player1.playSound(p.getLocation(), "paladin.avengerswrath.activation", 2, 1);
+        for (Player player1 : wp.getWorld().getPlayers()) {
+            player1.playSound(wp.getLocation(), "paladin.avengerswrath.activation", 2, 1);
         }
 
         new GameRunnable(wp.getGame()) {
             @Override
             public void run() {
-                if (!wp.getCooldownManager().hasCooldown(tempAvengersWrath)) {
-                    Location location = p.getLocation();
+                if (wp.getCooldownManager().hasCooldown(tempAvengersWrath)) {
+                    Location location = wp.getLocation();
                     location.add(0, 1.2, 0);
                     ParticleEffect.SPELL.display(0.3F, 0.1F, 0.3F, 0.2F, 6, location, 500);
                 } else {

@@ -83,15 +83,18 @@ public class OrderOfEviscerate extends AbstractAbility {
                     this.cancel();
                     wp.updateArmor();
                     wp.setMarkedTarget(null);
-                    player.removePotionEffect(PotionEffectType.INVISIBILITY);
                     cancelSpeed.run();
-                    for (Player player1 : player.getWorld().getPlayers()) {
-                        player1.showPlayer(player);
+
+                    wp.getEntity().removePotionEffect(PotionEffectType.INVISIBILITY);
+                    if (wp.getEntity() instanceof Player) {
+                        for (Player player1 : wp.getWorld().getPlayers()) {
+                            player1.showPlayer((Player) wp.getEntity());
+                        }
                     }
                 } else {
-                    ParticleEffect.SMOKE_NORMAL.display(0, 0.2f, 0, 0.05f, 4, player.getLocation(), 500);
-                    for (Player player1 : player.getWorld().getPlayers()) {
-                        player1.playSound(player.getLocation(), Sound.AMBIENCE_CAVE, 0.05f, 2);
+                    ParticleEffect.SMOKE_NORMAL.display(0, 0.2f, 0, 0.05f, 4, wp.getLocation(), 500);
+                    for (Player player1 : wp.getWorld().getPlayers()) {
+                        player1.playSound(wp.getLocation(), Sound.AMBIENCE_CAVE, 0.05f, 2);
                     }
                 }
             }

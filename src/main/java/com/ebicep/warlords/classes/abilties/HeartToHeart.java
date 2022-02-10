@@ -110,7 +110,7 @@ public class HeartToHeart extends AbstractAbility {
                         }
 
                         if (timer >= 8) {
-                            player.setVelocity(playerLoc.getDirection().multiply(0.4).setY(0.2));
+                            wp.setVelocity(playerLoc.getDirection().multiply(0.4).setY(0.2));
                         }
                     }
                 }.runTaskTimer(Warlords.getInstance(), 0, 1);

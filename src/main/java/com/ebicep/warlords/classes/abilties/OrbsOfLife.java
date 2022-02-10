@@ -78,7 +78,7 @@ public class OrbsOfLife extends AbstractAbility {
             @Override
             public void run() {
                 counter++;
-                if (wp.isAlive() && player.isSneaking()) {
+                if (wp.isAlive() && wp.getEntity() instanceof Player && ((Player) wp.getEntity()).isSneaking()) {
                     //setting target player to move towards (includes self)
                     tempOrbsOfLight.getSpawnedOrbs().forEach(orb -> orb.setPlayerToMoveTowards(PlayerFilter
                             .entitiesAround(orb.armorStand.getLocation(), floatingOrbRadius, floatingOrbRadius, floatingOrbRadius)
@@ -111,11 +111,11 @@ public class OrbsOfLife extends AbstractAbility {
                         }
                     }.runTaskTimer(0, 1);
 
-                                player.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " Your current " + ChatColor.GREEN + name + ChatColor.GRAY + " will now levitate towards you or a teammate!");
-                                for (Player player1 : player.getWorld().getPlayers()) {
-                                    player1.playSound(player.getLocation(), Sound.LEVEL_UP, 0.85f, 0.7f);
-                                }
-                                ParticleEffect.ENCHANTMENT_TABLE.display(0.8f, 0, 0.8f, 0.2f, 10, player.getLocation().add(0, 1.5, 0), 500);
+                    wp.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " Your current " + ChatColor.GREEN + name + ChatColor.GRAY + " will now levitate towards you or a teammate!");
+                    for (Player player1 : wp.getWorld().getPlayers()) {
+                        player1.playSound(wp.getLocation(), Sound.LEVEL_UP, 0.85f, 0.7f);
+                    }
+                    ParticleEffect.ENCHANTMENT_TABLE.display(0.8f, 0, 0.8f, 0.2f, 10, wp.getLocation().add(0, 1.5, 0), 500);
 
                     this.cancel();
                 }

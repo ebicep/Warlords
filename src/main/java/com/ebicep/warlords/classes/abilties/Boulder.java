@@ -46,6 +46,8 @@ public class Boulder extends AbstractAbility {
         stand.setGravity(false);
         stand.setVisible(false);
 
+        Location initialCastLocation = player.getLocation();
+
         new GameRunnable(wp.getGame()) {
 
             @Override
@@ -98,7 +100,7 @@ public class Boulder extends AbstractAbility {
 
                 if (shouldExplode) {
                     stand.remove();
-                    for (Player player1 : player.getWorld().getPlayers()) {
+                    for (Player player1 : wp.getWorld().getPlayers()) {
                         player1.playSound(newLoc, "shaman.boulder.impact", 2, 1);
                     }
                     WarlordsPlayer directHitFinal = directHit;
@@ -112,7 +114,7 @@ public class Boulder extends AbstractAbility {
                             ) {
                                 Vector v;
                                 if (p == directHitFinal) {
-                                    v = player.getLocation().toVector().subtract(p.getLocation().toVector()).normalize().multiply(-1.15).setY(0.2);
+                                    v = initialCastLocation.toVector().subtract(p.getLocation().toVector()).normalize().multiply(-1.15).setY(0.2);
                                 } else {
                                     v = p.getLocation().toVector().subtract(newLoc.toVector()).normalize().multiply(1.15).setY(0.2);
                                 }

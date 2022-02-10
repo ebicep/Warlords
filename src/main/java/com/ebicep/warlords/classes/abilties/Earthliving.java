@@ -46,8 +46,8 @@ public class Earthliving extends AbstractAbility {
         new GameRunnable(wp.getGame()) {
             @Override
             public void run() {
-                if (!wp.getCooldownManager().hasCooldown(tempEarthliving)) {
-                    Location location = player.getLocation();
+                if (wp.getCooldownManager().hasCooldown(tempEarthliving)) {
+                    Location location = wp.getLocation();
                     location.add(0, 1.2, 0);
                     ParticleEffect.VILLAGER_HAPPY.display(0.3F, 0.3F, 0.3F, 0.1F, 2, location, 500);
                 } else {

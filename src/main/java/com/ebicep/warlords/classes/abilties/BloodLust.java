@@ -38,8 +38,8 @@ public class BloodLust extends AbstractAbility {
         new GameRunnable(wp.getGame()) {
             @Override
             public void run() {
-                if (!wp.getCooldownManager().hasCooldown(tempBloodLust)) {
-                    Location location = p.getLocation();
+                if (wp.getCooldownManager().hasCooldown(tempBloodLust)) {
+                    Location location = wp.getLocation();
                     location.add((Math.random() - 0.5) * 1, 1.2, (Math.random() - 0.5) * 1);
                     ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(255, 0, 0), location, 500);
                 } else {

@@ -53,16 +53,16 @@ public class WideGuard extends AbstractAbility {
         }
 
         // First Particle Sphere
-        playSphereAnimation(player, BUBBLE_RADIUS + 2.5, 68, 176, 176);
+        playSphereAnimation(wp.getLocation(), BUBBLE_RADIUS + 2.5, 68, 176, 176);
 
         // Second Particle Sphere
         new GameRunnable(wp.getGame()) {
             @Override
             public void run() {
-                playSphereAnimation(player, BUBBLE_RADIUS + 1, 65, 185, 185);
+                playSphereAnimation(wp.getLocation(), BUBBLE_RADIUS + 1, 65, 185, 185);
 
-                for (Player player1 : player.getWorld().getPlayers()) {
-                    player1.playSound(player.getLocation(), "warrior.intervene.impact", 2, 0.2f);
+                for (Player player1 : wp.getWorld().getPlayers()) {
+                    player1.playSound(wp.getLocation(), "warrior.intervene.impact", 2, 0.2f);
                 }
             }
         }.runTaskLater(3);
@@ -79,10 +79,10 @@ public class WideGuard extends AbstractAbility {
 
                     ParticleEffect.ENCHANTMENT_TABLE.display(0.2F, 0F, 0.2F, 0.1F, 1, particleLoc, 500);
 
-                    playSphereAnimation(player, BUBBLE_RADIUS, 190, 190, 190);
+                    playSphereAnimation(wp.getLocation(), BUBBLE_RADIUS, 190, 190, 190);
 
-                    for (Player player1 : player.getWorld().getPlayers()) {
-                        player1.playSound(player.getLocation(), Sound.CREEPER_DEATH, 2, 2);
+                    for (Player player1 : wp.getWorld().getPlayers()) {
+                        player1.playSound(wp.getLocation(), Sound.CREEPER_DEATH, 2, 2);
                     }
 
                     timeInBubble.compute(wp, (k, v) -> v == null ? 1 : v + 1);
@@ -105,9 +105,9 @@ public class WideGuard extends AbstractAbility {
                 } else {
                     this.cancel();
 
-                    for (Player player1 : player.getWorld().getPlayers()) {
-                        player1.playSound(player.getLocation(), "paladin.holyradiance.activation", 2, 1.3f);
-                        player1.playSound(player.getLocation(), Sound.AMBIENCE_THUNDER, 2, 1.5f);
+                    for (Player player1 : wp.getWorld().getPlayers()) {
+                        player1.playSound(wp.getLocation(), "paladin.holyradiance.activation", 2, 1.3f);
+                        player1.playSound(wp.getLocation(), Sound.AMBIENCE_THUNDER, 2, 1.5f);
                     }
 
                     for (Map.Entry<WarlordsPlayer, Integer> entry : timeInBubble.entrySet()) {
@@ -118,7 +118,7 @@ public class WideGuard extends AbstractAbility {
                         entry.getKey().addHealingInstance(wp, name, totalHealing, totalHealing, -1, 100, false, false);
                     }
 
-                    CircleEffect circle = new CircleEffect(wp.getGame(), wp.getTeam(), player.getLocation(), 4);
+                    CircleEffect circle = new CircleEffect(wp.getGame(), wp.getTeam(), wp.getLocation(), 4);
                     circle.addEffect(new CircumferenceEffect(ParticleEffect.SPELL).particlesPerCircumference(2));
                     circle.playEffects();
                 }

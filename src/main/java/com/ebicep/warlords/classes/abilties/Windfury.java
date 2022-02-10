@@ -46,7 +46,7 @@ public class Windfury extends AbstractAbility {
             @Override
             public void run() {
                 if (wp.getCooldownManager().hasCooldown(tempWindfury)) {
-                    Location location = player.getLocation();
+                    Location location = wp.getLocation();
                     location.add(0, 1.2, 0);
                     ParticleEffect.CRIT.display(0.2F, 0F, 0.2F, 0.1F, 3, location, 500);
                 } else {

@@ -96,13 +96,13 @@ public class DeathsDebt extends AbstractTotemBase {
                         particles.cancel();
                         this.cancel();
                     } else {
-                        if (player.getWorld() != totemStand.getWorld()) {
+                        if (wp.getWorld() != totemStand.getWorld()) {
                             totemStand.remove();
                             particles.cancel();
                             this.cancel();
                             return;
                         }
-                        boolean isPlayerInRadius = player.getLocation().distanceSquared(totemStand.getLocation()) < respiteRadius * respiteRadius;
+                        boolean isPlayerInRadius = wp.getLocation().distanceSquared(totemStand.getLocation()) < respiteRadius * respiteRadius;
                         if (!isPlayerInRadius && tempDeathsDebt.getTimeLeftRespite() != -1) {
                             tempDeathsDebt.setTimeLeftRespite(0);
                         }
@@ -113,10 +113,10 @@ public class DeathsDebt extends AbstractTotemBase {
                             if (counter % 20 == 0) {
                                 if (ticksLeftRespite > 0) {
                                     //respite
-                                    for (Player player1 : player.getWorld().getPlayers()) {
+                                    for (Player player1 : wp.getWorld().getPlayers()) {
                                         player1.playSound(totemStand.getLocation(), "shaman.earthlivingweapon.impact", 2, 1.5F);
                                     }
-                                    player.sendMessage(ChatColor.GREEN + "\u00BB §2Spirit's Respite §7delayed §c" + Math.round(tempDeathsDebt.getDelayedDamage()) + " §7damage. §6" + (ticksLeftRespite / 20) + " §7seconds left.");
+                                    wp.sendMessage(ChatColor.GREEN + "\u00BB §2Spirit's Respite §7delayed §c" + Math.round(tempDeathsDebt.getDelayedDamage()) + " §7damage. §6" + (ticksLeftRespite / 20) + " §7seconds left.");
                                 } else if (ticksLeftRespite == 0) {
                                     //beginning debt
                                     wp.getCooldownManager().removeCooldown(tempDeathsDebt);
@@ -124,9 +124,9 @@ public class DeathsDebt extends AbstractTotemBase {
                                     }, 6 * 20);
 
                                 if (!isPlayerInRadius) {
-                                    player.sendMessage("§7You walked outside your §dDeath's Debt §7radius");
+                                    wp.sendMessage("§7You walked outside your §dDeath's Debt §7radius");
                                 } else {
-                                    player.sendMessage("§c\u00AB §2Spirit's Respite §7delayed §c" + Math.round(tempDeathsDebt.getDelayedDamage()) + " §7damage. §dYour debt must now be paid.");
+                                    wp.sendMessage("§c\u00AB §2Spirit's Respite §7delayed §c" + Math.round(tempDeathsDebt.getDelayedDamage()) + " §7damage. §dYour debt must now be paid.");
                                 }
                                 circle.replaceEffects(e -> e instanceof DoubleLineEffect, new DoubleLineEffect(ParticleEffect.SPELL_WITCH));
                                 circle.setRadius(debtRadius);
@@ -135,7 +135,7 @@ public class DeathsDebt extends AbstractTotemBase {
                                 totemStand.setHelmet(new ItemStack(Material.DARK_OAK_FENCE_GATE));
 
                                     //first dmg tick
-                                    onDebtTick(wp, player, totemStand, tempDeathsDebt);
+                                    onDebtTick(wp, totemStand, tempDeathsDebt);
                                     //cancel respite and initiate debt
                                     tempDeathsDebt.setTimeLeftRespite(-1);
                                     tempDeathsDebt.setTimeLeftDebt(6 * 20);
@@ -143,10 +143,10 @@ public class DeathsDebt extends AbstractTotemBase {
                                     //during debt
                                     if (ticksLeftDebt > 0) {
                                         //5 dmg procs
-                                        onDebtTick(wp, player, totemStand, tempDeathsDebt);
+                                        onDebtTick(wp, totemStand, tempDeathsDebt);
                                     } else {
                                         //final damage tick
-                                        player.getWorld().spigot().strikeLightningEffect(totemStand.getLocation(), false);
+                                        wp.getWorld().spigot().strikeLightningEffect(totemStand.getLocation(), false);
                                         // Enemy damage
                                         PlayerFilter.entitiesAround(totemStand, debtRadius, debtRadius - 1, debtRadius)
                                                 .aliveEnemiesOf(wp)
@@ -169,18 +169,18 @@ public class DeathsDebt extends AbstractTotemBase {
                             if (ticksLeftRespite > 0) {
                                 tempDeathsDebt.setTimeLeftRespite(ticksLeftRespite - 1);
                             }
-                            if (ticksLeftDebt > 0) {
-                                tempDeathsDebt.setTimeLeftDebt(ticksLeftDebt - 1);
-                            }
-                            counter++;
+                        if (ticksLeftDebt > 0) {
+                            tempDeathsDebt.setTimeLeftDebt(ticksLeftDebt - 1);
                         }
+                        counter++;
                     }
                 }
-            }.runTaskTimer(0, 0);
+            }
+        }.runTaskTimer(0, 0);
     }
 
-    public void onDebtTick(WarlordsPlayer wp, Player player, ArmorStand totemStand, DeathsDebt tempDeathsDebt) {
-        for (Player player1 : player.getWorld().getPlayers()) {
+    public void onDebtTick(WarlordsPlayer wp, ArmorStand totemStand, DeathsDebt tempDeathsDebt) {
+        for (Player player1 : wp.getWorld().getPlayers()) {
             player1.playSound(totemStand.getLocation(), "shaman.lightningbolt.impact", 2, 1.5F);
         }
         // 100% of damage over 6 seconds

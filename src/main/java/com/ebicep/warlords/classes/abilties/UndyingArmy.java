@@ -92,7 +92,9 @@ public class UndyingArmy extends AbstractAbility {
                             if (!(optionalUndyingArmy.get()).isArmyDead(teammate.getUuid())) {
                                 float healAmount = 100 + (teammate.getMaxHealth() - teammate.getHealth()) * 0.035f;
                                 teammate.addHealingInstance(wp, name, healAmount, healAmount, -1, 100, false, false);
-                                player.playSound(teammate.getLocation(), "paladin.holyradiance.activation", 0.15f, 0.7f);
+                                if (wp.getEntity() instanceof Player) {
+                                    ((Player) wp.getEntity()).playSound(teammate.getLocation(), "paladin.holyradiance.activation", 0.15f, 0.7f);
+                                }
 
                                 // particles
                                 Location playerLoc = teammate.getLocation();

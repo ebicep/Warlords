@@ -87,7 +87,7 @@ public class SoulShackle extends AbstractAbility {
                                 ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(25, 25, 25), particleLoc, 500);
                             }
                         }
-                        for (Player player1 : player.getWorld().getPlayers()) {
+                        for (Player player1 : wp.getWorld().getPlayers()) {
                             player1.playSound(playerLoc, Sound.DIG_SAND, 2, 2);
                         }
                     } else {

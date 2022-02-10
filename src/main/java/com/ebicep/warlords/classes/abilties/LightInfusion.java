@@ -45,7 +45,7 @@ public class LightInfusion extends AbstractAbility {
             @Override
             public void run() {
                 if (wp.getCooldownManager().hasCooldown(tempLightInfusion)) {
-                    Location location = player.getLocation();
+                    Location location = wp.getLocation();
                     location.add(0, 1.2, 0);
                     ParticleEffect.SPELL.display(0.3F, 0.1F, 0.3F, 0.2F, 2, location, 500);
                 } else {

@@ -25,7 +25,10 @@ public class EffectUtils {
      * @param blue         is the RGB assigned color for the particles.
      */
     public static void playSphereAnimation(Player player, double sphereRadius, int red, int green, int blue) {
-        Location particleLoc = player.getLocation();
+        playSphereAnimation(player.getLocation(), sphereRadius, red, green, blue);
+    }
+
+    public static void playSphereAnimation(Location particleLoc, double sphereRadius, int red, int green, int blue) {
         particleLoc.add(0, 1, 0);
         for (double i = 0; i <= Math.PI; i += Math.PI / 10) {
             double radius = Math.sin(i) * sphereRadius + 0.5;
@@ -48,7 +51,10 @@ public class EffectUtils {
      * @param particleCount the amount of particles that should be displayed.
      */
     public static void playSphereAnimation(Player player, double sphereRadius, ParticleEffect effect, int particleCount) {
-        Location particleLoc = player.getLocation();
+        playSphereAnimation(player.getLocation(), sphereRadius, effect, particleCount);
+    }
+
+    public static void playSphereAnimation(Location particleLoc, double sphereRadius, ParticleEffect effect, int particleCount) {
         particleLoc.add(0, 1, 0);
         for (double i = 0; i <= Math.PI; i += Math.PI / 10) {
             double radius = Math.sin(i) * sphereRadius + 0.5;
@@ -72,11 +78,14 @@ public class EffectUtils {
      * @param blue        is the RGB assigned color for the particles.
      */
     public static void playHelixAnimation(Player player, double helixRadius, int red, int green, int blue) {
+        playHelixAnimation(player.getLocation(), helixRadius, red, green, blue);
+    }
+
+    public static void playHelixAnimation(Location location, double helixRadius, int red, int green, int blue) {
         double rotation = Math.PI / 4;
         int particles = 40;
         int strands = 8;
         int curve = 10;
-        Location location = player.getLocation();
         for (int i = 1; i <= strands; i++) {
             for (int j = 1; j <= particles; j++) {
                 float ratio = (float) j / particles;
@@ -90,6 +99,7 @@ public class EffectUtils {
         }
     }
 
+
     /**
      * @param player        what player should the helix be around.
      * @param helixRadius   is how big the helix should be.
@@ -97,11 +107,14 @@ public class EffectUtils {
      * @param particleCount the amount of particles that should be displayed.
      */
     public static void playHelixAnimation(Player player, double helixRadius, ParticleEffect effect, int particleCount) {
+        playHelixAnimation(player.getLocation(), helixRadius, effect, particleCount);
+    }
+
+    public static void playHelixAnimation(Location location, double helixRadius, ParticleEffect effect, int particleCount) {
         double rotation = Math.PI / 4;
         int particles = 20;
         int strands = 4;
         int curve = 10;
-        Location location = player.getLocation();
         for (int i = 1; i <= strands; i++) {
             for (int j = 1; j <= particles; j++) {
                 float ratio = (float) j / particles;
@@ -123,14 +136,17 @@ public class EffectUtils {
      * @param blue           the amount of particles that should be displayed.
      */
     public static void playCylinderAnimation(Player player, double cylinderRadius, int red, int green, int blue) {
-        Location playerLoc = player.getLocation();
-        Location particleLoc = playerLoc.clone();
+        playCylinderAnimation(player.getLocation(), cylinderRadius, red, green, blue);
+    }
+
+    public static void playCylinderAnimation(Location location, double cylinderRadius, int red, int green, int blue) {
+        Location particleLoc = location.clone();
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
                 double angle = j / 10D * Math.PI * 2;
-                particleLoc.setX(playerLoc.getX() + Math.sin(angle) * cylinderRadius);
-                particleLoc.setY(playerLoc.getY() + i / 5D);
-                particleLoc.setZ(playerLoc.getZ() + Math.cos(angle) * cylinderRadius);
+                particleLoc.setX(location.getX() + Math.sin(angle) * cylinderRadius);
+                particleLoc.setY(location.getY() + i / 5D);
+                particleLoc.setZ(location.getZ() + Math.cos(angle) * cylinderRadius);
 
                 ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(red, green, blue), particleLoc, 500);
             }

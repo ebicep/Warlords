@@ -49,7 +49,7 @@ public class IceBarrier extends AbstractAbility {
             @Override
             public void run() {
                 if (wp.getCooldownManager().hasCooldown(tempIceBarrier)) {
-                    Location location = player.getLocation();
+                    Location location = wp.getLocation();
                     location.add(0, 1.5, 0);
                     ParticleEffect.CLOUD.display(0.2F, 0.2F, 0.2F, 0.001F, 1, location, 500);
                     ParticleEffect.FIREWORKS_SPARK.display(0.3F, 0.2F, 0.3F, 0.0001F, 1, location, 500);

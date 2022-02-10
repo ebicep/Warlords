@@ -96,11 +96,11 @@ public class WaterBreath extends AbstractAbility {
                     double angle = Math.toRadians(i * 90) + animationTimer * 0.15;
                     double width = animationTimer * 0.3;
                     ParticleEffect.DRIP_WATER.display(0, 0, 0, 0, 1,
-                            center.translateVector(player.getWorld(), animationTimer / 2D, Math.sin(angle) * width, Math.cos(angle) * width), 500);
+                            center.translateVector(wp.getWorld(), animationTimer / 2D, Math.sin(angle) * width, Math.cos(angle) * width), 500);
                     ParticleEffect.ENCHANTMENT_TABLE.display(0, 0, 0, 0, 1,
-                            center.translateVector(player.getWorld(), animationTimer / 2D, Math.sin(angle) * width, Math.cos(angle) * width), 500);
+                            center.translateVector(wp.getWorld(), animationTimer / 2D, Math.sin(angle) * width, Math.cos(angle) * width), 500);
                     ParticleEffect.VILLAGER_HAPPY.display(0, 0, 0, 0, 1,
-                            center.translateVector(player.getWorld(), animationTimer / 2D, Math.sin(angle) * width, Math.cos(angle) * width), 500);
+                            center.translateVector(wp.getWorld(), animationTimer / 2D, Math.sin(angle) * width, Math.cos(angle) * width), 500);
                 }
 
                 animationTimer++;

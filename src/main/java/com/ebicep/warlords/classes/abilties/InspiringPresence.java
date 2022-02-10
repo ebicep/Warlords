@@ -54,7 +54,7 @@ public class InspiringPresence extends AbstractAbility {
             @Override
             public void run() {
                 if (wp.getCooldownManager().hasCooldown(tempPresence)) {
-                    Location location = player.getLocation();
+                    Location location = wp.getLocation();
                     location.add(0, 1.5, 0);
                     ParticleEffect.SMOKE_NORMAL.display(0.3F, 0.3F, 0.3F, 0.02F, 1, location, 500);
                     ParticleEffect.SPELL.display(0.3F, 0.3F, 0.3F, 0.5F, 2, location, 500);

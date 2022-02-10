@@ -96,9 +96,9 @@ public class RemedicChains extends AbstractAbility {
 
                     if (counter % 8 == 0) {
                         if (wp.getCooldownManager().hasCooldown(tempRemedicChain)) {
-                            Location lineLocation = player.getLocation().add(0, 1, 0);
+                            Location lineLocation = wp.getLocation().add(0, 1, 0);
                             lineLocation.setDirection(lineLocation.toVector().subtract(chainTarget.getLocation().add(0, 1, 0).toVector()).multiply(-1));
-                            for (int i = 0; i < Math.floor(player.getLocation().distance(chainTarget.getLocation())) * 2; i++) {
+                            for (int i = 0; i < Math.floor(wp.getLocation().distance(chainTarget.getLocation())) * 2; i++) {
                                 ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(250, 200, 250), lineLocation, 500);
                                 lineLocation.add(lineLocation.getDirection().multiply(0.5));
                             }
@@ -158,7 +158,7 @@ public class RemedicChains extends AbstractAbility {
 
                             ParticleEffect.VILLAGER_HAPPY.display(0.5f, 0.5f, 0.5f, 1, 10, chainTarget.getLocation().add(0, 1, 0), 500);
 
-                            for (Player player1 : player.getWorld().getPlayers()) {
+                            for (Player player1 : wp.getWorld().getPlayers()) {
                                 player1.playSound(chainTarget.getLocation(), "rogue.remedicchains.impact", 0.05f, 1.4f);
                             }
                             this.cancel();

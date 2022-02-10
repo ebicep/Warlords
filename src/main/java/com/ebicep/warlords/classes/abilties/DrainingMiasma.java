@@ -133,7 +133,7 @@ public class DrainingMiasma extends AbstractAbility {
                             ally.getSpeed().addSpeedModifier("Draining Miasma Speed", 30, 2 * 20, "BASE");
                         }
 
-                        EffectUtils.playHelixAnimation(player, 6, ParticleEffect.VILLAGER_HAPPY, 1);
+                        EffectUtils.playHelixAnimation(wp.getLocation(), 6, ParticleEffect.VILLAGER_HAPPY, 1);
 
                     } else {
                         this.cancel();

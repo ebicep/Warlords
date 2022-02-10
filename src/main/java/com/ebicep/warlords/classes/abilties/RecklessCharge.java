@@ -65,7 +65,7 @@ public class RecklessCharge extends AbstractAbility implements Listener {
 
                 @Override
                 public void run() {
-                    player.setVelocity(location.getDirection().multiply(2).setY(.2));
+                    wp.setVelocity(location.getDirection().multiply(2).setY(.2));
                 }
             }.runTaskLater(0);
         } else {
@@ -84,20 +84,20 @@ public class RecklessCharge extends AbstractAbility implements Listener {
             @Override
             public void run() {
                 //cancel charge if hit a block, making the player stand still
-                if (player.getLocation().distanceSquared(chargeLocation) > finalChargeDistance * finalChargeDistance ||
-                        (player.getVelocity().getX() == 0 && player.getVelocity().getZ() == 0) ||
+                if (wp.getLocation().distanceSquared(chargeLocation) > finalChargeDistance * finalChargeDistance ||
+                        (wp.getEntity().getVelocity().getX() == 0 && wp.getEntity().getVelocity().getZ() == 0) ||
                         maxChargeDuration <= 0
                 ) {
-                    player.setVelocity(new Vector(0, 0, 0));
+                    wp.setVelocity(new Vector(0, 0, 0));
                     this.cancel();
                 }
                 for (int i = 0; i < 4; i++) {
                     ParticleEffect.REDSTONE.display(
                             new ParticleEffect.OrdinaryColor(255, 0, 0),
-                            player.getLocation().clone().add((Math.random() * 1.5) - .75, .5 + (Math.random() * 2) - 1, (Math.random() * 1.5) - .75),
+                            wp.getLocation().clone().add((Math.random() * 1.5) - .75, .5 + (Math.random() * 2) - 1, (Math.random() * 1.5) - .75),
                             500);
                 }
-                PlayerFilter.entitiesAround(player, 2.5, 5, 2.5)
+                PlayerFilter.entitiesAround(wp, 2.5, 5, 2.5)
                         .excluding(playersHit)
                         .aliveEnemiesOf(wp)
                         .forEach(enemy -> {

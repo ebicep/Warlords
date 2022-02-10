@@ -77,7 +77,7 @@ public class HealingTotem extends AbstractTotemBase {
                         Location initParticleLoc = totemStand.getLocation().clone().add(0, 1.6, 0);
                         ParticleEffect.VILLAGER_HAPPY.display(0.4F, 0.2F, 0.4F, 0.05F, 5, initParticleLoc, 500);
 
-                        for (Player player1 : player.getWorld().getPlayers()) {
+                        for (Player player1 : wp.getWorld().getPlayers()) {
                             player1.playSound(totemStand.getLocation(), "shaman.earthlivingweapon.impact", 2, 0.9f);
                         }
 
@@ -132,7 +132,7 @@ public class HealingTotem extends AbstractTotemBase {
                                             critMultiplier,
                                             false, false);
                                 });
-                        for (Player player1 : player.getWorld().getPlayers()) {
+                        for (Player player1 : wp.getWorld().getPlayers()) {
                             player1.playSound(totemStand.getLocation(), Sound.BLAZE_DEATH, 1.2f, 0.7f);
                             player1.playSound(totemStand.getLocation(), "shaman.heal.impact", 2, 1);
                         }
@@ -153,7 +153,7 @@ public class HealingTotem extends AbstractTotemBase {
             public void run() {
                 if (wp.isDeath() || counter >= 20 * duration) {
                     this.cancel();
-                } else if (player.isSneaking()) {
+                } else if (wp.getEntity() instanceof Player && ((Player) wp.getEntity()).isSneaking()) {
                     PlayerFilter.entitiesAround(totemStand.getLocation(), radius, radius, radius)
                             .aliveEnemiesOf(wp)
                             .forEach((p) -> {
@@ -161,7 +161,7 @@ public class HealingTotem extends AbstractTotemBase {
                                 p.getCooldownManager().addRegularCooldown("Totem Crippling", "CRIP", HealingTotem.class, new HealingTotem(), wp, CooldownTypes.DEBUFF, cooldownManager -> {
                                 }, crippleDuration * 20);
                             });
-                    for (Player player1 : player.getWorld().getPlayers()) {
+                    for (Player player1 : wp.getWorld().getPlayers()) {
                         player1.playSound(totemStand.getLocation(), "paladin.hammeroflight.impact", 1.5f, 0.2f);
                     }
                     new FallingBlockWaveEffect(totemStand.getLocation().add(0, 1, 0), 7, 2, Material.SAPLING, (byte) 1).play();

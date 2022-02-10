@@ -64,7 +64,7 @@ public class TimeWarp extends AbstractAbility {
 
                 if (counter % 4 == 0) {
                     if (time != 0) {
-                        warpTrail.add(player.getLocation());
+                        warpTrail.add(wp.getLocation());
                     }
                 }
 

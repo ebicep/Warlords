@@ -37,7 +37,7 @@ public class Inferno extends AbstractAbility {
             @Override
             public void run() {
                 if (wp.getCooldownManager().hasCooldown(tempInferno)) {
-                    Location location = player.getLocation();
+                    Location location = wp.getLocation();
                     location.add(0, 1.2, 0);
                     ParticleEffect.DRIP_LAVA.display(0.5F, 0.3F, 0.5F, 0.4F, 1, location, 500);
                     ParticleEffect.FLAME.display(0.5F, 0.3F, 0.5F, 0.0001F, 1, location, 500);
