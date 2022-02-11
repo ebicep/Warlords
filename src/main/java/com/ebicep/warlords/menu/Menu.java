@@ -31,7 +31,7 @@ public class Menu extends AbstractMenuBase {
     }
 
     public Menu(String name, int size) {
-        this.inventory = Bukkit.createInventory(null, size, name);
+        this.inventory = Bukkit.createInventory(null, size, name.substring(0, Math.min(name.length(), 32)));
     }
 
     public void setItem(int x, int y, ItemStack item, BiConsumer<Menu, InventoryClickEvent> clickHandler) {
