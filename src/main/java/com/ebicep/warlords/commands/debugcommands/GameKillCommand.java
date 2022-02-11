@@ -1,7 +1,8 @@
 package com.ebicep.warlords.commands.debugcommands;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.maps.GameManager.GameHolder;
+import com.ebicep.warlords.game.GameManager.GameHolder;
+
 import java.util.*;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;

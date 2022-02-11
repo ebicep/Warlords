@@ -4,7 +4,7 @@ import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.FutureMessageManager;
 import com.ebicep.warlords.database.repositories.player.PlayersCollections;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
-import com.ebicep.warlords.maps.GameAddon;
+import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.util.ChatUtils;
 import com.ebicep.warlords.util.NumberFormat;
 import org.bson.Document;

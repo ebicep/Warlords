@@ -1,8 +1,8 @@
 package com.ebicep.warlords.util;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.maps.Game;
-import com.ebicep.warlords.maps.Team;
+import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import org.bukkit.Location;
 import org.bukkit.World;

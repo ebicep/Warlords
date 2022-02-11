@@ -1,14 +1,19 @@
 package com.ebicep.warlords.maps;
 
 import com.avaje.ebean.config.ServerConfig;
-import com.ebicep.warlords.maps.option.Option;
+import com.ebicep.warlords.game.GameAddon;
+import com.ebicep.warlords.game.GameMap;
+import com.ebicep.warlords.game.MapCategory;
+import com.ebicep.warlords.game.option.Option;
 import com.ebicep.warlords.util.LocationFactory;
+
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+
 import org.bukkit.*;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;

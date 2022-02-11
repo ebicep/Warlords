@@ -1,7 +1,7 @@
 package com.ebicep.customentities.npc.traits;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.maps.MapCategory;
+import com.ebicep.warlords.game.MapCategory;
 import com.ebicep.warlords.party.Party;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;

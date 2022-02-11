@@ -1,8 +1,8 @@
 package com.ebicep.warlords.commands;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.maps.Game;
-import com.ebicep.warlords.maps.GameAddon;
+import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.GameAddon;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

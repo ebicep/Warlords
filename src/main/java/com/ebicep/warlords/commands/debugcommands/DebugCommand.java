@@ -2,8 +2,8 @@ package com.ebicep.warlords.commands.debugcommands;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.BaseCommand;
-import com.ebicep.warlords.maps.Game;
-import com.ebicep.warlords.maps.state.TimerDebugAble;
+import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.state.TimerDebugAble;
 import com.ebicep.warlords.menu.DebugMenu;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import org.apache.commons.lang.math.NumberUtils;

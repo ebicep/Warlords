@@ -1,14 +1,17 @@
 package com.ebicep.warlords.commands.debugcommands;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.maps.Game;
-import com.ebicep.warlords.maps.GameAddon;
-import com.ebicep.warlords.maps.GameManager.GameHolder;
-import com.ebicep.warlords.maps.option.WinAfterTimeoutOption;
+import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.GameAddon;
+import com.ebicep.warlords.game.GameManager.GameHolder;
+import com.ebicep.warlords.game.option.WinAfterTimeoutOption;
 import com.ebicep.warlords.util.Utils;
+
 import static com.ebicep.warlords.util.Utils.toTitleHumanCase;
+
 import java.util.EnumSet;
 import java.util.OptionalInt;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

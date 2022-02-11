@@ -1,6 +1,6 @@
 package com.ebicep.warlords.events;
 
-import com.ebicep.warlords.maps.Game;
+import com.ebicep.warlords.game.Game;
 import org.bukkit.event.HandlerList;
 
 public class WarlordsGameUpdatedEvent extends WarlordsGameEvent {

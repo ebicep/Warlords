@@ -4,7 +4,7 @@ package com.ebicep.warlords.menu;
 import com.ebicep.warlords.classes.abilties.CripplingStrike;
 import com.ebicep.warlords.classes.abilties.WoundingStrikeBerserker;
 import com.ebicep.warlords.classes.abilties.WoundingStrikeDefender;
-import com.ebicep.warlords.maps.option.PowerupOption.PowerupType;
+import com.ebicep.warlords.game.option.PowerupOption.PowerupType;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;

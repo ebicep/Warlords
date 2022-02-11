@@ -2,8 +2,8 @@ package com.ebicep.warlords.commands.debugcommands;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.BaseCommand;
-import com.ebicep.warlords.maps.GameAddon;
-import com.ebicep.warlords.maps.Team;
+import com.ebicep.warlords.game.GameAddon;
+import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.party.Party;
 import com.ebicep.warlords.party.PollBuilder;
 import com.ebicep.warlords.player.WarlordsPlayer;

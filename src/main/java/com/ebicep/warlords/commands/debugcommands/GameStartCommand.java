@@ -1,7 +1,8 @@
 package com.ebicep.warlords.commands.debugcommands;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.maps.*;
+import com.ebicep.warlords.game.*;
+
 import com.ebicep.warlords.party.Party;
 import com.ebicep.warlords.util.Pair;
 import com.ebicep.warlords.util.Utils;

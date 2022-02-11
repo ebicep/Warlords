@@ -4,7 +4,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.miscellaneouscommands.DiscordCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
-import com.ebicep.warlords.maps.Team;
+import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.player.Classes;
 import com.ebicep.warlords.queuesystem.QueueManager;
 import com.ebicep.warlords.util.PacketUtils;

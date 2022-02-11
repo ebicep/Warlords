@@ -1,7 +1,7 @@
 package com.ebicep.warlords.effects;
 
-import com.ebicep.warlords.maps.Game;
-import com.ebicep.warlords.maps.Team;
+import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.Team;
 import org.bukkit.entity.Player;
 
 import java.util.stream.Stream;

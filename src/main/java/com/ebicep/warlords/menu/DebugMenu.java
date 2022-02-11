@@ -1,14 +1,15 @@
 package com.ebicep.warlords.menu;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.maps.*;
-import com.ebicep.warlords.maps.flags.GroundFlagLocation;
-import com.ebicep.warlords.maps.flags.PlayerFlagLocation;
-import com.ebicep.warlords.maps.flags.SpawnFlagLocation;
-import com.ebicep.warlords.maps.option.marker.DebugLocationMarker;
-import com.ebicep.warlords.maps.option.marker.FlagHolder;
-import com.ebicep.warlords.maps.option.marker.LobbyLocationMarker;
-import com.ebicep.warlords.maps.option.marker.MapSymmetryMarker;
+import com.ebicep.warlords.game.*;
+
+import com.ebicep.warlords.game.flags.GroundFlagLocation;
+import com.ebicep.warlords.game.flags.PlayerFlagLocation;
+import com.ebicep.warlords.game.flags.SpawnFlagLocation;
+import com.ebicep.warlords.game.option.marker.DebugLocationMarker;
+import com.ebicep.warlords.game.option.marker.FlagHolder;
+import com.ebicep.warlords.game.option.marker.LobbyLocationMarker;
+import com.ebicep.warlords.game.option.marker.MapSymmetryMarker;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.player.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.util.ItemBuilder;

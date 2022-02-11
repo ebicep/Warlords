@@ -1,6 +1,6 @@
 package com.ebicep.warlords.util;
 
-import com.ebicep.warlords.maps.Game;
+import com.ebicep.warlords.game.Game;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;

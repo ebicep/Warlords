@@ -1,7 +1,7 @@
 package com.ebicep.warlords.player;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.maps.Team;
+import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.util.ItemBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
@@ -10,7 +10,6 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
-import org.bukkit.metadata.FixedMetadataValue;
 
 import java.util.*;
 import java.util.stream.Collectors;

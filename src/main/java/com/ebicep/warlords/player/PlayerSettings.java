@@ -1,6 +1,6 @@
 package com.ebicep.warlords.player;
 
-import com.ebicep.warlords.maps.Team;
+import com.ebicep.warlords.game.Team;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
 import javax.annotation.Nonnull;

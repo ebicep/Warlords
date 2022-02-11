@@ -1,9 +1,9 @@
 package com.ebicep.warlords.events;
 
-import com.ebicep.warlords.maps.Game;
-import com.ebicep.warlords.maps.Team;
-import com.ebicep.warlords.maps.flags.FlagInfo;
-import com.ebicep.warlords.maps.flags.FlagLocation;
+import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.Team;
+import com.ebicep.warlords.game.flags.FlagInfo;
+import com.ebicep.warlords.game.flags.FlagLocation;
 import org.bukkit.event.HandlerList;
 
 public class WarlordsFlagUpdatedEvent extends WarlordsGameEvent {

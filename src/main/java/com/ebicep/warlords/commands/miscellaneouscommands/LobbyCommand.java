@@ -2,9 +2,11 @@ package com.ebicep.warlords.commands.miscellaneouscommands;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.BaseCommand;
-import com.ebicep.warlords.maps.Game;
-import com.ebicep.warlords.maps.Team;
+import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.Team;
+
 import java.util.Optional;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

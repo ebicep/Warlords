@@ -1,10 +1,12 @@
 package com.ebicep.warlords.events;
 
-import com.ebicep.warlords.maps.Game;
-import com.ebicep.warlords.maps.Team;
-import com.ebicep.warlords.maps.option.Option;
+import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.Team;
+import com.ebicep.warlords.game.option.Option;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 

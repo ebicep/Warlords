@@ -1,8 +1,10 @@
 package com.ebicep.warlords.events;
 
-import com.ebicep.warlords.maps.Game;
-import com.ebicep.warlords.maps.Team;
+import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.Team;
+
 import java.util.Objects;
+
 import org.bukkit.event.HandlerList;
 
 import javax.annotation.Nonnull;

@@ -2,9 +2,9 @@ package com.ebicep.warlords.commands.debugcommands;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.commands.BaseCommand;
-import com.ebicep.warlords.maps.GameAddon;
-import com.ebicep.warlords.maps.Team;
-import com.ebicep.warlords.maps.option.marker.TeamMarker;
+import com.ebicep.warlords.game.GameAddon;
+import com.ebicep.warlords.game.Team;
+import com.ebicep.warlords.game.option.marker.TeamMarker;
 import com.ebicep.warlords.player.PlayerSettings;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import org.bukkit.Bukkit;

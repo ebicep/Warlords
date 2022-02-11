@@ -1,6 +1,7 @@
 package com.ebicep.warlords.events;
 
-import com.ebicep.warlords.maps.Game;
+import com.ebicep.warlords.game.Game;
+
 import java.util.Objects;
 import javax.annotation.Nonnull;
 import org.bukkit.event.Event;

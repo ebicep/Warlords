@@ -1,12 +1,12 @@
 package com.ebicep.jda;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.maps.Game;
-import com.ebicep.warlords.maps.GameManager.GameHolder;
-import com.ebicep.warlords.maps.Team;
-import com.ebicep.warlords.maps.option.WinAfterTimeoutOption;
-import com.ebicep.warlords.maps.state.PlayingState;
-import com.ebicep.warlords.maps.state.PreLobbyState;
+import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.GameManager.GameHolder;
+import com.ebicep.warlords.game.Team;
+import com.ebicep.warlords.game.option.WinAfterTimeoutOption;
+import com.ebicep.warlords.game.state.PlayingState;
+import com.ebicep.warlords.game.state.PreLobbyState;
 import com.ebicep.warlords.util.Utils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;

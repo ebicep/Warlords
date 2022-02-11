@@ -1,11 +1,13 @@
 package com.ebicep.warlords.commands.debugcommands;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.maps.Game;
-import com.ebicep.warlords.maps.GameManager.GameHolder;
-import com.ebicep.warlords.maps.state.EndState;
-import com.ebicep.warlords.maps.state.PlayingState;
+import com.ebicep.warlords.game.Game;
+import com.ebicep.warlords.game.GameManager.GameHolder;
+import com.ebicep.warlords.game.state.EndState;
+import com.ebicep.warlords.game.state.PlayingState;
+
 import java.util.*;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
