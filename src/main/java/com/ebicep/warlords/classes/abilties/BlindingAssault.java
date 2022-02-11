@@ -49,10 +49,10 @@ public class BlindingAssault extends AbstractAbility {
                 .build());
 
         for (WarlordsPlayer assaultTarget : PlayerFilter
-                .entitiesAround(player, 6, 6, 6)
+                .entitiesAround(player, 5, 5, 5)
                 .aliveEnemiesOf(wp)
         ) {
-            assaultTarget.getEntity().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 25, 0, true, false), true);
+            assaultTarget.getEntity().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 20, 0, true, false), true);
             assaultTarget.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
             for (Player player1 : player.getWorld().getPlayers()) {
                 player1.playSound(playerLoc, "warrior.revenant.orbsoflife", 2, 1.9f);

@@ -14,9 +14,7 @@ import javax.annotation.Nonnull;
 
 public class CrossVital extends AbstractAbility {
 
-    public static final int SPEED_DURATION = 4;
-
-    private final int duration = 12;
+    private final int radius = 15;
 
     public CrossVital() {
         super("Soul Switch", 0, 0, 30, 40, -1, 50);
@@ -25,15 +23,15 @@ public class CrossVital extends AbstractAbility {
     @Override
     public void updateDescription(Player player) {
         description = "§7Switch locations with an enemy, has an\n" +
-                "§7optimal range of §e10 §7blocks. Soul Switch has low\n" +
-                "§7verticality.";
+                "§7optimal range of §e" + radius + " §7blocks. Soul Switch\n" +
+                "§7has low verticality.";
     }
 
     @Override
     public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
 
         for (WarlordsPlayer swapTarget : PlayerFilter
-                .entitiesAround(wp.getLocation(), 10, 4, 10)
+                .entitiesAround(wp.getLocation(), radius, 7.5, radius)
                 .aliveEnemiesOf(wp)
                 .requireLineOfSight(wp)
                 .closestFirst(wp)
@@ -45,9 +43,20 @@ public class CrossVital extends AbstractAbility {
                 Location ownLocation = wp.getLocation();
 
                 swapTarget.teleport(new Location(
-                        wp.getWorld(), ownLocation.getX(), ownLocation.getY(), ownLocation.getZ(), swapLocation.getYaw(), swapLocation.getPitch()));
+                        wp.getWorld(),
+                        ownLocation.getX(),
+                        ownLocation.getY(),
+                        ownLocation.getZ(),
+                        swapLocation.getYaw(),
+                        swapLocation.getPitch()));
+
                 wp.teleport(new Location(
-                        swapLocation.getWorld(), swapLocation.getX(), swapLocation.getY(), swapLocation.getZ(), ownLocation.getYaw(), ownLocation.getPitch()));
+                        swapLocation.getWorld(),
+                        swapLocation.getX(),
+                        swapLocation.getY(),
+                        swapLocation.getZ(),
+                        ownLocation.getYaw(),
+                        ownLocation.getPitch()));
 
                 wp.subtractEnergy(energyCost);
 

@@ -706,11 +706,6 @@ public final class WarlordsPlayer {
                         }
                     });
 
-                    // Cross Vital speed on death.
-                    if (attacker.getCooldownManager().hasCooldown(CrossVital.class)) {
-                        attacker.getSpeed().addSpeedModifier("Cross Vital Speed", 40, CrossVital.SPEED_DURATION * 20, "BASE");
-                    }
-
                     // Title card "YOU DIED!"
                     if (this.entity instanceof Player) {
                         PacketUtils.sendTitle((Player) entity, ChatColor.RED + "YOU DIED!", ChatColor.GRAY + attacker.getName() + " killed you.", 0, 40, 0);

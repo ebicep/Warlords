@@ -17,11 +17,11 @@ import javax.annotation.Nonnull;
 
 public class SoulShackle extends AbstractAbility {
 
-    private final int shackleRange = 12;
+    private final int shackleRange = 15;
     private float absorbPool = 0;
 
     public SoulShackle() {
-        super("Soul Shackle", 327, 443, 8, 40, 20, 175);
+        super("Soul Shackle", 344, 468, 8, 40, 20, 175);
     }
 
     @Override
