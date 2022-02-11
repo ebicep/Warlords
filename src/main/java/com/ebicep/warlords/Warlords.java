@@ -560,7 +560,7 @@ public class Warlords extends JavaPlugin {
 
                             for (RegularCooldown undyingArmyCooldown : new CooldownFilter<>(wp, RegularCooldown.class)
                                     .filterCooldownClass(UndyingArmy.class)
-                                    .getStream()
+                                    .stream()
                                     .collect(Collectors.toList())
                             ) {
                                 UndyingArmy undyingArmy = (UndyingArmy) undyingArmyCooldown.getCooldownObject();

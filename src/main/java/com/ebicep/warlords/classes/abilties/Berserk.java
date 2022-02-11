@@ -1,8 +1,10 @@
 package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.ParticleEffect;
 import org.bukkit.Location;
@@ -30,8 +32,27 @@ public class Berserk extends AbstractAbility {
         Berserk tempBerserk = new Berserk();
         wp.subtractEnergy(energyCost);
         wp.getSpeed().addSpeedModifier("Berserk", speedBuff, duration * 20, "BASE");
-        wp.getCooldownManager().addRegularCooldown(name, "BERS", Berserk.class, tempBerserk, wp, CooldownTypes.BUFF, cooldownManager -> {
-        }, duration * 20);
+        wp.getCooldownManager().addCooldown(new RegularCooldown<Berserk>(
+                name,
+                "BERS",
+                Berserk.class,
+                tempBerserk,
+                wp,
+                CooldownTypes.BUFF,
+                cooldownManager -> {
+                },
+                duration * 20
+        ) {
+            @Override
+            public float modifyDamageBeforeInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                return currentDamageValue * 1.1f;
+            }
+
+            @Override
+            public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                return currentDamageValue * 1.3f;
+            }
+        });
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "warrior.berserk.activation", 2, 1);

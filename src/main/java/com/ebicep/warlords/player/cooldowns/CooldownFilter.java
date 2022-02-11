@@ -80,7 +80,7 @@ public class CooldownFilter<T extends AbstractCooldown<?>> implements Iterable<T
         return stream.findFirst().map(t -> clazz.cast(t.getCooldownObject()));
     }
 
-    public Stream<T> getStream() {
+    public Stream<T> stream() {
         return stream;
     }
 

@@ -5,8 +5,10 @@ import com.ebicep.warlords.classes.internal.AbstractTotemBase;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
-import com.ebicep.warlords.player.cooldowns.CooldownTypes;
+import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
@@ -158,8 +160,22 @@ public class HealingTotem extends AbstractTotemBase {
                             .aliveEnemiesOf(wp)
                             .forEach((p) -> {
                                 wp.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " Your Healing Totem has crippled " + ChatColor.YELLOW + p.getName() + ChatColor.GRAY + "!");
-                                p.getCooldownManager().addRegularCooldown("Totem Crippling", "CRIP", HealingTotem.class, new HealingTotem(), wp, CooldownTypes.DEBUFF, cooldownManager -> {
-                                }, crippleDuration * 20);
+                                p.getCooldownManager().addCooldown(new RegularCooldown<HealingTotem>(
+                                        "Totem Crippling",
+                                        "CRIP",
+                                        HealingTotem.class,
+                                        new HealingTotem(),
+                                        wp,
+                                        CooldownTypes.DEBUFF,
+                                        cooldownManager -> {
+                                        },
+                                        crippleDuration * 20
+                                ) {
+                                    @Override
+                                    public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                                        return currentDamageValue * .75f;
+                                    }
+                                });
                             });
                     for (Player player1 : wp.getWorld().getPlayers()) {
                         player1.playSound(totemStand.getLocation(), "paladin.hammeroflight.impact", 1.5f, 0.2f);

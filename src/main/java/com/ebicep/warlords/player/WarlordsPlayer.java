@@ -217,21 +217,9 @@ public final class WarlordsPlayer {
             return;
         }
 
-        // Inferno
-        if (attacker.getCooldownManager().hasCooldown(Inferno.class) && (!isMeleeHit && !ability.equals("Time Warp"))) {
-            critChance += attacker.getSpec().getOrange().getCritChance();
-            critMultiplier += attacker.getSpec().getOrange().getCritMultiplier();
-        }
-
-        if (attacker.getCooldownManager().hasCooldown(CrossVital.class) && !isMeleeHit) {
-            critMultiplier += attacker.getSpec().getBlue().getCritMultiplier();
-        }
-
-        // Assassin Mark crit chance increase
-        if (attacker.getCooldownManager().hasCooldown(OrderOfEviscerate.class)) {
-            if (!Utils.isLineOfSightAssassin(getEntity(), attacker.getEntity())) {
-                critChance = 100;
-            }
+        for (RegularCooldown<?> regularCooldown : new CooldownFilter<>(attacker, RegularCooldown.class).stream().collect(Collectors.toList())) {
+            critChance = regularCooldown.addCritChanceFromAttacker(event, critChance);
+            critMultiplier = regularCooldown.addCritMultiplierFromAttacker(event, critMultiplier);
         }
 
         // Assassin takes damage, remove ability.
@@ -307,19 +295,12 @@ public final class WarlordsPlayer {
                 // Damage Increase
                 // Example: 1.1 = 10% increase.
 
-                // Checks whether the attacker has Berserk active.
-                for (RegularCooldown<?> regularCooldown : new CooldownFilter<>(attacker, RegularCooldown.class).filterCooldownClass(Berserk.class)) {
-                    damageValue *= 1.3;
+                for (RegularCooldown<?> regularCooldown : new CooldownFilter<>(this, RegularCooldown.class).stream().collect(Collectors.toList())) {
+                    damageValue = regularCooldown.modifyDamageBeforeInterveneFromSelf(event, damageValue);
                 }
 
-                // Checks whether the player has Berserk active for self damage.
-                for (RegularCooldown<?> regularCooldown : new CooldownFilter<>(this, RegularCooldown.class).filterCooldownClass(Berserk.class)) {
-                    damageValue *= 1.1;
-                }
-
-                // Checks whether the attacker has been crippled by Healing Totem.
-                for (RegularCooldown<?> regularCooldown : new CooldownFilter<>(attacker, RegularCooldown.class).filterName("Totem Crippling")) {
-                    damageValue *= .75;
+                for (RegularCooldown<?> regularCooldown : new CooldownFilter<>(attacker, RegularCooldown.class).stream().collect(Collectors.toList())) {
+                    damageValue = regularCooldown.modifyDamageBeforeInterveneFromAttacker(event, damageValue);
                 }
 
                 // Checks whether the attacker has been crippled by Crippling Strike.
@@ -382,6 +363,15 @@ public final class WarlordsPlayer {
                     // Damage Reduction
                     // Example: .8 = 20% reduction.
 
+                    for (RegularCooldown<?> regularCooldown : new CooldownFilter<>(this, RegularCooldown.class).stream().collect(Collectors.toList())) {
+                        damageValue = regularCooldown.modifyDamageAfterInterveneFromSelf(event, damageValue);
+                    }
+
+                    for (RegularCooldown<?> regularCooldown : new CooldownFilter<>(attacker, RegularCooldown.class).stream().collect(Collectors.toList())) {
+                        damageValue = regularCooldown.modifyDamageAfterInterveneFromAttacker(event, damageValue);
+                    }
+
+                    /*
                     // Checks whether the player has Ice Barrier Active.
                     for (IceBarrier iceBarrier : new CooldownFilter<>(this, RegularCooldown.class)
                             .filterCooldownClassAndMapToObjectsOfClass(IceBarrier.class)
@@ -389,6 +379,8 @@ public final class WarlordsPlayer {
                     ) {
                         addAbsorbed(Math.abs(damageValue - (damageValue *= iceBarrier.getDamageReduction())));
                     }
+
+                     */
 
                     // Checks whether the player has Chain Lightning Active.
                     List<ChainLightning> chainLightning = new CooldownFilter<>(this, RegularCooldown.class)
@@ -481,7 +473,7 @@ public final class WarlordsPlayer {
                 //LAST STAND HEALING
                 for (RegularCooldown<?> cooldown : new CooldownFilter<>(this, RegularCooldown.class)
                         .filterCooldownClass(LastStand.class)
-                        .getStream()
+                        .stream()
                         .collect(Collectors.toList())
                 ) {
                     WarlordsPlayer lastStandedBy = cooldown.getFrom();
@@ -524,7 +516,7 @@ public final class WarlordsPlayer {
                     if (!HammerOfLight.standingInHammer(attacker, entity)) {
                         for (RegularCooldown<?> cooldown : new CooldownFilter<>(this, RegularCooldown.class)
                                 .filterCooldownClass(LastStand.class)
-                                .getStream()
+                                .stream()
                                 .collect(Collectors.toList())
                         ) {
                             WarlordsPlayer lastStandedBy = cooldown.getFrom();

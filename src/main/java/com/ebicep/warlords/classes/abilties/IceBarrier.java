@@ -1,8 +1,10 @@
 package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.ParticleEffect;
 import org.bukkit.Location;
@@ -39,8 +41,24 @@ public class IceBarrier extends AbstractAbility {
     @Override
     public boolean onActivate(WarlordsPlayer wp, Player player) {
         IceBarrier tempIceBarrier = new IceBarrier(damageReductionPercent);
-        wp.getCooldownManager().addRegularCooldown(name, "ICE", IceBarrier.class, tempIceBarrier, wp, CooldownTypes.ABILITY, cooldownManager -> {
-        }, duration * 20);
+        wp.getCooldownManager().addCooldown(new RegularCooldown<IceBarrier>(
+                name,
+                "ICE",
+                IceBarrier.class,
+                tempIceBarrier,
+                wp,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {
+                },
+                duration * 20
+        ) {
+            @Override
+            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                float newDamageValue = currentDamageValue * getDamageReduction();
+                event.getPlayer().addAbsorbed(Math.abs(currentDamageValue - newDamageValue));
+                return newDamageValue;
+            }
+        });
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "mage.icebarrier.activation", 2, 1);

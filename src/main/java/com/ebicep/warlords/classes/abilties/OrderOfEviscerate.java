@@ -1,10 +1,13 @@
 package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.ParticleEffect;
+import com.ebicep.warlords.util.Utils;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
@@ -43,16 +46,25 @@ public class OrderOfEviscerate extends AbstractAbility {
         wp.subtractEnergy(energyCost);
 
         wp.getCooldownManager().removeCooldown(OrderOfEviscerate.class);
-        wp.getCooldownManager().addRegularCooldown(
+        wp.getCooldownManager().addCooldown(new RegularCooldown<OrderOfEviscerate>(
                 "Order of Eviscerate",
                 "ORDER",
                 OrderOfEviscerate.class,
                 new OrderOfEviscerate(),
                 wp,
                 CooldownTypes.ABILITY,
-                cooldownManager -> {},
+                cooldownManager -> {
+                },
                 duration * 20
-        );
+        ) {
+            @Override
+            public int addCritChanceFromAttacker(WarlordsDamageHealingEvent event, int currentCritChance) {
+                if (!Utils.isLineOfSightAssassin(event.getPlayer().getEntity(), event.getAttacker().getEntity())) {
+                    return 100;
+                }
+                return currentCritChance;
+            }
+        });
 
         wp.getCooldownManager().removeCooldownByName("Cloaked");
         wp.getCooldownManager().addRegularCooldown(

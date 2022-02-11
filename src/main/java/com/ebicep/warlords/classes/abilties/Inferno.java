@@ -1,8 +1,10 @@
 package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.classes.AbstractAbility;
-import com.ebicep.warlords.player.cooldowns.CooldownTypes;
+import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.ParticleEffect;
 import org.bukkit.Location;
@@ -11,9 +13,11 @@ import org.bukkit.entity.Player;
 public class Inferno extends AbstractAbility {
 
     private final int duration = 18;
+    private final int critChance = 30;
+    private final int critMultiplier = 30;
 
     public Inferno() {
-        super("Inferno", 0, 0, 46.98f, 0, 30, 30);
+        super("Inferno", 0, 0, 46.98f, 0, 0, 0);
     }
 
     @Override
@@ -27,8 +31,31 @@ public class Inferno extends AbstractAbility {
     @Override
     public boolean onActivate(WarlordsPlayer wp, Player player) {
         Inferno tempInferno = new Inferno();
-        wp.getCooldownManager().addRegularCooldown(name, "INFR", Inferno.class, tempInferno, wp, CooldownTypes.BUFF, cooldownManager -> {
-        }, duration * 20);
+        wp.getCooldownManager().addCooldown(new RegularCooldown<Inferno>(
+                name,
+                "INFR",
+                Inferno.class,
+                tempInferno,
+                wp,
+                CooldownTypes.BUFF,
+                cooldownManager -> {
+                },
+                duration * 20
+        ) {
+            @Override
+            public int addCritChanceFromAttacker(WarlordsDamageHealingEvent event, int currentCritChance) {
+                if (event.getAbility().isEmpty() || event.getAbility().equals("Time Warp"))
+                    return currentCritChance;
+                return currentCritChance + critChance;
+            }
+
+            @Override
+            public int addCritMultiplierFromAttacker(WarlordsDamageHealingEvent event, int currentCritMultiplier) {
+                if (event.getAbility().isEmpty() || event.getAbility().equals("Time Warp"))
+                    return currentCritMultiplier;
+                return currentCritMultiplier + critMultiplier;
+            }
+        });
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "mage.inferno.activation", 2, 1);

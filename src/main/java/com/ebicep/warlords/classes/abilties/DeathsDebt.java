@@ -185,7 +185,7 @@ public class DeathsDebt extends AbstractTotemBase {
         }
         // 100% of damage over 6 seconds
         float damage = (tempDeathsDebt.getDelayedDamage() * getSelfDamageInPercentPerSecond());
-        float debtTrueDamage = (float) (damage * Math.pow(.8, (int) new CooldownFilter<>(wp, RegularCooldown.class).filterCooldownClass(SpiritLink.class).getStream().count()));
+        float debtTrueDamage = (float) (damage * Math.pow(.8, (int) new CooldownFilter<>(wp, RegularCooldown.class).filterCooldownClass(SpiritLink.class).stream().count()));
         // Player damage
         wp.addDamageInstance(wp, "",
                 debtTrueDamage,

@@ -50,7 +50,7 @@ public class Soulbinding extends AbstractAbility {
         Soulbinding tempSoulBinding = new Soulbinding();
         wp.getCooldownManager().addPersistentCooldown(name, "SOUL", Soulbinding.class, tempSoulBinding, wp, CooldownTypes.ABILITY,
                 cooldownManager -> {
-                    if (new CooldownFilter<>(cooldownManager, PersistentCooldown.class).filterCooldownClass(Soulbinding.class).getStream().count() == 1) {
+                    if (new CooldownFilter<>(cooldownManager, PersistentCooldown.class).filterCooldownClass(Soulbinding.class).stream().count() == 1) {
                         if (wp.getEntity() instanceof Player) {
                             ((CraftPlayer) wp.getEntity()).getInventory().getItem(0).removeEnchantment(Enchantment.OXYGEN);
                         }
