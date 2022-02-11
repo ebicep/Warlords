@@ -669,11 +669,6 @@ public final class WarlordsPlayer {
                             p.sendMessage(getColoredName() + ChatColor.GRAY + " was killed by " + attacker.getColoredName());
                         }
                     });
-                    gameState.getGame().spectators().forEach(uuid -> {
-                        if (Bukkit.getPlayer(uuid) != null) {
-                            Bukkit.getPlayer(uuid).sendMessage(getColoredName() + ChatColor.GRAY + " was killed by " + attacker.getColoredName());
-                        }
-                    });
 
                     // Assassin Mark
                     gameState.getGame().forEachOfflineWarlordsPlayer(p -> {
