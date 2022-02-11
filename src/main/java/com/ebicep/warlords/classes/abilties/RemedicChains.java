@@ -92,6 +92,17 @@ public class RemedicChains extends AbstractAbility {
                                 false,
                                 false
                         );
+
+                        wp.addHealingInstance(
+                                wp,
+                                name,
+                                maxHealing,
+                                maxHealing,
+                                -1,
+                                100,
+                                false,
+                                false
+                        );
                     }
 
                     if (counter % 8 == 0) {
@@ -108,8 +119,6 @@ public class RemedicChains extends AbstractAbility {
                                 for (Map.Entry<WarlordsPlayer, Integer> entry : timeLinked.entrySet()) {
                                     float healingMultiplier = 0.125f;
                                     float totalHealingMultiplier = (healingMultiplier * entry.getValue());
-                                    System.out.println(totalHealingMultiplier);
-                                    System.out.println(entry.getValue());
                                     entry.getKey().addHealingInstance(
                                             wp,
                                             name,
@@ -123,18 +132,7 @@ public class RemedicChains extends AbstractAbility {
                                 }
 
                                 chainTarget.getCooldownManager().removeCooldown(tempRemedicChain);
-                                chainTarget.addHealingInstance(
-                                        wp,
-                                        name,
-                                        minDamageHeal * 0.2f,
-                                        maxDamageHeal * 0.2f,
-                                        critChance,
-                                        critMultiplier,
-                                        false,
-                                        false
-                                );
-
-                                chainTarget.sendMessage(WarlordsPlayer.GIVE_ARROW + ChatColor.RED + " You left the link range early!");
+                                chainTarget.sendMessage(ChatColor.RED + " You left the link range early!");
                                 this.cancel();
                             }
 

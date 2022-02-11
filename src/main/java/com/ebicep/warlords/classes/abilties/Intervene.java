@@ -105,7 +105,7 @@ public class Intervene extends AbstractAbility {
                                 @Override
                                 public void run() {
                                     Optional<RegularCooldown> optionalRegularCooldown = new CooldownFilter<>(vt, RegularCooldown.class).filterCooldownObject(tempIntervene).findFirst();
-                            if (wp.isDeath() ||
+                            if (wp.isDead() ||
                                     tempIntervene.damagePrevented >= (3600 / 2.0) ||
                                     !optionalRegularCooldown.isPresent() ||
                                     vt.getLocation().distanceSquared(optionalRegularCooldown.get().getFrom().getEntity().getLocation()) > 15 * 15

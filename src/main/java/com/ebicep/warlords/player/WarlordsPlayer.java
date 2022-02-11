@@ -429,11 +429,11 @@ public final class WarlordsPlayer {
 
                     if (cooldownManager.hasCooldownFromName("Wide Guard")) {
                         if (
-                                ability.equals("Fireball") ||
-                                        ability.equals("Frostbolt") ||
-                                        ability.equals("Water Bolt") ||
-                                        ability.equals("Lightning Bolt") ||
-                                        ability.equals("Flame Burst")
+                            ability.equals("Fireball") ||
+                            ability.equals("Frostbolt") ||
+                            ability.equals("Water Bolt") ||
+                            ability.equals("Lightning Bolt") ||
+                            ability.equals("Flame Burst")
                         ) {
                             damageValue *= .3;
                         }
@@ -705,11 +705,6 @@ public final class WarlordsPlayer {
                             }
                         }
                     });
-
-                    // Cross Vital speed on death.
-                    if (attacker.getCooldownManager().hasCooldown(CrossVital.class)) {
-                        attacker.getSpeed().addSpeedModifier("Cross Vital Speed", 40, CrossVital.SPEED_DURATION * 20, "BASE");
-                    }
 
                     // Title card "YOU DIED!"
                     if (this.entity instanceof Player) {

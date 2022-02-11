@@ -8,9 +8,9 @@ import com.ebicep.warlords.classes.mage.specs.pyromancer.Pyromancer;
 import com.ebicep.warlords.classes.paladin.specs.avenger.Avenger;
 import com.ebicep.warlords.classes.paladin.specs.crusader.Crusader;
 import com.ebicep.warlords.classes.paladin.specs.protector.Protector;
+import com.ebicep.warlords.classes.rogue.specs.apothecary.Apothecary;
 import com.ebicep.warlords.classes.rogue.specs.assassin.Assassin;
 import com.ebicep.warlords.classes.rogue.specs.vindicator.Vindicator;
-import com.ebicep.warlords.classes.rogue.specs.apothecary.Apothecary;
 import com.ebicep.warlords.classes.shaman.specs.earthwarden.Earthwarden;
 import com.ebicep.warlords.classes.shaman.specs.spiritguard.Spiritguard;
 import com.ebicep.warlords.classes.shaman.specs.thunderlord.Thunderlord;
@@ -92,17 +92,17 @@ public enum Classes {
             Assassin::new,
             WordWrap.wrapWithNewline("§7A damage-oriented Rogue specialization that serves the art of stealth, rapidly taking out any enemies who cross them.", 200),
             SpecType.DAMAGE,
-            JUDGEMENT_STRIKE),
+            EARTHEN_SPIKE),
     VINDICATOR("Vindicator",
             Vindicator::new,
             WordWrap.wrapWithNewline("§7A defense-oriented Rogue specialization that deceives enemies by disabling their powers and use bulk power to protect allies.", 200),
             SpecType.TANK,
-            RIGHTEOUS_STRIKE),
+            EARTHEN_SPIKE),
     APOTHECARY("Apothecary",
             Apothecary::new,
             WordWrap.wrapWithNewline("§7A healing-oriented Rogue specialization that uses special brews and alchemical powers to weaken their foes while aiding allies.", 200),
             SpecType.HEALER,
-            IMPALING_STRIKE),
+            EARTHEN_SPIKE),
 
     ;
 

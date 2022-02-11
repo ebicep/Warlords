@@ -24,7 +24,7 @@ public class BlindingAssault extends AbstractAbility {
     public void updateDescription(Player player) {
         description = "§7Leap forward, dealing §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage to\n" +
                 "§7all enemies close to you. Enemies hit are blinded\n" +
-                "§7for §62 §7seconds. Blinding Assault has reduced\n" +
+                "§7for §61 §7second. Blinding Assault has reduced\n" +
                 "§7range when holding a Flag.";
     }
 
@@ -32,9 +32,8 @@ public class BlindingAssault extends AbstractAbility {
     public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
         Location playerLoc = player.getLocation();
 
-        double hasFlag = wp.getFlagDamageMultiplier();
-        if (hasFlag < 0) {
-            player.setVelocity(playerLoc.getDirection().multiply(1).setY(0.3));
+        if (wp.getCarriedFlag() != null) {
+            player.setVelocity(playerLoc.getDirection().multiply(1.15).setY(0.4));
         } else {
             player.setVelocity(playerLoc.getDirection().multiply(1.5).setY(0.7));
         }
@@ -50,10 +49,10 @@ public class BlindingAssault extends AbstractAbility {
                 .build());
 
         for (WarlordsPlayer assaultTarget : PlayerFilter
-                .entitiesAround(player, 4, 4, 4)
+                .entitiesAround(player, 5, 5, 5)
                 .aliveEnemiesOf(wp)
         ) {
-            assaultTarget.getEntity().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 2 * 25, 0, true, false), true);
+            assaultTarget.getEntity().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 20, 0, true, false), true);
             assaultTarget.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
             for (Player player1 : player.getWorld().getPlayers()) {
                 player1.playSound(playerLoc, "warrior.revenant.orbsoflife", 2, 1.9f);
