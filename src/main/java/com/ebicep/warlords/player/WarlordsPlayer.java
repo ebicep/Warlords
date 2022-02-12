@@ -1713,7 +1713,7 @@ public final class WarlordsPlayer {
         List<String> lore = new ArrayList<>();
         meta.setDisplayName(ChatColor.AQUA + "Stat Breakdown (" + name + "):");
         List<PlayerStatistics.Entry> entries = this.stats.getEntries();
-        int length = entries.size() - 1;
+        int length = entries.size();
         for (int i = 0; i < length; i++) {
             PlayerStatistics.Entry entry = entries.get(length - i - 1);
             switch (name) {

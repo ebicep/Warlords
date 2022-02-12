@@ -244,7 +244,10 @@ public class Utils {
         location.setPitch(0);
         Location headLocationForward = location.clone().add(location.getDirection().multiply(1)).add(0, 1, 0);
         Location footLocationForward = location.clone().add(location.getDirection().multiply(1));
-        return location.getWorld().getBlockAt(headLocationForward).getType() != Material.AIR && location.getWorld().getBlockAt(footLocationForward).getType() != Material.AIR;
+        return location.getWorld().getBlockAt(headLocationForward).getType() != Material.AIR &&
+                location.getWorld().getBlockAt(headLocationForward).getType() != Material.WOOD_STEP &&
+                location.getWorld().getBlockAt(headLocationForward).getType() != Material.STEP &&
+                location.getWorld().getBlockAt(footLocationForward).getType() != Material.AIR;
     }
 
     public static boolean isMountableZone(Location location) {
