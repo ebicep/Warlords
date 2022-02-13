@@ -18,7 +18,7 @@ public class HeartToHeart extends AbstractAbility {
     private final int vindDuration = 6;
 
     public HeartToHeart() {
-        super("Heart To Heart", 355, 428, 13, 20, 25, 175);
+        super("Heart To Heart", 0, 0, 13, 20, -1, 100);
     }
 
     @Override
@@ -35,88 +35,86 @@ public class HeartToHeart extends AbstractAbility {
         for (WarlordsPlayer heartTarget : PlayerFilter
                 .entitiesAround(wp, radius, radius, radius)
                 .aliveTeammatesOfExcludingSelf(wp)
+                .requireLineOfSight(wp)
                 .lookingAtFirst(wp)
                 .limit(1)
         ) {
-            if (Utils.isLookingAtMark(player, heartTarget.getEntity()) && Utils.hasLineOfSight(player, heartTarget.getEntity())) {
-
-                for (Player player1 : player.getWorld().getPlayers()) {
-                    player1.playSound(player.getLocation(), "rogue.hearttoheart.activation", 2, 1);
-                    player1.playSound(player.getLocation(), "rogue.hearttoheart.activation.alt", 2, 1.2f);
-                }
-
-                HeartToHeart tempHeartToHeart = new HeartToHeart();
-                wp.subtractEnergy(energyCost);
-
-                // remove other instances of vindicate buff to override
-                heartTarget.getCooldownManager().removeCooldown(HeartToHeart.class);
-                heartTarget.getCooldownManager().addRegularCooldown(
-                        "Vindicate Debuff Immunity",
-                        "VIND",
-                        HeartToHeart.class,
-                        tempHeartToHeart,
-                        wp,
-                        CooldownTypes.BUFF,
-                        cooldownManager -> {},
-                        vindDuration * 20
-                );
-
-                wp.getCooldownManager().removeCooldown(HeartToHeart.class);
-                wp.getCooldownManager().addRegularCooldown(
-                        "Vindicate Debuff Immunity",
-                        "VIND",
-                        HeartToHeart.class,
-                        tempHeartToHeart,
-                        wp,
-                        CooldownTypes.BUFF,
-                        cooldownManager -> {},
-                        vindDuration * 20
-                );
-
-                new BukkitRunnable() {
-
-                    final Location playerLoc = wp.getLocation();
-                    int timer = 0;
-
-                    @Override
-                    public void run() {
-                        timer++;
-
-                        if (timer >= 8 || (heartTarget.isDead() || wp.isDead())) {
-                            this.cancel();
-                        }
-
-                        double target = timer / 8D;
-                        Location targetLoc = heartTarget.getLocation();
-                        Location newLocation = new Location(
-                                playerLoc.getWorld(),
-                                Utils.lerp(playerLoc.getX(), targetLoc.getX(), target),
-                                Utils.lerp(playerLoc.getY(), targetLoc.getY(), target),
-                                Utils.lerp(playerLoc.getZ(), targetLoc.getZ(), target),
-                                targetLoc.getYaw(),
-                                targetLoc.getPitch()
-                        );
-
-                        EffectUtils.playChainAnimation(wp, heartTarget, Material.CLAY, timer);
-
-                        wp.teleportLocationOnly(newLocation);
-                        newLocation.add(0, 1, 0);
-                        Matrix4d center = new Matrix4d(newLocation);
-                        for (float i = 0; i < 6; i++) {
-                            double angle = Math.toRadians(i * 90) + timer * 0.6;
-                            double width = 1.5D;
-                            ParticleEffect.SPELL_WITCH.display(0, 0, 0, 0, 2,
-                                    center.translateVector(playerLoc.getWorld(), 0, Math.sin(angle) * width, Math.cos(angle) * width), 500);
-                        }
-
-                        if (timer >= 8) {
-                            wp.setVelocity(playerLoc.getDirection().multiply(0.4).setY(0.2));
-                        }
-                    }
-                }.runTaskTimer(Warlords.getInstance(), 0, 1);
-
-                return true;
+            for (Player player1 : player.getWorld().getPlayers()) {
+                player1.playSound(player.getLocation(), "rogue.hearttoheart.activation", 2, 1);
+                player1.playSound(player.getLocation(), "rogue.hearttoheart.activation.alt", 2, 1.2f);
             }
+
+            HeartToHeart tempHeartToHeart = new HeartToHeart();
+            wp.subtractEnergy(energyCost);
+
+            // remove other instances of vindicate buff to override
+            heartTarget.getCooldownManager().removeCooldownByName("Vindicate Debuff Immunity");
+            heartTarget.getCooldownManager().addRegularCooldown(
+                    "Vindicate Debuff Immunity",
+                    "VIND",
+                    HeartToHeart.class,
+                    tempHeartToHeart,
+                    wp,
+                    CooldownTypes.BUFF,
+                    cooldownManager -> {},
+                    vindDuration * 20
+            );
+
+            wp.getCooldownManager().removeCooldownByName("Vindicate Debuff Immunity");
+            wp.getCooldownManager().addRegularCooldown(
+                    "Vindicate Debuff Immunity",
+                    "VIND",
+                    HeartToHeart.class,
+                    tempHeartToHeart,
+                    wp,
+                    CooldownTypes.BUFF,
+                    cooldownManager -> {},
+                    vindDuration * 20
+            );
+
+            new BukkitRunnable() {
+
+                final Location playerLoc = wp.getLocation();
+                int timer = 0;
+
+                @Override
+                public void run() {
+                    timer++;
+
+                    if (timer >= 8 || (heartTarget.isDead() || wp.isDead())) {
+                        this.cancel();
+                    }
+
+                    double target = timer / 8D;
+                    Location targetLoc = heartTarget.getLocation();
+                    Location newLocation = new Location(
+                            playerLoc.getWorld(),
+                            Utils.lerp(playerLoc.getX(), targetLoc.getX(), target),
+                            Utils.lerp(playerLoc.getY(), targetLoc.getY(), target),
+                            Utils.lerp(playerLoc.getZ(), targetLoc.getZ(), target),
+                            targetLoc.getYaw(),
+                            targetLoc.getPitch()
+                    );
+
+                    EffectUtils.playChainAnimation(wp, heartTarget, Material.CLAY, timer);
+
+                    wp.teleportLocationOnly(newLocation);
+                    newLocation.add(0, 1, 0);
+                    Matrix4d center = new Matrix4d(newLocation);
+                    for (float i = 0; i < 6; i++) {
+                        double angle = Math.toRadians(i * 90) + timer * 0.6;
+                        double width = 1.5D;
+                        ParticleEffect.SPELL_WITCH.display(0, 0, 0, 0, 2,
+                                center.translateVector(playerLoc.getWorld(), 0, Math.sin(angle) * width, Math.cos(angle) * width), 500);
+                    }
+
+                    if (timer >= 8) {
+                        wp.setVelocity(playerLoc.getDirection().multiply(0.4).setY(0.2));
+                    }
+                }
+            }.runTaskTimer(Warlords.getInstance(), 0, 1);
+
+            return true;
         }
 
         return false;

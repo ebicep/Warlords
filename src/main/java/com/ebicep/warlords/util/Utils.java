@@ -1,9 +1,9 @@
 package com.ebicep.warlords.util;
 
 import com.ebicep.warlords.player.WarlordsPlayer;
-import java.util.*;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.Statistic;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -12,12 +12,16 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Locale;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
-import javax.annotation.Nonnull;
 
 public class Utils {
 
@@ -399,5 +403,17 @@ public class Utils {
 
     public static boolean startsWithIgnoreCase(String str, String prefix) {
         return str.regionMatches(true, 0, prefix, 0, prefix.length());
+    }
+
+    public static void playGlobalSound(@Nonnull Location location, Sound sound, float volume, float pitch) {
+        for (Player p : location.getWorld().getPlayers()) {
+            p.playSound(location, sound, volume, pitch);
+        }
+    }
+
+    public static void playGlobalSound(@Nonnull Location location, String soundString, float volume, float pitch) {
+        for (Player p : location.getWorld().getPlayers()) {
+            p.playSound(location, soundString, volume, pitch);
+        }
     }
 }

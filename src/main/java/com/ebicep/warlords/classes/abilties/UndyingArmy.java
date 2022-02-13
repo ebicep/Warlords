@@ -7,10 +7,6 @@ import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
-import com.ebicep.warlords.util.ItemBuilder;
-import com.ebicep.warlords.util.Matrix4d;
-import com.ebicep.warlords.util.ParticleEffect;
-import com.ebicep.warlords.util.PlayerFilter;
 import com.ebicep.warlords.util.*;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -78,8 +74,24 @@ public class UndyingArmy extends AbstractAbility {
         ) {
             tempUndyingArmy.getPlayersPopped().put(teammate.getUuid(), false);
             if (teammate != wp) {
-                wp.sendMessage("§a\u00BB§7 " + ChatColor.GRAY + "Your " + ChatColor.YELLOW + "Undying Army" + ChatColor.GRAY + " is now protecting " + teammate.getName() + ChatColor.GRAY + ".");
-                teammate.sendMessage("§a\u00BB§7 " + ChatColor.GRAY + wp.getName() + "'s " + ChatColor.YELLOW + "Undying Army" + ChatColor.GRAY + " is now protecting you for " + ChatColor.GOLD + duration + ChatColor.GRAY + " seconds.");
+                wp.sendMessage(
+                    WarlordsPlayer.RECEIVE_ARROW +
+                    ChatColor.GRAY + " Your " +
+                    ChatColor.YELLOW + "Undying Army" +
+                    ChatColor.GRAY + " is now protecting " +
+                    teammate.getName() +
+                    ChatColor.GRAY + "."
+                );
+
+                teammate.sendMessage(
+                    WarlordsPlayer.RECEIVE_ARROW +
+                    ChatColor.GRAY + " " +
+                    ChatColor.GRAY + wp.getName() + "'s " +
+                    ChatColor.YELLOW + "Undying Army" +
+                    ChatColor.GRAY + " is now protecting you for " +
+                    ChatColor.GOLD + duration +
+                    ChatColor.GRAY + " seconds."
+                );
             }
             teammate.getCooldownManager().addRegularCooldown(name, "ARMY", UndyingArmy.class, tempUndyingArmy, wp, CooldownTypes.ABILITY, cooldownManager -> {
             }, duration * 20);
@@ -92,9 +104,7 @@ public class UndyingArmy extends AbstractAbility {
                             if (!(optionalUndyingArmy.get()).isArmyDead(teammate.getUuid())) {
                                 float healAmount = 100 + (teammate.getMaxHealth() - teammate.getHealth()) * 0.035f;
                                 teammate.addHealingInstance(wp, name, healAmount, healAmount, -1, 100, false, false);
-                                if (wp.getEntity() instanceof Player) {
-                                    ((Player) wp.getEntity()).playSound(teammate.getLocation(), "paladin.holyradiance.activation", 0.15f, 0.7f);
-                                }
+                                teammate.playSound(teammate.getLocation(), "paladin.holyradiance.activation", 0.15f, 0.7f);
 
                                 // particles
                                 Location playerLoc = teammate.getLocation();

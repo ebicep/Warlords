@@ -541,7 +541,7 @@ public class Warlords extends JavaPlugin {
                         }
 
                         // Checks whether the player has Vindicate active.
-                        if (wp.getCooldownManager().hasCooldown(Vindicate.class)) {
+                        if (wp.getCooldownManager().hasCooldownFromName("Vindicate Debuff Immunity")) {
                             wp.getSpeed().removeSlownessModifiers();
                             wp.getCooldownManager().removeDebuffCooldowns();
                         }

@@ -3,11 +3,11 @@ package com.ebicep.warlords.classes.abilties;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
+import com.ebicep.warlords.util.EffectUtils;
 import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -19,6 +19,7 @@ public class RemedicChains extends AbstractAbility {
     private final int linkBreakRadius = 15;
     private final int duration = 8;
     private final int alliesAffected = 3;
+    private final float healingMultiplier = 0.125f;
 
     public RemedicChains() {
         super("Remedic Chains", 643, 770, 16, 40, 20, 200);
@@ -107,17 +108,11 @@ public class RemedicChains extends AbstractAbility {
 
                     if (counter % 8 == 0) {
                         if (wp.getCooldownManager().hasCooldown(tempRemedicChain)) {
-                            Location lineLocation = wp.getLocation().add(0, 1, 0);
-                            lineLocation.setDirection(lineLocation.toVector().subtract(chainTarget.getLocation().add(0, 1, 0).toVector()).multiply(-1));
-                            for (int i = 0; i < Math.floor(wp.getLocation().distance(chainTarget.getLocation())) * 2; i++) {
-                                ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(250, 200, 250), lineLocation, 500);
-                                lineLocation.add(lineLocation.getDirection().multiply(0.5));
-                            }
+                            EffectUtils.playParticleLinkAnimation(wp.getLocation(), chainTarget.getLocation(), 250, 200, 250);
 
                             // Ally is out of range, break link
                             if (outOfRange) {
                                 for (Map.Entry<WarlordsPlayer, Integer> entry : timeLinked.entrySet()) {
-                                    float healingMultiplier = 0.125f;
                                     float totalHealingMultiplier = (healingMultiplier * entry.getValue());
                                     entry.getKey().addHealingInstance(
                                             wp,

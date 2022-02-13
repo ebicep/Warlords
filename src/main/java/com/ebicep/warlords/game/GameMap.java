@@ -1,9 +1,9 @@
 package com.ebicep.warlords.game;
 
 import com.ebicep.warlords.game.option.*;
+import com.ebicep.warlords.game.option.PowerupOption.PowerupType;
 import com.ebicep.warlords.game.option.marker.LobbyLocationMarker;
 import com.ebicep.warlords.game.option.marker.TeamMarker;
-import com.ebicep.warlords.game.option.PowerupOption.PowerupType;
 import com.ebicep.warlords.game.state.PreLobbyState;
 import com.ebicep.warlords.game.state.State;
 import com.ebicep.warlords.util.LocationFactory;
@@ -126,11 +126,11 @@ public enum GameMap {
             options.add(new GateOption(loc, -9, 19, 5, -19, 26, -5));
             options.add(new GateOption(loc, 39, 39, 57, 49, 49, 67));
 
-            options.add(new WinByPointsOption(300));
+            options.add(new WinByPointsOption(500));
             options.add(new MercyWinOption());
             options.add(new WinAfterTimeoutOption());
             options.add(new ScoreOnEventOption.FlagReturn());
-            options.add(new ScoreOnEventOption.FlagHolding());
+            options.add(new ScoreOnEventOption.FlagHolding(2));
             options.add(new SimulationTeleportOption());
             options.add(new RespawnWaveOption());
             options.add(new RespawnProtectionOption());
@@ -414,150 +414,6 @@ public enum GameMap {
             options.add(new GameOvertimeOption());
             options.add(new ScoreOnEventOption.FlagCapture());
             options.add(new ScoreOnEventOption.OnKill());
-            options.add(new RespawnWaveOption());
-            options.add(new RespawnProtectionOption());
-            options.add(new GraveOption());
-
-            options.add(new BasicScoreboardOption());
-            options.add(new BoundingBoxOption(loc.getWorld()));
-
-            return options;
-        }
-
-    },
-    SIEGE(
-            "Siege",
-            28,
-            10,
-            60 * SECOND,
-            "",
-            MapCategory.TEAM_DEATHMATCH
-    ) {
-        @Override
-        public List<Option> initMap(MapCategory category, LocationFactory loc, EnumSet<GameAddon> addons) {
-            List<Option> options = category.initMap(this, loc, addons);
-            options.add(new MarkerOption(
-                    TeamMarker.create(Team.BLUE, Team.RED),
-                    LobbyLocationMarker.create(loc.addXYZ(-22.5, 39, -83.5).yaw(180), Team.BLUE),
-                    LobbyLocationMarker.create(loc.addXYZ(23.5, 39, 83.5), Team.RED)
-            ));
-            options.add(new PowerupOption(loc.addXYZ(5.5, 15.5, -33.5), PowerupType.ENERGY));
-            options.add(new PowerupOption(loc.addXYZ(-4.5, 15.5, 34.5), PowerupType.ENERGY));
-
-            options.add(new PowerupOption(loc.addXYZ(4.5, 25.5, -86.5), PowerupType.SPEED));
-            options.add(new PowerupOption(loc.addXYZ(-3.5, 25.5, 87.5), PowerupType.SPEED));
-
-            options.add(new PowerupOption(loc.addXYZ(57.5, 15.5, 1.5), PowerupType.HEALING));
-            options.add(new PowerupOption(loc.addXYZ(-56.5, 15.5, -0.5), PowerupType.HEALING));
-
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(39.5, 28.5, -97.5), Team.BLUE));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(-38.5, 28.5, 97.5), Team.RED));
-
-            options.add(new GateOption(loc.addXYZ(-26, 33, -96), loc.addXYZ(-19, 40, -96)));
-            options.add(new GateOption(loc.addXYZ(-28, 31, -81), loc.addXYZ(-28, 41, -75)));
-            options.add(new GateOption(loc.addXYZ(20, 33, 96), loc.addXYZ(26, 42, 96)));
-            options.add(new GateOption(loc.addXYZ(29, 31, 76), loc.addXYZ(29, 41, 82)));
-
-            options.add(new WinByPointsOption());
-            options.add(new MercyWinOption());
-            options.add(new WinAfterTimeoutOption());
-            options.add(new ScoreOnEventOption.OnKill(15));
-            options.add(new RespawnWaveOption());
-            options.add(new RespawnProtectionOption());
-            options.add(new GraveOption());
-
-            options.add(new BasicScoreboardOption());
-            options.add(new BoundingBoxOption(loc.getWorld()));
-
-            return options;
-        }
-
-    },
-    FALSTAD_GATE(
-            "Falstad Gate",
-            28,
-            10,
-            60 * SECOND,
-            "",
-            MapCategory.TEAM_DEATHMATCH
-    ) {
-        @Override
-        public List<Option> initMap(MapCategory category, LocationFactory loc, EnumSet<GameAddon> addons) {
-            List<Option> options = category.initMap(this, loc, addons);
-            options.add(new MarkerOption(
-                    TeamMarker.create(Team.BLUE, Team.RED),
-                    LobbyLocationMarker.create(loc.addXYZ(-22.5, 39, -83.5).yaw(180), Team.BLUE),
-                    LobbyLocationMarker.create(loc.addXYZ(23.5, 39, 83.5), Team.RED)
-            ));
-            options.add(new PowerupOption(loc.addXYZ(5.5, 15.5, -33.5), PowerupType.ENERGY));
-            options.add(new PowerupOption(loc.addXYZ(-4.5, 15.5, 34.5), PowerupType.ENERGY));
-
-            options.add(new PowerupOption(loc.addXYZ(4.5, 25.5, -86.5), PowerupType.SPEED));
-            options.add(new PowerupOption(loc.addXYZ(-3.5, 25.5, 87.5), PowerupType.SPEED));
-
-            options.add(new PowerupOption(loc.addXYZ(57.5, 15.5, 1.5), PowerupType.HEALING));
-            options.add(new PowerupOption(loc.addXYZ(-56.5, 15.5, -0.5), PowerupType.HEALING));
-
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(39.5, 28.5, -97.5), Team.BLUE));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(-38.5, 28.5, 97.5), Team.RED));
-
-            options.add(new GateOption(loc.addXYZ(-26, 33, -96), loc.addXYZ(-19, 40, -96)));
-            options.add(new GateOption(loc.addXYZ(-28, 31, -81), loc.addXYZ(-28, 41, -75)));
-            options.add(new GateOption(loc.addXYZ(20, 33, 96), loc.addXYZ(26, 42, 96)));
-            options.add(new GateOption(loc.addXYZ(29, 31, 76), loc.addXYZ(29, 41, 82)));
-
-            options.add(new WinByPointsOption());
-            options.add(new MercyWinOption());
-            options.add(new WinAfterTimeoutOption());
-            options.add(new ScoreOnEventOption.OnKill(15));
-            options.add(new RespawnWaveOption());
-            options.add(new RespawnProtectionOption());
-            options.add(new GraveOption());
-
-            options.add(new BasicScoreboardOption());
-            options.add(new BoundingBoxOption(loc.getWorld()));
-
-            return options;
-        }
-
-    },
-    BLACK_TEMPLE(
-            "Black Temple",
-            28,
-            10,
-            60 * SECOND,
-            "",
-            MapCategory.TEAM_DEATHMATCH
-    ) {
-        @Override
-        public List<Option> initMap(MapCategory category, LocationFactory loc, EnumSet<GameAddon> addons) {
-            List<Option> options = category.initMap(this, loc, addons);
-            options.add(new MarkerOption(
-                    TeamMarker.create(Team.BLUE, Team.RED),
-                    LobbyLocationMarker.create(loc.addXYZ(-22.5, 39, -83.5).yaw(180), Team.BLUE),
-                    LobbyLocationMarker.create(loc.addXYZ(23.5, 39, 83.5), Team.RED)
-            ));
-            options.add(new PowerupOption(loc.addXYZ(5.5, 15.5, -33.5), PowerupType.ENERGY));
-            options.add(new PowerupOption(loc.addXYZ(-4.5, 15.5, 34.5), PowerupType.ENERGY));
-
-            options.add(new PowerupOption(loc.addXYZ(4.5, 25.5, -86.5), PowerupType.SPEED));
-            options.add(new PowerupOption(loc.addXYZ(-3.5, 25.5, 87.5), PowerupType.SPEED));
-
-            options.add(new PowerupOption(loc.addXYZ(57.5, 15.5, 1.5), PowerupType.HEALING));
-            options.add(new PowerupOption(loc.addXYZ(-56.5, 15.5, -0.5), PowerupType.HEALING));
-
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(39.5, 28.5, -97.5), Team.BLUE));
-            options.add(SpawnpointOption.forTeam(loc.addXYZ(-38.5, 28.5, 97.5), Team.RED));
-
-            options.add(new GateOption(loc.addXYZ(-26, 33, -96), loc.addXYZ(-19, 40, -96)));
-            options.add(new GateOption(loc.addXYZ(-28, 31, -81), loc.addXYZ(-28, 41, -75)));
-            options.add(new GateOption(loc.addXYZ(20, 33, 96), loc.addXYZ(26, 42, 96)));
-            options.add(new GateOption(loc.addXYZ(29, 31, 76), loc.addXYZ(29, 41, 82)));
-
-            options.add(new WinByPointsOption());
-            options.add(new MercyWinOption());
-            options.add(new WinAfterTimeoutOption());
-            options.add(new ScoreOnEventOption.OnKill(15));
             options.add(new RespawnWaveOption());
             options.add(new RespawnProtectionOption());
             options.add(new GraveOption());

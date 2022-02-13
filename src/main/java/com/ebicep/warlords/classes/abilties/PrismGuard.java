@@ -8,7 +8,7 @@ import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
-import org.bukkit.Location;
+import com.ebicep.warlords.util.Utils;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
@@ -18,23 +18,22 @@ import java.util.Map;
 
 import static com.ebicep.warlords.util.EffectUtils.playSphereAnimation;
 
-public class WideGuard extends AbstractAbility {
+public class PrismGuard extends AbstractAbility {
 
     public static final int BUBBLE_RADIUS = 4;
 
-    public WideGuard() {
-        super("Wide Guard", 0, 0, 23, 40, -1, 100);
+    public PrismGuard() {
+        super("Prism Guard", 0, 0, 22, 40, -1, 100);
     }
 
     @Override
     public void updateDescription(Player player) {
         description = "§7Create a bubble shield around you that\n" +
                 "§7lasts §64 §7seconds. All projectiles that pass through\n" +
-                "§7the barrier have their damage reduced by §c70%§7.\n" +
-                "§7(scales down with the amount of allies inside\n" +
-                "§7the bubble. Minimum §c20%§7.) " +
+                "§7the barrier have their damage reduced by §c75%§7.\n" +
+                "§7(§c25% §7for all other attacks.)" +
                 "\n\n" +
-                "§7After §64 §7seconds, the bubble will burst healing\n" +
+                "§7After §64 §7seconds the bubble will burst, healing\n" +
                 "§7all allies for up to §a600 §7+ §a20% §7missing health\n" +
                 "§7based on how long they've been in the bubble.\n";
     }
@@ -42,18 +41,17 @@ public class WideGuard extends AbstractAbility {
     @Override
     public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
         wp.subtractEnergy(energyCost);
-        WideGuard tempWideGuard = new WideGuard();
+        PrismGuard tempWideGuard = new PrismGuard();
         wp.getCooldownManager().addRegularCooldown(
-                "Wide Guard",
+                "Prism Guard",
                 "GUARD",
-                WideGuard.class,
+                PrismGuard.class,
                 tempWideGuard,
                 wp,
                 CooldownTypes.ABILITY,
                 cooldownManager -> {},
                 4 * 20
         );
-        //wp.getCooldownManager().addCooldown("Reflection Shield", this.getClass(), WideGuard.class, "", 4, wp, CooldownTypes.ABILITY);
 
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(wp.getLocation(), "mage.timewarp.teleport", 2, 2);
@@ -82,34 +80,27 @@ public class WideGuard extends AbstractAbility {
             @Override
             public void run() {
                 if (wp.getCooldownManager().hasCooldown(tempWideGuard)) {
-                    Location particleLoc = wp.getLocation();
-                    particleLoc.add(0, 1, 0);
-
-                    ParticleEffect.ENCHANTMENT_TABLE.display(0.2F, 0F, 0.2F, 0.1F, 1, particleLoc, 500);
 
                     playSphereAnimation(wp.getLocation(), BUBBLE_RADIUS, 190, 190, 190);
-
-                    for (Player player1 : wp.getWorld().getPlayers()) {
-                        player1.playSound(wp.getLocation(), Sound.CREEPER_DEATH, 2, 2);
-                    }
-
+                    Utils.playGlobalSound(wp.getLocation(), Sound.CREEPER_DEATH, 2, 2);
                     timeInBubble.compute(wp, (k, v) -> v == null ? 1 : v + 1);
 
-                    PlayerFilter.entitiesAround(particleLoc, BUBBLE_RADIUS, BUBBLE_RADIUS, BUBBLE_RADIUS)
+                    for (WarlordsPlayer bubblePlayer : PlayerFilter
+                            .entitiesAround(wp, BUBBLE_RADIUS, BUBBLE_RADIUS, BUBBLE_RADIUS)
                             .aliveTeammatesOfExcludingSelf(wp)
-                            .forEach(playerInsideBubble -> {
-                                playerInsideBubble.getCooldownManager().removeCooldown(WideGuard.class);
-                                playerInsideBubble.getCooldownManager().addRegularCooldown(
-                                        "Wide Guard",
-                                        "GUARD",
-                                        WideGuard.class,
-                                        tempWideGuard,
-                                        wp,
-                                        CooldownTypes.ABILITY,
-                                        cooldownManager -> {},
-                                        20);
-                                timeInBubble.compute(playerInsideBubble, (k, v) -> v == null ? 1 : v + 1);
-                            });
+                    ) {
+                        bubblePlayer.getCooldownManager().removeCooldown(PrismGuard.class);
+                        bubblePlayer.getCooldownManager().addRegularCooldown(
+                                "Wide Guard",
+                                "GUARD",
+                                PrismGuard.class,
+                                tempWideGuard,
+                                wp,
+                                CooldownTypes.ABILITY,
+                                cooldownManager -> {},
+                                20);
+                        timeInBubble.compute(bubblePlayer, (k, v) -> v == null ? 1 : v + 1);
+                    }
                 } else {
                     this.cancel();
 
@@ -123,10 +114,19 @@ public class WideGuard extends AbstractAbility {
                         float healingValue = 150 + (entry.getKey().getMaxHealth() - entry.getKey().getHealth()) * 0.05f;
                         int timeInSeconds = entry.getValue() * 4 / 20;
                         float totalHealing = (timeInSeconds * healingValue);
-                        entry.getKey().addHealingInstance(wp, name, totalHealing, totalHealing, -1, 100, false, false);
+                        entry.getKey().addHealingInstance(
+                                wp,
+                                name,
+                                totalHealing,
+                                totalHealing,
+                                -1,
+                                100,
+                                false,
+                                false
+                        );
                     }
 
-                    CircleEffect circle = new CircleEffect(wp.getGame(), wp.getTeam(), wp.getLocation(), 4);
+                    CircleEffect circle = new CircleEffect(wp.getGame(), wp.getTeam(), wp.getLocation(), BUBBLE_RADIUS);
                     circle.addEffect(new CircumferenceEffect(ParticleEffect.SPELL).particlesPerCircumference(2));
                     circle.playEffects();
                 }

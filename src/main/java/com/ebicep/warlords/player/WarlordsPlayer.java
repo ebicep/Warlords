@@ -5,6 +5,7 @@ import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.classes.AbstractPlayerClass;
 import com.ebicep.warlords.classes.abilties.*;
+import com.ebicep.warlords.classes.rogue.specs.vindicator.Vindicator;
 import com.ebicep.warlords.classes.shaman.specs.spiritguard.Spiritguard;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
@@ -427,15 +428,18 @@ public final class WarlordsPlayer {
                         damageValue *= .75;
                     }
 
-                    if (cooldownManager.hasCooldownFromName("Wide Guard")) {
+                    if (cooldownManager.hasCooldownFromName("Prism Guard")) {
                         if (
                             ability.equals("Fireball") ||
                             ability.equals("Frostbolt") ||
                             ability.equals("Water Bolt") ||
                             ability.equals("Lightning Bolt") ||
-                            ability.equals("Flame Burst")
+                            ability.equals("Flame Burst") ||
+                            ability.equals("Fallen Souls")
                         ) {
-                            damageValue *= .3;
+                            damageValue *= .25;
+                        } else {
+                            damageValue *= .75;
                         }
                     }
                 }
@@ -554,6 +558,10 @@ public final class WarlordsPlayer {
 
                     sendDamageMessage(attacker, this, ability, damageValue, isCrit, isMeleeHit);
 
+                    if (spec instanceof Vindicator) {
+                        ((SoulShackle) spec.getRed()).addToAbsorbPool(damageValue);
+                    }
+
                     // Repentance
                     if (spec instanceof Spiritguard) {
                         ((Repentance) spec.getBlue()).addToPool(damageValue);
@@ -657,7 +665,6 @@ public final class WarlordsPlayer {
                         ((Player) attacker.entity).playSound(attacker.getLocation(), Sound.ORB_PICKUP, 500f, 1);
                         ((Player) attacker.entity).playSound(attacker.getLocation(), Sound.ORB_PICKUP, 500f, 0.5f);
                     }
-
 
                     attacker.addKill();
 
@@ -1619,6 +1626,18 @@ public final class WarlordsPlayer {
         }
     }
 
+    public void playSound(Location location, Sound sound, float volume, float pitch) {
+        if (this.entity instanceof Player) {
+            ((Player) this.entity).playSound(location, sound, volume, pitch);
+        }
+    }
+
+    public void playSound(Location location, String soundString, float volume, float pitch) {
+        if (this.entity instanceof Player) {
+            ((Player) this.entity).playSound(location, soundString, volume, pitch);
+        }
+    }
+
     public float getMaxEnergy() {
         return maxEnergy;
     }
@@ -1978,6 +1997,9 @@ public final class WarlordsPlayer {
         if (cooldownManager.hasCooldownFromName("KB Resistance")) {
             v.multiply(0.75);
         }
+        if (cooldownManager.hasCooldownFromName("Vindicate Debuff Immunity")) {
+            v.multiply(0.75);
+        }
         if (cooldownManager.hasCooldownFromName("KB Increase")) {
             v.multiply(1.5);
         }
@@ -1988,6 +2010,9 @@ public final class WarlordsPlayer {
     public void setVelocity(org.bukkit.util.Vector v, boolean kbAfterHorse) {
         if ((kbAfterHorse || this.entity.getVehicle() == null)) {
             if (cooldownManager.hasCooldownFromName("KB Resistance")) {
+                v.multiply(0.75);
+            }
+            if (cooldownManager.hasCooldownFromName("Vindicate Debuff Immunity")) {
                 v.multiply(0.75);
             }
             if (cooldownManager.hasCooldownFromName("KB Increase")) {
@@ -2006,8 +2031,6 @@ public final class WarlordsPlayer {
         if (((kbAfterHorse && this.entity.getVehicle() != null) || (!kbAfterHorse && this.entity.getVehicle() == null))) {
             if (cooldownManager.hasCooldownFromName("KB Resistance")) {
                 this.entity.setVelocity((to.toVector().subtract(from.toVector()).normalize().multiply(multipliedBy).setY(y)).multiply(.75));
-            } else if (cooldownManager.hasCooldownFromName("KB Increase")) {
-                this.entity.setVelocity((to.toVector().subtract(from.toVector()).normalize().multiply(multipliedBy).setY(y)).multiply(1.5));
             } else {
                 this.entity.setVelocity(to.toVector().subtract(from.toVector()).normalize().multiply(multipliedBy).setY(y));
             }

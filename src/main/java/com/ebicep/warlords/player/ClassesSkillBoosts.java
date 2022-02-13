@@ -249,11 +249,15 @@ public enum ClassesSkillBoosts {
             }
     ),
     INTERVENE("Intervene",
-            "§7Reduce the cooldown of Intervene\n§7by 10%",
-            "§aReduce the cooldown of Intervene\n§aby §c10%",
+            "§7Increase the cast and break radius\n§7of Intervene by 2 blocks and increase\n§7the max amount of damage you can\n§7absorb by 400",
+            "§aIncrease the cast and break radius\n§aof Intervene by §c2 §ablocks and increase\n§athe max amount of damage you can\n§aabsorb by §c400",
             Intervene.class,
             abstractAbility -> {
-                abstractAbility.setCooldown(abstractAbility.getCooldown() * .9f);
+                if (abstractAbility instanceof Intervene) {
+                    ((Intervene) abstractAbility).setMaxDamagePrevented(4000);
+                    ((Intervene) abstractAbility).setRadius(12);
+                    ((Intervene) abstractAbility).setBreakRadius(17);
+                }
             }
     ),
     LAST_STAND("Last Stand",
