@@ -363,16 +363,20 @@ public class WarlordsEvents implements Listener {
                 .pitch(livingEntity.getLocation().getPitch())
                 .yaw(livingEntity.getLocation().getYaw());
         e.getVehicle().remove();
-//        try {
-//            e.getExited().teleport(location);
-//        } catch (StackOverflowError error) {
-//            //System.out.println("OVERFLOW");
-//        }
+        try {
+            e.getExited().teleport(location);
+        } catch (StackOverflowError error) {
+            //System.out.println("OVERFLOW");
+        }
     }
 
     @EventHandler
     public void onPlayerTeleport(PlayerTeleportEvent e) {
         if (e.getCause() == PlayerTeleportEvent.TeleportCause.UNKNOWN) {
+            WarlordsPlayer warlordsPlayer = Warlords.getPlayer(e.getPlayer().getUniqueId());
+            if (warlordsPlayer == null) {
+                return;
+            }
             if (e.getPlayer().getGameMode() == GameMode.SPECTATOR) {
                 e.setCancelled(true);
                 e.getPlayer().setSpectatorTarget(null);

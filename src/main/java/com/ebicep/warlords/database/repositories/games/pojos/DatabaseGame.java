@@ -427,20 +427,22 @@ public class DatabaseGame {
         DatabasePlayer databasePlayerWeekly = DatabaseManager.playerService.findByUUID(UUID.fromString(gamePlayer.getUuid()), PlayersCollections.WEEKLY);
         DatabasePlayer databasePlayerDaily = DatabaseManager.playerService.findByUUID(UUID.fromString(gamePlayer.getUuid()), PlayersCollections.DAILY);
 
-        if (databasePlayerAllTime != null)
+        if (databasePlayerAllTime != null) {
             updatePlayerStats(databaseGame, add, gamePlayer, databasePlayerAllTime, blue);
-        else throw new NullPointerException(gamePlayer.getName() + " was not found in ALL_TIME");
-        if (databasePlayerSeason != null) updatePlayerStats(databaseGame, add, gamePlayer, databasePlayerSeason, blue);
-        else throw new NullPointerException(gamePlayer.getName() + " was not found in SEASON");
-        if (databasePlayerWeekly != null) updatePlayerStats(databaseGame, add, gamePlayer, databasePlayerWeekly, blue);
-        else throw new NullPointerException(gamePlayer.getName() + " was not found in WEEKLY");
-        if (databasePlayerDaily != null) updatePlayerStats(databaseGame, add, gamePlayer, databasePlayerDaily, blue);
-        else throw new NullPointerException(gamePlayer.getName() + " was not found in DAILY");
-
-        DatabaseManager.updatePlayerAsync(databasePlayerAllTime);
-        DatabaseManager.updatePlayerAsync(databasePlayerSeason, PlayersCollections.SEASON_5);
-        DatabaseManager.updatePlayerAsync(databasePlayerWeekly, PlayersCollections.WEEKLY);
-        DatabaseManager.updatePlayerAsync(databasePlayerDaily, PlayersCollections.DAILY);
+            DatabaseManager.updatePlayerAsync(databasePlayerAllTime);
+        } else System.out.println("WARNING - " + gamePlayer.getName() + " was not found in ALL_TIME");
+        if (databasePlayerSeason != null) {
+            updatePlayerStats(databaseGame, add, gamePlayer, databasePlayerSeason, blue);
+            DatabaseManager.updatePlayerAsync(databasePlayerSeason, PlayersCollections.SEASON_5);
+        } else System.out.println("WARNING - " + gamePlayer.getName() + " was not found in SEASON");
+        if (databasePlayerWeekly != null) {
+            updatePlayerStats(databaseGame, add, gamePlayer, databasePlayerWeekly, blue);
+            DatabaseManager.updatePlayerAsync(databasePlayerWeekly, PlayersCollections.WEEKLY);
+        } else System.out.println("WARNING - " + gamePlayer.getName() + " was not found in WEEKLY");
+        if (databasePlayerDaily != null) {
+            updatePlayerStats(databaseGame, add, gamePlayer, databasePlayerDaily, blue);
+            DatabaseManager.updatePlayerAsync(databasePlayerDaily, PlayersCollections.DAILY);
+        } else System.out.println("WARNING - " + gamePlayer.getName() + " was not found in DAILY");
     }
 
     private static void updatePlayerStats(DatabaseGame databaseGame, boolean add, DatabaseGamePlayers.GamePlayer gamePlayer, DatabasePlayer databasePlayer, boolean checkBlueWin) {
