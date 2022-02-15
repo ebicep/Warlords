@@ -364,7 +364,7 @@ public enum ClassesSkillBoosts {
     HOLY_RADIANCE_AVENGER("Holy Radiance",
             "§7Reduce the cooldown of Holy Radiance\n§7by 40%",
             "§aReduce the cooldown of Holy Radiance\n§aby §c40%",
-            HolyRadiance.class,
+            HolyRadianceAvenger.class,
             abstractAbility -> {
                 abstractAbility.setCooldown(abstractAbility.getCooldown() * .6f);
             }

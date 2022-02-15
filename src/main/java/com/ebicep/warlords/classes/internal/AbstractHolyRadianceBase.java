@@ -1,4 +1,4 @@
-package com.ebicep.warlords.classes.abilties;
+package com.ebicep.warlords.classes.internal;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
@@ -11,23 +11,22 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
-public class HolyRadiance extends AbstractAbility {
+import javax.annotation.Nonnull;
 
-    private final int radius = 6;
+public abstract class AbstractHolyRadianceBase extends AbstractAbility {
 
-    public HolyRadiance(float minDamageHeal, float maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier) {
-        super("Holy Radiance", minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
+    private final int radius;
+
+    public AbstractHolyRadianceBase(String name, float minDamageHeal, float maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier, int radius) {
+        super(name, minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
+        this.radius = radius;
     }
 
-    @Override
-    public void updateDescription(Player player) {
-        description = "§7Radiate with holy energy, healing\n" +
-                "§7yourself and all nearby allies for\n" +
-                "§a" + format(minDamageHeal) + " §7- §a" + format(maxDamageHeal) + " §7health.";
-    }
+    public abstract void chain(WarlordsPlayer wp, Player player);
 
     @Override
-    public boolean onActivate(WarlordsPlayer wp, Player player) {
+    public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
+        chain(wp, player);
 
         wp.subtractEnergy(energyCost);
         for (WarlordsPlayer p : PlayerFilter
@@ -93,11 +92,11 @@ public class HolyRadiance extends AbstractAbility {
                 Location armorStandLocation = armorStand.getLocation();
                 double distance = targetLocation.distanceSquared(armorStandLocation);
 
-            if (distance < speed * speed) {
-                target.addHealingInstance(owner, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false, false);
-                this.cancel();
-                return;
-            }
+                if (distance < speed * speed) {
+                    target.addHealingInstance(owner, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false, false);
+                    this.cancel();
+                    return;
+                }
 
                 targetLocation.subtract(armorStandLocation);
                 //System.out.println(Math.max(speed * 3.25 / targetLocation.lengthSquared() / 2, speed / 10));
