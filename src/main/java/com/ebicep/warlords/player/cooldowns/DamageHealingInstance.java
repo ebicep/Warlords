@@ -1,19 +1,33 @@
 package com.ebicep.warlords.player.cooldowns;
 
 import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.player.WarlordsPlayer;
 
 public interface DamageHealingInstance {
 
+    /**
+     * if true, only the methods of the first cooldown is applied, the rest are skipped,
+     * checks based on class and name
+     */
+    default boolean distinct() {
+        return false;
+    }
+
+    /**
+     * boolean if damageheal instance is healing
+     */
     default boolean isHealing() {
         return false;
     }
 
     //HEALING
 
-    default float doBeforeHeal(WarlordsDamageHealingEvent event, float currentHealValue) {
+    /**
+     * Done before any healing is done to players
+     */
+    default float doBeforeHealFromSelf(WarlordsDamageHealingEvent event, float currentHealValue) {
         return currentHealValue;
     }
+
 
     //DAMAGE
 
@@ -60,4 +74,33 @@ public interface DamageHealingInstance {
         return currentDamageValue;
     }
 
+    /**
+     * Called after when the player takes shield damage - based on self cooldowns
+     */
+    default void onShield(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+    }
+
+    /**
+     * Called after all damage modifications - based on self cooldowns
+     */
+    default void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+    }
+
+    /**
+     * Called after all damage modifications - based on attackers cooldowns
+     */
+    default void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+    }
+
+    /**
+     * Called at the end of damage instance - based on self cooldowns
+     */
+    default void onEndFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+    }
+
+    /**
+     * Called at the end of damage instance - based on attackers cooldowns
+     */
+    default void onEndFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+    }
 }

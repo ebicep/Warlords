@@ -2,8 +2,8 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
-import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.Matrix4d;
 import com.ebicep.warlords.util.ParticleEffect;
@@ -55,7 +55,8 @@ public class LastStand extends AbstractAbility {
                 tempLastStand,
                 wp,
                 CooldownTypes.BUFF,
-                cooldownManager -> { },
+                cooldownManager -> {
+                },
                 selfDuration * 20
         ) {
             @Override
@@ -80,12 +81,25 @@ public class LastStand extends AbstractAbility {
                             tempLastStand,
                             wp,
                             CooldownTypes.BUFF,
-                            cooldownManager -> { },
+                            cooldownManager -> {
+                            },
                             allyDuration * 20
                     ) {
                         @Override
                         public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                             return currentDamageValue * getTeammateDamageReduction();
+                        }
+
+                        @Override
+                        public void onShield(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                            wp.addAbsorbed(currentDamageValue);
+                            wp.addHealingInstance(wp, "Last Stand", currentDamageValue, currentDamageValue, isCrit ? 100 : -1, 100, false, true);
+                        }
+
+                        @Override
+                        public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                            wp.addAbsorbed(currentDamageValue);
+                            wp.addHealingInstance(wp, "Last Stand", currentDamageValue, currentDamageValue, isCrit ? 100 : -1, 100, false, false);
                         }
                     });
                     player.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " Your Last Stand is now protecting " + ChatColor.YELLOW + nearPlayer.getName() + ChatColor.GRAY + "!");

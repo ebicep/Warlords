@@ -44,14 +44,15 @@ public class PrismGuard extends AbstractAbility {
     public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
         wp.subtractEnergy(energyCost);
         PrismGuard tempWideGuard = new PrismGuard();
-        wp.getCooldownManager().addCooldown(new RegularCooldown<WideGuard>(
+        wp.getCooldownManager().addCooldown(new RegularCooldown<PrismGuard>(
                 "Prism Guard",
                 "GUARD",
                 PrismGuard.class,
                 tempWideGuard,
                 wp,
                 CooldownTypes.ABILITY,
-                cooldownManager -> {},
+                cooldownManager -> {
+                },
                 4 * 20
         ) {
             @Override
@@ -107,7 +108,7 @@ public class PrismGuard extends AbstractAbility {
                             .aliveTeammatesOfExcludingSelf(wp)
                     ) {
                         bubblePlayer.getCooldownManager().removeCooldown(PrismGuard.class);
-                        bubblePlayer.getCooldownManager().addCooldown(new RegularCooldown<WideGuard>(
+                        bubblePlayer.getCooldownManager().addCooldown(new RegularCooldown<PrismGuard>(
                                 "Wide Guard",
                                 "GUARD",
                                 PrismGuard.class,
@@ -116,8 +117,8 @@ public class PrismGuard extends AbstractAbility {
                                 CooldownTypes.ABILITY,
                                 cooldownManager -> {
                                 },
-                                        4 * 20
-                                ) {
+                                4 * 20
+                        ) {
                                     @Override
                                     public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
                                         String ability = event.getAbility();

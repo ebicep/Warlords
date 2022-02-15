@@ -8,12 +8,17 @@ import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.Utils;
+import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import javax.annotation.Nonnull;
+
+import java.util.UUID;
+
+import static com.ebicep.warlords.player.WarlordsPlayer.RECEIVE_ARROW;
 
 public class OrderOfEviscerate extends AbstractAbility {
 
@@ -63,6 +68,16 @@ public class OrderOfEviscerate extends AbstractAbility {
                     return 100;
                 }
                 return currentCritChance;
+            }
+
+            @Override
+            public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                WarlordsPlayer attacker = event.getAttacker();
+                WarlordsPlayer victim = event.getPlayer();
+                if (attacker.getMarkedTarget() != victim.getUuid()) {
+                    attacker.sendMessage(RECEIVE_ARROW + ChatColor.GRAY + " You have marked §e" + victim.getName());
+                }
+                attacker.setMarkedTarget(victim.getUuid());
             }
         });
 

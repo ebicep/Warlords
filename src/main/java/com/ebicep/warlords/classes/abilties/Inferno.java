@@ -43,6 +43,11 @@ public class Inferno extends AbstractAbility {
                 duration * 20
         ) {
             @Override
+            public boolean distinct() {
+                return true;
+            }
+
+            @Override
             public int addCritChanceFromAttacker(WarlordsDamageHealingEvent event, int currentCritChance) {
                 if (event.getAbility().isEmpty() || event.getAbility().equals("Time Warp"))
                     return currentCritChance;

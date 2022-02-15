@@ -2,8 +2,10 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.classes.internal.AbstractChainBase;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
+import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.LocationBuilder;
 import com.ebicep.warlords.util.PlayerFilter;
 import com.ebicep.warlords.util.Utils;
@@ -65,8 +67,25 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
 
     @Override
     protected void onHit(WarlordsPlayer warlordsPlayer, Player player, int hitCounter) {
-        warlordsPlayer.getCooldownManager().addRegularCooldown(name, "CHAIN", ChainLightning.class, new ChainLightning(hitCounter), warlordsPlayer, CooldownTypes.BUFF, cooldownManager -> {
-        }, 4 * 20);
+        warlordsPlayer.getCooldownManager().removeCooldown(ChainLightning.class);
+        warlordsPlayer.getCooldownManager().addCooldown(new RegularCooldown<ChainLightning>(
+                name,
+                "CHAIN",
+                ChainLightning.class,
+                new ChainLightning(hitCounter),
+                warlordsPlayer,
+                CooldownTypes.BUFF,
+                cooldownManager -> {
+                },
+                4 * 20
+        ) {
+            @Override
+            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                float newDamageValue = currentDamageValue * ((10 - hitCounter) / 10f);
+                event.getPlayer().addAbsorbed(Math.abs(currentDamageValue - newDamageValue));
+                return newDamageValue;
+            }
+        });
         warlordsPlayer.getSpec().getRed().setCurrentCooldown((float) (cooldown * warlordsPlayer.getCooldownModifier()));
 
         player.playSound(player.getLocation(), "shaman.chainlightning.impact", 2, 1);

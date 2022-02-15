@@ -1,6 +1,7 @@
 package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.classes.internal.AbstractStrikeBase;
+import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownFilter;
@@ -42,16 +43,44 @@ public class CripplingStrike extends AbstractStrikeBase {
         if (optionalCripplingStrike.isPresent()) {
             CripplingStrike cripplingStrike = optionalCripplingStrike.get();
             nearPlayer.getCooldownManager().removeCooldown(CripplingStrike.class);
-            nearPlayer.getCooldownManager().addRegularCooldown(name, "CRIP", CripplingStrike.class, new CripplingStrike(Math.min(cripplingStrike.getConsecutiveStrikeCounter() + 1, 2)), wp, CooldownTypes.DEBUFF, cooldownManager -> {
-            }, 3 * 20);
-        } else {
-            nearPlayer.sendMessage(ChatColor.GRAY + "You are " + ChatColor.RED + "crippled" + ChatColor.GRAY + ".");
-            nearPlayer.getCooldownManager().addRegularCooldown(name, "CRIP", CripplingStrike.class, new CripplingStrike(), wp, CooldownTypes.DEBUFF,
+            nearPlayer.getCooldownManager().addCooldown(new RegularCooldown<CripplingStrike>(
+                    name,
+                    "CRIP",
+                    CripplingStrike.class,
+                    new CripplingStrike(Math.min(cripplingStrike.getConsecutiveStrikeCounter() + 1, 2)),
+                    wp,
+                    CooldownTypes.DEBUFF,
                     cooldownManager -> {
                         if (new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterNameActionBar("CRIP").stream().count() == 1) {
                             wp.sendMessage(ChatColor.GRAY + "You are no longer " + ChatColor.RED + "crippled" + ChatColor.GRAY + ".");
                         }
-                    }, 3 * 20);
+                    },
+                    3 * 20
+            ) {
+                @Override
+                public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                    return (float) (currentDamageValue * (.9 - Math.min(cripplingStrike.getConsecutiveStrikeCounter() + 1, 2) * .05));
+                }
+            });
+        } else {
+            nearPlayer.sendMessage(ChatColor.GRAY + "You are " + ChatColor.RED + "crippled" + ChatColor.GRAY + ".");
+            nearPlayer.getCooldownManager().addCooldown(new RegularCooldown<CripplingStrike>(
+                    name, "CRIP",
+                    CripplingStrike.class,
+                    new CripplingStrike(),
+                    wp,
+                    CooldownTypes.DEBUFF,
+                    cooldownManager -> {
+                        if (new CooldownFilter<>(cooldownManager, RegularCooldown.class).filterNameActionBar("CRIP").stream().count() == 1) {
+                            wp.sendMessage(ChatColor.GRAY + "You are no longer " + ChatColor.RED + "crippled" + ChatColor.GRAY + ".");
+                        }
+                    }, 3 * 20
+            ) {
+                @Override
+                public float modifyDamageBeforeInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                    return currentDamageValue * .9f;
+                }
+            });
         }
     }
 

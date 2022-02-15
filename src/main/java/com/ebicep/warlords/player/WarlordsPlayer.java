@@ -48,7 +48,6 @@ import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -218,9 +217,9 @@ public final class WarlordsPlayer {
             return;
         }
 
-        for (RegularCooldown<?> regularCooldown : new CooldownFilter<>(attacker, RegularCooldown.class).stream().collect(Collectors.toList())) {
-            critChance = regularCooldown.addCritChanceFromAttacker(event, critChance);
-            critMultiplier = regularCooldown.addCritMultiplierFromAttacker(event, critMultiplier);
+        for (AbstractCooldown<?> abstractCooldown : attacker.getCooldownManager().getCooldownsDistinct()) {
+            critChance = abstractCooldown.addCritChanceFromAttacker(event, critChance);
+            critMultiplier = abstractCooldown.addCritMultiplierFromAttacker(event, critMultiplier);
         }
 
         // Assassin takes damage, remove ability.
@@ -296,20 +295,12 @@ public final class WarlordsPlayer {
                 // Damage Increase
                 // Example: 1.1 = 10% increase.
 
-                for (RegularCooldown<?> regularCooldown : new CooldownFilter<>(this, RegularCooldown.class).stream().collect(Collectors.toList())) {
-                    damageValue = regularCooldown.modifyDamageBeforeInterveneFromSelf(event, damageValue);
+                for (AbstractCooldown<?> abstractCooldown : getCooldownManager().getCooldownsDistinct()) {
+                    damageValue = abstractCooldown.modifyDamageBeforeInterveneFromSelf(event, damageValue);
                 }
 
-                for (RegularCooldown<?> regularCooldown : new CooldownFilter<>(attacker, RegularCooldown.class).stream().collect(Collectors.toList())) {
-                    damageValue = regularCooldown.modifyDamageBeforeInterveneFromAttacker(event, damageValue);
-                }
-
-                // Checks whether the attacker has been crippled by Crippling Strike.
-                for (CripplingStrike cripplingStrike : new CooldownFilter<>(attacker, RegularCooldown.class)
-                        .filterCooldownClassAndMapToObjectsOfClass(CripplingStrike.class)
-                        .collect(Collectors.toList())
-                ) {
-                    damageValue *= .9 - (cripplingStrike.getConsecutiveStrikeCounter() * .05);
+                for (AbstractCooldown<?> abstractCooldown : attacker.getCooldownManager().getCooldownsDistinct()) {
+                    damageValue = abstractCooldown.modifyDamageBeforeInterveneFromAttacker(event, damageValue);
                 }
 
                 if (attacker.getMarkedTarget() == uuid) {
@@ -360,85 +351,15 @@ public final class WarlordsPlayer {
             // Damage reduction after Intervene
             if (!ignoreReduction) {
                 if (!HammerOfLight.standingInHammer(attacker, entity)) {
-
                     // Damage Reduction
                     // Example: .8 = 20% reduction.
-
-                    for (RegularCooldown<?> regularCooldown : new CooldownFilter<>(this, RegularCooldown.class).stream().collect(Collectors.toList())) {
-                        damageValue = regularCooldown.modifyDamageAfterInterveneFromSelf(event, damageValue);
+                    for (AbstractCooldown<?> abstractCooldown : getCooldownManager().getCooldownsDistinct()) {
+                        damageValue = abstractCooldown.modifyDamageAfterInterveneFromSelf(event, damageValue);
                     }
 
-                    for (RegularCooldown<?> regularCooldown : new CooldownFilter<>(attacker, RegularCooldown.class).stream().collect(Collectors.toList())) {
-                        damageValue = regularCooldown.modifyDamageAfterInterveneFromAttacker(event, damageValue);
+                    for (AbstractCooldown<?> abstractCooldown : attacker.getCooldownManager().getCooldownsDistinct()) {
+                        damageValue = abstractCooldown.modifyDamageAfterInterveneFromAttacker(event, damageValue);
                     }
-
-                    /*
-                    // Checks whether the player has Ice Barrier Active.
-                    for (IceBarrier iceBarrier : new CooldownFilter<>(this, RegularCooldown.class)
-                            .filterCooldownClassAndMapToObjectsOfClass(IceBarrier.class)
-                            .collect(Collectors.toList())
-                    ) {
-                        addAbsorbed(Math.abs(damageValue - (damageValue *= iceBarrier.getDamageReduction())));
-                    }
-
-                     */
-
-                    // Checks whether the player has Chain Lightning Active.
-                    List<ChainLightning> chainLightning = new CooldownFilter<>(this, RegularCooldown.class)
-                            .filterCooldownClassAndMapToObjectsOfClass(ChainLightning.class)
-                            .collect(Collectors.toList());
-                    if (!chainLightning.isEmpty()) {
-                        addAbsorbed(Math.abs(damageValue - (damageValue *= 1 - (Collections.max(chainLightning.stream()
-                                .map(ChainLightning::getDamageReduction)
-                                .collect(Collectors.toList())) * .1)
-                        )));
-                    }
-
-                    /*
-                    // Checks whether the player has Spirit Link Active.
-                    for (RegularCooldown<?> regularCooldown : new CooldownFilter<>(this, RegularCooldown.class).filterCooldownClass(SpiritLink.class)) {
-                        addAbsorbed(Math.abs(damageValue - (damageValue *= .8)));
-                    }
-
-                    // Checks whether the player has Last Stand Active.
-                    for (RegularCooldown<LastStand> regularCooldown : new CooldownFilter<>(this, RegularCooldown.class).filterCooldownClass(LastStand.class)) {
-                        WarlordsPlayer lastStandedBy = regularCooldown.getFrom();
-                        LastStand lastStand = regularCooldown.getCooldownObject();
-                        if (lastStandedBy == this) {
-                            damageValue *= lastStand.getSelfDamageReduction();
-                        } else {
-                            damageValue *= lastStand.getTeammateDamageReduction();
-                        }
-                    }
-
-
-
-                    // Checks whether the player has a Flag.
-                    if (cooldownManager.hasCooldownFromName("Flag Damage Reduction")) {
-                        damageValue *= .9;
-                    }
-
-                    // Checks whether the player has Vindicate active.
-                    if (cooldownManager.hasCooldownFromName("Vindicate Resistance")) {
-                        damageValue *= .75;
-                    }
-
-                    if (cooldownManager.hasCooldownFromName("Prism Guard")) {
-                        if (
-                            ability.equals("Fireball") ||
-                            ability.equals("Frostbolt") ||
-                            ability.equals("Water Bolt") ||
-                            ability.equals("Lightning Bolt") ||
-                            ability.equals("Flame Burst") ||
-                            ability.equals("Fallen Souls")
-                        ) {
-                            damageValue *= .25;
-                        } else {
-                            damageValue *= .75;
-                        }
-                    }
-
-                     */
                 }
             }
 
@@ -479,24 +400,8 @@ public final class WarlordsPlayer {
                     addAbsorbed(Math.abs(damageHealValueBeforeReduction));
                 }
 
-                //LAST STAND HEALING
-                for (RegularCooldown<?> cooldown : new CooldownFilter<>(this, RegularCooldown.class)
-                        .filterCooldownClass(LastStand.class)
-                        .stream()
-                        .collect(Collectors.toList())
-                ) {
-                    WarlordsPlayer lastStandedBy = cooldown.getFrom();
-                    lastStandedBy.addAbsorbed(damageValue);
-                    //HEALING FROM LASTSTAND
-                    if (lastStandedBy != this) {
-                        float finalDamageHealValue = damageValue;
-                        boolean finalIsCrit = isCrit;
-                        //healing if multiple last stands
-                        new CooldownFilter<>(lastStandedBy, RegularCooldown.class)
-                                .filterCooldownObject(cooldown.getCooldownObject())
-                                .filter(RegularCooldown::hasTicksLeft)
-                                .forEach(regularCooldown -> lastStandedBy.addHealingInstance(lastStandedBy, "Last Stand", finalDamageHealValue, finalDamageHealValue, finalIsCrit ? 100 : -1, 100, false, true));
-                    }
+                for (AbstractCooldown<?> abstractCooldown : getCooldownManager().getCooldownsDistinct()) {
+                    abstractCooldown.onShield(event, damageValue, isCrit);
                 }
 
                 //ORBS
@@ -521,35 +426,11 @@ public final class WarlordsPlayer {
                     removeHorse();
                     regenTimer = 10;
 
-                    //LAST STAND HEALING
-                    if (!HammerOfLight.standingInHammer(attacker, entity)) {
-                        for (RegularCooldown<?> cooldown : new CooldownFilter<>(this, RegularCooldown.class)
-                                .filterCooldownClass(LastStand.class)
-                                .stream()
-                                .collect(Collectors.toList())
-                        ) {
-                            WarlordsPlayer lastStandedBy = cooldown.getFrom();
-                            lastStandedBy.addAbsorbed(damageValue);
-                            //HEALING FROM LASTSTAND
-                            if (lastStandedBy != this) {
-                                float finalDamageHealValue = damageValue;
-                                boolean finalIsCrit = isCrit;
-                                //healing if multiple last stands
-                                new CooldownFilter<>(lastStandedBy, RegularCooldown.class)
-                                        .filterCooldownObject(cooldown.getCooldownObject())
-                                        .filter(RegularCooldown::hasTicksLeft)
-                                        .forEach(regularCooldown -> lastStandedBy.addHealingInstance(lastStandedBy, "Last Stand", finalDamageHealValue, finalDamageHealValue, finalIsCrit ? 100 : -1, 100, false, false));
-                            }
-                        }
-
-                    }
-
                     // Death's Debt
                     Optional<DeathsDebt> deathsDebtOptional = new CooldownFilter<>(this, RegularCooldown.class)
                             .filterName("Spirits Respite")
                             .findFirstObjectOfClass(DeathsDebt.class);
                     if (deathsDebtOptional.isPresent()) {
-                        deathsDebtOptional.get().addDelayedDamage(damageValue);
                         debt = true;
                     }
 
@@ -563,15 +444,15 @@ public final class WarlordsPlayer {
                     if (spec instanceof Spiritguard) {
                         ((Repentance) spec.getBlue()).addToPool(damageValue);
                     }
-                    if (attacker.getSpec() instanceof Spiritguard) {
-                        if (attacker.getCooldownManager().hasCooldown(Repentance.class)) {
-                            Repentance repentance = (Repentance) attacker.getSpec().getBlue();
-                            int healthToAdd = (int) (repentance.getPool() * (repentance.getDamageConvertPercent() / 100f)) + 10;
-                            attacker.addHealingInstance(attacker, "Repentance", healthToAdd, healthToAdd, -1, 100, false, false);
-                            repentance.setPool(repentance.getPool() * .5f);
-                            attacker.addEnergy(attacker, "Repentance", (float) (healthToAdd * .035));
-                        }
+
+                    for (AbstractCooldown<?> abstractCooldown : getCooldownManager().getCooldownsDistinct()) {
+                        abstractCooldown.onDamageFromSelf(event, damageValue, isCrit);
                     }
+
+                    for (AbstractCooldown<?> abstractCooldown : attacker.getCooldownManager().getCooldownsDistinct()) {
+                        abstractCooldown.onDamageFromAttacker(event, damageValue, isCrit);
+                    }
+
 
                     // Orbs of Life + Spawns additional orb if the ability is Crippling Strike
                     spawnOrbs(ability, attacker);
@@ -619,28 +500,9 @@ public final class WarlordsPlayer {
                     }
                 }
 
-                // Blood Lust
-                if (attacker.getCooldownManager().hasCooldown(BloodLust.class)) {
-                    BloodLust bloodLust = (BloodLust) attacker.getSpec().getBlue();
-                    attacker.addHealingInstance(attacker, "Blood Lust", damageValue * (bloodLust.getDamageConvertPercent() / 100f), damageValue * (bloodLust.getDamageConvertPercent() / 100f), -1, 100, false, false);
-                }
-
-                // Impaling Strike
-                if (cooldownManager.hasCooldown(ImpalingStrike.class)) {
-                    attacker.addHealingInstance(attacker, "Leech", damageValue * 0.3f, damageValue * 0.3f, -1, 100, false, false);
-                }
-
                 // Judgement Strike
                 if (ability.equals("Judgement Strike") && isCrit) {
                     attacker.getSpeed().addSpeedModifier("Judgement Speed", 20, 2 * 20, "BASE");
-                }
-
-                // Assassin Mark
-                if (attacker.getCooldownManager().hasCooldown(OrderOfEviscerate.class)) {
-                    if (attacker.getMarkedTarget() != uuid) {
-                        attacker.sendMessage(RECEIVE_ARROW + ChatColor.GRAY + " You have marked §e" + getName());
-                    }
-                    attacker.setMarkedTarget(uuid);
                 }
 
                 updateJimmyHealth();
@@ -718,66 +580,12 @@ public final class WarlordsPlayer {
             }
         }
 
-        // Windfury Weapon
-        if (isMeleeHit) {
-            if (attacker.getCooldownManager().hasCooldown(Windfury.class)) {
-                int windfuryActivate = (int) (Math.random() * 100);
-                if (((Windfury) attacker.getSpec().getPurple()).isFirstProc()) {
-                    ((Windfury) attacker.getSpec().getPurple()).setFirstProc(false);
-                    windfuryActivate = 0;
-                }
-                if (windfuryActivate < ((Windfury) attacker.getSpec().getPurple()).getProcChance()) {
-                    new BukkitRunnable() {
-                        int counter = 0;
+        for (AbstractCooldown<?> abstractCooldown : getCooldownManager().getCooldownsDistinct()) {
+            abstractCooldown.onEndFromSelf(event, damageValue, isCrit);
+        }
 
-                        @Override
-                        public void run() {
-                            gameState.getGame().forEachOnlinePlayerWithoutSpectators((player1, t) -> {
-                                player1.playSound(getLocation(), "shaman.windfuryweapon.impact", 2, 1);
-                            });
-
-                            if (Warlords.getPlayerSettings(attacker.uuid).getSkillBoostForClass() == ClassesSkillBoosts.WINDFURY_WEAPON) {
-                                addDamageInstance(attacker, "Windfury Weapon", min * 1.35f * 1.2f, max * 1.35f * 1.2f, 25, 200, false);
-                            } else {
-                                addDamageInstance(attacker, "Windfury Weapon", min * 1.35f, max * 1.35f, 25, 200, false);
-                            }
-
-                            counter++;
-
-                            if (counter == 2) {
-                                this.cancel();
-                            }
-                        }
-                    }.runTaskTimer(Warlords.getInstance(), 3, 3);
-                }
-
-                // Earthliving Weapon.
-            } else if (attacker.getCooldownManager().hasCooldown(Earthliving.class)) {
-                int earthlivingActivate = (int) (Math.random() * 100);
-                Earthliving earthliving = (Earthliving) attacker.getSpec().getPurple();
-                if (earthliving.isFirstProc()) {
-                    earthliving.setFirstProc(false);
-                    earthlivingActivate = 0;
-                }
-                if (earthlivingActivate < earthliving.getProcChance()) {
-                    boolean earthlivingBoost = Warlords.getPlayerSettings(attacker.uuid).getSkillBoostForClass() == ClassesSkillBoosts.EARTHLIVING_WEAPON;
-                    float multiplyBy = earthlivingBoost ? 2.5f : 2.4f;
-
-                    attacker.addHealingInstance(attacker, "Earthliving Weapon", 132 * multiplyBy, 179 * multiplyBy, 25, 200, false, false);
-
-                    gameState.getGame().forEachOnlinePlayerWithoutSpectators((p, t) -> {
-                        p.playSound(getLocation(), "shaman.earthlivingweapon.impact", 2, 1);
-                    });
-
-                    for (WarlordsPlayer nearPlayer : PlayerFilter
-                            .entitiesAround(attacker, 6, 6, 6)
-                            .aliveTeammatesOfExcludingSelf(attacker)
-                            .limit(2)
-                    ) {
-                        nearPlayer.addHealingInstance(attacker, "Earthliving Weapon", 132 * multiplyBy, 179 * multiplyBy, 25, 200, false, false);
-                    }
-                }
-            }
+        for (AbstractCooldown<?> abstractCooldown : attacker.getCooldownManager().getCooldownsDistinct()) {
+            abstractCooldown.onEndFromAttacker(event, damageValue, isCrit);
         }
     }
 
@@ -832,11 +640,11 @@ public final class WarlordsPlayer {
             healValue *= critMultiplier / 100f;
         }
 
-        // Checks whether the player has been wounded.
-        if (cooldownManager.hasCooldown(WoundingStrikeBerserker.class)) {
-            healValue *= .6;
-        } else if (cooldownManager.hasCooldown(WoundingStrikeDefender.class)) {
-            healValue *= .75;
+
+        for (RegularCooldown<?> regularCooldown : new CooldownFilter<>(this, RegularCooldown.class).stream().collect(Collectors.toList())) {
+            if (regularCooldown.isHealing()) {
+                healValue = regularCooldown.doBeforeHealFromSelf(event, healValue);
+            }
         }
 
         // Self Healing
