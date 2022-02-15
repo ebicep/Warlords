@@ -393,6 +393,7 @@ public final class WarlordsPlayer {
                         )));
                     }
 
+                    /*
                     // Checks whether the player has Spirit Link Active.
                     for (RegularCooldown<?> regularCooldown : new CooldownFilter<>(this, RegularCooldown.class).filterCooldownClass(SpiritLink.class)) {
                         addAbsorbed(Math.abs(damageValue - (damageValue *= .8)));
@@ -408,6 +409,8 @@ public final class WarlordsPlayer {
                             damageValue *= lastStand.getTeammateDamageReduction();
                         }
                     }
+
+
 
                     // Checks whether the player has a Flag.
                     if (cooldownManager.hasCooldownFromName("Flag Damage Reduction")) {
@@ -430,6 +433,8 @@ public final class WarlordsPlayer {
                             damageValue *= .3;
                         }
                     }
+
+                     */
                 }
             }
 

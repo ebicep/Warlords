@@ -3,8 +3,10 @@ package com.ebicep.warlords.classes.abilties;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
+import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
@@ -43,16 +45,32 @@ public class WideGuard extends AbstractAbility {
     public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
         wp.subtractEnergy(energyCost);
         WideGuard tempWideGuard = new WideGuard();
-        wp.getCooldownManager().addRegularCooldown(
+        wp.getCooldownManager().addCooldown(new RegularCooldown<WideGuard>(
                 "Wide Guard",
                 "GUARD",
                 WideGuard.class,
                 tempWideGuard,
                 wp,
                 CooldownTypes.ABILITY,
-                cooldownManager -> {},
+                cooldownManager -> {
+                },
                 4 * 20
-        );
+        ) {
+            @Override
+            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                String ability = event.getAbility();
+                if (
+                        ability.equals("Fireball") ||
+                        ability.equals("Frostbolt") ||
+                        ability.equals("Water Bolt") ||
+                        ability.equals("Lightning Bolt") ||
+                        ability.equals("Flame Burst")
+                ) {
+                    return currentDamageValue * .3f;
+                }
+                return currentDamageValue;
+            }
+        });
         //wp.getCooldownManager().addCooldown("Reflection Shield", this.getClass(), WideGuard.class, "", 4, wp, CooldownTypes.ABILITY);
 
         for (Player player1 : player.getWorld().getPlayers()) {
@@ -99,15 +117,32 @@ public class WideGuard extends AbstractAbility {
                             .aliveTeammatesOfExcludingSelf(wp)
                             .forEach(playerInsideBubble -> {
                                 playerInsideBubble.getCooldownManager().removeCooldown(WideGuard.class);
-                                playerInsideBubble.getCooldownManager().addRegularCooldown(
+                                playerInsideBubble.getCooldownManager().addCooldown(new RegularCooldown<WideGuard>(
                                         "Wide Guard",
                                         "GUARD",
                                         WideGuard.class,
                                         tempWideGuard,
                                         wp,
                                         CooldownTypes.ABILITY,
-                                        cooldownManager -> {},
-                                        20);
+                                        cooldownManager -> {
+                                        },
+                                        4 * 20
+                                ) {
+                                    @Override
+                                    public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                                        String ability = event.getAbility();
+                                        if (
+                                                ability.equals("Fireball") ||
+                                                        ability.equals("Frostbolt") ||
+                                                        ability.equals("Water Bolt") ||
+                                                        ability.equals("Lightning Bolt") ||
+                                                        ability.equals("Flame Burst")
+                                        ) {
+                                            return currentDamageValue * .3f;
+                                        }
+                                        return currentDamageValue;
+                                    }
+                                });
                                 timeInBubble.compute(playerInsideBubble, (k, v) -> v == null ? 1 : v + 1);
                             });
                 } else {
@@ -131,7 +166,7 @@ public class WideGuard extends AbstractAbility {
                     circle.playEffects();
                 }
             }
-        }.runTaskTimer( 5, 4);
+        }.runTaskTimer(5, 4);
 
         return true;
     }
