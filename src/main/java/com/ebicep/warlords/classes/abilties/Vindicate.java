@@ -19,8 +19,8 @@ import javax.annotation.Nonnull;
 public class Vindicate extends AbstractAbility {
 
     private final int radius = 8;
-    private final int vindicateDuration = 6;
-    private int vindicateSelfDuration = 6;
+    private final int vindicateDuration = 8;
+    private int vindicateSelfDuration = 8;
 
     public Vindicate() {
         super("Vindicate", 0, 0, 55, 25, -1, 100);
@@ -36,7 +36,7 @@ public class Vindicate extends AbstractAbility {
                 "\n\n" +
                 "§7You gain §e25% §7damage reduction for §6" + vindicateSelfDuration + " §7seconds instead.\n" +
                 "§7Each ally within your Vindicate radius increases\n" +
-                "§7the duration by §61 §7second. (up to §610 §7seconds.)";
+                "§7the duration by §61 §7second. (up to §612 §7seconds.)";
     }
 
     @Override
@@ -55,12 +55,26 @@ public class Vindicate extends AbstractAbility {
                 .aliveTeammatesOfExcludingSelf(wp)
                 .closestFirst(wp)
         ) {
-            wp.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " Your Vindicate is now protecting " + ChatColor.YELLOW + vindicateTarget.getName() + ChatColor.GRAY + "!");
+            wp.sendMessage(
+                WarlordsPlayer.RECEIVE_ARROW +
+                ChatColor.GRAY + " Your Vindicate is now protecting " +
+                ChatColor.YELLOW + vindicateTarget.getName() +
+                ChatColor.GRAY + "!"
+            );
+
+            vindicateTarget.sendMessage(
+                WarlordsPlayer.RECEIVE_ARROW + " " +
+                ChatColor.GRAY + wp.getName() + "'s" +
+                ChatColor.YELLOW + " Vindicate" +
+                ChatColor.GRAY + " is now protecting you from de-buffs for " +
+                ChatColor.GOLD + vindicateDuration +
+                ChatColor.GRAY + " seconds!"
+            );
 
             // Vindicate Immunity
             vindicateTarget.getSpeed().removeSlownessModifiers();
             vindicateTarget.getCooldownManager().removeDebuffCooldowns();
-            vindicateTarget.getCooldownManager().removeCooldown(Vindicate.class);
+            vindicateTarget.getCooldownManager().removeCooldownByName("Vindicate Debuff Immunity");
             vindicateTarget.getCooldownManager().addRegularCooldown(
                     "Vindicate Debuff Immunity",
                     "VIND",
@@ -72,23 +86,11 @@ public class Vindicate extends AbstractAbility {
                     vindicateDuration * 20
             );
 
-            // KB Resistance
-            vindicateTarget.getCooldownManager().addRegularCooldown(
-                    "KB Resistance",
-                    "KB",
-                    Vindicate.class,
-                    tempVindicate,
-                    wp,
-                    CooldownTypes.BUFF,
-                    cooldownManager -> {},
-                    vindicateDuration * 20
-            );
-
             vindicateSelfDuration++;
         }
 
-        if (vindicateSelfDuration > 10) {
-            vindicateSelfDuration = 10;
+        if (vindicateSelfDuration > 12) {
+            vindicateSelfDuration = 12;
         }
 
         wp.getCooldownManager().addCooldown(new RegularCooldown<Vindicate>(
@@ -107,7 +109,7 @@ public class Vindicate extends AbstractAbility {
             }
         });
 
-        vindicateSelfDuration = 6;
+        vindicateSelfDuration = 8;
 
         CircleEffect circle = new CircleEffect(wp.getGame(), wp.getTeam(), player.getLocation(), radius);
         circle.addEffect(new CircumferenceEffect(ParticleEffect.SPELL, ParticleEffect.REDSTONE).particlesPerCircumference(2));

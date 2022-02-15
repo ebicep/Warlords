@@ -88,10 +88,15 @@ public class TestCommand implements CommandExecutor {
 //            System.out.println(uuidWarlordsPlayerEntry.getValue().getName() + " - " + uuidWarlordsPlayerEntry.getValue().getEntity());
 //        }
 //
-        Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get().warlordsPlayers().forEach(warlordsPlayer1 -> {
-            System.out.println(warlordsPlayer1.getName());
-            System.out.println(warlordsPlayer1.getEntity().getVehicle() != null);
-        });
+//        Warlords.getGameManager().getPlayerGame(player.getUniqueId()).get().warlordsPlayers().forEach(warlordsPlayer1 -> {
+//            System.out.println(warlordsPlayer1.getName());
+//            System.out.println(warlordsPlayer1.getEntity().getVehicle() != null);
+//        });
+
+        for (int i = 0; i < 10; i++) {
+            System.out.println(i);
+            if (i == 5) throw new NullPointerException("HELLO");
+        }
 
         PlayerSettings playerSettings = Warlords.getPlayerSettings(player.getUniqueId());
 //        System.out.println(ArmorManager.ArmorSets.getSelected(player.getUniqueId()));

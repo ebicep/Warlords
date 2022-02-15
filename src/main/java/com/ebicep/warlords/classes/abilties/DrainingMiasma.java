@@ -47,7 +47,6 @@ public class DrainingMiasma extends AbstractAbility {
             player1.playSound(player.getLocation(), "shaman.earthlivingweapon.activation", 2, 0.65f);
         }
 
-        EffectUtils.playCylinderAnimation(player, 6, 30, 200, 30);
         EffectUtils.playSphereAnimation(player, 6, ParticleEffect.SLIME, 1);
 
         FireWorkEffectPlayer.playFirework(wp.getLocation(), FireworkEffect.builder()

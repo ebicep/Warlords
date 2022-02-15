@@ -17,19 +17,23 @@ import javax.annotation.Nonnull;
 
 public class SoulShackle extends AbstractAbility {
 
-    private final int shackleRange = 15;
+    private final int shackleRange = 12;
     private float absorbPool = 0;
 
     public SoulShackle() {
-        super("Soul Shackle", 344, 468, 8, 40, 20, 175);
+        super("Soul Shackle", 344, 468, 10, 40, 20, 175);
     }
 
     @Override
     public void updateDescription(Player player) {
         description = "§7Shackle up to §e1 §7enemy and deal §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage.\n" +
-                "§7Shackled enemies are silenced for §62 §7seconds,\n" +
+                "§7Shackled enemies are silenced for §62§7-§64 §7seconds,\n" +
                 "§7making them unable to use their main attack for\n" +
-                "§7the duration.";
+                "§7the duration. The silence duration increases by §61\n" +
+                "§7second for every §c1000 §7damage you took in the last\n" +
+                "§610 §7seconds." +
+                "\n\n" +
+                "§7Has an optimal range of §e" + shackleRange + " §7blocks.";
     }
 
     @Override
@@ -37,7 +41,7 @@ public class SoulShackle extends AbstractAbility {
         SoulShackle tempSoulShackle = new SoulShackle();
 
         for (WarlordsPlayer shackleTarget : PlayerFilter
-                .entitiesAround(player, shackleRange, shackleRange, shackleRange)
+                .entitiesAround(wp, shackleRange, shackleRange, shackleRange)
                 .aliveEnemiesOf(wp)
                 .lookingAtFirst(wp)
                 .requireLineOfSight(wp)
@@ -51,6 +55,14 @@ public class SoulShackle extends AbstractAbility {
                 ChatColor.GRAY + "!"
             );
 
+            int silenceDuration = 2 + (int) (absorbPool / 1000);
+            if (silenceDuration > 4) {
+                silenceDuration = 4;
+            }
+
+            System.out.println(silenceDuration);
+            System.out.println(absorbPool);
+
             shackleTarget.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
             shackleTarget.getCooldownManager().addRegularCooldown(
                     "Shackle Silence",
@@ -60,7 +72,7 @@ public class SoulShackle extends AbstractAbility {
                     wp,
                     CooldownTypes.DEBUFF,
                     cooldownManager -> {},
-                    2 * 20
+                    silenceDuration * 20
             );
 
             for (Player player1 : player.getWorld().getPlayers()) {
@@ -114,4 +126,13 @@ public class SoulShackle extends AbstractAbility {
         this.absorbPool = pool;
     }
 
+    @Override
+    public void runEverySecond() {
+        if (absorbPool > 0) {
+            float newPool = absorbPool - 100;
+            absorbPool = Math.max(newPool, 0);
+        }
+
+        System.out.println(absorbPool);
+    }
 }

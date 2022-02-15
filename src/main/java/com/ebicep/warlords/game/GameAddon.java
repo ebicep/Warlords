@@ -10,13 +10,12 @@ import com.ebicep.warlords.game.state.PreLobbyState;
 import com.ebicep.warlords.game.state.State;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.ItemBuilder;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
 
 public enum GameAddon {
 
@@ -66,7 +65,6 @@ public enum GameAddon {
             player.setCooldownModifier(player.getCooldownModifier() * 0.5);
         }
     },
-    //RECORD_MODE(),
     MEGA_GAME("Mega Game", "warlords.game.megagame") {
         @Override
         public int getMaxPlayers(@Nonnull GameMap map, int maxPlayers) {

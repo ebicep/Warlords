@@ -341,6 +341,24 @@ public class EffectUtils {
         }.runTaskTimer(Warlords.getInstance(), 0, 0);
     }
 
+    public static void playParticleLinkAnimation(Location to, Location from, ParticleEffect effect) {
+        Location lineLocation = to.add(0, 1, 0);
+        lineLocation.setDirection(lineLocation.toVector().subtract(from.add(0, 1, 0).toVector()).multiply(-1));
+        for (int i = 0; i < Math.floor(to.distance(from)) * 2; i++) {
+            effect.display(0, 0, 0, 0, 1, lineLocation, 500);
+            lineLocation.add(lineLocation.getDirection().multiply(.5));
+        }
+    }
+
+    public static void playParticleLinkAnimation(Location to, Location from, int red, int green, int blue) {
+        Location lineLocation = to.add(0, 1, 0);
+        lineLocation.setDirection(lineLocation.toVector().subtract(from.add(0, 1, 0).toVector()).multiply(-1));
+        for (int i = 0; i < Math.floor(to.distance(from)) * 2; i++) {
+            ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(red, green, blue), lineLocation, 500);
+            lineLocation.add(lineLocation.getDirection().multiply(.5));
+        }
+    }
+
     public static Vector rotateAroundAxisX(Vector v, double angle) {
         double y, z, cos, sin;
         cos = Math.cos(angle);

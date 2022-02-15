@@ -96,7 +96,7 @@ public class BaseCommand {
         }
         Optional<Game> playerGame = Warlords.getGameManager().getPlayerGame(((Player)sender).getUniqueId());
         if (!playerGame.isPresent()) {
-            sender.sendMessage(ChatColor.RED + "You are not in an game!");
+            sender.sendMessage(ChatColor.RED + "You are not in a game!");
             return null;
         }
         return playerGame.get();

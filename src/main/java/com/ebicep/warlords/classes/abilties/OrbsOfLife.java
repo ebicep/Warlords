@@ -63,8 +63,17 @@ public class OrbsOfLife extends AbstractAbility {
     public boolean onActivate(WarlordsPlayer wp, Player player) {
         wp.subtractEnergy(energyCost);
         OrbsOfLife tempOrbsOfLight = new OrbsOfLife();
-        wp.getCooldownManager().addPersistentCooldown(name, "ORBS", OrbsOfLife.class, tempOrbsOfLight, wp, CooldownTypes.ABILITY, cooldownManager -> {
-        }, duration * 20, orbsOfLife -> orbsOfLife.getSpawnedOrbs().isEmpty());
+        wp.getCooldownManager().addPersistentCooldown(
+                name,
+                "ORBS",
+                OrbsOfLife.class,
+                tempOrbsOfLight,
+                wp,
+                CooldownTypes.ABILITY
+                , cooldownManager -> {},
+                duration * 20,
+                orbsOfLife -> orbsOfLife.getSpawnedOrbs().isEmpty()
+        );
 
         tempOrbsOfLight.getSpawnedOrbs().add(new Orb(((CraftWorld) player.getLocation().getWorld()).getHandle(), generateSpawnLocation(player.getLocation()), wp));
         tempOrbsOfLight.getSpawnedOrbs().add(new Orb(((CraftWorld) player.getLocation().getWorld()).getHandle(), generateSpawnLocation(player.getLocation()), wp));
@@ -74,11 +83,12 @@ public class OrbsOfLife extends AbstractAbility {
         }
         new GameRunnable(wp.getGame()) {
             int counter = 0;
+            boolean wasSneaking = false;
 
             @Override
             public void run() {
                 counter++;
-                if (wp.isAlive() && wp.getEntity() instanceof Player && ((Player) wp.getEntity()).isSneaking()) {
+                if (wp.isAlive() && wp.getEntity() instanceof Player && ((Player) wp.getEntity()).isSneaking() && !wasSneaking) {
                     //setting target player to move towards (includes self)
                     tempOrbsOfLight.getSpawnedOrbs().forEach(orb -> orb.setPlayerToMoveTowards(PlayerFilter
                             .entitiesAround(orb.armorStand.getLocation(), floatingOrbRadius, floatingOrbRadius, floatingOrbRadius)
@@ -105,21 +115,21 @@ public class OrbsOfLife extends AbstractAbility {
                                 orbArmorStand.setPassenger(orb);
                                 ParticleEffect.VILLAGER_HAPPY.display(0, 0, 0, 0, 1, orbArmorStand.getLocation().add(0, 1.65, 0), 500);
                             });
-                            if (tempOrbsOfLight.getSpawnedOrbs().stream().noneMatch(orb -> orb.getPlayerToMoveTowards() != null)) {
+                            /*if (tempOrbsOfLight.getSpawnedOrbs().stream().noneMatch(orb -> orb.getPlayerToMoveTowards() != null)) {
                                 this.cancel();
-                            }
+                            }*/
                         }
                     }.runTaskTimer(0, 1);
+
+                    wasSneaking = player.isSneaking();
 
                     wp.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " Your current " + ChatColor.GREEN + name + ChatColor.GRAY + " will now levitate towards you or a teammate!");
                     for (Player player1 : wp.getWorld().getPlayers()) {
                         player1.playSound(wp.getLocation(), Sound.LEVEL_UP, 0.85f, 0.7f);
                     }
                     ParticleEffect.ENCHANTMENT_TABLE.display(0.8f, 0, 0.8f, 0.2f, 10, wp.getLocation().add(0, 1.5, 0), 500);
-
-                    this.cancel();
                 }
-                if (counter >= 20 * duration || wp.isDeath()) {
+                if (counter >= 20 * duration || wp.isDead()) {
                     this.cancel();
                 }
             }

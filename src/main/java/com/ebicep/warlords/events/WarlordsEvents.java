@@ -23,10 +23,7 @@ import com.ebicep.warlords.permissions.PermissionHandler;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.player.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.cooldowns.cooldowns.PersistentCooldown;
-import com.ebicep.warlords.util.ChatUtils;
-import com.ebicep.warlords.util.ItemBuilder;
-import com.ebicep.warlords.util.PacketUtils;
-import com.ebicep.warlords.util.Utils;
+import com.ebicep.warlords.util.*;
 import org.bukkit.*;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.*;
 import org.bukkit.entity.*;
@@ -46,6 +43,8 @@ import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
 
 import javax.annotation.Nullable;
 import java.util.HashSet;
@@ -53,6 +52,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 import static com.ebicep.warlords.menu.GameMenu.openMainMenu;
@@ -363,6 +363,10 @@ public class WarlordsEvents implements Listener {
     @EventHandler
     public void onPlayerTeleport(PlayerTeleportEvent e) {
         if (e.getCause() == PlayerTeleportEvent.TeleportCause.UNKNOWN) {
+            WarlordsPlayer warlordsPlayer = Warlords.getPlayer(e.getPlayer().getUniqueId());
+            if (warlordsPlayer == null) {
+                return;
+            }
             if (e.getPlayer().getGameMode() == GameMode.SPECTATOR) {
                 e.setCancelled(true);
                 e.getPlayer().setSpectatorTarget(null);
