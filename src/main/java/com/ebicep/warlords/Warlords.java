@@ -43,6 +43,7 @@ import com.ebicep.warlords.queuesystem.QueueCommand;
 import com.ebicep.warlords.util.*;
 import me.filoghost.holographicdisplays.api.beta.HolographicDisplaysAPI;
 import me.filoghost.holographicdisplays.api.beta.hologram.Hologram;
+import net.minecraft.server.v1_8_R3.PacketPlayInSteerVehicle;
 import org.bukkit.*;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
@@ -65,6 +66,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.security.auth.login.LoginException;
 import java.io.File;
+import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -364,6 +366,29 @@ public class Warlords extends JavaPlugin {
                         }
                     }
                 });
+        protocolManager.addPacketListener(
+                new PacketAdapter(this, ListenerPriority.HIGHEST, PacketType.Play.Client.STEER_VEHICLE) {
+                    @Override
+                    public void onPacketReceiving(PacketEvent e) {
+                        if (e.getPacketType() == PacketType.Play.Client.STEER_VEHICLE) {
+                            if (e.getPacket().getHandle() instanceof PacketPlayInSteerVehicle) {
+                                boolean dismount = e.getPacket().getBooleans().read(1);
+                                Field f;
+                                try {
+                                    f = PacketPlayInSteerVehicle.class.getDeclaredField("d");
+                                    f.setAccessible(true);
+                                    f.set(e.getPacket().getHandle(), false);
+                                } catch (Exception e1) {
+                                    e1.printStackTrace();
+                                }
+                                if (dismount && e.getPlayer().getVehicle() != null) {
+                                    e.getPlayer().getVehicle().remove();
+                                }
+                            }
+                        }
+                    }
+                }
+        );
 
         citizensEnabled = Bukkit.getPluginManager().isPluginEnabled("Citizens");
 

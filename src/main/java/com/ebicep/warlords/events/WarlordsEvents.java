@@ -357,17 +357,7 @@ public class WarlordsEvents implements Listener {
 
     @EventHandler
     public void onDismount(VehicleExitEvent e) {
-        LivingEntity livingEntity = e.getExited();
-        Location location = new LocationBuilder(e.getVehicle().getLocation().clone())
-                .addY(1)
-                .pitch(livingEntity.getLocation().getPitch())
-                .yaw(livingEntity.getLocation().getYaw());
         e.getVehicle().remove();
-        try {
-            e.getExited().teleport(location);
-        } catch (StackOverflowError error) {
-            //System.out.println("OVERFLOW");
-        }
     }
 
     @EventHandler
