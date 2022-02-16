@@ -152,8 +152,8 @@ public class PlayingState implements State, TimerDebugAble {
         if (players.isEmpty()) {
             return;
         }
-        float highestDamage = players.stream().sorted(Comparator.comparing((WarlordsPlayer wp) -> wp.getStats().total().getDamage()).reversed()).findFirst().get().getStats().total().getDamage();
-        float highestHealing = players.stream().sorted(Comparator.comparing((WarlordsPlayer wp) -> wp.getStats().total().getHealing()).reversed()).findFirst().get().getStats().total().getHealing();
+        float highestDamage = players.stream().max(Comparator.comparing((WarlordsPlayer wp) -> wp.getStats().total().getDamage())).get().getStats().total().getDamage();
+        float highestHealing = players.stream().max(Comparator.comparing((WarlordsPlayer wp) -> wp.getStats().total().getHealing())).get().getStats().total().getHealing();
         //PUBS
         if (!game.getAddons().contains(GameAddon.PRIVATE_GAME) && !game.getAddons().contains(GameAddon.IMPOSTER_MODE) && winEvent != null && game.playersCount() >= 12) {
             String gameEnd = "[GAME] A Public game ended with ";

@@ -204,6 +204,10 @@ public class EndState implements State, TimerDebugAble {
         this.timer = 10 * 20;
     }
 
+    public WarlordsGameTriggerWinEvent getWinEvent() {
+        return winEvent;
+    }
+
     private void sendMessageToAllGamePlayer(Game game, String message, boolean centered) {
         game.forEachOnlinePlayerWithoutSpectators((p, team) -> {
             if (centered) {
