@@ -24,6 +24,7 @@ import com.ebicep.warlords.game.state.PlayingState;
 import com.ebicep.warlords.player.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.cooldowns.CooldownManager;
+import com.ebicep.warlords.player.cooldowns.cooldowns.DamageHealExpiringCooldown;
 import com.ebicep.warlords.player.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.*;
@@ -453,6 +454,7 @@ public final class WarlordsPlayer {
                         abstractCooldown.onDamageFromAttacker(event, damageValue, isCrit);
                     }
 
+                    attacker.getCooldownManager().getCooldowns().removeAll(new CooldownFilter<>(attacker, DamageHealExpiringCooldown.class).stream().collect(Collectors.toList()));
 
                     // Orbs of Life + Spawns additional orb if the ability is Crippling Strike
                     spawnOrbs(ability, attacker);
@@ -460,50 +462,50 @@ public final class WarlordsPlayer {
                         spawnOrbs(ability, attacker);
                     }
 
-                    // Protector's Strike
-                    if (ability.equals("Protector's Strike")) {
-
-                        float healthFraction = lerp(0, 1, (float) attacker.getHealth() / attacker.getMaxHealth());
-
-                        if (healthFraction > 1) {
-                            healthFraction = 1; // in the case of overheal
-                        }
-
-                        if (healthFraction < 0) {
-                            healthFraction = 0;
-                        }
-
-                        float allyHealing = 0.5f + healthFraction * 0.5f;
-                        float ownHealing = 0.5f + (1 - healthFraction) * 0.5f;
-
-                        // Self Heal
-                        if (Warlords.getPlayerSettings(attacker.uuid).getSkillBoostForClass() == ClassesSkillBoosts.PROTECTOR_STRIKE) {
-                            attacker.addHealingInstance(attacker, ability, damageValue * ownHealing * 1.2f, damageValue * ownHealing * 1.2f, isCrit ? 100 : -1, 100, false, false);
-                        } else {
-                            attacker.addHealingInstance(attacker, ability, damageValue * ownHealing, damageValue * ownHealing, isCrit ? 100 : -1, 100, false, false);
-                        }
-
-                        // Ally Heal
-                        for (WarlordsPlayer ally : PlayerFilter
-                                .entitiesAround(attacker, 10, 10, 10)
-                                .aliveTeammatesOfExcludingSelf(attacker)
-                                .sorted(Comparator.comparing((WarlordsPlayer p) -> p.getCooldownManager().hasCooldown(HolyRadianceProtector.class) ? 0 : 1)
-                                        .thenComparing(Utils.sortClosestBy(WarlordsPlayer::getLocation, attacker.getLocation())))
-                                .limit(2)
-                        ) {
-                            if (Warlords.getPlayerSettings(attacker.uuid).getSkillBoostForClass() == ClassesSkillBoosts.PROTECTOR_STRIKE) {
-                                ally.addHealingInstance(attacker, ability, damageValue * allyHealing * 1.2f, damageValue * allyHealing * 1.2f, isCrit ? 100 : -1, 100, false, false);
-                            } else {
-                                ally.addHealingInstance(attacker, ability, damageValue * allyHealing, damageValue * allyHealing, isCrit ? 100 : -1, 100, false, false);
-                            }
-                        }
-                    }
+//                    // Protector's Strike
+//                    if (ability.equals("Protector's Strike")) {
+//
+//                        float healthFraction = lerp(0, 1, (float) attacker.getHealth() / attacker.getMaxHealth());
+//
+//                        if (healthFraction > 1) {
+//                            healthFraction = 1; // in the case of overheal
+//                        }
+//
+//                        if (healthFraction < 0) {
+//                            healthFraction = 0;
+//                        }
+//
+//                        float allyHealing = 0.5f + healthFraction * 0.5f;
+//                        float ownHealing = 0.5f + (1 - healthFraction) * 0.5f;
+//
+//                        // Self Heal
+//                        if (Warlords.getPlayerSettings(attacker.uuid).getSkillBoostForClass() == ClassesSkillBoosts.PROTECTOR_STRIKE) {
+//                            attacker.addHealingInstance(attacker, ability, damageValue * ownHealing * 1.2f, damageValue * ownHealing * 1.2f, isCrit ? 100 : -1, 100, false, false);
+//                        } else {
+//                            attacker.addHealingInstance(attacker, ability, damageValue * ownHealing, damageValue * ownHealing, isCrit ? 100 : -1, 100, false, false);
+//                        }
+//
+//                        // Ally Heal
+//                        for (WarlordsPlayer ally : PlayerFilter
+//                                .entitiesAround(attacker, 10, 10, 10)
+//                                .aliveTeammatesOfExcludingSelf(attacker)
+//                                .sorted(Comparator.comparing((WarlordsPlayer p) -> p.getCooldownManager().hasCooldown(HolyRadianceProtector.class) ? 0 : 1)
+//                                        .thenComparing(Utils.sortClosestBy(WarlordsPlayer::getLocation, attacker.getLocation())))
+//                                .limit(2)
+//                        ) {
+//                            if (Warlords.getPlayerSettings(attacker.uuid).getSkillBoostForClass() == ClassesSkillBoosts.PROTECTOR_STRIKE) {
+//                                ally.addHealingInstance(attacker, ability, damageValue * allyHealing * 1.2f, damageValue * allyHealing * 1.2f, isCrit ? 100 : -1, 100, false, false);
+//                            } else {
+//                                ally.addHealingInstance(attacker, ability, damageValue * allyHealing, damageValue * allyHealing, isCrit ? 100 : -1, 100, false, false);
+//                            }
+//                        }
+//                    }
                 }
 
                 // Judgement Strike
-                if (ability.equals("Judgement Strike") && isCrit) {
-                    attacker.getSpeed().addSpeedModifier("Judgement Speed", 20, 2 * 20, "BASE");
-                }
+//                if (ability.equals("Judgement Strike") && isCrit) {
+//                    attacker.getSpeed().addSpeedModifier("Judgement Speed", 20, 2 * 20, "BASE");
+//                }
 
                 updateJimmyHealth();
 
