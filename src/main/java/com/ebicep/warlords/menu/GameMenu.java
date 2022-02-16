@@ -189,6 +189,7 @@ public class GameMenu {
                         setSelectedBoost(player, skillBoost);
                         openSkillBoostMenu(player, selectedGroup);
 
+                        if (DatabaseManager.playerService == null) return;
                         //sync bc player should be cached
                         DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
                         databasePlayer.getSpec(selectedClass).setSkillBoost(skillBoost);
@@ -279,6 +280,8 @@ public class GameMenu {
                                     .getOrDefault(selectedClass, Weapons.FELFLAME_BLADE).item)).name("§aWeapon Skin Preview")
                                     .lore("")
                                     .get());
+
+                            if (DatabaseManager.playerService == null) return;
                             //sync bc player should be cached
                             DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
                             databasePlayer.getSpec(selectedClass).setWeapon(weapon);
@@ -368,6 +371,7 @@ public class GameMenu {
                         }
                         List<Helmets> selectedHelmets = Helmets.getSelected(player);
                         Warlords.newChain().async(() -> {
+                            if (DatabaseManager.playerService == null) return;
                             DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
                             databasePlayer.getMage().setHelmet(selectedHelmets.get(0));
                             databasePlayer.getWarrior().setHelmet(selectedHelmets.get(1));
@@ -414,6 +418,7 @@ public class GameMenu {
                         }
                         List<ArmorSets> armorSetsList = ArmorSets.getSelected(player);
                         Warlords.newChain().async(() -> {
+                            if (DatabaseManager.playerService == null) return;
                             DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
                             databasePlayer.getMage().setArmor(armorSetsList.get(0));
                             databasePlayer.getWarrior().setArmor(armorSetsList.get(1));

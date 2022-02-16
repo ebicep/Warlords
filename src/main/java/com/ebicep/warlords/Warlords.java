@@ -328,6 +328,7 @@ public class Warlords extends JavaPlugin {
         saveWeaponConfig();
 
         holographicDisplaysEnabled = Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays");
+        citizensEnabled = Bukkit.getPluginManager().isPluginEnabled("Citizens");
 
         Bukkit.getOnlinePlayers().forEach(player -> {
             playerScoreboards.put(player.getUniqueId(), new CustomScoreboard(player));
@@ -389,8 +390,6 @@ public class Warlords extends JavaPlugin {
                     }
                 }
         );
-
-        citizensEnabled = Bukkit.getPluginManager().isPluginEnabled("Citizens");
 
         startMainLoop();
         getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Warlords] Plugin is enabled");

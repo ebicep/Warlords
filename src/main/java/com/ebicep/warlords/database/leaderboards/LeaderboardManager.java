@@ -74,6 +74,9 @@ public class LeaderboardManager {
 
     public static void addHologramLeaderboards(String sharedChainName, boolean init) {
         if (!Warlords.holographicDisplaysEnabled) return;
+        if (!DatabaseManager.enabled) return;
+        if (DatabaseManager.playerService == null || DatabaseManager.gameService == null) return;
+
         HolographicDisplaysAPI.get(Warlords.getInstance()).getHolograms().forEach(hologram -> {
             Location hologramLocation = hologram.getPosition().toLocation();
             if (!DatabaseGame.lastGameStatsLocation.equals(hologramLocation) &&
@@ -129,11 +132,6 @@ public class LeaderboardManager {
                         long endTime = System.nanoTime();
                         long timeToLoad = (endTime - startTime) / 1000000;
                         System.out.println("Time it took for LB to load (ms): " + timeToLoad);
-//                        if (timeToLoad > 25000) {
-//                            System.out.println("FART FART FART");
-//                            System.out.println("HOLOGRAMS TOOK LONG ASS TIME TO LOAD!?!");
-//                            System.out.println("FART FART FART");
-//                        }
                         Bukkit.getOnlinePlayers().forEach(player -> {
                             setLeaderboardHologramVisibility(player);
                             DatabaseGame.setGameHologramVisibility(player);
@@ -142,9 +140,7 @@ public class LeaderboardManager {
                         System.out.println("Set Hologram Visibility");
 
                         if (init) {
-                            if (Warlords.citizensEnabled) {
-                                NPCManager.createGameNPC();
-                            }
+                            NPCManager.createGameNPC();
                         }
                         this.cancel();
                     } else if (counter++ > 2 * 300) { //holograms should all load within 5 minutes or ???
@@ -152,28 +148,7 @@ public class LeaderboardManager {
                     }
                 }
             }.runTaskTimer(Warlords.getInstance(), 20, 10);
-//            Warlords.newChain()//newSharedChain(sharedChainName)
-//                    .delay(10, TimeUnit.SECONDS)
-//                    .sync(() -> {
-//                        long endTime = System.nanoTime();
-//                        long timeToLoad = (endTime - startTime) / 1000000;
-////                        System.out.println("Time it took for LB to load (ms): " + timeToLoad);
-////                        if (timeToLoad > 25000) {
-////                            System.out.println("FART FART FART");
-////                            System.out.println("HOLOGRAMS TOOK LONG ASS TIME TO LOAD!?!");
-////                            System.out.println("FART FART FART");
-////                        }
-//                        System.out.println("Setting Hologram Visibility");
-//                        Bukkit.getOnlinePlayers().forEach(player -> {
-//                            setLeaderboardHologramVisibility(player);
-//                            DatabaseGame.setGameHologramVisibility(player);
-//                        });
-//                        System.out.println("Set Hologram Visibility");
-//                    }).execute();
-
         }
-
-
     }
 
     private static void addHologramsToGameType(PlayersCollections value, List<DatabasePlayer> collection, LeaderboardCategory<?> leaderboardCategory, String subTitle) {

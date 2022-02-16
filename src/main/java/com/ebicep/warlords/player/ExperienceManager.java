@@ -57,6 +57,11 @@ public class ExperienceManager {
     }};
 
     public static void awardWeeklyExperience(Document weeklyDocument) {
+        if (DatabaseManager.playerService == null) {
+            System.out.println("WARNING - Could not give weekly experience bonus - playerService is null");
+            return;
+        }
+
         HashMap<String, Document> futureMessageDocuments = new HashMap<>();
         BulkOperations operations = DatabaseManager.playerService.bulkOps();
 
@@ -276,6 +281,7 @@ public class ExperienceManager {
 //    }
 
     public static long getExperienceForClass(UUID uuid, ClassesGroup classesGroup) {
+        if (DatabaseManager.playerService == null) return 0;
         DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid);
         return databasePlayer == null ? 0L : databasePlayer.getClass(classesGroup).getExperience();
     }
@@ -293,11 +299,13 @@ public class ExperienceManager {
     }
 
     public static long getUniversalLevel(UUID uuid) {
+        if (DatabaseManager.playerService == null) return 0;
         DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid);
         return databasePlayer == null ? 0L : databasePlayer.getExperience();
     }
 
     private static long getExperienceFromSpec(UUID uuid, Classes classes) {
+        if (DatabaseManager.playerService == null) return 0;
         DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid);
         return databasePlayer == null ? 0L : databasePlayer.getSpec(classes).getExperience();
     }

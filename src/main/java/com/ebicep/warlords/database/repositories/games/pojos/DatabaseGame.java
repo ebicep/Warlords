@@ -373,6 +373,7 @@ public class DatabaseGame {
     }
 
     public static void addGameToDatabase(DatabaseGame databaseGame) {
+        if (DatabaseManager.gameService == null) return;
         //game in the database
         if (DatabaseManager.gameService.exists(databaseGame)) {
             //if not counted then update player stats then set counted to true, else do nothing
@@ -404,6 +405,7 @@ public class DatabaseGame {
     }
 
     public static void removeGameFromDatabase(DatabaseGame databaseGame) {
+        if (DatabaseManager.gameService == null) return;
         //game in the database
         if (DatabaseManager.gameService.exists(databaseGame)) {
             //if counted then remove player stats then set counted to false, else do nothing
@@ -422,6 +424,11 @@ public class DatabaseGame {
     }
 
     private static void updatePlayerStatsFromTeam(DatabaseGame databaseGame, boolean add, DatabaseGamePlayers.GamePlayer gamePlayer, boolean blue) {
+        if (DatabaseManager.playerService == null) {
+            System.out.println("playerService is null - cannot update player stats");
+            return;
+        }
+
         DatabasePlayer databasePlayerAllTime = DatabaseManager.playerService.findByUUID(UUID.fromString(gamePlayer.getUuid()));
         DatabasePlayer databasePlayerSeason = DatabaseManager.playerService.findByUUID(UUID.fromString(gamePlayer.getUuid()), PlayersCollections.SEASON_5);
         DatabasePlayer databasePlayerWeekly = DatabaseManager.playerService.findByUUID(UUID.fromString(gamePlayer.getUuid()), PlayersCollections.WEEKLY);

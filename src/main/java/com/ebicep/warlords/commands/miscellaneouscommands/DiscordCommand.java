@@ -34,6 +34,11 @@ public class DiscordCommand implements CommandExecutor {
             return true;
         }
 
+        if (DatabaseManager.playerService == null) {
+            sender.sendMessage(ChatColor.RED + "Problem connecting to the database");
+            return true;
+        }
+
         String input = args[0];
         switch (input.toLowerCase()) {
             case "link": {
