@@ -32,9 +32,7 @@ public class SoothingPuddle extends AbstractAbility {
                 "§7allies for §a" + format(minDamageHeal) + " §7- §a" + format(maxDamageHeal) + " §7health upon impact.\n" +
                 "§7The projectile will form a small puddle that\n" +
                 "§7heals allies for §a" + puddleMinHealing + " §7- §a " + puddleMaxHealing + " §7health per second.\n" +
-                "§7Lasts §64 §7seconds." +
-                "\n\n" +
-                "§7Has an optimal range of §e25 §7blocks.";
+                "§7Lasts §64 §7seconds.";
     }
 
     @Override
@@ -160,7 +158,7 @@ public class SoothingPuddle extends AbstractAbility {
                             }
                         }
 
-                    }.runTaskTimer(0, 20);
+                    }.runTaskTimer(20, 20);
 
                     this.cancel();
                 }

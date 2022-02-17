@@ -9,6 +9,7 @@ import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
@@ -155,7 +156,7 @@ public class HealingTotem extends AbstractTotemBase {
             public void run() {
                 if (wp.isDeath() || counter >= 20 * duration) {
                     this.cancel();
-                } else if (wp.getEntity() instanceof Player && ((Player) wp.getEntity()).isSneaking()) {
+                } else if (wp.isSneaking()) {
                     PlayerFilter.entitiesAround(totemStand.getLocation(), radius, radius, radius)
                             .aliveEnemiesOf(wp)
                             .forEach((p) -> {

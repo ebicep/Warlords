@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
@@ -126,7 +127,13 @@ public class RecklessCharge extends AbstractAbility implements Listener {
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent e) {
         if (stunnedPlayers.contains(e.getPlayer().getUniqueId())) {
-            e.setTo(e.getFrom());
+            if (
+                (e.getFrom().getX() != e.getTo().getX() ||
+                e.getFrom().getZ() != e.getTo().getZ()) &&
+                !(e instanceof PlayerTeleportEvent)
+            ) {
+                e.getPlayer().teleport(e.getFrom());
+            }
         }
     }
 

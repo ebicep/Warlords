@@ -83,6 +83,7 @@ public class BotListener extends ListenerAdapter implements Listener {
                 Long key = Long.parseLong(message.getContentRaw());
                 if (DiscordCommand.playerLinkKeys.containsValue(key)) {
                     UUID uuid = DiscordCommand.playerLinkKeys.getKey(key);
+                    if (DatabaseManager.playerService == null) return;
                     Warlords.newChain()
                             .asyncFirst(() -> DatabaseManager.playerService.findByUUID(uuid))
                             .syncLast(databasePlayer -> {
@@ -217,9 +218,11 @@ public class BotListener extends ListenerAdapter implements Listener {
                                             }
                                             if (!spec.isEmpty()) {
                                                 Warlords.getPlayerSettings(uuid).setSelectedClass(Classes.getClass(spec));
-                                                DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid);
-                                                databasePlayer.setLastSpec(Classes.getClass(spec));
-                                                DatabaseManager.updatePlayerAsync(databasePlayer);
+                                                if (DatabaseManager.playerService != null) {
+                                                    DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid);
+                                                    databasePlayer.setLastSpec(Classes.getClass(spec));
+                                                    DatabaseManager.updatePlayerAsync(databasePlayer);
+                                                }
                                             }
                                             //only send messages to online
                                             if (offlinePlayer.isOnline()) {

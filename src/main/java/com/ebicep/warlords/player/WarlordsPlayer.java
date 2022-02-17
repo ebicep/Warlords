@@ -438,7 +438,7 @@ public final class WarlordsPlayer {
                     sendDamageMessage(attacker, this, ability, damageValue, isCrit, isMeleeHit);
 
                     if (spec instanceof Vindicator) {
-                        ((SoulShackle) spec.getRed()).addToAbsorbPool(damageValue);
+                        ((SoulShackle) spec.getRed()).addToShacklePool(damageValue);
                     }
 
                     // Repentance
@@ -1274,6 +1274,8 @@ public final class WarlordsPlayer {
         this.spec.getBlue().updateDescription(player);
         this.spec.getOrange().updateDescription(player);
         assignItemLore(Bukkit.getPlayer(uuid));
+
+        if (DatabaseManager.playerService == null) return;
         //sync bc player should be cached
         DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
         databasePlayer.getSpec(specClass).setSkillBoost(skillBoost);
@@ -1724,6 +1726,10 @@ public final class WarlordsPlayer {
     @Nonnull
     public Location getLocation(@Nonnull Location copyInto) {
         return this.entity.getLocation(copyInto);
+    }
+
+    public boolean isSneaking() {
+        return this.entity instanceof Player && ((Player) this.entity).isSneaking();
     }
 
     public boolean isEnemyAlive(@Nullable Entity other) {

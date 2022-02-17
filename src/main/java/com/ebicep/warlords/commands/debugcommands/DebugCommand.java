@@ -7,18 +7,23 @@ import com.ebicep.warlords.game.state.TimerDebugAble;
 import com.ebicep.warlords.menu.DebugMenu;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import org.apache.commons.lang.math.NumberUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.ebicep.warlords.commands.BaseCommand.requireGame;
 import static com.ebicep.warlords.commands.BaseCommand.requireWarlordsPlayerInPrivateGame;
 
-public class DebugCommand implements CommandExecutor {
+public class DebugCommand implements TabExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
@@ -34,10 +39,10 @@ public class DebugCommand implements CommandExecutor {
             return true;
         }
         String input = args[0];
-        switch(input.toLowerCase(Locale.ROOT)) {
+        switch (input.toLowerCase(Locale.ROOT)) {
             case "respawn": {
                 WarlordsPlayer wp = requireWarlordsPlayerInPrivateGame(sender, args.length > 1 ? args[1] : null);
-                if(wp == null) {
+                if (wp == null) {
                     return true;
                 }
                 wp.respawn();
@@ -45,10 +50,10 @@ public class DebugCommand implements CommandExecutor {
             }
             case "energy": {
                 WarlordsPlayer wp = requireWarlordsPlayerInPrivateGame(sender, args.length > 2 ? args[2] : null);
-                if(wp == null) {
+                if (wp == null) {
                     return true;
                 }
-                switch(args.length > 1 ? args[1] : "") {
+                switch (args.length > 1 ? args[1] : "") {
                     case "disable":
                         wp.setInfiniteEnergy(true);
                         sender.sendMessage(ChatColor.RED + "DEV: " + wp.getColoredName() + "'s §aEnergy consumption has been disabled!");
@@ -64,10 +69,10 @@ public class DebugCommand implements CommandExecutor {
             }
             case "cooldown": {
                 WarlordsPlayer wp = requireWarlordsPlayerInPrivateGame(sender, args.length > 2 ? args[2] : null);
-                if(wp == null) {
+                if (wp == null) {
                     return true;
                 }
-                switch(args.length > 1 ? args[1] : "") {
+                switch (args.length > 1 ? args[1] : "") {
                     case "disable":
                         wp.setDisableCooldowns(true);
                         sender.sendMessage(ChatColor.RED + "DEV: " + wp.getColoredName() + "'s §aCooldown timers have been disabled!");
@@ -83,10 +88,10 @@ public class DebugCommand implements CommandExecutor {
             }
             case "damage": {
                 WarlordsPlayer wp = BaseCommand.requireWarlordsPlayerInPrivateGame(sender, args.length > 2 ? args[2] : null);
-                if(wp == null) {
+                if (wp == null) {
                     return true;
                 }
-                switch(args.length > 1 ? args[1] : "") {
+                switch (args.length > 1 ? args[1] : "") {
                     case "disable":
                         wp.setTakeDamage(false);
                         sender.sendMessage(ChatColor.RED + "§cDEV: " + wp.getColoredName() + "'s §aTaking damage has been disabled!");
@@ -115,9 +120,9 @@ public class DebugCommand implements CommandExecutor {
                     }
 
                     String endMessage = input.equals("takedamage") ? "took " + amount + " damage!" : "got " + amount + " heath!";
-                    
+
                     WarlordsPlayer wp = BaseCommand.requireWarlordsPlayerInPrivateGame(sender, args.length > 2 ? args[2] : null);
-                    if(wp == null) {
+                    if (wp == null) {
                         return true;
                     }
                     sender.sendMessage(ChatColor.RED + "§cDEV: " + wp.getColoredName() + " §a" + endMessage);
@@ -137,10 +142,10 @@ public class DebugCommand implements CommandExecutor {
             }
             case "crits": {
                 WarlordsPlayer wp = requireWarlordsPlayerInPrivateGame(sender, args.length > 2 ? args[2] : null);
-                if(wp == null) {
+                if (wp == null) {
                     return true;
                 }
-                switch(args.length > 1 ? args[1] : "") {
+                switch (args.length > 1 ? args[1] : "") {
                     case "disable":
                         wp.setCanCrit(false);
                         sender.sendMessage(ChatColor.RED + "§cDEV: " + wp.getColoredName() + "'s §aCrits has been disabled!");
@@ -156,20 +161,21 @@ public class DebugCommand implements CommandExecutor {
             }
             case "freeze": {
                 Game game = requireGame(sender, args.length > 1 ? args[1] : null);
-                if(game == null) {
+                if (game == null) {
                     return true;
                 }
-                if (game.isFrozen()){
+                if (game.isFrozen()) {
                     game.removeFrozenCause(game.getFrozenCauses().get(0));
+                    sender.sendMessage(ChatColor.RED + "§cDEV: §aThe game has been unfrozen!");
                 } else {
                     game.addFrozenCause("Manually frozen");
+                    sender.sendMessage(ChatColor.RED + "§cDEV: §aThe game has been frozen!");
                 }
-                sender.sendMessage(ChatColor.RED + "§cDEV: §aThe game has been frozen!");
                 return true;
             }
             case "timer": {
                 Game game = requireGame(sender, args.length > 2 ? args[2] : null);
-                if(game == null) {
+                if (game == null) {
                     return true;
                 }
                 if (!(game.getState() instanceof TimerDebugAble)) {
@@ -203,6 +209,29 @@ public class DebugCommand implements CommandExecutor {
 
     public void register(Warlords instance) {
         instance.getCommand("wl").setExecutor(this);
-        //instance.getCommand("wl").setTabCompleter(this);
+        instance.getCommand("wl").setTabCompleter(this);
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] args) {
+        String lastArg = args[args.length - 1];
+        if (args.length > 1) {
+            return Bukkit.getOnlinePlayers().stream()
+                    .filter(e -> e.getName().toLowerCase().startsWith(lastArg.toLowerCase()))
+                    .map(e -> e.getName().charAt(0) + e.getName().substring(1))
+                    .collect(Collectors.toList());
+        }
+        return Stream.of("respawn",
+                        "energy",
+                        "cooldown",
+                        "damage",
+                        "heal",
+                        "takedamage",
+                        "crits",
+                        "freeze",
+                        "timer")
+                .filter(e -> e.startsWith(lastArg.toLowerCase(Locale.ROOT)))
+                .map(e -> e.charAt(0) + e.substring(1).toLowerCase(Locale.ROOT))
+                .collect(Collectors.toList());
     }
 }

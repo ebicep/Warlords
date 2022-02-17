@@ -40,6 +40,8 @@ public class ExperienceCommand implements CommandExecutor {
                     return true;
                 }
 
+                if (DatabaseManager.playerService == null) return true;
+
                 Warlords.newChain()
                         .asyncFirst(() -> DatabaseManager.playerService.findByUUID(player.getUniqueId()))
                         .syncLast(databasePlayer -> {
@@ -69,6 +71,8 @@ public class ExperienceCommand implements CommandExecutor {
                     sender.sendMessage(ChatColor.RED + "Invalid Player");
                     return true;
                 }
+
+                if (DatabaseManager.playerService == null) return true;
 
                 Warlords.newChain()
                         .asyncFirst(() -> DatabaseManager.playerService.findByUUID(player.getUniqueId()))

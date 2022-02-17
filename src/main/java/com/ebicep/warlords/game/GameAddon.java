@@ -1,10 +1,7 @@
 package com.ebicep.warlords.game;
 
 import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.game.option.GameFreezeWhenOfflineOption;
-import com.ebicep.warlords.game.option.ImposterModeOption;
-import com.ebicep.warlords.game.option.InterchangeModeOption;
-import com.ebicep.warlords.game.option.PreGameItemOption;
+import com.ebicep.warlords.game.option.*;
 import com.ebicep.warlords.game.state.ClosedState;
 import com.ebicep.warlords.game.state.PreLobbyState;
 import com.ebicep.warlords.game.state.State;
@@ -23,6 +20,7 @@ public enum GameAddon {
         @Override
         public void modifyGame(@Nonnull Game game) {
             game.getOptions().add(new GameFreezeWhenOfflineOption());
+            //game.getOptions().add(new CountGameOption());
             game.getOptions().add(new PreGameItemOption(5, new ItemBuilder(Material.NOTE_BLOCK)
                     .name(ChatColor.GREEN + "Team Selector " + ChatColor.GRAY + "(Right-Click)")
                     .lore(ChatColor.YELLOW + "Click to select your team!")

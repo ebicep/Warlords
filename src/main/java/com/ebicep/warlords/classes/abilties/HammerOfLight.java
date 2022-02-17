@@ -159,7 +159,7 @@ public class HammerOfLight extends AbstractAbility {
             public void run() {
                 if (!wp.getGame().isFrozen()) {
 
-                    if (wp.isAlive() && wp.getEntity() instanceof Player && ((Player) wp.getEntity()).isSneaking() && !wasSneaking) {
+                    if (wp.isAlive() && wp.isSneaking() && !wasSneaking) {
                         tempHammerOfLight.setCrownOfLight(true);
                         new CooldownFilter<>(wp, RegularCooldown.class)
                                 .filterCooldownObject(tempHammerOfLight)
@@ -219,7 +219,7 @@ public class HammerOfLight extends AbstractAbility {
                     }
 
 
-                    wasSneaking = wp.getEntity() instanceof Player && ((Player) wp.getEntity()).isSneaking();
+                    wasSneaking = wp.isSneaking();
 
 
                     if (wp.isDead() || hol.getDuration() <= 0) {

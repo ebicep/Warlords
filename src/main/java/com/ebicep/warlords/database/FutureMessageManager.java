@@ -22,6 +22,7 @@ public class FutureMessageManager implements Listener {
     public static MongoCollection<Document> futureMessages;
 
     public static void addNewFutureMessageDocument(UUID uuid, boolean centered, String... messages) {
+        if (futureMessages == null) return;
         Document previousDocument = getPlayerDocument(uuid);
         if (previousDocument != null) {
             futureMessages.updateOne(eq("uuid", uuid.toString()), Updates.pushEach("messages", Arrays.stream(messages).collect(Collectors.toList())));
@@ -33,10 +34,12 @@ public class FutureMessageManager implements Listener {
     }
 
     public static void addNewFutureMessageDocuments(List<Document> documents) {
+        if (futureMessages == null) return;
         futureMessages.insertMany(documents);
     }
 
     public static void editFutureMessage(UUID uuid, boolean centered, String... newMessages) {
+        if (futureMessages == null) return;
         if (getPlayerDocument(uuid) != null) {
             futureMessages.updateOne(eq("uuid", uuid.toString()),
                     new Document("$set", new Document("centered", centered)
@@ -51,6 +54,7 @@ public class FutureMessageManager implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e) {
+        if (futureMessages == null) return;
         Player player = e.getPlayer();
         Document playerDocument = getPlayerDocument(player.getUniqueId());
         if (playerDocument != null) {

@@ -59,19 +59,17 @@ public class HealingRain extends AbstractAbility {
             @Override
             public void run() {
                 if (!wp.getGame().isFrozen()) {
-                    if (wp.getEntity() instanceof Player) {
-                        Player p = (Player) wp.getEntity();
-                        if (wp.isAlive() && p.isSneaking() && !wasSneaking) {
-                            p.playSound(p.getLocation(), "mage.timewarp.teleport", 2, 1.35f);
-                            p.sendMessage(WarlordsPlayer.RECEIVE_ARROW + " §7You moved your §aHealing Rain §7to your current location.");
-                            hr.setLocation(p.getLocation());
-                        }
-
-                        wasSneaking = p.isSneaking();
+                    if (wp.isAlive() && wp.isSneaking() && !wasSneaking) {
+                        wp.playSound(wp.getLocation(), "mage.timewarp.teleport", 2, 1.35f);
+                        wp.sendMessage(WarlordsPlayer.RECEIVE_ARROW + " §7You moved your §aHealing Rain §7to your current location.");
+                        hr.setLocation(wp.getLocation());
                     }
+
+                    wasSneaking = wp.isSneaking();
                 }
             }
         }.runTaskTimer(0, 0);
+
         new GameRunnable(wp.getGame()) {
 
             @Override

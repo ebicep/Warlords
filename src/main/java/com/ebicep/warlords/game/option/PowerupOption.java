@@ -288,7 +288,7 @@ public class PowerupOption implements Option {
             public void onPickUp(PowerupOption option, WarlordsPlayer warlordsPlayer) {
                 warlordsPlayer.getCooldownManager().addRegularCooldown(
                         "Damage",
-                        "Damage",
+                        "DMG",
                         DamagePowerup.class,
                         DamagePowerup.DAMAGE_POWERUP,
                         null,

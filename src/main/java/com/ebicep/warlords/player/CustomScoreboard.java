@@ -215,6 +215,10 @@ public class CustomScoreboard {
             }
             return;
         }
+        if (DatabaseManager.playerService == null) {
+            clearSideBar();
+            return;
+        }
         DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
         giveNewSideBar(true,
                 ChatColor.GRAY + "Lifetime",
