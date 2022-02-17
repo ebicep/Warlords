@@ -65,7 +65,7 @@ public class WonderTrap extends AbstractAbility {
                         break;
                 }
 
-                if (counter > 2 && wp.getEntity() instanceof Player && ((Player) wp.getEntity()).isSneaking() && trap.isCanEndEarly()) {
+                if (counter > 2 && wp.isSneaking() && trap.isCanEndEarly()) {
                     trap.cancel();
                     this.cancel();
                     textCooldown.setRemove(true);
@@ -109,7 +109,7 @@ public class WonderTrap extends AbstractAbility {
                 timeToLive--;
                 trapArmTime--;
 
-                if (trapOwner.getEntity() instanceof Player && ((Player) trapOwner.getEntity()).isSneaking() && canEndEarly) {
+                if (trapOwner.isSneaking() && canEndEarly) {
 
                     for (Player player1 : trapStand.getWorld().getPlayers()) {
                         player1.playSound(trapStand.getLocation(), "rogue.wondertrap.explosion", 2, 1.75f);

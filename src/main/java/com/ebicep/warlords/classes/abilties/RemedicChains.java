@@ -8,6 +8,7 @@ import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
 import org.bukkit.ChatColor;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -45,7 +46,7 @@ public class RemedicChains extends AbstractAbility {
     public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
         RemedicChains tempRemedicChain = new RemedicChains();
 
-        int targethit = 0;
+        int targetHit = 0;
         for (WarlordsPlayer chainTarget : PlayerFilter
                 .entitiesAround(player, 10, 10, 10)
                 .aliveTeammatesOfExcludingSelf(wp)
@@ -72,7 +73,7 @@ public class RemedicChains extends AbstractAbility {
 
             HashMap<WarlordsPlayer, Integer> timeLinked = new HashMap<>();
 
-            targethit++;
+            targetHit++;
             new GameRunnable(wp.getGame()) {
                 int counter = 0;
                 @Override
@@ -109,7 +110,6 @@ public class RemedicChains extends AbstractAbility {
                     if (counter % 8 == 0) {
                         if (wp.getCooldownManager().hasCooldown(tempRemedicChain)) {
                             EffectUtils.playParticleLinkAnimation(wp.getLocation(), chainTarget.getLocation(), 250, 200, 250);
-
                             // Ally is out of range, break link
                             if (outOfRange) {
                                 for (Map.Entry<WarlordsPlayer, Integer> entry : timeLinked.entrySet()) {
@@ -127,7 +127,7 @@ public class RemedicChains extends AbstractAbility {
                                 }
 
                                 chainTarget.getCooldownManager().removeCooldown(tempRemedicChain);
-                                chainTarget.sendMessage(ChatColor.RED + " You left the link range early!");
+                                chainTarget.sendMessage(ChatColor.RED + "You left the link range early!");
                                 this.cancel();
                             }
 
@@ -163,10 +163,10 @@ public class RemedicChains extends AbstractAbility {
             }.runTaskTimer(0, 0);
         }
 
-        if (targethit >= 1) {
+        if (targetHit >= 1) {
             for (Player player1 : player.getWorld().getPlayers()) {
                 player1.playSound(player.getLocation(), "rogue.remedicchains.activation", 2, 0.3f);
-                player1.playSound(player.getLocation(), "shaman.lightningbolt.impact", 2, 2);
+                player1.playSound(player.getLocation(), Sound.BLAZE_BREATH, 2, 0.3f);
             }
 
             wp.subtractEnergy(energyCost);
@@ -182,7 +182,7 @@ public class RemedicChains extends AbstractAbility {
             );
         }
 
-        return targethit >= 1;
+        return targetHit >= 1;
     }
 
 }

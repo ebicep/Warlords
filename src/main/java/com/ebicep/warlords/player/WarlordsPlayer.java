@@ -224,7 +224,7 @@ public final class WarlordsPlayer {
             critMultiplier += attacker.getSpec().getOrange().getCritMultiplier();
         }
 
-        if (attacker.getCooldownManager().hasCooldown(CrossVital.class) && !isMeleeHit) {
+        if (attacker.getCooldownManager().hasCooldown(SoulSwitch.class) && !isMeleeHit) {
             critMultiplier += attacker.getSpec().getBlue().getCritMultiplier();
         }
 
@@ -559,7 +559,7 @@ public final class WarlordsPlayer {
                     sendDamageMessage(attacker, this, ability, damageValue, isCrit, isMeleeHit);
 
                     if (spec instanceof Vindicator) {
-                        ((SoulShackle) spec.getRed()).addToAbsorbPool(damageValue);
+                        ((SoulShackle) spec.getRed()).addToShacklePool(damageValue);
                     }
 
                     // Repentance
@@ -1917,6 +1917,10 @@ public final class WarlordsPlayer {
     @Nonnull
     public Location getLocation(@Nonnull Location copyInto) {
         return this.entity.getLocation(copyInto);
+    }
+
+    public boolean isSneaking() {
+        return this.entity instanceof Player && ((Player) this.entity).isSneaking();
     }
 
     public boolean isEnemyAlive(@Nullable Entity other) {

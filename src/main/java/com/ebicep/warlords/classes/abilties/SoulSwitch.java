@@ -12,11 +12,11 @@ import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 
-public class CrossVital extends AbstractAbility {
+public class SoulSwitch extends AbstractAbility {
 
     private final int radius = 15;
 
-    public CrossVital() {
+    public SoulSwitch() {
         super("Soul Switch", 0, 0, 30, 40, -1, 50);
     }
 
@@ -31,13 +31,15 @@ public class CrossVital extends AbstractAbility {
     public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
 
         for (WarlordsPlayer swapTarget : PlayerFilter
-                .entitiesAround(wp.getLocation(), radius, 7.5, radius)
+                .entitiesAround(wp.getLocation(), radius, 6, radius)
                 .aliveEnemiesOf(wp)
                 .requireLineOfSight(wp)
                 .closestFirst(wp)
         ) {
             if (swapTarget.getCarriedFlag() != null) {
                 wp.sendMessage(ChatColor.RED + "You cannot Soul Switch with a player holding the flag!");
+            } else if (wp.getCarriedFlag() != null) {
+                wp.sendMessage(ChatColor.RED + "You cannot Soul Switch while holding the flag!");
             } else {
                 Location swapLocation = swapTarget.getLocation();
                 Location ownLocation = wp.getLocation();

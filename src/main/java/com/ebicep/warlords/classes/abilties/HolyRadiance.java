@@ -6,12 +6,15 @@ import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
 import org.bukkit.Location;
-import org.bukkit.Sound;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import javax.annotation.Nonnull;
+
 public class HolyRadiance extends AbstractAbility {
+
+    // CURRENTLY UNUSED CONTENT
 
     private final int radius = 6;
 
@@ -27,7 +30,7 @@ public class HolyRadiance extends AbstractAbility {
     }
 
     @Override
-    public boolean onActivate(WarlordsPlayer wp, Player player) {
+    public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
 
         wp.subtractEnergy(energyCost);
         for (WarlordsPlayer p : PlayerFilter
@@ -41,7 +44,6 @@ public class HolyRadiance extends AbstractAbility {
 
         wp.addHealingInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false, false);
 
-        player.playSound(player.getLocation(), Sound.ORB_PICKUP, 1, 1);
         for (Player player1 : player.getWorld().getPlayers()) {
             player1.playSound(player.getLocation(), "paladin.holyradiance.activation", 2, 1);
         }

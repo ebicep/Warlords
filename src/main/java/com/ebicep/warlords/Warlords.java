@@ -17,6 +17,7 @@ import com.ebicep.warlords.classes.abilties.*;
 import com.ebicep.warlords.classes.internal.EnergyPowerup;
 import com.ebicep.warlords.classes.internal.HealingPowerup;
 import com.ebicep.warlords.classes.internal.Overheal;
+import com.ebicep.warlords.classes.rogue.specs.apothecary.Apothecary;
 import com.ebicep.warlords.commands.debugcommands.*;
 import com.ebicep.warlords.commands.miscellaneouscommands.*;
 import com.ebicep.warlords.database.DatabaseManager;
@@ -50,11 +51,9 @@ import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Firework;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -272,13 +271,13 @@ public class Warlords extends JavaPlugin {
 
         gameManager = new GameManager();
         gameManager.addGameHolder("Rift-0", GameMap.RIFT, new LocationFactory(Bukkit.getWorld("Rift")));
-//        gameManager.addGameHolder("SimulationRift-0", GameMap.SIMULATION_RIFT, new LocationFactory(Bukkit.getWorld("SimulationRift")));
+        gameManager.addGameHolder("SimulationRift-0", GameMap.SIMULATION_RIFT, new LocationFactory(Bukkit.getWorld("SimulationRift")));
+        gameManager.addGameHolder("Arathi-0", GameMap.ARATHI, new LocationFactory(Bukkit.getWorld("Arathi")));
         gameManager.addGameHolder("Crossfire-0", GameMap.CROSSFIRE, new LocationFactory(Bukkit.getWorld("Crossfire")));
-        gameManager.addGameHolder("Gorge-0", GameMap.GORGE, new LocationFactory(Bukkit.getWorld("Gorge")));
         gameManager.addGameHolder("Valley-0", GameMap.VALLEY, new LocationFactory(Bukkit.getWorld("Atherrough_Valley")));
         gameManager.addGameHolder("Warsong-0", GameMap.WARSONG, new LocationFactory(Bukkit.getWorld("Warsong")));
         gameManager.addGameHolder("Debug-0", GameMap.DEBUG, new LocationFactory(Bukkit.getWorld("TestWorld")));
-        //gameManager.addGameHolder("Heaven-0", GameMap.HEAVEN_WILL, new LocationFactory(Bukkit.getWorld("Heaven")));
+        gameManager.addGameHolder("Heaven-0", GameMap.HEAVEN_WILL, new LocationFactory(Bukkit.getWorld("Heaven")));
 
         Thread.currentThread().setContextClassLoader(getClassLoader());
 
@@ -488,6 +487,11 @@ public class Warlords extends JavaPlugin {
                         // Updating all player speed.
                         wp.getSpeed().updateSpeed();
 
+                        // will add more efficient system later
+                        if (wp.getSpec() instanceof Apothecary) {
+                            wp.getSpeed().addSpeedModifier("Base Speed", 20, 1, "BASE");
+                        }
+
                         CooldownManager cooldownManager = wp.getCooldownManager();
 
                         // Setting the flag tracking compass.
@@ -615,14 +619,12 @@ public class Warlords extends JavaPlugin {
                                                         " every second."
                                                 );
                                     }
-                                    Firework firework = wp.getWorld().spawn(wp.getLocation(), Firework.class);
-                                    FireworkMeta meta = firework.getFireworkMeta();
-                                    meta.addEffects(FireworkEffect.builder()
+
+                                    FireWorkEffectPlayer.playFirework(wp.getLocation(), FireworkEffect.builder()
                                             .withColor(Color.LIME)
                                             .with(FireworkEffect.Type.BALL)
                                             .build());
-                                    meta.setPower(0);
-                                    firework.setFireworkMeta(meta);
+
                                     wp.heal();
 
                                     if (player != null) {
@@ -738,14 +740,19 @@ public class Warlords extends JavaPlugin {
                                 energyGainPerTick += .25;
                             }
 
-                            // Checks whether the player has the Energy Powerup active.
-                            if (cooldownManager.hasCooldown(EnergyPowerup.class)) {
-                                energyGainPerTick *= 1.4;
+                            // Checks whether the player has Acupressure active.
+                            if (cooldownManager.hasCooldown(Acupressure.class)) {
+                                energyGainPerTick += 2.5;
+                            }
+
+                            // Checks whether the player has been marked by an Avenger.
+                            if (cooldownManager.hasCooldown(HolyRadianceAvenger.class)) {
+                                energyGainPerTick -= .4;
                             }
 
                             // Checks whether the player has the Energy Powerup active.
-                            if (cooldownManager.hasCooldown(Acupressure.class)) {
-                                energyGainPerTick *= 2.5;
+                            if (cooldownManager.hasCooldown(EnergyPowerup.class)) {
+                                energyGainPerTick *= 1.4;
                             }
 
                             // Setting energy gain to the value after all ability instance multipliers have been applied.
@@ -792,7 +799,7 @@ public class Warlords extends JavaPlugin {
                                 orb.remove();
                                 itr.remove();
 
-                                float orbHeal = 225;
+                                float orbHeal = OrbsOfLife.ORB_HEALING;
                                 if (Warlords.getPlayerSettings(orb.getOwner().getUuid()).getSkillBoostForClass() == ClassesSkillBoosts.ORBS_OF_LIFE) {
                                     orbHeal *= 1.2;
                                 }

@@ -113,7 +113,7 @@ public class EffectUtils {
     public static void playHelixAnimation(Location location, double helixRadius, ParticleEffect effect, int particleCount) {
         double rotation = Math.PI / 4;
         int particles = 20;
-        int strands = 4;
+        int strands = 8;
         int curve = 10;
         for (int i = 1; i <= strands; i++) {
             for (int j = 1; j <= particles; j++) {
@@ -249,55 +249,6 @@ public class EffectUtils {
         }
     }
 
-    /**
-     * @param player1 point A
-     * @param player2 point B
-     * @param item which item should the chain hold
-     * @param ticksLived how long should the chain last
-     */
-    public static void playChainAnimation(Player player1, Player player2, Material item, int ticksLived) {
-        Location from = player1.getLocation().add(0, -0.6, 0);
-        Location to = player2.getLocation().add(0, -0.6, 0);
-        from.setDirection(from.toVector().subtract(to.toVector()).multiply(-1));
-        List<ArmorStand> chains = new ArrayList<>();
-        int maxDistance = (int) Math.round(to.distance(from));
-        for (int i = 0; i < maxDistance; i++) {
-            ArmorStand chain = from.getWorld().spawn(from, ArmorStand.class);
-            chain.setHeadPose(new EulerAngle(from.getDirection().getY() * -1, 0, 0));
-            chain.setGravity(false);
-            chain.setVisible(false);
-            chain.setBasePlate(false);
-            chain.setMarker(true);
-            chain.setHelmet(new ItemStack(item));
-            from.add(from.getDirection().multiply(1.1));
-            chains.add(chain);
-            if(to.distanceSquared(from) < .3) {
-                break;
-            }
-        }
-
-        new BukkitRunnable() {
-
-            @Override
-            public void run() {
-                if (chains.size() == 0) {
-                    this.cancel();
-                }
-
-                for (int i = 0; i < chains.size(); i++) {
-                    ArmorStand armorStand = chains.get(i);
-                    if (armorStand.getTicksLived() > ticksLived) {
-                        armorStand.remove();
-                        chains.remove(i);
-                        i--;
-                    }
-                }
-
-            }
-
-        }.runTaskTimer(Warlords.getInstance(), 0, 0);
-    }
-
     public static void playChainAnimation(WarlordsPlayer player1, WarlordsPlayer player2, Material item, int ticksLived) {
         Location from = player1.getLocation().add(0, -0.6, 0);
         Location to = player2.getLocation().add(0, -0.6, 0);
@@ -341,6 +292,11 @@ public class EffectUtils {
         }.runTaskTimer(Warlords.getInstance(), 0, 0);
     }
 
+    /**
+     * @param to Location A
+     * @param from Location B
+     * @param effect which particle effect should the link be.
+     */
     public static void playParticleLinkAnimation(Location to, Location from, ParticleEffect effect) {
         Location lineLocation = to.add(0, 1, 0);
         lineLocation.setDirection(lineLocation.toVector().subtract(from.add(0, 1, 0).toVector()).multiply(-1));

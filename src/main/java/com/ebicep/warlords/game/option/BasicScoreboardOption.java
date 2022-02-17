@@ -9,9 +9,9 @@ import com.ebicep.warlords.util.GameRunnable;
 import org.bukkit.ChatColor;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import javax.annotation.Nullable;
 
 public class BasicScoreboardOption implements Option{
 
@@ -61,7 +61,8 @@ public class BasicScoreboardOption implements Option{
             @Override
             public List<String> computeLines(@Nullable WarlordsPlayer player) {
                 return player == null ? Collections.emptyList()
-                        : Arrays.asList(ChatColor.GREEN.toString() + player.getStats().total().getKills() + ChatColor.RESET + " Kills "
+                        : Arrays.asList(ChatColor.GREEN.toString()
+                                + player.getStats().total().getKills() + ChatColor.RESET + " Kills "
                                 + ChatColor.GREEN + player.getStats().total().getAssists() + ChatColor.RESET + " Assists");
             }
         };

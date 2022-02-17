@@ -13,13 +13,13 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
-public class HolyRadianceProtector extends AbstractAbility {
+public class HolyRadianceAvenger extends AbstractAbility {
 
     private final int radius = 6;
     private final int markRadius = 15;
     private int markDuration = 8;
 
-    public HolyRadianceProtector(float minDamageHeal, float maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier) {
+    public HolyRadianceAvenger(float minDamageHeal, float maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier) {
         super("Holy Radiance", minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
     }
 
@@ -29,7 +29,7 @@ public class HolyRadianceProtector extends AbstractAbility {
                 "§7yourself and all nearby allies for\n" +
                 "§a" + format(minDamageHeal) + " §7- §a" + format(maxDamageHeal) + " §7health." +
                 "\n\n" +
-                "§7You may look at an ally to mark\n" +
+                "§7You may look at an enemy to mark\n" +
                 "§7them for §6" + markDuration + " §7seconds. Mark has an\n" +
                 "§7optimal range of §e" + markRadius + " §7blocks. However,\n" +
                 "§7marking players from far away\n" +
@@ -38,15 +38,16 @@ public class HolyRadianceProtector extends AbstractAbility {
 
     @Override
     public boolean onActivate(WarlordsPlayer wp, Player player) {
+        wp.addHealingInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false, false);
+        wp.subtractEnergy(energyCost);
 
         for (WarlordsPlayer markTarget : PlayerFilter
                 .entitiesAround(player, markRadius, markRadius, markRadius)
-                .aliveTeammatesOfExcludingSelf(wp)
+                .aliveEnemiesOf(wp)
                 .lookingAtFirst(wp)
                 .limit(1)
         ) {
             if (Utils.isLookingAtMark(player, markTarget.getEntity()) && Utils.hasLineOfSight(player, markTarget.getEntity())) {
-                wp.subtractEnergy(energyCost);
 
                 for (Player player1 : player.getWorld().getPlayers()) {
                     player1.playSound(player.getLocation(), "paladin.consecrate.activation", 2, 0.65f);
@@ -56,57 +57,36 @@ public class HolyRadianceProtector extends AbstractAbility {
                 EffectUtils.playParticleLinkAnimation(wp.getLocation(), markTarget.getLocation(), 0, 255, 70);
                 EffectUtils.playChainAnimation(wp, markTarget, Material.PUMPKIN, 8);
 
-                HolyRadianceProtector tempMark = new HolyRadianceProtector(minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
+                HolyRadianceAvenger tempMark = new HolyRadianceAvenger(minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
                 markTarget.getCooldownManager().addRegularCooldown(
                         name,
-                        "PROT MARK",
-                        HolyRadianceProtector.class,
+                        "AVENGER MARK",
+                        HolyRadianceAvenger.class,
                         tempMark,
                         wp,
-                        CooldownTypes.BUFF,
+                        CooldownTypes.DEBUFF,
                         cooldownManager -> {},
                         markDuration * 20
                 );
 
-                player.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " You have marked " + ChatColor.GREEN + markTarget.getName() + ChatColor.GRAY + "!");
-                markTarget.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " You have been granted " + ChatColor.GREEN + "Protector's Mark" + ChatColor.GRAY + " by " + wp.getName() + "!");
+                wp.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " You have marked " + ChatColor.GOLD + markTarget.getName() + ChatColor.GRAY + "!");
+                markTarget.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " You have been cursed with " + ChatColor.GOLD + "Avenger's Mark" + ChatColor.GRAY + " by " + wp.getName() + "!");
 
                 new GameRunnable(wp.getGame()) {
                     @Override
                     public void run() {
                         if (markTarget.getCooldownManager().hasCooldown(tempMark)) {
-                            EffectUtils.playCylinderAnimation(markTarget.getLocation(), 1, 0, 255, 70);
+                            EffectUtils.playCylinderAnimation(markTarget.getLocation(), 1, 250, 25, 25);
                         } else {
                             this.cancel();
                         }
                     }
                 }.runTaskTimer(0, 10);
-                new GameRunnable(wp.getGame()) {
-                    @Override
-                    public void run() {
-                        if (markTarget.getCooldownManager().hasCooldown(tempMark)) {
-                            float maxHealing = (markTarget.getMaxHealth() - markTarget.getHealth()) * 0.025f;
-                            markTarget.addHealingInstance(
-                                    wp,
-                                    name,
-                                    maxHealing,
-                                    maxHealing,
-                                    -1,
-                                    100,
-                                    false,
-                                    false
-                            );
-                        } else {
-                            this.cancel();
-                        }
-                    }
-                }.runTaskTimer(0, 20);
             } else {
                 player.sendMessage("§cYour mark was out of range or you did not target a player!");
             }
         }
 
-        wp.subtractEnergy(energyCost);
         for (WarlordsPlayer p : PlayerFilter
                 .entitiesAround(player, radius, radius, radius)
                 .aliveTeammatesOfExcludingSelf(wp)
@@ -115,8 +95,6 @@ public class HolyRadianceProtector extends AbstractAbility {
                     new FlyingArmorStand(wp.getLocation(), p, wp, 1.1).runTaskTimer(Warlords.getInstance(), 1, 1)
             );
         }
-
-        wp.addHealingInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false, false);
 
         player.playSound(player.getLocation(), Sound.ORB_PICKUP, 1, 1);
         for (Player player1 : player.getWorld().getPlayers()) {
