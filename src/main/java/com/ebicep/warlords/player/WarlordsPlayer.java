@@ -1467,6 +1467,8 @@ public final class WarlordsPlayer {
         this.spec.getBlue().updateDescription(player);
         this.spec.getOrange().updateDescription(player);
         assignItemLore(Bukkit.getPlayer(uuid));
+
+        if (DatabaseManager.playerService == null) return;
         //sync bc player should be cached
         DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
         databasePlayer.getSpec(specClass).setSkillBoost(skillBoost);

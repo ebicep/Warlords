@@ -1,5 +1,6 @@
 package com.ebicep.warlords.database;
 
+import com.ebicep.customentities.npc.NPCManager;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.cache.MultipleCacheResolver;
 import com.ebicep.warlords.database.configuration.ApplicationConfiguration;
@@ -46,11 +47,26 @@ public class DatabaseManager {
 
     public static String lastWarlordsPlusString = "";
 
+    public static boolean enabled = false;
+
     public static void init() {
+        if (!enabled) {
+            NPCManager.createGameNPC();
+            return;
+        }
+
         AbstractApplicationContext context = new AnnotationConfigApplicationContext(ApplicationConfiguration.class);
 
-        playerService = context.getBean("playerService", PlayerService.class);
-        gameService = context.getBean("gameService", GameService.class);
+        try {
+            playerService = context.getBean("playerService", PlayerService.class);
+            gameService = context.getBean("gameService", GameService.class);
+        } catch (Exception e) {
+            playerService = null;
+            gameService = null;
+            NPCManager.createGameNPC();
+            e.printStackTrace();
+            return;
+        }
 
         try {
             System.out.println("CACHES");
@@ -133,6 +149,7 @@ public class DatabaseManager {
     }
 
     public static void loadPlayer(UUID uuid, PlayersCollections collections, Runnable callback) {
+        if (playerService == null || !enabled) return;
         if (playerService.findByUUID(uuid, collections) == null) {
             Warlords.newChain()
                     .syncFirst(() -> {
@@ -244,14 +261,17 @@ public class DatabaseManager {
     }
 
     public static void updatePlayerAsync(DatabasePlayer databasePlayer) {
+        if (playerService == null || !enabled) return;
         Warlords.newChain().async(() -> playerService.update(databasePlayer)).execute();
     }
 
     public static void updatePlayerAsync(DatabasePlayer databasePlayer, PlayersCollections collections) {
+        if (playerService == null || !enabled) return;
         Warlords.newChain().async(() -> playerService.update(databasePlayer, collections)).execute();
     }
 
     public static void updateGameAsync(DatabaseGame databaseGame) {
+        if (playerService == null || !enabled) return;
         Warlords.newChain().async(() -> gameService.update(databaseGame)).execute();
     }
 

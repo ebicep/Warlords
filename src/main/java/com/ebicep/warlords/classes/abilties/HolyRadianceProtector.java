@@ -2,25 +2,32 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
-import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.classes.internal.AbstractHolyRadianceBase;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.*;
+import net.minecraft.server.v1_8_R3.PacketPlayOutAnimation;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.EulerAngle;
 
-public class HolyRadianceProtector extends AbstractAbility {
+import java.util.ArrayList;
+import java.util.List;
 
-    private final int radius = 6;
+public class HolyRadianceProtector extends AbstractHolyRadianceBase {
+
     private final int markRadius = 15;
     private int markDuration = 8;
 
     public HolyRadianceProtector(float minDamageHeal, float maxDamageHeal, float cooldown, int energyCost, int critChance, int critMultiplier) {
-        super("Holy Radiance", minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
+        super("Holy Radiance", minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier, 6);
     }
 
     @Override
@@ -37,153 +44,59 @@ public class HolyRadianceProtector extends AbstractAbility {
     }
 
     @Override
-    public boolean onActivate(WarlordsPlayer wp, Player player) {
-
-        for (WarlordsPlayer markTarget : PlayerFilter
+    public void chain(WarlordsPlayer wp, Player player) {
+        for (WarlordsPlayer p : PlayerFilter
                 .entitiesAround(player, markRadius, markRadius, markRadius)
                 .aliveTeammatesOfExcludingSelf(wp)
                 .lookingAtFirst(wp)
                 .limit(1)
         ) {
-            if (Utils.isLookingAtMark(player, markTarget.getEntity()) && Utils.hasLineOfSight(player, markTarget.getEntity())) {
+            if (Utils.isLookingAtMark(player, p.getEntity()) && Utils.hasLineOfSight(player, p.getEntity())) {
                 wp.subtractEnergy(energyCost);
 
                 for (Player player1 : player.getWorld().getPlayers()) {
                     player1.playSound(player.getLocation(), "paladin.consecrate.activation", 2, 0.65f);
                 }
 
+                PacketPlayOutAnimation playOutAnimation = new PacketPlayOutAnimation(((CraftPlayer) player).getHandle(), 0);
+                ((CraftPlayer) player).getHandle().playerConnection.sendPacket(playOutAnimation);
+
+
                 // chain particles
-                EffectUtils.playParticleLinkAnimation(wp.getLocation(), markTarget.getLocation(), 0, 255, 70);
-                EffectUtils.playChainAnimation(wp, markTarget, Material.PUMPKIN, 8);
+                EffectUtils.playParticleLinkAnimation(player.getLocation(), p.getLocation(), 0, 255, 70);
+                EffectUtils.playChainAnimation(wp.getLocation(), p.getLocation(), Material.RED_ROSE, 8);
 
                 HolyRadianceProtector tempMark = new HolyRadianceProtector(minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
-                markTarget.getCooldownManager().addRegularCooldown(
-                        name,
-                        "PROT MARK",
-                        HolyRadianceProtector.class,
-                        tempMark,
-                        wp,
-                        CooldownTypes.BUFF,
-                        cooldownManager -> {},
-                        markDuration * 20
-                );
+                p.getCooldownManager().addRegularCooldown(name, "PROT MARK", HolyRadianceProtector.class, tempMark, wp, CooldownTypes.BUFF, cooldownManager -> {
+                }, markDuration * 20);
 
-                player.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " You have marked " + ChatColor.GREEN + markTarget.getName() + ChatColor.GRAY + "!");
-                markTarget.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " You have been granted " + ChatColor.GREEN + "Protector's Mark" + ChatColor.GRAY + " by " + wp.getName() + "!");
+                player.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " You have marked " + ChatColor.GREEN + p.getName() + ChatColor.GRAY + "!");
+                p.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " You have been granted " + ChatColor.GREEN + "Protector's Mark" + ChatColor.GRAY + " by " + wp.getName() + "!");
 
                 new GameRunnable(wp.getGame()) {
                     @Override
                     public void run() {
-                        if (markTarget.getCooldownManager().hasCooldown(tempMark)) {
-                            EffectUtils.playCylinderAnimation(markTarget.getLocation(), 1, 0, 255, 70);
+                        if (p.getCooldownManager().hasCooldown(tempMark)) {
+                            Location playerLoc = p.getLocation();
+                            Location particleLoc = playerLoc.clone();
+                            for (int i = 0; i < 4; i++) {
+                                for (int j = 0; j < 10; j++) {
+                                    double angle = j / 9D * Math.PI * 2;
+                                    double width = 1;
+                                    particleLoc.setX(playerLoc.getX() + Math.sin(angle) * width);
+                                    particleLoc.setY(playerLoc.getY() + i / 6D);
+                                    particleLoc.setZ(playerLoc.getZ() + Math.cos(angle) * width);
+
+                                    ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(0, 255, 70), particleLoc, 500);
+                                }
+                            }
                         } else {
                             this.cancel();
                         }
                     }
                 }.runTaskTimer(0, 10);
-                new GameRunnable(wp.getGame()) {
-                    @Override
-                    public void run() {
-                        if (markTarget.getCooldownManager().hasCooldown(tempMark)) {
-                            float maxHealing = (markTarget.getMaxHealth() - markTarget.getHealth()) * 0.025f;
-                            markTarget.addHealingInstance(
-                                    wp,
-                                    name,
-                                    maxHealing,
-                                    maxHealing,
-                                    -1,
-                                    100,
-                                    false,
-                                    false
-                            );
-                        } else {
-                            this.cancel();
-                        }
-                    }
-                }.runTaskTimer(0, 20);
             } else {
                 player.sendMessage("§cYour mark was out of range or you did not target a player!");
-            }
-        }
-
-        wp.subtractEnergy(energyCost);
-        for (WarlordsPlayer p : PlayerFilter
-                .entitiesAround(player, radius, radius, radius)
-                .aliveTeammatesOfExcludingSelf(wp)
-        ) {
-            wp.getGame().registerGameTask(
-                    new FlyingArmorStand(wp.getLocation(), p, wp, 1.1).runTaskTimer(Warlords.getInstance(), 1, 1)
-            );
-        }
-
-        wp.addHealingInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false, false);
-
-        player.playSound(player.getLocation(), Sound.ORB_PICKUP, 1, 1);
-        for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "paladin.holyradiance.activation", 2, 1);
-        }
-
-        Location particleLoc = player.getLocation().add(0, 1.2, 0);
-        ParticleEffect.VILLAGER_HAPPY.display(1, 1, 1, 0.1F, 2, particleLoc, 500);
-        ParticleEffect.SPELL.display(1, 1, 1, 0.06F, 12, particleLoc, 500);
-
-        return true;
-    }
-
-    private class FlyingArmorStand extends BukkitRunnable {
-
-        private final WarlordsPlayer target;
-        private final WarlordsPlayer owner;
-        private final double speed;
-        private final ArmorStand armorStand;
-
-        public FlyingArmorStand(Location location, WarlordsPlayer target, WarlordsPlayer owner, double speed) {
-            this.armorStand = location.getWorld().spawn(location, ArmorStand.class);
-            armorStand.setGravity(false);
-            armorStand.setVisible(false);
-            this.target = target;
-            this.speed = speed;
-            this.owner = owner;
-        }
-
-        @Override
-        public void cancel() {
-            super.cancel();
-            armorStand.remove();
-        }
-
-        @Override
-        public void run() {
-            if (!owner.getGame().isFrozen()) {
-
-                if (this.target.isDead()) {
-                    this.cancel();
-                    return;
-                }
-
-                if (target.getWorld() != armorStand.getWorld()) {
-                    this.cancel();
-                    return;
-                }
-
-                Location targetLocation = target.getLocation();
-                Location armorStandLocation = armorStand.getLocation();
-                double distance = targetLocation.distanceSquared(armorStandLocation);
-
-                if (distance < speed * speed) {
-                    target.addHealingInstance(owner, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false, false);
-                    this.cancel();
-                    return;
-                }
-
-                targetLocation.subtract(armorStandLocation);
-                //System.out.println(Math.max(speed * 3.25 / targetLocation.lengthSquared() / 2, speed / 10));
-                targetLocation.multiply(Math.max(speed * 3.25 / targetLocation.lengthSquared() / 2, speed / 10));
-
-                armorStandLocation.add(targetLocation);
-                this.armorStand.teleport(armorStandLocation);
-
-                ParticleEffect.SPELL.display(0.01f, 0, 0.01f, 0.1f, 2, armorStandLocation.add(0, 1.75, 0), 500);
             }
         }
     }

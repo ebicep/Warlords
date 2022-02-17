@@ -77,17 +77,17 @@ public class WarlordsEvents implements Listener {
 
     @EventHandler
     public static void onPlayerPreLogin(AsyncPlayerPreLoginEvent event) {
-        if (DatabaseManager.playerService == null) {
+        if (DatabaseManager.playerService == null && DatabaseManager.enabled) {
             event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, "Please wait!");
         }
     }
 
-    @EventHandler
-    public static void onPlayerLogin(PlayerLoginEvent event) {
-        if (DatabaseManager.playerService == null) {
-            event.disallow(PlayerLoginEvent.Result.KICK_OTHER, "Please wait!");
-        }
-    }
+//    @EventHandler
+//    public static void onPlayerLogin(PlayerLoginEvent event) {
+//        if (DatabaseManager.playerService == null && DatabaseManager.enabled) {
+//            event.disallow(PlayerLoginEvent.Result.KICK_OTHER, "Please wait!");
+//        }
+//    }
 
     @EventHandler
     public static void onPlayerJoin(PlayerJoinEvent e) {

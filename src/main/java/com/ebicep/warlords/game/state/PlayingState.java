@@ -90,16 +90,20 @@ public class PlayingState implements State, TimerDebugAble {
             }
         });
 
-        Warlords.newChain().async(() -> game.forEachOfflinePlayer((player, team) -> {
-            DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
-            DatabaseManager.updatePlayerAsync(databasePlayer);
-            DatabaseManager.loadPlayer(player.getUniqueId(), PlayersCollections.SEASON_5, () -> {
-            });
-            DatabaseManager.loadPlayer(player.getUniqueId(), PlayersCollections.WEEKLY, () -> {
-            });
-            DatabaseManager.loadPlayer(player.getUniqueId(), PlayersCollections.DAILY, () -> {
-            });
-        })).execute();
+        if (DatabaseManager.playerService != null) {
+            Warlords.newChain().async(() -> game.forEachOfflinePlayer((player, team) -> {
+                DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(player.getUniqueId());
+                DatabaseManager.updatePlayerAsync(databasePlayer);
+                DatabaseManager.loadPlayer(player.getUniqueId(), PlayersCollections.SEASON_5, () -> {
+                });
+                DatabaseManager.loadPlayer(player.getUniqueId(), PlayersCollections.WEEKLY, () -> {
+                });
+                DatabaseManager.loadPlayer(player.getUniqueId(), PlayersCollections.DAILY, () -> {
+                });
+            })).execute();
+        } else {
+            System.out.println("ATTENTION - playerService is null");
+        }
         game.registerEvents(new Listener() {
             @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
             public void onWin(WarlordsGameTriggerWinEvent event) {
@@ -148,8 +152,8 @@ public class PlayingState implements State, TimerDebugAble {
         if (players.isEmpty()) {
             return;
         }
-        float highestDamage = players.stream().sorted(Comparator.comparing((WarlordsPlayer wp) -> wp.getStats().total().getDamage()).reversed()).findFirst().get().getStats().total().getDamage();
-        float highestHealing = players.stream().sorted(Comparator.comparing((WarlordsPlayer wp) -> wp.getStats().total().getHealing()).reversed()).findFirst().get().getStats().total().getHealing();
+        float highestDamage = players.stream().max(Comparator.comparing((WarlordsPlayer wp) -> wp.getStats().total().getDamage())).get().getStats().total().getDamage();
+        float highestHealing = players.stream().max(Comparator.comparing((WarlordsPlayer wp) -> wp.getStats().total().getHealing())).get().getStats().total().getHealing();
         //PUBS
         if (!game.getAddons().contains(GameAddon.PRIVATE_GAME) && !game.getAddons().contains(GameAddon.IMPOSTER_MODE) && winEvent != null && game.playersCount() >= 12) {
             String gameEnd = "[GAME] A Public game ended with ";
@@ -169,6 +173,7 @@ public class PlayingState implements State, TimerDebugAble {
                 System.out.println(ChatColor.GREEN + "[Warlords] This PUB game was added to the database (INVALID DAMAGE/HEALING) but player information remained the same");
             }
 
+            if (DatabaseManager.playerService == null) return;
             Warlords.newChain()
                     .asyncFirst(() -> DatabaseManager.playerService.findAll(PlayersCollections.SEASON_5))
                     .syncLast(databasePlayers -> {
