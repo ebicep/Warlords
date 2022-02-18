@@ -7,6 +7,7 @@ import com.ebicep.warlords.classes.abilties.UndyingArmy;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
+import com.ebicep.warlords.util.Pair;
 import com.ebicep.warlords.util.PlayerFilter;
 
 import java.util.ArrayList;
@@ -54,6 +55,21 @@ public class CooldownManager {
 
     public List<AbstractCooldown<?>> getCooldowns() {
         return abstractCooldowns;
+    }
+
+    public List<AbstractCooldown<?>> getCooldownsDistinct() {
+        List<AbstractCooldown<?>> cooldowns = new ArrayList<>();
+        List<Pair<Class<?>, String>> previousCooldowns = new ArrayList<>();
+        for (AbstractCooldown<?> abstractCooldown : abstractCooldowns) {
+            if (abstractCooldown.distinct() && previousCooldowns.stream().anyMatch(classStringPair -> classStringPair.getA().equals(abstractCooldown.getCooldownClass()) && classStringPair.getB().equals(abstractCooldown.getName()))) {
+                continue;
+            }
+            cooldowns.add(abstractCooldown);
+            if (abstractCooldown.distinct()) {
+                previousCooldowns.add(new Pair<>(abstractCooldown.getCooldownClass(), abstractCooldown.getName()));
+            }
+        }
+        return cooldowns;
     }
 
     public int getTotalCooldowns() {

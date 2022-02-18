@@ -1,8 +1,10 @@
 package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.classes.internal.AbstractStrikeBase;
+import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -28,15 +30,21 @@ public class ImpalingStrike extends AbstractStrikeBase {
     protected void onHit(@Nonnull WarlordsPlayer wp, @Nonnull Player player, @Nonnull WarlordsPlayer nearPlayer) {
         nearPlayer.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
         nearPlayer.getCooldownManager().removeCooldown(ImpalingStrike.class);
-        nearPlayer.getCooldownManager().addRegularCooldown(
+        nearPlayer.getCooldownManager().addCooldown(new RegularCooldown<ImpalingStrike>(
                 "Leech Debuff",
                 "LEECH",
                 ImpalingStrike.class,
                 new ImpalingStrike(),
                 wp,
                 CooldownTypes.DEBUFF,
-                cooldownManager -> {},
+                cooldownManager -> {
+                },
                 leechDuration * 20
-        );
+        ) {
+            @Override
+            public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                event.getAttacker().addHealingInstance(event.getAttacker(), "Leech", currentDamageValue * 0.3f, currentDamageValue * 0.3f, isCrit ? 100 : -1, 100, false, false);
+            }
+        });
     }
 }

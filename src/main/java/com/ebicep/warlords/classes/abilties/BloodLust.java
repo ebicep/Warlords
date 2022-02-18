@@ -1,8 +1,10 @@
 package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.classes.AbstractAbility;
-import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.Utils;
@@ -29,8 +31,29 @@ public class BloodLust extends AbstractAbility {
     public boolean onActivate(WarlordsPlayer wp, Player p) {
         wp.subtractEnergy(energyCost);
         BloodLust tempBloodLust = new BloodLust();
-        wp.getCooldownManager().addRegularCooldown(name, "LUST", BloodLust.class, tempBloodLust, wp, CooldownTypes.ABILITY, cooldownManager -> {
-        }, duration * 20);
+        wp.getCooldownManager().addCooldown(new RegularCooldown<BloodLust>(
+                name,
+                "LUST",
+                BloodLust.class,
+                tempBloodLust,
+                wp,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {
+                },
+                duration * 20
+        ) {
+            @Override
+            public boolean distinct() {
+                return true;
+            }
+
+            @Override
+            public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                WarlordsPlayer attacker = event.getAttacker();
+                BloodLust bloodLust = (BloodLust) attacker.getSpec().getBlue();
+                attacker.addHealingInstance(attacker, "Blood Lust", currentDamageValue * (bloodLust.getDamageConvertPercent() / 100f), currentDamageValue * (bloodLust.getDamageConvertPercent() / 100f), -1, 100, false, false);
+            }
+        });
 
         Utils.playGlobalSound(p.getLocation(), "warrior.bloodlust.activation", 2, 1);
 

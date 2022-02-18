@@ -1,11 +1,16 @@
 package com.ebicep.warlords.classes.abilties;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
+import com.ebicep.warlords.player.ClassesSkillBoosts;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.Utils;
+import com.ebicep.warlords.util.PlayerFilter;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -13,7 +18,6 @@ public class Earthliving extends AbstractAbility {
 
     private final int duration = 8;
     private int procChance = 40;
-    private boolean firstProc = false;
 
     public Earthliving() {
         super("Earthliving Weapon", 0, 0, 15.66f, 30, 25, 200);
@@ -35,10 +39,50 @@ public class Earthliving extends AbstractAbility {
     public boolean onActivate(WarlordsPlayer wp, Player player) {
         wp.subtractEnergy(energyCost);
         Earthliving tempEarthliving = new Earthliving();
-        wp.getCooldownManager().addRegularCooldown(name, "EARTH", Earthliving.class, tempEarthliving, wp, CooldownTypes.ABILITY, cooldownManager -> {
-        }, duration * 20);
+        final boolean[] firstProc = {true};
+        wp.getCooldownManager().addCooldown(new RegularCooldown<Earthliving>(
+                name,
+                "EARTH",
+                Earthliving.class,
+                tempEarthliving,
+                wp,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {
+                },
+                duration * 20
+        ) {
+            @Override
+            public void onEndFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                if (event.getAbility().isEmpty()) {
+                    WarlordsPlayer victim = event.getPlayer();
+                    WarlordsPlayer attacker = event.getAttacker();
 
-        firstProc = true;
+                    int earthlivingActivate = (int) (Math.random() * 100);
+                    if (firstProc[0]) {
+                        firstProc[0] = false;
+                        earthlivingActivate = 0;
+                    }
+                    if (earthlivingActivate < procChance) {
+                        boolean earthlivingBoost = Warlords.getPlayerSettings(attacker.getUuid()).getSkillBoostForClass() == ClassesSkillBoosts.EARTHLIVING_WEAPON;
+                        float multiplyBy = earthlivingBoost ? 2.5f : 2.4f;
+
+                        attacker.addHealingInstance(attacker, "Earthliving Weapon", 132 * multiplyBy, 179 * multiplyBy, 25, 200, false, false);
+
+                        victim.getGameState().getGame().forEachOnlinePlayerWithoutSpectators((p, t) -> {
+                            p.playSound(victim.getLocation(), "shaman.earthlivingweapon.impact", 2, 1);
+                        });
+
+                        for (WarlordsPlayer nearPlayer : PlayerFilter
+                                .entitiesAround(attacker, 6, 6, 6)
+                                .aliveTeammatesOfExcludingSelf(attacker)
+                                .limit(2)
+                        ) {
+                            nearPlayer.addHealingInstance(attacker, "Earthliving Weapon", 132 * multiplyBy, 179 * multiplyBy, 25, 200, false, false);
+                        }
+                    }
+                }
+            }
+        });
 
         Utils.playGlobalSound(player.getLocation(), "shaman.earthlivingweapon.activation", 2, 1);
 
@@ -56,14 +100,6 @@ public class Earthliving extends AbstractAbility {
         }.runTaskTimer(0, 4);
 
         return true;
-    }
-
-    public boolean isFirstProc() {
-        return firstProc;
-    }
-
-    public void setFirstProc(boolean firstProc) {
-        this.firstProc = firstProc;
     }
 
     public int getProcChance() {

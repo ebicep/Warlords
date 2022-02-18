@@ -315,11 +315,13 @@ public class EffectUtils {
         }
     }
 
-    public static void playParticleLinkAnimation(Location to, Location from, int red, int green, int blue) {
+    public static void playParticleLinkAnimation(Location to, Location from, int red, int green, int blue, int amount) {
         Location lineLocation = to.add(0, 1, 0);
         lineLocation.setDirection(lineLocation.toVector().subtract(from.add(0, 1, 0).toVector()).multiply(-1));
         for (int i = 0; i < Math.floor(to.distance(from)) * 2; i++) {
-            ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(red, green, blue), lineLocation, 500);
+            for (int i1 = 0; i1 < amount; i1++) {
+                ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(red, green, blue), lineLocation, 500);
+            }
             lineLocation.add(lineLocation.getDirection().multiply(.5));
         }
     }

@@ -3,8 +3,10 @@ package com.ebicep.warlords.classes.abilties;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
+import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.EffectUtils;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
@@ -89,7 +91,7 @@ public class Vindicate extends AbstractAbility {
             vindicateSelfDuration = 12;
         }
 
-        wp.getCooldownManager().addRegularCooldown(
+        wp.getCooldownManager().addCooldown(new RegularCooldown<Vindicate>(
                 "Vindicate Resistance",
                 "VIND RES",
                 Vindicate.class,
@@ -97,7 +99,13 @@ public class Vindicate extends AbstractAbility {
                 wp,
                 CooldownTypes.BUFF,
                 cooldownManager -> {},
-                vindicateSelfDuration * 20);
+                vindicateSelfDuration * 20
+        ) {
+            @Override
+            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                return currentDamageValue * .75f;
+            }
+        });
 
         vindicateSelfDuration = 8;
 
