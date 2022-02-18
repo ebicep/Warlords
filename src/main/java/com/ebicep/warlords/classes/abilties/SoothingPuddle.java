@@ -2,6 +2,10 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.effects.circle.AreaEffect;
+import com.ebicep.warlords.effects.circle.CircleEffect;
+import com.ebicep.warlords.effects.circle.CircumferenceEffect;
+import com.ebicep.warlords.effects.circle.DoubleLineEffect;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.*;
 import org.bukkit.*;
@@ -103,7 +107,8 @@ public class SoothingPuddle extends AbstractAbility {
                     newLoc.add(0, -1, 0);
                 }
 
-                DamageHealCircle med = new DamageHealCircle(wp, newLoc.add(0, 1, 0), HITBOX, 4, puddleMinHealing, puddleMaxHealing, critChance, critMultiplier, name);
+                //DamageHealCircle med = new DamageHealCircle(wp, newLoc.add(0, 1, 0), HITBOX, 4, puddleMinHealing, puddleMaxHealing, critChance, critMultiplier, name);
+                newLoc.add(0, 1, 0);
 
                 if (shouldExplode) {
                     stand.remove();
@@ -131,26 +136,37 @@ public class SoothingPuddle extends AbstractAbility {
                                 false);
                     }
 
-                    BukkitTask task = Bukkit.getScheduler().runTaskTimer(Warlords.getInstance(), med::spawn, 0, 1);
+                    CircleEffect circleEffect = new CircleEffect(
+                            wp.getGame(),
+                            wp.getTeam(),
+                            newLoc,
+                            HITBOX,
+                            new CircumferenceEffect(ParticleEffect.VILLAGER_HAPPY, ParticleEffect.REDSTONE),
+                            new AreaEffect(1, ParticleEffect.DRIP_WATER).particlesPerSurface(0.025)
+                    );
+
+                    BukkitTask task = Bukkit.getScheduler().runTaskTimer(Warlords.getInstance(), circleEffect::playEffects, 0, 1);
                     wp.getGame().registerGameTask(task);
                     new GameRunnable(wp.getGame()) {
+                        int timeLeft = 4;
+
                         @Override
                         public void run() {
-                            PlayerFilter.entitiesAround(med.getLocation(), med.getRadius(), med.getRadius(), med.getRadius())
+                            PlayerFilter.entitiesAround(newLoc, HITBOX, HITBOX, HITBOX)
                                     .aliveTeammatesOf(wp)
                                     .forEach((ally) -> ally.addHealingInstance(
-                                            med.getWarlordsPlayer(),
-                                            med.getName(),
-                                            med.getMinDamage(),
-                                            med.getMaxDamage(),
-                                            med.getCritChance(),
-                                            med.getCritMultiplier(),
+                                            wp,
+                                            name,
+                                            puddleMinHealing,
+                                            puddleMaxHealing,
+                                            critChance,
+                                            critMultiplier,
                                             false,
                                             false));
 
-                            med.setDuration(med.getDuration() - 1);
+                            timeLeft--;
 
-                            if (med.getDuration() < 0) {
+                            if (timeLeft < 0) {
                                 this.cancel();
                                 task.cancel();
                             }

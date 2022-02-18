@@ -1,9 +1,12 @@
 package com.ebicep.warlords.classes.abilties;
 
+import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.classes.paladin.specs.protector.Protector;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
+import com.ebicep.warlords.effects.circle.DoubleLineEffect;
+import com.ebicep.warlords.effects.circle.LineEffect;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
@@ -16,13 +19,18 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitTask;
+import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class HammerOfLight extends AbstractAbility {
 
@@ -93,11 +101,11 @@ public class HammerOfLight extends AbstractAbility {
 
     @Override
     public boolean onActivate(WarlordsPlayer wp, Player player) {
-        if (player.getTargetBlock((HashSet<Byte>) null, 25).getType() == Material.AIR) return false;
+        if (player.getTargetBlock((Set<Material>) null, 25).getType() == Material.AIR) return false;
 
-        DamageHealCircle hol = new DamageHealCircle(wp, player.getTargetBlock((HashSet<Byte>) null, 25).getLocation().add(1, 0, 1), radius, duration, minDamageHeal, maxDamageHeal, critChance, critMultiplier, name);
-        hol.spawnHammer();
-        hol.getLocation().add(0, 1, 0);
+        Location location = player.getTargetBlock((Set<Material>) null, 25).getLocation().add(1, 0, 1).clone();
+        ArmorStand hammer = spawnHammer(location, wp);
+
         wp.subtractEnergy(energyCost);
         wp.getSpec().getOrange().setCurrentCooldown((float) (cooldown * wp.getCooldownModifier()));
         HammerOfLight tempHammerOfLight = new HammerOfLight();
@@ -106,7 +114,19 @@ public class HammerOfLight extends AbstractAbility {
 
         Utils.playGlobalSound(player.getLocation(), "paladin.hammeroflight.impact", 2, 0.85f);
 
-        BukkitTask task = wp.getGame().registerGameTask(hol::spawn, 0, 1);
+        CircleEffect circleEffect = new CircleEffect(
+                wp.getGame(),
+                wp.getTeam(),
+                location,
+                radius,
+                new CircumferenceEffect(ParticleEffect.VILLAGER_HAPPY, ParticleEffect.REDSTONE),
+                new LineEffect(location.clone().add(0, 2.3, 0), ParticleEffect.SPELL)
+        );
+        BukkitTask task = wp.getGame().registerGameTask(circleEffect::playEffects, 0, 1);
+
+        location.add(0, 1, 0);
+
+        final int[] timeLeftHammer = {duration};
         new GameRunnable(wp.getGame()) {
             int counter = 0;
 
@@ -115,34 +135,34 @@ public class HammerOfLight extends AbstractAbility {
                 if (!wp.getGame().isFrozen()) {
 
                     if (counter % 20 == 0) {
-                        hol.setDuration(hol.getDuration() - 1);
+                        timeLeftHammer[0]--;
                         for (WarlordsPlayer warlordsPlayer : PlayerFilter
-                                .entitiesAround(hol.getLocation(), radius, radius, radius)
+                                .entitiesAround(location, radius, radius, radius)
                                 .isAlive()
                         ) {
-                            if (hol.getWarlordsPlayer().isTeammateAlive(warlordsPlayer)) {
+                            if (wp.isTeammateAlive(warlordsPlayer)) {
                                 warlordsPlayer.addHealingInstance(
-                                        hol.getWarlordsPlayer(),
-                                        hol.getName(),
-                                        hol.getMinDamage(),
-                                        hol.getMaxDamage(),
-                                        hol.getCritChance(),
-                                        hol.getCritMultiplier(),
+                                        wp,
+                                        name,
+                                        minDamageHeal,
+                                        maxDamageHeal,
+                                        critChance,
+                                        critMultiplier,
                                         false, false);
                             } else {
                                 warlordsPlayer.addDamageInstance(
-                                        hol.getWarlordsPlayer(),
-                                        hol.getName(),
-                                        hol.getMinDamage(),
-                                        hol.getMaxDamage(),
-                                        hol.getCritChance(),
-                                        hol.getCritMultiplier(),
+                                        wp,
+                                        name,
+                                        minDamageHeal,
+                                        maxDamageHeal,
+                                        critChance,
+                                        critMultiplier,
                                         false);
                             }
                         }
                     }
-                    if (hol.getDuration() <= 0) {
-                        hol.removeHammer();
+                    if (timeLeftHammer[0] <= 0) {
+                        hammer.remove();
                         this.cancel();
                         task.cancel();
                     }
@@ -189,19 +209,19 @@ public class HammerOfLight extends AbstractAbility {
                             }
                         }.runTaskTimer(0, 6);
                         new GameRunnable(wp.getGame()) {
-                            int timeLeft = hol.getDuration();
+                            int timeLeft = timeLeftHammer[0];
 
                             @Override
                             public void run() {
                                 PlayerFilter.entitiesAround(wp.getLocation(), radius, radius, radius)
                                         .aliveTeammatesOf(wp)
                                         .forEach(teammate -> teammate.addHealingInstance(
-                                                hol.getWarlordsPlayer(),
+                                                wp,
                                                 "Crown of Light",
-                                                hol.getMinDamage() * 1.5f,
-                                                hol.getMaxDamage() * 1.5f,
-                                                hol.getCritChance(),
-                                                hol.getCritMultiplier(),
+                                                minDamageHeal * 1.5f,
+                                                maxDamageHeal * 1.5f,
+                                                critChance,
+                                                critMultiplier,
                                                 false, false));
                                 timeLeft--;
 
@@ -212,14 +232,12 @@ public class HammerOfLight extends AbstractAbility {
                             }
                         }.runTaskTimer(2, 20);
                         this.cancel();
-                        hol.setDuration(0);
+                        timeLeftHammer[0] = 0;
                     }
-
 
                     wasSneaking = wp.isSneaking();
 
-
-                    if (wp.isDead() || hol.getDuration() <= 0) {
+                    if (wp.isDead() || timeLeftHammer[0] <= 0) {
                         this.cancel();
                     }
                 }
@@ -227,5 +245,25 @@ public class HammerOfLight extends AbstractAbility {
         }.runTaskTimer(0, 0);
 
         return true;
+    }
+
+    public ArmorStand spawnHammer(Location location, WarlordsPlayer warlordsPlayer) {
+        Location newLocation = location.clone();
+        for (int i = 0; i < 10; i++) {
+            if (newLocation.getWorld().getBlockAt(newLocation.clone().add(0, -1, 0)).getType() == Material.AIR) {
+                newLocation.add(0, -1, 0);
+            }
+        }
+        newLocation.add(0, -1, 0);
+
+        ArmorStand hammer = (ArmorStand) location.getWorld().spawnEntity(newLocation.clone().add(.25, 1.9, -.25), EntityType.ARMOR_STAND);
+        hammer.setMetadata("Hammer of Light - " + warlordsPlayer.getName(), new FixedMetadataValue(Warlords.getInstance(), true));
+        hammer.setRightArmPose(new EulerAngle(20.25, 0, 0));
+        hammer.setItemInHand(new ItemStack(Material.STRING));
+        hammer.setGravity(false);
+        hammer.setVisible(false);
+        hammer.setMarker(true);
+
+        return hammer;
     }
 }
