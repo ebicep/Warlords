@@ -109,7 +109,7 @@ public class RemedicChains extends AbstractAbility {
 
                     if (counter % 8 == 0) {
                         if (wp.getCooldownManager().hasCooldown(tempRemedicChain)) {
-                            EffectUtils.playParticleLinkAnimation(wp.getLocation(), chainTarget.getLocation(), 250, 200, 250);
+                            EffectUtils.playParticleLinkAnimation(wp.getLocation(), chainTarget.getLocation(), 250, 200, 250, 1);
                             // Ally is out of range, break link
                             if (outOfRange) {
                                 for (Map.Entry<WarlordsPlayer, Integer> entry : timeLinked.entrySet()) {

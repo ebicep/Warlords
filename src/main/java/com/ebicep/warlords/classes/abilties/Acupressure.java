@@ -124,7 +124,7 @@ public class Acupressure extends AbstractAbility {
                     @Override
                     public void run() {
                         if (wp.getCooldownManager().hasCooldown(tempAcupressure)) {
-                            EffectUtils.playParticleLinkAnimation(wp.getLocation(), enemyTarget.getLocation(), 255, 170, 0);
+                            EffectUtils.playParticleLinkAnimation(wp.getLocation(), enemyTarget.getLocation(), 255, 170, 0, 1);
                         } else {
                             this.cancel();
                         }

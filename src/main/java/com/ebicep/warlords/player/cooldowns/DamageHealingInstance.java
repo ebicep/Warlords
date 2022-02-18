@@ -61,6 +61,12 @@ public interface DamageHealingInstance {
     }
 
     /**
+     * Called after when the player takes damage while intervened - based on attackers cooldowns
+     */
+    default void onInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+    }
+
+    /**
      * If self has abilities that increase/decrease their damage taken (berserk) - after intervene
      */
     default float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
@@ -77,7 +83,13 @@ public interface DamageHealingInstance {
     /**
      * Called after when the player takes shield damage - based on self cooldowns
      */
-    default void onShield(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+    default void onShieldFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+    }
+
+    /**
+     * Called after when the player takes shield damage - based on attackers cooldowns
+     */
+    default void onShieldFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
     }
 
     /**

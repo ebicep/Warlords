@@ -2,6 +2,7 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
@@ -61,17 +62,42 @@ public class OrbsOfLife extends AbstractAbility {
     public boolean onActivate(WarlordsPlayer wp, Player player) {
         wp.subtractEnergy(energyCost);
         OrbsOfLife tempOrbsOfLight = new OrbsOfLife();
-        wp.getCooldownManager().addPersistentCooldown(
+        wp.getCooldownManager().addCooldown(new PersistentCooldown<OrbsOfLife>(
                 name,
                 "ORBS",
                 OrbsOfLife.class,
                 tempOrbsOfLight,
                 wp,
                 CooldownTypes.ABILITY,
-                cooldownManager -> {},
+                cooldownManager -> {
+                },
                 duration * 20,
                 orbsOfLife -> orbsOfLife.getSpawnedOrbs().isEmpty()
-        );
+        ) {
+            @Override
+            public void onInterveneFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                spawnOrbs(event.getPlayer(), event.getAbility(), this);
+                if (event.getAbility().equals("Crippling Strike")) {
+                    spawnOrbs(event.getPlayer(), event.getAbility(), this);
+                }
+            }
+
+            @Override
+            public void onShieldFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                spawnOrbs(event.getPlayer(), event.getAbility(), this);
+                if (event.getAbility().equals("Crippling Strike")) {
+                    spawnOrbs(event.getPlayer(), event.getAbility(), this);
+                }
+            }
+
+            @Override
+            public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                spawnOrbs(event.getPlayer(), event.getAbility(), this);
+                if (event.getAbility().equals("Crippling Strike")) {
+                    spawnOrbs(event.getPlayer(), event.getAbility(), this);
+                }
+            }
+        });
 
         tempOrbsOfLight.getSpawnedOrbs().add(new Orb(((CraftWorld) player.getLocation().getWorld()).getHandle(), generateSpawnLocation(player.getLocation()), wp));
         tempOrbsOfLight.getSpawnedOrbs().add(new Orb(((CraftWorld) player.getLocation().getWorld()).getHandle(), generateSpawnLocation(player.getLocation()), wp));
@@ -136,6 +162,17 @@ public class OrbsOfLife extends AbstractAbility {
         return true;
     }
 
+    public void spawnOrbs(WarlordsPlayer victim, String ability, PersistentCooldown<OrbsOfLife> cooldown) {
+        if (ability.isEmpty() || ability.equals("Intervene")) return;
+        if (cooldown.isHidden()) return;
+        OrbsOfLife orbsOfLife = cooldown.getCooldownObject();
+        Location location = victim.getLocation();
+        Location spawnLocation = orbsOfLife.generateSpawnLocation(location);
+
+        OrbsOfLife.Orb orb = new OrbsOfLife.Orb(((CraftWorld) location.getWorld()).getHandle(), spawnLocation, cooldown.getFrom());
+        orbsOfLife.getSpawnedOrbs().add(orb);
+    }
+
     public Location generateSpawnLocation(Location location) {
         Location spawnLocation;
         int counter = 0;
@@ -153,29 +190,6 @@ public class OrbsOfLife extends AbstractAbility {
 
     public boolean orbsInsideBlock(Location location) {
         return location.getBlock().getType() != Material.AIR;
-//        if (location.getWorld().getBlockAt(location).getType() != Material.AIR) {
-//            for (int i = 1; i < 3; i++) {
-//                if (location.getWorld().getBlockAt(location.clone().add(0, i, 0)).getType() == Material.AIR &&
-//                        location.getWorld().getBlockAt(location.clone().add(0, i + 1.75, 0)).getType() == Material.AIR
-//                ) {
-//                    location.add(0, i, 0);
-//                    return false;
-//                }
-//            }
-//            return true;
-//        } else if (location.getWorld().getBlockAt(location.clone().add(0, -3, 0)).getType() == Material.AIR ||
-//                location.getWorld().getBlockAt(location.clone().add(0, -2, 0)).getType() == Material.AIR ||
-//                location.getWorld().getBlockAt(location.clone().add(0, -1, 0)).getType() == Material.AIR
-//        ) {
-//            for (int i = 3; i > 0; i--) {
-//                if (location.getWorld().getBlockAt(location.clone().add(0, -i, 0)).getType() == Material.AIR) {
-//                    location.add(0, -i, 0);
-//                    return false;
-//                }
-//            }
-//            return true;
-//        }
-//        return false;
     }
 
     public boolean nearLocation(Location location) {

@@ -8,6 +8,10 @@ import org.bukkit.ChatColor;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
+/**
+ * This type of cooldown is used for any cooldown thats objects need to persist and should be removed based on the objects condition,
+ * ex. Soulbinding people or orbs produced right before the cooldown is about to expire
+ */
 public class PersistentCooldown<T> extends RegularCooldown<T> {
 
     protected Predicate<T> objectCheck;

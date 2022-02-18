@@ -8,6 +8,9 @@ import org.bukkit.ChatColor;
 
 import java.util.function.Consumer;
 
+/**
+ * This type of cooldown is used for text that should be displayed on the action bar and only gets removed on a specified condition
+ */
 public class TextCooldown<T> extends AbstractCooldown<T> {
 
     protected boolean remove = false;

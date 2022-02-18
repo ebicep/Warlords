@@ -91,7 +91,7 @@ public class LastStand extends AbstractAbility {
                         }
 
                         @Override
-                        public void onShield(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                        public void onShieldFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
                             wp.addAbsorbed(currentDamageValue);
                             wp.addHealingInstance(wp, "Last Stand", currentDamageValue, currentDamageValue, isCrit ? 100 : -1, 100, false, true);
                         }

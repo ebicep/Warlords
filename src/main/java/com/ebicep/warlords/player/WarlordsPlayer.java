@@ -24,7 +24,7 @@ import com.ebicep.warlords.game.state.PlayingState;
 import com.ebicep.warlords.player.cooldowns.AbstractCooldown;
 import com.ebicep.warlords.player.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.cooldowns.CooldownManager;
-import com.ebicep.warlords.player.cooldowns.cooldowns.DamageHealExpiringCooldown;
+import com.ebicep.warlords.player.cooldowns.cooldowns.DamageHealCompleteCooldown;
 import com.ebicep.warlords.player.cooldowns.cooldowns.PersistentCooldown;
 import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.*;
@@ -54,8 +54,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static com.ebicep.warlords.util.Utils.lerp;
 
 public final class WarlordsPlayer {
 
@@ -333,20 +331,15 @@ public final class WarlordsPlayer {
             intervenedBy.getEntity().playEffect(EntityEffect.HURT);
 
             // Red line particle if the player gets hit
-            Location lineLoc = getLocation().add(0, 1, 0);
-            lineLoc.setDirection(lineLoc.toVector().subtract(intervenedBy.getLocation().add(0, 1, 0).toVector()).multiply(-1));
-            for (int i = 0; i < Math.floor(getLocation().distance(intervenedBy.getLocation())) * 2; i++) {
-                ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(255, 0, 0), lineLoc, 500);
-                ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(255, 0, 0), lineLoc, 500);
-                lineLoc.add(lineLoc.getDirection().multiply(.5));
-            }
+            EffectUtils.playParticleLinkAnimation(getLocation(), intervenedBy.getLocation(), 255, 0, 0, 2);
 
             // Remove horses.
             removeHorse();
             intervenedBy.removeHorse();
 
-            // Orbs of Life
-            spawnOrbs(ability, attacker);
+            for (AbstractCooldown<?> abstractCooldown : attacker.getCooldownManager().getCooldownsDistinct()) {
+                abstractCooldown.onInterveneFromAttacker(event, damageValue);
+            }
         } else {
 
             // Damage reduction after Intervene
@@ -402,11 +395,12 @@ public final class WarlordsPlayer {
                 }
 
                 for (AbstractCooldown<?> abstractCooldown : getCooldownManager().getCooldownsDistinct()) {
-                    abstractCooldown.onShield(event, damageValue, isCrit);
+                    abstractCooldown.onShieldFromSelf(event, damageValue, isCrit);
                 }
 
-                //ORBS
-                spawnOrbs(ability, attacker);
+                for (AbstractCooldown<?> abstractCooldown : attacker.getCooldownManager().getCooldownsDistinct()) {
+                    abstractCooldown.onShieldFromAttacker(event, damageValue, isCrit);
+                }
 
                 playHurtAnimation(this.entity, attacker);
 
@@ -417,7 +411,7 @@ public final class WarlordsPlayer {
 
             } else {
 
-                boolean debt = false;
+                boolean debt = getCooldownManager().hasCooldownFromName("Spirits Respite");
 
                 if (isEnemy(attacker)) {
                     hitBy.put(attacker, 10);
@@ -426,14 +420,6 @@ public final class WarlordsPlayer {
 
                     removeHorse();
                     regenTimer = 10;
-
-                    // Death's Debt
-                    Optional<DeathsDebt> deathsDebtOptional = new CooldownFilter<>(this, RegularCooldown.class)
-                            .filterName("Spirits Respite")
-                            .findFirstObjectOfClass(DeathsDebt.class);
-                    if (deathsDebtOptional.isPresent()) {
-                        debt = true;
-                    }
 
                     sendDamageMessage(attacker, this, ability, damageValue, isCrit, isMeleeHit);
 
@@ -454,58 +440,7 @@ public final class WarlordsPlayer {
                         abstractCooldown.onDamageFromAttacker(event, damageValue, isCrit);
                     }
 
-                    attacker.getCooldownManager().getCooldowns().removeAll(new CooldownFilter<>(attacker, DamageHealExpiringCooldown.class).stream().collect(Collectors.toList()));
-
-                    // Orbs of Life + Spawns additional orb if the ability is Crippling Strike
-                    spawnOrbs(ability, attacker);
-                    if (ability.equals("Crippling Strike")) {
-                        spawnOrbs(ability, attacker);
-                    }
-
-//                    // Protector's Strike
-//                    if (ability.equals("Protector's Strike")) {
-//
-//                        float healthFraction = lerp(0, 1, (float) attacker.getHealth() / attacker.getMaxHealth());
-//
-//                        if (healthFraction > 1) {
-//                            healthFraction = 1; // in the case of overheal
-//                        }
-//
-//                        if (healthFraction < 0) {
-//                            healthFraction = 0;
-//                        }
-//
-//                        float allyHealing = 0.5f + healthFraction * 0.5f;
-//                        float ownHealing = 0.5f + (1 - healthFraction) * 0.5f;
-//
-//                        // Self Heal
-//                        if (Warlords.getPlayerSettings(attacker.uuid).getSkillBoostForClass() == ClassesSkillBoosts.PROTECTOR_STRIKE) {
-//                            attacker.addHealingInstance(attacker, ability, damageValue * ownHealing * 1.2f, damageValue * ownHealing * 1.2f, isCrit ? 100 : -1, 100, false, false);
-//                        } else {
-//                            attacker.addHealingInstance(attacker, ability, damageValue * ownHealing, damageValue * ownHealing, isCrit ? 100 : -1, 100, false, false);
-//                        }
-//
-//                        // Ally Heal
-//                        for (WarlordsPlayer ally : PlayerFilter
-//                                .entitiesAround(attacker, 10, 10, 10)
-//                                .aliveTeammatesOfExcludingSelf(attacker)
-//                                .sorted(Comparator.comparing((WarlordsPlayer p) -> p.getCooldownManager().hasCooldown(HolyRadianceProtector.class) ? 0 : 1)
-//                                        .thenComparing(Utils.sortClosestBy(WarlordsPlayer::getLocation, attacker.getLocation())))
-//                                .limit(2)
-//                        ) {
-//                            if (Warlords.getPlayerSettings(attacker.uuid).getSkillBoostForClass() == ClassesSkillBoosts.PROTECTOR_STRIKE) {
-//                                ally.addHealingInstance(attacker, ability, damageValue * allyHealing * 1.2f, damageValue * allyHealing * 1.2f, isCrit ? 100 : -1, 100, false, false);
-//                            } else {
-//                                ally.addHealingInstance(attacker, ability, damageValue * allyHealing, damageValue * allyHealing, isCrit ? 100 : -1, 100, false, false);
-//                            }
-//                        }
-//                    }
                 }
-
-                // Judgement Strike
-//                if (ability.equals("Judgement Strike") && isCrit) {
-//                    attacker.getSpeed().addSpeedModifier("Judgement Speed", 20, 2 * 20, "BASE");
-//                }
 
                 updateJimmyHealth();
 
@@ -589,6 +524,9 @@ public final class WarlordsPlayer {
         for (AbstractCooldown<?> abstractCooldown : attacker.getCooldownManager().getCooldownsDistinct()) {
             abstractCooldown.onEndFromAttacker(event, damageValue, isCrit);
         }
+
+        getCooldownManager().getCooldowns().removeAll(new CooldownFilter<>(attacker, DamageHealCompleteCooldown.class).stream().collect(Collectors.toList()));
+        attacker.getCooldownManager().getCooldowns().removeAll(new CooldownFilter<>(attacker, DamageHealCompleteCooldown.class).stream().collect(Collectors.toList()));
     }
 
     /**

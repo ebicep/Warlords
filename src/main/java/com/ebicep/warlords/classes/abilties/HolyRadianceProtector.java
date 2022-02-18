@@ -1,7 +1,5 @@
 package com.ebicep.warlords.classes.abilties;
 
-import com.ebicep.warlords.Warlords;
-import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.classes.internal.AbstractHolyRadianceBase;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
@@ -10,16 +8,8 @@ import net.minecraft.server.v1_8_R3.PacketPlayOutAnimation;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
-import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.EulerAngle;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class HolyRadianceProtector extends AbstractHolyRadianceBase {
 
@@ -63,7 +53,7 @@ public class HolyRadianceProtector extends AbstractHolyRadianceBase {
 
 
                 // chain particles
-                EffectUtils.playParticleLinkAnimation(player.getLocation(), p.getLocation(), 0, 255, 70);
+                EffectUtils.playParticleLinkAnimation(player.getLocation(), p.getLocation(), 0, 255, 70, 1);
                 EffectUtils.playChainAnimation(wp.getLocation(), p.getLocation(), Material.RED_ROSE, 8);
 
                 HolyRadianceProtector tempMark = new HolyRadianceProtector(minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
