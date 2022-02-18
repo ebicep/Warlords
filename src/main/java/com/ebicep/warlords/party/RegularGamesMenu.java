@@ -3,7 +3,7 @@ package com.ebicep.warlords.party;
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
-import com.ebicep.warlords.maps.Team;
+import com.ebicep.warlords.game.Team;
 import com.ebicep.warlords.menu.Menu;
 import com.ebicep.warlords.permissions.PermissionHandler;
 import com.ebicep.warlords.player.Classes;
@@ -11,7 +11,6 @@ import com.ebicep.warlords.player.ClassesGroup;
 import com.ebicep.warlords.player.SpecType;
 import com.ebicep.warlords.util.ItemBuilder;
 import org.bukkit.*;
-import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -211,7 +210,7 @@ public class RegularGamesMenu {
                         .name(ChatColor.AQUA + name + ChatColor.GREEN + " SELECTED")
                         .lore(ChatColor.GOLD + p.getSelectedClass().name);
             } else {
-                itemBuilder = new ItemBuilder(CraftItemStack.asBukkitCopy(Warlords.getPlayerHeads().getOrDefault(uuid, CraftItemStack.asNMSCopy(new ItemStack(Material.SKULL_ITEM)))))
+                itemBuilder = new ItemBuilder(Warlords.getHead(uuid))
                         .name(ChatColor.AQUA + name)
                         .lore(ChatColor.GOLD + p.getSelectedClass().name);
             }

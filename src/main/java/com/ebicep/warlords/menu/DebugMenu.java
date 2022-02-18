@@ -48,7 +48,7 @@ public class DebugMenu {
         items.put(new ItemBuilder(Material.ENDER_PORTAL_FRAME).name(ChatColor.GREEN + "Game Options").get(),
                 (n, e) -> openGameMenu(player)
         );
-        items.put(new ItemBuilder(CraftItemStack.asBukkitCopy(Warlords.getPlayerHeads().get(player.getUniqueId()))).name(ChatColor.GREEN + "Player Options").get(),
+        items.put(new ItemBuilder(Warlords.getHead(player)).name(ChatColor.GREEN + "Player Options").get(),
                 (n, e) -> openPlayerMenu(player, Warlords.getPlayer(player))
         );
         items.put(new ItemBuilder(Material.NOTE_BLOCK).name(ChatColor.GREEN + "Team Options").get(),
@@ -327,7 +327,7 @@ public class DebugMenu {
                 lore.add(ChatColor.YELLOW.toString() + ChatColor.BOLD + "CLICK" + ChatColor.GREEN + " to " + ChatColor.YELLOW + "Open Player Options");
             }
             menu.setItem(i % 4 + (blueTeam ? 0 : 5), y,
-                    new ItemBuilder(CraftItemStack.asBukkitCopy(Warlords.getPlayerHeads().get(wp.getUuid())))
+                    new ItemBuilder(Warlords.getHead(wp.getUuid()))
                             .name((blueTeam ? ChatColor.BLUE : ChatColor.RED) + wp.getName() + (wp.getCarriedFlag() != null ? ChatColor.WHITE + " ⚑" : ""))
                             .lore(lore)
                             .get(),
@@ -467,7 +467,7 @@ public class DebugMenu {
         Menu menu = new Menu("Cooldown Manager: " + target.getName(), 9 * 6);
         //general info
         menu.setItem(4, 0,
-                new ItemBuilder(CraftItemStack.asBukkitCopy(Warlords.getPlayerHeads().get(player.getUniqueId())))
+                new ItemBuilder(Warlords.getHead(player))
                         .name(ChatColor.GREEN + "Cooldown Stats")
                         .lore(ChatColor.GREEN + "Total Cooldowns: " + target.getCooldownManager().getTotalCooldowns(),
                                 ChatColor.GREEN + "Active Cooldowns: " + target.getCooldownManager().getCooldowns().size()
