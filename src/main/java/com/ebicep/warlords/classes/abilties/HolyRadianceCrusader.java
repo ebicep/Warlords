@@ -49,13 +49,13 @@ public class HolyRadianceCrusader extends AbstractHolyRadianceBase {
 
     @Override
     public void chain(WarlordsPlayer wp, Player player) {
-        for (WarlordsPlayer p : PlayerFilter
+        for (WarlordsPlayer markTarget : PlayerFilter
                 .entitiesAround(player, markRadius, markRadius, markRadius)
                 .aliveTeammatesOfExcludingSelf(wp)
                 .lookingAtFirst(wp)
                 .limit(1)
         ) {
-            if (Utils.isLookingAtMark(player, p.getEntity()) && Utils.hasLineOfSight(player, p.getEntity())) {
+            if (Utils.isLookingAtMark(player, markTarget.getEntity()) && Utils.hasLineOfSight(player, markTarget.getEntity())) {
                 wp.subtractEnergy(energyCost);
 
                 for (Player player1 : player.getWorld().getPlayers()) {
@@ -66,23 +66,23 @@ public class HolyRadianceCrusader extends AbstractHolyRadianceBase {
                 ((CraftPlayer) player).getHandle().playerConnection.sendPacket(playOutAnimation);
 
                 // chain particles
-                EffectUtils.playParticleLinkAnimation(player.getLocation(), p.getLocation(), 255, 170, 0);
-                EffectUtils.playChainAnimation(wp.getLocation(), p.getLocation(), Material.PUMPKIN, 8);
+                EffectUtils.playParticleLinkAnimation(player.getLocation(), markTarget.getLocation(), 255, 170, 0);
+                EffectUtils.playChainAnimation(wp.getLocation(), markTarget.getLocation(), Material.PUMPKIN, 8);
 
                 HolyRadianceCrusader tempMark = new HolyRadianceCrusader(minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
-                p.addHealingInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false, false);
-                p.getCooldownManager().addRegularCooldown(name, "CRUS MARK", HolyRadianceCrusader.class, tempMark, wp, CooldownTypes.BUFF, cooldownManager -> {
+                markTarget.addHealingInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false, false);
+                markTarget.getCooldownManager().addRegularCooldown(name, "CRUS MARK", HolyRadianceCrusader.class, tempMark, wp, CooldownTypes.BUFF, cooldownManager -> {
                 }, markDuration * 20);
-                p.getSpeed().addSpeedModifier("Crusader Mark Speed", 20, 20 * markDuration, "BASE");
+                markTarget.getSpeed().addSpeedModifier("Crusader Mark Speed", 20, 20 * markDuration, "BASE");
 
-                player.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " You have marked " + ChatColor.YELLOW + p.getName() + ChatColor.GRAY + "!");
-                p.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " You have been granted " + ChatColor.YELLOW + "Crusader's Mark" + ChatColor.GRAY + " by " + wp.getName() + "!");
+                player.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " You have marked " + ChatColor.YELLOW + markTarget.getName() + ChatColor.GRAY + "!");
+                markTarget.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " You have been granted " + ChatColor.YELLOW + "Crusader's Mark" + ChatColor.GRAY + " by " + wp.getName() + "!");
 
                 new GameRunnable(wp.getGame()) {
                     @Override
                     public void run() {
-                        if (p.getCooldownManager().hasCooldown(tempMark)) {
-                            Location playerLoc = p.getLocation();
+                        if (markTarget.getCooldownManager().hasCooldown(tempMark)) {
+                            Location playerLoc = markTarget.getLocation();
                             Location particleLoc = playerLoc.clone();
                             for (int i = 0; i < 4; i++) {
                                 for (int j = 0; j < 10; j++) {

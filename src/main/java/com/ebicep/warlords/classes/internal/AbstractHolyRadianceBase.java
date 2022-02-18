@@ -26,9 +26,11 @@ public abstract class AbstractHolyRadianceBase extends AbstractAbility {
 
     @Override
     public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
+        wp.addHealingInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false, false);
+        wp.subtractEnergy(energyCost);
+
         chain(wp, player);
 
-        wp.subtractEnergy(energyCost);
         for (WarlordsPlayer p : PlayerFilter
                 .entitiesAround(player, radius, radius, radius)
                 .aliveTeammatesOfExcludingSelf(wp)
@@ -37,8 +39,6 @@ public abstract class AbstractHolyRadianceBase extends AbstractAbility {
                     new FlyingArmorStand(wp.getLocation(), p, wp, 1.1).runTaskTimer(Warlords.getInstance(), 1, 1)
             );
         }
-
-        wp.addHealingInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false, false);
 
         player.playSound(player.getLocation(), Sound.ORB_PICKUP, 1, 1);
         for (Player player1 : player.getWorld().getPlayers()) {

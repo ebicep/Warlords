@@ -53,9 +53,9 @@ public class PlayerSettings implements ConfigurationSerializable {
     private transient Team wantedTeam = null;
 
     private ArmorManager.Helmets mageHelmet = SIMPLE_MAGE_HELMET;
-    private ArmorManager.Helmets warriorHelmet = SIMPLE_MAGE_HELMET;
-    private ArmorManager.Helmets paladinHelmet = SIMPLE_MAGE_HELMET;
-    private ArmorManager.Helmets shamanHelmet = SIMPLE_MAGE_HELMET;
+    private ArmorManager.Helmets warriorHelmet = SIMPLE_WARRIOR_HELMET;
+    private ArmorManager.Helmets paladinHelmet = SIMPLE_PALADIN_HELMET;
+    private ArmorManager.Helmets shamanHelmet = SIMPLE_SHAMAN_HELMET;
     private ArmorManager.ArmorSets mageArmor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE_MAGE;
     private ArmorManager.ArmorSets warriorArmor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE_WARRIOR;
     private ArmorManager.ArmorSets paladinArmor = ArmorManager.ArmorSets.SIMPLE_CHESTPLATE_PALADIN;

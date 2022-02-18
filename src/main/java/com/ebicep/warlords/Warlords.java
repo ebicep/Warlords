@@ -271,13 +271,13 @@ public class Warlords extends JavaPlugin {
 
         gameManager = new GameManager();
         gameManager.addGameHolder("Rift-0", GameMap.RIFT, new LocationFactory(Bukkit.getWorld("Rift")));
-        gameManager.addGameHolder("SimulationRift-0", GameMap.SIMULATION_RIFT, new LocationFactory(Bukkit.getWorld("SimulationRift")));
-        gameManager.addGameHolder("Arathi-0", GameMap.ARATHI, new LocationFactory(Bukkit.getWorld("Arathi")));
+        //gameManager.addGameHolder("SimulationRift-0", GameMap.SIMULATION_RIFT, new LocationFactory(Bukkit.getWorld("SimulationRift")));
+        //gameManager.addGameHolder("Arathi-0", GameMap.ARATHI, new LocationFactory(Bukkit.getWorld("Arathi")));
         gameManager.addGameHolder("Crossfire-0", GameMap.CROSSFIRE, new LocationFactory(Bukkit.getWorld("Crossfire")));
         gameManager.addGameHolder("Valley-0", GameMap.VALLEY, new LocationFactory(Bukkit.getWorld("Atherrough_Valley")));
         gameManager.addGameHolder("Warsong-0", GameMap.WARSONG, new LocationFactory(Bukkit.getWorld("Warsong")));
         gameManager.addGameHolder("Debug-0", GameMap.DEBUG, new LocationFactory(Bukkit.getWorld("TestWorld")));
-        gameManager.addGameHolder("Heaven-0", GameMap.HEAVEN_WILL, new LocationFactory(Bukkit.getWorld("Heaven")));
+        //gameManager.addGameHolder("Heaven-0", GameMap.HEAVEN_WILL, new LocationFactory(Bukkit.getWorld("Heaven")));
 
         Thread.currentThread().setContextClassLoader(getClassLoader());
 
@@ -734,6 +734,11 @@ public class Warlords extends JavaPlugin {
                                 energyGainPerTick += .5;
                             }
 
+                            // Checks whether the player has been marked by an Avenger.
+                            if (cooldownManager.hasCooldown(HolyRadianceAvenger.class)) {
+                                energyGainPerTick -= .4;
+                            }
+
                             // Checks whether the player has been marked by a Crusader.
                             if (cooldownManager.hasCooldown(HolyRadianceCrusader.class)) {
                                 energyGainPerTick += .25;
@@ -742,11 +747,6 @@ public class Warlords extends JavaPlugin {
                             // Checks whether the player has Acupressure active.
                             if (cooldownManager.hasCooldown(Acupressure.class)) {
                                 energyGainPerTick += 2.5;
-                            }
-
-                            // Checks whether the player has been marked by an Avenger.
-                            if (cooldownManager.hasCooldown(HolyRadianceAvenger.class)) {
-                                energyGainPerTick -= .4;
                             }
 
                             // Checks whether the player has the Energy Powerup active.

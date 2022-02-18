@@ -138,7 +138,7 @@ public class DeathsDebt extends AbstractTotemBase {
                                     onDebtTick(wp, totemStand, tempDeathsDebt);
                                     //cancel respite and initiate debt
                                     tempDeathsDebt.setTimeLeftRespite(-1);
-                                    tempDeathsDebt.setTimeLeftDebt(6 * 20);
+                                    tempDeathsDebt.setTimeLeftDebt(5 * 20);
                                 } else {
                                     //during debt
                                     if (ticksLeftDebt > 0) {

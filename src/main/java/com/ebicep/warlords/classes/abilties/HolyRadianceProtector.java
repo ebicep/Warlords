@@ -45,13 +45,13 @@ public class HolyRadianceProtector extends AbstractHolyRadianceBase {
 
     @Override
     public void chain(WarlordsPlayer wp, Player player) {
-        for (WarlordsPlayer p : PlayerFilter
+        for (WarlordsPlayer markTarget : PlayerFilter
                 .entitiesAround(player, markRadius, markRadius, markRadius)
                 .aliveTeammatesOfExcludingSelf(wp)
                 .lookingAtFirst(wp)
                 .limit(1)
         ) {
-            if (Utils.isLookingAtMark(player, p.getEntity()) && Utils.hasLineOfSight(player, p.getEntity())) {
+            if (Utils.isLookingAtMark(player, markTarget.getEntity()) && Utils.hasLineOfSight(player, markTarget.getEntity())) {
                 wp.subtractEnergy(energyCost);
 
                 for (Player player1 : player.getWorld().getPlayers()) {
@@ -63,21 +63,21 @@ public class HolyRadianceProtector extends AbstractHolyRadianceBase {
 
 
                 // chain particles
-                EffectUtils.playParticleLinkAnimation(player.getLocation(), p.getLocation(), 0, 255, 70);
-                EffectUtils.playChainAnimation(wp.getLocation(), p.getLocation(), Material.RED_ROSE, 8);
+                EffectUtils.playParticleLinkAnimation(player.getLocation(), markTarget.getLocation(), 0, 255, 70);
+                EffectUtils.playChainAnimation(wp.getLocation(), markTarget.getLocation(), Material.RED_ROSE, 8);
 
                 HolyRadianceProtector tempMark = new HolyRadianceProtector(minDamageHeal, maxDamageHeal, cooldown, energyCost, critChance, critMultiplier);
-                p.getCooldownManager().addRegularCooldown(name, "PROT MARK", HolyRadianceProtector.class, tempMark, wp, CooldownTypes.BUFF, cooldownManager -> {
+                markTarget.getCooldownManager().addRegularCooldown(name, "PROT MARK", HolyRadianceProtector.class, tempMark, wp, CooldownTypes.BUFF, cooldownManager -> {
                 }, markDuration * 20);
 
-                player.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " You have marked " + ChatColor.GREEN + p.getName() + ChatColor.GRAY + "!");
-                p.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " You have been granted " + ChatColor.GREEN + "Protector's Mark" + ChatColor.GRAY + " by " + wp.getName() + "!");
+                player.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " You have marked " + ChatColor.GREEN + markTarget.getName() + ChatColor.GRAY + "!");
+                markTarget.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " You have been granted " + ChatColor.GREEN + "Protector's Mark" + ChatColor.GRAY + " by " + wp.getName() + "!");
 
                 new GameRunnable(wp.getGame()) {
                     @Override
                     public void run() {
-                        if (p.getCooldownManager().hasCooldown(tempMark)) {
-                            Location playerLoc = p.getLocation();
+                        if (markTarget.getCooldownManager().hasCooldown(tempMark)) {
+                            Location playerLoc = markTarget.getLocation();
                             Location particleLoc = playerLoc.clone();
                             for (int i = 0; i < 4; i++) {
                                 for (int j = 0; j < 10; j++) {
