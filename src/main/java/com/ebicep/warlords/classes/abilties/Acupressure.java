@@ -34,7 +34,7 @@ public class Acupressure extends AbstractAbility {
                 "§7within the range will cause the enemy\n" +
                 "§7to discharge an additional healing potion\n" +
                 "§7that heals nearby allies for §a" + format(minWaveHealing) + " §7- §a" + format(maxWaveHealing) + " §7health\n" +
-                "§7and increase their energy per second by\n" +
+                "§7and increase their energy regeneration by\n" +
                 "§e30 §7for §6" + duration + " §7seconds.";
     }
 
@@ -54,7 +54,6 @@ public class Acupressure extends AbstractAbility {
 
         Utils.playGlobalSound(player.getLocation(), "shaman.chainlightning.impact", 2, 0.1f);
         Utils.playGlobalSound(player.getLocation(), Sound.BLAZE_DEATH, 2, 0.6f);
-
 
         new FallingBlockWaveEffect(player.getLocation(), acuRange, 1, Material.DEAD_BUSH, (byte) 0).play();
 

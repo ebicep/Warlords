@@ -19,7 +19,7 @@ public class JudgementStrike extends AbstractStrikeBase {
         description = "§7Strike the targeted enemy, dealing §c" + format(minDamageHeal) + " §7- §c" + format(maxDamageHeal) + " §7damage.\n" +
                 "§7Every 3rd attack is a §cguaranteed §7critical strike.\n" +
                 "§7Critical strikes temporarily increase your movement\n" +
-                "§7speed by §e20% §7for §e2 §7seconds.";
+                "§7speed by §e25% §7for §e2 §7seconds.";
     }
 
     @Override

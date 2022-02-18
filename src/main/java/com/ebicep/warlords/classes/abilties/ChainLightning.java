@@ -2,8 +2,8 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.classes.internal.AbstractChainBase;
 import com.ebicep.warlords.effects.FallingBlockWaveEffect;
-import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.LocationBuilder;
 import com.ebicep.warlords.util.PlayerFilter;
 import com.ebicep.warlords.util.Utils;
@@ -23,7 +23,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
-public class ChainLightning extends AbstractChainBase implements Comparable<ChainLightning>{
+public class ChainLightning extends AbstractChainBase implements Comparable<ChainLightning> {
 
     private int damageReduction = 0;
 
@@ -148,11 +148,7 @@ public class ChainLightning extends AbstractChainBase implements Comparable<Chai
         pulseDamage(wp, PlayerFilter.entitiesAround(totem, 6, 6, 6).aliveEnemiesOf(wp).stream());
         new FallingBlockWaveEffect(totem.getLocation().add(0, 1, 0), 6, 1.2, Material.SAPLING, (byte) 0).play();
         Utils.playGlobalSound(totem.getLocation(), "shaman.capacitortotem.pulse", 2, 1);
-
-        if (wp.getEntity() instanceof Player) {
-            Player player = (Player)wp.getEntity();
-            player.playSound(player.getLocation(), "shaman.chainlightning.impact", 2, 1);
-        }
+        wp.playSound(totem.getLocation(), "shaman.chainlightning.impact", 2, 1);
     }
 
     private void pulseDamage(WarlordsPlayer warlordsPlayer, Stream<WarlordsPlayer> near) {

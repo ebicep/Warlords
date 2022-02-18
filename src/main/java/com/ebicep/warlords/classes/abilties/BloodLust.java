@@ -1,8 +1,8 @@
 package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.classes.AbstractAbility;
-import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.Utils;
@@ -33,7 +33,6 @@ public class BloodLust extends AbstractAbility {
         }, duration * 20);
 
         Utils.playGlobalSound(p.getLocation(), "warrior.bloodlust.activation", 2, 1);
-
 
         new GameRunnable(wp.getGame()) {
             @Override

@@ -5,7 +5,6 @@ import com.ebicep.warlords.classes.internal.Overheal;
 import com.ebicep.warlords.effects.circle.AreaEffect;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
-import com.ebicep.warlords.effects.circle.DoubleLineEffect;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.GameRunnable;
@@ -17,7 +16,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.util.HashSet;
 import java.util.Set;
 
 
@@ -99,35 +97,39 @@ public class HealingRain extends AbstractAbility {
             public void run() {
                 if (!wp.getGame().isFrozen()) {
                     if (counter % 10 == 0) {
-                        PlayerFilter.entitiesAround(location, radius, radius, radius)
+                        for (WarlordsPlayer teammateInRain : PlayerFilter
+                                .entitiesAround(location, radius, radius, radius)
                                 .aliveTeammatesOf(wp)
-                                .forEach((teammateInRain) -> {
-                                    teammateInRain.addHealingInstance(
-                                            wp,
-                                            name,
-                                            minDamageHeal,
-                                            maxDamageHeal,
-                                            critChance,
-                                            critMultiplier,
-                                            false,
-                                            false);
+                        ) {
+                            teammateInRain.addHealingInstance(
+                                    wp,
+                                    name,
+                                    minDamageHeal,
+                                    maxDamageHeal,
+                                    critChance,
+                                    critMultiplier,
+                                    false,
+                                    false);
 
-                                    if (teammateInRain != wp) {
-                                        teammateInRain.getCooldownManager().removeCooldown(Overheal.OVERHEAL_MARKER);
-                                        teammateInRain.getCooldownManager().addRegularCooldown("Overheal",
-                                                "OVERHEAL", Overheal.class, Overheal.OVERHEAL_MARKER, wp, CooldownTypes.BUFF, cooldownManager -> {
-                                                }, Overheal.OVERHEAL_DURATION * 20);
-                                    }
-                                });
+                            if (teammateInRain != wp) {
+                                teammateInRain.getCooldownManager().removeCooldown(Overheal.OVERHEAL_MARKER);
+                                teammateInRain.getCooldownManager().addRegularCooldown("Overheal",
+                                        "OVERHEAL", Overheal.class, Overheal.OVERHEAL_MARKER, wp, CooldownTypes.BUFF, cooldownManager -> {
+                                        }, Overheal.OVERHEAL_DURATION * 20);
+                            }
+                        }
+
                         if (timeLeft < 0) {
                             this.cancel();
                             task.cancel();
                             rainSneakAbility.cancel();
                         }
                     }
+
                     if (counter % 20 == 0) {
                         timeLeft--;
                     }
+
                     counter--;
                 }
             }

@@ -9,7 +9,6 @@ import com.ebicep.warlords.util.EffectUtils;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
 import com.ebicep.warlords.util.Utils;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -44,7 +43,6 @@ public class Vindicate extends AbstractAbility {
 
         Utils.playGlobalSound(player.getLocation(), "rogue.vindicate.activation", 2, 0.7f);
         Utils.playGlobalSound(player.getLocation(), "shaman.capacitortotem.pulse", 2, 0.7f);
-
 
         Vindicate tempVindicate = new Vindicate();
 
