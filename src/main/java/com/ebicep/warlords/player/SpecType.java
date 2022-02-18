@@ -6,9 +6,9 @@ import org.bukkit.inventory.ItemStack;
 
 public enum SpecType {
 
-    DAMAGE("damage", new ItemStack(Material.NETHER_STALK, 1), "銌", ChatColor.RED),
-    TANK("tank", new ItemStack(Material.CLAY_BALL, 1), "鉰", ChatColor.YELLOW),
-    HEALER("healer", new ItemStack(Material.INK_SACK, 1, (short) 6), "銀", ChatColor.GREEN),
+    DAMAGE("Damage", new ItemStack(Material.NETHER_STALK, 1), "銌", ChatColor.RED),
+    TANK("Tank", new ItemStack(Material.CLAY_BALL, 1), "鉰", ChatColor.YELLOW),
+    HEALER("Healer", new ItemStack(Material.INK_SACK, 1, (short) 6), "銀", ChatColor.GREEN),
 
     ;
 

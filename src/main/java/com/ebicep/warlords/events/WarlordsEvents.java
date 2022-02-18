@@ -19,6 +19,7 @@ import com.ebicep.warlords.game.flags.WaitingFlagLocation;
 import com.ebicep.warlords.game.option.marker.FlagHolder;
 import com.ebicep.warlords.game.state.EndState;
 import com.ebicep.warlords.game.state.PreLobbyState;
+import com.ebicep.warlords.party.RegularGamesMenu;
 import com.ebicep.warlords.permissions.PermissionHandler;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.player.cooldowns.CooldownFilter;
@@ -174,11 +175,27 @@ public class WarlordsEvents implements Listener {
 
             player.getInventory().clear();
             player.getInventory().setArmorContents(new ItemStack[]{null, null, null, null});
-            player.getInventory().setItem(4, new ItemBuilder(Material.NETHER_STAR).name("§aSelection Menu").get());
             player.getInventory().setItem(1, new ItemBuilder(apc.getWeapon().getItem(playerSettings.getWeaponSkins()
                     .getOrDefault(selectedClass, Weapons.FELFLAME_BLADE).item)).name("§aWeapon Skin Preview")
                     .lore("")
                     .get());
+            player.getInventory().setItem(4, new ItemBuilder(Material.NETHER_STAR).name("§aSelection Menu").get());
+
+            if (!fromGame) {
+                Warlords.partyManager.getPartyFromAny(player.getUniqueId()).ifPresent(party -> {
+                    List<RegularGamesMenu.RegularGamePlayer> playerList = party.getRegularGamesMenu().getRegularGamePlayers();
+                    if (!playerList.isEmpty()) {
+                        playerList.stream()
+                                .filter(regularGamePlayer -> regularGamePlayer.getUuid().equals(player.getUniqueId()))
+                                .findFirst()
+                                .ifPresent(regularGamePlayer -> player.getInventory().setItem(7,
+                                                new ItemBuilder(regularGamePlayer.getTeam().item).name("§aTeam Builder")
+                                                        .get()
+                                        )
+                                );
+                    }
+                });
+            }
 
             if (player.hasPermission("warlords.game.debug")) {
                 player.getInventory().setItem(3, new ItemBuilder(Material.EMERALD).name("§aDebug Menu").get());
@@ -327,6 +344,25 @@ public class WarlordsEvents implements Listener {
                 } else if (itemHeld.getType() == Material.EMERALD) {
                     //wl command
                     Bukkit.getServer().dispatchCommand(player, "wl");
+                } else if (itemHeld.getType() == Material.WOOL) {
+                    if (itemHeld.getItemMeta().getDisplayName().equals(ChatColor.GREEN + "Team Builder")) {
+                        Warlords.partyManager.getPartyFromAny(player.getUniqueId()).ifPresent(party -> {
+                            List<RegularGamesMenu.RegularGamePlayer> playerList = party.getRegularGamesMenu().getRegularGamePlayers();
+                            if (!playerList.isEmpty()) {
+                                party.getRegularGamesMenu().openMenuForPlayer(player);
+                                new BukkitRunnable() {
+                                    @Override
+                                    public void run() {
+                                        if (player.getOpenInventory().getTopInventory().getName().equals("Team Builder")) {
+                                            party.getRegularGamesMenu().openMenuForPlayer(player);
+                                        } else {
+                                            this.cancel();
+                                        }
+                                    }
+                                }.runTaskTimer(Warlords.getInstance(), 20, 10);
+                            }
+                        });
+                    }
                 } else {
                     PreLobbyState state = Warlords.getGameManager().getPlayerGame(player.getUniqueId()).flatMap(g -> g.getState(PreLobbyState.class)).orElse(null);
                     if (state != null) {
@@ -755,7 +791,7 @@ public class WarlordsEvents implements Listener {
     public void onPlayerLogout(PlayerQuitEvent event) {
         dropFlag(event.getPlayer());
     }
-    
+
     @EventHandler
     public void onPlayerDeath(WarlordsDeathEvent event) {
         dropFlag(event.getPlayer());

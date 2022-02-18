@@ -5,8 +5,10 @@ import com.ebicep.warlords.commands.miscellaneouscommands.DiscordCommand;
 import com.ebicep.warlords.database.DatabaseManager;
 import com.ebicep.warlords.database.repositories.player.pojos.general.DatabasePlayer;
 import com.ebicep.warlords.game.Team;
+import com.ebicep.warlords.party.RegularGamesMenu;
 import com.ebicep.warlords.player.Classes;
 import com.ebicep.warlords.queuesystem.QueueManager;
+import com.ebicep.warlords.util.ItemBuilder;
 import com.ebicep.warlords.util.PacketUtils;
 import com.ebicep.warlords.util.Utils;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -28,6 +30,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class BotListener extends ListenerAdapter implements Listener {
 
@@ -164,6 +167,7 @@ public class BotListener extends ListenerAdapter implements Listener {
                     if (!message.getEmbeds().isEmpty() && message.getEmbeds().get(0).getFields().size() == 2) {
                         cancelOnGoingBalance();
                         MessageEmbed embed = message.getEmbeds().get(0);
+                        boolean isExperimental = embed.getTitle().contains("*");
                         List<String> blueTeam = new ArrayList<>();
                         List<String> redTeam = new ArrayList<>();
                         for (MessageEmbed.Field field : embed.getFields()) {
@@ -192,6 +196,7 @@ public class BotListener extends ListenerAdapter implements Listener {
                                 }
                             }
                         }
+                        AtomicBoolean resetMenu = new AtomicBoolean(true);
                         for (MessageEmbed.Field field : embed.getFields()) {
                             String fieldName = field.getName();
                             String fieldValue = field.getValue();
@@ -209,7 +214,12 @@ public class BotListener extends ListenerAdapter implements Listener {
                                             String name = player.substring(0, player.indexOf('-'));
                                             String spec = player.substring(player.indexOf('-') + 1);
                                             OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(name);
+                                            if (offlinePlayer == null) continue;
                                             UUID uuid = offlinePlayer.getUniqueId();
+                                            if (resetMenu.get()) {
+                                                Warlords.partyManager.getPartyFromAny(uuid).ifPresent(party -> party.getRegularGamesMenu().reset());
+                                                resetMenu.set(false);
+                                            }
                                             //includes offline players
                                             if (isBlueTeam) {
                                                 Warlords.getPlayerSettings(uuid).setWantedTeam(Team.BLUE);
@@ -218,11 +228,33 @@ public class BotListener extends ListenerAdapter implements Listener {
                                             }
                                             if (!spec.isEmpty()) {
                                                 Warlords.getPlayerSettings(uuid).setSelectedClass(Classes.getClass(spec));
-                                                if (DatabaseManager.playerService != null) {
-                                                    DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid);
-                                                    databasePlayer.setLastSpec(Classes.getClass(spec));
-                                                    DatabaseManager.updatePlayerAsync(databasePlayer);
+                                                DatabasePlayer databasePlayer = DatabaseManager.playerService.findByUUID(uuid);
+                                                databasePlayer.setLastSpec(Classes.getClass(spec));
+                                                DatabaseManager.updatePlayerAsync(databasePlayer);
+                                                if (!isExperimental) {
+                                                    Warlords.partyManager.getPartyFromAny(uuid).ifPresent(party -> {
+                                                        party.getRegularGamesMenu().getRegularGamePlayers().add(
+                                                                new RegularGamesMenu.RegularGamePlayer(uuid, isBlueTeam ? Team.BLUE : Team.RED, Classes.getClass(spec))
+                                                        );
+                                                    });
                                                 }
+                                            } else {
+                                                if (!isExperimental) {
+                                                    Warlords.partyManager.getPartyFromAny(uuid).ifPresent(party -> {
+                                                        party.getRegularGamesMenu().getRegularGamePlayers().add(
+                                                                new RegularGamesMenu.RegularGamePlayer(uuid, isBlueTeam ? Team.BLUE : Team.RED, Classes.PYROMANCER)
+                                                        );
+                                                    });
+                                                }
+                                            }
+                                            if (!isExperimental) {
+                                                Warlords.partyManager.getPartyFromAny(uuid).ifPresent(party -> {
+                                                    if (offlinePlayer.isOnline()) {
+                                                        offlinePlayer.getPlayer().getInventory().setItem(7,
+                                                                new ItemBuilder((isBlueTeam ? Team.BLUE : Team.RED).item).name("§aTeam Builder")
+                                                                        .get());
+                                                    }
+                                                });
                                             }
                                             //only send messages to online
                                             if (offlinePlayer.isOnline()) {
