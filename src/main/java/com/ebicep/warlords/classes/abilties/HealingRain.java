@@ -6,6 +6,7 @@ import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.PlayerFilter;
+import com.ebicep.warlords.util.Utils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
@@ -48,9 +49,8 @@ public class HealingRain extends AbstractAbility {
         }, duration * 20);
         wp.getSpec().getOrange().setCurrentCooldown((float) (cooldown * wp.getCooldownModifier()));
 
-        for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(hr.getLocation(), "mage.healingrain.impact", 2, 1);
-        }
+        Utils.playGlobalSound(hr.getLocation(), "mage.healingrain.impact", 2, 1);
+
 
         BukkitTask task = wp.getGame().registerGameTask(hr::spawn, 0, 1);
         BukkitTask rainSneakAbility = new GameRunnable(wp.getGame()) {

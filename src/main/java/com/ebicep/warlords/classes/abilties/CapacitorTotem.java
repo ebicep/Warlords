@@ -5,6 +5,7 @@ import com.ebicep.warlords.classes.internal.AbstractTotemBase;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.GameRunnable;
+import com.ebicep.warlords.util.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
@@ -42,9 +43,7 @@ public class CapacitorTotem extends AbstractTotemBase {
 
     @Override
     protected void playSound(Player player, Location location) {
-        for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(location, "shaman.totem.activation", 2, 1);
-        }
+        Utils.playGlobalSound(location, "shaman.totem.activation", 2, 1);
     }
 
     @Override

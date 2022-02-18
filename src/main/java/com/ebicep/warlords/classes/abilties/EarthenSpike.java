@@ -85,9 +85,7 @@ public class EarthenSpike extends AbstractAbility {
                             WarlordsPlayer user = earthenSpikeBlock.getUser();
 
                             if (earthenSpikeBlock.getDuration() % 5 == 1) {
-                                for (Player player1 : wp.getWorld().getPlayers()) {
-                                    player1.playSound(spikeLoc, REPEATING_SOUND[(earthenSpikeBlock.getDuration() / 5) % 4], 2, 1);
-                                }
+                                Utils.playGlobalSound(spikeLoc, REPEATING_SOUND[(earthenSpikeBlock.getDuration() / 5) % 4], 2, 1);
                             }
 
                             if (earthenSpikeBlock.getDuration() > 30) {
@@ -147,9 +145,7 @@ public class EarthenSpike extends AbstractAbility {
                                     }
                                 }
 
-                                for (Player player1 : wp.getWorld().getPlayers()) {
-                                    player1.playSound(wp.getLocation(), "shaman.earthenspike.impact", 2, 1);
-                                }
+                                Utils.playGlobalSound(wp.getLocation(), "shaman.earthenspike.impact", 2, 1);
 
                                 targetLocation.setYaw(0);
                                 for (int i = 0; i < 100; i++) {

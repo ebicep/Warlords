@@ -4,6 +4,7 @@ import com.ebicep.warlords.classes.internal.AbstractProjectileBase;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
+import com.ebicep.warlords.util.Utils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -53,9 +54,7 @@ public class Fireball extends AbstractProjectileBase {
         ParticleEffect.LAVA.display(0.5F, 0, 0.5F, 1.5f, 10, currentLocation, 500);
         ParticleEffect.CLOUD.display(0.3F, 0.3F, 0.3F, 1F, 3, currentLocation, 500);
 
-        for (Player player1 : currentLocation.getWorld().getPlayers()) {
-            player1.playSound(currentLocation, "mage.fireball.impact", 2, 1);
-        }
+        Utils.playGlobalSound(currentLocation, "mage.fireball.impact", 2, 1);
 
         double distanceSquared = startingLocation.distanceSquared(currentLocation);
         double toReduceBy = MAX_FULL_DAMAGE_DISTANCE * MAX_FULL_DAMAGE_DISTANCE > distanceSquared ? 1 : 

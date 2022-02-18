@@ -11,6 +11,7 @@ import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
+import com.ebicep.warlords.util.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
@@ -103,9 +104,7 @@ public class HammerOfLight extends AbstractAbility {
         wp.getCooldownManager().addRegularCooldown(name, "HAMMER", HammerOfLight.class, tempHammerOfLight, wp, CooldownTypes.ABILITY, cooldownManager -> {
         }, duration * 20);
 
-        for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "paladin.hammeroflight.impact", 2, 0.85f);
-        }
+        Utils.playGlobalSound(player.getLocation(), "paladin.hammeroflight.impact", 2, 0.85f);
 
         BukkitTask task = wp.getGame().registerGameTask(hol::spawn, 0, 1);
         new GameRunnable(wp.getGame()) {
@@ -168,10 +167,8 @@ public class HammerOfLight extends AbstractAbility {
                                     regularCooldown.setNameAbbreviation("CROWN");
                                 });
 
-                        for (Player player1 : wp.getWorld().getPlayers()) {
-                            player1.playSound(wp.getLocation(), "warrior.revenant.orbsoflife", 2, 0.15f);
-                            player1.playSound(wp.getLocation(), "mage.firebreath.activation", 2, 0.25f);
-                        }
+                        Utils.playGlobalSound(wp.getLocation(), "warrior.revenant.orbsoflife", 2, 0.15f);
+                        Utils.playGlobalSound(wp.getLocation(), "mage.firebreath.activation", 2, 0.25f);
 
                         BukkitTask particles = new GameRunnable(wp.getGame()) {
                             @Override

@@ -5,6 +5,7 @@ import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.ParticleEffect;
+import com.ebicep.warlords.util.Utils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -31,9 +32,8 @@ public class BloodLust extends AbstractAbility {
         wp.getCooldownManager().addRegularCooldown(name, "LUST", BloodLust.class, tempBloodLust, wp, CooldownTypes.ABILITY, cooldownManager -> {
         }, duration * 20);
 
-        for (Player player1 : p.getWorld().getPlayers()) {
-            player1.playSound(p.getLocation(), "warrior.bloodlust.activation", 2, 1);
-        }
+        Utils.playGlobalSound(p.getLocation(), "warrior.bloodlust.activation", 2, 1);
+
 
         new GameRunnable(wp.getGame()) {
             @Override

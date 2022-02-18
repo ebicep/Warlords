@@ -137,10 +137,8 @@ public class UndyingArmy extends AbstractAbility {
             }
         }
 
-        for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), Sound.ZOMBIE_IDLE, 2, 0.3f);
-            player1.playSound(player.getLocation(), Sound.AMBIENCE_THUNDER, 2, 0.9f);
-        }
+        Utils.playGlobalSound(player.getLocation(), Sound.ZOMBIE_IDLE, 2, 0.3f);
+        Utils.playGlobalSound(player.getLocation(), Sound.AMBIENCE_THUNDER, 2, 0.9f);
 
         // particles
         Location loc = player.getEyeLocation();

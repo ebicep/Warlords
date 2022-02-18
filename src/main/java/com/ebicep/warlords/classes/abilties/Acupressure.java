@@ -52,10 +52,9 @@ public class Acupressure extends AbstractAbility {
                 false
         );
 
-        for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "shaman.chainlightning.impact", 2, 0.1f);
-            player1.playSound(player.getLocation(), Sound.BLAZE_DEATH, 2, 0.6f);
-        }
+        Utils.playGlobalSound(player.getLocation(), "shaman.chainlightning.impact", 2, 0.1f);
+        Utils.playGlobalSound(player.getLocation(), Sound.BLAZE_DEATH, 2, 0.6f);
+
 
         new FallingBlockWaveEffect(player.getLocation(), acuRange, 1, Material.DEAD_BUSH, (byte) 0).play();
 

@@ -73,9 +73,8 @@ public class RecklessCharge extends AbstractAbility implements Listener {
             player.setVelocity(location.getDirection().multiply(1.5).setY(.2));
         }
 
-        for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "warrior.seismicwave.activation", 2, 1);
-        }
+        Utils.playGlobalSound(player.getLocation(), "warrior.seismicwave.activation", 2, 1);
+
 
         double finalChargeDistance = chargeDistance;
         new GameRunnable(wp.getGame()) {

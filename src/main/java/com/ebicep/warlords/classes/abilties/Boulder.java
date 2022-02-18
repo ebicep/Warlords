@@ -6,6 +6,7 @@ import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
+import com.ebicep.warlords.util.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
@@ -100,9 +101,8 @@ public class Boulder extends AbstractAbility {
 
                 if (shouldExplode) {
                     stand.remove();
-                    for (Player player1 : wp.getWorld().getPlayers()) {
-                        player1.playSound(newLoc, "shaman.boulder.impact", 2, 1);
-                    }
+                    Utils.playGlobalSound(newLoc, "shaman.boulder.impact", 2, 1);
+
                     WarlordsPlayer directHitFinal = directHit;
 
                     new GameRunnable(wp.getGame()) {
@@ -144,9 +144,7 @@ public class Boulder extends AbstractAbility {
 
         }.runTaskTimer(0, 1);
 
-        for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "shaman.boulder.activation", 2, 1);
-        }
+        Utils.playGlobalSound(player.getLocation(), "shaman.boulder.activation", 2, 1);
 
         return true;
     }

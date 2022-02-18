@@ -49,14 +49,14 @@ public class PrismGuard extends AbstractAbility {
                 tempWideGuard,
                 wp,
                 CooldownTypes.ABILITY,
-                cooldownManager -> {},
+                cooldownManager -> {
+                },
                 4 * 20
         );
 
-        for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(wp.getLocation(), "mage.timewarp.teleport", 2, 2);
-            player1.playSound(player.getLocation(), "warrior.intervene.impact", 2, 0.1f);
-        }
+        Utils.playGlobalSound(wp.getLocation(), "mage.timewarp.teleport", 2, 2);
+        Utils.playGlobalSound(player.getLocation(), "warrior.intervene.impact", 2, 0.1f);
+
 
         // First Particle Sphere
         playSphereAnimation(wp.getLocation(), BUBBLE_RADIUS + 2.5, 68, 176, 176);
@@ -66,10 +66,7 @@ public class PrismGuard extends AbstractAbility {
             @Override
             public void run() {
                 playSphereAnimation(wp.getLocation(), BUBBLE_RADIUS + 1, 65, 185, 185);
-
-                for (Player player1 : wp.getWorld().getPlayers()) {
-                    player1.playSound(wp.getLocation(), "warrior.intervene.impact", 2, 0.2f);
-                }
+                Utils.playGlobalSound(wp.getLocation(), "warrior.intervene.impact", 2, 0.2f);
             }
         }.runTaskLater(3);
 
@@ -104,10 +101,8 @@ public class PrismGuard extends AbstractAbility {
                 } else {
                     this.cancel();
 
-                    for (Player player1 : wp.getWorld().getPlayers()) {
-                        player1.playSound(wp.getLocation(), "paladin.holyradiance.activation", 2, 1.3f);
-                        player1.playSound(wp.getLocation(), Sound.AMBIENCE_THUNDER, 2, 1.5f);
-                    }
+                    Utils.playGlobalSound(wp.getLocation(), "paladin.holyradiance.activation", 2, 1.3f);
+                    Utils.playGlobalSound(wp.getLocation(), Sound.AMBIENCE_THUNDER, 2, 1.5f);
 
                     for (Map.Entry<WarlordsPlayer, Integer> entry : timeInBubble.entrySet()) {
                         // 5% missing health * 4

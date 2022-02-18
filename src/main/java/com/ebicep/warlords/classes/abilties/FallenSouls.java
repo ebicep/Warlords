@@ -55,9 +55,7 @@ public class FallenSouls extends AbstractAbility {
 
         wp.subtractEnergy(energyCost);
 
-        for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "shaman.lightningbolt.impact", 2, 1.5f);
-        }
+        Utils.playGlobalSound(player.getLocation(), "shaman.lightningbolt.impact", 2, 1.5f);
 
         new GameRunnable(wp.getGame()) {
 

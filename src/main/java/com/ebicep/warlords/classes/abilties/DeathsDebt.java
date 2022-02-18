@@ -12,6 +12,7 @@ import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
+import com.ebicep.warlords.util.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -63,10 +64,8 @@ public class DeathsDebt extends AbstractTotemBase {
 
     @Override
     protected void playSound(Player player, Location location) {
-        for (Player player1 : player.getWorld().getPlayers()) {
             //TODO find the right sound - this aint right chief
-            player1.playSound(location, "shaman.chainlightning.impact", 2, 2);
-        }
+        Utils.playGlobalSound(location, "shaman.chainlightning.impact", 2, 2);
     }
 
     @Override
@@ -113,9 +112,7 @@ public class DeathsDebt extends AbstractTotemBase {
                             if (counter % 20 == 0) {
                                 if (ticksLeftRespite > 0) {
                                     //respite
-                                    for (Player player1 : wp.getWorld().getPlayers()) {
-                                        player1.playSound(totemStand.getLocation(), "shaman.earthlivingweapon.impact", 2, 1.5F);
-                                    }
+                                    Utils.playGlobalSound(totemStand.getLocation(), "shaman.earthlivingweapon.impact", 2, 1.5F);
                                     wp.sendMessage(ChatColor.GREEN + "\u00BB §2Spirit's Respite §7delayed §c" + Math.round(tempDeathsDebt.getDelayedDamage()) + " §7damage. §6" + (ticksLeftRespite / 20) + " §7seconds left.");
                                 } else if (ticksLeftRespite == 0) {
                                     //beginning debt
@@ -180,9 +177,8 @@ public class DeathsDebt extends AbstractTotemBase {
     }
 
     public void onDebtTick(WarlordsPlayer wp, ArmorStand totemStand, DeathsDebt tempDeathsDebt) {
-        for (Player player1 : wp.getWorld().getPlayers()) {
-            player1.playSound(totemStand.getLocation(), "shaman.lightningbolt.impact", 2, 1.5F);
-        }
+        Utils.playGlobalSound(totemStand.getLocation(), "shaman.lightningbolt.impact", 2, 1.5F);
+
         // 100% of damage over 6 seconds
         float damage = (tempDeathsDebt.getDelayedDamage() * getSelfDamageInPercentPerSecond());
         float debtTrueDamage = (float) (damage * Math.pow(.8, (int) new CooldownFilter<>(wp, RegularCooldown.class).filterCooldownClass(SpiritLink.class).getStream().count()));

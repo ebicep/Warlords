@@ -5,6 +5,7 @@ import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
+import com.ebicep.warlords.util.Utils;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.ArmorStand;
@@ -41,9 +42,7 @@ public abstract class AbstractHolyRadianceBase extends AbstractAbility {
         }
 
         player.playSound(player.getLocation(), Sound.ORB_PICKUP, 1, 1);
-        for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "paladin.holyradiance.activation", 2, 1);
-        }
+        Utils.playGlobalSound(player.getLocation(), "paladin.holyradiance.activation", 2, 1);
 
         Location particleLoc = player.getLocation().add(0, 1.2, 0);
         ParticleEffect.VILLAGER_HAPPY.display(1, 1, 1, 0.1F, 2, particleLoc, 500);

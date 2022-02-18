@@ -354,7 +354,7 @@ public final class WarlordsPlayer {
             intervenedBy.addDamageInstance(attacker, "Intervene", damageValue, damageValue, isCrit ? 100 : -1, 100, false);
             Location loc = getLocation();
             //EFFECTS + SOUNDS
-            gameState.getGame().forEachOnlinePlayerWithoutSpectators((p, t) -> p.playSound(loc, "warrior.intervene.block", 2, 1));
+            Utils.playGlobalSound(loc, "warrior.intervene.block", 2, 1);
             playHitSound(attacker);
             entity.playEffect(EntityEffect.HURT);
             intervenedBy.getEntity().playEffect(EntityEffect.HURT);
@@ -735,9 +735,7 @@ public final class WarlordsPlayer {
 
                         @Override
                         public void run() {
-                            gameState.getGame().forEachOnlinePlayerWithoutSpectators((player1, t) -> {
-                                player1.playSound(getLocation(), "shaman.windfuryweapon.impact", 2, 1);
-                            });
+                            Utils.playGlobalSound(getLocation(), "shaman.windfuryweapon.impact", 2, 1);
 
                             if (Warlords.getPlayerSettings(attacker.uuid).getSkillBoostForClass() == ClassesSkillBoosts.WINDFURY_WEAPON) {
                                 addDamageInstance(attacker, "Windfury Weapon", min * 1.35f * 1.2f, max * 1.35f * 1.2f, 25, 200, false);
@@ -768,9 +766,7 @@ public final class WarlordsPlayer {
 
                     attacker.addHealingInstance(attacker, "Earthliving Weapon", 132 * multiplyBy, 179 * multiplyBy, 25, 200, false, false);
 
-                    gameState.getGame().forEachOnlinePlayerWithoutSpectators((p, t) -> {
-                        p.playSound(getLocation(), "shaman.earthlivingweapon.impact", 2, 1);
-                    });
+                    Utils.playGlobalSound(getLocation(), "shaman.earthlivingweapon.impact", 2, 1);
 
                     for (WarlordsPlayer nearPlayer : PlayerFilter
                             .entitiesAround(attacker, 6, 6, 6)

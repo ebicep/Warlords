@@ -107,11 +107,9 @@ public class SoothingPuddle extends AbstractAbility {
 
                 if (shouldExplode) {
                     stand.remove();
-                    for (Player player1 : wp.getWorld().getPlayers()) {
-                        player1.playSound(newLoc, "rogue.healingremedy.impact", 1.5f, 0.2f);
-                        player1.playSound(newLoc, Sound.GLASS, 1.5f, 0.7f);
-                        player1.playSound(newLoc, "mage.waterbolt.impact", 1.5f, 0.3f);
-                    }
+                    Utils.playGlobalSound(newLoc, "rogue.healingremedy.impact", 1.5f, 0.2f);
+                    Utils.playGlobalSound(newLoc, Sound.GLASS, 1.5f, 0.7f);
+                    Utils.playGlobalSound(newLoc, "mage.waterbolt.impact", 1.5f, 0.3f);
 
                     FireWorkEffectPlayer.playFirework(newLoc, FireworkEffect.builder()
                             .withColor(Color.WHITE)
@@ -166,9 +164,7 @@ public class SoothingPuddle extends AbstractAbility {
 
         }.runTaskTimer(0, 1);
 
-        for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "mage.frostbolt.activation", 2, 0.7f);
-        }
+        Utils.playGlobalSound(player.getLocation(), "mage.frostbolt.activation", 2, 0.7f);
 
         return true;
     }

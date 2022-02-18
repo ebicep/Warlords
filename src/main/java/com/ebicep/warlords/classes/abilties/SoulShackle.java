@@ -65,16 +65,15 @@ public class SoulShackle extends AbstractAbility {
                     tempSoulShackle,
                     wp,
                     CooldownTypes.DEBUFF,
-                    cooldownManager -> {},
+                    cooldownManager -> {
+                    },
                     silenceDuration * 20
             );
 
             shacklePool = 0;
 
-            for (Player player1 : player.getWorld().getPlayers()) {
-                player1.playSound(player.getLocation(), "warrior.intervene.impact", 1.5f, 0.45f);
-                player1.playSound(player.getLocation(), "mage.fireball.activation", 1.5f, 0.3f);
-            }
+            Utils.playGlobalSound(player.getLocation(), "warrior.intervene.impact", 1.5f, 0.45f);
+            Utils.playGlobalSound(player.getLocation(), "mage.fireball.activation", 1.5f, 0.3f);
 
             EffectUtils.playChainAnimation(wp, shackleTarget, Material.PUMPKIN, 20);
 

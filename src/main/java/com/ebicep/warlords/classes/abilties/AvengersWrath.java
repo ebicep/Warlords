@@ -5,6 +5,7 @@ import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.ParticleEffect;
+import com.ebicep.warlords.util.Utils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -35,9 +36,7 @@ public class AvengersWrath extends AbstractAbility {
         wp.getCooldownManager().addRegularCooldown(name, "WRATH", AvengersWrath.class, tempAvengersWrath, wp, CooldownTypes.BUFF, cooldownManager -> {
         }, duration * 20);
 
-        for (Player player1 : wp.getWorld().getPlayers()) {
-            player1.playSound(wp.getLocation(), "paladin.avengerswrath.activation", 2, 1);
-        }
+        Utils.playGlobalSound(wp.getLocation(), "paladin.avengerswrath.activation", 2, 1);
 
         new GameRunnable(wp.getGame()) {
             @Override

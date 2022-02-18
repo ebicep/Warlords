@@ -6,6 +6,7 @@ import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
+import com.ebicep.warlords.util.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -47,9 +48,8 @@ public class InspiringPresence extends AbstractAbility {
                     }, duration * 20);
                 });
 
-        for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "paladin.inspiringpresence.activation", 2, 1);
-        }
+        Utils.playGlobalSound(player.getLocation(), "paladin.inspiringpresence.activation", 2, 1);
+
         new GameRunnable(wp.getGame()) {
             @Override
             public void run() {

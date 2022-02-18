@@ -2,10 +2,7 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.player.WarlordsPlayer;
-import com.ebicep.warlords.util.FireWorkEffectPlayer;
-import com.ebicep.warlords.util.GameRunnable;
-import com.ebicep.warlords.util.ParticleEffect;
-import com.ebicep.warlords.util.PlayerFilter;
+import com.ebicep.warlords.util.*;
 import org.bukkit.*;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
@@ -95,9 +92,8 @@ public class IncendiaryCurse extends AbstractAbility {
 
                 if (shouldExplode) {
                     stand.remove();
-                    for (Player player1 : wp.getWorld().getPlayers()) {
-                        player1.playSound(newLoc, Sound.FIRE_IGNITE, 2, 0.1f);
-                    }
+
+                    Utils.playGlobalSound(newLoc, Sound.FIRE_IGNITE, 2, 0.1f);
 
                     FireWorkEffectPlayer.playFirework(newLoc, FireworkEffect.builder()
                             .withColor(Color.ORANGE)
@@ -132,9 +128,7 @@ public class IncendiaryCurse extends AbstractAbility {
 
         }.runTaskTimer(0, 1);
 
-        for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "mage.frostbolt.activation", 2, 0.7f);
-        }
+        Utils.playGlobalSound(player.getLocation(), "mage.frostbolt.activation", 2, 0.7f);
 
         return true;
     }

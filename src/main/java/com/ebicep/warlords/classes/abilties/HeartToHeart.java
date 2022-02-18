@@ -39,10 +39,8 @@ public class HeartToHeart extends AbstractAbility {
                 .lookingAtFirst(wp)
                 .limit(1)
         ) {
-            for (Player player1 : player.getWorld().getPlayers()) {
-                player1.playSound(player.getLocation(), "rogue.hearttoheart.activation", 2, 1);
-                player1.playSound(player.getLocation(), "rogue.hearttoheart.activation.alt", 2, 1.2f);
-            }
+            Utils.playGlobalSound(player.getLocation(), "rogue.hearttoheart.activation", 2, 1);
+            Utils.playGlobalSound(player.getLocation(), "rogue.hearttoheart.activation.alt", 2, 1.2f);
 
             HeartToHeart tempHeartToHeart = new HeartToHeart();
             wp.subtractEnergy(energyCost);

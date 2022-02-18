@@ -45,10 +45,7 @@ public class HolyRadianceAvenger extends AbstractHolyRadianceBase {
                 .limit(1)
         ) {
             if (Utils.isLookingAtMark(player, markTarget.getEntity()) && Utils.hasLineOfSight(player, markTarget.getEntity())) {
-
-                for (Player player1 : player.getWorld().getPlayers()) {
-                    player1.playSound(player.getLocation(), "paladin.consecrate.activation", 2, 0.65f);
-                }
+                Utils.playGlobalSound(player.getLocation(), "paladin.consecrate.activation", 2, 0.65f);
 
                 // chain particles
                 EffectUtils.playParticleLinkAnimation(wp.getLocation(), markTarget.getLocation(), 0, 255, 70);

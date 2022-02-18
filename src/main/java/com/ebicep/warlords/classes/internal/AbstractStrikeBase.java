@@ -47,9 +47,7 @@ public abstract class AbstractStrikeBase extends AbstractAbility {
                         }
 
                         if (this instanceof AvengersStrike || this instanceof CrusadersStrike || this instanceof ProtectorsStrike) {
-                            for (Player player1 : player.getWorld().getPlayers()) {
-                                player1.playSound(nearPlayer.getLocation(), "paladin.paladinstrike.activation", 2, 1);
-                            }
+                            Utils.playGlobalSound(nearPlayer.getLocation(), "paladin.paladinstrike.activation", 2, 1);
                             randomHitEffect(nearPlayer, 5, 255, 0, 0);
                             ParticleEffect.SPELL.display(
                                     (float) ((Math.random() * 2) - 1),
@@ -60,27 +58,19 @@ public abstract class AbstractStrikeBase extends AbstractAbility {
                                     nearPlayer.getLocation().clone().add(0, 1, 0),
                                     500);
                         } else if (this instanceof WoundingStrikeBerserker || this instanceof WoundingStrikeDefender || this instanceof CripplingStrike) {
-                            for (Player player1 : Bukkit.getOnlinePlayers()) {
-                                player1.playSound(nearPlayer.getLocation(), "warrior.mortalstrike.impact", 2, 1);
-                            }
+                            Utils.playGlobalSound(nearPlayer.getLocation(), "warrior.mortalstrike.impact", 2, 1);
                             randomHitEffect(nearPlayer, 7, 255, 0, 0);
                         } else if (this instanceof JudgementStrike) {
-                            for (Player player1 : Bukkit.getOnlinePlayers()) {
-                                player1.playSound(nearPlayer.getLocation(), "warrior.revenant.orbsoflife", 2, 1.7f);
-                                player1.playSound(nearPlayer.getLocation(), "mage.frostbolt.activation", 2, 2);
-                            }
+                            Utils.playGlobalSound(nearPlayer.getLocation(), "warrior.revenant.orbsoflife", 2, 1.7f);
+                            Utils.playGlobalSound(nearPlayer.getLocation(), "mage.frostbolt.activation", 2, 2);
                             randomHitEffect(nearPlayer, 7, 255, 255, 255);
                         } else if (this instanceof RighteousStrike) {
-                            for (Player player1 : Bukkit.getOnlinePlayers()) {
-                                player1.playSound(nearPlayer.getLocation(), "rogue.vindicatorstrike.activation", 2, 0.7f);
-                                player1.playSound(nearPlayer.getLocation(), "shaman.earthenspike.impact", 2, 2);
-                            }
+                            Utils.playGlobalSound(nearPlayer.getLocation(), "rogue.vindicatorstrike.activation", 2, 0.7f);
+                            Utils.playGlobalSound(nearPlayer.getLocation(), "shaman.earthenspike.impact", 2, 2);
                             randomHitEffect(nearPlayer, 7, 255, 255, 255);
                         } else if (this instanceof ImpalingStrike) {
-                            for (Player player1 : Bukkit.getOnlinePlayers()) {
-                                player1.playSound(nearPlayer.getLocation(), "rogue.apothecarystrike.activation", 2, 0.5f);
-                                player1.playSound(nearPlayer.getLocation(), "mage.fireball.activation", 2, 1.8f);
-                            }
+                            Utils.playGlobalSound(nearPlayer.getLocation(), "rogue.apothecarystrike.activation", 2, 0.5f);
+                            Utils.playGlobalSound(nearPlayer.getLocation(), "mage.fireball.activation", 2, 1.8f);
                             randomHitEffect(nearPlayer, 7, 100, 255, 100);
                         }
 

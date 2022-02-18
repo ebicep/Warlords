@@ -70,9 +70,7 @@ public class WaterBreath extends AbstractAbility {
                 }
             });
 
-        for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "mage.waterbreath.activation", 2, 1);
-        }
+        Utils.playGlobalSound(player.getLocation(), "mage.waterbreath.activation", 2, 1);
 
         ParticleEffect.HEART.display(0.6f, 0.6f, 0.6f, 1, 2, player.getLocation().add(0, 0.7, 0), 500);
         new GameRunnable(wp.getGame()) {

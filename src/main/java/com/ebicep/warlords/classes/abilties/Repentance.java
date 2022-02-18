@@ -5,6 +5,7 @@ import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.EffectUtils;
+import com.ebicep.warlords.util.Utils;
 import org.bukkit.entity.Player;
 
 public class Repentance extends AbstractAbility {
@@ -34,9 +35,7 @@ public class Repentance extends AbstractAbility {
         warlordsPlayer.getCooldownManager().addRegularCooldown(name, "REPE", Repentance.class, new Repentance(), warlordsPlayer, CooldownTypes.ABILITY, cooldownManager -> {
         }, duration * 20);
 
-        for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "paladin.barrieroflight.impact", 2, 1.35f);
-        }
+        Utils.playGlobalSound(player.getLocation(), "paladin.barrieroflight.impact", 2, 1.35f);
 
         EffectUtils.playCylinderAnimation(player, 1, 255, 255, 255);
 

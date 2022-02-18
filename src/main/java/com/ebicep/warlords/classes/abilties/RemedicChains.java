@@ -3,10 +3,7 @@ package com.ebicep.warlords.classes.abilties;
 import com.ebicep.warlords.classes.AbstractAbility;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
-import com.ebicep.warlords.util.EffectUtils;
-import com.ebicep.warlords.util.GameRunnable;
-import com.ebicep.warlords.util.ParticleEffect;
-import com.ebicep.warlords.util.PlayerFilter;
+import com.ebicep.warlords.util.*;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -151,9 +148,8 @@ public class RemedicChains extends AbstractAbility {
 
                             ParticleEffect.VILLAGER_HAPPY.display(0.5f, 0.5f, 0.5f, 1, 10, chainTarget.getLocation().add(0, 1, 0), 500);
 
-                            for (Player player1 : wp.getWorld().getPlayers()) {
-                                player1.playSound(chainTarget.getLocation(), "rogue.remedicchains.impact", 0.05f, 1.4f);
-                            }
+                            Utils.playGlobalSound(chainTarget.getLocation(), "rogue.remedicchains.impact", 0.05f, 1.4f);
+
                             this.cancel();
                         }
                     }
@@ -164,10 +160,8 @@ public class RemedicChains extends AbstractAbility {
         }
 
         if (targetHit >= 1) {
-            for (Player player1 : player.getWorld().getPlayers()) {
-                player1.playSound(player.getLocation(), "rogue.remedicchains.activation", 2, 0.3f);
-                player1.playSound(player.getLocation(), Sound.BLAZE_BREATH, 2, 0.3f);
-            }
+            Utils.playGlobalSound(player.getLocation(), "rogue.remedicchains.activation", 2, 0.3f);
+            Utils.playGlobalSound(player.getLocation(), Sound.BLAZE_BREATH, 2, 0.3f);
 
             wp.subtractEnergy(energyCost);
             wp.getCooldownManager().addRegularCooldown(

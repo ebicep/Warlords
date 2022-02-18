@@ -813,9 +813,7 @@ public class Warlords extends JavaPlugin {
 
                                 wp.addHealingInstance(orb.getOwner(), "Orbs of Life", orbHeal, orbHeal, -1, 100, false, false);
                                 if (player != null) {
-                                    for (Player player1 : player.getWorld().getPlayers()) {
-                                        player1.playSound(player.getLocation(), Sound.ORB_PICKUP, 0.2f, 1);
-                                    }
+                                    Utils.playGlobalSound(player.getLocation(), Sound.ORB_PICKUP, 0.2f, 1);
                                 }
 
                                 for (WarlordsPlayer nearPlayer : PlayerFilter
@@ -825,9 +823,7 @@ public class Warlords extends JavaPlugin {
                                 ) {
                                     nearPlayer.addHealingInstance(orb.getOwner(), "Orbs of Life", orbHeal, orbHeal, -1, 100, false, false);
                                     if (player != null) {
-                                        for (Player player1 : player.getWorld().getPlayers()) {
-                                            player1.playSound(player.getLocation(), Sound.ORB_PICKUP, 0.2f, 1);
-                                        }
+                                        Utils.playGlobalSound(player.getLocation(), Sound.ORB_PICKUP, 0.2f, 1);
                                     }
                                 }
                             }

@@ -11,6 +11,7 @@ import com.ebicep.warlords.game.option.marker.MapSymmetryMarker;
 import com.ebicep.warlords.player.*;
 import com.ebicep.warlords.util.ItemBuilder;
 import com.ebicep.warlords.util.NumberFormat;
+import com.ebicep.warlords.util.Utils;
 import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -780,18 +781,16 @@ public class GameMenu {
                         }
 
                         if (rarity == WeaponsRarity.LEGENDARY) {
-                            for (Player player1 : player.getWorld().getPlayers()) {
-                                player1.playSound(player.getLocation(), "legendaryfind", 1, 1);
-                            }
+                            Utils.playGlobalSound(player.getLocation(), "legendaryfind", 1, 1);
+
                             Bukkit.broadcastMessage(ChatColor.AQUA + player.getDisplayName() + " §fgot lucky and found " + message);
                             player.getWorld().spigot().strikeLightningEffect(player.getLocation(), false);
                         }
 
                         if (rarity == WeaponsRarity.MYTHIC) {
-                            for (Player player1 : player.getWorld().getPlayers()) {
-                                player1.playSound(player.getLocation(), "legendaryfind", 500, 0.8f);
-                                player1.playSound(player.getLocation(), Sound.ENDERDRAGON_GROWL, 500, 0.8f);
-                            }
+                            Utils.playGlobalSound(player.getLocation(), "legendaryfind", 500, 0.8f);
+                            Utils.playGlobalSound(player.getLocation(), Sound.ENDERDRAGON_GROWL, 500, 0.8f);
+
                             Bukkit.broadcastMessage(ChatColor.AQUA + player.getDisplayName() + " §fgot lucky and found " + mythicMessage);
 
                             for (int j = 0; j < 10; j++) {

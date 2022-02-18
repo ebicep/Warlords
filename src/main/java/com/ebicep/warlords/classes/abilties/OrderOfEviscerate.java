@@ -5,6 +5,7 @@ import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.GameRunnable;
 import com.ebicep.warlords.util.ParticleEffect;
+import com.ebicep.warlords.util.Utils;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
@@ -62,7 +63,8 @@ public class OrderOfEviscerate extends AbstractAbility {
                 new OrderOfEviscerate(),
                 wp,
                 CooldownTypes.BUFF,
-                cooldownManager -> {},
+                cooldownManager -> {
+                },
                 duration * 20
         );
 
@@ -71,8 +73,9 @@ public class OrderOfEviscerate extends AbstractAbility {
 
         wp.updateArmor();
 
+        Utils.playGlobalSound(player.getLocation(), Sound.GHAST_FIREBALL, 2, 0.7f);
+
         for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), Sound.GHAST_FIREBALL, 2, 0.7f);
             player1.hidePlayer(player);
         }
 
@@ -92,9 +95,7 @@ public class OrderOfEviscerate extends AbstractAbility {
                     }
                 } else {
                     ParticleEffect.SMOKE_NORMAL.display(0, 0.2f, 0, 0.05f, 4, wp.getLocation(), 500);
-                    for (Player player1 : wp.getWorld().getPlayers()) {
-                        player1.playSound(wp.getLocation(), Sound.AMBIENCE_CAVE, 0.08f, 2);
-                    }
+                    Utils.playGlobalSound(wp.getLocation(), Sound.AMBIENCE_CAVE, 0.08f, 2);
                 }
             }
         }.runTaskTimer(0, 1);

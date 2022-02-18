@@ -8,6 +8,7 @@ import com.ebicep.warlords.player.cooldowns.CooldownTypes;
 import com.ebicep.warlords.util.EffectUtils;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
+import com.ebicep.warlords.util.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -41,10 +42,9 @@ public class Vindicate extends AbstractAbility {
     public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
         wp.subtractEnergy(energyCost);
 
-        for (Player player1 : Bukkit.getOnlinePlayers()) {
-            player1.playSound(player.getLocation(), "rogue.vindicate.activation", 2, 0.7f);
-            player1.playSound(player.getLocation(), "shaman.capacitortotem.pulse", 2, 0.7f);
-        }
+        Utils.playGlobalSound(player.getLocation(), "rogue.vindicate.activation", 2, 0.7f);
+        Utils.playGlobalSound(player.getLocation(), "shaman.capacitortotem.pulse", 2, 0.7f);
+
 
         Vindicate tempVindicate = new Vindicate();
 

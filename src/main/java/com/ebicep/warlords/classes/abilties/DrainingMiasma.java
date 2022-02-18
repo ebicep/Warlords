@@ -42,10 +42,8 @@ public class DrainingMiasma extends AbstractAbility {
     public boolean onActivate(@Nonnull WarlordsPlayer wp, @Nonnull Player player) {
         wp.subtractEnergy(energyCost);
 
-        for (Player player1 : player.getWorld().getPlayers()) {
-            player1.playSound(player.getLocation(), "rogue.drainingmiasma.activation", 2, 1.7f);
-            player1.playSound(player.getLocation(), "shaman.earthlivingweapon.activation", 2, 0.65f);
-        }
+        Utils.playGlobalSound(player.getLocation(), "rogue.drainingmiasma.activation", 2, 1.7f);
+        Utils.playGlobalSound(player.getLocation(), "shaman.earthlivingweapon.activation", 2, 0.65f);
 
         EffectUtils.playSphereAnimation(player, 6, ParticleEffect.SLIME, 1);
 
