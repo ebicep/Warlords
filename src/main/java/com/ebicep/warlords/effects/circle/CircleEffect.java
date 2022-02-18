@@ -1,6 +1,7 @@
 package com.ebicep.warlords.effects.circle;
 
 import com.ebicep.warlords.effects.AbstractBaseAreaEffect;
+import com.ebicep.warlords.effects.AbstractEffectPlayer;
 import com.ebicep.warlords.effects.EffectPlayer;
 import com.ebicep.warlords.effects.GameTeamContainer;
 import com.ebicep.warlords.game.Game;
@@ -32,6 +33,17 @@ public class CircleEffect extends AbstractBaseAreaEffect<EffectPlayer<? super Ci
         this.center = center;
         this.radius = radius;
         this.players = new GameTeamContainer(game, team);
+    }
+
+    @SafeVarargs
+    public CircleEffect(@Nonnull Game game, @Nullable Team team, @Nonnull Location center, double radius, EffectPlayer<? super CircleEffect>... effects) {
+        Validate.notNull(game, "game");
+        Validate.notNull(center, "center");
+        center.setY(center.getBlockY() + 0.01);
+        this.center = center;
+        this.radius = radius;
+        this.players = new GameTeamContainer(game, team);
+        this.addEffects(effects);
     }
 
     public Team getTeam() {

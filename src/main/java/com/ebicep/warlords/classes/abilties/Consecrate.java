@@ -2,11 +2,16 @@ package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.Warlords;
 import com.ebicep.warlords.classes.AbstractAbility;
+import com.ebicep.warlords.effects.circle.CircleEffect;
+import com.ebicep.warlords.effects.circle.CircumferenceEffect;
+import com.ebicep.warlords.effects.circle.DoubleLineEffect;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.util.GameRunnable;
+import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
 import com.ebicep.warlords.util.Utils;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -36,38 +41,47 @@ public class Consecrate extends AbstractAbility {
 
     @Override
     public boolean onActivate(WarlordsPlayer wp, Player player) {
-        DamageHealCircle cons = new DamageHealCircle(wp, player.getLocation(), radius, 5, minDamageHeal, maxDamageHeal, critChance, critMultiplier, name);
         wp.subtractEnergy(energyCost);
 
         Utils.playGlobalSound(player.getLocation(), "paladin.consecrate.activation", 2, 1);
 
-
+        Location location = player.getLocation().clone();
         ArmorStand consecrate = player.getLocation().getWorld().spawn(player.getLocation().clone().add(0, -2, 0), ArmorStand.class);
         consecrate.setMetadata("Consecrate - " + player.getName(), new FixedMetadataValue(Warlords.getInstance(), true));
         consecrate.setGravity(false);
         consecrate.setVisible(false);
         consecrate.setMarker(true);
-        BukkitTask task = Bukkit.getScheduler().runTaskTimer(Warlords.getInstance(), cons::spawn, 0, 1);
+        CircleEffect circleEffect = new CircleEffect(
+                wp.getGame(),
+                wp.getTeam(),
+                location,
+                radius,
+                new CircumferenceEffect(ParticleEffect.VILLAGER_HAPPY, ParticleEffect.REDSTONE),
+                new DoubleLineEffect(ParticleEffect.SPELL)
+        );
 
+        BukkitTask task = Bukkit.getScheduler().runTaskTimer(Warlords.getInstance(), circleEffect::playEffects, 0, 1);
         new GameRunnable(wp.getGame()) {
+
+            int timeLeft = 5;
 
             @Override
             public void run() {
                 if (!wp.getGame().isFrozen()) {
-                    cons.setDuration(cons.getDuration() - 1);
-                    PlayerFilter.entitiesAround(cons.getLocation(), radius, 6, radius)
+                    timeLeft--;
+                    PlayerFilter.entitiesAround(location, radius, 6, radius)
                             .aliveEnemiesOf(wp)
                             .forEach(warlordsPlayer -> {
                                 warlordsPlayer.addDamageInstance(
-                                        cons.getWarlordsPlayer(),
-                                        cons.getName(),
-                                        cons.getMinDamage(),
-                                        cons.getMaxDamage(),
-                                        cons.getCritChance(),
-                                        cons.getCritMultiplier(),
+                                        wp,
+                                        name,
+                                        minDamageHeal,
+                                        maxDamageHeal,
+                                        critChance,
+                                        critMultiplier,
                                         false);
                             });
-                    if (cons.getDuration() == 0) {
+                    if (timeLeft == 0) {
                         consecrate.remove();
                         this.cancel();
                         task.cancel();
