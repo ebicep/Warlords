@@ -1,8 +1,10 @@
 package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.classes.AbstractAbility;
-import com.ebicep.warlords.player.cooldowns.CooldownTypes;
+import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.cooldowns.cooldowns.RegularCooldown;
 import com.ebicep.warlords.util.Matrix4d;
 import com.ebicep.warlords.util.ParticleEffect;
 import com.ebicep.warlords.util.PlayerFilter;
@@ -47,8 +49,22 @@ public class LastStand extends AbstractAbility {
     public boolean onActivate(WarlordsPlayer wp, Player player) {
         wp.subtractEnergy(energyCost);
         LastStand tempLastStand = new LastStand(selfDamageReductionPercent, teammateDamageReductionPercent);
-        wp.getCooldownManager().addRegularCooldown(name, "LAST", LastStand.class, tempLastStand, wp, CooldownTypes.BUFF, cooldownManager -> {
-        }, selfDuration * 20);
+        wp.getCooldownManager().addCooldown(new RegularCooldown<LastStand>(
+                name,
+                "LAST",
+                LastStand.class,
+                tempLastStand,
+                wp,
+                CooldownTypes.BUFF,
+                cooldownManager -> {
+                },
+                selfDuration * 20
+        ) {
+            @Override
+            public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                return currentDamageValue * getSelfDamageReduction();
+            }
+        });
         PlayerFilter.entitiesAround(wp, radius, radius, radius)
                 .aliveTeammatesOfExcludingSelf(wp)
                 .forEach((nearPlayer) -> {
@@ -59,8 +75,34 @@ public class LastStand extends AbstractAbility {
                         ParticleEffect.VILLAGER_HAPPY.display(0, 0, 0, 0.35F, 1, lineLocation, 500);
                         lineLocation.add(lineLocation.getDirection().multiply(.5));
                     }
-                    nearPlayer.getCooldownManager().addRegularCooldown(name, "LAST", LastStand.class, tempLastStand, wp, CooldownTypes.BUFF, cooldownManager -> {
-                    }, allyDuration * 20);
+                    nearPlayer.getCooldownManager().addCooldown(new RegularCooldown<LastStand>(
+                            name,
+                            "LAST",
+                            LastStand.class,
+                            tempLastStand,
+                            wp,
+                            CooldownTypes.BUFF,
+                            cooldownManager -> {
+                            },
+                            allyDuration * 20
+                    ) {
+                        @Override
+                        public float modifyDamageAfterInterveneFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue) {
+                            return currentDamageValue * getTeammateDamageReduction();
+                        }
+
+                        @Override
+                        public void onShieldFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                            wp.addAbsorbed(currentDamageValue);
+                            wp.addHealingInstance(wp, "Last Stand", currentDamageValue, currentDamageValue, isCrit ? 100 : -1, 100, false, true);
+                        }
+
+                        @Override
+                        public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                            wp.addAbsorbed(currentDamageValue);
+                            wp.addHealingInstance(wp, "Last Stand", currentDamageValue, currentDamageValue, isCrit ? 100 : -1, 100, false, false);
+                        }
+                    });
                     player.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " Your Last Stand is now protecting " + ChatColor.YELLOW + nearPlayer.getName() + ChatColor.GRAY + "!");
                     nearPlayer.sendMessage(WarlordsPlayer.RECEIVE_ARROW + ChatColor.GRAY + " " + player.getName() + "'s " + ChatColor.YELLOW + "Last Stand" + ChatColor.GRAY + " is now protecting you for §66 §7seconds!");
                 });

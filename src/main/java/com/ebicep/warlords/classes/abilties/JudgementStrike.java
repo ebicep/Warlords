@@ -1,7 +1,10 @@
 package com.ebicep.warlords.classes.abilties;
 
 import com.ebicep.warlords.classes.internal.AbstractStrikeBase;
+import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.WarlordsPlayer;
+import com.ebicep.warlords.player.cooldowns.CooldownTypes;
+import com.ebicep.warlords.player.cooldowns.cooldowns.DamageHealCompleteCooldown;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
@@ -31,6 +34,24 @@ public class JudgementStrike extends AbstractStrikeBase {
             attacksDone = 0;
             critChance = 100;
         }
+
+        wp.getCooldownManager().addCooldown(new DamageHealCompleteCooldown<JudgementStrike>(
+                "Judgment Strike",
+                "",
+                JudgementStrike.class,
+                new JudgementStrike(),
+                wp,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {
+                }
+        ) {
+            @Override
+            public void onDamageFromAttacker(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                if (event.getAbility().equals("Judgement Strike") && isCrit) {
+                    event.getAttacker().getSpeed().addSpeedModifier("Judgement Speed", 20, 2 * 20, "BASE");
+                }
+            }
+        });
         nearPlayer.addDamageInstance(wp, name, minDamageHeal, maxDamageHeal, critChance, critMultiplier, false);
     }
 }

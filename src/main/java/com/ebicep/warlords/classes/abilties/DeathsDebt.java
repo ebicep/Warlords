@@ -5,6 +5,7 @@ import com.ebicep.warlords.classes.internal.AbstractTotemBase;
 import com.ebicep.warlords.effects.circle.CircleEffect;
 import com.ebicep.warlords.effects.circle.CircumferenceEffect;
 import com.ebicep.warlords.effects.circle.DoubleLineEffect;
+import com.ebicep.warlords.events.WarlordsDamageHealingEvent;
 import com.ebicep.warlords.player.WarlordsPlayer;
 import com.ebicep.warlords.player.cooldowns.CooldownFilter;
 import com.ebicep.warlords.player.cooldowns.CooldownTypes;
@@ -75,8 +76,22 @@ public class DeathsDebt extends AbstractTotemBase {
         DeathsDebt tempDeathsDebt = new DeathsDebt();
         tempDeathsDebt.setTimeLeftRespite(ticksLeft);
 
-        wp.getCooldownManager().addRegularCooldown("Spirits Respite", "RESP", DeathsDebt.class, tempDeathsDebt, wp, CooldownTypes.ABILITY, cooldownManager -> {
-        }, ticksLeft);
+        wp.getCooldownManager().addCooldown(new RegularCooldown<DeathsDebt>(
+                "Spirits Respite",
+                "RESP",
+                DeathsDebt.class,
+                tempDeathsDebt,
+                wp,
+                CooldownTypes.ABILITY,
+                cooldownManager -> {
+                },
+                ticksLeft
+        ) {
+            @Override
+            public void onDamageFromSelf(WarlordsDamageHealingEvent event, float currentDamageValue, boolean isCrit) {
+                tempDeathsDebt.addDelayedDamage(currentDamageValue);
+            }
+        });
 
         CircleEffect circle = new CircleEffect(wp, totemStand.getLocation().clone().add(0, 1.25, 0), respiteRadius);
         circle.addEffect(new CircumferenceEffect(ParticleEffect.SPELL));
@@ -181,7 +196,7 @@ public class DeathsDebt extends AbstractTotemBase {
 
         // 100% of damage over 6 seconds
         float damage = (tempDeathsDebt.getDelayedDamage() * getSelfDamageInPercentPerSecond());
-        float debtTrueDamage = (float) (damage * Math.pow(.8, (int) new CooldownFilter<>(wp, RegularCooldown.class).filterCooldownClass(SpiritLink.class).getStream().count()));
+        float debtTrueDamage = (float) (damage * Math.pow(.8, (int) new CooldownFilter<>(wp, RegularCooldown.class).filterCooldownClass(SpiritLink.class).stream().count()));
         // Player damage
         wp.addDamageInstance(wp, "",
                 debtTrueDamage,
